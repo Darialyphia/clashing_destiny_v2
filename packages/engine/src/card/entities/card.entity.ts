@@ -1,0 +1,233 @@
+import { type JSONObject } from '@game/shared';
+import { EntityWithModifiers } from '../../entity';
+import type { Game } from '../../game/game';
+import { ModifierManager } from '../../modifier/modifier-manager.component';
+import type { Player } from '../../player/player.entity';
+import { Interceptable } from '../../utils/interceptable';
+import type { CardBlueprint } from '../card-blueprint';
+import { CARD_DECK_SOURCES, CARD_EVENTS, type CardDeckSource } from '../card.enums';
+import {
+  CardAddToHandevent,
+  CardAfterDestroyEvent,
+  CardBeforeDestroyEvent,
+  CardDiscardEvent,
+  CardExhaustEvent,
+  CardWakeUpEvent
+} from '../card.events';
+import { match } from 'ts-pattern';
+import type { CardLocation } from '../components/card-manager.component';
+
+export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
+  id: string;
+  blueprint: T;
+};
+
+export type AnyCard = Card<any, any, any>;
+export type CardInterceptors = {
+  manaCost: Interceptable<number | null>;
+  destinyCost: Interceptable<number | null>;
+  player: Interceptable<Player>;
+};
+
+export const makeCardInterceptors = (): CardInterceptors => ({
+  manaCost: new Interceptable(),
+  destinyCost: new Interceptable(),
+  player: new Interceptable()
+});
+
+export type SerializedCard = {
+  id: string;
+  entityType: 'card';
+  player: string;
+  isExhausted: boolean;
+  name: string;
+  description: string;
+  canPlay: boolean;
+  source: CardDeckSource;
+  location: CardLocation | null;
+};
+
+export abstract class Card<
+  TSerialized extends JSONObject,
+  TInterceptors extends CardInterceptors = CardInterceptors,
+  TBlueprint extends CardBlueprint = CardBlueprint
+> extends EntityWithModifiers<TInterceptors> {
+  protected game: Game;
+
+  blueprint: TBlueprint;
+
+  originalPlayer: Player;
+
+  protected _isExhausted = false;
+
+  constructor(
+    game: Game,
+    player: Player,
+    interceptors: TInterceptors,
+    options: CardOptions<TBlueprint>
+  ) {
+    super(options.id, interceptors);
+    this.game = game;
+    this.originalPlayer = player;
+    this.blueprint = options.blueprint as any;
+    this.modifiers = new ModifierManager(this);
+  }
+
+  async init() {
+    await this.blueprint.onInit(this.game, this as any);
+  }
+
+  get player() {
+    return this.interceptors.player.getValue(this.originalPlayer, {});
+  }
+
+  get deckSource() {
+    return this.blueprint.deckSource;
+  }
+
+  get isMainDeckCard() {
+    return this.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
+  }
+
+  get isDestinyDeckCard() {
+    return this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
+  }
+
+  get blueprintId() {
+    return this.blueprint.id;
+  }
+
+  get isExhausted() {
+    return this._isExhausted;
+  }
+
+  get location() {
+    return this.player.cardManager.findCard(this.id)?.location;
+  }
+
+  get manaCost(): number {
+    if ('manaCost' in this.blueprint) {
+      return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
+    }
+    return 0;
+  }
+
+  get destinyCost() {
+    if ('destinyCost' in this.blueprint) {
+      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
+    }
+    return 0;
+  }
+
+  get canPayManaCost() {
+    return (
+      this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
+      this.manaCost
+    );
+  }
+
+  get canPayDestinyCost() {
+    return this.player.cardManager.destinyZone.size >= this.destinyCost;
+  }
+
+  removeFromCurrentLocation() {
+    if (!this.location) {
+      return;
+    }
+    match(this.location)
+      .with('hand', () => {
+        this.player.cardManager.removeFromHand(this);
+      })
+      .with('discardPile', () => {
+        this.player.cardManager.removeFromDiscardPile(this);
+      })
+      .with('banishPile', () => {
+        this.player.cardManager.removeFromBanishPile(this);
+      })
+      .with('mainDeck', () => {
+        this.player.cardManager.mainDeck.pluck(this);
+      })
+      .with('destinyDeck', () => {
+        this.player.cardManager.destinyDeck.pluck(this);
+      })
+      .with('destinyZone', () => {
+        this.player.cardManager.removeFromDestinyZone(this);
+      })
+      .with('board', () => {})
+      .exhaustive();
+  }
+
+  sendToDiscardPile() {
+    this.removeFromCurrentLocation();
+    this.player.cardManager.sendToDiscardPile(this);
+  }
+
+  sendToBanishPile() {
+    this.removeFromCurrentLocation();
+    this.player.cardManager.sendToBanishPile(this);
+  }
+
+  sendToDestinyZone() {
+    this.removeFromCurrentLocation();
+    this.player.cardManager.sendToDestinyZone(this);
+  }
+
+  abstract canPlay(): boolean;
+
+  abstract play(): Promise<void>;
+
+  protected serializeBase(): SerializedCard {
+    return {
+      id: this.id,
+      source: this.deckSource,
+      entityType: 'card',
+      player: this.player.id,
+      isExhausted: this.isExhausted,
+      name: this.blueprint.name,
+      description: this.blueprint.description,
+      canPlay: this.canPlay(),
+      location: this.location ?? null
+    };
+  }
+
+  abstract serialize(): TSerialized;
+
+  async discard() {
+    await this.game.emit(CARD_EVENTS.CARD_DISCARD, new CardDiscardEvent({ card: this }));
+    this.player.cardManager.discard(this);
+  }
+
+  async addToHand() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_ADD_TO_HAND,
+      new CardAddToHandevent({ card: this })
+    );
+    this.removeFromCurrentLocation();
+    this.player.cardManager.addToHand(this);
+  }
+
+  async exhaust() {
+    await this.game.emit(CARD_EVENTS.CARD_EXHAUST, new CardExhaustEvent({ card: this }));
+    this._isExhausted = true;
+  }
+
+  async wakeUp() {
+    await this.game.emit(CARD_EVENTS.CARD_WAKE_UP, new CardWakeUpEvent({ card: this }));
+    this._isExhausted = false;
+  }
+
+  async destroy() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_DESTROY,
+      new CardBeforeDestroyEvent({ card: this })
+    );
+    await match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.sendToDiscardPile())
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.sendToBanishPile())
+      .exhaustive();
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_DESTROY,
+      new CardAfterDestroyEvent({ card: this })
+    );
+  }
+}

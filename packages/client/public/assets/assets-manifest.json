@@ -1,0 +1,4424 @@
+{
+  "bundles": [
+    {
+      "name": "default",
+      "assets": [
+        {
+          "alias": [
+            "undefinedlogo.svg"
+          ],
+          "src": [
+            "/assets/logo.svg"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "backgrounds",
+      "assets": [
+        {
+          "alias": [
+            "battle-bg.png"
+          ],
+          "src": [
+            "/assets/backgrounds/battle-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "battle-bg2.png"
+          ],
+          "src": [
+            "/assets/backgrounds/battle-bg2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "fx",
+      "assets": [
+        {
+          "alias": [
+            "fx-frozen"
+          ],
+          "src": [
+            "/assets/fx/frozen.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-frozen.png"
+          ],
+          "src": [
+            "/assets/fx/frozen.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-light-mask"
+          ],
+          "src": [
+            "/assets/fx/light-mask.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-light-mask.png"
+          ],
+          "src": [
+            "/assets/fx/light-mask.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-shadow.png"
+          ],
+          "src": [
+            "/assets/fx/shadow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-slash"
+          ],
+          "src": [
+            "/assets/fx/slash.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-slash.png"
+          ],
+          "src": [
+            "/assets/fx/slash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-stasis"
+          ],
+          "src": [
+            "/assets/fx/stasis.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fx-stasis.png"
+          ],
+          "src": [
+            "/assets/fx/stasis.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "icons",
+      "assets": [
+        {
+          "alias": [
+            "icon-artifact-book-of-knowledge"
+          ],
+          "src": [
+            "/assets/icons/artifact-book-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-artifact-equality-pendant"
+          ],
+          "src": [
+            "/assets/icons/artifact-equality-pendant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-artifact-philosopher-stone"
+          ],
+          "src": [
+            "/assets/icons/artifact-philosopher-stone.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-artifact-pilfering-blade"
+          ],
+          "src": [
+            "/assets/icons/artifact-pilfering-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-artifact-rainbow-blade"
+          ],
+          "src": [
+            "/assets/icons/artifact-rainbow-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-artifact-test"
+          ],
+          "src": [
+            "/assets/icons/artifact-test.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-artifact-wrath-of-the-skies"
+          ],
+          "src": [
+            "/assets/icons/artifact-wrath-of-the-skies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-equality-pendant"
+          ],
+          "src": [
+            "/assets/icons/equality-pendant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keywor-dazzling-bloom"
+          ],
+          "src": [
+            "/assets/icons/keywor-dazzling-bloom.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-ability-power-buff"
+          ],
+          "src": [
+            "/assets/icons/keyword-ability-power-buff.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-altar"
+          ],
+          "src": [
+            "/assets/icons/keyword-altar.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-attack-buff"
+          ],
+          "src": [
+            "/assets/icons/keyword-attack-buff.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-attack-debuff"
+          ],
+          "src": [
+            "/assets/icons/keyword-attack-debuff.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-burn"
+          ],
+          "src": [
+            "/assets/icons/keyword-burn.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-commander"
+          ],
+          "src": [
+            "/assets/icons/keyword-commander.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-dazzling-bloom"
+          ],
+          "src": [
+            "/assets/icons/keyword-dazzling-bloom.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-defiant"
+          ],
+          "src": [
+            "/assets/icons/keyword-defiant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-disarmed"
+          ],
+          "src": [
+            "/assets/icons/keyword-disarmed.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-double-attack"
+          ],
+          "src": [
+            "/assets/icons/keyword-double-attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-elusive"
+          ],
+          "src": [
+            "/assets/icons/keyword-elusive.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-fearsome"
+          ],
+          "src": [
+            "/assets/icons/keyword-fearsome.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-frame-negative"
+          ],
+          "src": [
+            "/assets/icons/keyword-frame-negative.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-frame-positive"
+          ],
+          "src": [
+            "/assets/icons/keyword-frame-positive.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-frozen"
+          ],
+          "src": [
+            "/assets/icons/keyword-frozen.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-hp-buff"
+          ],
+          "src": [
+            "/assets/icons/keyword-hp-buff.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-hp-debuff"
+          ],
+          "src": [
+            "/assets/icons/keyword-hp-debuff.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-immunity"
+          ],
+          "src": [
+            "/assets/icons/keyword-immunity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-provoke"
+          ],
+          "src": [
+            "/assets/icons/keyword-provoke.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-provoked"
+          ],
+          "src": [
+            "/assets/icons/keyword-provoked.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-rage"
+          ],
+          "src": [
+            "/assets/icons/keyword-rage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-ranged"
+          ],
+          "src": [
+            "/assets/icons/keyword-ranged.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-rooted"
+          ],
+          "src": [
+            "/assets/icons/keyword-rooted.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-rush"
+          ],
+          "src": [
+            "/assets/icons/keyword-rush.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-silenced"
+          ],
+          "src": [
+            "/assets/icons/keyword-silenced.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-spellcaster"
+          ],
+          "src": [
+            "/assets/icons/keyword-spellcaster.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-splash-attack"
+          ],
+          "src": [
+            "/assets/icons/keyword-splash-attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-stasis"
+          ],
+          "src": [
+            "/assets/icons/keyword-stasis.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-structure"
+          ],
+          "src": [
+            "/assets/icons/keyword-structure.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-swift"
+          ],
+          "src": [
+            "/assets/icons/keyword-swift.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-vigilant"
+          ],
+          "src": [
+            "/assets/icons/keyword-vigilant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-modifier-bubble"
+          ],
+          "src": [
+            "/assets/icons/modifier-bubble.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-modifier-mana-shield"
+          ],
+          "src": [
+            "/assets/icons/modifier-mana-shield.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-modifier-mana-shield"
+          ],
+          "src": [
+            "/assets/icons/modifier-mana-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-placeholder"
+          ],
+          "src": [
+            "/assets/icons/placeholder.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-player-infos-destiny"
+          ],
+          "src": [
+            "/assets/icons/player-infos-destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-player-infos-hp"
+          ],
+          "src": [
+            "/assets/icons/player-infos-hp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-player-infos-mana"
+          ],
+          "src": [
+            "/assets/icons/player-infos-mana.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-secret-flashfire"
+          ],
+          "src": [
+            "/assets/icons/secret-flashfire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-secret-icy-breath"
+          ],
+          "src": [
+            "/assets/icons/secret-icy-breath.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-call-of-the-champion"
+          ],
+          "src": [
+            "/assets/icons/spell-call-of-the-champion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-ceasefire"
+          ],
+          "src": [
+            "/assets/icons/spell-ceasefire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-eternal-flame"
+          ],
+          "src": [
+            "/assets/icons/spell-eternal-flame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-fireball"
+          ],
+          "src": [
+            "/assets/icons/spell-fireball.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-frost-nova"
+          ],
+          "src": [
+            "/assets/icons/spell-frost-nova.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-heatwave"
+          ],
+          "src": [
+            "/assets/icons/spell-heatwave.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-ice-bolt"
+          ],
+          "src": [
+            "/assets/icons/spell-ice-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-inner-fire"
+          ],
+          "src": [
+            "/assets/icons/spell-inner-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-insight"
+          ],
+          "src": [
+            "/assets/icons/spell-insight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-lightning-bolt"
+          ],
+          "src": [
+            "/assets/icons/spell-lightning-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-novice-pyromancy"
+          ],
+          "src": [
+            "/assets/icons/spell-novice-pyromancy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-petal-blade"
+          ],
+          "src": [
+            "/assets/icons/spell-petal-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-pillars-of-frost"
+          ],
+          "src": [
+            "/assets/icons/spell-pillars-of-frost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-sands-of-time"
+          ],
+          "src": [
+            "/assets/icons/spell-sands-of-time.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-shoal-of-eels"
+          ],
+          "src": [
+            "/assets/icons/spell-shoal-of-eels.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-slime-to-the-rescue"
+          ],
+          "src": [
+            "/assets/icons/spell-slime-to-the-rescue.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-spark"
+          ],
+          "src": [
+            "/assets/icons/spell-spark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-storm-flash"
+          ],
+          "src": [
+            "/assets/icons/spell-storm-flash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-tidal-wave"
+          ],
+          "src": [
+            "/assets/icons/spell-tidal-wave.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-acolyte"
+          ],
+          "src": [
+            "/assets/icons/unit-acolyte.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-aiden-lv1"
+          ],
+          "src": [
+            "/assets/icons/unit-aiden-lv1.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-aiden-lv2"
+          ],
+          "src": [
+            "/assets/icons/unit-aiden-lv2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-aiden-lv3"
+          ],
+          "src": [
+            "/assets/icons/unit-aiden-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-air-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/icons/unit-air-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-archmage"
+          ],
+          "src": [
+            "/assets/icons/unit-archmage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-ardent-monk"
+          ],
+          "src": [
+            "/assets/icons/unit-ardent-monk.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-avatar-of-peace"
+          ],
+          "src": [
+            "/assets/icons/unit-avatar-of-peace.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-bubbly-slime"
+          ],
+          "src": [
+            "/assets/icons/unit-bubbly-slime.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-cerulean-wave-disciple"
+          ],
+          "src": [
+            "/assets/icons/unit-cerulean-wave-disciple.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-crusader-of-creation"
+          ],
+          "src": [
+            "/assets/icons/unit-crusader-of-creation.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-earth-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/icons/unit-earth-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-elana-lv1"
+          ],
+          "src": [
+            "/assets/icons/unit-elana-lv1.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-elana-lv2"
+          ],
+          "src": [
+            "/assets/icons/unit-elana-lv2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-elana-lv3"
+          ],
+          "src": [
+            "/assets/icons/unit-elana-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-enji-one-man-army"
+          ],
+          "src": [
+            "/assets/icons/unit-enji-one-man-army.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-esteemed-erudite"
+          ],
+          "src": [
+            "/assets/icons/unit-esteemed-erudite.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-exorcist"
+          ],
+          "src": [
+            "/assets/icons/unit-exorcist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-fire-salamander"
+          ],
+          "src": [
+            "/assets/icons/unit-fire-salamander.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-fire-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/icons/unit-fire-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-flame-exorcist"
+          ],
+          "src": [
+            "/assets/icons/unit-flame-exorcist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-flame-juggler"
+          ],
+          "src": [
+            "/assets/icons/unit-flame-juggler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-fleeting-dancer"
+          ],
+          "src": [
+            "/assets/icons/unit-fleeting-dancer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-garrison-marksman"
+          ],
+          "src": [
+            "/assets/icons/unit-garrison-marksman.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-ice-queen"
+          ],
+          "src": [
+            "/assets/icons/unit-ice-queen.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-kozui-aquamancer"
+          ],
+          "src": [
+            "/assets/icons/unit-kozui-aquamancer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-luminescent-mystic"
+          ],
+          "src": [
+            "/assets/icons/unit-luminescent-mystic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-luminscent-mystic"
+          ],
+          "src": [
+            "/assets/icons/unit-luminscent-mystic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-mage"
+          ],
+          "src": [
+            "/assets/icons/unit-mage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-naga-skirmisher"
+          ],
+          "src": [
+            "/assets/icons/unit-naga-skirmisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-playful-eels"
+          ],
+          "src": [
+            "/assets/icons/unit-playful-eels.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-primordial-herald"
+          ],
+          "src": [
+            "/assets/icons/unit-primordial-herald.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-promising-recruit"
+          ],
+          "src": [
+            "/assets/icons/unit-promising-recruit.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-rainbow-phoenix"
+          ],
+          "src": [
+            "/assets/icons/unit-rainbow-phoenix.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-shield-maiden"
+          ],
+          "src": [
+            "/assets/icons/unit-shield-maiden.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-shrouded-sorcerer"
+          ],
+          "src": [
+            "/assets/icons/unit-shrouded-sorcerer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-stalwart-vanguard"
+          ],
+          "src": [
+            "/assets/icons/unit-stalwart-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-sword-instructor"
+          ],
+          "src": [
+            "/assets/icons/unit-sword-instructor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-test-minion"
+          ],
+          "src": [
+            "/assets/icons/unit-test-minion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-water-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/icons/unit-water-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-water-spring-lily"
+          ],
+          "src": [
+            "/assets/icons/unit-water-spring-lily.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-waterfall-fox-priestess"
+          ],
+          "src": [
+            "/assets/icons/unit-waterfall-fox-priestess.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-will-o-wisp"
+          ],
+          "src": [
+            "/assets/icons/unit-will-o-wisp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-zoran-the-punisher"
+          ],
+          "src": [
+            "/assets/icons/unit-zoran-the-punisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "obstacles",
+      "assets": [
+        {
+          "alias": [
+            "experience-globe"
+          ],
+          "src": [
+            "/assets/obstacles/experience-globe.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "experience-globe.png"
+          ],
+          "src": [
+            "/assets/obstacles/experience-globe.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "incoming-experience-globe"
+          ],
+          "src": [
+            "/assets/obstacles/incoming-experience-globe.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "incoming-experience-globe.png"
+          ],
+          "src": [
+            "/assets/obstacles/incoming-experience-globe.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "pedestals",
+      "assets": [
+        {
+          "alias": [
+            "default.png"
+          ],
+          "src": [
+            "/assets/pedestals/default.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "pedestal-default.png"
+          ],
+          "src": [
+            "/assets/pedestals/pedestal-default.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "tiles",
+      "assets": [
+        {
+          "alias": [
+            "grass"
+          ],
+          "src": [
+            "/assets/tiles/grass.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "grass.png"
+          ],
+          "src": [
+            "/assets/tiles/grass.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ui",
+      "assets": [
+        {
+          "alias": [
+            "ability-exhaust.png"
+          ],
+          "src": [
+            "/assets/ui/ability-exhaust.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ability-power.png"
+          ],
+          "src": [
+            "/assets/ui/ability-power.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "active-unit-indicator"
+          ],
+          "src": [
+            "/assets/ui/active-unit-indicator.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "active-unit-indicator.png"
+          ],
+          "src": [
+            "/assets/ui/active-unit-indicator.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ally-indicator.png"
+          ],
+          "src": [
+            "/assets/ui/ally-indicator.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ap-indicator-empty-ui.png"
+          ],
+          "src": [
+            "/assets/ui/ap-indicator-empty-ui.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ap-indicator-ui.png"
+          ],
+          "src": [
+            "/assets/ui/ap-indicator-ui.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ap-indicator"
+          ],
+          "src": [
+            "/assets/ui/ap-indicator.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ap-indicator.png"
+          ],
+          "src": [
+            "/assets/ui/ap-indicator.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ap.png"
+          ],
+          "src": [
+            "/assets/ui/ap.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "artifact-durability.png"
+          ],
+          "src": [
+            "/assets/ui/artifact-durability.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "atk.png"
+          ],
+          "src": [
+            "/assets/ui/atk.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "attack.png"
+          ],
+          "src": [
+            "/assets/ui/attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "banish-icon.png"
+          ],
+          "src": [
+            "/assets/ui/banish-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "button-blue.png"
+          ],
+          "src": [
+            "/assets/ui/button-blue.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "button-disabled.png"
+          ],
+          "src": [
+            "/assets/ui/button-disabled.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "button-error.png"
+          ],
+          "src": [
+            "/assets/ui/button-error.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "button.png"
+          ],
+          "src": [
+            "/assets/ui/button.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-art-frame.png"
+          ],
+          "src": [
+            "/assets/ui/card-art-frame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-attack.png"
+          ],
+          "src": [
+            "/assets/ui/card-attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-back.png"
+          ],
+          "src": [
+            "/assets/ui/card-back.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-back3.png"
+          ],
+          "src": [
+            "/assets/ui/card-back3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-back4.png"
+          ],
+          "src": [
+            "/assets/ui/card-back4.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-air.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-air.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-arcane.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-arcane.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-earth.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-earth.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-fire.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-genesis.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-genesis.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-harmony.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-harmony.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-normal.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-normal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-void.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-void.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-water.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-water.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-wrath.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-wrath.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-description.png"
+          ],
+          "src": [
+            "/assets/ui/card-description.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-destiny.png"
+          ],
+          "src": [
+            "/assets/ui/card-destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-durability.png"
+          ],
+          "src": [
+            "/assets/ui/card-durability.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-exp.png"
+          ],
+          "src": [
+            "/assets/ui/card-exp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-hp.png"
+          ],
+          "src": [
+            "/assets/ui/card-hp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-artifact.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-artifact.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-hero.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-hero.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-minion.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-minion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-secret.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-secret.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-spell.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-spell.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-level-empty.png"
+          ],
+          "src": [
+            "/assets/ui/card-level-empty.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-level-filled.png"
+          ],
+          "src": [
+            "/assets/ui/card-level-filled.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-mana.png"
+          ],
+          "src": [
+            "/assets/ui/card-mana.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-mp.png"
+          ],
+          "src": [
+            "/assets/ui/card-mp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-name.png"
+          ],
+          "src": [
+            "/assets/ui/card-name.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-previous-class.png"
+          ],
+          "src": [
+            "/assets/ui/card-previous-class.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-rarity-common.png"
+          ],
+          "src": [
+            "/assets/ui/card-rarity-common.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-rarity-epic.png"
+          ],
+          "src": [
+            "/assets/ui/card-rarity-epic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-rarity-legendary.png"
+          ],
+          "src": [
+            "/assets/ui/card-rarity-legendary.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-rarity-rare.png"
+          ],
+          "src": [
+            "/assets/ui/card-rarity-rare.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-spellpower.png"
+          ],
+          "src": [
+            "/assets/ui/card-spellpower.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-type.png"
+          ],
+          "src": [
+            "/assets/ui/card-type.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cursor-disabled.png"
+          ],
+          "src": [
+            "/assets/ui/cursor-disabled.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cursor-hover.png"
+          ],
+          "src": [
+            "/assets/ui/cursor-hover.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cursor.png"
+          ],
+          "src": [
+            "/assets/ui/cursor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "deck-big.png"
+          ],
+          "src": [
+            "/assets/ui/deck-big.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "deck.png"
+          ],
+          "src": [
+            "/assets/ui/deck.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "destiny-deck-icon.png"
+          ],
+          "src": [
+            "/assets/ui/destiny-deck-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "enemy-indicator.png"
+          ],
+          "src": [
+            "/assets/ui/enemy-indicator.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "exp.png"
+          ],
+          "src": [
+            "/assets/ui/exp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-air.png"
+          ],
+          "src": [
+            "/assets/ui/gem-air.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-arcane.png"
+          ],
+          "src": [
+            "/assets/ui/gem-arcane.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-earth.png"
+          ],
+          "src": [
+            "/assets/ui/gem-earth.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-fire.png"
+          ],
+          "src": [
+            "/assets/ui/gem-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-genesis.png"
+          ],
+          "src": [
+            "/assets/ui/gem-genesis.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-harmony.png"
+          ],
+          "src": [
+            "/assets/ui/gem-harmony.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-normal.png"
+          ],
+          "src": [
+            "/assets/ui/gem-normal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-oblivion.png"
+          ],
+          "src": [
+            "/assets/ui/gem-oblivion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-order.png"
+          ],
+          "src": [
+            "/assets/ui/gem-order.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-void.png"
+          ],
+          "src": [
+            "/assets/ui/gem-void.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-water.png"
+          ],
+          "src": [
+            "/assets/ui/gem-water.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gem-wrath.png"
+          ],
+          "src": [
+            "/assets/ui/gem-wrath.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "graveyard-icon.png"
+          ],
+          "src": [
+            "/assets/ui/graveyard-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "hovered-cell"
+          ],
+          "src": [
+            "/assets/ui/hovered-cell.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "hovered-cell.png"
+          ],
+          "src": [
+            "/assets/ui/hovered-cell.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "hp.png"
+          ],
+          "src": [
+            "/assets/ui/hp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mp.png"
+          ],
+          "src": [
+            "/assets/ui/mp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-end-proj"
+          ],
+          "src": [
+            "/assets/ui/path-end-proj.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-end-proj.png"
+          ],
+          "src": [
+            "/assets/ui/path-end-proj.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-end"
+          ],
+          "src": [
+            "/assets/ui/path-end.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-end.png"
+          ],
+          "src": [
+            "/assets/ui/path-end.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-start-proj"
+          ],
+          "src": [
+            "/assets/ui/path-start-proj.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-start-proj.png"
+          ],
+          "src": [
+            "/assets/ui/path-start-proj.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-start"
+          ],
+          "src": [
+            "/assets/ui/path-start.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-start.png"
+          ],
+          "src": [
+            "/assets/ui/path-start.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-straight-proj"
+          ],
+          "src": [
+            "/assets/ui/path-straight-proj.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-straight-proj.png"
+          ],
+          "src": [
+            "/assets/ui/path-straight-proj.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-straight"
+          ],
+          "src": [
+            "/assets/ui/path-straight.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-straight.png"
+          ],
+          "src": [
+            "/assets/ui/path-straight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-turn-proj"
+          ],
+          "src": [
+            "/assets/ui/path-turn-proj.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-turn-proj.png"
+          ],
+          "src": [
+            "/assets/ui/path-turn-proj.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-turn"
+          ],
+          "src": [
+            "/assets/ui/path-turn.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "path-turn.png"
+          ],
+          "src": [
+            "/assets/ui/path-turn.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "quest-icon-empty.png"
+          ],
+          "src": [
+            "/assets/ui/quest-icon-empty.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "quest-icon-filled.png"
+          ],
+          "src": [
+            "/assets/ui/quest-icon-filled.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "relic.png"
+          ],
+          "src": [
+            "/assets/ui/relic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "secret-triggered.png"
+          ],
+          "src": [
+            "/assets/ui/secret-triggered.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "shield.png"
+          ],
+          "src": [
+            "/assets/ui/shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed.png"
+          ],
+          "src": [
+            "/assets/ui/speed.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "test-projection.png"
+          ],
+          "src": [
+            "/assets/ui/test-projection.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tile-highlights-proj"
+          ],
+          "src": [
+            "/assets/ui/tile-highlights-proj.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tile-highlights-proj.png"
+          ],
+          "src": [
+            "/assets/ui/tile-highlights-proj.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tile-highlights"
+          ],
+          "src": [
+            "/assets/ui/tile-highlights.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tile-highlights.png"
+          ],
+          "src": [
+            "/assets/ui/tile-highlights.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unit-stat-bars"
+          ],
+          "src": [
+            "/assets/ui/unit-stat-bars.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unit-stat-bars.png"
+          ],
+          "src": [
+            "/assets/ui/unit-stat-bars.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unit-stats-attack.png"
+          ],
+          "src": [
+            "/assets/ui/unit-stats-attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unit-stats-hp.png"
+          ],
+          "src": [
+            "/assets/ui/unit-stats-hp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unit-stats-spellpower.png"
+          ],
+          "src": [
+            "/assets/ui/unit-stats-spellpower.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unit-stats.png"
+          ],
+          "src": [
+            "/assets/ui/unit-stats.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "weapon.png"
+          ],
+          "src": [
+            "/assets/ui/weapon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "units",
+      "assets": [
+        {
+          "alias": [
+            "acolyte"
+          ],
+          "src": [
+            "/assets/units/acolyte.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "acolyte.png"
+          ],
+          "src": [
+            "/assets/units/acolyte.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv1"
+          ],
+          "src": [
+            "/assets/units/aiden-lv1.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv1.png"
+          ],
+          "src": [
+            "/assets/units/aiden-lv1.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv2"
+          ],
+          "src": [
+            "/assets/units/aiden-lv2.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv2.png"
+          ],
+          "src": [
+            "/assets/units/aiden-lv2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv3"
+          ],
+          "src": [
+            "/assets/units/aiden-lv3.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv3.png"
+          ],
+          "src": [
+            "/assets/units/aiden-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ardent-monk"
+          ],
+          "src": [
+            "/assets/units/ardent-monk.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ardent-monk.png"
+          ],
+          "src": [
+            "/assets/units/ardent-monk.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "avatar-of-peace"
+          ],
+          "src": [
+            "/assets/units/avatar-of-peace.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "avatar-of-peace.png"
+          ],
+          "src": [
+            "/assets/units/avatar-of-peace.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "bubbly-slime"
+          ],
+          "src": [
+            "/assets/units/bubbly-slime.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "bubbly-slime.png"
+          ],
+          "src": [
+            "/assets/units/bubbly-slime.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "bubbly-slimet.png"
+          ],
+          "src": [
+            "/assets/units/bubbly-slimet.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cerulean-waves-disciple"
+          ],
+          "src": [
+            "/assets/units/cerulean-waves-disciple.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cerulean-waves-disciple.png"
+          ],
+          "src": [
+            "/assets/units/cerulean-waves-disciple.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "crusader-of-creation"
+          ],
+          "src": [
+            "/assets/units/crusader-of-creation.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "crusader-of-creation.png"
+          ],
+          "src": [
+            "/assets/units/crusader-of-creation.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "earth-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/units/earth-shrine-of-knowledge.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "earth-shrine-of-knowledge.png"
+          ],
+          "src": [
+            "/assets/units/earth-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "elana-lv1"
+          ],
+          "src": [
+            "/assets/units/elana-lv1.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "elana-lv1.png"
+          ],
+          "src": [
+            "/assets/units/elana-lv1.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "elana-lv2"
+          ],
+          "src": [
+            "/assets/units/elana-lv2.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "elana-lv2.png"
+          ],
+          "src": [
+            "/assets/units/elana-lv2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "elana-lv3"
+          ],
+          "src": [
+            "/assets/units/elana-lv3.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "elana-lv3.png"
+          ],
+          "src": [
+            "/assets/units/elana-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "enji-one-man-army"
+          ],
+          "src": [
+            "/assets/units/enji-one-man-army.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "enji-one-man-army.png"
+          ],
+          "src": [
+            "/assets/units/enji-one-man-army.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "esteemed-erudite"
+          ],
+          "src": [
+            "/assets/units/esteemed-erudite.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "esteemed-erudite.png"
+          ],
+          "src": [
+            "/assets/units/esteemed-erudite.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fire-salamander"
+          ],
+          "src": [
+            "/assets/units/fire-salamander.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fire-salamander.png"
+          ],
+          "src": [
+            "/assets/units/fire-salamander.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fire-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/units/fire-shrine-of-knowledge.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fire-shrine-of-knowledge.png"
+          ],
+          "src": [
+            "/assets/units/fire-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flame-exorcist"
+          ],
+          "src": [
+            "/assets/units/flame-exorcist.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flame-exorcist.png"
+          ],
+          "src": [
+            "/assets/units/flame-exorcist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flame-juggler"
+          ],
+          "src": [
+            "/assets/units/flame-juggler.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flame-juggler.png"
+          ],
+          "src": [
+            "/assets/units/flame-juggler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fleeting-dancer"
+          ],
+          "src": [
+            "/assets/units/fleeting-dancer.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fleeting-dancer.png"
+          ],
+          "src": [
+            "/assets/units/fleeting-dancer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "garrison-marksman"
+          ],
+          "src": [
+            "/assets/units/garrison-marksman.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "garrison-marksman.png"
+          ],
+          "src": [
+            "/assets/units/garrison-marksman.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ice-queen"
+          ],
+          "src": [
+            "/assets/units/ice-queen.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ice-queen.png"
+          ],
+          "src": [
+            "/assets/units/ice-queen.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kozui-aquamancer"
+          ],
+          "src": [
+            "/assets/units/kozui-aquamancer.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kozui-aquamancer.png"
+          ],
+          "src": [
+            "/assets/units/kozui-aquamancer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "luminescent-mystic"
+          ],
+          "src": [
+            "/assets/units/luminescent-mystic.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "luminescent-mystic.png"
+          ],
+          "src": [
+            "/assets/units/luminescent-mystic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "misleading-wisp"
+          ],
+          "src": [
+            "/assets/units/misleading-wisp.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "misleading-wisp.png"
+          ],
+          "src": [
+            "/assets/units/misleading-wisp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "naga-skirmisher"
+          ],
+          "src": [
+            "/assets/units/naga-skirmisher.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "naga-skirmisher.png"
+          ],
+          "src": [
+            "/assets/units/naga-skirmisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "playful-eels"
+          ],
+          "src": [
+            "/assets/units/playful-eels.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "playful-eels.png"
+          ],
+          "src": [
+            "/assets/units/playful-eels.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "primordial-herald"
+          ],
+          "src": [
+            "/assets/units/primordial-herald.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "primordial-herald.png"
+          ],
+          "src": [
+            "/assets/units/primordial-herald.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "promising-recruit"
+          ],
+          "src": [
+            "/assets/units/promising-recruit.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "promising-recruit.png"
+          ],
+          "src": [
+            "/assets/units/promising-recruit.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rainbow-phoenix"
+          ],
+          "src": [
+            "/assets/units/rainbow-phoenix.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rainbow-phoenix.png"
+          ],
+          "src": [
+            "/assets/units/rainbow-phoenix.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "shield-maiden"
+          ],
+          "src": [
+            "/assets/units/shield-maiden.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "shield-maiden.png"
+          ],
+          "src": [
+            "/assets/units/shield-maiden.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "shrouded-sorcerer"
+          ],
+          "src": [
+            "/assets/units/shrouded-sorcerer.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "shrouded-sorcerer.png"
+          ],
+          "src": [
+            "/assets/units/shrouded-sorcerer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "stalwart-vanguard"
+          ],
+          "src": [
+            "/assets/units/stalwart-vanguard.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "stalwart-vanguard.png"
+          ],
+          "src": [
+            "/assets/units/stalwart-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sword-instructor"
+          ],
+          "src": [
+            "/assets/units/sword-instructor.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sword-instructor.png"
+          ],
+          "src": [
+            "/assets/units/sword-instructor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "test-unit"
+          ],
+          "src": [
+            "/assets/units/test-unit.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "test-unit.png"
+          ],
+          "src": [
+            "/assets/units/test-unit.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "water-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/units/water-shrine-of-knowledge.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "water-shrine-of-knowledge.png"
+          ],
+          "src": [
+            "/assets/units/water-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "water-spring-lilly"
+          ],
+          "src": [
+            "/assets/units/water-spring-lilly.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "water-spring-lilly.png"
+          ],
+          "src": [
+            "/assets/units/water-spring-lilly.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "waterfall-fox-priestess"
+          ],
+          "src": [
+            "/assets/units/waterfall-fox-priestess.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "waterfall-fox-priestess.png"
+          ],
+          "src": [
+            "/assets/units/waterfall-fox-priestess.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "will-o-wisp"
+          ],
+          "src": [
+            "/assets/units/will-o-wisp.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "will-o-wisp.png"
+          ],
+          "src": [
+            "/assets/units/will-o-wisp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "wind-shrine-of-knowledge"
+          ],
+          "src": [
+            "/assets/units/wind-shrine-of-knowledge.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "wind-shrine-of-knowledge.png"
+          ],
+          "src": [
+            "/assets/units/wind-shrine-of-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "wizard"
+          ],
+          "src": [
+            "/assets/units/wizard.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "wizard.png"
+          ],
+          "src": [
+            "/assets/units/wizard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "zoran-the-punisher"
+          ],
+          "src": [
+            "/assets/units/zoran-the-punisher.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "zoran-the-punisher.png"
+          ],
+          "src": [
+            "/assets/units/zoran-the-punisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
