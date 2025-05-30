@@ -174,8 +174,8 @@ export class GameInteractionSystem
     } as InteractionContext & { state: T };
   }
 
-  async selectCardsOnBoard(options: {
-    isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
+  async selectCardsOnBoard<T extends AnyCard>(options: {
+    isElligible: (candidate: AnyCard, selectedCards: AnyCard[]) => boolean;
     canCommit: (selectedCards: AnyCard[]) => boolean;
     isDone(selectedCards: AnyCard[]): boolean;
     player: Player;
@@ -185,7 +185,7 @@ export class GameInteractionSystem
       INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
     ].create(this.game, options);
 
-    return this.game.inputSystem.pause<AnyCard[]>();
+    return this.game.inputSystem.pause<T[]>();
   }
 
   async selectMinionSlot(options: {

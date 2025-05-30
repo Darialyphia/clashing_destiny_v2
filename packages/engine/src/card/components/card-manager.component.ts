@@ -140,6 +140,14 @@ export class CardManagerComponent {
     });
   }
 
+  async drawIntoDestinyZone(amount: number) {
+    const cards = this.mainDeck.draw(amount);
+
+    cards.forEach(card => {
+      this.sendToDestinyZone(card);
+    });
+  }
+
   removeFromHand(card: AnyCard) {
     const index = this.hand.findIndex(handCard => handCard.equals(card));
     if (index === -1) return;

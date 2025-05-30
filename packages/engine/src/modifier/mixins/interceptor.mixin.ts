@@ -74,6 +74,14 @@ export class HeroInterceptorModifierMixin<
   TKey extends keyof HeroCardInterceptors
 > extends InterceptorModifierMixin<HeroCardInterceptors, TKey, HeroCard> {}
 
+export class UnitInterceptorModifierMixin<
+  TKey extends keyof MinionCardInterceptors | keyof HeroCardInterceptors
+> extends InterceptorModifierMixin<
+  MinionCardInterceptors & HeroCardInterceptors,
+  TKey,
+  MinionCard | HeroCard
+> {}
+
 export class ArtifactInterceptorModifierMixin<
   TKey extends keyof ArtifactCardInterceptors
 > extends InterceptorModifierMixin<ArtifactCardInterceptors, TKey, ArtifactCard> {}

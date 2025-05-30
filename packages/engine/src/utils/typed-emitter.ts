@@ -96,9 +96,9 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     return () => this.off(eventName, onceHandler as any);
   }
 
-  off<TEventName extends keyof TEvents & string>(
+  off<TEventName extends keyof EventMapWithStarEvent<TEvents> & string>(
     eventName: TEventName,
-    handler: (eventArg: TEvents[TEventName]) => void
+    handler: (eventArg: EventMapWithStarEvent<TEvents>[TEventName]) => MaybePromise<void>
   ) {
     const listeners = this._listeners[eventName];
     if (!listeners) return;

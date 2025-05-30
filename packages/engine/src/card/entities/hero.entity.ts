@@ -40,6 +40,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
+  canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, HeroCard>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
@@ -122,6 +123,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canUseAbility: new Interceptable(),
+        canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
@@ -147,6 +149,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get maxHp(): number {
     return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
+  }
+
+  canBeTargeted(source: AnyCard) {
+    return this.interceptors.canBeTargeted.getValue(true, {
+      source
+    });
   }
 
   canAttack(target: AttackTarget) {
@@ -261,7 +269,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
     return (
       this.player.hero.hasLineage(this.blueprint.lineage) &&
-      this.player.hero.level < this.blueprint.level
+      this.blueprint.level - this.player.hero.level === 1
     );
   }
 

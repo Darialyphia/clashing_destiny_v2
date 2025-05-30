@@ -38,6 +38,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
   canUseAbility: Interceptable<boolean, MinionCard>;
+  canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
@@ -155,6 +156,7 @@ export class MinionCard extends Card<
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canUseAbility: new Interceptable(),
+        canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable()
@@ -179,10 +181,21 @@ export class MinionCard extends Card<
     return Math.max(this.maxHp - this.damageTaken, 0);
   }
 
+  get slot() {
+    if (!this.position) return null;
+    return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
+  }
+
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
     if (key === 'maxHp') {
       await this.checkHp();
     }
+  }
+
+  canBeTargeted(source: AnyCard) {
+    return this.interceptors.canBeTargeted.getValue(true, {
+      source
+    });
   }
 
   canAttack(target: AttackTarget) {

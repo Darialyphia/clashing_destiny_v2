@@ -16,6 +16,8 @@ import {
 } from '../card.events';
 import { match } from 'ts-pattern';
 import type { CardLocation } from '../components/card-manager.component';
+import { KeywordManagerComponent } from '../components/keyword-manager.component';
+import type { Keyword } from '../card-keywords';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -45,6 +47,7 @@ export type SerializedCard = {
   canPlay: boolean;
   source: CardDeckSource;
   location: CardLocation | null;
+  keywords: Array<{ id: string; name: string; description: string }>;
 };
 
 export abstract class Card<
@@ -59,6 +62,8 @@ export abstract class Card<
   originalPlayer: Player;
 
   protected _isExhausted = false;
+
+  readonly keywordManager = new KeywordManagerComponent();
 
   constructor(
     game: Game,
@@ -75,6 +80,14 @@ export abstract class Card<
 
   async init() {
     await this.blueprint.onInit(this.game, this as any);
+  }
+
+  get kind() {
+    return this.blueprint.kind;
+  }
+
+  get keywords() {
+    return this.keywordManager.keywords;
   }
 
   get player() {
@@ -186,7 +199,12 @@ export abstract class Card<
       name: this.blueprint.name,
       description: this.blueprint.description,
       canPlay: this.canPlay(),
-      location: this.location ?? null
+      location: this.location ?? null,
+      keywords: this.keywords.map(keyword => ({
+        id: keyword.id,
+        name: keyword.name,
+        description: keyword.description
+      }))
     };
   }
 

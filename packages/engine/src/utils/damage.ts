@@ -49,13 +49,13 @@ export class CombatDamage extends Damage {
 }
 
 export class SpellDamage extends Damage {
-  constructor(options: BetterOmit<DamageOptions, 'type'>) {
-    super({ ...options, type: DAMAGE_TYPES.SPELL });
+  constructor(amount: number) {
+    super({ baseAmount: amount, type: DAMAGE_TYPES.SPELL });
   }
 }
 
 export class AbilityDamage extends Damage {
-  constructor(options: BetterOmit<DamageOptions, 'type'>) {
-    super({ ...options, type: DAMAGE_TYPES.ABILITY });
+  constructor(amount: number) {
+    super({ baseAmount: amount, type: DAMAGE_TYPES.ABILITY });
   }
 }

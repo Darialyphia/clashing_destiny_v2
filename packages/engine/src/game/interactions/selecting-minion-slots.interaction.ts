@@ -10,6 +10,7 @@ import {
 } from '../systems/game-interaction.system';
 
 export type MinionPosition = {
+  player: Player;
   slot: MinionSlot;
   zone: 'attack' | 'defense';
 };
@@ -60,14 +61,18 @@ export class SelectingMinionSlotsContext {
 
   private get elligiblePositions() {
     const result: MinionPosition[] = [];
-    this.game.playerSystem.players.forEach(() => {
+    this.game.playerSystem.players.forEach(player => {
       (['attack', 'defense'] as const).forEach(zone => {
         for (let i = 0; i < 5; i++) {
           const slot = i;
-          const elligible = this.isElligible({ slot, zone }, this.selectedPositions);
+          const elligible = this.isElligible(
+            { player, slot, zone },
+            this.selectedPositions
+          );
           if (!elligible) continue;
 
           result.push({
+            player,
             slot,
             zone
           });
@@ -81,6 +86,7 @@ export class SelectingMinionSlotsContext {
   serialize() {
     return {
       selectedPositions: this.selectedPositions.map(pos => ({
+        player: pos.player.id,
         slot: pos.slot,
         zone: pos.zone
       })),

@@ -41,7 +41,8 @@ export const ARTIFACT_EVENTS = {
   ARTIFACT_BEFORE_LOSE_DURABILITY: 'artifact.lose-durability',
   ARTIFACT_AFTER_LOSE_DURABILITY: 'artifact.after-lose-durability',
   ARTIFACT_BEFORE_GAIN_DURABILITY: 'artifact.gain-durability',
-  ARTIFACT_AFTER_GAIN_DURABILITY: 'artifact.after-gain-durability'
+  ARTIFACT_AFTER_GAIN_DURABILITY: 'artifact.after-gain-durability',
+  ARTIFACT_EQUIPED: 'artifact.equiped'
 } as const;
 
 export type ArtifactEvents = Values<typeof ARTIFACT_EVENTS>;
@@ -70,6 +71,17 @@ export class ArtifactDurabilityEvent extends TypedSerializableEvent<
   }
 }
 
+export class ArtifactEquipedEvent extends TypedSerializableEvent<
+  { card: ArtifactCard },
+  { card: SerializedArtifactCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
 export type ArtifactCardEventMap = {
   [ARTIFACT_EVENTS.ARTIFACT_BEFORE_USE_ABILITY]: ArtifactUsedAbilityEvent;
   [ARTIFACT_EVENTS.ARTIFACT_AFTER_USE_ABILITY]: ArtifactUsedAbilityEvent;
@@ -77,6 +89,7 @@ export type ArtifactCardEventMap = {
   [ARTIFACT_EVENTS.ARTIFACT_AFTER_LOSE_DURABILITY]: ArtifactDurabilityEvent;
   [ARTIFACT_EVENTS.ARTIFACT_BEFORE_GAIN_DURABILITY]: ArtifactDurabilityEvent;
   [ARTIFACT_EVENTS.ARTIFACT_AFTER_GAIN_DURABILITY]: ArtifactDurabilityEvent;
+  [ARTIFACT_EVENTS.ARTIFACT_EQUIPED]: ArtifactEquipedEvent;
 };
 
 export class ArtifactCard extends Card<
@@ -213,6 +226,11 @@ export class ArtifactCard extends Card<
     );
     this.player.artifactManager.equip(this);
     await this.blueprint.onPlay(this.game, this);
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+      new ArtifactEquipedEvent({ card: this })
+    );
+
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })

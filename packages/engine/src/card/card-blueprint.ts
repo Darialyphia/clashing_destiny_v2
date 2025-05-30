@@ -50,7 +50,6 @@ export type Ability<TCard extends AnyCard, TTarget extends PreResponseTarget> = 
   shouldExhaust: boolean;
   description: string;
   label: string;
-  getDescription(game: Game, card: TCard): string;
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
   onResolve(game: Game, card: TCard, targets: TTarget[]): void;
@@ -132,7 +131,7 @@ export type TalentBlueprint = DestinyDeckCardBlueprint & {
 };
 
 export type CardBlueprint =
-  | SpellBlueprint<PreResponseTarget>
+  | SpellBlueprint<any>
   | ArtifactBlueprint
   | AttackBlueprint
   | TalentBlueprint

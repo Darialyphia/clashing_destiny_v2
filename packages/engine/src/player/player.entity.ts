@@ -20,6 +20,7 @@ import {
 import type { HeroCard } from '../card/entities/hero.entity';
 import type { TalentCard } from '../card/entities/talent.entity';
 import type { Affinity } from '../card/card.enums';
+import type { CardBlueprint } from '../card/card-blueprint';
 
 export type PlayerOptions = {
   id: string;
@@ -103,6 +104,26 @@ export class Player
     return {} as HeroCard;
   }
 
+  get enemyHero() {
+    return this.opponent.hero;
+  }
+
+  get minions() {
+    return this.boardSide.getAllMinions();
+  }
+
+  get allAllies() {
+    return [this.hero, ...this.minions];
+  }
+
+  get allEnemies() {
+    return [this.enemyHero, ...this.enemyMinions];
+  }
+
+  get enemyMinions() {
+    return this.opponent.minions;
+  }
+
   get isTurnPlayer() {
     return this.game.gamePhaseSystem.turnPlayer.equals(this);
   }
@@ -173,4 +194,10 @@ export class Player
   }
 
   endTurn() {}
+
+  generateCard<T extends AnyCard = AnyCard>(blueprintId: string) {
+    const card = this.game.cardSystem.addCard<T>(this, blueprintId);
+
+    return card;
+  }
 }
