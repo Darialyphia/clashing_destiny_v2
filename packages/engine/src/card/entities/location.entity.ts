@@ -22,14 +22,14 @@ export type SerializedLocationCard = SerializedCard & {
     description: string;
   }>;
 };
-export type AbilityCardInterceptors = CardInterceptors & {
+export type LocationCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, LocationCard>;
   canUseAbility: Interceptable<boolean, LocationCard>;
 };
 
 export class LocationCard extends Card<
   SerializedCard,
-  AbilityCardInterceptors,
+  LocationCardInterceptors,
   LocationBlueprint
 > {
   constructor(game: Game, player: Player, options: CardOptions<LocationBlueprint>) {

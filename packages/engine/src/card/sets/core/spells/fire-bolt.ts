@@ -1,6 +1,6 @@
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyTargetRules } from '../../../card-utils';
+import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -16,7 +16,8 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'fire-bolt',
   name: 'Fire Bolt',
   cardIconId: 'fire-bolt',
-  description: 'Deal 1 damage to a target enemy.',
+  description:
+    "Deal 1 damage to a target enemy. If it's a minion, deal 1 damage to the enemy Hero.",
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -31,5 +32,9 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   async onInit() {},
   async onPlay(game, card, [target]) {
     await target.takeDamage(card, new SpellDamage(1));
+
+    if (isMinion(target)) {
+      await target.player.hero.takeDamage(card, new SpellDamage(1));
+    }
   }
 };

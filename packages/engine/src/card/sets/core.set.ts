@@ -2,6 +2,7 @@ import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
+import { magicGrimoire } from './core/artifacts/magic-grimoire';
 import { finalSlash } from './core/attacks/final-slash';
 import { elementalist } from './core/heroes/elementalist';
 import { mage } from './core/heroes/mage';
@@ -12,6 +13,7 @@ import { warlock } from './core/heroes/warlock';
 import { warrior } from './core/heroes/warrior';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { blazingSalamander } from './core/minions/blazing-salamander';
+import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
@@ -26,9 +28,12 @@ import { channelTheFlames } from './core/spells/channel-the-flames';
 import { dualCasting } from './core/spells/dual-casting';
 import { fireBall } from './core/spells/fire-ball';
 import { fireBolt } from './core/spells/fire-bolt';
+import { hourglassFracture } from './core/spells/hourglass-fracture';
 import { ignite } from './core/spells/ignite';
 import { innerFire } from './core/spells/inner-fire';
+import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
+import { recollection } from './core/spells/recollection';
 import { scorchedEarth } from './core/spells/scorched-earth';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 import { fireStudies } from './core/talents/fire-studies';
@@ -76,6 +81,13 @@ export const coreSet: CardSet = {
     archsageOfMoonring,
     seer,
     magicFueledGolem,
-    spellbladeDuelist
+    spellbladeDuelist,
+    novaBlast,
+    esteemedErudite,
+    magicGrimoire,
+
+    // Chrono
+    recollection,
+    hourglassFracture
   ]
 };

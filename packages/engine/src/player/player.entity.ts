@@ -13,7 +13,10 @@ import {
 import type { HeroCard } from '../card/entities/hero.entity';
 import type { TalentCard } from '../card/entities/talent.entity';
 import { type Affinity } from '../card/card.enums';
-import { CardTrackerComponent } from './components/cards-tracke.component';
+import { CardTrackerComponent } from './components/cards-tracker.component';
+import { Interceptable } from '../utils/interceptable';
+import { GAME_EVENTS } from '../game/game.events';
+import { PlayerTurnEvent } from './player.events';
 
 export type PlayerOptions = {
   id: string;
@@ -28,9 +31,13 @@ export type SerializedPlayer = {
   name: string;
 };
 
-type PlayerInterceptors = EmptyObject;
+type PlayerInterceptors = {
+  unlockedAffinities: Interceptable<Affinity[]>;
+};
 const makeInterceptors = (): PlayerInterceptors => {
-  return {};
+  return {
+    unlockedAffinities: new Interceptable<Affinity[]>()
+  };
 };
 
 export class Player
@@ -45,7 +52,7 @@ export class Player
 
   readonly artifactManager: ArtifactManagerComponent;
 
-  readonly unlockedAffinities: Affinity[] = [];
+  private readonly _unlockedAffinities: Affinity[] = [];
 
   readonly cardTracker: CardTrackerComponent;
 
@@ -112,12 +119,16 @@ export class Player
     return this.opponent.minions;
   }
 
+  get unlockedAffinities() {
+    return this.interceptors.unlockedAffinities.getValue(this._unlockedAffinities, {});
+  }
+
   get isTurnPlayer() {
     return this.game.gamePhaseSystem.turnPlayer.equals(this);
   }
 
   async unlockAffinity(affinity: Affinity) {
-    this.unlockedAffinities.push(affinity);
+    this._unlockedAffinities.push(affinity);
   }
 
   private payForManaCost(card: AnyCard, indices: number[]) {
@@ -169,12 +180,21 @@ export class Player
   }
 
   async startTurn() {
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_START_TURN,
+      new PlayerTurnEvent({ player: this })
+    );
     for (const card of this.boardSide.getAllCardsInPlay()) {
       await card.wakeUp();
     }
   }
 
-  endTurn() {}
+  async endTurn() {
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_END_TURN,
+      new PlayerTurnEvent({ player: this })
+    );
+  }
 
   generateCard<T extends AnyCard = AnyCard>(blueprintId: string) {
     const card = this.game.cardSystem.addCard<T>(this, blueprintId);

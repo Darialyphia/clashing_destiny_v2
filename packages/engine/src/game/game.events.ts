@@ -21,6 +21,8 @@ import {
   ARTIFACT_EVENTS,
   type ArtifactCardEventMap
 } from '../card/entities/artifact.entity';
+import { PLAYER_EVENTS } from '../player/player.enums';
+import type { PlayerEventMap } from '../player/player.events';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -110,7 +112,8 @@ export type GameEventMap = Prettify<
     CombatEventMap &
     MinionCardEventMap &
     HeroCardEventMap &
-    ArtifactCardEventMap
+    ArtifactCardEventMap &
+    PlayerEventMap
 >;
 export type GameEventName = keyof GameEventMap;
 
@@ -128,5 +131,6 @@ export const GAME_EVENTS = {
   ...COMBAT_EVENTS,
   ...MINION_EVENTS,
   ...HERO_EVENTS,
-  ...ARTIFACT_EVENTS
+  ...ARTIFACT_EVENTS,
+  ...PLAYER_EVENTS
 } as const satisfies Record<string, keyof GameEventMap>;

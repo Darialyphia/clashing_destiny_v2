@@ -158,7 +158,7 @@ export const multipleEnemyTargetRules = {
       return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
         player: card.player,
         isElligible(candidate, selectedCards) {
-          if (!isMinion(candidate) && !isHero(candidate)) {
+          if (card.isAlly(candidate) || isMinion(candidate) || !isHero(candidate)) {
             return false;
           }
           return (

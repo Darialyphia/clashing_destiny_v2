@@ -153,6 +153,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
   }
 
+  get unlockableAffinities() {
+    return this.blueprint.unlockableAffinities;
+  }
+
   canBeTargeted(source: AnyCard) {
     return this.interceptors.canBeTargeted.getValue(true, {
       source
@@ -291,7 +295,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     if (this.level > 0) {
       const affinity = await this.game.interaction.chooseAffinity({
         player: this.player,
-        choices: this.blueprint.unlockableAffinities
+        choices: this.unlockableAffinities
       });
       if (affinity) {
         await this.player.unlockAffinity(affinity);

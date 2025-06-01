@@ -18,3 +18,21 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
 
   return { cards, cardsToPutAtBottom };
 };
+
+export const discover = async (game: Game, card: AnyCard, choicePool: MainDeckCard[]) => {
+  const choices: MainDeckCard[] = [];
+  for (let i = 0; i < 3; i++) {
+    const index = game.rngSystem.nextInt(choicePool.length - 1);
+    choices.push(...choicePool.splice(index, 1));
+  }
+  const [selectedCard] = await game.interaction.chooseCards<MainDeckCard>({
+    player: card.player,
+    minChoiceCount: 1,
+    maxChoiceCount: 1,
+    choices
+  });
+
+  await selectedCard.addToHand();
+
+  return { selectedCard, choices };
+};

@@ -29,8 +29,8 @@ export const GAME_PHASE_TRANSITIONS = {
 export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 
 export type GamePhaseEventMap = {
-  [GAME_PHASE_EVENTS.TURN_START]: GameTurnEvent;
-  [GAME_PHASE_EVENTS.TURN_END]: GameTurnEvent;
+  [GAME_PHASE_EVENTS.GAME_TURN_START]: GameTurnEvent;
+  [GAME_PHASE_EVENTS.GAME_TURN_END]: GameTurnEvent;
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseChangeEvent;
   [GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE]: GamePhaseChangeEvent;
 };
@@ -209,7 +209,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   private startGameTurn() {
     return this.game.emit(
-      GAME_PHASE_EVENTS.TURN_START,
+      GAME_PHASE_EVENTS.GAME_TURN_START,
       new GameTurnEvent({ turnCount: this.elapsedTurns })
     );
   }
@@ -217,7 +217,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   private endGameTurn() {
     this._elapsedTurns++;
     return this.game.emit(
-      GAME_PHASE_EVENTS.TURN_END,
+      GAME_PHASE_EVENTS.GAME_TURN_END,
       new GameTurnEvent({ turnCount: this.elapsedTurns })
     );
   }
@@ -247,7 +247,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.FINISH_END_TURN), new WrongGamePhaseError());
-    this.turnPlayer.endTurn();
+    await this.turnPlayer.endTurn();
 
     const nextPlayer = this._turnPlayer.opponent;
     if (nextPlayer.equals(this.firstPlayer)) {

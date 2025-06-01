@@ -18,11 +18,11 @@ export class UntilEndOfTurnModifierMixin<T extends AnyCard> extends ModifierMixi
 
   onApplied(target: AnyCard, modifier: Modifier<T>): void {
     this.modifier = modifier;
-    this.game.once(GAME_EVENTS.TURN_END, this.onTurnEnd);
+    this.game.once(GAME_EVENTS.PLAYER_END_TURN, this.onTurnEnd);
   }
 
   onRemoved(): void {
-    this.game.off(GAME_EVENTS.TURN_END, this.onTurnEnd);
+    this.game.off(GAME_EVENTS.PLAYER_END_TURN, this.onTurnEnd);
   }
 
   onReapplied(): void {}

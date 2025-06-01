@@ -17,7 +17,7 @@ export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
       icon: 'keyword-burn',
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.TURN_START,
+          eventName: GAME_EVENTS.PLAYER_START_TURN,
           handler: async () => {
             await this.target.takeDamage(
               source,

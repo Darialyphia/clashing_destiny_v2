@@ -1,0 +1,7 @@
+import type { Values } from '@game/shared';
+
+export const PLAYER_EVENTS = {
+  PLAYER_START_TURN: 'player_start_turn',
+  PLAYER_END_TURN: 'player_end_turn'
+} as const;
+export type PlayerEvent = Values<typeof PLAYER_EVENTS>;

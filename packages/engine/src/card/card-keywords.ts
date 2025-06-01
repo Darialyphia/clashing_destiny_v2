@@ -184,12 +184,18 @@ export const KEYWORDS = {
       'Damages minions to the right and to the left of the target as well when attacking.',
     aliases: []
   },
+  PIERCING: {
+    id: 'piercing',
+    name: 'Piercing',
+    description: 'Damages the minion behind the target when attacking.',
+    aliases: []
+  },
   SCRY: {
     id: 'scry',
     name: 'Scry(X)',
     description:
       'Look at the top X cards of your deck, then ut any number of them at the bottom of your deck.',
-    aliases: [/scry\([0-9]+\)/]
+    aliases: [/scry [0-9]+/]
   }
 };
 

@@ -1,7 +1,7 @@
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { isHero, isMinion } from '../../../card-utils';
+import { multipleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -9,8 +9,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
-import type { MinionCard } from '../../../entities/minion.card';
 
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
@@ -32,18 +30,11 @@ export const archsageOfMoonring: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
-        const targets = await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
-          player: card.player,
-          isElligible(candidate) {
-            return card.isEnemy(candidate) && (isMinion(candidate) || isHero(candidate));
-          },
-          canCommit() {
-            return true;
-          },
-          isDone(selectedCards) {
-            return selectedCards.length === 4;
-          }
-        });
+        const targets = await multipleEnemyTargetRules.getPreResponseTargets({
+          min: 0,
+          max: 4,
+          allowRepeat: true
+        })(game, card);
 
         for (const target of targets) {
           await target.takeDamage(card, new AbilityDamage(1));

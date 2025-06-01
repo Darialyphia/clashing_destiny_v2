@@ -14,7 +14,12 @@ export const warlock: HeroBlueprint = {
   destinyCost: 3,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [AFFINITIES.BLOOD, AFFINITIES.CHAOS, AFFINITIES.FIRE],
+  unlockableAffinities: [
+    AFFINITIES.BLOOD,
+    AFFINITIES.CHAOS,
+    AFFINITIES.FIRE,
+    AFFINITIES.SHADOW
+  ],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   cardIconId: 'warlock',
