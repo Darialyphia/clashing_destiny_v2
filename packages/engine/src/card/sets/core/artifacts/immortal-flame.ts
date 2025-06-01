@@ -45,6 +45,7 @@ export const immortalFlame: ArtifactBlueprint = {
       }
     }
   ],
+  tags: [],
   canPlay: () => true,
   async onInit() {},
   async onPlay() {}

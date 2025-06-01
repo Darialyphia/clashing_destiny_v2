@@ -24,6 +24,7 @@ export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
   subKind: SPELL_KINDS.CAST,
+  tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {

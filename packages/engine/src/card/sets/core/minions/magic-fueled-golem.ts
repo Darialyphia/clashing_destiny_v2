@@ -27,6 +27,7 @@ export const magicFueledGolem: MinionBlueprint = {
   affinity: AFFINITIES.ARCANE,
   setId: CARD_SETS.CORE,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     const buff = new Modifier<MinionCard>('mana-fueled-golem-buff', game, card, {

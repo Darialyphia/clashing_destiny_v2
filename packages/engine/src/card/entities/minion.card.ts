@@ -4,7 +4,7 @@ import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.
 import type { Player } from '../../player/player.entity';
 import type { Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import type { MinionBlueprint } from '../card-blueprint';
+import type { MinionBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -24,12 +24,7 @@ export type SerializedMinionCard = SerializedCard & {
   remainingHp: number;
   affinity: Affinity;
   manaCost: number;
-  abilities: Array<{
-    id: string;
-    canUse: boolean;
-    name: string;
-    description: string;
-  }>;
+  abilities: SerializedAbility[];
 };
 export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;

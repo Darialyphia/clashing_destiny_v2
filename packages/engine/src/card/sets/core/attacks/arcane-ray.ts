@@ -27,6 +27,7 @@ export const arcaneRay: AttackBlueprint = {
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ATTACK,
+  tags: [],
   canPlay: () => true,
   getPreResponseTargets: attackRules.getPreResponseTargets,
   async onInit(game, card) {

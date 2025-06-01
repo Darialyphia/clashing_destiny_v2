@@ -27,6 +27,7 @@ export const channelTheFlames: SpellBlueprint<PreResponseTarget> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
+  tags: [],
   canPlay: () => true,
   async getPreResponseTargets() {
     return [];

@@ -35,6 +35,7 @@ export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   subKind: SPELL_KINDS.CAST,
+  tags: [],
   canPlay: singleEnemyTargetRules.canPlay,
   getPreResponseTargets: singleEnemyTargetRules.getPreResponseTargets,
   async onInit(game, card) {

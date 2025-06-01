@@ -32,6 +32,7 @@ export const firebrand: ArtifactBlueprint = {
   durability: 3,
   subKind: ARTIFACT_KINDS.WEAPON,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     const burnAura = new Modifier<ArtifactCard>('firebrand-burn-aura', game, card, {

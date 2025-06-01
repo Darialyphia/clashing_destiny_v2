@@ -29,6 +29,7 @@ export const manaVisions: TalentBlueprint = {
   rarity: RARITIES.RARE,
   kind: CARD_KINDS.TALENT,
   setId: CARD_SETS.CORE,
+  tags: [],
   async onInit() {},
   async onPlay(game, card) {
     const modifier = new Modifier<HeroCard>('mana-visions', game, card, {

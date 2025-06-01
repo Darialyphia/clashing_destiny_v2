@@ -29,6 +29,7 @@ export const flagBearerOfFlame: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     const attackBuff = new SimpleAttackBuffModifier(

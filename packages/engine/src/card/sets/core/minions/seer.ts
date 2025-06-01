@@ -29,6 +29,7 @@ export const seer: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     const levelMod = new LevelBonusModifier<MinionCard>(game, card, 3);

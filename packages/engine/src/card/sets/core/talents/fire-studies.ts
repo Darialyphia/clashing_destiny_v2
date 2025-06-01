@@ -27,6 +27,7 @@ export const fireStudies: TalentBlueprint = {
   rarity: RARITIES.RARE,
   kind: CARD_KINDS.TALENT,
   setId: CARD_SETS.CORE,
+  tags: [],
   async onInit() {},
   async onPlay(game, card) {
     const interceptor = (manaCost: number | null) => {

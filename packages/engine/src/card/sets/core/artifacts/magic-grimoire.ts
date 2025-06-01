@@ -57,6 +57,7 @@ export const magicGrimoire: ArtifactBlueprint = {
       }
     }
   ],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(

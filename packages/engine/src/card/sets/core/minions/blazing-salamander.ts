@@ -26,6 +26,7 @@ export const blazingSalamander: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(

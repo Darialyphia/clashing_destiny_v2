@@ -27,6 +27,7 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
+  tags: [],
   canPlay: singleEnemyTargetRules.canPlay,
   getPreResponseTargets: singleEnemyTargetRules.getPreResponseTargets,
   async onInit() {},

@@ -26,6 +26,7 @@ export const flamefistFighter: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     const buff = new AttackerModifier(game, card, async () => {

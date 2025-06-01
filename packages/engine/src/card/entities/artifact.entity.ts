@@ -3,7 +3,7 @@ import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { ArtifactBlueprint } from '../card-blueprint';
+import type { ArtifactBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import { CardBeforePlayEvent, CardAfterPlayEvent } from '../card.events';
 import {
@@ -20,12 +20,7 @@ export type SerializedArtifactCard = SerializedCard & {
   durability: number;
   subKind: ArtifactKind;
   manaCost: number;
-  abilities: Array<{
-    id: string;
-    canUse: boolean;
-    name: string;
-    description: string;
-  }>;
+  abilities: SerializedAbility[];
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {

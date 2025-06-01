@@ -25,6 +25,7 @@ export const magicChanneler: MinionBlueprint = {
   affinity: AFFINITIES.ARCANE,
   setId: CARD_SETS.CORE,
   abilities: [],
+  tags: [],
   canPlay: () => true,
   async onInit(game, card) {
     const buff = new SimpleSpellpowerBuffModifier('magic_channeler_buff', game, card, {

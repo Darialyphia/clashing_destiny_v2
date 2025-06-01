@@ -26,6 +26,7 @@ export const elementalist: HeroBlueprint = {
   description: '',
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [],
+  tags: [],
   async onInit() {},
   async onPlay() {}
 };

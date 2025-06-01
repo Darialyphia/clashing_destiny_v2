@@ -2,7 +2,7 @@ import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { LocationBlueprint } from '../card-blueprint';
+import type { LocationBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -15,12 +15,7 @@ import {
 
 export type SerializedLocationCard = SerializedCard & {
   manaCost: number;
-  abilities: Array<{
-    id: string;
-    canUse: boolean;
-    name: string;
-    description: string;
-  }>;
+  abilities: SerializedAbility[];
 };
 export type LocationCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, LocationCard>;

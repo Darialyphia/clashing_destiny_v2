@@ -2,7 +2,7 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, isDefined, type EmptyObject, type Serializable } from '@game/shared';
+import { assert, isDefined, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -29,6 +29,17 @@ export type SerializedPlayer = {
   id: string;
   entityType: 'player';
   name: string;
+  hand: string[];
+  handSize: number;
+  discardPile: string[];
+  banishPile: string[];
+  destinyZone: string[];
+  remainingCardsInDeck: number;
+  destinyDeck: string[];
+  maxHp: number;
+  currentHp: number;
+  isPlayer1: boolean;
+  unlockedAffinities: Affinity[];
 };
 
 type PlayerInterceptors = {
@@ -83,7 +94,18 @@ export class Player
     return {
       id: this.id,
       entityType: 'player' as const,
-      name: this.options.name
+      name: this.options.name,
+      hand: this.cardManager.hand.map(card => card.id),
+      handSize: this.cardManager.hand.length,
+      discardPile: [...this.cardManager.discardPile].map(card => card.id),
+      banishPile: [...this.cardManager.banishPile].map(card => card.id),
+      destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
+      remainingCardsInDeck: this.cardManager.mainDeck.cards.length,
+      destinyDeck: this.cardManager.destinyDeck.cards.map(card => card.id),
+      maxHp: this.hero.maxHp,
+      currentHp: this.hero.remainingHp,
+      isPlayer1: this.isPlayer1,
+      unlockedAffinities: this.unlockedAffinities
     };
   }
 

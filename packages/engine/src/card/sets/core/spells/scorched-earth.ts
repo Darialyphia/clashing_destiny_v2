@@ -26,6 +26,7 @@ export const scorchedEarth: SpellBlueprint<MinionCard | HeroCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
   subKind: SPELL_KINDS.CAST,
+  tags: [],
   canPlay: () => true,
   async getPreResponseTargets() {
     return [];

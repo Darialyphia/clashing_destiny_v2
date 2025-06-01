@@ -31,6 +31,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
   subKind: SPELL_KINDS.CAST,
+  tags: [],
   canPlay: singleEnemyMinionTargetRules.canPlay,
   getPreResponseTargets: singleEnemyMinionTargetRules.getPreResponseTargets,
   async onInit(game, card) {

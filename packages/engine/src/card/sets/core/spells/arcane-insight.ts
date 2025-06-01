@@ -24,6 +24,7 @@ export const arcaneInsight: SpellBlueprint<PreResponseTarget> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
+  tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {

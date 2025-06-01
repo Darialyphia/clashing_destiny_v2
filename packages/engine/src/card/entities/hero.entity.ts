@@ -5,7 +5,7 @@ import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.
 import type { Player } from '../../player/player.entity';
 import type { Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import type { HeroBlueprint } from '../card-blueprint';
+import type { HeroBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -26,12 +26,7 @@ export type SerializedHeroCard = SerializedCard & {
   spellPower: number;
   maxHp: number;
   remainingHp: number;
-  abilities: Array<{
-    id: string;
-    canUse: boolean;
-    name: string;
-    description: string;
-  }>;
+  abilities: SerializedAbility[];
   unlockableAffinities: string[];
 };
 export type HeroCardInterceptors = CardInterceptors & {
@@ -151,6 +146,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get maxHp(): number {
     return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
+  }
+
+  get remainingHp(): number {
+    return Math.max(this.maxHp - this.damageTaken, 0);
   }
 
   get unlockableAffinities() {

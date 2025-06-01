@@ -84,3 +84,8 @@ export const AFFINITIES = {
 } as const;
 
 export type Affinity = Values<typeof AFFINITIES>;
+
+export const TAGS = {
+  SWORD: 'sword'
+} as const;
+export type Tag = Values<typeof TAGS>;

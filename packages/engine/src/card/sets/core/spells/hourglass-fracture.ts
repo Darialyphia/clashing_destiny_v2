@@ -26,6 +26,7 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
   subKind: SPELL_KINDS.CAST,
+  tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit() {},

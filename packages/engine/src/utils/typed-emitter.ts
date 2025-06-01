@@ -5,7 +5,7 @@ import {
   type Serializable
 } from '@game/shared';
 
-type GenericEventMap = Record<Exclude<string, '*'>, TypedSerializableEvent<any, any>>;
+type GenericEventMap = Record<Exclude<string, '*'>, AnyObject>;
 
 type EmitterMode = 'sequential' | 'parallel';
 

@@ -5,7 +5,14 @@ import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, CARD_EVENTS, type CardDeckSource } from '../card.enums';
+import {
+  CARD_DECK_SOURCES,
+  CARD_EVENTS,
+  type Affinity,
+  type CardDeckSource,
+  type CardKind,
+  type Rarity
+} from '../card.enums';
 import {
   CardAddToHandevent,
   CardAfterDestroyEvent,
@@ -41,6 +48,9 @@ export const makeCardInterceptors = (): CardInterceptors => ({
 export type SerializedCard = {
   id: string;
   entityType: 'card';
+  cardIconId: string;
+  kind: CardKind;
+  rarity: Rarity;
   player: string;
   isExhausted: boolean;
   name: string;
@@ -49,6 +59,8 @@ export type SerializedCard = {
   source: CardDeckSource;
   location: CardLocation | null;
   keywords: Array<{ id: string; name: string; description: string }>;
+  affinity: Affinity;
+  modifiers: string[];
 };
 
 export abstract class Card<
@@ -123,6 +135,10 @@ export abstract class Card<
 
   get location() {
     return this.player.cardManager.findCard(this.id)?.location;
+  }
+
+  get tags() {
+    return this.blueprint.tags ?? [];
   }
 
   get manaCost(): number {
@@ -249,14 +265,19 @@ export abstract class Card<
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
+      cardIconId: this.blueprint.cardIconId,
       source: this.deckSource,
       entityType: 'card',
+      rarity: this.blueprint.rarity,
       player: this.player.id,
+      kind: this.kind,
+      affinity: this.affinity,
       isExhausted: this.isExhausted,
       name: this.blueprint.name,
       description: this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
+      modifiers: this.modifiers.list.map(modifier => modifier.id),
       keywords: this.keywords.map(keyword => ({
         id: keyword.id,
         name: keyword.name,

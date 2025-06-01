@@ -27,6 +27,7 @@ export const phoenix: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
+  tags: [],
   abilities: [
     {
       id: 'phoenix-ability',

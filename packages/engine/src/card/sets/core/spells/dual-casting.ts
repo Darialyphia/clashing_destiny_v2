@@ -26,6 +26,7 @@ export const dualCasting: SpellBlueprint<MinionCard | HeroCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
+  tags: [],
   canPlay: multipleEnemyTargetRules.canPlay(1),
   getPreResponseTargets: multipleEnemyTargetRules.getPreResponseTargets({
     min: 1,

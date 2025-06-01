@@ -27,6 +27,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   subKind: SPELL_KINDS.BURST,
+  tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit() {},

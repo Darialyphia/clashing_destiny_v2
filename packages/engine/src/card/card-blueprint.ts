@@ -10,7 +10,8 @@ import type {
   CARD_DECK_SOURCES,
   Affinity,
   ArtifactKind,
-  SpellKind
+  SpellKind,
+  Tag
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AttackCard } from './entities/attck.entity';
@@ -32,6 +33,8 @@ export type CardBlueprintBase = {
   collectable: boolean;
   unique?: boolean;
   affinity: Affinity;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  tags: (Tag | (string & {}))[];
 };
 
 export type MainDeckCardBlueprint = CardBlueprintBase & {
@@ -53,6 +56,13 @@ export type Ability<TCard extends AnyCard, TTarget extends PreResponseTarget> = 
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
   onResolve(game: Game, card: TCard, targets: TTarget[]): void;
+};
+
+export type SerializedAbility = {
+  id: string;
+  canUse: boolean;
+  name: string;
+  description: string;
 };
 
 export type PreResponseTarget = AnyCard | MinionPosition;
