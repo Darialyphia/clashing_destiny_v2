@@ -35,7 +35,9 @@ export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;
   canBlock: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
+  canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
+  canAttackOnSameTurnAsPlayed: Interceptable<boolean, MinionCard>;
   canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
   canUseAbility: Interceptable<boolean, MinionCard>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
@@ -153,7 +155,9 @@ export class MinionCard extends Card<
         canPlay: new Interceptable(),
         canBlock: new Interceptable(),
         canBeBlocked: new Interceptable(),
+        canBeDefended: new Interceptable(),
         canAttack: new Interceptable(),
+        canAttackOnSameTurnAsPlayed: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
@@ -181,6 +185,13 @@ export class MinionCard extends Card<
     return Math.max(this.maxHp - this.damageTaken, 0);
   }
 
+  get canAttackOnSameTurnAsPlayed(): boolean {
+    return this.interceptors.canAttackOnSameTurnAsPlayed.getValue(
+      this.position?.zone === 'attack' && !this._isExhausted,
+      this
+    );
+  }
+
   get slot() {
     if (!this.position) return null;
     return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
@@ -199,12 +210,16 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    return this.interceptors.canAttack.getValue(
-      this.position?.zone === 'attack' && !this._isExhausted,
-      {
-        target
-      }
-    );
+    const base =
+      this.position?.zone === 'attack' &&
+      !this._isExhausted &&
+      (this.game.gamePhaseSystem.elapsedTurns === this.playedAtTurn
+        ? this.canAttackOnSameTurnAsPlayed
+        : true);
+
+    return this.interceptors.canAttack.getValue(base, {
+      target
+    });
   }
 
   canBeAttacked(target: AttackTarget) {
@@ -215,7 +230,7 @@ export class MinionCard extends Card<
 
   canBlock(attacker: Attacker) {
     return this.interceptors.canBlock.getValue(
-      this.position?.zone === 'defense' && this._isExhausted,
+      this.position?.zone === 'defense' && !this._isExhausted,
       {
         attacker
       }
@@ -225,6 +240,12 @@ export class MinionCard extends Card<
   canBeBlocked(blocker: Defender) {
     return this.interceptors.canBeBlocked.getValue(true, {
       blocker
+    });
+  }
+
+  canBeDefendedBy(defender: Defender) {
+    return this.interceptors.canBeDefended.getValue(true, {
+      defender
     });
   }
 
@@ -341,6 +362,8 @@ export class MinionCard extends Card<
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
+    this.updatePlayedAt();
+
     this.removeFromCurrentLocation();
     this.player.boardSide.summonMinion(this, position.zone, position.slot);
     await this.blueprint.onPlay(this.game, this);

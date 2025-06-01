@@ -203,7 +203,7 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<MinionPosition[]>();
   }
 
-  async chooseCards(options: {
+  async chooseCards<T extends AnyCard>(options: {
     player: Player;
     minChoiceCount: number;
     maxChoiceCount: number;
@@ -215,7 +215,7 @@ export class GameInteractionSystem
       options
     );
 
-    return this.game.inputSystem.pause<AnyCard[]>();
+    return this.game.inputSystem.pause<T[]>();
   }
 
   async chooseAffinity(options: { player: Player; choices: Affinity[] }) {

@@ -53,6 +53,7 @@ export class TalentCard extends Card<
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
+    this.updatePlayedAt();
     await this.player.addTalent(this);
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,

@@ -2,10 +2,12 @@ import { defaultInputSchema, Input } from '../input';
 import { z } from 'zod';
 import { type InteractionStateDict } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
+import { IllegalTargetError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
   zone: z.enum(['attack', 'defense']),
-  slot: z.number()
+  slot: z.number(),
+  playerId: z.string()
 });
 
 export class SelectMinionSlotInput extends Input<typeof schema> {
@@ -23,9 +25,15 @@ export class SelectMinionSlotInput extends Input<typeof schema> {
   async impl() {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['SELECTING_MINION_SLOT']>();
+
+    const player = this.game.playerSystem.getPlayerById(this.payload.playerId);
+    if (!player) {
+      throw new IllegalTargetError();
+    }
     await interactionContext.ctx.selectPosition(this.player, {
       zone: this.payload.zone,
-      slot: this.payload.slot
+      slot: this.payload.slot,
+      player
     });
   }
 }

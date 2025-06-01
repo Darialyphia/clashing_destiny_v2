@@ -2,7 +2,10 @@ import type { Modifier } from '../../../../modifier/modifier.entity';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyMinionTarget, singleEnemyTarget } from '../../../card-utils';
+import {
+  singleEnemyMinionTargetRules,
+  singleEnemyTargetRules
+} from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -28,8 +31,8 @@ export const ignite: SpellBlueprint<MinionCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
-  canPlay: singleEnemyMinionTarget.canPlay,
-  getPreResponseTargets: singleEnemyMinionTarget.getPreResponseTargets,
+  canPlay: singleEnemyMinionTargetRules.canPlay,
+  getPreResponseTargets: singleEnemyMinionTargetRules.getPreResponseTargets,
   async onInit() {},
   async onPlay(game, card, [target]) {
     await target.modifiers.add(new BurnModifier(game, card));

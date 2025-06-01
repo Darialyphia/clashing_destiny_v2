@@ -1,6 +1,6 @@
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyTarget } from '../../../card-utils';
+import { singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -26,8 +26,8 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
-  canPlay: singleEnemyTarget.canPlay,
-  getPreResponseTargets: singleEnemyTarget.getPreResponseTargets,
+  canPlay: singleEnemyTargetRules.canPlay,
+  getPreResponseTargets: singleEnemyTargetRules.getPreResponseTargets,
   async onInit() {},
   async onPlay(game, card, [target]) {
     await target.takeDamage(card, new SpellDamage(1));

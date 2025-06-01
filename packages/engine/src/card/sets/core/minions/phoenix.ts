@@ -1,4 +1,3 @@
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
@@ -23,7 +22,7 @@ export const phoenix: MinionBlueprint = {
   manaCost: 5,
   atk: 3,
   maxHp: 5,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   affinity: AFFINITIES.FIRE,
@@ -52,15 +51,14 @@ export const phoenix: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
+        const burningEnemies = card.player.opponent.allEnemies.filter(enemy =>
+          enemy.modifiers.has(BurnModifier)
+        );
         const attackBuff = new SimpleAttackBuffModifier<MinionCard>(
           'phoenix-attack-buff',
           game,
           card,
-          {
-            amount: card.player.opponent.allEnemies.filter(enemy =>
-              enemy.modifiers.has(BurnModifier)
-            ).length
-          }
+          { amount: burningEnemies.length }
         );
 
         await card.modifiers.add(attackBuff);

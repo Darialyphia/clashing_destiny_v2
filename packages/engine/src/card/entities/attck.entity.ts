@@ -5,6 +5,8 @@ import { GAME_EVENTS } from '../../game/game.events';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import type { AttackBlueprint } from '../card-blueprint';
+import { CARD_EVENTS } from '../card.enums';
+import { CardBeforePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -15,9 +17,11 @@ import {
 
 export type SerializedAttackCard = SerializedCard & {
   manaCost: number;
+  damage: number;
 };
 export type AttackCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, AttackCard>;
+  damage: Interceptable<number, AttackCard>;
 };
 
 export class AttackCard extends Card<
@@ -29,9 +33,17 @@ export class AttackCard extends Card<
     super(
       game,
       player,
-      { ...makeCardInterceptors(), canPlay: new Interceptable() },
+      {
+        ...makeCardInterceptors(),
+        canPlay: new Interceptable(),
+        damage: new Interceptable()
+      },
       options
     );
+  }
+
+  get damage(): number {
+    return this.interceptors.damage.getValue(this.blueprint.damage, this);
   }
 
   canPlay() {
@@ -45,9 +57,14 @@ export class AttackCard extends Card<
   }
 
   async play() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
+    this.updatePlayedAt();
     const cleanups = [
       await this.player.hero.addInterceptor('canBeBlocked', () => false),
-      await this.player.hero.addInterceptor('atk', val => val + this.blueprint.damage)
+      await this.player.hero.addInterceptor('atk', val => val + this.damage)
     ];
     const unsub = this.game.on(GAME_EVENTS.BEFORE_CHANGE_PHASE, e => {
       if (e.data.from === GAME_PHASES.ATTACK) {
@@ -60,12 +77,18 @@ export class AttackCard extends Card<
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['ATTACK']>()
       .ctx.declareAttacker({ attacker: this.player.hero, target });
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
   }
 
   serialize(): SerializedAttackCard {
     return {
       ...this.serializeBase(),
-      manaCost: this.blueprint.manaCost
+      manaCost: this.blueprint.manaCost,
+      damage: this.damage
     };
   }
 }

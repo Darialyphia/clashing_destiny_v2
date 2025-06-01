@@ -40,6 +40,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
+  canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, HeroCard>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
@@ -122,6 +123,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         canBeBlocked: new Interceptable(),
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
+        canBeDefended: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
@@ -166,6 +168,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   canBeAttacked(target: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       target
+    });
+  }
+
+  canBeDefendedBy(defender: Defender) {
+    return this.interceptors.canBeDefended.getValue(true, {
+      defender
     });
   }
 
@@ -278,6 +286,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
+    this.updatePlayedAt();
+
     if (this.level > 0) {
       const affinity = await this.game.interaction.chooseAffinity({
         player: this.player,
@@ -325,7 +335,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,
-        description: ability.getDescription(this.game, this)
+        description: ability.description
       }))
     };
   }

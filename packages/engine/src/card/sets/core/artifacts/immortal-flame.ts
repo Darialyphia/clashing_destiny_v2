@@ -20,7 +20,7 @@ export const immortalFlame: ArtifactBlueprint = {
   setId: CARD_SETS.CORE,
   unique: false,
   manaCost: 4,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.FIRE,

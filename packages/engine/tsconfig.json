@@ -1,6 +1,11 @@
 {
   "extends": "@game/tsconfig/base.json",
-  "include": ["src/**/*.ts", "__test__/**/*.ts", "tsup.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "__test__/**/*.ts",
+    "tsup.config.ts",
+    "src/player/components/cards-tracker.componentts"
+  ],
   "exclude": [".git", "node_modules"],
   "compilerOptions": {
     "types": ["vitest/importMeta"]

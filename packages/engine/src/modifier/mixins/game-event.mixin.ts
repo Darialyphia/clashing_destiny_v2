@@ -1,16 +1,17 @@
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import type { GameEventMap } from '../../game/game.events';
+import type { EventMapWithStarEvent } from '../../utils/typed-emitter';
 import { ModifierMixin } from '../modifier-mixin';
 
 export class GameEventModifierMixin<
-  TEvent extends keyof GameEventMap
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>
 > extends ModifierMixin<AnyCard> {
   constructor(
     game: Game,
     private options: {
       eventName: TEvent;
-      handler: (event: GameEventMap[TEvent]) => void;
+      handler: (event: EventMapWithStarEvent<GameEventMap>[TEvent]) => void;
       once?: boolean;
     }
   ) {

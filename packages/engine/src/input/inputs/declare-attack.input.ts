@@ -22,18 +22,13 @@ export class DeclareAttackInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   get attacker() {
-    const candidates = this.player.boardSide.getMinions('attack');
-
-    return candidates.find(creature => creature.id === this.payload.attackerId);
+    return this.player.minions.find(creature => creature.id === this.payload.attackerId);
   }
 
   get defender() {
-    const candidates = [
-      this.player.opponent.hero,
-      ...this.player.opponent.boardSide.getAllMinions()
-    ];
-
-    return candidates.find(creature => creature.id === this.payload.defenderId);
+    return [this.player.opponent.hero, ...this.player.enemyMinions].find(
+      creature => creature.id === this.payload.defenderId
+    );
   }
 
   async impl() {

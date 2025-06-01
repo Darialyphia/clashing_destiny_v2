@@ -79,7 +79,8 @@ export const AFFINITIES = {
   CHRONO: 'CHRONO',
   CHAOS: 'CHAOS',
   TECH: 'TECH',
-  PRIMAL: 'PRIMAL'
+  PRIMAL: 'PRIMAL',
+  ARMS: 'ARMS'
 } as const;
 
 export type Affinity = Values<typeof AFFINITIES>;

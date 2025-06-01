@@ -3,7 +3,8 @@ import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import type { PreResponseTarget, SpellBlueprint } from '../card-blueprint';
-import { SPELL_KINDS, type SpellKind } from '../card.enums';
+import { CARD_EVENTS, SPELL_KINDS, type SpellKind } from '../card.enums';
+import { CardBeforePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -16,13 +17,13 @@ export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   subKind: SpellKind;
 };
-export type AbilityCardInterceptors = CardInterceptors & {
+export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
 };
 
 export class SpellCard extends Card<
   SerializedCard,
-  AbilityCardInterceptors,
+  SpellCardInterceptors,
   SpellBlueprint<PreResponseTarget>
 > {
   constructor(
@@ -57,9 +58,18 @@ export class SpellCard extends Card<
     const effect = {
       source: this,
       handler: async () => {
+        await this.game.emit(
+          CARD_EVENTS.CARD_BEFORE_PLAY,
+          new CardBeforePlayEvent({ card: this })
+        );
+        this.updatePlayedAt();
         await this.blueprint.onPlay(this.game, this, targets);
         this.removeFromCurrentLocation();
         this.player.cardManager.sendToDiscardPile(this);
+        await this.game.emit(
+          CARD_EVENTS.CARD_AFTER_PLAY,
+          new CardBeforePlayEvent({ card: this })
+        );
       }
     };
 

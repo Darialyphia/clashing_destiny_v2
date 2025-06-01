@@ -2,25 +2,18 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import {
-  assert,
-  isDefined,
-  type EmptyObject,
-  type Nullable,
-  type Serializable
-} from '@game/shared';
+import { assert, isDefined, type EmptyObject, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
   CardNotFoundError,
-  NoTalentSlotAvailableError,
   NotEnoughCardsInDestinyZoneError,
   NotEnoughCardsInHandError
 } from '../card/card-errors';
 import type { HeroCard } from '../card/entities/hero.entity';
 import type { TalentCard } from '../card/entities/talent.entity';
-import type { Affinity } from '../card/card.enums';
-import type { CardBlueprint } from '../card/card-blueprint';
+import { type Affinity } from '../card/card.enums';
+import { CardTrackerComponent } from './components/cards-tracke.component';
 
 export type PlayerOptions = {
   id: string;
@@ -54,15 +47,9 @@ export class Player
 
   readonly unlockedAffinities: Affinity[] = [];
 
-  readonly talents: {
-    1: [Nullable<TalentCard>, Nullable<TalentCard>];
-    2: [Nullable<TalentCard>, Nullable<TalentCard>];
-    3: [Nullable<TalentCard>, Nullable<TalentCard>];
-  } = {
-    1: [null, null],
-    2: [null, null],
-    3: [null, null]
-  };
+  readonly cardTracker: CardTrackerComponent;
+
+  readonly talents: TalentCard[] = [];
 
   constructor(
     game: Game,
@@ -70,6 +57,7 @@ export class Player
   ) {
     super(options.id, makeInterceptors());
     this.game = game;
+    this.cardTracker = new CardTrackerComponent(game, this);
     this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       mainDeck: this.options.mainDeck.cards,
@@ -142,7 +130,7 @@ export class Player
   }
 
   async playMainDeckCardAtIndex(index: number, manaCostIndices: number[]) {
-    const card = this.cardManager.getCardAt(index);
+    const card = this.cardManager.getCardInHandAt(index);
     assert(isDefined(card), new CardNotFoundError());
 
     this.payForManaCost(card, manaCostIndices);
@@ -170,21 +158,14 @@ export class Player
   }
 
   canAddTalent(talent: TalentCard) {
-    const { level } = talent.blueprint;
-    const [slot1, slot2] = this.talents[level];
-    return slot1 === null || slot2 === null;
+    return (
+      this.talents.length < this.game.config.MAX_TALENTS &&
+      talent.level <= this.hero.level
+    );
   }
 
   addTalent(talent: TalentCard) {
-    const { level } = talent.blueprint;
-    const [slot1, slot2] = this.talents[level];
-    assert(slot1 === null || slot2 === null, new NoTalentSlotAvailableError());
-    if (slot1 === null) {
-      this.talents[level][0] = talent;
-    }
-    if (slot2 === null) {
-      this.talents[level][1] = talent;
-    }
+    this.talents.push(talent);
   }
 
   async startTurn() {

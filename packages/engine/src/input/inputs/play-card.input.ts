@@ -22,7 +22,7 @@ export class PlayCardInput extends Input<typeof schema> {
       new NotTurnPlayerError()
     );
 
-    const card = this.player.cardManager.getCardAt(this.payload.index);
+    const card = this.player.cardManager.getCardInHandAt(this.payload.index);
     assert(card.canPlay(), new IllegalCardPlayedError());
 
     await this.player.playMainDeckCardAtIndex(

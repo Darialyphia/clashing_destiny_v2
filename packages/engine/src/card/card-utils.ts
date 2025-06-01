@@ -1,3 +1,4 @@
+import { isDefined } from '@game/shared';
 import type { Game } from '../game/game';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
@@ -37,7 +38,7 @@ export const isAttack = (card: AnyCard): card is AttackCard => {
   return card.kind === CARD_KINDS.ATTACK;
 };
 
-export const singleEnemyTarget = {
+export const singleEnemyTargetRules = {
   canPlay(
     game: Game,
     card: AnyCard,
@@ -75,7 +76,7 @@ export const singleEnemyTarget = {
   }
 };
 
-export const singleEnemyMinionTarget = {
+export const singleEnemyMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
     return (
       card.player.enemyMinions.filter(c => c.canBeTargeted(card) && predicate(c)).length >
@@ -123,6 +124,72 @@ export const singleEmptyAllySlot = {
           slot.player.equals(card.player) &&
           !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied
         );
+      },
+      canCommit(selectedSlots) {
+        return selectedSlots.length === 1;
+      },
+      isDone(selectedSlots) {
+        return selectedSlots.length === 1;
+      }
+    });
+  }
+};
+
+export const multipleEnemyTargetRules = {
+  canPlay:
+    (min: number) =>
+    (
+      game: Game,
+      card: AnyCard,
+      predicate: (c: MinionCard | HeroCard) => boolean = () => true
+    ) => {
+      return (
+        card.player.allEnemies.filter(c => c.canBeTargeted(card) && predicate(c)).length >
+        min
+      );
+    },
+  getPreResponseTargets:
+    ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat: boolean }) =>
+    async (
+      game: Game,
+      card: AnyCard,
+      predicate: (c: MinionCard | HeroCard) => boolean = () => true
+    ) => {
+      return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+        player: card.player,
+        isElligible(candidate, selectedCards) {
+          if (!isMinion(candidate) && !isHero(candidate)) {
+            return false;
+          }
+          return (
+            card.player.allEnemies.some(enemy => enemy.equals(candidate)) &&
+            candidate.canBeTargeted(card) &&
+            (allowRepeat
+              ? true
+              : !selectedCards.some(selected => selected.equals(candidate))) &&
+            predicate(candidate)
+          );
+        },
+        canCommit(selectedCards) {
+          return selectedCards.length >= min;
+        },
+        isDone(selectedCards) {
+          return selectedCards.length === max;
+        }
+      });
+    }
+};
+
+export const attackRules = {
+  async getPreResponseTargets(game: Game, card: AnyCard) {
+    return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+      player: card.player,
+      isElligible(card) {
+        if (isMinion(card)) {
+          return isDefined(card.location);
+        }
+        if (isHero(card)) return true;
+        return false;
       },
       canCommit(selectedSlots) {
         return selectedSlots.length === 1;

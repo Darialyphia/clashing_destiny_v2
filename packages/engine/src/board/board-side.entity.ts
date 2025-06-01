@@ -27,6 +27,8 @@ import {
   type SerializedBoardMinionSlot
 } from './board-minion-slot.entity';
 import type { Attacker } from '../game/phases/combat.phase';
+import { match } from 'ts-pattern';
+import { CARD_KINDS } from '../card/card.enums';
 
 export type MinionSlot = number;
 
@@ -248,16 +250,43 @@ export class BoardSide
     toSlot.summon(minion);
   }
 
-  remove(card: MainDeckCard) {
-    console.log('TODO Remove card from board:', card);
+  async changeLocation(location: LocationCard) {
+    await this.removeLocation();
+    this.location = location;
   }
 
-  changeLocation(location: LocationCard) {
+  removeLocation() {
     if (this.location) {
-      this.location.sendToDiscardPile();
       this.location = null;
     }
-    this.location = location;
+  }
+
+  remove(card: AnyCard) {
+    match(card.kind)
+      .with(
+        CARD_KINDS.HERO,
+        CARD_KINDS.TALENT,
+        CARD_KINDS.SPELL,
+        CARD_KINDS.ATTACK,
+        CARD_KINDS.ARTIFACT,
+        () => {}
+      )
+      .with(CARD_KINDS.MINION, () => {
+        this.attackZone.slots.forEach(slot => {
+          if (slot.minion?.equals(card)) {
+            slot.removeMinion();
+          }
+        });
+        this.defenseZone.slots.forEach(slot => {
+          if (slot.minion?.equals(card)) {
+            slot.removeMinion();
+          }
+        });
+      })
+      .with(CARD_KINDS.LOCATION, () => {
+        this.removeLocation();
+      })
+      .exhaustive();
   }
 
   serialize(): SerializedBoardSide {

@@ -90,7 +90,11 @@ export class SelectingMinionSlotsContext {
         slot: pos.slot,
         zone: pos.zone
       })),
-      elligiblePosition: this.elligiblePositions,
+      elligiblePosition: this.elligiblePositions.map(pos => ({
+        playerId: pos.player.id,
+        slot: pos.slot,
+        zone: pos.zone
+      })),
       player: this.player.id,
       canCommit: this.canCommit(this.selectedPositions)
     };

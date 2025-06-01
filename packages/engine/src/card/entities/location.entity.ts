@@ -58,8 +58,10 @@ export class LocationCard extends Card<
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
+    this.updatePlayedAt();
+
     this.removeFromCurrentLocation();
-    this.player.boardSide.changeLocation(this);
+    await this.player.boardSide.changeLocation(this);
     await this.blueprint.onPlay(this.game, this);
 
     await this.game.emit(

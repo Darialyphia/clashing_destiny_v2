@@ -1,0 +1,33 @@
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
+import type { MinionBlueprint } from '../../../card-blueprint';
+import {
+  AFFINITIES,
+  CARD_DECK_SOURCES,
+  CARD_KINDS,
+  CARD_SETS,
+  RARITIES
+} from '../../../card.enums';
+
+export const hotHeadedRecruit: MinionBlueprint = {
+  id: 'hot-headed-recruit',
+  name: 'Hot-Headed Recruit',
+  cardIconId: 'hot-headed-recruit',
+  description: `@Rush@.`,
+  collectable: true,
+  unique: false,
+  manaCost: 1,
+  atk: 1,
+  maxHp: 1,
+  rarity: RARITIES.COMMON,
+  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
+  kind: CARD_KINDS.MINION,
+  affinity: AFFINITIES.FIRE,
+  setId: CARD_SETS.CORE,
+  abilities: [],
+  canPlay: () => true,
+  async onInit(game, card) {
+    await card.modifiers.add(new RushModifier(game, card));
+  },
+  async onPlay() {}
+};

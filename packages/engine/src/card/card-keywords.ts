@@ -63,11 +63,11 @@ export const KEYWORDS = {
     description: 'You can only have one copy of this card in your deck.',
     aliases: []
   },
-  CLASS_BONUS: {
-    id: 'class-bonus',
-    name: 'Class Bonus',
-    description: "This card has a bonus effect if its class matches your hero's class.",
-    aliases: []
+  LINEAGE_BONUS: {
+    id: 'lineage-bonus',
+    name: 'Lineage Bonus',
+    description: 'This card has a bonus effect if you have this hero in your lineage.',
+    aliases: [/lineage bonus\([a-z\s]\)/]
   },
   LEVEL_BONUS: {
     id: 'level-bonus',
@@ -91,7 +91,7 @@ export const KEYWORDS = {
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',
-    description: 'This card is removed from your hand at the end of your turn.',
+    description: 'This card is banished at the end of your turn if it is in your hand.',
     aliases: []
   },
   ELUSIVE: {
@@ -99,6 +99,12 @@ export const KEYWORDS = {
     name: 'Elusive',
     description:
       'When this minion is attacked  for the first time in a turn, it moves to a adjacent position if possible (prioritizing the left). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
+    aliases: []
+  },
+  RUSH: {
+    id: 'rush',
+    name: 'Rush',
+    description: 'This unit can attack the turn it is played.',
     aliases: []
   },
   FROZEN: {
@@ -152,8 +158,40 @@ export const KEYWORDS = {
     name: 'Burn',
     description: 'This takes 1 damage at the start of every turn.',
     aliases: []
+  },
+  INFLUENCE: {
+    id: 'influence',
+    name: 'Influence',
+    description: 'The sum of the cards in your hand and Destiny zone.',
+    aliases: []
+  },
+  ATTACKER: {
+    id: 'attacker',
+    name: 'Attacker',
+    description: 'This effects is applied if this card is played in the Attack zone.',
+    aliases: []
+  },
+  DEFENDER: {
+    id: 'defender',
+    name: 'Defender',
+    description: 'This effects is applied if this card is played in the Defense zone.',
+    aliases: []
+  },
+  CLEAVE: {
+    id: 'cleave',
+    name: 'Cleave',
+    description:
+      'Damages minions to the right and to the left of the target as well when attacking.',
+    aliases: []
+  },
+  SCRY: {
+    id: 'scry',
+    name: 'Scry(X)',
+    description:
+      'Look at the top X cards of your deck, then ut any number of them at the bottom of your deck.',
+    aliases: [/scry\([0-9]+\)/]
   }
-} as const satisfies Record<string, Keyword>;
+};
 
 export type KeywordName = Values<typeof KEYWORDS>['name'];
 export type KeywordId = Values<typeof KEYWORDS>['id'];

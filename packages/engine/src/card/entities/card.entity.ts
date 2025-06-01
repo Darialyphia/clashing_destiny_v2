@@ -17,7 +17,8 @@ import {
 import { match } from 'ts-pattern';
 import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
-import type { Keyword } from '../card-keywords';
+import { IllegalGameStateError } from '../../game/game-error';
+import { isDestinyDeckCard, isMainDeckCard } from '../../board/board.system';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -59,11 +60,13 @@ export abstract class Card<
 
   blueprint: TBlueprint;
 
-  originalPlayer: Player;
+  protected originalPlayer: Player;
 
   protected _isExhausted = false;
 
   readonly keywordManager = new KeywordManagerComponent();
+
+  protected playedAtTurn: number | null = null;
 
   constructor(
     game: Game,
@@ -84,6 +87,10 @@ export abstract class Card<
 
   get kind() {
     return this.blueprint.kind;
+  }
+
+  get affinity() {
+    return this.blueprint.affinity;
   }
 
   get keywords() {
@@ -152,39 +159,89 @@ export abstract class Card<
         this.player.cardManager.removeFromHand(this);
       })
       .with('discardPile', () => {
+        if (!isMainDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from discard pile when it is not a main deck card.`
+          );
+        }
         this.player.cardManager.removeFromDiscardPile(this);
       })
       .with('banishPile', () => {
+        if (!isMainDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from banish pile when it is not a main deck card.`
+          );
+        }
         this.player.cardManager.removeFromBanishPile(this);
       })
       .with('mainDeck', () => {
+        if (!isMainDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from main deck when it is not a main deck card.`
+          );
+        }
         this.player.cardManager.mainDeck.pluck(this);
       })
       .with('destinyDeck', () => {
+        if (!isDestinyDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from destiny deck when it is not a destiny deck card.`
+          );
+        }
         this.player.cardManager.destinyDeck.pluck(this);
       })
       .with('destinyZone', () => {
+        if (!isMainDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from destiny zone pile when it is not a main deck card.`
+          );
+        }
         this.player.cardManager.removeFromDestinyZone(this);
       })
-      .with('board', () => {})
+      .with('board', () => {
+        if (!isMainDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from board pile when it is not a main deck card.`
+          );
+        }
+        this.player.boardSide.remove(this);
+      })
       .exhaustive();
   }
 
   sendToDiscardPile() {
+    if (!isMainDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot send card ${this.id} to discard pile when it is not a main deck card.`
+      );
+    }
     this.removeFromCurrentLocation();
     this.player.cardManager.sendToDiscardPile(this);
   }
 
   sendToBanishPile() {
+    if (!isMainDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot send card ${this.id} to banish pile when it is not a main deck card.`
+      );
+    }
     this.removeFromCurrentLocation();
     this.player.cardManager.sendToBanishPile(this);
   }
 
   sendToDestinyZone() {
+    if (!isMainDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot send card ${this.id} to destiny zone when it is not a main deck card.`
+      );
+    }
     this.removeFromCurrentLocation();
     this.player.cardManager.sendToDestinyZone(this);
   }
 
+  protected updatePlayedAt() {
+    this.playedAtTurn = this.game.gamePhaseSystem.elapsedTurns;
+  }
   abstract canPlay(): boolean;
 
   abstract play(): Promise<void>;
@@ -211,12 +268,25 @@ export abstract class Card<
   abstract serialize(): TSerialized;
 
   async discard() {
-    await this.game.emit(CARD_EVENTS.CARD_DISCARD, new CardDiscardEvent({ card: this }));
+    if (!isMainDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot discard card ${this.id} when it is not a main deck card.`
+      );
+    }
+    await (this as this).game.emit(
+      CARD_EVENTS.CARD_DISCARD,
+      new CardDiscardEvent({ card: this })
+    );
     this.player.cardManager.discard(this);
   }
 
   async addToHand() {
-    await this.game.emit(
+    if (!isMainDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot discard card ${this.id} when it is not a main deck card.`
+      );
+    }
+    await (this as this).game.emit(
       CARD_EVENTS.CARD_ADD_TO_HAND,
       new CardAddToHandevent({ card: this })
     );
@@ -247,5 +317,13 @@ export abstract class Card<
       CARD_EVENTS.CARD_AFTER_DESTROY,
       new CardAfterDestroyEvent({ card: this })
     );
+  }
+
+  isAlly(card: AnyCard) {
+    return this.player.equals(card.player);
+  }
+
+  isEnemy(card: AnyCard) {
+    return !this.isAlly(card);
   }
 }

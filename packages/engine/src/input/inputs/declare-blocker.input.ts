@@ -21,9 +21,9 @@ export class DeclareBlockerInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   get blocker() {
-    const candidates = this.player.opponent.boardSide.getMinions('defense');
-
-    return candidates.find(creature => creature.id === this.payload.blockerId);
+    return this.player.enemyMinions.find(
+      creature => creature.id === this.payload.blockerId
+    );
   }
 
   async impl() {

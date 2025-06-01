@@ -9,7 +9,7 @@ type GenericEventMap = Record<Exclude<string, '*'>, TypedSerializableEvent<any, 
 
 type EmitterMode = 'sequential' | 'parallel';
 
-type EventMapWithStarEvent<TEvents extends GenericEventMap> = TEvents & {
+export type EventMapWithStarEvent<TEvents extends GenericEventMap> = TEvents & {
   '*': StarEvent<TEvents>;
 };
 

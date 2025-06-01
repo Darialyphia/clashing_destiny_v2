@@ -3,11 +3,12 @@ import { ModifierMixin } from '../modifier-mixin';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../../card/entities/card.entity';
 import { GAME_EVENTS } from '../../game/game.events';
+import type { MaybePromise } from '@game/shared';
 
 export type AuraOptions = {
-  isElligible(card: AnyCard): boolean;
-  onGainAura(unit: AnyCard): void;
-  onLoseAura(unit: AnyCard): void;
+  isElligible(candidate: AnyCard): boolean;
+  onGainAura(candidate: AnyCard): MaybePromise<void>;
+  onLoseAura(candidate: AnyCard): MaybePromise<void>;
   canSelfApply: boolean;
 };
 
@@ -31,10 +32,10 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
     this.cleanup = this.cleanup.bind(this);
   }
 
-  private checkAura() {
+  private async checkAura() {
     if (!this.isApplied) return;
 
-    this.game.cardSystem.cards.forEach(card => {
+    for (const card of this.game.cardSystem.cards) {
       if (!this.options.canSelfApply && card.equals(this.modifier.target)) return;
       const shouldGetAura = this.options.isElligible(card);
 
@@ -42,28 +43,28 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
 
       if (!shouldGetAura && hasAura) {
         this.affectedCardIds.delete(card.id);
-        this.options.onLoseAura(card);
+        await this.options.onLoseAura(card);
         return;
       }
 
       if (shouldGetAura && !hasAura) {
         this.affectedCardIds.add(card.id);
-        this.options.onGainAura(card);
+        await this.options.onGainAura(card);
         return;
       }
-    });
+    }
   }
 
-  private cleanup() {
+  private async cleanup() {
     this.game.off('*', this.checkAura);
 
-    this.affectedCardIds.forEach(id => {
+    for (const id of this.affectedCardIds) {
       const card = this.game.cardSystem.getCardById(id);
       if (!card) return;
 
       this.affectedCardIds.delete(id);
-      this.options.onLoseAura(card);
-    });
+      await this.options.onLoseAura(card);
+    }
   }
 
   onApplied(card: AnyCard, modifier: Modifier<AnyCard>): void {
@@ -71,17 +72,17 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
     this.isApplied = true;
 
     this.game.on('*', this.checkAura);
-    const unsub = this.game.on(GAME_EVENTS.CARD_AFTER_DESTROY, event => {
+    const unsub = this.game.on(GAME_EVENTS.CARD_AFTER_DESTROY, async event => {
       if (event.data.card.equals(card)) {
         unsub();
-        this.cleanup();
+        await this.cleanup();
       }
     });
   }
 
-  onRemoved() {
+  async onRemoved() {
     this.isApplied = false;
-    this.cleanup();
+    await this.cleanup();
   }
 
   onReapplied() {}

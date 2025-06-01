@@ -224,6 +224,7 @@ export class ArtifactCard extends Card<
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
+    this.updatePlayedAt();
     this.player.artifactManager.equip(this);
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(

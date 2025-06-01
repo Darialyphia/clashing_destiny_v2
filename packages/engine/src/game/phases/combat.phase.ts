@@ -40,6 +40,7 @@ export type SerializedCombatPhase = {
   target: string;
   blocker: string | null;
   step: CombatStep;
+  potentialBlockers: string[];
 };
 
 export class BeforeDeclareAttackEvent extends TypedSerializableEvent<
@@ -162,6 +163,10 @@ export class CombatPhase
     ]);
   }
 
+  get potentialBlockers(): Defender[] {
+    return this.target.player.minions.filter(minion => this.canBlock(minion));
+  }
+
   async declareAttacker({
     attacker,
     target
@@ -238,7 +243,11 @@ export class CombatPhase
   }
 
   canBlock(blocker: Defender) {
-    return this.attacker.canBeBlocked(blocker) && blocker.canBlock(this.attacker);
+    return (
+      this.attacker.canBeBlocked(blocker) &&
+      blocker.canBlock(this.attacker) &&
+      this.target.canBeDefendedBy(blocker)
+    );
   }
 
   async onEnter() {}
@@ -250,7 +259,8 @@ export class CombatPhase
       attacker: this.attacker.id,
       target: this.target.id,
       blocker: this.blocker?.id ?? null,
-      step: this.getState()
+      step: this.getState(),
+      potentialBlockers: this.potentialBlockers.map(b => b.id)
     };
   }
 }

@@ -4,3 +4,9 @@ export class GameError extends Error {
     super(message);
   }
 }
+
+export class IllegalGameStateError extends GameError {
+  constructor(message: string) {
+    super(`Illegal game state: ${message}`);
+  }
+}

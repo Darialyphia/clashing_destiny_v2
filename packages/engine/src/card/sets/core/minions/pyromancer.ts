@@ -7,6 +7,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import type { SpellCard } from '../../../entities/spell.entity';
 import { fireBolt } from '../spells/fire-bolt';
 
 export const pyromancer: MinionBlueprint = {
@@ -29,7 +30,7 @@ export const pyromancer: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
-        const firebolt = await card.player.generateCard(fireBolt.id);
+        const firebolt = await card.player.generateCard<SpellCard>(fireBolt.id);
         card.player.cardManager.addToHand(firebolt);
       })
     );
