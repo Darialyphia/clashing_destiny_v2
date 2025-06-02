@@ -1,7 +1,6 @@
-import type { BetterExtract, Override, Values } from '@game/shared';
+import type { BetterExtract, MaybePromise, Values } from '@game/shared';
 import type { InputDispatcher } from '../input/input-system';
 import type {
-  EntityDictionary,
   GameStateSnapshot,
   SerializedOmniscientState,
   SerializedPlayerState
@@ -9,9 +8,8 @@ import type {
 import { ModifierViewModel } from './view-models/modifier.model';
 import { CardViewModel } from './view-models/card.model';
 import { PlayerViewModel } from './view-models/player.model';
-import { match } from 'ts-pattern';
-import { TypedEventEmitter } from '../utils/typed-emitter';
-import { GAME_EVENTS, type GameEventMap } from '../game/game.events';
+import { FxController } from './controllers/fx-controller';
+import { ClientStateController } from './controllers/state-controller';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -25,8 +23,22 @@ export type GameStateEntities = Record<
   PlayerViewModel | CardViewModel | ModifierViewModel
 >;
 
+export type OnSnapshotUpdateCallback = (
+  snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+) => MaybePromise<void>;
+
+export type NetworkAdapter = {
+  dispatch: InputDispatcher;
+  subscribe(cb: OnSnapshotUpdateCallback): void;
+  sync: (
+    lastSnapshotId: number
+  ) => Promise<
+    Array<GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>>
+  >;
+};
+
 export type GameClientOptions = {
-  dispatcher: InputDispatcher;
+  adapter: NetworkAdapter;
 } & (
   | {
       gameType: BetterExtract<GameType, 'local'>;
@@ -40,42 +52,12 @@ export type GameClientOptions = {
     }
 );
 
-export type GameClientState = Override<
-  SerializedOmniscientState,
-  {
-    entities: GameStateEntities;
-  }
->;
-
-export type PreBattleEvent<T extends keyof GameEventMap> = `pre_${T}`;
-export type PreBattleEventKey<T extends keyof typeof GAME_EVENTS> = `PRE_${T}`;
-export const BATTLE_EVENTS = {
-  ...GAME_EVENTS,
-  ...(Object.fromEntries(
-    Object.entries(GAME_EVENTS).map(([key, value]) => [`PRE_${key}`, `pre_${value}`])
-  ) as unknown as {
-    [Key in keyof typeof GAME_EVENTS as PreBattleEventKey<Key>]: PreBattleEvent<
-      (typeof GAME_EVENTS)[Key]
-    >;
-  })
-} as const;
-
-export type ClientBattleEvent = Values<typeof BATTLE_EVENTS>;
-
-export type BattleEventName = keyof GameEventMap | PreBattleEvent<keyof GameEventMap>;
-
-type SerializedGameEventMap = {
-  [Key in BattleEventName]: Key extends PreBattleEvent<infer U>
-    ? ReturnType<GameEventMap[U]['serialize']>
-    : Key extends keyof GameEventMap
-      ? ReturnType<GameEventMap[Key]['serialize']>
-      : never;
-};
-
 export class GameClient {
-  private emitter = new TypedEventEmitter<SerializedGameEventMap>('parallel');
+  readonly fx = new FxController();
 
-  private dispatch: InputDispatcher;
+  readonly state: ClientStateController;
+
+  private adapter: NetworkAdapter;
 
   private gameType: GameType;
 
@@ -83,23 +65,30 @@ export class GameClient {
 
   private playerId?: string;
 
-  private state: GameClientState;
-
   private lastSnapshotId = -1;
 
   private _isPlayingFx = false;
 
   private _isReady = false;
 
+  private _processingUpdate = false;
+
+  private queue: Array<
+    GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  > = [];
+
   constructor(options: GameClientOptions) {
-    this.dispatch = options.dispatcher;
+    this.adapter = options.adapter;
+    this.state = new ClientStateController(options.initialState, this.adapter);
     this.gameType = options.gameType;
     this.initialState = options.initialState;
     this.playerId = options.playerId;
-    this.state = {
-      ...this.initialState,
-      entities: this.buildentities(this.initialState.entities, {})
-    };
+
+    this.adapter.subscribe(async snapshot => {
+      this.queue.push(snapshot);
+      if (this._processingUpdate) return;
+      await this.processQueue();
+    });
   }
 
   get isPlayingFx() {
@@ -110,16 +99,20 @@ export class GameClient {
     return this._isReady;
   }
 
-  get on() {
-    return this.emitter.on.bind(this.emitter);
-  }
+  private async processQueue() {
+    if (this._processingUpdate || this.queue.length === 0) {
+      console.warn('Already processing updates or queue is empty, skipping processing.');
+      return;
+    }
 
-  get once() {
-    return this.emitter.once.bind(this.emitter);
-  }
+    this._processingUpdate = true;
 
-  get off() {
-    return this.emitter.off.bind(this.emitter);
+    while (this.queue.length > 0) {
+      const snapshot = this.queue.shift();
+      await this.update(snapshot!);
+    }
+
+    this._processingUpdate = false;
   }
 
   async update(
@@ -129,32 +122,23 @@ export class GameClient {
       console.log(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}`
       );
+      this.queue = [];
+      await this.sync();
       return;
     }
+
     this.lastSnapshotId = snapshot.id;
 
     try {
       this._isPlayingFx = true;
 
       for (const event of snapshot.events) {
-        await this.emitter.emit(`pre_${event.eventName}`, event.event as any);
-        await this.emitter.emit(event.eventName, event.event as any);
+        await this.fx.emit(event.eventName, event.event);
       }
       this._isPlayingFx = false;
 
-      this.state.entities = this.buildentities(snapshot.state.entities, {
-        ...this.state.entities
-      });
-
-      this.state.board = snapshot.state.board;
-      this.state.config = snapshot.state.config;
-      this.state.interaction = snapshot.state.interaction;
-      this.state.phase = snapshot.state.phase;
-      this.state.turnPlayer = snapshot.state.turnPlayer;
-      this.state.turnCount = snapshot.state.turnCount;
-
       if (this.gameType === GAME_TYPES.LOCAL) {
-        this.playerId = this.state.turnPlayer;
+        this.playerId = snapshot.state.turnPlayer;
       }
 
       this._isReady = true;
@@ -163,26 +147,8 @@ export class GameClient {
     }
   }
 
-  private buildentities = (
-    entities: EntityDictionary,
-    existing: GameStateEntities
-  ): GameClientState['entities'] => {
-    for (const [id, entity] of Object.entries(entities)) {
-      existing[id] = match(entity)
-        .with(
-          { entityType: 'player' },
-          entity => new PlayerViewModel(entity, existing, this.dispatch)
-        )
-        .with(
-          { entityType: 'card' },
-          entity => new CardViewModel(entity, existing, this.dispatch)
-        )
-        .with(
-          { entityType: 'modifier' },
-          entity => new ModifierViewModel(entity, existing, this.dispatch)
-        )
-        .exhaustive();
-    }
-    return existing;
-  };
+  private async sync() {
+    const snapshots = await this.adapter.sync(this.lastSnapshotId);
+    this.queue.push(...snapshots);
+  }
 }

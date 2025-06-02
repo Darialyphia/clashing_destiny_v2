@@ -11,6 +11,7 @@ import type { SerializedAttackCard } from '../../card/entities/attck.entity';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
+import type { GameClientState } from '../controllers/state-controller';
 
 type CardData =
   | SerializedSpellCard
@@ -20,6 +21,14 @@ type CardData =
   | SerializedLocationCard
   | SerializedTalentCard
   | SerializedAttackCard;
+
+type CardActionRules = {
+  predicate: (card: CardViewModel, state: GameClientState) => boolean;
+  action: {
+    label: string;
+    handler: (card: CardViewModel) => void;
+  };
+};
 
 export class CardViewModel {
   private getEntities: () => GameStateEntities;
