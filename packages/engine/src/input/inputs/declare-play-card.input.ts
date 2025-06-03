@@ -5,12 +5,11 @@ import { assert } from '@game/shared';
 import { IllegalCardPlayedError, NotTurnPlayerError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
-  index: z.number(),
-  manaCostIndices: z.array(z.number())
+  index: z.number()
 });
 
-export class PlayCardInput extends Input<typeof schema> {
-  readonly name = 'playCard';
+export class DeclarePlayCardInput extends Input<typeof schema> {
+  readonly name = 'declarePlayCard';
 
   readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
 
@@ -25,9 +24,6 @@ export class PlayCardInput extends Input<typeof schema> {
     const card = this.player.cardManager.getCardInHandAt(this.payload.index);
     assert(card.canPlay(), new IllegalCardPlayedError());
 
-    await this.player.playMainDeckCardAtIndex(
-      this.payload.index,
-      this.payload.manaCostIndices
-    );
+    await this.game.interaction.declarePlayCardIntent(this.payload.index, this.player);
   }
 }

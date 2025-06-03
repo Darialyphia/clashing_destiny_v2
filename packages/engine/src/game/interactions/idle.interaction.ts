@@ -1,5 +1,11 @@
+import type { Game } from '../game';
+
 export class IdleContext {
+  constructor(private game: Game) {}
+
   serialize() {
-    return {};
+    return {
+      player: this.game.gamePhaseSystem.turnPlayer.id
+    };
   }
 }

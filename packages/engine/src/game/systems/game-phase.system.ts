@@ -63,23 +63,23 @@ export type GamePhaseContext =
 
 export type SerializedGamePhaseContext =
   | {
-      state: Extract<GamePhase, 'draw'>;
+      state: BetterExtract<GamePhase, 'draw_phase'>;
       ctx: ReturnType<DrawPhase['serialize']>;
     }
   | {
-      state: Extract<GamePhase, 'destiny'>;
+      state: BetterExtract<GamePhase, 'destiny_phase'>;
       ctx: ReturnType<DestinyPhase['serialize']>;
     }
   | {
-      state: Extract<GamePhase, 'main'>;
+      state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: ReturnType<MainPhase['serialize']>;
     }
   | {
-      state: Extract<GamePhase, 'attack'>;
+      state: BetterExtract<GamePhase, 'attack_phase'>;
       ctx: ReturnType<CombatPhase['serialize']>;
     }
   | {
-      state: Extract<GamePhase, 'end'>;
+      state: BetterExtract<GamePhase, 'end_phase'>;
       ctx: ReturnType<EndPhase['serialize']>;
     }
   | {

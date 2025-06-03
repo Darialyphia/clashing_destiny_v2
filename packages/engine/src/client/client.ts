@@ -10,6 +10,7 @@ import { CardViewModel } from './view-models/card.model';
 import { PlayerViewModel } from './view-models/player.model';
 import { FxController } from './controllers/fx-controller';
 import { ClientStateController } from './controllers/state-controller';
+import { UiController } from './controllers/ui-controller';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -55,15 +56,17 @@ export type GameClientOptions = {
 export class GameClient {
   readonly fx = new FxController();
 
-  readonly state: ClientStateController;
+  readonly stateManager: ClientStateController;
 
-  private adapter: NetworkAdapter;
+  readonly ui: UiController;
+
+  readonly adapter: NetworkAdapter;
 
   private gameType: GameType;
 
   private initialState: SerializedOmniscientState | SerializedPlayerState;
 
-  private playerId?: string;
+  private _playerId?: string;
 
   private lastSnapshotId = -1;
 
@@ -79,10 +82,11 @@ export class GameClient {
 
   constructor(options: GameClientOptions) {
     this.adapter = options.adapter;
-    this.state = new ClientStateController(options.initialState, this.adapter);
+    this.stateManager = new ClientStateController(options.initialState, this.adapter);
+    this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.initialState = options.initialState;
-    this.playerId = options.playerId;
+    this._playerId = options.playerId;
 
     this.adapter.subscribe(async snapshot => {
       this.queue.push(snapshot);
@@ -91,12 +95,20 @@ export class GameClient {
     });
   }
 
+  get playerId() {
+    return this._playerId;
+  }
+
   get isPlayingFx() {
     return this._isPlayingFx;
   }
 
   get isReady() {
     return this._isReady;
+  }
+
+  get state() {
+    return this.stateManager.state;
   }
 
   private async processQueue() {
@@ -137,9 +149,13 @@ export class GameClient {
       }
       this._isPlayingFx = false;
 
+      this.stateManager.update(snapshot.state);
+
       if (this.gameType === GAME_TYPES.LOCAL) {
-        this.playerId = snapshot.state.turnPlayer;
+        this._playerId = snapshot.state.turnPlayer;
       }
+
+      this.ui.update();
 
       this._isReady = true;
     } catch (err) {

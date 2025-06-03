@@ -1,5 +1,5 @@
 import {
-  type EmptyObject,
+  type BetterExtract,
   type Serializable,
   type Values,
   assert,
@@ -20,13 +20,16 @@ import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction
 import { IdleContext } from '../interactions/idle.interaction';
 import { ChoosingAffinityContext } from '../interactions/choosing-affinity.interaction';
 import type { Affinity } from '../../card/card.enums';
+import { PlayCardContext } from '../interactions/play-card.interaction';
+import { IllegalCardPlayedError } from '../../input/input-errors';
 
 export const INTERACTION_STATES = {
   IDLE: 'idle',
   SELECTING_CARDS_ON_BOARD: 'selecting_cards_on_board',
   CHOOSING_CARDS: 'choosing_cards',
   SELECTING_MINION_SLOT: 'selecting_minion_slot',
-  CHOOSING_AFFINITY: 'choosing_affinity'
+  CHOOSING_AFFINITY: 'choosing_affinity',
+  PLAYING_CARD: 'playing_card'
 } as const;
 export type InteractionStateDict = typeof INTERACTION_STATES;
 export type InteractionState = Values<typeof INTERACTION_STATES>;
@@ -39,36 +42,43 @@ export const INTERACTION_STATE_TRANSITIONS = {
   START_CHOOSING_CARDS: 'start_choosing_cards',
   COMMIT_CHOOSING_CARDS: 'commit_choosing_cards',
   START_CHOOSING_AFFINITY: 'start_choosing_affinity',
-  COMMIT_CHOOSING_AFFINITY: 'commit_choosing_affinity'
+  COMMIT_CHOOSING_AFFINITY: 'commit_choosing_affinity',
+  START_PLAYING_CARD: 'start_playing_card',
+  COMMIT_PLAYING_CARD: 'commit_playing_card',
+  CANCEL_PLAYING_CARD: 'cancel_playing_card'
 };
 export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;
 
 export type InteractionContext =
   | {
-      state: Extract<InteractionState, 'idle'>;
+      state: BetterExtract<InteractionState, 'idle'>;
       ctx: IdleContext;
     }
   | {
-      state: Extract<InteractionState, 'selecting_cards_on_board'>;
+      state: BetterExtract<InteractionState, 'selecting_cards_on_board'>;
       ctx: SelectingCardOnBoardContext;
     }
   | {
-      state: Extract<InteractionState, 'selecting_minion_slot'>;
+      state: BetterExtract<InteractionState, 'selecting_minion_slot'>;
       ctx: SelectingMinionSlotsContext;
     }
   | {
-      state: Extract<InteractionState, 'choosing_cards'>;
+      state: BetterExtract<InteractionState, 'choosing_cards'>;
       ctx: ChoosingCardsContext;
     }
   | {
-      state: Extract<InteractionState, 'choosing_affinity'>;
+      state: BetterExtract<InteractionState, 'choosing_affinity'>;
       ctx: ChoosingAffinityContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'playing_card'>;
+      ctx: PlayCardContext;
     };
 
 export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'idle'>;
-      ctx: EmptyObject;
+      ctx: ReturnType<IdleContext['serialize']>;
     }
   | {
       state: Extract<InteractionState, 'selecting_cards_on_board'>;
@@ -85,6 +95,10 @@ export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'choosing_affinity'>;
       ctx: ReturnType<ChoosingAffinityContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'playing_card'>;
+      ctx: ReturnType<PlayCardContext['serialize']>;
     };
 
 export class GameInteractionSystem
@@ -96,14 +110,15 @@ export class GameInteractionSystem
     [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
     [INTERACTION_STATES.SELECTING_MINION_SLOT]: SelectingMinionSlotsContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
-    [INTERACTION_STATES.CHOOSING_AFFINITY]: ChoosingAffinityContext
+    [INTERACTION_STATES.CHOOSING_AFFINITY]: ChoosingAffinityContext,
+    [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext
   } as const;
 
   private _ctx:
     | IdleContext
     | SelectingCardOnBoardContext
     | SelectingMinionSlotsContext
-    | ChoosingCardsContext = new IdleContext();
+    | ChoosingCardsContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);
@@ -147,8 +162,24 @@ export class GameInteractionSystem
         INTERACTION_STATES.CHOOSING_AFFINITY,
         INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_AFFINITY,
         INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD,
+        INTERACTION_STATES.PLAYING_CARD
+      ),
+      stateTransition(
+        INTERACTION_STATES.PLAYING_CARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.PLAYING_CARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        INTERACTION_STATES.IDLE
       )
     ]);
+    this._ctx = new IdleContext(this.game);
   }
 
   initialize() {}
@@ -220,6 +251,7 @@ export class GameInteractionSystem
 
   async chooseAffinity(options: { player: Player; choices: Affinity[] }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY);
+    // @ts-expect-error
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_AFFINITY].create(
       this.game,
       options
@@ -227,8 +259,33 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<Affinity | null>();
   }
 
+  async declarePlayCardIntent(index: number, player: Player) {
+    assert(
+      this.getState() === INTERACTION_STATES.IDLE,
+      new CorruptedInteractionContextError()
+    );
+    const canPlay = this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
+      : this.game.gamePhaseSystem.turnPlayer.equals(player);
+    assert(canPlay, new IllegalCardPlayedError());
+
+    const card = player.cardManager.getCardInHandAt(index);
+    assert(card, new IllegalCardPlayedError());
+    assert(card.canPlay(), new IllegalCardPlayedError());
+
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD);
+    // @ts-expect-error
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.PLAYING_CARD].create(
+      this.game,
+      {
+        card,
+        player
+      }
+    );
+  }
+
   onInteractionEnd() {
-    this._ctx = new IdleContext();
+    this._ctx = new IdleContext(this.game);
   }
 }
 

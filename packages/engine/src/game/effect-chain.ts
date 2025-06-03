@@ -131,6 +131,13 @@ export class EffectChain
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.PASS);
   }
 
+  canAddEffect(player: Player): boolean {
+    return (
+      player.equals(this.currentPlayer) &&
+      this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT)
+    );
+  }
+
   serialize() {
     return this.effectStack.map(effect => effect.source.serialize());
   }

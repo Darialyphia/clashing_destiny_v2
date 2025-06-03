@@ -46,6 +46,7 @@ export class ChoosingCardsContext {
 
   serialize() {
     return {
+      player: this.player.id,
       choices: this.choices.map(card => card.id),
       minChoiceCount: this.minChoiceCount,
       maxChoiceCount: this.maxChoiceCount

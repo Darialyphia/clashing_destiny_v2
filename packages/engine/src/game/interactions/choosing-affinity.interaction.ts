@@ -37,6 +37,7 @@ export class ChoosingAffinityContext {
 
   serialize() {
     return {
+      player: this.player.id,
       choices: this.choices
     };
   }

@@ -15,6 +15,7 @@ type SelectingCardOnBoardContextOptions = {
   canCommit: (selectedCards: AnyCard[]) => boolean;
   isDone(selectedCards: AnyCard[]): boolean;
 };
+
 export class SelectingCardOnBoardContext {
   static async create(game: Game, options: SelectingCardOnBoardContextOptions) {
     const instance = new SelectingCardOnBoardContext(game, options);

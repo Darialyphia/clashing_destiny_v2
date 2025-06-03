@@ -19,7 +19,6 @@ import {
   GameInputRequiredEvent
 } from '../game/game.events';
 
-import { PlayCardInput } from './inputs/play-card.input';
 import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
@@ -32,6 +31,9 @@ import { CommitMinionSlotSelectionInput } from './inputs/commit-minion-slot-sele
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { UseCardAbilityInput } from './inputs/use-card-ability.input';
+import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
+import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
+import { CommitPlayCardInput } from './inputs/commit-play-card';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -46,7 +48,9 @@ type ValidatedInputMap<T extends GenericInputMap> = {
 const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>) => data;
 
 const inputMap = validateinputMap({
-  playCard: PlayCardInput,
+  declarePlayCard: DeclarePlayCardInput,
+  cancelPlayCard: CancelPlayCardInput,
+  commitPlayCard: CommitPlayCardInput,
   playDestinyCard: PlayDestinyCardInput,
   declareAttack: DeclareAttackInput,
   declareBlocker: DeclareBlockerInput,
@@ -58,12 +62,6 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   useCardAbility: UseCardAbilityInput
-  // addCardTarget: AddCardTargetCardInput,
-  // commitPlayCard: CommitPlayCardInput,
-  // commitCardSelection: CommitCardSelectionCardInput,
-  // useUnitAbility: UseUnitAbilityInput,
-  // useArtifactAbility: UseArtifactAbilityInput,
-  // useCardAbility: UseCardAbilityInput
 });
 
 type InputMap = typeof inputMap;

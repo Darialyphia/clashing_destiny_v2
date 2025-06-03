@@ -17,6 +17,7 @@ import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerTurnEvent } from './player.events';
+import type { MainDeckCard } from '../board/board.system';
 
 export type PlayerOptions = {
   id: string;
@@ -162,10 +163,7 @@ export class Player
     });
   }
 
-  async playMainDeckCardAtIndex(index: number, manaCostIndices: number[]) {
-    const card = this.cardManager.getCardInHandAt(index);
-    assert(isDefined(card), new CardNotFoundError());
-
+  async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
     this.payForManaCost(card, manaCostIndices);
     await card.play();
   }
