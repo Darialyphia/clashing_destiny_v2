@@ -1,11 +1,7 @@
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import {
-  singleEnemyMinionTargetRules,
-  singleEnemyTargetRules
-} from '../../../card-utils';
+import { singleEnemyMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -14,7 +10,6 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.card';
 
 export const innerFire: SpellBlueprint<MinionCard> = {

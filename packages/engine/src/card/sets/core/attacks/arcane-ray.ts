@@ -17,7 +17,7 @@ export const arcaneRay: AttackBlueprint = {
   id: 'arcane-ray',
   name: 'Arcane Ray',
   cardIconId: 'arcane-ray',
-  description: `@Piercing@\n@Lineage Bonus(${mage.name})@: Deals + spellpower damage.`,
+  description: `@Piercing@\n@[lineage] ${mage.name} bonus@: Deals 2 + @[spellpower]@ damage.`,
   collectable: true,
   unique: false,
   manaCost: 2,

@@ -3,6 +3,7 @@ import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
 import { magicGrimoire } from './core/artifacts/magic-grimoire';
+import { arcaneRay } from './core/attacks/arcane-ray';
 import { finalSlash } from './core/attacks/final-slash';
 import { elementalist } from './core/heroes/elementalist';
 import { mage } from './core/heroes/mage';
@@ -84,6 +85,7 @@ export const coreSet: CardSet = {
     spellbladeDuelist,
     novaBlast,
     esteemedErudite,
+    arcaneRay,
     magicGrimoire,
 
     // Chrono
