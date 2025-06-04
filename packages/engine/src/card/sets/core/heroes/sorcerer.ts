@@ -22,6 +22,7 @@ export const sorcerer: HeroBlueprint = {
   unique: false,
   lineage: null,
   spellPower: 0,
+  atk: 0,
   maxHp: 21,
   description: '',
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,

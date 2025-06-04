@@ -136,7 +136,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get atk(): number {
     const weapon = this.player.artifactManager.artifacts.weapon;
-    const baseAttack = 0 + (weapon?.atk ?? 0);
+    const baseAttack = this.blueprint.atk + (weapon?.atk ?? 0);
     return this.interceptors.atk.getValue(baseAttack, this);
   }
 

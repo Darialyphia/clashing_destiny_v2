@@ -1,6 +1,5 @@
 import {
   CARD_KINDS,
-  UNIT_KINDS,
   CARD_DECK_SOURCES,
   type Affinity
 } from '@game/engine/src/card/card.enums';
@@ -10,16 +9,13 @@ export const useCardList = () => {
   const authorizedSets: CardSet[] = [CARD_SET_DICTIONARY.CORE];
 
   const KIND_ORDER = {
-    [CARD_KINDS.UNIT]: 1,
-    [CARD_KINDS.SPELL]: 2,
-    [CARD_KINDS.ARTIFACT]: 3,
-    [CARD_KINDS.SECRET]: 4
-  };
-
-  const UNIT_KIND_ORDER = {
-    [UNIT_KINDS.SHRINE]: 1,
-    [UNIT_KINDS.HERO]: 2,
-    [UNIT_KINDS.MINION]: 3
+    [CARD_KINDS.HERO]: 1,
+    [CARD_KINDS.TALENT]: 2,
+    [CARD_KINDS.MINION]: 3,
+    [CARD_KINDS.SPELL]: 4,
+    [CARD_KINDS.ATTACK]: 5,
+    [CARD_KINDS.ARTIFACT]: 6,
+    [CARD_KINDS.LOCATION]: 7
   };
 
   const affinityFilter = ref(new Set<Affinity>());
@@ -44,12 +40,6 @@ export const useCardList = () => {
         }
 
         if (a.kind === b.kind) {
-          if (a.kind === CARD_KINDS.UNIT && b.kind === CARD_KINDS.UNIT) {
-            if (a.unitKind !== b.unitKind) {
-              return UNIT_KIND_ORDER[a.unitKind] - UNIT_KIND_ORDER[b.unitKind];
-            }
-          }
-
           if (
             a.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
             b.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&

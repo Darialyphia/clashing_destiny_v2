@@ -21,9 +21,6 @@ definePage({
           <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
-        </li>
-        <li>
           <!-- <RouterLink :to="{ name: 'Tutorial1' }">Tutorial</RouterLink> -->
         </li>
         <li>

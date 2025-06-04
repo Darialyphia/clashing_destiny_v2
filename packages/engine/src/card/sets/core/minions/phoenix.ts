@@ -32,7 +32,7 @@ export const phoenix: MinionBlueprint = {
     {
       id: 'phoenix-ability',
       label: 'Use ability',
-      description: `Banish this minion. Equip an ${immortalFlame.name} to your hero.`,
+      description: `Banish this minion. Equip an Immortal Flame to your hero.`,
       manaCost: 4,
       shouldExhaust: true,
       canUse() {

@@ -7,7 +7,7 @@ import {
   HoverCardTrigger,
   HoverCardPortal
 } from 'reka-ui';
-import { KEYWORDS, type Keyword } from '@game/engine/src/card/card-keyword';
+import { KEYWORDS, type Keyword } from '@game/engine/src/card/card-keywords';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';

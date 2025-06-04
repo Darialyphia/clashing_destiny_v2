@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 import { useLocalStorage } from '@vueuse/core';
-import { type Affinity } from '@game/engine/src/card/card.enums';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import { domToPng } from 'modern-screenshot';
-import {
-  StandardDeckValidator,
-  type ValidatableDeck
-} from '@game/engine/src/card/validators/deck.validator';
+
 import { DeckBuildervModel } from '@/card/deck-builder.model';
 import { keyBy } from 'lodash-es';
 import FancyButton from '@/ui/components/FancyButton.vue';
@@ -15,6 +11,8 @@ import { Icon } from '@iconify/vue';
 import { useCardList } from '@/card/composables/useCardList';
 import { AFFINITIES } from '@game/engine/src/card/card.enums';
 import { vIntersectionObserver } from '@vueuse/components';
+import type { ValidatableDeck } from '@game/engine/src/card/validators/deck.validator';
+import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
 
 definePage({
   name: 'Collection'
@@ -73,73 +71,73 @@ const saveDeck = () => {
   deckBuilder.value.reset();
 };
 
-const affinities: Array<{
-  id: Affinity;
-  img: string;
-  label: string;
-  color: string;
-}> = [
-  {
-    id: AFFINITIES.NORMAL,
-    img: `/assets/ui/gem-${AFFINITIES.NORMAL.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.NORMAL),
-    color: '#7a7a7a'
-  },
-  {
-    id: AFFINITIES.FIRE,
-    img: `/assets/ui/gem-${AFFINITIES.FIRE.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.FIRE),
-    color: '#f87d35'
-  },
-  {
-    id: AFFINITIES.WATER,
-    img: `/assets/ui/gem-${AFFINITIES.WATER.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.WATER),
-    color: '#409fe2'
-  },
-  {
-    id: AFFINITIES.EARTH,
-    img: `/assets/ui/gem-${AFFINITIES.EARTH.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.EARTH),
-    color: '#c85149'
-  },
-  {
-    id: AFFINITIES.AIR,
-    img: `/assets/ui/gem-${AFFINITIES.AIR.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.AIR),
-    color: '#00fdaa'
-  },
-  {
-    id: AFFINITIES.GENESIS,
-    img: `/assets/ui/gem-${AFFINITIES.GENESIS.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.GENESIS),
-    color: '#d2b72d'
-  },
-  {
-    id: AFFINITIES.VOID,
-    img: `/assets/ui/gem-${AFFINITIES.VOID.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.VOID),
-    color: '#d100b9'
-  },
-  {
-    id: AFFINITIES.HARMONY,
-    img: `/assets/ui/gem-${AFFINITIES.HARMONY.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.HARMONY),
-    color: '#00bf00'
-  },
-  {
-    id: AFFINITIES.WRATH,
-    img: `/assets/ui/gem-${AFFINITIES.WRATH.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.WRATH),
-    color: '#d10038'
-  },
-  {
-    id: AFFINITIES.ARCANE,
-    img: `/assets/ui/gem-${AFFINITIES.ARCANE.toLocaleLowerCase()}.png`,
-    label: uppercaseFirstLetter(AFFINITIES.ARCANE),
-    color: '#9067e9'
-  }
-];
+// const affinities: Array<{
+//   id: Affinity;
+//   img: string;
+//   label: string;
+//   color: string;
+// }> = [
+//   {
+//     id: AFFINITIES.NORMAL,
+//     img: `/assets/ui/gem-${AFFINITIES.NORMAL.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.NORMAL),
+//     color: '#7a7a7a'
+//   },
+//   {
+//     id: AFFINITIES.FIRE,
+//     img: `/assets/ui/gem-${AFFINITIES.FIRE.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.FIRE),
+//     color: '#f87d35'
+//   },
+//   {
+//     id: AFFINITIES.WATER,
+//     img: `/assets/ui/gem-${AFFINITIES.WATER.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.WATER),
+//     color: '#409fe2'
+//   },
+//   {
+//     id: AFFINITIES.EARTH,
+//     img: `/assets/ui/gem-${AFFINITIES.EARTH.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.EARTH),
+//     color: '#c85149'
+//   },
+//   {
+//     id: AFFINITIES.AIR,
+//     img: `/assets/ui/gem-${AFFINITIES.AIR.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.AIR),
+//     color: '#00fdaa'
+//   },
+//   {
+//     id: AFFINITIES.GENESIS,
+//     img: `/assets/ui/gem-${AFFINITIES.GENESIS.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.GENESIS),
+//     color: '#d2b72d'
+//   },
+//   {
+//     id: AFFINITIES.VOID,
+//     img: `/assets/ui/gem-${AFFINITIES.VOID.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.VOID),
+//     color: '#d100b9'
+//   },
+//   {
+//     id: AFFINITIES.HARMONY,
+//     img: `/assets/ui/gem-${AFFINITIES.HARMONY.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.HARMONY),
+//     color: '#00bf00'
+//   },
+//   {
+//     id: AFFINITIES.WRATH,
+//     img: `/assets/ui/gem-${AFFINITIES.WRATH.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.WRATH),
+//     color: '#d10038'
+//   },
+//   {
+//     id: AFFINITIES.ARCANE,
+//     img: `/assets/ui/gem-${AFFINITIES.ARCANE.toLocaleLowerCase()}.png`,
+//     label: uppercaseFirstLetter(AFFINITIES.ARCANE),
+//     color: '#9067e9'
+//   }
+// ];
 
 function uppercaseFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -171,9 +169,6 @@ const viewMode = ref<'normal' | 'small'>('normal');
             <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
           </li>
           <li>
-            <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
-          </li>
-          <li>
             <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
           </li>
         </ul>
@@ -200,7 +195,7 @@ const viewMode = ref<'normal' | 'small'>('normal');
         </label>
       </div>
       <div class="affinity-filter">
-        <button
+        <!-- <button
           v-for="affinity in affinities"
           :key="affinity.label"
           class=""
@@ -210,7 +205,7 @@ const viewMode = ref<'normal' | 'small'>('normal');
         >
           <img :src="affinity.img" :alt="affinity.label" />
           {{ affinity.label }}
-        </button>
+        </button> -->
       </div>
     </header>
     <ul ref="card-list" class="cards fancy-scrollbar" :class="viewMode">

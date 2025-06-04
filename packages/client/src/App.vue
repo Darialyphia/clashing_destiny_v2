@@ -26,7 +26,7 @@ const uiRoot = document.getElementById('#app');
 #ui-root {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 #card-portal {

@@ -16,7 +16,7 @@ export const warlock: HeroBlueprint = {
   affinity: AFFINITIES.NORMAL,
   unlockableAffinities: [
     AFFINITIES.BLOOD,
-    AFFINITIES.CHAOS,
+    AFFINITIES.VOID,
     AFFINITIES.FIRE,
     AFFINITIES.SHADOW
   ],
@@ -27,6 +27,7 @@ export const warlock: HeroBlueprint = {
   unique: false,
   lineage: null,
   spellPower: 0,
+  atk: 0,
   maxHp: 24,
   description: '',
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,

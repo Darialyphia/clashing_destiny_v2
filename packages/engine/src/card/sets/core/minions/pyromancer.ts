@@ -19,7 +19,7 @@ export const pyromancer: MinionBlueprint = {
   unique: false,
   manaCost: 3,
   atk: 2,
-  maxHp: 3,
+  maxHp: 1,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

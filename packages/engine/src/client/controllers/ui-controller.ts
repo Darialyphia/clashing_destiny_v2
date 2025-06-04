@@ -78,6 +78,9 @@ export class UiController {
 
       this._isChooseAffinityInteractionOverlayOpened =
         this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_AFFINITY;
+
+      this._isManaCostOverlayOpened =
+        this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
     }
 
     if (this.isTurnPlayer) {

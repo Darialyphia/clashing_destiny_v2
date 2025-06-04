@@ -1,4 +1,3 @@
-import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import { singleEmptyAllySlot } from '../../../card-utils';
 import {

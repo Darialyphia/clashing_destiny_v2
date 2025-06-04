@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import {
-  CARD_KINDS,
   RARITIES,
-  UNIT_KINDS,
   type Affinity,
   type CardKind,
-  type Rarity,
-  type UnitKind
+  type Rarity
 } from '@game/engine/src/card/card.enums';
 import { clamp, isDefined, mapRange } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -20,12 +17,11 @@ const { card } = defineProps<{
     image: string;
     kind: CardKind;
     affinity: Affinity;
+    uinlockableAffinities?: Affinity[];
     manaCost?: number;
     destinyCost?: number;
-    unitKind?: UnitKind;
     rarity: Rarity;
     level?: number;
-    job?: string;
     atk?: number;
     hp?: number;
     spellpower?: number;
@@ -47,24 +43,21 @@ const rarityBg = computed(() => {
 });
 
 const kindBg = computed(() => {
-  if (!isDefined(card.unitKind)) {
-    return `url('/assets/ui/card-kind-${card.kind.toLowerCase()}.png')`;
-  } else if (card.unitKind === UNIT_KINDS.SHRINE) {
-    return `url('/assets/ui/card-kind-hero.png')`;
-  }
-  return `url('/assets/ui/card-kind-${card.unitKind.toLowerCase()}.png')`;
+  return `url('/assets/ui/card-kind-${card.kind.toLowerCase()}.png')`;
 });
 
 const imageBg = computed(() => {
-  return `url('${card.image}')`;
+  // return `url('${card.image}')`;
+  return `url('/assets/icons/placeholder.png')`;
 });
 
 const affinityBg = computed(() => {
   return `url('/assets/ui/card-bg-${card.affinity.toLowerCase()}.png')`;
 });
-const affinityGemBg = computed(() => {
-  return `url('/assets/ui/gem-${card.affinity.toLowerCase()}.png')`;
-});
+
+const affinityGemBg = (affinity: Affinity) => {
+  return `url('/assets/ui/affinity-${affinity.toLowerCase()}.png')`;
+};
 
 const root = useTemplateRef('card');
 const { x, y } = useMouse();
@@ -145,12 +138,26 @@ const isMultiLine = computed(() => {
       <div class="name" :data-text="card.name">
         {{ card.name }}
       </div>
-      <div class="affinity-gem" />
-      <div class="affinity-gem" />
-
+      <div></div>
+      <div class="affinity-zone">
+        <template v-if="card.uinlockableAffinities">
+          <div
+            v-for="affinity in card.uinlockableAffinities"
+            :key="affinity"
+            class="affinity"
+            :style="{ '--bg': affinityGemBg(affinity) }"
+          />
+        </template>
+        <div
+          v-else
+          class="affinity"
+          :style="{ '--bg': affinityGemBg(card.affinity) }"
+        />
+      </div>
+      <!--
       <div class="level" v-if="card.level">
         <div v-for="i in card.level" :key="i" class="level-icon" />
-      </div>
+      </div> -->
 
       <div class="rarity" />
       <div class="stats">
@@ -187,13 +194,8 @@ const isMultiLine = computed(() => {
       </div>
       <div class="kind">
         <div class="kind-icon" />
-        {{
-          card.kind === CARD_KINDS.UNIT
-            ? card.unitKind?.toLocaleLowerCase()
-            : card.kind.toLocaleLowerCase()
-        }}
-        <template v-if="card.job">-</template>
-        {{ card.job?.toLocaleLowerCase() }}
+        <template v-if="isDefined(card.level)">Lvl {{ card.level }}</template>
+        {{ card.kind.toLocaleLowerCase() }}
       </div>
       <div
         class="description"
@@ -323,15 +325,21 @@ const isMultiLine = computed(() => {
   align-items: center;
 }
 
-.affinity-gem {
-  background: v-bind(affinityGemBg);
+.affinity-zone {
+  position: absolute;
+  top: calc(2px * var(--pixel-scale));
+  right: calc(2px * var(--pixel-scale));
+  display: flex;
+  flex-direction: column;
+  gap: calc(2px * var(--pixel-scale));
+}
+
+.affinity {
+  background: var(--bg);
   background-size: cover;
   background-position: center;
   width: calc(26px * var(--pixel-scale));
   height: calc(28px * var(--pixel-scale));
-  position: absolute;
-  top: calc(2px * var(--pixel-scale));
-  right: calc(2px * var(--pixel-scale));
 }
 
 .rarity {
@@ -361,8 +369,8 @@ const isMultiLine = computed(() => {
     height: calc(30px * var(--pixel-scale));
     display: grid;
     place-content: center;
-    font-size: 28px;
-    padding-top: calc(4px * var(--pixel-scale));
+    font-size: 24px;
+    padding-top: calc(3px * var(--pixel-scale));
     font-family: 'NotJamSlab11', monospace;
   }
 }
