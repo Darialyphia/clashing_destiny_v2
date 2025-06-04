@@ -11,6 +11,7 @@ import { KEYWORDS, type Keyword } from '@game/engine/src/card/card-keywords';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -26,13 +27,16 @@ type Token =
   | { type: 'exhaust' }
   | { type: 'mana'; text: string }
   | { type: 'spellpower' }
-  | { type: 'dynamic-value'; text: string };
+  | { type: 'dynamic-value'; text: string }
+  | { type: 'level-bonus'; text: string }
+  | { type: 'lineage-bonus'; text: string };
 
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
   return text.split(KEYWORD_DELIMITER).map(part => {
     const keyword = Object.values(KEYWORDS).find(keyword => {
+      if (part.startsWith('[')) return false;
       return (
         part.toLowerCase().match(keyword.name.toLowerCase()) ||
         keyword.aliases.some(alias => {
@@ -61,6 +65,18 @@ const tokens = computed<Token[]>(() => {
     if (part.startsWith('[spellpower]')) {
       return { type: 'spellpower' };
     }
+    if (part.startsWith('[level]')) {
+      return {
+        type: 'level-bonus',
+        text: part.replace('[level] ', 'Level ')
+      };
+    }
+    if (part.startsWith('[lineage]')) {
+      return {
+        type: 'lineage-bonus',
+        text: part.replace('[lineage] ', '')
+      };
+    }
     return { type: 'text', text: part };
   });
 });
@@ -80,13 +96,12 @@ const tokens = computed<Token[]>(() => {
       />
 
       <template v-else-if="token.type === 'spellpower'">
-        <!-- <UiSimpleTooltip>
+        <UiSimpleTooltip>
           <template #trigger>
             <img src="/assets/ui/ability-power.png" class="inline" />
           </template>
           Spellpower
-        </UiSimpleTooltip> -->
-        SpellPower
+        </UiSimpleTooltip>
       </template>
 
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
@@ -120,14 +135,23 @@ const tokens = computed<Token[]>(() => {
 }
 
 .token-mana {
-  background-color: #5185ff;
+  background: url('/assets/ui/mana-cost.png') no-repeat center center;
+  background-size: cover;
+  font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
   width: var(--size-5);
   height: var(--size-5);
-  border: solid 2px #662fe1;
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  padding-bottom: 1px;
+  text-shadow: 0 2px 2px black;
+}
+
+.token-level-bonus,
+.token-lineage-bonus {
+  font-weight: var(--font-weight-7);
+  text-decoration: underline;
 }
 .token-card {
   color: var(--lime-3);

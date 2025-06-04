@@ -31,7 +31,7 @@ export const magicGrimoire: ArtifactBlueprint = {
       id: 'magic-grimoire-ability',
       label: 'Gain Affinity',
       description:
-        'Gain an affinity of your current Hero until the end of the turn. This loses 1 durability',
+        '@[mana] 1@ @[exhaust]@ : Gain an affinity of your current Hero until the end of the turn. This loses 1 durability',
       manaCost: 1,
       shouldExhaust: true,
       canUse: () => true,

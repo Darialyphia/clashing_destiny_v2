@@ -1,11 +1,6 @@
-import type { Modifier } from '../../../../modifier/modifier.entity';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import {
-  singleEnemyMinionTargetRules,
-  singleEnemyTargetRules
-} from '../../../card-utils';
+import { singleEnemyMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -21,7 +16,7 @@ export const ignite: SpellBlueprint<MinionCard> = {
   name: 'Ignite',
   cardIconId: 'ignite',
   description:
-    'Inflict @Burn@ to an enemy minion.\n@Level 2 Bonus@: Draw 1 card into your Destiny Zone.',
+    'Inflict @Burn@ to an enemy minion.\n@[level] 2+ Bonus@: Draw 1 card into your Destiny Zone.',
   collectable: true,
   unique: false,
   manaCost: 1,

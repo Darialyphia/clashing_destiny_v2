@@ -17,7 +17,7 @@ export const finalSlash: AttackBlueprint = {
   id: 'final-slash',
   name: 'Final Slash',
   cardIconId: 'final-slash',
-  description: `@Lineage Bonus(${warrior.name})@ : Multiply this card's damage by your hero level.`,
+  description: `@[lineage] ${warrior.name} bonus@ : Multiply this card's damage by your hero level.`,
   collectable: true,
   unique: false,
   manaCost: 2,

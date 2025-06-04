@@ -14,7 +14,7 @@ export const arcaneInsight: SpellBlueprint<PreResponseTarget> = {
   id: 'arcane-insight',
   name: 'Arcane Insight',
   cardIconId: 'arcane-insight',
-  description: 'Draw a card. @Level 2 bonus@: Draw another card in your Destiny zone.',
+  description: 'Draw a card. @[level] 2+ bonus@: Draw another card in your Destiny zone.',
   collectable: true,
   unique: false,
   manaCost: 1,

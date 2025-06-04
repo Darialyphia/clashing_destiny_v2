@@ -20,7 +20,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'fire-ball',
-  description: `Deal 3 damage to all minions. @Lineage Bonus(${mage.name})@, @Level 3 bonus@: This costs 2 less.`,
+  description: `Deal 3 damage to all minions. @[lineage] ${mage.name} bonus@, @[level] 3+ bonus@: This costs 2 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,

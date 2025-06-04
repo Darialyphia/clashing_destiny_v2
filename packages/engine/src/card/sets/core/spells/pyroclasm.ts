@@ -1,13 +1,9 @@
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import {
-  singleEnemyMinionTargetRules,
-  singleEnemyTargetRules
-} from '../../../card-utils';
+import { singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -25,7 +21,7 @@ export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'pyroclasm',
   name: 'Pyroclasm',
   cardIconId: 'pyroclasm',
-  description: `Deal (4 + Spellpower) damage to an enemy. @Lineage Bonus(${mage.name})@: this costs 2 less.`,
+  description: `Deal 4 + @[spellpower]@ damage to an enemy.\n@[lineage] ${mage.name} bonus@: this costs 2 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,

@@ -14,7 +14,7 @@ export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   cardIconId: 'pyromancer',
-  description: `@On Enter@: Put a ${fireBolt.name} in your hand.`,
+  description: `@On Enter@: Put a @${fireBolt.name}@ in your hand.`,
   collectable: true,
   unique: false,
   manaCost: 3,

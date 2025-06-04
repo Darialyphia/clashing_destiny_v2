@@ -30,7 +30,7 @@ export const immortalFlame: ArtifactBlueprint = {
     {
       id: 'immortal-blade-ability',
       label: 'Use ability',
-      description: `Banish this card. Summon a @${phoenix.name}@ on your side of the field.`,
+      description: `@[mana] 4@ @[exhaust]@ : Banish this card. Summon a @${phoenix.name}@ on your side of the field.`,
       manaCost: 4,
       shouldExhaust: true,
       canUse: singleEmptyAllySlot.canPlay,

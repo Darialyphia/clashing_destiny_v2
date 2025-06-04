@@ -25,6 +25,9 @@ export const useCardList = () => {
       .map(set => set.cards)
       .flat()
       .filter(card => {
+        if (!card.collectable) {
+          return false;
+        }
         if (
           affinityFilter.value.size > 0 &&
           !affinityFilter.value.has(card.affinity)

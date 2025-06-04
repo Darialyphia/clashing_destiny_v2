@@ -1,6 +1,5 @@
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -17,7 +16,7 @@ export const flagBearerOfFlame: MinionBlueprint = {
   id: 'flagBearerOfFlame',
   name: 'Flag Bearer of Flame',
   cardIconId: 'flag-bearer-of-flame',
-  description: `The ally in front of this minion has +1 / +0`,
+  description: `The ally in front of this minion has +1/+0.`,
   collectable: true,
   unique: false,
   manaCost: 2,

@@ -21,7 +21,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   id: 'fire-ball',
   name: 'Fire Ball',
   cardIconId: 'fire-ball',
-  description: `Deal 3 damage to an enemy minion. Inflict @Burn@ to adjacent minions.\n@Lineage Bonus(${mage.name})@: this costs 1 less.`,
+  description: `Deal 3 damage to an enemy minion. Inflict @Burn@ to adjacent minions.\n@[lineage] ${mage.name} bonus@: this costs 1 less.`,
   collectable: true,
   unique: false,
   manaCost: 4,

@@ -8,13 +8,12 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { fireBolt } from '../spells/fire-bolt';
 
 export const blazingSalamander: MinionBlueprint = {
   id: 'blazingSalamander',
   name: 'Blazing Salamander',
   cardIconId: 'blazing-salamander',
-  description: `@On Enter@: Inflict @Burn@ to all other minions in the same row as this minion. Then if 5 or more minions are affected by @Burn@, draw a card.`,
+  description: `@On Enter@: Inflict @Burn@ to all other minions in the same column as this minion. Then if 5 or more minions are affected by @Burn@, draw a card.`,
   collectable: true,
   unique: false,
   manaCost: 3,

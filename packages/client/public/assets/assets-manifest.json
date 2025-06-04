@@ -1851,6 +1851,266 @@
         },
         {
           "alias": [
+            "affinity-arcane.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-arcane.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-arms.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-arms.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-armsl.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-armsl.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-blood.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-blood.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-chrono.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-chrono.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-cosmic.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-cosmic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-earth.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-earth.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-fire.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-frost.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-frost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-holy.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-holy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-ice.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-ice.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-nature.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-nature.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-normal.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-normal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-primal.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-primal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-shadow.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-shadow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-storm.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-storm.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-tech.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-tech.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-void.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-void.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-water.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-water.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-wind.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-wind.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "ally-indicator.png"
           ],
           "src": [
@@ -2125,6 +2385,45 @@
         },
         {
           "alias": [
+            "card-bg-blood.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-blood.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-chrono.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-chrono.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-cosmic.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-cosmic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-bg-earth.png"
           ],
           "src": [
@@ -2177,10 +2476,88 @@
         },
         {
           "alias": [
+            "card-bg-holy.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-holy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-nature.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-nature.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-bg-normal.png"
           ],
           "src": [
             "/assets/ui/card-bg-normal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-primal.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-primal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-shadow.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-shadow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-storm.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-storm.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-tech.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-tech.png"
           ],
           "data": {
             "tags": {
@@ -2207,6 +2584,19 @@
           ],
           "src": [
             "/assets/ui/card-bg-water.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-bg-wind.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-wind.png"
           ],
           "data": {
             "tags": {
@@ -2320,10 +2710,36 @@
         },
         {
           "alias": [
+            "card-kind-attack.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-kind-hero.png"
           ],
           "src": [
             "/assets/ui/card-kind-hero.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-location.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-location.png"
           ],
           "data": {
             "tags": {
@@ -2363,6 +2779,19 @@
           ],
           "src": [
             "/assets/ui/card-kind-spell.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-talent.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-talent.png"
           ],
           "data": {
             "tags": {

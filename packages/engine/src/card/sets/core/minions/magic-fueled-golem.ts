@@ -12,14 +12,14 @@ import {
 import type { MinionCard } from '../../../entities/minion.card';
 
 export const magicFueledGolem: MinionBlueprint = {
-  id: 'mana-fueled-golem',
-  name: 'Mana-Fueled Golem',
-  cardIconId: 'mana-fueled-golem',
-  description: `This cannot attack or block unless you have at least 3 spellPower.`,
+  id: 'magic-fueled-golem',
+  name: 'Magic-Fueled Golem',
+  cardIconId: 'magic-fueled-golem',
+  description: `This cannot attack or block unless your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,
-  manaCost: 3,
-  atk: 1,
+  manaCost: 2,
+  atk: 3,
   maxHp: 3,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

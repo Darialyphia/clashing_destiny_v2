@@ -70,7 +70,7 @@ const tag = computed(() => {
     position: relative;
     z-index: 0;
 
-    border-image-slice: 39 fill;
+    border-image-slice: 38 fill;
     border-image-width: 39px;
     border-radius: var(--_ui-button-radius);
 

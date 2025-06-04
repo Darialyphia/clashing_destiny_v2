@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  CARD_KINDS,
   RARITIES,
   type Affinity,
   type CardKind,
@@ -27,6 +28,7 @@ const { card } = defineProps<{
     spellpower?: number;
     durability?: number;
     abilities?: string[];
+    subKind?: string;
   };
 }>();
 
@@ -44,6 +46,10 @@ const rarityBg = computed(() => {
 
 const kindBg = computed(() => {
   return `url('/assets/ui/card-kind-${card.kind.toLowerCase()}.png')`;
+});
+
+const subKindBg = computed(() => {
+  return `url('/assets/ui/subkind-${(card.subKind ?? '').toLowerCase()}.png')`;
 });
 
 const imageBg = computed(() => {
@@ -213,6 +219,9 @@ const isMultiLine = computed(() => {
         <span ref="multi-line-checker" />
       </div>
 
+      <div class="sub-kind" v-if="card.subKind">
+        {{ card.subKind }}
+      </div>
       <div class="glare lt-lg:hidden" />
     </div>
     <div class="card-back" />
@@ -251,7 +260,7 @@ const isMultiLine = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('/assets/ui/card-back4.png');
+  background: url('/assets/ui/card-back5.png');
   background-size: cover;
 }
 
@@ -303,7 +312,7 @@ const isMultiLine = computed(() => {
   } */
 
   .unit & {
-    background-position: center -10px;
+    background-position: center -20px;
   }
 }
 
@@ -312,7 +321,7 @@ const isMultiLine = computed(() => {
   text-align: center;
   text-wrap: pretty;
   position: absolute;
-  top: calc(90px * var(--pixel-scale));
+  top: calc(80px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
   font-size: 18px;
@@ -349,17 +358,16 @@ const isMultiLine = computed(() => {
   width: calc(12px * var(--pixel-scale));
   height: calc(15px * var(--pixel-scale));
   position: absolute;
-  top: calc(112px * var(--pixel-scale));
+  top: calc(102px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
 }
 
 .stats {
   position: absolute;
-  top: calc(2px * var(--pixel-scale));
+  top: calc(0px * var(--pixel-scale));
   left: calc(2px * var(--pixel-scale));
   display: flex;
-  gap: calc(2px * var(--pixel-scale));
   flex-direction: column;
   > * {
     z-index: 0;
@@ -423,7 +431,7 @@ const isMultiLine = computed(() => {
   width: calc(96px * var(--pixel-scale));
   height: calc(16px * var(--pixel-scale));
   position: absolute;
-  top: calc(128px * var(--pixel-scale));
+  top: calc(120px * var(--pixel-scale));
   left: calc(20px * var(--pixel-scale));
   display: flex;
   align-items: center;
@@ -444,7 +452,7 @@ const isMultiLine = computed(() => {
   width: calc(116px * var(--pixel-scale));
   height: calc(58px * var(--pixel-scale));
   position: absolute;
-  top: calc(147px * var(--pixel-scale));
+  top: calc(139px * var(--pixel-scale));
   left: calc(24px * var(--pixel-scale));
   font-size: calc(1px * v-bind(textSize));
   overflow: hidden;
@@ -461,6 +469,24 @@ const isMultiLine = computed(() => {
     align-self: start;
     vertical-align: top;
   }
+}
+
+.sub-kind {
+  height: calc(16px * var(--pixel-scale));
+  position: absolute;
+  bottom: calc(2px * var(--pixel-scale));
+  right: calc(2px * var(--pixel-scale));
+  font-size: 14px;
+  overflow: hidden;
+  background: v-bind(subKindBg), black;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: calc(16px * var(--pixel-scale))
+    calc(16px * var(--pixel-scale));
+  padding-inline: calc(18px * var(--pixel-scale)) 6px;
 }
 
 .glare {

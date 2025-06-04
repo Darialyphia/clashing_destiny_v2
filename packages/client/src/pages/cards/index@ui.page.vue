@@ -20,7 +20,10 @@ definePage({
 
 const { cards, hasAffinityFilter, toggleAffinityFilter } = useCardList();
 
-const decks = useLocalStorage<ValidatableDeck[]>('clash-of-destiny-decks', []);
+const decks = useLocalStorage<ValidatableDeck[]>(
+  'clashing-destinies-decks',
+  []
+);
 const collection = computed(() =>
   cards.value.map(card => ({ blueprint: card, copiesOwned: 4 }))
 );
