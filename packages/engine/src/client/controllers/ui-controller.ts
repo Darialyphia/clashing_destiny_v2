@@ -1,12 +1,25 @@
+import type { Override } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
+import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
+import { DeclareAttackCardAction } from '../actions/declare-attack';
+import { SelectCardAction } from '../actions/select-card';
+import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
+import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
+import { SelectMinionslotAction } from '../actions/select-minion-slot';
 
-type CardClickRule = {
+export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
   handler: (card: CardViewModel) => void;
+};
+
+export type UiMinionslot = Override<MinionPosition, { player: PlayerViewModel }>;
+export type MinionSlotClickRule = {
+  predicate: (slot: UiMinionslot, state: GameClientState) => boolean;
+  handler: (slot: UiMinionslot) => void;
 };
 
 export class UiController {
@@ -26,10 +39,13 @@ export class UiController {
 
   private cardClickRules: CardClickRule[] = [];
 
+  private minionSlotClickRules: MinionSlotClickRule[] = [];
+
   private hoverTimeout: NodeJS.Timeout | null = null;
 
   constructor(private client: GameClient) {
     this.buildClickRules();
+    this.buildMinionSlotClickRules();
   }
 
   get hoveredCard() {
@@ -66,47 +82,14 @@ export class UiController {
 
   private buildClickRules() {
     this.cardClickRules = [
-      {
-        predicate: (card, state) =>
-          card.getPlayer().id === this.client.playerId &&
-          state.interaction.state === INTERACTION_STATES.IDLE &&
-          !this.selectedCard?.equals(card) &&
-          this.isInteractingPlayer,
-        handler: card => {
-          this.select(card);
-        }
-      },
-      {
-        predicate: card =>
-          this.isSelectingAttackTarget &&
-          card.getPlayer().id !== this.client.playerId &&
-          this.isInteractingPlayer,
-        handler: card => {
-          this.client.adapter.dispatch({
-            type: 'declareAttack',
-            payload: {
-              attackerId: this.selectedCard!.id,
-              defenderId: card.id,
-              playerId: this.client.playerId
-            }
-          });
-        }
-      },
-      {
-        predicate: (card, state) =>
-          state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-          this.isInteractingPlayer,
-        handler: card => {
-          this.client.adapter.dispatch({
-            type: 'selectCardOnBoard',
-            payload: {
-              cardId: card.id,
-              playerId: this.client.playerId
-            }
-          });
-        }
-      }
+      new SelectCardAction(this.client),
+      new DeclareAttackCardAction(this.client),
+      new SelectCardOnBoardAction(this.client)
     ];
+  }
+
+  private buildMinionSlotClickRules() {
+    this.minionSlotClickRules = [new SelectMinionslotAction(this.client)];
   }
 
   onCardClick(card: CardViewModel) {
@@ -120,6 +103,17 @@ export class UiController {
     }
 
     this.unselect();
+  }
+
+  onMinionSlotClick(slot: UiMinionslot) {
+    const state = this.client.state;
+
+    for (const rule of this.minionSlotClickRules) {
+      if (rule.predicate(slot, state)) {
+        rule.handler(slot);
+        return;
+      }
+    }
   }
 
   get isInteractingPlayer() {

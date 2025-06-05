@@ -5,9 +5,11 @@ import { GAME_PHASES } from '../../game/game.enums';
 import { IllegalTargetError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
-  zone: z.enum(['attack', 'defense']),
-  slot: z.number(),
-  playerId: z.string()
+  slot: z.object({
+    zone: z.enum(['attack', 'defense']),
+    slot: z.number(),
+    player: z.string()
+  })
 });
 
 export class SelectMinionSlotInput extends Input<typeof schema> {
@@ -26,13 +28,13 @@ export class SelectMinionSlotInput extends Input<typeof schema> {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['SELECTING_MINION_SLOT']>();
 
-    const player = this.game.playerSystem.getPlayerById(this.payload.playerId);
+    const player = this.game.playerSystem.getPlayerById(this.payload.slot.player);
     if (!player) {
       throw new IllegalTargetError();
     }
     await interactionContext.ctx.selectPosition(this.player, {
-      zone: this.payload.zone,
-      slot: this.payload.slot,
+      zone: this.payload.slot.zone,
+      slot: this.payload.slot.slot,
       player
     });
   }
