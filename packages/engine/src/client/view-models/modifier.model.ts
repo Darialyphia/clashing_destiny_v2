@@ -1,17 +1,20 @@
 import type { InputDispatcher } from '../../input/input-system';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
-import type { GameStateEntities } from '../client';
+import type { GameClient, GameStateEntities } from '../client';
 import type { CardViewModel } from './card.model';
 
 export class ModifierViewModel {
   private getEntities: () => GameStateEntities;
 
+  private getClient: () => GameClient;
+
   constructor(
     private data: SerializedModifier,
     entityDictionary: GameStateEntities,
-    private dispatcher: InputDispatcher
+    client: GameClient
   ) {
     this.getEntities = () => entityDictionary;
+    this.getClient = () => client;
   }
 
   equals(unit: ModifierViewModel | SerializedModifier) {

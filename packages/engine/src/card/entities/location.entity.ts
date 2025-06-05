@@ -1,4 +1,5 @@
 import type { Game } from '../../game/game';
+import { GAME_PHASES } from '../../game/game.enums';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -44,6 +45,8 @@ export class LocationCard extends Card<
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
         !this.game.effectChainSystem.currentChain &&
+        this.location === 'hand' &&
+        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
         this.blueprint.canPlay(this.game, this),
       this
     );

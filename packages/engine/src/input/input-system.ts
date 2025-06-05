@@ -34,6 +34,7 @@ import { UseCardAbilityInput } from './inputs/use-card-ability.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
+import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -53,6 +54,7 @@ const inputMap = validateinputMap({
   commitPlayCard: CommitPlayCardInput,
   playDestinyCard: PlayDestinyCardInput,
   declareAttack: DeclareAttackInput,
+  declareAttackTarget: DeclareAttackTargetInput,
   declareBlocker: DeclareBlockerInput,
   declareEndTurn: DeclareEndTurnInput,
   passChain: PassChainInput,

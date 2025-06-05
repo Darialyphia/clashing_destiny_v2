@@ -1,4 +1,5 @@
 import type { Game } from '../../game/game';
+import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -43,11 +44,19 @@ export class SpellCard extends Card<
     return this.blueprint.subKind === SPELL_KINDS.BURST;
   }
 
+  get authorizedPhases(): GamePhase[] {
+    if (this.blueprint.subKind === SPELL_KINDS.BURST) {
+      return [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+    }
+    return [GAME_PHASES.MAIN];
+  }
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost && this.game.effectChainSystem.currentChain
-        ? this.canPlayDuringChain
-        : true && this.blueprint.canPlay(this.game, this),
+      this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
+        this.location === 'hand' &&
+        this.canPayManaCost &&
+        this.blueprint.canPlay(this.game, this) &&
+        (this.game.effectChainSystem.currentChain ? this.canPlayDuringChain : true),
       this
     );
   }

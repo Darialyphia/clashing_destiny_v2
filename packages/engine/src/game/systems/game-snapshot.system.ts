@@ -11,7 +11,7 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedAttackCard } from '../../card/entities/attck.entity';
+import type { SerializedAttackCard } from '../../card/entities/attack.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedTalentCard } from '../../card/entities/talent.entity';

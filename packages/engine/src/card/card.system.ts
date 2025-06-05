@@ -17,7 +17,7 @@ import { SpellCard } from './entities/spell.entity';
 import { ArtifactCard } from './entities/artifact.entity';
 import { MinionCard } from './entities/minion.card';
 import { HeroCard } from './entities/hero.entity';
-import { AttackCard } from './entities/attck.entity';
+import { AttackCard } from './entities/attack.entity';
 import { TalentCard } from './entities/talent.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';

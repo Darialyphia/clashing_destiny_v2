@@ -10,7 +10,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { AttackCard } from '../../../entities/attck.entity';
+import type { AttackCard } from '../../../entities/attack.entity';
 import { mage } from '../heroes/mage';
 
 export const arcaneRay: AttackBlueprint = {

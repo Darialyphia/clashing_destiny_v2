@@ -17,6 +17,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedHeroCard = SerializedCard & {
   level: number;
@@ -279,6 +280,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     if (!this.blueprint.lineage) return true;
 
     return (
+      this.location === 'destinyDeck' &&
+      this.game.gamePhaseSystem.getContext().state === GAME_PHASES.DESTINY &&
       this.player.hero.hasLineage(this.blueprint.lineage) &&
       this.blueprint.level - this.player.hero.level === 1
     );

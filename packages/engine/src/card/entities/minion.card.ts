@@ -16,6 +16,8 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -25,6 +27,7 @@ export type SerializedMinionCard = SerializedCard & {
   affinity: Affinity;
   manaCost: number;
   abilities: SerializedAbility[];
+  position: Pick<MinionPosition, 'zone' | 'slot'> | null;
 };
 export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;
@@ -335,6 +338,8 @@ export class MinionCard extends Card<
       this.canPayManaCost &&
         !this.game.effectChainSystem.currentChain &&
         this.player.boardSide.hasUnoccupiedSlot &&
+        this.location === 'hand' &&
+        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
         this.blueprint.canPlay(this.game, this),
       this
     );
@@ -388,6 +393,9 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       remainingHp: this.remainingHp,
       affinity: this.blueprint.affinity,
+      position: this.position
+        ? { zone: this.position.zone, slot: this.position.slot }
+        : null,
       abilities: this.blueprint.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),

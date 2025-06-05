@@ -51,6 +51,8 @@ export class AttackCard extends Card<
       this.canPayManaCost &&
         !this.game.effectChainSystem.currentChain &&
         !this.player.hero.isExhausted &&
+        this.location === 'hand' &&
+        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
         this.blueprint.canPlay(this.game, this),
       this
     );
@@ -76,7 +78,10 @@ export class AttackCard extends Card<
     await this.game.gamePhaseSystem.startCombat();
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['ATTACK']>()
-      .ctx.declareAttacker({ attacker: this.player.hero, target });
+      .ctx.declareAttacker(this.player.hero);
+    await this.game.gamePhaseSystem
+      .getContext<GamePhasesDict['ATTACK']>()
+      .ctx.declareAttackTarget(target);
 
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,

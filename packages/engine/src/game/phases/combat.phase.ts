@@ -20,6 +20,7 @@ export type Defender = MinionCard | HeroCard;
 
 export const COMBAT_STEPS = {
   DECLARE_ATTACKER: 'declare-attacker',
+  DECLARE_TARGET: 'declare-target',
   DECLARE_BLOCKER: 'declare-blocker',
   BUILDING_CHAIN: 'chain',
   RESOLVING_COMBAT: 'resolving'
@@ -29,6 +30,7 @@ export type CombatStep = Values<typeof COMBAT_STEPS>;
 
 export const COMBAT_STEP_TRANSITIONS = {
   ATTACKER_DECLARED: 'attacker-declared',
+  ATTACKER_TARGET_DECLARED: 'attacker-target-declared',
   BLOCKER_DECLARED: 'blocker-declared',
   CHAIN_RESOLVED: 'chain-resolved'
 } as const;
@@ -40,28 +42,49 @@ export type SerializedCombatPhase = {
   target: string;
   blocker: string | null;
   step: CombatStep;
+  potentialTargets: string[];
   potentialBlockers: string[];
 };
 
 export class BeforeDeclareAttackEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget },
-  { attacker: string; target: string }
+  { attacker: Attacker },
+  { attacker: string }
 > {
   serialize() {
     return {
-      attacker: this.data.attacker.id,
-      target: this.data.target.id
+      attacker: this.data.attacker.id
     };
   }
 }
 
 export class AfterDeclareAttackEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget },
-  { attacker: string; target: string }
+  { attacker: Attacker },
+  { attacker: string }
 > {
   serialize() {
     return {
-      attacker: this.data.attacker.id,
+      attacker: this.data.attacker.id
+    };
+  }
+}
+
+export class BeforeDeclareAttackTargetEvent extends TypedSerializableEvent<
+  { target: AttackTarget },
+  { target: string }
+> {
+  serialize() {
+    return {
+      target: this.data.target.id
+    };
+  }
+}
+
+export class AfterDeclareAttackTargetEvent extends TypedSerializableEvent<
+  { target: AttackTarget },
+  { target: string }
+> {
+  serialize() {
+    return {
       target: this.data.target.id
     };
   }
@@ -117,6 +140,8 @@ export class AfterResolveCombatEvent extends TypedSerializableEvent<
 export const COMBAT_EVENTS = {
   BEFORE_DECLARE_ATTACK: 'combat.before-declare-attack',
   AFTER_DECLARE_ATTACK: 'combat.after-declare-attack',
+  BEFORE_DECLARE_ATTACK_TARGET: 'combat.before-declare-attack-target',
+  AFTER_DECLARE_ATTACK_TARGET: 'combat.after-declare-attack-target',
   BEFORE_DECLARE_BLOCKER: 'combat.before-declare-blocker',
   AFTER_DECLARE_BLOCKER: 'combat.after-declare-blocker',
   BEFORE_RESOLVE_COMBAT: 'combat.before-resolve-combat',
@@ -127,6 +152,8 @@ export type CombatEventName = Values<typeof COMBAT_EVENTS>;
 export type CombatEventMap = {
   [COMBAT_EVENTS.BEFORE_DECLARE_ATTACK]: BeforeDeclareAttackEvent;
   [COMBAT_EVENTS.AFTER_DECLARE_ATTACK]: AfterDeclareAttackEvent;
+  [COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET]: BeforeDeclareAttackTargetEvent;
+  [COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET]: AfterDeclareAttackTargetEvent;
   [COMBAT_EVENTS.BEFORE_DECLARE_BLOCKER]: BeforeDeclareBlockerEvent;
   [COMBAT_EVENTS.AFTER_DECLARE_BLOCKER]: AfterDeclareBlockerEvent;
   [COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT]: BeforeResolveCombatEvent;
@@ -148,6 +175,11 @@ export class CombatPhase
       stateTransition(
         COMBAT_STEPS.DECLARE_ATTACKER,
         COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED,
+        COMBAT_STEPS.DECLARE_TARGET
+      ),
+      stateTransition(
+        COMBAT_STEPS.DECLARE_TARGET,
+        COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED,
         COMBAT_STEPS.DECLARE_BLOCKER
       ),
       stateTransition(
@@ -167,31 +199,51 @@ export class CombatPhase
     return this.target.player.minions.filter(minion => this.canBlock(minion));
   }
 
-  async declareAttacker({
-    attacker,
-    target
-  }: {
-    attacker: Attacker;
-    target: AttackTarget;
-  }) {
+  get potentialTargets(): AttackTarget[] {
+    return [
+      ...this.attacker.player.opponent.minions,
+      this.attacker.player.opponent.hero
+    ].filter(card => card.canBeAttacked);
+  }
+
+  async declareAttacker(attacker: Attacker) {
     assert(
       this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED),
       new WrongCombatStepError()
     );
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_DECLARE_ATTACK,
-      new BeforeDeclareAttackEvent({ attacker, target })
+      new BeforeDeclareAttackEvent({ attacker })
     );
 
     this.attacker = attacker;
-    this.target = target;
-
-    await this.attacker.exhaust();
 
     this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK,
-      new AfterDeclareAttackEvent({ attacker, target })
+      new AfterDeclareAttackEvent({ attacker })
+    );
+
+    await this.game.inputSystem.askForPlayerInput();
+  }
+
+  async declareAttackTarget(target: AttackTarget) {
+    assert(
+      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
+      new WrongCombatStepError()
+    );
+    await this.game.emit(
+      COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET,
+      new BeforeDeclareAttackTargetEvent({ target })
+    );
+
+    this.target = target;
+    await this.attacker.exhaust();
+
+    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
+    await this.game.emit(
+      COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
+      new AfterDeclareAttackTargetEvent({ target })
     );
 
     await this.game.inputSystem.askForPlayerInput();
@@ -260,7 +312,8 @@ export class CombatPhase
       target: this.target.id,
       blocker: this.blocker?.id ?? null,
       step: this.getState(),
-      potentialBlockers: this.potentialBlockers.map(b => b.id)
+      potentialBlockers: this.potentialBlockers.map(b => b.id),
+      potentialTargets: this.potentialTargets.map(t => t.id)
     };
   }
 }

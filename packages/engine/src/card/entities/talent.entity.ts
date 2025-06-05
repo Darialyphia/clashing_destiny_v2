@@ -1,4 +1,5 @@
 import type { Game } from '../../game/game';
+import { GAME_PHASES } from '../../game/game.enums';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -43,6 +44,8 @@ export class TalentCard extends Card<
       this.player.hero.hasLineage(this.blueprint.heroId) &&
         this.canPayDestinyCost &&
         this.player.hero.level >= this.level &&
+        this.location === 'destinyDeck' &&
+        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.DESTINY &&
         this.player.canAddTalent(this),
       this
     );

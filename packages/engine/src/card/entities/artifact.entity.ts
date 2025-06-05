@@ -14,6 +14,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -209,6 +210,8 @@ export class ArtifactCard extends Card<
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
         !this.game.effectChainSystem.currentChain &&
+        this.location === 'hand' &&
+        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
         this.blueprint.canPlay(this.game, this),
       this
     );

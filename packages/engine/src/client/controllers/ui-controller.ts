@@ -2,7 +2,7 @@ import type { Override } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { DeclareAttackCardAction } from '../actions/declare-attack';
+import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
 import { SelectCardAction } from '../actions/select-card';
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
@@ -34,8 +34,6 @@ export class UiController {
   private _isChooseCardsInteractionOverlayOpened = false;
 
   private _isChooseAffinityInteractionOverlayOpened = false;
-
-  private _isSelectingAttackTarget = false;
 
   private cardClickRules: CardClickRule[] = [];
 
@@ -72,18 +70,10 @@ export class UiController {
     return this._isChooseAffinityInteractionOverlayOpened;
   }
 
-  get isSelectingAttackTarget() {
-    return this._isSelectingAttackTarget;
-  }
-
-  startDeclaringAttack() {
-    this._isSelectingAttackTarget = true;
-  }
-
   private buildClickRules() {
     this.cardClickRules = [
       new SelectCardAction(this.client),
-      new DeclareAttackCardAction(this.client),
+      new DeclareAttackTargetCardAction(this.client),
       new SelectCardOnBoardAction(this.client)
     ];
   }

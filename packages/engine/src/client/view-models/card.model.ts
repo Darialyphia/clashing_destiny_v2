@@ -1,17 +1,18 @@
-import type { InputDispatcher } from '@game/engine/src/input/input-system';
 import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { GameStateEntities } from '../client';
+import type { GameClient, GameStateEntities } from '../client';
 import type { SerializedTalentCard } from '../../card/entities/talent.entity';
-import type { SerializedAttackCard } from '../../card/entities/attck.entity';
+import type { SerializedAttackCard } from '../../card/entities/attack.entity';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
+import { PlayCardAction } from '../actions/play-card';
+import { DeclareAttackAction } from '../actions/declare-attack';
 
 type CardData =
   | SerializedSpellCard
@@ -22,23 +23,24 @@ type CardData =
   | SerializedTalentCard
   | SerializedAttackCard;
 
-type CardActionRules = {
+export type CardActionRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
-  action: {
-    label: string;
-    handler: (card: CardViewModel) => void;
-  };
+  getLabel: (card: CardViewModel) => string;
+  handler: (card: CardViewModel) => void;
 };
 
 export class CardViewModel {
   private getEntities: () => GameStateEntities;
 
+  private getClient: () => GameClient;
+
   constructor(
     private data: SerializedCard,
     entityDictionary: GameStateEntities,
-    private dispatcher: InputDispatcher
+    client: GameClient
   ) {
     this.getEntities = () => entityDictionary;
+    this.getClient = () => client;
   }
 
   equals(unit: CardViewModel | SerializedCard) {
@@ -82,6 +84,22 @@ export class CardViewModel {
     }
 
     return null;
+  }
+
+  get source() {
+    return this.data.source;
+  }
+
+  get position() {
+    if ('position' in this.data) {
+      return this.data.position as SerializedMinionCard['position'];
+    }
+
+    return null;
+  }
+
+  get location() {
+    return this.data.location;
   }
 
   get abilities() {
@@ -144,6 +162,22 @@ export class CardViewModel {
     return this.data.canPlay;
   }
 
+  get potentialAttackTargets() {
+    if ('potentialAttackTargets' in this.data) {
+      return (
+        this.data.potentialAttackTargets as SerializedMinionCard['potentialAttackTargets']
+      ).map(targetId => {
+        return this.getEntities()[targetId] as CardViewModel;
+      });
+    }
+
+    return [];
+  }
+
+  get canAttack() {
+    return this.potentialAttackTargets.length > 0;
+  }
+
   getPlayer() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
   }
@@ -154,12 +188,20 @@ export class CardViewModel {
     });
   }
 
-  play(manaCostIndices: number[]) {
+  play() {
     const player = this.getPlayer();
     const hand = player.getHand();
 
     const index = hand.findIndex(card => card.equals(this));
     if (index === -1) return;
-    player.playCard(index, manaCostIndices);
+
+    player.playCard(index);
+  }
+
+  getActions(): CardActionRule[] {
+    return [
+      new PlayCardAction(this.getClient()),
+      new DeclareAttackAction(this.getClient())
+    ];
   }
 }

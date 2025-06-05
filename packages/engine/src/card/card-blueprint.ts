@@ -14,7 +14,7 @@ import type {
   Tag
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
-import type { AttackCard } from './entities/attck.entity';
+import type { AttackCard } from './entities/attack.entity';
 import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { LocationCard } from './entities/location.entity';

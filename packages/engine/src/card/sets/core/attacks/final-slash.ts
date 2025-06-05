@@ -11,7 +11,7 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { warrior } from '../heroes/warrior';
-import type { AttackCard } from '../../../entities/attck.entity';
+import type { AttackCard } from '../../../entities/attack.entity';
 
 export const finalSlash: AttackBlueprint = {
   id: 'final-slash',

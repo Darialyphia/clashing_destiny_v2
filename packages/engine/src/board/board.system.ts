@@ -6,7 +6,7 @@ import type {
   SerializedArtifactCard
 } from '../card/entities/artifact.entity';
 import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
-import type { AttackCard, SerializedAttackCard } from '../card/entities/attck.entity';
+import type { AttackCard, SerializedAttackCard } from '../card/entities/attack.entity';
 import type {
   LocationCard,
   SerializedLocationCard

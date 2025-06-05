@@ -1,18 +1,19 @@
-import type { InputDispatcher } from '@game/engine/src/input/input-system';
-import type { GameStateEntities } from '../client';
+import type { GameClient, GameStateEntities } from '../client';
 
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { CardViewModel } from './card.model';
 
 export class PlayerViewModel {
   private getEntities: () => GameStateEntities;
+  private getClient: () => GameClient;
 
   constructor(
     private data: SerializedPlayer,
     entityDictionary: GameStateEntities,
-    private dispatcher: InputDispatcher
+    client: GameClient
   ) {
     this.getEntities = () => entityDictionary;
+    this.getClient = () => client;
   }
 
   equals(unit: PlayerViewModel | SerializedPlayer) {
@@ -83,7 +84,7 @@ export class PlayerViewModel {
   }
 
   declareEndTurn() {
-    this.dispatcher({
+    this.getClient().adapter.dispatch({
       type: 'declareEndTurn',
       payload: {
         playerId: this.data.id
@@ -91,17 +92,16 @@ export class PlayerViewModel {
     });
   }
 
-  playCard(index: number, manaCostIndices: number[]) {
+  playCard(index: number) {
     const card = this.getHand()[index];
     if (!card) return;
     if (!card.canPlay) return;
 
-    this.dispatcher({
-      type: 'playCard',
+    this.getClient().adapter.dispatch({
+      type: 'declarePlayCard',
       payload: {
         playerId: this.data.id,
-        index: index,
-        manaCostIndices: manaCostIndices
+        index: index
       }
     });
   }
@@ -110,7 +110,7 @@ export class PlayerViewModel {
     const card = this.getDestinyDeck()[index];
     if (!card) return;
     if (!card.canPlay) return;
-    this.dispatcher({
+    this.getClient().adapter.dispatch({
       type: 'playDestinyCard',
       payload: {
         playerId: this.data.id,
