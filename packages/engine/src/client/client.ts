@@ -66,7 +66,7 @@ export class GameClient {
 
   private initialState: SerializedOmniscientState | SerializedPlayerState;
 
-  private _playerId?: string;
+  private _playerId: string;
 
   private lastSnapshotId = -1;
 
@@ -86,7 +86,7 @@ export class GameClient {
     this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.initialState = options.initialState;
-    this._playerId = options.playerId;
+    this._playerId = options.playerId ?? options.initialState.turnPlayer;
 
     this.adapter.subscribe(async snapshot => {
       this.queue.push(snapshot);

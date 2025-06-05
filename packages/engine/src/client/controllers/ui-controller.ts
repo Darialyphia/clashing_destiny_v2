@@ -1,11 +1,6 @@
 import { GAME_PHASES } from '../../game/game.enums';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import type {
-  GameStateSnapshot,
-  SerializedOmniscientState,
-  SerializedPlayerState
-} from '../../game/systems/game-snapshot.system';
-import type { GameClient, NetworkAdapter } from '../client';
+import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
 
@@ -26,6 +21,8 @@ export class UiController {
   private _isChooseCardsInteractionOverlayOpened = false;
 
   private _isChooseAffinityInteractionOverlayOpened = false;
+
+  private _isSelectingAttackTarget = false;
 
   private cardClickRules: CardClickRule[] = [];
 
@@ -59,8 +56,70 @@ export class UiController {
     return this._isChooseAffinityInteractionOverlayOpened;
   }
 
+  get isSelectingAttackTarget() {
+    return this._isSelectingAttackTarget;
+  }
+
+  startDeclaringAttack() {
+    this._isSelectingAttackTarget = true;
+  }
+
   private buildClickRules() {
-    this.cardClickRules = [];
+    this.cardClickRules = [
+      {
+        predicate: (card, state) =>
+          card.getPlayer().id === this.client.playerId &&
+          state.interaction.state === INTERACTION_STATES.IDLE &&
+          !this.selectedCard?.equals(card) &&
+          this.isInteractingPlayer,
+        handler: card => {
+          this.select(card);
+        }
+      },
+      {
+        predicate: card =>
+          this.isSelectingAttackTarget &&
+          card.getPlayer().id !== this.client.playerId &&
+          this.isInteractingPlayer,
+        handler: card => {
+          this.client.adapter.dispatch({
+            type: 'declareAttack',
+            payload: {
+              attackerId: this.selectedCard!.id,
+              defenderId: card.id,
+              playerId: this.client.playerId
+            }
+          });
+        }
+      },
+      {
+        predicate: (card, state) =>
+          state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
+          this.isInteractingPlayer,
+        handler: card => {
+          this.client.adapter.dispatch({
+            type: 'selectCardOnBoard',
+            payload: {
+              cardId: card.id,
+              playerId: this.client.playerId
+            }
+          });
+        }
+      }
+    ];
+  }
+
+  onCardClick(card: CardViewModel) {
+    const state = this.client.state;
+
+    for (const rule of this.cardClickRules) {
+      if (rule.predicate(card, state)) {
+        rule.handler(card);
+        return;
+      }
+    }
+
+    this.unselect();
   }
 
   get isInteractingPlayer() {
