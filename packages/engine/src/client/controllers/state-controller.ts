@@ -8,7 +8,7 @@ import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
 import { match } from 'ts-pattern';
-import type { NetworkAdapter } from '../client';
+import type { GameClient } from '../client';
 
 export type GameStateEntities = Record<
   string,
@@ -27,7 +27,7 @@ export class ClientStateController {
 
   constructor(
     initialState: SerializedPlayerState | SerializedOmniscientState,
-    private adapter: NetworkAdapter
+    private client: GameClient
   ) {
     this._state = {
       ...initialState,
@@ -47,15 +47,15 @@ export class ClientStateController {
       existing[id] = match(entity)
         .with(
           { entityType: 'player' },
-          entity => new PlayerViewModel(entity, existing, this.adapter.dispatch)
+          entity => new PlayerViewModel(entity, existing, this.client)
         )
         .with(
           { entityType: 'card' },
-          entity => new CardViewModel(entity, existing, this.adapter.dispatch)
+          entity => new CardViewModel(entity, existing, this.client)
         )
         .with(
           { entityType: 'modifier' },
-          entity => new ModifierViewModel(entity, existing, this.adapter.dispatch)
+          entity => new ModifierViewModel(entity, existing, this.client)
         )
         .exhaustive();
     }

@@ -82,7 +82,7 @@ export class GameClient {
 
   constructor(options: GameClientOptions) {
     this.adapter = options.adapter;
-    this.stateManager = new ClientStateController(options.initialState, this.adapter);
+    this.stateManager = new ClientStateController(options.initialState, this);
     this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.initialState = options.initialState;

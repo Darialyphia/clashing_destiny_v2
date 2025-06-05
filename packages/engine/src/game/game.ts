@@ -4,7 +4,12 @@ import type { Player, PlayerOptions } from '../player/player.entity';
 import { RngSystem } from '../rng/rng.system';
 import { TypedSerializableEventEmitter } from '../utils/typed-emitter';
 import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/shared';
-import { GameSnaphotSystem } from './systems/game-snapshot.system';
+import {
+  GameSnaphotSystem,
+  type GameStateSnapshot,
+  type SerializedOmniscientState,
+  type SerializedPlayerState
+} from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';
 import { GAME_EVENTS, GameReadyEvent, type GameEventMap } from './game.events';
 import { GamePhaseSystem } from './systems/game-phase.system';
@@ -18,7 +23,6 @@ import { EffectChainSystem } from './systems/effect-chain.system';
 export type GameOptions = {
   id: string;
   rngSeed: string;
-  mapId: string;
   history?: SerializedInput[];
   overrides: Partial<{
     cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -73,17 +77,7 @@ export class Game implements Serializable<SerializedGame> {
     this.id = options.id;
     this.config = Object.assign({}, defaultConfig, options.overrides.config);
     this.isSimulation = options.isSimulation ?? false;
-    this.setupStarEvents();
     this.cardPool = options.overrides.cardPool ?? {};
-  }
-
-  // the event emitter doesnt provide the event name if you enable wildcards, so let's implement it ourselves
-  private setupStarEvents() {
-    // Object.values(GAME_EVENTS).forEach(eventName => {
-    //   this.on(eventName as any, event => {
-    //     this.emit('*', new GameStarEvent({ e: { event, eventName } }));
-    //   });
-    // });
   }
 
   async initialize() {
@@ -120,6 +114,29 @@ export class Game implements Serializable<SerializedGame> {
 
   get off() {
     return this.emitter.off.bind(this.emitter);
+  }
+
+  subscribeOmniscient(
+    cb: (snapshot: GameStateSnapshot<SerializedOmniscientState>) => void
+  ) {
+    this.on(GAME_EVENTS.FLUSHED, () =>
+      cb(this.snapshotSystem.getLatestOmniscientSnapshot())
+    );
+    this.on(GAME_EVENTS.INPUT_REQUIRED, () =>
+      cb(this.snapshotSystem.getLatestOmniscientSnapshot())
+    );
+  }
+
+  subscribeForPlayer(
+    id: string,
+    cb: (snapshot: GameStateSnapshot<SerializedPlayerState>) => void
+  ) {
+    this.on(GAME_EVENTS.FLUSHED, () =>
+      cb(this.snapshotSystem.getLatestSnapshotForPlayer(id))
+    );
+    this.on(GAME_EVENTS.INPUT_REQUIRED, () =>
+      cb(this.snapshotSystem.getLatestSnapshotForPlayer(id))
+    );
   }
 
   async emit<TEventName extends keyof GameEventMap & string>(

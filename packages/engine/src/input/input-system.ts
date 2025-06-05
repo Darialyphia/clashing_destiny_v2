@@ -165,30 +165,31 @@ export class InputSystem extends System<SerializedInput[]> {
         new GameInputQueueFlushedEvent({})
       );
     } catch (err) {
-      console.groupCollapsed('%c[INPUT SYSTEM]: ERROR', 'color: #ff0000');
-      console.error(err);
-      console.groupEnd();
+      await this.handleError(err);
+    }
+  }
 
-      const serialized = this.game.serialize();
-      if (this._currentAction) {
-        serialized.history.push(this._currentAction.serialize() as SerializedInput);
-      }
-      await this.game.emit(
-        'game.error',
-        new GameErrorEvent({ error: err as Error, debugDump: serialized })
-      );
+  private async handleError(err: unknown) {
+    console.groupCollapsed('%c[INPUT SYSTEM]: ERROR', 'color: #ff0000');
+    console.error(err);
+    console.groupEnd();
 
-      // this means the error got caught during player input validation, the game state is not corrupted but clients might need to resync
-      if (err instanceof InputError) {
-        this.isRunning = false;
-        this.queue = [];
-        this._currentAction = null;
-        this.game.snapshotSystem.takeSnapshot();
-        await this.game.emit(
-          'game.input-queue-flushed',
-          new GameInputQueueFlushedEvent({})
-        );
-      }
+    const serialized = this.game.serialize();
+    if (this._currentAction) {
+      serialized.history.push(this._currentAction.serialize() as SerializedInput);
+    }
+    await this.game.emit(
+      'game.error',
+      new GameErrorEvent({ error: err as Error, debugDump: serialized })
+    );
+
+    // this means the error got caught during player input validation, the game state is not corrupted but clients might need to resync
+    if (err instanceof InputError) {
+      this.isRunning = false;
+      this.queue = [];
+      this._currentAction = null;
+      this.game.snapshotSystem.takeSnapshot();
+      await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
     }
   }
 

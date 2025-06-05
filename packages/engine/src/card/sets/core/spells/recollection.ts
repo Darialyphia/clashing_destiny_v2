@@ -17,7 +17,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   name: 'Recollection',
   cardIconId: 'recollection',
   description:
-    'Add a copy of all cards you played since the start of your last turn. They cost 1 more.',
+    'Add a copy of all cards you played since the start of your last turn to your hand. They cost 1 more.',
   collectable: true,
   unique: false,
   manaCost: 2,

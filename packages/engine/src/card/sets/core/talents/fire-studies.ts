@@ -17,7 +17,7 @@ export const fireStudies: TalentBlueprint = {
   id: 'fire-studies',
   name: 'Fire Studies',
   cardIconId: 'fire-studies',
-  description: 'Your first spell each turn costs 1 less mana.',
+  description: 'Your first Fire spell each turn costs 1 less mana.',
   affinity: AFFINITIES.FIRE,
   collectable: true,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
@@ -42,6 +42,8 @@ export const fireStudies: TalentBlueprint = {
             if (candidate.location !== 'hand') return false;
             if (!candidate.player.equals(card.player)) return false;
             if (!isSpell(candidate)) return false;
+            if (candidate.affinity !== AFFINITIES.FIRE) return false;
+
             const spellsPlayedThisTurn =
               card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL);
             return spellsPlayedThisTurn.length === 0;

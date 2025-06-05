@@ -2190,10 +2190,49 @@
         },
         {
           "alias": [
+            "artifact-armor.png"
+          ],
+          "src": [
+            "/assets/ui/artifact-armor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "artifact-durability.png"
           ],
           "src": [
             "/assets/ui/artifact-durability.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "artifact-relic.png"
+          ],
+          "src": [
+            "/assets/ui/artifact-relic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "artifact-weapon.png"
+          ],
+          "src": [
+            "/assets/ui/artifact-weapon.png"
           ],
           "data": {
             "tags": {
@@ -2233,6 +2272,19 @@
           ],
           "src": [
             "/assets/ui/banish-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "burst-spell.png"
+          ],
+          "src": [
+            "/assets/ui/burst-spell.png"
           ],
           "data": {
             "tags": {
@@ -2350,6 +2402,19 @@
           ],
           "src": [
             "/assets/ui/card-back4.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-back5.png"
+          ],
+          "src": [
+            "/assets/ui/card-back5.png"
           ],
           "data": {
             "tags": {
@@ -2957,6 +3022,19 @@
         },
         {
           "alias": [
+            "cast-spell.png"
+          ],
+          "src": [
+            "/assets/ui/cast-spell.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "cursor-disabled.png"
           ],
           "src": [
@@ -3270,6 +3348,19 @@
         },
         {
           "alias": [
+            "mana-cost.png"
+          ],
+          "src": [
+            "/assets/ui/mana-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "mp.png"
           ],
           "src": [
@@ -3568,6 +3659,71 @@
           ],
           "src": [
             "/assets/ui/speed.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "subkind-armor.png"
+          ],
+          "src": [
+            "/assets/ui/subkind-armor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "subkind-burst.png"
+          ],
+          "src": [
+            "/assets/ui/subkind-burst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "subkind-cast.png"
+          ],
+          "src": [
+            "/assets/ui/subkind-cast.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "subkind-relic.png"
+          ],
+          "src": [
+            "/assets/ui/subkind-relic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "subkind-weapon.png"
+          ],
+          "src": [
+            "/assets/ui/subkind-weapon.png"
           ],
           "data": {
             "tags": {
