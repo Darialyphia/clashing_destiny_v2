@@ -14,7 +14,10 @@ const myBoard = useMyBoard();
       class="card"
       v-for="(cardId, index) in myBoard.hand"
       :key="cardId"
-      :style="{ '--index': index }"
+      :style="{
+        '--index': index,
+        '--offset': Math.abs(index - myBoard.hand.length / 2)
+      }"
     >
       <GameCard :card-id="cardId" />
     </div>
@@ -32,7 +35,7 @@ const myBoard = useMyBoard();
   justify-items: center;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  --offset-step: 100px;
+  --offset-step: 125px;
 
   &:has(:hover) {
     --offset-step: 175px;
@@ -46,7 +49,8 @@ const myBoard = useMyBoard();
     --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
-    --y-offset: 0;
+    /* --rotation: 0deg; */
+    --y-offset: calc(var(--offset) * 20px - 4rem);
     --counter-rotation: 0;
     transform-origin: center 120%;
     transform: translateX(

@@ -201,7 +201,7 @@ document.addEventListener('fullscreenchange', () => {
   --board-scale: 1;
   display: grid;
   grid-template-rows: 2fr 2fr;
-  height: 110dvh;
+  height: 105dvh;
   row-gap: 1.5rem;
   padding-inline: 5rem;
   transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
