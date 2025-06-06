@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useMyBoard } from '@/game/composables/useGameClient';
-
-const props = defineProps<{}>();
-const emit = defineEmits<{}>();
+import GameCard from '@/game/components/GameCard.vue';
 
 const myBoard = useMyBoard();
 </script>
@@ -23,4 +21,46 @@ const myBoard = useMyBoard();
   </section>
 </template>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+.hand {
+  position: fixed;
+  bottom: 0;
+  height: 250px;
+  width: 100%;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  --offset-step: 100px;
+
+  &:has(:hover) {
+    --offset-step: 175px;
+  }
+
+  > * {
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+
+    --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
+    --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
+    --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
+    --y-offset: 0;
+    --counter-rotation: 0;
+    transform-origin: center 120%;
+    transform: translateX(
+        calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
+      )
+      rotate(var(--rotation)) translateY(var(--y-offset))
+      rotate(var(--counter-rotation));
+    transition: transform 0.2s ease-out;
+
+    &:hover {
+      z-index: 1;
+      --y-offset: -13rem;
+      --counter-rotation: calc(var(--rotation) * -1);
+    }
+  }
+}
+</style>

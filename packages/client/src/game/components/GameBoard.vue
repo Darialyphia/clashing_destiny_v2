@@ -9,6 +9,7 @@ import { useBoardResize } from '../composables/useBoardResize';
 import CardBack from '@/card/components/CardBack.vue';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import Hand from '@/card/components/Hand.vue';
 
 const client = useGameClient();
 
@@ -164,6 +165,7 @@ document.addEventListener('fullscreenchange', () => {
         </div>
       </section>
     </section>
+    <Hand />
   </div>
 </template>
 
@@ -285,48 +287,6 @@ document.addEventListener('fullscreenchange', () => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
-  }
-}
-
-.my-hand {
-  position: fixed;
-  bottom: 0;
-  height: 250px;
-  width: 100%;
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  --offset-step: 100px;
-
-  &:has(:hover) {
-    --offset-step: 175px;
-  }
-  > * {
-    grid-row: 1;
-    grid-column: 1;
-    position: relative;
-
-    --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
-    --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
-    --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
-    --y-offset: 0;
-    --counter-rotation: 0;
-    transform-origin: center 120%;
-    transform: translateZ(20px)
-      translateX(
-        calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
-      )
-      rotate(var(--rotation)) translateY(var(--y-offset))
-      rotate(var(--counter-rotation));
-    transition: transform 0.2s ease-out;
-
-    &:hover {
-      z-index: 1;
-      --y-offset: -13rem;
-      --counter-rotation: calc(var(--rotation) * -1);
-    }
   }
 }
 
