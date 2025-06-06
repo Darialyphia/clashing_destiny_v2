@@ -10,6 +10,7 @@ import CardBack from '@/card/components/CardBack.vue';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import Hand from '@/card/components/Hand.vue';
+import ManaCostModal from './ManaCostModal.vue';
 
 const client = useGameClient();
 
@@ -24,6 +25,7 @@ document.addEventListener('fullscreenchange', () => {
 </script>
 
 <template>
+  <ManaCostModal />
   <div class="board-container">
     <div class="debug-tools">
       <button

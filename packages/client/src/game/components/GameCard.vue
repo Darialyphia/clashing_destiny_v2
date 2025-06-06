@@ -12,9 +12,14 @@ import { vOnClickOutside } from '@vueuse/components';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import CardText from '@/card/components/CardText.vue';
 
-const { cardId, interactive = true } = defineProps<{
+const {
+  cardId,
+  interactive = true,
+  autoScale = true
+} = defineProps<{
   cardId: string;
   interactive?: boolean;
+  autoScale?: boolean;
 }>();
 
 const card = useCard(cardId);
@@ -24,6 +29,10 @@ const root = useTemplateRef('root');
 const scale = ref(1);
 const calculateScale = () => {
   if (!root.value) return;
+  if (!autoScale) {
+    scale.value = 1;
+    return;
+  }
   const availableWidth = root.value.parentElement?.offsetWidth || 0;
   const availableHeight = root.value.parentElement?.offsetHeight || 0;
   const width = root.value.offsetWidth;

@@ -146,7 +146,7 @@ const isMultiLine = computed(() => {
       </div>
       <div></div>
       <div class="affinity-zone">
-        <template v-if="card.uinlockableAffinities">
+        <template v-if="card.uinlockableAffinities?.length">
           <div
             v-for="affinity in card.uinlockableAffinities"
             :key="affinity"

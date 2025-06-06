@@ -23,23 +23,19 @@ export type GameClientState = Override<
 >;
 
 export class ClientStateController {
-  private _state!: GameClientState;
+  state!: GameClientState;
 
   constructor(private client: GameClient) {}
 
-  get state(): GameClientState {
-    return this._state;
-  }
-
   initialize(initialState: SerializedPlayerState | SerializedOmniscientState) {
-    this._state = {
+    this.state = {
       ...initialState,
       entities: this.buildentities(initialState.entities)
     };
   }
 
   private buildentities = (entities: EntityDictionary): GameClientState['entities'] => {
-    const dict: GameClientState['entities'] = this._state?.entities ?? {};
+    const dict: GameClientState['entities'] = this.state?.entities ?? {};
     for (const [id, entity] of Object.entries(entities)) {
       dict[id] = match(entity)
         .with(
@@ -60,7 +56,7 @@ export class ClientStateController {
   };
 
   update(newState: SerializedPlayerState | SerializedOmniscientState): void {
-    this._state = {
+    this.state = {
       ...newState,
       entities: this.buildentities(newState.entities)
     };

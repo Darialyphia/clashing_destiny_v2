@@ -15,6 +15,9 @@ const GAME_CLIENT_INJECTION_KEY = Symbol(
 
 export const provideGameClient = (options: GameClientOptions) => {
   const client = ref(new GameClient(options)) as Ref<GameClient>;
+  client.value.onUpdate(() => {
+    triggerRef(client);
+  });
 
   provide(GAME_CLIENT_INJECTION_KEY, client);
   return client;
@@ -27,7 +30,7 @@ export const useGameClient = () => {
 export const useGameState = () => {
   const client = useGameClient();
 
-  return computed(() => client.value.state);
+  return computed(() => client.value.stateManager.state);
 };
 
 export const useMyBoard = () => {

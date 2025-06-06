@@ -1,4 +1,4 @@
-import type { MaybePromise, Values } from '@game/shared';
+import type { EmptyObject, MaybePromise, Values } from '@game/shared';
 import type { InputDispatcher } from '../input/input-system';
 import type {
   GameStateSnapshot,
@@ -11,6 +11,7 @@ import { PlayerViewModel } from './view-models/player.model';
 import { FxController } from './controllers/fx-controller';
 import { ClientStateController } from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
+import { TypedEventEmitter } from '../utils/typed-emitter';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -70,6 +71,8 @@ export class GameClient {
   private queue: Array<
     GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
   > = [];
+
+  private emitter = new TypedEventEmitter<{ update: EmptyObject }>('sequential');
 
   constructor(options: GameClientOptions) {
     this.adapter = options.adapter;
@@ -161,9 +164,15 @@ export class GameClient {
       }
 
       this.ui.update();
+
+      void this.emitter.emit('update', {});
     } catch (err) {
       console.error(err);
     }
+  }
+
+  onUpdate(cb: () => void) {
+    this.emitter.on('update', cb);
   }
 
   private async sync() {
