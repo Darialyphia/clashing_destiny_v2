@@ -15,20 +15,16 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
           ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
           : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN
       );
-      await this.game.inputSystem.schedule(async () => {
-        await this.game.gamePhaseSystem.sendTransition(
-          GAME_PHASE_TRANSITIONS.DRAW_FOR_DIRST_TURN
-        );
-      });
+      await this.game.gamePhaseSystem.sendTransition(
+        GAME_PHASE_TRANSITIONS.DRAW_FOR_DIRST_TURN
+      );
     } else {
       await this.game.gamePhaseSystem.turnPlayer.cardManager.draw(
         this.game.config.CARDS_DRAWN_PER_TURN
       );
-      await this.game.inputSystem.schedule(async () => {
-        await this.game.gamePhaseSystem.sendTransition(
-          GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN
-        );
-      });
+      await this.game.gamePhaseSystem.sendTransition(
+        GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN
+      );
     }
   }
 

@@ -160,10 +160,7 @@ export class InputSystem extends System<SerializedInput[]> {
       }
       this.isRunning = false;
       this.game.snapshotSystem.takeSnapshot();
-      await this.game.emit(
-        'game.input-queue-flushed',
-        new GameInputQueueFlushedEvent({})
-      );
+      await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
     } catch (err) {
       await this.handleError(err);
     }
@@ -233,7 +230,7 @@ export class InputSystem extends System<SerializedInput[]> {
 
   async askForPlayerInput() {
     this.game.snapshotSystem.takeSnapshot();
-    await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
+    // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 
   serialize() {

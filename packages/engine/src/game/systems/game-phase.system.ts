@@ -179,6 +179,9 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._turnPlayer = this.game.playerSystem.player1;
     this.firstPlayer = this._turnPlayer;
+  }
+
+  async startGame() {
     await (this._ctx as DrawPhase).onEnter();
   }
 

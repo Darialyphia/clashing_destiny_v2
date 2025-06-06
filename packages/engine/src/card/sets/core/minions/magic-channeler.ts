@@ -10,7 +10,7 @@ import {
 } from '../../../card.enums';
 
 export const magicChanneler: MinionBlueprint = {
-  id: 'magicChanneler',
+  id: 'magic-channeler',
   name: 'Magic Channeler',
   cardIconId: 'magic-channeler',
   description: `Your hero has +1 Spellpower.`,

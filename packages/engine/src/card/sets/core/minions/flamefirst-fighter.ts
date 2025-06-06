@@ -1,5 +1,4 @@
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -11,7 +10,7 @@ import {
 } from '../../../card.enums';
 
 export const flamefistFighter: MinionBlueprint = {
-  id: 'flamefistFighter',
+  id: 'flamefist-fighter',
   name: 'Flamefist Fighter',
   cardIconId: 'flamefist-fighter',
   description: `@Attacker@: +1 / + 0.`,

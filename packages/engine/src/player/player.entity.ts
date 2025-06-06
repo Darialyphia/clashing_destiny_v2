@@ -18,6 +18,7 @@ import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerTurnEvent } from './player.events';
 import type { MainDeckCard } from '../board/board.system';
+import { novice } from '../card/sets/core/heroes/novice';
 
 export type PlayerOptions = {
   id: string;
@@ -70,6 +71,8 @@ export class Player
 
   readonly talents: TalentCard[] = [];
 
+  private _hero!: HeroCard;
+
   constructor(
     game: Game,
     private options: PlayerOptions
@@ -87,8 +90,9 @@ export class Player
     this.artifactManager = new ArtifactManagerComponent(game, this);
   }
 
-  init() {
-    return this.cardManager.init();
+  async init() {
+    this._hero = await this.generateCard<HeroCard>(novice.id);
+    await this.cardManager.init();
   }
 
   serialize() {
@@ -119,7 +123,7 @@ export class Player
   }
 
   get hero() {
-    return {} as HeroCard;
+    return this._hero;
   }
 
   get enemyHero() {

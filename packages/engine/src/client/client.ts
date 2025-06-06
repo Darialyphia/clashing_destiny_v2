@@ -1,4 +1,4 @@
-import type { BetterExtract, MaybePromise, Values } from '@game/shared';
+import type { MaybePromise, Values } from '@game/shared';
 import type { InputDispatcher } from '../input/input-system';
 import type {
   GameStateSnapshot,
@@ -40,18 +40,9 @@ export type NetworkAdapter = {
 
 export type GameClientOptions = {
   adapter: NetworkAdapter;
-} & (
-  | {
-      gameType: BetterExtract<GameType, 'local'>;
-      initialState: SerializedOmniscientState;
-      playerId?: never;
-    }
-  | {
-      gameType: BetterExtract<GameType, 'online'>;
-      initialState: SerializedPlayerState;
-      playerId: string;
-    }
-);
+  gameType: GameType;
+  playerId: string;
+};
 
 export class GameClient {
   readonly fx = new FxController();
@@ -64,7 +55,7 @@ export class GameClient {
 
   private gameType: GameType;
 
-  private initialState: SerializedOmniscientState | SerializedPlayerState;
+  private initialState!: SerializedOmniscientState | SerializedPlayerState;
 
   private _playerId: string;
 
@@ -72,7 +63,7 @@ export class GameClient {
 
   private _isPlayingFx = false;
 
-  private _isReady = false;
+  public isReady = false;
 
   private _processingUpdate = false;
 
@@ -82,13 +73,16 @@ export class GameClient {
 
   constructor(options: GameClientOptions) {
     this.adapter = options.adapter;
-    this.stateManager = new ClientStateController(options.initialState, this);
+    this.stateManager = new ClientStateController(this);
     this.ui = new UiController(this);
     this.gameType = options.gameType;
-    this.initialState = options.initialState;
-    this._playerId = options.playerId ?? options.initialState.turnPlayer;
+    this._playerId = options.playerId;
 
     this.adapter.subscribe(async snapshot => {
+      console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
+      console.log('state', snapshot.state);
+      console.log('events', snapshot.events);
+      console.groupEnd();
       this.queue.push(snapshot);
       if (this._processingUpdate) return;
       await this.processQueue();
@@ -101,10 +95,6 @@ export class GameClient {
 
   get isPlayingFx() {
     return this._isPlayingFx;
-  }
-
-  get isReady() {
-    return this._isReady;
   }
 
   get state() {
@@ -125,6 +115,21 @@ export class GameClient {
     }
 
     this._processingUpdate = false;
+  }
+
+  initialize(
+    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  ) {
+    this.lastSnapshotId = snapshot.id;
+    this.initialState = snapshot.state;
+
+    this.stateManager.initialize(snapshot.state);
+
+    if (this.gameType === GAME_TYPES.LOCAL) {
+      this._playerId = snapshot.state.turnPlayer;
+    }
+
+    this.isReady = true;
   }
 
   async update(
@@ -156,8 +161,6 @@ export class GameClient {
       }
 
       this.ui.update();
-
-      this._isReady = true;
     } catch (err) {
       console.error(err);
     }

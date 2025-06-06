@@ -119,6 +119,7 @@ export class CardSystem extends System<CardSystemOptions> {
       )
       .exhaustive();
     await card.init();
+
     this.cardMap.set(card.id, card);
     return card as any;
   }

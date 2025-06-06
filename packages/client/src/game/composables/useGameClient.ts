@@ -4,6 +4,7 @@ import {
   type GameClientOptions,
   type NetworkAdapter
 } from '@game/engine/src/client/client';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import type { InjectionKey, Ref } from 'vue';
 
 type GameClientContext = Ref<GameClient>;
@@ -21,4 +22,43 @@ export const provideGameClient = (options: GameClientOptions) => {
 
 export const useGameClient = () => {
   return useSafeInject(GAME_CLIENT_INJECTION_KEY);
+};
+
+export const useGameState = () => {
+  const client = useGameClient();
+
+  return computed(() => client.value.state);
+};
+
+export const useMyBoard = () => {
+  const client = useGameClient();
+
+  return computed(
+    () =>
+      client.value.state.board.sides.find(
+        side => side.playerId === client.value.playerId
+      )!
+  );
+};
+
+export const useOpponentBoard = () => {
+  const client = useGameClient();
+
+  return computed(
+    () =>
+      client.value.state.board.sides.find(
+        side => side.playerId !== client.value.playerId
+      )!
+  );
+};
+
+export const useCard = (cardId: string) => {
+  const client = useGameClient();
+  return computed(() => {
+    const card = client.value.state.entities[cardId];
+    if (!card) {
+      throw new Error(`Card with ID ${cardId} not found in the game state.`);
+    }
+    return card as unknown as CardViewModel;
+  });
 };

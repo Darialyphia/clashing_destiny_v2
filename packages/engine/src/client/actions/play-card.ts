@@ -2,6 +2,8 @@ import type { GameClient } from '../client';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
 export class PlayCardAction implements CardActionRule {
+  id: 'play';
+
   constructor(private client: GameClient) {}
 
   predicate(card: CardViewModel) {

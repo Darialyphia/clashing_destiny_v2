@@ -13,6 +13,7 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
+import type { Affinity, ArtifactKind, SpellKind } from '../../card/card.enums';
 
 type CardData =
   | SerializedSpellCard
@@ -24,6 +25,7 @@ type CardData =
   | SerializedAttackCard;
 
 export type CardActionRule = {
+  id: string;
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
   getLabel: (card: CardViewModel) => string;
   handler: (card: CardViewModel) => void;
@@ -130,6 +132,29 @@ export class CardViewModel {
     return null;
   }
 
+  get hp() {
+    if ('remainingHp' in this.data) {
+      return this.data.remainingHp as number;
+    }
+
+    return null;
+  }
+
+  get subKind() {
+    if ('subKind' in this.data) {
+      return this.data.subKind as SpellKind | ArtifactKind;
+    }
+
+    return null;
+  }
+
+  get unlockableAffinities() {
+    if ('unlockableAffinities' in this.data) {
+      return this.data.unlockableAffinities as Affinity[];
+    }
+    return [];
+  }
+
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;
@@ -175,6 +200,7 @@ export class CardViewModel {
   }
 
   get canAttack() {
+    console.log(this.id, this.potentialAttackTargets.length);
     return this.potentialAttackTargets.length > 0;
   }
 
@@ -202,6 +228,6 @@ export class CardViewModel {
     return [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient())
-    ];
+    ].filter(rule => rule.predicate(this));
   }
 }

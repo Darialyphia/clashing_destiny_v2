@@ -3,6 +3,7 @@ import { System } from '../../system';
 import type { Config } from '../../config';
 import {
   GAME_EVENTS,
+  GameNewSnapshotEvent,
   type GameStarEvent,
   type SerializedStarEvent
 } from '../game.events';
@@ -104,7 +105,12 @@ export class GameSnaphotSystem extends System<EmptyObject> {
 
   private buildEntityDictionary(): EntityDictionary {
     const entities: EntityDictionary = {};
-
+    this.game.cardSystem.cards.forEach(card => {
+      entities[card.id] = card.serialize();
+    });
+    this.game.playerSystem.players.forEach(player => {
+      entities[player.id] = player.serialize();
+    });
     return entities;
   }
 
@@ -146,19 +152,19 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       });
     };
     opponent.cardManager.mainDeck.cards.forEach(card => {
-      if (!hasBeenPlayed(card.id)) return;
+      if (hasBeenPlayed(card.id)) return;
 
       delete state.entities[card.id];
     });
 
     opponent.cardManager.destinyDeck.cards.forEach(card => {
-      if (!hasBeenPlayed(card.id)) return;
+      if (hasBeenPlayed(card.id)) return;
 
       delete state.entities[card.id];
     });
 
     opponent.cardManager.hand.forEach(card => {
-      if (!hasBeenPlayed(card.id)) return;
+      if (hasBeenPlayed(card.id)) return;
 
       delete state.entities[card.id];
     });
@@ -188,5 +194,6 @@ export class GameSnaphotSystem extends System<EmptyObject> {
     });
 
     this.eventsSinceLastSnapshot = [];
+    void this.game.emit(GAME_EVENTS.NEW_SNAPSHOT, new GameNewSnapshotEvent({}));
   }
 }

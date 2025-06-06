@@ -5,6 +5,7 @@ export type Config = {
   MAX_DESTINY_DECK_SIZE: number;
   MAX_DESTINY_DECK_CARD_COPIES: number;
 
+  INITIAL_HAND_SIZE: number;
   MAX_HAND_SIZE: number;
   CARDS_DRAWN_PER_TURN: number;
   PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: number;
@@ -24,6 +25,7 @@ export const defaultConfig: Config = {
   MAX_DESTINY_DECK_SIZE: 10,
   MAX_DESTINY_DECK_CARD_COPIES: 1,
 
+  INITIAL_HAND_SIZE: 6,
   MAX_HAND_SIZE: 999,
   SHUFFLE_DECK_ON_GAME_START: true,
   CARDS_DRAWN_PER_TURN: 2,

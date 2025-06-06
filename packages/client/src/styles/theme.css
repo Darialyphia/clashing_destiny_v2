@@ -123,6 +123,9 @@
 
   --card-width: 160px;
   --card-height: 224px;
+
+  --card-width-unitless: 160;
+  --card-height-unitless: 224;
 }
 
 html.dark {

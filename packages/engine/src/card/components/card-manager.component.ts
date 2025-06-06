@@ -51,21 +51,24 @@ export class CardManagerComponent {
     }
   }
 
+  private async buildCards<T extends AnyCard>(cards: string[]) {
+    const result: T[] = [];
+    for (const card of cards) {
+      result.push(await this.game.cardSystem.addCard<T>(this.player, card));
+    }
+    return result;
+  }
+
   async init() {
-    this.mainDeck.populate(
-      await Promise.all(
-        this.options.mainDeck.map(card =>
-          this.game.cardSystem.addCard<MainDeckCard>(this.player, card)
-        )
-      )
-    );
-    this.destinyDeck.populate(
-      await Promise.all(
-        this.options.destinyDeck.map(card =>
-          this.game.cardSystem.addCard<DestinyDeckCard>(this.player, card)
-        )
-      )
-    );
+    const [mainDeckCards, destinyDeckCards] = await Promise.all([
+      this.buildCards<MainDeckCard>(this.options.mainDeck),
+      this.buildCards<DestinyDeckCard>(this.options.destinyDeck)
+    ]);
+
+    this.mainDeck.populate(mainDeckCards);
+    this.destinyDeck.populate(destinyDeckCards);
+    this.mainDeck.shuffle();
+    this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
   }
 
   get isHandFull() {

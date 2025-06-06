@@ -70,6 +70,15 @@ export class GameReadyEvent extends TypedSerializableEvent<EmptyObject, EmptyObj
   }
 }
 
+export class GameNewSnapshotEvent extends TypedSerializableEvent<
+  EmptyObject,
+  EmptyObject
+> {
+  serialize() {
+    return {};
+  }
+}
+
 export class GameModifierEvent extends TypedSerializableEvent<
   {
     modifier: Modifier<any>;
@@ -102,6 +111,7 @@ type GameEventsBase = {
   'game.error': GameErrorEvent;
   'game.ready': GameReadyEvent;
   'game.modifier-event': GameModifierEvent;
+  'game.new-snapshot': GameNewSnapshotEvent;
 };
 
 export type GameEventMap = Prettify<
@@ -125,6 +135,7 @@ export const GAME_EVENTS = {
   INPUT_START: 'game.input-start',
   INPUT_END: 'game.input-end',
   INPUT_REQUIRED: 'game.input-required',
+  NEW_SNAPSHOT: 'game.new-snapshot',
   ...GAME_PHASE_EVENTS,
   ...MODIFIER_EVENTS,
   ...CARD_EVENTS,

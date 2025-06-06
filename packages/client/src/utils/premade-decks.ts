@@ -34,10 +34,10 @@ export const premadeDecks: Array<PremadeDeck> = [
         'arcane-ray',
         'arcane-ray',
 
-        'flagBearerOfFlame',
-        'flagBearerOfFlame',
-        'flagBearerOfFlame',
-        'flagBearerOfFlame',
+        'flagbearer-of-flame',
+        'flagbearer-of-flame',
+        'flagbearer-of-flame',
+        'flagbearer-of-flame',
 
         'pyromancer',
         'pyromancer',
@@ -59,8 +59,8 @@ export const premadeDecks: Array<PremadeDeck> = [
         'magic-channeler',
         'magic-channeler',
 
-        'archsageOfMoonring',
-        'archsageOfMoonring',
+        'archsage-of-moonring',
+        'archsage-of-moonring',
 
         'phoenix'
       ]

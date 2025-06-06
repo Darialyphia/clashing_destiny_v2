@@ -83,6 +83,7 @@ export class UiController {
   }
 
   onCardClick(card: CardViewModel) {
+    console.log('Card clicked:', card.id);
     const state = this.client.state;
 
     for (const rule of this.cardClickRules) {

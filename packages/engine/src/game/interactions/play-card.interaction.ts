@@ -1,10 +1,8 @@
 import { assert } from '@game/shared';
-import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 import {
   InvalidPlayerError,
-  UnableToCommitError,
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
 import type { MainDeckCard } from '../../board/board.system';

@@ -172,6 +172,9 @@ const viewMode = ref<'normal' | 'small'>('normal');
             <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
           </li>
           <li>
+            <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
+          </li>
+          <li>
             <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
           </li>
         </ul>

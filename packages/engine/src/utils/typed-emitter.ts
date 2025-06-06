@@ -34,8 +34,7 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     }
     const starListeners = Array.from(this._listeners['*'] ?? []);
     for (const listener of starListeners) {
-      // @ts-expect-error
-      await listener(new StarEvent({ eventName, eventArg }));
+      await listener(new StarEvent({ eventName, event: eventArg }) as any);
     }
   }
 
@@ -51,8 +50,7 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     await Promise.all(listeners);
 
     const starListeners = Array.from(this._listeners['*'] ?? []).map(listener =>
-      // @ts-expect-error
-      listener(new StarEvent({ eventName, eventArg }))
+      listener(new StarEvent({ eventName, event: eventArg }) as any)
     );
     await Promise.all(starListeners);
   }

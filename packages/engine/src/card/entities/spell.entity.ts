@@ -50,6 +50,7 @@ export class SpellCard extends Card<
     }
     return [GAME_PHASES.MAIN];
   }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&

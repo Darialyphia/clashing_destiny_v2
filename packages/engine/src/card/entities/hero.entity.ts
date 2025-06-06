@@ -277,12 +277,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canPlay() {
-    if (!this.blueprint.lineage) return true;
-
     return (
       this.location === 'destinyDeck' &&
       this.game.gamePhaseSystem.getContext().state === GAME_PHASES.DESTINY &&
-      this.player.hero.hasLineage(this.blueprint.lineage) &&
+      (!this.blueprint.lineage || this.player.hero.hasLineage(this.blueprint.lineage)) &&
       this.blueprint.level - this.player.hero.level === 1
     );
   }

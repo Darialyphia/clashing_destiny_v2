@@ -81,18 +81,62 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   async initialize() {
+    const start = performance.now();
+    let now = start;
+
     this.rngSystem.initialize({ seed: this.options.rngSeed });
+    console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
     this.cardSystem.initialize({ cardPool: this.cardPool });
+    console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
     await this.playerSystem.initialize({
       players: this.options.players
     });
+    console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
+    this.snapshotSystem.initialize();
+    console.log(
+      `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
+
     this.boardSystem.initialize();
-    await this.gamePhaseSystem.initialize();
+    console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
     this.interaction.initialize();
+    console.log(
+      `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
+
     this.effectChainSystem.initialize();
+    console.log(
+      `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
+
+    await this.gamePhaseSystem.initialize();
+    console.log(
+      `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
+
     await this.inputSystem.initialize(this.options.history ?? []);
-    this.snapshotSystem.takeSnapshot();
+    console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));
+    await this.gamePhaseSystem.startGame();
+    this.snapshotSystem.takeSnapshot();
+    console.log(
+      `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,
+      'color: blue; font-weight: bold;'
+    );
   }
 
   serialize() {
@@ -119,22 +163,18 @@ export class Game implements Serializable<SerializedGame> {
   subscribeOmniscient(
     cb: (snapshot: GameStateSnapshot<SerializedOmniscientState>) => void
   ) {
-    this.on(GAME_EVENTS.FLUSHED, () =>
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
       cb(this.snapshotSystem.getLatestOmniscientSnapshot())
     );
-    this.on(GAME_EVENTS.INPUT_REQUIRED, () =>
-      cb(this.snapshotSystem.getLatestOmniscientSnapshot())
-    );
+
+    console.log('subscribed');
   }
 
   subscribeForPlayer(
     id: string,
     cb: (snapshot: GameStateSnapshot<SerializedPlayerState>) => void
   ) {
-    this.on(GAME_EVENTS.FLUSHED, () =>
-      cb(this.snapshotSystem.getLatestSnapshotForPlayer(id))
-    );
-    this.on(GAME_EVENTS.INPUT_REQUIRED, () =>
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
       cb(this.snapshotSystem.getLatestSnapshotForPlayer(id))
     );
   }

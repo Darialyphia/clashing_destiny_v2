@@ -19,16 +19,16 @@ const { card } = defineProps<{
     kind: CardKind;
     affinity: Affinity;
     uinlockableAffinities?: Affinity[];
-    manaCost?: number;
-    destinyCost?: number;
+    manaCost?: number | null;
+    destinyCost?: number | null;
     rarity: Rarity;
-    level?: number;
-    atk?: number;
-    hp?: number;
-    spellpower?: number;
-    durability?: number;
+    level?: number | null;
+    atk?: number | null;
+    hp?: number | null;
+    spellpower?: number | null;
+    durability?: number | null;
     abilities?: string[];
-    subKind?: string;
+    subKind?: string | null;
   };
 }>();
 

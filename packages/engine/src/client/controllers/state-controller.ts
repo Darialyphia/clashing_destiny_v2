@@ -23,49 +23,46 @@ export type GameClientState = Override<
 >;
 
 export class ClientStateController {
-  private _state: GameClientState;
+  private _state!: GameClientState;
 
-  constructor(
-    initialState: SerializedPlayerState | SerializedOmniscientState,
-    private client: GameClient
-  ) {
-    this._state = {
-      ...initialState,
-      entities: this.buildentities(initialState.entities, {})
-    };
-  }
+  constructor(private client: GameClient) {}
 
   get state(): GameClientState {
     return this._state;
   }
 
-  private buildentities = (
-    entities: EntityDictionary,
-    existing: GameStateEntities
-  ): GameClientState['entities'] => {
+  initialize(initialState: SerializedPlayerState | SerializedOmniscientState) {
+    this._state = {
+      ...initialState,
+      entities: this.buildentities(initialState.entities)
+    };
+  }
+
+  private buildentities = (entities: EntityDictionary): GameClientState['entities'] => {
+    const dict: GameClientState['entities'] = this._state?.entities ?? {};
     for (const [id, entity] of Object.entries(entities)) {
-      existing[id] = match(entity)
+      dict[id] = match(entity)
         .with(
           { entityType: 'player' },
-          entity => new PlayerViewModel(entity, existing, this.client)
+          entity => new PlayerViewModel(entity, dict, this.client)
         )
         .with(
           { entityType: 'card' },
-          entity => new CardViewModel(entity, existing, this.client)
+          entity => new CardViewModel(entity, dict, this.client)
         )
         .with(
           { entityType: 'modifier' },
-          entity => new ModifierViewModel(entity, existing, this.client)
+          entity => new ModifierViewModel(entity, dict, this.client)
         )
         .exhaustive();
     }
-    return existing;
+    return dict;
   };
 
   update(newState: SerializedPlayerState | SerializedOmniscientState): void {
     this._state = {
       ...newState,
-      entities: this.buildentities(newState.entities, this._state.entities)
+      entities: this.buildentities(newState.entities)
     };
   }
 }
