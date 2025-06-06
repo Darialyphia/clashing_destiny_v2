@@ -282,6 +282,7 @@ export class GameInteractionSystem
         player
       }
     );
+    await this.game.inputSystem.askForPlayerInput();
   }
 
   onInteractionEnd() {

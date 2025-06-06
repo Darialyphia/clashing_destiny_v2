@@ -3,7 +3,7 @@ import type { GameClient } from '../client';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
 export class DeclareAttackAction implements CardActionRule {
-  id = 'declare attack';
+  readonly id = 'declare attack';
 
   constructor(private client: GameClient) {}
 

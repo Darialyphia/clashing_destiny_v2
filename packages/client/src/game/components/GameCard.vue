@@ -70,47 +70,51 @@ const isActionsPopoverOpened = computed({
   >
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />
-      <PopoverPortal>
-        <PopoverContent>
-          <div class="flex flex-col">
-            <button
-              v-for="action in card.getActions()"
-              :key="action.id"
-              class="action"
-            >
-              <CardText :text="action.getLabel(card)" />
-            </button>
-          </div>
-        </PopoverContent>
-      </PopoverPortal>
+      <Card
+        :card="{
+          id: card.id,
+          name: card.name,
+          affinity: card.affinity,
+          description: card.description,
+          image: card.imagePath,
+          kind: card.kind,
+          level: card.level,
+          rarity: card.rarity,
+          manaCost: card.manaCost,
+          destinyCost: card.destinyCost,
+          atk: card.atk,
+          hp: card.hp,
+          spellpower: card.spellpower,
+          durability: card.durability,
+          subKind: card.subKind,
+          uinlockableAffinities: card.unlockableAffinities,
+          abilities: card.abilities.map(ability => ability.description)
+        }"
+        @click="
+          () => {
+            if (!interactive) return;
+            client.ui.onCardClick(card);
+          }
+        "
+      />
+      <PopoverContent>
+        <div class="flex flex-col">
+          <button
+            v-for="action in card.getActions()"
+            :key="action.id"
+            class="action"
+            @click="
+              () => {
+                action.handler(card);
+                isActionsPopoverOpened = false;
+              }
+            "
+          >
+            <CardText :text="action.getLabel(card)" />
+          </button>
+        </div>
+      </PopoverContent>
     </PopoverRoot>
-    <Card
-      :card="{
-        id: card.id,
-        name: card.name,
-        affinity: card.affinity,
-        description: card.description,
-        image: card.imagePath,
-        kind: card.kind,
-        level: card.level,
-        rarity: card.rarity,
-        manaCost: card.manaCost,
-        destinyCost: card.destinyCost,
-        atk: card.atk,
-        hp: card.hp,
-        spellpower: card.spellpower,
-        durability: card.durability,
-        subKind: card.subKind,
-        uinlockableAffinities: card.unlockableAffinities,
-        abilities: card.abilities.map(ability => ability.description)
-      }"
-      @click="
-        () => {
-          if (!interactive) return;
-          client.ui.onCardClick(card);
-        }
-      "
-    />
   </div>
 </template>
 

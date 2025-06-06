@@ -166,8 +166,6 @@ export class Game implements Serializable<SerializedGame> {
     this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
       cb(this.snapshotSystem.getLatestOmniscientSnapshot())
     );
-
-    console.log('subscribed');
   }
 
   subscribeForPlayer(

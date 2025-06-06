@@ -2,7 +2,7 @@ import type { GameClient } from '../client';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
 export class PlayCardAction implements CardActionRule {
-  id: 'play';
+  readonly id = 'play';
 
   constructor(private client: GameClient) {}
 
@@ -18,7 +18,10 @@ export class PlayCardAction implements CardActionRule {
     this.client.adapter.dispatch({
       type: 'declarePlayCard',
       payload: {
-        index: card.getPlayer().getHand().indexOf(card),
+        index: card
+          .getPlayer()
+          .getHand()
+          .findIndex(c => c.equals(card)),
         playerId: this.client.playerId
       }
     });

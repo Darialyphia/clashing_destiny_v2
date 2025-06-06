@@ -51,19 +51,21 @@ const myBoard = useMyBoard();
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
     /* --rotation: 0deg; */
     --y-offset: calc(var(--offset) * 20px - 4rem);
-    --counter-rotation: 0;
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
       )
-      rotate(var(--rotation)) translateY(var(--y-offset))
-      rotate(var(--counter-rotation));
+      rotate(var(--rotation)) translateY(var(--y-offset));
     transition: transform 0.2s ease-out;
 
     &:hover {
       z-index: 1;
       --y-offset: -13rem;
       --counter-rotation: calc(var(--rotation) * -1);
+      transform: translateX(
+          calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
+        )
+        translateY(var(--y-offset));
     }
   }
 }

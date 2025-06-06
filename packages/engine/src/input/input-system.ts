@@ -199,12 +199,15 @@ export class InputSystem extends System<SerializedInput[]> {
     if (this.isPaused) {
       // if the game is paused, run the input immediately
       await this.handleInput(input);
-    } else {
+    } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
       // the currentinput could schedule new actions, so we need to wait for the flush
       this.game.once(GAME_EVENTS.FLUSHED, () =>
         this.schedule(() => this.handleInput(input))
       );
+    } else {
+      // if the game is not paused and not running, run the input immediately
+      await this.handleInput(input);
     }
   }
 

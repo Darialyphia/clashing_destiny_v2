@@ -200,7 +200,6 @@ export class CardViewModel {
   }
 
   get canAttack() {
-    console.log(this.id, this.potentialAttackTargets.length);
     return this.potentialAttackTargets.length > 0;
   }
 

@@ -199,13 +199,15 @@ document.addEventListener('fullscreenchange', () => {
 
 .board {
   --board-scale: 1;
+  --board-height: 105dvh;
   display: grid;
-  grid-template-rows: 2fr 2fr;
-  height: 105dvh;
+  grid-template-rows: 1fr 1fr;
+  height: ar(--board-height);
   row-gap: 1.5rem;
   padding-inline: 5rem;
   transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
   transform-style: preserve-3d;
+  padding-inline: 10rem;
 
   * {
     transform-style: preserve-3d;
@@ -217,6 +219,10 @@ document.addEventListener('fullscreenchange', () => {
   display: grid;
   grid-template-columns: auto auto 1fr auto;
   gap: 0.5rem;
+  > * {
+    /* hack for Firefox that doesnt handle aspect-ratio in auto sized grid columns correctly; */
+    height: calc(var(--board-height) / 2);
+  }
 }
 
 .talent-zone {
@@ -224,6 +230,8 @@ document.addEventListener('fullscreenchange', () => {
   grid-auto-flow: column;
   grid-template-rows: repeat(4, 1fr);
   gap: 0.5rem;
+  /* hack for Firefox that doesnt handle aspect-ratio in auto sized grid columns correctly; */
+  aspect-ratio: 1 / 4;
   > * {
     aspect-ratio: 1;
   }
