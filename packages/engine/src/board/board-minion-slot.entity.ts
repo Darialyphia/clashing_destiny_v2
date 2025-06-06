@@ -54,12 +54,12 @@ export class BoardMinionSlot
   }
 
   summon(minion: MinionCard): void {
-    assert(this.isOccupied, 'Minion slot already occupied');
+    assert(!this.isOccupied, 'Minion slot already occupied');
     this._minion = minion;
   }
 
   removeMinion() {
-    assert(!this.isOccupied, 'Minion slot already empty');
+    assert(this.isOccupied, 'Minion slot already empty');
     const minion = this._minion!;
     this._minion = null;
 

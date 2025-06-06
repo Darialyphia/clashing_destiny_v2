@@ -4,6 +4,7 @@ import type { Config } from '../../config';
 import {
   GAME_EVENTS,
   GameNewSnapshotEvent,
+  type GameEventName,
   type GameStarEvent,
   type SerializedStarEvent
 } from '../game.events';
@@ -64,7 +65,14 @@ export class GameSnaphotSystem extends System<EmptyObject> {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   initialize(): void {
+    const ignoredEvents: GameEventName[] = [
+      GAME_EVENTS.NEW_SNAPSHOT,
+      GAME_EVENTS.FLUSHED,
+      GAME_EVENTS.INPUT_START,
+      GAME_EVENTS.INPUT_END
+    ];
     this.game.on('*', event => {
+      if (ignoredEvents.includes(event.data.eventName)) return;
       this.eventsSinceLastSnapshot.push(event);
     });
     this.playerCaches[this.game.playerSystem.player1.id] = [];

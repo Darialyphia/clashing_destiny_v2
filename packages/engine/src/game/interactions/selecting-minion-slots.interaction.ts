@@ -55,9 +55,7 @@ export class SelectingMinionSlotsContext {
     this.isDone = options.isDone;
   }
 
-  async init() {
-    await this.autoCommitIfAble();
-  }
+  init() {}
 
   private get elligiblePositions() {
     const result: MinionPosition[] = [];

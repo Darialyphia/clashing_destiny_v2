@@ -10,6 +10,8 @@ import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 export class WhileOnBoardModifier<
   T extends MinionCard | ArtifactCard | LocationCard
 > extends Modifier<T> {
+  private isActivated = false;
+
   constructor(
     modifierType: string,
     game: Game,
@@ -25,8 +27,12 @@ export class WhileOnBoardModifier<
           eventName: '*',
           handler: async () => {
             if (this.target.location !== 'board') {
+              if (!this.isActivated) return;
+              this.isActivated = false;
               await this.deactivate();
             } else {
+              if (this.isActivated) return;
+              this.isActivated = true;
               await this.activate();
             }
           }

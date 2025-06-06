@@ -58,11 +58,11 @@ const selectedIndices = ref<number[]>([]);
     }"
   >
     <div class="content" :class="{ 'is-showing-board': isShowingBoard }">
-      <p class="text-5 mb-4">
+      <p v-if="playedCard" class="text-5 mb-4">
         Select the card to put in the Destiny Zone ({{
           selectedIndices.length
         }}
-        / {{ playedCard!.manaCost }}) .
+        / {{ playedCard.manaCost }}) .
       </p>
       <div class="card-list">
         <label v-for="card in displayedCards" :key="card.cardId">
@@ -97,6 +97,7 @@ const selectedIndices = ref<number[]>([]);
         <FancyButton
           variant="info"
           text="Play card"
+          :disabled="selectedIndices.length < (playedCard?.manaCost ?? 0)"
           @click="
             client.adapter.dispatch({
               type: 'commitPlayCard',

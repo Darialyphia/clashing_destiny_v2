@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { assert, type JSONValue, type Serializable } from '@game/shared';
+import {
+  assert,
+  type JSONValue,
+  type MaybePromise,
+  type Serializable
+} from '@game/shared';
 import type { Game } from '../game/game';
 import { MissingPayloadError, WrongGamePhaseError } from './input-errors';
 import type { GamePhase } from '../game/game.enums';
@@ -27,7 +32,7 @@ export abstract class Input<TSchema extends DefaultSchema>
     protected rawPayload: JSONValue
   ) {}
 
-  protected abstract impl(): void;
+  protected abstract impl(): MaybePromise<void>;
 
   private parsePayload() {
     const parsed = this.payloadSchema.safeParse(this.rawPayload);
@@ -44,13 +49,13 @@ export abstract class Input<TSchema extends DefaultSchema>
     return this.allowedPhases.includes(this.game.gamePhaseSystem.getContext().state);
   }
 
-  execute() {
+  async execute() {
     this.parsePayload();
 
     assert(this.payload, new MissingPayloadError());
     assert(this.isValidPhase, new WrongGamePhaseError());
 
-    this.impl();
+    await this.impl();
   }
 
   serialize() {

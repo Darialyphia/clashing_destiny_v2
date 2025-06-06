@@ -156,7 +156,7 @@ export class InputSystem extends System<SerializedInput[]> {
     try {
       while (this.queue.length) {
         const fn = this.queue.shift();
-        fn!();
+        await fn!();
       }
       this.isRunning = false;
       this.game.snapshotSystem.takeSnapshot();
@@ -195,7 +195,6 @@ export class InputSystem extends System<SerializedInput[]> {
     console.log(input);
     console.groupEnd();
     if (!this.isActionType(input.type)) return;
-
     if (this.isPaused) {
       // if the game is paused, run the input immediately
       await this.handleInput(input);
@@ -207,7 +206,7 @@ export class InputSystem extends System<SerializedInput[]> {
       );
     } else {
       // if the game is not paused and not running, run the input immediately
-      await this.handleInput(input);
+      await this.schedule(() => this.handleInput(input));
     }
   }
 
@@ -220,8 +219,7 @@ export class InputSystem extends System<SerializedInput[]> {
     this._currentAction = input;
     await this.game.emit(GAME_EVENTS.INPUT_START, new GameInputEvent({ input }));
 
-    input.execute();
-
+    await input.execute();
     await this.game.emit(GAME_EVENTS.INPUT_END, new GameInputEvent({ input }));
     this.addToHistory(input);
     this._currentAction = prevAction;

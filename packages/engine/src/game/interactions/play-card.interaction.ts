@@ -51,6 +51,7 @@ export class PlayCardContext {
   }
 
   async cancel(player: Player) {
+    console.log('canceling play card interaction');
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();

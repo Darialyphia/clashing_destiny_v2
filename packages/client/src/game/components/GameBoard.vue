@@ -11,6 +11,7 @@ import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
+import MinionSlot from '../MinionSlot.vue';
 
 const client = useGameClient();
 
@@ -51,7 +52,7 @@ document.addEventListener('fullscreenchange', () => {
           <div class="talent"></div>
           <div class="talent"></div>
         </div>
-        <div class="hero-zone debug">
+        <div class="hero-zone">
           <div class="location card-turned debug"></div>
           <div class="artifacts">
             <div class="card"></div>
@@ -66,18 +67,18 @@ document.addEventListener('fullscreenchange', () => {
         </div>
         <div class="minion-zone">
           <div class="minion-row debug">
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
+            <MinionSlot
+              v-for="slot in opponentBoard.defenseZone.slots"
+              :key="slot.position"
+              :slot="slot"
+            />
           </div>
-          <div class="minion-row debug">
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
+          <div class="minion-row">
+            <MinionSlot
+              v-for="slot in opponentBoard.attackZone.slots"
+              :key="slot.position"
+              :slot="slot"
+            />
           </div>
         </div>
         <div class="deck-zone debug">
@@ -127,19 +128,19 @@ document.addEventListener('fullscreenchange', () => {
           <div class="location card-turned debug"></div>
         </div>
         <div class="minion-zone">
-          <div class="minion-row debug">
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
+          <div class="minion-row">
+            <MinionSlot
+              v-for="slot in myBoard.attackZone.slots"
+              :key="slot.position"
+              :slot="slot"
+            />
           </div>
-          <div class="minion-row debug">
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
-            <div class=""></div>
+          <div class="minion-row">
+            <MinionSlot
+              v-for="slot in myBoard.defenseZone.slots"
+              :key="slot.position"
+              :slot="slot"
+            />
           </div>
         </div>
         <div class="deck-zone debug">
@@ -219,7 +220,7 @@ document.addEventListener('fullscreenchange', () => {
 .opponent-side,
 .my-side {
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto auto minmax(50%, 1fr) auto;
   gap: 0.5rem;
   > * {
     /* hack for Firefox that doesnt handle aspect-ratio in auto sized grid columns correctly; */
@@ -272,7 +273,7 @@ document.addEventListener('fullscreenchange', () => {
 .minion-zone {
   display: grid;
   grid-auto-flow: row;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 50% 50%;
   gap: 0.5rem;
 
   .minion-row {

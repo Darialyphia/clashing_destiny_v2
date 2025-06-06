@@ -349,7 +349,10 @@ export class MinionCard extends Card<
     const [position] = await this.game.interaction.selectMinionSlot({
       player: this.player,
       isElligible(position) {
-        return this.player.boardSide.isOccupied(position.zone, position.slot);
+        return (
+          position.player.equals(this.player) &&
+          !this.player.boardSide.isOccupied(position.zone, position.slot)
+        );
       },
       canCommit(selectedSlots) {
         return selectedSlots.length === 1;
@@ -358,6 +361,7 @@ export class MinionCard extends Card<
         return selectedSlots.length === 1;
       }
     });
+    console.log(position);
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
