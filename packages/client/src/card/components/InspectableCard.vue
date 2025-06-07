@@ -25,7 +25,7 @@ const card = useCard(cardId);
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent>
-        <GameCard :card-id="cardId" />
+        <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>
     </HoverCardPortal>
   </HoverCardRoot>

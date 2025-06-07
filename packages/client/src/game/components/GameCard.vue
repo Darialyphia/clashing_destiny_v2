@@ -67,10 +67,6 @@ const isActionsPopoverOpened = computed({
   <div
     class="card-resizer"
     ref="root"
-    :class="{
-      disabled: !card.canPlay && card.location === 'hand',
-      selected: client.ui.selectedCard?.equals(card)
-    }"
     v-on-click-outside="
       () => {
         isActionsPopoverOpened = false;
@@ -99,6 +95,13 @@ const isActionsPopoverOpened = computed({
           uinlockableAffinities: card.unlockableAffinities,
           abilities: card.abilities.map(ability => ability.description)
         }"
+        class="card"
+        :class="{
+          floating: card.location === 'board',
+          exhausted: card.isExhausted,
+          disabled: !card.canPlay && card.location === 'hand',
+          selected: client.ui.selectedCard?.equals(card)
+        }"
         @click="
           () => {
             if (!interactive) return;
@@ -106,23 +109,25 @@ const isActionsPopoverOpened = computed({
           }
         "
       />
-      <PopoverContent>
-        <div class="flex flex-col">
-          <button
-            v-for="action in card.getActions()"
-            :key="action.id"
-            class="action"
-            @click="
-              () => {
-                action.handler(card);
-                isActionsPopoverOpened = false;
-              }
-            "
-          >
-            <CardText :text="action.getLabel(card)" />
-          </button>
-        </div>
-      </PopoverContent>
+      <PopoverPortal :disabled="card.location === 'hand'">
+        <PopoverContent :side-offset="-50" v-if="interactive">
+          <div class="actions-list">
+            <button
+              v-for="action in card.getActions()"
+              :key="action.id"
+              class="action"
+              @click="
+                () => {
+                  action.handler(card);
+                  isActionsPopoverOpened = false;
+                }
+              "
+            >
+              <CardText :text="action.getLabel(card)" />
+            </button>
+          </div>
+        </PopoverContent>
+      </PopoverPortal>
     </PopoverRoot>
   </div>
 </template>
@@ -161,6 +166,10 @@ const isActionsPopoverOpened = computed({
   animation: card-glow 2.5s infinite;
 }
 
+.actions-list {
+  display: flex;
+  flex-direction: column;
+}
 .action {
   background: black;
   padding: 0.5rem;
@@ -171,6 +180,17 @@ const isActionsPopoverOpened = computed({
   }
   &:focus-visible {
     outline: solid 2px hsl(var(--cyan-4-hsl));
+  }
+}
+
+.card {
+  transition: all 0.3s var(--ease-2);
+  &.floating {
+    transform: translateZ(10px);
+  }
+  &.exhausted {
+    filter: grayscale(0.5);
+    transform: none;
   }
 }
 </style>

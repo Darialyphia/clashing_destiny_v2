@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
-import GameCard from './components/GameCard.vue';
-import { useGameClient, useGameState } from './composables/useGameClient';
+import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import { useGameClient, useGameState } from '../composables/useGameClient';
 
 const props = defineProps<{
   slot: SerializedBoardMinionSlot;
@@ -45,15 +45,14 @@ const isHighlighted = computed(() => {
     "
   >
     <InspectableCard v-if="props.slot.minion" :card-id="props.slot.minion">
-      <GameCard :card-id="props.slot.minion" />
+      <GameCard :card-id="props.slot.minion" class="minion-slot-card" />
     </InspectableCard>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .minion-slot {
-  border: solid 1px yellow;
-  overflow: hidden;
+  border: solid 1px white;
   aspect-ratio: var(--card-width-unitless) / var(--card-height-unitless);
   position: relative;
   &.highlighted {

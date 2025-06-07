@@ -211,6 +211,7 @@ export class MinionCard extends Card<
     const base =
       this.position?.zone === 'attack' &&
       !this._isExhausted &&
+      this.atk > 0 &&
       (this.game.gamePhaseSystem.elapsedTurns === this.playedAtTurn
         ? this.canAttackOnSameTurnAsPlayed
         : true);

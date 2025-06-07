@@ -11,7 +11,7 @@ import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
-import MinionSlot from '../MinionSlot.vue';
+import MinionSlot from './MinionSlot.vue';
 import DestinyZone from './DestinyZone.vue';
 
 const client = useGameClient();
@@ -53,7 +53,7 @@ document.addEventListener('fullscreenchange', () => {
           <div class="talent"></div>
           <div class="talent"></div>
         </div>
-        <div class="hero-zone">
+        <div class="hero-zone debug">
           <div class="location card-turned debug"></div>
           <div class="artifacts">
             <div class="card"></div>
@@ -209,10 +209,10 @@ document.addEventListener('fullscreenchange', () => {
   transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
   transform-style: preserve-3d;
   padding-inline: 10rem;
+}
 
-  * {
-    transform-style: preserve-3d;
-  }
+:global(.board *) {
+  transform-style: preserve-3d;
 }
 
 .opponent-side,
@@ -249,7 +249,7 @@ document.addEventListener('fullscreenchange', () => {
 
   .hero {
     justify-self: center;
-    overflow: hidden;
+    /* overflow: hidden; */
     position: relative;
     & > * {
       position: absolute;
@@ -277,6 +277,7 @@ document.addEventListener('fullscreenchange', () => {
   .minion-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    align-items: center;
     /* justify-content: space-around;
     padding-block: 0.5rem; */
   }

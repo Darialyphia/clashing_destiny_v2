@@ -203,6 +203,10 @@ export class CardViewModel {
     return this.potentialAttackTargets.length > 0;
   }
 
+  get isExhausted() {
+    return this.data.isExhausted;
+  }
+
   getPlayer() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
   }
