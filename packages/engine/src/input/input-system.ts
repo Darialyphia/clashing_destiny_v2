@@ -35,6 +35,7 @@ import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
+import { ChooseAffinityInput } from './inputs/choose-affinity.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -63,6 +64,7 @@ const inputMap = validateinputMap({
   commitMinionSlotSelection: CommitMinionSlotSelectionInput,
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
+  chooseAffinity: ChooseAffinityInput,
   useCardAbility: UseCardAbilityInput
 });
 
