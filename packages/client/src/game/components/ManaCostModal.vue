@@ -45,6 +45,11 @@ const playedCard = computed(() => {
 });
 
 const selectedIndices = ref<number[]>([]);
+watch(isOpened, opened => {
+  if (!opened) {
+    selectedIndices.value = [];
+  }
+});
 </script>
 
 <template>

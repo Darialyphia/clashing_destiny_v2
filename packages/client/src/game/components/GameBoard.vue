@@ -270,7 +270,7 @@ const canEndTurn = computed(() => {
 .my-side {
   display: grid;
   gap: var(--size-2);
-  grid-template-columns: 0.8fr 2fr 0.8fr;
+  grid-template-columns: 0.6fr 2fr 0.6fr;
   > * {
     height: calc(var(--board-height) / 2);
   }
@@ -316,6 +316,10 @@ const canEndTurn = computed(() => {
   .minion-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
+    > * {
+      aspect-ratio: var(--card-ratio);
+    }
     align-items: center;
   }
 }
@@ -324,7 +328,7 @@ const canEndTurn = computed(() => {
   display: grid;
   grid-auto-flow: row;
   gap: var(--size-2);
-  grid-template-rows: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.8fr);
 
   .two-card-pile {
     display: grid;
