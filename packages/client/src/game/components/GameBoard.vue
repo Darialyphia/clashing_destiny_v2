@@ -129,7 +129,39 @@ const canEndTurn = computed(() => {
         </div>
       </section>
 
-      <div class="explainer">TODO Current interaction explainer message</div>
+      <div class="explainer">
+        <div
+          class="phase"
+          :class="{ active: state.phase.state === GAME_PHASES.DRAW }"
+        >
+          DRAW
+        </div>
+        <div
+          class="phase"
+          :class="{ active: state.phase.state === GAME_PHASES.DESTINY }"
+        >
+          DESTINY
+        </div>
+        <div
+          class="phase"
+          :class="{ active: state.phase.state === GAME_PHASES.MAIN }"
+        >
+          MAIN
+        </div>
+        <div
+          class="phase"
+          :class="{ active: state.phase.state === GAME_PHASES.ATTACK }"
+        >
+          COMBAT
+        </div>
+        <div
+          class="phase"
+          :class="{ active: state.phase.state === GAME_PHASES.END }"
+        >
+          END
+        </div>
+        <p class="ml-auto">TODO Current interaction explainer message</p>
+      </div>
       <section class="my-side">
         <div class="hero-zone debug">
           <div class="hero">
@@ -268,9 +300,24 @@ const canEndTurn = computed(() => {
 }
 
 .explainer {
-  text-align: center;
   font-size: var(--font-size-4);
-  transform: rotateX(-30deg);
+  display: flex;
+  gap: var(--size-3);
+  align-items: center;
+
+  > p {
+    transform: rotateX(-30deg);
+    font-size: inherit;
+  }
+}
+.phase {
+  border: solid 2px white;
+  border-radius: var(--radius-2);
+  padding: var(--size-2) var(--size-3);
+  font-size: var(--font-size-3);
+  &.active {
+    border-color: var(--cyan-4);
+  }
 }
 
 .opponent-side,
