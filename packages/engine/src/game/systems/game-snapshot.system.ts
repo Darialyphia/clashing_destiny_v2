@@ -21,6 +21,7 @@ import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
 import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.events';
+import type { SerializedEffectChain } from '../effect-chain';
 
 export type GameStateSnapshot<T> = {
   id: number;
@@ -49,6 +50,7 @@ export type SerializedOmniscientState = {
   board: SerializedBoard;
   turnPlayer: string;
   turnCount: number;
+  effectChain: SerializedEffectChain | null;
 };
 
 export type SerializedPlayerState = SerializedOmniscientState;
@@ -130,7 +132,8 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       interaction: this.game.interaction.serialize(),
       board: this.game.boardSystem.serialize(),
       turnPlayer: this.game.gamePhaseSystem.turnPlayer.id,
-      turnCount: this.game.gamePhaseSystem.elapsedTurns
+      turnCount: this.game.gamePhaseSystem.elapsedTurns,
+      effectChain: this.game.effectChainSystem.serialize()
     };
   }
 

@@ -11,6 +11,7 @@ import {
 import { vOnClickOutside } from '@vueuse/components';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import CardText from '@/card/components/CardText.vue';
+import CardResizer from './CardResizer.vue';
 
 const {
   cardId,
@@ -23,28 +24,6 @@ const {
 }>();
 
 const card = useCard(cardId);
-
-const root = useTemplateRef('root');
-
-const scale = ref(1);
-const calculateScale = () => {
-  if (!root.value) return;
-  if (!autoScale) {
-    scale.value = 1;
-    return;
-  }
-  const availableWidth = root.value.parentElement?.offsetWidth || 0;
-  const availableHeight = root.value.parentElement?.offsetHeight || 0;
-  const width = root.value.offsetWidth;
-  const height = root.value.offsetHeight;
-
-  const scaleX = availableWidth / width;
-  const scaleY = availableHeight / height;
-  scale.value = Math.min(scaleX, scaleY);
-};
-
-useResizeObserver(root, calculateScale);
-onMounted(calculateScale);
 
 const client = useGameClient();
 
@@ -64,15 +43,7 @@ const isActionsPopoverOpened = computed({
 </script>
 
 <template>
-  <div
-    class="card-resizer"
-    ref="root"
-    v-on-click-outside="
-      () => {
-        isActionsPopoverOpened = false;
-      }
-    "
-  >
+  <CardResizer :enabled="autoScale">
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />
       <Card
@@ -129,16 +100,10 @@ const isActionsPopoverOpened = computed({
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
-  </div>
+  </CardResizer>
 </template>
 
 <style scoped lang="postcss">
-.card-resizer {
-  transform: scale(v-bind(scale));
-  transform-origin: top left;
-  position: relative;
-}
-
 @keyframes card-glow {
   0%,
   80%,

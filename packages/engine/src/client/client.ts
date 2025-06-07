@@ -58,7 +58,7 @@ export class GameClient {
 
   private initialState!: SerializedOmniscientState | SerializedPlayerState;
 
-  private _playerId: string;
+  playerId: string;
 
   private lastSnapshotId = -1;
 
@@ -79,7 +79,7 @@ export class GameClient {
     this.stateManager = new ClientStateController(this);
     this.ui = new UiController(this);
     this.gameType = options.gameType;
-    this._playerId = options.playerId;
+    this.playerId = options.playerId;
 
     this.adapter.subscribe(async snapshot => {
       console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
@@ -90,10 +90,6 @@ export class GameClient {
       if (this._processingUpdate) return;
       await this.processQueue();
     });
-  }
-
-  get playerId() {
-    return this._playerId;
   }
 
   get isPlayingFx() {
@@ -129,7 +125,9 @@ export class GameClient {
     this.stateManager.initialize(snapshot.state);
 
     if (this.gameType === GAME_TYPES.LOCAL) {
-      this._playerId = snapshot.state.turnPlayer;
+      this.playerId = snapshot.state.effectChain
+        ? snapshot.state.effectChain.player
+        : snapshot.state.interaction.ctx.player;
     }
 
     this.isReady = true;
@@ -160,7 +158,9 @@ export class GameClient {
       this.stateManager.update(snapshot.state);
 
       if (this.gameType === GAME_TYPES.LOCAL) {
-        this._playerId = snapshot.state.turnPlayer;
+        this.playerId = snapshot.state.effectChain
+          ? snapshot.state.effectChain.player
+          : snapshot.state.interaction.ctx.player;
       }
 
       this.ui.update();

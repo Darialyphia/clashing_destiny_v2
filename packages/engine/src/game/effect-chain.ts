@@ -28,7 +28,10 @@ type EffectChainTransition = Values<typeof EFFECT_CHAIN_STATE_TRANSITIONS>;
 
 export type Effect = { source: AnyCard; handler: (game: Game) => Promise<void> };
 
-export type SerializedEffectChain = SerializedCard[];
+export type SerializedEffectChain = {
+  stack: string[];
+  player: string;
+};
 
 export class EffectChain
   extends StateMachine<EffectChainState, EffectChainTransition>
@@ -138,8 +141,11 @@ export class EffectChain
     );
   }
 
-  serialize() {
-    return this.effectStack.map(effect => effect.source.serialize());
+  serialize(): SerializedEffectChain {
+    return {
+      stack: this.effectStack.map(effect => effect.source.id),
+      player: this.currentPlayer.id
+    };
   }
 }
 

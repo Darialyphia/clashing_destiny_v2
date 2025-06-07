@@ -102,7 +102,7 @@ export class BoardSide
     this._defenseZone = {
       slots: Array.from(
         { length: this.game.config.DEFENSE_ZONE_SLOTS },
-        (_, index) => new BoardMinionSlot(player, 'attack', index)
+        (_, index) => new BoardMinionSlot(player, 'defense', index)
       )
     };
   }

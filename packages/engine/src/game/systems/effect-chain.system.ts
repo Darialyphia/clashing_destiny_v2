@@ -37,4 +37,8 @@ export class EffectChainSystem extends System<never> {
     assert(this._currentChain, 'No active effect chain');
     this._currentChain.pass(player);
   }
+
+  serialize() {
+    return this._currentChain?.serialize() ?? null;
+  }
 }

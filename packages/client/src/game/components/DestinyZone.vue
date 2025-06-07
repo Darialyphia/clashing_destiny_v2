@@ -35,6 +35,7 @@ const client = useGameClient();
 <style scoped lang="postcss">
 .destiny-zone {
   display: flex;
+  border: solid 1px white;
 }
 
 .item {

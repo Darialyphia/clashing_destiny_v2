@@ -164,8 +164,8 @@ export class CardViewModel {
   }
 
   get spellpower() {
-    if ('spellpower' in this.data) {
-      return this.data.spellpower as number;
+    if ('spellPower' in this.data) {
+      return this.data.spellPower as number;
     }
 
     return null;

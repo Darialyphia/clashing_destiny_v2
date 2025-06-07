@@ -2,6 +2,7 @@
 import { useFullscreen } from '@vueuse/core';
 import {
   useGameClient,
+  useGameState,
   useMyBoard,
   useOpponentBoard
 } from '../composables/useGameClient';
@@ -13,9 +14,13 @@ import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
 import MinionSlot from './MinionSlot.vue';
 import DestinyZone from './DestinyZone.vue';
+import CardResizer from './CardResizer.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const client = useGameClient();
-
+const state = useGameState();
 const board = useTemplateRef('board');
 useBoardResize(board);
 const { isFullscreen } = useFullscreen(document.body);
@@ -23,6 +28,13 @@ const myBoard = useMyBoard();
 const opponentBoard = useOpponentBoard();
 document.addEventListener('fullscreenchange', () => {
   console.log(document.fullscreenElement);
+});
+
+const canEndTurn = computed(() => {
+  return (
+    state.value.phase.state === GAME_PHASES.MAIN &&
+    client.value.playerId === state.value.turnPlayer
+  );
 });
 </script>
 
@@ -46,34 +58,21 @@ document.addEventListener('fullscreenchange', () => {
       :style="{ '--board-scale': 1 }"
       ref="board"
     >
-      <section class="opponent-side debug">
-        <div class="talent-zone debug">
-          <div class="talent"></div>
-          <div class="talent"></div>
-          <div class="talent"></div>
-          <div class="talent"></div>
-        </div>
+      <section class="opponent-side">
         <div class="hero-zone debug">
-          <div class="location card-turned debug"></div>
+          <div class="hero">
+            <InspectableCard :card-id="opponentBoard.heroZone.hero">
+              <GameCard :card-id="opponentBoard.heroZone.hero" />
+            </InspectableCard>
+          </div>
           <div class="artifacts">
             <div class="card"></div>
             <div class="card"></div>
             <div class="card"></div>
           </div>
-          <div class="hero card">
-            <InspectableCard :card-id="opponentBoard.heroZone.hero">
-              <GameCard :card-id="opponentBoard.heroZone.hero" />
-            </InspectableCard>
-          </div>
+          <div class="location card-turned debug"></div>
         </div>
         <div class="minion-zone">
-          <div class="minion-row debug">
-            <MinionSlot
-              v-for="slot in opponentBoard.defenseZone.slots"
-              :key="slot.position"
-              :slot="slot"
-            />
-          </div>
           <div class="minion-row">
             <MinionSlot
               v-for="slot in opponentBoard.attackZone.slots"
@@ -81,42 +80,58 @@ document.addEventListener('fullscreenchange', () => {
               :slot="slot"
             />
           </div>
+          <div class="minion-row">
+            <MinionSlot
+              v-for="slot in opponentBoard.defenseZone.slots"
+              :key="slot.position"
+              :slot="slot"
+            />
+          </div>
         </div>
-        <div class="deck-zone debug">
-          <DestinyZone :player-id="opponentBoard.playerId" />
+        <div class="deck-zone">
+          <div class="two-card-pile debug">
+            <div class="card"></div>
+            <div class="card"></div>
+          </div>
+          <div class="two-card-pile debug">
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="deck">
+                  <CardResizer
+                    v-for="i in opponentBoard.mainDeck.remaining"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                  >
+                    <CardBack class="deck-card" />
+                  </CardResizer>
+                </div>
+              </template>
+              Opponent's Main Deck: {{ opponentBoard.mainDeck.remaining }} cards
+            </UiSimpleTooltip>
 
-          <div class="two-card-pile debug">
-            <div class="deck">
-              <CardBack
-                class="card"
-                v-for="i in opponentBoard.mainDeck.remaining"
-                :style="{ '--i': i - 1 }"
-              />
-            </div>
-            <div class="deck">
-              <CardBack
-                class="card"
-                v-for="i in opponentBoard.destinyDeck.remaining"
-                :style="{ '--i': i - 1 }"
-              />
-            </div>
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="deck">
+                  <CardResizer
+                    v-for="i in opponentBoard.destinyDeck.remaining"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                  >
+                    <CardBack class="deck-card" />
+                  </CardResizer>
+                </div>
+              </template>
+              Opponent's Destiny Deck:
+              {{ opponentBoard.destinyDeck.remaining }} cards
+            </UiSimpleTooltip>
           </div>
-          <div class="two-card-pile debug">
-            <div class="card"></div>
-            <div class="card"></div>
-          </div>
+          <DestinyZone :player-id="opponentBoard.playerId" />
         </div>
       </section>
 
       <section class="my-side">
-        <div class="talent-zone debug">
-          <div class="talent"></div>
-          <div class="talent"></div>
-          <div class="talent"></div>
-          <div class="talent"></div>
-        </div>
         <div class="hero-zone debug">
-          <div class="hero card">
+          <div class="hero">
             <InspectableCard :card-id="myBoard.heroZone.hero">
               <GameCard :card-id="myBoard.heroZone.hero" />
             </InspectableCard>
@@ -144,32 +159,73 @@ document.addEventListener('fullscreenchange', () => {
             />
           </div>
         </div>
-        <div class="deck-zone debug">
+        <div class="deck-zone">
           <div class="two-card-pile debug">
             <div class="card"></div>
             <div class="card"></div>
           </div>
           <div class="two-card-pile debug">
-            <div class="deck">
-              <CardBack
-                class="card"
-                v-for="i in myBoard.mainDeck.remaining"
-                :style="{ '--i': i - 1 }"
-              />
-            </div>
-            <div class="deck">
-              <CardBack
-                class="card"
-                v-for="i in myBoard.destinyDeck.remaining"
-                :style="{ '--i': i - 1 }"
-              />
-            </div>
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="deck">
+                  <CardResizer
+                    v-for="i in myBoard.mainDeck.remaining"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                  >
+                    <CardBack class="deck-card" />
+                  </CardResizer>
+                </div>
+              </template>
+              YourMain Deck: {{ myBoard.mainDeck.remaining }} cards
+            </UiSimpleTooltip>
+
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="deck">
+                  <CardResizer
+                    v-for="i in myBoard.destinyDeck.remaining"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                  >
+                    <CardBack class="deck-card" />
+                  </CardResizer>
+                </div>
+              </template>
+              Your Destiny Deck: {{ myBoard.destinyDeck.remaining }} cards
+            </UiSimpleTooltip>
           </div>
           <DestinyZone :player-id="myBoard.playerId" />
         </div>
       </section>
     </section>
     <Hand />
+    <div class="action-buttons">
+      <FancyButton
+        v-if="state.effectChain"
+        text="Pass chain"
+        @click="
+          client.adapter.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: client.playerId
+            }
+          })
+        "
+      />
+      <FancyButton
+        text="End turn"
+        :disabled="!canEndTurn"
+        @click="
+          client.adapter.dispatch({
+            type: 'declareEndTurn',
+            payload: {
+              playerId: client.playerId
+            }
+          })
+        "
+      />
+    </div>
   </div>
 </template>
 
@@ -180,11 +236,6 @@ document.addEventListener('fullscreenchange', () => {
   overflow: hidden;
   transform-style: preserve-3d;
   perspective: 1000px;
-}
-
-.card {
-  aspect-ratio: var(--card-ratio);
-  position: relative;
 }
 
 .card-turned {
@@ -204,11 +255,11 @@ document.addEventListener('fullscreenchange', () => {
   display: grid;
   grid-template-rows: 1fr 1fr;
   height: ar(--board-height);
-  row-gap: 1.5rem;
-  padding-inline: 5rem;
+  row-gap: var(--size-5);
+  padding-inline: 20rem;
   transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
   transform-style: preserve-3d;
-  padding-inline: 10rem;
+  padding-inline: var(--size-12);
 }
 
 :global(.board *) {
@@ -218,38 +269,26 @@ document.addEventListener('fullscreenchange', () => {
 .opponent-side,
 .my-side {
   display: grid;
-  grid-template-columns: auto auto minmax(50%, 1fr) auto;
-  gap: 0.5rem;
+  gap: var(--size-2);
+  grid-template-columns: 0.8fr 2fr 0.8fr;
   > * {
-    /* hack for Firefox that doesnt handle aspect-ratio in auto sized grid columns correctly; */
     height: calc(var(--board-height) / 2);
   }
 }
 
-.talent-zone {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(4, 1fr);
-  gap: 0.5rem;
-  /* hack for Firefox that doesnt handle aspect-ratio in auto sized grid columns correctly; */
-  aspect-ratio: 1 / 4;
-  > * {
-    aspect-ratio: 1;
-  }
+.opponent-side {
+  transform: rotateZ(180deg);
 }
 
 .hero-zone {
   display: grid;
   grid-auto-flow: row;
-  grid-template-rows: 1fr 1.5fr 3fr;
-  gap: 0.5rem;
-  .my-side & {
-    grid-template-rows: 3fr 1.5fr 1fr;
-  }
+  grid-template-rows: 3fr 1.5fr 1fr;
+  gap: var(--size-2);
 
   .hero {
     justify-self: center;
-    /* overflow: hidden; */
+    aspect-ratio: var(--card-ratio);
     position: relative;
     & > * {
       position: absolute;
@@ -260,8 +299,8 @@ document.addEventListener('fullscreenchange', () => {
     display: grid;
     grid-auto-flow: row;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    padding-inline: 0.5rem;
+    gap: var(--size-2);
+    padding-inline: var(--size-2);
   }
   .location {
     justify-self: center;
@@ -272,31 +311,30 @@ document.addEventListener('fullscreenchange', () => {
   display: grid;
   grid-auto-flow: row;
   grid-template-rows: 50% 50%;
-  gap: 0.5rem;
+  gap: var(--size-2);
 
   .minion-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     align-items: center;
-    /* justify-content: space-around;
-    padding-block: 0.5rem; */
   }
 }
 
 .deck-zone {
   display: grid;
   grid-auto-flow: row;
-  gap: 0.5rem;
-  grid-template-rows: 2fr 2fr 1fr;
-
-  .opponent-side & {
-    grid-template-rows: 1fr 2fr 2fr;
-  }
+  gap: var(--size-2);
+  grid-template-rows: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr);
 
   .two-card-pile {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    place-items: center;
+    gap: var(--size-2);
+    > * {
+      height: 100%;
+      aspect-ratio: var(--card-ratio);
+    }
   }
 }
 
@@ -304,12 +342,17 @@ document.addEventListener('fullscreenchange', () => {
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
-  --card-width: 50%;
-  --card-height: 50%;
-  > .card {
+  > * {
     grid-row: 1;
     grid-column: 1;
     transform: translateZ(calc(var(--i) * 0.8px));
+    height: 100%;
+    /* aspect-ratio: var(--card-ratio); */
+  }
+
+  .deck-card {
+    height: 100%;
+    aspect-ratio: var(--card-ratio);
   }
 }
 
@@ -318,7 +361,18 @@ document.addEventListener('fullscreenchange', () => {
   top: 0;
   left: 0;
   z-index: 1000;
-  padding: 1rem;
+  padding: var(--size-3);
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.action-buttons {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  bottom: var(--size-3);
+  right: var(--size-3);
+  z-index: 2;
+  align-items: center;
 }
 </style>

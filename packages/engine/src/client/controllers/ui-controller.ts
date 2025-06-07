@@ -107,7 +107,9 @@ export class UiController {
   }
 
   get isInteractingPlayer() {
-    return this.client.playerId === this.client.state.interaction.ctx.player;
+    return this.client.state.effectChain
+      ? this.client.playerId === this.client.state.effectChain.player
+      : this.client.playerId === this.client.state.interaction.ctx.player;
   }
 
   get isTurnPlayer() {
