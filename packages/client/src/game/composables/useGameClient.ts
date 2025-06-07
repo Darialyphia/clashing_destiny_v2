@@ -33,6 +33,21 @@ export const useGameState = () => {
   return computed(() => client.value.stateManager.state);
 };
 
+export const useGameUi = () => {
+  const client = useGameClient();
+
+  return computed(() => client.value.ui);
+};
+
+export const useBoardSide = (playerId: MaybeRef<string>) => {
+  const client = useGameClient();
+  return computed(() => {
+    return client.value.state.board.sides.find(
+      side => side.playerId === unref(playerId)
+    )!;
+  });
+};
+
 export const useMyBoard = () => {
   const client = useGameClient();
 

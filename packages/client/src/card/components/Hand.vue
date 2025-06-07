@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { useMyBoard } from '@/game/composables/useGameClient';
+import { useGameUi, useMyBoard } from '@/game/composables/useGameClient';
 import GameCard from '@/game/components/GameCard.vue';
 
 const myBoard = useMyBoard();
+const ui = useGameUi();
 </script>
 
 <template>
@@ -14,6 +15,9 @@ const myBoard = useMyBoard();
       class="card"
       v-for="(cardId, index) in myBoard.hand"
       :key="cardId"
+      :class="{
+        selected: ui.selectedCard?.id === cardId
+      }"
       :style="{
         '--index': index,
         '--offset': Math.abs(index - myBoard.hand.length / 2)
@@ -58,7 +62,7 @@ const myBoard = useMyBoard();
       rotate(var(--rotation)) translateY(var(--y-offset));
     transition: transform 0.2s ease-out;
 
-    &:hover {
+    &:is(:hover, .selected) {
       z-index: 1;
       --y-offset: -13rem;
       --counter-rotation: calc(var(--rotation) * -1);

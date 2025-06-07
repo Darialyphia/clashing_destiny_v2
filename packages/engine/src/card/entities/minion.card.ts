@@ -361,7 +361,6 @@ export class MinionCard extends Card<
         return selectedSlots.length === 1;
       }
     });
-    console.log(position);
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })

@@ -126,6 +126,10 @@
 
   --card-width-unitless: 160;
   --card-height-unitless: 224;
+
+  --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
+  --card-ratio-inverted: var(--card-height-unitless) /
+    var(--card-width-unitless);
 }
 
 html.dark {

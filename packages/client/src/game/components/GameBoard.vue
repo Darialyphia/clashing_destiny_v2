@@ -12,6 +12,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
 import MinionSlot from '../MinionSlot.vue';
+import DestinyZone from './DestinyZone.vue';
 
 const client = useGameClient();
 
@@ -82,7 +83,7 @@ document.addEventListener('fullscreenchange', () => {
           </div>
         </div>
         <div class="deck-zone debug">
-          <div class="destiny-zone"></div>
+          <DestinyZone :player-id="opponentBoard.playerId" />
 
           <div class="two-card-pile debug">
             <div class="deck">
@@ -164,7 +165,7 @@ document.addEventListener('fullscreenchange', () => {
               />
             </div>
           </div>
-          <div class="destiny-zone"></div>
+          <DestinyZone :player-id="myBoard.playerId" />
         </div>
       </section>
     </section>
@@ -179,9 +180,6 @@ document.addEventListener('fullscreenchange', () => {
   overflow: hidden;
   transform-style: preserve-3d;
   perspective: 1000px;
-  --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
-  --card-ratio-inverted: var(--card-height-unitless) /
-    var(--card-width-unitless);
 }
 
 .card {

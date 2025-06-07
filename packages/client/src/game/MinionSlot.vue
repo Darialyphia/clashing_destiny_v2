@@ -4,6 +4,7 @@ import GameCard from './components/GameCard.vue';
 import { useGameClient, useGameState } from './composables/useGameClient';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const props = defineProps<{
   slot: SerializedBoardMinionSlot;
@@ -43,7 +44,9 @@ const isHighlighted = computed(() => {
       })
     "
   >
-    <GameCard v-if="props.slot.minion" :card-id="props.slot.minion" />
+    <InspectableCard v-if="props.slot.minion" :card-id="props.slot.minion">
+      <GameCard :card-id="props.slot.minion" />
+    </InspectableCard>
   </div>
 </template>
 
@@ -52,9 +55,14 @@ const isHighlighted = computed(() => {
   border: solid 1px yellow;
   overflow: hidden;
   aspect-ratio: var(--card-width-unitless) / var(--card-height-unitless);
+  position: relative;
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
+  }
+  & > * {
+    position: absolute;
+    inset: 0;
   }
 }
 </style>

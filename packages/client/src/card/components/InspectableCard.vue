@@ -5,20 +5,22 @@ import {
   HoverCardTrigger,
   HoverCardPortal,
   HoverCardContent,
-  type HoverCardContentProps
+  type HoverCardContentProps,
+  type HoverCardRootProps
 } from 'reka-ui';
 import GameCard from '@/game/components/GameCard.vue';
 
 const { cardId, side } = defineProps<
-  { cardId: string } & Pick<HoverCardContentProps, 'side'>
+  { cardId: string } & Pick<HoverCardContentProps, 'side'> &
+    Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
 
 const card = useCard(cardId);
 </script>
 
 <template>
-  <HoverCardRoot>
-    <HoverCardTrigger class="card">
+  <HoverCardRoot :open-delay="openDelay" :close-delay="closeDelay">
+    <HoverCardTrigger class="inspectable-card">
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal>
