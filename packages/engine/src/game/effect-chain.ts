@@ -40,13 +40,19 @@ export class EffectChain
   private effectStack: Effect[] = [];
   private consecutivePasses = 0;
   private currentPlayer: Player;
+  public onResolved: () => MaybePromise<void>;
 
   constructor(
     private game: Game,
     startingPlayer: Player,
-    public onResolved: () => MaybePromise<void>
+    onResolved: () => MaybePromise<void>
   ) {
     super(EFFECT_CHAIN_STATES.BUILDING);
+    this.onResolved = async () => {
+      await onResolved();
+      console.log('Effect chain resolved');
+      await this.game.inputSystem.askForPlayerInput();
+    };
     this.currentPlayer = startingPlayer;
 
     this.addTransitions([
