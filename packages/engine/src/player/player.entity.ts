@@ -84,7 +84,7 @@ export class Player
     this.cardManager = new CardManagerComponent(game, this, {
       mainDeck: this.options.mainDeck.cards,
       destinyDeck: this.options.destinyDeck.cards,
-      maxHandSize: 5,
+      maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
     this.artifactManager = new ArtifactManagerComponent(game, this);

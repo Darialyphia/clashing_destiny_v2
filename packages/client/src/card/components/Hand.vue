@@ -4,12 +4,28 @@ import GameCard from '@/game/components/GameCard.vue';
 
 const myBoard = useMyBoard();
 const ui = useGameUi();
+
+const cardSpacing = computed(() => {
+  const handSize = myBoard.value.hand.length;
+  const base = 125;
+  return handSize > 7 ? base - 0 * (handSize - 6) : base;
+});
+const cardSpacingHovered = computed(() => {
+  const handSize = myBoard.value.hand.length;
+  const base = 175;
+  return handSize > 6 ? base - 10 * (handSize - 6) : base;
+});
+
+const angle = computed(() => {
+  const handSize = myBoard.value.hand.length;
+  return handSize > 7 ? 5 - (handSize - 6) * 0.5 : 5;
+});
 </script>
 
 <template>
   <section
     class="hand"
-    :style="{ '--hand-size': myBoard.hand.length, '--angle': 5 }"
+    :style="{ '--hand-size': myBoard.hand.length, '--angle': angle }"
   >
     <div
       class="card"
@@ -39,10 +55,10 @@ const ui = useGameUi();
   justify-items: center;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  --offset-step: 125px;
+  --offset-step: calc(1px * v-bind(cardSpacing));
 
   &:has(:hover) {
-    --offset-step: 175px;
+    --offset-step: calc(1px * v-bind(cardSpacingHovered));
   }
 
   > * {
@@ -54,7 +70,7 @@ const ui = useGameUi();
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
     /* --rotation: 0deg; */
-    --y-offset: calc(var(--offset) * 20px - 2rem);
+    --y-offset: calc(var(--offset) * 10px - 2rem);
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))

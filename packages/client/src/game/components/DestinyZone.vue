@@ -33,7 +33,6 @@ const computeSpacing = () => {
     -excess / (boardSide.value.destinyZone.length - 1),
     0
   );
-  console.log('cardSpacing', cardSpacing.value);
 };
 
 watch(

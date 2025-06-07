@@ -23,13 +23,15 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
     const cards = [...this.game.gamePhaseSystem.turnPlayer.cardManager.destinyZone];
 
     for (const card of cards) {
-      await card.addToHand();
+      await card.removeFromCurrentLocation();
+      await card.player.cardManager.addToHand(card);
     }
   }
 
   async onEnter() {}
 
   async onExit() {
+    console.log('onExit destiny phase');
     await this.recollectDestinyCards();
   }
 

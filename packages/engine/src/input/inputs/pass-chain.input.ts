@@ -14,7 +14,6 @@ export class PassChainInput extends Input<typeof schema> {
 
   impl() {
     assert(this.game.effectChainSystem.currentChain, new NoOngoingEffectChainsError());
-
     this.game.effectChainSystem.pass(this.player);
   }
 }

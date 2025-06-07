@@ -236,9 +236,9 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       })
     );
     this.dispatch(transition);
+    await this._ctx.onExit();
     this._ctx = new this.ctxDictionary[nextPhase!](this.game);
-    // @ts-ignore
-    await this._ctx.onEnter(previousPhase);
+    await this._ctx.onEnter();
     await this.game.emit(
       GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE,
       new GamePhaseChangeEvent({

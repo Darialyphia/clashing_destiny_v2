@@ -78,7 +78,6 @@ const tokens = computed<Token[]>(() => {
       };
     }
     if (part.startsWith('[missing-affinity]')) {
-      console.log(part);
       return {
         type: 'missing-affinity',
         text: part.replace('[missing-affinity] ', '')

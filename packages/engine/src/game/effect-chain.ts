@@ -50,7 +50,6 @@ export class EffectChain
     super(EFFECT_CHAIN_STATES.BUILDING);
     this.onResolved = async () => {
       await onResolved();
-      console.log('Effect chain resolved');
       await this.game.inputSystem.askForPlayerInput();
     };
     this.currentPlayer = startingPlayer;
