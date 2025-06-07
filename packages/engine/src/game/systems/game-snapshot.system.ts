@@ -180,6 +180,9 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       delete state.entities[card.id];
     });
 
+    const boardSide = state.board.sides.find(side => side.playerId === opponent.id)!;
+    boardSide.destinyDeck.cards = [];
+
     return state;
   }
 

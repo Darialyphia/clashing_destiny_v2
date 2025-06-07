@@ -5,7 +5,7 @@ import { assert } from '@game/shared';
 import { IllegalCardPlayedError, NotTurnPlayerError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
-  index: z.number()
+  index: z.number().nullable()
 });
 
 export class PlayDestinyCardInput extends Input<typeof schema> {
@@ -20,6 +20,13 @@ export class PlayDestinyCardInput extends Input<typeof schema> {
       this.game.gamePhaseSystem.turnPlayer.equals(this.player),
       new NotTurnPlayerError()
     );
+
+    if (this.payload.index === null) {
+      await this.game.gamePhaseSystem
+        .getContext<GamePhasesDict['DESTINY']>()
+        .ctx.skipDestinyPhase();
+      return;
+    }
 
     const card = this.player.cardManager.getDestinyCardAt(this.payload.index);
     assert(card, new IllegalCardPlayedError());

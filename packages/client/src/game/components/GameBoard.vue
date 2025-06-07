@@ -18,6 +18,7 @@ import CardResizer from './CardResizer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import DestinyPhaseModal from './DestinyPhaseModal.vue';
 
 const client = useGameClient();
 const state = useGameState();
@@ -40,6 +41,8 @@ const canEndTurn = computed(() => {
 
 <template>
   <ManaCostModal />
+  <DestinyPhaseModal />
+
   <div class="board-container">
     <div class="debug-tools">
       <button

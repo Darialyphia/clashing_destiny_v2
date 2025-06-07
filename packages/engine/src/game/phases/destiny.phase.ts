@@ -13,6 +13,12 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
     );
   }
 
+  async skipDestinyPhase() {
+    await this.game.gamePhaseSystem.sendTransition(
+      GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE
+    );
+  }
+
   private async recollectDestinyCards() {
     const cards = [...this.game.gamePhaseSystem.turnPlayer.cardManager.destinyZone];
 

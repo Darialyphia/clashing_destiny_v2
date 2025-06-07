@@ -69,7 +69,7 @@ export type SerializedBoardSide = {
   hand: string[];
   destinyZone: string[];
   mainDeck: { total: number; remaining: number };
-  destinyDeck: { total: number; remaining: number };
+  destinyDeck: { total: number; remaining: number; cards: string[] };
   discardPile: string[];
   banishPile: string[];
 };
@@ -313,7 +313,8 @@ export class BoardSide
       },
       destinyDeck: {
         total: this.player.cardManager.destinyDeckSize,
-        remaining: this.player.cardManager.remainingCardsInDestinyDeck
+        remaining: this.player.cardManager.remainingCardsInDestinyDeck,
+        cards: this.player.cardManager.destinyDeck.cards.map(card => card.id)
       }
     };
   }
