@@ -129,6 +129,7 @@ const canEndTurn = computed(() => {
         </div>
       </section>
 
+      <div class="explainer">TODO Current interaction explainer message</div>
       <section class="my-side">
         <div class="hero-zone debug">
           <div class="hero">
@@ -251,19 +252,25 @@ const canEndTurn = computed(() => {
 
 .board {
   --board-scale: 1;
-  --board-height: 105dvh;
+  --board-height: 90dvh;
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr auto 1fr;
   height: ar(--board-height);
   row-gap: var(--size-5);
   padding-inline: 20rem;
-  transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
+  transform: rotateX(30deg) translateY(-225px) scale(var(--board-scale));
   transform-style: preserve-3d;
   padding-inline: var(--size-12);
 }
 
 :global(.board *) {
   transform-style: preserve-3d;
+}
+
+.explainer {
+  text-align: center;
+  font-size: var(--font-size-4);
+  transform: rotateX(-30deg);
 }
 
 .opponent-side,

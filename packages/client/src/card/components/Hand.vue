@@ -54,7 +54,7 @@ const ui = useGameUi();
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
     /* --rotation: 0deg; */
-    --y-offset: calc(var(--offset) * 20px - 4rem);
+    --y-offset: calc(var(--offset) * 20px - 2rem);
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
