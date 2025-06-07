@@ -68,6 +68,28 @@ export class CardAfterPlayEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardBeforePlayWithoutAffinityMatchEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardAfterPlayWithoutAffinityMatchEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
 export class CardBeforeDestroyEvent extends TypedSerializableEvent<
   { card: AnyCard },
   { card: SerializedCard }
@@ -109,6 +131,8 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_LEAVE_BOARD]: CardLeaveBoardEvent;
   [CARD_EVENTS.CARD_BEFORE_PLAY]: CardBeforePlayEvent;
   [CARD_EVENTS.CARD_AFTER_PLAY]: CardAfterPlayEvent;
+  [CARD_EVENTS.CARD_BEFORE_PLAY_WITHOUT_AFFINITY_MATCH]: CardBeforePlayWithoutAffinityMatchEvent;
+  [CARD_EVENTS.CARD_AFTER_PLAY_WITHOUT_AFFINITY_MATCH]: CardAfterPlayWithoutAffinityMatchEvent;
   [CARD_EVENTS.CARD_BEFORE_DESTROY]: CardBeforeDestroyEvent;
   [CARD_EVENTS.CARD_AFTER_DESTROY]: CardAfterDestroyEvent;
 };

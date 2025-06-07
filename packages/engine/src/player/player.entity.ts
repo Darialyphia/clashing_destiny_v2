@@ -12,7 +12,7 @@ import {
 } from '../card/card-errors';
 import type { HeroCard } from '../card/entities/hero.entity';
 import type { TalentCard } from '../card/entities/talent.entity';
-import { type Affinity } from '../card/card.enums';
+import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
@@ -65,7 +65,7 @@ export class Player
 
   readonly artifactManager: ArtifactManagerComponent;
 
-  private readonly _unlockedAffinities: Affinity[] = [];
+  private readonly _unlockedAffinities: Affinity[] = [AFFINITIES.NORMAL];
 
   readonly cardTracker: CardTrackerComponent;
 
@@ -169,7 +169,7 @@ export class Player
 
   async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
     this.payForManaCost(card, manaCostIndices);
-    await card.play();
+    await card.tryPlay();
   }
 
   private payForDestinyCost(card: AnyCard) {

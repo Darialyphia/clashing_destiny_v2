@@ -56,7 +56,7 @@ export class SpellCard extends Card<
       this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
         this.location === 'hand' &&
         this.canPayManaCost &&
-        this.blueprint.canPlay(this.game, this) &&
+        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true) &&
         (this.game.effectChainSystem.currentChain ? this.canPlayDuringChain : true),
       this
     );

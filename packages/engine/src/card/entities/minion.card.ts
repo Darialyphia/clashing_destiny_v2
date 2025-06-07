@@ -341,7 +341,7 @@ export class MinionCard extends Card<
         this.player.boardSide.hasUnoccupiedSlot &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        this.blueprint.canPlay(this.game, this),
+        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true),
       this
     );
   }

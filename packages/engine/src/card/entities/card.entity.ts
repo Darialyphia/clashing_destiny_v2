@@ -16,7 +16,9 @@ import {
 import {
   CardAddToHandevent,
   CardAfterDestroyEvent,
+  CardAfterPlayWithoutAffinityMatchEvent,
   CardBeforeDestroyEvent,
+  CardBeforePlayWithoutAffinityMatchEvent,
   CardDiscardEvent,
   CardExhaustEvent,
   CardWakeUpEvent
@@ -60,6 +62,7 @@ export type SerializedCard = {
   location: CardLocation | null;
   keywords: Array<{ id: string; name: string; description: string }>;
   affinity: Affinity;
+  hasAffinityMatch: boolean;
   modifiers: string[];
 };
 
@@ -262,6 +265,35 @@ export abstract class Card<
 
   abstract play(): Promise<void>;
 
+  get hasAffinityMatch() {
+    return this.player.unlockedAffinities.includes(this.affinity);
+  }
+
+  protected async playWithoutAffinityMatch() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY_WITHOUT_AFFINITY_MATCH,
+      new CardBeforePlayWithoutAffinityMatchEvent({ card: this })
+    );
+
+    await this.player.cardManager.drawIntoDestinyZone(1);
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY_WITHOUT_AFFINITY_MATCH,
+      new CardAfterPlayWithoutAffinityMatchEvent({ card: this })
+    );
+  }
+
+  async tryPlay() {
+    if (!this.hasAffinityMatch) {
+      return this.playWithoutAffinityMatch();
+    }
+    return this.play();
+  }
+
+  get descriptionWithoutAffinityMatch() {
+    return `@[missing-affinity] Missing Affinity: Draw a card into your destiny Zone.@\n(regular effect: ${this.blueprint.description})`;
+  }
+
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
@@ -274,10 +306,14 @@ export abstract class Card<
       affinity: this.affinity,
       isExhausted: this.isExhausted,
       name: this.blueprint.name,
-      description: this.blueprint.description,
+      description:
+        !this.hasAffinityMatch && this.location === 'hand'
+          ? this.descriptionWithoutAffinityMatch
+          : this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
       modifiers: this.modifiers.list.map(modifier => modifier.id),
+      hasAffinityMatch: this.hasAffinityMatch,
       keywords: this.keywords.map(keyword => ({
         id: keyword.id,
         name: keyword.name,

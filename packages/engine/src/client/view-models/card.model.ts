@@ -183,6 +183,10 @@ export class CardViewModel {
     return this.data.affinity;
   }
 
+  get hasAffinityMatch() {
+    return this.data.hasAffinityMatch;
+  }
+
   get canPlay() {
     return this.data.canPlay;
   }

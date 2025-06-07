@@ -44,6 +44,7 @@ export class TalentCard extends Card<
       this.player.hero.hasLineage(this.blueprint.heroId) &&
         this.canPayDestinyCost &&
         this.player.hero.level >= this.level &&
+        this.hasAffinityMatch &&
         this.location === 'destinyDeck' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.DESTINY &&
         this.player.canAddTalent(this),

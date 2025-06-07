@@ -29,7 +29,8 @@ type Token =
   | { type: 'spellpower' }
   | { type: 'dynamic-value'; text: string }
   | { type: 'level-bonus'; text: string }
-  | { type: 'lineage-bonus'; text: string };
+  | { type: 'lineage-bonus'; text: string }
+  | { type: 'missing-affinity'; text: string };
 
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
@@ -54,7 +55,6 @@ const tokens = computed<Token[]>(() => {
         text: part,
         card: card
       };
-
     if (part === '[exhaust]') return { type: 'exhaust' };
     if (part.startsWith('[mana]')) {
       return { type: 'mana', text: part.replace('[mana] ', '') };
@@ -75,6 +75,13 @@ const tokens = computed<Token[]>(() => {
       return {
         type: 'lineage-bonus',
         text: part.replace('[lineage] ', '')
+      };
+    }
+    if (part.startsWith('[missing-affinity]')) {
+      console.log(part);
+      return {
+        type: 'missing-affinity',
+        text: part.replace('[missing-affinity] ', '')
       };
     }
     return { type: 'text', text: part };
@@ -148,6 +155,10 @@ const tokens = computed<Token[]>(() => {
   text-shadow: 0 2px 2px black;
 }
 
+.token-missing-affinity {
+  color: var(--red-7);
+  font-weight: var(--font-weight-7);
+}
 .token-level-bonus,
 .token-lineage-bonus {
   font-weight: var(--font-weight-7);
