@@ -12,6 +12,8 @@ import { FxController } from './controllers/fx-controller';
 import { ClientStateController } from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
+import { GAME_PHASES } from '../game/game.enums';
+import { COMBAT_STEPS } from '../game/phases/combat.phase';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -116,6 +118,23 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
+  getActivePlayerId(
+    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  ) {
+    if (snapshot.state.effectChain) {
+      return snapshot.state.effectChain.player;
+    }
+
+    if (
+      snapshot.state.phase.state === GAME_PHASES.ATTACK &&
+      snapshot.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
+    ) {
+      return snapshot.state.players.find(id => id !== snapshot.state.turnPlayer)!;
+    }
+
+    return snapshot.state.interaction.ctx.player;
+  }
+
   initialize(
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
   ) {
@@ -125,9 +144,7 @@ export class GameClient {
     this.stateManager.initialize(snapshot.state);
 
     if (this.gameType === GAME_TYPES.LOCAL) {
-      this.playerId = snapshot.state.effectChain
-        ? snapshot.state.effectChain.player
-        : snapshot.state.interaction.ctx.player;
+      this.playerId = this.getActivePlayerId(snapshot);
     }
 
     this.isReady = true;
@@ -158,9 +175,7 @@ export class GameClient {
       this.stateManager.update(snapshot.state);
 
       if (this.gameType === GAME_TYPES.LOCAL) {
-        this.playerId = snapshot.state.effectChain
-          ? snapshot.state.effectChain.player
-          : snapshot.state.interaction.ctx.player;
+        this.playerId = this.getActivePlayerId(snapshot);
       }
 
       this.ui.update();

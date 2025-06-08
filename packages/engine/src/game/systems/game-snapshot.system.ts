@@ -47,6 +47,7 @@ export type SerializedOmniscientState = {
   entities: EntityDictionary;
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
+  players: string[];
   board: SerializedBoard;
   turnPlayer: string;
   turnCount: number;
@@ -131,6 +132,7 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
       board: this.game.boardSystem.serialize(),
+      players: this.game.playerSystem.players.map(player => player.id),
       turnPlayer: this.game.gamePhaseSystem.turnPlayer.id,
       turnCount: this.game.gamePhaseSystem.elapsedTurns,
       effectChain: this.game.effectChainSystem.serialize()
