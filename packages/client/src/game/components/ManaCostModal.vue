@@ -81,6 +81,10 @@ watch(isOpened, opened => {
             class="hidden"
             :value="card.indexInHand"
             v-model="selectedIndices"
+            :disabled="
+              selectedIndices.length >= (playedCard?.manaCost ?? 0) &&
+              !selectedIndices.includes(card.indexInHand)
+            "
           />
         </label>
       </div>
@@ -145,6 +149,10 @@ watch(isOpened, opened => {
   > label:has(input:checked) {
     filter: brightness(1.3);
     transform: translateY(10px);
+  }
+
+  > label:has(input:disabled) {
+    filter: grayscale(0.75);
   }
 }
 

@@ -16,6 +16,8 @@ import AffinityModal from './AffinityModal.vue';
 import BoardSide from './BoardSide.vue';
 import Debug from './Debug.vue';
 import ActionsButtons from './ActionsButtons.vue';
+import ExplainerMessage from './ExplainerMessage.vue';
+import GamePhaseTracker from './GamePhaseTracker.vue';
 
 const client = useGameClient();
 const state = useGameState();
@@ -40,38 +42,9 @@ const opponentBoard = useOpponentBoard();
       ref="board"
     >
       <BoardSide :player="opponentBoard.playerId" class="opponent-side" />
-      <div class="explainer">
-        <div
-          class="phase"
-          :class="{ active: state.phase.state === GAME_PHASES.DRAW }"
-        >
-          DRAW
-        </div>
-        <div
-          class="phase"
-          :class="{ active: state.phase.state === GAME_PHASES.DESTINY }"
-        >
-          DESTINY
-        </div>
-        <div
-          class="phase"
-          :class="{ active: state.phase.state === GAME_PHASES.MAIN }"
-        >
-          MAIN
-        </div>
-        <div
-          class="phase"
-          :class="{ active: state.phase.state === GAME_PHASES.ATTACK }"
-        >
-          COMBAT
-        </div>
-        <div
-          class="phase"
-          :class="{ active: state.phase.state === GAME_PHASES.END }"
-        >
-          END
-        </div>
-        <p class="ml-auto">TODO Current interaction explainer message</p>
+      <div class="middle-row">
+        <GamePhaseTracker />
+        <ExplainerMessage />
       </div>
       <BoardSide :player="myBoard.playerId" class="my-side" />
     </section>
@@ -117,25 +90,11 @@ const opponentBoard = useOpponentBoard();
   transform-style: preserve-3d;
 }
 
-.explainer {
+.middle-row {
   font-size: var(--font-size-4);
   display: flex;
   gap: var(--size-3);
   align-items: center;
-
-  > p {
-    transform: rotateX(-30deg);
-    font-size: inherit;
-  }
-}
-.phase {
-  border: solid 2px white;
-  border-radius: var(--radius-2);
-  padding: var(--size-2) var(--size-3);
-  font-size: var(--font-size-3);
-  &.active {
-    border-color: var(--cyan-4);
-  }
 }
 
 .opponent-side {

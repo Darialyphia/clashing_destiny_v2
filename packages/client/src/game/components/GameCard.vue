@@ -17,6 +17,8 @@ import CardResizer from './CardResizer.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import { isDefined } from '@game/shared';
 
 const {
   cardId,
@@ -28,7 +30,7 @@ const {
   autoScale?: boolean;
 }>();
 
-const card = useCard(cardId);
+const card = useCard(computed(() => cardId));
 
 const client = useGameClient();
 const state = useGameState();
@@ -62,10 +64,20 @@ const isTargetable = computed(() => {
 
   return canSelect || canAttack;
 });
+
+const shouldDisplayStats = computed(() => {
+  if (!interactive) return false;
+  if (card.value.location !== 'board') return false;
+  return (
+    card.value.kind === CARD_KINDS.HERO ||
+    card.value.kind === CARD_KINDS.MINION ||
+    card.value.kind === CARD_KINDS.ARTIFACT
+  );
+});
 </script>
 
 <template>
-  <CardResizer :enabled="autoScale">
+  <CardResizer :enabled="autoScale" class="game-card">
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />
       <Card
@@ -103,6 +115,17 @@ const isTargetable = computed(() => {
           }
         "
       />
+      <div
+        v-if="shouldDisplayStats"
+        class="stats"
+        :class="{ flipped: card.getPlayer().id !== client.playerId }"
+      >
+        <div class="atk" v-if="isDefined(card.atk)">{{ card.atk }}</div>
+        <div class="spellpower" v-if="isDefined(card.spellpower)">
+          {{ card.spellpower }}
+        </div>
+        <div class="hp" v-if="isDefined(card.hp)">{{ card.hp }}</div>
+      </div>
       <PopoverPortal :disabled="card.location === 'hand'">
         <PopoverContent :side-offset="-50" v-if="interactive">
           <div class="actions-list">
@@ -136,6 +159,13 @@ const isTargetable = computed(() => {
   40% {
     box-shadow: 0 0 30px hsl(var(--glow-hsl) / 0.75);
   }
+}
+
+.game-card {
+  --pixel-scale: 2;
+  --floating-amount: 10px;
+  width: calc(var(--card-width) * var(--pixel-scale));
+  height: calc(var(--card-height) * var(--pixel-scale));
 }
 
 .disabled {
@@ -174,7 +204,7 @@ const isTargetable = computed(() => {
 .card {
   transition: all 0.3s var(--ease-2);
   &.floating {
-    transform: translateZ(10px);
+    transform: translateZ(var(--floating-amount));
   }
   &.exhausted {
     filter: grayscale(0.5);
@@ -187,6 +217,50 @@ const isTargetable = computed(() => {
       inset: 0;
       background-color: hsl(200 100% 50% / 0.25);
     }
+  }
+}
+
+.stats {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, hsl(0 0 0 / 0.5));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: var(--size-3);
+  outline: solid 2px red;
+  font-size: var(--font-size-10);
+  font-weight: var(--font-weight-9);
+  line-height: 1;
+
+  &.flipped {
+    rotate: 180deg;
+    justify-content: flex-start;
+  }
+  .game-card:has(.card.floating) & {
+    transform: translateZ(var(--floating-amount));
+  }
+
+  .atk {
+    background-image: url('/assets/ui/attack.png');
+    background-position: left center;
+    background-size: 60px;
+    padding-left: var(--size-10);
+  }
+
+  .spellpower {
+    background-image: url('/assets/ui/ability-power.png');
+    background-position: left center;
+    background-size: 60px;
+    padding-left: var(--size-10);
+  }
+
+  .hp {
+    background-image: url('/assets/ui/hp.png');
+    background-position: left center;
+    background-size: 60px;
+    padding-left: var(--size-10);
   }
 }
 </style>

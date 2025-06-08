@@ -17,6 +17,13 @@ const { player } = defineProps<{
 }>();
 
 const boardSide = useBoardSide(computed(() => player));
+
+const hero = computed(() => {
+  return boardSide.value.heroZone.hero;
+});
+watchEffect(() => {
+  console.log(player, boardSide.value.playerId, boardSide.value.heroZone.hero);
+});
 </script>
 
 <template>

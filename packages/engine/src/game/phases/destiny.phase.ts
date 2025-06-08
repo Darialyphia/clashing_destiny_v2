@@ -31,7 +31,6 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
   async onEnter() {}
 
   async onExit() {
-    console.log('onExit destiny phase');
     await this.recollectDestinyCards();
   }
 

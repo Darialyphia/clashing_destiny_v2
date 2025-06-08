@@ -18,7 +18,6 @@ const calculateScale = () => {
   const availableHeight = root.value.parentElement?.clientHeight || 0;
   const width = root.value.offsetWidth;
   const height = root.value.offsetHeight;
-
   const scaleX = availableWidth / width;
   const scaleY = availableHeight / height;
   scale.value = Math.min(scaleX, scaleY);

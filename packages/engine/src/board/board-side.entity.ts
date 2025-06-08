@@ -192,6 +192,7 @@ export class BoardSide
           ...slot.minion.modifiers.list.map(modifier => modifier.source)
         ];
       }),
+      this.heroZone.hero,
       ...this.heroZone.artifacts.flatMap(artifact => {
         return [artifact, ...artifact.modifiers.list.map(modifier => modifier.source)];
       }),

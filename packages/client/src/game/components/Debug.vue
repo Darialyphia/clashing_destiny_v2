@@ -18,6 +18,7 @@ const state = useGameState();
       Debug client
     </button>
     <div>
+      <div>Player: {{ client.playerId }}</div>
       <div>Phase: {{ state.phase.state }}</div>
       <div>
         Interaction: {{ state.interaction.state }} ({{

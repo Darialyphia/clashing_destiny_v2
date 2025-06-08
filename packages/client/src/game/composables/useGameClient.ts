@@ -4,6 +4,10 @@ import {
   type GameClientOptions,
   type NetworkAdapter
 } from '@game/engine/src/client/client';
+import type {
+  FXEvent,
+  FXEventMap
+} from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import type { InjectionKey, Ref } from 'vue';
 
@@ -70,13 +74,26 @@ export const useOpponentBoard = () => {
   );
 };
 
-export const useCard = (cardId: string) => {
+export const useCard = (cardId: MaybeRef<string>) => {
   const client = useGameClient();
   return computed(() => {
-    const card = client.value.state.entities[cardId];
+    const card = client.value.state.entities[unref(cardId)];
     if (!card) {
       throw new Error(`Card with ID ${cardId} not found in the game state.`);
     }
     return card as unknown as CardViewModel;
   });
+};
+
+export const useFxEvent = <T extends FXEvent>(
+  name: T,
+  handler: (eventArg: FXEventMap[T]) => Promise<void>
+) => {
+  const client = useGameClient();
+
+  const unsub = client.value.fx.on(name, handler);
+
+  onUnmounted(unsub);
+
+  return unsub;
 };

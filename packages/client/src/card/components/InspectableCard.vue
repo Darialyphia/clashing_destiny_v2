@@ -15,7 +15,7 @@ const { cardId, side } = defineProps<
     Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
 
-const card = useCard(cardId);
+const card = useCard(computed(() => cardId));
 </script>
 
 <template>
