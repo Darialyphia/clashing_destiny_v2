@@ -7,19 +7,13 @@ import {
   useOpponentBoard
 } from '../composables/useGameClient';
 import { useBoardResize } from '../composables/useBoardResize';
-import CardBack from '@/card/components/CardBack.vue';
-import GameCard from './GameCard.vue';
-import InspectableCard from '@/card/components/InspectableCard.vue';
 import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
-import MinionSlot from './MinionSlot.vue';
-import DestinyZone from './DestinyZone.vue';
-import CardResizer from './CardResizer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import AffinityModal from './AffinityModal.vue';
+import BoardSide from './BoardSide.vue';
 
 const client = useGameClient();
 const state = useGameState();
@@ -72,110 +66,7 @@ const canEndTurn = computed(() => {
       :style="{ '--board-scale': 1 }"
       ref="board"
     >
-      <section class="opponent-side">
-        <div class="hero-zone debug">
-          <div class="hero">
-            <InspectableCard :card-id="opponentBoard.heroZone.hero">
-              <GameCard :card-id="opponentBoard.heroZone.hero" />
-            </InspectableCard>
-          </div>
-          <div class="artifacts">
-            <div class="card"></div>
-            <div class="card"></div>
-            <div class="card"></div>
-          </div>
-          <div class="location card-turned debug"></div>
-        </div>
-        <div class="minion-zone">
-          <div class="minion-row">
-            <MinionSlot
-              v-for="slot in opponentBoard.attackZone.slots"
-              :key="slot.position"
-              :slot="slot"
-            />
-          </div>
-          <div class="minion-row">
-            <MinionSlot
-              v-for="slot in opponentBoard.defenseZone.slots"
-              :key="slot.position"
-              :slot="slot"
-            />
-          </div>
-        </div>
-        <div class="deck-zone">
-          <div class="two-card-pile debug">
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <GameCard
-                    v-for="(
-                      cardId, i
-                    ) in opponentBoard.discardPile.toReversed()"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                    :card-id="cardId"
-                    :interactive="false"
-                    class="pile-card"
-                  />
-                </div>
-              </template>
-              Opponent's Discard Pile:
-              {{ opponentBoard.discardPile.length }} cards
-            </UiSimpleTooltip>
-
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <GameCard
-                    v-for="(cardId, i) in opponentBoard.banishPile.toReversed()"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                    :card-id="cardId"
-                    :interactive="false"
-                    class="pile-card"
-                  />
-                </div>
-              </template>
-              Opponent's Banish Pile:
-              {{ opponentBoard.banishPile.length }} cards
-            </UiSimpleTooltip>
-          </div>
-          <div class="two-card-pile debug">
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <CardResizer
-                    v-for="i in opponentBoard.mainDeck.remaining"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                  >
-                    <CardBack class="pile-card" />
-                  </CardResizer>
-                </div>
-              </template>
-              Opponent's Main Deck: {{ opponentBoard.mainDeck.remaining }} cards
-            </UiSimpleTooltip>
-
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <CardResizer
-                    v-for="i in opponentBoard.destinyDeck.remaining"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                  >
-                    <CardBack class="pile-card" />
-                  </CardResizer>
-                </div>
-              </template>
-              Opponent's Destiny Deck:
-              {{ opponentBoard.destinyDeck.remaining }} cards
-            </UiSimpleTooltip>
-          </div>
-          <DestinyZone :player-id="opponentBoard.playerId" />
-        </div>
-      </section>
-
+      <BoardSide :player="opponentBoard.playerId" class="opponent-side" />
       <div class="explainer">
         <div
           class="phase"
@@ -209,106 +100,7 @@ const canEndTurn = computed(() => {
         </div>
         <p class="ml-auto">TODO Current interaction explainer message</p>
       </div>
-      <section class="my-side">
-        <div class="hero-zone debug">
-          <div class="hero">
-            <InspectableCard :card-id="myBoard.heroZone.hero">
-              <GameCard :card-id="myBoard.heroZone.hero" />
-            </InspectableCard>
-          </div>
-          <div class="artifacts">
-            <div class="card"></div>
-            <div class="card"></div>
-            <div class="card"></div>
-          </div>
-          <div class="location card-turned debug"></div>
-        </div>
-        <div class="minion-zone">
-          <div class="minion-row">
-            <MinionSlot
-              v-for="slot in myBoard.attackZone.slots"
-              :key="slot.position"
-              :slot="slot"
-            />
-          </div>
-          <div class="minion-row">
-            <MinionSlot
-              v-for="slot in myBoard.defenseZone.slots"
-              :key="slot.position"
-              :slot="slot"
-            />
-          </div>
-        </div>
-        <div class="deck-zone">
-          <div class="two-card-pile debug">
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <GameCard
-                    v-for="(cardId, i) in myBoard.discardPile.toReversed()"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                    :card-id="cardId"
-                    :interactive="false"
-                    class="pile-card"
-                  />
-                </div>
-              </template>
-              Your Discard Pile:
-              {{ myBoard.discardPile.length }} cards
-            </UiSimpleTooltip>
-
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <GameCard
-                    v-for="(cardId, i) in myBoard.banishPile.toReversed()"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                    :card-id="cardId"
-                    :interactive="false"
-                    class="pile-card"
-                  />
-                </div>
-              </template>
-              Your Banish Pile:
-              {{ myBoard.banishPile.length }} cards
-            </UiSimpleTooltip>
-          </div>
-          <div class="two-card-pile debug">
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <CardResizer
-                    v-for="i in myBoard.mainDeck.remaining"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                  >
-                    <CardBack class="pile-card" />
-                  </CardResizer>
-                </div>
-              </template>
-              Your Main Deck: {{ myBoard.mainDeck.remaining }} cards
-            </UiSimpleTooltip>
-
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="pile">
-                  <CardResizer
-                    v-for="i in myBoard.destinyDeck.remaining"
-                    :key="i"
-                    :style="{ '--i': i - 1 }"
-                  >
-                    <CardBack class="pile-card" />
-                  </CardResizer>
-                </div>
-              </template>
-              Your Destiny Deck: {{ myBoard.destinyDeck.remaining }} cards
-            </UiSimpleTooltip>
-          </div>
-          <DestinyZone :player-id="myBoard.playerId" />
-        </div>
-      </section>
+      <BoardSide :player="myBoard.playerId" class="my-side" />
     </section>
     <Hand />
     <div class="action-buttons">

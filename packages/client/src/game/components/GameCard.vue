@@ -12,8 +12,6 @@ import {
   PopoverPortal,
   PopoverContent
 } from 'reka-ui';
-import { vOnClickOutside } from '@vueuse/components';
-import FancyButton from '@/ui/components/FancyButton.vue';
 import CardText from '@/card/components/CardText.vue';
 import CardResizer from './CardResizer.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';

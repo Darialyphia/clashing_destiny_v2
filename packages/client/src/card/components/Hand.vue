@@ -7,12 +7,12 @@ const ui = useGameUi();
 
 const cardSpacing = computed(() => {
   const handSize = myBoard.value.hand.length;
-  const base = 125;
+  const base = 130;
   return handSize > 7 ? base - 0 * (handSize - 6) : base;
 });
 const cardSpacingHovered = computed(() => {
   const handSize = myBoard.value.hand.length;
-  const base = 175;
+  const base = 185;
   return handSize > 6 ? base - 10 * (handSize - 6) : base;
 });
 
