@@ -195,7 +195,6 @@ export class GameInteractionSystem
   }
 
   getContext<T extends InteractionState>() {
-    console.log(this.getState(), this._ctx);
     assert(
       this._ctx instanceof this.ctxDictionary[this.getState()],
       new CorruptedInteractionContextError()

@@ -87,7 +87,6 @@ export class EffectChain
 
   private onAddEffect() {
     this.consecutivePasses = 0;
-    console.log('resetting consecutive passes');
     this.switchTurn();
   }
 
@@ -98,7 +97,6 @@ export class EffectChain
 
   private onPass() {
     this.consecutivePasses++;
-    console.log(this.consecutivePasses);
     if (this.consecutivePasses >= this.passesNeededToResolve) {
       this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.RESOLVE);
       void this.resolveEffects();
@@ -124,7 +122,6 @@ export class EffectChain
   }
 
   addEffect(effect: Effect, player: Player): void {
-    console.log('Adding effect to chain', effect.source.id);
     assert(
       this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT),
       new InactiveEffectChainError()

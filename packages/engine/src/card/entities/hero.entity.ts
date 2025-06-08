@@ -300,8 +300,11 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       if (affinity) {
         await this.player.unlockAffinity(affinity);
       }
+      await this.player.hero.levelup(this.blueprint);
+    } else {
+      await this.blueprint.onPlay(this.game, this);
     }
-    await this.blueprint.onPlay(this.game, this);
+
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })
