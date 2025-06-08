@@ -34,11 +34,7 @@ export const flamefistFighter: MinionBlueprint = {
       );
     });
 
-    await card.modifiers.add(
-      new AttackerModifier(game, card, async () => {
-        await card.modifiers.add(buff);
-      })
-    );
+    await card.modifiers.add(buff);
   },
   async onPlay() {}
 };

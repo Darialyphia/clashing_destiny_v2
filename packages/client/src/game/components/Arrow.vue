@@ -23,7 +23,7 @@ const markerUrl = `url(#${markerId})`;
         :refY="6"
         orient="auto"
       >
-        <path d="M 2 2 L 2 9 L 7 6 L 2 4" class="arrow-head" />
+        <path d="M 2 2 L 2 9 L 7 6 L 2 3" class="arrow-head" />
       </marker>
     </defs>
     <path class="path" :d="props.path" />
