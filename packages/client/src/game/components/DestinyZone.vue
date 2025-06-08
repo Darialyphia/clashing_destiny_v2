@@ -7,7 +7,7 @@ import { throttle } from 'lodash-es';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
-const boardSide = useBoardSide(playerId);
+const boardSide = useBoardSide(computed(() => playerId));
 
 const client = useGameClient();
 
