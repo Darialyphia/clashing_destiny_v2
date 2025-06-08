@@ -234,11 +234,13 @@ export class CardViewModel {
   }
 
   getActions(): CardActionRule[] {
-    return [
+    const res = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
+    console.log(res);
+    return res;
   }
 }

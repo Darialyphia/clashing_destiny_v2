@@ -96,7 +96,7 @@ export class SpellCard extends Card<
   serialize(): SerializedSpellCard {
     return {
       ...this.serializeBase(),
-      manaCost: this.blueprint.manaCost,
+      manaCost: this.manaCost,
       subKind: this.blueprint.subKind
     };
   }

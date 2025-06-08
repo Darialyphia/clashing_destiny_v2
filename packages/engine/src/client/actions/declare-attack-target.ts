@@ -1,4 +1,5 @@
 import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import type { GameClient } from '../client';
 import type { CardClickRule } from '../controllers/ui-controller';
 import type { CardViewModel } from '../view-models/card.model';
@@ -9,6 +10,7 @@ export class DeclareAttackTargetCardAction implements CardClickRule {
   predicate(card: CardViewModel) {
     return (
       this.client.state.phase.state === GAME_PHASES.ATTACK &&
+      this.client.state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
       this.client.state.phase.ctx.potentialTargets.some(id => id === card.id) &&
       card.getPlayer().id !== this.client.playerId &&
       this.client.ui.isInteractingPlayer

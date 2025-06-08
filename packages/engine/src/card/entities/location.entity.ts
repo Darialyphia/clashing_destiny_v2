@@ -121,7 +121,7 @@ export class LocationCard extends Card<
   serialize(): SerializedLocationCard {
     return {
       ...this.serializeBase(),
-      manaCost: this.blueprint.manaCost,
+      manaCost: this.manaCost,
       abilities: this.blueprint.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),

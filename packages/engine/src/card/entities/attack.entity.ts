@@ -95,7 +95,7 @@ export class AttackCard extends Card<
   serialize(): SerializedAttackCard {
     return {
       ...this.serializeBase(),
-      manaCost: this.blueprint.manaCost,
+      manaCost: this.manaCost,
       damage: this.damage
     };
   }

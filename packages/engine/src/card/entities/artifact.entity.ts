@@ -257,7 +257,7 @@ export class ArtifactCard extends Card<
       maxDurability: this.maxDurability,
       durability: this.remainingDurability,
       subKind: this.subkind,
-      manaCost: this.blueprint.manaCost,
+      manaCost: this.manaCost,
       abilities: this.blueprint.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),

@@ -49,7 +49,7 @@ const affinities = computed<Affinity[]>(() => {
     }"
   >
     <div class="content" :class="{ 'is-showing-board': isShowingBoard }">
-      <p class="text-5 mb-4">Play up to one Destiny Card.</p>
+      <p class="text-5 mb-4">Choose which Affinity to unlock.</p>
 
       <div class="flex gap-3">
         <label
