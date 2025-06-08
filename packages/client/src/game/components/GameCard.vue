@@ -81,6 +81,7 @@ const shouldDisplayStats = computed(() => {
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />
       <Card
+        :id="card.id"
         :card="{
           id: card.id,
           name: card.name,
@@ -229,10 +230,10 @@ const shouldDisplayStats = computed(() => {
   justify-content: flex-end;
   align-items: flex-end;
   padding: var(--size-3);
-  outline: solid 2px red;
   font-size: var(--font-size-10);
   font-weight: var(--font-weight-9);
   line-height: 1;
+  pointer-events: none;
 
   &.flipped {
     rotate: 180deg;

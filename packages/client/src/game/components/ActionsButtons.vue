@@ -3,6 +3,7 @@ import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
+import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
 const client = useGameClient();
 const state = useGameState();
@@ -17,6 +18,40 @@ const canEndTurn = computed(() => {
 
 <template>
   <div class="action-buttons">
+    <FancyButton
+      v-if="
+        state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT &&
+        state.interaction.ctx.player === client.playerId &&
+        state.interaction.ctx.canCommit
+      "
+      text="Confirm"
+      @click="
+        client.adapter.dispatch({
+          type: 'commitMinionSlotSelection',
+          payload: {
+            playerId: client.playerId
+          }
+        })
+      "
+    />
+
+    <FancyButton
+      v-if="
+        state.interaction.state ===
+          INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
+        state.interaction.ctx.player === client.playerId &&
+        state.interaction.ctx.canCommit
+      "
+      text="Confirm"
+      @click="
+        client.adapter.dispatch({
+          type: 'commitCardSelection',
+          payload: {
+            playerId: client.playerId
+          }
+        })
+      "
+    />
     <FancyButton
       v-if="
         state.phase.state === GAME_PHASES.ATTACK &&

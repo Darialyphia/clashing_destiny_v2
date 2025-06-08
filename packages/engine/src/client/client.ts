@@ -118,21 +118,21 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerId(
-    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
-  ) {
-    if (snapshot.state.effectChain) {
-      return snapshot.state.effectChain.player;
+  getActivePlayerId() {
+    if (this.stateManager.state.effectChain) {
+      return this.stateManager.state.effectChain.player;
     }
 
     if (
-      snapshot.state.phase.state === GAME_PHASES.ATTACK &&
-      snapshot.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
+      this.stateManager.state.phase.state === GAME_PHASES.ATTACK &&
+      this.stateManager.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
-      return snapshot.state.players.find(id => id !== snapshot.state.turnPlayer)!;
+      return this.stateManager.state.players.find(
+        id => id !== this.stateManager.state.turnPlayer
+      )!;
     }
 
-    return snapshot.state.interaction.ctx.player;
+    return this.stateManager.state.interaction.ctx.player;
   }
 
   initialize(
@@ -144,7 +144,7 @@ export class GameClient {
     this.stateManager.initialize(snapshot.state);
 
     if (this.gameType === GAME_TYPES.LOCAL) {
-      this.playerId = this.getActivePlayerId(snapshot);
+      this.playerId = this.getActivePlayerId();
     }
 
     this.isReady = true;
@@ -175,7 +175,7 @@ export class GameClient {
       this.stateManager.update(snapshot.state);
 
       if (this.gameType === GAME_TYPES.LOCAL) {
-        this.playerId = this.getActivePlayerId(snapshot);
+        this.playerId = this.getActivePlayerId();
       }
 
       this.ui.update();

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useFullscreen } from '@vueuse/core';
+import { useFullscreen, useWindowSize } from '@vueuse/core';
 import {
-  useGameClient,
   useGameState,
   useMyBoard,
   useOpponentBoard
@@ -9,8 +8,6 @@ import {
 import { useBoardResize } from '../composables/useBoardResize';
 import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import AffinityModal from './AffinityModal.vue';
 import BoardSide from './BoardSide.vue';
@@ -18,9 +15,8 @@ import Debug from './Debug.vue';
 import ActionsButtons from './ActionsButtons.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import GamePhaseTracker from './GamePhaseTracker.vue';
+import CombatArrow from './CombatArrow.vue';
 
-const client = useGameClient();
-const state = useGameState();
 const board = useTemplateRef('board');
 useBoardResize(board);
 const { isFullscreen } = useFullscreen(document.body);
@@ -32,9 +28,10 @@ const opponentBoard = useOpponentBoard();
   <ManaCostModal />
   <DestinyPhaseModal />
   <AffinityModal />
-
+  <CombatArrow />
   <div class="board-container">
     <Debug />
+
     <section
       class="board"
       :class="{ 'full-screen': isFullscreen }"
@@ -75,15 +72,15 @@ const opponentBoard = useOpponentBoard();
 
 .board {
   --board-scale: 1;
-  --board-height: 90dvh;
+  --board-height: 95dvh;
   display: grid;
   grid-template-rows: 1fr auto 1fr;
-  height: ar(--board-height);
+  min-height: var(--board-height);
   row-gap: var(--size-5);
-  padding-inline: 20rem;
-  transform: rotateX(30deg) translateY(-225px) scale(var(--board-scale));
+  transform: rotateX(30deg) translateY(-250px) scale(var(--board-scale));
   transform-style: preserve-3d;
-  padding-inline: var(--size-12);
+  position: relative;
+  margin-inline: auto;
 }
 
 :global(.board *) {
