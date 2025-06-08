@@ -270,8 +270,9 @@ export class CombatPhase
       COMBAT_EVENTS.AFTER_DECLARE_BLOCKER,
       new AfterDeclareBlockerEvent({ blocker })
     );
-    await this.game.effectChainSystem.createChain(this.attacker.player.opponent);
-    await this.resolveCombat();
+    void this.game.effectChainSystem
+      .createChain(this.attacker.player.opponent)
+      .then(() => this.resolveCombat());
   }
 
   private async resolveCombat() {
@@ -289,6 +290,10 @@ export class CombatPhase
       })
     );
     const defender = this.blocker ?? this.target;
+    console.log({
+      attacker: this.attacker,
+      defender
+    });
     await defender.takeDamage(this.attacker, new CombatDamage(this.attacker));
     await this.attacker.takeDamage(defender, new CombatDamage(defender));
 
@@ -302,6 +307,7 @@ export class CombatPhase
     );
     this.game.interaction.onInteractionEnd();
     await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.FINISH_ATTACK);
+    await this.game.inputSystem.askForPlayerInput();
   }
 
   canBlock(blocker: Defender) {

@@ -11,8 +11,7 @@ export class SelectCardAction implements CardClickRule {
     return (
       card.getPlayer().id === this.client.playerId &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      !this.client.ui.selectedCard?.equals(card) &&
-      this.client.ui.isInteractingPlayer
+      !this.client.ui.selectedCard?.equals(card)
     );
   }
 

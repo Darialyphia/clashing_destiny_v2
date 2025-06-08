@@ -206,6 +206,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
 
     const amount = damage.getFinalAmount(this);
+
     const armor = this.player.artifactManager.artifacts.armor;
     if (armor) {
       const absorbed = Math.min(armor.remainingDurability, amount);

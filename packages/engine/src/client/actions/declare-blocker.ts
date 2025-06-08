@@ -17,14 +17,14 @@ export class DeclareBlockerAction implements CardActionRule {
   }
 
   getLabel() {
-    return `Attack`;
+    return `Block`;
   }
 
   handler(card: CardViewModel) {
     this.client.adapter.dispatch({
-      type: 'declareAttack',
+      type: 'declareBlocker',
       payload: {
-        attackerId: card.id,
+        blockerId: card.id,
         playerId: this.client.playerId
       }
     });

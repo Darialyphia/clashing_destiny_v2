@@ -323,6 +323,7 @@ export class MinionCard extends Card<
       this.damageTaken + damage.getFinalAmount(this),
       this.maxHp
     );
+
     await this.game.emit(
       MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE,
       new MinionCardAfterTakeDamageEvent({
@@ -399,7 +400,6 @@ export class MinionCard extends Card<
 
   get potentialAttackTargets() {
     if (this.location !== 'board') return [];
-    console.log(this.id, this.player.opponent.boardSide.getAllAttackTargets());
     return this.player.opponent.boardSide
       .getAllAttackTargets()
       .filter(target => this.canAttack(target));

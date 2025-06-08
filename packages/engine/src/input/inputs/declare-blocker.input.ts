@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
 import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
-import { assert } from '@game/shared';
+import { assert, isDefined } from '@game/shared';
 import {
   IllegalBlockError,
   IllegalCombatStepError,
@@ -21,8 +21,8 @@ export class DeclareBlockerInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   get blocker() {
-    return this.player.enemyMinions.find(
-      creature => creature.id === this.payload.blockerId
+    return (
+      this.player.minions.find(creature => creature.id === this.payload.blockerId) ?? null
     );
   }
 
@@ -35,9 +35,9 @@ export class DeclareBlockerInput extends Input<typeof schema> {
       ctx.can(COMBAT_STEP_TRANSITIONS.BLOCKER_DECLARED),
       new IllegalCombatStepError()
     );
-    assert(this.blocker, new IllegalBlockError());
-    assert(ctx.canBlock(this.blocker), new IllegalBlockError());
-
+    if (isDefined(this.blocker)) {
+      assert(ctx.canBlock(this.blocker), new IllegalBlockError());
+    }
     await ctx.declareBlocker(this.blocker);
   }
 }

@@ -206,7 +206,10 @@ export class CardViewModel {
   }
 
   get canAttack() {
-    return this.potentialAttackTargets.length > 0;
+    return (
+      this.getPlayer().id === this.getClient().state.turnPlayer &&
+      this.potentialAttackTargets.length > 0
+    );
   }
 
   get isExhausted() {
@@ -234,13 +237,11 @@ export class CardViewModel {
   }
 
   getActions(): CardActionRule[] {
-    const res = [
+    return [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
-    console.log(res);
-    return res;
   }
 }
