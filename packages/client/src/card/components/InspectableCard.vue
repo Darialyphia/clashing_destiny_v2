@@ -23,7 +23,7 @@ const card = useCard(computed(() => cardId));
     <HoverCardTrigger class="inspectable-card">
       <slot />
     </HoverCardTrigger>
-    <HoverCardPortal>
+    <HoverCardPortal to="#card-portal">
       <HoverCardContent>
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>

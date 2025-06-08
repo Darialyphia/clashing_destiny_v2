@@ -239,6 +239,7 @@ export class GameInteractionSystem
     minChoiceCount: number;
     maxChoiceCount: number;
     choices: AnyCard[];
+    label: string;
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(

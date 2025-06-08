@@ -11,16 +11,21 @@ import MinionSlot from './MinionSlot.vue';
 import DestinyZone from './DestinyZone.vue';
 import CardResizer from './CardResizer.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-
+import DiscardPile from './DiscardPile.vue';
+import BanishPile from './BanishPile.vue';
 const { player } = defineProps<{
   player: string;
 }>();
 
 const boardSide = useBoardSide(computed(() => player));
+const isDiscardPileOpened = ref(false);
+const isBanishPileOpened = ref(false);
 </script>
 
 <template>
   <section class="board-side">
+    <DiscardPile v-model:is-opened="isDiscardPileOpened" :player="player" />
+    <BanishPile v-model:is-opened="isBanishPileOpened" :player="player" />
     <div class="hero-zone debug">
       <div class="hero">
         <InspectableCard :card-id="boardSide.heroZone.hero">
@@ -54,7 +59,7 @@ const boardSide = useBoardSide(computed(() => player));
       <div class="two-card-pile debug">
         <UiSimpleTooltip>
           <template #trigger>
-            <div class="pile">
+            <div class="pile" @click="isDiscardPileOpened = true">
               <GameCard
                 v-for="(cardId, i) in boardSide.discardPile.toReversed()"
                 :key="i"
@@ -71,7 +76,7 @@ const boardSide = useBoardSide(computed(() => player));
 
         <UiSimpleTooltip>
           <template #trigger>
-            <div class="pile">
+            <div class="pile" @click="isBanishPileOpened = true">
               <GameCard
                 v-for="(cardId, i) in boardSide.banishPile.toReversed()"
                 :key="i"

@@ -6,7 +6,6 @@ const props = defineProps<{
   color: string;
 }>();
 
-const arrowHead = useTemplateRef('marker');
 const markerId = randomString(6);
 const markerUrl = `url(#${markerId})`;
 </script>

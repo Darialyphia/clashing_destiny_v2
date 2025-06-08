@@ -14,6 +14,7 @@ type ChoosingCardsContextOptions = {
   choices: AnyCard[];
   minChoiceCount: number;
   maxChoiceCount: number;
+  label: string;
 };
 export class ChoosingCardsContext {
   static async create(game: Game, options: ChoosingCardsContextOptions) {
@@ -32,6 +33,8 @@ export class ChoosingCardsContext {
 
   private player: Player;
 
+  private label: string;
+
   private constructor(
     private game: Game,
     options: ChoosingCardsContextOptions
@@ -40,6 +43,7 @@ export class ChoosingCardsContext {
     this.minChoiceCount = options.minChoiceCount;
     this.maxChoiceCount = options.maxChoiceCount;
     this.player = options.player;
+    this.label = options.label;
   }
 
   async init() {}
@@ -49,7 +53,8 @@ export class ChoosingCardsContext {
       player: this.player.id,
       choices: this.choices.map(card => card.id),
       minChoiceCount: this.minChoiceCount,
-      maxChoiceCount: this.maxChoiceCount
+      maxChoiceCount: this.maxChoiceCount,
+      label: this.label
     };
   }
 
