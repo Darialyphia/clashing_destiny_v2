@@ -15,7 +15,7 @@ const schema = defaultInputSchema.extend({
 export class DeclareAttackInput extends Input<typeof schema> {
   readonly name = 'declareAttack';
 
-  readonly allowedPhases = [GAME_PHASES.ATTACK];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 

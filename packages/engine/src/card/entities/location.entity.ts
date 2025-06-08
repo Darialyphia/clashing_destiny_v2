@@ -1,5 +1,5 @@
 import type { Game } from '../../game/game';
-import { GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -74,10 +74,22 @@ export class LocationCard extends Card<
   canUseAbility(id: string) {
     const ability = this.blueprint.abilities.find(ability => ability.id === id);
     if (!ability) return false;
+
+    const authorizedPhases: GamePhase[] = [
+      GAME_PHASES.MAIN,
+      GAME_PHASES.ATTACK,
+      GAME_PHASES.END
+    ];
+
     return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost && ability.shouldExhaust
-        ? !this.isExhausted
-        : true && ability.canUse(this.game, this),
+      this.player.cardManager.hand.length >= ability.manaCost &&
+        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
+        this.game.effectChainSystem.currentChain
+        ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
+        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
+            (ability.shouldExhaust
+              ? !this.isExhausted
+              : true && ability.canUse(this.game, this)),
       this
     );
   }

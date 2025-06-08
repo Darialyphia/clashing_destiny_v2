@@ -15,6 +15,8 @@ import {
 import CardText from '@/card/components/CardText.vue';
 import CardResizer from './CardResizer.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const {
   cardId,
@@ -45,12 +47,20 @@ const isActionsPopoverOpened = computed({
 });
 
 const isTargetable = computed(() => {
-  return (
-    interactive &&
+  if (!interactive) return false;
+
+  const canSelect =
     state.value.interaction.state ===
       INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-    state.value.interaction.ctx.elligibleCards.some(id => id === cardId)
-  );
+    state.value.interaction.ctx.elligibleCards.some(id => id === cardId);
+
+  const canAttack =
+    state.value.interaction.state === INTERACTION_STATES.IDLE &&
+    state.value.phase.state === GAME_PHASES.ATTACK &&
+    state.value.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
+    state.value.phase.ctx.potentialTargets.some(id => id === cardId);
+
+  return canSelect || canAttack;
 });
 </script>
 

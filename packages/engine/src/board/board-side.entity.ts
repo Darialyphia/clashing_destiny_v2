@@ -131,15 +131,15 @@ export class BoardSide
   }
 
   getPositionFor(card: MinionCard) {
-    const attackZoneIndex = this.attackZone.slots.findIndex(creature =>
-      creature?.equals(card)
+    const attackZoneIndex = this.attackZone.slots.findIndex(slot =>
+      slot.minion?.equals(card)
     );
     if (attackZoneIndex >= 0) {
       return { zone: 'attack' as const, slot: attackZoneIndex as MinionSlot };
     }
 
-    const defenseZoneIndex = this.defenseZone.slots.findIndex(creature =>
-      creature?.equals(card)
+    const defenseZoneIndex = this.defenseZone.slots.findIndex(slot =>
+      slot.minion?.equals(card)
     );
     if (defenseZoneIndex >= 0) {
       return { zone: 'defense' as const, slot: defenseZoneIndex as MinionSlot };

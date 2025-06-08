@@ -10,7 +10,10 @@ import type { GamePhaseController } from './game-phase';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.card';
 import { GameError } from '../game-error';
-import { GAME_PHASE_TRANSITIONS } from '../systems/game-phase.system';
+import {
+  CorruptedGamephaseContextError,
+  GAME_PHASE_TRANSITIONS
+} from '../systems/game-phase.system';
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
@@ -39,7 +42,7 @@ export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 
 export type SerializedCombatPhase = {
   attacker: string;
-  target: string;
+  target: string | null;
   blocker: string | null;
   step: CombatStep;
   potentialTargets: string[];
@@ -165,7 +168,7 @@ export class CombatPhase
   implements GamePhaseController, Serializable<SerializedCombatPhase>
 {
   attacker!: Attacker;
-  target!: AttackTarget;
+  target: AttackTarget | null = null;
   blocker: Defender | null = null;
 
   constructor(private game: Game) {
@@ -196,6 +199,9 @@ export class CombatPhase
   }
 
   get potentialBlockers(): Defender[] {
+    if (!this.attacker || !this.target) {
+      return [];
+    }
     return this.target.player.minions.filter(minion => this.canBlock(minion));
   }
 
@@ -240,7 +246,7 @@ export class CombatPhase
     this.target = target;
     await this.attacker.exhaust();
 
-    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
+    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
       new AfterDeclareAttackTargetEvent({ target })
@@ -269,6 +275,10 @@ export class CombatPhase
   }
 
   private async resolveCombat() {
+    if (!this.target) {
+      throw new CorruptedGamephaseContextError();
+    }
+
     this.dispatch(COMBAT_STEP_TRANSITIONS.CHAIN_RESOLVED);
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
@@ -295,6 +305,8 @@ export class CombatPhase
   }
 
   canBlock(blocker: Defender) {
+    if (!this.attacker || !this.target) return false;
+
     return (
       this.attacker.canBeBlocked(blocker) &&
       blocker.canBlock(this.attacker) &&
@@ -309,7 +321,7 @@ export class CombatPhase
   serialize(): SerializedCombatPhase {
     return {
       attacker: this.attacker.id,
-      target: this.target.id,
+      target: this.target?.id ?? null,
       blocker: this.blocker?.id ?? null,
       step: this.getState(),
       potentialBlockers: this.potentialBlockers.map(b => b.id),

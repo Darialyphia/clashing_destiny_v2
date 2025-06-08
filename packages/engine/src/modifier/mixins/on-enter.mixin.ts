@@ -8,7 +8,7 @@ import type {
   ArtifactEquipedEvent
 } from '../../card/entities/artifact.entity';
 import type { LocationCard } from '../../card/entities/location.entity';
-import type { CardAfterPlayEvent } from '../../card/card.events';
+import type { CardAfterPlayEvent, CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
 import { isArtifact, isLocation, isMinion } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
@@ -35,7 +35,11 @@ export class OnEnterModifierMixin<
     this.onBeforePlay = this.onBeforePlay.bind(this);
   }
 
-  onBeforePlay() {
+  onBeforePlay(event: CardBeforePlayEvent) {
+    if (!event.data.card.equals(this.modifier.target)) {
+      return;
+    }
+
     const target = this.modifier.target;
     if (isMinion(target)) {
       const unsub = this.game.on(GAME_EVENTS.MINION_SUMMONED, async event => {

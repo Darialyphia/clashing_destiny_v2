@@ -17,7 +17,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
-import { GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -251,10 +251,22 @@ export class MinionCard extends Card<
   canUseAbility(id: string) {
     const ability = this.blueprint.abilities.find(ability => ability.id === id);
     if (!ability) return false;
+
+    const authorizedPhases: GamePhase[] = [
+      GAME_PHASES.MAIN,
+      GAME_PHASES.ATTACK,
+      GAME_PHASES.END
+    ];
+
     return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost && ability.shouldExhaust
-        ? !this.isExhausted
-        : true && ability.canUse(this.game, this),
+      this.player.cardManager.hand.length >= ability.manaCost &&
+        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
+        this.game.effectChainSystem.currentChain
+        ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
+        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
+            (ability.shouldExhaust
+              ? !this.isExhausted
+              : true && ability.canUse(this.game, this)),
       this
     );
   }
@@ -386,6 +398,8 @@ export class MinionCard extends Card<
   }
 
   get potentialAttackTargets() {
+    if (this.location !== 'board') return [];
+    console.log(this.id, this.player.opponent.boardSide.getAllAttackTargets());
     return this.player.opponent.boardSide
       .getAllAttackTargets()
       .filter(target => this.canAttack(target));

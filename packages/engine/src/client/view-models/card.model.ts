@@ -14,6 +14,8 @@ import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
 import type { Affinity, ArtifactKind, SpellKind } from '../../card/card.enums';
+import { DeclareBlockerAction } from '../actions/declare-blocker';
+import { UseAbilityAction } from '../actions/use-ability';
 
 type CardData =
   | SerializedSpellCard
@@ -234,7 +236,9 @@ export class CardViewModel {
   getActions(): CardActionRule[] {
     return [
       new PlayCardAction(this.getClient()),
-      new DeclareAttackAction(this.getClient())
+      new DeclareAttackAction(this.getClient()),
+      new DeclareBlockerAction(this.getClient()),
+      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
   }
 }

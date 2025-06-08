@@ -14,6 +14,8 @@ import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import AffinityModal from './AffinityModal.vue';
 import BoardSide from './BoardSide.vue';
+import Debug from './Debug.vue';
+import ActionsButtons from './ActionsButtons.vue';
 
 const client = useGameClient();
 const state = useGameState();
@@ -22,16 +24,6 @@ useBoardResize(board);
 const { isFullscreen } = useFullscreen(document.body);
 const myBoard = useMyBoard();
 const opponentBoard = useOpponentBoard();
-document.addEventListener('fullscreenchange', () => {
-  console.log(document.fullscreenElement);
-});
-
-const canEndTurn = computed(() => {
-  return (
-    state.value.phase.state === GAME_PHASES.MAIN &&
-    client.value.playerId === state.value.turnPlayer
-  );
-});
 </script>
 
 <template>
@@ -40,26 +32,7 @@ const canEndTurn = computed(() => {
   <AffinityModal />
 
   <div class="board-container">
-    <div class="debug-tools">
-      <button
-        @click="
-          () => {
-            console.log(client);
-          }
-        "
-      >
-        Debug client
-      </button>
-      <div>
-        <div>Phase: {{ state.phase.state }}</div>
-        <div>
-          Interaction: {{ state.interaction.state }} ({{
-            state.interaction.ctx.player
-          }})
-        </div>
-        <div>Chain: {{ state.effectChain?.player ?? 'none' }}</div>
-      </div>
-    </div>
+    <Debug />
     <section
       class="board"
       :class="{ 'full-screen': isFullscreen }"
@@ -103,32 +76,7 @@ const canEndTurn = computed(() => {
       <BoardSide :player="myBoard.playerId" class="my-side" />
     </section>
     <Hand />
-    <div class="action-buttons">
-      <FancyButton
-        v-if="state.effectChain"
-        text="Pass chain"
-        @click="
-          client.adapter.dispatch({
-            type: 'passChain',
-            payload: {
-              playerId: client.playerId
-            }
-          })
-        "
-      />
-      <FancyButton
-        text="End turn"
-        :disabled="!canEndTurn"
-        @click="
-          client.adapter.dispatch({
-            type: 'declareEndTurn',
-            payload: {
-              playerId: client.playerId
-            }
-          })
-        "
-      />
-    </div>
+    <ActionsButtons />
   </div>
 </template>
 
@@ -190,123 +138,7 @@ const canEndTurn = computed(() => {
   }
 }
 
-.opponent-side,
-.my-side {
-  display: grid;
-  gap: var(--size-2);
-  grid-template-columns: 0.6fr 2fr 0.6fr;
-  > * {
-    height: calc(var(--board-height) / 2);
-  }
-}
-
 .opponent-side {
   transform: rotateZ(180deg);
-}
-
-.hero-zone {
-  display: grid;
-  grid-auto-flow: row;
-  grid-template-rows: 3fr 1.5fr 1fr;
-  gap: var(--size-2);
-
-  .hero {
-    justify-self: center;
-    aspect-ratio: var(--card-ratio);
-    position: relative;
-    & > * {
-      position: absolute;
-      inset: 0;
-    }
-  }
-  .artifacts {
-    display: grid;
-    grid-auto-flow: row;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--size-2);
-    padding-inline: var(--size-2);
-  }
-  .location {
-    justify-self: center;
-  }
-}
-
-.minion-zone {
-  display: grid;
-  grid-auto-flow: row;
-  grid-template-rows: 50% 50%;
-  gap: var(--size-2);
-
-  .minion-row {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    justify-items: center;
-    > * {
-      aspect-ratio: var(--card-ratio);
-    }
-    align-items: center;
-  }
-}
-
-.deck-zone {
-  display: grid;
-  grid-auto-flow: row;
-  gap: var(--size-2);
-  grid-template-rows: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.8fr);
-
-  .two-card-pile {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    place-items: center;
-    gap: var(--size-2);
-    > * {
-      height: 100%;
-      aspect-ratio: var(--card-ratio);
-    }
-  }
-}
-
-.pile {
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-template-columns: 1fr;
-  position: relative;
-  > * {
-    grid-row: 1;
-    grid-column: 1;
-    transform: translateZ(calc(var(--i) * 0.8px));
-    height: 100%;
-    /* aspect-ratio: var(--card-ratio); */
-  }
-
-  .pile-card {
-    height: 100%;
-    position: absolute;
-    aspect-ratio: var(--card-ratio);
-  }
-}
-
-.debug-tools {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 1000;
-  padding: var(--size-3);
-  background-color: rgba(0, 0, 0, 0.5);
-  > button {
-    padding: var(--size-1);
-    border: solid 1px hsl(0 0 100% / 0.5);
-  }
-}
-
-.action-buttons {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-  bottom: var(--size-3);
-  right: var(--size-3);
-  z-index: 2;
-  align-items: center;
 }
 </style>
