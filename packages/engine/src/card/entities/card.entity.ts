@@ -283,13 +283,6 @@ export abstract class Card<
     );
   }
 
-  async tryPlay() {
-    if (!this.hasAffinityMatch) {
-      return this.playWithoutAffinityMatch();
-    }
-    return this.play();
-  }
-
   get descriptionWithoutAffinityMatch() {
     return `@[missing-affinity] Missing Affinity: Draw a card into your destiny Zone.@\n(regular effect: ${this.blueprint.description})`;
   }

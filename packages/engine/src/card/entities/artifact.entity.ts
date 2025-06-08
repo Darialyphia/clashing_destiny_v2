@@ -218,6 +218,9 @@ export class ArtifactCard extends Card<
   }
 
   async play() {
+    if (!this.hasAffinityMatch) {
+      return this.playWithoutAffinityMatch();
+    }
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })

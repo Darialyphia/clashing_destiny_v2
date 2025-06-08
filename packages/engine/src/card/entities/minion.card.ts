@@ -347,6 +347,9 @@ export class MinionCard extends Card<
   }
 
   async play() {
+    if (!this.hasAffinityMatch) {
+      return this.playWithoutAffinityMatch();
+    }
     const [position] = await this.game.interaction.selectMinionSlot({
       player: this.player,
       isElligible(position) {

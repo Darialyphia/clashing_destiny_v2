@@ -107,7 +107,7 @@ watch(isOpened, opened => {
             client.adapter.dispatch({
               type: 'commitPlayCard',
               payload: {
-                playerId: state.turnPlayer,
+                playerId: client.playerId,
                 manaCostIndices: selectedIndices
               }
             })

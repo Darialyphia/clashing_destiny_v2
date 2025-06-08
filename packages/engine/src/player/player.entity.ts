@@ -169,7 +169,7 @@ export class Player
 
   async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
     this.payForManaCost(card, manaCostIndices);
-    await card.tryPlay();
+    await card.play();
   }
 
   private payForDestinyCost(card: AnyCard) {

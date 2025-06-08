@@ -63,11 +63,16 @@ export class SpellCard extends Card<
   }
 
   async play() {
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this);
+    const targets = this.hasAffinityMatch
+      ? await this.blueprint.getPreResponseTargets(this.game, this)
+      : [];
 
     const effect = {
       source: this,
       handler: async () => {
+        if (!this.hasAffinityMatch) {
+          return this.playWithoutAffinityMatch();
+        }
         await this.game.emit(
           CARD_EVENTS.CARD_BEFORE_PLAY,
           new CardBeforePlayEvent({ card: this })

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
 import { GAME_PHASES } from '../../game/game.enums';
 import { assert } from '@game/shared';
-import { IllegalCardPlayedError, NotTurnPlayerError } from '../input-errors';
+import { IllegalCardPlayedError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
   index: z.number()
@@ -16,14 +16,8 @@ export class DeclarePlayCardInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    assert(
-      this.game.gamePhaseSystem.turnPlayer.equals(this.player),
-      new NotTurnPlayerError()
-    );
-
     const card = this.player.cardManager.getCardInHandAt(this.payload.index);
     assert(card.canPlay(), new IllegalCardPlayedError());
-
     await this.game.interaction.declarePlayCardIntent(this.payload.index, this.player);
   }
 }
