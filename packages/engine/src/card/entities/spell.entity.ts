@@ -41,7 +41,7 @@ export class SpellCard extends Card<
   }
 
   get canPlayDuringChain() {
-    return this.blueprint.subKind === SPELL_KINDS.BURST;
+    return this.hasAffinityMatch && this.blueprint.subKind === SPELL_KINDS.BURST;
   }
 
   get authorizedPhases(): GamePhase[] {
@@ -63,16 +63,14 @@ export class SpellCard extends Card<
   }
 
   async play() {
-    const targets = this.hasAffinityMatch
-      ? await this.blueprint.getPreResponseTargets(this.game, this)
-      : [];
+    if (!this.hasAffinityMatch) {
+      return this.playWithoutAffinityMatch();
+    }
+    const targets = await this.blueprint.getPreResponseTargets(this.game, this);
 
     const effect = {
       source: this,
       handler: async () => {
-        if (!this.hasAffinityMatch) {
-          return this.playWithoutAffinityMatch();
-        }
         await this.game.emit(
           CARD_EVENTS.CARD_BEFORE_PLAY,
           new CardBeforePlayEvent({ card: this })

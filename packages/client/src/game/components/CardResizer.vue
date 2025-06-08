@@ -36,7 +36,7 @@ onMounted(calculateScale);
 
 <style scoped lang="postcss">
 .card-resizer {
-  transform: scale(v-bind(scale));
+  scale: v-bind(scale);
   transform-origin: top left;
   position: relative;
 }

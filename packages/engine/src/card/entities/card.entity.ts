@@ -276,6 +276,7 @@ export abstract class Card<
     );
 
     await this.player.cardManager.drawIntoDestinyZone(1);
+    this.sendToDiscardPile();
 
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY_WITHOUT_AFFINITY_MATCH,

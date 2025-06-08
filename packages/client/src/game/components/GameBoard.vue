@@ -56,6 +56,15 @@ const canEndTurn = computed(() => {
       >
         Debug client
       </button>
+      <div>
+        <div>Phase: {{ state.phase.state }}</div>
+        <div>
+          Interaction: {{ state.interaction.state }} ({{
+            state.interaction.ctx.player
+          }})
+        </div>
+        <div>Chain: {{ state.effectChain?.player ?? 'none' }}</div>
+      </div>
     </div>
     <section
       class="board"
@@ -95,19 +104,52 @@ const canEndTurn = computed(() => {
         </div>
         <div class="deck-zone">
           <div class="two-card-pile debug">
-            <div class="card"></div>
-            <div class="card"></div>
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="pile">
+                  <GameCard
+                    v-for="(
+                      cardId, i
+                    ) in opponentBoard.discardPile.toReversed()"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                    :card-id="cardId"
+                    :interactive="false"
+                    class="pile-card"
+                  />
+                </div>
+              </template>
+              Opponent's Discard Pile:
+              {{ opponentBoard.discardPile.length }} cards
+            </UiSimpleTooltip>
+
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="pile">
+                  <GameCard
+                    v-for="(cardId, i) in opponentBoard.banishPile.toReversed()"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                    :card-id="cardId"
+                    :interactive="false"
+                    class="pile-card"
+                  />
+                </div>
+              </template>
+              Opponent's Banish Pile:
+              {{ opponentBoard.banishPile.length }} cards
+            </UiSimpleTooltip>
           </div>
           <div class="two-card-pile debug">
             <UiSimpleTooltip>
               <template #trigger>
-                <div class="deck">
+                <div class="pile">
                   <CardResizer
                     v-for="i in opponentBoard.mainDeck.remaining"
                     :key="i"
                     :style="{ '--i': i - 1 }"
                   >
-                    <CardBack class="deck-card" />
+                    <CardBack class="pile-card" />
                   </CardResizer>
                 </div>
               </template>
@@ -116,13 +158,13 @@ const canEndTurn = computed(() => {
 
             <UiSimpleTooltip>
               <template #trigger>
-                <div class="deck">
+                <div class="pile">
                   <CardResizer
                     v-for="i in opponentBoard.destinyDeck.remaining"
                     :key="i"
                     :style="{ '--i': i - 1 }"
                   >
-                    <CardBack class="deck-card" />
+                    <CardBack class="pile-card" />
                   </CardResizer>
                 </div>
               </template>
@@ -199,34 +241,65 @@ const canEndTurn = computed(() => {
         </div>
         <div class="deck-zone">
           <div class="two-card-pile debug">
-            <div class="card"></div>
-            <div class="card"></div>
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="pile">
+                  <GameCard
+                    v-for="(cardId, i) in myBoard.discardPile.toReversed()"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                    :card-id="cardId"
+                    :interactive="false"
+                    class="pile-card"
+                  />
+                </div>
+              </template>
+              Your Discard Pile:
+              {{ myBoard.discardPile.length }} cards
+            </UiSimpleTooltip>
+
+            <UiSimpleTooltip>
+              <template #trigger>
+                <div class="pile">
+                  <GameCard
+                    v-for="(cardId, i) in myBoard.banishPile.toReversed()"
+                    :key="i"
+                    :style="{ '--i': i - 1 }"
+                    :card-id="cardId"
+                    :interactive="false"
+                    class="pile-card"
+                  />
+                </div>
+              </template>
+              Your Banish Pile:
+              {{ myBoard.banishPile.length }} cards
+            </UiSimpleTooltip>
           </div>
           <div class="two-card-pile debug">
             <UiSimpleTooltip>
               <template #trigger>
-                <div class="deck">
+                <div class="pile">
                   <CardResizer
                     v-for="i in myBoard.mainDeck.remaining"
                     :key="i"
                     :style="{ '--i': i - 1 }"
                   >
-                    <CardBack class="deck-card" />
+                    <CardBack class="pile-card" />
                   </CardResizer>
                 </div>
               </template>
-              YourMain Deck: {{ myBoard.mainDeck.remaining }} cards
+              Your Main Deck: {{ myBoard.mainDeck.remaining }} cards
             </UiSimpleTooltip>
 
             <UiSimpleTooltip>
               <template #trigger>
-                <div class="deck">
+                <div class="pile">
                   <CardResizer
                     v-for="i in myBoard.destinyDeck.remaining"
                     :key="i"
                     :style="{ '--i': i - 1 }"
                   >
-                    <CardBack class="deck-card" />
+                    <CardBack class="pile-card" />
                   </CardResizer>
                 </div>
               </template>
@@ -401,10 +474,11 @@ const canEndTurn = computed(() => {
   }
 }
 
-.deck {
+.pile {
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
+  position: relative;
   > * {
     grid-row: 1;
     grid-column: 1;
@@ -413,8 +487,9 @@ const canEndTurn = computed(() => {
     /* aspect-ratio: var(--card-ratio); */
   }
 
-  .deck-card {
+  .pile-card {
     height: 100%;
+    position: absolute;
     aspect-ratio: var(--card-ratio);
   }
 }
@@ -426,6 +501,10 @@ const canEndTurn = computed(() => {
   z-index: 1000;
   padding: var(--size-3);
   background-color: rgba(0, 0, 0, 0.5);
+  > button {
+    padding: var(--size-1);
+    border: solid 1px hsl(0 0 100% / 0.5);
+  }
 }
 
 .action-buttons {

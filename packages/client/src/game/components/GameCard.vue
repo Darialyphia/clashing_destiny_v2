@@ -173,7 +173,12 @@ const isTargetable = computed(() => {
     transform: none;
   }
   &.targetable {
-    filter: sepia(0.5) hue-rotate(180deg);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: hsl(200 100% 50% / 0.25);
+    }
   }
 }
 </style>
