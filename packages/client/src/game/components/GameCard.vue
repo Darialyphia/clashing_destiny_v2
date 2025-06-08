@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useResizeObserver } from '@vueuse/core';
-import { useCard, useGameClient } from '../composables/useGameClient';
+import {
+  useCard,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
 import Card from '@/card/components/Card.vue';
 import {
   PopoverRoot,
@@ -12,6 +16,7 @@ import { vOnClickOutside } from '@vueuse/components';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import CardText from '@/card/components/CardText.vue';
 import CardResizer from './CardResizer.vue';
+import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
 const {
   cardId,
@@ -26,7 +31,7 @@ const {
 const card = useCard(cardId);
 
 const client = useGameClient();
-
+const state = useGameState();
 const isActionsPopoverOpened = computed({
   get() {
     if (!client.value.ui.selectedCard) return false;
@@ -39,6 +44,15 @@ const isActionsPopoverOpened = computed({
       client.value.ui.unselect();
     }
   }
+});
+
+const isTargetable = computed(() => {
+  return (
+    interactive &&
+    state.value.interaction.state ===
+      INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
+    state.value.interaction.ctx.elligibleCards.some(id => id === cardId)
+  );
 });
 </script>
 
@@ -71,7 +85,8 @@ const isActionsPopoverOpened = computed({
           floating: card.location === 'board',
           exhausted: card.isExhausted,
           disabled: !card.canPlay && card.location === 'hand',
-          selected: client.ui.selectedCard?.equals(card)
+          selected: client.ui.selectedCard?.equals(card),
+          targetable: isTargetable
         }"
         @click="
           () => {
@@ -156,6 +171,9 @@ const isActionsPopoverOpened = computed({
   &.exhausted {
     filter: grayscale(0.5);
     transform: none;
+  }
+  &.targetable {
+    filter: sepia(0.5) hue-rotate(180deg);
   }
 }
 </style>

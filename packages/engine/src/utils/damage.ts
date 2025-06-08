@@ -1,5 +1,4 @@
-import type { BetterOmit, Values } from '@game/shared';
-import type { AnyCard } from '../card/entities/card.entity';
+import type { Values } from '@game/shared';
 import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
 
 export const DAMAGE_TYPES = {

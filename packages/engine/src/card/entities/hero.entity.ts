@@ -194,7 +194,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   getReceivedDamage(damage: Damage) {
-    return this.interceptors.receivedDamage.getValue(damage.getFinalAmount(this), {
+    return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
       damage
     });
   }

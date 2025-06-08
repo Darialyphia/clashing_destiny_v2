@@ -51,9 +51,7 @@ export class SelectingCardOnBoardContext {
     };
   }
 
-  async init() {
-    await this.autoCommitIfAble();
-  }
+  async init() {}
 
   private async autoCommitIfAble() {
     const isDone = this.isDone(this.selectedCards);

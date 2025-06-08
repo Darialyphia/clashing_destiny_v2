@@ -291,7 +291,7 @@ export class MinionCard extends Card<
   }
 
   getReceivedDamage(damage: Damage) {
-    return this.interceptors.receivedDamage.getValue(damage.getFinalAmount(this), {
+    return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
       damage
     });
   }
