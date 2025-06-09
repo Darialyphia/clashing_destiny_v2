@@ -20,6 +20,10 @@ export class PlayerViewModel {
     return this.id === unit.id;
   }
 
+  update(data: Partial<SerializedPlayer>) {
+    Object.assign(this.data, data);
+  }
+
   get id() {
     return this.data.id;
   }

@@ -21,6 +21,10 @@ export class ModifierViewModel {
     return this.id === unit.id;
   }
 
+  update(data: Partial<SerializedModifier>) {
+    Object.assign(this.data, data);
+  }
+
   get id() {
     return this.data.id;
   }

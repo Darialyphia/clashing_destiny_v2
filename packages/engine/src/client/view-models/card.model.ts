@@ -13,9 +13,10 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import type { Affinity, ArtifactKind, SpellKind } from '../../card/card.enums';
+import type { Affinity, ArtifactKind, CardKind, SpellKind } from '../../card/card.enums';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
+import type { AnyObject } from '@game/shared';
 
 type CardData =
   | SerializedSpellCard
@@ -49,6 +50,10 @@ export class CardViewModel {
 
   equals(unit: CardViewModel | SerializedCard) {
     return this.id === unit.id;
+  }
+
+  update<T extends CardKind>(data: Partial<CardData & { kind: T }>) {
+    Object.assign(this.data, data);
   }
 
   get id() {

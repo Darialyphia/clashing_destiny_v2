@@ -52,8 +52,8 @@ const message = computed(() => {
 
 <style scoped lang="postcss">
 .explainer-message {
-  margin-inline-start: auto;
+  margin-inline-start: var(--size-9);
   transform: rotateX(-30deg);
-  font-size: inherit;
+  font-size: var(--font-size-6);
 }
 </style>

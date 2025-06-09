@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useResizeObserver } from '@vueuse/core';
+import { unrefElement, useResizeObserver } from '@vueuse/core';
 import {
   useCard,
+  useFxEvent,
   useGameClient,
   useGameState
 } from '../composables/useGameClient';
@@ -18,6 +19,9 @@ import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
+import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import type { DamageType } from '@game/engine/src/utils/damage';
 const {
   cardId,
   interactive = true,
@@ -62,10 +66,52 @@ const isTargetable = computed(() => {
 
   return canSelect || canAttack;
 });
+
+const cardComponent = useTemplateRef('card');
+const cardElement = computed(() => unrefElement(cardComponent));
+
+const onTakeDamage = async (e: {
+  card: SerializedCard;
+  damage: {
+    type: DamageType;
+    amount: number;
+  };
+}) => {
+  if (e.card.id !== cardId || !cardElement.value) {
+    return;
+  }
+
+  card.value.update(e.card);
+
+  cardElement.value.classList.add('damage');
+  cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
+  setTimeout(() => {
+    cardElement.value?.classList.remove('damage');
+    delete cardElement.value?.dataset.damage;
+  }, 1750);
+
+  const keyframes: Keyframe[] = [
+    { transform: 'translateX(0)' },
+    { transform: 'translateX(10px)' },
+    { transform: 'translateX(-10px)' },
+    { transform: 'translateX(10px)' },
+    { transform: 'translateX(-10px)' },
+    { transform: 'translateX(10px)' },
+    { transform: 'translateX(0)' }
+  ];
+
+  await cardElement.value?.animate(keyframes, {
+    duration: 500,
+    easing: 'ease-in-out',
+    iterations: 1
+  }).finished;
+};
+useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
+useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 </script>
 
 <template>
-  <CardResizer :enabled="autoScale" class="game-card">
+  <CardResizer :enabled="autoScale" class="game-card" ref="card">
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />
       <Card
@@ -135,6 +181,24 @@ const isTargetable = computed(() => {
   --floating-amount: 10px;
   width: calc(var(--card-width) * var(--pixel-scale));
   height: calc(var(--card-height) * var(--pixel-scale));
+  &.damage::after {
+    content: attr(data-damage);
+    position: absolute;
+    top: 0;
+    font-size: var(--font-size-12);
+    color: red;
+    background-size: cover;
+    transform: translateZ(30px);
+    font-weight: var(--font-weight-9);
+    -webkit-text-stroke: 2px black;
+    paint-order: fill stroke;
+    transition: all 0.3s var(--ease-in-2);
+    @starting-style {
+      transform: translateZ(60px) translateY(-50px) scale(15);
+      filter: blur(10px);
+      opacity: 0;
+    }
+  }
 }
 
 .disabled {
