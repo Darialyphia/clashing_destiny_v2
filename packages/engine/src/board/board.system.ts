@@ -1,4 +1,4 @@
-import { isDefined, type Serializable } from '@game/shared';
+import { type Serializable } from '@game/shared';
 import { MinionCard, type SerializedMinionCard } from '../card/entities/minion.card';
 import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
 import type {
@@ -16,14 +16,9 @@ import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
 import { BoardColumn } from './board-column';
-import { isArtifact, isMinion, isSpell } from '../card/card-utils';
 import { CARD_DECK_SOURCES } from '../card/card.enums';
 
 export type MinionSlot = number;
-
-type SerializedCreatureZone = {
-  slots: (SerializedMinionCard | null)[];
-};
 
 export type MainDeckCard =
   | MinionCard

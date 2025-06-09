@@ -29,6 +29,7 @@
     "dev": "echo 'no dev script'",
     "test": "vitest",
     "type-check": "tsc --noEmit",
+    "lint": "eslint ./src --fix",
     "fix-circular-deps": "dpdm -T --no-tree ./src/**/*.ts"
   }
 }

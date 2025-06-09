@@ -1,4 +1,3 @@
-import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';

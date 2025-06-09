@@ -17,7 +17,6 @@ import type {
   AttackCardInterceptors
 } from '../../card/entities/attack.entity';
 import type { SpellCard, SpellCardInterceptors } from '../../card/entities/spell.entity';
-import type { AnyCard, CardInterceptors } from '../../card/entities/card.entity';
 import type { LocationCardInterceptors } from '../../card/entities/location.entity';
 import type { MainDeckCard } from '../../board/board.system';
 

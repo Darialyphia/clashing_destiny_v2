@@ -15,8 +15,7 @@ import {
   GAME_EVENTS,
   GameErrorEvent,
   GameInputQueueFlushedEvent,
-  GameInputEvent,
-  GameInputRequiredEvent
+  GameInputEvent
 } from '../game/game.events';
 
 import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';

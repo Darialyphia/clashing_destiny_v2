@@ -8,7 +8,7 @@ import {
 } from '@game/shared';
 import type { Game } from './game';
 import type { Player } from '../player/player.entity';
-import type { AnyCard, SerializedCard } from '../card/entities/card.entity';
+import type { AnyCard } from '../card/entities/card.entity';
 import { GameError } from './game-error';
 
 const EFFECT_CHAIN_STATES = {

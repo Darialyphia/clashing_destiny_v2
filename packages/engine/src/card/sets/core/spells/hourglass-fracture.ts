@@ -1,7 +1,5 @@
 import { GAME_PHASES } from '../../../../game/game.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
-import { MainDeckCardInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,

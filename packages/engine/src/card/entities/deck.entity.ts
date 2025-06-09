@@ -6,7 +6,6 @@ import { nanoid } from 'nanoid';
 import { EntityWithModifiers } from '../../entity';
 import type { AnyCard, SerializedCard } from './card.entity';
 import type { Player } from '../../player/player.entity';
-import { InputError } from '../../input/input-errors';
 
 export const DECK_EVENTS = {
   BEFORE_DRAW: 'before_draw',

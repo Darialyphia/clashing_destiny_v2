@@ -15,12 +15,12 @@ export class InputSimulator {
     this.inputs = inputs;
   }
 
-  prepare(cb?: (game: Game) => void) {
-    this.game.initialize();
+  async prepare(cb?: (game: Game) => void) {
+    await this.game.initialize();
     cb?.(this.game);
   }
 
-  run({
+  async run({
     onBeforeInput,
     onAfterInput
   }: {
@@ -29,7 +29,7 @@ export class InputSimulator {
   }) {
     for (const input of this.inputs) {
       onBeforeInput?.(this.game, input);
-      this.game.dispatch(input);
+      await this.game.dispatch(input);
       onAfterInput?.(this.game, input);
     }
 

@@ -1,10 +1,8 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
-import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { scry } from '../../../card-actions-utils';
 import type { TalentBlueprint } from '../../../card-blueprint';
-import { isSpell } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,

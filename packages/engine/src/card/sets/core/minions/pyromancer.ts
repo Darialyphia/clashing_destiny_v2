@@ -33,7 +33,7 @@ export const pyromancer: MinionBlueprint = {
       new OnEnterModifier(game, card, async () => {
         console.log('pyromancer on enter');
         const firebolt = await card.player.generateCard<SpellCard>(fireBolt.id);
-        card.player.cardManager.addToHand(firebolt);
+        await card.player.cardManager.addToHand(firebolt);
       })
     );
   },

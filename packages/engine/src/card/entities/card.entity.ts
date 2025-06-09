@@ -16,9 +16,7 @@ import {
 import {
   CardAddToHandevent,
   CardAfterDestroyEvent,
-  CardAfterPlayWithoutAffinityMatchEvent,
   CardBeforeDestroyEvent,
-  CardBeforePlayWithoutAffinityMatchEvent,
   CardDiscardEvent,
   CardExhaustEvent,
   CardWakeUpEvent
@@ -328,10 +326,10 @@ export abstract class Card<
     this.player.cardManager.discard(this);
   }
 
-  async addToHand() {
+  async addToHand(index?: number) {
     if (!isMainDeckCard(this)) {
       throw new IllegalGameStateError(
-        `Cannot discard card ${this.id} when it is not a main deck card.`
+        `Cannot add card ${this.id} to hand because it is not a main deck card.`
       );
     }
     await (this as this).game.emit(
@@ -339,7 +337,7 @@ export abstract class Card<
       new CardAddToHandevent({ card: this })
     );
     this.removeFromCurrentLocation();
-    this.player.cardManager.addToHand(this);
+    await this.player.cardManager.addToHand(this, index);
   }
 
   async exhaust() {

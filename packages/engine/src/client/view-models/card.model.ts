@@ -16,7 +16,6 @@ import { DeclareAttackAction } from '../actions/declare-attack';
 import type { Affinity, ArtifactKind, CardKind, SpellKind } from '../../card/card.enums';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
-import type { AnyObject } from '@game/shared';
 
 type CardData =
   | SerializedSpellCard

@@ -1,4 +1,3 @@
-import type { InputDispatcher } from '../../input/input-system';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
 import type { CardViewModel } from './card.model';

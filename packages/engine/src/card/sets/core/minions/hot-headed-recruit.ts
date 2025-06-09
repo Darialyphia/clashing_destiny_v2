@@ -1,4 +1,3 @@
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {

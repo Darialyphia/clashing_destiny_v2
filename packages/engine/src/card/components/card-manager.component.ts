@@ -140,9 +140,9 @@ export class CardManagerComponent {
     if (amountToDraw <= 0) return;
     const cards = this.mainDeck.draw(amountToDraw);
 
-    cards.forEach(card => {
-      this.addToHand(card);
-    });
+    for (const card of cards) {
+      await card.addToHand();
+    }
   }
 
   async drawIntoDestinyZone(amount: number) {
@@ -210,7 +210,7 @@ export class CardManagerComponent {
     return replacement;
   }
 
-  addToHand(card: MainDeckCard, index?: number) {
+  async addToHand(card: MainDeckCard, index?: number) {
     if (this.isHandFull) return;
     if (isDefined(index)) {
       this.hand.splice(index, 0, card);

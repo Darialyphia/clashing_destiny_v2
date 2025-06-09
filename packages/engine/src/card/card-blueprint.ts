@@ -1,5 +1,4 @@
 import type { BetterExtract } from '@game/shared';
-import type { MinionSlot } from '../board/board-side.entity';
 import type { Game } from '../game/game';
 import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import type {
