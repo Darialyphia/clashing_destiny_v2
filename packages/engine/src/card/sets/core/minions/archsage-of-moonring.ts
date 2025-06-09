@@ -1,7 +1,7 @@
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { multipleEnemyTargetRules, singleEnemyTargetRules } from '../../../card-utils';
+import { multipleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,

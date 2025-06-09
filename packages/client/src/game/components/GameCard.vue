@@ -111,7 +111,12 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 </script>
 
 <template>
-  <CardResizer :enabled="autoScale" class="game-card" ref="card">
+  <CardResizer
+    :enabled="autoScale"
+    class="game-card"
+    ref="card"
+    :class="{ 'is-enemy': card.getPlayer().id !== client.playerId }"
+  >
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />
       <Card
@@ -193,11 +198,16 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     -webkit-text-stroke: 2px black;
     paint-order: fill stroke;
     transition: all 0.3s var(--ease-in-2);
+    pointer-events: none;
+
     @starting-style {
       transform: translateZ(60px) translateY(-50px) scale(15);
       filter: blur(10px);
       opacity: 0;
     }
+  }
+  &.is-enemy.damage::after {
+    rotate: 180deg;
   }
 }
 
