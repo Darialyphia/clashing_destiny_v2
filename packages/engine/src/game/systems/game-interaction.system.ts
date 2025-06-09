@@ -265,6 +265,7 @@ export class GameInteractionSystem
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
     );
+
     const canPlay = this.game.effectChainSystem.currentChain
       ? this.game.effectChainSystem.currentChain.canAddEffect(player)
       : this.game.gamePhaseSystem.turnPlayer.equals(player);

@@ -138,6 +138,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.blueprint.level;
   }
 
+  get isAlive() {
+    return this.remainingHp > 0 && this.location === 'board';
+  }
+
   get atk(): number {
     const weapon = this.player.artifactManager.artifacts.weapon;
     const baseAttack = this.blueprint.atk + (weapon?.atk ?? 0);

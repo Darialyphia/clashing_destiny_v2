@@ -173,6 +173,10 @@ export class MinionCard extends Card<
     return this.player.boardSide.getPositionFor(this);
   }
 
+  get isAlive() {
+    return this.remainingHp > 0 && this.location === 'board';
+  }
+
   get atk(): number {
     return this.interceptors.atk.getValue(this.blueprint.atk, this);
   }

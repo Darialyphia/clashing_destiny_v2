@@ -42,7 +42,7 @@ export class SpellCard extends Card<
   }
 
   get canPlayDuringChain() {
-    return this.hasAffinityMatch && this.blueprint.subKind === SPELL_KINDS.BURST;
+    return this.blueprint.subKind === SPELL_KINDS.BURST;
   }
 
   get authorizedPhases(): GamePhase[] {

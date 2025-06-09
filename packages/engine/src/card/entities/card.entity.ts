@@ -158,12 +158,7 @@ export abstract class Card<
 
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
-      return (
-        this.interceptors.manaCost.getValue(
-          this.hasAffinityMatch ? this.blueprint.manaCost : 1,
-          {}
-        ) ?? 0
-      );
+      return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
     }
     return 0;
   }

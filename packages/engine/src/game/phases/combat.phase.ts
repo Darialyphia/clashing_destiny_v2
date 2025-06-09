@@ -290,12 +290,11 @@ export class CombatPhase
       })
     );
     const defender = this.blocker ?? this.target;
-    console.log({
-      attacker: this.attacker,
-      defender
-    });
-    await defender.takeDamage(this.attacker, new CombatDamage(this.attacker));
-    await this.attacker.takeDamage(defender, new CombatDamage(defender));
+
+    if (defender.isAlive && this.attacker.isAlive) {
+      await defender.takeDamage(this.attacker, new CombatDamage(this.attacker));
+      await this.attacker.takeDamage(defender, new CombatDamage(defender));
+    }
 
     await this.game.emit(
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,

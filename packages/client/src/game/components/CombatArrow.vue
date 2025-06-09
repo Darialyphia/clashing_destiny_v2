@@ -55,7 +55,6 @@ watch(() => state.value.phase.ctx, buildAttackArrowPath);
 useEventListener(window, 'resize', throttle(buildAttackArrowPath, 100));
 
 const buildBlockerArrowPath = async () => {
-  console.log('Building blocker arrow path');
   await nextTick();
   if (state.value.phase.state !== GAME_PHASES.ATTACK) {
     blockerPath.value = '';
@@ -71,7 +70,6 @@ const buildBlockerArrowPath = async () => {
     state.value.phase.ctx.blocker,
     state.value.phase.ctx.attacker
   );
-  console.log('Blocker path:', blockerPath.value);
 };
 
 watchEffect(buildBlockerArrowPath);
