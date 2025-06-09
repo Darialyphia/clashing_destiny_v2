@@ -1,7 +1,7 @@
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { multipleEnemyTargetRules } from '../../../card-utils';
+import { multipleEnemyTargetRules, singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -31,13 +31,20 @@ export const archsageOfMoonring: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
-        const targets = await multipleEnemyTargetRules.getPreResponseTargets({
-          min: 0,
-          max: 4,
-          allowRepeat: true
-        })(game, card);
-        for (const target of targets) {
-          await target.takeDamage(card, new AbilityDamage(1));
+        let count = 0;
+        while (count < 4) {
+          const targets = await multipleEnemyTargetRules.getPreResponseTargets({
+            min: 0,
+            max: 1,
+            allowRepeat: true
+          })(game, card);
+          if (!targets || targets.length === 0) {
+            break;
+          }
+          for (const target of targets) {
+            await target.takeDamage(card, new AbilityDamage(1));
+            count++;
+          }
         }
       })
     );

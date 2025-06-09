@@ -24,6 +24,10 @@ const calculateScale = () => {
 };
 
 useResizeObserver(root, calculateScale);
+useResizeObserver(
+  computed(() => root.value?.parentElement),
+  calculateScale
+);
 onMounted(calculateScale);
 </script>
 

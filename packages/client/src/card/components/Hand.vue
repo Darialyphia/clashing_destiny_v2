@@ -34,6 +34,9 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const newCard = e.card as SerializedCard;
   if (newCard.player !== myBoard.value.playerId) return;
 
+  // @FIXME this can happen on P1T1, this will probaly go away once mulligan is implemented
+  if (myBoard.value.hand.includes(newCard.id)) return;
+
   if (isDefined(e.index)) {
     myBoard.value.hand.splice(e.index, 0, newCard.id);
   } else {

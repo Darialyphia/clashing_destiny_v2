@@ -139,7 +139,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
         :class="{
           floating: card.location === 'board',
           exhausted: card.isExhausted,
-          disabled: !card.canPlay && card.location === 'hand',
+          disabled: interactive && !card.canPlay && card.location === 'hand',
           selected: client.ui.selectedCard?.equals(card),
           targetable: isTargetable
         }"

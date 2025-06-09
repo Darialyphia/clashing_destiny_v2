@@ -265,6 +265,8 @@ export class CombatPhase
       new BeforeDeclareBlockerEvent({ blocker })
     );
     this.blocker = blocker;
+    await this.blocker?.exhaust();
+
     this.dispatch(COMBAT_STEP_TRANSITIONS.BLOCKER_DECLARED);
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_BLOCKER,

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  useBoardSide,
-  useGameClient,
-  useGameState
-} from '../composables/useGameClient';
+import { useBoardSide, useGameClient } from '../composables/useGameClient';
 import CardBack from '@/card/components/CardBack.vue';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
@@ -18,6 +14,7 @@ const { player } = defineProps<{
 }>();
 
 const boardSide = useBoardSide(computed(() => player));
+const client = useGameClient();
 const isDiscardPileOpened = ref(false);
 const isBanishPileOpened = ref(false);
 </script>
@@ -28,7 +25,10 @@ const isBanishPileOpened = ref(false);
     <BanishPile v-model:is-opened="isBanishPileOpened" :player="player" />
     <div class="hero-zone debug">
       <div class="hero">
-        <InspectableCard :card-id="boardSide.heroZone.hero">
+        <InspectableCard
+          :card-id="boardSide.heroZone.hero"
+          :side="player === client.playerId ? 'right' : 'left'"
+        >
           <GameCard :card-id="boardSide.heroZone.hero" />
         </InspectableCard>
       </div>

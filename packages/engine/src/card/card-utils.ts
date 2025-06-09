@@ -38,6 +38,10 @@ export const isAttack = (card: AnyCard): card is AttackCard => {
   return card.kind === CARD_KINDS.ATTACK;
 };
 
+export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => {
+  return isMinion(card) || isHero(card);
+};
+
 export const singleEnemyTargetRules = {
   canPlay(
     game: Game,
@@ -197,7 +201,7 @@ export const multipleEnemyTargetRules = {
       return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
         player: card.player,
         isElligible(candidate, selectedCards) {
-          if (card.isAlly(candidate) || isMinion(candidate) || !isHero(candidate)) {
+          if (card.isAlly(candidate) || !isMinionOrHero(candidate)) {
             return false;
           }
           return (
