@@ -72,12 +72,6 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
     this.isApplied = true;
 
     this.game.on('*', this.checkAura);
-    const unsub = this.game.on(GAME_EVENTS.CARD_AFTER_DESTROY, async event => {
-      if (event.data.card.equals(card)) {
-        unsub();
-        await this.cleanup();
-      }
-    });
   }
 
   async onRemoved() {

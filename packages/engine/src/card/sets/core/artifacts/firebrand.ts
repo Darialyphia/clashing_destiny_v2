@@ -39,6 +39,7 @@ export const firebrand: ArtifactBlueprint = {
         new AuraModifierMixin(game, {
           canSelfApply: false,
           isElligible(candidate) {
+            if (card.location !== 'board') return false;
             if (!isMinion(candidate)) return false;
             if (candidate.isAlly(card)) return false;
             if (candidate.modifiers.has(BurnModifier)) return false;

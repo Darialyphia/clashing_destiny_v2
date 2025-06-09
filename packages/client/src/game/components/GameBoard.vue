@@ -79,7 +79,7 @@ const opponentBoard = useOpponentBoard();
   --board-scale: 1;
   --board-height: 95dvh;
   display: grid;
-  grid-template-rows: 1fr minmax(auto, 5.5rem) 1fr;
+  grid-template-rows: 1fr minmax(auto, 5rem) 1fr;
   min-height: var(--board-height);
   row-gap: var(--size-5);
   transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
