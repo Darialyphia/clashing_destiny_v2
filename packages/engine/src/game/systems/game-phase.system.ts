@@ -31,8 +31,8 @@ export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.GAME_TURN_START]: GameTurnEvent;
   [GAME_PHASE_EVENTS.GAME_TURN_END]: GameTurnEvent;
-  [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseChangeEvent;
-  [GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE]: GamePhaseChangeEvent;
+  [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
+  [GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE]: GamePhaseAfterChangeEvent;
 };
 
 export type GamePhaseContext =
@@ -230,7 +230,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     const nextPhase = this.getNextState(transition);
     await this.game.emit(
       GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE,
-      new GamePhaseChangeEvent({
+      new GamePhaseBeforeChangeEvent({
         from: previousPhase,
         to: nextPhase!
       })
@@ -238,14 +238,14 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     this.dispatch(transition);
     await this._ctx.onExit();
     this._ctx = new this.ctxDictionary[nextPhase!](this.game);
-    await this._ctx.onEnter();
     await this.game.emit(
       GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE,
-      new GamePhaseChangeEvent({
+      new GamePhaseAfterChangeEvent({
         from: previousPhase,
-        to: nextPhase!
+        to: this.getContext()
       })
     );
+    await this._ctx.onEnter();
   }
 
   async endTurn() {
@@ -303,7 +303,7 @@ export class GameTurnEvent extends TypedSerializableEvent<
   }
 }
 
-export class GamePhaseChangeEvent extends TypedSerializableEvent<
+export class GamePhaseBeforeChangeEvent extends TypedSerializableEvent<
   { from: GamePhase; to: GamePhase },
   { from: GamePhase; to: GamePhase }
 > {
@@ -311,6 +311,21 @@ export class GamePhaseChangeEvent extends TypedSerializableEvent<
     return {
       from: this.data.from,
       to: this.data.to
+    };
+  }
+}
+
+export class GamePhaseAfterChangeEvent extends TypedSerializableEvent<
+  { from: GamePhase; to: GamePhaseContext },
+  { from: GamePhase; to: SerializedGamePhaseContext }
+> {
+  serialize() {
+    return {
+      from: this.data.from,
+      to: {
+        state: this.data.to.state,
+        ctx: this.data.to.ctx.serialize() as any // Type assertion to match SerializedGamePhaseContext
+      }
     };
   }
 }

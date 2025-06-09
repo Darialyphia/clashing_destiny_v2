@@ -32,13 +32,8 @@ const angle = computed(() => {
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const newCard = e.card as SerializedCard;
-  console.log(newCard.player, myBoard.value.playerId);
-  if (newCard.player !== myBoard.value.playerId) {
-    return;
-  }
-  const side = client.value.stateManager.state.board.sides.find(
-    side => side.playerId === myBoard.value.playerId
-  );
+  if (newCard.player !== myBoard.value.playerId) return;
+
   if (isDefined(e.index)) {
     myBoard.value.hand.splice(e.index, 0, newCard.id);
   } else {
@@ -49,7 +44,18 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const el = document.querySelector(
     client.value.ui.getCardDOMSelectorInHand(newCard.id, myBoard.value.playerId)
   );
-  console.log(el);
+  if (el) {
+    await el.animate(
+      [
+        { transform: 'translateY(-50%)', opacity: 0 },
+        { transform: 'none', opacity: 1 }
+      ],
+      {
+        duration: 300,
+        easing: 'ease-out'
+      }
+    ).finished;
+  }
 });
 </script>
 

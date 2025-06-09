@@ -75,9 +75,9 @@ export const useOpponentBoard = () => {
 };
 
 export const useCard = (cardId: MaybeRef<string>) => {
-  const client = useGameClient();
+  const state = useGameState();
   return computed(() => {
-    const card = client.value.state.entities[unref(cardId)];
+    const card = state.value.entities[unref(cardId)];
     if (!card) {
       throw new Error(`Card with ID ${cardId} not found in the game state.`);
     }

@@ -185,8 +185,10 @@ export class GameClient {
       this._isPlayingFx = true;
 
       for (const event of snapshot.events) {
-        this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
-        console.log(event.eventName, this.playerId);
+        if (this.gameType === GAME_TYPES.LOCAL) {
+          this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
+          await this.emitter.emit('update', {});
+        }
         await this.fx.emit(event.eventName, event.event);
       }
       this._isPlayingFx = false;
@@ -199,7 +201,7 @@ export class GameClient {
 
       this.ui.update();
 
-      void this.emitter.emit('update', {});
+      await this.emitter.emit('update', {});
     } catch (err) {
       console.error(err);
     }

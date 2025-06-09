@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-import { useGameState } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { waitFor } from '@game/shared';
 
 const state = useGameState();
 
@@ -19,6 +25,12 @@ const indicatorOffset = computed(() => {
     default:
       return 0; // Default to DRAW phase if unknown
   }
+});
+
+const client = useGameClient();
+useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
+  client.value.stateManager.state.phase = e.to;
+  await waitFor(300);
 });
 </script>
 
