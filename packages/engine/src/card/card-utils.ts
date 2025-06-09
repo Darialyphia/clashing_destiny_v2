@@ -96,7 +96,46 @@ export const singleEnemyMinionTargetRules = {
         }
 
         return (
-          card.player.allEnemies.some(enemy => enemy.equals(candidate)) &&
+          card.player.enemyMinions.some(enemy => enemy.equals(candidate)) &&
+          candidate.canBeTargeted(card) &&
+          !selectedCards.some(selected => selected.equals(candidate)) &&
+          predicate(candidate)
+        );
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length === 1;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === 1;
+      }
+    });
+  }
+};
+
+export const singleMinionTargetRules = {
+  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
+    return (
+      [...card.player.minions, ...card.player.enemyMinions].filter(
+        c => c.canBeTargeted(card) && predicate(c)
+      ).length > 0
+    );
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    predicate: (c: MinionCard) => boolean = () => true
+  ) {
+    return await game.interaction.selectCardsOnBoard<MinionCard>({
+      player: card.player,
+      isElligible(candidate, selectedCards) {
+        if (!isMinion(candidate)) {
+          return false;
+        }
+
+        return (
+          [...card.player.enemyMinions, ...card.player.minions].some(minion =>
+            minion.equals(candidate)
+          ) &&
           candidate.canBeTargeted(card) &&
           !selectedCards.some(selected => selected.equals(candidate)) &&
           predicate(candidate)

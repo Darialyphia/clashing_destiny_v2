@@ -36,7 +36,6 @@ export const archsageOfMoonring: MinionBlueprint = {
           max: 4,
           allowRepeat: true
         })(game, card);
-
         for (const target of targets) {
           await target.takeDamage(card, new AbilityDamage(1));
         }

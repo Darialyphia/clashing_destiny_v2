@@ -21,7 +21,9 @@ import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
+  baseAtk: number;
   atk: number;
+  baseMaxHp: number;
   maxHp: number;
   remainingHp: number;
   affinity: Affinity;
@@ -319,11 +321,11 @@ export class MinionCard extends Card<
       MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE,
       new MinionCardBeforeTakeDamageEvent({ card: this, damage })
     );
+
     this.damageTaken = Math.min(
       this.damageTaken + damage.getFinalAmount(this),
       this.maxHp
     );
-
     await this.game.emit(
       MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE,
       new MinionCardAfterTakeDamageEvent({
@@ -411,7 +413,9 @@ export class MinionCard extends Card<
       manaCost: this.manaCost,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
+      baseAtk: this.blueprint.atk,
       maxHp: this.maxHp,
+      baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
       affinity: this.blueprint.affinity,
       position: this.position

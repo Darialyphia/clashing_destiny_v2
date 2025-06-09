@@ -121,11 +121,36 @@ const shouldDisplayStats = computed(() => {
         class="stats"
         :class="{ flipped: card.getPlayer().id !== client.playerId }"
       >
-        <div class="atk" v-if="isDefined(card.atk)">{{ card.atk }}</div>
-        <div class="spellpower" v-if="isDefined(card.spellpower)">
+        <div
+          class="atk"
+          v-if="isDefined(card.atk)"
+          :class="{
+            buffed: card.baseAtk! < card.atk,
+            debuffed: card.baseAtk! > card.atk
+          }"
+        >
+          {{ card.atk }}
+        </div>
+        <div
+          class="spellpower"
+          v-if="isDefined(card.spellpower)"
+          :class="{
+            buffed: card.baseSpellpower! < card.spellpower,
+            debuffed: card.baseSpellpower! > card.spellpower
+          }"
+        >
           {{ card.spellpower }}
         </div>
-        <div class="hp" v-if="isDefined(card.hp)">{{ card.hp }}</div>
+        <div
+          class="hp"
+          v-if="isDefined(card.hp)"
+          :class="{
+            buffed: card.baseMaxHp! < card.hp,
+            debuffed: card.baseMaxHp! > card.hp
+          }"
+        >
+          {{ card.hp }}
+        </div>
       </div>
       <PopoverPortal :disabled="card.location === 'hand'">
         <PopoverContent :side-offset="-50" v-if="interactive">
@@ -234,6 +259,15 @@ const shouldDisplayStats = computed(() => {
   font-weight: var(--font-weight-9);
   line-height: 1;
   pointer-events: none;
+  --buff-color: var(--green-6);
+  --debuff-color: var(--red-6);
+
+  .buffed {
+    color: var(--buff-color);
+  }
+  .debuffed {
+    color: var(--debuff-color);
+  }
 
   &.flipped {
     rotate: 180deg;

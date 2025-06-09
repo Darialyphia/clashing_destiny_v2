@@ -126,9 +126,24 @@ export class CardViewModel {
     return null;
   }
 
+  get baseAtk() {
+    if ('baseAtk' in this.data) {
+      return this.data.baseAtk as number;
+    }
+    return null;
+  }
+
   get maxHp() {
     if ('maxHp' in this.data) {
       return this.data.maxHp as number;
+    }
+
+    return null;
+  }
+
+  get baseMaxHp() {
+    if ('baseMaxHp' in this.data) {
+      return this.data.baseMaxHp as number;
     }
 
     return null;
@@ -170,6 +185,13 @@ export class CardViewModel {
       return this.data.spellPower as number;
     }
 
+    return null;
+  }
+
+  get baseSpellpower() {
+    if ('baseSpellPower' in this.data) {
+      return this.data.baseSpellPower as number;
+    }
     return null;
   }
 

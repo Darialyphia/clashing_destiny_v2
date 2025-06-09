@@ -8,7 +8,8 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
     player: card.player,
     minChoiceCount: 0,
     maxChoiceCount: amount,
-    choices: cards
+    choices: cards,
+    label: `Choose up to ${amount} cards to put at the bottom of your deck`
   });
 
   for (const card of cardsToPutAtBottom) {
@@ -29,7 +30,8 @@ export const discover = async (game: Game, card: AnyCard, choicePool: MainDeckCa
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
-    choices
+    choices,
+    label: 'Choose a card to add to your hand'
   });
 
   await selectedCard.addToHand();

@@ -44,7 +44,7 @@ const board = useBoardSide(computed(() => player));
         </InspectableCard>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
-        <FancyButton text="Cloe" @click="isOpened = false" />
+        <FancyButton text="Close" @click="isOpened = false" />
       </footer>
     </div>
   </UiModal>

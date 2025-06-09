@@ -16,6 +16,7 @@ import ActionsButtons from './ActionsButtons.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import GamePhaseTracker from './GamePhaseTracker.vue';
 import CombatArrow from './CombatArrow.vue';
+import ChooseCardModal from './ChooseCardModal.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -28,6 +29,7 @@ const opponentBoard = useOpponentBoard();
   <ManaCostModal />
   <DestinyPhaseModal />
   <AffinityModal />
+  <ChooseCardModal />
   <CombatArrow />
   <div class="board-container">
     <Debug />

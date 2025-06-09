@@ -24,8 +24,11 @@ export type SerializedHeroCard = SerializedCard & {
   destinyCost: number;
   potentialAttackTargets: string[];
   atk: number;
+  baseAtk: number;
   spellPower: number;
+  baseSpellPower: number;
   maxHp: number;
+  baseMaxHp: number;
   remainingHp: number;
   abilities: SerializedAbility[];
   unlockableAffinities: string[];
@@ -212,9 +215,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       const absorbed = Math.min(armor.remainingDurability, amount);
       await armor.loseDurability(absorbed);
 
-      this.damageTaken = Math.min(amount - absorbed, this.maxHp);
+      this.damageTaken = Math.min(this.damageTaken + amount - absorbed, this.maxHp);
     } else {
-      this.damageTaken = Math.min(amount, this.maxHp);
+      this.damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
     }
 
     await this.game.emit(
@@ -292,6 +295,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   canPlay() {
     return (
       this.location === 'destinyDeck' &&
+      this.canPayDestinyCost &&
       this.game.gamePhaseSystem.getContext().state === GAME_PHASES.DESTINY &&
       (!this.blueprint.lineage || this.player.hero.hasLineage(this.blueprint.lineage)) &&
       this.blueprint.level - this.player.hero.level === 1
@@ -347,8 +351,11 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       level: this.level,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
+      baseAtk: this.blueprint.atk,
       spellPower: this.spellPower,
+      baseSpellPower: this.blueprint.spellPower,
       maxHp: this.maxHp,
+      baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       unlockableAffinities: this.blueprint.unlockableAffinities,
       abilities: this.blueprint.abilities.map(ability => ({
