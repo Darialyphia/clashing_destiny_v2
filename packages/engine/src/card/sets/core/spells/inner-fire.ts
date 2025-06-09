@@ -1,7 +1,7 @@
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyMinionTargetRules } from '../../../card-utils';
+import { singleMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -27,8 +27,8 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
   tags: [],
-  canPlay: singleEnemyMinionTargetRules.canPlay,
-  getPreResponseTargets: singleEnemyMinionTargetRules.getPreResponseTargets,
+  canPlay: singleMinionTargetRules.canPlay,
+  getPreResponseTargets: singleMinionTargetRules.getPreResponseTargets,
   async onInit() {},
   async onPlay(game, card, [target]) {
     await target.modifiers.add(

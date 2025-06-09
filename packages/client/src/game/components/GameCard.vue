@@ -21,7 +21,7 @@ import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import type { DamageType } from '@game/engine/src/utils/damage';
+import { Damage, type DamageType } from '@game/engine/src/utils/damage';
 const {
   cardId,
   interactive = true,
@@ -77,7 +77,7 @@ const onTakeDamage = async (e: {
     amount: number;
   };
 }) => {
-  if (e.card.id !== cardId || !cardElement.value) {
+  if (e.card.id !== cardId || !cardElement.value || e.damage.amount <= 0) {
     return;
   }
 

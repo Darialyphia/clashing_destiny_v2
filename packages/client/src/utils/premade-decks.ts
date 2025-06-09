@@ -34,15 +34,15 @@ export const premadeDecks: Array<PremadeDeck> = [
         'arcane-ray',
         'arcane-ray',
 
-        'flagbearer-of-flame',
-        'flagbearer-of-flame',
-        'flagbearer-of-flame',
-        'flagbearer-of-flame',
+        'pyromancer',
+        'pyromancer',
+        'pyromancer',
+        'pyromancer',
 
-        'pyromancer',
-        'pyromancer',
-        'pyromancer',
-        'pyromancer',
+        'flagbearer-of-flame',
+        'flagbearer-of-flame',
+        'flagbearer-of-flame',
+        'flagbearer-of-flame',
 
         'flamefist-fighter',
         'flamefist-fighter',

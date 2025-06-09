@@ -39,5 +39,5 @@ export const defaultConfig: Config = {
 
   MAX_TALENTS: 4,
 
-  BASE_LOYALTY: 2
+  BASE_LOYALTY: 1
 };

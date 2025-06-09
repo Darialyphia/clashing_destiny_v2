@@ -178,7 +178,7 @@ export class Player
     const cost = card.destinyCost;
 
     for (let i = 0; i < cost; i++) {
-      const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size);
+      const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size - 1);
       const card = [...this.cardManager.destinyZone][index];
       card.sendToBanishPile();
     }

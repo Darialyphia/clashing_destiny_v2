@@ -45,7 +45,9 @@ export const flagBearerOfFlame: MinionBlueprint = {
         new AuraModifierMixin(game, {
           canSelfApply: false,
           isElligible(candidate) {
-            return card.slot?.inFront?.equals(candidate) ?? false;
+            if (candidate.location !== 'board') return false;
+            if (card.location !== 'board') return false;
+            return card.slot?.inFront?.minion?.equals(candidate) ?? false;
           },
           async onGainAura(candidate) {
             await candidate.modifiers.add(attackBuff);

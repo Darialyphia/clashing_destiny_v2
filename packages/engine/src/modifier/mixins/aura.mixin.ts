@@ -36,7 +36,7 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
     if (!this.isApplied) return;
 
     for (const card of this.game.cardSystem.cards) {
-      if (!this.options.canSelfApply && card.equals(this.modifier.target)) return;
+      if (!this.options.canSelfApply && card.equals(this.modifier.target)) continue;
       const shouldGetAura = this.options.isElligible(card);
 
       const hasAura = this.affectedCardIds.has(card.id);
@@ -44,13 +44,13 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
       if (!shouldGetAura && hasAura) {
         this.affectedCardIds.delete(card.id);
         await this.options.onLoseAura(card);
-        return;
+        continue;
       }
 
       if (shouldGetAura && !hasAura) {
         this.affectedCardIds.add(card.id);
         await this.options.onGainAura(card);
-        return;
+        continue;
       }
     }
   }

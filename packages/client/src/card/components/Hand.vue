@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useGameUi, useMyBoard } from '@/game/composables/useGameClient';
+import {
+  useFxEvent,
+  useGameUi,
+  useMyBoard
+} from '@/game/composables/useGameClient';
 import GameCard from '@/game/components/GameCard.vue';
 
 const myBoard = useMyBoard();
@@ -19,6 +23,10 @@ const cardSpacingHovered = computed(() => {
 const angle = computed(() => {
   const handSize = myBoard.value.hand.length;
   return handSize > 7 ? 5 - (handSize - 6) * 0.5 : 5;
+});
+
+useFxEvent('card.add_to_hand', async e => {
+  console.log(e);
 });
 </script>
 
