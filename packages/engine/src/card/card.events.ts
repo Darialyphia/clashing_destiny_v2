@@ -1,5 +1,6 @@
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS } from './card.enums';
+import type { CardLocation } from './components/card-manager.component';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
@@ -36,12 +37,13 @@ export class CardDiscardEvent extends TypedSerializableEvent<
 }
 
 export class CardAddToHandevent extends TypedSerializableEvent<
-  { card: AnyCard },
-  { card: SerializedCard }
+  { card: AnyCard; index: number | null },
+  { card: SerializedCard; index: number | null }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.serialize(),
+      index: this.data.index
     };
   }
 }

@@ -118,6 +118,23 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
+  getActivePlayerIdFromSnapshotState(
+    snapshot: SerializedOmniscientState | SerializedPlayerState
+  ) {
+    if (snapshot.effectChain) {
+      return snapshot.effectChain.player;
+    }
+
+    if (
+      snapshot.phase.state === GAME_PHASES.ATTACK &&
+      snapshot.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
+    ) {
+      return snapshot.players.find(id => id !== snapshot.turnPlayer)!;
+    }
+
+    return snapshot.interaction.ctx.player;
+  }
+
   getActivePlayerId() {
     if (this.stateManager.state.effectChain) {
       return this.stateManager.state.effectChain.player;
@@ -168,6 +185,8 @@ export class GameClient {
       this._isPlayingFx = true;
 
       for (const event of snapshot.events) {
+        this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
+        console.log(event.eventName, this.playerId);
         await this.fx.emit(event.eventName, event.event);
       }
       this._isPlayingFx = false;

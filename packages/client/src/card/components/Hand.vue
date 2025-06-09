@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import {
   useFxEvent,
+  useGameClient,
   useGameUi,
   useMyBoard
 } from '@/game/composables/useGameClient';
 import GameCard from '@/game/components/GameCard.vue';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
+import { isDefined, waitFor } from '@game/shared';
 
 const myBoard = useMyBoard();
 const ui = useGameUi();
+const client = useGameClient();
 
 const cardSpacing = computed(() => {
   const handSize = myBoard.value.hand.length;
@@ -25,13 +30,32 @@ const angle = computed(() => {
   return handSize > 7 ? 5 - (handSize - 6) * 0.5 : 5;
 });
 
-useFxEvent('card.add_to_hand', async e => {
-  console.log(e);
+useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
+  const newCard = e.card as SerializedCard;
+  console.log(newCard.player, myBoard.value.playerId);
+  if (newCard.player !== myBoard.value.playerId) {
+    return;
+  }
+  const side = client.value.stateManager.state.board.sides.find(
+    side => side.playerId === myBoard.value.playerId
+  );
+  if (isDefined(e.index)) {
+    myBoard.value.hand.splice(e.index, 0, newCard.id);
+  } else {
+    myBoard.value.hand.push(newCard.id);
+  }
+  await nextTick();
+
+  const el = document.querySelector(
+    client.value.ui.getCardDOMSelectorInHand(newCard.id, myBoard.value.playerId)
+  );
+  console.log(el);
 });
 </script>
 
 <template>
   <section
+    :id="`hand-${myBoard.playerId}`"
     class="hand"
     :style="{ '--hand-size': myBoard.hand.length, '--angle': angle }"
   >

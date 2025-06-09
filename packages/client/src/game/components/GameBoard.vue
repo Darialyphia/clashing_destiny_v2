@@ -35,6 +35,7 @@ const opponentBoard = useOpponentBoard();
     <Debug />
 
     <section
+      id="board"
       class="board"
       :class="{ 'full-screen': isFullscreen }"
       :style="{ '--board-scale': 1 }"

@@ -13,10 +13,10 @@ const blockerPath = ref('');
 
 const buildArrowBetweenTwoCards = (card1: string, card2: string) => {
   const startRect = document
-    .querySelector(`.board #${card1}`)!
+    .querySelector(client.value.ui.getCardDOMSelectorOnBoard(card1))!
     .getBoundingClientRect();
   const endRect = document
-    .querySelector(`.board #${card2}`)!
+    .querySelector(client.value.ui.getCardDOMSelectorOnBoard(card2))!
     .getBoundingClientRect();
 
   const start = {

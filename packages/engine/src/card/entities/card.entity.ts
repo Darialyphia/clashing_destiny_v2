@@ -332,12 +332,12 @@ export abstract class Card<
         `Cannot add card ${this.id} to hand because it is not a main deck card.`
       );
     }
-    await (this as this).game.emit(
-      CARD_EVENTS.CARD_ADD_TO_HAND,
-      new CardAddToHandevent({ card: this })
-    );
     this.removeFromCurrentLocation();
     await this.player.cardManager.addToHand(this, index);
+    await (this as this).game.emit(
+      CARD_EVENTS.CARD_ADD_TO_HAND,
+      new CardAddToHandevent({ card: this, index: index ?? null })
+    );
   }
 
   async exhaust() {

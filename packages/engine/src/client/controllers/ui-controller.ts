@@ -10,6 +10,7 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
+import type { SerializedCard } from '../../card/entities/card.entity';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -157,5 +158,25 @@ export class UiController {
 
   unselect() {
     this._selectedCard = null;
+  }
+
+  getHandDOMSelector(playerId: string) {
+    return `#hand-${playerId}`;
+  }
+
+  getBoardDOMSelector() {
+    return '#board';
+  }
+
+  getCardDOMSelector(cardId: string) {
+    return `#${cardId}`;
+  }
+
+  getCardDOMSelectorOnBoard(cardId: string) {
+    return `${this.getBoardDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
+  }
+
+  getCardDOMSelectorInHand(cardId: string, playerId: string) {
+    return `${this.getHandDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
   }
 }
