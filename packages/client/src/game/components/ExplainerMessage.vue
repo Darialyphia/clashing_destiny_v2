@@ -31,7 +31,7 @@ const message = computed(() => {
   }
 
   if (state.value.effectChain) {
-    return 'Effect chain: use an abiity or play a Burst Spell';
+    return 'Effect chain: Your turn';
   }
 
   if (state.value.phase.state === GAME_PHASES.ATTACK) {
@@ -54,6 +54,6 @@ const message = computed(() => {
 .explainer-message {
   margin-inline-start: var(--size-9);
   transform: rotateX(-30deg);
-  font-size: var(--font-size-6);
+  font-size: var(--font-size-5);
 }
 </style>

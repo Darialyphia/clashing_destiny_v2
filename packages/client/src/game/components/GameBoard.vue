@@ -17,6 +17,7 @@ import ExplainerMessage from './ExplainerMessage.vue';
 import GamePhaseTracker from './GamePhaseTracker.vue';
 import CombatArrow from './CombatArrow.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
+import EffectChain from './EffectChain.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -45,6 +46,7 @@ const opponentBoard = useOpponentBoard();
       <div class="middle-row">
         <GamePhaseTracker />
         <ExplainerMessage />
+        <EffectChain />
       </div>
       <BoardSide :player="myBoard.playerId" class="my-side" />
     </section>
@@ -77,10 +79,10 @@ const opponentBoard = useOpponentBoard();
   --board-scale: 1;
   --board-height: 95dvh;
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: 1fr minmax(auto, 5.5rem) 1fr;
   min-height: var(--board-height);
   row-gap: var(--size-5);
-  transform: rotateX(30deg) translateY(-250px) scale(var(--board-scale));
+  transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
   transform-style: preserve-3d;
   position: relative;
   margin-inline: auto;
