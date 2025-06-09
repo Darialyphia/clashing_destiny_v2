@@ -15,6 +15,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { LoyaltyDamage } from '../../utils/damage';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -230,14 +231,16 @@ export class ArtifactCard extends Card<
   }
 
   async play() {
-    if (!this.hasAffinityMatch) {
-      return this.playWithoutAffinityMatch();
-    }
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
+    this.removeFromCurrentLocation();
+
+    if (!this.hasAffinityMatch) {
+      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
+    }
     this.player.artifactManager.equip(this);
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(

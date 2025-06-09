@@ -2,6 +2,7 @@ import type { Game } from '../../game/game';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 
 import type { Player } from '../../player/player.entity';
+import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import type { LocationBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
@@ -52,16 +53,16 @@ export class LocationCard extends Card<
     );
   }
   async play() {
-    if (!this.hasAffinityMatch) {
-      return this.playWithoutAffinityMatch();
-    }
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
-
     this.removeFromCurrentLocation();
+
+    if (!this.hasAffinityMatch) {
+      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
+    }
     await this.player.boardSide.changeLocation(this);
     await this.blueprint.onPlay(this.game, this);
 

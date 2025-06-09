@@ -14,8 +14,6 @@ const { cardId, side } = defineProps<
   { cardId: string } & Pick<HoverCardContentProps, 'side'> &
     Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
-
-const card = useCard(computed(() => cardId));
 </script>
 
 <template>
@@ -24,7 +22,7 @@ const card = useCard(computed(() => cardId));
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
-      <HoverCardContent>
+      <HoverCardContent :side="side">
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>
     </HoverCardPortal>

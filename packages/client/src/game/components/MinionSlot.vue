@@ -44,7 +44,11 @@ const isHighlighted = computed(() => {
       })
     "
   >
-    <InspectableCard v-if="props.slot.minion" :card-id="props.slot.minion">
+    <InspectableCard
+      v-if="props.slot.minion"
+      :card-id="props.slot.minion"
+      side="right"
+    >
       <GameCard :card-id="props.slot.minion" class="minion-slot-card" />
     </InspectableCard>
   </div>
@@ -52,7 +56,7 @@ const isHighlighted = computed(() => {
 
 <style scoped lang="postcss">
 .minion-slot {
-  border: solid 1px white;
+  border: solid 2px white;
   /* aspect-ratio: var(--card-width-unitless) / var(--card-height-unitless); */
   height: 100%;
   position: relative;

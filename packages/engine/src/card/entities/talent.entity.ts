@@ -39,6 +39,10 @@ export class TalentCard extends Card<
     return this.blueprint.level;
   }
 
+  get needAffinityToBePlayed() {
+    return this.interceptors.needAffinityToBePlayed.getValue(true, {});
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.player.hero.hasLineage(this.blueprint.heroId) &&

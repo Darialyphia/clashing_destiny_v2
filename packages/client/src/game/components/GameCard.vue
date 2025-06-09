@@ -12,14 +12,12 @@ import {
   PopoverPortal,
   PopoverContent
 } from 'reka-ui';
-import CardText from '@/card/components/CardText.vue';
 import CardResizer from './CardResizer.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import { isDefined } from '@game/shared';
-
+import CardStats from './CardStats.vue';
+import CardActions from './CardActions.vue';
 const {
   cardId,
   interactive = true,
@@ -64,16 +62,6 @@ const isTargetable = computed(() => {
 
   return canSelect || canAttack;
 });
-
-const shouldDisplayStats = computed(() => {
-  if (!interactive) return false;
-  if (card.value.location !== 'board') return false;
-  return (
-    card.value.kind === CARD_KINDS.HERO ||
-    card.value.kind === CARD_KINDS.MINION ||
-    card.value.kind === CARD_KINDS.ARTIFACT
-  );
-});
 </script>
 
 <template>
@@ -116,59 +104,14 @@ const shouldDisplayStats = computed(() => {
           }
         "
       />
-      <div
-        v-if="shouldDisplayStats"
-        class="stats"
-        :class="{ flipped: card.getPlayer().id !== client.playerId }"
-      >
-        <div
-          class="atk"
-          v-if="isDefined(card.atk)"
-          :class="{
-            buffed: card.baseAtk! < card.atk,
-            debuffed: card.baseAtk! > card.atk
-          }"
-        >
-          {{ card.atk }}
-        </div>
-        <div
-          class="spellpower"
-          v-if="isDefined(card.spellpower)"
-          :class="{
-            buffed: card.baseSpellpower! < card.spellpower,
-            debuffed: card.baseSpellpower! > card.spellpower
-          }"
-        >
-          {{ card.spellpower }}
-        </div>
-        <div
-          class="hp"
-          v-if="isDefined(card.hp)"
-          :class="{
-            buffed: card.baseMaxHp! < card.hp,
-            debuffed: card.baseMaxHp! > card.hp
-          }"
-        >
-          {{ card.hp }}
-        </div>
-      </div>
+      <CardStats v-if="interactive" :card="card" />
+
       <PopoverPortal :disabled="card.location === 'hand'">
         <PopoverContent :side-offset="-50" v-if="interactive">
-          <div class="actions-list">
-            <button
-              v-for="action in card.getActions()"
-              :key="action.id"
-              class="action"
-              @click="
-                () => {
-                  action.handler(card);
-                  isActionsPopoverOpened = false;
-                }
-              "
-            >
-              <CardText :text="action.getLabel(card)" />
-            </button>
-          </div>
+          <CardActions
+            :card="card"
+            v-model:is-opened="isActionsPopoverOpened"
+          />
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
@@ -210,23 +153,6 @@ const shouldDisplayStats = computed(() => {
   animation: card-glow 2.5s infinite;
 }
 
-.actions-list {
-  display: flex;
-  flex-direction: column;
-}
-.action {
-  background: black;
-  padding: 0.5rem;
-  min-width: 10rem;
-  text-align: left;
-  &:focus {
-    outline: none;
-  }
-  &:focus-visible {
-    outline: solid 2px hsl(var(--cyan-4-hsl));
-  }
-}
-
 .card {
   transition: all 0.3s var(--ease-2);
   &.floating {
@@ -246,56 +172,21 @@ const shouldDisplayStats = computed(() => {
   }
 }
 
-.stats {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent, hsl(0 0 0 / 0.5));
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  padding: var(--size-3);
-  font-size: var(--font-size-10);
-  font-weight: var(--font-weight-9);
-  line-height: 1;
-  pointer-events: none;
-  --buff-color: var(--green-6);
-  --debuff-color: var(--red-6);
-
-  .buffed {
-    color: var(--buff-color);
+@keyframes horizontal-shaking {
+  0% {
+    transform: translateX(0);
   }
-  .debuffed {
-    color: var(--debuff-color);
+  25% {
+    transform: translateX(5px);
   }
-
-  &.flipped {
-    rotate: 180deg;
-    justify-content: flex-start;
+  50% {
+    transform: translateX(-5px);
   }
-  .game-card:has(.card.floating) & {
-    transform: translateZ(var(--floating-amount));
+  75% {
+    transform: translateX(5px);
   }
-
-  .atk {
-    background-image: url('/assets/ui/attack.png');
-    background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
-  }
-
-  .spellpower {
-    background-image: url('/assets/ui/ability-power.png');
-    background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
-  }
-
-  .hp {
-    background-image: url('/assets/ui/hp.png');
-    background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+  100% {
+    transform: translateX(0);
   }
 }
 </style>

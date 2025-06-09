@@ -2,6 +2,7 @@ import type { Game } from '../../game/game';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 
 import type { Player } from '../../player/player.entity';
+import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import type { PreResponseTarget, SpellBlueprint } from '../card-blueprint';
 import { CARD_EVENTS, SPELL_KINDS, type SpellKind } from '../card.enums';
@@ -63,9 +64,6 @@ export class SpellCard extends Card<
   }
 
   async play() {
-    if (!this.hasAffinityMatch) {
-      return this.playWithoutAffinityMatch();
-    }
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
 
     const effect = {
@@ -76,6 +74,10 @@ export class SpellCard extends Card<
           new CardBeforePlayEvent({ card: this })
         );
         this.updatePlayedAt();
+
+        if (!this.hasAffinityMatch) {
+          await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
+        }
         await this.blueprint.onPlay(this.game, this, targets);
         this.removeFromCurrentLocation();
         this.player.cardManager.sendToDiscardPile(this);

@@ -68,7 +68,7 @@ const opponentBoard = useOpponentBoard();
 
 .debug {
   > * {
-    border: solid 1px white;
+    border: solid 2px white;
   }
 }
 

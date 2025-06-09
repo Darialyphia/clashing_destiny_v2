@@ -39,12 +39,16 @@ export type CardInterceptors = {
   manaCost: Interceptable<number | null>;
   destinyCost: Interceptable<number | null>;
   player: Interceptable<Player>;
+  loyalty: Interceptable<number>;
+  needAffinityToBePlayed: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
   manaCost: new Interceptable(),
   destinyCost: new Interceptable(),
-  player: new Interceptable()
+  player: new Interceptable(),
+  loyalty: new Interceptable(),
+  needAffinityToBePlayed: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -142,6 +146,14 @@ export abstract class Card<
 
   get tags() {
     return this.blueprint.tags ?? [];
+  }
+
+  get loyalty() {
+    return this.interceptors.loyalty.getValue(this.game.config.BASE_LOYALTY, {}) ?? 0;
+  }
+
+  get needAffinityToBePlayed() {
+    return this.interceptors.needAffinityToBePlayed.getValue(false, {});
   }
 
   get manaCost(): number {
@@ -274,23 +286,8 @@ export abstract class Card<
     return this.player.unlockedAffinities.includes(this.affinity);
   }
 
-  protected async playWithoutAffinityMatch() {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY_WITHOUT_AFFINITY_MATCH,
-      new CardBeforePlayWithoutAffinityMatchEvent({ card: this })
-    );
-
-    await this.player.cardManager.drawIntoDestinyZone(1);
-    this.sendToDiscardPile();
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY_WITHOUT_AFFINITY_MATCH,
-      new CardAfterPlayWithoutAffinityMatchEvent({ card: this })
-    );
-  }
-
   get descriptionWithoutAffinityMatch() {
-    return `@[missing-affinity] Missing Affinity: Draw a card into your destiny Zone.@\n(regular effect: ${this.blueprint.description})`;
+    return `@[missing-affinity] Missing Affinity: Your hero will take ${this.loyalty} damage.@\n${this.blueprint.description}`;
   }
 
   protected serializeBase(): SerializedCard {

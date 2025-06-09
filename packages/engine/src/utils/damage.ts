@@ -1,11 +1,13 @@
 import type { Values } from '@game/shared';
 import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
+import type { AnyCard } from '../card/entities/card.entity';
 
 export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',
   HERO_ATTACK: 'HERO_ATTACK',
   ABILITY: 'ABILITY',
-  SPELL: 'SPELL'
+  SPELL: 'SPELL',
+  LOYALTY: 'LOYALTY'
 } as const;
 
 export type DamageType = Values<typeof DAMAGE_TYPES>;
@@ -56,5 +58,11 @@ export class SpellDamage extends Damage {
 export class AbilityDamage extends Damage {
   constructor(amount: number) {
     super({ baseAmount: amount, type: DAMAGE_TYPES.ABILITY });
+  }
+}
+
+export class LoyaltyDamage extends Damage {
+  constructor(card: AnyCard) {
+    super({ baseAmount: card.loyalty, type: DAMAGE_TYPES.LOYALTY });
   }
 }

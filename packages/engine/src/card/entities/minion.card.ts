@@ -2,7 +2,7 @@ import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
-import type { Damage, DamageType } from '../../utils/damage';
+import { LoyaltyDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import type { MinionBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
@@ -362,9 +362,6 @@ export class MinionCard extends Card<
   }
 
   async play() {
-    if (!this.hasAffinityMatch) {
-      return this.playWithoutAffinityMatch();
-    }
     const [position] = await this.game.interaction.selectMinionSlot({
       player: this.player,
       isElligible(position) {
@@ -385,8 +382,11 @@ export class MinionCard extends Card<
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
-
     this.removeFromCurrentLocation();
+
+    if (!this.hasAffinityMatch) {
+      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
+    }
     this.player.boardSide.summonMinion(this, position.zone, position.slot);
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(

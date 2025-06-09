@@ -62,7 +62,7 @@ useResizeObserver(root, throttle(computeSpacing, 50));
 <style scoped lang="postcss">
 .destiny-zone {
   display: flex;
-  border: solid 1px white;
+  border: solid 2px white;
   & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
   }

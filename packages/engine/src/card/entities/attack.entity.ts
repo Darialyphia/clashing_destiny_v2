@@ -3,6 +3,7 @@ import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 
 import type { Player } from '../../player/player.entity';
+import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import type { AttackBlueprint } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
@@ -59,14 +60,16 @@ export class AttackCard extends Card<
   }
 
   async play() {
-    if (!this.hasAffinityMatch) {
-      return this.playWithoutAffinityMatch();
-    }
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
+    this.removeFromCurrentLocation();
+
+    if (!this.hasAffinityMatch) {
+      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
+    }
     const cleanups = [
       await this.player.hero.addInterceptor('canBeBlocked', () => false),
       await this.player.hero.addInterceptor('atk', val => val + this.damage)
