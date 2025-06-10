@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { useFullscreen, useWindowSize } from '@vueuse/core';
-import {
-  useGameState,
-  useMyBoard,
-  useOpponentBoard
-} from '../composables/useGameClient';
+import { useFullscreen } from '@vueuse/core';
+import { useMyBoard, useOpponentBoard } from '../composables/useGameClient';
 import { useBoardResize } from '../composables/useBoardResize';
 import Hand from '@/card/components/Hand.vue';
 import ManaCostModal from './ManaCostModal.vue';
@@ -18,6 +14,7 @@ import GamePhaseTracker from './GamePhaseTracker.vue';
 import CombatArrow from './CombatArrow.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import EffectChain from './EffectChain.vue';
+import PlayerInfos from './PlayerInfos.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -35,6 +32,7 @@ const opponentBoard = useOpponentBoard();
   <div class="board-container">
     <Debug />
 
+    <PlayerInfos />
     <section
       id="board"
       class="board"

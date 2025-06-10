@@ -39,6 +39,7 @@ import { recollection } from './core/spells/recollection';
 import { scorchedEarth } from './core/spells/scorched-earth';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
+import { arcaneStudies } from './core/talents/arcane-studies';
 import { fireStudies } from './core/talents/fire-studies';
 
 export const coreSet: CardSet = {
@@ -93,6 +94,7 @@ export const coreSet: CardSet = {
     arcaneRay,
     magicGrimoire,
     surgeOfWill,
+    arcaneStudies,
 
     // Chrono
     recollection,

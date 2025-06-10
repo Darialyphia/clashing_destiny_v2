@@ -9,6 +9,7 @@ import type {
   FXEventMap
 } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import type { InjectionKey, Ref } from 'vue';
 
 type GameClientContext = Ref<GameClient>;
@@ -96,4 +97,20 @@ export const useFxEvent = <T extends FXEvent>(
   onUnmounted(unsub);
 
   return unsub;
+};
+
+export const useMyPlayer = () => {
+  const state = useGameState();
+  const board = useMyBoard();
+  return computed(() => {
+    return state.value.entities[board.value.playerId] as PlayerViewModel;
+  });
+};
+
+export const useOpponentPlayer = () => {
+  const state = useGameState();
+  const board = useOpponentBoard();
+  return computed(() => {
+    return state.value.entities[board.value.playerId] as PlayerViewModel;
+  });
 };
