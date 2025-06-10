@@ -14,6 +14,7 @@ import { warlock } from './core/heroes/warlock';
 import { warrior } from './core/heroes/warrior';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { blazingSalamander } from './core/minions/blazing-salamander';
+import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
 import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
@@ -36,6 +37,7 @@ import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
 import { scorchedEarth } from './core/spells/scorched-earth';
+import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 import { fireStudies } from './core/talents/fire-studies';
 
@@ -54,6 +56,9 @@ export const coreSet: CardSet = {
 
     // Warrior Lineage
     warrior,
+
+    // Normal
+    courageousFootsoldier,
 
     // Fire
     fireBolt,
@@ -87,6 +92,7 @@ export const coreSet: CardSet = {
     esteemedErudite,
     arcaneRay,
     magicGrimoire,
+    surgeOfWill,
 
     // Chrono
     recollection,
