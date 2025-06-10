@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useBoardSide, useGameClient } from '../composables/useGameClient';
+import {
+  useBoardSide,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
 import CardBack from '@/card/components/CardBack.vue';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
@@ -9,14 +13,20 @@ import CardResizer from './CardResizer.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
+import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 const { player } = defineProps<{
   player: string;
 }>();
 
 const boardSide = useBoardSide(computed(() => player));
 const client = useGameClient();
+const state = useGameState();
 const isDiscardPileOpened = ref(false);
 const isBanishPileOpened = ref(false);
+
+const playerInfos = computed(() => {
+  return state.value.entities[player] as PlayerViewModel;
+});
 </script>
 
 <template>
@@ -30,6 +40,21 @@ const isBanishPileOpened = ref(false);
           :side="player === client.playerId ? 'right' : 'left'"
         >
           <GameCard :card-id="boardSide.heroZone.hero" />
+          <div class="talents">
+            <div
+              v-for="(talent, i) in state.config.MAX_TALENTS"
+              :key="talent"
+              class="talent"
+            >
+              <InspectableCard
+                v-if="playerInfos.talentIds[i]"
+                :card-id="playerInfos.talentIds[i]"
+                :side="player === client.playerId ? 'right' : 'left'"
+              >
+                <div class="talent-filled" />
+              </InspectableCard>
+            </div>
+          </div>
         </InspectableCard>
       </div>
       <div class="artifacts">
@@ -158,6 +183,7 @@ const isBanishPileOpened = ref(false);
   grid-auto-flow: row;
   grid-template-rows: 3fr 1.5fr 1fr;
   gap: var(--size-2);
+  position: relative;
   .hero {
     justify-self: center;
     aspect-ratio: var(--card-ratio);
@@ -233,6 +259,26 @@ const isBanishPileOpened = ref(false);
     height: 100%;
     position: absolute;
     aspect-ratio: var(--card-ratio);
+  }
+}
+
+.talents {
+  position: absolute;
+  top: 0;
+  left: -70px;
+  display: grid;
+  grid-template-rows: repeat(v-bind('state.config.MAX_TALENTS'), 1fr);
+  gap: var(--size-1);
+  height: 100%;
+  .talent {
+    background-color: black;
+    border-radius: var(--radius-round);
+    aspect-ratio: 1;
+  }
+  .talent-filled {
+    background-color: red;
+    border-radius: var(--radius-round);
+    aspect-ratio: 1;
   }
 }
 </style>

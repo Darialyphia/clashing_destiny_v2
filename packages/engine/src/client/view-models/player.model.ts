@@ -56,6 +56,16 @@ export class PlayerViewModel {
     return this.data.isPlayer1;
   }
 
+  get talentIds() {
+    return this.data.talents;
+  }
+
+  getTalents() {
+    return this.data.talents.map(talentId => {
+      return this.getEntities()[talentId] as CardViewModel;
+    });
+  }
+
   getHand() {
     return this.data.hand.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;

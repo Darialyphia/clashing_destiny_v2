@@ -42,6 +42,7 @@ export type SerializedPlayer = {
   currentHp: number;
   isPlayer1: boolean;
   unlockedAffinities: Affinity[];
+  talents: string[];
 };
 
 type PlayerInterceptors = {
@@ -110,7 +111,8 @@ export class Player
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
-      unlockedAffinities: this.unlockedAffinities
+      unlockedAffinities: this.unlockedAffinities,
+      talents: this.talents.map(talent => talent.id)
     };
   }
 
