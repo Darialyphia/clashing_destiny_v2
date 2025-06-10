@@ -34,14 +34,12 @@ const board = useBoardSide(computed(() => player));
   >
     <div class="content">
       <div class="card-list">
-        <InspectableCard
+        <GameCard
           v-for="card in board.discardPile"
           :key="card"
           :card-id="card"
-          side="right"
-        >
-          <GameCard :card-id="card" :interactive="false" />
-        </InspectableCard>
+          :interactive="false"
+        />
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton text="Close" @click="isOpened = false" />

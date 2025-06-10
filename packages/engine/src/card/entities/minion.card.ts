@@ -9,7 +9,12 @@ import {
   type DamageType
 } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import type { MinionBlueprint, SerializedAbility } from '../card-blueprint';
+import {
+  serializePreResponseTarget,
+  type MinionBlueprint,
+  type PreResponseTarget,
+  type SerializedAbility
+} from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -172,6 +177,8 @@ export class MinionCard extends Card<
 > {
   private damageTaken = 0;
 
+  private abilityTargets = new Map<string, PreResponseTarget[]>();
+
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
       game,
@@ -312,6 +319,8 @@ export class MinionCard extends Card<
       new MinionUsedAbilityEvent({ card: this, abilityId: id })
     );
     const targets = await ability.getPreResponseTargets(this.game, this);
+    this.abilityTargets.set(id, targets);
+
     if (ability.shouldExhaust) {
       await this.exhaust();
     }
@@ -320,6 +329,7 @@ export class MinionCard extends Card<
       source: this,
       handler: async () => {
         await ability.onResolve(this.game, this, targets);
+        this.abilityTargets.delete(id);
         await this.game.emit(
           MINION_EVENTS.MINION_AFTER_USE_ABILITY,
           new MinionUsedAbilityEvent({ card: this, abilityId: id })
@@ -469,7 +479,9 @@ export class MinionCard extends Card<
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,
-        description: ability.description
+        description: ability.description,
+        targets:
+          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
       }))
     };
   }

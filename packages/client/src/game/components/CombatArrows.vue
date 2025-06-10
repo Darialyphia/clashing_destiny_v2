@@ -79,25 +79,8 @@ useEventListener(window, 'resize', throttle(buildBlockerArrowPath, 100));
 </script>
 
 <template>
-  <div class="arrows">
+  <Teleport to="#arrows" defer>
     <Arrow :path="attackPath" color="red" v-if="attackPath" />
     <Arrow :path="blockerPath" color="lime" v-if="blockerPath" />
-  </div>
+  </Teleport>
 </template>
-
-<style scoped lang="postcss">
-.arrows {
-  position: fixed;
-  z-index: 1;
-  inset: 0;
-  pointer-events: none;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-
-  > * {
-    grid-column: 1;
-    grid-row: 1;
-  }
-}
-</style>

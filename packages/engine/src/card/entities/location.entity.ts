@@ -4,7 +4,12 @@ import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import type { Player } from '../../player/player.entity';
 import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import type { LocationBlueprint, SerializedAbility } from '../card-blueprint';
+import {
+  serializePreResponseTarget,
+  type LocationBlueprint,
+  type PreResponseTarget,
+  type SerializedAbility
+} from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -29,6 +34,8 @@ export class LocationCard extends Card<
   LocationCardInterceptors,
   LocationBlueprint
 > {
+  private abilityTargets = new Map<string, PreResponseTarget[]>();
+
   constructor(game: Game, player: Player, options: CardOptions<LocationBlueprint>) {
     super(
       game,
@@ -100,6 +107,8 @@ export class LocationCard extends Card<
     if (!ability) return;
 
     const targets = await ability.getPreResponseTargets(this.game, this);
+    this.abilityTargets.set(id, targets);
+
     if (ability.shouldExhaust) {
       await this.exhaust();
     }
@@ -107,8 +116,7 @@ export class LocationCard extends Card<
       source: this,
       handler: async () => {
         await ability.onResolve(this.game, this, targets);
-        this.removeFromCurrentLocation();
-        this.player.cardManager.sendToDiscardPile(this);
+        this.abilityTargets.delete(id);
       }
     };
 
@@ -127,7 +135,9 @@ export class LocationCard extends Card<
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,
-        description: ability.description
+        description: ability.description,
+        targets:
+          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
       }))
     };
   }

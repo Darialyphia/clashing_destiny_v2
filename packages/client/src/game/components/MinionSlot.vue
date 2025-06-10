@@ -36,6 +36,7 @@ const isHighlighted = computed(() => {
   <div
     class="minion-slot"
     :class="{ highlighted: isHighlighted }"
+    :id="`minion-slot-${props.slot.playerId}-${props.slot.position}-${props.slot.zone}`"
     @click="
       client.ui.onMinionSlotClick({
         player: player,

@@ -111,7 +111,7 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
     /* --rotation: 0deg; */
-    --y-offset: calc(var(--offset) * 10px - 2rem);
+    --y-offset: calc(var(--offset) * 10px);
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))

@@ -3,7 +3,12 @@ import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { ArtifactBlueprint, SerializedAbility } from '../card-blueprint';
+import {
+  serializePreResponseTarget,
+  type ArtifactBlueprint,
+  type PreResponseTarget,
+  type SerializedAbility
+} from '../card-blueprint';
 import { CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import { CardBeforePlayEvent, CardAfterPlayEvent } from '../card.events';
 import {
@@ -95,6 +100,8 @@ export class ArtifactCard extends Card<
   ArtifactBlueprint
 > {
   private lostDurability = 0;
+
+  private abilityTargets = new Map<string, PreResponseTarget[]>();
 
   constructor(game: Game, player: Player, options: CardOptions<ArtifactBlueprint>) {
     super(
@@ -197,6 +204,8 @@ export class ArtifactCard extends Card<
       new ArtifactUsedAbilityEvent({ card: this, abilityId: id })
     );
     const targets = await ability.getPreResponseTargets(this.game, this);
+    this.abilityTargets.set(id, targets);
+
     if (ability.shouldExhaust) {
       await this.exhaust();
     }
@@ -205,6 +214,7 @@ export class ArtifactCard extends Card<
       source: this,
       handler: async () => {
         await ability.onResolve(this.game, this, targets);
+        this.abilityTargets.delete(id);
         await this.game.emit(
           ARTIFACT_EVENTS.ARTIFACT_AFTER_USE_ABILITY,
           new ArtifactUsedAbilityEvent({ card: this, abilityId: id })
@@ -265,7 +275,9 @@ export class ArtifactCard extends Card<
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,
-        description: ability.description
+        description: ability.description,
+        targets:
+          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
       }))
     };
   }

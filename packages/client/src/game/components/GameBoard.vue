@@ -11,7 +11,7 @@ import Debug from './Debug.vue';
 import ActionsButtons from './ActionsButtons.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import GamePhaseTracker from './GamePhaseTracker.vue';
-import CombatArrow from './CombatArrow.vue';
+import CombatArrows from './CombatArrows.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import EffectChain from './EffectChain.vue';
 import PlayerInfos from './PlayerInfos.vue';
@@ -28,7 +28,9 @@ const opponentBoard = useOpponentBoard();
   <DestinyPhaseModal />
   <AffinityModal />
   <ChooseCardModal />
-  <CombatArrow />
+  <CombatArrows />
+  <div class="arrows" id="arrows" />
+
   <div class="board-container">
     <Debug />
 
@@ -77,9 +79,9 @@ const opponentBoard = useOpponentBoard();
   --board-scale: 1;
   --board-height: 95dvh;
   display: grid;
-  grid-template-rows: 1fr minmax(auto, 5rem) 1fr;
+  grid-template-rows: 1fr auto 1fr;
   min-height: var(--board-height);
-  row-gap: var(--size-5);
+  row-gap: var(--size-2);
   transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
   transform-style: preserve-3d;
   position: relative;
@@ -99,5 +101,20 @@ const opponentBoard = useOpponentBoard();
 
 .opponent-side {
   transform: rotateZ(180deg) translateX(-6%);
+}
+
+.arrows {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+
+  > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
 }
 </style>

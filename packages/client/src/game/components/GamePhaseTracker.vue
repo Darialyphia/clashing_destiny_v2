@@ -65,7 +65,7 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
   border: solid 2px white;
   border-radius: var(--radius-2);
   padding: var(--size-2) var(--size-3);
-  font-size: var(--font-size-3);
+  font-size: var(--font-size-4);
   grid-column: var(--col);
 }
 </style>

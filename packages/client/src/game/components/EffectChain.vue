@@ -7,13 +7,18 @@ const state = useGameState();
 </script>
 
 <template>
-  <div class="effect-chain" is="effect-chain">
+  <div class="effect-chain" id="effect-chain">
     <InspectableCard
       v-for="(effect, index) in state.effectChain?.stack"
       :key="index"
       :card-id="effect"
+      class="effect-chain-card-wrapper"
     >
-      <GameCard :card-id="effect" :interactive="false" />
+      <GameCard
+        :card-id="effect"
+        :interactive="false"
+        class="effect-chain-card"
+      />
     </InspectableCard>
   </div>
 </template>
@@ -24,15 +29,14 @@ const state = useGameState();
   align-self: stretch;
   display: flex;
   gap: var(--size-3);
+  height: var(--size-11);
+}
 
-  & > * {
-    aspect-ratio: var(--card-ratio);
-    position: relative;
-    & > * {
-      position: absolute;
-      inset: 0;
-      scale: 2;
-    }
-  }
+:global(.effect-chain > *) {
+  position: relative;
+  aspect-ratio: var(--card-ratio);
+  overflow: hidden;
+  height: 100%;
+  /* scale: 2; */
 }
 </style>

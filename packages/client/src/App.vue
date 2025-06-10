@@ -4,14 +4,20 @@ import { useAssets } from './shared/composables/useAssets';
 import PixiApp from './PixiApp.vue';
 import { TooltipProvider } from 'reka-ui';
 
-const { loaded } = useAssets();
+// const { loaded } = useAssets();
 
 const uiRoot = document.getElementById('#app');
 </script>
 
 <template>
-  <div v-if="!loaded">Loading...</div>
-  <PixiApp v-else>
+  <!-- <div v-if="!loaded">Loading...</div> -->
+  <div>
+    <TooltipProvider :delay-duration="400">
+      <RouterView name="ui" />
+    </TooltipProvider>
+    <div id="card-portal" />
+  </div>
+  <!-- <PixiApp v-else>
     <RouterView name="scene" />
     <External :root="uiRoot!" id="ui-root">
       <TooltipProvider :delay-duration="400">
@@ -19,7 +25,7 @@ const uiRoot = document.getElementById('#app');
       </TooltipProvider>
       <div id="card-portal" />
     </External>
-  </PixiApp>
+  </PixiApp> -->
 </template>
 
 <style>

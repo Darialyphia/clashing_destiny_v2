@@ -62,6 +62,7 @@ export type SerializedAbility = {
   canUse: boolean;
   name: string;
   description: string;
+  targets: SerializedPreResponseTarget[] | null;
 };
 
 export type PreResponseTarget = AnyCard | MinionPosition;

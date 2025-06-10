@@ -5,7 +5,12 @@ import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.
 import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import type { HeroBlueprint, SerializedAbility } from '../card-blueprint';
+import {
+  serializePreResponseTarget,
+  type HeroBlueprint,
+  type PreResponseTarget,
+  type SerializedAbility
+} from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -131,6 +136,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   private damageTaken = 0;
 
   private lineage: HeroBlueprint[] = [];
+
+  private abilityTargets = new Map<string, PreResponseTarget[]>();
 
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
     super(
@@ -309,6 +316,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       new HeroUsedAbilityEvent({ card: this, abilityId: id })
     );
     const targets = await ability.getPreResponseTargets(this.game, this);
+    this.abilityTargets.set(id, targets);
+
     if (ability.shouldExhaust) {
       await this.exhaust();
     }
@@ -317,6 +326,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       source: this,
       handler: async () => {
         await ability.onResolve(this.game, this, targets);
+        this.abilityTargets.delete(id);
         await this.game.emit(
           HERO_EVENTS.HERO_AFTER_USE_ABILITY,
           new HeroUsedAbilityEvent({ card: this, abilityId: id })
@@ -401,7 +411,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,
-        description: ability.description
+        description: ability.description,
+        targets:
+          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
       }))
     };
   }
