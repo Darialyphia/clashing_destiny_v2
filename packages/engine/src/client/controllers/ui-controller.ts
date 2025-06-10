@@ -168,6 +168,9 @@ export class UiController {
     return '#board';
   }
 
+  getEffectChainDOMSelector() {
+    return '#effect-chain';
+  }
   getCardDOMSelector(cardId: string) {
     return `#${cardId}`;
   }
@@ -178,5 +181,9 @@ export class UiController {
 
   getCardDOMSelectorInHand(cardId: string, playerId: string) {
     return `${this.getHandDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
+  }
+
+  getCardDOMSelectorInEffectChain(cardId: string) {
+    return `${this.getEffectChainDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
   }
 }

@@ -55,7 +55,7 @@ const opponentBoard = useOpponentBoard();
 
 <style scoped lang="postcss">
 .board-container {
-  margin: 0;
+  margin: 0 auto;
   height: 100dvh;
   overflow: hidden;
   transform-style: preserve-3d;
@@ -98,6 +98,6 @@ const opponentBoard = useOpponentBoard();
 }
 
 .opponent-side {
-  transform: rotateZ(180deg);
+  transform: rotateZ(180deg) translateX(-6%);
 }
 </style>

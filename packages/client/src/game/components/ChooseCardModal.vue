@@ -8,14 +8,12 @@ import {
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
 const isOpened = computed(() => {
   const interaction = state.value.interaction;
   return interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
 });
 
-const board = useMyBoard();
 const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();

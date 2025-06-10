@@ -146,7 +146,8 @@ const isBanishPileOpened = ref(false);
 .board-side {
   display: grid;
   gap: var(--size-2);
-  grid-template-columns: 0.6fr 2fr 0.6fr;
+  grid-template-columns: 0.8fr 2fr 0.6fr;
+  justify-self: center;
   > * {
     height: calc(var(--board-height) / 2);
   }
@@ -157,7 +158,6 @@ const isBanishPileOpened = ref(false);
   grid-auto-flow: row;
   grid-template-rows: 3fr 1.5fr 1fr;
   gap: var(--size-2);
-
   .hero {
     justify-self: center;
     aspect-ratio: var(--card-ratio);
@@ -184,6 +184,7 @@ const isBanishPileOpened = ref(false);
   grid-auto-flow: row;
   grid-template-rows: 50% 50%;
   gap: var(--size-2);
+  justify-self: center;
 
   .minion-row {
     display: grid;
@@ -200,6 +201,7 @@ const isBanishPileOpened = ref(false);
   display: grid;
   grid-auto-flow: row;
   gap: var(--size-2);
+  justify-self: start;
   grid-template-rows: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.8fr);
 
   .two-card-pile {

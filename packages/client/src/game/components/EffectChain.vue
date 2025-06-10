@@ -7,7 +7,7 @@ const state = useGameState();
 </script>
 
 <template>
-  <div class="effect-chain">
+  <div class="effect-chain" is="effect-chain">
     <InspectableCard
       v-for="(effect, index) in state.effectChain?.stack"
       :key="index"
@@ -31,6 +31,7 @@ const state = useGameState();
     & > * {
       position: absolute;
       inset: 0;
+      scale: 2;
     }
   }
 }

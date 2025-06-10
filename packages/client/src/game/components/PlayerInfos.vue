@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useMyPlayer, useOpponentPlayer } from '../composables/useGameClient';
 
 const myPlayer = useMyPlayer();
@@ -10,23 +11,35 @@ const opponentPlayer = useOpponentPlayer();
     <div>
       <h2>{{ myPlayer.name }}</h2>
       <div class="flex gap-2">
-        <img
+        <UiSimpleTooltip
           v-for="affinity in myPlayer.unlockedAffinities"
           :key="affinity"
-          :src="`/assets/ui/affinity-${affinity.toLocaleLowerCase()}.png`"
-          class="affinity-icon"
-        />
+        >
+          <template #trigger>
+            <img
+              :src="`/assets/ui/affinity-${affinity.toLocaleLowerCase()}.png`"
+              class="affinity-icon pointer-events-auto"
+            />
+          </template>
+          {{ affinity }}
+        </UiSimpleTooltip>
       </div>
     </div>
     <div>
       <h2>{{ opponentPlayer.name }}</h2>
       <div class="flex gap-2">
-        <img
+        <UiSimpleTooltip
           v-for="affinity in opponentPlayer.unlockedAffinities"
           :key="affinity"
-          :src="`/assets/ui/affinity-${affinity.toLocaleLowerCase()}.png`"
-          class="affinity-icon"
-        />
+        >
+          <template #trigger>
+            <img
+              :src="`/assets/ui/affinity-${affinity.toLocaleLowerCase()}.png`"
+              class="affinity-icon pointer-events-auto"
+            />
+          </template>
+          {{ affinity }}
+        </UiSimpleTooltip>
       </div>
       <div>hand: {{ opponentPlayer.handSize }}</div>
     </div>
@@ -38,7 +51,7 @@ const opponentPlayer = useOpponentPlayer();
   display: flex;
   justify-content: space-between;
   padding: 1rem;
-  display: fixed;
+  position: fixed;
   top: 0;
   width: 100%;
   pointer-events: none;

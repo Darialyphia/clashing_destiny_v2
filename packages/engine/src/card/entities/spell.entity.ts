@@ -1,5 +1,6 @@
 import type { Game } from '../../game/game';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
 import { LoyaltyDamage } from '../../utils/damage';
@@ -61,11 +62,16 @@ export class SpellCard extends Card<
   }
 
   canPlay() {
+    const gameStateCtx = this.game.gamePhaseSystem.getContext();
+
     return this.interceptors.canPlay.getValue(
       this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
+        (gameStateCtx.state === GAME_PHASES.ATTACK
+          ? gameStateCtx.ctx.step === COMBAT_STEPS.BUILDING_CHAIN
+          : true) &&
         this.location === 'hand' &&
         this.canPayManaCost &&
-        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true) &&
+        this.blueprint.canPlay(this.game, this) &&
         (this.game.effectChainSystem.currentChain ? this.canPlayDuringChain : true),
       this
     );

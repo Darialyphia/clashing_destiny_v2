@@ -321,6 +321,10 @@ export class CombatPhase
     );
   }
 
+  get step() {
+    return this.getState();
+  }
+
   async onEnter() {}
 
   async onExit() {}
