@@ -94,6 +94,8 @@ export class Modifier<
 
   readonly modifierType: string;
 
+  protected stacks = 1;
+
   constructor(
     modifierType: string,
     game: Game,
@@ -144,7 +146,7 @@ export class Modifier<
       MODIFIER_EVENTS.BEFORE_REAPPLIED,
       new ModifierLifecycleEvent(this)
     );
-
+    this.stacks += 1;
     this.mixins.forEach(mixin => {
       mixin.onReapplied(target, this);
     });
