@@ -16,7 +16,7 @@ export const magicChanneler: MinionBlueprint = {
   description: `Your hero has +1 Spellpower.`,
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   atk: 1,
   maxHp: 2,
   rarity: RARITIES.EPIC,

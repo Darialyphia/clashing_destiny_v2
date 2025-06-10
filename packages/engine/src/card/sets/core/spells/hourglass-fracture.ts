@@ -11,9 +11,9 @@ import {
 } from '../../../card.enums';
 
 export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
-  id: 'time-jump',
-  name: 'Time Jump',
-  cardIconId: 'time-jump',
+  id: 'hourglass-fracture',
+  name: 'Hourglass Fracture',
+  cardIconId: 'hourglass-fracture',
   description: 'Your opponent ends their next turn after their Destiny Phase.',
   collectable: true,
   unique: false,

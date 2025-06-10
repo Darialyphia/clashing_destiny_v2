@@ -20,16 +20,10 @@ export const premadeDecks: Array<PremadeDeck> = [
         'fire-ball',
         'fire-ball',
         'fire-ball',
-        'fire-ball',
-
-        'pyroclasm',
-        'pyroclasm',
 
         'inner-fire',
         'inner-fire',
-
-        'arcane-ray',
-        'arcane-ray',
+        'inner-fire',
 
         'pyromancer',
         'pyromancer',
@@ -39,6 +33,12 @@ export const premadeDecks: Array<PremadeDeck> = [
         'flagbearer-of-flame',
         'flagbearer-of-flame',
         'flagbearer-of-flame',
+        'flagbearer-of-flame',
+
+        'hot-headed-recruit',
+        'hot-headed-recruit',
+        'hot-headed-recruit',
+        'hot-headed-recruit',
 
         'flamefist-fighter',
         'flamefist-fighter',
@@ -54,16 +54,17 @@ export const premadeDecks: Array<PremadeDeck> = [
         'seer',
         'seer',
         'seer',
-
-        'magic-channeler',
-        'magic-channeler',
-        'magic-channeler',
-        'magic-channeler',
 
         'archsage-of-moonring',
         'archsage-of-moonring',
+        'archsage-of-moonring',
 
-        'phoenix'
+        'phoenix',
+
+        'recollection',
+        'recollection',
+
+        'hourglass-fracture'
       ]
     },
 

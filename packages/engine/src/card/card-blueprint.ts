@@ -14,7 +14,7 @@ import type {
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AttackCard } from './entities/attack.entity';
-import type { AnyCard } from './entities/card.entity';
+import { Card, type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { LocationCard } from './entities/location.entity';
 import type { MinionCard } from './entities/minion.card';
@@ -65,6 +65,33 @@ export type SerializedAbility = {
 };
 
 export type PreResponseTarget = AnyCard | MinionPosition;
+export type SerializedPreResponseTarget =
+  | {
+      type: 'card';
+      card: string;
+    }
+  | {
+      type: 'minionPosition';
+      playerId: string;
+      slot: number;
+      zone: 'attack' | 'defense';
+    };
+export const serializePreResponseTarget = (
+  target: PreResponseTarget
+): SerializedPreResponseTarget => {
+  if (target instanceof Card) {
+    return {
+      type: 'card',
+      card: target.id
+    };
+  }
+  return {
+    type: 'minionPosition',
+    playerId: target.player.id,
+    slot: target.slot,
+    zone: target.zone
+  };
+};
 
 export type MinionBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;

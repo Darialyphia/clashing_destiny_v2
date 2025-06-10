@@ -88,7 +88,7 @@ useEventListener(window, 'resize', throttle(buildBlockerArrowPath, 100));
 <style scoped lang="postcss">
 .arrows {
   position: fixed;
-  z-index: 50;
+  z-index: 1;
   inset: 0;
   pointer-events: none;
   display: grid;

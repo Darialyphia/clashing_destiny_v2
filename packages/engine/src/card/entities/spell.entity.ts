@@ -4,7 +4,12 @@ import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import type { Player } from '../../player/player.entity';
 import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import type { PreResponseTarget, SpellBlueprint } from '../card-blueprint';
+import {
+  serializePreResponseTarget,
+  type PreResponseTarget,
+  type SerializedPreResponseTarget,
+  type SpellBlueprint
+} from '../card-blueprint';
 import { CARD_EVENTS, SPELL_KINDS, type SpellKind } from '../card.enums';
 import { CardBeforePlayEvent } from '../card.events';
 import {
@@ -18,6 +23,7 @@ import {
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   subKind: SpellKind;
+  preResponseTargets: SerializedPreResponseTarget[] | null;
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
@@ -28,6 +34,8 @@ export class SpellCard extends Card<
   SpellCardInterceptors,
   SpellBlueprint<PreResponseTarget>
 > {
+  private preResponseTargets: PreResponseTarget[] | null = null;
+
   constructor(
     game: Game,
     player: Player,
@@ -66,6 +74,8 @@ export class SpellCard extends Card<
   async play() {
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
 
+    this.preResponseTargets = targets;
+
     const effect = {
       source: this,
       handler: async () => {
@@ -85,6 +95,7 @@ export class SpellCard extends Card<
           CARD_EVENTS.CARD_AFTER_PLAY,
           new CardBeforePlayEvent({ card: this })
         );
+        this.preResponseTargets = null;
       }
     };
 
@@ -99,7 +110,10 @@ export class SpellCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
-      subKind: this.blueprint.subKind
+      subKind: this.blueprint.subKind,
+      preResponseTargets: this.preResponseTargets
+        ? this.preResponseTargets.map(serializePreResponseTarget)
+        : null
     };
   }
 }

@@ -20,7 +20,7 @@ export const magicFueledGolem: MinionBlueprint = {
   unique: false,
   manaCost: 2,
   atk: 3,
-  maxHp: 3,
+  maxHp: 4,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
