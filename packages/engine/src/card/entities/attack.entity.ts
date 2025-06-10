@@ -71,7 +71,6 @@ export class AttackCard extends Card<
       await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
     }
     const cleanups = [
-      await this.player.hero.addInterceptor('canBeBlocked', () => false),
       await this.player.hero.addInterceptor('atk', val => val + this.damage)
     ];
     const unsub = this.game.on(GAME_EVENTS.BEFORE_CHANGE_PHASE, e => {

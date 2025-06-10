@@ -29,7 +29,7 @@ export const finalSlash: AttackBlueprint = {
   kind: CARD_KINDS.ATTACK,
   tags: [],
   canPlay: () => true,
-  getPreResponseTargets: attackRules.getPreResponseTargets,
+  getPreResponseTargets: attackRules.getPreResponseTargets(),
   async onInit(game, card) {
     const lineageMod = new LineageBonusModifier<AttackCard>(game, card, warrior.id);
     await card.modifiers.add(lineageMod);

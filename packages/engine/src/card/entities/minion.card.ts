@@ -2,7 +2,12 @@ import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
-import { LoyaltyDamage, type Damage, type DamageType } from '../../utils/damage';
+import {
+  CombatDamage,
+  LoyaltyDamage,
+  type Damage,
+  type DamageType
+} from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import type { MinionBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
@@ -51,12 +56,31 @@ export const MINION_EVENTS = {
   MINION_SUMMONED: 'minion.summoned',
   MINION_BEFORE_TAKE_DAMAGE: 'minion.before-take-damage',
   MINION_AFTER_TAKE_DAMAGE: 'minion.after-take-damage',
+  MINION_BEFORE_DEAL_COMBAT_DAMAGE: 'minion.before-deal-combat-damage',
+  MINION_AFTER_DEAL_COMBAT_DAMAGE: 'minion.after-deal-combat-damage',
   MINION_BEFORE_HEAL: 'minion.before-heal',
   MINION_AFTER_HEAL: 'minion.after-heal',
   MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
   MINION_AFTER_USE_ABILITY: 'minion.after-use-ability'
 } as const;
 export type MinionEvents = Values<typeof MINION_EVENTS>;
+
+export class MinionCardDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard;
+    target: AttackTarget;
+    damage: CombatDamage;
+  },
+  { card: SerializedMinionCard; target: string; damage: number }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target)
+    };
+  }
+}
 
 export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
   { card: MinionCard; damage: Damage },
@@ -131,7 +155,9 @@ export class MinionSummonedEvent extends TypedSerializableEvent<
 
 export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE]: MinionCardBeforeTakeDamageEvent;
-  [MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE]: MinionCardBeforeTakeDamageEvent;
+  [MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE]: MinionCardAfterTakeDamageEvent;
+  [MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE]: MinionCardDealCombatDamageEvent;
+  [MINION_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE]: MinionCardDealCombatDamageEvent;
   [MINION_EVENTS.MINION_BEFORE_USE_ABILITY]: MinionUsedAbilityEvent;
   [MINION_EVENTS.MINION_AFTER_USE_ABILITY]: MinionUsedAbilityEvent;
   [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
@@ -318,6 +344,20 @@ export class MinionCard extends Card<
     if (this.remainingHp <= 0) {
       await this.destroy();
     }
+  }
+
+  async dealDamage(target: AttackTarget, damage: CombatDamage) {
+    await this.game.emit(
+      MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE,
+      new MinionCardDealCombatDamageEvent({ card: this, target, damage })
+    );
+
+    await target.takeDamage(this, damage);
+
+    await this.game.emit(
+      MINION_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE,
+      new MinionCardDealCombatDamageEvent({ card: this, target, damage })
+    );
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {

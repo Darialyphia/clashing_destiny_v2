@@ -3,7 +3,7 @@ import type { Game } from '../../game/game';
 import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
-import type { Damage, DamageType } from '../../utils/damage';
+import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import type { HeroBlueprint, SerializedAbility } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
@@ -51,6 +51,8 @@ export type HeroCardInterceptors = CardInterceptors & {
 export const HERO_EVENTS = {
   HERO_BEFORE_TAKE_DAMAGE: 'hero.before-take-damage',
   HERO_AFTER_TAKE_DAMAGE: 'hero.after-take-damage',
+  HERO_BEFORE_DEAL_COMBAT_DAMAGE: 'hero.before-deal-combat-damage',
+  HERO_AFTER_DEAL_COMBAT_DAMAGE: 'hero.after-deal-combat-damage',
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_USE_ABILITY: 'hero.before-use-ability',
@@ -69,6 +71,23 @@ export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
       }
+    };
+  }
+}
+
+export class HeroDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: HeroCard;
+    target: AttackTarget;
+    damage: CombatDamage;
+  },
+  { card: SerializedHeroCard; target: string; damage: number }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target)
     };
   }
 }
@@ -100,6 +119,8 @@ export class HeroUsedAbilityEvent extends TypedSerializableEvent<
 export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
   [HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
+  [HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE]: HeroDealCombatDamageEvent;
+  [HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE]: HeroDealCombatDamageEvent;
   [HERO_EVENTS.HERO_BEFORE_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_USE_ABILITY]: HeroUsedAbilityEvent;
@@ -204,6 +225,20 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
       damage
     });
+  }
+
+  async dealDamage(target: AttackTarget, damage: CombatDamage) {
+    await this.game.emit(
+      HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
+      new HeroDealCombatDamageEvent({ card: this, target, damage })
+    );
+
+    await target.takeDamage(this, damage);
+
+    await this.game.emit(
+      HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
+      new HeroDealCombatDamageEvent({ card: this, target, damage })
+    );
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {

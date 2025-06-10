@@ -35,8 +35,8 @@ export const phoenix: MinionBlueprint = {
       description: `@[mana] 4@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
       manaCost: 4,
       shouldExhaust: true,
-      canUse() {
-        return true;
+      canUse(game, card) {
+        return card.location === 'board';
       },
       async getPreResponseTargets() {
         return [];

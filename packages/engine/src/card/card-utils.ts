@@ -224,22 +224,20 @@ export const multipleEnemyTargetRules = {
 };
 
 export const attackRules = {
-  async getPreResponseTargets(game: Game, card: AnyCard) {
-    return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
-      player: card.player,
-      isElligible(card) {
-        if (isMinion(card)) {
-          return isDefined(card.location);
+  getPreResponseTargets:
+    (predicate?: (card: AnyCard) => boolean) => async (game: Game, card: AnyCard) => {
+      return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+        player: card.player,
+        isElligible(card) {
+          if (card.location !== 'board') return false;
+          return isMinionOrHero(card) && (predicate?.(card) ?? true);
+        },
+        canCommit(selectedSlots) {
+          return selectedSlots.length === 1;
+        },
+        isDone(selectedSlots) {
+          return selectedSlots.length === 1;
         }
-        if (isHero(card)) return true;
-        return false;
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
-    });
-  }
+      });
+    }
 };

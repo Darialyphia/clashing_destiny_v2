@@ -33,7 +33,9 @@ export const immortalFlame: ArtifactBlueprint = {
       description: `@[mana] 4@ @[exhaust]@ : Banish this card. Summon a @${phoenix.name}@ on your side of the field.`,
       manaCost: 4,
       shouldExhaust: true,
-      canUse: singleEmptyAllySlot.canPlay,
+      canUse(game, card) {
+        return singleEmptyAllySlot.canPlay(game, card) && card.location === 'board';
+      },
       async getPreResponseTargets() {
         return []; // phoenix play method will take card of target selection
       },

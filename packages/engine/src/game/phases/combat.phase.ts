@@ -294,8 +294,8 @@ export class CombatPhase
     const defender = this.blocker ?? this.target;
 
     if (defender.isAlive && this.attacker.isAlive) {
-      await defender.takeDamage(this.attacker, new CombatDamage(this.attacker));
-      await this.attacker.takeDamage(defender, new CombatDamage(defender));
+      await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
+      await defender.dealDamage(this.attacker, new CombatDamage(defender));
     }
 
     await this.game.emit(

@@ -2,7 +2,7 @@ import { AttackInterceptorModifierMixin } from '../../../../modifier/mixins/inte
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
 import type { AttackBlueprint } from '../../../card-blueprint';
-import { attackRules } from '../../../card-utils';
+import { attackRules, isMinion } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -17,7 +17,7 @@ export const arcaneRay: AttackBlueprint = {
   id: 'arcane-ray',
   name: 'Arcane Ray',
   cardIconId: 'arcane-ray',
-  description: `@Piercing@\n@[lineage] ${mage.name} bonus@: Deals 2 + @[spellpower]@ damage.`,
+  description: `@Piercing@\n@[lineage] ${mage.name} bonus@: Deals 2 + @[spellpower]@ damage.\nCan only target minions.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -29,7 +29,7 @@ export const arcaneRay: AttackBlueprint = {
   kind: CARD_KINDS.ATTACK,
   tags: [],
   canPlay: () => true,
-  getPreResponseTargets: attackRules.getPreResponseTargets,
+  getPreResponseTargets: attackRules.getPreResponseTargets(isMinion),
   async onInit(game, card) {
     const lineageMod = new LineageBonusModifier<AttackCard>(game, card, mage.id);
     await card.modifiers.add(lineageMod);

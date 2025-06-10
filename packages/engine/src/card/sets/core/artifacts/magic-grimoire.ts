@@ -1,4 +1,5 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
+import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { scry } from '../../../card-actions-utils';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
@@ -10,6 +11,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { mage } from '../heroes/mage';
 
 export const magicGrimoire: ArtifactBlueprint = {
   id: 'magic-grimoire',
@@ -30,11 +32,14 @@ export const magicGrimoire: ArtifactBlueprint = {
     {
       id: 'magic-grimoire-ability',
       label: 'Gain Affinity',
-      description:
-        '@[mana] 1@ @[exhaust]@ : Gain an affinity of your current Hero until the end of the turn. This loses 1 durability',
+      description: `'@[lineage] ${mage.name} bonus@, @[mana] 1@ @[exhaust]@ : Gain an affinity of your current Hero until the end of the turn. This loses 1 durability.`,
       manaCost: 1,
       shouldExhaust: true,
-      canUse: () => true,
+      canUse(game, card) {
+        if (card.location !== 'board') return false;
+        const lineageMod = card.modifiers.get(LineageBonusModifier);
+        return lineageMod?.isActive ?? false;
+      },
       getPreResponseTargets: async () => [],
       async onResolve(game, card) {
         const affinity = await game.interaction.chooseAffinity({
@@ -60,6 +65,8 @@ export const magicGrimoire: ArtifactBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new LineageBonusModifier(game, card, mage.id));
+
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         await scry(game, card, 2);

@@ -14,12 +14,7 @@ export const sage: HeroBlueprint = {
   destinyCost: 3,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [
-    AFFINITIES.COSMIC,
-    AFFINITIES.ARCANE,
-    AFFINITIES.CHRONO,
-    AFFINITIES.VOID
-  ],
+  unlockableAffinities: [AFFINITIES.COSMIC, AFFINITIES.ARCANE, AFFINITIES.CHRONO],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   cardIconId: 'sage',
