@@ -34,12 +34,11 @@ export const mage: HeroBlueprint = {
     let count = 0;
     game.on(GAME_EVENTS.CARD_AFTER_PLAY, async event => {
       if (
-        !event.data.card.equals(card.player) ||
+        !event.data.card.player.equals(card.player) ||
         event.data.card.kind !== CARD_KINDS.SPELL
       ) {
         return;
       }
-
       count++;
       if (count % 3 === 0) {
         await card.player.cardManager.draw(1);

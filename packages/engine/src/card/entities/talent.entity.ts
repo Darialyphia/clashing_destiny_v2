@@ -63,6 +63,7 @@ export class TalentCard extends Card<
     );
     this.updatePlayedAt();
     await this.player.addTalent(this);
+    await this.blueprint.onPlay(this.game, this);
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })

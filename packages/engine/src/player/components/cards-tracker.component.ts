@@ -23,7 +23,7 @@ export class CardTrackerComponent {
 
     game.on(GAME_EVENTS.CARD_AFTER_PLAY, event => {
       if (isDestinyDeckCard(event.data.card)) return;
-      if (event.data.card.player.equals(this.player)) return;
+      if (!event.data.card.player.equals(this.player)) return;
 
       this._cardsPlayedThisTurn.push(event.data.card);
       this._cardsPlayedSinceStartOfLastOwnTurn.push(event.data.card);
@@ -38,6 +38,7 @@ export class CardTrackerComponent {
     TKind extends CardKind,
     TCard extends AnyCard & { kind: TKind } = AnyCard & { kind: TKind }
   >(kind: TKind): TCard[] {
+    console.log(kind, this._cardsPlayedThisTurn);
     return this._cardsPlayedThisTurn.filter(card => card.kind === kind) as TCard[];
   }
 

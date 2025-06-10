@@ -26,6 +26,7 @@ export const arcaneStudies: TalentBlueprint = {
   tags: [],
   async onInit() {},
   async onPlay(game, card) {
+    console.log('Applying Arcane Studies buff to hero:', card.player.hero.id);
     await card.player.hero.modifiers.add(
       new SimpleSpellpowerBuffModifier('arcane-studies', game, card, { amount: 1 })
     );

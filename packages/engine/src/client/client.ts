@@ -183,7 +183,7 @@ export class GameClient {
 
     try {
       this._isPlayingFx = true;
-
+      this.stateManager.preupdate(snapshot.state);
       for (const event of snapshot.events) {
         if (this.gameType === GAME_TYPES.LOCAL) {
           this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);

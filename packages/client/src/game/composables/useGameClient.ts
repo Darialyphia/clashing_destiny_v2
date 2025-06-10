@@ -80,7 +80,9 @@ export const useCard = (cardId: MaybeRef<string>) => {
   return computed(() => {
     const card = state.value.entities[unref(cardId)];
     if (!card) {
-      throw new Error(`Card with ID ${cardId} not found in the game state.`);
+      throw new Error(
+        `Card with ID ${unref(cardId)} not found in the game state.`
+      );
     }
     return card as unknown as CardViewModel;
   });
