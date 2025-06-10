@@ -291,7 +291,7 @@ export class CombatPhase
         blocker: this.blocker
       })
     );
-    const defender = this.blocker ?? this.target;
+    const defender = this.blocker?.isAlive ? this.blocker : this.target;
 
     if (defender.isAlive && this.attacker.isAlive) {
       await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));

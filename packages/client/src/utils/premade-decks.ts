@@ -27,12 +27,9 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         'inner-fire',
         'inner-fire',
-        'inner-fire',
-        'inner-fire',
 
         'arcane-ray',
         'arcane-ray',
-        'arcane-ray',
 
         'pyromancer',
         'pyromancer',
@@ -42,12 +39,16 @@ export const premadeDecks: Array<PremadeDeck> = [
         'flagbearer-of-flame',
         'flagbearer-of-flame',
         'flagbearer-of-flame',
-        'flagbearer-of-flame',
 
         'flamefist-fighter',
         'flamefist-fighter',
         'flamefist-fighter',
         'flamefist-fighter',
+
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
 
         'seer',
         'seer',
@@ -67,7 +68,7 @@ export const premadeDecks: Array<PremadeDeck> = [
     },
 
     destinyDeck: {
-      cards: ['mage', 'elementalist', 'sage', 'fire-studies']
+      cards: ['mage', 'sorcerer', 'sage', 'fire-studies']
     }
   }
 ];
