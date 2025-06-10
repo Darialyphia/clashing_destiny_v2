@@ -84,6 +84,7 @@ export class SpellCard extends Card<
 
     const effect = {
       source: this,
+      targets,
       handler: async () => {
         await this.game.emit(
           CARD_EVENTS.CARD_BEFORE_PLAY,

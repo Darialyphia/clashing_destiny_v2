@@ -34,11 +34,9 @@ const length = computed(() => path.value?.getTotalLength() ?? 0);
 <style scoped lang="postcss">
 .path {
   stroke: v-bind(color);
-  stroke-width: 10px;
+  stroke-width: 5px;
   fill: none;
   marker-end: v-bind(markerUrl);
-  stroke-dasharray: v-bind(length);
-  stroke-dashoffset: v-bind(length);
   animation: arrow-dash 0.3s var(--ease-in-2) forwards;
 }
 

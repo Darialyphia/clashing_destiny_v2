@@ -212,6 +212,7 @@ export class ArtifactCard extends Card<
 
     const effect = {
       source: this,
+      targets,
       handler: async () => {
         await ability.onResolve(this.game, this, targets);
         this.abilityTargets.delete(id);

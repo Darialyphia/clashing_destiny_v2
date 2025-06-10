@@ -103,7 +103,7 @@ const opponentBoard = useOpponentBoard();
   transform: rotateZ(180deg) translateX(-6%);
 }
 
-.arrows {
+#arrows {
   position: fixed;
   z-index: 1;
   inset: 0;
@@ -111,10 +111,9 @@ const opponentBoard = useOpponentBoard();
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-
-  > * {
-    grid-column: 1;
-    grid-row: 1;
-  }
+}
+:global(#arrows > *) {
+  grid-column: 1;
+  grid-row: 1;
 }
 </style>

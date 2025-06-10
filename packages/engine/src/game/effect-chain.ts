@@ -10,6 +10,11 @@ import type { Game } from './game';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { GameError } from './game-error';
+import {
+  serializePreResponseTarget,
+  type PreResponseTarget,
+  type SerializedPreResponseTarget
+} from '../card/card-blueprint';
 
 const EFFECT_CHAIN_STATES = {
   BUILDING: 'BUILDING',
@@ -26,10 +31,17 @@ const EFFECT_CHAIN_STATE_TRANSITIONS = {
 } as const;
 type EffectChainTransition = Values<typeof EFFECT_CHAIN_STATE_TRANSITIONS>;
 
-export type Effect = { source: AnyCard; handler: (game: Game) => Promise<void> };
+export type Effect = {
+  source: AnyCard;
+  handler: (game: Game) => Promise<void>;
+  targets: PreResponseTarget[];
+};
 
 export type SerializedEffectChain = {
-  stack: string[];
+  stack: Array<{
+    source: string;
+    targets: SerializedPreResponseTarget[];
+  }>;
   player: string;
 };
 
@@ -148,7 +160,10 @@ export class EffectChain
 
   serialize(): SerializedEffectChain {
     return {
-      stack: this.effectStack.map(effect => effect.source.id),
+      stack: this.effectStack.map(effect => ({
+        source: effect.source.id,
+        targets: effect.targets.map(serializePreResponseTarget)
+      })),
       player: this.currentPlayer.id
     };
   }

@@ -11,6 +11,7 @@ import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
 import type { SerializedCard } from '../../card/entities/card.entity';
+import type { SerializedBoardMinionSlot } from '../../board/board-minion-slot.entity';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -185,5 +186,11 @@ export class UiController {
 
   getCardDOMSelectorInEffectChain(cardId: string) {
     return `${this.getEffectChainDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
+  }
+
+  getMinionSlotDomSelector(
+    slot: Pick<SerializedBoardMinionSlot, 'playerId' | 'position' | 'zone'>
+  ) {
+    return `#minion-slot-${slot.playerId}-${slot.position}-${slot.zone}`;
   }
 }
