@@ -1,6 +1,8 @@
+import { GAME_EVENTS } from '../../../../game/game.events';
 import { AttackInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
+import { PercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import type { AttackBlueprint } from '../../../card-blueprint';
 import { attackRules, isMinion } from '../../../card-utils';
 import {
@@ -11,6 +13,7 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { AttackCard } from '../../../entities/attack.entity';
+import type { HeroCard } from '../../../entities/hero.entity';
 import { mage } from '../heroes/mage';
 
 export const arcaneRay: AttackBlueprint = {
@@ -40,12 +43,19 @@ export const arcaneRay: AttackBlueprint = {
           new AttackInterceptorModifierMixin(game, {
             key: 'damage',
             interceptor(value) {
-              return lineageMod.isActive ? value * card.player.hero.level : value;
+              return lineageMod.isActive ? value + card.player.hero.spellPower : value;
             }
           })
         ]
       })
     );
   },
-  async onPlay() {}
+  async onPlay(game, card) {
+    const percingMod = new PercingModifier<HeroCard>(game, card);
+
+    await card.player.hero.modifiers.add(percingMod);
+    game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, async () => {
+      await card.player.hero.modifiers.remove(percingMod);
+    });
+  }
 };

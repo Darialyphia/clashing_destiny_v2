@@ -73,11 +73,8 @@ export class AttackCard extends Card<
     const cleanups = [
       await this.player.hero.addInterceptor('atk', val => val + this.damage)
     ];
-    const unsub = this.game.on(GAME_EVENTS.BEFORE_CHANGE_PHASE, e => {
-      if (e.data.from === GAME_PHASES.ATTACK) {
-        cleanups.forEach(unsub => unsub());
-        unsub();
-      }
+    this.game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, () => {
+      cleanups.forEach(unsub => unsub());
     });
     const [target] = await this.blueprint.getPreResponseTargets(this.game, this);
     await this.game.gamePhaseSystem.startCombat();
