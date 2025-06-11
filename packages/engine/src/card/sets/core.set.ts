@@ -18,6 +18,7 @@ import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
 import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
+import { friendlySlime } from './core/minions/friendly-slime';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { magicChanneler } from './core/minions/magic-channeler';
 import { magicFueledGolem } from './core/minions/magic-fueled-golem';
@@ -60,6 +61,7 @@ export const coreSet: CardSet = {
 
     // Normal
     courageousFootsoldier,
+    friendlySlime,
 
     // Fire
     fireBolt,

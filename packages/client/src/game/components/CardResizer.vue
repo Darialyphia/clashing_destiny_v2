@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { isDefined } from '@game/shared';
 import { useResizeObserver } from '@vueuse/core';
 
-const { enabled = true } = defineProps<{
+const { enabled = true, forcedScale } = defineProps<{
   enabled?: boolean;
+  forcedScale?: number;
 }>();
 
 const root = useTemplateRef('root');
@@ -12,6 +14,10 @@ const calculateScale = () => {
   if (!root.value) return;
   if (!enabled) {
     scale.value = 1;
+    return;
+  }
+  if (isDefined(forcedScale)) {
+    scale.value = forcedScale;
     return;
   }
   const availableWidth = root.value.parentElement?.clientWidth || 0;

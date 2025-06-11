@@ -48,6 +48,10 @@ export class PlayerViewModel {
     return this.data.handSize;
   }
 
+  get influence() {
+    return this.data.influence;
+  }
+
   get remainingCardsInDeck() {
     return this.data.remainingCardsInDeck;
   }

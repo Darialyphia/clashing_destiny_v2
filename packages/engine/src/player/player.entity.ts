@@ -33,6 +33,7 @@ export type SerializedPlayer = {
   name: string;
   hand: string[];
   handSize: number;
+  influence: number;
   discardPile: string[];
   banishPile: string[];
   destinyZone: string[];
@@ -112,7 +113,8 @@ export class Player
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       unlockedAffinities: this.unlockedAffinities,
-      talents: this.talents.map(talent => talent.id)
+      talents: this.talents.map(talent => talent.id),
+      influence: this.influence
     };
   }
 
@@ -154,6 +156,10 @@ export class Player
 
   get isTurnPlayer() {
     return this.game.gamePhaseSystem.turnPlayer.equals(this);
+  }
+
+  get influence() {
+    return this.cardManager.hand.length + this.cardManager.destinyZone.size;
   }
 
   async unlockAffinity(affinity: Affinity) {

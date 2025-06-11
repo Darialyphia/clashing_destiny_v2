@@ -7,7 +7,7 @@ const { players } = defineProps<{
 }>();
 
 const sandbox = useSandbox({
-  rngSeed: 'sandbox',
+  rngSeed: `sandbox-${Math.random().toString(36).substring(2, 15)}`,
   players
 });
 </script>

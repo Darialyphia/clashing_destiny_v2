@@ -1,4 +1,5 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -29,7 +30,7 @@ export const phoenix: MinionBlueprint = {
     {
       id: 'phoenix-ability',
       label: 'Use ability',
-      description: `@[mana] 4@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
+      description: `@[mana] 3@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
       manaCost: 3,
       shouldExhaust: true,
       canUse(game, card) {
@@ -47,11 +48,13 @@ export const phoenix: MinionBlueprint = {
   ],
   canPlay: () => true,
   async onInit(game, card) {
-    const targets = card.player.enemyMinions;
-
-    for (const target of targets) {
-      await target.modifiers.add(new BurnModifier(game, target));
-    }
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, async () => {
+        for (const target of card.player.enemyMinions) {
+          await target.modifiers.add(new BurnModifier(game, target));
+        }
+      })
+    );
   },
   async onPlay() {}
 };

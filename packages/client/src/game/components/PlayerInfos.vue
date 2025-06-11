@@ -24,6 +24,7 @@ const opponentPlayer = useOpponentPlayer();
           {{ affinity }}
         </UiSimpleTooltip>
       </div>
+      <div>influence: {{ myPlayer.influence }}</div>
     </div>
     <div>
       <h2>{{ opponentPlayer.name }}</h2>
@@ -42,6 +43,7 @@ const opponentPlayer = useOpponentPlayer();
         </UiSimpleTooltip>
       </div>
       <div>hand: {{ opponentPlayer.handSize }}</div>
+      <div>influence: {{ opponentPlayer.influence }}</div>
     </div>
   </header>
 </template>

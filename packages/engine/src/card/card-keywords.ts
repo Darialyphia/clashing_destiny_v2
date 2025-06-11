@@ -196,6 +196,12 @@ export const KEYWORDS = {
     description:
       'Look at the top X cards of your deck, then ut any number of them at the bottom of your deck.',
     aliases: [/scry [0-9]+/]
+  },
+  AFFINITY_BONUS: {
+    id: 'affinity-bonus',
+    name: 'Affinity Bonus',
+    description: 'This card has a bonus effect if you have a hero with this affinity.',
+    aliases: [/affinity bonus\([a-z\s]+\)/]
   }
 };
 
