@@ -27,7 +27,8 @@ export const pathOfTheVanguard: TalentBlueprint = {
   tags: [],
   async onInit() {},
   async onPlay(game, card) {
-    game.on(GAME_EVENTS.HERO_AFTER_LEVEL_UP, async () => {
+    game.on(GAME_EVENTS.HERO_AFTER_LEVEL_UP, async event => {
+      if (!event.data.card.equals(card.player.hero)) return;
       for (const minion of card.player.minions) {
         await minion.modifiers.add(
           new SimpleHealthBuffModifier('path-of-the-vanguard-health-buff', game, card, {

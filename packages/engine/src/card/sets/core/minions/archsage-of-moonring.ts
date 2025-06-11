@@ -14,7 +14,7 @@ import {
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
   name: 'Archsage of Moonring',
-  cardIconId: 'archsage-of-moonring',
+  cardIconId: 'unit-archsage-of-moonring',
   description: `@Loyalty(1)@\n@On Enter@: deal up to 4 damage split among enemies.`,
   collectable: true,
   unique: false,
