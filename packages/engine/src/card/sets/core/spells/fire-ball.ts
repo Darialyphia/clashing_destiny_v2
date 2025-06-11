@@ -20,7 +20,7 @@ import { mage } from '../heroes/mage';
 export const fireBall: SpellBlueprint<MinionCard> = {
   id: 'fire-ball',
   name: 'Fire Ball',
-  cardIconId: 'spell-fire-ball',
+  cardIconId: 'spell-fireball',
   description: `Deal 3 damage to an enemy minion. Inflict @Burn@ to adjacent minions.\n@[lineage] ${mage.name} bonus@: this costs 1 less.`,
   collectable: true,
   unique: false,

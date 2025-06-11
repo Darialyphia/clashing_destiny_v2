@@ -237,7 +237,8 @@ export class Player
     );
   }
 
-  addTalent(talent: TalentCard) {
+  async addTalent(talent: TalentCard) {
+    await talent.removeFromCurrentLocation();
     this.talents.push(talent);
   }
 
