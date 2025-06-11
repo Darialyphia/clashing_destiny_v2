@@ -160,7 +160,7 @@ const playerInfos = computed(() => {
 
 .debug {
   > * {
-    border: solid 2px white;
+    /* border: solid 2px white; */
   }
 }
 
@@ -215,6 +215,7 @@ const playerInfos = computed(() => {
   .minion-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    gap: var(--size-2);
     justify-items: center;
     > * {
       aspect-ratio: var(--card-ratio);

@@ -15,7 +15,7 @@ import type { MinionCard } from '../../../entities/minion.card';
 export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'fire-bolt',
   name: 'Fire Bolt',
-  cardIconId: 'fire-bolt',
+  cardIconId: 'spell-fire-bolt',
   description:
     "Deal 1 damage to a target enemy. If it's a minion, deal 1 damage to the enemy Hero.",
   collectable: true,

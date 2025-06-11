@@ -14,7 +14,8 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   id: 'hourglass-fracture',
   name: 'Hourglass Fracture',
   cardIconId: 'hourglass-fracture',
-  description: 'Your opponent ends their next turn after their Destiny Phase.',
+  description:
+    '@Loyalty(1)@.\nYour opponent ends their next turn after their Destiny Phase.',
   collectable: true,
   unique: false,
   manaCost: 5,

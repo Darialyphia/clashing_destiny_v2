@@ -162,7 +162,7 @@ export type AttackBlueprint = MainDeckCardBlueprint & {
 
 export type TalentBlueprint = DestinyDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.TALENT>;
-  level: 1 | 2 | 3;
+  level: 0 | 1 | 2 | 3;
   heroId: string;
   onInit: (game: Game, card: TalentCard) => Promise<void>;
   onPlay: (game: Game, card: TalentCard) => Promise<void>;

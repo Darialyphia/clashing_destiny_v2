@@ -13,7 +13,7 @@ import { fireBolt } from '../spells/fire-bolt';
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
-  cardIconId: 'pyromancer',
+  cardIconId: 'unit-flame-juggler',
   description: `@On Enter@: Put a @${fireBolt.name}@ in your hand.`,
   collectable: true,
   unique: false,

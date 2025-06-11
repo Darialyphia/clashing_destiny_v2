@@ -13,7 +13,7 @@ import {
 export const esteemedErudite: MinionBlueprint = {
   id: 'esteemed-erudite',
   name: 'Esteemed Erudite',
-  cardIconId: 'esteemed-erudite',
+  cardIconId: 'unit-esteemed-erudite',
   description: `@On Enter@: @Discover@ a Spell from one of your affinities.`,
   collectable: true,
   unique: false,

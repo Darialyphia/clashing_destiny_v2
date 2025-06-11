@@ -11,7 +11,7 @@ import {
 export const mage: HeroBlueprint = {
   id: 'mage',
   name: 'Mage',
-  description: 'Every three spell you play, draw a card.',
+  description: 'Every three spells you play, draw a card.',
   level: 1,
   destinyCost: 1,
   kind: CARD_KINDS.HERO,

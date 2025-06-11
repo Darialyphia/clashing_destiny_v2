@@ -16,7 +16,7 @@ import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import { PlayerTurnEvent } from './player.events';
+import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import type { MainDeckCard } from '../board/board.system';
 import { novice } from '../card/sets/core/heroes/novice';
 
@@ -48,10 +48,12 @@ export type SerializedPlayer = {
 
 type PlayerInterceptors = {
   unlockedAffinities: Interceptable<Affinity[]>;
+  cardsDrawnForTurn: Interceptable<number>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    unlockedAffinities: new Interceptable<Affinity[]>()
+    unlockedAffinities: new Interceptable<Affinity[]>(),
+    cardsDrawnForTurn: new Interceptable<number>()
   };
 };
 
@@ -118,6 +120,24 @@ export class Player
     };
   }
 
+  get cardsDrawnForTurn() {
+    const isFirstTurn = this.game.gamePhaseSystem.elapsedTurns === 0;
+
+    if (isFirstTurn) {
+      return this.interceptors.cardsDrawnForTurn.getValue(
+        this.game.gamePhaseSystem.turnPlayer.isPlayer1
+          ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
+          : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN,
+        {}
+      );
+    }
+
+    return this.interceptors.cardsDrawnForTurn.getValue(
+      this.game.config.CARDS_DRAWN_PER_TURN,
+      {}
+    );
+  }
+
   get isPlayer1() {
     return this.game.playerSystem.player1.equals(this);
   }
@@ -180,23 +200,33 @@ export class Player
     await card.play();
   }
 
-  private payForDestinyCost(card: AnyCard) {
+  private async payForDestinyCost(card: AnyCard) {
     const hasEnough = this.cardManager.destinyZone.size >= card.destinyCost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
     const cost = card.destinyCost;
 
+    const banishedCards: Array<{ card: MainDeckCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
       const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size - 1);
       const card = [...this.cardManager.destinyZone][index];
       card.sendToBanishPile();
+      banishedCards.push({ card, index });
     }
+
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_PAY_FOR_DESTINY_COST,
+      new PlayerPayForDestinyCostEvent({
+        player: this,
+        cards: banishedCards
+      })
+    );
   }
 
   async playDestinyDeckCardAtIndex(index: number) {
     const card = this.cardManager.getDestinyCardAt(index);
     assert(isDefined(card), new CardNotFoundError());
 
-    this.payForDestinyCost(card);
+    await this.payForDestinyCost(card);
     await card.play();
   }
 

@@ -1,5 +1,3 @@
-import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -12,7 +10,7 @@ import {
 export const courageousFootsoldier: MinionBlueprint = {
   id: 'courageous-footsoldier',
   name: 'Courageous Footsoldier',
-  cardIconId: 'flamefist-fighter',
+  cardIconId: 'unit-promising-recruit',
   description: ``,
   collectable: true,
   unique: false,

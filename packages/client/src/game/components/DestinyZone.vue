@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import CardBack from '@/card/components/CardBack.vue';
-import { useBoardSide, useGameClient } from '../composables/useGameClient';
+import {
+  useBoardSide,
+  useFxEvent,
+  useGameClient
+} from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { waitFor } from '@game/shared';
+import GameCard from './GameCard.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -44,14 +51,36 @@ watch(
 );
 
 useResizeObserver(root, throttle(computeSpacing, 50));
+
+const cardBanishedAsDestinyCost = ref<Array<{ card: string; index: number }>>(
+  []
+);
+useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async event => {
+  if (event.player.id !== playerId) return;
+  event.cards.forEach(card => {
+    cardBanishedAsDestinyCost.value[card.index] = card;
+  });
+});
+
+useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
+  if (event.player.id !== playerId) return;
+  // await waitFor(1000 * 60 * 10);
+  cardBanishedAsDestinyCost.value = [];
+});
 </script>
 
 <template>
   <div class="destiny-zone" ref="root">
-    <div v-for="card in boardSide.destinyZone" :key="card">
+    <div v-for="(card, index) in boardSide.destinyZone" :key="card">
       <template v-if="client.playerId === playerId">
         <InspectableCard :card-id="card" side="top">
           <CardBack :key="card" class="item" />
+          <GameCard
+            v-if="cardBanishedAsDestinyCost[index]"
+            :card-id="cardBanishedAsDestinyCost[index].card"
+            class="banished-card"
+            :id="`banished-card-${cardBanishedAsDestinyCost[index].card}`"
+          />
         </InspectableCard>
       </template>
       <CardBack v-else class="item" />
@@ -63,6 +92,9 @@ useResizeObserver(root, throttle(computeSpacing, 50));
 .destiny-zone {
   display: flex;
   border: solid 2px white;
+  > * {
+    position: relative;
+  }
   & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
   }

@@ -13,7 +13,7 @@ export const magicChanneler: MinionBlueprint = {
   id: 'magic-channeler',
   name: 'Magic Channeler',
   cardIconId: 'magic-channeler',
-  description: `Your hero has +1 Spellpower.`,
+  description: `Your hero has +1@[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 1,

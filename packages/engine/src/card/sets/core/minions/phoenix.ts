@@ -1,5 +1,7 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { LoyaltyModifier } from '../../../../modifier/modifiers/loyalty.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -13,7 +15,7 @@ import { immortalFlame } from '../artifacts/immortal-flame';
 export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
-  cardIconId: 'phoenix',
+  cardIconId: 'unit-rainbow-phoenix',
   description: `@On Enter@: inflicts @Burn@ to all enemy minions.`,
   collectable: true,
   unique: false,
@@ -30,8 +32,8 @@ export const phoenix: MinionBlueprint = {
     {
       id: 'phoenix-ability',
       label: 'Use ability',
-      description: `@[mana] 3@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
-      manaCost: 3,
+      description: `@Loyalty(2)@, @Pride(2)@.\n@[mana] 2@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
+      manaCost: 2,
       shouldExhaust: true,
       canUse(game, card) {
         return card.location === 'board';
@@ -48,6 +50,8 @@ export const phoenix: MinionBlueprint = {
   ],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new LoyaltyModifier(game, card, 2));
+    await card.modifiers.add(new PrideModifier(game, card, 2));
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         for (const target of card.player.enemyMinions) {

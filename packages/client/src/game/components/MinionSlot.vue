@@ -57,10 +57,11 @@ const isHighlighted = computed(() => {
 
 <style scoped lang="postcss">
 .minion-slot {
-  border: solid 2px white;
+  border: solid 2px var(--gray-6);
   /* aspect-ratio: var(--card-width-unitless) / var(--card-height-unitless); */
   height: 100%;
   position: relative;
+  border-radius: var(--radius-2);
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);

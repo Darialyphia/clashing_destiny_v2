@@ -71,6 +71,8 @@ const client = useGameClient();
   font-weight: var(--font-weight-9);
   line-height: 1;
   pointer-events: none;
+  -webkit-text-stroke: 4px black;
+  paint-order: fill stroke;
   --buff-color: var(--green-6);
   --debuff-color: var(--red-6);
 

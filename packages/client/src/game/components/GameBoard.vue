@@ -69,12 +69,6 @@ const opponentBoard = useOpponentBoard();
   position: relative;
 }
 
-.debug {
-  > * {
-    border: solid 2px white;
-  }
-}
-
 .board {
   --board-scale: 1;
   --board-height: 95dvh;

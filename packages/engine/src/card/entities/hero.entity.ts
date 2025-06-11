@@ -7,6 +7,7 @@ import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
+  type Ability,
   type HeroBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -46,7 +47,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
-  canUseAbility: Interceptable<boolean, HeroCard>;
+  canUseAbility: Interceptable<boolean, { ability: Ability<HeroCard, any> }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
@@ -61,7 +62,9 @@ export const HERO_EVENTS = {
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_USE_ABILITY: 'hero.before-use-ability',
-  HERO_AFTER_USE_ABILITY: 'hero.after-use-ability'
+  HERO_AFTER_USE_ABILITY: 'hero.after-use-ability',
+  HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
+  HERO_AFTER_LEVEL_UP: 'hero.after-level-up'
 } as const;
 export type HeroEvents = Values<typeof HERO_EVENTS>;
 
@@ -121,6 +124,18 @@ export class HeroUsedAbilityEvent extends TypedSerializableEvent<
   }
 }
 
+export class HeroLevelUpEvent extends TypedSerializableEvent<
+  { card: HeroCard; to: HeroCard },
+  { card: SerializedHeroCard; to: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      to: this.data.to.id
+    };
+  }
+}
+
 export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
   [HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
@@ -130,6 +145,8 @@ export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_USE_ABILITY]: HeroUsedAbilityEvent;
   [HERO_EVENTS.HERO_AFTER_USE_ABILITY]: HeroUsedAbilityEvent;
+  [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;
+  [HERO_EVENTS.HERO_AFTER_LEVEL_UP]: HeroLevelUpEvent;
 };
 
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
@@ -303,7 +320,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),
-      this
+      { ability }
     );
   }
 
@@ -367,7 +384,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       if (affinity) {
         await this.player.unlockAffinity(affinity);
       }
-      await this.player.hero.levelup(this.blueprint);
+      await this.player.hero.levelup(this);
     } else {
       await this.blueprint.onPlay(this.game, this);
     }
@@ -378,10 +395,19 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  async levelup(blueprint: HeroBlueprint) {
+  async levelup(hero: HeroCard) {
+    await this.game.emit(
+      HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
+      new HeroLevelUpEvent({ card: this, to: hero })
+    );
+    this.damageTaken = 0; // Reset damage taken on level up
     this.lineage.push(this.blueprint);
-    this.blueprint = blueprint;
+    this.blueprint = hero.blueprint;
     await this.blueprint.onPlay(this.game, this);
+    await this.game.emit(
+      HERO_EVENTS.HERO_AFTER_LEVEL_UP,
+      new HeroLevelUpEvent({ card: this, to: hero })
+    );
   }
 
   hasLineage(lineage: string) {

@@ -27,6 +27,8 @@ type Token =
   | { type: 'exhaust' }
   | { type: 'mana'; text: string }
   | { type: 'spellpower' }
+  | { type: 'health' }
+  | { type: 'attack' }
   | { type: 'dynamic-value'; text: string }
   | { type: 'level-bonus'; text: string }
   | { type: 'lineage-bonus'; text: string }
@@ -64,6 +66,12 @@ const tokens = computed<Token[]>(() => {
     }
     if (part.startsWith('[spellpower]')) {
       return { type: 'spellpower' };
+    }
+    if (part.startsWith('[health]')) {
+      return { type: 'health' };
+    }
+    if (part.startsWith('[attack]')) {
+      return { type: 'attack' };
     }
     if (part.startsWith('[level]')) {
       return {
@@ -106,7 +114,29 @@ const tokens = computed<Token[]>(() => {
           <template #trigger>
             <img src="/assets/ui/ability-power.png" class="inline" />
           </template>
-          Spellpower
+          <b>Spellpower</b>
+          : is used to enhance the effects of some cards.
+        </UiSimpleTooltip>
+      </template>
+
+      <template v-else-if="token.type === 'health'">
+        <UiSimpleTooltip>
+          <template #trigger>
+            <img src="/assets/ui/hp.png" class="inline" />
+          </template>
+          <b>Health</b>
+          : represents the amount of damage a minion or hero can take before
+          being destroyed.
+        </UiSimpleTooltip>
+      </template>
+
+      <template v-else-if="token.type === 'attack'">
+        <UiSimpleTooltip>
+          <template #trigger>
+            <img src="/assets/ui/attack.png" class="inline" />
+          </template>
+          <b>Attack</b>
+          : is the amount of damage a minion or hero can deal in combat.
         </UiSimpleTooltip>
       </template>
 
@@ -157,6 +187,10 @@ const tokens = computed<Token[]>(() => {
 .token-missing-affinity {
   color: var(--red-7);
   font-weight: var(--font-weight-7);
+  font-size: 0.8em;
+  > * {
+    line-height: 1;
+  }
 }
 .token-level-bonus,
 .token-lineage-bonus {
@@ -177,9 +211,30 @@ const tokens = computed<Token[]>(() => {
   color: var(--blue-3);
   font-weight: var(--font-weight-5);
   img {
-    width: 20px;
+    width: 1.2em;
     aspect-ratio: 1;
-    transform: translateY(6px);
+    transform: translateY(4px);
+    margin-inline: var(--size-1);
+  }
+}
+.token-attack {
+  color: var(--yellow-5);
+  font-weight: var(--font-weight-5);
+  img {
+    width: 1.2em;
+    aspect-ratio: 1;
+    transform: translateY(3px);
+    margin-inline: var(--size-1);
+  }
+}
+.token-health {
+  color: var(--pink-6);
+  font-weight: var(--font-weight-5);
+  img {
+    width: 1.2em;
+    aspect-ratio: 1;
+    transform: translateY(3px);
+    margin-inline: var(--size-1);
   }
 }
 .keyword-card {

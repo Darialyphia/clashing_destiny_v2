@@ -15,8 +15,8 @@ import type { MinionCard } from '../../../entities/minion.card';
 export const innerFire: SpellBlueprint<MinionCard> = {
   id: 'inner-fire',
   name: 'Inner Fire',
-  cardIconId: 'inner-fire',
-  description: 'Give target minion +2/+0 until the end of the turn.',
+  cardIconId: 'spell-inner-fire',
+  description: 'Give target minion +2@[attack]@ until the end of the turn.',
   collectable: true,
   unique: false,
   manaCost: 1,

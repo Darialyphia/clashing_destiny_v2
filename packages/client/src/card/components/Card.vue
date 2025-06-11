@@ -53,8 +53,7 @@ const subKindBg = computed(() => {
 });
 
 const imageBg = computed(() => {
-  // return `url('${card.image}')`;
-  return `url('/assets/icons/placeholder.png')`;
+  return `url('${card.image}')`;
 });
 
 const affinityBg = computed(() => {
@@ -311,8 +310,8 @@ const isMultiLine = computed(() => {
     mix-blend-mode: screen;
   } */
 
-  .unit & {
-    background-position: center -20px;
+  .card:is(.minion, .hero) & {
+    background-position: center -15px;
   }
 }
 

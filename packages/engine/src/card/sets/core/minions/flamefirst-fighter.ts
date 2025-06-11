@@ -12,8 +12,8 @@ import {
 export const flamefistFighter: MinionBlueprint = {
   id: 'flamefist-fighter',
   name: 'Flamefist Fighter',
-  cardIconId: 'flamefist-fighter',
-  description: `@Attacker@: +1 / + 0.`,
+  cardIconId: 'unit-flamefist-fighter',
+  description: `@Attacker@: +1@[attack]@`,
   collectable: true,
   unique: false,
   manaCost: 2,

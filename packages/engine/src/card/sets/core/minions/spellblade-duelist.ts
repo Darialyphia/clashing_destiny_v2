@@ -16,7 +16,7 @@ export const spellbladeDuelist: MinionBlueprint = {
   id: 'spellblade-duelist',
   name: 'Spellblade Duelist',
   cardIconId: 'spellblade-duelist',
-  description: `This gains +1/+0 and @Blitz@ as long as you have at least 3 @[spellpower]@.`,
+  description: `This gains +1@[attack]@ and @Blitz@ as long as your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 3,

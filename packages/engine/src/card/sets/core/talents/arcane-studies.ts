@@ -13,7 +13,7 @@ export const arcaneStudies: TalentBlueprint = {
   id: 'arcane-studies',
   name: 'Arcane Studies',
   cardIconId: 'arcane-studies',
-  description: 'Your hero has +1 Spellpower.',
+  description: 'Your hero has +1@[spellpower]@.',
   affinity: AFFINITIES.ARCANE,
   collectable: true,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,

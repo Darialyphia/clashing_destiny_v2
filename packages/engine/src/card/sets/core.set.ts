@@ -26,6 +26,7 @@ import { phoenix } from './core/minions/phoenix';
 import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
+import { temporalShifter } from './core/minions/temporal-shifter';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { channelTheFlames } from './core/spells/channel-the-flames';
 import { dualCasting } from './core/spells/dual-casting';
@@ -42,6 +43,9 @@ import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 import { arcaneStudies } from './core/talents/arcane-studies';
 import { fireStudies } from './core/talents/fire-studies';
+import { manaVisions } from './core/talents/mana-visions';
+import { pathOfTheVanguard } from './core/talents/path-of-the-vanguard';
+import { theHangman } from './core/talents/the-hangman';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -62,6 +66,8 @@ export const coreSet: CardSet = {
     // Normal
     courageousFootsoldier,
     friendlySlime,
+    pathOfTheVanguard,
+    theHangman,
 
     // Fire
     fireBolt,
@@ -97,9 +103,11 @@ export const coreSet: CardSet = {
     magicGrimoire,
     surgeOfWill,
     arcaneStudies,
+    manaVisions,
 
     // Chrono
     recollection,
-    hourglassFracture
+    hourglassFracture,
+    temporalShifter
   ]
 };

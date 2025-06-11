@@ -17,7 +17,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   name: 'Recollection',
   cardIconId: 'recollection',
   description:
-    'Add a copy of all cards you played since the start of your last turn to your hand. They cost 1 more.',
+    "Add a copy of all cards you played since the start of your last turn to your hand. If you don't have @Affinity Bonus@, they cost one more.",
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -40,7 +40,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
           mixins: [
             new MainDeckCardInterceptorModifierMixin(game, {
               key: 'manaCost',
-              interceptor: value => value! + 1
+              interceptor: value => (card.hasAffinityMatch ? value : value! + 1)
             })
           ]
         })

@@ -70,7 +70,16 @@ export const premadeDecks: Array<PremadeDeck> = [
     },
 
     destinyDeck: {
-      cards: ['mage', 'sorcerer', 'sage', 'fire-studies', 'arcane-studies']
+      cards: [
+        'mage',
+        'sorcerer',
+        'sage',
+        'fire-studies',
+        'arcane-studies',
+        'the-hangman',
+        'path-of-the-vanguard',
+        'mana-visions'
+      ]
     }
   }
 ];

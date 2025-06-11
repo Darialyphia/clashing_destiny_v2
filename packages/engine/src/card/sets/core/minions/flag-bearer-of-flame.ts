@@ -16,7 +16,7 @@ export const flagBearerOfFlame: MinionBlueprint = {
   id: 'flagbearer-of-flame',
   name: 'Flagbearer of Flame',
   cardIconId: 'flag-bearer-of-flame',
-  description: `The ally in front of this minion has +1/+0.`,
+  description: `The ally in front of this minion has +1@[attack]@.`,
   collectable: true,
   unique: false,
   manaCost: 2,

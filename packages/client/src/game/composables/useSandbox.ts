@@ -20,6 +20,10 @@ export const useSandbox = (
   window.__debugGame = () => {
     console.log(game);
   };
+  // @ts-ignore
+  window.__debugClient = () => {
+    console.log(client.value);
+  };
   const adapter: NetworkAdapter = {
     dispatch: input => {
       return game.dispatch(input);

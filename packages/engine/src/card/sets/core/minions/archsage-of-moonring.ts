@@ -1,3 +1,4 @@
+import { LoyaltyModifier } from '../../../../modifier/modifiers/loyalty.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -14,7 +15,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
   name: 'Archsage of Moonring',
   cardIconId: 'archsage-of-moonring',
-  description: `@On Enter@: deal up to 4 damage split among enemies.`,
+  description: `@Loyalty(1)@\n@On Enter@: deal up to 4 damage split among enemies.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -29,6 +30,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new LoyaltyModifier(game, card, 1));
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         let count = 0;
