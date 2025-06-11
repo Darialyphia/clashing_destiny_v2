@@ -19,7 +19,7 @@ import { mage } from '../heroes/mage';
 export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
-  cardIconId: 'fire-ball',
+  cardIconId: 'spell-comet',
   description: `Deal 3 damage to all minions. @[lineage] ${mage.name} bonus@, @[level] 3+ bonus@: This costs 2 less.`,
   collectable: true,
   unique: false,

@@ -16,7 +16,7 @@ import { mage } from '../heroes/mage';
 export const fireStudies: TalentBlueprint = {
   id: 'fire-studies',
   name: 'Fire Studies',
-  cardIconId: 'fire-studies',
+  cardIconId: 'talent-fire-studies',
   description: 'Your first Fire spell each turn costs 1 less mana.',
   affinity: AFFINITIES.FIRE,
   collectable: true,

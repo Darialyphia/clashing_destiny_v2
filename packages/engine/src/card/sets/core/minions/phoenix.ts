@@ -16,7 +16,7 @@ export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
   cardIconId: 'unit-rainbow-phoenix',
-  description: `@On Enter@: inflicts @Burn@ to all enemy minions.`,
+  description: `@Loyalty(2)@, @Pride(2)@.\n@On Enter@: inflicts @Burn@ to all enemy minions.`,
   collectable: true,
   unique: false,
   manaCost: 5,
@@ -32,7 +32,7 @@ export const phoenix: MinionBlueprint = {
     {
       id: 'phoenix-ability',
       label: 'Use ability',
-      description: `@Loyalty(2)@, @Pride(2)@.\n@[mana] 2@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
+      description: `@[mana] 2@@[exhaust]@ Banish this minion. Equip an Immortal Flame to your hero.`,
       manaCost: 2,
       shouldExhaust: true,
       canUse(game, card) {

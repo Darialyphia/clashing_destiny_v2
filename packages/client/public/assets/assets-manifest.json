@@ -891,6 +891,19 @@
         },
         {
           "alias": [
+            "icon-spell-fire-bolt"
+          ],
+          "src": [
+            "/assets/icons/spell-fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-fireball"
           ],
           "src": [
@@ -1376,6 +1389,19 @@
           ],
           "src": [
             "/assets/icons/unit-flame-juggler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-flamefist-fighter"
+          ],
+          "src": [
+            "/assets/icons/unit-flamefist-fighter.png"
           ],
           "data": {
             "tags": {
@@ -4414,6 +4440,33 @@
           ],
           "src": [
             "/assets/units/flame-juggler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flamefist-fighter"
+          ],
+          "src": [
+            "/assets/units/flamefist-fighter.json"
+          ],
+          "loadParser": "aseprite_loader",
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flamefist-fighter.png"
+          ],
+          "src": [
+            "/assets/units/flamefist-fighter.png"
           ],
           "data": {
             "tags": {

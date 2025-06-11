@@ -16,7 +16,7 @@ import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-e
 export const seer: MinionBlueprint = {
   id: 'seer',
   name: 'Seer',
-  cardIconId: 'seer',
+  cardIconId: 'unit-seer',
   description: `@On Enter@: @Scry 3@. @[level] 3+ bonus@ : Give your hero +1@[spellpower]@ until end of turn for each Arcane card scryed.`,
   collectable: true,
   unique: false,

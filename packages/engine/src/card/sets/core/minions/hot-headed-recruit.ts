@@ -11,7 +11,7 @@ import {
 export const hotHeadedRecruit: MinionBlueprint = {
   id: 'hot-headed-recruit',
   name: 'Hot-Headed Recruit',
-  cardIconId: 'hot-headed-recruit',
+  cardIconId: 'unit-hot-blooded-recruit',
   description: `@Rush@.`,
   collectable: true,
   unique: false,

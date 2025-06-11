@@ -20,7 +20,7 @@ export const esteemedErudite: MinionBlueprint = {
   manaCost: 2,
   atk: 1,
   maxHp: 2,
-  rarity: RARITIES.LEGENDARY,
+  rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   affinity: AFFINITIES.ARCANE,

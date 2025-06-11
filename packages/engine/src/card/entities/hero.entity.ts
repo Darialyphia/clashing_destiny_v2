@@ -400,7 +400,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
       new HeroLevelUpEvent({ card: this, to: hero })
     );
-    this.damageTaken = 0; // Reset damage taken on level up
     this.lineage.push(this.blueprint);
     this.blueprint = hero.blueprint;
     await this.blueprint.onPlay(this.game, this);

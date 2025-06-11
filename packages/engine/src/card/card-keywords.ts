@@ -80,7 +80,7 @@ export const KEYWORDS = {
     name: 'Pride(X)',
     description:
       "This minion cannot attack, block or use abilities unless its owner's hero is at least level X.",
-    aliases: [/defiant\([0-9]+\)/]
+    aliases: [/pride\([0-9]+\)/]
   },
   LOYALTY: {
     id: 'loyalty',
