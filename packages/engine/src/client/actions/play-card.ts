@@ -1,5 +1,3 @@
-import { GAME_PHASES } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import type { GameClient } from '../client';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
@@ -17,7 +15,7 @@ export class PlayCardAction implements CardActionRule {
   }
 
   handler(card: CardViewModel) {
-    this.client.adapter.dispatch({
+    this.client.networkAdapter.dispatch({
       type: 'declarePlayCard',
       payload: {
         index: card

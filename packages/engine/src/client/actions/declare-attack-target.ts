@@ -18,7 +18,7 @@ export class DeclareAttackTargetCardAction implements CardClickRule {
   }
 
   handler(card: CardViewModel) {
-    this.client.adapter.dispatch({
+    this.client.networkAdapter.dispatch({
       type: 'declareAttackTarget',
       payload: {
         targetId: card.id,

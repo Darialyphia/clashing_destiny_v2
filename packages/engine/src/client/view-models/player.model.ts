@@ -102,7 +102,7 @@ export class PlayerViewModel {
   }
 
   declareEndTurn() {
-    this.getClient().adapter.dispatch({
+    this.getClient().networkAdapter.dispatch({
       type: 'declareEndTurn',
       payload: {
         playerId: this.data.id
@@ -115,7 +115,7 @@ export class PlayerViewModel {
     if (!card) return;
     if (!card.canPlay) return;
 
-    this.getClient().adapter.dispatch({
+    this.getClient().networkAdapter.dispatch({
       type: 'declarePlayCard',
       payload: {
         playerId: this.data.id,
@@ -128,7 +128,7 @@ export class PlayerViewModel {
     const card = this.getDestinyDeck()[index];
     if (!card) return;
     if (!card.canPlay) return;
-    this.getClient().adapter.dispatch({
+    this.getClient().networkAdapter.dispatch({
       type: 'playDestinyCard',
       payload: {
         playerId: this.data.id,

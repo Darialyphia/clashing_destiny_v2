@@ -95,7 +95,7 @@ watch(isOpened, opened => {
           text="Cancel"
           variant="error"
           @click="
-            client.adapter.dispatch({
+            client.networkAdapter.dispatch({
               type: 'cancelPlayCard',
               payload: { playerId: state.turnPlayer }
             })
@@ -106,7 +106,7 @@ watch(isOpened, opened => {
           text="Play card"
           :disabled="selectedIndices.length < (playedCard?.manaCost ?? 0)"
           @click="
-            client.adapter.dispatch({
+            client.networkAdapter.dispatch({
               type: 'commitPlayCard',
               payload: {
                 playerId: client.playerId,

@@ -21,7 +21,7 @@ export class DeclareBlockerAction implements CardActionRule {
   }
 
   handler(card: CardViewModel) {
-    this.client.adapter.dispatch({
+    this.client.networkAdapter.dispatch({
       type: 'declareBlocker',
       payload: {
         blockerId: card.id,

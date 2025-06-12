@@ -1,4 +1,4 @@
-import type { NetworkAdapter } from '@game/engine/src/client/client';
+import type { FxAdapter, NetworkAdapter } from '@game/engine/src/client/client';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import { provideGameClient } from './useGameClient';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
@@ -24,7 +24,7 @@ export const useSandbox = (
   window.__debugClient = () => {
     console.log(client.value);
   };
-  const adapter: NetworkAdapter = {
+  const networkAdapter: NetworkAdapter = {
     dispatch: input => {
       return game.dispatch(input);
     },
@@ -37,8 +37,18 @@ export const useSandbox = (
     }
   };
 
+  const fxAdapter: FxAdapter = {
+    onDeclarePlayCard: async (card, client) => {
+      // No FX in sandbox
+      console.log(
+        `FX for playing card ${card.id} is not implemented in sandbox`
+      );
+    }
+  };
+
   const client = provideGameClient({
-    adapter,
+    networkAdapter,
+    fxAdapter,
     gameType: 'local',
     playerId: 'p1'
   });

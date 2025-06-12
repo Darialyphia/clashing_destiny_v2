@@ -41,8 +41,13 @@ export type NetworkAdapter = {
   >;
 };
 
+export type FxAdapter = {
+  onDeclarePlayCard: (card: CardViewModel, client: GameClient) => MaybePromise<void>;
+};
+
 export type GameClientOptions = {
-  adapter: NetworkAdapter;
+  networkAdapter: NetworkAdapter;
+  fxAdapter: FxAdapter;
   gameType: GameType;
   playerId: string;
 };
@@ -54,7 +59,9 @@ export class GameClient {
 
   readonly ui: UiController;
 
-  readonly adapter: NetworkAdapter;
+  readonly networkAdapter: NetworkAdapter;
+
+  readonly fxAdapter: FxAdapter;
 
   private gameType: GameType;
 
@@ -77,13 +84,14 @@ export class GameClient {
   private emitter = new TypedEventEmitter<{ update: EmptyObject }>('sequential');
 
   constructor(options: GameClientOptions) {
-    this.adapter = options.adapter;
+    this.networkAdapter = options.networkAdapter;
+    this.fxAdapter = options.fxAdapter;
     this.stateManager = new ClientStateController(this);
     this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.playerId = options.playerId;
 
-    this.adapter.subscribe(async snapshot => {
+    this.networkAdapter.subscribe(async snapshot => {
       console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
       console.log('state', snapshot.state);
       console.log('events', snapshot.events);
@@ -212,7 +220,7 @@ export class GameClient {
   }
 
   private async sync() {
-    const snapshots = await this.adapter.sync(this.lastSnapshotId);
+    const snapshots = await this.networkAdapter.sync(this.lastSnapshotId);
     this.queue.push(...snapshots);
   }
 }

@@ -27,13 +27,14 @@ const canEndTurn = computed(() => {
       text="Play Card"
       variant="info"
       @click="
-        client.adapter.dispatch({
+        console.log('Commit play card', client.ui.selectedManaCostIndices);
+        client.networkAdapter.dispatch({
           type: 'commitPlayCard',
           payload: {
             playerId: client.playerId,
             manaCostIndices: client.ui.selectedManaCostIndices
           }
-        })
+        });
       "
     />
 
@@ -44,7 +45,7 @@ const canEndTurn = computed(() => {
       "
       text="Cancel"
       @click="
-        client.adapter.dispatch({
+        client.networkAdapter.dispatch({
           type: 'cancelPlayCard',
           payload: { playerId: state.turnPlayer }
         })
@@ -60,7 +61,7 @@ const canEndTurn = computed(() => {
       text="Confirm"
       variant="info"
       @click="
-        client.adapter.dispatch({
+        client.networkAdapter.dispatch({
           type: 'commitMinionSlotSelection',
           payload: {
             playerId: client.playerId
@@ -79,7 +80,7 @@ const canEndTurn = computed(() => {
       text="Confirm"
       variant="info"
       @click="
-        client.adapter.dispatch({
+        client.networkAdapter.dispatch({
           type: 'commitCardSelection',
           payload: {
             playerId: client.playerId
@@ -96,7 +97,7 @@ const canEndTurn = computed(() => {
       text="Skip Block"
       variant="error"
       @click="
-        client.adapter.dispatch({
+        client.networkAdapter.dispatch({
           type: 'declareBlocker',
           payload: {
             blockerId: null,
@@ -109,7 +110,7 @@ const canEndTurn = computed(() => {
       v-if="state.effectChain"
       text="Pass chain"
       @click="
-        client.adapter.dispatch({
+        client.networkAdapter.dispatch({
           type: 'passChain',
           payload: {
             playerId: client.playerId
@@ -122,7 +123,7 @@ const canEndTurn = computed(() => {
       variant="error"
       :disabled="!canEndTurn"
       @click="
-        client.adapter.dispatch({
+        client.networkAdapter.dispatch({
           type: 'declareEndTurn',
           payload: {
             playerId: client.playerId

@@ -89,7 +89,7 @@ const maxChoices = computed(() => {
           text="Play card"
           :disabled="selectedIndices.length < minChoices"
           @click="
-            client.adapter.dispatch({
+            client.networkAdapter.dispatch({
               type: 'chooseCards',
               payload: {
                 playerId: client.playerId,

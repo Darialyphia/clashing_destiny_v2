@@ -84,7 +84,7 @@ const destinyCards = computed<CardViewModel[]>(() => {
           variant="info"
           :text="selectedIndex !== null ? 'Play' : 'Skip'"
           @click="
-            client.adapter.dispatch({
+            client.networkAdapter.dispatch({
               type: 'playDestinyCard',
               payload: {
                 playerId: state.turnPlayer,

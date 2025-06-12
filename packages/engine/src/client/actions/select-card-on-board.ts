@@ -16,7 +16,7 @@ export class SelectCardOnBoardAction implements CardClickRule {
   }
 
   handler(card: CardViewModel) {
-    this.client.adapter.dispatch({
+    this.client.networkAdapter.dispatch({
       type: 'selectCardOnBoard',
       payload: {
         cardId: card.id,

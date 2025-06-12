@@ -19,7 +19,7 @@ export class UseAbilityAction implements CardActionRule {
   }
 
   handler(card: CardViewModel) {
-    this.client.adapter.dispatch({
+    this.client.networkAdapter.dispatch({
       type: 'useCardAbility',
       payload: {
         abilityId: this.ability.id,

@@ -25,6 +25,9 @@ export type MinionSlotClickRule = {
   handler: (slot: UiMinionslot) => void;
 };
 
+export type UiOptimisticState = {
+  playedCardId: string | null;
+};
 export class UiController {
   private _hoveredCard: CardViewModel | null = null;
 
@@ -43,6 +46,10 @@ export class UiController {
   private minionSlotClickRules: MinionSlotClickRule[] = [];
 
   private hoverTimeout: NodeJS.Timeout | null = null;
+
+  optimisticState: UiOptimisticState = {
+    playedCardId: null
+  };
 
   selectedManaCostIndices: number[] = [];
 
@@ -121,6 +128,10 @@ export class UiController {
     return this.client.playerId === this.client.getActivePlayerId();
   }
 
+  clearOptimisticState() {
+    this.optimisticState.playedCardId = null;
+  }
+
   update() {
     this._isChooseCardsInteractionOverlayOpened =
       this.isInteractingPlayer &&
@@ -142,6 +153,8 @@ export class UiController {
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
       this.selectedManaCostIndices = [];
     }
+
+    this.clearOptimisticState();
   }
 
   hover(card: CardViewModel) {

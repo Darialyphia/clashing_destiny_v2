@@ -115,6 +115,7 @@ const displayCards = computed(() => {
   justify-items: center;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
+  pointer-events: none;
   --offset-step: calc(1px * v-bind(cardSpacing));
 
   &:has(:hover) {
@@ -125,7 +126,7 @@ const displayCards = computed(() => {
     grid-row: 1;
     grid-column: 1;
     position: relative;
-
+    pointer-events: auto;
     --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
