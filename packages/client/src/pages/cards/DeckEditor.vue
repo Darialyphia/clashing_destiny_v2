@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useCollectionPage } from './useCollectionPage';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
 </script>
@@ -53,7 +54,7 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
     </div>
     <div class="flex gap-2">
       <FancyButton text="Back" variant="error" @click="isEditingDeck = false" />
-      <FancyButton text="Save" @click="saveDeck" />
+      <FancyButton text="Save" variant="info" @click="saveDeck" />
     </div>
   </div>
 </template>
@@ -70,18 +71,18 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
   gap: var(--size-3);
   align-items: center;
   border: solid var(--border-size-1) #d7ad42;
-  margin-block: var(--size-2);
-  padding: var(--size-3);
+  padding: var(--size-2) var(--size-3);
   cursor: url('/assets/ui/cursor-hover.png'), auto;
   background-image: linear-gradient(
+      to right,
       hsl(0deg 0% 0% / 0.5),
-      hsl(0deg 0% 0% / 0.5)
+      hsl(0deg 0% 0% / 0.25) 80%
     ),
     var(--bg);
   background-repeat: no-repeat;
   background-position:
     center center,
-    calc(100% + 40px) -70px;
+    calc(100% + 40px) -75px;
   background-size: 200%, calc(2px * 96);
   text-shadow: 0 0 1rem 1rem black;
   transition: all 0.3s var(--ease-2);
@@ -103,33 +104,38 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
       center center,
       calc(100% + 50px) -85px;
   }
+
+  @starting-style {
+    opacity: 0;
+    transform: translateX(-3rem);
+  }
 }
 
 .mana-cost {
-  background-color: #5185ff;
+  background: url(/assets/ui/card-mana.png) no-repeat center center;
+  background-size: contain;
   font-size: var(--size-3);
-  font-weight: var(--weight-500);
-  font-weight: var(--font-weight-7);
-  border-radius: var(--radius-round);
-  width: var(--size-5);
-  height: var(--size-5);
+  font-weight: var(--font-weight-5);
+  width: 28px;
+  height: 30px;
   display: grid;
   place-content: center;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
+  padding-right: 1px;
 }
 
 .destiny-cost {
-  background-color: #feb500;
+  background: url(/assets/ui/card-destiny.png) no-repeat center center;
+  background-size: contain;
   font-size: var(--size-3);
-  font-weight: var(--weight-500);
-  font-weight: var(--font-weight-7);
-  border-radius: var(--radius-round);
-  width: var(--size-5);
-  height: var(--size-5);
+  font-weight: var(--font-weight-5);
+  width: 28px;
+  height: 30px;
   display: grid;
   place-content: center;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
+  padding-right: 1px;
 }
 </style>

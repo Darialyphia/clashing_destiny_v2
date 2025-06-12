@@ -29,6 +29,17 @@ export class DeckBuilderViewModel {
     this.cardPool = cardPool;
   }
 
+  hasCard(blueprintId: string) {
+    return (
+      this._deck[CARD_DECK_SOURCES.MAIN_DECK].some(
+        card => card.blueprintId === blueprintId
+      ) ||
+      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].some(
+        card => card.blueprintId === blueprintId
+      )
+    );
+  }
+
   addCard(blueprintId: string) {
     const card = this.cardPool.find(card => card.blueprint.id === blueprintId);
     if (!card) {

@@ -57,6 +57,7 @@ const cardKinds: Array<{
     <section class="flex gap-3 items-center">
       <h4>Display</h4>
       <div class="flex gap-3">
+        {{ viewMode }}
         <UiSimpleTooltip>
           <template #trigger>
             <label class="view-toggle">
@@ -67,7 +68,7 @@ const cardKinds: Array<{
               <input
                 v-model="viewMode"
                 type="radio"
-                value="normal"
+                value="expanded"
                 class="sr-only"
               />
             </label>
@@ -77,12 +78,12 @@ const cardKinds: Array<{
 
         <UiSimpleTooltip>
           <template #trigger>
-            <label>
+            <label class="view-toggle">
               <Icon icon="heroicons:squares-2x2-16-solid" width="1.5rem" />
               <input
                 v-model="viewMode"
                 type="radio"
-                value="small"
+                value="compact"
                 class="sr-only"
               />
             </label>
