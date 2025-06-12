@@ -157,7 +157,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
           }
         "
       />
-      <CardStats v-if="interactive" :card="card" />
+      <CardStats v-if="interactive" :card-id="card.id" />
 
       <PopoverPortal :disabled="card.location === 'hand'">
         <PopoverContent :side-offset="-50" v-if="interactive">

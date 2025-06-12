@@ -23,7 +23,7 @@ const board = useBoardSide(computed(() => player));
   >
     <div class="content">
       <div class="card-list fancy-scrollbar">
-        <div v-for="card in board.banishPile" :key="card">
+        <div v-for="card in board.banishPile.toReversed()" :key="card">
           <GameCard :card-id="card" />
         </div>
       </div>

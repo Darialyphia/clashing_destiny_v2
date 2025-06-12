@@ -2,16 +2,17 @@
 import { isDefined } from '@game/shared';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import { useGameClient } from '../composables/useGameClient';
+import { useCard, useGameClient } from '../composables/useGameClient';
 
-const { card } = defineProps<{ card: CardViewModel }>();
+const { cardId } = defineProps<{ cardId: string }>();
 
+const card = useCard(computed(() => cardId));
 const isDisplayed = computed(() => {
-  if (card.location !== 'board') return false;
+  if (card.value.location !== 'board') return false;
   return (
-    card.kind === CARD_KINDS.HERO ||
-    card.kind === CARD_KINDS.MINION ||
-    card.kind === CARD_KINDS.ARTIFACT
+    card.value.kind === CARD_KINDS.HERO ||
+    card.value.kind === CARD_KINDS.MINION ||
+    card.value.kind === CARD_KINDS.ARTIFACT
   );
 });
 

@@ -5,6 +5,9 @@ import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interacti
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useGameState } from '../composables/useGameClient';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import CardStats from './CardStats.vue';
+import CardResizer from './CardResizer.vue';
 
 const props = defineProps<{
   slot: SerializedBoardMinionSlot;
@@ -30,6 +33,12 @@ const isHighlighted = computed(() => {
     })
   );
 });
+
+const getspriteFromCardId = (cardId: string) => {
+  const card = state.value.entities[cardId] as CardViewModel;
+  if (!card) return '';
+  return `url(${card.imagePath})`;
+};
 </script>
 
 <template>
@@ -52,6 +61,11 @@ const isHighlighted = computed(() => {
     >
       <GameCard :card-id="props.slot.minion" class="minion-slot-card" />
     </InspectableCard>
+    <!-- <div
+      v-if="props.slot.minion"
+      class="minion-slot-sprite"
+      :style="{ '--bg': getspriteFromCardId(props.slot.minion) }"
+    /> -->
   </div>
 </template>
 
@@ -72,5 +86,15 @@ const isHighlighted = computed(() => {
     /* display: grid;
     place-content: center; */
   }
+}
+
+.minion-slot-sprite {
+  background-image: var(--bg);
+  background-size: cover;
+  transform: scale(2) translateX(-3px) translateY(-15px) rotateX(-30deg);
+  aspect-ratio: 1;
+  image-rendering: pixelated;
+  position: relative;
+  pointer-events: none;
 }
 </style>
