@@ -192,7 +192,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     content: attr(data-damage);
     position: absolute;
     top: 0;
-    font-size: var(--font-size-12);
+    font-size: var(--font-size-11);
     color: red;
     background-size: cover;
     transform: translateZ(30px);

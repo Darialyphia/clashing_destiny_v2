@@ -15,6 +15,12 @@ export const KEYWORDS = {
       'This Hero must be leveled up from a previous hero with the same lineage.',
     aliases: [/^[a-z\s]+\slineage+/]
   },
+  SUMMONING_SICKNESS: {
+    id: 'summoning-sickness',
+    name: 'Summoning Sickness',
+    description: 'This unit cannot attack or use abilities the turn it is played.',
+    aliases: []
+  },
   PROVOKE: {
     id: 'provoke',
     name: 'Provoke',
