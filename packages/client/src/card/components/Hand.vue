@@ -2,6 +2,7 @@
 import {
   useFxEvent,
   useGameClient,
+  useGameState,
   useGameUi,
   useMyBoard
 } from '@/game/composables/useGameClient';
@@ -9,6 +10,8 @@ import GameCard from '@/game/components/GameCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { isDefined, waitFor } from '@game/shared';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
 const myBoard = useMyBoard();
 const ui = useGameUi();
@@ -60,6 +63,22 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
     ).finished;
   }
 });
+
+const state = useGameState();
+const displayCards = computed(() => {
+  if (state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
+    return myBoard.value.hand;
+  }
+  const ctx = state.value.interaction.ctx;
+  return myBoard.value.hand.filter(cardId => {
+    return (
+      ctx.card !== cardId &&
+      !client.value.ui.selectedManaCostIndices.includes(
+        myBoard.value.hand.indexOf(cardId)
+      )
+    );
+  });
+});
 </script>
 
 <template>
@@ -70,7 +89,7 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   >
     <div
       class="card"
-      v-for="(cardId, index) in myBoard.hand"
+      v-for="(cardId, index) in displayCards"
       :key="cardId"
       :class="{
         selected: ui.selectedCard?.id === cardId

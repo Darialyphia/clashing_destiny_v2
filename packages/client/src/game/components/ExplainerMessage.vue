@@ -3,6 +3,7 @@ import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interacti
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
 const client = useGameClient();
 const state = useGameState();
@@ -23,6 +24,15 @@ const message = computed(() => {
     return 'Select a minion slot';
   }
 
+  if (
+    state.value.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
+    state.value.interaction.ctx.player === playerId.value
+  ) {
+    const card = state.value.entities[
+      state.value.interaction.ctx.card
+    ] as CardViewModel;
+    return `Put cards in the Destiny Zone (${client.value.ui.selectedManaCostIndices.length} / ${card?.manaCost})`;
+  }
   if (
     state.value.interaction.state ===
     INTERACTION_STATES.SELECTING_CARDS_ON_BOARD

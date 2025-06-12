@@ -12,6 +12,7 @@ import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedBoardMinionSlot } from '../../board/board-minion-slot.entity';
+import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -76,6 +77,7 @@ export class UiController {
 
   private buildClickRules() {
     this.cardClickRules = [
+      new ToggleForManaCost(this.client),
       new SelectCardAction(this.client),
       new DeclareAttackTargetCardAction(this.client),
       new SelectCardOnBoardAction(this.client)
@@ -88,7 +90,6 @@ export class UiController {
 
   onCardClick(card: CardViewModel) {
     const state = this.client.state;
-
     for (const rule of this.cardClickRules) {
       if (rule.predicate(card, state)) {
         rule.handler(card);

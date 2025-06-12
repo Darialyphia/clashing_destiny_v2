@@ -9,7 +9,6 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { waitFor } from '@game/shared';
 import GameCard from './GameCard.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
@@ -85,6 +84,18 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
       </template>
       <CardBack v-else class="item" />
     </div>
+
+    <template v-if="playerId === client.playerId">
+      <div
+        v-for="index in client.ui.selectedManaCostIndices"
+        :key="index"
+        class="item mana-card"
+      >
+        <InspectableCard :card-id="boardSide.hand[index]" side="top">
+          <GameCard :card-id="boardSide.hand[index]" class="item" />
+        </InspectableCard>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -103,5 +114,10 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 .item {
   aspect-ratio: var(--card-ratio);
   height: 100%;
+}
+
+.mana-card {
+  background-color: red;
+  overflow: hidden;
 }
 </style>

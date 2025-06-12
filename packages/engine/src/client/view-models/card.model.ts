@@ -274,8 +274,19 @@ export class CardViewModel {
 
     return canSelect || canAttack;
   }
+
   get isExhausted() {
     return this.data.isExhausted;
+  }
+
+  get indexInHand() {
+    if (this.data.location !== 'hand') {
+      return null;
+    }
+
+    return this.getPlayer()
+      .getHand()
+      .findIndex(card => card.equals(this));
   }
 
   get preResponseTargets() {

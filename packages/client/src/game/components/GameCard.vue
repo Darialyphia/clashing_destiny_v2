@@ -25,11 +25,13 @@ import { type DamageType } from '@game/engine/src/utils/damage';
 const {
   cardId,
   interactive = true,
-  autoScale = true
+  autoScale = true,
+  deferAutoScaling = false
 } = defineProps<{
   cardId: string;
   interactive?: boolean;
   autoScale?: boolean;
+  deferAutoScaling?: boolean;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -53,7 +55,10 @@ const isActionsPopoverOpened = computed({
 const isTargetable = computed(() => {
   if (!interactive) return false;
 
-  return card.value.canBeTargeted;
+  return (
+    card.value.canBeTargeted ||
+    client.value.ui.selectedManaCostIndices.includes(card.value.indexInHand!)
+  );
 });
 
 const cardComponent = useTemplateRef('card');
@@ -105,6 +110,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     class="game-card"
     ref="card"
     :class="{ 'is-enemy': card.getPlayer().id !== client.playerId }"
+    :defer="deferAutoScaling"
   >
     <PopoverRoot v-model:open="isActionsPopoverOpened">
       <PopoverAnchor />

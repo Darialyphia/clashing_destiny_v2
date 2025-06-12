@@ -2,15 +2,22 @@
 import { isDefined } from '@game/shared';
 import { useResizeObserver } from '@vueuse/core';
 
-const { enabled = true, forcedScale } = defineProps<{
+const {
+  enabled = true,
+  forcedScale,
+  debug,
+  defer = false
+} = defineProps<{
   enabled?: boolean;
   forcedScale?: number;
+  debug?: boolean;
+  defer?: boolean;
 }>();
 
 const root = useTemplateRef('root');
 
 const scale = ref(1);
-const calculateScale = () => {
+const calculateScale = async () => {
   if (!root.value) return;
   if (!enabled) {
     scale.value = 1;
@@ -20,10 +27,21 @@ const calculateScale = () => {
     scale.value = forcedScale;
     return;
   }
-  const availableWidth = root.value.parentElement?.clientWidth || 0;
-  const availableHeight = root.value.parentElement?.clientHeight || 0;
+  if (defer) {
+    await nextTick();
+  }
+  const availableWidth = root.value.parentElement?.offsetWidth || 0;
+  const availableHeight = root.value.parentElement?.offsetHeight || 0;
   const width = root.value.offsetWidth;
   const height = root.value.offsetHeight;
+  if (debug) {
+    console.log(root.value.parentElement, {
+      availableWidth,
+      availableHeight,
+      width,
+      height
+    });
+  }
   const scaleX = availableWidth / width;
   const scaleY = availableHeight / height;
   scale.value = Math.min(scaleX, scaleY);

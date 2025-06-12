@@ -3,7 +3,7 @@ import { useFullscreen } from '@vueuse/core';
 import { useMyBoard, useOpponentBoard } from '../composables/useGameClient';
 import { useBoardResize } from '../composables/useBoardResize';
 import Hand from '@/card/components/Hand.vue';
-import ManaCostModal from './ManaCostModal.vue';
+// import ManaCostModal from './ManaCostModal.vue';
 import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import AffinityModal from './AffinityModal.vue';
 import BoardSide from './BoardSide.vue';
@@ -15,6 +15,7 @@ import CombatArrows from './CombatArrows.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import EffectChain from './EffectChain.vue';
 import PlayerInfos from './PlayerInfos.vue';
+import PlayedCard from './PlayedCard.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -24,11 +25,12 @@ const opponentBoard = useOpponentBoard();
 </script>
 
 <template>
-  <ManaCostModal />
+  <!-- <ManaCostModal /> -->
   <DestinyPhaseModal />
   <AffinityModal />
   <ChooseCardModal />
   <CombatArrows />
+  <PlayedCard />
   <div class="arrows" id="arrows" />
 
   <div class="board-container">

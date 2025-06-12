@@ -11,6 +11,7 @@ const state = useGameState();
 const canEndTurn = computed(() => {
   return (
     state.value.phase.state === GAME_PHASES.MAIN &&
+    state.value.interaction.state === INTERACTION_STATES.IDLE &&
     client.value.playerId === state.value.turnPlayer
   );
 });
@@ -20,11 +21,44 @@ const canEndTurn = computed(() => {
   <div class="action-buttons">
     <FancyButton
       v-if="
+        state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
+        state.interaction.ctx.player === client.playerId
+      "
+      text="Play Card"
+      variant="info"
+      @click="
+        client.adapter.dispatch({
+          type: 'commitPlayCard',
+          payload: {
+            playerId: client.playerId,
+            manaCostIndices: client.ui.selectedManaCostIndices
+          }
+        })
+      "
+    />
+
+    <FancyButton
+      v-if="
+        state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
+        state.interaction.ctx.player === client.playerId
+      "
+      text="Cancel"
+      @click="
+        client.adapter.dispatch({
+          type: 'cancelPlayCard',
+          payload: { playerId: state.turnPlayer }
+        })
+      "
+    />
+
+    <FancyButton
+      v-if="
         state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT &&
         state.interaction.ctx.player === client.playerId &&
         state.interaction.ctx.canCommit
       "
       text="Confirm"
+      variant="info"
       @click="
         client.adapter.dispatch({
           type: 'commitMinionSlotSelection',
@@ -43,6 +77,7 @@ const canEndTurn = computed(() => {
         state.interaction.ctx.canCommit
       "
       text="Confirm"
+      variant="info"
       @click="
         client.adapter.dispatch({
           type: 'commitCardSelection',
@@ -59,6 +94,7 @@ const canEndTurn = computed(() => {
         state.turnPlayer !== client.playerId
       "
       text="Skip Block"
+      variant="error"
       @click="
         client.adapter.dispatch({
           type: 'declareBlocker',
@@ -83,6 +119,7 @@ const canEndTurn = computed(() => {
     />
     <FancyButton
       text="End turn"
+      variant="error"
       :disabled="!canEndTurn"
       @click="
         client.adapter.dispatch({
@@ -106,5 +143,8 @@ const canEndTurn = computed(() => {
   right: var(--size-3);
   z-index: 2;
   align-items: center;
+  & > * {
+    width: 100%;
+  }
 }
 </style>
