@@ -38,6 +38,7 @@ export type SerializedMinionCard = SerializedCard & {
   remainingHp: number;
   affinity: Affinity;
   manaCost: number;
+  baseManaCost: number;
   abilities: SerializedAbility[];
   position: Pick<MinionPosition, 'zone' | 'slot'> | null;
 };
@@ -466,6 +467,7 @@ export class MinionCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
+      baseManaCost: this.blueprint.manaCost,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,

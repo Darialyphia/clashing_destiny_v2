@@ -89,9 +89,24 @@ export class CardViewModel {
     return null;
   }
 
+  get baseManaCost() {
+    if ('baseManaCost' in this.data) {
+      return this.data.baseManaCost as number;
+    }
+    return null;
+  }
+
   get destinyCost() {
     if ('destinyCost' in this.data) {
       return this.data.destinyCost as number;
+    }
+
+    return null;
+  }
+
+  get baseDestinyCost() {
+    if ('baseDestinyCost' in this.data) {
+      return this.data.baseDestinyCost as number;
     }
 
     return null;

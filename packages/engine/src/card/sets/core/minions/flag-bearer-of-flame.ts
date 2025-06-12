@@ -15,7 +15,7 @@ import type { MinionCard } from '../../../entities/minion.card';
 export const flagBearerOfFlame: MinionBlueprint = {
   id: 'flagbearer-of-flame',
   name: 'Flagbearer of Flame',
-  cardIconId: 'flag-bearer-of-flame',
+  cardIconId: 'unit-flagbearer-of-flame',
   description: `The ally in front of this minion has +1@[attack]@.`,
   collectable: true,
   unique: false,

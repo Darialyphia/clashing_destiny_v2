@@ -19,7 +19,7 @@ import { mage } from '../heroes/mage';
 export const arcaneRay: AttackBlueprint = {
   id: 'arcane-ray',
   name: 'Arcane Ray',
-  cardIconId: 'spell-arcane-ray',
+  cardIconId: 'attack-arcane-ray',
   description: `@Piercing@\n@[lineage] ${mage.name} bonus@: Deals 2 + @[spellpower]@ damage.\nCan only target minions.`,
   collectable: true,
   unique: false,

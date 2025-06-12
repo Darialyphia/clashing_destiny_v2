@@ -32,8 +32,8 @@ export const magicGrimoire: ArtifactBlueprint = {
     {
       id: 'magic-grimoire-ability',
       label: 'Gain Affinity',
-      description: `@[lineage] ${mage.name} bonus@, @[mana] 1@ @[exhaust]@ : Gain an affinity of your current Hero until the end of the turn. This loses 1 durability.`,
-      manaCost: 1,
+      description: `@[lineage] ${mage.name} bonus@, @[exhaust]@ : Gain an affinity until the end of the turn. This loses 1 durability.`,
+      manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
         if (card.location !== 'board') return false;
@@ -44,7 +44,7 @@ export const magicGrimoire: ArtifactBlueprint = {
       async onResolve(game, card) {
         const affinity = await game.interaction.chooseAffinity({
           player: card.player,
-          choices: card.player.hero.unlockableAffinities
+          choices: Object.values(AFFINITIES)
         });
 
         const remove = await card.player.addInterceptor(

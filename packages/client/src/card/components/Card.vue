@@ -20,7 +20,9 @@ const { card } = defineProps<{
     affinity: Affinity;
     uinlockableAffinities?: Affinity[];
     manaCost?: number | null;
+    baseManaCost?: number | null;
     destinyCost?: number | null;
+    baseDestinyCost?: number | null;
     rarity: Rarity;
     level?: number | null;
     atk?: number | null;
@@ -128,6 +130,25 @@ const isMultiLine = computed(() => {
   const checkerRect = multiLineChecker.value.getBoundingClientRect();
   return checkerRect.top > boxRect.top;
 });
+
+const costStatus = computed(() => {
+  if (isDefined(card.manaCost)) {
+    if (!isDefined(card.baseManaCost) || card.baseManaCost === card.manaCost)
+      return '';
+
+    return card.manaCost < card.baseManaCost ? 'buffed' : 'debuffed';
+  } else if (isDefined(card.destinyCost)) {
+    if (
+      !isDefined(card.baseDestinyCost) ||
+      card.baseDestinyCost === card.destinyCost
+    )
+      return '';
+
+    return card.destinyCost < card.baseDestinyCost ? 'buffed' : 'debuffed';
+  }
+
+  return '';
+});
 </script>
 
 <template>
@@ -166,12 +187,20 @@ const isMultiLine = computed(() => {
 
       <div class="rarity" />
       <div class="stats">
-        <div v-if="isDefined(card.manaCost)" class="mana-cost">
+        <div
+          v-if="isDefined(card.manaCost)"
+          class="mana-cost"
+          :class="costStatus"
+        >
           <div class="dual-text" :data-text="card.manaCost">
             {{ card.manaCost }}
           </div>
         </div>
-        <div v-if="isDefined(card.destinyCost)" class="destiny-cost">
+        <div
+          v-if="isDefined(card.destinyCost)"
+          class="destiny-cost"
+          :class="costStatus"
+        >
           <div class="dual-text" :data-text="card.destinyCost">
             {{ card.destinyCost }}
           </div>
@@ -266,6 +295,8 @@ const isMultiLine = computed(() => {
 .dual-text {
   color: transparent;
   position: relative;
+  --_top-color: var(--top-color, #fcfcfc);
+  --_bottom-color: var(--bottom-color, #ffb270);
   &::before,
   &::after {
     position: absolute;
@@ -274,7 +305,11 @@ const isMultiLine = computed(() => {
     inset: 0;
   }
   &:after {
-    background: linear-gradient(#fcfcfc, #fcfcfc 40%, #ffb270 40%);
+    background: linear-gradient(
+      var(--_top-color),
+      var(--_top-color) 40%,
+      var(--_bottom-color) 40%
+    );
     background-clip: text;
   }
   &:before {
@@ -402,6 +437,14 @@ const isMultiLine = computed(() => {
   }
 }
 
+.buffed {
+  --top-color: var(--green-2);
+  --bottom-color: var(--green-6);
+}
+.debuffed {
+  --top-color: var(--red-3);
+  --bottom-color: var(--red-6);
+}
 .mana-cost {
   background-image: url('/assets/ui/card-mana.png');
 }

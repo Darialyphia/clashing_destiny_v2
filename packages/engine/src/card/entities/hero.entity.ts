@@ -28,6 +28,7 @@ import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 export type SerializedHeroCard = SerializedCard & {
   level: number;
   destinyCost: number;
+  baseDestinyCost: number;
   potentialAttackTargets: string[];
   atk: number;
   baseAtk: number;
@@ -423,6 +424,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return {
       ...this.serializeBase(),
       destinyCost: this.destinyCost,
+      baseDestinyCost: this.blueprint.destinyCost,
       level: this.level,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,

@@ -16,8 +16,8 @@ export const CARD_EVENTS = {
 export type CardEvent = Values<typeof CARD_EVENTS>;
 
 export const CARD_DECK_SOURCES = {
-  MAIN_DECK: 'MAIN_DECK',
-  DESTINY_DECK: 'DESTINY_DECK'
+  MAIN_DECK: 'mainDeck',
+  DESTINY_DECK: 'destinyDeck'
 } as const;
 export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 
@@ -79,7 +79,6 @@ export const AFFINITIES = {
   DEATH: 'DEATH',
   COSMIC: 'COSMIC',
   CHRONO: 'CHRONO',
-  CHAOS: 'CHAOS',
   TECH: 'TECH',
   PRIMAL: 'PRIMAL',
   ARMS: 'ARMS'

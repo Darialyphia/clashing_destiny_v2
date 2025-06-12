@@ -23,6 +23,7 @@ import {
 
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
+  baseManaCost: number;
   subKind: SpellKind;
   preResponseTargets: SerializedPreResponseTarget[] | null;
 };
@@ -117,6 +118,7 @@ export class SpellCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
+      baseManaCost: this.blueprint.manaCost,
       subKind: this.blueprint.subKind,
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)

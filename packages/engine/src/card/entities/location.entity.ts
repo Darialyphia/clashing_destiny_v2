@@ -22,6 +22,7 @@ import {
 
 export type SerializedLocationCard = SerializedCard & {
   manaCost: number;
+  baseManaCost: number;
   abilities: SerializedAbility[];
 };
 export type LocationCardInterceptors = CardInterceptors & {
@@ -132,6 +133,7 @@ export class LocationCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
+      baseManaCost: this.blueprint.manaCost,
       abilities: this.blueprint.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),

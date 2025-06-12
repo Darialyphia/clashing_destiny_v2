@@ -20,7 +20,7 @@ import { mage } from '../heroes/mage';
 export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'pyroclasm',
   name: 'Pyroclasm',
-  cardIconId: 'pyroclasm',
+  cardIconId: 'spell-eternal-flame',
   description: `Deal 4 + @[spellpower]@ damage to an enemy.\n@[lineage] ${mage.name} bonus@: this costs 2 less.`,
   collectable: true,
   unique: false,

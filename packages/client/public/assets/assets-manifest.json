@@ -1112,6 +1112,19 @@
         },
         {
           "alias": [
+            "icon-talent-fire-studies"
+          ],
+          "src": [
+            "/assets/icons/talent-fire-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-acolyte"
           ],
           "src": [
@@ -1181,6 +1194,19 @@
           ],
           "src": [
             "/assets/icons/unit-archmage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-archsage-of-moonring"
+          ],
+          "src": [
+            "/assets/icons/unit-archsage-of-moonring.png"
           ],
           "data": {
             "tags": {
@@ -1372,6 +1398,19 @@
         },
         {
           "alias": [
+            "icon-unit-flagbearer-of-flame"
+          ],
+          "src": [
+            "/assets/icons/unit-flagbearer-of-flame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-flame-exorcist"
           ],
           "src": [
@@ -1428,6 +1467,19 @@
           ],
           "src": [
             "/assets/icons/unit-garrison-marksman.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-hot-blooded-recruit"
+          ],
+          "src": [
+            "/assets/icons/unit-hot-blooded-recruit.png"
           ],
           "data": {
             "tags": {
@@ -1502,6 +1554,19 @@
         },
         {
           "alias": [
+            "icon-unit-magic-channeler"
+          ],
+          "src": [
+            "/assets/icons/unit-magic-channeler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-naga-skirmisher"
           ],
           "src": [
@@ -1558,6 +1623,19 @@
           ],
           "src": [
             "/assets/icons/unit-rainbow-phoenix.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-seer"
+          ],
+          "src": [
+            "/assets/icons/unit-seer.png"
           ],
           "data": {
             "tags": {
@@ -4611,6 +4689,19 @@
         },
         {
           "alias": [
+            "magic-channeler.png"
+          ],
+          "src": [
+            "/assets/units/magic-channeler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "misleading-wisp"
           ],
           "src": [
@@ -4791,6 +4882,19 @@
           ],
           "src": [
             "/assets/units/rainbow-phoenix.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "seer.png"
+          ],
+          "src": [
+            "/assets/units/seer.png"
           ],
           "data": {
             "tags": {

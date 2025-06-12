@@ -16,6 +16,7 @@ import {
 
 export type SerializedTalentCard = SerializedCard & {
   destinyCost: number;
+  baseDestinyCost: number;
 };
 export type AbilityCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, TalentCard>;
@@ -73,7 +74,8 @@ export class TalentCard extends Card<
   serialize(): SerializedTalentCard {
     return {
       ...this.serializeBase(),
-      destinyCost: this.blueprint.destinyCost
+      destinyCost: this.blueprint.destinyCost,
+      baseDestinyCost: this.blueprint.destinyCost
     };
   }
 }

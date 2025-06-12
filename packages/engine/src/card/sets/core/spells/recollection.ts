@@ -32,21 +32,24 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   getPreResponseTargets: async () => [],
   async onInit() {},
   async onPlay(game, card) {
-    for (const playedCard of card.player.cardTracker.cardsPlayedSinceStartOfLastOwnTurn) {
+    const playedCards = card.player.cardTracker.getCardsPlayedSince(
+      game.gamePhaseSystem.elapsedTurns - 1
+    );
+    console.log(playedCards);
+    for (const playedCard of playedCards) {
       const copy = await card.player.generateCard(playedCard.blueprintId);
-
+      await copy.addToHand();
+      if (card.hasAffinityMatch) continue;
       await copy.modifiers.add(
         new Modifier('recollection-debuff', game, card, {
           mixins: [
             new MainDeckCardInterceptorModifierMixin(game, {
               key: 'manaCost',
-              interceptor: value => (card.hasAffinityMatch ? value : value! + 1)
+              interceptor: value => value! + 1
             })
           ]
         })
       );
-
-      await copy.addToHand();
     }
   }
 };

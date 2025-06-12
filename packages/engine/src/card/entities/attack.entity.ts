@@ -18,6 +18,7 @@ import {
 
 export type SerializedAttackCard = SerializedCard & {
   manaCost: number;
+  baseManaCost: number;
   damage: number;
 };
 export type AttackCardInterceptors = CardInterceptors & {
@@ -95,6 +96,7 @@ export class AttackCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
+      baseManaCost: this.blueprint.manaCost,
       damage: this.damage
     };
   }

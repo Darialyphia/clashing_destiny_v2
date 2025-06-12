@@ -27,6 +27,7 @@ export type SerializedArtifactCard = SerializedCard & {
   durability: number;
   subKind: ArtifactKind;
   manaCost: number;
+  baseManaCost: number;
   abilities: SerializedAbility[];
 };
 
@@ -272,6 +273,7 @@ export class ArtifactCard extends Card<
       durability: this.remainingDurability,
       subKind: this.subkind,
       manaCost: this.manaCost,
+      baseManaCost: this.blueprint.manaCost,
       abilities: this.blueprint.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),

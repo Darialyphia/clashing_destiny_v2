@@ -9,10 +9,12 @@ import { keyBy } from 'lodash-es';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { Icon } from '@iconify/vue';
 import { useCardList } from '@/card/composables/useCardList';
-import { AFFINITIES } from '@game/engine/src/card/card.enums';
+import { AFFINITIES, type Affinity } from '@game/engine/src/card/card.enums';
 import { vIntersectionObserver } from '@vueuse/components';
 import type { ValidatableDeck } from '@game/engine/src/card/validators/deck.validator';
 import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
+import { uppercaseFirstLetter } from '@game/shared';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 definePage({
   name: 'Collection'
@@ -65,8 +67,8 @@ const saveDeck = () => {
   );
   if (existingDeck) {
     existingDeck.name = deckBuilder.value.deck.name;
-    existingDeck.MAIN_DECK = deckBuilder.value.deck.MAIN_DECK;
-    existingDeck.DESTINY_DECK = deckBuilder.value.deck.DESTINY_DECK;
+    existingDeck.mainDeck = deckBuilder.value.deck.mainDeck;
+    existingDeck.destinyDeck = deckBuilder.value.deck.destinyDeck;
   } else {
     decks.value.push(deckBuilder.value.deck);
   }
@@ -74,12 +76,18 @@ const saveDeck = () => {
   deckBuilder.value.reset();
 };
 
-// const affinities: Array<{
-//   id: Affinity;
-//   img: string;
-//   label: string;
-//   color: string;
-// }> = [
+const affinities: Array<{
+  id: Affinity;
+  img: string;
+  label: string;
+  color: string;
+}> = Object.values(AFFINITIES).map(affinity => ({
+  id: affinity,
+  img: `/assets/ui/affinity-${affinity.toLocaleLowerCase()}.png`,
+  label: uppercaseFirstLetter(affinity),
+  color: 'white'
+}));
+// [
 //   {
 //     id: AFFINITIES.NORMAL,
 //     img: `/assets/ui/gem-${AFFINITIES.NORMAL.toLocaleLowerCase()}.png`,
@@ -142,10 +150,6 @@ const saveDeck = () => {
 //   }
 // ];
 
-function uppercaseFirstLetter(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 const visibleCards = ref(new Set<string>());
 const onIntersectionObserver =
   (cardId: string) => (entries: IntersectionObserverEntry[]) => {
@@ -174,9 +178,6 @@ const viewMode = ref<'normal' | 'small'>('normal');
           <li>
             <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
           </li>
-          <li>
-            <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
-          </li>
         </ul>
       </nav>
 
@@ -201,17 +202,19 @@ const viewMode = ref<'normal' | 'small'>('normal');
         </label>
       </div>
       <div class="affinity-filter">
-        <!-- <button
-          v-for="affinity in affinities"
-          :key="affinity.label"
-          class=""
-          :class="hasAffinityFilter(affinity.id) && 'active'"
-          :style="{ '--color': affinity.color }"
-          @click="toggleAffinityFilter(affinity.id)"
-        >
-          <img :src="affinity.img" :alt="affinity.label" />
+        <UiSimpleTooltip v-for="affinity in affinities" :key="affinity.label">
+          <template #trigger>
+            <button
+              :class="hasAffinityFilter(affinity.id) && 'active'"
+              :style="{ '--color': affinity.color }"
+              :aria-label="affinity.label"
+              @click="toggleAffinityFilter(affinity.id)"
+            >
+              <img :src="affinity.img" :alt="affinity.label" />
+            </button>
+          </template>
           {{ affinity.label }}
-        </button> -->
+        </UiSimpleTooltip>
       </div>
     </header>
     <ul ref="card-list" class="cards fancy-scrollbar" :class="viewMode">
@@ -356,14 +359,17 @@ const viewMode = ref<'normal' | 'small'>('normal');
 .affinity-filter {
   display: flex;
   gap: var(--size-1);
-
   button {
     border: solid var(--border-size-2) transparent;
-    display: flex;
-    align-items: center;
-    gap: var(--size-2);
-    padding: var(--size-2);
     border-radius: var(--radius-pill);
+    min-height: var(--size-8);
+    aspect-ratio: 1;
+    padding: 0;
+    display: grid;
+    > img {
+      width: 100%;
+      height: 100%;
+    }
     &.active {
       background-color: hsl(from var(--color) h s l / 0.25);
       border-color: var(--color);
