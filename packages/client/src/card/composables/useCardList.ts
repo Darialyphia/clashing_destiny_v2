@@ -1,3 +1,5 @@
+import { useSafeInject } from '@/shared/composables/useSafeInject';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
@@ -7,8 +9,22 @@ import {
 } from '@game/engine/src/card/card.enums';
 import { type CardSet, CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isString } from '@game/shared';
+import type { Ref, ComputedRef, InjectionKey } from 'vue';
 
-export const useCardList = () => {
+export type CardListContext = {
+  cards: ComputedRef<CardBlueprint[]>;
+  textFilter: Ref<string, string>;
+  hasAffinityFilter(affinity: Affinity): boolean;
+  toggleAffinityFilter(affinity: Affinity): void;
+  hasKindFilter(kind: CardKind): boolean;
+  toggleKindFilter(kind: CardKind): void;
+};
+
+const CardListInjectionKey = Symbol(
+  'cardList'
+) as InjectionKey<CardListContext>;
+
+export const provideCardList = () => {
   const authorizedSets: CardSet[] = [CARD_SET_DICTIONARY.CORE];
 
   const KIND_ORDER = {
@@ -98,7 +114,7 @@ export const useCardList = () => {
       });
   });
 
-  return {
+  const api: CardListContext = {
     cards,
     textFilter,
     hasAffinityFilter(affinity: Affinity) {
@@ -122,4 +138,10 @@ export const useCardList = () => {
       }
     }
   };
+
+  provide(CardListInjectionKey, api);
+
+  return api;
 };
+
+export const useCardList = () => useSafeInject(CardListInjectionKey);

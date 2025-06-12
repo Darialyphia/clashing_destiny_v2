@@ -14,7 +14,7 @@ export type DeckBuilderCardPool = Array<{
   copiesOwned: number;
 }>;
 
-export class DeckBuildervModel {
+export class DeckBuilderViewModel {
   private _deck: ValidatableDeck = {
     id: nanoid(4),
     name: 'New Deck',

@@ -201,6 +201,19 @@
         },
         {
           "alias": [
+            "icon-artifact-firebrand"
+          ],
+          "src": [
+            "/assets/icons/artifact-firebrand.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-artifact-philosopher-stone"
           ],
           "src": [
@@ -266,10 +279,36 @@
         },
         {
           "alias": [
+            "icon-attack-arcane-ray"
+          ],
+          "src": [
+            "/assets/icons/attack-arcane-ray.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-equality-pendant"
           ],
           "src": [
             "/assets/icons/equality-pendant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-hero-mage"
+          ],
+          "src": [
+            "/assets/icons/hero-mage.png"
           ],
           "data": {
             "tags": {
@@ -1099,10 +1138,36 @@
         },
         {
           "alias": [
+            "icon-spell-thirst-for-knowledge"
+          ],
+          "src": [
+            "/assets/icons/spell-thirst-for-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-tidal-wave"
           ],
           "src": [
             "/assets/icons/spell-tidal-wave.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-arcane-studies"
+          ],
+          "src": [
+            "/assets/icons/talent-arcane-studies.png"
           ],
           "data": {
             "tags": {
@@ -2024,6 +2089,19 @@
           ],
           "src": [
             "/assets/ui/affinity-cosmic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "affinity-death.png"
+          ],
+          "src": [
+            "/assets/ui/affinity-death.png"
           ],
           "data": {
             "tags": {

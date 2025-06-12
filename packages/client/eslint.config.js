@@ -2,6 +2,7 @@ import pluginVue from 'eslint-plugin-vue';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 import fs from 'fs-extra';
+import eslintPluginVueScopedCSS from 'eslint-plugin-vue-scoped-css';
 
 const unpluginAutoImport = fs.readJSONSync('./.eslintrc-auto-import.json');
 export default [
@@ -14,6 +15,8 @@ export default [
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**']
   },
+
+  ...eslintPluginVueScopedCSS.configs['flat/recommended'],
 
   { name: 'unplugin-auto-import', languageOptions: unpluginAutoImport },
 
