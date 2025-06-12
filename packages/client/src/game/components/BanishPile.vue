@@ -22,6 +22,9 @@ const board = useBoardSide(computed(() => player));
     }"
   >
     <div class="content">
+      <header>
+        <h2 class="text-center">Banish Pile</h2>
+      </header>
       <div class="card-list fancy-scrollbar">
         <div v-for="card in board.banishPile.toReversed()" :key="card">
           <GameCard :card-id="card" />
@@ -38,7 +41,7 @@ const board = useBoardSide(computed(() => player));
 .content {
   height: 80dvh;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr auto;
   overflow: hidden;
   &.is-showing-board .card-list {
     visibility: hidden;

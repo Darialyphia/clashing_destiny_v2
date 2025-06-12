@@ -31,6 +31,10 @@ const onIntersectionObserver =
   };
 
 const listRoot = useTemplateRef('card-list');
+
+watch(viewMode, () => {
+  visibleCards.value.clear();
+});
 </script>
 
 <template>
@@ -100,7 +104,7 @@ const listRoot = useTemplateRef('card-list');
 
   &.compact {
     --pixel-scale: 1;
-    --min-column-size: 9rem;
+    --min-column-size: 10rem;
     .collection-card {
       transform: scale(0.5);
       transform-origin: top left;

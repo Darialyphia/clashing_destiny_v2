@@ -52,7 +52,7 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
         </li>
       </ul>
     </div>
-    <div class="flex gap-2">
+    <div class="flex gap-2 mt-3">
       <FancyButton text="Back" variant="error" @click="isEditingDeck = false" />
       <FancyButton text="Save" variant="info" @click="saveDeck" />
     </div>
@@ -76,7 +76,7 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
   background-image: linear-gradient(
       to right,
       hsl(0deg 0% 0% / 0.5),
-      hsl(0deg 0% 0% / 0.25) 80%
+      hsl(0deg 0% 0% / 0.5)
     ),
     var(--bg);
   background-repeat: no-repeat;

@@ -45,8 +45,9 @@ const { isEditingDeck } = provideCollectionPage();
   height: 100dvh;
   pointer-events: auto;
   display: grid;
-  grid-template-columns: auto 1fr var(--size-xs);
+  grid-template-columns: auto 1fr 24rem;
   grid-template-rows: auto 1fr;
+  column-gap: var(--size-5);
 
   > header {
     grid-row: 1;
@@ -60,10 +61,13 @@ const { isEditingDeck } = provideCollectionPage();
 }
 
 .right-sidebar {
-  padding: var(--size-3);
+  padding: var(--size-6);
   overflow-y: hidden;
   grid-row: 1 / -1;
   grid-column: 3;
+  border-image-slice: 63 fill;
+  border-image-width: 64px;
+  border-image-source: url('/assets/ui/ui-surface.png');
 }
 
 .filters {

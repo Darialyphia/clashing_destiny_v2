@@ -57,7 +57,6 @@ const cardKinds: Array<{
     <section class="flex gap-3 items-center">
       <h4>Display</h4>
       <div class="flex gap-3">
-        {{ viewMode }}
         <UiSimpleTooltip>
           <template #trigger>
             <label class="view-toggle">
@@ -136,6 +135,7 @@ const cardKinds: Array<{
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--size-1);
+
   button {
     border: solid var(--border-size-2) transparent;
     border-radius: var(--radius-pill);
@@ -178,10 +178,14 @@ const cardKinds: Array<{
 }
 
 .filters {
-  padding: var(--size-3);
+  padding: var(--size-6);
   display: flex;
   flex-direction: column;
   gap: var(--size-4);
+
+  border-image-slice: 63 fill;
+  border-image-width: 64px;
+  border-image-source: url('/assets/ui/ui-surface.png');
 }
 
 .view-toggle {

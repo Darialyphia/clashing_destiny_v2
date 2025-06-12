@@ -25,7 +25,7 @@ export class CardTrackerComponent {
   }
 
   get cardsPlayedThisTurn() {
-    return this.cardsPlayedByTurn.get(this.game.gamePhaseSystem.elapsedTurns)!;
+    return this.cardsPlayedByTurn.get(this.game.gamePhaseSystem.elapsedTurns) ?? [];
   }
 
   getCardsPlayedThisTurnOfKind<
