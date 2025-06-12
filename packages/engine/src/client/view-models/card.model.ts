@@ -19,6 +19,9 @@ import { DeclareAttackAction } from '../actions/declare-attack';
 import type { Affinity, ArtifactKind, CardKind, SpellKind } from '../../card/card.enums';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
+import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
+import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 type CardData =
   | SerializedSpellCard
@@ -256,6 +259,21 @@ export class CardViewModel {
     );
   }
 
+  get canBeTargeted() {
+    const client = this.getClient();
+    const state = client.stateManager.state;
+    const canSelect =
+      state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
+      state.interaction.ctx.elligibleCards.some(id => id === this.id);
+
+    const canAttack =
+      state.interaction.state === INTERACTION_STATES.IDLE &&
+      state.phase.state === GAME_PHASES.ATTACK &&
+      state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
+      state.phase.ctx.potentialTargets.some(id => id === this.id);
+
+    return canSelect || canAttack;
+  }
   get isExhausted() {
     return this.data.isExhausted;
   }

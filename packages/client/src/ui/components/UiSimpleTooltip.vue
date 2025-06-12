@@ -16,7 +16,7 @@ export type UITooltipProps = {
 };
 
 const {
-  sideOffset = 15,
+  sideOffset = 0,
   side = 'top',
   align = 'center',
   usePortal = true
@@ -48,7 +48,7 @@ const {
 .tooltip-content {
   background-color: black;
   color: white;
-  padding: var(--size-3);
+  padding: var(--size-1) var(--size-3);
   font-family: var(--font-system-ui);
   font-size: 14px;
   border: solid 1px #bb8225;

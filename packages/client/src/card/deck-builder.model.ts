@@ -124,8 +124,8 @@ export class DeckBuildervModel {
         };
       })
       .toSorted((a, b) => {
-        if (a.blueprint.kind === CARD_KINDS.UNIT) {
-          if (b.blueprint.kind === CARD_KINDS.UNIT) {
+        if (a.blueprint.kind === CARD_KINDS.HERO) {
+          if (b.blueprint.kind === CARD_KINDS.HERO) {
             if (a.blueprint.destinyCost !== b.blueprint.destinyCost) {
               return a.blueprint.destinyCost - b.blueprint.destinyCost;
             }
@@ -134,7 +134,7 @@ export class DeckBuildervModel {
           return -1;
         }
 
-        if (b.blueprint.kind === CARD_KINDS.UNIT) {
+        if (b.blueprint.kind === CARD_KINDS.HERO) {
           return 1;
         }
 

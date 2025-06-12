@@ -12,7 +12,7 @@ import { mage } from '../heroes/mage';
 export const arcaneStudies: TalentBlueprint = {
   id: 'arcane-studies',
   name: 'Arcane Studies',
-  cardIconId: 'arcane-studies',
+  cardIconId: 'talent-arcane-studies',
   description: 'Your hero has +1@[spellpower]@.',
   affinity: AFFINITIES.ARCANE,
   collectable: true,

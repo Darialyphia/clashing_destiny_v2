@@ -1,9 +1,12 @@
+import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
-  type Affinity
+  type Affinity,
+  type CardKind
 } from '@game/engine/src/card/card.enums';
 import { type CardSet, CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
+import { isString } from '@game/shared';
 
 export const useCardList = () => {
   const authorizedSets: CardSet[] = [CARD_SET_DICTIONARY.CORE];
@@ -19,6 +22,9 @@ export const useCardList = () => {
   };
 
   const affinityFilter = ref(new Set<Affinity>());
+  const kindFilter = ref(new Set<CardKind>());
+
+  const textFilter = ref('');
 
   const cards = computed(() => {
     return authorizedSets
@@ -33,6 +39,32 @@ export const useCardList = () => {
           !affinityFilter.value.has(card.affinity)
         ) {
           return false;
+        }
+
+        if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
+          return false;
+        }
+
+        if (textFilter.value) {
+          const searchText = textFilter.value.toLocaleLowerCase();
+          return (
+            card.name.toLocaleLowerCase().includes(searchText) ||
+            card.description.toLocaleLowerCase().includes(searchText) ||
+            card.tags.some(tag =>
+              tag.toLocaleLowerCase().includes(searchText)
+            ) ||
+            Object.values(KEYWORDS).some(
+              k =>
+                k.name.toLocaleLowerCase().includes(searchText) ||
+                k.aliases.some(alias => {
+                  return isString(alias)
+                    ? searchText
+                        .toLocaleLowerCase()
+                        .match(alias.toLocaleLowerCase())
+                    : searchText.toLocaleLowerCase().match(alias);
+                })
+            )
+          );
         }
 
         return true;
@@ -68,6 +100,7 @@ export const useCardList = () => {
 
   return {
     cards,
+    textFilter,
     hasAffinityFilter(affinity: Affinity) {
       return affinityFilter.value.has(affinity);
     },
@@ -76,6 +109,16 @@ export const useCardList = () => {
         affinityFilter.value.delete(affinity);
       } else {
         affinityFilter.value.add(affinity);
+      }
+    },
+    hasKindFilter(kind: CardKind) {
+      return kindFilter.value.has(kind);
+    },
+    toggleKindFilter(kind: CardKind) {
+      if (kindFilter.value.has(kind)) {
+        kindFilter.value.delete(kind);
+      } else {
+        kindFilter.value.add(kind);
       }
     }
   };

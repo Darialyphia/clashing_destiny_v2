@@ -21,7 +21,7 @@ import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { Damage, type DamageType } from '@game/engine/src/utils/damage';
+import { type DamageType } from '@game/engine/src/utils/damage';
 const {
   cardId,
   interactive = true,
@@ -53,18 +53,7 @@ const isActionsPopoverOpened = computed({
 const isTargetable = computed(() => {
   if (!interactive) return false;
 
-  const canSelect =
-    state.value.interaction.state ===
-      INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-    state.value.interaction.ctx.elligibleCards.some(id => id === cardId);
-
-  const canAttack =
-    state.value.interaction.state === INTERACTION_STATES.IDLE &&
-    state.value.phase.state === GAME_PHASES.ATTACK &&
-    state.value.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
-    state.value.phase.ctx.potentialTargets.some(id => id === cardId);
-
-  return canSelect || canAttack;
+  return card.value.canBeTargeted;
 });
 
 const cardComponent = useTemplateRef('card');

@@ -86,7 +86,7 @@ const playerInfos = computed(() => {
           <template #trigger>
             <div class="pile" @click="isDiscardPileOpened = true">
               <GameCard
-                v-for="(cardId, i) in boardSide.discardPile.toReversed()"
+                v-for="(cardId, i) in boardSide.discardPile"
                 :key="i"
                 :style="{ '--i': i - 1 }"
                 :card-id="cardId"
@@ -103,7 +103,7 @@ const playerInfos = computed(() => {
           <template #trigger>
             <div class="pile" @click="isBanishPileOpened = true">
               <GameCard
-                v-for="(cardId, i) in boardSide.banishPile.toReversed()"
+                v-for="(cardId, i) in boardSide.banishPile"
                 :key="i"
                 :style="{ '--i': i - 1 }"
                 :card-id="cardId"

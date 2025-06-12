@@ -9,7 +9,12 @@ import { keyBy } from 'lodash-es';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { Icon } from '@iconify/vue';
 import { useCardList } from '@/card/composables/useCardList';
-import { AFFINITIES, type Affinity } from '@game/engine/src/card/card.enums';
+import {
+  AFFINITIES,
+  CARD_KINDS,
+  type Affinity,
+  type CardKind
+} from '@game/engine/src/card/card.enums';
 import { vIntersectionObserver } from '@vueuse/components';
 import type { ValidatableDeck } from '@game/engine/src/card/validators/deck.validator';
 import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
@@ -20,7 +25,14 @@ definePage({
   name: 'Collection'
 });
 
-const { cards, hasAffinityFilter, toggleAffinityFilter } = useCardList();
+const {
+  cards,
+  hasAffinityFilter,
+  toggleAffinityFilter,
+  hasKindFilter,
+  toggleKindFilter,
+  textFilter
+} = useCardList();
 
 const decks = useLocalStorage<ValidatableDeck[]>(
   'clashing-destinies-decks',
@@ -87,68 +99,18 @@ const affinities: Array<{
   label: uppercaseFirstLetter(affinity),
   color: 'white'
 }));
-// [
-//   {
-//     id: AFFINITIES.NORMAL,
-//     img: `/assets/ui/gem-${AFFINITIES.NORMAL.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.NORMAL),
-//     color: '#7a7a7a'
-//   },
-//   {
-//     id: AFFINITIES.FIRE,
-//     img: `/assets/ui/gem-${AFFINITIES.FIRE.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.FIRE),
-//     color: '#f87d35'
-//   },
-//   {
-//     id: AFFINITIES.WATER,
-//     img: `/assets/ui/gem-${AFFINITIES.WATER.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.WATER),
-//     color: '#409fe2'
-//   },
-//   {
-//     id: AFFINITIES.EARTH,
-//     img: `/assets/ui/gem-${AFFINITIES.EARTH.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.EARTH),
-//     color: '#c85149'
-//   },
-//   {
-//     id: AFFINITIES.AIR,
-//     img: `/assets/ui/gem-${AFFINITIES.AIR.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.AIR),
-//     color: '#00fdaa'
-//   },
-//   {
-//     id: AFFINITIES.GENESIS,
-//     img: `/assets/ui/gem-${AFFINITIES.GENESIS.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.GENESIS),
-//     color: '#d2b72d'
-//   },
-//   {
-//     id: AFFINITIES.VOID,
-//     img: `/assets/ui/gem-${AFFINITIES.VOID.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.VOID),
-//     color: '#d100b9'
-//   },
-//   {
-//     id: AFFINITIES.HARMONY,
-//     img: `/assets/ui/gem-${AFFINITIES.HARMONY.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.HARMONY),
-//     color: '#00bf00'
-//   },
-//   {
-//     id: AFFINITIES.WRATH,
-//     img: `/assets/ui/gem-${AFFINITIES.WRATH.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.WRATH),
-//     color: '#d10038'
-//   },
-//   {
-//     id: AFFINITIES.ARCANE,
-//     img: `/assets/ui/gem-${AFFINITIES.ARCANE.toLocaleLowerCase()}.png`,
-//     label: uppercaseFirstLetter(AFFINITIES.ARCANE),
-//     color: '#9067e9'
-//   }
-// ];
+
+const cardKinds: Array<{
+  id: CardKind;
+  img: string;
+  label: string;
+  color: string;
+}> = Object.values(CARD_KINDS).map(kind => ({
+  id: kind,
+  img: `/assets/ui/card-kind-${kind.toLocaleLowerCase()}.png`,
+  label: uppercaseFirstLetter(kind),
+  color: 'white'
+}));
 
 const visibleCards = ref(new Set<string>());
 const onIntersectionObserver =
@@ -180,43 +142,91 @@ const viewMode = ref<'normal' | 'small'>('normal');
           </li>
         </ul>
       </nav>
-
-      <div class="flex gap-3">
-        <label>
-          <Icon icon="material-symbols-light:view-column-2" width="1.5rem" />
-          <input
-            v-model="viewMode"
-            type="radio"
-            value="normal"
-            class="sr-only"
-          />
-        </label>
-        <label>
-          <Icon icon="heroicons:squares-2x2-16-solid" width="1.5rem" />
-          <input
-            v-model="viewMode"
-            type="radio"
-            value="small"
-            class="sr-only"
-          />
-        </label>
-      </div>
-      <div class="affinity-filter">
-        <UiSimpleTooltip v-for="affinity in affinities" :key="affinity.label">
-          <template #trigger>
-            <button
-              :class="hasAffinityFilter(affinity.id) && 'active'"
-              :style="{ '--color': affinity.color }"
-              :aria-label="affinity.label"
-              @click="toggleAffinityFilter(affinity.id)"
-            >
-              <img :src="affinity.img" :alt="affinity.label" />
-            </button>
-          </template>
-          {{ affinity.label }}
-        </UiSimpleTooltip>
-      </div>
     </header>
+    <aside class="filters">
+      <section class="flex gap-3 items-center">
+        <input
+          v-model="textFilter"
+          type="text"
+          placeholder="Search cards..."
+          class="search-input"
+        />
+      </section>
+      <section class="flex gap-3 items-center">
+        <h4>Display</h4>
+        <div class="flex gap-3">
+          <UiSimpleTooltip>
+            <template #trigger>
+              <label class="view-toggle">
+                <Icon
+                  icon="material-symbols-light:view-column-2"
+                  width="1.5rem"
+                />
+                <input
+                  v-model="viewMode"
+                  type="radio"
+                  value="normal"
+                  class="sr-only"
+                />
+              </label>
+            </template>
+            Expanded view
+          </UiSimpleTooltip>
+
+          <UiSimpleTooltip>
+            <template #trigger>
+              <label>
+                <Icon icon="heroicons:squares-2x2-16-solid" width="1.5rem" />
+                <input
+                  v-model="viewMode"
+                  type="radio"
+                  value="small"
+                  class="sr-only"
+                />
+              </label>
+            </template>
+            Compact view
+          </UiSimpleTooltip>
+        </div>
+      </section>
+
+      <section>
+        <h4>Affinities</h4>
+        <div class="affinity-filter">
+          <UiSimpleTooltip v-for="affinity in affinities" :key="affinity.label">
+            <template #trigger>
+              <button
+                :class="hasAffinityFilter(affinity.id) && 'active'"
+                :style="{ '--color': affinity.color }"
+                :aria-label="affinity.label"
+                @click="toggleAffinityFilter(affinity.id)"
+              >
+                <img :src="affinity.img" :alt="affinity.label" />
+              </button>
+            </template>
+            {{ affinity.label }}
+          </UiSimpleTooltip>
+        </div>
+      </section>
+
+      <section>
+        <h4>Card type</h4>
+        <div class="kind-filter">
+          <button
+            v-for="kind in cardKinds"
+            :key="kind.label"
+            :class="hasKindFilter(kind.id) && 'active'"
+            :style="{ '--color': kind.color }"
+            :aria-label="kind.label"
+            @click="toggleKindFilter(kind.id)"
+          >
+            <img :src="kind.img" :alt="kind.label" />
+            {{ kind.label }}
+          </button>
+        </div>
+      </section>
+    </aside>
+
     <ul ref="card-list" class="cards fancy-scrollbar" :class="viewMode">
       <li
         v-for="card in cards"
@@ -251,7 +261,8 @@ const viewMode = ref<'normal' | 'small'>('normal');
         </button>
       </li>
     </ul>
-    <aside>
+
+    <aside class="decks">
       <template v-if="!isEditing">
         <p v-if="!decks.length">You haven't created any deck yet.</p>
         <ul class="mb-5">
@@ -283,7 +294,7 @@ const viewMode = ref<'normal' | 'small'>('normal');
           <Icon icon="material-symbols:edit-outline" />
           <input v-model="deckBuilder.deck.name" type="text" />
         </div>
-        <div class="overflow-y-auto">
+        <div class="overflow-y-auto fancy-scrollbar">
           <div class="text-3 my-5 font-500">
             Main deck ({{ deckBuilder.mainDeckSize }} /
             {{ deckBuilder.validator.mainDeckSize }})
@@ -330,7 +341,6 @@ const viewMode = ref<'normal' | 'small'>('normal');
         </div>
       </div>
     </aside>
-    <footer>TODO Mana filters</footer>
   </div>
 </template>
 
@@ -340,24 +350,23 @@ const viewMode = ref<'normal' | 'small'>('normal');
   height: 100dvh;
   pointer-events: auto;
   display: grid;
-  grid-template-columns: 1fr var(--size-xs);
-  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto 1fr var(--size-xs);
+  grid-template-rows: auto 1fr;
 
   > header {
-    grid-column: 1;
+    grid-row: 1;
+    grid-column: 1 / span 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-block: var(--size-3);
     padding-inline: var(--size-5);
   }
-  > footer {
-    grid-column: 1 / -1;
-  }
 }
 
 .affinity-filter {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--size-1);
   button {
     border: solid var(--border-size-2) transparent;
@@ -377,17 +386,51 @@ const viewMode = ref<'normal' | 'small'>('normal');
   }
 }
 
-aside {
+.kind-filter {
+  display: flex;
+  flex-direction: column;
+  button {
+    border: solid var(--border-size-2) transparent;
+    border-radius: var(--radius-pill);
+    text-align: left;
+    display: flex;
+    gap: var(--size-2);
+    align-items: center;
+
+    &.active {
+      background-color: hsl(from var(--color) h s l / 0.25);
+      border-color: var(--color);
+    }
+
+    & > img {
+      width: 32px;
+      aspect-ratio: 1;
+    }
+  }
+}
+
+.decks {
   padding: var(--size-3);
   overflow-y: hidden;
   grid-row: 1 / -1;
-  grid-column: 2;
+  grid-column: 3;
+}
+
+.filters {
+  grid-row: 2;
+  grid-column: 1;
+  padding: var(--size-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
 }
 
 .cards {
   --pixel-scale: 2;
-  --min-column-size: 19rem;
+  --min-column-size: 20rem;
   gap: var(--size-6);
+  grid-column: 2;
+  grid-row: 2;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--min-column-size), 1fr));
   justify-items: center;
@@ -500,5 +543,22 @@ aside {
   place-content: center;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
+}
+
+.view-toggle {
+  cursor: url('/assets/ui/cursor-hover.png'), auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--size-2) var(--size-4);
+  border-radius: var(--radius-pill);
+  border: solid var(--border-size-1) var(--gray-5);
+  background-color: var(--color-gray-1);
+  color: var(--color-gray-9);
+  &::placeholder {
+    color: var(--color-gray-6);
+    font-style: italic;
+  }
 }
 </style>
