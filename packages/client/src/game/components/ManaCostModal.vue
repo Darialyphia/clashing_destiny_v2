@@ -10,15 +10,13 @@ import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
-const isOpened = computed(() => {
-  const interaction = state.value.interaction;
-  return interaction.state === INTERACTION_STATES.PLAYING_CARD;
-});
-
 const board = useMyBoard();
 const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();
+const isOpened = computed(() => {
+  return client.value.ui.isManaCostOverlayOpened;
+});
 
 const displayedCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD)

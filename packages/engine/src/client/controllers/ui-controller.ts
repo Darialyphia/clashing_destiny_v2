@@ -43,6 +43,8 @@ export class UiController {
 
   private hoverTimeout: NodeJS.Timeout | null = null;
 
+  selectedManaCostIndices: number[] = [];
+
   constructor(private client: GameClient) {
     this.buildClickRules();
     this.buildMinionSlotClickRules();
@@ -114,25 +116,30 @@ export class UiController {
       : this.client.playerId === this.client.state.interaction.ctx.player;
   }
 
-  get isTurnPlayer() {
-    return this.client.playerId === this.client.state.turnPlayer;
+  get isInteractivePlayer() {
+    return this.client.playerId === this.client.getActivePlayerId();
   }
 
   update() {
-    if (this.isInteractingPlayer) {
-      this._isChooseCardsInteractionOverlayOpened =
-        this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
+    this._isChooseCardsInteractionOverlayOpened =
+      this.isInteractingPlayer &&
+      this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
 
-      this._isChooseAffinityInteractionOverlayOpened =
-        this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_AFFINITY;
+    this._isChooseAffinityInteractionOverlayOpened =
+      this.isInteractingPlayer &&
+      this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_AFFINITY;
 
-      this._isManaCostOverlayOpened =
-        this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
-    }
+    this._isManaCostOverlayOpened =
+      this.isInteractingPlayer &&
+      this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
 
-    if (this.isTurnPlayer) {
-      this._isDestinyPhaseOverlayOpened =
-        this.client.state.phase.state === GAME_PHASES.DESTINY;
+    this._isDestinyPhaseOverlayOpened =
+      this.isInteractingPlayer &&
+      this.client.state.phase.state === GAME_PHASES.DESTINY &&
+      this.client.state.interaction.state === INTERACTION_STATES.IDLE;
+
+    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
+      this.selectedManaCostIndices = [];
     }
   }
 

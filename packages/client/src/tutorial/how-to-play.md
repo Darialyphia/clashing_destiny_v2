@@ -1,249 +1,224 @@
-# Comprehensive Rules
+# Clashing Destiny
 
 ## What is this game about ?
 
-Clashes of destiny is a turn based game where two players control a hero, summon creatures, cast spells and equip artifacts to defeat the opponent hero.
+Clashing Destiny is a PVP digital Collectible Card Game, where 2 players control a hero, summon creatures, cast spells and equip artifacts to defeat the opponent hero.
+
+Main inspirations: Grand Archive TCG, Carte Online
 
 ## Start of the game
 
-Both player prepare 2 decks: a **Main deck** and a **Destiny deck**.
+Both players prepare 2 decks: a **Main deck** and a **Destiny deck**. 
 
-When the game starts they draw 4 cards from their main deck.
+When the game starts they draw 6 cards from their main deck.
 
 ## Win Condition
 
-The goal of the game is to reduce the Health of the opponent's **Shrine** OR **Hero** to zero.
+The goal of the game is to reduce the Health of the opponent's **Hero** to zero.
 
 ## Board
 
-The board is of 9 X 5 dimensions with square tiles. The player's Shrines are placed on the middle row on both extremity of the board.
+The board is comprised of 2 symmetrical board sides, one for each player.
 
-## Resources
 
-The game uses 3 types or resources used to play cards and activate abilities: Mana, Destiny and Affinities
+The content of a board side is as follows:
 
-### Mana
+### Talent Zone
 
-Mana is a resource that is used to play cards from the Main Deck. It is earned at a rate of a flat 4 mana per turn, but can be banked for use in the following turn, up to a maximum of 4 mana. This means a player can have up to 8 mana in a turn.
+This zone contains 4 slots to display the **Talent cards** the player has unlocked during the game
 
-#### Overdrive Mode
+### Hero Zone
+ 
+This zone contains:
+- The player's hero: **Hero cards** are placed on top of each other as the hero levels up
+- Artifacts : one slot for each kind of **Artifact card**: Weapon, Armor and Relic
+- Location: one slot for the player current **Location card**
 
-At the start of player 2's sixth turn, the game enters Overdrive Mode. In this mode, players gain 6 mana per turn instead of 4.
+### Minion Zone
 
-### Destiny
+This zone contains 2 other zone: the Attack zone and the Defense zone. They have 5 slots each where players put the **Minion cards** they summon. That means a player can have a maximum of 10 minions on the board at the same time.
 
-Destiny is a resource that is used to play cards from the Destiny Deck. Unlike mana, Players do not gain Destiny automatically at the start of their turn. Instead, once per turn, they may chose to banish up to 2 cards from their han in order to gain that much destiny.
+### Deck Zone
 
-### Affinities
-
-Affinities that a player unlocks determines which cards they are able to play. They start the game with the affinity associated with their Shrine (lvl 0 hero). However, as their Hero gets to max level (level 3), they will be able to unlock a affinities based on the hero.
-The 4 basic affinities are: Fire, Water, Air and Earth.
-The 5 advanced affinities are : Genesis, Wrath, Harmony, Void and Arcane.
-There is also a Normal affinities that can be used regardless of which affinities are unlocked.
-
-## Decks
-
-### Main deck
-
-The Main deck is made of 40 cards. A maximum of 4 copies of the same crd can be put into the main deck. At the beginning of their turn, player draw one card from the main deck.
-
-The Main deck can contain cards of the following type:
-
-- Minion
-- Spell
-- Artifact
-- Secret
-
-### Destiny Deck
-
-The destiny deck is made of 10 unique cards. At the beginning of their turn, after they have drawn from their main deck, a player may spend destiny points to play one and only one card from the Destiny Deck by paying its Destiny cost. If they choose to do so, they must do it before any other action.
-
-The Destiny Deck **MUST** contain one and only one Shrine card. The other cards can be of the following types:
-
-- Minion
-- Spell
-- Artifact
-- Secret
-- Hero
-- Shrine
-
-Note that only a card that has a Destiny cost can be put in the destiny deck : if a card has a mana cost instead, it must go into the Main deck.
-
-When a card from the Destiny deck leaves the field it is banished instead of being sent to its owner's discard pile.
-
-Players are able to play one (and only one) destiny card during the Destiny Phase; however, some card effects could allow playing additional cards from the destiny deck at other points during the course of the game, for exemple "On Enter: play an artifact card from your destiny deck with a destiny cost of 0."
+This zone contains
+- The **Main deck**
+- The **Destiny deck**
+- The **Discard pile**
+- The **Banish pile**
+- The Destiny Zone where the player will put cards face down in order to play cards from the **Main deck**.
 
 ## Cards
 
-There are 6 types of cards: Minions, Heroes, Spells, Artifacts and Secrets.
+The game has two types of card: **Main deck cards** and **Destiny deck cards**
 
-### Shrines
+### Main Deck Cards
 
-Shrines are what a player starts the game with. They start in the Destiny Deck and players must only have one Shrine.
+Main deck cards are located in the **Main Deck**. In order to be played, a player must put cards from their hand into their **Destiny Zone** face down equal to the card's mana cost. Those cards will return to its owner's hand during their next turn (see the Destiny Phase section).
 
-At the start of the game, the Shrine is automatically played from the destiny deck, and the players draw their starting hand (shrines have different way of drawing your starting hand, for example "On Enter: draw 6 cards" vs "On Enter: Scry(6), then draw 6 cards").
+When a Main deck card leaves the board, it goes into the **Discard pile**.
 
-Shrines have a fixed starting position: {x: 0, y: 2} for player 1, ans {x: 8, y: 2} for player 2.
+The main deck can contain between 40 and 60 cards. The same card can be added up to 4 times.
 
-A shrine behaves like a hero, except it cannot move, attack, or counterattack.
+Here are the different types of Main deck cards:
 
-For all intents and purposes, Shrines are considered level 0 heroes.
+#### Minions
 
-### Heroes
+Minions go into the Minion zone's Attack of Defense Zone. They have attack and hp stats. They are able to attack other minions or the enemy hero, block attacks and use abilities, except on the turn they are summoned : this is called *Summoning Sickness*.
 
-Heroes are the main pieces on the board. the goal of the game is to reduce their Health Points to 0.
+Once a minion has been summoned on one of the slots in the Creature Zone, it cannot move except as a result of another card's effect.
 
-A hero starts in the Destiny deck.
+Minions cannot attack the turn they are summoned. They can, however, use abilities or block as they are not exhausted.
 
-When a hero is played, it will either, depending on the state of the game, replace the player's Shrine or its current Hero.
+Minion damage persists between turns.
 
-To be able to play a hero, a player must meet its Destiny cost requirement, as wel las its base level requirement. There are three base level: 1, 2 and 3. Only a hero level 1 can be placed on a Shrine, then a level 2 hero placed on a level 1 hero, and so on.
+##### Positioning clarifications
 
-Note that a card effect may increase a hero's level. This does not affect the hero's base level. For instance, a base level 1 hero with +1 level can not be used to play a base level 3 hero from your destiny deck.
+Positioning plays an important role in Clashing Destinies. Some card effects may targets specific spaces:
+- in front: if the minion is in the defense zone, it means the minion on the same slot of that minion's controller attack zone. If the minion is in the attack zone, it means the minion on the attack zone of that card's player's opponent.
+- behind: if the minion is in the defense zone, this whiffs. If the minion is in the attack zone, it means the minion on the same slot of that minion's controller defense zone.
+- adjacent: This means the spaces in front of, behind, and to the sides of that minion. Diagonals do not count.
+- same row: all spaces on the same attack or defense zone
+- same column: all spaces on the same positional slot of both players's attack and defense zone
 
-For all intents and purposes, the Shrine a player starts the game with is considered a base level 0 hero that cannot move, attack or use abilities.
+#### Spells
 
-#### Level up
+Spells are one time effects. Once resolved, they go directly to the **Discard pile**. 
 
-When playing a base level 2 or 3 hero, the previous level card are not destroyed or banished. Instead, they are placed on top of each other, to make it easier to track lineage and unlocked affinities.
+There are two types of spells: **Cast** and **Burst**. Only Burst spells can be played during an Effect Chain (see the Effect Chain section).
 
-Leveling up a hero will not change its **exhaustion status** nor will it remove the damage they have suffered so far.
+#### Artifacts
 
-#### Lineage
+Artifacts are attached to your Hero and enhance their performance in battle or give them new abilities. Every Artifact has a **durability** stat, When it reaches 0, the artifact is removed and sent to the **Discard pile**.
 
-In addition, most heroes follow a lineage: only heroes that share the same lineage can be played. The lineage is indicated on the card.
+there are 3 types of artifacts: Weapons, Armors and Relics. A hero can only have one of each type equiped at the same time. If another one is equiped, the previous one is considered destroyed and is sent to the **Discard pile**
 
-For example, you can only play _Aiden, Caller of Storms_, hat has the Aiden lineage, if your current hero also posess the Aiden lineage.
+##### Weapons
 
-Note that not all heroes have a lineage requirement. However, playing a hero without a lineage breaks the "lineage chain". For example, playing the base level 2 hero _Ohm, the Forgotten_ on top of a base level 1 _Aiden, Child of the Storm_, breaks the Aiden Lineage. Its player will then not be able to play a level 3 hero with the Aiden lineage, such as _Aiden, Thunder Incarnate_.
+Weapons have an attack stat. Your hero's attack is increased by that amount while it is equipped. 
 
-If the player has a Shrine on the board instead of a Hero, they can play any level 1 Hero on top of it.
+Weapons lose 1 durability after your hero attacks.
 
-### Deckbuilding restrictions
+##### Armor
 
-There are no deckbuilding restrictions regarding which, or how many, heroes a player can put in their Destiny Deck. However, once they played a base level hero, they might lock themselves out from using other heroes due to lineage / level restrictions.
+Armor prevent your hero from taking damage.
 
-#### Affinities
+Armors lose durability when your hero takes damage, equal to the damage taken.
 
-Most heroes of base level 3 will unlock one of the five advanced affinities for its player.
+##### Relic
 
-#### Stats
+Relics do not lose durability by default, but they usually have an activated ability that consumes one or more durability.
 
-A Hero has the following stats:
+#### Attacks
 
-- Health Points (HP): how much damage they can take before being defeated.
-- Attack Points (ATK): how much damage they deal through combat.
-- Spellpower (SP): influences the effects of some other cards.
-- Level (LV): represents the level of the hero. It can influence the effects of some other cards.
+Attack cards are a secondary way to attack with your hero. Like spells, they go straight to the discard pile upon use.
 
-### Minions
+Using an Attack card will immediately transition you to the combat phase, with your Hero declaring the attack.
 
-Minions represent creatures that are summoned on the board and can fight other minions and heroes. They can start either in the Main deck or the Destiny deck.
+Like any othern normal attack, upon playing the attack card, your hero will be exhausted.
 
-Unless specified otherwise on the card, a minion must be summoned on a tile adjacent to its owner's Hero or Shrine (diagonals are allowed).
+#### Locations
 
-#### Summoning sickness
+Locations are cards that provide various bonus or effects to your side of the board. Only one Location card can be active on one side of the board. If another one is played, the current one is first sent to the Discard pile.
 
-There is not "summoning sickness" in this game: minions can move attack or use abilties the turn they are summoned.
+#### Card Affinity
 
-#### Stats
+A card has an **Affinity** associated to it. There are many affinities in the game, such as fire, frost, arcane, shadow, etc...If a player plays a card for which they haven't unlocked the affinity, their Hero will take 1 damage. In addition, some cards can have part , or the totality, of their effect gated behind having unlocked their affinity.
 
-A Minion has the following stats:
+### Destiny Deck Cards 
 
-- Health Points (HP): how much damage they can take before being defeated.
-- Attack Points (ATK): how much damage they deal through combat.
+Destiny deck cards are located in the **Destiny Deck**. In order to be played, a player must send cards from their **Destiny Zone** to their **Banish pile** at random equal to the card's Destiny Cost.
 
-### Spells
+The destiny deck can contain exactly 12 different cards.
 
-Spells one time effect cards: once they are resolved, they go to it's owner discard pile.
+Here are the different types of Destiny Deck Cards :
 
-Some spell's effects may be affected by its owner's Heros Spellpower in various ways. They may also be affected by it owner's Hero's level.
+#### Heroes
 
-Example: Deal 2 + SP damage, draw LV cards, etc...
+Hero are the main cards of this game. If a hero's hp reach 0, they lose the game.
 
-### Artifacts
+Players start with a level 0 Novice with the **Normal** affinity already in play. However, over the course of the game, players are able to level up their hero up to a level 3.
 
-Artifacts are equipements that are attached to its owner's Hero. Note that a Shrine cannot equip artifacts.
+While the default way of leveling up a hero only happens once per turn (see the Turn Structure section below), card effects may enable a player to trigger additional level ups. They cannot however, level up above level 3, or level up to a hero of the same level. They must have a level 0 hero, then level 1, 2 , 3.
 
-Artifacts grant various effects or abilities to its wielder while they are equipped.
+In addition to HP and Attack, Heroes have another stat called Power, that may enhance the effect of some other cards. For example, "Deal 1 + Power damage to an enemy".
 
-When a hero changes by playing another one from the Destiny deck, artifacts stay in place, without any change.
+Each Hero has a few (usually 3) unlockable **Affinities**. When the Hero is played, its player chooses one of those affinities and is now able to play cards of the same affinity to full effect.
 
-#### Stats
+When a hero levels up, its previous hero remains on the board, below the new card. It is considered to be te player's **Hero Lineage**. Most heroes have a lineage requirement; for example, To play a level 3 Warlock, you need to have a Mage in your lineage.
 
-An artifact has the following stats:
+#### Talents
 
-- Durability: an artifact starts at full durability. Whenever its hero takes damage, the artifact loses 1 durability. When it reaches zero, the artifact is destroyed. The durability loss does not scale with the damage taken: it will always lose one and only one durability.
+Talents are passive bonuses tha persist throughout the whole game. They may give bonus to minions, add new effect that trigger under specific conditions, or give activated abilities to the Hero. 
 
-### Secrets
+Talents are tied to a hero class, this means that, for exemple, to play a Mage talent, you need to have your current Hero to be a Mage, or have a Mage in your lineage.
 
-Secrets are cards that are played face down on the board and cannot be activated manually. They trigger when some specific conditions are met, such as the opponent using a spell, or attacking the enemy hero. Once triggered, the secret is destroyed.
-
-### Card Classes and Class Bonus
-
-Each card may have a **Class**, which represents its combat or magical specialization. The available classes are:
-
-- **Fighter** – Close-range martial combatants.
-- **Spellcaster** – Masters of destructive or utility magic.
-- **Avenger** – Agile skirmishers, assassins, and archers.
-- **Guardian** – Defensive stalwarts who protect allies.
-- **Wanderer** – Versatile adventurers and rogues.
-- **Summoner** – Masters of conjuring minions or spirits.
-
-Cards of any type (Minion, Spell, Artifact, etc.) may have a class.
-
-Your **Hero also has a class**, indicated on their card.
-
-Some card effects include a **Class Bonus**: this is an additional effect that is only applied if the card's class matches your Hero’s class.
-
-#### Example:
-
-> **Arcane Bolt** _(Spell – Spellcaster)_  
-> Deal 2 damage.  
-> **Class Bonus – Draw a card.**  
-> (This effect only triggers if your Hero is a Spellcaster.)
-
-Class Bonuses allow you to create synergies between your Hero and your deck, rewarding themed builds while still allowing off-class flexibility.
-
-### Card replacement
-
-Once per turn, a player can put one card from their hand at the bottom of their deck, then draw one card.
-
-## Units
-
-A **Unit** represents either a Creature, Shrine or Hero on the board. During its owner's turn, a unit can
-
-- Move 1 tile. Units cannot move diagonally.
-- Attack another unit.
-- Use an ability.
+Talents remain on the board when played, in the Talent Zone. This one had 4 slots, thus a player may only have 4 active talents. If the one is full, they cannot override them with another Talent card.
 
 ### Exhaustion
 
-An _exhausted_ unit cannot move, attack, counterattack or use an ability. A unit becomes exhausted when
+An *exhausted* card cannot attack, block or use an ability. A card becomes exhausted when
+- it declares an attacks
+- it declares a block
+- it uses an ability (note: not all abilities exhaust the card).
 
-- it attacks.
-- it uses an ability (note: not all abilities exhaust the unit).
-- it counterattacks.
+A card loses its exhausted status at the start of its player's turn. Losing the exhausted status is referred as *activating*.
 
-A unit loses its exhausted status at the end of any player's turn. Losing the exhausted status is referred as _activating_.
+## Turn Structure
 
-## Combat
+Each turn has a few phases that always happen in the same order:
 
-When attacking, a unit deals damage to it equals to its attack, then, if able, the defender will counter attack, doing the same.
+### Start Phase
 
-An exhausted unit will not counterattack. (Keep in mind units activate at the start of **every** player turn, so attacking on your turn does not prevent you from counterattacking).
+During the Start Phase, all of the turn player's card are activated, then they draw 1 card. Player can not take any action during this phase.
 
-A unit will counterattack even if the attacked reduced it's HP to 0.
+Once they have draw for turn, the turn player moves to the **Destiny Phase**.
 
-## Discard Pile and Banish Pile
+### Destiny Phase
 
-Once a card leaves the board, it will go to its owner's discard pile if it is a main deck card, or its banish pile if it is a destiny deck cards. Some cards effect may also require a player to banish some cards.
-From a gameplay perspective, the banish pile is way harder to interact with, while the discard pile may be used for resurrection or recursion effects, etc...
+During the Destiny phase, the turn player player have the opportunity to play one and only one card from their Destiny Deck (either a Hero or Talent card), by banishing cards at random from their Destiny Zone. They may choose not to play any card.
 
-## First player advantage
+Once they have done so, all cards in the turn player's Destiny Zone return to their hand.
 
-To counterbalance first player advantage, the player going second:
+### Main Phase 
 
-- starts with an additional card in their hand at the start of the game, that allows them to gain one additional mana for this turn only.
-- will draw 2 cards on their first turn's Draw phase.
-- will have access to Overdrive Mode one turn sooner.
+During the Main phase, the turn player can:
+- Play cards from their hand
+- Declare an attack: this will automatically progress the game to the Combat Phase.
+- Use a card ability
+
+### Combat phase
+
+The Combat Phase starts when the turn player declares an attack. To do so, they will select their Hero or one of their minion in the Attack Zone, and select a target, which is any enemy Minion, or the Enemy Hero.
+
+Declaring the attack immediately exausts the attacker.
+
+Once done, and after **On Declare Attack** effects have resolved, control passes to the Opponent who has the opportunity to:
+- Declare a blocker by selecting one of their minion in the Defense Zone. This minion will then participate in combat instead of the initial attack target. They may chose not to block the attack.
+- Start an **Effect Chain** (see below)
+
+Declaring a blocker immediately exhausts the blocker.
+
+Once the blocker has been declared, and the effect chain resolved, both combat participant deal damage to each other equal to their attack.
+
+After combat has resolved, the game goes back to the Main Phase where the turn player may play other cards and declare other attacks.
+
+### End Phase
+
+During the end Phase, the turn player's opponent may start an effect Chain. Once it is resolve, or if no chain is declared, The turn ends.
+
+## Effect Chains
+
+Effect chains are the mechanism used to resolve multiple card that happen at the same time. Control alternates between players during  an effect chain.
+When they have control, a player can
+- pass
+- add another effect to the chain. Only **Burst** Spells or card abilities are valid effects.
+
+Once both players are successively passed, the chains resolves in a FILO (First In, Last Out) manner, until the chain is empty.
+
+An effect chain automatically starts:
+- When a Spell is played
+- When a card ability is used
+
+An effect chain may be declared by the turn player's opponent :
+- When the turn player declares an attack
+- When the turn player declares the end of their turn

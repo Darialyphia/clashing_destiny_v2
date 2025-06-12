@@ -16,10 +16,7 @@ const state = useGameState();
 const client = useGameClient();
 
 const isOpened = computed(() => {
-  return (
-    state.value.interaction.state === INTERACTION_STATES.CHOOSING_AFFINITY &&
-    state.value.interaction.ctx.player === client.value.playerId
-  );
+  return client.value.ui.isChooseAffinityInteractionOverlayOpened;
 });
 
 const selected = ref<Affinity | null>(null);

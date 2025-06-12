@@ -3982,6 +3982,19 @@
         },
         {
           "alias": [
+            "ui-surface.png"
+          ],
+          "src": [
+            "/assets/ui/ui-surface.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "unit-stat-bars"
           ],
           "src": [

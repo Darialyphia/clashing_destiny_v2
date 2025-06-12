@@ -9,14 +9,13 @@ import {
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
+const client = useGameClient();
 const isOpened = computed(() => {
-  const interaction = state.value.interaction;
-  return interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
+  return client.value.ui.isChooseCardsInteractionOverlayOpened;
 });
 
 const isShowingBoard = ref(false);
 const state = useGameState();
-const client = useGameClient();
 
 const displayedCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)

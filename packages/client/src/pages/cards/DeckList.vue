@@ -6,7 +6,9 @@ const { decks, createDeck, editDeck } = useCollectionPage();
 </script>
 
 <template>
-  <p v-if="!decks.length">You haven't created any deck yet.</p>
+  <p v-if="!decks.length" class="text-center text-4 mt-6">
+    You haven't created any deck.
+  </p>
   <ul class="mb-5">
     <li
       v-for="(deck, index) in decks"
@@ -24,7 +26,12 @@ const { decks, createDeck, editDeck } = useCollectionPage();
       />
     </li>
   </ul>
-  <FancyButton class="primary-button" text="New Deck" @click="createDeck" />
+  <FancyButton
+    class="primary-button"
+    :class="!decks.length && 'mx-auto'"
+    text="New Deck"
+    @click="createDeck"
+  />
 </template>
 
 <style scoped lang="postcss"></style>
