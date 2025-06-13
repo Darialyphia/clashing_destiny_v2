@@ -21,7 +21,7 @@ export const magicGrimoire: ArtifactBlueprint = {
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  manaCost: 3,
+  manaCost: 2,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,

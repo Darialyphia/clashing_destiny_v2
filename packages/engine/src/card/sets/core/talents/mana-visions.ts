@@ -16,7 +16,7 @@ import { mage } from '../heroes/mage';
 export const manaVisions: TalentBlueprint = {
   id: 'mana-visions',
   name: 'Mana Visions',
-  cardIconId: 'mana-visions',
+  cardIconId: 'talent-mana-visions',
   description: 'After you play an arcane card, @Scry 1@.',
   affinity: AFFINITIES.ARCANE,
   collectable: true,

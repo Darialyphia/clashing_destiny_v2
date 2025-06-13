@@ -917,6 +917,19 @@
         },
         {
           "alias": [
+            "icon-spell-dual-casting"
+          ],
+          "src": [
+            "/assets/icons/spell-dual-casting.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-eternal-flame"
           ],
           "src": [
@@ -1138,6 +1151,19 @@
         },
         {
           "alias": [
+            "icon-spell-surge-of-will"
+          ],
+          "src": [
+            "/assets/icons/spell-surge-of-will.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-thirst-for-knowledge"
           ],
           "src": [
@@ -1181,6 +1207,45 @@
           ],
           "src": [
             "/assets/icons/talent-fire-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-mana-visions"
+          ],
+          "src": [
+            "/assets/icons/talent-mana-visions.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-path-of-the-vanguard"
+          ],
+          "src": [
+            "/assets/icons/talent-path-of-the-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-the-hangman"
+          ],
+          "src": [
+            "/assets/icons/talent-the-hangman.png"
           ],
           "data": {
             "tags": {

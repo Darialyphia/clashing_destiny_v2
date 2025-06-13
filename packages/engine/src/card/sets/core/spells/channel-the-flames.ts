@@ -17,7 +17,7 @@ export const channelTheFlames: SpellBlueprint<PreResponseTarget> = {
   name: 'Channel the Flames',
   cardIconId: 'channel-the-flames',
   description:
-    'Remove @Burn@ from all minions. Gain +1 spellpower until the end of the turn and deal 1 damage to your hero for each removed.',
+    'Remove @Burn@ from all minions. Draw a card and deal 1 damage to your hero for each removed.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -39,13 +39,7 @@ export const channelTheFlames: SpellBlueprint<PreResponseTarget> = {
       ...card.player.opponent.boardSide.getAllMinions()
     ].filter(minion => minion.modifiers.has(BurnModifier));
 
-    await card.player.hero.modifiers.add(
-      new SimpleSpellpowerBuffModifier('channel-the-flames-buff', game, card, {
-        amount: minionsWithBurn.length,
-        mixins: [new UntilEndOfTurnModifierMixin(game)]
-      })
-    );
-
+    await card.player.cardManager.draw(minionsWithBurn.length);
     await card.player.hero.takeDamage(card, new SpellDamage(minionsWithBurn.length));
   }
 };

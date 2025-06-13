@@ -13,7 +13,7 @@ import type { SpellCard } from '../../../entities/spell.entity';
 export const arcaneInsight: SpellBlueprint<PreResponseTarget> = {
   id: 'arcane-insight',
   name: 'Arcane Insight',
-  cardIconId: 'arcane-insight',
+  cardIconId: 'spell-arcane-insight',
   description: 'Draw a card. @[level] 2+ bonus@: Draw another card in your Destiny zone.',
   collectable: true,
   unique: false,

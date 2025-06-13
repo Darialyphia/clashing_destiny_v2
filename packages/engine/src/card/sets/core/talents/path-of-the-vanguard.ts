@@ -13,7 +13,7 @@ import { novice } from '../heroes/novice';
 export const pathOfTheVanguard: TalentBlueprint = {
   id: 'path-of-the-vanguard',
   name: 'Path of the Vanguard',
-  cardIconId: 'path-of-the-vanguard',
+  cardIconId: 'talent-path-of-the-vanguard',
   description: 'When your hero levels up, give +1@[health]@ to your minions.',
   affinity: AFFINITIES.NORMAL,
   collectable: true,

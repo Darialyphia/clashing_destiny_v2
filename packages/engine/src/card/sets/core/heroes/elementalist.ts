@@ -14,7 +14,7 @@ export const elementalist: HeroBlueprint = {
   destinyCost: 2,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [AFFINITIES.FIRE, AFFINITIES.STORM, AFFINITIES.FROST],
+  unlockableAffinities: [AFFINITIES.FIRE, AFFINITIES.WIND, AFFINITIES.FROST],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
   cardIconId: 'elementalist',

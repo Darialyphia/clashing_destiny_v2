@@ -283,6 +283,7 @@ const costStatus = computed(() => {
   /* font-family: 'NotJamSlab14', monospace; */
   font-size: 16px;
   padding: 1rem;
+  transform-style: preserve-3d;
 }
 
 .card-back {

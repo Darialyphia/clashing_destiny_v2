@@ -14,7 +14,7 @@ import type { MinionCard } from '../../../entities/minion.card';
 export const magicFueledGolem: MinionBlueprint = {
   id: 'magic-fueled-golem',
   name: 'Magic-Fueled Golem',
-  cardIconId: 'magic-fueled-golem',
+  cardIconId: 'unit-mana-fueled-golem',
   description: `This cannot attack or block unless your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,

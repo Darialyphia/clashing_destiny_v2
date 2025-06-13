@@ -7,6 +7,7 @@ import { useFxAdapter } from './useFxAdapter';
 export const useSandbox = (
   options: Pick<GameOptions, 'players' | 'rngSeed'>
 ) => {
+  console.log(options);
   const game = new Game({
     id: 'sandbox',
     rngSeed: options.rngSeed,

@@ -15,7 +15,7 @@ import type { MinionCard } from '../../../entities/minion.card';
 export const dualCasting: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'dual-casting',
   name: 'Dual Casting',
-  cardIconId: 'dual-casting',
+  cardIconId: 'spell-dual-casting',
   description: 'Deal 1 damage to up to 2 enemies.',
   collectable: true,
   unique: false,

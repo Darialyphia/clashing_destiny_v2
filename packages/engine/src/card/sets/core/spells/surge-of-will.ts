@@ -16,7 +16,7 @@ import type { MinionCard } from '../../../entities/minion.card';
 export const surgeOfWill: SpellBlueprint<MinionCard> = {
   id: 'surge-of-will',
   name: 'Surge of Will',
-  cardIconId: 'surge-of-will',
+  cardIconId: 'spell-surge-of-will',
   description: 'Your hero has +2 Spellpower until the end of the turn.',
   collectable: true,
   unique: false,
@@ -28,10 +28,10 @@ export const surgeOfWill: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
   tags: [],
-  canPlay: singleEnemyMinionTargetRules.canPlay,
-  getPreResponseTargets: singleEnemyMinionTargetRules.getPreResponseTargets,
+  canPlay: () => true,
+  getPreResponseTargets: async () => [],
   async onInit() {},
-  async onPlay(game, card, [target]) {
+  async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new SimpleSpellpowerBuffModifier('magic_channeler_buff', game, card, {
         amount: 1,
