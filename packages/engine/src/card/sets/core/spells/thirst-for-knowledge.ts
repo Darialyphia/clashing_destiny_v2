@@ -14,7 +14,7 @@ export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
   name: 'Thirst for Knowledge',
   cardIconId: 'spell-thirst-for-knowledge',
   description:
-    'Draw 1 + @[spellpower]@ cards, then put all non Arcane cards in your hand into your Destiny Zone.',
+    'Draw @[spellpower]@ cards, then put all non Arcane cards in your hand into your Destiny Zone.',
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -31,7 +31,7 @@ export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
     await card.modifiers.add(new LevelBonusModifier(game, card, 2));
   },
   async onPlay(game, card) {
-    const amountToDraw = 1 + card.player.hero.spellPower;
+    const amountToDraw = card.player.hero.spellPower;
     await card.player.cardManager.draw(amountToDraw);
     const nonArcaneCards = card.player.cardManager.hand.filter(
       c => c.affinity !== AFFINITIES.ARCANE
