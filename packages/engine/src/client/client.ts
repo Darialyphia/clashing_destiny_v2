@@ -14,6 +14,7 @@ import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import { GAME_PHASES } from '../game/game.enums';
 import { COMBAT_STEPS } from '../game/phases/combat.phase';
+import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -43,6 +44,15 @@ export type NetworkAdapter = {
 
 export type FxAdapter = {
   onDeclarePlayCard: (card: CardViewModel, client: GameClient) => MaybePromise<void>;
+  onCancelPlayCard: (card: CardViewModel, client: GameClient) => MaybePromise<void>;
+  onSelectCardForManaCost: (
+    card: CardViewModel,
+    client: GameClient
+  ) => MaybePromise<void>;
+  onUnselectCardForManaCost: (
+    card: CardViewModel,
+    client: GameClient
+  ) => MaybePromise<void>;
 };
 
 export type GameClientOptions = {
@@ -100,6 +110,8 @@ export class GameClient {
       if (this._processingUpdate) return;
       await this.processQueue();
     });
+
+    this.cancelPlayCard = this.cancelPlayCard.bind(this);
   }
 
   get isPlayingFx() {
@@ -222,5 +234,19 @@ export class GameClient {
   private async sync() {
     const snapshots = await this.networkAdapter.sync(this.lastSnapshotId);
     this.queue.push(...snapshots);
+  }
+
+  cancelPlayCard() {
+    if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
+
+    this.networkAdapter.dispatch({
+      type: 'cancelPlayCard',
+      payload: { playerId: this.state.turnPlayer }
+    });
+    const playedCard = this.state.entities[
+      this.state.interaction.ctx.card
+    ] as CardViewModel;
+
+    void this.fxAdapter.onCancelPlayCard(playedCard, this);
   }
 }

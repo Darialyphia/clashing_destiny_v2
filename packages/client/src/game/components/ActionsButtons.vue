@@ -44,12 +44,7 @@ const canEndTurn = computed(() => {
         state.interaction.ctx.player === client.playerId
       "
       text="Cancel"
-      @click="
-        client.networkAdapter.dispatch({
-          type: 'cancelPlayCard',
-          payload: { playerId: state.turnPlayer }
-        })
-      "
+      @click="client.cancelPlayCard"
     />
 
     <FancyButton

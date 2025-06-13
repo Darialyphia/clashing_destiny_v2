@@ -69,7 +69,7 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 </script>
 
 <template>
-  <div class="destiny-zone" ref="root">
+  <div class="destiny-zone" ref="root" :id="`destiny-zone-${playerId}`">
     <div v-for="(card, index) in boardSide.destinyZone" :key="card">
       <template v-if="client.playerId === playerId">
         <InspectableCard :card-id="card" side="top">
@@ -117,7 +117,6 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 }
 
 .mana-card {
-  background-color: red;
   overflow: hidden;
 }
 </style>

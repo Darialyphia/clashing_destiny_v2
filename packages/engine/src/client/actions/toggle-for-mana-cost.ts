@@ -23,8 +23,10 @@ export class ToggleForManaCost implements CardClickRule {
     if (this.client.ui.selectedManaCostIndices.includes(index)) {
       this.client.ui.selectedManaCostIndices =
         this.client.ui.selectedManaCostIndices.filter(i => i !== index);
+      void this.client.fxAdapter.onUnselectCardForManaCost(card, this.client);
     } else {
       this.client.ui.selectedManaCostIndices.push(index);
+      void this.client.fxAdapter.onSelectCardForManaCost(card, this.client);
     }
   }
 }

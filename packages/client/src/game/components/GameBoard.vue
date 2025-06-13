@@ -16,6 +16,7 @@ import ChooseCardModal from './ChooseCardModal.vue';
 import EffectChain from './EffectChain.vue';
 import PlayerInfos from './PlayerInfos.vue';
 import PlayedCard from './PlayedCard.vue';
+import SVGFilters from './SVGFilters.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -26,6 +27,7 @@ const opponentBoard = useOpponentBoard();
 
 <template>
   <!-- <ManaCostModal /> -->
+  <SVGFilters />
   <DestinyPhaseModal />
   <AffinityModal />
   <ChooseCardModal />

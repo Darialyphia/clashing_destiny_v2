@@ -35,7 +35,12 @@ const card = computed(() => {
   top: 33%;
   right: var(--size-6);
   width: var(--card-width);
-  aspect-ratio: var(--card-ratio);
-  overflow: hidden;
+  height: var(--card-height);
+
+  & > * {
+    display: block;
+    width: var(--card-width);
+    height: var(--card-height);
+  }
 }
 </style>

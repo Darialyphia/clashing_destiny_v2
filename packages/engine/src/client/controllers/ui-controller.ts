@@ -193,6 +193,15 @@ export class UiController {
   getEffectChainDOMSelector() {
     return '#effect-chain';
   }
+
+  getPlayedCardZoneDOMSelector() {
+    return `#played-card`;
+  }
+
+  getDestinyZoneDOMSelector(playerId: string) {
+    return `#destiny-zone-${playerId}`;
+  }
+
   getCardDOMSelector(cardId: string) {
     return `#${cardId}`;
   }
@@ -207,6 +216,14 @@ export class UiController {
 
   getCardDOMSelectorInEffectChain(cardId: string) {
     return `${this.getEffectChainDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
+  }
+
+  getCardDOMSelectorInPLayedCardZone(cardId: string) {
+    return `${this.getPlayedCardZoneDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
+  }
+
+  getCardDOMSelectorInDestinyZone(cardId: string, playerId: string) {
+    return `${this.getDestinyZoneDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
   }
 
   getMinionSlotDomSelector(
