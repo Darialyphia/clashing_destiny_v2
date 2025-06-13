@@ -16,7 +16,11 @@ import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
+import {
+  PlayerPayForDestinyCostEvent,
+  PlayerTurnEvent,
+  PlayerUnlockAffinityEvent
+} from './player.events';
 import type { MainDeckCard } from '../board/board.system';
 import { novice } from '../card/sets/core/heroes/novice';
 
@@ -184,6 +188,13 @@ export class Player
 
   async unlockAffinity(affinity: Affinity) {
     this._unlockedAffinities.push(affinity);
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_UNLOCK_AFFINITY,
+      new PlayerUnlockAffinityEvent({
+        player: this,
+        affinity
+      })
+    );
   }
 
   private payForManaCost(card: AnyCard, indices: number[]) {
