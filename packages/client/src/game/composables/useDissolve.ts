@@ -8,12 +8,11 @@ const easeOutCubic = (t: number) => {
   return 1 - Math.pow(1 - t, 3);
 };
 
-const maxDisplacementScale = 2000;
+const maxDisplacementScale = 1000;
 
-const useDissolve = (el: MaybeRef<HTMLElement>) => {
+export const useDissolveVFX = () => {
   return {
-    play() {
-      const element = unref(el);
+    play(element: HTMLElement, duration: number) {
       if (element.getAttribute('data-dissolve') === 'true') return;
 
       const displacement = document.getElementById(
@@ -22,7 +21,6 @@ const useDissolve = (el: MaybeRef<HTMLElement>) => {
       setRandomSeed();
       element.style.filter = 'url(#dissolve-filter)';
 
-      const duration = 1000;
       const startTime = performance.now();
       element.setAttribute('data-dissolve', 'true');
 

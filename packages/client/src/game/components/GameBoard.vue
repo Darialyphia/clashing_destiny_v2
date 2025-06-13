@@ -17,6 +17,7 @@ import EffectChain from './EffectChain.vue';
 import PlayerInfos from './PlayerInfos.vue';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
+import DestinyCostVFX from './DestinyCostVFX.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -33,6 +34,7 @@ const opponentBoard = useOpponentBoard();
   <ChooseCardModal />
   <CombatArrows />
   <PlayedCard />
+  <DestinyCostVFX />
   <div class="arrows" id="arrows" />
 
   <div class="board-container">

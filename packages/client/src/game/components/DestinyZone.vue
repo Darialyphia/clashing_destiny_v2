@@ -10,6 +10,7 @@ import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import GameCard from './GameCard.vue';
+import { waitFor } from '@game/shared';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -63,7 +64,6 @@ useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async event => {
 
 useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
   if (event.player.id !== playerId) return;
-  // await waitFor(1000 * 60 * 10);
   cardBanishedAsDestinyCost.value = [];
 });
 </script>
@@ -118,5 +118,13 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 
 .mana-card {
   overflow: hidden;
+}
+
+.banished-card {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: var(--card-ratio);
+  height: 100%;
+  transform: rotateY(180deg) translateX(-100%);
 }
 </style>

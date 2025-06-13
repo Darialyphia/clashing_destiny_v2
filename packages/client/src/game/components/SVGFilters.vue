@@ -31,6 +31,7 @@
 
         <!-- Generate fine-grained fractal noise -->
         <feTurbulence
+          id="dissolve-filter-turbulence"
           type="fractalNoise"
           baseFrequency="1"
           numOctaves="1"
@@ -45,6 +46,7 @@
 
         <!-- Apply displacement map to distort the image -->
         <feDisplacementMap
+          id="dissolve-filter-displacement"
           in="SourceGraphic"
           in2="mergedNoise"
           scale="0"

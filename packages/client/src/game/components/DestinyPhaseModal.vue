@@ -2,6 +2,7 @@
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import {
+  useFxEvent,
   useGameClient,
   useGameState,
   useMyBoard
@@ -10,18 +11,22 @@ import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
 const board = useMyBoard();
 const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();
 
-const isOpened = computed(() => {
-  return (
+const isOpened = ref(false);
+watchEffect(() => {
+  isOpened.value =
     client.value.playerId === state.value.turnPlayer &&
     state.value.phase.state === GAME_PHASES.DESTINY &&
-    state.value.interaction.state === INTERACTION_STATES.IDLE
-  );
+    state.value.interaction.state === INTERACTION_STATES.IDLE;
+});
+useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
+  isOpened.value = false;
 });
 
 const selectedIndex = ref<number | null>(null);
@@ -84,13 +89,14 @@ const destinyCards = computed<CardViewModel[]>(() => {
           variant="info"
           :text="selectedIndex !== null ? 'Play' : 'Skip'"
           @click="
+            isOpened = false;
             client.networkAdapter.dispatch({
               type: 'playDestinyCard',
               payload: {
                 playerId: state.turnPlayer,
                 index: selectedIndex
               }
-            })
+            });
           "
         />
       </footer>
