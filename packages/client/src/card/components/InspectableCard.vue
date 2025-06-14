@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useCard } from '@/game/composables/useGameClient';
 import {
   HoverCardRoot,
   HoverCardTrigger,
@@ -10,8 +9,14 @@ import {
 } from 'reka-ui';
 import GameCard from '@/game/components/GameCard.vue';
 
-const { cardId, side } = defineProps<
-  { cardId: string } & Pick<HoverCardContentProps, 'side'> &
+const {
+  cardId,
+  side,
+  sideOffset,
+  closeDelay = 0,
+  openDelay
+} = defineProps<
+  { cardId: string } & Pick<HoverCardContentProps, 'side' | 'sideOffset'> &
     Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
 </script>
@@ -22,7 +27,7 @@ const { cardId, side } = defineProps<
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
-      <HoverCardContent :side="side">
+      <HoverCardContent :side="side" :side-offset="sideOffset">
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>
     </HoverCardPortal>

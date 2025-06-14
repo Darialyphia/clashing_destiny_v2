@@ -72,22 +72,24 @@ export class AfterDeclareAttackEvent extends TypedSerializableEvent<
 }
 
 export class BeforeDeclareAttackTargetEvent extends TypedSerializableEvent<
-  { target: AttackTarget },
-  { target: string }
+  { target: AttackTarget; attacker: Attacker },
+  { target: string; attacker: string }
 > {
   serialize() {
     return {
+      attacker: this.data.attacker.id,
       target: this.data.target.id
     };
   }
 }
 
 export class AfterDeclareAttackTargetEvent extends TypedSerializableEvent<
-  { target: AttackTarget },
-  { target: string }
+  { target: AttackTarget; attacker: Attacker },
+  { target: string; attacker: string }
 > {
   serialize() {
     return {
+      attacker: this.data.attacker.id,
       target: this.data.target.id
     };
   }
@@ -240,7 +242,7 @@ export class CombatPhase
     );
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET,
-      new BeforeDeclareAttackTargetEvent({ target })
+      new BeforeDeclareAttackTargetEvent({ target, attacker: this.attacker })
     );
 
     this.target = target;
@@ -249,7 +251,7 @@ export class CombatPhase
     this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
-      new AfterDeclareAttackTargetEvent({ target })
+      new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
     );
 
     await this.game.inputSystem.askForPlayerInput();

@@ -2,9 +2,11 @@ import { isDefined } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
-import type { Player } from '../../player/player.entity';
+import { Player } from '../../player/player.entity';
 import { CARD_DECK_SOURCES } from '../card.enums';
 import type { DestinyDeckCard, MainDeckCard } from '../../board/board.system';
+import { GAME_EVENTS } from '../../game/game.events';
+import { PlayerDrawEvent } from '../../player/player.events';
 
 export type CardManagerComponentOptions = {
   mainDeck: string[];
@@ -138,11 +140,26 @@ export class CardManagerComponent {
       this.options.maxHandSize - this.hand.length
     );
     if (amountToDraw <= 0) return;
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_BEFORE_DRAW,
+      new PlayerDrawEvent({
+        player: this.player,
+        amount: amountToDraw
+      })
+    );
     const cards = this.mainDeck.draw(amountToDraw);
 
     for (const card of cards) {
       await card.addToHand();
     }
+
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_AFTER_DRAW,
+      new PlayerDrawEvent({
+        player: this.player,
+        amount: amountToDraw
+      })
+    );
   }
 
   async drawIntoDestinyZone(amount: number) {

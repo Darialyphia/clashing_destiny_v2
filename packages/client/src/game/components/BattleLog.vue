@@ -3,11 +3,11 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { Icon } from '@iconify/vue';
-import { HoverCardRoot, HoverCardContent, HoverCardTrigger } from 'reka-ui';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { vOnClickOutside } from '@vueuse/components';
 import type { GamePhase } from '@game/engine/src/game/game.enums';
+import { isDefined } from '@game/shared';
 
 const state = useGameState();
 const client = useGameClient();
@@ -35,6 +35,113 @@ onMounted(() => {
         tokens.push({
           kind: 'game-phase-change',
           phase: event.to.state as GamePhase
+        });
+      }
+
+      if (eventName === GAME_EVENTS.CARD_AFTER_PLAY) {
+        tokens.push({
+          kind: 'text',
+          text: `${state.value.entities[event.card.player].name} played`
+        });
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card.id] as CardViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.attacker] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: 'declared an attack on'
+        });
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.target] as CardViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.AFTER_DECLARE_BLOCKER) {
+        if (isDefined(event.blocker)) {
+          tokens.push({
+            kind: 'card',
+            card: state.value.entities[event.blocker] as CardViewModel
+          });
+          tokens.push({
+            kind: 'text',
+            text: 'declared a block.'
+          });
+        } else {
+          tokens.push({
+            kind: 'text',
+            text: 'No blocker declared.'
+          });
+        }
+      }
+
+      if (eventName === GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card.id] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `dealt ${event.damage} combat damage to`
+        });
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.target] as CardViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card.id] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `dealt ${event.damage} combat damage to`
+        });
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.target] as CardViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card.id] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `took ${event.damage.amount} ${event.damage.type} damage.`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card.id] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `took ${event.damage.amount} ${event.damage.type} damage.`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.PLAYER_AFTER_DRAW) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player.id] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `draw ${event.amount} card${event.amount > 1 ? 's' : ''}.`
         });
       }
 
@@ -124,15 +231,15 @@ const isAction = (event: Pick<Token, 'kind'>[]) =>
             {{ token.text }}
           </template>
           <template v-else-if="token.kind === 'card'">
-            <HoverCardRoot>
-              <HoverCardTrigger>
-                <span class="card">{{ token.card.name }}</span>
-              </HoverCardTrigger>
-
-              <HoverCardContent side="right" :side-offset="20">
-                <InspectableCard :card-id="token.card.id" />
-              </HoverCardContent>
-            </HoverCardRoot>
+            <InspectableCard
+              :card-id="token.card.id"
+              side="right"
+              :side-offset="50"
+              :close-delay="0"
+              :open-delay="0"
+            >
+              <span class="card">{{ token.card.name }}</span>
+            </InspectableCard>
           </template>
 
           <template v-else-if="token.kind === 'input'">

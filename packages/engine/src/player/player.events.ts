@@ -42,9 +42,23 @@ export class PlayerUnlockAffinityEvent extends TypedSerializableEvent<
   }
 }
 
+export class PlayerDrawEvent extends TypedSerializableEvent<
+  { player: Player; amount: number },
+  { player: SerializedPlayer; amount: number }
+> {
+  serialize() {
+    return {
+      player: this.data.player.serialize(),
+      amount: this.data.amount
+    };
+  }
+}
+
 export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_START_TURN]: PlayerTurnEvent;
   [PLAYER_EVENTS.PLAYER_END_TURN]: PlayerTurnEvent;
   [PLAYER_EVENTS.PLAYER_PAY_FOR_DESTINY_COST]: PlayerPayForDestinyCostEvent;
   [PLAYER_EVENTS.PLAYER_UNLOCK_AFFINITY]: PlayerUnlockAffinityEvent;
+  [PLAYER_EVENTS.PLAYER_BEFORE_DRAW]: PlayerDrawEvent;
+  [PLAYER_EVENTS.PLAYER_AFTER_DRAW]: PlayerDrawEvent;
 };
