@@ -27,6 +27,9 @@ const isBanishPileOpened = ref(false);
 const playerInfos = computed(() => {
   return state.value.entities[player] as PlayerViewModel;
 });
+const talents = computed(() => {
+  return playerInfos.value.getTalents();
+});
 </script>
 
 <template>
@@ -47,11 +50,14 @@ const playerInfos = computed(() => {
               class="talent"
             >
               <InspectableCard
-                v-if="playerInfos.talentIds[i]"
-                :card-id="playerInfos.talentIds[i]"
+                v-if="talents[i]"
+                :card-id="talents[i].id"
                 :side="player === client.playerId ? 'right' : 'left'"
               >
-                <div class="talent-filled" />
+                <div
+                  class="talent-filled"
+                  :style="{ '--bg': `url('${talents[i].imagePath}')` }"
+                />
               </InspectableCard>
             </div>
           </div>
@@ -69,14 +75,14 @@ const playerInfos = computed(() => {
         <MinionSlot
           v-for="slot in boardSide.attackZone.slots"
           :key="slot.position"
-          :slot="slot"
+          :minion-slot="slot"
         />
       </div>
       <div class="minion-row">
         <MinionSlot
           v-for="slot in boardSide.defenseZone.slots"
           :key="slot.position"
-          :slot="slot"
+          :minion-slot="slot"
         />
       </div>
     </div>
@@ -156,12 +162,6 @@ const playerInfos = computed(() => {
 .card-turned {
   aspect-ratio: var(--card-ratio-inverted);
   position: relative;
-}
-
-.debug {
-  > * {
-    /* border: solid 2px white; */
-  }
 }
 
 :global(.board *) {
@@ -277,7 +277,8 @@ const playerInfos = computed(() => {
     aspect-ratio: 1;
   }
   .talent-filled {
-    background-color: red;
+    background: var(--bg) no-repeat center;
+    background-size: 200%;
     border-radius: var(--radius-round);
     aspect-ratio: 1;
   }

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  CARD_KINDS,
   RARITIES,
   type Affinity,
   type CardKind,
@@ -106,7 +105,7 @@ until(descriptionBox)
   .toBeTruthy()
   .then(box => {
     const inner = box.firstChild as HTMLElement;
-    let outerHeight = box.clientHeight;
+    const outerHeight = box.clientHeight;
     let innerHeight = inner.clientHeight;
 
     while (innerHeight > outerHeight) {

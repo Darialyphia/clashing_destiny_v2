@@ -5,19 +5,16 @@ import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interacti
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useGameState } from '../composables/useGameClient';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import CardStats from './CardStats.vue';
-import CardResizer from './CardResizer.vue';
 
 const props = defineProps<{
-  slot: SerializedBoardMinionSlot;
+  minionSlot: SerializedBoardMinionSlot;
 }>();
 
 const state = useGameState();
 const client = useGameClient();
 
 const player = computed(() => {
-  return state.value.entities[props.slot.playerId] as PlayerViewModel;
+  return state.value.entities[props.minionSlot.playerId] as PlayerViewModel;
 });
 
 const isHighlighted = computed(() => {
@@ -26,40 +23,40 @@ const isHighlighted = computed(() => {
       INTERACTION_STATES.SELECTING_MINION_SLOT &&
     state.value.interaction.ctx.elligiblePosition.some(p => {
       return (
-        p.playerId === props.slot.playerId &&
-        p.slot === props.slot.position &&
-        p.zone === props.slot.zone
+        p.playerId === props.minionSlot.playerId &&
+        p.slot === props.minionSlot.position &&
+        p.zone === props.minionSlot.zone
       );
     })
   );
 });
 
-const getspriteFromCardId = (cardId: string) => {
-  const card = state.value.entities[cardId] as CardViewModel;
-  if (!card) return '';
-  return `url(${card.imagePath})`;
-};
+// const getspriteFromCardId = (cardId: string) => {
+//   const card = state.value.entities[cardId] as CardViewModel;
+//   if (!card) return '';
+//   return `url(${card.imagePath})`;
+// };
 </script>
 
 <template>
   <div
     class="minion-slot"
     :class="{ highlighted: isHighlighted }"
-    :id="`minion-slot-${props.slot.playerId}-${props.slot.position}-${props.slot.zone}`"
+    :id="`minion-slot-${props.minionSlot.playerId}-${props.minionSlot.position}-${props.minionSlot.zone}`"
     @click="
       client.ui.onMinionSlotClick({
         player: player,
-        slot: props.slot.position,
-        zone: props.slot.zone
+        slot: props.minionSlot.position,
+        zone: props.minionSlot.zone
       })
     "
   >
     <InspectableCard
-      v-if="props.slot.minion"
-      :card-id="props.slot.minion"
+      v-if="props.minionSlot.minion"
+      :card-id="props.minionSlot.minion"
       side="right"
     >
-      <GameCard :card-id="props.slot.minion" class="minion-slot-card" />
+      <GameCard :card-id="props.minionSlot.minion" class="minion-slot-card" />
     </InspectableCard>
     <!-- <div
       v-if="props.slot.minion"
@@ -88,7 +85,7 @@ const getspriteFromCardId = (cardId: string) => {
   }
 }
 
-.minion-slot-sprite {
+/* .minion-slot-sprite {
   background-image: var(--bg);
   background-size: cover;
   transform: scale(2) translateX(-3px) translateY(-15px) rotateX(-30deg);
@@ -96,5 +93,5 @@ const getspriteFromCardId = (cardId: string) => {
   image-rendering: pixelated;
   position: relative;
   pointer-events: none;
-}
+} */
 </style>

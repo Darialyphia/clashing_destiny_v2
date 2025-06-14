@@ -303,7 +303,6 @@ export class CardViewModel {
 
   getModifiers() {
     return this.data.modifiers.map(modifierId => {
-      console.log(modifierId, this.getEntities()[modifierId]);
       return this.getEntities()[modifierId] as ModifierViewModel;
     });
   }

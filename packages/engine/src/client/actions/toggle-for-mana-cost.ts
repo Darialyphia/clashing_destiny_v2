@@ -16,6 +16,10 @@ export class ToggleForManaCost implements CardClickRule {
   }
 
   async handler(card: CardViewModel) {
+    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
+      return;
+    }
+
     const index = card
       .getPlayer()
       .getHand()
@@ -27,7 +31,10 @@ export class ToggleForManaCost implements CardClickRule {
     } else {
       this.client.ui.selectedManaCostIndices.push(index);
       await this.client.fxAdapter.onSelectCardForManaCost(card, this.client);
-      if (this.client.ui.selectedManaCostIndices.length === card.manaCost) {
+      const playedCardId = this.client.state.interaction.ctx.card;
+      const playedCard = this.client.state.entities[playedCardId] as CardViewModel;
+
+      if (this.client.ui.selectedManaCostIndices.length === playedCard.manaCost) {
         this.client.commitPlayCard();
       }
     }
