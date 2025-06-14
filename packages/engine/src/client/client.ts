@@ -81,6 +81,11 @@ export class GameClient {
 
   private lastSnapshotId = -1;
 
+  private snapshots = new Map<
+    number,
+    GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  >();
+
   private _isPlayingFx = false;
 
   public isReady = false;
@@ -91,7 +96,10 @@ export class GameClient {
     GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
   > = [];
 
-  private emitter = new TypedEventEmitter<{ update: EmptyObject }>('sequential');
+  private emitter = new TypedEventEmitter<{
+    update: EmptyObject;
+    updateCompleted: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>;
+  }>('sequential');
 
   constructor(options: GameClientOptions) {
     this.networkAdapter = options.networkAdapter;
@@ -221,8 +229,9 @@ export class GameClient {
       }
 
       this.ui.update();
-
+      this.snapshots.set(snapshot.id, snapshot);
       await this.emitter.emit('update', {});
+      await this.emitter.emit('updateCompleted', snapshot);
     } catch (err) {
       console.error(err);
     }
@@ -230,6 +239,14 @@ export class GameClient {
 
   onUpdate(cb: () => void) {
     this.emitter.on('update', cb);
+  }
+
+  onUpdateCompleted(
+    cb: (
+      snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+    ) => void
+  ) {
+    this.emitter.on('updateCompleted', cb);
   }
 
   private async sync() {

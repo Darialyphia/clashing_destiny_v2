@@ -18,6 +18,7 @@ import PlayerInfos from './PlayerInfos.vue';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
+import BattleLog from './BattleLog.vue';
 
 const board = useTemplateRef('board');
 useBoardResize(board);
@@ -28,6 +29,7 @@ const opponentBoard = useOpponentBoard();
 
 <template>
   <!-- <ManaCostModal /> -->
+  <BattleLog />
   <SVGFilters />
   <DestinyPhaseModal />
   <AffinityModal />
@@ -68,11 +70,6 @@ const opponentBoard = useOpponentBoard();
   overflow: hidden;
   transform-style: preserve-3d;
   perspective: 1000px;
-}
-
-.card-turned {
-  aspect-ratio: var(--card-ratio-inverted);
-  position: relative;
 }
 
 .board {
