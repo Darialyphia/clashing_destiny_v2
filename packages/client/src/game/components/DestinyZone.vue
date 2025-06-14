@@ -10,7 +10,6 @@ import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import GameCard from './GameCard.vue';
-import { waitFor } from '@game/shared';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -89,10 +88,10 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
       <div
         v-for="index in client.ui.selectedManaCostIndices"
         :key="index"
-        class="item mana-card"
+        class="item mana-card-wrapper"
       >
         <InspectableCard :card-id="boardSide.hand[index]" side="top">
-          <GameCard :card-id="boardSide.hand[index]" class="item" />
+          <GameCard :card-id="boardSide.hand[index]" class="mana-card" />
         </InspectableCard>
       </div>
     </template>
@@ -116,8 +115,14 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
   height: 100%;
 }
 
-.mana-card {
-  overflow: hidden;
+.mana-card-wrapper {
+  position: relative;
+}
+:global(.mana-card-wrapper > *) {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: var(--card-ratio);
+  height: 100%;
 }
 
 .banished-card {

@@ -34,7 +34,7 @@ export const surgeOfWill: SpellBlueprint<MinionCard> = {
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new SimpleSpellpowerBuffModifier('magic_channeler_buff', game, card, {
-        amount: 1,
+        amount: 2,
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );

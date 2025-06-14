@@ -852,6 +852,19 @@
         },
         {
           "alias": [
+            "icon-spell-arcane-insight"
+          ],
+          "src": [
+            "/assets/icons/spell-arcane-insight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-arcane-missile"
           ],
           "src": [
@@ -1688,6 +1701,19 @@
           ],
           "src": [
             "/assets/icons/unit-magic-channeler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-mana-fueled-golem"
+          ],
+          "src": [
+            "/assets/icons/unit-mana-fueled-golem.png"
           ],
           "data": {
             "tags": {

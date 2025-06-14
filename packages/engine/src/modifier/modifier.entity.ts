@@ -71,6 +71,7 @@ export type SerializedModifier = {
   icon?: string;
   target: string;
   source: string;
+  stacks: number;
 };
 
 export class Modifier<
@@ -177,7 +178,8 @@ export class Modifier<
       description: this.infos.description,
       icon: this.infos.icon,
       target: this._target.id,
-      source: this.source.id
+      source: this.source.id,
+      stacks: this.stacks
     };
   }
 }

@@ -130,6 +130,7 @@
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
   --card-ratio-inverted: var(--card-height-unitless) /
     var(--card-width-unitless);
+  --pixel-scale: 2;
 }
 
 html.dark {

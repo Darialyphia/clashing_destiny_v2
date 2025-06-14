@@ -118,9 +118,15 @@ export class GameSnaphotSystem extends System<EmptyObject> {
     const entities: EntityDictionary = {};
     this.game.cardSystem.cards.forEach(card => {
       entities[card.id] = card.serialize();
+      card.modifiers.list.forEach(modifier => {
+        entities[modifier.id] = modifier.serialize();
+      });
     });
     this.game.playerSystem.players.forEach(player => {
       entities[player.id] = player.serialize();
+      player.modifiers.list.forEach(modifier => {
+        entities[modifier.id] = modifier.serialize();
+      });
     });
     return entities;
   }

@@ -44,6 +44,10 @@ export class ModifierViewModel {
     return this.data.icon;
   }
 
+  get stacks() {
+    return this.data.stacks;
+  }
+
   get targetAsCard() {
     return this.getEntities()[this.data.target] as CardViewModel;
   }

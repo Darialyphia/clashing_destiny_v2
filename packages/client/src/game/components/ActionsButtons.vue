@@ -19,24 +19,15 @@ const canEndTurn = computed(() => {
 
 <template>
   <div class="action-buttons">
-    <FancyButton
+    <!-- <FancyButton
       v-if="
         state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
         state.interaction.ctx.player === client.playerId
       "
       text="Play Card"
       variant="info"
-      @click="
-        console.log('Commit play card', client.ui.selectedManaCostIndices);
-        client.networkAdapter.dispatch({
-          type: 'commitPlayCard',
-          payload: {
-            playerId: client.playerId,
-            manaCostIndices: client.ui.selectedManaCostIndices
-          }
-        });
-      "
-    />
+      @click="client.commitPlayCard"
+    /> -->
 
     <FancyButton
       v-if="

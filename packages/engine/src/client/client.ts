@@ -112,6 +112,7 @@ export class GameClient {
     });
 
     this.cancelPlayCard = this.cancelPlayCard.bind(this);
+    this.commitPlayCard = this.commitPlayCard.bind(this);
   }
 
   get isPlayingFx() {
@@ -248,5 +249,15 @@ export class GameClient {
     ] as CardViewModel;
 
     void this.fxAdapter.onCancelPlayCard(playedCard, this);
+  }
+
+  commitPlayCard() {
+    this.networkAdapter.dispatch({
+      type: 'commitPlayCard',
+      payload: {
+        playerId: this.playerId,
+        manaCostIndices: this.ui.selectedManaCostIndices
+      }
+    });
   }
 }

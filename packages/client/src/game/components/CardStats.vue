@@ -3,6 +3,7 @@ import { isDefined } from '@game/shared';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { useCard, useGameClient } from '../composables/useGameClient';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const { cardId } = defineProps<{ cardId: string }>();
 
@@ -17,6 +18,10 @@ const isDisplayed = computed(() => {
 });
 
 const client = useGameClient();
+
+const visibleModifiers = computed(() =>
+  card.value.getModifiers().filter(modifier => modifier.icon)
+);
 </script>
 
 <template>
@@ -25,6 +30,25 @@ const client = useGameClient();
     class="stats"
     :class="{ flipped: card.getPlayer().id !== client.playerId }"
   >
+    <div class="modifiers">
+      <UiSimpleTooltip
+        v-for="modifier in visibleModifiers"
+        :key="modifier.id"
+        use-portal
+        side="left"
+      >
+        <template #trigger>
+          <div
+            :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+            :alt="modifier.name"
+            class="modifier"
+          />
+        </template>
+
+        <div class="font-7">{{ modifier.name }}</div>
+        {{ modifier.description }}
+      </UiSimpleTooltip>
+    </div>
     <div
       class="atk"
       v-if="isDefined(card.atk)"
@@ -112,5 +136,28 @@ const client = useGameClient();
     background-size: 60px;
     padding-left: var(--size-10);
   }
+}
+
+.modifiers {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: var(--size-5);
+  --pixel-scale: 3;
+  .stats.flipped & {
+    bottom: unset;
+    top: 0;
+  }
+}
+
+.modifier {
+  width: calc(var(--pixel-scale) * 20px);
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center center;
+  background-size: cover;
+  pointer-events: auto;
 }
 </style>

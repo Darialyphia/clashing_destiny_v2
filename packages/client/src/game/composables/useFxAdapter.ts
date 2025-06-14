@@ -37,19 +37,22 @@ export const useFxAdapter = (): FxAdapter => {
     },
 
     onSelectCardForManaCost(card, client) {
-      const flipState = Flip.getState(
-        client.ui.getCardDOMSelectorInHand(card.id, card.getPlayer().id)
-      );
+      return new Promise<void>(resolve => {
+        const flipState = Flip.getState(
+          client.ui.getCardDOMSelectorInHand(card.id, card.getPlayer().id)
+        );
 
-      window.requestAnimationFrame(() => {
-        Flip.from(flipState, {
-          targets: client.ui.getCardDOMSelectorInDestinyZone(
-            card.id,
-            card.getPlayer().id
-          ),
-          duration: 0.4,
-          absolute: true,
-          ease: Power3.easeOut
+        window.requestAnimationFrame(() => {
+          Flip.from(flipState, {
+            targets: client.ui.getCardDOMSelectorInDestinyZone(
+              card.id,
+              card.getPlayer().id
+            ),
+            duration: 0.4,
+            absolute: true,
+            ease: Power3.easeOut,
+            onComplete: resolve
+          });
         });
       });
     },

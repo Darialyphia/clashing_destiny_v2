@@ -23,6 +23,7 @@ import {
 } from './player.events';
 import type { MainDeckCard } from '../board/board.system';
 import { novice } from '../card/sets/core/heroes/novice';
+import { ModifierManager } from '../modifier/modifier-manager.component';
 
 export type PlayerOptions = {
   id: string;
@@ -71,6 +72,8 @@ export class Player
 
   readonly cardManager: CardManagerComponent;
 
+  readonly modifiers: ModifierManager<Player>;
+
   readonly artifactManager: ArtifactManagerComponent;
 
   private readonly _unlockedAffinities: Affinity[] = [AFFINITIES.NORMAL];
@@ -95,6 +98,7 @@ export class Player
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
+    this.modifiers = new ModifierManager<Player>(this);
     this.artifactManager = new ArtifactManagerComponent(game, this);
   }
 
