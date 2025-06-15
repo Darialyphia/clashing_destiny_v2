@@ -284,7 +284,11 @@ export class GameInteractionSystem
         player
       }
     );
-    await this.game.inputSystem.askForPlayerInput();
+    if (card.manaCost === 0) {
+      await this.getContext<'playing_car'>().ctx.commit(player, []);
+    } else {
+      await this.game.inputSystem.askForPlayerInput();
+    }
   }
 
   onInteractionEnd() {

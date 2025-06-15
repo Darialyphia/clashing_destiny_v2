@@ -11,6 +11,7 @@ import type { Affinity } from '../../card/card.enums';
 type ChoosingAffinityContextOptions = {
   player: Player;
   choices: Affinity[];
+  label: string;
 };
 export class ChoosingAffinityContext {
   static async create(game: Game, options: ChoosingAffinityContextOptions) {
@@ -25,12 +26,15 @@ export class ChoosingAffinityContext {
 
   private player: Player;
 
+  private label: string;
+
   private constructor(
     private game: Game,
     options: ChoosingAffinityContextOptions
   ) {
     this.choices = options.choices;
     this.player = options.player;
+    this.label = options.label;
   }
 
   async init() {}
@@ -38,7 +42,8 @@ export class ChoosingAffinityContext {
   serialize() {
     return {
       player: this.player.id,
-      choices: this.choices
+      choices: this.choices,
+      label: this.label
     };
   }
 
