@@ -29,6 +29,7 @@ export class PercingModifier<T extends MinionCard | HeroCard> extends Modifier<T
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
           handler: async event => {
+            console.log(event.data);
             if (!event.data.card.equals(this.target)) return;
             if (!isMinion(event.data.target)) return;
             const behind = event.data.target.slot?.behind?.minion;

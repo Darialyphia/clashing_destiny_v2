@@ -201,6 +201,12 @@ export class Player
     );
   }
 
+  async removeAffinity(affinity: Affinity) {
+    const index = this._unlockedAffinities.indexOf(affinity);
+    assert(index !== -1, new CardNotFoundError());
+    this._unlockedAffinities.splice(index, 1);
+  }
+
   private payForManaCost(card: AnyCard, indices: number[]) {
     const hasEnough = this.cardManager.hand.length >= card.manaCost;
     assert(hasEnough, new NotEnoughCardsInHandError());

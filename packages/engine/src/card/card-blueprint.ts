@@ -116,7 +116,7 @@ export type HeroBlueprint = DestinyDeckCardBlueprint & {
   level: 0 | 1 | 2 | 3;
   lineage: string | null;
   onInit: (game: Game, card: HeroCard) => Promise<void>;
-  onPlay: (game: Game, card: HeroCard) => Promise<void>;
+  onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   atk: number;
   maxHp: number;
   spellPower: number;

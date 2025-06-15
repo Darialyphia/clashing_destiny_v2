@@ -97,8 +97,7 @@ export class SpellCard extends Card<
           await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
         }
         await this.blueprint.onPlay(this.game, this, targets);
-        this.removeFromCurrentLocation();
-        this.player.cardManager.sendToDiscardPile(this);
+        this.sendToDiscardPile();
         await this.game.emit(
           CARD_EVENTS.CARD_AFTER_PLAY,
           new CardBeforePlayEvent({ card: this })

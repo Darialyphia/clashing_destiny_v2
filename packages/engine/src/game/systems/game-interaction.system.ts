@@ -250,7 +250,7 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async chooseAffinity(options: { player: Player; choices: Affinity[] }) {
+  async chooseAffinity(options: { player: Player; choices: Affinity[]; label: string }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY);
     // @ts-expect-error
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_AFFINITY].create(

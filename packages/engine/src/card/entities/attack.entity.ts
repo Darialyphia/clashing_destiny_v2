@@ -66,7 +66,7 @@ export class AttackCard extends Card<
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
-    this.removeFromCurrentLocation();
+    this.sendToDiscardPile();
 
     if (!this.hasAffinityMatch) {
       await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
@@ -78,6 +78,7 @@ export class AttackCard extends Card<
       cleanups.forEach(unsub => unsub());
     });
     const [target] = await this.blueprint.getPreResponseTargets(this.game, this);
+    await this.blueprint.onPlay(this.game, this);
     await this.game.gamePhaseSystem.startCombat();
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['ATTACK']>()

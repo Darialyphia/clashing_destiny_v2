@@ -12,7 +12,7 @@ import {
   type PreResponseTarget,
   type SerializedAbility
 } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, type Affinity } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
   Card,
@@ -156,6 +156,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   private lineage: HeroBlueprint[] = [];
 
   private abilityTargets = new Map<string, PreResponseTarget[]>();
+
+  unlockedAffinity!: Affinity;
 
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
     super(
@@ -380,14 +382,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     if (this.level > 0) {
       const affinity = await this.game.interaction.chooseAffinity({
         player: this.player,
-        choices: this.unlockableAffinities
+        choices: this.unlockableAffinities,
+        label: 'Choose an affinity to unlock'
       });
       if (affinity) {
+        this.unlockedAffinity = affinity;
         await this.player.unlockAffinity(affinity);
       }
       await this.player.hero.levelup(this);
     } else {
-      await this.blueprint.onPlay(this.game, this);
+      await this.blueprint.onPlay(this.game, this, this);
     }
 
     await this.game.emit(
@@ -403,7 +407,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
     this.lineage.push(this.blueprint);
     this.blueprint = hero.blueprint;
-    await this.blueprint.onPlay(this.game, this);
+    await this.blueprint.onPlay(this.game, this, hero);
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_LEVEL_UP,
       new HeroLevelUpEvent({ card: this, to: hero })
