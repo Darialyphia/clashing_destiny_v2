@@ -18,7 +18,7 @@ export const magicFueledGolem: MinionBlueprint = {
   id: 'magic-fueled-golem',
   name: 'Magic-Fueled Golem',
   cardIconId: 'unit-mana-fueled-golem',
-  description: `This has +3 @[atk]@ and @Taunt@ as long as your hero has at least 3 @[spellpower]@.`,
+  description: `This has +3 @[attack]@ and @Taunt@ as long as your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
