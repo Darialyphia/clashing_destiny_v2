@@ -13,7 +13,7 @@ export class PercingModifier<T extends MinionCard | HeroCard> extends Modifier<T
   constructor(game: Game, source: AnyCard) {
     super(KEYWORDS.PIERCING.id, game, source, {
       name: KEYWORDS.PIERCING.name,
-      description: KEYWORDS.BLITZ.description,
+      description: KEYWORDS.PIERCING.description,
       icon: 'keyword-piercing',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.RUSH),

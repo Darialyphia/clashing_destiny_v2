@@ -50,7 +50,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
-  canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
+  canBeAttacked: Interceptable<boolean, { target: Attacker }>;
   canUseAbility: Interceptable<boolean, MinionCard>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;

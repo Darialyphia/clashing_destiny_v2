@@ -85,6 +85,13 @@ const opponentBoard = useOpponentBoard();
   margin-inline: auto;
 }
 
+@media (width < 1024px) {
+  .board {
+    transform: rotateX(30deg) translateY(-300px)
+      scale(calc(var(--board-scale) / 2));
+  }
+}
+
 :global(.board *) {
   transform-style: preserve-3d;
 }

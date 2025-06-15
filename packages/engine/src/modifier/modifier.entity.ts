@@ -97,6 +97,8 @@ export class Modifier<
 
   protected stacks = 1;
 
+  private _isEnabled = true;
+
   constructor(
     modifierType: string,
     game: Game,
@@ -118,10 +120,40 @@ export class Modifier<
     };
   }
 
+  get isEnabled() {
+    return this._isEnabled;
+  }
+
+  enable() {
+    if (this._isEnabled) return;
+    this._isEnabled = true;
+    if (this.isApplied) {
+      this.mixins.forEach(mixin => mixin.onApplied(this._target, this));
+    }
+  }
+
+  disable() {
+    if (!this._isEnabled) return;
+    this._isEnabled = false;
+    if (this.isApplied) {
+      this.mixins.forEach(mixin => mixin.onRemoved(this._target, this));
+    }
+  }
+
   addMixin(mixin: ModifierMixin<T>) {
     this.mixins.push(mixin);
     if (this.isApplied) {
       mixin.onApplied(this._target, this);
+    }
+  }
+
+  removeMixin(mixin: ModifierMixin<T>) {
+    const index = this.mixins.indexOf(mixin);
+    if (index !== -1) {
+      this.mixins.splice(index, 1);
+      if (this.isApplied) {
+        mixin.onRemoved(this._target, this);
+      }
     }
   }
 
@@ -135,9 +167,11 @@ export class Modifier<
       new ModifierLifecycleEvent(this)
     );
     this._target = target;
-    this.mixins.forEach(mixin => {
-      mixin.onApplied(target, this);
-    });
+    if (this.isEnabled) {
+      this.mixins.forEach(mixin => {
+        mixin.onApplied(target, this);
+      });
+    }
     this.isApplied = true;
     await this.game.emit(MODIFIER_EVENTS.AFTER_APPLIED, new ModifierLifecycleEvent(this));
   }
@@ -148,9 +182,12 @@ export class Modifier<
       new ModifierLifecycleEvent(this)
     );
     this.stacks += 1;
-    this.mixins.forEach(mixin => {
-      mixin.onReapplied(target, this);
-    });
+    if (this.isEnabled) {
+      this.mixins.forEach(mixin => {
+        mixin.onReapplied(target, this);
+      });
+    }
+
     await this.game.emit(
       MODIFIER_EVENTS.AFTER_REAPPLIED,
       new ModifierLifecycleEvent(this)

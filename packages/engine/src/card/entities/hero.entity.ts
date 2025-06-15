@@ -45,7 +45,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBlock: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
-  canBeAttacked: Interceptable<boolean, { target: AttackTarget }>;
+  canBeAttacked: Interceptable<boolean, { target: Attacker }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, { ability: Ability<HeroCard, any> }>;

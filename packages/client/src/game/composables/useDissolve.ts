@@ -8,7 +8,7 @@ const easeOutCubic = (t: number) => {
   return 1 - Math.pow(1 - t, 3);
 };
 
-const maxDisplacementScale = 1000;
+const maxDisplacementScale = 300;
 
 export const useDissolveVFX = () => {
   return {

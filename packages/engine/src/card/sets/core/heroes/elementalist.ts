@@ -31,7 +31,7 @@ export const elementalist: HeroBlueprint = {
   abilities: [
     {
       id: 'elementalist-ability',
-      label: 'Elemental Surge',
+      label: 'Master of the Elements',
       description:
         '@[exhaust]@ @[mana] 1 @ : Replace one of your unlocked affinities with a different one available for Elementalist.',
       manaCost: 1,
@@ -61,14 +61,13 @@ export const elementalist: HeroBlueprint = {
   ],
   tags: [],
   async onInit() {},
-  async onPlay(game, card, originalCard) {
-    const unlockedAffinity = originalCard.unlockedAffinity;
+  async onPlay(game, card) {
     const choicePool = await Promise.all(
       Object.values(game.cardPool)
         .filter(
           blueprint =>
             blueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-            card.player.unlockedAffinities.includes(unlockedAffinity) &&
+            card.player.unlockedAffinities.includes(blueprint.affinity) &&
             blueprint.kind === CARD_KINDS.SPELL
         )
         .map(blueprint => card.player.generateCard<MainDeckCard>(blueprint.id))

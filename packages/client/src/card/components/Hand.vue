@@ -9,8 +9,7 @@ import {
 import GameCard from '@/game/components/GameCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
-import { isDefined, waitFor } from '@game/shared';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { isDefined } from '@game/shared';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
 const myBoard = useMyBoard();
@@ -148,6 +147,12 @@ const displayCards = computed(() => {
         )
         translateY(var(--y-offset));
     }
+  }
+}
+
+@media (width < 1024px) {
+  .hand {
+    transform: scale(0.5);
   }
 }
 </style>

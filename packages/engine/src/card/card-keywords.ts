@@ -21,11 +21,11 @@ export const KEYWORDS = {
     description: 'This unit cannot attack or use abilities the turn it is played.',
     aliases: []
   },
-  PROVOKE: {
-    id: 'provoke',
-    name: 'Provoke',
+  TAUNT: {
+    id: 'taunt',
+    name: 'Taunt',
     description: 'Enemies must target this when declaring an attack.',
-    aliases: ['provoke']
+    aliases: ['Taunted']
   },
   ON_ENTER: {
     id: 'on-enter',

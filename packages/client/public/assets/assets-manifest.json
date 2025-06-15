@@ -305,10 +305,49 @@
         },
         {
           "alias": [
+            "icon-hero-elementalist"
+          ],
+          "src": [
+            "/assets/icons/hero-elementalist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-hero-mage"
           ],
           "src": [
             "/assets/icons/hero-mage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-hero-sage"
+          ],
+          "src": [
+            "/assets/icons/hero-sage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-hero-sorcerer"
+          ],
+          "src": [
+            "/assets/icons/hero-sorcerer.png"
           ],
           "data": {
             "tags": {
@@ -751,6 +790,19 @@
           ],
           "src": [
             "/assets/icons/modifier-bubble.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-modifier-double-cast"
+          ],
+          "src": [
+            "/assets/icons/modifier-double-cast.png"
           ],
           "data": {
             "tags": {
