@@ -285,7 +285,7 @@ export class GameInteractionSystem
       }
     );
     if (card.manaCost === 0) {
-      await this.getContext<'playing_car'>().ctx.commit(player, []);
+      await this.getContext<'playing_card'>().ctx.commit(player, []);
     } else {
       await this.game.inputSystem.askForPlayerInput();
     }
