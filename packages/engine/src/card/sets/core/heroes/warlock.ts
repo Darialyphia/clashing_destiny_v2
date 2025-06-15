@@ -1,5 +1,10 @@
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { HeroBlueprint } from '../../../card-blueprint';
+import { isMinion } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -46,5 +51,24 @@ export const warlock: HeroBlueprint = {
   ],
   tags: [],
   async onInit() {},
-  async onPlay() {}
+  async onPlay(game, card) {
+    let destroyedMinions = 0;
+    const stop = game.on(GAME_EVENTS.CARD_AFTER_DESTROY, event => {
+      if (isMinion(event.data.card)) {
+        destroyedMinions++;
+      }
+    });
+    const minions = [...card.player.minions, ...card.player.opponent.minions];
+    for (const minion of minions) {
+      await minion.takeDamage(card, new AbilityDamage(2));
+    }
+    stop();
+
+    await card.player.hero.modifiers.add(
+      new SimpleSpellpowerBuffModifier('warlock-spellpower', game, card, {
+        amount: destroyedMinions,
+        mixins: [new UntilEndOfTurnModifierMixin(game)]
+      })
+    );
+  }
 };
