@@ -22,6 +22,7 @@ import { TalentCard } from './entities/talent.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';
 import { LocationCard } from './entities/location.entity';
+import { GAME_EVENTS } from '../game/game.events';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -31,10 +32,16 @@ export class CardSystem extends System<CardSystemOptions> {
 
   private cardPool!: IndexedRecord<CardBlueprint, 'id'>;
 
+  private cardsPlayed: AnyCard[] = [];
+
   private nextId = 0;
 
   initialize(options: CardSystemOptions) {
     this.cardPool = options.cardPool;
+
+    this.game.on(GAME_EVENTS.CARD_AFTER_PLAY, event => {
+      this.cardsPlayed.unshift(event.data.card);
+    });
   }
 
   shutdown() {}
@@ -122,5 +129,13 @@ export class CardSystem extends System<CardSystemOptions> {
 
     this.cardMap.set(card.id, card);
     return card as any;
+  }
+
+  getLastPlayedCard<T extends AnyCard = AnyCard>(
+    predicate: (card: AnyCard) => boolean
+  ): T | undefined {
+    const card = this.cardsPlayed.find(predicate);
+    if (!card) return undefined;
+    return card as T;
   }
 }

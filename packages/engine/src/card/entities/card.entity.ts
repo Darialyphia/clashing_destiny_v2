@@ -39,6 +39,7 @@ export type CardInterceptors = {
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
   needAffinityToBePlayed: Interceptable<boolean>;
+  hasAffinityMatch: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -46,7 +47,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  needAffinityToBePlayed: new Interceptable()
+  needAffinityToBePlayed: new Interceptable(),
+  hasAffinityMatch: new Interceptable<boolean>()
 });
 
 export type SerializedCard = {
@@ -276,7 +278,10 @@ export abstract class Card<
   abstract play(): Promise<void>;
 
   get hasAffinityMatch() {
-    return this.player.unlockedAffinities.includes(this.affinity);
+    return this.interceptors.hasAffinityMatch.getValue(
+      this.player.unlockedAffinities.includes(this.affinity),
+      {}
+    );
   }
 
   get descriptionWithoutAffinityMatch() {

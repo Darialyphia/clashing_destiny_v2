@@ -37,7 +37,7 @@ export const sage: HeroBlueprint = {
       id: 'sage-ability',
       label: 'Double cast',
       description:
-        '@[exhaust]@ @[mana] 1@Add a @Fleeting@ copy of the next spell you cast this turn. It costs @[mana] 1@. You can only activate this ability unless you have at least 4@[spellpower]@',
+        '@[exhaust]@ @[mana] 1@Add a copy of the last spell card that was played. You can play it as if you had unlocked its affinity.',
       canUse(game, card) {
         return card.player.hero.spellPower >= 4;
       },
@@ -45,25 +45,22 @@ export const sage: HeroBlueprint = {
       manaCost: 1,
       shouldExhaust: true,
       async onResolve(game, card) {
-        const stop = game.on(GAME_EVENTS.CARD_AFTER_PLAY, async event => {
-          if (event.data.card.kind !== CARD_KINDS.SPELL) return;
-          if (!event.data.card.player.equals(card.player)) return;
-          stop();
-          const copy = await card.player.generateCard<SpellCard>(card.blueprint.id);
-          await copy.modifiers.add(
-            new Modifier('double-cast', game, card, {
-              mixins: [
-                new SpellInterceptorModifierMixin(game, {
-                  key: 'manaCost',
-                  interceptor() {
-                    return 1;
-                  }
-                })
-              ]
-            })
-          );
-          await card.player.cardManager.addToHand(copy);
-        });
+        const lastSpell = game.cardSystem.getLastPlayedCard<SpellCard>(
+          card => card.kind === CARD_KINDS.SPELL
+        );
+        if (!lastSpell) return;
+        const copy = await card.player.generateCard<SpellCard>(lastSpell.blueprint.id);
+        await copy.modifiers.add(
+          new Modifier('sage-copy', game, card, {
+            mixins: [
+              new SpellInterceptorModifierMixin(game, {
+                key: 'hasAffinityMatch',
+                interceptor: () => true
+              })
+            ]
+          })
+        );
+        await card.player.cardManager.addToHand(copy);
       }
     }
   ],
