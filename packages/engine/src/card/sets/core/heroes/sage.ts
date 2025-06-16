@@ -17,7 +17,8 @@ export const sage: HeroBlueprint = {
   id: 'sage',
   name: 'Sage',
   cardIconId: 'hero-sage',
-  description: 'Reduce the cost of spells in your hand by your @[spellpower]@.',
+  description:
+    'Reduce the cost of spells in your hand by 2 as long as you have at least 4 @[spellpower]@.',
   level: 3,
   destinyCost: 3,
   kind: CARD_KINDS.HERO,
@@ -72,16 +73,17 @@ export const sage: HeroBlueprint = {
         new SpellInterceptorModifierMixin(game, {
           key: 'manaCost',
           interceptor(value) {
-            return Math.max(value! - 1, 0);
+            return card.player.hero.spellPower >= 4 ? Math.max(value! - 2, 0) : value;
           }
         })
       ]
     });
+
     await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('sage-spell-cost-reduction', game, card, {
+      new Modifier<HeroCard>('sage-spell-cost-reduction-aura', game, card, {
         icon: 'modifier-double-cast',
         name: 'One with the magic',
-        description: 'Reduce the cost of spells in your hand by your spellpower.',
+        description: 'Reduce the cost of spells in your hand by 2.',
         mixins: [
           new AuraModifierMixin(game, {
             canSelfApply: false,
