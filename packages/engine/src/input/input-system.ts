@@ -15,7 +15,8 @@ import {
   GAME_EVENTS,
   GameErrorEvent,
   GameInputQueueFlushedEvent,
-  GameInputEvent
+  GameInputEvent,
+  GameInputRequiredEvent
 } from '../game/game.events';
 
 import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
@@ -232,7 +233,7 @@ export class InputSystem extends System<SerializedInput[]> {
 
   async askForPlayerInput() {
     this.game.snapshotSystem.takeSnapshot();
-    // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
+    await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 
   serialize() {

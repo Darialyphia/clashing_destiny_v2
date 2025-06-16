@@ -107,6 +107,10 @@ export class EffectChain
     return 2;
   }
 
+  isCurrentPlayer(player: Player): boolean {
+    return player.equals(this.currentPlayer);
+  }
+
   private onPass() {
     this.consecutivePasses++;
     if (this.consecutivePasses >= this.passesNeededToResolve) {

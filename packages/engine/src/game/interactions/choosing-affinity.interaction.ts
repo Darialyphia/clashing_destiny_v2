@@ -24,7 +24,7 @@ export class ChoosingAffinityContext {
 
   private choices: Affinity[] = [];
 
-  private player: Player;
+  readonly player: Player;
 
   private label: string;
 

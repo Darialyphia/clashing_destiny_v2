@@ -30,7 +30,7 @@ export class SelectingCardOnBoardContext {
 
   private isDone: (selectedCards: AnyCard[]) => boolean;
 
-  private player: Player;
+  readonly player: Player;
 
   private constructor(
     private game: Game,

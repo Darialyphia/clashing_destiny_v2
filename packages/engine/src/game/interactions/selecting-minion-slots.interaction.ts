@@ -43,7 +43,7 @@ export class SelectingMinionSlotsContext {
 
   private isDone: (selectedSlots: MinionPosition[]) => boolean;
 
-  private player: Player;
+  readonly player: Player;
 
   private constructor(
     private game: Game,

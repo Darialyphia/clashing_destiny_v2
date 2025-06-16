@@ -31,7 +31,7 @@ export class ChoosingCardsContext {
 
   private maxChoiceCount: number;
 
-  private player: Player;
+  readonly player: Player;
 
   private label: string;
 
