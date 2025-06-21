@@ -1,4 +1,3 @@
-import { GAME_EVENTS } from '../../../../game/game.events';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
