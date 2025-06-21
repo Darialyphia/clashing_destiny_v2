@@ -57,6 +57,8 @@ export type Ability<TCard extends AnyCard, TTarget extends PreResponseTarget> = 
   onResolve(game: Game, card: TCard, targets: TTarget[]): void;
 };
 
+export type AnyAbility = Ability<AnyCard, PreResponseTarget>;
+
 export type SerializedAbility = {
   id: string;
   canUse: boolean;

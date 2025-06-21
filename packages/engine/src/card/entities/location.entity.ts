@@ -6,6 +6,7 @@ import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
+  type Ability,
   type LocationBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -27,7 +28,10 @@ export type SerializedLocationCard = SerializedCard & {
 };
 export type LocationCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, LocationCard>;
-  canUseAbility: Interceptable<boolean, LocationCard>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: LocationCard; ability: Ability<LocationCard, PreResponseTarget> }
+  >;
 };
 
 export class LocationCard extends Card<
@@ -99,7 +103,7 @@ export class LocationCard extends Card<
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),
-      this
+      { card: this, ability }
     );
   }
 

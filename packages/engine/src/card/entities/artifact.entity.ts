@@ -5,6 +5,7 @@ import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
+  type Ability,
   type ArtifactBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -33,7 +34,10 @@ export type SerializedArtifactCard = SerializedCard & {
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
-  canUseAbility: Interceptable<boolean, ArtifactCard>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: ArtifactCard; ability: Ability<ArtifactCard, PreResponseTarget> }
+  >;
   durability: Interceptable<number, ArtifactCard>;
   attack: Interceptable<number, ArtifactCard>;
 };
@@ -192,7 +196,7 @@ export class ArtifactCard extends Card<
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),
-      this
+      { card: this, ability }
     );
   }
 

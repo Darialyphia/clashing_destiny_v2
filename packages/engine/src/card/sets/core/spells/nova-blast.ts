@@ -20,7 +20,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',
-  description: `Deal 3 damage to all minions. @[lineage] ${mage.name} bonus@, @[level] 3+ bonus@: This costs 2 less.`,
+  description: `Deal 3 damage to all minions. @[lineage] @[level] 3+ bonus@: This costs 3 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,
@@ -34,9 +34,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {
-    const lineageMod = new LineageBonusModifier<SpellCard>(game, card, mage.id);
-    const levelMod = new LevelBonusModifier<SpellCard>(game, card, 2);
-    await card.modifiers.add(lineageMod);
+    const levelMod = new LevelBonusModifier<SpellCard>(game, card, 3);
     await card.modifiers.add(levelMod);
 
     await card.modifiers.add(
@@ -45,9 +43,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
           new SpellInterceptorModifierMixin(game, {
             key: 'manaCost',
             interceptor(value) {
-              return lineageMod.isActive && levelMod.isActive
-                ? Math.max(value! - 1, 0)
-                : value;
+              return levelMod.isActive ? Math.max(value! - 3, 0) : value;
             }
           })
         ]

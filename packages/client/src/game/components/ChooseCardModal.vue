@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import {
-  useGameClient,
-  useGameState,
-  useMyBoard
-} from '../composables/useGameClient';
+import { useGameClient, useGameState } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
@@ -25,10 +21,8 @@ const displayedCards = computed(() => {
 });
 
 const selectedIndices = ref<number[]>([]);
-watch(isOpened, opened => {
-  if (!opened) {
-    selectedIndices.value = [];
-  }
+watch(isOpened, () => {
+  selectedIndices.value = [];
 });
 
 const label = computed(() => {

@@ -236,7 +236,8 @@ export class BoardSide
 
   moveMinion(
     from: { zone: 'attack' | 'defense'; slot: MinionSlot },
-    to: { zone: 'attack' | 'defense'; slot: MinionSlot }
+    to: { zone: 'attack' | 'defense'; slot: MinionSlot },
+    { allowSwap = false }: { allowSwap: boolean } = { allowSwap: false }
   ) {
     if (from.zone === to.zone && from.slot === to.slot) return;
 
@@ -245,9 +246,15 @@ export class BoardSide
     assert(isDefined(fromSlot), 'Invalid from slot');
     assert(isDefined(toSlot), 'Invalid to slot');
     assert(fromSlot.isOccupied, 'No creature in slot');
-    assert(!toSlot.isOccupied, 'Target slot occupied');
+    assert(allowSwap || !toSlot.isOccupied, 'Target slot occupied');
 
     const minion = fromSlot.removeMinion();
+    if (toSlot.isOccupied && allowSwap) {
+      const otherMinion = toSlot.removeMinion();
+      toSlot.summon(minion);
+      fromSlot.summon(otherMinion);
+      return;
+    }
     toSlot.summon(minion);
   }
 

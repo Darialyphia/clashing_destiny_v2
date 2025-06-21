@@ -48,11 +48,15 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeAttacked: Interceptable<boolean, { target: Attacker }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
-  canUseAbility: Interceptable<boolean, { ability: Ability<HeroCard, any> }>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: HeroCard; ability: Ability<HeroCard, any> }
+  >;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
+  abilities: Interceptable<Ability<HeroCard, PreResponseTarget>[], HeroCard>;
 };
 
 export const HERO_EVENTS = {
@@ -176,7 +180,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
-        spellPower: new Interceptable()
+        spellPower: new Interceptable(),
+        abilities: new Interceptable()
       },
       options
     );
@@ -210,6 +215,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get unlockableAffinities() {
     return this.blueprint.unlockableAffinities;
+  }
+
+  get abilities(): Ability<HeroCard, PreResponseTarget>[] {
+    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }
 
   canBeTargeted(source: AnyCard) {
@@ -305,7 +314,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canUseAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return false;
 
     const authorizedPhases: GamePhase[] = [
@@ -323,12 +332,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),
-      { ability }
+      { card: this, ability }
     );
   }
 
   async useAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return;
 
     await this.game.emit(
@@ -439,7 +448,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       unlockableAffinities: this.blueprint.unlockableAffinities,
-      abilities: this.blueprint.abilities.map(ability => ({
+      abilities: this.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,

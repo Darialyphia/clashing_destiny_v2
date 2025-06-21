@@ -15,7 +15,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
   name: 'Archsage of Moonring',
   cardIconId: 'unit-archsage-of-moonring',
-  description: `@Loyalty(1)@\n@On Enter@: deal up to 4 damage split among enemies.`,
+  description: `@Loyalty(1)@\n@On Enter@: deal up to 3 damage split among enemies.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -34,7 +34,7 @@ export const archsageOfMoonring: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         let count = 0;
-        while (count < 4) {
+        while (count < 3) {
           const targets = await multipleEnemyTargetRules.getPreResponseTargets({
             min: 0,
             max: 1,

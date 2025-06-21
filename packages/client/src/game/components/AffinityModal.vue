@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import {
-  useGameClient,
-  useGameState,
-  useMyBoard
-} from '../composables/useGameClient';
+import { useGameClient, useGameState } from '../composables/useGameClient';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import type { Affinity } from '@game/engine/src/card/card.enums';
 
-const board = useMyBoard();
 const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();
@@ -21,10 +15,8 @@ const isOpened = computed(() => {
 
 const selected = ref<Affinity | null>(null);
 
-watch(isOpened, opened => {
-  if (!opened) {
-    selected.value = null;
-  }
+watch(isOpened, () => {
+  selected.value = null;
 });
 
 const affinities = computed<Affinity[]>(() => {
@@ -48,7 +40,7 @@ const affinities = computed<Affinity[]>(() => {
     <div class="content" :class="{ 'is-showing-board': isShowingBoard }">
       <p class="text-5 mb-4">Choose which Affinity to unlock.</p>
 
-      <div class="flex gap-3">
+      <div class="affinities">
         <label
           v-for="affinity in affinities"
           :key="affinity"
@@ -92,9 +84,14 @@ const affinities = computed<Affinity[]>(() => {
 
 <style scoped lang="postcss">
 .content {
-  &.is-showing-board .card-list {
+  &.is-showing-board .affinities {
     visibility: hidden;
   }
+}
+
+.affinities {
+  display: flex;
+  gap: var(--size-3);
 }
 
 label {
@@ -115,11 +112,5 @@ label {
     body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
   ) {
   opacity: 0;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: var(--size-7);
-  font-weight: var(--font-weight-4);
 }
 </style>

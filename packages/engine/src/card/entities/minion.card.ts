@@ -11,6 +11,8 @@ import {
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
+  type Ability,
+  type AnyAbility,
   type MinionBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -51,11 +53,15 @@ export type MinionCardInterceptors = CardInterceptors & {
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
   canBeAttacked: Interceptable<boolean, { target: Attacker }>;
-  canUseAbility: Interceptable<boolean, MinionCard>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: MinionCard; ability: Ability<MinionCard, PreResponseTarget> }
+  >;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
+  abilities: Interceptable<Ability<MinionCard, PreResponseTarget>[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -198,14 +204,15 @@ export class MinionCard extends Card<
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        atk: new Interceptable()
+        atk: new Interceptable(),
+        abilities: new Interceptable()
       },
       options
     );
   }
 
   get hasSummoningSickness(): boolean {
-    return this.interceptors.hasSummoningSickness.getValue(true, this);
+    return this.interceptors.hasSummoningSickness.getValue(false, this);
   }
 
   get position() {
@@ -231,6 +238,10 @@ export class MinionCard extends Card<
   get slot() {
     if (!this.position) return null;
     return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
+  }
+
+  get abilities(): Ability<MinionCard, PreResponseTarget>[] {
+    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
@@ -281,7 +292,7 @@ export class MinionCard extends Card<
   }
 
   canUseAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return false;
 
     const authorizedPhases: GamePhase[] = [
@@ -299,12 +310,12 @@ export class MinionCard extends Card<
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),
-      this
+      { card: this, ability }
     );
   }
 
   async useAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return;
 
     await this.game.emit(
@@ -476,7 +487,7 @@ export class MinionCard extends Card<
       position: this.position
         ? { zone: this.position.zone, slot: this.position.slot }
         : null,
-      abilities: this.blueprint.abilities.map(ability => ({
+      abilities: this.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),
         name: ability.label,

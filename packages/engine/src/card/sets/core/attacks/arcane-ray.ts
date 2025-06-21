@@ -2,7 +2,7 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import { AttackInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
-import { PercingModifier } from '../../../../modifier/modifiers/percing.modifier';
+import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import type { AttackBlueprint } from '../../../card-blueprint';
 import { attackRules, isMinion } from '../../../card-utils';
 import {
@@ -51,11 +51,11 @@ export const arcaneRay: AttackBlueprint = {
     );
   },
   async onPlay(game, card) {
-    const percingMod = new PercingModifier<HeroCard>(game, card);
+    const piercingMod = new PiercingModifier<HeroCard>(game, card);
 
-    await card.player.hero.modifiers.add(percingMod);
+    await card.player.hero.modifiers.add(piercingMod);
     game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, async () => {
-      await card.player.hero.modifiers.remove(percingMod);
+      await card.player.hero.modifiers.remove(piercingMod);
     });
   }
 };

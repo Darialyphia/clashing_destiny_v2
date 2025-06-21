@@ -221,6 +221,13 @@ export const KEYWORDS = {
     name: 'Seal',
     description: 'This ability cannot be used.',
     aliases: []
+  },
+  DOUBLE_ATTACK: {
+    id: 'double-attack',
+    name: 'Double Attack',
+    description:
+      'The first time this deals combat damage during your turn, wake up this minion.',
+    aliases: []
   }
 };
 
