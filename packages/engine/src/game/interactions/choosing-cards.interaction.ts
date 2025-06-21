@@ -61,8 +61,14 @@ export class ChoosingCardsContext {
   commit(player: Player, indices: number[]) {
     assert(player.equals(this.player), new InvalidPlayerError());
 
-    assert(indices.length >= this.minChoiceCount, new NotEnoughCardsError());
-    assert(indices.length <= this.maxChoiceCount, new TooManyCardsError());
+    assert(
+      indices.length >= this.minChoiceCount,
+      new NotEnoughCardsError(this.minChoiceCount, indices.length)
+    );
+    assert(
+      indices.length <= this.maxChoiceCount,
+      new TooManyCardsError(this.maxChoiceCount, indices.length)
+    );
 
     const selectedCards = indices.map(index => this.choices[index]);
     this.selectedCards.push(...selectedCards);

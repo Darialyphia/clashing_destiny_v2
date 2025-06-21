@@ -315,13 +315,13 @@ export class UnableToCommitError extends GameError {
 }
 
 export class NotEnoughCardsError extends GameError {
-  constructor() {
-    super('Not enough cards selected');
+  constructor(expected: number, received: number) {
+    super(`Not enough cards selected, expected ${expected}, received ${received}`);
   }
 }
 
 export class TooManyCardsError extends GameError {
-  constructor() {
-    super('Too many cards selected');
+  constructor(expected: number, received: number) {
+    super(`Too many cards selected, expected ${expected}, received ${received}`);
   }
 }
