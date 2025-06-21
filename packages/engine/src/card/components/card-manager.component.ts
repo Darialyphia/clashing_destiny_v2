@@ -71,6 +71,12 @@ export class CardManagerComponent {
     this.destinyDeck.populate(destinyDeckCards);
     this.mainDeck.shuffle();
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
+    const initialDestinyCards = this.mainDeck.draw(
+      this.game.config.INITAL_CARDS_IN_DESTINY_ZONE
+    );
+    initialDestinyCards.forEach(card => {
+      this.destinyZone.add(card);
+    });
   }
 
   get isHandFull() {
