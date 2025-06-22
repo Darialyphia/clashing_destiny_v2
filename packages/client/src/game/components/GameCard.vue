@@ -181,7 +181,7 @@ const spriteUrl = computed(() => {
         "
       />
 
-      <CardStats v-if="interactive" :card-id="card.id" />
+      <CardStats v-if="interactive" :card-id="card.id" class="stats" />
 
       <PopoverPortal :disabled="card.location === 'hand'">
         <PopoverContent :side-offset="-50" v-if="interactive">
@@ -293,20 +293,28 @@ const spriteUrl = computed(() => {
 .sprite {
   aspect-ratio: var(--card-ratio);
   position: relative;
+  background-image: url('/assets/ui/card-board-front.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   &::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
     background-image: var(--bg);
-    background-position: center -50%;
-    background-size: calc(4 * 96px);
+    background-position: center -50;
+    background-size: calc(3.5 * 96px);
     background-repeat: no-repeat;
     image-rendering: pixelated;
-    transition: background-color 0.2s var(--ease-2);
+    transition: transform 0.2s var(--ease-2);
   }
   &:hover::after {
-    background-color: hsl(200 100% 50% / 0.15);
+    transform: translateY(-10px);
   }
+}
+
+.game-card:has(.sprite.floating) .stats {
+  transform: translateZ(var(--floating-amount));
 }
 </style>

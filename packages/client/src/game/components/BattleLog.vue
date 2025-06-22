@@ -168,8 +168,7 @@ type Token =
     }
   | { kind: 'game-turn-start'; turn: number }
   | { kind: 'game-phase-change'; phase: GamePhase }
-  | { kind: 'player-turn_start'; player: PlayerViewModel }
-  | { kind: 'action'; text: string };
+  | { kind: 'player-turn_start'; player: PlayerViewModel };
 
 const events = shallowRef<Token[][]>([[]]);
 
@@ -203,9 +202,6 @@ watch(
 const close = () => {
   isCollapsed.value = true;
 };
-
-const isAction = (event: Pick<Token, 'kind'>[]) =>
-  event.some(t => t.kind === 'action');
 </script>
 
 <template>
@@ -216,20 +212,14 @@ const isAction = (event: Pick<Token, 'kind'>[]) =>
   >
     <h4>Battle Log</h4>
     <ul v-if="!isCollapsed" ref="listEl" class="fancy-scrollbar">
-      <li
-        v-for="(event, index) in events"
-        :key="index"
-        :class="isAction(event) && 'action'"
-      >
+      <li v-for="(event, index) in events" :key="index">
         <span
           v-for="(token, tokenIndex) in event"
           :key="tokenIndex"
           :class="token.kind"
         >
           <template v-if="token.kind === 'text'">{{ token.text }}</template>
-          <template v-else-if="token.kind === 'action'">
-            {{ token.text }}
-          </template>
+
           <template v-else-if="token.kind === 'card'">
             <InspectableCard
               :card-id="token.card.id"
@@ -316,6 +306,7 @@ h4 {
 ul {
   overflow-y: auto;
 }
+
 li {
   display: flex;
   flex-wrap: wrap;
@@ -323,10 +314,6 @@ li {
 
   padding-block: var(--size-1);
   padding-inline-start: var(--size-6);
-
-  &.action {
-    background-color: hsl(0 0 100% / 0.05);
-  }
 }
 
 .toggle {

@@ -8,9 +8,6 @@ const props = defineProps<{
 
 const markerId = randomString(6);
 const markerUrl = `url(#${markerId})`;
-
-const path = useTemplateRef<SVGPathElement>('path');
-const length = computed(() => path.value?.getTotalLength() ?? 0);
 </script>
 
 <template>
@@ -27,7 +24,7 @@ const length = computed(() => path.value?.getTotalLength() ?? 0);
         <path d="M 2 2 L 2 9 L 7 6 L 2 3" class="arrow-head" />
       </marker>
     </defs>
-    <path class="path" :d="props.path" ref="path" />
+    <path class="path" :d="props.path" />
   </svg>
 </template>
 

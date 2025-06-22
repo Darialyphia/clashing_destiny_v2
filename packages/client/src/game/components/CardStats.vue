@@ -109,10 +109,6 @@ const visibleModifiers = computed(() =>
 
   &.flipped {
     rotate: 180deg;
-    justify-content: flex-start;
-  }
-  .game-card:has(.card.floating) & {
-    transform: translateZ(var(--floating-amount));
   }
 
   .atk {
