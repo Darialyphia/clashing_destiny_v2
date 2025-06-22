@@ -21,8 +21,9 @@
 }
 
 .surface {
-  background-color: var(--surface-1);
-  color: var(--text-1);
+  border-image-slice: 63 fill;
+  border-image-width: 64px;
+  border-image-source: url('/assets/ui/ui-surface.png');
   padding: var(--size-6);
 }
 

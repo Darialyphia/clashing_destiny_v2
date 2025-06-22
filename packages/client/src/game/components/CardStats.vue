@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { useCard, useGameClient } from '../composables/useGameClient';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';

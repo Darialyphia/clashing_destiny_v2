@@ -32,7 +32,7 @@ const { isEditingDeck } = provideCollectionPage();
 
     <Collection class="cards" />
 
-    <aside class="right-sidebar">
+    <aside class="right-sidebar surface">
       <DeckList v-if="!isEditingDeck" />
       <DeckEditor v-else />
     </aside>
@@ -61,13 +61,9 @@ const { isEditingDeck } = provideCollectionPage();
 }
 
 .right-sidebar {
-  padding: var(--size-6);
   overflow-y: hidden;
   grid-row: 1 / -1;
   grid-column: 3;
-  border-image-slice: 63 fill;
-  border-image-width: 64px;
-  border-image-source: url('/assets/ui/ui-surface.png');
 }
 
 .filters {

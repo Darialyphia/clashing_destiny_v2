@@ -17,7 +17,7 @@ export const novice: HeroBlueprint = {
   unlockableAffinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.BASIC,
-  cardIconId: 'novice',
+  cardIconId: 'hero-novice',
   collectable: false,
   unique: false,
   lineage: null,

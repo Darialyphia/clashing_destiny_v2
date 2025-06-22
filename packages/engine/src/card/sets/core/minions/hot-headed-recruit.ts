@@ -16,7 +16,7 @@ export const hotHeadedRecruit: MinionBlueprint = {
   description: `@Double Attack@.`,
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   atk: 1,
   maxHp: 1,
   rarity: RARITIES.COMMON,

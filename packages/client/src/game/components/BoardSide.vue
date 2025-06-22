@@ -42,7 +42,7 @@ const talents = computed(() => {
           :card-id="boardSide.heroZone.hero"
           :side="player === client.playerId ? 'right' : 'left'"
         >
-          <GameCard :card-id="boardSide.heroZone.hero" />
+          <GameCard :card-id="boardSide.heroZone.hero" image-only />
           <div class="talents">
             <div
               v-for="(talent, i) in state.config.MAX_TALENTS"

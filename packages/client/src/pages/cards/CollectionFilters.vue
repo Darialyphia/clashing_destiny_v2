@@ -45,7 +45,7 @@ const cardKinds: Array<{
 </script>
 
 <template>
-  <aside class="filters">
+  <aside class="flex flex-col gap-3 surface">
     <section class="flex gap-3 items-center">
       <input
         v-model="textFilter"
@@ -175,17 +175,6 @@ const cardKinds: Array<{
       aspect-ratio: 1;
     }
   }
-}
-
-.filters {
-  padding: var(--size-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-4);
-
-  border-image-slice: 63 fill;
-  border-image-width: 64px;
-  border-image-source: url('/assets/ui/ui-surface.png');
 }
 
 .view-toggle {

@@ -331,6 +331,19 @@
         },
         {
           "alias": [
+            "icon-hero-novice"
+          ],
+          "src": [
+            "/assets/icons/hero-novice.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-hero-sage"
           ],
           "src": [

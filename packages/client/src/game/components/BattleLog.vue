@@ -211,7 +211,7 @@ const isAction = (event: Pick<Token, 'kind'>[]) =>
 <template>
   <div
     v-on-click-outside="close"
-    class="combat-log fancy-scrollbar"
+    class="combat-log fancy-scrollbar surface"
     :class="isCollapsed && 'is-collapsed'"
   >
     <h4>Battle Log</h4>
@@ -278,13 +278,7 @@ const isAction = (event: Pick<Token, 'kind'>[]) =>
   color: #efef9f;
   user-select: none;
 
-  padding: var(--size-5);
-
   box-shadow: 3px 3px 0 black;
-
-  border-image-slice: 63 fill;
-  border-image-width: 64px;
-  border-image-source: url('/assets/ui/ui-surface.png');
 
   display: grid;
   grid-template-rows: auto 1fr;

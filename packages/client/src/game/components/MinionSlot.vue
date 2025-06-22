@@ -5,7 +5,6 @@ import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interacti
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useGameState } from '../composables/useGameClient';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -57,7 +56,11 @@ const isHighlighted = computed(() => {
       :card-id="props.minionSlot.minion"
       side="right"
     >
-      <GameCard :card-id="props.minionSlot.minion" class="minion-slot-card" />
+      <GameCard
+        :card-id="props.minionSlot.minion"
+        class="minion-slot-card"
+        image-only
+      />
     </InspectableCard>
     <!-- <div
       v-if="props.minionSlot.minion"
@@ -74,6 +77,9 @@ const isHighlighted = computed(() => {
   height: 100%;
   position: relative;
   border-radius: var(--radius-2);
+  &:hover {
+    border-color: var(--cyan-4);
+  }
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
