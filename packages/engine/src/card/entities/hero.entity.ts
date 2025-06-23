@@ -24,6 +24,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { type SerializedTalentTree, TalentTree } from '../talent-tree';
 
 export type SerializedHeroCard = SerializedCard & {
   level: number;
@@ -39,6 +40,7 @@ export type SerializedHeroCard = SerializedCard & {
   remainingHp: number;
   abilities: SerializedAbility[];
   unlockableAffinities: string[];
+  talentTree: SerializedTalentTree;
 };
 export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
@@ -161,6 +163,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   private abilityTargets = new Map<string, PreResponseTarget[]>();
 
+  private talentTree: TalentTree;
+
   unlockedAffinity!: Affinity;
 
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
@@ -185,6 +189,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       },
       options
     );
+    this.talentTree = new TalentTree(game, options.blueprint.talentTree, this);
   }
 
   get level() {
@@ -372,13 +377,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canPlay() {
-    return (
-      this.location === 'destinyDeck' &&
-      this.canPayDestinyCost &&
-      this.game.gamePhaseSystem.getContext().state === GAME_PHASES.DESTINY &&
-      (!this.blueprint.lineage || this.player.hero.hasLineage(this.blueprint.lineage)) &&
-      this.blueprint.level - this.player.hero.level === 1
-    );
+    return true;
   }
 
   async play() {
@@ -455,7 +454,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         description: ability.description,
         targets:
           this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+      })),
+      talentTree: this.talentTree.serialize()
     };
   }
 }

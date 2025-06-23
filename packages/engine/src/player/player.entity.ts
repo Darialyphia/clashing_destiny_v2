@@ -2,7 +2,7 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, isDefined, type Serializable } from '@game/shared';
+import { assert, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -29,7 +29,7 @@ export type PlayerOptions = {
   id: string;
   name: string;
   mainDeck: { cards: string[] };
-  destinyDeck: { cards: string[] };
+  hero: string;
 };
 
 export type SerializedPlayer = {
@@ -43,7 +43,6 @@ export type SerializedPlayer = {
   banishPile: string[];
   destinyZone: string[];
   remainingCardsInDeck: number;
-  destinyDeck: string[];
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -94,7 +93,6 @@ export class Player
     this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       mainDeck: this.options.mainDeck.cards,
-      destinyDeck: this.options.destinyDeck.cards,
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
@@ -118,7 +116,6 @@ export class Player
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
       remainingCardsInDeck: this.cardManager.mainDeck.cards.length,
-      destinyDeck: this.cardManager.destinyDeck.cards.map(card => card.id),
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
@@ -241,14 +238,6 @@ export class Player
         cards: banishedCards
       })
     );
-  }
-
-  async playDestinyDeckCardAtIndex(index: number) {
-    const card = this.cardManager.getDestinyCardAt(index);
-    assert(isDefined(card), new CardNotFoundError());
-
-    await this.payForDestinyCost(card);
-    await card.play();
   }
 
   canAddTalent(talent: TalentCard) {

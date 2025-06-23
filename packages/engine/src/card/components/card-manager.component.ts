@@ -4,13 +4,12 @@ import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
 import { CARD_DECK_SOURCES } from '../card.enums';
-import type { DestinyDeckCard, MainDeckCard } from '../../board/board.system';
+import type { MainDeckCard } from '../../board/board.system';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 
 export type CardManagerComponentOptions = {
   mainDeck: string[];
-  destinyDeck: string[];
   maxHandSize: number;
   shouldShuffleDeck: boolean;
 };
@@ -18,7 +17,6 @@ export type CardManagerComponentOptions = {
 export type CardLocation =
   | 'hand'
   | 'mainDeck'
-  | 'destinyDeck'
   | 'discardPile'
   | 'banishPile'
   | 'destinyZone'
@@ -28,8 +26,6 @@ export class CardManagerComponent {
   private game: Game;
 
   readonly mainDeck: Deck<MainDeckCard>;
-
-  readonly destinyDeck: Deck<DestinyDeckCard>;
 
   readonly hand: MainDeckCard[] = [];
 
@@ -46,7 +42,6 @@ export class CardManagerComponent {
   ) {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
-    this.destinyDeck = new Deck(this.game, player);
 
     if (options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
@@ -62,13 +57,9 @@ export class CardManagerComponent {
   }
 
   async init() {
-    const [mainDeckCards, destinyDeckCards] = await Promise.all([
-      this.buildCards<MainDeckCard>(this.options.mainDeck),
-      this.buildCards<DestinyDeckCard>(this.options.destinyDeck)
-    ]);
+    const mainDeckCards = await this.buildCards<MainDeckCard>(this.options.mainDeck);
 
     this.mainDeck.populate(mainDeckCards);
-    this.destinyDeck.populate(destinyDeckCards);
     this.mainDeck.shuffle();
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
     const initialDestinyCards = this.mainDeck.draw(
@@ -91,14 +82,6 @@ export class CardManagerComponent {
     return this.mainDeck.size;
   }
 
-  get remainingCardsInDestinyDeck() {
-    return this.destinyDeck.remaining;
-  }
-
-  get destinyDeckSize() {
-    return this.destinyDeck.size;
-  }
-
   findCard(id: string): {
     card: AnyCard;
     location: CardLocation;
@@ -108,9 +91,6 @@ export class CardManagerComponent {
 
     const mainDeckCard = this.mainDeck.cards.find(card => card.id === id);
     if (mainDeckCard) return { card: mainDeckCard, location: 'mainDeck' };
-
-    const destinyDeckCard = this.destinyDeck.cards.find(card => card.id === id);
-    if (destinyDeckCard) return { card: destinyDeckCard, location: 'destinyDeck' };
 
     const discardPileCard = [...this.discardPile].find(card => card.id === id);
     if (discardPileCard) return { card: discardPileCard, location: 'discardPile' };
@@ -131,10 +111,6 @@ export class CardManagerComponent {
 
   getCardInHandAt(index: number) {
     return [...this.hand][index];
-  }
-
-  getDestinyCardAt(index: number) {
-    return this.destinyDeck.cards[index];
   }
 
   async draw(amount: number) {
@@ -180,14 +156,6 @@ export class CardManagerComponent {
     const index = this.hand.findIndex(handCard => handCard.equals(card));
     if (index === -1) return;
     this.hand.splice(index, 1);
-  }
-
-  removeFromDestinyDeck(card: AnyCard) {
-    const index = this.destinyDeck.cards.findIndex(destinyCard =>
-      destinyCard.equals(card)
-    );
-    if (index === -1) return;
-    this.destinyDeck.cards.splice(index, 1);
   }
 
   discard(card: MainDeckCard) {

@@ -7,7 +7,7 @@ import type {
 import { isDefined, type Serializable } from '@game/shared';
 import { GameError } from '../game/game-error';
 
-type SerializedTalentTreeNode = {
+export type SerializedTalentTreeNode = {
   id: string;
   isUnlocked: boolean;
   iconId: string;
@@ -17,7 +17,7 @@ type SerializedTalentTreeNode = {
   parentIds: string[];
 };
 
-type SerializedTalentTree = {
+export type SerializedTalentTree = {
   heroId: string;
   nodes: SerializedTalentTreeNode[];
 };

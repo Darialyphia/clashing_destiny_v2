@@ -124,7 +124,7 @@ export type HeroBlueprint = DestinyDeckCardBlueprint & {
   spellPower: number;
   unlockableAffinities: Affinity[];
   abilities: Ability<HeroCard, PreResponseTarget>[];
-  talentTree?: TalentTreeBlueprint;
+  talentTree: TalentTreeBlueprint;
 };
 export type LocationBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.LOCATION>;
