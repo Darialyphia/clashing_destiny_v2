@@ -2,9 +2,6 @@ export type Config = {
   MAX_MAIN_DECK_SIZE: number;
   MAX_MAIN_DECK_CARD_COPIES: number;
 
-  MAX_DESTINY_DECK_SIZE: number;
-  MAX_DESTINY_DECK_CARD_COPIES: number;
-
   INITIAL_HAND_SIZE: number;
   INITAL_CARDS_IN_DESTINY_ZONE: number;
   MAX_HAND_SIZE: number;
@@ -24,9 +21,6 @@ export type Config = {
 export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 40,
   MAX_MAIN_DECK_CARD_COPIES: 4,
-
-  MAX_DESTINY_DECK_SIZE: 10,
-  MAX_DESTINY_DECK_CARD_COPIES: 1,
 
   INITIAL_HAND_SIZE: 5,
   INITAL_CARDS_IN_DESTINY_ZONE: 1,

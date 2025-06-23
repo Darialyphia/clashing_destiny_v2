@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  useBoardSide,
-  useGameClient,
-  useGameState
-} from '../composables/useGameClient';
+import { useBoardSide, useGameClient } from '../composables/useGameClient';
 import CardBack from '@/card/components/CardBack.vue';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
@@ -13,23 +9,14 @@ import CardResizer from './CardResizer.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
-import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 const { player } = defineProps<{
   player: string;
 }>();
 
 const boardSide = useBoardSide(computed(() => player));
 const client = useGameClient();
-const state = useGameState();
 const isDiscardPileOpened = ref(false);
 const isBanishPileOpened = ref(false);
-
-const playerInfos = computed(() => {
-  return state.value.entities[player] as PlayerViewModel;
-});
-const talents = computed(() => {
-  return playerInfos.value.getTalents();
-});
 </script>
 
 <template>
@@ -43,24 +30,6 @@ const talents = computed(() => {
           :side="player === client.playerId ? 'right' : 'left'"
         >
           <GameCard :card-id="boardSide.heroZone.hero" image-only />
-          <div class="talents">
-            <div
-              v-for="(talent, i) in state.config.MAX_TALENTS"
-              :key="talent"
-              class="talent"
-            >
-              <InspectableCard
-                v-if="talents[i]"
-                :card-id="talents[i].id"
-                :side="player === client.playerId ? 'right' : 'left'"
-              >
-                <div
-                  class="talent-filled"
-                  :style="{ '--bg': `url('${talents[i].imagePath}')` }"
-                />
-              </InspectableCard>
-            </div>
-          </div>
         </InspectableCard>
       </div>
       <div class="artifacts">
@@ -136,21 +105,6 @@ const talents = computed(() => {
             </div>
           </template>
           Your Main Deck: {{ boardSide.mainDeck.remaining }} cards
-        </UiSimpleTooltip>
-
-        <UiSimpleTooltip>
-          <template #trigger>
-            <div class="pile">
-              <CardResizer
-                v-for="i in boardSide.destinyDeck.remaining"
-                :key="i"
-                :style="{ '--i': i - 1 }"
-              >
-                <CardBack class="pile-card" />
-              </CardResizer>
-            </div>
-          </template>
-          Your Destiny Deck: {{ boardSide.destinyDeck.remaining }} cards
         </UiSimpleTooltip>
       </div>
       <DestinyZone :player-id="boardSide.playerId" />
@@ -260,27 +214,6 @@ const talents = computed(() => {
     height: 100%;
     position: absolute;
     aspect-ratio: var(--card-ratio);
-  }
-}
-
-.talents {
-  position: absolute;
-  top: 0;
-  left: -70px;
-  display: grid;
-  grid-template-rows: repeat(v-bind('state.config.MAX_TALENTS'), 1fr);
-  gap: var(--size-1);
-  height: 100%;
-  .talent {
-    background-color: black;
-    border-radius: var(--radius-round);
-    aspect-ratio: 1;
-  }
-  .talent-filled {
-    background: var(--bg) no-repeat center;
-    background-size: 200%;
-    border-radius: var(--radius-round);
-    aspect-ratio: 1;
   }
 }
 </style>

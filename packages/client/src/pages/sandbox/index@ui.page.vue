@@ -17,14 +17,13 @@ const decks = useLocalStorage<ValidatableDeck[]>(
 type DeckChoice = {
   label: string;
   mainDeck: { cards: string[] };
-  destinyDeck: { cards: string[] };
+  hero: string;
 };
 const choices = computed(() => {
   return [
     ...premadeDecks.map(deck => ({
       label: deck.name,
-      mainDeck: deck.mainDeck,
-      destinyDeck: deck.destinyDeck
+      mainDeck: deck.mainDeck
     })),
     ...decks.value.map(deck => ({
       label: deck.name,
@@ -33,11 +32,7 @@ const choices = computed(() => {
           Array.from({ length: card.copies }, () => card.blueprintId)
         )
       },
-      destinyDeck: {
-        cards: deck.destinyDeck.flatMap(card =>
-          Array.from({ length: card.copies }, () => card.blueprintId)
-        )
-      }
+      hero: deck.hero
     }))
   ];
 });
@@ -91,14 +86,14 @@ const isStarted = ref(false);
       {
         id: 'p1',
         name: 'Player 1',
-        destinyDeck: p1Deck.destinyDeck,
-        mainDeck: p1Deck.mainDeck
+        mainDeck: p1Deck.mainDeck,
+        hero: p1Deck.hero
       },
       {
         id: 'p2',
         name: 'Player 2',
-        destinyDeck: p2Deck.destinyDeck,
-        mainDeck: p2Deck.mainDeck
+        mainDeck: p2Deck.mainDeck,
+        hero: p2Deck.hero
       }
     ]"
   />

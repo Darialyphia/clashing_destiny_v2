@@ -1,10 +1,9 @@
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { GameOptions } from '@game/engine/src/game/game';
 
 export type PremadeDeck = {
   name: string;
   mainDeck: GameOptions['players'][number]['mainDeck'];
-  destinyDeck: GameOptions['players'][number]['destinyDeck'];
+  hero: GameOptions['players'][number]['hero'];
 };
 
 export const premadeDecks: Array<PremadeDeck> = [
@@ -69,17 +68,6 @@ export const premadeDecks: Array<PremadeDeck> = [
       ]
     },
 
-    destinyDeck: {
-      cards: [
-        'mage',
-        'sorcerer',
-        'sage',
-        'fire-studies',
-        'arcane-studies',
-        'the-hangman',
-        'path-of-the-vanguard',
-        'mana-visions'
-      ]
-    }
+    hero: 'warlock'
   }
 ];
