@@ -11,7 +11,6 @@ import {
   NotEnoughCardsInHandError
 } from '../card/card-errors';
 import type { HeroCard } from '../card/entities/hero.entity';
-import type { TalentCard } from '../card/entities/talent.entity';
 import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
@@ -22,7 +21,6 @@ import {
   PlayerUnlockAffinityEvent
 } from './player.events';
 import type { MainDeckCard } from '../board/board.system';
-import { novice } from '../card/sets/core/heroes/novice';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 
 export type PlayerOptions = {
@@ -47,7 +45,6 @@ export type SerializedPlayer = {
   currentHp: number;
   isPlayer1: boolean;
   unlockedAffinities: Affinity[];
-  talents: string[];
 };
 
 type PlayerInterceptors = {
@@ -79,8 +76,6 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly talents: TalentCard[] = [];
-
   private _hero!: HeroCard;
 
   constructor(
@@ -101,7 +96,7 @@ export class Player
   }
 
   async init() {
-    this._hero = await this.generateCard<HeroCard>(novice.id);
+    this._hero = await this.generateCard<HeroCard>(this.options.hero);
     await this.cardManager.init();
   }
 
@@ -120,7 +115,6 @@ export class Player
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       unlockedAffinities: this.unlockedAffinities,
-      talents: this.talents.map(talent => talent.id),
       influence: this.influence
     };
   }
@@ -218,10 +212,9 @@ export class Player
     await card.play();
   }
 
-  private async payForDestinyCost(card: AnyCard) {
-    const hasEnough = this.cardManager.destinyZone.size >= card.destinyCost;
+  private async payForDestinyCost(cost: number) {
+    const hasEnough = this.cardManager.destinyZone.size >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
-    const cost = card.destinyCost;
 
     const banishedCards: Array<{ card: MainDeckCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
@@ -238,18 +231,6 @@ export class Player
         cards: banishedCards
       })
     );
-  }
-
-  canAddTalent(talent: TalentCard) {
-    return (
-      this.talents.length < this.game.config.MAX_TALENTS &&
-      talent.level <= this.hero.level
-    );
-  }
-
-  async addTalent(talent: TalentCard) {
-    await talent.removeFromCurrentLocation();
-    this.talents.push(talent);
   }
 
   async startTurn() {

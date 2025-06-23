@@ -5,8 +5,6 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { SerializedTalentCard } from '../../card/entities/talent.entity';
-import type { SerializedAttackCard } from '../../card/entities/attack.entity';
 import type {
   SerializedAbility,
   SerializedPreResponseTarget
@@ -28,9 +26,7 @@ type CardData =
   | SerializedArtifactCard
   | SerializedHeroCard
   | SerializedMinionCard
-  | SerializedLocationCard
-  | SerializedTalentCard
-  | SerializedAttackCard;
+  | SerializedLocationCard;
 
 export type CardActionRule = {
   id: string;

@@ -60,16 +60,6 @@ export class PlayerViewModel {
     return this.data.isPlayer1;
   }
 
-  get talentIds() {
-    return this.data.talents;
-  }
-
-  getTalents() {
-    return this.data.talents.map(talentId => {
-      return this.getEntities()[talentId] as CardViewModel;
-    });
-  }
-
   getHand() {
     return this.data.hand.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
@@ -95,12 +85,6 @@ export class PlayerViewModel {
     return entity as PlayerViewModel;
   }
 
-  getDestinyDeck() {
-    return this.data.destinyDeck.map(cardId => {
-      return this.getEntities()[cardId] as CardViewModel;
-    });
-  }
-
   declareEndTurn() {
     this.getClient().networkAdapter.dispatch({
       type: 'declareEndTurn',
@@ -117,19 +101,6 @@ export class PlayerViewModel {
 
     this.getClient().networkAdapter.dispatch({
       type: 'declarePlayCard',
-      payload: {
-        playerId: this.data.id,
-        index: index
-      }
-    });
-  }
-
-  playDestinyCard(index: number) {
-    const card = this.getDestinyDeck()[index];
-    if (!card) return;
-    if (!card.canPlay) return;
-    this.getClient().networkAdapter.dispatch({
-      type: 'playDestinyCard',
       payload: {
         playerId: this.data.id,
         index: index

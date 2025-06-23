@@ -163,22 +163,11 @@ export abstract class Card<
     return 0;
   }
 
-  get destinyCost() {
-    if ('destinyCost' in this.blueprint) {
-      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
-    }
-    return 0;
-  }
-
   get canPayManaCost() {
     return (
       this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
       this.manaCost
     );
-  }
-
-  get canPayDestinyCost() {
-    return this.player.cardManager.destinyZone.size >= this.destinyCost;
   }
 
   removeFromCurrentLocation() {

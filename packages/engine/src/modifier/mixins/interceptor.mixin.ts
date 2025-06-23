@@ -12,10 +12,6 @@ import type {
   ArtifactCard,
   ArtifactCardInterceptors
 } from '../../card/entities/artifact.entity';
-import type {
-  AttackCard,
-  AttackCardInterceptors
-} from '../../card/entities/attack.entity';
 import type { SpellCard, SpellCardInterceptors } from '../../card/entities/spell.entity';
 import type { LocationCardInterceptors } from '../../card/entities/location.entity';
 import type { MainDeckCard } from '../../board/board.system';
@@ -77,8 +73,7 @@ type MainDeckCardInterceptors =
   | MinionCardInterceptors
   | SpellCardInterceptors
   | ArtifactCardInterceptors
-  | LocationCardInterceptors
-  | AttackCardInterceptors;
+  | LocationCardInterceptors;
 export class MainDeckCardInterceptorModifierMixin<
   TKey extends keyof MainDeckCardInterceptors
 > extends InterceptorModifierMixin<MainDeckCardInterceptors, TKey, MainDeckCard> {}
@@ -102,10 +97,6 @@ export class UnitInterceptorModifierMixin<
 export class ArtifactInterceptorModifierMixin<
   TKey extends keyof ArtifactCardInterceptors
 > extends InterceptorModifierMixin<ArtifactCardInterceptors, TKey, ArtifactCard> {}
-
-export class AttackInterceptorModifierMixin<
-  TKey extends keyof AttackCardInterceptors
-> extends InterceptorModifierMixin<AttackCardInterceptors, TKey, AttackCard> {}
 
 export class SpellInterceptorModifierMixin<
   TKey extends keyof SpellCardInterceptors

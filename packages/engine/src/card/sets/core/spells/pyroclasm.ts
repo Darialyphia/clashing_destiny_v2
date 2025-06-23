@@ -1,6 +1,3 @@
-import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
-import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../card-utils';
@@ -14,7 +11,6 @@ import {
 } from '../../../card.enums';
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.card';
-import { SpellCard } from '../../../entities/spell.entity';
 
 export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'pyroclasm',

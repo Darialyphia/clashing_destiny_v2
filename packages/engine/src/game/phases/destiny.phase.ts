@@ -6,8 +6,8 @@ import type { EmptyObject, Serializable } from '@game/shared';
 export class DestinyPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
 
-  async playDestinyCard(index: number) {
-    await this.game.gamePhaseSystem.turnPlayer.playDestinyDeckCardAtIndex(index);
+  async unlockTalent(id: string) {
+    await this.game.gamePhaseSystem.turnPlayer.hero.talentTree.getNode(id)?.unlock();
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE
     );

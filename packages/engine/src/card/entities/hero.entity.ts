@@ -34,8 +34,6 @@ import { GameError } from '../../game/game-error';
 
 export type SerializedHeroCard = SerializedCard & {
   level: number;
-  destinyCost: number;
-  baseDestinyCost: number;
   potentialAttackTargets: string[];
   atk: number;
   baseAtk: number;
@@ -167,7 +165,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   private abilityTargets = new Map<string, PreResponseTarget[]>();
 
-  private talentTree: TalentTree;
+  readonly talentTree: TalentTree;
 
   unlockedAffinity!: Affinity;
 
@@ -426,8 +424,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   serialize(): SerializedHeroCard {
     return {
       ...this.serializeBase(),
-      destinyCost: this.destinyCost,
-      baseDestinyCost: this.blueprint.destinyCost,
       level: this.level,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,

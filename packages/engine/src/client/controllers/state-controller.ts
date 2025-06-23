@@ -10,12 +10,10 @@ import { PlayerViewModel } from '../view-models/player.model';
 import { match } from 'ts-pattern';
 import type { GameClient } from '../client';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedAttackCard } from '../../card/entities/attack.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedTalentCard } from '../../card/entities/talent.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 
@@ -49,10 +47,8 @@ export class ClientStateController {
       | SerializedMinionCard
       | SerializedHeroCard
       | SerializedSpellCard
-      | SerializedAttackCard
       | SerializedArtifactCard
       | SerializedLocationCard
-      | SerializedTalentCard
       | SerializedPlayer
       | SerializedModifier
   ) {

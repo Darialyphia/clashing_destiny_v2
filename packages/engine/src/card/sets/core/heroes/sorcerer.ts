@@ -10,9 +10,7 @@ import {
 export const sorcerer: HeroBlueprint = {
   id: 'sorcerer',
   name: 'Sorcerer',
-  level: 2,
   cardIconId: 'hero-sorcerer',
-  destinyCost: 2,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [AFFINITIES.ARCANE, AFFINITIES.WIND, AFFINITIES.EARTH],
@@ -29,5 +27,8 @@ export const sorcerer: HeroBlueprint = {
   abilities: [],
   tags: [],
   async onInit() {},
-  async onPlay() {}
+  async onPlay() {},
+  talentTree: {
+    nodes: []
+  }
 };
