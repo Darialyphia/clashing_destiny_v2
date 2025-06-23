@@ -24,7 +24,13 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import { type SerializedTalentTree, TalentTree } from '../talent-tree';
+import {
+  type SerializedTalentTree,
+  type SerializedTalentTreeNode,
+  TalentTree,
+  TalentTreeNode
+} from '../talent-tree';
+import { GameError } from '../../game/game-error';
 
 export type SerializedHeroCard = SerializedCard & {
   level: number;
@@ -132,13 +138,13 @@ export class HeroUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class HeroLevelUpEvent extends TypedSerializableEvent<
-  { card: HeroCard; to: HeroCard },
-  { card: SerializedHeroCard; to: string }
+  { card: HeroCard; talent: TalentTreeNode },
+  { card: SerializedHeroCard; talent: SerializedTalentTreeNode }
 > {
   serialize() {
     return {
       card: this.data.card.serialize(),
-      to: this.data.to.id
+      talent: this.data.talent.serialize()
     };
   }
 }
@@ -158,8 +164,6 @@ export type HeroCardEventMap = {
 
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
   private damageTaken = 0;
-
-  private lineage: HeroBlueprint[] = [];
 
   private abilityTargets = new Map<string, PreResponseTarget[]>();
 
@@ -387,20 +391,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
     this.updatePlayedAt();
 
-    if (this.level > 0) {
-      const affinity = await this.game.interaction.chooseAffinity({
-        player: this.player,
-        choices: this.unlockableAffinities,
-        label: 'Choose an affinity to unlock'
-      });
-      if (affinity) {
-        this.unlockedAffinity = affinity;
-        await this.player.unlockAffinity(affinity);
-      }
-      await this.player.hero.levelup(this);
-    } else {
-      await this.blueprint.onPlay(this.game, this, this);
-    }
+    await this.blueprint.onPlay(this.game, this, this);
 
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
@@ -408,22 +399,22 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  async levelup(hero: HeroCard) {
+  async levelup(talentNodeId: string) {
+    const node = this.talentTree.getNode(talentNodeId);
+    if (!node) {
+      throw new GameError(`Talent node with id ${talentNodeId} not found.`);
+    }
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
-      new HeroLevelUpEvent({ card: this, to: hero })
+      new HeroLevelUpEvent({ card: this, talent: node })
     );
-    this.lineage.push(this.blueprint);
-    this.blueprint = hero.blueprint;
-    await this.blueprint.onPlay(this.game, this, hero);
+
+    await node.unlock();
+
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_LEVEL_UP,
-      new HeroLevelUpEvent({ card: this, to: hero })
+      new HeroLevelUpEvent({ card: this, talent: node })
     );
-  }
-
-  hasLineage(lineage: string) {
-    return this.lineage.some(l => l.id === lineage) || this.blueprint.id === lineage;
   }
 
   get potentialAttackTargets() {

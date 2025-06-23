@@ -18,8 +18,6 @@ import {
   GameInputEvent,
   GameInputRequiredEvent
 } from '../game/game.events';
-
-import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
 import { DeclareBlockerInput } from './inputs/declare-blocker.input';
@@ -53,7 +51,6 @@ const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
   cancelPlayCard: CancelPlayCardInput,
   commitPlayCard: CommitPlayCardInput,
-  playDestinyCard: PlayDestinyCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
   declareBlocker: DeclareBlockerInput,
