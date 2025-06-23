@@ -12,12 +12,10 @@ import type {
   SerializedArtifactCard
 } from '../card/entities/artifact.entity';
 import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
-import type { AttackCard, SerializedAttackCard } from '../card/entities/attack.entity';
 import type {
   LocationCard,
   SerializedLocationCard
 } from '../card/entities/location.entity';
-import type { SerializedTalentCard, TalentCard } from '../card/entities/talent.entity';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
@@ -40,22 +38,16 @@ type SerializedCreatureZone = {
   slots: Array<SerializedBoardMinionSlot>;
 };
 
-export type MainDeckCard =
-  | MinionCard
-  | SpellCard
-  | ArtifactCard
-  | AttackCard
-  | LocationCard;
+export type MainDeckCard = MinionCard | SpellCard | ArtifactCard | LocationCard;
 
 export type SerializedMainDeckCard =
   | SerializedMinionCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedAttackCard
   | SerializedLocationCard;
 
-export type DestinyDeckCard = HeroCard | TalentCard;
-export type SerializedDestinyDeckCard = SerializedHeroCard | SerializedTalentCard;
+export type DestinyDeckCard = HeroCard;
+export type SerializedDestinyDeckCard = SerializedHeroCard;
 
 export type SerializedBoardSide = {
   playerId: string;
@@ -69,7 +61,6 @@ export type SerializedBoardSide = {
   hand: string[];
   destinyZone: string[];
   mainDeck: { total: number; remaining: number };
-  destinyDeck: { total: number; remaining: number; cards: string[] };
   discardPile: string[];
   banishPile: string[];
 };
@@ -271,14 +262,7 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(
-        CARD_KINDS.HERO,
-        CARD_KINDS.TALENT,
-        CARD_KINDS.SPELL,
-        CARD_KINDS.ATTACK,
-        CARD_KINDS.ARTIFACT,
-        () => {}
-      )
+      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {})
       .with(CARD_KINDS.MINION, () => {
         this.attackZone.slots.forEach(slot => {
           if (slot.minion?.equals(card)) {
@@ -318,11 +302,6 @@ export class BoardSide
       mainDeck: {
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck
-      },
-      destinyDeck: {
-        total: this.player.cardManager.destinyDeckSize,
-        remaining: this.player.cardManager.remainingCardsInDestinyDeck,
-        cards: this.player.cardManager.destinyDeck.cards.map(card => card.id)
       }
     };
   }

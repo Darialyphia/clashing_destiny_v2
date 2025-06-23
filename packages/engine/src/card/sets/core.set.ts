@@ -2,16 +2,9 @@ import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
-import { magicGrimoire } from './core/artifacts/magic-grimoire';
-import { arcaneRay } from './core/attacks/arcane-ray';
-import { finalSlash } from './core/attacks/final-slash';
-import { elementalist } from './core/heroes/elementalist';
-import { mage } from './core/heroes/mage';
-import { novice } from './core/heroes/novice';
 import { sage } from './core/heroes/sage';
 import { sorcerer } from './core/heroes/sorcerer';
 import { warlock } from './core/heroes/warlock';
-import { warrior } from './core/heroes/warrior';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { blazingSalamander } from './core/minions/blazing-salamander';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
@@ -41,33 +34,19 @@ import { recollection } from './core/spells/recollection';
 import { scorchedEarth } from './core/spells/scorched-earth';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
-import { arcaneStudies } from './core/talents/arcane-studies';
-import { fireStudies } from './core/talents/fire-studies';
-import { manaVisions } from './core/talents/mana-visions';
-import { pathOfTheVanguard } from './core/talents/path-of-the-vanguard';
-import { theHangman } from './core/talents/the-hangman';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
-    novice,
-
-    // Mage Lineage
-    mage,
-    elementalist,
+    // Heroes
     sage,
     sorcerer,
     warlock,
 
-    // Warrior Lineage
-    warrior,
-
     // Normal
     courageousFootsoldier,
     friendlySlime,
-    pathOfTheVanguard,
-    theHangman,
 
     // Fire
     fireBolt,
@@ -81,8 +60,6 @@ export const coreSet: CardSet = {
     flagBearerOfFlame,
     immortalFlame,
     hotHeadedRecruit,
-    finalSlash,
-    fireStudies,
     channelTheFlames,
     firebrand,
     pyroclasm,
@@ -99,11 +76,7 @@ export const coreSet: CardSet = {
     spellbladeDuelist,
     novaBlast,
     esteemedErudite,
-    arcaneRay,
-    magicGrimoire,
     surgeOfWill,
-    arcaneStudies,
-    manaVisions,
 
     // Chrono
     recollection,

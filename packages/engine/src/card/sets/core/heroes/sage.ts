@@ -18,11 +18,9 @@ export const sage: HeroBlueprint = {
   cardIconId: 'hero-sage',
   description:
     'Reduce the cost of spells in your hand by 2 as long as you have at least 4 @[spellpower]@.',
-  level: 3,
-  destinyCost: 3,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [AFFINITIES.COSMIC, AFFINITIES.ARCANE, AFFINITIES.CHRONO],
+  affinities: [AFFINITIES.COSMIC, AFFINITIES.ARCANE, AFFINITIES.CHRONO],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
@@ -99,5 +97,8 @@ export const sage: HeroBlueprint = {
         ]
       })
     );
+  },
+  talentTree: {
+    nodes: []
   }
 };

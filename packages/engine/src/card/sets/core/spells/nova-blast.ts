@@ -1,7 +1,6 @@
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
-import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
@@ -14,13 +13,12 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.card';
 import { SpellCard } from '../../../entities/spell.entity';
-import { mage } from '../heroes/mage';
 
 export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',
-  description: `Deal 3 damage to all minions. @[lineage] @[level] 3+ bonus@: This costs 3 less.`,
+  description: `Deal 3 damage to all minions. @[level] 3+ bonus@: This costs 3 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,

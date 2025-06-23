@@ -56,7 +56,7 @@ export class TalentTreeNode implements Serializable<SerializedTalentTreeNode> {
 
   async unlock(): Promise<void> {
     if (!this.canUnlock) throw new GameError('Cannot unlock this node.');
-    await this.blueprint.onResolve(this.game, this.tree.hero);
+    await this.blueprint.onUnlock(this.game, this.tree.hero);
     this._isUnlocked = true;
   }
 
@@ -97,6 +97,10 @@ export class TalentTree implements Serializable<SerializedTalentTree> {
 
   get unlockableNodes() {
     return this.nodes.filter(node => node.canUnlock);
+  }
+
+  get unlockedNodes() {
+    return this.nodes.filter(node => node.isUnlocked);
   }
 
   serialize(): SerializedTalentTree {

@@ -26,9 +26,7 @@ export const CARD_KINDS = {
   HERO: 'HERO',
   LOCATION: 'LOCATION',
   SPELL: 'SPELL',
-  ATTACK: 'ATTACK',
-  ARTIFACT: 'ARTIFACT',
-  TALENT: 'TALENT'
+  ARTIFACT: 'ARTIFACT'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 

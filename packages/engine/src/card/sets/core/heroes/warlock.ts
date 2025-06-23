@@ -19,11 +19,9 @@ export const warlock: HeroBlueprint = {
   description:
     '@On Enter@ : Deal 2 damage to all minions. Gain +1 @[spellpower]@  until the end of the turn equal to the amount of minions destroyed this way.',
   cardIconId: 'hero-warlock',
-  level: 3,
-  destinyCost: 3,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [AFFINITIES.BLOOD, AFFINITIES.VOID, AFFINITIES.FIRE],
+  affinities: [AFFINITIES.BLOOD, AFFINITIES.VOID, AFFINITIES.FIRE],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
@@ -70,5 +68,8 @@ export const warlock: HeroBlueprint = {
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );
+  },
+  talentTree: {
+    nodes: []
   }
 };

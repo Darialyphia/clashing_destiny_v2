@@ -6,12 +6,10 @@ import type {
   SerializedArtifactCard
 } from '../card/entities/artifact.entity';
 import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
-import type { AttackCard, SerializedAttackCard } from '../card/entities/attack.entity';
 import type {
   LocationCard,
   SerializedLocationCard
 } from '../card/entities/location.entity';
-import type { SerializedTalentCard, TalentCard } from '../card/entities/talent.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
@@ -20,12 +18,7 @@ import { CARD_DECK_SOURCES } from '../card/card.enums';
 
 export type MinionSlot = number;
 
-export type MainDeckCard =
-  | MinionCard
-  | SpellCard
-  | ArtifactCard
-  | AttackCard
-  | LocationCard;
+export type MainDeckCard = MinionCard | SpellCard | ArtifactCard | LocationCard;
 
 export const isMainDeckCard = (card: AnyCard): card is MainDeckCard => {
   return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
@@ -35,15 +28,14 @@ export type SerializedMainDeckCard =
   | SerializedMinionCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedAttackCard
   | SerializedLocationCard;
 
-export type DestinyDeckCard = HeroCard | TalentCard;
+export type DestinyDeckCard = HeroCard;
 
 export const isDestinyDeckCard = (card: AnyCard): card is DestinyDeckCard => {
   return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
 };
-export type SerializedDestinyDeckCard = SerializedHeroCard | SerializedTalentCard;
+export type SerializedDestinyDeckCard = SerializedHeroCard;
 
 export type SerializedBoard = {
   sides: [SerializedBoardSide, SerializedBoardSide];

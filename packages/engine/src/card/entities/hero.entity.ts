@@ -197,7 +197,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get level() {
-    return this.blueprint.level;
+    return this.talentTree.unlockedNodes.length + 1;
   }
 
   get isAlive() {
@@ -223,7 +223,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get unlockableAffinities() {
-    return this.blueprint.unlockableAffinities;
+    return this.blueprint.affinities;
   }
 
   get abilities(): Ability<HeroCard, PreResponseTarget>[] {
@@ -437,7 +437,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
-      unlockableAffinities: this.blueprint.unlockableAffinities,
+      unlockableAffinities: this.blueprint.affinities,
       abilities: this.abilities.map(ability => ({
         id: ability.id,
         canUse: this.canUseAbility(ability.id),

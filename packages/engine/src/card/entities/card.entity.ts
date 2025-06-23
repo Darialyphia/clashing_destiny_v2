@@ -213,14 +213,6 @@ export abstract class Card<
         }
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with('destinyDeck', () => {
-        if (!isDestinyDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from destiny deck when it is not a destiny deck card.`
-          );
-        }
-        this.player.cardManager.destinyDeck.pluck(this);
-      })
       .with('destinyZone', () => {
         if (!isMainDeckCard(this)) {
           throw new IllegalGameStateError(
