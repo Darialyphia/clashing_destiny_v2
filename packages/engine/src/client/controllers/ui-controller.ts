@@ -10,7 +10,6 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
-import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedBoardMinionSlot } from '../../board/board-minion-slot.entity';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 
@@ -80,6 +79,14 @@ export class UiController {
 
   get isChooseAffinityInteractionOverlayOpened() {
     return this._isChooseAffinityInteractionOverlayOpened;
+  }
+
+  get playedCardId() {
+    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD)
+      return null;
+    if (this.client.playerId !== this.client.state.interaction.ctx.player) return null;
+
+    return this.client.state.interaction.ctx.card;
   }
 
   private buildClickRules() {

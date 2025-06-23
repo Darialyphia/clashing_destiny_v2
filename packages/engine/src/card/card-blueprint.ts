@@ -124,6 +124,7 @@ export type HeroBlueprint = DestinyDeckCardBlueprint & {
   spellPower: number;
   unlockableAffinities: Affinity[];
   abilities: Ability<HeroCard, PreResponseTarget>[];
+  talentTree?: TalentTreeBlueprint;
 };
 export type LocationBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.LOCATION>;
@@ -168,6 +169,21 @@ export type TalentBlueprint = DestinyDeckCardBlueprint & {
   heroId: string;
   onInit: (game: Game, card: TalentCard) => Promise<void>;
   onPlay: (game: Game, card: TalentCard) => Promise<void>;
+};
+
+export type TalentTreeNodeBlueprint = {
+  id: string;
+  name: string;
+  description: string;
+  level: 1 | 2 | 3 | 4;
+  parentIds: string[];
+  iconId: string;
+  onResolve: (game: Game, hero: HeroCard) => Promise<void>;
+};
+
+export type TalentTreeBlueprint = {
+  nodes: TalentTreeNodeBlueprint[];
+  rootNodeIds: string[];
 };
 
 export type CardBlueprint =
