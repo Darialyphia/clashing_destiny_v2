@@ -51,7 +51,21 @@ export class TalentTreeNode implements Serializable<SerializedTalentTreeNode> {
   }
 
   get canUnlock(): boolean {
-    return !this.isUnlocked && this.parents.every(parent => parent.isUnlocked);
+    if (this.isUnlocked) return false;
+    if (this.blueprint.destinyCost > this.tree.hero.player.cardManager.destinyZone.size) {
+      return false;
+    }
+    if (this.blueprint.exclusiveWith) {
+      const exclusiveNodes = this.blueprint.exclusiveWith
+        .map(id => this.tree.getNode(id))
+        .filter(isDefined)
+        .filter(node => node.isUnlocked);
+      if (exclusiveNodes.length > 0) {
+        return false;
+      }
+    }
+
+    return this.parents.every(parent => parent.isUnlocked);
   }
 
   async unlock(): Promise<void> {

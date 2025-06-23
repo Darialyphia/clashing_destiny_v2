@@ -155,6 +155,7 @@ export type TalentTreeNodeBlueprint = {
   parentIds: string[];
   iconId: string;
   destinyCost: number;
+  exclusiveWith?: string[];
   onUnlock: (game: Game, hero: HeroCard) => Promise<void>;
 };
 
