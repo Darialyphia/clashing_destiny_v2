@@ -1,4 +1,4 @@
-import { isDefined } from '@game/shared';
+import { isDefined, type Nullable } from '@game/shared';
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
 import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
@@ -15,7 +15,7 @@ export type ValidatableDeck = {
     blueprintId: string;
     copies: number;
   }>;
-  hero: string;
+  hero: Nullable<string>;
 };
 
 export type DeckValidationResult =

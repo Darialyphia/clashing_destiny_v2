@@ -31,26 +31,6 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
           {{ card.blueprint.name }} X {{ card.copies }}
         </li>
       </ul>
-
-      <div class="text-3 my-5 font-500">
-        Destiny Deck ({{ deckBuilder.destinyDeckSize }} /
-        {{ deckBuilder.validator.destinyDeckSize }})
-      </div>
-      <ul>
-        <li
-          v-for="(card, index) in deckBuilder.destinyDeckCards"
-          :key="index"
-          :style="{
-            '--bg': `url(/assets/icons/${card.blueprint.cardIconId}.png)`
-          }"
-          :class="card.blueprint.kind.toLocaleLowerCase()"
-          class="deck-item"
-          @click="deckBuilder.removeCard(card.blueprintId)"
-        >
-          <div class="destiny-cost">{{ card.blueprint.destinyCost }}</div>
-          {{ card.blueprint.name }} X {{ card.copies }}
-        </li>
-      </ul>
     </div>
     <div class="flex gap-2 mt-3">
       <FancyButton text="Back" variant="error" @click="isEditingDeck = false" />
