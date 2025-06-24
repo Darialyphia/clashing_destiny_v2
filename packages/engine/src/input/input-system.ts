@@ -34,6 +34,7 @@ import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { ChooseAffinityInput } from './inputs/choose-affinity.input';
+import { UnlockTalentInput } from './inputs/unlock-talent.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -62,7 +63,8 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   chooseAffinity: ChooseAffinityInput,
-  useCardAbility: UseCardAbilityInput
+  useCardAbility: UseCardAbilityInput,
+  unlockTalent: UnlockTalentInput
 });
 
 type InputMap = typeof inputMap;

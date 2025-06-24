@@ -44,7 +44,7 @@ export class UiController {
 
   private minionSlotClickRules: MinionSlotClickRule[] = [];
 
-  private hoverTimeout: NodeJS.Timeout | null = null;
+  private hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
   optimisticState: UiOptimisticState = {
     playedCardId: null

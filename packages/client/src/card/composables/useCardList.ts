@@ -29,12 +29,10 @@ export const provideCardList = () => {
 
   const KIND_ORDER = {
     [CARD_KINDS.HERO]: 1,
-    [CARD_KINDS.TALENT]: 2,
-    [CARD_KINDS.MINION]: 3,
-    [CARD_KINDS.SPELL]: 4,
-    [CARD_KINDS.ATTACK]: 5,
-    [CARD_KINDS.ARTIFACT]: 6,
-    [CARD_KINDS.LOCATION]: 7
+    [CARD_KINDS.MINION]: 2,
+    [CARD_KINDS.SPELL]: 3,
+    [CARD_KINDS.ARTIFACT]: 4,
+    [CARD_KINDS.LOCATION]: 5
   };
 
   const affinityFilter = ref(new Set<Affinity>());
@@ -99,13 +97,6 @@ export const provideCardList = () => {
             return a.manaCost - b.manaCost;
           }
 
-          if (
-            a.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-            b.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-            a.destinyCost !== b.destinyCost
-          ) {
-            return a.destinyCost - b.destinyCost;
-          }
           return a.name
             .toLocaleLowerCase()
             .localeCompare(b.name.toLocaleLowerCase());
