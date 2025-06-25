@@ -14,7 +14,6 @@ import {
   PopoverContent
 } from 'reka-ui';
 import CardResizer from './CardResizer.vue';
-
 import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';

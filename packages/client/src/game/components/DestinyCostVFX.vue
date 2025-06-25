@@ -21,7 +21,7 @@ useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async e => {
   }));
   await nextTick();
 });
-useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async e => {
+useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
   isDisplayed.value = true;
   cards.value.forEach(card => {
     const el = root.value!.querySelector(
@@ -40,7 +40,7 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async e => {
   await waitFor(500);
 
   const cardEls = root.value!.querySelectorAll('.card');
-  cardEls.forEach((el, index) => {
+  cardEls.forEach(el => {
     disolve.play(el as HTMLElement, 1500);
   });
   await waitFor(1500);

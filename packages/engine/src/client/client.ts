@@ -277,4 +277,50 @@ export class GameClient {
       }
     });
   }
+
+  commitMinionSlotSelection() {
+    this.networkAdapter.dispatch({
+      type: 'commitMinionSlotSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  commitCardSelection() {
+    this.networkAdapter.dispatch({
+      type: 'commitCardSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  skipBlock() {
+    this.networkAdapter.dispatch({
+      type: 'declareBlocker',
+      payload: {
+        blockerId: null,
+        playerId: this.playerId
+      }
+    });
+  }
+
+  endTurn() {
+    this.networkAdapter.dispatch({
+      type: 'declareEndTurn',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  passChain() {
+    this.networkAdapter.dispatch({
+      type: 'passChain',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
 }

@@ -129,17 +129,4 @@ const maxChoices = computed(() => {
   ) {
   opacity: 0;
 }
-
-h2 {
-  text-align: center;
-  margin-bottom: var(--size-7);
-  font-weight: var(--font-weight-4);
-}
-
-.played-card {
-  position: fixed;
-  top: var(--size-8);
-  right: var(--size-8);
-  z-index: 10;
-}
 </style>
