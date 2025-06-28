@@ -14,7 +14,7 @@ const artifacts = useEntities<CardViewModel>(
 </script>
 
 <template>
-  <div class="grid cols-3 gap-4 py-3">
+  <div class="equiped-artifacts">
     <div
       class="artifact"
       v-for="artifact in artifacts"
@@ -23,13 +23,24 @@ const artifacts = useEntities<CardViewModel>(
         '--bg': `url(${artifact.imagePath})`
       }"
     />
+    <div class="artifact" style="--bg: url(/assets/icons/artifact-test.png)" />
   </div>
 </template>
 
 <style scoped lang="postcss">
+.equiped-artifacts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
 .artifact {
+  --pixel-scale: 1;
   aspect-ratio: var(--artifact-ratio);
   background-image: var(--bg);
   background-position: center;
+  background-size: calc(96px * var(--pixel-scale))
+    calc(96px * var(--pixel-scale));
+  height: calc(var(--artifact-height) * var(--pixel-scale));
 }
 </style>

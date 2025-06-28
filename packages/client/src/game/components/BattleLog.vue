@@ -261,7 +261,7 @@ const close = () => {
 <style scoped lang="postcss">
 .combat-log {
   position: fixed;
-  top: 25%;
+  top: 35%;
 
   pointer-events: auto;
   font-size: 16px;
@@ -318,7 +318,7 @@ li {
 
 .toggle {
   position: absolute;
-  bottom: 60%;
+  bottom: 00%;
   left: 100%;
   transform: translateY(-6px);
 

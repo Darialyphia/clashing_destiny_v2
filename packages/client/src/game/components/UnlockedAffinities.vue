@@ -21,15 +21,14 @@ const { player } = defineProps<{
 
 <style scoped lang="postcss">
 .unlocked-affinities {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--size-4);
-  padding-block: var(--size-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
 }
 
 .affinity {
   aspect-ratio: 1;
-  max-height: calc(var(--pixel-scale) * 25px);
+  height: calc(var(--pixel-scale) * 25px);
   background-image: var(--bg);
   background-size: cover;
   background-position: center;

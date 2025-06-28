@@ -3751,6 +3751,58 @@
         },
         {
           "alias": [
+            "icon-banish-pile.png"
+          ],
+          "src": [
+            "/assets/ui/icon-banish-pile.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-deck.png"
+          ],
+          "src": [
+            "/assets/ui/icon-deck.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-discard-pile.png"
+          ],
+          "src": [
+            "/assets/ui/icon-discard-pile.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-influence.png"
+          ],
+          "src": [
+            "/assets/ui/icon-influence.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "mana-cost.png"
           ],
           "src": [

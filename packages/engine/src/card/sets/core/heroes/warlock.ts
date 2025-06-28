@@ -20,7 +20,7 @@ export const warlock: HeroBlueprint = {
   cardIconId: 'hero-warlock',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  affinities: [AFFINITIES.BLOOD, AFFINITIES.VOID, AFFINITIES.FIRE],
+  affinities: [AFFINITIES.BLOOD],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,

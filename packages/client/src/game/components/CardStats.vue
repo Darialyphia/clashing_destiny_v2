@@ -16,19 +16,13 @@ const isDisplayed = computed(() => {
   );
 });
 
-const client = useGameClient();
-
 const visibleModifiers = computed(() =>
   card.value.getModifiers().filter(modifier => modifier.icon)
 );
 </script>
 
 <template>
-  <div
-    v-if="isDisplayed"
-    class="stats"
-    :class="{ flipped: card.getPlayer().id !== client.playerId }"
-  >
+  <div v-if="isDisplayed" class="stats" :class="card.kind.toLocaleLowerCase()">
     <div class="modifiers">
       <UiSimpleTooltip
         v-for="modifier in visibleModifiers"
@@ -90,16 +84,22 @@ const visibleModifiers = computed(() =>
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: var(--size-3);
-  font-size: var(--font-size-10);
+  padding: var(--size-2);
+  font-size: var(--font-size-5);
   font-weight: var(--font-weight-9);
   line-height: 1;
   pointer-events: none;
-  -webkit-text-stroke: 4px black;
+  -webkit-text-stroke: 2px black;
   paint-order: fill stroke;
   --buff-color: var(--green-6);
   --debuff-color: var(--red-6);
 
+  &.minion {
+    flex-direction: row;
+    padding-right: 0;
+    padding-bottom: 0;
+    justify-content: space-between;
+  }
   .buffed {
     color: var(--buff-color);
   }
@@ -107,29 +107,34 @@ const visibleModifiers = computed(() =>
     color: var(--debuff-color);
   }
 
-  &.flipped {
-    rotate: 180deg;
-  }
-
   .atk {
     background-image: url('/assets/ui/attack.png');
     background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+    background-size: 20px;
+    padding-left: var(--size-6);
+    .minion & {
+      padding-left: var(--size-4);
+    }
   }
 
   .spellpower {
     background-image: url('/assets/ui/ability-power.png');
     background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+    background-size: 20px;
+    padding-left: var(--size-6);
+    .minion & {
+      padding-left: var(--size-4);
+    }
   }
 
   .hp {
     background-image: url('/assets/ui/hp.png');
     background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+    background-size: 20px;
+    padding-left: var(--size-6);
+    .minion & {
+      padding-left: var(--size-4);
+    }
   }
 }
 

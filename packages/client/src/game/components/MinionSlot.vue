@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { useGameClient } from '../composables/useGameClient';
+import { useGameClient, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
+import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import CardStats from './CardStats.vue';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -12,6 +14,10 @@ const client = useGameClient();
 
 const { player, isHighlighted } = useMinionSlot(
   computed(() => props.minionSlot)
+);
+
+const card = useMaybeEntity<CardViewModel>(
+  computed(() => props.minionSlot.minion)
 );
 </script>
 
@@ -28,14 +34,10 @@ const { player, isHighlighted } = useMinionSlot(
       })
     "
   >
-    <InspectableCard
-      v-if="props.minionSlot.minion"
-      :card-id="props.minionSlot.minion"
-      side="right"
-    >
-      <div class="minion" :style="{ '--bg': '' }" />
-      >
+    <InspectableCard v-if="card" :card-id="card.id" side="right">
+      <div class="minion" :style="{ '--bg': `url(${card?.imagePath})` }" />
     </InspectableCard>
+    <CardStats v-if="card" :card-id="card.id" />
   </div>
 </template>
 
@@ -48,6 +50,7 @@ const { player, isHighlighted } = useMinionSlot(
   border-radius: var(--radius-2);
   background: url('/assets/ui/card-board-front-2.png') no-repeat center;
   background-size: cover;
+  position: relative;
   &:hover {
     border-color: var(--cyan-4);
   }
@@ -55,5 +58,16 @@ const { player, isHighlighted } = useMinionSlot(
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
   }
+}
+
+.minion {
+  width: 100%;
+  aspect-ratio: 1;
+  --pixel-scale: 2;
+  border-radius: var(--radius-2);
+  background: var(--bg) no-repeat;
+  background-position: center 75%;
+  background-size: calc(96px * var(--pixel-scale))
+    calc(96px * var(--pixel-scale));
 }
 </style>

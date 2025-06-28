@@ -16,10 +16,8 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import ActionsButtons from './ActionsButtons.vue';
-import UnlockedAffinities from './UnlockedAffinities.vue';
 import HeroSlot from './HeroSlot.vue';
 import TalentTree from './TalentTree.vue';
-import EquipedArtifacts from './EquipedArtifacts.vue';
 import Hand from '@/card/components/Hand.vue';
 import DestinyZone from './DestinyZone.vue';
 
@@ -80,14 +78,12 @@ const opponentPlayer = useOpponentPlayer();
         </div>
       </div>
 
-      <div class="grid cols-2 gap-2">
+      <div class="grid cols-2 gap-2 mb-2">
         <div>
           <TalentTree :player="myPlayer" />
-          <UnlockedAffinities :player="myPlayer" />
         </div>
         <div>
           <HeroSlot :player="myPlayer" />
-          <EquipedArtifacts :player="myPlayer" />
         </div>
       </div>
 
@@ -140,14 +136,12 @@ const opponentPlayer = useOpponentPlayer();
         </div>
       </div>
 
-      <div class="grid cols-2 gap-2">
+      <div class="grid cols-2 gap-2 mb-2">
         <div>
           <HeroSlot :player="opponentPlayer" />
-          <EquipedArtifacts :player="opponentPlayer" />
         </div>
         <div>
           <TalentTree :player="opponentPlayer" />
-          <UnlockedAffinities :player="opponentPlayer" />
         </div>
       </div>
 
@@ -184,7 +178,6 @@ const opponentPlayer = useOpponentPlayer();
 .p1-zone,
 .p2-zone {
   padding: var(--size-6);
-  background-color: #335;
   display: grid;
   grid-template-rows: auto auto auto 1fr;
 }
@@ -193,7 +186,6 @@ const opponentPlayer = useOpponentPlayer();
   grid-column: 2;
   grid-row: 1;
   padding-block: var(--size-6);
-  background-color: #335;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -203,7 +195,6 @@ const opponentPlayer = useOpponentPlayer();
 .hand-zone {
   grid-column: 1 / -1;
   grid-row: 2;
-  background-color: #335;
 }
 
 .avatar {

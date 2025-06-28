@@ -38,7 +38,10 @@ const computeSpacing = () => {
   //   -excess / (boardSide.value.destinyZone.length - 1),
   //   0
   // );
-  cardSpacing.value = Math.round(allowedWidth / root.value.children.length + 1);
+  const lastCardWidth = [...root.value.children].at(-1)!.clientWidth;
+  cardSpacing.value = Math.round(
+    (allowedWidth - lastCardWidth) / root.value.children.length
+  );
 };
 
 watch(

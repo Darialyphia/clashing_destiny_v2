@@ -98,6 +98,9 @@ export class Player
   async init() {
     this._hero = await this.generateCard<HeroCard>(this.options.hero);
     await this.cardManager.init();
+    this._hero.unlockableAffinities.forEach(affinity => {
+      this._unlockedAffinities.push(affinity);
+    });
   }
 
   serialize() {

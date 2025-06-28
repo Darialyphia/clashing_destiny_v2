@@ -323,9 +323,6 @@ const costStatus = computed(() => {
 }
 
 .image {
-  background: v-bind(imageBg);
-  background-size: cover;
-  background-position: center;
   width: calc(96px * var(--pixel-scale));
   height: calc(96px * var(--pixel-scale));
   position: absolute;
@@ -333,10 +330,30 @@ const costStatus = computed(() => {
   left: 50%;
   transform: translateX(-50%);
 
-  /* &::after {
+  &::after {
+    content: '';
     position: absolute;
     inset: 0;
+    background: v-bind(imageBg);
+    background-size: cover;
+    background-position: center;
+  }
+
+  :is(.minion, .hero) &::before {
     content: '';
+    position: absolute;
+    inset: 0;
+    background: v-bind(imageBg) no-repeat;
+    background-size: cover;
+    background-position: center;
+    transform: scaleY(0.5) translateY(75px) skewX(30deg) translateX(-40px);
+    filter: brightness(0);
+    opacity: 0.35;
+  }
+  /* &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     background: v-bind(imageBg);
     background-size: cover;
     background-position: center;
