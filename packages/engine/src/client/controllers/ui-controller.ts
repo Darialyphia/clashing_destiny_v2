@@ -327,6 +327,10 @@ export class UiController {
         return 'Declare blocker or skip';
       }
     }
+
+    if (state.phase.state === GAME_PHASES.DESTINY) {
+      return 'You may unlock a talent.';
+    }
     return '';
   }
 }

@@ -99,7 +99,7 @@ const opponentPlayer = useOpponentPlayer();
     <section class="middle-zone">
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="flex flex-col gap-2 h-[128px]">
-        <EffectChain v-if="state.effectChain" />
+        <EffectChain v-if="state.effectChain?.stack.length" />
         <GamePhaseTracker v-else />
         <div class="flex justify-end items-center gap-2">
           <ExplainerMessage />
@@ -172,7 +172,7 @@ const opponentPlayer = useOpponentPlayer();
   height: 100dvh;
   aspect-ratio: 16 / 9;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: calc(240 / 800 * 100%) 1fr calc(240 / 800 * 100%);
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.5);
   margin-inline: auto;
   background: url(/assets/backgrounds/battle-board.png) no-repeat center;

@@ -16,6 +16,7 @@ export type SerializedTalentTreeNode = {
   level: number;
   parentIds: string[];
   canUnlock: boolean;
+  destinyCost: number;
 };
 
 export type SerializedTalentTree = {
@@ -90,7 +91,8 @@ export class TalentTreeNode implements Serializable<SerializedTalentTreeNode> {
       description: this.blueprint.description,
       level: this.blueprint.level,
       parentIds: this.blueprint.parentIds,
-      canUnlock: this.canUnlock
+      canUnlock: this.canUnlock,
+      destinyCost: this.blueprint.destinyCost
     };
   }
 }

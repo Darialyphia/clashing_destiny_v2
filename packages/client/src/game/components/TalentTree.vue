@@ -3,6 +3,12 @@ import type { SerializedTalentTreeNode } from '@game/engine/src/card/talent-tree
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import {
+  HoverCardPortal,
+  HoverCardRoot,
+  HoverCardTrigger,
+  HoverCardContent
+} from 'reka-ui';
 
 const { player } = defineProps<{ player: PlayerViewModel }>();
 
@@ -97,19 +103,6 @@ const positionMap = computed(() =>
 <template>
   <div class="talent-tree" ref="root">
     <svg>
-      <defs>
-        <marker
-          id="talent-arrowhead"
-          markerWidth="10"
-          markerHeight="7"
-          refX="10"
-          refY="3.5"
-          orient="auto"
-        >
-          <polygon points="0 0, 10 3.5, 0 7" fill="#444" />
-        </marker>
-      </defs>
-
       <template v-for="node in talentTree.nodes">
         <line
           v-for="parent in node.parentIds"
@@ -119,6 +112,7 @@ const positionMap = computed(() =>
           :x2="positionMap[node.id].x"
           :y2="positionMap[node.id].y"
           class="arrow"
+          :class="{ unlocked: node.isUnlocked }"
         />
       </template>
 
@@ -135,10 +129,27 @@ const positionMap = computed(() =>
             state.turnPlayer === player.id
         }"
       >
-        <circle
-          :cx="position.x"
-          :cy="position.y"
-          r="15"
+        <circle :cx="position.x" :cy="position.y" r="12" />
+      </g>
+    </svg>
+
+    <HoverCardRoot v-for="position in positions" :key="position.node.id">
+      <HoverCardTrigger as-child>
+        <div
+          class="node-item"
+          :style="{
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+            '--bg': `url(/assets/icons/${position.node.iconId}.png)`
+          }"
+          :class="{
+            unlocked: position.node.isUnlocked,
+            disabled: !position.node.isUnlocked && !position.node.canUnlock,
+            interactive:
+              position.node.canUnlock &&
+              state.phase.state === GAME_PHASES.DESTINY &&
+              state.turnPlayer === player.id
+          }"
           @click="
             () => {
               if (
@@ -151,8 +162,26 @@ const positionMap = computed(() =>
             }
           "
         />
-      </g>
-    </svg>
+      </HoverCardTrigger>
+      <HoverCardPortal to="#card-portal">
+        <HoverCardContent>
+          <div class="node-infos">
+            <div class="node-title">
+              <div
+                class="node-image"
+                :style="{
+                  '--bg': `url(/assets/icons/${position.node.iconId}.png)`
+                }"
+              />
+              {{ position.node.name }}
+
+              <div class="node-cost">{{ position.node.destinyCost }}</div>
+            </div>
+            {{ position.node.description }}
+          </div>
+        </HoverCardContent>
+      </HoverCardPortal>
+    </HoverCardRoot>
   </div>
 </template>
 
@@ -162,6 +191,7 @@ const positionMap = computed(() =>
   aspect-ratio: var(--hero-ratio);
   max-height: calc(var(--pixel-scale) * var(--hero-height));
   background-color: black;
+  position: relative;
 }
 
 svg {
@@ -185,13 +215,65 @@ svg {
 
   .interactive & {
     cursor: pointer;
-    filter: drop-shadow(0 0 5px yellow);
+    filter: drop-shadow(0 0 10px yellow);
   }
 }
 .arrow {
   stroke: #444;
   stroke-width: 2;
   fill: none;
-  marker-end: url(#talent-arrowhead);
+  &.unlocked {
+    stroke: cyan;
+  }
+}
+
+.node-item {
+  position: absolute;
+  width: 32px;
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center;
+  background-size: cover;
+  transform: translate(-50%, -50%);
+  filter: sepia(0.35) hue-rotate(-20deg) brightness(0.75);
+  &.unlocked {
+    filter: none;
+  }
+  &.disabled {
+    filter: sepia(0.7) hue-rotate(-20deg) brightness(0.35);
+  }
+}
+
+.node-infos {
+  background-color: black;
+  padding: var(--size-3);
+  color: white;
+  width: 40ch;
+}
+
+.node-title {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  font-weight: bold;
+  font-size: var(--font-size-2);
+}
+
+.node-image {
+  width: calc(16px * var(--pixel-scale));
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center;
+  background-size: cover;
+  border-radius: var(--radius-2);
+}
+
+.node-cost {
+  margin-left: auto;
+  height: calc(10px * var(--pixel-scale));
+  padding-left: calc(18px * var(--pixel-scale));
+  background: url('/assets/ui/destiny.png') no-repeat center;
+  background-size: calc(10px * var(--pixel-scale)) 100%;
+  align-self: center;
+  display: flex;
+  align-items: center;
 }
 </style>

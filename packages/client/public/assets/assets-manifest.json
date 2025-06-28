@@ -41,6 +41,19 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "battle-board.png"
+          ],
+          "src": [
+            "/assets/backgrounds/battle-board.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -4179,6 +4192,19 @@
           ],
           "src": [
             "/assets/ui/subkind-weapon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "talent-node.png"
+          ],
+          "src": [
+            "/assets/ui/talent-node.png"
           ],
           "data": {
             "tags": {

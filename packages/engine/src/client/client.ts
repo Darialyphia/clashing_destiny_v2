@@ -345,7 +345,7 @@ export class GameClient {
     });
   }
 
-  unlockTalent(id: string) {
+  unlockTalent(id: string | null) {
     this.networkAdapter.dispatch({
       type: 'unlockTalent',
       payload: {
