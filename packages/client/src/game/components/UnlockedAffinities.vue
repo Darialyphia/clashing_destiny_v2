@@ -23,7 +23,6 @@ const { player } = defineProps<{
 .unlocked-affinities {
   display: flex;
   flex-direction: column;
-  gap: var(--size-2);
 }
 
 .affinity {

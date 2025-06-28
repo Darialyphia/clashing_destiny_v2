@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import AffinityModal from './AffinityModal.vue';
 import CombatArrows from './CombatArrows.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
@@ -10,6 +9,7 @@ import BattleLog from './BattleLog.vue';
 import Minionzone from './Minionzone.vue';
 import GamePhaseTracker from './GamePhaseTracker.vue';
 import {
+  useGameState,
   useMyBoard,
   useMyPlayer,
   useOpponentBoard,
@@ -21,7 +21,9 @@ import TalentTree from './TalentTree.vue';
 import Hand from '@/card/components/Hand.vue';
 import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
+import EffectChain from './EffectChain.vue';
 
+const state = useGameState();
 const myBoard = useMyBoard();
 const opponentBoard = useOpponentBoard();
 
@@ -33,7 +35,7 @@ const opponentPlayer = useOpponentPlayer();
   <!-- <ManaCostModal /> -->
   <BattleLog />
   <SVGFilters />
-  <DestinyPhaseModal />
+  <!-- <DestinyPhaseModal /> -->
   <AffinityModal />
   <ChooseCardModal />
   <CombatArrows />
@@ -97,7 +99,8 @@ const opponentPlayer = useOpponentPlayer();
     <section class="middle-zone">
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="flex flex-col gap-2 h-[128px]">
-        <GamePhaseTracker />
+        <EffectChain v-if="state.effectChain" />
+        <GamePhaseTracker v-else />
         <div class="flex justify-end items-center gap-2">
           <ExplainerMessage />
           <ActionsButtons />
@@ -119,12 +122,12 @@ const opponentPlayer = useOpponentPlayer();
               class="icon"
               style="--bg: url(/assets/ui/icon-influence.png)"
             />
-            {{ myPlayer.handSize }}
+            {{ opponentPlayer.handSize }}
           </div>
 
           <div>
             <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
-            {{ myPlayer.remainingCardsInDeck }}
+            {{ opponentPlayer.remainingCardsInDeck }}
           </div>
 
           <div>
@@ -132,7 +135,7 @@ const opponentPlayer = useOpponentPlayer();
               class="icon"
               style="--bg: url(/assets/ui/icon-discard-pile.png)"
             />
-            {{ myPlayer.getDiscardPile().length }}
+            {{ opponentPlayer.getDiscardPile().length }}
           </div>
 
           <div>
@@ -140,7 +143,7 @@ const opponentPlayer = useOpponentPlayer();
               class="icon"
               style="--bg: url(/assets/ui/icon-banish-pile.png)"
             />
-            {{ myPlayer.getBanishPile().length }}
+            {{ opponentPlayer.getBanishPile().length }}
           </div>
         </div>
       </div>

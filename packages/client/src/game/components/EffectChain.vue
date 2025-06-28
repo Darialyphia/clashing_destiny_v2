@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useGameState } from '../composables/useGameClient';
-import GameCard from './GameCard.vue';
 import Arrow from './Arrow.vue';
 import { match } from 'ts-pattern';
 
@@ -69,11 +68,8 @@ watch(() => client.value.playerId, buildPaths);
       :card-id="effect.source"
       class="effect-chain-card-wrapper"
     >
-      <GameCard
-        :card-id="effect.source"
-        :interactive="false"
-        class="effect-chain-card"
-      />
+      <div :id="effect.source" class="effect-chain-card" />
+
       <Teleport to="#arrows">
         <Arrow
           v-for="(path, targetIndex) in paths[index]"
@@ -92,14 +88,12 @@ watch(() => client.value.playerId, buildPaths);
   align-self: stretch;
   display: flex;
   gap: var(--size-3);
-  height: var(--size-11);
 }
 
-:global(.effect-chain > *) {
-  position: relative;
-  aspect-ratio: var(--card-ratio);
-  overflow: hidden;
-  height: 100%;
-  /* scale: 2; */
+.effect-chain-card {
+  width: var(--size-8);
+  aspect-ratio: 1;
+  border-radius: var(--radius-round);
+  background-color: red;
 }
 </style>
