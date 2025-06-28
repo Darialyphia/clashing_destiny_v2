@@ -41,14 +41,7 @@ const computeSpacing = () => {
   // );
 
   const lastCardWidth = [...root.value.children].at(-1)!.clientWidth;
-  console.log(
-    'lastCardWidth',
-    lastCardWidth,
-    'allowedWidth',
-    allowedWidth,
-    'children',
-    root.value.children.length
-  );
+
   cardSpacing.value = Math.round(
     (allowedWidth - lastCardWidth) / root.value.children.length
   );

@@ -344,4 +344,14 @@ export class GameClient {
       }
     });
   }
+
+  unlockTalent(id: string) {
+    this.networkAdapter.dispatch({
+      type: 'unlockTalent',
+      payload: {
+        playerId: this.playerId,
+        id
+      }
+    });
+  }
 }

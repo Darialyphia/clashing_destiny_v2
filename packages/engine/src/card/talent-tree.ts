@@ -15,6 +15,7 @@ export type SerializedTalentTreeNode = {
   description: string;
   level: number;
   parentIds: string[];
+  canUnlock: boolean;
 };
 
 export type SerializedTalentTree = {
@@ -55,6 +56,12 @@ export class TalentTreeNode implements Serializable<SerializedTalentTreeNode> {
     if (this.blueprint.destinyCost > this.tree.hero.player.cardManager.destinyZone.size) {
       return false;
     }
+    if (this.tree.hero.level < this.blueprint.level) {
+      return false;
+    }
+    if (this.tree.hero.player.cardManager.destinyZone.size < this.blueprint.destinyCost) {
+      return false;
+    }
     if (this.blueprint.exclusiveWith) {
       const exclusiveNodes = this.blueprint.exclusiveWith
         .map(id => this.tree.getNode(id))
@@ -82,7 +89,8 @@ export class TalentTreeNode implements Serializable<SerializedTalentTreeNode> {
       name: this.blueprint.name,
       description: this.blueprint.description,
       level: this.blueprint.level,
-      parentIds: this.blueprint.parentIds
+      parentIds: this.blueprint.parentIds,
+      canUnlock: this.canUnlock
     };
   }
 }

@@ -195,7 +195,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get level() {
-    return this.talentTree.unlockedNodes.length + 1;
+    return this.talentTree.unlockedNodes.length;
   }
 
   get isAlive() {

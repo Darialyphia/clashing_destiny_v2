@@ -128,6 +128,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
         </PopoverPortal>
       </PopoverRoot>
     </InspectableCard>
+
     <CardStats v-if="card" :card-id="card.id" />
   </div>
 </template>

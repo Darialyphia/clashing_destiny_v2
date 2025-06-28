@@ -69,6 +69,67 @@ export const warlock: HeroBlueprint = {
     );
   },
   talentTree: {
-    nodes: []
+    nodes: [
+      {
+        id: 'warlock-talent-1',
+        name: 'Warlock Talent 1',
+        description: 'This is a placeholder for Warlock talent 1.',
+        destinyCost: 1,
+        iconId: 'placeholder',
+        level: 0,
+        parentIds: [],
+        async onUnlock() {
+          console.log('Warlock Talent 1 unlocked');
+        }
+      },
+      {
+        id: 'warlock-talent-2',
+        name: 'Warlock Talent 2',
+        description: 'This is a placeholder for Warlock talent 2.',
+        destinyCost: 1,
+        iconId: 'placeholder',
+        level: 0,
+        parentIds: [],
+        async onUnlock() {
+          console.log('Warlock Talent 2 unlocked');
+        }
+      },
+      {
+        id: 'warlock-talent-3',
+        name: 'Warlock Talent 3',
+        description: 'This is a placeholder for Warlock talent 3.',
+        destinyCost: 1,
+        iconId: 'placeholder',
+        level: 1,
+        parentIds: ['warlock-talent-1'],
+        async onUnlock() {
+          console.log('Warlock Talent 3 unlocked');
+        }
+      },
+      {
+        id: 'warlock-talent-4',
+        name: 'Warlock Talent 4',
+        description: 'This is a placeholder for Warlock talent 4.',
+        destinyCost: 2,
+        iconId: 'placeholder',
+        level: 1,
+        parentIds: [],
+        async onUnlock() {
+          console.log('Warlock Talent 4 unlocked');
+        }
+      },
+      {
+        id: 'warlock-talent-5',
+        name: 'Warlock Talent 5',
+        description: 'This is a placeholder for Warlock talent 5.',
+        destinyCost: 2,
+        iconId: 'placeholder',
+        level: 2,
+        parentIds: ['warlock-talent-3'],
+        async onUnlock() {
+          console.log('Warlock Talent 5 unlocked');
+        }
+      }
+    ]
   }
 };
