@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { useGameClient, useMaybeEntity } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameClient,
+  useMaybeEntity
+} from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import {
@@ -12,6 +16,9 @@ import {
 } from 'reka-ui';
 import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
+import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import type { DamageType } from '@game/engine/src/utils/damage';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -42,6 +49,50 @@ const isActionsPopoverOpened = computed({
     }
   }
 });
+
+const cardElement = useTemplateRef('card');
+const onTakeDamage = async (e: {
+  card: SerializedCard;
+  damage: {
+    type: DamageType;
+    amount: number;
+  };
+}) => {
+  if (!card.value) return;
+  if (
+    e.card.id !== card.value.id ||
+    !cardElement.value ||
+    e.damage.amount <= 0
+  ) {
+    return;
+  }
+
+  card.value.update(e.card);
+
+  cardElement.value.classList.add('damage');
+  cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
+  setTimeout(() => {
+    cardElement.value?.classList.remove('damage');
+    delete cardElement.value?.dataset.damage;
+  }, 1750);
+
+  const keyframes: Keyframe[] = [
+    { transform: 'translateX(0)' },
+    { transform: 'translateX(10px)' },
+    { transform: 'translateX(-10px)' },
+    { transform: 'translateX(10px)' },
+    { transform: 'translateX(-10px)' },
+    { transform: 'translateX(10px)' },
+    { transform: 'translateX(0)' }
+  ];
+
+  await cardElement.value?.animate(keyframes, {
+    duration: 500,
+    easing: 'ease-in-out',
+    iterations: 1
+  }).finished;
+};
+useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 </script>
 
 <template>
@@ -61,7 +112,9 @@ const isActionsPopoverOpened = computed({
       <PopoverRoot v-model:open="isActionsPopoverOpened">
         <PopoverAnchor />
         <div
-          class="minion"
+          ref="card"
+          :id="card.id"
+          class="slot-minion"
           :style="{ '--bg': `url(${card?.imagePath})` }"
           @click="client.ui.onCardClick(card)"
         />
@@ -97,14 +150,49 @@ const isActionsPopoverOpened = computed({
   }
 }
 
-.minion {
+.slot-minion {
   width: 100%;
   aspect-ratio: 1;
-  --pixel-scale: 2;
-  border-radius: var(--radius-2);
-  background: var(--bg) no-repeat;
-  background-position: center 85%;
-  background-size: calc(96px * var(--pixel-scale))
-    calc(96px * var(--pixel-scale));
+  position: relative;
+  transition: filter 0.2s ease-in-out;
+  &:hover {
+    filter: brightness(1.25);
+  }
+  &::before {
+    --pixel-scale: 1;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    inset: 0;
+    border-radius: var(--radius-2);
+    background: var(--bg) no-repeat;
+    background-position: center 85%;
+    background-size: calc(96px * var(--pixel-scale))
+      calc(96px * var(--pixel-scale));
+    transform: scale(2) translateY(-15%);
+    pointer-events: none;
+  }
+}
+/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
+.slot-minion.damage::after {
+  content: attr(data-damage);
+  position: absolute;
+  top: 0;
+  font-size: var(--font-size-5);
+  color: red;
+  background-size: cover;
+  transform: translateZ(30px);
+  font-weight: var(--font-weight-9);
+  -webkit-text-stroke: 2px black;
+  paint-order: fill stroke;
+  transition: all 0.3s var(--ease-in-2);
+  pointer-events: none;
+
+  @starting-style {
+    transform: translateZ(60px) translateY(-50px) scale(15);
+    filter: blur(10px);
+    opacity: 0;
+  }
 }
 </style>

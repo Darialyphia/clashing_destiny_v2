@@ -41,7 +41,7 @@ const opponentPlayer = useOpponentPlayer();
   <DestinyCostVFX />
   <div class="arrows" id="arrows" />
 
-  <div class="board">
+  <div class="board" id="board">
     <section class="p1-zone">
       <div class="flex gap-3 mb-4">
         <div class="avatar" />
@@ -98,10 +98,10 @@ const opponentPlayer = useOpponentPlayer();
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="flex flex-col gap-2 h-[128px]">
         <GamePhaseTracker />
-        <UiFlex class="flex justify-end items-center gap-2">
+        <div class="flex justify-end items-center gap-2">
           <ExplainerMessage />
           <ActionsButtons />
-        </UiFlex>
+        </div>
       </div>
       <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
     </section>
