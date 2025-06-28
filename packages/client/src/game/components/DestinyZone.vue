@@ -39,14 +39,27 @@ const computeSpacing = () => {
   //   -excess / (boardSide.value.destinyZone.length - 1),
   //   0
   // );
+
   const lastCardWidth = [...root.value.children].at(-1)!.clientWidth;
+  console.log(
+    'lastCardWidth',
+    lastCardWidth,
+    'allowedWidth',
+    allowedWidth,
+    'children',
+    root.value.children.length
+  );
   cardSpacing.value = Math.round(
     (allowedWidth - lastCardWidth) / root.value.children.length
   );
 };
 
 watch(
-  [root, computed(() => boardSide.value.destinyZone.length)],
+  [
+    root,
+    computed(() => boardSide.value.destinyZone.length),
+    computed(() => client.value.ui.selectedManaCostIndices.length)
+  ],
   () => {
     nextTick(computeSpacing);
   },
@@ -86,9 +99,10 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 
     <template v-if="playerId === client.playerId">
       <div
-        v-for="index in client.ui.selectedManaCostIndices"
+        v-for="(index, i) in client.ui.selectedManaCostIndices"
         :key="index"
         class="item mana-card-wrapper"
+        :style="{ '--index': boardSide.destinyZone.length + i }"
       >
         <InspectableCard :card-id="boardSide.hand[index]" side="top">
           <GameCard :card-id="boardSide.hand[index]" class="mana-card" />
@@ -103,6 +117,7 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
   display: flex;
   position: relative;
   overflow: hidden;
+  align-items: flex-end;
   /* & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
   } */
@@ -111,7 +126,8 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 .item {
   position: absolute;
   height: var(--card-height);
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   left: calc(var(--index) * v-bind(cardSpacing) * 1px);
 }
 
@@ -120,7 +136,7 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 }
 
 .mana-card-wrapper {
-  position: relative;
+  position: absolute;
 }
 :global(.mana-card-wrapper > *) {
   position: absolute;

@@ -60,7 +60,8 @@ export class LocationCard extends Card<
         !this.game.effectChainSystem.currentChain &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true),
+        this.hasAffinityMatch &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }

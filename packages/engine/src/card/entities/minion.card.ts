@@ -415,7 +415,8 @@ export class MinionCard extends Card<
         this.player.boardSide.hasUnoccupiedSlot &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true),
+        this.hasAffinityMatch &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -443,9 +444,6 @@ export class MinionCard extends Card<
     this.updatePlayedAt();
     this.removeFromCurrentLocation();
 
-    if (!this.hasAffinityMatch) {
-      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
-    }
     this.player.boardSide.summonMinion(this, position.zone, position.slot);
     await this.blueprint.onPlay(this.game, this);
 

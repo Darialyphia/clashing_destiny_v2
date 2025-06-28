@@ -172,6 +172,8 @@ const opponentPlayer = useOpponentPlayer();
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.5);
   margin-inline: auto;
+  background: url(/assets/backgrounds/battle-board.png) no-repeat center;
+  background-size: cover;
 }
 
 .p1-zone {
@@ -231,9 +233,9 @@ const opponentPlayer = useOpponentPlayer();
 }
 
 .stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--size-2);
-  margin-block: var(--size-4);
   > * {
     display: flex;
     align-items: center;

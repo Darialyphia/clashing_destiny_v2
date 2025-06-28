@@ -79,7 +79,6 @@ const visibleModifiers = computed(() =>
 .stats {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent, hsl(0 0 0 / 0.5));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

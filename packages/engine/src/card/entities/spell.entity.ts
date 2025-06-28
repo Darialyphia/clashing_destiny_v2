@@ -72,6 +72,7 @@ export class SpellCard extends Card<
           : true) &&
         this.location === 'hand' &&
         this.canPayManaCost &&
+        this.hasAffinityMatch &&
         this.blueprint.canPlay(this.game, this) &&
         (this.game.effectChainSystem.currentChain ? this.canPlayDuringChain : true),
       this
@@ -93,9 +94,6 @@ export class SpellCard extends Card<
         );
         this.updatePlayedAt();
 
-        if (!this.hasAffinityMatch) {
-          await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
-        }
         await this.blueprint.onPlay(this.game, this, targets);
         this.sendToDiscardPile();
         await this.game.emit(

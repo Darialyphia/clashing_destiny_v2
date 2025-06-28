@@ -25,7 +25,7 @@ import { match } from 'ts-pattern';
 import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
-import { isDestinyDeckCard, isMainDeckCard } from '../../board/board.system';
+import { isMainDeckCard } from '../../board/board.system';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
