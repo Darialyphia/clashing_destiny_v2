@@ -129,7 +129,6 @@ const spriteUrl = computed(() => {
         :class="{
           floating: card.location === 'board',
           exhausted: card.isExhausted,
-          disabled: interactive && !card.canPlay && card.location === 'hand',
           selected: client.ui.selectedCard?.equals(card),
           targetable: isTargetable
         }"
@@ -234,10 +233,6 @@ const spriteUrl = computed(() => {
   &.is-enemy.damage::after {
     rotate: 180deg;
   }
-}
-
-.disabled {
-  filter: grayscale(0.75);
 }
 
 .selected {

@@ -11,6 +11,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { isDefined } from '@game/shared';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
 const myBoard = useMyBoard();
 const ui = useGameUi();
@@ -68,17 +69,23 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
 const state = useGameState();
 const displayCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
-    return myBoard.value.hand;
+    return myBoard.value.hand.map(id => {
+      return state.value.entities[id] as CardViewModel;
+    });
   }
   const ctx = state.value.interaction.ctx;
-  return myBoard.value.hand.filter(cardId => {
-    return (
-      ctx.card !== cardId &&
-      !client.value.ui.selectedManaCostIndices.includes(
-        myBoard.value.hand.indexOf(cardId)
-      )
-    );
-  });
+  return myBoard.value.hand
+    .filter(cardId => {
+      return (
+        ctx.card !== cardId &&
+        !client.value.ui.selectedManaCostIndices.includes(
+          myBoard.value.hand.indexOf(cardId)
+        )
+      );
+    })
+    .map(cardId => {
+      return state.value.entities[cardId] as CardViewModel;
+    });
 });
 </script>
 
@@ -90,17 +97,21 @@ const displayCards = computed(() => {
   >
     <div
       class="card"
-      v-for="(cardId, index) in displayCards"
-      :key="cardId"
+      v-for="(card, index) in displayCards"
+      :key="card.id"
       :class="{
-        selected: ui.selectedCard?.id === cardId
+        selected: ui.selectedCard?.id === card.id
       }"
       :style="{
         '--index': index,
         '--offset': Math.abs(index - myBoard.hand.length / 2)
       }"
     >
-      <GameCard :card-id="cardId" />
+      <GameCard
+        :card-id="card.id"
+        class="hand-card"
+        :class="{ disabled: !card.canPlay }"
+      />
     </div>
   </section>
 </template>
@@ -146,6 +157,13 @@ const displayCards = computed(() => {
         )
         translateY(var(--y-offset));
     }
+  }
+}
+
+.hand-card {
+  filter: drop-shadow(0 0 10px hsl(var(--color-primary-hsl) / 0.5));
+  &.disabled {
+    filter: none;
   }
 }
 

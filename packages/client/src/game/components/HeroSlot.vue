@@ -68,11 +68,11 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 <template>
   <div
     class="hero-slot"
-    :style="{ '--bg': `url(${hero.imagePath})` }"
     :id="hero.id"
     ref="card"
     @click="client.ui.onCardClick(hero)"
   >
+    <div class="hero-sprite" :style="{ '--bg': `url(${hero.imagePath})` }" />
     <UnlockedAffinities :player="player" class="affinities" />
     <EquipedArtifacts :player="player" class="artifacts" />
     <CardStats :card-id="hero.id" />
@@ -85,9 +85,32 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   position: relative;
   aspect-ratio: var(--hero-ratio);
   max-height: calc(var(--pixel-scale) * var(--hero-height));
+  /* overflow: hidden; */
+
+  .affinities {
+    position: absolute;
+    top: calc(-1 * var(--size-2));
+    right: calc(-1 * var(--size-2));
+    z-index: 1;
+  }
+  .artifacts {
+    position: absolute;
+    bottom: 0;
+    left: calc(-1 * var(--size-3));
+    z-index: 1;
+  }
+}
+
+.hero-sprite {
+  --pixel-scale: 2;
+  position: absolute;
+  inset: 0;
+  aspect-ratio: var(--hero-ratio);
+  max-height: calc(var(--pixel-scale) * var(--hero-height));
   background: url('/assets/ui/card-board-front.png') no-repeat center;
   background-size: cover;
-  /* overflow: hidden; */
+  overflow: hidden;
+
   &::after {
     content: '';
     position: absolute;

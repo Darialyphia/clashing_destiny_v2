@@ -98,7 +98,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 <template>
   <div
     class="minion-slot"
-    :class="{ highlighted: isHighlighted }"
+    :class="{ highlighted: isHighlighted, exhausted: card?.isExhausted }"
     :id="`minion-slot-${props.minionSlot.playerId}-${props.minionSlot.position}-${props.minionSlot.zone}`"
     @click="
       client.ui.onMinionSlotClick({
@@ -148,6 +148,11 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
+    filter: brightness(1.35);
+  }
+
+  &.exhausted {
+    filter: grayscale(0.75);
   }
 }
 
