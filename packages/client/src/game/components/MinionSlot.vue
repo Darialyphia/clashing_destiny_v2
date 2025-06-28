@@ -4,7 +4,14 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import {
+  PopoverRoot,
+  PopoverAnchor,
+  PopoverPortal,
+  PopoverContent
+} from 'reka-ui';
 import CardStats from './CardStats.vue';
+import CardActions from './CardActions.vue';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -19,6 +26,22 @@ const { player, isHighlighted } = useMinionSlot(
 const card = useMaybeEntity<CardViewModel>(
   computed(() => props.minionSlot.minion)
 );
+
+const isActionsPopoverOpened = computed({
+  get() {
+    if (!card.value) return false;
+    if (!client.value.ui.selectedCard) return false;
+    return client.value.ui.selectedCard.equals(card.value);
+  },
+  set(value) {
+    if (!card.value) return;
+    if (value) {
+      client.value.ui.select(card.value);
+    } else {
+      client.value.ui.unselect();
+    }
+  }
+});
 </script>
 
 <template>
@@ -35,7 +58,22 @@ const card = useMaybeEntity<CardViewModel>(
     "
   >
     <InspectableCard v-if="card" :card-id="card.id" side="right">
-      <div class="minion" :style="{ '--bg': `url(${card?.imagePath})` }" />
+      <PopoverRoot v-model:open="isActionsPopoverOpened">
+        <PopoverAnchor />
+        <div
+          class="minion"
+          :style="{ '--bg': `url(${card?.imagePath})` }"
+          @click="client.ui.onCardClick(card)"
+        />
+        <PopoverPortal :disabled="card.location === 'hand'">
+          <PopoverContent :side-offset="-50">
+            <CardActions
+              :card="card"
+              v-model:is-opened="isActionsPopoverOpened"
+            />
+          </PopoverContent>
+        </PopoverPortal>
+      </PopoverRoot>
     </InspectableCard>
     <CardStats v-if="card" :card-id="card.id" />
   </div>
@@ -44,7 +82,6 @@ const card = useMaybeEntity<CardViewModel>(
 <style scoped lang="postcss">
 .minion-slot {
   --pixel-scale: 1;
-  border: solid 2px var(--gray-6);
   width: calc(var(--minion-slot-width) * var(--pixel-scale));
   height: calc(var(--minion-slot-height) * var(--pixel-scale));
   border-radius: var(--radius-2);

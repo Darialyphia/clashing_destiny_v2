@@ -20,6 +20,7 @@ import HeroSlot from './HeroSlot.vue';
 import TalentTree from './TalentTree.vue';
 import Hand from '@/card/components/Hand.vue';
 import DestinyZone from './DestinyZone.vue';
+import ExplainerMessage from './ExplainerMessage.vue';
 
 const myBoard = useMyBoard();
 const opponentBoard = useOpponentBoard();
@@ -91,12 +92,15 @@ const opponentPlayer = useOpponentPlayer();
     </section>
 
     <section class="middle-zone">
-      <Minionzone :player-id="opponentBoard.playerId" />
+      <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="flex flex-col gap-2 h-[128px]">
         <GamePhaseTracker />
-        <ActionsButtons />
+        <UiFlex class="flex justify-end items-center">
+          <ExplainerMessage />
+          <ActionsButtons />
+        </UiFlex>
       </div>
-      <Minionzone :player-id="myBoard.playerId" />
+      <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
     </section>
 
     <section class="p2-zone">
@@ -185,7 +189,6 @@ const opponentPlayer = useOpponentPlayer();
 .middle-zone {
   grid-column: 2;
   grid-row: 1;
-  padding-block: var(--size-6);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -195,6 +198,22 @@ const opponentPlayer = useOpponentPlayer();
 .hand-zone {
   grid-column: 1 / -1;
   grid-row: 2;
+}
+
+/* .p1-zone,
+.p1-minions,
+.hand-zone {
+  background-color: #448;
+}
+
+.p2-zone,
+.p2-minions {
+  background-color: #844;
+} */
+
+.p1-minions,
+.p2-minions {
+  flex-grow: 1;
 }
 
 .avatar {

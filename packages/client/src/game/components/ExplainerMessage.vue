@@ -11,7 +11,6 @@ const client = useGameClient();
 <style scoped lang="postcss">
 .explainer-message {
   margin-inline-start: var(--size-9);
-  transform: rotateX(-30deg);
-  font-size: var(--font-size-5);
+  font-size: var(--font-size-3);
 }
 </style>

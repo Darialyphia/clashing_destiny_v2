@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import { useCard, useGameClient } from '../composables/useGameClient';
+import { useCard } from '../composables/useGameClient';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const { cardId } = defineProps<{ cardId: string }>();
@@ -96,9 +96,8 @@ const visibleModifiers = computed(() =>
 
   &.minion {
     flex-direction: row;
-    padding-right: 0;
-    padding-bottom: 0;
     justify-content: space-between;
+    padding: 0;
   }
   .buffed {
     color: var(--buff-color);
@@ -140,21 +139,16 @@ const visibleModifiers = computed(() =>
 
 .modifiers {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  top: var(--size-1);
+  left: var(--size-2);
   display: flex;
   flex-direction: column;
   gap: var(--size-2);
-  padding: var(--size-5);
   --pixel-scale: 3;
-  .stats.flipped & {
-    bottom: unset;
-    top: 0;
-  }
 }
 
 .modifier {
-  width: calc(var(--pixel-scale) * 20px);
+  width: 20px;
   aspect-ratio: 1;
   background: var(--bg) no-repeat center center;
   background-size: cover;

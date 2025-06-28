@@ -111,19 +111,17 @@ const displayCards = computed(() => {
   justify-items: center;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  pointer-events: none;
   --offset-step: calc(1px * v-bind(cardSpacing));
 
   &:has(:hover) > * {
     --offset-step: calc(1px * v-bind(cardSpacingHovered));
-    --y-offset: -8rem;
+    --y-offset: -20%;
   }
 
   > * {
     grid-row: 1;
     grid-column: 1;
     position: relative;
-    pointer-events: auto;
     --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     /* --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg); */
@@ -139,7 +137,7 @@ const displayCards = computed(() => {
 
     &:is(:hover, .selected) {
       z-index: 1;
-      --y-offset: -20rem;
+      --y-offset: -30%;
       --counter-rotation: calc(var(--rotation) * -1);
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
