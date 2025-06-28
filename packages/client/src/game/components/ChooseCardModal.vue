@@ -82,15 +82,7 @@ const maxChoices = computed(() => {
           variant="info"
           text="Play card"
           :disabled="selectedIndices.length < minChoices"
-          @click="
-            client.networkAdapter.dispatch({
-              type: 'chooseCards',
-              payload: {
-                playerId: client.playerId,
-                indices: selectedIndices
-              }
-            })
-          "
+          @click="client.chooseCards(selectedIndices)"
         />
       </footer>
     </div>

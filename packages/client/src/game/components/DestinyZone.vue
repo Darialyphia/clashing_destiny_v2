@@ -9,7 +9,6 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import GameCard from './GameCard.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -29,16 +28,17 @@ const computeSpacing = () => {
   }
 
   const allowedWidth = root.value.clientWidth;
-  const totalWidth = [...root.value.children].reduce((total, child) => {
-    return total + child.clientWidth;
-  }, 0);
+  // const totalWidth = [...root.value.children].reduce((total, child) => {
+  //   return total + child.clientWidth;
+  // }, 0);
 
-  const excess = totalWidth - allowedWidth;
+  // const excess = totalWidth - allowedWidth;
 
-  cardSpacing.value = Math.min(
-    -excess / (boardSide.value.destinyZone.length - 1),
-    0
-  );
+  // cardSpacing.value = Math.min(
+  //   -excess / (boardSide.value.destinyZone.length - 1),
+  //   0
+  // );
+  cardSpacing.value = Math.round(allowedWidth / root.value.children.length + 1);
 };
 
 watch(
@@ -69,31 +69,15 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 
 <template>
   <div class="destiny-zone" ref="root" :id="`destiny-zone-${playerId}`">
-    <div v-for="(card, index) in boardSide.destinyZone" :key="card">
-      <template v-if="client.playerId === playerId">
-        <InspectableCard :card-id="card" side="top">
-          <CardBack :key="card" class="item" />
-          <GameCard
-            v-if="cardBanishedAsDestinyCost[index]"
-            :card-id="cardBanishedAsDestinyCost[index].card"
-            class="banished-card"
-            :id="`banished-card-${cardBanishedAsDestinyCost[index].card}`"
-          />
-        </InspectableCard>
-      </template>
-      <CardBack v-else class="item" />
-    </div>
-
-    <template v-if="playerId === client.playerId">
-      <div
-        v-for="index in client.ui.selectedManaCostIndices"
-        :key="index"
-        class="item mana-card-wrapper"
+    <template v-for="(card, index) in boardSide.destinyZone" :key="card">
+      <InspectableCard
+        v-if="client.playerId === playerId"
+        :card-id="card"
+        side="top"
       >
-        <InspectableCard :card-id="boardSide.hand[index]" side="top">
-          <GameCard :card-id="boardSide.hand[index]" class="mana-card" />
-        </InspectableCard>
-      </div>
+        <CardBack :key="card" class="item" :style="{ '--index': index }" />
+      </InspectableCard>
+      <CardBack v-else class="item" :style="{ '--index': index }" />
     </template>
   </div>
 </template>
@@ -101,35 +85,21 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 <style scoped lang="postcss">
 .destiny-zone {
   display: flex;
-  border: solid 2px white;
-  > * {
-    position: relative;
-  }
-  & > *:not(:last-child) {
+  position: relative;
+  overflow: hidden;
+  /* & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
-  }
+  } */
 }
 
 .item {
-  aspect-ratio: var(--card-ratio);
+  position: absolute;
   height: 100%;
+  top: 0;
+  left: calc(var(--index) * v-bind(cardSpacing) * 1px);
 }
 
-.mana-card-wrapper {
-  position: relative;
-}
-:global(.mana-card-wrapper > *) {
-  position: absolute;
-  inset: 0;
+:global(.destiny-zone > *) {
   aspect-ratio: var(--card-ratio);
-  height: 100%;
-}
-
-.banished-card {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: var(--card-ratio);
-  height: 100%;
-  transform: rotateY(180deg) translateX(-100%);
 }
 </style>

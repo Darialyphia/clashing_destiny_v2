@@ -23,7 +23,8 @@ const choices = computed(() => {
   return [
     ...premadeDecks.map(deck => ({
       label: deck.name,
-      mainDeck: deck.mainDeck
+      mainDeck: deck.mainDeck,
+      hero: deck.hero
     })),
     ...decks.value.map(deck => ({
       label: deck.name,

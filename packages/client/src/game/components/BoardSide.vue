@@ -196,24 +196,4 @@ const isBanishPileOpened = ref(false);
     }
   }
 }
-
-.pile {
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-template-columns: 1fr;
-  position: relative;
-  > * {
-    grid-row: 1;
-    grid-column: 1;
-    transform: translateZ(calc(var(--i) * 0.8px));
-    height: 100%;
-    /* aspect-ratio: var(--card-ratio); */
-  }
-
-  .pile-card {
-    height: 100%;
-    position: absolute;
-    aspect-ratio: var(--card-ratio);
-  }
-}
 </style>

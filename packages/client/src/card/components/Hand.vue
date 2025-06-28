@@ -105,10 +105,7 @@ const displayCards = computed(() => {
 
 <style scoped lang="postcss">
 .hand {
-  position: fixed;
-  bottom: 0;
-  height: 250px;
-  width: 100%;
+  position: relative;
   z-index: 1;
   display: grid;
   justify-items: center;
@@ -117,8 +114,9 @@ const displayCards = computed(() => {
   pointer-events: none;
   --offset-step: calc(1px * v-bind(cardSpacing));
 
-  &:has(:hover) {
+  &:has(:hover) > * {
     --offset-step: calc(1px * v-bind(cardSpacingHovered));
+    --y-offset: -8rem;
   }
 
   > * {
@@ -128,9 +126,10 @@ const displayCards = computed(() => {
     pointer-events: auto;
     --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
-    --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
-    /* --rotation: 0deg; */
-    --y-offset: calc(var(--offset) * 10px);
+    /* --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg); */
+    --rotation: 0deg;
+    /* --y-offset: calc(var(--offset) * 10px); */
+    --y-offset: 0;
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
@@ -140,7 +139,7 @@ const displayCards = computed(() => {
 
     &:is(:hover, .selected) {
       z-index: 1;
-      --y-offset: -13rem;
+      --y-offset: -20rem;
       --counter-rotation: calc(var(--rotation) * -1);
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))

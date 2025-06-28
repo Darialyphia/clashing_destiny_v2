@@ -1,8 +1,7 @@
 import { useSafeInject } from '@/shared/composables/useSafeInject';
 import {
   GameClient,
-  type GameClientOptions,
-  type NetworkAdapter
+  type GameClientOptions
 } from '@game/engine/src/client/client';
 import type {
   FXEvent,
@@ -75,17 +74,39 @@ export const useOpponentBoard = () => {
   );
 };
 
-export const useCard = (cardId: MaybeRef<string>) => {
+export const useEntity = <T>(entityId: MaybeRef<string>) => {
   const state = useGameState();
   return computed(() => {
-    const card = state.value.entities[unref(cardId)];
-    if (!card) {
+    const entity = state.value.entities[unref(entityId)];
+    if (!entity) {
       throw new Error(
-        `Card with ID ${unref(cardId)} not found in the game state.`
+        `Entity with ID ${unref(entityId)} not found in the game state.`
       );
     }
-    return card as unknown as CardViewModel;
+    return entity as unknown as T;
   });
+};
+
+export const useEntities = <T>(entityIds: MaybeRef<string[]>) => {
+  const state = useGameState();
+  return computed(() => {
+    const ids = unref(entityIds);
+    return ids.map(id => {
+      const entity = state.value.entities[id];
+      if (!entity) {
+        throw new Error(`Entity with ID ${id} not found in the game state.`);
+      }
+      return entity as unknown as T;
+    });
+  });
+};
+
+export const usePlayer = (playerId: MaybeRef<string>) => {
+  return useEntity<PlayerViewModel>(playerId);
+};
+
+export const useCard = (cardId: MaybeRef<string>) => {
+  return useEntity<CardViewModel>(cardId);
 };
 
 export const useFxEvent = <T extends FXEvent>(

@@ -1,6 +1,5 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { HeroBlueprint } from '../../../card-blueprint';

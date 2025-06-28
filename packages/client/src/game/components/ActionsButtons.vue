@@ -20,16 +20,11 @@ const client = useGameClient();
 
 <style scoped lang="postcss">
 .action-buttons {
-  position: fixed;
   display: flex;
-  flex-direction: column;
   gap: var(--size-2);
   bottom: var(--size-3);
+  justify-content: flex-end;
   right: var(--size-3);
-  z-index: 2;
   align-items: center;
-  & > * {
-    width: 100%;
-  }
 }
 </style>

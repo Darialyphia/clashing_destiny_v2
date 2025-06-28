@@ -85,15 +85,6 @@ export class PlayerViewModel {
     return entity as PlayerViewModel;
   }
 
-  declareEndTurn() {
-    this.getClient().networkAdapter.dispatch({
-      type: 'declareEndTurn',
-      payload: {
-        playerId: this.data.id
-      }
-    });
-  }
-
   playCard(index: number) {
     const card = this.getHand()[index];
     if (!card) return;

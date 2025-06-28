@@ -121,15 +121,32 @@
   --unit-icon-size: calc(38 * 3px);
   --unit-icon-size-mobile: 38px;
 
-  --card-width: 160px;
-  --card-height: 224px;
-
   --card-width-unitless: 160;
   --card-height-unitless: 224;
-
+  --card-width: calc(var(--card-width-unitless) * 1px);
+  --card-height: calc(var(--card-height-unitless) * 1px);
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
-  --card-ratio-inverted: var(--card-height-unitless) /
-    var(--card-width-unitless);
+
+  --minion-slot-width-unitless: 128;
+  --minion-slot-height-unitless: 128;
+  --minion-slot-width: calc(var(--minion-slot-width-unitless) * 1px);
+  --minion-slot-height: calc(var(--minion-slot-height-unitless) * 1px);
+  --minion-slot-ratio: var(--minion-slot-width-unitless) /
+    var(--minion-slot-height-unitless);
+
+  --hero-width-unitless: 120;
+  --hero-height-unitless: 168;
+  --hero-width: calc(var(--hero-width-unitless) * 1px);
+  --hero-height: calc(var(--hero-height-unitless) * 1px);
+  --hero-ratio: var(--hero-width-unitless) / var(--hero-height-unitless);
+
+  --artifact-width-unitless: 48;
+  --artifact-height-unitless: 64;
+  --artifact-width: calc(var(--artifact-width-unitless) * 1px);
+  --artifact-height: calc(var(--artifact-height-unitless) * 1px);
+  --artifact-ratio: var(--artifact-width-unitless) /
+    var(--artifact-height-unitless);
+
   --pixel-scale: 2;
 }
 

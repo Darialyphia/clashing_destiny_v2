@@ -15,11 +15,11 @@ export class EndTurnGlobalAction implements GlobalActionRule {
     return 'End Turn';
   }
 
-  shouldDisplay() {
-    return true;
+  shouldBeDisabled() {
+    return false;
   }
 
-  shouldBeDisabled(state: GameClientState) {
+  shouldDisplay(state: GameClientState) {
     return (
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&

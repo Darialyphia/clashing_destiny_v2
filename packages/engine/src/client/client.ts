@@ -15,6 +15,7 @@ import { TypedEventEmitter } from '../utils/typed-emitter';
 import { GAME_PHASES } from '../game/game.enums';
 import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
+import type { Affinity } from '../card/card.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -320,6 +321,26 @@ export class GameClient {
       type: 'passChain',
       payload: {
         playerId: this.playerId
+      }
+    });
+  }
+
+  chooseAffinity(affinity: Affinity) {
+    this.networkAdapter.dispatch({
+      type: 'chooseAffinity',
+      payload: {
+        playerId: this.playerId,
+        affinity
+      }
+    });
+  }
+
+  chooseCards(indices: number[]) {
+    this.networkAdapter.dispatch({
+      type: 'chooseCards',
+      payload: {
+        playerId: this.playerId,
+        indices
       }
     });
   }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import GameCard from './GameCard.vue';
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient } from '../composables/useGameClient';
@@ -34,31 +33,27 @@ const { player, isHighlighted } = useMinionSlot(
       :card-id="props.minionSlot.minion"
       side="right"
     >
-      <GameCard
-        :card-id="props.minionSlot.minion"
-        class="minion-slot-card"
-        image-only
-      />
+      <div class="minion" :style="{ '--bg': '' }" />
+      >
     </InspectableCard>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .minion-slot {
+  --pixel-scale: 1;
   border: solid 2px var(--gray-6);
-  height: 100%;
-  position: relative;
+  width: calc(var(--minion-slot-width) * var(--pixel-scale));
+  height: calc(var(--minion-slot-height) * var(--pixel-scale));
   border-radius: var(--radius-2);
+  background: url('/assets/ui/card-board-front-2.png') no-repeat center;
+  background-size: cover;
   &:hover {
     border-color: var(--cyan-4);
   }
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
-  }
-  & > * {
-    position: absolute;
-    inset: 0;
   }
 }
 </style>
