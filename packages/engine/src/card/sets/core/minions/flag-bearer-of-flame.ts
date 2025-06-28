@@ -47,6 +47,7 @@ export const flagBearerOfFlame: MinionBlueprint = {
           isElligible(candidate) {
             if (candidate.location !== 'board') return false;
             if (card.location !== 'board') return false;
+            if (candidate.isEnemy(card)) return false;
             return card.slot?.inFront?.minion?.equals(candidate) ?? false;
           },
           async onGainAura(candidate) {

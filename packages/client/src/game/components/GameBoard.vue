@@ -43,41 +43,46 @@ const opponentPlayer = useOpponentPlayer();
 
   <div class="board">
     <section class="p1-zone">
-      <div class="flex gap-3">
+      <div class="flex gap-3 mb-4">
         <div class="avatar" />
         <div>
           <div>{{ myPlayer.name }}</div>
           <div>TODO player titles</div>
         </div>
+
+        <div class="stats">
+          <div>
+            <div
+              class="icon"
+              style="--bg: url(/assets/ui/icon-influence.png)"
+            />
+            {{ myPlayer.handSize }}
+          </div>
+
+          <div>
+            <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
+            {{ myPlayer.remainingCardsInDeck }}
+          </div>
+
+          <div>
+            <div
+              class="icon"
+              style="--bg: url(/assets/ui/icon-discard-pile.png)"
+            />
+            {{ myPlayer.getDiscardPile().length }}
+          </div>
+
+          <div>
+            <div
+              class="icon"
+              style="--bg: url(/assets/ui/icon-banish-pile.png)"
+            />
+            {{ myPlayer.getBanishPile().length }}
+          </div>
+        </div>
       </div>
 
-      <div class="stats">
-        <div>
-          <div class="icon" style="--bg: url(/assets/ui/icon-influence.png)" />
-          {{ myPlayer.handSize }}
-        </div>
-
-        <div>
-          <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
-          {{ myPlayer.remainingCardsInDeck }}
-        </div>
-
-        <div>
-          <div
-            class="icon"
-            style="--bg: url(/assets/ui/icon-discard-pile.png)"
-          />
-          {{ myPlayer.getDiscardPile().length }}
-        </div>
-
-        <div>
-          <div
-            class="icon"
-            style="--bg: url(/assets/ui/icon-banish-pile.png)"
-          />
-          {{ myPlayer.getBanishPile().length }}
-        </div>
-      </div>
+      <DestinyZone :player-id="myPlayer.id" />
 
       <div class="grid cols-2 gap-2 mb-2">
         <div>
@@ -87,15 +92,13 @@ const opponentPlayer = useOpponentPlayer();
           <HeroSlot :player="myPlayer" />
         </div>
       </div>
-
-      <DestinyZone :player-id="myPlayer.id" />
     </section>
 
     <section class="middle-zone">
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="flex flex-col gap-2 h-[128px]">
         <GamePhaseTracker />
-        <UiFlex class="flex justify-end items-center">
+        <UiFlex class="flex justify-end items-center gap-2">
           <ExplainerMessage />
           <ActionsButtons />
         </UiFlex>
@@ -104,39 +107,41 @@ const opponentPlayer = useOpponentPlayer();
     </section>
 
     <section class="p2-zone">
-      <div class="flex gap-3 flex-row-reverse">
+      <div class="flex gap-3 flex-row-reverse mb-4">
         <div class="avatar" />
         <div class="text-right">
           <div>{{ opponentPlayer.name }}</div>
           <div>TODO player titles</div>
         </div>
-      </div>
+        <div class="stats justify-end">
+          <div>
+            <div
+              class="icon"
+              style="--bg: url(/assets/ui/icon-influence.png)"
+            />
+            {{ myPlayer.handSize }}
+          </div>
 
-      <div class="stats justify-end">
-        <div>
-          <div class="icon" style="--bg: url(/assets/ui/icon-influence.png)" />
-          {{ myPlayer.handSize }}
-        </div>
+          <div>
+            <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
+            {{ myPlayer.remainingCardsInDeck }}
+          </div>
 
-        <div>
-          <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
-          {{ myPlayer.remainingCardsInDeck }}
-        </div>
+          <div>
+            <div
+              class="icon"
+              style="--bg: url(/assets/ui/icon-discard-pile.png)"
+            />
+            {{ myPlayer.getDiscardPile().length }}
+          </div>
 
-        <div>
-          <div
-            class="icon"
-            style="--bg: url(/assets/ui/icon-discard-pile.png)"
-          />
-          {{ myPlayer.getDiscardPile().length }}
-        </div>
-
-        <div>
-          <div
-            class="icon"
-            style="--bg: url(/assets/ui/icon-banish-pile.png)"
-          />
-          {{ myPlayer.getBanishPile().length }}
+          <div>
+            <div
+              class="icon"
+              style="--bg: url(/assets/ui/icon-banish-pile.png)"
+            />
+            {{ myPlayer.getBanishPile().length }}
+          </div>
         </div>
       </div>
 
@@ -165,25 +170,26 @@ const opponentPlayer = useOpponentPlayer();
   aspect-ratio: 16 / 9;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.5);
   margin-inline: auto;
 }
 
 .p1-zone {
   grid-column: 1;
   grid-row: 1;
+  grid-template-rows: auto 1fr auto;
 }
 
 .p2-zone {
   grid-column: 3;
   grid-row: 1;
+  grid-template-rows: auto auto 1fr;
 }
 
 .p1-zone,
 .p2-zone {
-  padding: var(--size-6);
+  padding: var(--size-6) var(--size-6) 0;
   display: grid;
-  grid-template-rows: auto auto auto 1fr;
 }
 
 .middle-zone {
@@ -221,11 +227,12 @@ const opponentPlayer = useOpponentPlayer();
   aspect-ratio: 1;
   border-radius: var(--radius-round);
   background-color: black;
+  align-self: center;
 }
 
 .stats {
   display: flex;
-  gap: var(--size-4);
+  gap: var(--size-2);
   margin-block: var(--size-4);
   > * {
     display: flex;

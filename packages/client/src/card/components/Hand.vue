@@ -23,8 +23,10 @@ const cardSpacing = computed(() => {
 });
 const cardSpacingHovered = computed(() => {
   const handSize = myBoard.value.hand.length;
-  const base = 185;
-  return handSize > 6 ? base - 10 * (handSize - 6) : base;
+  const base = 184;
+  const amount = handSize > 6 ? base - 10 * (handSize - 6) : base;
+
+  return amount % 2 === 0 ? amount : amount - 1; // Ensure even number to avoid image-rendering: pixelated working
 });
 
 const angle = computed(() => {
@@ -115,7 +117,7 @@ const displayCards = computed(() => {
 
   &:has(:hover) > * {
     --offset-step: calc(1px * v-bind(cardSpacingHovered));
-    --y-offset: -20%;
+    --y-offset: -40%;
   }
 
   > * {
@@ -132,12 +134,12 @@ const displayCards = computed(() => {
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
       )
-      rotate(var(--rotation)) translateY(var(--y-offset));
+      translateY(var(--y-offset));
     transition: transform 0.2s ease-out;
 
     &:is(:hover, .selected) {
       z-index: 1;
-      --y-offset: -30%;
+      --y-offset: -60%;
       --counter-rotation: calc(var(--rotation) * -1);
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))

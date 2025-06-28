@@ -103,7 +103,7 @@ const isActionsPopoverOpened = computed({
   --pixel-scale: 2;
   border-radius: var(--radius-2);
   background: var(--bg) no-repeat;
-  background-position: center 75%;
+  background-position: center 85%;
   background-size: calc(96px * var(--pixel-scale))
     calc(96px * var(--pixel-scale));
 }
