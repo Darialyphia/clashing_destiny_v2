@@ -1,0 +1,11 @@
+- Players alternate playing cards from their hand, one at a time, starting with the player who has the initiative (alternates each turn)
+- To play a card, players place that many cards from their hand face-down as resources.
+- Minions are placed in a single row; positioning is important.
+- Minions have 3 stats: attack, health, and speed.
+- After both players pass, combat begins automatically.
+- During combat, minions automatically fight from right to left, one pair at a time.
+- The minion with the higher Speed strikes first: If a minion dies before it can retaliate, it does not deal damage back.
+- If both have equal Speed, minion deal damage at the same time.
+- When a minion dies, the one to its left takes its place; When a player has no minions, their hero fights instead.
+- Combat continues until there are no minions on the board, then a new turn begins
+- The game ends when a hero reaches 0 HP.

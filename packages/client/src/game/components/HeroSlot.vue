@@ -12,12 +12,13 @@ import CardStats from './CardStats.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import type { DamageType } from '@game/engine/src/utils/damage';
+import { useHeroSlot } from '../composables/useHeroSlot';
 
 const { player } = defineProps<{ player: PlayerViewModel }>();
 
 const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
-
+const { isHighlighted } = useHeroSlot(hero);
 const client = useGameClient();
 
 const cardElement = useTemplateRef('card');
@@ -72,7 +73,11 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     ref="card"
     @click="client.ui.onCardClick(hero)"
   >
-    <div class="hero-sprite" :style="{ '--bg': `url(${hero.imagePath})` }" />
+    <div
+      class="hero-sprite"
+      :style="{ '--bg': `url(${hero.imagePath})` }"
+      :class="{ highlighted: isHighlighted }"
+    />
     <UnlockedAffinities :player="player" class="affinities" />
     <EquipedArtifacts :player="player" class="artifacts" />
     <CardStats :card-id="hero.id" />
@@ -110,7 +115,9 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   background: url('/assets/ui/card-board-front.png') no-repeat center;
   background-size: cover;
   overflow: hidden;
-
+  &.highlighted {
+    filter: sepia(0.25) brightness(1.15);
+  }
   &::after {
     content: '';
     position: absolute;

@@ -161,6 +161,9 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   aspect-ratio: 1;
   position: relative;
   transition: filter 0.2s ease-in-out;
+  @starting-style {
+    filter: brightness(2.75);
+  }
   &:hover {
     filter: brightness(1.25);
   }

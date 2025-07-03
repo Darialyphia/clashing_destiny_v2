@@ -41,7 +41,6 @@ const opponentPlayer = useOpponentPlayer();
   <CombatArrows />
   <PlayedCard />
   <DestinyCostVFX />
-  <div class="arrows" id="arrows" />
 
   <div class="board" id="board">
     <section class="p1-zone">
@@ -164,6 +163,7 @@ const opponentPlayer = useOpponentPlayer();
       <Hand />
     </section>
   </div>
+  <div class="arrows" id="arrows" />
 </template>
 
 <style scoped lang="postcss">
@@ -173,7 +173,7 @@ const opponentPlayer = useOpponentPlayer();
   aspect-ratio: 16 / 9;
   display: grid;
   grid-template-columns: calc(240 / 800 * 100%) 1fr calc(240 / 800 * 100%);
-  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.5);
+  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
   background: url(/assets/backgrounds/battle-board.png) no-repeat center;
   background-size: cover;
@@ -200,10 +200,8 @@ const opponentPlayer = useOpponentPlayer();
 .middle-zone {
   grid-column: 2;
   grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--size-5);
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
 }
 
 .hand-zone {
@@ -225,6 +223,7 @@ const opponentPlayer = useOpponentPlayer();
 .p1-minions,
 .p2-minions {
   flex-grow: 1;
+  align-self: center;
 }
 
 .avatar {
