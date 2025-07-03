@@ -155,28 +155,12 @@ export class GameClient {
       return snapshot.effectChain.player;
     }
 
-    if (
-      snapshot.phase.state === GAME_PHASES.ATTACK &&
-      snapshot.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
-    ) {
-      return snapshot.players.find(id => id !== snapshot.turnPlayer)!;
-    }
-
     return snapshot.interaction.ctx.player;
   }
 
   getActivePlayerId() {
     if (this.stateManager.state.effectChain) {
       return this.stateManager.state.effectChain.player;
-    }
-
-    if (
-      this.stateManager.state.phase.state === GAME_PHASES.ATTACK &&
-      this.stateManager.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
-    ) {
-      return this.stateManager.state.players.find(
-        id => id !== this.stateManager.state.turnPlayer
-      )!;
     }
 
     return this.stateManager.state.interaction.ctx.player;

@@ -18,12 +18,12 @@ const client = useGameClient();
 
 const cardSpacing = computed(() => {
   const handSize = myBoard.value.hand.length;
-  const base = 130;
+  const base = 160;
   return handSize > 7 ? base - 0 * (handSize - 6) : base;
 });
 const cardSpacingHovered = computed(() => {
   const handSize = myBoard.value.hand.length;
-  const base = 184;
+  const base = 190;
   const amount = handSize > 6 ? base - 10 * (handSize - 6) : base;
 
   return amount % 2 === 0 ? amount : amount - 1; // Ensure even number to avoid image-rendering: pixelated working
@@ -139,7 +139,7 @@ const displayCards = computed(() => {
 
     &:is(:hover, .selected) {
       z-index: 1;
-      --y-offset: -60%;
+      --y-offset: -50%;
       --counter-rotation: calc(var(--rotation) * -1);
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))

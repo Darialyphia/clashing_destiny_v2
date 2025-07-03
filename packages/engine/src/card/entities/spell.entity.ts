@@ -3,7 +3,6 @@ import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
-import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
@@ -73,8 +72,7 @@ export class SpellCard extends Card<
         this.location === 'hand' &&
         this.canPayManaCost &&
         this.hasAffinityMatch &&
-        this.blueprint.canPlay(this.game, this) &&
-        (this.game.effectChainSystem.currentChain ? this.canPlayDuringChain : true),
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -82,33 +80,18 @@ export class SpellCard extends Card<
   async play() {
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
 
-    this.preResponseTargets = targets;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
+    this.updatePlayedAt();
 
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        await this.game.emit(
-          CARD_EVENTS.CARD_BEFORE_PLAY,
-          new CardBeforePlayEvent({ card: this })
-        );
-        this.updatePlayedAt();
-
-        await this.blueprint.onPlay(this.game, this, targets);
-        this.sendToDiscardPile();
-        await this.game.emit(
-          CARD_EVENTS.CARD_AFTER_PLAY,
-          new CardBeforePlayEvent({ card: this })
-        );
-        this.preResponseTargets = null;
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
+    await this.blueprint.onPlay(this.game, this, targets);
+    this.sendToDiscardPile();
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
   }
 
   serialize(): SerializedSpellCard {

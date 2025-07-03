@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import CardText from '@/card/components/CardText.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 const { card } = defineProps<{ card: CardViewModel }>();
 const isOpened = defineModel<boolean>('isOpened', { required: true });
@@ -8,10 +9,10 @@ const isOpened = defineModel<boolean>('isOpened', { required: true });
 
 <template>
   <div class="actions-list">
-    <button
+    <FancyButton
       v-for="action in card.getActions()"
       :key="action.id"
-      class="action"
+      text=""
       @click="
         () => {
           action.handler(card);
@@ -19,8 +20,10 @@ const isOpened = defineModel<boolean>('isOpened', { required: true });
         }
       "
     >
-      <CardText :text="action.getLabel(card)" />
-    </button>
+      <div>
+        <CardText :text="action.getLabel(card)" />
+      </div>
+    </FancyButton>
   </div>
 </template>
 

@@ -44,7 +44,9 @@ const tag = computed(() => {
   >
     <!-- <UiSpinner v-if="isLoading" /> -->
     <span class="content" :data-text="text">
-      {{ text }}
+      <slot>
+        {{ text }}
+      </slot>
     </span>
   </component>
 </template>

@@ -12,14 +12,10 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import { GameError } from '../game-error';
 import type { Player } from '../../player/player.entity';
 import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
-import {
-  SelectingMinionSlotsContext,
-  type MinionPosition
-} from '../interactions/selecting-minion-slots.interaction';
+import { SelectingMinionSlotsContext } from '../interactions/selecting-minion-slots.interaction';
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { ChoosingAffinityContext } from '../interactions/choosing-affinity.interaction';
-import type { Affinity } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 
@@ -27,8 +23,6 @@ export const INTERACTION_STATES = {
   IDLE: 'idle',
   SELECTING_CARDS_ON_BOARD: 'selecting_cards_on_board',
   CHOOSING_CARDS: 'choosing_cards',
-  SELECTING_MINION_SLOT: 'selecting_minion_slot',
-  CHOOSING_AFFINITY: 'choosing_affinity',
   PLAYING_CARD: 'playing_card'
 } as const;
 export type InteractionStateDict = typeof INTERACTION_STATES;
@@ -37,12 +31,8 @@ export type InteractionState = Values<typeof INTERACTION_STATES>;
 export const INTERACTION_STATE_TRANSITIONS = {
   START_SELECTING_CARDS_ON_BOARD: 'start_selecting_cards_on_board',
   COMMIT_SELECTING_CARDS_ON_BOARD: 'commit_selecting_cards_on_board',
-  START_SELECTING_MINION_SLOT: 'start_selecting_minion_slot',
-  COMMIT_SELECTING_MINION_SLOT: 'commit_selecting_minion_slot',
   START_CHOOSING_CARDS: 'start_choosing_cards',
   COMMIT_CHOOSING_CARDS: 'commit_choosing_cards',
-  START_CHOOSING_AFFINITY: 'start_choosing_affinity',
-  COMMIT_CHOOSING_AFFINITY: 'commit_choosing_affinity',
   START_PLAYING_CARD: 'start_playing_card',
   COMMIT_PLAYING_CARD: 'commit_playing_card',
   CANCEL_PLAYING_CARD: 'cancel_playing_card'
@@ -59,16 +49,8 @@ export type InteractionContext =
       ctx: SelectingCardOnBoardContext;
     }
   | {
-      state: BetterExtract<InteractionState, 'selecting_minion_slot'>;
-      ctx: SelectingMinionSlotsContext;
-    }
-  | {
       state: BetterExtract<InteractionState, 'choosing_cards'>;
       ctx: ChoosingCardsContext;
-    }
-  | {
-      state: BetterExtract<InteractionState, 'choosing_affinity'>;
-      ctx: ChoosingAffinityContext;
     }
   | {
       state: BetterExtract<InteractionState, 'playing_card'>;
@@ -108,9 +90,7 @@ export class GameInteractionSystem
   private ctxDictionary = {
     [INTERACTION_STATES.IDLE]: IdleContext,
     [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
-    [INTERACTION_STATES.SELECTING_MINION_SLOT]: SelectingMinionSlotsContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
-    [INTERACTION_STATES.CHOOSING_AFFINITY]: ChoosingAffinityContext,
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext
   } as const;
 
@@ -130,11 +110,6 @@ export class GameInteractionSystem
       ),
       stateTransition(
         INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_SELECTING_MINION_SLOT,
-        INTERACTION_STATES.SELECTING_MINION_SLOT
-      ),
-      stateTransition(
-        INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
         INTERACTION_STATES.CHOOSING_CARDS
       ),
@@ -144,23 +119,8 @@ export class GameInteractionSystem
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
-        INTERACTION_STATES.SELECTING_MINION_SLOT,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_MINION_SLOT,
-        INTERACTION_STATES.IDLE
-      ),
-      stateTransition(
         INTERACTION_STATES.CHOOSING_CARDS,
         INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
-        INTERACTION_STATES.IDLE
-      ),
-      stateTransition(
-        INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY,
-        INTERACTION_STATES.CHOOSING_AFFINITY
-      ),
-      stateTransition(
-        INTERACTION_STATES.CHOOSING_AFFINITY,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_AFFINITY,
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
@@ -219,21 +179,6 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async selectMinionSlot(options: {
-    isElligible: (position: MinionPosition, selectedSlots: MinionPosition[]) => boolean;
-    canCommit: (selectedSlots: MinionPosition[]) => boolean;
-    isDone(selectedSlots: MinionPosition[]): boolean;
-    player: Player;
-  }) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_MINION_SLOT);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.SELECTING_MINION_SLOT].create(
-      this.game,
-      options
-    );
-
-    return this.game.inputSystem.pause<MinionPosition[]>();
-  }
-
   async chooseCards<T extends AnyCard>(options: {
     player: Player;
     minChoiceCount: number;
@@ -250,25 +195,13 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async chooseAffinity(options: { player: Player; choices: Affinity[]; label: string }) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY);
-    // @ts-expect-error
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_AFFINITY].create(
-      this.game,
-      options
-    );
-    return this.game.inputSystem.pause<Affinity | null>();
-  }
-
   async declarePlayCardIntent(index: number, player: Player) {
     assert(
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
     );
 
-    const canPlay = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
-      : this.game.gamePhaseSystem.turnPlayer.equals(player);
+    const canPlay = this.game.gamePhaseSystem.turnPlayer.equals(player);
     assert(canPlay, new IllegalCardPlayedError());
 
     const card = player.cardManager.getCardInHandAt(index);

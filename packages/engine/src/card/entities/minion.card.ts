@@ -2,21 +2,9 @@ import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
-import {
-  CombatDamage,
-  LoyaltyDamage,
-  type Damage,
-  type DamageType
-} from '../../utils/damage';
+import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  serializePreResponseTarget,
-  type Ability,
-  type AnyAbility,
-  type MinionBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
+import { type MinionBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -29,7 +17,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
 
 export type SerializedMinionCard = SerializedCard & {
@@ -42,7 +30,6 @@ export type SerializedMinionCard = SerializedCard & {
   affinity: Affinity;
   manaCost: number;
   baseManaCost: number;
-  abilities: SerializedAbility[];
   position: Pick<MinionPosition, 'zone' | 'slot'> | null;
 };
 export type MinionCardInterceptors = CardInterceptors & {
@@ -53,15 +40,10 @@ export type MinionCardInterceptors = CardInterceptors & {
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
   canBeAttacked: Interceptable<boolean, { target: Attacker }>;
-  canUseAbility: Interceptable<
-    boolean,
-    { card: MinionCard; ability: Ability<MinionCard, PreResponseTarget> }
-  >;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
-  abilities: Interceptable<Ability<MinionCard, PreResponseTarget>[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -72,9 +54,7 @@ export const MINION_EVENTS = {
   MINION_BEFORE_DEAL_COMBAT_DAMAGE: 'minion.before-deal-combat-damage',
   MINION_AFTER_DEAL_COMBAT_DAMAGE: 'minion.after-deal-combat-damage',
   MINION_BEFORE_HEAL: 'minion.before-heal',
-  MINION_AFTER_HEAL: 'minion.after-heal',
-  MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability'
+  MINION_AFTER_HEAL: 'minion.after-heal'
 } as const;
 export type MinionEvents = Values<typeof MINION_EVENTS>;
 
@@ -171,8 +151,6 @@ export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE]: MinionCardAfterTakeDamageEvent;
   [MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE]: MinionCardDealCombatDamageEvent;
   [MINION_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE]: MinionCardDealCombatDamageEvent;
-  [MINION_EVENTS.MINION_BEFORE_USE_ABILITY]: MinionUsedAbilityEvent;
-  [MINION_EVENTS.MINION_AFTER_USE_ABILITY]: MinionUsedAbilityEvent;
   [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
   [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
   [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
@@ -200,12 +178,10 @@ export class MinionCard extends Card<
         canAttack: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
         canBeAttacked: new Interceptable(),
-        canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        atk: new Interceptable(),
-        abilities: new Interceptable()
+        atk: new Interceptable()
       },
       options
     );
@@ -238,10 +214,6 @@ export class MinionCard extends Card<
   get slot() {
     if (!this.position) return null;
     return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
-  }
-
-  get abilities(): Ability<MinionCard, PreResponseTarget>[] {
-    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
@@ -289,64 +261,6 @@ export class MinionCard extends Card<
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
-  }
-
-  canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
-    if (!ability) return false;
-
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost &&
-        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        this.game.effectChainSystem.currentChain
-        ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
-            (ability.shouldExhaust
-              ? !this.isExhausted
-              : true && ability.canUse(this.game, this)),
-      { card: this, ability }
-    );
-  }
-
-  async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
-    if (!ability) return;
-
-    await this.game.emit(
-      MINION_EVENTS.MINION_BEFORE_USE_ABILITY,
-      new MinionUsedAbilityEvent({ card: this, abilityId: id })
-    );
-    const targets = await ability.getPreResponseTargets(this.game, this);
-    this.abilityTargets.set(id, targets);
-
-    if (ability.shouldExhaust) {
-      await this.exhaust();
-    }
-
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        await ability.onResolve(this.game, this, targets);
-        this.abilityTargets.delete(id);
-        await this.game.emit(
-          MINION_EVENTS.MINION_AFTER_USE_ABILITY,
-          new MinionUsedAbilityEvent({ card: this, abilityId: id })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
   }
 
   getReceivedDamage(damage: Damage) {
@@ -484,15 +398,7 @@ export class MinionCard extends Card<
       affinity: this.blueprint.affinity,
       position: this.position
         ? { zone: this.position.zone, slot: this.position.slot }
-        : null,
-      abilities: this.abilities.map(ability => ({
-        id: ability.id,
-        canUse: this.canUseAbility(ability.id),
-        name: ability.label,
-        description: ability.description,
-        targets:
-          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+        : null
     };
   }
 }

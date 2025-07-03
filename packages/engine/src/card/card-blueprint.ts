@@ -15,7 +15,6 @@ import type {
 import type { ArtifactCard } from './entities/artifact.entity';
 import { Card, type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
-import type { LocationCard } from './entities/location.entity';
 import type { MinionCard } from './entities/minion.card';
 import type { SpellCard } from './entities/spell.entity';
 
@@ -37,19 +36,6 @@ export type MainDeckCardBlueprint = CardBlueprintBase & {
   manaCost: number;
   deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
 };
-
-export type Ability<TCard extends AnyCard, TTarget extends PreResponseTarget> = {
-  id: string;
-  manaCost: number;
-  shouldExhaust: boolean;
-  description: string;
-  label: string;
-  getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
-  canUse(game: Game, card: TCard): boolean;
-  onResolve(game: Game, card: TCard, targets: TTarget[]): void;
-};
-
-export type AnyAbility = Ability<AnyCard, PreResponseTarget>;
 
 export type SerializedAbility = {
   id: string;
@@ -95,7 +81,6 @@ export type MinionBlueprint = MainDeckCardBlueprint & {
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
   atk: number;
   maxHp: number;
-  abilities: Ability<MinionCard, PreResponseTarget>[];
 };
 export type SpellBlueprint<T extends PreResponseTarget> = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
@@ -105,6 +90,7 @@ export type SpellBlueprint<T extends PreResponseTarget> = MainDeckCardBlueprint 
   canPlay: (game: Game, card: SpellCard) => boolean;
   getPreResponseTargets: (game: Game, card: SpellCard) => Promise<T[]>;
 };
+
 export type HeroBlueprint = CardBlueprintBase & {
   deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
@@ -115,22 +101,13 @@ export type HeroBlueprint = CardBlueprintBase & {
   maxHp: number;
   spellPower: number;
   affinities: Affinity[];
-  abilities: Ability<HeroCard, PreResponseTarget>[];
-  talentTree: TalentTreeBlueprint;
 };
-export type LocationBlueprint = MainDeckCardBlueprint & {
-  kind: Extract<CardKind, typeof CARD_KINDS.LOCATION>;
-  abilities: Ability<LocationCard, PreResponseTarget>[];
-  canPlay: (game: Game, card: LocationCard) => boolean;
-  onInit: (game: Game, card: LocationCard) => Promise<void>;
-  onPlay: (game: Game, card: LocationCard) => Promise<void>;
-};
+
 export type ArtifactBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
-  abilities: Ability<ArtifactCard, PreResponseTarget>[];
 } & (
     | {
         subKind: BetterExtract<ArtifactKind, 'WEAPON'>;
@@ -147,25 +124,8 @@ export type ArtifactBlueprint = MainDeckCardBlueprint & {
       }
   );
 
-export type TalentTreeNodeBlueprint = {
-  id: string;
-  name: string;
-  description: string;
-  level: number;
-  parentIds: string[];
-  iconId: string;
-  destinyCost: number;
-  exclusiveWith?: string[];
-  onUnlock: (game: Game, hero: HeroCard) => Promise<void>;
-};
-
-export type TalentTreeBlueprint = {
-  nodes: TalentTreeNodeBlueprint[];
-};
-
 export type CardBlueprint =
   | SpellBlueprint<any>
   | ArtifactBlueprint
   | MinionBlueprint
-  | HeroBlueprint
-  | LocationBlueprint;
+  | HeroBlueprint;

@@ -170,6 +170,9 @@ const tokens = computed<Token[]>(() => {
   font-weight: var(--font-weight-7);
 }
 
+.card-text {
+  color: #fcffcb;
+}
 .token-mana {
   background: url('/assets/ui/mana-cost.png') no-repeat center center;
   background-size: cover;

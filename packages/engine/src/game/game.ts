@@ -18,7 +18,6 @@ import { CardSystem } from '../card/card.system';
 import type { CardBlueprint } from '../card/card-blueprint';
 import { GameInteractionSystem } from './systems/game-interaction.system';
 import { BoardSystem } from '../board/board.system';
-import { EffectChainSystem } from './systems/effect-chain.system';
 
 export type GameOptions = {
   id: string;
@@ -58,8 +57,6 @@ export class Game implements Serializable<SerializedGame> {
   readonly cardSystem = new CardSystem(this);
 
   readonly boardSystem = new BoardSystem(this);
-
-  readonly effectChainSystem = new EffectChainSystem(this);
 
   // readonly unitSystem = new UnitSystem(this);
 
@@ -111,12 +108,6 @@ export class Game implements Serializable<SerializedGame> {
     this.interaction.initialize();
     console.log(
       `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    );
-    now = performance.now();
-
-    this.effectChainSystem.initialize();
-    console.log(
-      `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
     now = performance.now();
 

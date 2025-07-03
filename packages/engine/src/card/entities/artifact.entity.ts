@@ -1,15 +1,8 @@
 import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
-
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  serializePreResponseTarget,
-  type Ability,
-  type ArtifactBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
+import { type ArtifactBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import { CardBeforePlayEvent, CardAfterPlayEvent } from '../card.events';
 import {
@@ -20,7 +13,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import { LoyaltyDamage } from '../../utils/damage';
 
 export type SerializedArtifactCard = SerializedCard & {
@@ -29,15 +22,10 @@ export type SerializedArtifactCard = SerializedCard & {
   subKind: ArtifactKind;
   manaCost: number;
   baseManaCost: number;
-  abilities: SerializedAbility[];
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
-  canUseAbility: Interceptable<
-    boolean,
-    { card: ArtifactCard; ability: Ability<ArtifactCard, PreResponseTarget> }
-  >;
   durability: Interceptable<number, ArtifactCard>;
   attack: Interceptable<number, ArtifactCard>;
 };
@@ -115,7 +103,6 @@ export class ArtifactCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canUseAbility: new Interceptable(),
         durability: new Interceptable(),
         attack: new Interceptable()
       },
@@ -177,68 +164,9 @@ export class ArtifactCard extends Card<
     );
   }
 
-  canUseAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
-    if (!ability) return false;
-
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost &&
-        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        this.game.effectChainSystem.currentChain
-        ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
-            (ability.shouldExhaust
-              ? !this.isExhausted
-              : true && ability.canUse(this.game, this)),
-      { card: this, ability }
-    );
-  }
-
-  async useAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
-    if (!ability) return;
-
-    await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_BEFORE_USE_ABILITY,
-      new ArtifactUsedAbilityEvent({ card: this, abilityId: id })
-    );
-    const targets = await ability.getPreResponseTargets(this.game, this);
-    this.abilityTargets.set(id, targets);
-
-    if (ability.shouldExhaust) {
-      await this.exhaust();
-    }
-
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        await ability.onResolve(this.game, this, targets);
-        this.abilityTargets.delete(id);
-        await this.game.emit(
-          ARTIFACT_EVENTS.ARTIFACT_AFTER_USE_ABILITY,
-          new ArtifactUsedAbilityEvent({ card: this, abilityId: id })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
-  }
-
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
-        !this.game.effectChainSystem.currentChain &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
         (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true),
@@ -277,15 +205,7 @@ export class ArtifactCard extends Card<
       durability: this.remainingDurability,
       subKind: this.subkind,
       manaCost: this.manaCost,
-      baseManaCost: this.blueprint.manaCost,
-      abilities: this.blueprint.abilities.map(ability => ({
-        id: ability.id,
-        canUse: this.canUseAbility(ability.id),
-        name: ability.label,
-        description: ability.description,
-        targets:
-          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+      baseManaCost: this.blueprint.manaCost
     };
   }
 }

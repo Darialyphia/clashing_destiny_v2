@@ -1359,6 +1359,19 @@
         },
         {
           "alias": [
+            "icon-talent-test"
+          ],
+          "src": [
+            "/assets/icons/talent-test.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-the-hangman"
           ],
           "src": [
@@ -3520,6 +3533,19 @@
           ],
           "src": [
             "/assets/ui/destiny-deck-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "destiny.png"
+          ],
+          "src": [
+            "/assets/ui/destiny.png"
           ],
           "data": {
             "tags": {
