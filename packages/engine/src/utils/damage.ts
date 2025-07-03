@@ -1,6 +1,7 @@
 import type { Values } from '@game/shared';
-import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
 import type { AnyCard } from '../card/entities/card.entity';
+import type { MinionCard } from '../card/entities/minion.card';
+import type { HeroCard } from '../card/entities/hero.entity';
 
 export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',
@@ -31,15 +32,15 @@ export abstract class Damage {
     return this._baseAmount;
   }
 
-  getFinalAmount(target: AttackTarget): number {
+  getFinalAmount(target: MinionCard | HeroCard): number {
     return target.getReceivedDamage(this);
   }
 }
 
 export class CombatDamage extends Damage {
-  private _attacker: Attacker;
+  private _attacker: MinionCard | HeroCard;
 
-  constructor(attacker: Attacker) {
+  constructor(attacker: MinionCard | HeroCard) {
     super({ baseAmount: attacker.atk, type: DAMAGE_TYPES.COMBAT });
     this._attacker = attacker;
   }

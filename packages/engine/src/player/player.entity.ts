@@ -22,7 +22,6 @@ import {
 } from './player.events';
 import type { MainDeckCard } from '../board/board.system';
 import { ModifierManager } from '../modifier/modifier-manager.component';
-import { type SerializedTalentTree } from '../card/talent-tree';
 
 export type PlayerOptions = {
   id: string;
@@ -46,7 +45,6 @@ export type SerializedPlayer = {
   currentHp: number;
   isPlayer1: boolean;
   unlockedAffinities: Affinity[];
-  talentTree: SerializedTalentTree;
 };
 
 type PlayerInterceptors = {
@@ -120,8 +118,7 @@ export class Player
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       unlockedAffinities: this.unlockedAffinities,
-      influence: this.influence,
-      talentTree: this._hero.talentTree.serialize()
+      influence: this.influence
     };
   }
 
@@ -160,7 +157,7 @@ export class Player
   }
 
   get minions() {
-    return this.boardSide.getAllMinions();
+    return this.boardSide.minionZone;
   }
 
   get allAllies() {

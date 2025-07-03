@@ -12,10 +12,8 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import { GameError } from '../game-error';
 import type { Player } from '../../player/player.entity';
 import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
-import { SelectingMinionSlotsContext } from '../interactions/selecting-minion-slots.interaction';
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
-import { ChoosingAffinityContext } from '../interactions/choosing-affinity.interaction';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 
@@ -67,16 +65,8 @@ export type SerializedInteractionContext =
       ctx: ReturnType<SelectingCardOnBoardContext['serialize']>;
     }
   | {
-      state: Extract<InteractionState, 'selecting_minion_slot'>;
-      ctx: ReturnType<SelectingMinionSlotsContext['serialize']>;
-    }
-  | {
       state: Extract<InteractionState, 'choosing_cards'>;
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
-    }
-  | {
-      state: Extract<InteractionState, 'choosing_affinity'>;
-      ctx: ReturnType<ChoosingAffinityContext['serialize']>;
     }
   | {
       state: Extract<InteractionState, 'playing_card'>;
@@ -94,11 +84,7 @@ export class GameInteractionSystem
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext
   } as const;
 
-  private _ctx:
-    | IdleContext
-    | SelectingCardOnBoardContext
-    | SelectingMinionSlotsContext
-    | ChoosingCardsContext;
+  private _ctx: IdleContext | SelectingCardOnBoardContext | ChoosingCardsContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);

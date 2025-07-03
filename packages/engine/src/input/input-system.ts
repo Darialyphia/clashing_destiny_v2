@@ -19,22 +19,12 @@ import {
   GameInputRequiredEvent
 } from '../game/game.events';
 import { GameNotPausedError, InputError } from './input-errors';
-import { DeclareAttackInput } from './inputs/declare-attack.input';
-import { DeclareBlockerInput } from './inputs/declare-blocker.input';
-import { DeclareEndTurnInput } from './inputs/declare-end-turn.input';
-import { PassChainInput } from './inputs/pass-chain.input';
 import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
-import { SelectMinionSlotInput } from './inputs/select-minion-slot.input';
-import { CommitMinionSlotSelectionInput } from './inputs/commit-minion-slot-selection.input';
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
-import { UseCardAbilityInput } from './inputs/use-card-ability.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
-import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
-import { ChooseAffinityInput } from './inputs/choose-affinity.input';
-import { UnlockTalentInput } from './inputs/unlock-talent.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -52,19 +42,9 @@ const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
   cancelPlayCard: CancelPlayCardInput,
   commitPlayCard: CommitPlayCardInput,
-  declareAttack: DeclareAttackInput,
-  declareAttackTarget: DeclareAttackTargetInput,
-  declareBlocker: DeclareBlockerInput,
-  declareEndTurn: DeclareEndTurnInput,
-  passChain: PassChainInput,
   selectCardOnBoard: SelectCardOnBoardInput,
-  selectMinionSlot: SelectMinionSlotInput,
-  commitMinionSlotSelection: CommitMinionSlotSelectionInput,
   commitCardSelection: CommitCardSelectionInput,
-  chooseCards: ChooseCardsInput,
-  chooseAffinity: ChooseAffinityInput,
-  useCardAbility: UseCardAbilityInput,
-  unlockTalent: UnlockTalentInput
+  chooseCards: ChooseCardsInput
 });
 
 type InputMap = typeof inputMap;

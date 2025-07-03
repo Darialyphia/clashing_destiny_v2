@@ -3,7 +3,6 @@ import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
-import type { LocationCard } from './entities/location.entity';
 import type { MinionCard } from './entities/minion.card';
 import type { SpellCard } from './entities/spell.entity';
 
@@ -21,10 +20,6 @@ export const isSpell = (card: AnyCard): card is SpellCard => {
 
 export const isArtifact = (card: AnyCard): card is ArtifactCard => {
   return card.kind === CARD_KINDS.ARTIFACT;
-};
-
-export const isLocation = (card: AnyCard): card is LocationCard => {
-  return card.kind === CARD_KINDS.LOCATION;
 };
 
 export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => {
@@ -139,29 +134,6 @@ export const singleMinionTargetRules = {
       },
       isDone(selectedCards) {
         return selectedCards.length === 1;
-      }
-    });
-  }
-};
-
-export const singleEmptyAllySlot = {
-  canPlay(game: Game, card: AnyCard) {
-    return card.player.boardSide.hasUnoccupiedSlot;
-  },
-  async getPreResponseTargets(game: Game, card: AnyCard) {
-    return await game.interaction.selectMinionSlot({
-      player: card.player,
-      isElligible(slot) {
-        return (
-          slot.player.equals(card.player) &&
-          !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied
-        );
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
       }
     });
   }

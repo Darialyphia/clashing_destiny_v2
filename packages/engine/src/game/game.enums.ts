@@ -2,9 +2,8 @@ import type { Values } from '@game/shared';
 
 export const GAME_PHASES = {
   DRAW: 'draw_phase',
-  DESTINY: 'destiny_phase',
   MAIN: 'main_phase',
-  ATTACK: 'attack_phase',
+  COMBAT: 'combat_phase',
   END: 'end_phase',
   GAME_END: 'game_end'
 } as const;

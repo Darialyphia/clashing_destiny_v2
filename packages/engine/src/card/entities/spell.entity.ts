@@ -1,6 +1,5 @@
 import type { Game } from '../../game/game';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -56,19 +55,14 @@ export class SpellCard extends Card<
 
   get authorizedPhases(): GamePhase[] {
     if (this.blueprint.subKind === SPELL_KINDS.BURST) {
-      return [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+      return [GAME_PHASES.MAIN, GAME_PHASES.COMBAT, GAME_PHASES.END];
     }
     return [GAME_PHASES.MAIN];
   }
 
   canPlay() {
-    const gameStateCtx = this.game.gamePhaseSystem.getContext();
-
     return this.interceptors.canPlay.getValue(
       this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        (gameStateCtx.state === GAME_PHASES.ATTACK
-          ? gameStateCtx.ctx.step === COMBAT_STEPS.BUILDING_CHAIN
-          : true) &&
         this.location === 'hand' &&
         this.canPayManaCost &&
         this.hasAffinityMatch &&

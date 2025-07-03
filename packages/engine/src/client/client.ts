@@ -12,10 +12,7 @@ import { FxController } from './controllers/fx-controller';
 import { ClientStateController } from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
-import { GAME_PHASES } from '../game/game.enums';
-import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
-import type { Affinity } from '../card/card.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -151,18 +148,10 @@ export class GameClient {
   getActivePlayerIdFromSnapshotState(
     snapshot: SerializedOmniscientState | SerializedPlayerState
   ) {
-    if (snapshot.effectChain) {
-      return snapshot.effectChain.player;
-    }
-
     return snapshot.interaction.ctx.player;
   }
 
   getActivePlayerId() {
-    if (this.stateManager.state.effectChain) {
-      return this.stateManager.state.effectChain.player;
-    }
-
     return this.stateManager.state.interaction.ctx.player;
   }
 
@@ -263,58 +252,11 @@ export class GameClient {
     });
   }
 
-  commitMinionSlotSelection() {
-    this.networkAdapter.dispatch({
-      type: 'commitMinionSlotSelection',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
   commitCardSelection() {
     this.networkAdapter.dispatch({
       type: 'commitCardSelection',
       payload: {
         playerId: this.playerId
-      }
-    });
-  }
-
-  skipBlock() {
-    this.networkAdapter.dispatch({
-      type: 'declareBlocker',
-      payload: {
-        blockerId: null,
-        playerId: this.playerId
-      }
-    });
-  }
-
-  endTurn() {
-    this.networkAdapter.dispatch({
-      type: 'declareEndTurn',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
-  passChain() {
-    this.networkAdapter.dispatch({
-      type: 'passChain',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
-  chooseAffinity(affinity: Affinity) {
-    this.networkAdapter.dispatch({
-      type: 'chooseAffinity',
-      payload: {
-        playerId: this.playerId,
-        affinity
       }
     });
   }
@@ -325,16 +267,6 @@ export class GameClient {
       payload: {
         playerId: this.playerId,
         indices
-      }
-    });
-  }
-
-  unlockTalent(id: string | null) {
-    this.networkAdapter.dispatch({
-      type: 'unlockTalent',
-      payload: {
-        playerId: this.playerId,
-        id
       }
     });
   }

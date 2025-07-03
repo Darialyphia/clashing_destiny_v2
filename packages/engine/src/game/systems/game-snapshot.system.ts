@@ -14,12 +14,10 @@ import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
 import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.events';
-import type { SerializedEffectChain } from '../effect-chain';
 
 export type GameStateSnapshot<T> = {
   id: number;
@@ -33,7 +31,6 @@ export type EntityDictionary = Record<
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedLocationCard
   | SerializedPlayer
   | SerializedModifier
 >;
@@ -47,7 +44,6 @@ export type SerializedOmniscientState = {
   board: SerializedBoard;
   turnPlayer: string;
   turnCount: number;
-  effectChain: SerializedEffectChain | null;
 };
 
 export type SerializedPlayerState = SerializedOmniscientState;
@@ -136,8 +132,7 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       board: this.game.boardSystem.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
       turnPlayer: this.game.gamePhaseSystem.turnPlayer.id,
-      turnCount: this.game.gamePhaseSystem.elapsedTurns,
-      effectChain: this.game.effectChainSystem.serialize()
+      turnCount: this.game.gamePhaseSystem.elapsedTurns
     };
   }
 

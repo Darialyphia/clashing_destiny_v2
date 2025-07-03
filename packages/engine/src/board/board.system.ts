@@ -9,7 +9,6 @@ import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.enti
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
-import { BoardColumn } from './board-column';
 import { CARD_DECK_SOURCES } from '../card/card.enums';
 
 export type MinionSlot = number;
@@ -48,10 +47,6 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
   }
   getAllCardsInPlay(): AnyCard[] {
     return this.sides.flatMap(side => side.getAllCardsInPlay());
-  }
-
-  getColumn(row: number) {
-    return new BoardColumn(this.game, row);
   }
 
   serialize(): SerializedBoard {

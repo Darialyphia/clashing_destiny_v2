@@ -20,24 +20,6 @@ export class PrideModifier extends Modifier<MinionCard> {
             }
             return value;
           }
-        }),
-        new MinionInterceptorModifierMixin(game, {
-          key: 'canBlock',
-          interceptor: (value: boolean) => {
-            if (this.target.player.hero.level < minLevel) {
-              return false;
-            }
-            return value;
-          }
-        }),
-        new MinionInterceptorModifierMixin(game, {
-          key: 'canUseAbility',
-          interceptor: (value: boolean) => {
-            if (this.target.player.hero.level < minLevel) {
-              return false;
-            }
-            return value;
-          }
         })
       ]
     });

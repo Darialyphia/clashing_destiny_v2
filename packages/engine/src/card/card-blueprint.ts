@@ -1,6 +1,5 @@
 import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
-import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import type {
   CARD_KINDS,
   CardKind,
@@ -45,7 +44,7 @@ export type SerializedAbility = {
   targets: SerializedPreResponseTarget[] | null;
 };
 
-export type PreResponseTarget = AnyCard | MinionPosition;
+export type PreResponseTarget = AnyCard;
 export type SerializedPreResponseTarget =
   | {
       type: 'card';
@@ -60,17 +59,9 @@ export type SerializedPreResponseTarget =
 export const serializePreResponseTarget = (
   target: PreResponseTarget
 ): SerializedPreResponseTarget => {
-  if (target instanceof Card) {
-    return {
-      type: 'card',
-      card: target.id
-    };
-  }
   return {
-    type: 'minionPosition',
-    playerId: target.player.id,
-    slot: target.slot,
-    zone: target.zone
+    type: 'card',
+    card: target.id
   };
 };
 

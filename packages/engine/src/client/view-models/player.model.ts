@@ -60,10 +60,6 @@ export class PlayerViewModel {
     return this.data.isPlayer1;
   }
 
-  get talentTree() {
-    return this.data.talentTree;
-  }
-
   getHand() {
     return this.data.hand.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;

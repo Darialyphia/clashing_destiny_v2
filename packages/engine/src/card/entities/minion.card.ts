@@ -1,6 +1,5 @@
 import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
-import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
@@ -16,12 +15,10 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { GAME_PHASES } from '../../game/game.enums';
-import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
+import type { HeroCard } from './hero.entity';
 
 export type SerializedMinionCard = SerializedCard & {
-  potentialAttackTargets: string[];
   baseAtk: number;
   atk: number;
   baseMaxHp: number;
@@ -30,16 +27,11 @@ export type SerializedMinionCard = SerializedCard & {
   affinity: Affinity;
   manaCost: number;
   baseManaCost: number;
-  position: Pick<MinionPosition, 'zone' | 'slot'> | null;
 };
 export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;
-  canBlock: Interceptable<boolean, { attacker: Attacker }>;
-  canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
-  canBeDefended: Interceptable<boolean, { defender: Defender }>;
-  canAttack: Interceptable<boolean, { target: AttackTarget }>;
-  hasSummoningSickness: Interceptable<boolean, MinionCard>;
-  canBeAttacked: Interceptable<boolean, { target: Attacker }>;
+  canAttack: Interceptable<boolean, { target: MinionCard | HeroCard }>;
+  canBeAttacked: Interceptable<boolean, { target: MinionCard | HeroCard }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
@@ -61,7 +53,7 @@ export type MinionEvents = Values<typeof MINION_EVENTS>;
 export class MinionCardDealCombatDamageEvent extends TypedSerializableEvent<
   {
     card: MinionCard;
-    target: AttackTarget;
+    target: MinionCard | HeroCard;
     damage: CombatDamage;
   },
   { card: SerializedMinionCard; target: string; damage: number }
@@ -135,8 +127,8 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard; position: { zone: 'attack' | 'defense'; slot: number } },
-  { card: SerializedMinionCard; position: { zone: 'attack' | 'defense'; slot: number } }
+  { card: MinionCard; position: number },
+  { card: SerializedMinionCard; position: number }
 > {
   serialize() {
     return {
@@ -172,11 +164,7 @@ export class MinionCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBlock: new Interceptable(),
-        canBeBlocked: new Interceptable(),
-        canBeDefended: new Interceptable(),
         canAttack: new Interceptable(),
-        hasSummoningSickness: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
@@ -187,12 +175,8 @@ export class MinionCard extends Card<
     );
   }
 
-  get hasSummoningSickness(): boolean {
-    return this.interceptors.hasSummoningSickness.getValue(false, this);
-  }
-
   get position() {
-    return this.player.boardSide.getPositionFor(this);
+    return this.player.boardSide.minionZone.findIndex(minion => minion.equals(this));
   }
 
   get isAlive() {
@@ -211,11 +195,6 @@ export class MinionCard extends Card<
     return Math.max(this.maxHp - this.damageTaken, 0);
   }
 
-  get slot() {
-    if (!this.position) return null;
-    return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
-  }
-
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
     if (key === 'maxHp') {
       await this.checkHp();
@@ -228,38 +207,15 @@ export class MinionCard extends Card<
     });
   }
 
-  canAttack(target: AttackTarget) {
-    const base = this.position?.zone === 'attack' && !this._isExhausted && this.atk > 0;
-
-    return this.interceptors.canAttack.getValue(base, {
+  canAttack(target: MinionCard | HeroCard) {
+    return this.interceptors.canAttack.getValue(!this._isExhausted && this.atk > 0, {
       target
     });
   }
 
-  canBeAttacked(target: AttackTarget) {
+  canBeAttacked(target: MinionCard | HeroCard) {
     return this.interceptors.canBeAttacked.getValue(true, {
       target
-    });
-  }
-
-  canBlock(attacker: Attacker) {
-    return this.interceptors.canBlock.getValue(
-      this.position?.zone === 'defense' && !this._isExhausted,
-      {
-        attacker
-      }
-    );
-  }
-
-  canBeBlocked(blocker: Defender) {
-    return this.interceptors.canBeBlocked.getValue(true, {
-      blocker
-    });
-  }
-
-  canBeDefendedBy(defender: Defender) {
-    return this.interceptors.canBeDefended.getValue(true, {
-      defender
     });
   }
 
@@ -275,7 +231,7 @@ export class MinionCard extends Card<
     }
   }
 
-  async dealDamage(target: AttackTarget, damage: CombatDamage) {
+  async dealDamage(target: MinionCard | HeroCard, damage: CombatDamage) {
     await this.game.emit(
       MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE,
       new MinionCardDealCombatDamageEvent({ card: this, target, damage })
@@ -325,8 +281,6 @@ export class MinionCard extends Card<
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
-        !this.game.effectChainSystem.currentChain &&
-        this.player.boardSide.hasUnoccupiedSlot &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
         this.hasAffinityMatch &&
@@ -336,21 +290,22 @@ export class MinionCard extends Card<
   }
 
   async play() {
-    const [position] = await this.game.interaction.selectMinionSlot({
-      player: this.player,
-      isElligible(position) {
-        return (
-          position.player.equals(this.player) &&
-          !this.player.boardSide.isOccupied(position.zone, position.slot)
-        );
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
-    });
+    // const [position] = await this.game.interaction.selectMinionSlot({
+    //   player: this.player,
+    //   isElligible(position) {
+    //     return (
+    //       position.player.equals(this.player) &&
+    //       !this.player.boardSide.isOccupied(position.zone, position.slot)
+    //     );
+    //   },
+    //   canCommit(selectedSlots) {
+    //     return selectedSlots.length === 1;
+    //   },
+    //   isDone(selectedSlots) {
+    //     return selectedSlots.length === 1;
+    //   }
+    // });
+    const index = 0;
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
@@ -358,30 +313,18 @@ export class MinionCard extends Card<
     this.updatePlayedAt();
     this.removeFromCurrentLocation();
 
-    this.player.boardSide.summonMinion(this, position.zone, position.slot);
+    this.player.boardSide.summonMinion(this, 0);
     await this.blueprint.onPlay(this.game, this);
 
     await this.game.emit(
       MINION_EVENTS.MINION_SUMMONED,
-      new MinionSummonedEvent({ card: this, position })
+      new MinionSummonedEvent({ card: this, position: index })
     );
 
-    if (this.hasSummoningSickness) {
-      await (this as MinionCard).modifiers.add(
-        new SummoningSicknessModifier(this.game, this)
-      );
-    }
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })
     );
-  }
-
-  get potentialAttackTargets() {
-    if (this.location !== 'board') return [];
-    return this.player.opponent.boardSide
-      .getAllAttackTargets()
-      .filter(target => this.canAttack(target));
   }
 
   serialize(): SerializedMinionCard {
@@ -389,16 +332,12 @@ export class MinionCard extends Card<
       ...this.serializeBase(),
       manaCost: this.manaCost,
       baseManaCost: this.blueprint.manaCost,
-      potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
-      affinity: this.blueprint.affinity,
-      position: this.position
-        ? { zone: this.position.zone, slot: this.position.slot }
-        : null
+      affinity: this.blueprint.affinity
     };
   }
 }

@@ -1,4 +1,3 @@
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
@@ -13,20 +12,14 @@ import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
-import { DeclareAttackAction } from '../actions/declare-attack';
 import type { Affinity, ArtifactKind, CardKind, SpellKind } from '../../card/card.enums';
-import { DeclareBlockerAction } from '../actions/declare-blocker';
-import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { GAME_PHASES } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 type CardData =
   | SerializedSpellCard
   | SerializedArtifactCard
   | SerializedHeroCard
-  | SerializedMinionCard
-  | SerializedLocationCard;
+  | SerializedMinionCard;
 
 export type CardActionRule = {
   id: string;
@@ -113,14 +106,6 @@ export class CardViewModel {
 
   get source() {
     return this.data.source;
-  }
-
-  get position() {
-    if ('position' in this.data) {
-      return this.data.position as SerializedMinionCard['position'];
-    }
-
-    return null;
   }
 
   get location() {
@@ -236,25 +221,6 @@ export class CardViewModel {
     return this.data.canPlay;
   }
 
-  get potentialAttackTargets() {
-    if ('potentialAttackTargets' in this.data) {
-      return (
-        this.data.potentialAttackTargets as SerializedMinionCard['potentialAttackTargets']
-      ).map(targetId => {
-        return this.getEntities()[targetId] as CardViewModel;
-      });
-    }
-
-    return [];
-  }
-
-  get canAttack() {
-    return (
-      this.getPlayer().id === this.getClient().state.turnPlayer &&
-      this.potentialAttackTargets.length > 0
-    );
-  }
-
   get canBeTargeted() {
     const client = this.getClient();
     const state = client.stateManager.state;
@@ -262,13 +228,7 @@ export class CardViewModel {
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
       state.interaction.ctx.elligibleCards.some(id => id === this.id);
 
-    const canAttack =
-      state.interaction.state === INTERACTION_STATES.IDLE &&
-      state.phase.state === GAME_PHASES.ATTACK &&
-      state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
-      state.phase.ctx.potentialTargets.some(id => id === this.id);
-
-    return canSelect || canAttack;
+    return canSelect;
   }
 
   get isExhausted() {
@@ -314,11 +274,6 @@ export class CardViewModel {
   }
 
   getActions(): CardActionRule[] {
-    return [
-      new PlayCardAction(this.getClient()),
-      new DeclareAttackAction(this.getClient()),
-      new DeclareBlockerAction(this.getClient()),
-      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
-    ].filter(rule => rule.predicate(this));
+    return [new PlayCardAction(this.getClient())].filter(rule => rule.predicate(this));
   }
 }

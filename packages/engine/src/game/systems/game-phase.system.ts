@@ -11,18 +11,14 @@ import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, GAME_PHASE_EVENTS, type GamePhase } from '../game.enums';
 import { CombatPhase } from '../phases/combat.phase';
 import { DrawPhase } from '../phases/draw.phase';
-import { DestinyPhase } from '../phases/destiny.phase';
 import { MainPhase } from '../phases/main.phase';
 import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
-  DRAW_FOR_DIRST_TURN: 'draw_for_first_turn',
-  GO_TO_MAIN_PHASE: 'go_to_main_phase',
-  DECLARE_ATTACK: 'declare_attack',
-  FINISH_ATTACK: 'finish_attack',
-  DECLARE_END_PHASE: 'declare_end_phase',
+  START_COMBAT: 'start_combat',
+  END_COMBAT: 'end_combat',
   FINISH_END_TURN: 'finish_end_turn',
   PLAYER_WON: 'player_won'
 } as const;
@@ -41,15 +37,11 @@ export type GamePhaseContext =
       ctx: DrawPhase;
     }
   | {
-      state: BetterExtract<GamePhase, 'destiny_phase'>;
-      ctx: DestinyPhase;
-    }
-  | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: MainPhase;
     }
   | {
-      state: BetterExtract<GamePhase, 'attack_phase'>;
+      state: BetterExtract<GamePhase, 'combat_phase'>;
       ctx: CombatPhase;
     }
   | {
@@ -67,15 +59,11 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<DrawPhase['serialize']>;
     }
   | {
-      state: BetterExtract<GamePhase, 'destiny_phase'>;
-      ctx: ReturnType<DestinyPhase['serialize']>;
-    }
-  | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: ReturnType<MainPhase['serialize']>;
     }
   | {
-      state: BetterExtract<GamePhase, 'attack_phase'>;
+      state: BetterExtract<GamePhase, 'combat_phase'>;
       ctx: ReturnType<CombatPhase['serialize']>;
     }
   | {
@@ -98,9 +86,8 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
-    [GAME_PHASES.DESTINY]: DestinyPhase,
     [GAME_PHASES.MAIN]: MainPhase,
-    [GAME_PHASES.ATTACK]: CombatPhase,
+    [GAME_PHASES.COMBAT]: CombatPhase,
     [GAME_PHASES.END]: EndPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
   };
@@ -114,31 +101,16 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       stateTransition(
         GAME_PHASES.DRAW,
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
-        GAME_PHASES.DESTINY
-      ),
-      stateTransition(
-        GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.DRAW_FOR_DIRST_TURN,
-        GAME_PHASES.MAIN
-      ),
-      stateTransition(
-        GAME_PHASES.DESTINY,
-        GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE,
         GAME_PHASES.MAIN
       ),
       stateTransition(
         GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_ATTACK,
-        GAME_PHASES.ATTACK
+        GAME_PHASE_TRANSITIONS.START_COMBAT,
+        GAME_PHASES.COMBAT
       ),
       stateTransition(
-        GAME_PHASES.ATTACK,
-        GAME_PHASE_TRANSITIONS.FINISH_ATTACK,
-        GAME_PHASES.MAIN
-      ),
-      stateTransition(
-        GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_END_PHASE,
+        GAME_PHASES.COMBAT,
+        GAME_PHASE_TRANSITIONS.END_COMBAT,
         GAME_PHASES.END
       ),
       stateTransition(
@@ -158,12 +130,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.GAME_END
       ),
       stateTransition(
-        GAME_PHASES.DESTINY,
-        GAME_PHASE_TRANSITIONS.PLAYER_WON,
-        GAME_PHASES.GAME_END
-      ),
-      stateTransition(
-        GAME_PHASES.ATTACK,
+        GAME_PHASES.COMBAT,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       ),
@@ -267,14 +234,14 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     });
   }
 
-  async declareEndPhase() {
-    assert(GAME_PHASE_TRANSITIONS.DECLARE_END_PHASE, new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_PHASE);
+  async startCombat() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.START_COMBAT), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_COMBAT);
   }
 
-  async startCombat() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK), new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK);
+  async endComat() {
+    assert(GAME_PHASE_TRANSITIONS.END_COMBAT, new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.END_COMBAT);
   }
 
   async declareWinner(player: Player) {

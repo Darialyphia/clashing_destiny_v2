@@ -20,13 +20,9 @@ export class AISystem {
   }
 
   get isActive() {
-    if (this.game.effectChainSystem.currentChain) {
-      return this.game.effectChainSystem.currentChain.isCurrentPlayer(this.player);
-    }
-
     const gamePhaseState = this.game.gamePhaseSystem.getContext();
     if (
-      gamePhaseState.state === GAME_PHASES.ATTACK &&
+      gamePhaseState.state === GAME_PHASES.COMBAT &&
       gamePhaseState.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
       return this.game.gamePhaseSystem.turnPlayer.equals(this.player);
@@ -47,7 +43,7 @@ export class AISystem {
         await this.game.dispatch(bestMove.input);
       } else {
         await this.game.dispatch({
-          type: this.game.effectChainSystem.currentChain ? 'passChain' : 'declareEndTurn',
+          type: 'declareEndTurn',
           payload: {
             playerId: this.player.id
           }

@@ -14,7 +14,6 @@ import {
 } from '../modifier/modifier.entity';
 import { CARD_EVENTS } from '../card/card.enums';
 import type { CardEventMap } from '../card/card.events';
-import { COMBAT_EVENTS, type CombatEventMap } from './phases/combat.phase';
 import { MINION_EVENTS, type MinionCardEventMap } from '../card/entities/minion.card';
 import { HERO_EVENTS, type HeroCardEventMap } from '../card/entities/hero.entity';
 import {
@@ -119,7 +118,6 @@ export type GameEventMap = Prettify<
     GamePhaseEventMap &
     ModifierEventMap &
     CardEventMap &
-    CombatEventMap &
     MinionCardEventMap &
     HeroCardEventMap &
     ArtifactCardEventMap &
@@ -139,7 +137,6 @@ export const GAME_EVENTS = {
   ...GAME_PHASE_EVENTS,
   ...MODIFIER_EVENTS,
   ...CARD_EVENTS,
-  ...COMBAT_EVENTS,
   ...MINION_EVENTS,
   ...HERO_EVENTS,
   ...ARTIFACT_EVENTS,
