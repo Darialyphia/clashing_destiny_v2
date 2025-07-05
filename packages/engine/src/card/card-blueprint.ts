@@ -12,7 +12,7 @@ import type {
   Tag
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
-import { Card, type AnyCard } from './entities/card.entity';
+import { type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.card';
 import type { SpellCard } from './entities/spell.entity';
@@ -70,6 +70,7 @@ export type MinionBlueprint = MainDeckCardBlueprint & {
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
+  speed: number;
   atk: number;
   maxHp: number;
 };
@@ -88,6 +89,7 @@ export type HeroBlueprint = CardBlueprintBase & {
   lineage: string | null;
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
+  speed: number;
   atk: number;
   maxHp: number;
   spellPower: number;

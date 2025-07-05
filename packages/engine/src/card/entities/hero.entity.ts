@@ -23,6 +23,7 @@ export type SerializedHeroCard = SerializedCard & {
   baseAtk: number;
   spellPower: number;
   baseSpellPower: number;
+  speed: number;
   maxHp: number;
   baseMaxHp: number;
   remainingHp: number;
@@ -34,6 +35,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeAttacked: Interceptable<boolean, { target: MinionCard | HeroCard }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
+  speed: Interceptable<number, HeroCard>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
@@ -147,6 +149,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         canBeAttacked: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
+        speed: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         spellPower: new Interceptable()
@@ -161,6 +164,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get isAlive() {
     return this.remainingHp > 0 && this.location === 'board';
+  }
+
+  get speed(): number {
+    return this.interceptors.speed.getValue(this.blueprint.speed, this);
   }
 
   get atk(): number {
@@ -295,6 +302,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       ...this.serializeBase(),
       level: this.level,
       atk: this.atk,
+      speed: this.speed,
       baseAtk: this.blueprint.atk,
       spellPower: this.spellPower,
       baseSpellPower: this.blueprint.spellPower,
