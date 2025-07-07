@@ -275,17 +275,17 @@ const close = () => {
 
   width: 26rem;
   height: var(--size-15);
-  z-index: 1;
+  z-index: 2;
+
+  line-height: 2;
+  transition: transform 0.2s var(--ease-5);
+
+  padding-inline: 0;
+
   @screen lt-lg {
     width: 20rem;
     height: var(--size-13);
   }
-
-  padding-inline: 0;
-
-  line-height: 2;
-
-  transition: transform 0.2s var(--ease-5);
 
   &.is-collapsed {
     transform: translateX(-100%);
@@ -300,20 +300,21 @@ const close = () => {
 
 h4 {
   padding-block-end: var(--size-4);
-  padding-inline-start: var(--size-3);
+  padding-inline: var(--size-6);
 }
 
 ul {
   overflow-y: auto;
+  margin-inline: var(--size-3);
 }
 
 li {
   display: flex;
   flex-wrap: wrap;
   gap: 1ch;
-
-  padding-block: var(--size-1);
-  padding-inline-start: var(--size-6);
+  line-height: 1.2;
+  padding-inline: var(--size-3);
+  padding-block: var(--size-2);
 }
 
 .toggle {

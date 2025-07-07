@@ -128,7 +128,7 @@ const displayCards = computed(() => {
 
   &:has(:hover) > * {
     --offset-step: calc(1px * v-bind(cardSpacingHovered));
-    --y-offset: -40%;
+    --y-offset: -50%;
   }
 
   > * {
@@ -150,7 +150,7 @@ const displayCards = computed(() => {
 
     &:is(:hover, .selected) {
       z-index: 1;
-      --y-offset: -60%;
+      --y-offset: -62%;
       --counter-rotation: calc(var(--rotation) * -1);
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
