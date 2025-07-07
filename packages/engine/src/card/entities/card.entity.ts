@@ -281,10 +281,7 @@ export abstract class Card<
       affinity: this.affinity,
       isExhausted: this.isExhausted,
       name: this.blueprint.name,
-      description:
-        !this.hasAffinityMatch && this.location === 'hand'
-          ? this.descriptionWithoutAffinityMatch
-          : this.blueprint.description,
+      description: this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
       modifiers: this.modifiers.list.map(modifier => modifier.id),
