@@ -32,7 +32,6 @@ export type SerializedBoardSide = {
   };
   minionZone: string[];
   hand: string[];
-  resourceZone: string[];
   deck: { total: number; remaining: number };
   discardPile: string[];
 };
@@ -118,7 +117,6 @@ export class BoardSide
       minionZone: this.minionZone.map(minion => minion.id),
       discardPile: [...this.player.cardManager.discardPile].map(card => card.id),
       hand: this.player.cardManager.hand.map(card => card.id),
-      resourceZone: [...this.player.cardManager.destinyZone].map(card => card.id),
       deck: {
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck

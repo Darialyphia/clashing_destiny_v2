@@ -14,13 +14,7 @@ export type CardManagerComponentOptions = {
   shouldShuffleDeck: boolean;
 };
 
-export type CardLocation =
-  | 'hand'
-  | 'mainDeck'
-  | 'discardPile'
-  | 'banishPile'
-  | 'destinyZone'
-  | 'board';
+export type CardLocation = 'hand' | 'mainDeck' | 'discardPile' | 'board';
 
 export class CardManagerComponent {
   private game: Game;
@@ -94,12 +88,6 @@ export class CardManagerComponent {
 
     const discardPileCard = [...this.discardPile].find(card => card.id === id);
     if (discardPileCard) return { card: discardPileCard, location: 'discardPile' };
-
-    const banishPileCard = [...this.banishPile].find(card => card.id === id);
-    if (banishPileCard) return { card: banishPileCard, location: 'banishPile' };
-
-    const destinyZoneCard = [...this.destinyZone].find(card => card.id === id);
-    if (destinyZoneCard) return { card: destinyZoneCard, location: 'destinyZone' };
 
     const onBoardCard = this.player.boardSide
       .getAllCardsInPlay()

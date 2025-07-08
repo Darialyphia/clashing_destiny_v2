@@ -186,14 +186,6 @@ export abstract class Card<
         }
         this.player.cardManager.removeFromDiscardPile(this);
       })
-      .with('banishPile', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from banish pile when it is not a main deck card.`
-          );
-        }
-        this.player.cardManager.removeFromBanishPile(this);
-      })
       .with('mainDeck', () => {
         if (!isMainDeckCard(this)) {
           throw new IllegalGameStateError(
@@ -201,14 +193,6 @@ export abstract class Card<
           );
         }
         this.player.cardManager.mainDeck.pluck(this);
-      })
-      .with('destinyZone', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from destiny zone pile when it is not a main deck card.`
-          );
-        }
-        this.player.cardManager.removeFromDestinyZone(this);
       })
       .with('board', () => {
         if (!isMainDeckCard(this)) {
