@@ -159,17 +159,24 @@ const opponentPlayer = useOpponentPlayer();
   grid-template-columns: calc(240 / 800 * 100%) 1fr calc(240 / 800 * 100%);
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
-  background: url(/assets/backgrounds/battle-board.png) no-repeat center;
+  /* background: url(/assets/backgrounds/battle-board.png) no-repeat center; */
   background-size: cover;
+  transform-style: preserve-3d;
 }
 
 .p1-zone {
   grid-column: 1;
+  .hero-slot {
+    align-self: flex-start;
+  }
 }
 
 .p2-zone {
   grid-column: 3;
   grid-row: 1;
+  .hero-slot {
+    align-self: flex-end;
+  }
 }
 
 .p1-zone,
@@ -186,14 +193,14 @@ const opponentPlayer = useOpponentPlayer();
   grid-row: 1;
   display: grid;
   grid-template-rows: 1fr auto 1fr;
+  transform: rotateY(-10deg) rotateX(60deg) rotateZ(25deg);
+  transform-origin: center right;
+  transform-style: preserve-3d;
 }
 
 .hand-zone {
   grid-column: 1 / -1;
   grid-row: 2;
-}
-.hero-slot {
-  align-self: center;
 }
 
 /* .p1-zone,
@@ -211,6 +218,7 @@ const opponentPlayer = useOpponentPlayer();
 .p2-minions {
   flex-grow: 1;
   align-self: center;
+  transform-style: preserve-3d;
 }
 
 .avatar {

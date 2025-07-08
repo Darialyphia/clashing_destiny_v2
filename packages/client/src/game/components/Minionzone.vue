@@ -37,11 +37,14 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
   display: grid;
   justify-self: center;
   gap: var(--size-2);
+  transform-style: preserve-3d;
+
   .minion-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     justify-items: center;
     align-items: center;
+    transform-style: preserve-3d;
   }
 }
 </style>

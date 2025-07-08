@@ -1307,10 +1307,36 @@
         },
         {
           "alias": [
+            "icon-talent-arcane-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-arcane-affinity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-arcane-studies"
           ],
           "src": [
             "/assets/icons/talent-arcane-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-fire-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-fire-affinity.png"
           ],
           "data": {
             "tags": {
