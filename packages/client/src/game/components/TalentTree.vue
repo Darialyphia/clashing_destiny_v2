@@ -133,7 +133,12 @@ const positionMap = computed(() =>
       </g>
     </svg>
 
-    <HoverCardRoot v-for="position in positions" :key="position.node.id">
+    <HoverCardRoot
+      v-for="position in positions"
+      :key="position.node.id"
+      :open-delay="0"
+      :close-delay="0"
+    >
       <HoverCardTrigger as-child>
         <div
           class="node-item"
@@ -240,6 +245,10 @@ svg {
   }
   &.disabled {
     filter: sepia(0.7) hue-rotate(-20deg) brightness(0.35);
+  }
+  &:not(.disabled):hover {
+    filter: brightness(1.35);
+    cursor: url('/assets/ui/cursor-hover.png'), auto;
   }
 }
 

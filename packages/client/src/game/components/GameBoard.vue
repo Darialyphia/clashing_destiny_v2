@@ -17,7 +17,6 @@ import {
 } from '../composables/useGameClient';
 import ActionsButtons from './ActionsButtons.vue';
 import HeroSlot from './HeroSlot.vue';
-import TalentTree from './TalentTree.vue';
 import Hand from '@/card/components/Hand.vue';
 import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
@@ -41,6 +40,11 @@ const opponentPlayer = useOpponentPlayer();
   <CombatArrows />
   <PlayedCard />
   <DestinyCostVFX />
+
+  <div class="explainer">
+    <ExplainerMessage />
+  </div>
+  <ActionsButtons />
 
   <div class="board" id="board">
     <section class="p1-zone">
@@ -89,13 +93,9 @@ const opponentPlayer = useOpponentPlayer();
 
     <section class="middle-zone">
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
-      <div class="flex flex-col gap-2 h-[128px]">
+      <div class="flex flex-col gap-2">
         <EffectChain v-if="state.effectChain?.stack.length" />
         <GamePhaseTracker v-else />
-        <div class="flex justify-end items-center gap-2">
-          <ExplainerMessage />
-          <ActionsButtons />
-        </div>
       </div>
       <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
     </section>
@@ -153,6 +153,7 @@ const opponentPlayer = useOpponentPlayer();
 <style scoped lang="postcss">
 .board {
   --pixel-scale: 2;
+  filter: brightness(1);
   height: 100dvh;
   aspect-ratio: 16 / 9;
   display: grid;
@@ -161,11 +162,13 @@ const opponentPlayer = useOpponentPlayer();
   margin-inline: auto;
   /* background: url(/assets/backgrounds/battle-board.png) no-repeat center; */
   background-size: cover;
-  transform-style: preserve-3d;
+  /* transform-style: preserve-3d; */
 }
 
 .p1-zone {
   grid-column: 1;
+  position: relative;
+  z-index: 1;
   .hero-slot {
     align-self: flex-start;
   }
@@ -193,8 +196,7 @@ const opponentPlayer = useOpponentPlayer();
   grid-row: 1;
   display: grid;
   grid-template-rows: 1fr auto 1fr;
-  transform: rotateY(-10deg) rotateX(60deg) rotateZ(25deg);
-  transform-origin: center right;
+  transform: rotateY(-0deg) rotateX(60deg) rotateZ(45deg) scale(1);
   transform-style: preserve-3d;
 }
 
@@ -202,17 +204,6 @@ const opponentPlayer = useOpponentPlayer();
   grid-column: 1 / -1;
   grid-row: 2;
 }
-
-/* .p1-zone,
-.p1-minions,
-.hand-zone {
-  background-color: #448;
-}
-
-.p2-zone,
-.p2-minions {
-  background-color: #844;
-} */
 
 .p1-minions,
 .p2-minions {
@@ -260,5 +251,14 @@ const opponentPlayer = useOpponentPlayer();
 :global(#arrows > *) {
   grid-column: 1;
   grid-row: 1;
+}
+
+.explainer {
+  position: fixed;
+  top: var(--size-3);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
 }
 </style>

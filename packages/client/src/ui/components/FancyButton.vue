@@ -52,77 +52,73 @@ const tag = computed(() => {
 <style scoped lang="postcss">
 @import 'open-props/media';
 
-@layer components {
-  .fancy-button {
-    font-size: 28px;
-    font-weight: var(--font-weight-4);
+.fancy-button {
+  font-size: 28px;
+  font-weight: var(--font-weight-4);
 
-    display: flex;
-    gap: var(--size-2);
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+  justify-content: center;
 
-    width: fit-content;
-    padding: var(--size-2-em) var(--size-3-em);
+  width: fit-content;
+  padding: var(--size-2-em) var(--size-3-em);
 
-    font-family: 'NotJamSlab14', monospace;
-    white-space: nowrap;
-    position: relative;
-    z-index: 0;
+  font-family: 'NotJamSlab14', monospace;
+  white-space: nowrap;
+  position: relative;
+  z-index: 0;
 
-    border-image-slice: 38 fill;
-    border-image-width: 39px;
-    border-radius: var(--_ui-button-radius);
+  border-image-slice: 38 fill;
+  border-image-width: 39px;
+  border-radius: var(--_ui-button-radius);
 
-    transition: filter 0.2s;
+  &.primary {
+    border-image-source: url('/assets/ui/button.png');
+  }
 
-    &.primary {
-      border-image-source: url('/assets/ui/button.png');
-    }
+  &.error {
+    border-image-source: url('/assets/ui/button-error.png');
+  }
 
-    &.error {
-      border-image-source: url('/assets/ui/button-error.png');
-    }
+  &.info {
+    border-image-source: url('/assets/ui/button-blue.png');
+  }
 
-    &.info {
-      border-image-source: url('/assets/ui/button-blue.png');
-    }
+  &:disabled {
+    border-image-source: url('/assets/ui/button-disabled.png');
+    cursor: not-allowed;
+  }
 
-    &:disabled {
-      border-image-source: url('/assets/ui/button-disabled.png');
-      cursor: not-allowed;
-    }
+  &,
+  &:hover {
+    text-decoration: none;
+  }
 
-    &,
-    &:hover {
-      text-decoration: none;
-    }
+  &:hover &:active {
+    /* transform: scale(0.98); */
+    /* transition: transform 0.2s; */
+  }
 
-    &:hover &:active {
-      transform: scale(0.98);
-      transition: transform 0.2s;
-    }
+  &:focus-visible {
+    color: var(--_ui-button-focus-color);
+    background-color: var(--_ui-button-focus-bg);
+  }
+  &.is-inline {
+    display: inline-flex;
+  }
 
-    &:focus-visible {
-      color: var(--_ui-button-focus-color);
-      background-color: var(--_ui-button-focus-bg);
-    }
-    &.is-inline {
-      display: inline-flex;
-    }
+  & > .icon {
+    display: block;
+    flex-shrink: 0;
+    aspect-ratio: 1;
+    font-size: var(--font-size-4);
+  }
 
-    & > .icon {
-      display: block;
-      flex-shrink: 0;
-      aspect-ratio: 1;
-      font-size: var(--font-size-4);
-    }
-
-    &:hover:not(:disabled) {
-      color: var(--_ui-button-hover-color);
-      /* background-color: var(--_ui-button-hover-bg); */
-      filter: brightness(1.2);
-    }
+  &:hover:not(:disabled) {
+    color: var(--_ui-button-hover-color);
+    /* background-color: var(--_ui-button-hover-bg); */
+    filter: brightness(1.5);
   }
 }
 

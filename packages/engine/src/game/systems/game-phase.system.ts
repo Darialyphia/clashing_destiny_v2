@@ -18,7 +18,7 @@ import { GameEndPhase } from '../phases/game-end.phase';
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
-  DRAW_FOR_DIRST_TURN: 'draw_for_first_turn',
+  DRAW_FOR_FIRST_TURN: 'draw_for_first_turn',
   GO_TO_MAIN_PHASE: 'go_to_main_phase',
   DECLARE_ATTACK: 'declare_attack',
   FINISH_ATTACK: 'finish_attack',
@@ -118,7 +118,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(
         GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.DRAW_FOR_DIRST_TURN,
+        GAME_PHASE_TRANSITIONS.DRAW_FOR_FIRST_TURN,
         GAME_PHASES.MAIN
       ),
       stateTransition(

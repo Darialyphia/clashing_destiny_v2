@@ -189,7 +189,6 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   position: absolute;
   top: 0;
   font-size: var(--font-size-5);
-  color: red;
   background-size: cover;
   transform: translateZ(30px);
   font-weight: var(--font-weight-9);
