@@ -151,10 +151,9 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
-    filter: brightness(1.35);
   }
 
-  &.exhausted {
+  &.exhausted .slot-minion {
     filter: grayscale(0.75);
   }
 }
@@ -196,6 +195,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   paint-order: fill stroke;
   transition: all 0.3s var(--ease-in-2);
   pointer-events: none;
+  color: var(--red-9);
 
   @starting-style {
     transform: translateZ(60px) translateY(-50px) scale(15);
@@ -205,7 +205,8 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 }
 
 .minion-wrapper {
-  transform: translateZ(65px) rotateX(-75deg) rotateY(10deg);
+  transform: translateY(40px) translateX(25px) translateZ(75px) rotateX(-75deg)
+    rotateY(45deg);
   transform-style: preserve-3d;
 }
 </style>

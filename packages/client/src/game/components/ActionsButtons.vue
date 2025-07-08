@@ -29,5 +29,6 @@ const client = useGameClient();
   position: fixed;
   bottom: var(--size-6);
   right: var(--size-6);
+  z-index: 1;
 }
 </style>
