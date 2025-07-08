@@ -329,7 +329,9 @@ export class UiController {
     }
 
     if (state.phase.state === GAME_PHASES.DESTINY) {
-      return 'You may unlock a talent.';
+      return state.turnCount === 0
+        ? 'Unlock your first affinity.'
+        : 'you may unlock a talent.';
     }
     return '';
   }

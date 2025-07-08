@@ -75,66 +75,65 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
   if (event.player.id !== playerId) return;
   cardBanishedAsDestinyCost.value = [];
 });
+
+const displayedCards = computed(() => {
+  return [
+    ...boardSide.value.destinyZone.map((card, index) => {
+      return {
+        type: 'destiny',
+        cardId: card
+      };
+    }),
+    ...client.value.ui.selectedManaCostIndices.map(index => {
+      return {
+        type: 'mana',
+        cardId: boardSide.value.hand[index]
+      };
+    })
+  ];
+});
 </script>
 
 <template>
   <div class="destiny-zone" ref="root" :id="`destiny-zone-${playerId}`">
-    <template v-for="(card, index) in boardSide.destinyZone" :key="card">
+    <div v-for="(card, index) in displayedCards" :key="card.cardId">
       <InspectableCard
         v-if="client.playerId === playerId"
-        :card-id="card"
+        :card-id="card.cardId"
         side="top"
       >
-        <CardBack :key="card" class="item" :style="{ '--index': index }" />
+        <CardBack
+          :key="card.cardId"
+          class="item"
+          :style="{ '--index': index }"
+        />
       </InspectableCard>
       <CardBack v-else class="item" :style="{ '--index': index }" />
-    </template>
-
-    <template v-if="playerId === client.playerId">
-      <div
-        v-for="(index, i) in client.ui.selectedManaCostIndices"
-        :key="index"
-        class="item mana-card-wrapper"
-        :style="{ '--index': boardSide.destinyZone.length + i }"
-      >
-        <InspectableCard :card-id="boardSide.hand[index]" side="top">
-          <GameCard :card-id="boardSide.hand[index]" class="mana-card" />
-        </InspectableCard>
-      </div>
-    </template>
+    </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .destiny-zone {
-  display: flex;
+  display: grid;
   position: relative;
   overflow: hidden;
-  align-items: flex-end;
+  justify-items: start;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
   /* & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
   } */
+
+  > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
 }
 
 .item {
-  position: absolute;
   height: var(--card-height);
-  top: 50%;
-  transform: translateY(-50%);
-  left: calc(var(--index) * v-bind(cardSpacing) * 1px);
-}
-
-:global(.destiny-zone > *) {
   aspect-ratio: var(--card-ratio);
-}
-
-.mana-card-wrapper {
-  position: absolute;
-}
-:global(.mana-card-wrapper > *) {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: var(--card-ratio);
-  height: var(--card-height);
+  transform: translateX(calc(var(--index) * v-bind(cardSpacing) * 1px));
 }
 </style>

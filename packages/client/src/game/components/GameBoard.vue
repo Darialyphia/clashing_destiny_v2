@@ -83,16 +83,8 @@ const opponentPlayer = useOpponentPlayer();
         </div>
       </div>
 
+      <HeroSlot :player="myPlayer" class="hero-slot" />
       <DestinyZone :player-id="myPlayer.id" />
-
-      <div class="grid cols-2 gap-2 mb-2">
-        <div>
-          <TalentTree :player="myPlayer" />
-        </div>
-        <div>
-          <HeroSlot :player="myPlayer" />
-        </div>
-      </div>
     </section>
 
     <section class="middle-zone">
@@ -147,15 +139,7 @@ const opponentPlayer = useOpponentPlayer();
         </div>
       </div>
 
-      <div class="grid cols-2 gap-2 mb-2">
-        <div>
-          <HeroSlot :player="opponentPlayer" />
-        </div>
-        <div>
-          <TalentTree :player="opponentPlayer" />
-        </div>
-      </div>
-
+      <HeroSlot :player="opponentPlayer" class="hero-slot" />
       <DestinyZone :player-id="opponentPlayer.id" />
     </section>
 
@@ -181,20 +165,20 @@ const opponentPlayer = useOpponentPlayer();
 
 .p1-zone {
   grid-column: 1;
-  grid-row: 1;
-  grid-template-rows: auto 1fr auto;
 }
 
 .p2-zone {
   grid-column: 3;
   grid-row: 1;
-  grid-template-rows: auto auto 1fr;
 }
 
 .p1-zone,
 .p2-zone {
   padding: var(--size-6) var(--size-6) 0;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  grid-row: 1;
 }
 
 .middle-zone {
@@ -207,6 +191,9 @@ const opponentPlayer = useOpponentPlayer();
 .hand-zone {
   grid-column: 1 / -1;
   grid-row: 2;
+}
+.hero-slot {
+  align-self: center;
 }
 
 /* .p1-zone,

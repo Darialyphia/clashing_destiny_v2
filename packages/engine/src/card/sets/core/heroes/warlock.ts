@@ -20,7 +20,7 @@ export const warlock: HeroBlueprint = {
   cardIconId: 'hero-warlock',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  affinities: [AFFINITIES.FIRE],
+  affinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
@@ -71,27 +71,27 @@ export const warlock: HeroBlueprint = {
   talentTree: {
     nodes: [
       {
-        id: 'warlock-talent-1',
-        name: 'Warlock Talent 1',
-        description: 'This is a placeholder for Warlock talent 1.',
-        destinyCost: 1,
-        iconId: 'talent-test',
+        id: 'fire-affinity',
+        name: 'Fire affinity',
+        description: 'Allows you to play Fire cards.',
+        destinyCost: 0,
+        iconId: 'talent-fire-affinity',
         level: 0,
         parentIds: [],
-        async onUnlock() {
-          console.log('Warlock Talent 1 unlocked');
+        async onUnlock(game, hero) {
+          hero.player.unlockAffinity(AFFINITIES.FIRE);
         }
       },
       {
-        id: 'warlock-talent-2',
-        name: 'Warlock Talent 2',
-        description: 'This is a placeholder for Warlock talent 2.',
-        destinyCost: 1,
-        iconId: 'talent-test',
+        id: 'arcane-affinity',
+        name: 'Arcane affinity',
+        description: 'Allows you to play Arcane cards.',
+        destinyCost: 0,
+        iconId: 'talent-arcane-affinity',
         level: 0,
         parentIds: [],
-        async onUnlock() {
-          console.log('Warlock Talent 2 unlocked');
+        async onUnlock(game, hero) {
+          hero.player.unlockAffinity(AFFINITIES.ARCANE);
         }
       },
       {
@@ -101,7 +101,7 @@ export const warlock: HeroBlueprint = {
         destinyCost: 1,
         iconId: 'talent-test',
         level: 1,
-        parentIds: ['warlock-talent-1'],
+        parentIds: [],
         async onUnlock() {
           console.log('Warlock Talent 3 unlocked');
         }
@@ -113,7 +113,7 @@ export const warlock: HeroBlueprint = {
         destinyCost: 2,
         iconId: 'talent-test',
         level: 1,
-        parentIds: ['warlock-talent-1'],
+        parentIds: [],
         async onUnlock() {
           console.log('Warlock Talent 4 unlocked');
         }
@@ -125,7 +125,7 @@ export const warlock: HeroBlueprint = {
         destinyCost: 2,
         iconId: 'talent-test',
         level: 2,
-        parentIds: ['warlock-talent-3'],
+        parentIds: [],
         async onUnlock() {
           console.log('Warlock Talent 5 unlocked');
         }

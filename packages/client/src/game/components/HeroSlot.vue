@@ -4,7 +4,8 @@ import {
   useBoardSide,
   useCard,
   useFxEvent,
-  useGameClient
+  useGameClient,
+  useGameState
 } from '../composables/useGameClient';
 import UnlockedAffinities from './UnlockedAffinities.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
@@ -13,6 +14,8 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import type { DamageType } from '@game/engine/src/utils/damage';
 import { useHeroSlot } from '../composables/useHeroSlot';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import TalentTree from './TalentTree.vue';
 
 const { player } = defineProps<{ player: PlayerViewModel }>();
 
@@ -20,6 +23,7 @@ const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
 const { isHighlighted } = useHeroSlot(hero);
 const client = useGameClient();
+const state = useGameState();
 
 const cardElement = useTemplateRef('card');
 const onTakeDamage = async (e: {
@@ -73,14 +77,23 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     ref="card"
     @click="client.ui.onCardClick(hero)"
   >
-    <div
-      class="hero-sprite"
-      :style="{ '--bg': `url(${hero.imagePath})` }"
-      :class="{ highlighted: isHighlighted }"
+    <TalentTree
+      v-if="
+        client.playerId === player.id &&
+        state.phase.state === GAME_PHASES.DESTINY
+      "
+      :player="player"
     />
-    <UnlockedAffinities :player="player" class="affinities" />
-    <EquipedArtifacts :player="player" class="artifacts" />
-    <CardStats :card-id="hero.id" />
+    <div v-else>
+      <div
+        class="hero-sprite"
+        :style="{ '--bg': `url(${hero.imagePath})` }"
+        :class="{ highlighted: isHighlighted }"
+      />
+      <UnlockedAffinities :player="player" class="affinities" />
+      <EquipedArtifacts :player="player" class="artifacts" />
+      <CardStats :card-id="hero.id" />
+    </div>
   </div>
 </template>
 
@@ -89,7 +102,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   --pixel-scale: 2;
   position: relative;
   aspect-ratio: var(--hero-ratio);
-  max-height: calc(var(--pixel-scale) * var(--hero-height));
+  height: calc(var(--pixel-scale) * var(--hero-height));
   /* overflow: hidden; */
 
   .affinities {
