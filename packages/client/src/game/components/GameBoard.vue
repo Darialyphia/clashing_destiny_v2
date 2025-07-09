@@ -21,6 +21,7 @@ import Hand from '@/card/components/Hand.vue';
 import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import EffectChain from './EffectChain.vue';
+import PlayerStats from './PlayerStats.vue';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -48,44 +49,16 @@ const opponentPlayer = useOpponentPlayer();
 
   <div class="board" id="board">
     <section class="p1-zone">
-      <div class="flex gap-3 mb-4">
-        <div class="avatar" />
-        <div>
-          <div>{{ myPlayer.name }}</div>
-          <div>TODO player titles</div>
-        </div>
-
-        <div class="stats">
+      <article>
+        <div class="flex gap-3 mb-2">
+          <div class="avatar" />
           <div>
-            <div
-              class="icon"
-              style="--bg: url(/assets/ui/icon-influence.png)"
-            />
-            {{ myPlayer.handSize }}
-          </div>
-
-          <div>
-            <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
-            {{ myPlayer.remainingCardsInDeck }}
-          </div>
-
-          <div>
-            <div
-              class="icon"
-              style="--bg: url(/assets/ui/icon-discard-pile.png)"
-            />
-            {{ myPlayer.getDiscardPile().length }}
-          </div>
-
-          <div>
-            <div
-              class="icon"
-              style="--bg: url(/assets/ui/icon-banish-pile.png)"
-            />
-            {{ myPlayer.getBanishPile().length }}
+            <div>{{ myPlayer.name }}</div>
+            <div>TODO player titles</div>
           </div>
         </div>
-      </div>
+        <PlayerStats :player="myPlayer" />
+      </article>
 
       <HeroSlot :player="myPlayer" class="hero-slot" />
       <DestinyZone :player-id="myPlayer.id" />
@@ -101,43 +74,16 @@ const opponentPlayer = useOpponentPlayer();
     </section>
 
     <section class="p2-zone">
-      <div class="flex gap-3 flex-row-reverse mb-4">
-        <div class="avatar" />
-        <div class="text-right">
-          <div>{{ opponentPlayer.name }}</div>
-          <div>TODO player titles</div>
-        </div>
-        <div class="stats justify-end">
-          <div>
-            <div
-              class="icon"
-              style="--bg: url(/assets/ui/icon-influence.png)"
-            />
-            {{ opponentPlayer.handSize }}
-          </div>
-
-          <div>
-            <div class="icon" style="--bg: url(/assets/ui/icon-deck.png)" />
-            {{ opponentPlayer.remainingCardsInDeck }}
-          </div>
-
-          <div>
-            <div
-              class="icon"
-              style="--bg: url(/assets/ui/icon-discard-pile.png)"
-            />
-            {{ opponentPlayer.getDiscardPile().length }}
-          </div>
-
-          <div>
-            <div
-              class="icon"
-              style="--bg: url(/assets/ui/icon-banish-pile.png)"
-            />
-            {{ opponentPlayer.getBanishPile().length }}
+      <article>
+        <div class="flex gap-3 flex-row-reverse mb-2">
+          <div class="avatar" />
+          <div class="text-right">
+            <div>{{ opponentPlayer.name }}</div>
+            <div>TODO player titles</div>
           </div>
         </div>
-      </div>
+        <PlayerStats :player="opponentPlayer" class="justify-end" />
+      </article>
 
       <HeroSlot :player="opponentPlayer" class="hero-slot" />
       <DestinyZone :player-id="opponentPlayer.id" />
@@ -187,7 +133,7 @@ const opponentPlayer = useOpponentPlayer();
   padding: var(--size-6) var(--size-6) 0;
   display: flex;
   flex-direction: column;
-  gap: var(--size-2);
+  gap: var(--size-4);
   grid-row: 1;
 }
 
@@ -218,25 +164,6 @@ const opponentPlayer = useOpponentPlayer();
   border-radius: var(--radius-round);
   background-color: black;
   align-self: center;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--size-2);
-  > * {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--size-2);
-  }
-}
-
-.icon {
-  aspect-ratio: 1;
-  width: calc(16px * var(--pixel-scale));
-  background: var(--bg) no-repeat center;
-  background-size: cover;
 }
 
 #arrows {

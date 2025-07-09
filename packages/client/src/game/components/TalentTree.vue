@@ -169,7 +169,7 @@ const positionMap = computed(() =>
         />
       </HoverCardTrigger>
       <HoverCardPortal to="#card-portal">
-        <HoverCardContent>
+        <HoverCardContent :side-offset="30">
           <div class="node-infos">
             <div class="node-title">
               <div

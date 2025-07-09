@@ -198,15 +198,15 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   color: var(--red-9);
 
   @starting-style {
-    transform: translateZ(60px) translateY(-50px) scale(15);
+    transform: translateZ(60px) translateY(-50px) scale(12);
     filter: blur(10px);
     opacity: 0;
   }
 }
 
 .minion-wrapper {
-  transform: translateY(40px) translateX(25px) translateZ(75px) rotateX(-75deg)
-    rotateY(45deg);
+  transform: translateY(40px) translateX(25px) translateZ(75px) rotateX(-80deg)
+    rotateY(10deg);
   transform-style: preserve-3d;
 }
 </style>
