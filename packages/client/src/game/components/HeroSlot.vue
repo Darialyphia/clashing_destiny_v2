@@ -4,26 +4,27 @@ import {
   useBoardSide,
   useCard,
   useFxEvent,
-  useGameClient,
-  useGameState
+  useGameClient
 } from '../composables/useGameClient';
-import UnlockedAffinities from './UnlockedAffinities.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
 import CardStats from './CardStats.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import type { DamageType } from '@game/engine/src/utils/damage';
 import { useHeroSlot } from '../composables/useHeroSlot';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-import TalentTree from './TalentTree.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import type { HoverCardContentProps } from 'reka-ui';
 
-const { player } = defineProps<{ player: PlayerViewModel }>();
+const { player } = defineProps<
+  Pick<HoverCardContentProps, 'side' | 'sideOffset'> & {
+    player: PlayerViewModel;
+  }
+>();
 
 const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
 const { isHighlighted } = useHeroSlot(hero);
 const client = useGameClient();
-const state = useGameState();
 
 const cardElement = useTemplateRef('card');
 const onTakeDamage = async (e: {
@@ -77,20 +78,14 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     ref="card"
     @click="client.ui.onCardClick(hero)"
   >
-    <TalentTree
-      v-if="
-        client.playerId === player.id &&
-        state.phase.state === GAME_PHASES.DESTINY
-      "
-      :player="player"
-    />
-    <div v-else>
-      <div
-        class="hero-sprite"
-        :style="{ '--bg': `url(${hero.imagePath})` }"
-        :class="{ highlighted: isHighlighted }"
-      />
-      <UnlockedAffinities :player="player" class="affinities" />
+    <div>
+      <InspectableCard :card-id="hero.id">
+        <div
+          class="hero-sprite"
+          :style="{ '--bg': `url(${hero.imagePath})` }"
+          :class="{ highlighted: isHighlighted }"
+        />
+      </InspectableCard>
       <EquipedArtifacts :player="player" class="artifacts" />
       <CardStats :card-id="hero.id" />
     </div>
@@ -100,17 +95,14 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 <style scoped lang="postcss">
 .hero-slot {
   --pixel-scale: 2;
-  position: relative;
   aspect-ratio: var(--hero-ratio);
-  height: calc(var(--pixel-scale) * var(--hero-height));
+  height: calc(96px * var(--pixel-scale));
+  transform: rotateZ(-45deg) rotateX(-60deg) translateY(-50%);
+  transform-style: preserve-3d;
+  justify-self: center;
+  /* height: calc(var(--pixel-scale) * var(--hero-height)); */
   /* overflow: hidden; */
 
-  .affinities {
-    position: absolute;
-    top: calc(-1 * var(--size-2));
-    right: calc(-1 * var(--size-2));
-    z-index: 1;
-  }
   .artifacts {
     position: absolute;
     bottom: 0;
@@ -124,9 +116,8 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   position: absolute;
   inset: 0;
   aspect-ratio: var(--hero-ratio);
-  max-height: calc(var(--pixel-scale) * var(--hero-height));
-  background: url('/assets/ui/card-board-front.png') no-repeat center;
-  background-size: cover;
+  /* max-height: calc(var(--pixel-scale) * var(--hero-height)); */
+  max-height: calc(96px * var(--pixel-scale));
   overflow: hidden;
   &.highlighted {
     filter: sepia(0.25) brightness(1.15);
@@ -138,23 +129,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
     background: var(--bg) no-repeat center top;
     background-size: calc(96px * var(--pixel-scale));
   }
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--bg) no-repeat center top;
-    background-size: calc(96px * var(--pixel-scale));
-    transform: scaleY(-0.5) translateY(-40px) skewX(20deg) translateX(-20px);
-    filter: brightness(0);
-    opacity: 0.5;
-  }
 
-  .affinities {
-    position: absolute;
-    top: calc(-1 * var(--size-2));
-    right: calc(-1 * var(--size-2));
-    z-index: 1;
-  }
   .artifacts {
     position: absolute;
     bottom: 0;

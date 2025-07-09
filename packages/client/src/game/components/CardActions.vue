@@ -34,6 +34,9 @@ const isOpened = defineModel<boolean>('isOpened', { required: true });
   padding: 0.5rem;
   min-width: 10rem;
   text-align: left;
+  &:hover {
+    background: var(--gray-10);
+  }
   &:focus {
     outline: none;
   }

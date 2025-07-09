@@ -49,6 +49,7 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   position: relative;
+  background-color: rgba(0, 0, 0, 0.5);
   &::after {
     content: '';
     position: absolute;

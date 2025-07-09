@@ -9,7 +9,6 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import GameCard from './GameCard.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -41,7 +40,14 @@ const computeSpacing = () => {
   // );
 
   const lastCardWidth = [...root.value.children].at(-1)!.clientWidth;
-
+  const childrenWidth = [...root.value.children].reduce(
+    (total, child) => total + child.clientWidth,
+    0
+  );
+  if (childrenWidth <= allowedWidth) {
+    cardSpacing.value = lastCardWidth;
+    return;
+  }
   cardSpacing.value = Math.round(
     (allowedWidth - lastCardWidth) / root.value.children.length
   );
@@ -78,7 +84,7 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
 
 const displayedCards = computed(() => {
   return [
-    ...boardSide.value.destinyZone.map((card, index) => {
+    ...boardSide.value.destinyZone.map(card => {
       return {
         type: 'destiny',
         cardId: card
@@ -95,7 +101,12 @@ const displayedCards = computed(() => {
 </script>
 
 <template>
-  <div class="destiny-zone" ref="root" :id="`destiny-zone-${playerId}`">
+  <div
+    class="destiny-zone"
+    ref="root"
+    :id="`destiny-zone-${playerId}`"
+    :class="{ p2: playerId !== client.playerId }"
+  >
     <div v-for="(card, index) in displayedCards" :key="card.cardId">
       <InspectableCard
         v-if="client.playerId === playerId"
@@ -121,6 +132,11 @@ const displayedCards = computed(() => {
   justify-items: start;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
+  height: calc(var(--card-height) / 2);
+
+  &.p2 {
+    justify-items: end;
+  }
   /* & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
   } */
@@ -132,7 +148,7 @@ const displayedCards = computed(() => {
 }
 
 .item {
-  height: var(--card-height);
+  height: calc(var(--card-height) / 2);
   aspect-ratio: var(--card-ratio);
   transform: translateX(calc(var(--index) * v-bind(cardSpacing) * 1px));
 }

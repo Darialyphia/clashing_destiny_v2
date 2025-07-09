@@ -22,7 +22,7 @@ const { player } = defineProps<{
 <style scoped lang="postcss">
 .unlocked-affinities {
   display: flex;
-  flex-direction: column;
+  gap: var(--size-2);
 }
 
 .affinity {

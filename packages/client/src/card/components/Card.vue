@@ -99,7 +99,7 @@ const pointerStyle = computed(() => {
 const descriptionBox = useTemplateRef('description-box');
 
 const MIN_TEXT_SIZE = 10;
-const MAX_TEXT_SIZE = 18;
+const MAX_TEXT_SIZE = 16;
 const textSize = ref(MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()

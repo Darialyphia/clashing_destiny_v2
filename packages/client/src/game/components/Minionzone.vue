@@ -36,12 +36,13 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
 .minion-zone {
   display: grid;
   justify-self: center;
-  gap: var(--size-2);
+  gap: var(--size-4);
   transform-style: preserve-3d;
 
   .minion-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    gap: var(--size-4);
     justify-items: center;
     align-items: center;
     transform-style: preserve-3d;

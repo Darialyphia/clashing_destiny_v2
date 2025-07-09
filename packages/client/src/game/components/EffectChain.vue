@@ -3,6 +3,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import Arrow from './Arrow.vue';
 import { match } from 'ts-pattern';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
 const client = useGameClient();
 const state = useGameState();
@@ -58,17 +59,30 @@ const buildPaths = async () => {
 };
 watch(() => state.value.effectChain?.stack, buildPaths);
 watch(() => client.value.playerId, buildPaths);
+
+const stack = computed(() => {
+  return (
+    state.value.effectChain?.stack.map(step => ({
+      ...step,
+      image: `url(${(state.value.entities[step.source] as CardViewModel)?.imagePath})`
+    })) || []
+  );
+});
 </script>
 
 <template>
   <div class="effect-chain" id="effect-chain">
     <InspectableCard
-      v-for="(effect, index) in state.effectChain?.stack"
+      v-for="(effect, index) in stack"
       :key="index"
       :card-id="effect.source"
       class="effect-chain-card-wrapper"
     >
-      <div :id="effect.source" class="effect-chain-card" />
+      <div
+        :id="effect.source"
+        class="effect-chain-card"
+        :style="{ '--bg': effect.image }"
+      />
 
       <Teleport to="#arrows">
         <Arrow
@@ -87,13 +101,16 @@ watch(() => client.value.playerId, buildPaths);
   flex-grow: 1;
   align-self: stretch;
   display: flex;
+  align-items: center;
   gap: var(--size-3);
 }
 
 .effect-chain-card {
   width: var(--size-8);
   aspect-ratio: 1;
-  border-radius: var(--radius-round);
   background-color: red;
+  background-image: var(--bg);
+  background-position: center;
+  background-size: 200%;
 }
 </style>

@@ -22,6 +22,10 @@ import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import EffectChain from './EffectChain.vue';
 import PlayerStats from './PlayerStats.vue';
+import TalentTree from './TalentTree.vue';
+import UnlockedAffinities from './UnlockedAffinities.vue';
+import { useMouse } from '@vueuse/core';
+import { mapRange } from '@game/shared';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -29,6 +33,18 @@ const opponentBoard = useOpponentBoard();
 
 const myPlayer = useMyPlayer();
 const opponentPlayer = useOpponentPlayer();
+
+const { x, y } = useMouse();
+const angleZ = computed(() => {
+  return mapRange(Math.round(x.value), [0, window.innerWidth], [-180, 180]);
+});
+const angleX = computed(() => {
+  return mapRange(
+    window.innerHeight - Math.round(y.value),
+    [0, window.innerHeight],
+    [-180, 180]
+  );
+});
 </script>
 
 <template>
@@ -49,7 +65,7 @@ const opponentPlayer = useOpponentPlayer();
 
   <div class="board" id="board">
     <section class="p1-zone">
-      <article>
+      <article class="flex flex-col gap-1">
         <div class="flex gap-3 mb-2">
           <div class="avatar" />
           <div>
@@ -58,23 +74,26 @@ const opponentPlayer = useOpponentPlayer();
           </div>
         </div>
         <PlayerStats :player="myPlayer" />
+        <UnlockedAffinities :player="myPlayer" class="affinities" />
       </article>
 
-      <HeroSlot :player="myPlayer" class="hero-slot" />
       <DestinyZone :player-id="myPlayer.id" />
+      <TalentTree :player="myPlayer" class="talent-tree" />
     </section>
 
     <section class="middle-zone">
+      <HeroSlot :player="opponentPlayer" class="absolute bottom-[100%]" />
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 justify-center">
         <EffectChain v-if="state.effectChain?.stack.length" />
         <GamePhaseTracker v-else />
       </div>
       <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
+      <HeroSlot :player="myPlayer" class="absolute top-[100%] p1-hero" />
     </section>
 
     <section class="p2-zone">
-      <article>
+      <article class="flex flex-col gap-1">
         <div class="flex gap-3 flex-row-reverse mb-2">
           <div class="avatar" />
           <div class="text-right">
@@ -83,10 +102,11 @@ const opponentPlayer = useOpponentPlayer();
           </div>
         </div>
         <PlayerStats :player="opponentPlayer" class="justify-end" />
+        <UnlockedAffinities :player="opponentPlayer" class="justify-end" />
       </article>
 
-      <HeroSlot :player="opponentPlayer" class="hero-slot" />
       <DestinyZone :player-id="opponentPlayer.id" />
+      <TalentTree :player="opponentPlayer" class="talent-tree" />
     </section>
 
     <section class="hand-zone">
@@ -103,10 +123,10 @@ const opponentPlayer = useOpponentPlayer();
   height: 100dvh;
   aspect-ratio: 16 / 9;
   display: grid;
-  grid-template-columns: calc(240 / 800 * 100%) 1fr calc(240 / 800 * 100%);
+  grid-template-columns: calc(220 / 800 * 100%) 1fr calc(220 / 800 * 100%);
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
-  /* background: url(/assets/backgrounds/battle-board.png) no-repeat center; */
+  background: url(/assets/backgrounds/battle-board-2.png) no-repeat center;
   background-size: cover;
   /* transform-style: preserve-3d; */
 }
@@ -115,7 +135,8 @@ const opponentPlayer = useOpponentPlayer();
   grid-column: 1;
   position: relative;
   z-index: 1;
-  .hero-slot {
+
+  .talent-tree {
     align-self: flex-start;
   }
 }
@@ -123,7 +144,8 @@ const opponentPlayer = useOpponentPlayer();
 .p2-zone {
   grid-column: 3;
   grid-row: 1;
-  .hero-slot {
+
+  .talent-tree {
     align-self: flex-end;
   }
 }
@@ -135,13 +157,23 @@ const opponentPlayer = useOpponentPlayer();
   flex-direction: column;
   gap: var(--size-4);
   grid-row: 1;
+  /* pointer-events: none; */
+  align-self: start;
 }
 
 .middle-zone {
   grid-column: 2;
   grid-row: 1;
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
+  gap: var(--size-2);
+  grid-template-rows: auto 1fr auto 1fr auto;
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  --angleZ: calc(1deg * v-bind(angleZ));
+  --angleX: calc(1deg * v-bind(angleX));
+  /* transform: rotateY(-0deg) rotateX(var(--angleX)) rotateZ(var(--angleZ))
+    scale(1); */
   transform: rotateY(-0deg) rotateX(60deg) rotateZ(45deg) scale(1);
   transform-style: preserve-3d;
 }
@@ -187,5 +219,10 @@ const opponentPlayer = useOpponentPlayer();
   display: flex;
   justify-content: center;
   pointer-events: none;
+  z-index: 1;
+}
+
+.p1-hero {
+  translate: 50% 50%;
 }
 </style>

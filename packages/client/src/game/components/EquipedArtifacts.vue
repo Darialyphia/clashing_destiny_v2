@@ -23,7 +23,6 @@ const artifacts = useEntities<CardViewModel>(
         '--bg': `url(${artifact.imagePath})`
       }"
     />
-    <div class="artifact" style="--bg: url(/assets/icons/artifact-test.png)" />
   </div>
 </template>
 

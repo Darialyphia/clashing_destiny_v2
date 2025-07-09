@@ -108,8 +108,14 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
       })
     "
   >
-    <div class="minion-wrapper">
-      <InspectableCard v-if="card" :card-id="card.id" side="right">
+    <template v-if="card">
+      <InspectableCard :card-id="card.id" side="right">
+        <div
+          class="minion-clickable-area"
+          @click="client.ui.onCardClick(card)"
+        />
+      </InspectableCard>
+      <div class="minion-wrapper">
         <PopoverRoot v-model:open="isActionsPopoverOpened">
           <PopoverAnchor />
           <div
@@ -117,7 +123,6 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
             :id="card.id"
             class="slot-minion"
             :style="{ '--bg': `url(${card?.imagePath})` }"
-            @click="client.ui.onCardClick(card)"
           />
           <PopoverPortal :disabled="card.location === 'hand'">
             <PopoverContent :side-offset="-50">
@@ -128,10 +133,10 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
             </PopoverContent>
           </PopoverPortal>
         </PopoverRoot>
-      </InspectableCard>
 
-      <CardStats v-if="card" :card-id="card.id" class="stats" />
-    </div>
+        <CardStats :card-id="card.id" />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -158,14 +163,18 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   }
 }
 
+.minion-clickable-area {
+  position: absolute;
+  inset: 0;
+  .minion-slot:has(&:hover) .slot-minion {
+    filter: brightness(1.25);
+  }
+}
 .slot-minion {
   width: 100%;
   aspect-ratio: 1;
   position: relative;
 
-  &:hover {
-    filter: brightness(1.25);
-  }
   &::before {
     --pixel-scale: 1;
     content: '';
@@ -178,7 +187,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
     background-position: center 85%;
     background-size: calc(96px * var(--pixel-scale))
       calc(96px * var(--pixel-scale));
-    transform: scale(2) translateY(-15%);
+    transform: translateY(-40px) scale(2);
     pointer-events: none;
   }
 }
@@ -205,8 +214,8 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 }
 
 .minion-wrapper {
-  transform: translateY(40px) translateX(25px) translateZ(75px) rotateX(-80deg)
-    rotateY(10deg);
+  transform: translateY(20px) rotateZ(-45deg) rotateX(-60deg) translateY(-60px);
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 </style>

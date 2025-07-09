@@ -96,7 +96,6 @@ const visibleModifiers = computed(() =>
   &.minion {
     flex-direction: row;
     justify-content: space-between;
-    padding: 0;
   }
   .buffed {
     color: var(--buff-color);
