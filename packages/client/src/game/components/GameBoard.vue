@@ -129,6 +129,17 @@ const angleX = computed(() => {
   background: url(/assets/backgrounds/battle-board-2.png) no-repeat center;
   background-size: cover;
   /* transform-style: preserve-3d; */
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.25;
+    z-index: 1;
+  }
 }
 
 .p1-zone {

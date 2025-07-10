@@ -16,7 +16,7 @@ export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'pyroclasm',
   name: 'Pyroclasm',
   cardIconId: 'spell-eternal-flame',
-  description: `Deal 4 + @[spellpower]@ damage to an enemy.\n@[lineage]`,
+  description: `Deal 4 + @[spellpower]@ damage to an enemy.\n`,
   collectable: true,
   unique: false,
   manaCost: 5,

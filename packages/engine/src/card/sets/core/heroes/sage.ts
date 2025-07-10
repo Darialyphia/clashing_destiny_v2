@@ -26,9 +26,9 @@ export const sage: HeroBlueprint = {
   collectable: true,
   unique: false,
   lineage: null,
-  spellPower: 1,
+  spellPower: 0,
   atk: 0,
-  maxHp: 24,
+  maxHp: 20,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {

@@ -330,6 +330,11 @@ const costStatus = computed(() => {
   left: 50%;
   transform: translateX(-50%);
 
+  .card-front:has(.foil) &::after {
+    filter: drop-shadow(10px 10px 0 hsl(30 100% 50% / 0.25))
+      drop-shadow(-10px -10px 0 hsl(180 100% 50% / 0.25))
+      drop-shadow(0 0 3px yellow);
+  }
   &::after {
     content: '';
     position: absolute;
@@ -570,22 +575,88 @@ const costStatus = computed(() => {
   }
 }
 
-@property --foil-angle {
-  syntax: '<angle>';
+@property --foil-x {
+  syntax: '<percentage>';
   inherits: false;
-  initial-value: 0deg;
+  initial-value: 0%;
+}
+@property --foil-y {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+@property --foil-brightness {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
 }
 
-@keyframes foil-spin {
+@keyframes foil {
   from {
-    --foil-angle: 0deg;
+    --foil-x: 0%;
+    --foil-y: 0%;
+    --foil-brightness: 0.2;
+  }
+  50% {
+    --foil-brightness: 0.5;
   }
   to {
-    --foil-angle: 360deg;
+    --foil-x: 37.9%;
+    --foil-y: 100%;
+    --foil-brightness: 0.2;
   }
 }
+
 .foil {
   --space: 5%;
+  --angle: 133deg;
+  --foil-brightness: 0.6;
+  --foil-x: 0%;
+  --foil-y: 0%;
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  pointer-events: none;
+  mask-image: url('/assets/ui/card-bg.png');
+  mask-size: cover;
+  mix-blend-mode: color-dodge;
+  background-image: url('/assets/ui/foil-texture.webp'),
+    repeating-linear-gradient(
+      0deg,
+      rgb(255, 119, 115) calc(var(--space) * 1),
+      rgba(255, 237, 95, 1) calc(var(--space) * 2),
+      rgba(168, 255, 95, 1) calc(var(--space) * 3),
+      rgba(131, 255, 247, 1) calc(var(--space) * 4),
+      rgba(120, 148, 255, 1) calc(var(--space) * 5),
+      rgb(216, 117, 255) calc(var(--space) * 6),
+      rgb(255, 119, 115) calc(var(--space) * 7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180, 10%, 60%) 3.8%,
+      hsl(180, 29%, 66%) 4.5%,
+      hsl(180, 10%, 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    );
+  background-size:
+    100%,
+    200% 700%,
+    500%;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-blend-mode: exclusion, hue, hard-light;
+  background-position:
+    center,
+    0% var(--foil-y),
+    var(--foil-x) var(--foil-y);
+  filter: brightness(calc((var(--foil-brightness) * 0.3) + 0.5)) contrast(5)
+    saturate(1.5);
+  animation: foil 10s infinite linear;
+}
+
+/*.foil-texture {
+   --space: 5%;
   --foil-angle: 0deg;
   --img-size: 300% 400%;
   position: absolute;
@@ -607,17 +678,10 @@ const costStatus = computed(() => {
   background-position:
     0% calc(33% * 1),
     63% 33%;
-  /* background-position:
-    0% calc(var(--foil-y) * 1),
-    var(--foil-x) var(--foil-y); */
-  /* opacity: 0; */
-  /* display: none; */
   transition: opacity 0.3s;
-  filter: brightness(0.85) contrast(2.75) saturate(0.65);
-  mask-image: url('/assets/ui/card-bg.png');
-  mask-size: cover;
+  filter: brightness(0.85) contrast(2.75) saturate(0.65); */
 
-  &::after {
+/* &::after {
     position: absolute;
     inset: 0;
     content: '';
@@ -634,5 +698,5 @@ const costStatus = computed(() => {
       contrast(0.85) saturate(1.1);
     mix-blend-mode: hard-light;
   }
-}
+}*/
 </style>
