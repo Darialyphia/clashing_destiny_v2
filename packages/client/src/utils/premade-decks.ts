@@ -26,6 +26,8 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         'friendly-slime',
         'friendly-slime',
+        'friendly-slime',
+        'friendly-slime',
 
         'pyromancer',
         'pyromancer',
@@ -52,19 +54,12 @@ export const premadeDecks: Array<PremadeDeck> = [
         'courageous-footsoldier',
         'courageous-footsoldier',
 
-        'seer',
-        'seer',
+        'firebrand',
+        'firebrand',
+        'firebrand',
+        'firebrand',
 
-        'archsage-of-moonring',
-        'archsage-of-moonring',
-        'archsage-of-moonring',
-
-        'phoenix',
-
-        'recollection',
-        'recollection',
-
-        'hourglass-fracture'
+        'phoenix'
       ]
     },
 

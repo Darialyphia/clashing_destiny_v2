@@ -131,22 +131,9 @@ export type ArtifactBlueprint = MainDeckCardBlueprint & {
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
   abilities: Ability<ArtifactCard, PreResponseTarget>[];
-} & (
-    | {
-        subKind: BetterExtract<ArtifactKind, 'WEAPON'>;
-        atk: number;
-        durability: number;
-      }
-    | {
-        subKind: BetterExtract<ArtifactKind, 'ARMOR'>;
-        durability: number;
-      }
-    | {
-        subKind: BetterExtract<ArtifactKind, 'RELIC'>;
-        durability: number;
-      }
-  );
-
+  subKind: ArtifactKind;
+  durability: number;
+};
 export type TalentTreeNodeBlueprint = {
   id: string;
   name: string;

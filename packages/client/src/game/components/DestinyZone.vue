@@ -105,7 +105,7 @@ const displayedCards = computed(() => {
     class="destiny-zone"
     ref="root"
     :id="`destiny-zone-${playerId}`"
-    :class="{ p2: playerId !== client.playerId }"
+    :class="{ 'player-2': playerId !== client.playerId }"
   >
     <div v-for="(card, index) in displayedCards" :key="card.cardId">
       <InspectableCard
@@ -133,9 +133,10 @@ const displayedCards = computed(() => {
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
   height: calc(var(--card-height) / 2);
-
-  &.p2 {
+  --spacing-offset: 1;
+  &.player-2 {
     justify-items: end;
+    --spacing-offset: -1;
   }
   /* & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
@@ -150,6 +151,8 @@ const displayedCards = computed(() => {
 .item {
   height: calc(var(--card-height) / 2);
   aspect-ratio: var(--card-ratio);
-  transform: translateX(calc(var(--index) * v-bind(cardSpacing) * 1px));
+  transform: translateX(
+    calc(var(--index) * v-bind(cardSpacing) * 1px * var(--spacing-offset))
+  );
 }
 </style>

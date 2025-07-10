@@ -2,6 +2,7 @@
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { useBoardSide, useEntities } from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -15,14 +16,18 @@ const artifacts = useEntities<CardViewModel>(
 
 <template>
   <div class="equiped-artifacts">
-    <div
-      class="artifact"
+    <InspectableCard
       v-for="artifact in artifacts"
       :key="artifact.id"
-      :style="{
-        '--bg': `url(${artifact.imagePath})`
-      }"
-    />
+      :card-id="artifact.id"
+    >
+      <div
+        class="artifact"
+        :style="{
+          '--bg': `url(${artifact.imagePath})`
+        }"
+      />
+    </InspectableCard>
   </div>
 </template>
 

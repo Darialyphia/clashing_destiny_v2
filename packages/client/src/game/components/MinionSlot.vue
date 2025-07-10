@@ -115,7 +115,10 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
           @click="client.ui.onCardClick(card)"
         />
       </InspectableCard>
-      <div class="minion-wrapper">
+      <div
+        class="minion-wrapper"
+        :class="{ opponent: card.getPlayer().id !== client.playerId }"
+      >
         <PopoverRoot v-model:open="isActionsPopoverOpened">
           <PopoverAnchor />
           <div
@@ -152,6 +155,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   transform-style: preserve-3d;
   &:hover {
     border-color: var(--cyan-4);
+    background: url('/assets/ui/minino-slot-hover.png') no-repeat center;
   }
   &.highlighted {
     border-color: cyan;
@@ -189,6 +193,10 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
       calc(96px * var(--pixel-scale));
     transform: translateY(-40px) scale(2);
     pointer-events: none;
+  }
+
+  .opponent &::before {
+    transform: translateY(-40px) scale(2) scaleX(-1);
   }
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */

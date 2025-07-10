@@ -21,7 +21,6 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import { LoyaltyDamage } from '../../utils/damage';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -127,12 +126,6 @@ export class ArtifactCard extends Card<
     return this.blueprint.subKind;
   }
 
-  get atk(): number {
-    if (this.subkind !== 'WEAPON') return 0;
-    const base = (this.blueprint as ArtifactBlueprint & { subKind: 'WEAPON' }).atk;
-    return this.interceptors.attack.getValue(base, this);
-  }
-
   get maxDurability(): number {
     return this.interceptors.durability.getValue(this.blueprint.durability, this);
   }
@@ -187,15 +180,17 @@ export class ArtifactCard extends Card<
       GAME_PHASES.END
     ];
 
+    const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
+    const chainCondition = this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
+      : this.game.gamePhaseSystem.turnPlayer.equals(this.player);
+
     return this.interceptors.canUseAbility.getValue(
       this.player.cardManager.hand.length >= ability.manaCost &&
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        this.game.effectChainSystem.currentChain
-        ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
-            (ability.shouldExhaust
-              ? !this.isExhausted
-              : true && ability.canUse(this.game, this)),
+        ability.canUse(this.game, this) &&
+        exhaustCondition &&
+        chainCondition,
       { card: this, ability }
     );
   }
@@ -241,7 +236,8 @@ export class ArtifactCard extends Card<
         !this.game.effectChainSystem.currentChain &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true),
+        this.hasAffinityMatch &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -254,9 +250,6 @@ export class ArtifactCard extends Card<
     this.updatePlayedAt();
     this.removeFromCurrentLocation();
 
-    if (!this.hasAffinityMatch) {
-      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
-    }
     this.player.artifactManager.equip(this);
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(

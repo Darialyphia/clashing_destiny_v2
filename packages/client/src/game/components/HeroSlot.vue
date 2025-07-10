@@ -74,6 +74,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 <template>
   <div
     class="hero-slot"
+    :class="{ opponent: client.playerId !== player.id }"
     :id="hero.id"
     ref="card"
     @click="client.ui.onCardClick(hero)"
@@ -95,7 +96,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 <style scoped lang="postcss">
 .hero-slot {
   --pixel-scale: 2;
-  aspect-ratio: var(--hero-ratio);
+  aspect-ratio: 1;
   height: calc(96px * var(--pixel-scale));
   transform: rotateZ(-45deg) rotateX(-60deg) translateY(-50%);
   transform-style: preserve-3d;
@@ -115,19 +116,18 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   --pixel-scale: 2;
   position: absolute;
   inset: 0;
-  aspect-ratio: var(--hero-ratio);
+  aspect-ratio: 1;
   /* max-height: calc(var(--pixel-scale) * var(--hero-height)); */
-  max-height: calc(96px * var(--pixel-scale));
+  height: calc(96px * var(--pixel-scale));
   overflow: hidden;
+  background: var(--bg) no-repeat center top;
+  background-size: calc(96px * var(--pixel-scale));
   &.highlighted {
     filter: sepia(0.25) brightness(1.15);
   }
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--bg) no-repeat center top;
-    background-size: calc(96px * var(--pixel-scale));
+
+  .opponent & {
+    transform: scaleX(-1);
   }
 
   .artifacts {

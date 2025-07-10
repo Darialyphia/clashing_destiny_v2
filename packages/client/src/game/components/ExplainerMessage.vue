@@ -5,7 +5,7 @@ const client = useGameClient();
 </script>
 
 <template>
-  <p class="explainer-message" v-if="client.ui.explainerMessage">
+  <p class="surface explainer-message" v-if="client.ui.explainerMessage">
     {{ client.ui.explainerMessage }}
   </p>
 </template>
