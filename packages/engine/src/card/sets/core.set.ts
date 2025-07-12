@@ -2,6 +2,7 @@ import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
+import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
 import { sorcerer } from './core/heroes/sorcerer';
 import { warlock } from './core/heroes/warlock';
@@ -43,6 +44,7 @@ export const coreSet: CardSet = {
     sage,
     sorcerer,
     warlock,
+    knight,
 
     // Normal
     courageousFootsoldier,

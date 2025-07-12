@@ -267,7 +267,6 @@ const costStatus = computed(() => {
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
   transform-style: preserve-3d;
-
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -321,7 +320,19 @@ const costStatus = computed(() => {
     z-index: -1;
   }
 }
-
+/*
+@keyframes foil-image {
+  from {
+    filter: drop-shadow(0 0 2px cyan)
+      drop-shadow(0px 0px 0px hsl(30 100% 50% / 0.25))
+      drop-shadow(-0px -0px 0px hsl(180 100% 50% / 0.25));
+  }
+  to {
+    filter: drop-shadow(0 0 2px cyan)
+      drop-shadow(15px 15px 5px hsl(30 100% 50% / 0.25))
+      drop-shadow(-15px -15px 5px hsl(180 100% 50% / 0.25));
+  }
+} */
 .image {
   width: calc(96px * var(--pixel-scale));
   height: calc(96px * var(--pixel-scale));
@@ -329,11 +340,13 @@ const costStatus = computed(() => {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-
+  transform-style: preserve-3d;
   .card-front:has(.foil) &::after {
-    filter: drop-shadow(10px 10px 0 hsl(30 100% 50% / 0.25))
-      drop-shadow(-10px -10px 0 hsl(180 100% 50% / 0.25))
-      drop-shadow(0 0 3px yellow);
+    filter: drop-shadow(0 0 2px cyan)
+      drop-shadow(10px 10px 0px hsl(30 100% 50% / 0.25))
+      drop-shadow(-10px -10px 0px hsl(180 100% 50% / 0.25));
+    transform: translateZ(20px);
+    /* animation: foil-image 1.5s infinite alternate var(--ease-2); */
   }
   &::after {
     content: '';
@@ -355,17 +368,6 @@ const costStatus = computed(() => {
     filter: brightness(0);
     opacity: 0.35;
   }
-  /* &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: v-bind(imageBg);
-    background-size: cover;
-    background-position: center;
-    filter: blur(10px) sepia(60%) hue-rotate(40deg);
-    transform: translateY(-10px);
-    mix-blend-mode: screen;
-  } */
 
   .card:is(.minion, .hero) & {
     background-position: center -15px;
@@ -577,12 +579,12 @@ const costStatus = computed(() => {
 
 @property --foil-x {
   syntax: '<percentage>';
-  inherits: false;
+  inherits: true;
   initial-value: 0%;
 }
 @property --foil-y {
   syntax: '<percentage>';
-  inherits: false;
+  inherits: true;
   initial-value: 0%;
 }
 @property --foil-brightness {

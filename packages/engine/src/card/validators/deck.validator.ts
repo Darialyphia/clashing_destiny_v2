@@ -139,7 +139,7 @@ export class StandardDeckValidator implements DeckValidator {
 
       return true;
     } else {
-      return isDefined(deck.hero);
+      return !isDefined(deck.hero);
     }
   }
 }

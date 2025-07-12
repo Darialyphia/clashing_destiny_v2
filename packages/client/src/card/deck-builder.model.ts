@@ -86,6 +86,12 @@ export class DeckBuilderViewModel {
     return this._validator;
   }
 
+  get hero() {
+    return this._deck.hero
+      ? this.cardPool.find(card => card.blueprint.id === this._deck.hero)
+      : null;
+  }
+
   get deck() {
     return this._deck;
   }
@@ -97,7 +103,7 @@ export class DeckBuilderViewModel {
     );
   }
 
-  get mainDeckCards() {
+  get cards() {
     return this._deck[CARD_DECK_SOURCES.MAIN_DECK]
       .map(card => {
         const blueprint = this.cardPool.find(

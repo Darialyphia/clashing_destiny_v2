@@ -28,7 +28,12 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
     }
   }
 
-  async onEnter() {}
+  async onEnter() {
+    await this.recollectDestinyCards();
+    await this.game.gamePhaseSystem.sendTransition(
+      GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE
+    );
+  }
 
   async onExit() {
     await this.recollectDestinyCards();

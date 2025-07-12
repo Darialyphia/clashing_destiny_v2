@@ -234,7 +234,7 @@ svg {
 
 .node-item {
   position: absolute;
-  width: 32px;
+  width: 50px;
   aspect-ratio: 1;
   background: var(--bg) no-repeat center;
   background-size: cover;
@@ -268,7 +268,7 @@ svg {
 }
 
 .node-image {
-  width: calc(16px * var(--pixel-scale));
+  width: calc(25px * var(--pixel-scale));
   aspect-ratio: 1;
   background: var(--bg) no-repeat center;
   background-size: cover;

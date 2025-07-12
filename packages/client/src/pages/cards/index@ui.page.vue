@@ -41,14 +41,14 @@ const { isEditingDeck } = provideCollectionPage();
 
 <style scoped lang="postcss">
 .page {
-  overflow: hidden;
+  /* overflow: hidden; */
   height: 100dvh;
   pointer-events: auto;
   display: grid;
   grid-template-columns: auto 1fr 24rem;
   grid-template-rows: auto 1fr;
   column-gap: var(--size-5);
-
+  transform-style: preserve-3d;
   > header {
     grid-row: 1;
     grid-column: 1 / span 2;

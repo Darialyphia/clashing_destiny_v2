@@ -24,7 +24,7 @@ export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
-  LOCATION: 'LOCATION',
+  // LOCATION: 'LOCATION',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT'
 } as const;

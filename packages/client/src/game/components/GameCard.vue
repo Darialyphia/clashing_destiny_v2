@@ -127,7 +127,6 @@ const spriteUrl = computed(() => {
         :id="card.id"
         :style="{ '--bg': spriteUrl }"
         :class="{
-          floating: card.location === 'board',
           exhausted: card.isExhausted,
           selected: client.ui.selectedCard?.equals(card),
           targetable: isTargetable
@@ -165,7 +164,6 @@ const spriteUrl = computed(() => {
         }"
         class="card"
         :class="{
-          floating: card.location === 'board',
           exhausted: card.isExhausted,
           disabled: interactive && !card.canPlay && card.location === 'hand',
           selected: client.ui.selectedCard?.equals(card),
@@ -207,7 +205,6 @@ const spriteUrl = computed(() => {
 
 .game-card {
   --pixel-scale: 2;
-  --floating-amount: 10px;
   width: calc(var(--card-width) * var(--pixel-scale));
   height: calc(var(--card-height) * var(--pixel-scale));
   &.damage::after {
@@ -249,9 +246,7 @@ const spriteUrl = computed(() => {
 
 .card {
   transition: all 0.3s var(--ease-2);
-  &.floating {
-    transform: translateZ(var(--floating-amount));
-  }
+
   &.exhausted {
     filter: grayscale(0.5);
     transform: none;
@@ -306,9 +301,5 @@ const spriteUrl = computed(() => {
   &:hover::after {
     transform: translateY(-10px);
   }
-}
-
-.game-card:has(.sprite.floating) .stats {
-  transform: translateZ(var(--floating-amount));
 }
 </style>

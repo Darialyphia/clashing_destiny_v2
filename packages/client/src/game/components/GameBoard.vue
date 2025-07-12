@@ -78,7 +78,7 @@ const angleX = computed(() => {
       </article>
 
       <DestinyZone :player-id="myPlayer.id" />
-      <TalentTree :player="myPlayer" class="talent-tree" />
+      <!-- <TalentTree :player="myPlayer" class="talent-tree" /> -->
     </section>
 
     <section class="middle-zone">
@@ -106,7 +106,7 @@ const angleX = computed(() => {
       </article>
 
       <DestinyZone :player-id="opponentPlayer.id" />
-      <TalentTree :player="opponentPlayer" class="talent-tree" />
+      <!-- <TalentTree :player="opponentPlayer" class="talent-tree" /> -->
     </section>
 
     <section class="hand-zone">

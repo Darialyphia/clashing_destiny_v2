@@ -8,7 +8,7 @@ export type PremadeDeck = {
 
 export const premadeDecks: Array<PremadeDeck> = [
   {
-    name: 'Mage Starter Deck',
+    name: 'Knight Starter Deck',
     mainDeck: {
       cards: [
         'fire-bolt',
@@ -63,6 +63,6 @@ export const premadeDecks: Array<PremadeDeck> = [
       ]
     },
 
-    hero: 'warlock'
+    hero: 'knight'
   }
 ];

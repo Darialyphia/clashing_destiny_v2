@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCollectionPage } from './useCollectionPage';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { Icon } from '@iconify/vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
 </script>
@@ -18,7 +19,17 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
       </div>
       <ul>
         <li
-          v-for="(card, index) in deckBuilder.mainDeckCards"
+          v-if="deckBuilder.hero"
+          :style="{
+            '--bg': `url(/assets/icons/${deckBuilder.hero.blueprint.cardIconId}.png)`
+          }"
+          class="deck-item"
+          @click="deckBuilder.removeCard(deckBuilder.hero.blueprint.id)"
+        >
+          {{ deckBuilder.hero.blueprint.name }}
+        </li>
+        <li
+          v-for="(card, index) in deckBuilder.cards"
           :key="index"
           :style="{
             '--bg': `url(/assets/icons/${card.blueprint.cardIconId}.png)`

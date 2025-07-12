@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { domToPng } from 'modern-screenshot';
 import { useCollectionPage } from './useCollectionPage';
-import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import { vIntersectionObserver } from '@vueuse/components';
-const { cards, viewMode, deckBuilder, isEditingDeck } = useCollectionPage();
+import CollectionCard from './CollectionCard.vue';
+
+const { cards, viewMode, isEditingDeck } = useCollectionPage();
 
 const screenshot = async (id: string, e: MouseEvent) => {
   const card = (e.target as HTMLElement)
@@ -56,28 +57,7 @@ watch(viewMode, () => {
       ]"
     >
       <Transition>
-        <BlueprintCard
-          v-if="visibleCards.has(card.id)"
-          :blueprint="card"
-          class="collection-card"
-          :class="{ disabled: isEditingDeck && !deckBuilder.canAdd(card.id) }"
-          @click="
-            () => {
-              if (!isEditingDeck) return;
-              if (deckBuilder.canAdd(card.id)) {
-                deckBuilder.addCard(card.id);
-              }
-            }
-          "
-          @contextmenu.prevent="
-            () => {
-              if (!isEditingDeck) return;
-              if (deckBuilder.hasCard(card.id)) {
-                deckBuilder.removeCard(card.id);
-              }
-            }
-          "
-        />
+        <CollectionCard v-if="visibleCards.has(card.id)" :card="card" />
       </Transition>
       <button
         v-if="!isEditingDeck"
@@ -115,23 +95,10 @@ watch(viewMode, () => {
     position: relative;
     width: calc(var(--card-width) * var(--pixel-scale));
     height: calc(var(--card-height) * var(--pixel-scale));
+    transform-style: preserve-3d;
+    perspective: 1200px;
+    perspective-origin: center;
   }
-}
-
-.collection-card {
-  --transition-duration: 0.7s;
-  &:is(.v-enter-active, .v-leave-active) {
-    transition: all var(--transition-duration) var(--ease-spring-3);
-  }
-
-  &:is(.v-enter-from, .v-leave-to) {
-    transform: translateY(15px);
-    opacity: 0.5;
-  }
-}
-
-.compact .collection-card {
-  --transition-duration: 0s;
 }
 
 .card.disabled {
