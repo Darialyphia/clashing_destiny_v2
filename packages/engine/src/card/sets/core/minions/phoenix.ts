@@ -16,12 +16,12 @@ export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
   cardIconId: 'unit-rainbow-phoenix',
-  description: `@Loyalty(2)@, @Pride(2)@.\n@On Enter@: inflicts @Burn@ to all enemy minions.`,
+  description: `@On Enter@: inflicts @Burn@ to all enemy minions.`,
   collectable: true,
   unique: false,
   manaCost: 5,
   atk: 4,
-  maxHp: 5,
+  maxHp: 4,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -50,8 +50,6 @@ export const phoenix: MinionBlueprint = {
   ],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new LoyaltyModifier(game, card, 2));
-    await card.modifiers.add(new PrideModifier(game, card, 2));
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         for (const target of card.player.enemyMinions) {

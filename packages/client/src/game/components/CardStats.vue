@@ -137,7 +137,7 @@ const visibleModifiers = computed(() =>
 
 .modifiers {
   position: absolute;
-  top: var(--size-1);
+  top: var(--size-2);
   left: var(--size-2);
   display: flex;
   flex-direction: column;

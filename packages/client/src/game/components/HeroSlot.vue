@@ -100,16 +100,16 @@ const isActionsPopoverOpened = computed({
     @click="client.ui.onCardClick(hero)"
   >
     <div>
-      <InspectableCard :card-id="hero.id">
+      <InspectableCard :card-id="hero.id" side="left" :side-offset="-50">
         <PopoverRoot v-model:open="isActionsPopoverOpened">
           <PopoverAnchor />
           <div
             class="hero-sprite"
             :style="{ '--bg': `url(${hero.imagePath})` }"
-            :class="{ highlighted: isHighlighted }"
+            :class="{ highlighted: isHighlighted, exhausted: hero.isExhausted }"
           />
           <PopoverPortal>
-            <PopoverContent :side-offset="-50" side="right">
+            <PopoverContent :side-offset="-50" side="top">
               <CardActions
                 :card="hero"
                 v-model:is-opened="isActionsPopoverOpened"
@@ -118,7 +118,7 @@ const isActionsPopoverOpened = computed({
           </PopoverPortal>
         </PopoverRoot>
       </InspectableCard>
-      <CardStats :card-id="hero.id" />
+      <CardStats :card-id="hero.id" class="stats" />
     </div>
   </div>
 </template>
@@ -133,13 +133,6 @@ const isActionsPopoverOpened = computed({
   justify-self: center;
   /* height: calc(var(--pixel-scale) * var(--hero-height)); */
   /* overflow: hidden; */
-
-  .artifacts {
-    position: absolute;
-    bottom: 0;
-    left: calc(-1 * var(--size-8));
-    z-index: 1;
-  }
 }
 
 .hero-sprite {
@@ -152,19 +145,15 @@ const isActionsPopoverOpened = computed({
   overflow: hidden;
   background: var(--bg) no-repeat center top;
   background-size: calc(96px * var(--pixel-scale));
+  &.exhausted {
+    filter: grayscale(0.75);
+  }
   &.highlighted {
     filter: sepia(0.25) brightness(1.15);
   }
 
   .opponent & {
     transform: scaleX(-1);
-  }
-
-  .artifacts {
-    position: absolute;
-    bottom: 0;
-    left: calc(-1 * var(--size-3));
-    z-index: 1;
   }
 }
 
@@ -188,5 +177,10 @@ const isActionsPopoverOpened = computed({
     filter: blur(10px);
     opacity: 0;
   } */
+}
+
+.stats {
+  left: 32px;
+  top: 12px;
 }
 </style>

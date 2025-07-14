@@ -28,11 +28,6 @@ export class UseCardAbilityInput extends Input<typeof schema> {
   }
 
   async impl() {
-    assert(
-      this.game.gamePhaseSystem.turnPlayer.equals(this.player),
-      new NotTurnPlayerError()
-    );
-
     assert(isDefined(this.card), new UnknownCardError(this.payload.cardId));
     const card = this.card;
     assert(
