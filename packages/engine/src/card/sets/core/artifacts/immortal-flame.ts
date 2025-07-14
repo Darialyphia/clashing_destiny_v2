@@ -23,7 +23,6 @@ export const immortalFlame: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.FIRE,
-  atk: 2,
   durability: 2,
   subKind: ARTIFACT_KINDS.WEAPON,
   abilities: [

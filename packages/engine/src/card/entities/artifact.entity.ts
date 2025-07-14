@@ -21,6 +21,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { chain } from 'lodash-es';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -136,7 +137,7 @@ export class ArtifactCard extends Card<
 
   async checkDurability() {
     if (this.remainingDurability <= 0) {
-      await this.player.artifactManager.unequip(this.blueprint.subKind);
+      await this.player.artifactManager.unequip(this);
     }
   }
 
@@ -250,7 +251,7 @@ export class ArtifactCard extends Card<
     this.updatePlayedAt();
     this.removeFromCurrentLocation();
 
-    this.player.artifactManager.equip(this);
+    await this.player.artifactManager.equip(this);
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_EQUIPED,

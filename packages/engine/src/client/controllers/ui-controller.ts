@@ -198,11 +198,6 @@ export class UiController {
       this.isInteractingPlayer &&
       this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
 
-    this._isDestinyPhaseOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.phase.state === GAME_PHASES.DESTINY &&
-      this.client.state.interaction.state === INTERACTION_STATES.IDLE;
-
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
       this.selectedManaCostIndices = [];
     }
@@ -328,11 +323,6 @@ export class UiController {
       }
     }
 
-    if (state.phase.state === GAME_PHASES.DESTINY) {
-      return state.turnCount === 0
-        ? 'Unlock your first affinity.'
-        : 'you may unlock a talent.';
-    }
     return '';
   }
 }

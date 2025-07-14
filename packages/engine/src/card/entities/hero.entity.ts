@@ -203,9 +203,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get atk(): number {
-    const weapon = this.player.artifactManager.artifacts.weapon;
-    const baseAttack = this.blueprint.atk + (weapon?.atk ?? 0);
-    return this.interceptors.atk.getValue(baseAttack, this);
+    return this.interceptors.atk.getValue(this.blueprint.atk, this);
   }
 
   get spellPower(): number {
@@ -292,15 +290,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
     const amount = damage.getFinalAmount(this);
 
-    const armor = this.player.artifactManager.artifacts.armor;
-    if (armor) {
-      const absorbed = Math.min(armor.remainingDurability, amount);
-      await armor.loseDurability(absorbed);
-
-      this.damageTaken = Math.min(this.damageTaken + amount - absorbed, this.maxHp);
-    } else {
-      this.damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
-    }
+    this.damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE,
@@ -379,7 +369,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canPlay() {
-    return true;
+    return this.location !== 'board';
   }
 
   async play() {

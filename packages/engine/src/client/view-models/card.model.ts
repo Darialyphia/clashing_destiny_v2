@@ -1,4 +1,3 @@
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
@@ -25,8 +24,7 @@ type CardData =
   | SerializedSpellCard
   | SerializedArtifactCard
   | SerializedHeroCard
-  | SerializedMinionCard
-  | SerializedLocationCard;
+  | SerializedMinionCard;
 
 export type CardActionRule = {
   id: string;
@@ -314,11 +312,12 @@ export class CardViewModel {
   }
 
   getActions(): CardActionRule[] {
-    return [
+    const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
+    return actions;
   }
 }

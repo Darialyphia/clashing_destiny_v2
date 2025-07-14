@@ -6,14 +6,20 @@ import {
   useFxEvent,
   useGameClient
 } from '../composables/useGameClient';
-import EquipedArtifacts from './EquipedArtifacts.vue';
 import CardStats from './CardStats.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import type { DamageType } from '@game/engine/src/utils/damage';
 import { useHeroSlot } from '../composables/useHeroSlot';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import type { HoverCardContentProps } from 'reka-ui';
+import {
+  type HoverCardContentProps,
+  PopoverRoot,
+  PopoverAnchor,
+  PopoverPortal,
+  PopoverContent
+} from 'reka-ui';
+import CardActions from './CardActions.vue';
 
 const { player } = defineProps<
   Pick<HoverCardContentProps, 'side' | 'sideOffset'> & {
@@ -69,6 +75,20 @@ const onTakeDamage = async (e: {
   }).finished;
 };
 useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
+
+const isActionsPopoverOpened = computed({
+  get() {
+    if (!client.value.ui.selectedCard) return false;
+    return client.value.ui.selectedCard.equals(hero.value);
+  },
+  set(value) {
+    if (value) {
+      client.value.ui.select(hero.value);
+    } else {
+      client.value.ui.unselect();
+    }
+  }
+});
 </script>
 
 <template>
@@ -81,13 +101,23 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   >
     <div>
       <InspectableCard :card-id="hero.id">
-        <div
-          class="hero-sprite"
-          :style="{ '--bg': `url(${hero.imagePath})` }"
-          :class="{ highlighted: isHighlighted }"
-        />
+        <PopoverRoot v-model:open="isActionsPopoverOpened">
+          <PopoverAnchor />
+          <div
+            class="hero-sprite"
+            :style="{ '--bg': `url(${hero.imagePath})` }"
+            :class="{ highlighted: isHighlighted }"
+          />
+          <PopoverPortal>
+            <PopoverContent :side-offset="-50" side="right">
+              <CardActions
+                :card="hero"
+                v-model:is-opened="isActionsPopoverOpened"
+              />
+            </PopoverContent>
+          </PopoverPortal>
+        </PopoverRoot>
       </InspectableCard>
-      <EquipedArtifacts :player="player" class="artifacts" />
       <CardStats :card-id="hero.id" />
     </div>
   </div>
@@ -107,7 +137,7 @@ useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
   .artifacts {
     position: absolute;
     bottom: 0;
-    left: calc(-1 * var(--size-3));
+    left: calc(-1 * var(--size-8));
     z-index: 1;
   }
 }

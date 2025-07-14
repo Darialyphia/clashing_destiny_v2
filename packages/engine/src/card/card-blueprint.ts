@@ -1,4 +1,3 @@
-import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
 import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import type {
@@ -15,7 +14,6 @@ import type {
 import type { ArtifactCard } from './entities/artifact.entity';
 import { Card, type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
-import type { LocationCard } from './entities/location.entity';
 import type { MinionCard } from './entities/minion.card';
 import type { SpellCard } from './entities/spell.entity';
 
@@ -118,13 +116,7 @@ export type HeroBlueprint = CardBlueprintBase & {
   abilities: Ability<HeroCard, PreResponseTarget>[];
   talentTree: TalentTreeBlueprint;
 };
-export type LocationBlueprint = MainDeckCardBlueprint & {
-  kind: Extract<CardKind, typeof CARD_KINDS.LOCATION>;
-  abilities: Ability<LocationCard, PreResponseTarget>[];
-  canPlay: (game: Game, card: LocationCard) => boolean;
-  onInit: (game: Game, card: LocationCard) => Promise<void>;
-  onPlay: (game: Game, card: LocationCard) => Promise<void>;
-};
+
 export type ArtifactBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
@@ -154,5 +146,4 @@ export type CardBlueprint =
   | SpellBlueprint<any>
   | ArtifactBlueprint
   | MinionBlueprint
-  | HeroBlueprint
-  | LocationBlueprint;
+  | HeroBlueprint;

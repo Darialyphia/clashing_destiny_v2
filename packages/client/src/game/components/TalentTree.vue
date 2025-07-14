@@ -123,10 +123,7 @@ const positionMap = computed(() =>
         :class="{
           unlocked: position.node.isUnlocked,
           disabled: !position.node.isUnlocked && !position.node.canUnlock,
-          interactive:
-            position.node.canUnlock &&
-            state.phase.state === GAME_PHASES.DESTINY &&
-            state.turnPlayer === player.id
+          interactive: position.node.canUnlock && state.turnPlayer === player.id
         }"
       >
         <circle :cx="position.x" :cy="position.y" r="12" />

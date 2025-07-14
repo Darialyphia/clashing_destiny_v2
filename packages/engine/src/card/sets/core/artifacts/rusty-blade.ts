@@ -4,10 +4,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
-import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
-import { isMinion } from '../../../card-utils';
 import {
   AFFINITIES,
   ARTIFACT_KINDS,
@@ -16,29 +13,28 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { ArtifactCard } from '../../../entities/artifact.entity';
 import type { HeroCard } from '../../../entities/hero.entity';
 
-export const firebrand: ArtifactBlueprint = {
-  id: 'firebrand',
-  name: 'Firebrand',
-  cardIconId: 'artifact-firebrand',
+export const rustyBlade: ArtifactBlueprint = {
+  id: 'rusty-blade',
+  name: 'Rusty Blade',
+  cardIconId: 'artifact-rusty-blade',
   description: '',
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  manaCost: 2,
-  rarity: RARITIES.RARE,
+  manaCost: 1,
+  rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
-  affinity: AFFINITIES.FIRE,
-  durability: 2,
+  affinity: AFFINITIES.NORMAL,
+  durability: 1,
   subKind: ARTIFACT_KINDS.WEAPON,
   abilities: [
     {
-      id: 'firebrand-ability',
+      id: 'rusty-blade-ability',
       label: 'Use ability',
-      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +1@[attack]@ and has @On Minion Hit@: Inflicts @Burn@ to the target.`,
+      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +2@[attack]@.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
@@ -51,21 +47,14 @@ export const firebrand: ArtifactBlueprint = {
         await card.player.hero.modifiers.add(
           new Modifier<HeroCard>('firebrand-buff', game, card, {
             name: 'Firebrand',
-            description: `+1 Attack. Inflicts Burn on hit.`,
+            description: `+1 Attack.`,
+            icon: 'keyword-attack-buff',
             mixins: [
               new UntilEndOfTurnModifierMixin<HeroCard>(game),
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + 1;
-                }
-              }),
-              new GameEventModifierMixin(game, {
-                eventName: GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
-                handler: async event => {
-                  if (!event.data.card.equals(card.player.hero)) return;
-                  if (!isMinion(event.data.target)) return;
-                  await event.data.target.modifiers.add(new BurnModifier(game, card));
+                  return value + 2;
                 }
               })
             ]

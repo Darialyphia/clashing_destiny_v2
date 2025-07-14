@@ -3,7 +3,6 @@ import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
-import type { LocationCard } from './entities/location.entity';
 import type { MinionCard } from './entities/minion.card';
 import type { SpellCard } from './entities/spell.entity';
 
@@ -21,10 +20,6 @@ export const isSpell = (card: AnyCard): card is SpellCard => {
 
 export const isArtifact = (card: AnyCard): card is ArtifactCard => {
   return card.kind === CARD_KINDS.ARTIFACT;
-};
-
-export const isLocation = (card: AnyCard): card is LocationCard => {
-  return card.kind === CARD_KINDS.LOCATION;
 };
 
 export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => {
@@ -229,4 +224,18 @@ export const attackRules = {
         }
       });
     }
+};
+
+export const sealAbility = (
+  card: HeroCard | ArtifactCard | MinionCard,
+  abilityId: string
+) => {
+  const ability = card.blueprint.abilities.find(ability => ability.id === abilityId);
+  if (!ability) return;
+
+  // @ts-expect-error
+  card.addInterceptor('canUseAbility', (canUse, ctx) => {
+    if (ctx.ability.id !== abilityId) return canUse;
+    return false;
+  });
 };

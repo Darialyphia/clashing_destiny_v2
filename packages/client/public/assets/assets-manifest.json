@@ -279,6 +279,19 @@
         },
         {
           "alias": [
+            "icon-artifact-rusty-blade"
+          ],
+          "src": [
+            "/assets/icons/artifact-rusty-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-artifact-test"
           ],
           "src": [

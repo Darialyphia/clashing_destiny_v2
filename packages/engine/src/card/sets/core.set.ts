@@ -2,6 +2,7 @@ import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
+import { rustyBlade } from './core/artifacts/rusty-blade';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
 import { sorcerer } from './core/heroes/sorcerer';
@@ -32,7 +33,6 @@ import { innerFire } from './core/spells/inner-fire';
 import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
-import { scorchedEarth } from './core/spells/scorched-earth';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 
@@ -49,12 +49,12 @@ export const coreSet: CardSet = {
     // Normal
     courageousFootsoldier,
     friendlySlime,
+    rustyBlade,
 
     // Fire
     fireBolt,
     fireBall,
     ignite,
-    scorchedEarth,
     flamefistFighter,
     pyromancer,
     blazingSalamander,

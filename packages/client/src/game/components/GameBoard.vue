@@ -22,10 +22,10 @@ import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import EffectChain from './EffectChain.vue';
 import PlayerStats from './PlayerStats.vue';
-import TalentTree from './TalentTree.vue';
 import UnlockedAffinities from './UnlockedAffinities.vue';
 import { useMouse } from '@vueuse/core';
 import { mapRange } from '@game/shared';
+import EquipedArtifacts from './EquipedArtifacts.vue';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -75,6 +75,7 @@ const angleX = computed(() => {
         </div>
         <PlayerStats :player="myPlayer" />
         <UnlockedAffinities :player="myPlayer" class="affinities" />
+        <EquipedArtifacts :player="myPlayer" />
       </article>
 
       <DestinyZone :player-id="myPlayer.id" />
@@ -103,6 +104,7 @@ const angleX = computed(() => {
         </div>
         <PlayerStats :player="opponentPlayer" class="justify-end" />
         <UnlockedAffinities :player="opponentPlayer" class="justify-end" />
+        <EquipedArtifacts :player="opponentPlayer" class="artifacts" />
       </article>
 
       <DestinyZone :player-id="opponentPlayer.id" />
@@ -130,35 +132,17 @@ const angleX = computed(() => {
   background-size: cover;
   /* transform-style: preserve-3d; */
   position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    mix-blend-mode: screen;
-    opacity: 0.25;
-    z-index: 1;
-  }
 }
 
 .p1-zone {
   grid-column: 1;
   position: relative;
   z-index: 1;
-
-  .talent-tree {
-    align-self: flex-start;
-  }
 }
 
 .p2-zone {
   grid-column: 3;
   grid-row: 1;
-
-  .talent-tree {
-    align-self: flex-end;
-  }
 }
 
 .p1-zone,

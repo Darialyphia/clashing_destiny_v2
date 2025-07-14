@@ -43,7 +43,7 @@ export const KEYWORDS = {
     id: 'on-attack',
     name: 'On Attack',
     description: 'Does something when this card declares an attack.',
-    aliases: []
+    aliases: ['on minion attack', 'on hero attack']
   },
   ON_BLOCK: {
     id: 'on-block',
@@ -55,7 +55,7 @@ export const KEYWORDS = {
     id: 'on-hit',
     name: 'On Hit',
     description: 'Does something when this card deals combat damage.',
-    aliases: []
+    aliases: ['on minion hit', 'on hero hit']
   },
   ON_KILL: {
     id: 'on-kill',

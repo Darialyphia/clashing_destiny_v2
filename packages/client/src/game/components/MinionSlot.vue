@@ -137,7 +137,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
           </PopoverPortal>
         </PopoverRoot>
 
-        <CardStats :card-id="card.id" />
+        <CardStats :card-id="card.id" class="stats" />
       </div>
     </template>
   </div>
@@ -225,5 +225,9 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   transform: translateY(20px) rotateZ(-45deg) rotateX(-60deg) translateY(-60px);
   transform-style: preserve-3d;
   pointer-events: none;
+}
+
+.stats {
+  transform: translateY(10px) translateZ(20px);
 }
 </style>

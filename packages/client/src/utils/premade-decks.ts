@@ -59,6 +59,11 @@ export const premadeDecks: Array<PremadeDeck> = [
         'firebrand',
         'firebrand',
 
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+
         'phoenix'
       ]
     },

@@ -11,7 +11,6 @@ import { match } from 'ts-pattern';
 import type { GameClient } from '../client';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
@@ -48,7 +47,6 @@ export class ClientStateController {
       | SerializedHeroCard
       | SerializedSpellCard
       | SerializedArtifactCard
-      | SerializedLocationCard
       | SerializedPlayer
       | SerializedModifier
   ) {

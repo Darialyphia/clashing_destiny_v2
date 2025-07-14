@@ -13,7 +13,7 @@ export type Config = {
   ATTACK_ZONE_SLOTS: number;
   DEFENSE_ZONE_SLOTS: number;
 
-  MAX_TALENTS: number;
+  MAX_EQUIPPED_ARTIFACTS: number;
 
   BASE_LOYALTY: number;
 };
@@ -33,7 +33,7 @@ export const defaultConfig: Config = {
   ATTACK_ZONE_SLOTS: 5,
   DEFENSE_ZONE_SLOTS: 5,
 
-  MAX_TALENTS: 4,
+  MAX_EQUIPPED_ARTIFACTS: 3,
 
   BASE_LOYALTY: 1
 };

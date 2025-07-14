@@ -14,7 +14,6 @@ import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
@@ -33,7 +32,6 @@ export type EntityDictionary = Record<
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedLocationCard
   | SerializedPlayer
   | SerializedModifier
 >;

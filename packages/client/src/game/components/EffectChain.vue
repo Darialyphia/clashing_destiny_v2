@@ -108,7 +108,6 @@ const stack = computed(() => {
 .effect-chain-card {
   width: var(--size-8);
   aspect-ratio: 1;
-  background-color: red;
   background-image: var(--bg);
   background-position: center;
   background-size: 200%;

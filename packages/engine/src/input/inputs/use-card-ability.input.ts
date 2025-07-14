@@ -10,7 +10,6 @@ import {
 import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.card';
-import { LocationCard } from '../../card/entities/location.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -39,7 +38,6 @@ export class UseCardAbilityInput extends Input<typeof schema> {
     assert(
       card instanceof HeroCard ||
         card instanceof MinionCard ||
-        card instanceof LocationCard ||
         card instanceof ArtifactCard,
       new UnknownCardError(this.payload.cardId)
     );

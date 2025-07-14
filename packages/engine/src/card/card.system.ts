@@ -6,7 +6,6 @@ import type {
   ArtifactBlueprint,
   CardBlueprint,
   HeroBlueprint,
-  LocationBlueprint,
   MinionBlueprint,
   PreResponseTarget,
   SpellBlueprint
@@ -17,7 +16,6 @@ import { MinionCard } from './entities/minion.card';
 import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';
-import { LocationCard } from './entities/location.entity';
 import { GAME_EVENTS } from '../game/game.events';
 
 export type CardSystemOptions = {
@@ -87,14 +85,6 @@ export class CardSystem extends System<CardSystemOptions> {
             id,
             blueprint
           } as CardOptions<MinionBlueprint>)
-      )
-      .with(
-        CARD_KINDS.LOCATION,
-        () =>
-          new LocationCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<LocationBlueprint>)
       )
       .with(
         CARD_KINDS.HERO,

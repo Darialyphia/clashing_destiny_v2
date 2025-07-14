@@ -1,14 +1,13 @@
 import type { MaybePromise } from '@game/shared';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { LocationCard } from '../../card/entities/location.entity';
 import type { MinionCard } from '../../card/entities/minion.card';
 import type { Game } from '../../game/game';
 import { Modifier } from '../modifier.entity';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 
 export class WhileOnBoardModifier<
-  T extends MinionCard | ArtifactCard | LocationCard
+  T extends MinionCard | ArtifactCard
 > extends Modifier<T> {
   private isActivated = false;
 

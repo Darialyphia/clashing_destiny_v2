@@ -20,6 +20,9 @@ export class DeclareAttackInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   get attacker() {
+    if (this.player.hero.id === this.payload.attackerId) {
+      return this.player.hero;
+    }
     return this.player.minions.find(creature => creature.id === this.payload.attackerId);
   }
 
