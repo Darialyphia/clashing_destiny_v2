@@ -2,17 +2,11 @@ import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
-import {
-  CombatDamage,
-  LoyaltyDamage,
-  type Damage,
-  type DamageType
-} from '../../utils/damage';
+import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
   type Ability,
-  type AnyAbility,
   type MinionBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -52,7 +46,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
-  canBeAttacked: Interceptable<boolean, { target: Attacker }>;
+  canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canUseAbility: Interceptable<
     boolean,
     { card: MinionCard; ability: Ability<MinionCard, PreResponseTarget> }
@@ -268,9 +262,9 @@ export class MinionCard extends Card<
     });
   }
 
-  canBeAttacked(target: AttackTarget) {
+  canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
-      target
+      attacker
     });
   }
 

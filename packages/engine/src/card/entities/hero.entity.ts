@@ -51,7 +51,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBlock: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
-  canBeAttacked: Interceptable<boolean, { target: Attacker }>;
+  canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<
@@ -238,9 +238,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     });
   }
 
-  canBeAttacked(target: AttackTarget) {
+  canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
-      target
+      attacker
     });
   }
 
