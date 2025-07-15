@@ -130,7 +130,7 @@ export class Player
 
     if (isFirstTurn) {
       return this.interceptors.cardsDrawnForTurn.getValue(
-        this.game.gamePhaseSystem.turnPlayer.isPlayer1
+        this.game.gamePhaseSystem.currentPlayer.isPlayer1
           ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
           : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN,
         {}
@@ -179,8 +179,8 @@ export class Player
     return this.interceptors.unlockedAffinities.getValue(this._unlockedAffinities, {});
   }
 
-  get isTurnPlayer() {
-    return this.game.gamePhaseSystem.turnPlayer.equals(this);
+  get iscurrentPlayer() {
+    return this.game.gamePhaseSystem.currentPlayer.equals(this);
   }
 
   get influence() {

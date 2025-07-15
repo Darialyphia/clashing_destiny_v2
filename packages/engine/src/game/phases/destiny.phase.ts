@@ -7,7 +7,7 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
   constructor(private game: Game) {}
 
   async unlockTalent(id: string) {
-    await this.game.gamePhaseSystem.turnPlayer.hero.talentTree.getNode(id)?.unlock();
+    await this.game.gamePhaseSystem.currentPlayer.hero.talentTree.getNode(id)?.unlock();
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE
     );
@@ -20,7 +20,7 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
   }
 
   private async recollectDestinyCards() {
-    const cards = [...this.game.gamePhaseSystem.turnPlayer.cardManager.destinyZone];
+    const cards = [...this.game.gamePhaseSystem.currentPlayer.cardManager.destinyZone];
 
     for (const card of cards) {
       await card.removeFromCurrentLocation();

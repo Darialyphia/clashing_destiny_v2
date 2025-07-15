@@ -83,7 +83,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   private _elapsedTurns = 0;
 
-  private _turnPlayer!: Player;
+  private _currentPlayer!: Player;
 
   private firstPlayer!: Player;
 
@@ -157,8 +157,8 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
-    this._turnPlayer = this.game.playerSystem.player1;
-    this.firstPlayer = this._turnPlayer;
+    this._currentPlayer = this.game.playerSystem.player1;
+    this.firstPlayer = this._currentPlayer;
   }
 
   async startGame() {
@@ -186,8 +186,8 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     return this._elapsedTurns;
   }
 
-  get turnPlayer() {
-    return this._turnPlayer;
+  get currentPlayer() {
+    return this._currentPlayer;
   }
 
   private startGameTurn() {
@@ -230,20 +230,20 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.FINISH_END_TURN), new WrongGamePhaseError());
-    await this.turnPlayer.endTurn();
+    await this.currentPlayer.endTurn();
 
-    const nextPlayer = this._turnPlayer.opponent;
+    const nextPlayer = this._currentPlayer.opponent;
     if (nextPlayer.equals(this.firstPlayer)) {
       await this.endGameTurn();
-      this._turnPlayer = nextPlayer;
+      this._currentPlayer = nextPlayer;
       await this.startGameTurn();
     } else {
-      this._turnPlayer = nextPlayer;
+      this._currentPlayer = nextPlayer;
     }
 
     await this.game.inputSystem.schedule(async () => {
       await this.sendTransition(GAME_PHASE_TRANSITIONS.FINISH_END_TURN);
-      await this._turnPlayer.startTurn();
+      await this._currentPlayer.startTurn();
     });
   }
 

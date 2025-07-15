@@ -4,7 +4,7 @@ export class IdleContext {
   constructor(private game: Game) {}
 
   get player() {
-    return this.game.gamePhaseSystem.turnPlayer;
+    return this.game.gamePhaseSystem.currentPlayer;
   }
   serialize() {
     return {

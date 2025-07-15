@@ -23,7 +23,7 @@ export class EndTurnGlobalAction implements GlobalActionRule {
     return (
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      this.client.playerId === state.turnPlayer &&
+      this.client.playerId === state.currentPlayer &&
       !state.effectChain
     );
   }

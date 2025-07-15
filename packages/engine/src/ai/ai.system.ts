@@ -29,7 +29,7 @@ export class AISystem {
       gamePhaseState.state === GAME_PHASES.ATTACK &&
       gamePhaseState.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
-      return this.game.gamePhaseSystem.turnPlayer.equals(this.player);
+      return this.game.gamePhaseSystem.currentPlayer.equals(this.player);
     }
 
     return this.game.interaction.getContext().ctx.player;

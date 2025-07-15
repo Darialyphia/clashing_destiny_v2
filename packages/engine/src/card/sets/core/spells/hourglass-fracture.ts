@@ -31,7 +31,7 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   async onInit() {},
   async onPlay(game, card) {
     const stop = game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
-      if (game.gamePhaseSystem.turnPlayer.equals(card.player)) return;
+      if (game.gamePhaseSystem.currentPlayer.equals(card.player)) return;
 
       if (event.data.from === GAME_PHASES.MAIN) {
         stop();

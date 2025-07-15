@@ -4,7 +4,7 @@ import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
   IllegalAttackerError,
-  NotTurnPlayerError,
+  NotcurrentPlayerError,
   UnknownUnitError
 } from '../input-errors';
 
@@ -27,7 +27,7 @@ export class DeclareAttackInput extends Input<typeof schema> {
   }
 
   async impl() {
-    assert(this.player.isTurnPlayer, new NotTurnPlayerError());
+    assert(this.player.iscurrentPlayer, new NotcurrentPlayerError());
     assert(this.attacker, new UnknownUnitError(this.payload.attackerId));
     assert(this.attacker.canAttack, new IllegalAttackerError());
 

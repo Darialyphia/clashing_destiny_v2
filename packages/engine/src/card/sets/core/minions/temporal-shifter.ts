@@ -45,7 +45,7 @@ export const temporalShifter: MinionBlueprint = {
           game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
             if (
               event.data.to.state === GAME_PHASES.END &&
-              game.gamePhaseSystem.turnPlayer.equals(card.player.opponent)
+              game.gamePhaseSystem.currentPlayer.equals(card.player.opponent)
             ) {
               await card.player.opponent.cardManager.draw(cardsToDrawInEndPhase);
             }
