@@ -94,7 +94,7 @@ export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
   }
 }
 
-export class HeroDealCombatDamageEvent extends TypedSerializableEvent<
+export class HeroBeforeDealCombatDamageEvent extends TypedSerializableEvent<
   {
     card: HeroCard;
     target: AttackTarget;
@@ -107,6 +107,24 @@ export class HeroDealCombatDamageEvent extends TypedSerializableEvent<
       card: this.data.card.serialize(),
       target: this.data.target.id,
       damage: this.data.damage.getFinalAmount(this.data.target)
+    };
+  }
+}
+
+export class HeroAfterDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: HeroCard;
+    target: AttackTarget;
+    damage: CombatDamage;
+  },
+  { card: SerializedHeroCard; target: string; damage: number; isFatal: boolean }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      isFatal: !this.data.target.isAlive
     };
   }
 }
@@ -150,8 +168,8 @@ export class HeroLevelUpEvent extends TypedSerializableEvent<
 export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
   [HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
-  [HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE]: HeroDealCombatDamageEvent;
-  [HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE]: HeroDealCombatDamageEvent;
+  [HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE]: HeroBeforeDealCombatDamageEvent;
+  [HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE]: HeroAfterDealCombatDamageEvent;
   [HERO_EVENTS.HERO_BEFORE_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_USE_ABILITY]: HeroUsedAbilityEvent;
@@ -271,14 +289,14 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   async dealDamage(target: AttackTarget, damage: CombatDamage) {
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
-      new HeroDealCombatDamageEvent({ card: this, target, damage })
+      new HeroBeforeDealCombatDamageEvent({ card: this, target, damage })
     );
 
     await target.takeDamage(this, damage);
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
-      new HeroDealCombatDamageEvent({ card: this, target, damage })
+      new HeroAfterDealCombatDamageEvent({ card: this, target, damage })
     );
   }
 
