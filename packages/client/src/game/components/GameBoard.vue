@@ -128,7 +128,7 @@ const angleX = computed(() => {
   grid-template-columns: calc(220 / 800 * 100%) 1fr calc(220 / 800 * 100%);
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
-  background: url(/assets/backgrounds/battle-board-2.png) no-repeat center;
+  /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
   background-size: cover;
   /* transform-style: preserve-3d; */
   position: relative;

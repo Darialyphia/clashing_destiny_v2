@@ -18,6 +18,7 @@ import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { magicChanneler } from './core/minions/magic-channeler';
 import { magicFueledGolem } from './core/minions/magic-fueled-golem';
 import { phoenix } from './core/minions/phoenix';
+import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
@@ -66,6 +67,7 @@ export const coreSet: CardSet = {
     firebrand,
     pyroclasm,
     innerFire,
+    pyreArchfiend,
 
     // Arcane,
     dualCasting,
