@@ -10,6 +10,7 @@ import { warlock } from './core/heroes/warlock';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { blazingSalamander } from './core/minions/blazing-salamander';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
+import { enjiOneManArmy } from './core/minions/enji-one-man-army';
 import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
@@ -68,6 +69,7 @@ export const coreSet: CardSet = {
     pyroclasm,
     innerFire,
     pyreArchfiend,
+    enjiOneManArmy,
 
     // Arcane,
     dualCasting,

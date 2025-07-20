@@ -131,7 +131,6 @@ const isActionsPopoverOpened = computed({
   transform: rotateZ(-45deg) rotateX(-60deg) translateY(-50%);
   transform-style: preserve-3d;
   justify-self: center;
-  /* height: calc(var(--pixel-scale) * var(--hero-height)); */
   /* overflow: hidden; */
 }
 

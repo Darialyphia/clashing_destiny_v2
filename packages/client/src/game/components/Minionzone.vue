@@ -41,7 +41,7 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
 
   .minion-row {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--size-4);
     justify-items: center;
     align-items: center;

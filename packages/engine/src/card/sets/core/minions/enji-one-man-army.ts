@@ -1,5 +1,6 @@
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
-import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
+import { type MainDeckCard } from '../../../../board/board.system';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { discover } from '../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -9,16 +10,16 @@ import {
   RARITIES
 } from '../../../card.enums';
 
-export const pyreArchfiend: MinionBlueprint = {
-  id: 'pyre-archfiend',
-  name: 'Pyre Archfiend',
-  cardIconId: 'unit-pyre-archfiend',
-  description: `@Cleave@.\n@On Kill@: deal 3 damage to the enemy Hero.`,
+export const enjiOneManArmy: MinionBlueprint = {
+  id: 'enji-one-man-army',
+  name: 'Enji, One-Man Army',
+  cardIconId: 'unit-enji-one-man-army',
+  description: `@Unique@, @Cleave@, @Piercing@.\nIf you have another minion on the board, destroy this.`,
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 3,
-  maxHp: 2,
+  atk: 4,
+  maxHp: 5,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

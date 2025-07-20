@@ -161,9 +161,9 @@ const displayCards = computed(() => {
 }
 
 .hand-card {
-  filter: drop-shadow(0 0 15px hsl(var(--lime-4-hsl) / 0.25));
+  /* filter: drop-shadow(0 0 15px hsl(var(--lime-4-hsl) / 0.25)); */
   &.disabled {
-    filter: none;
+    filter: brightness(0.75) grayscale(0.3);
   }
 }
 
