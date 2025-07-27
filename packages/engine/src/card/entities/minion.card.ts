@@ -179,7 +179,7 @@ export class MinionCard extends Card<
 > {
   private damageTaken = 0;
 
-  private abilityTargets = new Map<string, PreResponseTarget[]>();
+  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(

@@ -21,7 +21,6 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import { chain } from 'lodash-es';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;

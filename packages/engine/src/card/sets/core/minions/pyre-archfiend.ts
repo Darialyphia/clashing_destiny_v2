@@ -18,7 +18,7 @@ export const pyreArchfiend: MinionBlueprint = {
   unique: false,
   manaCost: 4,
   atk: 3,
-  maxHp: 2,
+  maxHp: 3,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
