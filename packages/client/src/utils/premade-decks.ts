@@ -18,19 +18,18 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         'fire-ball',
         'fire-ball',
-        'fire-ball',
 
         'inner-fire',
         'inner-fire',
-        'inner-fire',
+
+        'forged-in-the-crater',
+        'forged-in-the-crater',
 
         'friendly-slime',
         'friendly-slime',
         'friendly-slime',
         'friendly-slime',
 
-        'pyromancer',
-        'pyromancer',
         'pyromancer',
         'pyromancer',
 
@@ -56,13 +55,14 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         'firebrand',
         'firebrand',
-        'firebrand',
-        'firebrand',
 
         'rusty-blade',
         'rusty-blade',
         'rusty-blade',
         'rusty-blade',
+
+        'sun-emperor',
+        'sun-emperor',
 
         'phoenix'
       ]

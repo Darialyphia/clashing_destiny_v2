@@ -25,6 +25,7 @@ import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
+import { sunEmperor } from './core/minions/sun-emperor';
 import { temporalShifter } from './core/minions/temporal-shifter';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { channelTheFlames } from './core/spells/channel-the-flames';
@@ -74,6 +75,7 @@ export const coreSet: CardSet = {
     flameExorcist,
     ardentMonk,
     forgedInTheCrater,
+    sunEmperor,
 
     // Arcane,
     dualCasting,
