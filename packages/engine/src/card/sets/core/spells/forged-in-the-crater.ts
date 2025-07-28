@@ -2,9 +2,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   ARTIFACT_KINDS,
@@ -26,7 +24,7 @@ export const forgedInTheCrater: SpellBlueprint<MinionCard> = {
     'This turn, when you use a Weapon ability, give your hero +1@[attack]@ until the end of the turn.',
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   affinity: AFFINITIES.FIRE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

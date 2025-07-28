@@ -75,7 +75,6 @@ const angleX = computed(() => {
         </div>
         <PlayerStats :player="myPlayer" />
         <UnlockedAffinities :player="myPlayer" class="affinities" />
-        <EquipedArtifacts :player="myPlayer" />
       </article>
 
       <DestinyZone :player-id="myPlayer.id" />
@@ -83,14 +82,20 @@ const angleX = computed(() => {
     </section>
 
     <section class="middle-zone">
-      <HeroSlot :player="opponentPlayer" class="p2-hero" />
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
-      <div class="flex flex-col gap-2 justify-center">
+      <div class="p2-hero">
+        <HeroSlot :player="opponentPlayer" class="p2-hero" />
+        <EquipedArtifacts :player="opponentPlayer" class="artifacts" />
+      </div>
+      <div class="current-infos">
         <EffectChain v-if="state.effectChain?.stack.length" />
         <GamePhaseTracker v-else />
       </div>
+      <div class="p1-hero">
+        <EquipedArtifacts :player="myPlayer" />
+        <HeroSlot :player="myPlayer" />
+      </div>
       <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
-      <HeroSlot :player="myPlayer" class="absolute top-[100%] p1-hero" />
     </section>
 
     <section class="p2-zone">
@@ -104,7 +109,6 @@ const angleX = computed(() => {
         </div>
         <PlayerStats :player="opponentPlayer" class="justify-end" />
         <UnlockedAffinities :player="opponentPlayer" class="justify-end" />
-        <EquipedArtifacts :player="opponentPlayer" class="artifacts" />
       </article>
 
       <DestinyZone :player-id="opponentPlayer.id" />
@@ -125,7 +129,7 @@ const angleX = computed(() => {
   height: 100dvh;
   aspect-ratio: 16 / 9;
   display: grid;
-  grid-template-columns: calc(220 / 800 * 100%) 1fr calc(220 / 800 * 100%);
+  grid-template-columns: auto 1fr auto;
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
   /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
@@ -168,16 +172,16 @@ const angleX = computed(() => {
   display: grid;
   gap: var(--size-2);
   grid-template-rows: autpo 1fr auto 1fr auto;
+  grid-template-columns: 1fr auto 1fr;
   position: relative;
   z-index: 1;
   align-self: center;
+  grid-column: 2;
   --angleZ: calc(1deg * v-bind(angleZ));
   --angleX: calc(1deg * v-bind(angleX));
-  /* transform: rotateY(-0deg) rotateX(var(--angleX)) rotateZ(var(--angleZ))
-    scale(1); */
-  /*transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
-    rotateZ(45deg) scale(1);*/
-  transform: translateY(-100px) rotateX(25deg);
+  transform: rotateX(25deg);
+  /* uncomment the line below to debug elements position in 3D space */
+  /* transform: rotateX(var(--angleX)) rotateZ(var(--angleZ)); */
   transform-style: preserve-3d;
   animation: battlefield 1.5s var(--ease-4);
 }
@@ -187,11 +191,12 @@ const angleX = computed(() => {
     transform: rotate(45deg) scale(0.5);
   }
   to {
-    transform: translateY(-100px) rotateX(25deg);
-
-    /* transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
-      rotateZ(45deg) scale(1); */
+    transform: rotateX(25deg);
   }
+}
+
+.current-infos {
+  grid-column: 1 / -1;
 }
 
 .hand-zone {
@@ -201,9 +206,9 @@ const angleX = computed(() => {
 
 .p1-minions,
 .p2-minions {
-  flex-grow: 1;
   align-self: center;
   transform-style: preserve-3d;
+  grid-column: 2;
 }
 
 .avatar {
@@ -238,12 +243,20 @@ const angleX = computed(() => {
   z-index: 1;
 }
 
-.p1-hero {
-  /* translate: 40% 65%; */
-  translate: 0 -45px;
-}
+.p1-hero,
 .p2-hero {
-  translate: 0 -25px;
-  /* translate: 25% 50%; */
+  transform-style: preserve-3d;
+}
+.p1-hero {
+  grid-column: 1;
+  align-self: end;
+  justify-self: end;
+}
+
+.p2-hero {
+  grid-column: 3;
+  align-self: start;
+  justify-self: start;
+  translate: 0 -25%;
 }
 </style>

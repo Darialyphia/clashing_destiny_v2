@@ -10,7 +10,6 @@ import CardStats from './CardStats.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import type { DamageType } from '@game/engine/src/utils/damage';
-import { useHeroSlot } from '../composables/useHeroSlot';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import {
   type HoverCardContentProps,
@@ -29,7 +28,6 @@ const { player } = defineProps<
 
 const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
-const { isHighlighted } = useHeroSlot(hero);
 const client = useGameClient();
 
 const cardElement = useTemplateRef('card');
@@ -106,7 +104,10 @@ const isActionsPopoverOpened = computed({
           <div
             class="hero-sprite"
             :style="{ '--bg': `url(${hero.imagePath})` }"
-            :class="{ highlighted: isHighlighted, exhausted: hero.isExhausted }"
+            :class="{
+              highlighted: hero.canBeTargeted,
+              exhausted: hero.isExhausted
+            }"
           />
           <PopoverPortal>
             <PopoverContent :side-offset="-50" side="top">
@@ -137,8 +138,8 @@ const isActionsPopoverOpened = computed({
 
 .hero-sprite {
   --pixel-scale: 2;
-  position: absolute;
-  inset: 0;
+  /* position: absolute;
+  inset: 0; */
   aspect-ratio: 1;
   /* max-height: calc(var(--pixel-scale) * var(--hero-height)); */
   height: calc(96px * var(--pixel-scale));
@@ -149,7 +150,18 @@ const isActionsPopoverOpened = computed({
     filter: grayscale(0.75);
   }
   &.highlighted {
-    filter: sepia(0.25) brightness(1.15);
+    filter: saturate(150%) drop-shadow(0 0 1px red);
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--bg) no-repeat center top;
+      background-size: calc(96px * var(--pixel-scale));
+      filter: sepia(100%) brightness(50%) saturate(300%) hue-rotate(-50deg)
+        blur(5px);
+      mix-blend-mode: overlay;
+    }
   }
 
   .opponent & {

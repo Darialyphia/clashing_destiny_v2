@@ -124,6 +124,9 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
           <div
             ref="card"
             :id="card.id"
+            :class="{
+              targetable: card.canBeTargeted
+            }"
             class="slot-minion"
             :style="{ '--bg': `url(${card?.imagePath})` }"
           />
@@ -178,7 +181,11 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   width: 100%;
   aspect-ratio: 1;
   position: relative;
+  transition: filter 0.8s var(--ease-3);
 
+  @starting-style {
+    filter: brightness(600%) blur(5px);
+  }
   &::before {
     --pixel-scale: 1;
     content: '';
@@ -191,12 +198,36 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
     background-position: center 85%;
     background-size: calc(96px * var(--pixel-scale))
       calc(96px * var(--pixel-scale));
-    transform: translateY(-40px) scale(2);
+    transform: translateY(-50px) scale(2);
     pointer-events: none;
   }
 
-  .opponent &::before {
-    transform: translateY(-40px) scale(2) scaleX(-1);
+  &.targetable::before {
+    filter: saturate(150%) drop-shadow(0 0 1px red);
+  }
+
+  &.targetable::after {
+    --pixel-scale: 1;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    inset: 0;
+    border-radius: var(--radius-2);
+    background: var(--bg) no-repeat;
+    background-position: center 85%;
+    background-size: calc(96px * var(--pixel-scale))
+      calc(96px * var(--pixel-scale));
+    transform: translateY(-50px) scale(2);
+    pointer-events: none;
+    filter: sepia(100%) brightness(50%) saturate(300%) hue-rotate(-50deg)
+      blur(5px);
+    mix-blend-mode: overlay;
+  }
+
+  .opponent &::before,
+  .opponent &::after {
+    transform: translateY(-50px) scale(2) scaleX(-1);
   }
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
@@ -224,7 +255,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 .minion-wrapper {
   /* transform: translateY(40px) translateX(20px) rotateZ(-45deg) rotateX(-60deg)
     translateY(-60px); */
-  transform: rotateX(-25deg) translateY(-30px);
+  transform: translateZ(20px) rotateX(-25deg);
   transform-style: preserve-3d;
   pointer-events: none;
 }
