@@ -83,7 +83,7 @@ const angleX = computed(() => {
     </section>
 
     <section class="middle-zone">
-      <HeroSlot :player="opponentPlayer" class="absolute bottom-[100%]" />
+      <HeroSlot :player="opponentPlayer" class="p2-hero" />
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="flex flex-col gap-2 justify-center">
         <EffectChain v-if="state.effectChain?.stack.length" />
@@ -128,10 +128,15 @@ const angleX = computed(() => {
   grid-template-columns: calc(220 / 800 * 100%) 1fr calc(220 / 800 * 100%);
   grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
-  background: url(/assets/backgrounds/battle-board-2.png) no-repeat center;
+  /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
   background-size: cover;
   /* transform-style: preserve-3d; */
   position: relative;
+
+  @starting-style {
+    opacity: 0;
+  }
+  transition: opacity 1s var(--ease-2);
 }
 
 .p1-zone {
@@ -161,7 +166,7 @@ const angleX = computed(() => {
   grid-row: 1;
   display: grid;
   gap: var(--size-2);
-  grid-template-rows: auto 1fr auto 1fr auto;
+  grid-template-rows: autpo 1fr auto 1fr auto;
   position: relative;
   z-index: 1;
   align-self: center;
@@ -169,8 +174,20 @@ const angleX = computed(() => {
   --angleX: calc(1deg * v-bind(angleX));
   /* transform: rotateY(-0deg) rotateX(var(--angleX)) rotateZ(var(--angleZ))
     scale(1); */
-  transform: rotateY(-0deg) rotateX(60deg) rotateZ(45deg) scale(1);
+  transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
+    rotateZ(45deg) scale(1);
   transform-style: preserve-3d;
+  animation: battlefield 1.5s var(--ease-4);
+}
+
+@keyframes battlefield {
+  from {
+    transform: rotate(45deg) scale(0.5);
+  }
+  to {
+    transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
+      rotateZ(45deg) scale(1);
+  }
 }
 
 .hand-zone {
@@ -218,6 +235,9 @@ const angleX = computed(() => {
 }
 
 .p1-hero {
-  translate: 50% 50%;
+  translate: 40% 65%;
+}
+.p2-hero {
+  translate: 25% 50%;
 }
 </style>

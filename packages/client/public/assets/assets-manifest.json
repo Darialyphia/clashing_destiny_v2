@@ -1996,6 +1996,19 @@
         },
         {
           "alias": [
+            "icon-unit-pyre-archfiend"
+          ],
+          "src": [
+            "/assets/icons/unit-pyre-archfiend.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-rainbow-phoenix"
           ],
           "src": [

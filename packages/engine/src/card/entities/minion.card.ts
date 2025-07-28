@@ -179,7 +179,7 @@ export class MinionCard extends Card<
 > {
   private damageTaken = 0;
 
-  private abilityTargets = new Map<string, PreResponseTarget[]>();
+  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
@@ -304,7 +304,7 @@ export class MinionCard extends Card<
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
         this.game.effectChainSystem.currentChain
         ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
+        : this.game.gamePhaseSystem.currentPlayer.equals(this.player) &&
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),

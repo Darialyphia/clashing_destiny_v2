@@ -1,0 +1,86 @@
+import { isDefined } from '@game/shared';
+import { KEYWORDS } from '../../card/card-keywords';
+import { isMinion, isSpell } from '../../card/card-utils';
+import type { AnyCard } from '../../card/entities/card.entity';
+import type {
+  HeroCard,
+  HeroDealCombatDamageEvent
+} from '../../card/entities/hero.entity';
+import type {
+  MinionCard,
+  MinionCardDealCombatDamageEvent
+} from '../../card/entities/minion.card';
+import type { Game } from '../../game/game';
+import { GAME_EVENTS } from '../../game/game.events';
+import { AbilityDamage, SpellDamage } from '../../utils/damage';
+import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { Modifier } from '../modifier.entity';
+
+export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+  private otherTargets: MinionCard[] = [];
+
+  constructor(game: Game, source: AnyCard) {
+    super(KEYWORDS.CLEAVE.id, game, source, {
+      name: KEYWORDS.CLEAVE.name,
+      description: KEYWORDS.CLEAVE.description,
+      icon: 'keyword-cleave',
+      mixins: [
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.PLAYER_START_TURN,
+          handler: async () => {
+            await this.target.takeDamage(
+              source,
+              isSpell(source) ? new SpellDamage(1) : new AbilityDamage(1)
+            );
+          }
+        }),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE,
+          handler: async event => {
+            this.getOtherTargets(event);
+          }
+        }),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
+          handler: async event => {
+            this.getOtherTargets(event);
+          }
+        }),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE,
+          handler: async event => {
+            await this.dealCleaveDamage(event);
+          }
+        }),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
+          handler: async event => {
+            await this.dealCleaveDamage(event);
+          }
+        })
+      ]
+    });
+  }
+
+  private getOtherTargets(
+    event: MinionCardDealCombatDamageEvent | HeroDealCombatDamageEvent
+  ) {
+    if (!event.data.card.equals(this.target)) return;
+    if (!isMinion(event.data.target)) return;
+    this.otherTargets = [
+      event.data.target.slot?.left?.minion,
+      event.data.target.slot?.right?.minion
+    ].filter(isDefined);
+  }
+
+  private async dealCleaveDamage(
+    event: MinionCardDealCombatDamageEvent | HeroDealCombatDamageEvent
+  ) {
+    if (!event.data.card.equals(this.target)) return;
+    if (!isMinion(event.data.target)) return;
+    for (const target of this.otherTargets) {
+      await target.takeDamage(this.target, event.data.damage);
+    }
+    this.otherTargets = [];
+  }
+}

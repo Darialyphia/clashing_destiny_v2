@@ -248,7 +248,7 @@ export class CardViewModel {
 
   get canAttack() {
     return (
-      this.getPlayer().id === this.getClient().state.turnPlayer &&
+      this.getPlayer().id === this.getClient().state.currentPlayer &&
       this.potentialAttackTargets.length > 0
     );
   }

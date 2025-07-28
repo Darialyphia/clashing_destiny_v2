@@ -343,7 +343,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
         this.game.effectChainSystem.currentChain
         ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
+        : this.game.gamePhaseSystem.currentPlayer.equals(this.player) &&
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),

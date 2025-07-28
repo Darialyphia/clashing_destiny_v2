@@ -60,14 +60,13 @@ const { card } = defineProps<{
 
 @keyframes colelction-foil-rotate {
   0% {
-    transform: rotateY(0deg);
+    transform: rotateY(-20deg);
   }
   100% {
-    transform: rotateY(360deg);
+    transform: rotateY(20deg);
   }
 }
 .collection-card:has(.foil) {
-  transform: rotateY(70deg);
-  /* animation: colelction-foil-rotate 5s linear infinite; */
+  animation: colelction-foil-rotate 5s var(--ease-3) alternate infinite;
 }
 </style>

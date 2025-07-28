@@ -123,7 +123,8 @@ const positionMap = computed(() =>
         :class="{
           unlocked: position.node.isUnlocked,
           disabled: !position.node.isUnlocked && !position.node.canUnlock,
-          interactive: position.node.canUnlock && state.turnPlayer === player.id
+          interactive:
+            position.node.canUnlock && state.currentPlayer === player.id
         }"
       >
         <circle :cx="position.x" :cy="position.y" r="12" />
@@ -150,14 +151,14 @@ const positionMap = computed(() =>
             interactive:
               position.node.canUnlock &&
               state.phase.state === GAME_PHASES.DESTINY &&
-              state.turnPlayer === player.id
+              state.currentPlayer === player.id
           }"
           @click="
             () => {
               if (
                 position.node.canUnlock &&
                 state.phase.state === GAME_PHASES.DESTINY &&
-                state.turnPlayer === player.id
+                state.currentPlayer === player.id
               ) {
                 client.unlockTalent(position.node.id);
               }

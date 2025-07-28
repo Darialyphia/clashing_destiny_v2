@@ -20,7 +20,7 @@ export class SkipBlockGlobalAction implements GlobalActionRule {
     return (
       state.phase.state === GAME_PHASES.ATTACK &&
       state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER &&
-      state.turnPlayer !== this.client.playerId
+      state.currentPlayer !== this.client.playerId
     );
   }
 

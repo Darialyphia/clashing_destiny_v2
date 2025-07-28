@@ -159,7 +159,7 @@ export class GameClient {
       snapshot.phase.state === GAME_PHASES.ATTACK &&
       snapshot.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
-      return snapshot.players.find(id => id !== snapshot.turnPlayer)!;
+      return snapshot.players.find(id => id !== snapshot.currentPlayer)!;
     }
 
     return snapshot.interaction.ctx.player;
@@ -175,7 +175,7 @@ export class GameClient {
       this.stateManager.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
       return this.stateManager.state.players.find(
-        id => id !== this.stateManager.state.turnPlayer
+        id => id !== this.stateManager.state.currentPlayer
       )!;
     }
 
@@ -260,7 +260,7 @@ export class GameClient {
 
     this.networkAdapter.dispatch({
       type: 'cancelPlayCard',
-      payload: { playerId: this.state.turnPlayer }
+      payload: { playerId: this.state.currentPlayer }
     });
     const playedCard = this.state.entities[
       this.state.interaction.ctx.card

@@ -21,7 +21,6 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import { chain } from 'lodash-es';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -184,7 +183,7 @@ export class ArtifactCard extends Card<
     const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
     const chainCondition = this.game.effectChainSystem.currentChain
       ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-      : this.game.gamePhaseSystem.turnPlayer.equals(this.player);
+      : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
 
     return this.interceptors.canUseAbility.getValue(
       this.player.cardManager.hand.length >= ability.manaCost &&
