@@ -513,6 +513,19 @@
         },
         {
           "alias": [
+            "icon-keyword-cleave"
+          ],
+          "src": [
+            "/assets/icons/keyword-cleave.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-keyword-commander"
           ],
           "src": [
@@ -1116,6 +1129,19 @@
           ],
           "src": [
             "/assets/icons/spell-fireball.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-forged-in-the-crater"
+          ],
+          "src": [
+            "/assets/icons/spell-forged-in-the-crater.png"
           ],
           "data": {
             "tags": {
@@ -2065,6 +2091,19 @@
           ],
           "src": [
             "/assets/icons/unit-stalwart-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-sun-emperor"
+          ],
+          "src": [
+            "/assets/icons/unit-sun-emperor.png"
           ],
           "data": {
             "tags": {

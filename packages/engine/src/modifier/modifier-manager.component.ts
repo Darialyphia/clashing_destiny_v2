@@ -9,7 +9,8 @@ export class ModifierManager<T extends ModifierTarget> {
   has(modifierOrId: string | Modifier<T, any> | Constructor<Modifier<T>>) {
     if (modifierOrId instanceof Modifier) {
       return this._modifiers.some(
-        modifier => modifier.modifierType === modifierOrId.modifierType
+        modifier =>
+          modifier.modifierType === modifierOrId.modifierType && modifier.isUnique
       );
     } else if (isString(modifierOrId)) {
       return this._modifiers.some(modifier => modifier.modifierType === modifierOrId);

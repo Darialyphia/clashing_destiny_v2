@@ -47,7 +47,7 @@ export const rustyBlade: ArtifactBlueprint = {
         await card.player.hero.modifiers.add(
           new Modifier<HeroCard>('firebrand-buff', game, card, {
             name: 'Firebrand',
-            description: `+1 Attack.`,
+            description: `+2 Attack.`,
             icon: 'keyword-attack-buff',
             mixins: [
               new UntilEndOfTurnModifierMixin<HeroCard>(game),

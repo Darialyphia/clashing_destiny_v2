@@ -15,6 +15,7 @@ export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modif
       icon: 'keyword-double-attack',
       name: KEYWORDS.DOUBLE_ATTACK.name,
       description: KEYWORDS.DOUBLE_ATTACK.description,
+      isUnique: true,
       mixins: [
         new GameEventModifierMixin(game, {
           eventName: 'combat.after-resolve-combat',

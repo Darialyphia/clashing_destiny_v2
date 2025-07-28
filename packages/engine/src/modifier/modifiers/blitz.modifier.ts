@@ -13,6 +13,7 @@ export class BlitzModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
       name: KEYWORDS.BLITZ.name,
       description: KEYWORDS.BLITZ.description,
       icon: 'keyword-blitz',
+      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.RUSH),
         new UnitInterceptorModifierMixin(game, {

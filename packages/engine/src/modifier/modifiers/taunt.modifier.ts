@@ -15,13 +15,15 @@ export class TauntModifier<T extends AnyCard> extends Modifier<T> {
       name: KEYWORDS.TAUNT.name,
       description: KEYWORDS.TAUNT.description,
       icon: 'keyword-provoke',
+      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.FLEETING),
         new AuraModifierMixin(game, {
           canSelfApply: false,
           isElligible: candidate => {
             return (
-              candidate.player.equals(this.target.player) && isMinionOrHero(candidate)
+              candidate.player.equals(this.target.player.opponent) &&
+              isMinionOrHero(candidate)
             );
           },
           onGainAura: async candidate => {

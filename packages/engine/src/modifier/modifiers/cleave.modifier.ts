@@ -3,8 +3,9 @@ import { KEYWORDS } from '../../card/card-keywords';
 import { isMinion, isSpell } from '../../card/card-utils';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type {
-  HeroCard,
-  HeroDealCombatDamageEvent
+  HeroAfterDealCombatDamageEvent,
+  HeroBeforeDealCombatDamageEvent,
+  HeroCard
 } from '../../card/entities/hero.entity';
 import type {
   MinionCard,
@@ -24,6 +25,7 @@ export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T>
       name: KEYWORDS.CLEAVE.name,
       description: KEYWORDS.CLEAVE.description,
       icon: 'keyword-cleave',
+      isUnique: true,
       mixins: [
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.PLAYER_START_TURN,
@@ -63,7 +65,10 @@ export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T>
   }
 
   private getOtherTargets(
-    event: MinionCardDealCombatDamageEvent | HeroDealCombatDamageEvent
+    event:
+      | MinionCardDealCombatDamageEvent
+      | HeroBeforeDealCombatDamageEvent
+      | HeroAfterDealCombatDamageEvent
   ) {
     if (!event.data.card.equals(this.target)) return;
     if (!isMinion(event.data.target)) return;
@@ -74,7 +79,10 @@ export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T>
   }
 
   private async dealCleaveDamage(
-    event: MinionCardDealCombatDamageEvent | HeroDealCombatDamageEvent
+    event:
+      | MinionCardDealCombatDamageEvent
+      | HeroBeforeDealCombatDamageEvent
+      | HeroAfterDealCombatDamageEvent
   ) {
     if (!event.data.card.equals(this.target)) return;
     if (!isMinion(event.data.target)) return;
