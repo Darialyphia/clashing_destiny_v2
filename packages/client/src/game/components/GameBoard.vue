@@ -130,7 +130,8 @@ const angleX = computed(() => {
   margin-inline: auto;
   /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
   background-size: cover;
-  /* transform-style: preserve-3d; */
+  transform-style: preserve-3d;
+  perspective: 1600px;
   position: relative;
 
   @starting-style {
@@ -174,8 +175,9 @@ const angleX = computed(() => {
   --angleX: calc(1deg * v-bind(angleX));
   /* transform: rotateY(-0deg) rotateX(var(--angleX)) rotateZ(var(--angleZ))
     scale(1); */
-  transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
-    rotateZ(45deg) scale(1);
+  /*transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
+    rotateZ(45deg) scale(1);*/
+  transform: translateY(-100px) rotateX(25deg);
   transform-style: preserve-3d;
   animation: battlefield 1.5s var(--ease-4);
 }
@@ -185,8 +187,10 @@ const angleX = computed(() => {
     transform: rotate(45deg) scale(0.5);
   }
   to {
-    transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
-      rotateZ(45deg) scale(1);
+    transform: translateY(-100px) rotateX(25deg);
+
+    /* transform: translateX(10%) translateY(-5%) rotateY(-0deg) rotateX(60deg)
+      rotateZ(45deg) scale(1); */
   }
 }
 
@@ -235,9 +239,11 @@ const angleX = computed(() => {
 }
 
 .p1-hero {
-  translate: 40% 65%;
+  /* translate: 40% 65%; */
+  translate: 0 -45px;
 }
 .p2-hero {
-  translate: 25% 50%;
+  translate: 0 -25px;
+  /* translate: 25% 50%; */
 }
 </style>

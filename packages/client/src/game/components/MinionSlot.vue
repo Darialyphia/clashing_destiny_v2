@@ -222,8 +222,9 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 }
 
 .minion-wrapper {
-  transform: translateY(40px) translateX(20px) rotateZ(-45deg) rotateX(-60deg)
-    translateY(-60px);
+  /* transform: translateY(40px) translateX(20px) rotateZ(-45deg) rotateX(-60deg)
+    translateY(-60px); */
+  transform: rotateX(-25deg) translateY(-30px);
   transform-style: preserve-3d;
   pointer-events: none;
 }
