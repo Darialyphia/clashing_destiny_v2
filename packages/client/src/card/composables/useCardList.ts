@@ -61,23 +61,26 @@ export const provideCardList = () => {
 
         if (textFilter.value) {
           const searchText = textFilter.value.toLocaleLowerCase();
+
           return (
             card.name.toLocaleLowerCase().includes(searchText) ||
             card.description.toLocaleLowerCase().includes(searchText) ||
             card.tags.some(tag =>
               tag.toLocaleLowerCase().includes(searchText)
             ) ||
-            Object.values(KEYWORDS).some(
-              k =>
-                k.name.toLocaleLowerCase().includes(searchText) ||
+            Object.values(KEYWORDS).some(k => {
+              return (
+                (k.name.toLocaleLowerCase().includes(searchText) &&
+                  card.description.includes(searchText)) ||
                 k.aliases.some(alias => {
                   return isString(alias)
-                    ? searchText
+                    ? card.description
                         .toLocaleLowerCase()
                         .match(alias.toLocaleLowerCase())
-                    : searchText.toLocaleLowerCase().match(alias);
+                    : card.description.toLocaleLowerCase().match(alias);
                 })
-            )
+              );
+            })
           );
         }
 
