@@ -1,6 +1,4 @@
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
 import {

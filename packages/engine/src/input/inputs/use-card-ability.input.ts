@@ -4,13 +4,12 @@ import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import {
   IllegalAbilityError,
-  NotTurnPlayerError,
+  NotCurrentPlayerError,
   UnknownCardError
 } from '../input-errors';
 import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.card';
-import { LocationCard } from '../../card/entities/location.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -29,17 +28,11 @@ export class UseCardAbilityInput extends Input<typeof schema> {
   }
 
   async impl() {
-    assert(
-      this.game.gamePhaseSystem.turnPlayer.equals(this.player),
-      new NotTurnPlayerError()
-    );
-
     assert(isDefined(this.card), new UnknownCardError(this.payload.cardId));
     const card = this.card;
     assert(
       card instanceof HeroCard ||
         card instanceof MinionCard ||
-        card instanceof LocationCard ||
         card instanceof ArtifactCard,
       new UnknownCardError(this.payload.cardId)
     );

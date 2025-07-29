@@ -25,7 +25,7 @@ import { match } from 'ts-pattern';
 import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
-import { isDestinyDeckCard, isMainDeckCard } from '../../board/board.system';
+import { isMainDeckCard } from '../../board/board.system';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -38,7 +38,6 @@ export type CardInterceptors = {
   destinyCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
-  needAffinityToBePlayed: Interceptable<boolean>;
   hasAffinityMatch: Interceptable<boolean>;
 };
 
@@ -47,7 +46,6 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  needAffinityToBePlayed: new Interceptable(),
   hasAffinityMatch: new Interceptable<boolean>()
 });
 
@@ -152,20 +150,9 @@ export abstract class Card<
     return this.interceptors.loyalty.getValue(this.game.config.BASE_LOYALTY, {}) ?? 0;
   }
 
-  get needAffinityToBePlayed() {
-    return this.interceptors.needAffinityToBePlayed.getValue(false, {});
-  }
-
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
-    }
-    return 0;
-  }
-
-  get destinyCost() {
-    if ('destinyCost' in this.blueprint) {
-      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
     }
     return 0;
   }
@@ -175,6 +162,13 @@ export abstract class Card<
       this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
       this.manaCost
     );
+  }
+
+  get destinyCost(): number {
+    if ('destinyCost' in this.blueprint) {
+      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
+    }
+    return 0;
   }
 
   get canPayDestinyCost() {
@@ -214,12 +208,7 @@ export abstract class Card<
         this.player.cardManager.mainDeck.pluck(this);
       })
       .with('destinyDeck', () => {
-        if (!isDestinyDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from destiny deck when it is not a destiny deck card.`
-          );
-        }
-        this.player.cardManager.destinyDeck.pluck(this);
+        this.player.cardManager.removeFromDestinyDeck(this);
       })
       .with('destinyZone', () => {
         if (!isMainDeckCard(this)) {
@@ -300,10 +289,7 @@ export abstract class Card<
       affinity: this.affinity,
       isExhausted: this.isExhausted,
       name: this.blueprint.name,
-      description:
-        !this.hasAffinityMatch && this.location === 'hand'
-          ? this.descriptionWithoutAffinityMatch
-          : this.blueprint.description,
+      description: this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
       modifiers: this.modifiers.list.map(modifier => modifier.id),

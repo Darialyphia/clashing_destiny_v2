@@ -15,7 +15,7 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   name: 'Hourglass Fracture',
   cardIconId: 'hourglass-fracture',
   description:
-    '@Loyalty(1)@.\nYour opponent ends their next turn after their Destiny Phase.',
+    '@Loyalty(1)@.\nYour opponent ends their next turn after their Draw Phase.',
   collectable: true,
   unique: false,
   manaCost: 5,
@@ -31,9 +31,9 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   async onInit() {},
   async onPlay(game, card) {
     const stop = game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
-      if (game.gamePhaseSystem.turnPlayer.equals(card.player)) return;
+      if (game.gamePhaseSystem.currentPlayer.equals(card.player)) return;
 
-      if (event.data.from === GAME_PHASES.DESTINY) {
+      if (event.data.from === GAME_PHASES.MAIN) {
         stop();
         await game.gamePhaseSystem.endTurn();
       }

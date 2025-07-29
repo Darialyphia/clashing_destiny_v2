@@ -13,10 +13,7 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedAttackCard } from '../../card/entities/attack.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
-import type { SerializedTalentCard } from '../../card/entities/talent.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
@@ -34,10 +31,7 @@ export type EntityDictionary = Record<
   | SerializedMinionCard
   | SerializedHeroCard
   | SerializedSpellCard
-  | SerializedAttackCard
   | SerializedArtifactCard
-  | SerializedLocationCard
-  | SerializedTalentCard
   | SerializedPlayer
   | SerializedModifier
 >;
@@ -49,7 +43,7 @@ export type SerializedOmniscientState = {
   interaction: SerializedInteractionContext;
   players: string[];
   board: SerializedBoard;
-  turnPlayer: string;
+  currentPlayer: string;
   turnCount: number;
   effectChain: SerializedEffectChain | null;
 };
@@ -139,7 +133,7 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       interaction: this.game.interaction.serialize(),
       board: this.game.boardSystem.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
-      turnPlayer: this.game.gamePhaseSystem.turnPlayer.id,
+      currentPlayer: this.game.gamePhaseSystem.currentPlayer.id,
       turnCount: this.game.gamePhaseSystem.elapsedTurns,
       effectChain: this.game.effectChainSystem.serialize()
     };
@@ -176,20 +170,11 @@ export class GameSnaphotSystem extends System<EmptyObject> {
       delete state.entities[card.id];
     });
 
-    opponent.cardManager.destinyDeck.cards.forEach(card => {
-      if (hasBeenPlayed(card.id)) return;
-
-      delete state.entities[card.id];
-    });
-
     opponent.cardManager.hand.forEach(card => {
       if (hasBeenPlayed(card.id)) return;
 
       delete state.entities[card.id];
     });
-
-    const boardSide = state.board.sides.find(side => side.playerId === opponent.id)!;
-    boardSide.destinyDeck.cards = [];
 
     return state;
   }

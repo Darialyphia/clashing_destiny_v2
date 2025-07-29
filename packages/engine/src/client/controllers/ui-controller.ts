@@ -10,9 +10,15 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
-import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedBoardMinionSlot } from '../../board/board-minion-slot.entity';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
+import { COMBAT_STEPS } from '../../game/phases/combat.phase';
+import { EndTurnGlobalAction } from '../actions/end-turn';
+import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
+import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
+import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
+import { SkipBlockGlobalAction } from '../actions/skip-block';
+import { PassChainGlobalAction } from '../actions/pass-chain';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -23,6 +29,15 @@ export type UiMinionslot = Override<MinionPosition, { player: PlayerViewModel }>
 export type MinionSlotClickRule = {
   predicate: (slot: UiMinionslot, state: GameClientState) => boolean;
   handler: (slot: UiMinionslot) => void;
+};
+
+export type GlobalActionRule = {
+  id: string;
+  shouldDisplay: (state: GameClientState) => boolean;
+  shouldBeDisabled: (state: GameClientState) => boolean;
+  onClick: () => void;
+  getLabel(state: GameClientState): string;
+  variant: 'primary' | 'error' | 'info';
 };
 
 export type UiOptimisticState = {
@@ -45,7 +60,9 @@ export class UiController {
 
   private minionSlotClickRules: MinionSlotClickRule[] = [];
 
-  private hoverTimeout: NodeJS.Timeout | null = null;
+  private globalActionRules: GlobalActionRule[] = [];
+
+  private hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
   optimisticState: UiOptimisticState = {
     playedCardId: null
@@ -54,8 +71,9 @@ export class UiController {
   selectedManaCostIndices: number[] = [];
 
   constructor(private client: GameClient) {
-    this.buildClickRules();
+    this.buildCardClickRules();
     this.buildMinionSlotClickRules();
+    this.buildGlobalActionRules();
   }
 
   get hoveredCard() {
@@ -82,7 +100,15 @@ export class UiController {
     return this._isChooseAffinityInteractionOverlayOpened;
   }
 
-  private buildClickRules() {
+  get playedCardId() {
+    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD)
+      return null;
+    if (this.client.playerId !== this.client.state.interaction.ctx.player) return null;
+
+    return this.client.state.interaction.ctx.card;
+  }
+
+  private buildCardClickRules() {
     this.cardClickRules = [
       new ToggleForManaCost(this.client),
       new SelectCardAction(this.client),
@@ -93,6 +119,33 @@ export class UiController {
 
   private buildMinionSlotClickRules() {
     this.minionSlotClickRules = [new SelectMinionslotAction(this.client)];
+  }
+
+  private buildGlobalActionRules() {
+    this.globalActionRules = [
+      new CancelPlayCardGlobalAction(this.client),
+      new EndTurnGlobalAction(this.client),
+      new CommitMinionSlotSelectionGlobalAction(this.client),
+      new CommitCardSelectionGlobalAction(this.client),
+      new SkipBlockGlobalAction(this.client),
+      new PassChainGlobalAction(this.client)
+    ];
+  }
+
+  get globalActions() {
+    return this.globalActionRules
+      .filter(rule => rule.shouldDisplay(this.client.state))
+      .map(rule => {
+        return {
+          id: rule.id,
+          label: rule.getLabel(this.client.state),
+          isDisabled: rule.shouldBeDisabled(this.client.state),
+          variant: rule.variant,
+          onClick: () => {
+            rule.onClick();
+          }
+        };
+      });
   }
 
   onCardClick(card: CardViewModel) {
@@ -144,11 +197,6 @@ export class UiController {
     this._isManaCostOverlayOpened =
       this.isInteractingPlayer &&
       this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
-
-    this._isDestinyPhaseOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.phase.state === GAME_PHASES.DESTINY &&
-      this.client.state.interaction.state === INTERACTION_STATES.IDLE;
 
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
       this.selectedManaCostIndices = [];
@@ -230,5 +278,51 @@ export class UiController {
     slot: Pick<SerializedBoardMinionSlot, 'playerId' | 'position' | 'zone'>
   ) {
     return `#minion-slot-${slot.playerId}-${slot.position}-${slot.zone}`;
+  }
+
+  get idleMessage() {
+    if (this.client.state.effectChain) {
+      return 'Effect chain: Your turn';
+    }
+    return 'Waiting for opponent...';
+  }
+
+  get explainerMessage() {
+    const activePlayerId = this.client.getActivePlayerId();
+    const state = this.client.state;
+
+    if (activePlayerId !== this.client.playerId) {
+      return this.idleMessage;
+    }
+
+    if (state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT) {
+      return 'Select a minion slot';
+    }
+
+    if (
+      state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
+      state.interaction.ctx.player === this.client.playerId
+    ) {
+      const card = state.entities[state.interaction.ctx.card] as CardViewModel;
+      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${card?.manaCost})`;
+    }
+    if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {
+      return 'Select targets';
+    }
+
+    if (state.effectChain) {
+      return 'Effect chain: Your turn';
+    }
+
+    if (state.phase.state === GAME_PHASES.ATTACK) {
+      if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET) {
+        return 'Declare attack target';
+      }
+      if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER) {
+        return 'Declare blocker or skip';
+      }
+    }
+
+    return '';
   }
 }

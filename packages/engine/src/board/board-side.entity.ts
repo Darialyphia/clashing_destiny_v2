@@ -12,12 +12,6 @@ import type {
   SerializedArtifactCard
 } from '../card/entities/artifact.entity';
 import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
-import type { AttackCard, SerializedAttackCard } from '../card/entities/attack.entity';
-import type {
-  LocationCard,
-  SerializedLocationCard
-} from '../card/entities/location.entity';
-import type { SerializedTalentCard, TalentCard } from '../card/entities/talent.entity';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
@@ -40,22 +34,15 @@ type SerializedCreatureZone = {
   slots: Array<SerializedBoardMinionSlot>;
 };
 
-export type MainDeckCard =
-  | MinionCard
-  | SpellCard
-  | ArtifactCard
-  | AttackCard
-  | LocationCard;
+export type MainDeckCard = MinionCard | SpellCard | ArtifactCard;
 
 export type SerializedMainDeckCard =
   | SerializedMinionCard
   | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedAttackCard
-  | SerializedLocationCard;
+  | SerializedArtifactCard;
 
-export type DestinyDeckCard = HeroCard | TalentCard;
-export type SerializedDestinyDeckCard = SerializedHeroCard | SerializedTalentCard;
+export type DestinyDeckCard = HeroCard;
+export type SerializedDestinyDeckCard = SerializedHeroCard;
 
 export type SerializedBoardSide = {
   playerId: string;
@@ -65,13 +52,12 @@ export type SerializedBoardSide = {
   };
   attackZone: SerializedCreatureZone;
   defenseZone: SerializedCreatureZone;
-  location: SerializedLocationCard | null;
   hand: string[];
   destinyZone: string[];
   mainDeck: { total: number; remaining: number };
-  destinyDeck: { total: number; remaining: number; cards: string[] };
   discardPile: string[];
   banishPile: string[];
+  destinyDeck: string[];
 };
 
 export type SerializedBoard = {
@@ -85,7 +71,6 @@ export class BoardSide
   readonly player: Player;
   private _attackZone: MinionZone;
   private _defenseZone: MinionZone;
-  private location: LocationCard | null = null;
 
   constructor(
     private game: Game,
@@ -110,11 +95,7 @@ export class BoardSide
   get heroZone() {
     return {
       hero: this.player.hero,
-      artifacts: [
-        this.player.artifactManager.artifacts.weapon,
-        this.player.artifactManager.artifacts.armor,
-        this.player.artifactManager.artifacts.relic
-      ].filter(isDefined)
+      artifacts: this.player.artifactManager.artifacts
     };
   }
 
@@ -196,8 +177,7 @@ export class BoardSide
       ...this.heroZone.artifacts.flatMap(artifact => {
         return [artifact, ...artifact.modifiers.list.map(modifier => modifier.source)];
       }),
-      ...this.heroZone.hero.modifiers.list.flatMap(modifier => modifier.source),
-      this.location
+      ...this.heroZone.hero.modifiers.list.flatMap(modifier => modifier.source)
     ].filter(isDefined);
   }
 
@@ -258,25 +238,13 @@ export class BoardSide
     toSlot.summon(minion);
   }
 
-  async changeLocation(location: LocationCard) {
-    await this.removeLocation();
-    this.location = location;
-  }
-
-  removeLocation() {
-    if (this.location) {
-      this.location = null;
-    }
-  }
-
   remove(card: AnyCard) {
     match(card.kind)
       .with(
         CARD_KINDS.HERO,
-        CARD_KINDS.TALENT,
         CARD_KINDS.SPELL,
-        CARD_KINDS.ATTACK,
         CARD_KINDS.ARTIFACT,
+        CARD_KINDS.DESTINY,
         () => {}
       )
       .with(CARD_KINDS.MINION, () => {
@@ -290,9 +258,6 @@ export class BoardSide
             slot.removeMinion();
           }
         });
-      })
-      .with(CARD_KINDS.LOCATION, () => {
-        this.removeLocation();
       })
       .exhaustive();
   }
@@ -313,17 +278,12 @@ export class BoardSide
       banishPile: [...this.player.cardManager.banishPile].map(card => card.id),
       discardPile: [...this.player.cardManager.discardPile].map(card => card.id),
       hand: this.player.cardManager.hand.map(card => card.id),
-      location: this.location ? this.location.serialize() : null,
       destinyZone: [...this.player.cardManager.destinyZone].map(card => card.id),
       mainDeck: {
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck
       },
-      destinyDeck: {
-        total: this.player.cardManager.destinyDeckSize,
-        remaining: this.player.cardManager.remainingCardsInDestinyDeck,
-        cards: this.player.cardManager.destinyDeck.cards.map(card => card.id)
-      }
+      destinyDeck: this.player.cardManager.destinyDeck.cards.map(card => card.id)
     };
   }
 }

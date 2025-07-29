@@ -69,7 +69,7 @@ export const provideCollectionPage = () => {
     if (existingDeck) {
       existingDeck.name = deckBuilder.value.deck.name;
       existingDeck.mainDeck = deckBuilder.value.deck.mainDeck;
-      existingDeck.destinyDeck = deckBuilder.value.deck.destinyDeck;
+      existingDeck.hero = deckBuilder.value.deck.hero;
     } else {
       decks.value.push(deckBuilder.value.deck);
     }

@@ -268,7 +268,7 @@ export class GameInteractionSystem
 
     const canPlay = this.game.effectChainSystem.currentChain
       ? this.game.effectChainSystem.currentChain.canAddEffect(player)
-      : this.game.gamePhaseSystem.turnPlayer.equals(player);
+      : this.game.gamePhaseSystem.currentPlayer.equals(player);
     assert(canPlay, new IllegalCardPlayedError());
 
     const card = player.cardManager.getCardInHandAt(index);

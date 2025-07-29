@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { isString } from '@game/shared';
-import Card from './Card.vue';
 import {
   HoverCardRoot,
   HoverCardContent,
@@ -32,7 +31,8 @@ type Token =
   | { type: 'dynamic-value'; text: string }
   | { type: 'level-bonus'; text: string }
   | { type: 'lineage-bonus'; text: string }
-  | { type: 'missing-affinity'; text: string };
+  | { type: 'missing-affinity'; text: string }
+  | { type: 'durability' };
 
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
@@ -72,6 +72,9 @@ const tokens = computed<Token[]>(() => {
     }
     if (part.startsWith('[attack]')) {
       return { type: 'attack' };
+    }
+    if (part.startsWith('[durability]')) {
+      return { type: 'durability' };
     }
     if (part.startsWith('[level]')) {
       return {
@@ -140,6 +143,16 @@ const tokens = computed<Token[]>(() => {
         </UiSimpleTooltip>
       </template>
 
+      <template v-else-if="token.type === 'durability'">
+        <UiSimpleTooltip>
+          <template #trigger>
+            <img src="/assets/ui/shield.png" class="inline" />
+          </template>
+          <b>Durability</b>
+          : when it reaches zero, the artifact is destroyed.
+        </UiSimpleTooltip>
+      </template>
+
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
         <HoverCardTrigger>
           <span tabindex="0">
@@ -168,6 +181,7 @@ const tokens = computed<Token[]>(() => {
 <style scoped lang="postcss">
 :is(.token-keyword, .token-card) {
   font-weight: var(--font-weight-7);
+  color: #ffcda1;
 }
 
 .token-mana {

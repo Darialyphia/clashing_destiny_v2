@@ -2,17 +2,11 @@ import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
-import {
-  CombatDamage,
-  LoyaltyDamage,
-  type Damage,
-  type DamageType
-} from '../../utils/damage';
+import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
   type Ability,
-  type AnyAbility,
   type MinionBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -52,7 +46,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
-  canBeAttacked: Interceptable<boolean, { target: Attacker }>;
+  canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canUseAbility: Interceptable<
     boolean,
     { card: MinionCard; ability: Ability<MinionCard, PreResponseTarget> }
@@ -185,7 +179,7 @@ export class MinionCard extends Card<
 > {
   private damageTaken = 0;
 
-  private abilityTargets = new Map<string, PreResponseTarget[]>();
+  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
@@ -212,7 +206,7 @@ export class MinionCard extends Card<
   }
 
   get hasSummoningSickness(): boolean {
-    return this.interceptors.hasSummoningSickness.getValue(false, this);
+    return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
   get position() {
@@ -264,9 +258,9 @@ export class MinionCard extends Card<
     });
   }
 
-  canBeAttacked(target: AttackTarget) {
+  canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
-      target
+      attacker
     });
   }
 
@@ -306,7 +300,7 @@ export class MinionCard extends Card<
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
         this.game.effectChainSystem.currentChain
         ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.turnPlayer.equals(this.player) &&
+        : this.game.gamePhaseSystem.currentPlayer.equals(this.player) &&
             (ability.shouldExhaust
               ? !this.isExhausted
               : true && ability.canUse(this.game, this)),
@@ -415,7 +409,8 @@ export class MinionCard extends Card<
         this.player.boardSide.hasUnoccupiedSlot &&
         this.location === 'hand' &&
         this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        (this.hasAffinityMatch ? this.blueprint.canPlay(this.game, this) : true),
+        this.hasAffinityMatch &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -443,9 +438,6 @@ export class MinionCard extends Card<
     this.updatePlayedAt();
     this.removeFromCurrentLocation();
 
-    if (!this.hasAffinityMatch) {
-      await this.player.hero.takeDamage(this, new LoyaltyDamage(this));
-    }
     this.player.boardSide.summonMinion(this, position.zone, position.slot);
     await this.blueprint.onPlay(this.game, this);
 

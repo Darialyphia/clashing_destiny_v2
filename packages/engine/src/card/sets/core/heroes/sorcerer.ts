@@ -10,12 +10,10 @@ import {
 export const sorcerer: HeroBlueprint = {
   id: 'sorcerer',
   name: 'Sorcerer',
-  level: 2,
   cardIconId: 'hero-sorcerer',
-  destinyCost: 2,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [AFFINITIES.ARCANE, AFFINITIES.WIND, AFFINITIES.EARTH],
+  affinities: [AFFINITIES.ARCANE, AFFINITIES.WIND, AFFINITIES.EARTH],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
   collectable: true,

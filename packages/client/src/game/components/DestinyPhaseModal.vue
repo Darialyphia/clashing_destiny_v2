@@ -21,7 +21,7 @@ const client = useGameClient();
 const isOpened = ref(false);
 watchEffect(() => {
   isOpened.value =
-    client.value.playerId === state.value.turnPlayer &&
+    client.value.playerId === state.value.currentPlayer &&
     state.value.phase.state === GAME_PHASES.DESTINY &&
     state.value.interaction.state === INTERACTION_STATES.IDLE;
 });
@@ -49,7 +49,7 @@ watch(isOpened, opened => {
 });
 
 const destinyCards = computed<CardViewModel[]>(() => {
-  return board.value.destinyDeck.cards.map(cardId => {
+  return board.value.destinyDeck.map(cardId => {
     return state.value.entities[cardId] as CardViewModel;
   });
 });
@@ -86,17 +86,23 @@ const destinyCards = computed<CardViewModel[]>(() => {
         />
 
         <FancyButton
-          variant="info"
+          :variant="selectedIndex !== null ? 'info' : 'error'"
           :text="selectedIndex !== null ? 'Play' : 'Skip'"
           @click="
-            isOpened = false;
-            client.networkAdapter.dispatch({
-              type: 'playDestinyCard',
-              payload: {
-                playerId: state.turnPlayer,
-                index: selectedIndex
+            () => {
+              isOpened = false;
+              if (selectedIndex === null) {
+                return client.skipDestiny();
               }
-            });
+
+              client.networkAdapter.dispatch({
+                type: 'playDestinyCard',
+                payload: {
+                  playerId: state.currentPlayer,
+                  index: selectedIndex!
+                }
+              });
+            }
           "
         />
       </footer>
@@ -149,5 +155,9 @@ h2 {
   top: var(--size-8);
   right: var(--size-8);
   z-index: 10;
+}
+
+footer > button {
+  min-width: 12ch;
 }
 </style>

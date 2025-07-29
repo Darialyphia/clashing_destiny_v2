@@ -12,11 +12,13 @@ export type ModifierInfos<TCustomEvents extends Record<string, any>> =
         name?: string;
         description?: string;
         icon?: string;
+        isUnique?: boolean;
         customEventNames?: never;
       }
     : {
         name?: string;
         description?: string;
+        isUnique?: boolean;
         icon?: string;
         customEventNames: TCustomEvents;
       };
@@ -99,6 +101,8 @@ export class Modifier<
 
   private _isEnabled = true;
 
+  private _isUnique: boolean;
+
   constructor(
     modifierType: string,
     game: Game,
@@ -118,6 +122,11 @@ export class Modifier<
       name: options.name,
       icon: options.icon
     };
+    this._isUnique = options.isUnique ?? false;
+  }
+
+  get isUnique() {
+    return this._isUnique;
   }
 
   get isEnabled() {

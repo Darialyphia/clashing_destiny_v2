@@ -11,6 +11,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { isDefined } from '@game/shared';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
 const myBoard = useMyBoard();
 const ui = useGameUi();
@@ -23,8 +24,10 @@ const cardSpacing = computed(() => {
 });
 const cardSpacingHovered = computed(() => {
   const handSize = myBoard.value.hand.length;
-  const base = 185;
-  return handSize > 6 ? base - 10 * (handSize - 6) : base;
+  const base = 184;
+  const amount = handSize > 6 ? base - 10 * (handSize - 6) : base;
+
+  return amount % 2 === 0 ? amount : amount - 1; // Ensure even number to avoid image-rendering: pixelated working
 });
 
 const angle = computed(() => {
@@ -66,17 +69,23 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
 const state = useGameState();
 const displayCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
-    return myBoard.value.hand;
+    return myBoard.value.hand.map(id => {
+      return state.value.entities[id] as CardViewModel;
+    });
   }
   const ctx = state.value.interaction.ctx;
-  return myBoard.value.hand.filter(cardId => {
-    return (
-      ctx.card !== cardId &&
-      !client.value.ui.selectedManaCostIndices.includes(
-        myBoard.value.hand.indexOf(cardId)
-      )
-    );
-  });
+  return myBoard.value.hand
+    .filter(cardId => {
+      return (
+        ctx.card !== cardId &&
+        !client.value.ui.selectedManaCostIndices.includes(
+          myBoard.value.hand.indexOf(cardId)
+        )
+      );
+    })
+    .map(cardId => {
+      return state.value.entities[cardId] as CardViewModel;
+    });
 });
 </script>
 
@@ -88,65 +97,75 @@ const displayCards = computed(() => {
   >
     <div
       class="card"
-      v-for="(cardId, index) in displayCards"
-      :key="cardId"
+      v-for="(card, index) in displayCards"
+      :key="card.id"
       :class="{
-        selected: ui.selectedCard?.id === cardId
+        selected: ui.selectedCard?.id === card.id
       }"
       :style="{
         '--index': index,
         '--offset': Math.abs(index - myBoard.hand.length / 2)
       }"
     >
-      <GameCard :card-id="cardId" />
+      <GameCard
+        :card-id="card.id"
+        class="hand-card"
+        :class="{ disabled: !card.canPlay }"
+      />
     </div>
   </section>
 </template>
 
 <style scoped lang="postcss">
 .hand {
-  position: fixed;
-  bottom: 0;
-  height: 250px;
-  width: 100%;
+  position: relative;
   z-index: 1;
   display: grid;
   justify-items: center;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  pointer-events: none;
   --offset-step: calc(1px * v-bind(cardSpacing));
 
-  &:has(:hover) {
+  &:has(:hover) > * {
     --offset-step: calc(1px * v-bind(cardSpacingHovered));
+    --y-offset: -50%;
   }
 
   > * {
     grid-row: 1;
     grid-column: 1;
     position: relative;
-    pointer-events: auto;
     --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
     --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
     /* --rotation: 0deg; */
-    --y-offset: calc(var(--offset) * 10px);
+    /* --y-offset: calc(var(--offset) * 10px); */
+    --y-offset: 0;
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
       )
-      rotate(var(--rotation)) translateY(var(--y-offset));
+      translateY(var(--y-offset)) rotate(var(--rotation));
     transition: transform 0.2s ease-out;
 
+    .hand:hover & {
+      --rotation: 0deg;
+    }
     &:is(:hover, .selected) {
       z-index: 1;
-      --y-offset: -13rem;
-      --counter-rotation: calc(var(--rotation) * -1);
+      --y-offset: -62%;
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
         )
         translateY(var(--y-offset));
     }
+  }
+}
+
+.hand-card {
+  /* filter: drop-shadow(0 0 15px hsl(var(--lime-4-hsl) / 0.25)); */
+  &.disabled {
+    filter: brightness(0.75) grayscale(0.3);
   }
 }
 

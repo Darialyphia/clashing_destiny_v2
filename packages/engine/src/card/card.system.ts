@@ -4,25 +4,21 @@ import { System } from '../system';
 import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
   ArtifactBlueprint,
-  AttackBlueprint,
   CardBlueprint,
+  DestinyBlueprint,
   HeroBlueprint,
-  LocationBlueprint,
   MinionBlueprint,
   PreResponseTarget,
-  SpellBlueprint,
-  TalentBlueprint
+  SpellBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
 import { ArtifactCard } from './entities/artifact.entity';
 import { MinionCard } from './entities/minion.card';
 import { HeroCard } from './entities/hero.entity';
-import { AttackCard } from './entities/attack.entity';
-import { TalentCard } from './entities/talent.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';
-import { LocationCard } from './entities/location.entity';
 import { GAME_EVENTS } from '../game/game.events';
+import { DestinyCard } from './entities/destiny.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -93,14 +89,6 @@ export class CardSystem extends System<CardSystemOptions> {
           } as CardOptions<MinionBlueprint>)
       )
       .with(
-        CARD_KINDS.LOCATION,
-        () =>
-          new LocationCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<LocationBlueprint>)
-      )
-      .with(
         CARD_KINDS.HERO,
         () =>
           new HeroCard(this.game, player, {
@@ -109,20 +97,12 @@ export class CardSystem extends System<CardSystemOptions> {
           } as CardOptions<HeroBlueprint>)
       )
       .with(
-        CARD_KINDS.ATTACK,
+        CARD_KINDS.DESTINY,
         () =>
-          new AttackCard(this.game, player, {
+          new DestinyCard(this.game, player, {
             id,
             blueprint
-          } as CardOptions<AttackBlueprint>)
-      )
-      .with(
-        CARD_KINDS.TALENT,
-        () =>
-          new TalentCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<TalentBlueprint>)
+          } as CardOptions<DestinyBlueprint>)
       )
       .exhaustive();
     await card.init();

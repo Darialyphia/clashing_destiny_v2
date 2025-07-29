@@ -24,11 +24,10 @@ export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
-  LOCATION: 'LOCATION',
+  // LOCATION: 'LOCATION',
   SPELL: 'SPELL',
-  ATTACK: 'ATTACK',
   ARTIFACT: 'ARTIFACT',
-  TALENT: 'TALENT'
+  DESTINY: 'DESTINY'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 

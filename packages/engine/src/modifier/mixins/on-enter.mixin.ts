@@ -7,24 +7,21 @@ import type {
   ArtifactCard,
   ArtifactEquipedEvent
 } from '../../card/entities/artifact.entity';
-import type { LocationCard } from '../../card/entities/location.entity';
-import type { CardAfterPlayEvent, CardBeforePlayEvent } from '../../card/card.events';
+import type { CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
-import { isArtifact, isLocation, isMinion } from '../../card/card-utils';
+import { isArtifact, isMinion } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
 
-export type OnEnterHandler<T extends MinionCard | ArtifactCard | LocationCard> = (
+export type OnEnterHandler<T extends MinionCard | ArtifactCard> = (
   event: T extends MinionCard
     ? MinionSummonedEvent
     : T extends ArtifactCard
       ? ArtifactEquipedEvent
-      : T extends LocationCard
-        ? CardAfterPlayEvent
-        : never
+      : never
 ) => MaybePromise<void>;
 
 export class OnEnterModifierMixin<
-  T extends MinionCard | ArtifactCard | LocationCard
+  T extends MinionCard | ArtifactCard
 > extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
   constructor(
@@ -50,13 +47,6 @@ export class OnEnterModifierMixin<
       });
     } else if (isArtifact(target)) {
       const unsub = this.game.on(GAME_EVENTS.ARTIFACT_EQUIPED, async event => {
-        if (event.data.card.equals(target)) {
-          unsub();
-          await this.handler(event as any);
-        }
-      });
-    } else if (isLocation(target)) {
-      const unsub = this.game.on(GAME_EVENTS.CARD_AFTER_PLAY, async event => {
         if (event.data.card.equals(target)) {
           unsub();
           await this.handler(event as any);

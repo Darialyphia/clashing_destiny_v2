@@ -9,6 +9,7 @@ import { Modifier } from '../modifier.entity';
 export class RushModifier extends Modifier<MinionCard> {
   constructor(game: Game, source: AnyCard) {
     super(KEYWORDS.RUSH.id, game, source, {
+      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.RUSH),
         new MinionInterceptorModifierMixin(game, {

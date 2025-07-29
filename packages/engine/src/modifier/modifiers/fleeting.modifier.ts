@@ -11,6 +11,7 @@ export class PercingFleeting<T extends AnyCard> extends Modifier<T> {
     super(KEYWORDS.FLEETING.id, game, source, {
       name: KEYWORDS.FLEETING.name,
       description: KEYWORDS.FLEETING.description,
+      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.FLEETING),
         new GameEventModifierMixin(game, {

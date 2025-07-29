@@ -7,6 +7,7 @@ import { CARD_DECK_SOURCES } from '../card.enums';
 import type { DestinyDeckCard, MainDeckCard } from '../../board/board.system';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
+import type { DestinyCard } from '../entities/destiny.entity';
 
 export type CardManagerComponentOptions = {
   mainDeck: string[];
@@ -29,7 +30,7 @@ export class CardManagerComponent {
 
   readonly mainDeck: Deck<MainDeckCard>;
 
-  readonly destinyDeck: Deck<DestinyDeckCard>;
+  readonly destinyDeck: Deck<DestinyCard>;
 
   readonly hand: MainDeckCard[] = [];
 
@@ -64,7 +65,7 @@ export class CardManagerComponent {
   async init() {
     const [mainDeckCards, destinyDeckCards] = await Promise.all([
       this.buildCards<MainDeckCard>(this.options.mainDeck),
-      this.buildCards<DestinyDeckCard>(this.options.destinyDeck)
+      this.buildCards<DestinyCard>(this.options.destinyDeck)
     ]);
 
     this.mainDeck.populate(mainDeckCards);
@@ -87,12 +88,12 @@ export class CardManagerComponent {
     return this.mainDeck.remaining;
   }
 
-  get mainDeckSize() {
-    return this.mainDeck.size;
-  }
-
   get remainingCardsInDestinyDeck() {
     return this.destinyDeck.remaining;
+  }
+
+  get mainDeckSize() {
+    return this.mainDeck.size;
   }
 
   get destinyDeckSize() {
@@ -176,18 +177,18 @@ export class CardManagerComponent {
     });
   }
 
-  removeFromHand(card: AnyCard) {
-    const index = this.hand.findIndex(handCard => handCard.equals(card));
-    if (index === -1) return;
-    this.hand.splice(index, 1);
-  }
-
   removeFromDestinyDeck(card: AnyCard) {
     const index = this.destinyDeck.cards.findIndex(destinyCard =>
       destinyCard.equals(card)
     );
     if (index === -1) return;
     this.destinyDeck.cards.splice(index, 1);
+  }
+
+  removeFromHand(card: AnyCard) {
+    const index = this.hand.findIndex(handCard => handCard.equals(card));
+    if (index === -1) return;
+    this.hand.splice(index, 1);
   }
 
   discard(card: MainDeckCard) {

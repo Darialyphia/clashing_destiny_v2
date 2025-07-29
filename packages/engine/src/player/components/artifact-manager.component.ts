@@ -1,16 +1,9 @@
-import type { Nullable } from '@game/shared';
-import { ARTIFACT_KINDS, type ArtifactKind } from '../../card/card.enums';
-import { match } from 'ts-pattern';
 import type { Game } from '../../game/game';
-import type { ArtifactCard } from '../../card/entities/artifact.entity';
+import { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { Player } from '../player.entity';
 
 export class ArtifactManagerComponent {
-  private weapon: Nullable<ArtifactCard> = null;
-
-  private armor: Nullable<ArtifactCard> = null;
-
-  private relic: Nullable<ArtifactCard> = null;
+  private _artifacts: ArtifactCard[] = [];
 
   constructor(
     private game: Game,
@@ -18,47 +11,29 @@ export class ArtifactManagerComponent {
   ) {}
 
   get artifacts() {
-    return {
-      weapon: this.weapon,
-      armor: this.armor,
-      relic: this.relic
-    };
+    return this._artifacts;
   }
 
-  equip(artifact: ArtifactCard) {
-    return match(artifact.subkind)
-      .with(ARTIFACT_KINDS.WEAPON, () => {
-        this.weapon = artifact;
-      })
-      .with(ARTIFACT_KINDS.ARMOR, () => {
-        this.armor = artifact;
-      })
-      .with(ARTIFACT_KINDS.RELIC, () => {
-        this.relic = artifact;
-      })
-      .exhaustive();
+  async equip(artifact: ArtifactCard) {
+    if (this._artifacts.length >= this.game.config.MAX_EQUIPPED_ARTIFACTS) {
+      const [artifactToUnequip] = await this.game.interaction.chooseCards<ArtifactCard>({
+        player: this.player,
+        choices: this._artifacts,
+        minChoiceCount: 1,
+        maxChoiceCount: 1,
+        label: 'Choose an artifact to unequip'
+      });
+
+      await this.unequip(artifactToUnequip);
+    }
+
+    this._artifacts.push(artifact);
   }
 
-  async unequip(artifactKind: ArtifactKind) {
-    await match(artifactKind)
-      .with(ARTIFACT_KINDS.WEAPON, async () => {
-        if (!this.weapon) return;
-        await this.weapon.destroy();
+  async unequip(artifact: ArtifactCard) {
+    const index = this._artifacts.findIndex(a => a.equals(artifact));
+    if (index === -1) return;
 
-        this.weapon = null;
-      })
-      .with(ARTIFACT_KINDS.ARMOR, async () => {
-        if (!this.armor) return;
-
-        await this.armor.destroy();
-        this.armor = null;
-      })
-      .with(ARTIFACT_KINDS.RELIC, async () => {
-        if (!this.relic) return;
-
-        await this.relic.destroy();
-        this.relic = null;
-      })
-      .exhaustive();
+    this._artifacts.splice(index, 1);
   }
 }

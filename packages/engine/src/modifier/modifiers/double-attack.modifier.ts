@@ -15,11 +15,12 @@ export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modif
       icon: 'keyword-double-attack',
       name: KEYWORDS.DOUBLE_ATTACK.name,
       description: KEYWORDS.DOUBLE_ATTACK.description,
+      isUnique: true,
       mixins: [
         new GameEventModifierMixin(game, {
           eventName: 'combat.after-resolve-combat',
           handler: async event => {
-            if (!game.gamePhaseSystem.turnPlayer.equals(this.target.player)) return;
+            if (!game.gamePhaseSystem.currentPlayer.equals(this.target.player)) return;
 
             if (!event.data.attacker.equals(this.target)) return;
 

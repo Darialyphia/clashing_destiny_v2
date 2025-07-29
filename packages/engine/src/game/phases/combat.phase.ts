@@ -211,7 +211,7 @@ export class CombatPhase
     return [
       ...this.attacker.player.opponent.minions,
       this.attacker.player.opponent.hero
-    ].filter(card => card.canBeAttacked);
+    ].filter(card => card.canBeAttacked(this.attacker));
   }
 
   async declareAttacker(attacker: Attacker) {

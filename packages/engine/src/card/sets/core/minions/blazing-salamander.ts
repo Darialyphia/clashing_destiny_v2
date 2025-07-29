@@ -13,7 +13,7 @@ export const blazingSalamander: MinionBlueprint = {
   id: 'blazingSalamander',
   name: 'Blazing Salamander',
   cardIconId: 'unit-fire-salamander',
-  description: `@On Enter@: Inflict @Burn@ to all other minions in the same column as this minion. Then if 5 or more minions are affected by @Burn@, draw a card.`,
+  description: `@On Enter@: Inflict @Burn@ to all other minions in the same column as this minion. Then if 3 or more minions are affected by @Burn@, draw a card.`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -38,7 +38,7 @@ export const blazingSalamander: MinionBlueprint = {
           await minion.modifiers.add(new BurnModifier(game, card));
         }
 
-        if (affectedMinions.length >= 5) {
+        if (affectedMinions.length >= 3) {
           await card.player.cardManager.draw(1);
         }
       })

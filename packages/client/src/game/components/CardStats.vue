@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import { useCard, useGameClient } from '../composables/useGameClient';
+import { useCard } from '../composables/useGameClient';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const { cardId } = defineProps<{ cardId: string }>();
@@ -16,19 +16,13 @@ const isDisplayed = computed(() => {
   );
 });
 
-const client = useGameClient();
-
 const visibleModifiers = computed(() =>
   card.value.getModifiers().filter(modifier => modifier.icon)
 );
 </script>
 
 <template>
-  <div
-    v-if="isDisplayed"
-    class="stats"
-    :class="{ flipped: card.getPlayer().id !== client.playerId }"
-  >
+  <div v-if="isDisplayed" class="stats" :class="card.kind.toLocaleLowerCase()">
     <div class="modifiers">
       <UiSimpleTooltip
         v-for="modifier in visibleModifiers"
@@ -85,21 +79,24 @@ const visibleModifiers = computed(() =>
 .stats {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent, hsl(0 0 0 / 0.5));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: var(--size-3);
-  font-size: var(--font-size-10);
+  padding: var(--size-2);
+  font-size: var(--font-size-5);
   font-weight: var(--font-weight-9);
   line-height: 1;
   pointer-events: none;
-  -webkit-text-stroke: 4px black;
+  -webkit-text-stroke: 2px black;
   paint-order: fill stroke;
   --buff-color: var(--green-6);
   --debuff-color: var(--red-6);
 
+  &.minion {
+    flex-direction: row;
+    justify-content: space-between;
+  }
   .buffed {
     color: var(--buff-color);
   }
@@ -107,49 +104,49 @@ const visibleModifiers = computed(() =>
     color: var(--debuff-color);
   }
 
-  &.flipped {
-    rotate: 180deg;
-  }
-
   .atk {
     background-image: url('/assets/ui/attack.png');
     background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+    background-size: 20px;
+    padding-left: var(--size-6);
+    .minion & {
+      padding-left: var(--size-4);
+    }
   }
 
   .spellpower {
     background-image: url('/assets/ui/ability-power.png');
     background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+    background-size: 20px;
+    padding-left: var(--size-6);
+    .minion & {
+      padding-left: var(--size-4);
+    }
   }
 
   .hp {
     background-image: url('/assets/ui/hp.png');
     background-position: left center;
-    background-size: 60px;
-    padding-left: var(--size-10);
+    background-size: 20px;
+    padding-left: var(--size-6);
+    .minion & {
+      padding-left: var(--size-4);
+    }
   }
 }
 
 .modifiers {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  top: var(--size-2);
+  left: var(--size-2);
   display: flex;
   flex-direction: column;
   gap: var(--size-2);
-  padding: var(--size-5);
   --pixel-scale: 3;
-  .stats.flipped & {
-    bottom: unset;
-    top: 0;
-  }
 }
 
 .modifier {
-  width: calc(var(--pixel-scale) * 20px);
+  width: 20px;
   aspect-ratio: 1;
   background: var(--bg) no-repeat center center;
   background-size: cover;

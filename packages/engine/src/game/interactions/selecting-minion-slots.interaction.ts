@@ -61,7 +61,7 @@ export class SelectingMinionSlotsContext {
     const result: MinionPosition[] = [];
     this.game.playerSystem.players.forEach(player => {
       (['attack', 'defense'] as const).forEach(zone => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < this.game.config.ATTACK_ZONE_SLOTS; i++) {
           const slot = i;
           const elligible = this.isElligible(
             { player, slot, zone },

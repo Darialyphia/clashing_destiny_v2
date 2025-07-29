@@ -1,6 +1,5 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { HeroBlueprint } from '../../../card-blueprint';
@@ -19,32 +18,30 @@ export const warlock: HeroBlueprint = {
   description:
     '@On Enter@ : Deal 2 damage to all minions. Gain +1 @[spellpower]@  until the end of the turn equal to the amount of minions destroyed this way.',
   cardIconId: 'hero-warlock',
-  level: 3,
-  destinyCost: 3,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  unlockableAffinities: [AFFINITIES.BLOOD, AFFINITIES.VOID, AFFINITIES.FIRE],
+  affinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
   unique: false,
   lineage: null,
-  spellPower: 1,
+  spellPower: 0,
   atk: 0,
-  maxHp: 24,
+  maxHp: 20,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {
       label: 'Draw 2 cards',
       description:
-        '@[exhaust]@ @[mana] 2@] : Deal 3 damage to your hero and draw 2 cards.',
+        '@[exhaust]@ @[mana] 2@] : Deal 4 damage to your hero and draw 2 cards.',
       id: 'warlock-ability',
       canUse: () => true,
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 1,
       shouldExhaust: true,
       async onResolve(game, card) {
-        await card.player.hero.takeDamage(card, new AbilityDamage(3));
+        await card.player.hero.takeDamage(card, new AbilityDamage(4));
         await card.player.cardManager.draw(2);
       }
     }

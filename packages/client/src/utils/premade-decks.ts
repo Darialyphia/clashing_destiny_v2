@@ -1,15 +1,18 @@
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { GameOptions } from '@game/engine/src/game/game';
 
 export type PremadeDeck = {
   name: string;
   mainDeck: GameOptions['players'][number]['mainDeck'];
-  destinyDeck: GameOptions['players'][number]['destinyDeck'];
+  destinyDeck: GameOptions['players'][number]['mainDeck'];
+  hero: GameOptions['players'][number]['hero'];
 };
 
 export const premadeDecks: Array<PremadeDeck> = [
   {
-    name: 'Mage Starter Deck',
+    name: 'Knight Starter Deck',
+    destinyDeck: {
+      cards: ['fire-affinity', 'inspired-by-steel']
+    },
     mainDeck: {
       cards: [
         'fire-bolt',
@@ -19,19 +22,20 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         'fire-ball',
         'fire-ball',
-        'fire-ball',
 
         'inner-fire',
         'inner-fire',
-        'inner-fire',
 
+        'forged-in-the-crater',
+        'forged-in-the-crater',
+
+        'friendly-slime',
+        'friendly-slime',
         'friendly-slime',
         'friendly-slime',
 
         'pyromancer',
         'pyromancer',
-        'pyromancer',
-        'pyromancer',
 
         'flagbearer-of-flame',
         'flagbearer-of-flame',
@@ -53,33 +57,21 @@ export const premadeDecks: Array<PremadeDeck> = [
         'courageous-footsoldier',
         'courageous-footsoldier',
 
-        'seer',
-        'seer',
+        'firebrand',
+        'firebrand',
 
-        'archsage-of-moonring',
-        'archsage-of-moonring',
-        'archsage-of-moonring',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
 
-        'phoenix',
+        'sun-emperor',
+        'sun-emperor',
 
-        'recollection',
-        'recollection',
-
-        'hourglass-fracture'
+        'phoenix'
       ]
     },
 
-    destinyDeck: {
-      cards: [
-        'mage',
-        'sorcerer',
-        'sage',
-        'fire-studies',
-        'arcane-studies',
-        'the-hangman',
-        'path-of-the-vanguard',
-        'mana-visions'
-      ]
-    }
+    hero: 'knight'
   }
 ];

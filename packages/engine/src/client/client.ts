@@ -15,6 +15,7 @@ import { TypedEventEmitter } from '../utils/typed-emitter';
 import { GAME_PHASES } from '../game/game.enums';
 import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
+import type { Affinity } from '../card/card.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -158,7 +159,7 @@ export class GameClient {
       snapshot.phase.state === GAME_PHASES.ATTACK &&
       snapshot.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
-      return snapshot.players.find(id => id !== snapshot.turnPlayer)!;
+      return snapshot.players.find(id => id !== snapshot.currentPlayer)!;
     }
 
     return snapshot.interaction.ctx.player;
@@ -174,7 +175,7 @@ export class GameClient {
       this.stateManager.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
     ) {
       return this.stateManager.state.players.find(
-        id => id !== this.stateManager.state.turnPlayer
+        id => id !== this.stateManager.state.currentPlayer
       )!;
     }
 
@@ -259,7 +260,7 @@ export class GameClient {
 
     this.networkAdapter.dispatch({
       type: 'cancelPlayCard',
-      payload: { playerId: this.state.turnPlayer }
+      payload: { playerId: this.state.currentPlayer }
     });
     const playedCard = this.state.entities[
       this.state.interaction.ctx.card
@@ -274,6 +275,81 @@ export class GameClient {
       payload: {
         playerId: this.playerId,
         manaCostIndices: this.ui.selectedManaCostIndices
+      }
+    });
+  }
+
+  commitMinionSlotSelection() {
+    this.networkAdapter.dispatch({
+      type: 'commitMinionSlotSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  commitCardSelection() {
+    this.networkAdapter.dispatch({
+      type: 'commitCardSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  skipBlock() {
+    this.networkAdapter.dispatch({
+      type: 'declareBlocker',
+      payload: {
+        blockerId: null,
+        playerId: this.playerId
+      }
+    });
+  }
+
+  endTurn() {
+    this.networkAdapter.dispatch({
+      type: 'declareEndTurn',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  passChain() {
+    this.networkAdapter.dispatch({
+      type: 'passChain',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  chooseAffinity(affinity: Affinity) {
+    this.networkAdapter.dispatch({
+      type: 'chooseAffinity',
+      payload: {
+        playerId: this.playerId,
+        affinity
+      }
+    });
+  }
+
+  chooseCards(indices: number[]) {
+    this.networkAdapter.dispatch({
+      type: 'chooseCards',
+      payload: {
+        playerId: this.playerId,
+        indices
+      }
+    });
+  }
+
+  skipDestiny() {
+    this.networkAdapter.dispatch({
+      type: 'skipDestiny',
+      payload: {
+        playerId: this.playerId
       }
     });
   }

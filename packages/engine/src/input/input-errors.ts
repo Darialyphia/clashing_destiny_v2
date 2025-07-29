@@ -31,7 +31,7 @@ export class TooManyMulliganedCardsError extends InputError {
   }
 }
 
-export class NotTurnPlayerError extends InputError {
+export class NotCurrentPlayerError extends InputError {
   constructor() {
     super('You are not the active player.');
   }
@@ -79,9 +79,21 @@ export class UnknownCardError extends Error {
   }
 }
 
+export class UnknownTalentError extends InputError {
+  constructor(talentId: string) {
+    super(`Unknown talent id: ${talentId}`);
+  }
+}
+
 export class UnitNotOwnedError extends InputError {
   constructor() {
     super('You do not own this unit.');
+  }
+}
+
+export class IllegalTalentUnlockError extends InputError {
+  constructor() {
+    super('You cannot unlock this talent');
   }
 }
 

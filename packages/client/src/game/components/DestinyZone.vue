@@ -9,7 +9,6 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import GameCard from './GameCard.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -29,20 +28,37 @@ const computeSpacing = () => {
   }
 
   const allowedWidth = root.value.clientWidth;
-  const totalWidth = [...root.value.children].reduce((total, child) => {
-    return total + child.clientWidth;
-  }, 0);
+  // const totalWidth = [...root.value.children].reduce((total, child) => {
+  //   return total + child.clientWidth;
+  // }, 0);
 
-  const excess = totalWidth - allowedWidth;
+  // const excess = totalWidth - allowedWidth;
 
-  cardSpacing.value = Math.min(
-    -excess / (boardSide.value.destinyZone.length - 1),
+  // cardSpacing.value = Math.min(
+  //   -excess / (boardSide.value.destinyZone.length - 1),
+  //   0
+  // );
+
+  const lastCardWidth = [...root.value.children].at(-1)!.clientWidth;
+  const childrenWidth = [...root.value.children].reduce(
+    (total, child) => total + child.clientWidth,
     0
+  );
+  if (childrenWidth <= allowedWidth) {
+    cardSpacing.value = lastCardWidth;
+    return;
+  }
+  cardSpacing.value = Math.round(
+    (allowedWidth - lastCardWidth) / root.value.children.length
   );
 };
 
 watch(
-  [root, computed(() => boardSide.value.destinyZone.length)],
+  [
+    root,
+    computed(() => boardSide.value.destinyZone.length),
+    computed(() => client.value.ui.selectedManaCostIndices.length)
+  ],
   () => {
     nextTick(computeSpacing);
   },
@@ -65,71 +81,78 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
   if (event.player.id !== playerId) return;
   cardBanishedAsDestinyCost.value = [];
 });
+
+const displayedCards = computed(() => {
+  return [
+    ...boardSide.value.destinyZone.map(card => {
+      return {
+        type: 'destiny',
+        cardId: card
+      };
+    }),
+    ...client.value.ui.selectedManaCostIndices.map(index => {
+      return {
+        type: 'mana',
+        cardId: boardSide.value.hand[index]
+      };
+    })
+  ];
+});
 </script>
 
 <template>
-  <div class="destiny-zone" ref="root" :id="`destiny-zone-${playerId}`">
-    <div v-for="(card, index) in boardSide.destinyZone" :key="card">
-      <template v-if="client.playerId === playerId">
-        <InspectableCard :card-id="card" side="top">
-          <CardBack :key="card" class="item" />
-          <GameCard
-            v-if="cardBanishedAsDestinyCost[index]"
-            :card-id="cardBanishedAsDestinyCost[index].card"
-            class="banished-card"
-            :id="`banished-card-${cardBanishedAsDestinyCost[index].card}`"
-          />
-        </InspectableCard>
-      </template>
-      <CardBack v-else class="item" />
-    </div>
-
-    <template v-if="playerId === client.playerId">
-      <div
-        v-for="index in client.ui.selectedManaCostIndices"
-        :key="index"
-        class="item mana-card-wrapper"
+  <div
+    class="destiny-zone"
+    ref="root"
+    :id="`destiny-zone-${playerId}`"
+    :class="{ 'player-2': playerId !== client.playerId }"
+  >
+    <div v-for="(card, index) in displayedCards" :key="card.cardId">
+      <InspectableCard
+        v-if="client.playerId === playerId"
+        :card-id="card.cardId"
+        side="top"
       >
-        <InspectableCard :card-id="boardSide.hand[index]" side="top">
-          <GameCard :card-id="boardSide.hand[index]" class="mana-card" />
-        </InspectableCard>
-      </div>
-    </template>
+        <CardBack
+          :key="card.cardId"
+          class="item"
+          :style="{ '--index': index }"
+        />
+      </InspectableCard>
+      <CardBack v-else class="item" :style="{ '--index': index }" />
+    </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .destiny-zone {
-  display: flex;
-  border: solid 2px white;
-  > * {
-    position: relative;
+  display: grid;
+  position: relative;
+  overflow: hidden;
+  justify-items: start;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  height: calc(var(--card-height) / 2);
+  --spacing-offset: 1;
+  &.player-2 {
+    justify-items: end;
+    --spacing-offset: -1;
   }
-  & > *:not(:last-child) {
+  /* & > *:not(:last-child) {
     margin-right: calc(1px * v-bind(cardSpacing));
+  } */
+
+  > * {
+    grid-column: 1;
+    grid-row: 1;
   }
 }
 
 .item {
+  height: calc(var(--card-height) / 2);
   aspect-ratio: var(--card-ratio);
-  height: 100%;
-}
-
-.mana-card-wrapper {
-  position: relative;
-}
-:global(.mana-card-wrapper > *) {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: var(--card-ratio);
-  height: 100%;
-}
-
-.banished-card {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: var(--card-ratio);
-  height: 100%;
-  transform: rotateY(180deg) translateX(-100%);
+  transform: translateX(
+    calc(var(--index) * v-bind(cardSpacing) * 1px * var(--spacing-offset))
+  );
 }
 </style>

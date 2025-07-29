@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
 import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
 import { assert } from '@game/shared';
-import { IllegalCardPlayedError, NotTurnPlayerError } from '../input-errors';
+import { IllegalCardPlayedError, NotCurrentPlayerError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
-  index: z.number().nullable()
+  index: z.number()
 });
 
 export class PlayDestinyCardInput extends Input<typeof schema> {
@@ -16,10 +16,7 @@ export class PlayDestinyCardInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    assert(
-      this.game.gamePhaseSystem.turnPlayer.equals(this.player),
-      new NotTurnPlayerError()
-    );
+    assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
 
     if (this.payload.index === null) {
       await this.game.gamePhaseSystem

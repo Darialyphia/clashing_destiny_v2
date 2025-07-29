@@ -18,30 +18,30 @@ type DeckChoice = {
   label: string;
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
+  hero: string;
 };
-const choices = computed(() => {
+const choices = computed<DeckChoice[]>(() => {
   return [
     ...premadeDecks.map(deck => ({
       label: deck.name,
       mainDeck: deck.mainDeck,
-      destinyDeck: deck.destinyDeck
+      destinyDeck: deck.destinyDeck,
+      hero: deck.hero
     })),
     ...decks.value.map(deck => ({
       label: deck.name,
+      destinyDeck: {
+        cards: deck.destinyDeck.map(card => card.blueprintId)
+      },
       mainDeck: {
         cards: deck.mainDeck.flatMap(card =>
           Array.from({ length: card.copies }, () => card.blueprintId)
         )
       },
-      destinyDeck: {
-        cards: deck.destinyDeck.flatMap(card =>
-          Array.from({ length: card.copies }, () => card.blueprintId)
-        )
-      }
+      hero: deck.hero
     }))
   ];
 });
-
 const p1Deck = ref<DeckChoice | null>(null);
 const p2Deck = ref<DeckChoice | null>(null);
 const isStarted = ref(false);
@@ -91,14 +91,16 @@ const isStarted = ref(false);
       {
         id: 'p1',
         name: 'Player 1',
+        mainDeck: p1Deck.mainDeck,
         destinyDeck: p1Deck.destinyDeck,
-        mainDeck: p1Deck.mainDeck
+        hero: p1Deck.hero
       },
       {
         id: 'p2',
         name: 'Player 2',
+        mainDeck: p2Deck.mainDeck,
         destinyDeck: p2Deck.destinyDeck,
-        mainDeck: p2Deck.mainDeck
+        hero: p2Deck.hero
       }
     ]"
   />

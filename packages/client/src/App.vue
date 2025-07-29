@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { External } from 'vue3-pixi';
-import { useAssets } from './shared/composables/useAssets';
-import PixiApp from './PixiApp.vue';
 import { TooltipProvider } from 'reka-ui';
 
 // const { loaded } = useAssets();
-
-const uiRoot = document.getElementById('#app');
 </script>
 
 <template>
@@ -15,7 +10,7 @@ const uiRoot = document.getElementById('#app');
     <TooltipProvider :delay-duration="400">
       <RouterView name="ui" />
     </TooltipProvider>
-    <div id="card-portal" />
+    <div id="card-portal"></div>
   </div>
   <!-- <PixiApp v-else>
     <RouterView name="scene" />
@@ -38,5 +33,7 @@ const uiRoot = document.getElementById('#app');
 #card-portal {
   position: fixed;
   z-index: 10;
+  top: 0;
+  left: 0;
 }
 </style>

@@ -4,7 +4,7 @@ import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
   IllegalAttackerError,
-  NotTurnPlayerError,
+  NotCurrentPlayerError,
   UnknownUnitError
 } from '../input-errors';
 
@@ -20,11 +20,14 @@ export class DeclareAttackInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   get attacker() {
+    if (this.player.hero.id === this.payload.attackerId) {
+      return this.player.hero;
+    }
     return this.player.minions.find(creature => creature.id === this.payload.attackerId);
   }
 
   async impl() {
-    assert(this.player.isTurnPlayer, new NotTurnPlayerError());
+    assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
     assert(this.attacker, new UnknownUnitError(this.payload.attackerId));
     assert(this.attacker.canAttack, new IllegalAttackerError());
 

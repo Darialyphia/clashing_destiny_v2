@@ -99,7 +99,7 @@ const pointerStyle = computed(() => {
 const descriptionBox = useTemplateRef('description-box');
 
 const MIN_TEXT_SIZE = 10;
-const MAX_TEXT_SIZE = 18;
+const MAX_TEXT_SIZE = 16;
 const textSize = ref(MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
@@ -179,10 +179,6 @@ const costStatus = computed(() => {
           :style="{ '--bg': affinityGemBg(card.affinity) }"
         />
       </div>
-      <!--
-      <div class="level" v-if="card.level">
-        <div v-for="i in card.level" :key="i" class="level-icon" />
-      </div> -->
 
       <div class="rarity" />
       <div class="stats">
@@ -202,6 +198,11 @@ const costStatus = computed(() => {
         >
           <div class="dual-text" :data-text="card.destinyCost">
             {{ card.destinyCost }}
+          </div>
+        </div>
+        <div v-if="isDefined(card.level)" class="level">
+          <div class="dual-text" :data-text="card.level">
+            {{ card.level }}
           </div>
         </div>
         <div v-if="isDefined(card.atk)" class="atk">
@@ -227,7 +228,6 @@ const costStatus = computed(() => {
       </div>
       <div class="kind">
         <div class="kind-icon" />
-        <template v-if="isDefined(card.level)">Lvl {{ card.level }}</template>
         {{ card.kind.toLocaleLowerCase() }}
       </div>
       <div
@@ -267,7 +267,6 @@ const costStatus = computed(() => {
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
   transform-style: preserve-3d;
-
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -322,28 +321,61 @@ const costStatus = computed(() => {
   }
 }
 
+@property --foil-image-shadow-hue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes foil-image {
+  from {
+    filter: drop-shadow(0 0 2px hsl(var(--foil-image-shadow-hue), 100%, 70%))
+      drop-shadow(0px 0px 0px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15))
+      drop-shadow(
+        -0px -0px 0px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15)
+      );
+  }
+  to {
+    --foil-image-shadow-hue: 360;
+    filter: drop-shadow(0 0 2px hsl(var(--foil-image-shadow-hue), 100%, 70%))
+      drop-shadow(
+        15px 15px 5px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15)
+      )
+      drop-shadow(
+        -15px -15px 5px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15)
+      );
+  }
+}
 .image {
-  background: v-bind(imageBg);
-  background-size: cover;
-  background-position: center;
   width: calc(96px * var(--pixel-scale));
   height: calc(96px * var(--pixel-scale));
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-
-  /* &::after {
+  /*card image is in a pseudo element because otherwise the shadow appears before
+   Some property nullifies the z-index ordering, not sure what or why */
+  &::after {
+    content: '';
     position: absolute;
     inset: 0;
-    content: '';
     background: v-bind(imageBg);
     background-size: cover;
+  }
+  .card-front:has(.foil) &::after {
+    animation: foil-image 10s infinite alternate var(--ease-2);
+  }
+
+  :is(.minion, .hero) &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: v-bind(imageBg) no-repeat;
+    background-size: cover;
     background-position: center;
-    filter: blur(10px) sepia(60%) hue-rotate(40deg);
-    transform: translateY(-10px);
-    mix-blend-mode: screen;
-  } */
+    transform: scaleY(0.5) translateY(50px) skewX(30deg) translateX(-40px);
+    filter: brightness(0);
+    opacity: 0.35;
+  }
 
   .card:is(.minion, .hero) & {
     background-position: center -15px;
@@ -418,23 +450,7 @@ const costStatus = computed(() => {
 }
 
 .level {
-  position: absolute;
-  top: calc(32px * var(--pixel-scale));
-  right: calc(9px * var(--pixel-scale));
-  display: flex;
-  flex-direction: column;
-  > * {
-    background-image: url('/assets/ui/card-level-filled.png');
-    background-size: cover;
-    background-position: center;
-    width: calc(13px * var(--pixel-scale));
-    height: calc(13px * var(--pixel-scale));
-    display: grid;
-    place-content: center;
-    font-size: 28px;
-    padding-top: calc(4px * var(--pixel-scale));
-    font-family: 'NotJamSlab11', monospace;
-  }
+  background-image: url('/assets/ui/card-level.png');
 }
 
 .buffed {
@@ -538,8 +554,14 @@ const costStatus = computed(() => {
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.3s;
-  background-image: radial-gradient(
+  /* background-image: radial-gradient(
     circle at var(--glare-x) var(--glare-y),
+    hsla(0, 0%, 100%, 0.8) 10%,
+    hsla(0, 0%, 100%, 0.65) 20%,
+    hsla(0, 0%, 0%, 0.5) 90%
+  ); */
+  background-image: radial-gradient(
+    farthest-corner circle at var(--glare-x) var(--glare-y),
     hsla(0, 0%, 100%, 0.8) 10%,
     hsla(0, 0%, 100%, 0.65) 20%,
     hsla(0, 0%, 0%, 0.5) 90%
@@ -547,28 +569,93 @@ const costStatus = computed(() => {
   mix-blend-mode: overlay;
   mask-image: url('/assets/ui/card-bg.png');
   mask-size: cover;
-
   .card:hover & {
-    opacity: 0.8;
+    opacity: 1;
   }
 }
 
-@property --foil-angle {
-  syntax: '<angle>';
+@property --foil-x {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+@property --foil-y {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+@property --foil-brightness {
+  syntax: '<number>';
   inherits: false;
-  initial-value: 0deg;
+  initial-value: 0;
 }
 
-@keyframes foil-spin {
+@keyframes foil {
   from {
-    --foil-angle: 0deg;
+    --foil-x: 0%;
+    --foil-y: 0%;
+    --foil-brightness: 0.2;
+  }
+  50% {
+    --foil-brightness: 0.5;
   }
   to {
-    --foil-angle: 360deg;
+    --foil-x: 37.9%;
+    --foil-y: 100%;
+    --foil-brightness: 0.2;
   }
 }
+
 .foil {
   --space: 5%;
+  --angle: 133deg;
+  --foil-brightness: 0.6;
+  --foil-x: 0%;
+  --foil-y: 0%;
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  pointer-events: none;
+  mask-image: url('/assets/ui/card-bg.png');
+  mask-size: cover;
+  mix-blend-mode: color-dodge;
+  background-image: url('/assets/ui/foil-texture.webp'),
+    repeating-linear-gradient(
+      0deg,
+      rgb(255, 119, 115) calc(var(--space) * 1),
+      rgba(255, 237, 95, 1) calc(var(--space) * 2),
+      rgba(168, 255, 95, 1) calc(var(--space) * 3),
+      rgba(131, 255, 247, 1) calc(var(--space) * 4),
+      rgba(120, 148, 255, 1) calc(var(--space) * 5),
+      rgb(216, 117, 255) calc(var(--space) * 6),
+      rgb(255, 119, 115) calc(var(--space) * 7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180, 10%, 60%) 3.8%,
+      hsl(180, 29%, 66%) 4.5%,
+      hsl(180, 10%, 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    );
+  background-size:
+    100%,
+    200% 700%,
+    500%;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-blend-mode: exclusion, hue, hard-light;
+  background-position:
+    center,
+    0% var(--foil-y),
+    var(--foil-x) var(--foil-y);
+  filter: brightness(calc((var(--foil-brightness) * 0.3) + 0.5)) contrast(5)
+    saturate(1.5);
+  animation: foil 10s infinite linear;
+}
+
+/*.foil-texture {
+   --space: 5%;
   --foil-angle: 0deg;
   --img-size: 300% 400%;
   position: absolute;
@@ -590,17 +677,10 @@ const costStatus = computed(() => {
   background-position:
     0% calc(33% * 1),
     63% 33%;
-  /* background-position:
-    0% calc(var(--foil-y) * 1),
-    var(--foil-x) var(--foil-y); */
-  /* opacity: 0; */
-  /* display: none; */
   transition: opacity 0.3s;
-  filter: brightness(0.85) contrast(2.75) saturate(0.65);
-  mask-image: url('/assets/ui/card-bg.png');
-  mask-size: cover;
+  filter: brightness(0.85) contrast(2.75) saturate(0.65); */
 
-  &::after {
+/* &::after {
     position: absolute;
     inset: 0;
     content: '';
@@ -617,5 +697,5 @@ const costStatus = computed(() => {
       contrast(0.85) saturate(1.1);
     mix-blend-mode: hard-light;
   }
-}
+}*/
 </style>

@@ -41,6 +41,32 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "battle-board-2.png"
+          ],
+          "src": [
+            "/assets/backgrounds/battle-board-2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "battle-board.png"
+          ],
+          "src": [
+            "/assets/backgrounds/battle-board.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -253,6 +279,19 @@
         },
         {
           "alias": [
+            "icon-artifact-rusty-blade"
+          ],
+          "src": [
+            "/assets/icons/artifact-rusty-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-artifact-test"
           ],
           "src": [
@@ -309,6 +348,19 @@
           ],
           "src": [
             "/assets/icons/hero-elementalist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-hero-knight"
+          ],
+          "src": [
+            "/assets/icons/hero-knight.png"
           ],
           "data": {
             "tags": {
@@ -452,6 +504,19 @@
           ],
           "src": [
             "/assets/icons/keyword-burn.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-cleave"
+          ],
+          "src": [
+            "/assets/icons/keyword-cleave.png"
           ],
           "data": {
             "tags": {
@@ -1073,6 +1138,19 @@
         },
         {
           "alias": [
+            "icon-spell-forged-in-the-crater"
+          ],
+          "src": [
+            "/assets/icons/spell-forged-in-the-crater.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-frost-nova"
           ],
           "src": [
@@ -1294,10 +1372,62 @@
         },
         {
           "alias": [
+            "icon-talent-air-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-air-affinity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-arcane-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-arcane-affinity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-arcane-studies"
           ],
           "src": [
             "/assets/icons/talent-arcane-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-earth-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-earth-affinity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-fire-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-fire-affinity.png"
           ],
           "data": {
             "tags": {
@@ -1346,10 +1476,36 @@
         },
         {
           "alias": [
+            "icon-talent-test"
+          ],
+          "src": [
+            "/assets/icons/talent-test.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-the-hangman"
           ],
           "src": [
             "/assets/icons/talent-the-hangman.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-water-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-water-affinity.png"
           ],
           "data": {
             "tags": {
@@ -1866,6 +2022,19 @@
         },
         {
           "alias": [
+            "icon-unit-pyre-archfiend"
+          ],
+          "src": [
+            "/assets/icons/unit-pyre-archfiend.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-rainbow-phoenix"
           ],
           "src": [
@@ -1922,6 +2091,19 @@
           ],
           "src": [
             "/assets/icons/unit-stalwart-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-sun-emperor"
+          ],
+          "src": [
+            "/assets/icons/unit-sun-emperor.png"
           ],
           "data": {
             "tags": {
@@ -2879,6 +3061,19 @@
         },
         {
           "alias": [
+            "card-bg-frost.png"
+          ],
+          "src": [
+            "/assets/ui/card-bg-frost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-bg-genesis.png"
           ],
           "src": [
@@ -3061,6 +3256,32 @@
         },
         {
           "alias": [
+            "card-board-front-2.png"
+          ],
+          "src": [
+            "/assets/ui/card-board-front-2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-board-front.png"
+          ],
+          "src": [
+            "/assets/ui/card-board-front.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-description.png"
           ],
           "src": [
@@ -3143,6 +3364,19 @@
           ],
           "src": [
             "/assets/ui/card-kind-attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-destiny.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-destiny.png"
           ],
           "data": {
             "tags": {
@@ -3477,6 +3711,19 @@
         },
         {
           "alias": [
+            "destiny.png"
+          ],
+          "src": [
+            "/assets/ui/destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "enemy-indicator.png"
           ],
           "src": [
@@ -3494,6 +3741,19 @@
           ],
           "src": [
             "/assets/ui/exp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "foil-texture.webp"
+          ],
+          "src": [
+            "/assets/ui/foil-texture.webp"
           ],
           "data": {
             "tags": {
@@ -3712,10 +3972,75 @@
         },
         {
           "alias": [
+            "icon-banish-pile.png"
+          ],
+          "src": [
+            "/assets/ui/icon-banish-pile.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-deck.png"
+          ],
+          "src": [
+            "/assets/ui/icon-deck.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-discard-pile.png"
+          ],
+          "src": [
+            "/assets/ui/icon-discard-pile.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-influence.png"
+          ],
+          "src": [
+            "/assets/ui/icon-influence.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "mana-cost.png"
           ],
           "src": [
             "/assets/ui/mana-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "minino-slot-hover.png"
+          ],
+          "src": [
+            "/assets/ui/minino-slot-hover.png"
           ],
           "data": {
             "tags": {
@@ -4088,6 +4413,19 @@
           ],
           "src": [
             "/assets/ui/subkind-weapon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "talent-node.png"
+          ],
+          "src": [
+            "/assets/ui/talent-node.png"
           ],
           "data": {
             "tags": {

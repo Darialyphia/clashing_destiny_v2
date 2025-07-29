@@ -1,12 +1,9 @@
-import type { SerializedLocationCard } from '../../card/entities/location.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.card';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { SerializedTalentCard } from '../../card/entities/talent.entity';
-import type { SerializedAttackCard } from '../../card/entities/attack.entity';
 import type {
   SerializedAbility,
   SerializedPreResponseTarget
@@ -16,7 +13,13 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import type { Affinity, ArtifactKind, CardKind, SpellKind } from '../../card/card.enums';
+import {
+  CARD_KINDS,
+  type Affinity,
+  type ArtifactKind,
+  type CardKind,
+  type SpellKind
+} from '../../card/card.enums';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
@@ -27,10 +30,7 @@ type CardData =
   | SerializedSpellCard
   | SerializedArtifactCard
   | SerializedHeroCard
-  | SerializedMinionCard
-  | SerializedLocationCard
-  | SerializedTalentCard
-  | SerializedAttackCard;
+  | SerializedMinionCard;
 
 export type CardActionRule = {
   id: string;
@@ -201,6 +201,9 @@ export class CardViewModel {
     if ('level' in this.data) {
       return this.data.level as number;
     }
+    if ('minLevel' in this.data) {
+      return this.data.minLevel as number;
+    }
 
     return null;
   }
@@ -254,7 +257,7 @@ export class CardViewModel {
 
   get canAttack() {
     return (
-      this.getPlayer().id === this.getClient().state.turnPlayer &&
+      this.getPlayer().id === this.getClient().state.currentPlayer &&
       this.potentialAttackTargets.length > 0
     );
   }
@@ -297,6 +300,17 @@ export class CardViewModel {
     return null;
   }
 
+  get isAttacking() {
+    const relevantKinds: CardKind[] = [CARD_KINDS.MINION, CARD_KINDS.HERO];
+    if (!relevantKinds.includes(this.kind)) {
+      return false;
+    }
+    const state = this.getClient().state;
+
+    return (
+      state.phase.state === GAME_PHASES.ATTACK && state.phase.ctx.attacker === this.id
+    );
+  }
   getPlayer() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
   }
@@ -318,11 +332,12 @@ export class CardViewModel {
   }
 
   getActions(): CardActionRule[] {
-    return [
+    const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
+    return actions;
   }
 }

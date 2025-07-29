@@ -18,8 +18,6 @@ import {
   GameInputEvent,
   GameInputRequiredEvent
 } from '../game/game.events';
-
-import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
 import { DeclareBlockerInput } from './inputs/declare-blocker.input';
@@ -36,6 +34,8 @@ import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { ChooseAffinityInput } from './inputs/choose-affinity.input';
+import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
+import { SkipDestinyInput } from './inputs/skip-destiny.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -53,7 +53,6 @@ const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
   cancelPlayCard: CancelPlayCardInput,
   commitPlayCard: CommitPlayCardInput,
-  playDestinyCard: PlayDestinyCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
   declareBlocker: DeclareBlockerInput,
@@ -65,7 +64,9 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   chooseAffinity: ChooseAffinityInput,
-  useCardAbility: UseCardAbilityInput
+  useCardAbility: UseCardAbilityInput,
+  skipDestiny: SkipDestinyInput,
+  playDestinyCard: PlayDestinyCardInput
 });
 
 type InputMap = typeof inputMap;

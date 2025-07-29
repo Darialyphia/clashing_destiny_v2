@@ -1,6 +1,7 @@
+import { isDefined } from '@game/shared';
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
+import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -16,8 +17,8 @@ export type ValidatableDeck = {
   }>;
   [CARD_DECK_SOURCES.DESTINY_DECK]: Array<{
     blueprintId: string;
-    copies: number;
   }>;
+  hero: string;
 };
 
 export type DeckValidationResult =
@@ -101,15 +102,6 @@ export class StandardDeckValidator implements DeckValidator {
         reason: `Main deck must have exactly ${defaultConfig.MAX_MAIN_DECK_SIZE} cards.`
       });
     }
-    if (
-      this.getSize(deck[CARD_DECK_SOURCES.DESTINY_DECK]) !==
-      defaultConfig.MAX_DESTINY_DECK_SIZE
-    ) {
-      violations.push({
-        type: 'invalid_deck_size',
-        reason: `Destiny deck must have exactly ${defaultConfig.MAX_DESTINY_DECK_SIZE} cards.`
-      });
-    }
 
     for (const card of deck[CARD_DECK_SOURCES.MAIN_DECK]) {
       const blueprint = this.cardPool[card.blueprintId];
@@ -131,25 +123,6 @@ export class StandardDeckValidator implements DeckValidator {
       );
     }
 
-    for (const card of deck[CARD_DECK_SOURCES.DESTINY_DECK]) {
-      const blueprint = this.cardPool[card.blueprintId];
-      if (!blueprint) {
-        violations.push({
-          type: 'unknown_card',
-          reason: `Card with Id ${card.blueprintId} not found in card pool.`
-        });
-      }
-
-      violations.push(
-        ...this.validateCard(
-          {
-            blueprint,
-            copies: card.copies
-          },
-          CARD_DECK_SOURCES.DESTINY_DECK
-        )
-      );
-    }
     return { result: 'success' };
   }
 
@@ -184,21 +157,15 @@ export class StandardDeckValidator implements DeckValidator {
       }
 
       return true;
-    } else {
+    } else if (card.kind === CARD_KINDS.DESTINY) {
       if (withBlueprint.destiny.length >= this.destinyDeckSize) {
         return false;
       }
       const existing = withBlueprint.destiny.find(c => c.blueprint.id === card.id);
-      if (existing) {
-        if (existing.copies >= this.maxCopiesForDestinyCard) {
-          return false;
-        }
-        if (card.unique) {
-          return false;
-        }
-      }
 
-      return true;
+      return !isDefined(existing);
+    } else {
+      return !isDefined(deck.hero);
     }
   }
 }

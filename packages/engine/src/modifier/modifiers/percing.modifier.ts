@@ -18,6 +18,7 @@ export class PiercingModifier<T extends MinionCard | HeroCard> extends Modifier<
       name: KEYWORDS.PIERCING.name,
       description: KEYWORDS.PIERCING.description,
       icon: 'keyword-piercing',
+      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.RUSH),
         new GameEventModifierMixin(game, {

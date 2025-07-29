@@ -1,13 +1,18 @@
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import { GAME_PHASE_TRANSITIONS } from '../systems/game-phase.system';
-import type { EmptyObject, Serializable } from '@game/shared';
+import { assert, isDefined, type EmptyObject, type Serializable } from '@game/shared';
+import { CardNotFoundError } from '../../card/card-errors';
 
 export class DestinyPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
 
   async playDestinyCard(index: number) {
-    await this.game.gamePhaseSystem.turnPlayer.playDestinyDeckCardAtIndex(index);
+    const card =
+      this.game.gamePhaseSystem.currentPlayer.cardManager.getDestinyCardAt(index);
+    assert(isDefined(card), new CardNotFoundError());
+
+    await this.game.gamePhaseSystem.currentPlayer.playDestinyCard(card);
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE
     );
@@ -19,8 +24,8 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
     );
   }
 
-  private async recollectDestinyCards() {
-    const cards = [...this.game.gamePhaseSystem.turnPlayer.cardManager.destinyZone];
+  private async recollect() {
+    const cards = [...this.game.gamePhaseSystem.currentPlayer.cardManager.destinyZone];
 
     for (const card of cards) {
       await card.removeFromCurrentLocation();
@@ -31,7 +36,7 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
   async onEnter() {}
 
   async onExit() {
-    await this.recollectDestinyCards();
+    await this.recollect();
   }
 
   serialize(): EmptyObject {

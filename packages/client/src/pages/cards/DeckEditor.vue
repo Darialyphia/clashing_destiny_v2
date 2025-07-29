@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useCollectionPage } from './useCollectionPage';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import { Icon } from '@iconify/vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
 </script>
@@ -18,27 +20,17 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
       </div>
       <ul>
         <li
-          v-for="(card, index) in deckBuilder.mainDeckCards"
-          :key="index"
+          v-if="deckBuilder.hero"
           :style="{
-            '--bg': `url(/assets/icons/${card.blueprint.cardIconId}.png)`
+            '--bg': `url(/assets/icons/${deckBuilder.hero.blueprint.cardIconId}.png)`
           }"
-          :class="card.blueprint.kind.toLocaleLowerCase()"
           class="deck-item"
-          @click="deckBuilder.removeCard(card.blueprintId)"
+          @click="deckBuilder.removeCard(deckBuilder.hero.blueprint.id)"
         >
-          <div class="mana-cost">{{ card.blueprint.manaCost }}</div>
-          {{ card.blueprint.name }} X {{ card.copies }}
+          {{ deckBuilder.hero.blueprint.name }}
         </li>
-      </ul>
-
-      <div class="text-3 my-5 font-500">
-        Destiny Deck ({{ deckBuilder.destinyDeckSize }} /
-        {{ deckBuilder.validator.destinyDeckSize }})
-      </div>
-      <ul>
         <li
-          v-for="(card, index) in deckBuilder.destinyDeckCards"
+          v-for="(card, index) in deckBuilder.cards"
           :key="index"
           :style="{
             '--bg': `url(/assets/icons/${card.blueprint.cardIconId}.png)`
@@ -47,8 +39,14 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
           class="deck-item"
           @click="deckBuilder.removeCard(card.blueprintId)"
         >
-          <div class="destiny-cost">{{ card.blueprint.destinyCost }}</div>
-          {{ card.blueprint.name }} X {{ card.copies }}
+          <div class="mana-cost" v-if="'manaCost' in card.blueprint">
+            {{ card.blueprint.manaCost }}
+          </div>
+          <div class="destiny-cost" v-if="'destinyCost' in card.blueprint">
+            {{ card.blueprint.destinyCost }}
+          </div>
+          {{ card.blueprint.name }}
+          <template v-if="'copies' in card">X {{ card.copies }}</template>
         </li>
       </ul>
     </div>

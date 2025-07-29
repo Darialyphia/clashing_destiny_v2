@@ -2,7 +2,7 @@
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import Arrow from './Arrow.vue';
-import { at, throttle } from 'lodash-es';
+import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
 
 const client = useGameClient();

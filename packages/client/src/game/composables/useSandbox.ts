@@ -1,4 +1,4 @@
-import type { FxAdapter, NetworkAdapter } from '@game/engine/src/client/client';
+import type { NetworkAdapter } from '@game/engine/src/client/client';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import { provideGameClient } from './useGameClient';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
@@ -7,7 +7,6 @@ import { useFxAdapter } from './useFxAdapter';
 export const useSandbox = (
   options: Pick<GameOptions, 'players' | 'rngSeed'>
 ) => {
-  console.log(options);
   const game = new Game({
     id: 'sandbox',
     rngSeed: options.rngSeed,
@@ -18,11 +17,11 @@ export const useSandbox = (
     players: options.players
   });
 
-  // @ts-ignore
+  // @ts-expect-error
   window.__debugGame = () => {
     console.log(game);
   };
-  // @ts-ignore
+  // @ts-expect-error
   window.__debugClient = () => {
     console.log(client.value);
   };
@@ -34,7 +33,7 @@ export const useSandbox = (
       game.subscribeOmniscient(cb);
     },
     sync(lastSnapshotId) {
-      console.log('TODO: sync snapshots from sandbox');
+      console.log('TODO: sync snapshots from sandbox', lastSnapshotId);
       return Promise.resolve([]);
     }
   };

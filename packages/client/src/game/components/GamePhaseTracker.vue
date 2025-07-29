@@ -48,6 +48,8 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
 .phase-tracker {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.5);
   &::after {
     content: '';
     position: absolute;
@@ -64,8 +66,8 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
   text-align: center;
   border: solid 2px white;
   border-radius: var(--radius-2);
-  padding: var(--size-2) var(--size-3);
-  font-size: var(--font-size-4);
+  padding: var(--size-2) var(--size-2);
+  font-size: var(--font-size-3);
   grid-column: var(--col);
 }
 </style>

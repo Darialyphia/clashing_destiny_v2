@@ -67,15 +67,7 @@ const affinities = computed<Affinity[]>(() => {
           variant="info"
           text="Choose"
           :disabled="selected === null"
-          @click="
-            client.networkAdapter.dispatch({
-              type: 'chooseAffinity',
-              payload: {
-                playerId: state.turnPlayer,
-                affinity: selected!
-              }
-            })
-          "
+          @click="client.chooseAffinity(selected!)"
         />
       </footer>
     </div>

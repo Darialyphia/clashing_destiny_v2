@@ -82,15 +82,7 @@ const maxChoices = computed(() => {
           variant="info"
           text="Play card"
           :disabled="selectedIndices.length < minChoices"
-          @click="
-            client.networkAdapter.dispatch({
-              type: 'chooseCards',
-              payload: {
-                playerId: client.playerId,
-                indices: selectedIndices
-              }
-            })
-          "
+          @click="client.chooseCards(selectedIndices)"
         />
       </footer>
     </div>
@@ -128,18 +120,5 @@ const maxChoices = computed(() => {
     body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
   ) {
   opacity: 0;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: var(--size-7);
-  font-weight: var(--font-weight-4);
-}
-
-.played-card {
-  position: fixed;
-  top: var(--size-8);
-  right: var(--size-8);
-  z-index: 10;
 }
 </style>

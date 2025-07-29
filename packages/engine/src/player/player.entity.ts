@@ -11,7 +11,6 @@ import {
   NotEnoughCardsInHandError
 } from '../card/card-errors';
 import type { HeroCard } from '../card/entities/hero.entity';
-import type { TalentCard } from '../card/entities/talent.entity';
 import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
@@ -22,14 +21,16 @@ import {
   PlayerUnlockAffinityEvent
 } from './player.events';
 import type { MainDeckCard } from '../board/board.system';
-import { novice } from '../card/sets/core/heroes/novice';
 import { ModifierManager } from '../modifier/modifier-manager.component';
+import { type SerializedTalentTree } from '../card/talent-tree';
+import type { DestinyCard } from '../card/entities/destiny.entity';
 
 export type PlayerOptions = {
   id: string;
   name: string;
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
+  hero: string;
 };
 
 export type SerializedPlayer = {
@@ -43,12 +44,11 @@ export type SerializedPlayer = {
   banishPile: string[];
   destinyZone: string[];
   remainingCardsInDeck: number;
-  destinyDeck: string[];
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
   unlockedAffinities: Affinity[];
-  talents: string[];
+  unlockedDestinyCards: string[];
 };
 
 type PlayerInterceptors = {
@@ -80,9 +80,9 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly talents: TalentCard[] = [];
-
   private _hero!: HeroCard;
+
+  readonly unlockedDestinyCards: DestinyCard[] = [];
 
   constructor(
     game: Game,
@@ -103,8 +103,11 @@ export class Player
   }
 
   async init() {
-    this._hero = await this.generateCard<HeroCard>(novice.id);
+    this._hero = await this.generateCard<HeroCard>(this.options.hero);
     await this.cardManager.init();
+    this._hero.unlockableAffinities.forEach(affinity => {
+      this._unlockedAffinities.push(affinity);
+    });
   }
 
   serialize() {
@@ -118,13 +121,12 @@ export class Player
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
       remainingCardsInDeck: this.cardManager.mainDeck.cards.length,
-      destinyDeck: this.cardManager.destinyDeck.cards.map(card => card.id),
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       unlockedAffinities: this.unlockedAffinities,
-      talents: this.talents.map(talent => talent.id),
-      influence: this.influence
+      influence: this.influence,
+      unlockedDestinyCards: this.unlockedDestinyCards.map(card => card.id)
     };
   }
 
@@ -133,7 +135,7 @@ export class Player
 
     if (isFirstTurn) {
       return this.interceptors.cardsDrawnForTurn.getValue(
-        this.game.gamePhaseSystem.turnPlayer.isPlayer1
+        this.game.gamePhaseSystem.currentPlayer.isPlayer1
           ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
           : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN,
         {}
@@ -182,8 +184,8 @@ export class Player
     return this.interceptors.unlockedAffinities.getValue(this._unlockedAffinities, {});
   }
 
-  get isTurnPlayer() {
-    return this.game.gamePhaseSystem.turnPlayer.equals(this);
+  get isCurrentPlayer() {
+    return this.game.gamePhaseSystem.currentPlayer.equals(this);
   }
 
   get influence() {
@@ -221,10 +223,15 @@ export class Player
     await card.play();
   }
 
-  private async payForDestinyCost(card: AnyCard) {
-    const hasEnough = this.cardManager.destinyZone.size >= card.destinyCost;
+  async playDestinyCard(card: DestinyCard) {
+    await this.payForDestinyCost(card.destinyCost);
+    await card.play();
+    this.unlockedDestinyCards.push(card);
+  }
+
+  private async payForDestinyCost(cost: number) {
+    const hasEnough = this.cardManager.destinyZone.size >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
-    const cost = card.destinyCost;
 
     const banishedCards: Array<{ card: MainDeckCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
@@ -241,26 +248,6 @@ export class Player
         cards: banishedCards
       })
     );
-  }
-
-  async playDestinyDeckCardAtIndex(index: number) {
-    const card = this.cardManager.getDestinyCardAt(index);
-    assert(isDefined(card), new CardNotFoundError());
-
-    await this.payForDestinyCost(card);
-    await card.play();
-  }
-
-  canAddTalent(talent: TalentCard) {
-    return (
-      this.talents.length < this.game.config.MAX_TALENTS &&
-      talent.level <= this.hero.level
-    );
-  }
-
-  async addTalent(talent: TalentCard) {
-    await talent.removeFromCurrentLocation();
-    this.talents.push(talent);
   }
 
   async startTurn() {

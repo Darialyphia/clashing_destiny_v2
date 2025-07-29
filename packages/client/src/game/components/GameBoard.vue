@@ -1,110 +1,241 @@
 <script setup lang="ts">
-import { useFullscreen } from '@vueuse/core';
-import { useMyBoard, useOpponentBoard } from '../composables/useGameClient';
-import { useBoardResize } from '../composables/useBoardResize';
-import Hand from '@/card/components/Hand.vue';
-// import ManaCostModal from './ManaCostModal.vue';
-import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import AffinityModal from './AffinityModal.vue';
-import BoardSide from './BoardSide.vue';
-import Debug from './Debug.vue';
-import ActionsButtons from './ActionsButtons.vue';
-import ExplainerMessage from './ExplainerMessage.vue';
-import GamePhaseTracker from './GamePhaseTracker.vue';
 import CombatArrows from './CombatArrows.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
-import EffectChain from './EffectChain.vue';
-import PlayerInfos from './PlayerInfos.vue';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
 import BattleLog from './BattleLog.vue';
+import Minionzone from './Minionzone.vue';
+import GamePhaseTracker from './GamePhaseTracker.vue';
+import {
+  useGameState,
+  useMyBoard,
+  useMyPlayer,
+  useOpponentBoard,
+  useOpponentPlayer
+} from '../composables/useGameClient';
+import ActionsButtons from './ActionsButtons.vue';
+import HeroSlot from './HeroSlot.vue';
+import Hand from '@/card/components/Hand.vue';
+import DestinyZone from './DestinyZone.vue';
+import ExplainerMessage from './ExplainerMessage.vue';
+import EffectChain from './EffectChain.vue';
+import PlayerStats from './PlayerStats.vue';
+import UnlockedAffinities from './UnlockedAffinities.vue';
+import { useMouse } from '@vueuse/core';
+import { mapRange } from '@game/shared';
+import EquipedArtifacts from './EquipedArtifacts.vue';
+import DestinyPhaseModal from './DestinyPhaseModal.vue';
+import Deck from './Deck.vue';
+import UnlockedDestinies from './UnlockedDestinies.vue';
 
-const board = useTemplateRef('board');
-useBoardResize(board);
-const { isFullscreen } = useFullscreen(document.body);
+const state = useGameState();
 const myBoard = useMyBoard();
 const opponentBoard = useOpponentBoard();
+
+const myPlayer = useMyPlayer();
+const opponentPlayer = useOpponentPlayer();
+
+const { x, y } = useMouse();
+const angleZ = computed(() => {
+  return mapRange(Math.round(x.value), [0, window.innerWidth], [-90, 90]);
+});
+const angleX = computed(() => {
+  return mapRange(
+    window.innerHeight - Math.round(y.value),
+    [0, window.innerHeight],
+    [-90, 90]
+  );
+});
+
+const hasFinishedStartAnimation = ref(false);
+const finishStartAnimation = () => {
+  setTimeout(() => {
+    hasFinishedStartAnimation.value = true;
+  }, 1000);
+};
 </script>
 
 <template>
   <!-- <ManaCostModal /> -->
   <BattleLog />
   <SVGFilters />
-  <DestinyPhaseModal />
+  <DestinyPhaseModal v-if="hasFinishedStartAnimation" />
   <AffinityModal />
   <ChooseCardModal />
   <CombatArrows />
   <PlayedCard />
   <DestinyCostVFX />
-  <div class="arrows" id="arrows" />
 
-  <div class="board-container">
-    <Debug />
-
-    <PlayerInfos />
-    <section
-      id="board"
-      class="board"
-      :class="{ 'full-screen': isFullscreen }"
-      :style="{ '--board-scale': 1 }"
-      ref="board"
-    >
-      <BoardSide :player="opponentBoard.playerId" class="opponent-side" />
-      <div class="middle-row">
-        <GamePhaseTracker />
-        <ExplainerMessage />
-        <EffectChain />
-      </div>
-      <BoardSide :player="myBoard.playerId" class="my-side" />
-    </section>
-    <Hand />
-    <ActionsButtons />
+  <div class="explainer">
+    <ExplainerMessage />
   </div>
+  <ActionsButtons />
+
+  <div class="board" id="board">
+    <section class="p1-zone">
+      <article class="flex flex-col gap-1">
+        <div class="flex gap-3 mb-2">
+          <div class="avatar" />
+          <div>
+            <div>{{ myPlayer.name }}</div>
+            <div>TODO player titles</div>
+          </div>
+        </div>
+        <PlayerStats :player="myPlayer" />
+        <UnlockedDestinies :player="myPlayer" />
+      </article>
+
+      <DestinyZone :player-id="myPlayer.id" />
+      <!-- <TalentTree :player="myPlayer" class="talent-tree" /> -->
+    </section>
+
+    <section class="middle-zone" @animationend="finishStartAnimation">
+      <Deck :player="myPlayer" class="p2-deck" />
+      <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
+      <div class="p2-hero">
+        <HeroSlot :player="opponentPlayer" class="p2-hero" />
+        <EquipedArtifacts :player="opponentPlayer" class="artifacts" />
+      </div>
+      <div class="current-infos">
+        <EffectChain v-if="state.effectChain?.stack.length" />
+        <GamePhaseTracker v-else />
+      </div>
+      <div class="p1-hero">
+        <EquipedArtifacts :player="myPlayer" />
+        <HeroSlot :player="myPlayer" />
+      </div>
+      <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
+      <Deck :player="myPlayer" class="p1-deck" />
+    </section>
+
+    <section class="p2-zone">
+      <article class="flex flex-col gap-1">
+        <div class="flex gap-3 flex-row-reverse mb-2">
+          <div class="avatar" />
+          <div class="text-right">
+            <div>{{ opponentPlayer.name }}</div>
+            <div>TODO player titles</div>
+          </div>
+        </div>
+        <PlayerStats :player="opponentPlayer" class="justify-end" />
+        <UnlockedDestinies :player="opponentPlayer" class="justify-end" />
+      </article>
+
+      <DestinyZone :player-id="opponentPlayer.id" />
+      <!-- <TalentTree :player="opponentPlayer" class="talent-tree" /> -->
+    </section>
+
+    <section class="hand-zone">
+      <Hand />
+    </section>
+  </div>
+  <div class="arrows" id="arrows" />
 </template>
 
 <style scoped lang="postcss">
-.board-container {
-  margin: 0 auto;
-  height: 100dvh;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
 .board {
-  --board-scale: 1;
-  --board-height: 95dvh;
+  --pixel-scale: 2;
+  background: radial-gradient(
+      circle at center,
+      hsla(0, 0%, 0%, 0.5) 0% 25%,
+      hsla(0, 0%, 0%, 0.85) 100%
+    ),
+    url('/assets/backgrounds/battle-bg.png');
+  background-size: cover;
+  filter: brightness(1);
+  height: 100dvh;
+  aspect-ratio: 16 / 9;
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
-  min-height: var(--board-height);
-  row-gap: var(--size-2);
-  transform: rotateX(30deg) translateY(-275px) scale(var(--board-scale));
-  transform-style: preserve-3d;
-  position: relative;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
   margin-inline: auto;
+  /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
+  background-size: cover;
+  transform-style: preserve-3d;
+  perspective: 1600px;
+  position: relative;
+
+  @starting-style {
+    opacity: 0;
+  }
+  transition: opacity 1s var(--ease-2);
 }
 
-@media (width < 1024px) {
-  .board {
-    transform: rotateX(30deg) translateY(-300px)
-      scale(calc(var(--board-scale) / 2));
+.p1-zone {
+  grid-column: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.p2-zone {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.p1-zone,
+.p2-zone {
+  padding: var(--size-6) var(--size-6) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  grid-row: 1;
+  /* pointer-events: none; */
+  align-self: start;
+}
+
+.middle-zone {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  gap: var(--size-2);
+  grid-template-rows: autpo 1fr auto 1fr auto;
+  grid-template-columns: 1fr auto 1fr;
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  grid-column: 2;
+  --angleZ: calc(1deg * v-bind(angleZ));
+  --angleX: calc(1deg * v-bind(angleX));
+  transform: rotateX(25deg);
+  /* uncomment the line below to debug elements position in 3D space */
+  /* transform: rotateX(var(--angleX)) rotateZ(var(--angleZ)); */
+  transform-style: preserve-3d;
+  animation: battlefield 1.5s var(--ease-4);
+}
+
+@keyframes battlefield {
+  from {
+    transform: rotate(45deg) scale(0.5);
+  }
+  to {
+    transform: rotateX(25deg);
   }
 }
 
-:global(.board *) {
+.current-infos {
+  grid-column: 1 / -1;
+}
+
+.hand-zone {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.p1-minions,
+.p2-minions {
+  align-self: center;
   transform-style: preserve-3d;
+  grid-column: 2;
 }
 
-.middle-row {
-  font-size: var(--font-size-4);
-  display: flex;
-  gap: var(--size-3);
-  align-items: center;
-}
-
-.opponent-side {
-  transform: rotateZ(180deg) translateX(-6%);
+.avatar {
+  width: var(--size-8);
+  aspect-ratio: 1;
+  border-radius: var(--radius-round);
+  background-color: black;
+  align-self: center;
 }
 
 #arrows {
@@ -119,5 +250,40 @@ const opponentBoard = useOpponentBoard();
 :global(#arrows > *) {
   grid-column: 1;
   grid-row: 1;
+}
+
+.explainer {
+  position: fixed;
+  top: var(--size-3);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.p1-hero,
+.p2-hero {
+  transform-style: preserve-3d;
+}
+.p1-hero {
+  grid-column: 1;
+  align-self: end;
+  justify-self: end;
+}
+
+.p2-hero {
+  grid-column: 3;
+  align-self: start;
+  justify-self: start;
+  translate: 0 -25%;
+}
+
+.p1-deck {
+  align-self: end;
+}
+
+.p2-deck {
+  align-self: start;
 }
 </style>
