@@ -1,3 +1,6 @@
+import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { Modifier } from '../../../../modifier/modifier.entity';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import { singleEmptyAllySlot } from '../../../card-utils';
 import {
@@ -8,6 +11,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import type { HeroCard } from '../../../entities/hero.entity';
 import { phoenix } from '../minions/phoenix';
 
 export const immortalFlame: ArtifactBlueprint = {
@@ -27,11 +31,43 @@ export const immortalFlame: ArtifactBlueprint = {
   subKind: ARTIFACT_KINDS.WEAPON,
   abilities: [
     {
-      id: 'immortal-blade-ability',
-      label: 'Use ability',
-      description: `@[mana] 4@ @[exhaust]@ : Banish this card. Summon a @${phoenix.name}@ on your side of the field.`,
-      manaCost: 4,
+      id: 'immortal-flame-ability',
+      label: '+2 Attack',
+      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +2@[attack]@.`,
+      manaCost: 0,
       shouldExhaust: true,
+      canUse(game, card) {
+        return card.location === 'board';
+      },
+      async getPreResponseTargets() {
+        return [];
+      },
+      async onResolve(game, card) {
+        await card.player.hero.modifiers.add(
+          new Modifier<HeroCard>('firebrand-buff', game, card, {
+            name: 'Firebrand',
+            description: `+2 Attack.`,
+            icon: 'keyword-attack-buff',
+            mixins: [
+              new UntilEndOfTurnModifierMixin<HeroCard>(game),
+              new HeroInterceptorModifierMixin(game, {
+                key: 'atk',
+                interceptor(value) {
+                  return value + 2;
+                }
+              })
+            ]
+          })
+        );
+        await card.loseDurability(1);
+      }
+    },
+    {
+      id: 'immortal-blade-ability2',
+      label: 'Summon Phoenix',
+      description: `@[mana] 4@ : Banish this card. Summon a @${phoenix.name}@ on your side of the field.`,
+      manaCost: 4,
+      shouldExhaust: false,
       canUse(game, card) {
         return singleEmptyAllySlot.canPlay(game, card) && card.location === 'board';
       },

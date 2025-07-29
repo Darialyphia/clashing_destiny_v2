@@ -7,11 +7,11 @@ import {
   RARITIES
 } from '../../../card.enums';
 
-export const fireAffinity: DestinyBlueprint = {
-  id: 'fire-affinity',
-  name: 'Fire Affinity',
-  cardIconId: 'talent-fire-affinity',
-  description: '@Basic Affinity@.\nAllows you to play Fire cards.',
+export const waterAffinity: DestinyBlueprint = {
+  id: 'water-affinity',
+  name: 'Water Affinity',
+  cardIconId: 'talent-water-affinity',
+  description: '@Basic Affinity@.\nAllows you to play Water cards.',
   collectable: true,
   unique: false,
   destinyCost: 0,
@@ -24,6 +24,6 @@ export const fireAffinity: DestinyBlueprint = {
   minLevel: 0,
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.unlockAffinity(AFFINITIES.FIRE);
+    await card.player.unlockAffinity(AFFINITIES.WATER);
   }
 };

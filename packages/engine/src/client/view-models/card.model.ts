@@ -13,7 +13,13 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import type { Affinity, ArtifactKind, CardKind, SpellKind } from '../../card/card.enums';
+import {
+  CARD_KINDS,
+  type Affinity,
+  type ArtifactKind,
+  type CardKind,
+  type SpellKind
+} from '../../card/card.enums';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
@@ -195,6 +201,9 @@ export class CardViewModel {
     if ('level' in this.data) {
       return this.data.level as number;
     }
+    if ('minLevel' in this.data) {
+      return this.data.minLevel as number;
+    }
 
     return null;
   }
@@ -291,6 +300,17 @@ export class CardViewModel {
     return null;
   }
 
+  get isAttacking() {
+    const relevantKinds: CardKind[] = [CARD_KINDS.MINION, CARD_KINDS.HERO];
+    if (!relevantKinds.includes(this.kind)) {
+      return false;
+    }
+    const state = this.getClient().state;
+
+    return (
+      state.phase.state === GAME_PHASES.ATTACK && state.phase.ctx.attacker === this.id
+    );
+  }
   getPlayer() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
   }

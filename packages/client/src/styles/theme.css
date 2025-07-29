@@ -6,7 +6,7 @@
 */
 :root {
   --color-text-1-hsl: var(--gray-1-hsl);
-  --color-text-2-hsl: var(--gray-2-hsl);
+  --color-text-2-hsl: var(--gray-4-hsl);
   --color-text-3-hsl: var(--gray-3-hsl);
 
   --color-surface-1-hsl: var(--gray-11-hsl);

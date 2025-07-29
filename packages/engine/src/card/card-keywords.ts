@@ -8,6 +8,20 @@ export type Keyword = {
 };
 
 export const KEYWORDS = {
+  BASIC_AFFINITY: {
+    id: 'basic-affinity',
+    name: 'Basic Affinity',
+    description:
+      'You cannot play this card during your Destiny Phase if you already have a Basic Affinity card in play.',
+    aliases: []
+  },
+  ADVANCED_AFFINITY: {
+    id: 'advanced-affinity',
+    name: 'Advanced Affinity',
+    description:
+      'You cannot play this card during your Destiny Phase if you already have an Advanced Affinity card in play.',
+    aliases: []
+  },
   LINEAGE: {
     id: 'lineage',
     name: 'Lineage',
@@ -72,7 +86,7 @@ export const KEYWORDS = {
   LINEAGE_BONUS: {
     id: 'lineage-bonus',
     name: 'Lineage Bonus',
-    description: 'This card has a bonus effect if you have this hero in your lineage.',
+    description: 'This card has a bonus effect if this is your hero.',
     aliases: [/lineage bonus\([a-z\s]\)/]
   },
   LEVEL_BONUS: {

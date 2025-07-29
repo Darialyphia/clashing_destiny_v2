@@ -3,7 +3,10 @@ import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
 import { rustyBlade } from './core/artifacts/rusty-blade';
+import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { fireAffinity } from './core/destinies/fire-affinity';
+import { inspiredBySteel } from './core/destinies/inspired-by-steel';
+import { waterAffinity } from './core/destinies/water-affinity';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
 import { sorcerer } from './core/heroes/sorcerer';
@@ -57,6 +60,9 @@ export const coreSet: CardSet = {
     friendlySlime,
     rustyBlade,
     fireAffinity,
+    waterAffinity,
+    arcaneAffinity,
+    inspiredBySteel,
 
     // Fire
     fireBolt,

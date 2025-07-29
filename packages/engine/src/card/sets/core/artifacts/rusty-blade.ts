@@ -33,7 +33,7 @@ export const rustyBlade: ArtifactBlueprint = {
   abilities: [
     {
       id: 'rusty-blade-ability',
-      label: 'Use ability',
+      label: '+2 Attack',
       description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +2@[attack]@.`,
       manaCost: 0,
       shouldExhaust: true,

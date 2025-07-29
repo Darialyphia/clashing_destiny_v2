@@ -37,8 +37,8 @@ export const firebrand: ArtifactBlueprint = {
   abilities: [
     {
       id: 'firebrand-ability',
-      label: 'Use ability',
-      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +1@[attack]@ and has @On Minion Hit@: Inflicts @Burn@ to the target.`,
+      label: '+1 Attack and Burn',
+      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gains +1@[attack]@ and has @On Minion Hit@: Inflicts @Burn@ to the target.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {

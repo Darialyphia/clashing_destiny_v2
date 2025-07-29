@@ -11,7 +11,7 @@ export const premadeDecks: Array<PremadeDeck> = [
   {
     name: 'Knight Starter Deck',
     destinyDeck: {
-      cards: ['fire-affinity']
+      cards: ['fire-affinity', 'inspired-by-steel']
     },
     mainDeck: {
       cards: [

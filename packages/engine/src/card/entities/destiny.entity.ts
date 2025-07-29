@@ -42,7 +42,12 @@ export class DestinyCard extends Card<
   }
 
   canPlay() {
-    return true;
+    return this.interceptors.canPlay.getValue(
+      this.canPayDestinyCost &&
+        this.minLevel <= this.player.hero.level &&
+        this.interceptors.canPlay.getValue(true, this),
+      this
+    );
   }
 
   async play() {
@@ -51,7 +56,7 @@ export class DestinyCard extends Card<
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
-
+    this.removeFromCurrentLocation();
     await this.blueprint.onPlay(this.game, this);
 
     await this.game.emit(

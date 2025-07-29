@@ -179,10 +179,6 @@ const costStatus = computed(() => {
           :style="{ '--bg': affinityGemBg(card.affinity) }"
         />
       </div>
-      <!--
-      <div class="level" v-if="card.level">
-        <div v-for="i in card.level" :key="i" class="level-icon" />
-      </div> -->
 
       <div class="rarity" />
       <div class="stats">
@@ -202,6 +198,11 @@ const costStatus = computed(() => {
         >
           <div class="dual-text" :data-text="card.destinyCost">
             {{ card.destinyCost }}
+          </div>
+        </div>
+        <div v-if="isDefined(card.level)" class="level">
+          <div class="dual-text" :data-text="card.level">
+            {{ card.level }}
           </div>
         </div>
         <div v-if="isDefined(card.atk)" class="atk">
@@ -319,19 +320,31 @@ const costStatus = computed(() => {
     z-index: -1;
   }
 }
-/*
+
+@property --foil-image-shadow-hue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 @keyframes foil-image {
   from {
-    filter: drop-shadow(0 0 2px cyan)
-      drop-shadow(0px 0px 0px hsl(30 100% 50% / 0.25))
-      drop-shadow(-0px -0px 0px hsl(180 100% 50% / 0.25));
+    filter: drop-shadow(0 0 2px hsl(var(--foil-image-shadow-hue), 100%, 70%))
+      drop-shadow(0px 0px 0px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15))
+      drop-shadow(
+        -0px -0px 0px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15)
+      );
   }
   to {
-    filter: drop-shadow(0 0 2px cyan)
-      drop-shadow(15px 15px 5px hsl(30 100% 50% / 0.25))
-      drop-shadow(-15px -15px 5px hsl(180 100% 50% / 0.25));
+    --foil-image-shadow-hue: 360;
+    filter: drop-shadow(0 0 2px hsl(var(--foil-image-shadow-hue), 100%, 70%))
+      drop-shadow(
+        15px 15px 5px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15)
+      )
+      drop-shadow(
+        -15px -15px 5px hsl(var(--foil-image-shadow-hue) 100% 50% / 0.15)
+      );
   }
-} */
+}
 .image {
   width: calc(96px * var(--pixel-scale));
   height: calc(96px * var(--pixel-scale));
@@ -339,21 +352,17 @@ const costStatus = computed(() => {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  transform-style: preserve-3d;
-  .card-front:has(.foil) &::after {
-    filter: drop-shadow(0 0 2px cyan)
-      drop-shadow(10px 10px 0px hsl(30 100% 50% / 0.25))
-      drop-shadow(-10px -10px 0px hsl(180 100% 50% / 0.25));
-    transform: translateZ(20px);
-    /* animation: foil-image 1.5s infinite alternate var(--ease-2); */
-  }
-  background: v-bind(imageBg);
-  background-size: cover;
-
+  /*card image is in a pseudo element because otherwise the shadow appears before
+   Some property nullifies the z-index ordering, not sure what or why */
   &::after {
     content: '';
     position: absolute;
     inset: 0;
+    background: v-bind(imageBg);
+    background-size: cover;
+  }
+  .card-front:has(.foil) &::after {
+    animation: foil-image 10s infinite alternate var(--ease-2);
   }
 
   :is(.minion, .hero) &::before {
@@ -441,23 +450,7 @@ const costStatus = computed(() => {
 }
 
 .level {
-  position: absolute;
-  top: calc(32px * var(--pixel-scale));
-  right: calc(9px * var(--pixel-scale));
-  display: flex;
-  flex-direction: column;
-  > * {
-    background-image: url('/assets/ui/card-level-filled.png');
-    background-size: cover;
-    background-position: center;
-    width: calc(13px * var(--pixel-scale));
-    height: calc(13px * var(--pixel-scale));
-    display: grid;
-    place-content: center;
-    font-size: 28px;
-    padding-top: calc(4px * var(--pixel-scale));
-    font-family: 'NotJamSlab11', monospace;
-  }
+  background-image: url('/assets/ui/card-level.png');
 }
 
 .buffed {

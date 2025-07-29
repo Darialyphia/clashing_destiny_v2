@@ -86,26 +86,23 @@ const destinyCards = computed<CardViewModel[]>(() => {
         />
 
         <FancyButton
-          variant="info"
-          text="Play"
-          :disabled="selectedIndex === null"
+          :variant="selectedIndex !== null ? 'info' : 'error'"
+          :text="selectedIndex !== null ? 'Play' : 'Skip'"
           @click="
-            isOpened = false;
-            client.networkAdapter.dispatch({
-              type: 'playDestinyCard',
-              payload: {
-                playerId: state.currentPlayer,
-                index: selectedIndex!
+            () => {
+              isOpened = false;
+              if (selectedIndex === null) {
+                return client.skipDestiny();
               }
-            });
-          "
-        />
-        <FancyButton
-          variant="error"
-          text="Skip"
-          @click="
-            isOpened = false;
-            client.skipDestiny();
+
+              client.networkAdapter.dispatch({
+                type: 'playDestinyCard',
+                payload: {
+                  playerId: state.currentPlayer,
+                  index: selectedIndex!
+                }
+              });
+            }
           "
         />
       </footer>

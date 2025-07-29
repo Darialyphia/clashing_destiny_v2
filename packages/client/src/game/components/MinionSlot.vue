@@ -30,20 +30,20 @@ const { player, isHighlighted } = useMinionSlot(
   computed(() => props.minionSlot)
 );
 
-const card = useMaybeEntity<CardViewModel>(
+const minion = useMaybeEntity<CardViewModel>(
   computed(() => props.minionSlot.minion)
 );
 
 const isActionsPopoverOpened = computed({
   get() {
-    if (!card.value) return false;
+    if (!minion.value) return false;
     if (!client.value.ui.selectedCard) return false;
-    return client.value.ui.selectedCard.equals(card.value);
+    return client.value.ui.selectedCard.equals(minion.value);
   },
   set(value) {
-    if (!card.value) return;
+    if (!minion.value) return;
     if (value) {
-      client.value.ui.select(card.value);
+      client.value.ui.select(minion.value);
     } else {
       client.value.ui.unselect();
     }
@@ -58,16 +58,16 @@ const onTakeDamage = async (e: {
     amount: number;
   };
 }) => {
-  if (!card.value) return;
+  if (!minion.value) return;
   if (
-    e.card.id !== card.value.id ||
+    e.card.id !== minion.value.id ||
     !cardElement.value ||
     e.damage.amount <= 0
   ) {
     return;
   }
 
-  card.value.update(e.card);
+  minion.value.update(e.card);
 
   cardElement.value.classList.add('damage');
   cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
@@ -98,7 +98,11 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 <template>
   <div
     class="minion-slot"
-    :class="{ highlighted: isHighlighted, exhausted: card?.isExhausted }"
+    :class="{
+      highlighted: isHighlighted,
+      exhausted: minion?.isExhausted,
+      attacking: minion?.isAttacking
+    }"
     :id="`minion-slot-${props.minionSlot.playerId}-${props.minionSlot.position}-${props.minionSlot.zone}`"
     @click="
       client.ui.onMinionSlotClick({
@@ -108,39 +112,39 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
       })
     "
   >
-    <template v-if="card">
-      <InspectableCard :card-id="card.id" side="left" :side-offset="50">
+    <template v-if="minion">
+      <InspectableCard :card-id="minion.id" side="left" :side-offset="50">
         <div
           class="minion-clickable-area"
-          @click="client.ui.onCardClick(card)"
+          @click="client.ui.onCardClick(minion)"
         />
       </InspectableCard>
       <div
         class="minion-wrapper"
-        :class="{ opponent: card.getPlayer().id !== client.playerId }"
+        :class="{ opponent: minion.getPlayer().id !== client.playerId }"
       >
         <PopoverRoot v-model:open="isActionsPopoverOpened">
           <PopoverAnchor />
           <div
             ref="card"
-            :id="card.id"
+            :id="minion.id"
             :class="{
-              targetable: card.canBeTargeted
+              targetable: minion.canBeTargeted
             }"
             class="slot-minion"
-            :style="{ '--bg': `url(${card?.imagePath})` }"
+            :style="{ '--bg': `url(${minion?.imagePath})` }"
           />
-          <PopoverPortal :disabled="card.location === 'hand'">
+          <PopoverPortal :disabled="minion.location === 'hand'">
             <PopoverContent :side-offset="-50">
               <CardActions
-                :card="card"
+                :card="minion"
                 v-model:is-opened="isActionsPopoverOpened"
               />
             </PopoverContent>
           </PopoverPortal>
         </PopoverRoot>
 
-        <CardStats :card-id="card.id" class="stats" />
+        <CardStats :card-id="minion.id" class="stats" />
       </div>
     </template>
   </div>
@@ -156,9 +160,13 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   background-size: cover;
   position: relative;
   transform-style: preserve-3d;
-  &:hover {
+  &:not(.attacking):hover {
     border-color: var(--cyan-4);
     background: url('/assets/ui/minino-slot-hover.png') no-repeat center;
+  }
+  &.attacking {
+    border-color: var(--red-4);
+    background: url('/assets/ui/minino-slot-attacking.png') no-repeat center;
   }
   &.highlighted {
     border-color: cyan;
