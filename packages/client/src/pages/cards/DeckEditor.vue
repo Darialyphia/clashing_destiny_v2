@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCollectionPage } from './useCollectionPage';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { Icon } from '@iconify/vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
@@ -38,8 +39,14 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
           class="deck-item"
           @click="deckBuilder.removeCard(card.blueprintId)"
         >
-          <div class="mana-cost">{{ card.blueprint.manaCost }}</div>
-          {{ card.blueprint.name }} X {{ card.copies }}
+          <div class="mana-cost" v-if="'manaCost' in card.blueprint">
+            {{ card.blueprint.manaCost }}
+          </div>
+          <div class="destiny-cost" v-if="'destinyCost' in card.blueprint">
+            {{ card.blueprint.destinyCost }}
+          </div>
+          {{ card.blueprint.name }}
+          <template v-if="'copies' in card">X {{ card.copies }}</template>
         </li>
       </ul>
     </div>

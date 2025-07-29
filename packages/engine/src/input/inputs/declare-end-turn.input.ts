@@ -1,7 +1,7 @@
 import { assert } from '@game/shared';
 import { defaultInputSchema, Input } from '../input';
 import { GAME_PHASES } from '../../game/game.enums';
-import { NotcurrentPlayerError } from '../input-errors';
+import { NotCurrentPlayerError } from '../input-errors';
 
 const schema = defaultInputSchema;
 
@@ -15,7 +15,7 @@ export class DeclareEndTurnInput extends Input<typeof schema> {
   async impl() {
     assert(
       this.game.gamePhaseSystem.currentPlayer.equals(this.player),
-      new NotcurrentPlayerError()
+      new NotCurrentPlayerError()
     );
 
     await this.game.gamePhaseSystem.declareEndPhase();

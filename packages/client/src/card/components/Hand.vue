@@ -137,21 +137,23 @@ const displayCards = computed(() => {
     position: relative;
     --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
     --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
-    /* --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg); */
-    --rotation: 0deg;
+    --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
+    /* --rotation: 0deg; */
     /* --y-offset: calc(var(--offset) * 10px); */
     --y-offset: 0;
     transform-origin: center 120%;
     transform: translateX(
         calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
       )
-      translateY(var(--y-offset));
+      translateY(var(--y-offset)) rotate(var(--rotation));
     transition: transform 0.2s ease-out;
 
+    .hand:hover & {
+      --rotation: 0deg;
+    }
     &:is(:hover, .selected) {
       z-index: 1;
       --y-offset: -62%;
-      --counter-rotation: calc(var(--rotation) * -1);
       transform: translateX(
           calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
         )

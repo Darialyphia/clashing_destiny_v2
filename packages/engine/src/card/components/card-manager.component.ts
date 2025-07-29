@@ -4,12 +4,14 @@ import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
 import { CARD_DECK_SOURCES } from '../card.enums';
-import type { MainDeckCard } from '../../board/board.system';
+import type { DestinyDeckCard, MainDeckCard } from '../../board/board.system';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
+import type { DestinyCard } from '../entities/destiny.entity';
 
 export type CardManagerComponentOptions = {
   mainDeck: string[];
+  destinyDeck: string[];
   maxHandSize: number;
   shouldShuffleDeck: boolean;
 };
@@ -17,6 +19,7 @@ export type CardManagerComponentOptions = {
 export type CardLocation =
   | 'hand'
   | 'mainDeck'
+  | 'destinyDeck'
   | 'discardPile'
   | 'banishPile'
   | 'destinyZone'
@@ -26,6 +29,8 @@ export class CardManagerComponent {
   private game: Game;
 
   readonly mainDeck: Deck<MainDeckCard>;
+
+  readonly destinyDeck: Deck<DestinyCard>;
 
   readonly hand: MainDeckCard[] = [];
 
@@ -42,6 +47,7 @@ export class CardManagerComponent {
   ) {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
+    this.destinyDeck = new Deck(this.game, player);
 
     if (options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
@@ -57,9 +63,13 @@ export class CardManagerComponent {
   }
 
   async init() {
-    const mainDeckCards = await this.buildCards<MainDeckCard>(this.options.mainDeck);
+    const [mainDeckCards, destinyDeckCards] = await Promise.all([
+      this.buildCards<MainDeckCard>(this.options.mainDeck),
+      this.buildCards<DestinyCard>(this.options.destinyDeck)
+    ]);
 
     this.mainDeck.populate(mainDeckCards);
+    this.destinyDeck.populate(destinyDeckCards);
     this.mainDeck.shuffle();
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
     const initialDestinyCards = this.mainDeck.draw(
@@ -78,8 +88,16 @@ export class CardManagerComponent {
     return this.mainDeck.remaining;
   }
 
+  get remainingCardsInDestinyDeck() {
+    return this.destinyDeck.remaining;
+  }
+
   get mainDeckSize() {
     return this.mainDeck.size;
+  }
+
+  get destinyDeckSize() {
+    return this.destinyDeck.size;
   }
 
   findCard(id: string): {
@@ -91,6 +109,9 @@ export class CardManagerComponent {
 
     const mainDeckCard = this.mainDeck.cards.find(card => card.id === id);
     if (mainDeckCard) return { card: mainDeckCard, location: 'mainDeck' };
+
+    const destinyDeckCard = this.destinyDeck.cards.find(card => card.id === id);
+    if (destinyDeckCard) return { card: destinyDeckCard, location: 'destinyDeck' };
 
     const discardPileCard = [...this.discardPile].find(card => card.id === id);
     if (discardPileCard) return { card: discardPileCard, location: 'discardPile' };
@@ -111,6 +132,10 @@ export class CardManagerComponent {
 
   getCardInHandAt(index: number) {
     return [...this.hand][index];
+  }
+
+  getDestinyCardAt(index: number) {
+    return this.destinyDeck.cards[index];
   }
 
   async draw(amount: number) {
@@ -150,6 +175,14 @@ export class CardManagerComponent {
     cards.forEach(card => {
       this.sendToDestinyZone(card);
     });
+  }
+
+  removeFromDestinyDeck(card: AnyCard) {
+    const index = this.destinyDeck.cards.findIndex(destinyCard =>
+      destinyCard.equals(card)
+    );
+    if (index === -1) return;
+    this.destinyDeck.cards.splice(index, 1);
   }
 
   removeFromHand(card: AnyCard) {

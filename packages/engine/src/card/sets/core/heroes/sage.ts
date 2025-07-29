@@ -97,8 +97,5 @@ export const sage: HeroBlueprint = {
         ]
       })
     );
-  },
-  talentTree: {
-    nodes: []
   }
 };

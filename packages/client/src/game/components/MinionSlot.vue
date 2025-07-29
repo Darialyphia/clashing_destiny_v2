@@ -109,7 +109,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
     "
   >
     <template v-if="card">
-      <InspectableCard :card-id="card.id" side="right">
+      <InspectableCard :card-id="card.id" side="left" :side-offset="50">
         <div
           class="minion-clickable-area"
           @click="client.ui.onCardClick(card)"
@@ -181,10 +181,10 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   width: 100%;
   aspect-ratio: 1;
   position: relative;
-  transition: filter 0.8s var(--ease-3);
+  transition: filter 0.5s var(--ease-3);
 
   @starting-style {
-    filter: brightness(600%) blur(5px);
+    filter: brightness(400%) blur(5px);
   }
   &::before {
     --pixel-scale: 1;

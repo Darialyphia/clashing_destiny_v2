@@ -31,7 +31,7 @@ export class TooManyMulliganedCardsError extends InputError {
   }
 }
 
-export class NotcurrentPlayerError extends InputError {
+export class NotCurrentPlayerError extends InputError {
   constructor() {
     super('You are not the active player.');
   }

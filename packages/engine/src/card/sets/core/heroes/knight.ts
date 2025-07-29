@@ -16,7 +16,7 @@ export const knight: HeroBlueprint = {
   cardIconId: 'hero-knight',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  affinities: [AFFINITIES.FIRE],
+  affinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
@@ -65,8 +65,5 @@ export const knight: HeroBlueprint = {
   ],
   tags: [],
   async onInit() {},
-  async onPlay() {},
-  talentTree: {
-    nodes: []
-  }
+  async onPlay() {}
 };

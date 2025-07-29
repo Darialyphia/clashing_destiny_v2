@@ -26,7 +26,9 @@ import UnlockedAffinities from './UnlockedAffinities.vue';
 import { useMouse } from '@vueuse/core';
 import { mapRange } from '@game/shared';
 import EquipedArtifacts from './EquipedArtifacts.vue';
+import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import Deck from './Deck.vue';
+import UnlockedDestinies from './UnlockedDestinies.vue';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -37,22 +39,29 @@ const opponentPlayer = useOpponentPlayer();
 
 const { x, y } = useMouse();
 const angleZ = computed(() => {
-  return mapRange(Math.round(x.value), [0, window.innerWidth], [-180, 180]);
+  return mapRange(Math.round(x.value), [0, window.innerWidth], [-90, 90]);
 });
 const angleX = computed(() => {
   return mapRange(
     window.innerHeight - Math.round(y.value),
     [0, window.innerHeight],
-    [-180, 180]
+    [-90, 90]
   );
 });
+
+const hasFinishedStartAnimation = ref(false);
+const finishStartAnimation = () => {
+  setTimeout(() => {
+    hasFinishedStartAnimation.value = true;
+  }, 1000);
+};
 </script>
 
 <template>
   <!-- <ManaCostModal /> -->
   <BattleLog />
   <SVGFilters />
-  <!-- <DestinyPhaseModal /> -->
+  <DestinyPhaseModal v-if="hasFinishedStartAnimation" />
   <AffinityModal />
   <ChooseCardModal />
   <CombatArrows />
@@ -75,15 +84,15 @@ const angleX = computed(() => {
           </div>
         </div>
         <PlayerStats :player="myPlayer" />
-        <UnlockedAffinities :player="myPlayer" class="affinities" />
+        <UnlockedDestinies :player="myPlayer" />
       </article>
 
       <DestinyZone :player-id="myPlayer.id" />
       <!-- <TalentTree :player="myPlayer" class="talent-tree" /> -->
     </section>
 
-    <section class="middle-zone">
-      <Deck :player="myPlayer" />
+    <section class="middle-zone" @animationend="finishStartAnimation">
+      <Deck :player="myPlayer" class="p2-deck" />
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="p2-hero">
         <HeroSlot :player="opponentPlayer" class="p2-hero" />
@@ -98,7 +107,7 @@ const angleX = computed(() => {
         <HeroSlot :player="myPlayer" />
       </div>
       <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
-      <Deck :player="myPlayer" />
+      <Deck :player="myPlayer" class="p1-deck" />
     </section>
 
     <section class="p2-zone">
@@ -111,7 +120,7 @@ const angleX = computed(() => {
           </div>
         </div>
         <PlayerStats :player="opponentPlayer" class="justify-end" />
-        <UnlockedAffinities :player="opponentPlayer" class="justify-end" />
+        <UnlockedDestinies :player="opponentPlayer" class="justify-end" />
       </article>
 
       <DestinyZone :player-id="opponentPlayer.id" />
@@ -128,6 +137,13 @@ const angleX = computed(() => {
 <style scoped lang="postcss">
 .board {
   --pixel-scale: 2;
+  background: radial-gradient(
+      circle at center,
+      hsla(0, 0%, 0%, 0.5) 0% 25%,
+      hsla(0, 0%, 0%, 0.85) 100%
+    ),
+    url('/assets/backgrounds/battle-bg.png');
+  background-size: cover;
   filter: brightness(1);
   height: 100dvh;
   aspect-ratio: 16 / 9;
@@ -261,5 +277,13 @@ const angleX = computed(() => {
   align-self: start;
   justify-self: start;
   translate: 0 -25%;
+}
+
+.p1-deck {
+  align-self: end;
+}
+
+.p2-deck {
+  align-self: start;
 }
 </style>

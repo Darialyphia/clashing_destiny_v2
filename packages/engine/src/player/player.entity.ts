@@ -2,7 +2,7 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, type Serializable } from '@game/shared';
+import { assert, isDefined, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -23,11 +23,13 @@ import {
 import type { MainDeckCard } from '../board/board.system';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import { type SerializedTalentTree } from '../card/talent-tree';
+import type { DestinyCard } from '../card/entities/destiny.entity';
 
 export type PlayerOptions = {
   id: string;
   name: string;
   mainDeck: { cards: string[] };
+  destinyDeck: { cards: string[] };
   hero: string;
 };
 
@@ -46,7 +48,7 @@ export type SerializedPlayer = {
   currentHp: number;
   isPlayer1: boolean;
   unlockedAffinities: Affinity[];
-  talentTree: SerializedTalentTree;
+  unlockedDestinyCards: string[];
 };
 
 type PlayerInterceptors = {
@@ -80,6 +82,8 @@ export class Player
 
   private _hero!: HeroCard;
 
+  readonly unlockedDestinyCards: DestinyCard[] = [];
+
   constructor(
     game: Game,
     private options: PlayerOptions
@@ -90,6 +94,7 @@ export class Player
     this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       mainDeck: this.options.mainDeck.cards,
+      destinyDeck: this.options.destinyDeck.cards,
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
@@ -121,7 +126,7 @@ export class Player
       isPlayer1: this.isPlayer1,
       unlockedAffinities: this.unlockedAffinities,
       influence: this.influence,
-      talentTree: this._hero.talentTree.serialize()
+      unlockedDestinyCards: this.unlockedDestinyCards.map(card => card.id)
     };
   }
 
@@ -179,7 +184,7 @@ export class Player
     return this.interceptors.unlockedAffinities.getValue(this._unlockedAffinities, {});
   }
 
-  get iscurrentPlayer() {
+  get isCurrentPlayer() {
     return this.game.gamePhaseSystem.currentPlayer.equals(this);
   }
 
@@ -216,6 +221,12 @@ export class Player
   async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
     this.payForManaCost(card, manaCostIndices);
     await card.play();
+  }
+
+  async playDestinyCard(card: DestinyCard) {
+    await this.payForDestinyCost(card.destinyCost);
+    await card.play();
+    this.unlockedDestinyCards.push(card);
   }
 
   private async payForDestinyCost(cost: number) {

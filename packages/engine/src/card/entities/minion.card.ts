@@ -206,7 +206,7 @@ export class MinionCard extends Card<
   }
 
   get hasSummoningSickness(): boolean {
-    return this.interceptors.hasSummoningSickness.getValue(false, this);
+    return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
   get position() {
@@ -251,11 +251,7 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    const base =
-      this.position?.zone === 'attack' &&
-      !this._isExhausted &&
-      this.atk > 0 &&
-      (this.player.isPlayer1 ? this.game.gamePhaseSystem.elapsedTurns > 0 : true);
+    const base = this.position?.zone === 'attack' && !this._isExhausted && this.atk > 0;
 
     return this.interceptors.canAttack.getValue(base, {
       target

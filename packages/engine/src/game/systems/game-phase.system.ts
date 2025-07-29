@@ -14,10 +14,10 @@ import { DrawPhase } from '../phases/draw.phase';
 import { MainPhase } from '../phases/main.phase';
 import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
+import { DestinyPhase } from '../phases/destiny.phase';
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
-  DRAW_FOR_FIRST_TURN: 'draw_for_first_turn',
   GO_TO_MAIN_PHASE: 'go_to_main_phase',
   DECLARE_ATTACK: 'declare_attack',
   FINISH_ATTACK: 'finish_attack',
@@ -40,6 +40,10 @@ export type GamePhaseContext =
       ctx: DrawPhase;
     }
   | {
+      state: BetterExtract<GamePhase, 'destiny_phase'>;
+      ctx: DestinyPhase;
+    }
+  | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: MainPhase;
     }
@@ -60,6 +64,10 @@ export type SerializedGamePhaseContext =
   | {
       state: BetterExtract<GamePhase, 'draw_phase'>;
       ctx: ReturnType<DrawPhase['serialize']>;
+    }
+  | {
+      state: BetterExtract<GamePhase, 'destiny_phase'>;
+      ctx: ReturnType<DestinyPhase['serialize']>;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
@@ -89,6 +97,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
+    [GAME_PHASES.DESTINY]: DestinyPhase,
     [GAME_PHASES.MAIN]: MainPhase,
     [GAME_PHASES.ATTACK]: CombatPhase,
     [GAME_PHASES.END]: EndPhase,
@@ -104,11 +113,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       stateTransition(
         GAME_PHASES.DRAW,
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
-        GAME_PHASES.MAIN
+        GAME_PHASES.DESTINY
       ),
       stateTransition(
-        GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.DRAW_FOR_FIRST_TURN,
+        GAME_PHASES.DESTINY,
+        GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE,
         GAME_PHASES.MAIN
       ),
       stateTransition(
@@ -139,6 +148,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(
         GAME_PHASES.DRAW,
+        GAME_PHASE_TRANSITIONS.PLAYER_WON,
+        GAME_PHASES.GAME_END
+      ),
+      stateTransition(
+        GAME_PHASES.DESTINY,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       ),

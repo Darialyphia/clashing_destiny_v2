@@ -27,7 +27,7 @@ export class DeclareBlockerInput extends Input<typeof schema> {
   }
 
   async impl() {
-    assert(!this.player.iscurrentPlayer, new IllegalTargetError());
+    assert(!this.player.isCurrentPlayer, new IllegalTargetError());
 
     const { ctx } = this.game.gamePhaseSystem.getContext<GamePhasesDict['ATTACK']>();
 

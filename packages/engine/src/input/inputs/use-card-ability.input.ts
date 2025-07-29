@@ -4,7 +4,7 @@ import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import {
   IllegalAbilityError,
-  NotcurrentPlayerError,
+  NotCurrentPlayerError,
   UnknownCardError
 } from '../input-errors';
 import { ArtifactCard } from '../../card/entities/artifact.entity';

@@ -38,7 +38,6 @@ export type CardInterceptors = {
   destinyCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
-  needAffinityToBePlayed: Interceptable<boolean>;
   hasAffinityMatch: Interceptable<boolean>;
 };
 
@@ -47,7 +46,6 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  needAffinityToBePlayed: new Interceptable(),
   hasAffinityMatch: new Interceptable<boolean>()
 });
 
@@ -152,10 +150,6 @@ export abstract class Card<
     return this.interceptors.loyalty.getValue(this.game.config.BASE_LOYALTY, {}) ?? 0;
   }
 
-  get needAffinityToBePlayed() {
-    return this.interceptors.needAffinityToBePlayed.getValue(false, {});
-  }
-
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
@@ -168,6 +162,17 @@ export abstract class Card<
       this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
       this.manaCost
     );
+  }
+
+  get destinyCost(): number {
+    if ('destinyCost' in this.blueprint) {
+      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
+    }
+    return 0;
+  }
+
+  get canPayDestinyCost() {
+    return this.player.cardManager.destinyZone.size >= this.destinyCost;
   }
 
   removeFromCurrentLocation() {
@@ -201,6 +206,14 @@ export abstract class Card<
           );
         }
         this.player.cardManager.mainDeck.pluck(this);
+      })
+      .with('destinyDeck', () => {
+        if (!isMainDeckCard(this)) {
+          throw new IllegalGameStateError(
+            `Cannot remove card ${this.id} from destiny deck when it is not a main deck card.`
+          );
+        }
+        this.player.cardManager.removeFromDestinyDeck(this);
       })
       .with('destinyZone', () => {
         if (!isMainDeckCard(this)) {

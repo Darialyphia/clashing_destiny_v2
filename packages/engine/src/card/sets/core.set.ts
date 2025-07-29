@@ -3,6 +3,7 @@ import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
 import { rustyBlade } from './core/artifacts/rusty-blade';
+import { fireAffinity } from './core/destinies/fire-affinity';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
 import { sorcerer } from './core/heroes/sorcerer';
@@ -55,6 +56,7 @@ export const coreSet: CardSet = {
     courageousFootsoldier,
     friendlySlime,
     rustyBlade,
+    fireAffinity,
 
     // Fire
     fireBolt,

@@ -1,7 +1,7 @@
-import { isDefined, type Nullable } from '@game/shared';
+import { isDefined } from '@game/shared';
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
+import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -15,7 +15,10 @@ export type ValidatableDeck = {
     blueprintId: string;
     copies: number;
   }>;
-  hero: Nullable<string>;
+  [CARD_DECK_SOURCES.DESTINY_DECK]: Array<{
+    blueprintId: string;
+  }>;
+  hero: string;
 };
 
 export type DeckValidationResult =
@@ -26,7 +29,9 @@ export type DeckValidationResult =
 
 export type DeckValidator = {
   maxCopiesForMainDeckCard: number;
+  maxCopiesForDestinyCard: number;
   mainDeckSize: number;
+  destinyDeckSize: number;
   validate(deck: ValidatableDeck): DeckValidationResult;
   canAdd(card: CardBlueprint, deck: ValidatableDeck): boolean;
 };
@@ -38,8 +43,16 @@ export class StandardDeckValidator implements DeckValidator {
     return defaultConfig.MAX_MAIN_DECK_SIZE;
   }
 
+  get destinyDeckSize(): number {
+    return defaultConfig.MAX_DESTINY_DECK_SIZE;
+  }
+
   get maxCopiesForMainDeckCard(): number {
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
+  }
+
+  get maxCopiesForDestinyCard(): number {
+    return defaultConfig.MAX_DESTINY_DECK_CARD_COPIES;
   }
 
   private validateCard(
@@ -120,6 +133,12 @@ export class StandardDeckValidator implements DeckValidator {
         blueprint: this.cardPool[card.blueprintId] as CardBlueprint & {
           decksource: typeof CARD_DECK_SOURCES.MAIN_DECK;
         }
+      })),
+      destiny: deck[CARD_DECK_SOURCES.DESTINY_DECK].map(card => ({
+        ...card,
+        blueprint: this.cardPool[card.blueprintId] as CardBlueprint & {
+          decksource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
+        }
       }))
     };
 
@@ -138,6 +157,13 @@ export class StandardDeckValidator implements DeckValidator {
       }
 
       return true;
+    } else if (card.kind === CARD_KINDS.DESTINY) {
+      if (withBlueprint.destiny.length >= this.destinyDeckSize) {
+        return false;
+      }
+      const existing = withBlueprint.destiny.find(c => c.blueprint.id === card.id);
+
+      return !isDefined(existing);
     } else {
       return !isDefined(deck.hero);
     }

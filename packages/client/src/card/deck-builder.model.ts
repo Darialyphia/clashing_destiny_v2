@@ -19,7 +19,8 @@ export class DeckBuilderViewModel {
     id: nanoid(4),
     name: 'New Deck',
     [CARD_DECK_SOURCES.MAIN_DECK]: [],
-    hero: null
+    [CARD_DECK_SOURCES.DESTINY_DECK]: [],
+    hero: null as unknown as string // will be filled later
   };
 
   constructor(
@@ -33,7 +34,11 @@ export class DeckBuilderViewModel {
     return (
       this._deck[CARD_DECK_SOURCES.MAIN_DECK].some(
         card => card.blueprintId === blueprintId
-      ) || this._deck.hero === blueprintId
+      ) ||
+      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].some(
+        card => card.blueprintId === blueprintId
+      ) ||
+      this._deck.hero === blueprintId
     );
   }
 
@@ -45,6 +50,18 @@ export class DeckBuilderViewModel {
 
     if (card.blueprint.kind === CARD_KINDS.HERO) {
       this._deck.hero = blueprintId;
+      return;
+    }
+
+    if (card.blueprint.kind === CARD_KINDS.DESTINY) {
+      const existing = this._deck[CARD_DECK_SOURCES.DESTINY_DECK].find(
+        card => card.blueprintId === blueprintId
+      );
+      if (existing) return;
+
+      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].push({
+        blueprintId
+      });
       return;
     }
 
@@ -65,21 +82,24 @@ export class DeckBuilderViewModel {
     }
 
     if (card.blueprint.kind === CARD_KINDS.HERO) {
-      this._deck.hero = null;
+      this._deck.hero = null as any;
       return;
     }
 
-    const existing = this._deck.mainDeck.find(
+    const isMainDeck = this._deck.mainDeck.find(
       card => card.blueprintId === blueprintId
     );
-    if (existing) {
-      existing.copies--;
-      if (existing.copies <= 0) {
+    if (isMainDeck) {
+      isMainDeck.copies--;
+      if (isMainDeck.copies <= 0) {
         this._deck.mainDeck = this._deck.mainDeck.filter(
           card => card.blueprintId !== blueprintId
         );
       }
     }
+    this._deck[CARD_DECK_SOURCES.DESTINY_DECK] = this._deck[
+      CARD_DECK_SOURCES.DESTINY_DECK
+    ].filter(card => card.blueprintId !== blueprintId);
   }
 
   get validator() {
@@ -104,13 +124,14 @@ export class DeckBuilderViewModel {
   }
 
   get cards() {
-    return this._deck[CARD_DECK_SOURCES.MAIN_DECK]
+    return [
+      ...this._deck[CARD_DECK_SOURCES.MAIN_DECK],
+      ...this._deck[CARD_DECK_SOURCES.DESTINY_DECK]
+    ]
       .map(card => {
         const blueprint = this.cardPool.find(
           c => c.blueprint.id === card.blueprintId
-        )!.blueprint as CardBlueprint & {
-          deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
-        };
+        )!.blueprint as CardBlueprint;
 
         return {
           ...card,
@@ -118,10 +139,41 @@ export class DeckBuilderViewModel {
         };
       })
       .toSorted((a, b) => {
-        if (a.blueprint.manaCost === b.blueprint.manaCost) {
-          return a.blueprint.name.localeCompare(b.blueprint.name);
+        if (
+          a.blueprint.kind === CARD_KINDS.DESTINY &&
+          b.blueprint.kind !== CARD_KINDS.DESTINY
+        ) {
+          return -1;
         }
-        return a.blueprint.manaCost - b.blueprint.manaCost;
+
+        if (
+          a.blueprint.kind !== CARD_KINDS.DESTINY &&
+          b.blueprint.kind === CARD_KINDS.DESTINY
+        ) {
+          return 1;
+        }
+
+        if (
+          a.blueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          b.blueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK
+        ) {
+          if (a.blueprint.manaCost === b.blueprint.manaCost) {
+            return a.blueprint.name.localeCompare(b.blueprint.name);
+          }
+          return a.blueprint.manaCost - b.blueprint.manaCost;
+        }
+
+        if (
+          a.blueprint.kind === CARD_KINDS.DESTINY &&
+          b.blueprint.kind === CARD_KINDS.DESTINY
+        ) {
+          if (a.blueprint.destinyCost === b.blueprint.destinyCost) {
+            return a.blueprint.name.localeCompare(b.blueprint.name);
+          }
+          return a.blueprint.destinyCost - b.blueprint.destinyCost;
+        }
+
+        return 0;
       });
   }
 
@@ -146,7 +198,8 @@ export class DeckBuilderViewModel {
       id: nanoid(4),
       name: 'New Deck',
       [CARD_DECK_SOURCES.MAIN_DECK]: [],
-      hero: null
+      [CARD_DECK_SOURCES.DESTINY_DECK]: [],
+      hero: null as any
     };
   }
 }

@@ -344,4 +344,13 @@ export class GameClient {
       }
     });
   }
+
+  skipDestiny() {
+    this.networkAdapter.dispatch({
+      type: 'skipDestiny',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
 }

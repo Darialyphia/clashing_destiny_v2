@@ -23,6 +23,8 @@ useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async e => {
 });
 useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
   isDisplayed.value = true;
+  if (!cards.value.length) return;
+
   cards.value.forEach(card => {
     const el = root.value!.querySelector(
       client.value.ui.getCardDOMSelector(card.card)

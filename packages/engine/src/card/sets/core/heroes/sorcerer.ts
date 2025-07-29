@@ -27,8 +27,5 @@ export const sorcerer: HeroBlueprint = {
   abilities: [],
   tags: [],
   async onInit() {},
-  async onPlay() {},
-  talentTree: {
-    nodes: []
-  }
+  async onPlay() {}
 };

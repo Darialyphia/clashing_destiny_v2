@@ -227,7 +227,6 @@ const costStatus = computed(() => {
       </div>
       <div class="kind">
         <div class="kind-icon" />
-        <template v-if="isDefined(card.level)">Lvl {{ card.level }}</template>
         {{ card.kind.toLocaleLowerCase() }}
       </div>
       <div

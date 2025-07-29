@@ -3373,6 +3373,19 @@
         },
         {
           "alias": [
+            "card-kind-destiny.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-kind-hero.png"
           ],
           "src": [

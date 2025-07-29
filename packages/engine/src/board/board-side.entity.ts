@@ -57,6 +57,7 @@ export type SerializedBoardSide = {
   mainDeck: { total: number; remaining: number };
   discardPile: string[];
   banishPile: string[];
+  destinyDeck: string[];
 };
 
 export type SerializedBoard = {
@@ -239,7 +240,13 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {})
+      .with(
+        CARD_KINDS.HERO,
+        CARD_KINDS.SPELL,
+        CARD_KINDS.ARTIFACT,
+        CARD_KINDS.DESTINY,
+        () => {}
+      )
       .with(CARD_KINDS.MINION, () => {
         this.attackZone.slots.forEach(slot => {
           if (slot.minion?.equals(card)) {
@@ -275,7 +282,8 @@ export class BoardSide
       mainDeck: {
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck
-      }
+      },
+      destinyDeck: this.player.cardManager.destinyDeck.cards.map(card => card.id)
     };
   }
 }

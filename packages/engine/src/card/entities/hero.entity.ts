@@ -24,13 +24,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import {
-  type SerializedTalentTree,
-  type SerializedTalentTreeNode,
-  TalentTree,
-  TalentTreeNode
-} from '../talent-tree';
-import { GameError } from '../../game/game-error';
+import type { DestinyCard } from './destiny.entity';
 
 export type SerializedHeroCard = SerializedCard & {
   level: number;
@@ -44,7 +38,6 @@ export type SerializedHeroCard = SerializedCard & {
   remainingHp: number;
   abilities: SerializedAbility[];
   unlockableAffinities: string[];
-  talentTree: SerializedTalentTree;
 };
 export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
@@ -154,13 +147,12 @@ export class HeroUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class HeroLevelUpEvent extends TypedSerializableEvent<
-  { card: HeroCard; talent: TalentTreeNode },
-  { card: SerializedHeroCard; talent: SerializedTalentTreeNode }
+  { card: HeroCard },
+  { card: SerializedHeroCard }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
-      talent: this.data.talent.serialize()
+      card: this.data.card.serialize()
     };
   }
 }
@@ -182,8 +174,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   private damageTaken = 0;
 
   private abilityTargets = new Map<string, PreResponseTarget[]>();
-
-  readonly talentTree: TalentTree;
 
   unlockedAffinity!: Affinity;
 
@@ -209,11 +199,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       },
       options
     );
-    this.talentTree = new TalentTree(game, options.blueprint.talentTree, this);
   }
 
   get level() {
-    return this.talentTree.unlockedNodes.length;
+    return this.player.unlockedDestinyCards.length;
   }
 
   get isAlive() {
@@ -405,21 +394,17 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  async levelup(talentNodeId: string) {
-    const node = this.talentTree.getNode(talentNodeId);
-    if (!node) {
-      throw new GameError(`Talent node with id ${talentNodeId} not found.`);
-    }
+  async levelup(destinyCard: DestinyCard) {
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
-      new HeroLevelUpEvent({ card: this, talent: node })
+      new HeroLevelUpEvent({ card: this })
     );
 
-    await node.unlock();
+    await this.player.playDestinyCard(destinyCard);
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_LEVEL_UP,
-      new HeroLevelUpEvent({ card: this, talent: node })
+      new HeroLevelUpEvent({ card: this })
     );
   }
 
@@ -449,8 +434,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         description: ability.description,
         targets:
           this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      })),
-      talentTree: this.talentTree.serialize()
+      }))
     };
   }
 }
