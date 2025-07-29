@@ -26,6 +26,7 @@ import UnlockedAffinities from './UnlockedAffinities.vue';
 import { useMouse } from '@vueuse/core';
 import { mapRange } from '@game/shared';
 import EquipedArtifacts from './EquipedArtifacts.vue';
+import Deck from './Deck.vue';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -82,6 +83,7 @@ const angleX = computed(() => {
     </section>
 
     <section class="middle-zone">
+      <Deck :player="myPlayer" />
       <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
       <div class="p2-hero">
         <HeroSlot :player="opponentPlayer" class="p2-hero" />
@@ -96,6 +98,7 @@ const angleX = computed(() => {
         <HeroSlot :player="myPlayer" />
       </div>
       <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
+      <Deck :player="myPlayer" />
     </section>
 
     <section class="p2-zone">
