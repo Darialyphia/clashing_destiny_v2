@@ -25,7 +25,9 @@ import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flameExorcist } from './core/minions/flame-exorcist';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
 import { friendlySlime } from './core/minions/friendly-slime';
+import { heraldOfSalvation } from './core/minions/herald-of-salvation';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
+import { luminescentMystic } from './core/minions/luminescent-mystic';
 import { magicChanneler } from './core/minions/magic-channeler';
 import { magicFueledGolem } from './core/minions/magic-fueled-golem';
 import { phoenix } from './core/minions/phoenix';
@@ -71,6 +73,8 @@ export const coreSet: CardSet = {
     insight,
     manaVisions,
     rainbowSword,
+    heraldOfSalvation,
+    luminescentMystic,
 
     // Fire
     fireBolt,

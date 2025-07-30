@@ -11,7 +11,8 @@ export const waterAffinity: DestinyBlueprint = {
   id: 'water-affinity',
   name: 'Water Affinity',
   cardIconId: 'talent-water-affinity',
-  description: '@Basic Affinity@.\nAllows you to play Water cards.',
+  description:
+    'Allows you to play Water cards. Costs @[mana] 1@ more for each affinity you have unlocked.',
   collectable: true,
   unique: false,
   destinyCost: 0,
@@ -22,7 +23,14 @@ export const waterAffinity: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 0,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.addInterceptor(
+      'destinyCost',
+      value =>
+        value! +
+        card.player.unlockedAffinities.filter(a => a !== AFFINITIES.NORMAL).length
+    );
+  },
   async onPlay(game, card) {
     await card.player.unlockAffinity(AFFINITIES.WATER);
   }

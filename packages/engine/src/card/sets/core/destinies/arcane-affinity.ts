@@ -11,10 +11,11 @@ export const arcaneAffinity: DestinyBlueprint = {
   id: 'arcane-affinity',
   name: 'Arcane Affinity',
   cardIconId: 'talent-arcane-affinity',
-  description: '@Advanced Affinity@.\nAllows you to play Arcane cards.',
+  description:
+    'Allows you to play Arcane cards. Costs @[mana] 1@ more for each affinity you have unlocked.',
   collectable: true,
   unique: false,
-  destinyCost: 2,
+  destinyCost: 1,
   affinity: AFFINITIES.NORMAL,
   kind: CARD_KINDS.DESTINY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
@@ -22,7 +23,14 @@ export const arcaneAffinity: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.addInterceptor(
+      'destinyCost',
+      value =>
+        value! +
+        card.player.unlockedAffinities.filter(a => a !== AFFINITIES.NORMAL).length
+    );
+  },
   async onPlay(game, card) {
     await card.player.unlockAffinity(AFFINITIES.WATER);
   }
