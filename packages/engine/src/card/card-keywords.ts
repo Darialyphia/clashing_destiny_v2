@@ -15,6 +15,13 @@ export const KEYWORDS = {
       'This Hero must be leveled up from a previous hero with the same lineage.',
     aliases: [/^[a-z\s]+\slineage+/]
   },
+  ECHOED_DESTINY: {
+    id: 'echoed-destiny',
+    name: 'Echoed Destiny',
+    description:
+      'While in your discard pile, this is banished instead of a card from your Destiny zone when paying for a Destiny card.',
+    aliases: []
+  },
   SUMMONING_SICKNESS: {
     id: 'summoning-sickness',
     name: 'Summoning Sickness',

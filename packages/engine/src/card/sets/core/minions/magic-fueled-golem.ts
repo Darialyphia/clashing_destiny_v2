@@ -1,6 +1,5 @@
-import { UnitInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
+import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { TauntModifier } from '../../../../modifier/modifiers/taunt.modifier';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
@@ -18,7 +17,7 @@ export const magicFueledGolem: MinionBlueprint = {
   id: 'magic-fueled-golem',
   name: 'Magic-Fueled Golem',
   cardIconId: 'unit-mana-fueled-golem',
-  description: `This has +3 @[attack]@ and @Taunt@ as long as your hero has at least 3 @[spellpower]@.`,
+  description: `This has +3 @[attack]@ and @Taunt@ as long as your hero has at least 3 @[spellpower]@.\n@Echoed Destiny@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -58,6 +57,8 @@ export const magicFueledGolem: MinionBlueprint = {
         }
       })
     );
+
+    await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay() {}
 };

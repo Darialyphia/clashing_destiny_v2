@@ -39,6 +39,7 @@ export type CardInterceptors = {
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
   hasAffinityMatch: Interceptable<boolean>;
+  canBeUsedAsDestinyCost: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -46,7 +47,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  hasAffinityMatch: new Interceptable<boolean>()
+  hasAffinityMatch: new Interceptable<boolean>(),
+  canBeUsedAsDestinyCost: new Interceptable<boolean>()
 });
 
 export type SerializedCard = {
@@ -173,6 +175,10 @@ export abstract class Card<
 
   get canPayDestinyCost() {
     return this.player.cardManager.destinyZone.size >= this.destinyCost;
+  }
+
+  get canBeUsedAsDestinyCost() {
+    return this.interceptors.canBeUsedAsDestinyCost.getValue(false, {});
   }
 
   removeFromCurrentLocation() {

@@ -230,15 +230,25 @@ export class Player
   }
 
   private async payForDestinyCost(cost: number) {
-    const hasEnough = this.cardManager.destinyZone.size >= cost;
+    const prioritizedCards = Array.from(this.cardManager.discardPile).filter(
+      card => card.canBeUsedAsDestinyCost
+    );
+    const pool = [...this.cardManager.destinyZone, ...prioritizedCards];
+    const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 
     const banishedCards: Array<{ card: MainDeckCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
-      const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size - 1);
-      const card = [...this.cardManager.destinyZone][index];
-      card.sendToBanishPile();
-      banishedCards.push({ card, index });
+      if (prioritizedCards.length > 0) {
+        const card = prioritizedCards.shift()!;
+        card.sendToBanishPile();
+        banishedCards.push({ card, index: -1 });
+      } else {
+        const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size - 1);
+        const card = [...this.cardManager.destinyZone][index];
+        card.sendToBanishPile();
+        banishedCards.push({ card, index });
+      }
     }
 
     await this.game.emit(

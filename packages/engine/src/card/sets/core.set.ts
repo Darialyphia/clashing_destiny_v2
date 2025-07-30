@@ -36,6 +36,7 @@ import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
+import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
 import { temporalShifter } from './core/minions/temporal-shifter';
 import { arcaneInsight } from './core/spells/arcane-insight';
@@ -75,6 +76,7 @@ export const coreSet: CardSet = {
     rainbowSword,
     heraldOfSalvation,
     luminescentMystic,
+    stalwartVanguard,
 
     // Fire
     fireBolt,
