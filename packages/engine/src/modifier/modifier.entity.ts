@@ -97,7 +97,7 @@ export class Modifier<
 
   readonly modifierType: string;
 
-  protected stacks = 1;
+  protected _stacks = 1;
 
   private _isEnabled = true;
 
@@ -131,6 +131,10 @@ export class Modifier<
 
   get isEnabled() {
     return this._isEnabled;
+  }
+
+  get stacks() {
+    return this._stacks;
   }
 
   enable() {
@@ -190,7 +194,7 @@ export class Modifier<
       MODIFIER_EVENTS.BEFORE_REAPPLIED,
       new ModifierLifecycleEvent(this)
     );
-    this.stacks += 1;
+    this._stacks += 1;
     if (this.isEnabled) {
       this.mixins.forEach(mixin => {
         mixin.onReapplied(target, this);
@@ -215,6 +219,17 @@ export class Modifier<
     await this.game.emit(MODIFIER_EVENTS.AFTER_REMOVED, new ModifierLifecycleEvent(this));
   }
 
+  addStacks(count: number) {
+    this._stacks += count;
+  }
+
+  async removeStacks(count: number) {
+    this._stacks = Math.max(0, this._stacks - count);
+    if (this._stacks <= 0) {
+      await this.remove();
+    }
+  }
+
   serialize(): SerializedModifier {
     return {
       id: this.id,
@@ -225,7 +240,7 @@ export class Modifier<
       icon: this.infos.icon,
       target: this._target.id,
       source: this.source.id,
-      stacks: this.stacks
+      stacks: this._stacks
     };
   }
 }

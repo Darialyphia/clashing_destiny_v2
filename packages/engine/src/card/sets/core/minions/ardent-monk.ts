@@ -1,3 +1,4 @@
+import type { MainDeckCard } from '../../../../board/board.system';
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
@@ -31,7 +32,7 @@ export const ardentMonk: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
-        const [discardedCard] = await game.interaction.chooseCards({
+        const [discardedCard] = await game.interaction.chooseCards<MainDeckCard>({
           player: card.player,
           label: 'Choose a card to discard',
           minChoiceCount: 0,
@@ -40,6 +41,8 @@ export const ardentMonk: MinionBlueprint = {
         });
 
         if (!discardedCard) return;
+
+        card.player.cardManager.discard(discardedCard);
 
         if (discardedCard.kind === CARD_KINDS.MINION) {
           await card.modifiers.add(

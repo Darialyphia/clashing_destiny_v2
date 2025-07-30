@@ -30,7 +30,8 @@ export const flameExorcist: MinionBlueprint = {
       id: 'ability',
       label: 'Burn minion',
       description: `@[exhaust]@ Inflict @Burn@ to a minion.`,
-      canUse: game =>
+      canUse: (game, card) =>
+        card.location === 'board' &&
         game.boardSystem.sides.some(side => side.getAllMinions().length > 0),
       getPreResponseTargets(game, card) {
         return singleMinionTargetRules.getPreResponseTargets(game, card);

@@ -34,6 +34,7 @@ const visibleModifiers = computed(() =>
           <div
             :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
             :alt="modifier.name"
+            :data-stacks="modifier.stacks"
             class="modifier"
           />
         </template>
@@ -151,5 +152,14 @@ const visibleModifiers = computed(() =>
   background: var(--bg) no-repeat center center;
   background-size: cover;
   pointer-events: auto;
+  position: relative;
+  &::after {
+    content: attr(data-stacks);
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    font-size: var(--font-size-2);
+    color: white;
+  }
 }
 </style>

@@ -159,7 +159,10 @@ const costStatus = computed(() => {
   >
     <div class="card-front">
       <!-- <div class="foil" /> -->
-      <div class="image" />
+      <div class="image">
+        <div class="shadow" />
+        <div class="art" />
+      </div>
       <div class="name" :data-text="card.name">
         {{ card.name }}
       </div>
@@ -352,20 +355,41 @@ const costStatus = computed(() => {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
+  display: grid;
+
+  > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
   /*card image is in a pseudo element because otherwise the shadow appears before
    Some property nullifies the z-index ordering, not sure what or why */
-  &::after {
+  .art {
     content: '';
     position: absolute;
     inset: 0;
     background: v-bind(imageBg);
     background-size: cover;
   }
-  .card-front:has(.foil) &::after {
+  .card-front:has(.foil) & .art {
     animation: foil-image 10s infinite alternate var(--ease-2);
   }
 
-  :is(.minion, .hero) &::before {
+  .destiny & {
+    background: url('/assets/ui/frame-destiny.png') no-repeat;
+    background-size: cover;
+  }
+
+  .spell & {
+    background: url('/assets/ui/frame-spell.png') no-repeat;
+    background-size: cover;
+  }
+
+  .artifact & {
+    background: url('/assets/ui/frame-artifact.png') no-repeat;
+    background-size: cover;
+  }
+
+  :is(.minion, .hero) & .shadow {
     content: '';
     position: absolute;
     inset: 0;

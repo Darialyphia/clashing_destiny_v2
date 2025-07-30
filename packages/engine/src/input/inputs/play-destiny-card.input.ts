@@ -5,7 +5,7 @@ import { assert } from '@game/shared';
 import { IllegalCardPlayedError, NotCurrentPlayerError } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
-  index: z.number()
+  id: z.string()
 });
 
 export class PlayDestinyCardInput extends Input<typeof schema> {
@@ -18,18 +18,11 @@ export class PlayDestinyCardInput extends Input<typeof schema> {
   async impl() {
     assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
 
-    if (this.payload.index === null) {
-      await this.game.gamePhaseSystem
-        .getContext<GamePhasesDict['DESTINY']>()
-        .ctx.skipDestinyPhase();
-      return;
-    }
-
-    const card = this.player.cardManager.getDestinyCardAt(this.payload.index);
+    const card = this.player.cardManager.getDestinyCardById(this.payload.id);
     assert(card, new IllegalCardPlayedError());
 
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['DESTINY']>()
-      .ctx.playDestinyCard(this.payload.index);
+      .ctx.playDestinyCard(card);
   }
 }

@@ -1,17 +1,13 @@
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import { GAME_PHASE_TRANSITIONS } from '../systems/game-phase.system';
-import { assert, isDefined, type EmptyObject, type Serializable } from '@game/shared';
-import { CardNotFoundError } from '../../card/card-errors';
+import { type EmptyObject, type Serializable } from '@game/shared';
+import type { DestinyCard } from '../../card/entities/destiny.entity';
 
 export class DestinyPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
 
-  async playDestinyCard(index: number) {
-    const card =
-      this.game.gamePhaseSystem.currentPlayer.cardManager.getDestinyCardAt(index);
-    assert(isDefined(card), new CardNotFoundError());
-
+  async playDestinyCard(card: DestinyCard) {
     await this.game.gamePhaseSystem.currentPlayer.playDestinyCard(card);
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE

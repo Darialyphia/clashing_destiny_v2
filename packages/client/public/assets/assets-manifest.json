@@ -604,6 +604,19 @@
         },
         {
           "alias": [
+            "icon-keyword-ember"
+          ],
+          "src": [
+            "/assets/icons/keyword-ember.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-keyword-fearsome"
           ],
           "src": [
@@ -1073,6 +1086,19 @@
         },
         {
           "alias": [
+            "icon-spell-channel-the-flames"
+          ],
+          "src": [
+            "/assets/icons/spell-channel-the-flames.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-comet"
           ],
           "src": [
@@ -1441,6 +1467,32 @@
           ],
           "src": [
             "/assets/icons/talent-fire-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-insight"
+          ],
+          "src": [
+            "/assets/icons/talent-insight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-inspired-by-steel"
+          ],
+          "src": [
+            "/assets/icons/talent-inspired-by-steel.png"
           ],
           "data": {
             "tags": {
@@ -2026,6 +2078,19 @@
           ],
           "src": [
             "/assets/icons/unit-pyre-archfiend.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-pyrebound-lancer"
+          ],
+          "src": [
+            "/assets/icons/unit-pyrebound-lancer.png"
           ],
           "data": {
             "tags": {
@@ -2753,6 +2818,19 @@
           ],
           "src": [
             "/assets/ui/artifact-durability.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "artifact-empty.png"
+          ],
+          "src": [
+            "/assets/ui/artifact-empty.png"
           ],
           "data": {
             "tags": {
@@ -3490,6 +3568,19 @@
         },
         {
           "alias": [
+            "card-level.png"
+          ],
+          "src": [
+            "/assets/ui/card-level.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-mana.png"
           ],
           "src": [
@@ -3754,6 +3845,45 @@
           ],
           "src": [
             "/assets/ui/foil-texture.webp"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "frame-artifact.png"
+          ],
+          "src": [
+            "/assets/ui/frame-artifact.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "frame-destiny.png"
+          ],
+          "src": [
+            "/assets/ui/frame-destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "frame-spell.png"
+          ],
+          "src": [
+            "/assets/ui/frame-spell.png"
           ],
           "data": {
             "tags": {
@@ -4028,6 +4158,19 @@
           ],
           "src": [
             "/assets/ui/mana-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "minino-slot-attacking.png"
+          ],
+          "src": [
+            "/assets/ui/minino-slot-attacking.png"
           ],
           "data": {
             "tags": {

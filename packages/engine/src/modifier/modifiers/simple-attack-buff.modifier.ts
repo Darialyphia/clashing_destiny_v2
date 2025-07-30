@@ -21,6 +21,7 @@ export class SimpleAttackBuffModifier<
     }
   ) {
     super(modifierType, game, card, {
+      isUnique: true,
       icon: options.amount > 0 ? 'keyword-attack-buff' : 'keyword-attack-debuff',
       name: (options.name ?? options.amount > 0) ? 'Attack Buff' : 'Attack Debuff',
       description: `${options.amount > 0 ? '+' : '-'}${options.amount} Attack`,
@@ -29,7 +30,7 @@ export class SimpleAttackBuffModifier<
         new UnitInterceptorModifierMixin(game, {
           key: 'atk',
           interceptor: value => {
-            return value + options.amount * this.stacks;
+            return value + options.amount * this._stacks;
           }
         }),
         ...(options.mixins ?? [])

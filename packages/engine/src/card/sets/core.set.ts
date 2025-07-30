@@ -5,7 +5,10 @@ import { immortalFlame } from './core/artifacts/immortal-flame';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { fireAffinity } from './core/destinies/fire-affinity';
+import { fireStudies } from './core/destinies/fire-studies';
+import { insight } from './core/destinies/insight';
 import { inspiredBySteel } from './core/destinies/inspired-by-steel';
+import { manaVisions } from './core/destinies/mana-visions';
 import { waterAffinity } from './core/destinies/water-affinity';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
@@ -26,6 +29,7 @@ import { magicChanneler } from './core/minions/magic-channeler';
 import { magicFueledGolem } from './core/minions/magic-fueled-golem';
 import { phoenix } from './core/minions/phoenix';
 import { pyreArchfiend } from './core/minions/pyre-archfiend';
+import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
@@ -63,6 +67,8 @@ export const coreSet: CardSet = {
     waterAffinity,
     arcaneAffinity,
     inspiredBySteel,
+    insight,
+    manaVisions,
 
     // Fire
     fireBolt,
@@ -84,6 +90,8 @@ export const coreSet: CardSet = {
     ardentMonk,
     forgedInTheCrater,
     sunEmperor,
+    fireStudies,
+    pyreboundLancer,
 
     // Arcane,
     dualCasting,

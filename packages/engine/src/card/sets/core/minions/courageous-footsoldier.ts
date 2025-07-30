@@ -25,6 +25,6 @@ export const courageousFootsoldier: MinionBlueprint = {
   abilities: [],
   tags: [],
   canPlay: () => true,
-  async onInit(game, card) {},
+  async onInit() {},
   async onPlay() {}
 };

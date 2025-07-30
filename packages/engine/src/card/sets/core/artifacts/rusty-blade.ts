@@ -1,6 +1,3 @@
-import { GAME_EVENTS } from '../../../../game/game.events';
-import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';

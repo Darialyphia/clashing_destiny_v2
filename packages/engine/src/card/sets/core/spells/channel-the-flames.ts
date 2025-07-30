@@ -13,12 +13,12 @@ import {
 export const channelTheFlames: SpellBlueprint<PreResponseTarget> = {
   id: 'channel-the-flames',
   name: 'Channel the Flames',
-  cardIconId: 'channel-the-flames',
+  cardIconId: 'spell-channel-the-flames',
   description:
-    'Remove @Burn@ from all minions. Draw a card and deal 1 damage to your hero for each removed.',
+    'Remove @Burn@ from all minions. Draw a card and deal 2 damage to your hero for each removed.',
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   affinity: AFFINITIES.FIRE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

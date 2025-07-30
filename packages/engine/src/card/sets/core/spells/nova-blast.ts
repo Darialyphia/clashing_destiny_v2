@@ -18,7 +18,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',
-  description: `Deal 3 damage to all minions. @[level] 3+ bonus@: This costs 3 less.`,
+  description: `Deal 3 damage to all minions. @[level] 5+ bonus@: This costs 3 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,
@@ -32,7 +32,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {
-    const levelMod = new LevelBonusModifier<SpellCard>(game, card, 3);
+    const levelMod = new LevelBonusModifier<SpellCard>(game, card, 5);
     await card.modifiers.add(levelMod);
 
     await card.modifiers.add(

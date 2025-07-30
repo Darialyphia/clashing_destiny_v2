@@ -1,5 +1,6 @@
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
@@ -17,7 +18,7 @@ export const sage: HeroBlueprint = {
   name: 'Sage',
   cardIconId: 'hero-sage',
   description:
-    'Reduce the cost of spells in your hand by 2 as long as you have at least 4 @[spellpower]@.',
+    'Reduce the cost of spells in your hand by 1 as long as you have at least 4 @[spellpower]@.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [AFFINITIES.COSMIC, AFFINITIES.ARCANE, AFFINITIES.CHRONO],
@@ -31,36 +32,36 @@ export const sage: HeroBlueprint = {
   maxHp: 20,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
-    {
-      id: 'sage-ability',
-      label: 'Double cast',
-      description:
-        '@[exhaust]@ @[mana] 1@Add a copy of the last spell card that was played. You can play it as if you had unlocked its affinity.',
-      canUse(game, card) {
-        return card.player.hero.spellPower >= 4;
-      },
-      getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 1,
-      shouldExhaust: true,
-      async onResolve(game, card) {
-        const lastSpell = game.cardSystem.getLastPlayedCard<SpellCard>(
-          card => card.kind === CARD_KINDS.SPELL
-        );
-        if (!lastSpell) return;
-        const copy = await card.player.generateCard<SpellCard>(lastSpell.blueprint.id);
-        await copy.modifiers.add(
-          new Modifier('sage-copy', game, card, {
-            mixins: [
-              new SpellInterceptorModifierMixin(game, {
-                key: 'hasAffinityMatch',
-                interceptor: () => true
-              })
-            ]
-          })
-        );
-        await card.player.cardManager.addToHand(copy);
-      }
-    }
+    // {
+    //   id: 'sage-ability',
+    //   label: 'Double cast',
+    //   description:
+    //     '@[exhaust]@ @[mana] 1@Add a copy of the last spell card that was played. You can play it as if you had unlocked its affinity.',
+    //   canUse(game, card) {
+    //     return card.player.hero.spellPower >= 4;
+    //   },
+    //   getPreResponseTargets: () => Promise.resolve([]),
+    //   manaCost: 1,
+    //   shouldExhaust: true,
+    //   async onResolve(game, card) {
+    //     const lastSpell = game.cardSystem.getLastPlayedCard<SpellCard>(
+    //       card => card.kind === CARD_KINDS.SPELL
+    //     );
+    //     if (!lastSpell) return;
+    //     const copy = await card.player.generateCard<SpellCard>(lastSpell.blueprint.id);
+    //     await copy.modifiers.add(
+    //       new Modifier('sage-copy', game, card, {
+    //         mixins: [
+    //           new SpellInterceptorModifierMixin(game, {
+    //             key: 'hasAffinityMatch',
+    //             interceptor: () => true
+    //           })
+    //         ]
+    //       })
+    //     );
+    //     await card.player.cardManager.addToHand(copy);
+    //   }
+    // }
   ],
   tags: [],
   async onInit() {},
@@ -70,7 +71,7 @@ export const sage: HeroBlueprint = {
         new SpellInterceptorModifierMixin(game, {
           key: 'manaCost',
           interceptor(value) {
-            return card.player.hero.spellPower >= 4 ? Math.max(value! - 2, 0) : value;
+            return Math.max(value! - 1, 0);
           }
         })
       ]
@@ -80,8 +81,9 @@ export const sage: HeroBlueprint = {
       new Modifier<HeroCard>('sage-spell-cost-reduction-aura', game, card, {
         icon: 'modifier-double-cast',
         name: 'One with the magic',
-        description: 'Reduce the cost of spells in your hand by 2.',
+        description: 'Reduce the cost of spells in your hand by 1.',
         mixins: [
+          new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 4),
           new AuraModifierMixin(game, {
             canSelfApply: false,
             isElligible(candidate) {

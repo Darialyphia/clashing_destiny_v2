@@ -134,6 +134,10 @@ export class CardManagerComponent {
     return [...this.hand][index];
   }
 
+  getDestinyCardById(id: string) {
+    return this.destinyDeck.cards.find(card => card.id === id);
+  }
+
   getDestinyCardAt(index: number) {
     return this.destinyDeck.cards[index];
   }

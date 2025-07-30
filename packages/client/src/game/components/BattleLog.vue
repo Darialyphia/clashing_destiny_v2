@@ -126,7 +126,7 @@ onMounted(() => {
       if (eventName === GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',

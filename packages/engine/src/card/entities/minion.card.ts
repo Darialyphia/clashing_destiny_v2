@@ -90,12 +90,13 @@ export class MinionCardDealCombatDamageEvent extends TypedSerializableEvent<
 }
 
 export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard; damage: Damage },
-  { card: SerializedMinionCard; damage: { type: DamageType; amount: number } }
+  { card: MinionCard; source: AnyCard; damage: Damage },
+  { card: string; source: string; damage: { type: DamageType; amount: number } }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
+      source: this.data.source.id,
       damage: {
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
@@ -105,16 +106,18 @@ export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
 }
 
 export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard; damage: Damage; isFatal: boolean },
+  { card: MinionCard; source: AnyCard; damage: Damage; isFatal: boolean },
   {
-    card: SerializedMinionCard;
+    card: string;
+    source: string;
     damage: { type: DamageType; amount: number };
     isFatal: boolean;
   }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
+      source: this.data.source.id,
       damage: {
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
@@ -370,9 +373,10 @@ export class MinionCard extends Card<
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
+    console.trace('minion.takeDamage', { source, damage });
     await this.game.emit(
       MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE,
-      new MinionCardBeforeTakeDamageEvent({ card: this, damage })
+      new MinionCardBeforeTakeDamageEvent({ card: this, source, damage })
     );
 
     this.damageTaken = Math.min(
@@ -383,6 +387,7 @@ export class MinionCard extends Card<
       MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE,
       new MinionCardAfterTakeDamageEvent({
         card: this,
+        source,
         damage,
         isFatal: this.remainingHp <= 0
       })

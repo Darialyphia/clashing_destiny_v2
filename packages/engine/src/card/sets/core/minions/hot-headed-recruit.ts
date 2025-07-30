@@ -13,10 +13,10 @@ export const hotHeadedRecruit: MinionBlueprint = {
   id: 'hot-headed-recruit',
   name: 'Hot-Headed Recruit',
   cardIconId: 'unit-hot-blooded-recruit',
-  description: `@Rush@, @Double Attack@.`,
+  description: `@Rush@.`,
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   atk: 1,
   maxHp: 1,
   rarity: RARITIES.COMMON,
@@ -29,7 +29,6 @@ export const hotHeadedRecruit: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(new RushModifier(game, card));
-    await card.modifiers.add(new DoubleAttackModifier(game, card));
   },
   async onPlay() {}
 };

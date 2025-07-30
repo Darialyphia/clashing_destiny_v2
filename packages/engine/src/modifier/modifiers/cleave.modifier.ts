@@ -28,15 +28,6 @@ export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T>
       isUnique: true,
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.PLAYER_START_TURN,
-          handler: async () => {
-            await this.target.takeDamage(
-              source,
-              isSpell(source) ? new SpellDamage(1) : new AbilityDamage(1)
-            );
-          }
-        }),
-        new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE,
           handler: async event => {
             this.getOtherTargets(event);

@@ -22,7 +22,6 @@ import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import EffectChain from './EffectChain.vue';
 import PlayerStats from './PlayerStats.vue';
-import UnlockedAffinities from './UnlockedAffinities.vue';
 import { useMouse } from '@vueuse/core';
 import { mapRange } from '@game/shared';
 import EquipedArtifacts from './EquipedArtifacts.vue';

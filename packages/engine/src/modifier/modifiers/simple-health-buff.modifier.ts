@@ -29,7 +29,7 @@ export class SimpleHealthBuffModifier<
         new UnitInterceptorModifierMixin(game, {
           key: 'maxHp',
           interceptor: value => {
-            return value + options.amount * this.stacks;
+            return value + options.amount * this._stacks;
           }
         }),
         ...(options.mixins ?? [])

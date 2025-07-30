@@ -29,29 +29,33 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
   isOpened.value = false;
 });
 
-const selectedIndex = ref<number | null>(null);
+const selectedId = ref<string | null>(null);
 const selected = computed({
   get() {
-    return selectedIndex.value;
+    return selectedId.value;
   },
-  set(value: number) {
-    if (value === selectedIndex.value) {
-      selectedIndex.value = null;
+  set(value: string) {
+    if (value === selectedId.value) {
+      selectedId.value = null;
     } else {
-      selectedIndex.value = value;
+      selectedId.value = value;
     }
   }
 });
 watch(isOpened, opened => {
   if (!opened) {
-    selectedIndex.value = null;
+    selectedId.value = null;
   }
 });
 
 const destinyCards = computed<CardViewModel[]>(() => {
-  return board.value.destinyDeck.map(cardId => {
-    return state.value.entities[cardId] as CardViewModel;
-  });
+  return board.value.destinyDeck
+    .map(cardId => {
+      return state.value.entities[cardId] as CardViewModel;
+    })
+    .sort((a, b) => {
+      return a.destinyCost! - b.destinyCost! || a.name.localeCompare(b.name);
+    });
 });
 </script>
 
@@ -70,11 +74,11 @@ const destinyCards = computed<CardViewModel[]>(() => {
 
       <div class="card-list">
         <button
-          v-for="(card, index) in destinyCards"
+          v-for="card in destinyCards"
           :key="card.id"
-          :class="{ selected: selected === index }"
+          :class="{ selected: selected === card.id }"
           :disabled="!card.canPlay"
-          @click="selected = index"
+          @click="selected = card.id"
         >
           <GameCard :key="card.id" :card-id="card.id" :interactive="false" />
         </button>
@@ -86,12 +90,12 @@ const destinyCards = computed<CardViewModel[]>(() => {
         />
 
         <FancyButton
-          :variant="selectedIndex !== null ? 'info' : 'error'"
-          :text="selectedIndex !== null ? 'Play' : 'Skip'"
+          :variant="selectedId !== null ? 'info' : 'error'"
+          :text="selectedId !== null ? 'Play' : 'Skip'"
           @click="
             () => {
               isOpened = false;
-              if (selectedIndex === null) {
+              if (selectedId === null) {
                 return client.skipDestiny();
               }
 
@@ -99,7 +103,7 @@ const destinyCards = computed<CardViewModel[]>(() => {
                 type: 'playDestinyCard',
                 payload: {
                   playerId: state.currentPlayer,
-                  index: selectedIndex!
+                  id: selectedId!
                 }
               });
             }
