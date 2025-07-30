@@ -411,7 +411,7 @@ const costStatus = computed(() => {
   text-align: center;
   text-wrap: pretty;
   position: absolute;
-  top: calc(80px * var(--pixel-scale));
+  top: calc(84px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
   font-size: 18px;

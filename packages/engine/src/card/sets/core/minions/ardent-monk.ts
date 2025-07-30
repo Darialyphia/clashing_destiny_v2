@@ -15,7 +15,7 @@ export const ardentMonk: MinionBlueprint = {
   id: 'ardentMonk',
   name: 'Ardent Monk',
   cardIconId: 'unit-ardent-monk',
-  description: `@On Enter@: You may discard a card. Then, depending on the discarded card: \n• Minion: this gain +2@[attack]@ \n• Spell: draw a card@ \n• Artifact: this gains @Cleave@.`,
+  description: `@On Enter@ : You may discard a card. Then, depending on the discarded card: \n• Minion: this gain +2@[attack]@ \n• Spell: draw a card@ \n• Artifact: this gains @Cleave@.`,
   collectable: true,
   unique: false,
   manaCost: 3,

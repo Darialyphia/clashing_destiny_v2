@@ -14,7 +14,7 @@ export const sunEmperor: MinionBlueprint = {
   id: 'sun-emperor',
   name: 'Sun Emperor',
   cardIconId: 'unit-sun-emperor',
-  description: `@On Enter@: Activate an artifact.`,
+  description: `@On Enter@ : Activate an artifact.`,
   collectable: true,
   unique: false,
   manaCost: 4,

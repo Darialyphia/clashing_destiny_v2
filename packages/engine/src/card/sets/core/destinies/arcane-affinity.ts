@@ -14,14 +14,14 @@ export const arcaneAffinity: DestinyBlueprint = {
   description: '@Advanced Affinity@.\nAllows you to play Arcane cards.',
   collectable: true,
   unique: false,
-  destinyCost: 1,
+  destinyCost: 2,
   affinity: AFFINITIES.NORMAL,
   kind: CARD_KINDS.DESTINY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  minLevel: 3,
+  minLevel: 1,
   async onInit() {},
   async onPlay(game, card) {
     await card.player.unlockAffinity(AFFINITIES.WATER);

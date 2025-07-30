@@ -23,7 +23,7 @@ export const esteemedErudite: MinionBlueprint = {
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
-  affinity: AFFINITIES.ARCANE,
+  affinity: AFFINITIES.NORMAL,
   setId: CARD_SETS.CORE,
   abilities: [],
   tags: [],

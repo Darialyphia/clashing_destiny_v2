@@ -14,7 +14,7 @@ export const friendlySlime: MinionBlueprint = {
   id: 'friendly-slime',
   name: 'Friendly Slime',
   cardIconId: 'unit-bubbly-slime',
-  description: `@On Enter@: If you have less @Influence@ than your opponent, draw a card into your Destiny Zone.`,
+  description: `@On Enter@ : If you have less @Influence@ than your opponent, draw a card into your Destiny Zone.`,
   collectable: true,
   unique: false,
   manaCost: 1,

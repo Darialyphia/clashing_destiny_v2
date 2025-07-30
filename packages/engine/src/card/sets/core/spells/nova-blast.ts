@@ -18,7 +18,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',
-  description: `Deal 3 damage to all minions. @[level] 5+ bonus@: This costs 3 less.`,
+  description: `Deal 3 damage to all minions. @[level] 5+ bonus@ : This costs 3 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,

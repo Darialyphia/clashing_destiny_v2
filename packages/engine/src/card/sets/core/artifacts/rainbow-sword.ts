@@ -1,0 +1,84 @@
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { RemoveOnDestroyedMixin } from '../../../../modifier/mixins/remove-on-destroyed';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
+import type { ArtifactBlueprint } from '../../../card-blueprint';
+import {
+  AFFINITIES,
+  ARTIFACT_KINDS,
+  CARD_DECK_SOURCES,
+  CARD_KINDS,
+  CARD_SETS,
+  RARITIES
+} from '../../../card.enums';
+import { ArtifactCard } from '../../../entities/artifact.entity';
+import { HeroCard } from '../../../entities/hero.entity';
+
+export const rainbowSword: ArtifactBlueprint = {
+  id: 'rainbow-sword',
+  name: 'Rainbow Sword',
+  cardIconId: 'artifact-rainbow-blade',
+  description:
+    '@On Enter@ : Your hero gains +1 @[attack]@ and +1 @[spellpower]@ this turn.\nWhen your hero takes damage, this loses 1 @[durability]@.\n@On Destroyed@ : Draw 2 cards.',
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  unique: false,
+  manaCost: 3,
+  rarity: RARITIES.EPIC,
+  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
+  kind: CARD_KINDS.ARTIFACT,
+  affinity: AFFINITIES.NORMAL,
+  durability: 4,
+  subKind: ARTIFACT_KINDS.WEAPON,
+  abilities: [],
+  tags: [],
+  canPlay: () => true,
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, async () => {
+        await card.player.hero.modifiers.add(
+          new SimpleAttackBuffModifier<HeroCard>('rainbow-sword-attack', game, card, {
+            amount: 1,
+            name: 'Raibow Sword',
+            mixins: [new UntilEndOfTurnModifierMixin(game)]
+          })
+        );
+        await card.player.hero.modifiers.add(
+          new SimpleSpellpowerBuffModifier('rainbow-sword-spellpower', game, card, {
+            amount: 1,
+            name: 'Raibow Sword',
+            mixins: [new UntilEndOfTurnModifierMixin(game)]
+          })
+        );
+      })
+    );
+  },
+  async onPlay(game, card) {
+    await card.modifiers.add(
+      new Modifier<ArtifactCard>('rainbow-sword-durability', game, card, {
+        mixins: [
+          new RemoveOnDestroyedMixin(game),
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
+            handler: async event => {
+              if (!event.data.card.equals(card.player.hero)) return;
+              await card.loseDurability(1);
+            }
+          })
+        ]
+      })
+    );
+    await card.modifiers.add(
+      new OnDeathModifier(game, card, {
+        async handler() {
+          await card.player.cardManager.draw(2);
+        }
+      })
+    );
+  }
+};

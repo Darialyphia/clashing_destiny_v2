@@ -2,6 +2,7 @@ import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
+import { rainbowSword } from './core/artifacts/rainbow-sword';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { fireAffinity } from './core/destinies/fire-affinity';
@@ -69,6 +70,7 @@ export const coreSet: CardSet = {
     inspiredBySteel,
     insight,
     manaVisions,
+    rainbowSword,
 
     // Fire
     fireBolt,

@@ -238,7 +238,7 @@ export class CardManagerComponent {
     return replacement;
   }
 
-  async addToHand(card: MainDeckCard, index?: number) {
+  addToHand(card: MainDeckCard, index?: number) {
     if (this.isHandFull) return;
     if (isDefined(index)) {
       this.hand.splice(index, 0, card);

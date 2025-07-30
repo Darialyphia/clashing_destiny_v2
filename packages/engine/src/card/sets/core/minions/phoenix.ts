@@ -14,7 +14,7 @@ export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
   cardIconId: 'unit-rainbow-phoenix',
-  description: `@Pride(3)@.\n@On Enter@: inflicts @Burn@ to all enemy minions.`,
+  description: `@Pride(3)@.\n@On Enter@ : inflicts @Burn@ to all enemy minions.`,
   collectable: true,
   unique: false,
   manaCost: 5,

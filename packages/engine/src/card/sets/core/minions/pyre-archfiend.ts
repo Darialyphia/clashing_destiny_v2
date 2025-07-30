@@ -15,7 +15,7 @@ export const pyreArchfiend: MinionBlueprint = {
   id: 'pyre-archfiend',
   name: 'Pyre Archfiend',
   cardIconId: 'unit-pyre-archfiend',
-  description: `@Rush@, @Cleave@.\n@On Kill@: deal 3 damage to the enemy Hero.`,
+  description: `@Rush@, @Cleave@.\n@On Kill@ : deal 3 damage to the enemy Hero.`,
   collectable: true,
   unique: false,
   manaCost: 4,

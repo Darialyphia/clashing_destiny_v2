@@ -15,7 +15,7 @@ export const pyreboundLancer: MinionBlueprint = {
   id: 'pyrebound-lancer',
   name: 'Pyrebound Lancer',
   cardIconId: 'unit-pyrebound-lancer',
-  description: `@On Kill@: Put the last spell from your discard pile in your Destiny one.`,
+  description: `@On Kill@ : Put the last spell from your discard pile in your hand.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -38,7 +38,7 @@ export const pyreboundLancer: MinionBlueprint = {
           );
 
           if (!lastFireSpell) return;
-          card.player.cardManager.sendToDestinyZone(lastFireSpell);
+          card.player.cardManager.addToHand(lastFireSpell);
         }
       })
     );

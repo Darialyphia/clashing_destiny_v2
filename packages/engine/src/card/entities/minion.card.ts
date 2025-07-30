@@ -373,7 +373,6 @@ export class MinionCard extends Card<
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
-    console.trace('minion.takeDamage', { source, damage });
     await this.game.emit(
       MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE,
       new MinionCardBeforeTakeDamageEvent({ card: this, source, damage })

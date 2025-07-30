@@ -34,6 +34,7 @@ export class ArtifactManagerComponent {
     const index = this._artifacts.findIndex(a => a.equals(artifact));
     if (index === -1) return;
 
+    await artifact.destroy();
     this._artifacts.splice(index, 1);
   }
 }
