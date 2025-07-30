@@ -267,6 +267,7 @@ export abstract class Card<
   abstract play(): Promise<void>;
 
   get hasAffinityMatch() {
+    console.log(this.id, this.affinity, this.player.unlockedAffinities);
     return this.interceptors.hasAffinityMatch.getValue(
       this.player.unlockedAffinities.includes(this.affinity),
       {}

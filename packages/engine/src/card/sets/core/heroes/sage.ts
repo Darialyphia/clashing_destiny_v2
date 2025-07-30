@@ -11,7 +11,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { HeroCard } from '../../../entities/hero.entity';
-import { SpellCard } from '../../../entities/spell.entity';
 
 export const sage: HeroBlueprint = {
   id: 'sage',
@@ -21,7 +20,7 @@ export const sage: HeroBlueprint = {
     'Reduce the cost of spells in your hand by 1 as long as you have at least 4 @[spellpower]@.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
-  affinities: [AFFINITIES.COSMIC, AFFINITIES.ARCANE, AFFINITIES.CHRONO],
+  affinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
