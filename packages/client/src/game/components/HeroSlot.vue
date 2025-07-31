@@ -98,7 +98,7 @@ const isActionsPopoverOpened = computed({
     @click="client.ui.onCardClick(hero)"
   >
     <div>
-      <InspectableCard :card-id="hero.id" side="left" :side-offset="-50">
+      <InspectableCard :card-id="hero.id" side="left" :side-offset="10">
         <PopoverRoot v-model:open="isActionsPopoverOpened">
           <PopoverAnchor />
           <div

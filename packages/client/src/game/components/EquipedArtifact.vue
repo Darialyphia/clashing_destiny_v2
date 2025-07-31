@@ -35,14 +35,17 @@ const isActionsPopoverOpened = computed({
   <PopoverRoot v-model:open="isActionsPopoverOpened">
     <div>
       <PopoverAnchor />
-      <InspectableCard :card-id="artifact.id" side="left" :side-offset="30">
+      <InspectableCard :card-id="artifact.id" side="left" :side-offset="40">
         <div
           @click="client.ui.onCardClick(artifact)"
           class="artifact"
+          :class="{ exhausted: artifact.isExhausted }"
           :style="{
             '--bg': `url(${artifact.imagePath})`
           }"
-        />
+        >
+          <div class="durability">{{ artifact.durability }}</div>
+        </div>
       </InspectableCard>
     </div>
     <PopoverPortal>
@@ -65,5 +68,29 @@ const isActionsPopoverOpened = computed({
   background-size: calc(96px * var(--pixel-scale))
     calc(96px * var(--pixel-scale));
   height: calc(var(--artifact-height) * var(--pixel-scale));
+  transform: translateZ(
+    40px
+  ); /* @FIXME this is needed otherwise we cannot click the artifact, wtf ? */
+  position: relative;
+  &.exhausted {
+    filter: brightness(75%);
+  }
+}
+
+.durability {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 10px;
+  background: url(/assets/ui/durability.png) no-repeat right center;
+  background-size: 20px 20px;
+  text-align: right;
+  font-weight: var(--font-weight-5);
 }
 </style>

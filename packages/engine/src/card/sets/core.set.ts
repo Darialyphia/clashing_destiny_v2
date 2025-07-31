@@ -6,6 +6,7 @@ import { rainbowSword } from './core/artifacts/rainbow-sword';
 import { runedShiv } from './core/artifacts/runed-shiv';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
+import { arcaneMastery } from './core/destinies/arcane-mastery';
 import { fireAffinity } from './core/destinies/fire-affinity';
 import { fireStudies } from './core/destinies/fire-studies';
 import { insight } from './core/destinies/insight';
@@ -47,6 +48,7 @@ import { dualCasting } from './core/spells/dual-casting';
 import { fireBall } from './core/spells/fire-ball';
 import { fireBolt } from './core/spells/fire-bolt';
 import { forgedInTheCrater } from './core/spells/forged-in-the-crater';
+import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { hourglassFracture } from './core/spells/hourglass-fracture';
 import { innerFire } from './core/spells/inner-fire';
 import { novaBlast } from './core/spells/nova-blast';
@@ -82,6 +84,7 @@ export const coreSet: CardSet = {
     sunEmperor,
     sunPalaceGuard,
     runedShiv,
+    gazeIntoTomorrow,
 
     // Fire
     fireBolt,
@@ -117,6 +120,7 @@ export const coreSet: CardSet = {
     novaBlast,
     esteemedErudite,
     surgeOfWill,
+    arcaneMastery,
 
     // Chrono
     recollection,

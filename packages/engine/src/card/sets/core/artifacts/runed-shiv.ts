@@ -30,7 +30,7 @@ export const runedShiv: ArtifactBlueprint = {
   abilities: [
     {
       id: 'runed-shiv-ability',
-      label: '+2 Attack',
+      label: '@[exhaust]@ +1 Attack',
       description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +1@[attack]@.`,
       manaCost: 0,
       shouldExhaust: true,

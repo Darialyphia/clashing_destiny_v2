@@ -36,7 +36,6 @@ export class UseCardAbilityInput extends Input<typeof schema> {
         card instanceof ArtifactCard,
       new UnknownCardError(this.payload.cardId)
     );
-
     assert(card.canUseAbility(this.payload.abilityId), new IllegalAbilityError());
     await card.useAbility(this.payload.abilityId);
   }

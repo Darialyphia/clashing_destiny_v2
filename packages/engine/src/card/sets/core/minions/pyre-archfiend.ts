@@ -1,5 +1,6 @@
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
+import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -15,7 +16,7 @@ export const pyreArchfiend: MinionBlueprint = {
   id: 'pyre-archfiend',
   name: 'Pyre Archfiend',
   cardIconId: 'unit-pyre-archfiend',
-  description: `@Rush@, @Cleave@.\n@On Kill@ : deal 3 damage to the enemy Hero.`,
+  description: `@Pride(2)@, @Rush@, @Cleave@.\n@On Kill@ : deal 3 damage to the enemy Hero.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -30,6 +31,7 @@ export const pyreArchfiend: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new PrideModifier(game, card, 2));
     await card.modifiers.add(new CleaveModifier(game, card));
     await card.modifiers.add(new RushModifier(game, card));
     await card.modifiers.add(

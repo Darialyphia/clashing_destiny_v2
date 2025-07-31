@@ -11,7 +11,14 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
 
 <template>
   <div class="minion-zone">
-    <div class="minion-row">
+    <div
+      class="minion-row"
+      :style="{
+        '--cols': isFlipped
+          ? boardSide.defenseZone.slots.length
+          : boardSide.attackZone.slots.length
+      }"
+    >
       <MinionSlot
         v-for="slot in isFlipped
           ? boardSide.defenseZone.slots
@@ -20,7 +27,14 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
         :minion-slot="slot"
       />
     </div>
-    <div class="minion-row">
+    <div
+      class="minion-row"
+      :style="{
+        '--cols': isFlipped
+          ? boardSide.attackZone.slots.length
+          : boardSide.defenseZone.slots.length
+      }"
+    >
       <MinionSlot
         v-for="slot in isFlipped
           ? boardSide.attackZone.slots
@@ -41,7 +55,7 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
 
   .minion-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(var(--cols), 1fr);
     gap: var(--size-4);
     justify-items: center;
     align-items: center;

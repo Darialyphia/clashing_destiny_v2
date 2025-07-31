@@ -39,6 +39,7 @@ export type ArtifactCardInterceptors = CardInterceptors & {
   >;
   durability: Interceptable<number, ArtifactCard>;
   attack: Interceptable<number, ArtifactCard>;
+  abilities: Interceptable<Ability<ArtifactCard, PreResponseTarget>[], ArtifactCard>;
 };
 
 export const ARTIFACT_EVENTS = {
@@ -116,7 +117,8 @@ export class ArtifactCard extends Card<
         canPlay: new Interceptable(),
         canUseAbility: new Interceptable(),
         durability: new Interceptable(),
-        attack: new Interceptable()
+        attack: new Interceptable(),
+        abilities: new Interceptable()
       },
       options
     );
@@ -170,8 +172,12 @@ export class ArtifactCard extends Card<
     );
   }
 
+  get abilities(): Ability<ArtifactCard, PreResponseTarget>[] {
+    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
+  }
+
   canUseAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return false;
 
     const authorizedPhases: GamePhase[] = [
@@ -181,16 +187,17 @@ export class ArtifactCard extends Card<
     ];
 
     const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
-    const chainCondition = this.game.effectChainSystem.currentChain
+
+    const timingCondition = this.game.effectChainSystem.currentChain
       ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
       : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
 
     return this.interceptors.canUseAbility.getValue(
       this.player.cardManager.hand.length >= ability.manaCost &&
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        ability.canUse(this.game, this) &&
+        timingCondition &&
         exhaustCondition &&
-        chainCondition,
+        ability.canUse(this.game, this),
       { card: this, ability }
     );
   }

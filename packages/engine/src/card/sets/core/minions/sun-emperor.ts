@@ -29,11 +29,15 @@ export const sunEmperor: MinionBlueprint = {
     {
       id: 'sun-emperor-ability',
       label: 'Summon Sun Palace Guard',
-      description: 'Summon a @Sun Palace Guard@ in your Attack zone.',
+      description:
+        '@[exhaust]@ @[mana] 1@ : @Summon a @Sun Palace Guard@ in your Attack zone.',
       shouldExhaust: true,
       manaCost: 1,
       canUse(game, card) {
-        return card.player.boardSide.attackZone.slots.some(slot => !slot.isOccupied);
+        return (
+          card.location === 'board' &&
+          card.player.boardSide.attackZone.slots.some(slot => !slot.isOccupied)
+        );
       },
       async getPreResponseTargets(game, card) {
         return game.interaction.selectMinionSlot({

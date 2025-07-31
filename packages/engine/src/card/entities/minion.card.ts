@@ -298,15 +298,18 @@ export class MinionCard extends Card<
       GAME_PHASES.END
     ];
 
+    const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
+
+    const timingCondition = this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
+      : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
+
     return this.interceptors.canUseAbility.getValue(
       this.player.cardManager.hand.length >= ability.manaCost &&
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        this.game.effectChainSystem.currentChain
-        ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-        : this.game.gamePhaseSystem.currentPlayer.equals(this.player) &&
-            (ability.shouldExhaust
-              ? !this.isExhausted
-              : true && ability.canUse(this.game, this)),
+        timingCondition &&
+        exhaustCondition &&
+        ability.canUse(this.game, this),
       { card: this, ability }
     );
   }
