@@ -17,7 +17,7 @@ export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
     'Draw @[spellpower]@ cards, then put all non Arcane cards in your hand into your Destiny Zone.',
   collectable: true,
   unique: false,
-  manaCost: 3,
+  manaCost: 2,
   affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

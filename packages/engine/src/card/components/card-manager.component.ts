@@ -4,10 +4,10 @@ import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
 import { CARD_DECK_SOURCES } from '../card.enums';
-import type { DestinyDeckCard, MainDeckCard } from '../../board/board.system';
+import type { MainDeckCard } from '../../board/board.system';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
-import type { DestinyCard } from '../entities/destiny.entity';
+import { DestinyCard } from '../entities/destiny.entity';
 
 export type CardManagerComponentOptions = {
   mainDeck: string[];
@@ -122,9 +122,9 @@ export class CardManagerComponent {
     const destinyZoneCard = [...this.destinyZone].find(card => card.id === id);
     if (destinyZoneCard) return { card: destinyZoneCard, location: 'destinyZone' };
 
-    const onBoardCard = this.player.boardSide
-      .getAllCardsInPlay()
-      .find(card => card.id === id);
+    const onBoardCard =
+      this.player.boardSide.getAllCardsInPlay().find(card => card.id === id) ??
+      this.player.unlockedDestinyCards.find(card => card.id === id);
     if (onBoardCard) return { card: onBoardCard, location: 'board' };
 
     return null;

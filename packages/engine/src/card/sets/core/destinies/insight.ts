@@ -24,7 +24,7 @@ export const insight: DestinyBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  minLevel: 1,
+  minLevel: 0,
   abilities: [],
   async onInit() {},
   async onPlay(game, card) {

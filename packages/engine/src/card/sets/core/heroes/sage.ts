@@ -30,52 +30,21 @@ export const sage: HeroBlueprint = {
   atk: 0,
   maxHp: 20,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
-  abilities: [
-    // {
-    //   id: 'sage-ability',
-    //   label: 'Double cast',
-    //   description:
-    //     '@[exhaust]@ @[mana] 1@Add a copy of the last spell card that was played. You can play it as if you had unlocked its affinity.',
-    //   canUse(game, card) {
-    //     return card.player.hero.spellPower >= 4;
-    //   },
-    //   getPreResponseTargets: () => Promise.resolve([]),
-    //   manaCost: 1,
-    //   shouldExhaust: true,
-    //   async onResolve(game, card) {
-    //     const lastSpell = game.cardSystem.getLastPlayedCard<SpellCard>(
-    //       card => card.kind === CARD_KINDS.SPELL
-    //     );
-    //     if (!lastSpell) return;
-    //     const copy = await card.player.generateCard<SpellCard>(lastSpell.blueprint.id);
-    //     await copy.modifiers.add(
-    //       new Modifier('sage-copy', game, card, {
-    //         mixins: [
-    //           new SpellInterceptorModifierMixin(game, {
-    //             key: 'hasAffinityMatch',
-    //             interceptor: () => true
-    //           })
-    //         ]
-    //       })
-    //     );
-    //     await card.player.cardManager.addToHand(copy);
-    //   }
-    // }
-  ],
+  abilities: [],
   tags: [],
   async onInit() {},
   async onPlay(game, card) {
-    const manaCostReduction = new Modifier('sage-discount', game, card, {
-      mixins: [
-        new SpellInterceptorModifierMixin(game, {
-          key: 'manaCost',
-          interceptor(value) {
-            return Math.max(value! - 1, 0);
-          }
-        })
-      ]
-    });
-
+    const manaCostReduction = () =>
+      new Modifier('sage-discount', game, card, {
+        mixins: [
+          new SpellInterceptorModifierMixin(game, {
+            key: 'manaCost',
+            interceptor(value) {
+              return Math.max(value! - 1, 0);
+            }
+          })
+        ]
+      });
     await card.player.hero.modifiers.add(
       new Modifier<HeroCard>('sage-spell-cost-reduction-aura', game, card, {
         icon: 'modifier-double-cast',
@@ -89,10 +58,10 @@ export const sage: HeroBlueprint = {
               return candidate.kind === CARD_KINDS.SPELL && candidate.location === 'hand';
             },
             async onGainAura(candidate) {
-              await candidate.modifiers.add(manaCostReduction);
+              await candidate.modifiers.add(manaCostReduction());
             },
             async onLoseAura(candidate) {
-              await candidate.modifiers.remove(manaCostReduction.id);
+              await candidate.modifiers.remove('sage-discount');
             }
           })
         ]

@@ -11,11 +11,22 @@ export type TutorialStepValidationResult =
       errorMessage: string;
     };
 
+export type TutorialTextBox = {
+  onEnter?: () => MaybePromise<void>;
+  onLeave?: () => MaybePromise<void>;
+  text: string;
+  canGoNext: boolean;
+};
+
 export type TutorialStep = {
   id: number;
-  textBoxes: string[];
+  textBoxes: TutorialTextBox[];
   validate(input: SerializedInput): TutorialStepValidationResult;
-  onSuccess?(game: Game, input: SerializedInput): MaybePromise<void>;
+  onSuccess?(
+    game: Game,
+    input: SerializedInput,
+    nextStep: Nullable<TutorialStep>
+  ): MaybePromise<void>;
   onFail?(game: Game, input: SerializedInput, errorMessage: string): MaybePromise<void>;
   next: (input: SerializedInput) => Nullable<number>;
 };
@@ -41,8 +52,9 @@ export class Tutorial {
 
     if (result.status === 'success') {
       await this.game.dispatch(input);
-      await step.onSuccess?.(this.game, input);
       const next = step.next(input);
+      await step.onSuccess?.(this.game, input, next ? this.steps[next] : null);
+
       if (isDefined(next)) {
         this.currentStepId = next;
       } else {

@@ -17,7 +17,7 @@ export const magicFueledGolem: MinionBlueprint = {
   id: 'magic-fueled-golem',
   name: 'Magic-Fueled Golem',
   cardIconId: 'unit-mana-fueled-golem',
-  description: `This has +3 @[attack]@ and @Taunt@ as long as your hero has at least 3 @[spellpower]@.\n@Echoed Destiny@.`,
+  description: `This has +2 @[attack]@ and @Taunt@ as long as your hero has at least 2 @[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -37,12 +37,12 @@ export const magicFueledGolem: MinionBlueprint = {
       game,
       card,
       {
-        amount: 3,
-        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
+        amount: 2,
+        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 2)]
       }
     );
     const taunt = new TauntModifier<MinionCard>(game, card, {
-      mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
+      mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 2)]
     });
 
     await card.modifiers.add(
@@ -57,8 +57,6 @@ export const magicFueledGolem: MinionBlueprint = {
         }
       })
     );
-
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay() {}
 };

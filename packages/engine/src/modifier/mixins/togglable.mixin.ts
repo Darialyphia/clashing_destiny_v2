@@ -1,7 +1,7 @@
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { ModifierMixin } from '../modifier-mixin';
-import type { Modifier, ModifierEventMap } from '../modifier.entity';
+import type { Modifier } from '../modifier.entity';
 
 export class TogglableModifierMixin<T extends AnyCard> extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
@@ -28,7 +28,10 @@ export class TogglableModifierMixin<T extends AnyCard> extends ModifierMixin<T> 
   }
 
   onRemoved(): void {
-    this.game.off('*', this.check);
+    if (this.modifier.isEnabled) {
+      // only stop checking when the modifier is removed, but keep checking wen disabled
+      this.game.off('*', this.check);
+    }
   }
 
   onReapplied() {}

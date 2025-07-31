@@ -15,7 +15,7 @@ export const arcaneInsight: SpellBlueprint<PreResponseTarget> = {
   name: 'Arcane Insight',
   cardIconId: 'spell-arcane-insight',
   description:
-    'Draw a card. @[level] 4+ bonus@ : Draw another card in your Destiny zone.',
+    'Draw a card. @[level] 3+ bonus@ : Draw another card in your Destiny zone.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -29,7 +29,7 @@ export const arcaneInsight: SpellBlueprint<PreResponseTarget> = {
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 4));
+    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
   },
   async onPlay(game, card) {
     await card.player.cardManager.draw(1);

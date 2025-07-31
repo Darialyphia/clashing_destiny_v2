@@ -11,7 +11,7 @@ export class LevelBonusModifier<T extends AnyCard> extends Modifier<T> {
     source: AnyCard,
     private level: number
   ) {
-    super(`${KEYWORDS.LEVEL_BONUS}_${level}`, game, source, {
+    super(`${KEYWORDS.LEVEL_BONUS.id}_${level}`, game, source, {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.LEVEL_BONUS),
         new TogglableModifierMixin(game, () => this.isActive)
