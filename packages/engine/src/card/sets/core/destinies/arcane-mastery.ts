@@ -27,6 +27,7 @@ export const arcaneMastery: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
+  abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new LevelBonusModifier(game, card, 5));
   },

@@ -157,9 +157,12 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   background-size: cover;
   position: relative;
   transform-style: preserve-3d;
-  &:not(.attacking):hover {
+  &:not(:is(.attacking, .exhausted)):hover {
     border-color: var(--cyan-4);
     background: url('/assets/ui/minino-slot-hover.png') no-repeat center;
+    .minion-clickable-area {
+      filter: brightness(1.25);
+    }
   }
   &.attacking {
     border-color: var(--red-4);
@@ -178,9 +181,6 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
 .minion-clickable-area {
   position: absolute;
   inset: 0;
-  .minion-slot:has(&:hover) .slot-minion {
-    filter: brightness(1.25);
-  }
 }
 .slot-minion {
   width: 100%;

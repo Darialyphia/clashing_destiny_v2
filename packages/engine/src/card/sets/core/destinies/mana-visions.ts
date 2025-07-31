@@ -33,14 +33,13 @@ export const manaVisions: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
-  async onInit() {},
-  async onPlay(game, card) {
-    const ability: Ability<HeroCard, PreResponseTarget> = {
+  abilities: [
+    {
       id: 'mana-visions-ability',
       manaCost: 1,
       shouldExhaust: true,
       description: '@Scry 1@, then draw a card. You cannot play spells this turn.',
-      label: 'Scry 1, draw 1',
+      label: '@[exhaust]@ : @Scry 1@, draw 1',
       getPreResponseTargets: async () => [],
       canUse: (game, card) => {
         return (
@@ -48,7 +47,7 @@ export const manaVisions: DestinyBlueprint = {
             .length === 0
         );
       },
-      onResolve: async () => {
+      onResolve: async (game, card) => {
         await scry(game, card, 1);
         await card.player.cardManager.draw(1);
 
@@ -77,19 +76,8 @@ export const manaVisions: DestinyBlueprint = {
           })
         );
       }
-    };
-
-    await card.player.hero.modifiers.add(
-      new Modifier('fire-studies-ability', game, card, {
-        mixins: [
-          new HeroInterceptorModifierMixin(game, {
-            key: 'abilities',
-            interceptor(value) {
-              return [...value, ability];
-            }
-          })
-        ]
-      })
-    );
-  }
+    }
+  ],
+  async onInit() {},
+  async onPlay() {}
 };

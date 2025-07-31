@@ -32,7 +32,7 @@ export const immortalFlame: ArtifactBlueprint = {
   abilities: [
     {
       id: 'immortal-flame-ability',
-      label: '+2 Attack',
+      label: '@[exhaust]@ : +2 Attack',
       description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +2@[attack]@.`,
       manaCost: 0,
       shouldExhaust: true,

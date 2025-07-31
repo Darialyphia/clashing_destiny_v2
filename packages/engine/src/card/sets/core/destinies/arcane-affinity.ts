@@ -23,6 +23,7 @@ export const arcaneAffinity: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
+  abilities: [],
   async onInit(game, card) {
     await card.addInterceptor(
       'destinyCost',

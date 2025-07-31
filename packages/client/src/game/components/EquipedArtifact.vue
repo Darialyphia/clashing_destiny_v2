@@ -21,7 +21,6 @@ const isActionsPopoverOpened = computed({
     return client.value.ui.selectedCard.equals(artifact);
   },
   set(value) {
-    console.log('toggle artifact actions popover', value);
     if (value) {
       client.value.ui.select(artifact);
     } else {

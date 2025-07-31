@@ -134,6 +134,11 @@ const isActionsPopoverOpened = computed({
   transform-style: preserve-3d;
   justify-self: center;
   /* overflow: hidden; */
+  &:hover {
+    .hero-sprite:not(:is(.highlighted, .exhausted)):hover {
+      filter: brightness(1.25);
+    }
+  }
 }
 
 .hero-sprite {
@@ -149,6 +154,7 @@ const isActionsPopoverOpened = computed({
   &.exhausted {
     filter: grayscale(0.75);
   }
+
   &.highlighted {
     filter: saturate(150%) drop-shadow(0 0 1px red);
     position: relative;

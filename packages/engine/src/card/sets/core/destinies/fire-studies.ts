@@ -33,9 +33,8 @@ export const fireStudies: DestinyBlueprint = {
   rarity: RARITIES.RARE,
   tags: [],
   minLevel: 1,
-  async onInit() {},
-  async onPlay(game, card) {
-    const ability: Ability<HeroCard, PreResponseTarget> = {
+  abilities: [
+    {
       id: 'fire-studies-ability',
       manaCost: 0,
       shouldExhaust: false,
@@ -47,15 +46,17 @@ export const fireStudies: DestinyBlueprint = {
         if (!hero.modifiers.has(EmberModifier)) return false;
         return hero.modifiers.get(EmberModifier)!.stacks >= 3;
       },
-      onResolve: async () => {
+      onResolve: async (game, card) => {
         const hero = card.player.hero;
         const emberModifier = hero.modifiers.get(EmberModifier);
         if (!emberModifier) return;
         await emberModifier.removeStacks(3);
         await card.player.cardManager.draw(1);
       }
-    };
-
+    }
+  ],
+  async onInit() {},
+  async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new Modifier('fire-studies-embers-on-spell-cast', game, card, {
         mixins: [
@@ -66,19 +67,6 @@ export const fireStudies: DestinyBlueprint = {
               if (event.data.card.kind !== CARD_KINDS.SPELL) return;
               if (event.data.card.affinity !== AFFINITIES.FIRE) return;
               await card.player.hero.modifiers.add(new EmberModifier(game, card));
-            }
-          })
-        ]
-      })
-    );
-
-    await card.player.hero.modifiers.add(
-      new Modifier('fire-studies-ability', game, card, {
-        mixins: [
-          new HeroInterceptorModifierMixin(game, {
-            key: 'abilities',
-            interceptor(value) {
-              return [...value, ability];
             }
           })
         ]

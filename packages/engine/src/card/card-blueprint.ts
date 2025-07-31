@@ -125,6 +125,7 @@ export type DestinyBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard) => Promise<void>;
   affinity: Affinity;
+  abilities: Ability<DestinyCard, PreResponseTarget>[];
 };
 
 export type ArtifactBlueprint = MainDeckCardBlueprint & {

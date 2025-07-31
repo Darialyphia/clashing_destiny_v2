@@ -25,6 +25,7 @@ export const insight: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
+  abilities: [],
   async onInit() {},
   async onPlay(game, card) {
     await card.player.cardManager.draw(1);

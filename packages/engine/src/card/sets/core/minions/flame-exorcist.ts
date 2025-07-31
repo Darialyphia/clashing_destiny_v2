@@ -29,7 +29,7 @@ export const flameExorcist: MinionBlueprint = {
   abilities: [
     {
       id: 'ability',
-      label: 'Burn minion',
+      label: '@[exhaust]@ : @Burn minion',
       description: `@[exhaust]@ Inflict @Burn@ to a minion.\n@Echoed Destiny@.`,
       canUse: (game, card) =>
         card.location === 'board' &&

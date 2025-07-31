@@ -19,7 +19,7 @@ export const sunEmperor: MinionBlueprint = {
   unique: false,
   manaCost: 4,
   atk: 3,
-  maxHp: 4,
+  maxHp: 3,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -28,7 +28,7 @@ export const sunEmperor: MinionBlueprint = {
   abilities: [
     {
       id: 'sun-emperor-ability',
-      label: 'Summon Sun Palace Guard',
+      label: '@[exhaust]@  @[mana] 1@ : Summon a Sun Palace Guard',
       description:
         '@[exhaust]@ @[mana] 1@ : @Summon a @Sun Palace Guard@ in your Attack zone.',
       shouldExhaust: true,

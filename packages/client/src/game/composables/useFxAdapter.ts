@@ -29,9 +29,9 @@ export const useFxAdapter = (): FxAdapter => {
             card.id,
             card.getPlayer().id
           ),
-          duration: 0.4,
+          duration: 0.5,
           absolute: true,
-          ease: Power3.easeOut
+          ease: 'back.out'
         });
       });
     },

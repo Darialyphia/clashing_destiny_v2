@@ -33,6 +33,7 @@ export const inspiredBySteel: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
+  abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new LineageBonusModifier(game, card, knight.id));
   },
