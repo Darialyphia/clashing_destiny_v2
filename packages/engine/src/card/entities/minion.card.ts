@@ -419,22 +419,7 @@ export class MinionCard extends Card<
     );
   }
 
-  async play() {
-    const [position] = await this.game.interaction.selectMinionSlot({
-      player: this.player,
-      isElligible(position) {
-        return (
-          position.player.equals(this.player) &&
-          !this.player.boardSide.isOccupied(position.zone, position.slot)
-        );
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
-    });
+  async playAt(position: MinionPosition) {
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
@@ -459,6 +444,25 @@ export class MinionCard extends Card<
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })
     );
+  }
+
+  async play() {
+    const [position] = await this.game.interaction.selectMinionSlot({
+      player: this.player,
+      isElligible(position) {
+        return (
+          position.player.equals(this.player) &&
+          !this.player.boardSide.isOccupied(position.zone, position.slot)
+        );
+      },
+      canCommit(selectedSlots) {
+        return selectedSlots.length === 1;
+      },
+      isDone(selectedSlots) {
+        return selectedSlots.length === 1;
+      }
+    });
+    await this.playAt(position);
   }
 
   get potentialAttackTargets() {

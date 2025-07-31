@@ -2,6 +2,7 @@ import type { MainDeckCard } from '../../../../board/board.system';
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -15,12 +16,12 @@ export const ardentMonk: MinionBlueprint = {
   id: 'ardentMonk',
   name: 'Ardent Monk',
   cardIconId: 'unit-ardent-monk',
-  description: `@On Enter@ : You may discard a card. Then, depending on the discarded card: \n• Minion: this gain +2@[attack]@ \n• Spell: draw a card@ \n• Artifact: this gains @Cleave@.`,
+  description: `@On Enter@ : You may discard a card. Then, depending on the discarded card: \n• Minion: this gain +1@[attack]@ / +1@[health]@ \n• Spell: draw a card@ \n• Artifact: this gains @Cleave@.`,
   collectable: true,
   unique: false,
   manaCost: 3,
   atk: 2,
-  maxHp: 2,
+  maxHp: 3,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -46,8 +47,13 @@ export const ardentMonk: MinionBlueprint = {
 
         if (discardedCard.kind === CARD_KINDS.MINION) {
           await card.modifiers.add(
-            new SimpleAttackBuffModifier('ardentMonkMinionBuff', game, card, {
-              amount: 2
+            new SimpleAttackBuffModifier('ardentMonkAtkBuff', game, card, {
+              amount: 1
+            })
+          );
+          await card.modifiers.add(
+            new SimpleHealthBuffModifier('ardentMonkHpBuff', game, card, {
+              amount: 1
             })
           );
         } else if (discardedCard.kind === CARD_KINDS.SPELL) {

@@ -3,6 +3,7 @@ import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
 import { rainbowSword } from './core/artifacts/rainbow-sword';
+import { runedShiv } from './core/artifacts/runed-shiv';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { fireAffinity } from './core/destinies/fire-affinity';
@@ -38,6 +39,7 @@ import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
 import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
+import { sunPalaceGuard } from './core/minions/sun-palace-guard';
 import { temporalShifter } from './core/minions/temporal-shifter';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { channelTheFlames } from './core/spells/channel-the-flames';
@@ -77,6 +79,9 @@ export const coreSet: CardSet = {
     heraldOfSalvation,
     luminescentMystic,
     stalwartVanguard,
+    sunEmperor,
+    sunPalaceGuard,
+    runedShiv,
 
     // Fire
     fireBolt,
@@ -97,7 +102,6 @@ export const coreSet: CardSet = {
     flameExorcist,
     ardentMonk,
     forgedInTheCrater,
-    sunEmperor,
     fireStudies,
     pyreboundLancer,
 

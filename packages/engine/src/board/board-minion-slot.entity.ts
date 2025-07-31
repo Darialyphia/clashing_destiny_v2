@@ -3,6 +3,7 @@ import type { MinionCard } from '../card/entities/minion.card';
 import { EntityWithModifiers } from '../entity';
 import type { Player } from '../player/player.entity';
 import { Interceptable } from '../utils/interceptable';
+import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
 
 type BoardMinionSlotInterceptors = {
   canSummon: Interceptable<boolean>;
@@ -41,6 +42,15 @@ export class BoardMinionSlot
       canSummon: this.canSummon
     };
   }
+
+  isSame(position: MinionPosition): boolean {
+    return (
+      this.zone === position.zone &&
+      this.position === position.slot &&
+      this.player.equals(position.player)
+    );
+  }
+
   get minion(): MinionCard | null {
     return this._minion;
   }

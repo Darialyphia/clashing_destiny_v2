@@ -864,6 +864,19 @@
         },
         {
           "alias": [
+            "icon-keyword-summoning-sickness"
+          ],
+          "src": [
+            "/assets/icons/keyword-summoning-sickness.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-keyword-swift"
           ],
           "src": [
@@ -1918,6 +1931,19 @@
         },
         {
           "alias": [
+            "icon-unit-herald-of-salvation"
+          ],
+          "src": [
+            "/assets/icons/unit-herald-of-salvation.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-hot-blooded-recruit"
           ],
           "src": [
@@ -2169,6 +2195,19 @@
           ],
           "src": [
             "/assets/icons/unit-sun-emperor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-sun-palace-guard"
+          ],
+          "src": [
+            "/assets/icons/unit-sun-palace-guard.png"
           ],
           "data": {
             "tags": {

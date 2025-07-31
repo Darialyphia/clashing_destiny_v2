@@ -12,10 +12,10 @@ import {
 } from '../../../card.enums';
 import type { HeroCard } from '../../../entities/hero.entity';
 
-export const rustyBlade: ArtifactBlueprint = {
-  id: 'rusty-blade',
-  name: 'Rusty Blade',
-  cardIconId: 'artifact-rusty-blade',
+export const runedShiv: ArtifactBlueprint = {
+  id: 'runed-shiv',
+  name: 'Runed Shiv',
+  cardIconId: 'artifact-runed-shiv',
   description: '',
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -25,13 +25,13 @@ export const rustyBlade: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.NORMAL,
-  durability: 1,
+  durability: 2,
   subKind: ARTIFACT_KINDS.WEAPON,
   abilities: [
     {
-      id: 'rusty-blade-ability',
+      id: 'runed-shiv-ability',
       label: '+2 Attack',
-      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +2@[attack]@.`,
+      description: `@[exhaust]@ -1@[durability]@  : This turn, your hero gain +1@[attack]@.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
@@ -42,16 +42,16 @@ export const rustyBlade: ArtifactBlueprint = {
       },
       async onResolve(game, card) {
         await card.player.hero.modifiers.add(
-          new Modifier<HeroCard>('firebrand-buff', game, card, {
-            name: 'Rusty Blade',
-            description: `+2 Attack.`,
+          new Modifier<HeroCard>('runed-shiv-buff', game, card, {
+            name: 'Runed Shiv',
+            description: `+1 Attack.`,
             icon: 'keyword-attack-buff',
             mixins: [
               new UntilEndOfTurnModifierMixin<HeroCard>(game),
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + 2;
+                  return value + 1;
                 }
               })
             ]

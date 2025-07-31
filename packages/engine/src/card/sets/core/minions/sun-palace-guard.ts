@@ -1,5 +1,4 @@
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
-import { TauntModifier } from '../../../../modifier/modifiers/taunt.modifier';
+import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -9,11 +8,11 @@ import {
   RARITIES
 } from '../../../card.enums';
 
-export const stalwartVanguard: MinionBlueprint = {
-  id: 'stalwart-vanguard',
-  name: 'Stalwart Vanguard',
-  cardIconId: 'unit-stalwart-vanguard',
-  description: `@Taunt@, @Echoed Destiny@.`,
+export const sunPalaceGuard: MinionBlueprint = {
+  id: 'sun-palace-guard',
+  name: 'Sun Palace Guard',
+  cardIconId: 'unit-sun-palace-guard',
+  description: `@Piercing@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -28,8 +27,7 @@ export const stalwartVanguard: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new TauntModifier(game, card, {}));
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
+    await card.modifiers.add(new PiercingModifier(game, card));
   },
   async onPlay() {}
 };

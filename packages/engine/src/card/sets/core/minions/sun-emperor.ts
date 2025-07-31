@@ -1,6 +1,5 @@
+import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
-import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -9,6 +8,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import type { MinionCard } from '../../../entities/minion.card';
 
 export const sunEmperor: MinionBlueprint = {
   id: 'sun-emperor',
@@ -23,9 +23,41 @@ export const sunEmperor: MinionBlueprint = {
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
-  affinity: AFFINITIES.FIRE,
+  affinity: AFFINITIES.NORMAL,
   setId: CARD_SETS.CORE,
-  abilities: [],
+  abilities: [
+    {
+      id: 'sun-emperor-ability',
+      label: 'Summon Sun Palace Guard',
+      description: 'Summon a @Sun Palace Guard@ in your Attack zone.',
+      shouldExhaust: true,
+      manaCost: 1,
+      canUse(game, card) {
+        return card.player.boardSide.attackZone.slots.some(slot => !slot.isOccupied);
+      },
+      async getPreResponseTargets(game, card) {
+        return game.interaction.selectMinionSlot({
+          player: card.player,
+          isElligible: slot =>
+            card.player.boardSide.attackZone.slots.some(s => s.isSame(slot)),
+          canCommit(selectedSlots) {
+            return selectedSlots.length === 1;
+          },
+          isDone(selectedSlots) {
+            return selectedSlots.length === 1;
+          }
+        });
+      },
+      async onResolve(game, card, targets) {
+        const [position] = targets;
+        if (!position) return;
+
+        const sunPalaceGuard =
+          await card.player.generateCard<MinionCard>('sun-palace-guard');
+        await sunPalaceGuard.playAt(position as MinionPosition);
+      }
+    }
+  ],
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
