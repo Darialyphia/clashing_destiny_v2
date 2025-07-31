@@ -34,7 +34,7 @@ const visibleModifiers = computed(() =>
           <div
             :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
             :alt="modifier.name"
-            :data-stacks="modifier.stacks"
+            :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
             class="modifier"
           />
         </template>

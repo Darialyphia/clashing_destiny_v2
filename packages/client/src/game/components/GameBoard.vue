@@ -52,7 +52,7 @@ const hasFinishedStartAnimation = ref(false);
 const finishStartAnimation = () => {
   setTimeout(() => {
     hasFinishedStartAnimation.value = true;
-  }, 1000);
+  }, 500);
 };
 </script>
 

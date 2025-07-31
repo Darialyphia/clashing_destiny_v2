@@ -24,7 +24,7 @@ export const knight: HeroBlueprint = {
   lineage: null,
   spellPower: 0,
   atk: 0,
-  maxHp: 20,
+  maxHp: 15,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {

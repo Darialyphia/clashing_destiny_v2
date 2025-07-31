@@ -16,7 +16,6 @@ import {
 } from 'reka-ui';
 import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
-import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { DamageType } from '@game/engine/src/utils/damage';
 
@@ -52,7 +51,7 @@ const isActionsPopoverOpened = computed({
 
 const cardElement = useTemplateRef('card');
 const onTakeDamage = async (e: {
-  card: SerializedCard;
+  card: string;
   damage: {
     type: DamageType;
     amount: number;
@@ -60,14 +59,12 @@ const onTakeDamage = async (e: {
 }) => {
   if (!minion.value) return;
   if (
-    e.card.id !== minion.value.id ||
+    e.card !== minion.value.id ||
     !cardElement.value ||
     e.damage.amount <= 0
   ) {
     return;
   }
-
-  minion.value.update(e.card);
 
   cardElement.value.classList.add('damage');
   cardElement.value.dataset.damage = `HP -${e.damage.amount}`;

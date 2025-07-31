@@ -11,6 +11,9 @@ export class SummoningSicknessModifier extends Modifier<MinionCard> {
   constructor(game: Game, source: AnyCard) {
     super(KEYWORDS.RUSH.id, game, source, {
       isUnique: true,
+      name: KEYWORDS.SUMMONING_SICKNESS.name,
+      description: KEYWORDS.SUMMONING_SICKNESS.description,
+      icon: 'keyword-summoning-sickness',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.SUMMONING_SICKNESS),
         new MinionInterceptorModifierMixin(game, {

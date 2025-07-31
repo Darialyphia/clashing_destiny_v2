@@ -1,4 +1,5 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { singleMinionTargetRules } from '../../../card-utils';
 import {
@@ -29,7 +30,7 @@ export const flameExorcist: MinionBlueprint = {
     {
       id: 'ability',
       label: 'Burn minion',
-      description: `@[exhaust]@ Inflict @Burn@ to a minion.`,
+      description: `@[exhaust]@ Inflict @Burn@ to a minion.\n@Echoed Destiny@.`,
       canUse: (game, card) =>
         card.location === 'board' &&
         game.boardSystem.sides.some(side => side.getAllMinions().length > 0),
@@ -49,6 +50,8 @@ export const flameExorcist: MinionBlueprint = {
   ],
   tags: [],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new EchoedDestinyModifier(game, card));
+  },
   async onPlay() {}
 };

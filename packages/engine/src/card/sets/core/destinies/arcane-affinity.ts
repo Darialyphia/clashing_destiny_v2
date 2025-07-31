@@ -32,6 +32,6 @@ export const arcaneAffinity: DestinyBlueprint = {
     );
   },
   async onPlay(game, card) {
-    await card.player.unlockAffinity(AFFINITIES.WATER);
+    await card.player.unlockAffinity(AFFINITIES.ARCANE);
   }
 };

@@ -22,7 +22,7 @@ export const manaVisions: DestinyBlueprint = {
   name: 'Mana Visions',
   cardIconId: 'talent-mana-visions',
   description:
-    '@[exhaust]@ @[mana] 1@ : @Scry 1@, then draw a card in your Destiny zone. You cannot play spells this turn. You cannot use this ability if you have already played a spell this turn.',
+    '@[exhaust]@ @[mana] 1@ : @Scry 1@, then draw a card. You cannot play spells this turn. You cannot use this ability if you have already played a spell this turn.',
   collectable: true,
   unique: false,
   destinyCost: 1,
