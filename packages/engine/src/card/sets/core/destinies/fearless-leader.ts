@@ -12,7 +12,7 @@ export const fearlessLeader: DestinyBlueprint = {
   name: 'Fearless Leader',
   cardIconId: 'talent-fearless-leader',
   description:
-    'Give your general @On Attack@ : give +1 @[attack]@ to your minions in the Attack zone this turn.',
+    'Give your hero @On Attack@ : give +1 @[attack]@ to your minions in the Attack zone this turn.',
   collectable: true,
   unique: false,
   destinyCost: 1,
