@@ -32,10 +32,6 @@ const onIntersectionObserver =
   };
 
 const listRoot = useTemplateRef('card-list');
-
-watch(viewMode, () => {
-  visibleCards.value.clear();
-});
 </script>
 
 <template>

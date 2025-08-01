@@ -21,8 +21,7 @@ export const manaVisions: DestinyBlueprint = {
   id: 'mana-visions',
   name: 'Mana Visions',
   cardIconId: 'talent-mana-visions',
-  description:
-    '@[exhaust]@ @[mana] 1@ : @Scry 1@, then draw a card. You cannot play spells this turn. You cannot use this ability if you have already played a spell this turn.',
+  description: '',
   collectable: true,
   unique: false,
   destinyCost: 1,
@@ -38,7 +37,8 @@ export const manaVisions: DestinyBlueprint = {
       id: 'mana-visions-ability',
       manaCost: 1,
       shouldExhaust: true,
-      description: '@Scry 1@, then draw a card. You cannot play spells this turn.',
+      description:
+        '@[exhaust]@ @[mana] 1@ : @Scry 1@, then draw a card. You cannot play spells this turn. You cannot use this ability if you have already played a spell this turn.',
       label: '@[exhaust]@ : @Scry 1@, draw 1',
       getPreResponseTargets: async () => [],
       canUse: (game, card) => {

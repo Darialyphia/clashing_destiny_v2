@@ -21,8 +21,7 @@ export const fireStudies: DestinyBlueprint = {
   id: 'fire-studies',
   name: 'Fire Studies',
   cardIconId: 'talent-fire-studies',
-  description:
-    'When you play a Fire Spell, gain 1 sack of Embers.\n@[mana] 0@ : Consume 3 stacks of Embers to draw a card.',
+  description: 'When you play a Fire Spell, gain 1 sack of Embers.',
   collectable: true,
   unique: false,
   destinyCost: 1,
@@ -38,7 +37,7 @@ export const fireStudies: DestinyBlueprint = {
       id: 'fire-studies-ability',
       manaCost: 0,
       shouldExhaust: false,
-      description: 'Consume 3 stacks of Embers to draw a card.',
+      description: '@[mana] 0@ : Consume 3 stacks of Embers to draw a card.',
       label: 'Consume 3 Embers: draw a card',
       getPreResponseTargets: async () => [],
       canUse: (game, card) => {
