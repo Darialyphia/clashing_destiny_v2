@@ -65,8 +65,8 @@ export const coreSet: CardSet = {
   cards: [
     // Heroes
     sage,
-    sorcerer,
-    warlock,
+    // sorcerer,
+    // warlock,
     knight,
 
     // Normal

@@ -4,7 +4,7 @@
 
 Clashing Destiny is a PVP digital Collectible Card Game, where 2 players control a hero, summon creatures, cast spells and equip artifacts to defeat the opponent hero.
 
-Main inspirations: Grand Archive TCG, Carte Online
+Main inspirations: Grand Archive TCG, Carte Online, Duelyst
 
 ## Start of the game
 
@@ -23,9 +23,6 @@ The board is comprised of 2 symmetrical board sides, one for each player.
 
 The content of a board side is as follows:
 
-### Talent Zone
-
-This zone contains 4 slots to display the **Talent cards** the player has unlocked during the game
 
 ### Hero Zone
  
@@ -46,6 +43,16 @@ This zone contains
 - The **Discard pile**
 - The **Banish pile**
 - The Destiny Zone where the player will put cards face down in order to play cards from the **Main deck**.
+
+## Heroes
+
+Hero are the main cards of this game. If a hero's hp reach 0, its player loses the game.
+
+They have a level stat that increases over the course of the game by playing **Destiny Cards**. The level can be relevant for some card effects and other mechanics.
+
+Heroes have an Attack stat, that typically starts at 0, but can be increased by various means.
+
+In addition to HP and Attack, Heroes have another stat called Spellpower, that may enhance the effect of some other cards. For example, "Deal 1 + Power damage to an enemy".
 
 ## Cards
 
@@ -74,11 +81,11 @@ Minion damage persists between turns.
 ##### Positioning clarifications
 
 Positioning plays an important role in Clashing Destinies. Some card effects may targets specific spaces:
-- in front: if the minion is in the defense zone, it means the minion on the same slot of that minion's controller attack zone. If the minion is in the attack zone, it means the minion on the attack zone of that card's player's opponent.
-- behind: if the minion is in the defense zone, this whiffs. If the minion is in the attack zone, it means the minion on the same slot of that minion's controller defense zone.
-- adjacent: This means the spaces in front of, behind, and to the sides of that minion. Diagonals do not count.
-- same row: all spaces on the same attack or defense zone
-- same column: all spaces on the same positional slot of both players's attack and defense zone
+- **in front**: if the minion is in the defense zone, it means the minion on the same slot of that minion's controller attack zone. If the minion is in the attack zone, it means the minion on the attack zone of that card's player's opponent.
+- **behind**: if the minion is in the defense zone, this whiffs. If the minion is in the attack zone, it means the minion on the same slot of that minion's controller defense zone.
+- **adjacent**: This means the spaces in front of, behind, and to the sides of that minion. Diagonals do not count.
+- **same row**: all spaces on the same attack or defense zone
+- **same column**: all spaces on the same positional slot of both players's attack and defense zone
 
 #### Spells
 
@@ -90,39 +97,13 @@ There are two types of spells: **Cast** and **Burst**. Only Burst spells can be 
 
 Artifacts are attached to your Hero and enhance their performance in battle or give them new abilities. Every Artifact has a **durability** stat, When it reaches 0, the artifact is removed and sent to the **Discard pile**.
 
-there are 3 types of artifacts: Weapons, Armors and Relics. A hero can only have one of each type equiped at the same time. If another one is equiped, the previous one is considered destroyed and is sent to the **Discard pile**
-
-##### Weapons
-
-Weapons have an attack stat. Your hero's attack is increased by that amount while it is equipped. 
-
-Weapons lose 1 durability after your hero attacks.
-
-##### Armor
-
-Armor prevent your hero from taking damage.
-
-Armors lose durability when your hero takes damage, equal to the damage taken.
-
-##### Relic
-
-Relics do not lose durability by default, but they usually have an activated ability that consumes one or more durability.
-
-#### Attacks
-
-Attack cards are a secondary way to attack with your hero. Like spells, they go straight to the discard pile upon use.
-
-Using an Attack card will immediately transition you to the combat phase, with your Hero declaring the attack.
-
-Like any othern normal attack, upon playing the attack card, your hero will be exhausted.
-
-#### Locations
-
-Locations are cards that provide various bonus or effects to your side of the board. Only one Location card can be active on one side of the board. If another one is played, the current one is first sent to the Discard pile.
+Players can have a maximum of 3 artifact equiped at the same time.If another one is equiped, they chose one to destroy and send to the **Discard pile**.
 
 #### Card Affinity
 
-A card has an **Affinity** associated to it. There are many affinities in the game, such as fire, frost, arcane, shadow, etc...If a player plays a card for which they haven't unlocked the affinity, their Hero will take 1 damage. In addition, some cards can have part , or the totality, of their effect gated behind having unlocked their affinity.
+A card has an **Affinity** associated to it. There are many affinities in the game, such as fire, frost, arcane, shadow, etc... To play a card, its player must have unlocked the corresponding affinity. 
+
+A player can unlock affinities through Destiny cards. The Destiny cost of Affinity Destiny Card increases by 1 for every unlocked affinity.
 
 ### Destiny Deck Cards 
 
@@ -132,27 +113,11 @@ The destiny deck can contain exactly 12 different cards.
 
 Here are the different types of Destiny Deck Cards :
 
-#### Heroes
-
-Hero are the main cards of this game. If a hero's hp reach 0, they lose the game.
-
-Players start with a level 0 Novice with the **Normal** affinity already in play. However, over the course of the game, players are able to level up their hero up to a level 3.
-
-While the default way of leveling up a hero only happens once per turn (see the Turn Structure section below), card effects may enable a player to trigger additional level ups. They cannot however, level up above level 3, or level up to a hero of the same level. They must have a level 0 hero, then level 1, 2 , 3.
-
-In addition to HP and Attack, Heroes have another stat called Power, that may enhance the effect of some other cards. For example, "Deal 1 + Power damage to an enemy".
-
-Each Hero has a few (usually 3) unlockable **Affinities**. When the Hero is played, its player chooses one of those affinities and is now able to play cards of the same affinity to full effect.
-
-When a hero levels up, its previous hero remains on the board, below the new card. It is considered to be te player's **Hero Lineage**. Most heroes have a lineage requirement; for example, To play a level 3 Warlock, you need to have a Mage in your lineage.
-
 #### Talents
 
 Talents are passive bonuses tha persist throughout the whole game. They may give bonus to minions, add new effect that trigger under specific conditions, or give activated abilities to the Hero. 
 
-Talents are tied to a hero class, this means that, for exemple, to play a Mage talent, you need to have your current Hero to be a Mage, or have a Mage in your lineage.
-
-Talents remain on the board when played, in the Talent Zone. This one had 4 slots, thus a player may only have 4 active talents. If the one is full, they cannot override them with another Talent card.
+Talents remain on the board when played, in the Talent Zone.
 
 ### Exhaustion
 
