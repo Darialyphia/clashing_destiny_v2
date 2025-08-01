@@ -19,7 +19,7 @@ export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   description: `Deal 4 + @[spellpower]@ damage to an enemy.\n`,
   collectable: true,
   unique: false,
-  manaCost: 5,
+  manaCost: 4,
   affinity: AFFINITIES.FIRE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

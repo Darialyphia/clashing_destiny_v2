@@ -1,3 +1,5 @@
+import { isDefined } from '@game/shared';
+import { OnAttackModifier } from '../../../../modifier/modifiers/on-attack';
 import type { DestinyBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -6,6 +8,9 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { MinionCard } from '../../../entities/minion.card';
 
 export const fearlessLeader: DestinyBlueprint = {
   id: 'fearless-leader',
@@ -24,6 +29,30 @@ export const fearlessLeader: DestinyBlueprint = {
   tags: [],
   minLevel: 3,
   abilities: [],
-  async onInit(game, card) {},
-  async onPlay(game, card) {}
+  async onInit() {},
+  async onPlay(game, card) {
+    await card.player.hero.modifiers.add(
+      new OnAttackModifier(game, card, {
+        async handler() {
+          const minions = card.player.boardSide.attackZone.slots
+            .map(slot => slot.minion)
+            .filter(isDefined);
+
+          for (const minion of minions) {
+            await minion.modifiers.add(
+              new SimpleAttackBuffModifier<MinionCard>(
+                'fearless-leader-buff',
+                game,
+                card,
+                {
+                  amount: 1,
+                  mixins: [new UntilEndOfTurnModifierMixin(game)]
+                }
+              )
+            );
+          }
+        }
+      })
+    );
+  }
 };
