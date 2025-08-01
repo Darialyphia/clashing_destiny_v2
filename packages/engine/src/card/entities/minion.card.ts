@@ -108,7 +108,7 @@ export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
 export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
   { card: MinionCard; source: AnyCard; damage: Damage; isFatal: boolean },
   {
-    card: string;
+    card: SerializedMinionCard;
     source: string;
     damage: { type: DamageType; amount: number };
     isFatal: boolean;
@@ -116,7 +116,7 @@ export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
 > {
   serialize() {
     return {
-      card: this.data.card.id,
+      card: this.data.card.serialize(),
       source: this.data.source.id,
       damage: {
         type: this.data.damage.type,

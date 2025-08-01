@@ -18,6 +18,7 @@ import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { DamageType } from '@game/engine/src/utils/damage';
+import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -51,7 +52,7 @@ const isActionsPopoverOpened = computed({
 
 const cardElement = useTemplateRef('card');
 const onTakeDamage = async (e: {
-  card: string;
+  card: SerializedCard;
   damage: {
     type: DamageType;
     amount: number;
@@ -59,7 +60,7 @@ const onTakeDamage = async (e: {
 }) => {
   if (!minion.value) return;
   if (
-    e.card !== minion.value.id ||
+    e.card.id !== minion.value.id ||
     !cardElement.value ||
     e.damage.amount <= 0
   ) {
