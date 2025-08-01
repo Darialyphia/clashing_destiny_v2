@@ -27,6 +27,7 @@ export const rustyBlade: ArtifactBlueprint = {
   affinity: AFFINITIES.NORMAL,
   durability: 1,
   subKind: ARTIFACT_KINDS.WEAPON,
+  atkBonus: 2,
   abilities: [
     {
       id: 'rusty-blade-ability',
@@ -51,7 +52,7 @@ export const rustyBlade: ArtifactBlueprint = {
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + 2;
+                  return value + card.atkBonus;
                 }
               })
             ]

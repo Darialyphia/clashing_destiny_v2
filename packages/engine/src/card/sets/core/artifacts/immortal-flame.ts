@@ -29,6 +29,7 @@ export const immortalFlame: ArtifactBlueprint = {
   affinity: AFFINITIES.FIRE,
   durability: 2,
   subKind: ARTIFACT_KINDS.WEAPON,
+  atkBonus: 2,
   abilities: [
     {
       id: 'immortal-flame-ability',
@@ -53,7 +54,7 @@ export const immortalFlame: ArtifactBlueprint = {
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + 2;
+                  return value + card.atkBonus;
                 }
               })
             ]

@@ -4,6 +4,7 @@ import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-e
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LineageBonusModifier } from '../../../../modifier/modifiers/lineage-bonus.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import type { Player } from '../../../../player/player.entity';
 import type { DestinyBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -21,8 +22,7 @@ export const inspiredBySteel: DestinyBlueprint = {
   id: 'inspired-by-steel',
   name: 'Inspired by Steel',
   cardIconId: 'talent-inspired-by-steel',
-  description:
-    '@Lineage Bonus(Knight)@ : When you equip a Weapon Artifact, gain +1 Attack this turn.',
+  description: 'When you equip a Weapon Artifact, gain +1 Attack this turn.',
   collectable: true,
   unique: false,
   destinyCost: 1,
@@ -34,14 +34,12 @@ export const inspiredBySteel: DestinyBlueprint = {
   tags: [],
   minLevel: 1,
   abilities: [],
-  async onInit(game, card) {
-    await card.modifiers.add(new LineageBonusModifier(game, card, knight.id));
-  },
+  async onInit() {},
   async onPlay(game, card) {
     const onEquiped = async (event: ArtifactEquipedEvent) => {
       if (!event.data.card.player.equals(card.player)) return;
       if (event.data.card.subkind !== ARTIFACT_KINDS.WEAPON) return;
-      if (card.modifiers.get(LineageBonusModifier)?.isActive) return;
+
       await card.player.hero.modifiers.add(
         new SimpleAttackBuffModifier<HeroCard>(
           'inspired-by-steel-attack-buff',
@@ -56,7 +54,7 @@ export const inspiredBySteel: DestinyBlueprint = {
     };
 
     await card.player.modifiers.add(
-      new Modifier('inspired-by-steel', game, card, {
+      new Modifier<Player>('inspired-by-steel', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.ARTIFACT_EQUIPED,

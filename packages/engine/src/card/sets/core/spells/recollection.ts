@@ -1,5 +1,6 @@
 import { MainDeckCardInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -17,7 +18,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   name: 'Recollection',
   cardIconId: 'recollection',
   description:
-    "Add a copy of all cards you played since the start of your last turn to your hand. If you don't have @Affinity Bonus@, they cost one more.",
+    'Add a copy of all cards you played since the start of your last turn to your hand. @[level] 5-@ : they cost 1 more.',
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -30,16 +31,21 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new LevelBonusModifier(game, card, 5));
+  },
   async onPlay(game, card) {
     const playedCards = card.player.cardTracker.getCardsPlayedSince(
       game.gamePhaseSystem.elapsedTurns - 1
     );
-    console.log(playedCards);
+
+    const levelMod = card.modifiers.get(LevelBonusModifier);
+
     for (const playedCard of playedCards) {
       const copy = await card.player.generateCard(playedCard.blueprintId);
       await copy.addToHand();
-      if (card.hasAffinityMatch) continue;
+      if (levelMod?.isActive) return;
+
       await copy.modifiers.add(
         new Modifier('recollection-debuff', game, card, {
           mixins: [

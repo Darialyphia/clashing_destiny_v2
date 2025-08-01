@@ -1,4 +1,5 @@
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
@@ -11,12 +12,13 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { MinionCard } from '../../../entities/minion.card';
 
 export const pyreArchfiend: MinionBlueprint = {
   id: 'pyre-archfiend',
   name: 'Pyre Archfiend',
   cardIconId: 'unit-pyre-archfiend',
-  description: `@Pride(2)@, @Rush@, @Cleave@.\n@On Kill@ : deal 3 damage to the enemy Hero.`,
+  description: `@Rush@, @Cleave@.\n@[level] 3+ bonus@ : @On Kill@ : deal 3 damage to the enemy Hero.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -31,13 +33,16 @@ export const pyreArchfiend: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new PrideModifier(game, card, 2));
+    const levelMod = new LevelBonusModifier<MinionCard>(game, card, 3);
+    await card.modifiers.add(levelMod);
     await card.modifiers.add(new CleaveModifier(game, card));
     await card.modifiers.add(new RushModifier(game, card));
     await card.modifiers.add(
       new OnKillModifier(game, card, {
         handler: async () => {
-          await card.player.opponent.hero.takeDamage(card, new AbilityDamage(3));
+          if (levelMod.isActive) {
+            await card.player.opponent.hero.takeDamage(card, new AbilityDamage(3));
+          }
         }
       })
     );

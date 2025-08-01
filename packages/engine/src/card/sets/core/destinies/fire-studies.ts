@@ -58,7 +58,7 @@ export const fireStudies: DestinyBlueprint = {
   async onInit() {},
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
-      new Modifier('fire-studies-embers-on-spell-cast', game, card, {
+      new Modifier<HeroCard>('fire-studies-embers-on-spell-cast', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,

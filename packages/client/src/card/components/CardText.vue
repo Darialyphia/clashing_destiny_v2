@@ -181,7 +181,7 @@ const tokens = computed<Token[]>(() => {
 <style scoped lang="postcss">
 :is(.token-keyword, .token-card) {
   font-weight: var(--font-weight-7);
-  color: #ffcda1;
+  color: #ffb270;
 }
 
 .token-mana {
@@ -261,5 +261,6 @@ const tokens = computed<Token[]>(() => {
 
 .card-text {
   white-space: pre-wrap;
+  color: #fcffcb;
 }
 </style>

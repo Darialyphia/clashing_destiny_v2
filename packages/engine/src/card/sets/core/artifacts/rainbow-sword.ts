@@ -19,9 +19,9 @@ import {
 import { ArtifactCard } from '../../../entities/artifact.entity';
 import { HeroCard } from '../../../entities/hero.entity';
 
-export const rainbowSword: ArtifactBlueprint = {
+export const rainbowCeremonialSword: ArtifactBlueprint = {
   id: 'rainbow-sword',
-  name: 'Rainbow Sword',
+  name: 'Rainbow Ceremonial Sword',
   cardIconId: 'artifact-rainbow-blade',
   description:
     '@On Enter@ : Your hero gains +1 @[attack]@ and +1 @[spellpower]@ this turn.\nWhen your hero takes damage, this loses 1 @[durability]@.\n@On Destroyed@ : Draw 2 cards.',
@@ -34,7 +34,7 @@ export const rainbowSword: ArtifactBlueprint = {
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.NORMAL,
   durability: 4,
-  subKind: ARTIFACT_KINDS.WEAPON,
+  subKind: ARTIFACT_KINDS.RELIC,
   abilities: [],
   tags: [],
   canPlay: () => true,

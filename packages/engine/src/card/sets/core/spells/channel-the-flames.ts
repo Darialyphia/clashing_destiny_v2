@@ -18,7 +18,7 @@ export const channelTheFlames: SpellBlueprint<PreResponseTarget> = {
     'Remove @Burn@ from all minions. Draw a card and deal 2 damage to your hero for each removed.',
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   affinity: AFFINITIES.FIRE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

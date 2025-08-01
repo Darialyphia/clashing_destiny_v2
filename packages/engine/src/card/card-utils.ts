@@ -64,6 +64,44 @@ export const singleEnemyTargetRules = {
   }
 };
 
+export const singleAllyTargetRules = {
+  canPlay(
+    game: Game,
+    card: AnyCard,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) {
+    return (
+      card.player.allAllies.filter(c => c.canBeTargeted(card) && predicate(c)).length > 0
+    );
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) {
+    return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+      player: card.player,
+      isElligible(candidate, selectedCards) {
+        if (!isMinion(candidate) && !isHero(candidate)) {
+          return false;
+        }
+        return (
+          card.player.allAllies.some(ally => ally.equals(candidate)) &&
+          candidate.canBeTargeted(card) &&
+          !selectedCards.some(selected => selected.equals(candidate)) &&
+          predicate(candidate)
+        );
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length === 1;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === 1;
+      }
+    });
+  }
+};
+
 export const singleEnemyMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
     return (

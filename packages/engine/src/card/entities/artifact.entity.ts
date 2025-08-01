@@ -10,7 +10,7 @@ import {
   type PreResponseTarget,
   type SerializedAbility
 } from '../card-blueprint';
-import { CARD_EVENTS, type ArtifactKind } from '../card.enums';
+import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import { CardBeforePlayEvent, CardAfterPlayEvent } from '../card.events';
 import {
   Card,
@@ -38,7 +38,7 @@ export type ArtifactCardInterceptors = CardInterceptors & {
     { card: ArtifactCard; ability: Ability<ArtifactCard, PreResponseTarget> }
   >;
   durability: Interceptable<number, ArtifactCard>;
-  attack: Interceptable<number, ArtifactCard>;
+  attackBonus: Interceptable<number, ArtifactCard>;
   abilities: Interceptable<Ability<ArtifactCard, PreResponseTarget>[], ArtifactCard>;
 };
 
@@ -117,7 +117,7 @@ export class ArtifactCard extends Card<
         canPlay: new Interceptable(),
         canUseAbility: new Interceptable(),
         durability: new Interceptable(),
-        attack: new Interceptable(),
+        attackBonus: new Interceptable(),
         abilities: new Interceptable()
       },
       options
@@ -169,6 +169,13 @@ export class ArtifactCard extends Card<
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_AFTER_GAIN_DURABILITY,
       new ArtifactDurabilityEvent({ card: this, amount })
+    );
+  }
+
+  get atkBonus(): number {
+    return this.interceptors.attackBonus.getValue(
+      this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : 0,
+      this
     );
   }
 

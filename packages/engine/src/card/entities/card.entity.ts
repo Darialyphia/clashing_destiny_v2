@@ -174,7 +174,11 @@ export abstract class Card<
   }
 
   get canPayDestinyCost() {
-    return this.player.cardManager.destinyZone.size >= this.destinyCost;
+    const pool = Array.from(this.player.cardManager.discardPile)
+      .filter(card => card.canBeUsedAsDestinyCost)
+      .concat([...this.player.cardManager.destinyZone]);
+
+    return pool.length >= this.destinyCost;
   }
 
   get canBeUsedAsDestinyCost() {

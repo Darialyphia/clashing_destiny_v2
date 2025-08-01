@@ -27,6 +27,7 @@ export const runedShiv: ArtifactBlueprint = {
   affinity: AFFINITIES.NORMAL,
   durability: 2,
   subKind: ARTIFACT_KINDS.WEAPON,
+  atkBonus: 1,
   abilities: [
     {
       id: 'runed-shiv-ability',
@@ -51,7 +52,7 @@ export const runedShiv: ArtifactBlueprint = {
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + 1;
+                  return value + card.atkBonus;
                 }
               })
             ]

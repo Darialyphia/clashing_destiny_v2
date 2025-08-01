@@ -1,8 +1,7 @@
 import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
-import { SpellDamage } from '../../../../utils/damage';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { scry } from '../../../card-actions-utils';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -18,7 +17,7 @@ export const gazeIntoTomorrow: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'gaze-into-tomorrow',
   name: 'Gaze Into Tomorrow',
   cardIconId: 'spell-gaze-into-tomorrow',
-  description: '@Scry 1@, then draw a card.\n@Echoed Destiny@.',
+  description: '@Scry 1@. @[level] 4+ bonus@.\n@Echoed Destiny@.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -32,10 +31,14 @@ export const gazeIntoTomorrow: SpellBlueprint<MinionCard | HeroCard> = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
+    await card.modifiers.add(new LevelBonusModifier(game, card, 4));
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay(game, card) {
     await scry(game, card, 1);
-    await card.player.cardManager.draw(1);
+    const levelModifier = card.modifiers.get(LevelBonusModifier);
+    if (levelModifier?.isActive) {
+      await card.player.cardManager.draw(1);
+    }
   }
 };

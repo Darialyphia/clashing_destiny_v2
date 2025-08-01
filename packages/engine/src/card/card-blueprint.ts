@@ -1,3 +1,4 @@
+import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
 import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import type {
@@ -134,9 +135,17 @@ export type ArtifactBlueprint = MainDeckCardBlueprint & {
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
   abilities: Ability<ArtifactCard, PreResponseTarget>[];
-  subKind: ArtifactKind;
   durability: number;
-};
+} & (
+    | {
+        subKind: BetterExtract<ArtifactKind, 'ARMOR' | 'RELIC'>;
+      }
+    | {
+        subKind: BetterExtract<ArtifactKind, 'WEAPON'>;
+        atkBonus: number;
+      }
+  );
+
 export type TalentTreeNodeBlueprint = {
   id: string;
   name: string;

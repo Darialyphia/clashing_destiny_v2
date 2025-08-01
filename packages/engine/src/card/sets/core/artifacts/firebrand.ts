@@ -34,6 +34,7 @@ export const firebrand: ArtifactBlueprint = {
   affinity: AFFINITIES.FIRE,
   durability: 2,
   subKind: ARTIFACT_KINDS.WEAPON,
+  atkBonus: 1,
   abilities: [
     {
       id: 'firebrand-ability',
@@ -57,7 +58,7 @@ export const firebrand: ArtifactBlueprint = {
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + 1;
+                  return value + card.atkBonus;
                 }
               }),
               new GameEventModifierMixin(game, {

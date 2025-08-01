@@ -2,11 +2,12 @@ import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
 import { immortalFlame } from './core/artifacts/immortal-flame';
-import { rainbowSword } from './core/artifacts/rainbow-sword';
+import { rainbowCeremonialSword } from './core/artifacts/rainbow-sword';
 import { runedShiv } from './core/artifacts/runed-shiv';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { arcaneMastery } from './core/destinies/arcane-mastery';
+import { fearlessLeader } from './core/destinies/fearless-leader';
 import { fireAffinity } from './core/destinies/fire-affinity';
 import { fireStudies } from './core/destinies/fire-studies';
 import { insight } from './core/destinies/insight';
@@ -51,6 +52,7 @@ import { forgedInTheCrater } from './core/spells/forged-in-the-crater';
 import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { hourglassFracture } from './core/spells/hourglass-fracture';
 import { innerFire } from './core/spells/inner-fire';
+import { manaShield } from './core/spells/mana-shield';
 import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
@@ -77,7 +79,7 @@ export const coreSet: CardSet = {
     inspiredBySteel,
     insight,
     manaVisions,
-    rainbowSword,
+    rainbowCeremonialSword,
     heraldOfSalvation,
     luminescentMystic,
     stalwartVanguard,
@@ -85,6 +87,7 @@ export const coreSet: CardSet = {
     sunPalaceGuard,
     runedShiv,
     gazeIntoTomorrow,
+    fearlessLeader,
 
     // Fire
     fireBolt,
@@ -121,6 +124,7 @@ export const coreSet: CardSet = {
     esteemedErudite,
     surgeOfWill,
     arcaneMastery,
+    manaShield,
 
     // Chrono
     recollection,

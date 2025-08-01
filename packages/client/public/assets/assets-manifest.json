@@ -1294,6 +1294,19 @@
         },
         {
           "alias": [
+            "icon-spell-mana-shield"
+          ],
+          "src": [
+            "/assets/icons/spell-mana-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-novice-pyromancy"
           ],
           "src": [
@@ -1493,6 +1506,19 @@
           ],
           "src": [
             "/assets/icons/talent-earth-affinity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-fearless-leader"
+          ],
+          "src": [
+            "/assets/icons/talent-fearless-leader.png"
           ],
           "data": {
             "tags": {
