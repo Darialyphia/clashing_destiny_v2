@@ -1,5 +1,5 @@
 import { type Serializable } from '@game/shared';
-import { MinionCard, type SerializedMinionCard } from '../card/entities/minion.card';
+import { MinionCard, type SerializedMinionCard } from '../card/entities/minion.entity';
 import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
 import type {
   ArtifactCard,

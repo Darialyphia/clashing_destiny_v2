@@ -15,7 +15,7 @@ import {
 import { CARD_EVENTS } from '../card/card.enums';
 import type { CardEventMap } from '../card/card.events';
 import { COMBAT_EVENTS, type CombatEventMap } from './phases/combat.phase';
-import { MINION_EVENTS, type MinionCardEventMap } from '../card/entities/minion.card';
+import { MINION_EVENTS, type MinionCardEventMap } from '../card/entities/minion.entity';
 import { HERO_EVENTS, type HeroCardEventMap } from '../card/entities/hero.entity';
 import {
   ARTIFACT_EVENTS,

@@ -254,7 +254,11 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    const base = this.position?.zone === 'attack' && !this._isExhausted && this.atk > 0;
+    const base =
+      this.position?.zone === 'attack' &&
+      !this._isExhausted &&
+      this.atk > 0 &&
+      target.canBeAttacked(this);
 
     return this.interceptors.canAttack.getValue(base, {
       target

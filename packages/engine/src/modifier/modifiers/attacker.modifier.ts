@@ -1,6 +1,6 @@
 import type { MaybePromise } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { MinionCard } from '../../card/entities/minion.card';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import { Modifier } from '../modifier.entity';
 import { KEYWORDS } from '../../card/card-keywords';
 import type { Game } from '../../game/game';

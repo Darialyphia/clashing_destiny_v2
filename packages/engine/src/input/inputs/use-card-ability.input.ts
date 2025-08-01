@@ -9,7 +9,7 @@ import {
 } from '../input-errors';
 import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
-import { MinionCard } from '../../card/entities/minion.card';
+import { MinionCard } from '../../card/entities/minion.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),

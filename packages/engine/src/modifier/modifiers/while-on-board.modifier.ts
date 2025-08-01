@@ -1,7 +1,7 @@
 import type { MaybePromise } from '@game/shared';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { MinionCard } from '../../card/entities/minion.card';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { Modifier } from '../modifier.entity';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';

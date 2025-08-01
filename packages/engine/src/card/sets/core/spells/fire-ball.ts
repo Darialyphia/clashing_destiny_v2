@@ -10,7 +10,7 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.card';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const fireBall: SpellBlueprint<MinionCard> = {
   id: 'fire-ball',

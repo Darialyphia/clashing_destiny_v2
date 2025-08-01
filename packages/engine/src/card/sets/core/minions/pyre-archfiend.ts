@@ -12,7 +12,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { MinionCard } from '../../../entities/minion.card';
+import { MinionCard } from '../../../entities/minion.entity';
 
 export const pyreArchfiend: MinionBlueprint = {
   id: 'pyre-archfiend',

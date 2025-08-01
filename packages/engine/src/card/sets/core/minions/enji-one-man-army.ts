@@ -10,7 +10,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { MinionCard } from '../../../entities/minion.card';
+import { MinionCard } from '../../../entities/minion.entity';
 
 export const enjiOneManArmy: MinionBlueprint = {
   id: 'enji-one-man-army',

@@ -8,7 +8,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.card';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const sunEmperor: MinionBlueprint = {
   id: 'sun-emperor',

@@ -16,8 +16,10 @@ export class TogglableModifierMixin<T extends AnyCard> extends ModifierMixin<T> 
 
   check() {
     if (this.predicate()) {
+      if (this.modifier.isEnabled) return;
       this.modifier.enable();
     } else {
+      if (!this.modifier.isEnabled) return;
       this.modifier.disable();
     }
   }

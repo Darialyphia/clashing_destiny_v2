@@ -11,7 +11,7 @@ import { match } from 'ts-pattern';
 import type { GameClient } from '../client';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
-import type { SerializedMinionCard } from '../../card/entities/minion.card';
+import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';

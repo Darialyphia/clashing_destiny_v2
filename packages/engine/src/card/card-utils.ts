@@ -3,7 +3,7 @@ import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
-import type { MinionCard } from './entities/minion.card';
+import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 
 export const isHero = (card: AnyCard): card is HeroCard => {

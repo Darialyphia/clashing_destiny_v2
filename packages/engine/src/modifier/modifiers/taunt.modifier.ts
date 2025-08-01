@@ -1,7 +1,7 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import { isMinionOrHero } from '../../card/card-utils';
 import { Card, type AnyCard } from '../../card/entities/card.entity';
-import type { MinionCard } from '../../card/entities/minion.card';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import type { AttackTarget } from '../../game/phases/combat.phase';
 import { AuraModifierMixin } from '../mixins/aura.mixin';
@@ -25,10 +25,13 @@ export class TauntModifier<T extends AnyCard> extends Modifier<T> {
           isElligible: candidate => {
             return (
               candidate.player.equals(this.target.player.opponent) &&
+              candidate.location === 'board' &&
               isMinionOrHero(candidate)
             );
           },
           onGainAura: async candidate => {
+            console.log(`TauntModifier: applying aura to ${candidate.id}`);
+            // Apply interceptor to the candidate to
             await (candidate as MinionCard).addInterceptor('canAttack', this.interceptor);
           },
           onLoseAura: async candidate => {

@@ -7,7 +7,7 @@ import type {
 import type {
   MinionCard,
   MinionCardDealCombatDamageEvent
-} from '../../card/entities/minion.card';
+} from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import type { AfterDeclareAttackEvent } from '../../game/phases/combat.phase';

@@ -1,5 +1,5 @@
 import { assert, isDefined, type Serializable } from '@game/shared';
-import type { MinionCard } from '../card/entities/minion.card';
+import type { MinionCard } from '../card/entities/minion.entity';
 import { EntityWithModifiers } from '../entity';
 import type { Player } from '../player/player.entity';
 import { Interceptable } from '../utils/interceptable';

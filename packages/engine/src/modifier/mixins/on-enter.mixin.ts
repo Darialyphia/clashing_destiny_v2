@@ -2,7 +2,7 @@ import type { Modifier } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import { CARD_EVENTS } from '../../card/card.enums';
 import type { Game } from '../../game/game';
-import type { MinionCard, MinionSummonedEvent } from '../../card/entities/minion.card';
+import type { MinionCard, MinionSummonedEvent } from '../../card/entities/minion.entity';
 import type {
   ArtifactCard,
   ArtifactEquipedEvent

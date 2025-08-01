@@ -1,7 +1,7 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
-import type { MinionCard } from '../../card/entities/minion.card';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';

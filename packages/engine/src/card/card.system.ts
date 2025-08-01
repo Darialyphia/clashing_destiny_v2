@@ -13,7 +13,7 @@ import type {
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
 import { ArtifactCard } from './entities/artifact.entity';
-import { MinionCard } from './entities/minion.card';
+import { MinionCard } from './entities/minion.entity';
 import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';

@@ -6,7 +6,10 @@ import type {
   inferInterceptorCtx,
   Interceptable
 } from '../../utils/interceptable';
-import type { MinionCard, MinionCardInterceptors } from '../../card/entities/minion.card';
+import type {
+  MinionCard,
+  MinionCardInterceptors
+} from '../../card/entities/minion.entity';
 import type { HeroCard, HeroCardInterceptors } from '../../card/entities/hero.entity';
 import type {
   ArtifactCard,

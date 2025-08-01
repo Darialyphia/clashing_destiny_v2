@@ -16,7 +16,7 @@ import type { ArtifactCard } from './entities/artifact.entity';
 import { Card, type AnyCard } from './entities/card.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { HeroCard } from './entities/hero.entity';
-import type { MinionCard } from './entities/minion.card';
+import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 
 export type CardBlueprintBase = {

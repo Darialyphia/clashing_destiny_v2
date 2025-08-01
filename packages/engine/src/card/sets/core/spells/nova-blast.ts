@@ -11,7 +11,7 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.card';
+import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellCard } from '../../../entities/spell.entity';
 
 export const novaBlast: SpellBlueprint<MinionCard> = {

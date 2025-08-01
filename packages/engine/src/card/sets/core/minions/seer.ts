@@ -11,7 +11,7 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { MinionCard } from '../../../entities/minion.card';
+import { MinionCard } from '../../../entities/minion.entity';
 
 export const seer: MinionBlueprint = {
   id: 'seer',

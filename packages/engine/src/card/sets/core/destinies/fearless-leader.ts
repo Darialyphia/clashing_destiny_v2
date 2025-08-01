@@ -10,7 +10,7 @@ import {
 } from '../../../card.enums';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { MinionCard } from '../../../entities/minion.card';
+import { MinionCard } from '../../../entities/minion.entity';
 
 export const fearlessLeader: DestinyBlueprint = {
   id: 'fearless-leader',

@@ -240,9 +240,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canAttack(target: AttackTarget) {
-    return this.interceptors.canAttack.getValue(!this._isExhausted && this.atk > 0, {
-      target
-    });
+    return this.interceptors.canAttack.getValue(
+      !this._isExhausted && this.atk > 0 && target.canBeAttacked(this),
+      {
+        target
+      }
+    );
   }
 
   canBeAttacked(attacker: AttackTarget) {

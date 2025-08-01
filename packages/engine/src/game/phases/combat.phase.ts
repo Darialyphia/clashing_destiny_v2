@@ -8,7 +8,7 @@ import {
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import type { HeroCard } from '../../card/entities/hero.entity';
-import type { MinionCard } from '../../card/entities/minion.card';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import { GameError } from '../game-error';
 import {
   CorruptedGamephaseContextError,
@@ -204,14 +204,13 @@ export class CombatPhase
     if (!this.attacker || !this.target) {
       return [];
     }
-    return this.target.player.minions.filter(minion => this.canBlock(minion));
+    return this.target.player.minions.filter(
+      minion => this.canBlock(minion) && this.attacker.canBeBlocked(minion)
+    );
   }
 
   get potentialTargets(): AttackTarget[] {
-    return [
-      ...this.attacker.player.opponent.minions,
-      this.attacker.player.opponent.hero
-    ].filter(card => card.canBeAttacked(this.attacker));
+    return this.attacker.potentialAttackTargets;
   }
 
   async declareAttacker(attacker: Attacker) {
