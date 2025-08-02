@@ -160,6 +160,7 @@ const visibleModifiers = computed(() =>
     right: -5px;
     font-size: var(--font-size-2);
     color: white;
+    -webkit-text-stroke: 1px black;
   }
 }
 </style>

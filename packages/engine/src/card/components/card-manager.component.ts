@@ -121,10 +121,12 @@ export class CardManagerComponent {
 
     const destinyZoneCard = [...this.destinyZone].find(card => card.id === id);
     if (destinyZoneCard) return { card: destinyZoneCard, location: 'destinyZone' };
-
     const onBoardCard =
       this.player.boardSide.getAllCardsInPlay().find(card => card.id === id) ??
-      this.player.unlockedDestinyCards.find(card => card.id === id);
+      this.player.unlockedDestinyCards.find(card => {
+        console.log(card.id, id);
+        card.id === id;
+      });
     if (onBoardCard) return { card: onBoardCard, location: 'board' };
 
     return null;

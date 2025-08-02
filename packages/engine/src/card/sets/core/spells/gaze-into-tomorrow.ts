@@ -17,7 +17,7 @@ export const gazeIntoTomorrow: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'gaze-into-tomorrow',
   name: 'Gaze Into Tomorrow',
   cardIconId: 'spell-gaze-into-tomorrow',
-  description: '@Scry 1@. @[level] 3+ bonus@: draw a card.\n@Echoed Destiny@.',
+  description: '@Scry 1@. @[level] 2+ bonus@: draw a card.\n@Echoed Destiny@.',
   collectable: true,
   unique: false,
   manaCost: 1,

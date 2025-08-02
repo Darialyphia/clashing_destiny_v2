@@ -1,12 +1,12 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
-import { immortalFlame } from './core/artifacts/immortal-flame';
 import { rainbowCeremonialSword } from './core/artifacts/rainbow-sword';
 import { runedShiv } from './core/artifacts/runed-shiv';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { arcaneMastery } from './core/destinies/arcane-mastery';
+import { chronoAffinity } from './core/destinies/chrono-affinity';
 import { fearlessLeader } from './core/destinies/fearless-leader';
 import { fireAffinity } from './core/destinies/fire-affinity';
 import { fireStudies } from './core/destinies/fire-studies';
@@ -16,8 +16,6 @@ import { manaVisions } from './core/destinies/mana-visions';
 import { waterAffinity } from './core/destinies/water-affinity';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
-import { sorcerer } from './core/heroes/sorcerer';
-import { warlock } from './core/heroes/warlock';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { ardentMonk } from './core/minions/ardent-monk';
 import { blazingSalamander } from './core/minions/blazing-salamander';
@@ -88,6 +86,7 @@ export const coreSet: CardSet = {
     runedShiv,
     gazeIntoTomorrow,
     fearlessLeader,
+    chronoAffinity,
 
     // Fire
     fireBolt,
@@ -97,7 +96,6 @@ export const coreSet: CardSet = {
     blazingSalamander,
     phoenix,
     flagBearerOfFlame,
-    immortalFlame,
     hotHeadedRecruit,
     channelTheFlames,
     firebrand,

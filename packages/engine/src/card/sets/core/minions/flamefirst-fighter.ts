@@ -29,11 +29,16 @@ export const flamefistFighter: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    if (!card.player.hero.modifiers.has(EmberModifier)) {
-      await card.player.hero.modifiers.add(new EmberModifier(game, card.player.hero));
-    }
-    const modifier = card.player.hero.modifiers.get(EmberModifier)!;
-    modifier.addStacks(2);
+    await card.modifiers.add(
+      new AttackerModifier(game, card, async () => {
+        const modifier = card.player.hero.modifiers.get(EmberModifier);
+        if (!modifier) {
+          await card.player.hero.modifiers.add(new EmberModifier(game, card, 2));
+        } else {
+          modifier.addStacks(2);
+        }
+      })
+    );
   },
   async onPlay() {}
 };

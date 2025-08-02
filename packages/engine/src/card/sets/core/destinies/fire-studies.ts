@@ -1,13 +1,8 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
-import type {
-  Ability,
-  DestinyBlueprint,
-  PreResponseTarget
-} from '../../../card-blueprint';
+import type { DestinyBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,

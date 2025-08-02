@@ -44,7 +44,7 @@ export const KEYWORDS = {
     id: 'on-destroyed',
     name: 'On Destroyed',
     description: 'Does something when this card is destroyed.',
-    aliases: []
+    aliases: ['on death']
   },
   ON_ATTACK: {
     id: 'on-attack',

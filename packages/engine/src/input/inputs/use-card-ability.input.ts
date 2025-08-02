@@ -2,14 +2,11 @@ import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
 import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
-import {
-  IllegalAbilityError,
-  NotCurrentPlayerError,
-  UnknownCardError
-} from '../input-errors';
+import { IllegalAbilityError, UnknownCardError } from '../input-errors';
 import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
+import { DestinyCard } from '../../card/entities/destiny.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -33,7 +30,8 @@ export class UseCardAbilityInput extends Input<typeof schema> {
     assert(
       card instanceof HeroCard ||
         card instanceof MinionCard ||
-        card instanceof ArtifactCard,
+        card instanceof ArtifactCard ||
+        card instanceof DestinyCard,
       new UnknownCardError(this.payload.cardId)
     );
     assert(card.canUseAbility(this.payload.abilityId), new IllegalAbilityError());

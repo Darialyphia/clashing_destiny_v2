@@ -28,6 +28,7 @@ export type ModifierOptions<
   TCustomEvents extends Record<string, any>
 > = ModifierInfos<TCustomEvents> & {
   mixins: ModifierMixin<T>[];
+  stacks?: number;
 };
 
 class ModifierLifecycleEvent extends TypedSerializableEvent<
@@ -123,6 +124,9 @@ export class Modifier<
       icon: options.icon
     };
     this._isUnique = options.isUnique ?? false;
+    if (options.stacks) {
+      this._stacks = options.stacks;
+    }
   }
 
   get isUnique() {
