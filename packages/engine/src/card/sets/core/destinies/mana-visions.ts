@@ -37,44 +37,12 @@ export const manaVisions: DestinyBlueprint = {
       id: 'mana-visions-ability',
       manaCost: 1,
       shouldExhaust: true,
-      description:
-        '@[exhaust]@ @[mana] 1@ : @Scry 1@, then draw a card. You cannot play spells this turn. You cannot use this ability if you have already played a spell this turn.',
-      label: '@[exhaust]@ : @Scry 1@, draw 1',
+      description: '@[exhaust]@ @[mana] 1@ : @Scry 1@.',
+      label: '@[exhaust]@ : @Scry 1@',
       getPreResponseTargets: async () => [],
-      canUse: (game, card) => {
-        return (
-          card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL)
-            .length === 0
-        );
-      },
+      canUse: () => true,
       onResolve: async (game, card) => {
         await scry(game, card, 1);
-        await card.player.cardManager.draw(1);
-
-        const interceptor = () => false;
-        await card.player.hero.modifiers.add(
-          new Modifier<HeroCard>('mana-visions-cannot-play-spells', game, card, {
-            mixins: [
-              new UntilEndOfTurnModifierMixin(game),
-              new AuraModifierMixin(game, {
-                canSelfApply: false,
-                isElligible(candidate) {
-                  return (
-                    candidate.kind === CARD_KINDS.SPELL &&
-                    candidate.player.equals(card.player) &&
-                    candidate.location === 'hand'
-                  );
-                },
-                async onGainAura(candidate) {
-                  await candidate.addInterceptor('canPlay', interceptor);
-                },
-                async onLoseAura(candidate) {
-                  await candidate.removeInterceptor('canPlay', interceptor);
-                }
-              })
-            ]
-          })
-        );
       }
     }
   ],

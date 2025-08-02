@@ -55,6 +55,7 @@ import { moltenShield } from './core/spells/molten-shield';
 import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
+import { revisedStrategy } from './core/spells/revised-strategy';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 
@@ -88,6 +89,7 @@ export const coreSet: CardSet = {
     gazeIntoTomorrow,
     fearlessLeader,
     chronoAffinity,
+    revisedStrategy,
 
     // Fire
     fireBolt,

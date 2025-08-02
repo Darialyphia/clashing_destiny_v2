@@ -35,8 +35,8 @@ export const moltenShield: SpellBlueprint<MinionCard | HeroCard> = {
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
   tags: [],
-  canPlay: singleAllyTargetRules.canPlay,
-  getPreResponseTargets: singleAllyTargetRules.getPreResponseTargets,
+  canPlay: () => true,
+  getPreResponseTargets: async () => [],
   async onInit(game, card) {
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },

@@ -969,6 +969,19 @@
         },
         {
           "alias": [
+            "icon-modifier-molten-shield"
+          ],
+          "src": [
+            "/assets/icons/modifier-molten-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-placeholder"
           ],
           "src": [
@@ -1242,6 +1255,19 @@
         },
         {
           "alias": [
+            "icon-spell-hourglass-fracture"
+          ],
+          "src": [
+            "/assets/icons/spell-hourglass-fracture.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-ice-bolt"
           ],
           "src": [
@@ -1307,6 +1333,19 @@
         },
         {
           "alias": [
+            "icon-spell-molten-shield"
+          ],
+          "src": [
+            "/assets/icons/spell-molten-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-novice-pyromancy"
           ],
           "src": [
@@ -1337,6 +1376,32 @@
           ],
           "src": [
             "/assets/icons/spell-pillars-of-frost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-recollection"
+          ],
+          "src": [
+            "/assets/icons/spell-recollection.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-revise-strategy"
+          ],
+          "src": [
+            "/assets/icons/spell-revise-strategy.png"
           ],
           "data": {
             "tags": {
@@ -1493,6 +1558,19 @@
           ],
           "src": [
             "/assets/icons/talent-arcane-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-chrono-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-chrono-affinity.png"
           ],
           "data": {
             "tags": {
@@ -2286,6 +2364,19 @@
           ],
           "src": [
             "/assets/icons/unit-sword-instructor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-temporal-shifter"
+          ],
+          "src": [
+            "/assets/icons/unit-temporal-shifter.png"
           ],
           "data": {
             "tags": {
