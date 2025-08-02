@@ -53,11 +53,12 @@ export const knight: HeroBlueprint = {
         const [artifact] = await game.interaction.chooseCards({
           player: card.player,
           choices,
-          minChoiceCount: 1,
+          minChoiceCount: 0,
           maxChoiceCount: 1,
           label: 'Choose a weapon artifact to equip'
         });
-
+        if (!artifact) return;
+        artifact.removeFromCurrentLocation();
         await artifact.play();
         sealAbility(card, 'knight-ability-1');
       }

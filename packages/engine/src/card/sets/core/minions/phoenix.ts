@@ -1,4 +1,6 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
+import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -14,7 +16,7 @@ export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
   cardIconId: 'unit-rainbow-phoenix',
-  description: `@Pride(3)@.\n@On Enter@ : inflicts @Burn@ to all enemy minions.`,
+  description: `@Pride(3)@.\n@On Enter@ : inflicts @Burn@ to all enemy minions. @On Death@: If your hero has at least 3 @Ember@ stacks, consume them to equp an @Immortal Flame@ to your hero.`,
   collectable: true,
   unique: false,
   manaCost: 5,
@@ -26,32 +28,27 @@ export const phoenix: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
   tags: [],
-  abilities: [
-    {
-      id: 'phoenix-ability',
-      label: 'Use ability',
-      description: `@[mana] 2@@[exhaust]@ Banish this minion. Equip an @Immortal Flame@ to your hero.`,
-      manaCost: 2,
-      shouldExhaust: true,
-      canUse(game, card) {
-        return card.location === 'board';
-      },
-      async getPreResponseTargets() {
-        return [];
-      },
-      async onResolve(game, card) {
-        card.sendToBanishPile();
-        const immortalFlameCard = await card.player.generateCard(immortalFlame.id);
-        await immortalFlameCard.play();
-      }
-    }
-  ],
+  abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         for (const target of card.player.enemyMinions) {
           await target.modifiers.add(new BurnModifier(game, target));
+        }
+      })
+    );
+
+    await card.modifiers.add(
+      new OnDeathModifier(game, card, {
+        handler: async () => {
+          const ember = card.player.hero.modifiers.get(EmberModifier);
+          if (!ember) return;
+          if (ember.stacks >= 3) {
+            await ember.removeStacks(3);
+            const immortalFlameCard = await card.player.generateCard(immortalFlame.id);
+            await immortalFlameCard.play();
+          }
         }
       })
     );

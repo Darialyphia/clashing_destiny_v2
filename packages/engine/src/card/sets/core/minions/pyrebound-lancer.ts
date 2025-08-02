@@ -1,4 +1,3 @@
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -8,8 +7,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { SpellCard } from '../../../entities/spell.entity';
-import { fireBolt } from '../spells/fire-bolt';
 
 export const pyreboundLancer: MinionBlueprint = {
   id: 'pyrebound-lancer',

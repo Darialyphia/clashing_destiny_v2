@@ -16,7 +16,7 @@ export const temporalShifter: MinionBlueprint = {
   id: 'temporal-shifter',
   name: 'Temporal Shifter',
   cardIconId: 'temporal-shifter',
-  description: `@On Enter@ : @[level] 2+ bonus@ : Your opponent draws cards during their End phase instead of their Draw phase during their next turn.`,
+  description: `@On Enter@ : Your opponent draws cards during their End phase instead of their Draw phase during their next turn.`,
   collectable: true,
   unique: false,
   manaCost: 4,

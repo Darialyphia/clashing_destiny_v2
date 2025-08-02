@@ -15,6 +15,7 @@ import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
+import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 
 export type GameStateEntities = Record<
   string,
@@ -92,5 +93,12 @@ export class ClientStateController {
       ...newState,
       entities: this.buildentities(newState.entities)
     };
+  }
+
+  async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {
+    if (event.eventName === GAME_EVENTS.PLAYER_START_TURN) {
+      this.state.currentPlayer = event.event.player.id;
+      await flush();
+    }
   }
 }

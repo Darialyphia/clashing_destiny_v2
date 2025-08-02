@@ -4,10 +4,19 @@ import CardText from '@/card/components/CardText.vue';
 
 const { card } = defineProps<{ card: CardViewModel }>();
 const isOpened = defineModel<boolean>('isOpened', { required: true });
+watchEffect(() => {
+  if (!isOpened.value) return;
+  if (card.getActions().length === 0) {
+    setTimeout(() => {
+      isOpened.value = false;
+    }, 2000);
+  }
+});
 </script>
 
 <template>
   <div class="actions-list">
+    <p v-if="!card.getActions().length">No actions available</p>
     <button
       v-for="action in card.getActions()"
       :key="action.id"

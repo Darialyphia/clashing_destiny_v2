@@ -235,6 +235,12 @@ export const KEYWORDS = {
     description:
       'The first time this deals combat damage during your turn, wake up this minion.',
     aliases: []
+  },
+  EMBER: {
+    id: 'ember',
+    name: 'Ember',
+    description: 'Consumed by other cards to gain additional effects.',
+    aliases: []
   }
 };
 

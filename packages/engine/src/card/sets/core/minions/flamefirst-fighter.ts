@@ -1,4 +1,5 @@
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
+import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -13,7 +14,7 @@ export const flamefistFighter: MinionBlueprint = {
   id: 'flamefist-fighter',
   name: 'Flamefist Fighter',
   cardIconId: 'unit-flamefist-fighter',
-  description: `@Attacker@ : +1@[attack]@`,
+  description: `@Attacker@ : add 2 stacks of @Ember@ to your hero.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -28,13 +29,11 @@ export const flamefistFighter: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const buff = new AttackerModifier(game, card, async () => {
-      await card.modifiers.add(
-        new SimpleAttackBuffModifier('flamefistFighter', game, card, { amount: 1 })
-      );
-    });
-
-    await card.modifiers.add(buff);
+    if (!card.player.hero.modifiers.has(EmberModifier)) {
+      await card.player.hero.modifiers.add(new EmberModifier(game, card.player.hero));
+    }
+    const modifier = card.player.hero.modifiers.get(EmberModifier)!;
+    modifier.addStacks(2);
   },
   async onPlay() {}
 };

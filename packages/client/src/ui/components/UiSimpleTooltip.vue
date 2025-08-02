@@ -29,17 +29,19 @@ const {
       <slot name="trigger" v-bind="triggerProps" />
     </TooltipTrigger>
     <TooltipPortal :disabled="!usePortal">
-      <TooltipContent
-        v-slot="contentProps"
-        class="select-none"
-        :side-offset="sideOffset"
-        :side="side"
-        :align="align"
-      >
-        <div class="tooltip-content">
-          <slot v-bind="contentProps" />
-        </div>
-      </TooltipContent>
+      <Transition>
+        <TooltipContent
+          v-slot="contentProps"
+          class="select-none"
+          :side-offset="sideOffset"
+          :side="side"
+          :align="align"
+        >
+          <div class="tooltip-content">
+            <slot v-bind="contentProps" />
+          </div>
+        </TooltipContent>
+      </Transition>
     </TooltipPortal>
   </TooltipRoot>
 </template>
@@ -53,5 +55,12 @@ const {
   font-size: 14px;
   border: solid 1px #bb8225;
   max-width: 40ch;
+}
+
+:is(.v-enter-active, .v-leave-active) {
+  transition: opacity 0.2s ease-in-out;
+}
+:is(.v-enter-from, .v-leave-to) {
+  opacity: 0;
 }
 </style>

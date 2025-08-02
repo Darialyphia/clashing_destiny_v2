@@ -36,6 +36,7 @@ export const rustyBlade: ArtifactBlueprint = {
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
+        console.log(card.location);
         return card.location === 'board';
       },
       async getPreResponseTargets() {

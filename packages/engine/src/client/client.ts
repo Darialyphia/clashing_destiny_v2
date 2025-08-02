@@ -16,6 +16,7 @@ import { GAME_PHASES } from '../game/game.enums';
 import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
 import type { Affinity } from '../card/card.enums';
+import { GAME_EVENTS } from '../game/game.events';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -74,7 +75,7 @@ export class GameClient {
 
   readonly fxAdapter: FxAdapter;
 
-  private gameType: GameType;
+  readonly gameType: GameType;
 
   private initialState!: SerializedOmniscientState | SerializedPlayerState;
 
@@ -217,8 +218,11 @@ export class GameClient {
       for (const event of snapshot.events) {
         if (this.gameType === GAME_TYPES.LOCAL) {
           this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
-          await this.emitter.emit('update', {});
         }
+        await this.stateManager.onEvent(event, async () => {
+          await this.emitter.emit('update', {});
+        });
+
         await this.fx.emit(event.eventName, event.event);
       }
       this._isPlayingFx = false;

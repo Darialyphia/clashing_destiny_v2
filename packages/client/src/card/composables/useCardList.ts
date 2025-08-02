@@ -16,8 +16,10 @@ export type CardListContext = {
   textFilter: Ref<string, string>;
   hasAffinityFilter(affinity: Affinity): boolean;
   toggleAffinityFilter(affinity: Affinity): void;
+  clearAffinityFilter(): void;
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
+  clearKindFilter(): void;
 };
 
 const CardListInjectionKey = Symbol(
@@ -130,6 +132,12 @@ export const provideCardList = () => {
       } else {
         kindFilter.value.add(kind);
       }
+    },
+    clearAffinityFilter: () => {
+      affinityFilter.value.clear();
+    },
+    clearKindFilter: () => {
+      kindFilter.value.clear();
     }
   };
 

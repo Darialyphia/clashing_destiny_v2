@@ -1,5 +1,6 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
+import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { singleMinionTargetRules } from '../../../card-utils';
 import {
@@ -30,16 +31,21 @@ export const flameExorcist: MinionBlueprint = {
     {
       id: 'ability',
       label: '@[exhaust]@ : @Burn minion',
-      description: `@[exhaust]@ Inflict @Burn@ to a minion.\n@Echoed Destiny@.`,
+      description: `@[exhaust]@ Consume 1 @Ember@ stack from your hero Inflict @Burn@ to a minion.`,
       canUse: (game, card) =>
         card.location === 'board' &&
-        game.boardSystem.sides.some(side => side.getAllMinions().length > 0),
+        game.boardSystem.sides.some(side => side.getAllMinions().length > 0) &&
+        (card.player.hero.modifiers.get(EmberModifier)?.stacks ?? 0) > 0,
       getPreResponseTargets(game, card) {
         return singleMinionTargetRules.getPreResponseTargets(game, card);
       },
       manaCost: 0,
       shouldExhaust: true,
       async onResolve(game, card) {
+        const emberModifier = card.player.hero.modifiers.get(EmberModifier);
+        if (!emberModifier || emberModifier.stacks < 1) return;
+        await emberModifier.removeStacks(1);
+
         for (const target of card.abilityTargets.get('ability')!) {
           if (target instanceof MinionCard) {
             await target.modifiers.add(new BurnModifier(game, card));

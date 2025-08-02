@@ -15,6 +15,7 @@ const {
   hasAffinityFilter,
   hasKindFilter,
   toggleAffinityFilter,
+  clearAffinityFilter,
   toggleKindFilter,
   viewMode
 } = useCollectionPage();
@@ -56,40 +57,35 @@ const cardKinds: Array<{
     </section>
     <section class="flex gap-3 items-center">
       <h4>Display</h4>
-      <div class="flex gap-3">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <label class="view-toggle">
-              <Icon
-                icon="material-symbols-light:view-column-2"
-                width="1.5rem"
-              />
-              <input
-                v-model="viewMode"
-                type="radio"
-                value="expanded"
-                class="sr-only"
-              />
-            </label>
-          </template>
-          Expanded view
-        </UiSimpleTooltip>
+      <UiSimpleTooltip>
+        <template #trigger>
+          <label class="view-toggle">
+            <Icon icon="material-symbols-light:view-column-2" width="1.5rem" />
+            <input
+              v-model="viewMode"
+              type="radio"
+              value="expanded"
+              class="sr-only"
+            />
+          </label>
+        </template>
+        Normal view
+      </UiSimpleTooltip>
 
-        <UiSimpleTooltip>
-          <template #trigger>
-            <label class="view-toggle">
-              <Icon icon="heroicons:squares-2x2-16-solid" width="1.5rem" />
-              <input
-                v-model="viewMode"
-                type="radio"
-                value="compact"
-                class="sr-only"
-              />
-            </label>
-          </template>
-          Compact view
-        </UiSimpleTooltip>
-      </div>
+      <UiSimpleTooltip>
+        <template #trigger>
+          <label class="view-toggle">
+            <Icon icon="heroicons:squares-2x2-16-solid" width="1.5rem" />
+            <input
+              v-model="viewMode"
+              type="radio"
+              value="compact"
+              class="sr-only"
+            />
+          </label>
+        </template>
+        Compact view
+      </UiSimpleTooltip>
     </section>
 
     <section>
@@ -109,6 +105,7 @@ const cardKinds: Array<{
           {{ affinity.label }}
         </UiSimpleTooltip>
       </div>
+      <button class="clear-button" @click="clearAffinityFilter">Clear</button>
     </section>
 
     <section>
@@ -147,9 +144,12 @@ const cardKinds: Array<{
       width: 100%;
       height: 100%;
     }
+    &:not(.active) {
+      filter: brightness(70%);
+    }
     &.active {
       background-color: hsl(from var(--color) h s l / 0.25);
-      border-color: var(--color);
+      /* border-color: var(--color); */
     }
   }
 }
@@ -185,12 +185,20 @@ const cardKinds: Array<{
   width: 100%;
   padding: var(--size-2) var(--size-4);
   border-radius: var(--radius-pill);
-  border: solid var(--border-size-1) var(--gray-5);
+  border: solid var(--border-size-1) #b96b45;
   background-color: var(--color-gray-1);
   color: var(--color-gray-9);
+  transition: border-color 0.2s var(--ease-1);
   &::placeholder {
     color: var(--color-gray-6);
     font-style: italic;
   }
+  &:focus {
+    border-color: #ffb270;
+    outline: none;
+  }
+}
+
+.clear-button {
 }
 </style>

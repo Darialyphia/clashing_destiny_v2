@@ -2,6 +2,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -21,7 +22,7 @@ export const forgedInTheCrater: SpellBlueprint<MinionCard> = {
   name: 'Forged in the Crater',
   cardIconId: 'spell-forged-in-the-crater',
   description:
-    'This turn, when you use a Weapon ability, give your hero +1@[attack]@ until the end of the turn.',
+    'This turn, when you use a Weapon ability, give your hero +1@[attack]@ until the end of the turn. @[level] 3+@ : draw a card in your Destiny zone',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -34,7 +35,9 @@ export const forgedInTheCrater: SpellBlueprint<MinionCard> = {
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
+  },
   async onPlay(game, card) {
     let stacks = 0;
 
@@ -59,5 +62,9 @@ export const forgedInTheCrater: SpellBlueprint<MinionCard> = {
         ]
       })
     );
+
+    if (card.modifiers.get(LevelBonusModifier)?.isActive) {
+      await card.player.cardManager.drawIntoDestinyZone(1);
+    }
   }
 };

@@ -16,7 +16,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'recollection',
   name: 'Recollection',
-  cardIconId: 'recollection',
+  cardIconId: 'spell-recollection',
   description:
     'Add a copy of all cards you played since the start of your last turn to your hand. @[level] 5-@ : they cost 1 more.',
   collectable: true,
