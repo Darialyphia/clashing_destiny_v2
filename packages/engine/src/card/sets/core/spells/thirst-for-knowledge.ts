@@ -14,7 +14,7 @@ export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
   name: 'Thirst for Knowledge',
   cardIconId: 'spell-thirst-for-knowledge',
   description:
-    'Draw @[spellpower]@ cards, then put all non Arcane cards in your hand into your Destiny Zone.',
+    'Draw @[spellpower]@ cards, then discard all non Arcane cards in your hand.',
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -38,7 +38,7 @@ export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
     );
 
     for (const card of nonArcaneCards) {
-      await card.sendToDestinyZone();
+      await card.discard();
     }
   }
 };

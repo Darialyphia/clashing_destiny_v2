@@ -193,12 +193,12 @@ export class Modifier<
     await this.game.emit(MODIFIER_EVENTS.AFTER_APPLIED, new ModifierLifecycleEvent(this));
   }
 
-  async reapplyTo(target: T) {
+  async reapplyTo(target: T, stacks = 1) {
     await this.game.emit(
       MODIFIER_EVENTS.BEFORE_REAPPLIED,
       new ModifierLifecycleEvent(this)
     );
-    this._stacks += 1;
+    this._stacks += stacks;
     if (this.isEnabled) {
       this.mixins.forEach(mixin => {
         mixin.onReapplied(target, this);

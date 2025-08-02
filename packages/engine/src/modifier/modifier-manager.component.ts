@@ -40,7 +40,7 @@ export class ModifierManager<T extends ModifierTarget> {
   async add(modifier: Modifier<T>) {
     if (this.has(modifier)) {
       const mod = this.get(modifier.modifierType)!;
-      await mod!.reapplyTo(this.target);
+      await mod!.reapplyTo(this.target, modifier.stacks);
       return mod;
     } else {
       this._modifiers.push(modifier);

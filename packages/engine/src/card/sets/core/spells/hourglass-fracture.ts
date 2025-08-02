@@ -34,7 +34,7 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
 
       if (event.data.from === GAME_PHASES.DESTINY) {
         stop();
-        await game.gamePhaseSystem.endTurn();
+        await game.gamePhaseSystem.declareEndPhase();
       }
     });
   }

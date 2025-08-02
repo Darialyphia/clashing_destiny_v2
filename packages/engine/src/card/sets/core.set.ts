@@ -51,6 +51,7 @@ import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { hourglassFracture } from './core/spells/hourglass-fracture';
 import { innerFire } from './core/spells/inner-fire';
 import { manaShield } from './core/spells/mana-shield';
+import { moltenShield } from './core/spells/molten-shield';
 import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
@@ -108,6 +109,7 @@ export const coreSet: CardSet = {
     forgedInTheCrater,
     fireStudies,
     pyreboundLancer,
+    moltenShield,
 
     // Arcane,
     dualCasting,
