@@ -8,7 +8,6 @@ import {
   useMyBoard
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -18,15 +17,14 @@ const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();
 
-const isOpened = ref(false);
-watchEffect(() => {
-  isOpened.value =
+const isOpened = ref(client.value.playerId === state.value.currentPlayer);
+useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
+  if (
     client.value.playerId === state.value.currentPlayer &&
-    state.value.phase.state === GAME_PHASES.DESTINY &&
-    state.value.interaction.state === INTERACTION_STATES.IDLE;
-});
-useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
-  isOpened.value = false;
+    event.to.state === GAME_PHASES.DESTINY
+  ) {
+    isOpened.value = true;
+  }
 });
 
 const selectedId = ref<string | null>(null);
@@ -146,22 +144,5 @@ const destinyCards = computed<CardViewModel[]>(() => {
     body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
   ) {
   opacity: 0;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: var(--size-7);
-  font-weight: var(--font-weight-4);
-}
-
-.played-card {
-  position: fixed;
-  top: var(--size-8);
-  right: var(--size-8);
-  z-index: 10;
-}
-
-footer > button {
-  min-width: 12ch;
 }
 </style>

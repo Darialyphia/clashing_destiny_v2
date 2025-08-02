@@ -6,6 +6,8 @@ import {
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
 import type { MainDeckCard } from '../../board/board.system';
+import { CARD_EVENTS } from '../../card/card.enums';
+import { CardDeclarePlayEvent } from '../../card/card.events';
 
 type PlayCardContextOptions = {
   card: MainDeckCard;
@@ -34,7 +36,9 @@ export class PlayCardContext {
     this.card = options.card;
   }
 
-  async init() {}
+  async init() {
+    this.card.removeFromCurrentLocation();
+  }
 
   serialize() {
     return {
@@ -47,6 +51,7 @@ export class PlayCardContext {
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
+
     await this.player.playMainDeckCard(this.card, manaCostIndices);
   }
 

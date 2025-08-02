@@ -12,7 +12,11 @@ import {
   type SerializedAbility
 } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
-import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
+import {
+  CardAfterPlayEvent,
+  CardBeforePlayEvent,
+  CardDeclarePlayEvent
+} from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -432,7 +436,6 @@ export class MinionCard extends Card<
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
-    this.removeFromCurrentLocation();
 
     this.player.boardSide.summonMinion(this, position.zone, position.slot);
     await this.blueprint.onPlay(this.game, this);
@@ -469,6 +472,10 @@ export class MinionCard extends Card<
         return selectedSlots.length === 1;
       }
     });
+    await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
     await this.playAt(position);
   }
 

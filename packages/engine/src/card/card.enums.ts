@@ -11,7 +11,8 @@ export const CARD_EVENTS = {
   CARD_WAKE_UP: 'card.wake_up',
   CARD_LEAVE_BOARD: 'card.leave_board',
   CARD_BEFORE_DESTROY: 'card.before_destroy',
-  CARD_AFTER_DESTROY: 'card.after_destroy'
+  CARD_AFTER_DESTROY: 'card.after_destroy',
+  CARD_DECLARE_PLAY: 'card.declare_play'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 

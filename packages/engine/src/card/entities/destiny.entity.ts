@@ -10,7 +10,11 @@ import {
   type SerializedAbility
 } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
-import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
+import {
+  CardAfterPlayEvent,
+  CardBeforePlayEvent,
+  CardDeclarePlayEvent
+} from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -88,6 +92,10 @@ export class DestinyCard extends Card<
   }
 
   async play() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })

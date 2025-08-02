@@ -11,7 +11,11 @@ import {
   type SerializedAbility
 } from '../card-blueprint';
 import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
-import { CardBeforePlayEvent, CardAfterPlayEvent } from '../card.events';
+import {
+  CardBeforePlayEvent,
+  CardAfterPlayEvent,
+  CardDeclarePlayEvent
+} from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -258,11 +262,14 @@ export class ArtifactCard extends Card<
 
   async play() {
     await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
+    await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
     this.updatePlayedAt();
-    this.removeFromCurrentLocation();
 
     await this.player.artifactManager.equip(this);
     await this.blueprint.onPlay(this.game, this);

@@ -12,7 +12,7 @@ import {
   type SpellBlueprint
 } from '../card-blueprint';
 import { CARD_EVENTS, SPELL_KINDS, type SpellKind } from '../card.enums';
-import { CardBeforePlayEvent } from '../card.events';
+import { CardBeforePlayEvent, CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -83,7 +83,10 @@ export class SpellCard extends Card<
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
 
     this.preResponseTargets = targets;
-
+    await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
     const effect = {
       source: this,
       targets,

@@ -2,7 +2,7 @@
 import AffinityModal from './AffinityModal.vue';
 import CombatArrows from './CombatArrows.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
-import PlayedCard from './PlayedCard.vue';
+import PlayedCardIntent from './PlayedCardIntent.vue';
 import SVGFilters from './SVGFilters.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
 import BattleLog from './BattleLog.vue';
@@ -28,6 +28,7 @@ import EquipedArtifacts from './EquipedArtifacts.vue';
 import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import Deck from './Deck.vue';
 import UnlockedDestinies from './UnlockedDestinies.vue';
+import PlayedCard from './PlayedCard.vue';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -64,6 +65,7 @@ const finishStartAnimation = () => {
   <AffinityModal />
   <ChooseCardModal />
   <CombatArrows />
+  <PlayedCardIntent />
   <PlayedCard />
   <DestinyCostVFX />
 
