@@ -22,7 +22,7 @@ export const battleflameInvoker: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 1,
+  atk: 2,
   maxHp: 4,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -36,7 +36,7 @@ export const battleflameInvoker: MinionBlueprint = {
       label: 'Gain 1 Ember',
       shouldExhaust: true,
       manaCost: 0,
-      canUse: () => true,
+      canUse: (game, card) => card.location === 'board',
       getPreResponseTargets: async () => [],
       async onResolve(game, card) {
         await card.player.hero.modifiers.add(new EmberModifier(game, card));

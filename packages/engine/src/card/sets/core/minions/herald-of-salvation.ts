@@ -1,4 +1,8 @@
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
+import { isMinion } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -6,12 +10,13 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const heraldOfSalvation: MinionBlueprint = {
   id: 'herald-of-salvation',
   name: 'Herald of Salvation',
   cardIconId: 'unit-herald-of-salvation',
-  description: `@[level] 3+@ : @On Enter@: The next time a allied minion is destroyed, send it to your Destiny zone instead of the discard pile.`,
+  description: `@[level] 3+@ : @On Enter@: The next time a allied minion is destroyed, send it to your Destiny zone.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -25,6 +30,23 @@ export const heraldOfSalvation: MinionBlueprint = {
   abilities: [],
   tags: [],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 3)
+    )) as LevelBonusModifier<MinionCard>;
+
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, () => {
+        if (!levelMod.isActive) return;
+
+        const unsub = game.on(GAME_EVENTS.CARD_AFTER_DESTROY, ({ data }) => {
+          if (!data.card.player.equals(card.player)) return;
+          if (!isMinion(data.card)) return;
+          unsub();
+          card.sendToDestinyZone();
+        });
+      })
+    );
+  },
   async onPlay() {}
 };

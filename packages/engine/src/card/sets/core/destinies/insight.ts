@@ -14,7 +14,7 @@ export const insight: DestinyBlueprint = {
   id: 'insight',
   name: 'Insight',
   cardIconId: 'talent-insight',
-  description: 'Draw a card. You cannot declare an attack this turn.',
+  description: 'Draw a card. You cannot declare attacks this turn.',
   collectable: true,
   unique: false,
   destinyCost: 0,

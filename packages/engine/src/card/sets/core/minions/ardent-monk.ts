@@ -51,7 +51,7 @@ export const ardentMonk: MinionBlueprint = {
             })
           );
         }
-        if (stacks >= 3) {
+        if (stacks >= 3 && card.player.cardManager.hand.length > 0) {
           await discardFromHand(game, card, { min: 1, max: 1 });
           await card.player.cardManager.draw(1);
         }
