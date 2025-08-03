@@ -2,6 +2,7 @@ import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -18,7 +19,7 @@ export const phoenix: MinionBlueprint = {
   description: `@Pride(3)@.\n@On Enter@ : inflicts @Burn@ to all enemy minions.\n@On Death@: If your hero has at least 4 @Ember@ stacks, consume them to summon this in the Defense zone exhausted.`,
   collectable: true,
   unique: false,
-  manaCost: 5,
+  manaCost: 4,
   atk: 4,
   maxHp: 4,
   rarity: RARITIES.LEGENDARY,
@@ -30,10 +31,11 @@ export const phoenix: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new PrideModifier(game, card, 3));
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
         for (const target of card.player.enemyMinions) {
-          await target.modifiers.add(new BurnModifier(game, target));
+          await target.modifiers.add(new BurnModifier(game, card));
         }
       })
     );
@@ -42,18 +44,16 @@ export const phoenix: MinionBlueprint = {
       new OnDeathModifier(game, card, {
         handler: async () => {
           const ember = card.player.hero.modifiers.get(EmberModifier);
-          if (!ember) return;
-          if (ember.stacks < 4) return;
-          const hasRoom = card.player.boardSide.defenseZone.slots.some(
-            s => !s.isOccupied
-          );
+          if (!ember || ember?.stacks < 4) return;
+
+          const hasRoom = card.player.boardSide.defenseZone.hasEmptySlot;
           if (!hasRoom) return;
 
           await ember.removeStacks(4);
+
           const [position] = await game.interaction.selectMinionSlot({
             player: card.player,
-            isElligible: slot =>
-              card.player.boardSide.defenseZone.slots.some(s => s.isSame(slot)),
+            isElligible: slot => card.player.boardSide.defenseZone.has(slot),
             canCommit(selectedSlots) {
               return selectedSlots.length === 1;
             },

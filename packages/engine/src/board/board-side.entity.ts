@@ -23,11 +23,16 @@ import {
 import type { Attacker } from '../game/phases/combat.phase';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '../card/card.enums';
+import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
 
 export type MinionSlot = number;
 
 type MinionZone = {
+  player: Player;
   slots: Array<BoardMinionSlot>;
+  hasEmptySlot: boolean;
+  minions: MinionCard[];
+  has(position: MinionPosition): boolean;
 };
 
 type SerializedCreatureZone = {
@@ -79,16 +84,36 @@ export class BoardSide
     super(`board-side-${player.id}`, {});
     this.player = player;
     this._attackZone = {
+      player,
       slots: Array.from(
         { length: this.game.config.ATTACK_ZONE_SLOTS },
         (_, index) => new BoardMinionSlot(player, 'attack', index)
-      )
+      ),
+      get hasEmptySlot() {
+        return this.slots.some(slot => !slot.isOccupied);
+      },
+      get minions() {
+        return this.slots.map(slot => slot.minion).filter(isDefined);
+      },
+      has(position: MinionPosition) {
+        return this.slots.some(slot => slot.isSame(position));
+      }
     };
     this._defenseZone = {
+      player,
       slots: Array.from(
         { length: this.game.config.DEFENSE_ZONE_SLOTS },
         (_, index) => new BoardMinionSlot(player, 'defense', index)
-      )
+      ),
+      get hasEmptySlot() {
+        return this.slots.some(slot => !slot.isOccupied);
+      },
+      get minions() {
+        return this.slots.map(slot => slot.minion).filter(isDefined);
+      },
+      has(position: MinionPosition) {
+        return this.slots.some(slot => slot.isSame(position));
+      }
     };
   }
 

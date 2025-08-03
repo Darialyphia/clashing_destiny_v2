@@ -21,7 +21,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
     'Add a copy of all cards you played since the start of your last turn to your hand.\n@[level] 5-@ : they cost 1 more.',
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 3,
   affinity: AFFINITIES.CHRONO,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

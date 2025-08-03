@@ -25,6 +25,7 @@ export class PlayCardContext {
   }
 
   private card: MainDeckCard;
+  private cardIndexInHand: number;
 
   readonly player: Player;
 
@@ -34,6 +35,9 @@ export class PlayCardContext {
   ) {
     this.player = options.player;
     this.card = options.card;
+    this.cardIndexInHand = this.player.cardManager.hand.findIndex(c =>
+      c.equals(this.card)
+    );
   }
 
   async init() {
@@ -57,6 +61,7 @@ export class PlayCardContext {
 
   async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
+    this.card.player.cardManager.addToHand(this.card, this.cardIndexInHand);
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
   }

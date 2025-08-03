@@ -282,7 +282,6 @@ export class CombatPhase
     if (!this.target) {
       throw new CorruptedGamephaseContextError();
     }
-
     this.dispatch(COMBAT_STEP_TRANSITIONS.CHAIN_RESOLVED);
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
@@ -307,6 +306,7 @@ export class CombatPhase
         blocker: this.blocker
       })
     );
+
     this.game.interaction.onInteractionEnd();
     await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.FINISH_ATTACK);
     await this.game.inputSystem.askForPlayerInput();

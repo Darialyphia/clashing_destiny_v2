@@ -40,9 +40,9 @@ export const moltenShield: SpellBlueprint<MinionCard | HeroCard> = {
   async onInit(game, card) {
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
-  async onPlay(game, card, [target]) {
-    await (target as MinionCard).modifiers.add(
-      new Modifier<MinionCard>('molten-shield', game, card, {
+  async onPlay(game, card) {
+    await card.player.hero.modifiers.add(
+      new Modifier<HeroCard>('molten-shield', game, card, {
         name: 'Molten Shield',
         description: 'Prevent the 2 combat damage dealt to this.',
         icon: 'keyword-molten-shield',
@@ -59,7 +59,7 @@ export const moltenShield: SpellBlueprint<MinionCard | HeroCard> = {
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
             handler: async (event, modifier) => {
-              if (!event.data.card.equals(target)) return;
+              if (!event.data.card.equals(card.player.hero)) return;
               if (event.data.damage.type !== DAMAGE_TYPES.COMBAT) return;
               await modifier.target.modifiers.remove(modifier);
               const amountPrevented =

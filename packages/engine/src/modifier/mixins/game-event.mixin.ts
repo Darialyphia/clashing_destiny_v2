@@ -1,3 +1,4 @@
+import type { MaybePromise } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import type { GameEventMap } from '../../game/game.events';
@@ -15,7 +16,7 @@ export class GameEventModifierMixin<
       handler: (
         event: EventMapWithStarEvent<GameEventMap>[TEvent],
         modifier: Modifier<ModifierTarget>
-      ) => void;
+      ) => MaybePromise<void>;
       once?: boolean;
     }
   ) {
@@ -25,8 +26,10 @@ export class GameEventModifierMixin<
 
   private modifier!: Modifier<ModifierTarget>;
 
-  private handler(event: EventMapWithStarEvent<GameEventMap>[TEvent]): void {
-    this.options.handler(event, this.modifier);
+  private async handler(
+    event: EventMapWithStarEvent<GameEventMap>[TEvent]
+  ): Promise<void> {
+    await this.options.handler(event, this.modifier);
   }
 
   onApplied(target: ModifierTarget, modifier: Modifier<ModifierTarget>): void {

@@ -1,3 +1,4 @@
+import type { MaybePromise } from '@game/shared';
 import { KEYWORDS } from '../../card/card-keywords';
 import type { CardAfterDestroyEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
@@ -14,7 +15,10 @@ export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
     source: AnyCard,
     options: {
       mixins?: ModifierMixin<T>[];
-      handler: (event: CardAfterDestroyEvent, modifier: Modifier<T>) => void;
+      handler: (
+        event: CardAfterDestroyEvent,
+        modifier: Modifier<T>
+      ) => MaybePromise<void>;
     }
   ) {
     super(KEYWORDS.ON_DESTROYED.id, game, source, {
@@ -22,9 +26,9 @@ export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
         new KeywordModifierMixin(game, KEYWORDS.ON_DESTROYED),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
-          handler: event => {
+          handler: async event => {
             if (event.data.card.equals(this.target)) {
-              options.handler(event, this);
+              await options.handler(event, this);
             }
           }
         }),

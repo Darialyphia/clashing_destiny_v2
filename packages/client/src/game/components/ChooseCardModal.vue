@@ -58,7 +58,7 @@ const maxChoices = computed(() => {
       <p class="text-5 mb-4">
         {{ label }} ({{ selectedIndices.length }}/{{ maxChoices }})
       </p>
-      <div class="card-list">
+      <div class="card-list fancy-scrollbar">
         <label v-for="(card, index) in displayedCards" :key="card">
           <GameCard :key="card" :card-id="card" :interactive="false" />
           <input
@@ -100,6 +100,8 @@ const maxChoices = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: var(--size-2);
+  max-height: 60dvh;
+  overflow-y: auto;
   > * {
     width: var(--card-width);
     height: var(--card-height);
