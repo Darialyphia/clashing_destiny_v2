@@ -241,6 +241,13 @@ export const KEYWORDS = {
     name: 'Ember',
     description: 'Consumed by other cards to gain additional effects.',
     aliases: []
+  },
+  TRAP: {
+    id: 'trap',
+    name: 'Trap',
+    description:
+      'If the condition is met while this card is in your destiny Zone, it is played for free. This card is sent to the discard pile instead of being recollected at the end of your Destiny Phase.',
+    aliases: []
   }
 };
 

@@ -2,6 +2,7 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
+import { AbilityDamage } from '../../../../utils/damage';
 import type { DestinyBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -33,7 +34,7 @@ export const fireStudies: DestinyBlueprint = {
       manaCost: 0,
       shouldExhaust: false,
       description:
-        '@[mana] 0@ : Consume 3 stacks of @Ember@ from your hero to draw a card.',
+        '@[mana] 0@ : Consume 3 stacks of @Ember@ from your hero to draw a card and deal 2 damage to your hero.',
       label: 'Consume 3 Embers: draw a card',
       getPreResponseTargets: async () => [],
       canUse: (game, card) => {
@@ -47,6 +48,7 @@ export const fireStudies: DestinyBlueprint = {
         if (!emberModifier) return;
         await emberModifier.removeStacks(3);
         await card.player.cardManager.draw(1);
+        await card.player.hero.takeDamage(card, new AbilityDamage(2));
       }
     }
   ],

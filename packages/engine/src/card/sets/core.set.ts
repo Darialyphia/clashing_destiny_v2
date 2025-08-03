@@ -52,6 +52,7 @@ import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { hourglassFracture } from './core/spells/hourglass-fracture';
 import { innerFire } from './core/spells/inner-fire';
 import { manaShield } from './core/spells/mana-shield';
+import { masquerade } from './core/spells/masquerade';
 import { moltenShield } from './core/spells/molten-shield';
 import { novaBlast } from './core/spells/nova-blast';
 import { pyroclasm } from './core/spells/pyroclasm';
@@ -91,6 +92,7 @@ export const coreSet: CardSet = {
     fearlessLeader,
     chronoAffinity,
     revisedStrategy,
+    masquerade,
 
     // Fire
     fireBolt,
