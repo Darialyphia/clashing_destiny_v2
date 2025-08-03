@@ -42,6 +42,7 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, async event => {
   transform: translateX(-50%);
   width: var(--card-width);
   height: var(--card-height);
+  pointer-events: none;
 }
 
 :is(.v-enter-active, .v-leave-active) {

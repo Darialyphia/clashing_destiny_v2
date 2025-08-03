@@ -33,6 +33,8 @@ export const provideCollectionPage = () => {
     toggleAffinityFilter,
     hasKindFilter,
     toggleKindFilter,
+    clearAffinityFilter,
+    clearKindFilter,
     textFilter
   } = provideCardList();
 
@@ -85,6 +87,8 @@ export const provideCollectionPage = () => {
     toggleAffinityFilter,
     hasKindFilter,
     toggleKindFilter,
+    clearAffinityFilter,
+    clearKindFilter,
     textFilter,
     viewMode,
     isEditingDeck: isEditing,

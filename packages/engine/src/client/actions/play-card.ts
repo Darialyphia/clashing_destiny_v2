@@ -7,7 +7,7 @@ export class PlayCardAction implements CardActionRule {
   constructor(private client: GameClient) {}
 
   predicate(card: CardViewModel) {
-    return card.canPlay;
+    return card.canPlay && card.location === 'hand';
   }
 
   getLabel(card: CardViewModel) {
