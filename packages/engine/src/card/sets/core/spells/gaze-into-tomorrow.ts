@@ -31,7 +31,7 @@ export const gazeIntoTomorrow: SpellBlueprint<MinionCard | HeroCard> = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
+    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay(game, card) {

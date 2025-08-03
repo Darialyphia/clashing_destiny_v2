@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { GAME_PHASES } from '../../../../game/game.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
@@ -14,9 +15,12 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   id: 'hourglass-fracture',
   name: 'Hourglass Fracture',
   cardIconId: 'spell-hourglass-fracture',
-  description: 'Your opponent ends their next turn after their Destiny Phase.',
+  description: dedent`
+  @Unique@.
+  Your opponent ends their next turn after their Destiny Phase.
+  `,
   collectable: true,
-  unique: false,
+  unique: true,
   manaCost: 6,
   affinity: AFFINITIES.CHRONO,
   kind: CARD_KINDS.SPELL,

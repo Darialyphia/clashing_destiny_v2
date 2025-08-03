@@ -18,6 +18,7 @@ import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { ardentMonk } from './core/minions/ardent-monk';
+import { battleflameInvoker } from './core/minions/battleflame-invoker';
 import { blazingSalamander } from './core/minions/blazing-salamander';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
 import { enjiOneManArmy } from './core/minions/enji-one-man-army';
@@ -112,6 +113,7 @@ export const coreSet: CardSet = {
     fireStudies,
     pyreboundLancer,
     moltenShield,
+    battleflameInvoker,
 
     // Arcane,
     dualCasting,
