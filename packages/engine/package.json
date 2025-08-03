@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@game/shared": "*",
+    "dedent": "^1.6.0",
     "deep-equal": "^2.2.3",
     "dpdm": "^3.14.0",
     "eventemitter2": "^6.4.9",

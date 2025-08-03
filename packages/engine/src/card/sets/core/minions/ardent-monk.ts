@@ -1,10 +1,10 @@
+import dedent from 'dedent';
 import type { MainDeckCard } from '../../../../board/board.system';
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -13,12 +13,17 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { discardFromHand } from '../../../card-actions-utils';
 
 export const ardentMonk: MinionBlueprint = {
   id: 'ardentMonk',
   name: 'Ardent Monk',
   cardIconId: 'unit-ardent-monk',
-  description: `@On Enter@ : Depending on the amount of @Ember@ stacks on your hero:\n• 1-2: gain +1@[attack]@\n• 3-5: draw a card in your Destiny zone\n• 6+: gain @Rush@ and @Cleave@.`,
+  description: dedent`
+  @On Enter@ : Depending on the amount of @Ember@ stacks on your hero:
+  • 1-2: gain +1@[attack]@
+  • 3-5: discard 1 card, then draw 1 card
+  • 6+: gain @Rush@ and @Cleave@.`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -47,7 +52,8 @@ export const ardentMonk: MinionBlueprint = {
           );
         }
         if (stacks >= 3) {
-          await card.player.cardManager.drawIntoDestinyZone(1);
+          await discardFromHand(game, card, { min: 1, max: 1 });
+          await card.player.cardManager.draw(1);
         }
         if (stacks >= 5) {
           await card.modifiers.add(new CleaveModifier(game, card));

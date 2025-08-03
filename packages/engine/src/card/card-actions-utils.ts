@@ -38,3 +38,27 @@ export const discover = async (game: Game, card: AnyCard, choicePool: MainDeckCa
 
   return { selectedCard, choices };
 };
+
+export const discardFromHand = async (
+  game: Game,
+  card: AnyCard,
+  options: { min: number; max: number }
+) => {
+  const cards = card.player.cardManager.hand;
+  const cardsToDiscard = await game.interaction.chooseCards<MainDeckCard>({
+    player: card.player,
+    minChoiceCount: options.min,
+    maxChoiceCount: options.max,
+    choices: cards,
+    label:
+      options.min === options.max
+        ? `Choose ${options.max} cards to discard`
+        : `Choose up to ${options.max} cards to discard`
+  });
+
+  for (const card of cardsToDiscard) {
+    await card.discard();
+  }
+
+  return cardsToDiscard;
+};

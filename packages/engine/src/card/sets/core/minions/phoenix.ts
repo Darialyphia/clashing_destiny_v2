@@ -19,7 +19,7 @@ export const phoenix: MinionBlueprint = {
   description: `@Pride(3)@.\n@On Enter@ : inflicts @Burn@ to all enemy minions.\n@On Death@: If your hero has at least 4 @Ember@ stacks, consume them to summon this in the Defense zone exhausted.`,
   collectable: true,
   unique: false,
-  manaCost: 4,
+  manaCost: 5,
   atk: 4,
   maxHp: 4,
   rarity: RARITIES.LEGENDARY,

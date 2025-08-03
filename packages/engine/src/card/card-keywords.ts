@@ -150,7 +150,7 @@ export const KEYWORDS = {
     id: 'pusher',
     name: 'Pusher',
     description:
-      'When this unit deals combat damage to a minion, move that minion to the Defense Zone.',
+      'When this unit deals combat damage to a minion, move that minion to the same position in the Defense Zone. If there is already a minion in that position, deal 1 damage to both minions.',
     aliases: []
   },
   DRIFTER: {
@@ -170,7 +170,7 @@ export const KEYWORDS = {
     id: 'puller',
     name: 'Puller',
     description:
-      'When this unit declares an attack, move the attack target to the Attack Zone.',
+      'When this unit declares an attack, move the attack target to the Attack Zone. If there is already a minion in that position, deal 1 damage to both minions.',
     aliases: []
   },
   BURN: {

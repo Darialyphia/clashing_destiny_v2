@@ -18,7 +18,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
   name: 'Recollection',
   cardIconId: 'spell-recollection',
   description:
-    'Add a copy of all cards you played since the start of your last turn to your hand.\n@[level] 5-@ : they cost 1 more.',
+    'Add a copy of all cards you played on your last turn to your hand.\n@[level] 5-@ : they cost 1 more.',
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -35,7 +35,7 @@ export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
     await card.modifiers.add(new LevelBonusModifier(game, card, 5));
   },
   async onPlay(game, card) {
-    const playedCards = card.player.cardTracker.getCardsPlayedSince(
+    const playedCards = card.player.cardTracker.getCardsPlayedOnTurn(
       game.gamePhaseSystem.elapsedTurns - 1
     );
 

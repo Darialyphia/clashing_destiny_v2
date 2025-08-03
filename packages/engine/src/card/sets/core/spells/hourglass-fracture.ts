@@ -17,7 +17,7 @@ export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
   description: 'Your opponent ends their next turn after their Destiny Phase.',
   collectable: true,
   unique: false,
-  manaCost: 5,
+  manaCost: 6,
   affinity: AFFINITIES.CHRONO,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

@@ -53,4 +53,12 @@ watchEffect(() => {
     outline: solid 2px hsl(var(--cyan-4-hsl));
   }
 }
+
+p {
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
+  text-shadow:
+    0 0 2px black,
+    0 0 1px black;
+}
 </style>
