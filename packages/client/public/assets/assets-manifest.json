@@ -1333,6 +1333,19 @@
         },
         {
           "alias": [
+            "icon-spell-masquerade"
+          ],
+          "src": [
+            "/assets/icons/spell-masquerade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-molten-shield"
           ],
           "src": [
@@ -1831,6 +1844,19 @@
           ],
           "src": [
             "/assets/icons/unit-avatar-of-peace.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-battleflame-invoker"
+          ],
+          "src": [
+            "/assets/icons/unit-battleflame-invoker.png"
           ],
           "data": {
             "tags": {

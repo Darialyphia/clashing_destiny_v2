@@ -55,6 +55,7 @@ import { manaShield } from './core/spells/mana-shield';
 import { masquerade } from './core/spells/masquerade';
 import { moltenShield } from './core/spells/molten-shield';
 import { novaBlast } from './core/spells/nova-blast';
+import { powerOverwhelming } from './core/spells/power-overwhelming';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
 import { revisedStrategy } from './core/spells/revised-strategy';
@@ -131,6 +132,7 @@ export const coreSet: CardSet = {
     surgeOfWill,
     arcaneMastery,
     manaShield,
+    powerOverwhelming,
 
     // Chrono
     recollection,
