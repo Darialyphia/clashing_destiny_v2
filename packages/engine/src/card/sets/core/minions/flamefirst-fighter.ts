@@ -14,7 +14,7 @@ export const flamefistFighter: MinionBlueprint = {
   id: 'flamefist-fighter',
   name: 'Flamefist Fighter',
   cardIconId: 'unit-flamefist-fighter',
-  description: `@Attacker@ : add 2 stacks of @Ember@ to your hero.`,
+  description: `@Attacker@ : add 1 stacks of @Ember@ to your hero.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -33,7 +33,7 @@ export const flamefistFighter: MinionBlueprint = {
       new AttackerModifier(game, card, async () => {
         const modifier = card.player.hero.modifiers.get(EmberModifier);
         if (!modifier) {
-          await card.player.hero.modifiers.add(new EmberModifier(game, card, 2));
+          await card.player.hero.modifiers.add(new EmberModifier(game, card, 1));
         } else {
           modifier.addStacks(2);
         }

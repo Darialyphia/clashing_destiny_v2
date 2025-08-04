@@ -11,15 +11,17 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { HeroCard } from '../../../entities/hero.entity';
 
 export const powerOverwhelming: SpellBlueprint<MinionCard> = {
   id: 'power-overwhelming',
   name: 'Power Overwhelming',
   cardIconId: 'spell-power-overwhelming',
-  description: dedent`Discard any number of cards from your hand. Gain +1@[spellpower]@ this turn for each card discarded this way.`,
+  description: dedent`This turn, your hero gains @[attack]@ equal to their @[spellpower]@.`,
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -31,21 +33,9 @@ export const powerOverwhelming: SpellBlueprint<MinionCard> = {
   getPreResponseTargets: async () => [],
   async onInit() {},
   async onPlay(game, card) {
-    const cardsToDiscard = await game.interaction.chooseCards({
-      player: card.player,
-      label: 'Choose cards to discard',
-      minChoiceCount: 0,
-      maxChoiceCount: card.player.cardManager.hand.length,
-      choices: card.player.cardManager.hand
-    });
-
-    for (const cardToDiscard of cardsToDiscard) {
-      await cardToDiscard.discard();
-    }
-
     await card.player.hero.modifiers.add(
-      new SimpleSpellpowerBuffModifier('power_overwhelming_buff', game, card, {
-        amount: cardsToDiscard.length,
+      new SimpleAttackBuffModifier<HeroCard>('power_overwhelming_buff', game, card, {
+        amount: card.player.hero.spellPower,
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );

@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
@@ -16,7 +17,10 @@ export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
   cardIconId: 'unit-rainbow-phoenix',
-  description: `@Pride(3)@.\n@On Enter@ : inflicts @Burn@ to all enemy minions.\n@On Death@: If your hero has at least 4 @Ember@ stacks, consume them to summon this in the Defense zone exhausted.`,
+  description: dedent`
+  @Pride(3)@.
+  @On Enter@ : inflicts @Burn@ to all enemy minions.
+  @On Death@: If your hero has at least 4 @Ember@ stacks, consume them to summon this in the Defense zone exhausted.`,
   collectable: true,
   unique: false,
   manaCost: 5,

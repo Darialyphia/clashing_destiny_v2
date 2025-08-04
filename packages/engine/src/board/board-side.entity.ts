@@ -5,7 +5,11 @@ import {
   type Nullable,
   type Serializable
 } from '@game/shared';
-import { MinionCard, type SerializedMinionCard } from '../card/entities/minion.entity';
+import {
+  MinionCard,
+  MinionMoveEvent,
+  type SerializedMinionCard
+} from '../card/entities/minion.entity';
 import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
 import type {
   ArtifactCard,
@@ -24,6 +28,7 @@ import type { Attacker } from '../game/phases/combat.phase';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '../card/card.enums';
 import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
+import { GAME_EVENTS } from '../game/game.events';
 
 export type MinionSlot = number;
 
@@ -32,6 +37,7 @@ type MinionZone = {
   slots: Array<BoardMinionSlot>;
   hasEmptySlot: boolean;
   minions: MinionCard[];
+  get(slot: number): BoardMinionSlot;
   has(position: MinionPosition): boolean;
 };
 
@@ -97,6 +103,9 @@ export class BoardSide
       },
       has(position: MinionPosition) {
         return this.slots.some(slot => slot.isSame(position));
+      },
+      get(slot: MinionSlot): BoardMinionSlot {
+        return this.slots[slot];
       }
     };
     this._defenseZone = {
@@ -113,6 +122,9 @@ export class BoardSide
       },
       has(position: MinionPosition) {
         return this.slots.some(slot => slot.isSame(position));
+      },
+      get(slot: MinionSlot): BoardMinionSlot {
+        return this.slots[slot];
       }
     };
   }
@@ -239,7 +251,7 @@ export class BoardSide
       .filter(isDefined);
   }
 
-  moveMinion(
+  async moveMinion(
     from: { zone: 'attack' | 'defense'; slot: MinionSlot },
     to: { zone: 'attack' | 'defense'; slot: MinionSlot },
     { allowSwap = false }: { allowSwap: boolean } = { allowSwap: false }
@@ -253,14 +265,55 @@ export class BoardSide
     assert(fromSlot.isOccupied, 'No creature in slot');
     assert(allowSwap || !toSlot.isOccupied, 'Target slot occupied');
 
+    await this.game.emit(
+      GAME_EVENTS.MINION_BEFORE_MOVE,
+      new MinionMoveEvent({
+        card: fromSlot.minion!,
+        from: fromSlot,
+        to: toSlot
+      })
+    );
+
     const minion = fromSlot.removeMinion();
     if (toSlot.isOccupied && allowSwap) {
+      await this.game.emit(
+        GAME_EVENTS.MINION_BEFORE_MOVE,
+        new MinionMoveEvent({
+          card: toSlot.minion!,
+          from: toSlot,
+          to: fromSlot
+        })
+      );
       const otherMinion = toSlot.removeMinion();
       toSlot.summon(minion);
       fromSlot.summon(otherMinion);
+      await this.game.emit(
+        GAME_EVENTS.MINION_AFTER_MOVE,
+        new MinionMoveEvent({
+          card: minion,
+          from: fromSlot,
+          to: toSlot
+        })
+      );
+      await this.game.emit(
+        GAME_EVENTS.MINION_AFTER_MOVE,
+        new MinionMoveEvent({
+          card: otherMinion,
+          from: toSlot,
+          to: fromSlot
+        })
+      );
       return;
     }
     toSlot.summon(minion);
+    await this.game.emit(
+      GAME_EVENTS.MINION_AFTER_MOVE,
+      new MinionMoveEvent({
+        card: minion,
+        from: fromSlot,
+        to: toSlot
+      })
+    );
   }
 
   remove(card: AnyCard) {

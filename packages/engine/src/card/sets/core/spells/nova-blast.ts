@@ -18,7 +18,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',
-  description: `Deal 3 damage to all minions. @[level] 5+ bonus@ : This costs 3 less.`,
+  description: `Deal 3 damage to all minions. @[level] 5+ bonus@ : This costs 2 less.`,
   collectable: true,
   unique: false,
   manaCost: 6,
@@ -41,7 +41,7 @@ export const novaBlast: SpellBlueprint<MinionCard> = {
           new SpellInterceptorModifierMixin(game, {
             key: 'manaCost',
             interceptor(value) {
-              return levelMod.isActive ? Math.max(value! - 3, 0) : value;
+              return levelMod.isActive ? Math.max(value! - 2, 0) : value;
             }
           })
         ]

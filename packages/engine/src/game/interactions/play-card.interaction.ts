@@ -6,8 +6,6 @@ import {
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
 import type { MainDeckCard } from '../../board/board.system';
-import { CARD_EVENTS } from '../../card/card.enums';
-import { CardDeclarePlayEvent } from '../../card/card.events';
 
 type PlayCardContextOptions = {
   card: MainDeckCard;

@@ -29,6 +29,10 @@ import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
+import type {
+  BoardMinionSlot,
+  SerializedBoardMinionSlot
+} from '../../board/board-minion-slot.entity';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -72,7 +76,9 @@ export const MINION_EVENTS = {
   MINION_BEFORE_HEAL: 'minion.before-heal',
   MINION_AFTER_HEAL: 'minion.after-heal',
   MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability'
+  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability',
+  MINION_BEFORE_MOVE: 'minion.before-move',
+  MINION_AFTER_MOVE: 'minion.after-move'
 } as const;
 export type MinionEvents = Values<typeof MINION_EVENTS>;
 
@@ -167,6 +173,23 @@ export class MinionSummonedEvent extends TypedSerializableEvent<
   }
 }
 
+export class MinionMoveEvent extends TypedSerializableEvent<
+  { card: MinionCard; from: BoardMinionSlot; to: BoardMinionSlot },
+  {
+    card: SerializedMinionCard;
+    from: SerializedBoardMinionSlot;
+    to: SerializedBoardMinionSlot;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      from: this.data.from.serialize(),
+      to: this.data.to.serialize()
+    };
+  }
+}
+
 export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE]: MinionCardBeforeTakeDamageEvent;
   [MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE]: MinionCardAfterTakeDamageEvent;
@@ -177,6 +200,8 @@ export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
   [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
   [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
+  [MINION_EVENTS.MINION_BEFORE_MOVE]: MinionMoveEvent;
+  [MINION_EVENTS.MINION_AFTER_MOVE]: MinionMoveEvent;
 };
 
 export class MinionCard extends Card<
@@ -218,6 +243,11 @@ export class MinionCard extends Card<
 
   get position() {
     return this.player.boardSide.getPositionFor(this);
+  }
+
+  get minionSlot() {
+    if (!this.position) return null;
+    return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
   }
 
   get isAlive() {
@@ -294,6 +324,12 @@ export class MinionCard extends Card<
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
+  }
+
+  async moveTo(position: MinionPosition, allowSwap = false) {
+    if (!this.position) return;
+
+    return this.player.boardSide.moveMinion(this.position, position, { allowSwap });
   }
 
   canUseAbility(id: string) {

@@ -75,6 +75,7 @@ export type SerializedModifier = {
   target: string;
   source: string;
   stacks: number;
+  isEnabled: boolean;
 };
 
 export class Modifier<
@@ -244,7 +245,8 @@ export class Modifier<
       icon: this.infos.icon,
       target: this._target.id,
       source: this.source.id,
-      stacks: this._stacks
+      stacks: this._stacks,
+      isEnabled: this._isEnabled
     };
   }
 }

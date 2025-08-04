@@ -24,7 +24,7 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
   name: 'Rainbow Ceremonial Sword',
   cardIconId: 'artifact-rainbow-blade',
   description:
-    '@On Enter@ : Your hero gains +1 @[attack]@ and +1 @[spellpower]@ this turn.\nWhen your hero takes damage, this loses 1 @[durability]@.\n@On Destroyed@ : Draw 2 cards.',
+    '@On Enter@ : Your hero gains +2 @[attack]@ and +2 @[spellpower]@ this turn.\nWhen your hero takes damage, this loses 1 @[durability]@.\n@On Destroyed@ : Draw 2 cards.',
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
@@ -33,7 +33,7 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.NORMAL,
-  durability: 4,
+  durability: 3,
   subKind: ARTIFACT_KINDS.RELIC,
   abilities: [],
   tags: [],
@@ -43,15 +43,15 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
       new OnEnterModifier(game, card, async () => {
         await card.player.hero.modifiers.add(
           new SimpleAttackBuffModifier<HeroCard>('rainbow-sword-attack', game, card, {
-            amount: 1,
-            name: 'Raibow Sword',
+            amount: 2,
+            name: 'Rainbow Sword',
             mixins: [new UntilEndOfTurnModifierMixin(game)]
           })
         );
         await card.player.hero.modifiers.add(
           new SimpleSpellpowerBuffModifier('rainbow-sword-spellpower', game, card, {
-            amount: 1,
-            name: 'Raibow Sword',
+            amount: 2,
+            name: 'Rainbow Sword',
             mixins: [new UntilEndOfTurnModifierMixin(game)]
           })
         );

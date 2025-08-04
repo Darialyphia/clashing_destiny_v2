@@ -11,6 +11,8 @@ import GameCard from './GameCard.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import CardResizer from './CardResizer.vue';
 
 const board = useMyBoard();
 const isShowingBoard = ref(false);
@@ -71,15 +73,31 @@ const destinyCards = computed<CardViewModel[]>(() => {
       <p class="text-5 mb-4">Play up to one Destiny Card.</p>
 
       <div class="card-list">
-        <button
+        <InspectableCard
           v-for="card in destinyCards"
           :key="card.id"
-          :class="{ selected: selected === card.id }"
-          :disabled="!card.canPlay"
-          @click="selected = card.id"
+          :card-id="card.id"
+          side="left"
+          :side-offset="0"
+          :open-delay="200"
+          :close-delay="0"
         >
-          <GameCard :key="card.id" :card-id="card.id" :interactive="false" />
-        </button>
+          <button
+            class="toggle"
+            :class="{ selected: selected === card.id }"
+            :disabled="!card.canPlay"
+            @click="selected = card.id"
+          >
+            <CardResizer :forced-scale="0.5">
+              <GameCard
+                :key="card.id"
+                :card-id="card.id"
+                :interactive="false"
+                :auto-scale="false"
+              />
+            </CardResizer>
+          </button>
+        </InspectableCard>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton
@@ -123,18 +141,23 @@ const destinyCards = computed<CardViewModel[]>(() => {
   display: flex;
   flex-wrap: wrap;
   gap: var(--size-2);
-  > * {
-    width: var(--card-width);
-    height: var(--card-height);
-    transition: all 0.2s var(--ease-2);
-  }
+}
 
-  > button.selected {
+:deep(.inspectable-card) {
+  width: var(--card-width);
+  height: var(--card-height);
+}
+
+.toggle {
+  width: var(--card-width);
+  height: var(--card-height);
+  transition: all 0.2s var(--ease-2);
+  &.selected {
     filter: brightness(1.3);
     transform: translateY(10px);
   }
 
-  > button:disabled {
+  &:disabled {
     filter: grayscale(0.7);
     pointer-events: none;
   }

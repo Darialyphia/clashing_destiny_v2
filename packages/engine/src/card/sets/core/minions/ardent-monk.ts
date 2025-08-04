@@ -21,9 +21,9 @@ export const ardentMonk: MinionBlueprint = {
   cardIconId: 'unit-ardent-monk',
   description: dedent`
   @On Enter@ : Depending on the amount of @Ember@ stacks on your hero:
-  • 1-2: gain +1@[attack]@
-  • 3-5: discard 1 card, then draw 1 card
-  • 6+: gain @Rush@ and @Cleave@.`,
+  • 1-2: gains +1@[attack]@
+  • 3-5: gains @Cleave@
+  • 6+:  draw 1 card.`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -52,12 +52,10 @@ export const ardentMonk: MinionBlueprint = {
           );
         }
         if (stacks >= 3 && card.player.cardManager.hand.length > 0) {
-          await discardFromHand(game, card, { min: 1, max: 1 });
-          await card.player.cardManager.draw(1);
+          await card.modifiers.add(new CleaveModifier(game, card));
         }
         if (stacks >= 5) {
-          await card.modifiers.add(new CleaveModifier(game, card));
-          await card.modifiers.add(new RushModifier(game, card));
+          await card.player.cardManager.draw(1);
         }
       })
     );

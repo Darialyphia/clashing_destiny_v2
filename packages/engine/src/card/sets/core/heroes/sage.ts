@@ -1,4 +1,6 @@
+import { GAME_EVENTS } from '../../../../game/game.events';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
@@ -17,7 +19,7 @@ export const sage: HeroBlueprint = {
   name: 'Sage',
   cardIconId: 'hero-sage',
   description:
-    'Reduce the cost of spells in your hand by 1 as long as you have at least 4 @[spellpower]@.',
+    'As long as this has at least 3+ @[spellpower]@, after you play a spell, draw a card.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
@@ -34,34 +36,23 @@ export const sage: HeroBlueprint = {
   tags: [],
   async onInit() {},
   async onPlay(game, card) {
-    const manaCostReduction = () =>
-      new Modifier('sage-discount', game, card, {
-        mixins: [
-          new SpellInterceptorModifierMixin(game, {
-            key: 'manaCost',
-            interceptor(value) {
-              return Math.max(value! - 1, 0);
-            }
-          })
-        ]
-      });
     await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('sage-spell-cost-reduction-aura', game, card, {
+      new Modifier<HeroCard>('sage-buff', game, card, {
         icon: 'modifier-double-cast',
         name: 'One with the magic',
-        description: 'Reduce the cost of spells in your hand by 1.',
+        description: 'After you play a spell, draw a card.',
         mixins: [
-          new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 4),
-          new AuraModifierMixin(game, {
-            canSelfApply: false,
-            isElligible(candidate) {
-              return candidate.kind === CARD_KINDS.SPELL && candidate.location === 'hand';
-            },
-            async onGainAura(candidate) {
-              await candidate.modifiers.add(manaCostReduction());
-            },
-            async onLoseAura(candidate) {
-              await candidate.modifiers.remove('sage-discount');
+          new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3),
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            handler: async event => {
+              const { card: playedCard } = event.data;
+              if (
+                playedCard.kind === CARD_KINDS.SPELL &&
+                playedCard.player.equals(card.player)
+              ) {
+                await card.player.cardManager.draw(1);
+              }
             }
           })
         ]

@@ -13,14 +13,18 @@ import type {
 } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import { AbilityDamage, SpellDamage } from '../../utils/damage';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { Modifier } from '../modifier.entity';
+import type { ModifierMixin } from '../modifier-mixin';
 
 export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
   private otherTargets: MinionCard[] = [];
 
-  constructor(game: Game, source: AnyCard) {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: { mixins: ModifierMixin<T>[] } = { mixins: [] }
+  ) {
     super(KEYWORDS.CLEAVE.id, game, source, {
       name: KEYWORDS.CLEAVE.name,
       description: KEYWORDS.CLEAVE.description,
@@ -50,7 +54,8 @@ export class CleaveModifier<T extends MinionCard | HeroCard> extends Modifier<T>
           handler: async event => {
             await this.dealCleaveDamage(event);
           }
-        })
+        }),
+        ...options.mixins
       ]
     });
   }

@@ -15,7 +15,8 @@ export const revisedStrategy: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'revised-strategy',
   name: 'Revised Strategy',
   cardIconId: 'spell-revise-strategy',
-  description: 'Look at your deck and banish 3 cards from it. Draw a card.',
+  description:
+    'Look at your deck and banish 3 cards from it. Shuffle your deck and Draw a card.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -41,7 +42,7 @@ export const revisedStrategy: SpellBlueprint<MinionCard | HeroCard> = {
     for (const cardToBanish of cards) {
       await card.player.cardManager.sendToBanishPile(cardToBanish);
     }
-
+    await card.player.cardManager.mainDeck.shuffle();
     await card.player.cardManager.draw(1);
   }
 };

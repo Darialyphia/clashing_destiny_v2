@@ -302,7 +302,9 @@ export abstract class Card<
       description: this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
-      modifiers: this.modifiers.list.map(modifier => modifier.id),
+      modifiers: this.modifiers.list
+        .filter(mod => mod.isEnabled)
+        .map(modifier => modifier.id),
       hasAffinityMatch: this.hasAffinityMatch,
       keywords: this.keywords.map(keyword => ({
         id: keyword.id,

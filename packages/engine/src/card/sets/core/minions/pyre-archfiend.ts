@@ -1,7 +1,6 @@
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
-import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';

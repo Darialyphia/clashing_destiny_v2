@@ -17,7 +17,8 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'fire-bolt',
   name: 'Fire Bolt',
   cardIconId: 'spell-fire-bolt',
-  description: 'Deal 1 damage to a target enemy. Add a stack of @Ember@ to your hero.',
+  description:
+    'Deal 1 damage to a target enemy. If it destroys the target, add a stack of @Ember@ to your hero.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -33,6 +34,8 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   async onInit() {},
   async onPlay(game, card, [target]) {
     await target.takeDamage(card, new SpellDamage(1));
-    await card.player.hero.modifiers.add(new EmberModifier(game, card));
+    if (!target.isAlive) {
+      await card.player.hero.modifiers.add(new EmberModifier(game, card));
+    }
   }
 };

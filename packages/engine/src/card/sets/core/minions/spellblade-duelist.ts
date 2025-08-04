@@ -15,7 +15,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 export const spellbladeDuelist: MinionBlueprint = {
   id: 'spellblade-duelist',
   name: 'Spellblade Duelist',
-  cardIconId: 'spellblade-duelist',
+  cardIconId: 'unit-spellblade-duelist',
   description: `This gains +1@[attack]@ and @Blitz@ as long as your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,

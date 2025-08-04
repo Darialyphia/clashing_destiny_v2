@@ -199,6 +199,14 @@ export class CardManagerComponent {
     this.sendToDiscardPile(card);
   }
 
+  mill(amount: number) {
+    const cards = this.mainDeck.draw(amount);
+    for (const card of cards) {
+      this.sendToDiscardPile(card);
+    }
+    return cards;
+  }
+
   sendToDiscardPile(card: MainDeckCard) {
     if (card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
       this.sendToBanishPile(card);

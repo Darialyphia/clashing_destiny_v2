@@ -156,7 +156,7 @@ export const KEYWORDS = {
   DRIFTER: {
     id: 'drifter',
     name: 'Drifter',
-    description: "This unit switches zone at th start of its owner's truncate, if able.",
+    description: "This unit switches zone at the start of its owner's turn, if able.",
     aliases: []
   },
   BLITZ: {
@@ -212,7 +212,7 @@ export const KEYWORDS = {
   },
   SCRY: {
     id: 'scry',
-    name: 'Scry(X)',
+    name: 'Scry (X)',
     description:
       'Look at the top X cards of your deck, then ut any number of them at the bottom of your deck.',
     aliases: [/scry [0-9]+/]
@@ -248,6 +248,12 @@ export const KEYWORDS = {
     description:
       'If the condition is met while this card is in your destiny Zone, it is played for free. This card is sent to the discard pile instead of being recollected at the end of your Destiny Phase.',
     aliases: []
+  },
+  MILL: {
+    id: 'mill',
+    name: 'Mill (X)',
+    description: 'Send the top X cards of your deck to the discard pile.',
+    aliases: [/mill [0-9]+/]
   }
 };
 

@@ -9,6 +9,10 @@ import {
 } from 'reka-ui';
 import GameCard from '@/game/components/GameCard.vue';
 
+defineOptions({
+  inheritAttrs: false
+});
+
 const {
   cardId,
   side,
@@ -23,7 +27,7 @@ const {
 
 <template>
   <HoverCardRoot :open-delay="openDelay" :close-delay="closeDelay">
-    <HoverCardTrigger class="inspectable-card">
+    <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">

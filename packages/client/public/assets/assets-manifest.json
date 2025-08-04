@@ -1398,6 +1398,19 @@
         },
         {
           "alias": [
+            "icon-spell-power-overwhelming"
+          ],
+          "src": [
+            "/assets/icons/spell-power-overwhelming.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-recollection"
           ],
           "src": [
@@ -2087,6 +2100,19 @@
         },
         {
           "alias": [
+            "icon-unit-flowkeeper-sage"
+          ],
+          "src": [
+            "/assets/icons/unit-flowkeeper-sage.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-garrison-marksman"
           ],
           "src": [
@@ -2347,6 +2373,32 @@
         },
         {
           "alias": [
+            "icon-unit-spellblade-duelist"
+          ],
+          "src": [
+            "/assets/icons/unit-spellblade-duelist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-spiritualist"
+          ],
+          "src": [
+            "/assets/icons/unit-spiritualist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-stalwart-vanguard"
           ],
           "src": [
@@ -2416,6 +2468,19 @@
           ],
           "src": [
             "/assets/icons/unit-test-minion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-water-elemental"
+          ],
+          "src": [
+            "/assets/icons/unit-water-elemental.png"
           ],
           "data": {
             "tags": {

@@ -24,20 +24,37 @@ export class BoardMinionSlot
   private _minion: MinionCard | null = null;
 
   constructor(
-    private player: Player,
-    private zone: 'attack' | 'defense',
-    private position: number
+    private _player: Player,
+    private _zone: 'attack' | 'defense',
+    private _position: number
   ) {
-    super(`minion-slot-${player.id}-${zone}-${position}`, {
+    super(`minion-slot-${_player.id}-${_zone}-${_position}`, {
       canSummon: new Interceptable()
     });
   }
 
+  get player(): Player {
+    return this._player;
+  }
+
+  get zone(): 'attack' | 'defense' {
+    return this._zone;
+  }
+
+  get position(): number {
+    return this._position;
+  }
+
+  // this is here for compatibility reason with some legacy code
+  get slot(): number {
+    return this._position;
+  }
+
   serialize() {
     return {
-      playerId: this.player.id,
-      zone: this.zone,
-      position: this.position,
+      playerId: this._player.id,
+      zone: this._zone,
+      position: this._position,
       minion: this._minion?.id ?? null,
       canSummon: this.canSummon
     };
@@ -45,9 +62,9 @@ export class BoardMinionSlot
 
   isSame(position: MinionPosition): boolean {
     return (
-      this.zone === position.zone &&
-      this.position === position.slot &&
-      this.player.equals(position.player)
+      this._zone === position.zone &&
+      this._position === position.slot &&
+      this._player.equals(position.player)
     );
   }
 
@@ -77,22 +94,22 @@ export class BoardMinionSlot
   }
 
   get left(): BoardMinionSlot | null {
-    return this.player.boardSide.getSlot(this.zone, this.position - 1);
+    return this._player.boardSide.getSlot(this._zone, this._position - 1);
   }
 
   get right(): BoardMinionSlot | null {
-    return this.player.boardSide.getSlot(this.zone, this.position + 1);
+    return this._player.boardSide.getSlot(this._zone, this._position + 1);
   }
 
   get inFront(): BoardMinionSlot | null {
-    return this.zone === 'attack'
-      ? this.player.opponent.boardSide.getSlot('attack', this.position)
-      : this.player.boardSide.getSlot('attack', this.position);
+    return this._zone === 'attack'
+      ? this._player.opponent.boardSide.getSlot('attack', this._position)
+      : this._player.boardSide.getSlot('attack', this._position);
   }
 
   get behind(): BoardMinionSlot | null {
-    return this.zone === 'attack'
-      ? this.player.boardSide.getSlot('defense', this.position)
+    return this._zone === 'attack'
+      ? this._player.boardSide.getSlot('defense', this._position)
       : null;
   }
 

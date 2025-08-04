@@ -1,5 +1,6 @@
 import {
   assert,
+  isDefined,
   StateMachine,
   stateTransition,
   type Serializable,
@@ -173,6 +174,8 @@ export class CombatPhase
   target: AttackTarget | null = null;
   blocker: Defender | null = null;
 
+  private isCancelled = false;
+
   constructor(private game: Game) {
     super(COMBAT_STEPS.DECLARE_ATTACKER);
 
@@ -278,6 +281,11 @@ export class CombatPhase
       .then(() => this.resolveCombat());
   }
 
+  changeTarget(newTarget: AttackTarget) {
+    assert(isDefined(this.target), new WrongCombatStepError());
+    this.target = newTarget;
+  }
+
   private async resolveCombat() {
     if (!this.target) {
       throw new CorruptedGamephaseContextError();
@@ -291,7 +299,17 @@ export class CombatPhase
         blocker: this.blocker
       })
     );
+
+    if (!this.isCancelled) {
+      await this.performAttacks();
+    }
+
+    await this.end();
+  }
+
+  private async performAttacks() {
     const defender = this.blocker?.isAlive ? this.blocker : this.target;
+    if (!defender) return;
 
     if (defender.isAlive && this.attacker.isAlive) {
       await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
@@ -302,14 +320,22 @@ export class CombatPhase
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
       new AfterResolveCombatEvent({
         attacker: this.attacker,
-        target: this.target,
+        target: this.target!,
         blocker: this.blocker
       })
     );
+  }
 
+  private async end() {
     this.game.interaction.onInteractionEnd();
     await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.FINISH_ATTACK);
     await this.game.inputSystem.askForPlayerInput();
+  }
+
+  async cancelAttack() {
+    if (this.isCancelled) return;
+    this.isCancelled = true;
+    await this.end();
   }
 
   canBlock(blocker: Defender) {

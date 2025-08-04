@@ -20,12 +20,14 @@ import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { ardentMonk } from './core/minions/ardent-monk';
 import { battleflameInvoker } from './core/minions/battleflame-invoker';
 import { blazingSalamander } from './core/minions/blazing-salamander';
+import { ceruleanWaveDisciple } from './core/minions/cerulean-wave-disciple';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
 import { enjiOneManArmy } from './core/minions/enji-one-man-army';
 import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flameExorcist } from './core/minions/flame-exorcist';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
+import { flowkeeperSage } from './core/minions/flowkeeper-sage';
 import { friendlySlime } from './core/minions/friendly-slime';
 import { heraldOfSalvation } from './core/minions/herald-of-salvation';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
@@ -38,6 +40,7 @@ import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
+import { spiritualist } from './core/minions/spiritualist';
 import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
 import { sunPalaceGuard } from './core/minions/sun-palace-guard';
@@ -61,6 +64,8 @@ import { recollection } from './core/spells/recollection';
 import { revisedStrategy } from './core/spells/revised-strategy';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
+import { tidalWave } from './core/spells/tidal-wave';
+import { waterSpringLily } from './core/spells/water-spring-lily';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -94,6 +99,7 @@ export const coreSet: CardSet = {
     chronoAffinity,
     revisedStrategy,
     masquerade,
+    spiritualist,
 
     // Fire
     fireBolt,
@@ -137,6 +143,12 @@ export const coreSet: CardSet = {
     // Chrono
     recollection,
     hourglassFracture,
-    temporalShifter
+    temporalShifter,
+
+    // Water
+    tidalWave,
+    ceruleanWaveDisciple,
+    waterSpringLily,
+    flowkeeperSage
   ]
 };
