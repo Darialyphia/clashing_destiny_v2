@@ -13,6 +13,7 @@ import { fireStudies } from './core/destinies/fire-studies';
 import { insight } from './core/destinies/insight';
 import { inspiredBySteel } from './core/destinies/inspired-by-steel';
 import { manaVisions } from './core/destinies/mana-visions';
+import { tidesFavored } from './core/destinies/tides-favored';
 import { waterAffinity } from './core/destinies/water-affinity';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
@@ -155,6 +156,7 @@ export const coreSet: CardSet = {
     flowkeeperSage,
     tranquility,
     slipstreamVeil,
-    waterElemental
+    waterElemental,
+    tidesFavored
   ]
 };
