@@ -254,6 +254,26 @@ export const KEYWORDS = {
     name: 'Mill (X)',
     description: 'Send the top X cards of your deck to the discard pile.',
     aliases: [/mill [0-9]+/]
+  },
+  TIDE: {
+    id: 'tide',
+    name: 'Tide',
+    description:
+      'Your tide level increases by 1 up to 3 at the start of your turn, then resets to 1.',
+    aliases: []
+  },
+  HIGH_TIDE: {
+    id: 'high-tide',
+    name: 'High Tide',
+    description: 'This card has a bonus effect if your Tide level is at 3.',
+    aliases: []
+  },
+  INTIMIDATE: {
+    id: 'intimidate',
+    name: 'Intimidate (X)',
+    description:
+      "Minions of X attack or less attacked by this minion don't counterattack.",
+    aliases: [/intimidate \([0-9]+\)/]
   }
 };
 

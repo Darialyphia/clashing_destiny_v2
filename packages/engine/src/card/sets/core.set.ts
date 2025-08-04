@@ -45,6 +45,7 @@ import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
 import { sunPalaceGuard } from './core/minions/sun-palace-guard';
 import { temporalShifter } from './core/minions/temporal-shifter';
+import { waterElemental } from './core/minions/water-elemental';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { channelTheFlames } from './core/spells/channel-the-flames';
 import { dualCasting } from './core/spells/dual-casting';
@@ -62,9 +63,11 @@ import { powerOverwhelming } from './core/spells/power-overwhelming';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
 import { revisedStrategy } from './core/spells/revised-strategy';
+import { slipstreamVeil } from './core/spells/slipstream-veil';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 import { tidalWave } from './core/spells/tidal-wave';
+import { tranquility } from './core/spells/tranquility';
 import { waterSpringLily } from './core/spells/water-spring-lily';
 
 export const coreSet: CardSet = {
@@ -149,6 +152,9 @@ export const coreSet: CardSet = {
     tidalWave,
     ceruleanWaveDisciple,
     waterSpringLily,
-    flowkeeperSage
+    flowkeeperSage,
+    tranquility,
+    slipstreamVeil,
+    waterElemental
   ]
 };

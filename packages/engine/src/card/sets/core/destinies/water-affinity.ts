@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import type { DestinyBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -11,8 +12,9 @@ export const waterAffinity: DestinyBlueprint = {
   id: 'water-affinity',
   name: 'Water Affinity',
   cardIconId: 'talent-water-affinity',
-  description:
-    'Allows you to play Water cards. Costs @[mana] 1@ more for each affinity you have unlocked.',
+  description: dedent`
+    Allows you to play Water cards. Costs @[mana] 1@ more for each affinity you have unlocked.
+  `,
   collectable: true,
   unique: false,
   destinyCost: 0,
