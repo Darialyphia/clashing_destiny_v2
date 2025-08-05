@@ -56,12 +56,13 @@ export const masquerade: SpellBlueprint = {
       new TrapModifier(game, card, {
         eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
         predicate: event => {
-          if (event.data.target.player.equals(card.player)) return false;
-          return [...card.player.cardManager.destinyZone].some(
-            cardInDestiny =>
+          if (!event.data.target.player.equals(card.player)) return false;
+          return [...card.player.cardManager.destinyZone].some(cardInDestiny => {
+            return (
               isMinion(cardInDestiny) &&
-              card.player.minions.some(minion => cardInDestiny.manaCost < minion.manaCost)
-          );
+              cardInDestiny.manaCost < event.data.target.manaCost
+            );
+          });
         },
         async handler(event) {
           const phaseCtx =

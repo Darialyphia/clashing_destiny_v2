@@ -2,7 +2,6 @@ import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { DestinyCard } from '../../card/entities/destiny.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
-import { tidesFavored } from '../../card/sets/core/destinies/tides-favored';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
@@ -17,6 +16,7 @@ export class TidesFavoredModifier extends Modifier<DestinyCard> {
       isUnique: true,
       name: "Tide's Favored",
       description: KEYWORDS.TIDE.description,
+      icon: 'keyword-tides-favored',
       mixins: [
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.PLAYER_END_TURN,
@@ -55,7 +55,6 @@ export class TideModifier extends Modifier<MinionCard> {
             ?.modifiers.get(TidesFavoredModifier);
 
           const stacks = tidesFavored?.stacks ?? 0;
-          console.log('TideModifier stacks:', stacks, 'allowedLevels:', allowedLevels);
           return allowedLevels.includes(stacks as 1 | 2 | 3);
         }),
         ...(mixins ?? [])

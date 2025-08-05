@@ -8,10 +8,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
-import { Modifier } from '../../../../modifier/modifier.entity';
-import { KEYWORDS } from '../../../card-keywords';
-import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { DestinyCard } from '../../../entities/destiny.entity';
 import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
 
 export const tidesFavored: DestinyBlueprint = {
