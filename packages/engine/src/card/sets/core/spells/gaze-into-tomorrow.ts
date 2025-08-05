@@ -10,10 +10,8 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
-import type { MinionCard } from '../../../entities/minion.entity';
 
-export const gazeIntoTomorrow: SpellBlueprint<MinionCard | HeroCard> = {
+export const gazeIntoTomorrow: SpellBlueprint = {
   id: 'gaze-into-tomorrow',
   name: 'Gaze Into Tomorrow',
   cardIconId: 'spell-gaze-into-tomorrow',

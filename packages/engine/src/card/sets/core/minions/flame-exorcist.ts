@@ -37,7 +37,11 @@ export const flameExorcist: MinionBlueprint = {
         game.boardSystem.sides.some(side => side.getAllMinions().length > 0) &&
         (card.player.hero.modifiers.get(EmberModifier)?.stacks ?? 0) > 0,
       getPreResponseTargets(game, card) {
-        return singleMinionTargetRules.getPreResponseTargets(game, card);
+        return singleMinionTargetRules.getPreResponseTargets(game, card, {
+          type: 'ability',
+          card,
+          abilityId: 'ability'
+        });
       },
       manaCost: 0,
       shouldExhaust: true,

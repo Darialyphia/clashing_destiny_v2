@@ -10,10 +10,9 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
+export const fireBolt: SpellBlueprint = {
   id: 'fire-bolt',
   name: 'Fire Bolt',
   cardIconId: 'spell-fire-bolt',
@@ -30,9 +29,15 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: singleEnemyTargetRules.canPlay,
-  getPreResponseTargets: singleEnemyTargetRules.getPreResponseTargets,
+  getPreResponseTargets(game, card) {
+    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
+      type: 'card',
+      card
+    });
+  },
   async onInit() {},
-  async onPlay(game, card, [target]) {
+  async onPlay(game, card, targets) {
+    const target = targets[0] as MinionCard;
     await target.takeDamage(card, new SpellDamage(1));
     if (!target.isAlive) {
       await card.player.hero.modifiers.add(new EmberModifier(game, card));

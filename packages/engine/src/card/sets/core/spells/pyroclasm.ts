@@ -12,7 +12,7 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
+export const pyroclasm: SpellBlueprint = {
   id: 'pyroclasm',
   name: 'Pyroclasm',
   cardIconId: 'spell-eternal-flame',
@@ -28,9 +28,16 @@ export const pyroclasm: SpellBlueprint<MinionCard | HeroCard> = {
   subKind: SPELL_KINDS.CAST,
   tags: [],
   canPlay: singleEnemyTargetRules.canPlay,
-  getPreResponseTargets: singleEnemyTargetRules.getPreResponseTargets,
+  getPreResponseTargets(game, card) {
+    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
+      type: 'card',
+      card
+    });
+  },
   async onInit() {},
-  async onPlay(game, card, [target]) {
+  async onPlay(game, card, targets) {
+    const target = targets[0] as HeroCard | MinionCard;
+
     await target.takeDamage(card, new SpellDamage(4 + card.player.hero.spellPower));
   }
 };

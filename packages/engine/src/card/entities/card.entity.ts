@@ -26,6 +26,10 @@ import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
+import type { DestinyCard } from './destiny.entity';
+import type { ArtifactCard } from './artifact.entity';
+import type { HeroCard } from './hero.entity';
+import type { MinionCard } from './minion.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -70,6 +74,14 @@ export type SerializedCard = {
   modifiers: string[];
 };
 
+export type CardTargetOrigin =
+  | { type: 'card'; card: AnyCard }
+  | {
+      type: 'ability';
+      abilityId: string;
+      card: MinionCard | HeroCard | ArtifactCard | DestinyCard;
+    };
+
 export abstract class Card<
   TSerialized extends JSONObject,
   TInterceptors extends CardInterceptors = CardInterceptors,
@@ -86,6 +98,8 @@ export abstract class Card<
   readonly keywordManager = new KeywordManagerComponent();
 
   protected playedAtTurn: number | null = null;
+
+  protected _targetedBy: CardTargetOrigin[] = [];
 
   constructor(
     game: Game,
@@ -183,6 +197,31 @@ export abstract class Card<
 
   get canBeUsedAsDestinyCost() {
     return this.interceptors.canBeUsedAsDestinyCost.getValue(false, {});
+  }
+
+  get targetedBy() {
+    return this._targetedBy;
+  }
+
+  targetBy(origin: CardTargetOrigin) {
+    this._targetedBy.push(origin);
+  }
+
+  clearTargetedBy(origin: CardTargetOrigin) {
+    this._targetedBy = this._targetedBy.filter(t =>
+      match(t)
+        .with(
+          { type: 'ability' },
+          t =>
+            (origin.type === 'ability' && t.abilityId !== origin.abilityId) ||
+            !t.card.equals(origin.card)
+        )
+        .with(
+          { type: 'card' },
+          t => origin.type === 'card' && !t.card.equals(origin.card)
+        )
+        .exhaustive()
+    );
   }
 
   removeFromCurrentLocation() {

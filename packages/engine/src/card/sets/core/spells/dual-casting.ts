@@ -9,10 +9,9 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const dualCasting: SpellBlueprint<MinionCard | HeroCard> = {
+export const dualCasting: SpellBlueprint = {
   id: 'dual-casting',
   name: 'Dual Casting',
   cardIconId: 'spell-dual-casting',
@@ -28,14 +27,16 @@ export const dualCasting: SpellBlueprint<MinionCard | HeroCard> = {
   subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: multipleEnemyTargetRules.canPlay(1),
-  getPreResponseTargets: multipleEnemyTargetRules.getPreResponseTargets({
-    min: 1,
-    max: 2,
-    allowRepeat: false
-  }),
+  getPreResponseTargets(game, card) {
+    return multipleEnemyTargetRules.getPreResponseTargets({
+      min: 1,
+      max: 2,
+      allowRepeat: false
+    })(game, card, { type: 'card', card });
+  },
   async onInit() {},
   async onPlay(game, card, targets) {
-    for (const target of targets) {
+    for (const target of targets as MinionCard[]) {
       await target.takeDamage(card, new SpellDamage(1));
     }
   }

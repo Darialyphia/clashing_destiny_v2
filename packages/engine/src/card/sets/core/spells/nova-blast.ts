@@ -14,7 +14,7 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellCard } from '../../../entities/spell.entity';
 
-export const novaBlast: SpellBlueprint<MinionCard> = {
+export const novaBlast: SpellBlueprint = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',

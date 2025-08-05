@@ -16,7 +16,7 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const manaShield: SpellBlueprint<MinionCard | HeroCard> = {
+export const manaShield: SpellBlueprint = {
   id: 'mana-shield',
   name: 'Mana Shield',
   cardIconId: 'spell-mana-shield',
@@ -33,9 +33,16 @@ export const manaShield: SpellBlueprint<MinionCard | HeroCard> = {
   subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: singleAllyTargetRules.canPlay,
-  getPreResponseTargets: singleAllyTargetRules.getPreResponseTargets,
+  getPreResponseTargets(game, card) {
+    return singleAllyTargetRules.getPreResponseTargets(game, card, {
+      type: 'card',
+      card
+    });
+  },
   async onInit() {},
-  async onPlay(game, card, [target]) {
+  async onPlay(game, card, targets) {
+    const target = targets[0] as HeroCard | MinionCard;
+
     await (target as MinionCard).modifiers.add(
       new Modifier<MinionCard>('mana-shield', game, card, {
         name: 'Mana Shield',

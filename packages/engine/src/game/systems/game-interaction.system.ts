@@ -8,7 +8,7 @@ import {
 } from '@game/shared';
 
 import type { Game } from '../game';
-import type { AnyCard } from '../../card/entities/card.entity';
+import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
 import { GameError } from '../game-error';
 import type { Player } from '../../player/player.entity';
 import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
@@ -210,6 +210,7 @@ export class GameInteractionSystem
     canCommit: (selectedCards: AnyCard[]) => boolean;
     isDone(selectedCards: AnyCard[]): boolean;
     player: Player;
+    origin: CardTargetOrigin;
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD);
     this._ctx = await this.ctxDictionary[

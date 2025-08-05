@@ -10,7 +10,7 @@ import {
   SPELL_KINDS
 } from '../../../card.enums';
 
-export const channelTheFlames: SpellBlueprint<PreResponseTarget> = {
+export const channelTheFlames: SpellBlueprint = {
   id: 'channel-the-flames',
   name: 'Channel the Flames',
   cardIconId: 'spell-channel-the-flames',

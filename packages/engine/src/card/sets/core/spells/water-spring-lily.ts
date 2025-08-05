@@ -32,11 +32,19 @@ export const waterSpringLily: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
+        const availableMinions = card.player.minions.filter(
+          minion => !minion.equals(card)
+        );
+        if (availableMinions.length === 0) return;
+
         const [target] = await game.interaction.selectMinionSlot({
           player: card.player,
-          isElligible: slot =>
-            slot.player.equals(card.player) &&
-            card.player.boardSide.getSlot(slot.zone, slot.slot)!.isOccupied,
+          isElligible: slot => {
+            if (!slot.player.equals(card.player)) return false;
+            const minionSlot = card.player.boardSide.getSlot(slot.zone, slot.slot)!;
+
+            return minionSlot.isOccupied && !minionSlot.minion!.equals(card);
+          },
           isDone(selectedSlots) {
             return selectedSlots.length === 1;
           },

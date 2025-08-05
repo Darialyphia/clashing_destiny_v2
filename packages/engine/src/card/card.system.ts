@@ -56,10 +56,7 @@ export class CardSystem extends System<CardSystemOptions> {
     return [...this.cardMap.values()];
   }
 
-  async addCard<T extends AnyCard = AnyCard>(
-    player: Player,
-    blueprintId: string
-  ): Promise<T> {
+  async addCard<T extends AnyCard>(player: Player, blueprintId: string): Promise<T> {
     const blueprint = this.getBlueprint(blueprintId);
     const id = `${blueprintId}-${this.nextId++}`;
 
@@ -70,7 +67,7 @@ export class CardSystem extends System<CardSystemOptions> {
           new SpellCard(this.game, player, {
             id,
             blueprint
-          } as CardOptions<SpellBlueprint<PreResponseTarget>>)
+          } as CardOptions<SpellBlueprint>)
       )
       .with(
         CARD_KINDS.ARTIFACT,

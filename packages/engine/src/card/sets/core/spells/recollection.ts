@@ -13,7 +13,7 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const recollection: SpellBlueprint<MinionCard | HeroCard> = {
+export const recollection: SpellBlueprint = {
   id: 'recollection',
   name: 'Recollection',
   cardIconId: 'spell-recollection',

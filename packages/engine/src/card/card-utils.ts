@@ -1,7 +1,7 @@
 import type { Game } from '../game/game';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
-import type { AnyCard } from './entities/card.entity';
+import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
@@ -39,9 +39,11 @@ export const singleEnemyTargetRules = {
   async getPreResponseTargets(
     game: Game,
     card: AnyCard,
+    origin: CardTargetOrigin,
     predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) {
     return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+      origin,
       player: card.player,
       isElligible(candidate, selectedCards) {
         if (!isMinion(candidate) && !isHero(candidate)) {
@@ -77,10 +79,12 @@ export const singleAllyTargetRules = {
   async getPreResponseTargets(
     game: Game,
     card: AnyCard,
+    origin: CardTargetOrigin,
     predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) {
     return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
       player: card.player,
+      origin,
       isElligible(candidate, selectedCards) {
         if (!isMinion(candidate) && !isHero(candidate)) {
           return false;
@@ -112,9 +116,11 @@ export const singleEnemyMinionTargetRules = {
   async getPreResponseTargets(
     game: Game,
     card: AnyCard,
+    origin: CardTargetOrigin,
     predicate: (c: MinionCard) => boolean = () => true
   ) {
     return await game.interaction.selectCardsOnBoard<MinionCard>({
+      origin,
       player: card.player,
       isElligible(candidate, selectedCards) {
         if (!isMinion(candidate)) {
@@ -123,6 +129,43 @@ export const singleEnemyMinionTargetRules = {
 
         return (
           card.player.enemyMinions.some(enemy => enemy.equals(candidate)) &&
+          candidate.canBeTargeted(card) &&
+          !selectedCards.some(selected => selected.equals(candidate)) &&
+          predicate(candidate)
+        );
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length === 1;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === 1;
+      }
+    });
+  }
+};
+
+export const singleAllyMinionTargetRules = {
+  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
+    return (
+      card.player.minions.filter(c => c.canBeTargeted(card) && predicate(c)).length > 0
+    );
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: MinionCard) => boolean = () => true
+  ) {
+    return await game.interaction.selectCardsOnBoard<MinionCard>({
+      origin,
+      player: card.player,
+      isElligible(candidate, selectedCards) {
+        if (!isMinion(candidate)) {
+          return false;
+        }
+
+        return (
+          card.player.minions.some(minion => minion.equals(candidate)) &&
           candidate.canBeTargeted(card) &&
           !selectedCards.some(selected => selected.equals(candidate)) &&
           predicate(candidate)
@@ -149,9 +192,11 @@ export const singleMinionTargetRules = {
   async getPreResponseTargets(
     game: Game,
     card: AnyCard,
+    origin: CardTargetOrigin,
     predicate: (c: MinionCard) => boolean = () => true
   ) {
     return await game.interaction.selectCardsOnBoard<MinionCard>({
+      origin,
       player: card.player,
       isElligible(candidate, selectedCards) {
         if (!isMinion(candidate)) {
@@ -218,10 +263,12 @@ export const multipleEnemyTargetRules = {
     async (
       game: Game,
       card: AnyCard,
+      origin: CardTargetOrigin,
       predicate: (c: MinionCard | HeroCard) => boolean = () => true
     ) => {
       return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
         player: card.player,
+        origin,
         isElligible(candidate, selectedCards) {
           if (card.isAlly(candidate) || !isMinionOrHero(candidate)) {
             return false;
@@ -240,25 +287,6 @@ export const multipleEnemyTargetRules = {
         },
         isDone(selectedCards) {
           return selectedCards.length === max;
-        }
-      });
-    }
-};
-
-export const attackRules = {
-  getPreResponseTargets:
-    (predicate?: (card: AnyCard) => boolean) => async (game: Game, card: AnyCard) => {
-      return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
-        player: card.player,
-        isElligible(card) {
-          if (card.location !== 'board') return false;
-          return isMinionOrHero(card) && (predicate?.(card) ?? true);
-        },
-        canCommit(selectedSlots) {
-          return selectedSlots.length === 1;
-        },
-        isDone(selectedSlots) {
-          return selectedSlots.length === 1;
         }
       });
     }

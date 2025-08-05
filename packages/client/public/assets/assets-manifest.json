@@ -1060,6 +1060,19 @@
         },
         {
           "alias": [
+            "icon-slipstream-veil"
+          ],
+          "src": [
+            "/assets/icons/slipstream-veil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-arcane-insight"
           ],
           "src": [
@@ -1476,6 +1489,19 @@
         },
         {
           "alias": [
+            "icon-spell-slipstream-veil"
+          ],
+          "src": [
+            "/assets/icons/spell-slipstream-veil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-spark"
           ],
           "src": [
@@ -1532,6 +1558,19 @@
           ],
           "src": [
             "/assets/icons/spell-tidal-wave.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-spell-tranquility"
+          ],
+          "src": [
+            "/assets/icons/spell-tranquility.png"
           ],
           "data": {
             "tags": {
@@ -1727,6 +1766,19 @@
           ],
           "src": [
             "/assets/icons/talent-the-hangman.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-tides-favor"
+          ],
+          "src": [
+            "/assets/icons/talent-tides-favor.png"
           ],
           "data": {
             "tags": {

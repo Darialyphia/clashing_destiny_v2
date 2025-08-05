@@ -10,7 +10,7 @@ import {
   SPELL_KINDS
 } from '../../../card.enums';
 
-export const thirstForKnowledge: SpellBlueprint<PreResponseTarget> = {
+export const thirstForKnowledge: SpellBlueprint = {
   id: 'thirst-for-knowledge',
   name: 'Thirst for Knowledge',
   cardIconId: 'spell-thirst-for-knowledge',

@@ -10,7 +10,7 @@ import {
 } from '../../../card.enums';
 import type { SpellCard } from '../../../entities/spell.entity';
 
-export const arcaneInsight: SpellBlueprint<PreResponseTarget> = {
+export const arcaneInsight: SpellBlueprint = {
   id: 'arcane-insight',
   name: 'Arcane Insight',
   cardIconId: 'spell-arcane-insight',

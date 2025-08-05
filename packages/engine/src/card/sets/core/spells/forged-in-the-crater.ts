@@ -15,9 +15,8 @@ import {
 } from '../../../card.enums';
 import { ARTIFACT_EVENTS } from '../../../entities/artifact.entity';
 import { HeroCard } from '../../../entities/hero.entity';
-import type { MinionCard } from '../../../entities/minion.entity';
 
-export const forgedInTheCrater: SpellBlueprint<MinionCard> = {
+export const forgedInTheCrater: SpellBlueprint = {
   id: 'forged-in-the-crater',
   name: 'Forged in the Crater',
   cardIconId: 'spell-forged-in-the-crater',

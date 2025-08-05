@@ -15,7 +15,7 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 
-export const surgeOfWill: SpellBlueprint<MinionCard> = {
+export const surgeOfWill: SpellBlueprint = {
   id: 'surge-of-will',
   name: 'Surge of Will',
   cardIconId: 'spell-surge-of-will',

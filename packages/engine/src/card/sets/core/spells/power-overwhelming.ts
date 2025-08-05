@@ -14,7 +14,7 @@ import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-e
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { HeroCard } from '../../../entities/hero.entity';
 
-export const powerOverwhelming: SpellBlueprint<MinionCard> = {
+export const powerOverwhelming: SpellBlueprint = {
   id: 'power-overwhelming',
   name: 'Power Overwhelming',
   cardIconId: 'spell-power-overwhelming',

@@ -41,7 +41,9 @@ const tokens = computed<Token[]>(() => {
     const keyword = Object.values(KEYWORDS).find(keyword => {
       if (part.startsWith('[')) return false;
       return (
-        part.toLowerCase().match(keyword.name.toLowerCase()) ||
+        part
+          .toLowerCase()
+          .match(new RegExp(`^${keyword.name.toLowerCase()}$`)) ||
         keyword.aliases.some(alias => {
           return isString(alias)
             ? part.toLowerCase().match(alias.toLowerCase())

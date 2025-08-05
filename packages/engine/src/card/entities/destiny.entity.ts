@@ -18,6 +18,7 @@ import {
 import {
   Card,
   makeCardInterceptors,
+  type AnyCard,
   type CardInterceptors,
   type CardOptions,
   type SerializedCard
@@ -82,6 +83,10 @@ export class DestinyCard extends Card<
     return this.blueprint.minLevel;
   }
 
+  get countsAsLevel() {
+    return this.blueprint.countsAsLevel;
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayDestinyCost &&
@@ -112,6 +117,21 @@ export class DestinyCard extends Card<
 
   get abilities(): Ability<DestinyCard, PreResponseTarget>[] {
     return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
+  }
+
+  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
+    const targets = this.abilityTargets.get(abilityId);
+    if (!targets) return;
+    if (newTarget instanceof Card) {
+      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
+      if (index === -1) return;
+
+      const oldTarget = targets[index] as AnyCard;
+      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
+
+      targets[index] = newTarget;
+      newTarget.targetBy({ type: 'ability', abilityId, card: this });
+    }
   }
 
   canUseAbility(id: string) {
@@ -158,7 +178,13 @@ export class DestinyCard extends Card<
       source: this,
       targets,
       handler: async () => {
-        await ability.onResolve(this.game, this, targets);
+        const abilityTargets = this.abilityTargets.get(id)!;
+        await ability.onResolve(this.game, this, abilityTargets);
+        abilityTargets.forEach(target => {
+          if (target instanceof Card) {
+            target.clearTargetedBy({ type: 'card', card: this });
+          }
+        });
         this.abilityTargets.delete(id);
         await this.game.emit(
           DESTINY_EVENTS.DESTINY_AFTER_USE_ABILITY,

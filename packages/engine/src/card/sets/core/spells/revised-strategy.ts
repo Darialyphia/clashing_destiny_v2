@@ -11,7 +11,7 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const revisedStrategy: SpellBlueprint<MinionCard | HeroCard> = {
+export const revisedStrategy: SpellBlueprint = {
   id: 'revised-strategy',
   name: 'Revised Strategy',
   cardIconId: 'spell-revise-strategy',

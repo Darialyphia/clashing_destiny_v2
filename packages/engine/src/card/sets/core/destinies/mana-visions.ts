@@ -1,13 +1,5 @@
-import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { scry } from '../../../card-actions-utils';
-import type {
-  Ability,
-  DestinyBlueprint,
-  PreResponseTarget
-} from '../../../card-blueprint';
+import type { DestinyBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -15,7 +7,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
 
 export const manaVisions: DestinyBlueprint = {
   id: 'mana-visions',
@@ -32,6 +23,7 @@ export const manaVisions: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
+  countsAsLevel: true,
   abilities: [
     {
       id: 'mana-visions-ability',

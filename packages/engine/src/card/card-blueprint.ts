@@ -97,13 +97,13 @@ export type MinionBlueprint = MainDeckCardBlueprint & {
   maxHp: number;
   abilities: Ability<MinionCard, PreResponseTarget>[];
 };
-export type SpellBlueprint<T extends PreResponseTarget> = MainDeckCardBlueprint & {
+export type SpellBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   subKind: SpellKind;
   onInit: (game: Game, card: SpellCard) => Promise<void>;
-  onPlay: (game: Game, card: SpellCard, targets: T[]) => Promise<void>;
+  onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
-  getPreResponseTargets: (game: Game, card: SpellCard) => Promise<T[]>;
+  getPreResponseTargets: (game: Game, card: SpellCard) => Promise<PreResponseTarget[]>;
 };
 export type HeroBlueprint = CardBlueprintBase & {
   deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
@@ -123,6 +123,7 @@ export type DestinyBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
   destinyCost: number;
   minLevel: number;
+  countsAsLevel: boolean;
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard) => Promise<void>;
   affinity: Affinity;
@@ -163,7 +164,7 @@ export type TalentTreeBlueprint = {
 };
 
 export type CardBlueprint =
-  | SpellBlueprint<any>
+  | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
   | HeroBlueprint

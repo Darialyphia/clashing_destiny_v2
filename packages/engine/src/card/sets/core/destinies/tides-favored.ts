@@ -7,6 +7,8 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { GAME_PHASES } from '../../../../game/game.enums';
+import { GAME_EVENTS } from '../../../../game/game.events';
 
 export const tidesFavored: DestinyBlueprint = {
   id: 'tides-favored',
@@ -27,7 +29,12 @@ export const tidesFavored: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 0,
+  countsAsLevel: false,
   abilities: [],
-  async onInit(game, card) {},
+  async onInit(game, card) {
+    await game.once(GAME_EVENTS.READY, async () => {
+      await card.player.playDestinyCard(card);
+    });
+  },
   async onPlay(game, card) {}
 };

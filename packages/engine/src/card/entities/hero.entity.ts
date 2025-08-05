@@ -202,7 +202,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get level() {
-    return this.player.unlockedDestinyCards.length;
+    return this.player.unlockedDestinyCards.filter(card => card.countsAsLevel).length;
   }
 
   get isAlive() {
@@ -346,6 +346,20 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
+  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
+    const targets = this.abilityTargets.get(abilityId);
+    if (!targets) return;
+    if (newTarget instanceof Card) {
+      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
+      if (index === -1) return;
+
+      const oldTarget = targets[index] as AnyCard;
+      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
+
+      targets[index] = newTarget;
+      newTarget.targetBy({ type: 'ability', abilityId, card: this });
+    }
+  }
   async useAbility(id: string) {
     const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return;
@@ -365,7 +379,13 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       source: this,
       targets,
       handler: async () => {
-        await ability.onResolve(this.game, this, targets);
+        const abilityTargets = this.abilityTargets.get(id)!;
+        await ability.onResolve(this.game, this, abilityTargets);
+        abilityTargets.forEach(target => {
+          if (target instanceof Card) {
+            target.clearTargetedBy({ type: 'card', card: this });
+          }
+        });
         this.abilityTargets.delete(id);
         await this.game.emit(
           HERO_EVENTS.HERO_AFTER_USE_ABILITY,

@@ -1,5 +1,5 @@
 import { assert } from '@game/shared';
-import type { AnyCard } from '../../card/entities/card.entity';
+import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
 import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
@@ -14,6 +14,7 @@ type SelectingCardOnBoardContextOptions = {
   isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
   canCommit: (selectedCards: AnyCard[]) => boolean;
   isDone(selectedCards: AnyCard[]): boolean;
+  origin: CardTargetOrigin;
 };
 
 export class SelectingCardOnBoardContext {
@@ -23,6 +24,8 @@ export class SelectingCardOnBoardContext {
     return instance;
   }
   private selectedCards: AnyCard[] = [];
+
+  private origin: CardTargetOrigin;
 
   private isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
 
@@ -40,6 +43,7 @@ export class SelectingCardOnBoardContext {
     this.isElligible = options.isElligible;
     this.canCommit = options.canCommit;
     this.isDone = options.isDone;
+    this.origin = options.origin;
   }
 
   serialize() {
@@ -67,6 +71,7 @@ export class SelectingCardOnBoardContext {
     assert(player.equals(this.player), new InvalidPlayerError());
     assert(this.isElligible(card, this.selectedCards), new IllegalTargetError());
     this.selectedCards.push(card);
+    card.targetBy(this.origin);
     await this.autoCommitIfAble();
   }
 

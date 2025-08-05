@@ -3,7 +3,6 @@ import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
-import { LoyaltyDamage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
@@ -16,6 +15,7 @@ import { CardBeforePlayEvent, CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
+  type AnyCard,
   type CardInterceptors,
   type CardOptions,
   type SerializedCard
@@ -34,15 +34,11 @@ export type SpellCardInterceptors = CardInterceptors & {
 export class SpellCard extends Card<
   SerializedCard,
   SpellCardInterceptors,
-  SpellBlueprint<PreResponseTarget>
+  SpellBlueprint
 > {
   private preResponseTargets: PreResponseTarget[] | null = null;
 
-  constructor(
-    game: Game,
-    player: Player,
-    options: CardOptions<SpellBlueprint<PreResponseTarget>>
-  ) {
+  constructor(game: Game, player: Player, options: CardOptions<SpellBlueprint>) {
     super(
       game,
       player,
@@ -62,9 +58,23 @@ export class SpellCard extends Card<
     return [GAME_PHASES.MAIN];
   }
 
+  replacePreResponseTarget(oldTarget: AnyCard, newTarget: AnyCard) {
+    if (!this.preResponseTargets) return;
+    if (newTarget instanceof Card) {
+      const index = this.preResponseTargets.findIndex(
+        t => t instanceof Card && t.equals(oldTarget)
+      );
+      if (index === -1) return;
+
+      oldTarget.clearTargetedBy({ type: 'card', card: this });
+
+      this.preResponseTargets[index] = newTarget;
+      newTarget.targetBy({ type: 'card', card: this });
+    }
+  }
+
   canPlay() {
     const gameStateCtx = this.game.gamePhaseSystem.getContext();
-
     return this.interceptors.canPlay.getValue(
       this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
         (gameStateCtx.state === GAME_PHASES.ATTACK
@@ -97,8 +107,13 @@ export class SpellCard extends Card<
         );
         this.updatePlayedAt();
 
-        await this.blueprint.onPlay(this.game, this, targets);
+        await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
         this.sendToDiscardPile();
+        this.preResponseTargets?.forEach(target => {
+          if (target instanceof Card) {
+            target.clearTargetedBy({ type: 'card', card: this });
+          }
+        });
         await this.game.emit(
           CARD_EVENTS.CARD_AFTER_PLAY,
           new CardBeforePlayEvent({ card: this })

@@ -12,7 +12,7 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const fireBall: SpellBlueprint<MinionCard> = {
+export const fireBall: SpellBlueprint = {
   id: 'fire-ball',
   name: 'Fire Ball',
   cardIconId: 'spell-fireball',
@@ -28,9 +28,15 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   subKind: SPELL_KINDS.CAST,
   tags: [],
   canPlay: singleEnemyMinionTargetRules.canPlay,
-  getPreResponseTargets: singleEnemyMinionTargetRules.getPreResponseTargets,
+  getPreResponseTargets(game, card) {
+    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+      type: 'card',
+      card
+    });
+  },
   async onInit() {},
-  async onPlay(game, card, [target]) {
+  async onPlay(game, card, targets) {
+    const target = targets[0] as MinionCard;
     const adjacentMinions = target.slot?.adjacentMinions ?? [];
     await target.takeDamage(card, new SpellDamage(3));
 

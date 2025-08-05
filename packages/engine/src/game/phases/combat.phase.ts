@@ -282,8 +282,18 @@ export class CombatPhase
   }
 
   changeTarget(newTarget: AttackTarget) {
-    assert(isDefined(this.target), new WrongCombatStepError());
+    if (!this.target) return;
     this.target = newTarget;
+  }
+
+  changeAttacker(newAttacker: Attacker) {
+    if (!this.attacker) return;
+    this.attacker = newAttacker;
+  }
+
+  changeBlocker(newBlocker: Defender | null) {
+    if (!this.blocker) return;
+    this.blocker = newBlocker;
   }
 
   private async resolveCombat() {
@@ -299,7 +309,6 @@ export class CombatPhase
         blocker: this.blocker
       })
     );
-
     if (!this.isCancelled) {
       await this.performAttacks();
     }

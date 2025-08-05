@@ -11,7 +11,7 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const slipstreamVeil: SpellBlueprint<MinionCard> = {
+export const slipstreamVeil: SpellBlueprint = {
   id: 'slipstream-veil',
   name: 'Slipstream Veil',
   cardIconId: 'spell-slipstream-veil',
@@ -24,12 +24,19 @@ export const slipstreamVeil: SpellBlueprint<MinionCard> = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  subKind: SPELL_KINDS.CAST,
+  subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: singleMinionTargetRules.canPlay,
-  getPreResponseTargets: singleMinionTargetRules.getPreResponseTargets,
+  getPreResponseTargets(game, card) {
+    return singleMinionTargetRules.getPreResponseTargets(game, card, {
+      type: 'card',
+      card
+    });
+  },
   async onInit() {},
-  async onPlay(game, card, [target]) {
+  async onPlay(game, card, targets) {
+    const target = targets[0] as MinionCard;
+
     await target.modifiers.add(new ElusiveModifier(game, card));
   }
 };

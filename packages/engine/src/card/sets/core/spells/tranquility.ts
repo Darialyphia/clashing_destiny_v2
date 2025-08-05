@@ -11,7 +11,7 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const tranquility: SpellBlueprint<MinionCard> = {
+export const tranquility: SpellBlueprint = {
   id: 'tranquility',
   name: 'Tranquility',
   cardIconId: 'spell-tranquility',

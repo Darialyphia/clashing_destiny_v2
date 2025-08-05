@@ -11,7 +11,7 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const tidalWave: SpellBlueprint<MinionCard | HeroCard> = {
+export const tidalWave: SpellBlueprint = {
   id: 'tidal-wave',
   name: 'Tidal Wave',
   cardIconId: 'spell-tidal-wave',

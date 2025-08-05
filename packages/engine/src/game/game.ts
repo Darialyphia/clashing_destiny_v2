@@ -31,6 +31,7 @@ export type GameOptions = {
   }>;
   isSimulation?: boolean;
   players: [PlayerOptions, PlayerOptions];
+  enableSnapshots?: boolean;
 };
 
 export type SerializedGame = {
@@ -85,49 +86,49 @@ export class Game implements Serializable<SerializedGame> {
     let now = start;
 
     this.rngSystem.initialize({ seed: this.options.rngSeed });
-    console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    // console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     this.cardSystem.initialize({ cardPool: this.cardPool });
-    console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    // console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     await this.playerSystem.initialize({
       players: this.options.players
     });
-    console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    // console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
-    this.snapshotSystem.initialize();
-    console.log(
-      `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    );
+    this.snapshotSystem.initialize({ enabled: this.options.enableSnapshots ?? true });
+    // console.log(
+    //   `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    // );
     now = performance.now();
 
     this.boardSystem.initialize();
-    console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    // console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     this.interaction.initialize();
-    console.log(
-      `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    );
+    // console.log(
+    //   `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    // );
     now = performance.now();
 
     this.effectChainSystem.initialize();
-    console.log(
-      `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    );
+    // console.log(
+    //   `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    // );
     now = performance.now();
 
     await this.gamePhaseSystem.initialize();
-    console.log(
-      `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    );
+    // console.log(
+    //   `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    // );
     now = performance.now();
 
     await this.inputSystem.initialize(this.options.history ?? []);
-    console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    // console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));

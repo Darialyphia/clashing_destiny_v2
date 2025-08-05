@@ -1,6 +1,6 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import { isMinionOrHero } from '../../card/card-utils';
-import { Card, type AnyCard } from '../../card/entities/card.entity';
+import { type AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import type { AttackTarget } from '../../game/phases/combat.phase';

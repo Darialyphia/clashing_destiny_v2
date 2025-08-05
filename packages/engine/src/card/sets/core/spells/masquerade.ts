@@ -1,8 +1,4 @@
 import dedent from 'dedent';
-import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -13,18 +9,19 @@ import {
   SPELL_KINDS
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { GAME_PHASES, type GamePhase } from '../../../../game/game.enums';
-import { COMBAT_STEPS } from '../../../../game/phases/combat.phase';
-import { isMinion } from '../../../card-utils';
-import type { BetterExtract } from '@game/shared';
+import { GAME_PHASES } from '../../../../game/game.enums';
+import { isMinion, singleAllyMinionTargetRules } from '../../../card-utils';
+import { match } from 'ts-pattern';
+import { SpellCard } from '../../../entities/spell.entity';
 
-export const masquerade: SpellBlueprint<MinionCard> = {
+export const masquerade: SpellBlueprint = {
   id: 'masquerade',
   name: 'Masquerade',
   cardIconId: 'spell-masquerade',
   description: dedent`
-  Swap an allied minion that is targeted by an attack with a minion from your destiny zone that costs less.
-  @Trap@ : An allied minion gets attacked.
+  Swap an allied minion with a minion from your Destiny zone that costs less.
+
+  @Trap@ : An allied minion gets attacked. 
   `,
   collectable: true,
   unique: false,
@@ -34,33 +31,39 @@ export const masquerade: SpellBlueprint<MinionCard> = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  subKind: SPELL_KINDS.CAST,
+  subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: (game, card) => {
-    if (game.gamePhaseSystem.currentPlayer.equals(card.player)) return false;
-    const phaseCtx = game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
-
     return (
-      (phaseCtx.ctx.getState() === COMBAT_STEPS.BUILDING_CHAIN ||
-        phaseCtx.ctx.getState() === COMBAT_STEPS.DECLARE_TARGET) && // to enable trap activation
+      singleAllyMinionTargetRules.canPlay(game, card) &&
       [...card.player.cardManager.destinyZone].some(
-        c => isMinion(c) && c.manaCost < phaseCtx.ctx.target!.manaCost
+        cardInDestiny =>
+          isMinion(cardInDestiny) &&
+          card.player.minions.some(minion => cardInDestiny.manaCost < minion.manaCost)
       )
     );
   },
-  getPreResponseTargets: async () => [],
-  async onInit(game, card) {},
-  async onPlay(game, card) {
-    const phaseCtx =
-      game.gamePhaseSystem.getContext<BetterExtract<GamePhase, 'attack_phase'>>();
-
-    const target = phaseCtx.ctx.target;
-    if (!target || !isMinion(target)) return;
+  getPreResponseTargets(game, card) {
+    return singleAllyMinionTargetRules.getPreResponseTargets(
+      game,
+      card,
+      { type: 'card', card },
+      candidate =>
+        [...card.player.cardManager.destinyZone].some(
+          cardInDestiny =>
+            isMinion(cardInDestiny) && cardInDestiny.manaCost < candidate.manaCost
+        )
+    );
+  },
+  async onInit() {},
+  async onPlay(game, card, targets) {
+    const target = targets[0] as MinionCard;
+    if (!target) return;
 
     const destinyMinions = [...card.player.cardManager.destinyZone].filter(
-      c => isMinion(c) && c.manaCost < target.manaCost
+      c => isMinion(c) && c.manaCost <= target.manaCost
     );
+    if (destinyMinions.length === 0) return;
 
     const [choice] = await game.interaction.chooseCards<MinionCard>({
       player: card.player,
@@ -72,10 +75,37 @@ export const masquerade: SpellBlueprint<MinionCard> = {
 
     const position = target.position!;
     target.sendToDestinyZone();
+    choice.removeFromCurrentLocation();
     await choice.playAt({
       player: card.player,
       ...position
     });
-    phaseCtx.ctx.changeTarget(choice);
+
+    target.targetedBy.forEach(origin => {
+      match(origin)
+        .with({ type: 'ability' }, origin => {
+          origin.card.replaceAbilityTarget(origin.abilityId, target, choice);
+        })
+        .with({ type: 'card' }, origin => {
+          if (origin.card instanceof SpellCard) {
+            origin.card.replacePreResponseTarget(target, choice);
+          }
+        })
+        .exhaustive();
+    });
+
+    const gamePhaseCtx = game.gamePhaseSystem.getContext();
+    if (gamePhaseCtx.state !== GAME_PHASES.ATTACK) return;
+
+    const { ctx } = gamePhaseCtx;
+    if (ctx.attacker?.equals(target)) {
+      ctx.changeAttacker(choice);
+    }
+    if (ctx.blocker?.equals(target)) {
+      ctx.changeBlocker(choice);
+    }
+    if (ctx.target?.equals(target)) {
+      ctx.changeTarget(choice);
+    }
   }
 };

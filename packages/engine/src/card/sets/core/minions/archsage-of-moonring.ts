@@ -39,7 +39,7 @@ export const archsageOfMoonring: MinionBlueprint = {
             min: 0,
             max: 1,
             allowRepeat: true
-          })(game, card);
+          })(game, card, { type: 'card', card });
           if (!targets || targets.length === 0) {
             break;
           }

@@ -11,7 +11,7 @@ import {
   SPELL_KINDS
 } from '../../../card.enums';
 
-export const hourglassFracture: SpellBlueprint<PreResponseTarget> = {
+export const hourglassFracture: SpellBlueprint = {
   id: 'hourglass-fracture',
   name: 'Hourglass Fracture',
   cardIconId: 'spell-hourglass-fracture',

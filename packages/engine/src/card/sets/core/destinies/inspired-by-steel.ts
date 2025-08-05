@@ -33,6 +33,7 @@ export const inspiredBySteel: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 1,
+  countsAsLevel: true,
   abilities: [],
   async onInit() {},
   async onPlay(game, card) {

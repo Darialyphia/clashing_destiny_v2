@@ -50,7 +50,9 @@ export type SerializedOmniscientState = {
 
 export type SerializedPlayerState = SerializedOmniscientState;
 
-export class GameSnaphotSystem extends System<EmptyObject> {
+export class GameSnaphotSystem extends System<{ enabled: boolean }> {
+  private isEnabled = true;
+
   private playerCaches: Record<string, GameStateSnapshot<SerializedPlayerState>[]> = {
     omniscient: []
   };
@@ -60,20 +62,23 @@ export class GameSnaphotSystem extends System<EmptyObject> {
 
   private nextId = 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  initialize(): void {
+  initialize({ enabled }: { enabled: boolean }): void {
+    this.isEnabled = enabled;
+
     const ignoredEvents: GameEventName[] = [
       GAME_EVENTS.NEW_SNAPSHOT,
       GAME_EVENTS.FLUSHED,
       GAME_EVENTS.INPUT_START,
       GAME_EVENTS.INPUT_END
     ];
-    this.game.on('*', event => {
-      if (ignoredEvents.includes(event.data.eventName)) return;
-      this.eventsSinceLastSnapshot.push(event);
-    });
     this.playerCaches[this.game.playerSystem.player1.id] = [];
     this.playerCaches[this.game.playerSystem.player2.id] = [];
+
+    this.game.on('*', event => {
+      if (ignoredEvents.includes(event.data.eventName)) return;
+      if (!this.isEnabled) return;
+      this.eventsSinceLastSnapshot.push(event);
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -180,6 +185,7 @@ export class GameSnaphotSystem extends System<EmptyObject> {
   }
 
   takeSnapshot() {
+    if (!this.isEnabled) return;
     const events = this.eventsSinceLastSnapshot.map(event => event.serialize());
     const id = this.nextId++;
     this.playerCaches[this.game.playerSystem.player1.id].push({

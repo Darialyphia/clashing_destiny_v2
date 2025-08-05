@@ -24,6 +24,9 @@ import type { MainDeckCard } from '../board/board.system';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import { type SerializedTalentTree } from '../card/talent-tree';
 import type { DestinyCard } from '../card/entities/destiny.entity';
+import type { SpellCard } from '../card/entities/spell.entity';
+import type { ArtifactCard } from '../card/entities/artifact.entity';
+import type { MinionCard } from '../card/entities/minion.entity';
 
 export type PlayerOptions = {
   id: string;
@@ -278,7 +281,7 @@ export class Player
     );
   }
 
-  generateCard<T extends AnyCard = AnyCard>(blueprintId: string) {
+  generateCard<T extends AnyCard>(blueprintId: string) {
     const card = this.game.cardSystem.addCard<T>(this, blueprintId);
 
     return card;

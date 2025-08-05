@@ -23,6 +23,7 @@ export const chronoAffinity: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 3,
+  countsAsLevel: true,
   abilities: [],
   async onInit(game, card) {
     await card.addInterceptor(

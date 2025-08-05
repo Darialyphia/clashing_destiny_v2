@@ -23,6 +23,7 @@ export const fireAffinity: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   minLevel: 0,
+  countsAsLevel: true,
   abilities: [],
   async onInit(game, card) {
     await card.addInterceptor(

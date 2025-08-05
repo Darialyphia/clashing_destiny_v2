@@ -332,6 +332,21 @@ export class MinionCard extends Card<
     return this.player.boardSide.moveMinion(this.position, position, { allowSwap });
   }
 
+  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
+    const targets = this.abilityTargets.get(abilityId);
+    if (!targets) return;
+    if (newTarget instanceof Card) {
+      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
+      if (index === -1) return;
+
+      const oldTarget = targets[index] as AnyCard;
+      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
+
+      targets[index] = newTarget;
+      newTarget.targetBy({ type: 'ability', abilityId, card: this });
+    }
+  }
+
   canUseAbility(id: string) {
     const ability = this.abilities.find(ability => ability.id === id);
     if (!ability) return false;
@@ -377,7 +392,13 @@ export class MinionCard extends Card<
       source: this,
       targets,
       handler: async () => {
-        await ability.onResolve(this.game, this, targets);
+        const abilityTargets = this.abilityTargets.get(id)!;
+        await ability.onResolve(this.game, this, abilityTargets);
+        abilityTargets.forEach(target => {
+          if (target instanceof Card) {
+            target.clearTargetedBy({ type: 'card', card: this });
+          }
+        });
         this.abilityTargets.delete(id);
         await this.game.emit(
           MINION_EVENTS.MINION_AFTER_USE_ABILITY,

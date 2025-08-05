@@ -28,6 +28,7 @@ export const fireStudies: DestinyBlueprint = {
   rarity: RARITIES.RARE,
   tags: [],
   minLevel: 1,
+  countsAsLevel: true,
   abilities: [
     {
       id: 'fire-studies-ability',

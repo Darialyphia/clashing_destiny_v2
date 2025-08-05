@@ -19,7 +19,7 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const moltenShield: SpellBlueprint<MinionCard | HeroCard> = {
+export const moltenShield: SpellBlueprint = {
   id: 'molten-shield',
   name: 'Molten Shield',
   cardIconId: 'spell-molten-shield',
