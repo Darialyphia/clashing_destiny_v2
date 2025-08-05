@@ -41,7 +41,6 @@ export const flowkeeperSage: MinionBlueprint = {
       new TideModifier(game, card, {
         allowedLevels: [3],
         mixins: [
-          new TogglableModifierMixin(game, () => card.location === 'board'),
           new UnitInterceptorModifierMixin(game, {
             key: 'atk',
             interceptor: value => value + 3

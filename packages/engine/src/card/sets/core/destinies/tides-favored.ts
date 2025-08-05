@@ -37,6 +37,6 @@ export const tidesFavored: DestinyBlueprint = {
     });
   },
   async onPlay(game, card) {
-    await card.modifiers.add(new TidesFavoredModifier(game, card));
+    await card.player.hero.modifiers.add(new TidesFavoredModifier(game, card));
   }
 };
