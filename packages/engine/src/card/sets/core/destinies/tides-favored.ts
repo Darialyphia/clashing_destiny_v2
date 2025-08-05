@@ -7,8 +7,12 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { GAME_PHASES } from '../../../../game/game.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { KEYWORDS } from '../../../card-keywords';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { DestinyCard } from '../../../entities/destiny.entity';
+import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
 
 export const tidesFavored: DestinyBlueprint = {
   id: 'tides-favored',
@@ -36,5 +40,7 @@ export const tidesFavored: DestinyBlueprint = {
       await card.player.playDestinyCard(card);
     });
   },
-  async onPlay(game, card) {}
+  async onPlay(game, card) {
+    await card.modifiers.add(new TidesFavoredModifier(game, card));
+  }
 };

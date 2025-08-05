@@ -235,6 +235,13 @@ export class Modifier<
     }
   }
 
+  async setStacks(count: number) {
+    this._stacks = count;
+    if (this._stacks <= 0) {
+      await this.remove();
+    }
+  }
+
   serialize(): SerializedModifier {
     return {
       id: this.id,

@@ -89,9 +89,7 @@ export class SpellCard extends Card<
     );
   }
 
-  async play() {
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this);
-
+  async playWithTargets(targets: PreResponseTarget[]) {
     this.preResponseTargets = targets;
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
@@ -99,7 +97,7 @@ export class SpellCard extends Card<
     );
     const effect = {
       source: this,
-      targets,
+      targets: this.preResponseTargets!,
       handler: async () => {
         await this.game.emit(
           CARD_EVENTS.CARD_BEFORE_PLAY,
@@ -127,6 +125,11 @@ export class SpellCard extends Card<
     } else {
       void this.game.effectChainSystem.createChain(this.player, effect);
     }
+  }
+
+  async play() {
+    const targets = await this.blueprint.getPreResponseTargets(this.game, this);
+    await this.playWithTargets(targets);
   }
 
   serialize(): SerializedSpellCard {

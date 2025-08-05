@@ -1,8 +1,6 @@
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
-import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {

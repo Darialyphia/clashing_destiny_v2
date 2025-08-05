@@ -1,0 +1,41 @@
+import type { MaybePromise } from '@game/shared';
+import type { Game } from '../..';
+import { KEYWORDS } from '../../card/card-keywords';
+import type { AnyCard } from '../../card/entities/card.entity';
+import type { GameEventMap } from '../../game/game.events';
+import type { EventMapWithStarEvent } from '../../utils/typed-emitter';
+import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { TogglableModifierMixin } from '../mixins/togglable.mixin';
+import { Modifier, type ModifierTarget } from '../modifier.entity';
+
+export class TrapModifier<
+  TTarget extends AnyCard,
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>
+> extends Modifier<TTarget> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: {
+      eventName: TEvent;
+      predicate: (event: EventMapWithStarEvent<GameEventMap>[TEvent]) => boolean;
+      handler: (
+        event: EventMapWithStarEvent<GameEventMap>[TEvent],
+        modifier: Modifier<ModifierTarget>
+      ) => MaybePromise<void>;
+    }
+  ) {
+    super(KEYWORDS.TRAP.id, game, source, {
+      mixins: [
+        new TogglableModifierMixin(game, () => this.target.location === 'destinyZone'),
+        new GameEventModifierMixin(game, {
+          eventName: options.eventName,
+          handler: async (event, modifier) => {
+            console.log('trap event triggered', options.predicate(event));
+            if (!options.predicate(event)) return;
+            await options.handler(event, modifier);
+          }
+        })
+      ]
+    });
+  }
+}

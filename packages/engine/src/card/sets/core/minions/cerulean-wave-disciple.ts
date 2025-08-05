@@ -11,7 +11,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { TauntModifier } from '../../../../modifier/modifiers/taunt.modifier';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 
@@ -26,8 +25,8 @@ export const ceruleanWaveDisciple: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 3,
-  atk: 0,
-  maxHp: 4,
+  atk: 1,
+  maxHp: 3,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

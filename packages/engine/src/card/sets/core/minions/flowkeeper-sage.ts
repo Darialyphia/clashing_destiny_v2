@@ -10,6 +10,9 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { TideModifier } from '../../../../modifier/modifiers/tide-modifier';
+import { UnitInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const flowkeeperSage: MinionBlueprint = {
   id: 'flowkeeperSage',
@@ -17,7 +20,7 @@ export const flowkeeperSage: MinionBlueprint = {
   cardIconId: 'unit-flowkeeper-sage',
   description: dedent`
   @Elusive@.
-  @High Tide@: Gain +3 @[attack]@.
+  @Tide (3)@: Gain +3 @[attack]@.
   `,
   collectable: true,
   unique: false,
@@ -34,6 +37,18 @@ export const flowkeeperSage: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(new ElusiveModifier(game, card));
+    await card.modifiers.add(
+      new TideModifier(game, card, {
+        allowedLevels: [3],
+        mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
+          new UnitInterceptorModifierMixin(game, {
+            key: 'atk',
+            interceptor: value => value + 3
+          })
+        ]
+      })
+    );
   },
   async onPlay() {}
 };

@@ -260,13 +260,7 @@ export const KEYWORDS = {
     name: 'Tide',
     description:
       'Your tide level increases by 1 up to 3 at the start of your turn, then resets to 1.',
-    aliases: []
-  },
-  HIGH_TIDE: {
-    id: 'high-tide',
-    name: 'High Tide',
-    description: 'This card has a bonus effect if your Tide level is at 3.',
-    aliases: []
+    aliases: [/tide \([0-9a-z\s+-]+\)/]
   },
   INTIMIDATE: {
     id: 'intimidate',

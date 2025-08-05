@@ -1,9 +1,8 @@
-import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { ModifierMixin } from '../modifier-mixin';
-import type { Modifier } from '../modifier.entity';
+import type { Modifier, ModifierTarget } from '../modifier.entity';
 
-export class TogglableModifierMixin<T extends AnyCard> extends ModifierMixin<T> {
+export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
 
   constructor(

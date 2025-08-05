@@ -9,10 +9,13 @@ import {
   SPELL_KINDS
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { GAME_PHASES } from '../../../../game/game.enums';
+import { GAME_PHASES, type GamePhase } from '../../../../game/game.enums';
 import { isMinion, singleAllyMinionTargetRules } from '../../../card-utils';
 import { match } from 'ts-pattern';
 import { SpellCard } from '../../../entities/spell.entity';
+import { TrapModifier } from '../../../../modifier/modifiers/trap.modifier';
+import { GAME_EVENTS } from '../../../../game/game.events';
+import type { BetterExtract } from '@game/shared';
 
 export const masquerade: SpellBlueprint = {
   id: 'masquerade',
@@ -34,14 +37,7 @@ export const masquerade: SpellBlueprint = {
   subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: (game, card) => {
-    return (
-      singleAllyMinionTargetRules.canPlay(game, card) &&
-      [...card.player.cardManager.destinyZone].some(
-        cardInDestiny =>
-          isMinion(cardInDestiny) &&
-          card.player.minions.some(minion => cardInDestiny.manaCost < minion.manaCost)
-      )
-    );
+    return singleAllyMinionTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
     return singleAllyMinionTargetRules.getPreResponseTargets(
@@ -55,7 +51,29 @@ export const masquerade: SpellBlueprint = {
         )
     );
   },
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new TrapModifier(game, card, {
+        eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
+        predicate: event => {
+          if (event.data.target.player.equals(card.player)) return false;
+          return [...card.player.cardManager.destinyZone].some(
+            cardInDestiny =>
+              isMinion(cardInDestiny) &&
+              card.player.minions.some(minion => cardInDestiny.manaCost < minion.manaCost)
+          );
+        },
+        async handler(event) {
+          const phaseCtx =
+            game.gamePhaseSystem.getContext<BetterExtract<GamePhase, 'attack_phase'>>();
+
+          await phaseCtx.ctx.declareBlocker(null);
+
+          await card.playWithTargets([event.data.target]);
+        }
+      })
+    );
+  },
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
     if (!target) return;
@@ -68,7 +86,7 @@ export const masquerade: SpellBlueprint = {
     const [choice] = await game.interaction.chooseCards<MinionCard>({
       player: card.player,
       label: 'Choose a minion to swap with',
-      minChoiceCount: 1,
+      minChoiceCount: 0,
       maxChoiceCount: 1,
       choices: destinyMinions
     });

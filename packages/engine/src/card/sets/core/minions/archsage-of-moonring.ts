@@ -2,7 +2,7 @@ import { LoyaltyModifier } from '../../../../modifier/modifiers/loyalty.modifier
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { multipleEnemyTargetRules } from '../../../card-utils';
+import { multipleEnemyTargetRules, singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -15,7 +15,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
   name: 'Archsage of Moonring',
   cardIconId: 'unit-archsage-of-moonring',
-  description: `@On Enter@ : deal up to 3 damage split among enemies.`,
+  description: `@On Enter@ : deal 3 damage split among enemies.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -33,20 +33,18 @@ export const archsageOfMoonring: MinionBlueprint = {
     await card.modifiers.add(new LoyaltyModifier(game, card, 1));
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
-        let count = 0;
+        const count = 0;
         while (count < 3) {
-          const targets = await multipleEnemyTargetRules.getPreResponseTargets({
-            min: 0,
-            max: 1,
-            allowRepeat: true
-          })(game, card, { type: 'card', card });
-          if (!targets || targets.length === 0) {
-            break;
-          }
-          for (const target of targets) {
-            await target.takeDamage(card, new AbilityDamage(1));
-            count++;
-          }
+          const [target] = await singleEnemyTargetRules.getPreResponseTargets(
+            game,
+            card,
+            {
+              type: 'card',
+              card
+            }
+          );
+
+          await target.takeDamage(card, new AbilityDamage(1));
         }
       })
     );
