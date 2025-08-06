@@ -1,20 +1,47 @@
 <script setup lang="ts">
 import { useCollectionPage } from './useCollectionPage';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import { Icon } from '@iconify/vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
+
+const getCountByKind = (kind: CardKind) => {
+  return deckBuilder.value.cards
+    .filter(c => c.blueprint.kind === kind)
+    .reduce((acc, card) => {
+      if ('copies' in card) {
+        return acc + (card.copies as number);
+      }
+      return acc;
+    }, 0);
+};
 </script>
 
 <template>
   <div class="deck">
-    <div class="flex gap-2">
-      <Icon icon="material-symbols:edit-outline" />
-      <input v-model="deckBuilder.deck.name" type="text" />
+    <div>
+      <div class="flex gap-2">
+        <Icon icon="material-symbols:edit-outline" />
+        <input v-model="deckBuilder.deck.name" type="text" />
+      </div>
+      <div class="counts">
+        <div>
+          <span>{{ getCountByKind(CARD_KINDS.MINION) }}</span>
+          Minions
+        </div>
+        <div>
+          <span>{{ getCountByKind(CARD_KINDS.SPELL) }}</span>
+          Spells
+        </div>
+        <div>
+          <span>{{ getCountByKind(CARD_KINDS.ARTIFACT) }}</span>
+          Artifacts
+        </div>
+      </div>
     </div>
     <div class="overflow-y-auto fancy-scrollbar">
-      <div class="text-3 my-5 font-500">
+      <div class="text-3 mb-5 font-500">
         Main deck ({{ deckBuilder.mainDeckSize }} /
         {{ deckBuilder.validator.mainDeckSize }})
       </div>
@@ -135,5 +162,19 @@ const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
   padding-right: 1px;
+}
+
+.counts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--size-2);
+  justify-items: center;
+  font-size: var(--font-size-0);
+  margin-block: var(--size-3);
+  > div > span {
+    font-size: var(--font-size-2);
+    color: var(--primary);
+    font-weight: var(--font-weight-5);
+  }
 }
 </style>

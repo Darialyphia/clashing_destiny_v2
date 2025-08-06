@@ -123,6 +123,19 @@ export class DeckBuilderViewModel {
     );
   }
 
+  get mainDeckCards() {
+    return this._deck[CARD_DECK_SOURCES.MAIN_DECK].map(card => {
+      const blueprint = this.cardPool.find(
+        c => c.blueprint.id === card.blueprintId
+      )!.blueprint as CardBlueprint;
+
+      return {
+        ...card,
+        blueprint
+      };
+    });
+  }
+
   get cards() {
     return [
       ...this._deck[CARD_DECK_SOURCES.MAIN_DECK],

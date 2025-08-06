@@ -1,9 +1,7 @@
 import dedent from 'dedent';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -12,17 +10,13 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 
 export const surgeOfWill: SpellBlueprint = {
   id: 'surge-of-will',
   name: 'Surge of Will',
   cardIconId: 'spell-surge-of-will',
-  description: dedent`
-  Your hero has +2 Spellpower until the end of the turn.
-  @Echoed Destiny@.
-  `,
+  description: `Your hero has +2 Spellpower until the end of the turn. Draw a card.`,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -35,9 +29,7 @@ export const surgeOfWill: SpellBlueprint = {
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
-  async onInit(game, card) {
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
-  },
+  async onInit() {},
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new SimpleSpellpowerBuffModifier('surge_of_will_buff', game, card, {
@@ -45,5 +37,7 @@ export const surgeOfWill: SpellBlueprint = {
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );
+
+    await card.player.cardManager.draw(1);
   }
 };
