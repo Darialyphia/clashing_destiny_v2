@@ -162,8 +162,7 @@ export const KEYWORDS = {
   BLITZ: {
     id: 'blitz',
     name: 'Blitz',
-    description:
-      'This unit cannot be blocked. When attacked, its owner cannot declare a block.',
+    description: 'This unit cannot be blocked.',
     aliases: []
   },
   PULLER: {
@@ -266,7 +265,7 @@ export const KEYWORDS = {
     id: 'intimidate',
     name: 'Intimidate (X)',
     description:
-      "Minions of X attack or less attacked by this minion don't counterattack.",
+      "Minions of that cost X or less attacked by this minion don't counterattack.",
     aliases: [/intimidate \([0-9]+\)/]
   }
 };

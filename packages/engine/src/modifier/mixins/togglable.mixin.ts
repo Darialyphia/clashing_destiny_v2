@@ -3,7 +3,7 @@ import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier, ModifierTarget } from '../modifier.entity';
 
 export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMixin<T> {
-  private modifier!: Modifier<T>;
+  protected modifier!: Modifier<T>;
 
   constructor(
     game: Game,

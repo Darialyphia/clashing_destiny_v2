@@ -294,6 +294,7 @@ export class ArtifactCard extends Card<
     this.updatePlayedAt();
 
     await this.player.artifactManager.equip(this);
+    this.lostDurability = 0;
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_EQUIPED,

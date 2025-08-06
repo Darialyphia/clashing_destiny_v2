@@ -903,6 +903,19 @@
         },
         {
           "alias": [
+            "icon-keyword-tides-favored"
+          ],
+          "src": [
+            "/assets/icons/keyword-tides-favored.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-keyword-vigilant"
           ],
           "src": [

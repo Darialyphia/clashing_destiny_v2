@@ -9,6 +9,9 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
+import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
+import { singleAllyTargetRules } from '../../../card-utils';
+import type { HeroCard } from '../../../entities/hero.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 
 export const tranquility: SpellBlueprint = {
@@ -16,21 +19,28 @@ export const tranquility: SpellBlueprint = {
   name: 'Tranquility',
   cardIconId: 'spell-tranquility',
   description: dedent`
-  Give a minion "If this is not exhausted at the end of the turn, draw a card into your Destiny zone."
+  Heal an ally for 1 + @[spellpower]@."
   @Echoed Destiny@.
   `,
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   affinity: AFFINITIES.WATER,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  subKind: SPELL_KINDS.CAST,
+  subKind: SPELL_KINDS.BURST,
   tags: [],
-  canPlay: () => true,
-  getPreResponseTargets: async () => [],
-  async onInit() {},
-  async onPlay(game, card) {}
+  canPlay: singleAllyTargetRules.canPlay,
+  getPreResponseTargets: async (game, card) =>
+    singleAllyTargetRules.getPreResponseTargets(game, card, { type: 'card', card }),
+  async onInit(game, card) {
+    await card.modifiers.add(new EchoedDestinyModifier(game, card));
+  },
+  async onPlay(game, card, targets) {
+    const target = targets[0] as MinionCard | HeroCard;
+
+    await target.heal(1 + card.player.hero.spellPower);
+  }
 };

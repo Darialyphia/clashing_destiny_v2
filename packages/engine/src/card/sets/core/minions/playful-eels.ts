@@ -11,20 +11,17 @@ import {
 import { UnitInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { TideModifier } from '../../../../modifier/modifiers/tide-modifier';
 
-export const flowkeeperSage: MinionBlueprint = {
-  id: 'flowkeeperSage',
-  name: 'Flowkeeper Sage',
-  cardIconId: 'unit-flowkeeper-sage',
-  description: dedent`
-  @Elusive@.
-  @Tide (3)@: Gain +2 @[attack]@.
-  `,
+export const playfulEels: MinionBlueprint = {
+  id: 'playfulEels',
+  name: 'Playful Eels',
+  cardIconId: 'unit-playful-eels',
+  description: `@Elusive@.`,
   collectable: true,
   unique: false,
-  manaCost: 4,
-  atk: 3,
-  maxHp: 3,
-  rarity: RARITIES.RARE,
+  manaCost: 1,
+  atk: 1,
+  maxHp: 1,
+  rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   affinity: AFFINITIES.WATER,
@@ -34,17 +31,6 @@ export const flowkeeperSage: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(new ElusiveModifier(game, card));
-    await card.modifiers.add(
-      new TideModifier(game, card, {
-        allowedLevels: [3],
-        mixins: [
-          new UnitInterceptorModifierMixin(game, {
-            key: 'atk',
-            interceptor: value => value + 2
-          })
-        ]
-      })
-    );
   },
   async onPlay() {}
 };

@@ -20,16 +20,25 @@ export class TidesFavoredModifier extends Modifier<HeroCard> {
       mixins: [
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.PLAYER_START_TURN,
-          handler: async (event, modifier) => {
+          handler: async event => {
             if (game.gamePhaseSystem.elapsedTurns === 0) return;
             if (event.data.player.equals(source.player)) {
-              const newStacks = modifier.stacks + 1 > 3 ? 1 : modifier.stacks + 1;
-              await modifier.setStacks(newStacks);
+              await this.raiseTides();
             }
           }
         })
       ]
     });
+  }
+
+  async raiseTides() {
+    const newStacks = this.stacks + 1 > 3 ? 1 : this.stacks + 1;
+    await this.setStacks(newStacks);
+  }
+
+  async lowerTides() {
+    const newStacks = this.stacks - 1 < 1 ? 3 : this.stacks - 1;
+    await this.setStacks(newStacks);
   }
 }
 

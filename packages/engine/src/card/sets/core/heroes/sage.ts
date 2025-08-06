@@ -19,7 +19,7 @@ export const sage: HeroBlueprint = {
   name: 'Sage',
   cardIconId: 'hero-sage',
   description:
-    'As long as this has at least 3+ @[spellpower]@, after you play a spell, draw a card.',
+    'As long as this has at least 4+ @[spellpower]@, after you play a spell, draw a card.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [],

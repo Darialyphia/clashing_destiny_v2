@@ -2,7 +2,7 @@ import { LoyaltyModifier } from '../../../../modifier/modifiers/loyalty.modifier
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { multipleEnemyTargetRules, singleEnemyTargetRules } from '../../../card-utils';
+import { singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -33,7 +33,7 @@ export const archsageOfMoonring: MinionBlueprint = {
     await card.modifiers.add(new LoyaltyModifier(game, card, 1));
     await card.modifiers.add(
       new OnEnterModifier(game, card, async () => {
-        const count = 0;
+        let count = 0;
         while (count < 3) {
           const [target] = await singleEnemyTargetRules.getPreResponseTargets(
             game,
@@ -45,6 +45,7 @@ export const archsageOfMoonring: MinionBlueprint = {
           );
 
           await target.takeDamage(card, new AbilityDamage(1));
+          count++;
         }
       })
     );

@@ -235,6 +235,17 @@ export class BoardSide
     );
   }
 
+  get unoccupiedSlots() {
+    return [
+      ...this.attackZone.slots
+        .filter(slot => !slot.isOccupied)
+        .map(slot => ({ zone: 'attack' as const, slot: slot })),
+      ...this.defenseZone.slots
+        .filter(slot => !slot.isOccupied)
+        .map(slot => ({ zone: 'defense' as const, slot: slot }))
+    ];
+  }
+
   getSlot(zone: 'attack' | 'defense', slot: number): BoardMinionSlot | null {
     return this.getZone(zone).slots[slot] ?? null;
   }

@@ -1,9 +1,11 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { firebrand } from './core/artifacts/firebrand';
+import { orbOfTheTides } from './core/artifacts/orb-of-the-tides';
 import { rainbowCeremonialSword } from './core/artifacts/rainbow-sword';
 import { runedShiv } from './core/artifacts/runed-shiv';
 import { rustyBlade } from './core/artifacts/rusty-blade';
+import { tomeOfKnowledge } from './core/artifacts/tome-of-knowledge';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { arcaneMastery } from './core/destinies/arcane-mastery';
 import { chronoAffinity } from './core/destinies/chrono-affinity';
@@ -35,7 +37,9 @@ import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { luminescentMystic } from './core/minions/luminescent-mystic';
 import { magicChanneler } from './core/minions/magic-channeler';
 import { magicFueledGolem } from './core/minions/magic-fueled-golem';
+import { nagaSkirmisher } from './core/minions/naga-skirmisher';
 import { phoenix } from './core/minions/phoenix';
+import { playfulEels } from './core/minions/playful-eels';
 import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { pyromancer } from './core/minions/pyromancer';
@@ -64,6 +68,7 @@ import { powerOverwhelming } from './core/spells/power-overwhelming';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
 import { revisedStrategy } from './core/spells/revised-strategy';
+import { shoalOfEels } from './core/spells/shoal-of-eels';
 import { slipstreamVeil } from './core/spells/slipstream-veil';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
@@ -104,6 +109,8 @@ export const coreSet: CardSet = {
     revisedStrategy,
     masquerade,
     spiritualist,
+    tomeOfKnowledge,
+    orbOfTheTides,
 
     // Fire
     fireBolt,
@@ -157,6 +164,9 @@ export const coreSet: CardSet = {
     tranquility,
     slipstreamVeil,
     waterElemental,
-    tidesFavored
+    tidesFavored,
+    playfulEels,
+    nagaSkirmisher,
+    shoalOfEels
   ]
 };

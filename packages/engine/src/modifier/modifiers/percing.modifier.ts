@@ -9,11 +9,16 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { Modifier } from '../modifier.entity';
+import type { ModifierMixin } from '../modifier-mixin';
 
 export class PiercingModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
   private behind: Nullable<MinionCard>;
 
-  constructor(game: Game, source: AnyCard) {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    { mixins }: { mixins?: ModifierMixin<T>[] } = {}
+  ) {
     super(KEYWORDS.PIERCING.id, game, source, {
       name: KEYWORDS.PIERCING.name,
       description: KEYWORDS.PIERCING.description,
@@ -54,7 +59,8 @@ export class PiercingModifier<T extends MinionCard | HeroCard> extends Modifier<
             await this.behind?.takeDamage(this.target, event.data.damage);
             this.behind = null;
           }
-        })
+        }),
+        ...(mixins ?? [])
       ]
     });
   }

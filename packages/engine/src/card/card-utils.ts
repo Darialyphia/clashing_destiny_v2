@@ -245,6 +245,31 @@ export const singleEmptyAllySlot = {
   }
 };
 
+export const multipleEmptyAllySlot = {
+  canPlay: (min: number) => (game: Game, card: AnyCard) => {
+    return card.player.boardSide.unoccupiedSlots.length >= min;
+  },
+  getPreResponseTargets:
+    ({ min, max }: { min: number; max: number }) =>
+    async (game: Game, card: AnyCard) => {
+      return await game.interaction.selectMinionSlot({
+        player: card.player,
+        isElligible(slot) {
+          return (
+            slot.player.equals(card.player) &&
+            !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied
+          );
+        },
+        canCommit(selectedSlots) {
+          return selectedSlots.length >= min;
+        },
+        isDone(selectedSlots) {
+          return selectedSlots.length === max;
+        }
+      });
+    }
+};
+
 export const multipleEnemyTargetRules = {
   canPlay:
     (min: number) =>

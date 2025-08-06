@@ -12,28 +12,27 @@ import {
 } from '../../../card.enums';
 import type { HeroCard } from '../../../entities/hero.entity';
 
-export const runedShiv: ArtifactBlueprint = {
-  id: 'runed-shiv',
-  name: 'Runed Shiv',
-  cardIconId: 'artifact-runed-shiv',
-  description: '',
+export const tomeOfKnowledge: ArtifactBlueprint = {
+  id: 'tome-of-knowledge',
+  name: 'Tome of Knowledge',
+  cardIconId: 'artifact-book-of-knowledge',
+  description: 'This comes into play exhausted.',
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.NORMAL,
   durability: 2,
-  subKind: ARTIFACT_KINDS.WEAPON,
-  atkBonus: 1,
+  subKind: ARTIFACT_KINDS.RELIC,
   abilities: [
     {
-      id: 'runed-shiv-ability',
-      label: '@[exhaust]@ +1 Attack',
-      description: `@[exhaust]@ -1@[durability]@ : This turn, your hero gain +1@[attack]@.`,
-      manaCost: 0,
+      id: 'tome-of-knowledge-ability',
+      label: '@[exhaust]@ +1 Spellpower',
+      description: `@[exhaust]@ -1@[durability]@ : Your hero gains +1 @[spellpower]@.`,
+      manaCost: 2,
       shouldExhaust: true,
       canUse(game, card) {
         return card.location === 'board';
@@ -43,16 +42,15 @@ export const runedShiv: ArtifactBlueprint = {
       },
       async onResolve(game, card) {
         await card.player.hero.modifiers.add(
-          new Modifier<HeroCard>('runed-shiv-buff', game, card, {
-            name: 'Runed Shiv',
-            description: `+1 Attack.`,
-            icon: 'keyword-attack-buff',
+          new Modifier<HeroCard>('tome-of-knowledge-buff', game, card, {
+            name: 'Tome of Knowledge',
+            description: `+1 Spellpower.`,
+            icon: 'keyword-abilitypower-buff',
             mixins: [
-              new UntilEndOfTurnModifierMixin<HeroCard>(game),
               new HeroInterceptorModifierMixin(game, {
-                key: 'atk',
+                key: 'spellPower',
                 interceptor(value) {
-                  return value + card.atkBonus;
+                  return value + 1;
                 }
               })
             ]
@@ -65,5 +63,7 @@ export const runedShiv: ArtifactBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit() {},
-  async onPlay() {}
+  async onPlay(ame, card) {
+    await card.exhaust();
+  }
 };

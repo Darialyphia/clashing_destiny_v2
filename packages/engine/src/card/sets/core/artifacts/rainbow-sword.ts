@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { RemoveOnDestroyedMixin } from '../../../../modifier/mixins/remove-on-destroyed';
@@ -23,12 +24,14 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
   id: 'rainbow-sword',
   name: 'Rainbow Ceremonial Sword',
   cardIconId: 'artifact-rainbow-blade',
-  description:
-    '@On Enter@ : Your hero gains +2 @[attack]@ and +2 @[spellpower]@ this turn.\nWhen your hero takes damage, this loses 1 @[durability]@.\n@On Destroyed@ : Draw 2 cards.',
+  description: dedent`
+  @On Enter@ : Your hero gains +2 @[attack]@ and +2 @[spellpower]@ this turn.
+  When your hero takes damage, this loses 1 @[durability]@.
+  @On Destroyed@ : Draw 2 cards.`,
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  manaCost: 3,
+  manaCost: 4,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,

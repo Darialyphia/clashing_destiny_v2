@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -8,17 +7,17 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
+import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { TideModifierMixin } from '../../../../modifier/mixins/tide.mixin';
-import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
+import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
 
-export const waterElemental: MinionBlueprint = {
-  id: 'water-elemental',
-  name: 'Water Elemental',
-  cardIconId: 'unit-water-elemental',
+export const nagaSkirmisher: MinionBlueprint = {
+  id: 'naga-skirmisher',
+  name: 'Naga Skirmisher',
+  cardIconId: 'unit-naga-skirmisher',
   description: dedent`
-  @On Enter@ : Increase your @Tide@ by 1.
-  @Tide (3)@ : Gain @Piercing@ +1 @[health]@.
+  @Tide (2+)@: @Cleave@.
+  @Tide (3)@: @Double Attack@.
   `,
   collectable: true,
   unique: false,
@@ -35,16 +34,16 @@ export const waterElemental: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        await card.player.hero.modifiers.get(TidesFavoredModifier)?.raiseTides();
+      new CleaveModifier(game, card, {
+        mixins: [new TideModifierMixin(game, [2, 3])]
       })
     );
-  },
-  async onPlay(game, card) {
+
     await card.modifiers.add(
-      new PiercingModifier(game, card, {
+      new DoubleAttackModifier(game, card, {
         mixins: [new TideModifierMixin(game, [3])]
       })
     );
-  }
+  },
+  async onPlay() {}
 };

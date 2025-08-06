@@ -19,10 +19,6 @@ export class BlitzModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
         new UnitInterceptorModifierMixin(game, {
           key: 'canBeBlocked',
           interceptor: () => false
-        }),
-        new UnitInterceptorModifierMixin(game, {
-          key: 'canBeDefended',
-          interceptor: () => false
         })
       ]
     });
