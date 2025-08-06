@@ -20,7 +20,7 @@ export const orbOfTheTides: ArtifactBlueprint = {
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
@@ -31,7 +31,7 @@ export const orbOfTheTides: ArtifactBlueprint = {
     {
       id: 'orb-of-the-tides-ability',
       label: '@[exhaust]@ : Increase Tide',
-      description: `@[exhaust]@ -1@[durability]@ : Set your @Tide@ to 3.`,
+      description: `@[exhaust]@ -1@[durability]@ : Increase your @Tide@ by 1.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
@@ -41,7 +41,8 @@ export const orbOfTheTides: ArtifactBlueprint = {
         return [];
       },
       async onResolve(game, card) {
-        await card.player.hero.modifiers.get(TidesFavoredModifier)?.setStacks(3);
+        await card.player.hero.modifiers.get(TidesFavoredModifier)?.raiseTides();
+        await card.loseDurability(1);
       }
     }
   ],

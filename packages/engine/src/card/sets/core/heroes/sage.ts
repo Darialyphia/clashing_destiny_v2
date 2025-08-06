@@ -4,6 +4,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -19,7 +20,7 @@ export const sage: HeroBlueprint = {
   name: 'Sage',
   cardIconId: 'hero-sage',
   description:
-    'As long as this has at least 4+ @[spellpower]@, after you play a spell, draw a card.',
+    '@[level] 3+@ : The first time you play a spell during your turn, draw 1 card.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
@@ -34,29 +35,33 @@ export const sage: HeroBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [],
   tags: [],
-  async onInit() {},
-  async onPlay(game, card) {
-    await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('sage-buff', game, card, {
-        icon: 'modifier-double-cast',
-        name: 'One with the magic',
-        description: 'After you play a spell, draw a card.',
+  async onInit(game, card) {
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 3)
+    )) as LevelBonusModifier<HeroCard>;
+
+    await card.modifiers.add(
+      new Modifier<HeroCard>('sage-spell-discount', game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3),
+          new TogglableModifierMixin(game, () => {
+            if (!levelMod.isActive) return false;
+            if (!card.player.isCurrentPlayer) return false;
+            return card.player.cardTracker.cardsPlayedThisTurn.every(
+              card => card.kind !== CARD_KINDS.SPELL
+            );
+          }),
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
             handler: async event => {
-              const { card: playedCard } = event.data;
-              if (
-                playedCard.kind === CARD_KINDS.SPELL &&
-                playedCard.player.equals(card.player)
-              ) {
-                await card.player.cardManager.draw(1);
-              }
+              if (!event.data.card.player.equals(card.player)) return;
+              if (event.data.card.kind !== CARD_KINDS.SPELL) return;
+
+              await card.player.cardManager.draw(1);
             }
           })
         ]
       })
     );
-  }
+  },
+  async onPlay() {}
 };

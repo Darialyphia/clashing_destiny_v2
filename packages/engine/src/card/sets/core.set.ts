@@ -40,6 +40,7 @@ import { magicFueledGolem } from './core/minions/magic-fueled-golem';
 import { nagaSkirmisher } from './core/minions/naga-skirmisher';
 import { phoenix } from './core/minions/phoenix';
 import { playfulEels } from './core/minions/playful-eels';
+import { poseidonEmperorOfTheSea } from './core/minions/poseidon-emperor-of-the-sea';
 import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { pyromancer } from './core/minions/pyromancer';
@@ -68,6 +69,7 @@ import { powerOverwhelming } from './core/spells/power-overwhelming';
 import { pyroclasm } from './core/spells/pyroclasm';
 import { recollection } from './core/spells/recollection';
 import { revisedStrategy } from './core/spells/revised-strategy';
+import { shiftingCurrents } from './core/spells/shifting-currents';
 import { shoalOfEels } from './core/spells/shoal-of-eels';
 import { slipstreamVeil } from './core/spells/slipstream-veil';
 import { surgeOfWill } from './core/spells/surge-of-will';
@@ -167,6 +169,8 @@ export const coreSet: CardSet = {
     tidesFavored,
     playfulEels,
     nagaSkirmisher,
-    shoalOfEels
+    shoalOfEels,
+    shiftingCurrents,
+    poseidonEmperorOfTheSea
   ]
 };

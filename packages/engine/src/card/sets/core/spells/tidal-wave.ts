@@ -31,7 +31,8 @@ export const tidalWave: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card) {
     for (const enemy of card.player.opponent.boardSide.attackZone.minions) {
-      const targetSpace = enemy.player.boardSide.defenseZone.get(enemy.position!.slot);
+      const targetSpace = enemy.slot?.behind;
+      if (!targetSpace) continue;
       if (targetSpace.isOccupied) {
         await enemy.takeDamage(card, new SpellDamage(2));
         await targetSpace.minion!.takeDamage(card, new SpellDamage(2));

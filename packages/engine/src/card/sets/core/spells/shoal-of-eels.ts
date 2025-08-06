@@ -13,6 +13,9 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { playfulEels } from '../minions/playful-eels';
+import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
+import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
+import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 
 export const shoalOfEels: SpellBlueprint = {
   id: 'shoal-of-eels',
@@ -20,6 +23,7 @@ export const shoalOfEels: SpellBlueprint = {
   cardIconId: 'spell-shoal-of-eels',
   description: dedent`
   Summon up to 2 @Playful Eels@.
+  @Tide (3)@ : Give them @Rush@.
   @Echoed Destiny@.
   `,
   collectable: true,
@@ -39,11 +43,18 @@ export const shoalOfEels: SpellBlueprint = {
       max: 2
     })(game, card);
   },
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new EchoedDestinyModifier(game, card));
+  },
   async onPlay(game, card, targets) {
+    const tideStacks = card.player.hero.modifiers.get(TidesFavoredModifier)?.stacks ?? 0;
+
     for (const target of targets as MinionPosition[]) {
       const eel = await card.player.generateCard<MinionCard>(playfulEels.id);
       await eel.playAt(target);
+      if (tideStacks === 3) {
+        await eel.modifiers.add(new RushModifier(game, card));
+      }
     }
   }
 };

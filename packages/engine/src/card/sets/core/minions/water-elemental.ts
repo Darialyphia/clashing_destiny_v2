@@ -8,9 +8,10 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import { TideModifierMixin } from '../../../../modifier/mixins/tide.mixin';
 import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
+import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
+import { PusherModifier } from '../../../../modifier/modifiers/pusher.modifier';
 
 export const waterElemental: MinionBlueprint = {
   id: 'water-elemental',
@@ -18,7 +19,7 @@ export const waterElemental: MinionBlueprint = {
   cardIconId: 'unit-water-elemental',
   description: dedent`
   @On Enter@ : Increase your @Tide@ by 1.
-  @Tide (3)@ : Gain @Piercing@ +1 @[health]@.
+  @Tide (3)@ : Gain @Pusher@ +2 @[health]@.
   `,
   collectable: true,
   unique: false,
@@ -42,7 +43,14 @@ export const waterElemental: MinionBlueprint = {
   },
   async onPlay(game, card) {
     await card.modifiers.add(
-      new PiercingModifier(game, card, {
+      new PusherModifier(game, card, {
+        mixins: [new TideModifierMixin(game, [3])]
+      })
+    );
+
+    await card.modifiers.add(
+      new SimpleHealthBuffModifier('water-elemental-tides-hp-buff', game, card, {
+        amount: 2,
         mixins: [new TideModifierMixin(game, [3])]
       })
     );

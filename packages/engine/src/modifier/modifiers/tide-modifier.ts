@@ -10,6 +10,19 @@ import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
+export class FixTideModifier<T extends AnyCard> extends Modifier<T> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    readonly amount: number
+  ) {
+    super('fix-tide', game, source, {
+      mixins: [new TogglableModifierMixin(game, () => this.target.location === 'board')],
+      isUnique: true
+    });
+  }
+}
+
 export class TidesFavoredModifier extends Modifier<HeroCard> {
   constructor(game: Game, source: AnyCard) {
     super('tides-favored', game, source, {
@@ -22,6 +35,12 @@ export class TidesFavoredModifier extends Modifier<HeroCard> {
           eventName: GAME_EVENTS.PLAYER_START_TURN,
           handler: async event => {
             if (game.gamePhaseSystem.elapsedTurns === 0) return;
+            if (this.fixedAmount) {
+              if (this.stacks !== this.fixedAmount) {
+                await this.setStacks(this.fixedAmount);
+                return;
+              }
+            }
             if (event.data.player.equals(source.player)) {
               await this.raiseTides();
             }
@@ -31,12 +50,26 @@ export class TidesFavoredModifier extends Modifier<HeroCard> {
     });
   }
 
+  get fixedAmount() {
+    for (const card of this.target.player.boardSide.getAllCardsInPlay()) {
+      if (card.modifiers.has(FixTideModifier)) {
+        const modifier = card.modifiers.get(FixTideModifier)!;
+        return modifier.amount;
+      }
+    }
+
+    return null;
+  }
+
   async raiseTides() {
+    if (this.fixedAmount) return;
+
     const newStacks = this.stacks + 1 > 3 ? 1 : this.stacks + 1;
     await this.setStacks(newStacks);
   }
 
   async lowerTides() {
+    if (this.fixedAmount) return;
     const newStacks = this.stacks - 1 < 1 ? 3 : this.stacks - 1;
     await this.setStacks(newStacks);
   }
