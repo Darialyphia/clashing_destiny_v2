@@ -70,7 +70,7 @@ export class TidesFavoredModifier extends Modifier<HeroCard> {
 
   async lowerTides() {
     if (this.fixedAmount) return;
-    const newStacks = this.stacks - 1 < 1 ? 3 : this.stacks - 1;
+    const newStacks = Math.min(this.stacks - 1, 1);
     await this.setStacks(newStacks);
   }
 }

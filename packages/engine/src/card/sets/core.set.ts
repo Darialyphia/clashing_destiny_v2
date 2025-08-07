@@ -8,6 +8,7 @@ import { rustyBlade } from './core/artifacts/rusty-blade';
 import { tomeOfKnowledge } from './core/artifacts/tome-of-knowledge';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { arcaneMastery } from './core/destinies/arcane-mastery';
+import { bloodAffinity } from './core/destinies/blood-affinity';
 import { cabalInitiate } from './core/destinies/cabal-initiate';
 import { chronoAffinity } from './core/destinies/chrono-affinity';
 import { fearlessLeader } from './core/destinies/fearless-leader';
@@ -16,6 +17,7 @@ import { fireStudies } from './core/destinies/fire-studies';
 import { insight } from './core/destinies/insight';
 import { inspiredBySteel } from './core/destinies/inspired-by-steel';
 import { manaVisions } from './core/destinies/mana-visions';
+import { theHangedMan } from './core/destinies/the-hangman';
 import { tidesFavored } from './core/destinies/tides-favored';
 import { waterAffinity } from './core/destinies/water-affinity';
 import { knight } from './core/heroes/knight';
@@ -26,6 +28,7 @@ import { battleflameInvoker } from './core/minions/battleflame-invoker';
 import { blazingSalamander } from './core/minions/blazing-salamander';
 import { ceruleanWaveDisciple } from './core/minions/cerulean-wave-disciple';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
+import { crimsonSuppressor } from './core/minions/crimson-suppressor';
 import { enjiOneManArmy } from './core/minions/enji-one-man-army';
 import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
@@ -54,6 +57,7 @@ import { sunPalaceGuard } from './core/minions/sun-palace-guard';
 import { temporalShifter } from './core/minions/temporal-shifter';
 import { waterElemental } from './core/minions/water-elemental';
 import { arcaneInsight } from './core/spells/arcane-insight';
+import { calmWaters } from './core/spells/calm-waters';
 import { channelTheFlames } from './core/spells/channel-the-flames';
 import { dualCasting } from './core/spells/dual-casting';
 import { fireBall } from './core/spells/fire-ball';
@@ -90,12 +94,14 @@ export const coreSet: CardSet = {
     knight,
 
     // Normal
-    courageousFootsoldier,
-    friendlySlime,
-    rustyBlade,
     fireAffinity,
     waterAffinity,
     arcaneAffinity,
+    chronoAffinity,
+    bloodAffinity,
+    courageousFootsoldier,
+    friendlySlime,
+    rustyBlade,
     inspiredBySteel,
     insight,
     manaVisions,
@@ -108,13 +114,13 @@ export const coreSet: CardSet = {
     runedShiv,
     gazeIntoTomorrow,
     fearlessLeader,
-    chronoAffinity,
     revisedStrategy,
     masquerade,
     spiritualist,
     tomeOfKnowledge,
     orbOfTheTides,
     cabalInitiate,
+    theHangedMan,
 
     // Fire
     fireBolt,
@@ -173,6 +179,10 @@ export const coreSet: CardSet = {
     nagaSkirmisher,
     shoalOfEels,
     shiftingCurrents,
-    poseidonEmperorOfTheSea
+    poseidonEmperorOfTheSea,
+    calmWaters,
+
+    // Blood
+    crimsonSuppressor
   ]
 };

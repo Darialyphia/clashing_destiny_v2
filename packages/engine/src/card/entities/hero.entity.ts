@@ -58,6 +58,8 @@ export type HeroCardInterceptors = CardInterceptors & {
   abilities: Interceptable<Ability<HeroCard, PreResponseTarget>[], HeroCard>;
 };
 
+export type HeroCardInterceptorName = keyof HeroCardInterceptors;
+
 export const HERO_EVENTS = {
   HERO_BEFORE_TAKE_DAMAGE: 'hero.before-take-damage',
   HERO_AFTER_TAKE_DAMAGE: 'hero.after-take-damage',
@@ -199,6 +201,24 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       },
       options
     );
+  }
+
+  protected async onInterceptorAdded(key: HeroCardInterceptorName) {
+    if (key === 'maxHp') {
+      await this.checkHp();
+    }
+  }
+
+  protected async onInterceptorRemoved(key: HeroCardInterceptorName) {
+    if (key === 'maxHp') {
+      await this.checkHp();
+    }
+  }
+
+  private async checkHp() {
+    if (this.remainingHp <= 0) {
+      await this.destroy();
+    }
   }
 
   get level() {

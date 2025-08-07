@@ -1684,6 +1684,32 @@
         },
         {
           "alias": [
+            "icon-talent-blood-affinity"
+          ],
+          "src": [
+            "/assets/icons/talent-blood-affinity.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-talent-cabal-initiate"
+          ],
+          "src": [
+            "/assets/icons/talent-cabal-initiate.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-chrono-affinity"
           ],
           "src": [

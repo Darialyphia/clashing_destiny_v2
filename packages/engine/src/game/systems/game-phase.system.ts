@@ -87,7 +87,7 @@ export type SerializedGamePhaseContext =
     };
 
 export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition> {
-  private _winner: Player | null = null;
+  private _winners: Player[] = [];
 
   private _elapsedTurns = 0;
 
@@ -173,6 +173,19 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._currentPlayer = this.game.playerSystem.player1;
     this.firstPlayer = this._currentPlayer;
+
+    const stop = this.game.on('*', async () => {
+      const winners: Player[] = [];
+      for (const player of this.game.playerSystem.players) {
+        if (this.game.winCondition(this.game, player)) {
+          winners.push(player);
+        }
+      }
+
+      if (!winners.length) return;
+      stop();
+      await this.declareWinner(winners);
+    });
   }
 
   async startGame() {
@@ -192,8 +205,8 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     } as GamePhaseContext & { state: T };
   }
 
-  get winner() {
-    return this._winner;
+  get winners() {
+    return this._winners;
   }
 
   get elapsedTurns() {
@@ -270,10 +283,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK);
   }
 
-  async declareWinner(player: Player) {
+  async declareWinner(players: Player[]) {
     assert(this.can(GAME_PHASE_TRANSITIONS.PLAYER_WON), new WrongGamePhaseError());
-    this._winner = player;
+    this._winners = players;
     await this.sendTransition(GAME_PHASE_TRANSITIONS.PLAYER_WON);
+    await this.game.inputSystem.askForPlayerInput();
   }
 
   serialize() {

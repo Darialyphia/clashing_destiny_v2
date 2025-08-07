@@ -16,7 +16,7 @@ export const shiftingCurrents: SpellBlueprint = {
   id: 'shifting-currents',
   name: 'Shifting Currents',
   cardIconId: 'spell-shifting-current',
-  description: `Deal 1 damage to an enemy minion. Increase your @Tide@ by 1.`,
+  description: `Deal 1 damage to an enemy minion. Raise your @Tide@ level.`,
   collectable: true,
   unique: false,
   manaCost: 1,

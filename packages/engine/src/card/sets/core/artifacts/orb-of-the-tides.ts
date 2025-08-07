@@ -2,7 +2,9 @@ import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interc
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
+import { AbilityDamage } from '../../../../utils/damage';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
+import { isHero } from '../../../card-utils';
 import {
   AFFINITIES,
   ARTIFACT_KINDS,
@@ -11,6 +13,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import type { HeroCard } from '../../../entities/hero.entity';
 
 export const orbOfTheTides: ArtifactBlueprint = {
   id: 'orb-of-the-tides',
@@ -24,14 +27,14 @@ export const orbOfTheTides: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
-  affinity: AFFINITIES.NORMAL,
+  affinity: AFFINITIES.WATER,
   durability: 1,
   subKind: ARTIFACT_KINDS.RELIC,
   abilities: [
     {
       id: 'orb-of-the-tides-ability',
       label: '@[exhaust]@ : Increase Tide',
-      description: `@[exhaust]@ -1@[durability]@ : Increase your @Tide@ by 1.`,
+      description: `@[exhaust]@ -1@[durability]@ : Raise your @Tide@ level.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
@@ -43,6 +46,41 @@ export const orbOfTheTides: ArtifactBlueprint = {
       async onResolve(game, card) {
         await card.player.hero.modifiers.get(TidesFavoredModifier)?.raiseTides();
         await card.loseDurability(1);
+      }
+    },
+    {
+      id: 'orb-of-the-tides-ability-2',
+      label: '@[exhaust]@ : Deal 2 damage',
+      description: `@[exhaust]@ -1@[durability]@ : Deal 2 damage to target Hero. @Tide (3)@: This doesn't lose durability.`,
+      manaCost: 0,
+      shouldExhaust: true,
+      canUse(game, card) {
+        return (
+          card.location === 'board' &&
+          (card.player.hero.canBeTargeted(card) ||
+            card.player.opponent.hero.canBeTargeted(card))
+        );
+      },
+      async getPreResponseTargets(game, card) {
+        return await game.interaction.selectCardsOnBoard({
+          player: card.player,
+          origin: { type: 'ability', card, abilityId: 'orb-of-the-tides-ability-2' },
+          isElligible: card => isHero(card) && card.location === 'board',
+          canCommit(selectedCards) {
+            return selectedCards.length === 1;
+          },
+          isDone(selectedCards) {
+            return selectedCards.length === 1;
+          }
+        });
+      },
+      async onResolve(game, card, targets) {
+        const target = targets[0] as HeroCard;
+        await target.takeDamage(card, new AbilityDamage(2));
+        const stacks = card.player.hero.modifiers.get(TidesFavoredModifier)?.stacks ?? 0;
+        if (stacks < 3) {
+          await card.loseDurability(1);
+        }
       }
     }
   ],

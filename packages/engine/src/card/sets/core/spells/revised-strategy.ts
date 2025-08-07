@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { type MainDeckCard } from '../../../../board/board.system';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
@@ -8,15 +9,15 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
-import type { MinionCard } from '../../../entities/minion.entity';
+import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 
 export const revisedStrategy: SpellBlueprint = {
   id: 'revised-strategy',
   name: 'Revised Strategy',
   cardIconId: 'spell-revise-strategy',
-  description:
-    'Look at your deck and banish 3 cards from it. Shuffle your deck and Draw a card.',
+  description: dedent`
+  Look at your deck and banish 3 cards from it. Shuffle your deck and Draw a card.
+  @Echoed Destiny@.`,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -25,11 +26,13 @@ export const revisedStrategy: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  subKind: SPELL_KINDS.BURST,
+  subKind: SPELL_KINDS.CAST,
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new EchoedDestinyModifier(game, card));
+  },
   async onPlay(game, card) {
     const cards = await game.interaction.chooseCards<MainDeckCard>({
       player: card.player,

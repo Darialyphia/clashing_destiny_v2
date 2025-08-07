@@ -281,6 +281,12 @@ export class MinionCard extends Card<
     }
   }
 
+  protected async onInterceptorRemoved(key: MinionCardInterceptorName) {
+    if (key === 'maxHp') {
+      await this.checkHp();
+    }
+  }
+
   canBeTargeted(source: AnyCard) {
     return this.interceptors.canBeTargeted.getValue(true, {
       source

@@ -23,7 +23,8 @@ export abstract class Entity<TI extends Record<string, Interceptable<any, any>>>
   protected async onInterceptorAdded(key: string) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected async onInterceptorRemovedd(key: string) {}
+  protected async onInterceptorRemoved(key: string) {}
+
   async addInterceptor<T extends keyof TI & string>(
     key: T,
     interceptor: inferInterceptor<TI[T]>,
@@ -39,7 +40,7 @@ export abstract class Entity<TI extends Record<string, Interceptable<any, any>>>
     interceptor: inferInterceptor<TI[T]>
   ) {
     this.interceptors[key].remove(interceptor);
-    await this.onInterceptorRemovedd(key);
+    await this.onInterceptorRemoved(key);
   }
 }
 

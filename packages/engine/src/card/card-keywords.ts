@@ -258,7 +258,7 @@ export const KEYWORDS = {
     id: 'tide',
     name: 'Tide',
     description:
-      'Your tide level increases by 1 up to 3 at the start of your turn, then resets to 1.',
+      'Your Tide level increases by 1 up to 3 at the start of your turn. If you have a Tide level of 3, it resets to 1 instead.',
     aliases: [/tide \([0-9a-z\s+-]+\)/]
   },
   INTIMIDATE: {

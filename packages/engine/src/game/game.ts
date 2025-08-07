@@ -19,6 +19,7 @@ import type { CardBlueprint } from '../card/card-blueprint';
 import { GameInteractionSystem } from './systems/game-interaction.system';
 import { BoardSystem } from '../board/board.system';
 import { EffectChainSystem } from './systems/effect-chain.system';
+import { GAME_PHASES } from './game.enums';
 
 export type GameOptions = {
   id: string;
@@ -79,6 +80,13 @@ export class Game implements Serializable<SerializedGame> {
     this.config = Object.assign({}, defaultConfig, options.overrides.config);
     this.isSimulation = options.isSimulation ?? false;
     this.cardPool = options.overrides.cardPool ?? {};
+  }
+
+  get winCondition() {
+    return (
+      this.options.overrides.winCondition ??
+      ((game, player) => !player.opponent.hero.isAlive)
+    );
   }
 
   async initialize() {
@@ -186,6 +194,7 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   dispatch(input: SerializedInput) {
+    if (this.gamePhaseSystem.getState() === GAME_PHASES.GAME_END) return;
     return this.inputSystem.dispatch(input);
   }
 
