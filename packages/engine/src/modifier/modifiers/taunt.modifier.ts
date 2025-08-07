@@ -30,8 +30,6 @@ export class TauntModifier<T extends AnyCard> extends Modifier<T> {
             );
           },
           onGainAura: async candidate => {
-            console.log(`TauntModifier: applying aura to ${candidate.id}`);
-            // Apply interceptor to the candidate to
             await (candidate as MinionCard).addInterceptor('canAttack', this.interceptor);
           },
           onLoseAura: async candidate => {

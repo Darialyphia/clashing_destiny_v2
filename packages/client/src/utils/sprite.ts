@@ -1,4 +1,3 @@
-import { deg2Rad } from '@game/shared';
 import { type FrameObject, type Spritesheet, Texture } from 'pixi.js';
 
 export const hasAnimation = (spritesheet: Spritesheet, name: string) => {
@@ -88,6 +87,5 @@ export function rectangleWithHoles({
     ctx.closePath();
     ctx.fill();
   });
-  console.log(c.toDataURL());
   return Texture.from(c);
 }

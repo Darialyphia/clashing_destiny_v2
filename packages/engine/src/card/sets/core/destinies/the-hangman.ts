@@ -13,7 +13,7 @@ export const theHangedMan: DestinyBlueprint = {
   id: 'the-hanged-man',
   name: 'The Hanged Man',
   cardIconId: 'talent-the-hangman',
-  description: '.',
+  description: '',
   collectable: true,
   unique: false,
   destinyCost: 1,
@@ -52,6 +52,8 @@ export const theHangedMan: DestinyBlueprint = {
 
           await minion.moveTo(targetPosition, true);
         }
+
+        sealAbility(card, 'the-hanged-man-ability');
       }
     }
   ],

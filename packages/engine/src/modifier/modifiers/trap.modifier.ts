@@ -30,7 +30,6 @@ export class TrapModifier<
         new GameEventModifierMixin(game, {
           eventName: options.eventName,
           handler: async (event, modifier) => {
-            console.log('trap event triggered', options.predicate(event));
             if (!options.predicate(event)) return;
             await options.handler(event, modifier);
           }

@@ -1164,6 +1164,19 @@
         },
         {
           "alias": [
+            "icon-spell-calm-waters"
+          ],
+          "src": [
+            "/assets/icons/spell-calm-waters.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-ceasefire"
           ],
           "src": [
@@ -2035,6 +2048,19 @@
         },
         {
           "alias": [
+            "icon-unit-crimson-suppressor"
+          ],
+          "src": [
+            "/assets/icons/unit-crimson-suppressor.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-crusader-of-creation"
           ],
           "src": [
@@ -2611,6 +2637,19 @@
           ],
           "src": [
             "/assets/icons/unit-test-minion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-violet-stalker"
+          ],
+          "src": [
+            "/assets/icons/unit-violet-stalker.png"
           ],
           "data": {
             "tags": {

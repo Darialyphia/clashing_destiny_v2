@@ -119,7 +119,7 @@ const isActionsPopoverOpened = computed({
           </PopoverPortal>
         </PopoverRoot>
       </InspectableCard>
-      <CardStats :card-id="hero.id" class="stats" />
+      <CardStats :card-id="hero.id" />
     </div>
   </div>
 </template>

@@ -44,8 +44,9 @@ export const calmWaters: SpellBlueprint = {
     const levelMod = (await card.modifiers.add(
       new LevelBonusModifier(game, card, 4)
     )) as LevelBonusModifier<SpellCard>;
+
     await card.modifiers.add(
-      new Modifier('nova-blast-discount', game, card, {
+      new Modifier('calm-waters-discount', game, card, {
         mixins: [
           new SpellInterceptorModifierMixin(game, {
             key: 'manaCost',

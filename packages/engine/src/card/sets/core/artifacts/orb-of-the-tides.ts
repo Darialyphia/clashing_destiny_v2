@@ -1,6 +1,3 @@
-import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
@@ -23,7 +20,7 @@ export const orbOfTheTides: ArtifactBlueprint = {
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
@@ -51,7 +48,7 @@ export const orbOfTheTides: ArtifactBlueprint = {
     {
       id: 'orb-of-the-tides-ability-2',
       label: '@[exhaust]@ : Deal 2 damage',
-      description: `@[exhaust]@ -1@[durability]@ : Deal 2 damage to target Hero. @Tide (3)@: This doesn't lose durability.`,
+      description: `@[exhaust]@ -1@[durability]@ : Deal 1 damage to target Hero. @Tide (3)@: This doesn't lose durability.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
@@ -76,7 +73,7 @@ export const orbOfTheTides: ArtifactBlueprint = {
       },
       async onResolve(game, card, targets) {
         const target = targets[0] as HeroCard;
-        await target.takeDamage(card, new AbilityDamage(2));
+        await target.takeDamage(card, new AbilityDamage(1));
         const stacks = card.player.hero.modifiers.get(TidesFavoredModifier)?.stacks ?? 0;
         if (stacks < 3) {
           await card.loseDurability(1);

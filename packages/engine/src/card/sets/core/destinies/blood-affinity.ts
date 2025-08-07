@@ -22,7 +22,7 @@ export const bloodAffinity: DestinyBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  minLevel: 3,
+  minLevel: 2,
   countsAsLevel: true,
   abilities: [],
   async onInit(game, card) {

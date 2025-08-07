@@ -11,7 +11,6 @@ import GameCard from './GameCard.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import InspectableCard from '@/card/components/InspectableCard.vue';
 import CardResizer from './CardResizer.vue';
 
 const board = useMyBoard();
@@ -73,31 +72,23 @@ const destinyCards = computed<CardViewModel[]>(() => {
       <p class="text-5 mb-4">Play up to one Destiny Card.</p>
 
       <div class="card-list">
-        <InspectableCard
+        <button
           v-for="card in destinyCards"
           :key="card.id"
-          :card-id="card.id"
-          side="left"
-          :side-offset="0"
-          :open-delay="200"
-          :close-delay="0"
+          class="toggle"
+          :class="{ selected: selected === card.id }"
+          :disabled="!card.canPlay"
+          @click="selected = card.id"
         >
-          <button
-            class="toggle"
-            :class="{ selected: selected === card.id }"
-            :disabled="!card.canPlay"
-            @click="selected = card.id"
-          >
-            <CardResizer :forced-scale="0.5">
-              <GameCard
-                :key="card.id"
-                :card-id="card.id"
-                :interactive="false"
-                :auto-scale="false"
-              />
-            </CardResizer>
-          </button>
-        </InspectableCard>
+          <CardResizer :forced-scale="0.5">
+            <GameCard
+              :key="card.id"
+              :card-id="card.id"
+              :interactive="false"
+              :auto-scale="false"
+            />
+          </CardResizer>
+        </button>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton

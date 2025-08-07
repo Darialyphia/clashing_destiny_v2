@@ -27,7 +27,6 @@ const sheets = computed(() => {
 
   objectEntries(parts).forEach(([part, group]) => {
     if (!group) return;
-    console.log(part, group);
     result.push({
       //@ts-expect-error sorry I'm not Matt Pocock
       sheet: sheet.sheets[group][part]
@@ -64,10 +63,6 @@ watchEffect(() => {
   graphics.forEach(g => {
     textures.value.push(app.value.renderer.generateTexture(g));
   });
-});
-
-watchEffect(() => {
-  console.log('textures', textures.value);
 });
 </script>
 

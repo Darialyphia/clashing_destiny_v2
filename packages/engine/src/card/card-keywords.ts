@@ -267,6 +267,13 @@ export const KEYWORDS = {
     description:
       "Minions of that cost X or less attacked by this minion don't counterattack.",
     aliases: [/intimidate \([0-9]+\)/]
+  },
+  BLOOD_OFFERING: {
+    id: 'blood-offering',
+    name: 'Blood Offering',
+    description:
+      'You gain stacks of Blood Offering when your Hero takes damage. Consumed by other cards to gain additional effects.',
+    aliases: []
   }
 };
 

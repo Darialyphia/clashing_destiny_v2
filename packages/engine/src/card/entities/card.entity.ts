@@ -397,6 +397,7 @@ export abstract class Card<
       CARD_EVENTS.CARD_BEFORE_DESTROY,
       new CardBeforeDestroyEvent({ card: this })
     );
+
     await match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.sendToDiscardPile())
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.sendToBanishPile())

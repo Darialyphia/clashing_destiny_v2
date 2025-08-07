@@ -303,7 +303,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
       new HeroBeforeDealCombatDamageEvent({ card: this, target, damage })
     );
-
     await target.takeDamage(this, damage);
 
     await this.game.emit(

@@ -5,7 +5,6 @@ import { useResizeObserver } from '@vueuse/core';
 const {
   enabled = true,
   forcedScale,
-  debug,
   defer = false
 } = defineProps<{
   enabled?: boolean;
@@ -34,14 +33,7 @@ const calculateScale = async () => {
   const availableHeight = root.value.parentElement?.offsetHeight || 0;
   const width = root.value.offsetWidth;
   const height = root.value.offsetHeight;
-  if (debug) {
-    console.log(root.value.parentElement, {
-      availableWidth,
-      availableHeight,
-      width,
-      height
-    });
-  }
+
   const scaleX = availableWidth / width;
   const scaleY = availableHeight / height;
   scale.value = Math.min(scaleX, scaleY);

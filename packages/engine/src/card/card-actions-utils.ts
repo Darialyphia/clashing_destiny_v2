@@ -13,7 +13,6 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
   });
 
   for (const card of cardsToPutAtBottom) {
-    console.log(card);
     card.player.cardManager.mainDeck.pluck(card);
     card.player.cardManager.mainDeck.addToBottom(card);
   }

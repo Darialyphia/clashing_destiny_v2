@@ -426,9 +426,15 @@ export class MinionCard extends Card<
     });
   }
 
-  private async checkHp() {
+  private async checkHp(shouldDelay = false) {
     if (this.remainingHp <= 0) {
-      await this.destroy();
+      if (shouldDelay) {
+        await this.game.inputSystem.schedule(async () => {
+          await this.destroy();
+        });
+      } else {
+        await this.destroy();
+      }
     }
   }
 
@@ -465,7 +471,7 @@ export class MinionCard extends Card<
         isFatal: this.remainingHp <= 0
       })
     );
-    await this.checkHp();
+    await this.checkHp(damage instanceof CombatDamage);
   }
 
   async heal(heal: number) {

@@ -1,6 +1,5 @@
 const setRandomSeed = () => {
   const turbulence = document.getElementById('dissolve-filter-turbulence')!;
-  console.log('turbulence', turbulence);
   turbulence.setAttribute('seed', `${Math.random() * 1000}`);
 };
 

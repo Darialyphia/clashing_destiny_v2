@@ -1,6 +1,5 @@
 import {
   assert,
-  isDefined,
   StateMachine,
   stateTransition,
   type Serializable,
@@ -17,6 +16,7 @@ import {
 } from '../systems/game-phase.system';
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import { GAME_PHASES } from '../game.enums';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -337,7 +337,12 @@ export class CombatPhase
 
   private async end() {
     this.game.interaction.onInteractionEnd();
-    await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.FINISH_ATTACK);
+    // phase can be different if combat was aborted early, eg. Elusive
+    if (this.game.gamePhaseSystem.getState() === GAME_PHASES.ATTACK) {
+      await this.game.gamePhaseSystem.sendTransition(
+        GAME_PHASE_TRANSITIONS.FINISH_ATTACK
+      );
+    }
     await this.game.inputSystem.askForPlayerInput();
   }
 

@@ -9,6 +9,7 @@ import { tomeOfKnowledge } from './core/artifacts/tome-of-knowledge';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { arcaneMastery } from './core/destinies/arcane-mastery';
 import { bloodAffinity } from './core/destinies/blood-affinity';
+import { bloodCovenant } from './core/destinies/blood-covenant';
 import { cabalInitiate } from './core/destinies/cabal-initiate';
 import { chronoAffinity } from './core/destinies/chrono-affinity';
 import { fearlessLeader } from './core/destinies/fearless-leader';
@@ -121,6 +122,7 @@ export const coreSet: CardSet = {
     orbOfTheTides,
     cabalInitiate,
     theHangedMan,
+    bloodCovenant,
 
     // Fire
     fireBolt,

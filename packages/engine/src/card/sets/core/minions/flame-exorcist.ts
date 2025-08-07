@@ -1,10 +1,8 @@
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { singleEnemyTargetRules, singleMinionTargetRules } from '../../../card-utils';
+import { singleEnemyTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -23,8 +21,8 @@ export const flameExorcist: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 2,
-  atk: 1,
-  maxHp: 2,
+  atk: 2,
+  maxHp: 1,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
