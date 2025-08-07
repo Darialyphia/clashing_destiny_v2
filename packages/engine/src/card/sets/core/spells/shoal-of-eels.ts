@@ -51,10 +51,10 @@ export const shoalOfEels: SpellBlueprint = {
 
     for (const target of targets as MinionPosition[]) {
       const eel = await card.player.generateCard<MinionCard>(playfulEels.id);
-      await eel.playAt(target);
       if (tideStacks === 3) {
         await eel.modifiers.add(new RushModifier(game, card));
       }
+      await eel.playAt(target);
     }
   }
 };

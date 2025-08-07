@@ -118,7 +118,7 @@ export const KEYWORDS = {
     id: 'elusive',
     name: 'Elusive',
     description:
-      'When this minion is attacked  for the first time in a turn, it moves to a adjacent position if possible (prioritizing the left). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
+      'The first time this minion is attacked, it moves to a adjacent position if possible (prioritizing the left). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
     aliases: []
   },
   RUSH: {

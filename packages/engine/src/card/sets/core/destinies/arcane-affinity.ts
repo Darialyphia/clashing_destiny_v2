@@ -15,7 +15,7 @@ export const arcaneAffinity: DestinyBlueprint = {
     'Allows you to play Arcane cards. Costs @[mana] 1@ more for each affinity you have unlocked.',
   collectable: true,
   unique: false,
-  destinyCost: 1,
+  destinyCost: 0,
   affinity: AFFINITIES.NORMAL,
   kind: CARD_KINDS.DESTINY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,

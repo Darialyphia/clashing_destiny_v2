@@ -88,7 +88,7 @@ const finishStartAnimation = () => {
         <UnlockedDestinies :player="myPlayer" />
       </article>
 
-      <DestinyZone :player-id="myPlayer.id" />
+      <DestinyZone :player-id="myPlayer.id" class="mt-auto" />
       <!-- <TalentTree :player="myPlayer" class="talent-tree" /> -->
     </section>
 
@@ -124,7 +124,7 @@ const finishStartAnimation = () => {
         <UnlockedDestinies :player="opponentPlayer" class="justify-end" />
       </article>
 
-      <DestinyZone :player-id="opponentPlayer.id" />
+      <DestinyZone :player-id="opponentPlayer.id" class="mt-auto" />
       <!-- <TalentTree :player="opponentPlayer" class="talent-tree" /> -->
     </section>
 
@@ -183,7 +183,7 @@ const finishStartAnimation = () => {
   gap: var(--size-4);
   grid-row: 1;
   /* pointer-events: none; */
-  align-self: start;
+  padding-bottom: var(--size-10);
 }
 
 .middle-zone {

@@ -36,7 +36,7 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   affinity: AFFINITIES.NORMAL,
-  durability: 3,
+  durability: 4,
   subKind: ARTIFACT_KINDS.RELIC,
   abilities: [],
   tags: [],

@@ -1502,6 +1502,19 @@
         },
         {
           "alias": [
+            "icon-spell-shifting-current"
+          ],
+          "src": [
+            "/assets/icons/spell-shifting-current.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-shoal-of-eels"
           ],
           "src": [
@@ -2351,6 +2364,19 @@
           ],
           "src": [
             "/assets/icons/unit-playful-eels.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-poseidon-emperor-of-the-sea"
+          ],
+          "src": [
+            "/assets/icons/unit-poseidon-emperor-of-the-sea.png"
           ],
           "data": {
             "tags": {

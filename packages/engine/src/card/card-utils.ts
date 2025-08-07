@@ -2,6 +2,7 @@ import type { Game } from '../game/game';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
+import type { DestinyCard } from './entities/destiny.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
@@ -318,7 +319,7 @@ export const multipleEnemyTargetRules = {
 };
 
 export const sealAbility = (
-  card: HeroCard | ArtifactCard | MinionCard,
+  card: HeroCard | ArtifactCard | MinionCard | DestinyCard,
   abilityId: string
 ) => {
   const ability = card.blueprint.abilities.find(ability => ability.id === abilityId);

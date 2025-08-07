@@ -8,6 +8,7 @@ import { rustyBlade } from './core/artifacts/rusty-blade';
 import { tomeOfKnowledge } from './core/artifacts/tome-of-knowledge';
 import { arcaneAffinity } from './core/destinies/arcane-affinity';
 import { arcaneMastery } from './core/destinies/arcane-mastery';
+import { cabalInitiate } from './core/destinies/cabal-initiate';
 import { chronoAffinity } from './core/destinies/chrono-affinity';
 import { fearlessLeader } from './core/destinies/fearless-leader';
 import { fireAffinity } from './core/destinies/fire-affinity';
@@ -113,6 +114,7 @@ export const coreSet: CardSet = {
     spiritualist,
     tomeOfKnowledge,
     orbOfTheTides,
+    cabalInitiate,
 
     // Fire
     fireBolt,

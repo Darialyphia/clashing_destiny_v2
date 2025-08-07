@@ -6,7 +6,7 @@ const { player } = defineProps<{ player: PlayerViewModel }>();
 </script>
 
 <template>
-  <div class="flex gap-3">
+  <div class="grid grid-cols-4 gap-3">
     <UnlockedDestiny
       v-for="destiny in player.getUnlockedDestinies()"
       :key="destiny.id"

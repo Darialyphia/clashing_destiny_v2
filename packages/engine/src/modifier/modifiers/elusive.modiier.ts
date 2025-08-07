@@ -8,7 +8,7 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { Modifier } from '../modifier.entity';
 
 export class ElusiveModifier<T extends MinionCard> extends Modifier<T> {
-  private timesAttackedThisTurn = 0;
+  private hasBeenAttacked = 0;
 
   constructor(game: Game, source: AnyCard) {
     super(KEYWORDS.ELUSIVE.id, game, source, {
@@ -19,18 +19,11 @@ export class ElusiveModifier<T extends MinionCard> extends Modifier<T> {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.RUSH),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.PLAYER_START_TURN,
-          handler: () => {
-            this.timesAttackedThisTurn = 0;
-          }
-        }),
-        new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.BEFORE_RESOLVE_COMBAT,
           handler: async ({ data }) => {
-            const defender = data.blocker ?? data.target;
-            if (!defender.equals(this.target)) return;
-            if (this.timesAttackedThisTurn > 0) return;
-            this.timesAttackedThisTurn++;
+            if (!data.target.equals(this.target)) return;
+            if (this.hasBeenAttacked > 0) return;
+            this.hasBeenAttacked++;
 
             const phaseCtx = this.game.gamePhaseSystem.getContext<'attack_phase'>();
             const left = this.target.slot!.left;
