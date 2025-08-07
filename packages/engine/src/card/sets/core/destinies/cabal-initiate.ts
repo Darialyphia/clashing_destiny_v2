@@ -19,7 +19,7 @@ export const cabalInitiate: DestinyBlueprint = {
   description: '.',
   collectable: true,
   unique: false,
-  destinyCost: 0,
+  destinyCost: 1,
   affinity: AFFINITIES.NORMAL,
   kind: CARD_KINDS.DESTINY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
