@@ -87,7 +87,7 @@ export type InputDispatcher = (input: SerializedInput) => void;
 
 export type InputSystemOptions = { game: Game };
 
-export class InputSystem extends System<SerializedInput[]> {
+export class InputSystem extends System<never> {
   private history: Input<any>[] = [];
 
   private isRunning = false;
@@ -106,7 +106,9 @@ export class InputSystem extends System<SerializedInput[]> {
     return isDefined(this.onUnpause);
   }
 
-  async initialize(rawHistory: SerializedInput[]) {
+  initialize() {}
+
+  async applyHistory(rawHistory: SerializedInput[]) {
     for (const input of rawHistory) {
       await this.schedule(() => this.handleInput(input));
     }

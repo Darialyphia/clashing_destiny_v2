@@ -18,7 +18,11 @@ const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();
 
-const isOpened = ref(client.value.playerId === state.value.currentPlayer);
+const isOpened = ref(
+  client.value.playerId === state.value.currentPlayer &&
+    state.value.phase.state === GAME_PHASES.DESTINY
+);
+
 useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   if (
     client.value.playerId === state.value.currentPlayer &&

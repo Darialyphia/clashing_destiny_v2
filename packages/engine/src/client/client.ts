@@ -125,6 +125,10 @@ export class GameClient {
     this.commitPlayCard = this.commitPlayCard.bind(this);
   }
 
+  get nextSnapshotId() {
+    return this.lastSnapshotId + 1;
+  }
+
   get isPlayingFx() {
     return this._isPlayingFx;
   }
@@ -134,6 +138,10 @@ export class GameClient {
   }
 
   private async processQueue() {
+    if (!this.isReady) {
+      console.warn('Waiting for game client to be ready to process queue...');
+      return;
+    }
     if (this._processingUpdate || this.queue.length === 0) {
       console.warn('Already processing updates or queue is empty, skipping processing.');
       return;
@@ -196,18 +204,30 @@ export class GameClient {
     }
 
     this.isReady = true;
+    if (this.queue.length > 0) {
+      void this.processQueue();
+    }
   }
 
+  async onInvalidSnapshot() {
+    this.queue = [];
+    await this.sync();
+  }
   async update(
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
   ) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
-        `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}`
+        `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
       );
-      this.queue = [];
-      await this.sync();
       return;
+    }
+
+    if (snapshot.id > this.nextSnapshotId) {
+      console.warn(
+        `Missing snapshots, latest is ${this.lastSnapshotId}, received is ${snapshot.id}`
+      );
+      return await this.onInvalidSnapshot();
     }
 
     this.lastSnapshotId = snapshot.id;

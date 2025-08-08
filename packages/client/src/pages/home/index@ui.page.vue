@@ -7,9 +7,8 @@ definePage({
 </script>
 
 <template>
-  <h1>Home Page</h1>
-  <nav class="pointer-events-auto">
-    <ul class="flex gap-4">
+  <nav class="grid h-screen place-content-center">
+    <ul class="flex gap-4 surface">
       <li>
         <!-- <RouterLink :to="{ name: 'Settings' }">Settings</RouterLink> -->
       </li>
@@ -20,7 +19,7 @@ definePage({
         <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
       </li>
       <li>
-        <!-- <RouterLink :to="{ name: 'Tutorial1' }">Tutorial</RouterLink> -->
+        <RouterLink :to="{ name: 'TutorialList' }">Tutorial</RouterLink>
       </li>
       <li>
         <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>

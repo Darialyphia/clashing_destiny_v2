@@ -9,7 +9,7 @@ import { Modifier } from '../modifier.entity';
 
 export class SummoningSicknessModifier extends Modifier<MinionCard> {
   constructor(game: Game, source: AnyCard) {
-    super(KEYWORDS.RUSH.id, game, source, {
+    super(KEYWORDS.SUMMONING_SICKNESS.id, game, source, {
       isUnique: true,
       name: KEYWORDS.SUMMONING_SICKNESS.name,
       description: KEYWORDS.SUMMONING_SICKNESS.description,

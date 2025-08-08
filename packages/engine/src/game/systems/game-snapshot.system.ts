@@ -1,4 +1,3 @@
-import type { EmptyObject } from '@game/shared';
 import { System } from '../../system';
 import type { Config } from '../../config';
 import {

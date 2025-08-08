@@ -9,6 +9,7 @@ import BattleLog from './BattleLog.vue';
 import Minionzone from './Minionzone.vue';
 import GamePhaseTracker from './GamePhaseTracker.vue';
 import {
+  useGameClient,
   useGameState,
   useMyBoard,
   useMyPlayer,
@@ -31,9 +32,9 @@ import UnlockedDestinies from './UnlockedDestinies.vue';
 import PlayedCard from './PlayedCard.vue';
 
 const state = useGameState();
+const client = useGameClient();
 const myBoard = useMyBoard();
 const opponentBoard = useOpponentBoard();
-
 const myPlayer = useMyPlayer();
 const opponentPlayer = useOpponentPlayer();
 
@@ -94,7 +95,11 @@ const finishStartAnimation = () => {
 
     <section class="middle-zone" @animationend="finishStartAnimation">
       <Deck :player="myPlayer" class="p2-deck" />
-      <Minionzone :player-id="opponentBoard.playerId" class="p2-minions" />
+      <Minionzone
+        :player-id="opponentBoard.playerId"
+        class="p2-minions"
+        :id="client.ui.DOMSelectors.p2Minionzone.id"
+      />
       <div class="p2-hero">
         <HeroSlot :player="opponentPlayer" class="p2-hero" />
         <EquipedArtifacts :player="opponentPlayer" class="artifacts" />
@@ -107,7 +112,11 @@ const finishStartAnimation = () => {
         <EquipedArtifacts :player="myPlayer" />
         <HeroSlot :player="myPlayer" />
       </div>
-      <Minionzone :player-id="myBoard.playerId" class="p1-minions" />
+      <Minionzone
+        :player-id="myBoard.playerId"
+        class="p1-minions"
+        :id="client.ui.DOMSelectors.p1Minionzone.id"
+      />
       <Deck :player="myPlayer" class="p1-deck" />
     </section>
 

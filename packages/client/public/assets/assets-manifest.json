@@ -1710,6 +1710,19 @@
         },
         {
           "alias": [
+            "icon-talent-blood-covenant"
+          ],
+          "src": [
+            "/assets/icons/talent-blood-covenant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-cabal-initiate"
           ],
           "src": [
@@ -2013,6 +2026,19 @@
           ],
           "src": [
             "/assets/icons/unit-battleflame-invoker.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-bonebloodmancer"
+          ],
+          "src": [
+            "/assets/icons/unit-bonebloodmancer.png"
           ],
           "data": {
             "tags": {

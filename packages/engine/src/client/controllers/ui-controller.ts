@@ -10,7 +10,6 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
-import type { SerializedBoardMinionSlot } from '../../board/board-minion-slot.entity';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { EndTurnGlobalAction } from '../actions/end-turn';
@@ -43,6 +42,19 @@ export type GlobalActionRule = {
 export type UiOptimisticState = {
   playedCardId: string | null;
 };
+
+export class DOMSelector {
+  constructor(readonly id: string) {}
+
+  get selector() {
+    return `#${this.id}`;
+  }
+
+  get element() {
+    return document.getElementById(this.id);
+  }
+}
+
 export class UiController {
   private _hoveredCard: CardViewModel | null = null;
 
@@ -67,6 +79,24 @@ export class UiController {
   optimisticState: UiOptimisticState = {
     playedCardId: null
   };
+
+  DOMSelectors = {
+    p1Minionzone: new DOMSelector('p1-minion-zone'),
+    p2Minionzone: new DOMSelector('p2-minion-zone'),
+    minionSprite: (playerId: string, zone: 'attack' | 'defense', slot: number) =>
+      new DOMSelector(`${playerId}-${zone}-minion-sprite-${slot}`),
+    minionClickableArea: (playerId: string, zone: 'attack' | 'defense', slot: number) =>
+      new DOMSelector(`${playerId}-${zone}-minion-clickable-area-${slot}`),
+    heroSprite: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
+    cardAction: (cardId: string, actionId: string) =>
+      new DOMSelector(`${cardId}-action-${actionId}`)
+  };
+
+  displayedElements = {
+    hand: true
+  };
+
+  highlightedElement: HTMLElement | null = null;
 
   selectedManaCostIndices: number[] = [];
 
@@ -272,12 +302,6 @@ export class UiController {
 
   getCardDOMSelectorInDestinyZone(cardId: string, playerId: string) {
     return `${this.getDestinyZoneDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getMinionSlotDomSelector(
-    slot: Pick<SerializedBoardMinionSlot, 'playerId' | 'position' | 'zone'>
-  ) {
-    return `#minion-slot-${slot.playerId}-${slot.position}-${slot.zone}`;
   }
 
   get idleMessage() {

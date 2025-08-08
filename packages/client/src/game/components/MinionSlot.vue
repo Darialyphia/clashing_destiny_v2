@@ -114,12 +114,26 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
       <InspectableCard :card-id="minion.id" side="left" :side-offset="50">
         <div
           class="minion-clickable-area"
+          :id="
+            client.ui.DOMSelectors.minionClickableArea(
+              props.minionSlot.playerId,
+              props.minionSlot.zone,
+              props.minionSlot.position
+            ).id
+          "
           @click="client.ui.onCardClick(minion)"
         />
       </InspectableCard>
       <div
         class="minion-wrapper"
         :class="{ opponent: minion.getPlayer().id !== client.playerId }"
+        :id="
+          client.ui.DOMSelectors.minionSprite(
+            props.minionSlot.playerId,
+            props.minionSlot.zone,
+            props.minionSlot.position
+          ).id
+        "
       >
         <PopoverRoot v-model:open="isActionsPopoverOpened">
           <PopoverAnchor />
