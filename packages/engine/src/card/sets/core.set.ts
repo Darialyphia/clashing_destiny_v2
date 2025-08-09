@@ -21,6 +21,7 @@ import { manaVisions } from './core/destinies/mana-visions';
 import { theHangedMan } from './core/destinies/the-hangman';
 import { tidesFavored } from './core/destinies/tides-favored';
 import { waterAffinity } from './core/destinies/water-affinity';
+import { combatTutorialEnemyHero } from './core/heroes/combat-tutorial-enemy-hero';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
@@ -56,6 +57,8 @@ import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
 import { sunPalaceGuard } from './core/minions/sun-palace-guard';
 import { temporalShifter } from './core/minions/temporal-shifter';
+import { tutorialSlime1 } from './core/minions/tutorial-slime-1';
+import { tutorialSlime2 } from './core/minions/tutorial-slime-2';
 import { waterElemental } from './core/minions/water-elemental';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { calmWaters } from './core/spells/calm-waters';
@@ -88,10 +91,13 @@ export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
+    // Tutorial cards
+    tutorialSlime1,
+    tutorialSlime2,
+    combatTutorialEnemyHero,
+
     // Heroes
     sage,
-    // sorcerer,
-    // warlock,
     knight,
 
     // Normal

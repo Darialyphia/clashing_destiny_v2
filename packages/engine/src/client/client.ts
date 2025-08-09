@@ -9,7 +9,10 @@ import { ModifierViewModel } from './view-models/modifier.model';
 import { CardViewModel } from './view-models/card.model';
 import { PlayerViewModel } from './view-models/player.model';
 import { FxController } from './controllers/fx-controller';
-import { ClientStateController } from './controllers/state-controller';
+import {
+  ClientStateController,
+  type GameClientState
+} from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import { GAME_PHASES } from '../game/game.enums';
@@ -264,6 +267,7 @@ export class GameClient {
 
   onUpdate(cb: () => void) {
     this.emitter.on('update', cb);
+    return () => this.emitter.off('update', cb);
   }
 
   onUpdateCompleted(
@@ -272,6 +276,20 @@ export class GameClient {
     ) => void
   ) {
     this.emitter.on('updateCompleted', cb);
+    return () => this.emitter.off('updateCompleted', cb);
+  }
+
+  waitUntil(predicate: (state: GameClientState) => boolean) {
+    return new Promise<void>(resolve => {
+      const check = () => {
+        if (predicate(this.state)) {
+          resolve();
+          this.emitter.off('updateCompleted', check);
+        }
+      };
+      check();
+      this.emitter.on('updateCompleted', check);
+    });
   }
 
   private async sync() {

@@ -64,6 +64,7 @@ const destinyCards = computed<CardViewModel[]>(() => {
 
 <template>
   <UiModal
+    v-if="client.ui.displayedElements.destinyPhaseModal"
     v-model:is-opened="isOpened"
     title="Destiny Phase"
     description="You may choose to play one Destiny card"

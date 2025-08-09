@@ -82,11 +82,18 @@ const finishStartAnimation = () => {
           <div class="avatar" />
           <div>
             <div>{{ myPlayer.name }}</div>
-            <div>TODO player titles</div>
           </div>
         </div>
-        <PlayerStats :player="myPlayer" />
-        <UnlockedDestinies :player="myPlayer" />
+        <PlayerStats
+          :player="myPlayer"
+          :class="{ 'ui-hidden': !client.ui.displayedElements.playerInfos }"
+        />
+        <UnlockedDestinies
+          :player="myPlayer"
+          :class="{
+            'ui-hidden': !client.ui.displayedElements.unlockedDestinyCards
+          }"
+        />
       </article>
 
       <DestinyZone :player-id="myPlayer.id" class="mt-auto" />
@@ -126,11 +133,20 @@ const finishStartAnimation = () => {
           <div class="avatar" />
           <div class="text-right">
             <div>{{ opponentPlayer.name }}</div>
-            <div>TODO player titles</div>
           </div>
         </div>
-        <PlayerStats :player="opponentPlayer" class="justify-end" />
-        <UnlockedDestinies :player="opponentPlayer" class="justify-end" />
+        <PlayerStats
+          :player="opponentPlayer"
+          class="justify-end"
+          :class="{ 'ui-hidden': !client.ui.displayedElements.playerInfos }"
+        />
+        <UnlockedDestinies
+          :player="opponentPlayer"
+          class="justify-end"
+          :class="{
+            'ui-hidden': !client.ui.displayedElements.unlockedDestinyCards
+          }"
+        />
       </article>
 
       <DestinyZone :player-id="opponentPlayer.id" class="mt-auto" />
@@ -246,6 +262,7 @@ const finishStartAnimation = () => {
   border-radius: var(--radius-round);
   background-color: black;
   align-self: center;
+  border: solid 2px yellow;
 }
 
 #arrows {

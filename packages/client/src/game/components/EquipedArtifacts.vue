@@ -3,6 +3,7 @@ import type { PlayerViewModel } from '@game/engine/src/client/view-models/player
 import {
   useBoardSide,
   useEntities,
+  useGameClient,
   useGameState
 } from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
@@ -21,10 +22,14 @@ const state = useGameState();
 const emptySlots = computed(() => {
   return state.value.config.MAX_EQUIPPED_ARTIFACTS - artifacts.value.length;
 });
+const client = useGameClient();
 </script>
 
 <template>
-  <div class="equiped-artifacts">
+  <div
+    class="equiped-artifacts"
+    :class="{ 'ui-hidden': !client.ui.displayedElements.artifacts }"
+  >
     <EquipedArtifact
       v-for="artifact in artifacts"
       :key="artifact.id"

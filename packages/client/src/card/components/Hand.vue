@@ -93,6 +93,7 @@ const displayCards = computed(() => {
   <section
     :id="`hand-${myBoard.playerId}`"
     class="hand"
+    :class="{ 'ui-hidden': !client.ui.displayedElements.hand }"
     :style="{ '--hand-size': myBoard.hand.length, '--angle': angle }"
   >
     <div

@@ -13,6 +13,16 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
   <div class="minion-zone">
     <div
       class="minion-row"
+      :class="{
+        'ui-hidden': isFlipped
+          ? !client.ui.displayedElements.defenseZone
+          : !client.ui.displayedElements.attackZone
+      }"
+      :id="
+        isFlipped
+          ? client.ui.DOMSelectors.defenseZone(playerId).id
+          : client.ui.DOMSelectors.attackZone(playerId).id
+      "
       :style="{
         '--cols': isFlipped
           ? boardSide.defenseZone.slots.length
@@ -29,6 +39,16 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
     </div>
     <div
       class="minion-row"
+      :class="{
+        'ui-hidden': isFlipped
+          ? !client.ui.displayedElements.attackZone
+          : !client.ui.displayedElements.defenseZone
+      }"
+      :id="
+        isFlipped
+          ? client.ui.DOMSelectors.attackZone(playerId).id
+          : client.ui.DOMSelectors.defenseZone(playerId).id
+      "
       :style="{
         '--cols': isFlipped
           ? boardSide.attackZone.slots.length

@@ -35,7 +35,10 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
 </script>
 
 <template>
-  <div class="phase-tracker">
+  <div
+    class="phase-tracker"
+    :class="{ 'ui-hidden': !client.ui.displayedElements.phaseTracker }"
+  >
     <div class="phase" style="--col: 1">DRAW</div>
     <div class="phase" style="--col: 2">DESTINY</div>
     <div class="phase" style="--col: 3">MAIN</div>

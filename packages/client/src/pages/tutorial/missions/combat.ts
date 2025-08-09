@@ -3,10 +3,27 @@ import type { TutorialMission } from '.';
 import { z } from 'zod';
 import { SummoningSicknessModifier } from '@game/engine/src/modifier/modifiers/summoning-sickness';
 import { waitForElement } from '@/utils/dom-utils';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
+import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
+import { isDefined } from '@game/shared';
 
-const meta: { footsoldier: MinionCard | null; slime: MinionCard | null } = {
-  footsoldier: null,
-  slime: null
+const meta: {
+  allyHero: HeroCard | null;
+  allyfootSoldier1: MinionCard | null;
+  allyfootSoldier2: MinionCard | null;
+  enemyHero: HeroCard | null;
+  enemySlime1: MinionCard | null;
+  enemySlime2: MinionCard | null;
+  enemySlime3: MinionCard | null;
+} = {
+  allyHero: null,
+  allyfootSoldier1: null,
+  allyfootSoldier2: null,
+  enemyHero: null,
+  enemySlime1: null,
+  enemySlime2: null,
+  enemySlime3: null
 };
 
 export const combatTutorial: TutorialMission = {
@@ -28,7 +45,7 @@ export const combatTutorial: TutorialMission = {
       {
         id: 'p2',
         name: 'Opponent',
-        hero: 'knight',
+        hero: 'combat-tutorial-enemy-hero',
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
@@ -49,23 +66,35 @@ export const combatTutorial: TutorialMission = {
       PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
       PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0
     },
-    async setup(game) {
-      meta.footsoldier =
+    async setup(game, client) {
+      client.ui.displayedElements.hand = false;
+      client.ui.displayedElements.playerInfos = false;
+      client.ui.displayedElements.artifacts = false;
+      client.ui.displayedElements.unlockedDestinyCards = false;
+      client.ui.displayedElements.destinyZone = false;
+      client.ui.displayedElements.actionButtons = false;
+      client.ui.displayedElements.destinyPhaseModal = false;
+      client.ui.displayedElements.phaseTracker = false;
+      client.ui.displayedElements.defenseZone = false;
+
+      meta.allyHero = game.playerSystem.player1.hero;
+      meta.enemyHero = game.playerSystem.player2.hero;
+      meta.allyfootSoldier1 =
         await game.playerSystem.player1.generateCard<MinionCard>(
           'courageous-footsoldier'
         );
-      await meta.footsoldier.playAt({
+      await meta.allyfootSoldier1.playAt({
         player: game.playerSystem.player1,
         zone: 'attack',
         slot: 2
       });
-      await meta.footsoldier.modifiers.remove(SummoningSicknessModifier);
+      await meta.allyfootSoldier1.modifiers.remove(SummoningSicknessModifier);
 
-      meta.slime =
+      meta.enemySlime1 =
         await game.playerSystem.player2.generateCard<MinionCard>(
-          'friendly-slime'
+          'tutorial-slime-1'
         );
-      await meta.slime.playAt({
+      await meta.enemySlime1.playAt({
         player: game.playerSystem.player2,
         zone: 'attack',
         slot: 2
@@ -81,7 +110,7 @@ export const combatTutorial: TutorialMission = {
               type: z.literal('declareAttack'),
               payload: z.object({
                 playerId: z.literal('p1'),
-                attackerId: z.literal(meta.footsoldier!.id)
+                attackerId: z.literal(meta.allyfootSoldier1!.id)
               })
             })
             .safeParse(input);
@@ -112,27 +141,24 @@ export const combatTutorial: TutorialMission = {
             text: 'Here are your minions...',
             canGoNext: true,
             onEnter(game, client) {
-              client.ui.highlightedElement = document.querySelector(
-                client.ui.DOMSelectors.p1Minionzone.selector
-              ) as HTMLElement;
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.attackZone('p1').element;
             }
           },
           {
             text: "...and here are your opponent's",
             canGoNext: true,
             onEnter(game, client) {
-              client.ui.highlightedElement = document.querySelector(
-                client.ui.DOMSelectors.p2Minionzone.selector
-              ) as HTMLElement;
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.attackZone('p2').element;
             }
           },
           {
             text: "Let's declare an attack. first, click on your Courageous Footsoldier.",
             canGoNext: false,
             onEnter(game, client, next) {
-              client.ui.highlightedElement = document.querySelector(
-                client.ui.DOMSelectors.minionSprite('p1', 'attack', 2).selector
-              ) as HTMLElement;
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.minionSprite('p1', 'attack', 2).element;
 
               client.ui.DOMSelectors.minionClickableArea(
                 'p1',
@@ -149,7 +175,7 @@ export const combatTutorial: TutorialMission = {
             async onEnter(game, client) {
               const actionButton = await waitForElement(
                 client.ui.DOMSelectors.cardAction(
-                  meta.footsoldier!.id,
+                  meta.allyfootSoldier1!.id,
                   'declare_attack'
                 ).selector
               );
@@ -161,29 +187,14 @@ export const combatTutorial: TutorialMission = {
       },
       attack_1_declare_target: {
         id: 'attack_1_declare_target',
-        isRoot: true,
-        textBoxes: [
-          {
-            text: "Now click on your opponent's Friendly Slime to declare the attack.",
-            canGoNext: true,
-            onEnter(game, client) {
-              const slimeEl = document.querySelector(
-                client.ui.DOMSelectors.minionSprite('p2', 'attack', 2).selector
-              ) as HTMLElement;
-              client.ui.highlightedElement = slimeEl;
-            },
-            onLeave(game, client) {
-              client.ui.highlightedElement = null;
-            }
-          }
-        ],
+        isRoot: false,
         validate(input) {
           const result = z
             .object({
               type: z.literal('declareAttackTarget'),
               payload: z.object({
                 playerId: z.literal('p1'),
-                targetId: z.literal(meta.slime!.id)
+                targetId: z.literal(meta.enemySlime1!.id)
               })
             })
             .safeParse(input);
@@ -195,7 +206,517 @@ export const combatTutorial: TutorialMission = {
                 errorMessage: 'Click the slime to declare the attack.'
               };
         },
-        next: () => null
+        next: () => 'end_turn_1',
+        onSuccess(game) {
+          game.dispatch({
+            type: 'declareBlocker',
+            payload: {
+              playerId: 'p2',
+              blockerId: null
+            }
+          });
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p2'
+            }
+          });
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p1'
+            }
+          });
+        },
+        textBoxes: [
+          {
+            text: "Now click on your opponent's Friendly Slime to declare the attack.",
+            canGoNext: false,
+            onEnter(game, client) {
+              const slimeEl = client.ui.DOMSelectors.minionSprite(
+                'p2',
+                'attack',
+                2
+              ).element;
+              client.ui.highlightedElement = slimeEl;
+            },
+            onLeave(game, client) {
+              client.ui.highlightedElement = null;
+            }
+          }
+        ]
+      },
+      end_turn_1: {
+        id: 'end_turn_1',
+        isRoot: false,
+        textBoxes: [
+          { text: 'Both minions dealt damage to each other.', canGoNext: true },
+          {
+            text: "Since the Slime's HP got reduced to 0, it has been destroyed",
+            canGoNext: true
+          },
+          {
+            text: 'Press the End Turn button to end your turn',
+            canGoNext: false,
+            onEnter(game, client) {
+              client.ui.displayedElements.actionButtons = true;
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.actionButton('end-turn').element;
+            }
+          }
+        ],
+        validate(input) {
+          const result = z
+            .object({
+              type: z.literal('declareEndTurn'),
+              payload: z.object({
+                playerId: z.literal('p1')
+              })
+            })
+            .safeParse(input);
+
+          return result.success
+            ? { status: 'success' }
+            : {
+                status: 'error',
+                errorMessage: 'Click the End Turn button.'
+              };
+        },
+        next: () => 'opponent_turn_1'
+      },
+      opponent_turn_1: {
+        id: 'opponent_turn_1',
+        isRoot: false,
+        validate(input) {
+          const result = z
+            .object({
+              type: z.literal('declareBlocker'),
+              payload: z.object({
+                playerId: z.literal('p1'),
+                blockerId: z.literal(meta.allyfootSoldier2!.id)
+              })
+            })
+            .safeParse(input);
+
+          return result.success
+            ? { status: 'success' }
+            : {
+                status: 'error',
+                errorMessage: 'Click the Block button to block the attack'
+              };
+        },
+        next: () => 'turn_2_start',
+        async onEnter(game, step, client) {
+          client.ui.highlightedElement = null;
+          game.dispatch({ type: 'passChain', payload: { playerId: 'p2' } });
+
+          await client.waitUntil(
+            state => state.phase.state === GAME_PHASES.DESTINY
+          );
+          game.dispatch({
+            type: 'skipDestiny',
+            payload: { playerId: 'p2' }
+          });
+          meta.enemySlime2 =
+            await game.playerSystem.player2.generateCard<MinionCard>(
+              'tutorial-slime-1'
+            );
+          await meta.enemySlime2.playAt({
+            player: game.playerSystem.player2,
+            zone: 'attack',
+            slot: 2
+          });
+
+          await meta.enemySlime2.modifiers.remove(SummoningSicknessModifier);
+        },
+        textBoxes: [
+          {
+            text: 'Your opponent summoned another slime !.',
+            canGoNext: true
+          },
+          {
+            text: 'Your footsoldier only has 1 HP left, and is vulnerable !',
+            canGoNext: true,
+            async onEnter(game, client) {
+              game.dispatch({
+                type: 'declareAttack',
+                payload: {
+                  playerId: 'p2',
+                  attackerId: meta.enemySlime2!.id
+                }
+              });
+              await client.waitUntil(
+                state =>
+                  state.phase.state === GAME_PHASES.ATTACK &&
+                  state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET
+              );
+              game.dispatch({
+                type: 'declareAttackTarget',
+                payload: {
+                  playerId: 'p2',
+                  targetId: meta.allyfootSoldier1!.id
+                }
+              });
+            }
+          },
+          {
+            text: 'Here are some reinforcement !',
+            canGoNext: true,
+            async onEnter(game, client) {
+              client.ui.displayedElements.defenseZone = true;
+              meta.allyfootSoldier2 =
+                await game.playerSystem.player1.generateCard<MinionCard>(
+                  'courageous-footsoldier'
+                );
+              await meta.allyfootSoldier2.playAt({
+                player: game.playerSystem.player1,
+                zone: 'defense',
+                slot: 2
+              });
+
+              game.snapshotSystem.takeSnapshot();
+            }
+          },
+          {
+            text: 'This second footsoldier is on the back row, called the Defense Zone.',
+            canGoNext: true,
+            onEnter(game, client) {
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.defenseZone('p1').element;
+            }
+          },
+          {
+            text: 'This means they can block enemy attacks.',
+            canGoNext: true
+          },
+          {
+            text: 'Select your footsoldier.',
+            canGoNext: false,
+            onEnter(game, client, next) {
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.minionSprite('p1', 'defense', 2).element;
+
+              client.ui.DOMSelectors.minionClickableArea(
+                'p1',
+                'defense',
+                2
+              ).element!.addEventListener('click', next, {
+                once: true
+              });
+            }
+          },
+          {
+            text: '...then click on the Block button.',
+            canGoNext: false,
+            async onEnter(game, client) {
+              const actionButton = await waitForElement(
+                client.ui.DOMSelectors.cardAction(
+                  meta.allyfootSoldier2!.id,
+                  'declare_blocker'
+                ).selector
+              );
+
+              client.ui.highlightedElement = actionButton;
+            }
+          }
+        ]
+      },
+      turn_2_start: {
+        id: 'turn_2_start',
+        isRoot: false,
+        validate(input) {
+          const result = z
+            .object({
+              type: z.literal('declareAttack'),
+              payload: z.object({
+                playerId: z.literal('p1'),
+                attackerId: z.literal(meta.allyfootSoldier1!.id)
+              })
+            })
+            .safeParse(input);
+
+          return result.success
+            ? { status: 'success' }
+            : {
+                status: 'error',
+                errorMessage:
+                  'Declare an attack with your Courageous Footsoldier.'
+              };
+        },
+        next: () => 'turn2_declare_target',
+        async onEnter(game, step, client) {
+          client.ui.highlightedElement = null;
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p1'
+            }
+          });
+          await client.waitUntil(state => state.effectChain?.player === 'p2');
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p2'
+            }
+          });
+
+          meta.enemySlime3 =
+            await game.playerSystem.player2.generateCard<MinionCard>(
+              'tutorial-slime-2'
+            );
+          await meta.enemySlime3.playAt({
+            player: game.playerSystem.player2,
+            zone: 'defense',
+            slot: 1
+          });
+
+          await client.waitUntil(
+            state => state.phase.state === GAME_PHASES.MAIN
+          );
+          game.dispatch({
+            type: 'declareEndTurn',
+            payload: {
+              playerId: 'p2'
+            }
+          });
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p1'
+            }
+          });
+
+          await client.waitUntil(
+            state => state.phase.state === GAME_PHASES.DESTINY
+          );
+          game.dispatch({
+            type: 'skipDestiny',
+            payload: { playerId: 'p1' }
+          });
+        },
+        textBoxes: [
+          {
+            text: 'Your fresh footsoldier took the hit, protecting the injured one !',
+            canGoNext: true
+          },
+          {
+            text: "It's your turn again. Let's try to attack the enemy Hero directly!",
+            canGoNext: true
+          },
+          {
+            text: 'Minions in the Defense Zone cannot declare attacks.',
+            canGoNext: true
+          },
+          {
+            text: 'Select your footsoldier in the Attack Zone and declare attack.',
+            canGoNext: false,
+            onEnter(game, client, next) {
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.minionSprite('p1', 'attack', 1).element;
+
+              client.ui.DOMSelectors.minionClickableArea(
+                'p1',
+                'attack',
+                2
+              ).element!.addEventListener('click', next, {
+                once: true
+              });
+            }
+          }
+        ]
+      },
+      turn2_declare_target: {
+        id: 'turn2_declare_target',
+        isRoot: false,
+        validate(input) {
+          const result = z
+            .object({
+              type: z.literal('declareAttackTarget'),
+              payload: z.object({
+                playerId: z.literal('p1'),
+                targetId: z.literal(meta.enemyHero!.id)
+              })
+            })
+            .safeParse(input);
+
+          return result.success
+            ? { status: 'success' }
+            : {
+                status: 'error',
+                errorMessage: 'Click the enemy hero to attack it.'
+              };
+        },
+        next: () => 'turn_2_second_attack',
+        textBoxes: [
+          {
+            text: 'Click on the enemy Hero to attack it.',
+            canGoNext: false,
+            onEnter(game, client) {
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.heroSprite('p2').element;
+            },
+            onLeave(game, client) {
+              client.ui.highlightedElement = null;
+            }
+          }
+        ]
+      },
+      turn_2_second_attack: {
+        id: 'turn_2_second_attack',
+        isRoot: false,
+        validate(input) {
+          const result = z
+            .object({
+              type: z.literal('declareAttack'),
+              payload: z.object({
+                playerId: z.literal('p1'),
+                attackerId: z.literal(meta.allyHero!.id)
+              })
+            })
+            .safeParse(input);
+
+          return result.success
+            ? { status: 'success' }
+            : {
+                status: 'error',
+                errorMessage: 'Declare an attack with your hero.'
+              };
+        },
+        next: () => 'final_attack',
+        async onEnter(game) {
+          game.dispatch({
+            type: 'declareBlocker',
+            payload: {
+              playerId: 'p2',
+              blockerId: meta.enemySlime3!.id
+            }
+          });
+        },
+        textBoxes: [
+          {
+            text: 'The enemy slime is blocking your attack!',
+            canGoNext: true,
+            async onLeave(game, client) {
+              game.dispatch({
+                type: 'passChain',
+                payload: {
+                  playerId: 'p2'
+                }
+              });
+              await client.waitUntil(
+                state => state.effectChain?.player === 'p1'
+              );
+              game.dispatch({
+                type: 'passChain',
+                payload: {
+                  playerId: 'p1'
+                }
+              });
+            }
+          },
+          {
+            text: 'Even though the slime survived the attack, it cannot block anymore this turn.',
+            canGoNext: true
+          },
+          {
+            text: "The enemy hero is wide open, let's finish this !",
+            canGoNext: true
+          },
+          {
+            text: "I'm going to help you and increase your Hero's attack.",
+            canGoNext: true,
+            onLeave(game) {
+              meta.allyHero?.addInterceptor('atk', () => 5);
+              game.snapshotSystem.takeSnapshot();
+            }
+          },
+          {
+            text: 'Select your Hero and click the attack button.',
+            canGoNext: false,
+            onEnter(game, client) {
+              client.ui.highlightedElement =
+                client.ui.DOMSelectors.heroSprite('p1').element;
+            },
+            onLeave(game, client) {
+              client.ui.highlightedElement = null;
+            }
+          }
+        ]
+      },
+      final_attack: {
+        id: 'final_attack',
+        isRoot: false,
+        validate(input) {
+          const result = z
+            .object({
+              type: z.literal('declareAttackTarget'),
+              payload: z.object({
+                playerId: z.literal('p1'),
+                targetId: z.literal(meta.enemyHero!.id)
+              })
+            })
+            .safeParse(input);
+
+          return result.success
+            ? { status: 'success' }
+            : {
+                status: 'error',
+                errorMessage: 'Click the enemy hero to attack it.'
+              };
+        },
+        next: () => 'end',
+        async onEnter(game) {
+          game.dispatch({
+            type: 'declareAttack',
+            payload: {
+              playerId: 'p1',
+              attackerId: meta.allyHero!.id
+            }
+          });
+        },
+        textBoxes: [
+          {
+            text: "Let's finish this! Click the enemy hero !",
+            canGoNext: false
+          }
+        ]
+      },
+      end: {
+        id: 'end',
+        isRoot: false,
+        validate: () => {
+          return { status: 'success' };
+        },
+        next: () => null,
+        async onEnter(game, step, client) {
+          game.dispatch({
+            type: 'declareBlocker',
+            payload: {
+              playerId: 'p2',
+              blockerId: null
+            }
+          });
+          await client.waitUntil(state => isDefined(state.effectChain));
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p2'
+            }
+          });
+          await client.waitUntil(state => state.effectChain?.player === 'p1');
+          game.dispatch({
+            type: 'passChain',
+            payload: {
+              playerId: 'p1'
+            }
+          });
+        },
+        textBoxes: [
+          {
+            text: "You did it ! You've completed the tutorial !",
+            canGoNext: false
+          }
+        ]
       }
     }
   }

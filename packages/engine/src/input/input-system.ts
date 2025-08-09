@@ -98,6 +98,8 @@ export class InputSystem extends System<never> {
 
   private onUnpause: UnpauseCallback<any> | null = null;
 
+  private nextInputId = 0;
+
   get currentAction() {
     return this._currentAction;
   }
@@ -206,12 +208,14 @@ export class InputSystem extends System<never> {
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
       // the currentinput could schedule new actions, so we need to wait for the flush
-      this.game.once(GAME_EVENTS.FLUSHED, () =>
-        this.schedule(() => this.handleInput(input))
-      );
+      this.game.once(GAME_EVENTS.FLUSHED, () => {
+        return this.schedule(() => this.handleInput(input));
+      });
     } else {
       // if the game is not paused and not running, run the input immediately
-      await this.schedule(() => this.handleInput(input));
+      await this.schedule(() => {
+        return this.handleInput(input);
+      });
     }
   }
 
@@ -219,7 +223,7 @@ export class InputSystem extends System<never> {
     const { type, payload } = arg;
     if (!this.isActionType(type)) return;
     const ctor = inputMap[type];
-    const input = new ctor(this.game, payload);
+    const input = new ctor(this.game, this.nextInputId++, payload);
     const prevAction = this._currentAction;
     this._currentAction = input;
     await this.game.emit(GAME_EVENTS.INPUT_START, new GameInputEvent({ input }));

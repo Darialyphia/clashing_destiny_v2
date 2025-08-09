@@ -29,6 +29,7 @@ export abstract class Input<TSchema extends DefaultSchema>
 
   constructor(
     protected game: Game,
+    readonly id: number,
     protected rawPayload: JSONValue
   ) {}
 

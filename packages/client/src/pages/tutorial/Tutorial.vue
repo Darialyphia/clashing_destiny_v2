@@ -30,7 +30,11 @@ const RECT_PADDING = 15;
     }"
   />
   <div v-if="currentStepError" class="error">{{ currentStepError }}</div>
-  <div class="surface text-box" v-if="currentStepTextBox">
+  <div
+    class="surface text-box"
+    v-if="currentStepTextBox"
+    :key="currentStepTextBox?.text"
+  >
     {{ currentStepTextBox?.text }}
     <FancyButton
       v-if="currentStepTextBox?.canGoNext"
@@ -45,9 +49,14 @@ const RECT_PADDING = 15;
 .text-box {
   position: fixed;
   right: 0;
-  bottom: 30%;
+  bottom: 55%;
   max-width: var(--size-xs);
   font-size: var(--font-size-3);
+  transition: all 0.4s var(--ease-2);
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.5);
+  }
 }
 
 .error {

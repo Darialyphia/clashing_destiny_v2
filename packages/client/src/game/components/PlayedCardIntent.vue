@@ -34,7 +34,7 @@ const cardId = computed(() => {
   right: var(--size-6);
   width: var(--card-width);
   height: var(--card-height);
-
+  pointer-events: none;
   & > * {
     display: block;
     width: var(--card-width);

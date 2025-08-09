@@ -6,10 +6,14 @@ const client = useGameClient();
 </script>
 
 <template>
-  <div class="action-buttons">
+  <div
+    class="action-buttons"
+    :class="{ 'ui-hidden': !client.ui.displayedElements.actionButtons }"
+  >
     <FancyButton
       v-for="action in client.ui.globalActions"
       :key="action.id"
+      :id="client.ui.DOMSelectors.actionButton(action.id).id"
       :text="action.label"
       :variant="action.variant"
       :disabled="action.isDisabled"

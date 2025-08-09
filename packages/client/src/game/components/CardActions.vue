@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import CardText from '@/card/components/CardText.vue';
+import { useGameClient } from '../composables/useGameClient';
 
 const { card } = defineProps<{ card: CardViewModel }>();
 const isOpened = defineModel<boolean>('isOpened', { required: true });
@@ -12,6 +13,8 @@ watchEffect(() => {
     }, 2000);
   }
 });
+
+const client = useGameClient();
 </script>
 
 <template>
@@ -21,6 +24,7 @@ watchEffect(() => {
       v-for="action in card.getActions()"
       :key="action.id"
       class="action"
+      :id="client.ui.DOMSelectors.cardAction(card.id, action.id).id"
       @click="
         () => {
           action.handler(card);

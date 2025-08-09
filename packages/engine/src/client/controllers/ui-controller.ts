@@ -89,11 +89,23 @@ export class UiController {
       new DOMSelector(`${playerId}-${zone}-minion-clickable-area-${slot}`),
     heroSprite: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
-      new DOMSelector(`${cardId}-action-${actionId}`)
+      new DOMSelector(`${cardId}-action-${actionId}`),
+    attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
+    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
+    actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`)
   };
 
   displayedElements = {
-    hand: true
+    hand: true,
+    playerInfos: true,
+    artifacts: true,
+    unlockedDestinyCards: true,
+    destinyZone: true,
+    actionButtons: true,
+    destinyPhaseModal: true,
+    phaseTracker: true,
+    attackZone: true,
+    defenseZone: true
   };
 
   highlightedElement: HTMLElement | null = null;

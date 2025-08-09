@@ -108,6 +108,7 @@ const isActionsPopoverOpened = computed({
               highlighted: hero.canBeTargeted,
               exhausted: hero.isExhausted
             }"
+            :id="client.ui.DOMSelectors.heroSprite(player.id).id"
           />
           <PopoverPortal>
             <PopoverContent :side-offset="-50" side="top">

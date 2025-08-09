@@ -1,4 +1,7 @@
-import type { NetworkAdapter } from '@game/engine/src/client/client';
+import type {
+  GameClient,
+  NetworkAdapter
+} from '@game/engine/src/client/client';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
@@ -8,14 +11,26 @@ import {
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
 import { provideGameClient } from '@/game/composables/useGameClient';
 import type { Config } from '@game/engine/src/config';
-import type { IndexedRecord } from '@game/shared';
+import type { IndexedRecord, MaybePromise, Override } from '@game/shared';
 
 export type UseTutorialOptions = Pick<
   GameOptions,
   'players' | 'rngSeed' | 'history'
 > & {
-  steps: IndexedRecord<TutorialStep, 'id'>;
-  setup: (game: Game) => Promise<void>;
+  steps: IndexedRecord<
+    Override<
+      TutorialStep,
+      {
+        onEnter?(
+          game: Game,
+          step: TutorialStep,
+          client: GameClient
+        ): MaybePromise<void>;
+      }
+    >,
+    'id'
+  >;
+  setup: (game: Game, client: GameClient) => Promise<void>;
   config?: Partial<Config>;
 };
 
@@ -62,7 +77,7 @@ export const useTutorial = (options: UseTutorialOptions) => {
   const client = provideGameClient({
     networkAdapter,
     fxAdapter,
-    gameType: 'local',
+    gameType: 'online',
     playerId: 'p1'
   });
 
@@ -81,9 +96,10 @@ export const useTutorial = (options: UseTutorialOptions) => {
         {
           ...step,
           async onEnter(game, newStep) {
+            await currentStepTextBox.value?.onLeave?.(game, client.value);
             currentStep.value = newStep;
             currentStepTextboxIndex.value = 0;
-            await step.onEnter?.(game, newStep);
+            await step.onEnter?.(game, newStep, client.value);
             await currentStepTextBox.value?.onEnter?.(game, client.value, next);
           },
           onFail(game, input, errorMessage) {
@@ -101,7 +117,7 @@ export const useTutorial = (options: UseTutorialOptions) => {
 
   (async function () {
     await game.initialize();
-    await options.setup(game);
+    await options.setup(game, client.value);
     await game.snapshotSystem.takeSnapshot();
 
     client.value.initialize(game.snapshotSystem.getOmniscientSnapshotAt(0));

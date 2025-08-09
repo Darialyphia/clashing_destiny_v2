@@ -125,8 +125,9 @@ button:is(.primary-button, .error-button) {
   text-decoration: underline;
 }
 
-.tutorial-hidden {
+.ui-hidden {
   visibility: hidden;
+  pointer-events: none;
 }
 
 @keyframes tutorial-highlight {

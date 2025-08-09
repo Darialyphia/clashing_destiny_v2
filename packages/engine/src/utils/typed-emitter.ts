@@ -85,9 +85,13 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     if (!this._listeners[eventName]) {
       this._listeners[eventName] = new Set();
     }
-    const onceHandler = async (eventArg: EventMapWithStarEvent<TEvents>[TEventName]) => {
-      await handler(eventArg);
+    let handled = false;
+    const onceHandler = (eventArg: EventMapWithStarEvent<TEvents>[TEventName]) => {
+      // makes sure the handler is only called once as some async weirdness might make the handler run twice before it gets cleaned up
+      if (handled) return;
+      handled = true;
       this.off(eventName, onceHandler as any);
+      return handler(eventArg);
     };
     this._listeners[eventName].add(onceHandler);
 
