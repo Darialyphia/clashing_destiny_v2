@@ -1,24 +1,12 @@
-import type { MinionCard } from '@game/engine/src/card/entities/minion.entity';
 import type { TutorialMission } from '.';
-import { z } from 'zod';
 import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
 
 const meta: {
   allyHero: HeroCard | null;
-  allyfootSoldier1: MinionCard | null;
-  allyfootSoldier2: MinionCard | null;
   enemyHero: HeroCard | null;
-  enemySlime1: MinionCard | null;
-  enemySlime2: MinionCard | null;
-  enemySlime3: MinionCard | null;
 } = {
   allyHero: null,
-  allyfootSoldier1: null,
-  allyfootSoldier2: null,
-  enemyHero: null,
-  enemySlime1: null,
-  enemySlime2: null,
-  enemySlime3: null
+  enemyHero: null
 };
 
 export const playCardTutorial: TutorialMission = {
@@ -59,7 +47,8 @@ export const playCardTutorial: TutorialMission = {
     config: {
       INITIAL_HAND_SIZE: 4,
       PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
-      PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0
+      PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
+      SHUFFLE_DECK_ON_GAME_START: false
     },
     async setup(game, client) {
       client.ui.displayedElements.artifacts = false;
@@ -74,24 +63,8 @@ export const playCardTutorial: TutorialMission = {
       root: {
         id: 'root',
         isRoot: true,
-        validate(input) {
-          const result = z
-            .object({
-              type: z.literal('declareAttack'),
-              payload: z.object({
-                playerId: z.literal('p1'),
-                attackerId: z.literal(meta.allyfootSoldier1!.id)
-              })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage:
-                  'Declare an attack with your Courageous Footsoldier.'
-              };
+        validate() {
+          return { status: 'success' };
         },
         next: () => null,
         textBoxes: [

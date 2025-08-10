@@ -271,6 +271,16 @@ export class MinionCard extends Card<
     return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
   }
 
+  get isAttacking() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
+  }
+
+  get isBlocking() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
+  }
+
   get abilities(): Ability<MinionCard, PreResponseTarget>[] {
     return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }

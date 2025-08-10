@@ -249,6 +249,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.blueprint.affinities;
   }
 
+  get isAttacking() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
+  }
+
+  get isBlocking() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
+  }
+
   get abilities(): Ability<HeroCard, PreResponseTarget>[] {
     return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }

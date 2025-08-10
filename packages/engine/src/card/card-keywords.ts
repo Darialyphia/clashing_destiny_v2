@@ -67,7 +67,8 @@ export const KEYWORDS = {
   ON_KILL: {
     id: 'on-kill',
     name: 'On Kill',
-    description: 'Does something when this card kills another unit via combat.',
+    description:
+      'Does something when this card kills another unit via combat while being the attacker.',
     aliases: []
   },
   UNIQUE: {

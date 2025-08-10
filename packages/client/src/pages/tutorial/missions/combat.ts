@@ -253,23 +253,16 @@ export const combatTutorial: TutorialMission = {
             }
           }
         ],
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareEndTurn'),
               payload: z.object({
                 playerId: z.literal('p1')
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage: 'Click the End Turn button.'
-              };
-        },
+            }),
+          'Click the End Turn button.'
+        ),
         next: () => 'opponent_turn_1'
       },
       opponent_turn_1: {
@@ -405,25 +398,17 @@ export const combatTutorial: TutorialMission = {
       turn_2_start: {
         id: 'turn_2_start',
         isRoot: false,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareAttack'),
               payload: z.object({
                 playerId: z.literal('p1'),
                 attackerId: z.literal(meta.allyfootSoldier1!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage:
-                  'Declare an attack with your Courageous Footsoldier.'
-              };
-        },
+            }),
+          'Declare an attack with your Courageous Footsoldier.'
+        ),
         next: () => 'turn2_declare_target',
         async onEnter(game, step, client) {
           client.ui.highlightedElement = null;
@@ -509,24 +494,17 @@ export const combatTutorial: TutorialMission = {
       turn2_declare_target: {
         id: 'turn2_declare_target',
         isRoot: false,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareAttackTarget'),
               payload: z.object({
                 playerId: z.literal('p1'),
                 targetId: z.literal(meta.enemyHero!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage: 'Click the enemy hero to attack it.'
-              };
-        },
+            }),
+          'Click the enemy hero to attack it.'
+        ),
         next: () => 'turn_2_second_attack',
         textBoxes: [
           {
@@ -545,24 +523,17 @@ export const combatTutorial: TutorialMission = {
       turn_2_second_attack: {
         id: 'turn_2_second_attack',
         isRoot: false,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareAttack'),
               payload: z.object({
                 playerId: z.literal('p1'),
                 attackerId: z.literal(meta.allyHero!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage: 'Declare an attack with your hero.'
-              };
-        },
+            }),
+          'Declare an attack with your hero.'
+        ),
         next: () => 'final_attack',
         async onEnter(game) {
           game.dispatch({
@@ -627,24 +598,17 @@ export const combatTutorial: TutorialMission = {
       final_attack: {
         id: 'final_attack',
         isRoot: false,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareAttackTarget'),
               payload: z.object({
                 playerId: z.literal('p1'),
                 targetId: z.literal(meta.enemyHero!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage: 'Click the enemy hero to attack it.'
-              };
-        },
+            }),
+          'Click the enemy hero to attack it.'
+        ),
         next: () => 'end',
         textBoxes: [
           {

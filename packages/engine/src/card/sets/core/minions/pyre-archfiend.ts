@@ -17,7 +17,7 @@ export const pyreArchfiend: MinionBlueprint = {
   id: 'pyre-archfiend',
   name: 'Pyre Archfiend',
   cardIconId: 'unit-pyre-archfiend',
-  description: `@Rush@, @Cleave@.\n@[level] 3+ bonus@ : @On Kill@ : deal 3 damage to the enemy Hero.`,
+  description: `@Rush@, @Cleave@.\n@[level] 3+ bonus@ : @On Kill@ : deal 2 damage to the enemy Hero.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -40,7 +40,7 @@ export const pyreArchfiend: MinionBlueprint = {
       new OnKillModifier(game, card, {
         handler: async () => {
           if (levelMod.isActive) {
-            await card.player.opponent.hero.takeDamage(card, new AbilityDamage(3));
+            await card.player.opponent.hero.takeDamage(card, new AbilityDamage(2));
           }
         }
       })

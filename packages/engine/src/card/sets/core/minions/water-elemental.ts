@@ -20,7 +20,7 @@ export const waterElemental: MinionBlueprint = {
   description: dedent`
   @On Enter@ : Raise your @Tide@ level.
   @Drifter@.
-  @Tider@ (3): @Pusher@.
+  @Tide@ (3): @Pusher@.
   `,
   collectable: true,
   unique: false,
