@@ -10,13 +10,12 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 
 export const hotHeadedRecruit: MinionBlueprint = {
   id: 'hot-headed-recruit',
   name: 'Hot-Headed Recruit',
   cardIconId: 'unit-hot-blooded-recruit',
-  description: `@Rush@. @[level] 4+@ : @Double Attack@.`,
+  description: `@Rush@, @Double Attack@.`,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -32,14 +31,7 @@ export const hotHeadedRecruit: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(new RushModifier(game, card));
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 4)
-    )) as LevelBonusModifier<MinionCard>;
-    await card.modifiers.add(
-      new DoubleAttackModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
-      })
-    );
+    await card.modifiers.add(new DoubleAttackModifier(game, card, {}));
   },
   async onPlay() {}
 };
