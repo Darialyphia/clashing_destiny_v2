@@ -8,8 +8,14 @@ const { options } = defineProps<{
   options: Parameters<typeof useTutorial>[0];
 }>();
 
-const { client, currentStepTextBox, currentStepError, next } =
-  useTutorial(options);
+const {
+  client,
+  currentStepTextBox,
+  currentStepError,
+  next,
+  isFinished,
+  nextMission
+} = useTutorial(options);
 
 const rect = useElementBounding(
   computed(() => client.value.ui.highlightedElement)
@@ -41,6 +47,16 @@ const RECT_PADDING = 15;
       text="Next"
       class="mt-4 ml-auto"
       @click="next"
+    />
+    <FancyButton
+      v-if="isFinished"
+      class="mt-4 ml-auto"
+      :to="
+        nextMission
+          ? { name: 'TutorialMission', params: { id: nextMission } }
+          : { name: 'TutorialList' }
+      "
+      :text="nextMission ? 'New Mission' : 'Back to Missions'"
     />
   </div>
 </template>

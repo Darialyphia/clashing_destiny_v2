@@ -435,6 +435,19 @@
         },
         {
           "alias": [
+            "icon-hero-slime-king"
+          ],
+          "src": [
+            "/assets/icons/hero-slime-king.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-hero-sorcerer"
           ],
           "src": [
@@ -2663,6 +2676,19 @@
           ],
           "src": [
             "/assets/icons/unit-test-minion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-unit-tutorial-slime-hero"
+          ],
+          "src": [
+            "/assets/icons/unit-tutorial-slime-hero.png"
           ],
           "data": {
             "tags": {

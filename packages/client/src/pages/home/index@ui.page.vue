@@ -10,9 +10,6 @@ definePage({
   <nav class="grid h-screen place-content-center">
     <ul class="flex gap-4 surface">
       <li>
-        <!-- <RouterLink :to="{ name: 'Settings' }">Settings</RouterLink> -->
-      </li>
-      <li>
         <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
       </li>
       <li>
@@ -28,4 +25,14 @@ definePage({
   </nav>
 </template>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+li {
+  padding: var(--size-3);
+  border-radius: var(--radius-2);
+  font-weight: var(--font-weight-5);
+}
+
+li:hover {
+  background: hsl(40 60% 60% / 0.15);
+}
+</style>

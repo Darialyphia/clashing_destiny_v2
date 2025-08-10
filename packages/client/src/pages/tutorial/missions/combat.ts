@@ -7,6 +7,7 @@ import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { COMBAT_STEPS } from '@game/engine/src/game/phases/combat.phase';
 import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
 import { isDefined } from '@game/shared';
+import { simpleStepValidation } from './utils';
 
 const meta: {
   allyHero: HeroCard | null;
@@ -30,6 +31,7 @@ export const combatTutorial: TutorialMission = {
   id: 'combat',
   name: 'Mission 1 : Attacking and Blocking',
   options: {
+    next: 'play-cards',
     players: [
       {
         id: 'p1',
@@ -78,6 +80,7 @@ export const combatTutorial: TutorialMission = {
       client.ui.displayedElements.defenseZone = false;
 
       meta.allyHero = game.playerSystem.player1.hero;
+      meta.allyHero.addInterceptor('abilities', () => []);
       meta.enemyHero = game.playerSystem.player2.hero;
       meta.allyfootSoldier1 =
         await game.playerSystem.player1.generateCard<MinionCard>(
@@ -104,25 +107,17 @@ export const combatTutorial: TutorialMission = {
       root: {
         id: 'root',
         isRoot: true,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareAttack'),
               payload: z.object({
                 playerId: z.literal('p1'),
                 attackerId: z.literal(meta.allyfootSoldier1!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage:
-                  'Declare an attack with your Courageous Footsoldier.'
-              };
-        },
+            }),
+          'Declare an attack with your Courageous Footsoldier.'
+        ),
         next: () => 'attack_1_declare_target',
         textBoxes: [
           {
@@ -188,24 +183,17 @@ export const combatTutorial: TutorialMission = {
       attack_1_declare_target: {
         id: 'attack_1_declare_target',
         isRoot: false,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareAttackTarget'),
               payload: z.object({
                 playerId: z.literal('p1'),
                 targetId: z.literal(meta.enemySlime1!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage: 'Click the slime to declare the attack.'
-              };
-        },
+            }),
+          'Click the slime to declare the attack.'
+        ),
         next: () => 'end_turn_1',
         onSuccess(game) {
           game.dispatch({
@@ -287,24 +275,17 @@ export const combatTutorial: TutorialMission = {
       opponent_turn_1: {
         id: 'opponent_turn_1',
         isRoot: false,
-        validate(input) {
-          const result = z
-            .object({
+        validate: simpleStepValidation(
+          () =>
+            z.object({
               type: z.literal('declareBlocker'),
               payload: z.object({
-                playerId: z.literal('p1'),
-                blockerId: z.literal(meta.allyfootSoldier2!.id)
+                playerId: z.literal('p2'),
+                blockerId: z.literal(meta.enemySlime2!.id)
               })
-            })
-            .safeParse(input);
-
-          return result.success
-            ? { status: 'success' }
-            : {
-                status: 'error',
-                errorMessage: 'Click the Block button to block the attack'
-              };
-        },
+            }),
+          'Click the Block button to block the attack'
+        ),
         next: () => 'turn_2_start',
         async onEnter(game, step, client) {
           client.ui.highlightedElement = null;
@@ -331,7 +312,7 @@ export const combatTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Your opponent summoned another slime !.',
+            text: 'Your opponent summoned another slime !',
             canGoNext: true
           },
           {
@@ -360,7 +341,7 @@ export const combatTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Here are some reinforcement !',
+            text: 'Here are some reinforcements !',
             canGoNext: true,
             async onEnter(game, client) {
               client.ui.displayedElements.defenseZone = true;
@@ -512,7 +493,7 @@ export const combatTutorial: TutorialMission = {
             canGoNext: false,
             onEnter(game, client, next) {
               client.ui.highlightedElement =
-                client.ui.DOMSelectors.minionSprite('p1', 'attack', 1).element;
+                client.ui.DOMSelectors.minionSprite('p1', 'attack', 2).element;
 
               client.ui.DOMSelectors.minionClickableArea(
                 'p1',
@@ -665,15 +646,6 @@ export const combatTutorial: TutorialMission = {
               };
         },
         next: () => 'end',
-        async onEnter(game) {
-          game.dispatch({
-            type: 'declareAttack',
-            payload: {
-              playerId: 'p1',
-              attackerId: meta.allyHero!.id
-            }
-          });
-        },
         textBoxes: [
           {
             text: "Let's finish this! Click the enemy hero !",

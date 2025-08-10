@@ -49,8 +49,13 @@ h1 {
 
 ul {
   margin-block: var(--size-5);
-  li {
+  li > * {
     font-weight: var(--font-weight-5);
+    padding: var(--size-2) var(--size-3);
+    border-radius: var(--radius-2);
+    &:hover {
+      background: hsl(40 60% 60% / 0.15);
+    }
   }
 }
 </style>

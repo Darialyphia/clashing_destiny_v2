@@ -32,6 +32,7 @@ export type UseTutorialOptions = Pick<
   >;
   setup: (game: Game, client: GameClient) => Promise<void>;
   config?: Partial<Config>;
+  next?: string;
 };
 
 export const useTutorial = (options: UseTutorialOptions) => {
@@ -139,6 +140,10 @@ export const useTutorial = (options: UseTutorialOptions) => {
       await currentStepTextBox.value?.onLeave?.(game, client.value);
       currentStepTextboxIndex.value++;
       await currentStepTextBox.value?.onEnter?.(game, client.value, next);
-    }
+    },
+    nextMission: options.next,
+    isFinished: computed(() => {
+      return tutorial.value.isFinished;
+    })
   };
 };

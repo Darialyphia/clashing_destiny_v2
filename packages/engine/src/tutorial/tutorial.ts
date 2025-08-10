@@ -37,7 +37,7 @@ export type TutorialStep = {
 export class Tutorial {
   private currentStepId: string;
 
-  private isFinished = false;
+  isFinished = false;
 
   private client!: GameClient;
 
