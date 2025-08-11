@@ -32,15 +32,11 @@ const buildPaths = async () => {
             .getBoundingClientRect();
         })
         .with({ type: 'minionPosition' }, target => {
-          return document
-            .querySelector(
-              client.value.ui.getMinionSlotDomSelector({
-                playerId: target.playerId,
-                position: target.slot,
-                zone: target.zone
-              })
-            )!
-            .getBoundingClientRect();
+          return client.value.ui.DOMSelectors.minionSprite(
+            target.playerId,
+            target.zone,
+            target.slot
+          ).element!.getBoundingClientRect();
         })
         .exhaustive();
 

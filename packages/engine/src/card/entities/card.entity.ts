@@ -162,10 +162,6 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
-  get loyalty() {
-    return this.interceptors.loyalty.getValue(this.game.config.BASE_LOYALTY, {}) ?? 0;
-  }
-
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
@@ -320,10 +316,6 @@ export abstract class Card<
       this.player.unlockedAffinities.includes(this.affinity),
       {}
     );
-  }
-
-  get descriptionWithoutAffinityMatch() {
-    return `@[missing-affinity] Missing Affinity: Your hero will take ${this.loyalty} damage.@\n${this.blueprint.description}`;
   }
 
   protected serializeBase(): SerializedCard {
