@@ -1,7 +1,6 @@
+import dedent from 'dedent';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
-import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -11,12 +10,17 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { MinionCard } from '../../../entities/minion.entity';
+import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
+import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 
 export const enjiOneManArmy: MinionBlueprint = {
   id: 'enji-one-man-army',
   name: 'Enji, One-Man Army',
   cardIconId: 'unit-enji-one-man-army',
-  description: `@Unique@, @Cleave@, @Piercing@.\nIf you have another minion on the board, destroy this.`,
+  description: dedent`@Unique@, @Rush@.
+  @On Kill@: wake this up.
+  If you have another minion on the board, destroy this.
+  `,
   collectable: true,
   unique: true,
   manaCost: 4,
@@ -31,8 +35,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new PiercingModifier(game, card));
-    await card.modifiers.add(new CleaveModifier(game, card));
+    await card.modifiers.add(new RushModifier(game, card));
     await card.modifiers.add(
       new Modifier<MinionCard>('enji-aura', game, card, {
         mixins: [
@@ -41,8 +44,10 @@ export const enjiOneManArmy: MinionBlueprint = {
             isElligible(candidate) {
               return (
                 card.location === 'board' &&
+                card.kind === CARD_KINDS.MINION &&
                 candidate.location === 'board' &&
-                card.kind === CARD_KINDS.MINION
+                candidate.player.equals(card.player) &&
+                !candidate.equals(card)
               );
             },
             async onGainAura() {
@@ -51,6 +56,14 @@ export const enjiOneManArmy: MinionBlueprint = {
             onLoseAura() {}
           })
         ]
+      })
+    );
+
+    await card.modifiers.add(
+      new OnKillModifier(game, card, {
+        async handler() {
+          await card.wakeUp();
+        }
       })
     );
   },

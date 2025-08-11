@@ -16,7 +16,7 @@ export const heraldOfSalvation: MinionBlueprint = {
   id: 'herald-of-salvation',
   name: 'Herald of Salvation',
   cardIconId: 'unit-herald-of-salvation',
-  description: `@[level] 3+@ : @On Enter@: The next time a allied minion is destroyed, send it to your Destiny zone.`,
+  description: `@[level] 3+@ : @On Enter@: The next time another allied minion is destroyed, send it to your Destiny zone.`,
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -42,6 +42,8 @@ export const heraldOfSalvation: MinionBlueprint = {
         const unsub = game.on(GAME_EVENTS.CARD_AFTER_DESTROY, ({ data }) => {
           if (!data.card.player.equals(card.player)) return;
           if (!isMinion(data.card)) return;
+          if (!data.card.equals(card)) return;
+
           unsub();
           card.sendToDestinyZone();
         });

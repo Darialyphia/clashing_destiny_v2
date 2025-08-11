@@ -246,7 +246,7 @@ export const KEYWORDS = {
     id: 'trap',
     name: 'Trap',
     description:
-      'If the condition is met while this card is in your Destiny zone, it is played for free. This card is sent to the discard pile instead of being recollected at the end of your Destiny Phase.',
+      'This card is not recollected after your Destiny Phase and is sent to the discard pile instead. If the condition is met while this card is in your Destiny zone, it is played for free.',
     aliases: []
   },
   MILL: {

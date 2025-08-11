@@ -25,7 +25,11 @@ export class DestinyPhase implements GamePhaseController, Serializable<EmptyObje
 
     for (const card of cards) {
       await card.removeFromCurrentLocation();
-      await card.player.cardManager.addToHand(card);
+      if (card.canBeRecollected) {
+        await card.player.cardManager.addToHand(card);
+      } else {
+        await card.player.cardManager.sendToDiscardPile(card);
+      }
     }
   }
 
