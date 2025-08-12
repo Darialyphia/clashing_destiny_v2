@@ -5,10 +5,11 @@ import { RngSystem } from '../rng/rng.system';
 import { TypedSerializableEventEmitter } from '../utils/typed-emitter';
 import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/shared';
 import {
-  GameSnaphotSystem,
+  GameSnapshotSystem,
   type GameStateSnapshot,
   type SerializedOmniscientState,
-  type SerializedPlayerState
+  type SerializedPlayerState,
+  type SnapshotDiff
 } from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';
 import { GAME_EVENTS, GameReadyEvent, type GameEventMap } from './game.events';
@@ -51,7 +52,7 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly inputSystem = new InputSystem(this);
 
-  readonly snapshotSystem = new GameSnaphotSystem(this);
+  readonly snapshotSystem = new GameSnapshotSystem(this);
 
   readonly playerSystem = new PlayerSystem(this);
 
@@ -173,20 +174,18 @@ export class Game implements Serializable<SerializedGame> {
     return this.emitter.off.bind(this.emitter);
   }
 
-  subscribeOmniscient(
-    cb: (snapshot: GameStateSnapshot<SerializedOmniscientState>) => void
-  ) {
+  subscribeOmniscient(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
     this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
-      cb(this.snapshotSystem.getLatestOmniscientSnapshot())
+      cb(this.snapshotSystem.getLatestOmniscientDiffSnapshot())
     );
   }
 
   subscribeForPlayer(
     id: string,
-    cb: (snapshot: GameStateSnapshot<SerializedPlayerState>) => void
+    cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void
   ) {
     this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
-      cb(this.snapshotSystem.getLatestSnapshotForPlayer(id))
+      cb(this.snapshotSystem.getLatestDiffSnapshotForPlayer(id))
     );
   }
 

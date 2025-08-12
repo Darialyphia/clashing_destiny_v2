@@ -3,7 +3,8 @@ import type { InputDispatcher } from '../input/input-system';
 import type {
   GameStateSnapshot,
   SerializedOmniscientState,
-  SerializedPlayerState
+  SerializedPlayerState,
+  SnapshotDiff
 } from '../game/systems/game-snapshot.system';
 import { ModifierViewModel } from './view-models/modifier.model';
 import { CardViewModel } from './view-models/card.model';
@@ -34,17 +35,13 @@ export type GameStateEntities = Record<
 >;
 
 export type OnSnapshotUpdateCallback = (
-  snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  snapshot: GameStateSnapshot<SnapshotDiff>
 ) => MaybePromise<void>;
 
 export type NetworkAdapter = {
   dispatch: InputDispatcher;
   subscribe(cb: OnSnapshotUpdateCallback): void;
-  sync: (
-    lastSnapshotId: number
-  ) => Promise<
-    Array<GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>>
-  >;
+  sync: (lastSnapshotId: number) => Promise<Array<GameStateSnapshot<SnapshotDiff>>>;
 };
 
 export type FxAdapter = {
@@ -86,10 +83,7 @@ export class GameClient {
 
   private lastSnapshotId = -1;
 
-  private snapshots = new Map<
-    number,
-    GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
-  >();
+  private snapshots = new Map<number, GameStateSnapshot<SnapshotDiff>>();
 
   private _isPlayingFx = false;
 
@@ -97,13 +91,11 @@ export class GameClient {
 
   private _processingUpdate = false;
 
-  private queue: Array<
-    GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
-  > = [];
+  private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
 
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
-    updateCompleted: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>;
+    updateCompleted: GameStateSnapshot<SnapshotDiff>;
   }>('sequential');
 
   constructor(options: GameClientOptions) {
@@ -160,9 +152,7 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerIdFromSnapshotState(
-    snapshot: SerializedOmniscientState | SerializedPlayerState
-  ) {
+  getActivePlayerIdFromSnapshotState(snapshot: SnapshotDiff) {
     if (snapshot.effectChain) {
       return snapshot.effectChain.player;
     }
@@ -216,9 +206,7 @@ export class GameClient {
     this.queue = [];
     await this.sync();
   }
-  async update(
-    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
-  ) {
+  async update(snapshot: GameStateSnapshot<SnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
@@ -270,11 +258,7 @@ export class GameClient {
     return () => this.emitter.off('update', cb);
   }
 
-  onUpdateCompleted(
-    cb: (
-      snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
-    ) => void
-  ) {
+  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
     this.emitter.on('updateCompleted', cb);
     return () => this.emitter.off('updateCompleted', cb);
   }

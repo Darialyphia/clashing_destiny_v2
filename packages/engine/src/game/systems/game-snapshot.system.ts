@@ -18,6 +18,8 @@ import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
 import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.events';
 import type { SerializedEffectChain } from '../effect-chain';
+import type { AnyObject } from '@game/shared';
+import { areArraysIdentical } from '../../utils/utils';
 
 export type GameStateSnapshot<T> = {
   id: number;
@@ -35,6 +37,15 @@ export type EntityDictionary = Record<
   | SerializedModifier
 >;
 
+export type EntityDiffDictionary = Record<
+  string,
+  | Partial<SerializedMinionCard>
+  | Partial<SerializedSpellCard>
+  | Partial<SerializedArtifactCard>
+  | Partial<SerializedPlayer>
+  | Partial<SerializedModifier>
+>;
+
 export type SerializedOmniscientState = {
   config: Config;
   entities: EntityDictionary;
@@ -47,9 +58,23 @@ export type SerializedOmniscientState = {
   effectChain: SerializedEffectChain | null;
 };
 
+export type SnapshotDiff = {
+  config: Partial<Config>;
+  entities: EntityDiffDictionary;
+  addedEntities: string[];
+  removedEntities: string[];
+  phase: SerializedGamePhaseContext;
+  interaction: SerializedInteractionContext;
+  board: SerializedBoard;
+  turnCount: number;
+  currentPlayer: string;
+  players: string[];
+  effectChain: SerializedEffectChain | null;
+};
+
 export type SerializedPlayerState = SerializedOmniscientState;
 
-export class GameSnaphotSystem extends System<{ enabled: boolean }> {
+export class GameSnapshotSystem extends System<{ enabled: boolean }> {
   private isEnabled = true;
 
   private playerCaches: Record<string, GameStateSnapshot<SerializedPlayerState>[]> = {
@@ -60,6 +85,57 @@ export class GameSnaphotSystem extends System<{ enabled: boolean }> {
   private eventsSinceLastSnapshot: GameStarEvent[] = [];
 
   private nextId = 0;
+
+  private getObjectDiff<T extends AnyObject>(obj: T, prevObj: T | undefined): Partial<T> {
+    if (!prevObj) return { ...obj };
+    const result: Partial<T> = {};
+    for (const key in obj) {
+      if (Array.isArray(obj[key]) && Array.isArray(prevObj[key])) {
+        if (!areArraysIdentical(obj[key], prevObj[key])) {
+          result[key] = obj[key];
+        }
+      } else if (obj[key] !== prevObj[key]) {
+        result[key] = obj[key];
+      }
+    }
+    for (const key in prevObj) {
+      if (!(key in obj)) {
+        result[key] = undefined;
+      }
+    }
+    return result;
+  }
+
+  private diffSnapshots(
+    state: SerializedOmniscientState,
+    prevState: SerializedOmniscientState
+  ): SnapshotDiff {
+    const entities: EntityDiffDictionary = {};
+    for (const [key, entity] of Object.entries(state.entities)) {
+      const diff = this.getObjectDiff(entity, prevState.entities[key]);
+      if (Object.keys(diff).length > 0) {
+        entities[key] = diff;
+      }
+    }
+    console.log(entities);
+    return {
+      config: this.getObjectDiff(state.config, prevState.config),
+      entities,
+      removedEntities: Object.keys(prevState.entities).filter(
+        key => !(key in state.entities)
+      ),
+      addedEntities: Object.keys(state.entities).filter(
+        key => !(key in prevState.entities)
+      ),
+      phase: state.phase,
+      interaction: state.interaction,
+      board: state.board,
+      turnCount: state.turnCount - prevState.turnCount,
+      currentPlayer: state.currentPlayer,
+      players: state.players,
+      effectChain: state.effectChain
+    };
+  }
 
   initialize({ enabled }: { enabled: boolean }): void {
     this.isEnabled = enabled;
@@ -80,7 +156,6 @@ export class GameSnaphotSystem extends System<{ enabled: boolean }> {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   shutdown() {}
 
   getOmniscientSnapshotAt(index: number): GameStateSnapshot<SerializedOmniscientState> {
@@ -108,8 +183,48 @@ export class GameSnaphotSystem extends System<{ enabled: boolean }> {
     return this.getOmniscientSnapshotAt(this.nextId - 1);
   }
 
+  getLatestOmniscientDiffSnapshot(): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.getLatestOmniscientSnapshot();
+    if (this.nextId < 2) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(this.nextId - 2);
+
+    return {
+      ...latestSnapshot,
+      state: this.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
+  }
+
   getLatestSnapshotForPlayer(playerId: string): GameStateSnapshot<SerializedPlayerState> {
     return this.geSnapshotForPlayerAt(playerId, this.nextId - 1);
+  }
+
+  getLatestDiffSnapshotForPlayer(playerId: string): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.getLatestSnapshotForPlayer(playerId);
+    if (this.nextId < 2) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(this.nextId - 2);
+
+    return {
+      ...latestSnapshot,
+      state: this.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
   }
 
   private buildEntityDictionary(): EntityDictionary {

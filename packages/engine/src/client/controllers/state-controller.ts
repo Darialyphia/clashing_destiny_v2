@@ -2,7 +2,8 @@ import type { Override } from '@game/shared';
 import type {
   EntityDictionary,
   SerializedOmniscientState,
-  SerializedPlayerState
+  SerializedPlayerState,
+  SnapshotDiff
 } from '../../game/systems/game-snapshot.system';
 import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
@@ -29,6 +30,14 @@ export type GameClientState = Override<
   }
 >;
 
+export type SerializedEntity =
+  | SerializedMinionCard
+  | SerializedHeroCard
+  | SerializedSpellCard
+  | SerializedArtifactCard
+  | SerializedPlayer
+  | SerializedModifier;
+
 export class ClientStateController {
   state!: GameClientState;
 
@@ -42,15 +51,7 @@ export class ClientStateController {
     this.state.entities = this.buildentities(initialState.entities);
   }
 
-  private buildViewModel(
-    entity:
-      | SerializedMinionCard
-      | SerializedHeroCard
-      | SerializedSpellCard
-      | SerializedArtifactCard
-      | SerializedPlayer
-      | SerializedModifier
-  ) {
+  private buildViewModel(entity: SerializedEntity) {
     const dict: GameClientState['entities'] = this.state?.entities ?? {};
 
     return match(entity)
@@ -78,21 +79,33 @@ export class ClientStateController {
   };
 
   // prepopulate the state with new entities because they could be used by the fx events
-  preupdate(newState: SerializedPlayerState | SerializedOmniscientState) {
+  preupdate(newState: SnapshotDiff) {
     if (!this.state) return;
 
-    for (const [id, entity] of Object.entries(newState.entities)) {
-      const existingEntity = this.state.entities[id];
-      if (existingEntity) continue;
-      this.state.entities[entity.id] = this.buildViewModel(entity);
+    for (const id of newState.addedEntities) {
+      const entity = newState.entities[id];
+
+      this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
     }
   }
 
-  update(newState: SerializedPlayerState | SerializedOmniscientState): void {
-    this.state = {
-      ...newState,
-      entities: this.buildentities(newState.entities)
-    };
+  update(newState: SnapshotDiff): void {
+    const { entities, config, addedEntities, removedEntities, ...rest } = newState;
+    for (const [id, entity] of Object.entries(entities)) {
+      if (this.state.entities[id]) {
+        this.state.entities[id] = this.state.entities[id].update(entity as any).clone();
+      } else {
+        this.state.entities[id] = this.buildViewModel(entity as any);
+      }
+    }
+
+    removedEntities.forEach(id => {
+      delete this.state.entities[id];
+    });
+
+    Object.assign(this.state.config, config);
+    Object.assign(this.state, rest);
+    this.state = { ...this.state };
   }
 
   async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {

@@ -70,7 +70,7 @@ export type SerializedCard = {
   canPlay: boolean;
   source: CardDeckSource;
   location: CardLocation | null;
-  keywords: Array<{ id: string; name: string; description: string }>;
+  // keywords: Array<{ id: string; name: string; description: string }>;
   affinity: Affinity;
   hasAffinityMatch: boolean;
   modifiers: string[];
@@ -342,12 +342,12 @@ export abstract class Card<
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
-      hasAffinityMatch: this.hasAffinityMatch,
-      keywords: this.keywords.map(keyword => ({
-        id: keyword.id,
-        name: keyword.name,
-        description: keyword.description
-      }))
+      hasAffinityMatch: this.hasAffinityMatch
+      // keywords: this.keywords.map(keyword => ({
+      //   id: keyword.id,
+      //   name: keyword.name,
+      //   description: keyword.description
+      // }))
     };
   }
 

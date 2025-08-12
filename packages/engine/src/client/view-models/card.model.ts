@@ -58,7 +58,12 @@ export class CardViewModel {
   }
 
   update<T extends CardKind>(data: Partial<CardData & { kind: T }>) {
-    Object.assign(this.data, data);
+    this.data = Object.assign({}, this.data, data);
+    return this;
+  }
+
+  clone() {
+    return new CardViewModel(this.data, this.getEntities(), this.getClient());
   }
 
   get id() {
