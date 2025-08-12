@@ -4,7 +4,7 @@ import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
-  type Ability,
+  type AbilityBlueprint,
   type DestinyBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -33,7 +33,10 @@ export type SerializedDestinyCard = SerializedCard & {
 };
 export type DestinyCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, DestinyCard>;
-  abilities: Interceptable<Ability<DestinyCard, PreResponseTarget>[], DestinyCard>;
+  abilities: Interceptable<
+    AbilityBlueprint<DestinyCard, PreResponseTarget>[],
+    DestinyCard
+  >;
 };
 
 export const DESTINY_EVENTS = {
@@ -115,7 +118,7 @@ export class DestinyCard extends Card<
     );
   }
 
-  get abilities(): Ability<DestinyCard, PreResponseTarget>[] {
+  get abilities(): AbilityBlueprint<DestinyCard, PreResponseTarget>[] {
     return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }
 

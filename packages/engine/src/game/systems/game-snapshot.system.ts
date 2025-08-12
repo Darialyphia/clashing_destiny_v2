@@ -117,7 +117,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         entities[key] = diff;
       }
     }
-    console.log(entities);
     return {
       config: this.getObjectDiff(state.config, prevState.config),
       entities,

@@ -38,7 +38,7 @@ export type MainDeckCardBlueprint = CardBlueprintBase & {
   deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
 };
 
-export type Ability<TCard extends AnyCard, TTarget extends PreResponseTarget> = {
+export type AbilityBlueprint<TCard extends AnyCard, TTarget extends PreResponseTarget> = {
   id: string;
   manaCost: number;
   shouldExhaust: boolean;
@@ -49,7 +49,7 @@ export type Ability<TCard extends AnyCard, TTarget extends PreResponseTarget> = 
   onResolve(game: Game, card: TCard, targets: TTarget[]): void;
 };
 
-export type AnyAbility = Ability<AnyCard, PreResponseTarget>;
+export type AnyAbility = AbilityBlueprint<AnyCard, PreResponseTarget>;
 
 export type SerializedAbility = {
   id: string;
@@ -95,7 +95,7 @@ export type MinionBlueprint = MainDeckCardBlueprint & {
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
   atk: number;
   maxHp: number;
-  abilities: Ability<MinionCard, PreResponseTarget>[];
+  abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
 };
 export type SpellBlueprint = MainDeckCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
@@ -115,7 +115,7 @@ export type HeroBlueprint = CardBlueprintBase & {
   maxHp: number;
   spellPower: number;
   affinities: Affinity[];
-  abilities: Ability<HeroCard, PreResponseTarget>[];
+  abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
 };
 
 export type DestinyBlueprint = CardBlueprintBase & {
@@ -127,7 +127,7 @@ export type DestinyBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard) => Promise<void>;
   affinity: Affinity;
-  abilities: Ability<DestinyCard, PreResponseTarget>[];
+  abilities: AbilityBlueprint<DestinyCard, PreResponseTarget>[];
 };
 
 export type ArtifactBlueprint = MainDeckCardBlueprint & {
@@ -135,7 +135,7 @@ export type ArtifactBlueprint = MainDeckCardBlueprint & {
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
-  abilities: Ability<ArtifactCard, PreResponseTarget>[];
+  abilities: AbilityBlueprint<ArtifactCard, PreResponseTarget>[];
   durability: number;
 } & (
     | {

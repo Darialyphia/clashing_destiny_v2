@@ -7,7 +7,7 @@ import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
-  type Ability,
+  type AbilityBlueprint,
   type HeroBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -49,13 +49,13 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<
     boolean,
-    { card: HeroCard; ability: Ability<HeroCard, any> }
+    { card: HeroCard; ability: AbilityBlueprint<HeroCard, any> }
   >;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
-  abilities: Interceptable<Ability<HeroCard, PreResponseTarget>[], HeroCard>;
+  abilities: Interceptable<AbilityBlueprint<HeroCard, PreResponseTarget>[], HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -175,7 +175,7 @@ export type HeroCardEventMap = {
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
   private damageTaken = 0;
 
-  private abilityTargets = new Map<string, PreResponseTarget[]>();
+  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
   unlockedAffinity!: Affinity;
 
@@ -259,7 +259,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
   }
 
-  get abilities(): Ability<HeroCard, PreResponseTarget>[] {
+  get abilities(): AbilityBlueprint<HeroCard, PreResponseTarget>[] {
     return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }
 

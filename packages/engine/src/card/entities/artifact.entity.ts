@@ -3,13 +3,7 @@ import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  serializePreResponseTarget,
-  type Ability,
-  type ArtifactBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
+import { type ArtifactBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import {
   CardBeforePlayEvent,
@@ -26,6 +20,7 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { Ability } from './ability.entity';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -33,18 +28,18 @@ export type SerializedArtifactCard = SerializedCard & {
   subKind: ArtifactKind;
   manaCost: number;
   baseManaCost: number;
-  abilities: SerializedAbility[];
+  abilities: string[];
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
   canUseAbility: Interceptable<
     boolean,
-    { card: ArtifactCard; ability: Ability<ArtifactCard, PreResponseTarget> }
+    { card: ArtifactCard; ability: Ability<ArtifactCard> }
   >;
   durability: Interceptable<number, ArtifactCard>;
   attackBonus: Interceptable<number, ArtifactCard>;
-  abilities: Interceptable<Ability<ArtifactCard, PreResponseTarget>[], ArtifactCard>;
+  abilities: Interceptable<Ability<ArtifactCard>[], ArtifactCard>;
 };
 
 export const ARTIFACT_EVENTS = {
@@ -111,7 +106,7 @@ export class ArtifactCard extends Card<
 > {
   private lostDurability = 0;
 
-  private abilityTargets = new Map<string, PreResponseTarget[]>();
+  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
   constructor(game: Game, player: Player, options: CardOptions<ArtifactBlueprint>) {
     super(
@@ -184,12 +179,17 @@ export class ArtifactCard extends Card<
     );
   }
 
-  get abilities(): Ability<ArtifactCard, PreResponseTarget>[] {
-    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
+  get abilities(): Ability<ArtifactCard>[] {
+    return this.interceptors.abilities.getValue(
+      this.blueprint.abilities.map(
+        ability => new Ability<ArtifactCard>(this.game, this, ability)
+      ),
+      this
+    );
   }
 
   canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return false;
 
     const authorizedPhases: GamePhase[] = [
@@ -209,7 +209,7 @@ export class ArtifactCard extends Card<
         authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
         timingCondition &&
         exhaustCondition &&
-        ability.canUse(this.game, this),
+        ability.canUse,
       { card: this, ability }
     );
   }
@@ -230,44 +230,10 @@ export class ArtifactCard extends Card<
   }
 
   async useAbility(id: string) {
-    const ability = this.blueprint.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return;
 
-    await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_BEFORE_USE_ABILITY,
-      new ArtifactUsedAbilityEvent({ card: this, abilityId: id })
-    );
-    const targets = await ability.getPreResponseTargets(this.game, this);
-    this.abilityTargets.set(id, targets);
-
-    if (ability.shouldExhaust) {
-      await this.exhaust();
-    }
-
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        const abilityTargets = this.abilityTargets.get(id)!;
-        await ability.onResolve(this.game, this, abilityTargets);
-        abilityTargets.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        this.abilityTargets.delete(id);
-        await this.game.emit(
-          ARTIFACT_EVENTS.ARTIFACT_AFTER_USE_ABILITY,
-          new ArtifactUsedAbilityEvent({ card: this, abilityId: id })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
+    return await ability.use();
   }
 
   canPlay() {
@@ -315,14 +281,7 @@ export class ArtifactCard extends Card<
       subKind: this.subkind,
       manaCost: this.manaCost,
       baseManaCost: this.blueprint.manaCost,
-      abilities: this.blueprint.abilities.map(ability => ({
-        id: ability.id,
-        canUse: this.canUseAbility(ability.id),
-        name: ability.label,
-        description: ability.description,
-        targets:
-          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+      abilities: this.abilities.map(a => a.id)
     };
   }
 }

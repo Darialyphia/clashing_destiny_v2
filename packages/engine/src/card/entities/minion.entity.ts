@@ -6,7 +6,7 @@ import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializePreResponseTarget,
-  type Ability,
+  type AbilityBlueprint,
   type MinionBlueprint,
   type PreResponseTarget,
   type SerializedAbility
@@ -57,13 +57,13 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canUseAbility: Interceptable<
     boolean,
-    { card: MinionCard; ability: Ability<MinionCard, PreResponseTarget> }
+    { card: MinionCard; ability: AbilityBlueprint<MinionCard, PreResponseTarget> }
   >;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
-  abilities: Interceptable<Ability<MinionCard, PreResponseTarget>[], MinionCard>;
+  abilities: Interceptable<AbilityBlueprint<MinionCard, PreResponseTarget>[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -281,7 +281,7 @@ export class MinionCard extends Card<
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
   }
 
-  get abilities(): Ability<MinionCard, PreResponseTarget>[] {
+  get abilities(): AbilityBlueprint<MinionCard, PreResponseTarget>[] {
     return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
   }
 
