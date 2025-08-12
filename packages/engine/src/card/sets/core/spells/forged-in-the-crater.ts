@@ -13,7 +13,8 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import { ARTIFACT_EVENTS } from '../../../entities/artifact.entity';
+import { ABILITY_EVENTS } from '../../../entities/ability.entity';
+import { ArtifactCard } from '../../../entities/artifact.entity';
 import { HeroCard } from '../../../entities/hero.entity';
 
 export const forgedInTheCrater: SpellBlueprint = {
@@ -51,8 +52,9 @@ export const forgedInTheCrater: SpellBlueprint = {
             }
           }),
           new GameEventModifierMixin(game, {
-            eventName: ARTIFACT_EVENTS.ARTIFACT_AFTER_USE_ABILITY,
+            eventName: ABILITY_EVENTS.ABILITY_AFTER_USE,
             async handler(event) {
+              if (!(event.data.card instanceof ArtifactCard)) return;
               if (!event.data.card.player.equals(card.player)) return;
               if (event.data.card.subkind !== ARTIFACT_KINDS.WEAPON) return;
               stacks++;

@@ -24,19 +24,16 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { type GamePhase, GAME_PHASES } from '../../game/game.enums';
+import { Ability } from './ability.entity';
 
 export type SerializedDestinyCard = SerializedCard & {
   minLevel: number;
   destinyCost: number;
-  abilities: SerializedAbility[];
+  abilities: string[];
 };
 export type DestinyCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, DestinyCard>;
-  abilities: Interceptable<
-    AbilityBlueprint<DestinyCard, PreResponseTarget>[],
-    DestinyCard
-  >;
+  abilities: Interceptable<Ability<DestinyCard>[], DestinyCard>;
 };
 
 export const DESTINY_EVENTS = {
@@ -118,10 +115,14 @@ export class DestinyCard extends Card<
     );
   }
 
-  get abilities(): AbilityBlueprint<DestinyCard, PreResponseTarget>[] {
-    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
+  get abilities(): Ability<DestinyCard>[] {
+    return this.interceptors.abilities.getValue(
+      this.blueprint.abilities.map(
+        ability => new Ability<DestinyCard>(this.game, this, ability)
+      ),
+      this
+    );
   }
-
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
     const targets = this.abilityTargets.get(abilityId);
     if (!targets) return;
@@ -138,69 +139,17 @@ export class DestinyCard extends Card<
   }
 
   canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return false;
 
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
-
-    const timingCondition = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
-
-    return (
-      this.player.cardManager.hand.length >= ability.manaCost &&
-      authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-      timingCondition &&
-      exhaustCondition &&
-      ability.canUse(this.game, this)
-    );
+    return ability.canUse;
   }
 
   async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return;
 
-    await this.game.emit(
-      DESTINY_EVENTS.DESTINY_BEFORE_USE_ABILITY,
-      new DestinyUsedAbilityEvent({ card: this, abilityId: id })
-    );
-    const targets = await ability.getPreResponseTargets(this.game, this);
-    this.abilityTargets.set(id, targets);
-
-    if (ability.shouldExhaust) {
-      await this.exhaust();
-    }
-
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        const abilityTargets = this.abilityTargets.get(id)!;
-        await ability.onResolve(this.game, this, abilityTargets);
-        abilityTargets.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        this.abilityTargets.delete(id);
-        await this.game.emit(
-          DESTINY_EVENTS.DESTINY_AFTER_USE_ABILITY,
-          new DestinyUsedAbilityEvent({ card: this, abilityId: id })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
+    return await ability.use();
   }
 
   serialize(): SerializedDestinyCard {
@@ -208,14 +157,7 @@ export class DestinyCard extends Card<
       ...this.serializeBase(),
       minLevel: this.minLevel,
       destinyCost: this.destinyCost,
-      abilities: this.abilities.map(ability => ({
-        id: ability.id,
-        canUse: this.canUseAbility(ability.id),
-        name: ability.label,
-        description: ability.description,
-        targets:
-          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+      abilities: this.abilities.map(ability => ability.id)
     };
   }
 }

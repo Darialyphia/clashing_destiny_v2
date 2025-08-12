@@ -43,8 +43,6 @@ export type ArtifactCardInterceptors = CardInterceptors & {
 };
 
 export const ARTIFACT_EVENTS = {
-  ARTIFACT_BEFORE_USE_ABILITY: 'artifact.before-use-ability',
-  ARTIFACT_AFTER_USE_ABILITY: 'artifact.after-use-ability',
   ARTIFACT_BEFORE_LOSE_DURABILITY: 'artifact.lose-durability',
   ARTIFACT_AFTER_LOSE_DURABILITY: 'artifact.after-lose-durability',
   ARTIFACT_BEFORE_GAIN_DURABILITY: 'artifact.gain-durability',
@@ -53,18 +51,6 @@ export const ARTIFACT_EVENTS = {
 } as const;
 
 export type ArtifactEvents = Values<typeof ARTIFACT_EVENTS>;
-
-export class ArtifactUsedAbilityEvent extends TypedSerializableEvent<
-  { card: ArtifactCard; abilityId: string },
-  { card: SerializedArtifactCard; abilityId: string }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      abilityId: this.data.abilityId
-    };
-  }
-}
 
 export class ArtifactDurabilityEvent extends TypedSerializableEvent<
   { card: ArtifactCard; amount: number },
@@ -90,8 +76,6 @@ export class ArtifactEquipedEvent extends TypedSerializableEvent<
 }
 
 export type ArtifactCardEventMap = {
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_USE_ABILITY]: ArtifactUsedAbilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_USE_ABILITY]: ArtifactUsedAbilityEvent;
   [ARTIFACT_EVENTS.ARTIFACT_BEFORE_LOSE_DURABILITY]: ArtifactDurabilityEvent;
   [ARTIFACT_EVENTS.ARTIFACT_AFTER_LOSE_DURABILITY]: ArtifactDurabilityEvent;
   [ARTIFACT_EVENTS.ARTIFACT_BEFORE_GAIN_DURABILITY]: ArtifactDurabilityEvent;
@@ -192,26 +176,10 @@ export class ArtifactCard extends Card<
     const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return false;
 
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
-
-    const timingCondition = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
-
-    return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost &&
-        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        timingCondition &&
-        exhaustCondition &&
-        ability.canUse,
-      { card: this, ability }
-    );
+    return this.interceptors.canUseAbility.getValue(ability.canUse, {
+      card: this,
+      ability
+    });
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {

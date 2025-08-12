@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type {
-  Ability,
+  AbilityBlueprint,
   CardBlueprint
 } from '@game/engine/src/card/card-blueprint';
 import Card from './Card.vue';
@@ -27,7 +27,7 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       level: (blueprint as any).minLevel,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(
-        (a: Ability<any, any>) => a.description
+        (a: AbilityBlueprint<any, any>) => a.description
       ),
       subKind: (blueprint as any).subKind
     }"

@@ -1,5 +1,5 @@
-import type { SerializedAbility } from '../../card/card-blueprint';
 import type { GameClient } from '../client';
+import type { AbilityViewModel } from '../view-models/ability.model';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
 export class UseAbilityAction implements CardActionRule {
@@ -7,7 +7,7 @@ export class UseAbilityAction implements CardActionRule {
 
   constructor(
     private client: GameClient,
-    private ability: SerializedAbility
+    private ability: AbilityViewModel
   ) {}
 
   predicate() {
@@ -22,7 +22,7 @@ export class UseAbilityAction implements CardActionRule {
     this.client.networkAdapter.dispatch({
       type: 'useCardAbility',
       payload: {
-        abilityId: this.ability.id,
+        abilityId: this.ability.abilityId,
         cardId: card.id,
         playerId: this.client.playerId
       }

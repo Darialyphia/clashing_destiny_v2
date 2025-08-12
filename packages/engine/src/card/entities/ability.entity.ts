@@ -13,8 +13,51 @@ import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
+import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
-export class Ability<T extends MinionCard | HeroCard | ArtifactCard | DestinyCard>
+export const ABILITY_EVENTS = {
+  ABILITY_BEFORE_USE: 'ability.before-use',
+  ABILITY_AFTER_USE: 'ability.after-use'
+} as const;
+
+export class AbilityBeforeUseEvent extends TypedSerializableEvent<
+  { card: MinionCard | HeroCard | ArtifactCard | DestinyCard; abilityId: string },
+  {
+    card: string;
+    abilityId: string;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      abilityId: this.data.abilityId
+    };
+  }
+}
+
+export class AbilityAfterUseEvent extends TypedSerializableEvent<
+  { card: MinionCard | HeroCard | ArtifactCard | DestinyCard; abilityId: string },
+  {
+    card: string;
+    abilityId: string;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      abilityId: this.data.abilityId
+    };
+  }
+}
+
+export type AbilityEventMap = {
+  [ABILITY_EVENTS.ABILITY_BEFORE_USE]: AbilityBeforeUseEvent;
+  [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
+};
+
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | DestinyCard;
+
+export class Ability<T extends AbilityOwner>
   extends Entity<EmptyObject>
   implements Serializable<SerializedAbility>
 {
@@ -64,6 +107,11 @@ export class Ability<T extends MinionCard | HeroCard | ArtifactCard | DestinyCar
     const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
     this.card.abilityTargets.set(this.blueprint.id, targets);
 
+    await this.game.emit(
+      ABILITY_EVENTS.ABILITY_BEFORE_USE,
+      new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
+    );
+
     if (this.shouldExhaust) {
       await this.card.exhaust();
     }
@@ -80,6 +128,11 @@ export class Ability<T extends MinionCard | HeroCard | ArtifactCard | DestinyCar
           }
         });
         this.card.abilityTargets.delete(this.blueprint.id);
+
+        await this.game.emit(
+          ABILITY_EVENTS.ABILITY_AFTER_USE,
+          new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
+        );
       }
     };
 
@@ -93,6 +146,8 @@ export class Ability<T extends MinionCard | HeroCard | ArtifactCard | DestinyCar
   serialize(): SerializedAbility {
     return {
       id: this.id,
+      entityType: 'ability',
+      abilityId: this.abilityId,
       canUse: this.canUse,
       description: this.blueprint.description,
       name: this.blueprint.label,

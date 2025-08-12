@@ -160,7 +160,7 @@ const spriteUrl = computed(() => {
           durability: card.durability,
           subKind: card.subKind,
           uinlockableAffinities: card.unlockableAffinities,
-          abilities: card.abilities.map(ability => ability.description)
+          abilities: card.getAbilities().map(ability => ability.description)
         }"
         class="card"
         :class="{

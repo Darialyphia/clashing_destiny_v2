@@ -17,10 +17,12 @@ import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
+import type { SerializedAbility } from '../../card/card-blueprint';
+import { AbilityViewModel } from '../view-models/ability.model';
 
 export type GameStateEntities = Record<
   string,
-  PlayerViewModel | CardViewModel | ModifierViewModel
+  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
 >;
 
 export type GameClientState = Override<
@@ -36,7 +38,8 @@ export type SerializedEntity =
   | SerializedSpellCard
   | SerializedArtifactCard
   | SerializedPlayer
-  | SerializedModifier;
+  | SerializedModifier
+  | SerializedAbility;
 
 export class ClientStateController {
   state!: GameClientState;
@@ -66,6 +69,10 @@ export class ClientStateController {
       .with(
         { entityType: 'modifier' },
         entity => new ModifierViewModel(entity, dict, this.client)
+      )
+      .with(
+        { entityType: 'ability' },
+        entity => new AbilityViewModel(entity, dict, this.client)
       )
       .exhaustive();
   }
@@ -105,7 +112,6 @@ export class ClientStateController {
 
     Object.assign(this.state.config, config);
     Object.assign(this.state, rest);
-    this.state = { ...this.state };
   }
 
   async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {

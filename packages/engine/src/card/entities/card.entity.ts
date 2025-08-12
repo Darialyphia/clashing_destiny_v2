@@ -72,7 +72,6 @@ export type SerializedCard = {
   location: CardLocation | null;
   // keywords: Array<{ id: string; name: string; description: string }>;
   affinity: Affinity;
-  hasAffinityMatch: boolean;
   modifiers: string[];
 };
 
@@ -341,8 +340,7 @@ export abstract class Card<
       location: this.location ?? null,
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
-        .map(modifier => modifier.id),
-      hasAffinityMatch: this.hasAffinityMatch
+        .map(modifier => modifier.id)
       // keywords: this.keywords.map(keyword => ({
       //   id: keyword.id,
       //   name: keyword.name,

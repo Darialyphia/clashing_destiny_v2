@@ -53,6 +53,8 @@ export type AnyAbility = AbilityBlueprint<AnyCard, PreResponseTarget>;
 
 export type SerializedAbility = {
   id: string;
+  entityType: 'ability';
+  abilityId: string;
   canUse: boolean;
   name: string;
   description: string;

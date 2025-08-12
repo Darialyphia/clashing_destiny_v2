@@ -4,13 +4,7 @@ import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.
 import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  serializePreResponseTarget,
-  type AbilityBlueprint,
-  type MinionBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
+import { type MinionBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
 import {
   CardAfterPlayEvent,
@@ -27,12 +21,13 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
 import type {
   BoardMinionSlot,
   SerializedBoardMinionSlot
 } from '../../board/board-minion-slot.entity';
+import { Ability } from './ability.entity';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -44,7 +39,7 @@ export type SerializedMinionCard = SerializedCard & {
   affinity: Affinity;
   manaCost: number;
   baseManaCost: number;
-  abilities: SerializedAbility[];
+  abilities: string[];
   position: Pick<MinionPosition, 'zone' | 'slot'> | null;
 };
 export type MinionCardInterceptors = CardInterceptors & {
@@ -57,13 +52,13 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canUseAbility: Interceptable<
     boolean,
-    { card: MinionCard; ability: AbilityBlueprint<MinionCard, PreResponseTarget> }
+    { card: MinionCard; ability: Ability<MinionCard> }
   >;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
-  abilities: Interceptable<AbilityBlueprint<MinionCard, PreResponseTarget>[], MinionCard>;
+  abilities: Interceptable<Ability<MinionCard>[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -281,8 +276,13 @@ export class MinionCard extends Card<
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
   }
 
-  get abilities(): AbilityBlueprint<MinionCard, PreResponseTarget>[] {
-    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
+  get abilities(): Ability<MinionCard>[] {
+    return this.interceptors.abilities.getValue(
+      this.blueprint.abilities.map(
+        ability => new Ability<MinionCard>(this.game, this, ability)
+      ),
+      this
+    );
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
@@ -364,70 +364,20 @@ export class MinionCard extends Card<
   }
 
   canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return false;
 
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
-
-    const timingCondition = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
-
-    return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost &&
-        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        timingCondition &&
-        exhaustCondition &&
-        ability.canUse(this.game, this),
-      { card: this, ability }
-    );
+    return this.interceptors.canUseAbility.getValue(ability.canUse, {
+      card: this,
+      ability
+    });
   }
 
   async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return;
 
-    await this.game.emit(
-      MINION_EVENTS.MINION_BEFORE_USE_ABILITY,
-      new MinionUsedAbilityEvent({ card: this, abilityId: id })
-    );
-    const targets = await ability.getPreResponseTargets(this.game, this);
-    this.abilityTargets.set(id, targets);
-
-    if (ability.shouldExhaust) {
-      await this.exhaust();
-    }
-
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        const abilityTargets = this.abilityTargets.get(id)!;
-        await ability.onResolve(this.game, this, abilityTargets);
-        abilityTargets.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        this.abilityTargets.delete(id);
-        await this.game.emit(
-          MINION_EVENTS.MINION_AFTER_USE_ABILITY,
-          new MinionUsedAbilityEvent({ card: this, abilityId: id })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
+    return await ability.use();
   }
 
   getReceivedDamage(damage: Damage) {
@@ -580,14 +530,7 @@ export class MinionCard extends Card<
       position: this.position
         ? { zone: this.position.zone, slot: this.position.slot }
         : null,
-      abilities: this.abilities.map(ability => ({
-        id: ability.id,
-        canUse: this.canUseAbility(ability.id),
-        name: ability.label,
-        description: ability.description,
-        targets:
-          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+      abilities: this.abilities.map(ability => ability.id)
     };
   }
 }

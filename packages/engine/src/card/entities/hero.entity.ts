@@ -5,13 +5,7 @@ import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.
 import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  serializePreResponseTarget,
-  type AbilityBlueprint,
-  type HeroBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
+import { type HeroBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -25,6 +19,7 @@ import {
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import type { DestinyCard } from './destiny.entity';
+import { Ability } from './ability.entity';
 
 export type SerializedHeroCard = SerializedCard & {
   level: number;
@@ -36,7 +31,7 @@ export type SerializedHeroCard = SerializedCard & {
   maxHp: number;
   baseMaxHp: number;
   remainingHp: number;
-  abilities: SerializedAbility[];
+  abilities: string[];
   unlockableAffinities: string[];
 };
 export type HeroCardInterceptors = CardInterceptors & {
@@ -47,15 +42,12 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
-  canUseAbility: Interceptable<
-    boolean,
-    { card: HeroCard; ability: AbilityBlueprint<HeroCard, any> }
-  >;
+  canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
-  abilities: Interceptable<AbilityBlueprint<HeroCard, PreResponseTarget>[], HeroCard>;
+  abilities: Interceptable<Ability<HeroCard>[], HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -67,8 +59,6 @@ export const HERO_EVENTS = {
   HERO_AFTER_DEAL_COMBAT_DAMAGE: 'hero.after-deal-combat-damage',
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
-  HERO_BEFORE_USE_ABILITY: 'hero.before-use-ability',
-  HERO_AFTER_USE_ABILITY: 'hero.after-use-ability',
   HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
   HERO_AFTER_LEVEL_UP: 'hero.after-level-up'
 } as const;
@@ -136,18 +126,6 @@ export class HeroCardHealEvent extends TypedSerializableEvent<
   }
 }
 
-export class HeroUsedAbilityEvent extends TypedSerializableEvent<
-  { card: HeroCard; abilityId: string },
-  { card: SerializedHeroCard; abilityId: string }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
 export class HeroLevelUpEvent extends TypedSerializableEvent<
   { card: HeroCard },
   { card: SerializedHeroCard }
@@ -166,8 +144,6 @@ export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE]: HeroAfterDealCombatDamageEvent;
   [HERO_EVENTS.HERO_BEFORE_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
-  [HERO_EVENTS.HERO_BEFORE_USE_ABILITY]: HeroUsedAbilityEvent;
-  [HERO_EVENTS.HERO_AFTER_USE_ABILITY]: HeroUsedAbilityEvent;
   [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;
   [HERO_EVENTS.HERO_AFTER_LEVEL_UP]: HeroLevelUpEvent;
 };
@@ -259,8 +235,13 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
   }
 
-  get abilities(): AbilityBlueprint<HeroCard, PreResponseTarget>[] {
-    return this.interceptors.abilities.getValue(this.blueprint.abilities, this);
+  get abilities(): Ability<HeroCard>[] {
+    return this.interceptors.abilities.getValue(
+      this.blueprint.abilities.map(
+        ability => new Ability<HeroCard>(this.game, this, ability)
+      ),
+      this
+    );
   }
 
   canBeTargeted(source: AnyCard) {
@@ -350,29 +331,13 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return false;
 
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    const exhaustCondition = ability.shouldExhaust ? !this.isExhausted : true;
-
-    const timingCondition = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(this.player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(this.player);
-
-    return this.interceptors.canUseAbility.getValue(
-      this.player.cardManager.hand.length >= ability.manaCost &&
-        authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        timingCondition &&
-        exhaustCondition &&
-        ability.canUse(this.game, this),
-      { card: this, ability }
-    );
+    return this.interceptors.canUseAbility.getValue(ability.canUse, {
+      card: this,
+      ability
+    });
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
@@ -389,45 +354,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       newTarget.targetBy({ type: 'ability', abilityId, card: this });
     }
   }
+
   async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.id === id);
+    const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return;
 
-    await this.game.emit(
-      HERO_EVENTS.HERO_BEFORE_USE_ABILITY,
-      new HeroUsedAbilityEvent({ card: this, abilityId: id })
-    );
-    const targets = await ability.getPreResponseTargets(this.game, this);
-    this.abilityTargets.set(id, targets);
-
-    if (ability.shouldExhaust) {
-      await this.exhaust();
-    }
-
-    const effect = {
-      source: this,
-      targets,
-      handler: async () => {
-        const abilityTargets = this.abilityTargets.get(id)!;
-        await ability.onResolve(this.game, this, abilityTargets);
-        abilityTargets.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        this.abilityTargets.delete(id);
-        await this.game.emit(
-          HERO_EVENTS.HERO_AFTER_USE_ABILITY,
-          new HeroUsedAbilityEvent({ card: this, abilityId: id })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
+    return await ability.use();
   }
 
   canPlay() {
@@ -482,14 +414,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       unlockableAffinities: this.blueprint.affinities,
-      abilities: this.abilities.map(ability => ({
-        id: ability.id,
-        canUse: this.canUseAbility(ability.id),
-        name: ability.label,
-        description: ability.description,
-        targets:
-          this.abilityTargets.get(ability.id)?.map(serializePreResponseTarget) ?? null
-      }))
+      abilities: this.abilities.map(ability => ability.id)
     };
   }
 }

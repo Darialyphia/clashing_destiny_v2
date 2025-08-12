@@ -20,6 +20,9 @@ import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.even
 import type { SerializedEffectChain } from '../effect-chain';
 import type { AnyObject } from '@game/shared';
 import { areArraysIdentical } from '../../utils/utils';
+import type { SerializedAbility } from '../../card/card-blueprint';
+import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
 
 export type GameStateSnapshot<T> = {
   id: number;
@@ -35,6 +38,7 @@ export type EntityDictionary = Record<
   | SerializedArtifactCard
   | SerializedPlayer
   | SerializedModifier
+  | SerializedAbility
 >;
 
 export type EntityDiffDictionary = Record<
@@ -44,6 +48,7 @@ export type EntityDiffDictionary = Record<
   | Partial<SerializedArtifactCard>
   | Partial<SerializedPlayer>
   | Partial<SerializedModifier>
+  | Partial<SerializedAbility>
 >;
 
 export type SerializedOmniscientState = {
@@ -233,6 +238,11 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       card.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
+      if ('abilities' in card) {
+        (card.abilities as Ability<AbilityOwner>[]).forEach(ability => {
+          entities[ability.id] = ability.serialize();
+        });
+      }
     });
     this.game.playerSystem.players.forEach(player => {
       entities[player.id] = player.serialize();

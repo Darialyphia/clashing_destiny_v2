@@ -25,6 +25,7 @@ import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
+import { AbilityViewModel } from './ability.model';
 
 type CardData =
   | SerializedSpellCard
@@ -134,18 +135,6 @@ export class CardViewModel {
 
   get location() {
     return this.data.location;
-  }
-
-  get abilities() {
-    if ('abilities' in this.data) {
-      return this.data.abilities as SerializedAbility[];
-    }
-
-    return [];
-  }
-
-  get usableAbilities() {
-    return this.abilities.filter(a => a.canUse);
   }
 
   get atk() {
@@ -341,8 +330,24 @@ export class CardViewModel {
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
-      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
+      ...this.getAbilities().map(
+        ability => new UseAbilityAction(this.getClient(), ability)
+      )
     ].filter(rule => rule.predicate(this));
     return actions;
+  }
+
+  getAbilities() {
+    if ('abilities' in this.data) {
+      return (this.data.abilities as string[]).map(
+        ability => this.getEntities()[ability] as AbilityViewModel
+      );
+    }
+
+    return [];
+  }
+
+  getUsableAbilities() {
+    return this.getAbilities().filter(ability => ability.canUse);
   }
 }

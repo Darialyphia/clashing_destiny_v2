@@ -20,7 +20,7 @@ import { GAME_PHASES } from '../game/game.enums';
 import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
 import type { Affinity } from '../card/card.enums';
-import { GAME_EVENTS } from '../game/game.events';
+import type { AbilityViewModel } from './view-models/ability.model';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -31,7 +31,7 @@ export type GameType = Values<typeof GAME_TYPES>;
 
 export type GameStateEntities = Record<
   string,
-  PlayerViewModel | CardViewModel | ModifierViewModel
+  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
 >;
 
 export type OnSnapshotUpdateCallback = (
