@@ -50,6 +50,10 @@ export class AbilityViewModel {
     return this.data.canUse;
   }
 
+  get manaCost() {
+    return this.data.manaCost;
+  }
+
   get targets() {
     return this.data.targets;
   }

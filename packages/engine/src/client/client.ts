@@ -305,6 +305,25 @@ export class GameClient {
     });
   }
 
+  commitUseAbility() {
+    this.networkAdapter.dispatch({
+      type: 'commitUseAbility',
+      payload: {
+        playerId: this.playerId,
+        manaCostIndices: this.ui.selectedManaCostIndices
+      }
+    });
+  }
+
+  cancelUseAbility() {
+    if (this.state.interaction.state !== INTERACTION_STATES.USING_ABILITY) return;
+
+    this.networkAdapter.dispatch({
+      type: 'cancelUseAbility',
+      payload: { playerId: this.state.currentPlayer }
+    });
+  }
+
   commitMinionSlotSelection() {
     this.networkAdapter.dispatch({
       type: 'commitMinionSlotSelection',

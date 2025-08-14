@@ -38,7 +38,7 @@ export const knight: HeroBlueprint = {
       label: '@[exhaust]@ : Equip an artifact',
       description:
         '@[exhaust]@ : Equip a weapon artifact from your deck that costs 1 or less. @Seal@ this ability.',
-      manaCost: 1,
+      manaCost: 0,
       shouldExhaust: true,
       async getPreResponseTargets() {
         return [];

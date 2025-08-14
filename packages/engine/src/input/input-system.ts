@@ -28,7 +28,6 @@ import { SelectMinionSlotInput } from './inputs/select-minion-slot.input';
 import { CommitMinionSlotSelectionInput } from './inputs/commit-minion-slot-selection.input';
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
-import { UseCardAbilityInput } from './inputs/use-card-ability.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
@@ -36,6 +35,9 @@ import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { ChooseAffinityInput } from './inputs/choose-affinity.input';
 import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
 import { SkipDestinyInput } from './inputs/skip-destiny.input';
+import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
+import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
+import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -64,9 +66,11 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   chooseAffinity: ChooseAffinityInput,
-  useCardAbility: UseCardAbilityInput,
   skipDestiny: SkipDestinyInput,
-  playDestinyCard: PlayDestinyCardInput
+  playDestinyCard: PlayDestinyCardInput,
+  declareUseCardAbility: DeclareUseCardAbilityInput,
+  commitUseAbility: CommitUseAbilityInput,
+  cancelUseAbility: CancelUseAbilityInput
 });
 
 type InputMap = typeof inputMap;

@@ -57,6 +57,7 @@ export type SerializedAbility = {
   abilityId: string;
   canUse: boolean;
   name: string;
+  manaCost: number;
   description: string;
   targets: SerializedPreResponseTarget[] | null;
 };

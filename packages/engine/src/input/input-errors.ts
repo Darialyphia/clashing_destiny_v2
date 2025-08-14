@@ -79,6 +79,12 @@ export class UnknownCardError extends Error {
   }
 }
 
+export class UnknownAbilityError extends Error {
+  constructor(cardId: string, abilityId: string) {
+    super(`Unknown ability id: ${abilityId} on card id: ${cardId}`);
+  }
+}
+
 export class UnknownTalentError extends InputError {
   constructor(talentId: string) {
     super(`Unknown talent id: ${talentId}`);

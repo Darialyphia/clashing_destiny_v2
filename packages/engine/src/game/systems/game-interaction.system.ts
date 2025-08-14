@@ -22,6 +22,8 @@ import { ChoosingAffinityContext } from '../interactions/choosing-affinity.inter
 import type { Affinity } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
+import { UseAbilityContext } from '../interactions/use-ability.interaction';
+import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 
 export const INTERACTION_STATES = {
   IDLE: 'idle',
@@ -29,7 +31,8 @@ export const INTERACTION_STATES = {
   CHOOSING_CARDS: 'choosing_cards',
   SELECTING_MINION_SLOT: 'selecting_minion_slot',
   CHOOSING_AFFINITY: 'choosing_affinity',
-  PLAYING_CARD: 'playing_card'
+  PLAYING_CARD: 'playing_card',
+  USING_ABILITY: 'using_ability'
 } as const;
 export type InteractionStateDict = typeof INTERACTION_STATES;
 export type InteractionState = Values<typeof INTERACTION_STATES>;
@@ -45,7 +48,10 @@ export const INTERACTION_STATE_TRANSITIONS = {
   COMMIT_CHOOSING_AFFINITY: 'commit_choosing_affinity',
   START_PLAYING_CARD: 'start_playing_card',
   COMMIT_PLAYING_CARD: 'commit_playing_card',
-  CANCEL_PLAYING_CARD: 'cancel_playing_card'
+  CANCEL_PLAYING_CARD: 'cancel_playing_card',
+  START_USING_ABILITY: 'start_using_ability',
+  COMMIT_USING_ABILITY: 'commit_using_ability',
+  CANCEL_USING_ABILITY: 'cancel_using_ability'
 };
 export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;
 
@@ -73,6 +79,10 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'playing_card'>;
       ctx: PlayCardContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'using_ability'>;
+      ctx: UseAbilityContext;
     };
 
 export type SerializedInteractionContext =
@@ -99,6 +109,10 @@ export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'playing_card'>;
       ctx: ReturnType<PlayCardContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'using_ability'>;
+      ctx: ReturnType<UseAbilityContext['serialize']>;
     };
 
 export class GameInteractionSystem
@@ -111,14 +125,18 @@ export class GameInteractionSystem
     [INTERACTION_STATES.SELECTING_MINION_SLOT]: SelectingMinionSlotsContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
     [INTERACTION_STATES.CHOOSING_AFFINITY]: ChoosingAffinityContext,
-    [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext
+    [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
+    [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext
   } as const;
 
   private _ctx:
     | IdleContext
     | SelectingCardOnBoardContext
     | SelectingMinionSlotsContext
-    | ChoosingCardsContext;
+    | ChoosingCardsContext
+    | ChoosingAffinityContext
+    | PlayCardContext
+    | UseAbilityContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);
@@ -176,6 +194,21 @@ export class GameInteractionSystem
       stateTransition(
         INTERACTION_STATES.PLAYING_CARD,
         INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY,
+        INTERACTION_STATES.USING_ABILITY
+      ),
+      stateTransition(
+        INTERACTION_STATES.USING_ABILITY,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.USING_ABILITY,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
         INTERACTION_STATES.IDLE
       )
     ]);
@@ -253,7 +286,6 @@ export class GameInteractionSystem
 
   async chooseAffinity(options: { player: Player; choices: Affinity[]; label: string }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY);
-    // @ts-expect-error
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_AFFINITY].create(
       this.game,
       options
@@ -277,7 +309,7 @@ export class GameInteractionSystem
     assert(card.canPlay(), new IllegalCardPlayedError());
 
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD);
-    // @ts-expect-error
+
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.PLAYING_CARD].create(
       this.game,
       {
@@ -292,6 +324,28 @@ export class GameInteractionSystem
     }
   }
 
+  async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
+    assert(
+      this.getState() === INTERACTION_STATES.IDLE,
+      new CorruptedInteractionContextError()
+    );
+
+    const canUse = this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
+      : this.game.gamePhaseSystem.currentPlayer.equals(player);
+    assert(canUse, new IllegalCardPlayedError());
+
+    assert(ability.canUse, new IllegalCardPlayedError());
+
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
+    this._ctx = await UseAbilityContext.create(this.game, { ability, player });
+
+    if (ability.manaCost === 0) {
+      await this.getContext<'using_ability'>().ctx.commit(player, []);
+    } else {
+      await this.game.inputSystem.askForPlayerInput();
+    }
+  }
   onInteractionEnd() {
     this._ctx = new IdleContext(this.game);
   }

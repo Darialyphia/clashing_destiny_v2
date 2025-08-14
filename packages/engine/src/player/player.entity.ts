@@ -27,6 +27,7 @@ import type { DestinyCard } from '../card/entities/destiny.entity';
 import type { SpellCard } from '../card/entities/spell.entity';
 import type { ArtifactCard } from '../card/entities/artifact.entity';
 import type { MinionCard } from '../card/entities/minion.entity';
+import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 
 export type PlayerOptions = {
   id: string;
@@ -213,8 +214,8 @@ export class Player
     this._unlockedAffinities.splice(index, 1);
   }
 
-  private payForManaCost(card: AnyCard, indices: number[]) {
-    const hasEnough = this.cardManager.hand.length >= card.manaCost;
+  private payForManaCost(manaCost: number, indices: number[]) {
+    const hasEnough = this.cardManager.hand.length >= manaCost;
     assert(hasEnough, new NotEnoughCardsInHandError());
     const cards = this.cardManager.hand.filter((_, i) => indices.includes(i));
     cards.forEach(card => {
@@ -223,8 +224,13 @@ export class Player
   }
 
   async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
-    this.payForManaCost(card, manaCostIndices);
+    this.payForManaCost(card.manaCost, manaCostIndices);
     await card.play();
+  }
+
+  async useAbility(ability: Ability<AbilityOwner>, manaCostIndices: number[]) {
+    this.payForManaCost(ability.manaCost, manaCostIndices);
+    await ability.use();
   }
 
   async playDestinyCard(card: DestinyCard) {

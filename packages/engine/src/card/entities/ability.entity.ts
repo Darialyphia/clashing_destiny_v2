@@ -63,7 +63,7 @@ export class Ability<T extends AbilityOwner>
 {
   constructor(
     private game: Game,
-    private card: T,
+    readonly card: T,
     public blueprint: AbilityBlueprint<T, PreResponseTarget>
   ) {
     super(`${card.id}-${blueprint.id}`, {});
@@ -151,6 +151,7 @@ export class Ability<T extends AbilityOwner>
       canUse: this.canUse,
       description: this.blueprint.description,
       name: this.blueprint.label,
+      manaCost: this.manaCost,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };
