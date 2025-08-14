@@ -20,10 +20,7 @@ export class PlayCardAction implements CardActionRule {
     this.client.networkAdapter.dispatch({
       type: 'declarePlayCard',
       payload: {
-        index: card
-          .getPlayer()
-          .getHand()
-          .findIndex(c => c.equals(card)),
+        index: card.player.hand.findIndex(c => c.equals(card)),
         playerId: this.client.playerId
       }
     });

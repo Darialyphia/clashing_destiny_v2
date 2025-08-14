@@ -12,6 +12,7 @@ export class ModifierViewModel {
     entityDictionary: GameStateEntities,
     client: GameClient
   ) {
+    console.log(this.data.id, this.data.stacks);
     this.getEntities = () => entityDictionary;
     this.getClient = () => client;
   }

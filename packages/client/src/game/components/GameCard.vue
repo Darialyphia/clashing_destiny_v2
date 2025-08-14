@@ -116,7 +116,7 @@ const spriteUrl = computed(() => {
     :enabled="autoScale"
     class="game-card"
     ref="card"
-    :class="{ 'is-enemy': card.getPlayer().id !== client.playerId }"
+    :class="{ 'is-enemy': card.player.id !== client.playerId }"
     :defer="deferAutoScaling"
   >
     <PopoverRoot v-model:open="isActionsPopoverOpened">
@@ -160,7 +160,7 @@ const spriteUrl = computed(() => {
           durability: card.durability,
           subKind: card.subKind,
           uinlockableAffinities: card.unlockableAffinities,
-          abilities: card.getAbilities().map(ability => ability.description)
+          abilities: card.abilities.map(ability => ability.description)
         }"
         class="card"
         :class="{

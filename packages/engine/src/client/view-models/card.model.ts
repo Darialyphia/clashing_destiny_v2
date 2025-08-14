@@ -229,10 +229,6 @@ export class CardViewModel {
     return this.data.affinity;
   }
 
-  get hasAffinityMatch() {
-    return this.data.hasAffinityMatch;
-  }
-
   get canPlay() {
     return this.data.canPlay;
   }
@@ -251,7 +247,7 @@ export class CardViewModel {
 
   get canAttack() {
     return (
-      this.getPlayer().id === this.getClient().state.currentPlayer &&
+      this.player.id === this.getClient().state.currentPlayer &&
       this.potentialAttackTargets.length > 0
     );
   }
@@ -281,9 +277,7 @@ export class CardViewModel {
       return null;
     }
 
-    return this.getPlayer()
-      .getHand()
-      .findIndex(card => card.equals(this));
+    return this.player.hand.findIndex(card => card.equals(this));
   }
 
   get preResponseTargets() {
@@ -305,39 +299,37 @@ export class CardViewModel {
       state.phase.state === GAME_PHASES.ATTACK && state.phase.ctx.attacker === this.id
     );
   }
-  getPlayer() {
+
+  get player() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
   }
 
-  getModifiers() {
+  get modifiers() {
     return this.data.modifiers.map(modifierId => {
       return this.getEntities()[modifierId] as ModifierViewModel;
     });
   }
 
   play() {
-    const player = this.getPlayer();
-    const hand = player.getHand();
+    const hand = this.player.hand;
 
     const index = hand.findIndex(card => card.equals(this));
     if (index === -1) return;
 
-    player.playCard(index);
+    this.player.playCard(index);
   }
 
-  getActions(): CardActionRule[] {
+  get actions(): CardActionRule[] {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
-      ...this.getAbilities().map(
-        ability => new UseAbilityAction(this.getClient(), ability)
-      )
+      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
     return actions;
   }
 
-  getAbilities() {
+  get abilities() {
     if ('abilities' in this.data) {
       return (this.data.abilities as string[]).map(
         ability => this.getEntities()[ability] as AbilityViewModel
@@ -345,9 +337,5 @@ export class CardViewModel {
     }
 
     return [];
-  }
-
-  getUsableAbilities() {
-    return this.getAbilities().filter(ability => ability.canUse);
   }
 }

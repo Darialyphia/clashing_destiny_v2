@@ -65,31 +65,31 @@ export class PlayerViewModel {
     return this.data.isPlayer1;
   }
 
-  getHand() {
+  get hand() {
     return this.data.hand.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
     });
   }
 
-  getDiscardPile() {
+  get discardPile() {
     return this.data.discardPile.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
     });
   }
 
-  getBanishPile() {
+  get banishPile() {
     return this.data.banishPile.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
     });
   }
 
-  getUnlockedDestinies() {
+  get unlockedDestinies() {
     return this.data.unlockedDestinyCards.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
     });
   }
 
-  getOpponent() {
+  get opponent() {
     const entity = Object.values(this.getEntities()).find(
       entity => entity instanceof PlayerViewModel && entity.id !== this.id
     );
@@ -97,7 +97,7 @@ export class PlayerViewModel {
   }
 
   playCard(index: number) {
-    const card = this.getHand()[index];
+    const card = this.hand[index];
     if (!card) return;
     if (!card.canPlay) return;
 

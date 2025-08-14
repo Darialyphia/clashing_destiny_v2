@@ -5,7 +5,7 @@ export const useFxAdapter = (): FxAdapter => {
   return {
     onDeclarePlayCard(card, client) {
       const flipState = Flip.getState(
-        client.ui.getCardDOMSelectorInHand(card.id, card.getPlayer().id)
+        client.ui.getCardDOMSelectorInHand(card.id, card.player.id)
       );
 
       window.requestAnimationFrame(() => {
@@ -25,10 +25,7 @@ export const useFxAdapter = (): FxAdapter => {
 
       window.requestAnimationFrame(() => {
         Flip.from(flipState, {
-          targets: client.ui.getCardDOMSelectorInHand(
-            card.id,
-            card.getPlayer().id
-          ),
+          targets: client.ui.getCardDOMSelectorInHand(card.id, card.player.id),
           duration: 0.5,
           absolute: true,
           ease: 'back.out'
@@ -39,14 +36,14 @@ export const useFxAdapter = (): FxAdapter => {
     onSelectCardForManaCost(card, client) {
       return new Promise<void>(resolve => {
         const flipState = Flip.getState(
-          client.ui.getCardDOMSelectorInHand(card.id, card.getPlayer().id)
+          client.ui.getCardDOMSelectorInHand(card.id, card.player.id)
         );
 
         window.requestAnimationFrame(() => {
           Flip.from(flipState, {
             targets: client.ui.getCardDOMSelectorInDestinyZone(
               card.id,
-              card.getPlayer().id
+              card.player.id
             ),
             duration: 0.4,
             absolute: true,
@@ -59,15 +56,12 @@ export const useFxAdapter = (): FxAdapter => {
 
     onUnselectCardForManaCost(card, client) {
       const flipState = Flip.getState(
-        client.ui.getCardDOMSelectorInDestinyZone(card.id, card.getPlayer().id)
+        client.ui.getCardDOMSelectorInDestinyZone(card.id, card.player.id)
       );
 
       window.requestAnimationFrame(() => {
         Flip.from(flipState, {
-          targets: client.ui.getCardDOMSelectorInHand(
-            card.id,
-            card.getPlayer().id
-          ),
+          targets: client.ui.getCardDOMSelectorInHand(card.id, card.player.id),
           duration: 0.4,
           absolute: true,
           ease: Power3.easeOut

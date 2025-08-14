@@ -8,7 +8,7 @@ const { player } = defineProps<{ player: PlayerViewModel }>();
 <template>
   <div class="grid grid-cols-4 gap-3">
     <UnlockedDestiny
-      v-for="destiny in player.getUnlockedDestinies()"
+      v-for="destiny in player.unlockedDestinies"
       :key="destiny.id"
       :destiny="destiny"
     />

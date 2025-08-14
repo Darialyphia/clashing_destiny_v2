@@ -126,7 +126,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
       </InspectableCard>
       <div
         class="minion-wrapper"
-        :class="{ opponent: minion.getPlayer().id !== client.playerId }"
+        :class="{ opponent: minion.player.id !== client.playerId }"
         :id="
           client.ui.DOMSelectors.minionSprite(
             props.minionSlot.playerId,

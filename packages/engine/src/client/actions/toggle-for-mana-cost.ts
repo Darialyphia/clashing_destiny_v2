@@ -20,10 +20,7 @@ export class ToggleForManaCost implements CardClickRule {
       return;
     }
 
-    const index = card
-      .getPlayer()
-      .getHand()
-      .findIndex(c => c.equals(card));
+    const index = card.player.hand.findIndex(c => c.equals(card));
     if (this.client.ui.selectedManaCostIndices.includes(index)) {
       this.client.ui.selectedManaCostIndices =
         this.client.ui.selectedManaCostIndices.filter(i => i !== index);

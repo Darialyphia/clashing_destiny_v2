@@ -20,13 +20,12 @@ export const waterElemental: MinionBlueprint = {
   description: dedent`
   @On Enter@ : Raise your @Tide@ level.
   @Drifter@.
-  @Tide@ (3): @Pusher@.
   `,
   collectable: true,
   unique: false,
-  manaCost: 3,
+  manaCost: 2,
   atk: 2,
-  maxHp: 3,
+  maxHp: 2,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -44,10 +43,5 @@ export const waterElemental: MinionBlueprint = {
   },
   async onPlay(game, card) {
     await card.modifiers.add(new DrifterModifier(game, card, {}));
-    await card.modifiers.add(
-      new PusherModifier(game, card, {
-        mixins: [new TideModifierMixin(game, [3])]
-      })
-    );
   }
 };

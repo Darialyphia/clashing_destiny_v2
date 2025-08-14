@@ -97,6 +97,7 @@ export class ClientStateController {
   }
 
   update(newState: SnapshotDiff): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { entities, config, addedEntities, removedEntities, ...rest } = newState;
     for (const [id, entity] of Object.entries(entities)) {
       if (this.state.entities[id]) {
@@ -110,8 +111,11 @@ export class ClientStateController {
       delete this.state.entities[id];
     });
 
-    Object.assign(this.state.config, config);
-    Object.assign(this.state, rest);
+    this.state = {
+      ...this.state,
+      ...rest,
+      config: { ...this.state.config, ...config }
+    };
   }
 
   async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {

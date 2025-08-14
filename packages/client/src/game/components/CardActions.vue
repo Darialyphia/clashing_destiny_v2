@@ -7,7 +7,7 @@ const { card } = defineProps<{ card: CardViewModel }>();
 const isOpened = defineModel<boolean>('isOpened', { required: true });
 watchEffect(() => {
   if (!isOpened.value) return;
-  if (card.getActions().length === 0) {
+  if (card.actions.length === 0) {
     setTimeout(() => {
       isOpened.value = false;
     }, 2000);
@@ -19,9 +19,9 @@ const client = useGameClient();
 
 <template>
   <div class="actions-list">
-    <p v-if="!card.getActions().length">No actions available</p>
+    <p v-if="!card.actions.length">No actions available</p>
     <button
-      v-for="action in card.getActions()"
+      v-for="action in card.actions"
       :key="action.id"
       class="action"
       :id="client.ui.DOMSelectors.cardAction(card.id, action.id).id"

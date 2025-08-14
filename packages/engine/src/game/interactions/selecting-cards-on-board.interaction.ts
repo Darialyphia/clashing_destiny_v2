@@ -50,7 +50,10 @@ export class SelectingCardOnBoardContext {
     return {
       player: this.player.id,
       selectedCards: this.selectedCards.map(card => card.id),
-      elligibleCards: this.game.boardSystem.getAllCardsInPlay().map(card => card.id),
+      elligibleCards: this.game.boardSystem
+        .getAllCardsInPlay()
+        .filter(card => this.isElligible(card, this.selectedCards))
+        .map(card => card.id),
       canCommit: this.canCommit(this.selectedCards)
     };
   }

@@ -9,7 +9,7 @@ export class SelectCardAction implements CardClickRule {
 
   predicate(card: CardViewModel, state: GameClientState) {
     return (
-      card.getPlayer().id === this.client.playerId &&
+      card.player.id === this.client.playerId &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
       !this.client.ui.selectedCard?.equals(card)
     );

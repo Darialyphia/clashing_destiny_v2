@@ -18,12 +18,12 @@ const { player } = defineProps<{ player: PlayerViewModel }>();
 
     <div>
       <div class="icon" style="--bg: url(/assets/ui/icon-discard-pile.png)" />
-      {{ player.getDiscardPile().length }}
+      {{ player.discardPile.length }}
     </div>
 
     <div>
       <div class="icon" style="--bg: url(/assets/ui/icon-banish-pile.png)" />
-      {{ player.getBanishPile().length }}
+      {{ player.banishPile.length }}
     </div>
   </div>
 </template>

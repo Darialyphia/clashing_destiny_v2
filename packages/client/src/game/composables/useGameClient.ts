@@ -11,6 +11,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { isDefined, type Nullable } from '@game/shared';
 import type { InjectionKey, Ref } from 'vue';
+import { gameStateRef } from './gameStateRef';
 
 type GameClientContext = Ref<GameClient>;
 
@@ -76,32 +77,17 @@ export const useOpponentBoard = () => {
 };
 
 export const useEntity = <T>(entityId: MaybeRef<string>) => {
-  const state = useGameState();
-  return computed(() => {
-    const entity = state.value.entities[unref(entityId)];
-    if (!entity) {
-      throw new Error(
-        `Entity with ID ${unref(entityId)} not found in the game state.`
-      );
-    }
-    return entity as unknown as T;
+  return gameStateRef(state => {
+    return state.entities[unref(entityId)] as T;
   });
 };
 
 export const useMaybeEntity = <T>(entityId: MaybeRef<Nullable<string>>) => {
-  const state = useGameState();
-  return computed(() => {
+  return gameStateRef(state => {
     const id = unref(entityId);
-    if (!isDefined(id)) {
-      return null;
-    }
-    const entity = state.value.entities[id];
-    if (!entity) {
-      throw new Error(
-        `Entity with ID ${unref(entityId)} not found in the game state.`
-      );
-    }
-    return entity as unknown as T;
+    if (!isDefined(id)) return null;
+
+    return state.entities[id] as T;
   });
 };
 
