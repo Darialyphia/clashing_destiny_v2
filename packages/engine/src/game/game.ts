@@ -7,8 +7,6 @@ import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/sh
 import {
   GameSnapshotSystem,
   type GameStateSnapshot,
-  type SerializedOmniscientState,
-  type SerializedPlayerState,
   type SnapshotDiff
 } from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';

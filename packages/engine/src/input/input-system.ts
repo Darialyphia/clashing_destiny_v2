@@ -180,6 +180,10 @@ export class InputSystem extends System<never> {
   private async handleError(err: unknown) {
     console.groupCollapsed('%c[INPUT SYSTEM]: ERROR', 'color: #ff0000');
     console.error(err);
+    console.log({
+      initialState: this.game.options,
+      history: this.game.inputSystem.serialize()
+    });
     console.groupEnd();
 
     const serialized = this.game.serialize();
