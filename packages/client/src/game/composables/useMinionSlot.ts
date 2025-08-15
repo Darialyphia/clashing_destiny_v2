@@ -25,5 +25,19 @@ export const useMinionSlot = (slot: Ref<SerializedBoardMinionSlot>) => {
     );
   });
 
-  return { player, isHighlighted };
+  const isSelected = computed(() => {
+    return (
+      state.value.interaction.state ===
+        INTERACTION_STATES.SELECTING_MINION_SLOT &&
+      state.value.interaction.ctx.selectedPositions.some(p => {
+        return (
+          p.player === slot.value.playerId &&
+          p.slot === slot.value.position &&
+          p.zone === slot.value.zone
+        );
+      })
+    );
+  });
+
+  return { player, isHighlighted, isSelected };
 };

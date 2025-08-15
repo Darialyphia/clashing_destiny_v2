@@ -17,6 +17,7 @@ import {
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../game.enums';
+import { isMinion } from '../../card/card-utils';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -297,10 +298,10 @@ export class CombatPhase
   }
 
   private async resolveCombat() {
-    if (!this.target) {
-      throw new CorruptedGamephaseContextError();
-    }
+    assert(this.target, new CorruptedGamephaseContextError());
+
     this.dispatch(COMBAT_STEP_TRANSITIONS.CHAIN_RESOLVED);
+
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
       new BeforeResolveCombatEvent({
@@ -309,7 +310,9 @@ export class CombatPhase
         blocker: this.blocker
       })
     );
-    if (!this.isCancelled) {
+
+    const isCancelled = this.isCancelled || !this.attacker.canDealCombatDamage;
+    if (!isCancelled) {
       await this.performAttacks();
     }
 

@@ -4726,6 +4726,19 @@
         },
         {
           "alias": [
+            "minino-slot-selected.png"
+          ],
+          "src": [
+            "/assets/ui/minino-slot-selected.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "mp.png"
           ],
           "src": [

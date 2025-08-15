@@ -17,6 +17,8 @@ export type Config = {
   DEFENSE_ZONE_SLOTS: number;
 
   MAX_EQUIPPED_ARTIFACTS: number;
+
+  SUMMONING_SICKNESS: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -37,5 +39,7 @@ export const defaultConfig: Config = {
   ATTACK_ZONE_SLOTS: 5,
   DEFENSE_ZONE_SLOTS: 5,
 
-  MAX_EQUIPPED_ARTIFACTS: 3
+  MAX_EQUIPPED_ARTIFACTS: 3,
+
+  SUMMONING_SICKNESS: false
 };

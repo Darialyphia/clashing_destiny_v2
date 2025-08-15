@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
@@ -11,17 +12,19 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellCard } from '../../../entities/spell.entity';
 
 export const novaBlast: SpellBlueprint = {
   id: 'nova-blast',
   name: 'Nova Blast',
   cardIconId: 'spell-comet',
-  description: `Deal 3 damage to all minions. @[level] 5+ bonus@ : This costs 2 less.`,
+  description: dedent`
+  Deal 4 damage to all minions.
+  This costs @[spellpower]@ less.
+  `,
   collectable: true,
   unique: false,
-  manaCost: 6,
+  manaCost: 8,
   affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -32,16 +35,13 @@ export const novaBlast: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {
-    const levelMod = new LevelBonusModifier<SpellCard>(game, card, 5);
-    await card.modifiers.add(levelMod);
-
     await card.modifiers.add(
       new Modifier('nova-blast-discount', game, card, {
         mixins: [
           new SpellInterceptorModifierMixin(game, {
             key: 'manaCost',
             interceptor(value) {
-              return levelMod.isActive ? Math.max(value! - 2, 0) : value;
+              return Math.max(value! - card.player.hero.spellPower, 0);
             }
           })
         ]
@@ -52,7 +52,7 @@ export const novaBlast: SpellBlueprint = {
     const targets = [...card.player.minions, ...card.player.enemyMinions];
 
     for (const target of targets) {
-      await target.takeDamage(card, new SpellDamage(3));
+      await target.takeDamage(card, new SpellDamage(4));
     }
   }
 };

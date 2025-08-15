@@ -23,7 +23,6 @@ export const shoalOfEels: SpellBlueprint = {
   cardIconId: 'spell-shoal-of-eels',
   description: dedent`
   Summon up to 2 @Playful Eels@.
-  @Tide (3)@ : Give them @Rush@.
   @Echoed Destiny@.
   `,
   collectable: true,
@@ -47,13 +46,8 @@ export const shoalOfEels: SpellBlueprint = {
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay(game, card, targets) {
-    const tideStacks = card.player.hero.modifiers.get(TidesFavoredModifier)?.stacks ?? 0;
-
     for (const target of targets as MinionPosition[]) {
       const eel = await card.player.generateCard<MinionCard>(playfulEels.id);
-      if (tideStacks === 3) {
-        await eel.modifiers.add(new RushModifier(game, card));
-      }
       await eel.playAt(target);
     }
   }

@@ -12,17 +12,18 @@ import {
 import { MinionCard } from '../../../entities/minion.entity';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
+import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 
 export const enjiOneManArmy: MinionBlueprint = {
   id: 'enji-one-man-army',
   name: 'Enji, One-Man Army',
   cardIconId: 'unit-enji-one-man-army',
-  description: dedent`@Unique@, @Rush@.
+  description: dedent`@Pride(4), @Rush@.
   @On Kill@: wake this up.
   If you have another minion on the board, destroy this.
   `,
   collectable: true,
-  unique: true,
+  unique: false,
   manaCost: 4,
   atk: 4,
   maxHp: 5,
@@ -35,6 +36,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new PrideModifier(game, card, 4));
     await card.modifiers.add(new RushModifier(game, card));
     await card.modifiers.add(
       new Modifier<MinionCard>('enji-aura', game, card, {

@@ -259,6 +259,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
+  get canDealCombatDamage() {
+    return true;
+  }
+
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker

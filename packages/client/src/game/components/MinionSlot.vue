@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const client = useGameClient();
 
-const { player, isHighlighted } = useMinionSlot(
+const { player, isHighlighted, isSelected } = useMinionSlot(
   computed(() => props.minionSlot)
 );
 
@@ -98,6 +98,7 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
     class="minion-slot"
     :class="{
       highlighted: isHighlighted,
+      selected: isSelected,
       exhausted: minion?.isExhausted,
       attacking: minion?.isAttacking
     }"
@@ -186,6 +187,10 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   &.highlighted {
     border-color: cyan;
     background-color: hsl(200 100% 50% / 0.25);
+  }
+  &.selected {
+    border-color: var(--yellow-5);
+    background: url('/assets/ui/minino-slot-selected.png') no-repeat center;
   }
 
   &.exhausted .slot-minion {

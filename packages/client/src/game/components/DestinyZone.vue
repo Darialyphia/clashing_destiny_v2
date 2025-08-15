@@ -89,13 +89,13 @@ const displayedCards = computed(() => {
         type: 'destiny',
         cardId: card
       };
-    }),
-    ...client.value.ui.selectedManaCostIndices.map(index => {
-      return {
-        type: 'mana',
-        cardId: boardSide.value.hand[index]
-      };
     })
+    // ...client.value.ui.selectedManaCostIndices.map(index => {
+    //   return {
+    //     type: 'mana',
+    //     cardId: boardSide.value.hand[index]
+    //   };
+    // })
   ];
 });
 </script>

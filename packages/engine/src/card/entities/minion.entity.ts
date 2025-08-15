@@ -315,6 +315,10 @@ export class MinionCard extends Card<
     });
   }
 
+  get canDealCombatDamage() {
+    return this.position?.zone === 'attack';
+  }
+
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
@@ -474,7 +478,7 @@ export class MinionCard extends Card<
       new MinionSummonedEvent({ card: this, position })
     );
 
-    if (this.hasSummoningSickness) {
+    if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
       await (this as MinionCard).modifiers.add(
         new SummoningSicknessModifier(this.game, this)
       );

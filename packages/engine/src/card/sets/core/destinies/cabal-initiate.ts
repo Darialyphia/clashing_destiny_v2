@@ -30,8 +30,8 @@ export const cabalInitiate: DestinyBlueprint = {
       id: 'cabal-initiate-ability',
       label: 'Destroy minion',
       description:
-        '@[exhaust]@ Destroy a minion that costs 2 or less. @Seal@ this ability.',
-      manaCost: 0,
+        '@[exhaust]@ @[mana] 2@ :  Destroy a minion that costs 2 or less. @Seal@ this ability.',
+      manaCost: 2,
       shouldExhaust: true,
       canUse: (game, card) =>
         card.location === 'board' &&

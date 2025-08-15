@@ -15,7 +15,7 @@ export const tidesFavored: DestinyBlueprint = {
   name: "Tide's Favored",
   cardIconId: 'talent-tides-favor',
   description: dedent`
-  Your Hero now controls the @Tides@.
+  Your Hero now controls the @Tide@.
   
   This comes into play at the start of the game (it does not count towards your Hero's level).
   `,
