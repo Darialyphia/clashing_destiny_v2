@@ -1,5 +1,4 @@
 import type { DestinyBlueprint } from '../../../card-blueprint';
-import { sealAbility, singleMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -35,7 +34,7 @@ export const theHangedMan: DestinyBlueprint = {
       shouldExhaust: true,
       canUse: () => true,
       getPreResponseTargets: async () => [],
-      async onResolve(game, card) {
+      async onResolve(game, card, targets, ability) {
         const handledMinions = new Set<MinionCard>();
         const allMinions = [...card.player.minions, ...card.player.opponent.minions];
         for (const minion of allMinions) {
@@ -53,7 +52,7 @@ export const theHangedMan: DestinyBlueprint = {
           await minion.moveTo(targetPosition, true);
         }
 
-        sealAbility(card, 'the-hanged-man-ability');
+        ability.seal();
       }
     }
   ],

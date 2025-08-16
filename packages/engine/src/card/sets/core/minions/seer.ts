@@ -12,12 +12,15 @@ import {
 } from '../../../card.enums';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
+import dedent from 'dedent';
 
 export const seer: MinionBlueprint = {
   id: 'seer',
   name: 'Seer',
   cardIconId: 'unit-seer',
-  description: `@On Enter@ : @Scry 3@.  @[level] 3+ bonus@ Draw a card.`,
+  description: dedent`
+  @On Enter@ : @Scry 3@.
+  @[level] 3+ bonus@ Draw a card.`,
   collectable: true,
   unique: false,
   manaCost: 2,

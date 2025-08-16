@@ -43,7 +43,7 @@ export const rustyBlade: ArtifactBlueprint = {
       },
       async onResolve(game, card) {
         await card.player.hero.modifiers.add(
-          new Modifier<HeroCard>('firebrand-buff', game, card, {
+          new Modifier<HeroCard>('rusty-blades-buff', game, card, {
             name: 'Rusty Blade',
             description: `+2 Attack.`,
             icon: 'keyword-attack-buff',

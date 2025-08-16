@@ -1,8 +1,6 @@
 import type { HeroBlueprint } from '../../../card-blueprint';
-import { isArtifact, sealAbility } from '../../../card-utils';
 import {
   AFFINITIES,
-  ARTIFACT_KINDS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,

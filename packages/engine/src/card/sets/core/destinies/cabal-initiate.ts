@@ -1,5 +1,5 @@
 import type { DestinyBlueprint } from '../../../card-blueprint';
-import { sealAbility, singleMinionTargetRules } from '../../../card-utils';
+import { singleMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -42,10 +42,10 @@ export const cabalInitiate: DestinyBlueprint = {
           card,
           abilityId: 'cabal-initiate-ability'
         }),
-      async onResolve(game, card, targets) {
+      async onResolve(game, card, targets, ability) {
         const target = targets[0] as MinionCard;
         await target.destroy();
-        sealAbility(card, 'cabal-initiate-ability');
+        ability.seal();
       }
     }
   ],

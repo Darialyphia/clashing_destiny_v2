@@ -8,7 +8,6 @@ import type {
   DestinyBlueprint,
   HeroBlueprint,
   MinionBlueprint,
-  PreResponseTarget,
   SpellBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';

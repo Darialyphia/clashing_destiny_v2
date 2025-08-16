@@ -6,6 +6,7 @@ import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
+import { SummoningSicknessModifier } from './summoning-sickness';
 
 export class RushModifier extends Modifier<MinionCard> {
   constructor(
@@ -24,5 +25,11 @@ export class RushModifier extends Modifier<MinionCard> {
         ...(options.mixins || [])
       ]
     });
+  }
+
+  async applyTo(target: MinionCard): Promise<void> {
+    await target.modifiers.remove(SummoningSicknessModifier);
+
+    return super.applyTo(target);
   }
 }

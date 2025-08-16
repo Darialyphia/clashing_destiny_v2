@@ -1,5 +1,5 @@
 import type { HeroBlueprint } from '../../../card-blueprint';
-import { isArtifact, sealAbility } from '../../../card-utils';
+import { isArtifact } from '../../../card-utils';
 import {
   AFFINITIES,
   ARTIFACT_KINDS,
@@ -43,7 +43,7 @@ export const knight: HeroBlueprint = {
       async getPreResponseTargets() {
         return [];
       },
-      async onResolve(game, card) {
+      async onResolve(game, card, targets, ability) {
         const choices = card.player.cardManager.mainDeck.cards.filter(
           c =>
             isArtifact(c) &&
@@ -60,7 +60,7 @@ export const knight: HeroBlueprint = {
         if (!artifact) return;
         artifact.removeFromCurrentLocation();
         await artifact.play();
-        sealAbility(card, 'knight-ability-1');
+        ability.seal();
       }
     }
   ],

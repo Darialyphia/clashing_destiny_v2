@@ -19,15 +19,14 @@ import {
 } from '../../../card.enums';
 import { ArtifactCard } from '../../../entities/artifact.entity';
 import { HeroCard } from '../../../entities/hero.entity';
+import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 
 export const rainbowCeremonialSword: ArtifactBlueprint = {
   id: 'rainbow-sword',
   name: 'Rainbow Ceremonial Sword',
   cardIconId: 'artifact-rainbow-blade',
   description: dedent`
-  @On Enter@ : Your hero gains +2 @[attack]@ and +2 @[spellpower]@ this turn.
-  When your hero takes damage, this loses 1 @[durability]@.
-  @On Destroyed@ : Draw 2 cards.`,
+  @On Destroyed@ : Draw 1 card.`,
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
@@ -38,46 +37,50 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
   affinity: AFFINITIES.NORMAL,
   durability: 4,
   subKind: ARTIFACT_KINDS.RELIC,
-  abilities: [],
+  abilities: [
+    {
+      id: 'rainbow-ceremonial-sword-ability',
+      label: '@[exhaust]@ : +2 @[attack]@, +2 @[spellpower]@',
+      description: `@[exhaust]@ -1@[durability]@ : This turn, your hero gain +2@[attack]@ and +2@[spellpower]@.`,
+      manaCost: 0,
+      shouldExhaust: true,
+      canUse(game, card) {
+        return card.location === 'board';
+      },
+      async getPreResponseTargets() {
+        return [];
+      },
+      async onResolve(game, card) {
+        await card.player.hero.modifiers.add(
+          new Modifier<HeroCard>('rainbow-ceremonial-sword-buff', game, card, {
+            name: 'Rainbow Ceremonial Sword',
+            description: `+2 Attack and +2 Spellpower.`,
+            icon: 'keyword-attack-buff',
+            mixins: [
+              new UntilEndOfTurnModifierMixin<HeroCard>(game),
+              new HeroInterceptorModifierMixin(game, {
+                key: 'atk',
+                interceptor(value) {
+                  return value + card.atkBonus;
+                }
+              }),
+              new HeroInterceptorModifierMixin(game, {
+                key: 'spellPower',
+                interceptor(value) {
+                  return value + card.atkBonus;
+                }
+              })
+            ]
+          })
+        );
+        await card.loseDurability(1);
+      }
+    }
+  ],
   tags: [],
   canPlay: () => true,
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        handler: async () => {
-          await card.player.hero.modifiers.add(
-            new SimpleAttackBuffModifier<HeroCard>('rainbow-sword-attack', game, card, {
-              amount: 2,
-              name: 'Rainbow Sword',
-              mixins: [new UntilEndOfTurnModifierMixin(game)]
-            })
-          );
-          await card.player.hero.modifiers.add(
-            new SimpleSpellpowerBuffModifier('rainbow-sword-spellpower', game, card, {
-              amount: 2,
-              name: 'Rainbow Sword',
-              mixins: [new UntilEndOfTurnModifierMixin(game)]
-            })
-          );
-        }
-      })
-    );
-  },
+  async onInit() {},
   async onPlay(game, card) {
-    await card.modifiers.add(
-      new Modifier<ArtifactCard>('rainbow-sword-durability', game, card, {
-        mixins: [
-          new RemoveOnDestroyedMixin(game),
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
-            handler: async event => {
-              if (!event.data.card.equals(card.player.hero)) return;
-              await card.loseDurability(1);
-            }
-          })
-        ]
-      })
-    );
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         async handler() {

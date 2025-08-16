@@ -318,16 +318,45 @@ export const multipleEnemyTargetRules = {
     }
 };
 
-export const sealAbility = (
-  card: HeroCard | ArtifactCard | MinionCard | DestinyCard,
-  abilityId: string
-) => {
-  const ability = card.blueprint.abilities.find(ability => ability.id === abilityId);
-  if (!ability) return;
+export const singleArtifactTargetRules = {
+  canPlay(
+    game: Game,
+    card: AnyCard,
+    predicate: (c: ArtifactCard) => boolean = () => true
+  ) {
+    return (
+      game.boardSystem.getAllCardsInPlay().filter(c => isArtifact(c) && predicate(c))
+        .length > 0
+    );
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: ArtifactCard) => boolean = () => true
+  ) {
+    return await game.interaction.selectCardsOnBoard<ArtifactCard>({
+      origin,
+      player: card.player,
+      isElligible(candidate, selectedCards) {
+        if (!isArtifact(candidate)) {
+          return false;
+        }
 
-  // @ts-expect-error
-  card.addInterceptor('canUseAbility', (canUse, ctx) => {
-    if (ctx.ability.id !== abilityId) return canUse;
-    return false;
-  });
+        return (
+          game.boardSystem
+            .getAllCardsInPlay()
+            .some(artifact => artifact.equals(candidate)) &&
+          !selectedCards.some(selected => selected.equals(candidate)) &&
+          predicate(candidate)
+        );
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length === 1;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === 1;
+      }
+    });
+  }
 };

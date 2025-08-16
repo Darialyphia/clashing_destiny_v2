@@ -1,6 +1,5 @@
-import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
+import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -10,7 +9,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
 
 export const tomeOfKnowledge: ArtifactBlueprint = {
   id: 'tome-of-knowledge',
@@ -31,7 +29,7 @@ export const tomeOfKnowledge: ArtifactBlueprint = {
     {
       id: 'tome-of-knowledge-ability',
       label: '@[exhaust]@ +1 Spellpower',
-      description: `@[exhaust]@ -1@[durability]@ : Your hero gains +1 @[spellpower]@.`,
+      description: `@[exhaust]@ -1@[durability]@ : Your hero gains +1 @[spellpower]@ this turn.`,
       manaCost: 2,
       shouldExhaust: true,
       canUse(game, card) {
@@ -42,18 +40,9 @@ export const tomeOfKnowledge: ArtifactBlueprint = {
       },
       async onResolve(game, card) {
         await card.player.hero.modifiers.add(
-          new Modifier<HeroCard>('tome-of-knowledge-buff', game, card, {
-            name: 'Tome of Knowledge',
-            description: `+1 Spellpower.`,
-            icon: 'keyword-abilitypower-buff',
-            mixins: [
-              new HeroInterceptorModifierMixin(game, {
-                key: 'spellPower',
-                interceptor(value) {
-                  return value + 1;
-                }
-              })
-            ]
+          new SimpleSpellpowerBuffModifier('tome-of-knowledge-buff', game, card, {
+            amount: 1,
+            mixins: [new UntilEndOfTurnModifierMixin(game)]
           })
         );
         await card.loseDurability(1);

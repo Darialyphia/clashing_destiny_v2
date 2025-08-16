@@ -18,6 +18,7 @@ import type { DestinyCard } from './entities/destiny.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
+import type { Ability, AbilityOwner } from './entities/ability.entity';
 
 export type CardBlueprintBase = {
   id: string;
@@ -38,7 +39,10 @@ export type MainDeckCardBlueprint = CardBlueprintBase & {
   deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
 };
 
-export type AbilityBlueprint<TCard extends AnyCard, TTarget extends PreResponseTarget> = {
+export type AbilityBlueprint<
+  TCard extends AbilityOwner,
+  TTarget extends PreResponseTarget
+> = {
   id: string;
   manaCost: number;
   shouldExhaust: boolean;
@@ -46,10 +50,10 @@ export type AbilityBlueprint<TCard extends AnyCard, TTarget extends PreResponseT
   label: string;
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
-  onResolve(game: Game, card: TCard, targets: TTarget[]): void;
+  onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
 };
 
-export type AnyAbility = AbilityBlueprint<AnyCard, PreResponseTarget>;
+export type AnyAbility = AbilityBlueprint<AbilityOwner, PreResponseTarget>;
 
 export type SerializedAbility = {
   id: string;

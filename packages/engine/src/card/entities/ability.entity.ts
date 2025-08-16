@@ -61,6 +61,8 @@ export class Ability<T extends AbilityOwner>
   extends Entity<EmptyObject>
   implements Serializable<SerializedAbility>
 {
+  _isSealed = false;
+
   constructor(
     private game: Game,
     readonly card: T,
@@ -82,6 +84,8 @@ export class Ability<T extends AbilityOwner>
   }
 
   get canUse() {
+    if (this._isSealed) return false;
+
     const authorizedPhases: GamePhase[] = [
       GAME_PHASES.MAIN,
       GAME_PHASES.ATTACK,
@@ -121,7 +125,7 @@ export class Ability<T extends AbilityOwner>
       targets,
       handler: async () => {
         const abilityTargets = this.card.abilityTargets.get(this.blueprint.id)!;
-        await this.blueprint.onResolve(this.game, this.card, abilityTargets);
+        await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
         abilityTargets.forEach(target => {
           if (target instanceof Card) {
             target.clearTargetedBy({ type: 'card', card: this.card });
@@ -141,6 +145,14 @@ export class Ability<T extends AbilityOwner>
     } else {
       void this.game.effectChainSystem.createChain(this.card.player, effect);
     }
+  }
+
+  seal() {
+    this._isSealed = true;
+  }
+
+  unseal() {
+    this._isSealed = false;
   }
 
   serialize(): SerializedAbility {
