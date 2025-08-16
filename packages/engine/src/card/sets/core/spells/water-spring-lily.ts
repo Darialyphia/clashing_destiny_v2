@@ -20,7 +20,7 @@ export const waterSpringLily: MinionBlueprint = {
   unique: false,
   manaCost: 2,
   atk: 1,
-  maxHp: 1,
+  maxHp: 2,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

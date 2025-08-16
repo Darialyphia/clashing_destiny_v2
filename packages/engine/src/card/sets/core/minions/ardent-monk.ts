@@ -18,13 +18,13 @@ export const ardentMonk: MinionBlueprint = {
   cardIconId: 'unit-ardent-monk',
   description: dedent`
   @On Enter@ : Depending on the amount of @Ember@ stacks on your hero:
-  • 1-2: gains +1@[attack]@
-  • 3-5: gains @Cleave@
+  • 1-2: this gains +1@[attack]@
+  • 3-5: this gains @Rush@
   • 6+:  draw 1 card.`,
   collectable: true,
   unique: false,
   manaCost: 3,
-  atk: 2,
+  atk: 3,
   maxHp: 3,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

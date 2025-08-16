@@ -80,7 +80,7 @@ const maxChoices = computed(() => {
         />
         <FancyButton
           variant="info"
-          text="Play card"
+          text="Confirm"
           :disabled="selectedIndices.length < minChoices"
           @click="client.chooseCards(selectedIndices)"
         />

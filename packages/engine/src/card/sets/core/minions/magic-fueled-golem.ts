@@ -1,5 +1,4 @@
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { TauntModifier } from '../../../../modifier/modifiers/taunt.modifier';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
@@ -17,7 +16,7 @@ export const magicFueledGolem: MinionBlueprint = {
   id: 'magic-fueled-golem',
   name: 'Magic-Fueled Golem',
   cardIconId: 'unit-mana-fueled-golem',
-  description: `This has +2 @[attack]@ and @Taunt@ as long as your hero has at least 2 @[spellpower]@.`,
+  description: `This has +3 @[attack]@ and @Taunt@ as long as your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -37,12 +36,12 @@ export const magicFueledGolem: MinionBlueprint = {
       game,
       card,
       {
-        amount: 2,
-        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 2)]
+        amount: 3,
+        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
       }
     );
     const taunt = new TauntModifier<MinionCard>(game, card, {
-      mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 2)]
+      mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
     });
 
     await card.modifiers.add(

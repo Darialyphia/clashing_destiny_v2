@@ -1,4 +1,3 @@
-import { LoyaltyModifier } from '../../../../modifier/modifiers/loyalty.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -30,7 +29,6 @@ export const archsageOfMoonring: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new LoyaltyModifier(game, card, 1));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {

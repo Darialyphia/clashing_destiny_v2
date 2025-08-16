@@ -14,12 +14,13 @@ import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 
 export const enjiOneManArmy: MinionBlueprint = {
   id: 'enji-one-man-army',
   name: 'Enji, One-Man Army',
   cardIconId: 'unit-enji-one-man-army',
-  description: dedent`@Pride(3), @Rush@.
+  description: dedent`@Pride(3), @[level] 5+@ : @Rush@.
   @On Kill@: wake this up.
   If you have another minion on the board, destroy this.
   `,
@@ -37,8 +38,16 @@ export const enjiOneManArmy: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 5)
+    )) as LevelBonusModifier<MinionCard>;
+
     await card.modifiers.add(new PrideModifier(game, card, 3));
-    await card.modifiers.add(new RushModifier(game, card));
+    await card.modifiers.add(
+      new RushModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
+      })
+    );
     await card.modifiers.add(
       new Modifier<MinionCard>('enji-aura', game, card, {
         mixins: [

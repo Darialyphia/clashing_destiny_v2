@@ -30,7 +30,7 @@ export const hotHeadedRecruit: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new RushModifier(game, card));
+    await card.modifiers.add(new RushModifier(game, card, {}));
     await card.modifiers.add(new DoubleAttackModifier(game, card, {}));
   },
   async onPlay() {}

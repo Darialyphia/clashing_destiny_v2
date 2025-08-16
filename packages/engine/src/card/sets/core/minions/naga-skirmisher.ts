@@ -16,13 +16,12 @@ export const nagaSkirmisher: MinionBlueprint = {
   name: 'Naga Skirmisher',
   cardIconId: 'unit-naga-skirmisher',
   description: dedent`
-  @Tide (2+)@: @Cleave@.
   @Tide (3)@: @Double Attack@.
   `,
   collectable: true,
   unique: false,
   manaCost: 3,
-  atk: 2,
+  atk: 3,
   maxHp: 3,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -33,12 +32,6 @@ export const nagaSkirmisher: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(
-      new CleaveModifier(game, card, {
-        mixins: [new TideModifierMixin(game, [2, 3])]
-      })
-    );
-
     await card.modifiers.add(
       new DoubleAttackModifier(game, card, {
         mixins: [new TideModifierMixin(game, [3])]

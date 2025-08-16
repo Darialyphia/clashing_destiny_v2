@@ -17,7 +17,7 @@ export const calmWaters: SpellBlueprint = {
   cardIconId: 'spell-calm-waters',
   description: dedent`Draw a card in your Destiny Zone.
   @Tide (2+)@ : Scry 2.
-  @Tides (3)@ : Draw a card.
+  @Tide (3)@ : Draw a card.
   `,
   collectable: true,
   unique: false,

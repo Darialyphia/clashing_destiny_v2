@@ -11,17 +11,20 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { MinionCard } from '../../../entities/minion.entity';
+import { singleEmptyAllySlot } from '../../../card-utils';
+import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
+import { blazingSalamander } from './blazing-salamander';
 
 export const battleflameInvoker: MinionBlueprint = {
   id: 'battleflame-invoker',
   name: 'Battleflame Invoker',
   cardIconId: 'unit-battleflame-invoker',
-  description: `As long as your hero has at least 4 stacks of @Ember@, they gain +2 @[spellpower]@`,
+  description: ``,
   collectable: true,
   unique: false,
   manaCost: 4,
   atk: 2,
-  maxHp: 4,
+  maxHp: 5,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -29,8 +32,8 @@ export const battleflameInvoker: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   abilities: [
     {
-      id: 'battleflame-invoker-ability',
-      description: '@[exhaust]@ :  add 1 stack of @Ember@ to your hero',
+      id: 'battleflame-invoker-ability-2',
+      description: '@[exhaust]@ : add 1 stack of @Ember@ to your hero',
       label: 'Gain 1 Ember',
       shouldExhaust: true,
       manaCost: 0,
@@ -38,6 +41,31 @@ export const battleflameInvoker: MinionBlueprint = {
       getPreResponseTargets: async () => [],
       async onResolve(game, card) {
         await card.player.hero.modifiers.add(new EmberModifier(game, card));
+      }
+    },
+    {
+      id: 'battleflame-invoker-ability-2',
+      description:
+        '@[exhaust]@ : consume 3 stacks of @Ember@. Summon a @Blazing Salamander@ on your side of the field',
+      label: 'Summon Blazing Salamander',
+      shouldExhaust: true,
+      manaCost: 0,
+      canUse: (game, card) => {
+        return singleEmptyAllySlot.canPlay(game, card) && card.location === 'board';
+      },
+      getPreResponseTargets: async (game, card) =>
+        singleEmptyAllySlot.getPreResponseTargets(game, card),
+      async onResolve(game, card, targets) {
+        const emberModifier = card.player.hero.modifiers.get(EmberModifier);
+        if (!emberModifier || emberModifier.stacks < 3) return;
+        await emberModifier.removeStacks(3);
+
+        const target = targets[0] as MinionPosition;
+
+        const salamander = await card.player.generateCard<MinionCard>(
+          blazingSalamander.id
+        );
+        await salamander.playAt(target);
       }
     }
   ],

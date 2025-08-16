@@ -5,10 +5,11 @@ import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
+import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
 export class BlitzModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard) {
+  constructor(game: Game, source: AnyCard, options: { mixins?: ModifierMixin<T>[] }) {
     super(KEYWORDS.BLITZ.id, game, source, {
       name: KEYWORDS.BLITZ.name,
       description: KEYWORDS.BLITZ.description,
@@ -19,7 +20,8 @@ export class BlitzModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
         new UnitInterceptorModifierMixin(game, {
           key: 'canBeBlocked',
           interceptor: () => false
-        })
+        }),
+        ...(options.mixins || [])
       ]
     });
   }

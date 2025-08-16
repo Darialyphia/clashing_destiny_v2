@@ -35,7 +35,7 @@ export const pyreArchfiend: MinionBlueprint = {
     const levelMod = new LevelBonusModifier<MinionCard>(game, card, 3);
     await card.modifiers.add(levelMod);
     await card.modifiers.add(new CleaveModifier(game, card));
-    await card.modifiers.add(new RushModifier(game, card));
+    await card.modifiers.add(new RushModifier(game, card, {}));
     await card.modifiers.add(
       new OnKillModifier(game, card, {
         handler: async () => {

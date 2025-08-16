@@ -17,7 +17,7 @@ export const seer: MinionBlueprint = {
   id: 'seer',
   name: 'Seer',
   cardIconId: 'unit-seer',
-  description: `@On Enter@ : @Scry 3@.  @[level] 4+ bonus@ Give your hero +1@[spellpower]@ this turn for each Arcane card scryed.`,
+  description: `@On Enter@ : @Scry 3@.  @[level] 3+ bonus@ Draw a card.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -32,23 +32,16 @@ export const seer: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const levelMod = new LevelBonusModifier<MinionCard>(game, card, 4);
+    const levelMod = new LevelBonusModifier<MinionCard>(game, card, 3);
     await card.modifiers.add(levelMod);
 
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const { cards } = await scry(game, card, 3);
-          const arcaneCards = cards.filter(c => c.affinity === AFFINITIES.ARCANE);
-          if (arcaneCards.length === 0) return;
-          if (!levelMod.isActive) return;
+          await scry(game, card, 3);
 
-          await card.player.hero.modifiers.add(
-            new SimpleSpellpowerBuffModifier('seer-spellpower-buff', game, card, {
-              amount: arcaneCards.length,
-              mixins: [new UntilEndOfTurnModifierMixin(game)]
-            })
-          );
+          if (!levelMod.isActive) return;
+          await card.player.cardManager.draw(1);
         }
       })
     );

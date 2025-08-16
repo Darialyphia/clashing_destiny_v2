@@ -1,7 +1,4 @@
-import {
-  MinionInterceptorModifierMixin,
-  UnitInterceptorModifierMixin
-} from '../../../../modifier/mixins/interceptor.mixin';
+import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -20,7 +17,7 @@ export const spiritualist: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 3,
+  atk: 4,
   maxHp: 3,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

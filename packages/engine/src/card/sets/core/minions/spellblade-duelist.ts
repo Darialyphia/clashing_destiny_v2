@@ -1,6 +1,8 @@
 import { UnitInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { BlitzModifier } from '../../../../modifier/modifiers/blitz.modifier';
+import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -16,7 +18,7 @@ export const spellbladeDuelist: MinionBlueprint = {
   id: 'spellblade-duelist',
   name: 'Spellblade Duelist',
   cardIconId: 'unit-spellblade-duelist',
-  description: `This gains +1@[attack]@ and @Blitz@ as long as your hero has at least 3 @[spellpower]@.`,
+  description: `This gains +1@[attack]@, @Rush@ and @Blitz@ as long as your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -31,27 +33,16 @@ export const spellbladeDuelist: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const buff = new Modifier<MinionCard>('spellblade-duelist-buff', game, card, {
-      mixins: [
-        new UnitInterceptorModifierMixin(game, {
-          key: 'atk',
-          interceptor(value) {
-            return card.player.hero.spellPower >= 3 ? value + 1 : value;
-          }
-        })
-      ]
-    });
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier('spellblade-duelist-atk-buff', game, card, {
+        amount: 1,
+        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
+      })
+    );
 
     await card.modifiers.add(
-      new WhileOnBoardModifier('spellblade-duelist', game, card, {
-        async onActivate() {
-          await card.modifiers.add(buff);
-          await card.modifiers.add(new BlitzModifier(game, card));
-        },
-        async onDeactivate() {
-          await card.modifiers.remove(buff);
-          await card.modifiers.remove(BlitzModifier);
-        }
+      new BlitzModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
       })
     );
   },

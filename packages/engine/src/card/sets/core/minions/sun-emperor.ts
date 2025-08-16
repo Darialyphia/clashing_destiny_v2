@@ -66,21 +66,23 @@ export const sunEmperor: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        if (card.player.artifactManager.artifacts.length === 0) {
-          return;
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          if (card.player.artifactManager.artifacts.length === 0) {
+            return;
+          }
+
+          const [artifact] = await game.interaction.chooseCards({
+            player: card.player,
+            label: 'Choose an artifact to activate',
+            minChoiceCount: 0,
+            maxChoiceCount: 1,
+            choices: card.player.artifactManager.artifacts
+          });
+
+          if (!artifact) return;
+          await artifact.wakeUp();
         }
-
-        const [artifact] = await game.interaction.chooseCards({
-          player: card.player,
-          label: 'Choose an artifact to activate',
-          minChoiceCount: 0,
-          maxChoiceCount: 1,
-          choices: card.player.artifactManager.artifacts
-        });
-
-        if (!artifact) return;
-        await artifact.wakeUp();
       })
     );
   },
