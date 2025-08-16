@@ -30,19 +30,21 @@ export const esteemedErudite: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        const choicePool = await Promise.all(
-          Object.values(game.cardPool)
-            .filter(
-              blueprint =>
-                blueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-                card.player.unlockedAffinities.includes(blueprint.affinity) &&
-                blueprint.kind === CARD_KINDS.SPELL
-            )
-            .map(blueprint => card.player.generateCard<MainDeckCard>(blueprint.id))
-        );
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          const choicePool = await Promise.all(
+            Object.values(game.cardPool)
+              .filter(
+                blueprint =>
+                  blueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+                  card.player.unlockedAffinities.includes(blueprint.affinity) &&
+                  blueprint.kind === CARD_KINDS.SPELL
+              )
+              .map(blueprint => card.player.generateCard<MainDeckCard>(blueprint.id))
+          );
 
-        await discover(game, card, choicePool);
+          await discover(game, card, choicePool);
+        }
       })
     );
   },

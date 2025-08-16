@@ -30,9 +30,11 @@ export const pyromancer: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        const createdCard = await card.player.generateCard<SpellCard>(fireBolt.id);
-        await createdCard.addToHand();
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          const createdCard = await card.player.generateCard<SpellCard>(fireBolt.id);
+          await createdCard.addToHand();
+        }
       })
     );
   },

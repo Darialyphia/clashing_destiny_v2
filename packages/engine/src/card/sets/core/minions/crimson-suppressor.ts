@@ -30,31 +30,33 @@ export const crimsonSuppressor: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        const elligibleTargets = [
-          ...card.player.minions,
-          ...card.player.opponent.minions
-        ].filter(minion => minion.remainingHp < minion.maxHp);
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          const elligibleTargets = [
+            ...card.player.minions,
+            ...card.player.opponent.minions
+          ].filter(minion => minion.remainingHp < minion.maxHp);
 
-        if (!elligibleTargets.length) return;
+          if (!elligibleTargets.length) return;
 
-        const [target] = await game.interaction.selectCardsOnBoard<MinionCard>({
-          player: card.player,
-          origin: { type: 'card', card },
-          isElligible(candidate) {
-            return isMinion(candidate) && candidate.remainingHp < candidate.maxHp;
-          },
-          canCommit(selectedCards) {
-            return selectedCards.length === 1;
-          },
-          isDone(selectedCards) {
-            return selectedCards.length === 1;
-          }
-        });
+          const [target] = await game.interaction.selectCardsOnBoard<MinionCard>({
+            player: card.player,
+            origin: { type: 'card', card },
+            isElligible(candidate) {
+              return isMinion(candidate) && candidate.remainingHp < candidate.maxHp;
+            },
+            canCommit(selectedCards) {
+              return selectedCards.length === 1;
+            },
+            isDone(selectedCards) {
+              return selectedCards.length === 1;
+            }
+          });
 
-        if (!target) return;
+          if (!target) return;
 
-        await target.destroy();
+          await target.destroy();
+        }
       })
     );
   },

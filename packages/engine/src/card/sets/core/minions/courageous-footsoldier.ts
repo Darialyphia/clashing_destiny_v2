@@ -16,7 +16,7 @@ export const courageousFootsoldier: MinionBlueprint = {
   unique: false,
   manaCost: 2,
   atk: 2,
-  maxHp: 2,
+  maxHp: 3,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

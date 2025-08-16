@@ -34,15 +34,17 @@ export const luminescentMystic: MinionBlueprint = {
     await card.modifiers.add(levelMod);
 
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        const adjacentMinions = card.slot?.adjacentMinions ?? [];
-        for (const minion of adjacentMinions) {
-          await minion.modifiers.add(
-            new SimpleHealthBuffModifier('luminescent-mystic-health-buff', game, card, {
-              amount: levelMod.isActive ? 2 : 1,
-              name: 'Luminescent Mystic Health Buff'
-            })
-          );
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          const adjacentMinions = card.slot?.adjacentMinions ?? [];
+          for (const minion of adjacentMinions) {
+            await minion.modifiers.add(
+              new SimpleHealthBuffModifier('luminescent-mystic-health-buff', game, card, {
+                amount: levelMod.isActive ? 2 : 1,
+                name: 'Luminescent Mystic Health Buff'
+              })
+            );
+          }
         }
       })
     );

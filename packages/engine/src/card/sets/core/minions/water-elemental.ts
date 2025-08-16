@@ -8,9 +8,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { TideModifierMixin } from '../../../../modifier/mixins/tide.mixin';
 import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
-import { PusherModifier } from '../../../../modifier/modifiers/pusher.modifier';
 import { DrifterModifier } from '../../../../modifier/modifiers/drifter.modifier';
 
 export const waterElemental: MinionBlueprint = {
@@ -36,8 +34,10 @@ export const waterElemental: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        await card.player.hero.modifiers.get(TidesFavoredModifier)?.raiseTides();
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          await card.player.hero.modifiers.get(TidesFavoredModifier)?.raiseTides();
+        }
       })
     );
   },

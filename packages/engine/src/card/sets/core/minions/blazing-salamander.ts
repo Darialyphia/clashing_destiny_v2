@@ -29,17 +29,19 @@ export const blazingSalamander: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        const affectedMinions = game.boardSystem
-          .getColumn(card.position!.slot)
-          .minions.filter(minion => !minion.equals(card));
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          const affectedMinions = game.boardSystem
+            .getColumn(card.position!.slot)
+            .minions.filter(minion => !minion.equals(card));
 
-        for (const minion of affectedMinions) {
-          await minion.modifiers.add(new BurnModifier(game, card));
-        }
+          for (const minion of affectedMinions) {
+            await minion.modifiers.add(new BurnModifier(game, card));
+          }
 
-        if (affectedMinions.length >= 3) {
-          await card.player.cardManager.draw(1);
+          if (affectedMinions.length >= 3) {
+            await card.player.cardManager.draw(1);
+          }
         }
       })
     );

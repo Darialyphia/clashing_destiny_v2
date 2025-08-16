@@ -36,17 +36,19 @@ export const heraldOfSalvation: MinionBlueprint = {
     )) as LevelBonusModifier<MinionCard>;
 
     await card.modifiers.add(
-      new OnEnterModifier(game, card, () => {
-        if (!levelMod.isActive) return;
+      new OnEnterModifier(game, card, {
+        handler: () => {
+          if (!levelMod.isActive) return;
 
-        const unsub = game.on(GAME_EVENTS.CARD_AFTER_DESTROY, ({ data }) => {
-          if (!data.card.player.equals(card.player)) return;
-          if (!isMinion(data.card)) return;
-          if (!data.card.equals(card)) return;
+          const unsub = game.on(GAME_EVENTS.CARD_AFTER_DESTROY, ({ data }) => {
+            if (!data.card.player.equals(card.player)) return;
+            if (!isMinion(data.card)) return;
+            if (!data.card.equals(card)) return;
 
-          unsub();
-          card.sendToDestinyZone();
-        });
+            unsub();
+            card.sendToDestinyZone();
+          });
+        }
       })
     );
   },

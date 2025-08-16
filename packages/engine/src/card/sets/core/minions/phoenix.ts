@@ -37,9 +37,11 @@ export const phoenix: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new PrideModifier(game, card, 3));
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        for (const target of card.player.enemyMinions) {
-          await target.modifiers.add(new BurnModifier(game, card));
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          for (const target of card.player.enemyMinions) {
+            await target.modifiers.add(new BurnModifier(game, card));
+          }
         }
       })
     );

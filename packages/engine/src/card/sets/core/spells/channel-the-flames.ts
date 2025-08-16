@@ -1,6 +1,6 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { SpellDamage } from '../../../../utils/damage';
-import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
+import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
   CARD_KINDS,

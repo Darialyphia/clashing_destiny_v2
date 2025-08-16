@@ -36,18 +36,20 @@ export const seer: MinionBlueprint = {
     await card.modifiers.add(levelMod);
 
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        const { cards } = await scry(game, card, 3);
-        const arcaneCards = cards.filter(c => c.affinity === AFFINITIES.ARCANE);
-        if (arcaneCards.length === 0) return;
-        if (!levelMod.isActive) return;
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          const { cards } = await scry(game, card, 3);
+          const arcaneCards = cards.filter(c => c.affinity === AFFINITIES.ARCANE);
+          if (arcaneCards.length === 0) return;
+          if (!levelMod.isActive) return;
 
-        await card.player.hero.modifiers.add(
-          new SimpleSpellpowerBuffModifier('seer-spellpower-buff', game, card, {
-            amount: arcaneCards.length,
-            mixins: [new UntilEndOfTurnModifierMixin(game)]
-          })
-        );
+          await card.player.hero.modifiers.add(
+            new SimpleSpellpowerBuffModifier('seer-spellpower-buff', game, card, {
+              amount: arcaneCards.length,
+              mixins: [new UntilEndOfTurnModifierMixin(game)]
+            })
+          );
+        }
       })
     );
   },

@@ -1,6 +1,4 @@
-import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -30,9 +28,11 @@ export const friendlySlime: MinionBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        if (card.player.influence < card.player.opponent.influence) {
-          await card.player.cardManager.drawIntoDestinyZone(1);
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          if (card.player.influence < card.player.opponent.influence) {
+            await card.player.cardManager.drawIntoDestinyZone(1);
+          }
         }
       })
     );

@@ -32,20 +32,22 @@ export const archsageOfMoonring: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new LoyaltyModifier(game, card, 1));
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        let count = 0;
-        while (count < 3) {
-          const [target] = await singleEnemyTargetRules.getPreResponseTargets(
-            game,
-            card,
-            {
-              type: 'card',
-              card
-            }
-          );
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          let count = 0;
+          while (count < 3) {
+            const [target] = await singleEnemyTargetRules.getPreResponseTargets(
+              game,
+              card,
+              {
+                type: 'card',
+                card
+              }
+            );
 
-          await target.takeDamage(card, new AbilityDamage(1));
-          count++;
+            await target.takeDamage(card, new AbilityDamage(1));
+            count++;
+          }
         }
       })
     );

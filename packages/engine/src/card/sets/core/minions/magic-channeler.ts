@@ -18,7 +18,7 @@ export const magicChanneler: MinionBlueprint = {
   unique: false,
   manaCost: 1,
   atk: 1,
-  maxHp: 1,
+  maxHp: 2,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

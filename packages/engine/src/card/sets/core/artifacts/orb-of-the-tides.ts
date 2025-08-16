@@ -1,7 +1,7 @@
 import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
-import { isHero } from '../../../card-utils';
+import { isHero, isMinionOrHero } from '../../../card-utils';
 import {
   AFFINITIES,
   ARTIFACT_KINDS,
@@ -47,8 +47,8 @@ export const orbOfTheTides: ArtifactBlueprint = {
     },
     {
       id: 'orb-of-the-tides-ability-2',
-      label: '@[exhaust]@ : Deal 2 damage',
-      description: `@[exhaust]@ -1@[durability]@ : Deal 1 damage to target Hero. @Tide (3)@: This doesn't lose durability.`,
+      label: '@[exhaust]@ : Deal 1 damage',
+      description: `@[exhaust]@ -1@[durability]@ : Deal 1 damage to target unit. @Tide (3)@: This doesn't lose durability.`,
       manaCost: 0,
       shouldExhaust: true,
       canUse(game, card) {
@@ -62,7 +62,7 @@ export const orbOfTheTides: ArtifactBlueprint = {
         return await game.interaction.selectCardsOnBoard({
           player: card.player,
           origin: { type: 'ability', card, abilityId: 'orb-of-the-tides-ability-2' },
-          isElligible: card => isHero(card) && card.location === 'board',
+          isElligible: card => isMinionOrHero(card) && card.location === 'board',
           canCommit(selectedCards) {
             return selectedCards.length === 1;
           },

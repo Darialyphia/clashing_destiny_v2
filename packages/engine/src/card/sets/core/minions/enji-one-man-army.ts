@@ -13,12 +13,13 @@ import { MinionCard } from '../../../entities/minion.entity';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const enjiOneManArmy: MinionBlueprint = {
   id: 'enji-one-man-army',
   name: 'Enji, One-Man Army',
   cardIconId: 'unit-enji-one-man-army',
-  description: dedent`@Pride(4), @Rush@.
+  description: dedent`@Pride(3), @Rush@.
   @On Kill@: wake this up.
   If you have another minion on the board, destroy this.
   `,
@@ -36,21 +37,23 @@ export const enjiOneManArmy: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new PrideModifier(game, card, 4));
+    await card.modifiers.add(new PrideModifier(game, card, 3));
     await card.modifiers.add(new RushModifier(game, card));
     await card.modifiers.add(
       new Modifier<MinionCard>('enji-aura', game, card, {
         mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
           new AuraModifierMixin(game, {
             canSelfApply: false,
             isElligible(candidate) {
-              return (
-                card.location === 'board' &&
-                card.kind === CARD_KINDS.MINION &&
+              const ok =
+                candidate.location === 'board' &&
+                candidate.kind === CARD_KINDS.MINION &&
                 candidate.location === 'board' &&
                 candidate.player.equals(card.player) &&
-                !candidate.equals(card)
-              );
+                !candidate.equals(card);
+
+              return ok;
             },
             async onGainAura() {
               await card.destroy();

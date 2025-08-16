@@ -34,31 +34,33 @@ export const temporalShifter: MinionBlueprint = {
     const levelMod = new LevelBonusModifier<MinionCard>(game, card, 2);
     await card.modifiers.add(levelMod);
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        if (!levelMod.isActive) return;
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          if (!levelMod.isActive) return;
 
-        const cardsToDrawInEndPhase = card.player.opponent.cardsDrawnForTurn;
+          const cardsToDrawInEndPhase = card.player.opponent.cardsDrawnForTurn;
 
-        const cleanups = await Promise.all([
-          card.player.opponent.addInterceptor('cardsDrawnForTurn', () => 0),
+          const cleanups = await Promise.all([
+            card.player.opponent.addInterceptor('cardsDrawnForTurn', () => 0),
 
-          game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
-            if (
-              event.data.to.state === GAME_PHASES.END &&
-              game.gamePhaseSystem.currentPlayer.equals(card.player.opponent)
-            ) {
-              await card.player.opponent.cardManager.draw(cardsToDrawInEndPhase);
-            }
-          }),
-
-          game.on(GAME_EVENTS.PLAYER_END_TURN, async event => {
-            if (event.data.player.equals(card.player.opponent)) {
-              for (const cleanup of cleanups) {
-                await cleanup();
+            game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
+              if (
+                event.data.to.state === GAME_PHASES.END &&
+                game.gamePhaseSystem.currentPlayer.equals(card.player.opponent)
+              ) {
+                await card.player.opponent.cardManager.draw(cardsToDrawInEndPhase);
               }
-            }
-          })
-        ]);
+            }),
+
+            game.on(GAME_EVENTS.PLAYER_END_TURN, async event => {
+              if (event.data.player.equals(card.player.opponent)) {
+                for (const cleanup of cleanups) {
+                  await cleanup();
+                }
+              }
+            })
+          ]);
+        }
       })
     );
   },

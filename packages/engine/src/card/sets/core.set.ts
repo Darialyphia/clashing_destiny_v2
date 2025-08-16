@@ -63,6 +63,7 @@ import { waterElemental } from './core/minions/water-elemental';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { calmWaters } from './core/spells/calm-waters';
 import { channelTheFlames } from './core/spells/channel-the-flames';
+import { delayTheInevitable } from './core/spells/delay-the-inevitable';
 import { dualCasting } from './core/spells/dual-casting';
 import { fireBall } from './core/spells/fire-ball';
 import { fireBolt } from './core/spells/fire-bolt';
@@ -173,6 +174,7 @@ export const coreSet: CardSet = {
     recollection,
     hourglassFracture,
     temporalShifter,
+    delayTheInevitable,
 
     // Water
     tidalWave,

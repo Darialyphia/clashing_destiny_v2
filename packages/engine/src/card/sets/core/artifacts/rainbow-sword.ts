@@ -43,21 +43,23 @@ export const rainbowCeremonialSword: ArtifactBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnEnterModifier(game, card, async () => {
-        await card.player.hero.modifiers.add(
-          new SimpleAttackBuffModifier<HeroCard>('rainbow-sword-attack', game, card, {
-            amount: 2,
-            name: 'Rainbow Sword',
-            mixins: [new UntilEndOfTurnModifierMixin(game)]
-          })
-        );
-        await card.player.hero.modifiers.add(
-          new SimpleSpellpowerBuffModifier('rainbow-sword-spellpower', game, card, {
-            amount: 2,
-            name: 'Rainbow Sword',
-            mixins: [new UntilEndOfTurnModifierMixin(game)]
-          })
-        );
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          await card.player.hero.modifiers.add(
+            new SimpleAttackBuffModifier<HeroCard>('rainbow-sword-attack', game, card, {
+              amount: 2,
+              name: 'Rainbow Sword',
+              mixins: [new UntilEndOfTurnModifierMixin(game)]
+            })
+          );
+          await card.player.hero.modifiers.add(
+            new SimpleSpellpowerBuffModifier('rainbow-sword-spellpower', game, card, {
+              amount: 2,
+              name: 'Rainbow Sword',
+              mixins: [new UntilEndOfTurnModifierMixin(game)]
+            })
+          );
+        }
       })
     );
   },

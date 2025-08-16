@@ -41,5 +41,5 @@ export const defaultConfig: Config = {
 
   MAX_EQUIPPED_ARTIFACTS: 3,
 
-  SUMMONING_SICKNESS: false
+  SUMMONING_SICKNESS: true
 };

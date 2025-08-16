@@ -16,8 +16,7 @@ export const revisedStrategy: SpellBlueprint = {
   name: 'Revised Strategy',
   cardIconId: 'spell-revise-strategy',
   description: dedent`
-  Look at your deck and banish 3 cards from it. Shuffle your deck and Draw a card.
-  @Echoed Destiny@.`,
+  Look at your deck and banish 3 cards from it. Shuffle your deck and Draw a card.`,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -30,9 +29,7 @@ export const revisedStrategy: SpellBlueprint = {
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: async () => [],
-  async onInit(game, card) {
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
-  },
+  async onInit() {},
   async onPlay(game, card) {
     const cards = await game.interaction.chooseCards<MainDeckCard>({
       player: card.player,

@@ -1229,6 +1229,19 @@
         },
         {
           "alias": [
+            "icon-spell-delay-the-inevitable"
+          ],
+          "src": [
+            "/assets/icons/spell-delay-the-inevitable.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-spell-dual-casting"
           ],
           "src": [

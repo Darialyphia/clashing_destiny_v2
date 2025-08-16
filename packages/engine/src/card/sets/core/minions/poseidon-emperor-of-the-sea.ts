@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { ElusiveModifier } from '../../../../modifier/modifiers/elusive.modiier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -8,23 +7,25 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import {
-  FixTideModifier,
-  TidesFavoredModifier
-} from '../../../../modifier/modifiers/tide-modifier';
+import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
+import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { isMinion } from '../../../card-utils';
+import { MinionCard } from '../../../entities/minion.entity';
+import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 
 export const poseidonEmperorOfTheSea: MinionBlueprint = {
   id: 'poseidonEmperorOfTheSea',
   name: 'Poseidon, Emperor of the Sea',
   cardIconId: 'unit-poseidon-emperor-of-the-sea',
   description: dedent`
-  @Unique@.
-  Your @Tide@ is always at 3.`,
+  @Tide (3)@ : your other minions have @Rush@.`,
   collectable: true,
-  unique: true,
-  manaCost: 5,
-  atk: 3,
-  maxHp: 5,
+  unique: false,
+  manaCost: 4,
+  atk: 2,
+  maxHp: 4,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -34,9 +35,30 @@ export const poseidonEmperorOfTheSea: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new FixTideModifier(game, card, 3));
+    const tidesFavored = card.player.hero.modifiers.get(TidesFavoredModifier);
+    await card.modifiers.add(
+      new Modifier<MinionCard>('poseidon-aura', game, card, {
+        mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
+          new AuraModifierMixin(game, {
+            canSelfApply: false,
+            isElligible(candidate) {
+              return (
+                candidate.isAlly(card) &&
+                isMinion(candidate) &&
+                tidesFavored?.stacks === 3
+              );
+            },
+            async onGainAura(candidate) {
+              await candidate.modifiers.add(new RushModifier(game, card));
+            },
+            async onLoseAura(candidate) {
+              await candidate.modifiers.remove(RushModifier);
+            }
+          })
+        ]
+      })
+    );
   },
-  async onPlay(game, card) {
-    await card.player.hero.modifiers.get(TidesFavoredModifier)?.setStacks(3);
-  }
+  async onPlay() {}
 };

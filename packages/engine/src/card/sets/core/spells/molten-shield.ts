@@ -24,7 +24,7 @@ export const moltenShield: SpellBlueprint = {
   name: 'Molten Shield',
   cardIconId: 'spell-molten-shield',
   description:
-    'Prevent the next 2 combat damage dealt to your hero this turn. Add stacks of @Ember@ to your hero equal to the damage prevented.\n\n@Echoed Destiny@.',
+    'Prevent the next 3 combat damage dealt to target ally this turn. Add stacks of @Ember@ to your hero equal to the damage prevented.\n\n@Echoed Destiny@.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -36,15 +36,22 @@ export const moltenShield: SpellBlueprint = {
   subKind: SPELL_KINDS.BURST,
   tags: [],
   canPlay: () => true,
-  getPreResponseTargets: async () => [],
+  getPreResponseTargets(game, card) {
+    return singleAllyTargetRules.getPreResponseTargets(game, card, {
+      type: 'card',
+      card
+    });
+  },
   async onInit(game, card) {
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
-  async onPlay(game, card) {
-    await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('molten-shield', game, card, {
+  async onPlay(game, card, targets) {
+    const target = targets[0] as HeroCard | MinionCard;
+
+    await (target as MinionCard).modifiers.add(
+      new Modifier<MinionCard>('molten-shield', game, card, {
         name: 'Molten Shield',
-        description: 'Prevent the 2 combat damage dealt to this.',
+        description: 'Prevent the 3 combat damage dealt to this.',
         icon: 'keyword-molten-shield',
         mixins: [
           new UntilEndOfTurnModifierMixin(game),
@@ -52,7 +59,7 @@ export const moltenShield: SpellBlueprint = {
             key: 'receivedDamage',
             interceptor: (value, ctx) => {
               if (ctx.damage.type !== DAMAGE_TYPES.COMBAT) return value;
-              const maxMitigation = 2;
+              const maxMitigation = 3;
               return Math.max(0, value - maxMitigation);
             }
           }),

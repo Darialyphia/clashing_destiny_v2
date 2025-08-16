@@ -1,6 +1,5 @@
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -19,7 +18,7 @@ export const flamefistFighter: MinionBlueprint = {
   unique: false,
   manaCost: 2,
   atk: 2,
-  maxHp: 1,
+  maxHp: 2,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

@@ -1,5 +1,7 @@
+import { isDefined } from '@game/shared';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../card-utils';
@@ -10,14 +12,12 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { HeroCard } from '../../../entities/hero.entity';
-import { MinionCard } from '../../../entities/minion.entity';
 
 export const flameExorcist: MinionBlueprint = {
   id: 'flameExorcist',
   name: 'Flame Exorcist',
   cardIconId: 'unit-flame-exorcist',
-  description: ``,
+  description: `@On Enter@ : @[exhaust]@ deal 1 damage to a enemy. Consume one stack of @Ember@ to deal 2 damage instead.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -28,38 +28,22 @@ export const flameExorcist: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
-  abilities: [
-    {
-      id: 'ability',
-      label: '@[exhaust]@ : Deal 1 damage',
-      description: `@[exhaust]@ Consume 1 @Ember@ stack from your hero to deal 1 damage to a enemy. @[level] 4+@ deal 2 damage instead.`,
-      canUse: (game, card) =>
-        card.location === 'board' &&
-        singleEnemyTargetRules.canPlay(game, card) &&
-        (card.player.hero.modifiers.get(EmberModifier)?.stacks ?? 0) > 0,
-      getPreResponseTargets(game, card) {
-        return singleEnemyTargetRules.getPreResponseTargets(game, card, {
-          type: 'ability',
-          card,
-          abilityId: 'ability'
-        });
-      },
-      manaCost: 0,
-      shouldExhaust: true,
-      async onResolve(game, card, targets) {
-        const emberModifier = card.player.hero.modifiers.get(EmberModifier);
-        if (!emberModifier || emberModifier.stacks < 1) return;
-        await emberModifier.removeStacks(1);
-        const levelMod = card.modifiers.get(LevelBonusModifier);
-        const target = targets[0] as MinionCard | HeroCard;
-        await target.takeDamage(card, new AbilityDamage(levelMod?.isActive ? 2 : 1));
-      }
-    }
-  ],
+  abilities: [],
   tags: [],
-  canPlay: () => true,
+  canPlay: singleEnemyTargetRules.canPlay,
   async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 4));
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        async handler() {
+          const emberModifier = card.player.hero.modifiers.get(EmberModifier);
+          await emberModifier?.removeStacks(1);
+          await card.player.hero.takeDamage(
+            card,
+            new AbilityDamage(isDefined(emberModifier) ? 2 : 1)
+          );
+        }
+      })
+    );
   },
   async onPlay() {}
 };
