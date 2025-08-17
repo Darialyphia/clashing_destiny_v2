@@ -13,7 +13,7 @@ import type { DestinyCard } from '../../../entities/destiny.entity';
 
 export const arcaneMastery: DestinyBlueprint = {
   id: 'arcane-mastery',
-  name: 'Arcane Mastery',
+  name: 'Bond with the Arcane',
   cardIconId: 'talent-arcane-mastery',
   description:
     'Give your Hero +1 @[spellpower]@.\n@[level] 5+ bonus@: give +1@[spellpower]@ more.',

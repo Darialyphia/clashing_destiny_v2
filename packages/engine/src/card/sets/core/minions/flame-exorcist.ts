@@ -17,7 +17,7 @@ export const flameExorcist: MinionBlueprint = {
   id: 'flameExorcist',
   name: 'Flame Exorcist',
   cardIconId: 'unit-flame-exorcist',
-  description: `@On Enter@ : @[exhaust]@ deal 1 damage to a enemy. Consume one stack of @Ember@ to deal 2 damage instead.`,
+  description: `@On Enter@ : deal 1 damage to a enemy. Consume one stack of @Ember@ to deal 2 damage instead.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -30,14 +30,22 @@ export const flameExorcist: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   abilities: [],
   tags: [],
-  canPlay: singleEnemyTargetRules.canPlay,
+  canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
+          const hasTarget = singleEnemyTargetRules.canPlay(game, card);
+          if (!hasTarget) return;
+
+          const [target] = await singleEnemyTargetRules.getPreResponseTargets(
+            game,
+            card,
+            { type: 'card', card }
+          );
           const emberModifier = card.player.hero.modifiers.get(EmberModifier);
           await emberModifier?.removeStacks(1);
-          await card.player.hero.takeDamage(
+          await target.takeDamage(
             card,
             new AbilityDamage(isDefined(emberModifier) ? 2 : 1)
           );

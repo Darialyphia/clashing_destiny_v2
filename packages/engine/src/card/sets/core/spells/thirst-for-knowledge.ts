@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { scry } from '../../../card-actions-utils';
 import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
@@ -9,16 +10,23 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import type { SpellCard } from '../../../entities/spell.entity';
 
 export const thirstForKnowledge: SpellBlueprint = {
   id: 'thirst-for-knowledge',
   name: 'Thirst for Knowledge',
   cardIconId: 'spell-thirst-for-knowledge',
-  description:
-    '@Scry 1@ + @[spellpower]@. Draw a card. @[level] 4+@ draw a card in your Destiny zone.',
+  description: dedent`
+  Draw 2 cards.
+  @[level] 4+@ : This costs @[spellpower]@ less.
+
+  `,
   collectable: true,
   unique: false,
-  manaCost: 3,
+  manaCost: 5,
   affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -29,13 +37,25 @@ export const thirstForKnowledge: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 2)
+    )) as LevelBonusModifier<SpellCard>;
+
+    await card.modifiers.add(
+      new Modifier('thirst-for-knowledge-discount', game, card, {
+        mixins: [
+          new TogglableModifierMixin(game, () => levelMod.isActive),
+          new SpellInterceptorModifierMixin(game, {
+            key: 'manaCost',
+            interceptor(value) {
+              return Math.max(value! - card.player.hero.spellPower, 0);
+            }
+          })
+        ]
+      })
+    );
   },
   async onPlay(game, card) {
-    await scry(game, card, card.player.hero.spellPower + 1);
-    await card.player.cardManager.draw(1);
-    if (card.modifiers.get(LevelBonusModifier)?.isActive) {
-      await card.player.cardManager.drawIntoDestinyZone(1);
-    }
+    await card.player.cardManager.draw(2);
   }
 };

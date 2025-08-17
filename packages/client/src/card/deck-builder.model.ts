@@ -1,4 +1,7 @@
-import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import type {
+  CardBlueprint,
+  DestinyBlueprint
+} from '@game/engine/src/card/card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS
@@ -124,16 +127,49 @@ export class DeckBuilderViewModel {
   }
 
   get mainDeckCards() {
-    return this._deck[CARD_DECK_SOURCES.MAIN_DECK].map(card => {
-      const blueprint = this.cardPool.find(
-        c => c.blueprint.id === card.blueprintId
-      )!.blueprint as CardBlueprint;
+    return this._deck[CARD_DECK_SOURCES.MAIN_DECK]
+      .map(card => {
+        const blueprint = this.cardPool.find(
+          c => c.blueprint.id === card.blueprintId
+        )!.blueprint as CardBlueprint & {
+          deckSource: (typeof CARD_DECK_SOURCES)['MAIN_DECK'];
+        };
 
-      return {
-        ...card,
-        blueprint
-      };
-    });
+        return {
+          ...card,
+          blueprint
+        };
+      })
+      .sort((a, b) => {
+        if (a.blueprint.manaCost === b.blueprint.manaCost) {
+          return a.blueprint.name.localeCompare(b.blueprint.name);
+        }
+        return a.blueprint.manaCost - b.blueprint.manaCost;
+      });
+  }
+
+  get destinynDeckCards() {
+    return this._deck[CARD_DECK_SOURCES.DESTINY_DECK]
+      .map(card => {
+        const blueprint = this.cardPool.find(
+          c => c.blueprint.id === card.blueprintId
+        )!.blueprint as DestinyBlueprint;
+
+        return {
+          ...card,
+          blueprint
+        };
+      })
+      .sort((a, b) => {
+        if (a.blueprint.destinyCost === b.blueprint.destinyCost) {
+          return a.blueprint.name.localeCompare(b.blueprint.name);
+        }
+        return a.blueprint.destinyCost - b.blueprint.destinyCost;
+      });
+  }
+
+  get destinyDeckSize() {
+    return this._deck[CARD_DECK_SOURCES.DESTINY_DECK].length;
   }
 
   get cards() {

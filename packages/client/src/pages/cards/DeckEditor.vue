@@ -11,9 +11,9 @@ const getCountByKind = (kind: CardKind) => {
     .filter(c => c.blueprint.kind === kind)
     .reduce((acc, card) => {
       if ('copies' in card) {
-        return acc + (card.copies as number);
+        return acc + ((card.copies as number) ?? 1);
       }
-      return acc;
+      return acc + 1;
     }, 0);
 };
 </script>
@@ -38,13 +38,13 @@ const getCountByKind = (kind: CardKind) => {
           <span>{{ getCountByKind(CARD_KINDS.ARTIFACT) }}</span>
           Artifacts
         </div>
+        <div>
+          <span>{{ getCountByKind(CARD_KINDS.DESTINY) }}</span>
+          Destinies
+        </div>
       </div>
     </div>
     <div class="overflow-y-auto fancy-scrollbar">
-      <div class="text-3 mb-5 font-500">
-        Main deck ({{ deckBuilder.mainDeckSize }} /
-        {{ deckBuilder.validator.mainDeckSize }})
-      </div>
       <ul>
         <li
           v-if="deckBuilder.hero"
@@ -76,6 +76,10 @@ const getCountByKind = (kind: CardKind) => {
           <template v-if="'copies' in card">X {{ card.copies }}</template>
         </li>
       </ul>
+      <div class="deck-count">
+        Main deck ({{ deckBuilder.mainDeckSize }} /
+        {{ deckBuilder.validator.mainDeckSize }})
+      </div>
     </div>
     <div class="flex gap-2 mt-3">
       <FancyButton text="Back" variant="error" @click="isEditingDeck = false" />
@@ -176,5 +180,16 @@ const getCountByKind = (kind: CardKind) => {
     color: var(--primary);
     font-weight: var(--font-weight-5);
   }
+}
+
+.deck-count {
+  font-size: var(--font-size-3);
+  line-height: 1;
+  font-weight: 500;
+  text-align: right;
+  position: sticky;
+  bottom: 0;
+  background-color: #261a26;
+  padding: var(--size-3) var(--size-3);
 }
 </style>

@@ -1,5 +1,5 @@
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
-import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
+import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -18,7 +18,7 @@ export const arcaneInsight: SpellBlueprint = {
     'Draw a card. @[level] 3+ bonus@ : Draw another card in your Destiny zone.',
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 3,
   affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

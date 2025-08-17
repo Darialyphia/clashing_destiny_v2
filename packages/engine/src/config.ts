@@ -22,8 +22,8 @@ export type Config = {
 };
 
 export const defaultConfig: Config = {
-  MAX_MAIN_DECK_SIZE: 40,
-  MAX_MAIN_DECK_CARD_COPIES: 4,
+  MAX_MAIN_DECK_SIZE: 39,
+  MAX_MAIN_DECK_CARD_COPIES: 3,
 
   MAX_DESTINY_DECK_SIZE: 10,
   MAX_DESTINY_DECK_CARD_COPIES: 1,

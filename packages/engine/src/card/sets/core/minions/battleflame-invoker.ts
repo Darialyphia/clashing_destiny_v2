@@ -24,7 +24,7 @@ export const battleflameInvoker: MinionBlueprint = {
   unique: false,
   manaCost: 4,
   atk: 2,
-  maxHp: 5,
+  maxHp: 4,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -32,8 +32,8 @@ export const battleflameInvoker: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   abilities: [
     {
-      id: 'battleflame-invoker-ability-2',
-      description: '@[exhaust]@ : add 1 stack of @Ember@ to your hero',
+      id: 'battleflame-invoker-ability-1',
+      description: '@[exhaust]@ : gain 1 stack of @Ember@.',
       label: 'Gain 1 Ember',
       shouldExhaust: true,
       manaCost: 0,
@@ -46,7 +46,7 @@ export const battleflameInvoker: MinionBlueprint = {
     {
       id: 'battleflame-invoker-ability-2',
       description:
-        '@[exhaust]@ : consume 3 stacks of @Ember@. Summon a @Blazing Salamander@ on your side of the field',
+        '@[exhaust]@ : consume 4 stacks of @Ember@. Summon a @Blazing Salamander@ on your side of the field',
       label: 'Summon Blazing Salamander',
       shouldExhaust: true,
       manaCost: 0,
@@ -71,42 +71,6 @@ export const battleflameInvoker: MinionBlueprint = {
   ],
   tags: [],
   canPlay: () => true,
-  async onInit(game, card) {
-    const buff = new SimpleSpellpowerBuffModifier(
-      'battleflame-invoker-spellpower',
-      game,
-      card.player.hero,
-      {
-        amount: 2,
-        name: 'Battleflame Invoker'
-      }
-    );
-
-    await card.modifiers.add(
-      new Modifier<MinionCard>('battleflame-invoker-aura', game, card, {
-        mixins: [
-          new AuraModifierMixin(game, {
-            canSelfApply: false,
-            isElligible(candidate) {
-              const emberModifier = candidate.modifiers.get(EmberModifier);
-              if (!emberModifier) return false;
-
-              return (
-                card.location === 'board' &&
-                candidate.equals(card.player.hero) &&
-                emberModifier.stacks >= 4
-              );
-            },
-            async onGainAura() {
-              await card.player.hero.modifiers.add(buff);
-            },
-            async onLoseAura() {
-              await card.player.hero.modifiers.remove(buff);
-            }
-          })
-        ]
-      })
-    );
-  },
+  async onInit(game, card) {},
   async onPlay() {}
 };

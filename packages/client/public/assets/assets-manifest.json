@@ -1879,6 +1879,19 @@
         },
         {
           "alias": [
+            "icon-talent-sands-of-time"
+          ],
+          "src": [
+            "/assets/icons/talent-sands-of-time.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-test"
           ],
           "src": [

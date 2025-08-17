@@ -21,7 +21,7 @@ export const nagaSkirmisher: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 3,
-  atk: 3,
+  atk: 2,
   maxHp: 3,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

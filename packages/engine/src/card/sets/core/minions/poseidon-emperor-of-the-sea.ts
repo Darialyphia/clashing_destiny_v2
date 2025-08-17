@@ -14,20 +14,19 @@ import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mi
 import { isMinion } from '../../../card-utils';
 import { MinionCard } from '../../../entities/minion.entity';
 import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { P } from 'ts-pattern';
+import { SimpleManaCostBuffModifier } from '../../../../modifier/modifiers/simple-mana-cost-buff.modifier';
 
 export const poseidonEmperorOfTheSea: MinionBlueprint = {
   id: 'poseidonEmperorOfTheSea',
   name: 'Poseidon, Emperor of the Sea',
   cardIconId: 'unit-poseidon-emperor-of-the-sea',
   description: dedent`
-  @Tide (3)@ : your other Water minions have @Rush@ and +1 @[attack]@.`,
+  @Tide (3)@ : your other Water minions have @Rush@ and cost @[mana] 1@ less.`,
   collectable: true,
   unique: false,
   manaCost: 4,
   atk: 2,
-  maxHp: 5,
+  maxHp: 4,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -37,8 +36,7 @@ export const poseidonEmperorOfTheSea: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const tidesFavored = card.player.hero.modifiers.get(TidesFavoredModifier);
-    const POSEIDON_ATTACK_BUFF = 'poseidon-attack-buff';
+    const POSEIDON_MANA_COST_DISCOUNT = 'poseidon-mana-cost-discount';
 
     await card.modifiers.add(
       new Modifier<MinionCard>('poseidon-aura', game, card, {
@@ -47,6 +45,7 @@ export const poseidonEmperorOfTheSea: MinionBlueprint = {
           new AuraModifierMixin(game, {
             canSelfApply: false,
             isElligible(candidate) {
+              const tidesFavored = card.player.hero.modifiers.get(TidesFavoredModifier);
               return (
                 candidate.isAlly(card) &&
                 isMinion(candidate) &&
@@ -57,14 +56,14 @@ export const poseidonEmperorOfTheSea: MinionBlueprint = {
             async onGainAura(candidate) {
               await candidate.modifiers.add(new RushModifier(game, card, {}));
               await candidate.modifiers.add(
-                new SimpleAttackBuffModifier(POSEIDON_ATTACK_BUFF, game, card, {
-                  amount: 1
+                new SimpleManaCostBuffModifier(POSEIDON_MANA_COST_DISCOUNT, game, card, {
+                  amount: -1
                 })
               );
             },
             async onLoseAura(candidate) {
               await candidate.modifiers.remove(RushModifier);
-              await candidate.modifiers.remove(POSEIDON_ATTACK_BUFF);
+              await candidate.modifiers.remove(POSEIDON_MANA_COST_DISCOUNT);
             }
           })
         ]

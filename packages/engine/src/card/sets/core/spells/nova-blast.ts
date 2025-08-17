@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
@@ -12,7 +11,6 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import { SpellCard } from '../../../entities/spell.entity';
 
 export const novaBlast: SpellBlueprint = {
   id: 'nova-blast',

@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { GAME_PHASES } from '../../../../game/game.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
-import type { PreResponseTarget, SpellBlueprint } from '../../../card-blueprint';
+import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -16,12 +16,10 @@ export const hourglassFracture: SpellBlueprint = {
   name: 'Hourglass Fracture',
   cardIconId: 'spell-hourglass-fracture',
   description: dedent`
-  @Unique@.
-  Your opponent ends their next turn after their Destiny Phase.
+  Your opponent ends their next turn after their Destiny Phase. Banish all cards in your Destiny zone.
   `,
   collectable: true,
-  unique: true,
-  manaCost: 6,
+  manaCost: 5,
   affinity: AFFINITIES.CHRONO,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -41,5 +39,10 @@ export const hourglassFracture: SpellBlueprint = {
         await game.gamePhaseSystem.declareEndPhase();
       }
     });
+
+    for (const destinyCard of card.player.cardManager.destinyZone) {
+      destinyCard.removeFromCurrentLocation();
+      destinyCard.sendToBanishPile();
+    }
   }
 };
