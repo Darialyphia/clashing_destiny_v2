@@ -29,7 +29,7 @@ export const tomeOfKnowledge: ArtifactBlueprint = {
     {
       id: 'tome-of-knowledge-ability',
       label: '@[exhaust]@ +1 Spellpower',
-      description: `@[exhaust]@ -1@[durability]@ : Your hero gains +1 @[spellpower]@ this turn.`,
+      description: `@[exhaust]@ @[mana] 1@ -1@[durability]@ : Your hero gains +1 @[spellpower]@ this turn.`,
       manaCost: 2,
       shouldExhaust: true,
       canUse(game, card) {
