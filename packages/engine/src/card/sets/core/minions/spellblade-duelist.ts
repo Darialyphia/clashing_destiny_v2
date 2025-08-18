@@ -1,9 +1,7 @@
-import { UnitInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { BlitzModifier } from '../../../../modifier/modifiers/blitz.modifier';
+import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -12,7 +10,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 
 export const spellbladeDuelist: MinionBlueprint = {
   id: 'spellblade-duelist',
@@ -42,6 +39,11 @@ export const spellbladeDuelist: MinionBlueprint = {
 
     await card.modifiers.add(
       new BlitzModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
+      })
+    );
+    await card.modifiers.add(
+      new RushModifier(game, card, {
         mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
       })
     );

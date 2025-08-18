@@ -16,7 +16,7 @@ export const pyreboundLancer: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 3,
+  atk: 2,
   maxHp: 4,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
