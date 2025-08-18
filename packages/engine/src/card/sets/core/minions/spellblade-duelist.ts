@@ -15,7 +15,7 @@ export const spellbladeDuelist: MinionBlueprint = {
   id: 'spellblade-duelist',
   name: 'Spellblade Duelist',
   cardIconId: 'unit-spellblade-duelist',
-  description: `This gains +1@[attack]@, @Rush@ and @Blitz@ as long as your hero has at least 3 @[spellpower]@.`,
+  description: `This gains +1@[attack]@, @Blitz@ as long as your hero has at least 3 @[spellpower]@.`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -39,11 +39,6 @@ export const spellbladeDuelist: MinionBlueprint = {
 
     await card.modifiers.add(
       new BlitzModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
-      })
-    );
-    await card.modifiers.add(
-      new RushModifier(game, card, {
         mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower >= 3)]
       })
     );

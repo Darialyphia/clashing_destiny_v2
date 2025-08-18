@@ -51,6 +51,9 @@ export const battleflameInvoker: MinionBlueprint = {
       shouldExhaust: true,
       manaCost: 0,
       canUse: (game, card) => {
+        const emberModifier = card.player.hero.modifiers.get(EmberModifier);
+        if (!emberModifier || emberModifier.stacks < 4) return false;
+
         return singleEmptyAllySlot.canPlay(game, card) && card.location === 'board';
       },
       getPreResponseTargets: async (game, card) =>

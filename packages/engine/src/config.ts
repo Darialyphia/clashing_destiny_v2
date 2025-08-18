@@ -19,6 +19,7 @@ export type Config = {
   MAX_EQUIPPED_ARTIFACTS: number;
 
   SUMMONING_SICKNESS: boolean;
+  ALLOW_PLAYER_1_TURN_1_ATTACK: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -41,5 +42,6 @@ export const defaultConfig: Config = {
 
   MAX_EQUIPPED_ARTIFACTS: 3,
 
-  SUMMONING_SICKNESS: true
+  SUMMONING_SICKNESS: false,
+  ALLOW_PLAYER_1_TURN_1_ATTACK: false
 };

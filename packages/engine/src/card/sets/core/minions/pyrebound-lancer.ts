@@ -30,12 +30,12 @@ export const pyreboundLancer: MinionBlueprint = {
     await card.modifiers.add(
       new OnKillModifier(game, card, {
         async handler() {
-          const lastFireSpell = [...card.player.cardManager.discardPile].findLast(
+          const lastSpell = [...card.player.cardManager.discardPile].findLast(
             c => c.kind === CARD_KINDS.SPELL
           );
 
-          if (!lastFireSpell) return;
-          card.player.cardManager.addToHand(lastFireSpell);
+          if (!lastSpell) return;
+          card.player.cardManager.addToHand(lastSpell);
         }
       })
     );

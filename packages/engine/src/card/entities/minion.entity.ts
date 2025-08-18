@@ -304,7 +304,12 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
+    const p1t1Condition = this.game.config.ALLOW_PLAYER_1_TURN_1_ATTACK
+      ? true
+      : !this.player.isPlayer1 || this.game.gamePhaseSystem.elapsedTurns > 0;
+
     const base =
+      p1t1Condition &&
       this.position?.zone === 'attack' &&
       !this._isExhausted &&
       this.atk > 0 &&
