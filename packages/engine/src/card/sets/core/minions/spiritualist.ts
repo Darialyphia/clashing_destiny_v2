@@ -17,7 +17,7 @@ export const spiritualist: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 4,
+  atk: 3,
   maxHp: 3,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

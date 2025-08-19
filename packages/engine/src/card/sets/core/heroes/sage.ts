@@ -1,7 +1,5 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
-import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { SpellInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
@@ -20,7 +18,7 @@ export const sage: HeroBlueprint = {
   name: 'Sage',
   cardIconId: 'hero-sage',
   description:
-    '@[level] 3+@ : The first time you play a spell during your turn, draw 1 card.',
+    '@[level] 4+@ : The first time you play a spell during your turn, draw 1 card.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [],

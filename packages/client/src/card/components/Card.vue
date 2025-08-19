@@ -184,6 +184,7 @@ const costStatus = computed(() => {
       </div>
 
       <div class="rarity" />
+
       <div class="stats">
         <div
           v-if="isDefined(card.manaCost)"
