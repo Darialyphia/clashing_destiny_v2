@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
+import DiscardPile from './DiscardPile.vue';
+import BanishPile from './BanishPile.vue';
 
 const { player } = defineProps<{ player: PlayerViewModel }>();
+
+const isDiscardPileOpened = ref(false);
+const isBanishPileOpened = ref(false);
 </script>
 
 <template>
@@ -16,15 +21,17 @@ const { player } = defineProps<{ player: PlayerViewModel }>();
       {{ player.remainingCardsInDeck }}
     </div>
 
-    <div>
+    <button @click="isDiscardPileOpened = !isDiscardPileOpened">
       <div class="icon" style="--bg: url(/assets/ui/icon-discard-pile.png)" />
       {{ player.discardPile.length }}
-    </div>
+    </button>
+    <DiscardPile v-model:is-opened="isDiscardPileOpened" :player="player.id" />
 
-    <div>
+    <button @click="isBanishPileOpened = !isBanishPileOpened">
       <div class="icon" style="--bg: url(/assets/ui/icon-banish-pile.png)" />
       {{ player.banishPile.length }}
-    </div>
+    </button>
+    <BanishPile v-model:is-opened="isBanishPileOpened" :player="player.id" />
   </div>
 </template>
 

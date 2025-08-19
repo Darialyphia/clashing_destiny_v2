@@ -76,10 +76,12 @@ export const provideCardList = () => {
                   card.description.includes(searchText)) ||
                 k.aliases.some(alias => {
                   return isString(alias)
-                    ? card.description
-                        .toLocaleLowerCase()
-                        .match(alias.toLocaleLowerCase())
-                    : card.description.toLocaleLowerCase().match(alias);
+                    ? alias.includes(searchText) &&
+                        card.description
+                          .toLocaleLowerCase()
+                          .includes(alias.toLocaleLowerCase())
+                    : searchText.match(alias) &&
+                        card.description.toLocaleLowerCase().match(alias);
                 })
               );
             })

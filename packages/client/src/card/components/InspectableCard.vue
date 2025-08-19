@@ -18,9 +18,13 @@ const {
   side,
   sideOffset,
   closeDelay = 0,
-  openDelay
+  openDelay,
+  enabled = true
 } = defineProps<
-  { cardId: string } & Pick<HoverCardContentProps, 'side' | 'sideOffset'> &
+  { cardId: string; enabled?: boolean } & Pick<
+    HoverCardContentProps,
+    'side' | 'sideOffset'
+  > &
     Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
 </script>
@@ -31,7 +35,7 @@ const {
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
-      <HoverCardContent :side="side" :side-offset="sideOffset">
+      <HoverCardContent :side="side" :side-offset="sideOffset" v-if="enabled">
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>
     </HoverCardPortal>

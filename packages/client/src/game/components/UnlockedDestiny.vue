@@ -65,7 +65,7 @@ const isActionsPopoverOpened = computed({
   aspect-ratio: 1;
 
   &.exhausted {
-    filter: brightness(75%);
+    filter: grayscale(1) brightness(0.75);
   }
 }
 </style>

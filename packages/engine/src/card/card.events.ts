@@ -1,6 +1,5 @@
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS } from './card.enums';
-import type { CardLocation } from './components/card-manager.component';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<

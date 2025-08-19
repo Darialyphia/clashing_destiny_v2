@@ -17,7 +17,9 @@ const isDisplayed = computed(() => {
 });
 
 const visibleModifiers = computed(() => {
-  return card.value.modifiers.filter(modifier => modifier.icon);
+  return card.value.modifiers.filter(
+    modifier => modifier.icon && modifier.stacks > 0
+  );
 });
 
 const client = useGameClient();

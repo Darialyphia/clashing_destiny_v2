@@ -82,6 +82,7 @@ import { recollection } from './core/spells/recollection';
 import { revisedStrategy } from './core/spells/revised-strategy';
 import { shiftingCurrents } from './core/spells/shifting-currents';
 import { shoalOfEels } from './core/spells/shoal-of-eels';
+import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
 import { slipstreamVeil } from './core/spells/slipstream-veil';
 import { surgeOfWill } from './core/spells/surge-of-will';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
@@ -132,6 +133,7 @@ export const coreSet: CardSet = {
     theHangedMan,
     bloodCovenant,
     gluttonousSlime,
+    slimesToTheRescue,
 
     // Fire
     fireBolt,

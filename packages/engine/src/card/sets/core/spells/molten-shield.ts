@@ -68,7 +68,9 @@ export const moltenShield: SpellBlueprint = {
             handler: async (event, modifier) => {
               if (!event.data.card.equals(card.player.hero)) return;
               if (event.data.damage.type !== DAMAGE_TYPES.COMBAT) return;
+
               await modifier.target.modifiers.remove(modifier);
+
               const amountPrevented =
                 event.data.damage.baseAmount -
                 event.data.damage.getFinalAmount(event.data.card);

@@ -251,15 +251,16 @@ export const multipleEmptyAllySlot = {
     return card.player.boardSide.unoccupiedSlots.length >= min;
   },
   getPreResponseTargets:
-    ({ min, max }: { min: number; max: number }) =>
+    ({ min, max, zone }: { min: number; max: number; zone?: 'attack' | 'defense' }) =>
     async (game: Game, card: AnyCard) => {
       return await game.interaction.selectMinionSlot({
         player: card.player,
         isElligible(slot) {
-          return (
-            slot.player.equals(card.player) &&
-            !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied
-          );
+          return slot.player.equals(card.player) &&
+            !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied &&
+            zone
+            ? slot.zone === zone
+            : true;
         },
         canCommit(selectedSlots) {
           return selectedSlots.length >= min;

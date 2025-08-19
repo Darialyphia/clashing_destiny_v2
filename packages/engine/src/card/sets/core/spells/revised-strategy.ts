@@ -9,7 +9,6 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 
 export const revisedStrategy: SpellBlueprint = {
   id: 'revised-strategy',
@@ -40,7 +39,7 @@ export const revisedStrategy: SpellBlueprint = {
     });
 
     for (const cardToBanish of cards) {
-      await card.player.cardManager.sendToBanishPile(cardToBanish);
+      cardToBanish.sendToBanishPile();
     }
     await card.player.cardManager.mainDeck.shuffle();
     await card.player.cardManager.draw(1);

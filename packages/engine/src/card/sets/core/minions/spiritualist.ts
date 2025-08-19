@@ -17,7 +17,7 @@ export const spiritualist: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 4,
+  atk: 3,
   maxHp: 3,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -34,10 +34,9 @@ export const spiritualist: MinionBlueprint = {
           new MinionInterceptorModifierMixin(game, {
             key: 'manaCost',
             interceptor(value) {
-              const hasPlayedSpellThisTurn =
-                card.player.cardTracker.cardsPlayedThisTurn.filter(
-                  c => c.kind === CARD_KINDS.SPELL
-                );
+              const hasPlayedSpellThisTurn = card.player.cardTracker
+                .getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
+                .filter(c => c.player.equals(game.gamePhaseSystem.currentPlayer));
 
               return hasPlayedSpellThisTurn.length > 0
                 ? Math.max(0, (value ?? 0) - 2)

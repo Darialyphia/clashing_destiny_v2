@@ -1,6 +1,5 @@
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { scry } from '../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -10,7 +9,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
 import dedent from 'dedent';
 
@@ -19,8 +17,7 @@ export const seer: MinionBlueprint = {
   name: 'Seer',
   cardIconId: 'unit-seer',
   description: dedent`
-  @On Enter@ : @Scry 3@.
-  @[level] 3+ bonus@ Draw a card.`,
+  @On Enter@ : @Scry 3@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -35,16 +32,10 @@ export const seer: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const levelMod = new LevelBonusModifier<MinionCard>(game, card, 3);
-    await card.modifiers.add(levelMod);
-
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
           await scry(game, card, 3);
-
-          if (!levelMod.isActive) return;
-          await card.player.cardManager.draw(1);
         }
       })
     );

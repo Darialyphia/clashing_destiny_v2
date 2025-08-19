@@ -20,7 +20,7 @@ export const phoenix: MinionBlueprint = {
   description: dedent`
   @Pride(3)@.
   @On Enter@ : inflicts @Burn@ to all enemy minions.
-  @On Death@: If your hero has at least 5 @Ember@ stacks, consume them to re-summon this.`,
+  @On Death@: If your hero has at least 4 @Ember@ stacks, consume them to re-summon this.`,
   collectable: true,
   unique: false,
   manaCost: 5,
@@ -50,12 +50,12 @@ export const phoenix: MinionBlueprint = {
       new OnDeathModifier(game, card, {
         handler: async () => {
           const ember = card.player.hero.modifiers.get(EmberModifier);
-          if (!ember || ember?.stacks < 5) return;
+          if (!ember || ember?.stacks < 4) return;
 
           const hasRoom = card.player.boardSide.defenseZone.hasEmptySlot;
           if (!hasRoom) return;
 
-          await ember.removeStacks(5);
+          await ember.removeStacks(4);
 
           const [position] = await game.interaction.selectMinionSlot({
             player: card.player,

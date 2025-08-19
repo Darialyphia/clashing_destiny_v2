@@ -7,7 +7,7 @@ import {
 } from '@game/engine/src/card/card.enums';
 import { clamp, isDefined, mapRange } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until, useMouse } from '@vueuse/core';
+import { until, useElementBounding, useMouse } from '@vueuse/core';
 
 const { card } = defineProps<{
   card: {
@@ -65,36 +65,40 @@ const affinityGemBg = (affinity: Affinity) => {
   return `url('/assets/ui/affinity-${affinity.toLowerCase()}.png')`;
 };
 
-const root = useTemplateRef('card');
-const { x, y } = useMouse();
+// const root = useTemplateRef('card');
+// const { x, y } = useMouse();
 
-const rect = computed(() => root.value?.getBoundingClientRect());
+// const rect = useElementBounding(root);
 
-const pointerStyle = computed(() => {
-  if (!rect.value) return;
-  const pointer = {
-    x: clamp(x.value - rect.value.left, 0, rect.value.width),
-    y: clamp(y.value - rect.value.top, 0, rect.value.height)
-  };
-  const percent = {
-    x: (pointer.x / rect.value.width) * 100,
-    y: (pointer.y / rect.value.height) * 100
-  };
-  return {
-    glareX: pointer.x,
-    glareY: pointer.y,
-    foilX: Math.round(mapRange(percent.x, [0, 100], [37, 63])),
-    foilY: Math.round(mapRange(percent.y, [0, 100], [33, 67])),
-    pointerFromCenter: clamp(
-      Math.sqrt(
-        (percent.y - 50) * (percent.y - 50) +
-          (percent.x - 50) * (percent.x - 50)
-      ) / 50,
-      0,
-      1
-    )
-  };
-});
+// const pointerStyle = computed(() => {
+//   const left = rect.left.value ?? 0;
+//   const top = rect.top.value ?? 0;
+//   const width = rect.width.value ?? 0;
+//   const height = rect.height.value ?? 0;
+
+//   const pointer = {
+//     x: clamp(x.value - left, 0, width),
+//     y: clamp(y.value - top, 0, height)
+//   };
+//   const percent = {
+//     x: (pointer.x / width) * 100,
+//     y: (pointer.y / height) * 100
+//   };
+//   return {
+//     glareX: pointer.x,
+//     glareY: pointer.y,
+//     foilX: Math.round(mapRange(percent.x, [0, 100], [37, 63])),
+//     foilY: Math.round(mapRange(percent.y, [0, 100], [33, 67])),
+//     pointerFromCenter: clamp(
+//       Math.sqrt(
+//         (percent.y - 50) * (percent.y - 50) +
+//           (percent.x - 50) * (percent.x - 50)
+//       ) / 50,
+//       0,
+//       1
+//     )
+//   };
+// });
 
 const descriptionBox = useTemplateRef('description-box');
 
@@ -184,6 +188,7 @@ const costStatus = computed(() => {
       </div>
 
       <div class="rarity" />
+
       <div class="stats">
         <div
           v-if="isDefined(card.manaCost)"
@@ -252,7 +257,7 @@ const costStatus = computed(() => {
       <div class="sub-kind" v-if="card.subKind">
         {{ card.subKind }}
       </div>
-      <div class="glare lt-lg:hidden" />
+      <!-- <div class="glare lt-lg:hidden" /> -->
     </div>
     <div class="card-back" />
   </div>
@@ -261,11 +266,11 @@ const costStatus = computed(() => {
 <style scoped lang="postcss">
 .card {
   --pixel-scale: 2;
-  --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
+  /* --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
   --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
-  --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
-  --pointer-from-center: v-bind('pointerStyle?.pointerFromCenter');
+  --foil-y: calc(1% * v-bind('pointerStyle?.foilY')); */
+  /* --pointer-from-center: v-bind('pointerStyle?.pointerFromCenter'); */
   width: calc(var(--card-width) * var(--pixel-scale));
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
