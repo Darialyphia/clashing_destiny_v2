@@ -5,8 +5,13 @@ import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import type { Player } from '../player.entity';
 
+export type PlayedCard<T extends AnyCard = AnyCard> = {
+  player: Player; // the player whose turn it was when the card was played
+  card: T;
+};
+
 export class CardTrackerComponent {
-  private cardsPlayedByTurn = new Map<number, AnyCard[]>();
+  private cardsPlayedByGameTurn = new Map<number, PlayedCard[]>();
 
   constructor(
     private game: Game,
@@ -17,32 +22,37 @@ export class CardTrackerComponent {
       if (!event.data.card.player.equals(this.player)) return;
 
       const turn = game.gamePhaseSystem.elapsedTurns;
-      if (!this.cardsPlayedByTurn.has(turn)) {
-        this.cardsPlayedByTurn.set(turn, []);
+      if (!this.cardsPlayedByGameTurn.has(turn)) {
+        this.cardsPlayedByGameTurn.set(turn, []);
       }
-      this.cardsPlayedByTurn.get(turn)?.push(event.data.card);
+      this.cardsPlayedByGameTurn.get(turn)?.push({
+        player: this.game.gamePhaseSystem.currentPlayer,
+        card: event.data.card
+      });
     });
   }
 
-  get cardsPlayedThisTurn() {
-    return this.cardsPlayedByTurn.get(this.game.gamePhaseSystem.elapsedTurns) ?? [];
+  get cardsPlayedThisGameTurn() {
+    return this.cardsPlayedByGameTurn.get(this.game.gamePhaseSystem.elapsedTurns) ?? [];
   }
 
-  getCardsPlayedThisTurnOfKind<
+  getCardsPlayedThisGameTurnOfKind<
     TKind extends CardKind,
     TCard extends AnyCard & { kind: TKind } = AnyCard & { kind: TKind }
-  >(kind: TKind): TCard[] {
-    return this.cardsPlayedThisTurn.filter(card => card.kind === kind) as TCard[];
+  >(kind: TKind): Array<PlayedCard<TCard>> {
+    return this.cardsPlayedThisGameTurn.filter(card => card.card.kind === kind) as Array<
+      PlayedCard<TCard>
+    >;
   }
 
-  getCardsPlayedOnTurn(turn: number): AnyCard[] {
-    return this.cardsPlayedByTurn.get(turn) ?? [];
+  getCardsPlayedOnGameTurn(turn: number) {
+    return this.cardsPlayedByGameTurn.get(turn) ?? [];
   }
 
-  getCardsPlayedSince(turn: number): AnyCard[] {
-    const cards: AnyCard[] = [];
+  getCardsPlayedSince(turn: number) {
+    const cards: PlayedCard[] = [];
     for (let i = turn; i <= this.game.gamePhaseSystem.elapsedTurns; i++) {
-      const turnCards = this.cardsPlayedByTurn.get(i);
+      const turnCards = this.cardsPlayedByGameTurn.get(i);
       if (turnCards) {
         cards.push(...turnCards);
       }

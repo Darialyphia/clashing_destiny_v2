@@ -34,10 +34,9 @@ export const spiritualist: MinionBlueprint = {
           new MinionInterceptorModifierMixin(game, {
             key: 'manaCost',
             interceptor(value) {
-              const hasPlayedSpellThisTurn =
-                card.player.cardTracker.cardsPlayedThisTurn.filter(
-                  c => c.kind === CARD_KINDS.SPELL
-                );
+              const hasPlayedSpellThisTurn = card.player.cardTracker
+                .getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
+                .filter(c => c.player.equals(game.gamePhaseSystem.currentPlayer));
 
               return hasPlayedSpellThisTurn.length > 0
                 ? Math.max(0, (value ?? 0) - 2)

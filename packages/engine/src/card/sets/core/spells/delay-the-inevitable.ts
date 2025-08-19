@@ -36,28 +36,5 @@ export const delayTheInevitable: SpellBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new LevelBonusModifier(game, card, 5));
   },
-  async onPlay(game, card) {
-    const playedCards = card.player.cardTracker.getCardsPlayedOnTurn(
-      game.gamePhaseSystem.elapsedTurns - 1
-    );
-
-    const levelMod = card.modifiers.get(LevelBonusModifier);
-
-    for (const playedCard of playedCards) {
-      const copy = await card.player.generateCard(playedCard.blueprintId);
-      await copy.addToHand();
-      if (levelMod?.isActive) return;
-
-      await copy.modifiers.add(
-        new Modifier('recollection-debuff', game, card, {
-          mixins: [
-            new MainDeckCardInterceptorModifierMixin(game, {
-              key: 'manaCost',
-              interceptor: value => value! + 1
-            })
-          ]
-        })
-      );
-    }
-  }
+  async onPlay(game, card) {}
 };

@@ -33,14 +33,14 @@ export const recollection: SpellBlueprint = {
     await card.modifiers.add(new LevelBonusModifier(game, card, 5));
   },
   async onPlay(game, card) {
-    const playedCards = card.player.cardTracker.getCardsPlayedOnTurn(
-      game.gamePhaseSystem.elapsedTurns - 1
-    );
+    const playedCards = card.player.cardTracker
+      .getCardsPlayedOnGameTurn(game.gamePhaseSystem.elapsedTurns - 1)
+      .filter(c => c.player.equals(card.player));
 
     const levelMod = card.modifiers.get(LevelBonusModifier);
 
     for (const playedCard of playedCards) {
-      const copy = await card.player.generateCard(playedCard.blueprintId);
+      const copy = await card.player.generateCard(playedCard.card.blueprintId);
       await copy.addToHand();
       if (levelMod?.isActive) return;
 

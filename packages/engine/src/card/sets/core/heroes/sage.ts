@@ -17,8 +17,7 @@ export const sage: HeroBlueprint = {
   id: 'sage',
   name: 'Sage',
   cardIconId: 'hero-sage',
-  description:
-    '@[level] 4+@ : The first time you play a spell during your turn, draw 1 card.',
+  description: 'After you play 3 spells in a single turn, draw a card.',
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
@@ -34,27 +33,22 @@ export const sage: HeroBlueprint = {
   abilities: [],
   tags: [],
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
-    )) as LevelBonusModifier<HeroCard>;
-
     await card.modifiers.add(
-      new Modifier<HeroCard>('sage-spell-discount', game, card, {
+      new Modifier<HeroCard>('sage-spell-draw', game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => {
-            if (!levelMod.isActive) return false;
-            if (!card.player.isCurrentPlayer) return false;
-            return card.player.cardTracker.cardsPlayedThisTurn.every(
-              card => card.kind !== CARD_KINDS.SPELL
-            );
-          }),
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             handler: async event => {
               if (!event.data.card.player.equals(card.player)) return;
               if (event.data.card.kind !== CARD_KINDS.SPELL) return;
-
-              await card.player.cardManager.draw(1);
+              await game.inputSystem.schedule(async () => {
+                const count = card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(
+                  CARD_KINDS.SPELL
+                ).length;
+                if (count === 3) {
+                  await card.player.cardManager.draw(1);
+                }
+              });
             }
           })
         ]
