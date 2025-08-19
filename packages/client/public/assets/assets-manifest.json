@@ -1866,6 +1866,19 @@
         },
         {
           "alias": [
+            "icon-talent-mercy-for-the-injured"
+          ],
+          "src": [
+            "/assets/icons/talent-mercy-for-the-injured.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-path-of-the-vanguard"
           ],
           "src": [

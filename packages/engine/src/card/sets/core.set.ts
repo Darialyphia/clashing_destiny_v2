@@ -18,6 +18,7 @@ import { fireStudies } from './core/destinies/fire-studies';
 import { insight } from './core/destinies/insight';
 import { inspiredBySteel } from './core/destinies/inspired-by-steel';
 import { manaVisions } from './core/destinies/mana-visions';
+import { mercyForTheInjured } from './core/destinies/mercy-for-the-injured';
 import { theHangedMan } from './core/destinies/the-hangman';
 import { tidesFavored } from './core/destinies/tides-favored';
 import { waterAffinity } from './core/destinies/water-affinity';
@@ -134,6 +135,7 @@ export const coreSet: CardSet = {
     bloodCovenant,
     gluttonousSlime,
     slimesToTheRescue,
+    mercyForTheInjured,
 
     // Fire
     fireBolt,

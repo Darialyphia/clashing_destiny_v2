@@ -22,7 +22,6 @@ import type { AnyObject } from '@game/shared';
 import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
-import type { AnyCard } from '../../card/entities/card.entity';
 
 export type GameStateSnapshot<T> = {
   id: number;

@@ -5,9 +5,9 @@ import {
   type CardKind,
   type Rarity
 } from '@game/engine/src/card/card.enums';
-import { clamp, isDefined, mapRange } from '@game/shared';
+import { isDefined } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until, useElementBounding, useMouse } from '@vueuse/core';
+import { until } from '@vueuse/core';
 
 const { card } = defineProps<{
   card: {

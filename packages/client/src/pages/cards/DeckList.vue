@@ -77,7 +77,7 @@ li {
     center center,
     left center;
   background-size: 200%, calc(2px * 96);
-  border: solid 1px var(--yellow-9);
+  border: solid 1px var(--primary);
   padding: var(--size-2);
 }
 

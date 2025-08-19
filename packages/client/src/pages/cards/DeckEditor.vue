@@ -16,6 +16,14 @@ const getCountByKind = (kind: CardKind) => {
       return acc + 1;
     }, 0);
 };
+
+const getCountForCost = (cost: number) =>
+  deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost === cost)
+    .length;
+
+const getCountForCostAndUp = (minCost: number) =>
+  deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost >= minCost)
+    .length;
 </script>
 
 <template>
@@ -23,7 +31,24 @@ const getCountByKind = (kind: CardKind) => {
     <div>
       <div class="flex gap-2">
         <Icon icon="material-symbols:edit-outline" />
-        <input v-model="deckBuilder.deck.name" type="text" />
+        <input
+          v-model="deckBuilder.deck.name"
+          type="text"
+          class="flex-1 bg-transparent"
+        />
+      </div>
+      <div class="bars" :style="{ '--total': deckBuilder.mainDeckSize }">
+        <div
+          v-for="i in 7"
+          :key="i"
+          :style="{
+            '--count':
+              i === 7 ? getCountForCostAndUp(i - 1) : getCountForCost(i - 1)
+          }"
+        >
+          <div class="bar" :data-count="getCountForCost(i - 1)" />
+          <div class="cost">{{ i === 7 ? '6+' : i - 1 }}</div>
+        </div>
       </div>
       <div class="counts">
         <div>
@@ -72,8 +97,16 @@ const getCountByKind = (kind: CardKind) => {
           <div class="destiny-cost" v-if="'destinyCost' in card.blueprint">
             {{ card.blueprint.destinyCost }}
           </div>
-          {{ card.blueprint.name }}
-          <template v-if="'copies' in card">X {{ card.copies }}</template>
+          <div
+            class="affinity"
+            :style="{
+              '--bg': `url(/assets/ui/affinity-${card.blueprint.affinity.toLocaleLowerCase()}.png)`
+            }"
+          />
+          <span class="card-name">
+            <template v-if="'copies' in card">X {{ card.copies }}</template>
+            {{ card.blueprint.name }}
+          </span>
         </li>
       </ul>
       <div class="deck-count">
@@ -97,7 +130,7 @@ const getCountByKind = (kind: CardKind) => {
 
 .deck-item {
   display: flex;
-  gap: var(--size-3);
+  gap: var(--size-2);
   align-items: center;
   border: solid var(--border-size-1) #d7ad42;
   padding: var(--size-2) var(--size-3);
@@ -174,7 +207,7 @@ const getCountByKind = (kind: CardKind) => {
   gap: var(--size-2);
   justify-items: center;
   font-size: var(--font-size-0);
-  margin-block: var(--size-3);
+  margin-block: var(--size-1) var(--size-3);
   > div > span {
     font-size: var(--font-size-2);
     color: var(--primary);
@@ -190,6 +223,63 @@ const getCountByKind = (kind: CardKind) => {
   position: sticky;
   bottom: 0;
   background-color: #261a26;
-  padding: var(--size-3) var(--size-3);
+  padding: var(--size-3) var(--size-3) 0;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--size-1);
+  height: var(--size-10);
+  margin-top: var(--size-2);
+
+  > div {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: var(--size-1);
+  }
+}
+
+.cost {
+  display: grid;
+  place-content: center;
+  color: var(--primary);
+}
+
+.bar {
+  --percent: calc(1% * (var(--count) * 100 / var(--total)));
+
+  position: relative;
+  background: linear-gradient(
+    to top,
+    var(--primary) 0%,
+    var(--primary) var(--percent),
+    hsl(var(--gray-12-hsl) / 0.5) var(--percent)
+  );
+
+  &:not([data-count='0'])::after {
+    content: attr(data-count);
+
+    position: absolute;
+    bottom: var(--percent);
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: var(--font-size-0);
+  }
+}
+
+.affinity {
+  background: var(--bg);
+  background-size: cover;
+  background-position: center;
+  width: calc(1 * 26px);
+  height: calc(1 * 28px);
+}
+
+.card-name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

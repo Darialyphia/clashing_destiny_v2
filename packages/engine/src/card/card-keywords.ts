@@ -163,7 +163,7 @@ export const KEYWORDS = {
   BLITZ: {
     id: 'blitz',
     name: 'Blitz',
-    description: 'This unit cannot be blocked.',
+    description: 'This unit cannot be blocked and cannot be defended.',
     aliases: []
   },
   PULLER: {
@@ -247,6 +247,12 @@ export const KEYWORDS = {
     name: 'Trap',
     description:
       'This card is not recollected after your Destiny Phase and is sent to the discard pile instead. If the condition is met while this card is in your Destiny zone, it is played for free.',
+    aliases: []
+  },
+  CAST: {
+    id: 'cast',
+    name: 'Cast Speed',
+    description: 'Can only be used during your turn.',
     aliases: []
   },
   MILL: {

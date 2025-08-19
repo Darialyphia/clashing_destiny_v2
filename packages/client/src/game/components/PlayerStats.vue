@@ -13,7 +13,7 @@ const isBanishPileOpened = ref(false);
   <div class="stats">
     <div>
       <div class="icon" style="--bg: url(/assets/ui/icon-influence.png)" />
-      {{ player.handSize }}
+      {{ player.influence }}
     </div>
 
     <div>

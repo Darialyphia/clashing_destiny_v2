@@ -18,7 +18,7 @@ import {
 } from '../composables/useGameClient';
 import ActionsButtons from './ActionsButtons.vue';
 import HeroSlot from './HeroSlot.vue';
-import Hand from '@/card/components/Hand.vue';
+import Hand from '@/game/components/Hand.vue';
 import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import EffectChain from './EffectChain.vue';
@@ -30,6 +30,7 @@ import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import Deck from './Deck.vue';
 import UnlockedDestinies from './UnlockedDestinies.vue';
 import PlayedCard from './PlayedCard.vue';
+import OpponentHand from './OpponentHand.vue';
 
 const state = useGameState();
 const client = useGameClient();
@@ -155,6 +156,7 @@ const finishStartAnimation = () => {
 
     <section class="hand-zone">
       <Hand />
+      <OpponentHand class="opponent-hand" />
     </section>
   </div>
   <div class="arrows" id="arrows" />
@@ -312,5 +314,12 @@ const finishStartAnimation = () => {
 
 .p2-deck {
   align-self: start;
+}
+
+.opponent-hand {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 </style>
