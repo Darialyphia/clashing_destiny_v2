@@ -38,6 +38,7 @@ import { flameExorcist } from './core/minions/flame-exorcist';
 import { flamefistFighter } from './core/minions/flamefirst-fighter';
 import { flowkeeperSage } from './core/minions/flowkeeper-sage';
 import { friendlySlime } from './core/minions/friendly-slime';
+import { gluttonousSlime } from './core/minions/gluttonous-slime';
 import { heraldOfSalvation } from './core/minions/herald-of-salvation';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { luminescentMystic } from './core/minions/luminescent-mystic';
@@ -130,6 +131,7 @@ export const coreSet: CardSet = {
     cabalInitiate,
     theHangedMan,
     bloodCovenant,
+    gluttonousSlime,
 
     // Fire
     fireBolt,
