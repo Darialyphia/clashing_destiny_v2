@@ -1,7 +1,6 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { multipleEmptyAllySlot, multipleEnemyTargetRules } from '../../../card-utils';
+import { multipleEmptyAllySlot } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
@@ -13,9 +12,6 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { playfulEels } from '../minions/playful-eels';
-import { TidesFavoredModifier } from '../../../../modifier/modifiers/tide-modifier';
-import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 
 export const shoalOfEels: SpellBlueprint = {
   id: 'shoal-of-eels',

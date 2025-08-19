@@ -14,7 +14,7 @@ export const tomeOfKnowledge: ArtifactBlueprint = {
   id: 'tome-of-knowledge',
   name: 'Tome of Knowledge',
   cardIconId: 'artifact-book-of-knowledge',
-  description: 'This comes into play exhausted.',
+  description: '',
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
@@ -30,7 +30,7 @@ export const tomeOfKnowledge: ArtifactBlueprint = {
       id: 'tome-of-knowledge-ability',
       label: '@[exhaust]@ +1 Spellpower',
       description: `@[exhaust]@ @[mana] 1@ -1@[durability]@ : Your hero gains +1 @[spellpower]@ this turn.`,
-      manaCost: 2,
+      manaCost: 1,
       shouldExhaust: true,
       canUse(game, card) {
         return card.location === 'board';
@@ -52,7 +52,5 @@ export const tomeOfKnowledge: ArtifactBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit() {},
-  async onPlay(ame, card) {
-    await card.exhaust();
-  }
+  async onPlay() {}
 };
