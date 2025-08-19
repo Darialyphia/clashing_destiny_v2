@@ -194,7 +194,8 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   }
 
   &.exhausted .slot-minion {
-    filter: grayscale(0.75);
+    filter: grayscale(1) brightness(0.75);
+    /* rotate: 90deg; */
   }
 }
 

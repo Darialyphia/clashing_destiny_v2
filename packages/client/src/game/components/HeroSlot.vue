@@ -153,7 +153,7 @@ const isActionsPopoverOpened = computed({
   background: var(--bg) no-repeat center top;
   background-size: calc(96px * var(--pixel-scale));
   &.exhausted {
-    filter: grayscale(0.75);
+    filter: grayscale(1) brightness(0.75);
   }
 
   &.highlighted {

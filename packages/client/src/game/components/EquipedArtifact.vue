@@ -72,7 +72,7 @@ const isActionsPopoverOpened = computed({
   ); /* @FIXME this is needed otherwise we cannot click the artifact, wtf ? */
   position: relative;
   &.exhausted {
-    filter: brightness(75%);
+    filter: grayscale(1) brightness(0.75);
   }
 }
 
