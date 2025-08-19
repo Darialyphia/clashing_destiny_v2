@@ -2074,6 +2074,19 @@
         },
         {
           "alias": [
+            "icon-unit-big-slime"
+          ],
+          "src": [
+            "/assets/icons/unit-big-slime.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-unit-bonebloodmancer"
           ],
           "src": [

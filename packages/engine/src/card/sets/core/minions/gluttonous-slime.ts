@@ -10,11 +10,14 @@ import {
 } from '../../../card.enums';
 import { TauntModifier } from '../../../../modifier/modifiers/taunt.modifier';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
+import { isDefined } from '@game/shared';
+import type { MinionCard } from '../../../entities/minion.entity';
+import { friendlySlime } from './friendly-slime';
 
 export const gluttonousSlime: MinionBlueprint = {
   id: 'gluttonous-slime',
   name: 'Gluttonous Slime',
-  cardIconId: 'unit-gluttonous-slime',
+  cardIconId: 'unit-big-slime',
   description: dedent`
   @[level] 3+@: @Taunt@.
   @On Death@: Summon two @Friendly Slime@ next to this.
@@ -36,7 +39,20 @@ export const gluttonousSlime: MinionBlueprint = {
     await card.modifiers.add(new TauntModifier(game, card, {}));
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
-        handler: async () => {}
+        handler: async () => {
+          const positions = [card.minionSlot?.left, card.minionSlot?.right].filter(
+            slot => isDefined(slot) && !slot.isOccupied
+          );
+
+          for (const position of positions) {
+            const slime = await card.player.generateCard<MinionCard>(friendlySlime.id);
+            await slime.playAt({
+              player: card.player,
+              slot: position!.slot,
+              zone: position!.zone
+            });
+          }
+        }
       })
     );
   },

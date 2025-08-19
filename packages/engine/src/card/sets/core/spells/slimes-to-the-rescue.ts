@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, multipleEmptyAllySlot } from '../../../card-utils';
+import { multipleEmptyAllySlot } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_DECK_SOURCES,
