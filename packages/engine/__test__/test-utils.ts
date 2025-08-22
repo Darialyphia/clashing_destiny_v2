@@ -86,7 +86,7 @@ export const testGameBuilder = () => {
         errors,
         player1: game.playerSystem.player1,
         player2: game.playerSystem.player2,
-        helpers: {
+        testHelpers: {
           generateAndPlayCard: async <T extends AnyCard>(
             player: Player,
             blueprintId: string,
