@@ -48,8 +48,9 @@ export const gluttonousSlime: MinionBlueprint = {
     );
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
-        handler: async () => {
-          const positions = [card.minionSlot?.left, card.minionSlot?.right].filter(
+        handler: async (event, modifier, position) => {
+          const slot = card.player.boardSide.getSlot(position.zone, position.slot)!;
+          const positions = [slot.left, slot.right].filter(
             slot => isDefined(slot) && !slot.isOccupied
           );
 
