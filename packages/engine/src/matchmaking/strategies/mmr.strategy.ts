@@ -48,29 +48,29 @@ export function createMMRMatchmakingOptions(
 ): MMRMatchmakingOptions {
   return {
     matching: {
-      maxWinrateDifference: 0.25, // Max 25% winrate difference
-      maxStreakDifference: 4, // Max 4 game streak difference
+      maxWinrateDifference: 0.25,
+      maxStreakDifference: 10,
 
-      minimumMatchScore: 70, // Require 70% compatibility score
+      minimumMatchScore: 70,
       weights: {
-        mmrSimilarity: 40, // MMR is most important (40%)
-        winrateSimilarity: 25, // Recent performance matters (25%)
-        streakSimilarity: 20, // Streak compatibility (20%)
-        stakesAlignment: 15 // Stakes alignment (15%)
+        mmrSimilarity: 40,
+        winrateSimilarity: 25,
+        streakSimilarity: 20,
+        stakesAlignment: 15
       },
       ...overrides.matching
     },
     tolerance: {
-      mmrToleranceIncreasePerSecond: 5, // +5 MMR tolerance per second
-      timeBeforeToleranceExpansionInSeconds: 30, // Wait 30s before expanding
-      maxTolerance: 500, // Cap tolerance at 500 MMR
+      mmrToleranceIncreasePerSecond: 0.5,
+      timeBeforeToleranceExpansionInSeconds: 30,
+      maxTolerance: 500,
       ...overrides.tolerance
     },
     performance: {
-      mmrBucketSize: 200, // 200 MMR per bucket
-      maxSearchDistance: 100, // Search up to 100 players
-      maxCrossBucketSearch: 20, // Cross-bucket search limit
-      estimatedPlayerDensity: 3, // ~3 players per MMR point
+      mmrBucketSize: 200,
+      maxSearchDistance: 100,
+      maxCrossBucketSearch: 20,
+      estimatedPlayerDensity: 3,
       ...overrides.performance
     }
   };

@@ -56,6 +56,7 @@ import { pyromancer } from './core/minions/pyromancer';
 import { seer } from './core/minions/seer';
 import { spellbladeDuelist } from './core/minions/spellblade-duelist';
 import { spiritualist } from './core/minions/spiritualist';
+import { spriteOfFadingMemories } from './core/minions/sprite-of-fading-memories';
 import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
 import { sunPalaceGuard } from './core/minions/sun-palace-guard';
@@ -199,6 +200,7 @@ export const coreSet: CardSet = {
     shiftingCurrents,
     poseidonEmperorOfTheSea,
     calmWaters,
+    spriteOfFadingMemories,
 
     // Blood
     crimsonSuppressor

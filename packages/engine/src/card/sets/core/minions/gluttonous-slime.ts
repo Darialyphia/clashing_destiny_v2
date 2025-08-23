@@ -12,6 +12,8 @@ import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifie
 import { isDefined } from '@game/shared';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { friendlySlime } from './friendly-slime';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const gluttonousSlime: MinionBlueprint = {
   id: 'gluttonous-slime',
@@ -35,7 +37,15 @@ export const gluttonousSlime: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new TauntModifier(game, card, {}));
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 3)
+    )) as LevelBonusModifier<MinionCard>;
+
+    await card.modifiers.add(
+      new TauntModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
+      })
+    );
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         handler: async () => {
