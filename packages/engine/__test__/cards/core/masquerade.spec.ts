@@ -48,11 +48,11 @@ describe('Card:Core:Masquerade', () => {
     };
   };
 
-  test('Should be playable when a minion gets attacked while having a cheaper minion in destiny', async () => {
-    const { player1, player2, game, helpers } = await setup();
-    await helpers.skipDestiny();
+  test('Should be playable when a minion gets attacked while having a cheaper minion in destiny zone', async () => {
+    const { player1, player2, testHelpers } = await setup();
+    await testHelpers.skipDestiny();
 
-    const recruit = await helpers.generateAndPlayCard<MinionCard>(
+    const recruit = await testHelpers.generateAndPlayCard<MinionCard>(
       player1,
       courageousFootsoldier.id,
       [0, 1],
@@ -62,19 +62,19 @@ describe('Card:Core:Masquerade', () => {
     const masquerade = await player1.generateCard<SpellCard>(masqueradeBlueprint.id);
     player1.cardManager.addToHand(masquerade);
 
-    await helpers.endTurn(player1);
-    await helpers.waitUntilDestinyPhase();
-    await helpers.playDestinyCard(fireAffinity.id);
+    await testHelpers.endTurn(player1);
+    await testHelpers.waitUntilDestinyPhase();
+    await testHelpers.playDestinyCard(fireAffinity.id);
 
-    const attacker = await helpers.generateAndPlayCard<MinionCard>(
+    const attacker = await testHelpers.generateAndPlayCard<MinionCard>(
       player2,
       hotHeadedRecruit.id,
       [0],
       { zone: 'attack', slot: 0 }
     );
 
-    await helpers.declareAttack(attacker, recruit);
-    await helpers.skipBlock();
+    await testHelpers.declareAttack(attacker, recruit);
+    await testHelpers.skipBlock();
 
     expect(masquerade.canPlay()).toBe(true);
   });
