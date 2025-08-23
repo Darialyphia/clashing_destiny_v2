@@ -1905,6 +1905,19 @@
         },
         {
           "alias": [
+            "icon-talent-shieldmaster"
+          ],
+          "src": [
+            "/assets/icons/talent-shieldmaster.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "icon-talent-test"
           ],
           "src": [

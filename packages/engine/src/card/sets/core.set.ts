@@ -21,6 +21,7 @@ import { manaVisions } from './core/destinies/mana-visions';
 import { mercyForTheInjured } from './core/destinies/mercy-for-the-injured';
 import { theHangedMan } from './core/destinies/the-hangman';
 import { tidesFavored } from './core/destinies/tides-favored';
+import { vaillantParagon } from './core/destinies/vaillant-paragon';
 import { waterAffinity } from './core/destinies/water-affinity';
 import { combatTutorialEnemyHero } from './core/heroes/combat-tutorial-enemy-hero';
 import { knight } from './core/heroes/knight';
@@ -136,6 +137,7 @@ export const coreSet: CardSet = {
     gluttonousSlime,
     slimesToTheRescue,
     mercyForTheInjured,
+    vaillantParagon,
 
     // Fire
     fireBolt,

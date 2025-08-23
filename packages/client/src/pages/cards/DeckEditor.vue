@@ -17,13 +17,24 @@ const getCountByKind = (kind: CardKind) => {
     }, 0);
 };
 
+const getCount = (cards: Array<{ copies: number }>) => {
+  return cards.reduce((acc, card) => {
+    if ('copies' in card) {
+      return acc + ((card.copies as number) ?? 1);
+    }
+    return acc + 1;
+  }, 0);
+};
+
 const getCountForCost = (cost: number) =>
-  deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost === cost)
-    .length;
+  getCount(
+    deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost === cost)
+  );
 
 const getCountForCostAndUp = (minCost: number) =>
-  deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost >= minCost)
-    .length;
+  getCount(
+    deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost >= minCost)
+  );
 </script>
 
 <template>
