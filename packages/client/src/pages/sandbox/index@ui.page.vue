@@ -4,6 +4,8 @@ import { premadeDecks } from '@/utils/premade-decks';
 import type { ValidatableDeck } from '@game/engine/src/card/validators/deck.validator';
 import { useLocalStorage } from '@vueuse/core';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import type { DisplayedDeck } from '@/player/components/PlayerDeck.vue';
+import PlayerDeck from '@/player/components/PlayerDeck.vue';
 
 definePage({
   name: 'Sandbox'
@@ -15,20 +17,30 @@ const decks = useLocalStorage<ValidatableDeck[]>(
 );
 
 type DeckChoice = {
-  label: string;
+  id: string;
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
   hero: string;
+  deck: DisplayedDeck;
 };
 const choices = computed<DeckChoice[]>(() => {
   return [
-    ...premadeDecks.map(deck => ({
+    ...premadeDecks.map((deck, index) => ({
+      id: `premade-${index}`,
       label: deck.name,
       mainDeck: deck.mainDeck,
       destinyDeck: deck.destinyDeck,
-      hero: deck.hero
+      hero: deck.hero,
+      deck: {
+        name: deck.name,
+        hero: deck.hero,
+        mainDeck: deck.mainDeck.cards.map(card => ({
+          blueprintId: card
+        }))
+      }
     })),
-    ...decks.value.map(deck => ({
+    ...decks.value.map((deck, index) => ({
+      id: `custom-${index}`,
       label: deck.name,
       destinyDeck: {
         cards: deck.destinyDeck.map(card => card.blueprintId)
@@ -38,7 +50,8 @@ const choices = computed<DeckChoice[]>(() => {
           Array.from({ length: card.copies }, () => card.blueprintId)
         )
       },
-      hero: deck.hero
+      hero: deck.hero,
+      deck
     }))
   ];
 });
@@ -66,17 +79,25 @@ const isStarted = ref(false);
     </header>
     <h1 class="text-3xl font-bold mb-4">Sandbox Mode</h1>
     <p class="mb-4">Choose decks for both players:</p>
-    <div class="flex gap-4">
-      <select v-model="p1Deck" class="border p-2 rounded">
-        <option v-for="choice in choices" :key="choice.label" :value="choice">
-          {{ choice.label }}
-        </option>
-      </select>
-      <select v-model="p2Deck" class="border p-2 rounded">
-        <option v-for="choice in choices" :key="choice.label" :value="choice">
-          {{ choice.label }}
-        </option>
-      </select>
+    <div class="grid grid-cols-2 gap-4">
+      <ul class="flex flex-col gap-3">
+        <li
+          v-for="choice in choices"
+          :key="choice.deck.name"
+          :class="{ selected: p1Deck?.id === choice.id }"
+        >
+          <PlayerDeck :deck="choice.deck" @click="p1Deck = choice" />
+        </li>
+      </ul>
+      <ul class="flex flex-col gap-3">
+        <li
+          v-for="choice in choices"
+          :key="choice.deck.name"
+          :class="{ selected: p2Deck?.id === choice.id }"
+        >
+          <PlayerDeck :deck="choice.deck" @click="p2Deck = choice" />
+        </li>
+      </ul>
     </div>
     <FancyButton
       class="mt-4"
@@ -106,4 +127,10 @@ const isStarted = ref(false);
   />
 </template>
 
-<style scoped lang="postcss"></style>
+<style lang="postcss" scoped>
+.selected {
+  filter: brightness(1.25);
+  outline: solid 2px var(--primary);
+  outline-offset: 5px;
+}
+</style>

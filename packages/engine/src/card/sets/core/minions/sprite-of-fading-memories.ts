@@ -16,7 +16,7 @@ export const spriteOfFadingMemories: MinionBlueprint = {
   name: 'Sprite of Fading Memories',
   cardIconId: 'unit-sprite-of-fading-memories',
   description: dedent`
-  @On Enter@ : Choose a card in the opponent's Destiny Zone. It costs @[mana] 2@ more.`,
+  @On Enter@ : Choose a card in the opponent's Destiny Zone. It costs @[mana] 1@ more.`,
   collectable: true,
   unique: false,
   manaCost: 3,

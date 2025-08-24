@@ -47,6 +47,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBlock: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
+  canBeCounterattacked: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
@@ -218,6 +219,7 @@ export class MinionCard extends Card<
         canBlock: new Interceptable(),
         canBeBlocked: new Interceptable(),
         canBeDefended: new Interceptable(),
+        canBeCounterattacked: new Interceptable(),
         canAttack: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
         canBeAttacked: new Interceptable(),
@@ -347,6 +349,12 @@ export class MinionCard extends Card<
 
   canBeDefendedBy(defender: Defender) {
     return this.interceptors.canBeDefended.getValue(true, {
+      defender
+    });
+  }
+
+  canBeCounterattackedBy(defender: Defender) {
+    return this.interceptors.canBeCounterattacked.getValue(true, {
       defender
     });
   }

@@ -22,7 +22,7 @@ export const arcaneAffinity: DestinyBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  minLevel: 1,
+  minLevel: 0,
   countsAsLevel: true,
   abilities: [],
   async onInit(game, card) {

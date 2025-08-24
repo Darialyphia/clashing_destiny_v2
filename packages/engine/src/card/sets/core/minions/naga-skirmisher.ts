@@ -7,7 +7,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { TideModifierMixin } from '../../../../modifier/mixins/tide.mixin';
 import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
 

@@ -17,7 +17,6 @@ import {
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../game.enums';
-import { isMinion } from '../../card/card-utils';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -325,7 +324,9 @@ export class CombatPhase
 
     if (defender.isAlive && this.attacker.isAlive) {
       await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
-      await defender.dealDamage(this.attacker, new CombatDamage(defender));
+      if (this.attacker.canBeCounterattackedBy(defender)) {
+        await defender.dealDamage(this.attacker, new CombatDamage(defender));
+      }
     }
 
     await this.game.emit(

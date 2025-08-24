@@ -17,7 +17,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import type { DestinyCard } from './destiny.entity';
 import { Ability } from './ability.entity';
 
@@ -38,6 +38,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
   canBlock: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
+  canBeCounterattacked: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canBeDefended: Interceptable<boolean, { defender: Defender }>;
@@ -167,6 +168,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canBeDefended: new Interceptable(),
+        canBeCounterattacked: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
@@ -288,6 +290,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   canBeBlocked(blocker: Defender) {
     return this.interceptors.canBeBlocked.getValue(true, {
       blocker
+    });
+  }
+
+  canBeCounterattackedBy(defender: Defender) {
+    return this.interceptors.canBeCounterattacked.getValue(true, {
+      defender
     });
   }
 

@@ -16,7 +16,7 @@ export class BlitzModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
       icon: 'keyword-blitz',
       isUnique: true,
       mixins: [
-        new KeywordModifierMixin(game, KEYWORDS.RUSH),
+        new KeywordModifierMixin(game, KEYWORDS.BLITZ),
         new UnitInterceptorModifierMixin(game, {
           key: 'canBeBlocked',
           interceptor: () => false

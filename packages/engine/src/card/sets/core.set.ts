@@ -26,6 +26,7 @@ import { waterAffinity } from './core/destinies/water-affinity';
 import { combatTutorialEnemyHero } from './core/heroes/combat-tutorial-enemy-hero';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
+import { arcaneConduit } from './core/minions/arcane-conduit';
 import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
 import { ardentMonk } from './core/minions/ardent-monk';
 import { battleflameInvoker } from './core/minions/battleflame-invoker';
@@ -47,6 +48,7 @@ import { luminescentMystic } from './core/minions/luminescent-mystic';
 import { magicChanneler } from './core/minions/magic-channeler';
 import { magicFueledGolem } from './core/minions/magic-fueled-golem';
 import { nagaSkirmisher } from './core/minions/naga-skirmisher';
+import { nerathisMistressOfTheDepths } from './core/minions/nerathis-mistress-of-the-depths';
 import { phoenix } from './core/minions/phoenix';
 import { playfulEels } from './core/minions/playful-eels';
 import { poseidonEmperorOfTheSea } from './core/minions/poseidon-emperor-of-the-sea';
@@ -178,6 +180,7 @@ export const coreSet: CardSet = {
     arcaneMastery,
     manaShield,
     powerOverwhelming,
+    arcaneConduit,
 
     // Chrono
     recollection,
@@ -201,6 +204,7 @@ export const coreSet: CardSet = {
     poseidonEmperorOfTheSea,
     calmWaters,
     spriteOfFadingMemories,
+    nerathisMistressOfTheDepths,
 
     // Blood
     crimsonSuppressor
