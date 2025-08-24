@@ -5,6 +5,8 @@ import { Password } from './utils/password';
 
 import { RegisterUseCase } from './auth/usecases/register.usecase';
 import { LoginUseCase } from './auth/usecases/login.usecase';
+import { mutationWithSession } from './auth/auth.utils';
+import { LogoutUseCase } from './auth/usecases/logout.usecase';
 
 export const register = mutation({
   args: { email: v.string(), password: v.string() },
@@ -31,5 +33,16 @@ export const login = mutation({
     });
 
     return { sessionId: result.session._id };
+  }
+});
+
+export const logout = mutationWithSession({
+  args: {},
+  handler: async ctx => {
+    const usecase = new LogoutUseCase(ctx);
+
+    await usecase.execute();
+
+    return { success: true };
   }
 });

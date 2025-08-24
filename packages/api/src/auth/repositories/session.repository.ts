@@ -23,6 +23,13 @@ export const getSession = async (
   return db.get(sessionId);
 };
 
+export const deleteSession = async (
+  { db }: Pick<MutationCtx, 'db'>,
+  sessionId: Id<'authSessions'>
+) => {
+  await db.delete(sessionId);
+};
+
 export const getValidSession = async (
   { db }: Pick<QueryCtx, 'db'>,
   sessionId: Id<'authSessions'>
