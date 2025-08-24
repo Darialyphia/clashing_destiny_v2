@@ -1,5 +1,7 @@
 import type { AnyObject } from '@game/shared';
 
-export type UseCase<TInput, TOutput, TContext extends AnyObject> = {
-  execute: (input: TInput, ctx: TContext) => Promise<TOutput>;
-};
+export abstract class UseCase<TInput, TOutput, TContext extends AnyObject> {
+  constructor(protected readonly ctx: TContext) {}
+
+  abstract execute(input: TInput): Promise<TOutput>;
+}

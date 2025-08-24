@@ -1,15 +1,54 @@
-import type { Id } from '../_generated/dataModel';
-import type { MutationCtx, QueryCtx } from '../_generated/server';
-import { generateSecureRandomString } from '../utils/randomString';
-import { DEFAULT_SESSION_TOTAL_DURATION_MS } from './auth.constants';
+import { customMutation, customQuery } from 'convex-helpers/server/customFunctions';
+import { internalMutation, internalQuery, mutation, query } from '../_generated/server';
+import { v } from 'convex/values';
+import { Id } from '../_generated/dataModel';
+import {
+  getValidSession,
+  getValidSessionAndRenew
+} from './repositories/session.repository';
 
-export const createSession = async (
-  { db }: Pick<MutationCtx, 'db'>,
-  userId: Id<'users'>
-) => {
-  return db.insert('authSessions', {
-    userId,
-    secretHash: await generateSecureRandomString(),
-    expirationTime: Date.now() + DEFAULT_SESSION_TOTAL_DURATION_MS
-  });
-};
+export const queryWithSession = customQuery(query, {
+  args: {
+    sessionId: v.union(v.null(), v.string())
+  },
+  input: async (ctx, args: any) => {
+    const session = await getValidSession(ctx, args.sessionId as Id<'authSessions'>);
+    return { ctx: { ...ctx, session }, args: {} };
+  }
+});
+
+export const internalQueryWithSession = customQuery(internalQuery, {
+  args: {
+    sessionId: v.union(v.null(), v.string())
+  },
+  input: async (ctx, args: any) => {
+    const session = await getValidSession(ctx, args.sessionId as Id<'authSessions'>);
+    return { ctx: { ...ctx, session }, args: {} };
+  }
+});
+
+export const mutationWithSession = customMutation(mutation, {
+  args: {
+    sessionId: v.union(v.null(), v.string())
+  },
+  input: async (ctx, args: any) => {
+    const session = await getValidSessionAndRenew(
+      ctx,
+      args.sessionId as Id<'authSessions'>
+    );
+    return { ctx: { ...ctx, session }, args: {} };
+  }
+});
+
+export const internalMutationWithSession = customMutation(internalMutation, {
+  args: {
+    sessionId: v.union(v.null(), v.string())
+  },
+  input: async (ctx, args: any) => {
+    const session = await getValidSessionAndRenew(
+      ctx,
+      args.sessionId as Id<'authSessions'>
+    );
+    return { ctx: { ...ctx, session }, args: {} };
+  }
+});
