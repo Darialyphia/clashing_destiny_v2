@@ -20,7 +20,7 @@ export const arcaneConduit: MinionBlueprint = {
   id: 'arcane-conduit',
   name: 'Arcane Conduit',
   cardIconId: 'unit-arcane-conduit',
-  description: `Whenever you play an Arcane Spell, wake up this unit and give it +1@[attack]@ this turn.`,
+  description: `Whenever you play a Spell, wake up this unit and give it +1@[attack]@ this turn.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -42,7 +42,6 @@ export const arcaneConduit: MinionBlueprint = {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             async handler({ data }) {
               if (!isSpell(data.card)) return;
-              if (data.card.affinity !== AFFINITIES.ARCANE) return;
               if (!data.card.player.equals(card.player)) return;
               await card.wakeUp();
 
