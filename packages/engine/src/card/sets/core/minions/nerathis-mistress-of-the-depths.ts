@@ -23,8 +23,8 @@ export const nerathisMistressOfTheDepths: MinionBlueprint = {
   name: 'Nerathis, Mistress of the Depths',
   cardIconId: 'unit-nerathis-mistress-of-the-depth',
   description: dedent`
-  @[level] 3+ bonus@ :  @Intimidate (3)@ and this costs @[mana] 1@ less.
-  
+  @[level] 3+ bonus@ :  this costs @[mana] 1@ less.
+  @Intimidate (3)@.
   @On Attack@ : Put a @Shoal of Eels@ into your hand that costs @[mana] 0@. 
   `,
   collectable: true,

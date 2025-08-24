@@ -48,7 +48,6 @@ export type HeroCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
-  abilities: Interceptable<Ability<HeroCard>[], HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -156,6 +155,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   unlockedAffinity!: Affinity;
 
+  readonly abilities: Ability<HeroCard>[] = [];
+
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
     super(
       game,
@@ -174,11 +175,14 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
-        spellPower: new Interceptable(),
-        abilities: new Interceptable()
+        spellPower: new Interceptable()
       },
       options
     );
+
+    this.blueprint.abilities.forEach(ability => {
+      this.abilities.push(new Ability<HeroCard>(this.game, this, ability));
+    });
   }
 
   protected async onInterceptorAdded(key: HeroCardInterceptorName) {
@@ -235,15 +239,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   get isBlocking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
-  }
-
-  get abilities(): Ability<HeroCard>[] {
-    return this.interceptors.abilities.getValue(
-      this.blueprint.abilities.map(
-        ability => new Ability<HeroCard>(this.game, this, ability)
-      ),
-      this
-    );
   }
 
   canBeTargeted(source: AnyCard) {

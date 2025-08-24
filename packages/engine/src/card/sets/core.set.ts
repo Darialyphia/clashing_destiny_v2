@@ -65,6 +65,7 @@ import { sunPalaceGuard } from './core/minions/sun-palace-guard';
 import { temporalShifter } from './core/minions/temporal-shifter';
 import { tutorialSlime1 } from './core/minions/tutorial-slime-1';
 import { tutorialSlime2 } from './core/minions/tutorial-slime-2';
+import { violetStalker } from './core/minions/violet-stalker';
 import { waterElemental } from './core/minions/water-elemental';
 import { arcaneInsight } from './core/spells/arcane-insight';
 import { calmWaters } from './core/spells/calm-waters';
@@ -181,6 +182,7 @@ export const coreSet: CardSet = {
     manaShield,
     powerOverwhelming,
     arcaneConduit,
+    violetStalker,
 
     // Chrono
     recollection,

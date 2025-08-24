@@ -34,7 +34,7 @@ export const flamefistFighter: MinionBlueprint = {
         if (!modifier) {
           await card.player.hero.modifiers.add(new EmberModifier(game, card, 1));
         } else {
-          modifier.addStacks(2);
+          modifier.addStacks(1);
         }
       })
     );

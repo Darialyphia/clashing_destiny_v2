@@ -394,6 +394,8 @@ export abstract class Card<
       new CardBeforeDestroyEvent({ card: this })
     );
 
+    this._isExhausted = false;
+
     await match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.sendToDiscardPile())
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.sendToBanishPile())

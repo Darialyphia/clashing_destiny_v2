@@ -1,4 +1,3 @@
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { scry } from '../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -9,7 +8,6 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
-import { MinionCard } from '../../../entities/minion.entity';
 import dedent from 'dedent';
 
 export const seer: MinionBlueprint = {

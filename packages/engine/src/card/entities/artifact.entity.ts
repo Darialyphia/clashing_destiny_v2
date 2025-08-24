@@ -19,7 +19,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 
 export type SerializedArtifactCard = SerializedCard & {
@@ -39,7 +39,6 @@ export type ArtifactCardInterceptors = CardInterceptors & {
   >;
   durability: Interceptable<number, ArtifactCard>;
   attackBonus: Interceptable<number, ArtifactCard>;
-  abilities: Interceptable<Ability<ArtifactCard>[], ArtifactCard>;
 };
 
 export const ARTIFACT_EVENTS = {
@@ -92,6 +91,8 @@ export class ArtifactCard extends Card<
 
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
+  readonly abilities: Ability<ArtifactCard>[] = [];
+
   constructor(game: Game, player: Player, options: CardOptions<ArtifactBlueprint>) {
     super(
       game,
@@ -101,11 +102,14 @@ export class ArtifactCard extends Card<
         canPlay: new Interceptable(),
         canUseAbility: new Interceptable(),
         durability: new Interceptable(),
-        attackBonus: new Interceptable(),
-        abilities: new Interceptable()
+        attackBonus: new Interceptable()
       },
       options
     );
+
+    this.blueprint.abilities.forEach(ability => {
+      this.abilities.push(new Ability<ArtifactCard>(this.game, this, ability));
+    });
   }
 
   get subkind() {
@@ -159,15 +163,6 @@ export class ArtifactCard extends Card<
   get atkBonus(): number {
     return this.interceptors.attackBonus.getValue(
       this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : 0,
-      this
-    );
-  }
-
-  get abilities(): Ability<ArtifactCard>[] {
-    return this.interceptors.abilities.getValue(
-      this.blueprint.abilities.map(
-        ability => new Ability<ArtifactCard>(this.game, this, ability)
-      ),
       this
     );
   }

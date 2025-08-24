@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
-import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -12,6 +11,8 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { singleEmptyAllySlot } from '../../../card-utils';
+import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 
 export const phoenix: MinionBlueprint = {
   id: 'phoenix',
@@ -20,7 +21,7 @@ export const phoenix: MinionBlueprint = {
   description: dedent`
   @Pride(3)@.
   @On Enter@ : inflicts @Burn@ to all enemy minions.
-  @On Death@: If your hero has at least 4 @Ember@ stacks, consume them to re-summon this.`,
+  `,
   collectable: true,
   unique: false,
   manaCost: 5,
@@ -32,7 +33,33 @@ export const phoenix: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   setId: CARD_SETS.CORE,
   tags: [],
-  abilities: [],
+  abilities: [
+    {
+      id: 'phoenix-ability',
+      description: 'Consume 5 @Ember@ stacks : Summon this from your discard pile.',
+      label: 'Resurrect',
+      manaCost: 0,
+      shouldExhaust: false,
+      canUse: (game, card) => {
+        const ember = card.player.hero.modifiers.get(EmberModifier);
+        if (!ember) return false;
+
+        return ember.stacks >= 5 && singleEmptyAllySlot.canPlay(game, card);
+      },
+      getPreResponseTargets(game, card) {
+        return singleEmptyAllySlot.getPreResponseTargets(game, card);
+      },
+      async onResolve(game, card, targets) {
+        const ember = card.player.hero.modifiers.get(EmberModifier);
+        if (!ember) return;
+        if (ember.stacks < 5) return;
+        await ember.removeStacks(5);
+
+        const position = targets[0] as MinionPosition;
+        await card.playAt(position);
+      }
+    }
+  ],
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(new PrideModifier(game, card, 3));
@@ -45,35 +72,6 @@ export const phoenix: MinionBlueprint = {
         }
       })
     );
-
-    await card.modifiers.add(
-      new OnDeathModifier(game, card, {
-        handler: async () => {
-          const ember = card.player.hero.modifiers.get(EmberModifier);
-          if (!ember || ember?.stacks < 4) return;
-
-          const hasRoom = card.player.boardSide.defenseZone.hasEmptySlot;
-          if (!hasRoom) return;
-
-          await ember.removeStacks(4);
-
-          const [position] = await game.interaction.selectMinionSlot({
-            player: card.player,
-            isElligible: slot =>
-              slot.player.equals(card.player) &&
-              !card.player.boardSide.getSlot(slot.zone, slot.slot)!.isOccupied,
-            canCommit(selectedSlots) {
-              return selectedSlots.length === 1;
-            },
-            isDone(selectedSlots) {
-              return selectedSlots.length === 1;
-            }
-          });
-
-          await card.playAt(position);
-        }
-      })
-    );
   },
-  async onPlay(game, card) {}
+  async onPlay() {}
 };

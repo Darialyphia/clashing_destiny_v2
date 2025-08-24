@@ -200,6 +200,7 @@ export class Modifier<
       new ModifierLifecycleEvent(this)
     );
     this._stacks += stacks;
+    console.log('added stacks:', stacks, 'new total:', this._stacks);
     if (this.isEnabled) {
       this.mixins.forEach(mixin => {
         mixin.onReapplied(target, this);

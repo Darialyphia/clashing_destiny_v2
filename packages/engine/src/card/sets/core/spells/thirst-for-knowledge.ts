@@ -20,9 +20,8 @@ export const thirstForKnowledge: SpellBlueprint = {
   name: 'Thirst for Knowledge',
   cardIconId: 'spell-thirst-for-knowledge',
   description: dedent`
+  This costs @[spellpower]@ less.
   Draw 2 cards.
-  @[level] 4+@ : This costs @[spellpower]@ less.
-
   `,
   collectable: true,
   unique: false,
@@ -37,14 +36,9 @@ export const thirstForKnowledge: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: async () => [],
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 2)
-    )) as LevelBonusModifier<SpellCard>;
-
     await card.modifiers.add(
       new Modifier('thirst-for-knowledge-discount', game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => levelMod.isActive),
           new SpellInterceptorModifierMixin(game, {
             key: 'manaCost',
             interceptor(value) {

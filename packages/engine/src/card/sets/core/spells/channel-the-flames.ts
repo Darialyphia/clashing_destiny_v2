@@ -1,6 +1,8 @@
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
+import { singleAllyMinionTargetRules } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
@@ -9,13 +11,13 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const channelTheFlames: SpellBlueprint = {
   id: 'channel-the-flames',
   name: 'Channel the Flames',
   cardIconId: 'spell-channel-the-flames',
-  description:
-    'Remove @Burn@ from all minions. Draw a card and deal 2 damage to your hero for each removed.',
+  description: 'Sacrifice an allied minion. Gain @Ember@ stacks equal to its health',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -26,18 +28,18 @@ export const channelTheFlames: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   subKind: SPELL_KINDS.BURST,
   tags: [],
-  canPlay: () => true,
-  async getPreResponseTargets() {
-    return [];
-  },
+  canPlay: singleAllyMinionTargetRules.canPlay,
+  getPreResponseTargets: (game, card) =>
+    singleAllyMinionTargetRules.getPreResponseTargets(game, card, { type: 'card', card }),
   async onInit() {},
-  async onPlay(game, card) {
-    const minionsWithBurn = [
-      ...card.player.boardSide.getAllMinions(),
-      ...card.player.opponent.boardSide.getAllMinions()
-    ].filter(minion => minion.modifiers.has(BurnModifier));
+  async onPlay(game, card, targets) {
+    const target = targets[0] as MinionCard;
+    if (!target) return;
 
-    await card.player.cardManager.draw(minionsWithBurn.length);
-    await card.player.hero.takeDamage(card, new SpellDamage(minionsWithBurn.length));
+    const hp = target.remainingHp;
+
+    await target.destroy();
+
+    await card.player.hero.modifiers.add(new EmberModifier(game, card, hp));
   }
 };

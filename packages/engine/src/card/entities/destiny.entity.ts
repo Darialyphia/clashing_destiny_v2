@@ -2,13 +2,7 @@ import type { Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  serializePreResponseTarget,
-  type AbilityBlueprint,
-  type DestinyBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
+import { type DestinyBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import {
   CardAfterPlayEvent,
@@ -33,7 +27,6 @@ export type SerializedDestinyCard = SerializedCard & {
 };
 export type DestinyCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, DestinyCard>;
-  abilities: Interceptable<Ability<DestinyCard>[], DestinyCard>;
 };
 
 export const DESTINY_EVENTS = {
@@ -66,17 +59,22 @@ export class DestinyCard extends Card<
 > {
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
+  readonly abilities: Ability<DestinyCard>[] = [];
+
   constructor(game: Game, player: Player, options: CardOptions<DestinyBlueprint>) {
     super(
       game,
       player,
       {
         ...makeCardInterceptors(),
-        canPlay: new Interceptable(),
-        abilities: new Interceptable()
+        canPlay: new Interceptable()
       },
       options
     );
+
+    this.blueprint.abilities.forEach(ability => {
+      this.abilities.push(new Ability<DestinyCard>(this.game, this, ability));
+    });
   }
 
   get minLevel() {
@@ -115,14 +113,6 @@ export class DestinyCard extends Card<
     );
   }
 
-  get abilities(): Ability<DestinyCard>[] {
-    return this.interceptors.abilities.getValue(
-      this.blueprint.abilities.map(
-        ability => new Ability<DestinyCard>(this.game, this, ability)
-      ),
-      this
-    );
-  }
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
     const targets = this.abilityTargets.get(abilityId);
     if (!targets) return;

@@ -27,7 +27,7 @@ const board = useBoardSide(computed(() => player));
       </header>
       <div class="card-list fancy-scrollbar">
         <div v-for="card in board.discardPile.toReversed()" :key="card">
-          <GameCard :card-id="card" />
+          <GameCard :card-id="card" :actions-offset="10" />
         </div>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
@@ -51,14 +51,10 @@ const board = useBoardSide(computed(() => player));
 .card-list {
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   row-gap: var(--size-3);
   justify-items: center;
   grid-auto-rows: min-content;
-  > * {
-    width: var(--card-width);
-    height: var(--card-height);
-  }
 }
 
 h2 {

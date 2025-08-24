@@ -20,18 +20,21 @@ import type { SerializedCard } from '@game/engine/src/card/entities/card.entity'
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { type DamageType } from '@game/engine/src/utils/damage';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+
 const {
   cardId,
   interactive = true,
   autoScale = true,
   deferAutoScaling = false,
-  imageOnly = false
+  imageOnly = false,
+  actionsOffset = -50
 } = defineProps<{
   cardId: string;
   interactive?: boolean;
   autoScale?: boolean;
   deferAutoScaling?: boolean;
   imageOnly?: boolean;
+  actionsOffset?: number;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -179,8 +182,14 @@ const spriteUrl = computed(() => {
 
       <CardStats v-if="interactive" :card-id="card.id" class="stats" />
 
-      <PopoverPortal :disabled="card.location === 'hand'">
-        <PopoverContent :side-offset="-50" v-if="interactive">
+      <PopoverPortal
+        :disabled="
+          card.location === 'hand' ||
+          card.location === 'discardPile' ||
+          card.location === 'banishPile'
+        "
+      >
+        <PopoverContent :side-offset="actionsOffset" v-if="interactive">
           <CardActions
             :card="card"
             v-model:is-opened="isActionsPopoverOpened"

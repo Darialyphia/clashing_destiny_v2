@@ -59,7 +59,6 @@ export type MinionCardInterceptors = CardInterceptors & {
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
-  abilities: Interceptable<Ability<MinionCard>[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -209,6 +208,8 @@ export class MinionCard extends Card<
 
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
+  readonly abilities: Ability<MinionCard>[] = [];
+
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
       game,
@@ -227,11 +228,14 @@ export class MinionCard extends Card<
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        atk: new Interceptable(),
-        abilities: new Interceptable()
+        atk: new Interceptable()
       },
       options
     );
+
+    this.blueprint.abilities.forEach(ability => {
+      this.abilities.push(new Ability<MinionCard>(this.game, this, ability));
+    });
   }
 
   get hasSummoningSickness(): boolean {
@@ -276,15 +280,6 @@ export class MinionCard extends Card<
   get isBlocking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
-  }
-
-  get abilities(): Ability<MinionCard>[] {
-    return this.interceptors.abilities.getValue(
-      this.blueprint.abilities.map(
-        ability => new Ability<MinionCard>(this.game, this, ability)
-      ),
-      this
-    );
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {

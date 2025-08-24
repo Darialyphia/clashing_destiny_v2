@@ -280,6 +280,13 @@ export const KEYWORDS = {
     description:
       'You gain stacks of Blood Offering when your Hero takes damage. Consumed by other cards to gain additional effects.',
     aliases: []
+  },
+  STEALTH: {
+    id: 'stealth',
+    name: 'Stealth',
+    description:
+      'This unit cannot be targeted by attacks as long as it is not exhausted.',
+    aliases: []
   }
 };
 
