@@ -32,25 +32,6 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   }
 });
 
-const selectedId = ref<string | null>(null);
-const selected = computed({
-  get() {
-    return selectedId.value;
-  },
-  set(value: string) {
-    if (value === selectedId.value) {
-      selectedId.value = null;
-    } else {
-      selectedId.value = value;
-    }
-  }
-});
-watch(isOpened, opened => {
-  if (!opened) {
-    selectedId.value = null;
-  }
-});
-
 const destinyCards = computed<CardViewModel[]>(() => {
   return board.value.destinyDeck
     .map(cardId => {
@@ -66,7 +47,7 @@ const hoveredCard = ref<CardViewModel | null>(null);
 
 <template>
   <UiModal
-    v-if="client.ui.displayedElements.destinyPhaseModal"
+    v-if="client.ui.displayedElements.destinyPhaseModal && !isShowingBoard"
     v-model:is-opened="isOpened"
     title="Destiny Phase"
     description="You may choose to play one Destiny card"
@@ -75,81 +56,81 @@ const hoveredCard = ref<CardViewModel | null>(null);
       '--ui-modal-size': 'var(--size-lg)'
     }"
   >
-    <div class="content" :class="{ 'is-showing-board': isShowingBoard }">
-      <p class="text-5 mb-4">Play up to one Destiny Card.</p>
+    <p class="text-5 mb-4">Play up to one Destiny Card.</p>
 
-      <div class="content-inner">
-        <div class="card-list">
-          <button
-            v-for="card in destinyCards"
-            :key="card.id"
-            class="toggle"
-            :class="{ selected: selected === card.id }"
-            :disabled="!card.canPlay"
-            @mouseenter="hoveredCard = card"
-            @mouseleave="hoveredCard = null"
-            @click="selected = card.id"
-          >
-            <CardResizer :forced-scale="0.5">
-              <GameCard
-                class="destiny-card"
-                :key="card.id"
-                :card-id="card.id"
-                :interactive="false"
-                :auto-scale="false"
-              />
-            </CardResizer>
-          </button>
-        </div>
-
-        <div class="hovered-card">
-          <GameCard
-            v-if="hoveredCard"
-            :card-id="hoveredCard.id"
-            :interactive="false"
-            :auto-scale="true"
-          />
-        </div>
-      </div>
-      <footer class="flex mt-7 gap-10 justify-center">
-        <FancyButton
-          :text="isShowingBoard ? 'Hide Board' : 'Show Board'"
-          @click="isShowingBoard = !isShowingBoard"
-        />
-
-        <FancyButton
-          :variant="selectedId !== null ? 'info' : 'error'"
-          :text="selectedId !== null ? 'Play' : 'Skip'"
+    <section>
+      <div class="card-list">
+        <button
+          v-for="card in destinyCards"
+          :key="card.id"
+          class="toggle"
+          :disabled="!card.canPlay"
+          @mouseenter="hoveredCard = card"
+          @mouseleave="hoveredCard = null"
           @click="
-            () => {
-              isOpened = false;
-              if (selectedId === null) {
-                return client.skipDestiny();
+            isOpened = false;
+            client.networkAdapter.dispatch({
+              type: 'playDestinyCard',
+              payload: {
+                playerId: state.currentPlayer,
+                id: card.id
               }
-
-              client.networkAdapter.dispatch({
-                type: 'playDestinyCard',
-                payload: {
-                  playerId: state.currentPlayer,
-                  id: selectedId!
-                }
-              });
-            }
+            });
           "
+        >
+          <CardResizer :forced-scale="0.5">
+            <GameCard
+              class="destiny-card"
+              :key="card.id"
+              :card-id="card.id"
+              :interactive="false"
+              :auto-scale="false"
+            />
+          </CardResizer>
+        </button>
+      </div>
+
+      <div class="hovered-card">
+        <GameCard
+          v-if="hoveredCard"
+          :card-id="hoveredCard.id"
+          :interactive="false"
+          :auto-scale="true"
         />
-      </footer>
-    </div>
+      </div>
+    </section>
+
+    <footer class="flex mt-7 gap-10 justify-center">
+      <FancyButton
+        variant="error"
+        text="Skip"
+        @click="
+          () => {
+            isOpened = false;
+            return client.skipDestiny();
+          }
+        "
+      />
+    </footer>
   </UiModal>
+
+  <FancyButton
+    class="board-toggle"
+    :text="isShowingBoard ? 'Hide Board' : 'Show Board'"
+    @click="isShowingBoard = !isShowingBoard"
+  />
 </template>
 
 <style scoped lang="postcss">
-.content {
-  &.is-showing-board .content-inner {
-    visibility: hidden;
-  }
+.board-toggle {
+  position: fixed;
+  bottom: var(--size-8);
+  right: var(--size-8);
+  z-index: 999;
+  pointer-events: auto;
 }
 
-.content-inner {
+section {
   display: grid;
   grid-template-columns: 4fr 2fr;
   gap: var(--size-2);
@@ -173,9 +154,9 @@ const hoveredCard = ref<CardViewModel | null>(null);
   width: var(--card-width);
   height: var(--card-height);
   transition: all 0.2s var(--ease-2);
-  &.selected .destiny-card {
+  &:hover .destiny-card {
     filter: brightness(1.3);
-    outline: solid var(--border-size-3) var(--primary);
+    outline: solid var(--border-size-2) var(--primary);
   }
 
   &:disabled {
