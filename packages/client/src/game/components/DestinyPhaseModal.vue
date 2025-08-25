@@ -115,6 +115,7 @@ const hoveredCard = ref<CardViewModel | null>(null);
   </UiModal>
 
   <FancyButton
+    v-if="isOpened"
     class="board-toggle"
     :text="isShowingBoard ? 'Hide Board' : 'Show Board'"
     @click="isShowingBoard = !isShowingBoard"
