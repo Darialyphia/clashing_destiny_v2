@@ -80,7 +80,7 @@ export const combatTutorial: TutorialMission = {
       client.ui.displayedElements.defenseZone = false;
 
       meta.allyHero = game.playerSystem.player1.hero;
-      meta.allyHero.addInterceptor('abilities', () => []);
+      meta.allyHero.abilities.splice(0, -1);
       meta.enemyHero = game.playerSystem.player2.hero;
       meta.allyfootSoldier1 =
         await game.playerSystem.player1.generateCard<MinionCard>(

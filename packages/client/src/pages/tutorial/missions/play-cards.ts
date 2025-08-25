@@ -56,7 +56,7 @@ export const playCardTutorial: TutorialMission = {
       client.ui.displayedElements.phaseTracker = false;
 
       meta.allyHero = game.playerSystem.player1.hero;
-      meta.allyHero.addInterceptor('abilities', () => []);
+      meta.allyHero.abilities.splice(0, -1);
       meta.enemyHero = game.playerSystem.player2.hero;
     },
     steps: {
