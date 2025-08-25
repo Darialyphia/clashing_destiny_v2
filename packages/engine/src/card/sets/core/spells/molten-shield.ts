@@ -24,7 +24,7 @@ export const moltenShield: SpellBlueprint = {
   name: 'Molten Shield',
   cardIconId: 'spell-molten-shield',
   description:
-    'Prevent the next 3 combat damage dealt to target ally this turn. Add stacks of @Ember@ to your hero equal to the damage prevented.\n\n@Echoed Destiny@.',
+    'Prevent the next 3 combat damage dealt to target ally this turn. Add stacks of @Ember@ to your hero equal to the damage prevented.',
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -42,9 +42,7 @@ export const moltenShield: SpellBlueprint = {
       card
     });
   },
-  async onInit(game, card) {
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as HeroCard | MinionCard;
 

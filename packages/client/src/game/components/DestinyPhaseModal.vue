@@ -60,6 +60,8 @@ const destinyCards = computed<CardViewModel[]>(() => {
       return a.destinyCost! - b.destinyCost! || a.name.localeCompare(b.name);
     });
 });
+
+const hoveredCard = ref<CardViewModel | null>(null);
 </script>
 
 <template>
@@ -76,24 +78,38 @@ const destinyCards = computed<CardViewModel[]>(() => {
     <div class="content" :class="{ 'is-showing-board': isShowingBoard }">
       <p class="text-5 mb-4">Play up to one Destiny Card.</p>
 
-      <div class="card-list">
-        <button
-          v-for="card in destinyCards"
-          :key="card.id"
-          class="toggle"
-          :class="{ selected: selected === card.id }"
-          :disabled="!card.canPlay"
-          @click="selected = card.id"
-        >
-          <CardResizer :forced-scale="0.5">
-            <GameCard
-              :key="card.id"
-              :card-id="card.id"
-              :interactive="false"
-              :auto-scale="false"
-            />
-          </CardResizer>
-        </button>
+      <div class="content-inner">
+        <div class="card-list">
+          <button
+            v-for="card in destinyCards"
+            :key="card.id"
+            class="toggle"
+            :class="{ selected: selected === card.id }"
+            :disabled="!card.canPlay"
+            @mouseenter="hoveredCard = card"
+            @mouseleave="hoveredCard = null"
+            @click="selected = card.id"
+          >
+            <CardResizer :forced-scale="0.5">
+              <GameCard
+                class="destiny-card"
+                :key="card.id"
+                :card-id="card.id"
+                :interactive="false"
+                :auto-scale="false"
+              />
+            </CardResizer>
+          </button>
+        </div>
+
+        <div class="hovered-card">
+          <GameCard
+            v-if="hoveredCard"
+            :card-id="hoveredCard.id"
+            :interactive="false"
+            :auto-scale="true"
+          />
+        </div>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton
@@ -128,9 +144,15 @@ const destinyCards = computed<CardViewModel[]>(() => {
 
 <style scoped lang="postcss">
 .content {
-  &.is-showing-board .card-list {
+  &.is-showing-board .content-inner {
     visibility: hidden;
   }
+}
+
+.content-inner {
+  display: grid;
+  grid-template-columns: 4fr 2fr;
+  gap: var(--size-2);
 }
 
 .card-list {
@@ -139,6 +161,9 @@ const destinyCards = computed<CardViewModel[]>(() => {
   gap: var(--size-2);
 }
 
+.hovered-card {
+  --pixel-scale: 2;
+}
 :deep(.inspectable-card) {
   width: var(--card-width);
   height: var(--card-height);
@@ -148,20 +173,19 @@ const destinyCards = computed<CardViewModel[]>(() => {
   width: var(--card-width);
   height: var(--card-height);
   transition: all 0.2s var(--ease-2);
-  &.selected {
+  &.selected .destiny-card {
     filter: brightness(1.3);
-    transform: translateY(10px);
+    outline: solid var(--border-size-3) var(--primary);
   }
 
   &:disabled {
     filter: grayscale(0.7);
-    pointer-events: none;
   }
 }
 
 :global(
-    body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
-  ) {
+  body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
+) {
   opacity: 0;
 }
 </style>
