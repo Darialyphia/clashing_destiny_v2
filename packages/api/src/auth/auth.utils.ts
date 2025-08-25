@@ -9,20 +9,24 @@ import {
 } from '../_generated/server';
 import { v } from 'convex/values';
 import { Id } from '../_generated/dataModel';
-import {
-  getValidSession,
-  getValidSessionAndRenew
-} from './repositories/session.repository';
+
 import { Nullable } from '@game/shared';
 import { AuthSession } from './entities/session.entity';
 import { AppError } from '../utils/error';
+import {
+  createSessionReadRepository,
+  createSessionRepository
+} from './repositories/session.repository';
 
 export const queryWithSession = customQuery(query, {
   args: {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const session = await getValidSession(ctx, args.sessionId as Id<'authSessions'>);
+    const sessionRepo = createSessionReadRepository(ctx.db);
+    const session = await sessionRepo.getValidSession(
+      args.sessionId as Id<'authSessions'>
+    );
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
@@ -32,7 +36,10 @@ export const internalQueryWithSession = customQuery(internalQuery, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const session = await getValidSession(ctx, args.sessionId as Id<'authSessions'>);
+    const sessionRepo = createSessionReadRepository(ctx.db);
+    const session = await sessionRepo.getValidSession(
+      args.sessionId as Id<'authSessions'>
+    );
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
@@ -42,8 +49,8 @@ export const mutationWithSession = customMutation(mutation, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const session = await getValidSessionAndRenew(
-      ctx,
+    const sessionRepo = createSessionRepository(ctx.db);
+    const session = await sessionRepo.getValidSession(
       args.sessionId as Id<'authSessions'>
     );
     return { ctx: { ...ctx, session }, args: {} };
@@ -55,8 +62,8 @@ export const internalMutationWithSession = customMutation(internalMutation, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const session = await getValidSessionAndRenew(
-      ctx,
+    const sessionRepo = createSessionRepository(ctx.db);
+    const session = await sessionRepo.getValidSession(
       args.sessionId as Id<'authSessions'>
     );
     return { ctx: { ...ctx, session }, args: {} };

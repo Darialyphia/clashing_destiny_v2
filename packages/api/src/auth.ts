@@ -5,13 +5,18 @@ import { Password } from './utils/password';
 
 import { RegisterUseCase } from './auth/usecases/register.usecase';
 import { LoginUseCase } from './auth/usecases/login.usecase';
-import { mutationWithSession } from './auth/auth.utils';
+import { ensureAuthenticated, mutationWithSession } from './auth/auth.utils';
 import { LogoutUseCase } from './auth/usecases/logout.usecase';
+import { createSessionRepository } from './auth/repositories/session.repository';
+import { createUserRepository } from './users/user.repository';
 
 export const register = mutation({
   args: { email: v.string(), password: v.string() },
   handler: async (ctx, input) => {
-    const usecase = new RegisterUseCase(ctx);
+    const usecase = new RegisterUseCase({
+      userRepo: createUserRepository(ctx.db),
+      sessionRepo: createSessionRepository(ctx.db)
+    });
 
     const result = await usecase.execute({
       email: new Email(input.email),
@@ -25,7 +30,10 @@ export const register = mutation({
 export const login = mutation({
   args: { email: v.string(), password: v.string() },
   handler: async (ctx, input) => {
-    const usecase = new LoginUseCase(ctx);
+    const usecase = new LoginUseCase({
+      userRepo: createUserRepository(ctx.db),
+      sessionRepo: createSessionRepository(ctx.db)
+    });
 
     const result = await usecase.execute({
       email: new Email(input.email),
@@ -39,9 +47,13 @@ export const login = mutation({
 export const logout = mutationWithSession({
   args: {},
   handler: async ctx => {
-    const usecase = new LogoutUseCase(ctx);
+    const usecase = new LogoutUseCase({
+      sessionRepo: createSessionRepository(ctx.db)
+    });
 
-    await usecase.execute();
+    await usecase.execute({
+      sessionId: ensureAuthenticated(ctx.session)._id
+    });
 
     return { success: true };
   }

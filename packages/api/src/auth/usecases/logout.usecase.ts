@@ -1,16 +1,20 @@
+import { Id } from '../../_generated/dataModel';
 import { UseCase } from '../../usecase';
-import { deleteSession } from '../repositories/session.repository';
-import { ensureAuthenticated, MutationCtxWithSession } from '../auth.utils';
+import { SessionRepository } from '../repositories/session.repository';
 
+export type LogoutInput = {
+  sessionId: Id<'authSessions'>;
+};
 export interface LogoutOutput {
   success: true;
 }
 
-export class LogoutUseCase extends UseCase<never, LogoutOutput, MutationCtxWithSession> {
-  async execute(): Promise<LogoutOutput> {
-    const session = ensureAuthenticated(this.ctx.session);
-    await deleteSession(this.ctx, session._id);
-
+export type LogoutCtx = {
+  sessionRepo: SessionRepository;
+};
+export class LogoutUseCase extends UseCase<LogoutInput, LogoutOutput, LogoutCtx> {
+  async execute(input: LogoutInput): Promise<LogoutOutput> {
+    await this.ctx.sessionRepo.delete(input.sessionId);
     return { success: true };
   }
 }

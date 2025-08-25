@@ -1,74 +1,93 @@
 import { Id } from '../../_generated/dataModel';
-import type { MutationCtx, QueryCtx } from '../../_generated/server';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import {
   DEFAULT_SESSION_TOTAL_DURATION_MS,
   SESSION_VERIFICATION_INTERVAL_MS
 } from '../auth.constants';
 
-export const createSession = async (
-  { db }: Pick<MutationCtx, 'db'>,
-  userId: Id<'users'>
-) => {
-  return db.insert('authSessions', {
-    userId,
-    expirationTime: Date.now() + DEFAULT_SESSION_TOTAL_DURATION_MS,
-    lastVerifiedAt: Date.now()
-  });
-};
+export class SessionReadRepository {
+  constructor(protected db: DatabaseReader) {}
 
-export const getSession = async (
-  { db }: Pick<QueryCtx, 'db'>,
-  sessionId: Id<'authSessions'>
-) => {
-  return db.get(sessionId);
-};
-
-export const deleteSession = async (
-  { db }: Pick<MutationCtx, 'db'>,
-  sessionId: Id<'authSessions'>
-) => {
-  await db.delete(sessionId);
-};
-
-export const getValidSession = async (
-  { db }: Pick<QueryCtx, 'db'>,
-  sessionId: Id<'authSessions'>
-) => {
-  const now = new Date();
-
-  const session = await getSession({ db }, sessionId);
-  if (!session) {
-    return null;
+  async getById(sessionId: Id<'authSessions'>) {
+    return this.db.get(sessionId);
   }
 
-  if (session.expirationTime < now.getTime()) {
-    return null;
-  }
-  return session;
-};
-
-export const getValidSessionAndRenew = async (
-  { db }: Pick<MutationCtx, 'db'>,
-  sessionId: Id<'authSessions'>
-) => {
-  const now = new Date();
-
-  const session = await getSession({ db }, sessionId);
-  if (!session) {
-    return null;
+  async getByUserId(userId: Id<'users'>) {
+    return this.db
+      .query('authSessions')
+      .withIndex('userId', q => q.eq('userId', userId))
+      .collect();
   }
 
-  if (session.expirationTime < now.getTime()) {
-    return null;
+  async getValidSession(sessionId: Id<'authSessions'>) {
+    const now = new Date();
+
+    const session = await this.getById(sessionId);
+    if (!session) return null;
+
+    if (session.expirationTime < now.getTime()) {
+      return null;
+    }
+    return session;
+  }
+}
+
+export class SessionRepository extends SessionReadRepository {
+  protected declare db: DatabaseWriter;
+
+  constructor(db: DatabaseWriter) {
+    super(db);
+    this.db = db;
   }
 
-  const timeSinceLastVerification = now.getTime() - session.lastVerifiedAt;
-  if (timeSinceLastVerification > SESSION_VERIFICATION_INTERVAL_MS) {
-    await db.patch(sessionId, {
-      lastVerifiedAt: now.getTime(),
-      expirationTime: now.getTime() + SESSION_VERIFICATION_INTERVAL_MS
+  async create(userId: Id<'users'>) {
+    return this.db.insert('authSessions', {
+      userId,
+      expirationTime: Date.now() + DEFAULT_SESSION_TOTAL_DURATION_MS,
+      lastVerifiedAt: Date.now()
     });
   }
 
-  return session;
-};
+  async delete(sessionId: Id<'authSessions'>) {
+    await this.db.delete(sessionId);
+  }
+
+  async deleteAllForUser(userId: Id<'users'>) {
+    const sessions = await this.getByUserId(userId);
+    await Promise.all(sessions.map(session => this.db.delete(session._id)));
+  }
+
+  async updateLastVerified(sessionId: Id<'authSessions'>) {
+    return this.db.patch(sessionId, {
+      lastVerifiedAt: Date.now()
+    });
+  }
+
+  async refresh(sessionId: Id<'authSessions'>) {
+    return this.db.patch(sessionId, {
+      expirationTime: Date.now() + DEFAULT_SESSION_TOTAL_DURATION_MS,
+      lastVerifiedAt: Date.now()
+    });
+  }
+
+  async getValidSession(sessionId: Id<'authSessions'>) {
+    const session = await super.getValidSession(sessionId);
+    if (!session) return null;
+    const now = Date.now();
+
+    const timeSinceLastVerification = now - session.lastVerifiedAt;
+    if (timeSinceLastVerification > SESSION_VERIFICATION_INTERVAL_MS) {
+      await this.refresh(session._id);
+    }
+
+    return session;
+  }
+}
+
+/**
+ * Factory functions to create repository instances
+ */
+export const createSessionReadRepository = (db: DatabaseReader) =>
+  new SessionReadRepository(db);
+
+export const createSessionRepository = (db: DatabaseWriter) => new SessionRepository(db);

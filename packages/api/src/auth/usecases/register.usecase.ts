@@ -1,14 +1,14 @@
-import slugify from 'slugify';
 import { UseCase } from '../../usecase';
 import { Email } from '../../utils/email';
-import { AppError } from '../../utils/error';
 import { Password } from '../../utils/password';
-import { DEFAULT_USERNAME } from '../auth.constants';
 import { AuthSession } from '../entities/session.entity';
-import { generateDiscriminator } from '../../utils/discriminator';
-import { createSession } from '../repositories/session.repository';
 import type { MutationCtx } from '../../_generated/server';
-import { getUserByEmail } from '../../users/user.repository';
+import { createUserRepository, UserRepository } from '../../users/user.repository';
+import {
+  createSessionRepository,
+  SessionRepository
+} from '../repositories/session.repository';
+import { RegisterValidator } from '../validators/register.validator';
 
 export interface RegisterInput {
   email: Email;
@@ -19,32 +19,23 @@ export interface RegisterOutput {
   session: AuthSession;
 }
 
-export class RegisterUseCase extends UseCase<RegisterInput, RegisterOutput, MutationCtx> {
+export type RegisterCtx = {
+  userRepo: UserRepository;
+  sessionRepo: SessionRepository;
+};
+export class RegisterUseCase extends UseCase<RegisterInput, RegisterOutput, RegisterCtx> {
   async execute(input: RegisterInput): Promise<RegisterOutput> {
-    await this.validateEmail(input.email);
+    const validator = new RegisterValidator(this.ctx.userRepo);
 
-    const passwordHash = await input.password.toHash();
+    await validator.validate(input);
 
-    const userId = await this.createUser(input.email, passwordHash);
-
-    const sessionId = await createSession(this.ctx, userId);
-
-    return { session: (await this.ctx.db.get(sessionId))! };
-  }
-
-  private async validateEmail(email: Email) {
-    const existing = await getUserByEmail(this.ctx, email);
-    if (existing) throw new AppError('Email already in use');
-  }
-
-  private async createUser(email: Email, passwordHash: string) {
-    const userId = await this.ctx.db.insert('users', {
-      email: email.value,
-      passwordHash,
-      name: DEFAULT_USERNAME,
-      slug: slugify(DEFAULT_USERNAME),
-      discriminator: await generateDiscriminator(this.ctx, DEFAULT_USERNAME)
+    const userId = await this.ctx.userRepo.create({
+      email: input.email,
+      password: input.password
     });
-    return userId;
+
+    const sessionId = await this.ctx.sessionRepo.create(userId);
+
+    return { session: (await this.ctx.sessionRepo.getById(sessionId))! };
   }
 }

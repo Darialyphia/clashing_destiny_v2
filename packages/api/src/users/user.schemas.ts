@@ -7,7 +7,8 @@ export const userSchemas = {
     name: v.string(),
     discriminator: v.string(),
     slug: v.string(),
-    passwordHash: v.string()
+    passwordHash: v.string(),
+    mmr: v.number()
   })
     .index('by_fullname', ['name', 'discriminator'])
     .index('by_slug', ['slug'])
