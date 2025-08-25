@@ -30,7 +30,7 @@ export class UserReadRepository {
 }
 
 export class UserRepository extends UserReadRepository {
-  protected declare db: DatabaseWriter;
+  declare protected db: DatabaseWriter;
 
   constructor(db: DatabaseWriter) {
     super(db);

@@ -33,7 +33,7 @@ export class SessionReadRepository {
 }
 
 export class SessionRepository extends SessionReadRepository {
-  protected declare db: DatabaseWriter;
+  declare protected db: DatabaseWriter;
 
   constructor(db: DatabaseWriter) {
     super(db);
