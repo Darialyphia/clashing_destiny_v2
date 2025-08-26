@@ -31,12 +31,12 @@ export const mercyForTheInjured: DestinyBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
   tags: [],
-  minLevel: 2,
+  minLevel: 1,
   countsAsLevel: true,
   abilities: [
     {
       id: 'mercy-for-the-injured-ability',
-      label: 'Pay for Attacks',
+      label: '@[mana] 2@ Pay for Attacks',
       description:
         '@[exhaust]@ @[mana] 2@ : Can only be used during your turn. Until the start of your next turn, players must pay @[mana] 2@ when they declare an attack. @Seal@ this ability.',
       manaCost: 2,
@@ -53,7 +53,7 @@ export const mercyForTheInjured: DestinyBlueprint = {
               new AuraModifierMixin(game, {
                 canSelfApply: false,
                 isElligible(candidate) {
-                  return isMinionOrHero(candidate);
+                  return isMinionOrHero(candidate) && candidate.location === 'board';
                 },
                 async onGainAura(candidate) {
                   await candidate.modifiers.add(
@@ -63,9 +63,10 @@ export const mercyForTheInjured: DestinyBlueprint = {
                           key: 'canAttack',
                           interceptor: value => {
                             if (!value) return value;
+                            console.log(candidate.player.cardManager.hand);
                             return (
                               candidate.player.cardManager.hand.filter(
-                                card => card.canBeUsedAsDestinyCost
+                                card => card.canBeUsedAsManaCost
                               ).length >= 2
                             );
                           }

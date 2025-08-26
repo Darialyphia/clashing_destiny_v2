@@ -19,7 +19,8 @@ export class ToggleForManaCost implements CardClickRule {
     return (
       card.location === 'hand' &&
       this.isValidInteractionState(state) &&
-      this.client.playerId === state.interaction.ctx.player
+      this.client.playerId === state.interaction.ctx.player &&
+      card.canBeUsedAsManaCost
     );
   }
 

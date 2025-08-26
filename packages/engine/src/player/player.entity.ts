@@ -28,6 +28,7 @@ import type { SpellCard } from '../card/entities/spell.entity';
 import type { ArtifactCard } from '../card/entities/artifact.entity';
 import type { MinionCard } from '../card/entities/minion.entity';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
+import { GameError } from '../game/game-error';
 
 export type PlayerOptions = {
   id: string;
@@ -219,6 +220,9 @@ export class Player
     assert(hasEnough, new NotEnoughCardsInHandError());
     const cards = this.cardManager.hand.filter((_, i) => indices.includes(i));
     cards.forEach(card => {
+      if (!card.canBeUsedAsManaCost) {
+        throw new GameError(`Cannot use card '${card.id}' as mana cost`);
+      }
       card.sendToDestinyZone();
     });
   }

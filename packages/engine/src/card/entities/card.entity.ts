@@ -44,6 +44,7 @@ export type CardInterceptors = {
   loyalty: Interceptable<number>;
   hasAffinityMatch: Interceptable<boolean>;
   canBeUsedAsDestinyCost: Interceptable<boolean>;
+  canBeUsedAsManaCost: Interceptable<boolean>;
   canBeRecollected: Interceptable<boolean>;
 };
 
@@ -54,6 +55,7 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   loyalty: new Interceptable(),
   hasAffinityMatch: new Interceptable(),
   canBeUsedAsDestinyCost: new Interceptable(),
+  canBeUsedAsManaCost: new Interceptable(),
   canBeRecollected: new Interceptable()
 });
 
@@ -73,6 +75,7 @@ export type SerializedCard = {
   // keywords: Array<{ id: string; name: string; description: string }>;
   affinity: Affinity;
   modifiers: string[];
+  canBeUsedAsManaCost: boolean;
 };
 
 export type CardTargetOrigin =
@@ -194,6 +197,10 @@ export abstract class Card<
 
   get canBeUsedAsDestinyCost() {
     return this.interceptors.canBeUsedAsDestinyCost.getValue(false, {});
+  }
+
+  get canBeUsedAsManaCost() {
+    return this.interceptors.canBeUsedAsManaCost.getValue(true, {});
   }
 
   get canBeRecollected() {
@@ -338,6 +345,7 @@ export abstract class Card<
       description: this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
+      canBeUsedAsManaCost: this.canBeUsedAsManaCost,
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id)

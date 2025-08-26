@@ -4,10 +4,7 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type {
-  SerializedAbility,
-  SerializedPreResponseTarget
-} from '../../card/card-blueprint';
+import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
@@ -119,6 +116,10 @@ export class CardViewModel {
     }
 
     return null;
+  }
+
+  get canBeUsedAsManaCost() {
+    return this.data.canBeUsedAsManaCost;
   }
 
   get source() {
@@ -326,6 +327,7 @@ export class CardViewModel {
       new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
+
     return actions;
   }
 
