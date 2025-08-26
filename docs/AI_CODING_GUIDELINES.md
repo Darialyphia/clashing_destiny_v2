@@ -45,29 +45,6 @@ class Matchmaking {
 }
 ```
 
-#### Method Naming
-
-- **Use domain-specific method names** that a domain expert would understand
-- Method names should reflect business operations, not technical operations
-
-```typescript
-// ✅ Good - Domain expert understands this
-class Matchmaking {
-  join(userId: Id<"users">): void {}
-  leave(userId: Id<"users">): void {}
-  cancel(): void {}
-  start(): void {}
-}
-
-// ❌ Avoid - Too technical
-class Matchmaking {
-  addUser(userId: Id<"users">): void {}
-  removeUser(userId: Id<"users">): void {}
-  delete(): void {}
-  execute(): void {}
-}
-```
-
 ### Repository Guidelines
 
 #### Responsibility Separation
@@ -102,13 +79,3 @@ class Matchmaking {
 - Repositories: `{Entity}.repository.ts`
 - Use cases: `{Action}.usecase.ts`
 - Schemas: `{Domain}.schemas.ts`
-
-#### Factory Functions
-
-- Provide factory functions for repository instantiation
-- Helps with dependency injection and testing
-
-```typescript
-export const createMatchmakingRepository = (db: DatabaseWriter) =>
-  new MatchmakingRepository(db);
-```

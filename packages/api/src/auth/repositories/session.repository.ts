@@ -83,11 +83,3 @@ export class SessionRepository extends SessionReadRepository {
     return session;
   }
 }
-
-/**
- * Factory functions to create repository instances
- */
-export const createSessionReadRepository = (db: DatabaseReader) =>
-  new SessionReadRepository(db);
-
-export const createSessionRepository = (db: DatabaseWriter) => new SessionRepository(db);

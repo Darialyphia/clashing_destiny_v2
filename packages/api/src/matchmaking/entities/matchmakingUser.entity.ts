@@ -1,32 +1,18 @@
-import { Id } from '../../_generated/dataModel';
+import type { Doc, Id } from '../../_generated/dataModel';
+import { Entity } from '../../shared/entity';
+import { User } from '../../users/entities/user.entity';
 
-type MatchmakingUserData = {
-  userId: Id<'users'>;
-  matchmakingId: Id<'matchmaking'>;
-  id: Id<'matchmakingUsers'>;
-  mmr: number;
-};
+export type MatchmakingUserDoc = Doc<'matchmakingUsers'>;
 
-export class MatchmakingUser {
-  private data: MatchmakingUserData;
-
-  constructor(data: MatchmakingUserData) {
-    this.data = data;
-  }
-
-  get id() {
-    return this.data.id;
-  }
-
+export class MatchmakingUser extends Entity<
+  Id<'matchmakingUsers'>,
+  MatchmakingUserDoc & { user: User }
+> {
   get userId() {
     return this.data.userId;
   }
 
   get matchmakingId() {
     return this.data.matchmakingId;
-  }
-
-  get mmr() {
-    return this.data.mmr;
   }
 }

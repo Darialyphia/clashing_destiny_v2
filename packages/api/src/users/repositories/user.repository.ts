@@ -8,35 +8,10 @@ import { Password } from '../../utils/password';
 import { AppError } from '../../utils/error';
 import { User } from '../entities/user.entity';
 
-interface UserQuery {
-  include?: {
-    currentMatchmaking?: boolean;
-  };
-}
-
 export class UserReadRepository {
   constructor(protected db: DatabaseReader) {}
 
-  private async buildUserEntity(userData: Doc<'users'>, query: UserQuery) {
-    const currentMatchmakingUser = query.include?.currentMatchmaking
-      ? await this.loadCurrentMatchmakingUser(userData._id)
-      : undefined;
-
-    return new User({
-      ...userData,
-      id: userData._id,
-      currentMatchmakingUser: currentMatchmakingUser ?? undefined
-    });
-  }
-
-  private loadCurrentMatchmakingUser(userId: Id<'users'>) {
-    return this.db
-      .query('matchmakingUsers')
-      .withIndex('by_userId', q => q.eq('userId', userId))
-      .unique();
-  }
-
-  async getByEmail(email: Email, query: UserQuery = {}) {
+  async getByEmail(email: Email) {
     const userData = await this.db
       .query('users')
       .withIndex('by_email', q => q.eq('email', email.value))
@@ -44,18 +19,18 @@ export class UserReadRepository {
 
     if (!userData) return null;
 
-    return this.buildUserEntity(userData, query);
+    return new User(userData);
   }
 
-  async getById(userId: Id<'users'>, query: UserQuery = {}) {
+  async getById(userId: Id<'users'>) {
     const userData = await this.db.get(userId);
 
     if (!userData) return null;
 
-    return this.buildUserEntity(userData, query);
+    return new User(userData);
   }
 
-  async getBySlug(slug: string, query: UserQuery = {}) {
+  async getBySlug(slug: string) {
     const userData = await this.db
       .query('users')
       .withIndex('by_slug', q => q.eq('slug', slug))
@@ -63,7 +38,7 @@ export class UserReadRepository {
 
     if (!userData) return null;
 
-    return this.buildUserEntity(userData, query);
+    return new User(userData);
   }
 }
 
@@ -89,11 +64,11 @@ export class UserRepository extends UserReadRepository {
     });
   }
 
-  async updatePassword(userId: Id<'users'>, password: Password) {
-    return this.db.patch(userId, { passwordHash: await password.toHash() });
+  save(user: User) {
+    return this.db.replace(user.id, { ...user['data'] });
   }
 
-  async updateName(userId: Id<'users'>, name: string) {
+  async getNewDiscriminatorIfNeeded(userId: Id<'users'>, name: string) {
     const user = await this.getById(userId);
     if (!user) throw new AppError('User not found');
 
@@ -101,20 +76,9 @@ export class UserRepository extends UserReadRepository {
     const exists = await this.getBySlug(slug);
 
     if (exists) {
-      const discriminator = await generateDiscriminator({ db: this.db }, name);
-      const newSlug = slugify(`${name}--${discriminator}`);
-      return this.db.patch(userId, { name, discriminator, slug: newSlug });
+      return await generateDiscriminator({ db: this.db }, name);
     } else {
-      return this.db.patch(userId, { name, slug });
+      return user.discriminator;
     }
   }
-
-  async updateMmr(userId: Id<'users'>, mmr: number) {
-    return this.db.patch(userId, { mmr });
-  }
 }
-
-export const createUserReadRepository = (db: DatabaseReader) =>
-  new UserReadRepository(db);
-
-export const createUserRepository = (db: DatabaseWriter) => new UserRepository(db);

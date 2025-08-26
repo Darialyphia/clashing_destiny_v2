@@ -1,87 +1,33 @@
-import type { Id } from '../../_generated/dataModel';
-import { DomainError } from '../../utils/error';
-import {
-  Matchmaking,
-  MatchmakingUser
-} from '../../matchmaking/entities/matchmaking.entity';
+import slugify from 'slugify';
+import type { Doc, Id } from '../../_generated/dataModel';
+import { Entity } from '../../shared/entity';
 
-export class User {
-  public readonly id: Id<'users'>;
+export type UserDoc = Doc<'users'>;
 
-  public readonly name: string;
-
-  public readonly discriminator: string;
-
-  public readonly passwordHash: string;
-
-  public readonly mmr: number;
-
-  private currentMatchmakingUser?: MatchmakingUser;
-
-  private loadingState: {
-    currentMatchmakingUser: boolean;
-  };
-
-  constructor(config: {
-    id: Id<'users'>;
-    name: string;
-    discriminator: string;
-    passwordHash: string;
-    mmr: number;
-    currentMatchmakingUser?: MatchmakingUser;
-  }) {
-    this.id = config.id;
-    this.name = config.name;
-    this.discriminator = config.discriminator;
-    this.currentMatchmakingUser = config.currentMatchmakingUser;
-    this.passwordHash = config.passwordHash;
-    this.mmr = config.mmr;
-    this.loadingState = {
-      currentMatchmakingUser: config.currentMatchmakingUser !== undefined
-    };
+export class User extends Entity<Id<'users'>, UserDoc> {
+  get name() {
+    return this.data.name;
   }
 
-  getCurrentMatchmaking(): MatchmakingUser | null {
-    if (!this.loadingState.currentMatchmakingUser) {
-      throw new DomainError(
-        'Current matchmaking not loaded. Include currentMatchmaking in query.'
-      );
-    }
-    return this.currentMatchmakingUser ?? null;
+  get discriminator() {
+    return this.data.discriminator;
   }
 
-  canJoinMatchmaking(matchmaking: Matchmaking): boolean {
-    if (!this.loadingState.currentMatchmakingUser) {
-      throw new DomainError('Cannot validate join without current matchmaking loaded');
-    }
-    return (
-      !this.currentMatchmakingUser ||
-      this.currentMatchmakingUser.matchmakingId !== matchmaking.id
-    );
+  get passwordHash() {
+    return this.data.passwordHash;
   }
 
-  canLeaveMatchmaking(): boolean {
-    if (!this.loadingState.currentMatchmakingUser) {
-      throw new DomainError('Cannot validate leave without current matchmaking loaded');
-    }
-    return this.currentMatchmakingUser !== undefined;
+  get mmr() {
+    return this.data.mmr;
   }
 
-  isInMatchmaking(): boolean {
-    if (!this.loadingState.currentMatchmakingUser) {
-      throw new DomainError(
-        'Cannot check matchmaking status without current matchmaking loaded'
-      );
-    }
-    return this.currentMatchmakingUser !== undefined;
+  get slug() {
+    return this.data.slug;
   }
 
-  isInSpecificMatchmaking(matchmakingId: Id<'matchmaking'>): boolean {
-    if (!this.loadingState.currentMatchmakingUser) {
-      throw new DomainError(
-        'Cannot check specific matchmaking without current matchmaking loaded'
-      );
-    }
-    return this.currentMatchmakingUser?.matchmakingId === matchmakingId;
+  rename(name: string, discriminator: string) {
+    this.data.name = name;
+    this.data.discriminator = discriminator;
+    this.data.slug = slugify(`${name}--${discriminator}`);
   }
 }
