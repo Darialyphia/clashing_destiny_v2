@@ -8,10 +8,9 @@ import {
   type QueryCtx
 } from '../_generated/server';
 import { v } from 'convex/values';
-import { Id } from '../_generated/dataModel';
-
-import { Nullable } from '@game/shared';
-import { AuthSession } from './entities/session.entity';
+import type { Id } from '../_generated/dataModel';
+import type { Nullable } from '@game/shared';
+import { type AuthSession } from './entities/session.entity';
 import { AppError } from '../utils/error';
 import {
   createSessionReadRepository,

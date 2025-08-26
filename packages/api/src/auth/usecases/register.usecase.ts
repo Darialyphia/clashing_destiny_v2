@@ -1,13 +1,9 @@
 import { UseCase } from '../../usecase';
 import { Email } from '../../utils/email';
 import { Password } from '../../utils/password';
-import { AuthSession } from '../entities/session.entity';
-import type { MutationCtx } from '../../_generated/server';
-import { createUserRepository, UserRepository } from '../../users/user.repository';
-import {
-  createSessionRepository,
-  SessionRepository
-} from '../repositories/session.repository';
+import type { AuthSession } from '../entities/session.entity';
+import { UserRepository } from '../../users/repositories/user.repository';
+import { SessionRepository } from '../repositories/session.repository';
 import { RegisterValidator } from '../validators/register.validator';
 
 export interface RegisterInput {

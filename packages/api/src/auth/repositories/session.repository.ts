@@ -1,4 +1,4 @@
-import { Id } from '../../_generated/dataModel';
+import type { Id } from '../../_generated/dataModel';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import {
   DEFAULT_SESSION_TOTAL_DURATION_MS,

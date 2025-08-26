@@ -1,5 +1,5 @@
 import { AppError } from '../../utils/error';
-import { UserReadRepository } from '../../users/user.repository';
+import { UserReadRepository } from '../../users/repositories/user.repository';
 import { Email } from '../../utils/email';
 import { Password } from '../../utils/password';
 

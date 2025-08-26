@@ -1,31 +1,69 @@
-import { Id } from '../_generated/dataModel';
-import type { DatabaseReader, DatabaseWriter } from '../_generated/server';
-import { DEFAULT_USERNAME, INITIAL_MMR } from '../auth/auth.constants';
-import { generateDiscriminator } from '../utils/discriminator';
-import { Email } from '../utils/email';
+import type { Doc, Id } from '../../_generated/dataModel';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import { DEFAULT_USERNAME, INITIAL_MMR } from '../../auth/auth.constants';
+import { generateDiscriminator } from '../../utils/discriminator';
+import { Email } from '../../utils/email';
 import slugify from 'slugify';
-import { Password } from '../utils/password';
-import { AppError } from '../utils/error';
+import { Password } from '../../utils/password';
+import { AppError } from '../../utils/error';
+import { User } from '../entities/user.entity';
+
+interface UserQuery {
+  include?: {
+    currentMatchmaking?: boolean;
+  };
+}
 
 export class UserReadRepository {
   constructor(protected db: DatabaseReader) {}
 
-  async getByEmail(email: Email) {
+  private async buildUserEntity(userData: Doc<'users'>, query: UserQuery) {
+    const currentMatchmakingUser = query.include?.currentMatchmaking
+      ? await this.loadCurrentMatchmakingUser(userData._id)
+      : undefined;
+
+    return new User({
+      ...userData,
+      id: userData._id,
+      currentMatchmakingUser: currentMatchmakingUser ?? undefined
+    });
+  }
+
+  private loadCurrentMatchmakingUser(userId: Id<'users'>) {
     return this.db
+      .query('matchmakingUsers')
+      .withIndex('by_userId', q => q.eq('userId', userId))
+      .unique();
+  }
+
+  async getByEmail(email: Email, query: UserQuery = {}) {
+    const userData = await this.db
       .query('users')
       .withIndex('by_email', q => q.eq('email', email.value))
       .unique();
+
+    if (!userData) return null;
+
+    return this.buildUserEntity(userData, query);
   }
 
-  async getById(userId: Id<'users'>) {
-    return this.db.get(userId);
+  async getById(userId: Id<'users'>, query: UserQuery = {}) {
+    const userData = await this.db.get(userId);
+
+    if (!userData) return null;
+
+    return this.buildUserEntity(userData, query);
   }
 
-  async getBySlug(slug: string) {
-    return this.db
+  async getBySlug(slug: string, query: UserQuery = {}) {
+    const userData = await this.db
       .query('users')
       .withIndex('by_slug', q => q.eq('slug', slug))
       .unique();
+
+    if (!userData) return null;
+
+    return this.buildUserEntity(userData, query);
   }
 }
 
@@ -76,9 +114,6 @@ export class UserRepository extends UserReadRepository {
   }
 }
 
-/**
- * Factory functions to create repository instances with proper typing
- */
 export const createUserReadRepository = (db: DatabaseReader) =>
   new UserReadRepository(db);
 

@@ -1,9 +1,9 @@
 import { UseCase } from '../../usecase';
-import { UserRepository } from '../../users/user.repository';
+import { UserRepository } from '../../users/repositories/user.repository';
 import { Email } from '../../utils/email';
 import { AppError } from '../../utils/error';
 import { Password } from '../../utils/password';
-import { AuthSession } from '../entities/session.entity';
+import type { AuthSession } from '../entities/session.entity';
 import { SessionRepository } from '../repositories/session.repository';
 
 export interface LoginInput {
@@ -30,7 +30,7 @@ export class LoginUseCase extends UseCase<LoginInput, LoginOutput, LoginCtx> {
     const ok = await input.password.verify(hash);
     if (!user || !ok) throw new AppError('Invalid credentials');
 
-    const sessionId = await this.ctx.sessionRepo.create(user._id);
+    const sessionId = await this.ctx.sessionRepo.create(user.id);
 
     return { session: (await this.ctx.sessionRepo.getById(sessionId))! };
   }

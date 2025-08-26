@@ -1,75 +1,72 @@
-import { Id } from '../../_generated/dataModel';
+import type { Doc, Id } from '../../_generated/dataModel';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import { AppError } from '../../utils/error';
-import { Matchmaking, MatchmakingUser } from '../entities/matchmaking.entity';
+import { Matchmaking } from '../entities/matchmaking.entity';
+import { User } from '../../users/entities/user.entity';
+import { MatchmakingUser } from '../entities/matchmakingUser.entity';
 
 export class MatchmakingReadRepository {
   constructor(protected db: DatabaseReader) {}
 
-  async getById(matchmakingId: Id<'matchmaking'>) {
-    return this.db.get(matchmakingId);
-  }
-
-  async getByIdWithParticipants(
-    matchmakingId: Id<'matchmaking'>
-  ): Promise<Matchmaking | null> {
+  async getById(matchmakingId: Id<'matchmaking'>): Promise<Matchmaking | null> {
     const matchmakingData = await this.db.get(matchmakingId);
     if (!matchmakingData) return null;
 
+    return this.buildMatchmakingEntity(matchmakingData);
+  }
+
+  async getByName(name: string): Promise<Matchmaking | null> {
+    const matchmakingData = await this.db
+      .query('matchmaking')
+      .filter(q => q.eq(q.field('name'), name))
+      .first();
+
+    if (!matchmakingData) return null;
+
+    return this.buildMatchmakingEntity(matchmakingData);
+  }
+
+  protected async buildMatchmakingEntity(
+    matchmakingData: Doc<'matchmaking'>
+  ): Promise<Matchmaking> {
+    const participants = await this.loadParticipants(matchmakingData._id);
+
+    return new Matchmaking({
+      data: {
+        id: matchmakingData._id,
+        name: matchmakingData.name,
+        startedAt: matchmakingData.startedAt,
+        nextInvocationId: matchmakingData.nextInvocationId
+      },
+      participants
+    });
+  }
+
+  protected async buildMatchmakingUserEntity(
+    record: Doc<'matchmakingUsers'>
+  ): Promise<MatchmakingUser> {
+    const user = await this.db.get(record.userId);
+    if (!user) {
+      throw new AppError('Inconsistent data: user not found for matchmaking participant');
+    }
+
+    return new MatchmakingUser({
+      userId: record.userId,
+      matchmakingId: record.matchmakingId,
+      id: record._id,
+      mmr: user.mmr
+    });
+  }
+
+  private async loadParticipants(
+    matchmakingId: Id<'matchmaking'>
+  ): Promise<MatchmakingUser[]> {
     const participantRecords = await this.db
       .query('matchmakingUsers')
       .withIndex('by_matchmakingId', q => q.eq('matchmakingId', matchmakingId))
       .collect();
 
-    const participants = participantRecords.map(
-      record =>
-        new MatchmakingUser({
-          userId: record.userId,
-          matchmakingId: record.matchmakingId,
-          id: record._id
-        })
-    );
-
-    return new Matchmaking({
-      id: matchmakingData._id,
-      name: matchmakingData.name,
-      startedAt: matchmakingData.startedAt,
-      participants,
-      nextInvocationId: matchmakingData.nextInvocationId
-    });
-  }
-
-  async getUserCurrentMatchmaking(userId: Id<'users'>): Promise<MatchmakingUser | null> {
-    const record = await this.db
-      .query('matchmakingUsers')
-      .withIndex('by_userId', q => q.eq('userId', userId))
-      .first();
-
-    if (!record) return null;
-
-    return new MatchmakingUser({
-      userId: record.userId,
-      matchmakingId: record.matchmakingId,
-      id: record._id
-    });
-  }
-
-  async getParticipantsInMatchmaking(
-    matchmakingId: Id<'matchmaking'>
-  ): Promise<MatchmakingUser[]> {
-    const records = await this.db
-      .query('matchmakingUsers')
-      .withIndex('by_matchmakingId', q => q.eq('matchmakingId', matchmakingId))
-      .collect();
-
-    return records.map(
-      record =>
-        new MatchmakingUser({
-          userId: record.userId,
-          matchmakingId: record.matchmakingId,
-          id: record._id
-        })
-    );
+    return Promise.all(participantRecords.map(r => this.buildMatchmakingUserEntity(r)));
   }
 }
 
@@ -81,65 +78,67 @@ export class MatchmakingRepository extends MatchmakingReadRepository {
     this.db = db;
   }
 
-  /**
-   * Create a new matchmaking session
-   */
-  async createMatchmaking(config: { name: string }): Promise<Id<'matchmaking'>> {
+  async create(config: { name: string }): Promise<Id<'matchmaking'>> {
     return this.db.insert('matchmaking', {
-      name: config.name,
-      startedAt: Date.now()
+      name: config.name
     });
   }
 
-  /**
-   * High-level business operation: User joins a matchmaking
-   * Handles cross-matchmaking constraint: user can only be in one matchmaking at a time
-   */
-  async joinMatchmaking(
-    userId: Id<'users'>,
-    matchmakingId: Id<'matchmaking'>
-  ): Promise<void> {
-    // 1. Handle cross-matchmaking constraint (repository concern)
-    const currentMatchmaking = await this.getUserCurrentMatchmaking(userId);
-    if (currentMatchmaking) {
-      await this.leaveCurrentMatchmaking(userId);
-    }
-
-    // 2. Load the target matchmaking aggregate
-    const matchmaking = await this.getByIdWithParticipants(matchmakingId);
+  async joinMatchmaking(user: User, matchmakingId: Id<'matchmaking'>): Promise<void> {
+    const matchmaking = await this.getById(matchmakingId);
     if (!matchmaking) {
       throw new AppError('Matchmaking session not found');
     }
 
-    // 3. Let the domain entity handle business rules
-    const matchmakingUser = matchmaking.join(userId);
+    if (!user.canJoinMatchmaking(matchmaking)) {
+      throw new AppError('User cannot join this matchmaking');
+    }
 
-    // 4. Persist the changes
+    const currentMatchmaking = user.getCurrentMatchmaking();
+    if (currentMatchmaking?.id) {
+      await this.db.delete(currentMatchmaking.id);
+    }
+
+    const matchmakingUserRecord = await this.db
+      .query('matchmakingUsers')
+      .filter(q => q.eq(q.field('userId'), user.id))
+      .filter(q => q.eq(q.field('matchmakingId'), matchmakingId))
+      .first();
+
+    if (!matchmakingUserRecord) {
+      throw new AppError('User is not part of this matchmaking');
+    }
+
+    const matchmakingUser = await this.buildMatchmakingUserEntity(matchmakingUserRecord);
+    matchmaking.join(matchmakingUser);
+
     await this.db.insert('matchmakingUsers', {
       userId: matchmakingUser.userId,
       matchmakingId: matchmakingUser.matchmakingId
     });
   }
 
-  /**
-   * High-level business operation: User leaves their current matchmaking
-   */
-  async leaveCurrentMatchmaking(userId: Id<'users'>): Promise<void> {
-    const currentMatchmakingUser = await this.getUserCurrentMatchmaking(userId);
-    if (!currentMatchmakingUser) {
+  async delete(matchmaking: Matchmaking) {
+    await Promise.all(matchmaking.participants.map(p => this.db.delete(p.id)));
+    await this.db.delete(matchmaking.id);
+  }
+
+  async leaveCurrentMatchmaking(user: User): Promise<void> {
+    if (!user.canLeaveMatchmaking()) {
       throw new AppError('User is not in any matchmaking');
     }
 
-    // Load the matchmaking to let domain entity validate the leave operation
-    const matchmaking = await this.getByIdWithParticipants(
-      currentMatchmakingUser.matchmakingId
-    );
+    const currentMatchmakingUser = user.getCurrentMatchmaking()!;
+
+    const matchmaking = await this.getById(currentMatchmakingUser.matchmakingId, {
+      include: { participants: true }
+    });
     if (!matchmaking) {
       throw new AppError('Matchmaking session not found');
     }
 
     // Let domain entity handle the business logic
-    matchmaking.leave(userId);
+    matchmaking.leave(user.id);
 
     // Persist the changes
     if (currentMatchmakingUser.id) {
@@ -147,21 +146,13 @@ export class MatchmakingRepository extends MatchmakingReadRepository {
     }
   }
 
-  /**
-   * Delete a matchmaking session and all its participants
-   */
   async deleteMatchmaking(matchmakingId: Id<'matchmaking'>): Promise<void> {
-    // First remove all participants
     const participants = await this.getParticipantsInMatchmaking(matchmakingId);
     await Promise.all(participants.filter(p => p.id).map(p => this.db.delete(p.id!)));
 
-    // Then delete the matchmaking itself
     await this.db.delete(matchmakingId);
   }
 
-  /**
-   * Update the next invocation ID for scheduled functions
-   */
   async updateNextInvocation(
     matchmakingId: Id<'matchmaking'>,
     nextInvocationId: Id<'_scheduled_functions'>
@@ -170,9 +161,6 @@ export class MatchmakingRepository extends MatchmakingReadRepository {
   }
 }
 
-/**
- * Factory functions to create repository instances
- */
 export const createMatchmakingReadRepository = (db: DatabaseReader) =>
   new MatchmakingReadRepository(db);
 

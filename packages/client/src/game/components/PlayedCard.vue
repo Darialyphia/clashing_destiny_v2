@@ -37,7 +37,7 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, async event => {
 <style scoped lang="postcss">
 #declared-played-card {
   position: fixed;
-  top: var(--size-5);
+  top: var(--size-12);
   left: 50%;
   transform: translateX(-50%);
   width: var(--card-width);

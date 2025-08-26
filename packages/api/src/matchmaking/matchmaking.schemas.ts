@@ -4,7 +4,7 @@ import { v } from 'convex/values';
 export const matchmakingSchemas = {
   matchmaking: defineTable({
     name: v.string(),
-    startedAt: v.number(),
+    startedAt: v.optional(v.number()),
     nextInvocationId: v.optional(v.id('_scheduled_functions'))
   }),
 

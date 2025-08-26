@@ -112,7 +112,10 @@ onMounted(() => {
         });
       }
 
-      if (eventName === GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE) {
+      if (
+        eventName === GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE &&
+        event.damage.amount
+      ) {
         tokens.push({
           kind: 'card',
           card: state.value.entities[event.card.id] as CardViewModel
@@ -315,6 +318,9 @@ li {
   line-height: 1.2;
   padding-inline: var(--size-3);
   padding-block: var(--size-2);
+  &:not(:has(:is(.game-phase-change, .player-turn-start))) {
+    margin-block: var(--size-2);
+  }
 }
 
 .toggle {
@@ -380,10 +386,12 @@ li {
 .player-turn_start {
   flex-grow: 1;
 
+  font-size: var(--font-size-3);
   font-weight: var(--font-weight-6);
   text-align: center;
 
   background-color: hsl(0 0 100% / 0.2);
+  padding-block: var(--size-2);
 
   li:has(&) {
     padding: 0;
@@ -393,11 +401,13 @@ li {
 .game-phase-change {
   flex-grow: 1;
 
+  font-size: var(--font-size-3);
   font-weight: var(--font-weight-6);
   text-align: center;
 
   background-color: hsl(0 0 100% / 0.1);
   text-transform: capitalize;
+  padding-block: var(--size-2);
 
   li:has(&) {
     padding: 0;

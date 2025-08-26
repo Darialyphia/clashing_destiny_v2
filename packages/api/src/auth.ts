@@ -8,7 +8,7 @@ import { LoginUseCase } from './auth/usecases/login.usecase';
 import { ensureAuthenticated, mutationWithSession } from './auth/auth.utils';
 import { LogoutUseCase } from './auth/usecases/logout.usecase';
 import { createSessionRepository } from './auth/repositories/session.repository';
-import { createUserRepository } from './users/user.repository';
+import { createUserRepository } from './users/repositories/user.repository';
 
 export const register = mutation({
   args: { email: v.string(), password: v.string() },

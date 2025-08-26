@@ -1,67 +1,89 @@
-import { Id } from '../../_generated/dataModel';
+import type { Id } from '../../_generated/dataModel';
 import { DomainError } from '../../utils/error';
+import { Matchmaking as GameMatchmaking } from '@game/engine/src/matchmaking/matchmaking';
+import {
+  createMMRMatchmakingOptions,
+  MMRMatchmakingParticipant,
+  MMRMatchmakingStrategy
+} from '@game/engine/src/matchmaking/strategies/mmr.strategy';
+import { MatchmakingUser } from './matchmakingUser.entity';
 
-export class MatchmakingUser {
-  public readonly userId: Id<'users'>;
-  public readonly matchmakingId: Id<'matchmaking'>;
-  public readonly id?: Id<'matchmakingUsers'>;
-
-  constructor(config: {
-    userId: Id<'users'>;
-    matchmakingId: Id<'matchmaking'>;
-    id?: Id<'matchmakingUsers'>;
-  }) {
-    this.userId = config.userId;
-    this.matchmakingId = config.matchmakingId;
-    this.id = config.id;
-  }
-}
+type MatchmakingData = {
+  id: Id<'matchmaking'>;
+  name: string;
+  startedAt: number;
+  nextInvocationId?: Id<'_scheduled_functions'>;
+};
 
 export class Matchmaking {
-  public readonly id: Id<'matchmaking'>;
-  public readonly name: string;
-  public readonly startedAt: number;
-  public readonly nextInvocationId?: Id<'_scheduled_functions'>;
-  private participants: MatchmakingUser[];
+  private data: MatchmakingData;
 
-  constructor(config: {
-    id: Id<'matchmaking'>;
-    name: string;
-    startedAt: number;
-    participants?: MatchmakingUser[];
-    nextInvocationId?: Id<'_scheduled_functions'>;
-  }) {
-    this.id = config.id;
-    this.name = config.name;
-    this.startedAt = config.startedAt;
-    this.participants = config.participants || [];
-    this.nextInvocationId = config.nextInvocationId;
+  private _participants: MatchmakingUser[];
+
+  private mm: GameMatchmaking<MMRMatchmakingParticipant>;
+
+  constructor(config: { data: MatchmakingData; participants: MatchmakingUser[] }) {
+    this.data = config.data;
+    this._participants = config.participants || [];
+
+    this.mm = new GameMatchmaking(
+      new MMRMatchmakingStrategy(createMMRMatchmakingOptions())
+    );
+
+    // this.participants.forEach(participant => {
+    //   this.mm.join({
+    //     id: participant.userId,
+    //     // @FIXME this is dummy data for the moment, we need to fix the MatchmakingUser aggregate problem
+    //     mmr: 1200,
+    //     // @TODO this is dummy data for the moment, game history persistence and ranking has not been implemented yet
+    //     isDemotionGame: false,
+    //     isPromotionGame: false,
+    //     lossStreak: 0,
+    //     tolerance: 50,
+    //     winStreak: 0,
+    //     recentWinrate: 0
+    //   });
+    // });
   }
 
-  getParticipants(): readonly MatchmakingUser[] {
-    return [...this.participants];
+  get id() {
+    return this.data.id;
+  }
+
+  get name() {
+    return this.data.name;
+  }
+
+  get startedAt() {
+    return this.data.startedAt;
+  }
+
+  get nextInvocationId() {
+    return this.data.nextInvocationId;
+  }
+
+  equals(other: Matchmaking): boolean {
+    return this.id === other.id;
+  }
+
+  get participants(): readonly MatchmakingUser[] {
+    return [...this._participants];
   }
 
   canJoin(userId: Id<'users'>): boolean {
-    return !this.participants.some(participant => participant.userId === userId);
+    return !this._participants.some(participant => participant.userId === userId);
   }
 
   canLeave(userId: Id<'users'>): boolean {
-    return this.participants.some(participant => participant.userId === userId);
+    return this._participants.some(participant => participant.userId === userId);
   }
 
-  join(userId: Id<'users'>): MatchmakingUser {
-    if (!this.canJoin(userId)) {
+  join(user: MatchmakingUser) {
+    if (!this.canJoin(user.userId)) {
       throw new DomainError('User is already participating in this matchmaking');
     }
 
-    const matchmakingUser = new MatchmakingUser({
-      userId,
-      matchmakingId: this.id
-    });
-
-    this.participants.push(matchmakingUser);
-    return matchmakingUser;
+    this._participants.push(user);
   }
 
   leave(userId: Id<'users'>): MatchmakingUser {
@@ -69,23 +91,20 @@ export class Matchmaking {
       throw new DomainError('User is not participating in this matchmaking');
     }
 
-    const participantIndex = this.participants.findIndex(
+    const participantIndex = this._participants.findIndex(
       participant => participant.userId === userId
     );
 
-    const removedParticipant = this.participants.splice(participantIndex, 1)[0];
+    const removedParticipant = this._participants.splice(participantIndex, 1)[0];
+
     return removedParticipant;
   }
 
-  getParticipantCount(): number {
-    return this.participants.length;
-  }
-
-  isEmpty(): boolean {
-    return this.participants.length === 0;
+  get isEmpty(): boolean {
+    return this._participants.length === 0;
   }
 
   hasParticipant(userId: Id<'users'>): boolean {
-    return this.participants.some(participant => participant.userId === userId);
+    return this._participants.some(participant => participant.userId === userId);
   }
 }
