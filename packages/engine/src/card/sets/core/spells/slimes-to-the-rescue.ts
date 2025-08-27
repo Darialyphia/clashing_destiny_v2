@@ -24,7 +24,7 @@ export const slimesToTheRescue: SpellBlueprint = {
   description: dedent`
   Summon up to 2 @Friendly Slime@ in the Defense Zone.
 
-  @Trap@: An enemy declares an attack on your Hero. The first summoned Slime is declared as blocker for the attack.
+  @Trap@: An enemy declares an attack on your Hero.
   `,
   collectable: true,
   unique: false,
@@ -62,14 +62,6 @@ export const slimesToTheRescue: SpellBlueprint = {
           )) as MinionPosition[];
 
           await card.playWithTargets(targets);
-
-          const firstSlime = card.player.boardSide.getSlot(
-            targets[0].zone,
-            targets[0].slot
-          )?.minion;
-          if (!firstSlime) return;
-
-          await phaseCtx.ctx.declareBlocker(firstSlime);
         }
       })
     );

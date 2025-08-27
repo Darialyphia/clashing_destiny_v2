@@ -1,4 +1,4 @@
-import type { Doc, Id } from '../../_generated/dataModel';
+import type { Id } from '../../_generated/dataModel';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import { DEFAULT_USERNAME, INITIAL_MMR } from '../../auth/auth.constants';
 import { generateDiscriminator } from '../../utils/discriminator';
@@ -12,33 +12,21 @@ export class UserReadRepository {
   constructor(protected db: DatabaseReader) {}
 
   async getByEmail(email: Email) {
-    const userData = await this.db
+    return this.db
       .query('users')
       .withIndex('by_email', q => q.eq('email', email.value))
       .unique();
-
-    if (!userData) return null;
-
-    return new User(userData);
   }
 
   async getById(userId: Id<'users'>) {
-    const userData = await this.db.get(userId);
-
-    if (!userData) return null;
-
-    return new User(userData);
+    return this.db.get(userId);
   }
 
   async getBySlug(slug: string) {
-    const userData = await this.db
+    return this.db
       .query('users')
       .withIndex('by_slug', q => q.eq('slug', slug))
       .unique();
-
-    if (!userData) return null;
-
-    return new User(userData);
   }
 }
 

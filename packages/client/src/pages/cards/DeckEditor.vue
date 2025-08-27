@@ -217,7 +217,7 @@ const getCountForCostAndUp = (minCost: number) =>
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--size-2);
   justify-items: center;
-  font-size: var(--font-size-0);
+  font-size: var(--font-size-00);
   margin-block: var(--size-1) var(--size-3);
   > div > span {
     font-size: var(--font-size-2);

@@ -2,6 +2,7 @@ import slugify from 'slugify';
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
 
+export type UserId = Id<'users'>;
 export type UserDoc = Doc<'users'>;
 
 export class User extends Entity<Id<'users'>, UserDoc> {

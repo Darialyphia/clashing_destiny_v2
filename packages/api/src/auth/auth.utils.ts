@@ -13,8 +13,8 @@ import type { Nullable } from '@game/shared';
 import { type AuthSession } from './entities/session.entity';
 import { AppError } from '../utils/error';
 import {
-  createSessionReadRepository,
-  createSessionRepository
+  SessionReadRepository,
+  SessionRepository
 } from './repositories/session.repository';
 
 export const queryWithSession = customQuery(query, {
@@ -22,7 +22,7 @@ export const queryWithSession = customQuery(query, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = createSessionReadRepository(ctx.db);
+    const sessionRepo = new SessionReadRepository(ctx.db);
     const session = await sessionRepo.getValidSession(
       args.sessionId as Id<'authSessions'>
     );
@@ -35,7 +35,7 @@ export const internalQueryWithSession = customQuery(internalQuery, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = createSessionReadRepository(ctx.db);
+    const sessionRepo = new SessionReadRepository(ctx.db);
     const session = await sessionRepo.getValidSession(
       args.sessionId as Id<'authSessions'>
     );
@@ -48,7 +48,7 @@ export const mutationWithSession = customMutation(mutation, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = createSessionRepository(ctx.db);
+    const sessionRepo = new SessionRepository(ctx.db);
     const session = await sessionRepo.getValidSession(
       args.sessionId as Id<'authSessions'>
     );
@@ -61,7 +61,7 @@ export const internalMutationWithSession = customMutation(internalMutation, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = createSessionRepository(ctx.db);
+    const sessionRepo = new SessionRepository(ctx.db);
     const session = await sessionRepo.getValidSession(
       args.sessionId as Id<'authSessions'>
     );

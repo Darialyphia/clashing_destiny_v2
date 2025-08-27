@@ -12,7 +12,8 @@ export class DeclareBlockerAction implements CardActionRule {
     return (
       this.client.state.phase.state === GAME_PHASES.ATTACK &&
       this.client.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER &&
-      this.client.state.phase.ctx.potentialBlockers.includes(card.id)
+      this.client.state.phase.ctx.potentialBlockers.includes(card.id) &&
+      !this.client.state.effectChain
     );
   }
 

@@ -1,5 +1,6 @@
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
+import { UserId } from '../../users/entities/user.entity';
 import { DomainError } from '../../utils/error';
 import { MatchmakingUser } from '../entities/matchmakingUser.entity';
 
@@ -9,7 +10,7 @@ export type MatchmakingData = {
 };
 
 export type MatchmakingId = Id<'matchmaking'>;
-
+export type MatchmakingDoc = Doc<'matchmaking'>;
 export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
   private has(user: MatchmakingUser) {
     return this.data.matchmakingUsers.some(u => u.equals(user));
@@ -31,6 +32,10 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     return this.data.matchmakingUsers;
   }
 
+  canJoin(user: MatchmakingUser) {
+    return !this.has(user);
+  }
+
   join(user: MatchmakingUser) {
     if (this.has(user)) {
       throw new DomainError('User is already in the matchmaking');
@@ -39,11 +44,9 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     this.data.matchmakingUsers.push(user);
   }
 
-  leave(user: MatchmakingUser) {
-    if (!this.has(user)) {
-      throw new DomainError('User is not in the matchmaking');
-    }
-
-    this.data.matchmakingUsers = this.data.matchmakingUsers.filter(u => !u.equals(user));
+  leave(userId: UserId) {
+    this.data.matchmakingUsers = this.data.matchmakingUsers.filter(
+      u => u.userId !== userId
+    );
   }
 }
