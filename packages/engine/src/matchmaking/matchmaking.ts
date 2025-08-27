@@ -146,7 +146,7 @@ export class Matchmaking<T> {
     return { pairs, remaining: remaining.map(p => p.data) };
   }
 
-  join(participant: T) {
+  join(participant: T, joinedAt = Date.now()): number | undefined {
     const hasAlreadyJoined = this._participants.some(p =>
       this.strategy.equals(p.data, participant)
     );
@@ -156,7 +156,7 @@ export class Matchmaking<T> {
     const id = this.nextId++;
     this._participants.push({
       id,
-      joinedAt: Date.now(),
+      joinedAt,
       data: participant,
       triedParticipants: new Set()
     });

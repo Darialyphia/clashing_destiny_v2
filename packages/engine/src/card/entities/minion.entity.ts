@@ -294,6 +294,11 @@ export class MinionCard extends Card<
     }
   }
 
+  removeFromCurrentLocation(): void {
+    super.removeFromCurrentLocation();
+    this.damageTaken = 0;
+  }
+
   canBeTargeted(source: AnyCard) {
     return this.interceptors.canBeTargeted.getValue(true, {
       source

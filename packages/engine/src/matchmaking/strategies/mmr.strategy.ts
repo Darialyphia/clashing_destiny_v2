@@ -3,7 +3,6 @@ import type { MatchmakingStrategy, MatchmakingParticipant } from '../matchmaking
 export type MMRMatchmakingParticipant = {
   id: string;
   mmr: number;
-  tolerance: number;
   recentWinrate: number;
   winStreak: number;
   lossStreak: number;
@@ -26,9 +25,10 @@ export type MMRMatchmakingOptions = {
   };
 
   tolerance: {
+    minTolerance: number;
+    maxTolerance: number;
     mmrToleranceIncreasePerSecond: number;
     timeBeforeToleranceExpansionInSeconds: number;
-    maxTolerance: number;
   };
 
   performance: {
@@ -63,6 +63,7 @@ export function createMMRMatchmakingOptions(
     tolerance: {
       mmrToleranceIncreasePerSecond: 0.5,
       timeBeforeToleranceExpansionInSeconds: 30,
+      minTolerance: 50,
       maxTolerance: 500,
       ...overrides.tolerance
     },
@@ -110,7 +111,7 @@ export class MMRMatchmakingStrategy
 
     // MMR Similarity Score (0-100)
     const mmrDifference = Math.abs(a.data.mmr - b.data.mmr);
-    const maxAllowedMmrDifference = a.data.tolerance + b.data.tolerance;
+    const maxAllowedMmrDifference = this.getTolerance(a) + this.getTolerance(b);
 
     // If MMR difference exceeds tolerance, this is a hard fail
     if (mmrDifference > maxAllowedMmrDifference) return 0;
@@ -145,9 +146,6 @@ export class MMRMatchmakingStrategy
     return totalScore;
   }
 
-  /**
-   * Get detailed match quality breakdown for analytics/debugging
-   */
   getMatchQuality(
     a: MatchmakingParticipant<MMRMatchmakingParticipant>,
     b: MatchmakingParticipant<MMRMatchmakingParticipant>
@@ -165,7 +163,8 @@ export class MMRMatchmakingStrategy
 
     // Calculate individual scores
     const mmrDifference = Math.abs(a.data.mmr - b.data.mmr);
-    const maxAllowedMmrDifference = a.data.tolerance + b.data.tolerance;
+    const maxAllowedMmrDifference = this.getTolerance(a) + this.getTolerance(b);
+
     const mmrScore =
       mmrDifference > maxAllowedMmrDifference
         ? 0
@@ -198,25 +197,25 @@ export class MMRMatchmakingStrategy
     };
   }
 
-  processUnmatched(
-    participant: MMRMatchmakingParticipant,
-    timeSpentInSeconds: number
-  ): MMRMatchmakingParticipant {
-    return {
-      ...participant,
-      tolerance:
-        timeSpentInSeconds > this.options.tolerance.timeBeforeToleranceExpansionInSeconds
-          ? Math.min(
-              participant.tolerance +
-                this.options.tolerance.mmrToleranceIncreasePerSecond * timeSpentInSeconds,
-              this.options.tolerance.maxTolerance
-            )
-          : participant.tolerance
-    };
+  getTolerance(participant: MatchmakingParticipant<MMRMatchmakingParticipant>) {
+    const timeSpentInSeconds = (Date.now() - participant.joinedAt) / 1000;
+
+    return timeSpentInSeconds >
+      this.options.tolerance.timeBeforeToleranceExpansionInSeconds
+      ? Math.min(
+          this.options.tolerance.minTolerance +
+            this.options.tolerance.mmrToleranceIncreasePerSecond * timeSpentInSeconds,
+          this.options.tolerance.maxTolerance
+        )
+      : this.options.tolerance.minTolerance;
+  }
+
+  processUnmatched(participant: MMRMatchmakingParticipant): MMRMatchmakingParticipant {
+    return participant;
   }
 
   equals(a: MMRMatchmakingParticipant, b: MMRMatchmakingParticipant): boolean {
-    return a.mmr === b.mmr && a.tolerance === b.tolerance;
+    return a.id === b.id;
   }
 
   getBucket(participant: MatchmakingParticipant<MMRMatchmakingParticipant>): string {
@@ -246,7 +245,7 @@ export class MMRMatchmakingStrategy
   ): number {
     // Estimate how many players we need to check based on tolerance
     // Higher tolerance = wider search, but cap it for performance
-    const estimatedRange = participant.data.tolerance * 2;
+    const estimatedRange = this.getTolerance(participant) * 2;
     return Math.min(
       estimatedRange * this.options.performance.estimatedPlayerDensity,
       this.options.performance.maxSearchDistance

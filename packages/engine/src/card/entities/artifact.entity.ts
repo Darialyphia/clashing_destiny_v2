@@ -124,6 +124,11 @@ export class ArtifactCard extends Card<
     return this.maxDurability - this.lostDurability;
   }
 
+  removeFromCurrentLocation(): void {
+    super.removeFromCurrentLocation();
+    this.lostDurability = 0;
+  }
+
   async checkDurability() {
     if (this.remainingDurability <= 0) {
       await this.player.artifactManager.unequip(this);

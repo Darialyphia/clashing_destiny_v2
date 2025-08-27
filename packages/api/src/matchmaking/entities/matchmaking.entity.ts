@@ -3,6 +3,11 @@ import { Entity } from '../../shared/entity';
 import { UserId } from '../../users/entities/user.entity';
 import { DomainError } from '../../utils/error';
 import { MatchmakingUser } from '../entities/matchmakingUser.entity';
+import { Matchmaking as GameMatchmaking } from '@game/engine/src/matchmaking/matchmaking';
+import {
+  MMRMatchmakingStrategy,
+  createMMRMatchmakingOptions
+} from '@game/engine/src/matchmaking/strategies/mmr.strategy';
 
 export type MatchmakingData = {
   matchmaking: Doc<'matchmaking'>;
@@ -48,5 +53,22 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     this.data.matchmakingUsers = this.data.matchmakingUsers.filter(
       u => u.userId !== userId
     );
+  }
+
+  matchParticipants() {
+    const strategy = new MMRMatchmakingStrategy(createMMRMatchmakingOptions());
+    const matchmaking = new GameMatchmaking(strategy);
+    this.participants.forEach(user => {
+      matchmaking.join({} as any, user.joinedAt);
+    });
+
+    const { pairs } = matchmaking.makePairs();
+
+    pairs.forEach(([a, b]) => {
+      this.leave(a.id as UserId);
+      this.leave(b.id as UserId);
+    });
+
+    return pairs;
   }
 }

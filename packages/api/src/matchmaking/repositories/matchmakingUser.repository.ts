@@ -80,14 +80,16 @@ export class MatchmakingUserRepository {
   }) {
     return this.db.insert('matchmakingUsers', {
       matchmakingId,
-      userId
+      userId,
+      joinedAt: Date.now()
     });
   }
 
   async save(matchmakingUser: MatchmakingUser) {
     await this.db.replace(matchmakingUser.id, {
       matchmakingId: matchmakingUser.matchmakingId,
-      userId: matchmakingUser.userId
+      userId: matchmakingUser.userId,
+      joinedAt: matchmakingUser.joinedAt
     });
   }
 }

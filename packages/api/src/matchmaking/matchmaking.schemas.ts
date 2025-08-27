@@ -10,7 +10,8 @@ export const matchmakingSchemas = {
 
   matchmakingUsers: defineTable({
     userId: v.id('users'),
-    matchmakingId: v.id('matchmaking')
+    matchmakingId: v.id('matchmaking'),
+    joinedAt: v.number()
   })
     .index('by_userId', ['userId'])
     .index('by_matchmakingId', ['matchmakingId'])
