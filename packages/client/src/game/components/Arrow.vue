@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import { randomString } from '@game/shared';
+import { until } from '@vueuse/core';
 
 const props = defineProps<{
   path: string;
   color: string;
 }>();
 
+const pathId = randomString(6);
 const markerId = randomString(6);
 const markerUrl = `url(#${markerId})`;
 const shadowId = randomString(6);
 const shadowUrl = `url(#${shadowId})`;
+
+const circle = useTemplateRef('circle');
+
+until(circle)
+  .toBeTruthy()
+  .then(el => {
+    gsap.to(el, {
+      duration: 4,
+      motionPath: props.path,
+      ease: 'none',
+      repeat: -1
+    });
+  });
 </script>
 
 <template>
   <svg class="w-full h-full">
     <defs>
-      <marker
+      <!-- <marker
         :id="markerId"
         markerWidth="13"
         markerHeight="13"
@@ -24,12 +39,16 @@ const shadowUrl = `url(#${shadowId})`;
         orient="auto"
       >
         <path d="M 2 2 L 2 9 L 7 6 L 2 3" class="arrow-head" />
-      </marker>
+      </marker> -->
       <filter :id="shadowId">
         <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
       </filter>
     </defs>
-    <path class="path" :d="props.path" :filter="shadowUrl" />
+    <g filter="url(#bloom-filter)">
+      <path :id="pathId" class="path" :d="props.path" :filter="shadowUrl" />
+      <path class="inner-path" :d="props.path" :filter="shadowUrl" />
+      <circle cx="0" cy="0" r="7" class="circle" ref="circle" />
+    </g>
   </svg>
 </template>
 
@@ -38,16 +57,28 @@ const shadowUrl = `url(#${shadowId})`;
   stroke: v-bind(color);
   stroke-width: 5px;
   fill: none;
-  marker-end: v-bind(markerUrl);
+  /* marker-end: v-bind(markerUrl); */
   animation: arrow-dash 0.3s var(--ease-in-2) forwards;
   opacity: 0.75;
 }
-
+.inner-path {
+  stroke: white;
+  stroke-width: 2px;
+  /* marker-end: v-bind(markerUrl); */
+  fill: none;
+  animation: arrow-dash 0.3s var(--ease-in-2) forwards;
+  opacity: 0.75;
+}
+/*
 .arrow-head {
   fill: v-bind(color);
   animation: arrow-head 0.2s var(--ease-in-2) forwards;
   animation-delay: 0.3s;
   opacity: 0;
+} */
+
+.circle {
+  fill: v-bind(color);
 }
 
 @keyframes arrow-dash {
