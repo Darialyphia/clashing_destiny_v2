@@ -1,8 +1,11 @@
 import type { Id } from '../../_generated/dataModel';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import { type DeckId } from '../../deck/entities/deck.entity';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
-import { GamePlayer, GamePlayerDoc } from '../entities/gamePlayer.entity';
+import { GamePlayer, type GamePlayerDoc } from '../entities/gamePlayer.entity';
+import { type GameId } from '../entities/game.entity';
+import { type UserId } from '../../users/entities/user.entity';
 
 export class GamePlayerReadRepository {
   constructor(protected db: DatabaseReader) {}
@@ -69,6 +72,10 @@ export class GamePlayerRepository {
       .collect();
 
     return Promise.all(docs.map(doc => this.buildEntity(doc)));
+  }
+
+  create(data: { deckId: DeckId; userId: UserId; gameId: GameId }) {
+    return this.db.insert('gamePlayers', data);
   }
 
   async save(gamePlayer: GamePlayer) {

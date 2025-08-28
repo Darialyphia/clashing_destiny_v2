@@ -8,6 +8,8 @@ const props = defineProps<{
 
 const markerId = randomString(6);
 const markerUrl = `url(#${markerId})`;
+const shadowId = randomString(6);
+const shadowUrl = `url(#${shadowId})`;
 </script>
 
 <template>
@@ -23,8 +25,11 @@ const markerUrl = `url(#${markerId})`;
       >
         <path d="M 2 2 L 2 9 L 7 6 L 2 3" class="arrow-head" />
       </marker>
+      <filter :id="shadowId">
+        <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
+      </filter>
     </defs>
-    <path class="path" :d="props.path" />
+    <path class="path" :d="props.path" :filter="shadowUrl" />
   </svg>
 </template>
 
@@ -35,6 +40,7 @@ const markerUrl = `url(#${markerId})`;
   fill: none;
   marker-end: v-bind(markerUrl);
   animation: arrow-dash 0.3s var(--ease-in-2) forwards;
+  opacity: 0.75;
 }
 
 .arrow-head {

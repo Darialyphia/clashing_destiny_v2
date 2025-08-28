@@ -1,8 +1,10 @@
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
-import { UserId } from '../../users/entities/user.entity';
+import type { DeckId } from '../../deck/entities/deck.entity';
+import type { UserId } from '../../users/entities/user.entity';
 import { UserRepository } from '../../users/repositories/user.repository';
-import { Game, GameDoc, GameId } from '../entities/game.entity';
+import { Game, type GameDoc, type GameId } from '../entities/game.entity';
 import { GamePlayer } from '../entities/gamePlayer.entity';
+import { GAME_STATUS } from '../game.constants';
 import { GamePlayerReadRepository, GamePlayerRepository } from './gamePlayer.repository';
 
 export class GameReadRepository {
@@ -63,6 +65,21 @@ export class GameRepository {
     if (!gameDoc) return null;
 
     return this.buildEntity(gameDoc);
+  }
+
+  async create(players: Array<{ userId: UserId; deckId: DeckId }>) {
+    const gameId = await this.db.insert('games', {
+      seed: `${Date.now()}`,
+      status: GAME_STATUS.WAITING_FOR_PLAYERS
+    });
+
+    for (const player of players) {
+      await this.gamePlayerRepo.create({
+        deckId: player.deckId,
+        userId: player.userId,
+        gameId: gameId
+      });
+    }
   }
 
   async save(gamePlayer: GamePlayer) {

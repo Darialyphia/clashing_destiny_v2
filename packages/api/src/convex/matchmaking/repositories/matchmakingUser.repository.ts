@@ -2,7 +2,10 @@ import type { Id } from '../../_generated/dataModel';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
-import { MatchmakingUser, MatchmakingUserDoc } from '../entities/matchmakingUser.entity';
+import {
+  MatchmakingUser,
+  type MatchmakingUserDoc
+} from '../entities/matchmakingUser.entity';
 
 export class MatchmakingUserReadRepository {
   constructor(protected db: DatabaseReader) {}

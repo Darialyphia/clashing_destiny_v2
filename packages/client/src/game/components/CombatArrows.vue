@@ -30,7 +30,14 @@ const buildArrowBetweenTwoCards = (card1: string, card2: string) => {
     y: endRect.top + endRect.height / 2
   };
 
-  return `M${start.x},${start.y} L${end.x},${end.y}`;
+  const highest = Math.min(start.y, end.y);
+  const halfX = (start.x + end.x) / 2;
+  const yDiff = Math.abs(start.y - end.y);
+  return `
+        M${start.x},${start.y}
+        Q${halfX},${highest - yDiff / 2}
+         ${end.x},${end.y}
+      `;
 };
 
 const buildAttackArrowPath = async () => {

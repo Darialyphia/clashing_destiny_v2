@@ -1,4 +1,4 @@
-import { AnyObject } from '@game/shared';
+import type { AnyObject } from '@game/shared';
 
 export class Entity<TId extends string, TData extends AnyObject> {
   constructor(

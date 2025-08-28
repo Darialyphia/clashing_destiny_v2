@@ -127,7 +127,7 @@ export class Matchmaking<T> {
     pairs: [T, T][];
     remaining: T[];
   } {
-    const sorted = this._participants.toSorted(this.strategy.sorter);
+    const sorted = this._participants.slice().sort(this.strategy.sorter);
 
     const buckets = this.makeBuckets(sorted);
 
@@ -140,10 +140,10 @@ export class Matchmaking<T> {
 
     this.matchAcrossBuckets(sorted, pairs, matched);
 
-    const remaining = sorted.filter(p => !matched.has(p.id));
+    const remaining = sorted.filter((p: MatchmakingParticipant<T>) => !matched.has(p.id));
     this.updateRemainingParticipants(remaining);
 
-    return { pairs, remaining: remaining.map(p => p.data) };
+    return { pairs, remaining: remaining.map((p: MatchmakingParticipant<T>) => p.data) };
   }
 
   join(participant: T, joinedAt = Date.now()): number | undefined {

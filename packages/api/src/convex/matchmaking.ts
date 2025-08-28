@@ -17,7 +17,7 @@ import { internalMutation } from './_generated/server';
 import { RunMatchmakingUseCase } from './matchmaking/usecases/runMatchmaking.usecase';
 
 export const join = mutationWithSession({
-  args: { name: v.string() },
+  args: { name: v.string(), deckId: v.id('decks') },
   handler: async (ctx, input) => {
     const session = ensureAuthenticated(ctx.session);
 
@@ -25,7 +25,8 @@ export const join = mutationWithSession({
     const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
     const matchmakingRepo = new MatchmakingRepository({
       db: ctx.db,
-      matchmakingUserRepo
+      matchmakingUserRepo,
+      scheduler: ctx.scheduler
     });
     const gamePlayerRepo = new GamePlayerRepository({ db: ctx.db, userRepo });
     const gameRepo = new GameRepository({
@@ -43,7 +44,8 @@ export const join = mutationWithSession({
     });
 
     return usecase.execute({
-      name: input.name
+      name: input.name,
+      deckId: input.deckId
     });
   }
 });
@@ -55,10 +57,14 @@ export const leave = mutationWithSession({
     const userRepo = new UserRepository(ctx.db);
     const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
     const usecase = new LeaveMatchmakingUseCase({
-      userRepo,
       session,
+      userRepo,
       matchmakingUserRepo,
-      matchmakingRepo: new MatchmakingRepository({ db: ctx.db, matchmakingUserRepo })
+      matchmakingRepo: new MatchmakingRepository({
+        db: ctx.db,
+        matchmakingUserRepo,
+        scheduler: ctx.scheduler
+      })
     });
 
     return usecase.execute();
@@ -72,7 +78,8 @@ export const run = internalMutation({
     const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
     const matchmakingRepo = new MatchmakingRepository({
       db: ctx.db,
-      matchmakingUserRepo
+      matchmakingUserRepo,
+      scheduler: ctx.scheduler
     });
 
     const usecase = new RunMatchmakingUseCase({

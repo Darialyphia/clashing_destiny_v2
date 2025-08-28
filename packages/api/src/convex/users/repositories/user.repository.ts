@@ -30,12 +30,40 @@ export class UserReadRepository {
   }
 }
 
-export class UserRepository extends UserReadRepository {
+export class UserRepository {
   declare protected db: DatabaseWriter;
 
   constructor(db: DatabaseWriter) {
-    super(db);
     this.db = db;
+  }
+
+  async getByEmail(email: Email) {
+    const doc = await this.db
+      .query('users')
+      .withIndex('by_email', q => q.eq('email', email.value))
+      .unique();
+
+    if (!doc) return null;
+
+    return new User(doc._id, doc);
+  }
+
+  async getById(userId: Id<'users'>) {
+    const doc = await this.db.get(userId);
+    if (!doc) return null;
+
+    return new User(doc._id, doc);
+  }
+
+  async getBySlug(slug: string) {
+    const doc = await this.db
+      .query('users')
+      .withIndex('by_slug', q => q.eq('slug', slug))
+      .unique();
+
+    if (!doc) return null;
+
+    return new User(doc._id, doc);
   }
 
   async create(input: { email: Email; password: Password; name?: string }) {

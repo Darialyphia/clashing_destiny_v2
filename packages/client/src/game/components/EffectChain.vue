@@ -48,8 +48,14 @@ const buildPaths = async () => {
         x: endRect.left + endRect.width / 2,
         y: endRect.top + endRect.height / 2
       };
-
-      return `M${start.x},${start.y} L${end.x},${end.y}`;
+      const highest = Math.min(start.y, end.y);
+      const halfX = (start.x + end.x) / 2;
+      const yDiff = Math.abs(start.y - end.y);
+      return `
+        M${start.x},${start.y}
+        Q${halfX},${highest - yDiff / 2}
+         ${end.x},${end.y}
+      `;
     });
   });
 };
@@ -85,7 +91,7 @@ const stack = computed(() => {
           v-for="(path, targetIndex) in paths[index]"
           :key="targetIndex"
           :path="path"
-          color="cyan"
+          color="#d7ad42"
         />
       </Teleport>
     </InspectableCard>

@@ -1,15 +1,14 @@
 import type { AuthSession } from '../../auth/entities/session.entity';
+import type { DeckId } from '../../deck/entities/deck.entity';
 import { UseCase } from '../../usecase';
-import { User } from '../../users/entities/user.entity';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
-import { Matchmaking } from '../entities/matchmaking.entity';
-import { MatchmakingUser } from '../entities/matchmakingUser.entity';
 import { MatchmakingRepository } from '../repositories/matchmaking.repository';
 import { MatchmakingUserRepository } from '../repositories/matchmakingUser.repository';
 
 export type JoinMatchmakingInput = {
   name: string;
+  deckId: DeckId;
 };
 
 export interface JoinMatchmakingOutput {
@@ -66,8 +65,14 @@ export class JoinMatchmakingUseCase extends UseCase<
 
     await this.matchmakingUserRepo.create({
       matchmakingId: matchmaking.id,
-      userId: this.session.userId
+      userId: this.session.userId,
+      deckId: input.deckId
     });
+
+    if (!matchmaking.isRunning) {
+      await this.matchmakingRepo.scheduleRun(matchmaking);
+      await this.matchmakingRepo.save(matchmaking);
+    }
 
     return { success: true };
   }

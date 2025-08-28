@@ -35,9 +35,9 @@ export const violetStalker: MinionBlueprint = {
   abilities: [
     {
       id: 'violet-stalker-ability',
-      description: '@[exhaust]@ : Deal 3 damage to an exhausted enemy.',
-      label: '@[exhaust]@ Deal 3 damage',
-      manaCost: 0,
+      description: '@[exhaust]@ @[mana] 1@ : Deal 2 damage to an exhausted enemy.',
+      label: '@[exhaust]@ @[mana] 1@ Deal 2 damage',
+      manaCost: 1,
       shouldExhaust: true,
       canUse: (game, card) =>
         singleEnemyTargetRules.canPlay(game, card, candidate => candidate.isExhausted),
@@ -56,7 +56,7 @@ export const violetStalker: MinionBlueprint = {
       async onResolve(game, card, targets) {
         const target = targets[0] as MinionCard | HeroCard;
 
-        await target.takeDamage(card, new AbilityDamage(3));
+        await target.takeDamage(card, new AbilityDamage(2));
       }
     }
   ],

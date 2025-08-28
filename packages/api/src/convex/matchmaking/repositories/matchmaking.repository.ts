@@ -1,8 +1,12 @@
+import { internal } from '../../_generated/api';
 import type { Id } from '../../_generated/dataModel';
-import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
-import { DomainError } from '../../utils/error';
-import { Matchmaking, MatchmakingDoc } from '../entities/matchmaking.entity';
-import { MatchmakingUserDoc } from '../entities/matchmakingUser.entity';
+import type {
+  DatabaseReader,
+  DatabaseWriter,
+  MutationCtx
+} from '../../_generated/server';
+import { Matchmaking, type MatchmakingDoc } from '../entities/matchmaking.entity';
+import { MATCHMAKING_SCHEDULER_INTERVAL_MS } from '../matchmaking.constants';
 import { MatchmakingUserRepository } from './matchmakingUser.repository';
 
 export class MatchmakingReadRepository {
@@ -20,16 +24,20 @@ export class MatchmakingReadRepository {
   }
 }
 
+type Scheduler = MutationCtx['scheduler'];
 export class MatchmakingRepository {
   declare protected db: DatabaseWriter;
   declare protected matchmakingUserRepo: MatchmakingUserRepository;
+  declare protected scheduler: Scheduler;
 
   constructor(config: {
     db: DatabaseWriter;
     matchmakingUserRepo: MatchmakingUserRepository;
+    scheduler: MutationCtx['scheduler'];
   }) {
     this.db = config.db;
     this.matchmakingUserRepo = config.matchmakingUserRepo;
+    this.scheduler = config.scheduler;
   }
 
   private async buildEntity(doc: MatchmakingDoc) {
@@ -81,5 +89,14 @@ export class MatchmakingRepository {
     await Promise.all(
       matchmaking.participants.map(async user => this.matchmakingUserRepo.save(user))
     );
+  }
+
+  async scheduleRun(matchmaking: Matchmaking) {
+    const nextInvocationId = await this.scheduler.runAfter(
+      MATCHMAKING_SCHEDULER_INTERVAL_MS,
+      internal.matchmaking.run,
+      { name: matchmaking.name }
+    );
+    matchmaking.scheduleRun(nextInvocationId);
   }
 }

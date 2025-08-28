@@ -1,4 +1,4 @@
-import { UserId } from '../users/entities/user.entity';
+import type { UserId } from '../users/entities/user.entity';
 import { GameRepository } from './repositories/game.repository';
 
 export const ensureHasNoCurrentGame = async (

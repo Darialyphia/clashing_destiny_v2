@@ -1,6 +1,6 @@
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
-import { UserId } from '../../users/entities/user.entity';
+import { type UserId } from '../../users/entities/user.entity';
 import { DomainError } from '../../utils/error';
 import { MatchmakingUser } from '../entities/matchmakingUser.entity';
 import { Matchmaking as GameMatchmaking } from '@game/engine/src/matchmaking/matchmaking';
@@ -35,6 +35,10 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
 
   get participants() {
     return this.data.matchmakingUsers;
+  }
+
+  get isRunning() {
+    return !!this.data.matchmaking.nextInvocationId;
   }
 
   canJoin(user: MatchmakingUser) {
