@@ -16,6 +16,7 @@ import type {
 import type * as auth from "../auth.js";
 import type * as index from "../index.js";
 import type * as matchmaking_index from "../matchmaking/index.js";
+import type * as matchmaking from "../matchmaking.js";
 import type * as shared_entity from "../shared/entity.js";
 import type * as usecase from "../usecase.js";
 import type * as utils_discriminator from "../utils/discriminator.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   index: typeof index;
   "matchmaking/index": typeof matchmaking_index;
+  matchmaking: typeof matchmaking;
   "shared/entity": typeof shared_entity;
   usecase: typeof usecase;
   "utils/discriminator": typeof utils_discriminator;

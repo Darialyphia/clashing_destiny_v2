@@ -11,6 +11,10 @@ export class MatchmakingUser extends Entity<
     return this.data.userId;
   }
 
+  get deckId() {
+    return this.data.deckId;
+  }
+
   get matchmakingId() {
     return this.data.matchmakingId;
   }

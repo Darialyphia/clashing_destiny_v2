@@ -62,13 +62,21 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
       matchmaking.join({} as any, user.joinedAt);
     });
 
-    const { pairs } = matchmaking.makePairs();
+    const { pairs, remaining } = matchmaking.makePairs();
 
     pairs.forEach(([a, b]) => {
       this.leave(a.id as UserId);
       this.leave(b.id as UserId);
     });
 
-    return pairs;
+    return { pairs, remaining };
+  }
+
+  scheduleRun(nextInvocationId: Id<'_scheduled_functions'>) {
+    this.data.matchmaking.nextInvocationId = nextInvocationId;
+  }
+
+  stopRunning() {
+    this.data.matchmaking.nextInvocationId = undefined;
   }
 }

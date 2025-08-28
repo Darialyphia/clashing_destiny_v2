@@ -30,9 +30,9 @@ export class MatchmakingUserRepository {
   declare protected db: DatabaseWriter;
   declare protected userRepo: UserRepository;
 
-  constructor(db: DatabaseWriter, userRepo: UserRepository) {
-    this.db = db;
-    this.userRepo = userRepo;
+  constructor(config: { db: DatabaseWriter; userRepo: UserRepository }) {
+    this.db = config.db;
+    this.userRepo = config.userRepo;
   }
 
   private async buildEntity(doc: MatchmakingUserDoc) {
@@ -73,14 +73,17 @@ export class MatchmakingUserRepository {
 
   async create({
     matchmakingId,
-    userId
+    userId,
+    deckId
   }: {
     matchmakingId: Id<'matchmaking'>;
     userId: Id<'users'>;
+    deckId: Id<'decks'>;
   }) {
     return this.db.insert('matchmakingUsers', {
       matchmakingId,
       userId,
+      deckId,
       joinedAt: Date.now()
     });
   }
@@ -89,6 +92,7 @@ export class MatchmakingUserRepository {
     await this.db.replace(matchmakingUser.id, {
       matchmakingId: matchmakingUser.matchmakingId,
       userId: matchmakingUser.userId,
+      deckId: matchmakingUser.deckId,
       joinedAt: matchmakingUser.joinedAt
     });
   }

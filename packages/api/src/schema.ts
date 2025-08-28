@@ -1,13 +1,15 @@
 import { defineSchema } from 'convex/server';
-// import { gameSchemas } from './convex/game/game.schemas';
 
 import { authSchemas } from './auth/auth.schema';
 import { userSchemas } from './users/user.schemas';
 import { matchmakingSchemas } from './matchmaking/matchmaking.schemas';
+import { deckSchemas } from './deck/deck.schemas';
+import { gameSchemas } from './game/game.schemas';
 
 export default defineSchema({
   ...authSchemas,
   ...userSchemas,
-  ...matchmakingSchemas
-  // ...gameSchemas
+  ...matchmakingSchemas,
+  ...deckSchemas,
+  ...gameSchemas
 });
