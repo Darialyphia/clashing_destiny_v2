@@ -13,25 +13,22 @@ export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMi
     this.check = this.check.bind(this);
   }
 
-  check() {
-    if (this.predicate()) {
-      if (this.modifier.isEnabled) return;
-      this.modifier.enable();
-    } else {
-      if (!this.modifier.isEnabled) return;
-      this.modifier.disable();
-    }
+  check(val: boolean) {
+    if (!val) return val;
+
+    return this.predicate();
   }
 
-  onApplied(target: T, modifier: Modifier<T>): void {
+  async onApplied(target: T, modifier: Modifier<T>) {
     this.modifier = modifier;
-    this.game.on('*', this.check);
+    await this.modifier.addInterceptor('isEnabled', this.check);
   }
 
-  onRemoved(): void {
-    if (this.modifier.isEnabled) {
-      // only stop checking when the modifier is removed, but keep checking wen disabled
-      this.game.off('*', this.check);
+  async onRemoved() {
+    // only remove the interceptor if the modifier is being remove, not disabled
+    // otherwise it'd cause an infinite loop
+    if (!this.modifier.isApplied) {
+      await this.modifier.removeInterceptor('isEnabled', this.check);
     }
   }
 

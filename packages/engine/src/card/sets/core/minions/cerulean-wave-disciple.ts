@@ -1,8 +1,4 @@
 import dedent from 'dedent';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
-import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,

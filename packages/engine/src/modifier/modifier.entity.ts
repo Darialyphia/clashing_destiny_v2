@@ -5,6 +5,7 @@ import type { Game } from '../game/game';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { ModifierManager } from './modifier-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
+import { Interceptable } from '../utils/interceptable';
 
 export type ModifierInfos<TCustomEvents extends Record<string, any>> =
   TCustomEvents extends EmptyObject
@@ -78,11 +79,15 @@ export type SerializedModifier = {
   isEnabled: boolean;
 };
 
+export type ModifierInterceptors = {
+  isEnabled: Interceptable<boolean>;
+};
+
 export class Modifier<
     T extends ModifierTarget,
     TEventsMap extends ModifierEventMap = ModifierEventMap
   >
-  extends Entity<EmptyObject>
+  extends Entity<ModifierInterceptors>
   implements Serializable<SerializedModifier>
 {
   private mixins: ModifierMixin<T>[];
@@ -93,7 +98,7 @@ export class Modifier<
 
   protected _target!: T;
 
-  private isApplied = false;
+  private _isApplied = false;
 
   readonly infos: { name?: string; description?: string; icon?: string };
 
@@ -101,9 +106,9 @@ export class Modifier<
 
   protected _stacks = 1;
 
-  private _isEnabled = true;
-
   private _isUnique: boolean;
+
+  private _prevEnabled = true;
 
   constructor(
     modifierType: string,
@@ -114,7 +119,9 @@ export class Modifier<
       Record<Exclude<keyof TEventsMap, keyof ModifierEventMap>, boolean>
     >
   ) {
-    super(game.modifierIdFactory(modifierType), {});
+    super(game.modifierIdFactory(modifierType), {
+      isEnabled: new Interceptable()
+    });
     this.game = game;
     this.modifierType = modifierType;
     this.source = source;
@@ -128,39 +135,40 @@ export class Modifier<
     if (options.stacks) {
       this._stacks = options.stacks;
     }
+    this.game.on('*', this.checkEnabled.bind(this));
   }
 
   get isUnique() {
     return this._isUnique;
   }
 
+  get isApplied() {
+    return this._isApplied;
+  }
+
   get isEnabled() {
-    return this._isEnabled;
+    return this.interceptors.isEnabled.getValue(true, {});
   }
 
   get stacks() {
     return this._stacks;
   }
 
-  enable() {
-    if (this._isEnabled) return;
-    this._isEnabled = true;
-    if (this.isApplied) {
-      this.mixins.forEach(mixin => mixin.onApplied(this._target, this));
+  checkEnabled() {
+    if (!this._isApplied) return;
+    if (this.isEnabled !== this._prevEnabled) {
+      if (this.isEnabled) {
+        this.mixins.forEach(mixin => mixin.onApplied(this._target, this));
+      } else {
+        this.mixins.forEach(mixin => mixin.onRemoved(this._target, this));
+      }
     }
-  }
-
-  disable() {
-    if (!this._isEnabled) return;
-    this._isEnabled = false;
-    if (this.isApplied) {
-      this.mixins.forEach(mixin => mixin.onRemoved(this._target, this));
-    }
+    this._prevEnabled = this.isEnabled;
   }
 
   addMixin(mixin: ModifierMixin<T>) {
     this.mixins.push(mixin);
-    if (this.isApplied) {
+    if (this._isApplied) {
       mixin.onApplied(this._target, this);
     }
   }
@@ -169,7 +177,7 @@ export class Modifier<
     const index = this.mixins.indexOf(mixin);
     if (index !== -1) {
       this.mixins.splice(index, 1);
-      if (this.isApplied) {
+      if (this._isApplied) {
         mixin.onRemoved(this._target, this);
       }
     }
@@ -190,7 +198,7 @@ export class Modifier<
         mixin.onApplied(target, this);
       });
     }
-    this.isApplied = true;
+    this._isApplied = true;
     await this.game.emit(MODIFIER_EVENTS.AFTER_APPLIED, new ModifierLifecycleEvent(this));
   }
 
@@ -218,10 +226,10 @@ export class Modifier<
       MODIFIER_EVENTS.BEFORE_REMOVED,
       new ModifierLifecycleEvent(this)
     );
+    this._isApplied = false;
     this.mixins.forEach(mixin => {
       mixin.onRemoved(this._target, this);
     });
-    this.isApplied = false;
     await this.game.emit(MODIFIER_EVENTS.AFTER_REMOVED, new ModifierLifecycleEvent(this));
   }
 
@@ -254,7 +262,7 @@ export class Modifier<
       target: this._target.id,
       source: this.source.id,
       stacks: this._stacks,
-      isEnabled: this._isEnabled
+      isEnabled: this.isEnabled
     };
   }
 }

@@ -8,8 +8,6 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { HeroCard } from '../../../entities/hero.entity';
@@ -21,7 +19,7 @@ export const powerOverwhelming: SpellBlueprint = {
   description: dedent`This turn, your hero gains @[attack]@ equal to their @[spellpower]@.`,
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 3,
   affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

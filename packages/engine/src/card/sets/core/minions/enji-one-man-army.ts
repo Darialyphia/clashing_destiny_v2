@@ -18,7 +18,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   id: 'enji-one-man-army',
   name: 'Enji, One-Man Army',
   cardIconId: 'unit-enji-one-man-army',
-  description: dedent`@Pride(3).
+  description: dedent`@Pride (3).
   @On Kill@: wake this up.
   If you have another minion on the board, destroy this.
   `,

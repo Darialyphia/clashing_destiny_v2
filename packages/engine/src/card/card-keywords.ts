@@ -94,14 +94,14 @@ export const KEYWORDS = {
     name: 'Pride(X)',
     description:
       "This minion cannot attack, block or use abilities unless its owner's hero is at least level X.",
-    aliases: [/pride\([0-9]+\)/]
+    aliases: [/pride \([0-9]+\)/]
   },
   LOYALTY: {
     id: 'loyalty',
     name: 'Loyalty(X)',
     description:
       'If you play this minion without having unlocked its affinity, your hero takes X more damage.',
-    aliases: [/loyalty\([0-9]+\)/]
+    aliases: [/loyalty \([0-9]+\)/]
   },
   VIGILANT: {
     id: 'vigilant',
@@ -221,7 +221,7 @@ export const KEYWORDS = {
     id: 'affinity-bonus',
     name: 'Affinity Bonus',
     description: 'This card has a bonus effect if you have a hero with this affinity.',
-    aliases: [/affinity bonus\([a-z\s]+\)/]
+    aliases: [/affinity bonus \([a-z\s]+\)/]
   },
   SEAL: {
     id: 'seal',

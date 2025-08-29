@@ -1,4 +1,3 @@
-import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
@@ -17,7 +16,7 @@ export const pyreArchfiend: MinionBlueprint = {
   id: 'pyre-archfiend',
   name: 'Pyre Archfiend',
   cardIconId: 'unit-pyre-archfiend',
-  description: `@Intimidate(2)@.\n@[level] 3+ bonus@ : @On Kill@ : deal 2 damage to the enemy Hero.`,
+  description: `@Intimidate (2)@.\n@[level] 3+ bonus@ : @On Kill@ : deal 2 damage to the enemy Hero.`,
   collectable: true,
   unique: false,
   manaCost: 4,

@@ -91,7 +91,7 @@ const stack = computed(() => {
           v-for="(path, targetIndex) in paths[index]"
           :key="targetIndex"
           :path="path"
-          color="#d7ad42"
+          color="#00bcff"
         />
       </Teleport>
     </InspectableCard>

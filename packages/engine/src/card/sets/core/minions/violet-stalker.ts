@@ -40,6 +40,7 @@ export const violetStalker: MinionBlueprint = {
       manaCost: 1,
       shouldExhaust: true,
       canUse: (game, card) =>
+        card.location === 'board' &&
         singleEnemyTargetRules.canPlay(game, card, candidate => candidate.isExhausted),
       getPreResponseTargets(game, card) {
         return singleEnemyTargetRules.getPreResponseTargets(

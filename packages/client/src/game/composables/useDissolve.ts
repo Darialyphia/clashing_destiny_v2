@@ -7,9 +7,7 @@ const easeOutCubic = (t: number) => {
   return 1 - Math.pow(1 - t, 3);
 };
 
-const maxDisplacementScale = 300;
-
-export const useDissolveVFX = () => {
+export const useDissolveVFX = (speed = 0.1, maxDisplacementScale = 300) => {
   return {
     play(element: HTMLElement, duration: number) {
       if (element.getAttribute('data-dissolve') === 'true') return;
@@ -29,7 +27,7 @@ export const useDissolveVFX = () => {
         const displacementScale = easeOutCubic(progress) * maxDisplacementScale;
 
         displacement.setAttribute('scale', `${displacementScale}`);
-        element.style.transform = `scale(${1 + 0.1 * progress})`;
+        element.style.scale = `${1 + speed * progress}`;
 
         if (progress < 1) {
           requestAnimationFrame(animate);

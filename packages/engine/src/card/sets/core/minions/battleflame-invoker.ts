@@ -1,7 +1,4 @@
-import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,

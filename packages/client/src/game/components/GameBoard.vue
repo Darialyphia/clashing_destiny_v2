@@ -165,7 +165,8 @@ const finishStartAnimation = () => {
 <style scoped lang="postcss">
 .board {
   --pixel-scale: 2;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at center,
       hsla(0, 0%, 0%, 0.5) 0% 25%,
       hsla(0, 0%, 0%, 0.85) 100%
@@ -214,6 +215,7 @@ const finishStartAnimation = () => {
 }
 
 .middle-zone {
+  --board-rotation: 25deg;
   grid-column: 2;
   grid-row: 1;
   display: grid;
@@ -226,7 +228,7 @@ const finishStartAnimation = () => {
   grid-column: 2;
   --angleZ: calc(1deg * v-bind(angleZ));
   --angleX: calc(1deg * v-bind(angleX));
-  transform: rotateX(25deg);
+  transform: rotateX(var(--board-rotation));
   /* uncomment the line below to debug elements position in 3D space */
   /* transform: rotateX(var(--angleX)) rotateZ(var(--angleZ)); */
   transform-style: preserve-3d;
@@ -305,7 +307,7 @@ const finishStartAnimation = () => {
   grid-column: 3;
   align-self: start;
   justify-self: start;
-  translate: 0 -25%;
+  /* translate: 0 -25%; */
 }
 
 .p1-deck {

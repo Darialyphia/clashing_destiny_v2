@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { randomString } from '@game/shared';
-import { until } from '@vueuse/core';
 
 const props = defineProps<{
   path: string;
@@ -8,23 +7,30 @@ const props = defineProps<{
 }>();
 
 const pathId = randomString(6);
-const markerId = randomString(6);
-const markerUrl = `url(#${markerId})`;
+// const markerId = randomString(6);
+// const markerUrl = `url(#${markerId})`;
 const shadowId = randomString(6);
 const shadowUrl = `url(#${shadowId})`;
 
 const circle = useTemplateRef('circle');
 
-until(circle)
-  .toBeTruthy()
-  .then(el => {
-    gsap.to(el, {
-      duration: 4,
-      motionPath: props.path,
-      ease: 'none',
+watch(
+  [() => props.path, circle],
+  ([path, circle]) => {
+    if (!path) return;
+    if (!circle) return;
+
+    gsap.to(circle, {
+      duration: 3,
+      motionPath: path,
+      ease: Power1.easeInOut,
       repeat: -1
     });
-  });
+  },
+  {
+    immediate: true
+  }
+);
 </script>
 
 <template>
@@ -47,7 +53,7 @@ until(circle)
     <g filter="url(#bloom-filter)">
       <path :id="pathId" class="path" :d="props.path" :filter="shadowUrl" />
       <path class="inner-path" :d="props.path" :filter="shadowUrl" />
-      <circle cx="0" cy="0" r="7" class="circle" ref="circle" />
+      <circle cx="0" cy="0" r="5" class="circle" ref="circle" />
     </g>
   </svg>
 </template>
@@ -78,7 +84,9 @@ until(circle)
 } */
 
 .circle {
-  fill: v-bind(color);
+  fill: white;
+  stroke: v-bind(color);
+  stroke-width: 3px;
 }
 
 @keyframes arrow-dash {

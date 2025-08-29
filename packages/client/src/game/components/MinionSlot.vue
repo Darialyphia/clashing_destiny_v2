@@ -19,6 +19,7 @@ import CardActions from './CardActions.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { DamageType } from '@game/engine/src/utils/damage';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
+import { waitFor } from '@game/shared';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -91,6 +92,14 @@ const onTakeDamage = async (e: {
   }).finished;
 };
 useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
+
+useFxEvent(FX_EVENTS.CARD_BEFORE_DESTROY, async event => {
+  if (!minion.value) return;
+  if (minion.value.id !== event.card.id) return;
+  if (!cardElement.value) return;
+  cardElement.value.classList.add('is-destroyed');
+  await waitFor(500);
+});
 </script>
 
 <template>
@@ -278,10 +287,14 @@ useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
   }
 }
 
+/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
+.slot-minion.is-destroyed {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
 .minion-wrapper {
-  /* transform: translateY(40px) translateX(20px) rotateZ(-45deg) rotateX(-60deg)
-    translateY(-60px); */
-  transform: translateZ(20px) rotateX(-25deg);
+  transform: translateZ(20px);
+  transform: translateZ(20px) rotateX(calc(-1 * var(--board-rotation)));
   transform-style: preserve-3d;
   pointer-events: none;
 }

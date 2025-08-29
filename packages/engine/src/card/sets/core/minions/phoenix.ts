@@ -19,7 +19,7 @@ export const phoenix: MinionBlueprint = {
   name: 'Phoenix',
   cardIconId: 'unit-rainbow-phoenix',
   description: dedent`
-  @Pride(3)@.
+  @Pride (3)@.
   @On Enter@ : inflicts @Burn@ to all enemy minions.
   `,
   collectable: true,
