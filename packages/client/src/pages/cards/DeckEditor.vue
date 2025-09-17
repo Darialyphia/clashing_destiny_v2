@@ -2,7 +2,6 @@
 import { useCollectionPage } from './useCollectionPage';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
-import { Icon } from '@iconify/vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
 
@@ -40,12 +39,12 @@ const getCountForCostAndUp = (minCost: number) =>
 <template>
   <div class="deck">
     <div>
-      <div class="flex gap-2">
-        <Icon icon="material-symbols:edit-outline" />
+      <div class="flex gap-2 items-center">
+        <img class="edit-icon" src="/assets/ui/pen.png" />
         <input
           v-model="deckBuilder.deck.name"
           type="text"
-          class="flex-1 bg-transparent"
+          class="flex-1 bg-transparent deck-name"
         />
       </div>
       <div class="bars" :style="{ '--total': deckBuilder.mainDeckSize }">
@@ -146,11 +145,8 @@ const getCountForCostAndUp = (minCost: number) =>
   border: solid var(--border-size-1) #d7ad42;
   padding: var(--size-2) var(--size-3);
   cursor: url('/assets/ui/cursor-hover.png'), auto;
-  background-image: linear-gradient(
-      to right,
-      hsl(0deg 0% 0% / 0.5),
-      hsl(0deg 0% 0% / 0.5)
-    ),
+  background-image:
+    linear-gradient(to right, hsl(0deg 0% 0% / 0.5), hsl(0deg 0% 0% / 0.5)),
     var(--bg);
   background-repeat: no-repeat;
   background-position:
@@ -167,11 +163,8 @@ const getCountForCostAndUp = (minCost: number) =>
   }
 
   &:hover {
-    background-image: linear-gradient(
-        hsl(0deg 0% 0% / 0.25),
-        hsl(0deg 0% 0% / 0.25)
-      ),
-      var(--bg);
+    background-image:
+      linear-gradient(hsl(0deg 0% 0% / 0.25), hsl(0deg 0% 0% / 0.25)), var(--bg);
     background-size: 200%, calc(2.25 * 96px);
     background-position:
       center center,
@@ -235,6 +228,7 @@ const getCountForCostAndUp = (minCost: number) =>
   bottom: 0;
   background-color: #261a26;
   padding: var(--size-3) var(--size-3) 0;
+  box-shadow: 0 -10px 1rem hsl(var(--gray-12-hsl) / 0.5);
 }
 
 .bars {
@@ -292,5 +286,18 @@ const getCountForCostAndUp = (minCost: number) =>
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.deck-name {
+  border-image-slice: 16 fill;
+  border-image-width: 16px;
+  color: black;
+  padding: var(--size-2);
+  border-image-source: url('/assets/ui/text-input.png');
+}
+
+.edit-icon {
+  width: 24px;
+  height: 24px;
 }
 </style>

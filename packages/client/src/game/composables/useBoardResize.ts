@@ -10,7 +10,8 @@ export const useBoardResize = (board: ShallowRef<HTMLElement | null>) => {
 
     const width = Math.round(rect.width);
     const screenWidth = window.innerWidth;
-    if (width === screenWidth) return;
+
+    if (width <= screenWidth) return;
     const ratio = screenWidth / width;
     board.value.style.setProperty('--board-scale', ratio.toString());
   }, 50);

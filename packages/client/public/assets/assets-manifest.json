@@ -5072,6 +5072,19 @@
         },
         {
           "alias": [
+            "pen.png"
+          ],
+          "src": [
+            "/assets/ui/pen.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "quest-icon-empty.png"
           ],
           "src": [
@@ -5232,6 +5245,19 @@
           ],
           "src": [
             "/assets/ui/test-projection.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "text-input.png"
+          ],
+          "src": [
+            "/assets/ui/text-input.png"
           ],
           "data": {
             "tags": {

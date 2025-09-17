@@ -257,7 +257,7 @@ const costStatus = computed(() => {
       <div class="sub-kind" v-if="card.subKind">
         {{ card.subKind }}
       </div>
-      <!-- <div class="glare lt-lg:hidden" /> -->
+      <div class="glare lt-lg:hidden" />
     </div>
     <div class="card-back" />
   </div>
@@ -367,7 +367,7 @@ const costStatus = computed(() => {
     grid-row: 1;
   }
   /*card image is in a pseudo element because otherwise the shadow appears before
-   Some property nullifies the z-index ordering, not sure what or why */
+  Some property nullifies the z-index ordering, not sure what or why */
   .art {
     content: '';
     position: absolute;
@@ -377,6 +377,8 @@ const costStatus = computed(() => {
   }
   .card-front:has(.foil) & .art {
     animation: foil-image 10s infinite alternate var(--ease-2);
+    filter: drop-shadow(0 1px 0 lime) drop-shadow(0 -1px 0 magenta)
+      drop-shadow(1px 0 0 cyan) drop-shadow(-1px 0 0 yellow);
   }
 
   .destiny & {
@@ -648,7 +650,8 @@ const costStatus = computed(() => {
   mask-image: url('/assets/ui/card-bg.png');
   mask-size: cover;
   mix-blend-mode: color-dodge;
-  background-image: url('/assets/ui/foil-texture.webp'),
+  background-image:
+    url('/assets/ui/foil-texture.webp'),
     repeating-linear-gradient(
       0deg,
       rgb(255, 119, 115) calc(var(--space) * 1),

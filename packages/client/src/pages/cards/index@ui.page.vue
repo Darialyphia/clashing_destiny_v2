@@ -28,9 +28,9 @@ const { isEditingDeck } = provideCollectionPage();
         </ul>
       </nav>
     </header>
-    <CollectionFilters class="filters" />
+    <CollectionFilters class="filters lt-lg:hidden" />
 
-    <Collection class="cards" />
+    <Collection />
 
     <aside class="right-sidebar surface">
       <DeckList v-if="!isEditingDeck" />
@@ -49,6 +49,10 @@ const { isEditingDeck } = provideCollectionPage();
   grid-template-rows: auto 1fr;
   column-gap: var(--size-5);
   transform-style: preserve-3d;
+  @screen lt-lg {
+    grid-template-columns: 1fr 18rem;
+    column-gap: 0;
+  }
   > header {
     grid-row: 1;
     grid-column: 1 / span 2;
@@ -64,6 +68,10 @@ const { isEditingDeck } = provideCollectionPage();
   overflow-y: hidden;
   grid-row: 1 / -1;
   grid-column: 3;
+
+  @screen lt-lg {
+    grid-column: 2;
+  }
 }
 
 .filters {

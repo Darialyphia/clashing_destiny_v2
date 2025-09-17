@@ -78,6 +78,15 @@ const listRoot = useTemplateRef('card-list');
   overflow-y: auto;
   overflow-x: hidden;
 
+  @screen lt-lg {
+    --pixel-scale: 1;
+    --min-column-size: 10rem;
+    .collection-card {
+      transform: scale(0.5);
+      transform-origin: top left;
+    }
+  }
+
   &.compact {
     --pixel-scale: 1;
     --min-column-size: 10rem;

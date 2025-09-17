@@ -31,6 +31,7 @@ import Deck from './Deck.vue';
 import UnlockedDestinies from './UnlockedDestinies.vue';
 import PlayedCard from './PlayedCard.vue';
 import OpponentHand from './OpponentHand.vue';
+import { useBoardResize } from '../composables/useBoardResize';
 
 const state = useGameState();
 const client = useGameClient();
@@ -57,6 +58,9 @@ const finishStartAnimation = () => {
     hasFinishedStartAnimation.value = true;
   }, 500);
 };
+
+const board = useTemplateRef('board');
+useBoardResize(board);
 </script>
 
 <template>
@@ -76,7 +80,7 @@ const finishStartAnimation = () => {
   </div>
   <ActionsButtons />
 
-  <div class="board" id="board">
+  <div class="board" id="board" ref="board">
     <section class="p1-zone">
       <article class="flex flex-col gap-1">
         <div class="flex gap-3 mb-2">
@@ -185,7 +189,9 @@ const finishStartAnimation = () => {
   transform-style: preserve-3d;
   perspective: 1600px;
   position: relative;
-
+  transform-origin: center left;
+  scale: var(--board-scale, 1);
+  overflow: hidden;
   @starting-style {
     opacity: 0;
   }
@@ -210,7 +216,6 @@ const finishStartAnimation = () => {
   flex-direction: column;
   gap: var(--size-4);
   grid-row: 1;
-  /* pointer-events: none; */
   padding-bottom: var(--size-10);
 }
 
@@ -228,7 +233,7 @@ const finishStartAnimation = () => {
   grid-column: 2;
   --angleZ: calc(1deg * v-bind(angleZ));
   --angleX: calc(1deg * v-bind(angleX));
-  transform: rotateX(var(--board-rotation));
+  /*transform: rotateX(var(--board-rotation));*/
   /* uncomment the line below to debug elements position in 3D space */
   /* transform: rotateX(var(--angleX)) rotateZ(var(--angleZ)); */
   transform-style: preserve-3d;

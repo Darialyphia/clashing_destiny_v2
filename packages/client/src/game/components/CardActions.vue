@@ -41,7 +41,9 @@ const client = useGameClient();
 .actions-list {
   display: flex;
   flex-direction: column;
-  border: solid 2px var(--primary);
+  &:not(:has(> p)) {
+    border: solid 2px var(--primary);
+  }
 }
 .action {
   background: black;

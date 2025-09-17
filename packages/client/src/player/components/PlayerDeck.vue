@@ -55,11 +55,8 @@ const affinities = computed(() => {
   display: flex;
   gap: var(--size-2);
   align-items: center;
-  background-image: linear-gradient(
-      to right,
-      hsl(0deg 0% 0% / 0.5),
-      hsl(0deg 0% 0% / 0.5)
-    ),
+  background-image:
+    linear-gradient(to right, hsl(0deg 0% 0% / 0.5), hsl(0deg 0% 0% / 0.5)),
     var(--bg);
   background-repeat: no-repeat;
   background-position:
@@ -79,6 +76,12 @@ const affinities = computed(() => {
   text-shadow: 0 0 1rem 1rem black;
   -webkit-text-stroke: 3px black;
   paint-order: stroke fill;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  @screen lt-lg {
+    font-size: var(--font-size-1);
+  }
 }
 
 .deck-affinity {

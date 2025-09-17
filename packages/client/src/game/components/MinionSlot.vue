@@ -293,8 +293,7 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_DESTROY, async event => {
   transition: opacity 0.5s;
 }
 .minion-wrapper {
-  transform: translateZ(20px);
-  transform: translateZ(20px) rotateX(calc(-1 * var(--board-rotation)));
+  /* transform: translateZ(20px) rotateX(calc(-1 * var(--board-rotation))); */
   transform-style: preserve-3d;
   pointer-events: none;
 }

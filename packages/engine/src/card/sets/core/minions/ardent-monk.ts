@@ -11,6 +11,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
 
 export const ardentMonk: MinionBlueprint = {
   id: 'ardentMonk',
@@ -19,8 +20,8 @@ export const ardentMonk: MinionBlueprint = {
   description: dedent`
   @On Enter@ : Depending on the amount of @Ember@ stacks on your hero:
   • 1-2: this gains +1@[attack]@
-  • 3-5: this gains @Cleave@
-  • 6+:  draw 1 card.`,
+  • 3-4: this gains @Intimidate(2)@
+  • 5+:  draw 1 card.`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -50,9 +51,9 @@ export const ardentMonk: MinionBlueprint = {
             );
           }
           if (stacks >= 3 && card.player.cardManager.hand.length > 0) {
-            await card.modifiers.add(new CleaveModifier(game, card));
+            await card.modifiers.add(new IntimidateModifier(game, card, { minLevel: 3 }));
           }
-          if (stacks >= 6) {
+          if (stacks >= 5) {
             await card.player.cardManager.draw(1);
           }
         }
