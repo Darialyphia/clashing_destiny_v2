@@ -1,10 +1,9 @@
-import type { MainDeckCard } from '../board/board.system';
 import type { Game } from '../game/game';
 import type { AnyCard } from './entities/card.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
-  const cardsToPutAtBottom = await game.interaction.chooseCards<MainDeckCard>({
+  const cardsToPutAtBottom = await game.interaction.chooseCards<AnyCard>({
     player: card.player,
     minChoiceCount: 0,
     maxChoiceCount: amount,
@@ -20,13 +19,13 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
   return { cards, cardsToPutAtBottom };
 };
 
-export const discover = async (game: Game, card: AnyCard, choicePool: MainDeckCard[]) => {
-  const choices: MainDeckCard[] = [];
+export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[]) => {
+  const choices: AnyCard[] = [];
   for (let i = 0; i < 3; i++) {
     const index = game.rngSystem.nextInt(choicePool.length - 1);
     choices.push(...choicePool.splice(index, 1));
   }
-  const [selectedCard] = await game.interaction.chooseCards<MainDeckCard>({
+  const [selectedCard] = await game.interaction.chooseCards<AnyCard>({
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
@@ -45,7 +44,7 @@ export const discardFromHand = async (
   options: { min: number; max: number }
 ) => {
   const cards = card.player.cardManager.hand;
-  const cardsToDiscard = await game.interaction.chooseCards<MainDeckCard>({
+  const cardsToDiscard = await game.interaction.chooseCards<AnyCard>({
     player: card.player,
     minChoiceCount: options.min,
     maxChoiceCount: options.max,

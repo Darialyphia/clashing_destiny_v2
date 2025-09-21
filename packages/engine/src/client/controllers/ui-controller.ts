@@ -16,7 +16,6 @@ import { EndTurnGlobalAction } from '../actions/end-turn';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
-import { SkipBlockGlobalAction } from '../actions/skip-block';
 import { PassChainGlobalAction } from '../actions/pass-chain';
 import type { AbilityViewModel } from '../view-models/ability.model';
 
@@ -363,9 +362,6 @@ export class UiController {
     if (state.phase.state === GAME_PHASES.ATTACK) {
       if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET) {
         return 'Declare attack target';
-      }
-      if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER) {
-        return 'Declare blocker or skip';
       }
     }
 

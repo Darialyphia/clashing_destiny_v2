@@ -1,6 +1,4 @@
 import dedent from 'dedent';
-import { MainDeckCardInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {

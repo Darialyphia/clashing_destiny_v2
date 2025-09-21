@@ -20,7 +20,6 @@ import {
 } from '../game/game.events';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
-import { DeclareBlockerInput } from './inputs/declare-blocker.input';
 import { DeclareEndTurnInput } from './inputs/declare-end-turn.input';
 import { PassChainInput } from './inputs/pass-chain.input';
 import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
@@ -56,7 +55,6 @@ const inputMap = validateinputMap({
   commitPlayCard: CommitPlayCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
-  declareBlocker: DeclareBlockerInput,
   declareEndTurn: DeclareEndTurnInput,
   passChain: PassChainInput,
   selectCardOnBoard: SelectCardOnBoardInput,

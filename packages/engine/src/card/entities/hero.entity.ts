@@ -236,11 +236,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
   }
 
-  get isBlocking() {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
-  }
-
   canBeTargeted(source: AnyCard) {
     return this.interceptors.canBeTargeted.getValue(true, {
       source
