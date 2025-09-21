@@ -2,7 +2,7 @@
 
 ## 📘 Overview
 
-A streamlined, digital-first PVP card game where players summon minions, cast spells, and position their forces in preparation for automated combat. Designed for fast-paced, tactical gameplay with clean interactions and minimal overhead.
+A PVP card game where players summon minions, cast spells, and position their forces in preparation for automated combat. Designed for fast-paced, tactical gameplay with clean interactions and minimal overhead.
 
 ---
 
@@ -15,6 +15,7 @@ To win a game, you need to accumulate 4 Victory Points(VP). You gain one VP by w
 ## 🣍‍♂️ Player Setup
 
 Each player has:
+
 - A **Hero** with:
   - Starting HP (e.g., 20)
   - A passive ability
@@ -33,14 +34,17 @@ Each player has:
 ## 🔄 Turn Structure
 
 ### 1. Draw Phase
+
 - Draw **2 cards**.
 
 ### 2. Main Phase (Alternating Play)
+
 - Players **alternate playing cards**, starting with the player who has initiative (on the first turn, initiative is decided at random, then it alternates each turn).
 - To **play a card**, place a number of cards from your hand **face-down** into the resource zone equal to the card’s cost.
 - A player may **pass**. If both players pass consecutively, proceed to the combat phase.
 
 ### 3. Combat Phase
+
 - Combat proceeds in **rounds**. In each round:
   - All active units (minions and heroes) take **one action**.
   - Units act in **descending order of Speed**.
@@ -55,6 +59,7 @@ Each player has:
 ## 💥 Card Types
 
 ### 🔹 Minions
+
 - Have **ATK, HP, Speed**, and may have special abilities or **keywords**.
 - Placed in the minion line at any position.
 - Fight in the combat phase.
@@ -63,11 +68,13 @@ Each player has:
 - Once they reach -3HP, they are destroyed and removed from the board
 
 ### 🔹 Spells
+
 - One-shot effects.
 - Resolves immediately on cast.
 - May deal damage, draw cards, etc.
 
 ### 🔹 Artifacts
+
 - Are attached to the Hero
 - Persistent effects (e.g., buffs, passives, etc.).
 - May enhance the Hero or affect the board.
@@ -77,7 +84,7 @@ Each player has:
 ## 🧱 Resource System
 
 - To play a card, **pay its cost** by placing that many cards from your hand face-down into the **resource zone**.
-- These cards remain hidden and are normally **recovered at the start of your next turn**... *unless* they are used for special effects (see below).
+- These cards remain hidden and are normally **recovered at the start of your next turn**... _unless_ they are used for special effects (see below).
 
 ---
 
@@ -100,4 +107,3 @@ Each player has:
 - At the start of the turn, after their draw phase, Heroes gain a level.
 - When this happens, players may **banish** resource cards **at random** to unlock a talent from their talent tree.
 - Heroes could level up through other card means, e.g., some card effect.
-

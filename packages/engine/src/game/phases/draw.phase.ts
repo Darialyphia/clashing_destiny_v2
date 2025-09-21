@@ -7,17 +7,32 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   constructor(private game: Game) {}
 
   private async drawForTurn() {
-    await this.game.gamePhaseSystem.currentPlayer.cardManager.draw(
-      this.game.gamePhaseSystem.currentPlayer.cardsDrawnForTurn
-    );
-
+    for (const player of this.game.playerSystem.players) {
+      await player.cardManager.draw(player.cardsDrawnForTurn);
+    }
     await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN);
+  }
+
+  private async recollect() {
+    for (const player of this.game.playerSystem.players) {
+      const cards = [...player.cardManager.destinyZone];
+
+      for (const card of cards) {
+        await card.removeFromCurrentLocation();
+        if (card.canBeRecollected) {
+          await card.player.cardManager.addToHand(card);
+        } else {
+          await card.player.cardManager.sendToDiscardPile(card);
+        }
+      }
+    }
   }
 
   async onEnter() {
     await this.game.gamePhaseSystem.currentPlayer.startTurn();
 
     await this.drawForTurn();
+    await this.recollect();
   }
 
   async onExit() {}

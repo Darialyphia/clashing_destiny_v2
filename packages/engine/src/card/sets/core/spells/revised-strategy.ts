@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { type MainDeckCard } from '../../../../board/board.system';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -9,6 +8,7 @@ import {
   RARITIES,
   SPELL_KINDS
 } from '../../../card.enums';
+import type { AnyCard } from '../../../entities/card.entity';
 
 export const revisedStrategy: SpellBlueprint = {
   id: 'revised-strategy',
@@ -30,7 +30,7 @@ export const revisedStrategy: SpellBlueprint = {
   getPreResponseTargets: async () => [],
   async onInit() {},
   async onPlay(game, card) {
-    const cards = await game.interaction.chooseCards<MainDeckCard>({
+    const cards = await game.interaction.chooseCards<AnyCard>({
       player: card.player,
       choices: card.player.cardManager.mainDeck.cards,
       label: 'Choose 3 cards to banish from your deck',

@@ -78,7 +78,6 @@ useBoardResize(board);
   <div class="explainer">
     <ExplainerMessage />
   </div>
-  <ActionsButtons />
 
   <div class="board" id="board" ref="board">
     <section class="p1-zone">
@@ -162,6 +161,7 @@ useBoardResize(board);
       <Hand />
       <OpponentHand class="opponent-hand" />
     </section>
+    <ActionsButtons />
   </div>
   <div class="arrows" id="arrows" />
 </template>
@@ -182,7 +182,7 @@ useBoardResize(board);
   aspect-ratio: 16 / 9;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.38);
+  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.3);
   margin-inline: auto;
   /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
   background-size: cover;
@@ -220,7 +220,7 @@ useBoardResize(board);
 }
 
 .middle-zone {
-  --board-rotation: 25deg;
+  --board-rotation: 15deg;
   grid-column: 2;
   grid-row: 1;
   display: grid;
@@ -233,7 +233,7 @@ useBoardResize(board);
   grid-column: 2;
   --angleZ: calc(1deg * v-bind(angleZ));
   --angleX: calc(1deg * v-bind(angleX));
-  /*transform: rotateX(var(--board-rotation));*/
+  /* transform: rotateX(var(--board-rotation)); */
   /* uncomment the line below to debug elements position in 3D space */
   /* transform: rotateX(var(--angleX)) rotateZ(var(--angleZ)); */
   transform-style: preserve-3d;
@@ -245,7 +245,7 @@ useBoardResize(board);
     transform: rotate(45deg) scale(0.5);
   }
   to {
-    transform: rotateX(25deg);
+    transform: rotateX(0deg);
   }
 }
 

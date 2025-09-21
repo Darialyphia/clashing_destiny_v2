@@ -4,7 +4,6 @@ import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
 import { CARD_DECK_SOURCES } from '../card.enums';
-import type { MainDeckCard } from '../../board/board.system';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 import { DestinyCard } from '../entities/destiny.entity';
@@ -28,17 +27,17 @@ export type CardLocation =
 export class CardManagerComponent {
   private game: Game;
 
-  readonly mainDeck: Deck<MainDeckCard>;
+  readonly mainDeck: Deck<AnyCard>;
 
-  readonly destinyDeck: Deck<DestinyCard>;
+  readonly destinyDeck: Deck<AnyCard>;
 
-  readonly hand: MainDeckCard[] = [];
+  readonly hand: AnyCard[] = [];
 
-  readonly discardPile = new Set<MainDeckCard>();
+  readonly discardPile = new Set<AnyCard>();
 
-  readonly banishPile = new Set<MainDeckCard>();
+  readonly banishPile = new Set<AnyCard>();
 
-  readonly destinyZone = new Set<MainDeckCard>();
+  readonly destinyZone = new Set<AnyCard>();
 
   constructor(
     game: Game,
@@ -64,8 +63,8 @@ export class CardManagerComponent {
 
   async init() {
     const [mainDeckCards, destinyDeckCards] = await Promise.all([
-      this.buildCards<MainDeckCard>(this.options.mainDeck),
-      this.buildCards<DestinyCard>(this.options.destinyDeck)
+      this.buildCards<AnyCard>(this.options.mainDeck),
+      this.buildCards<AnyCard>(this.options.destinyDeck)
     ]);
 
     this.mainDeck.populate(mainDeckCards);
@@ -133,6 +132,10 @@ export class CardManagerComponent {
     return [...this.hand][index];
   }
 
+  getCardInHandById(id: string) {
+    return this.hand.find(card => card.id === id);
+  }
+
   getDestinyCardById(id: string) {
     return this.destinyDeck.cards.find(card => card.id === id);
   }
@@ -194,7 +197,7 @@ export class CardManagerComponent {
     this.hand.splice(index, 1);
   }
 
-  discard(card: MainDeckCard) {
+  discard(card: AnyCard) {
     this.removeFromHand(card);
     this.sendToDiscardPile(card);
   }
@@ -207,31 +210,31 @@ export class CardManagerComponent {
     return cards;
   }
 
-  sendToDiscardPile(card: MainDeckCard) {
+  sendToDiscardPile(card: AnyCard) {
     if (card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
       this.sendToBanishPile(card);
     } else {
-      this.discardPile.add(card as MainDeckCard);
+      this.discardPile.add(card);
     }
   }
 
-  removeFromDiscardPile(card: MainDeckCard) {
+  removeFromDiscardPile(card: AnyCard) {
     this.discardPile.delete(card);
   }
 
-  sendToBanishPile(card: MainDeckCard) {
+  sendToBanishPile(card: AnyCard) {
     this.banishPile.add(card);
   }
 
-  removeFromBanishPile(card: MainDeckCard) {
+  removeFromBanishPile(card: AnyCard) {
     this.banishPile.delete(card);
   }
 
-  sendToDestinyZone(card: MainDeckCard) {
+  sendToDestinyZone(card: AnyCard) {
     this.destinyZone.add(card);
   }
 
-  removeFromDestinyZone(card: MainDeckCard) {
+  removeFromDestinyZone(card: AnyCard) {
     this.destinyZone.delete(card);
   }
 
@@ -245,7 +248,7 @@ export class CardManagerComponent {
     return replacement;
   }
 
-  addToHand(card: MainDeckCard, index?: number) {
+  addToHand(card: AnyCard, index?: number) {
     if (this.isHandFull) return;
     if (isDefined(index)) {
       this.hand.splice(index, 0, card);

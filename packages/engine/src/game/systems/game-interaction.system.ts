@@ -293,7 +293,7 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<Affinity | null>();
   }
 
-  async declarePlayCardIntent(index: number, player: Player) {
+  async declarePlayCardIntent(card: AnyCard, player: Player) {
     assert(
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
@@ -304,7 +304,6 @@ export class GameInteractionSystem
       : this.game.gamePhaseSystem.currentPlayer.equals(player);
     assert(canPlay, new IllegalCardPlayedError());
 
-    const card = player.cardManager.getCardInHandAt(index);
     assert(card, new IllegalCardPlayedError());
     assert(card.canPlay(), new IllegalCardPlayedError());
 

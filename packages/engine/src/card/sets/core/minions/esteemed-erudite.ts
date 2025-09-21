@@ -1,4 +1,3 @@
-import { type MainDeckCard } from '../../../../board/board.system';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { discover } from '../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -9,6 +8,7 @@ import {
   CARD_SETS,
   RARITIES
 } from '../../../card.enums';
+import type { AnyCard } from '../../../entities/card.entity';
 
 export const esteemedErudite: MinionBlueprint = {
   id: 'esteemed-erudite',
@@ -40,7 +40,7 @@ export const esteemedErudite: MinionBlueprint = {
                   card.player.unlockedAffinities.includes(blueprint.affinity) &&
                   blueprint.kind === CARD_KINDS.SPELL
               )
-              .map(blueprint => card.player.generateCard<MainDeckCard>(blueprint.id))
+              .map(blueprint => card.player.generateCard<AnyCard>(blueprint.id))
           );
 
           await discover(game, card, choicePool);

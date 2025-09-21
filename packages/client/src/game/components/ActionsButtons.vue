@@ -30,7 +30,7 @@ const client = useGameClient();
   justify-content: flex-end;
   right: var(--size-3);
   align-items: center;
-  position: fixed;
+  position: absolute;
   bottom: var(--size-6);
   right: var(--size-6);
   z-index: 1;

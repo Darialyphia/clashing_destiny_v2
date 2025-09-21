@@ -14,15 +14,12 @@ import { DrawPhase } from '../phases/draw.phase';
 import { MainPhase } from '../phases/main.phase';
 import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
-import { DestinyPhase } from '../phases/destiny.phase';
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
-  GO_TO_MAIN_PHASE: 'go_to_main_phase',
   DECLARE_ATTACK: 'declare_attack',
   FINISH_ATTACK: 'finish_attack',
-  DECLARE_END_PHASE: 'declare_end_phase',
-  FINISH_END_TURN: 'finish_end_turn',
+  END_TURN: 'end_turn',
   PLAYER_WON: 'player_won'
 } as const;
 export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
@@ -38,10 +35,6 @@ export type GamePhaseContext =
   | {
       state: BetterExtract<GamePhase, 'draw_phase'>;
       ctx: DrawPhase;
-    }
-  | {
-      state: BetterExtract<GamePhase, 'destiny_phase'>;
-      ctx: DestinyPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
@@ -64,10 +57,6 @@ export type SerializedGamePhaseContext =
   | {
       state: BetterExtract<GamePhase, 'draw_phase'>;
       ctx: ReturnType<DrawPhase['serialize']>;
-    }
-  | {
-      state: BetterExtract<GamePhase, 'destiny_phase'>;
-      ctx: ReturnType<DestinyPhase['serialize']>;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
@@ -97,7 +86,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
-    [GAME_PHASES.DESTINY]: DestinyPhase,
     [GAME_PHASES.MAIN]: MainPhase,
     [GAME_PHASES.ATTACK]: CombatPhase,
     [GAME_PHASES.END]: EndPhase,
@@ -113,11 +101,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       stateTransition(
         GAME_PHASES.DRAW,
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
-        GAME_PHASES.DESTINY
-      ),
-      stateTransition(
-        GAME_PHASES.DESTINY,
-        GAME_PHASE_TRANSITIONS.GO_TO_MAIN_PHASE,
         GAME_PHASES.MAIN
       ),
       stateTransition(
@@ -130,17 +113,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASE_TRANSITIONS.FINISH_ATTACK,
         GAME_PHASES.MAIN
       ),
-      stateTransition(
-        GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_END_PHASE,
-        GAME_PHASES.END
-      ),
-      stateTransition(
-        GAME_PHASES.END,
-        GAME_PHASE_TRANSITIONS.FINISH_END_TURN,
-        GAME_PHASES.DRAW
-      ),
-
+      stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
@@ -148,11 +121,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(
         GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.PLAYER_WON,
-        GAME_PHASES.GAME_END
-      ),
-      stateTransition(
-        GAME_PHASES.DESTINY,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       ),
@@ -256,7 +224,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   }
 
   async endTurn() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.FINISH_END_TURN), new WrongGamePhaseError());
+    assert(this.can(GAME_PHASE_TRANSITIONS.END_TURN), new WrongGamePhaseError());
     await this.currentPlayer.endTurn();
 
     const nextPlayer = this._currentPlayer.opponent;
@@ -269,13 +237,8 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     }
 
     await this.game.inputSystem.schedule(async () => {
-      await this.sendTransition(GAME_PHASE_TRANSITIONS.FINISH_END_TURN);
+      await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
     });
-  }
-
-  async declareEndPhase() {
-    assert(GAME_PHASE_TRANSITIONS.DECLARE_END_PHASE, new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_PHASE);
   }
 
   async startCombat() {

@@ -45,8 +45,6 @@ type SerializedCreatureZone = {
   slots: Array<SerializedBoardMinionSlot>;
 };
 
-export type MainDeckCard = MinionCard | SpellCard | ArtifactCard;
-
 export type SerializedMainDeckCard =
   | SerializedMinionCard
   | SerializedSpellCard

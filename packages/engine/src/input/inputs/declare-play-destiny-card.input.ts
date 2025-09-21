@@ -8,10 +8,10 @@ const schema = defaultInputSchema.extend({
   id: z.string()
 });
 
-export class PlayDestinyCardInput extends Input<typeof schema> {
-  readonly name = 'playDestinyCard';
+export class DeclarePlayDestinyCardInput extends Input<typeof schema> {
+  readonly name = 'declarePlayDestinyCard';
 
-  readonly allowedPhases = [GAME_PHASES.DESTINY];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
 
   protected payloadSchema = schema;
 
@@ -20,9 +20,8 @@ export class PlayDestinyCardInput extends Input<typeof schema> {
 
     const card = this.player.cardManager.getDestinyCardById(this.payload.id);
     assert(card, new IllegalCardPlayedError());
+    assert(card.canPlay(), new IllegalCardPlayedError());
 
-    await this.game.gamePhaseSystem
-      .getContext<GamePhasesDict['DESTINY']>()
-      .ctx.playDestinyCard(card);
+    await this.game.gamePhaseSystem.currentPlayer.playDestinyCard(card);
   }
 }
