@@ -8,11 +8,12 @@ import {
   UnableToCommitError,
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
+import { MINION_SLOT_ZONES, type MinionSlotZone } from '../../board/board;constants';
 
 export type MinionPosition = {
   player: Player;
   slot: MinionSlot;
-  zone: 'attack' | 'defense';
+  zone: MinionSlotZone;
 };
 
 type SelectingMinionSlotsContextOptions = {
@@ -60,7 +61,7 @@ export class SelectingMinionSlotsContext {
   private get elligiblePositions() {
     const result: MinionPosition[] = [];
     this.game.playerSystem.players.forEach(player => {
-      (['attack', 'defense'] as const).forEach(zone => {
+      Object.values(MINION_SLOT_ZONES).forEach(zone => {
         for (let i = 0; i < this.game.config.ATTACK_ZONE_SLOTS; i++) {
           const slot = i;
           const elligible = this.isElligible(

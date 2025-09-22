@@ -10,7 +10,7 @@ Inspirations: Grand Archive, Might and Magic: Duel of Champions, Legends of Rune
 
 ## Start of game
 
-At the start of the game, both players draw 7 cards. They have the opportunity to replace up to 3 cards from their hand. This is called a **mulligan**. Oncve both player have chosen to mulligan or not, their Level 1 hero from their Destiny deck (see below) is automatically played.
+At the start of the game, both players draw 7 cards. They have the opportunity to replace up to 3 cards from their hand. This is called a **mulligan**. Once both player have chosen to mulligan or not, their Level 1 hero from their Destiny deck (see below) is automatically played.
 
 ## Turn structure
 
@@ -24,6 +24,7 @@ The actions available are:
 - Play a card from their Destiny Deck (see below)
 - Declare an attack
 - Use a card ability
+- Replace a card from their hand
 - Pass
 
 The player who can performe an action is called the **initiative player**. On the first turn, player 1 gets the initiative first. After that it goes back and forth between the two players.

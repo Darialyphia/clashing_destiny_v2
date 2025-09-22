@@ -93,9 +93,7 @@ export class Ability<T extends AbilityOwner>
 
     const exhaustCondition = this.shouldExhaust ? !this.card.isExhausted : true;
 
-    const timingCondition = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(this.card.player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(this.card.player);
+    const timingCondition = this.game.interaction.isInteractive(this.card.player);
 
     return (
       this.card.player.cardManager.hand.length >= this.manaCost &&

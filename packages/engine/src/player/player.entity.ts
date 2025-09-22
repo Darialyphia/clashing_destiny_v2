@@ -120,11 +120,11 @@ export class Player
   }
 
   get cardsDrawnForTurn() {
-    const isFirstTurn = this.game.gamePhaseSystem.elapsedTurns === 0;
+    const isFirstTurn = this.game.turnSystem.elapsedTurns === 0;
 
     if (isFirstTurn) {
       return this.interceptors.cardsDrawnForTurn.getValue(
-        this.game.gamePhaseSystem.currentPlayer.isPlayer1
+        this.game.interaction.isInteractive(this)
           ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
           : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN,
         {}
@@ -169,8 +169,8 @@ export class Player
     return this.opponent.minions;
   }
 
-  get isCurrentPlayer() {
-    return this.game.gamePhaseSystem.currentPlayer.equals(this);
+  get isInteractive() {
+    return this.game.interaction.isInteractive(this);
   }
 
   get influence() {

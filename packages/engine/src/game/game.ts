@@ -19,6 +19,7 @@ import { GameInteractionSystem } from './systems/game-interaction.system';
 import { BoardSystem } from '../board/board.system';
 import { EffectChainSystem } from './systems/effect-chain.system';
 import { GAME_PHASES } from './game.enums';
+import { TurnSystem } from './systems/turn.system';
 
 export type GameOptions = {
   id: string;
@@ -61,6 +62,8 @@ export class Game implements Serializable<SerializedGame> {
   readonly boardSystem = new BoardSystem(this);
 
   readonly effectChainSystem = new EffectChainSystem(this);
+
+  readonly turnSystem = new TurnSystem(this);
 
   // readonly unitSystem = new UnitSystem(this);
 
@@ -131,6 +134,12 @@ export class Game implements Serializable<SerializedGame> {
     await this.gamePhaseSystem.initialize();
     // console.log(
     //   `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    // );
+    // now = performance.now();
+
+    await this.turnSystem.initialize();
+    // console.log(
+    //   `Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`
     // );
     // now = performance.now();
 

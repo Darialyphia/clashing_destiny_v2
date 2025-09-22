@@ -4,6 +4,7 @@ import { EntityWithModifiers } from '../entity';
 import type { Player } from '../player/player.entity';
 import { Interceptable } from '../utils/interceptable';
 import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
+import { MINION_SLOT_ZONES, type MinionSlotZone } from './board;constants';
 
 type BoardMinionSlotInterceptors = {
   canSummon: Interceptable<boolean>;
@@ -11,7 +12,7 @@ type BoardMinionSlotInterceptors = {
 
 export type SerializedBoardMinionSlot = {
   playerId: string;
-  zone: 'attack' | 'defense';
+  zone: MinionSlotZone;
   position: number;
   minion: string | null;
   canSummon: boolean;
@@ -25,7 +26,7 @@ export class BoardMinionSlot
 
   constructor(
     private _player: Player,
-    private _zone: 'attack' | 'defense',
+    private _zone: MinionSlotZone,
     private _position: number
   ) {
     super(`minion-slot-${_player.id}-${_zone}-${_position}`, {
@@ -37,7 +38,7 @@ export class BoardMinionSlot
     return this._player;
   }
 
-  get zone(): 'attack' | 'defense' {
+  get zone(): MinionSlotZone {
     return this._zone;
   }
 
@@ -102,14 +103,17 @@ export class BoardMinionSlot
   }
 
   get inFront(): BoardMinionSlot | null {
-    return this._zone === 'attack'
-      ? this._player.opponent.boardSide.getSlot('attack', this._position)
-      : this._player.boardSide.getSlot('attack', this._position);
+    return this._zone === MINION_SLOT_ZONES.FRONT_ROW
+      ? this._player.opponent.boardSide.getSlot(
+          MINION_SLOT_ZONES.FRONT_ROW,
+          this._position
+        )
+      : this._player.boardSide.getSlot(MINION_SLOT_ZONES.FRONT_ROW, this._position);
   }
 
   get behind(): BoardMinionSlot | null {
-    return this._zone === 'attack'
-      ? this._player.boardSide.getSlot('defense', this._position)
+    return this._zone === MINION_SLOT_ZONES.FRONT_ROW
+      ? this._player.boardSide.getSlot(MINION_SLOT_ZONES.BACK_ROW, this._position)
       : null;
   }
 

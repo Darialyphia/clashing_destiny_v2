@@ -4,6 +4,7 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 
@@ -15,6 +16,7 @@ export const courageousFootsoldier: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 2,
+  speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 3,
   rarity: RARITIES.COMMON,

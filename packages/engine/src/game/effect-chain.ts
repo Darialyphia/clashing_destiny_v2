@@ -51,7 +51,7 @@ export class EffectChain
 {
   private effectStack: Effect[] = [];
   private consecutivePasses = 0;
-  private currentPlayer: Player;
+  private _currentPlayer: Player;
   public onResolved: () => MaybePromise<void>;
 
   constructor(
@@ -64,7 +64,7 @@ export class EffectChain
       await onResolved();
       await this.game.inputSystem.askForPlayerInput();
     };
-    this.currentPlayer = startingPlayer;
+    this._currentPlayer = startingPlayer;
 
     this.addTransitions([
       stateTransition(
@@ -102,13 +102,17 @@ export class EffectChain
     this.switchTurn();
   }
 
+  get currentPlayer() {
+    return this._currentPlayer;
+  }
+
   private get passesNeededToResolve() {
     // return this.effectStack.length <= 1 ? 1 : 2;
     return 2;
   }
 
   isCurrentPlayer(player: Player): boolean {
-    return player.equals(this.currentPlayer);
+    return player.equals(this._currentPlayer);
   }
 
   private onPass() {
@@ -134,7 +138,7 @@ export class EffectChain
   }
 
   private switchTurn(): void {
-    this.currentPlayer = this.currentPlayer.opponent;
+    this._currentPlayer = this._currentPlayer.opponent;
   }
 
   addEffect(effect: Effect, player: Player): void {
@@ -142,7 +146,7 @@ export class EffectChain
       this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT),
       new InactiveEffectChainError()
     );
-    assert(player.equals(this.currentPlayer), new IllegalPlayerResponseError());
+    assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
 
     this.effectStack.push(effect);
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT);
@@ -150,14 +154,14 @@ export class EffectChain
 
   pass(player: Player): void {
     assert(this.can(EFFECT_CHAIN_STATE_TRANSITIONS.PASS), new InactiveEffectChainError());
-    assert(player.equals(this.currentPlayer), new IllegalPlayerResponseError());
+    assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
 
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.PASS);
   }
 
   canAddEffect(player: Player): boolean {
     return (
-      player.equals(this.currentPlayer) &&
+      player.equals(this._currentPlayer) &&
       this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT)
     );
   }
@@ -168,7 +172,7 @@ export class EffectChain
         source: effect.source.id,
         targets: effect.targets.map(serializePreResponseTarget)
       })),
-      player: this.currentPlayer.id
+      player: this._currentPlayer.id
     };
   }
 }

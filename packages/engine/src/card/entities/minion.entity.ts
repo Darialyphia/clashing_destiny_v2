@@ -6,11 +6,7 @@ import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type MinionBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { CARD_EVENTS, type Affinity } from '../card.enums';
-import {
-  CardAfterPlayEvent,
-  CardBeforePlayEvent,
-  CardDeclarePlayEvent
-} from '../card.events';
+import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -28,6 +24,7 @@ import type {
   SerializedBoardMinionSlot
 } from '../../board/board-minion-slot.entity';
 import { Ability } from './ability.entity';
+import { type MinionSlotZone } from '../../board/board;constants';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -44,9 +41,6 @@ export type SerializedMinionCard = SerializedCard & {
 };
 export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;
-  canBlock: Interceptable<boolean, { attacker: Attacker }>;
-  canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
-  canBeDefended: Interceptable<boolean, { defender: Defender }>;
   canBeCounterattacked: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
@@ -157,8 +151,8 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard; position: { zone: 'attack' | 'defense'; slot: number } },
-  { card: SerializedMinionCard; position: { zone: 'attack' | 'defense'; slot: number } }
+  { card: MinionCard; position: { zone: MinionSlotZone; slot: number } },
+  { card: SerializedMinionCard; position: { zone: MinionSlotZone; slot: number } }
 > {
   serialize() {
     return {
@@ -217,9 +211,6 @@ export class MinionCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBlock: new Interceptable(),
-        canBeBlocked: new Interceptable(),
-        canBeDefended: new Interceptable(),
         canBeCounterattacked: new Interceptable(),
         canAttack: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
@@ -301,16 +292,7 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    const p1t1Condition = this.game.config.ALLOW_PLAYER_1_TURN_1_ATTACK
-      ? true
-      : !this.player.isPlayer1 || this.game.gamePhaseSystem.elapsedTurns > 0;
-
-    const base =
-      p1t1Condition &&
-      this.position?.zone === 'attack' &&
-      !this._isExhausted &&
-      this.atk > 0 &&
-      target.canBeAttacked(this);
+    const base = !this._isExhausted && this.atk > 0 && target.canBeAttacked(this);
 
     return this.interceptors.canAttack.getValue(base, {
       target
@@ -318,33 +300,12 @@ export class MinionCard extends Card<
   }
 
   get canDealCombatDamage() {
-    return this.position?.zone === 'attack';
+    return true; // @TODO legacy shit, need to remove
   }
 
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
-    });
-  }
-
-  canBlock(attacker: Attacker) {
-    return this.interceptors.canBlock.getValue(
-      this.position?.zone === 'defense' && !this._isExhausted,
-      {
-        attacker
-      }
-    );
-  }
-
-  canBeBlocked(blocker: Defender) {
-    return this.interceptors.canBeBlocked.getValue(true, {
-      blocker
-    });
-  }
-
-  canBeDefendedBy(defender: Defender) {
-    return this.interceptors.canBeDefended.getValue(true, {
-      defender
     });
   }
 

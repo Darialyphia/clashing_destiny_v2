@@ -45,6 +45,7 @@ export type EntityDiffDictionary = Record<
   | Partial<SerializedMinionCard>
   | Partial<SerializedSpellCard>
   | Partial<SerializedArtifactCard>
+  | Partial<SerializedHeroCard>
   | Partial<SerializedPlayer>
   | Partial<SerializedModifier>
   | Partial<SerializedAbility>
@@ -260,8 +261,8 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       interaction: this.game.interaction.serialize(),
       board: this.game.boardSystem.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
-      currentPlayer: this.game.gamePhaseSystem.currentPlayer.id,
-      turnCount: this.game.gamePhaseSystem.elapsedTurns,
+      currentPlayer: this.game.interaction.interactivePlayer.id,
+      turnCount: this.game.turnSystem.elapsedTurns,
       effectChain: this.game.effectChainSystem.serialize()
     };
   }

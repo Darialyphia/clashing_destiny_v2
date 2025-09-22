@@ -136,7 +136,7 @@ export const testGameBuilder = () => {
           },
 
           async playDestinyCard(blueprintId: string) {
-            const player = game.gamePhaseSystem.currentPlayer;
+            const player = game.interaction.interactivePlayer;
             const card = player.cardManager.destinyDeck.cards.find(
               c => c.blueprintId === blueprintId
             )!;

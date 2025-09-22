@@ -34,7 +34,7 @@ export class TidesFavoredModifier extends Modifier<HeroCard> {
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.PLAYER_START_TURN,
           handler: async event => {
-            if (game.gamePhaseSystem.elapsedTurns === 0) return;
+            if (game.turnSystem.elapsedTurns === 0) return;
             if (this.fixedAmount) {
               if (this.stacks !== this.fixedAmount) {
                 await this.setStacks(this.fixedAmount);

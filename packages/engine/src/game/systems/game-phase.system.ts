@@ -25,8 +25,6 @@ export const GAME_PHASE_TRANSITIONS = {
 export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 
 export type GamePhaseEventMap = {
-  [GAME_PHASE_EVENTS.GAME_TURN_START]: GameTurnEvent;
-  [GAME_PHASE_EVENTS.GAME_TURN_END]: GameTurnEvent;
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
   [GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE]: GamePhaseAfterChangeEvent;
 };
@@ -77,12 +75,6 @@ export type SerializedGamePhaseContext =
 
 export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition> {
   private _winners: Player[] = [];
-
-  private _elapsedTurns = 0;
-
-  private _currentPlayer!: Player;
-
-  private firstPlayer!: Player;
 
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
@@ -138,10 +130,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   }
 
   async initialize() {
-    // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
-    this._currentPlayer = this.game.playerSystem.player1;
-    this.firstPlayer = this._currentPlayer;
-
     const stop = this.game.on('*', async () => {
       const winners: Player[] = [];
       for (const player of this.game.playerSystem.players) {
@@ -177,29 +165,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     return this._winners;
   }
 
-  get elapsedTurns() {
-    return this._elapsedTurns;
-  }
-
-  get currentPlayer() {
-    return this._currentPlayer;
-  }
-
-  private startGameTurn() {
-    return this.game.emit(
-      GAME_PHASE_EVENTS.GAME_TURN_START,
-      new GameTurnEvent({ turnCount: this.elapsedTurns })
-    );
-  }
-
-  private endGameTurn() {
-    this._elapsedTurns++;
-    return this.game.emit(
-      GAME_PHASE_EVENTS.GAME_TURN_END,
-      new GameTurnEvent({ turnCount: this.elapsedTurns })
-    );
-  }
-
   async sendTransition(transition: GamePhaseTransition) {
     const previousPhase = this.getState();
     const nextPhase = this.getNextState(transition);
@@ -225,16 +190,8 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.END_TURN), new WrongGamePhaseError());
-    await this.currentPlayer.endTurn();
 
-    const nextPlayer = this._currentPlayer.opponent;
-    if (nextPlayer.equals(this.firstPlayer)) {
-      await this.endGameTurn();
-      this._currentPlayer = nextPlayer;
-      await this.startGameTurn();
-    } else {
-      this._currentPlayer = nextPlayer;
-    }
+    await this.game.turnSystem.endTurn();
 
     await this.game.inputSystem.schedule(async () => {
       await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);

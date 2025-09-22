@@ -4,7 +4,7 @@ import { InputError } from '../input/input-errors';
 import type { SerializedInput } from '../input/input-system';
 import { StarEvent, TypedSerializableEvent } from '../utils/typed-emitter';
 import type { SerializedGame } from './game';
-import { GAME_PHASE_EVENTS } from './game.enums';
+import { GAME_PHASE_EVENTS, TURN_EVENTS } from './game.enums';
 import type { GamePhaseEventMap } from './systems/game-phase.system';
 import {
   MODIFIER_EVENTS,
@@ -24,6 +24,7 @@ import {
 import { PLAYER_EVENTS } from '../player/player.enums';
 import type { PlayerEventMap } from '../player/player.events';
 import { ABILITY_EVENTS, type AbilityEventMap } from '../card/entities/ability.entity';
+import type { TurnEventMap } from './systems/turn.system';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -125,7 +126,8 @@ export type GameEventMap = Prettify<
     HeroCardEventMap &
     ArtifactCardEventMap &
     PlayerEventMap &
-    AbilityEventMap
+    AbilityEventMap &
+    TurnEventMap
 >;
 export type GameEventName = keyof GameEventMap;
 
@@ -146,5 +148,6 @@ export const GAME_EVENTS = {
   ...HERO_EVENTS,
   ...ARTIFACT_EVENTS,
   ...PLAYER_EVENTS,
-  ...ABILITY_EVENTS
+  ...ABILITY_EVENTS,
+  ...TURN_EVENTS
 } as const satisfies Record<string, GameEventName>;

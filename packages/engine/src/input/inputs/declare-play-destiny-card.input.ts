@@ -16,12 +16,12 @@ export class DeclarePlayDestinyCardInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
+    assert(this.player.isInteractive, new NotCurrentPlayerError());
 
     const card = this.player.cardManager.getDestinyCardById(this.payload.id);
     assert(card, new IllegalCardPlayedError());
     assert(card.canPlay(), new IllegalCardPlayedError());
 
-    await this.game.gamePhaseSystem.currentPlayer.playDestinyCard(card);
+    await this.game.interaction.interactivePlayer.playDestinyCard(card);
   }
 }

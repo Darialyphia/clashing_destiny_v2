@@ -219,6 +219,16 @@ export class GameInteractionSystem
 
   shutdown() {}
 
+  get interactivePlayer() {
+    return this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.currentPlayer
+      : this.game.turnSystem.initiativePlayer;
+  }
+
+  isInteractive(player: Player) {
+    return player.equals(this.interactivePlayer);
+  }
+
   serialize() {
     const context = this.getContext();
     return {
@@ -299,9 +309,7 @@ export class GameInteractionSystem
       new CorruptedInteractionContextError()
     );
 
-    const canPlay = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(player);
+    const canPlay = this.isInteractive(player);
     assert(canPlay, new IllegalCardPlayedError());
 
     assert(card, new IllegalCardPlayedError());
@@ -329,9 +337,7 @@ export class GameInteractionSystem
       new CorruptedInteractionContextError()
     );
 
-    const canUse = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(player);
+    const canUse = this.isInteractive(player);
     assert(canUse, new IllegalCardPlayedError());
 
     assert(ability.canUse, new IllegalCardPlayedError());

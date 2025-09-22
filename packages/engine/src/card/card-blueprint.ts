@@ -18,6 +18,7 @@ import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
+import type { MinionSlotZone } from '../board/board;constants';
 
 export type CardSourceBlueprint =
   | {
@@ -80,7 +81,7 @@ export type SerializedPreResponseTarget =
       type: 'minionPosition';
       playerId: string;
       slot: number;
-      zone: 'attack' | 'defense';
+      zone: MinionSlotZone;
     };
 export const serializePreResponseTarget = (
   target: PreResponseTarget

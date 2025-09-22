@@ -7,6 +7,7 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 import { HeroCard } from '../../../entities/hero.entity';
@@ -19,6 +20,7 @@ export const sage: HeroBlueprint = {
   kind: CARD_KINDS.HERO,
   level: 1,
   destinyCost: 0,
+  speed: CARD_SPEED.SLOW,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
   setId: CARD_SETS.CORE,
@@ -32,6 +34,7 @@ export const sage: HeroBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [],
   tags: [],
+  canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
       new Modifier<HeroCard>('sage-spell-draw', game, card, {

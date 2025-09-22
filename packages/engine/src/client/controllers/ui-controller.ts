@@ -17,6 +17,7 @@ import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassChainGlobalAction } from '../actions/pass-chain';
 import type { AbilityViewModel } from '../view-models/ability.model';
+import type { MinionSlotZone } from '../../board/board;constants';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -82,9 +83,9 @@ export class UiController {
   DOMSelectors = {
     p1Minionzone: new DOMSelector('p1-minion-zone'),
     p2Minionzone: new DOMSelector('p2-minion-zone'),
-    minionSprite: (playerId: string, zone: 'attack' | 'defense', slot: number) =>
+    minionSprite: (playerId: string, zone: MinionSlotZone, slot: number) =>
       new DOMSelector(`${playerId}-${zone}-minion-sprite-${slot}`),
-    minionClickableArea: (playerId: string, zone: 'attack' | 'defense', slot: number) =>
+    minionClickableArea: (playerId: string, zone: MinionSlotZone, slot: number) =>
       new DOMSelector(`${playerId}-${zone}-minion-clickable-area-${slot}`),
     heroSprite: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>

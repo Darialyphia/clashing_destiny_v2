@@ -14,8 +14,7 @@ import {
   CARD_KINDS,
   type Affinity,
   type ArtifactKind,
-  type CardKind,
-  type SpellKind
+  type CardKind
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
@@ -171,14 +170,6 @@ export class CardViewModel {
   get hp() {
     if ('remainingHp' in this.data) {
       return this.data.remainingHp as number;
-    }
-
-    return null;
-  }
-
-  get subKind() {
-    if ('subKind' in this.data) {
-      return this.data.subKind as SpellKind | ArtifactKind;
     }
 
     return null;

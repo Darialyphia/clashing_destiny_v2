@@ -29,7 +29,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   }
 
   async onEnter() {
-    await this.game.gamePhaseSystem.currentPlayer.startTurn();
+    await this.game.interaction.interactivePlayer.startTurn();
 
     await this.drawForTurn();
     await this.recollect();

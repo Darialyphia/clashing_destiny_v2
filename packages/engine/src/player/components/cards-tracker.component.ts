@@ -21,19 +21,19 @@ export class CardTrackerComponent {
       if (isDestinyDeckCard(event.data.card)) return;
       if (!event.data.card.player.equals(this.player)) return;
 
-      const turn = game.gamePhaseSystem.elapsedTurns;
+      const turn = game.turnSystem.elapsedTurns;
       if (!this.cardsPlayedByGameTurn.has(turn)) {
         this.cardsPlayedByGameTurn.set(turn, []);
       }
       this.cardsPlayedByGameTurn.get(turn)?.push({
-        player: this.game.gamePhaseSystem.currentPlayer,
+        player: event.data.card.player,
         card: event.data.card
       });
     });
   }
 
   get cardsPlayedThisGameTurn() {
-    return this.cardsPlayedByGameTurn.get(this.game.gamePhaseSystem.elapsedTurns) ?? [];
+    return this.cardsPlayedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
   }
 
   getCardsPlayedThisGameTurnOfKind<
@@ -51,7 +51,7 @@ export class CardTrackerComponent {
 
   getCardsPlayedSince(turn: number) {
     const cards: PlayedCard[] = [];
-    for (let i = turn; i <= this.game.gamePhaseSystem.elapsedTurns; i++) {
+    for (let i = turn; i <= this.game.turnSystem.elapsedTurns; i++) {
       const turnCards = this.cardsPlayedByGameTurn.get(i);
       if (turnCards) {
         cards.push(...turnCards);

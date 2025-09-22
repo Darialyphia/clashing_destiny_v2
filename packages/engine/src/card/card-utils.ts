@@ -1,3 +1,4 @@
+import type { MinionSlotZone } from '../board/board;constants';
 import type { Game } from '../game/game';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
@@ -250,7 +251,7 @@ export const multipleEmptyAllySlot = {
     return card.player.boardSide.unoccupiedSlots.length >= min;
   },
   getPreResponseTargets:
-    ({ min, max, zone }: { min: number; max: number; zone?: 'attack' | 'defense' }) =>
+    ({ min, max, zone }: { min: number; max: number; zone?: MinionSlotZone }) =>
     async (game: Game, card: AnyCard) => {
       return await game.interaction.selectMinionSlot({
         player: card.player,

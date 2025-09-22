@@ -3,10 +3,11 @@ import { z } from 'zod';
 import { type InteractionStateDict } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
 import { IllegalTargetError } from '../input-errors';
+import { MINION_SLOT_ZONES } from '../../board/board;constants';
 
 const schema = defaultInputSchema.extend({
   slot: z.object({
-    zone: z.enum(['attack', 'defense']),
+    zone: z.enum([MINION_SLOT_ZONES.BACK_ROW, MINION_SLOT_ZONES.FRONT_ROW]),
     slot: z.number(),
     player: z.string()
   })

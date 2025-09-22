@@ -8,6 +8,7 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 import type { HeroCard } from '../../../entities/hero.entity';
@@ -21,6 +22,7 @@ export const rustyBlade: ArtifactBlueprint = {
   setId: CARD_SETS.CORE,
   unique: false,
   manaCost: 1,
+  speed: CARD_SPEED.SLOW,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,

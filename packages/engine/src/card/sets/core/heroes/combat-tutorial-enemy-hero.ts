@@ -4,6 +4,7 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 
@@ -14,6 +15,8 @@ export const combatTutorialEnemyHero: HeroBlueprint = {
   level: 1,
   cardIconId: 'hero-slime-king',
   destinyCost: 0,
+  speed: CARD_SPEED.SLOW,
+  canPlay: () => true,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
   affinities: [],

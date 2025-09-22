@@ -6,6 +6,7 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 
@@ -17,6 +18,7 @@ export const knight: HeroBlueprint = {
   kind: CARD_KINDS.HERO,
   level: 1,
   destinyCost: 0,
+  speed: CARD_SPEED.SLOW,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
   setId: CARD_SETS.CORE,
@@ -67,6 +69,7 @@ export const knight: HeroBlueprint = {
     }
   ],
   tags: [],
+  canPlay: () => true,
   async onInit() {},
   async onPlay() {}
 };

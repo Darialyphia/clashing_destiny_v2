@@ -287,16 +287,6 @@ export class CombatPhase
     await this.end();
   }
 
-  canBlock(blocker: Defender) {
-    if (!this.attacker || !this.target) return false;
-
-    return (
-      this.attacker.canBeBlocked(blocker) &&
-      blocker.canBlock(this.attacker) &&
-      this.target.canBeDefendedBy(blocker)
-    );
-  }
-
   get step() {
     return this.getState();
   }
