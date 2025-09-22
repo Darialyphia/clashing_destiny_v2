@@ -2,6 +2,7 @@ import type { Player } from '../../player/player.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { TURN_EVENTS } from '../game.enums';
 import { System } from '../../system';
+import type { AnyFunction } from '@game/shared';
 
 export type TurnEventMap = {
   [TURN_EVENTS.TURN_START]: TurnEvent;
@@ -32,7 +33,7 @@ export class TurnSystem extends System<never> {
     return this._elapsedTurns;
   }
 
-  private startTurn() {
+  startTurn() {
     this._initiativePlayer = this.nextInitiativePlayer;
     this.nextInitiativePlayer = this._initiativePlayer.opponent;
 
@@ -49,6 +50,11 @@ export class TurnSystem extends System<never> {
       TURN_EVENTS.TURN_END,
       new TurnEvent({ turnCount: this.elapsedTurns })
     );
+  }
+
+  async takeAction(action: AnyFunction) {
+    await action();
+    this._initiativePlayer = this._initiativePlayer.opponent;
   }
 }
 

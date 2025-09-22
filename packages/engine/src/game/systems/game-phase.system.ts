@@ -195,6 +195,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
     await this.game.inputSystem.schedule(async () => {
       await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
+      await this.game.turnSystem.startTurn();
     });
   }
 

@@ -1,6 +1,4 @@
 import type { Game } from '../../game/game';
-import { GAME_PHASES } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -10,8 +8,6 @@ import {
   type SerializedPreResponseTarget,
   type SpellBlueprint
 } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
-import { CardBeforePlayEvent, CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,

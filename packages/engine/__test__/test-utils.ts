@@ -14,6 +14,7 @@ import { GAME_PHASES, type GamePhasesDict } from '../src/game/game.enums';
 import type { HeroCard } from '../src/card/entities/hero.entity';
 import { MinionCard } from '../src/card/entities/minion.entity';
 import type { AnyCard } from '../src/card/entities/card.entity';
+import type { MinionSlotZone } from '../src/board/board;constants';
 
 export const testGameBuilder = () => {
   const options: Partial<GameOptions> = {};
@@ -93,7 +94,7 @@ export const testGameBuilder = () => {
             manaCostIndices: number[],
             options: T extends MinionCard
               ? {
-                  zone: 'attack' | 'defense';
+                  zone: MinionSlotZone;
                   slot: number;
                 }
               : undefined
@@ -118,33 +119,12 @@ export const testGameBuilder = () => {
           async endTurn(player: Player) {
             // eslint-disable-next-line no-async-promise-executor
             return new Promise<void>(async resolve => {
-              await game.gamePhaseSystem.declareEndPhase();
               game.once(GAME_EVENTS.PLAYER_START_TURN, () => resolve());
 
               game.effectChainSystem.pass(player.opponent);
             });
           },
-          waitUntilDestinyPhase() {
-            return new Promise<void>(resolve => {
-              const stop = game.once(GAME_EVENTS.AFTER_CHANGE_PHASE, event => {
-                if (event.data.to.state === GAME_PHASES.DESTINY) {
-                  stop();
-                  resolve();
-                }
-              });
-            });
-          },
 
-          async playDestinyCard(blueprintId: string) {
-            const player = game.interaction.interactivePlayer;
-            const card = player.cardManager.destinyDeck.cards.find(
-              c => c.blueprintId === blueprintId
-            )!;
-
-            await game.gamePhaseSystem
-              .getContext<GamePhasesDict['DESTINY']>()
-              .ctx.playDestinyCard(card);
-          },
           async declareAttack(
             attacker: MinionCard | HeroCard,
             target: MinionCard | HeroCard
