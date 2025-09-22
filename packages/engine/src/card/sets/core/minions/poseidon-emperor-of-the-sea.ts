@@ -13,8 +13,6 @@ import { Modifier } from '../../../../modifier/modifier.entity';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { isMinion } from '../../../card-utils';
 import { MinionCard } from '../../../entities/minion.entity';
-import { RushModifier } from '../../../../modifier/modifiers/rush.modifier';
-import { SimpleManaCostBuffModifier } from '../../../../modifier/modifiers/simple-mana-cost-buff.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const poseidonEmperorOfTheSea: MinionBlueprint = {
@@ -61,11 +59,11 @@ export const poseidonEmperorOfTheSea: MinionBlueprint = {
                   amount: 1
                 })
               );
-              await candidate.modifiers.add(
-                new SimpleManaCostBuffModifier(POSEIDON_MANA_COST_DISCOUNT, game, card, {
-                  amount: -1
-                })
-              );
+              // await candidate.modifiers.add(
+              //   new SimpleManaCostBuffModifier(POSEIDON_MANA_COST_DISCOUNT, game, card, {
+              //     amount: -1
+              //   })
+              // );
             },
             async onLoseAura(candidate) {
               await candidate.modifiers.remove(POSEIDON_MANA_COST_DISCOUNT);

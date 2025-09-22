@@ -1,5 +1,4 @@
 import { type Serializable } from '@game/shared';
-import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
@@ -12,9 +11,7 @@ export const isMainDeckCard = (card: AnyCard) => {
   return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
 };
 
-export type DestinyDeckCard = HeroCard;
-
-export const isDestinyDeckCard = (card: AnyCard): card is DestinyDeckCard => {
+export const isDestinyDeckCard = (card: AnyCard) => {
   return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
 };
 

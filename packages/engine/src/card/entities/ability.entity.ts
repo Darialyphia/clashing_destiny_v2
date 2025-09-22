@@ -7,7 +7,6 @@ import {
   type SerializedAbility
 } from '../card-blueprint';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { DestinyCard } from './destiny.entity';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
@@ -21,7 +20,7 @@ export const ABILITY_EVENTS = {
 } as const;
 
 export class AbilityBeforeUseEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard | ArtifactCard | DestinyCard; abilityId: string },
+  { card: MinionCard | HeroCard | ArtifactCard; abilityId: string },
   {
     card: string;
     abilityId: string;
@@ -36,7 +35,7 @@ export class AbilityBeforeUseEvent extends TypedSerializableEvent<
 }
 
 export class AbilityAfterUseEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard | ArtifactCard | DestinyCard; abilityId: string },
+  { card: MinionCard | HeroCard | ArtifactCard; abilityId: string },
   {
     card: string;
     abilityId: string;
@@ -55,7 +54,7 @@ export type AbilityEventMap = {
   [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
 };
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | DestinyCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard;
 
 export class Ability<T extends AbilityOwner>
   extends Entity<EmptyObject>

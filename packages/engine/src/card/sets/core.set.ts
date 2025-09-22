@@ -6,23 +6,6 @@ import { rainbowCeremonialSword } from './core/artifacts/rainbow-sword';
 import { runedShiv } from './core/artifacts/runed-shiv';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { tomeOfKnowledge } from './core/artifacts/tome-of-knowledge';
-import { arcaneAffinity } from './core/destinies/arcane-affinity';
-import { arcaneMastery } from './core/destinies/arcane-mastery';
-import { bloodAffinity } from './core/destinies/blood-affinity';
-import { bloodCovenant } from './core/destinies/blood-covenant';
-import { cabalInitiate } from './core/destinies/cabal-initiate';
-import { chronoAffinity } from './core/destinies/chrono-affinity';
-import { fearlessLeader } from './core/destinies/fearless-leader';
-import { fireAffinity } from './core/destinies/fire-affinity';
-import { fireStudies } from './core/destinies/fire-studies';
-import { insight } from './core/destinies/insight';
-import { inspiredBySteel } from './core/destinies/inspired-by-steel';
-import { manaVisions } from './core/destinies/mana-visions';
-import { mercyForTheInjured } from './core/destinies/mercy-for-the-injured';
-import { theHangedMan } from './core/destinies/the-hangman';
-import { tidesFavored } from './core/destinies/tides-favored';
-import { vaillantParagon } from './core/destinies/vaillant-paragon';
-import { waterAffinity } from './core/destinies/water-affinity';
 import { combatTutorialEnemyHero } from './core/heroes/combat-tutorial-enemy-hero';
 import { knight } from './core/heroes/knight';
 import { sage } from './core/heroes/sage';
@@ -33,7 +16,6 @@ import { battleflameInvoker } from './core/minions/battleflame-invoker';
 import { blazingSalamander } from './core/minions/blazing-salamander';
 import { ceruleanWaveDisciple } from './core/minions/cerulean-wave-disciple';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
-import { crimsonSuppressor } from './core/minions/crimson-suppressor';
 import { enjiOneManArmy } from './core/minions/enji-one-man-army';
 import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
@@ -62,7 +44,6 @@ import { spriteOfFadingMemories } from './core/minions/sprite-of-fading-memories
 import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sunEmperor } from './core/minions/sun-emperor';
 import { sunPalaceGuard } from './core/minions/sun-palace-guard';
-import { temporalShifter } from './core/minions/temporal-shifter';
 import { tutorialSlime1 } from './core/minions/tutorial-slime-1';
 import { tutorialSlime2 } from './core/minions/tutorial-slime-2';
 import { violetStalker } from './core/minions/violet-stalker';
@@ -110,17 +91,9 @@ export const coreSet: CardSet = {
     knight,
 
     // Normal
-    fireAffinity,
-    waterAffinity,
-    arcaneAffinity,
-    chronoAffinity,
-    bloodAffinity,
     courageousFootsoldier,
     friendlySlime,
     rustyBlade,
-    inspiredBySteel,
-    insight,
-    manaVisions,
     rainbowCeremonialSword,
     heraldOfSalvation,
     luminescentMystic,
@@ -129,19 +102,13 @@ export const coreSet: CardSet = {
     sunPalaceGuard,
     runedShiv,
     gazeIntoTomorrow,
-    fearlessLeader,
     revisedStrategy,
     masquerade,
     spiritualist,
     tomeOfKnowledge,
     orbOfTheTides,
-    cabalInitiate,
-    theHangedMan,
-    bloodCovenant,
     gluttonousSlime,
     slimesToTheRescue,
-    mercyForTheInjured,
-    vaillantParagon,
 
     // Fire
     fireBolt,
@@ -161,7 +128,6 @@ export const coreSet: CardSet = {
     flameExorcist,
     ardentMonk,
     forgedInTheCrater,
-    fireStudies,
     pyreboundLancer,
     moltenShield,
     battleflameInvoker,
@@ -178,7 +144,6 @@ export const coreSet: CardSet = {
     novaBlast,
     esteemedErudite,
     surgeOfWill,
-    arcaneMastery,
     manaShield,
     powerOverwhelming,
     arcaneConduit,
@@ -187,7 +152,6 @@ export const coreSet: CardSet = {
     // Chrono
     recollection,
     hourglassFracture,
-    temporalShifter,
     delayTheInevitable,
 
     // Water
@@ -198,7 +162,6 @@ export const coreSet: CardSet = {
     tranquility,
     slipstreamVeil,
     waterElemental,
-    tidesFavored,
     playfulEels,
     nagaSkirmisher,
     shoalOfEels,
@@ -206,9 +169,6 @@ export const coreSet: CardSet = {
     poseidonEmperorOfTheSea,
     calmWaters,
     spriteOfFadingMemories,
-    nerathisMistressOfTheDepths,
-
-    // Blood
-    crimsonSuppressor
+    nerathisMistressOfTheDepths
   ]
 };

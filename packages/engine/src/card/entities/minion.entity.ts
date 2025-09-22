@@ -460,44 +460,37 @@ export class MinionCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost &&
-        !this.game.effectChainSystem.currentChain &&
+      this.canPlayBase &&
         this.player.boardSide.hasUnoccupiedSlot &&
-        this.location === 'hand' &&
-        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        this.hasAffinityMatch &&
         this.blueprint.canPlay(this.game, this),
       this
     );
   }
 
   async playAt(position: MinionPosition) {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    this.updatePlayedAt();
+    await this.insertInChainOrExecute(async () => {
+      if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
+        this.dispose();
+        return;
+      }
 
-    this.player.boardSide.summonMinion(this, position.zone, position.slot);
-    await this.blueprint.onPlay(this.game, this);
+      this.player.boardSide.summonMinion(this, position.zone, position.slot);
+      await this.blueprint.onPlay(this.game, this);
 
-    await this.game.emit(
-      MINION_EVENTS.MINION_SUMMONED,
-      new MinionSummonedEvent({ card: this, position })
-    );
-
-    if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
-      await (this as MinionCard).modifiers.add(
-        new SummoningSicknessModifier(this.game, this)
+      await this.game.emit(
+        MINION_EVENTS.MINION_SUMMONED,
+        new MinionSummonedEvent({ card: this, position })
       );
-    }
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
-    );
+
+      if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
+        await (this as MinionCard).modifiers.add(
+          new SummoningSicknessModifier(this.game, this)
+        );
+      }
+    }, [position]);
   }
 
-  async play() {
+  private async promptForSummonPosition() {
     const [position] = await this.game.interaction.selectMinionSlot({
       player: this.player,
       isElligible(position) {
@@ -513,6 +506,11 @@ export class MinionCard extends Card<
         return selectedSlots.length === 1;
       }
     });
+
+    return position;
+  }
+  async play() {
+    const position = await this.promptForSummonPosition();
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
@@ -531,7 +529,7 @@ export class MinionCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
-      baseManaCost: this.blueprint.manaCost,
+      baseManaCost: this.manaCost,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,

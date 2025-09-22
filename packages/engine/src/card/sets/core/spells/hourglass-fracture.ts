@@ -20,7 +20,7 @@ export const hourglassFracture: SpellBlueprint = {
   `,
   collectable: true,
   manaCost: 5,
-  affinity: AFFINITIES.CHRONO,
+  affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
@@ -34,10 +34,10 @@ export const hourglassFracture: SpellBlueprint = {
     const stop = game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
       if (game.gamePhaseSystem.currentPlayer.equals(card.player)) return;
 
-      if (event.data.from === GAME_PHASES.DESTINY) {
-        stop();
-        await game.gamePhaseSystem.declareEndPhase();
-      }
+      // if (event.data.from === GAME_PHASES.DESTINY) {
+      //   stop();
+      //   await game.gamePhaseSystem.declareEndPhase();
+      // }
     });
 
     for (const destinyCard of card.player.cardManager.destinyZone) {

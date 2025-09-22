@@ -19,7 +19,6 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 
 export type SerializedArtifactCard = SerializedCard & {
@@ -206,12 +205,7 @@ export class ArtifactCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost &&
-        !this.game.effectChainSystem.currentChain &&
-        this.location === 'hand' &&
-        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        this.hasAffinityMatch &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -221,24 +215,16 @@ export class ArtifactCard extends Card<
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    this.updatePlayedAt();
 
-    await this.player.artifactManager.equip(this);
-    this.lostDurability = 0;
-    await this.blueprint.onPlay(this.game, this);
-    await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-      new ArtifactEquipedEvent({ card: this })
-    );
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
-    );
+    await this.insertInChainOrExecute(async () => {
+      await this.player.artifactManager.equip(this);
+      this.lostDurability = 0;
+      await this.blueprint.onPlay(this.game, this);
+      await this.game.emit(
+        ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+        new ArtifactEquipedEvent({ card: this })
+      );
+    }, []);
   }
 
   serialize(): SerializedArtifactCard {
@@ -248,7 +234,7 @@ export class ArtifactCard extends Card<
       durability: this.remainingDurability,
       subKind: this.subkind,
       manaCost: this.manaCost,
-      baseManaCost: this.blueprint.manaCost,
+      baseManaCost: this.manaCost,
       abilities: this.abilities.map(a => a.id)
     };
   }

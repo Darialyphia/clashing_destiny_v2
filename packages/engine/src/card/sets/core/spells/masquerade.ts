@@ -65,11 +65,6 @@ export const masquerade: SpellBlueprint = {
           });
         },
         async handler(event) {
-          const phaseCtx =
-            game.gamePhaseSystem.getContext<BetterExtract<GamePhase, 'attack_phase'>>();
-
-          await phaseCtx.ctx.declareBlocker(null);
-
           await card.playWithTargets([event.data.target]);
         }
       })
@@ -120,9 +115,7 @@ export const masquerade: SpellBlueprint = {
     if (ctx.attacker?.equals(target)) {
       ctx.changeAttacker(choice);
     }
-    if (ctx.blocker?.equals(target)) {
-      ctx.changeBlocker(choice);
-    }
+
     if (ctx.target?.equals(target)) {
       ctx.changeTarget(choice);
     }

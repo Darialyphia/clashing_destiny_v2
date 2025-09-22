@@ -1,4 +1,3 @@
-import { MainDeckCardInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
@@ -20,7 +19,7 @@ export const recollection: SpellBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 3,
-  affinity: AFFINITIES.CHRONO,
+  affinity: AFFINITIES.ARCANE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
@@ -44,16 +43,16 @@ export const recollection: SpellBlueprint = {
       await copy.addToHand();
       if (levelMod?.isActive) return;
 
-      await copy.modifiers.add(
-        new Modifier('recollection-debuff', game, card, {
-          mixins: [
-            new MainDeckCardInterceptorModifierMixin(game, {
-              key: 'manaCost',
-              interceptor: value => value! + 1
-            })
-          ]
-        })
-      );
+      // await copy.modifiers.add(
+      //   new Modifier('recollection-debuff', game, card, {
+      //     mixins: [
+      //       new MainDeckCardInterceptorModifierMixin(game, {
+      //         key: 'manaCost',
+      //         interceptor: value => value! + 1
+      //       })
+      //     ]
+      //   })
+      // );
     }
   }
 };

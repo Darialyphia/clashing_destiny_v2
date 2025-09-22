@@ -1,8 +1,6 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -19,6 +17,8 @@ export const sage: HeroBlueprint = {
   cardIconId: 'hero-sage',
   description: 'After you play 3 spells in a single turn, draw a card.',
   kind: CARD_KINDS.HERO,
+  level: 1,
+  destinyCost: 0,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
   setId: CARD_SETS.CORE,

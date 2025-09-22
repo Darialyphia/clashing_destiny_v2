@@ -18,11 +18,9 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../../game/game.enums';
-import type { DestinyCard } from './destiny.entity';
 import { Ability } from './ability.entity';
 
 export type SerializedHeroCard = SerializedCard & {
-  level: number;
   potentialAttackTargets: string[];
   atk: number;
   baseAtk: number;
@@ -203,10 +201,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     }
   }
 
-  get level() {
-    return this.player.unlockedDestinyCards.filter(card => card.countsAsLevel).length;
-  }
-
   get isAlive() {
     return this.remainingHp > 0 && this.location === 'board';
   }
@@ -368,8 +362,30 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return await ability.use();
   }
 
+  get level() {
+    return this.blueprint.level;
+  }
+
+  get lineage() {
+    return this.blueprint.lineage;
+  }
+
+  get hasCorrectLevelToPlay() {
+    return this.player.hero.level === this.blueprint.level - 1;
+  }
+
+  get hasCorrectLineageToPlay() {
+    return !this.lineage || this.player.hero.lineage === this.lineage;
+  }
+
   canPlay() {
-    return this.location !== 'board';
+    return this.interceptors.canPlay.getValue(
+      this.canPlayBase &&
+        this.hasCorrectLevelToPlay &&
+        this.hasCorrectLineageToPlay &&
+        this.blueprint.canPlay(this.game, this),
+      this
+    );
   }
 
   async play() {
@@ -387,13 +403,13 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  async levelup(destinyCard: DestinyCard) {
+  async levelup() {
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
       new HeroLevelUpEvent({ card: this })
     );
 
-    await this.player.playDestinyCard(destinyCard);
+    // @TODO implement level up logic
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_LEVEL_UP,
@@ -410,7 +426,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   serialize(): SerializedHeroCard {
     return {
       ...this.serializeBase(),
-      level: this.level,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,

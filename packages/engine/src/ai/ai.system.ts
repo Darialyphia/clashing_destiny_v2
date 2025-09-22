@@ -24,14 +24,6 @@ export class AISystem {
       return this.game.effectChainSystem.currentChain.isCurrentPlayer(this.player);
     }
 
-    const gamePhaseState = this.game.gamePhaseSystem.getContext();
-    if (
-      gamePhaseState.state === GAME_PHASES.ATTACK &&
-      gamePhaseState.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
-    ) {
-      return this.game.gamePhaseSystem.currentPlayer.equals(this.player);
-    }
-
     return this.game.interaction.getContext().ctx.player;
   }
 
@@ -46,12 +38,12 @@ export class AISystem {
       if (bestMove) {
         await this.game.dispatch(bestMove.input);
       } else {
-        await this.game.dispatch({
-          type: this.game.effectChainSystem.currentChain ? 'passChain' : 'declareEndTurn',
-          payload: {
-            playerId: this.player.id
-          }
-        });
+        // await this.game.dispatch({
+        //   type: this.game.effectChainSystem.currentChain ? 'passChain' : 'declareEndTurn',
+        //   payload: {
+        //     playerId: this.player.id
+        //   }
+        // });
       }
     });
   }

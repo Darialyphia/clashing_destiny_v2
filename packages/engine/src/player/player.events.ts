@@ -1,5 +1,5 @@
-import type { MainDeckCard } from '../board/board.system';
 import type { Affinity } from '../card/card.enums';
+import type { AnyCard } from '../card/entities/card.entity';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { Player, SerializedPlayer } from './player.entity';
 import type { PLAYER_EVENTS } from './player.enums';
@@ -16,7 +16,7 @@ export class PlayerTurnEvent extends TypedSerializableEvent<
 }
 
 export class PlayerPayForDestinyCostEvent extends TypedSerializableEvent<
-  { player: Player; cards: Array<{ card: MainDeckCard; index: number }> },
+  { player: Player; cards: Array<{ card: AnyCard; index: number }> },
   { player: SerializedPlayer; cards: Array<{ card: string; index: number }> }
 > {
   serialize() {

@@ -5,10 +5,10 @@ import {
   InvalidPlayerError,
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
-import type { MainDeckCard } from '../../board/board.system';
+import type { AnyCard } from '../../card/entities/card.entity';
 
 type PlayCardContextOptions = {
-  card: MainDeckCard;
+  card: AnyCard;
   player: Player;
 };
 
@@ -22,7 +22,7 @@ export class PlayCardContext {
     return instance;
   }
 
-  private card: MainDeckCard;
+  private card: AnyCard;
   private cardIndexInHand: number;
 
   readonly player: Player;

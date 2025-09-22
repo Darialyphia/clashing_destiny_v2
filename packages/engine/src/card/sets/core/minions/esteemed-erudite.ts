@@ -37,7 +37,6 @@ export const esteemedErudite: MinionBlueprint = {
               .filter(
                 blueprint =>
                   blueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-                  card.player.unlockedAffinities.includes(blueprint.affinity) &&
                   blueprint.kind === CARD_KINDS.SPELL
               )
               .map(blueprint => card.player.generateCard<AnyCard>(blueprint.id))

@@ -157,28 +157,12 @@ export class GameClient {
       return snapshot.effectChain.player;
     }
 
-    if (
-      snapshot.phase.state === GAME_PHASES.ATTACK &&
-      snapshot.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
-    ) {
-      return snapshot.players.find(id => id !== snapshot.currentPlayer)!;
-    }
-
     return snapshot.interaction.ctx.player;
   }
 
   getActivePlayerId() {
     if (this.stateManager.state.effectChain) {
       return this.stateManager.state.effectChain.player;
-    }
-
-    if (
-      this.stateManager.state.phase.state === GAME_PHASES.ATTACK &&
-      this.stateManager.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
-    ) {
-      return this.stateManager.state.players.find(
-        id => id !== this.stateManager.state.currentPlayer
-      )!;
     }
 
     return this.stateManager.state.interaction.ctx.player;
@@ -281,6 +265,18 @@ export class GameClient {
     this.queue.push(...snapshots);
   }
 
+  declarePlayCard(card: CardViewModel) {
+    this.ui.optimisticState.playedCardId = card.id;
+
+    this.networkAdapter.dispatch({
+      type: 'declarePlayCard',
+      payload: {
+        id: card.id,
+        playerId: this.playerId
+      }
+    });
+  }
+
   cancelPlayCard() {
     if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
 
@@ -342,25 +338,6 @@ export class GameClient {
     });
   }
 
-  skipBlock() {
-    this.networkAdapter.dispatch({
-      type: 'declareBlocker',
-      payload: {
-        blockerId: null,
-        playerId: this.playerId
-      }
-    });
-  }
-
-  endTurn() {
-    this.networkAdapter.dispatch({
-      type: 'declareEndTurn',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
   passChain() {
     this.networkAdapter.dispatch({
       type: 'passChain',
@@ -386,15 +363,6 @@ export class GameClient {
       payload: {
         playerId: this.playerId,
         indices
-      }
-    });
-  }
-
-  skipDestiny() {
-    this.networkAdapter.dispatch({
-      type: 'skipDestiny',
-      payload: {
-        playerId: this.playerId
       }
     });
   }

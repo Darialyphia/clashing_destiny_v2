@@ -1,6 +1,4 @@
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleManaCostBuffModifier } from '../../../../modifier/modifiers/simple-mana-cost-buff.modifier';
-import { scry } from '../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -44,14 +42,14 @@ export const spriteOfFadingMemories: MinionBlueprint = {
             choices: Array.from(card.player.opponent.cardManager.destinyZone)
           });
 
-          await selectedCard.modifiers.add(
-            new SimpleManaCostBuffModifier(
-              'sprite-of-fading-memories-debuff',
-              game,
-              card,
-              { amount: 1 }
-            )
-          );
+          // await selectedCard.modifiers.add(
+          //   new SimpleManaCostBuffModifier(
+          //     'sprite-of-fading-memories-debuff',
+          //     game,
+          //     card,
+          //     { amount: 1 }
+          //   )
+          // );
         }
       })
     );

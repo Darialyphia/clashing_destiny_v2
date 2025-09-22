@@ -5,7 +5,6 @@ import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
   ArtifactBlueprint,
   CardBlueprint,
-  DestinyBlueprint,
   HeroBlueprint,
   MinionBlueprint,
   SpellBlueprint
@@ -17,7 +16,6 @@ import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { DestinyCard } from './entities/destiny.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -91,14 +89,6 @@ export class CardSystem extends System<CardSystemOptions> {
             id,
             blueprint
           } as CardOptions<HeroBlueprint>)
-      )
-      .with(
-        CARD_KINDS.DESTINY,
-        () =>
-          new DestinyCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<DestinyBlueprint>)
       )
       .exhaustive();
     await card.init();

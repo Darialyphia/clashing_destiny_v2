@@ -2,7 +2,7 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, isDefined, type Serializable } from '@game/shared';
+import { assert, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -20,13 +20,7 @@ import {
   PlayerTurnEvent,
   PlayerUnlockAffinityEvent
 } from './player.events';
-import type { MainDeckCard } from '../board/board.system';
 import { ModifierManager } from '../modifier/modifier-manager.component';
-import { type SerializedTalentTree } from '../card/talent-tree';
-import type { DestinyCard } from '../card/entities/destiny.entity';
-import type { SpellCard } from '../card/entities/spell.entity';
-import type { ArtifactCard } from '../card/entities/artifact.entity';
-import type { MinionCard } from '../card/entities/minion.entity';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 
@@ -52,17 +46,13 @@ export type SerializedPlayer = {
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
-  unlockedAffinities: Affinity[];
-  unlockedDestinyCards: string[];
 };
 
 type PlayerInterceptors = {
-  unlockedAffinities: Interceptable<Affinity[]>;
   cardsDrawnForTurn: Interceptable<number>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    unlockedAffinities: new Interceptable<Affinity[]>(),
     cardsDrawnForTurn: new Interceptable<number>()
   };
 };
@@ -87,8 +77,6 @@ export class Player
 
   private _hero!: HeroCard;
 
-  readonly unlockedDestinyCards: DestinyCard[] = [];
-
   constructor(
     game: Game,
     private options: PlayerOptions
@@ -111,9 +99,6 @@ export class Player
     this._hero = await this.generateCard<HeroCard>(this.options.hero);
     await this._hero.play();
     await this.cardManager.init();
-    this._hero.unlockableAffinities.forEach(affinity => {
-      this._unlockedAffinities.push(affinity);
-    });
   }
 
   serialize() {
@@ -130,9 +115,7 @@ export class Player
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
-      unlockedAffinities: this.unlockedAffinities,
-      influence: this.influence,
-      unlockedDestinyCards: this.unlockedDestinyCards.map(card => card.id)
+      influence: this.influence
     };
   }
 
@@ -186,10 +169,6 @@ export class Player
     return this.opponent.minions;
   }
 
-  get unlockedAffinities() {
-    return this.interceptors.unlockedAffinities.getValue(this._unlockedAffinities, {});
-  }
-
   get isCurrentPlayer() {
     return this.game.gamePhaseSystem.currentPlayer.equals(this);
   }
@@ -227,7 +206,7 @@ export class Player
     });
   }
 
-  async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
+  async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     this.payForManaCost(card.manaCost, manaCostIndices);
     await card.play();
   }
@@ -237,10 +216,9 @@ export class Player
     await ability.use();
   }
 
-  async playDestinyCard(card: DestinyCard) {
+  async playDestinyCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
     await card.play();
-    this.unlockedDestinyCards.push(card);
   }
 
   private async payForDestinyCost(cost: number) {
@@ -251,7 +229,7 @@ export class Player
     const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 
-    const banishedCards: Array<{ card: MainDeckCard; index: number }> = [];
+    const banishedCards: Array<{ card: AnyCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
       if (prioritizedCards.length > 0) {
         const card = prioritizedCards.shift()!;

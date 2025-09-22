@@ -22,7 +22,7 @@ export const delayTheInevitable: SpellBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 3,
-  affinity: AFFINITIES.CHRONO,
+  affinity: AFFINITIES.DARK,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,

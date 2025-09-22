@@ -12,7 +12,6 @@ import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
-import { EndTurnGlobalAction } from '../actions/end-turn';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
@@ -166,10 +165,8 @@ export class UiController {
   private buildGlobalActionRules() {
     this.globalActionRules = [
       new CancelPlayCardGlobalAction(this.client),
-      new EndTurnGlobalAction(this.client),
       new CommitMinionSlotSelectionGlobalAction(this.client),
       new CommitCardSelectionGlobalAction(this.client),
-      new SkipBlockGlobalAction(this.client),
       new PassChainGlobalAction(this.client)
     ];
   }

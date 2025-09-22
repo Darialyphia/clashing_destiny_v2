@@ -157,13 +157,6 @@ export class StandardDeckValidator implements DeckValidator {
       }
 
       return true;
-    } else if (card.kind === CARD_KINDS.DESTINY) {
-      if (withBlueprint.destiny.length >= this.destinyDeckSize) {
-        return false;
-      }
-      const existing = withBlueprint.destiny.find(c => c.blueprint.id === card.id);
-
-      return !isDefined(existing);
     } else {
       return !isDefined(deck.hero);
     }

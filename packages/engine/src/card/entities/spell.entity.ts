@@ -1,5 +1,5 @@
 import type { Game } from '../../game/game';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
@@ -10,7 +10,7 @@ import {
   type SerializedPreResponseTarget,
   type SpellBlueprint
 } from '../card-blueprint';
-import { CARD_EVENTS, SPELL_KINDS, type SpellKind } from '../card.enums';
+import { CARD_EVENTS } from '../card.enums';
 import { CardBeforePlayEvent, CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -24,7 +24,6 @@ import {
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
-  subKind: SpellKind;
   preResponseTargets: SerializedPreResponseTarget[] | null;
 };
 export type SpellCardInterceptors = CardInterceptors & {
@@ -47,17 +46,6 @@ export class SpellCard extends Card<
     );
   }
 
-  get canPlayDuringChain() {
-    return this.blueprint.subKind === SPELL_KINDS.BURST;
-  }
-
-  get authorizedPhases(): GamePhase[] {
-    if (this.blueprint.subKind === SPELL_KINDS.BURST) {
-      return [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
-    }
-    return [GAME_PHASES.MAIN];
-  }
-
   replacePreResponseTarget(oldTarget: AnyCard, newTarget: AnyCard) {
     if (!this.preResponseTargets) return;
     if (newTarget instanceof Card) {
@@ -74,57 +62,27 @@ export class SpellCard extends Card<
   }
 
   canPlay() {
-    const gameStateCtx = this.game.gamePhaseSystem.getContext();
     return this.interceptors.canPlay.getValue(
-      this.authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-        (gameStateCtx.state === GAME_PHASES.ATTACK
-          ? gameStateCtx.ctx.step === COMBAT_STEPS.BUILDING_CHAIN
-          : true) &&
-        this.location === 'hand' &&
-        this.canPayManaCost &&
-        this.hasAffinityMatch &&
-        this.blueprint.canPlay(this.game, this) &&
-        (this.game.effectChainSystem.currentChain ? this.canPlayDuringChain : true),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
 
   async playWithTargets(targets: PreResponseTarget[]) {
     this.preResponseTargets = targets;
-    await this.game.emit(
-      CARD_EVENTS.CARD_DECLARE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
-    );
-    const effect = {
-      source: this,
-      targets: this.preResponseTargets!,
-      handler: async () => {
-        await this.game.emit(
-          CARD_EVENTS.CARD_BEFORE_PLAY,
-          new CardBeforePlayEvent({ card: this })
-        );
-        this.updatePlayedAt();
 
-        await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
-        this.sendToDiscardPile();
-        this.preResponseTargets?.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        await this.game.emit(
-          CARD_EVENTS.CARD_AFTER_PLAY,
-          new CardBeforePlayEvent({ card: this })
-        );
-        this.preResponseTargets = null;
-      }
-    };
+    await this.insertInChainOrExecute(async () => {
+      await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
 
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
-    }
+      this.dispose();
+
+      this.preResponseTargets?.forEach(target => {
+        if (target instanceof Card) {
+          target.clearTargetedBy({ type: 'card', card: this });
+        }
+      });
+      this.preResponseTargets = null;
+    }, targets);
   }
 
   async play() {
@@ -136,8 +94,7 @@ export class SpellCard extends Card<
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
-      baseManaCost: this.blueprint.manaCost,
-      subKind: this.blueprint.subKind,
+      baseManaCost: this.manaCost,
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
         : null

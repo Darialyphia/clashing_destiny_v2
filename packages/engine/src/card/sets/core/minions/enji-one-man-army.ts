@@ -11,7 +11,6 @@ import {
 } from '../../../card.enums';
 import { MinionCard } from '../../../entities/minion.entity';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
-import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const enjiOneManArmy: MinionBlueprint = {
@@ -36,8 +35,6 @@ export const enjiOneManArmy: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new PrideModifier(game, card, 3));
-
     await card.modifiers.add(
       new Modifier<MinionCard>('enji-aura', game, card, {
         mixins: [

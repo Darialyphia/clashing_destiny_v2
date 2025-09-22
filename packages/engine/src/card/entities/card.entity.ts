@@ -4,19 +4,23 @@ import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint } from '../card-blueprint';
+import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
+  CARD_SPEED,
   type Affinity,
   type CardDeckSource,
   type CardKind,
+  type CardSpeed,
   type Rarity
 } from '../card.enums';
 import {
   CardAddToHandevent,
   CardAfterDestroyEvent,
+  CardAfterPlayEvent,
   CardBeforeDestroyEvent,
+  CardBeforePlayEvent,
   CardDiscardEvent,
   CardExhaustEvent,
   CardWakeUpEvent
@@ -26,10 +30,11 @@ import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
-import type { DestinyCard } from './destiny.entity';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
+import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -46,6 +51,7 @@ export type CardInterceptors = {
   canBeUsedAsDestinyCost: Interceptable<boolean>;
   canBeUsedAsManaCost: Interceptable<boolean>;
   canBeRecollected: Interceptable<boolean>;
+  speed: Interceptable<CardSpeed>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -56,7 +62,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   hasAffinityMatch: new Interceptable(),
   canBeUsedAsDestinyCost: new Interceptable(),
   canBeUsedAsManaCost: new Interceptable(),
-  canBeRecollected: new Interceptable()
+  canBeRecollected: new Interceptable(),
+  speed: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -72,10 +79,13 @@ export type SerializedCard = {
   canPlay: boolean;
   source: CardDeckSource;
   location: CardLocation | null;
+  speed: CardSpeed;
   // keywords: Array<{ id: string; name: string; description: string }>;
   affinity: Affinity;
   modifiers: string[];
   canBeUsedAsManaCost: boolean;
+  manaCost: number | null;
+  destinyCost: number | null;
 };
 
 export type CardTargetOrigin =
@@ -83,7 +93,7 @@ export type CardTargetOrigin =
   | {
       type: 'ability';
       abilityId: string;
-      card: MinionCard | HeroCard | ArtifactCard | DestinyCard;
+      card: MinionCard | HeroCard | ArtifactCard;
     };
 
 export abstract class Card<
@@ -211,6 +221,60 @@ export abstract class Card<
     return this._targetedBy;
   }
 
+  get speed() {
+    return this.interceptors.speed.getValue(this.blueprint.speed, {});
+  }
+
+  get canPlayDuringChain() {
+    return this.speed !== CARD_SPEED.SLOW;
+  }
+
+  protected dispose() {
+    return match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
+        this.sendToDiscardPile();
+      })
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
+        this.sendToBanishPile();
+      })
+      .exhaustive();
+  }
+
+  protected async insertInChainOrExecute(
+    handler: () => Promise<void>,
+    targets: PreResponseTarget[]
+  ) {
+    const effect = {
+      source: this,
+      targets,
+      handler: async () => {
+        await this.game.emit(
+          CARD_EVENTS.CARD_BEFORE_PLAY,
+          new CardBeforePlayEvent({ card: this })
+        );
+        this.updatePlayedAt();
+
+        await handler();
+
+        await this.game.emit(
+          CARD_EVENTS.CARD_AFTER_PLAY,
+          new CardAfterPlayEvent({ card: this })
+        );
+      }
+    };
+
+    if (this.speed === CARD_SPEED.FLASH) {
+      await effect.handler();
+      return this.game.inputSystem.askForPlayerInput();
+    }
+
+    if (this.game.effectChainSystem.currentChain) {
+      this.game.effectChainSystem.addEffect(effect, this.player);
+    } else {
+      void this.game.effectChainSystem.createChain(this.player, effect);
+    }
+  }
+
   targetBy(origin: CardTargetOrigin) {
     this._targetedBy.push(origin);
   }
@@ -321,14 +385,41 @@ export abstract class Card<
   }
   abstract canPlay(): boolean;
 
-  abstract play(): Promise<void>;
-
-  get hasAffinityMatch() {
-    return this.interceptors.hasAffinityMatch.getValue(
-      this.player.unlockedAffinities.includes(this.affinity),
-      {}
-    );
+  protected get canPlayAsMaindeckCard() {
+    if (this.deckSource !== CARD_DECK_SOURCES.MAIN_DECK) {
+      return false;
+    }
+    return this.location === 'hand' && this.canPayManaCost;
   }
+
+  protected get canPlayAsDestinyDeckCard() {
+    if (this.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK) {
+      return false;
+    }
+    return this.location === 'destinyDeck' && this.canPayDestinyCost;
+  }
+
+  protected get canPlayBase() {
+    const gameStateCtx = this.game.gamePhaseSystem.getContext();
+
+    if (
+      gameStateCtx.state === GAME_PHASES.ATTACK &&
+      gameStateCtx.ctx.step !== COMBAT_STEPS.BUILDING_CHAIN
+    ) {
+      return false;
+    }
+
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+      return false;
+    }
+
+    return match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
+      .exhaustive();
+  }
+
+  abstract play(): Promise<void>;
 
   protected serializeBase(): SerializedCard {
     return {
@@ -348,7 +439,10 @@ export abstract class Card<
       canBeUsedAsManaCost: this.canBeUsedAsManaCost,
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
-        .map(modifier => modifier.id)
+        .map(modifier => modifier.id),
+      manaCost: this.manaCost,
+      destinyCost: this.destinyCost,
+      speed: this.blueprint.speed
       // keywords: this.keywords.map(keyword => ({
       //   id: keyword.id,
       //   name: keyword.name,

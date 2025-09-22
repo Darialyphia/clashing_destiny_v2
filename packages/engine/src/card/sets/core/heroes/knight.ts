@@ -15,6 +15,8 @@ export const knight: HeroBlueprint = {
   description: '',
   cardIconId: 'hero-knight',
   kind: CARD_KINDS.HERO,
+  level: 1,
+  destinyCost: 0,
   affinity: AFFINITIES.NORMAL,
   affinities: [],
   setId: CARD_SETS.CORE,

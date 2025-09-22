@@ -134,11 +134,7 @@ export const testGameBuilder = () => {
               });
             });
           },
-          async skipDestiny() {
-            await game.gamePhaseSystem
-              .getContext<GamePhasesDict['DESTINY']>()
-              .ctx.skipDestinyPhase();
-          },
+
           async playDestinyCard(blueprintId: string) {
             const player = game.gamePhaseSystem.currentPlayer;
             const card = player.cardManager.destinyDeck.cards.find(
@@ -158,14 +154,6 @@ export const testGameBuilder = () => {
 
             await ctx.declareAttacker(attacker);
             await ctx.declareAttackTarget(target);
-          },
-          async skipBlock() {
-            const { ctx } = game.gamePhaseSystem.getContext<GamePhasesDict['ATTACK']>();
-            await ctx.declareBlocker(null);
-          },
-          async declareBlocker(blocker: MinionCard | HeroCard) {
-            const { ctx } = game.gamePhaseSystem.getContext<GamePhasesDict['ATTACK']>();
-            await ctx.declareBlocker(blocker);
           }
         }
       };

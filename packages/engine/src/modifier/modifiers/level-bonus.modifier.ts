@@ -21,6 +21,7 @@ export class LevelBonusModifier<T extends AnyCard> extends Modifier<T> {
 
   get isActive() {
     if (!this.target.player.hero) return false;
-    return this.target.player.hero.level >= this.level;
+    return true;
+    // return this.target.player.hero.level >= this.level;
   }
 }

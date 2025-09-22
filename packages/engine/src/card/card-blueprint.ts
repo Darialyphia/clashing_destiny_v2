@@ -6,20 +6,28 @@ import type {
   CardKind,
   CardSetId,
   Rarity,
-  CARD_DECK_SOURCES,
   Affinity,
   ArtifactKind,
-  SpellKind,
-  Tag
+  Tag,
+  CARD_DECK_SOURCES,
+  CardSpeed
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { Card, type AnyCard } from './entities/card.entity';
-import type { DestinyCard } from './entities/destiny.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 
+export type CardSourceBlueprint =
+  | {
+      deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
+      manaCost: number;
+    }
+  | {
+      deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
+      destinyCost: number;
+    };
 export type CardBlueprintBase = {
   id: string;
   name: string;
@@ -30,14 +38,10 @@ export type CardBlueprintBase = {
   collectable: boolean;
   unique?: boolean;
   affinity: Affinity;
+  speed: CardSpeed;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-};
-
-export type MainDeckCardBlueprint = CardBlueprintBase & {
-  manaCost: number;
-  deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
-};
+} & CardSourceBlueprint;
 
 export type AbilityBlueprint<
   TCard extends AbilityOwner,
@@ -95,7 +99,7 @@ export const serializePreResponseTarget = (
   };
 };
 
-export type MinionBlueprint = MainDeckCardBlueprint & {
+export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
@@ -104,20 +108,20 @@ export type MinionBlueprint = MainDeckCardBlueprint & {
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
 };
-export type SpellBlueprint = MainDeckCardBlueprint & {
+export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
-  subKind: SpellKind;
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
   getPreResponseTargets: (game: Game, card: SpellCard) => Promise<PreResponseTarget[]>;
 };
 export type HeroBlueprint = CardBlueprintBase & {
-  deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
   lineage: string | null;
+  level: number;
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
+  canPlay: (game: Game, card: HeroCard) => boolean;
   atk: number;
   maxHp: number;
   spellPower: number;
@@ -125,19 +129,7 @@ export type HeroBlueprint = CardBlueprintBase & {
   abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
 };
 
-export type DestinyBlueprint = CardBlueprintBase & {
-  deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
-  kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  destinyCost: number;
-  minLevel: number;
-  countsAsLevel: boolean;
-  onInit: (game: Game, card: DestinyCard) => Promise<void>;
-  onPlay: (game: Game, card: DestinyCard) => Promise<void>;
-  affinity: Affinity;
-  abilities: AbilityBlueprint<DestinyCard, PreResponseTarget>[];
-};
-
-export type ArtifactBlueprint = MainDeckCardBlueprint & {
+export type ArtifactBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
@@ -174,5 +166,4 @@ export type CardBlueprint =
   | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
-  | HeroBlueprint
-  | DestinyBlueprint;
+  | HeroBlueprint;

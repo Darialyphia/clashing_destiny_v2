@@ -2,7 +2,6 @@ import dedent from 'dedent';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   AFFINITIES,
@@ -62,7 +61,6 @@ export const phoenix: MinionBlueprint = {
   ],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new PrideModifier(game, card, 3));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {

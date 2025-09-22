@@ -27,16 +27,9 @@ export const CARD_KINDS = {
   HERO: 'HERO',
   // LOCATION: 'LOCATION',
   SPELL: 'SPELL',
-  ARTIFACT: 'ARTIFACT',
-  DESTINY: 'DESTINY'
+  ARTIFACT: 'ARTIFACT'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
-
-export const SPELL_KINDS = {
-  CAST: 'CAST',
-  BURST: 'BURST'
-} as const;
-export type SpellKind = Values<typeof SPELL_KINDS>;
 
 export const ARTIFACT_KINDS = {
   WEAPON: 'WEAPON',
@@ -44,6 +37,14 @@ export const ARTIFACT_KINDS = {
   RELIC: 'RELIC'
 } as const;
 export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
+
+export const CARD_SPEED = {
+  SLOW: 'SLOW',
+  FAST: 'FAST',
+  FLASH: 'FLASH'
+  // WARP: 'WARP'
+} as const;
+export type CardSpeed = Values<typeof CARD_SPEED>;
 
 export const CARD_SETS = {
   CORE: 'CORE'
@@ -66,22 +67,11 @@ export const AFFINITIES = {
   NORMAL: 'NORMAL',
   FIRE: 'FIRE',
   WATER: 'WATER',
-  FROST: 'FROST',
   EARTH: 'EARTH',
-  WIND: 'WIND',
-  STORM: 'STORM',
-  VOID: 'VOID',
+  AIR: 'AIR',
   ARCANE: 'ARCANE',
-  BLOOD: 'BLOOD',
-  HOLY: 'HOLY',
-  SHADOW: 'SHADOW',
-  NATURE: 'NATURE',
-  DEATH: 'DEATH',
-  COSMIC: 'COSMIC',
-  CHRONO: 'CHRONO',
-  TECH: 'TECH',
-  PRIMAL: 'PRIMAL',
-  ARMS: 'ARMS'
+  LIGHT: 'LIGHT',
+  DARK: 'DARK'
 } as const;
 
 export type Affinity = Values<typeof AFFINITIES>;

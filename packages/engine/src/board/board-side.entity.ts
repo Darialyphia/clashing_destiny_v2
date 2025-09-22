@@ -327,13 +327,7 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(
-        CARD_KINDS.HERO,
-        CARD_KINDS.SPELL,
-        CARD_KINDS.ARTIFACT,
-        CARD_KINDS.DESTINY,
-        () => {}
-      )
+      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {})
       .with(CARD_KINDS.MINION, () => {
         this.attackZone.slots.forEach(slot => {
           if (slot.minion?.equals(card)) {

@@ -17,7 +17,6 @@ import {
   type CardKind,
   type SpellKind
 } from '../../card/card.enums';
-import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
@@ -317,14 +316,13 @@ export class CardViewModel {
     const index = hand.findIndex(card => card.equals(this));
     if (index === -1) return;
 
-    this.player.playCard(index);
+    this.getClient().declarePlayCard(this);
   }
 
   get actions(): CardActionRule[] {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
-      new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 
