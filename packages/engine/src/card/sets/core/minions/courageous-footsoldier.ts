@@ -11,7 +11,7 @@ import {
 export const courageousFootsoldier: MinionBlueprint = {
   id: 'courageous-footsoldier',
   name: 'Courageous Footsoldier',
-  cardIconId: 'unit-promising-recruit',
+  cardIconId: 'minions/courageous-footsoldier',
   description: ``,
   collectable: true,
   unique: false,

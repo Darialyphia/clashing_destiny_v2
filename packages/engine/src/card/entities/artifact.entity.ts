@@ -1,15 +1,11 @@
-import type { Values } from '@game/shared';
+import type { MaybePromise, Values } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import { type ArtifactBlueprint, type PreResponseTarget } from '../card-blueprint';
 import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
-import {
-  CardBeforePlayEvent,
-  CardAfterPlayEvent,
-  CardDeclarePlayEvent
-} from '../card.events';
+import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -196,13 +192,6 @@ export class ArtifactCard extends Card<
     }
   }
 
-  async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
-    if (!ability) return;
-
-    return await ability.use();
-  }
-
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase && this.blueprint.canPlay(this.game, this),
@@ -210,21 +199,25 @@ export class ArtifactCard extends Card<
     );
   }
 
-  async play() {
+  async play(onResolved: () => MaybePromise<void>) {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.insertInChainOrExecute(async () => {
-      await this.player.artifactManager.equip(this);
-      this.lostDurability = 0;
-      await this.blueprint.onPlay(this.game, this);
-      await this.game.emit(
-        ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-        new ArtifactEquipedEvent({ card: this })
-      );
-    }, []);
+    await this.insertInChainOrExecute(
+      async () => {
+        await this.player.artifactManager.equip(this);
+        this.lostDurability = 0;
+        await this.blueprint.onPlay(this.game, this);
+        await this.game.emit(
+          ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+          new ArtifactEquipedEvent({ card: this })
+        );
+      },
+      [],
+      onResolved
+    );
   }
 
   serialize(): SerializedArtifactCard {

@@ -2,7 +2,7 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, type Serializable } from '@game/shared';
+import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -10,7 +10,11 @@ import {
   NotEnoughCardsInDestinyZoneError,
   NotEnoughCardsInHandError
 } from '../card/card-errors';
-import type { HeroCard } from '../card/entities/hero.entity';
+import {
+  HERO_EVENTS,
+  HeroLevelUpEvent,
+  type HeroCard
+} from '../card/entities/hero.entity';
 import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
@@ -75,7 +79,10 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  private _hero!: HeroCard;
+  private _hero!: {
+    card: HeroCard;
+    lineage: HeroCard[];
+  };
 
   constructor(
     game: Game,
@@ -96,9 +103,37 @@ export class Player
   }
 
   async init() {
-    this._hero = await this.generateCard<HeroCard>(this.options.hero);
-    await this._hero.play();
+    this._hero = {
+      card: await this.generateCard<HeroCard>(this.options.hero),
+      lineage: []
+    };
+    await this._hero.card.play(() => {});
     await this.cardManager.init();
+  }
+
+  async levelupHero(newHero: HeroCard) {
+    const oldHero = this._hero.card;
+    await this.game.emit(
+      HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
+      new HeroLevelUpEvent({ from: oldHero, to: newHero })
+    );
+
+    this._hero.lineage.push(this._hero.card);
+    this._hero = {
+      card: newHero,
+      lineage: this._hero.lineage
+    };
+
+    oldHero.removeFromCurrentLocation();
+    newHero.cloneDamageTaken(oldHero);
+    for (const modifier of oldHero.modifiers.list) {
+      await modifier.remove();
+      await this._hero.card.modifiers.add(modifier);
+    }
+    await this.game.emit(
+      HERO_EVENTS.HERO_AFTER_LEVEL_UP,
+      new HeroLevelUpEvent({ from: oldHero, to: newHero })
+    );
   }
 
   serialize() {
@@ -146,7 +181,11 @@ export class Player
   }
 
   get hero() {
-    return this._hero;
+    return this._hero.card;
+  }
+
+  get heroLinerage() {
+    return this._hero.lineage;
   }
 
   get enemyHero() {
@@ -208,17 +247,31 @@ export class Player
 
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     this.payForManaCost(card.manaCost, manaCostIndices);
-    await card.play();
+    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
+    await card.play(() => {
+      if (isAction) {
+        this.game.turnSystem.switchInitiative();
+      }
+    });
   }
 
-  async useAbility(ability: Ability<AbilityOwner>, manaCostIndices: number[]) {
+  async useAbility(
+    ability: Ability<AbilityOwner>,
+    manaCostIndices: number[],
+    onResolved: () => MaybePromise<void>
+  ) {
     this.payForManaCost(ability.manaCost, manaCostIndices);
-    await ability.use();
+    await ability.use(onResolved);
   }
 
-  async playDestinyCard(card: AnyCard) {
+  async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
-    await card.play();
+    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
+    await card.play(() => {
+      if (isAction) {
+        this.game.turnSystem.switchInitiative();
+      }
+    });
   }
 
   private async payForDestinyCost(cost: number) {

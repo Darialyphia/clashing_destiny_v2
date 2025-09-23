@@ -34,7 +34,11 @@ export class UseAbilityContext {
     this.ability = options.ability;
   }
 
-  async init() {}
+  async init() {
+    if (this.ability.manaCost === 0) {
+      await this.commit(this.player, []);
+    }
+  }
 
   serialize() {
     return {
@@ -49,7 +53,9 @@ export class UseAbilityContext {
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY);
     this.game.interaction.onInteractionEnd();
 
-    await this.player.useAbility(this.ability, manaCostIndices);
+    await this.player.useAbility(this.ability, manaCostIndices, () => {
+      this.game.turnSystem.switchInitiative;
+    });
   }
 
   async cancel(player: Player) {

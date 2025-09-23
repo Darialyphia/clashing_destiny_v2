@@ -16,7 +16,7 @@ import type { HeroCard } from '../../../entities/hero.entity';
 export const rustyBlade: ArtifactBlueprint = {
   id: 'rusty-blade',
   name: 'Rusty Blade',
-  cardIconId: 'artifact-rusty-blade',
+  cardIconId: 'artifacts/rusty-blade',
   description: '',
   collectable: true,
   setId: CARD_SETS.CORE,

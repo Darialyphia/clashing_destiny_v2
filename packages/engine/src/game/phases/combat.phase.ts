@@ -211,9 +211,11 @@ export class CombatPhase
     );
 
     if (!this.game.effectChainSystem.currentChain) {
-      void this.game.effectChainSystem
-        .createChain(this.attacker.player.opponent)
-        .then(() => this.resolveCombat());
+      void this.game.effectChainSystem.createChain({
+        initialPlayer: this.attacker.player,
+        onResolved: async () => this.resolveCombat()
+      });
+
       await this.game.inputSystem.askForPlayerInput();
     } else {
       await this.resolveCombat();

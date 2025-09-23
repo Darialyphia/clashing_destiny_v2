@@ -1,4 +1,4 @@
-import type { EmptyObject, Serializable } from '@game/shared';
+import type { EmptyObject, MaybePromise, Serializable } from '@game/shared';
 import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
@@ -104,7 +104,7 @@ export class Ability<T extends AbilityOwner>
     );
   }
 
-  async use() {
+  async use(onResolved?: () => MaybePromise<void>) {
     const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
     this.card.abilityTargets.set(this.blueprint.id, targets);
 
@@ -140,7 +140,11 @@ export class Ability<T extends AbilityOwner>
     if (this.game.effectChainSystem.currentChain) {
       this.game.effectChainSystem.addEffect(effect, this.card.player);
     } else {
-      void this.game.effectChainSystem.createChain(this.card.player, effect);
+      void this.game.effectChainSystem.createChain({
+        initialPlayer: this.card.player,
+        initialEffect: effect,
+        onResolved
+      });
     }
   }
 

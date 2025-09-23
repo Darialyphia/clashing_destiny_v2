@@ -31,7 +31,6 @@ import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { ChooseAffinityInput } from './inputs/choose-affinity.input';
-import { DeclarePlayDestinyCardInput } from './inputs/declare-play-destiny-card.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
 import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
@@ -61,7 +60,6 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   chooseAffinity: ChooseAffinityInput,
-  declarePlayDestinyCard: DeclarePlayDestinyCardInput,
   declareUseCardAbility: DeclareUseCardAbilityInput,
   commitUseAbility: CommitUseAbilityInput,
   cancelUseAbility: CancelUseAbilityInput

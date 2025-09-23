@@ -52,7 +52,7 @@ export class EffectChain
   private effectStack: Effect[] = [];
   private consecutivePasses = 0;
   private _currentPlayer: Player;
-  public onResolved: () => MaybePromise<void>;
+  private resolveCallbacks: Array<() => MaybePromise<void>> = [];
 
   constructor(
     private game: Game,
@@ -60,10 +60,8 @@ export class EffectChain
     onResolved: () => MaybePromise<void>
   ) {
     super(EFFECT_CHAIN_STATES.BUILDING);
-    this.onResolved = async () => {
-      await onResolved();
-      await this.game.inputSystem.askForPlayerInput();
-    };
+    this.resolveCallbacks.push(() => this.game.inputSystem.askForPlayerInput());
+    this.resolveCallbacks.push(onResolved);
     this._currentPlayer = startingPlayer;
 
     this.addTransitions([
@@ -126,7 +124,11 @@ export class EffectChain
   }
 
   private onEnd() {
-    void this.onResolved();
+    void this.resolveCallbacks.reverse().forEach(callback => callback());
+  }
+
+  onResolved(cb: () => MaybePromise<void>) {
+    this.resolveCallbacks.push(cb);
   }
 
   private async resolveEffects() {

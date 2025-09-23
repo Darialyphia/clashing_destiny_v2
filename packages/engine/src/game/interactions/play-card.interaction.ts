@@ -6,6 +6,7 @@ import {
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
 import type { AnyCard } from '../../card/entities/card.entity';
+import { isDestinyDeckCard, isMainDeckCard } from '../../board/board.system';
 
 type PlayCardContextOptions = {
   card: AnyCard;
@@ -40,6 +41,15 @@ export class PlayCardContext {
 
   async init() {
     this.card.removeFromCurrentLocation();
+    if (isDestinyDeckCard(this.card)) {
+      this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD);
+      this.game.interaction.onInteractionEnd();
+
+      await this.player.playDestinyDeckCard(this.card);
+    }
+    if (isMainDeckCard(this.card) && this.card.manaCost === 0) {
+      await this.commit(this.player, []);
+    }
   }
 
   serialize() {

@@ -5,6 +5,7 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
+  HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
 
@@ -19,6 +20,7 @@ export const combatTutorialEnemyHero: HeroBlueprint = {
   canPlay: () => true,
   kind: CARD_KINDS.HERO,
   affinity: AFFINITIES.NORMAL,
+  job: HERO_JOBS.WARRIOR,
   affinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,

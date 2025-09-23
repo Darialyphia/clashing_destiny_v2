@@ -1,4 +1,4 @@
-import { type JSONObject } from '@game/shared';
+import { type JSONObject, type MaybePromise } from '@game/shared';
 import { EntityWithModifiers } from '../../entity';
 import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
@@ -13,6 +13,7 @@ import {
   type CardDeckSource,
   type CardKind,
   type CardSpeed,
+  type HeroJob,
   type Rarity
 } from '../card.enums';
 import {
@@ -86,6 +87,7 @@ export type SerializedCard = {
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
   destinyCost: number | null;
+  job: HeroJob | null;
 };
 
 export type CardTargetOrigin =
@@ -242,7 +244,8 @@ export abstract class Card<
 
   protected async insertInChainOrExecute(
     handler: () => Promise<void>,
-    targets: PreResponseTarget[]
+    targets: PreResponseTarget[],
+    onResolved?: () => MaybePromise<void>
   ) {
     const effect = {
       source: this,
@@ -271,7 +274,11 @@ export abstract class Card<
     if (this.game.effectChainSystem.currentChain) {
       this.game.effectChainSystem.addEffect(effect, this.player);
     } else {
-      void this.game.effectChainSystem.createChain(this.player, effect);
+      void this.game.effectChainSystem.createChain({
+        initialPlayer: this.player,
+        initialEffect: effect,
+        onResolved
+      });
     }
   }
 
@@ -419,7 +426,7 @@ export abstract class Card<
       .exhaustive();
   }
 
-  abstract play(): Promise<void>;
+  abstract play(onResolved: () => MaybePromise<void>): Promise<void>;
 
   protected serializeBase(): SerializedCard {
     return {
@@ -442,7 +449,8 @@ export abstract class Card<
         .map(modifier => modifier.id),
       manaCost: this.manaCost,
       destinyCost: this.destinyCost,
-      speed: this.blueprint.speed
+      speed: this.blueprint.speed,
+      job: this.blueprint.job ?? null
       // keywords: this.keywords.map(keyword => ({
       //   id: keyword.id,
       //   name: keyword.name,

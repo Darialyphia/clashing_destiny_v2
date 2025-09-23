@@ -10,7 +10,8 @@ import type {
   ArtifactKind,
   Tag,
   CARD_DECK_SOURCES,
-  CardSpeed
+  CardSpeed,
+  HeroJob
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { Card, type AnyCard } from './entities/card.entity';
@@ -40,6 +41,7 @@ export type CardBlueprintBase = {
   unique?: boolean;
   affinity: Affinity;
   speed: CardSpeed;
+  job?: HeroJob;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
 } & CardSourceBlueprint;
@@ -123,6 +125,7 @@ export type HeroBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;
+  job: HeroJob;
   atk: number;
   maxHp: number;
   spellPower: number;

@@ -3,6 +3,7 @@ import {
   StateMachine,
   stateTransition,
   type BetterExtract,
+  type MaybePromise,
   type Values
 } from '@game/shared';
 import type { Player } from '../../player/player.entity';
@@ -14,11 +15,13 @@ import { DrawPhase } from '../phases/draw.phase';
 import { MainPhase } from '../phases/main.phase';
 import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
+import { GAME_EVENTS } from '../game.events';
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
   DECLARE_ATTACK: 'declare_attack',
   FINISH_ATTACK: 'finish_attack',
+  DECLARE_END_TURN: 'declare_end_turn',
   END_TURN: 'end_turn',
   PLAYER_WON: 'player_won'
 } as const;
@@ -105,7 +108,13 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASE_TRANSITIONS.FINISH_ATTACK,
         GAME_PHASES.MAIN
       ),
+      stateTransition(
+        GAME_PHASES.MAIN,
+        GAME_PHASE_TRANSITIONS.DECLARE_END_TURN,
+        GAME_PHASES.END
+      ),
       stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
+
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
@@ -188,6 +197,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await this._ctx.onEnter();
   }
 
+  async declareEndTurn() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN);
+  }
+
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.END_TURN), new WrongGamePhaseError());
 
@@ -199,8 +213,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     });
   }
 
-  async startCombat() {
+  async startCombat(onResolved?: () => MaybePromise<void>) {
     assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK), new WrongGamePhaseError());
+    if (onResolved) {
+      this.game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, onResolved);
+    }
     await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK);
   }
 

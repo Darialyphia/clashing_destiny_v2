@@ -294,23 +294,13 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async chooseAffinity(options: { player: Player; choices: Affinity[]; label: string }) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_AFFINITY].create(
-      this.game,
-      options
-    );
-    return this.game.inputSystem.pause<Affinity | null>();
-  }
-
   async declarePlayCardIntent(card: AnyCard, player: Player) {
     assert(
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
     );
 
-    const canPlay = this.isInteractive(player);
-    assert(canPlay, new IllegalCardPlayedError());
+    assert(this.isInteractive(player), new IllegalCardPlayedError());
 
     assert(card, new IllegalCardPlayedError());
     assert(card.canPlay(), new IllegalCardPlayedError());
@@ -324,11 +314,8 @@ export class GameInteractionSystem
         player
       }
     );
-    if (card.manaCost === 0) {
-      await this.getContext<'playing_card'>().ctx.commit(player, []);
-    } else {
-      await this.game.inputSystem.askForPlayerInput();
-    }
+
+    await this.game.inputSystem.askForPlayerInput();
   }
 
   async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
@@ -337,20 +324,16 @@ export class GameInteractionSystem
       new CorruptedInteractionContextError()
     );
 
-    const canUse = this.isInteractive(player);
-    assert(canUse, new IllegalCardPlayedError());
+    assert(this.isInteractive(player), new IllegalCardPlayedError());
 
     assert(ability.canUse, new IllegalCardPlayedError());
 
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
     this._ctx = await UseAbilityContext.create(this.game, { ability, player });
 
-    if (ability.manaCost === 0) {
-      await this.getContext<'using_ability'>().ctx.commit(player, []);
-    } else {
-      await this.game.inputSystem.askForPlayerInput();
-    }
+    await this.game.inputSystem.askForPlayerInput();
   }
+
   onInteractionEnd() {
     this._ctx = new IdleContext(this.game);
   }

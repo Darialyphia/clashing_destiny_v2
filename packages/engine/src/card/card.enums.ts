@@ -25,7 +25,6 @@ export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
-  // LOCATION: 'LOCATION',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT'
 } as const;
@@ -75,6 +74,28 @@ export const AFFINITIES = {
 } as const;
 
 export type Affinity = Values<typeof AFFINITIES>;
+
+export const LEVEL1_HERO_JOBS = {
+  WARRIOR: 'WARRIOR'
+} as const;
+export type Level1HeroJob = Values<typeof LEVEL1_HERO_JOBS>;
+
+export const LEVEL2_HERO_JOBS = {
+  KNIGHT: 'KNIGHT'
+} as const;
+export type Level2HeroJob = Values<typeof LEVEL2_HERO_JOBS>;
+
+export const LEVEL3_HERO_JOBS = {
+  HIGHLANDER: 'HIGHLANDER'
+} as const;
+export type Level3HeroJob = Values<typeof LEVEL3_HERO_JOBS>;
+
+export const HERO_JOBS = {
+  ...LEVEL1_HERO_JOBS,
+  ...LEVEL2_HERO_JOBS,
+  ...LEVEL3_HERO_JOBS
+} as const;
+export type HeroJob = Values<typeof HERO_JOBS>;
 
 export const TAGS = {
   SWORD: 'sword'

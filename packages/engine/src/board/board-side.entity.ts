@@ -11,11 +11,8 @@ import {
   type SerializedMinionCard
 } from '../card/entities/minion.entity';
 import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
-import type {
-  ArtifactCard,
-  SerializedArtifactCard
-} from '../card/entities/artifact.entity';
-import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
+import type { SerializedArtifactCard } from '../card/entities/artifact.entity';
+import type { SerializedSpellCard } from '../card/entities/spell.entity';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
@@ -24,7 +21,6 @@ import {
   BoardMinionSlot,
   type SerializedBoardMinionSlot
 } from './board-minion-slot.entity';
-import type { Attacker } from '../game/phases/combat.phase';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '../card/card.enums';
 import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
@@ -182,14 +178,6 @@ export class BoardSide
 
   getMinionAt(zone: MinionSlotZone, slot: MinionSlot): Nullable<MinionCard> {
     return this.getZone(zone).slots[slot].minion;
-  }
-
-  getAllAttackTargets(): Attacker[] {
-    return [
-      ...this.frontRow.slots.map(slot => slot.minion).filter(isDefined),
-      ...this.backRow.slots.map(slot => slot.minion).filter(isDefined),
-      this.heroZone.hero
-    ];
   }
 
   getAllCardsInPlay(): AnyCard[] {

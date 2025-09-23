@@ -1,3 +1,4 @@
+import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
@@ -64,26 +65,33 @@ export class SpellCard extends Card<
     );
   }
 
-  async playWithTargets(targets: PreResponseTarget[]) {
+  async playWithTargets(
+    targets: PreResponseTarget[],
+    onResolved?: () => MaybePromise<void>
+  ) {
     this.preResponseTargets = targets;
 
-    await this.insertInChainOrExecute(async () => {
-      await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
+    await this.insertInChainOrExecute(
+      async () => {
+        await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
 
-      this.dispose();
+        this.dispose();
 
-      this.preResponseTargets?.forEach(target => {
-        if (target instanceof Card) {
-          target.clearTargetedBy({ type: 'card', card: this });
-        }
-      });
-      this.preResponseTargets = null;
-    }, targets);
+        this.preResponseTargets?.forEach(target => {
+          if (target instanceof Card) {
+            target.clearTargetedBy({ type: 'card', card: this });
+          }
+        });
+        this.preResponseTargets = null;
+      },
+      targets,
+      onResolved
+    );
   }
 
-  async play() {
+  async play(onResolved: () => MaybePromise<void>) {
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
-    await this.playWithTargets(targets);
+    await this.playWithTargets(targets, onResolved);
   }
 
   serialize(): SerializedSpellCard {

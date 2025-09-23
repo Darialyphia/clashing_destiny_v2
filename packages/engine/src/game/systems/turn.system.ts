@@ -17,6 +17,8 @@ export class TurnSystem extends System<never> {
 
   private nextInitiativePlayer!: Player;
 
+  private consecutivePasses = 0;
+
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._initiativePlayer = this.game.playerSystem.player1;
@@ -25,12 +27,26 @@ export class TurnSystem extends System<never> {
 
   shutdown() {}
 
+  private get passesNeededToResolve() {
+    // return this.effectStack.length <= 1 ? 1 : 2;
+    return 2;
+  }
+
   get initiativePlayer() {
     return this._initiativePlayer;
   }
 
   get elapsedTurns() {
     return this._elapsedTurns;
+  }
+
+  async pass() {
+    this.consecutivePasses++;
+    if (this.consecutivePasses === this.passesNeededToResolve) {
+      await this.game.gamePhaseSystem.declareEndTurn();
+    } else {
+      this._initiativePlayer = this._initiativePlayer.opponent;
+    }
   }
 
   startTurn() {
@@ -52,8 +68,8 @@ export class TurnSystem extends System<never> {
     );
   }
 
-  async takeAction(action: AnyFunction) {
-    await action();
+  switchInitiative() {
+    this.consecutivePasses = 0;
     this._initiativePlayer = this._initiativePlayer.opponent;
   }
 }

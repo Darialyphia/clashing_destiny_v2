@@ -7,19 +7,21 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
+  HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
 
-export const knight: HeroBlueprint = {
-  id: 'knight',
-  name: 'Knight',
+export const aidenLv1: HeroBlueprint = {
+  id: 'aiden-lv1',
+  name: 'Aiden Lvl1',
   description: '',
-  cardIconId: 'hero-knight',
+  cardIconId: 'heroes/aiden-lv1',
   kind: CARD_KINDS.HERO,
   level: 1,
   destinyCost: 0,
   speed: CARD_SPEED.SLOW,
   affinity: AFFINITIES.NORMAL,
+  job: HERO_JOBS.WARRIOR,
   affinities: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
@@ -63,7 +65,7 @@ export const knight: HeroBlueprint = {
         });
         if (!artifact) return;
         artifact.removeFromCurrentLocation();
-        await artifact.play();
+        await artifact.play(() => {});
         ability.seal();
       }
     }

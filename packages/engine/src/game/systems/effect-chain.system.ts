@@ -1,4 +1,4 @@
-import { assert, type Nullable } from '@game/shared';
+import { assert, type MaybePromise, type Nullable } from '@game/shared';
 import { System } from '../../system';
 import { EffectChain, type Effect } from '../effect-chain';
 import type { Player } from '../../player/player.entity';
@@ -10,18 +10,22 @@ export class EffectChainSystem extends System<never> {
 
   shutdown() {}
 
-  createChain(player: Player, initialEffect?: Effect) {
-    return new Promise<void>(resolve => {
-      this._currentChain = new EffectChain(this.game, player, () => {
-        this._currentChain = null;
-        resolve();
-      });
-
-      if (initialEffect) {
-        this._currentChain.addEffect(initialEffect, player);
-      }
-      return this.game.inputSystem.askForPlayerInput();
+  createChain(opts: {
+    initialPlayer: Player;
+    initialEffect?: Effect;
+    onResolved?: () => MaybePromise<void>;
+  }) {
+    this._currentChain = new EffectChain(this.game, opts.initialPlayer, async () => {
+      await opts.onResolved?.();
+      this._currentChain = null;
     });
+
+    if (opts.initialEffect) {
+      this._currentChain.addEffect(opts.initialEffect, opts.initialPlayer);
+    }
+    void this.game.inputSystem.askForPlayerInput();
+
+    return this.currentChain;
   }
 
   get currentChain() {
