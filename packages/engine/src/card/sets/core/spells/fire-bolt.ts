@@ -3,7 +3,7 @@ import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../card-utils';
 import {
-  AFFINITIES,
+  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -21,7 +21,7 @@ export const fireBolt: SpellBlueprint = {
   unique: false,
   manaCost: 1,
   speed: CARD_SPEED.FAST,
-  affinity: AFFINITIES.FIRE,
+  spellSchool: SPELL_SCHOOLS.FIRE,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,

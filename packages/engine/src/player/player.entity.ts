@@ -6,7 +6,6 @@ import { assert, isDefined, type MaybePromise, type Serializable } from '@game/s
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
-  CardNotFoundError,
   NotEnoughCardsInDestinyZoneError,
   NotEnoughCardsInHandError
 } from '../card/card-errors';
@@ -15,15 +14,10 @@ import {
   HeroLevelUpEvent,
   type HeroCard
 } from '../card/entities/hero.entity';
-import { AFFINITIES, type Affinity } from '../card/card.enums';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import {
-  PlayerPayForDestinyCostEvent,
-  PlayerTurnEvent,
-  PlayerUnlockAffinityEvent
-} from './player.events';
+import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
@@ -74,8 +68,6 @@ export class Player
   readonly modifiers: ModifierManager<Player>;
 
   readonly artifactManager: ArtifactManagerComponent;
-
-  private readonly _unlockedAffinities: Affinity[] = [AFFINITIES.NORMAL];
 
   readonly cardTracker: CardTrackerComponent;
 
@@ -214,23 +206,6 @@ export class Player
 
   get influence() {
     return this.cardManager.hand.length + this.cardManager.destinyZone.size;
-  }
-
-  async unlockAffinity(affinity: Affinity) {
-    this._unlockedAffinities.push(affinity);
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_UNLOCK_AFFINITY,
-      new PlayerUnlockAffinityEvent({
-        player: this,
-        affinity
-      })
-    );
-  }
-
-  async removeAffinity(affinity: Affinity) {
-    const index = this._unlockedAffinities.indexOf(affinity);
-    assert(index !== -1, new CardNotFoundError());
-    this._unlockedAffinities.splice(index, 1);
   }
 
   private payForManaCost(manaCost: number, indices: number[]) {

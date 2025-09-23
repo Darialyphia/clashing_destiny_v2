@@ -258,7 +258,11 @@ export class CombatPhase
 
     if (this.target.isAlive && this.attacker.isAlive) {
       await this.attacker.dealDamage(this.target, new CombatDamage(this.attacker));
-      if (this.attacker.canBeCounterattackedBy(this.target)) {
+      if (
+        this.attacker.canBeCounterattackedBy(this.target) &&
+        this.target.isAlive &&
+        this.attacker.isAlive
+      ) {
         await this.target.dealDamage(this.attacker, new CombatDamage(this.target));
       }
     }

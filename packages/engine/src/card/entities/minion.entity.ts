@@ -5,7 +5,7 @@ import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type MinionBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { CARD_EVENTS, type Affinity } from '../card.enums';
+import { CARD_EVENTS, type HeroJob, type SpellSchool } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -36,10 +36,10 @@ export type SerializedMinionCard = SerializedCard & {
   baseMaxHp: number;
   maxHp: number;
   remainingHp: number;
-  affinity: Affinity;
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
+  job: HeroJob | null;
   position: Pick<MinionPosition, 'zone' | 'slot'> | null;
 };
 
@@ -424,17 +424,20 @@ export class MinionCard extends Card<
   }
 
   async dealDamage(target: AttackTarget, damage: CombatDamage) {
+    const affectedCards = this.getAffectedCardsForAttack(target);
     await this.game.emit(
       MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE,
       new MinionCardBeforeDealCombatDamageEvent({
         card: this,
         target,
         damage,
-        affectedCards: this.getAffectedCardsForAttack(target)
+        affectedCards
       })
     );
 
-    await target.takeDamage(this, damage);
+    for (const card of affectedCards) {
+      await card.takeDamage(this, damage);
+    }
 
     await this.game.emit(
       MINION_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE,
@@ -442,7 +445,7 @@ export class MinionCard extends Card<
         card: this,
         target,
         damage,
-        affectedCards: this.getAffectedCardsForAttack(target)
+        affectedCards
       })
     );
   }
@@ -577,11 +580,11 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
-      affinity: this.blueprint.affinity,
       position: this.position
         ? { zone: this.position.zone, slot: this.position.slot }
         : null,
-      abilities: this.abilities.map(ability => ability.id)
+      abilities: this.abilities.map(ability => ability.id),
+      job: this.blueprint.job ?? null
     };
   }
 }

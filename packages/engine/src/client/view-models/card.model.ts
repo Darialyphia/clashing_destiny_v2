@@ -12,7 +12,7 @@ import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
 import {
   CARD_KINDS,
-  type Affinity,
+  type SpellSchool,
   type ArtifactKind,
   type CardKind
 } from '../../card/card.enums';
@@ -175,9 +175,9 @@ export class CardViewModel {
     return null;
   }
 
-  get unlockableAffinities() {
-    if ('unlockableAffinities' in this.data) {
-      return this.data.unlockableAffinities as Affinity[];
+  get spellSchools() {
+    if ('spellSchools' in this.data) {
+      return this.data.spellSchools as SpellSchool[];
     }
     return [];
   }
@@ -214,10 +214,6 @@ export class CardViewModel {
     }
 
     return null;
-  }
-
-  get affinity() {
-    return this.data.affinity;
   }
 
   get canPlay() {

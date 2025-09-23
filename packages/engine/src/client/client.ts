@@ -19,7 +19,7 @@ import { TypedEventEmitter } from '../utils/typed-emitter';
 import { GAME_PHASES } from '../game/game.enums';
 import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
-import type { Affinity } from '../card/card.enums';
+import type { SpellSchool } from '../card/card.enums';
 import type { AbilityViewModel } from './view-models/ability.model';
 
 export const GAME_TYPES = {
@@ -347,7 +347,7 @@ export class GameClient {
     });
   }
 
-  chooseAffinity(affinity: Affinity) {
+  chooseAffinity(affinity: SpellSchool) {
     this.networkAdapter.dispatch({
       type: 'chooseAffinity',
       payload: {

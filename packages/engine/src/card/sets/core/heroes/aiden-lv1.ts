@@ -1,7 +1,7 @@
 import type { HeroBlueprint } from '../../../card-blueprint';
 import { isArtifact } from '../../../card-utils';
 import {
-  AFFINITIES,
+  SPELL_SCHOOLS,
   ARTIFACT_KINDS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
@@ -20,9 +20,8 @@ export const aidenLv1: HeroBlueprint = {
   level: 1,
   destinyCost: 0,
   speed: CARD_SPEED.SLOW,
-  affinity: AFFINITIES.NORMAL,
-  job: HERO_JOBS.WARRIOR,
-  affinities: [],
+  jobs: [HERO_JOBS.WARRIOR],
+  spellSchools: [SPELL_SCHOOLS.AIR],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,

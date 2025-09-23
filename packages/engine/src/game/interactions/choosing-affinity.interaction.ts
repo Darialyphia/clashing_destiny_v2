@@ -6,11 +6,11 @@ import {
   UnableToCommitError
 } from '../systems/game-interaction.system';
 import type { Player } from '../../player/player.entity';
-import type { Affinity } from '../../card/card.enums';
+import type { SpellSchool } from '../../card/card.enums';
 
 type ChoosingAffinityContextOptions = {
   player: Player;
-  choices: Affinity[];
+  choices: SpellSchool[];
   label: string;
 };
 export class ChoosingAffinityContext {
@@ -20,9 +20,9 @@ export class ChoosingAffinityContext {
     return instance;
   }
 
-  private selectedAffinity: Affinity | null = null;
+  private selectedAffinity: SpellSchool | null = null;
 
-  private choices: Affinity[] = [];
+  private choices: SpellSchool[] = [];
 
   readonly player: Player;
 
@@ -47,7 +47,7 @@ export class ChoosingAffinityContext {
     };
   }
 
-  commit(player: Player, affinity: Affinity | null) {
+  commit(player: Player, affinity: SpellSchool | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
     if (isDefined(affinity)) {
       assert(this.choices.includes(affinity), new UnableToCommitError());

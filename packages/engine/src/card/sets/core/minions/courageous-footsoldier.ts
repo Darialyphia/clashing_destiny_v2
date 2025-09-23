@@ -1,6 +1,6 @@
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
-  AFFINITIES,
+  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -22,7 +22,7 @@ export const courageousFootsoldier: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
-  affinity: AFFINITIES.NORMAL,
+  job: null,
   setId: CARD_SETS.CORE,
   abilities: [],
   tags: [],

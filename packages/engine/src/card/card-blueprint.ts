@@ -6,7 +6,7 @@ import type {
   CardKind,
   CardSetId,
   Rarity,
-  Affinity,
+  SpellSchool,
   ArtifactKind,
   Tag,
   CARD_DECK_SOURCES,
@@ -39,9 +39,7 @@ export type CardBlueprintBase = {
   cardIconId: string;
   collectable: boolean;
   unique?: boolean;
-  affinity: Affinity;
   speed: CardSpeed;
-  job?: HeroJob;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
 } & CardSourceBlueprint;
@@ -107,12 +105,14 @@ export type MinionBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
+  job: HeroJob | null;
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
 };
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
+  spellSchool: SpellSchool | null;
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
@@ -125,11 +125,11 @@ export type HeroBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;
-  job: HeroJob;
+  jobs: HeroJob[];
   atk: number;
   maxHp: number;
   spellPower: number;
-  affinities: Affinity[];
+  spellSchools: SpellSchool[];
   abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
 };
 
@@ -138,6 +138,7 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
+  job: HeroJob | null;
   abilities: AbilityBlueprint<ArtifactCard, PreResponseTarget>[];
   durability: number;
 } & (
@@ -149,22 +150,6 @@ export type ArtifactBlueprint = CardBlueprintBase & {
         atkBonus: number;
       }
   );
-
-export type TalentTreeNodeBlueprint = {
-  id: string;
-  name: string;
-  description: string;
-  level: number;
-  parentIds: string[];
-  iconId: string;
-  destinyCost: number;
-  exclusiveWith?: string[];
-  onUnlock: (game: Game, hero: HeroCard) => Promise<void>;
-};
-
-export type TalentTreeBlueprint = {
-  nodes: TalentTreeNodeBlueprint[];
-};
 
 export type CardBlueprint =
   | SpellBlueprint

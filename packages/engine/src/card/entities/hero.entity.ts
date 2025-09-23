@@ -6,7 +6,7 @@ import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type HeroBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { type Affinity, type HeroJob } from '../card.enums';
+import { type SpellSchool, type HeroJob } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -32,8 +32,8 @@ export type SerializedHeroCard = SerializedCard & {
   baseMaxHp: number;
   remainingHp: number;
   abilities: string[];
-  unlockableAffinities: string[];
-  job: HeroJob;
+  spellSchools: SpellSchool[];
+  jobs: HeroJob[];
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -168,7 +168,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
-  unlockedAffinity!: Affinity;
+  unlockedAffinity!: SpellSchool;
 
   readonly abilities: Ability<HeroCard>[] = [];
 
@@ -242,10 +242,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get remainingHp(): number {
     return Math.max(this.maxHp - this.damageTaken, 0);
-  }
-
-  get unlockableAffinities() {
-    return this.blueprint.affinities;
   }
 
   get attackRanges(): AttackRange[] {
@@ -333,16 +329,20 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   async dealDamage(target: AttackTarget, damage: CombatDamage) {
+    const affectedCards = this.getAffectedCardsForAttack(target);
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
       new HeroBeforeDealCombatDamageEvent({
         card: this,
         target,
         damage,
-        affectedCards: this.getAffectedCardsForAttack(target)
+        affectedCards
       })
     );
-    await target.takeDamage(this, damage);
+
+    for (const card of affectedCards) {
+      await card.takeDamage(this, damage);
+    }
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
@@ -350,7 +350,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         card: this,
         target,
         damage,
-        affectedCards: this.getAffectedCardsForAttack(target)
+        affectedCards
       })
     );
   }
@@ -406,6 +406,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       targets[index] = newTarget;
       newTarget.targetBy({ type: 'ability', abilityId, card: this });
     }
+  }
+
+  get spellSchools() {
+    return this.blueprint.spellSchools;
   }
 
   get level() {
@@ -469,9 +473,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
-      unlockableAffinities: this.blueprint.affinities,
       abilities: this.abilities.map(ability => ability.id),
-      job: this.blueprint.job
+      jobs: this.blueprint.jobs,
+      spellSchools: this.blueprint.spellSchools
     };
   }
 }

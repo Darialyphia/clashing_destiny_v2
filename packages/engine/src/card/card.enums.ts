@@ -62,8 +62,7 @@ export const RARITIES = {
 
 export type Rarity = Values<typeof RARITIES>;
 
-export const AFFINITIES = {
-  NORMAL: 'NORMAL',
+export const SPELL_SCHOOLS = {
   FIRE: 'FIRE',
   WATER: 'WATER',
   EARTH: 'EARTH',
@@ -72,28 +71,11 @@ export const AFFINITIES = {
   LIGHT: 'LIGHT',
   DARK: 'DARK'
 } as const;
-
-export type Affinity = Values<typeof AFFINITIES>;
-
-export const LEVEL1_HERO_JOBS = {
-  WARRIOR: 'WARRIOR'
-} as const;
-export type Level1HeroJob = Values<typeof LEVEL1_HERO_JOBS>;
-
-export const LEVEL2_HERO_JOBS = {
-  KNIGHT: 'KNIGHT'
-} as const;
-export type Level2HeroJob = Values<typeof LEVEL2_HERO_JOBS>;
-
-export const LEVEL3_HERO_JOBS = {
-  HIGHLANDER: 'HIGHLANDER'
-} as const;
-export type Level3HeroJob = Values<typeof LEVEL3_HERO_JOBS>;
+export type SpellSchool = Values<typeof SPELL_SCHOOLS>;
 
 export const HERO_JOBS = {
-  ...LEVEL1_HERO_JOBS,
-  ...LEVEL2_HERO_JOBS,
-  ...LEVEL3_HERO_JOBS
+  WARRIOR: 'WARRIOR',
+  KNIGHT: 'KNIGHT'
 } as const;
 export type HeroJob = Values<typeof HERO_JOBS>;
 

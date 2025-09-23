@@ -9,7 +9,7 @@ import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
   CARD_SPEED,
-  type Affinity,
+  type SpellSchool,
   type CardDeckSource,
   type CardKind,
   type CardSpeed,
@@ -81,13 +81,10 @@ export type SerializedCard = {
   source: CardDeckSource;
   location: CardLocation | null;
   speed: CardSpeed;
-  // keywords: Array<{ id: string; name: string; description: string }>;
-  affinity: Affinity;
   modifiers: string[];
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
   destinyCost: number | null;
-  job: HeroJob | null;
 };
 
 export type CardTargetOrigin =
@@ -136,10 +133,6 @@ export abstract class Card<
 
   get kind() {
     return this.blueprint.kind;
-  }
-
-  get affinity() {
-    return this.blueprint.affinity;
   }
 
   get keywords() {
@@ -437,7 +430,6 @@ export abstract class Card<
       rarity: this.blueprint.rarity,
       player: this.player.id,
       kind: this.kind,
-      affinity: this.affinity,
       isExhausted: this.isExhausted,
       name: this.blueprint.name,
       description: this.blueprint.description,
@@ -449,8 +441,7 @@ export abstract class Card<
         .map(modifier => modifier.id),
       manaCost: this.manaCost,
       destinyCost: this.destinyCost,
-      speed: this.blueprint.speed,
-      job: this.blueprint.job ?? null
+      speed: this.blueprint.speed
       // keywords: this.keywords.map(keyword => ({
       //   id: keyword.id,
       //   name: keyword.name,

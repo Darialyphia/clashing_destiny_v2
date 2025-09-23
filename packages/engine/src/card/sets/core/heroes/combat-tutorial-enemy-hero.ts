@@ -1,6 +1,6 @@
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
-  AFFINITIES,
+  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -19,9 +19,8 @@ export const combatTutorialEnemyHero: HeroBlueprint = {
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   kind: CARD_KINDS.HERO,
-  affinity: AFFINITIES.NORMAL,
-  job: HERO_JOBS.WARRIOR,
-  affinities: [],
+  jobs: [HERO_JOBS.WARRIOR],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   collectable: false,

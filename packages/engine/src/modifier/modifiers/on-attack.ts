@@ -1,13 +1,7 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type {
-  HeroAfterDealCombatDamageEvent,
-  HeroCard
-} from '../../card/entities/hero.entity';
-import type {
-  MinionCard,
-  MinionCardDealCombatDamageEvent
-} from '../../card/entities/minion.entity';
+import type { HeroCard } from '../../card/entities/hero.entity';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import type { AfterDeclareAttackEvent } from '../../game/phases/combat.phase';

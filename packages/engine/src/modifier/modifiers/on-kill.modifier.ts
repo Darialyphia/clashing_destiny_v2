@@ -1,7 +1,7 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroAfterDealCombatDamageEvent } from '../../card/entities/hero.entity';
-import type { MinionCardDealCombatDamageEvent } from '../../card/entities/minion.entity';
+import type { MinionCardAfterDealCombatDamageEvent } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
@@ -16,7 +16,7 @@ export class OnKillModifier<T extends AnyCard> extends Modifier<T> {
     private options: {
       mixins?: ModifierMixin<T>[];
       handler: (
-        event: MinionCardDealCombatDamageEvent | HeroAfterDealCombatDamageEvent,
+        event: MinionCardAfterDealCombatDamageEvent | HeroAfterDealCombatDamageEvent,
         modifier: Modifier<T>
       ) => void;
     }
@@ -38,10 +38,10 @@ export class OnKillModifier<T extends AnyCard> extends Modifier<T> {
   }
 
   private async onDamage(
-    event: MinionCardDealCombatDamageEvent | HeroAfterDealCombatDamageEvent
+    event: MinionCardAfterDealCombatDamageEvent | HeroAfterDealCombatDamageEvent
   ) {
     if (!event.data.card.equals(this.target)) return;
-    if (event.data.target.isAlive) return;
+    if (!event.data.target.isAlive) return;
     if (event.data.target.isAttacking) return; // onKill only procs when the unit is attacking, blocking or being attacked
     await this.options.handler(event, this);
   }

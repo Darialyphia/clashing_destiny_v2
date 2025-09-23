@@ -3,7 +3,6 @@ import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-e
 import { Modifier } from '../../../../modifier/modifier.entity';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import {
-  AFFINITIES,
   ARTIFACT_KINDS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
@@ -26,7 +25,7 @@ export const rustyBlade: ArtifactBlueprint = {
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
-  affinity: AFFINITIES.NORMAL,
+  job: null,
   durability: 1,
   subKind: ARTIFACT_KINDS.WEAPON,
   atkBonus: 2,

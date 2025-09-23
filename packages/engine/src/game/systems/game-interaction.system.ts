@@ -19,7 +19,7 @@ import {
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { ChoosingAffinityContext } from '../interactions/choosing-affinity.interaction';
-import type { Affinity } from '../../card/card.enums';
+import type { SpellSchool } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { UseAbilityContext } from '../interactions/use-ability.interaction';
