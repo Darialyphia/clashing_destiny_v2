@@ -7,9 +7,10 @@ import {
   type Rarity,
   type SpellSchool
 } from '@game/engine/src/card/card.enums';
-import { clamp, isDefined, mapRange, uppercaseFirstLetter } from '@game/shared';
+import { clamp, isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
 import { until, useElementBounding, useMouse } from '@vueuse/core';
+import CardFoil from './CardFoil.vue';
 
 const { card } = defineProps<{
   card: {
@@ -83,8 +84,9 @@ const pointerStyle = computed(() => {
   return {
     glareX: pointer.x,
     glareY: pointer.y,
-    foilX: Math.round(mapRange(percent.x, [0, 100], [37, 63])),
-    foilY: Math.round(mapRange(percent.y, [0, 100], [33, 67])),
+
+    foilOilX: width - pointer.x,
+    foilOilY: height - pointer.y,
     pointerFromCenter: clamp(
       Math.sqrt(
         (percent.y - 50) * (percent.y - 50) +
@@ -175,14 +177,14 @@ const costStatus = computed(() => {
     ref="card"
   >
     <div class="card-front">
-      <div class="foil" />
+      <CardFoil />
       <div class="image">
         <div class="shadow" />
         <div class="art" />
       </div>
 
       <div ref="name-box" class="name" :data-text="card.name">
-        <div>
+        <div class="dual-text" :data-text="card.name">
           {{ card.name }}
         </div>
       </div>
@@ -209,7 +211,7 @@ const costStatus = computed(() => {
           {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
         </div>
         <div
-          v-for="school in card.unlockedSpellSchools ?? card.spellSchool ?? []"
+          v-for="school in card.unlockedSpellSchools ?? []"
           :key="school"
           class="spell-school"
           :style="{
@@ -261,7 +263,8 @@ const costStatus = computed(() => {
       </div>
 
       <div class="kind">
-        {{ card.kind.toLocaleLowerCase() }}
+        {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
+        <span v-if="card.level">- Lvl{{ card.level }}</span>
       </div>
       <div
         class="description"
@@ -279,12 +282,15 @@ const costStatus = computed(() => {
         <span ref="multi-line-checker" />
       </div>
 
-      <div class="sub-kind" v-if="card.subKind">
+      <!-- <div class="sub-kind" v-if="card.subKind">
         {{ card.subKind }}
-      </div>
+      </div> -->
       <div class="glare lt-lg:hidden" />
     </div>
-    <div class="card-back" />
+    <div class="card-back">
+      <CardFoil />
+      <div class="glare lt-lg:hidden" />
+    </div>
   </div>
 </template>
 
@@ -293,14 +299,14 @@ const costStatus = computed(() => {
   --pixel-scale: 2;
   --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
-  --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
-  --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
+  --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
+  --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   /* --pointer-from-center: v-bind('pointerStyle?.pointerFromCenter'); */
   width: calc(var(--card-width) * var(--pixel-scale));
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
-  transform-style: preserve-3d;
   font-family: 'Lato', sans-serif;
+  transform-style: preserve-3d;
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -315,7 +321,15 @@ const costStatus = computed(() => {
   /* font-family: 'NotJamSlab14', monospace; */
   font-size: 16px;
   padding: 1rem;
+  position: relative;
   transform-style: preserve-3d;
+}
+
+.front-content {
+  position: absolute;
+  transform-style: preserve-3d;
+  inset: 0;
+  transform: translateZ(150px);
 }
 
 .card-back {
@@ -340,18 +354,17 @@ const costStatus = computed(() => {
   &:after {
     background: linear-gradient(
       var(--_top-color),
-      var(--_top-color) 40%,
-      var(--_bottom-color) 40%
+      var(--_top-color) 50%,
+      var(--_bottom-color) 50%
     );
+    line-height: 1.2;
     background-clip: text;
+    background-size: 100% 1lh;
+    background-repeat: repeat-y;
     translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
   }
   &:before {
-    text-shadow:
-      0 2px black,
-      0 -2px black,
-      2px 0 black,
-      -2px 0 black;
+    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
     z-index: -1;
     translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
   }
@@ -389,13 +402,11 @@ const costStatus = computed(() => {
   left: 50%;
   transform: translateX(-50%);
   display: grid;
-
   > * {
     grid-column: 1;
     grid-row: 1;
   }
-  /*card image is in a pseudo element because otherwise the shadow appears in front of it
-  Some property seems to nullifies the z-index ordering, not sure what or why */
+
   .art {
     content: '';
     position: absolute;
@@ -410,14 +421,14 @@ const costStatus = computed(() => {
   }
 
   .spell & {
-    /* background: url('/assets/ui/frame-spell.png') no-repeat; */
-    /* background-size: cover; */
+    background: url('/assets/ui/frame-spell.png') no-repeat;
+    background-size: cover;
     top: 0;
   }
 
   .artifact & {
-    /* background: url('/assets/ui/frame-artifact.png') no-repeat; */
-    /* background-size: cover; */
+    background: url('/assets/ui/frame-artifact.png') no-repeat;
+    background-size: cover;
     top: 0;
   }
 
@@ -541,7 +552,7 @@ const costStatus = computed(() => {
   padding-right: calc(8px * var(--pixel-scale));
 
   --dual-text-offset-x: calc(-17px * var(--pixel-scale));
-  --dual-text-offset-y: calc(2.5px * var(--pixel-scale));
+  --dual-text-offset-y: calc(3.5px * var(--pixel-scale));
   + * {
     margin-top: calc(2px * var(--pixel-scale));
   }
@@ -588,11 +599,20 @@ const costStatus = computed(() => {
 }
 .mana-cost {
   background-image: url('/assets/ui/mana-cost.png');
+  font-weight: var(--font-weight-7);
+  padding-top: calc(3px * var(--pixel-scale));
+  .dual-text::before {
+    transform: translateY(-3px); /* *shrug* */
+  }
 }
 
 .destiny-cost {
   background-image: url('/assets/ui/destiny-cost.png');
   font-weight: var(--font-weight-7);
+  padding-top: calc(3px * var(--pixel-scale));
+  .dual-text::before {
+    transform: translateY(-3px); /* *shrug* */
+  }
 }
 
 .job {
@@ -614,6 +634,7 @@ const costStatus = computed(() => {
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 18px;
+  --dual-text-offset-y: 2px;
 }
 
 .spellpower {
@@ -635,6 +656,7 @@ const costStatus = computed(() => {
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 18px;
+  --dual-text-offset-y: 2px;
 }
 
 .durability {
@@ -646,9 +668,8 @@ const costStatus = computed(() => {
   position: absolute;
   top: calc(104px * var(--pixel-scale));
   left: calc(18px * var(--pixel-scale));
-  display: grid;
-  place-content: center;
   text-transform: capitalize;
+  text-align: center;
   font-size: 12px;
   color: #d7ad42;
   font-weight: var(--font-weight-5);
@@ -709,12 +730,6 @@ const costStatus = computed(() => {
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.3s;
-  /* background-image: radial-gradient(
-    circle at var(--glare-x) var(--glare-y),
-    hsla(0, 0%, 100%, 0.8) 10%,
-    hsla(0, 0%, 100%, 0.65) 20%,
-    hsla(0, 0%, 0%, 0.5) 90%
-  ); */
   background-image: radial-gradient(
     farthest-corner circle at var(--glare-x) var(--glare-y),
     hsla(0, 0%, 100%, 0.8) 10%,
@@ -728,130 +743,4 @@ const costStatus = computed(() => {
     opacity: 1;
   }
 }
-
-@property --foil-x {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 0%;
-}
-@property --foil-y {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 0%;
-}
-@property --foil-brightness {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
-
-@keyframes foil {
-  from {
-    --foil-x: 0%;
-    --foil-y: 0%;
-    --foil-brightness: 0.2;
-  }
-  50% {
-    --foil-brightness: 0.5;
-  }
-  to {
-    --foil-x: 37.9%;
-    --foil-y: 100%;
-    --foil-brightness: 0.2;
-  }
-}
-
-.foil {
-  --space: 5%;
-  --angle: 133deg;
-  --foil-brightness: 0.6;
-  --foil-x: 0%;
-  --foil-y: 0%;
-  position: absolute;
-  inset: 0;
-  opacity: 0.4;
-  pointer-events: none;
-  mask-image: url('/assets/ui/card-bg.png');
-  mask-size: cover;
-  mix-blend-mode: color-dodge;
-  background-image:
-    url('/assets/ui/foil-texture.webp'),
-    repeating-linear-gradient(
-      0deg,
-      rgb(255, 119, 115) calc(var(--space) * 1),
-      rgba(255, 237, 95, 1) calc(var(--space) * 2),
-      rgba(168, 255, 95, 1) calc(var(--space) * 3),
-      rgba(131, 255, 247, 1) calc(var(--space) * 4),
-      rgba(120, 148, 255, 1) calc(var(--space) * 5),
-      rgb(216, 117, 255) calc(var(--space) * 6),
-      rgb(255, 119, 115) calc(var(--space) * 7)
-    ),
-    repeating-linear-gradient(
-      var(--angle),
-      #0e152e 0%,
-      hsl(180, 10%, 60%) 3.8%,
-      hsl(180, 29%, 66%) 4.5%,
-      hsl(180, 10%, 60%) 5.2%,
-      #0e152e 10%,
-      #0e152e 12%
-    );
-  background-size:
-    100%,
-    200% 700%,
-    500%;
-  background-repeat: repeat, no-repeat, no-repeat;
-  background-blend-mode: exclusion, hue, hard-light;
-  background-position:
-    center,
-    0% var(--foil-y),
-    var(--foil-x) var(--foil-y);
-  filter: brightness(calc((var(--foil-brightness) * 0.3) + 0.5)) contrast(5)
-    saturate(1.5);
-  animation: foil 10s infinite linear;
-}
-
-/*.foil-texture {
-   --space: 5%;
-  --foil-angle: 0deg;
-  --img-size: 300% 400%;
-  position: absolute;
-  inset: 0;
-  animation: foil-spin 10s infinite linear;
-  background: repeating-linear-gradient(
-    var(--foil-angle),
-    hsla(283, 49%, 60%, 0.75) calc(var(--space) * 1),
-    hsla(2, 74%, 59%, 0.75) calc(var(--space) * 2),
-    hsla(53, 67%, 53%, 0.75) calc(var(--space) * 3),
-    hsla(93, 56%, 52%, 0.75) calc(var(--space) * 4),
-    hsla(176, 38%, 50%, 0.75) calc(var(--space) * 5),
-    hsla(228, 100%, 77%, 0.75) calc(var(--space) * 6),
-    hsla(283, 49%, 61%, 0.75) calc(var(--space) * 7)
-  );
-  background-size: var(--img-size);
-  opacity: 0.7;
-  mix-blend-mode: color-dodge;
-  background-position:
-    0% calc(33% * 1),
-    63% 33%;
-  transition: opacity 0.3s;
-  filter: brightness(0.85) contrast(2.75) saturate(0.65); */
-
-/* &::after {
-    position: absolute;
-    inset: 0;
-    content: '';
-    background-image: radial-gradient(
-      farthest-corner ellipse at calc(((var(--glare-x)) * 0.5) + 25%)
-        calc(((var(--glare-y)) * 0.5) + 25%),
-      hsl(0, 0%, 100%) 5%,
-      hsla(300, 100%, 11%, 0.6) 40%,
-      hsl(0, 0%, 22%) 120%
-    );
-    background-position: center center;
-    background-size: 400% 500%;
-    filter: brightness(calc((var(--pointer-from-center) * 0.2) + 0.4))
-      contrast(0.85) saturate(1.1);
-    mix-blend-mode: hard-light;
-  }
-}*/
 </style>

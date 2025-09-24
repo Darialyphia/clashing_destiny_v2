@@ -94,7 +94,21 @@
     },
     {
       "name": "cards/spells",
-      "assets": []
+      "assets": [
+        {
+          "alias": [
+            "fire-bolt.png"
+          ],
+          "src": [
+            "/assets/cards/spells/fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
     },
     {
       "name": "fx",
@@ -5152,6 +5166,84 @@
           ],
           "src": [
             "/assets/ui/speed.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-air.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-air.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-dark.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-dark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-earth.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-earth.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-fire.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-light.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-light.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-water.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-water.png"
           ],
           "data": {
             "tags": {
