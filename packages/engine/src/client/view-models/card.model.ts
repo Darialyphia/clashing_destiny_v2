@@ -179,6 +179,9 @@ export class CardViewModel {
     if ('spellSchools' in this.data) {
       return this.data.spellSchools as SpellSchool[];
     }
+    if ('spellSchool' in this.data && this.data.spellSchool) {
+      return [this.data.spellSchool] as SpellSchool[];
+    }
     return [];
   }
 

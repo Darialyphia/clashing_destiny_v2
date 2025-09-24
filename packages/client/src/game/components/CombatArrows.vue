@@ -62,29 +62,6 @@ watchEffect(buildAttackArrowPath);
 watch(() => client.value.playerId, buildAttackArrowPath);
 watch(() => state.value.phase.ctx, buildAttackArrowPath);
 useEventListener(window, 'resize', throttle(buildAttackArrowPath, 100));
-
-const buildBlockerArrowPath = async () => {
-  await nextTick();
-  if (state.value.phase.state !== GAME_PHASES.ATTACK) {
-    blockerPath.value = '';
-    return;
-  }
-
-  if (!state.value.phase.ctx.blocker) {
-    blockerPath.value = '';
-    return;
-  }
-
-  blockerPath.value = buildArrowBetweenTwoCards(
-    state.value.phase.ctx.blocker,
-    state.value.phase.ctx.attacker
-  );
-};
-
-watchEffect(buildBlockerArrowPath);
-watch(() => client.value.playerId, buildBlockerArrowPath);
-watch(() => state.value.phase.ctx, buildBlockerArrowPath);
-useEventListener(window, 'resize', throttle(buildBlockerArrowPath, 100));
 </script>
 
 <template>

@@ -147,7 +147,7 @@ const spriteUrl = computed(() => {
         :card="{
           id: card.id,
           name: card.name,
-          affinity: card.affinity,
+          spellSchools: card.spellSchools,
           description: card.description,
           image: card.imagePath,
           kind: card.kind,
@@ -161,8 +161,6 @@ const spriteUrl = computed(() => {
           hp: card.hp,
           spellpower: card.spellpower,
           durability: card.durability,
-          subKind: card.subKind,
-          uinlockableAffinities: card.unlockableAffinities,
           abilities: card.abilities.map(ability => ability.description)
         }"
         class="card"

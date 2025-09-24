@@ -7,7 +7,6 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { vOnClickOutside } from '@vueuse/components';
 import type { GamePhase } from '@game/engine/src/game/game.enums';
-import { isDefined } from '@game/shared';
 
 const state = useGameState();
 const client = useGameClient();
@@ -17,7 +16,7 @@ onMounted(() => {
     snapshot.events.forEach(({ event, eventName }) => {
       const tokens: Token[] = [];
 
-      if (eventName === GAME_EVENTS.GAME_TURN_START) {
+      if (eventName === GAME_EVENTS.TURN_START) {
         tokens.push({
           kind: 'game-turn-start',
           turn: event.turnCount
@@ -62,24 +61,6 @@ onMounted(() => {
           kind: 'card',
           card: state.value.entities[event.target] as CardViewModel
         });
-      }
-
-      if (eventName === GAME_EVENTS.AFTER_DECLARE_BLOCKER) {
-        if (isDefined(event.blocker)) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.blocker] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: 'declared a block.'
-          });
-        } else {
-          tokens.push({
-            kind: 'text',
-            text: 'No blocker declared.'
-          });
-        }
       }
 
       if (eventName === GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE) {

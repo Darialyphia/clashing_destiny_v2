@@ -110,19 +110,16 @@
 
   --fancy-bg: linear-gradient(130deg, #041b38, #1e0112);
 
-  --fancy-bg-transparency: linear-gradient(
-      130deg,
-      hsl(200 100% 35% / 0.3),
-      hsl(320 100% 35% / 0.3)
-    ),
+  --fancy-bg-transparency:
+    linear-gradient(130deg, hsl(200 100% 35% / 0.3), hsl(320 100% 35% / 0.3)),
     hsl(250 30% 0% / 0.6);
   --fancy-border: solid var(--border-size-2) hsl(var(--color-primary-hsl) / 0.5);
 
   --unit-icon-size: calc(38 * 3px);
   --unit-icon-size-mobile: 38px;
 
-  --card-width-unitless: 160;
-  --card-height-unitless: 224;
+  --card-width-unitless: 128;
+  --card-height-unitless: 179;
   --card-width: calc(var(--card-width-unitless) * 1px);
   --card-height: calc(var(--card-height-unitless) * 1px);
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);

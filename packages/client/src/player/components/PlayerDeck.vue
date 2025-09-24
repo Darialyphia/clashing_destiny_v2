@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AFFINITIES, type Affinity } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 
 export type DisplayedDeck = {
@@ -15,17 +14,17 @@ const hero = computed(() => {
   return deck.hero ? CARDS_DICTIONARY[deck.hero] : null;
 });
 
-const affinities = computed(() => {
-  const result = new Set<Affinity>();
-  deck.mainDeck.forEach(card => {
-    const blueprint = CARDS_DICTIONARY[card.blueprintId];
-    if (!blueprint) return;
-    if (blueprint.affinity !== AFFINITIES.NORMAL) {
-      result.add(blueprint.affinity);
-    }
-  });
-  return Array.from(result);
-});
+// const affinities = computed(() => {
+//   const result = new Set<Affinity>();
+//   deck.mainDeck.forEach(card => {
+//     const blueprint = CARDS_DICTIONARY[card.blueprintId];
+//     if (!blueprint) return;
+//     if (blueprint.affinity !== AFFINITIES.NORMAL) {
+//       result.add(blueprint.affinity);
+//     }
+//   });
+//   return Array.from(result);
+// });
 </script>
 
 <template>
@@ -39,14 +38,14 @@ const affinities = computed(() => {
       {{ deck.name }}
     </button>
 
-    <div
+    <!-- <div
       v-for="affinity in affinities"
       :key="affinity"
       class="deck-affinity"
       :style="{
         '--bg': `url('/assets/ui/affinity-${affinity.toLowerCase()}.png')`
       }"
-    />
+    /> -->
   </article>
 </template>
 

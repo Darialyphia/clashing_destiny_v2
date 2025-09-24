@@ -1,7 +1,4 @@
-import type {
-  CardBlueprint,
-  DestinyBlueprint
-} from '@game/engine/src/card/card-blueprint';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS
@@ -56,7 +53,7 @@ export class DeckBuilderViewModel {
       return;
     }
 
-    if (card.blueprint.kind === CARD_KINDS.DESTINY) {
+    if (card.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
       const existing = this._deck[CARD_DECK_SOURCES.DESTINY_DECK].find(
         card => card.blueprintId === blueprintId
       );
@@ -153,7 +150,9 @@ export class DeckBuilderViewModel {
       .map(card => {
         const blueprint = this.cardPool.find(
           c => c.blueprint.id === card.blueprintId
-        )!.blueprint as DestinyBlueprint;
+        )!.blueprint as CardBlueprint & {
+          deckSource: (typeof CARD_DECK_SOURCES)['DESTINY_DECK'];
+        };
 
         return {
           ...card,
@@ -189,15 +188,15 @@ export class DeckBuilderViewModel {
       })
       .toSorted((a, b) => {
         if (
-          a.blueprint.kind === CARD_KINDS.DESTINY &&
-          b.blueprint.kind !== CARD_KINDS.DESTINY
+          a.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          b.blueprint.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK
         ) {
           return -1;
         }
 
         if (
-          a.blueprint.kind !== CARD_KINDS.DESTINY &&
-          b.blueprint.kind === CARD_KINDS.DESTINY
+          a.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          b.blueprint.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK
         ) {
           return 1;
         }
@@ -213,8 +212,8 @@ export class DeckBuilderViewModel {
         }
 
         if (
-          a.blueprint.kind === CARD_KINDS.DESTINY &&
-          b.blueprint.kind === CARD_KINDS.DESTINY
+          a.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          b.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK
         ) {
           if (a.blueprint.destinyCost === b.blueprint.destinyCost) {
             return a.blueprint.name.localeCompare(b.blueprint.name);

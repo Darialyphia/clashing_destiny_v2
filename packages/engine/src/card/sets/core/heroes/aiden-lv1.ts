@@ -13,12 +13,12 @@ import {
 
 export const aidenLv1: HeroBlueprint = {
   id: 'aiden-lv1',
-  name: 'Aiden Lvl1',
+  name: "Aiden, Crown's Vanguard",
   description: '',
   cardIconId: 'heroes/aiden-lv1',
   kind: CARD_KINDS.HERO,
   level: 1,
-  destinyCost: 0,
+  destinyCost: 1,
   speed: CARD_SPEED.SLOW,
   jobs: [HERO_JOBS.WARRIOR],
   spellSchools: [SPELL_SCHOOLS.AIR],

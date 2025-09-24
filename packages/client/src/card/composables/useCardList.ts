@@ -4,8 +4,8 @@ import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
-  type Affinity,
-  type CardKind
+  type CardKind,
+  type SpellSchool
 } from '@game/engine/src/card/card.enums';
 import { type CardSet, CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isString } from '@game/shared';
@@ -14,9 +14,9 @@ import type { Ref, ComputedRef, InjectionKey } from 'vue';
 export type CardListContext = {
   cards: ComputedRef<CardBlueprint[]>;
   textFilter: Ref<string, string>;
-  hasAffinityFilter(affinity: Affinity): boolean;
-  toggleAffinityFilter(affinity: Affinity): void;
-  clearAffinityFilter(): void;
+  hasSpellSchoolFilter(spellSchool: SpellSchool): boolean;
+  toggleSpellSchoolFilter(spellSchool: SpellSchool): void;
+  clearSpellSchoolFilter(): void;
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
@@ -33,11 +33,10 @@ export const provideCardList = () => {
     [CARD_KINDS.HERO]: 1,
     [CARD_KINDS.MINION]: 2,
     [CARD_KINDS.SPELL]: 3,
-    [CARD_KINDS.ARTIFACT]: 4,
-    [CARD_KINDS.DESTINY]: 5
+    [CARD_KINDS.ARTIFACT]: 4
   };
 
-  const affinityFilter = ref(new Set<Affinity>());
+  const spellSchoolFilter = ref(new Set<SpellSchool>());
   const kindFilter = ref(new Set<CardKind>());
 
   const textFilter = ref('');
@@ -47,14 +46,17 @@ export const provideCardList = () => {
       .map(set => set.cards)
       .flat()
       .filter(card => {
-        if (!card.collectable) {
+        if (!card.collectable) return false;
+        if (card.kind !== CARD_KINDS.SPELL && card.kind !== CARD_KINDS.HERO)
           return false;
-        }
-        if (
-          affinityFilter.value.size > 0 &&
-          !affinityFilter.value.has(card.affinity)
-        ) {
-          return false;
+        if (spellSchoolFilter.value.size > 0) {
+          const spellSchools =
+            card.kind === CARD_KINDS.SPELL
+              ? [card.spellSchool]
+              : card.spellSchools;
+          if (spellSchools.every(s => !spellSchoolFilter.value.has(s!))) {
+            return false;
+          }
         }
 
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
@@ -115,14 +117,14 @@ export const provideCardList = () => {
   const api: CardListContext = {
     cards,
     textFilter,
-    hasAffinityFilter(affinity: Affinity) {
-      return affinityFilter.value.has(affinity);
+    hasSpellSchoolFilter(affinity: SpellSchool) {
+      return spellSchoolFilter.value.has(affinity);
     },
-    toggleAffinityFilter(affinity: Affinity) {
-      if (affinityFilter.value.has(affinity)) {
-        affinityFilter.value.delete(affinity);
+    toggleSpellSchoolFilter(affinity: SpellSchool) {
+      if (spellSchoolFilter.value.has(affinity)) {
+        spellSchoolFilter.value.delete(affinity);
       } else {
-        affinityFilter.value.add(affinity);
+        spellSchoolFilter.value.add(affinity);
       }
     },
     hasKindFilter(kind: CardKind) {
@@ -135,8 +137,8 @@ export const provideCardList = () => {
         kindFilter.value.add(kind);
       }
     },
-    clearAffinityFilter: () => {
-      affinityFilter.value.clear();
+    clearSpellSchoolFilter: () => {
+      spellSchoolFilter.value.clear();
     },
     clearKindFilter: () => {
       kindFilter.value.clear();

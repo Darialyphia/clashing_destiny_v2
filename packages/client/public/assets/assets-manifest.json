@@ -71,6 +71,32 @@
       ]
     },
     {
+      "name": "cards",
+      "assets": []
+    },
+    {
+      "name": "cards/heroes",
+      "assets": [
+        {
+          "alias": [
+            "aiden-lv1.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/aiden-lv1.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards/spells",
+      "assets": []
+    },
+    {
       "name": "fx",
       "assets": [
         {
@@ -3046,33 +3072,6 @@
         },
         {
           "alias": [
-            "active-unit-indicator"
-          ],
-          "src": [
-            "/assets/ui/active-unit-indicator.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "active-unit-indicator.png"
-          ],
-          "src": [
-            "/assets/ui/active-unit-indicator.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "affinity-arcane.png"
           ],
           "src": [
@@ -3346,72 +3345,6 @@
         },
         {
           "alias": [
-            "ally-indicator.png"
-          ],
-          "src": [
-            "/assets/ui/ally-indicator.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator-empty-ui.png"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator-empty-ui.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator-ui.png"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator-ui.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator.png"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "ap.png"
           ],
           "src": [
@@ -3438,32 +3371,6 @@
         },
         {
           "alias": [
-            "artifact-durability.png"
-          ],
-          "src": [
-            "/assets/ui/artifact-durability.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "artifact-empty.png"
-          ],
-          "src": [
-            "/assets/ui/artifact-empty.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "artifact-relic.png"
           ],
           "src": [
@@ -3481,19 +3388,6 @@
           ],
           "src": [
             "/assets/ui/artifact-weapon.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "atk.png"
-          ],
-          "src": [
-            "/assets/ui/atk.png"
           ],
           "data": {
             "tags": {
@@ -4036,6 +3930,19 @@
         },
         {
           "alias": [
+            "card-front.png"
+          ],
+          "src": [
+            "/assets/ui/card-front.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-hp.png"
           ],
           "src": [
@@ -4157,6 +4064,19 @@
           ],
           "src": [
             "/assets/ui/card-kind-talent.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-underline.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-underline.png"
           ],
           "data": {
             "tags": {
@@ -4309,6 +4229,58 @@
         },
         {
           "alias": [
+            "card-speed-badge-fast.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-fast.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-speed-badge-flash.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-flash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-speed-badge-slow.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-slow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-speed-badge-warp.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-warp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-spellpower.png"
           ],
           "src": [
@@ -4404,6 +4376,19 @@
           ],
           "src": [
             "/assets/ui/deck.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "destiny-cost.png"
+          ],
+          "src": [
+            "/assets/ui/destiny-cost.png"
           ],
           "data": {
             "tags": {
@@ -4782,6 +4767,19 @@
           ],
           "src": [
             "/assets/ui/icon-influence.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "jobs-warrior.png"
+          ],
+          "src": [
+            "/assets/ui/jobs-warrior.png"
           ],
           "data": {
             "tags": {

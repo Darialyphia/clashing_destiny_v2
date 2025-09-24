@@ -29,11 +29,11 @@ export const CollectionInjectionKey = Symbol(
 export const provideCollectionPage = () => {
   const {
     cards,
-    hasAffinityFilter,
-    toggleAffinityFilter,
+    hasSpellSchoolFilter: hasAffinityFilter,
+    toggleSpellSchoolFilter: toggleAffinityFilter,
     hasKindFilter,
     toggleKindFilter,
-    clearAffinityFilter,
+    clearSpellSchoolFilter: clearAffinityFilter,
     clearKindFilter,
     textFilter
   } = provideCardList();
@@ -83,11 +83,11 @@ export const provideCollectionPage = () => {
 
   const api: CollectionContext = {
     cards,
-    hasAffinityFilter,
-    toggleAffinityFilter,
+    hasSpellSchoolFilter: hasAffinityFilter,
+    toggleSpellSchoolFilter: toggleAffinityFilter,
     hasKindFilter,
     toggleKindFilter,
-    clearAffinityFilter,
+    clearSpellSchoolFilter: clearAffinityFilter,
     clearKindFilter,
     textFilter,
     viewMode,

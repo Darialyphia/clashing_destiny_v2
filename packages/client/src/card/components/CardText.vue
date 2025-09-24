@@ -181,9 +181,18 @@ const tokens = computed<Token[]>(() => {
 </template>
 
 <style scoped lang="postcss">
+.card-text {
+  white-space: pre-wrap;
+  color: #d7ad42;
+  color: #efef9f;
+}
+
 :is(.token-keyword, .token-card) {
   font-weight: var(--font-weight-7);
-  color: #ffb270;
+  color: #efef9f;
+  color: #d7ad42;
+  -webkit-text-stroke: 4px black;
+  paint-order: stroke fill;
 }
 
 .token-mana {
@@ -259,10 +268,5 @@ const tokens = computed<Token[]>(() => {
   padding: var(--size-3);
   color: var(--text-1);
   background-color: black;
-}
-
-.card-text {
-  white-space: pre-wrap;
-  color: #fcffcb;
 }
 </style>

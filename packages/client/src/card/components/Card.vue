@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import {
   RARITIES,
-  type Affinity,
   type CardKind,
-  type Rarity
+  type CardSpeed,
+  type HeroJob,
+  type Rarity,
+  type SpellSchool
 } from '@game/engine/src/card/card.enums';
-import { isDefined } from '@game/shared';
+import { clamp, isDefined, mapRange, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until } from '@vueuse/core';
+import { until, useElementBounding, useMouse } from '@vueuse/core';
 
 const { card } = defineProps<{
   card: {
@@ -16,8 +18,9 @@ const { card } = defineProps<{
     description: string;
     image: string;
     kind: CardKind;
-    affinity: Affinity;
-    uinlockableAffinities?: Affinity[];
+    spellSchool?: SpellSchool;
+    unlockedSpellSchools?: SpellSchool[];
+    jobs?: HeroJob[];
     manaCost?: number | null;
     baseManaCost?: number | null;
     destinyCost?: number | null;
@@ -30,6 +33,7 @@ const { card } = defineProps<{
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
+    speed: CardSpeed;
   };
 }>();
 
@@ -45,8 +49,8 @@ const rarityBg = computed(() => {
   return `url('/assets/ui/card-rarity-${card.rarity}.png')`;
 });
 
-const kindBg = computed(() => {
-  return `url('/assets/ui/card-kind-${card.kind.toLowerCase()}.png')`;
+const speedBg = computed(() => {
+  return `url('/assets/ui/card-speed-badge-${card.speed.toLowerCase()}.png')`;
 });
 
 const subKindBg = computed(() => {
@@ -57,73 +61,82 @@ const imageBg = computed(() => {
   return `url('${card.image}')`;
 });
 
-const affinityBg = computed(() => {
-  return `url('/assets/ui/card-bg-${card.affinity.toLowerCase()}.png')`;
+const root = useTemplateRef('card');
+const { x, y } = useMouse();
+
+const rect = useElementBounding(root);
+
+const pointerStyle = computed(() => {
+  const left = rect.left.value ?? 0;
+  const top = rect.top.value ?? 0;
+  const width = rect.width.value ?? 0;
+  const height = rect.height.value ?? 0;
+
+  const pointer = {
+    x: clamp(x.value - left, 0, width),
+    y: clamp(y.value - top, 0, height)
+  };
+  const percent = {
+    x: (pointer.x / width) * 100,
+    y: (pointer.y / height) * 100
+  };
+  return {
+    glareX: pointer.x,
+    glareY: pointer.y,
+    foilX: Math.round(mapRange(percent.x, [0, 100], [37, 63])),
+    foilY: Math.round(mapRange(percent.y, [0, 100], [33, 67])),
+    pointerFromCenter: clamp(
+      Math.sqrt(
+        (percent.y - 50) * (percent.y - 50) +
+          (percent.x - 50) * (percent.x - 50)
+      ) / 50,
+      0,
+      1
+    )
+  };
 });
 
-const affinityGemBg = (affinity: Affinity) => {
-  return `url('/assets/ui/affinity-${affinity.toLowerCase()}.png')`;
+const setVariableFontSize = (
+  box: HTMLElement,
+  sizeRef: Ref<number>,
+  min: number
+) => {
+  const inner = box.firstChild as HTMLElement;
+  const outerHeight = box.clientHeight;
+  let innerHeight = inner.clientHeight;
+
+  while (innerHeight > outerHeight) {
+    sizeRef.value -= 0.5;
+    box.style.fontSize = `${sizeRef.value}px`;
+
+    innerHeight = inner.clientHeight;
+    if (sizeRef.value <= min) {
+      break;
+    }
+  }
 };
-
-// const root = useTemplateRef('card');
-// const { x, y } = useMouse();
-
-// const rect = useElementBounding(root);
-
-// const pointerStyle = computed(() => {
-//   const left = rect.left.value ?? 0;
-//   const top = rect.top.value ?? 0;
-//   const width = rect.width.value ?? 0;
-//   const height = rect.height.value ?? 0;
-
-//   const pointer = {
-//     x: clamp(x.value - left, 0, width),
-//     y: clamp(y.value - top, 0, height)
-//   };
-//   const percent = {
-//     x: (pointer.x / width) * 100,
-//     y: (pointer.y / height) * 100
-//   };
-//   return {
-//     glareX: pointer.x,
-//     glareY: pointer.y,
-//     foilX: Math.round(mapRange(percent.x, [0, 100], [37, 63])),
-//     foilY: Math.round(mapRange(percent.y, [0, 100], [33, 67])),
-//     pointerFromCenter: clamp(
-//       Math.sqrt(
-//         (percent.y - 50) * (percent.y - 50) +
-//           (percent.x - 50) * (percent.x - 50)
-//       ) / 50,
-//       0,
-//       1
-//     )
-//   };
-// });
-
 const descriptionBox = useTemplateRef('description-box');
-
-const MIN_TEXT_SIZE = 10;
-const MAX_TEXT_SIZE = 16;
-const textSize = ref(MAX_TEXT_SIZE);
+const DESCRIPTION_MIN_TEXT_SIZE = 9;
+const DESCRIPTION_MAX_TEXT_SIZE = 14;
+const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
   .then(box => {
-    const inner = box.firstChild as HTMLElement;
-    const outerHeight = box.clientHeight;
-    let innerHeight = inner.clientHeight;
-
-    while (innerHeight > outerHeight) {
-      textSize.value -= 0.5;
-      box.style.fontSize = `${textSize.value}px`;
-
-      innerHeight = inner.clientHeight;
-      if (textSize.value <= MIN_TEXT_SIZE) {
-        break;
-      }
-    }
+    setVariableFontSize(box, descriptionFontSize, DESCRIPTION_MIN_TEXT_SIZE);
   });
-const multiLineChecker = useTemplateRef('multi-line-checker');
 
+const nameBox = useTemplateRef('name-box');
+const NAME_MIN_TEXT_SIZE = 11;
+const NAME_MAX_TEXT_SIZE = 16;
+
+const nameFontSize = ref(NAME_MAX_TEXT_SIZE);
+until(nameBox)
+  .toBeTruthy()
+  .then(box => {
+    setVariableFontSize(box, nameFontSize, NAME_MIN_TEXT_SIZE);
+  });
+
+const multiLineChecker = useTemplateRef('multi-line-checker');
 const isMultiLine = computed(() => {
   if (!multiLineChecker.value) return;
   if (!descriptionBox.value) return;
@@ -162,38 +175,55 @@ const costStatus = computed(() => {
     ref="card"
   >
     <div class="card-front">
-      <!-- <div class="foil" /> -->
+      <div class="foil" />
       <div class="image">
         <div class="shadow" />
         <div class="art" />
       </div>
-      <div class="name" :data-text="card.name">
-        {{ card.name }}
+
+      <div ref="name-box" class="name" :data-text="card.name">
+        <div>
+          {{ card.name }}
+        </div>
       </div>
-      <div></div>
-      <div class="affinity-zone">
-        <template v-if="card.uinlockableAffinities?.length">
-          <div
-            v-for="affinity in card.uinlockableAffinities"
-            :key="affinity"
-            class="affinity"
-            :style="{ '--bg': affinityGemBg(affinity) }"
-          />
-        </template>
-        <div
-          v-else
-          class="affinity"
-          :style="{ '--bg': affinityGemBg(card.affinity) }"
-        />
+      <div v-if="isDefined(card.atk)" class="atk">
+        <div class="dual-text" :data-text="card.atk">
+          {{ card.atk }}
+        </div>
+      </div>
+      <div v-if="isDefined(card.hp)" class="hp">
+        <div class="dual-text" :data-text="card.hp">
+          {{ card.hp }}
+        </div>
       </div>
 
       <div class="rarity" />
 
-      <div class="stats">
+      <div class="top-right">
+        <div
+          v-if="isDefined(card.speed)"
+          class="speed dual-text"
+          :style="{ '--bg': speedBg }"
+          :data-text="uppercaseFirstLetter(card.speed.toLocaleLowerCase())"
+        >
+          {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
+        </div>
+        <div
+          v-for="school in card.unlockedSpellSchools ?? card.spellSchool ?? []"
+          :key="school"
+          class="spell-school"
+          :style="{
+            '--bg': `url('/assets/ui/spell-school-${school.toLowerCase()}.png')`
+          }"
+          :data-label="school.toLocaleLowerCase()"
+        />
+      </div>
+      <div class="top-left">
         <div
           v-if="isDefined(card.manaCost)"
           class="mana-cost"
           :class="costStatus"
+          data-label="Cost"
         >
           <div class="dual-text" :data-text="card.manaCost">
             {{ card.manaCost }}
@@ -203,39 +233,34 @@ const costStatus = computed(() => {
           v-if="isDefined(card.destinyCost)"
           class="destiny-cost"
           :class="costStatus"
+          data-label="Cost"
         >
           <div class="dual-text" :data-text="card.destinyCost">
             {{ card.destinyCost }}
           </div>
         </div>
-        <div v-if="isDefined(card.level)" class="level">
-          <div class="dual-text" :data-text="card.level">
-            {{ card.level }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.atk)" class="atk">
-          <div class="dual-text" :data-text="card.atk">
-            {{ card.atk }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.spellpower)" class="spellpower">
-          <div class="dual-text" :data-text="card.spellpower">
-            {{ card.spellpower }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.hp)" class="hp">
-          <div class="dual-text" :data-text="card.hp">
-            {{ card.hp }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.durability)" class="durability">
-          <div class="dual-text" :data-text="card.durability">
-            {{ card.durability }}
-          </div>
-        </div>
+
+        <div
+          v-for="job in card.jobs ?? []"
+          :key="job"
+          class="job"
+          :style="{
+            '--bg': `url('/assets/ui/jobs-${job.toLowerCase()}.png')`
+          }"
+          :data-label="job.toLocaleLowerCase()"
+        />
+
+        <div
+          v-if="card.spellSchool"
+          class="spell-school"
+          :style="{
+            '--bg': `url('/assets/ui/spell-school-${card.spellSchool.toLowerCase()}.png')`
+          }"
+          :data-label="card.spellSchool.toLocaleLowerCase()"
+        />
       </div>
+
       <div class="kind">
-        <div class="kind-icon" />
         {{ card.kind.toLocaleLowerCase() }}
       </div>
       <div
@@ -266,15 +291,16 @@ const costStatus = computed(() => {
 <style scoped lang="postcss">
 .card {
   --pixel-scale: 2;
-  /* --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
+  --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
   --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
-  --foil-y: calc(1% * v-bind('pointerStyle?.foilY')); */
+  --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
   /* --pointer-from-center: v-bind('pointerStyle?.pointerFromCenter'); */
   width: calc(var(--card-width) * var(--pixel-scale));
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
   transform-style: preserve-3d;
+  font-family: 'Lato', sans-serif;
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -283,7 +309,7 @@ const costStatus = computed(() => {
 
 .card-front {
   backface-visibility: hidden;
-  background: url('/assets/ui/card-bg.png'), v-bind(affinityBg);
+  background: url('/assets/ui/card-front.png');
   background-size: cover;
   color: #fcffcb;
   /* font-family: 'NotJamSlab14', monospace; */
@@ -295,7 +321,7 @@ const costStatus = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('/assets/ui/card-back5.png');
+  background: url('/assets/ui/card-back.png');
   background-size: cover;
 }
 
@@ -318,6 +344,7 @@ const costStatus = computed(() => {
       var(--_bottom-color) 40%
     );
     background-clip: text;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
   }
   &:before {
     text-shadow:
@@ -326,6 +353,7 @@ const costStatus = computed(() => {
       2px 0 black,
       -2px 0 black;
     z-index: -1;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
   }
 }
 
@@ -357,7 +385,7 @@ const costStatus = computed(() => {
   width: calc(96px * var(--pixel-scale));
   height: calc(96px * var(--pixel-scale));
   position: absolute;
-  top: 0;
+  top: calc(8px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
   display: grid;
@@ -366,8 +394,8 @@ const costStatus = computed(() => {
     grid-column: 1;
     grid-row: 1;
   }
-  /*card image is in a pseudo element because otherwise the shadow appears before
-  Some property nullifies the z-index ordering, not sure what or why */
+  /*card image is in a pseudo element because otherwise the shadow appears in front of it
+  Some property seems to nullifies the z-index ordering, not sure what or why */
   .art {
     content: '';
     position: absolute;
@@ -381,31 +409,31 @@ const costStatus = computed(() => {
       drop-shadow(1px 0 0 cyan) drop-shadow(-1px 0 0 yellow);
   }
 
-  .destiny & {
-    background: url('/assets/ui/frame-destiny.png') no-repeat;
-    background-size: cover;
-  }
-
   .spell & {
-    background: url('/assets/ui/frame-spell.png') no-repeat;
-    background-size: cover;
+    /* background: url('/assets/ui/frame-spell.png') no-repeat; */
+    /* background-size: cover; */
+    top: 0;
   }
 
   .artifact & {
-    background: url('/assets/ui/frame-artifact.png') no-repeat;
-    background-size: cover;
+    /* background: url('/assets/ui/frame-artifact.png') no-repeat; */
+    /* background-size: cover; */
+    top: 0;
   }
 
   :is(.minion, .hero) & .shadow {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: v-bind(imageBg) no-repeat;
-    background-size: cover;
-    background-position: center;
-    transform: scaleY(0.5) translateY(50px) skewX(30deg) translateX(-40px);
-    filter: brightness(0);
-    opacity: 0.35;
+    filter: blur(12px);
+    opacity: 0.33;
+    transform: scale(1.1);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: #bb8033;
+      mask-image: v-bind(imageBg);
+      mask-size: cover;
+      background-size: cover;
+    }
   }
 
   .card:is(.minion, .hero) & {
@@ -414,21 +442,20 @@ const costStatus = computed(() => {
 }
 
 .name {
-  width: calc(100px * var(--pixel-scale));
+  width: calc(81px * var(--pixel-scale));
   text-align: center;
   text-wrap: pretty;
   position: absolute;
-  top: calc(84px * var(--pixel-scale));
+  top: calc(88px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
-  font-size: 18px;
+  font-size: calc(1px * v-bind(descriptionFontSize));
   line-height: 1.1;
-  -webkit-text-stroke: 4px black;
-  font-weight: var(--font-weight-5);
-  paint-order: stroke fill;
-  height: calc(20px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  height: calc(16px * var(--pixel-scale));
+  overflow: hidden;
   display: grid;
-  align-items: center;
+  place-content: center;
 }
 
 .affinity-zone {
@@ -455,28 +482,95 @@ const costStatus = computed(() => {
   width: calc(12px * var(--pixel-scale));
   height: calc(15px * var(--pixel-scale));
   position: absolute;
-  top: calc(102px * var(--pixel-scale));
+  bottom: calc(0px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
 }
 
-.stats {
+.top-left {
   position: absolute;
-  top: calc(0px * var(--pixel-scale));
-  left: calc(2px * var(--pixel-scale));
+  top: calc(3px * var(--pixel-scale));
+  left: calc(3px * var(--pixel-scale));
   display: flex;
   flex-direction: column;
+  gap: calc(3px * var(--pixel-scale));
   > * {
     z-index: 0;
     background-size: cover;
     background-position: center;
-    width: calc(28px * var(--pixel-scale));
-    height: calc(30px * var(--pixel-scale));
+    width: calc(22px * var(--pixel-scale));
+    height: calc(20px * var(--pixel-scale));
     display: grid;
     place-content: center;
-    font-size: 24px;
-    padding-top: calc(3px * var(--pixel-scale));
-    font-family: 'NotJamSlab11', monospace;
+    font-size: 22px;
+    position: relative;
+    font-weight: var(--font-weight-7);
+    &::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: calc(-3px * var(--pixel-scale));
+      width: 100%;
+      font-size: 12px;
+      color: #efef9f;
+      text-align: center;
+      paint-order: stroke fill;
+      font-weight: var(--font-weight-5);
+      -webkit-text-stroke: 4px black;
+      text-transform: capitalize;
+    }
+  }
+}
+
+.top-right {
+  position: absolute;
+  top: calc(5px * var(--pixel-scale));
+  right: calc(3px * var(--pixel-scale));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(3px * var(--pixel-scale));
+}
+
+.speed {
+  background-image: var(--bg);
+  background-size: cover;
+  width: calc(40px * var(--pixel-scale));
+  height: calc(16px * var(--pixel-scale));
+  font-size: 14px;
+  text-align: right;
+  padding-right: calc(8px * var(--pixel-scale));
+
+  --dual-text-offset-x: calc(-17px * var(--pixel-scale));
+  --dual-text-offset-y: calc(2.5px * var(--pixel-scale));
+  + * {
+    margin-top: calc(2px * var(--pixel-scale));
+  }
+}
+
+.spell-school {
+  background-image: var(--bg);
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  width: calc(22px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  font-size: 22px;
+  position: relative;
+  font-weight: var(--font-weight-7);
+  &::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: calc(-3px * var(--pixel-scale));
+    width: 100%;
+    font-size: 12px;
+    color: #efef9f;
+    text-align: center;
+    paint-order: stroke fill;
+    font-weight: var(--font-weight-5);
+    -webkit-text-stroke: 4px black;
+    text-transform: capitalize;
   }
 }
 
@@ -493,15 +587,33 @@ const costStatus = computed(() => {
   --bottom-color: var(--red-6);
 }
 .mana-cost {
-  background-image: url('/assets/ui/card-mana.png');
+  background-image: url('/assets/ui/mana-cost.png');
 }
 
 .destiny-cost {
-  background-image: url('/assets/ui/card-destiny.png');
+  background-image: url('/assets/ui/destiny-cost.png');
+  font-weight: var(--font-weight-7);
+}
+
+.job {
+  background-image: var(--bg);
 }
 
 .atk {
   background-image: url('/assets/ui/card-attack.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  top: calc(86px * var(--pixel-scale));
+  left: calc(0px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-right: calc(4px * var(--pixel-scale));
+  padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 18px;
 }
 
 .spellpower {
@@ -510,6 +622,19 @@ const costStatus = computed(() => {
 
 .hp {
   background-image: url('/assets/ui/card-hp.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  top: calc(86px * var(--pixel-scale));
+  right: calc(0px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-left: calc(4px * var(--pixel-scale));
+  padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 18px;
 }
 
 .durability {
@@ -517,35 +642,34 @@ const costStatus = computed(() => {
 }
 
 .kind {
-  width: calc(96px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
+  width: calc(92px * var(--pixel-scale));
   position: absolute;
-  top: calc(120px * var(--pixel-scale));
-  left: calc(20px * var(--pixel-scale));
-  display: flex;
-  align-items: center;
-  gap: calc(2px * var(--pixel-scale));
+  top: calc(104px * var(--pixel-scale));
+  left: calc(18px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
   text-transform: capitalize;
-  font-size: 14px;
-
-  .kind-icon {
-    background: v-bind(kindBg);
-    background-size: cover;
-    background-position: center;
-    width: calc(16px * var(--pixel-scale));
-    aspect-ratio: 1;
-  }
+  font-size: 12px;
+  color: #d7ad42;
+  font-weight: var(--font-weight-5);
+  background: url('/assets/ui/card-kind-underline.png');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: calc(58px * var(--pixel-scale))
+    calc(4px * var(--pixel-scale));
+  padding-bottom: calc(2px * var(--pixel-scale));
 }
 
 .description {
-  width: calc(116px * var(--pixel-scale));
+  width: calc(96px * var(--pixel-scale));
   height: calc(58px * var(--pixel-scale));
   position: absolute;
-  top: calc(139px * var(--pixel-scale));
-  left: calc(24px * var(--pixel-scale));
-  font-size: calc(1px * v-bind(textSize));
+  top: calc(116px * var(--pixel-scale));
+  left: calc(16px * var(--pixel-scale));
+  font-size: calc(1px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;
+  line-height: 1.2;
   &.is-multi-line {
     text-align: left;
   }
@@ -645,7 +769,7 @@ const costStatus = computed(() => {
   --foil-y: 0%;
   position: absolute;
   inset: 0;
-  opacity: 0.5;
+  opacity: 0.4;
   pointer-events: none;
   mask-image: url('/assets/ui/card-bg.png');
   mask-size: cover;

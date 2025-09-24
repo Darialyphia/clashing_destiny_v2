@@ -14,8 +14,6 @@ const indicatorOffset = computed(() => {
   switch (state.value.phase.state) {
     case GAME_PHASES.DRAW:
       return 0;
-    case GAME_PHASES.DESTINY:
-      return 1;
     case GAME_PHASES.MAIN:
       return 2;
     case GAME_PHASES.ATTACK:
@@ -40,7 +38,6 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
     :class="{ 'ui-hidden': !client.ui.displayedElements.phaseTracker }"
   >
     <div class="phase" style="--col: 1">DRAW</div>
-    <div class="phase" style="--col: 2">DESTINY</div>
     <div class="phase" style="--col: 3">MAIN</div>
     <div class="phase" style="--col: 4">COMBAT</div>
     <div class="phase" style="--col: 5">END</div>
@@ -50,7 +47,7 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async e => {
 <style scoped lang="postcss">
 .phase-tracker {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   position: relative;
   background-color: rgba(0, 0, 0, 0.5);
   &::after {

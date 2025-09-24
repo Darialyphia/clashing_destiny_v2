@@ -2,15 +2,13 @@
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import {
-  useFxEvent,
   useGameClient,
   useGameState,
   useMyBoard
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+
 import CardResizer from './CardResizer.vue';
 
 const board = useMyBoard();
@@ -18,19 +16,7 @@ const isShowingBoard = ref(false);
 const state = useGameState();
 const client = useGameClient();
 
-const isOpened = ref(
-  client.value.playerId === state.value.currentPlayer &&
-    state.value.phase.state === GAME_PHASES.DESTINY
-);
-
-useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
-  if (
-    client.value.playerId === state.value.currentPlayer &&
-    event.to.state === GAME_PHASES.DESTINY
-  ) {
-    isOpened.value = true;
-  }
-});
+const isOpened = defineModel<boolean>('isOpened', { required: true });
 
 const destinyCards = computed<CardViewModel[]>(() => {
   return board.value.destinyDeck
@@ -70,7 +56,7 @@ const hoveredCard = ref<CardViewModel | null>(null);
           @click="
             isOpened = false;
             client.networkAdapter.dispatch({
-              type: 'playDestinyCard',
+              type: 'declarePlayCard',
               payload: {
                 playerId: state.currentPlayer,
                 id: card.id
@@ -99,19 +85,6 @@ const hoveredCard = ref<CardViewModel | null>(null);
         />
       </div>
     </section>
-
-    <footer class="flex mt-7 gap-10 justify-center">
-      <FancyButton
-        variant="error"
-        text="Skip"
-        @click="
-          () => {
-            isOpened = false;
-            return client.skipDestiny();
-          }
-        "
-      />
-    </footer>
   </UiModal>
 
   <FancyButton

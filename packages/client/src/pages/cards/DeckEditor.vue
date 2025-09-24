@@ -73,10 +73,6 @@ const getCountForCostAndUp = (minCost: number) =>
           <span>{{ getCountByKind(CARD_KINDS.ARTIFACT) }}</span>
           Artifacts
         </div>
-        <div>
-          <span>{{ getCountByKind(CARD_KINDS.DESTINY) }}</span>
-          Destinies
-        </div>
       </div>
     </div>
     <div class="overflow-y-auto fancy-scrollbar">
@@ -107,12 +103,6 @@ const getCountForCostAndUp = (minCost: number) =>
           <div class="destiny-cost" v-if="'destinyCost' in card.blueprint">
             {{ card.blueprint.destinyCost }}
           </div>
-          <div
-            class="affinity"
-            :style="{
-              '--bg': `url(/assets/ui/affinity-${card.blueprint.affinity.toLocaleLowerCase()}.png)`
-            }"
-          />
           <span class="card-name">
             <template v-if="'copies' in card">X {{ card.copies }}</template>
             {{ card.blueprint.name }}

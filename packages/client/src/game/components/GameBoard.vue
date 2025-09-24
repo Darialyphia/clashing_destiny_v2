@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AffinityModal from './AffinityModal.vue';
 import CombatArrows from './CombatArrows.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import PlayedCardIntent from './PlayedCardIntent.vue';
@@ -26,9 +25,7 @@ import PlayerStats from './PlayerStats.vue';
 import { useMouse } from '@vueuse/core';
 import { mapRange } from '@game/shared';
 import EquipedArtifacts from './EquipedArtifacts.vue';
-import DestinyPhaseModal from './DestinyPhaseModal.vue';
 import Deck from './Deck.vue';
-import UnlockedDestinies from './UnlockedDestinies.vue';
 import PlayedCard from './PlayedCard.vue';
 import OpponentHand from './OpponentHand.vue';
 import { useBoardResize } from '../composables/useBoardResize';
@@ -67,8 +64,7 @@ useBoardResize(board);
   <!-- <ManaCostModal /> -->
   <BattleLog />
   <SVGFilters />
-  <DestinyPhaseModal v-if="hasFinishedStartAnimation" />
-  <AffinityModal />
+  <!-- <DestinyPhaseModal v-if="hasFinishedStartAnimation" /> -->
   <ChooseCardModal />
   <CombatArrows />
   <PlayedCardIntent />
@@ -91,12 +87,6 @@ useBoardResize(board);
         <PlayerStats
           :player="myPlayer"
           :class="{ 'ui-hidden': !client.ui.displayedElements.playerInfos }"
-        />
-        <UnlockedDestinies
-          :player="myPlayer"
-          :class="{
-            'ui-hidden': !client.ui.displayedElements.unlockedDestinyCards
-          }"
         />
       </article>
 
@@ -143,13 +133,6 @@ useBoardResize(board);
           :player="opponentPlayer"
           class="justify-end"
           :class="{ 'ui-hidden': !client.ui.displayedElements.playerInfos }"
-        />
-        <UnlockedDestinies
-          :player="opponentPlayer"
-          class="justify-end"
-          :class="{
-            'ui-hidden': !client.ui.displayedElements.unlockedDestinyCards
-          }"
         />
       </article>
 

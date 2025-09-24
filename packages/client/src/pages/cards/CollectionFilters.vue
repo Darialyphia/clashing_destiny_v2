@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import {
-  AFFINITIES,
+  SPELL_SCHOOLS,
   CARD_KINDS,
-  type Affinity,
+  type SpellSchool,
   type CardKind
 } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
@@ -12,23 +12,23 @@ import { useCollectionPage } from './useCollectionPage';
 
 const {
   textFilter,
-  hasAffinityFilter,
+  hasSpellSchoolFilter: hasAffinityFilter,
   hasKindFilter,
-  toggleAffinityFilter,
-  clearAffinityFilter,
+  toggleSpellSchoolFilter: toggleAffinityFilter,
+  clearSpellSchoolFilter: clearAffinityFilter,
   toggleKindFilter,
   viewMode
 } = useCollectionPage();
 
-const affinities: Array<{
-  id: Affinity;
+const spellSchools: Array<{
+  id: SpellSchool;
   img: string;
   label: string;
   color: string;
-}> = Object.values(AFFINITIES).map(affinity => ({
-  id: affinity,
-  img: `/assets/ui/affinity-${affinity.toLocaleLowerCase()}.png`,
-  label: uppercaseFirstLetter(affinity),
+}> = Object.values(SPELL_SCHOOLS).map(spellSchool => ({
+  id: spellSchool,
+  img: `/assets/ui/affinity-${spellSchool.toLocaleLowerCase()}.png`,
+  label: uppercaseFirstLetter(spellSchool),
   color: 'white'
 }));
 
@@ -91,7 +91,7 @@ const cardKinds: Array<{
     <section>
       <h4>Affinities</h4>
       <div class="affinity-filter">
-        <UiSimpleTooltip v-for="affinity in affinities" :key="affinity.label">
+        <UiSimpleTooltip v-for="affinity in spellSchools" :key="affinity.label">
           <template #trigger>
             <button
               :class="hasAffinityFilter(affinity.id) && 'active'"

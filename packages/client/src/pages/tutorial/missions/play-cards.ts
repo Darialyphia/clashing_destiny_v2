@@ -39,10 +39,10 @@ export const playCardTutorial: TutorialMission = {
     ],
     rngSeed: 'tutorial-seed',
     history: [
-      {
-        type: 'skipDestiny',
-        payload: { playerId: 'p1' }
-      }
+      // {
+      //   type: 'skipDestiny',
+      //   payload: { playerId: 'p1' }
+      // }
     ],
     config: {
       INITIAL_HAND_SIZE: 4,
