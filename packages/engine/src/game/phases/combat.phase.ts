@@ -20,7 +20,6 @@ import { GAME_PHASES } from '../game.enums';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
-export type Defender = MinionCard | HeroCard;
 
 export const COMBAT_STEPS = {
   DECLARE_ATTACKER: 'declare-attacker',
@@ -42,6 +41,7 @@ export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 export type SerializedCombatPhase = {
   attacker: string;
   target: string | null;
+  isTargetCounterattacking: boolean;
   step: CombatStep;
   potentialTargets: string[];
 };
@@ -141,6 +141,7 @@ export class CombatPhase
 {
   attacker!: Attacker;
   target: AttackTarget | null = null;
+  isTargetCounterattacking = false;
 
   private isCancelled = false;
 
@@ -245,8 +246,7 @@ export class CombatPhase
       })
     );
 
-    const isCancelled = this.isCancelled || !this.attacker.canDealCombatDamage;
-    if (!isCancelled) {
+    if (!this.isCancelled) {
       await this.performAttacks();
     }
 
@@ -259,8 +259,8 @@ export class CombatPhase
     if (this.target.isAlive && this.attacker.isAlive) {
       await this.attacker.dealDamage(this.target, new CombatDamage(this.attacker));
       if (
-        this.attacker.canBeCounterattackedBy(this.target) &&
-        this.target.isAlive &&
+        this.isTargetCounterattacking &&
+        this.target.canCounterattack(this.attacker) &&
         this.attacker.isAlive
       ) {
         await this.target.dealDamage(this.attacker, new CombatDamage(this.target));
@@ -287,6 +287,18 @@ export class CombatPhase
     await this.game.inputSystem.askForPlayerInput();
   }
 
+  counterAttack() {
+    if (!this.target) {
+      throw new WrongCombatStepError();
+    }
+    if (
+      !this.attacker.canBeCounterattackedBy(this.target) ||
+      !this.target.canCounterattack(this.attacker)
+    ) {
+      throw new InvalidCounterattackError();
+    }
+    this.isTargetCounterattacking = true;
+  }
   async cancelAttack() {
     if (this.isCancelled) return;
     this.isCancelled = true;
@@ -306,7 +318,8 @@ export class CombatPhase
       attacker: this.attacker.id,
       target: this.target?.id ?? null,
       step: this.getState(),
-      potentialTargets: this.potentialTargets.map(t => t.id)
+      potentialTargets: this.potentialTargets.map(t => t.id),
+      isTargetCounterattacking: this.isTargetCounterattacking
     };
   }
 }
@@ -314,5 +327,11 @@ export class CombatPhase
 export class WrongCombatStepError extends GameError {
   constructor() {
     super('Wrong combat step');
+  }
+}
+
+export class InvalidCounterattackError extends GameError {
+  constructor() {
+    super('This unit cannot counterattack this target');
   }
 }

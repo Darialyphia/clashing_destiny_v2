@@ -13,13 +13,13 @@
   background-image: radial-gradient(
     farthest-corner circle at var(--glare-x) var(--glare-y),
     hsla(0, 0%, 100%, 0.8) 10%,
-    hsla(0, 0%, 100%, 0.65) 20%,
+    hsla(0, 70%, 100%, 0.65) 20%,
     hsla(0, 0%, 0%, 0.5) 90%
   );
   mix-blend-mode: overlay;
   mask-image: var(--glare-mask);
   mask-size: cover;
-  .card:hover & {
+  :has(> &):hover & {
     opacity: 1;
   }
 }

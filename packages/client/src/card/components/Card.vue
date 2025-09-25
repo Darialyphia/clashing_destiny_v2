@@ -181,7 +181,7 @@ const angle = ref({
   y: 0
 });
 
-const MAX_ANGLE = 20;
+const MAX_ANGLE = 30;
 const onMousemove = (e: MouseEvent) => {
   if (!root.value) return;
 
@@ -218,7 +218,9 @@ const onMouseleave = () => {
       ref="card"
     >
       <div class="card-front">
+        <!-- <div class="fx flame" /> -->
         <CardFoil v-if="isFoil" />
+
         <div class="image">
           <div class="shadow" />
           <div class="art" />
@@ -240,9 +242,9 @@ const onMouseleave = () => {
           </div>
         </div>
 
-        <div class="rarity" />
+        <div class="rarity parallax" style="--parallax-strength: 0.35" />
 
-        <div class="top-right">
+        <div class="top-right parallax" style="--parallax-strength: 0.35">
           <div
             v-if="isDefined(card.speed)"
             class="speed dual-text"
@@ -261,7 +263,7 @@ const onMouseleave = () => {
             :data-label="school.toLocaleLowerCase()"
           />
         </div>
-        <div class="top-left">
+        <div class="top-left parallax" style="--parallax-strength: 0.35">
           <div
             v-if="isDefined(card.manaCost)"
             class="mana-cost"
@@ -354,6 +356,7 @@ const onMouseleave = () => {
   transform: rotateY(calc(1deg * v-bind('angle.y')))
     rotateX(calc(1deg * v-bind('angle.x')));
   transform-style: preserve-3d;
+  position: relative;
 
   --foil-animated-toggle: ;
   .card-perspective-wrapper:hover & {
@@ -364,6 +367,24 @@ const onMouseleave = () => {
   > * {
     grid-column: 1;
     grid-row: 1;
+  }
+  &:has(.foil)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: url('/assets/ui/card-front.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -1;
+    filter: brightness(3) saturate(2) blur(50px);
+    opacity: 1;
+    mix-blend-mode: screen;
+    animation: pulse 5s var(--ease-out-3) infinite;
+    --parallax-x: calc(v-bind('angle.y') * -5px);
+    --parallax-y: calc(v-bind('angle.x') * 5px);
+    translate: var(--parallax-x) var(--parallax-y);
+    transition: translate 0.2s;
   }
 }
 
@@ -379,6 +400,30 @@ const onMouseleave = () => {
   transform-style: preserve-3d;
   --glare-mask: url('/assets/ui/card-front.png');
   --foil-mask: url('/assets/ui/card-front.png');
+}
+
+.parallax {
+  --parallax-strength: 1;
+  --parallax-x: calc(v-bind('angle.y') * var(--parallax-strength) * 1px);
+  --parallax-y: calc(v-bind('angle.x') * var(--parallax-strength) * -1px);
+  translate: var(--parallax-x) var(--parallax-y);
+  transition: translate 0.2s;
+}
+
+.fx.flame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* base gradient “fuel” */
+  background:
+    /* linear-gradient(to top, cyan, transparent 50%), */
+    radial-gradient(circle at 50% 120%, #0000 70%, #000 90%),
+    conic-gradient(from -90deg, #ff0, #ffa000, #ff4d00 60%, #660000 100%);
+  filter: url(#flameNoise) brightness(1.5) blur(3px);
+  mix-blend-mode: color-dodge;
+  mask: url('/assets/ui/card-art-frame-mask.png');
+  mask-size: cover;
+  opacity: 1;
 }
 
 .front-content {
@@ -458,8 +503,16 @@ const onMouseleave = () => {
   position: absolute;
   top: calc(8px * var(--pixel-scale));
   left: 50%;
-  transform: translateX(-50%) translateX(calc(v-bind('angle.y') * 0.5px))
-    translateY(calc(v-bind('angle.x') * -0.5px));
+
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+  .card-front:has(.foil) & {
+    --parallax-x: calc(v-bind('angle.y') * 0.5px);
+    --parallax-y: calc(v-bind('angle.x') * -0.5px);
+  }
+
+  transform: translateX(calc(-50% + var(--parallax-x)))
+    translateY(calc(var(--parallax-y)));
   display: grid;
   > * {
     grid-column: 1;
@@ -780,26 +833,5 @@ const onMouseleave = () => {
   background-size: calc(16px * var(--pixel-scale))
     calc(16px * var(--pixel-scale));
   padding-inline: calc(18px * var(--pixel-scale)) 6px;
-}
-
-.glare {
-  position: absolute;
-  pointer-events: none;
-  inset: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.3s;
-  background-image: radial-gradient(
-    farthest-corner circle at var(--glare-x) var(--glare-y),
-    hsla(0, 0%, 100%, 0.8) 10%,
-    hsla(0, 0%, 100%, 0.65) 20%,
-    hsla(0, 0%, 0%, 0.5) 90%
-  );
-  mix-blend-mode: overlay;
-  mask-image: url('/assets/ui/card-bg.png');
-  mask-size: cover;
-  .card:hover & {
-    opacity: 1;
-  }
 }
 </style>

@@ -51,7 +51,7 @@
   --foil-brightness: 0.6;
   position: absolute;
   inset: 0;
-  opacity: 0.4;
+  opacity: 0.3;
   pointer-events: none;
   mask-image: var(--foil-mask);
   mask-size: cover;
@@ -78,7 +78,7 @@
       #0e152e 12%
     );
   background-size:
-    100%,
+    40%,
     200% 700%,
     500%;
   background-repeat: repeat, no-repeat, no-repeat;
@@ -89,7 +89,6 @@
     var(--foil-x) var(--foil-y);
   filter: brightness(calc((var(--foil-brightness) * 0.3) + 0.5)) contrast(5)
     saturate(1.5);
-
   animation:
     foil-move 10s infinite linear,
     foil-brightness 5s infinite ease-in-out;
@@ -122,10 +121,10 @@
   filter: saturate(1.6) contrast(1.2);
   mask: var(--foil-mask) center/cover no-repeat;
   transition: opacity 1s;
-  transition-delay: opacity 0.5s;
-  .card:hover & {
+  transition-delay: 0;
+  :has(> &):hover & {
     opacity: 0.12;
-    transition-delay: 0;
+    transition-delay: 0.5s;
   }
 }
 </style>

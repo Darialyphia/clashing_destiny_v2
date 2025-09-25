@@ -98,6 +98,7 @@ const pointerStyle = computed(() => {
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
+  --foil-animated-toggle: ;
   width: calc(var(--card-small-width) * var(--pixel-scale));
   height: calc(var(--card-small-height) * var(--pixel-scale));
   display: grid;

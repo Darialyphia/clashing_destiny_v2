@@ -43,7 +43,40 @@ const card = ref('aiden-lv1');
         <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>
       </li>
     </ul> -->
+    <svg width="0" height="0" style="position: absolute">
+      <filter
+        id="flameNoise"
+        x="-20%"
+        y="-30%"
+        width="140%"
+        height="160%"
+        filterUnits="objectBoundingBox"
+      >
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="10"
+          numOctaves="3"
+          seed="7"
+          result="noise"
+          stitchTiles="noStitch"
+        >
+          <animate
+            attributeName="baseFrequency"
+            dur="15s"
+            values="0.005; 0.06;"
+            repeatCount="indefinite"
+          />
+        </feTurbulence>
 
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="90"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </svg>
     <fieldset>
       <legend>Card</legend>
       <label>

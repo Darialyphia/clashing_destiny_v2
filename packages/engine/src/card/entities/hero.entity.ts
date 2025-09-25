@@ -1,6 +1,6 @@
 import type { MaybePromise, Values } from '@game/shared';
 import type { Game } from '../../game/game';
-import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
+import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
@@ -34,16 +34,16 @@ export type SerializedHeroCard = SerializedCard & {
   abilities: string[];
   spellSchools: SpellSchool[];
   jobs: HeroJob[];
+  canCounterattack: boolean;
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
-  canBlock: Interceptable<boolean, { attacker: Attacker }>;
-  canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
-  canBeCounterattacked: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
-  canBeDefended: Interceptable<boolean, { defender: Defender }>;
+  canCounterattack: Interceptable<boolean, { attacker: AttackTarget }>;
+  canBeCounterattacked: Interceptable<boolean, { defender: AttackTarget }>;
+  canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
@@ -179,11 +179,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBlock: new Interceptable(),
-        canBeBlocked: new Interceptable(),
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canBeDefended: new Interceptable(),
+        canCounterattack: new Interceptable(),
         canBeCounterattacked: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
@@ -276,38 +275,31 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  get canDealCombatDamage() {
-    return true;
-  }
-
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
     });
   }
 
-  canBeDefendedBy(defender: Defender) {
+  canBeDefendedBy(defender: AttackTarget) {
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
   }
 
-  canBlock(attacker: Attacker) {
-    return this.interceptors.canBlock.getValue(false, {
-      attacker
-    });
-  }
-
-  canBeBlocked(blocker: Defender) {
-    return this.interceptors.canBeBlocked.getValue(true, {
-      blocker
-    });
-  }
-
-  canBeCounterattackedBy(defender: Defender) {
+  canBeCounterattackedBy(defender: AttackTarget) {
     return this.interceptors.canBeCounterattacked.getValue(true, {
       defender
     });
+  }
+
+  canCounterattack(target: AttackTarget) {
+    return this.interceptors.canCounterattack.getValue(
+      !this.isExhausted && this.atk > 0,
+      {
+        attacker: target
+      }
+    );
   }
 
   getReceivedDamage(damage: Damage) {
@@ -463,6 +455,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   serialize(): SerializedHeroCard {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+
     return {
       ...this.serializeBase(),
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
@@ -475,7 +469,14 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
       jobs: this.blueprint.jobs,
-      spellSchools: this.blueprint.spellSchools
+      spellSchools: this.blueprint.spellSchools,
+      canCounterattack:
+        phaseCtx.state === GAME_PHASES.ATTACK &&
+        phaseCtx.ctx.target?.equals(this) &&
+        phaseCtx.ctx.target?.canCounterattack(this)
+          ? this.canCounterattack(phaseCtx.ctx.attacker) &&
+            phaseCtx.ctx.attacker.canBeCounterattackedBy(this)
+          : false
     };
   }
 }

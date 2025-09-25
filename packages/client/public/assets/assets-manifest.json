@@ -3528,6 +3528,19 @@
         },
         {
           "alias": [
+            "card-back-small.png"
+          ],
+          "src": [
+            "/assets/ui/card-back-small.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-back.png"
           ],
           "src": [
@@ -3935,6 +3948,19 @@
           ],
           "src": [
             "/assets/ui/card-exp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-front-small.png"
+          ],
+          "src": [
+            "/assets/ui/card-front-small.png"
           ],
           "data": {
             "tags": {
@@ -5322,6 +5348,19 @@
           ],
           "src": [
             "/assets/ui/talent-node.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "template-small-back.png"
+          ],
+          "src": [
+            "/assets/ui/template-small-back.png"
           ],
           "data": {
             "tags": {

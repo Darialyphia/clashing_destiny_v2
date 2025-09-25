@@ -1,11 +1,11 @@
 import type { MaybePromise, Values } from '@game/shared';
 import type { Game } from '../../game/game';
-import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
+import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type MinionBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { CARD_EVENTS, type HeroJob, type SpellSchool } from '../card.enums';
+import { CARD_EVENTS, type HeroJob } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -41,14 +41,16 @@ export type SerializedMinionCard = SerializedCard & {
   abilities: string[];
   job: HeroJob | null;
   position: Pick<MinionPosition, 'zone' | 'slot'> | null;
+  canCounterattack: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
-  canPlay: Interceptable<boolean, MinionCard>;
-  canBeCounterattacked: Interceptable<boolean, { defender: Defender }>;
-  canAttack: Interceptable<boolean, { target: AttackTarget }>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
+  canPlay: Interceptable<boolean, MinionCard>;
+  canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
+  canBeCounterattacked: Interceptable<boolean, { defender: AttackTarget }>;
+  canCounterattack: Interceptable<boolean, { attacker: AttackTarget }>;
   canUseAbility: Interceptable<
     boolean,
     { card: MinionCard; ability: Ability<MinionCard> }
@@ -245,10 +247,11 @@ export class MinionCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBeCounterattacked: new Interceptable(),
         canAttack: new Interceptable(),
-        hasSummoningSickness: new Interceptable(),
         canBeAttacked: new Interceptable(),
+        canCounterattack: new Interceptable(),
+        canBeCounterattacked: new Interceptable(),
+        hasSummoningSickness: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
@@ -346,20 +349,25 @@ export class MinionCard extends Card<
     });
   }
 
-  get canDealCombatDamage() {
-    return true; // @TODO legacy shit, need to remove
-  }
-
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
     });
   }
 
-  canBeCounterattackedBy(defender: Defender) {
+  canBeCounterattackedBy(defender: AttackTarget) {
     return this.interceptors.canBeCounterattacked.getValue(true, {
       defender
     });
+  }
+
+  canCounterattack(target: AttackTarget) {
+    return this.interceptors.canCounterattack.getValue(
+      !this.isExhausted && this.atk > 0,
+      {
+        attacker: target
+      }
+    );
   }
 
   async moveTo(position: MinionPosition, allowSwap = false) {
@@ -570,6 +578,7 @@ export class MinionCard extends Card<
   }
 
   serialize(): SerializedMinionCard {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
@@ -584,7 +593,14 @@ export class MinionCard extends Card<
         ? { zone: this.position.zone, slot: this.position.slot }
         : null,
       abilities: this.abilities.map(ability => ability.id),
-      job: this.blueprint.job ?? null
+      job: this.blueprint.job ?? null,
+      canCounterattack:
+        phaseCtx.state === GAME_PHASES.ATTACK &&
+        phaseCtx.ctx.target?.equals(this) &&
+        phaseCtx.ctx.target?.canCounterattack(this)
+          ? this.canCounterattack(phaseCtx.ctx.attacker) &&
+            phaseCtx.ctx.attacker.canBeCounterattackedBy(this)
+          : false
     };
   }
 }
