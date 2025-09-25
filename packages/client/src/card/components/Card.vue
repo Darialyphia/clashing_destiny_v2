@@ -7,12 +7,18 @@ import {
   type Rarity,
   type SpellSchool
 } from '@game/engine/src/card/card.enums';
-import { clamp, isDefined, uppercaseFirstLetter } from '@game/shared';
+import { clamp, isDefined, mapRange, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until, useElementBounding, useMouse } from '@vueuse/core';
+import {
+  unrefElement,
+  until,
+  useElementBounding,
+  useMouse
+} from '@vueuse/core';
 import CardFoil from './CardFoil.vue';
+import CardGlare from './CardGlare.vue';
 
-const { card } = defineProps<{
+const { card, isFoil } = defineProps<{
   card: {
     id: string;
     name: string;
@@ -36,6 +42,7 @@ const { card } = defineProps<{
     subKind?: string | null;
     speed: CardSpeed;
   };
+  isFoil?: boolean;
 }>();
 
 const rarityBg = computed(() => {
@@ -84,7 +91,8 @@ const pointerStyle = computed(() => {
   return {
     glareX: pointer.x,
     glareY: pointer.y,
-
+    foilX: mapRange(percent.x, [0, 100], [0, 37.9]),
+    foilY: percent.y,
     foilOilX: width - pointer.x,
     foilOilY: height - pointer.y,
     pointerFromCenter: clamp(
@@ -167,138 +175,175 @@ const costStatus = computed(() => {
 
   return '';
 });
+
+const angle = ref({
+  x: 0,
+  y: 0
+});
+
+const MAX_ANGLE = 20;
+const onMousemove = (e: MouseEvent) => {
+  if (!root.value) return;
+
+  const { clientX, clientY } = e;
+  const { left, top, width, height } = unrefElement(
+    root.value
+  )!.getBoundingClientRect();
+  angle.value = {
+    y: ((clientX - left) / width - 0.5) * MAX_ANGLE,
+    x: ((clientY - top) / height - 0.5) * MAX_ANGLE
+  };
+};
+
+const onMouseleave = () => {
+  gsap.to(angle.value, {
+    x: 0,
+    y: 0,
+    duration: 0.5,
+    ease: Power2.easeOut
+  });
+};
 </script>
 
 <template>
   <div
-    class="card"
-    :class="card.kind.toLocaleLowerCase()"
-    :data-flip-id="`card_${card.id}`"
-    ref="card"
+    class="card-perspective-wrapper"
+    @mousemove="onMousemove"
+    @mouseleave="onMouseleave"
   >
-    <div class="card-front">
-      <CardFoil />
-      <div class="image">
-        <div class="shadow" />
-        <div class="art" />
-      </div>
+    <div
+      class="card"
+      :class="card.kind.toLocaleLowerCase()"
+      :data-flip-id="`card_${card.id}`"
+      ref="card"
+    >
+      <div class="card-front">
+        <CardFoil v-if="isFoil" />
+        <div class="image">
+          <div class="shadow" />
+          <div class="art" />
+        </div>
 
-      <div ref="name-box" class="name" :data-text="card.name">
-        <div class="dual-text" :data-text="card.name">
-          {{ card.name }}
-        </div>
-      </div>
-      <div v-if="isDefined(card.atk)" class="atk">
-        <div class="dual-text" :data-text="card.atk">
-          {{ card.atk }}
-        </div>
-      </div>
-      <div v-if="isDefined(card.hp)" class="hp">
-        <div class="dual-text" :data-text="card.hp">
-          {{ card.hp }}
-        </div>
-      </div>
-
-      <div class="rarity" />
-
-      <div class="top-right">
-        <div
-          v-if="isDefined(card.speed)"
-          class="speed dual-text"
-          :style="{ '--bg': speedBg }"
-          :data-text="uppercaseFirstLetter(card.speed.toLocaleLowerCase())"
-        >
-          {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
-        </div>
-        <div
-          v-for="school in card.unlockedSpellSchools ?? []"
-          :key="school"
-          class="spell-school"
-          :style="{
-            '--bg': `url('/assets/ui/spell-school-${school.toLowerCase()}.png')`
-          }"
-          :data-label="school.toLocaleLowerCase()"
-        />
-      </div>
-      <div class="top-left">
-        <div
-          v-if="isDefined(card.manaCost)"
-          class="mana-cost"
-          :class="costStatus"
-          data-label="Cost"
-        >
-          <div class="dual-text" :data-text="card.manaCost">
-            {{ card.manaCost }}
+        <div ref="name-box" class="name" :data-text="card.name">
+          <div class="dual-text" :data-text="card.name">
+            {{ card.name }}
           </div>
         </div>
-        <div
-          v-if="isDefined(card.destinyCost)"
-          class="destiny-cost"
-          :class="costStatus"
-          data-label="Cost"
-        >
-          <div class="dual-text" :data-text="card.destinyCost">
-            {{ card.destinyCost }}
+        <div v-if="isDefined(card.atk)" class="atk">
+          <div class="dual-text" :data-text="card.atk">
+            {{ card.atk }}
+          </div>
+        </div>
+        <div v-if="isDefined(card.hp)" class="hp">
+          <div class="dual-text" :data-text="card.hp">
+            {{ card.hp }}
           </div>
         </div>
 
-        <div
-          v-for="job in card.jobs ?? []"
-          :key="job"
-          class="job"
-          :style="{
-            '--bg': `url('/assets/ui/jobs-${job.toLowerCase()}.png')`
-          }"
-          :data-label="job.toLocaleLowerCase()"
-        />
+        <div class="rarity" />
 
-        <div
-          v-if="card.spellSchool"
-          class="spell-school"
-          :style="{
-            '--bg': `url('/assets/ui/spell-school-${card.spellSchool.toLowerCase()}.png')`
-          }"
-          :data-label="card.spellSchool.toLocaleLowerCase()"
-        />
-      </div>
-
-      <div class="kind">
-        {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
-        <span v-if="card.level">- Lvl{{ card.level }}</span>
-      </div>
-      <div
-        class="description"
-        ref="description-box"
-        :class="{ 'is-multi-line': isMultiLine }"
-      >
-        <div>
-          <CardText :text="card.description" />
-          <CardText
-            v-for="ability in card.abilities"
-            :key="ability"
-            :text="ability"
+        <div class="top-right">
+          <div
+            v-if="isDefined(card.speed)"
+            class="speed dual-text"
+            :style="{ '--bg': speedBg }"
+            :data-text="uppercaseFirstLetter(card.speed.toLocaleLowerCase())"
+          >
+            {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
+          </div>
+          <div
+            v-for="school in card.unlockedSpellSchools ?? []"
+            :key="school"
+            class="spell-school"
+            :style="{
+              '--bg': `url('/assets/ui/spell-school-${school.toLowerCase()}.png')`
+            }"
+            :data-label="school.toLocaleLowerCase()"
           />
         </div>
-        <span ref="multi-line-checker" />
-      </div>
+        <div class="top-left">
+          <div
+            v-if="isDefined(card.manaCost)"
+            class="mana-cost"
+            :class="costStatus"
+            data-label="Cost"
+          >
+            <div class="dual-text" :data-text="card.manaCost">
+              {{ card.manaCost }}
+            </div>
+          </div>
+          <div
+            v-if="isDefined(card.destinyCost)"
+            class="destiny-cost"
+            :class="costStatus"
+            data-label="Cost"
+          >
+            <div class="dual-text" :data-text="card.destinyCost">
+              {{ card.destinyCost }}
+            </div>
+          </div>
 
-      <!-- <div class="sub-kind" v-if="card.subKind">
-        {{ card.subKind }}
-      </div> -->
-      <div class="glare lt-lg:hidden" />
-    </div>
-    <div class="card-back">
-      <CardFoil />
-      <div class="glare lt-lg:hidden" />
+          <div
+            v-for="job in card.jobs ?? []"
+            :key="job"
+            class="job"
+            :style="{
+              '--bg': `url('/assets/ui/jobs-${job.toLowerCase()}.png')`
+            }"
+            :data-label="job.toLocaleLowerCase()"
+          />
+
+          <div
+            v-if="card.spellSchool"
+            class="spell-school"
+            :style="{
+              '--bg': `url('/assets/ui/spell-school-${card.spellSchool.toLowerCase()}.png')`
+            }"
+            :data-label="card.spellSchool.toLocaleLowerCase()"
+          />
+        </div>
+
+        <div class="kind">
+          {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
+          <span v-if="card.level">- Lvl{{ card.level }}</span>
+        </div>
+        <div
+          class="description"
+          ref="description-box"
+          :class="{ 'is-multi-line': isMultiLine }"
+        >
+          <div>
+            <CardText :text="card.description" />
+            <CardText
+              v-for="ability in card.abilities"
+              :key="ability"
+              :text="ability"
+            />
+          </div>
+          <span ref="multi-line-checker" />
+        </div>
+        <CardGlare />
+      </div>
+      <div class="card-back">
+        <CardFoil v-if="isFoil" />
+        <CardGlare />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
+.card-perspective-wrapper {
+  position: relative;
+  transform-style: preserve-3d;
+  align-self: start;
+  transition: filter 0.3s;
+}
 .card {
   --pixel-scale: 2;
   --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
+
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   /* --pointer-from-center: v-bind('pointerStyle?.pointerFromCenter'); */
@@ -306,7 +351,16 @@ const costStatus = computed(() => {
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
   font-family: 'Lato', sans-serif;
+  transform: rotateY(calc(1deg * v-bind('angle.y')))
+    rotateX(calc(1deg * v-bind('angle.x')));
   transform-style: preserve-3d;
+
+  --foil-animated-toggle: ;
+  .card-perspective-wrapper:hover & {
+    --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
+    --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
+    --foil-animated-toggle: initial;
+  }
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -323,6 +377,8 @@ const costStatus = computed(() => {
   padding: 1rem;
   position: relative;
   transform-style: preserve-3d;
+  --glare-mask: url('/assets/ui/card-front.png');
+  --foil-mask: url('/assets/ui/card-front.png');
 }
 
 .front-content {
@@ -337,6 +393,8 @@ const costStatus = computed(() => {
   backface-visibility: hidden;
   background: url('/assets/ui/card-back.png');
   background-size: cover;
+  --glare-mask: url('/assets/ui/card-back.png');
+  --foil-mask: url('/assets/ui/card-back.png');
 }
 
 .dual-text {
@@ -400,7 +458,8 @@ const costStatus = computed(() => {
   position: absolute;
   top: calc(8px * var(--pixel-scale));
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateX(calc(v-bind('angle.y') * 0.5px))
+    translateY(calc(v-bind('angle.x') * -0.5px));
   display: grid;
   > * {
     grid-column: 1;

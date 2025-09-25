@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
   <div class="foil" />
   <div class="foil-oil" />
@@ -20,18 +22,25 @@
   initial-value: 0;
 }
 
-@keyframes foil {
+@keyframes foil-move {
   from {
-    --foil-x: 0%;
-    --foil-y: 0%;
+    --foil-x: var(--foil-animated-toggle) 0%;
+    --foil-y: var(--foil-animated-toggle) 0%;
+  }
+  to {
+    --foil-x: var(--foil-animated-toggle) 37.9%;
+    --foil-y: var(--foil-animated-toggle) 100%;
+  }
+}
+
+@keyframes foil-brightness {
+  from {
     --foil-brightness: 0.2;
   }
   50% {
     --foil-brightness: 0.5;
   }
   to {
-    --foil-x: 37.9%;
-    --foil-y: 100%;
     --foil-brightness: 0.2;
   }
 }
@@ -40,13 +49,11 @@
   --space: 5%;
   --angle: 133deg;
   --foil-brightness: 0.6;
-  --foil-x: 0%;
-  --foil-y: 0%;
   position: absolute;
   inset: 0;
   opacity: 0.4;
   pointer-events: none;
-  mask-image: url('/assets/ui/card-front.png');
+  mask-image: var(--foil-mask);
   mask-size: cover;
   mix-blend-mode: color-dodge;
   background-image:
@@ -82,7 +89,10 @@
     var(--foil-x) var(--foil-y);
   filter: brightness(calc((var(--foil-brightness) * 0.3) + 0.5)) contrast(5)
     saturate(1.5);
-  animation: foil 10s infinite linear;
+
+  animation:
+    foil-move 10s infinite linear,
+    foil-brightness 5s infinite ease-in-out;
 }
 
 .foil-oil {
@@ -110,7 +120,7 @@
     );
   background-blend-mode: screen, hard-light;
   filter: saturate(1.6) contrast(1.2);
-  mask: url('/assets/ui/card-front.png') center/cover no-repeat;
+  mask: var(--foil-mask) center/cover no-repeat;
   transition: opacity 1s;
   transition-delay: opacity 0.5s;
   .card:hover & {

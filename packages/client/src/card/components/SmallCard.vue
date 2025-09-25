@@ -3,8 +3,9 @@ import { type CardKind } from '@game/engine/src/card/card.enums';
 import { clamp, isDefined } from '@game/shared';
 import { useElementBounding, useMouse } from '@vueuse/core';
 import CardFoil from './CardFoil.vue';
+import CardGlare from './CardGlare.vue';
 
-const { card } = defineProps<{
+const { card, isFoil } = defineProps<{
   card: {
     id: string;
     image: string;
@@ -13,6 +14,7 @@ const { card } = defineProps<{
     hp?: number | null;
     durability?: number | null;
   };
+  isFoil?: boolean;
 }>();
 
 const imageBg = computed(() => {
@@ -57,13 +59,13 @@ const pointerStyle = computed(() => {
 
 <template>
   <div
-    class="card"
+    class="small-card"
     :class="card.kind.toLocaleLowerCase()"
     :data-flip-id="`card_${card.id}`"
     ref="card"
   >
     <div class="card-front">
-      <CardFoil />
+      <CardFoil v-if="isFoil" />
       <div class="image">
         <div class="shadow" />
         <div class="art" />
@@ -79,16 +81,18 @@ const pointerStyle = computed(() => {
           {{ card.hp }}
         </div>
       </div>
+
+      <CardGlare />
     </div>
     <div class="card-back">
-      <CardFoil />
-      <!-- <div class="glare lt-lg:hidden" /> -->
+      <CardFoil v-if="isFoil" />
+      <CardGlare />
     </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
-.card {
+.small-card {
   --pixel-scale: 2;
   --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
@@ -114,6 +118,8 @@ const pointerStyle = computed(() => {
   padding: 1rem;
   position: relative;
   transform-style: preserve-3d;
+  --glare-mask: url('/assets/ui/card-front-small.png');
+  --foil-mask: url('/assets/ui/card-front-small.png');
 }
 
 .card-back {
@@ -121,6 +127,8 @@ const pointerStyle = computed(() => {
   backface-visibility: hidden;
   background: url('/assets/ui/card-back-small.png');
   background-size: cover;
+  --glare-mask: url('/assets/ui/card-front-small.png');
+  --foil-mask: url('/assets/ui/card-front-small.png');
 }
 
 .image {

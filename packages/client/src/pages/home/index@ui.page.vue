@@ -21,6 +21,10 @@ const screenshot = async (id: string, e: MouseEvent) => {
   a.download = `${id}.png`;
   a.click();
 };
+
+const isFoil = ref(false);
+const spin = ref(false);
+const card = ref('aiden-lv1');
 </script>
 
 <template>
@@ -39,18 +43,47 @@ const screenshot = async (id: string, e: MouseEvent) => {
         <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>
       </li>
     </ul> -->
+
+    <fieldset>
+      <legend>Card</legend>
+      <label>
+        Hero
+        <input v-model="card" type="radio" value="aiden-lv1" />
+      </label>
+      <label>
+        Spell
+        <input v-model="card" type="radio" value="fire-bolt" />
+      </label>
+    </fieldset>
+    <br />
+
+    <fieldset class="flex gap-3">
+      <legend>Options</legend>
+      <label>
+        <input type="checkbox" v-model="isFoil" />
+        Foil
+      </label>
+      <label>
+        <input type="checkbox" v-model="spin" />
+        Spin
+      </label>
+    </fieldset>
+
+    <br />
     <div class="wrapper" ref="wrapper">
       <BlueprintCard
-        :blueprint="CARDS_DICTIONARY['aiden-lv1']"
-        class="card-spin"
-        @dblclick="screenshot('aiden-lv1', $event)"
+        :blueprint="CARDS_DICTIONARY[card]"
+        :class="spin && 'card-spin'"
+        :is-foil="isFoil"
+        @dblclick="screenshot(card, $event)"
       />
 
       <BlueprintSmallCard
-        :blueprint="CARDS_DICTIONARY['aiden-lv1']"
-        class="card-spin"
+        :blueprint="CARDS_DICTIONARY[card]"
+        :class="spin && 'card-spin'"
+        :is-foil="isFoil"
         :style="{ '--pixel-scale': 1 }"
-        @dblclick="screenshot('aiden-lv1', $event)"
+        @dblclick="screenshot(card, $event)"
       />
     </div>
   </nav>
