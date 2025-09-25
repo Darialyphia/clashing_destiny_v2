@@ -1,6 +1,5 @@
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -18,7 +17,7 @@ export const courageousFootsoldier: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 3,
+  maxHp: 4,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

@@ -4,19 +4,43 @@ export type PremadeDeck = {
   name: string;
   mainDeck: GameOptions['players'][number]['mainDeck'];
   destinyDeck: GameOptions['players'][number]['mainDeck'];
-  hero: GameOptions['players'][number]['hero'];
 };
 
 export const premadeDecks: Array<PremadeDeck> = [
   {
-    name: 'Knight Starter Deck',
-    destinyDeck: {
-      cards: []
-    },
+    name: 'Aiden Starter',
     mainDeck: {
-      cards: []
-    },
+      cards: [
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
+        'courageous-footsoldier',
 
-    hero: 'knight'
+        'fire-bolt',
+        'fire-bolt',
+        'fire-bolt',
+        'fire-bolt',
+        'fire-bolt',
+        'fire-bolt',
+        'fire-bolt',
+        'fire-bolt',
+
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade',
+        'rusty-blade'
+      ]
+    },
+    destinyDeck: {
+      cards: ['aiden-lv1']
+    }
   }
 ];

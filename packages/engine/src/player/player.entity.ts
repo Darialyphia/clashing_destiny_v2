@@ -27,7 +27,6 @@ export type PlayerOptions = {
   name: string;
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
-  hero: string;
 };
 
 export type SerializedPlayer = {
@@ -96,7 +95,7 @@ export class Player
 
   async init() {
     this._hero = {
-      card: await this.generateCard<HeroCard>(this.options.hero),
+      card: await this.generateCard<HeroCard>(this.game.config.INITIAL_HERO_BLUEPRINTID),
       lineage: []
     };
     await this._hero.card.play(() => {});

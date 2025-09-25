@@ -46,9 +46,9 @@ export const provideCardList = () => {
       .map(set => set.cards)
       .flat()
       .filter(card => {
+        console.log(card.id, card.collectable);
         if (!card.collectable) return false;
-        if (card.kind !== CARD_KINDS.SPELL && card.kind !== CARD_KINDS.HERO)
-          return false;
+
         if (spellSchoolFilter.value.size > 0) {
           const spellSchools =
             card.kind === CARD_KINDS.SPELL

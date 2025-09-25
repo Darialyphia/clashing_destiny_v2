@@ -20,7 +20,6 @@ type DeckChoice = {
   id: string;
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
-  hero: string;
   deck: DisplayedDeck;
 };
 const choices = computed<DeckChoice[]>(() => {
@@ -30,10 +29,8 @@ const choices = computed<DeckChoice[]>(() => {
       label: deck.name,
       mainDeck: deck.mainDeck,
       destinyDeck: deck.destinyDeck,
-      hero: deck.hero,
       deck: {
         name: deck.name,
-        hero: deck.hero,
         mainDeck: deck.mainDeck.cards.map(card => ({
           blueprintId: card
         }))
@@ -50,7 +47,6 @@ const choices = computed<DeckChoice[]>(() => {
           Array.from({ length: card.copies }, () => card.blueprintId)
         )
       },
-      hero: deck.hero,
       deck
     }))
   ];
@@ -113,15 +109,13 @@ const isStarted = ref(false);
         id: 'p1',
         name: 'Player 1',
         mainDeck: p1Deck.mainDeck,
-        destinyDeck: p1Deck.destinyDeck,
-        hero: p1Deck.hero
+        destinyDeck: p1Deck.destinyDeck
       },
       {
         id: 'p2',
         name: 'Player 2',
         mainDeck: p2Deck.mainDeck,
-        destinyDeck: p2Deck.destinyDeck,
-        hero: p2Deck.hero
+        destinyDeck: p2Deck.destinyDeck
       }
     ]"
   />

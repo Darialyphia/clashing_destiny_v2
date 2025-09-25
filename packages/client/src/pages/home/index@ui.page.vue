@@ -29,7 +29,7 @@ const card = ref('aiden-lv1');
 
 <template>
   <nav class="grid h-screen place-content-center">
-    <!-- <ul class="flex gap-4 surface">
+    <ul class="flex gap-4 surface">
       <li>
         <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
       </li>
@@ -42,7 +42,7 @@ const card = ref('aiden-lv1');
       <li>
         <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>
       </li>
-    </ul> -->
+    </ul>
     <svg width="0" height="0" style="position: absolute">
       <filter
         id="flameNoise"

@@ -3,16 +3,15 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 
 export type DisplayedDeck = {
   name: string;
-  hero: string;
   mainDeck: { blueprintId: string }[];
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
 }>();
 
-const hero = computed(() => {
-  return deck.hero ? CARDS_DICTIONARY[deck.hero] : null;
-});
+// const hero = computed(() => {
+//   return deck.hero ? CARDS_DICTIONARY[deck.hero] : null;
+// });
 
 // const affinities = computed(() => {
 //   const result = new Set<Affinity>();
@@ -31,7 +30,7 @@ const hero = computed(() => {
   <article
     class="player-deck"
     :style="{
-      '--bg': `url(/assets/icons/${hero?.cardIconId}.png)`
+      // '--bg': `url(/assets/icons/${hero?.cardIconId}.png)`
     }"
   >
     <button class="deck-name">

@@ -49,34 +49,105 @@ const angleX = computed(() => {
   );
 });
 
-const hasFinishedStartAnimation = ref(false);
-const finishStartAnimation = () => {
-  setTimeout(() => {
-    hasFinishedStartAnimation.value = true;
-  }, 500);
-};
-
 const board = useTemplateRef('board');
-useBoardResize(board);
+// useBoardResize(board);
 </script>
 
 <template>
   <!-- <ManaCostModal /> -->
-  <BattleLog />
-  <SVGFilters />
+  <!-- <BattleLog />
+  <SVGFilters /> -->
   <!-- <DestinyPhaseModal v-if="hasFinishedStartAnimation" /> -->
-  <ChooseCardModal />
+  <!-- <ChooseCardModal />
   <CombatArrows />
   <PlayedCardIntent />
   <PlayedCard />
-  <DestinyCostVFX />
-
+  <DestinyCostVFX /> -->
+  <!--
   <div class="explainer">
     <ExplainerMessage />
-  </div>
+  </div> -->
+  <div class="board-perspective-wrapper">
+    <div class="board" id="board" ref="board">
+      <div class="flex gap-3 justify-center">
+        <div class="flex flex-col gap-3">
+          <div class="card-container"></div>
+          <div class="card-container mt-auto"></div>
+          <div class="card-container"></div>
+        </div>
+        <div class="flex flex-col justify-center items-center">
+          <div />
+          <div class="hero-slot"></div>
+          <div class="flex gap-2 mt-auto">
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+          </div>
+        </div>
+      </div>
 
-  <div class="board" id="board" ref="board">
-    <section class="p1-zone">
+      <div class="minions-zone">
+        <div class="flex gap-3 h-full">
+          <div class="minion-row">
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+          </div>
+          <div class="minion-row">
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 h-full">
+          <div class="minion-row">
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+          </div>
+          <div class="minion-row">
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 flex-row-reverse justify-center">
+        <div class="flex flex-col gap-3">
+          <div class="card-container"></div>
+          <div class="card-container mt-auto"></div>
+          <div class="card-container"></div>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <div class="hero-slot"></div>
+          <div class="flex gap-2 mt-auto">
+            <div class="card-container"></div>
+            <div class="card-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <section class="p1-destiny">
+        <div class="destiny-zone"></div>
+      </section>
+
+      <section class="chain-visualizer"></section>
+
+      <section class="p2-destiny">
+        <div class="destiny-zone"></div>
+      </section>
+
+      <section class="bottom-row">
+        <div class="p1-hand"></div>
+        <div class="p2-hand"></div>
+      </section>
+
+      <!-- <section class="p1-zone">
       <article class="flex flex-col gap-1">
         <div class="flex gap-3 mb-2">
           <div class="avatar" />
@@ -91,10 +162,9 @@ useBoardResize(board);
       </article>
 
       <DestinyZone :player-id="myPlayer.id" class="mt-auto" />
-      <!-- <TalentTree :player="myPlayer" class="talent-tree" /> -->
-    </section>
+    </section> -->
 
-    <section class="middle-zone" @animationend="finishStartAnimation">
+      <!-- <section class="middle-zone" @animationend="finishStartAnimation">
       <Deck :player="myPlayer" class="p2-deck" />
       <Minionzone
         :player-id="opponentBoard.playerId"
@@ -119,9 +189,9 @@ useBoardResize(board);
         :id="client.ui.DOMSelectors.p1Minionzone.id"
       />
       <Deck :player="myPlayer" class="p1-deck" />
-    </section>
+    </section> -->
 
-    <section class="p2-zone">
+      <!-- <section class="p2-zone">
       <article class="flex flex-col gap-1">
         <div class="flex gap-3 flex-row-reverse mb-2">
           <div class="avatar" />
@@ -137,36 +207,35 @@ useBoardResize(board);
       </article>
 
       <DestinyZone :player-id="opponentPlayer.id" class="mt-auto" />
-      <!-- <TalentTree :player="opponentPlayer" class="talent-tree" /> -->
-    </section>
+    </section> -->
 
-    <section class="hand-zone">
+      <!-- <section class="hand-zone">
       <Hand />
       <OpponentHand class="opponent-hand" />
     </section>
-    <ActionsButtons />
+    <ActionsButtons /> -->
+    </div>
   </div>
-  <div class="arrows" id="arrows" />
+  <!-- <div class="arrows" id="arrows" /> -->
 </template>
 
 <style scoped lang="postcss">
+.board-perspective-wrapper {
+  perspective: 1600px;
+  perspective-origin: center top;
+  display: flex;
+  justify-content: center;
+}
 .board {
-  --pixel-scale: 2;
-  background:
-    radial-gradient(
-      circle at center,
-      hsla(0, 0%, 0%, 0.5) 0% 25%,
-      hsla(0, 0%, 0%, 0.85) 100%
-    ),
-    url('/assets/backgrounds/battle-bg.png');
+  --pixel-scale: 1;
+  background: url('/assets/backgrounds/board.png');
   background-size: cover;
   filter: brightness(1);
   height: 100dvh;
   aspect-ratio: 16 / 9;
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-rows: 1fr calc(var(--pixel-scale) * var(--card-height) * 0.3);
-  margin-inline: auto;
+  grid-template-columns: 1fr auto 1fr;
+  grid-row-gap: var(--size-4);
   /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
   background-size: cover;
   transform-style: preserve-3d;
@@ -175,141 +244,46 @@ useBoardResize(board);
   transform-origin: center left;
   scale: var(--board-scale, 1);
   overflow: hidden;
-  @starting-style {
-    opacity: 0;
-  }
-  transition: opacity 1s var(--ease-2);
+
+  padding-top: var(--size-8);
+  padding-inline: var(--size-6);
 }
 
-.p1-zone {
-  grid-column: 1;
-  position: relative;
-  z-index: 1;
+.card-container {
+  --padding: 2px;
+  border: solid 1px #985e25;
+  width: calc(var(--card-small-width) + var(--padding) * 2);
+  height: calc(var(--card-small-height) + var(--padding) * 2);
 }
 
-.p2-zone {
-  grid-column: 3;
-  grid-row: 1;
+.minions-zone {
+  display: flex;
+  gap: var(--size-10);
 }
 
-.p1-zone,
-.p2-zone {
-  padding: var(--size-6) var(--size-6) 0;
+.minion-row {
   display: flex;
   flex-direction: column;
   gap: var(--size-4);
-  grid-row: 1;
-  padding-bottom: var(--size-10);
 }
 
-.middle-zone {
-  --board-rotation: 15deg;
-  grid-column: 2;
-  grid-row: 1;
-  display: grid;
-  gap: var(--size-2);
-  grid-template-rows: autpo 1fr auto 1fr auto;
-  grid-template-columns: 1fr auto 1fr;
-  position: relative;
-  z-index: 1;
-  align-self: center;
-  grid-column: 2;
-  --angleZ: calc(1deg * v-bind(angleZ));
-  --angleX: calc(1deg * v-bind(angleX));
-  /* transform: rotateX(var(--board-rotation)); */
-  /* uncomment the line below to debug elements position in 3D space */
-  /* transform: rotateX(var(--angleX)) rotateZ(var(--angleZ)); */
-  transform-style: preserve-3d;
-  animation: battlefield 1.5s var(--ease-4);
+.destiny-zone {
+  height: calc(var(--card-small-height) + var(--padding) * 2);
+  --padding: 2px;
+  border: solid 1px #985e25;
 }
 
-@keyframes battlefield {
-  from {
-    transform: rotate(45deg) scale(0.5);
-  }
-  to {
-    transform: rotateX(0deg);
-  }
+.bottom-row {
+  --pixel-scale: 2;
+  --visible-card-ratio: 0.4;
+  --scaled-height: calc(var(--card-height) * var(--pixel-scale));
+  height: min(calc(var(--scaled-height) + var(--visible-card-ratio)), 200px);
 }
 
-.current-infos {
-  grid-column: 1 / -1;
-}
-
-.hand-zone {
-  grid-column: 1 / -1;
-  grid-row: 2;
-}
-
-.p1-minions,
-.p2-minions {
-  align-self: center;
-  transform-style: preserve-3d;
-  grid-column: 2;
-}
-
-.avatar {
-  width: var(--size-8);
-  aspect-ratio: 1;
-  border-radius: var(--radius-round);
-  background-color: black;
-  align-self: center;
-  border: solid 2px yellow;
-}
-
-#arrows {
-  position: fixed;
-  z-index: 1;
-  inset: 0;
-  pointer-events: none;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-}
-:global(#arrows > *) {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.explainer {
-  position: fixed;
-  top: var(--size-3);
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.p1-hero,
-.p2-hero {
-  transform-style: preserve-3d;
-}
-.p1-hero {
-  grid-column: 1;
-  align-self: end;
-  justify-self: end;
-}
-
-.p2-hero {
-  grid-column: 3;
-  align-self: start;
-  justify-self: start;
-  /* translate: 0 -25%; */
-}
-
-.p1-deck {
-  align-self: end;
-}
-
-.p2-deck {
-  align-self: start;
-}
-
-.opponent-hand {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+.hero-slot {
+  --pixel-scale: 2;
+  width: calc(var(--card-width) * 2);
+  height: calc(var(--card-height) * 2);
+  border: solid 1px #985e25;
 }
 </style>

@@ -67,12 +67,52 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "board.png"
+          ],
+          "src": [
+            "/assets/backgrounds/board.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
     {
       "name": "cards",
-      "assets": []
+      "assets": [
+        {
+          "alias": [
+            "rusty-blade.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/rusty-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "courageous-footsoldier.png"
+          ],
+          "src": [
+            "/assets/cards/minions/courageous-footsoldier.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
     },
     {
       "name": "cards/heroes",
@@ -3493,6 +3533,19 @@
           ],
           "src": [
             "/assets/ui/button.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-art-frame-mask.png"
+          ],
+          "src": [
+            "/assets/ui/card-art-frame-mask.png"
           ],
           "data": {
             "tags": {

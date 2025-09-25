@@ -47,7 +47,7 @@ const { isEditingDeck } = provideCollectionPage();
   display: grid;
   grid-template-columns: auto 1fr 24rem;
   grid-template-rows: auto 1fr;
-  column-gap: var(--size-5);
+
   transform-style: preserve-3d;
   @screen lt-lg {
     grid-template-columns: 1fr 18rem;

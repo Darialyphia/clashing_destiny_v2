@@ -57,16 +57,4 @@ const { card } = defineProps<{
 .collection-card:not(.disabled):hover {
   cursor: url('/assets/ui/cursor-hover.png'), auto;
 }
-
-@keyframes colelction-foil-rotate {
-  0% {
-    transform: rotateY(-20deg);
-  }
-  100% {
-    transform: rotateY(20deg);
-  }
-}
-.collection-card:has(.foil) {
-  animation: colelction-foil-rotate 5s var(--ease-3) alternate infinite;
-}
 </style>

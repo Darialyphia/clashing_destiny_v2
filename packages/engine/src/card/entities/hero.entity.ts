@@ -431,6 +431,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   async play(onResolved: () => MaybePromise<void>) {
+    if (this.level === 0) {
+      return await this.blueprint.onPlay(this.game, this, this);
+    }
+
     await this.insertInChainOrExecute(
       async () => {
         await this.blueprint.onPlay(this.game, this, this);

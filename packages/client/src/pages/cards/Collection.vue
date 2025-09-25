@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { domToPng } from 'modern-screenshot';
+// import { domToPng } from 'modern-screenshot';
 import { useCollectionPage } from './useCollectionPage';
 import { vIntersectionObserver } from '@vueuse/components';
 import CollectionCard from './CollectionCard.vue';
 
-const { cards, viewMode, isEditingDeck } = useCollectionPage();
+const { cards, viewMode } = useCollectionPage();
 
-const screenshot = async (id: string, e: MouseEvent) => {
-  const card = (e.target as HTMLElement)
-    .closest('li')
-    ?.querySelector('.card-front') as HTMLElement;
-  const png = await domToPng(card, {
-    backgroundColor: 'transparent'
-  });
-  const a = document.createElement('a');
-  a.href = png;
-  a.download = `${id}.png`;
-  a.click();
-};
+// const screenshot = async (id: string, e: MouseEvent) => {
+//   const card = (e.target as HTMLElement)
+//     .closest('li')
+//     ?.querySelector('.card-front') as HTMLElement;
+//   const png = await domToPng(card, {
+//     backgroundColor: 'transparent'
+//   });
+//   const a = document.createElement('a');
+//   a.href = png;
+//   a.download = `${id}.png`;
+//   a.click();
+// };
 
 const visibleCards = ref(new Set<string>());
 const onIntersectionObserver =
@@ -55,13 +55,13 @@ const listRoot = useTemplateRef('card-list');
       <Transition>
         <CollectionCard v-if="visibleCards.has(card.id)" :card="card" />
       </Transition>
-      <button
+      <!-- <button
         v-if="!isEditingDeck"
         @click="screenshot(card.id, $event)"
         class="absolute bottom-0"
       >
         Screenshot
-      </button>
+      </button> -->
     </li>
   </ul>
   <p v-else class="text-center">No cards found.</p>
@@ -76,6 +76,7 @@ const listRoot = useTemplateRef('card-list');
   grid-template-columns: repeat(auto-fill, minmax(var(--min-column-size), 1fr));
   justify-items: center;
   overflow-y: auto;
+  padding-inline: var(--size-4);
   overflow-x: hidden;
 
   @screen lt-lg {
@@ -101,8 +102,9 @@ const listRoot = useTemplateRef('card-list');
     width: calc(var(--card-width) * var(--pixel-scale));
     height: calc(var(--card-height) * var(--pixel-scale));
     transform-style: preserve-3d;
-    perspective: 1200px;
+    perspective: 700px;
     perspective-origin: center;
+    isolation: isolate;
   }
 }
 

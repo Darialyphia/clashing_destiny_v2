@@ -353,17 +353,18 @@ const onMouseleave = () => {
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;
   font-family: 'Lato', sans-serif;
-  transform: rotateY(calc(1deg * v-bind('angle.y')))
-    rotateX(calc(1deg * v-bind('angle.x')));
   transform-style: preserve-3d;
   position: relative;
 
   --foil-animated-toggle: ;
-  .card-perspective-wrapper:hover & {
+  .card-perspective-wrapper:hover:has(.foil) & {
+    transform: rotateY(calc(1deg * v-bind('angle.y')))
+      rotateX(calc(1deg * v-bind('angle.x')));
     --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
     --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
     --foil-animated-toggle: initial;
   }
+
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -402,7 +403,7 @@ const onMouseleave = () => {
   --foil-mask: url('/assets/ui/card-front.png');
 }
 
-.parallax {
+.card-front:has(.foil).parallax {
   --parallax-strength: 1;
   --parallax-x: calc(v-bind('angle.y') * var(--parallax-strength) * 1px);
   --parallax-y: calc(v-bind('angle.x') * var(--parallax-strength) * -1px);
