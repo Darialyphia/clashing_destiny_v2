@@ -135,6 +135,18 @@ export class CardDeclarePlayEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardDeclareUseAbilityEvent extends TypedSerializableEvent<
+  { card: AnyCard; abilityId: string },
+  { card: SerializedCard; abilityId: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize() as SerializedCard,
+      abilityId: this.data.abilityId
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -148,4 +160,5 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_BEFORE_DESTROY]: CardBeforeDestroyEvent;
   [CARD_EVENTS.CARD_AFTER_DESTROY]: CardAfterDestroyEvent;
   [CARD_EVENTS.CARD_DECLARE_PLAY]: CardDeclarePlayEvent;
+  [CARD_EVENTS.CARD_DECLARE_USE_ABILITY]: CardDeclareUseAbilityEvent;
 };

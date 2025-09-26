@@ -18,7 +18,11 @@ import {
 import CardFoil from './CardFoil.vue';
 import CardGlare from './CardGlare.vue';
 
-const { card, isFoil } = defineProps<{
+const {
+  card,
+  isFoil,
+  isAnimated = true
+} = defineProps<{
   card: {
     id: string;
     name: string;
@@ -43,6 +47,7 @@ const { card, isFoil } = defineProps<{
     speed: CardSpeed;
   };
   isFoil?: boolean;
+  isAnimated?: boolean;
 }>();
 
 const rarityBg = computed(() => {
@@ -213,7 +218,7 @@ const onMouseleave = () => {
   >
     <div
       class="card"
-      :class="card.kind.toLocaleLowerCase()"
+      :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
       :data-flip-id="`card_${card.id}`"
       ref="card"
     >
@@ -307,7 +312,7 @@ const onMouseleave = () => {
 
         <div class="kind">
           {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
-          <span v-if="card.level">- Lvl{{ card.level }}</span>
+          <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
         </div>
         <div
           class="description"
@@ -341,8 +346,8 @@ const onMouseleave = () => {
   align-self: start;
   transition: filter 0.3s;
 }
+
 .card {
-  --pixel-scale: 2;
   --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
 
@@ -357,7 +362,7 @@ const onMouseleave = () => {
   position: relative;
 
   --foil-animated-toggle: ;
-  .card-perspective-wrapper:hover:has(.foil) & {
+  .card-perspective-wrapper:hover:has(.foil) &.animated {
     transform: rotateY(calc(1deg * v-bind('angle.y')))
       rotateX(calc(1deg * v-bind('angle.x')));
     --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
@@ -394,8 +399,7 @@ const onMouseleave = () => {
   background: url('/assets/ui/card-front.png');
   background-size: cover;
   color: #fcffcb;
-  /* font-family: 'NotJamSlab14', monospace; */
-  font-size: 16px;
+  font-size: calc(var(--pixel-scale) * 8px);
   padding: 1rem;
   position: relative;
   transform-style: preserve-3d;
@@ -403,12 +407,11 @@ const onMouseleave = () => {
   --foil-mask: url('/assets/ui/card-front.png');
 }
 
-.card-front:has(.foil).parallax {
+.card.animated:has(.foil) .parallax {
   --parallax-strength: 1;
   --parallax-x: calc(v-bind('angle.y') * var(--parallax-strength) * 1px);
   --parallax-y: calc(v-bind('angle.x') * var(--parallax-strength) * -1px);
   translate: var(--parallax-x) var(--parallax-y);
-  transition: translate 0.2s;
 }
 
 .fx.flame {
@@ -507,7 +510,7 @@ const onMouseleave = () => {
 
   --parallax-x: 0px;
   --parallax-y: 0px;
-  .card-front:has(.foil) & {
+  .card.animated:has(.foil) & {
     --parallax-x: calc(v-bind('angle.y') * 0.5px);
     --parallax-y: calc(v-bind('angle.x') * -0.5px);
   }
@@ -542,7 +545,7 @@ const onMouseleave = () => {
   .artifact & {
     background: url('/assets/ui/frame-artifact.png') no-repeat;
     background-size: cover;
-    top: 0;
+    top: calc(4px * var(--pixel-scale));
   }
 
   :is(.minion, .hero) & .shadow {
@@ -573,7 +576,7 @@ const onMouseleave = () => {
   top: calc(88px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
-  font-size: calc(1px * v-bind(descriptionFontSize));
+  font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   line-height: 1.1;
   font-weight: var(--font-weight-7);
   height: calc(16px * var(--pixel-scale));
@@ -626,7 +629,7 @@ const onMouseleave = () => {
     height: calc(20px * var(--pixel-scale));
     display: grid;
     place-content: center;
-    font-size: 22px;
+    font-size: calc(var(--pixel-scale) * 11px);
     position: relative;
     font-weight: var(--font-weight-7);
     &::after {
@@ -634,7 +637,7 @@ const onMouseleave = () => {
       position: absolute;
       bottom: calc(-3px * var(--pixel-scale));
       width: 100%;
-      font-size: 12px;
+      font-size: calc(var(--pixel-scale) * 6px);
       color: #efef9f;
       text-align: center;
       paint-order: stroke fill;
@@ -660,7 +663,7 @@ const onMouseleave = () => {
   background-size: cover;
   width: calc(40px * var(--pixel-scale));
   height: calc(16px * var(--pixel-scale));
-  font-size: 14px;
+  font-size: calc(var(--pixel-scale) * 7px);
   text-align: right;
   padding-right: calc(8px * var(--pixel-scale));
 
@@ -680,7 +683,7 @@ const onMouseleave = () => {
   height: calc(20px * var(--pixel-scale));
   display: grid;
   place-content: center;
-  font-size: 22px;
+  font-size: calc(var(--pixel-scale) * 11px);
   position: relative;
   font-weight: var(--font-weight-7);
   &::after {
@@ -688,7 +691,7 @@ const onMouseleave = () => {
     position: absolute;
     bottom: calc(-3px * var(--pixel-scale));
     width: 100%;
-    font-size: 12px;
+    font-size: calc(var(--pixel-scale) * 6px);
     color: #efef9f;
     text-align: center;
     paint-order: stroke fill;
@@ -746,7 +749,7 @@ const onMouseleave = () => {
   padding-right: calc(4px * var(--pixel-scale));
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
-  font-size: 18px;
+  font-size: calc(var(--pixel-scale) * 9px);
   --dual-text-offset-y: 2px;
 }
 
@@ -783,7 +786,7 @@ const onMouseleave = () => {
   left: calc(18px * var(--pixel-scale));
   text-transform: capitalize;
   text-align: center;
-  font-size: 12px;
+  font-size: calc(var(--pixel-scale) * 6px);
   color: #d7ad42;
   font-weight: var(--font-weight-5);
   background: url('/assets/ui/card-kind-underline.png');
@@ -800,7 +803,7 @@ const onMouseleave = () => {
   position: absolute;
   top: calc(116px * var(--pixel-scale));
   left: calc(16px * var(--pixel-scale));
-  font-size: calc(1px * v-bind(descriptionFontSize));
+  font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;
   line-height: 1.2;
@@ -823,7 +826,7 @@ const onMouseleave = () => {
   position: absolute;
   bottom: calc(2px * var(--pixel-scale));
   right: calc(2px * var(--pixel-scale));
-  font-size: 14px;
+  font-size: calc(var(--pixel-scale) * 7px);
   overflow: hidden;
   background: v-bind(subKindBg), black;
   border-radius: var(--radius-pill);

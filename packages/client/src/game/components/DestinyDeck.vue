@@ -1,17 +1,35 @@
 <script setup lang="ts">
-import Pile from './Pile.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useBoardSide, useFxEvent } from '../composables/useGameClient';
+import {
+  useBoardSide,
+  useFxEvent,
+  useGameState,
+  usePlayer
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
+import Deck from './Deck.vue';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
-const { player } = defineProps<{
-  player: string;
+const { playerId } = defineProps<{
+  playerId: string;
 }>();
 
-const board = useBoardSide(computed(() => player));
 const isOpened = ref(false);
+
+const player = usePlayer(computed(() => playerId));
+const state = useGameState();
+const board = useBoardSide(computed(() => playerId));
+const destinyCards = computed<CardViewModel[]>(() => {
+  return board.value.destinyDeck
+    .map(cardId => {
+      return state.value.entities[cardId] as CardViewModel;
+    })
+    .sort((a, b) => {
+      return a.destinyCost! - b.destinyCost! || a.name.localeCompare(b.name);
+    });
+});
 
 const close = () => {
   isOpened.value = false;
@@ -21,18 +39,7 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
 </script>
 
 <template>
-  <Pile
-    :size="board.discardPile.length"
-    v-slot="{ index }"
-    class="banish-pile"
-    @click="isOpened = true"
-  >
-    <GameCard
-      :card-id="board.banishPile[index]"
-      :is-interactive="false"
-      variant="small"
-    />
-  </Pile>
+  <Deck :size="player.remainingCardsInDestinyDeck" @click="isOpened = true" />
 
   <UiModal
     v-model:is-opened="isOpened"
@@ -44,15 +51,11 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
   >
     <div class="content" @click="close">
       <header>
-        <h2 class="text-center">Banish Pile</h2>
+        <h2 class="text-center">Discard Pile</h2>
       </header>
       <div class="card-list fancy-scrollbar">
-        <div
-          v-for="card in board.banishPile.toReversed()"
-          :key="card"
-          @click.stop
-        >
-          <GameCard :card-id="card" :actions-offset="10" />
+        <div v-for="card in destinyCards" :key="card.id" @click.stop>
+          <GameCard :card-id="card.id" :actions-offset="10" />
         </div>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
@@ -63,11 +66,6 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
 </template>
 
 <style scoped lang="postcss">
-.banish-pile {
-  height: var(--card-small-height);
-  width: var(--card-small-width);
-}
-
 .content {
   height: 80dvh;
   display: grid;

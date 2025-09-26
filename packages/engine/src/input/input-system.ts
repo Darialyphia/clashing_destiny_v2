@@ -20,7 +20,7 @@ import {
 } from '../game/game.events';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
-import { PassChainInput } from './inputs/pass-chain.input';
+import { PassInput } from './inputs/pass.input';
 import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
 import { SelectMinionSlotInput } from './inputs/select-minion-slot.input';
 import { CommitMinionSlotSelectionInput } from './inputs/commit-minion-slot-selection.input';
@@ -53,7 +53,7 @@ const inputMap = validateinputMap({
   commitPlayCard: CommitPlayCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
-  passChain: PassChainInput,
+  pass: PassInput,
   selectCardOnBoard: SelectCardOnBoardInput,
   selectMinionSlot: SelectMinionSlotInput,
   commitMinionSlotSelection: CommitMinionSlotSelectionInput,
@@ -193,8 +193,10 @@ export class InputSystem extends System<never> {
       this.queue = [];
       this._currentAction = null;
       this.game.snapshotSystem.takeSnapshot();
-      await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
+    } else {
+      this.game.snapshotSystem.takeErrorSnapshot();
     }
+    await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
   }
 
   async dispatch(input: SerializedInput) {

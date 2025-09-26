@@ -25,14 +25,14 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
       "
       :style="{
         '--cols': isFlipped
-          ? boardSide.defenseZone.slots.length
-          : boardSide.attackZone.slots.length
+          ? boardSide.backRow.slots.length
+          : boardSide.frontRow.slots.length
       }"
     >
       <MinionSlot
         v-for="slot in isFlipped
-          ? boardSide.defenseZone.slots
-          : boardSide.attackZone.slots"
+          ? boardSide.backRow.slots
+          : boardSide.frontRow.slots"
         :key="slot.position"
         :minion-slot="slot"
       />
@@ -51,14 +51,14 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
       "
       :style="{
         '--cols': isFlipped
-          ? boardSide.attackZone.slots.length
-          : boardSide.defenseZone.slots.length
+          ? boardSide.frontRow.slots.length
+          : boardSide.backRow.slots.length
       }"
     >
       <MinionSlot
         v-for="slot in isFlipped
-          ? boardSide.attackZone.slots
-          : boardSide.defenseZone.slots"
+          ? boardSide.frontRow.slots
+          : boardSide.backRow.slots"
         :key="slot.position"
         :minion-slot="slot"
       />

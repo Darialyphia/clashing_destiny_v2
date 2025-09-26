@@ -108,7 +108,9 @@ export class GameClient {
 
     this.networkAdapter.subscribe(async snapshot => {
       console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
-      console.log('state', snapshot.state);
+      if (snapshot.kind === 'state') {
+        console.log('state', snapshot.state);
+      }
       console.log('events', snapshot.events);
       console.groupEnd();
       this.queue.push(snapshot);
@@ -171,6 +173,10 @@ export class GameClient {
   initialize(
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
   ) {
+    if (snapshot.kind === 'error') {
+      throw new Error('Cannot initialize client with error snapshot');
+    }
+
     this.lastSnapshotId = snapshot.id;
     this.initialState = snapshot.state;
 
@@ -209,9 +215,12 @@ export class GameClient {
 
     try {
       this._isPlayingFx = true;
-      this.stateManager.preupdate(snapshot.state);
+      const isStateSnapshot = snapshot.kind === 'state';
+      if (isStateSnapshot) {
+        this.stateManager.preupdate(snapshot.state);
+      }
       for (const event of snapshot.events) {
-        if (this.gameType === GAME_TYPES.LOCAL) {
+        if (this.gameType === GAME_TYPES.LOCAL && isStateSnapshot) {
           this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
         }
         await this.stateManager.onEvent(event, async () => {
@@ -222,7 +231,9 @@ export class GameClient {
       }
       this._isPlayingFx = false;
 
-      this.stateManager.update(snapshot.state);
+      if (isStateSnapshot) {
+        this.stateManager.update(snapshot.state);
+      }
 
       if (this.gameType === GAME_TYPES.LOCAL) {
         this.playerId = this.getActivePlayerId();
@@ -338,9 +349,9 @@ export class GameClient {
     });
   }
 
-  passChain() {
+  pass() {
     this.networkAdapter.dispatch({
-      type: 'passChain',
+      type: 'pass',
       payload: {
         playerId: this.playerId
       }

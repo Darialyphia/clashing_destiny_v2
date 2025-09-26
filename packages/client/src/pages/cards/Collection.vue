@@ -69,8 +69,7 @@ const listRoot = useTemplateRef('card-list');
 
 <style scoped lang="postcss">
 .cards {
-  --pixel-scale: 2;
-  --min-column-size: 20rem;
+  --min-column-size: 16rem;
   gap: var(--size-6);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--min-column-size), 1fr));
@@ -91,10 +90,10 @@ const listRoot = useTemplateRef('card-list');
   &.compact {
     --pixel-scale: 1;
     --min-column-size: 10rem;
-    .collection-card {
+    /* .collection-card {
       transform: scale(0.5);
       transform-origin: top left;
-    }
+    } */
   }
 
   li {

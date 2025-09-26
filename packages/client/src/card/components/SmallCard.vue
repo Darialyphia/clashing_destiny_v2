@@ -93,7 +93,6 @@ const pointerStyle = computed(() => {
 
 <style scoped lang="postcss">
 .small-card {
-  --pixel-scale: 2;
   --glare-x: calc(1px * v-bind('pointerStyle?.glareX'));
   --glare-y: calc(1px * v-bind('pointerStyle?.glareY'));
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));

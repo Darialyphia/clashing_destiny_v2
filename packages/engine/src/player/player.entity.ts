@@ -39,7 +39,8 @@ export type SerializedPlayer = {
   discardPile: string[];
   banishPile: string[];
   destinyZone: string[];
-  remainingCardsInDeck: number;
+  remainingCardsInMainDeck: number;
+  remainingCardsInDestinyDeck: number;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -137,7 +138,8 @@ export class Player
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
-      remainingCardsInDeck: this.cardManager.mainDeck.cards.length,
+      remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
+      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,

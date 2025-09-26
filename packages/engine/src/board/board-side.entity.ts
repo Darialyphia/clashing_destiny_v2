@@ -56,8 +56,8 @@ export type SerializedBoardSide = {
     hero: string;
     artifacts: string[];
   };
-  attackZone: SerializedCreatureZone;
-  defenseZone: SerializedCreatureZone;
+  frontRow: SerializedCreatureZone;
+  backRow: SerializedCreatureZone;
   hand: string[];
   destinyZone: string[];
   mainDeck: { total: number; remaining: number };
@@ -340,10 +340,10 @@ export class BoardSide
         hero: this.heroZone.hero.id,
         artifacts: this.heroZone.artifacts.map(artifact => artifact.id)
       },
-      attackZone: {
+      frontRow: {
         slots: this.frontRow.slots.map(slot => slot.serialize())
       },
-      defenseZone: {
+      backRow: {
         slots: this.backRow.slots.map(slot => slot.serialize())
       },
       banishPile: [...this.player.cardManager.banishPile].map(card => card.id),

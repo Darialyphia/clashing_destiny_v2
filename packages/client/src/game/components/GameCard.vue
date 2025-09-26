@@ -1,40 +1,32 @@
 <script setup lang="ts">
-import { unrefElement } from '@vueuse/core';
 import {
   useCard,
-  useFxEvent,
   useGameClient,
-  useGameState
+  useMyPlayer
 } from '../composables/useGameClient';
 import Card from '@/card/components/Card.vue';
 import {
   PopoverRoot,
   PopoverAnchor,
   PopoverPortal,
-  PopoverContent
+  PopoverContent,
+  type PopoverContentProps
 } from 'reka-ui';
-import CardResizer from './CardResizer.vue';
-import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
-import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { type DamageType } from '@game/engine/src/utils/damage';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import SmallCard from '@/card/components/SmallCard.vue';
 
 const {
   cardId,
-  interactive = true,
-  autoScale = true,
-  deferAutoScaling = false,
-  imageOnly = false,
-  actionsOffset = -50
+  actionsOffset = -50,
+  actionsSide,
+  variant = 'default',
+  isInteractive = true
 } = defineProps<{
   cardId: string;
-  interactive?: boolean;
-  autoScale?: boolean;
-  deferAutoScaling?: boolean;
-  imageOnly?: boolean;
   actionsOffset?: number;
+  actionsSide?: PopoverContentProps['side'];
+  variant?: 'default' | 'small';
+  isInteractive?: boolean;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -56,103 +48,48 @@ const isActionsPopoverOpened = computed({
 });
 
 const isTargetable = computed(() => {
-  if (!interactive) return false;
-
   return (
     card.value.canBeTargeted ||
     client.value.ui.selectedManaCostIndices.includes(card.value.indexInHand!)
   );
 });
 
-const cardComponent = useTemplateRef('card');
-const cardElement = computed(() => unrefElement(cardComponent));
+const myPlayer = useMyPlayer();
 
-const onTakeDamage = async (e: {
-  card: SerializedCard;
-  damage: {
-    type: DamageType;
-    amount: number;
-  };
-}) => {
-  if (e.card.id !== cardId || !cardElement.value || e.damage.amount <= 0) {
-    return;
-  }
-
-  card.value.update(e.card);
-
-  cardElement.value.classList.add('damage');
-  cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
-  setTimeout(() => {
-    cardElement.value?.classList.remove('damage');
-    delete cardElement.value?.dataset.damage;
-  }, 1750);
-
-  const keyframes: Keyframe[] = [
-    { transform: 'translateX(0)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(0)' }
-  ];
-
-  await cardElement.value?.animate(keyframes, {
-    duration: 500,
-    easing: 'ease-in-out',
-    iterations: 1
-  }).finished;
+const handleClick = () => {
+  if (!isInteractive) return;
+  client.value.ui.onCardClick(card.value);
 };
-useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
-useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 
-const state = useGameState();
-const spriteUrl = computed(() => {
-  const card = state.value.entities[cardId] as CardViewModel;
-  if (!card) return '';
-  return `url(${card.imagePath})`;
+const classes = computed(() => {
+  return {
+    exhausted: isInteractive && card.value.isExhausted,
+    disabled: !card.value.canPlay && card.value.location === 'hand',
+    selected: client.value.ui.selectedCard?.equals(card.value),
+    targetable: isTargetable.value,
+    flipped: !myPlayer.value.equals(card.value.player)
+  };
 });
 </script>
 
 <template>
-  <CardResizer
-    :enabled="autoScale"
-    class="game-card"
-    ref="card"
-    :class="{ 'is-enemy': card.player.id !== client.playerId }"
-    :defer="deferAutoScaling"
-  >
-    <PopoverRoot v-model:open="isActionsPopoverOpened">
-      <PopoverAnchor />
-      <div
-        v-if="imageOnly"
-        class="card sprite"
-        :id="card.id"
-        :style="{ '--bg': spriteUrl }"
-        :class="{
-          exhausted: card.isExhausted,
-          selected: client.ui.selectedCard?.equals(card),
-          targetable: isTargetable
-        }"
-        @click="
-          () => {
-            if (!interactive) return;
-            client.ui.onCardClick(card);
-          }
-        "
-      />
+  <PopoverRoot v-model:open="isActionsPopoverOpened">
+    <PopoverAnchor>
       <Card
-        v-else
+        v-if="variant === 'default'"
+        :is-animated="false"
         :id="card.id"
         :card="{
           id: card.id,
           name: card.name,
-          spellSchools: card.spellSchools,
+          unlockedSpellSchools: card.unlockedSpellSchools,
+          spellSchool: card.spellSchool,
           description: card.description,
           image: card.imagePath,
           kind: card.kind,
           level: card.level,
           rarity: card.rarity,
+          speed: card.speed,
           manaCost: card.manaCost,
           baseManaCost: card.baseManaCost,
           destinyCost: card.destinyCost,
@@ -163,39 +100,40 @@ const spriteUrl = computed(() => {
           durability: card.durability,
           abilities: card.abilities.map(ability => ability.description)
         }"
-        class="card"
-        :class="{
-          exhausted: card.isExhausted,
-          disabled: interactive && !card.canPlay && card.location === 'hand',
-          selected: client.ui.selectedCard?.equals(card),
-          targetable: isTargetable
-        }"
-        @click="
-          () => {
-            if (!interactive) return;
-            client.ui.onCardClick(card);
-          }
-        "
+        class="game-card"
+        :class="classes"
+        @click="handleClick"
       />
+      <SmallCard
+        v-else-if="variant === 'small'"
+        :id="card.id"
+        :card="{
+          id: card.id,
+          image: card.imagePath,
+          kind: card.kind,
+          atk: card.atk,
+          hp: card.hp,
+          durability: card.durability
+        }"
+        class="game-card"
+        :class="classes"
+        @click="handleClick"
+      />
+    </PopoverAnchor>
 
-      <CardStats v-if="interactive" :card-id="card.id" class="stats" />
-
-      <PopoverPortal
-        :disabled="
-          card.location === 'hand' ||
-          card.location === 'discardPile' ||
-          card.location === 'banishPile'
-        "
-      >
-        <PopoverContent :side-offset="actionsOffset" v-if="interactive">
-          <CardActions
-            :card="card"
-            v-model:is-opened="isActionsPopoverOpened"
-          />
-        </PopoverContent>
-      </PopoverPortal>
-    </PopoverRoot>
-  </CardResizer>
+    <PopoverPortal
+      :disabled="
+        card.location === 'hand' ||
+        card.location === 'discardPile' ||
+        card.location === 'banishPile' ||
+        card.location === 'destinyDeck'
+      "
+    >
+      <PopoverContent :side-offset="actionsOffset" :side="actionsSide">
+        <CardActions :card="card" v-model:is-opened="isActionsPopoverOpened" />
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
 </template>
 
 <style scoped lang="postcss">
@@ -210,37 +148,8 @@ const spriteUrl = computed(() => {
   }
 } */
 
-.game-card {
-  --pixel-scale: 2;
-  width: calc(var(--card-width) * var(--pixel-scale));
-  height: calc(var(--card-height) * var(--pixel-scale));
-  &.damage::after {
-    content: attr(data-damage);
-    position: absolute;
-    top: 0;
-    font-size: var(--font-size-11);
-    color: red;
-    background-size: cover;
-    transform: translateZ(30px);
-    font-weight: var(--font-weight-9);
-    -webkit-text-stroke: 2px black;
-    paint-order: fill stroke;
-    transition: all 0.3s var(--ease-in-2);
-    pointer-events: none;
-
-    @starting-style {
-      transform: translateZ(60px) translateY(-50px) scale(15);
-      filter: blur(10px);
-      opacity: 0;
-    }
-  }
-  &.is-enemy.damage::after {
-    rotate: 180deg;
-  }
-}
-
 .selected {
-  outline: solid 3px cyan;
+  filter: brightnes(1.2);
 }
 
 /* .highlighted::after {
@@ -251,11 +160,11 @@ const spriteUrl = computed(() => {
   animation: card-glow 2.5s infinite;
 } */
 
-.card {
+.game-card {
   transition: all 0.3s var(--ease-2);
 
   &.exhausted {
-    filter: grayscale(0.5);
+    filter: grayscale(0.4) brightness(0.8);
     transform: none;
   }
   &.targetable {
@@ -286,27 +195,8 @@ const spriteUrl = computed(() => {
   }
 } */
 
-.sprite {
-  aspect-ratio: var(--card-ratio);
-  position: relative;
-  background-image: url('/assets/ui/card-board-front.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: var(--bg);
-    background-position: center -50;
-    background-size: calc(3.5 * 96px);
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-    transition: transform 0.2s var(--ease-2);
-  }
-  &:hover::after {
-    transform: translateY(-10px);
-  }
+.flipped:deep(.image) {
+  scale: -1 1;
+  translate: -100% 0;
 }
 </style>

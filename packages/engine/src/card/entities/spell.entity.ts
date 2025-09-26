@@ -22,6 +22,7 @@ export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   preResponseTargets: SerializedPreResponseTarget[] | null;
+  spellSchool: string | null;
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
@@ -99,6 +100,7 @@ export class SpellCard extends Card<
       ...this.serializeBase(),
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
+      spellSchool: this.blueprint.spellSchool,
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
         : null

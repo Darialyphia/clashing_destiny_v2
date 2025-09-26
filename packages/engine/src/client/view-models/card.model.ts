@@ -75,7 +75,7 @@ export class CardViewModel {
   }
 
   get imagePath() {
-    return `/assets/icons/${this.data.cardIconId}.png`;
+    return `/assets/cards/${this.data.cardIconId}.png`;
   }
 
   get kind() {
@@ -175,14 +175,24 @@ export class CardViewModel {
     return null;
   }
 
-  get spellSchools() {
+  get speed() {
+    return this.data.speed;
+  }
+
+  get unlockedSpellSchools() {
     if ('spellSchools' in this.data) {
       return this.data.spellSchools as SpellSchool[];
     }
-    if ('spellSchool' in this.data && this.data.spellSchool) {
-      return [this.data.spellSchool] as SpellSchool[];
-    }
+
     return [];
+  }
+
+  get spellSchool() {
+    if ('spellSchool' in this.data && this.data.spellSchool) {
+      return this.data.spellSchool as SpellSchool;
+    }
+
+    return undefined;
   }
 
   get level() {

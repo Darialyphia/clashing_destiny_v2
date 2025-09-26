@@ -6,8 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-  DialogPortal,
-  VisuallyHidden
+  DialogPortal
 } from 'reka-ui';
 export type ModalStyleVariables = '--ui-modal-size';
 

@@ -40,7 +40,8 @@ export class TurnSystem extends System<never> {
     return this._elapsedTurns;
   }
 
-  async pass() {
+  async pass(player: Player) {
+    if (!player.equals(this._initiativePlayer)) return;
     this.consecutivePasses++;
     if (this.consecutivePasses === this.passesNeededToResolve) {
       await this.game.gamePhaseSystem.declareEndTurn();
@@ -52,7 +53,7 @@ export class TurnSystem extends System<never> {
   startTurn() {
     this._initiativePlayer = this.nextInitiativePlayer;
     this.nextInitiativePlayer = this._initiativePlayer.opponent;
-
+    this.consecutivePasses = 0;
     return this.game.emit(
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })

@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import {
-  useFxEvent,
-  useGameClient,
-  useMaybeEntity
-} from '../composables/useGameClient';
+import { useGameClient, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import {
@@ -14,12 +10,8 @@ import {
   PopoverPortal,
   PopoverContent
 } from 'reka-ui';
-import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import type { DamageType } from '@game/engine/src/utils/damage';
-import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
-import { waitFor } from '@game/shared';
+import GameCard from './GameCard.vue';
 
 const props = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
@@ -50,56 +42,6 @@ const isActionsPopoverOpened = computed({
     }
   }
 });
-
-const cardElement = useTemplateRef('card');
-const onTakeDamage = async (e: {
-  card: SerializedCard;
-  damage: {
-    type: DamageType;
-    amount: number;
-  };
-}) => {
-  if (!minion.value) return;
-  if (
-    e.card.id !== minion.value.id ||
-    !cardElement.value ||
-    e.damage.amount <= 0
-  ) {
-    return;
-  }
-
-  cardElement.value.classList.add('damage');
-  cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
-  setTimeout(() => {
-    cardElement.value?.classList.remove('damage');
-    delete cardElement.value?.dataset.damage;
-  }, 1750);
-
-  const keyframes: Keyframe[] = [
-    { transform: 'translateX(0)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(0)' }
-  ];
-
-  await cardElement.value?.animate(keyframes, {
-    duration: 500,
-    easing: 'ease-in-out',
-    iterations: 1
-  }).finished;
-};
-useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
-
-useFxEvent(FX_EVENTS.CARD_BEFORE_DESTROY, async event => {
-  if (!minion.value) return;
-  if (minion.value.id !== event.card.id) return;
-  if (!cardElement.value) return;
-  cardElement.value.classList.add('is-destroyed');
-  await waitFor(500);
-});
 </script>
 
 <template>
@@ -120,10 +62,17 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_DESTROY, async event => {
       })
     "
   >
-    <template v-if="minion">
-      <InspectableCard :card-id="minion.id" side="left" :side-offset="50">
-        <div
+    <InspectableCard
+      v-if="minion"
+      :card-id="minion.id"
+      side="left"
+      :side-offset="50"
+    >
+      <PopoverRoot v-model:open="isActionsPopoverOpened">
+        <PopoverAnchor />
+        <GameCard
           class="minion-clickable-area"
+          variant="small"
           :id="
             client.ui.DOMSelectors.minionClickableArea(
               props.minionSlot.playerId,
@@ -131,71 +80,40 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_DESTROY, async event => {
               props.minionSlot.position
             ).id
           "
+          :card-id="minion.id"
+          :class="{
+            targetable: minion.canBeTargeted
+          }"
           @click="client.ui.onCardClick(minion)"
         />
-      </InspectableCard>
-      <div
-        class="minion-wrapper"
-        :class="{ opponent: minion.player.id !== client.playerId }"
-        :id="
-          client.ui.DOMSelectors.minionSprite(
-            props.minionSlot.playerId,
-            props.minionSlot.zone,
-            props.minionSlot.position
-          ).id
-        "
-      >
-        <PopoverRoot v-model:open="isActionsPopoverOpened">
-          <PopoverAnchor />
-          <div
-            ref="card"
-            :id="minion.id"
-            :class="{
-              targetable: minion.canBeTargeted
-            }"
-            class="slot-minion"
-            :style="{ '--bg': `url(${minion?.imagePath})` }"
-          />
-          <PopoverPortal :disabled="minion.location === 'hand'">
-            <PopoverContent :side-offset="-50">
-              <CardActions
-                :card="minion"
-                v-model:is-opened="isActionsPopoverOpened"
-              />
-            </PopoverContent>
-          </PopoverPortal>
-        </PopoverRoot>
-
-        <CardStats :card-id="minion.id" class="stats" />
-      </div>
-    </template>
+        <PopoverPortal :disabled="minion.location === 'hand'">
+          <PopoverContent :side-offset="-50">
+            <CardActions
+              :card="minion"
+              v-model:is-opened="isActionsPopoverOpened"
+            />
+          </PopoverContent>
+        </PopoverPortal>
+      </PopoverRoot>
+    </InspectableCard>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .minion-slot {
   --pixel-scale: 1;
-  width: calc(var(--minion-slot-width) * var(--pixel-scale));
-  height: calc(var(--minion-slot-height) * var(--pixel-scale));
-  border-radius: var(--radius-2);
-  background: url('/assets/ui/card-board-front-2.png') no-repeat center;
-  background-size: cover;
-  position: relative;
-  transform-style: preserve-3d;
+  --padding: 2px;
+  border: solid 1px #985e25;
+  width: calc(var(--card-small-width) + var(--padding) * 2);
+  height: calc(var(--card-small-height) + var(--padding) * 2);
   &:not(:is(.attacking, .exhausted)):hover {
     border-color: var(--cyan-4);
-    background: url('/assets/ui/minino-slot-hover.png') no-repeat center;
-    .minion-clickable-area {
-      filter: brightness(1.25);
-    }
   }
   &.attacking {
     border-color: var(--red-4);
-    background: url('/assets/ui/minino-slot-attacking.png') no-repeat center;
   }
   &.highlighted {
     border-color: cyan;
-    background-color: hsl(200 100% 50% / 0.25);
   }
   &.selected {
     border-color: var(--yellow-5);
@@ -208,97 +126,9 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_DESTROY, async event => {
   }
 }
 
-.minion-clickable-area {
-  position: absolute;
-  inset: 0;
-}
 .slot-minion {
-  width: 100%;
-  aspect-ratio: 1;
-  position: relative;
-  transition: filter 0.5s var(--ease-3);
-
-  @starting-style {
-    filter: brightness(400%) blur(5px);
-  }
-  &::before {
-    --pixel-scale: 1;
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    inset: 0;
-    border-radius: var(--radius-2);
-    background: var(--bg) no-repeat;
-    background-position: center 85%;
-    background-size: calc(96px * var(--pixel-scale))
-      calc(96px * var(--pixel-scale));
-    transform: translateY(-50px) scale(2);
-    pointer-events: none;
-  }
-
-  &.targetable::before {
+  &.targetable {
     filter: saturate(150%) drop-shadow(0 0 1px red);
   }
-
-  &.targetable::after {
-    --pixel-scale: 1;
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    inset: 0;
-    border-radius: var(--radius-2);
-    background: var(--bg) no-repeat;
-    background-position: center 85%;
-    background-size: calc(96px * var(--pixel-scale))
-      calc(96px * var(--pixel-scale));
-    transform: translateY(-50px) scale(2);
-    pointer-events: none;
-    filter: sepia(100%) brightness(50%) saturate(300%) hue-rotate(-50deg)
-      blur(5px);
-    mix-blend-mode: overlay;
-  }
-
-  .opponent &::before,
-  .opponent &::after {
-    transform: translateY(-50px) scale(2) scaleX(-1);
-  }
-}
-/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
-.slot-minion.damage::after {
-  content: attr(data-damage);
-  position: absolute;
-  top: 0;
-  font-size: var(--font-size-5);
-  background-size: cover;
-  transform: translateZ(30px);
-  font-weight: var(--font-weight-9);
-  -webkit-text-stroke: 2px black;
-  paint-order: fill stroke;
-  transition: all 0.3s var(--ease-in-2);
-  pointer-events: none;
-  color: var(--red-9);
-
-  @starting-style {
-    transform: translateZ(60px) translateY(-50px) scale(12);
-    filter: blur(10px);
-    opacity: 0;
-  }
-}
-
-/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
-.slot-minion.is-destroyed {
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-.minion-wrapper {
-  /* transform: translateZ(20px) rotateX(calc(-1 * var(--board-rotation))); */
-  transform-style: preserve-3d;
-  pointer-events: none;
-}
-
-.stats {
-  transform: translateY(10px) translateZ(20px);
 }
 </style>

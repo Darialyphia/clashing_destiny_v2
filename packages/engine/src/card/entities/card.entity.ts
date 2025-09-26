@@ -439,8 +439,9 @@ export abstract class Card<
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
-      manaCost: this.manaCost,
-      destinyCost: this.destinyCost,
+      manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
+      destinyCost:
+        this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
       speed: this.blueprint.speed
       // keywords: this.keywords.map(keyword => ({
       //   id: keyword.id,

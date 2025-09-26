@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useMyPlayer
+} from '../composables/useGameClient';
 import Arrow from './Arrow.vue';
 import { match } from 'ts-pattern';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import GameCard from './GameCard.vue';
 
 const client = useGameClient();
 const state = useGameState();
@@ -28,17 +33,18 @@ const buildPaths = async () => {
           return document
             .querySelector(
               client.value.ui.getCardDOMSelectorOnBoard(target.card)
-            )!
-            .getBoundingClientRect();
+            )
+            ?.getBoundingClientRect();
         })
         .with({ type: 'minionPosition' }, target => {
           return client.value.ui.DOMSelectors.minionSprite(
             target.playerId,
             target.zone,
             target.slot
-          ).element!.getBoundingClientRect();
+          ).element?.getBoundingClientRect();
         })
         .exhaustive();
+      if (!startRect || !endRect) return '';
 
       const start = {
         x: startRect.left + startRect.width / 2,
@@ -62,36 +68,43 @@ const buildPaths = async () => {
 watch(() => state.value.effectChain?.stack, buildPaths);
 watch(() => client.value.playerId, buildPaths);
 
+const myPlayer = useMyPlayer();
 const stack = computed(() => {
   return (
-    state.value.effectChain?.stack.map(step => ({
-      ...step,
-      image: `url(${(state.value.entities[step.source] as CardViewModel)?.imagePath})`
-    })) || []
+    state.value.effectChain?.stack.map(step => {
+      const card = state.value.entities[step.source] as CardViewModel;
+      return {
+        ...step,
+        type: card?.player.equals(myPlayer.value) ? 'ally' : 'enemy',
+        image: `url(${card?.imagePath})`
+      };
+    }) ?? []
   );
 });
 </script>
 
 <template>
-  <div class="effect-chain" id="effect-chain">
+  <div class="effect-chain" id="effect-chain" v-show="stack.length > 0">
     <InspectableCard
       v-for="(effect, index) in stack"
       :key="index"
       :card-id="effect.source"
       class="effect-chain-card-wrapper"
     >
-      <div
-        :id="effect.source"
-        class="effect-chain-card"
-        :style="{ '--bg': effect.image }"
-      />
+      <div class="effect" :class="effect.type">
+        <GameCard
+          :card-id="effect.source"
+          :is-interactive="false"
+          variant="small"
+        />
+      </div>
 
       <Teleport to="#arrows">
         <Arrow
           v-for="(path, targetIndex) in paths[index]"
           :key="targetIndex"
           :path="path"
-          color="#00bcff"
+          :color="effect.type === 'ally' ? 'cyan' : 'red'"
         />
       </Teleport>
     </InspectableCard>
@@ -105,13 +118,21 @@ const stack = computed(() => {
   display: flex;
   align-items: center;
   gap: var(--size-3);
+  padding: var(--size-1);
+  border: solid 1px #985e25;
 }
 
-.effect-chain-card {
-  width: var(--size-8);
-  aspect-ratio: 1;
-  background-image: var(--bg);
-  background-position: center;
-  background-size: 200%;
+@keyframes chain-effect-pulse {
+  to {
+    box-shadow: 0 0 1rem var(--shadow-color);
+  }
+}
+.ally {
+  --shadow-color: cyan;
+  animation: chain-effect-pulse 2.5s infinite alternate;
+}
+.enemy {
+  --shadow-color: red;
+  animation: chain-effect-pulse 2.5s infinite alternate;
 }
 </style>

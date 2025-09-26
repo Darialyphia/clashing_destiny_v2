@@ -9,31 +9,16 @@ import {
 import GameCard from '@/game/components/GameCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
-import { isDefined } from '@game/shared';
+import { clamp, isDefined } from '@game/shared';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { OnClickOutside } from '@vueuse/components';
+import { useResizeObserver } from '@vueuse/core';
 
+const state = useGameState();
 const myBoard = useMyBoard();
 const ui = useGameUi();
 const client = useGameClient();
-
-const cardSpacing = computed(() => {
-  const handSize = myBoard.value.hand.length;
-  const base = 130;
-  return handSize > 7 ? base - 0 * (handSize - 6) : base;
-});
-const cardSpacingHovered = computed(() => {
-  const handSize = myBoard.value.hand.length;
-  const base = 184;
-  const amount = handSize > 6 ? base - 10 * (handSize - 6) : base;
-
-  return amount % 2 === 0 ? amount : amount - 1; // Ensure even number to avoid image-rendering: pixelated working
-});
-
-const angle = computed(() => {
-  const handSize = myBoard.value.hand.length;
-  return handSize > 7 ? 5 - (handSize - 6) * 0.5 : 5;
-});
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const newCard = e.card as SerializedCard;
@@ -66,110 +51,204 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   }
 });
 
-const state = useGameState();
-const displayedCards = computed(() => {
-  return myBoard.value.hand.map(cardId => {
-    return state.value.entities[cardId] as CardViewModel;
-  });
-});
-
 const isInteractionActive = computed(() => {
   return (
     state.value.interaction.state === INTERACTION_STATES.PLAYING_CARD ||
     state.value.interaction.state === INTERACTION_STATES.USING_ABILITY
   );
 });
+
+const isExpanded = ref(false);
+
+const handContainer = useTemplateRef('hand');
+const handContainerSize = ref({ w: 0, h: 0 });
+
+useResizeObserver(handContainer, () => {
+  const el = handContainer.value;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  handContainerSize.value = { w: rect.width, h: rect.height };
+});
+
+const pixelScale = computed(() => {
+  let el = handContainer.value;
+  if (!el) return 1;
+  let scale = getComputedStyle(el).getPropertyValue('--pixel-scale');
+  while (!scale) {
+    if (!el.parentElement) return 1;
+    el = el.parentElement;
+    scale = getComputedStyle(el).getPropertyValue('--pixel-scale');
+  }
+
+  return parseInt(scale) || 1;
+});
+
+const cardW = computed(() => {
+  return (
+    parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--card-width-unitless'
+      )
+    ) * pixelScale.value
+  );
+});
+
+const handSize = computed(() => myBoard.value.hand.length);
+
+const MAX_FAN_ANGLE = 15;
+const MAX_FAN_SAG = 150;
+
+const tOf = (i: number, n: number) => {
+  // map i=0..n-1 to t in [-1, 1]
+  const half = (n - 1) / 2;
+  return n <= 1 ? 0 : (i - half) / Math.max(half, 1);
+};
+const overlapRatio = computed(() => {
+  if (handSize.value <= 1) return 0;
+  const r = (cardW.value - step.value) / cardW.value; // 0..1
+  return clamp(r, 0.3, 1);
+});
+
+const fanSag = computed(() => overlapRatio.value * MAX_FAN_SAG);
+
+const rotDeg = (i: number) => tOf(i, handSize.value) * (MAX_FAN_ANGLE / 2);
+
+const yOffset = (i: number) => {
+  const t = tOf(i, handSize.value);
+  return fanSag.value * t * t;
+};
+
+const step = computed(() => {
+  if (handSize.value <= 1) return 0;
+  const natural =
+    (handContainerSize.value.w - cardW.value) / (handSize.value - 1);
+  return clamp(natural, 0, cardW.value);
+});
+
+const cards = computed(() => {
+  if (handSize.value === 0) return [];
+  const usedSpan = cardW.value + (handSize.value - 1) * step.value;
+  const offset = (handContainerSize.value.w - usedSpan) / 2;
+
+  return myBoard.value.hand.map((cardId, i) => ({
+    card: state.value.entities[cardId] as CardViewModel,
+    x: offset + i * step.value,
+    y: yOffset(i),
+    rot: rotDeg(i),
+    z: i
+  }));
+});
 </script>
 
 <template>
-  <section
-    :id="`hand-${myBoard.playerId}`"
-    class="hand"
-    :class="{
-      'ui-hidden': !client.ui.displayedElements.hand,
-      'interaction-active': isInteractionActive
-    }"
-    :style="{ '--hand-size': myBoard.hand.length, '--angle': angle }"
-  >
-    <div
-      class="card"
-      v-for="(card, index) in displayedCards"
-      :key="card.id"
+  <OnClickOutside @trigger="isExpanded = false">
+    <section
+      :id="`hand-${myBoard.playerId}`"
+      class="hand"
       :class="{
-        selected: ui.selectedCard?.id === card.id
+        'ui-hidden': !client.ui.displayedElements.hand,
+        'interaction-active': isInteractionActive,
+        expanded: isExpanded
       }"
-      :style="{
-        '--index': index,
-        '--offset': Math.abs(index - myBoard.hand.length / 2)
-      }"
+      :style="{ '--hand-size': myBoard.hand.length }"
+      ref="hand"
     >
-      <GameCard
-        :card-id="card.id"
+      <div
         class="hand-card"
-        :class="{ disabled: !card.canPlay }"
-      />
-    </div>
-  </section>
+        v-for="card in cards"
+        :key="card.card.id"
+        :class="{
+          selected: ui.selectedCard?.equals(card.card),
+          disabled: !card.card.canPlay
+        }"
+        :style="{
+          '--x': `${card.x}px`,
+          '--y': `${isExpanded ? card.y : 0}px`,
+          '--z': card.z,
+          '--angle': isExpanded ? `${card.rot}deg` : '0deg'
+        }"
+        @click="isExpanded = true"
+      >
+        <GameCard
+          :card-id="card.card.id"
+          actions-side="top"
+          :actions-offset="15"
+          :is-interactive="isExpanded"
+        />
+        <p v-if="!card.card.canPlay" class="disabled-message">
+          You cannot play this card right now.
+        </p>
+      </div>
+    </section>
+  </OnClickOutside>
 </template>
 
 <style scoped lang="postcss">
 .hand {
   position: relative;
+
   z-index: 1;
-  display: grid;
-  justify-items: center;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  --offset-step: calc(1px * v-bind(cardSpacing));
 
-  &:has(:hover) > *,
-  &.interaction-active > * {
-    --offset-step: calc(1px * v-bind(cardSpacingHovered));
-    --y-offset: -50%;
-  }
+  height: 100%;
+  width: 50%;
 
-  > * {
-    grid-row: 1;
-    grid-column: 1;
-    position: relative;
-    --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
-    --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
-    --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
-    /* --rotation: 0deg; */
-    /* --y-offset: calc(var(--offset) * 10px); */
-    --y-offset: 0;
-    transform-origin: center 120%;
-    transform: translateX(
-        calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
-      )
-      translateY(var(--y-offset)) rotate(var(--rotation));
-    transition: transform 0.2s ease-out;
-
-    .hand:hover &,
-    .hand.interaction-active & {
-      --rotation: 0deg;
-    }
-    &:is(:hover, .selected) {
-      z-index: 1;
-      --y-offset: -62%;
-      transform: translateX(
-          calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
-        )
-        translateY(var(--y-offset));
-    }
+  &.expanded {
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
 .hand-card {
-  /* filter: drop-shadow(0 0 15px hsl(var(--lime-4-hsl) / 0.25)); */
+  position: absolute;
+  left: 0;
+  top: 0;
+  --hover-offset: 0px;
+  --offset-y: calc(
+    (var(--card-height) * var(--pixel-scale) * 0.5) + var(--hover-offset)
+  );
+  --rot-scale: 1;
+  --full-y: calc(var(--y) + var(--offset-y));
+  transform-origin: 50% 100%;
+  transform: translateX(var(--x)) translateY(var(--full-y))
+    rotate(calc(var(--angle) * var(--rot-scale)));
+  z-index: var(--z);
+  transition: transform 0.2s var(--ease-2);
+  pointer-events: auto;
+
+  .hand.expanded & {
+    --offset-y: var(--hover-offset);
+  }
+
+  &:hover {
+    --hover-offset: -150px;
+    z-index: var(--hand-size);
+  }
+  .hand.expanded &:hover,
+  &.selected {
+    --hover-offset: -30px;
+    --rot-scale: 0;
+    --full-y: var(--offset-y);
+  }
   &.disabled {
     filter: brightness(0.75) grayscale(0.3);
   }
 }
 
-@media (width < 1024px) {
-  .hand {
-    transform: scale(0.5);
-  }
+.disabled-message {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(0 0% 0% / 0.65);
+  color: hsl(0 0% 100% / 0.9);
+  font-size: var(--font-size--2);
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius-pill);
+  width: max-content;
+  max-width: 80%;
+  text-align: center;
+  pointer-events: none;
+  font-style: italic;
 }
 </style>

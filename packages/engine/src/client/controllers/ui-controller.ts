@@ -15,7 +15,7 @@ import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
-import { PassChainGlobalAction } from '../actions/pass-chain';
+import { PassChainGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
 import type { MinionSlotZone } from '../../board/board;constants';
 
@@ -189,6 +189,7 @@ export class UiController {
   }
 
   onCardClick(card: CardViewModel) {
+    console.log('on card click', card.id);
     const state = this.client.state;
     for (const rule of this.cardClickRules) {
       if (rule.predicate(card, state)) {

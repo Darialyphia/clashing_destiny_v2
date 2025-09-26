@@ -53,8 +53,12 @@ export class PlayerViewModel {
     return this.data.influence;
   }
 
-  get remainingCardsInDeck() {
-    return this.data.remainingCardsInDeck;
+  get remainingCardsInMainDeck() {
+    return this.data.remainingCardsInMainDeck;
+  }
+
+  get remainingCardsInDestinyDeck() {
+    return this.data.remainingCardsInDestinyDeck;
   }
 
   get isPlayer1() {

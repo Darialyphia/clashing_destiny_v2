@@ -24,6 +24,8 @@ import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { UseAbilityContext } from '../interactions/use-ability.interaction';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import { GAME_EVENTS } from '../game.events';
+import { CardDeclareUseAbilityEvent } from '../../card/card.events';
 
 export const INTERACTION_STATES = {
   IDLE: 'idle',
@@ -315,6 +317,10 @@ export class GameInteractionSystem
       }
     );
 
+    if (card.manaCost === 0) {
+      await this._ctx.commit(this._ctx.player, []);
+    }
+
     await this.game.inputSystem.askForPlayerInput();
   }
 
@@ -327,10 +333,24 @@ export class GameInteractionSystem
     assert(this.isInteractive(player), new IllegalCardPlayedError());
 
     assert(ability.canUse, new IllegalCardPlayedError());
-
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
-    this._ctx = await UseAbilityContext.create(this.game, { ability, player });
-
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.USING_ABILITY].create(
+      this.game,
+      {
+        ability,
+        player
+      }
+    );
+    await this.game.emit(
+      GAME_EVENTS.CARD_DECLARE_USE_ABILITY,
+      new CardDeclareUseAbilityEvent({
+        card: ability.card,
+        abilityId: ability.abilityId
+      })
+    );
+    if (ability.manaCost === 0) {
+      await this._ctx.commit(this._ctx.player, []);
+    }
     await this.game.inputSystem.askForPlayerInput();
   }
 

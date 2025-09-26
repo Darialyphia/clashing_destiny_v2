@@ -3,6 +3,7 @@ import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
 import type { GlobalActionRule } from '../controllers/ui-controller';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export class PassChainGlobalAction implements GlobalActionRule {
   readonly variant = 'error' as const;
@@ -16,11 +17,18 @@ export class PassChainGlobalAction implements GlobalActionRule {
   }
 
   shouldDisplay(state: GameClientState): boolean {
-    return (
-      isDefined(state.effectChain) &&
-      state.effectChain.player === this.client.playerId &&
-      state.interaction.state === INTERACTION_STATES.IDLE
-    );
+    if (isDefined(state.effectChain)) {
+      return (
+        state.effectChain.player === this.client.playerId &&
+        state.interaction.state === INTERACTION_STATES.IDLE
+      );
+    } else {
+      return (
+        state.phase.state === GAME_PHASES.MAIN &&
+        state.interaction.state === INTERACTION_STATES.IDLE &&
+        this.client.playerId === state.currentPlayer
+      );
+    }
   }
 
   shouldBeDisabled(): boolean {
@@ -28,6 +36,6 @@ export class PassChainGlobalAction implements GlobalActionRule {
   }
 
   onClick(): void {
-    this.client.passChain();
+    this.client.pass();
   }
 }

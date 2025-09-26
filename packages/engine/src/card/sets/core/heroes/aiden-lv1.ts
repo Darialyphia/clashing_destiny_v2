@@ -37,7 +37,7 @@ export const aidenLv1: HeroBlueprint = {
       canUse(game, card) {
         return (
           card.player.artifactManager.artifacts.length <
-          game.config.MAX_EQUIPPED_ARTIFACTS
+            game.config.MAX_EQUIPPED_ARTIFACTS && card.location === 'board'
         );
       },
       label: '@[exhaust]@ : Equip an artifact',

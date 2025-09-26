@@ -449,9 +449,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
     const result: Array<MinionCard | HeroCard> = this.player.opponent.boardSide
       .getAllMinions()
-      .filter(minion => this.attackRanges.some(range => range.canAttack(minion.slot!)));
+      .filter(
+        minion =>
+          this.attackRanges.some(range => range.canAttack(minion.slot!)) &&
+          this.canAttack(minion)
+      );
 
-    if (this.attackRanges.some(range => range.canAttackHero())) {
+    if (
+      this.attackRanges.some(range => range.canAttackHero()) &&
+      this.canAttack(this.player.opponent.hero)
+    ) {
       result.push(this.player.opponent.hero);
     }
 

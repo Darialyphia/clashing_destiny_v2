@@ -34,11 +34,7 @@ export class UseAbilityContext {
     this.ability = options.ability;
   }
 
-  async init() {
-    if (this.ability.manaCost === 0) {
-      await this.commit(this.player, []);
-    }
-  }
+  async init() {}
 
   serialize() {
     return {

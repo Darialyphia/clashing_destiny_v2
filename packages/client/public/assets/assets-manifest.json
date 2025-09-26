@@ -129,6 +129,19 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "novice-lv0.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/novice-lv0.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -3468,6 +3481,19 @@
           ],
           "src": [
             "/assets/ui/banish-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "board-card-slot-boarder.png"
+          ],
+          "src": [
+            "/assets/ui/board-card-slot-boarder.png"
           ],
           "data": {
             "tags": {

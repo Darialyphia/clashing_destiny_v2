@@ -18,6 +18,7 @@ export class EffectChainSystem extends System<never> {
     this._currentChain = new EffectChain(this.game, opts.initialPlayer, async () => {
       await opts.onResolved?.();
       this._currentChain = null;
+      await this.game.inputSystem.askForPlayerInput();
     });
 
     if (opts.initialEffect) {

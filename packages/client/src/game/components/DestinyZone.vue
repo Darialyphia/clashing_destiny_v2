@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CardBack from '@/card/components/CardBack.vue';
 import {
   useBoardSide,
   useFxEvent,
@@ -9,6 +8,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import SmallCardBack from '@/card/components/SmallCardBack.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -113,26 +113,30 @@ const displayedCards = computed(() => {
         :card-id="card.cardId"
         side="top"
       >
-        <CardBack
+        <SmallCardBack
           :key="card.cardId"
           class="item"
           :style="{ '--index': index }"
         />
       </InspectableCard>
-      <CardBack v-else class="item" :style="{ '--index': index }" />
+      <SmallCardBack v-else class="item" :style="{ '--index': index }" />
     </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .destiny-zone {
+  --piwxel-scale: 1;
   display: grid;
   position: relative;
   overflow: hidden;
   justify-items: start;
+  align-items: center;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
-  height: calc(var(--card-height) / 2);
+  height: 100%;
+  border: solid 1px #985e25;
+  padding-inline: 4px;
   --spacing-offset: 1;
   &.player-2 {
     justify-items: end;
@@ -149,8 +153,6 @@ const displayedCards = computed(() => {
 }
 
 .item {
-  height: calc(var(--card-height) / 2);
-  aspect-ratio: var(--card-ratio);
   transform: translateX(
     calc(var(--index) * v-bind(cardSpacing) * 1px * var(--spacing-offset))
   );

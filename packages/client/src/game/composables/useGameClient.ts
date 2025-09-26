@@ -9,7 +9,7 @@ import type {
 } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
-import { isDefined, type Nullable } from '@game/shared';
+import { isDefined, type MaybePromise, type Nullable } from '@game/shared';
 import type { InjectionKey, Ref } from 'vue';
 import { gameStateRef } from './gameStateRef';
 
@@ -115,7 +115,7 @@ export const useCard = (cardId: MaybeRef<string>) => {
 
 export const useFxEvent = <T extends FXEvent>(
   name: T,
-  handler: (eventArg: FXEventMap[T]) => Promise<void>
+  handler: (eventArg: FXEventMap[T]) => MaybePromise<void>
 ) => {
   const client = useGameClient();
 

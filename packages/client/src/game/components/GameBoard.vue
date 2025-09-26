@@ -1,56 +1,50 @@
 <script setup lang="ts">
-import CombatArrows from './CombatArrows.vue';
-import ChooseCardModal from './ChooseCardModal.vue';
-import PlayedCardIntent from './PlayedCardIntent.vue';
-import SVGFilters from './SVGFilters.vue';
-import DestinyCostVFX from './DestinyCostVFX.vue';
-import BattleLog from './BattleLog.vue';
-import Minionzone from './Minionzone.vue';
-import GamePhaseTracker from './GamePhaseTracker.vue';
 import {
-  useGameClient,
-  useGameState,
+  useFxEvent,
   useMyBoard,
   useMyPlayer,
   useOpponentBoard,
   useOpponentPlayer
 } from '../composables/useGameClient';
-import ActionsButtons from './ActionsButtons.vue';
-import HeroSlot from './HeroSlot.vue';
 import Hand from '@/game/components/Hand.vue';
-import DestinyZone from './DestinyZone.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
-import EffectChain from './EffectChain.vue';
-import PlayerStats from './PlayerStats.vue';
-import { useMouse } from '@vueuse/core';
-import { mapRange } from '@game/shared';
-import EquipedArtifacts from './EquipedArtifacts.vue';
 import Deck from './Deck.vue';
-import PlayedCard from './PlayedCard.vue';
-import OpponentHand from './OpponentHand.vue';
-import { useBoardResize } from '../composables/useBoardResize';
 
-const state = useGameState();
-const client = useGameClient();
+import GameCard from './GameCard.vue';
+import ActionsButtons from './ActionsButtons.vue';
+import DiscardPile from './DiscardPile.vue';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import type { SerializedGame } from '@game/engine/src/game/game';
+import { isDefined, type Nullable } from '@game/shared';
+import UiModal from '@/ui/components/UiModal.vue';
+import UiButton from '@/ui/components/UiButton.vue';
+import DestinyZone from './DestinyZone.vue';
+import DestinyDeck from './DestinyDeck.vue';
+import EffectChain from './EffectChain.vue';
+import BanishPile from './BanishPile.vue';
+import MinionSlot from './MinionSlot.vue';
+// import { useBoardResize } from '../composables/useBoardResize';
+
 const myBoard = useMyBoard();
-const opponentBoard = useOpponentBoard();
 const myPlayer = useMyPlayer();
+const opponentBoard = useOpponentBoard();
 const opponentPlayer = useOpponentPlayer();
-
-const { x, y } = useMouse();
-const angleZ = computed(() => {
-  return mapRange(Math.round(x.value), [0, window.innerWidth], [-90, 90]);
-});
-const angleX = computed(() => {
-  return mapRange(
-    window.innerHeight - Math.round(y.value),
-    [0, window.innerHeight],
-    [-90, 90]
-  );
-});
 
 const board = useTemplateRef('board');
 // useBoardResize(board);
+
+const error = ref(
+  null as Nullable<{
+    error: string;
+    isFatal: boolean;
+    debugDump: SerializedGame;
+  }>
+);
+useFxEvent(FX_EVENTS.ERROR, async e => {
+  error.value = e;
+});
+
+const router = useRouter();
 </script>
 
 <template>
@@ -67,20 +61,102 @@ const board = useTemplateRef('board');
   <div class="explainer">
     <ExplainerMessage />
   </div> -->
+
+  <UiModal
+    :is-opened="isDefined(error)"
+    :closable="false"
+    title="We hit a snag !"
+    description=""
+  >
+    <div v-if="error?.isFatal">
+      <p>The game encountered the following error :</p>
+      <code class="block my-4">
+        {{ error?.error }}
+        {{ error.debugDump }}
+      </code>
+      <p>This error is fatal, the game cannot continue.</p>
+      <UiButton
+        class="error-button"
+        @click="
+          () => {
+            console.log(error?.debugDump);
+            router.push({ name: 'Home' });
+          }
+        "
+      >
+        Send Crash Report
+      </UiButton>
+    </div>
+    <div v-else>
+      <p>
+        The game received an illegal action. If the issue persist, try
+        restarting the game.
+      </p>
+      <code class="block my-4">
+        {{ error?.error }}
+      </code>
+
+      <UiButton
+        class="error-button"
+        @click="
+          () => {
+            error = null;
+          }
+        "
+      >
+        Dismiss
+      </UiButton>
+    </div>
+  </UiModal>
+
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">
+      <ExplainerMessage class="explainer" />
       <div class="flex gap-3 justify-center">
         <div class="flex flex-col gap-3">
-          <div class="card-container"></div>
-          <div class="card-container mt-auto"></div>
-          <div class="card-container"></div>
+          <div class="flex-1 flex flex-col">
+            <div class="text-center">Artifacts</div>
+            <div class="artifacts"></div>
+          </div>
+
+          <div class="mb-4">
+            <div class="card-container">
+              <DestinyDeck :player-id="myPlayer.id" />
+            </div>
+            <div class="text-center">Destiny deck</div>
+          </div>
+
+          <div>
+            <div class="card-container">
+              <Deck :size="myPlayer.remainingCardsInMainDeck" />
+            </div>
+            <div class="text-center">Main deck</div>
+          </div>
         </div>
         <div class="flex flex-col justify-center items-center">
           <div />
-          <div class="hero-slot"></div>
+          <div class="hero-slot">
+            {{ myPlayer.name }}
+            <GameCard
+              :card-id="myBoard.heroZone.hero"
+              actions-side="bottom"
+              :actions-offset="15"
+            />
+          </div>
+
           <div class="flex gap-2 mt-auto">
-            <div class="card-container"></div>
-            <div class="card-container"></div>
+            <div class="mt-auto">
+              <div class="card-container">
+                <DiscardPile :player="myPlayer.id" />
+              </div>
+              <div class="text-center">Discard pile</div>
+            </div>
+            <div>
+              <div class="card-container">
+                <BanishPile :player="myPlayer.id" />
+              </div>
+              <div class="text-center">Banish pile</div>
+            </div>
           </div>
         </div>
       </div>
@@ -88,165 +164,152 @@ const board = useTemplateRef('board');
       <div class="minions-zone">
         <div class="flex gap-3 h-full">
           <div class="minion-row">
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
+            <div>Back row</div>
+            <MinionSlot
+              v-for="slot in myBoard.backRow.slots"
+              :key="slot.position"
+              :minion-slot="slot"
+            />
           </div>
           <div class="minion-row">
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
+            <div>Front row</div>
+            <MinionSlot
+              v-for="slot in myBoard.frontRow.slots"
+              :key="slot.position"
+              :minion-slot="slot"
+            />
           </div>
         </div>
 
         <div class="flex gap-3 h-full">
           <div class="minion-row">
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
+            <div>Front row</div>
+
+            <MinionSlot
+              v-for="slot in opponentBoard.frontRow.slots"
+              :key="slot.position"
+              :minion-slot="slot"
+            />
           </div>
           <div class="minion-row">
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
-            <div class="card-container"></div>
+            <div>Back row</div>
+            <MinionSlot
+              v-for="slot in opponentBoard.backRow.slots"
+              :key="slot.position"
+              :minion-slot="slot"
+            />
           </div>
         </div>
       </div>
 
       <div class="flex gap-3 flex-row-reverse justify-center">
         <div class="flex flex-col gap-3">
-          <div class="card-container"></div>
-          <div class="card-container mt-auto"></div>
-          <div class="card-container"></div>
+          <div class="flex-1 flex flex-col">
+            <div class="text-center">Artifacts</div>
+            <div class="artifacts"></div>
+          </div>
+          <div>
+            <div class="card-container">
+              <Deck :size="opponentPlayer.remainingCardsInDestinyDeck" />
+            </div>
+            <div class="text-center">Destiny deck</div>
+          </div>
+          <div>
+            <div class="card-container">
+              <Deck :size="opponentPlayer.remainingCardsInMainDeck" />
+            </div>
+            <div class="text-center">Main deck</div>
+          </div>
         </div>
         <div class="flex flex-col items-center justify-center">
-          <div class="hero-slot"></div>
+          <div class="hero-slot">
+            {{ opponentPlayer.name }}
+            <GameCard :card-id="opponentBoard.heroZone.hero" />
+          </div>
+
           <div class="flex gap-2 mt-auto">
-            <div class="card-container"></div>
-            <div class="card-container"></div>
+            <div class="mt-auto">
+              <div class="card-container">
+                <BanishPile :player="opponentPlayer.id" />
+              </div>
+              <div class="text-center">Banish pile</div>
+            </div>
+            <div>
+              <div class="card-container">
+                <DiscardPile :player="opponentPlayer.id" />
+              </div>
+              <div class="text-center">Discard pile</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <section class="p1-destiny">
-        <div class="destiny-zone"></div>
-      </section>
-
-      <section class="chain-visualizer"></section>
-
-      <section class="p2-destiny">
-        <div class="destiny-zone"></div>
-      </section>
-
-      <section class="bottom-row">
-        <div class="p1-hand"></div>
-        <div class="p2-hand"></div>
-      </section>
-
-      <!-- <section class="p1-zone">
-      <article class="flex flex-col gap-1">
-        <div class="flex gap-3 mb-2">
-          <div class="avatar" />
-          <div>
-            <div>{{ myPlayer.name }}</div>
-          </div>
+      <section class="p1-destiny flex gap-2">
+        <span>Destiny</span>
+        <div class="destiny-zone flex-1">
+          <DestinyZone :player-id="myPlayer.id" />
         </div>
-        <PlayerStats
-          :player="myPlayer"
-          :class="{ 'ui-hidden': !client.ui.displayedElements.playerInfos }"
-        />
-      </article>
+      </section>
 
-      <DestinyZone :player-id="myPlayer.id" class="mt-auto" />
-    </section> -->
+      <section class="chain-visualizer">
+        <EffectChain />
+      </section>
 
-      <!-- <section class="middle-zone" @animationend="finishStartAnimation">
-      <Deck :player="myPlayer" class="p2-deck" />
-      <Minionzone
-        :player-id="opponentBoard.playerId"
-        class="p2-minions"
-        :id="client.ui.DOMSelectors.p2Minionzone.id"
-      />
-      <div class="p2-hero">
-        <HeroSlot :player="opponentPlayer" class="p2-hero" />
-        <EquipedArtifacts :player="opponentPlayer" class="artifacts" />
-      </div>
-      <div class="current-infos">
-        <EffectChain v-if="state.effectChain?.stack.length" />
-        <GamePhaseTracker v-else />
-      </div>
-      <div class="p1-hero">
-        <EquipedArtifacts :player="myPlayer" />
-        <HeroSlot :player="myPlayer" />
-      </div>
-      <Minionzone
-        :player-id="myBoard.playerId"
-        class="p1-minions"
-        :id="client.ui.DOMSelectors.p1Minionzone.id"
-      />
-      <Deck :player="myPlayer" class="p1-deck" />
-    </section> -->
-
-      <!-- <section class="p2-zone">
-      <article class="flex flex-col gap-1">
-        <div class="flex gap-3 flex-row-reverse mb-2">
-          <div class="avatar" />
-          <div class="text-right">
-            <div>{{ opponentPlayer.name }}</div>
-          </div>
+      <section class="p2-destiny flex gap-2">
+        <div class="destiny-zone flex-1">
+          <DestinyZone :player-id="opponentPlayer.id" />
         </div>
-        <PlayerStats
-          :player="opponentPlayer"
-          class="justify-end"
-          :class="{ 'ui-hidden': !client.ui.displayedElements.playerInfos }"
-        />
-      </article>
+        <span>Destiny</span>
+      </section>
 
-      <DestinyZone :player-id="opponentPlayer.id" class="mt-auto" />
-    </section> -->
-
-      <!-- <section class="hand-zone">
-      <Hand />
-      <OpponentHand class="opponent-hand" />
-    </section>
-    <ActionsButtons /> -->
+      <section class="bottom-row" style="--pixel-scale: 2">
+        <Hand />
+      </section>
+      <ActionsButtons />
     </div>
   </div>
-  <!-- <div class="arrows" id="arrows" /> -->
+  <div class="arrows" id="arrows" />
 </template>
 
 <style scoped lang="postcss">
+code {
+  white-space: pre-wrap;
+  max-height: var(--size-13);
+  overflow-y: auto;
+}
 .board-perspective-wrapper {
-  perspective: 1600px;
+  perspective: 2500px;
   perspective-origin: center top;
+  margin-inline: auto;
+  background-size: cover;
   display: flex;
   justify-content: center;
+  height: 100dvh;
 }
 .board {
   --pixel-scale: 1;
   background: url('/assets/backgrounds/board.png');
   background-size: cover;
   filter: brightness(1);
-  height: 100dvh;
-  aspect-ratio: 16 / 9;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-row-gap: var(--size-4);
-  /* background: url(/assets/backgrounds/battle-board-2.png) no-repeat center; */
-  background-size: cover;
-  transform-style: preserve-3d;
-  perspective: 1600px;
-  position: relative;
-  transform-origin: center left;
+  grid-template-rows: min-content 1fr auto 1fr;
+  row-gap: var(--size-4);
+  column-gap: var(--size-2);
   scale: var(--board-scale, 1);
-  overflow: hidden;
-
-  padding-top: var(--size-8);
+  transform-style: preserve-3d;
+  transform-origin: top left;
+  position: relative;
+  font-family: 'Lato', sans-serif;
+  font-size: var(--font-size-0);
+  color: #985e25;
   padding-inline: var(--size-6);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.explainer {
+  grid-column: 1 / -1;
 }
 
 .card-container {
@@ -265,25 +328,58 @@ const board = useTemplateRef('board');
   display: flex;
   flex-direction: column;
   gap: var(--size-4);
+  > *:nth-child(2) {
+    margin-top: calc(-1 * var(--size-4));
+  }
 }
 
 .destiny-zone {
-  height: calc(var(--card-small-height) + var(--padding) * 2);
+  --padding: 2px;
+  min-height: calc(var(--card-small-height) + var(--padding) * 2);
+}
+
+.artifacts {
   --padding: 2px;
   border: solid 1px #985e25;
+  flex-grow: 1;
 }
 
 .bottom-row {
   --pixel-scale: 2;
   --visible-card-ratio: 0.4;
   --scaled-height: calc(var(--card-height) * var(--pixel-scale));
-  height: min(calc(var(--scaled-height) + var(--visible-card-ratio)), 200px);
+  height: var(--scaled-height);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  pointer-events: none;
 }
 
 .hero-slot {
   --pixel-scale: 2;
   width: calc(var(--card-width) * 2);
   height: calc(var(--card-height) * 2);
-  border: solid 1px #985e25;
+}
+
+.p1-destiny,
+.p2-destiny {
+  > span {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+}
+
+#arrows {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+:global(#arrows > *) {
+  grid-column: 1;
+  grid-row: 1;
 }
 </style>
