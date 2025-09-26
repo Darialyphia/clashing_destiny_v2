@@ -6,7 +6,7 @@ import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type HeroBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { type SpellSchool, type HeroJob } from '../card.enums';
+import { type SpellSchool, type HeroJob, CARD_EVENTS } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -21,6 +21,7 @@ import { Ability } from './ability.entity';
 import { AnywhereAttackRange, type AttackRange } from '../attack-range';
 import type { MinionCard } from './minion.entity';
 import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
+import { CardDeclarePlayEvent } from '../card.events';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -167,8 +168,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   private damageTaken = 0;
 
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
-
-  unlockedAffinity!: SpellSchool;
 
   readonly abilities: Ability<HeroCard>[] = [];
 
@@ -404,6 +403,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.blueprint.spellSchools;
   }
 
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
   get level() {
     return this.blueprint.level;
   }
@@ -434,9 +437,14 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     if (this.level === 0) {
       return await this.blueprint.onPlay(this.game, this, this);
     }
+    await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
 
     await this.insertInChainOrExecute(
       async () => {
+        await this.player.levelupHero(this);
         await this.blueprint.onPlay(this.game, this, this);
       },
       [],

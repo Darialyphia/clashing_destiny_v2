@@ -1,41 +1,120 @@
 <script setup lang="ts">
 import {
+  useFxEvent,
   useGameClient,
-  useOpponentPlayer
+  useGameState,
+  useOpponentBoard
 } from '@/game/composables/useGameClient';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { clamp } from '@game/shared';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { useResizeObserver } from '@vueuse/core';
 import CardBack from '@/card/components/CardBack.vue';
 
-const opponent = useOpponentPlayer();
+const state = useGameState();
+const opponentBoard = useOpponentBoard();
 const client = useGameClient();
 
-const cardSpacing = computed(() => {
-  const handSize = opponent.value.handSize;
-  const base = 80;
-  return handSize > 7 ? base - 0 * (handSize - 6) : base;
+useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
+  // const newCard = e.card as SerializedCard;
+  // if (newCard.player !== opponentBoard.value.playerId) return;
+  // // @FIXME this can happen on P1T1, this will probaly go away once mulligan is implemented
+  // if (opponentBoard.value.hand.includes(newCard.id)) return;
+  // if (isDefined(e.index)) {
+  //   opponentBoard.value.hand.splice(e.index, 0, newCard.id);
+  // } else {
+  //   opponentBoard.value.hand.push(newCard.id);
+  // }
+  // await nextTick();
+  // const el = document.querySelector(
+  //   client.value.ui.getCardDOMSelectorInHand(newCard.id, opponentBoard.value.playerId)
+  // );
+  // if (el) {
+  //   await el.animate(
+  //     [
+  //       { transform: 'translateY(-50%)', opacity: 0 },
+  //       { transform: 'none', opacity: 1 }
+  //     ],
+  //     {
+  //       duration: 300,
+  //       easing: 'ease-out'
+  //     }
+  //   ).finished;
+  // }
 });
 
-const angle = computed(() => {
-  const handSize = opponent.value.handSize;
-  return handSize > 7 ? 5 - (handSize - 6) * 0.5 : 5;
+const handContainer = useTemplateRef('hand');
+const handContainerSize = ref({ w: 0, h: 0 });
+
+useResizeObserver(handContainer, () => {
+  const el = handContainer.value;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  handContainerSize.value = { w: rect.width, h: rect.height };
+});
+
+const pixelScale = computed(() => {
+  let el = handContainer.value;
+  if (!el) return 1;
+  let scale = getComputedStyle(el).getPropertyValue('--pixel-scale');
+  while (!scale) {
+    if (!el.parentElement) return 1;
+    el = el.parentElement;
+    scale = getComputedStyle(el).getPropertyValue('--pixel-scale');
+  }
+
+  return parseInt(scale) || 1;
+});
+
+const cardW = computed(() => {
+  return (
+    parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--card-width-unitless'
+      )
+    ) * pixelScale.value
+  );
+});
+
+const handSize = computed(() => opponentBoard.value.hand.length);
+
+const step = computed(() => {
+  if (handSize.value <= 1) return 0;
+  const natural =
+    (handContainerSize.value.w - cardW.value) / (handSize.value - 1);
+  return clamp(natural, 0, cardW.value);
+});
+
+const cards = computed(() => {
+  if (handSize.value === 0) return [];
+  const usedSpan = cardW.value + (handSize.value - 1) * step.value;
+  const offset = (handContainerSize.value.w - usedSpan) / 2;
+
+  return opponentBoard.value.hand.map((cardId, i) => ({
+    card: state.value.entities[cardId] as CardViewModel,
+    x: offset + i * step.value,
+    z: i
+  }));
 });
 </script>
 
 <template>
   <section
-    :id="`hand-${opponent.id}`"
-    class="hand"
+    :id="`hand-${opponentBoard.playerId}`"
+    class="opponent-hand"
     :class="{
       'ui-hidden': !client.ui.displayedElements.hand
     }"
-    :style="{ '--hand-size': opponent.handSize, '--angle': angle }"
+    :style="{ '--hand-size': opponentBoard.hand.length }"
+    ref="hand"
   >
     <div
-      class="card"
-      v-for="i in opponent.handSize"
-      :key="`hand-${opponent.id}-card-${i}`"
+      class="hand-card"
+      v-for="card in cards"
+      :key="card.card.id"
       :style="{
-        '--index': i - 1,
-        '--offset': Math.abs(i - 1 - opponent.handSize / 2)
+        '--x': `${card.x}px`,
+        '--z': card.z
       }"
     >
       <CardBack />
@@ -44,43 +123,21 @@ const angle = computed(() => {
 </template>
 
 <style scoped lang="postcss">
-.hand {
-  position: relative;
+.opponent-hand {
+  --pixel-scale: 2;
   z-index: 1;
-  display: grid;
-  justify-items: center;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  transform: rotateZ(180deg) translateY(75%);
-  --offset-step: calc(1px * v-bind(cardSpacing));
-
-  > * {
-    grid-row: 1;
-    grid-column: 1;
-    position: relative;
-    --base-angle: calc((var(--hand-size) * 0.4) * var(--angle) * -1deg);
-    --base-offset: calc((var(--hand-size) / 2) * var(--offset-step) * -1);
-    --rotation: calc(var(--base-angle) + var(--index) * var(--angle) * 1deg);
-    /* --rotation: 0deg; */
-    /* --y-offset: calc(var(--offset) * 10px); */
-    --y-offset: 0;
-    transform-origin: center 120%;
-    transform: translateX(
-        calc(var(--base-offset) + (var(--index) + 0.5) * var(--offset-step))
-      )
-      translateY(var(--y-offset)) rotate(var(--rotation));
-    transition: transform 0.2s ease-out;
-  }
+  background-color: lime;
+  position: relative;
 }
 
-.card {
-  width: var(--card-width);
-  height: var(--card-height);
-}
-
-@media (width < 1024px) {
-  .hand {
-    transform: scale(0.5);
-  }
+.hand-card {
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-origin: 50% 100%;
+  transform: translateX(calc(-1 * var(--x)));
+  z-index: var(--z);
+  transition: transform 0.2s var(--ease-2);
+  pointer-events: auto;
 }
 </style>

@@ -209,6 +209,14 @@ export class Player
     return this.cardManager.hand.length + this.cardManager.destinyZone.size;
   }
 
+  private async playCard(card: AnyCard) {
+    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
+    await card.play(() => {
+      if (isAction) {
+        this.game.turnSystem.switchInitiative();
+      }
+    });
+  }
   private payForManaCost(manaCost: number, indices: number[]) {
     const hasEnough = this.cardManager.hand.length >= manaCost;
     assert(hasEnough, new NotEnoughCardsInHandError());
@@ -223,12 +231,7 @@ export class Player
 
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     this.payForManaCost(card.manaCost, manaCostIndices);
-    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
-    await card.play(() => {
-      if (isAction) {
-        this.game.turnSystem.switchInitiative();
-      }
-    });
+    await this.playCard(card);
   }
 
   async useAbility(
@@ -242,12 +245,7 @@ export class Player
 
   async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
-    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
-    await card.play(() => {
-      if (isAction) {
-        this.game.turnSystem.switchInitiative();
-      }
-    });
+    await this.playCard(card);
   }
 
   private async payForDestinyCost(cost: number) {

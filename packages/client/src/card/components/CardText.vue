@@ -25,6 +25,7 @@ type Token =
   | { type: 'card'; card: CardBlueprint; text: string }
   | { type: 'exhaust' }
   | { type: 'mana'; text: string }
+  | { type: 'destiny'; text: string }
   | { type: 'spellpower' }
   | { type: 'health' }
   | { type: 'attack' }
@@ -62,6 +63,9 @@ const tokens = computed<Token[]>(() => {
     if (part === '[exhaust]') return { type: 'exhaust' };
     if (part.startsWith('[mana]')) {
       return { type: 'mana', text: part.replace('[mana] ', '') };
+    }
+    if (part.startsWith('[destiny]')) {
+      return { type: 'destiny', text: part.replace('[destiny] ', '') };
     }
     if (part.startsWith('[value]')) {
       return { type: 'dynamic-value', text: part.replace('[value] ', '') };
@@ -197,6 +201,19 @@ const tokens = computed<Token[]>(() => {
 
 .token-mana {
   background: url('/assets/ui/mana-cost.png') no-repeat center center;
+  background-size: cover;
+  font-weight: var(--font-weight-5);
+  border-radius: var(--radius-round);
+  width: var(--size-5);
+  height: var(--size-5);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1px;
+  text-shadow: 0 2px 2px black;
+}
+.token-destiny {
+  background: url('/assets/ui/destiny-cost.png') no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);

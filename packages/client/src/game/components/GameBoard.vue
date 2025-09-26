@@ -23,6 +23,8 @@ import DestinyDeck from './DestinyDeck.vue';
 import EffectChain from './EffectChain.vue';
 import BanishPile from './BanishPile.vue';
 import MinionSlot from './MinionSlot.vue';
+import OpponentHand from './OpponentHand.vue';
+import BattleLog from './BattleLog.vue';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const myBoard = useMyBoard();
@@ -61,53 +63,6 @@ const router = useRouter();
   <div class="explainer">
     <ExplainerMessage />
   </div> -->
-
-  <UiModal
-    :is-opened="isDefined(error)"
-    :closable="false"
-    title="We hit a snag !"
-    description=""
-  >
-    <div v-if="error?.isFatal">
-      <p>The game encountered the following error :</p>
-      <code class="block my-4">
-        {{ error?.error }}
-        {{ error.debugDump }}
-      </code>
-      <p>This error is fatal, the game cannot continue.</p>
-      <UiButton
-        class="error-button"
-        @click="
-          () => {
-            console.log(error?.debugDump);
-            router.push({ name: 'Home' });
-          }
-        "
-      >
-        Send Crash Report
-      </UiButton>
-    </div>
-    <div v-else>
-      <p>
-        The game received an illegal action. If the issue persist, try
-        restarting the game.
-      </p>
-      <code class="block my-4">
-        {{ error?.error }}
-      </code>
-
-      <UiButton
-        class="error-button"
-        @click="
-          () => {
-            error = null;
-          }
-        "
-      >
-        Dismiss
-      </UiButton>
-    </div>
-  </UiModal>
 
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">
@@ -246,29 +201,76 @@ const router = useRouter();
 
       <section class="p1-destiny flex gap-2">
         <span>Destiny</span>
-        <div class="destiny-zone flex-1">
+        <div class="flex-1">
           <DestinyZone :player-id="myPlayer.id" />
         </div>
       </section>
 
-      <section class="chain-visualizer">
+      <section>
         <EffectChain />
       </section>
 
       <section class="p2-destiny flex gap-2">
-        <div class="destiny-zone flex-1">
+        <div class="flex-1">
           <DestinyZone :player-id="opponentPlayer.id" />
         </div>
         <span>Destiny</span>
       </section>
 
-      <section class="bottom-row" style="--pixel-scale: 2">
-        <Hand />
-      </section>
+      <BattleLog class="battle-log" />
+      <OpponentHand class="opponent-hand" />
+      <Hand class="my-hand" />
       <ActionsButtons />
     </div>
   </div>
   <div class="arrows" id="arrows" />
+
+  <UiModal
+    :is-opened="isDefined(error)"
+    :closable="false"
+    title="We hit a snag !"
+    description=""
+  >
+    <div v-if="error?.isFatal">
+      <p>The game encountered the following error :</p>
+      <code class="block my-4">
+        {{ error?.error }}
+        {{ error.debugDump }}
+      </code>
+      <p>This error is fatal, the game cannot continue.</p>
+      <UiButton
+        class="error-button"
+        @click="
+          () => {
+            console.log(error?.debugDump);
+            router.push({ name: 'Home' });
+          }
+        "
+      >
+        Send Crash Report
+      </UiButton>
+    </div>
+    <div v-else>
+      <p>
+        The game received an illegal action. If the issue persist, try
+        restarting the game.
+      </p>
+      <code class="block my-4">
+        {{ error?.error }}
+      </code>
+
+      <UiButton
+        class="error-button"
+        @click="
+          () => {
+            error = null;
+          }
+        "
+      >
+        Dismiss
+      </UiButton>
+    </div>
+  </UiModal>
 </template>
 
 <style scoped lang="postcss">
@@ -293,7 +295,7 @@ code {
   filter: brightness(1);
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: min-content 1fr auto 1fr;
+  grid-template-rows: min-content 1fr auto auto;
   row-gap: var(--size-4);
   column-gap: var(--size-2);
   scale: var(--board-scale, 1);
@@ -333,26 +335,26 @@ code {
   }
 }
 
-.destiny-zone {
-  --padding: 2px;
-  min-height: calc(var(--card-small-height) + var(--padding) * 2);
-}
-
 .artifacts {
   --padding: 2px;
   border: solid 1px #985e25;
   flex-grow: 1;
 }
 
-.bottom-row {
-  --pixel-scale: 2;
-  --visible-card-ratio: 0.4;
-  --scaled-height: calc(var(--card-height) * var(--pixel-scale));
-  height: var(--scaled-height);
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  pointer-events: none;
+.my-hand {
+  height: calc(var(--card-height) * 0.5 * 2);
+  grid-column: 1 / -1;
+  grid-row: 4;
+}
+
+.battle-log {
+  grid-column: 2;
+  grid-row: 4;
+}
+
+.opponent-hand {
+  grid-column: 3;
+  grid-row: 4;
 }
 
 .hero-slot {

@@ -22,7 +22,7 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
 
 <template>
   <Pile
-    :size="board.discardPile.length"
+    :size="board.banishPile.length"
     v-slot="{ index }"
     class="banish-pile"
     @click="isOpened = true"

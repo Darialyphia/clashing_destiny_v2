@@ -17,6 +17,8 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
+import { CARD_EVENTS } from '../card.enums';
+import { CardDeclarePlayEvent } from '../card.events';
 
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
@@ -59,9 +61,16 @@ export class SpellCard extends Card<
     }
   }
 
+  get hadUnlockedSpellSchool() {
+    if (!this.blueprint.spellSchool) return true;
+    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase &&
+        this.hadUnlockedSpellSchool &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -91,6 +100,10 @@ export class SpellCard extends Card<
   }
 
   async play(onResolved: () => MaybePromise<void>) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
     await this.playWithTargets(targets, onResolved);
   }

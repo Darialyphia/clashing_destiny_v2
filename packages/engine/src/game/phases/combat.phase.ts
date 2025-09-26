@@ -213,7 +213,7 @@ export class CombatPhase
 
     if (!this.game.effectChainSystem.currentChain) {
       void this.game.effectChainSystem.createChain({
-        initialPlayer: this.attacker.player,
+        initialPlayer: this.attacker.player.opponent,
         onResolved: async () => this.resolveCombat()
       });
 

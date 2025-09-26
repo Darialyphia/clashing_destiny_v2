@@ -62,12 +62,14 @@ const isExpanded = ref(false);
 
 const handContainer = useTemplateRef('hand');
 const handContainerSize = ref({ w: 0, h: 0 });
-
+const handOffsetY = ref(0);
 useResizeObserver(handContainer, () => {
   const el = handContainer.value;
   if (!el) return;
   const rect = el.getBoundingClientRect();
   handContainerSize.value = { w: rect.width, h: rect.height };
+  handOffsetY.value =
+    handContainer.value.scrollHeight - handContainer.value.clientHeight;
 });
 
 const pixelScale = computed(() => {
@@ -150,7 +152,10 @@ const cards = computed(() => {
         'interaction-active': isInteractionActive,
         expanded: isExpanded
       }"
-      :style="{ '--hand-size': myBoard.hand.length }"
+      :style="{
+        '--hand-size': myBoard.hand.length,
+        '--hand-offset-y': handOffsetY
+      }"
       ref="hand"
     >
       <div
@@ -185,16 +190,15 @@ const cards = computed(() => {
 
 <style scoped lang="postcss">
 .hand {
+  --pixel-scale: 2;
   position: relative;
-
   z-index: 1;
-
   height: 100%;
-  width: 50%;
-
+  width: 30%;
+  /* background-color: blue; */
   &.expanded {
-    width: 80%;
     left: 50%;
+    width: 80%;
     transform: translateX(-50%);
   }
 }
@@ -202,11 +206,8 @@ const cards = computed(() => {
 .hand-card {
   position: absolute;
   left: 0;
-  top: 0;
   --hover-offset: 0px;
-  --offset-y: calc(
-    (var(--card-height) * var(--pixel-scale) * 0.5) + var(--hover-offset)
-  );
+  --offset-y: var(--hover-offset);
   --rot-scale: 1;
   --full-y: calc(var(--y) + var(--offset-y));
   transform-origin: 50% 100%;
@@ -217,7 +218,7 @@ const cards = computed(() => {
   pointer-events: auto;
 
   .hand.expanded & {
-    --offset-y: var(--hover-offset);
+    --offset-y: calc(var(--hover-offset) - 1px * var(--hand-offset-y));
   }
 
   &:hover {

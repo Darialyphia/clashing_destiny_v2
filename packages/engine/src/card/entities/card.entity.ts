@@ -9,11 +9,9 @@ import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
   CARD_SPEED,
-  type SpellSchool,
   type CardDeckSource,
   type CardKind,
   type CardSpeed,
-  type HeroJob,
   type Rarity
 } from '../card.enums';
 import {

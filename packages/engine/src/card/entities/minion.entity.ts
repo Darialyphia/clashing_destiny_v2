@@ -492,10 +492,15 @@ export class MinionCard extends Card<
     );
   }
 
+  get isCorrectJob() {
+    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
         this.player.boardSide.hasUnoccupiedSlot &&
+        this.isCorrectJob &&
         this.blueprint.canPlay(this.game, this),
       this
     );

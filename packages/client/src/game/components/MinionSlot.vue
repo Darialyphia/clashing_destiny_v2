@@ -4,44 +4,19 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameClient, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import {
-  PopoverRoot,
-  PopoverAnchor,
-  PopoverPortal,
-  PopoverContent
-} from 'reka-ui';
-import CardActions from './CardActions.vue';
 import GameCard from './GameCard.vue';
 
-const props = defineProps<{
+const { minionSlot } = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
 }>();
 
 const client = useGameClient();
 
 const { player, isHighlighted, isSelected } = useMinionSlot(
-  computed(() => props.minionSlot)
+  computed(() => minionSlot)
 );
 
-const minion = useMaybeEntity<CardViewModel>(
-  computed(() => props.minionSlot.minion)
-);
-
-const isActionsPopoverOpened = computed({
-  get() {
-    if (!minion.value) return false;
-    if (!client.value.ui.selectedCard) return false;
-    return client.value.ui.selectedCard.equals(minion.value);
-  },
-  set(value) {
-    if (!minion.value) return;
-    if (value) {
-      client.value.ui.select(minion.value);
-    } else {
-      client.value.ui.unselect();
-    }
-  }
-});
+const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
 </script>
 
 <template>
@@ -53,12 +28,12 @@ const isActionsPopoverOpened = computed({
       exhausted: minion?.isExhausted,
       attacking: minion?.isAttacking
     }"
-    :id="`minion-slot-${props.minionSlot.playerId}-${props.minionSlot.position}-${props.minionSlot.zone}`"
+    :id="`minion-slot-${minionSlot.playerId}-${minionSlot.position}-${minionSlot.zone}`"
     @click="
       client.ui.onMinionSlotClick({
         player: player,
-        slot: props.minionSlot.position,
-        zone: props.minionSlot.zone
+        slot: minionSlot.position,
+        zone: minionSlot.zone
       })
     "
   >
@@ -68,33 +43,21 @@ const isActionsPopoverOpened = computed({
       side="left"
       :side-offset="50"
     >
-      <PopoverRoot v-model:open="isActionsPopoverOpened">
-        <PopoverAnchor />
-        <GameCard
-          class="minion-clickable-area"
-          variant="small"
-          :id="
-            client.ui.DOMSelectors.minionClickableArea(
-              props.minionSlot.playerId,
-              props.minionSlot.zone,
-              props.minionSlot.position
-            ).id
-          "
-          :card-id="minion.id"
-          :class="{
-            targetable: minion.canBeTargeted
-          }"
-          @click="client.ui.onCardClick(minion)"
-        />
-        <PopoverPortal :disabled="minion.location === 'hand'">
-          <PopoverContent :side-offset="-50">
-            <CardActions
-              :card="minion"
-              v-model:is-opened="isActionsPopoverOpened"
-            />
-          </PopoverContent>
-        </PopoverPortal>
-      </PopoverRoot>
+      <GameCard
+        class="minion-clickable-area"
+        variant="small"
+        :id="
+          client.ui.DOMSelectors.minionClickableArea(
+            minionSlot.playerId,
+            minionSlot.zone,
+            minionSlot.position
+          ).id
+        "
+        :card-id="minion.id"
+        :class="{
+          targetable: minion.canBeTargeted
+        }"
+      />
     </InspectableCard>
   </div>
 </template>

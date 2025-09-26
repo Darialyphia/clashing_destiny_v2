@@ -192,9 +192,13 @@ export class ArtifactCard extends Card<
     }
   }
 
+  get isCorrectJob() {
+    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.isCorrectJob && this.blueprint.canPlay(this.game, this),
       this
     );
   }

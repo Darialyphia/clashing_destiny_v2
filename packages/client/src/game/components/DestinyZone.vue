@@ -70,6 +70,7 @@ useResizeObserver(root, throttle(computeSpacing, 50));
 const cardBanishedAsDestinyCost = ref<Array<{ card: string; index: number }>>(
   []
 );
+
 useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async event => {
   if (event.player.id !== playerId) return;
   event.cards.forEach(card => {

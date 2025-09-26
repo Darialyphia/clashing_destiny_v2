@@ -50,7 +50,7 @@ export class UseAbilityContext {
     this.game.interaction.onInteractionEnd();
 
     await this.player.useAbility(this.ability, manaCostIndices, () => {
-      this.game.turnSystem.switchInitiative;
+      this.game.turnSystem.switchInitiative();
     });
   }
 

@@ -73,7 +73,7 @@ const classes = computed(() => {
 </script>
 
 <template>
-  <PopoverRoot v-model:open="isActionsPopoverOpened">
+  <PopoverRoot v-model:open="isActionsPopoverOpened" v-if="cardId">
     <PopoverAnchor>
       <Card
         v-if="variant === 'default'"

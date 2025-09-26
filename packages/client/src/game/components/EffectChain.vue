@@ -84,30 +84,33 @@ const stack = computed(() => {
 </script>
 
 <template>
-  <div class="effect-chain" id="effect-chain" v-show="stack.length > 0">
-    <InspectableCard
-      v-for="(effect, index) in stack"
-      :key="index"
-      :card-id="effect.source"
-      class="effect-chain-card-wrapper"
-    >
-      <div class="effect" :class="effect.type">
-        <GameCard
-          :card-id="effect.source"
-          :is-interactive="false"
-          variant="small"
-        />
-      </div>
+  <div>
+    <div class="effect-chain" id="effect-chain">
+      <InspectableCard
+        v-for="(effect, index) in stack"
+        :key="index"
+        :card-id="effect.source"
+        class="effect-chain-card-wrapper"
+      >
+        <div class="effect" :class="effect.type">
+          <GameCard
+            :card-id="effect.source"
+            :is-interactive="false"
+            variant="small"
+          />
+        </div>
 
-      <Teleport to="#arrows">
-        <Arrow
-          v-for="(path, targetIndex) in paths[index]"
-          :key="targetIndex"
-          :path="path"
-          :color="effect.type === 'ally' ? 'cyan' : 'red'"
-        />
-      </Teleport>
-    </InspectableCard>
+        <Teleport to="#arrows">
+          <Arrow
+            v-for="(path, targetIndex) in paths[index]"
+            :key="targetIndex"
+            :path="path"
+            :color="effect.type === 'ally' ? 'cyan' : 'red'"
+          />
+        </Teleport>
+      </InspectableCard>
+    </div>
+    <div class="text-center">Card chain</div>
   </div>
 </template>
 
@@ -118,7 +121,7 @@ const stack = computed(() => {
   display: flex;
   align-items: center;
   gap: var(--size-3);
-  padding: var(--size-1);
+  height: calc(var(--card-small-height) + var(--size-1) * 2);
   border: solid 1px #985e25;
 }
 
