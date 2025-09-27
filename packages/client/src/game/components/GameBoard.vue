@@ -25,6 +25,7 @@ import BanishPile from './BanishPile.vue';
 import MinionSlot from './MinionSlot.vue';
 import OpponentHand from './OpponentHand.vue';
 import BattleLog from './BattleLog.vue';
+import EquipedArtifacts from './EquipedArtifacts.vue';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const myBoard = useMyBoard();
@@ -71,7 +72,9 @@ const router = useRouter();
         <div class="flex flex-col gap-3">
           <div class="flex-1 flex flex-col">
             <div class="text-center">Artifacts</div>
-            <div class="artifacts"></div>
+            <div class="artifacts">
+              <EquipedArtifacts :player="myPlayer" />
+            </div>
           </div>
 
           <div class="mb-4">
@@ -161,7 +164,9 @@ const router = useRouter();
         <div class="flex flex-col gap-3">
           <div class="flex-1 flex flex-col">
             <div class="text-center">Artifacts</div>
-            <div class="artifacts"></div>
+            <div class="artifacts">
+              <EquipedArtifacts :player="opponentPlayer" />
+            </div>
           </div>
           <div>
             <div class="card-container">

@@ -7,6 +7,8 @@ import {
 } from '../systems/game-interaction.system';
 import type { AnyCard } from '../../card/entities/card.entity';
 import { isDestinyDeckCard, isMainDeckCard } from '../../board/board.system';
+import { match } from 'ts-pattern';
+import { CARD_DECK_SOURCES } from '../../card/card.enums';
 
 type PlayCardContextOptions = {
   card: AnyCard;
@@ -55,7 +57,14 @@ export class PlayCardContext {
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
 
-    await this.player.playMainDeckCard(this.card, manaCostIndices);
+    await match(this.card.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () =>
+        this.player.playMainDeckCard(this.card, manaCostIndices)
+      )
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () =>
+        this.player.playDestinyDeckCard(this.card)
+      )
+      .exhaustive();
   }
 
   async cancel(player: Player) {

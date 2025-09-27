@@ -46,6 +46,17 @@ onMounted(() => {
         });
       }
 
+      if (eventName === GAME_EVENTS.ABILITY_AFTER_USE) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `Used an ability`
+        });
+      }
+
       if (eventName === GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET) {
         tokens.push({
           kind: 'card',
@@ -128,8 +139,75 @@ onMounted(() => {
         });
       }
 
-      console.log(eventName, tokens);
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_PLAYER_PASSED) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `passed chain priority`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED) {
+        tokens.push({
+          kind: 'text',
+          text: `Resolving Effect chain step ${event.index + 1}`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED) {
+        tokens.push({
+          kind: 'text',
+          text: `Effect chain step ${event.index + 1} has been resolved`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `added an effect to the chain at step ${event.index + 1}`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_RESOLVED) {
+        tokens.push({
+          kind: 'text',
+          text: `The effect chain has been resolved`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.TURN_INITATIVE_CHANGE) {
+        tokens.push({
+          kind: 'text',
+          text: `Initiative switched to`
+        });
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[
+            event.newInitiativePlayer
+          ] as PlayerViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.TURN_PASS) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `passed initiative.`
+        });
+      }
+
       if (tokens.length > 0) {
+        tokens.push({ kind: 'text', text: '.' });
         events.value.push(tokens);
       }
     });
@@ -230,10 +308,6 @@ li {
   gap: 1ch;
   line-height: 1.2;
   padding-inline: var(--size-3);
-  padding-block: var(--size-2);
-  &:not(:has(:is(.game-phase-change, .player-turn-start))) {
-    margin-block: var(--size-2);
-  }
 }
 
 .player,

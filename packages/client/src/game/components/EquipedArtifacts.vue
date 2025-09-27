@@ -4,10 +4,11 @@ import {
   useBoardSide,
   useEntities,
   useGameClient,
-  useGameState
+  useMyPlayer
 } from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import EquipedArtifact from './EquipedArtifact.vue';
+import GameCard from './GameCard.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -18,41 +19,46 @@ const artifacts = useEntities<CardViewModel>(
   computed(() => boardSide.value.heroZone.artifacts)
 );
 
-const state = useGameState();
-const emptySlots = computed(() => {
-  return state.value.config.MAX_EQUIPPED_ARTIFACTS - artifacts.value.length;
-});
 const client = useGameClient();
+
+const myPlayer = useMyPlayer();
 </script>
 
 <template>
   <div
     class="equiped-artifacts"
     :class="{ 'ui-hidden': !client.ui.displayedElements.artifacts }"
+    :style="{ '--total': artifacts.length }"
   >
-    <EquipedArtifact
-      v-for="artifact in artifacts"
+    <div
+      class="equiped-artifact"
+      v-for="(artifact, i) in artifacts"
       :key="artifact.id"
-      :artifact="artifact"
-    />
-    <div class="empty-slot" v-for="i in emptySlots" :key="i" />
+      :style="{ '--z': artifacts.length - i }"
+    >
+      <InspectableCard
+        :card-id="artifact.id"
+        :side="player.equals(myPlayer) ? 'right' : 'left'"
+      >
+        <GameCard :card-id="artifact.id" variant="small" />
+      </InspectableCard>
+    </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .equiped-artifacts {
   display: flex;
-  gap: var(--size-3);
-  margin-top: var(--size-3);
+  flex-direction: column;
 }
 
-.empty-slot {
-  --pixel-scale: 1;
-  aspect-ratio: var(--artifact-ratio);
-  background-image: url(/assets/ui/artifact-empty.png);
-  background-position: center;
-  background-size: calc(96px * var(--pixel-scale))
-    calc(96px * var(--pixel-scale));
-  height: calc(var(--artifact-height) * var(--pixel-scale));
+.equiped-artifact {
+  z-index: var(--z);
+  &:hover {
+    z-index: calc(var(--total) + 1);
+  }
+  &:not(:first-child) {
+    margin-top: calc(var(--card-small-height) * -0.65);
+  }
 }
 </style>

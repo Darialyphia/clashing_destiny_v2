@@ -222,6 +222,7 @@ export class CardManagerComponent {
   }
 
   sendToBanishPile(card: AnyCard) {
+    console.log('send to banish', card.id);
     this.banishPile.add(card);
   }
 

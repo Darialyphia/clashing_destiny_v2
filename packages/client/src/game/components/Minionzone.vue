@@ -20,8 +20,8 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
       }"
       :id="
         isFlipped
-          ? client.ui.DOMSelectors.defenseZone(playerId).id
-          : client.ui.DOMSelectors.attackZone(playerId).id
+          ? client.ui.DOMSelectors.backRow(playerId).id
+          : client.ui.DOMSelectors.frontRow(playerId).id
       "
       :style="{
         '--cols': isFlipped
@@ -46,8 +46,8 @@ const isFlipped = computed(() => client.value.playerId !== playerId);
       }"
       :id="
         isFlipped
-          ? client.ui.DOMSelectors.attackZone(playerId).id
-          : client.ui.DOMSelectors.defenseZone(playerId).id
+          ? client.ui.DOMSelectors.frontRow(playerId).id
+          : client.ui.DOMSelectors.backRow(playerId).id
       "
       :style="{
         '--cols': isFlipped

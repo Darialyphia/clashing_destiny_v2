@@ -126,7 +126,6 @@ const cards = computed(() => {
 .opponent-hand {
   --pixel-scale: 2;
   z-index: 1;
-  background-color: lime;
   position: relative;
 }
 

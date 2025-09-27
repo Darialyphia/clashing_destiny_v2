@@ -83,15 +83,13 @@ export class UiController {
   DOMSelectors = {
     p1Minionzone: new DOMSelector('p1-minion-zone'),
     p2Minionzone: new DOMSelector('p2-minion-zone'),
-    minionSprite: (playerId: string, zone: MinionSlotZone, slot: number) =>
-      new DOMSelector(`${playerId}-${zone}-minion-sprite-${slot}`),
-    minionClickableArea: (playerId: string, zone: MinionSlotZone, slot: number) =>
-      new DOMSelector(`${playerId}-${zone}-minion-clickable-area-${slot}`),
+    minionPosition: (playerId: string, zone: MinionSlotZone, slot: number) =>
+      new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
     heroSprite: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
-    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
+    frontRow: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
+    backRow: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`)
   };
 

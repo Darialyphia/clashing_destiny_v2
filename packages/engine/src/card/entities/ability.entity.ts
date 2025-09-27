@@ -13,6 +13,7 @@ import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import { EFFECT_TYPE } from '../../game/effect-chain';
 
 export const ABILITY_EVENTS = {
   ABILITY_BEFORE_USE: 'ability.before-use',
@@ -118,6 +119,7 @@ export class Ability<T extends AbilityOwner>
     }
 
     const effect = {
+      type: EFFECT_TYPE.ABILITY,
       source: this.card,
       targets,
       handler: async () => {

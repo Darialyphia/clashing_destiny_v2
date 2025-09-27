@@ -19,6 +19,8 @@ export type GamePhaseEventName = Values<typeof GAME_PHASE_EVENTS>;
 
 export const TURN_EVENTS = {
   TURN_START: 'turn_start',
-  TURN_END: 'turn_end'
+  TURN_END: 'turn_end',
+  TURN_INITATIVE_CHANGE: 'turn_initiative_change',
+  TURN_PASS: 'turn_pass'
 } as const;
 export type TurnEventName = Values<typeof TURN_EVENTS>;

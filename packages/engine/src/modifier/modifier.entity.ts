@@ -42,21 +42,21 @@ class ModifierLifecycleEvent extends TypedSerializableEvent<
 }
 
 export const MODIFIER_EVENTS = {
-  BEFORE_APPLIED: 'modifier.before_applied',
-  AFTER_APPLIED: 'modifier.after_applied',
-  BEFORE_REMOVED: 'modifier.before_removed',
-  AFTER_REMOVED: 'modifier.after_removed',
-  BEFORE_REAPPLIED: 'before_reapplied',
-  AFTER_REAPPLIED: 'after_reapplied'
+  MODIFIER_BEFORE_APPLIED: 'modifier.before_applied',
+  MODIFIER_AFTER_APPLIED: 'modifier.after_applied',
+  MODIFIER_BEFORE_REMOVED: 'modifier.before_removed',
+  MODIFIER_AFTER_REMOVED: 'modifier.after_removed',
+  MODIFIER_BEFORE_REAPPLIED: 'before_reapplied',
+  MODIFIER_AFTER_REAPPLIED: 'after_reapplied'
 } as const;
 
 export type ModifierEventMap = {
-  [MODIFIER_EVENTS.BEFORE_APPLIED]: ModifierLifecycleEvent;
-  [MODIFIER_EVENTS.AFTER_APPLIED]: ModifierLifecycleEvent;
-  [MODIFIER_EVENTS.BEFORE_REMOVED]: ModifierLifecycleEvent;
-  [MODIFIER_EVENTS.AFTER_REMOVED]: ModifierLifecycleEvent;
-  [MODIFIER_EVENTS.BEFORE_REAPPLIED]: ModifierLifecycleEvent;
-  [MODIFIER_EVENTS.AFTER_REAPPLIED]: ModifierLifecycleEvent;
+  [MODIFIER_EVENTS.MODIFIER_BEFORE_APPLIED]: ModifierLifecycleEvent;
+  [MODIFIER_EVENTS.MODIFIER_AFTER_APPLIED]: ModifierLifecycleEvent;
+  [MODIFIER_EVENTS.MODIFIER_BEFORE_REMOVED]: ModifierLifecycleEvent;
+  [MODIFIER_EVENTS.MODIFIER_AFTER_REMOVED]: ModifierLifecycleEvent;
+  [MODIFIER_EVENTS.MODIFIER_BEFORE_REAPPLIED]: ModifierLifecycleEvent;
+  [MODIFIER_EVENTS.MODIFIER_AFTER_REAPPLIED]: ModifierLifecycleEvent;
 };
 
 export type ModifierEvent = Values<typeof MODIFIER_EVENTS>;
@@ -189,7 +189,7 @@ export class Modifier<
 
   async applyTo(target: T) {
     await this.game.emit(
-      MODIFIER_EVENTS.BEFORE_APPLIED,
+      MODIFIER_EVENTS.MODIFIER_BEFORE_APPLIED,
       new ModifierLifecycleEvent(this)
     );
     this._target = target;
@@ -199,12 +199,15 @@ export class Modifier<
       });
     }
     this._isApplied = true;
-    await this.game.emit(MODIFIER_EVENTS.AFTER_APPLIED, new ModifierLifecycleEvent(this));
+    await this.game.emit(
+      MODIFIER_EVENTS.MODIFIER_AFTER_APPLIED,
+      new ModifierLifecycleEvent(this)
+    );
   }
 
   async reapplyTo(target: T, stacks = 1) {
     await this.game.emit(
-      MODIFIER_EVENTS.BEFORE_REAPPLIED,
+      MODIFIER_EVENTS.MODIFIER_BEFORE_REAPPLIED,
       new ModifierLifecycleEvent(this)
     );
     this._stacks += stacks;
@@ -216,21 +219,24 @@ export class Modifier<
     }
 
     await this.game.emit(
-      MODIFIER_EVENTS.AFTER_REAPPLIED,
+      MODIFIER_EVENTS.MODIFIER_AFTER_REAPPLIED,
       new ModifierLifecycleEvent(this)
     );
   }
 
   async remove() {
     await this.game.emit(
-      MODIFIER_EVENTS.BEFORE_REMOVED,
+      MODIFIER_EVENTS.MODIFIER_BEFORE_REMOVED,
       new ModifierLifecycleEvent(this)
     );
     this._isApplied = false;
     this.mixins.forEach(mixin => {
       mixin.onRemoved(this._target, this);
     });
-    await this.game.emit(MODIFIER_EVENTS.AFTER_REMOVED, new ModifierLifecycleEvent(this));
+    await this.game.emit(
+      MODIFIER_EVENTS.MODIFIER_AFTER_REMOVED,
+      new ModifierLifecycleEvent(this)
+    );
   }
 
   addStacks(count: number) {

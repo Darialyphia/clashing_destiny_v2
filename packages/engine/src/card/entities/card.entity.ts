@@ -34,6 +34,7 @@ import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { GAME_PHASES } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
+import { EFFECT_TYPE } from '../../game/effect-chain';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -239,6 +240,7 @@ export abstract class Card<
     onResolved?: () => MaybePromise<void>
   ) {
     const effect = {
+      type: EFFECT_TYPE.CARD,
       source: this,
       targets,
       handler: async () => {
@@ -359,11 +361,6 @@ export abstract class Card<
   }
 
   sendToBanishPile() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to banish pile when it is not a main deck card.`
-      );
-    }
     this.removeFromCurrentLocation();
     this.player.cardManager.sendToBanishPile(this);
   }

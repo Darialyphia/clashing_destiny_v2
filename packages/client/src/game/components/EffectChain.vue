@@ -37,7 +37,7 @@ const buildPaths = async () => {
             ?.getBoundingClientRect();
         })
         .with({ type: 'minionPosition' }, target => {
-          return client.value.ui.DOMSelectors.minionSprite(
+          return client.value.ui.DOMSelectors.minionPosition(
             target.playerId,
             target.zone,
             target.slot
@@ -75,7 +75,7 @@ const stack = computed(() => {
       const card = state.value.entities[step.source] as CardViewModel;
       return {
         ...step,
-        type: card?.player.equals(myPlayer.value) ? 'ally' : 'enemy',
+        playerType: card?.player.equals(myPlayer.value) ? 'ally' : 'enemy',
         image: `url(${card?.imagePath})`
       };
     }) ?? []
@@ -92,12 +92,14 @@ const stack = computed(() => {
         :card-id="effect.source"
         class="effect-chain-card-wrapper"
       >
-        <div class="effect" :class="effect.type">
+        <div class="effect" :class="effect.playerType">
           <GameCard
             :card-id="effect.source"
             :is-interactive="false"
             variant="small"
           />
+
+          <div class="effect-type" :class="effect.type.toLowerCase()" />
         </div>
 
         <Teleport to="#arrows">
@@ -105,7 +107,7 @@ const stack = computed(() => {
             v-for="(path, targetIndex) in paths[index]"
             :key="targetIndex"
             :path="path"
-            :color="effect.type === 'ally' ? 'cyan' : 'red'"
+            :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
           />
         </Teleport>
       </InspectableCard>
@@ -137,5 +139,32 @@ const stack = computed(() => {
 .enemy {
   --shadow-color: red;
   animation: chain-effect-pulse 2.5s infinite alternate;
+}
+
+.effect {
+  position: relative;
+}
+
+.effect-type {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 32px;
+  aspect-ratio: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &.card {
+    background: url('/assets/ui/effect-card.png');
+  }
+
+  &.ability {
+    background: url('/assets/ui/effect-ability.png');
+  }
+
+  &.counterattack {
+    background: url('/assets/ui/effect-counterattack.png');
+  }
 }
 </style>

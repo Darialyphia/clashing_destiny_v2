@@ -75,7 +75,9 @@ const imageBg = computed(() => {
 });
 
 const root = useTemplateRef('card');
-const { x, y } = useMouse();
+const { x, y } = useMouse({
+  scroll: false
+});
 
 const rect = useElementBounding(root);
 

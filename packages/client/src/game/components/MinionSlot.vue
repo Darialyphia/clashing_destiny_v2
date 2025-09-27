@@ -28,7 +28,13 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
       exhausted: minion?.isExhausted,
       attacking: minion?.isAttacking
     }"
-    :id="`minion-slot-${minionSlot.playerId}-${minionSlot.position}-${minionSlot.zone}`"
+    :id="
+      client.ui.DOMSelectors.minionPosition(
+        player.id,
+        minionSlot.zone,
+        minionSlot.position
+      ).id
+    "
     @click="
       client.ui.onMinionSlotClick({
         player: player,
@@ -46,13 +52,6 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
       <GameCard
         class="minion-clickable-area"
         variant="small"
-        :id="
-          client.ui.DOMSelectors.minionClickableArea(
-            minionSlot.playerId,
-            minionSlot.zone,
-            minionSlot.position
-          ).id
-        "
         :card-id="minion.id"
         :class="{
           targetable: minion.canBeTargeted

@@ -211,12 +211,13 @@ export class Player
 
   private async playCard(card: AnyCard) {
     const isAction = !isDefined(this.game.effectChainSystem.currentChain);
-    await card.play(() => {
+    await card.play(async () => {
       if (isAction) {
-        this.game.turnSystem.switchInitiative();
+        await this.game.turnSystem.switchInitiative();
       }
     });
   }
+
   private payForManaCost(manaCost: number, indices: number[]) {
     const hasEnough = this.cardManager.hand.length >= manaCost;
     assert(hasEnough, new NotEnoughCardsInHandError());
@@ -249,25 +250,17 @@ export class Player
   }
 
   private async payForDestinyCost(cost: number) {
-    const prioritizedCards = Array.from(this.cardManager.discardPile).filter(
-      card => card.canBeUsedAsDestinyCost
-    );
-    const pool = [...this.cardManager.destinyZone, ...prioritizedCards];
+    const pool = [...this.cardManager.destinyZone];
     const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 
     const banishedCards: Array<{ card: AnyCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
-      if (prioritizedCards.length > 0) {
-        const card = prioritizedCards.shift()!;
-        card.sendToBanishPile();
-        banishedCards.push({ card, index: -1 });
-      } else {
-        const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size - 1);
-        const card = [...this.cardManager.destinyZone][index];
-        card.sendToBanishPile();
-        banishedCards.push({ card, index });
-      }
+      const index = this.game.rngSystem.nextInt(pool.length - 1);
+      const card = pool[index];
+      card.sendToBanishPile();
+      banishedCards.push({ card, index });
+      pool.splice(index, 1);
     }
 
     await this.game.emit(

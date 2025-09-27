@@ -168,9 +168,9 @@ const cards = computed(() => {
         }"
         :style="{
           '--x': `${card.x}px`,
-          '--y': `${isExpanded ? card.y : 0}px`,
+          '--y': `${card.y}px`,
           '--z': card.z,
-          '--angle': isExpanded ? `${card.rot}deg` : '0deg'
+          '--angle': `${card.rot}deg`
         }"
         @click="isExpanded = true"
       >
@@ -208,16 +208,18 @@ const cards = computed(() => {
   left: 0;
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
-  --rot-scale: 1;
-  --full-y: calc(var(--y) + var(--offset-y));
+  --rot-scale: 0;
+  --_y: var(--offset-y);
   transform-origin: 50% 100%;
-  transform: translateX(var(--x)) translateY(var(--full-y))
+  transform: translateX(var(--x)) translateY(var(--_y))
     rotate(calc(var(--angle) * var(--rot-scale)));
   z-index: var(--z);
-  transition: transform 0.2s var(--ease-2);
+  transition: transform 0.3s var(--ease-2);
   pointer-events: auto;
 
   .hand.expanded & {
+    --rot-scale: 1;
+    --_y: calc(var(--y) + var(--offset-y));
     --offset-y: calc(var(--hover-offset) - 1px * var(--hand-offset-y));
   }
 
@@ -229,7 +231,7 @@ const cards = computed(() => {
   &.selected {
     --hover-offset: -30px;
     --rot-scale: 0;
-    --full-y: var(--offset-y);
+    --_y: var(--offset-y);
   }
   &.disabled {
     filter: brightness(0.75) grayscale(0.3);

@@ -135,10 +135,11 @@ const pointerStyle = computed(() => {
   width: calc(96px * var(--pixel-scale));
   height: calc(96px * var(--pixel-scale));
   position: absolute;
-  top: calc(8px * var(--pixel-scale));
+  top: calc(4px * var(--pixel-scale));
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(1.25);
   display: grid;
+  transform-origin: center center;
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -197,7 +198,7 @@ const pointerStyle = computed(() => {
   height: calc(20px * var(--pixel-scale));
   position: absolute;
   bottom: calc(14px * var(--pixel-scale));
-  left: calc(12px * var(--pixel-scale));
+  left: calc(15px * var(--pixel-scale));
   display: grid;
   place-content: center;
   padding-right: calc(4px * var(--pixel-scale));
@@ -205,6 +206,7 @@ const pointerStyle = computed(() => {
   font-weight: var(--font-weight-7);
   font-size: 10px;
   --dual-text-offset-y: 2px;
+  scale: 2;
 }
 
 .hp {
@@ -215,7 +217,7 @@ const pointerStyle = computed(() => {
   height: calc(20px * var(--pixel-scale));
   position: absolute;
   bottom: calc(14px * var(--pixel-scale));
-  right: calc(12px * var(--pixel-scale));
+  right: calc(15px * var(--pixel-scale));
   display: grid;
   place-content: center;
   padding-left: calc(4px * var(--pixel-scale));
@@ -223,5 +225,6 @@ const pointerStyle = computed(() => {
   font-weight: var(--font-weight-7);
   font-size: 10px;
   --dual-text-offset-y: 2px;
+  scale: 2;
 }
 </style>

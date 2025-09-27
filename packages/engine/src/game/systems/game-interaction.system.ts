@@ -19,7 +19,7 @@ import {
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { ChoosingAffinityContext } from '../interactions/choosing-affinity.interaction';
-import type { SpellSchool } from '../../card/card.enums';
+import { CARD_DECK_SOURCES, type SpellSchool } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { UseAbilityContext } from '../interactions/use-ability.interaction';
@@ -316,8 +316,7 @@ export class GameInteractionSystem
         player
       }
     );
-
-    if (card.manaCost === 0) {
+    if (card.manaCost === 0 || card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
       await this._ctx.commit(this._ctx.player, []);
     }
 
