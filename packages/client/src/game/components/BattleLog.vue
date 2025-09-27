@@ -200,7 +200,6 @@ onMounted(() => {
       }
 
       if (tokens.length > 0) {
-        tokens.push({ kind: 'text', text: '.' });
         events.value.push(tokens);
       }
     });
@@ -225,7 +224,7 @@ type Token =
   | { kind: 'game-phase-change'; phase: GamePhase }
   | { kind: 'player-turn_start'; player: PlayerViewModel };
 
-const events = ref<Token[][]>([[{ kind: 'text', text: 'Game started.' }]]);
+const events = ref<Token[][]>([[{ kind: 'text', text: 'Game started' }]]);
 
 const listEl = ref<HTMLElement>();
 
@@ -271,12 +270,9 @@ watch(
         <template v-else-if="token.kind === 'player'">
           {{ token.player.name }}
         </template>
-        <template v-else-if="token.kind === 'player-turn_start'">
-          {{ token.player.name }}'s turn'
-        </template>
 
         <template v-else-if="token.kind === 'game-turn-start'">
-          TURN {{ token.turn }}
+          Turn {{ token.turn }} starts.
         </template>
         <template v-else-if="token.kind === 'game-phase-change'">
           {{ token.phase.replace('_', ' ') }}

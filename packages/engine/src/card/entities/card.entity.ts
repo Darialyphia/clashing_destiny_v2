@@ -265,7 +265,7 @@ export abstract class Card<
     }
 
     if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.player);
+      await this.game.effectChainSystem.addEffect(effect, this.player);
     } else {
       void this.game.effectChainSystem.createChain({
         initialPlayer: this.player,

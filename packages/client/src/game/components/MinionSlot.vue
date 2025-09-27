@@ -56,6 +56,7 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
         :class="{
           targetable: minion.canBeTargeted
         }"
+        show-stats
       />
     </InspectableCard>
   </div>

@@ -35,6 +35,7 @@ export const noviceLv0: HeroBlueprint = {
       description:
         '@[exhaust]@ : Draw a card into your Destiny zone. @Seal@ this ability.',
       canUse: () => true,
+      speed: CARD_SPEED.FAST,
       manaCost: 0,
       shouldExhaust: true,
       async getPreResponseTargets() {

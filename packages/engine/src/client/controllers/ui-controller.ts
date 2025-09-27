@@ -304,19 +304,18 @@ export class UiController {
     return `${this.getDestinyZoneDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
   }
 
-  get idleMessage() {
-    if (this.client.state.effectChain) {
-      return 'Effect chain: Your turn';
-    }
-    return 'Waiting for opponent...';
-  }
-
   get explainerMessage() {
     const activePlayerId = this.client.getActivePlayerId();
     const state = this.client.state;
 
+    if (this.client.state.effectChain) {
+      return this.client.state.effectChain.player === this.client.playerId
+        ? 'Effect chain: Your turn'
+        : 'Effect chain: Opponent turn';
+    }
+
     if (activePlayerId !== this.client.playerId) {
-      return this.idleMessage;
+      return 'Waiting for opponent...';
     }
 
     if (state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT) {
@@ -353,6 +352,6 @@ export class UiController {
       }
     }
 
-    return '';
+    return 'Your turn: play a card, use an ability or declare an attack';
   }
 }

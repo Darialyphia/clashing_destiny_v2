@@ -1,6 +1,5 @@
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,

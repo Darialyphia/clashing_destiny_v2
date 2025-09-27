@@ -6,7 +6,6 @@ import {
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
 import type { AnyCard } from '../../card/entities/card.entity';
-import { isDestinyDeckCard, isMainDeckCard } from '../../board/board.system';
 import { match } from 'ts-pattern';
 import { CARD_DECK_SOURCES } from '../../card/card.enums';
 

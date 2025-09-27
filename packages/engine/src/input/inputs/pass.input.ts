@@ -18,7 +18,7 @@ export class PassInput extends Input<typeof schema> {
         this.game.effectChainSystem.currentChain.currentPlayer.equals(this.player),
         new NotCurrentPlayerError()
       );
-      this.game.effectChainSystem.pass(this.player);
+      await this.game.effectChainSystem.pass(this.player);
     } else {
       assert(this.player.isInteractive, new NotCurrentPlayerError());
       await this.game.turnSystem.pass(this.player);

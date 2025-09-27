@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   useCard,
+  useFxEvent,
   useGameClient,
   useMyPlayer
 } from '../composables/useGameClient';
@@ -14,6 +15,9 @@ import {
 } from 'reka-ui';
 import CardActions from './CardActions.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { waitFor } from '@game/shared';
+import { refAutoReset } from '@vueuse/core';
 
 const {
   cardId,
@@ -21,7 +25,8 @@ const {
   actionsSide,
   variant = 'default',
   isInteractive = true,
-  showDisabledMessage = false
+  showDisabledMessage = false,
+  showStats = false
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -29,6 +34,7 @@ const {
   variant?: 'default' | 'small';
   isInteractive?: boolean;
   showDisabledMessage?: boolean;
+  showStats?: boolean;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -63,13 +69,33 @@ const handleClick = () => {
   client.value.ui.onCardClick(card.value);
 };
 
+const isAttacking = refAutoReset(false, 500);
+const isTakingDamage = refAutoReset(false, 500);
+const onAttack = async (e: { card: string }) => {
+  if (e.card !== cardId) return;
+  isAttacking.value = true;
+};
+
+const onTakeDamage = async (e: { card: string }) => {
+  if (e.card !== cardId) return;
+  isTakingDamage.value = true;
+  await waitFor(500);
+};
+
+useFxEvent(FX_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
+useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
+
 const classes = computed(() => {
   return {
     exhausted: isInteractive && card.value.isExhausted,
     disabled: !card.value.canPlay && card.value.location === 'hand',
     selected: client.value.ui.selectedCard?.equals(card.value),
     targetable: isTargetable.value,
-    flipped: !myPlayer.value.equals(card.value.player)
+    flipped: !myPlayer.value.equals(card.value.player),
+    'is-attacking': isAttacking.value,
+    'is-taking-damage': isTakingDamage.value
   };
 });
 </script>
@@ -101,7 +127,9 @@ const classes = computed(() => {
             hp: card.hp,
             spellpower: card.spellpower,
             durability: card.durability,
-            abilities: card.abilities.map(ability => ability.description)
+            abilities: card.abilities.map(
+              ability => `[${ability.speed}] ${ability.description}`
+            )
           }"
           class="game-card big"
           :class="classes"
@@ -120,6 +148,7 @@ const classes = computed(() => {
           }"
           class="game-card small"
           :class="classes"
+          :show-stats="showStats"
           @click="handleClick"
         />
         <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
@@ -155,21 +184,20 @@ const classes = computed(() => {
   }
 } */
 
-.selected {
-  filter: brightnes(1.2);
-}
-
 /* .highlighted::after {
   content: '';
   position: absolute;
   inset: 0;
   --glow-hsl: var(--cyan-4-hsl);
   animation: card-glow 2.5s infinite;
-} */
+  } */
+
+.selected {
+  filter: brightnes(1.2);
+}
 
 .game-card {
   transition: all 0.3s var(--ease-2);
-
   &.exhausted {
     filter: grayscale(0.4) brightness(0.8);
     transform: none;
@@ -184,23 +212,36 @@ const classes = computed(() => {
   }
 }
 
-/* @keyframes horizontal-shaking {
+@keyframes card-attack {
+  to {
+    transform: rotateY(1turn);
+  }
+}
+
+.is-attacking {
+  animation: card-attack 0.3s var(--ease-in-2) forwards;
+}
+
+@keyframes horizontal-shaking {
   0% {
     transform: translateX(0);
   }
-  25% {
-    transform: translateX(5px);
+  16%,
+  48%,
+  80% {
+    transform: translateX(10px);
   }
-  50% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
+  32%,
+  64% {
+    transform: translateX(-10px);
   }
   100% {
     transform: translateX(0);
   }
-} */
+}
+.is-taking-damage {
+  animation: horizontal-shaking 0.5s linear forwards;
+}
 
 .flipped:deep(.image) {
   scale: -1 1;

@@ -50,8 +50,13 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
     }"
   >
     <div class="content" @click="close">
-      <header>
-        <h2 class="text-center">Discard Pile</h2>
+      <header class="mb-4">
+        <h2 class="text-center">Destiny Deck</h2>
+        <p class="text-center italic">
+          Starting turn
+          {{ state.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD + 1 }}, you
+          can play 1 destiny card per turn.
+        </p>
       </header>
       <div class="card-list fancy-scrollbar">
         <div

@@ -1,5 +1,3 @@
-import type { PlayCardContext } from '../../game/interactions/play-card.interaction';
-import type { UseAbilityContext } from '../../game/interactions/use-ability.interaction';
 import {
   INTERACTION_STATES,
   type InteractionState,

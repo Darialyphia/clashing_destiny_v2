@@ -14,6 +14,7 @@ import { Card } from './card.entity';
 import { Entity } from '../../entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { EFFECT_TYPE } from '../../game/effect-chain';
+import { CARD_SPEED } from '../card.enums';
 
 export const ABILITY_EVENTS = {
   ABILITY_BEFORE_USE: 'ability.before-use',
@@ -75,6 +76,10 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.id;
   }
 
+  get speed() {
+    return this.blueprint.speed;
+  }
+
   get shouldExhaust() {
     return this.blueprint.shouldExhaust;
   }
@@ -105,42 +110,42 @@ export class Ability<T extends AbilityOwner>
     );
   }
 
-  async use(onResolved?: () => MaybePromise<void>) {
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
-    this.card.abilityTargets.set(this.blueprint.id, targets);
+  private async resolveEffect() {
+    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id)!;
+    await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
+    abilityTargets.forEach(target => {
+      if (target instanceof Card) {
+        target.clearTargetedBy({ type: 'card', card: this.card });
+      }
+    });
+    this.card.abilityTargets.delete(this.blueprint.id);
 
     await this.game.emit(
-      ABILITY_EVENTS.ABILITY_BEFORE_USE,
-      new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
+      ABILITY_EVENTS.ABILITY_AFTER_USE,
+      new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
     );
+  }
 
-    if (this.shouldExhaust) {
-      await this.card.exhaust();
-    }
-
+  protected async insertInChainOrExecute(
+    targets: PreResponseTarget[],
+    onResolved?: () => MaybePromise<void>
+  ) {
     const effect = {
-      type: EFFECT_TYPE.ABILITY,
+      type: EFFECT_TYPE.CARD,
       source: this.card,
       targets,
       handler: async () => {
-        const abilityTargets = this.card.abilityTargets.get(this.blueprint.id)!;
-        await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
-        abilityTargets.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this.card });
-          }
-        });
-        this.card.abilityTargets.delete(this.blueprint.id);
-
-        await this.game.emit(
-          ABILITY_EVENTS.ABILITY_AFTER_USE,
-          new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
-        );
+        await this.resolveEffect();
       }
     };
 
+    if (this.speed === CARD_SPEED.FLASH) {
+      await effect.handler();
+      return this.game.inputSystem.askForPlayerInput();
+    }
+
     if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.card.player);
+      await this.game.effectChainSystem.addEffect(effect, this.card.player);
     } else {
       void this.game.effectChainSystem.createChain({
         initialPlayer: this.card.player,
@@ -148,6 +153,17 @@ export class Ability<T extends AbilityOwner>
         onResolved
       });
     }
+  }
+
+  async use(onResolved?: () => MaybePromise<void>) {
+    const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
+    this.card.abilityTargets.set(this.blueprint.id, targets);
+
+    if (this.shouldExhaust) {
+      await this.card.exhaust();
+    }
+
+    await this.insertInChainOrExecute(targets, onResolved);
   }
 
   seal() {
@@ -167,6 +183,7 @@ export class Ability<T extends AbilityOwner>
       description: this.blueprint.description,
       name: this.blueprint.label,
       manaCost: this.manaCost,
+      speed: this.speed,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };

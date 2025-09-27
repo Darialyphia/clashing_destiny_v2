@@ -45,6 +45,7 @@ export const aidenLv1: HeroBlueprint = {
         '@[exhaust]@ : Equip a weapon artifact from your deck that costs 1 or less. @Seal@ this ability.',
       manaCost: 0,
       shouldExhaust: true,
+      speed: CARD_SPEED.FAST,
       async getPreResponseTargets() {
         return [];
       },

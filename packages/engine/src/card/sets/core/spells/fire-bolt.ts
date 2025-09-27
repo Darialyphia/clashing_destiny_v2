@@ -1,4 +1,3 @@
-import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../card-utils';

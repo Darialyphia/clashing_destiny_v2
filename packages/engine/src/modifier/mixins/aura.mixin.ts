@@ -2,7 +2,6 @@ import type { Modifier } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../../card/entities/card.entity';
-import { GAME_EVENTS } from '../../game/game.events';
 import type { MaybePromise } from '@game/shared';
 
 export type AuraOptions = {

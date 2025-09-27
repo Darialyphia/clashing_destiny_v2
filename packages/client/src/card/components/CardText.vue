@@ -11,6 +11,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -33,7 +34,8 @@ type Token =
   | { type: 'level-bonus'; text: string }
   | { type: 'lineage-bonus'; text: string }
   | { type: 'missing-affinity'; text: string }
-  | { type: 'durability' };
+  | { type: 'durability' }
+  | { type: CardSpeed };
 
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
@@ -100,6 +102,11 @@ const tokens = computed<Token[]>(() => {
         text: part.replace('[missing-affinity] ', '')
       };
     }
+    for (const speed of Object.values(CARD_SPEED)) {
+      if (part.startsWith(`[${speed}]`)) {
+        return { type: speed };
+      }
+    }
     return { type: 'text', text: part };
   });
 });
@@ -112,56 +119,73 @@ const tokens = computed<Token[]>(() => {
       :key="index"
       :class="highlighted && `token-${token.type}`"
     >
-      <img
-        v-if="token.type === 'exhaust'"
-        src="/assets/ui/ability-exhaust.png"
-        class="inline"
-      />
+      <UiSimpleTooltip v-if="token.type === 'exhaust'">
+        <template #trigger>
+          <img src="/assets/ui/ability-exhaust.png" class="inline" />
+        </template>
+        Exhaust the card.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'spellpower'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/ability-power.png" class="inline" />
-          </template>
-          <b>Spellpower</b>
-          : is used to enhance the effects of some cards.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'spellpower'">
+        <template #trigger>
+          <img src="/assets/ui/ability-power.png" class="inline" />
+        </template>
+        <b>Spellpower</b>
+        : is used to enhance the effects of some cards.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'health'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/hp.png" class="inline" />
-          </template>
-          <b>Health</b>
-          : represents the amount of damage a minion or hero can take before
-          being destroyed.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'health'">
+        <template #trigger>
+          <img src="/assets/ui/hp.png" class="inline" />
+        </template>
+        <b>Health</b>
+        : represents the amount of damage a minion or hero can take before being
+        destroyed.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'attack'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/attack.png" class="inline" />
-          </template>
-          <b>Attack</b>
-          : is the amount of damage a minion or hero can deal in combat.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'attack'">
+        <template #trigger>
+          <img src="/assets/ui/attack.png" class="inline" />
+        </template>
+        <b>Attack</b>
+        : is the amount of damage a minion or hero can deal in combat.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'durability'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/shield.png" class="inline" />
-          </template>
-          <b>Durability</b>
-          : when it reaches zero, the artifact is destroyed.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'durability'">
+        <template #trigger>
+          <img src="/assets/ui/shield.png" class="inline" />
+        </template>
+        <b>Durability</b>
+        : when it reaches zero, the artifact is destroyed.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
+        <template #trigger>
+          <img src="/assets/ui/speed-slow.png" class="inline" />
+        </template>
+
+        This can only be activated at Slow speed.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
+        <template #trigger>
+          <img src="/assets/ui/speed-fast.png" class="inline" />
+        </template>
+
+        This can be activated at Fast speed.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FLASH">
+        <template #trigger>
+          <img src="/assets/ui/speed-flash.png" class="inline" />
+        </template>
+
+        This can is activated at Flash speed and resolves instantly.
+      </UiSimpleTooltip>
 
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
         <HoverCardTrigger>
-          <span tabindex="0">
+          <span tabindex="0" v-if="'text' in token">
             {{ token.text }}
           </span>
         </HoverCardTrigger>
@@ -189,6 +213,7 @@ const tokens = computed<Token[]>(() => {
   white-space: pre-wrap;
   color: #d7ad42;
   color: #efef9f;
+  line-height: 1.3;
 }
 
 :is(.token-keyword, .token-card) {
@@ -262,6 +287,16 @@ const tokens = computed<Token[]>(() => {
 .token-attack {
   color: var(--yellow-5);
   font-weight: var(--font-weight-5);
+  img {
+    width: 1.2em;
+    aspect-ratio: 1;
+    transform: translateY(3px);
+    margin-inline: var(--size-1);
+  }
+}
+.token-SLOW,
+.token-FAST,
+.token-FLASH {
   img {
     width: 1.2em;
     aspect-ratio: 1;

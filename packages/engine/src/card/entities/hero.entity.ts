@@ -71,11 +71,11 @@ export type HeroEvents = Values<typeof HERO_EVENTS>;
 
 export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
   { card: HeroCard; damage: Damage },
-  { card: SerializedHeroCard; damage: { type: DamageType; amount: number } }
+  { card: string; damage: { type: DamageType; amount: number } }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       damage: {
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
@@ -91,11 +91,11 @@ export class HeroBeforeDealCombatDamageEvent extends TypedSerializableEvent<
     damage: CombatDamage;
     affectedCards: Array<MinionCard | HeroCard>;
   },
-  { card: SerializedHeroCard; target: string; damage: number; affectedCards: string[] }
+  { card: string; target: string; damage: number; affectedCards: string[] }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       target: this.data.target.id,
       damage: this.data.damage.getFinalAmount(this.data.target),
       affectedCards: this.data.affectedCards.map(card => card.id)
@@ -111,7 +111,7 @@ export class HeroAfterDealCombatDamageEvent extends TypedSerializableEvent<
     affectedCards: Array<MinionCard | HeroCard>;
   },
   {
-    card: SerializedHeroCard;
+    card: string;
     target: string;
     affectedCards: string[];
     damage: number;
@@ -120,7 +120,7 @@ export class HeroAfterDealCombatDamageEvent extends TypedSerializableEvent<
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       target: this.data.target.id,
       damage: this.data.damage.getFinalAmount(this.data.target),
       isFatal: !this.data.target.isAlive,

@@ -1,8 +1,7 @@
 import type { CardAfterDestroyEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
-import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
-import type { EventMapWithStarEvent } from '../../utils/typed-emitter';
+import { GAME_EVENTS } from '../../game/game.events';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';
 

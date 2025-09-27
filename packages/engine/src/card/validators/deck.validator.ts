@@ -1,7 +1,7 @@
 import { isDefined } from '@game/shared';
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
+import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
 
 export type DeckViolation = {
   type: string;

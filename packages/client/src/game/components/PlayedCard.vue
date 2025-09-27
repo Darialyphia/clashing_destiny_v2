@@ -4,12 +4,11 @@ import { useFxEvent, useGameState } from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { waitFor } from '@game/shared';
 import GameCard from './GameCard.vue';
-import CardResizer from './CardResizer.vue';
 
 const card = ref<CardViewModel | null>(null);
 const state = useGameState();
 
-useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, async event => {
+useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   card.value = state.value.entities[event.card.id] as CardViewModel;
   await waitFor(1200);
   card.value = null;
@@ -21,13 +20,11 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, async event => {
     <div id="declared-played-card">
       <Transition>
         <div class="wrapper" v-if="card">
-          <CardResizer :card-id="card.id" :forced-scale="0.5">
-            <GameCard
-              :card-id="card.id"
-              :interactive="false"
-              :auto-scale="false"
-            />
-          </CardResizer>
+          <GameCard
+            :card-id="card.id"
+            :interactive="false"
+            :auto-scale="false"
+          />
         </div>
       </Transition>
     </div>
@@ -36,12 +33,13 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, async event => {
 
 <style scoped lang="postcss">
 #declared-played-card {
+  --pixel-scale: 2;
   position: fixed;
-  top: var(--size-12);
+  top: var(--size-10);
   left: 50%;
   transform: translateX(-50%);
-  width: var(--card-width);
-  height: var(--card-height);
+  width: calc(var(--pixel-scale) * var(--card-width));
+  height: calc(var(--pixel-scale) * var(--card-height));
   pointer-events: none;
 }
 

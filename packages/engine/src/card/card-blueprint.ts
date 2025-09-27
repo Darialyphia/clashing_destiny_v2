@@ -53,6 +53,7 @@ export type AbilityBlueprint<
   shouldExhaust: boolean;
   description: string;
   label: string;
+  speed: CardSpeed;
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
   onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
@@ -68,6 +69,7 @@ export type SerializedAbility = {
   name: string;
   manaCost: number;
   description: string;
+  speed: CardSpeed;
   targets: SerializedPreResponseTarget[] | null;
 };
 

@@ -86,11 +86,11 @@ export class MinionCardBeforeDealCombatDamageEvent extends TypedSerializableEven
     affectedCards: Array<MinionCard | HeroCard>;
     damage: CombatDamage;
   },
-  { card: SerializedMinionCard; target: string; damage: number; affectedCards: string[] }
+  { card: string; target: string; damage: number; affectedCards: string[] }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       target: this.data.target.id,
       damage: this.data.damage.getFinalAmount(this.data.target),
       affectedCards: this.data.affectedCards.map(card => card.id)
@@ -106,7 +106,7 @@ export class MinionCardAfterDealCombatDamageEvent extends TypedSerializableEvent
     affectedCards: Array<MinionCard | HeroCard>;
   },
   {
-    card: SerializedMinionCard;
+    card: string;
     target: string;
     damage: number;
     affectedCards: string[];
@@ -115,7 +115,7 @@ export class MinionCardAfterDealCombatDamageEvent extends TypedSerializableEvent
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       target: this.data.target.id,
       damage: this.data.damage.getFinalAmount(this.data.target),
       affectedCards: this.data.affectedCards.map(card => card.id),

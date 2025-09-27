@@ -1,7 +1,6 @@
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { CardViewModel } from './card.model';
 
 export class AbilityViewModel {
   private getEntities: () => GameStateEntities;
@@ -44,6 +43,10 @@ export class AbilityViewModel {
 
   get description() {
     return this.data.description;
+  }
+
+  get speed() {
+    return this.data.speed;
   }
 
   get canUse() {

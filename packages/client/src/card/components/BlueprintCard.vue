@@ -27,7 +27,7 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       level: (blueprint as any).level,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(
-        (a: AbilityBlueprint<any, any>) => a.description
+        (a: AbilityBlueprint<any, any>) => `[${a.speed}] ${a.description}`
       ),
       subKind: (blueprint as any).subKind,
       jobs: (blueprint as any).jobs,

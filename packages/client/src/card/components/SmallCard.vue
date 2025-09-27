@@ -5,7 +5,11 @@ import { useElementBounding, useMouse } from '@vueuse/core';
 import CardFoil from './CardFoil.vue';
 import CardGlare from './CardGlare.vue';
 
-const { card, isFoil } = defineProps<{
+const {
+  card,
+  isFoil,
+  showStats = false
+} = defineProps<{
   card: {
     id: string;
     image: string;
@@ -15,6 +19,7 @@ const { card, isFoil } = defineProps<{
     durability?: number | null;
   };
   isFoil?: boolean;
+  showStats?: boolean;
 }>();
 
 const imageBg = computed(() => {
@@ -70,17 +75,17 @@ const pointerStyle = computed(() => {
         <div class="art" />
       </div>
 
-      <div v-if="isDefined(card.atk)" class="atk">
+      <div v-if="isDefined(card.atk) && showStats" class="atk">
         <div class="dual-text" :data-text="card.atk">
           {{ card.atk }}
         </div>
       </div>
-      <div v-if="isDefined(card.hp)" class="hp">
+      <div v-if="isDefined(card.hp) && showStats" class="hp">
         <div class="dual-text" :data-text="card.hp">
           {{ card.hp }}
         </div>
       </div>
-      <div v-if="isDefined(card.durability)" class="durability">
+      <div v-if="isDefined(card.durability) && showStats" class="durability">
         <div class="dual-text" :data-text="card.durability">
           {{ card.durability }}
         </div>

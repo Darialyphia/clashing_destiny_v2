@@ -1,7 +1,6 @@
 import type { BoardMinionSlot } from '../board/board-minion-slot.entity';
 import { MINION_SLOT_ZONES } from '../board/board;constants';
 import type { Game } from '../game/game';
-import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 
 export type AttackRange = {

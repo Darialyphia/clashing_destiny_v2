@@ -1,7 +1,5 @@
 import type { Game } from '../game/game';
-import { GAME_PHASES } from '../game/game.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import type { SerializedInput } from '../input/input-system';
 
 export type AIMove = {

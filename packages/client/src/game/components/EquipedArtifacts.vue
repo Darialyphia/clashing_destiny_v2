@@ -40,7 +40,7 @@ const myPlayer = useMyPlayer();
         :card-id="artifact.id"
         :side="player.equals(myPlayer) ? 'right' : 'left'"
       >
-        <GameCard :card-id="artifact.id" variant="small" />
+        <GameCard :card-id="artifact.id" variant="small" show-stats />
       </InspectableCard>
     </div>
   </div>

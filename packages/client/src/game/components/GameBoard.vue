@@ -32,6 +32,9 @@ import CombatArrows from './CombatArrows.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import PlayedCard from './PlayedCard.vue';
+import SVGFilters from './SVGFilters.vue';
+
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const myBoard = useMyBoard();
@@ -63,7 +66,6 @@ useKeyboardControl('keyup', settings.settings.bindings.showHand.control, () => {
 });
 useKeyboardControl('keyup', settings.settings.bindings.pass.control, () => {
   const actions = ui.value.globalActions;
-  console.log(actions);
   const passAction = actions.find(a => a.id === 'pass');
   if (!passAction) return;
   if (passAction.isDisabled) return;
@@ -87,15 +89,10 @@ for (let i = 1; i <= 9; i++) {
 </script>
 
 <template>
-  <!-- <ManaCostModal /> -->
-  <!-- <BattleLog />
-  <SVGFilters /> -->
-  <!-- <DestinyPhaseModal v-if="hasFinishedStartAnimation" /> -->
-  <!-- <ChooseCardModal />
-  <PlayedCardIntent />
-  <PlayedCard />
-  <DestinyCostVFX /> -->
+  <SVGFilters />
+  <!-- <DestinyCostVFX />  -->
   <CombatArrows />
+  <PlayedCard />
 
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">

@@ -36,6 +36,7 @@ export const rustyBlade: ArtifactBlueprint = {
       description: `@[exhaust]@ -1@[durability]@ : This turn, your hero gain +2@[attack]@.`,
       manaCost: 0,
       shouldExhaust: true,
+      speed: CARD_SPEED.FLASH,
       canUse(game, card) {
         return card.location === 'board';
       },
