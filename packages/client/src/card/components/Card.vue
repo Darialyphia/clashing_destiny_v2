@@ -13,7 +13,8 @@ import {
   unrefElement,
   until,
   useElementBounding,
-  useMouse
+  useMouse,
+  useResizeObserver
 } from '@vueuse/core';
 import CardFoil from './CardFoil.vue';
 import CardGlare from './CardGlare.vue';
@@ -120,6 +121,7 @@ const setVariableFontSize = (
 ) => {
   const inner = box.firstChild as HTMLElement;
   const outerHeight = box.clientHeight;
+
   let innerHeight = inner.clientHeight;
 
   while (innerHeight > outerHeight) {
@@ -127,12 +129,25 @@ const setVariableFontSize = (
     box.style.fontSize = `${sizeRef.value}px`;
 
     innerHeight = inner.clientHeight;
+
     if (sizeRef.value <= min) {
       break;
     }
   }
 };
 const descriptionBox = useTemplateRef('description-box');
+const descriptionChild = computed(() => {
+  if (!descriptionBox.value) return;
+  return descriptionBox.value.firstChild as HTMLElement;
+});
+// we need a resize observer because the description box size change change when description icons are loaded for the first time
+useResizeObserver(descriptionChild, () => {
+  setVariableFontSize(
+    descriptionBox.value!,
+    descriptionFontSize,
+    DESCRIPTION_MIN_TEXT_SIZE
+  );
+});
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
 const DESCRIPTION_MAX_TEXT_SIZE = 14;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
@@ -801,9 +816,9 @@ const onMouseleave = () => {
 
 .description {
   width: calc(96px * var(--pixel-scale));
-  height: calc(58px * var(--pixel-scale));
+  height: calc(52px * var(--pixel-scale));
   position: absolute;
-  top: calc(116px * var(--pixel-scale));
+  top: calc(114px * var(--pixel-scale));
   left: calc(16px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;

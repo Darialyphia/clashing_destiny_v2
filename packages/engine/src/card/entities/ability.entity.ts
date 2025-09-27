@@ -135,7 +135,7 @@ export class Ability<T extends AbilityOwner>
     onResolved?: () => MaybePromise<void>
   ) {
     const effect = {
-      type: EFFECT_TYPE.CARD,
+      type: EFFECT_TYPE.ABILITY,
       source: this.card,
       targets,
       handler: async () => {

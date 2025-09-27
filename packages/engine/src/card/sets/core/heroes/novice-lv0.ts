@@ -1,3 +1,4 @@
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -10,7 +11,7 @@ import {
 export const noviceLv0: HeroBlueprint = {
   id: 'novice-lv0',
   name: 'Child of Destiny',
-  description: '',
+  description: '@On Enter@: Draw 6 cards.',
   collectable: false,
   level: 0,
   cardIconId: 'heroes/novice-lv0',
@@ -31,23 +32,46 @@ export const noviceLv0: HeroBlueprint = {
   abilities: [
     {
       id: 'novice-ability-1',
-      label: '@[exhaust]@ : Draw into Destiny',
+      label: '@[mana] 1@ @[exhaust]@ : replace cards from hand',
       description:
-        '@[exhaust]@ : Draw a card into your Destiny zone. @Seal@ this ability.',
+        '@[mana] 1@ @[exhaust]@ : Choose up to 3 cards in your hand. Put them at the bottom of your deck, then draw that many cards. @Seal@ this ability.',
       canUse: () => true,
-      speed: CARD_SPEED.FAST,
-      manaCost: 0,
+      speed: CARD_SPEED.SLOW,
+      manaCost: 1,
       shouldExhaust: true,
       async getPreResponseTargets() {
         return [];
       },
       async onResolve(game, card, targets, ability) {
-        await card.player.cardManager.drawIntoDestinyZone(1);
+        const choices = await game.interaction.chooseCards({
+          player: card.player,
+          label: 'Choose up to 3 cards in your hand to put at the bottom of your deck',
+          minChoiceCount: 0,
+          maxChoiceCount: 3,
+          choices: card.player.cardManager.hand
+        });
+
+        for (const choice of choices) {
+          choice.removeFromCurrentLocation();
+          choice.player.cardManager.mainDeck.addToBottom(choice);
+        }
+
+        await card.player.cardManager.draw(choices.length);
+
         ability.seal();
       }
     }
   ],
   tags: [],
-  async onInit() {},
+  async onInit(game, card) {
+    console.log('init', card.id);
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          await card.player.cardManager.draw(6);
+        }
+      })
+    );
+  },
   async onPlay() {}
 };

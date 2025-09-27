@@ -40,7 +40,7 @@ const client = useGameClient();
 
 .hero-hp {
   position: absolute;
-  bottom: var(--size-2);
+  bottom: calc(-1 * var(--size-1));
   right: 0;
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-8);

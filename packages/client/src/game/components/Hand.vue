@@ -11,7 +11,10 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { clamp, isDefined } from '@game/shared';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import {
+  INTERACTION_STATES,
+  type InteractionState
+} from '@game/engine/src/game/systems/game-interaction.system';
 import { OnClickOutside } from '@vueuse/components';
 import { useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
@@ -144,6 +147,21 @@ const cards = computed(() => {
     z: i
   }));
 });
+
+watch(
+  () => state.value.interaction,
+  interaction => {
+    const relevantStates: InteractionState[] = [
+      INTERACTION_STATES.USING_ABILITY,
+      INTERACTION_STATES.PLAYING_CARD
+    ];
+    if (!relevantStates.includes(interaction.state)) return;
+
+    if (interaction.ctx.player !== myBoard.value.playerId) return;
+
+    ui.value.isHandExpanded = true;
+  }
+);
 </script>
 
 <template>

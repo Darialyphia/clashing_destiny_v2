@@ -113,8 +113,7 @@ export class EffectChain
       stateTransition(
         EFFECT_CHAIN_STATES.BUILDING,
         EFFECT_CHAIN_STATE_TRANSITIONS.PASS,
-        EFFECT_CHAIN_STATES.BUILDING,
-        this.onPass.bind(this)
+        EFFECT_CHAIN_STATES.BUILDING
       ),
       stateTransition(
         EFFECT_CHAIN_STATES.BUILDING,
@@ -150,16 +149,6 @@ export class EffectChain
 
   isCurrentPlayer(player: Player): boolean {
     return player.equals(this._currentPlayer);
-  }
-
-  private onPass() {
-    this.consecutivePasses++;
-    if (this.consecutivePasses >= this.passesNeededToResolve) {
-      this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.RESOLVE);
-      void this.resolveEffects();
-    } else {
-      this.switchTurn();
-    }
   }
 
   private onEnd() {
@@ -226,6 +215,14 @@ export class EffectChain
       new ChainPassedEvent({ player })
     );
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.PASS);
+
+    this.consecutivePasses++;
+    if (this.consecutivePasses >= this.passesNeededToResolve) {
+      this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.RESOLVE);
+      await this.resolveEffects();
+    } else {
+      this.switchTurn();
+    }
   }
 
   canAddEffect(player: Player): boolean {

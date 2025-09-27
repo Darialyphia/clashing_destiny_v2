@@ -95,12 +95,12 @@ export class Player
   }
 
   async init() {
+    await this.cardManager.init();
     this._hero = {
       card: await this.generateCard<HeroCard>(this.game.config.INITIAL_HERO_BLUEPRINTID),
       lineage: []
     };
     await this._hero.card.play(() => {});
-    await this.cardManager.init();
   }
 
   async levelupHero(newHero: HeroCard) {

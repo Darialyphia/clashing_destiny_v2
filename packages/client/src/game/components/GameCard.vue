@@ -141,7 +141,7 @@ const classes = computed(() => {
             spellpower: card.spellpower,
             durability: card.durability,
             abilities: card.abilities.map(
-              ability => `[${ability.speed}] ${ability.description}`
+              ability => `@[${ability.speed}]@ ${ability.description}`
             )
           }"
           class="game-card big"

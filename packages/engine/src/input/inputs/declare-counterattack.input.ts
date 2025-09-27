@@ -1,9 +1,8 @@
 import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
-import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
+import { GAME_PHASES } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
-  IllegalAttackerError,
   IllegalCounterAttackError,
   NotCurrentPlayerError,
   UnknownUnitError

@@ -341,7 +341,29 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     try {
       if (!this.isEnabled) return;
       const events = this.eventsSinceLastSnapshot.map(event => event.serialize());
+      const previousId = this.nextId - 1;
       const id = this.nextId++;
+      const omnisicientState = this.serializeOmniscientState();
+
+      if (events.length === 0 && previousId > 0) {
+        const previousSnapshot = this.getOmniscientSnapshotAt(previousId);
+        if (previousSnapshot.kind === 'state') {
+          const prevJSON = JSON.stringify(previousSnapshot.state);
+          const currentJSON = JSON.stringify(omnisicientState);
+          if (prevJSON === currentJSON) {
+            this.nextId--;
+            this.eventsSinceLastSnapshot = [];
+            return;
+          }
+        }
+      }
+
+      this.omniscientCache.push({
+        kind: 'state',
+        id,
+        events: events as any,
+        state: omnisicientState
+      });
       this.playerCaches[this.game.playerSystem.player1.id].push({
         kind: 'state',
         id,
@@ -354,13 +376,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         id,
         events: events as any,
         state: this.serializePlayerState(this.game.playerSystem.player2.id)
-      });
-
-      this.omniscientCache.push({
-        kind: 'state',
-        id,
-        events: events as any,
-        state: this.serializeOmniscientState()
       });
 
       this.eventsSinceLastSnapshot = [];

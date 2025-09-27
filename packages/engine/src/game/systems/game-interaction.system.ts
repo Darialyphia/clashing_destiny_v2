@@ -292,7 +292,6 @@ export class GameInteractionSystem
       this.game,
       options
     );
-
     return this.game.inputSystem.pause<T[]>();
   }
 

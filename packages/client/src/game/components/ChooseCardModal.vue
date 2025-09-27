@@ -6,10 +6,14 @@ import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
 const client = useGameClient();
-const isOpened = computed(() => {
-  return client.value.ui.isChooseCardsInteractionOverlayOpened;
-});
 
+const isOpened = ref(false);
+watch(
+  () => client.value.ui.isChooseCardsInteractionOverlayOpened,
+  newValue => {
+    isOpened.value = newValue;
+  }
+);
 const isShowingBoard = ref(false);
 const state = useGameState();
 
@@ -82,7 +86,10 @@ const maxChoices = computed(() => {
           variant="info"
           text="Confirm"
           :disabled="selectedIndices.length < minChoices"
-          @click="client.chooseCards(selectedIndices)"
+          @click="
+            isOpened = false;
+            client.chooseCards(selectedIndices);
+          "
         />
       </footer>
     </div>
@@ -97,20 +104,30 @@ const maxChoices = computed(() => {
 }
 
 .card-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-2);
+  --pixel-scale: 2;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(calc(var(--pixel-scale) * var(--card-width)), 1fr)
+  );
+  justify-items: center;
+  row-gap: var(--size-4);
   max-height: 60dvh;
   overflow-y: auto;
   > * {
-    width: var(--card-width);
-    height: var(--card-height);
     transition: all 0.2s var(--ease-2);
   }
 
   > label:has(input:checked) {
     filter: brightness(1.3);
-    transform: translateY(10px);
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: hsl(200 100% 50% / 0.25);
+      pointer-events: none;
+    }
   }
 
   > label:has(input:disabled) {
@@ -119,8 +136,8 @@ const maxChoices = computed(() => {
 }
 
 :global(
-    body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
-  ) {
+  body:has(.modal-overlay + .modal-content .is-showing-board) .modal-overlay
+) {
   opacity: 0;
 }
 </style>

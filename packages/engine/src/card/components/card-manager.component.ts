@@ -69,6 +69,7 @@ export class CardManagerComponent {
     this.mainDeck.populate(mainDeckCards);
     this.destinyDeck.populate(destinyDeckCards);
     this.mainDeck.shuffle();
+    console.log('drawing initial hand', this.game.config.INITIAL_HAND_SIZE);
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
     const initialDestinyCards = this.mainDeck.draw(
       this.game.config.INITAL_CARDS_IN_DESTINY_ZONE
@@ -151,6 +152,7 @@ export class CardManagerComponent {
       this.mainDeck.remaining,
       this.options.maxHandSize - this.hand.length
     );
+
     if (amountToDraw <= 0) return;
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_DRAW,
@@ -222,7 +224,6 @@ export class CardManagerComponent {
   }
 
   sendToBanishPile(card: AnyCard) {
-    console.log('send to banish', card.id);
     this.banishPile.add(card);
   }
 

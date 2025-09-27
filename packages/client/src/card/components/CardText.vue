@@ -229,8 +229,8 @@ const tokens = computed<Token[]>(() => {
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: var(--size-5);
-  height: var(--size-5);
+  width: 22px;
+  height: 20px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -267,6 +267,7 @@ const tokens = computed<Token[]>(() => {
 .token-card {
   color: var(--lime-3);
 }
+/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
   transform: translateY(4px);
 }
@@ -298,9 +299,10 @@ const tokens = computed<Token[]>(() => {
 .token-FAST,
 .token-FLASH {
   img {
-    width: 1.2em;
+    width: 22px;
+    height: 20px;
     aspect-ratio: 1;
-    transform: translateY(3px);
+    transform: translateY(4px);
     margin-inline: var(--size-1);
   }
 }

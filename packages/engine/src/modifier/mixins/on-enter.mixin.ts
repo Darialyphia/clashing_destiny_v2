@@ -9,19 +9,22 @@ import type {
 } from '../../card/entities/artifact.entity';
 import type { CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
-import { isArtifact, isMinion } from '../../card/card-utils';
+import { isArtifact, isHero, isMinion } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
+import type { HeroCard, HeroPlayedEvent } from '../../card/entities/hero.entity';
 
-export type OnEnterHandler<T extends MinionCard | ArtifactCard> = (
+export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard> = (
   event: T extends MinionCard
     ? MinionSummonedEvent
     : T extends ArtifactCard
       ? ArtifactEquipedEvent
-      : never
+      : T extends HeroCard
+        ? HeroPlayedEvent
+        : never
 ) => MaybePromise<void>;
 
 export class OnEnterModifierMixin<
-  T extends MinionCard | ArtifactCard
+  T extends MinionCard | ArtifactCard | HeroCard
 > extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
   constructor(
@@ -47,6 +50,13 @@ export class OnEnterModifierMixin<
       });
     } else if (isArtifact(target)) {
       const unsub = this.game.on(GAME_EVENTS.ARTIFACT_EQUIPED, async event => {
+        if (event.data.card.equals(target)) {
+          unsub();
+          await this.handler(event as any);
+        }
+      });
+    } else if (isHero(target)) {
+      const unsub = this.game.on(GAME_EVENTS.HERO_PLAYED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
           await this.handler(event as any);

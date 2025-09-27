@@ -34,6 +34,7 @@ import { useSettingsStore } from '@/shared/composables/useSettings';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
+import ChooseCardModal from './ChooseCardModal.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
@@ -91,6 +92,7 @@ for (let i = 1; i <= 9; i++) {
 <template>
   <SVGFilters />
   <!-- <DestinyCostVFX />  -->
+  <ChooseCardModal />
   <CombatArrows />
   <PlayedCard />
 

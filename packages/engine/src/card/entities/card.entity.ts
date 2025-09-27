@@ -340,11 +340,6 @@ export abstract class Card<
         this.player.cardManager.removeFromDestinyZone(this);
       })
       .with('board', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from board pile when it is not a main deck card.`
-          );
-        }
         this.player.boardSide.remove(this);
       })
       .exhaustive();

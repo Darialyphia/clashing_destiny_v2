@@ -66,9 +66,21 @@ export const HERO_EVENTS = {
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
-  HERO_AFTER_LEVEL_UP: 'hero.after-level-up'
+  HERO_AFTER_LEVEL_UP: 'hero.after-level-up',
+  HERO_PLAYED: 'hero.played'
 } as const;
 export type HeroEvents = Values<typeof HERO_EVENTS>;
+
+export class HeroPlayedEvent extends TypedSerializableEvent<
+  { card: HeroCard },
+  { card: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id
+    };
+  }
+}
 
 export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
   { card: HeroCard; damage: Damage },
@@ -163,6 +175,7 @@ export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;
   [HERO_EVENTS.HERO_AFTER_LEVEL_UP]: HeroLevelUpEvent;
+  [HERO_EVENTS.HERO_PLAYED]: HeroPlayedEvent;
 };
 
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
@@ -451,8 +464,20 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   async play(onResolved: () => MaybePromise<void>) {
     if (this.level === 0) {
-      return await this.blueprint.onPlay(this.game, this, this);
+      await this.game.emit(
+        CARD_EVENTS.CARD_BEFORE_PLAY,
+        new CardDeclarePlayEvent({ card: this })
+      );
+      await this.player.levelupHero(this);
+      await this.blueprint.onPlay(this.game, this, this);
+      await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
+      await this.game.emit(
+        CARD_EVENTS.CARD_AFTER_PLAY,
+        new CardDeclarePlayEvent({ card: this })
+      );
+      return;
     }
+
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
@@ -462,6 +487,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       async () => {
         await this.player.levelupHero(this);
         await this.blueprint.onPlay(this.game, this, this);
+        await this.game.emit(
+          HERO_EVENTS.HERO_PLAYED,
+          new HeroPlayedEvent({ card: this })
+        );
       },
       [],
       onResolved
