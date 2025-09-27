@@ -11,6 +11,7 @@ import { TooltipProvider } from 'reka-ui';
       <RouterView name="ui" />
     </TooltipProvider>
     <div id="card-portal"></div>
+    <div id="tooltip-portal"></div>
   </div>
   <!-- <PixiApp v-else>
     <RouterView name="scene" />
@@ -33,6 +34,12 @@ import { TooltipProvider } from 'reka-ui';
 #card-portal {
   position: fixed;
   z-index: 10;
+  top: 0;
+  left: 0;
+}
+#tooltip-portal {
+  position: fixed;
+  z-index: 11;
   top: 0;
   left: 0;
 }

@@ -9,6 +9,8 @@ import Arrow from './Arrow.vue';
 import { match } from 'ts-pattern';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { EFFECT_TYPE } from '@game/engine/src/game/effect-chain';
 
 const client = useGameClient();
 const state = useGameState();
@@ -90,7 +92,6 @@ const stack = computed(() => {
         v-for="(effect, index) in stack"
         :key="index"
         :card-id="effect.source"
-        class="effect-chain-card-wrapper"
       >
         <div class="effect" :class="effect.playerType">
           <GameCard
@@ -99,7 +100,20 @@ const stack = computed(() => {
             variant="small"
           />
 
-          <div class="effect-type" :class="effect.type.toLowerCase()" />
+          <UiSimpleTooltip>
+            <template #trigger>
+              <div class="effect-type" :class="effect.type.toLowerCase()" />
+            </template>
+            <p v-if="effect.type === EFFECT_TYPE.ABILITY">
+              This effect with execute an ability
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.CARD">
+              This effect will play a card.
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.COUNTERATTACK">
+              This effect will trigger a counterattack.
+            </p>
+          </UiSimpleTooltip>
         </div>
 
         <Teleport to="#arrows">
@@ -143,6 +157,16 @@ const stack = computed(() => {
 
 .effect {
   position: relative;
+  perspective: 2000px;
+  transform-style: preserve-3d;
+  &:deep(.small-card) {
+    transition: all 0.5s var(--ease-4);
+    @starting-style {
+      transform: rotateY(90deg);
+      filter: brightness(4);
+      opacity: 0;
+    }
+  }
 }
 
 .effect-type {
