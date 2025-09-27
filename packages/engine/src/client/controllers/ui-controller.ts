@@ -68,6 +68,8 @@ export class UiController {
 
   private _isChooseAffinityInteractionOverlayOpened = false;
 
+  isHandExpanded = false;
+
   private cardClickRules: CardClickRule[] = [];
 
   private minionSlotClickRules: MinionSlotClickRule[] = [];
@@ -85,7 +87,7 @@ export class UiController {
     p2Minionzone: new DOMSelector('p2-minion-zone'),
     minionPosition: (playerId: string, zone: MinionSlotZone, slot: number) =>
       new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
-    heroSprite: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
+    hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
     frontRow: (playerId: string) => new DOMSelector(`${playerId}-front-row`),

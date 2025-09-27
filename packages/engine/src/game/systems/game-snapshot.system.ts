@@ -2,7 +2,6 @@ import { System } from '../../system';
 import type { Config } from '../../config';
 import {
   GAME_EVENTS,
-  GameErrorEvent,
   GameNewSnapshotEvent,
   type GameEventName,
   type GameStarEvent,

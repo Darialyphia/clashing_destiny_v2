@@ -391,7 +391,12 @@ export abstract class Card<
     if (this.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK) {
       return false;
     }
-    return this.location === 'destinyDeck' && this.canPayDestinyCost;
+    return (
+      this.location === 'destinyDeck' &&
+      this.canPayDestinyCost &&
+      this.game.turnSystem.elapsedTurns >=
+        this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
+    );
   }
 
   protected get canPlayBase() {

@@ -54,8 +54,17 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
         <h2 class="text-center">Discard Pile</h2>
       </header>
       <div class="card-list fancy-scrollbar">
-        <div v-for="card in destinyCards" :key="card.id" @click.stop>
-          <GameCard :card-id="card.id" :actions-offset="10" />
+        <div
+          v-for="card in destinyCards"
+          :key="card.id"
+          @click.stop
+          :class="{ disabled: !card.canPlay }"
+        >
+          <GameCard
+            :card-id="card.id"
+            :actions-offset="10"
+            show-disabled-message
+          />
         </div>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
@@ -89,5 +98,9 @@ h2 {
   text-align: center;
   margin-bottom: var(--size-7);
   font-weight: var(--font-weight-4);
+}
+
+.disabled {
+  filter: brightness(0.75) grayscale(0.3);
 }
 </style>

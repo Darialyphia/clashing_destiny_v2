@@ -4556,6 +4556,45 @@
         },
         {
           "alias": [
+            "effect-ability.png"
+          ],
+          "src": [
+            "/assets/ui/effect-ability.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "effect-card.png"
+          ],
+          "src": [
+            "/assets/ui/effect-card.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "effect-counterattack.png"
+          ],
+          "src": [
+            "/assets/ui/effect-counterattack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "enemy-indicator.png"
           ],
           "src": [

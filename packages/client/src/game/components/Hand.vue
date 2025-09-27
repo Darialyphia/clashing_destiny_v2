@@ -58,8 +58,6 @@ const isInteractionActive = computed(() => {
   );
 });
 
-const isExpanded = ref(false);
-
 const handContainer = useTemplateRef('hand');
 const handContainerSize = ref({ w: 0, h: 0 });
 const handOffsetY = ref(0);
@@ -143,14 +141,14 @@ const cards = computed(() => {
 </script>
 
 <template>
-  <OnClickOutside @trigger="isExpanded = false">
+  <OnClickOutside @trigger="ui.isHandExpanded = false">
     <section
       :id="`hand-${myBoard.playerId}`"
       class="hand"
       :class="{
         'ui-hidden': !client.ui.displayedElements.hand,
         'interaction-active': isInteractionActive,
-        expanded: isExpanded
+        expanded: ui.isHandExpanded
       }"
       :style="{
         '--hand-size': myBoard.hand.length,
@@ -172,17 +170,15 @@ const cards = computed(() => {
           '--z': card.z,
           '--angle': `${card.rot}deg`
         }"
-        @click="isExpanded = true"
+        @click="ui.isHandExpanded = true"
       >
         <GameCard
           :card-id="card.card.id"
           actions-side="top"
           :actions-offset="15"
-          :is-interactive="isExpanded"
+          :is-interactive="ui.isHandExpanded"
+          show-disabled-message
         />
-        <p v-if="!card.card.canPlay" class="disabled-message">
-          You cannot play this card right now.
-        </p>
       </div>
     </section>
   </OnClickOutside>
@@ -214,7 +210,7 @@ const cards = computed(() => {
   transform: translateX(var(--x)) translateY(var(--_y))
     rotate(calc(var(--angle) * var(--rot-scale)));
   z-index: var(--z);
-  transition: transform 0.3s var(--ease-2);
+  transition: transform 0.2s var(--ease-2);
   pointer-events: auto;
 
   .hand.expanded & {
@@ -236,22 +232,5 @@ const cards = computed(() => {
   &.disabled {
     filter: brightness(0.75) grayscale(0.3);
   }
-}
-
-.disabled-message {
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: hsl(0 0% 0% / 0.65);
-  color: hsl(0 0% 100% / 0.9);
-  font-size: var(--font-size--2);
-  padding: var(--size-1) var(--size-2);
-  border-radius: var(--radius-pill);
-  width: max-content;
-  max-width: 80%;
-  text-align: center;
-  pointer-events: none;
-  font-style: italic;
 }
 </style>

@@ -10,7 +10,6 @@ import Hand from '@/game/components/Hand.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
 import Deck from './Deck.vue';
 
-import GameCard from './GameCard.vue';
 import ActionsButtons from './ActionsButtons.vue';
 import DiscardPile from './DiscardPile.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -26,6 +25,7 @@ import MinionSlot from './MinionSlot.vue';
 import OpponentHand from './OpponentHand.vue';
 import BattleLog from './BattleLog.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
+import HeroSlot from './HeroSlot.vue';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const myBoard = useMyBoard();
@@ -60,10 +60,6 @@ const router = useRouter();
   <PlayedCardIntent />
   <PlayedCard />
   <DestinyCostVFX /> -->
-  <!--
-  <div class="explainer">
-    <ExplainerMessage />
-  </div> -->
 
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">
@@ -95,11 +91,7 @@ const router = useRouter();
           <div />
           <div class="hero-slot">
             {{ myPlayer.name }}
-            <GameCard
-              :card-id="myBoard.heroZone.hero"
-              actions-side="bottom"
-              :actions-offset="15"
-            />
+            <HeroSlot :player="myPlayer" />
           </div>
 
           <div class="flex gap-2 mt-auto">
@@ -184,7 +176,7 @@ const router = useRouter();
         <div class="flex flex-col items-center justify-center">
           <div class="hero-slot">
             {{ opponentPlayer.name }}
-            <GameCard :card-id="opponentBoard.heroZone.hero" />
+            <HeroSlot :player="opponentPlayer" />
           </div>
 
           <div class="flex gap-2 mt-auto">

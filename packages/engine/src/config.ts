@@ -22,6 +22,8 @@ export type Config = {
   ALLOW_PLAYER_1_TURN_1_ATTACK: boolean;
 
   INITIAL_HERO_BLUEPRINTID: string;
+
+  MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: number;
 };
 
 export const defaultConfig: Config = {
@@ -47,5 +49,7 @@ export const defaultConfig: Config = {
   SUMMONING_SICKNESS: false,
   ALLOW_PLAYER_1_TURN_1_ATTACK: false,
 
-  INITIAL_HERO_BLUEPRINTID: 'novice-lv0'
+  INITIAL_HERO_BLUEPRINTID: 'novice-lv0',
+
+  MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: 1
 };

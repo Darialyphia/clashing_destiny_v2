@@ -20,13 +20,15 @@ const {
   actionsOffset = -50,
   actionsSide,
   variant = 'default',
-  isInteractive = true
+  isInteractive = true,
+  showDisabledMessage = false
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
   actionsSide?: PopoverContentProps['side'];
   variant?: 'default' | 'small';
   isInteractive?: boolean;
+  showDisabledMessage?: boolean;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -75,50 +77,55 @@ const classes = computed(() => {
 <template>
   <PopoverRoot v-model:open="isActionsPopoverOpened" v-if="cardId">
     <PopoverAnchor>
-      <Card
-        v-if="variant === 'default'"
-        :is-animated="false"
-        :id="card.id"
-        :card="{
-          id: card.id,
-          name: card.name,
-          unlockedSpellSchools: card.unlockedSpellSchools,
-          spellSchool: card.spellSchool,
-          description: card.description,
-          image: card.imagePath,
-          kind: card.kind,
-          level: card.level,
-          rarity: card.rarity,
-          speed: card.speed,
-          manaCost: card.manaCost,
-          baseManaCost: card.baseManaCost,
-          destinyCost: card.destinyCost,
-          baseDestinyCost: card.baseDestinyCost,
-          atk: card.atk,
-          hp: card.hp,
-          spellpower: card.spellpower,
-          durability: card.durability,
-          abilities: card.abilities.map(ability => ability.description)
-        }"
-        class="game-card"
-        :class="classes"
-        @click="handleClick"
-      />
-      <SmallCard
-        v-else-if="variant === 'small'"
-        :id="card.id"
-        :card="{
-          id: card.id,
-          image: card.imagePath,
-          kind: card.kind,
-          atk: card.atk,
-          hp: card.hp,
-          durability: card.durability
-        }"
-        class="game-card"
-        :class="classes"
-        @click="handleClick"
-      />
+      <div class="relative">
+        <Card
+          v-if="variant === 'default'"
+          :is-animated="false"
+          :id="card.id"
+          :card="{
+            id: card.id,
+            name: card.name,
+            unlockedSpellSchools: card.unlockedSpellSchools,
+            spellSchool: card.spellSchool,
+            description: card.description,
+            image: card.imagePath,
+            kind: card.kind,
+            level: card.level,
+            rarity: card.rarity,
+            speed: card.speed,
+            manaCost: card.manaCost,
+            baseManaCost: card.baseManaCost,
+            destinyCost: card.destinyCost,
+            baseDestinyCost: card.baseDestinyCost,
+            atk: card.atk,
+            hp: card.hp,
+            spellpower: card.spellpower,
+            durability: card.durability,
+            abilities: card.abilities.map(ability => ability.description)
+          }"
+          class="game-card"
+          :class="classes"
+          @click="handleClick"
+        />
+        <SmallCard
+          v-else-if="variant === 'small'"
+          :id="card.id"
+          :card="{
+            id: card.id,
+            image: card.imagePath,
+            kind: card.kind,
+            atk: card.atk,
+            hp: card.hp,
+            durability: card.durability
+          }"
+          class="game-card"
+          :class="classes"
+          @click="handleClick"
+        />
+        <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
+          You cannot play this card right now.
+        </p>
+      </div>
     </PopoverAnchor>
 
     <PopoverPortal
@@ -198,5 +205,22 @@ const classes = computed(() => {
 .flipped:deep(.image) {
   scale: -1 1;
   translate: -100% 0;
+}
+
+.disabled-message {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(0 0% 0% / 0.65);
+  color: hsl(0 0% 100% / 0.9);
+  font-size: var(--font-size--2);
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius-pill);
+  width: max-content;
+  max-width: 80%;
+  text-align: center;
+  pointer-events: none;
+  font-style: italic;
 }
 </style>
