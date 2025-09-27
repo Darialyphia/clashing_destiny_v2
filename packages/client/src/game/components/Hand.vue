@@ -14,6 +14,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import { OnClickOutside } from '@vueuse/components';
 import { useResizeObserver } from '@vueuse/core';
+import type { ShallowRef } from 'vue';
 
 const state = useGameState();
 const myBoard = useMyBoard();
@@ -34,9 +35,11 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   }
   await nextTick();
 
-  const el = document.querySelector(
-    client.value.ui.getCardDOMSelectorInHand(newCard.id, myBoard.value.playerId)
-  );
+  const el = client.value.ui.DOMSelectors.cardInHand(
+    newCard.id,
+    myBoard.value.playerId
+  ).element;
+
   if (el) {
     await el.animate(
       [
@@ -58,7 +61,10 @@ const isInteractionActive = computed(() => {
   );
 });
 
-const handContainer = useTemplateRef('hand');
+const handContainer = useTemplateRef('hand') as Readonly<
+  ShallowRef<HTMLElement | null>
+>; // somehow we have to cast it because it makes vue-tsc fail, yet it works in IDE...
+
 const handContainerSize = ref({ w: 0, h: 0 });
 const handOffsetY = ref(0);
 useResizeObserver(handContainer, () => {
@@ -158,17 +164,20 @@ const cards = computed(() => {
     >
       <div
         class="hand-card"
-        v-for="card in cards"
+        v-for="(card, index) in cards"
         :key="card.card.id"
         :class="{
           selected: ui.selectedCard?.equals(card.card),
           disabled: !card.card.canPlay
         }"
+        :data-keyboard-shortcut="ui.isHandExpanded ? index + 1 : undefined"
+        data-keyboard-shortcut-centered="true"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
           '--z': card.z,
-          '--angle': `${card.rot}deg`
+          '--angle': `${card.rot}deg`,
+          '--keyboard-shortcut-right': '50%'
         }"
         @click="ui.isHandExpanded = true"
       >

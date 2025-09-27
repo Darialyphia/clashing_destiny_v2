@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {
   useFxEvent,
+  useGameState,
+  useGameUi,
   useMyBoard,
   useMyPlayer,
   useOpponentBoard,
@@ -26,6 +28,10 @@ import OpponentHand from './OpponentHand.vue';
 import BattleLog from './BattleLog.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
 import HeroSlot from './HeroSlot.vue';
+import CombatArrows from './CombatArrows.vue';
+import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
+import { useSettingsStore } from '@/shared/composables/useSettings';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const myBoard = useMyBoard();
@@ -48,6 +54,36 @@ useFxEvent(FX_EVENTS.ERROR, async e => {
 });
 
 const router = useRouter();
+const ui = useGameUi();
+const state = useGameState();
+const settings = useSettingsStore();
+
+useKeyboardControl('keyup', settings.settings.bindings.showHand.control, () => {
+  ui.value.isHandExpanded = !ui.value.isHandExpanded;
+});
+useKeyboardControl('keyup', settings.settings.bindings.pass.control, () => {
+  const actions = ui.value.globalActions;
+  console.log(actions);
+  const passAction = actions.find(a => a.id === 'pass');
+  if (!passAction) return;
+  if (passAction.isDisabled) return;
+  passAction.onClick();
+});
+for (let i = 1; i <= 9; i++) {
+  useKeyboardControl(
+    'keyup',
+    settings.settings.bindings[
+      `interactCardInHand${i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`
+    ].control,
+    () => {
+      if (!ui.value.isHandExpanded) return;
+      const cardId = myBoard.value.hand[i - 1];
+      if (!cardId) return;
+      const card = state.value.entities[cardId] as CardViewModel;
+      ui.value.onCardClick(card);
+    }
+  );
+}
 </script>
 
 <template>
@@ -56,10 +92,10 @@ const router = useRouter();
   <SVGFilters /> -->
   <!-- <DestinyPhaseModal v-if="hasFinishedStartAnimation" /> -->
   <!-- <ChooseCardModal />
-  <CombatArrows />
   <PlayedCardIntent />
   <PlayedCard />
   <DestinyCostVFX /> -->
+  <CombatArrows />
 
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">

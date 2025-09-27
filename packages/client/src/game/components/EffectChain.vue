@@ -25,14 +25,14 @@ const buildPaths = async () => {
     return effect.targets.map(target => {
       const startRect = document
         .querySelector(
-          client.value.ui.getCardDOMSelectorInEffectChain(effect.source)
+          client.value.ui.DOMSelectors.cardInEffectChain(effect.source).selector
         )!
         .getBoundingClientRect();
       const endRect = match(target)
         .with({ type: 'card' }, target => {
           return document
             .querySelector(
-              client.value.ui.getCardDOMSelectorOnBoard(target.card)
+              client.value.ui.DOMSelectors.cardOnBoard(target.card).selector
             )
             ?.getBoundingClientRect();
         })

@@ -475,7 +475,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   serialize(): SerializedHeroCard {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-
     return {
       ...this.serializeBase(),
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),

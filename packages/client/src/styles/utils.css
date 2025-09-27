@@ -27,14 +27,6 @@
   padding: var(--size-6);
 }
 
-.center {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 .fancy-surface {
   background: var(--fancy-bg);
   border: var(--fancy-border);
@@ -61,8 +53,8 @@
 
 .fancy-scrollbar {
   --scrollbar-foreground: hsl(var(--color-primary-hsl) / 0.75);
-  --scrollbar-background: transparent scrollbar-color:
-    var(--scrollbar-foreground) var(--scrollbar-background);
+  --scrollbar-background: transparent
+    scrollbar-color: var(--scrollbar-foreground) var(--scrollbar-background);
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -149,4 +141,27 @@ button:is(.primary-button, .error-button) {
     outline-offset: 150px;
     outline-color: red;
   }
+}
+
+[data-keyboard-shortcut]::after {
+  content: attr(data-keyboard-shortcut);
+  position: absolute;
+  top: var(--keyboard-shortcut-top, -10px);
+  left: var(--keyboard-shortcut-right, -10px);
+  background: rgba(0, 0, 0, 0.5);
+  color: #efef9f;
+  font-size: var(--font-size-2);
+  border: solid 1px #efef9f;
+  border-radius: 4px;
+  /* pointer-events: none; */
+  font-weight: bold;
+  width: var(--size-6);
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+[data-keyboard-shortcut][data-keyboard-shortcut-centered='true']::after {
+  transform: translateX(-50%);
 }

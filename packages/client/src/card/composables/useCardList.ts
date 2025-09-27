@@ -50,13 +50,13 @@ export const provideCardList = () => {
         if (!card.collectable) return false;
 
         if (spellSchoolFilter.value.size > 0) {
-          const spellSchools =
-            card.kind === CARD_KINDS.SPELL
-              ? [card.spellSchool]
-              : card.spellSchools;
-          if (spellSchools.every(s => !spellSchoolFilter.value.has(s!))) {
-            return false;
-          }
+          // const spellSchools =
+          //   card.kind === CARD_KINDS.SPELL
+          //     ? [card.spellSchool]
+          //     : card.spellSchools;
+          // if (spellSchools.every(s => !spellSchoolFilter.value.has(s!))) {
+          //   return false;
+          // }
         }
 
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {

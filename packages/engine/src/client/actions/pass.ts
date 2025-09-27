@@ -5,10 +5,10 @@ import type { GlobalActionRule } from '../controllers/ui-controller';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
 
-export class PassChainGlobalAction implements GlobalActionRule {
+export class PassGlobalAction implements GlobalActionRule {
   readonly variant = 'error' as const;
 
-  readonly id = 'pass-chain';
+  readonly id = 'pass';
 
   constructor(private client: GameClient) {}
 

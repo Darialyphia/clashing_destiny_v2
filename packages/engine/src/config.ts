@@ -47,7 +47,7 @@ export const defaultConfig: Config = {
   MAX_EQUIPPED_ARTIFACTS: 3,
 
   SUMMONING_SICKNESS: false,
-  ALLOW_PLAYER_1_TURN_1_ATTACK: false,
+  ALLOW_PLAYER_1_TURN_1_ATTACK: true,
 
   INITIAL_HERO_BLUEPRINTID: 'novice-lv0',
 

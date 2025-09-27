@@ -103,7 +103,7 @@ const classes = computed(() => {
             durability: card.durability,
             abilities: card.abilities.map(ability => ability.description)
           }"
-          class="game-card"
+          class="game-card big"
           :class="classes"
           @click="handleClick"
         />
@@ -118,7 +118,7 @@ const classes = computed(() => {
             hp: card.hp,
             durability: card.durability
           }"
-          class="game-card"
+          class="game-card small"
           :class="classes"
           @click="handleClick"
         />
@@ -204,6 +204,9 @@ const classes = computed(() => {
 
 .flipped:deep(.image) {
   scale: -1 1;
+}
+
+.big.flipped:deep(.image) {
   translate: -100% 0;
 }
 

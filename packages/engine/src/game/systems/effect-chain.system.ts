@@ -10,19 +10,23 @@ export class EffectChainSystem extends System<never> {
 
   shutdown() {}
 
-  createChain(opts: {
+  async createChain(opts: {
     initialPlayer: Player;
     initialEffect?: Effect;
     onResolved?: () => MaybePromise<void>;
   }) {
-    this._currentChain = new EffectChain(this.game, opts.initialPlayer, async () => {
-      await opts.onResolved?.();
-      this._currentChain = null;
-      await this.game.inputSystem.askForPlayerInput();
-    });
+    this._currentChain = await EffectChain.create(
+      this.game,
+      opts.initialPlayer,
+      async () => {
+        await opts.onResolved?.();
+        this._currentChain = null;
+        await this.game.inputSystem.askForPlayerInput();
+      }
+    );
 
     if (opts.initialEffect) {
-      this._currentChain.addEffect(opts.initialEffect, opts.initialPlayer);
+      await this._currentChain.addEffect(opts.initialEffect, opts.initialPlayer);
     }
     void this.game.inputSystem.askForPlayerInput();
 
@@ -33,14 +37,14 @@ export class EffectChainSystem extends System<never> {
     return this._currentChain;
   }
 
-  addEffect(effect: Effect, player: Player) {
+  async addEffect(effect: Effect, player: Player) {
     assert(this._currentChain, 'No active effect chain');
-    this._currentChain.addEffect(effect, player);
+    await this._currentChain.addEffect(effect, player);
   }
 
-  pass(player: Player) {
+  async pass(player: Player) {
     assert(this._currentChain, 'No active effect chain');
-    this._currentChain.pass(player);
+    await this._currentChain.pass(player);
   }
 
   serialize() {

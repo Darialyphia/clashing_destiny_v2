@@ -1,20 +1,48 @@
 import type { Control } from '@/shared/composables/useKeyboardControl';
 
 export const defaultKeyBindings = {
-  rotateCW: {
-    label: 'Rotate map clockwise',
-    control: { key: 'KeyE', modifier: null }
+  showHand: {
+    label: 'Shows / hides your hand',
+    control: { key: 'KeyC', modifier: null }
   },
-  rotateCCW: {
-    label: 'Rotate map counter clockwise',
-    control: { key: 'KeyQ', modifier: null }
+  interactCardInHand1: {
+    label: 'Play / select the 1st card in your hand',
+    control: { key: 'Digit1', modifier: null }
   },
-  endTurn: {
-    label: "End the current unit's turn",
-    control: { key: 'KeyT', modifier: null }
+  interactCardInHand2: {
+    label: 'Play / select the 2nd card in your hand',
+    control: { key: 'Digit2', modifier: null }
   },
-  centerOnActiveUnit: {
-    label: 'Center the map on the active unit',
-    control: { key: 'Space', modifier: null }
+  interactCardInHand3: {
+    label: 'Play / select the 3rd card in your hand',
+    control: { key: 'Digit3', modifier: null }
+  },
+  interactCardInHand4: {
+    label: 'Play / select the 4th card in your hand',
+    control: { key: 'Digit4', modifier: null }
+  },
+  interactCardInHand5: {
+    label: 'Play / select the 5th card in your hand',
+    control: { key: 'Digit5', modifier: null }
+  },
+  interactCardInHand6: {
+    label: 'Play / select the 6th card in your hand',
+    control: { key: 'Digit6', modifier: null }
+  },
+  interactCardInHand7: {
+    label: 'Play / select the 7th card in your hand',
+    control: { key: 'Digit7', modifier: null }
+  },
+  interactCardInHand8: {
+    label: 'Play / select the 8th card in your hand',
+    control: { key: 'Digit8', modifier: null }
+  },
+  interactCardInHand9: {
+    label: 'Play / select the 9th card in your hand',
+    control: { key: 'Digit9', modifier: null }
+  },
+  pass: {
+    label: 'Pass',
+    control: { key: 'KeyP', modifier: null }
   }
 } as const satisfies Record<string, { label: string; control: Control }>;

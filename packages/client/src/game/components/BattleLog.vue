@@ -21,13 +21,6 @@ onMounted(() => {
         });
       }
 
-      if (eventName === GAME_EVENTS.PLAYER_START_TURN) {
-        tokens.push({
-          kind: 'player-turn_start',
-          player: state.value.entities[event.player.id] as PlayerViewModel
-        });
-      }
-
       if (eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
         tokens.push({
           kind: 'game-phase-change',
@@ -232,7 +225,7 @@ type Token =
   | { kind: 'game-phase-change'; phase: GamePhase }
   | { kind: 'player-turn_start'; player: PlayerViewModel };
 
-const events = ref<Token[][]>([]);
+const events = ref<Token[][]>([[{ kind: 'text', text: 'Game started.' }]]);
 
 const listEl = ref<HTMLElement>();
 
@@ -295,11 +288,12 @@ watch(
 
 <style scoped lang="postcss">
 .combat-log {
-  height: 100%;
+  height: 90%;
   overflow-y: auto;
   background-color: black;
   font-size: var(--font-size-0);
   color: #985e25;
+  padding-block: var(--size-1);
 }
 
 li {
@@ -352,29 +346,12 @@ li {
 
 .game-phase-change {
   flex-grow: 1;
-
-  font-size: var(--font-size-2);
-  font-weight: var(--font-weight-6);
-  text-align: center;
-
-  background-color: hsl(0 0 100% / 0.1);
+  color: #efef9f;
   text-transform: capitalize;
-  padding-block: var(--size-2);
-
-  li:has(&) {
-    padding: 0;
-  }
 }
 .game-turn_start {
   flex-grow: 1;
 
   font-weight: var(--font-weight-8);
-  text-align: center;
-
-  background-color: hsl(0 0 100% / 0.5);
-
-  li:has(&) {
-    padding: 0;
-  }
 }
 </style>

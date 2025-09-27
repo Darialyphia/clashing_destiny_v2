@@ -15,7 +15,7 @@ import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
-import { PassChainGlobalAction } from '../actions/pass';
+import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
 import type { MinionSlotZone } from '../../board/board;constants';
 
@@ -44,10 +44,13 @@ export type UiOptimisticState = {
 };
 
 export class DOMSelector {
-  constructor(readonly id: string) {}
+  constructor(
+    readonly id: string,
+    private readonly selectorPrefix: string = ''
+  ) {}
 
   get selector() {
-    return `#${this.id}`;
+    return `${this.selectorPrefix} #${this.id}`;
   }
 
   get element() {
@@ -83,10 +86,21 @@ export class UiController {
   };
 
   DOMSelectors = {
-    p1Minionzone: new DOMSelector('p1-minion-zone'),
-    p2Minionzone: new DOMSelector('p2-minion-zone'),
+    board: new DOMSelector('board'),
+    effectChain: new DOMSelector('effect-chain'),
+    playedCardZone: new DOMSelector('played-card'),
+    hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
+    destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
     minionPosition: (playerId: string, zone: MinionSlotZone, slot: number) =>
       new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
+    cardOnBoard: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.board.selector),
+    cardInHand: (cardId: string, playerId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.hand(playerId).selector),
+    cardInEffectChain: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.effectChain.selector),
+    cardInDestinyZone: (cardId: string, playerId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.destinyZone(playerId).selector),
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
@@ -168,7 +182,7 @@ export class UiController {
       new CancelPlayCardGlobalAction(this.client),
       new CommitMinionSlotSelectionGlobalAction(this.client),
       new CommitCardSelectionGlobalAction(this.client),
-      new PassChainGlobalAction(this.client)
+      new PassGlobalAction(this.client)
     ];
   }
 
@@ -270,18 +284,6 @@ export class UiController {
     this._selectedCard = null;
   }
 
-  getHandDOMSelector(playerId: string) {
-    return `#hand-${playerId}`;
-  }
-
-  getBoardDOMSelector() {
-    return '#board';
-  }
-
-  getEffectChainDOMSelector() {
-    return '#effect-chain';
-  }
-
   getPlayedCardZoneDOMSelector() {
     return `#played-card`;
   }
@@ -292,18 +294,6 @@ export class UiController {
 
   getCardDOMSelector(cardId: string) {
     return `#${cardId}`;
-  }
-
-  getCardDOMSelectorOnBoard(cardId: string) {
-    return `${this.getBoardDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getCardDOMSelectorInHand(cardId: string, playerId: string) {
-    return `${this.getHandDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getCardDOMSelectorInEffectChain(cardId: string) {
-    return `${this.getEffectChainDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
   }
 
   getCardDOMSelectorInPLayedCardZone(cardId: string) {

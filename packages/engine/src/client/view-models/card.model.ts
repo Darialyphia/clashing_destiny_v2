@@ -10,12 +10,7 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import {
-  CARD_KINDS,
-  type SpellSchool,
-  type ArtifactKind,
-  type CardKind
-} from '../../card/card.enums';
+import { CARD_KINDS, type SpellSchool, type CardKind } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';

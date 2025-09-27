@@ -67,7 +67,6 @@ const pointerStyle = computed(() => {
     <div class="card-front">
       <CardFoil v-if="isFoil" />
       <div class="image">
-        <div class="shadow" />
         <div class="art" />
       </div>
 
@@ -79,6 +78,11 @@ const pointerStyle = computed(() => {
       <div v-if="isDefined(card.hp)" class="hp">
         <div class="dual-text" :data-text="card.hp">
           {{ card.hp }}
+        </div>
+      </div>
+      <div v-if="isDefined(card.durability)" class="durability">
+        <div class="dual-text" :data-text="card.durability">
+          {{ card.durability }}
         </div>
       </div>
 
@@ -132,12 +136,10 @@ const pointerStyle = computed(() => {
 }
 
 .image {
-  width: calc(96px * var(--pixel-scale));
-  height: calc(96px * var(--pixel-scale));
   position: absolute;
-  top: calc(4px * var(--pixel-scale));
-  left: 50%;
-  transform: translateX(-50%) scale(1.25);
+  inset: 0;
+  pointer-events: none;
+  mask: url('/assets/ui/card-front-small-mask.png');
   display: grid;
   transform-origin: center center;
   > * {
@@ -146,11 +148,12 @@ const pointerStyle = computed(() => {
   }
 
   .art {
-    content: '';
     position: absolute;
     inset: 0;
     background: v-bind(imageBg);
-    background-size: cover;
+    background-position: center;
+    background-size: calc(96px * var(--pixel-scale))
+      calc(96px * var(--pixel-scale));
   }
   .card-front:has(.foil) & .art {
     animation: foil-image 10s infinite alternate var(--ease-2);
@@ -158,35 +161,16 @@ const pointerStyle = computed(() => {
       drop-shadow(1px 0 0 cyan) drop-shadow(-1px 0 0 yellow);
   }
 
-  .spell & {
-    background: url('/assets/ui/frame-spell.png') no-repeat;
-    background-size: cover;
-    top: 0;
+  :is(.minion, .hero) & .art {
+    --pixel-scale: 2;
+    background-position: center calc(50% + 20px);
+  }
+  .spell & .art {
+    background-image: v-bind(imageBg), url('/assets/ui/frame-spell.png');
   }
 
-  .artifact & {
-    background: url('/assets/ui/frame-artifact.png') no-repeat;
-    background-size: cover;
-    top: 0;
-  }
-
-  :is(.minion, .hero) & .shadow {
-    filter: blur(12px);
-    opacity: 0.33;
-    transform: scale(1.1);
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-color: #bb8033;
-      mask-image: v-bind(imageBg);
-      mask-size: cover;
-      background-size: cover;
-    }
-  }
-
-  .card:is(.minion, .hero) & {
-    background-position: center -15px;
+  .artifact & .art {
+    background-image: v-bind(imageBg), url('/assets/ui/frame-artifact.png');
   }
 }
 
@@ -211,6 +195,25 @@ const pointerStyle = computed(() => {
 
 .hp {
   background-image: url('/assets/ui/card-hp.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  bottom: calc(14px * var(--pixel-scale));
+  right: calc(15px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-left: calc(4px * var(--pixel-scale));
+  padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 10px;
+  --dual-text-offset-y: 2px;
+  scale: 2;
+}
+
+.durability {
+  background-image: url('/assets/ui/card-durability.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(24px * var(--pixel-scale));

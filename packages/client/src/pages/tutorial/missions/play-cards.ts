@@ -17,7 +17,6 @@ export const playCardTutorial: TutorialMission = {
       {
         id: 'p1',
         name: 'You',
-        hero: 'knight',
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
@@ -28,7 +27,6 @@ export const playCardTutorial: TutorialMission = {
       {
         id: 'p2',
         name: 'Opponent',
-        hero: 'combat-tutorial-enemy-hero',
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
