@@ -71,6 +71,7 @@ const handleClick = () => {
 
 const isAttacking = refAutoReset(false, 500);
 const isTakingDamage = refAutoReset(false, 500);
+const isUsingAbility = refAutoReset(false, 1000);
 const onAttack = async (e: { card: string }) => {
   if (e.card !== cardId) return;
   isAttacking.value = true;
@@ -82,10 +83,21 @@ const onTakeDamage = async (e: { card: string }) => {
   await waitFor(500);
 };
 
+const waitForAttackDone = async () => {
+  await waitFor(200);
+};
 useFxEvent(FX_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
 useFxEvent(FX_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
 useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
+useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, async e => {
+  if (!isInteractive) return;
+  if (e.card !== cardId) return;
+  isUsingAbility.value = true;
+  await waitFor(1000);
+});
 
 const classes = computed(() => {
   return {
@@ -95,7 +107,8 @@ const classes = computed(() => {
     targetable: isTargetable.value,
     flipped: !myPlayer.value.equals(card.value.player),
     'is-attacking': isAttacking.value,
-    'is-taking-damage': isTakingDamage.value
+    'is-taking-damage': isTakingDamage.value,
+    'is-using-ability': isUsingAbility.value
   };
 });
 </script>
@@ -198,6 +211,8 @@ const classes = computed(() => {
 
 .game-card {
   transition: all 0.3s var(--ease-2);
+  position: relative;
+
   &.exhausted {
     filter: grayscale(0.4) brightness(0.8);
     transform: none;
@@ -219,7 +234,7 @@ const classes = computed(() => {
 }
 
 .is-attacking {
-  animation: card-attack 0.3s var(--ease-in-2) forwards;
+  animation: card-attack 0.2s var(--ease-in-2) forwards;
 }
 
 @keyframes horizontal-shaking {
@@ -241,6 +256,29 @@ const classes = computed(() => {
 }
 .is-taking-damage {
   animation: horizontal-shaking 0.5s linear forwards;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: hsl(0 100% 60% / 0.65);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+}
+
+@keyframes ability-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 yellow;
+  }
+  50% {
+    box-shadow: 0 0 1.5rem yellow;
+  }
+}
+.is-using-ability {
+  filter: brightness(1.5) !important;
+  animation: ability-glow 1s ease-in-out;
 }
 
 .flipped:deep(.image) {

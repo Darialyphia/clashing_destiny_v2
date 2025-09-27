@@ -17,7 +17,7 @@ export class MeleeAttackRange implements AttackRange {
     if (position.slot !== this.minion.position!.slot) return false;
 
     if (position.zone === MINION_SLOT_ZONES.BACK_ROW) {
-      return position.player.boardSide.frontRow.get(position.slot).isOccupied;
+      return !position.player.boardSide.frontRow.get(position.slot).isOccupied;
     }
 
     return true;

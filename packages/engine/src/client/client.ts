@@ -375,4 +375,14 @@ export class GameClient {
       }
     });
   }
+
+  declareCounterAttack(defenderId: string) {
+    this.networkAdapter.dispatch({
+      type: 'declareCounterAttack',
+      payload: {
+        defenderId,
+        playerId: this.playerId
+      }
+    });
+  }
 }

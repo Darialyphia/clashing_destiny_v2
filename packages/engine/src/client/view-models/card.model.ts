@@ -16,6 +16,7 @@ import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { AbilityViewModel } from './ability.model';
+import { DeclareCounterAttackAction } from '../actions/declare-counter-attack';
 
 type CardData =
   | SerializedSpellCard
@@ -247,6 +248,13 @@ export class CardViewModel {
     );
   }
 
+  get canCounterattack() {
+    if ('canCounterattack' in this.data) {
+      return this.data.canCounterattack as boolean;
+    }
+    return false;
+  }
+
   get canBeTargeted() {
     const client = this.getClient();
     const state = client.stateManager.state;
@@ -318,6 +326,7 @@ export class CardViewModel {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
+      new DeclareCounterAttackAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

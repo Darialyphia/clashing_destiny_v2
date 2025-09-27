@@ -21,13 +21,6 @@ onMounted(() => {
         });
       }
 
-      if (eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
-        tokens.push({
-          kind: 'game-phase-change',
-          phase: event.to.state as GamePhase
-        });
-      }
-
       if (eventName === GAME_EVENTS.CARD_AFTER_PLAY) {
         tokens.push({
           kind: 'text',
@@ -68,7 +61,7 @@ onMounted(() => {
       if (eventName === GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',
@@ -83,7 +76,7 @@ onMounted(() => {
       if (eventName === GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',
@@ -102,7 +95,7 @@ onMounted(() => {
       ) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',

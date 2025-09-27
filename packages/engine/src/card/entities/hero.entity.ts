@@ -22,6 +22,7 @@ import { AnywhereAttackRange, type AttackRange } from '../attack-range';
 import type { MinionCard } from './minion.entity';
 import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
 import { CardDeclarePlayEvent } from '../card.events';
+import { CorruptedGamephaseContextError } from '../../game/systems/game-phase.system';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -293,12 +294,27 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canCounterattack(target: AttackTarget) {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
+      return false;
+    }
+
     return this.interceptors.canCounterattack.getValue(
-      !this.isExhausted && this.atk > 0,
+      !this.isExhausted &&
+        this.atk > 0 &&
+        phaseCtx.ctx.attacker.canBeCounterattackedBy(this),
       {
         attacker: target
       }
     );
+  }
+
+  async counterattack() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
+      throw new CorruptedGamephaseContextError();
+    }
+    await phaseCtx.ctx.counterAttack();
   }
 
   getReceivedDamage(damage: Damage) {

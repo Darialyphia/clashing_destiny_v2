@@ -17,6 +17,7 @@ import {
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../game.enums';
+import { EFFECT_TYPE } from '../effect-chain';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -258,11 +259,7 @@ export class CombatPhase
 
     if (this.target.isAlive && this.attacker.isAlive) {
       await this.attacker.dealDamage(this.target, new CombatDamage(this.attacker));
-      if (
-        this.isTargetCounterattacking &&
-        this.target.canCounterattack(this.attacker) &&
-        this.attacker.isAlive
-      ) {
+      if (this.isTargetCounterattacking && this.attacker.isAlive) {
         await this.target.dealDamage(this.attacker, new CombatDamage(this.target));
       }
     }
@@ -287,7 +284,7 @@ export class CombatPhase
     await this.game.inputSystem.askForPlayerInput();
   }
 
-  counterAttack() {
+  async counterAttack() {
     if (!this.target) {
       throw new WrongCombatStepError();
     }
@@ -297,8 +294,20 @@ export class CombatPhase
     ) {
       throw new InvalidCounterattackError();
     }
-    this.isTargetCounterattacking = true;
+    await this.target.exhaust();
+    await this.game.effectChainSystem.currentChain?.addEffect(
+      {
+        source: this.target,
+        type: EFFECT_TYPE.COUNTERATTACK,
+        targets: [this.attacker],
+        handler: async () => {
+          this.isTargetCounterattacking = true;
+        }
+      },
+      this.target.player
+    );
   }
+
   async cancelAttack() {
     if (this.isCancelled) return;
     this.isCancelled = true;
