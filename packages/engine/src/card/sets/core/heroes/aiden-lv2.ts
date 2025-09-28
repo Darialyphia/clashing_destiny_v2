@@ -29,7 +29,7 @@ export const aidenLv2: HeroBlueprint = {
   level: 2,
   destinyCost: 2,
   speed: CARD_SPEED.SLOW,
-  jobs: [HERO_JOBS.WARRIOR],
+  jobs: [HERO_JOBS.WARRIOR, HERO_JOBS.KNIGHT],
   spellSchools: [SPELL_SCHOOLS.FIRE],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
@@ -37,7 +37,7 @@ export const aidenLv2: HeroBlueprint = {
   unique: false,
   lineage: 'aiden',
   spellPower: 0,
-  atk: 0,
+  atk: 1,
   maxHp: 24,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [

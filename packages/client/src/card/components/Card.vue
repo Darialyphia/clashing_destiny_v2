@@ -439,22 +439,6 @@ const onMouseleave = () => {
   translate: var(--parallax-x) var(--parallax-y);
 }
 
-.fx.flame {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  /* base gradient “fuel” */
-  background:
-    /* linear-gradient(to top, cyan, transparent 50%), */
-    radial-gradient(circle at 50% 120%, #0000 70%, #000 90%),
-    conic-gradient(from -90deg, #ff0, #ffa000, #ff4d00 60%, #660000 100%);
-  filter: url(#flameNoise) brightness(1.5) blur(3px);
-  mix-blend-mode: color-dodge;
-  mask: url('/assets/ui/card-art-frame-mask.png');
-  mask-size: cover;
-  opacity: 1;
-}
-
 .front-content {
   position: absolute;
   transform-style: preserve-3d;
@@ -553,6 +537,9 @@ const onMouseleave = () => {
     position: absolute;
     inset: 0;
     background: v-bind(imageBg);
+    mask-image: url('/assets/ui/card-art-mask.png');
+    mask-size: cover;
+
     background-size: cover;
   }
   .card-front:has(.foil) & .art {
@@ -601,7 +588,7 @@ const onMouseleave = () => {
   top: calc(88px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
-  font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
+  font-size: calc(var(--pixel-scale) * 0.5px * v-bind(nameFontSize));
   line-height: 1.1;
   font-weight: var(--font-weight-7);
   height: calc(16px * var(--pixel-scale));
@@ -645,7 +632,7 @@ const onMouseleave = () => {
   left: calc(3px * var(--pixel-scale));
   display: flex;
   flex-direction: column;
-  gap: calc(3px * var(--pixel-scale));
+  gap: calc(1.5px * var(--pixel-scale));
   > * {
     z-index: 0;
     background-size: cover;
@@ -680,7 +667,7 @@ const onMouseleave = () => {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: calc(3px * var(--pixel-scale));
+  gap: calc(1.5px * var(--pixel-scale));
 }
 
 .speed {

@@ -2,12 +2,40 @@
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import { waitFor } from '@game/shared';
+import { domToPng } from 'modern-screenshot';
 
 const { deckBuilder, isEditingDeck } = useCollectionPage();
 
 const { card } = defineProps<{
   card: CardBlueprint;
 }>();
+
+const screenshot = async (e: MouseEvent) => {
+  const element = (e.currentTarget as HTMLElement)?.querySelector(
+    '.card-front'
+  ) as HTMLElement;
+  const glare = element.querySelector('.glare') as HTMLElement;
+  console.log(glare);
+  if (glare) {
+    glare.style.visibility = 'hidden';
+  }
+  await waitFor(50);
+  const png = await domToPng(element, {
+    backgroundColor: 'transparent'
+  });
+  if (glare) {
+    glare.style.visibility = '';
+  }
+  const a = document.createElement('a');
+  a.href = png;
+  a.download = `${card.name
+    .replace(/\W+/g, ' ')
+    .split(/ |\B(?=[A-Z])/)
+    .map(word => word.toLowerCase())
+    .join('_')}.png`;
+  a.click();
+};
 </script>
 
 <template>
@@ -17,6 +45,7 @@ const { card } = defineProps<{
     :class="{
       disabled: isEditingDeck && !deckBuilder.canAdd(card.id)
     }"
+    @dblclick="screenshot($event)"
     @click="
       () => {
         if (!isEditingDeck) return;

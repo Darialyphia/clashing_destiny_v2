@@ -311,6 +311,14 @@ export class MinionCard extends Card<
     return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
   }
 
+  get job() {
+    return this.blueprint.job;
+  }
+
+  get spellSchool() {
+    return this.blueprint.spellSchool;
+  }
+
   get attackRanges(): AttackRange[] {
     return this.interceptors.attackRanges.getValue(
       [new MeleeAttackRange(this.game, this)],

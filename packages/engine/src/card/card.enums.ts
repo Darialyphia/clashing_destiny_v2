@@ -78,7 +78,8 @@ export type SpellSchool = Values<typeof SPELL_SCHOOLS>;
 
 export const HERO_JOBS = {
   WARRIOR: 'WARRIOR',
-  KNIGHT: 'KNIGHT'
+  KNIGHT: 'KNIGHT',
+  PALADIN: 'PALADIN'
 } as const;
 export type HeroJob = Values<typeof HERO_JOBS>;
 
