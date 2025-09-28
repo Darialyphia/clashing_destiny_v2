@@ -41,6 +41,7 @@ const close = () => {
 };
 useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, close);
 useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
+useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, close);
 
 const myPlayer = useMyPlayer();
 const settings = useSettingsStore();

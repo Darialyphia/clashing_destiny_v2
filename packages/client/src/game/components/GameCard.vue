@@ -70,15 +70,20 @@ const handleClick = () => {
 
 const isAttacking = refAutoReset(false, 500);
 const isTakingDamage = refAutoReset(false, 500);
+const damageTaken = refAutoReset(0, 1000);
 const isUsingAbility = refAutoReset(false, 1000);
 const onAttack = async (e: { card: string }) => {
   if (e.card !== cardId) return;
   isAttacking.value = true;
 };
 
-const onTakeDamage = async (e: { card: string }) => {
+const onTakeDamage = async (e: {
+  card: string;
+  damage: { amount: number };
+}) => {
   if (e.card !== cardId) return;
   isTakingDamage.value = true;
+  damageTaken.value = e.damage.amount;
   await waitFor(500);
 };
 
@@ -149,6 +154,7 @@ const classes = computed(() => {
           }"
           class="game-card big"
           :class="classes"
+          :data-damage="damageTaken"
           @click="handleClick"
         />
         <SmallCard
@@ -165,8 +171,13 @@ const classes = computed(() => {
           class="game-card small"
           :class="classes"
           :show-stats="showStats"
+          :data-damage="damageTaken"
           @click="handleClick"
         />
+
+        <div class="damage" v-if="damageTaken > 0">
+          {{ damageTaken }}
+        </div>
         <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
           You cannot play this card right now.
         </p>
@@ -211,7 +222,21 @@ const classes = computed(() => {
 .selected {
   box-shadow: 0 0 0.5rem hsl(200 100% 50% / 0.75);
 }
-
+@keyframes card-damage-taken {
+  0% {
+    opacity: 0;
+    transform: scale(5);
+  }
+  30%,
+  75% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5rem);
+  }
+}
 .game-card {
   transition: all 0.3s var(--ease-2);
   position: relative;
@@ -268,6 +293,20 @@ const classes = computed(() => {
     mix-blend-mode: overlay;
     pointer-events: none;
   }
+}
+.damage {
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  font-size: var(--font-size-8);
+  font-weight: var(--font-weight-9);
+  color: var(--red-9);
+  -webkit-text-stroke: 8px black;
+  paint-order: stroke fill;
+  animation: card-damage-taken 1s linear forwards;
 }
 
 @keyframes ability-glow {

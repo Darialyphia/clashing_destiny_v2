@@ -43,7 +43,7 @@ export const aidenLv2: HeroBlueprint = {
   abilities: [
     {
       id: 'aiden-lv2-ability-1',
-      canUse: () => true,
+      canUse: (game, card) => card.location === 'board',
       label: '@[mana] 1@ : gain @Vigilant@.',
       description: '@[mana] 1@ : Aiden gains @Vigilant@ this turn.',
       manaCost: 1,

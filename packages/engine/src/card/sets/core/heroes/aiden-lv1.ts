@@ -26,7 +26,7 @@ export const aidenLv1: HeroBlueprint = {
   rarity: RARITIES.EPIC,
   collectable: true,
   unique: false,
-  lineage: null,
+  lineage: 'aiden',
   spellPower: 0,
   atk: 0,
   maxHp: 19,

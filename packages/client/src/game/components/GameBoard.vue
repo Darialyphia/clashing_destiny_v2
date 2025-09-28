@@ -26,6 +26,7 @@ import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
+import DestinyCostVFX from './DestinyCostVFX.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
@@ -42,7 +43,7 @@ useGameKeyboardControls();
 
 <template>
   <SVGFilters />
-  <!-- <DestinyCostVFX />  -->
+  <DestinyCostVFX />
   <ChooseCardModal />
   <CombatArrows />
   <PlayedCard />

@@ -280,13 +280,15 @@ export class CardViewModel {
     const state = client.stateManager.state;
     const canSelect =
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-      state.interaction.ctx.elligibleCards.some(id => id === this.id);
+      state.interaction.ctx.elligibleCards.some(id => id === this.id) &&
+      client.getActivePlayerId() === client.playerId;
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
       state.phase.state === GAME_PHASES.ATTACK &&
       state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
-      state.phase.ctx.potentialTargets.some(id => id === this.id);
+      state.phase.ctx.potentialTargets.some(id => id === this.id) &&
+      client.getActivePlayerId() === client.playerId;
 
     return canSelect || canAttack;
   }
