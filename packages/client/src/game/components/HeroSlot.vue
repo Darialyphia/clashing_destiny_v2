@@ -7,6 +7,8 @@ import {
   useGameUi
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
+import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
+import { useSettingsStore } from '@/shared/composables/useSettings';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -16,6 +18,9 @@ const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
 const { playerId } = useGameClient();
 const ui = useGameUi();
+
+const settings = useSettingsStore();
+const getKeyLabel = useKeybordShortcutLabel();
 </script>
 
 <template>
@@ -23,6 +28,13 @@ const ui = useGameUi();
     class="hero-slot"
     :class="{ opponent: playerId !== player.id }"
     :id="ui.DOMSelectors.hero(player.id).id"
+    :data-keyboard-shortcut="
+      player.id === playerId
+        ? getKeyLabel(settings.settings.bindings.interactHero.control)
+        : undefined
+    "
+    data-keyboard-shortcut-centered="true"
+    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     ref="card"
   >
     <GameCard :card-id="hero.id" actions-side="bottom" :actions-offset="15" />

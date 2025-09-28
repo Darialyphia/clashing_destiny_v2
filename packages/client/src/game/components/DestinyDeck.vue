@@ -6,12 +6,15 @@ import {
   useFxEvent,
   useGameState,
   useGameUi,
+  useMyPlayer,
   usePlayer
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import Deck from './Deck.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { useSettingsStore } from '@/shared/composables/useSettings';
+import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
 
 const { playerId } = defineProps<{
   playerId: string;
@@ -38,12 +41,23 @@ const close = () => {
 };
 useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, close);
 useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
+
+const myPlayer = useMyPlayer();
+const settings = useSettingsStore();
+const getKeyLabel = useKeybordShortcutLabel();
 </script>
 
 <template>
   <Deck
     :size="player.remainingCardsInDestinyDeck"
     :id="ui.DOMSelectors.destinyDeck(playerId).id"
+    :data-keyboard-shortcut="
+      player.id === myPlayer.id
+        ? getKeyLabel(settings.settings.bindings.toggleDestinyDeck.control)
+        : undefined
+    "
+    data-keyboard-shortcut-centered="true"
+    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     @click="isOpened = true"
   />
 

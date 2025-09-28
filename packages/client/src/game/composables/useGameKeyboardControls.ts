@@ -1,4 +1,7 @@
-import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
+import {
+  useKeyboardControl,
+  type Control
+} from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import {
   useGameState,
@@ -8,6 +11,7 @@ import {
   useOpponentPlayer
 } from './useGameClient';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { keyToString } from 'key-display-names';
 
 export const useGameKeyboardControls = () => {
   const settings = useSettingsStore();
@@ -103,4 +107,17 @@ export const useGameKeyboardControls = () => {
       ).element?.click();
     }
   );
+};
+
+export const useKeybordShortcutLabel = () => {
+  return (control: Control) => {
+    const formattedKey = computed(() => {
+      return keyToString(control.key);
+    });
+
+    if (control.modifier)
+      return `${control.modifier.toUpperCase()} + ${formattedKey.value}`;
+
+    return `${formattedKey.value}`;
+  };
 };

@@ -10,6 +10,8 @@ import {
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { useSettingsStore } from '@/shared/composables/useSettings';
+import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
 
 const { player } = defineProps<{
   player: string;
@@ -26,6 +28,8 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
 const ui = useGameUi();
 
 const myPlayer = useMyPlayer();
+const settings = useSettingsStore();
+const getKeyLabel = useKeybordShortcutLabel();
 </script>
 
 <template>
@@ -34,6 +38,15 @@ const myPlayer = useMyPlayer();
     v-slot="{ index }"
     class="discard-pile"
     :id="ui.DOMSelectors.discardPile(player).id"
+    :data-keyboard-shortcut="
+      player === myPlayer.id
+        ? getKeyLabel(settings.settings.bindings.toggleDiscardPile.control)
+        : getKeyLabel(
+            settings.settings.bindings.toggleOpponentDiscardPile.control
+          )
+    "
+    data-keyboard-shortcut-centered="true"
+    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     @click="isOpened = true"
   >
     <GameCard

@@ -150,16 +150,18 @@ button:is(.primary-button, .error-button) {
   left: var(--keyboard-shortcut-right, -10px);
   background: rgba(0, 0, 0, 0.5);
   color: #efef9f;
-  font-size: var(--font-size-2);
+  font-size: var(--font-size-00);
   border: solid 1px #efef9f;
   border-radius: 4px;
-  /* pointer-events: none; */
+  pointer-events: none;
   font-weight: bold;
-  width: var(--size-6);
-  aspect-ratio: 1;
+
   display: grid;
   place-content: center;
   background: rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  padding: var(--size-1);
+  line-height: 1;
 }
 
 [data-keyboard-shortcut][data-keyboard-shortcut-centered='true']::after {
