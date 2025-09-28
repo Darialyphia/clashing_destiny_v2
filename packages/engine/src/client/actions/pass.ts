@@ -17,7 +17,6 @@ export class PassGlobalAction implements GlobalActionRule {
   }
 
   shouldDisplay(state: GameClientState): boolean {
-    console.log('Checking if pass should be displayed', state, this.client);
     if (isDefined(state.effectChain)) {
       return (
         state.effectChain.player === this.client.playerId &&

@@ -15,7 +15,7 @@ export class SelectMinionslotAction implements MinionSlotClickRule {
           position.zone === slot.zone &&
           position.slot === slot.slot
       ) &&
-      this.client.ui.isInteractingPlayer
+      this.client.playerId === this.client.getActivePlayerId()
     );
   }
 

@@ -201,8 +201,8 @@ export class UiController {
   }
 
   onMinionSlotClick(slot: UiMinionslot) {
+    console.log(slot);
     const state = this.client.state;
-
     for (const rule of this.minionSlotClickRules) {
       if (rule.predicate(slot, state)) {
         rule.handler(slot);
@@ -276,12 +276,6 @@ export class UiController {
     const activePlayerId = this.client.getActivePlayerId();
     const state = this.client.state;
 
-    if (this.client.state.effectChain) {
-      return this.client.state.effectChain.player === this.client.playerId
-        ? 'Effect chain: Your turn'
-        : 'Effect chain: Opponent turn';
-    }
-
     if (activePlayerId !== this.client.playerId) {
       return 'Waiting for opponent...';
     }
@@ -311,8 +305,10 @@ export class UiController {
       return 'Select targets';
     }
 
-    if (state.effectChain) {
-      return 'Effect chain: Your turn';
+    if (this.client.state.effectChain) {
+      return this.client.state.effectChain.player === this.client.playerId
+        ? 'Effect chain: Your turn'
+        : 'Effect chain: Opponent turn';
     }
 
     if (state.phase.state === GAME_PHASES.ATTACK) {

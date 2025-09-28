@@ -13,7 +13,7 @@ export class DeclareAttackTargetCardAction implements CardClickRule {
       this.client.state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
       this.client.state.phase.ctx.potentialTargets.some(id => id === card.id) &&
       card.player.id !== this.client.playerId &&
-      this.client.ui.isInteractingPlayer
+      this.client.playerId === this.client.getActivePlayerId()
     );
   }
 

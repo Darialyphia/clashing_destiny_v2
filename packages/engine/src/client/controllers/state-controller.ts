@@ -136,25 +136,22 @@ export class ClientStateController {
         side => side.playerId === card.player.id
       )!;
       if (card.position?.zone === MINION_SLOT_ZONES.FRONT_ROW) {
-        boardSide.frontRow.slots[card.position.slot]!.minion = card.id;
+        boardSide.frontRow.slots[card.position.slot] = {
+          ...boardSide.frontRow.slots[card.position.slot],
+          minion: card.id
+        };
       } else if (card.position?.zone === MINION_SLOT_ZONES.BACK_ROW) {
-        boardSide.backRow.slots[card.position.slot]!.minion = card.id;
+        boardSide.backRow.slots[card.position.slot] = {
+          ...boardSide.backRow.slots[card.position.slot],
+          minion: card.id
+        };
       }
-      console.log('minion added to state', card.id);
-      return await flush(async () => {
-        const selector = this.client.ui.DOMSelectors.minionOnBoard(
-          card.player.id,
-          card.position!.zone,
-          card.position!.slot,
-          card.id
-        );
-        let waitCount = 0;
-        while (!selector.element && waitCount < 10) {
-          await waitFor(50);
-          waitCount++;
-        }
-        console.log('Found element after wait:', selector.element);
-      });
+      // @ts-expect-error force reactivity
+      this.state.board.sides = this.state.board.sides.map(side => ({
+        ...side
+      }));
+
+      return await flush();
     }
   }
 }

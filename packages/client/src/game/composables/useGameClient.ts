@@ -62,22 +62,22 @@ export const useBoardSide = (playerId: MaybeRef<string>) => {
 };
 
 export const useMyBoard = () => {
-  const { client } = useGameClient();
+  const { client, playerId } = useGameClient();
 
   return computed(() => {
     return client.value.state.board.sides.find(
-      side => side.playerId === client.value.playerId
+      side => side.playerId === playerId.value
     )!;
   });
 };
 
 export const useOpponentBoard = () => {
-  const { client } = useGameClient();
+  const { client, playerId } = useGameClient();
 
   return computed(
     () =>
       client.value.state.board.sides.find(
-        side => side.playerId !== client.value.playerId
+        side => side.playerId !== playerId.value
       )!
   );
 };
