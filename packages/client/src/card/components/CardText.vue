@@ -302,7 +302,7 @@ const tokens = computed<Token[]>(() => {
     width: 22px;
     height: 20px;
     aspect-ratio: 1;
-    transform: translateY(4px);
+    transform: translateY(6px);
     margin-inline: var(--size-1);
   }
 }

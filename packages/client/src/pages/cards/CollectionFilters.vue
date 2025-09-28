@@ -12,11 +12,16 @@ import { useCollectionPage } from './useCollectionPage';
 
 const {
   textFilter,
-  hasSpellSchoolFilter: hasAffinityFilter,
+  hasSpellSchoolFilter,
+  toggleSpellSchoolFilter,
+  clearSpellSchoolFilter,
+  hasJobFilter,
+  toggleJobFilter,
+  clearJobFilter,
   hasKindFilter,
-  toggleSpellSchoolFilter: toggleAffinityFilter,
-  clearSpellSchoolFilter: clearAffinityFilter,
   toggleKindFilter,
+  hasSpeedFilter,
+  toggleSpeedFilter,
   viewMode
 } = useCollectionPage();
 
@@ -27,7 +32,7 @@ const spellSchools: Array<{
   color: string;
 }> = Object.values(SPELL_SCHOOLS).map(spellSchool => ({
   id: spellSchool,
-  img: `/assets/ui/affinity-${spellSchool.toLocaleLowerCase()}.png`,
+  img: `/assets/ui/spell-school-${spellSchool.toLocaleLowerCase()}.png`,
   label: uppercaseFirstLetter(spellSchool),
   color: 'white'
 }));
@@ -89,23 +94,28 @@ const cardKinds: Array<{
     </section>
 
     <section>
-      <h4>Affinities</h4>
+      <h4>Spell Schools</h4>
       <div class="affinity-filter">
-        <UiSimpleTooltip v-for="affinity in spellSchools" :key="affinity.label">
+        <UiSimpleTooltip
+          v-for="spellSchool in spellSchools"
+          :key="spellSchool.label"
+        >
           <template #trigger>
             <button
-              :class="hasAffinityFilter(affinity.id) && 'active'"
-              :style="{ '--color': affinity.color }"
-              :aria-label="affinity.label"
-              @click="toggleAffinityFilter(affinity.id)"
+              :class="hasSpellSchoolFilter(spellSchool.id) && 'active'"
+              :style="{ '--color': spellSchool.color }"
+              :aria-label="spellSchool.label"
+              @click="toggleSpellSchoolFilter(spellSchool.id)"
             >
-              <img :src="affinity.img" :alt="affinity.label" />
+              <img :src="spellSchool.img" :alt="spellSchool.label" />
             </button>
           </template>
-          {{ affinity.label }}
+          {{ spellSchool.label }}
         </UiSimpleTooltip>
       </div>
-      <button class="clear-button" @click="clearAffinityFilter">Clear</button>
+      <button class="clear-button" @click="clearSpellSchoolFilter">
+        Clear
+      </button>
     </section>
 
     <section>
@@ -132,11 +142,13 @@ const cardKinds: Array<{
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--size-1);
+  --pixel-scale: 3;
 
   button {
     border: solid var(--border-size-2) transparent;
     border-radius: var(--radius-pill);
-    min-height: var(--size-8);
+    width: calc(var(--pixel-scale) * 22px);
+    height: calc(var(--pixel-scale) * 20px);
     aspect-ratio: 1;
     padding: 0;
     display: grid;

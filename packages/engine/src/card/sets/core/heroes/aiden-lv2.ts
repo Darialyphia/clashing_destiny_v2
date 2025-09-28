@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
@@ -19,7 +20,10 @@ import { HeroCard } from '../../../entities/hero.entity';
 export const aidenLv2: HeroBlueprint = {
   id: 'aiden-lv2',
   name: "Aiden, Crown's Vanguard",
-  description: '@On Enter@: Give a friendly minion +1@[attack]@ and +1@[health]@.',
+  description: dedent`
+  @Aiden Lineage@
+  @On Enter@: Give a friendly minion +1@[attack]@ and +1@[health]@.
+  `,
   cardIconId: 'heroes/aiden-lv2',
   kind: CARD_KINDS.HERO,
   level: 2,
@@ -31,7 +35,7 @@ export const aidenLv2: HeroBlueprint = {
   rarity: RARITIES.EPIC,
   collectable: true,
   unique: false,
-  lineage: null,
+  lineage: 'aiden',
   spellPower: 0,
   atk: 0,
   maxHp: 24,
@@ -40,8 +44,8 @@ export const aidenLv2: HeroBlueprint = {
     {
       id: 'aiden-lv2-ability-1',
       canUse: () => true,
-      label: '@[mana 1]@ : gain @Vigilant@.',
-      description: '@[mana 1]@ : Aiden gains @Vigilant@ this turn',
+      label: '@[mana] 1@ : gain @Vigilant@.',
+      description: '@[mana] 1@ : Aiden gains @Vigilant@ this turn.',
       manaCost: 1,
       shouldExhaust: false,
       speed: CARD_SPEED.FAST,

@@ -5,7 +5,9 @@ import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
   type CardKind,
-  type SpellSchool
+  type SpellSchool,
+  type CardSpeed,
+  type HeroJob
 } from '@game/engine/src/card/card.enums';
 import { type CardSet, CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isString } from '@game/shared';
@@ -17,9 +19,18 @@ export type CardListContext = {
   hasSpellSchoolFilter(spellSchool: SpellSchool): boolean;
   toggleSpellSchoolFilter(spellSchool: SpellSchool): void;
   clearSpellSchoolFilter(): void;
+
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
+
+  hasSpeedFilter(speed: CardSpeed): boolean;
+  toggleSpeedFilter(speed: CardSpeed): void;
+  clearSpeedFilter(): void;
+
+  hasJobFilter(job: HeroJob): boolean;
+  toggleJobFilter(job: HeroJob): void;
+  clearJobFilter(): void;
 };
 
 const CardListInjectionKey = Symbol(
@@ -38,6 +49,8 @@ export const provideCardList = () => {
 
   const spellSchoolFilter = ref(new Set<SpellSchool>());
   const kindFilter = ref(new Set<CardKind>());
+  const speedFilter = ref(new Set<CardSpeed>());
+  const jobFilter = ref(new Set<HeroJob>());
 
   const textFilter = ref('');
 
@@ -50,13 +63,24 @@ export const provideCardList = () => {
         if (!card.collectable) return false;
 
         if (spellSchoolFilter.value.size > 0) {
-          // const spellSchools =
-          //   card.kind === CARD_KINDS.SPELL
-          //     ? [card.spellSchool]
-          //     : card.spellSchools;
-          // if (spellSchools.every(s => !spellSchoolFilter.value.has(s!))) {
-          //   return false;
-          // }
+          const spellSchools =
+            card.kind === CARD_KINDS.HERO
+              ? card.spellSchools
+              : [card.spellSchool];
+          if (spellSchools.every(s => !spellSchoolFilter.value.has(s!))) {
+            return false;
+          }
+        }
+
+        if (jobFilter.value.size > 0) {
+          const jobs = card.kind === CARD_KINDS.HERO ? card.jobs : [card.job];
+          if (jobs.every(j => !jobFilter.value.has(j!))) {
+            return false;
+          }
+        }
+
+        if (speedFilter.value.size > 0 && !speedFilter.value.has(card.speed)) {
+          return false;
         }
 
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
@@ -135,6 +159,10 @@ export const provideCardList = () => {
         spellSchoolFilter.value.add(affinity);
       }
     },
+    clearSpellSchoolFilter: () => {
+      spellSchoolFilter.value.clear();
+    },
+
     hasKindFilter(kind: CardKind) {
       return kindFilter.value.has(kind);
     },
@@ -145,11 +173,36 @@ export const provideCardList = () => {
         kindFilter.value.add(kind);
       }
     },
-    clearSpellSchoolFilter: () => {
-      spellSchoolFilter.value.clear();
-    },
     clearKindFilter: () => {
       kindFilter.value.clear();
+    },
+
+    hasSpeedFilter(speed: CardSpeed) {
+      return speedFilter.value.has(speed);
+    },
+    toggleSpeedFilter(speed: CardSpeed) {
+      if (speedFilter.value.has(speed)) {
+        speedFilter.value.delete(speed);
+      } else {
+        speedFilter.value.add(speed);
+      }
+    },
+    clearSpeedFilter: () => {
+      speedFilter.value.clear();
+    },
+
+    hasJobFilter(job: HeroJob) {
+      return jobFilter.value.has(job);
+    },
+    toggleJobFilter(job: HeroJob) {
+      if (jobFilter.value.has(job)) {
+        jobFilter.value.delete(job);
+      } else {
+        jobFilter.value.add(job);
+      }
+    },
+    clearJobFilter: () => {
+      jobFilter.value.clear();
     }
   };
 

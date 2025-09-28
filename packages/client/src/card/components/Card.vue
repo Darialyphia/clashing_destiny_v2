@@ -838,7 +838,7 @@ const onMouseleave = () => {
 
 .description {
   width: calc(96px * var(--pixel-scale));
-  height: calc(52px * var(--pixel-scale));
+  height: calc(48px * var(--pixel-scale));
   position: absolute;
   top: calc(114px * var(--pixel-scale));
   left: calc(16px * var(--pixel-scale));

@@ -29,13 +29,19 @@ export const CollectionInjectionKey = Symbol(
 export const provideCollectionPage = () => {
   const {
     cards,
-    hasSpellSchoolFilter: hasAffinityFilter,
-    toggleSpellSchoolFilter: toggleAffinityFilter,
+    hasSpellSchoolFilter,
+    toggleSpellSchoolFilter,
     hasKindFilter,
     toggleKindFilter,
-    clearSpellSchoolFilter: clearAffinityFilter,
+    clearSpellSchoolFilter,
     clearKindFilter,
-    textFilter
+    textFilter,
+    hasSpeedFilter,
+    toggleSpeedFilter,
+    clearSpeedFilter,
+    hasJobFilter,
+    toggleJobFilter,
+    clearJobFilter
   } = provideCardList();
 
   const decks = useLocalStorage<ValidatableDeck[]>(
@@ -83,12 +89,18 @@ export const provideCollectionPage = () => {
 
   const api: CollectionContext = {
     cards,
-    hasSpellSchoolFilter: hasAffinityFilter,
-    toggleSpellSchoolFilter: toggleAffinityFilter,
+    hasSpellSchoolFilter,
+    toggleSpellSchoolFilter,
+    clearSpellSchoolFilter,
     hasKindFilter,
     toggleKindFilter,
-    clearSpellSchoolFilter: clearAffinityFilter,
     clearKindFilter,
+    hasSpeedFilter,
+    toggleSpeedFilter,
+    clearSpeedFilter,
+    hasJobFilter,
+    toggleJobFilter,
+    clearJobFilter,
     textFilter,
     viewMode,
     isEditingDeck: isEditing,

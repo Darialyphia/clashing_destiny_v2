@@ -465,6 +465,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get hasCorrectLineageToPlay() {
+    if (this.level <= 1) return true;
+
     return !this.lineage || this.player.hero.lineage === this.lineage;
   }
 
