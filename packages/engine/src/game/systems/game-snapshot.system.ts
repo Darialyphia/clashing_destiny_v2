@@ -161,11 +161,15 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     this.playerCaches[this.game.playerSystem.player1.id] = [];
     this.playerCaches[this.game.playerSystem.player2.id] = [];
 
-    this.game.on('*', event => {
-      if (ignoredEvents.includes(event.data.eventName)) return;
-      if (!this.isEnabled) return;
-      this.eventsSinceLastSnapshot.push(event);
-    });
+    this.game.on(
+      '*',
+      event => {
+        if (ignoredEvents.includes(event.data.eventName)) return;
+        if (!this.isEnabled) return;
+        this.eventsSinceLastSnapshot.push(event);
+      },
+      100
+    );
   }
 
   shutdown() {}

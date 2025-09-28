@@ -23,7 +23,7 @@ export const provideGameClient = (options: GameClientOptions) => {
   const client = ref(new GameClient(options)) as Ref<GameClient>;
   client.value.onUpdate(async () => {
     triggerRef(client);
-    console.log('[Client] state updated', client.value);
+    // console.log('[Client] state updated', client.value);
   });
 
   const playerId = ref(client.value.playerId);

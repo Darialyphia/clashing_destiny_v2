@@ -201,7 +201,6 @@ export class UiController {
   }
 
   onMinionSlotClick(slot: UiMinionslot) {
-    console.log(slot);
     const state = this.client.state;
     for (const rule of this.minionSlotClickRules) {
       if (rule.predicate(slot, state)) {
