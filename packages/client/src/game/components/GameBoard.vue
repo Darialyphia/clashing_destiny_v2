@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   useFxEvent,
-  useGameClient,
   useGameState,
   useGameUi,
   useMyBoard,
@@ -44,7 +43,7 @@ const myPlayer = useMyPlayer();
 const opponentBoard = useOpponentBoard();
 const opponentPlayer = useOpponentPlayer();
 
-const board = useTemplateRef('board');
+// const board = useTemplateRef('board');
 // useBoardResize(board);
 
 const error = ref(

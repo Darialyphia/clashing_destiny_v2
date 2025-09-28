@@ -340,7 +340,11 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
   takeSnapshot() {
     try {
       if (!this.isEnabled) return;
-      const events = this.eventsSinceLastSnapshot.map(event => event.serialize());
+
+      const events = this.eventsSinceLastSnapshot
+        // @ts-expect-error
+        .toSorted((a, b) => (a.data.event.__id - b.data.event.__id) as unknown as number)
+        .map(event => event.serialize());
       const previousId = this.nextId - 1;
       const id = this.nextId++;
       const omnisicientState = this.serializeOmniscientState();

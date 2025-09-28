@@ -1,4 +1,4 @@
-import type { EmptyObject, MaybePromise, Values } from '@game/shared';
+import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
 import type { InputDispatcher } from '../input/input-system';
 import type {
   GameStateSnapshot,
@@ -217,12 +217,15 @@ export class GameClient {
       if (isStateSnapshot) {
         this.stateManager.preupdate(snapshot.state);
       }
+
       for (const event of snapshot.events) {
         if (this.gameType === GAME_TYPES.LOCAL && isStateSnapshot) {
           this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
         }
-        await this.stateManager.onEvent(event, async () => {
+
+        await this.stateManager.onEvent(event, async postUpdateCallback => {
           await this.emitter.emit('update', {});
+          await postUpdateCallback?.();
         });
 
         await this.fx.emit(event.eventName, event.event);

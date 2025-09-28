@@ -21,8 +21,9 @@ const GAME_CLIENT_INJECTION_KEY = Symbol(
 
 export const provideGameClient = (options: GameClientOptions) => {
   const client = ref(new GameClient(options)) as Ref<GameClient>;
-  client.value.onUpdate(() => {
+  client.value.onUpdate(async () => {
     triggerRef(client);
+    console.log('[Client] state updated', client.value);
   });
 
   provide(GAME_CLIENT_INJECTION_KEY, client);
@@ -57,12 +58,11 @@ export const useBoardSide = (playerId: MaybeRef<string>) => {
 export const useMyBoard = () => {
   const client = useGameClient();
 
-  return computed(
-    () =>
-      client.value.state.board.sides.find(
-        side => side.playerId === client.value.playerId
-      )!
-  );
+  return computed(() => {
+    return client.value.state.board.sides.find(
+      side => side.playerId === client.value.playerId
+    )!;
+  });
 };
 
 export const useOpponentBoard = () => {

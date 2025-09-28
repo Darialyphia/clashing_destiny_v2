@@ -1,4 +1,4 @@
-import type { Override } from '@game/shared';
+import { waitFor, type Override } from '@game/shared';
 import type {
   EntityDictionary,
   SerializedOmniscientState,
@@ -119,7 +119,10 @@ export class ClientStateController {
     };
   }
 
-  async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {
+  async onEvent(
+    event: SerializedStarEvent,
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
     if (event.eventName === GAME_EVENTS.PLAYER_START_TURN) {
       this.state.currentPlayer = event.event.player.id;
       return await flush();
@@ -137,7 +140,21 @@ export class ClientStateController {
       } else if (card.position?.zone === MINION_SLOT_ZONES.BACK_ROW) {
         boardSide.backRow.slots[card.position.slot]!.minion = card.id;
       }
-      console.log('inserted minion', card.id, 'at slot', card.position?.slot);
+      console.log('minion added to state', card.id);
+      return await flush(async () => {
+        const selector = this.client.ui.DOMSelectors.minionOnBoard(
+          card.player.id,
+          card.position!.zone,
+          card.position!.slot,
+          card.id
+        );
+        let waitCount = 0;
+        while (!selector.element && waitCount < 10) {
+          await waitFor(50);
+          waitCount++;
+        }
+        console.log('Found element after wait:', selector.element);
+      });
     }
   }
 }

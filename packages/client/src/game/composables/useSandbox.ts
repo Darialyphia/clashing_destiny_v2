@@ -1,39 +1,38 @@
 import type { NetworkAdapter } from '@game/engine/src/client/client';
-import { Game, type GameOptions } from '@game/engine/src/game/game';
+import { type GameOptions } from '@game/engine/src/game/game';
 import { provideGameClient } from './useGameClient';
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { useFxAdapter } from './useFxAdapter';
+import SandboxWorker from '../sandbox-worker?worker';
 
 export const useSandbox = (
   options: Pick<GameOptions, 'players' | 'rngSeed'>
 ) => {
-  const game = new Game({
-    id: 'sandbox',
-    rngSeed: options.rngSeed,
-    history: [],
-    overrides: {
-      cardPool: CARDS_DICTIONARY
-    },
-    players: options.players
+  const worker = new SandboxWorker();
+
+  worker.postMessage({
+    type: 'init',
+    payload: {
+      options: JSON.parse(JSON.stringify(options))
+    }
   });
 
-  // @ts-expect-error
-  window.__debugGame = () => {
-    console.log(game);
-  };
   // @ts-expect-error
   window.__debugClient = () => {
     console.log(client.value);
   };
   const networkAdapter: NetworkAdapter = {
     dispatch: input => {
-      return game.dispatch(input);
+      worker.postMessage({ type: 'dispatch', payload: { input } });
     },
     subscribe(cb) {
-      game.subscribeOmniscient(cb);
+      worker.addEventListener('message', event => {
+        if (event.data.type === 'update') {
+          cb(event.data.payload);
+        }
+      });
     },
     sync(lastSnapshotId) {
-      console.log('TODO: sync snapshots from sandbox', lastSnapshotId);
+      console.log('TODO: sync snapshots from sandbox worker', lastSnapshotId);
       return Promise.resolve([]);
     }
   };
@@ -47,8 +46,10 @@ export const useSandbox = (
     playerId: 'p1'
   });
 
-  game.initialize().then(() => {
-    client.value.initialize(game.snapshotSystem.getLatestOmniscientSnapshot());
+  worker.addEventListener('message', event => {
+    if (event.data.type === 'ready') {
+      client.value.initialize(event.data.payload.snapshot);
+    }
   });
 
   return client;

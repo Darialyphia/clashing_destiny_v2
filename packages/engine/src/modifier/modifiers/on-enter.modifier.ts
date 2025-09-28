@@ -22,11 +22,11 @@ export class OnEnterModifier<
     super(KEYWORDS.ON_ENTER.id, game, source, {
       mixins: [
         new OnEnterModifierMixin<T>(game, async event => {
+          await options.handler(event);
           await game.emit(
             CARD_EVENTS.CARD_EFFECT_TRIGGERED,
             new CardEffectTriggeredEvent({ card: this.target })
           );
-          await options.handler(event);
         }),
         new KeywordModifierMixin(game, KEYWORDS.ON_ENTER),
         ...(options.mixins ?? [])

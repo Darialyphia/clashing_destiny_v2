@@ -38,7 +38,6 @@ const {
 }>();
 
 const card = useCard(computed(() => cardId));
-
 const client = useGameClient();
 
 const isActionsPopoverOpened = computed({

@@ -59,7 +59,6 @@ export const provideCardList = () => {
       .map(set => set.cards)
       .flat()
       .filter(card => {
-        console.log(card.id, card.collectable);
         if (!card.collectable) return false;
 
         if (spellSchoolFilter.value.size > 0) {

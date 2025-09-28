@@ -199,7 +199,10 @@ export class MinionSummonedEvent extends TypedSerializableEvent<
   serialize() {
     return {
       card: this.data.card.serialize(),
-      position: this.data.position
+      position: {
+        zone: this.data.position.zone,
+        slot: this.data.position.slot
+      }
     };
   }
 }

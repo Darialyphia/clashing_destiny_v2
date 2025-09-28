@@ -54,7 +54,7 @@ export class DOMSelector {
   }
 
   get element() {
-    return document.getElementById(this.id);
+    return document.querySelector(this.selector) as HTMLElement | null;
   }
 }
 
@@ -93,6 +93,16 @@ export class UiController {
     destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
     minionPosition: (playerId: string, zone: MinionSlotZone, slot: number) =>
       new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
+    minionOnBoard: (
+      playerId: string,
+      zone: MinionSlotZone,
+      slot: number,
+      minionId: string
+    ) =>
+      new DOMSelector(
+        minionId,
+        this.DOMSelectors.minionPosition(playerId, zone, slot).selector
+      ),
     cardOnBoard: (cardId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.board.selector),
     cardInHand: (cardId: string, playerId: string) =>

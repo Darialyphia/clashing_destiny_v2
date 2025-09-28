@@ -20,6 +20,8 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     >;
   }> = {};
 
+  private nextId = 0;
+
   constructor(private mode: EmitterMode = 'sequential') {}
 
   private async emitSequential<TEventName extends keyof TEvents & string>(
@@ -59,6 +61,9 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     eventName: TEventName,
     eventArg: TEvents[TEventName]
   ) {
+    // @ts-expect-error
+    eventArg.__id = this.nextId++;
+
     if (this.mode === 'sequential') {
       await this.emitSequential(eventName, eventArg);
     } else if (this.mode === 'parallel') {
