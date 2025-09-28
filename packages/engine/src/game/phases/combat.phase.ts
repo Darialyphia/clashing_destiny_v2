@@ -117,13 +117,26 @@ export class AfterResolveCombatEvent extends TypedSerializableEvent<
   }
 }
 
+export class AttackFizzledResolveCombatEvent extends TypedSerializableEvent<
+  { attacker: Attacker; target: AttackTarget },
+  { attacker: string; target: string }
+> {
+  serialize() {
+    return {
+      attacker: this.data.attacker.id,
+      target: this.data.target.id
+    };
+  }
+}
+
 export const COMBAT_EVENTS = {
   BEFORE_DECLARE_ATTACK: 'combat.before-declare-attack',
   AFTER_DECLARE_ATTACK: 'combat.after-declare-attack',
   BEFORE_DECLARE_ATTACK_TARGET: 'combat.before-declare-attack-target',
   AFTER_DECLARE_ATTACK_TARGET: 'combat.after-declare-attack-target',
   BEFORE_RESOLVE_COMBAT: 'combat.before-resolve-combat',
-  AFTER_RESOLVE_COMBAT: 'combat.after-resolve-combat'
+  AFTER_RESOLVE_COMBAT: 'combat.after-resolve-combat',
+  ATTACK_FIZZLED: 'combat.attack-fizzled'
 } as const;
 export type CombatEventName = Values<typeof COMBAT_EVENTS>;
 
@@ -134,6 +147,7 @@ export type CombatEventMap = {
   [COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET]: AfterDeclareAttackTargetEvent;
   [COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT]: BeforeResolveCombatEvent;
   [COMBAT_EVENTS.AFTER_RESOLVE_COMBAT]: AfterResolveCombatEvent;
+  [COMBAT_EVENTS.ATTACK_FIZZLED]: AttackFizzledResolveCombatEvent;
 };
 
 export class CombatPhase
@@ -255,12 +269,26 @@ export class CombatPhase
   }
 
   private async performAttacks() {
-    if (!this.target) return;
+    const attackTarget = this.target;
+    if (!attackTarget) return;
 
-    if (this.target.isAlive && this.attacker.isAlive) {
-      await this.attacker.dealDamage(this.target, new CombatDamage(this.attacker));
-      if (this.isTargetCounterattacking && this.attacker.isAlive) {
-        await this.target.dealDamage(this.attacker, new CombatDamage(this.target));
+    if (attackTarget.isAlive && this.attacker.isAlive) {
+      const isInRange = this.attacker.potentialAttackTargets.some(t =>
+        t.equals(attackTarget!)
+      );
+      if (!isInRange) {
+        await this.attacker.dealDamage(attackTarget, new CombatDamage(this.attacker));
+        if (this.isTargetCounterattacking && this.attacker.isAlive) {
+          await attackTarget.dealDamage(this.attacker, new CombatDamage(attackTarget));
+        }
+      } else {
+        await this.game.emit(
+          COMBAT_EVENTS.ATTACK_FIZZLED,
+          new AttackFizzledResolveCombatEvent({
+            attacker: this.attacker,
+            target: attackTarget
+          })
+        );
       }
     }
 
@@ -295,14 +323,13 @@ export class CombatPhase
       throw new InvalidCounterattackError();
     }
     await this.target.exhaust();
+    this.isTargetCounterattacking = true; // mark the counterattack immediately so it can be displayed inthe UI
     await this.game.effectChainSystem.currentChain?.addEffect(
       {
         source: this.target,
         type: EFFECT_TYPE.COUNTERATTACK,
         targets: [this.attacker],
-        handler: async () => {
-          this.isTargetCounterattacking = true;
-        }
+        handler: async () => {}
       },
       this.target.player
     );

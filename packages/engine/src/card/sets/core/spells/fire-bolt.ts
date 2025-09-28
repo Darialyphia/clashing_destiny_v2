@@ -21,6 +21,7 @@ export const fireBolt: SpellBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.FAST,
   spellSchool: SPELL_SCHOOLS.FIRE,
+  job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,

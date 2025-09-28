@@ -15,8 +15,7 @@ import {
   GAME_EVENTS,
   GameErrorEvent,
   GameInputQueueFlushedEvent,
-  GameInputEvent,
-  GameInputRequiredEvent
+  GameInputEvent
 } from '../game/game.events';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';

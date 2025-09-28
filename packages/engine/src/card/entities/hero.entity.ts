@@ -5,7 +5,11 @@ import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import { type HeroBlueprint, type PreResponseTarget } from '../card-blueprint';
+import {
+  type AbilityBlueprint,
+  type HeroBlueprint,
+  type PreResponseTarget
+} from '../card-blueprint';
 import { type SpellSchool, type HeroJob, CARD_EVENTS } from '../card.enums';
 import {
   Card,
@@ -426,6 +430,18 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       targets[index] = newTarget;
       newTarget.targetBy({ type: 'ability', abilityId, card: this });
     }
+  }
+
+  addAbility(ability: AbilityBlueprint<HeroCard, PreResponseTarget>) {
+    const newAbility = new Ability<HeroCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
+
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilityTargets.delete(abilityId);
   }
 
   get spellSchools() {

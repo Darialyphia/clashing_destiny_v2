@@ -111,6 +111,19 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "hot-headed-recruit.png"
+          ],
+          "src": [
+            "/assets/cards/minions/hot-headed-recruit.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -150,10 +163,36 @@
       "assets": [
         {
           "alias": [
+            "call-to-arms.png"
+          ],
+          "src": [
+            "/assets/cards/spells/call-to-arms.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "fire-bolt.png"
           ],
           "src": [
             "/assets/cards/spells/fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "knights-inspiration.png"
+          ],
+          "src": [
+            "/assets/cards/spells/knights-inspiration.png"
           ],
           "data": {
             "tags": {

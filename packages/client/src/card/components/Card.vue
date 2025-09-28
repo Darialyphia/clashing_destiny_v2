@@ -46,6 +46,7 @@ const {
     abilities?: string[];
     subKind?: string | null;
     speed: CardSpeed;
+    tags?: string[];
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -65,10 +66,6 @@ const rarityBg = computed(() => {
 
 const speedBg = computed(() => {
   return `url('/assets/ui/card-speed-badge-${card.speed.toLowerCase()}.png')`;
-});
-
-const subKindBg = computed(() => {
-  return `url('/assets/ui/subkind-${(card.subKind ?? '').toLowerCase()}.png')`;
 });
 
 const imageBg = computed(() => {
@@ -263,6 +260,11 @@ const onMouseleave = () => {
             {{ card.hp }}
           </div>
         </div>
+        <div v-if="isDefined(card.durability)" class="durability">
+          <div class="dual-text" :data-text="card.durability">
+            {{ card.durability }}
+          </div>
+        </div>
 
         <div class="rarity parallax" style="--parallax-strength: 0.35" />
 
@@ -330,6 +332,12 @@ const onMouseleave = () => {
         <div class="kind">
           {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
           <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
+          <span v-if="isDefined(card.subKind)">
+            - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
+          </span>
+          <span v-if="isDefined(card.tags)" class="tags">
+            {{ card.tags.join('- ') }}
+          </span>
         </div>
         <div
           class="description"
@@ -794,6 +802,20 @@ const onMouseleave = () => {
 
 .durability {
   background-image: url('/assets/ui/card-durability.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  top: calc(86px * var(--pixel-scale));
+  right: calc(0px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-left: calc(4px * var(--pixel-scale));
+  padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 18px;
+  --dual-text-offset-y: 2px;
 }
 
 .kind {
@@ -836,23 +858,5 @@ const onMouseleave = () => {
     align-self: start;
     vertical-align: top;
   }
-}
-
-.sub-kind {
-  height: calc(16px * var(--pixel-scale));
-  position: absolute;
-  bottom: calc(2px * var(--pixel-scale));
-  right: calc(2px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 7px);
-  overflow: hidden;
-  background: v-bind(subKindBg), black;
-  border-radius: var(--radius-pill);
-  display: flex;
-  align-items: center;
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: calc(16px * var(--pixel-scale))
-    calc(16px * var(--pixel-scale));
-  padding-inline: calc(18px * var(--pixel-scale)) 6px;
 }
 </style>

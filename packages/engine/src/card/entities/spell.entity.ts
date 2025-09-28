@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, type HeroJob } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 
 export type SerializedSpellCard = SerializedCard & {
@@ -25,6 +25,7 @@ export type SerializedSpellCard = SerializedCard & {
   baseManaCost: number;
   preResponseTargets: SerializedPreResponseTarget[] | null;
   spellSchool: string | null;
+  job: HeroJob | null;
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
@@ -61,15 +62,20 @@ export class SpellCard extends Card<
     }
   }
 
-  get hadUnlockedSpellSchool() {
+  get isCorrectSpellSchool() {
     if (!this.blueprint.spellSchool) return true;
     return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
+  }
+
+  get isCorrectJob() {
+    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
   }
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
-        this.hadUnlockedSpellSchool &&
+        this.isCorrectSpellSchool &&
+        this.isCorrectJob &&
         this.blueprint.canPlay(this.game, this),
       this
     );
@@ -85,7 +91,7 @@ export class SpellCard extends Card<
       async () => {
         await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
 
-        this.dispose();
+        await this.dispose();
 
         this.preResponseTargets?.forEach(target => {
           if (target instanceof Card) {
@@ -114,6 +120,7 @@ export class SpellCard extends Card<
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
       spellSchool: this.blueprint.spellSchool,
+      job: this.blueprint.job ?? null,
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
         : null

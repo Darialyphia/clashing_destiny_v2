@@ -69,7 +69,6 @@ export class CardManagerComponent {
     this.mainDeck.populate(mainDeckCards);
     this.destinyDeck.populate(destinyDeckCards);
     this.mainDeck.shuffle();
-    console.log('drawing initial hand', this.game.config.INITIAL_HAND_SIZE);
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
     const initialDestinyCards = this.mainDeck.draw(
       this.game.config.INITAL_CARDS_IN_DESTINY_ZONE

@@ -24,6 +24,10 @@ const buildPaths = async () => {
   }
   await nextTick();
   paths.value = state.value.effectChain?.stack.map(effect => {
+    if (effect.type === EFFECT_TYPE.COUNTERATTACK) {
+      return [];
+    }
+
     return effect.targets.map(target => {
       const startRect = document
         .querySelector(

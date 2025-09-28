@@ -21,6 +21,7 @@ import {
   CardBeforeDestroyEvent,
   CardBeforePlayEvent,
   CardDiscardEvent,
+  CardDisposedEvent,
   CardExhaustEvent,
   CardWakeUpEvent
 } from '../card.events';
@@ -223,8 +224,8 @@ export abstract class Card<
     return this.speed !== CARD_SPEED.SLOW;
   }
 
-  protected dispose() {
-    return match(this.deckSource)
+  protected async dispose() {
+    match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
         this.sendToDiscardPile();
       })
@@ -232,6 +233,10 @@ export abstract class Card<
         this.sendToBanishPile();
       })
       .exhaustive();
+    await this.game.emit(
+      CARD_EVENTS.CARD_DISPOSED,
+      new CardDisposedEvent({ card: this })
+    );
   }
 
   protected async insertInChainOrExecute(
@@ -265,9 +270,16 @@ export abstract class Card<
     }
 
     if (this.game.effectChainSystem.currentChain) {
-      await this.game.effectChainSystem.addEffect(effect, this.player);
+      if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
+        await this.game.effectChainSystem.addEffect(effect, this.player);
+      } else {
+        // this can happen if a card is played as part of an other card effect
+        // the card wiill be played while the current chain is resolving, so let's just execute it immediately
+        await effect.handler();
+        return this.game.inputSystem.askForPlayerInput();
+      }
     } else {
-      void this.game.effectChainSystem.createChain({
+      await this.game.effectChainSystem.createChain({
         initialPlayer: this.player,
         initialEffect: effect,
         onResolved
@@ -493,10 +505,8 @@ export abstract class Card<
 
     this._isExhausted = false;
 
-    await match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.sendToDiscardPile())
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.sendToBanishPile())
-      .exhaustive();
+    await this.dispose();
+
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_DESTROY,
       new CardAfterDestroyEvent({ card: this })

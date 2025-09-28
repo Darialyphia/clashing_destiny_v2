@@ -3,8 +3,18 @@ import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import { type ArtifactBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
+import {
+  type AbilityBlueprint,
+  type ArtifactBlueprint,
+  type PreResponseTarget
+} from '../card-blueprint';
+import {
+  ARTIFACT_KINDS,
+  CARD_EVENTS,
+  type ArtifactKind,
+  type HeroJob,
+  type SpellSchool
+} from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -24,6 +34,9 @@ export type SerializedArtifactCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
+  job: HeroJob | null;
+  spellSchool: SpellSchool | null;
+  atkBonus: number | null;
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
@@ -33,7 +46,7 @@ export type ArtifactCardInterceptors = CardInterceptors & {
     { card: ArtifactCard; ability: Ability<ArtifactCard> }
   >;
   durability: Interceptable<number, ArtifactCard>;
-  attackBonus: Interceptable<number, ArtifactCard>;
+  attackBonus: Interceptable<number | null, ArtifactCard>;
 };
 
 export const ARTIFACT_EVENTS = {
@@ -160,9 +173,9 @@ export class ArtifactCard extends Card<
     );
   }
 
-  get atkBonus(): number {
+  get atkBonus(): number | null {
     return this.interceptors.attackBonus.getValue(
-      this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : 0,
+      this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : null,
       this
     );
   }
@@ -192,13 +205,33 @@ export class ArtifactCard extends Card<
     }
   }
 
+  addAbility(ability: AbilityBlueprint<ArtifactCard, PreResponseTarget>) {
+    const newAbility = new Ability<ArtifactCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
+
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilityTargets.delete(abilityId);
+  }
+
   get isCorrectJob() {
     return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
   }
 
+  get isCorrectSpellSchool() {
+    if (!this.blueprint.spellSchool) return true;
+    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.isCorrectJob && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase &&
+        this.isCorrectJob &&
+        this.isCorrectSpellSchool &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -232,7 +265,10 @@ export class ArtifactCard extends Card<
       subKind: this.subkind,
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
-      abilities: this.abilities.map(a => a.id)
+      abilities: this.abilities.map(a => a.id),
+      job: this.blueprint.job ?? null,
+      spellSchool: this.blueprint.spellSchool ?? null,
+      atkBonus: this.atkBonus
     };
   }
 }

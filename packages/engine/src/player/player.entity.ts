@@ -95,11 +95,11 @@ export class Player
   }
 
   async init() {
-    await this.cardManager.init();
     this._hero = {
       card: await this.generateCard<HeroCard>(this.game.config.INITIAL_HERO_BLUEPRINTID),
       lineage: []
     };
+    await this.cardManager.init();
     await this._hero.card.play(() => {});
   }
 
@@ -174,7 +174,7 @@ export class Player
   }
 
   get hero() {
-    return this._hero.card;
+    return this._hero?.card;
   }
 
   get heroLinerage() {
@@ -280,13 +280,6 @@ export class Player
     for (const card of this.boardSide.getAllCardsInPlay()) {
       await card.wakeUp();
     }
-  }
-
-  async endTurn() {
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_END_TURN,
-      new PlayerTurnEvent({ player: this })
-    );
   }
 
   generateCard<T extends AnyCard>(blueprintId: string) {

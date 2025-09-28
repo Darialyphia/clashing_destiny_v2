@@ -76,6 +76,7 @@ const listRoot = useTemplateRef('card-list');
   justify-items: center;
   overflow-y: auto;
   padding-inline: var(--size-4);
+  padding-bottom: var(--size-10);
   overflow-x: hidden;
 
   @screen lt-lg {
@@ -98,8 +99,7 @@ const listRoot = useTemplateRef('card-list');
 
   li {
     position: relative;
-    width: calc(var(--card-width) * var(--pixel-scale));
-    height: calc(var(--card-height) * var(--pixel-scale));
+
     transform-style: preserve-3d;
     perspective: 700px;
     perspective-origin: center;

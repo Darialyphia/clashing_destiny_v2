@@ -12,6 +12,7 @@ export const CARD_EVENTS = {
   CARD_LEAVE_BOARD: 'card.leave_board',
   CARD_BEFORE_DESTROY: 'card.before_destroy',
   CARD_AFTER_DESTROY: 'card.after_destroy',
+  CARD_DISPOSED: 'card.disposed',
   CARD_DECLARE_PLAY: 'card.declare_play',
   CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability'
 } as const;

@@ -17,7 +17,7 @@ export class ElusiveModifier<T extends MinionCard> extends Modifier<T> {
       icon: 'keyword-elusive',
       isUnique: true,
       mixins: [
-        new KeywordModifierMixin(game, KEYWORDS.RUSH),
+        new KeywordModifierMixin(game, KEYWORDS.ELUSIVE),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.BEFORE_RESOLVE_COMBAT,
           handler: async ({ data }) => {

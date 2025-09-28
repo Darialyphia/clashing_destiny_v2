@@ -191,7 +191,7 @@ export class EffectChain
   async addEffect(effect: Effect, player: Player) {
     assert(
       this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT),
-      new InactiveEffectChainError()
+      new CannotAddEffectChainPhase(this.getState())
     );
     assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
 
@@ -262,6 +262,11 @@ export class InactiveEffectChainError extends GameError {
   }
 }
 
+export class CannotAddEffectChainPhase extends GameError {
+  constructor(phase: string) {
+    super(`You cannot add an effect in the ${phase} phase`);
+  }
+}
 export class ChainEvent extends TypedSerializableEvent<EmptyObject, EmptyObject> {
   serialize() {
     return {};

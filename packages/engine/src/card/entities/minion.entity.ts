@@ -4,8 +4,12 @@ import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import { type MinionBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { CARD_EVENTS, type HeroJob } from '../card.enums';
+import {
+  type AbilityBlueprint,
+  type MinionBlueprint,
+  type PreResponseTarget
+} from '../card-blueprint';
+import { CARD_EVENTS, type HeroJob, type SpellSchool } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -41,6 +45,7 @@ export type SerializedMinionCard = SerializedCard & {
   baseManaCost: number;
   abilities: string[];
   job: HeroJob | null;
+  spellSchool: SpellSchool | null;
   position: Pick<MinionPosition, 'zone' | 'slot'> | null;
   canCounterattack: boolean;
 };
@@ -508,8 +513,25 @@ export class MinionCard extends Card<
     );
   }
 
+  addAbility(ability: AbilityBlueprint<MinionCard, PreResponseTarget>) {
+    const newAbility = new Ability<MinionCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
+
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilityTargets.delete(abilityId);
+  }
+
   get isCorrectJob() {
     return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
+  }
+
+  get isCorrectSpellSchool() {
+    if (!this.blueprint.spellSchool) return true;
+    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
   }
 
   canPlay() {
@@ -517,6 +539,7 @@ export class MinionCard extends Card<
       this.canPlayBase &&
         this.player.boardSide.hasUnoccupiedSlot &&
         this.isCorrectJob &&
+        this.isCorrectSpellSchool &&
         this.blueprint.canPlay(this.game, this),
       this
     );
@@ -526,7 +549,7 @@ export class MinionCard extends Card<
     await this.insertInChainOrExecute(
       async () => {
         if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
-          this.dispose();
+          await this.dispose();
           return;
         }
 
@@ -615,6 +638,7 @@ export class MinionCard extends Card<
         : null,
       abilities: this.abilities.map(ability => ability.id),
       job: this.blueprint.job ?? null,
+      spellSchool: this.blueprint.spellSchool ?? null,
       canCounterattack:
         phaseCtx.state === GAME_PHASES.ATTACK &&
         phaseCtx.ctx.target?.equals(this) &&

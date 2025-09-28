@@ -22,6 +22,7 @@ export const courageousFootsoldier: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   job: null,
+  spellSchool: null,
   setId: CARD_SETS.CORE,
   abilities: [],
   tags: [],

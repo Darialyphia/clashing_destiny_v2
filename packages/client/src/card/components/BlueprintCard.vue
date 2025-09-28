@@ -21,7 +21,10 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       manaCost: (blueprint as any).manaCost,
       destinyCost: (blueprint as any).destinyCost,
       rarity: (blueprint as any).rarity,
-      atk: (blueprint as any).atk ?? (blueprint as any).damage,
+      atk:
+        (blueprint as any).atk ??
+        (blueprint as any).damage ??
+        (blueprint as any).atkBonus,
       hp: (blueprint as any).maxHp,
       spellpower: (blueprint as any).spellPower,
       level: (blueprint as any).level,
@@ -30,7 +33,9 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
         (a: AbilityBlueprint<any, any>) => `@[${a.speed}]@ ${a.description}`
       ),
       subKind: (blueprint as any).subKind,
-      jobs: (blueprint as any).jobs,
+      jobs:
+        (blueprint as any).jobs ??
+        ((blueprint as any).job ? [(blueprint as any).job] : []),
       speed: blueprint.speed
     }"
   />

@@ -10,13 +10,19 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import { CARD_KINDS, type SpellSchool, type CardKind } from '../../card/card.enums';
+import {
+  CARD_KINDS,
+  type SpellSchool,
+  type CardKind,
+  type HeroJob
+} from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { AbilityViewModel } from './ability.model';
 import { DeclareCounterAttackAction } from '../actions/declare-counter-attack';
+import { isDefined } from '@game/shared';
 
 type CardData =
   | SerializedSpellCard
@@ -137,6 +143,10 @@ export class CardViewModel {
       return this.data.atk as number;
     }
 
+    if ('atkBonus' in this.data) {
+      return this.data.atkBonus as number | null;
+    }
+
     return null;
   }
 
@@ -191,6 +201,16 @@ export class CardViewModel {
     return undefined;
   }
 
+  get jobs() {
+    if ('jobs' in this.data) {
+      return this.data.jobs as HeroJob[];
+    }
+    if ('job' in this.data) {
+      return [this.data.job].filter(isDefined) as HeroJob[];
+    }
+
+    return [];
+  }
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;

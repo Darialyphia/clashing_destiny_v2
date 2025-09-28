@@ -188,6 +188,7 @@ export class Ability<T extends AbilityOwner>
       name: this.blueprint.label,
       manaCost: this.manaCost,
       speed: this.speed,
+      isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };

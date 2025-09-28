@@ -140,9 +140,10 @@ const classes = computed(() => {
             hp: card.hp,
             spellpower: card.spellpower,
             durability: card.durability,
-            abilities: card.abilities.map(
-              ability => `@[${ability.speed}]@ ${ability.description}`
-            )
+            abilities: card.abilities
+              .filter(ability => !ability.isHiddenOnCard)
+              .map(ability => `@[${ability.speed}]@ ${ability.description}`),
+            jobs: card.jobs
           }"
           class="game-card big"
           :class="classes"

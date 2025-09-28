@@ -54,6 +54,7 @@ export type AbilityBlueprint<
   description: string;
   label: string;
   speed: CardSpeed;
+  isHiddenOnCard?: boolean;
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
   onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
@@ -71,6 +72,7 @@ export type SerializedAbility = {
   description: string;
   speed: CardSpeed;
   targets: SerializedPreResponseTarget[] | null;
+  isHiddenOnCard: boolean;
 };
 
 export type PreResponseTarget = AnyCard | MinionPosition;
@@ -108,6 +110,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   canPlay: (game: Game, card: MinionCard) => boolean;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
   job: HeroJob | null;
+  spellSchool: SpellSchool | null;
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
@@ -115,6 +118,7 @@ export type MinionBlueprint = CardBlueprintBase & {
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   spellSchool: SpellSchool | null;
+  job: HeroJob | null;
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
@@ -141,6 +145,7 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
   job: HeroJob | null;
+  spellSchool: SpellSchool | null;
   abilities: AbilityBlueprint<ArtifactCard, PreResponseTarget>[];
   durability: number;
 } & (

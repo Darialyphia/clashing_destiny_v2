@@ -26,14 +26,15 @@ export const rustyBlade: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
   job: null,
+  spellSchool: null,
   durability: 1,
   subKind: ARTIFACT_KINDS.WEAPON,
   atkBonus: 2,
   abilities: [
     {
       id: 'rusty-blade-ability',
-      label: '@[exhaust]@ : +2 Attack',
-      description: `@[exhaust]@ -1@[durability]@ : This turn, your hero gain +2@[attack]@.`,
+      label: '@[exhaust]@ : Grant hero Attack',
+      description: `-1@[durability]@ @[exhaust]@ : This turn, your hero gain @[attack]@ equal to this card's Attack bonus.`,
       manaCost: 0,
       shouldExhaust: true,
       speed: CARD_SPEED.FLASH,
@@ -54,7 +55,7 @@ export const rustyBlade: ArtifactBlueprint = {
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + card.atkBonus;
+                  return value + card.atkBonus!;
                 }
               })
             ]

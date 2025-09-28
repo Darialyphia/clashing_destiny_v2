@@ -9,9 +9,13 @@ const client = useGameClient();
 const state = useGameState();
 
 const attackPath = ref('');
-const blockerPath = ref('');
+const counterAttackPath = ref('');
 
-const buildArrowBetweenTwoCards = (card1: string, card2: string) => {
+const buildArrowBetweenTwoCards = (
+  card1: string,
+  card2: string,
+  biasY: number
+) => {
   const startRect = document
     .querySelector(client.value.ui.DOMSelectors.cardOnBoard(card1).selector)
     ?.getBoundingClientRect();
@@ -22,17 +26,20 @@ const buildArrowBetweenTwoCards = (card1: string, card2: string) => {
   if (!startRect || !endRect) return '';
 
   const start = {
-    x: startRect.left + startRect.width / 2,
-    y: startRect.top + startRect.height / 2
+    x: Math.round(startRect.left + startRect.width / 2),
+    y: Math.round(startRect.top + startRect.height / 2)
   };
   const end = {
-    x: endRect.left + endRect.width / 2,
-    y: endRect.top + endRect.height / 2
+    x: Math.round(endRect.left + endRect.width / 2),
+    y: Math.round(endRect.top + endRect.height / 2)
   };
 
   const highest = Math.min(start.y, end.y);
   const halfX = (start.x + end.x) / 2;
-  const yDiff = Math.abs(start.y - end.y);
+  let yDiff = Math.abs(start.y - end.y);
+  if (yDiff === 0) {
+    yDiff = biasY;
+  }
   return `
         M${start.x},${start.y}
         Q${halfX},${highest - yDiff / 2}
@@ -54,7 +61,8 @@ const buildAttackArrowPath = async () => {
 
   attackPath.value = buildArrowBetweenTwoCards(
     state.value.phase.ctx.attacker,
-    state.value.phase.ctx.target
+    state.value.phase.ctx.target,
+    40
   );
 };
 
@@ -62,11 +70,34 @@ watchEffect(buildAttackArrowPath);
 watch(() => client.value.playerId, buildAttackArrowPath);
 watch(() => state.value.phase.ctx, buildAttackArrowPath);
 useEventListener(window, 'resize', throttle(buildAttackArrowPath, 100));
+
+const buildCounterAttackArrowPath = async () => {
+  await nextTick();
+  if (state.value.phase.state !== GAME_PHASES.ATTACK) {
+    counterAttackPath.value = '';
+    return;
+  }
+  if (!state.value.phase.ctx.isTargetCounterattacking) {
+    counterAttackPath.value = '';
+    return;
+  }
+
+  counterAttackPath.value = buildArrowBetweenTwoCards(
+    state.value.phase.ctx.target!,
+    state.value.phase.ctx.attacker,
+    -40
+  );
+};
+
+watchEffect(buildCounterAttackArrowPath);
+watch(() => client.value.playerId, buildCounterAttackArrowPath);
+watch(() => state.value.phase.ctx, buildCounterAttackArrowPath);
+useEventListener(window, 'resize', throttle(buildCounterAttackArrowPath, 100));
 </script>
 
 <template>
   <Teleport to="#arrows" defer>
     <Arrow :path="attackPath" color="red" v-if="attackPath" />
-    <Arrow :path="blockerPath" color="lime" v-if="blockerPath" />
+    <Arrow :path="counterAttackPath" color="lime" v-if="counterAttackPath" />
   </Teleport>
 </template>

@@ -1,4 +1,4 @@
-import { type EmptyObject, type Serializable, type Values } from '@game/shared';
+import { isString, type EmptyObject, type Serializable, type Values } from '@game/shared';
 import type { ModifierMixin } from './modifier-mixin';
 import { Entity } from '../entity';
 import type { Game } from '../game/game';
@@ -11,7 +11,7 @@ export type ModifierInfos<TCustomEvents extends Record<string, any>> =
   TCustomEvents extends EmptyObject
     ? {
         name?: string;
-        description?: string;
+        description?: string | (() => string);
         icon?: string;
         isUnique?: boolean;
         customEventNames?: never;
@@ -100,7 +100,7 @@ export class Modifier<
 
   private _isApplied = false;
 
-  readonly infos: { name?: string; description?: string; icon?: string };
+  readonly infos: { name?: string; description?: string | (() => string); icon?: string };
 
   readonly modifierType: string;
 
@@ -263,7 +263,9 @@ export class Modifier<
       modifierType: this.modifierType,
       entityType: 'modifier' as const,
       name: this.infos.name,
-      description: this.infos.description,
+      description: isString(this.infos.description)
+        ? this.infos.description
+        : this.infos.description?.(),
       icon: this.infos.icon,
       target: this._target.id,
       source: this.source.id,
