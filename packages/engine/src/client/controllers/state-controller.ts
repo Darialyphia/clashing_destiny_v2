@@ -19,6 +19,7 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
+import { MINION_SLOT_ZONES } from '../../board/board;constants';
 
 export type GameStateEntities = Record<
   string,
@@ -121,7 +122,22 @@ export class ClientStateController {
   async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {
     if (event.eventName === GAME_EVENTS.PLAYER_START_TURN) {
       this.state.currentPlayer = event.event.player.id;
-      await flush();
+      return await flush();
+    }
+
+    if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
+      const card = this.buildViewModel(event.event.card) as CardViewModel;
+      this.state.entities[card.id] = card;
+
+      const boardSide = this.state.board.sides.find(
+        side => side.playerId === card.player.id
+      )!;
+      if (card.position?.zone === MINION_SLOT_ZONES.FRONT_ROW) {
+        boardSide.frontRow.slots[card.position.slot]!.minion = card.id;
+      } else if (card.position?.zone === MINION_SLOT_ZONES.BACK_ROW) {
+        boardSide.backRow.slots[card.position.slot]!.minion = card.id;
+      }
+      console.log('inserted minion', card.id, 'at slot', card.position?.slot);
     }
   }
 }

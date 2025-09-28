@@ -86,18 +86,21 @@ const onTakeDamage = async (e: { card: string }) => {
 const waitForAttackDone = async () => {
   await waitFor(200);
 };
+
+const onAbilityUse = async (e: { card: string }) => {
+  if (!isInteractive) return;
+  if (e.card !== cardId) return;
+  isUsingAbility.value = true;
+  await waitFor(1000);
+};
 useFxEvent(FX_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
 useFxEvent(FX_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
 useFxEvent(FX_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
 useFxEvent(FX_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
 useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
-useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, async e => {
-  if (!isInteractive) return;
-  if (e.card !== cardId) return;
-  isUsingAbility.value = true;
-  await waitFor(1000);
-});
+useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
+useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 
 const classes = computed(() => {
   return {

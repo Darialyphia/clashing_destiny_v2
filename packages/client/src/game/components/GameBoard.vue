@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   useFxEvent,
+  useGameClient,
   useGameState,
   useGameUi,
   useMyBoard,
@@ -31,7 +32,7 @@ import HeroSlot from './HeroSlot.vue';
 import CombatArrows from './CombatArrows.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
