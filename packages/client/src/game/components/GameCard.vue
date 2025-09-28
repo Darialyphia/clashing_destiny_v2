@@ -26,7 +26,8 @@ const {
   variant = 'default',
   isInteractive = true,
   showDisabledMessage = false,
-  showStats = false
+  showStats = false,
+  portalTarget = '#card-actions-portal'
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -35,6 +36,7 @@ const {
   isInteractive?: boolean;
   showDisabledMessage?: boolean;
   showStats?: boolean;
+  portalTarget?: string;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -185,11 +187,11 @@ const classes = computed(() => {
     </PopoverAnchor>
 
     <PopoverPortal
+      :to="portalTarget"
       :disabled="
         card.location === 'hand' ||
         card.location === 'discardPile' ||
-        card.location === 'banishPile' ||
-        card.location === 'destinyDeck'
+        card.location === 'banishPile'
       "
     >
       <PopoverContent :side-offset="actionsOffset" :side="actionsSide">

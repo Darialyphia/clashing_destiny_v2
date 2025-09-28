@@ -90,9 +90,11 @@ const getKeyLabel = useKeybordShortcutLabel();
             :card-id="card.id"
             :actions-offset="10"
             show-disabled-message
+            :portal-target="'#destiny-deck-actions-portal'"
           />
         </div>
       </div>
+      <div id="destiny-deck-actions-portal" />
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton text="Close" @click="isOpened = false" />
       </footer>

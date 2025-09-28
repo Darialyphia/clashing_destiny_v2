@@ -1,3 +1,6 @@
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { CardInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { Modifier } from '../../../../modifier/modifier.entity';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -27,5 +30,51 @@ export const fatedOath: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
-  async onPlay(game, card, targets) {}
+  async onPlay(game, card) {
+    const [cardToBanish] = await game.interaction.chooseCards({
+      player: card.player,
+      label: 'Choose a card to banish',
+      minChoiceCount: 1,
+      maxChoiceCount: 1,
+      choices: card.player.cardManager.mainDeck.cards
+    });
+
+    if (!cardToBanish) return;
+
+    cardToBanish.sendToBanishPile();
+
+    let counter = 2;
+    const stop = game.on(GAME_EVENTS.TURN_END, async () => {
+      counter--;
+      if (counter <= 0) {
+        stop();
+        await cardToBanish.modifiers.add(
+          new Modifier('fated-oath-modifier', game, cardToBanish, {
+            mixins: [
+              new CardInterceptorModifierMixin(game, {
+                key: 'deckSource',
+                interceptor() {
+                  return CARD_DECK_SOURCES.DESTINY_DECK;
+                }
+              }),
+              new CardInterceptorModifierMixin(game, {
+                key: 'destinyCost',
+                interceptor() {
+                  return 1;
+                }
+              }),
+              new CardInterceptorModifierMixin(game, {
+                key: 'manaCost',
+                interceptor() {
+                  return null;
+                }
+              })
+            ]
+          })
+        );
+        cardToBanish.removeFromCurrentLocation();
+        card.player.cardManager.destinyDeck.addToBottom(cardToBanish);
+      }
+    });
+  }
 };

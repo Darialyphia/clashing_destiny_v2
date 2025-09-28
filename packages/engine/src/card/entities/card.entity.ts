@@ -53,6 +53,7 @@ export type CardInterceptors = {
   canBeUsedAsManaCost: Interceptable<boolean>;
   canBeRecollected: Interceptable<boolean>;
   speed: Interceptable<CardSpeed>;
+  deckSource: Interceptable<CardDeckSource>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -64,7 +65,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   canBeUsedAsDestinyCost: new Interceptable(),
   canBeUsedAsManaCost: new Interceptable(),
   canBeRecollected: new Interceptable(),
-  speed: new Interceptable()
+  speed: new Interceptable(),
+  deckSource: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -144,7 +146,7 @@ export abstract class Card<
   }
 
   get deckSource() {
-    return this.blueprint.deckSource;
+    return this.interceptors.deckSource.getValue(this.blueprint.deckSource, {});
   }
 
   get isMainDeckCard() {
@@ -325,11 +327,6 @@ export abstract class Card<
         this.player.cardManager.removeFromDiscardPile(this);
       })
       .with('banishPile', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from banish pile when it is not a main deck card.`
-          );
-        }
         this.player.cardManager.removeFromBanishPile(this);
       })
       .with('mainDeck', () => {
