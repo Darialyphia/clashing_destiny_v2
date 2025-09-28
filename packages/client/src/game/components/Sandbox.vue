@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PopoverTrigger, PopoverRoot, PopoverContent } from 'reka-ui';
 import { useSandbox } from '../composables/useSandbox';
 import GameBoard from './GameBoard.vue';
 
@@ -10,33 +11,31 @@ const sandbox = useSandbox({
   rngSeed: `sandbox-${Math.random().toString(36).substring(2, 15)}`,
   players
 });
+
+const isSandboxPopoverOpened = ref(false);
 </script>
 
 <template>
   <GameBoard v-if="sandbox.client.value.isReady" />
-  <div class="fixed top-0 left-0 flex gap-2 items-center">
-    <button
-      v-for="(player, index) in players"
-      :key="player.id"
-      @click="sandbox.playerId.value = player.id"
-    >
-      Switch to Player {{ index + 1 }}
-    </button>
-    <input
-      type="checkbox"
-      id="auto-switch"
-      v-model="sandbox.autoSwitchPlayer.value"
-    />
-    <label for="auto-switch">Auto Switch to Active Player</label>
-  </div>
+  <PopoverRoot v-model:open="isSandboxPopoverOpened">
+    <PopoverTrigger class="fixed top-0 left-0 bg-gray-10 p-3">
+      Sandbox Tools
+    </PopoverTrigger>
+
+    <PopoverContent class="flex flex-col gap-2 p-4 bg-gray-10">
+      <button
+        v-for="(player, index) in players"
+        :key="player.id"
+        @click="sandbox.playerId.value = player.id"
+      >
+        Switch to Player {{ index + 1 }}
+      </button>
+      <label>
+        <input type="checkbox" v-model="sandbox.autoSwitchPlayer.value" />
+        Auto Switch to Active Player
+      </label>
+    </PopoverContent>
+  </PopoverRoot>
 </template>
 
-<style scoped lang="postcss">
-button {
-  background: #222;
-  border: 1px solid black;
-  padding: 0.5rem 1rem;
-  margin: 0.5rem;
-  cursor: pointer;
-}
-</style>
+<style scoped lang="postcss"></style>
