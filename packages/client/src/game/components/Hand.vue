@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   useFxEvent,
-  useGameClient,
   useGameState,
   useGameUi,
   useMyBoard
@@ -22,7 +21,6 @@ import type { ShallowRef } from 'vue';
 const state = useGameState();
 const myBoard = useMyBoard();
 const ui = useGameUi();
-const client = useGameClient();
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const newCard = e.card as SerializedCard;
@@ -38,7 +36,7 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   }
   await nextTick();
 
-  const el = client.value.ui.DOMSelectors.cardInHand(
+  const el = ui.value.DOMSelectors.cardInHand(
     newCard.id,
     myBoard.value.playerId
   ).element;
@@ -170,7 +168,7 @@ watch(
       :id="`hand-${myBoard.playerId}`"
       class="hand"
       :class="{
-        'ui-hidden': !client.ui.displayedElements.hand,
+        'ui-hidden': !ui.displayedElements.hand,
         'interaction-active': isInteractionActive,
         expanded: ui.isHandExpanded
       }"

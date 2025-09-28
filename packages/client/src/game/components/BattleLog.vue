@@ -8,7 +8,7 @@ import type { GamePhase } from '@game/engine/src/game/game.enums';
 import { DAMAGE_TYPES } from '@game/engine/src/utils/damage';
 
 const state = useGameState();
-const client = useGameClient();
+const { client } = useGameClient();
 
 onMounted(() => {
   client.value.onUpdateCompleted(snapshot => {

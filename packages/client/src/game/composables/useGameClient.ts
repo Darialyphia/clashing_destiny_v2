@@ -13,7 +13,7 @@ import { isDefined, type MaybePromise, type Nullable } from '@game/shared';
 import type { InjectionKey, Ref } from 'vue';
 import { gameStateRef } from './gameStateRef';
 
-type GameClientContext = Ref<GameClient>;
+type GameClientContext = { client: Ref<GameClient>; playerId: Ref<string> };
 
 const GAME_CLIENT_INJECTION_KEY = Symbol(
   'game-client'
@@ -26,8 +26,14 @@ export const provideGameClient = (options: GameClientOptions) => {
     console.log('[Client] state updated', client.value);
   });
 
-  provide(GAME_CLIENT_INJECTION_KEY, client);
-  return client;
+  const playerId = ref(client.value.playerId);
+  watch(playerId, newPlayerId => {
+    client.value.playerId = newPlayerId;
+  });
+
+  provide(GAME_CLIENT_INJECTION_KEY, { client, playerId });
+
+  return { client, playerId };
 };
 
 export const useGameClient = () => {
@@ -35,19 +41,19 @@ export const useGameClient = () => {
 };
 
 export const useGameState = () => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
   return computed(() => client.value.stateManager.state);
 };
 
 export const useGameUi = () => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
-  return computed(() => client.value.ui);
+  return gameStateRef(() => client.value.ui);
 };
 
 export const useBoardSide = (playerId: MaybeRef<string>) => {
-  const client = useGameClient();
+  const { client } = useGameClient();
   return computed(() => {
     return client.value.state.board.sides.find(
       side => side.playerId === unref(playerId)
@@ -56,7 +62,7 @@ export const useBoardSide = (playerId: MaybeRef<string>) => {
 };
 
 export const useMyBoard = () => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
   return computed(() => {
     return client.value.state.board.sides.find(
@@ -66,7 +72,7 @@ export const useMyBoard = () => {
 };
 
 export const useOpponentBoard = () => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
   return computed(
     () =>
@@ -117,7 +123,7 @@ export const useFxEvent = <T extends FXEvent>(
   name: T,
   handler: (eventArg: FXEventMap[T]) => MaybePromise<void>
 ) => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
   const unsub = client.value.fx.on(name, handler);
 

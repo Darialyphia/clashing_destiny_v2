@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { useGameClient } from '../composables/useGameClient';
+import { useGameUi } from '../composables/useGameClient';
 
-const client = useGameClient();
+const ui = useGameUi();
 </script>
 
 <template>
   <p
     class="explainer-message"
     :class="{
-      displayed: !!client.ui.explainerMessage
+      displayed: !!ui.explainerMessage
     }"
   >
-    {{ client.ui.explainerMessage || 'a' }}
+    {{ ui.explainerMessage || 'a' }}
   </p>
 </template>
 

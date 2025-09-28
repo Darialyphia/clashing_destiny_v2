@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { useGameClient } from '../composables/useGameClient';
+import { useGameUi } from '../composables/useGameClient';
 import FancyButton from '@/ui/components/FancyButton.vue';
 
-const client = useGameClient();
+const ui = useGameUi();
 </script>
 
 <template>
   <div
     class="action-buttons"
-    :class="{ 'ui-hidden': !client.ui.displayedElements.actionButtons }"
+    :class="{ 'ui-hidden': !ui.displayedElements.actionButtons }"
   >
     <FancyButton
-      v-for="action in client.ui.globalActions"
+      v-for="action in ui.globalActions"
       :key="action.id"
-      :id="client.ui.DOMSelectors.actionButton(action.id).id"
+      :id="ui.DOMSelectors.actionButton(action.id).id"
       :text="action.label"
       :variant="action.variant"
       :disabled="action.isDisabled"

@@ -3,7 +3,8 @@ import type { PlayerViewModel } from '@game/engine/src/client/view-models/player
 import {
   useBoardSide,
   useCard,
-  useGameClient
+  useGameClient,
+  useGameUi
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 
@@ -13,14 +14,15 @@ const { player } = defineProps<{
 
 const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
-const client = useGameClient();
+const { playerId } = useGameClient();
+const ui = useGameUi();
 </script>
 
 <template>
   <div
     class="hero-slot"
-    :class="{ opponent: client.playerId !== player.id }"
-    :id="client.ui.DOMSelectors.hero(player.id).id"
+    :class="{ opponent: playerId !== player.id }"
+    :id="ui.DOMSelectors.hero(player.id).id"
     ref="card"
   >
     <GameCard :card-id="hero.id" actions-side="bottom" :actions-offset="15" />

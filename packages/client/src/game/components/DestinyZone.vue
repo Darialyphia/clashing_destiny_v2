@@ -2,7 +2,8 @@
 import {
   useBoardSide,
   useFxEvent,
-  useGameClient
+  useGameClient,
+  useGameUi
 } from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
@@ -14,8 +15,8 @@ const { playerId } = defineProps<{ playerId: string }>();
 
 const boardSide = useBoardSide(computed(() => playerId));
 
-const client = useGameClient();
-
+const { playerId: activePlayerId } = useGameClient();
+const ui = useGameUi();
 const root = useTemplateRef<HTMLElement>('root');
 
 const cardSpacing = ref(0);
@@ -57,7 +58,7 @@ watch(
   [
     root,
     computed(() => boardSide.value.destinyZone.length),
-    computed(() => client.value.ui.selectedManaCostIndices.length)
+    computed(() => ui.value.selectedManaCostIndices.length)
   ],
   () => {
     nextTick(computeSpacing);
@@ -91,12 +92,6 @@ const displayedCards = computed(() => {
         cardId: card
       };
     })
-    // ...client.value.ui.selectedManaCostIndices.map(index => {
-    //   return {
-    //     type: 'mana',
-    //     cardId: boardSide.value.hand[index]
-    //   };
-    // })
   ];
 });
 </script>
@@ -106,11 +101,11 @@ const displayedCards = computed(() => {
     class="destiny-zone"
     ref="root"
     :id="`destiny-zone-${playerId}`"
-    :class="{ 'player-2': playerId !== client.playerId }"
+    :class="{ 'player-2': playerId !== activePlayerId }"
   >
     <div v-for="(card, index) in displayedCards" :key="card.cardId">
       <InspectableCard
-        v-if="client.playerId === playerId"
+        v-if="activePlayerId === playerId"
         :card-id="card.cardId"
         side="top"
       >

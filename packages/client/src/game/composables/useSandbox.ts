@@ -8,6 +8,7 @@ export const useSandbox = (
   options: Pick<GameOptions, 'players' | 'rngSeed'>
 ) => {
   const worker = new SandboxWorker();
+  const autoSwitchPlayer = ref(true);
 
   worker.postMessage({
     type: 'init',
@@ -22,7 +23,16 @@ export const useSandbox = (
   };
   const networkAdapter: NetworkAdapter = {
     dispatch: input => {
-      worker.postMessage({ type: 'dispatch', payload: { input } });
+      // helper to detect input serialization issues when sending to the worker
+      try {
+        JSON.stringify(input);
+      } catch {
+        console.error('Input is not serializable', input);
+      }
+      worker.postMessage({
+        type: 'dispatch',
+        payload: { input: JSON.parse(JSON.stringify(input)) }
+      });
     },
     subscribe(cb) {
       worker.addEventListener('message', event => {
@@ -39,18 +49,25 @@ export const useSandbox = (
 
   const fxAdapter = useFxAdapter();
 
-  const client = provideGameClient({
+  const { client, playerId } = provideGameClient({
     networkAdapter,
     fxAdapter,
     gameType: 'local',
     playerId: 'p1'
   });
 
-  worker.addEventListener('message', event => {
-    if (event.data.type === 'ready') {
-      client.value.initialize(event.data.payload.snapshot);
+  client.value.onUpdateCompleted(() => {
+    if (autoSwitchPlayer.value) {
+      playerId.value = client.value.getActivePlayerId();
     }
   });
 
-  return client;
+  worker.addEventListener('message', event => {
+    if (event.data.type === 'ready') {
+      client.value.initialize(event.data.payload.snapshot);
+      playerId.value = client.value.getActivePlayerId();
+    }
+  });
+
+  return { client, playerId, autoSwitchPlayer };
 };

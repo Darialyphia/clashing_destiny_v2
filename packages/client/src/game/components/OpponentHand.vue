@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
   useFxEvent,
-  useGameClient,
   useGameState,
+  useGameUi,
   useOpponentBoard
 } from '@/game/composables/useGameClient';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -13,7 +13,7 @@ import CardBack from '@/card/components/CardBack.vue';
 
 const state = useGameState();
 const opponentBoard = useOpponentBoard();
-const client = useGameClient();
+const ui = useGameUi();
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
   // const newCard = e.card as SerializedCard;
@@ -103,7 +103,7 @@ const cards = computed(() => {
     :id="`hand-${opponentBoard.playerId}`"
     class="opponent-hand"
     :class="{
-      'ui-hidden': !client.ui.displayedElements.hand
+      'ui-hidden': !ui.displayedElements.hand
     }"
     :style="{ '--hand-size': opponentBoard.hand.length }"
     ref="hand"

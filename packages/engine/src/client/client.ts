@@ -152,14 +152,6 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerIdFromSnapshotState(snapshot: SnapshotDiff) {
-    if (snapshot.effectChain) {
-      return snapshot.effectChain.player;
-    }
-
-    return snapshot.interaction.ctx.player;
-  }
-
   getActivePlayerId() {
     if (this.stateManager.state.effectChain) {
       return this.stateManager.state.effectChain.player;
@@ -179,10 +171,6 @@ export class GameClient {
     this.initialState = snapshot.state;
 
     this.stateManager.initialize(snapshot.state);
-
-    if (this.gameType === GAME_TYPES.LOCAL) {
-      this.playerId = this.getActivePlayerId();
-    }
 
     this.isReady = true;
     if (this.queue.length > 0) {
@@ -219,10 +207,6 @@ export class GameClient {
       }
 
       for (const event of snapshot.events) {
-        if (this.gameType === GAME_TYPES.LOCAL && isStateSnapshot) {
-          this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
-        }
-
         await this.stateManager.onEvent(event, async postUpdateCallback => {
           await this.emitter.emit('update', {});
           await postUpdateCallback?.();
@@ -234,10 +218,6 @@ export class GameClient {
 
       if (isStateSnapshot) {
         this.stateManager.update(snapshot.state);
-      }
-
-      if (this.gameType === GAME_TYPES.LOCAL) {
-        this.playerId = this.getActivePlayerId();
       }
 
       this.ui.update();

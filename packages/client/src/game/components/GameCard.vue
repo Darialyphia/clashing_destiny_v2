@@ -2,7 +2,7 @@
 import {
   useCard,
   useFxEvent,
-  useGameClient,
+  useGameUi,
   useMyPlayer
 } from '../composables/useGameClient';
 import Card from '@/card/components/Card.vue';
@@ -38,18 +38,18 @@ const {
 }>();
 
 const card = useCard(computed(() => cardId));
-const client = useGameClient();
+const ui = useGameUi();
 
 const isActionsPopoverOpened = computed({
   get() {
-    if (!client.value.ui.selectedCard) return false;
-    return client.value.ui.selectedCard.equals(card.value);
+    if (!ui.value.selectedCard) return false;
+    return ui.value.selectedCard.equals(card.value);
   },
   set(value) {
     if (value) {
-      client.value.ui.select(card.value);
+      ui.value.select(card.value);
     } else {
-      client.value.ui.unselect();
+      ui.value.unselect();
     }
   }
 });
@@ -57,7 +57,7 @@ const isActionsPopoverOpened = computed({
 const isTargetable = computed(() => {
   return (
     card.value.canBeTargeted ||
-    client.value.ui.selectedManaCostIndices.includes(card.value.indexInHand!)
+    ui.value.selectedManaCostIndices.includes(card.value.indexInHand!)
   );
 });
 
@@ -65,7 +65,7 @@ const myPlayer = useMyPlayer();
 
 const handleClick = () => {
   if (!isInteractive) return;
-  client.value.ui.onCardClick(card.value);
+  ui.value.onCardClick(card.value);
 };
 
 const isAttacking = refAutoReset(false, 500);
@@ -105,7 +105,7 @@ const classes = computed(() => {
   return {
     exhausted: isInteractive && card.value.isExhausted,
     disabled: !card.value.canPlay && card.value.location === 'hand',
-    selected: client.value.ui.selectedCard?.equals(card.value),
+    selected: ui.value.selectedCard?.equals(card.value),
     targetable: isTargetable.value,
     flipped: !myPlayer.value.equals(card.value.player),
     'is-attacking': isAttacking.value,

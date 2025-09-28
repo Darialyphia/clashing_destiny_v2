@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { useGameClient, useMaybeEntity } from '../composables/useGameClient';
+import { useGameUi, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
@@ -10,7 +10,7 @@ const { minionSlot } = defineProps<{
   minionSlot: SerializedBoardMinionSlot;
 }>();
 
-const client = useGameClient();
+const ui = useGameUi();
 
 const { player, isHighlighted, isSelected } = useMinionSlot(
   computed(() => minionSlot)
@@ -29,14 +29,14 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
       attacking: minion?.isAttacking
     }"
     :id="
-      client.ui.DOMSelectors.minionPosition(
+      ui.DOMSelectors.minionPosition(
         player.id,
         minionSlot.zone,
         minionSlot.position
       ).id
     "
     @click="
-      client.ui.onMinionSlotClick({
+      ui.onMinionSlotClick({
         player: player,
         slot: minionSlot.position,
         zone: minionSlot.zone

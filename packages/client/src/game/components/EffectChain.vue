@@ -3,6 +3,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import {
   useGameClient,
   useGameState,
+  useGameUi,
   useMyPlayer
 } from '../composables/useGameClient';
 import Arrow from './Arrow.vue';
@@ -12,7 +13,8 @@ import GameCard from './GameCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { EFFECT_TYPE } from '@game/engine/src/game/effect-chain';
 
-const client = useGameClient();
+const { playerId } = useGameClient();
+const ui = useGameUi();
 const state = useGameState();
 
 const paths = ref<string[][]>([]);
@@ -31,19 +33,19 @@ const buildPaths = async () => {
     return effect.targets.map(target => {
       const startRect = document
         .querySelector(
-          client.value.ui.DOMSelectors.cardInEffectChain(effect.source).selector
+          ui.value.DOMSelectors.cardInEffectChain(effect.source).selector
         )!
         .getBoundingClientRect();
       const endRect = match(target)
         .with({ type: 'card' }, target => {
           return document
             .querySelector(
-              client.value.ui.DOMSelectors.cardOnBoard(target.card).selector
+              ui.value.DOMSelectors.cardOnBoard(target.card).selector
             )
             ?.getBoundingClientRect();
         })
         .with({ type: 'minionPosition' }, target => {
-          return client.value.ui.DOMSelectors.minionPosition(
+          return ui.value.DOMSelectors.minionPosition(
             target.playerId,
             target.zone,
             target.slot
@@ -72,7 +74,7 @@ const buildPaths = async () => {
   });
 };
 watch(() => state.value.effectChain?.stack, buildPaths);
-watch(() => client.value.playerId, buildPaths);
+watch(() => playerId.value, buildPaths);
 
 const myPlayer = useMyPlayer();
 const stack = computed(() => {

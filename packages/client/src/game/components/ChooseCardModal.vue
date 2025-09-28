@@ -5,17 +5,16 @@ import { useGameClient, useGameState } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
-const client = useGameClient();
-
+const { client, playerId } = useGameClient();
 const isOpened = ref(false);
-watch(
-  () => client.value.ui.isChooseCardsInteractionOverlayOpened,
-  newValue => {
-    isOpened.value = newValue;
-  }
-);
-const isShowingBoard = ref(false);
 const state = useGameState();
+
+watchEffect(() => {
+  isOpened.value =
+    state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS &&
+    playerId.value === client.value.getActivePlayerId();
+});
+const isShowingBoard = ref(false);
 
 const displayedCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)

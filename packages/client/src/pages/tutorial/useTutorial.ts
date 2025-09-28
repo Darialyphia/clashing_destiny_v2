@@ -75,7 +75,7 @@ export const useTutorial = (options: UseTutorialOptions) => {
 
   const fxAdapter = useFxAdapter();
 
-  const client = provideGameClient({
+  const { client } = provideGameClient({
     networkAdapter,
     fxAdapter,
     gameType: 'online',

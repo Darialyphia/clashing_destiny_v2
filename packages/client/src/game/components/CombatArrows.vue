@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../composables/useGameClient';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import Arrow from './Arrow.vue';
 import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
 
-const client = useGameClient();
+const { playerId } = useGameClient();
+const ui = useGameUi();
 const state = useGameState();
 
 const attackPath = ref('');
@@ -17,10 +22,10 @@ const buildArrowBetweenTwoCards = (
   biasY: number
 ) => {
   const startRect = document
-    .querySelector(client.value.ui.DOMSelectors.cardOnBoard(card1).selector)
+    .querySelector(ui.value.DOMSelectors.cardOnBoard(card1).selector)
     ?.getBoundingClientRect();
   const endRect = document
-    .querySelector(client.value.ui.DOMSelectors.cardOnBoard(card2).selector)
+    .querySelector(ui.value.DOMSelectors.cardOnBoard(card2).selector)
     ?.getBoundingClientRect();
 
   if (!startRect || !endRect) return '';
@@ -67,7 +72,7 @@ const buildAttackArrowPath = async () => {
 };
 
 watchEffect(buildAttackArrowPath);
-watch(() => client.value.playerId, buildAttackArrowPath);
+watch(() => playerId.value, buildAttackArrowPath);
 watch(() => state.value.phase.ctx, buildAttackArrowPath);
 useEventListener(window, 'resize', throttle(buildAttackArrowPath, 100));
 
@@ -90,7 +95,7 @@ const buildCounterAttackArrowPath = async () => {
 };
 
 watchEffect(buildCounterAttackArrowPath);
-watch(() => client.value.playerId, buildCounterAttackArrowPath);
+watch(() => playerId.value, buildCounterAttackArrowPath);
 watch(() => state.value.phase.ctx, buildCounterAttackArrowPath);
 useEventListener(window, 'resize', throttle(buildCounterAttackArrowPath, 100));
 </script>

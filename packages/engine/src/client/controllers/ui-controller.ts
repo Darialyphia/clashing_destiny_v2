@@ -63,14 +63,6 @@ export class UiController {
 
   private _selectedCard: CardViewModel | null = null;
 
-  private _isManaCostOverlayOpened = false;
-
-  private _isDestinyPhaseOverlayOpened = false;
-
-  private _isChooseCardsInteractionOverlayOpened = false;
-
-  private _isChooseAffinityInteractionOverlayOpened = false;
-
   isHandExpanded = false;
 
   private cardClickRules: CardClickRule[] = [];
@@ -150,22 +142,6 @@ export class UiController {
     return this._selectedCard;
   }
 
-  get isManaCostOverlayOpened() {
-    return this._isManaCostOverlayOpened;
-  }
-
-  get isDestinyPhaseOverlayOpened() {
-    return this._isDestinyPhaseOverlayOpened;
-  }
-
-  get isChooseCardsInteractionOverlayOpened() {
-    return this._isChooseCardsInteractionOverlayOpened;
-  }
-
-  get isChooseAffinityInteractionOverlayOpened() {
-    return this._isChooseAffinityInteractionOverlayOpened;
-  }
-
   get playedCardId() {
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD)
       return null;
@@ -235,12 +211,6 @@ export class UiController {
     }
   }
 
-  get isInteractingPlayer() {
-    return this.client.state.effectChain
-      ? this.client.playerId === this.client.state.effectChain.player
-      : this.client.playerId === this.client.state.interaction.ctx.player;
-  }
-
   get isInteractivePlayer() {
     return this.client.playerId === this.client.getActivePlayerId();
   }
@@ -250,18 +220,6 @@ export class UiController {
   }
 
   update() {
-    this._isChooseCardsInteractionOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
-
-    this._isChooseAffinityInteractionOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_AFFINITY;
-
-    this._isManaCostOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
-
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
       this.selectedManaCostIndices = [];
     }
@@ -333,7 +291,8 @@ export class UiController {
     }
 
     if (
-      state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
+      (state.interaction.state === INTERACTION_STATES.PLAYING_CARD ||
+        state.interaction.state === INTERACTION_STATES.USING_ABILITY) &&
       state.interaction.ctx.player === this.client.playerId
     ) {
       const card = state.entities[state.interaction.ctx.card] as CardViewModel;

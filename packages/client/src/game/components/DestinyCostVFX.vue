@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { useFxEvent, useGameClient } from '../composables/useGameClient';
+import { useFxEvent, useGameUi } from '../composables/useGameClient';
 import { waitFor } from '@game/shared';
 import GameCard from './GameCard.vue';
 import { useDissolveVFX } from '../composables/useDissolve';
@@ -10,13 +10,13 @@ const isDisplayed = ref(false);
 const cards = ref<{ card: string; flipState: any }[]>([]);
 const root = useTemplateRef('root');
 const disolve = useDissolveVFX();
-const client = useGameClient();
+const ui = useGameUi();
 
 useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async e => {
   cards.value = e.cards.map(card => ({
     card: card.card,
     flipState: Flip.getState(
-      client.value.ui.getCardDOMSelectorInDestinyZone(card.card, e.player.id)
+      ui.value.getCardDOMSelectorInDestinyZone(card.card, e.player.id)
     )
   }));
   await nextTick();
@@ -27,7 +27,7 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
 
   cards.value.forEach(card => {
     const el = root.value!.querySelector(
-      client.value.ui.getCardDOMSelector(card.card)
+      ui.value.getCardDOMSelector(card.card)
     );
 
     Flip.from(card.flipState, {

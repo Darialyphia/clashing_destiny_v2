@@ -3,7 +3,7 @@ import type { PlayerViewModel } from '@game/engine/src/client/view-models/player
 import {
   useBoardSide,
   useEntities,
-  useGameClient,
+  useGameUi,
   useMyPlayer
 } from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
@@ -19,7 +19,7 @@ const artifacts = useEntities<CardViewModel>(
   computed(() => boardSide.value.heroZone.artifacts)
 );
 
-const client = useGameClient();
+const ui = useGameUi();
 
 const myPlayer = useMyPlayer();
 </script>
@@ -27,7 +27,7 @@ const myPlayer = useMyPlayer();
 <template>
   <div
     class="equiped-artifacts"
-    :class="{ 'ui-hidden': !client.ui.displayedElements.artifacts }"
+    :class="{ 'ui-hidden': !ui.displayedElements.artifacts }"
     :style="{ '--total': artifacts.length }"
   >
     <div
