@@ -11,6 +11,7 @@ import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flameJuggler } from './core/minions/flame-juggler';
 import { friendlySlime } from './core/minions/friendlySlime';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
+import { hougenThePunisher } from './core/minions/hougen-the-punisher';
 import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { sharpShooter } from './core/minions/sharpshooter';
 import { shieldMaiden } from './core/minions/shield-maiden';
@@ -44,6 +45,7 @@ export const coreSet: CardSet = {
     pyreboundLancer,
     unyieldingShield,
     reposition,
-    fatedOath
+    fatedOath,
+    hougenThePunisher
   ]
 };

@@ -29,7 +29,10 @@ export const reposition: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  canPlay: singleAllyMinionTargetRules.canPlay,
+  canPlay: (game, card) =>
+    singleAllyMinionTargetRules.canPlay(game, card, c => {
+      return !c.isAttackTarget;
+    }),
   getPreResponseTargets: (game, card) =>
     singleAllyMinionTargetRules.getPreResponseTargets(game, card, { type: 'card', card }),
   async onInit() {},

@@ -335,6 +335,11 @@ export class MinionCard extends Card<
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
   }
 
+  get isAttackTarget() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.target?.equals(this);
+  }
+
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
     if (key === 'maxHp') {
       await this.checkHp();

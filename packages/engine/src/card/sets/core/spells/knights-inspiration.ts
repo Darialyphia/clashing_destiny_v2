@@ -14,7 +14,7 @@ export const knightsInspiration: SpellBlueprint = {
   id: 'knights-inspiration',
   name: "Knight's Inspiration",
   cardIconId: 'spells/knights-inspiration',
-  description: 'Give friendly minions +2 @[attack]@ and +2 @[health]@.',
+  description: 'Give friendly minions +1 @[attack]@ and +2 @[health]@.',
   collectable: true,
   unique: false,
   manaCost: 3,

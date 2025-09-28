@@ -8,6 +8,7 @@ import { flagBearerOfFlame } from '@game/engine/src/card/sets/core/minions/flag-
 import { flameJuggler } from '@game/engine/src/card/sets/core/minions/flame-juggler';
 import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlySlime';
 import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
+import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/hougen-the-punisher';
 import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
 import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
@@ -98,7 +99,12 @@ export const premadeDecks: Array<PremadeDeck> = [
         reposition.id,
         reposition.id,
         reposition.id,
-        reposition.id
+        reposition.id,
+
+        hougenThePunisher.id,
+        hougenThePunisher.id,
+        hougenThePunisher.id,
+        hougenThePunisher.id
       ]
     },
     destinyDeck: {
