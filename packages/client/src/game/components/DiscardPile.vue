@@ -2,7 +2,12 @@
 import Pile from './Pile.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useBoardSide, useFxEvent } from '../composables/useGameClient';
+import {
+  useBoardSide,
+  useFxEvent,
+  useGameUi,
+  useMyPlayer
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
@@ -18,6 +23,9 @@ const close = () => {
 };
 useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, close);
 useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
+const ui = useGameUi();
+
+const myPlayer = useMyPlayer();
 </script>
 
 <template>
@@ -25,6 +33,7 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
     :size="board.discardPile.length"
     v-slot="{ index }"
     class="discard-pile"
+    :id="ui.DOMSelectors.discardPile(player).id"
     @click="isOpened = true"
   >
     <GameCard
@@ -36,7 +45,9 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
 
   <UiModal
     v-model:is-opened="isOpened"
-    title="Discard Pile"
+    :title="
+      myPlayer.id === player ? 'Your Discard Pile' : 'Opponent Discard Pile'
+    "
     description=""
     :style="{
       '--ui-modal-size': 'var(--size-lg)'
@@ -44,7 +55,13 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
   >
     <div class="content" @click="close">
       <header>
-        <h2 class="text-center">Discard Pile</h2>
+        <h2 class="text-center">
+          {{
+            myPlayer.id === player
+              ? 'Your Discard Pile'
+              : 'Opponent Discard Pile'
+          }}
+        </h2>
       </header>
       <div class="card-list fancy-scrollbar">
         <div

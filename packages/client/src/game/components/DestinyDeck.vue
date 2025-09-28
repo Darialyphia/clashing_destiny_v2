@@ -5,6 +5,7 @@ import {
   useBoardSide,
   useFxEvent,
   useGameState,
+  useGameUi,
   usePlayer
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
@@ -20,6 +21,7 @@ const isOpened = ref(false);
 
 const player = usePlayer(computed(() => playerId));
 const state = useGameState();
+const ui = useGameUi();
 const board = useBoardSide(computed(() => playerId));
 const destinyCards = computed<CardViewModel[]>(() => {
   return board.value.destinyDeck
@@ -39,11 +41,15 @@ useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
 </script>
 
 <template>
-  <Deck :size="player.remainingCardsInDestinyDeck" @click="isOpened = true" />
+  <Deck
+    :size="player.remainingCardsInDestinyDeck"
+    :id="ui.DOMSelectors.destinyDeck(playerId).id"
+    @click="isOpened = true"
+  />
 
   <UiModal
     v-model:is-opened="isOpened"
-    title="Discard Pile"
+    title="Destiny Deck"
     description=""
     :style="{
       '--ui-modal-size': 'var(--size-lg)'

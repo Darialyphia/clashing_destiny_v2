@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import {
-  useFxEvent,
-  useGameState,
-  useGameUi,
   useMyBoard,
   useMyPlayer,
   useOpponentBoard,
@@ -14,11 +11,6 @@ import Deck from './Deck.vue';
 
 import ActionsButtons from './ActionsButtons.vue';
 import DiscardPile from './DiscardPile.vue';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import type { SerializedGame } from '@game/engine/src/game/game';
-import { isDefined, type Nullable } from '@game/shared';
-import UiModal from '@/ui/components/UiModal.vue';
-import UiButton from '@/ui/components/UiButton.vue';
 import DestinyZone from './DestinyZone.vue';
 import DestinyDeck from './DestinyDeck.vue';
 import EffectChain from './EffectChain.vue';
@@ -29,12 +21,11 @@ import BattleLog from './BattleLog.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
 import HeroSlot from './HeroSlot.vue';
 import CombatArrows from './CombatArrows.vue';
-import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
-import { useSettingsStore } from '@/shared/composables/useSettings';
-import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
+import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
+import GameErrorModal from './GameErrorModal.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
@@ -46,47 +37,7 @@ const opponentPlayer = useOpponentPlayer();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
 
-const error = ref(
-  null as Nullable<{
-    error: string;
-    isFatal: boolean;
-    debugDump: SerializedGame;
-  }>
-);
-useFxEvent(FX_EVENTS.ERROR, async e => {
-  error.value = e;
-});
-
-const router = useRouter();
-const ui = useGameUi();
-const state = useGameState();
-const settings = useSettingsStore();
-
-useKeyboardControl('keyup', settings.settings.bindings.showHand.control, () => {
-  ui.value.isHandExpanded = !ui.value.isHandExpanded;
-});
-useKeyboardControl('keyup', settings.settings.bindings.pass.control, () => {
-  const actions = ui.value.globalActions;
-  const passAction = actions.find(a => a.id === 'pass');
-  if (!passAction) return;
-  if (passAction.isDisabled) return;
-  passAction.onClick();
-});
-for (let i = 1; i <= 9; i++) {
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings[
-      `interactCardInHand${i as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`
-    ].control,
-    () => {
-      if (!ui.value.isHandExpanded) return;
-      const cardId = myBoard.value.hand[i - 1];
-      if (!cardId) return;
-      const card = state.value.entities[cardId] as CardViewModel;
-      ui.value.onCardClick(card);
-    }
-  );
-}
+useGameKeyboardControls();
 </script>
 
 <template>
@@ -257,60 +208,10 @@ for (let i = 1; i <= 9; i++) {
   </div>
   <div class="arrows" id="arrows" />
 
-  <UiModal
-    :is-opened="isDefined(error)"
-    :closable="false"
-    title="We hit a snag !"
-    description=""
-  >
-    <div v-if="error?.isFatal">
-      <p>The game encountered the following error :</p>
-      <code class="block my-4">
-        {{ error?.error }}
-        {{ error.debugDump }}
-      </code>
-      <p>This error is fatal, the game cannot continue.</p>
-      <UiButton
-        class="error-button"
-        @click="
-          () => {
-            console.log(error?.debugDump);
-            router.push({ name: 'Home' });
-          }
-        "
-      >
-        Send Crash Report
-      </UiButton>
-    </div>
-    <div v-else>
-      <p>
-        The game received an illegal action. If the issue persist, try
-        restarting the game.
-      </p>
-      <code class="block my-4">
-        {{ error?.error }}
-      </code>
-
-      <UiButton
-        class="error-button"
-        @click="
-          () => {
-            error = null;
-          }
-        "
-      >
-        Dismiss
-      </UiButton>
-    </div>
-  </UiModal>
+  <GameErrorModal />
 </template>
 
 <style scoped lang="postcss">
-code {
-  white-space: pre-wrap;
-  max-height: var(--size-13);
-  overflow-y: auto;
-}
 .board-perspective-wrapper {
   perspective: 2500px;
   perspective-origin: center top;

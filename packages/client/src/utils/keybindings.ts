@@ -5,6 +5,30 @@ export const defaultKeyBindings = {
     label: 'Shows / hides your hand',
     control: { key: 'KeyC', modifier: null }
   },
+  toggleDiscardPile: {
+    label: 'Shows / hides the discard pile',
+    control: { key: 'KeyD', modifier: null }
+  },
+  toggleOpponentDiscardPile: {
+    label: "Shows / hides your opponent's discard pile",
+    control: { key: 'KeyD', modifier: 'shift' }
+  },
+  toggleBanishPile: {
+    label: 'Shows / hides the banish pile',
+    control: { key: 'KeyF', modifier: null }
+  },
+  toggleOpponentBanishPile: {
+    label: "Shows / hides your opponent's banish pile",
+    control: { key: 'KeyF', modifier: 'shift' }
+  },
+  toggleDestinyDeck: {
+    label: 'Shows / hides the destiny deck',
+    control: { key: 'KeyG', modifier: null }
+  },
+  interactHero: {
+    label: 'Select your hero',
+    control: { key: 'KeyH', modifier: null }
+  },
   interactCardInHand1: {
     label: 'Play / select the 1st card in your hand',
     control: { key: 'Digit1', modifier: null }

@@ -209,7 +209,7 @@ const classes = computed(() => {
   } */
 
 .selected {
-  filter: brightnes(1.2);
+  box-shadow: 0 0 0.5rem hsl(200 100% 50% / 0.75);
 }
 
 .game-card {
