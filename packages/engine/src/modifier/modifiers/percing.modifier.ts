@@ -10,10 +10,10 @@ import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { Modifier } from '../modifier.entity';
 import type { ModifierMixin } from '../modifier-mixin';
+import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import { PiercingAOE } from '../../card/attack-aoe';
 
 export class PiercingModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
-  private behind: Nullable<MinionCard>;
-
   constructor(
     game: Game,
     source: AnyCard,
@@ -26,38 +26,10 @@ export class PiercingModifier<T extends MinionCard | HeroCard> extends Modifier<
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.PIERCING),
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE,
-          handler: async event => {
-            if (!event.data.card.equals(this.target)) return;
-            if (!isMinion(event.data.target)) return;
-            this.behind = event.data.target.slot?.behind?.minion;
-          }
-        }),
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
-          handler: async event => {
-            if (!event.data.card.equals(this.target)) return;
-            if (!isMinion(event.data.target)) return;
-            this.behind = event.data.target.slot?.behind?.minion;
-          }
-        }),
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE,
-          handler: async event => {
-            if (!event.data.card.equals(this.target)) return;
-            if (!isMinion(event.data.target)) return;
-            await this.behind?.takeDamage(this.target, event.data.damage);
-            this.behind = null;
-          }
-        }),
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
-          handler: async event => {
-            if (!event.data.card.equals(this.target)) return;
-            if (!isMinion(event.data.target)) return;
-            await this.behind?.takeDamage(this.target, event.data.damage);
-            this.behind = null;
+        new UnitInterceptorModifierMixin(game, {
+          key: 'attackAOEs',
+          interceptor: value => {
+            return [...value, new PiercingAOE()];
           }
         }),
         ...(mixins ?? [])

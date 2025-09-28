@@ -1,12 +1,18 @@
 import { rustyBlade } from '@game/engine/src/card/sets/core/artifacts/rusty-blade';
+import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
+import { aidenLv2 } from '@game/engine/src/card/sets/core/heroes/aiden-lv2';
 import { courageousFootsoldier } from '@game/engine/src/card/sets/core/minions/courageous-footsoldier';
 import { flagBearerOfFlame } from '@game/engine/src/card/sets/core/minions/flag-bearer-of-flame';
 import { flameJuggler } from '@game/engine/src/card/sets/core/minions/flame-juggler';
+import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlySlime';
 import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
+import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
+import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
 import { fireBolt } from '@game/engine/src/card/sets/core/spells/fire-bolt';
 import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
 import { knightsInspiration } from '@game/engine/src/card/sets/core/spells/knights-inspiration';
+import { slimesToTheRescue } from '@game/engine/src/card/sets/core/spells/slimes-to-the-rescue';
 import type { GameOptions } from '@game/engine/src/game/game';
 
 export type PremadeDeck = {
@@ -63,11 +69,31 @@ export const premadeDecks: Array<PremadeDeck> = [
         flameJuggler.id,
         flameJuggler.id,
         flameJuggler.id,
-        flameJuggler.id
+        flameJuggler.id,
+
+        sharpShooter.id,
+        sharpShooter.id,
+        sharpShooter.id,
+        sharpShooter.id,
+
+        friendlySlime.id,
+        friendlySlime.id,
+        friendlySlime.id,
+        friendlySlime.id,
+
+        slimesToTheRescue.id,
+        slimesToTheRescue.id,
+        slimesToTheRescue.id,
+        slimesToTheRescue.id,
+
+        pyreboundLancer.id,
+        pyreboundLancer.id,
+        pyreboundLancer.id,
+        pyreboundLancer.id
       ]
     },
     destinyDeck: {
-      cards: ['aiden-lv1']
+      cards: [aidenLv1.id, aidenLv2.id]
     }
   }
 ];

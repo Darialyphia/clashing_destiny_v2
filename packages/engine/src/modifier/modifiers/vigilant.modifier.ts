@@ -8,37 +8,26 @@ import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
-  private hasAttackedThisturn = false;
-
+export class VigilantModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
   constructor(
     game: Game,
     source: AnyCard,
     options: { mixins?: ModifierMixin<T>[] } = { mixins: [] }
   ) {
-    super(KEYWORDS.DOUBLE_ATTACK.id, game, source, {
-      icon: 'keyword-double-attack',
-      name: KEYWORDS.DOUBLE_ATTACK.name,
-      description: KEYWORDS.DOUBLE_ATTACK.description,
+    super(KEYWORDS.VIGILANT.id, game, source, {
+      icon: 'keyword-vigilant',
+      name: KEYWORDS.VIGILANT.name,
+      description: KEYWORDS.VIGILANT.description,
       isUnique: true,
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: 'combat.after-resolve-combat',
+          eventName: GAME_EVENTS.AFTER_RESOLVE_COMBAT,
           handler: async event => {
-            if (!event.data.attacker.equals(this.target)) return;
+            if (!event.data.target.equals(this.target)) return;
 
-            if (this.hasAttackedThisturn) return;
-
-            if (event.data.attacker.isAlive) {
-              await event.data.attacker.wakeUp();
-              this.hasAttackedThisturn = true;
+            if (event.data.target.isAlive) {
+              await event.data.target.wakeUp();
             }
-          }
-        }),
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.PLAYER_END_TURN,
-          handler: async () => {
-            this.hasAttackedThisturn = false;
           }
         }),
         ...(options.mixins || [])

@@ -14,6 +14,7 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellSchoolAffinityModifier } from '../../../../modifier/modifiers/spell-school-affinity.modifier';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 
 export const flagBearerOfFlame: MinionBlueprint = {
   id: 'flagbearer-of-flame',
@@ -21,7 +22,7 @@ export const flagBearerOfFlame: MinionBlueprint = {
   cardIconId: 'minions/flag-bearer-of-flame',
   description: dedent`
   The ally in front of this minion has +1@[attack]@.
-  @Fire Affinity@: it has +2@[attack]@ instead.,
+  @[level] 2+ bonus@: @Fire Affinity@: it has +2@[attack]@ instead.,
   `,
   collectable: true,
   unique: false,
@@ -43,15 +44,19 @@ export const flagBearerOfFlame: MinionBlueprint = {
       new SpellSchoolAffinityModifier(game, card, SPELL_SCHOOLS.FIRE)
     )) as SpellSchoolAffinityModifier<MinionCard>;
 
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 2)
+    )) as LevelBonusModifier<MinionCard>;
+
     const attackBuff = new Modifier<MinionCard>('flag-bearer-of-flame-buff', game, card, {
       icon: 'keyword-attack-buff',
       name: 'Flag Bearer of Flame',
-      description: () => `+${affinityMod.isActive ? 2 : 1} Attack`,
+      description: () => `+${affinityMod.isActive && levelMod.isActive ? 2 : 1} Attack`,
       mixins: [
         new MinionInterceptorModifierMixin(game, {
           key: 'atk',
           interceptor: value => {
-            return value + (affinityMod.isActive ? 2 : 1);
+            return value + (affinityMod.isActive && levelMod.isActive ? 2 : 1);
           }
         })
       ]

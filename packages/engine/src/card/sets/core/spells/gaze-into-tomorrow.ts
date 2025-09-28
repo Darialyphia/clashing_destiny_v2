@@ -17,7 +17,7 @@ export const gazeIntoTomorrow: SpellBlueprint = {
   cardIconId: 'spells/gaze-into-tomorrow',
   description: dedent`
   @Scry 1@, then draw a card.
-  @[level] 2+ bonus@: @Echoed Destiny@.
+  @[level] 1+ bonus@: @Echoed Destiny@.
   `,
   collectable: true,
   unique: false,
@@ -33,7 +33,7 @@ export const gazeIntoTomorrow: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
+    await card.modifiers.add(new LevelBonusModifier(game, card, 1));
     await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay(game, card) {

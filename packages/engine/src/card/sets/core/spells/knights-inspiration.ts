@@ -14,13 +14,13 @@ export const knightsInspiration: SpellBlueprint = {
   id: 'knights-inspiration',
   name: "Knight's Inspiration",
   cardIconId: 'spells/knights-inspiration',
-  description: 'Give friendly minions +1 @[attack]@ and +2 @[health]@.',
+  description: 'Give friendly minions +2 @[attack]@ and +2 @[health]@.',
   collectable: true,
   unique: false,
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
   spellSchool: null,
-  job: HERO_JOBS.WARRIOR,
+  job: HERO_JOBS.KNIGHT,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
@@ -34,7 +34,7 @@ export const knightsInspiration: SpellBlueprint = {
       await minion.modifiers.add(
         new SimpleAttackBuffModifier('knights-inspiration-atk', game, card, {
           name: "Knight's Inspiration",
-          amount: 1
+          amount: 2
         })
       );
       await minion.modifiers.add(

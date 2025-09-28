@@ -93,7 +93,7 @@ export const KEYWORDS = {
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'This unit does not exhaust when counterattacking.',
+    description: 'After it counterattacks, wake up this unit.',
     aliases: []
   },
   FLEETING: {
@@ -241,6 +241,14 @@ export const KEYWORDS = {
       'This card is not recollected after your Destiny Phase and is sent to the discard pile instead. If the condition is met while this card is in your Destiny zone, it is played for free.',
     aliases: []
   },
+  RANGED: {
+    id: 'ranged',
+    name: 'Ranged',
+    description:
+      'This minion can attack minions in the back row even if they are behind another minion. When attacking from the back-row, non ranged minions cannot counterattack.',
+    aliases: []
+  },
+
   MILL: {
     id: 'mill',
     name: 'Mill (X)',

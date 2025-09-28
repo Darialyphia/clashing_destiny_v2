@@ -23,7 +23,7 @@ export class CleaveAOE implements AttackAOE {
   }
 }
 
-export class ChargeAOE implements AttackAOE {
+export class PiercingAOE implements AttackAOE {
   getAffectedCards(position: BoardMinionSlot) {
     return match(position.zone)
       .with(MINION_SLOT_ZONES.FRONT_ROW, () => {
@@ -33,5 +33,11 @@ export class ChargeAOE implements AttackAOE {
         return [position.minion, position.inFront?.minion].filter(isDefined);
       })
       .exhaustive();
+  }
+}
+
+export class BlastAOE implements AttackAOE {
+  getAffectedCards(position: BoardMinionSlot) {
+    return [position.minion, ...position.adjacentMinions].filter(isDefined);
   }
 }

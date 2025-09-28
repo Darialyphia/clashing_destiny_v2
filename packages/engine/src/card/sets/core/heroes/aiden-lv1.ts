@@ -13,7 +13,7 @@ import {
 
 export const aidenLv1: HeroBlueprint = {
   id: 'aiden-lv1',
-  name: "Aiden, Crown's Vanguard",
+  name: "Aiden, Crusader's Heir",
   description: '',
   cardIconId: 'heroes/aiden-lv1',
   kind: CARD_KINDS.HERO,
@@ -29,11 +29,11 @@ export const aidenLv1: HeroBlueprint = {
   lineage: null,
   spellPower: 0,
   atk: 0,
-  maxHp: 20,
+  maxHp: 19,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {
-      id: 'knight-ability-1',
+      id: 'aiden-lv1-ability',
       canUse(game, card) {
         return (
           card.player.artifactManager.artifacts.length <

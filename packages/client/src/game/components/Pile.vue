@@ -1,10 +1,17 @@
 <script setup lang="ts">
 const { size } = defineProps<{ size: number }>();
+
+const maxSize = 25;
 </script>
 
 <template>
   <div class="pile">
-    <div v-for="i in size" :key="i" class="pile-item" :style="{ '--i': i - 1 }">
+    <div
+      v-for="i in Math.min(size, maxSize)"
+      :key="i"
+      class="pile-item"
+      :style="{ '--i': i - 1 }"
+    >
       <slot :index="i - 1" />
     </div>
 

@@ -106,6 +106,14 @@ export const provideCardList = () => {
             return a.manaCost - b.manaCost;
           }
 
+          if (
+            a.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+            b.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+            a.destinyCost !== b.destinyCost
+          ) {
+            return a.destinyCost - b.destinyCost;
+          }
+
           return a.name
             .toLocaleLowerCase()
             .localeCompare(b.name.toLocaleLowerCase());
