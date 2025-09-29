@@ -12,6 +12,7 @@ export const matchmakingSchemas = {
     userId: v.id('users'),
     matchmakingId: v.id('matchmaking'),
     deckId: v.id('decks'),
+    mmr: v.number(),
     joinedAt: v.number()
   })
     .index('by_userId', ['userId'])

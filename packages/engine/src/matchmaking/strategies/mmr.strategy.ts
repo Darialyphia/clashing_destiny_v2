@@ -1,7 +1,8 @@
 import type { MatchmakingStrategy, MatchmakingParticipant } from '../matchmaking';
 
-export type MMRMatchmakingParticipant = {
+export type MMRMatchmakingParticipant<TMeta> = {
   id: string;
+  meta: TMeta;
   mmr: number;
   recentWinrate: number;
   winStreak: number;
@@ -77,8 +78,8 @@ export function createMMRMatchmakingOptions(
   };
 }
 
-export class MMRMatchmakingStrategy
-  implements MatchmakingStrategy<MMRMatchmakingParticipant>
+export class MMRMatchmakingStrategy<TMeta>
+  implements MatchmakingStrategy<MMRMatchmakingParticipant<TMeta>>
 {
   constructor(private options: MMRMatchmakingOptions) {}
 
@@ -87,15 +88,15 @@ export class MMRMatchmakingStrategy
   }
 
   sorter(
-    a: MatchmakingParticipant<MMRMatchmakingParticipant>,
-    b: MatchmakingParticipant<MMRMatchmakingParticipant>
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
   ): number {
     return a.data.mmr - b.data.mmr;
   }
 
   matcher(
-    a: MatchmakingParticipant<MMRMatchmakingParticipant>,
-    b: MatchmakingParticipant<MMRMatchmakingParticipant>
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
   ): boolean {
     return (
       this.calculateWeightedMatchScore(a, b) >= this.options.matching.minimumMatchScore
@@ -103,8 +104,8 @@ export class MMRMatchmakingStrategy
   }
 
   private calculateWeightedMatchScore(
-    a: MatchmakingParticipant<MMRMatchmakingParticipant>,
-    b: MatchmakingParticipant<MMRMatchmakingParticipant>
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
   ): number {
     const weights = this.options.matching.weights;
     let totalScore = 0;
@@ -147,8 +148,8 @@ export class MMRMatchmakingStrategy
   }
 
   getMatchQuality(
-    a: MatchmakingParticipant<MMRMatchmakingParticipant>,
-    b: MatchmakingParticipant<MMRMatchmakingParticipant>
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
   ): {
     totalScore: number;
     breakdown: {
@@ -197,7 +198,7 @@ export class MMRMatchmakingStrategy
     };
   }
 
-  getTolerance(participant: MatchmakingParticipant<MMRMatchmakingParticipant>) {
+  getTolerance(participant: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>) {
     const timeSpentInSeconds = (Date.now() - participant.joinedAt) / 1000;
 
     return timeSpentInSeconds >
@@ -210,15 +211,22 @@ export class MMRMatchmakingStrategy
       : this.options.tolerance.minTolerance;
   }
 
-  processUnmatched(participant: MMRMatchmakingParticipant): MMRMatchmakingParticipant {
+  processUnmatched(
+    participant: MMRMatchmakingParticipant<TMeta>
+  ): MMRMatchmakingParticipant<TMeta> {
     return participant;
   }
 
-  equals(a: MMRMatchmakingParticipant, b: MMRMatchmakingParticipant): boolean {
+  equals(
+    a: MMRMatchmakingParticipant<TMeta>,
+    b: MMRMatchmakingParticipant<TMeta>
+  ): boolean {
     return a.id === b.id;
   }
 
-  getBucket(participant: MatchmakingParticipant<MMRMatchmakingParticipant>): string {
+  getBucket(
+    participant: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ): string {
     const mmrBucket = Math.floor(
       participant.data.mmr / this.options.performance.mmrBucketSize
     );
@@ -241,7 +249,7 @@ export class MMRMatchmakingStrategy
   }
 
   getMaxSearchDistance(
-    participant: MatchmakingParticipant<MMRMatchmakingParticipant>
+    participant: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
   ): number {
     // Estimate how many players we need to check based on tolerance
     // Higher tolerance = wider search, but cap it for performance

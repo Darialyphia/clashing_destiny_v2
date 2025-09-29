@@ -67,7 +67,6 @@ export const unyieldingShield: ArtifactBlueprint = {
       new Modifier<ArtifactCard>('unyielding-shield', game, card, {
         mixins: [
           new AuraModifierMixin(game, {
-            canSelfApply: false,
             isElligible(candidate) {
               if (card.location !== 'board') return false;
               return candidate.equals(card.player.hero);

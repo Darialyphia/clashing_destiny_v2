@@ -22,4 +22,8 @@ export class MatchmakingUser extends Entity<
   get joinedAt() {
     return this.data.joinedAt;
   }
+
+  get mmr() {
+    return this.data.mmr;
+  }
 }

@@ -31,6 +31,9 @@ const buildPaths = async () => {
     }
 
     return effect.targets.map(target => {
+      const boardRect =
+        ui.value.DOMSelectors.board.element!.getBoundingClientRect();
+
       const startRect = document
         .querySelector(
           ui.value.DOMSelectors.cardInEffectChain(effect.source).selector
@@ -55,12 +58,12 @@ const buildPaths = async () => {
       if (!startRect || !endRect) return '';
 
       const start = {
-        x: startRect.left + startRect.width / 2,
-        y: startRect.top + startRect.height / 2
+        x: startRect.left + startRect.width / 2 - boardRect.left,
+        y: startRect.top + startRect.height / 2 - boardRect.top
       };
       const end = {
-        x: endRect.left + endRect.width / 2,
-        y: endRect.top + endRect.height / 2
+        x: endRect.left + endRect.width / 2 - boardRect.left,
+        y: endRect.top + endRect.height / 2 - boardRect.top
       };
       const highest = Math.min(start.y, end.y);
       const halfX = (start.x + end.x) / 2;

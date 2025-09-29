@@ -1,3 +1,4 @@
+import { amuletOfRemembrance } from '@game/engine/src/card/sets/core/artifacts/amulet-of-remembrance';
 import { rustyBlade } from '@game/engine/src/card/sets/core/artifacts/rusty-blade';
 import { unyieldingShield } from '@game/engine/src/card/sets/core/artifacts/unyielding-shield';
 import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
@@ -14,6 +15,7 @@ import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshoot
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
 import { fatedOath } from '@game/engine/src/card/sets/core/spells/fated-oath';
 import { fireBolt } from '@game/engine/src/card/sets/core/spells/fire-bolt';
+import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
 import { knightsInspiration } from '@game/engine/src/card/sets/core/spells/knights-inspiration';
 import { reposition } from '@game/engine/src/card/sets/core/spells/reposition';
@@ -113,7 +115,9 @@ export const premadeDecks: Array<PremadeDeck> = [
         aidenLv2.id,
         aidenLv3.id,
         unyieldingShield.id,
-        fatedOath.id
+        fatedOath.id,
+        amuletOfRemembrance.id,
+        flamingFrenzy.id
       ]
     }
   }

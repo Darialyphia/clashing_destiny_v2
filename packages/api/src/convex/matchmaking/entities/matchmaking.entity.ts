@@ -16,6 +16,7 @@ export type MatchmakingData = {
 
 export type MatchmakingId = Id<'matchmaking'>;
 export type MatchmakingDoc = Doc<'matchmaking'>;
+
 export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
   private has(user: MatchmakingUser) {
     return this.data.matchmakingUsers.some(u => u.equals(user));
@@ -60,10 +61,24 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
   }
 
   matchParticipants() {
-    const strategy = new MMRMatchmakingStrategy(createMMRMatchmakingOptions());
+    const strategy = new MMRMatchmakingStrategy<MatchmakingUser>(
+      createMMRMatchmakingOptions()
+    );
     const matchmaking = new GameMatchmaking(strategy);
     this.participants.forEach(user => {
-      matchmaking.join({} as any, user.joinedAt);
+      matchmaking.join(
+        {
+          id: user.id as string,
+          isDemotionGame: false,
+          isPromotionGame: false,
+          lossStreak: 0,
+          meta: user,
+          mmr: user.mmr,
+          recentWinrate: 0,
+          winStreak: 0
+        },
+        user.joinedAt
+      );
     });
 
     const { pairs, remaining } = matchmaking.makePairs();

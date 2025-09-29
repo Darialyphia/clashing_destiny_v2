@@ -247,7 +247,7 @@ const classes = computed(() => {
   position: relative;
 
   &.exhausted {
-    filter: grayscale(0.4) brightness(0.8);
+    filter: grayscale(0.4) brightness(0.6);
     transform: none;
   }
   &.targetable {

@@ -21,6 +21,8 @@ const buildArrowBetweenTwoCards = (
   card2: string,
   biasY: number
 ) => {
+  const boardRect =
+    ui.value.DOMSelectors.board.element!.getBoundingClientRect();
   const startRect = document
     .querySelector(ui.value.DOMSelectors.cardOnBoard(card1).selector)
     ?.getBoundingClientRect();
@@ -31,12 +33,12 @@ const buildArrowBetweenTwoCards = (
   if (!startRect || !endRect) return '';
 
   const start = {
-    x: Math.round(startRect.left + startRect.width / 2),
-    y: Math.round(startRect.top + startRect.height / 2)
+    x: Math.round(startRect.left + startRect.width / 2 - boardRect.left),
+    y: Math.round(startRect.top + startRect.height / 2 - boardRect.top)
   };
   const end = {
-    x: Math.round(endRect.left + endRect.width / 2),
-    y: Math.round(endRect.top + endRect.height / 2)
+    x: Math.round(endRect.left + endRect.width / 2 - boardRect.left),
+    y: Math.round(endRect.top + endRect.height / 2 - boardRect.top)
   };
 
   const highest = Math.min(start.y, end.y);

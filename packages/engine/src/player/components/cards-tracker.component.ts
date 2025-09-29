@@ -1,4 +1,5 @@
 import { isDestinyDeckCard } from '../../board/board.system';
+import { isMinion } from '../../card/card-utils';
 import type { CardKind } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
@@ -12,6 +13,7 @@ export type PlayedCard<T extends AnyCard = AnyCard> = {
 
 export class CardTrackerComponent {
   private cardsPlayedByGameTurn = new Map<number, PlayedCard[]>();
+  private minionsDestroyedByGameTurn = new Map<number, PlayedCard[]>();
 
   constructor(
     private game: Game,
@@ -30,10 +32,26 @@ export class CardTrackerComponent {
         card: event.data.card
       });
     });
+    game.on(GAME_EVENTS.CARD_AFTER_DESTROY, event => {
+      if (!event.data.card.player.equals(this.player)) return;
+      if (!isMinion(event.data.card)) return;
+      const turn = game.turnSystem.elapsedTurns;
+      if (!this.minionsDestroyedByGameTurn.has(turn)) {
+        this.minionsDestroyedByGameTurn.set(turn, []);
+      }
+      this.minionsDestroyedByGameTurn.get(turn)?.push({
+        player: event.data.card.player,
+        card: event.data.card
+      });
+    });
   }
 
   get cardsPlayedThisGameTurn() {
     return this.cardsPlayedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
+  }
+
+  get minionsDestroyedThisGameTurn() {
+    return this.minionsDestroyedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
   }
 
   getCardsPlayedThisGameTurnOfKind<

@@ -45,8 +45,8 @@ useGameKeyboardControls();
   <SVGFilters />
   <DestinyCostVFX />
   <ChooseCardModal />
-  <CombatArrows />
   <PlayedCard />
+  <CombatArrows />
 
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">
@@ -205,9 +205,9 @@ useGameKeyboardControls();
       <OpponentHand class="opponent-hand" />
       <Hand class="my-hand" />
       <ActionsButtons />
+      <div class="arrows" id="arrows" />
     </div>
   </div>
-  <div class="arrows" id="arrows" />
 
   <GameErrorModal />
 </template>

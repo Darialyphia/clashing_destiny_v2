@@ -1,5 +1,6 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
+import { amuletOfRemembrance } from './core/artifacts/amulet-of-remembrance';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { unyieldingShield } from './core/artifacts/unyielding-shield';
 import { aidenLv1 } from './core/heroes/aiden-lv1';
@@ -17,6 +18,7 @@ import { sharpShooter } from './core/minions/sharpshooter';
 import { shieldMaiden } from './core/minions/shield-maiden';
 import { fatedOath } from './core/spells/fated-oath';
 import { fireBolt } from './core/spells/fire-bolt';
+import { flamingFrenzy } from './core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { knightsInspiration } from './core/spells/knights-inspiration';
 import { reposition } from './core/spells/reposition';
@@ -46,6 +48,8 @@ export const coreSet: CardSet = {
     unyieldingShield,
     reposition,
     fatedOath,
-    hougenThePunisher
+    hougenThePunisher,
+    amuletOfRemembrance,
+    flamingFrenzy
   ]
 };

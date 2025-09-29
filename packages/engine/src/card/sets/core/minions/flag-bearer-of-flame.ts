@@ -65,7 +65,6 @@ export const flagBearerOfFlame: MinionBlueprint = {
       new Modifier<MinionCard>('flag-bearer-of-flame-aura', game, card, {
         mixins: [
           new AuraModifierMixin(game, {
-            canSelfApply: false,
             isElligible(candidate) {
               if (candidate.location !== 'board') return false;
               if (card.location !== 'board') return false;

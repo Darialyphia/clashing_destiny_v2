@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   useFxEvent,
+  useGameClient,
   useGameState,
   useGameUi,
   useMyBoard
@@ -21,7 +22,20 @@ import type { ShallowRef } from 'vue';
 const state = useGameState();
 const myBoard = useMyBoard();
 const ui = useGameUi();
+const { client } = useGameClient();
 
+onMounted(() => {
+  if (myBoard.value.playerId === client.value.getActivePlayerId()) {
+    ui.value.isHandExpanded = true;
+  }
+});
+useFxEvent(FX_EVENTS.TURN_INITATIVE_CHANGE, e => {
+  nextTick(() => {
+    if (e.newInitiativePlayer === myBoard.value.playerId) {
+      ui.value.isHandExpanded = true;
+    }
+  });
+});
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const newCard = e.card as SerializedCard;
   if (newCard.player !== myBoard.value.playerId) return;
@@ -221,6 +235,7 @@ watch(
     left: 50%;
     width: 80%;
     transform: translateX(-50%);
+    z-index: 2;
   }
 }
 

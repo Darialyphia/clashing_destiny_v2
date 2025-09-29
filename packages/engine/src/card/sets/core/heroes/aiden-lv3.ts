@@ -51,7 +51,6 @@ export const aidenLv3: HeroBlueprint = {
       new Modifier<HeroCard>('aiden-lv3-aura', game, card, {
         mixins: [
           new AuraModifierMixin(game, {
-            canSelfApply: false,
             isElligible(candidate) {
               if (card.location !== 'board') return false;
               return isMinion(candidate) && candidate.isAlly(card);

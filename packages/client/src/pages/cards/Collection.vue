@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // import { domToPng } from 'modern-screenshot';
 import { useCollectionPage } from './useCollectionPage';
-import { vIntersectionObserver } from '@vueuse/components';
 import CollectionCard from './CollectionCard.vue';
 import { useIntersectionObserver } from '@vueuse/core';
 

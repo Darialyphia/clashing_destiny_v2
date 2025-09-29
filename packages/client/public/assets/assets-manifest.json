@@ -88,6 +88,19 @@
       "assets": [
         {
           "alias": [
+            "amulet-of-remembrance.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/amulet-of-remembrance.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "rusty-blade.png"
           ],
           "src": [
@@ -349,6 +362,19 @@
           ],
           "src": [
             "/assets/cards/spells/fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flaming-frenzy.png"
+          ],
+          "src": [
+            "/assets/cards/spells/flaming-frenzy.png"
           ],
           "data": {
             "tags": {

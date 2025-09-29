@@ -279,6 +279,7 @@ export class Player
       GAME_EVENTS.PLAYER_START_TURN,
       new PlayerTurnEvent({ player: this })
     );
+    this.hasPlayedDestinyCardThisTurn = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       await card.wakeUp();
     }

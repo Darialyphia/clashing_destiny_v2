@@ -77,16 +77,19 @@ export class MatchmakingUserRepository {
   async create({
     matchmakingId,
     userId,
-    deckId
+    deckId,
+    mmr
   }: {
     matchmakingId: Id<'matchmaking'>;
     userId: Id<'users'>;
     deckId: Id<'decks'>;
+    mmr: number;
   }) {
     return this.db.insert('matchmakingUsers', {
       matchmakingId,
       userId,
       deckId,
+      mmr,
       joinedAt: Date.now()
     });
   }
@@ -96,6 +99,7 @@ export class MatchmakingUserRepository {
       matchmakingId: matchmakingUser.matchmakingId,
       userId: matchmakingUser.userId,
       deckId: matchmakingUser.deckId,
+      mmr: matchmakingUser.mmr,
       joinedAt: matchmakingUser.joinedAt
     });
   }

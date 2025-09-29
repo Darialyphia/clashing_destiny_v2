@@ -63,9 +63,14 @@ export class JoinMatchmakingUseCase extends UseCase<
 
     await this.leaveIfNeeded();
 
+    const user = await this.userRepo.getById(this.session.userId);
+    if (!user) {
+      throw new DomainError('User not found');
+    }
     await this.matchmakingUserRepo.create({
       matchmakingId: matchmaking.id,
       userId: this.session.userId,
+      mmr: user.mmr,
       deckId: input.deckId
     });
 
