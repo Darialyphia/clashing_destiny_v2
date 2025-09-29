@@ -190,7 +190,7 @@ export const KEYWORDS = {
   SEAL: {
     id: 'seal',
     name: 'Seal',
-    description: 'This ability cannot be used.',
+    description: 'Once sealed, this ability can no longer be used.',
     aliases: []
   },
   DOUBLE_ATTACK: {
@@ -211,6 +211,13 @@ export const KEYWORDS = {
     name: 'Intercept',
     description:
       "When an adjacent ally minion is attacked, at flash speed, you may swap this minion's position with the attack target, and have the attack target this minion instead.",
+    aliases: []
+  },
+  HERO_INTERCEPT: {
+    id: 'hero-intercept',
+    name: 'Hero Intercept',
+    description:
+      'When your hero is attacked, at flash speed, you may redirect the attack to this minion instead.',
     aliases: []
   },
   TRAP: {

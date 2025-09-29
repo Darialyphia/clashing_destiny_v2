@@ -17,6 +17,7 @@ import { fatedOath } from '@game/engine/src/card/sets/core/spells/fated-oath';
 import { fireBolt } from '@game/engine/src/card/sets/core/spells/fire-bolt';
 import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
+import { grandCross } from '@game/engine/src/card/sets/core/spells/grand-cross';
 import { knightsInspiration } from '@game/engine/src/card/sets/core/spells/knights-inspiration';
 import { reposition } from '@game/engine/src/card/sets/core/spells/reposition';
 import { slimesToTheRescue } from '@game/engine/src/card/sets/core/spells/slimes-to-the-rescue';
@@ -60,10 +61,7 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         knightsInspiration.id,
         knightsInspiration.id,
-        knightsInspiration.id,
-        knightsInspiration.id,
 
-        hotHeadedRecruit.id,
         hotHeadedRecruit.id,
         hotHeadedRecruit.id,
         hotHeadedRecruit.id,
@@ -90,23 +88,21 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         slimesToTheRescue.id,
         slimesToTheRescue.id,
-        slimesToTheRescue.id,
-        slimesToTheRescue.id,
 
         pyreboundLancer.id,
         pyreboundLancer.id,
         pyreboundLancer.id,
         pyreboundLancer.id,
 
-        reposition.id,
-        reposition.id,
         reposition.id,
         reposition.id,
 
         hougenThePunisher.id,
         hougenThePunisher.id,
         hougenThePunisher.id,
-        hougenThePunisher.id
+
+        grandCross.id,
+        grandCross.id
       ]
     },
     destinyDeck: {

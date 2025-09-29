@@ -550,6 +550,27 @@ export class MinionCard extends Card<
     return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
   }
 
+  private async summon(position: MinionPosition) {
+    if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
+      await this.dispose();
+      return;
+    }
+
+    this.player.boardSide.summonMinion(this, position.zone, position.slot);
+    await this.blueprint.onPlay(this.game, this);
+
+    await this.game.emit(
+      MINION_EVENTS.MINION_SUMMONED,
+      new MinionSummonedEvent({ card: this, position })
+    );
+
+    if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
+      await (this as MinionCard).modifiers.add(
+        new SummoningSicknessModifier(this.game, this)
+      );
+    }
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
@@ -564,28 +585,17 @@ export class MinionCard extends Card<
   async playAt(position: MinionPosition, onResolved?: () => MaybePromise<void>) {
     await this.insertInChainOrExecute(
       async () => {
-        if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
-          await this.dispose();
-          return;
-        }
-
-        this.player.boardSide.summonMinion(this, position.zone, position.slot);
-        await this.blueprint.onPlay(this.game, this);
-
-        await this.game.emit(
-          MINION_EVENTS.MINION_SUMMONED,
-          new MinionSummonedEvent({ card: this, position })
-        );
-
-        if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
-          await (this as MinionCard).modifiers.add(
-            new SummoningSicknessModifier(this.game, this)
-          );
-        }
+        await this.summon(position);
       },
       [position],
       onResolved
     );
+  }
+
+  // immediately plays the minion regardless of current chain or interaction state
+  // this is useful when summoning minions as part of another card effect
+  playImmediatelyAt(position: MinionPosition) {
+    return this.resolve(() => this.summon(position));
   }
 
   private async promptForSummonPosition() {

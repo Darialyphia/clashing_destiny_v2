@@ -1,9 +1,7 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { multipleEmptyAllySlot, singleEnemyTargetRules } from '../../../card-utils';
+import { multipleEmptyAllySlot } from '../../../card-utils';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -12,7 +10,6 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { friendlySlime } from '../minions/friendlySlime';
-import { MINION_SLOT_ZONES } from '../../../../board/board;constants';
 import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { InterceptModifier } from '../../../../modifier/modifiers/intercept.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
@@ -36,7 +33,9 @@ export const slimesToTheRescue: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  canPlay: multipleEmptyAllySlot.canPlay(1),
+  canPlay: (game, card) =>
+    multipleEmptyAllySlot.canPlay(1)(game, card) &&
+    card.player.opponent.minions.length > card.player.minions.length,
   getPreResponseTargets(game, card) {
     return multipleEmptyAllySlot.getPreResponseTargets({
       min: 1,
@@ -47,7 +46,7 @@ export const slimesToTheRescue: SpellBlueprint = {
   async onPlay(game, card, targets) {
     for (const target of targets as MinionPosition[]) {
       const slime = await card.player.generateCard<MinionCard>(friendlySlime.id);
-      await slime.playAt(target);
+      await slime.playImmediatelyAt(target);
       await slime.modifiers.add(
         new InterceptModifier(game, slime, {
           mixins: [new UntilEndOfTurnModifierMixin(game)]

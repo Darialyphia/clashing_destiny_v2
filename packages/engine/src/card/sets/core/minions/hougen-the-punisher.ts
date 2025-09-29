@@ -24,7 +24,7 @@ export const hougenThePunisher: MinionBlueprint = {
   manaCost: 3,
   atk: 2,
   maxHp: 4,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   spellSchool: null,

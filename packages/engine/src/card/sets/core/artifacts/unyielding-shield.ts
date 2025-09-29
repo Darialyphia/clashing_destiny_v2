@@ -56,7 +56,8 @@ export const unyieldingShield: ArtifactBlueprint = {
         }),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
-          async handler() {
+          async handler(e) {
+            if (!e.data.card.equals(card.player.hero)) return;
             await card.loseDurability(1);
           }
         })

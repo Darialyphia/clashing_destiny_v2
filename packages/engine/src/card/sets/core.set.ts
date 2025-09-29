@@ -20,6 +20,7 @@ import { fatedOath } from './core/spells/fated-oath';
 import { fireBolt } from './core/spells/fire-bolt';
 import { flamingFrenzy } from './core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
+import { grandCross } from './core/spells/grand-cross';
 import { knightsInspiration } from './core/spells/knights-inspiration';
 import { reposition } from './core/spells/reposition';
 import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
@@ -50,6 +51,7 @@ export const coreSet: CardSet = {
     fatedOath,
     hougenThePunisher,
     amuletOfRemembrance,
-    flamingFrenzy
+    flamingFrenzy,
+    grandCross
   ]
 };

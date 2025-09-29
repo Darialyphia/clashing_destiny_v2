@@ -361,3 +361,30 @@ export const singleArtifactTargetRules = {
     });
   }
 };
+
+export const anyMinionSlot = {
+  canPlay: () => true,
+  getPreResponseTargets:
+    ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat: boolean }) =>
+    async (game: Game, card: AnyCard) => {
+      return await game.interaction.selectMinionSlot({
+        player: card.player,
+        isElligible(slot, selectedSlots) {
+          return allowRepeat
+            ? true
+            : !selectedSlots.some(
+                selected =>
+                  selected.player.equals(slot.player) &&
+                  selected.slot === slot.slot &&
+                  selected.zone === slot.zone
+              );
+        },
+        canCommit(selectedSlots) {
+          return selectedSlots.length >= min;
+        },
+        isDone(selectedSlots) {
+          return selectedSlots.length === max;
+        }
+      });
+    }
+};

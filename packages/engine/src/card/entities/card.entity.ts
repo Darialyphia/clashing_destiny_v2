@@ -241,6 +241,21 @@ export abstract class Card<
     );
   }
 
+  async resolve(handler: () => Promise<void>) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
+    this.updatePlayedAt();
+
+    await handler();
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardAfterPlayEvent({ card: this })
+    );
+  }
+
   protected async insertInChainOrExecute(
     handler: () => Promise<void>,
     targets: PreResponseTarget[],
@@ -251,18 +266,7 @@ export abstract class Card<
       source: this,
       targets,
       handler: async () => {
-        await this.game.emit(
-          CARD_EVENTS.CARD_BEFORE_PLAY,
-          new CardBeforePlayEvent({ card: this })
-        );
-        this.updatePlayedAt();
-
-        await handler();
-
-        await this.game.emit(
-          CARD_EVENTS.CARD_AFTER_PLAY,
-          new CardAfterPlayEvent({ card: this })
-        );
+        await this.resolve(handler);
       }
     };
 
@@ -270,11 +274,13 @@ export abstract class Card<
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
-
+    console.log('inserting', this.id, this.game.effectChainSystem.currentChain);
     if (this.game.effectChainSystem.currentChain) {
       if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
+        console.log('adding to current chain');
         await this.game.effectChainSystem.addEffect(effect, this.player);
       } else {
+        console.log('cannot add to current chain, resolve immediately');
         // this can happen if a card is played as part of an other card effect
         // the card wiill be played while the current chain is resolving, so let's just execute it immediately
         await effect.handler();

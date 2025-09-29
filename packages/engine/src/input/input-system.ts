@@ -212,7 +212,6 @@ export class InputSystem extends System<never> {
       } catch (err) {
         await this.handleError(err);
       }
-      await this.handleInput(input);
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
       // the currentinput could schedule new actions, so we need to wait for the flush

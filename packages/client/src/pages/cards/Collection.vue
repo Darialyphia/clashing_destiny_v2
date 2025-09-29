@@ -79,6 +79,7 @@ useIntersectionObserver(
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--min-column-size), 1fr));
   justify-items: center;
+  overflow-x: hidden;
   overflow-y: auto;
   align-content: start;
   padding-inline: var(--size-4);

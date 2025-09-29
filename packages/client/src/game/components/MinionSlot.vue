@@ -66,9 +66,11 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
 .minion-slot {
   --pixel-scale: 1;
   --padding: 2px;
-  border: solid 1px #985e25;
+  background: url('/assets/ui/board-small-card-slot.png') no-repeat center;
+  background-size: cover;
   width: calc(var(--card-small-width) + var(--padding) * 2);
   height: calc(var(--card-small-height) + var(--padding) * 2);
+  padding: var(--padding);
   &:not(:is(.attacking, .exhausted)):hover {
     border-color: var(--cyan-4);
   }
@@ -76,22 +78,11 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
     border-color: var(--red-4);
   }
   &.highlighted {
-    border-color: cyan;
+    background-image: url('/assets/ui/board-small-card-slot-targetable.png');
   }
   &.selected {
-    border-color: var(--yellow-5);
-    background: url('/assets/ui/minino-slot-selected.png') no-repeat center;
-  }
-
-  &.exhausted .slot-minion {
-    filter: grayscale(1) brightness(0.75);
-    /* rotate: 90deg; */
-  }
-}
-
-.slot-minion {
-  &.targetable {
-    filter: saturate(150%) drop-shadow(0 0 1px red);
+    background: url('/assets/ui/board-small-card-slot-selected.png') no-repeat
+      center;
   }
 }
 </style>

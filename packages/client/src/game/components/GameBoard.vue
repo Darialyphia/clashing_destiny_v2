@@ -101,7 +101,7 @@ useGameKeyboardControls();
       <div class="minions-zone">
         <div class="flex gap-3 h-full">
           <div class="minion-row">
-            <div>Back row</div>
+            <div>Back line</div>
             <MinionSlot
               v-for="slot in myBoard.backRow.slots"
               :key="slot.position"
@@ -109,7 +109,7 @@ useGameKeyboardControls();
             />
           </div>
           <div class="minion-row">
-            <div>Front row</div>
+            <div>Front line</div>
             <MinionSlot
               v-for="slot in myBoard.frontRow.slots"
               :key="slot.position"
@@ -120,7 +120,7 @@ useGameKeyboardControls();
 
         <div class="flex gap-3 h-full">
           <div class="minion-row">
-            <div>Front row</div>
+            <div>Front line</div>
 
             <MinionSlot
               v-for="slot in opponentBoard.frontRow.slots"
@@ -129,7 +129,7 @@ useGameKeyboardControls();
             />
           </div>
           <div class="minion-row">
-            <div>Back row</div>
+            <div>Back line</div>
             <MinionSlot
               v-for="slot in opponentBoard.backRow.slots"
               :key="slot.position"
