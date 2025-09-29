@@ -9,12 +9,14 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { AbilityDamage } from '../../../../utils/damage';
+import { UniqueModifier } from '../../../../modifier/modifiers/unique.modifier';
 
 export const hougenThePunisher: MinionBlueprint = {
   id: 'hougen-the-punisher',
   name: 'Hougen, the Punisher',
   cardIconId: 'minions/hougen-the-punisher',
   description: dedent`
+  @Unique@.
   @On Enter@ : Deal 3 damage to the minion in front of this.
   `,
   collectable: true,
@@ -33,6 +35,7 @@ export const hougenThePunisher: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new UniqueModifier(game, card));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
