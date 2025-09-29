@@ -159,12 +159,13 @@ export class CardDisposedEvent extends TypedSerializableEvent<
 }
 
 export class CardEffectTriggeredEvent extends TypedSerializableEvent<
-  { card: AnyCard },
-  { card: string }
+  { card: AnyCard; message: string },
+  { card: string; message: string }
 > {
   serialize() {
     return {
-      card: this.data.card.id
+      card: this.data.card.id,
+      message: this.data.message
     };
   }
 }

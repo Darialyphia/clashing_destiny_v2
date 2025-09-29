@@ -1,4 +1,5 @@
-import type { Values } from '@game/shared';
+import { uppercaseFirstLetter, type Values } from '@game/shared';
+import { HERO_JOBS, SPELL_SCHOOLS, type HeroJob, type SpellSchool } from './card.enums';
 
 export type Keyword = {
   id: string;
@@ -6,6 +7,8 @@ export type Keyword = {
   description: string;
   aliases: (string | RegExp)[];
 };
+
+type ToAffinityKeywordKey<T extends string> = `${Uppercase<T>}_AFFINITY`;
 
 export const KEYWORDS = {
   LINEAGE: {
@@ -160,54 +163,30 @@ export const KEYWORDS = {
       'Look at the top X cards of your deck, then put any number of them at the bottom of your deck.',
     aliases: [/scry [0-9]+/]
   },
-  AFFINITY_BONUS: {
-    id: 'affinity-bonus',
-    name: 'Affinity Bonus',
-    description: 'This card has a bonus effect if you have a hero with this affinity.',
-    aliases: [/affinity bonus \([a-z\s]+\)/]
-  },
-  FIRE_AFFINITY: {
-    id: 'fire-affinity',
-    name: 'Fire Affinity',
-    description: 'This card has a bonus effect if your hero has the Fire spell school.',
-    aliases: []
-  },
-  WATER_AFFINITY: {
-    id: 'water-affinity',
-    name: 'Water Affinity',
-    description: 'This card has a bonus effect if your hero has the Water spell school.',
-    aliases: []
-  },
-  EARTH_AFFINITY: {
-    id: 'earth-affinity',
-    name: 'Earth Affinity',
-    description: 'This card has a bonus effect if your hero has the Earth spell school.',
-    aliases: []
-  },
-  AIR_AFFINITY: {
-    id: 'air-affinity',
-    name: 'Air Affinity',
-    description: 'This card has a bonus effect if your hero has the Air spell school.',
-    aliases: []
-  },
-  LIGHT_AFFINITY: {
-    id: 'light-affinity',
-    name: 'Light Affinity',
-    description: 'This card has a bonus effect if your hero has the Light spell school.',
-    aliases: []
-  },
-  DARK_AFFINITY: {
-    id: 'dark-affinity',
-    name: 'Dark Affinity',
-    description: 'This card has a bonus effect if your hero has the Dark spell school.',
-    aliases: []
-  },
-  ARCANE_AFFINITY: {
-    id: 'arcane-affinity',
-    name: 'Arcane Affinity',
-    description: 'This card has a bonus effect if your hero has the Arcane spell school.',
-    aliases: []
-  },
+  ...Object.values(HERO_JOBS).reduce(
+    (acc, job) => {
+      acc[`${job}_affinity`.toUpperCase() as ToAffinityKeywordKey<typeof job>] = {
+        id: `${job.toLowerCase()}-affinity`,
+        name: `${uppercaseFirstLetter(job.toLowerCase())} Affinity`,
+        description: `This card has a bonus effect if your hero has the ${uppercaseFirstLetter(job.toLowerCase())} class.`,
+        aliases: []
+      };
+      return acc;
+    },
+    {} as Record<ToAffinityKeywordKey<HeroJob>, Keyword>
+  ),
+  ...Object.values(SPELL_SCHOOLS).reduce(
+    (acc, school) => {
+      acc[`${school}_affinity`.toUpperCase() as ToAffinityKeywordKey<typeof school>] = {
+        id: `${school.toLowerCase()}-affinity`,
+        name: `${uppercaseFirstLetter(school.toLowerCase())} Affinity`,
+        description: `This card has a bonus effect if your hero has the ${uppercaseFirstLetter(school.toLowerCase())} spell school.`,
+        aliases: []
+      };
+      return acc;
+    },
+    {} as Record<ToAffinityKeywordKey<SpellSchool>, Keyword>
+  ),
   SEAL: {
     id: 'seal',
     name: 'Seal',
@@ -267,6 +246,13 @@ export const KEYWORDS = {
     name: 'Stealth',
     description:
       'This unit cannot be targeted by attacks as long as it is not exhausted.',
+    aliases: []
+  },
+  PREEMPTIVE_RETALIATION: {
+    id: 'preemptive-retaliation',
+    name: 'Preemptive Retaliation',
+    description:
+      'When this minion is attacked and retaliates, it deals damage before the attacker.',
     aliases: []
   }
 };

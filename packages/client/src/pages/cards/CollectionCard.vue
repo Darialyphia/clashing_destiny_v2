@@ -69,14 +69,14 @@ const screenshot = async (e: MouseEvent) => {
 .collection-card {
   --transition-duration: 0.7s;
 
-  &:is(.v-enter-active, .v-leave-active) {
+  /* &:is(.v-enter-active, .v-leave-active) {
     transition: all var(--transition-duration) var(--ease-spring-3);
   }
 
   &:is(.v-enter-from, .v-leave-to) {
     transform: translateY(15px);
     opacity: 0.5;
-  }
+  } */
 }
 
 .card.disabled {

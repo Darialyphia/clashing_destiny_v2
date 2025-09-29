@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CountChip from './CountChip.vue';
+
 const { size } = defineProps<{ size: number }>();
 
 const maxSize = 25;
@@ -15,7 +17,7 @@ const maxSize = 25;
       <slot :index="i - 1" />
     </div>
 
-    <div class="count">{{ size }}</div>
+    <CountChip :count="size" class="absolute bottom-0 right-0" />
   </div>
 </template>
 
@@ -35,21 +37,5 @@ const maxSize = 25;
   background: url('/assets/ui/card-back-small.png') no-repeat;
   background-size: contain;
   transform: translateY(calc(var(--i) * -2.5px));
-}
-
-.count {
-  position: absolute;
-  bottom: 0%;
-  right: 0;
-  background: black;
-  border-radius: 50%;
-  width: var(--size-5);
-  height: var(--size-5);
-  display: grid;
-  place-content: center;
-  font-weight: bold;
-  font-size: var(--font-size-1);
-  color: #d7ad42;
-  border: solid var(--border-size-1) #bb8225;
 }
 </style>

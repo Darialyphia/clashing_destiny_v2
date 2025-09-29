@@ -14,7 +14,8 @@ import {
   CARD_KINDS,
   type SpellSchool,
   type CardKind,
-  type HeroJob
+  type HeroJob,
+  CARD_DECK_SOURCES
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
@@ -89,6 +90,9 @@ export class CardViewModel {
   }
 
   get manaCost() {
+    if (this.source === CARD_DECK_SOURCES.DESTINY_DECK) {
+      return null;
+    }
     if ('manaCost' in this.data) {
       return this.data.manaCost as number;
     }
@@ -103,6 +107,9 @@ export class CardViewModel {
   }
 
   get destinyCost() {
+    if (this.source === CARD_DECK_SOURCES.MAIN_DECK) {
+      return null;
+    }
     if ('destinyCost' in this.data) {
       return this.data.destinyCost as number;
     }

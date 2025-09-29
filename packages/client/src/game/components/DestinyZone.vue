@@ -10,6 +10,7 @@ import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import SmallCardBack from '@/card/components/SmallCardBack.vue';
+import CountChip from './CountChip.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -117,6 +118,11 @@ const displayedCards = computed(() => {
       </InspectableCard>
       <SmallCardBack v-else class="item" :style="{ '--index': index }" />
     </div>
+
+    <CountChip
+      :count="displayedCards.length"
+      class="absolute bottom-0 right-0"
+    />
   </div>
 </template>
 

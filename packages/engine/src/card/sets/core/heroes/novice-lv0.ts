@@ -11,7 +11,7 @@ import {
 export const noviceLv0: HeroBlueprint = {
   id: 'novice-lv0',
   name: 'Child of Destiny',
-  description: '@On Enter@: Draw 6 cards.',
+  description: '@On Enter@: Draw 7 cards.',
   collectable: false,
   level: 0,
   cardIconId: 'heroes/novice-lv0',
@@ -68,7 +68,7 @@ export const noviceLv0: HeroBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          await card.player.cardManager.draw(6);
+          await card.player.cardManager.draw(7);
         }
       })
     );

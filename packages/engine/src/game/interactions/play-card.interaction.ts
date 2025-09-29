@@ -60,9 +60,10 @@ export class PlayCardContext {
       .with(CARD_DECK_SOURCES.MAIN_DECK, () =>
         this.player.playMainDeckCard(this.card, manaCostIndices)
       )
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () =>
-        this.player.playDestinyDeckCard(this.card)
-      )
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
+        this.card.player.hasPlayedDestinyCardThisTurn = true;
+        return this.player.playDestinyDeckCard(this.card);
+      })
       .exhaustive();
   }
 

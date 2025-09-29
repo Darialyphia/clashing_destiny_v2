@@ -395,6 +395,10 @@ export abstract class Card<
     if (this.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK) {
       return false;
     }
+    if (this.player.hasPlayedDestinyCardThisTurn) {
+      return false;
+    }
+
     return (
       this.location === 'destinyDeck' &&
       this.canPayDestinyCost &&

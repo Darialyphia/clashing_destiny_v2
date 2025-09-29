@@ -19,12 +19,12 @@ import {
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import { GAME_EVENTS } from './game.events';
 
-const EFFECT_CHAIN_STATES = {
+export const EFFECT_CHAIN_STATES = {
   BUILDING: 'BUILDING',
   RESOLVING: 'RESOLVING',
   FINISHED: 'FINISHED'
 } as const;
-type EffectChainState = Values<typeof EFFECT_CHAIN_STATES>;
+export type EffectChainState = Values<typeof EFFECT_CHAIN_STATES>;
 
 const EFFECT_CHAIN_STATE_TRANSITIONS = {
   ADD_EFFECT: 'ADD_EFFECT',
@@ -54,6 +54,7 @@ export type SerializedEffectChain = {
     source: string;
     targets: SerializedPreResponseTarget[];
   }>;
+  state: EffectChainState;
   player: string;
 };
 
@@ -239,6 +240,7 @@ export class EffectChain
         source: effect.source.id,
         targets: effect.targets.map(serializePreResponseTarget)
       })),
+      state: this.getState(),
       player: this._currentPlayer.id
     };
   }

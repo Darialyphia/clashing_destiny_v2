@@ -15,7 +15,10 @@ const {
     image: string;
     kind: CardKind;
     atk?: number | null;
+    baseAtk?: number | null;
     hp?: number | null;
+    maxHp?: number | null;
+    baseMaxHp?: number | null;
     durability?: number | null;
   };
   isFoil?: boolean;
@@ -75,12 +78,26 @@ const pointerStyle = computed(() => {
         <div class="art" />
       </div>
 
-      <div v-if="isDefined(card.atk) && showStats" class="atk">
+      <div
+        v-if="isDefined(card.atk) && showStats"
+        class="atk"
+        :class="{
+          buffed: isDefined(card.baseAtk) && card.atk > card.baseAtk,
+          debuffed: isDefined(card.baseAtk) && card.atk < card.baseAtk
+        }"
+      >
         <div class="dual-text" :data-text="card.atk">
           {{ card.atk }}
         </div>
       </div>
-      <div v-if="isDefined(card.hp) && showStats" class="hp">
+      <div
+        v-if="isDefined(card.hp) && showStats"
+        class="hp"
+        :class="{
+          buffed: isDefined(card.baseMaxHp) && card.hp > card.baseMaxHp,
+          debuffed: isDefined(card.maxHp) && card.hp < card.maxHp
+        }"
+      >
         <div class="dual-text" :data-text="card.hp">
           {{ card.hp }}
         </div>
@@ -194,7 +211,7 @@ const pointerStyle = computed(() => {
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 10px;
-  --dual-text-offset-y: 2px;
+  --dual-text-offset-y: 1px;
   scale: 2;
 }
 
@@ -213,8 +230,17 @@ const pointerStyle = computed(() => {
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 10px;
-  --dual-text-offset-y: 2px;
+  --dual-text-offset-y: 1px;
   scale: 2;
+}
+
+.buffed {
+  --top-color: var(--green-2);
+  --bottom-color: var(--green-6);
+}
+.debuffed {
+  --top-color: var(--red-5);
+  --bottom-color: var(--red-9);
 }
 
 .durability {
@@ -232,7 +258,38 @@ const pointerStyle = computed(() => {
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 10px;
-  --dual-text-offset-y: 2px;
+  --dual-text-offset-y: 1px;
   scale: 2;
+}
+
+.dual-text {
+  color: transparent;
+  position: relative;
+  --_top-color: var(--top-color, #fcfcfc);
+  --_bottom-color: var(--bottom-color, #ffb270);
+  &::before,
+  &::after {
+    position: absolute;
+    content: attr(data-text);
+    color: transparent;
+    inset: 0;
+  }
+  &:after {
+    background: linear-gradient(
+      var(--_top-color),
+      var(--_top-color) 50%,
+      var(--_bottom-color) 50%
+    );
+    line-height: 1.2;
+    background-clip: text;
+    background-size: 100% 1lh;
+    background-repeat: repeat-y;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
+  }
+  &:before {
+    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
+    z-index: -1;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
+  }
 }
 </style>

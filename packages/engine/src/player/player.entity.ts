@@ -71,6 +71,8 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
+  hasPlayedDestinyCardThisTurn = false;
+
   private _hero!: {
     card: HeroCard;
     lineage: HeroCard[];

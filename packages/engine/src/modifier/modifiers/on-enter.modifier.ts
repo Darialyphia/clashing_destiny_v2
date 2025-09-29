@@ -24,7 +24,10 @@ export class OnEnterModifier<
         new OnEnterModifierMixin<T>(game, async event => {
           await game.emit(
             CARD_EVENTS.CARD_EFFECT_TRIGGERED,
-            new CardEffectTriggeredEvent({ card: this.target })
+            new CardEffectTriggeredEvent({
+              card: this.target,
+              message: `${this.target.blueprint.name} triggered its On Enter effect.`
+            })
           );
           await options.handler(event);
         }),

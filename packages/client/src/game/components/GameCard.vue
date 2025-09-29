@@ -167,7 +167,10 @@ const classes = computed(() => {
             image: card.imagePath,
             kind: card.kind,
             atk: card.atk,
+            baseAtk: card.baseAtk,
             hp: card.hp,
+            baseMaxHp: card.baseMaxHp,
+            maxHp: card.maxHp,
             durability: card.durability
           }"
           class="game-card small"

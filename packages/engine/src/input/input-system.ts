@@ -207,6 +207,11 @@ export class InputSystem extends System<never> {
     if (!this.isActionType(input.type)) return;
     if (this.isPaused) {
       // if the game is paused, run the input immediately
+      try {
+        await this.handleInput(input);
+      } catch (err) {
+        await this.handleError(err);
+      }
       await this.handleInput(input);
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule

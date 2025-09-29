@@ -21,7 +21,7 @@ onMounted(() => {
         });
       }
 
-      if (eventName === GAME_EVENTS.CARD_AFTER_PLAY) {
+      if (eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
         tokens.push({
           kind: 'text',
           text: `${state.value.entities[event.card.player].name} played`
@@ -189,6 +189,13 @@ onMounted(() => {
         tokens.push({
           kind: 'text',
           text: `passed initiative.`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.CARD_EFFECT_TRIGGERED) {
+        tokens.push({
+          kind: 'text',
+          text: event.message
         });
       }
 

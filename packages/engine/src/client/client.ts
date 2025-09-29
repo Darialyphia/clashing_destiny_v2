@@ -19,6 +19,7 @@ import { TypedEventEmitter } from '../utils/typed-emitter';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
 import type { SpellSchool } from '../card/card.enums';
 import type { AbilityViewModel } from './view-models/ability.model';
+import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -153,7 +154,10 @@ export class GameClient {
   }
 
   getActivePlayerId() {
-    if (this.stateManager.state.effectChain) {
+    if (
+      this.stateManager.state.effectChain &&
+      this.stateManager.state.effectChain.state === EFFECT_CHAIN_STATES.BUILDING
+    ) {
       return this.stateManager.state.effectChain.player;
     }
 

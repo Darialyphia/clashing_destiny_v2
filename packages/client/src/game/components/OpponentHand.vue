@@ -10,6 +10,7 @@ import { clamp } from '@game/shared';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { useResizeObserver } from '@vueuse/core';
 import CardBack from '@/card/components/CardBack.vue';
+import CountChip from './CountChip.vue';
 
 const state = useGameState();
 const opponentBoard = useOpponentBoard();
@@ -119,6 +120,10 @@ const cards = computed(() => {
     >
       <CardBack />
     </div>
+    <CountChip
+      :count="opponentBoard.hand.length"
+      class="absolute top-0 left-0 z-12"
+    />
   </section>
 </template>
 

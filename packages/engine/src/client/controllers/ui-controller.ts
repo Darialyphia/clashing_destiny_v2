@@ -18,6 +18,7 @@ import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selectio
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
 import type { MinionSlotZone } from '../../board/board;constants';
+import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -308,6 +309,9 @@ export class UiController {
     }
 
     if (this.client.state.effectChain) {
+      if (this.client.state.effectChain.state === EFFECT_CHAIN_STATES.RESOLVING) {
+        return 'Resolving effect chain...';
+      }
       return this.client.state.effectChain.player === this.client.playerId
         ? 'Effect chain: Your turn'
         : 'Effect chain: Opponent turn';
