@@ -8,6 +8,8 @@ import { type GameId } from '../entities/game.entity';
 import { type UserId } from '../../users/entities/user.entity';
 
 export class GamePlayerReadRepository {
+  static INJECTION_KEY = 'gamePlayerReadRepo';
+
   constructor(protected db: DatabaseReader) {}
 
   async getById(gamePlayerId: Id<'gamePlayers'>) {
@@ -30,6 +32,8 @@ export class GamePlayerReadRepository {
 }
 
 export class GamePlayerRepository {
+  static INJECTION_KEY = 'gamePlayerRepo';
+
   declare protected db: DatabaseWriter;
   declare protected userRepo: UserRepository;
 

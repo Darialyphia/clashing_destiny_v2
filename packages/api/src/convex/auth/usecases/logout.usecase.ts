@@ -1,22 +1,16 @@
-import type { Id } from '../../_generated/dataModel';
-import { UseCase } from '../../usecase';
-import { SessionRepository } from '../repositories/session.repository';
+import type { EmptyObject } from '@game/shared';
+import { MutationUseCase } from '../../usecase';
 
-export type LogoutInput = {
-  sessionId: Id<'authSessions'>;
-};
+export type LogoutInput = never;
 export interface LogoutOutput {
   success: true;
 }
 
-export type LogoutCtx = {
-  sessionRepo: SessionRepository;
-};
-export class LogoutUseCase extends UseCase<LogoutInput, LogoutOutput, LogoutCtx> {
-  static INJECTION_KEY = 'logoutUseCase';
+export class LogoutUseCase extends MutationUseCase<LogoutInput, LogoutOutput> {
+  static INJECTION_KEY = 'logoutUseCase' as const;
 
-  async execute(input: LogoutInput): Promise<LogoutOutput> {
-    await this.ctx.sessionRepo.delete(input.sessionId);
+  async execute(): Promise<LogoutOutput> {
+    await this.ctx.sessionRepo.delete(this.ctx.session._id);
     return { success: true };
   }
 }

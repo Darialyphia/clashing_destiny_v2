@@ -6,7 +6,7 @@ import {
 } from '../auth.constants';
 
 export class SessionReadRepository {
-  static INJECTION_KEY = 'sessionReadRepo';
+  static INJECTION_KEY = 'sessionReadRepo' as const;
 
   constructor(protected db: DatabaseReader) {}
 
@@ -34,14 +34,24 @@ export class SessionReadRepository {
   }
 }
 
-export class SessionRepository extends SessionReadRepository {
-  static INJECTION_KEY = 'sessionRepo';
+export class SessionRepository {
+  static INJECTION_KEY = 'sessionRepo' as const;
 
   declare protected db: DatabaseWriter;
 
   constructor(db: DatabaseWriter) {
-    super(db);
     this.db = db;
+  }
+
+  async getById(sessionId: Id<'authSessions'>) {
+    return this.db.get(sessionId);
+  }
+
+  async getByUserId(userId: Id<'users'>) {
+    return this.db
+      .query('authSessions')
+      .withIndex('userId', q => q.eq('userId', userId))
+      .collect();
   }
 
   async create(userId: Id<'users'>) {
@@ -75,7 +85,7 @@ export class SessionRepository extends SessionReadRepository {
   }
 
   async getValidSession(sessionId: Id<'authSessions'>) {
-    const session = await super.getValidSession(sessionId);
+    const session = await this.getById(sessionId);
     if (!session) return null;
     const now = Date.now();
 

@@ -9,6 +9,8 @@ import { AppError } from '../../utils/error';
 import { User } from '../entities/user.entity';
 
 export class UserReadRepository {
+  static INJECTION_KEY = 'userReadRepo' as const;
+
   constructor(protected db: DatabaseReader) {}
 
   async getByEmail(email: Email) {
@@ -31,6 +33,8 @@ export class UserReadRepository {
 }
 
 export class UserRepository {
+  static INJECTION_KEY = 'userRepo' as const;
+
   declare protected db: DatabaseWriter;
 
   constructor(db: DatabaseWriter) {

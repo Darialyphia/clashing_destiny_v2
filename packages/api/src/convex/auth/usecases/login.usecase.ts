@@ -1,4 +1,4 @@
-import { UseCase } from '../../usecase';
+import { MutationUseCase } from '../../usecase';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { Email } from '../../utils/email';
 import { AppError } from '../../utils/error';
@@ -15,13 +15,8 @@ export interface LoginOutput {
   session: AuthSession;
 }
 
-export type LoginCtx = {
-  userRepo: UserRepository;
-  sessionRepo: SessionRepository;
-};
-
-export class LoginUseCase extends UseCase<LoginInput, LoginOutput, LoginCtx> {
-  static INJECTION_KEY = 'loginUseCase';
+export class LoginUseCase extends MutationUseCase<LoginInput, LoginOutput> {
+  static INJECTION_KEY = 'loginUseCase' as const;
 
   async execute(input: LoginInput): Promise<LoginOutput> {
     const user = await this.ctx.userRepo.getByEmail(input.email);

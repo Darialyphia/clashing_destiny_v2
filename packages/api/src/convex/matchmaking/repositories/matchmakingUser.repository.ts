@@ -8,6 +8,8 @@ import {
 } from '../entities/matchmakingUser.entity';
 
 export class MatchmakingUserReadRepository {
+  static INJECTION_KEY = 'matchmakingUserReadRepo' as const;
+
   constructor(protected db: DatabaseReader) {}
 
   async getById(matchmakingId: Id<'matchmakingUsers'>) {
@@ -30,6 +32,8 @@ export class MatchmakingUserReadRepository {
 }
 
 export class MatchmakingUserRepository {
+  static INJECTION_KEY = 'matchmakingUserRepo' as const;
+
   declare protected db: DatabaseWriter;
   declare protected userRepo: UserRepository;
 

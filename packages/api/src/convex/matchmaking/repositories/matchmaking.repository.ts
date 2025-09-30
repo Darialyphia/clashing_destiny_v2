@@ -10,6 +10,8 @@ import { MATCHMAKING_SCHEDULER_INTERVAL_MS } from '../matchmaking.constants';
 import { MatchmakingUserRepository } from './matchmakingUser.repository';
 
 export class MatchmakingReadRepository {
+  static INJECTION_KEY = 'matchmakingReadRepo' as const;
+
   constructor(protected db: DatabaseReader) {}
 
   async getById(matchmakingId: Id<'matchmaking'>) {
@@ -27,6 +29,8 @@ export class MatchmakingReadRepository {
 type Scheduler = MutationCtx['scheduler'];
 
 export class MatchmakingRepository {
+  static INJECTION_KEY = 'matchmakingRepo' as const;
+
   declare protected db: DatabaseWriter;
   declare protected matchmakingUserRepo: MatchmakingUserRepository;
   declare protected scheduler: Scheduler;

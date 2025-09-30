@@ -1,10 +1,7 @@
-import type { AuthSession } from '../../auth/entities/session.entity';
 import type { DeckId } from '../../deck/entities/deck.entity';
-import { UseCase } from '../../usecase';
-import { UserRepository } from '../../users/repositories/user.repository';
+import { ensureHasNoCurrentGame } from '../../game/game.guards';
+import { MutationUseCase } from '../../usecase';
 import { DomainError } from '../../utils/error';
-import { MatchmakingRepository } from '../repositories/matchmaking.repository';
-import { MatchmakingUserRepository } from '../repositories/matchmakingUser.repository';
 
 export type JoinMatchmakingInput = {
   name: string;
@@ -15,47 +12,27 @@ export interface JoinMatchmakingOutput {
   success: true;
 }
 
-export type JoinMatchmakingCtx = {
-  session: AuthSession;
-  matchmakingRepo: MatchmakingRepository;
-  matchmakingUserRepo: MatchmakingUserRepository;
-  userRepo: UserRepository;
-};
-
-export class JoinMatchmakingUseCase extends UseCase<
+export class JoinMatchmakingUseCase extends MutationUseCase<
   JoinMatchmakingInput,
-  JoinMatchmakingOutput,
-  JoinMatchmakingCtx
+  JoinMatchmakingOutput
 > {
-  get session() {
-    return this.ctx.session;
-  }
-
-  get matchmakingRepo() {
-    return this.ctx.matchmakingRepo;
-  }
-
-  get matchmakingUserRepo() {
-    return this.ctx.matchmakingUserRepo;
-  }
-
-  get userRepo() {
-    return this.ctx.userRepo;
-  }
+  static INJECTION_KEY = 'joinMatchmakingUseCase' as const;
 
   private async leaveIfNeeded() {
-    const currentMatchmaking = await this.matchmakingRepo.getByUserId(
-      this.session.userId
+    const currentMatchmaking = await this.ctx.matchmakingRepo.getByUserId(
+      this.ctx.session.userId
     );
 
     if (currentMatchmaking) {
-      currentMatchmaking.leave(this.session.userId);
-      await this.matchmakingRepo.save(currentMatchmaking);
+      currentMatchmaking.leave(this.ctx.session.userId);
+      await this.ctx.matchmakingRepo.save(currentMatchmaking);
     }
   }
 
   async execute(input: JoinMatchmakingInput): Promise<JoinMatchmakingOutput> {
-    const matchmaking = await this.matchmakingRepo.getByName(input.name);
+    await ensureHasNoCurrentGame(this.ctx.gameRepo, this.ctx.session.userId);
+
+    const matchmaking = await this.ctx.matchmakingRepo.getByName(input.name);
 
     if (!matchmaking) {
       throw new DomainError('Matchmaking not found');
@@ -63,20 +40,20 @@ export class JoinMatchmakingUseCase extends UseCase<
 
     await this.leaveIfNeeded();
 
-    const user = await this.userRepo.getById(this.session.userId);
+    const user = await this.ctx.userRepo.getById(this.ctx.session.userId);
     if (!user) {
       throw new DomainError('User not found');
     }
-    await this.matchmakingUserRepo.create({
+    await this.ctx.matchmakingUserRepo.create({
       matchmakingId: matchmaking.id,
-      userId: this.session.userId,
+      userId: this.ctx.session.userId,
       mmr: user.mmr,
       deckId: input.deckId
     });
 
     if (!matchmaking.isRunning) {
-      await this.matchmakingRepo.scheduleRun(matchmaking);
-      await this.matchmakingRepo.save(matchmaking);
+      await this.ctx.matchmakingRepo.scheduleRun(matchmaking);
+      await this.ctx.matchmakingRepo.save(matchmaking);
     }
 
     return { success: true };
