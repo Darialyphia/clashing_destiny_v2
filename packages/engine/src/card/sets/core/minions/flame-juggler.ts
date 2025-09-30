@@ -23,7 +23,7 @@ export const flameJuggler: MinionBlueprint = {
   unique: false,
   manaCost: 3,
   atk: 2,
-  maxHp: 5,
+  maxHp: 4,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

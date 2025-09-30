@@ -14,7 +14,6 @@ export const deckSchemas = {
       v.object({
         blueprintId: v.string()
       })
-    ),
-    hero: v.string()
+    )
   }).index('by_owner_id', ['ownerId'])
 };

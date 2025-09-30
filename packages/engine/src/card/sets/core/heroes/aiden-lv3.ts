@@ -16,13 +16,14 @@ import type { HeroCard } from '../../../entities/hero.entity';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
+import { SimpleMinionStatsModifier } from '../../../../modifier/modifiers/simple-minion-stats.modifier';
 
 export const aidenLv3: HeroBlueprint = {
   id: 'aiden-lv3',
   name: 'Aiden, Justicebringer',
   description: dedent`
   @Aiden Lineage@
-  Your minions have +2 @[health]@.
+  Your minions have +1 @[attack]@ and +1 @[health]@.
   @On Enter@: You may search your deck for a Warrior or Knight minion that costs @[mana] 2@ or less and summon it exhausted.
   `,
   cardIconId: 'heroes/aiden-lv3',
@@ -39,16 +40,16 @@ export const aidenLv3: HeroBlueprint = {
   lineage: 'aiden',
   spellPower: 0,
   atk: 2,
-  maxHp: 29,
+  maxHp: 24,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [],
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const HP_BUFF_ID = 'aiden-lv3-hp-buff';
+    const BUFF_ID = 'aiden-lv3-aura';
 
     await card.modifiers.add(
-      new Modifier<HeroCard>('aiden-lv3-aura', game, card, {
+      new Modifier<HeroCard>('aiden-lv3', game, card, {
         mixins: [
           new AuraModifierMixin(game, {
             isElligible(candidate) {
@@ -57,13 +58,15 @@ export const aidenLv3: HeroBlueprint = {
             },
             async onGainAura(candidate) {
               await candidate.modifiers.add(
-                new SimpleHealthBuffModifier<HeroCard>(HP_BUFF_ID, game, card, {
-                  amount: 2
+                new SimpleMinionStatsModifier(BUFF_ID, game, card, {
+                  name: 'Aiden, Justicebringer',
+                  attackAmount: 1,
+                  healthAmount: 1
                 })
               );
             },
             onLoseAura(candidate) {
-              return candidate.modifiers.remove(HP_BUFF_ID);
+              return candidate.modifiers.remove(BUFF_ID);
             }
           })
         ]

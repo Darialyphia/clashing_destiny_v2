@@ -11,7 +11,8 @@ export const gameSchemas = {
       v.literal(GAME_STATUS.ONGOING),
       v.literal(GAME_STATUS.WAITING_FOR_PLAYERS)
     ) as Validator<GameStatus>,
-    winnerId: v.optional(v.id('users'))
+    winnerId: v.optional(v.id('users')),
+    cancellationId: v.optional(v.id('_scheduled_functions'))
   }).index('by_status', ['status']),
 
   gamePlayers: defineTable({

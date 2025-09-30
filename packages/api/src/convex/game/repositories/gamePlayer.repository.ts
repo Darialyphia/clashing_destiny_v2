@@ -1,14 +1,14 @@
 import type { Id } from '../../_generated/dataModel';
-import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import type { DatabaseReader } from '../../_generated/server';
 import { type DeckId } from '../../deck/entities/deck.entity';
-import { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
 import { GamePlayer, type GamePlayerDoc } from '../entities/gamePlayer.entity';
 import { type GameId } from '../entities/game.entity';
 import { type UserId } from '../../users/entities/user.entity';
+import type { MutationContainer } from '../../shared/container';
 
 export class GamePlayerReadRepository {
-  static INJECTION_KEY = 'gamePlayerReadRepo';
+  static INJECTION_KEY = 'gamePlayerReadRepo' as const;
 
   constructor(protected db: DatabaseReader) {}
 
@@ -32,18 +32,12 @@ export class GamePlayerReadRepository {
 }
 
 export class GamePlayerRepository {
-  static INJECTION_KEY = 'gamePlayerRepo';
+  static INJECTION_KEY = 'gamePlayerRepo' as const;
 
-  declare protected db: DatabaseWriter;
-  declare protected userRepo: UserRepository;
-
-  constructor(config: { db: DatabaseWriter; userRepo: UserRepository }) {
-    this.db = config.db;
-    this.userRepo = config.userRepo;
-  }
+  constructor(private ctx: MutationContainer) {}
 
   private async buildEntity(doc: GamePlayerDoc) {
-    const userDoc = await this.userRepo.getById(doc.userId);
+    const userDoc = await this.ctx.userRepo.getById(doc.userId);
 
     if (!userDoc) throw new DomainError('User not found');
 
@@ -51,7 +45,7 @@ export class GamePlayerRepository {
   }
 
   async getById(gamePlayerId: Id<'gamePlayers'>) {
-    const doc = await this.db.get(gamePlayerId);
+    const doc = await this.ctx.db.get(gamePlayerId);
 
     if (!doc) return null;
 
@@ -59,7 +53,7 @@ export class GamePlayerRepository {
   }
 
   async byUserId(userId: Id<'users'>) {
-    const doc = await this.db
+    const doc = await this.ctx.db
       .query('gamePlayers')
       .withIndex('by_user_id', q => q.eq('userId', userId))
       .unique();
@@ -70,7 +64,7 @@ export class GamePlayerRepository {
   }
 
   async byGameId(gameId: Id<'games'>) {
-    const docs = await this.db
+    const docs = await this.ctx.db
       .query('gamePlayers')
       .withIndex('by_game_id', q => q.eq('gameId', gameId))
       .collect();
@@ -78,15 +72,16 @@ export class GamePlayerRepository {
     return Promise.all(docs.map(doc => this.buildEntity(doc)));
   }
 
-  create(data: { deckId: DeckId; userId: UserId; gameId: GameId }) {
-    return this.db.insert('gamePlayers', data);
+  async create(data: { deckId: DeckId; userId: UserId; gameId: GameId }) {
+    const gameId = await this.ctx.db.insert('gamePlayers', data);
+
+    return gameId;
   }
 
   async save(gamePlayer: GamePlayer) {
-    await this.db.replace(gamePlayer.id, {
-      gameId: gamePlayer.gameId,
-      userId: gamePlayer.userId,
-      deckId: gamePlayer.deckId
-    });
+    await this.ctx.db.replace(
+      gamePlayer.id,
+      this.ctx.gamePlayerMapper.toPersistence(gamePlayer)
+    );
   }
 }

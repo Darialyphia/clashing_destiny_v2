@@ -21,6 +21,14 @@ export class RunMatchmakingUseCase extends MutationUseCase<
     }
 
     const { pairs, remaining } = matchmaking.matchParticipants();
+    await Promise.all(
+      pairs.map(async pair => {
+        const gameId = await this.ctx.gameRepo.create(pair.map(p => p.meta));
+        const game = await this.ctx.gameRepo.getById(gameId);
+        await this.ctx.gameRepo.scheduleCancellation(game!);
+        await this.ctx.gameRepo.save(game!);
+      })
+    );
 
     if (remaining.length) {
       await this.ctx.matchmakingRepo.scheduleRun(matchmaking);

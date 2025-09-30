@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as games from "../games.js";
 import type * as matchmaking from "../matchmaking.js";
 import type * as shared_container from "../shared/container.js";
 import type * as shared_entity from "../shared/entity.js";
@@ -34,6 +35,7 @@ import type * as utils_randomString from "../utils/randomString.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  games: typeof games;
   matchmaking: typeof matchmaking;
   "shared/container": typeof shared_container;
   "shared/entity": typeof shared_entity;

@@ -16,6 +16,7 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { HeroCard } from '../../../entities/hero.entity';
+import { SimpleMinionStatsModifier } from '../../../../modifier/modifiers/simple-minion-stats.modifier';
 
 export const aidenLv2: HeroBlueprint = {
   id: 'aiden-lv2',
@@ -38,7 +39,7 @@ export const aidenLv2: HeroBlueprint = {
   lineage: 'aiden',
   spellPower: 0,
   atk: 1,
-  maxHp: 24,
+  maxHp: 21,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {
@@ -74,15 +75,10 @@ export const aidenLv2: HeroBlueprint = {
             { type: 'card', card }
           );
           await target.modifiers.add(
-            new SimpleAttackBuffModifier('aiden-lv2-atk', game, card, {
-              amount: 1,
-              name: "Aiden, Crown's Vanguard"
-            })
-          );
-          await target.modifiers.add(
-            new SimpleHealthBuffModifier('aiden-lv2-hp', game, card, {
-              amount: 1,
-              name: "Aiden, Crown's Vanguard"
+            new SimpleMinionStatsModifier('aiden-lv2-buff', game, card, {
+              name: "Aiden, Crown's Vanguard",
+              attackAmount: 1,
+              healthAmount: 1
             })
           );
         }

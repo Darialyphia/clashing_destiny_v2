@@ -1,11 +1,11 @@
-import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import { internal } from '../../_generated/api';
+import type { DatabaseReader } from '../../_generated/server';
 import type { DeckId } from '../../deck/entities/deck.entity';
+import type { MutationContainer } from '../../shared/container';
 import type { UserId } from '../../users/entities/user.entity';
-import { UserRepository } from '../../users/repositories/user.repository';
 import { Game, type GameDoc, type GameId } from '../entities/game.entity';
-import { GamePlayer } from '../entities/gamePlayer.entity';
-import { GAME_STATUS } from '../game.constants';
-import { GamePlayerReadRepository, GamePlayerRepository } from './gamePlayer.repository';
+import { GAME_STATUS, GAME_TIMEOUT_MS } from '../game.constants';
+import { GamePlayerReadRepository } from './gamePlayer.repository';
 
 export class GameReadRepository {
   static INJECTION_KEY = 'gameReadRepo' as const;
@@ -33,28 +33,16 @@ export class GameReadRepository {
 export class GameRepository {
   static INJECTION_KEY = 'gameRepo' as const;
 
-  declare protected db: DatabaseWriter;
-  declare protected userRepo: UserRepository;
-  declare protected gamePlayerRepo: GamePlayerRepository;
-
-  constructor(config: {
-    db: DatabaseWriter;
-    userRepo: UserRepository;
-    gamePlayerRepo: GamePlayerRepository;
-  }) {
-    this.db = config.db;
-    this.userRepo = config.userRepo;
-    this.gamePlayerRepo = config.gamePlayerRepo;
-  }
+  constructor(private ctx: MutationContainer) {}
 
   private async buildEntity(doc: GameDoc) {
-    const players = await this.gamePlayerRepo.byGameId(doc._id);
+    const players = await this.ctx.gamePlayerRepo.byGameId(doc._id);
 
     return new Game(doc._id, { game: doc, players });
   }
 
   async getById(gameId: GameId) {
-    const doc = await this.db.get(gameId);
+    const doc = await this.ctx.db.get(gameId);
 
     if (!doc) return null;
 
@@ -62,35 +50,43 @@ export class GameRepository {
   }
 
   async byUserId(userId: UserId) {
-    const gamePlayer = await this.gamePlayerRepo.byUserId(userId);
+    const gamePlayer = await this.ctx.gamePlayerRepo.byUserId(userId);
     if (!gamePlayer) return null;
 
-    const gameDoc = await this.db.get(gamePlayer.gameId);
+    const gameDoc = await this.ctx.db.get(gamePlayer.gameId);
     if (!gameDoc) return null;
 
     return this.buildEntity(gameDoc);
   }
 
   async create(players: Array<{ userId: UserId; deckId: DeckId }>) {
-    const gameId = await this.db.insert('games', {
+    const gameId = await this.ctx.db.insert('games', {
       seed: `${Date.now()}`,
       status: GAME_STATUS.WAITING_FOR_PLAYERS
     });
 
     for (const player of players) {
-      await this.gamePlayerRepo.create({
+      await this.ctx.gamePlayerRepo.create({
         deckId: player.deckId,
         userId: player.userId,
         gameId: gameId
       });
     }
+
+    return gameId;
   }
 
-  async save(gamePlayer: GamePlayer) {
-    await this.db.replace(gamePlayer.id, {
-      gameId: gamePlayer.gameId,
-      userId: gamePlayer.userId,
-      deckId: gamePlayer.deckId
-    });
+  async save(game: Game) {
+    await this.ctx.db.patch(game.id, this.ctx.gameMapper.toPersistence(game));
+  }
+
+  async scheduleCancellation(game: Game) {
+    const cancellationId = await this.ctx.scheduler.runAfter(
+      GAME_TIMEOUT_MS,
+      internal.games.cancel,
+      { gameId: game.id }
+    );
+
+    game.scheduleCancellation(cancellationId);
   }
 }
