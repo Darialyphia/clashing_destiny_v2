@@ -21,6 +21,8 @@ export type LoginCtx = {
 };
 
 export class LoginUseCase extends UseCase<LoginInput, LoginOutput, LoginCtx> {
+  static INJECTION_KEY = 'loginUseCase';
+
   async execute(input: LoginInput): Promise<LoginOutput> {
     const user = await this.ctx.userRepo.getByEmail(input.email);
 

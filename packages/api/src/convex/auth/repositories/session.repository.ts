@@ -6,6 +6,8 @@ import {
 } from '../auth.constants';
 
 export class SessionReadRepository {
+  static INJECTION_KEY = 'sessionReadRepo';
+
   constructor(protected db: DatabaseReader) {}
 
   async getById(sessionId: Id<'authSessions'>) {
@@ -33,6 +35,8 @@ export class SessionReadRepository {
 }
 
 export class SessionRepository extends SessionReadRepository {
+  static INJECTION_KEY = 'sessionRepo';
+
   declare protected db: DatabaseWriter;
 
   constructor(db: DatabaseWriter) {

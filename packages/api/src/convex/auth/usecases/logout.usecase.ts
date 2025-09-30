@@ -13,6 +13,8 @@ export type LogoutCtx = {
   sessionRepo: SessionRepository;
 };
 export class LogoutUseCase extends UseCase<LogoutInput, LogoutOutput, LogoutCtx> {
+  static INJECTION_KEY = 'logoutUseCase';
+
   async execute(input: LogoutInput): Promise<LogoutOutput> {
     await this.ctx.sessionRepo.delete(input.sessionId);
     return { success: true };

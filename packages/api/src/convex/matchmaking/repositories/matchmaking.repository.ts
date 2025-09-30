@@ -25,6 +25,7 @@ export class MatchmakingReadRepository {
 }
 
 type Scheduler = MutationCtx['scheduler'];
+
 export class MatchmakingRepository {
   declare protected db: DatabaseWriter;
   declare protected matchmakingUserRepo: MatchmakingUserRepository;

@@ -20,7 +20,6 @@ export const join = mutationWithSession({
   args: { name: v.string(), deckId: v.id('decks') },
   handler: async (ctx, input) => {
     const session = ensureAuthenticated(ctx.session);
-
     const userRepo = new UserRepository(ctx.db);
     const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
     const matchmakingRepo = new MatchmakingRepository({

@@ -20,6 +20,8 @@ export type RegisterCtx = {
   sessionRepo: SessionRepository;
 };
 export class RegisterUseCase extends UseCase<RegisterInput, RegisterOutput, RegisterCtx> {
+  static INJECTION_KEY = 'registerUseCase';
+
   get userRepo() {
     return this.ctx.userRepo;
   }

@@ -29,6 +29,7 @@ export const queryWithSession = customQuery(query, {
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
+export type QueryWithSessionCtx = QueryCtx & { session: AuthSession };
 
 export const internalQueryWithSession = customQuery(internalQuery, {
   args: {
@@ -55,6 +56,7 @@ export const mutationWithSession = customMutation(mutation, {
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
+export type MutationWithSessionCtx = MutationCtx & { session: AuthSession };
 
 export const internalMutationWithSession = customMutation(internalMutation, {
   args: {

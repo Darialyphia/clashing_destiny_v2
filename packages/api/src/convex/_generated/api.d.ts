@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as matchmaking from "../matchmaking.js";
+import type * as shared_container from "../shared/container.js";
 import type * as shared_entity from "../shared/entity.js";
 import type * as usecase from "../usecase.js";
 import type * as utils_discriminator from "../utils/discriminator.js";
@@ -34,6 +35,7 @@ import type * as utils_randomString from "../utils/randomString.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   matchmaking: typeof matchmaking;
+  "shared/container": typeof shared_container;
   "shared/entity": typeof shared_entity;
   usecase: typeof usecase;
   "utils/discriminator": typeof utils_discriminator;

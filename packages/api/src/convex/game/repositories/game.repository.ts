@@ -8,6 +8,8 @@ import { GAME_STATUS } from '../game.constants';
 import { GamePlayerReadRepository, GamePlayerRepository } from './gamePlayer.repository';
 
 export class GameReadRepository {
+  static INJECTION_KEY = 'gameReadRepo';
+
   declare protected db: DatabaseReader;
   declare protected gamePlayerRepo: GamePlayerReadRepository;
 
@@ -29,6 +31,8 @@ export class GameReadRepository {
 }
 
 export class GameRepository {
+  static INJECTION_KEY: 'gameRepo';
+
   declare protected db: DatabaseWriter;
   declare protected userRepo: UserRepository;
   declare protected gamePlayerRepo: GamePlayerRepository;
