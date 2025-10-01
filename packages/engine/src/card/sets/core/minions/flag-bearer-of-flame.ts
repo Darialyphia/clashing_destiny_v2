@@ -8,13 +8,9 @@ import {
   CARD_SETS,
   CARD_SPEED,
   HERO_JOBS,
-  RARITIES,
-  SPELL_SCHOOLS
+  RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SpellSchoolAffinityModifier } from '../../../../modifier/modifiers/spell-school-affinity.modifier';
-import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const flagBearerOfFlame: MinionBlueprint = {

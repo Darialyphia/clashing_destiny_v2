@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { SigilBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,

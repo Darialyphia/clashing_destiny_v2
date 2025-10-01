@@ -194,6 +194,7 @@ export class UiController {
 
   onCardClick(card: CardViewModel) {
     const state = this.client.state;
+    console.log(card);
     for (const rule of this.cardClickRules) {
       if (rule.predicate(card, state)) {
         rule.handler(card);

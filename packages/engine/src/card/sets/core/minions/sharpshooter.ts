@@ -8,8 +8,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { SpellCard } from '../../../entities/spell.entity';
-import { fireBolt } from '../spells/fire-bolt';
 import { singleEnemyTargetRules } from '../../../card-utils';
 import { AbilityDamage } from '../../../../utils/damage';
 import { RangedModifier } from '../../../../modifier/modifiers/ranged.modifier';

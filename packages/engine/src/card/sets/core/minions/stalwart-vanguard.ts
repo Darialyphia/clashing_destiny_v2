@@ -1,5 +1,4 @@
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { KEYWORDS } from '../../../card-keywords';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,

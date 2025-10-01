@@ -3,14 +3,8 @@ import { RangedAttackRange } from '../../card/attack-range';
 import { KEYWORDS } from '../../card/card-keywords';
 import { isHero } from '../../card/card-utils';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroAfterDealCombatDamageEvent } from '../../card/entities/hero.entity';
-import type {
-  MinionCard,
-  MinionCardAfterDealCombatDamageEvent
-} from '../../card/entities/minion.entity';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
-import { GAME_EVENTS } from '../../game/game.events';
-import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';

@@ -1,4 +1,4 @@
-import { waitFor, type Override } from '@game/shared';
+import { type Override } from '@game/shared';
 import type {
   EntityDictionary,
   SerializedOmniscientState,

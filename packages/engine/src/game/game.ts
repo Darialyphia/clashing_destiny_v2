@@ -153,7 +153,7 @@ export class Game implements Serializable<SerializedGame> {
     if (this.options.history) {
       await this.inputSystem.applyHistory(this.options.history);
     }
-    this.snapshotSystem.takeSnapshot();
+    await this.snapshotSystem.takeSnapshot();
     console.log(
       `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,
       'color: blue; font-weight: bold;'
@@ -182,8 +182,8 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   subscribeOmniscient(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
-      cb(this.snapshotSystem.getLatestOmniscientDiffSnapshot())
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getOmniscientDiffSnapshotAt(e.data.id))
     );
   }
 
@@ -191,8 +191,8 @@ export class Game implements Serializable<SerializedGame> {
     id: string,
     cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void
   ) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
-      cb(this.snapshotSystem.getLatestDiffSnapshotForPlayer(id))
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getDiffSnapshotForPlayerAt(id, e.data.id))
     );
   }
 

@@ -75,11 +75,13 @@ export class GameReadyEvent extends TypedSerializableEvent<EmptyObject, EmptyObj
 }
 
 export class GameNewSnapshotEvent extends TypedSerializableEvent<
-  EmptyObject,
-  EmptyObject
+  { id: number },
+  { id: number }
 > {
   serialize() {
-    return {};
+    return {
+      id: this.data.id
+    };
   }
 }
 

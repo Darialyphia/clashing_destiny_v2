@@ -167,7 +167,7 @@ export class InputSystem extends System<never> {
         await fn!();
       }
       this.isRunning = false;
-      this.game.snapshotSystem.takeSnapshot();
+      await this.game.snapshotSystem.takeSnapshot();
       await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
     } catch (err) {
       await this.handleError(err);
@@ -197,7 +197,7 @@ export class InputSystem extends System<never> {
       this.isRunning = false;
       this.queue = [];
       this._currentAction = null;
-      this.game.snapshotSystem.takeSnapshot();
+      await this.game.snapshotSystem.takeSnapshot();
     } else {
       this.game.snapshotSystem.takeErrorSnapshot();
     }
@@ -209,7 +209,6 @@ export class InputSystem extends System<never> {
     console.log(input);
     console.groupEnd();
     if (!this.isActionType(input.type)) return;
-    console.log(this.isPaused, this.isRunning);
     if (this.isPaused) {
       // if the game is paused, run the input immediately
       try {
@@ -251,7 +250,7 @@ export class InputSystem extends System<never> {
   }
 
   async askForPlayerInput() {
-    this.game.snapshotSystem.takeSnapshot();
+    await this.game.snapshotSystem.takeSnapshot();
     // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 

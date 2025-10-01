@@ -1,6 +1,5 @@
 import dedent from 'dedent';
 import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { scry } from '../../../card-actions-utils';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {

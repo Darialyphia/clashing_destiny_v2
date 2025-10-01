@@ -9,9 +9,6 @@ import {
   HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
-import type { SpellCard } from '../../../entities/spell.entity';
-import { fireBolt } from '../spells/fire-bolt';
-import { mixin } from 'lodash-es';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { Modifier } from '../../../../modifier/modifier.entity';

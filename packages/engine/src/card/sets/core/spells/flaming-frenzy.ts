@@ -1,7 +1,6 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
+import { isMinion } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -10,7 +9,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { Player } from '../../../../player/player.entity';

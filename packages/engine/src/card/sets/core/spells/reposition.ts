@@ -1,5 +1,3 @@
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { singleAllyMinionTargetRules, singleEmptyAllySlot } from '../../../card-utils';
 import {
@@ -7,8 +5,7 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  RARITIES,
-  HERO_JOBS
+  RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 

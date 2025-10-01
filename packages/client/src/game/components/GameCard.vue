@@ -109,16 +109,19 @@ useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
 useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 
 const classes = computed(() => {
-  return {
-    exhausted: isInteractive && card.value.isExhausted,
-    disabled: !card.value.canPlay && card.value.location === 'hand',
-    selected: ui.value.selectedCard?.equals(card.value),
-    targetable: isTargetable.value,
-    flipped: !myPlayer.value.equals(card.value.player),
-    'is-attacking': isAttacking.value,
-    'is-taking-damage': isTakingDamage.value,
-    'is-using-ability': isUsingAbility.value
-  };
+  return [
+    card.value.keywords.map(kw => kw.toLowerCase()),
+    {
+      exhausted: isInteractive && card.value.isExhausted,
+      disabled: !card.value.canPlay && card.value.location === 'hand',
+      selected: ui.value.selectedCard?.equals(card.value),
+      targetable: isTargetable.value,
+      flipped: !myPlayer.value.equals(card.value.player),
+      'is-attacking': isAttacking.value,
+      'is-taking-damage': isTakingDamage.value,
+      'is-using-ability': isUsingAbility.value
+    }
+  ];
 });
 </script>
 
@@ -353,5 +356,20 @@ const classes = computed(() => {
   text-align: center;
   pointer-events: none;
   font-style: italic;
+}
+
+@keyframes fleeting {
+  0%,
+  20%,
+  80%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+.fleeting {
+  animation: fleeting 5s var(--ease-3) infinite;
 }
 </style>

@@ -85,6 +85,12 @@ export const useSandbox = (
     autoSwitchPlayer,
     rewindOneStep: () => rewindTo(client.value.history.length - 2),
     rewindTo,
-    restart: () => rewindTo(0)
+    restart: () => rewindTo(0),
+    playCard(blueprintId: string) {
+      worker.postMessage({
+        type: 'playCard',
+        payload: { blueprintId, playerId: client.value.getActivePlayerId() }
+      });
+    }
   };
 };

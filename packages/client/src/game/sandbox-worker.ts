@@ -14,7 +14,8 @@ type SandboxWorkerEvent =
     }
   | { type: 'dispatch'; payload: { input: SerializedInput } }
   | { type: 'debug' }
-  | { type: 'rewind'; payload: { step: number } };
+  | { type: 'rewind'; payload: { step: number } }
+  | { type: 'playCard'; payload: { blueprintId: string; playerId: string } };
 
 let game: Game;
 self.addEventListener('message', ({ data }) => {
@@ -93,6 +94,11 @@ self.addEventListener('message', ({ data }) => {
           payload: snapshot
         });
       });
+    })
+    .with({ type: 'playCard' }, async ({ payload }) => {
+      const player = game.playerSystem.getPlayerById(payload.playerId)!;
+      const card = await player.generateCard(payload.blueprintId);
+      await card.play(() => {});
     })
     .exhaustive();
 });

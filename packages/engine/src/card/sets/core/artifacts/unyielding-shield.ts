@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { HeroInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import {

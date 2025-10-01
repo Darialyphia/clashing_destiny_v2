@@ -233,6 +233,37 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     };
   }
 
+  getOmniscientDiffSnapshotAt(index: number): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.getOmniscientSnapshotAt(index);
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (index < 1) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(index - 1);
+
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              ...latestSnapshot.state,
+              removedEntities: [],
+              addedEntities: Object.keys(latestSnapshot.state.entities)
+            }
+          : this.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
+  }
+
   getLatestSnapshotForPlayer(playerId: string): GameStateSnapshot<SerializedPlayerState> {
     return this.geSnapshotForPlayerAt(playerId, this.nextId - 1);
   }
@@ -254,6 +285,40 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       };
     }
     const previousSnapshot = this.getOmniscientSnapshotAt(this.nextId - 2);
+
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              ...latestSnapshot.state,
+              removedEntities: [],
+              addedEntities: Object.keys(latestSnapshot.state.entities)
+            }
+          : this.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
+  }
+
+  getDiffSnapshotForPlayerAt(
+    playerId: string,
+    index: number
+  ): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.geSnapshotForPlayerAt(playerId, index);
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (index < 1) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(index - 1);
 
     return {
       ...latestSnapshot,
@@ -344,7 +409,8 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     return state;
   }
 
-  takeSnapshot() {
+  async takeSnapshot() {
+    console.log('Taking snapshot', this.nextId);
     try {
       if (!this.isEnabled) return;
 
@@ -354,6 +420,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         .map(event => event.serialize());
       const previousId = this.nextId - 1;
       const id = this.nextId++;
+      console.log('id incremented', id);
       const omnisicientState = this.serializeOmniscientState();
 
       if (events.length === 0 && previousId > 0) {
@@ -363,12 +430,14 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           const currentJSON = JSON.stringify(omnisicientState);
           if (prevJSON === currentJSON) {
             this.nextId--;
+            console.log('id decremented', id);
             this.eventsSinceLastSnapshot = [];
             return;
           }
         }
       }
 
+      console.log('commiting snapshot', id);
       this.omniscientCache.push({
         kind: 'state',
         id,
@@ -390,7 +459,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       });
 
       this.eventsSinceLastSnapshot = [];
-      void this.game.emit(GAME_EVENTS.NEW_SNAPSHOT, new GameNewSnapshotEvent({}));
+      await this.game.emit(GAME_EVENTS.NEW_SNAPSHOT, new GameNewSnapshotEvent({ id }));
     } catch (err) {
       const idToRemove = this.nextId;
       Object.values(this.playerCaches).forEach(cache => {
@@ -404,7 +473,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     }
   }
 
-  takeErrorSnapshot() {
+  async takeErrorSnapshot() {
     if (!this.isEnabled) return;
     const id = this.nextId++;
     const events = this.eventsSinceLastSnapshot
@@ -436,6 +505,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     this.omniscientCache.push(snapshot);
 
     this.eventsSinceLastSnapshot = [];
-    void this.game.emit(GAME_EVENTS.NEW_SNAPSHOT, new GameNewSnapshotEvent({}));
+    await this.game.emit(GAME_EVENTS.NEW_SNAPSHOT, new GameNewSnapshotEvent({ id }));
   }
 }

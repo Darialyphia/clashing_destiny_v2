@@ -1,8 +1,6 @@
 import dedent from 'dedent';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import { singleAllyMinionTargetRules } from '../../../card-utils';
