@@ -1,8 +1,8 @@
 import type { Values } from '@game/shared';
 
-export const MINION_SLOT_ZONES = {
+export const BOARD_SLOT_ZONES = {
   FRONT_ROW: 'front-row',
   BACK_ROW: 'back-row'
 } as const;
 
-export type MinionSlotZone = Values<typeof MINION_SLOT_ZONES>;
+export type BoardSlotZone = Values<typeof BOARD_SLOT_ZONES>;

@@ -7,7 +7,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   RARITIES,
-  HERO_JOBS
+  SPELL_SCHOOLS
 } from '../../../card.enums';
 
 export const knightsInspiration: SpellBlueprint = {
@@ -19,8 +19,8 @@ export const knightsInspiration: SpellBlueprint = {
   unique: false,
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
-  spellSchool: null,
-  job: HERO_JOBS.KNIGHT,
+  spellSchool: SPELL_SCHOOLS.LIGHT,
+  job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,

@@ -1,10 +1,11 @@
-import type { MinionSlotZone } from '../board/board;constants';
+import type { BoardSlotZone } from '../board/board.constants';
 import type { Game } from '../game/game';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
+import type { SigilCard } from './entities/sigil.entity';
 import type { SpellCard } from './entities/spell.entity';
 
 export const isHero = (card: AnyCard): card is HeroCard => {
@@ -13,6 +14,10 @@ export const isHero = (card: AnyCard): card is HeroCard => {
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
   return card.kind === CARD_KINDS.MINION;
+};
+
+export const isSigil = (card: AnyCard): card is SigilCard => {
+  return card.kind === CARD_KINDS.SIGIL;
 };
 
 export const isSpell = (card: AnyCard): card is SpellCard => {
@@ -251,7 +256,7 @@ export const multipleEmptyAllySlot = {
     return card.player.boardSide.unoccupiedSlots.length >= min;
   },
   getPreResponseTargets:
-    ({ min, max, zone }: { min: number; max: number; zone?: MinionSlotZone }) =>
+    ({ min, max, zone }: { min: number; max: number; zone?: BoardSlotZone }) =>
     async (game: Game, card: AnyCard) => {
       return await game.interaction.selectMinionSlot({
         player: card.player,

@@ -87,6 +87,7 @@ export type SerializedCard = {
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
   destinyCost: number | null;
+  keywords: string[];
 };
 
 export type CardTargetOrigin =
@@ -274,13 +275,10 @@ export abstract class Card<
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
-    console.log('inserting', this.id, this.game.effectChainSystem.currentChain);
     if (this.game.effectChainSystem.currentChain) {
       if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
-        console.log('adding to current chain');
         await this.game.effectChainSystem.addEffect(effect, this.player);
       } else {
-        console.log('cannot add to current chain, resolve immediately');
         // this can happen if a card is played as part of an other card effect
         // the card wiill be played while the current chain is resolving, so let's just execute it immediately
         await effect.handler();
@@ -456,12 +454,8 @@ export abstract class Card<
       manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
       destinyCost:
         this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
-      speed: this.blueprint.speed
-      // keywords: this.keywords.map(keyword => ({
-      //   id: keyword.id,
-      //   name: keyword.name,
-      //   description: keyword.description
-      // }))
+      speed: this.blueprint.speed,
+      keywords: this.keywords.map(keyword => keyword.id)
     };
   }
 
@@ -513,7 +507,6 @@ export abstract class Card<
     this._isExhausted = false;
 
     await this.dispose();
-
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_DESTROY,
       new CardAfterDestroyEvent({ card: this })

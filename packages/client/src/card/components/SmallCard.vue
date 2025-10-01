@@ -17,6 +17,7 @@ const {
     atk?: number | null;
     baseAtk?: number | null;
     hp?: number | null;
+    countdown?: number | null;
     maxHp?: number | null;
     baseMaxHp?: number | null;
     durability?: number | null;
@@ -107,6 +108,11 @@ const pointerStyle = computed(() => {
           {{ card.durability }}
         </div>
       </div>
+      <div v-if="isDefined(card.countdown) && showStats" class="countdown">
+        <div class="dual-text" :data-text="card.countdown">
+          {{ card.countdown }}
+        </div>
+      </div>
 
       <CardGlare />
     </div>
@@ -191,6 +197,10 @@ const pointerStyle = computed(() => {
     background-image: v-bind(imageBg), url('/assets/ui/frame-spell.png');
   }
 
+  .sigil & .art {
+    background-image: v-bind(imageBg), url('/assets/ui/frame-sigil.png');
+  }
+
   .artifact & .art {
     background-image: v-bind(imageBg), url('/assets/ui/frame-artifact.png');
   }
@@ -245,6 +255,25 @@ const pointerStyle = computed(() => {
 
 .durability {
   background-image: url('/assets/ui/card-durability.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  bottom: calc(14px * var(--pixel-scale));
+  right: calc(15px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-left: calc(4px * var(--pixel-scale));
+  padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 10px;
+  --dual-text-offset-y: 1px;
+  scale: 2;
+}
+
+.countdown {
+  background-image: url('/assets/ui/card-countdown.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(24px * var(--pixel-scale));

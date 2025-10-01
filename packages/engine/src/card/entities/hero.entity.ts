@@ -87,8 +87,8 @@ export class HeroPlayedEvent extends TypedSerializableEvent<
 }
 
 export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
-  { card: HeroCard; damage: Damage },
-  { card: string; damage: { type: DamageType; amount: number } }
+  { card: HeroCard; damage: Damage; source: AnyCard },
+  { card: string; damage: { type: DamageType; amount: number }; source: string }
 > {
   serialize() {
     return {
@@ -96,7 +96,8 @@ export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
       damage: {
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
-      }
+      },
+      source: this.data.source.id
     };
   }
 }
@@ -382,7 +383,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   async takeDamage(source: AnyCard, damage: Damage) {
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE,
-      new HeroCardTakeDamageEvent({ card: this, damage })
+      new HeroCardTakeDamageEvent({ card: this, damage, source })
     );
 
     const amount = damage.getFinalAmount(this);
@@ -391,7 +392,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE,
-      new HeroCardTakeDamageEvent({ card: this, damage })
+      new HeroCardTakeDamageEvent({ card: this, damage, source })
     );
   }
 

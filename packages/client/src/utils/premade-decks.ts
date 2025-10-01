@@ -4,6 +4,7 @@ import { unyieldingShield } from '@game/engine/src/card/sets/core/artifacts/unyi
 import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
 import { aidenLv2 } from '@game/engine/src/card/sets/core/heroes/aiden-lv2';
 import { aidenLv3 } from '@game/engine/src/card/sets/core/heroes/aiden-lv3';
+import { angelOfRetribution } from '@game/engine/src/card/sets/core/minions/angel-of-retribution';
 import { courageousFootsoldier } from '@game/engine/src/card/sets/core/minions/courageous-footsoldier';
 import { flagBearerOfFlame } from '@game/engine/src/card/sets/core/minions/flag-bearer-of-flame';
 import { flameJuggler } from '@game/engine/src/card/sets/core/minions/flame-juggler';
@@ -13,6 +14,7 @@ import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/houge
 import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
 import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
+import { sigilOfImmortalFlame } from '@game/engine/src/card/sets/core/sigils/sigil-of-immortal-flame';
 import { fatedOath } from '@game/engine/src/card/sets/core/spells/fated-oath';
 import { fireBolt } from '@game/engine/src/card/sets/core/spells/fire-bolt';
 import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
@@ -64,7 +66,6 @@ export const premadeDecks: Array<PremadeDeck> = [
 
         hotHeadedRecruit.id,
         hotHeadedRecruit.id,
-        hotHeadedRecruit.id,
 
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
@@ -97,12 +98,14 @@ export const premadeDecks: Array<PremadeDeck> = [
         reposition.id,
         reposition.id,
 
-        hougenThePunisher.id,
         hougenThePunisher.id,
         hougenThePunisher.id,
 
         grandCross.id,
-        grandCross.id
+        grandCross.id,
+
+        sigilOfImmortalFlame.id,
+        sigilOfImmortalFlame.id
       ]
     },
     destinyDeck: {
@@ -113,7 +116,8 @@ export const premadeDecks: Array<PremadeDeck> = [
         unyieldingShield.id,
         fatedOath.id,
         amuletOfRemembrance.id,
-        flamingFrenzy.id
+        flamingFrenzy.id,
+        angelOfRetribution.id
       ]
     }
   }

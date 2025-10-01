@@ -44,7 +44,8 @@ export const provideCardList = () => {
     [CARD_KINDS.HERO]: 1,
     [CARD_KINDS.MINION]: 2,
     [CARD_KINDS.SPELL]: 3,
-    [CARD_KINDS.ARTIFACT]: 4
+    [CARD_KINDS.ARTIFACT]: 4,
+    [CARD_KINDS.SIGIL]: 5
   };
 
   const spellSchoolFilter = ref(new Set<SpellSchool>());

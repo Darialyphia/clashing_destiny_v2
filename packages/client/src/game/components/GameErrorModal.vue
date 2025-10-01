@@ -30,7 +30,7 @@ const router = useRouter();
   >
     <div v-if="error?.isFatal">
       <p>The game encountered the following error :</p>
-      <code class="block my-4">
+      <code class="block my-4 max-h-13 overflow-auto">
         {{ error?.error }}
         {{ error.debugDump }}
       </code>
@@ -69,3 +69,10 @@ const router = useRouter();
     </div>
   </UiModal>
 </template>
+
+<style scoped lang="postcss">
+code {
+  white-space: pre;
+  width: var(--size-md);
+}
+</style>

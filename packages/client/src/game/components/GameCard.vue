@@ -147,6 +147,7 @@ const classes = computed(() => {
             baseDestinyCost: card.baseDestinyCost,
             atk: card.atk,
             hp: card.hp,
+            countdown: card.countdown ?? card.maxCountdown,
             spellpower: card.spellpower,
             durability: card.durability,
             abilities: card.abilities
@@ -171,7 +172,8 @@ const classes = computed(() => {
             hp: card.hp,
             baseMaxHp: card.baseMaxHp,
             maxHp: card.maxHp,
-            durability: card.durability
+            durability: card.durability,
+            countdown: card.countdown ?? card.maxCountdown
           }"
           class="game-card small"
           :class="classes"

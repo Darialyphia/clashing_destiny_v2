@@ -15,6 +15,7 @@ import { Entity } from '../../entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { EFFECT_TYPE } from '../../game/effect-chain';
 import { CARD_SPEED } from '../card.enums';
+import type { SigilCard } from './sigil.entity';
 
 export const ABILITY_EVENTS = {
   ABILITY_BEFORE_USE: 'ability.before-use',
@@ -22,7 +23,7 @@ export const ABILITY_EVENTS = {
 } as const;
 
 export class AbilityBeforeUseEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard | ArtifactCard; abilityId: string },
+  { card: AbilityOwner; abilityId: string },
   {
     card: string;
     abilityId: string;
@@ -37,7 +38,7 @@ export class AbilityBeforeUseEvent extends TypedSerializableEvent<
 }
 
 export class AbilityAfterUseEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard | ArtifactCard; abilityId: string },
+  { card: AbilityOwner; abilityId: string },
   {
     card: string;
     abilityId: string;
@@ -56,7 +57,7 @@ export type AbilityEventMap = {
   [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
 };
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard;
 
 export class Ability<T extends AbilityOwner>
   extends Entity<EmptyObject>

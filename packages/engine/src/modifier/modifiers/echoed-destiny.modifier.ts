@@ -9,11 +9,11 @@ import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
+import { FleetingModifier } from './fleeting.modifier';
 
 export class EchoedDestinyModifier<
   T extends MinionCard | ArtifactCard | SpellCard
 > extends Modifier<T> {
-  private hasTriggered = false;
   constructor(
     game: Game,
     source: AnyCard,
@@ -26,12 +26,13 @@ export class EchoedDestinyModifier<
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ECHOED_DESTINY),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_DISPOSED,
-          handler: event => {
-            if (this.hasTriggered) return;
-            if (event.data.card.equals(this.target)) {
-              this.hasTriggered = true;
-              this.target.sendToDestinyZone();
+          eventName: GAME_EVENTS.PLAYER_PAY_FOR_DESTINY_COST,
+          handler: async event => {
+            if (!event.data.player.equals(this.target.player)) return;
+            if (event.data.cards.some(card => card.card.equals(this.target))) {
+              await this.target.addToHand();
+              // @ts-expect-error
+              await this.target.modifiers.add(new FleetingModifier<T>(game, source));
             }
           }
         }),

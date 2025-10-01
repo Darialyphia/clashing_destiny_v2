@@ -35,7 +35,7 @@ export const unyieldingShield: ArtifactBlueprint = {
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   kind: CARD_KINDS.ARTIFACT,
-  job: HERO_JOBS.KNIGHT,
+  job: HERO_JOBS.PALADIN,
   spellSchool: null,
   durability: 3,
   subKind: ARTIFACT_KINDS.ARMOR,

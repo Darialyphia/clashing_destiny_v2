@@ -23,6 +23,7 @@ import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_PHASES } from '../game.enums';
+import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 
 export type GameStateSnapshot<T> =
   | {
@@ -43,6 +44,7 @@ export type EntityDictionary = Record<
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
+  | SerializedSigilCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility
@@ -54,6 +56,7 @@ export type EntityDiffDictionary = Record<
   | Partial<SerializedSpellCard>
   | Partial<SerializedArtifactCard>
   | Partial<SerializedHeroCard>
+  | Partial<SerializedSigilCard>
   | Partial<SerializedPlayer>
   | Partial<SerializedModifier>
   | Partial<SerializedAbility>

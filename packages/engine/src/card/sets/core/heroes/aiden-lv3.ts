@@ -1,6 +1,5 @@
 import dedent from 'dedent';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import { isMinion, singleEmptyAllySlot } from '../../../card-utils';
 import {
@@ -24,14 +23,14 @@ export const aidenLv3: HeroBlueprint = {
   description: dedent`
   @Aiden Lineage@
   Your minions have +1 @[attack]@ and +1 @[health]@.
-  @On Enter@: You may search your deck for a Warrior or Knight minion that costs @[mana] 2@ or less and summon it exhausted.
+  @On Enter@: You may search your deck for a Warrior or  minion that costs @[mana] 2@ or less and summon it exhausted.
   `,
   cardIconId: 'heroes/aiden-lv3',
   kind: CARD_KINDS.HERO,
   level: 3,
   destinyCost: 3,
   speed: CARD_SPEED.SLOW,
-  jobs: [HERO_JOBS.WARRIOR, HERO_JOBS.KNIGHT, HERO_JOBS.PALADIN],
+  jobs: [HERO_JOBS.WARRIOR, HERO_JOBS.PALADIN],
   spellSchools: [SPELL_SCHOOLS.FIRE, SPELL_SCHOOLS.LIGHT],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
@@ -80,13 +79,13 @@ export const aidenLv3: HeroBlueprint = {
 
           const [minionToSummon] = await game.interaction.chooseCards<MinionCard>({
             player: card.player,
-            label: 'Choose a Warrior or Knight minion that costs 2 or less to summon',
+            label: 'Choose a Warrior minion that costs 2 or less to summon',
             minChoiceCount: 0,
             maxChoiceCount: 1,
             choices: card.player.cardManager.mainDeck.cards.filter(c => {
               if (!isMinion(c)) return false;
               if (c.manaCost > 2) return false;
-              if (c.job !== HERO_JOBS.WARRIOR && c.job !== HERO_JOBS.KNIGHT) return false;
+              if (c.job !== HERO_JOBS.WARRIOR) return false;
               return true;
             })
           });

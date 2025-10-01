@@ -7,17 +7,21 @@ import { aidenLv1 } from './core/heroes/aiden-lv1';
 import { aidenLv2 } from './core/heroes/aiden-lv2';
 import { aidenLv3 } from './core/heroes/aiden-lv3';
 import { noviceLv0 } from './core/heroes/novice-lv0';
+import { angelOfRetribution } from './core/minions/angel-of-retribution';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flameJuggler } from './core/minions/flame-juggler';
 import { friendlySlime } from './core/minions/friendlySlime';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { hougenThePunisher } from './core/minions/hougen-the-punisher';
+import { phoenix } from './core/minions/phoenix';
 import { pyreboundLancer } from './core/minions/pyrebound-lancer';
 import { sharpShooter } from './core/minions/sharpshooter';
 import { shieldMaiden } from './core/minions/shield-maiden';
+import { sigilOfImmortalFlame } from './core/sigils/sigil-of-immortal-flame';
 import { fatedOath } from './core/spells/fated-oath';
 import { fireBolt } from './core/spells/fire-bolt';
+import { fireball } from './core/spells/fireball';
 import { flamingFrenzy } from './core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { grandCross } from './core/spells/grand-cross';
@@ -52,6 +56,10 @@ export const coreSet: CardSet = {
     hougenThePunisher,
     amuletOfRemembrance,
     flamingFrenzy,
-    grandCross
+    grandCross,
+    fireball,
+    angelOfRetribution,
+    phoenix,
+    sigilOfImmortalFlame
   ]
 };

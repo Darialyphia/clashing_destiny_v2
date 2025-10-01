@@ -9,11 +9,12 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
-import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
-import { isMinion } from '../../card/card-utils';
+import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
+import { isMinion, isSigil } from '../../card/card-utils';
+import type { SigilCard } from '../../card/entities/sigil.entity';
 
 export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
-  private position: MinionPosition | null = null;
+  private position: BoardPosition | null = null;
 
   constructor(
     game: Game,
@@ -23,7 +24,7 @@ export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
       handler: (
         event: CardAfterDestroyEvent,
         modifier: Modifier<T>,
-        position: T extends MinionCard ? MinionPosition : null
+        position: T extends MinionCard | SigilCard ? BoardPosition : null
       ) => MaybePromise<void>;
     }
   ) {
@@ -34,7 +35,7 @@ export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
           eventName: GAME_EVENTS.CARD_BEFORE_DESTROY,
           handler: event => {
             if (!event.data.card.equals(this.target)) return;
-            if (isMinion(event.data.card)) {
+            if (isMinion(event.data.card) || isSigil(event.data.card)) {
               this.position = {
                 player: event.data.card.player,
                 slot: event.data.card.position!.slot,

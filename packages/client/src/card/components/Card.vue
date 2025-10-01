@@ -41,6 +41,7 @@ const {
     level?: number | null;
     atk?: number | null;
     hp?: number | null;
+    countdown?: number | null;
     spellpower?: number | null;
     durability?: number | null;
     abilities?: string[];
@@ -263,6 +264,11 @@ const onMouseleave = () => {
         <div v-if="isDefined(card.durability)" class="durability">
           <div class="dual-text" :data-text="card.durability">
             {{ card.durability }}
+          </div>
+        </div>
+        <div v-if="isDefined(card.countdown)" class="countdown">
+          <div class="dual-text" :data-text="card.countdown">
+            {{ card.countdown }}
           </div>
         </div>
 
@@ -554,6 +560,12 @@ const onMouseleave = () => {
     top: 0;
   }
 
+  .sigil & {
+    background: url('/assets/ui/frame-sigil.png') no-repeat;
+    background-size: cover;
+    top: 0;
+  }
+
   .artifact & {
     background: url('/assets/ui/frame-artifact.png') no-repeat;
     background-size: cover;
@@ -789,6 +801,24 @@ const onMouseleave = () => {
 
 .durability {
   background-image: url('/assets/ui/card-durability.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  top: calc(86px * var(--pixel-scale));
+  right: calc(0px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-left: calc(4px * var(--pixel-scale));
+  padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 18px;
+  --dual-text-offset-y: 2px;
+}
+
+.countdown {
+  background-image: url('/assets/ui/card-countdown.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(24px * var(--pixel-scale));

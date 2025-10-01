@@ -1,6 +1,6 @@
 import type { Override } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
-import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
+import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
 import { SelectCardAction } from '../actions/select-card';
@@ -17,7 +17,7 @@ import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
-import type { MinionSlotZone } from '../../board/board;constants';
+import type { BoardSlotZone } from '../../board/board.constants';
 import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
 
 export type CardClickRule = {
@@ -25,7 +25,7 @@ export type CardClickRule = {
   handler: (card: CardViewModel) => void;
 };
 
-export type UiMinionslot = Override<MinionPosition, { player: PlayerViewModel }>;
+export type UiMinionslot = Override<BoardPosition, { player: PlayerViewModel }>;
 export type MinionSlotClickRule = {
   predicate: (slot: UiMinionslot, state: GameClientState) => boolean;
   handler: (slot: UiMinionslot) => void;
@@ -84,11 +84,11 @@ export class UiController {
     playedCardZone: new DOMSelector('played-card'),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
-    minionPosition: (playerId: string, zone: MinionSlotZone, slot: number) =>
+    minionPosition: (playerId: string, zone: BoardSlotZone, slot: number) =>
       new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
     minionOnBoard: (
       playerId: string,
-      zone: MinionSlotZone,
+      zone: BoardSlotZone,
       slot: number,
       minionId: string
     ) =>

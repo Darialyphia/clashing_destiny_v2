@@ -1,4 +1,4 @@
-import { MINION_SLOT_ZONES } from '../../board/board;constants';
+import { BOARD_SLOT_ZONES } from '../../board/board.constants';
 import { RangedAttackRange } from '../../card/attack-range';
 import { KEYWORDS } from '../../card/card-keywords';
 import { isHero } from '../../card/card-utils';
@@ -30,7 +30,7 @@ export class RangedModifier extends Modifier<MinionCard> {
         new MinionInterceptorModifierMixin(game, {
           key: 'canBeCounterattacked',
           interceptor: (value, { defender }) => {
-            if (this.target.position?.zone === MINION_SLOT_ZONES.FRONT_ROW) return value;
+            if (this.target.position?.zone === BOARD_SLOT_ZONES.FRONT_ROW) return value;
             if (isHero(defender)) return value;
             if (defender.modifiers.has(RangedModifier)) return value;
             return false;

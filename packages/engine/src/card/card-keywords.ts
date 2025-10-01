@@ -22,13 +22,13 @@ export const KEYWORDS = {
     id: 'echoed-destiny',
     name: 'Echoed Destiny',
     description:
-      'The first time you play this card, when this card is sent to the graveyard, put it into your Destiny Zone instead.',
+      'If this card is banished while paying for the cost of a Destiny card, add it to your hand instead and give it Fleeting.',
     aliases: []
   },
   SUMMONING_SICKNESS: {
     id: 'summoning-sickness',
     name: 'Summoning Sickness',
-    description: 'This unit cannot attack or use abilities the turn it is played.',
+    description: 'This unit cannot attack the turn it is played.',
     aliases: []
   },
   ON_ENTER: {
@@ -102,7 +102,8 @@ export const KEYWORDS = {
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',
-    description: 'This card is banished at the end of your turn if it is in your hand.',
+    description:
+      'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
     aliases: []
   },
   ELUSIVE: {

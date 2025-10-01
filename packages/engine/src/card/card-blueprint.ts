@@ -1,6 +1,6 @@
 import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
-import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
+import type { BoardPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import type {
   CARD_KINDS,
   CardKind,
@@ -19,7 +19,8 @@ import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
-import type { MinionSlotZone } from '../board/board;constants';
+import type { BoardSlotZone } from '../board/board.constants';
+import type { SigilCard } from './entities/sigil.entity';
 
 export type CardSourceBlueprint =
   | {
@@ -75,7 +76,7 @@ export type SerializedAbility = {
   isHiddenOnCard: boolean;
 };
 
-export type PreResponseTarget = AnyCard | MinionPosition;
+export type PreResponseTarget = AnyCard | BoardPosition;
 export type SerializedPreResponseTarget =
   | {
       type: 'card';
@@ -85,7 +86,7 @@ export type SerializedPreResponseTarget =
       type: 'minionPosition';
       playerId: string;
       slot: number;
-      zone: MinionSlotZone;
+      zone: BoardSlotZone;
     };
 export const serializePreResponseTarget = (
   target: PreResponseTarget
@@ -115,6 +116,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
 };
+
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   spellSchool: SpellSchool | null;
@@ -124,6 +126,7 @@ export type SpellBlueprint = CardBlueprintBase & {
   canPlay: (game: Game, card: SpellCard) => boolean;
   getPreResponseTargets: (game: Game, card: SpellCard) => Promise<PreResponseTarget[]>;
 };
+
 export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
   lineage: string | null;
@@ -158,8 +161,20 @@ export type ArtifactBlueprint = CardBlueprintBase & {
       }
   );
 
+export type SigilBlueprint = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.SIGIL>;
+  onInit: (game: Game, card: SigilCard) => Promise<void>;
+  canPlay: (game: Game, card: SigilCard) => boolean;
+  onPlay: (game: Game, card: SigilCard) => Promise<void>;
+  job: HeroJob | null;
+  spellSchool: SpellSchool | null;
+  maxCountdown: number;
+  abilities: AbilityBlueprint<SigilCard, PreResponseTarget>[];
+};
+
 export type CardBlueprint =
   | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
-  | HeroBlueprint;
+  | HeroBlueprint
+  | SigilBlueprint;

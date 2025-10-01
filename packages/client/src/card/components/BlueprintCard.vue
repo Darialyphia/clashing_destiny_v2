@@ -26,6 +26,7 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
         (blueprint as any).damage ??
         (blueprint as any).atkBonus,
       hp: (blueprint as any).maxHp,
+      countdown: (blueprint as any).maxCountdown,
       spellpower: (blueprint as any).spellPower,
       level: (blueprint as any).level,
       durability: (blueprint as any).durability,

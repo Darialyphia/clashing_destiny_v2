@@ -15,7 +15,7 @@ export const fireBolt: SpellBlueprint = {
   id: 'fire-bolt',
   name: 'Fire Bolt',
   cardIconId: 'spells/fire-bolt',
-  description: 'Deal 1 damage to a target enemy.',
+  description: 'Deal 1 damage to target enemy.',
   collectable: true,
   unique: false,
   manaCost: 1,

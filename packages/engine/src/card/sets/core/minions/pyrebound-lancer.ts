@@ -5,13 +5,12 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  HERO_JOBS,
   RARITIES,
   SPELL_SCHOOLS
 } from '../../../card.enums';
 import { fireBolt } from '../spells/fire-bolt';
 import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
-import { OnHitModifier } from '../../../../modifier/modifiers/onHit.modifier';
+import { OnHitModifier } from '../../../../modifier/modifiers/on-hit.modifier';
 import { SpellSchoolAffinityModifier } from '../../../../modifier/modifiers/spell-school-affinity.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
@@ -28,12 +27,12 @@ export const pyreboundLancer: MinionBlueprint = {
   unique: false,
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
-  atk: 3,
+  atk: 2,
   maxHp: 5,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
-  job: HERO_JOBS.KNIGHT,
+  job: null,
   spellSchool: null,
   setId: CARD_SETS.CORE,
   abilities: [],

@@ -15,7 +15,7 @@ import DestinyZone from './DestinyZone.vue';
 import DestinyDeck from './DestinyDeck.vue';
 import EffectChain from './EffectChain.vue';
 import BanishPile from './BanishPile.vue';
-import MinionSlot from './MinionSlot.vue';
+import BoardSlot from './BoardSlot.vue';
 import OpponentHand from './OpponentHand.vue';
 import BattleLog from './BattleLog.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
@@ -102,18 +102,18 @@ useGameKeyboardControls();
         <div class="flex gap-3 h-full">
           <div class="minion-row">
             <div>Back line</div>
-            <MinionSlot
+            <BoardSlot
               v-for="slot in myBoard.backRow.slots"
               :key="slot.position"
-              :minion-slot="slot"
+              :boardSlot="slot"
             />
           </div>
           <div class="minion-row">
             <div>Front line</div>
-            <MinionSlot
+            <BoardSlot
               v-for="slot in myBoard.frontRow.slots"
               :key="slot.position"
-              :minion-slot="slot"
+              :boardSlot="slot"
             />
           </div>
         </div>
@@ -122,18 +122,18 @@ useGameKeyboardControls();
           <div class="minion-row">
             <div>Front line</div>
 
-            <MinionSlot
+            <BoardSlot
               v-for="slot in opponentBoard.frontRow.slots"
               :key="slot.position"
-              :minion-slot="slot"
+              :boardSlot="slot"
             />
           </div>
           <div class="minion-row">
             <div>Back line</div>
-            <MinionSlot
+            <BoardSlot
               v-for="slot in opponentBoard.backRow.slots"
               :key="slot.position"
-              :minion-slot="slot"
+              :boardSlot="slot"
             />
           </div>
         </div>

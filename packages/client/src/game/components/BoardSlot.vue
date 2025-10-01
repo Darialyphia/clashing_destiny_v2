@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
+import type { SerializedBoardSlot } from '@game/engine/src/board/board-slot.entity';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useGameUi, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 
-const { minionSlot } = defineProps<{
-  minionSlot: SerializedBoardMinionSlot;
+const { boardSlot: minionSlot } = defineProps<{
+  boardSlot: SerializedBoardSlot;
 }>();
 
 const ui = useGameUi();

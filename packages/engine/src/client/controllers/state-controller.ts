@@ -19,7 +19,8 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
-import { MINION_SLOT_ZONES } from '../../board/board;constants';
+import { BOARD_SLOT_ZONES } from '../../board/board.constants';
+import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 
 export type GameStateEntities = Record<
   string,
@@ -38,6 +39,7 @@ export type SerializedEntity =
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
+  | SerializedSigilCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility;
@@ -135,12 +137,12 @@ export class ClientStateController {
       const boardSide = this.state.board.sides.find(
         side => side.playerId === card.player.id
       )!;
-      if (card.position?.zone === MINION_SLOT_ZONES.FRONT_ROW) {
+      if (card.position?.zone === BOARD_SLOT_ZONES.FRONT_ROW) {
         boardSide.frontRow.slots[card.position.slot] = {
           ...boardSide.frontRow.slots[card.position.slot],
           minion: card.id
         };
-      } else if (card.position?.zone === MINION_SLOT_ZONES.BACK_ROW) {
+      } else if (card.position?.zone === BOARD_SLOT_ZONES.BACK_ROW) {
         boardSide.backRow.slots[card.position.slot] = {
           ...boardSide.backRow.slots[card.position.slot],
           minion: card.id

@@ -1,10 +1,10 @@
-import type { SerializedBoardMinionSlot } from '@game/engine/src/board/board-minion-slot.entity';
+import type { SerializedBoardSlot } from '@game/engine/src/board/board-slot.entity';
 import { useGameState } from './useGameClient';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import { type Ref } from 'vue';
 
-export const useMinionSlot = (slot: Ref<SerializedBoardMinionSlot>) => {
+export const useMinionSlot = (slot: Ref<SerializedBoardSlot>) => {
   const state = useGameState();
 
   const player = computed(() => {

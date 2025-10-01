@@ -17,7 +17,6 @@ export const flameJuggler: MinionBlueprint = {
   cardIconId: 'minions/flame-juggler',
   description: dedent`
   @On Enter@ : Put a @${fireBolt.name}@ in your hand.
-  @[level] 2+ bonus@: Your @${fireBolt.name}@ have Warp speed.
   `,
   collectable: true,
   unique: false,

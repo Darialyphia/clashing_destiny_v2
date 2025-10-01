@@ -3,8 +3,6 @@ import type { Values } from '@game/shared';
 export const CARD_EVENTS = {
   CARD_BEFORE_PLAY: 'card.before_play',
   CARD_AFTER_PLAY: 'card.after_play',
-  CARD_BEFORE_PLAY_WITHOUT_AFFINITY_MATCH: 'card.before_play_without_affinity_match',
-  CARD_AFTER_PLAY_WITHOUT_AFFINITY_MATCH: 'card.after_play_without_affinity_match',
   CARD_DISCARD: 'card.discard',
   CARD_ADD_TO_HAND: 'card.add_to_hand',
   CARD_EXHAUST: 'card.exhaust',
@@ -29,7 +27,8 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
-  ARTIFACT: 'ARTIFACT'
+  ARTIFACT: 'ARTIFACT',
+  SIGIL: 'SIGIL'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -78,7 +77,6 @@ export type SpellSchool = Values<typeof SPELL_SCHOOLS>;
 
 export const HERO_JOBS = {
   WARRIOR: 'WARRIOR',
-  KNIGHT: 'KNIGHT',
   PALADIN: 'PALADIN'
 } as const;
 export type HeroJob = Values<typeof HERO_JOBS>;

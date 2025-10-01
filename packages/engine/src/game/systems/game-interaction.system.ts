@@ -14,7 +14,7 @@ import type { Player } from '../../player/player.entity';
 import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
 import {
   SelectingMinionSlotsContext,
-  type MinionPosition
+  type BoardPosition
 } from '../interactions/selecting-minion-slots.interaction';
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
@@ -266,9 +266,9 @@ export class GameInteractionSystem
   }
 
   async selectMinionSlot(options: {
-    isElligible: (position: MinionPosition, selectedSlots: MinionPosition[]) => boolean;
-    canCommit: (selectedSlots: MinionPosition[]) => boolean;
-    isDone(selectedSlots: MinionPosition[]): boolean;
+    isElligible: (position: BoardPosition, selectedSlots: BoardPosition[]) => boolean;
+    canCommit: (selectedSlots: BoardPosition[]) => boolean;
+    isDone(selectedSlots: BoardPosition[]): boolean;
     player: Player;
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_MINION_SLOT);
@@ -277,7 +277,7 @@ export class GameInteractionSystem
       options
     );
 
-    return this.game.inputSystem.pause<MinionPosition[]>();
+    return this.game.inputSystem.pause<BoardPosition[]>();
   }
 
   async chooseCards<T extends AnyCard>(options: {

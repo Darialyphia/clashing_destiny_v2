@@ -1,10 +1,10 @@
-import type { BoardMinionSlot } from '../board/board-minion-slot.entity';
-import { MINION_SLOT_ZONES } from '../board/board;constants';
+import type { BoardSlot } from '../board/board-slot.entity';
+import { BOARD_SLOT_ZONES } from '../board/board.constants';
 import type { Game } from '../game/game';
 import type { MinionCard } from './entities/minion.entity';
 
 export type AttackRange = {
-  canAttack(position: BoardMinionSlot): boolean;
+  canAttack(position: BoardSlot): boolean;
   canAttackHero(): boolean;
 };
 
@@ -13,11 +13,11 @@ export class MeleeAttackRange implements AttackRange {
     private game: Game,
     private minion: MinionCard
   ) {}
-  canAttack(position: BoardMinionSlot) {
+  canAttack(position: BoardSlot) {
     if (position.slot !== this.minion.position!.slot) return false;
 
-    if (position.zone === MINION_SLOT_ZONES.BACK_ROW) {
-      return !position.player.boardSide.frontRow.get(position.slot).isOccupied;
+    if (position.zone === BOARD_SLOT_ZONES.BACK_ROW) {
+      return !position.player.boardSide.frontRow.get(position.slot).minion;
     }
 
     return true;
@@ -28,8 +28,7 @@ export class MeleeAttackRange implements AttackRange {
     const slot = this.minion.position!.slot;
 
     return (
-      !opponentBoard.frontRow.get(slot).isOccupied &&
-      !opponentBoard.backRow.get(slot).isOccupied
+      !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion
     );
   }
 }
@@ -40,7 +39,7 @@ export class RangedAttackRange implements AttackRange {
     private minion: MinionCard
   ) {}
 
-  canAttack(position: BoardMinionSlot) {
+  canAttack(position: BoardSlot) {
     return position.slot === this.minion.position!.slot;
   }
 
@@ -49,8 +48,7 @@ export class RangedAttackRange implements AttackRange {
     const slot = this.minion.position!.slot;
 
     return (
-      !opponentBoard.frontRow.get(slot).isOccupied &&
-      !opponentBoard.backRow.get(slot).isOccupied
+      !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion
     );
   }
 }
@@ -61,7 +59,7 @@ export class FlankAttackRange implements AttackRange {
     private minion: MinionCard
   ) {}
 
-  canAttack(position: BoardMinionSlot) {
+  canAttack(position: BoardSlot) {
     return Math.abs(position.slot - this.minion.position!.slot) === 1;
   }
 
@@ -70,8 +68,7 @@ export class FlankAttackRange implements AttackRange {
     const slot = this.minion.position!.slot;
 
     return (
-      !opponentBoard.frontRow.get(slot).isOccupied &&
-      !opponentBoard.backRow.get(slot).isOccupied
+      !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion
     );
   }
 }

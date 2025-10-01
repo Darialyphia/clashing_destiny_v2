@@ -21,6 +21,10 @@ export const useSandbox = (
   window.__debugClient = () => {
     console.log(client.value);
   };
+  // @ts-expect-error
+  window.__debugGame = () => {
+    worker.postMessage({ type: 'debug' });
+  };
   const networkAdapter: NetworkAdapter = {
     dispatch: input => {
       // helper to detect input serialization issues when sending to the worker

@@ -89,6 +89,26 @@ export class CardViewModel {
     return this.data.rarity;
   }
 
+  get keywords() {
+    return (this.data.keywords ?? []) as string[];
+  }
+
+  get countdown() {
+    if ('countdown' in this.data) {
+      return this.data.countdown as number;
+    }
+
+    return null;
+  }
+
+  get maxCountdown() {
+    if ('maxCountdown' in this.data) {
+      return this.data.maxCountdown as number;
+    }
+
+    return null;
+  }
+
   get manaCost() {
     if (this.source === CARD_DECK_SOURCES.DESTINY_DECK) {
       return null;

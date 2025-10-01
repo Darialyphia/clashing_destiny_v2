@@ -12,13 +12,17 @@ type SandboxWorkerEvent =
         options: Pick<GameOptions, 'players' | 'rngSeed'>;
       };
     }
-  | { type: 'dispatch'; payload: { input: SerializedInput } };
+  | { type: 'dispatch'; payload: { input: SerializedInput } }
+  | { type: 'debug' };
 
 let game: Game;
 self.addEventListener('message', ({ data }) => {
   const options = data as SandboxWorkerEvent;
 
   match(options)
+    .with({ type: 'debug' }, () => {
+      console.log(game);
+    })
     .with({ type: 'init' }, async ({ payload }) => {
       game = new Game({
         id: 'sandbox',

@@ -10,7 +10,7 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { friendlySlime } from '../minions/friendlySlime';
-import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
+import type { BoardPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { InterceptModifier } from '../../../../modifier/modifiers/intercept.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 
@@ -44,7 +44,7 @@ export const slimesToTheRescue: SpellBlueprint = {
   },
   async onInit() {},
   async onPlay(game, card, targets) {
-    for (const target of targets as MinionPosition[]) {
+    for (const target of targets as BoardPosition[]) {
       const slime = await card.player.generateCard<MinionCard>(friendlySlime.id);
       await slime.playImmediatelyAt(target);
       await slime.modifiers.add(

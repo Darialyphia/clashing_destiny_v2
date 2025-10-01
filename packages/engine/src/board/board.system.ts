@@ -33,8 +33,8 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
     return this.sides.flatMap(side => side.getAllCardsInPlay());
   }
 
-  getColumn(row: number) {
-    return new BoardColumn(this.game, row);
+  getColumn(slot: number) {
+    return new BoardColumn(this.game, slot);
   }
 
   serialize(): SerializedBoard {

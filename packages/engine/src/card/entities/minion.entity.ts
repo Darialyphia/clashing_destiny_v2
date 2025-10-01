@@ -20,15 +20,12 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
+import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { GAME_PHASES } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
-import type {
-  BoardMinionSlot,
-  SerializedBoardMinionSlot
-} from '../../board/board-minion-slot.entity';
+import type { BoardSlot, SerializedBoardSlot } from '../../board/board-slot.entity';
 import { Ability } from './ability.entity';
-import { type MinionSlotZone } from '../../board/board;constants';
+import { type BoardSlotZone } from '../../board/board.constants';
 import { MeleeAttackRange, type AttackRange } from '../attack-range';
 import { HeroCard } from './hero.entity';
 import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
@@ -46,7 +43,7 @@ export type SerializedMinionCard = SerializedCard & {
   abilities: string[];
   job: HeroJob | null;
   spellSchool: SpellSchool | null;
-  position: Pick<MinionPosition, 'zone' | 'slot'> | null;
+  position: Pick<BoardPosition, 'zone' | 'slot'> | null;
   canCounterattack: boolean;
 };
 
@@ -69,174 +66,6 @@ export type MinionCardInterceptors = CardInterceptors & {
   attackAOEs: Interceptable<AttackAOE[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
-
-export const MINION_EVENTS = {
-  MINION_SUMMONED: 'minion.summoned',
-  MINION_BEFORE_TAKE_DAMAGE: 'minion.before-take-damage',
-  MINION_AFTER_TAKE_DAMAGE: 'minion.after-take-damage',
-  MINION_BEFORE_DEAL_COMBAT_DAMAGE: 'minion.before-deal-combat-damage',
-  MINION_AFTER_DEAL_COMBAT_DAMAGE: 'minion.after-deal-combat-damage',
-  MINION_BEFORE_HEAL: 'minion.before-heal',
-  MINION_AFTER_HEAL: 'minion.after-heal',
-  MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability',
-  MINION_BEFORE_MOVE: 'minion.before-move',
-  MINION_AFTER_MOVE: 'minion.after-move'
-} as const;
-export type MinionEvents = Values<typeof MINION_EVENTS>;
-
-export class MinionCardBeforeDealCombatDamageEvent extends TypedSerializableEvent<
-  {
-    card: MinionCard;
-    target: AttackTarget;
-    affectedCards: Array<MinionCard | HeroCard>;
-    damage: CombatDamage;
-  },
-  { card: string; target: string; damage: number; affectedCards: string[] }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      target: this.data.target.id,
-      damage: this.data.damage.getFinalAmount(this.data.target),
-      affectedCards: this.data.affectedCards.map(card => card.id)
-    };
-  }
-}
-
-export class MinionCardAfterDealCombatDamageEvent extends TypedSerializableEvent<
-  {
-    card: MinionCard;
-    target: AttackTarget;
-    damage: CombatDamage;
-    affectedCards: Array<MinionCard | HeroCard>;
-  },
-  {
-    card: string;
-    target: string;
-    damage: number;
-    affectedCards: string[];
-    isFatal: boolean;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      target: this.data.target.id,
-      damage: this.data.damage.getFinalAmount(this.data.target),
-      affectedCards: this.data.affectedCards.map(card => card.id),
-      isFatal: !this.data.target.isAlive
-    };
-  }
-}
-
-export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard; source: AnyCard; damage: Damage },
-  { card: string; source: string; damage: { type: DamageType; amount: number } }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      source: this.data.source.id,
-      damage: {
-        type: this.data.damage.type,
-        amount: this.data.damage.getFinalAmount(this.data.card)
-      }
-    };
-  }
-}
-
-export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard; source: AnyCard; damage: Damage; isFatal: boolean },
-  {
-    card: SerializedMinionCard;
-    source: string;
-    damage: { type: DamageType; amount: number };
-    isFatal: boolean;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      source: this.data.source.id,
-      damage: {
-        type: this.data.damage.type,
-        amount: this.data.damage.getFinalAmount(this.data.card)
-      },
-      isFatal: this.data.isFatal
-    };
-  }
-}
-
-export class MinionCardHealEvent extends TypedSerializableEvent<
-  { card: MinionCard; amount: number },
-  { card: SerializedMinionCard; amount: number }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      amount: this.data.amount
-    };
-  }
-}
-
-export class MinionUsedAbilityEvent extends TypedSerializableEvent<
-  { card: MinionCard; abilityId: string },
-  { card: SerializedMinionCard; abilityId: string }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard; position: { zone: MinionSlotZone; slot: number } },
-  { card: SerializedMinionCard; position: { zone: MinionSlotZone; slot: number } }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      position: {
-        zone: this.data.position.zone,
-        slot: this.data.position.slot
-      }
-    };
-  }
-}
-
-export class MinionMoveEvent extends TypedSerializableEvent<
-  { card: MinionCard; from: BoardMinionSlot; to: BoardMinionSlot },
-  {
-    card: SerializedMinionCard;
-    from: SerializedBoardMinionSlot;
-    to: SerializedBoardMinionSlot;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      from: this.data.from.serialize(),
-      to: this.data.to.serialize()
-    };
-  }
-}
-
-export type MinionCardEventMap = {
-  [MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE]: MinionCardBeforeTakeDamageEvent;
-  [MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE]: MinionCardAfterTakeDamageEvent;
-  [MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE]: MinionCardBeforeDealCombatDamageEvent;
-  [MINION_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE]: MinionCardAfterDealCombatDamageEvent;
-  [MINION_EVENTS.MINION_BEFORE_USE_ABILITY]: MinionUsedAbilityEvent;
-  [MINION_EVENTS.MINION_AFTER_USE_ABILITY]: MinionUsedAbilityEvent;
-  [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
-  [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
-  [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
-  [MINION_EVENTS.MINION_BEFORE_MOVE]: MinionMoveEvent;
-  [MINION_EVENTS.MINION_AFTER_MOVE]: MinionMoveEvent;
-};
 
 export class MinionCard extends Card<
   SerializedCard,
@@ -285,7 +114,7 @@ export class MinionCard extends Card<
     return this.player.boardSide.getPositionFor(this);
   }
 
-  get minionSlot() {
+  get slot() {
     if (!this.position) return null;
     return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
   }
@@ -304,11 +133,6 @@ export class MinionCard extends Card<
 
   get remainingHp(): number {
     return Math.max(this.maxHp - this.damageTaken, 0);
-  }
-
-  get slot() {
-    if (!this.position) return null;
-    return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
   }
 
   get job() {
@@ -407,7 +231,7 @@ export class MinionCard extends Card<
     await phaseCtx.ctx.counterAttack();
   }
 
-  async moveTo(position: MinionPosition, allowSwap = false) {
+  async moveTo(position: BoardPosition, allowSwap = false) {
     if (!this.position) return;
 
     return this.player.boardSide.moveMinion(this.position, position, { allowSwap });
@@ -550,7 +374,7 @@ export class MinionCard extends Card<
     return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
   }
 
-  private async summon(position: MinionPosition) {
+  private async summon(position: BoardPosition) {
     if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
       await this.dispose();
       return;
@@ -582,7 +406,7 @@ export class MinionCard extends Card<
     );
   }
 
-  async playAt(position: MinionPosition, onResolved?: () => MaybePromise<void>) {
+  async playAt(position: BoardPosition, onResolved?: () => MaybePromise<void>) {
     await this.insertInChainOrExecute(
       async () => {
         await this.summon(position);
@@ -594,7 +418,7 @@ export class MinionCard extends Card<
 
   // immediately plays the minion regardless of current chain or interaction state
   // this is useful when summoning minions as part of another card effect
-  playImmediatelyAt(position: MinionPosition) {
+  playImmediatelyAt(position: BoardPosition) {
     return this.resolve(() => this.summon(position));
   }
 
@@ -675,3 +499,171 @@ export class MinionCard extends Card<
     };
   }
 }
+
+export const MINION_EVENTS = {
+  MINION_SUMMONED: 'minion.summoned',
+  MINION_BEFORE_TAKE_DAMAGE: 'minion.before-take-damage',
+  MINION_AFTER_TAKE_DAMAGE: 'minion.after-take-damage',
+  MINION_BEFORE_DEAL_COMBAT_DAMAGE: 'minion.before-deal-combat-damage',
+  MINION_AFTER_DEAL_COMBAT_DAMAGE: 'minion.after-deal-combat-damage',
+  MINION_BEFORE_HEAL: 'minion.before-heal',
+  MINION_AFTER_HEAL: 'minion.after-heal',
+  MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
+  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability',
+  MINION_BEFORE_MOVE: 'minion.before-move',
+  MINION_AFTER_MOVE: 'minion.after-move'
+} as const;
+export type MinionEvents = Values<typeof MINION_EVENTS>;
+
+export class MinionCardBeforeDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard;
+    target: AttackTarget;
+    affectedCards: Array<MinionCard | HeroCard>;
+    damage: CombatDamage;
+  },
+  { card: string; target: string; damage: number; affectedCards: string[] }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id)
+    };
+  }
+}
+
+export class MinionCardAfterDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard;
+    target: AttackTarget;
+    damage: CombatDamage;
+    affectedCards: Array<MinionCard | HeroCard>;
+  },
+  {
+    card: string;
+    target: string;
+    damage: number;
+    affectedCards: string[];
+    isFatal: boolean;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id),
+      isFatal: !this.data.target.isAlive
+    };
+  }
+}
+
+export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
+  { card: MinionCard; source: AnyCard; damage: Damage },
+  { card: string; source: string; damage: { type: DamageType; amount: number } }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      source: this.data.source.id,
+      damage: {
+        type: this.data.damage.type,
+        amount: this.data.damage.getFinalAmount(this.data.card)
+      }
+    };
+  }
+}
+
+export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
+  { card: MinionCard; source: AnyCard; damage: Damage; isFatal: boolean },
+  {
+    card: SerializedMinionCard;
+    source: string;
+    damage: { type: DamageType; amount: number };
+    isFatal: boolean;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      source: this.data.source.id,
+      damage: {
+        type: this.data.damage.type,
+        amount: this.data.damage.getFinalAmount(this.data.card)
+      },
+      isFatal: this.data.isFatal
+    };
+  }
+}
+
+export class MinionCardHealEvent extends TypedSerializableEvent<
+  { card: MinionCard; amount: number },
+  { card: SerializedMinionCard; amount: number }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      amount: this.data.amount
+    };
+  }
+}
+
+export class MinionUsedAbilityEvent extends TypedSerializableEvent<
+  { card: MinionCard; abilityId: string },
+  { card: SerializedMinionCard; abilityId: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      abilityId: this.data.abilityId
+    };
+  }
+}
+
+export class MinionSummonedEvent extends TypedSerializableEvent<
+  { card: MinionCard; position: { zone: BoardSlotZone; slot: number } },
+  { card: SerializedMinionCard; position: { zone: BoardSlotZone; slot: number } }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      position: {
+        zone: this.data.position.zone,
+        slot: this.data.position.slot
+      }
+    };
+  }
+}
+
+export class MinionMoveEvent extends TypedSerializableEvent<
+  { card: MinionCard; from: BoardSlot; to: BoardSlot },
+  {
+    card: SerializedMinionCard;
+    from: SerializedBoardSlot;
+    to: SerializedBoardSlot;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      from: this.data.from.serialize(),
+      to: this.data.to.serialize()
+    };
+  }
+}
+
+export type MinionCardEventMap = {
+  [MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE]: MinionCardBeforeTakeDamageEvent;
+  [MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE]: MinionCardAfterTakeDamageEvent;
+  [MINION_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE]: MinionCardBeforeDealCombatDamageEvent;
+  [MINION_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE]: MinionCardAfterDealCombatDamageEvent;
+  [MINION_EVENTS.MINION_BEFORE_USE_ABILITY]: MinionUsedAbilityEvent;
+  [MINION_EVENTS.MINION_AFTER_USE_ABILITY]: MinionUsedAbilityEvent;
+  [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
+  [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
+  [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
+  [MINION_EVENTS.MINION_BEFORE_MOVE]: MinionMoveEvent;
+  [MINION_EVENTS.MINION_AFTER_MOVE]: MinionMoveEvent;
+};
