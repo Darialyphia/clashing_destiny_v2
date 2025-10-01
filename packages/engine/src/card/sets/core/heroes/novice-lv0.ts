@@ -64,7 +64,6 @@ export const noviceLv0: HeroBlueprint = {
   ],
   tags: [],
   async onInit(game, card) {
-    console.log('init', card.id);
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {

@@ -22,7 +22,7 @@ export class PlayCardAction implements CardActionRule {
   handler(card: CardViewModel) {
     this.client.ui.optimisticState.playedCardId = card.id;
 
-    this.client.networkAdapter.dispatch({
+    this.client.dispatch({
       type: 'declarePlayCard',
       payload: {
         id: card.id,

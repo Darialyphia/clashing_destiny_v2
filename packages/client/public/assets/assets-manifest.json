@@ -327,6 +327,19 @@
         },
         {
           "alias": [
+            "erina-lv3.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/erina-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "novice-lv0.png"
           ],
           "src": [
@@ -342,7 +355,21 @@
     },
     {
       "name": "cards/sigils",
-      "assets": []
+      "assets": [
+        {
+          "alias": [
+            "sigil-of-immortal-flame.png"
+          ],
+          "src": [
+            "/assets/cards/sigils/sigil-of-immortal-flame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
     },
     {
       "name": "cards/spells",
@@ -3728,6 +3755,19 @@
         },
         {
           "alias": [
+            "card-countdown.png"
+          ],
+          "src": [
+            "/assets/ui/card-countdown.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-durability.png"
           ],
           "src": [
@@ -4235,6 +4275,19 @@
         },
         {
           "alias": [
+            "frame-sigil.png"
+          ],
+          "src": [
+            "/assets/ui/frame-sigil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "frame-spell.png"
           ],
           "src": [
@@ -4278,6 +4331,19 @@
           ],
           "src": [
             "/assets/ui/jobs-knight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "jobs-mage.png"
+          ],
+          "src": [
+            "/assets/ui/jobs-mage.png"
           ],
           "data": {
             "tags": {

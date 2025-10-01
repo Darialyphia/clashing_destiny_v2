@@ -66,12 +66,25 @@ export const useSandbox = (
     }
   });
 
-  worker.addEventListener('message', event => {
+  worker.addEventListener('message', async event => {
     if (event.data.type === 'ready') {
-      client.value.initialize(event.data.payload.snapshot);
+      await client.value.initialize(
+        event.data.payload.snapshot,
+        event.data.payload.history
+      );
       playerId.value = client.value.getActivePlayerId();
     }
   });
 
-  return { client, playerId, autoSwitchPlayer };
+  const rewindTo = (step: number) => {
+    worker.postMessage({ type: 'rewind', payload: { step } });
+  };
+  return {
+    client,
+    playerId,
+    autoSwitchPlayer,
+    rewindOneStep: () => rewindTo(client.value.history.length - 2),
+    rewindTo,
+    restart: () => rewindTo(0)
+  };
 };

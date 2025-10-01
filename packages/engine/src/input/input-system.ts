@@ -1,6 +1,7 @@
 import {
   assert,
   isDefined,
+  waitFor,
   type AnyFunction,
   type Constructor,
   type Nullable,
@@ -108,8 +109,11 @@ export class InputSystem extends System<never> {
   initialize() {}
 
   async applyHistory(rawHistory: SerializedInput[]) {
-    for (const input of rawHistory) {
-      await this.schedule(() => this.handleInput(input));
+    this.isRunning = false;
+    this._currentAction = null;
+    for (const rawInput of rawHistory) {
+      void this.dispatch(rawInput);
+      await waitFor(20);
     }
   }
 
@@ -205,6 +209,7 @@ export class InputSystem extends System<never> {
     console.log(input);
     console.groupEnd();
     if (!this.isActionType(input.type)) return;
+    console.log(this.isPaused, this.isRunning);
     if (this.isPaused) {
       // if the game is paused, run the input immediately
       try {
@@ -214,12 +219,12 @@ export class InputSystem extends System<never> {
       }
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
-      // the currentinput could schedule new actions, so we need to wait for the flush
+      // the current input could schedule new actions, so we need to wait for the flush to preserve the correct action order
       this.game.once(GAME_EVENTS.FLUSHED, () => {
         return this.schedule(() => this.handleInput(input));
       });
     } else {
-      // if the game is not paused and not running, run the input immediately
+      // if the game is not paused and not running, schedule the input
       await this.schedule(() => {
         return this.handleInput(input);
       });
@@ -235,9 +240,9 @@ export class InputSystem extends System<never> {
     this._currentAction = input;
     await this.game.emit(GAME_EVENTS.INPUT_START, new GameInputEvent({ input }));
 
+    this.addToHistory(input);
     await input.execute();
     await this.game.emit(GAME_EVENTS.INPUT_END, new GameInputEvent({ input }));
-    this.addToHistory(input);
     this._currentAction = prevAction;
   }
 

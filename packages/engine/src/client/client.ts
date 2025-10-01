@@ -1,5 +1,5 @@
 import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
-import type { InputDispatcher } from '../input/input-system';
+import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
   SerializedOmniscientState,
@@ -92,6 +92,8 @@ export class GameClient {
 
   private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
 
+  history: SerializedInput[] = [];
+
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
     updateCompleted: GameStateSnapshot<SnapshotDiff>;
@@ -164,9 +166,15 @@ export class GameClient {
     return this.stateManager.state.interaction.ctx.player;
   }
 
-  initialize(
-    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  async initialize(
+    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
+    history: SerializedInput[] = []
   ) {
+    this.isReady = false;
+    this.history = history;
+    this.lastSnapshotId = -1;
+    this.snapshots.clear();
+    this.queue = [];
     if (snapshot.kind === 'error') {
       throw new Error('Cannot initialize client with error snapshot');
     }
@@ -178,7 +186,7 @@ export class GameClient {
 
     this.isReady = true;
     if (this.queue.length > 0) {
-      void this.processQueue();
+      await this.processQueue();
     }
   }
 
@@ -269,10 +277,15 @@ export class GameClient {
     this.queue.push(...snapshots);
   }
 
+  dispatch(input: SerializedInput) {
+    this.history.push(input);
+    return this.networkAdapter.dispatch(input);
+  }
+
   declarePlayCard(card: CardViewModel) {
     this.ui.optimisticState.playedCardId = card.id;
 
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'declarePlayCard',
       payload: {
         id: card.id,
@@ -284,7 +297,7 @@ export class GameClient {
   cancelPlayCard() {
     if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
 
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'cancelPlayCard',
       payload: { playerId: this.state.currentPlayer }
     });
@@ -296,7 +309,7 @@ export class GameClient {
   }
 
   commitPlayCard() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitPlayCard',
       payload: {
         playerId: this.playerId,
@@ -306,7 +319,7 @@ export class GameClient {
   }
 
   commitUseAbility() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitUseAbility',
       payload: {
         playerId: this.playerId,
@@ -318,14 +331,14 @@ export class GameClient {
   cancelUseAbility() {
     if (this.state.interaction.state !== INTERACTION_STATES.USING_ABILITY) return;
 
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'cancelUseAbility',
       payload: { playerId: this.state.currentPlayer }
     });
   }
 
   commitMinionSlotSelection() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitMinionSlotSelection',
       payload: {
         playerId: this.playerId
@@ -334,7 +347,7 @@ export class GameClient {
   }
 
   commitCardSelection() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitCardSelection',
       payload: {
         playerId: this.playerId
@@ -343,7 +356,7 @@ export class GameClient {
   }
 
   pass() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'pass',
       payload: {
         playerId: this.playerId
@@ -352,7 +365,7 @@ export class GameClient {
   }
 
   chooseAffinity(affinity: SpellSchool) {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'chooseAffinity',
       payload: {
         playerId: this.playerId,
@@ -362,7 +375,7 @@ export class GameClient {
   }
 
   chooseCards(indices: number[]) {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'chooseCards',
       payload: {
         playerId: this.playerId,
@@ -372,7 +385,7 @@ export class GameClient {
   }
 
   declareCounterAttack(defenderId: string) {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'declareCounterAttack',
       payload: {
         defenderId,

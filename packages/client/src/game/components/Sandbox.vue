@@ -34,6 +34,19 @@ const isSandboxPopoverOpened = ref(false);
         <input type="checkbox" v-model="sandbox.autoSwitchPlayer.value" />
         Auto Switch to Active Player
       </label>
+      <button @click="sandbox.rewindOneStep()">Rewind one step</button>
+      <button @click="sandbox.restart()">Restart Game</button>
+      <div class="h-13 overflow-auto">
+        <h3 class="font-bold mb-2">History</h3>
+        <div
+          v-for="(input, index) in sandbox.client.value.history"
+          :key="index"
+          class="text-sm cursor-pointer hover:underline"
+          @click="sandbox.rewindTo(index)"
+        >
+          {{ input.type }}
+        </div>
+      </div>
     </PopoverContent>
   </PopoverRoot>
 </template>

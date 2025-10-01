@@ -17,7 +17,7 @@ export const knightsInspiration: SpellBlueprint = {
   description: 'Give friendly minions +1 @[attack]@ and +2 @[health]@.',
   collectable: true,
   unique: false,
-  manaCost: 3,
+  manaCost: 4,
   speed: CARD_SPEED.SLOW,
   spellSchool: SPELL_SCHOOLS.LIGHT,
   job: null,
@@ -34,7 +34,7 @@ export const knightsInspiration: SpellBlueprint = {
       await minion.modifiers.add(
         new SimpleAttackBuffModifier('knights-inspiration-atk', game, card, {
           name: "Knight's Inspiration",
-          amount: 2
+          amount: 1
         })
       );
       await minion.modifiers.add(

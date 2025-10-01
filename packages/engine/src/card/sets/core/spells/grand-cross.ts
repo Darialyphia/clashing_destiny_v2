@@ -23,7 +23,7 @@ export const grandCross: SpellBlueprint = {
   name: 'Grand Cross',
   cardIconId: 'spells/grand-cross',
   description: dedent`
-    Select a space. Deal 3 damage to all enemy minions and heal for 3 all ally minions that share a row or column with that space.
+    Select a space. Deal 3 damage to all enemy minions and heal for 3 all ally minions that are on the same row or column.
     @Paladin Affinity@: this costs 2 less.
     `,
   collectable: true,

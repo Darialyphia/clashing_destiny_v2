@@ -13,7 +13,8 @@ type SandboxWorkerEvent =
       };
     }
   | { type: 'dispatch'; payload: { input: SerializedInput } }
-  | { type: 'debug' };
+  | { type: 'debug' }
+  | { type: 'rewind'; payload: { step: number } };
 
 let game: Game;
 self.addEventListener('message', ({ data }) => {
@@ -33,6 +34,14 @@ self.addEventListener('message', ({ data }) => {
         },
         players: payload.options.players
       });
+
+      await game.initialize();
+      self.postMessage({
+        type: 'ready',
+        payload: {
+          snapshot: game.snapshotSystem.getLatestOmniscientSnapshot()
+        }
+      });
       game.subscribeOmniscient(snapshot => {
         // helper to find malformed events that would break structuredClone
         snapshot.events.forEach(event => {
@@ -48,16 +57,42 @@ self.addEventListener('message', ({ data }) => {
           payload: snapshot
         });
       });
+    })
+    .with({ type: 'dispatch' }, async ({ payload }) => {
+      game.dispatch(payload.input);
+    })
+    .with({ type: 'rewind' }, async ({ payload }) => {
+      if (!game) {
+        console.warn('Game not initialized yet, cannot rewind');
+      }
+      const history = game.inputSystem.serialize().slice(0, payload.step + 1);
+      console.log(payload.step, history);
+      game = new Game({ ...game.options, history });
+
       await game.initialize();
       self.postMessage({
         type: 'ready',
         payload: {
-          snapshot: game.snapshotSystem.getLatestOmniscientSnapshot()
+          snapshot: game.snapshotSystem.getLatestOmniscientSnapshot(),
+          history: game.inputSystem.serialize()
         }
       });
-    })
-    .with({ type: 'dispatch' }, async ({ payload }) => {
-      game.dispatch(payload.input);
+
+      game.subscribeOmniscient(snapshot => {
+        // helper to find malformed events that would break structuredClone
+        snapshot.events.forEach(event => {
+          try {
+            JSON.stringify(event);
+          } catch {
+            console.error('Error stringifying event:', event.eventName, event);
+          }
+        });
+
+        self.postMessage({
+          type: 'update',
+          payload: snapshot
+        });
+      });
     })
     .exhaustive();
 });

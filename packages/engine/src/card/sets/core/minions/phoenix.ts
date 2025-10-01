@@ -21,7 +21,7 @@ export const phoenix: MinionBlueprint = {
   cardIconId: 'minions/phoenix',
   description: dedent`
   @On Enter@ : Put a @${fireball.name}@ in your hand.
-  @On Destroy@: Play a @${sigilOfImmortalFlame.name}@ on this space.
+  @On Death@: Play a @${sigilOfImmortalFlame.name}@ on this space.
   `,
   collectable: true,
   unique: false,

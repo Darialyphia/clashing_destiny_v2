@@ -20,7 +20,7 @@ export class SelectMinionslotAction implements MinionSlotClickRule {
   }
 
   handler(slot: UiMinionslot) {
-    this.client.networkAdapter.dispatch({
+    this.client.dispatch({
       type: 'selectMinionSlot',
       payload: {
         playerId: this.client.playerId,

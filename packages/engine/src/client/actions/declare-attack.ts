@@ -16,7 +16,7 @@ export class DeclareAttackAction implements CardActionRule {
   }
 
   handler(card: CardViewModel) {
-    this.client.networkAdapter.dispatch({
+    this.client.dispatch({
       type: 'declareAttack',
       payload: {
         attackerId: card.id,

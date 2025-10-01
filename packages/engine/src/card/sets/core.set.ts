@@ -6,6 +6,7 @@ import { unyieldingShield } from './core/artifacts/unyielding-shield';
 import { aidenLv1 } from './core/heroes/aiden-lv1';
 import { aidenLv2 } from './core/heroes/aiden-lv2';
 import { aidenLv3 } from './core/heroes/aiden-lv3';
+import { erinaLv3 } from './core/heroes/erina-lv3';
 import { noviceLv0 } from './core/heroes/novice-lv0';
 import { angelOfRetribution } from './core/minions/angel-of-retribution';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
@@ -60,6 +61,7 @@ export const coreSet: CardSet = {
     fireball,
     angelOfRetribution,
     phoenix,
-    sigilOfImmortalFlame
+    sigilOfImmortalFlame,
+    erinaLv3
   ]
 };

@@ -106,6 +106,13 @@ export const KEYWORDS = {
       'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
     aliases: []
   },
+  ECHO: {
+    id: 'echo',
+    name: 'Echo',
+    description:
+      'When you play this card, add a Fleeting copy of it to your hand without Echo.',
+    aliases: []
+  },
   ELUSIVE: {
     id: 'elusive',
     name: 'Elusive',
@@ -235,7 +242,6 @@ export const KEYWORDS = {
       'This minion can attack minions in the back row even if they are behind another minion. When attacking from the back-row, non ranged minions cannot counterattack.',
     aliases: []
   },
-
   MILL: {
     id: 'mill',
     name: 'Mill (X)',
