@@ -23,7 +23,7 @@ export const erinaLv3: HeroBlueprint = {
   description: dedent`
   @Erina Lineage@.
   Your Spells have @Echo@.
-  Every 4 spells you play during a turn, draw a card.
+  Every 3 spells you play during a turn, draw a card.
    `,
   cardIconId: 'heroes/erina-lv3',
   kind: CARD_KINDS.HERO,

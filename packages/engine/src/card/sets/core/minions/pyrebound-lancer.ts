@@ -14,6 +14,7 @@ import { OnHitModifier } from '../../../../modifier/modifiers/on-hit.modifier';
 import { SpellSchoolAffinityModifier } from '../../../../modifier/modifiers/spell-school-affinity.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 
 export const pyreboundLancer: MinionBlueprint = {
   id: 'pyrebound-lancer',
@@ -21,7 +22,7 @@ export const pyreboundLancer: MinionBlueprint = {
   cardIconId: 'minions/pyrebound-lancer',
   description: dedent`
   @Piercing@.
-  @Fire Affinity@: @On Minion Hit@ : for each target hit, add a @${fireBolt.name}@ to your hand.
+  @Fire Affinity@: @On Kill@ : for each target hit, add a @${fireBolt.name}@ to your hand.
   `,
   collectable: true,
   unique: false,
@@ -45,7 +46,7 @@ export const pyreboundLancer: MinionBlueprint = {
     )) as SpellSchoolAffinityModifier<MinionCard>;
 
     await card.modifiers.add(
-      new OnHitModifier(game, card, {
+      new OnKillModifier(game, card, {
         handler: async event => {
           const count = event.data.affectedCards.length;
           for (let i = 0; i < count; i++) {

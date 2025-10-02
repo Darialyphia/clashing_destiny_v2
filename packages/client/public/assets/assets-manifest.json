@@ -480,6 +480,19 @@
         },
         {
           "alias": [
+            "iron-wall.png"
+          ],
+          "src": [
+            "/assets/cards/spells/iron-wall.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "knights-inspiration.png"
           ],
           "src": [

@@ -1,4 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
+import { isMinion } from '../../card/card-utils';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroAfterDealCombatDamageEvent } from '../../card/entities/hero.entity';
 import type { MinionCardAfterDealCombatDamageEvent } from '../../card/entities/minion.entity';
@@ -31,6 +32,12 @@ export class OnKillModifier<T extends AnyCard> extends Modifier<T> {
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
           handler: event => this.onDamage(event)
+        }),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
+          handler: event => {
+            if (!isMinion(event.data.card)) return;
+          }
         }),
         ...(options.mixins || [])
       ]

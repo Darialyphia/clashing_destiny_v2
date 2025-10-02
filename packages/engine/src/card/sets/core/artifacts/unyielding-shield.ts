@@ -13,19 +13,22 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { ArtifactCard } from '../../../entities/artifact.entity';
-import type { HeroCard } from '../../../entities/hero.entity';
+import { HeroCard } from '../../../entities/hero.entity';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
+import { ToughModifier } from '../../../../modifier/modifiers/tough.modifier';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const unyieldingShield: ArtifactBlueprint = {
   id: 'unyielding-shield',
   name: 'Unyielding Shield',
   cardIconId: 'artifacts/unyielding-shield',
   description: dedent`
-    When your hero takes damage while not exhausted, prevent 2 of that damage, then this lose 1 @[durability]@.
-    @On Destroyed@: Draw a card.
-    `,
+  Your hero had @Tough (2)@ while not exhausted.
+  When your hero takes damage this lose 1 @[durability]@.
+  @On Destroyed@: Draw a card.
+   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
@@ -43,16 +46,10 @@ export const unyieldingShield: ArtifactBlueprint = {
   canPlay: () => true,
   async onInit() {},
   async onPlay(game, card) {
-    const aura = new Modifier<HeroCard>('unyielding-shield-aura', game, card, {
+    const aura = new ToughModifier<HeroCard>(game, card, {
+      amount: 2,
       mixins: [
-        new HeroInterceptorModifierMixin(game, {
-          key: 'receivedDamage',
-          interceptor(value, ctx, modifier) {
-            if (modifier.target.isExhausted) return value;
-
-            return Math.max(0, value - 2);
-          }
-        }),
+        new TogglableModifierMixin(game, () => !card.player.hero.isExhausted),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
           async handler(e) {

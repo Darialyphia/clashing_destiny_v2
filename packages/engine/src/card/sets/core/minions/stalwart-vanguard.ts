@@ -1,3 +1,4 @@
+import { ProtectorModifier } from '../../../../modifier/modifiers/protector';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -7,16 +8,16 @@ import {
   RARITIES
 } from '../../../card.enums';
 
-export const courageousFootsoldier: MinionBlueprint = {
-  id: 'courageous-footsoldier',
-  name: 'Courageous Footsoldier',
-  cardIconId: 'minions/courageous-footsoldier',
-  description: ``,
+export const stalwartVanguard: MinionBlueprint = {
+  id: 'stalwart-vanguard',
+  name: 'Stalwart Vanguard',
+  cardIconId: 'minions/stalwart-vanguard',
+  description: `@Protector@`,
   collectable: true,
   unique: false,
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
+  atk: 1,
   maxHp: 4,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -27,6 +28,8 @@ export const courageousFootsoldier: MinionBlueprint = {
   abilities: [],
   tags: [],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new ProtectorModifier(game, card, {}));
+  },
   async onPlay() {}
 };

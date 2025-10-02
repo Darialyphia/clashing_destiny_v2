@@ -17,18 +17,24 @@ import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { hougenThePunisher } from './core/minions/hougen-the-punisher';
 import { phoenix } from './core/minions/phoenix';
 import { pyreboundLancer } from './core/minions/pyrebound-lancer';
+import { radiantCelestial } from './core/minions/radiant-celestial';
+import { royalGuard } from './core/minions/royal-guard';
 import { sharpShooter } from './core/minions/sharpshooter';
 import { shieldMaiden } from './core/minions/shield-maiden';
+import { stalwartVanguard } from './core/minions/stalwart-vanguard';
 import { sigilOfImmortalFlame } from './core/sigils/sigil-of-immortal-flame';
+import { blindingLight } from './core/spells/blinding-light';
 import { fatedOath } from './core/spells/fated-oath';
 import { fireBolt } from './core/spells/fire-bolt';
 import { fireball } from './core/spells/fireball';
 import { flamingFrenzy } from './core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { grandCross } from './core/spells/grand-cross';
+import { ironWall } from './core/spells/iron-wall';
 import { knightsInspiration } from './core/spells/knights-inspiration';
 import { reposition } from './core/spells/reposition';
 import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
+import { sunburst } from './core/spells/sunburst';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -62,6 +68,12 @@ export const coreSet: CardSet = {
     angelOfRetribution,
     phoenix,
     sigilOfImmortalFlame,
-    erinaLv3
+    erinaLv3,
+    stalwartVanguard,
+    ironWall,
+    royalGuard,
+    blindingLight,
+    sunburst,
+    radiantCelestial
   ]
 };

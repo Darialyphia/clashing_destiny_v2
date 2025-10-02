@@ -12,17 +12,18 @@ import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlyS
 import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
 import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/hougen-the-punisher';
 import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
+import { royalGuard } from '@game/engine/src/card/sets/core/minions/royal-guard';
 import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
+import { stalwartVanguard } from '@game/engine/src/card/sets/core/minions/stalwart-vanguard';
 import { sigilOfImmortalFlame } from '@game/engine/src/card/sets/core/sigils/sigil-of-immortal-flame';
-import { fatedOath } from '@game/engine/src/card/sets/core/spells/fated-oath';
-import { fireBolt } from '@game/engine/src/card/sets/core/spells/fire-bolt';
+import { blindingLight } from '@game/engine/src/card/sets/core/spells/blinding-light';
 import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
 import { grandCross } from '@game/engine/src/card/sets/core/spells/grand-cross';
+import { ironWall } from '@game/engine/src/card/sets/core/spells/iron-wall';
 import { knightsInspiration } from '@game/engine/src/card/sets/core/spells/knights-inspiration';
-import { reposition } from '@game/engine/src/card/sets/core/spells/reposition';
-import { slimesToTheRescue } from '@game/engine/src/card/sets/core/spells/slimes-to-the-rescue';
+import { sunburst } from '@game/engine/src/card/sets/core/spells/sunburst';
 import type { GameOptions } from '@game/engine/src/game/game';
 
 export type PremadeDeck = {
@@ -40,72 +41,58 @@ export const premadeDecks: Array<PremadeDeck> = [
         courageousFootsoldier.id,
         courageousFootsoldier.id,
         courageousFootsoldier.id,
-
-        fireBolt.id,
-        fireBolt.id,
-        fireBolt.id,
-        fireBolt.id,
-
         rustyBlade.id,
         rustyBlade.id,
         rustyBlade.id,
         rustyBlade.id,
-
         flagBearerOfFlame.id,
         flagBearerOfFlame.id,
         flagBearerOfFlame.id,
         flagBearerOfFlame.id,
-
         shieldMaiden.id,
         shieldMaiden.id,
         shieldMaiden.id,
         shieldMaiden.id,
-
         knightsInspiration.id,
         knightsInspiration.id,
-
+        knightsInspiration.id,
         hotHeadedRecruit.id,
         hotHeadedRecruit.id,
-
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
-
         flameJuggler.id,
         flameJuggler.id,
-        flameJuggler.id,
-        flameJuggler.id,
-
         sharpShooter.id,
         sharpShooter.id,
         sharpShooter.id,
         sharpShooter.id,
-
         friendlySlime.id,
         friendlySlime.id,
         friendlySlime.id,
         friendlySlime.id,
-
-        slimesToTheRescue.id,
-        slimesToTheRescue.id,
-
         pyreboundLancer.id,
         pyreboundLancer.id,
-        pyreboundLancer.id,
-        pyreboundLancer.id,
-
-        reposition.id,
-        reposition.id,
-
         hougenThePunisher.id,
         hougenThePunisher.id,
-
         grandCross.id,
         grandCross.id,
-
         sigilOfImmortalFlame.id,
-        sigilOfImmortalFlame.id
+        sigilOfImmortalFlame.id,
+        royalGuard.id,
+        royalGuard.id,
+        royalGuard.id,
+        royalGuard.id,
+        stalwartVanguard.id,
+        stalwartVanguard.id,
+        stalwartVanguard.id,
+        blindingLight.id,
+        blindingLight.id,
+        blindingLight.id,
+        blindingLight.id,
+        sunburst.id,
+        sunburst.id
       ]
     },
     destinyDeck: {
@@ -114,7 +101,7 @@ export const premadeDecks: Array<PremadeDeck> = [
         aidenLv2.id,
         aidenLv3.id,
         unyieldingShield.id,
-        fatedOath.id,
+        ironWall.id,
         amuletOfRemembrance.id,
         flamingFrenzy.id,
         angelOfRetribution.id

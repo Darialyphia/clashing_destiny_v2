@@ -19,7 +19,6 @@ export const flamingFrenzy: SpellBlueprint = {
   name: 'Flaming Frenzy',
   cardIconId: 'spells/flaming-frenzy',
   description: dedent`
-  This must be the first card you play this turn. 
   This turn, all minions have +1 @[attack]@.
   `,
   collectable: true,
@@ -33,10 +32,7 @@ export const flamingFrenzy: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  canPlay: (game, card) => {
-    // must be the first card played this turn
-    return card.player.cardTracker.cardsPlayedThisGameTurn.length === 0;
-  },
+  canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {

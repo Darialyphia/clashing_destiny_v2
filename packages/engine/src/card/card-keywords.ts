@@ -113,6 +113,13 @@ export const KEYWORDS = {
       'When you play this card, add a Fleeting copy of it to your hand without Echo.',
     aliases: []
   },
+  PROTECTOR: {
+    id: 'protector',
+    name: 'Protector',
+    description:
+      'As long as this unit is awake, when an adjacent minion takes combat damage, this minion takes the damage instead.',
+    aliases: []
+  },
   ELUSIVE: {
     id: 'elusive',
     name: 'Elusive',
@@ -234,6 +241,12 @@ export const KEYWORDS = {
     description:
       'This card is not recollected after your Destiny Phase and is sent to the discard pile instead. If the condition is met while this card is in your Destiny zone, it is played for free.',
     aliases: []
+  },
+  TOUGH: {
+    id: 'tough',
+    name: 'Tough (X)',
+    description: 'This minion takes X less damage from all sources.',
+    aliases: [/tough \([0-9]+\)/]
   },
   RANGED: {
     id: 'ranged',

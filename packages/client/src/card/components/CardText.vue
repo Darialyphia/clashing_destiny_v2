@@ -36,7 +36,6 @@ type Token =
   | { type: 'missing-affinity'; text: string }
   | { type: 'durability' }
   | { type: CardSpeed };
-
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
