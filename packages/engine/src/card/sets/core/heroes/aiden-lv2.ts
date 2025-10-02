@@ -47,7 +47,7 @@ export const aidenLv2: HeroBlueprint = {
       description: '@[mana] 1@ : Aiden gains @Vigilant@ this turn.',
       manaCost: 1,
       shouldExhaust: false,
-      speed: CARD_SPEED.FAST,
+      speed: CARD_SPEED.FLASH,
       async getPreResponseTargets() {
         return [];
       },

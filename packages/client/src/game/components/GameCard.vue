@@ -44,6 +44,7 @@ const ui = useGameUi();
 
 const isActionsPopoverOpened = computed({
   get() {
+    if (!isInteractive) return false;
     if (!ui.value.selectedCard) return false;
     return ui.value.selectedCard.equals(card.value);
   },
@@ -67,6 +68,7 @@ const myPlayer = useMyPlayer();
 
 const handleClick = () => {
   if (!isInteractive) return;
+  console.log('handle card click', cardId);
   ui.value.onCardClick(card.value);
 };
 

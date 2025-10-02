@@ -410,7 +410,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
   }
 
   async takeSnapshot() {
-    console.log('Taking snapshot', this.nextId);
     try {
       if (!this.isEnabled) return;
 
@@ -420,7 +419,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         .map(event => event.serialize());
       const previousId = this.nextId - 1;
       const id = this.nextId++;
-      console.log('id incremented', id);
       const omnisicientState = this.serializeOmniscientState();
 
       if (events.length === 0 && previousId > 0) {
@@ -430,14 +428,12 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           const currentJSON = JSON.stringify(omnisicientState);
           if (prevJSON === currentJSON) {
             this.nextId--;
-            console.log('id decremented', id);
             this.eventsSinceLastSnapshot = [];
             return;
           }
         }
       }
 
-      console.log('commiting snapshot', id);
       this.omniscientCache.push({
         kind: 'state',
         id,
