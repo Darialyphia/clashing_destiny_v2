@@ -12,6 +12,7 @@ import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlyS
 import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
 import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/hougen-the-punisher';
 import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
+import { radiantCelestial } from '@game/engine/src/card/sets/core/minions/radiant-celestial';
 import { royalGuard } from '@game/engine/src/card/sets/core/minions/royal-guard';
 import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
@@ -104,7 +105,8 @@ export const premadeDecks: Array<PremadeDeck> = [
         ironWall.id,
         amuletOfRemembrance.id,
         flamingFrenzy.id,
-        angelOfRetribution.id
+        angelOfRetribution.id,
+        radiantCelestial.id
       ]
     }
   }
