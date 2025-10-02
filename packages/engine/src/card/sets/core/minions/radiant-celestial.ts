@@ -8,6 +8,10 @@ import {
   RARITIES,
   SPELL_SCHOOLS
 } from '../../../card.enums';
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { HeroInterceptModifier } from '../../../../modifier/modifiers/hero-intercept.modifier';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { OnAttackModifier } from '../../../../modifier/modifiers/on-attack';
 
 export const radiantCelestial: MinionBlueprint = {
   id: 'radiant-celestial',
@@ -33,6 +37,31 @@ export const radiantCelestial: MinionBlueprint = {
   abilities: [],
   tags: [],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    game.on(GAME_EVENTS.CARD_DECLARE_PLAY, async event => {
+      if (!event.data.card.equals(card)) return;
+      const cards = await game.interaction.chooseCards({
+        player: card.player,
+        label: 'Select cards to pay for this card',
+        minChoiceCount: 2,
+        maxChoiceCount: 2,
+        choices: card.player.cardManager.hand
+      });
+      for (const c of cards) {
+        await c.sendToDestinyZone();
+      }
+    });
+
+    await card.modifiers.add(new HeroInterceptModifier(game, card, {}));
+
+    const heal = async () => {
+      const healTargets = [card.player.hero, ...card.player.minions];
+      for (const target of healTargets) {
+        await target.heal(4);
+      }
+    };
+    await card.modifiers.add(new OnAttackModifier(game, card, { handler: heal }));
+    await card.modifiers.add(new OnEnterModifier(game, card, { handler: heal }));
+  },
   async onPlay() {}
 };

@@ -447,6 +447,7 @@ export class MinionCard extends Card<
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
+
     await this.playAt(position, onResolved);
   }
 
