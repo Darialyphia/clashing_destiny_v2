@@ -17,6 +17,7 @@ export type ValidatableDeck = {
   }>;
   [CARD_DECK_SOURCES.DESTINY_DECK]: Array<{
     blueprintId: string;
+    copies: number;
   }>;
   hero: string;
 };
@@ -158,7 +159,20 @@ export class StandardDeckValidator implements DeckValidator {
 
       return true;
     } else {
-      return !isDefined(deck.hero);
+      if (withBlueprint.destiny.length >= this.destinyDeckSize) {
+        return false;
+      }
+      const existing = withBlueprint.destiny.find(c => c.blueprint.id === card.id);
+      if (existing) {
+        if (existing.copies >= this.maxCopiesForDestinyCard) {
+          return false;
+        }
+        if (card.unique) {
+          return false;
+        }
+      }
+
+      return true;
     }
   }
 }

@@ -1,17 +1,25 @@
 <script setup lang="ts">
+import {
+  HoverCardRoot,
+  HoverCardTrigger,
+  HoverCardPortal,
+  HoverCardContent
+} from 'reka-ui';
+import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { waitFor } from '@game/shared';
 import { domToPng } from 'modern-screenshot';
 
-const { deckBuilder, isEditingDeck } = useCollectionPage();
+const { deckBuilder, isEditingDeck, viewMode } = useCollectionPage();
 
 const { card } = defineProps<{
   card: CardBlueprint;
 }>();
 
 const screenshot = async (e: MouseEvent) => {
+  return; // Disabled for now
   const element = (e.currentTarget as HTMLElement)?.querySelector(
     '.card-front'
   ) as HTMLElement;
@@ -36,33 +44,50 @@ const screenshot = async (e: MouseEvent) => {
     .join('_')}.png`;
   a.click();
 };
+
+const cardComponents: Record<typeof viewMode.value, any> = {
+  compact: BlueprintSmallCard,
+  expanded: BlueprintCard
+};
+const component = computed(() => cardComponents[viewMode.value]);
 </script>
 
 <template>
-  <BlueprintCard
-    :blueprint="card"
-    class="collection-card"
-    :class="{
-      disabled: isEditingDeck && !deckBuilder.canAdd(card.id)
-    }"
-    @dblclick="screenshot($event)"
-    @click="
-      () => {
-        if (!isEditingDeck) return;
-        if (deckBuilder.canAdd(card.id)) {
-          deckBuilder.addCard(card.id);
-        }
-      }
-    "
-    @contextmenu.prevent="
-      () => {
-        if (!isEditingDeck) return;
-        if (deckBuilder.hasCard(card.id)) {
-          deckBuilder.removeCard(card.id);
-        }
-      }
-    "
-  />
+  <HoverCardRoot :open-delay="100" :close-delay="0">
+    <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
+      <component
+        :is="component"
+        :blueprint="card"
+        show-stats
+        class="collection-card"
+        :class="{
+          disabled: isEditingDeck && !deckBuilder.canAdd(card.id)
+        }"
+        @dblclick="screenshot($event)"
+        @click="
+          () => {
+            if (!isEditingDeck) return;
+            if (deckBuilder.canAdd(card.id)) {
+              deckBuilder.addCard(card.id);
+            }
+          }
+        "
+        @contextmenu.prevent="
+          () => {
+            if (!isEditingDeck) return;
+            if (deckBuilder.hasCard(card.id)) {
+              deckBuilder.removeCard(card.id);
+            }
+          }
+        "
+      />
+    </HoverCardTrigger>
+    <HoverCardPortal>
+      <HoverCardContent v-if="viewMode === 'compact'">
+        <BlueprintCard :blueprint="card" />
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
 </template>
 
 <style scoped lang="postcss">
@@ -79,8 +104,8 @@ const screenshot = async (e: MouseEvent) => {
   } */
 }
 
-.card.disabled {
-  filter: grayscale(100%);
+.collection-card.disabled {
+  filter: grayscale(50%) brightness(80%);
 }
 
 .collection-card:not(.disabled):hover {

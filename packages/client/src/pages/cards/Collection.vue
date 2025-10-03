@@ -73,37 +73,20 @@ useIntersectionObserver(
 
 <style scoped lang="postcss">
 .cards {
-  --min-column-size: 14rem;
-  column-gap: var(--size-6);
+  column-gap: var(--size-4);
   row-gap: var(--size-3);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--min-column-size), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(calc(var(--card-width) * var(--pixel-scale)), 1fr)
+  );
   justify-items: center;
   overflow-x: hidden;
   overflow-y: auto;
   align-content: start;
   padding-inline: var(--size-4);
   padding-bottom: var(--size-10);
-
-  @screen lt-lg {
-    --pixel-scale: 1;
-    --min-column-size: 10rem;
-    .collection-card {
-      transform: scale(0.5);
-      transform-origin: top left;
-    }
-  }
-
-  &.compact {
-    --pixel-scale: 1;
-    --min-column-size: 8rem;
-    gap: var(--size-2);
-
-    /* .collection-card {
-      transform: scale(0.5);
-      transform-origin: top left;
-    } */
-  }
+  padding-top: var(--size-3);
 
   li {
     position: relative;
@@ -113,6 +96,22 @@ useIntersectionObserver(
     isolation: isolate;
     height: calc(var(--card-height) * var(--pixel-scale));
     width: calc(var(--card-width) * var(--pixel-scale));
+  }
+
+  @screen lt-lg {
+    --pixel-scale: 1;
+    li {
+      height: calc(var(--card-small-height) * var(--pixel-scale));
+      width: calc(var(--card-small-width) * var(--pixel-scale));
+    }
+  }
+
+  &.compact {
+    --pixel-scale: 1;
+    li {
+      height: calc(var(--card-small-height) * var(--pixel-scale));
+      width: calc(var(--card-small-width) * var(--pixel-scale));
+    }
   }
 }
 

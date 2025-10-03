@@ -1,8 +1,5 @@
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-import {
-  CARD_DECK_SOURCES,
-  CARD_KINDS
-} from '@game/engine/src/card/card.enums';
+import { CARD_DECK_SOURCES } from '@game/engine/src/card/card.enums';
 import type {
   DeckValidator,
   ValidatableDeck
@@ -48,20 +45,17 @@ export class DeckBuilderViewModel {
       throw new Error(`Card with ID ${blueprintId} not found in card pool.`);
     }
 
-    if (card.blueprint.kind === CARD_KINDS.HERO) {
-      this._deck.hero = blueprintId;
-      return;
-    }
-
     if (card.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
       const existing = this._deck[CARD_DECK_SOURCES.DESTINY_DECK].find(
         card => card.blueprintId === blueprintId
       );
-      if (existing) return;
 
-      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].push({
-        blueprintId
-      });
+      if (existing) {
+        existing.copies++;
+      } else {
+        this._deck.destinyDeck.push({ blueprintId, copies: 1 });
+      }
+
       return;
     }
 
@@ -79,11 +73,6 @@ export class DeckBuilderViewModel {
     const card = this.cardPool.find(card => card.blueprint.id === blueprintId);
     if (!card) {
       throw new Error(`Card with ID ${blueprintId} not found in card pool.`);
-    }
-
-    if (card.blueprint.kind === CARD_KINDS.HERO) {
-      this._deck.hero = null as any;
-      return;
     }
 
     const isMainDeck = this._deck.mainDeck.find(

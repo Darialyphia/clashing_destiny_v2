@@ -13,7 +13,9 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       kind: blueprint.kind,
       atk: (blueprint as any).atk ?? (blueprint as any).damage,
       hp: (blueprint as any).maxHp,
-      durability: (blueprint as any).durability
+      durability: (blueprint as any).durability,
+      manaCost: (blueprint as any).manaCost,
+      destinyCost: (blueprint as any).destinyCost
     }"
   />
 </template>

@@ -360,7 +360,7 @@ const onMouseleave = () => {
           </div>
           <span ref="multi-line-checker" />
         </div>
-        <CardGlare />
+        <!-- <CardGlare /> -->
       </div>
       <div class="card-back">
         <CardFoil v-if="isFoil" />

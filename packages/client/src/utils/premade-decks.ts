@@ -1,5 +1,8 @@
 import { amuletOfRemembrance } from '@game/engine/src/card/sets/core/artifacts/amulet-of-remembrance';
+import { arbitersMaul } from '@game/engine/src/card/sets/core/artifacts/arbiters-maul';
+import { manaJewel } from '@game/engine/src/card/sets/core/artifacts/mana-jewel';
 import { rustyBlade } from '@game/engine/src/card/sets/core/artifacts/rusty-blade';
+import { scalesOfDestiny } from '@game/engine/src/card/sets/core/artifacts/scales-of-destiny';
 import { unyieldingShield } from '@game/engine/src/card/sets/core/artifacts/unyielding-shield';
 import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
 import { aidenLv2 } from '@game/engine/src/card/sets/core/heroes/aiden-lv2';
@@ -106,7 +109,10 @@ export const premadeDecks: Array<PremadeDeck> = [
         amuletOfRemembrance.id,
         flamingFrenzy.id,
         angelOfRetribution.id,
-        radiantCelestial.id
+        radiantCelestial.id,
+        arbitersMaul.id,
+        manaJewel.id,
+        scalesOfDestiny.id
       ]
     }
   }

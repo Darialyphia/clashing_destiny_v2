@@ -48,7 +48,7 @@ export class OnKillModifier<T extends AnyCard> extends Modifier<T> {
     event: MinionCardAfterDealCombatDamageEvent | HeroAfterDealCombatDamageEvent
   ) {
     if (!event.data.card.equals(this.target)) return;
-    if (!event.data.target.isAlive) return;
+    if (event.data.target.isAlive) return;
     if (event.data.target.isAttacking) return; // onKill only procs when the unit is attacking, blocking or being attacked
     await this.options.handler(event, this);
   }

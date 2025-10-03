@@ -101,6 +101,45 @@
         },
         {
           "alias": [
+            "arbiters-maul.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/arbiters-maul.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cleansing-hammer.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/cleansing-hammer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-jewel.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/mana-jewel.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "rusty-blade.png"
           ],
           "src": [
@@ -235,6 +274,32 @@
           ],
           "src": [
             "/assets/cards/minions/pyrebound-lancer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "radiant-celestial.png"
+          ],
+          "src": [
+            "/assets/cards/minions/radiant-celestial.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "royal-guard.png"
+          ],
+          "src": [
+            "/assets/cards/minions/royal-guard.png"
           ],
           "data": {
             "tags": {
@@ -389,6 +454,19 @@
         },
         {
           "alias": [
+            "blinding-light.png"
+          ],
+          "src": [
+            "/assets/cards/spells/blinding-light.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "call-to-arms.png"
           ],
           "src": [
@@ -506,6 +584,32 @@
         },
         {
           "alias": [
+            "mana-jewel.png"
+          ],
+          "src": [
+            "/assets/cards/spells/mana-jewel.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-spark.png"
+          ],
+          "src": [
+            "/assets/cards/spells/mana-spark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "reposition.png"
           ],
           "src": [
@@ -523,6 +627,19 @@
           ],
           "src": [
             "/assets/cards/spells/slimes-to-the-rescue.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sunburst.png"
+          ],
+          "src": [
+            "/assets/cards/spells/sunburst.png"
           ],
           "data": {
             "tags": {

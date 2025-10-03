@@ -67,7 +67,7 @@ const getKeyLabel = useKeybordShortcutLabel();
     title="Destiny Deck"
     description=""
     :style="{
-      '--ui-modal-size': 'var(--size-lg)'
+      '--ui-modal-size': 'var(--size-xl)'
     }"
   >
     <div class="content" @click="close">
@@ -116,7 +116,10 @@ const getKeyLabel = useKeybordShortcutLabel();
 .card-list {
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(calc(var(--card-width) * var(--pixel-scale)), 1fr)
+  );
   row-gap: var(--size-3);
   justify-items: center;
   grid-auto-rows: min-content;

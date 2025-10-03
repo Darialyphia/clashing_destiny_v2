@@ -1,7 +1,10 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { amuletOfRemembrance } from './core/artifacts/amulet-of-remembrance';
+import { arbitersMaul } from './core/artifacts/arbiters-maul';
+import { manaJewel } from './core/artifacts/mana-jewel';
 import { rustyBlade } from './core/artifacts/rusty-blade';
+import { scalesOfDestiny } from './core/artifacts/scales-of-destiny';
 import { unyieldingShield } from './core/artifacts/unyielding-shield';
 import { aidenLv1 } from './core/heroes/aiden-lv1';
 import { aidenLv2 } from './core/heroes/aiden-lv2';
@@ -32,6 +35,7 @@ import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
 import { grandCross } from './core/spells/grand-cross';
 import { ironWall } from './core/spells/iron-wall';
 import { knightsInspiration } from './core/spells/knights-inspiration';
+import { manaSpark } from './core/spells/mana-spark';
 import { reposition } from './core/spells/reposition';
 import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
 import { sunburst } from './core/spells/sunburst';
@@ -74,6 +78,10 @@ export const coreSet: CardSet = {
     royalGuard,
     blindingLight,
     sunburst,
-    radiantCelestial
+    radiantCelestial,
+    arbitersMaul,
+    manaSpark,
+    manaJewel,
+    scalesOfDestiny
   ]
 };

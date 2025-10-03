@@ -17,7 +17,7 @@ export class FleetingModifier<T extends AnyCard> extends Modifier<T> {
         new KeywordModifierMixin(game, KEYWORDS.FLEETING),
         new GameEventModifierMixin(game, {
           once: true,
-          eventName: GAME_EVENTS.PLAYER_END_TURN,
+          eventName: GAME_EVENTS.TURN_END,
           handler: async () => {
             if (this.target.location === 'hand') {
               this.target.removeFromCurrentLocation();

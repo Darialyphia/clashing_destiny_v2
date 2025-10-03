@@ -21,6 +21,8 @@ const {
     maxHp?: number | null;
     baseMaxHp?: number | null;
     durability?: number | null;
+    manaCost?: number | null;
+    destinyCost?: number | null;
   };
   isFoil?: boolean;
   showStats?: boolean;
@@ -111,6 +113,16 @@ const pointerStyle = computed(() => {
       <div v-if="isDefined(card.countdown) && showStats" class="countdown">
         <div class="dual-text" :data-text="card.countdown">
           {{ card.countdown }}
+        </div>
+      </div>
+      <div v-if="isDefined(card.manaCost) && showStats" class="mana-cost">
+        <div class="dual-text" :data-text="card.manaCost">
+          {{ card.manaCost }}
+        </div>
+      </div>
+      <div v-if="isDefined(card.destinyCost) && showStats" class="destiny-cost">
+        <div class="dual-text" :data-text="card.destinyCost">
+          {{ card.destinyCost }}
         </div>
       </div>
 
@@ -285,6 +297,44 @@ const pointerStyle = computed(() => {
   place-content: center;
   padding-left: calc(4px * var(--pixel-scale));
   padding-top: calc(1px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 10px;
+  --dual-text-offset-y: 1px;
+  scale: 2;
+}
+
+.mana-cost {
+  background-image: url('/assets/ui/mana-cost.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(22px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  top: calc(2px * var(--pixel-scale));
+  left: calc(12px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-right: calc(0px * var(--pixel-scale));
+  padding-top: calc(0px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-size: 10px;
+  --dual-text-offset-y: 1px;
+  scale: 2;
+}
+
+.destiny-cost {
+  background-image: url('/assets/ui/destiny-cost.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: calc(22px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
+  position: absolute;
+  top: calc(2px * var(--pixel-scale));
+  left: calc(12px * var(--pixel-scale));
+  display: grid;
+  place-content: center;
+  padding-left: calc(0px * var(--pixel-scale));
+  padding-top: calc(0px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 10px;
   --dual-text-offset-y: 1px;
