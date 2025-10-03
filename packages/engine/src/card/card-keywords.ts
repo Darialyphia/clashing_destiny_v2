@@ -127,6 +127,20 @@ export const KEYWORDS = {
       'The first time this minion is attacked each turn, it moves to a adjacent position on the same row if possible (prioritizing down). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
     aliases: []
   },
+  ATTACKER: {
+    id: 'attacker',
+    name: 'Attacker (X)',
+    description:
+      'When this units attacks, it gains X attack until the end of the combat phase.',
+    aliases: [/attacker \([0-9]+\)/]
+  },
+  DEFENDER: {
+    id: 'defender',
+    name: 'Defender (X)',
+    description:
+      'When this unit is retaliates, it gains X armor until the end of the combat phase.',
+    aliases: [/defender \([0-9]+\)/]
+  },
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',

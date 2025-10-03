@@ -135,6 +135,7 @@ export type GameEventMap = Prettify<
     TurnEventMap &
     EffectChainEventMap
 >;
+
 export type GameEventName = keyof GameEventMap;
 
 export type GameStarEvent = StarEvent<GameEventMap>;
@@ -159,3 +160,7 @@ export const GAME_EVENTS = {
   ...TURN_EVENTS,
   ...EFFECT_CHAIN_EVENTS
 } as const satisfies Record<string, GameEventName>;
+
+export type SerializedEvent<T extends keyof typeof GAME_EVENTS> = ReturnType<
+  GameEventMap[(typeof GAME_EVENTS)[T]]['serialize']
+>;

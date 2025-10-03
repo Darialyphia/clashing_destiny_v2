@@ -50,10 +50,17 @@ const cardComponents: Record<typeof viewMode.value, any> = {
   expanded: BlueprintCard
 };
 const component = computed(() => cardComponents[viewMode.value]);
+
+const isPreviewOpened = ref(false);
 </script>
 
 <template>
-  <HoverCardRoot :open-delay="100" :close-delay="0">
+  <HoverCardRoot
+    :open-delay="100"
+    :close-delay="0"
+    :open="viewMode === 'expanded' ? false : isPreviewOpened"
+    @update:open="isPreviewOpened = $event"
+  >
     <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
       <component
         :is="component"

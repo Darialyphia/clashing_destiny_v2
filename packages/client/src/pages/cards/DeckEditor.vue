@@ -82,7 +82,7 @@ const getCountForCostAndUp = (minCost: number) =>
         </div>
       </div>
     </div>
-    <div class="overflow-y-auto fancy-scrollbar">
+    <div class="overflow-y-auto fancy-scrollbar flex flex-col">
       <ul>
         <HoverCardRoot
           :open-delay="100"
@@ -143,7 +143,7 @@ const getCountForCostAndUp = (minCost: number) =>
 <style scoped lang="postcss">
 .deck {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   height: 100%;
 }
 
@@ -158,7 +158,7 @@ const getCountForCostAndUp = (minCost: number) =>
   background-repeat: no-repeat;
   background-position: calc(100% + 40px) -35px;
   background-size: calc(2px * 96);
-  transition: all 0.3s var(--ease-2);
+  transition: transform 0.3s var(--ease-2);
 
   &.artifact,
   &.spell,
@@ -232,6 +232,7 @@ const getCountForCostAndUp = (minCost: number) =>
 }
 
 .deck-count {
+  margin-top: auto;
   font-size: var(--font-size-1);
   line-height: 1;
   font-weight: 500;

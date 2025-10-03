@@ -6,29 +6,18 @@ import { useIntersectionObserver } from '@vueuse/core';
 
 const { cards, viewMode } = useCollectionPage();
 
-// const screenshot = async (id: string, e: MouseEvent) => {
-//   const card = (e.target as HTMLElement)
-//     .closest('li')
-//     ?.querySelector('.card-front') as HTMLElement;
-//   const png = await domToPng(card, {
-//     backgroundColor: 'transparent'
-//   });
-//   const a = document.createElement('a');
-//   a.href = png;
-//   a.download = `${id}.png`;
-//   a.click();
-// };
-
 const listRoot = useTemplateRef('card-list');
 const visibleCards = ref(new Set<string>());
-
+const cardElements = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  cards.value; //read the ref to trigger reactivity;
+  if (!listRoot.value) return [];
+  return Array.from(
+    listRoot.value.querySelectorAll('li[data-collection-card-id]')
+  ) as HTMLLIElement[];
+});
 useIntersectionObserver(
-  computed(() => {
-    if (!listRoot.value) return [];
-    return Array.from(
-      listRoot.value.querySelectorAll('li[data-collection-card-id]')
-    ) as HTMLLIElement[];
-  }),
+  cardElements,
   entries => {
     entries.forEach(entry => {
       const cardId = entry.target.getAttribute('data-collection-card-id');

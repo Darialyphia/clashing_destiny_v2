@@ -7,17 +7,17 @@ import {
   RARITIES
 } from '../../../card.enums';
 
-export const courageousFootsoldier: MinionBlueprint = {
-  id: 'courageous-footsoldier',
-  name: 'Courageous Footsoldier',
-  cardIconId: 'minions/courageous-footsoldier',
-  description: ``,
+export const bastionGuard: MinionBlueprint = {
+  id: 'bastion-guard',
+  name: 'Bastion Guard',
+  cardIconId: 'minions/bastion-guard',
+  description: `@Defender (1)@`,
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 3,
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 2,
+  maxHp: 5,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

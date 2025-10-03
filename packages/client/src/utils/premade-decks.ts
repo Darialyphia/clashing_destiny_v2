@@ -8,9 +8,9 @@ import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
 import { aidenLv2 } from '@game/engine/src/card/sets/core/heroes/aiden-lv2';
 import { aidenLv3 } from '@game/engine/src/card/sets/core/heroes/aiden-lv3';
 import { angelOfRetribution } from '@game/engine/src/card/sets/core/minions/angel-of-retribution';
+import { bastionGuard } from '@game/engine/src/card/sets/core/minions/bastion-guard';
 import { courageousFootsoldier } from '@game/engine/src/card/sets/core/minions/courageous-footsoldier';
 import { flagBearerOfFlame } from '@game/engine/src/card/sets/core/minions/flag-bearer-of-flame';
-import { flameJuggler } from '@game/engine/src/card/sets/core/minions/flame-juggler';
 import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlySlime';
 import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
 import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/hougen-the-punisher';
@@ -20,8 +20,8 @@ import { royalGuard } from '@game/engine/src/card/sets/core/minions/royal-guard'
 import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
 import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
 import { stalwartVanguard } from '@game/engine/src/card/sets/core/minions/stalwart-vanguard';
-import { sigilOfImmortalFlame } from '@game/engine/src/card/sets/core/sigils/sigil-of-immortal-flame';
 import { blindingLight } from '@game/engine/src/card/sets/core/spells/blinding-light';
+import { fireball } from '@game/engine/src/card/sets/core/spells/fireball';
 import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
 import { grandCross } from '@game/engine/src/card/sets/core/spells/grand-cross';
@@ -52,7 +52,6 @@ export const premadeDecks: Array<PremadeDeck> = [
         flagBearerOfFlame.id,
         flagBearerOfFlame.id,
         flagBearerOfFlame.id,
-        flagBearerOfFlame.id,
         shieldMaiden.id,
         shieldMaiden.id,
         shieldMaiden.id,
@@ -62,12 +61,14 @@ export const premadeDecks: Array<PremadeDeck> = [
         knightsInspiration.id,
         hotHeadedRecruit.id,
         hotHeadedRecruit.id,
+        hotHeadedRecruit.id,
+        fireball.id,
+        fireball.id,
+        fireball.id,
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
         gazeIntoTomorrow.id,
-        flameJuggler.id,
-        flameJuggler.id,
         sharpShooter.id,
         sharpShooter.id,
         sharpShooter.id,
@@ -82,8 +83,6 @@ export const premadeDecks: Array<PremadeDeck> = [
         hougenThePunisher.id,
         grandCross.id,
         grandCross.id,
-        sigilOfImmortalFlame.id,
-        sigilOfImmortalFlame.id,
         royalGuard.id,
         royalGuard.id,
         royalGuard.id,
@@ -96,7 +95,13 @@ export const premadeDecks: Array<PremadeDeck> = [
         blindingLight.id,
         blindingLight.id,
         sunburst.id,
-        sunburst.id
+        sunburst.id,
+        sunburst.id,
+        sunburst.id,
+        bastionGuard.id,
+        bastionGuard.id,
+        bastionGuard.id,
+        bastionGuard.id
       ]
     },
     destinyDeck: {
