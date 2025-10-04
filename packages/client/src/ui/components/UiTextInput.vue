@@ -4,7 +4,7 @@ const { placeholder, type = 'text' } = defineProps<{
   type?: string;
 }>();
 
-const modelValue = defineModel<string>({ required: true });
+const modelValue = defineModel<string | undefined>({ required: true });
 
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement;

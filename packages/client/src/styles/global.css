@@ -19,7 +19,6 @@
   body {
     color: var(--text-1);
     height: 100dvh;
-    overflow: hidden;
     cursor: url('/assets/ui/cursor.png'), auto;
     image-rendering: pixelated;
     user-select: none;
