@@ -45,6 +45,7 @@ import { GetSessionUserUseCase } from '../auth/usecases/getSessionUser.usecase';
 import { UserMapper } from '../users/mappers/user.mapper';
 import { GetMatchmakingsUsecase } from '../matchmaking/usecases/getMatchmakings.usecase';
 import { MatchmakingMapper } from '../matchmaking/mappers/matchmaking.mapper';
+import { DeckReadRepository, DeckRepository } from '../deck/repositories/deck.repository';
 
 export type QueryContainer = {
   db: DatabaseReader;
@@ -61,6 +62,7 @@ export type QueryContainer = {
   [GetSessionUserUseCase.INJECTION_KEY]: GetSessionUserUseCase;
   [GetMatchmakingsUsecase.INJECTION_KEY]: GetMatchmakingsUsecase;
   [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
+  [DeckReadRepository.INJECTION_KEY]: DeckReadRepository;
 };
 
 export const createQueryContainer = (ctx: QueryCtxWithSession) => {
@@ -82,7 +84,8 @@ export const createQueryContainer = (ctx: QueryCtxWithSession) => {
     [UserMapper.INJECTION_KEY]: asClass(UserMapper),
     [GetSessionUserUseCase.INJECTION_KEY]: asClass(GetSessionUserUseCase),
     [GetMatchmakingsUsecase.INJECTION_KEY]: asClass(GetMatchmakingsUsecase),
-    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper)
+    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
+    [DeckReadRepository.INJECTION_KEY]: asClass(DeckReadRepository)
   });
 
   return container;
@@ -109,6 +112,7 @@ export type MutationContainer = {
   [UserMapper.INJECTION_KEY]: UserMapper;
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
   [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
+  [DeckRepository.INJECTION_KEY]: DeckRepository;
 };
 export const createMutationContainer = (ctx: MutationCtxWithSession) => {
   const container = createContainer({
@@ -135,7 +139,8 @@ export const createMutationContainer = (ctx: MutationCtxWithSession) => {
     [GameMapper.INJECTION_KEY]: asClass(GameMapper),
     [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
     [UserMapper.INJECTION_KEY]: asClass(UserMapper),
-    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper)
+    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
+    [DeckRepository.INJECTION_KEY]: asClass(DeckRepository)
   });
 
   return container;

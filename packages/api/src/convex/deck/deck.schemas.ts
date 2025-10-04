@@ -7,12 +7,14 @@ export const deckSchemas = {
     ownerId: v.id('users'),
     mainDeck: v.array(
       v.object({
-        blueprintId: v.string()
+        blueprintId: v.string(),
+        copies: v.number()
       })
     ),
     destinyDeck: v.array(
       v.object({
-        blueprintId: v.string()
+        blueprintId: v.string(),
+        copies: v.number()
       })
     )
   }).index('by_owner_id', ['ownerId'])

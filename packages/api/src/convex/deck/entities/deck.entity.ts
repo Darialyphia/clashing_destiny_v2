@@ -8,4 +8,16 @@ export class Deck extends Entity<DeckId, DeckDoc> {
   get name() {
     return this.data.name;
   }
+
+  get mainDeck() {
+    return this.data.mainDeck;
+  }
+
+  get destinyDeck() {
+    return this.data.destinyDeck;
+  }
+
+  get ownerId() {
+    return this.data.ownerId;
+  }
 }

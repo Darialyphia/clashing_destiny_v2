@@ -19,6 +19,17 @@ export class MatchmakingReadRepository {
       .filter(q => q.eq(q.field('name'), name))
       .first();
   }
+
+  async getByUserId(userId: Id<'users'>) {
+    const matchmakingUserDoc = await this.ctx.db
+      .query('matchmakingUsers')
+      .withIndex('by_userId', q => q.eq('userId', userId))
+      .first();
+
+    if (!matchmakingUserDoc) return null;
+
+    return this.getById(matchmakingUserDoc.matchmakingId);
+  }
 }
 
 export class MatchmakingRepository {

@@ -1,3 +1,5 @@
+import type { Nullable } from '@game/shared';
+import type { MatchmakingId } from '../../matchmaking/entities/matchmaking.entity';
 import { QueryUseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
 import { Email } from '../../utils/email';
@@ -15,6 +17,11 @@ export interface GetSessionUserput {
   id: UserId;
   username: string;
   mmr: number;
+  currentJoinedMatchmaking: Nullable<{
+    id: MatchmakingId;
+    name: string;
+    joinedAt: number;
+  }>;
 }
 
 export class GetSessionUserUseCase extends QueryUseCase<never, GetSessionUserput> {
@@ -24,11 +31,20 @@ export class GetSessionUserUseCase extends QueryUseCase<never, GetSessionUserput
     const user = await this.ctx.userReadRepo.getById(this.ctx.session!.userId);
     if (!user) throw new AppError('User not found');
 
+    const matchmakingUser = await this.ctx.matchmakingReadRepo.getByUserId(user._id);
+
     return {
       sessionId: this.ctx.session!._id,
       id: user._id,
       username: user.username,
-      mmr: user.mmr
+      mmr: user.mmr,
+      currentJoinedMatchmaking: matchmakingUser
+        ? {
+            id: matchmakingUser._id,
+            name: matchmakingUser.name,
+            joinedAt: matchmakingUser._creationTime
+          }
+        : null
     };
   }
 }
