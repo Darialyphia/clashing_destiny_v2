@@ -1,16 +1,28 @@
 <script setup lang="ts">
 import RegisterForm from '@/auth/components/RegisterForm.vue';
+import UnauthenticatedHeader from '@/UnauthenticatedHeader.vue';
 
 definePage({
   name: 'Register',
-  path: '/register'
+  path: '/register',
+  meta: { publicOnly: true }
 });
 </script>
 
 <template>
   <div class="register-page">
-    <RegisterForm />
+    <UnauthenticatedHeader />
+    <RegisterForm class="register-form" />
   </div>
 </template>
 
-<style lang="postcss" scoped></style>
+<style lang="postcss" scoped>
+.register-page {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.register-form {
+  place-self: center;
+}
+</style>

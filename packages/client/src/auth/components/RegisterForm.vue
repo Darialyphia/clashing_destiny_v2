@@ -14,7 +14,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 
 const { mutate: register, error, isLoading } = useRegister();
 
-const { handleSubmit, defineField } = useForm({
+const { handleSubmit, defineField, errors } = useForm({
   validationSchema: toTypedSchema(
     z.object({
       email: z.string().email('Invalid email address'),
@@ -42,21 +42,37 @@ const { handleSubmit, defineField } = useForm({
   )
 });
 
-const [email, emailProps] = defineField('email');
+const [email, emailProps] = defineField('email', {
+  validateOnChange: false,
+  validateOnInput: false,
+  validateOnModelUpdate: false
+});
+const [username, usernameProps] = defineField('username', {
+  validateOnChange: false,
+  validateOnInput: false,
+  validateOnModelUpdate: false
+});
 const [password, passwordProps] = defineField('password');
-const [username, usernameProps] = defineField('username');
+
+const onSubmit = handleSubmit(async values => {
+  await register(values);
+});
 </script>
 
 <template>
-  <form class="surface w-80" @submit.prevent="handleSubmit(register)">
+  <form class="surface p-7" @submit.prevent="onSubmit">
     <h2 class="text-xl font-bold">Create Account</h2>
     <div class="form-control">
       <label for="email" class="mb-1 font-medium">Email</label>
       <UiTextInput id="email" v-model="email" v-bind="emailProps" />
+      <p v-if="errors.email" class="text-red-500 mt-1">{{ errors.email }}</p>
     </div>
     <div class="form-control">
       <label for="username" class="mb-1 font-medium">Username</label>
       <UiTextInput v-model="username" v-bind="usernameProps" />
+      <p v-if="errors.username" class="text-red-500 mt-1">
+        {{ errors.username }}
+      </p>
     </div>
     <div class="form-control">
       <label for="password" class="mb-1 font-medium">Password</label>
@@ -66,20 +82,34 @@ const [username, usernameProps] = defineField('username');
         v-bind="passwordProps"
         type="password"
       />
+      <p v-if="errors.password" class="text-red-500 mt-1">
+        {{ errors.password }}
+      </p>
     </div>
 
-    <FancyButton
-      type="submit"
-      :disabled="isLoading"
-      class="w-full"
-      :text="isLoading ? 'Loading...' : 'Submit'"
-    />
+    <div class="flex gap-3 items-center">
+      <p>
+        Already have an account?
+        <RouterLink :to="{ name: 'Login' }" class="underline color-blue-4">
+          Log in.
+        </RouterLink>
+      </p>
+      <FancyButton
+        type="submit"
+        :disabled="isLoading"
+        class="w-full"
+        :text="isLoading ? 'Loading...' : 'Submit'"
+      />
+    </div>
 
     <p v-if="error" class="text-red-500 mt-2">{{ error.message }}</p>
   </form>
 </template>
 
 <style scoped lang="postcss">
+form {
+  width: var(--size-sm);
+}
 h2 {
   font-family: 'Cinzel Decorative', serif;
   font-weight: var(--font-weight-7);

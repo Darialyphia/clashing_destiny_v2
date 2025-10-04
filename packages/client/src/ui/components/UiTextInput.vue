@@ -27,6 +27,7 @@ input {
   border-image-slice: 16 fill;
   border-image-width: 16px;
   color: black;
+  -webkit-text-fill-color: black;
   padding: var(--size-2);
   border-image-source: url('/assets/ui/text-input.png');
   background: transparent;

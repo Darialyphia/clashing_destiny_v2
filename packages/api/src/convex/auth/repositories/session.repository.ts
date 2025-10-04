@@ -1,5 +1,5 @@
 import type { Id } from '../../_generated/dataModel';
-import type { MutationContainer, QueryContainer } from '../../shared/container';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import {
   DEFAULT_SESSION_TOTAL_DURATION_MS,
   SESSION_VERIFICATION_INTERVAL_MS
@@ -8,7 +8,7 @@ import {
 export class SessionReadRepository {
   static INJECTION_KEY = 'sessionReadRepo' as const;
 
-  constructor(private ctx: QueryContainer) {}
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async getById(sessionId: Id<'authSessions'>) {
     return this.ctx.db.get(sessionId);
@@ -37,7 +37,7 @@ export class SessionReadRepository {
 export class SessionRepository {
   static INJECTION_KEY = 'sessionRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(private ctx: { db: DatabaseWriter }) {}
 
   async getById(sessionId: Id<'authSessions'>) {
     return this.ctx.db.get(sessionId);

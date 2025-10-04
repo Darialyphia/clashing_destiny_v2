@@ -80,6 +80,19 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "home_hero.jpg"
+          ],
+          "src": [
+            "/assets/backgrounds/home_hero.jpg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },

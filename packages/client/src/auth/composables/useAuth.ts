@@ -32,7 +32,7 @@ export const provideAuth = () => {
       return { name: 'Login' };
     }
     if (to.meta.publicOnly && sessionId.value) {
-      return { name: 'Home' };
+      return { name: 'ClientHome' };
     }
   });
 
@@ -43,7 +43,7 @@ export const provideAuth = () => {
         router.push({ name: 'Login' });
       }
       if (sessionId.value && router.currentRoute.value.meta.publicOnly) {
-        router.push({ name: 'Home' });
+        router.push({ name: 'ClientHome' });
       }
     },
     { immediate: true }
@@ -66,12 +66,7 @@ export const useAuthedQuery = <Query extends QueryReference>(
     query,
     computed(() => ({ ...toValue(args), sessionId: sessionId.value })),
     {
-      enabled: computed(() => {
-        let enabled = unref(options.enabled);
-        if (enabled === undefined) enabled = true;
-
-        return !!(enabled && sessionId.value);
-      })
+      enabled: options.enabled
     }
   );
 };
@@ -85,7 +80,6 @@ export const useAuthedMutation = <Mutation extends MutationReference>(
   return {
     ...rest,
     mutate(mutationArgs: Omit<Mutation['_args'], 'sessionId'>) {
-      if (!sessionId.value) return;
       return mutate({
         ...mutationArgs,
         sessionId: sessionId.value

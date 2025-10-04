@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import FancyButton from '@/ui/components/FancyButton.vue';
+import UiTextInput from '@/ui/components/UiTextInput.vue';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import { z } from 'zod';
@@ -17,10 +19,14 @@ const { handleSubmit, defineField } = useForm({
 
 const [email, emailProps] = defineField('email');
 const [password, passwordProps] = defineField('password');
+
+const onSubmit = handleSubmit(async values => {
+  await login(values);
+});
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit(login)">
+  <form class="surface p-7" @submit.prevent="onSubmit">
     <h2 class="text-xl font-bold">Login</h2>
 
     <div class="form-control">
@@ -36,12 +42,30 @@ const [password, passwordProps] = defineField('password');
         type="password"
       />
     </div>
-    <FancyButton type="submit" :disabled="isLoading">
-      <span v-if="isLoading">Loading...</span>
-      <span v-else>Submit</span>
-    </FancyButton>
+    <div class="flex items-center justify-between">
+      <RouterLink :to="{ name: 'Register' }" class="underline color-blue-4">
+        I don't have an account
+      </RouterLink>
+      <FancyButton
+        type="submit"
+        :disabled="isLoading"
+        :text="isLoading ? 'Loading...' : 'Submit'"
+      />
+    </div>
     <p v-if="error" class="text-red-500 mt-2">{{ error.message }}</p>
   </form>
 </template>
 
-<style lang="postcss" scoped></style>
+<style scoped lang="postcss">
+form {
+  width: var(--size-sm);
+}
+h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: var(--font-weight-7);
+}
+
+.form-control {
+  margin-block-end: var(--size-4);
+}
+</style>

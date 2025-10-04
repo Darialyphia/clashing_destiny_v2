@@ -1,15 +1,24 @@
+<script setup lang="ts">
+import { useLogout } from './auth/composables/useLogout';
+import { useMe } from './auth/composables/useMe';
+
+const { mutate: logout } = useLogout();
+const { data: me } = useMe();
+</script>
+
 <template>
   <header class="flex items-center gap-4 surface">
-    <RouterLink :to="{ name: 'Home' }">
-      <h1>Clashing Destinies</h1>
-    </RouterLink>
+    <div>Welcome back, {{ me?.username }}</div>
     <nav class="ml-auto">
       <ul class="flex gap-4">
         <li>
-          <RouterLink :to="{ name: 'Login' }">Login</RouterLink>
+          <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'Register' }">Register</RouterLink>
+          <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>
+        </li>
+        <li>
+          <button @click="logout({})">Logout</button>
         </li>
       </ul>
     </nav>

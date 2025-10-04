@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
 import { provideCollectionPage } from './useCollectionPage';
 
 import CollectionFilters from './CollectionFilters.vue';
 import DeckList from './DeckList.vue';
 import DeckEditor from './DeckEditor.vue';
 import Collection from './Collection.vue';
+import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 
 definePage({
   name: 'Collection',
+  path: '/client/collection',
   meta: {
     requiresAuth: true
   }
@@ -19,18 +20,7 @@ const { isEditingDeck } = provideCollectionPage();
 
 <template>
   <div class="page">
-    <header>
-      <nav>
-        <ul class="flex gap-4">
-          <li>
-            <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
-          </li>
-          <li>
-            <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <AuthenticatedHeader class="collection-header" />
     <CollectionFilters class="filters lt-lg:hidden" />
 
     <Collection />
@@ -56,15 +46,16 @@ const { isEditingDeck } = provideCollectionPage();
     grid-template-columns: 1fr 18rem;
     column-gap: 0;
   }
-  > header {
-    grid-row: 1;
-    grid-column: 1 / span 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-block: var(--size-3);
-    padding-inline: var(--size-5);
-  }
+}
+
+.collection-header {
+  grid-row: 1;
+  grid-column: 1 / span 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: var(--size-3);
+  padding-inline: var(--size-5);
 }
 
 .right-sidebar {

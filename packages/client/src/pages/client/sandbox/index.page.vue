@@ -8,7 +8,8 @@ import type { DisplayedDeck } from '@/player/components/PlayerDeck.vue';
 import PlayerDeck from '@/player/components/PlayerDeck.vue';
 
 definePage({
-  name: 'Sandbox'
+  name: 'Sandbox',
+  path: '/client/sandbox'
 });
 
 const decks = useLocalStorage<ValidatableDeck[]>(

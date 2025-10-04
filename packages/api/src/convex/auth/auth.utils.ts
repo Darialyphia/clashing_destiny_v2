@@ -22,10 +22,10 @@ export const queryWithSession = customQuery(query, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = new SessionReadRepository(ctx.db);
-    const session = await sessionRepo.getValidSession(
-      args.sessionId as Id<'authSessions'>
-    );
+    const sessionRepo = new SessionReadRepository({ db: ctx.db });
+    const session = args.sessionId
+      ? await sessionRepo.getValidSession(args.sessionId as Id<'authSessions'>)
+      : null;
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
@@ -36,10 +36,10 @@ export const internalQueryWithSession = customQuery(internalQuery, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = new SessionReadRepository(ctx.db);
-    const session = await sessionRepo.getValidSession(
-      args.sessionId as Id<'authSessions'>
-    );
+    const sessionRepo = new SessionReadRepository({ db: ctx.db });
+    const session = args.sessionId
+      ? await sessionRepo.getValidSession(args.sessionId as Id<'authSessions'>)
+      : null;
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
@@ -49,10 +49,10 @@ export const mutationWithSession = customMutation(mutation, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = new SessionRepository(ctx.db);
-    const session = await sessionRepo.getValidSession(
-      args.sessionId as Id<'authSessions'>
-    );
+    const sessionRepo = new SessionRepository({ db: ctx.db });
+    const session = args.sessionId
+      ? await sessionRepo.getValidSession(args.sessionId as Id<'authSessions'>)
+      : null;
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
@@ -63,10 +63,10 @@ export const internalMutationWithSession = customMutation(internalMutation, {
     sessionId: v.union(v.null(), v.string())
   },
   input: async (ctx, args: any) => {
-    const sessionRepo = new SessionRepository(ctx.db);
-    const session = await sessionRepo.getValidSession(
-      args.sessionId as Id<'authSessions'>
-    );
+    const sessionRepo = new SessionRepository({ db: ctx.db });
+    const session = args.sessionId
+      ? await sessionRepo.getValidSession(args.sessionId as Id<'authSessions'>)
+      : null;
     return { ctx: { ...ctx, session }, args: {} };
   }
 });
