@@ -42,6 +42,7 @@ import { CancelGameUseCase } from '../game/usecases/cancelGame.usecase';
 import { GameMapper } from '../game/mappers/game.mapper';
 import { GamePlayerMapper } from '../game/mappers/gamePlayer.mapper';
 import { GetSessionUserUseCase } from '../auth/usecases/getSessionUser.usecase';
+import { UserMapper } from '../users/mappers/user.mapper';
 
 export type QueryContainer = {
   db: DatabaseReader;
@@ -54,6 +55,7 @@ export type QueryContainer = {
   [MatchmakingUserReadRepository.INJECTION_KEY]: MatchmakingUserReadRepository;
   [GameMapper.INJECTION_KEY]: GameMapper;
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
+  [UserMapper.INJECTION_KEY]: UserMapper;
   [GetSessionUserUseCase.INJECTION_KEY]: GetSessionUserUseCase;
 };
 
@@ -73,6 +75,7 @@ export const createQueryContainer = (ctx: QueryCtxWithSession) => {
     [MatchmakingUserReadRepository.INJECTION_KEY]: asClass(MatchmakingUserReadRepository),
     [GameMapper.INJECTION_KEY]: asClass(GameMapper),
     [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
+    [UserMapper.INJECTION_KEY]: asClass(UserMapper),
     [GetSessionUserUseCase.INJECTION_KEY]: asClass(GetSessionUserUseCase)
   });
 
@@ -97,6 +100,7 @@ export type MutationContainer = {
   [RunMatchmakingUseCase.INJECTION_KEY]: RunMatchmakingUseCase;
   [CancelGameUseCase.INJECTION_KEY]: CancelGameUseCase;
   [GameMapper.INJECTION_KEY]: GameMapper;
+  [UserMapper.INJECTION_KEY]: UserMapper;
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
 };
 export const createMutationContainer = (ctx: MutationCtxWithSession) => {

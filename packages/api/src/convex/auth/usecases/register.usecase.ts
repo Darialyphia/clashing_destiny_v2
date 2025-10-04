@@ -3,9 +3,11 @@ import { Email } from '../../utils/email';
 import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
 import { AppError } from '../../utils/error';
+import { Username } from '../../users/username';
 
 export interface RegisterInput {
   email: Email;
+  username: Username;
   password: Password;
 }
 
@@ -27,6 +29,7 @@ export class RegisterUseCase extends MutationUseCase<RegisterInput, RegisterOutp
     await this.validateEmail(input.email);
 
     const userId = await this.ctx.userRepo.create({
+      username: input.username,
       email: input.email,
       password: input.password
     });

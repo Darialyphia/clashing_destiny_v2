@@ -8,14 +8,16 @@ import { LogoutUseCase } from './auth/usecases/logout.usecase';
 import { mutationWithContainer, queryWithContainer } from './shared/container';
 import { ensureAuthenticated } from './auth/auth.utils';
 import { GetSessionUserUseCase } from './auth/usecases/getSessionUser.usecase';
+import { Username } from './users/username';
 
 export const register = mutationWithContainer({
-  args: { email: v.string(), password: v.string() },
+  args: { email: v.string(), password: v.string(), username: v.string() },
   handler: async (ctx, input) => {
     const usecase = ctx.resolve<RegisterUseCase>(RegisterUseCase.INJECTION_KEY);
     const result = await usecase.execute({
       email: new Email(input.email),
-      password: new Password(input.password)
+      password: new Password(input.password),
+      username: new Username(input.username)
     });
 
     return { sessionId: result.session._id };

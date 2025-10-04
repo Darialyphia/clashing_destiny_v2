@@ -1,32 +1,24 @@
 import { internal } from '../../_generated/api';
-import type { DatabaseReader } from '../../_generated/server';
 import type { DeckId } from '../../deck/entities/deck.entity';
-import type { MutationContainer } from '../../shared/container';
+import type { MutationContainer, QueryContainer } from '../../shared/container';
 import type { UserId } from '../../users/entities/user.entity';
 import { Game, type GameDoc, type GameId } from '../entities/game.entity';
 import { GAME_STATUS, GAME_TIMEOUT_MS } from '../game.constants';
-import { GamePlayerReadRepository } from './gamePlayer.repository';
 
 export class GameReadRepository {
   static INJECTION_KEY = 'gameReadRepo' as const;
 
-  declare protected db: DatabaseReader;
-  declare protected gamePlayerRepo: GamePlayerReadRepository;
-
-  constructor(config: { db: DatabaseReader; gamePlayerRepo: GamePlayerReadRepository }) {
-    this.db = config.db;
-    this.gamePlayerRepo = config.gamePlayerRepo;
-  }
+  constructor(private ctx: QueryContainer) {}
 
   async getById(gameId: GameId) {
-    return this.db.get(gameId);
+    return this.ctx.db.get(gameId);
   }
 
   async getByUserId(userId: UserId) {
-    const gamePlayer = await this.gamePlayerRepo.byUserId(userId);
+    const gamePlayer = await this.ctx.gamePlayerReadRepo.byUserId(userId);
     if (!gamePlayer) return null;
 
-    return this.db.get(gamePlayer.gameId);
+    return this.ctx.db.get(gamePlayer.gameId);
   }
 }
 

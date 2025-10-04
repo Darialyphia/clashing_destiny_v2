@@ -1,6 +1,5 @@
 import type { Id } from '../../_generated/dataModel';
-import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
-import { UserRepository } from '../../users/repositories/user.repository';
+import type { MutationContainer, QueryContainer } from '../../shared/container';
 import { DomainError } from '../../utils/error';
 import {
   MatchmakingUser,
@@ -10,21 +9,21 @@ import {
 export class MatchmakingUserReadRepository {
   static INJECTION_KEY = 'matchmakingUserReadRepo' as const;
 
-  constructor(protected db: DatabaseReader) {}
+  constructor(private ctx: QueryContainer) {}
 
   async getById(matchmakingId: Id<'matchmakingUsers'>) {
-    return this.db.get(matchmakingId);
+    return this.ctx.db.get(matchmakingId);
   }
 
   async getByMatchmakingId(matchmakingId: Id<'matchmaking'>) {
-    return this.db
+    return this.ctx.db
       .query('matchmakingUsers')
       .withIndex('by_matchmakingId', q => q.eq('matchmakingId', matchmakingId))
       .collect();
   }
 
   async byUserId(userId: Id<'users'>) {
-    return this.db
+    return this.ctx.db
       .query('matchmakingUsers')
       .withIndex('by_userId', q => q.eq('userId', userId))
       .unique();
@@ -34,16 +33,10 @@ export class MatchmakingUserReadRepository {
 export class MatchmakingUserRepository {
   static INJECTION_KEY = 'matchmakingUserRepo' as const;
 
-  declare protected db: DatabaseWriter;
-  declare protected userRepo: UserRepository;
-
-  constructor(config: { db: DatabaseWriter; userRepo: UserRepository }) {
-    this.db = config.db;
-    this.userRepo = config.userRepo;
-  }
+  constructor(private ctx: MutationContainer) {}
 
   private async buildEntity(doc: MatchmakingUserDoc) {
-    const userDoc = await this.userRepo.getById(doc.userId);
+    const userDoc = await this.ctx.userRepo.getById(doc.userId);
 
     if (!userDoc) throw new DomainError('User not found');
 
@@ -51,7 +44,7 @@ export class MatchmakingUserRepository {
   }
 
   async getById(matchmakingId: Id<'matchmakingUsers'>) {
-    const doc = await this.db.get(matchmakingId);
+    const doc = await this.ctx.db.get(matchmakingId);
 
     if (!doc) return null;
 
@@ -59,7 +52,7 @@ export class MatchmakingUserRepository {
   }
 
   async getByMatchmakingId(matchmakingId: Id<'matchmaking'>) {
-    const docs = await this.db
+    const docs = await this.ctx.db
       .query('matchmakingUsers')
       .withIndex('by_matchmakingId', q => q.eq('matchmakingId', matchmakingId))
       .collect();
@@ -68,7 +61,7 @@ export class MatchmakingUserRepository {
   }
 
   async byUserId(userId: Id<'users'>) {
-    const doc = await this.db
+    const doc = await this.ctx.db
       .query('matchmakingUsers')
       .withIndex('by_userId', q => q.eq('userId', userId))
       .unique();
@@ -89,7 +82,7 @@ export class MatchmakingUserRepository {
     deckId: Id<'decks'>;
     mmr: number;
   }) {
-    return this.db.insert('matchmakingUsers', {
+    return this.ctx.db.insert('matchmakingUsers', {
       matchmakingId,
       userId,
       deckId,
@@ -99,7 +92,7 @@ export class MatchmakingUserRepository {
   }
 
   async save(matchmakingUser: MatchmakingUser) {
-    await this.db.replace(matchmakingUser.id, {
+    await this.ctx.db.replace(matchmakingUser.id, {
       matchmakingId: matchmakingUser.matchmakingId,
       userId: matchmakingUser.userId,
       deckId: matchmakingUser.deckId,

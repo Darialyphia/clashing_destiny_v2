@@ -20,7 +20,7 @@ import type * as ping from "../ping.js";
 import type * as shared_container from "../shared/container.js";
 import type * as shared_entity from "../shared/entity.js";
 import type * as usecase from "../usecase.js";
-import type * as utils_discriminator from "../utils/discriminator.js";
+import type * as users_username from "../users/username.js";
 import type * as utils_email from "../utils/email.js";
 import type * as utils_error from "../utils/error.js";
 import type * as utils_password from "../utils/password.js";
@@ -42,7 +42,7 @@ declare const fullApi: ApiFromModules<{
   "shared/container": typeof shared_container;
   "shared/entity": typeof shared_entity;
   usecase: typeof usecase;
-  "utils/discriminator": typeof utils_discriminator;
+  "users/username": typeof users_username;
   "utils/email": typeof utils_email;
   "utils/error": typeof utils_error;
   "utils/password": typeof utils_password;

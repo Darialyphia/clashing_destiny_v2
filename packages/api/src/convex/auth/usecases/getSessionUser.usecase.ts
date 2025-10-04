@@ -1,9 +1,9 @@
-import { MutationUseCase, QueryUseCase } from '../../usecase';
+import { QueryUseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
 import { Email } from '../../utils/email';
 import { AppError } from '../../utils/error';
 import { Password } from '../../utils/password';
-import type { AuthSession, SessionId } from '../entities/session.entity';
+import type { SessionId } from '../entities/session.entity';
 
 export interface LoginInput {
   email: Email;
@@ -13,8 +13,7 @@ export interface LoginInput {
 export interface GetSessionUserput {
   sessionId: SessionId;
   id: UserId;
-  name: string;
-  discriminator: string;
+  username: string;
   mmr: number;
 }
 
@@ -28,8 +27,7 @@ export class GetSessionUserUseCase extends QueryUseCase<never, GetSessionUserput
     return {
       sessionId: this.ctx.session!._id,
       id: user._id,
-      name: user.name,
-      discriminator: user.discriminator,
+      username: user.username,
       mmr: user.mmr
     };
   }
