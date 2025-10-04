@@ -153,6 +153,19 @@
         },
         {
           "alias": [
+            "scales-of-destiny.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/scales-of-destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "unyielding-shield.png"
           ],
           "src": [
@@ -170,6 +183,19 @@
           ],
           "src": [
             "/assets/cards/minions/angel-of-retribution.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "bastion-guard.png"
+          ],
+          "src": [
+            "/assets/cards/minions/bastion-guard.png"
           ],
           "data": {
             "tags": {
@@ -248,6 +274,19 @@
           ],
           "src": [
             "/assets/cards/minions/hougen-the-punisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-wisp.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-wisp.png"
           ],
           "data": {
             "tags": {
@@ -3924,6 +3963,19 @@
         },
         {
           "alias": [
+            "card-front-small-mask-export.png"
+          ],
+          "src": [
+            "/assets/ui/card-front-small-mask-export.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-front-small-mask.png"
           ],
           "src": [
@@ -4058,6 +4110,19 @@
           ],
           "src": [
             "/assets/ui/card-kind-secret.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-kind-sigil.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-sigil.png"
           ],
           "data": {
             "tags": {

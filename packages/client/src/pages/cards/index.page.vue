@@ -8,7 +8,10 @@ import DeckEditor from './DeckEditor.vue';
 import Collection from './Collection.vue';
 
 definePage({
-  name: 'Collection'
+  name: 'Collection',
+  meta: {
+    requiresAuth: true
+  }
 });
 
 const { isEditingDeck } = provideCollectionPage();

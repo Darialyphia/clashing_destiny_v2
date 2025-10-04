@@ -855,7 +855,7 @@ const onMouseleave = () => {
 
 .description {
   width: calc(96px * var(--pixel-scale));
-  height: calc(48px * var(--pixel-scale));
+  height: calc(50px * var(--pixel-scale));
   position: absolute;
   top: calc(114px * var(--pixel-scale));
   left: calc(16px * var(--pixel-scale));
@@ -863,6 +863,7 @@ const onMouseleave = () => {
   overflow: hidden;
   text-align: center;
   line-height: 1.2;
+  text-shadow: 0 0 5px black;
   &.is-multi-line {
     text-align: left;
   }

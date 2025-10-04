@@ -206,14 +206,17 @@ const pointerStyle = computed(() => {
     background-position: center calc(50% + 20px);
   }
   .spell & .art {
+    --pixel-scale: 2;
     background-image: v-bind(imageBg), url('/assets/ui/frame-spell.png');
   }
 
   .sigil & .art {
+    --pixel-scale: 2;
     background-image: v-bind(imageBg), url('/assets/ui/frame-sigil.png');
   }
 
   .artifact & .art {
+    --pixel-scale: 2;
     background-image: v-bind(imageBg), url('/assets/ui/frame-artifact.png');
   }
 }

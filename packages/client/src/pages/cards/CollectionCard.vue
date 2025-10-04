@@ -56,7 +56,7 @@ const isPreviewOpened = ref(false);
 
 <template>
   <HoverCardRoot
-    :open-delay="100"
+    :open-delay="250"
     :close-delay="0"
     :open="viewMode === 'expanded' ? false : isPreviewOpened"
     @update:open="isPreviewOpened = $event"

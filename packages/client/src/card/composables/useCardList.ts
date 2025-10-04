@@ -121,28 +121,29 @@ export const provideCardList = () => {
           return a.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? 1 : -1;
         }
 
-        if (a.kind === b.kind) {
-          if (
-            a.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-            b.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-            a.manaCost !== b.manaCost
-          ) {
-            return a.manaCost - b.manaCost;
-          }
-
-          if (
-            a.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-            b.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-            a.destinyCost !== b.destinyCost
-          ) {
-            return a.destinyCost - b.destinyCost;
-          }
-
-          return a.name
-            .toLocaleLowerCase()
-            .localeCompare(b.name.toLocaleLowerCase());
+        if (
+          a.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          b.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          a.manaCost !== b.manaCost
+        ) {
+          return a.manaCost - b.manaCost;
         }
-        return KIND_ORDER[a.kind] - KIND_ORDER[b.kind];
+
+        if (
+          a.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          b.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          a.destinyCost !== b.destinyCost
+        ) {
+          return a.destinyCost - b.destinyCost;
+        }
+
+        if (a.kind !== b.kind) {
+          return KIND_ORDER[a.kind] - KIND_ORDER[b.kind];
+        }
+
+        return a.name
+          .toLocaleLowerCase()
+          .localeCompare(b.name.toLocaleLowerCase());
       });
   });
 

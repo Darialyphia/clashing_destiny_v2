@@ -25,7 +25,7 @@ export const blindingLight: SpellBlueprint = {
   @Echoed Destiny@`,
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   spellSchool: SPELL_SCHOOLS.LIGHT,
   job: null,

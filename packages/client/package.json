@@ -13,10 +13,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@convex-vue/core": "^0.0.4",
     "@floating-ui/core": "^1.6.9",
     "@floating-ui/vue": "^1.1.6",
     "@formkit/auto-animate": "^0.8.2",
     "@game/engine": "^1.0.0",
+    "@game/api": "^1.0.0",
     "@game/shared": "^1.0.0",
     "@pixi/filter-adjustment": "^5.1.1",
     "@pixi/filter-advanced-bloom": "^5.1.1",

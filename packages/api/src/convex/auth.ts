@@ -5,7 +5,9 @@ import { Password } from './utils/password';
 import { RegisterUseCase } from './auth/usecases/register.usecase';
 import { LoginUseCase } from './auth/usecases/login.usecase';
 import { LogoutUseCase } from './auth/usecases/logout.usecase';
-import { mutationWithContainer } from './shared/container';
+import { mutationWithContainer, queryWithContainer } from './shared/container';
+import { ensureAuthenticated } from './auth/auth.utils';
+import { GetSessionUserUseCase } from './auth/usecases/getSessionUser.usecase';
 
 export const register = mutationWithContainer({
   args: { email: v.string(), password: v.string() },
@@ -42,5 +44,18 @@ export const logout = mutationWithContainer({
     await usecase.execute();
 
     return { success: true };
+  }
+});
+
+export const me = queryWithContainer({
+  args: {},
+  handler: async ctx => {
+    ensureAuthenticated(ctx.resolve('session'));
+
+    const usecase = ctx.resolve<GetSessionUserUseCase>(
+      GetSessionUserUseCase.INJECTION_KEY
+    );
+
+    return usecase.execute();
   }
 });

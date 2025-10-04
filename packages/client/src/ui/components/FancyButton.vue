@@ -53,7 +53,7 @@ const tag = computed(() => {
 @import 'open-props/media';
 
 .fancy-button {
-  font-size: 28px;
+  font-size: var(--font-size-3);
   font-weight: var(--font-weight-4);
 
   display: flex;
@@ -64,7 +64,8 @@ const tag = computed(() => {
   width: fit-content;
   padding: var(--size-2-em) var(--size-3-em);
 
-  font-family: 'NotJamSlab14', monospace;
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: var(--font-weight-9);
   white-space: nowrap;
   position: relative;
   z-index: 0;
@@ -73,6 +74,7 @@ const tag = computed(() => {
   border-image-width: 38px;
   border-radius: var(--_ui-button-radius);
 
+  transition: filter 0.2s var(--ease-2);
   &.primary {
     border-image-source: url('/assets/ui/button.png');
   }
@@ -95,15 +97,6 @@ const tag = computed(() => {
     text-decoration: none;
   }
 
-  &:hover &:active {
-    /* transform: scale(0.98); */
-    /* transition: transform 0.2s; */
-  }
-
-  &:focus-visible {
-    color: var(--_ui-button-focus-color);
-    background-color: var(--_ui-button-focus-bg);
-  }
   &.is-inline {
     display: inline-flex;
   }
@@ -117,7 +110,6 @@ const tag = computed(() => {
 
   &:hover:not(:disabled) {
     color: var(--_ui-button-hover-color);
-    /* background-color: var(--_ui-button-hover-bg); */
     filter: brightness(1.5);
   }
 }
@@ -136,7 +128,7 @@ const tag = computed(() => {
     background-clip: text;
   }
   .primary &::after {
-    background-image: linear-gradient(#fcfcfc, #fcfcfc 50%, #e6d67b 50%);
+    background-image: linear-gradient(#efef9f, #efef9f 50%, #d7ad42 50%);
   }
 
   .error &::after {
@@ -147,11 +139,8 @@ const tag = computed(() => {
     background-image: linear-gradient(#fcfcfc, #fcfcfc 50%, #c7fffc 50%);
   }
   &:before {
-    text-shadow:
-      0 2px black,
-      0 -2px black,
-      2px 0 black,
-      -2px 0 black;
+    -webkit-text-stroke: 2px hsl(0 0% 0% / 0.75);
+    paint-order: stroke fill;
     z-index: -1;
   }
 }

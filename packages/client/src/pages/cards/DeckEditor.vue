@@ -9,6 +9,7 @@ import {
   HoverCardContent
 } from 'reka-ui';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
+import UiTextInput from '@/ui/components/UiTextInput.vue';
 
 const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
 
@@ -48,10 +49,10 @@ const getCountForCostAndUp = (minCost: number) =>
     <div>
       <div class="flex gap-2 items-center">
         <img class="edit-icon" src="/assets/ui/pen.png" />
-        <input
+        <UiTextInput
+          class="flex-1"
           v-model="deckBuilder.deck.name"
-          type="text"
-          class="flex-1 bg-transparent deck-name"
+          placeholder="Deck Name"
         />
       </div>
       <div class="bars" :style="{ '--total': deckBuilder.mainDeckSize }">
@@ -301,14 +302,6 @@ const getCountForCostAndUp = (minCost: number) =>
   white-space: nowrap;
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;
-}
-
-.deck-name {
-  border-image-slice: 16 fill;
-  border-image-width: 16px;
-  color: black;
-  padding: var(--size-2);
-  border-image-source: url('/assets/ui/text-input.png');
 }
 
 .edit-icon {

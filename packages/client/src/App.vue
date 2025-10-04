@@ -1,28 +1,21 @@
 <script setup lang="ts">
 import { TooltipProvider } from 'reka-ui';
+import { provideAuth } from './auth/composables/useAuth';
 
 // const { loaded } = useAssets();
+provideAuth();
 </script>
 
 <template>
   <!-- <div v-if="!loaded">Loading...</div> -->
   <div>
     <TooltipProvider :delay-duration="400">
-      <RouterView name="ui" />
+      <RouterView />
     </TooltipProvider>
     <div id="card-portal"></div>
     <div id="card-actions-portal"></div>
     <div id="tooltip-portal"></div>
   </div>
-  <!-- <PixiApp v-else>
-    <RouterView name="scene" />
-    <External :root="uiRoot!" id="ui-root">
-      <TooltipProvider :delay-duration="400">
-        <RouterView name="ui" />
-      </TooltipProvider>
-      <div id="card-portal" />
-    </External>
-  </PixiApp> -->
 </template>
 
 <style>

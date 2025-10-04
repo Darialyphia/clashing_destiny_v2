@@ -5,7 +5,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
 
@@ -22,7 +21,7 @@ export const scalesOfDestiny: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   kind: CARD_KINDS.ARTIFACT,
-  job: HERO_JOBS.WARRIOR,
+  job: null,
   spellSchool: null,
   durability: 2,
   subKind: ARTIFACT_KINDS.WEAPON,

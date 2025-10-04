@@ -1,10 +1,8 @@
 import { MutationUseCase } from '../../usecase';
-import { UserRepository } from '../../users/repositories/user.repository';
 import { Email } from '../../utils/email';
 import { AppError } from '../../utils/error';
 import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
-import { SessionRepository } from '../repositories/session.repository';
 
 export interface LoginInput {
   email: Email;
