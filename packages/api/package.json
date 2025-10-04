@@ -4,6 +4,7 @@
   "main": "./src/index.ts",
   "scripts": {
     "dev": "convex dev",
+    "predev": "convex dev --run init --until-success",
     "codegen": "convex codegen",
     "deploy": "convex deploy",
     "convex": "convex",

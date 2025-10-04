@@ -26,19 +26,11 @@ const { data: me } = useMe();
 </template>
 
 <style scoped lang="postcss">
-h1 {
-  font-family: 'Cinzel Decorative', serif;
-  font-weight: var(--font-weight-7);
-  padding-left: var(--size-6);
-  color: transparent;
-  background-image: linear-gradient(#efef9f, #efef9f 50%, #d7ad42 50%);
-  background-clip: text;
-  text-shadow: 3px 5px 10px hsl(from cyan h s l / 0.3);
-}
 li {
   padding: var(--size-3);
   border-radius: var(--radius-2);
   font-weight: var(--font-weight-5);
+  display: grid;
 }
 
 li:hover {

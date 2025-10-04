@@ -3,7 +3,24 @@ import { ensureAuthenticated } from './auth/auth.utils';
 import { JoinMatchmakingUseCase } from './matchmaking/usecases/joinMatchmaking.usecase';
 import { LeaveMatchmakingUseCase } from './matchmaking/usecases/leaveMatchmaking.usecase';
 import { RunMatchmakingUseCase } from './matchmaking/usecases/runMatchmaking.usecase';
-import { internalMutationWithContainer, mutationWithContainer } from './shared/container';
+import {
+  internalMutationWithContainer,
+  mutationWithContainer,
+  queryWithContainer
+} from './shared/container';
+import { GetMatchmakingsUsecase } from './matchmaking/usecases/getMatchmakings.usecase';
+
+export const list = queryWithContainer({
+  args: {},
+  handler: async ctx => {
+    ensureAuthenticated(ctx.resolve('session'));
+    const usecase = ctx.resolve<GetMatchmakingsUsecase>(
+      GetMatchmakingsUsecase.INJECTION_KEY
+    );
+
+    return usecase.execute();
+  }
+});
 
 export const join = mutationWithContainer({
   args: { name: v.string(), deckId: v.id('decks') },

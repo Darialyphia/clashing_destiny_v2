@@ -5,8 +5,9 @@ export const matchmakingSchemas = {
   matchmaking: defineTable({
     name: v.string(),
     startedAt: v.optional(v.number()),
-    nextInvocationId: v.optional(v.id('_scheduled_functions'))
-  }),
+    nextInvocationId: v.optional(v.id('_scheduled_functions')),
+    enabled: v.boolean()
+  }).index('by_name', ['name']),
 
   matchmakingUsers: defineTable({
     userId: v.id('users'),

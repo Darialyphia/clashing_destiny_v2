@@ -68,11 +68,10 @@ export class MatchmakingRepository {
   }
 
   async save(matchmaking: Matchmaking) {
-    await this.ctx.db.insert('matchmaking', {
-      name: matchmaking.name,
-      startedAt: matchmaking.startedAt,
-      nextInvocationId: matchmaking.nextInvocationId
-    });
+    await this.ctx.db.insert(
+      'matchmaking',
+      this.ctx.matchmakingMapper.toPersistence(matchmaking)
+    );
 
     await Promise.all(
       matchmaking.participants.map(async user => this.ctx.matchmakingUserRepo.save(user))

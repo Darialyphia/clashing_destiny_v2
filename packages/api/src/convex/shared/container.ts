@@ -43,6 +43,8 @@ import { GameMapper } from '../game/mappers/game.mapper';
 import { GamePlayerMapper } from '../game/mappers/gamePlayer.mapper';
 import { GetSessionUserUseCase } from '../auth/usecases/getSessionUser.usecase';
 import { UserMapper } from '../users/mappers/user.mapper';
+import { GetMatchmakingsUsecase } from '../matchmaking/usecases/getMatchmakings.usecase';
+import { MatchmakingMapper } from '../matchmaking/mappers/matchmaking.mapper';
 
 export type QueryContainer = {
   db: DatabaseReader;
@@ -57,6 +59,8 @@ export type QueryContainer = {
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
   [UserMapper.INJECTION_KEY]: UserMapper;
   [GetSessionUserUseCase.INJECTION_KEY]: GetSessionUserUseCase;
+  [GetMatchmakingsUsecase.INJECTION_KEY]: GetMatchmakingsUsecase;
+  [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
 };
 
 export const createQueryContainer = (ctx: QueryCtxWithSession) => {
@@ -76,7 +80,9 @@ export const createQueryContainer = (ctx: QueryCtxWithSession) => {
     [GameMapper.INJECTION_KEY]: asClass(GameMapper),
     [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
     [UserMapper.INJECTION_KEY]: asClass(UserMapper),
-    [GetSessionUserUseCase.INJECTION_KEY]: asClass(GetSessionUserUseCase)
+    [GetSessionUserUseCase.INJECTION_KEY]: asClass(GetSessionUserUseCase),
+    [GetMatchmakingsUsecase.INJECTION_KEY]: asClass(GetMatchmakingsUsecase),
+    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper)
   });
 
   return container;
@@ -102,6 +108,7 @@ export type MutationContainer = {
   [GameMapper.INJECTION_KEY]: GameMapper;
   [UserMapper.INJECTION_KEY]: UserMapper;
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
+  [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
 };
 export const createMutationContainer = (ctx: MutationCtxWithSession) => {
   const container = createContainer({
@@ -126,7 +133,9 @@ export const createMutationContainer = (ctx: MutationCtxWithSession) => {
     [RunMatchmakingUseCase.INJECTION_KEY]: asClass(RunMatchmakingUseCase),
     [CancelGameUseCase.INJECTION_KEY]: asClass(CancelGameUseCase),
     [GameMapper.INJECTION_KEY]: asClass(GameMapper),
-    [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper)
+    [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
+    [UserMapper.INJECTION_KEY]: asClass(UserMapper),
+    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper)
   });
 
   return container;

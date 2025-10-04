@@ -22,6 +22,10 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     return this.data.matchmakingUsers.some(u => u.equals(user));
   }
 
+  get enabled() {
+    return this.data.matchmaking.enabled;
+  }
+
   get name() {
     return this.data.matchmaking.name;
   }
@@ -43,6 +47,7 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
   }
 
   canJoin(user: MatchmakingUser) {
+    if (!this.enabled) return false;
     return !this.has(user);
   }
 
