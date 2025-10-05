@@ -84,13 +84,16 @@ export class MatchmakingUserRepository {
     deckId: Id<'decks'>;
     mmr: number;
   }) {
-    return this.ctx.db.insert('matchmakingUsers', {
+    const id = await this.ctx.db.insert('matchmakingUsers', {
       matchmakingId,
       userId,
       deckId,
       mmr,
       joinedAt: Date.now()
     });
+
+    const matchmakingUser = await this.getById(id);
+    return matchmakingUser!;
   }
 
   delete(id: MatchmakingUserId) {

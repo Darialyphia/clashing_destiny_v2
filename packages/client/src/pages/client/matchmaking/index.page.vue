@@ -258,6 +258,10 @@ const getDisplayedDeck = (deck: any) => ({
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
+
+  &:has(button:disabled) {
+    opacity: 0.5;
+  }
 }
 
 .matchmaking-card:hover {

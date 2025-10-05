@@ -56,17 +56,21 @@ export class JoinMatchmakingUseCase
     if (!user) {
       throw new AppError('User not found');
     }
-    await this.ctx.matchmakingUserRepo.create({
+
+    const matchmakingUser = await this.ctx.matchmakingUserRepo.create({
       matchmakingId: matchmaking.id,
       userId: this.ctx.session.userId,
       mmr: user.mmr,
       deckId: input.deckId
     });
 
+    matchmaking.join(matchmakingUser);
+
     if (!matchmaking.isRunning) {
       await this.ctx.matchmakingRepo.scheduleRun(matchmaking);
-      await this.ctx.matchmakingRepo.save(matchmaking);
     }
+
+    await this.ctx.matchmakingRepo.save(matchmaking);
 
     return { success: true };
   }
