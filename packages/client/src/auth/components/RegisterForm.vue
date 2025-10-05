@@ -113,6 +113,7 @@ form {
 h2 {
   font-family: 'Cinzel Decorative', serif;
   font-weight: var(--font-weight-7);
+  text-align: center;
 }
 
 .form-control {

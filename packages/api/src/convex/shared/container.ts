@@ -48,6 +48,7 @@ import { MatchmakingMapper } from '../matchmaking/mappers/matchmaking.mapper';
 import { DeckReadRepository, DeckRepository } from '../deck/repositories/deck.repository';
 import { CardReadRepository, CardRepository } from '../card/repositories/card.repository';
 import { CardMapper } from '../card/mappers/card.mapper';
+import { GrantPremadeDeckUseCase } from '../deck/usecases/grantPremadeDeck';
 
 export type QueryContainer = {
   db: DatabaseReader;
@@ -114,6 +115,7 @@ export type MutationContainer = {
   [LeaveMatchmakingUseCase.INJECTION_KEY]: LeaveMatchmakingUseCase;
   [RunMatchmakingUseCase.INJECTION_KEY]: RunMatchmakingUseCase;
   [CancelGameUseCase.INJECTION_KEY]: CancelGameUseCase;
+  [GrantPremadeDeckUseCase.INJECTION_KEY]: GrantPremadeDeckUseCase;
   [GameMapper.INJECTION_KEY]: GameMapper;
   [UserMapper.INJECTION_KEY]: UserMapper;
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
@@ -144,6 +146,7 @@ export const createMutationContainer = (ctx: MutationCtxWithSession) => {
     [LeaveMatchmakingUseCase.INJECTION_KEY]: asClass(LeaveMatchmakingUseCase),
     [RunMatchmakingUseCase.INJECTION_KEY]: asClass(RunMatchmakingUseCase),
     [CancelGameUseCase.INJECTION_KEY]: asClass(CancelGameUseCase),
+    [GrantPremadeDeckUseCase.INJECTION_KEY]: asClass(GrantPremadeDeckUseCase),
     [GameMapper.INJECTION_KEY]: asClass(GameMapper),
     [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
     [UserMapper.INJECTION_KEY]: asClass(UserMapper),

@@ -16,6 +16,7 @@ import type {
 import type * as auth from "../auth.js";
 import type * as card_cardCopies from "../card/cardCopies.js";
 import type * as deck_premadeDecks from "../deck/premadeDecks.js";
+import type * as deck_usecases_grantPremadeDeck from "../deck/usecases/grantPremadeDeck.js";
 import type * as decks from "../decks.js";
 import type * as games from "../games.js";
 import type * as init from "../init.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "card/cardCopies": typeof card_cardCopies;
   "deck/premadeDecks": typeof deck_premadeDecks;
+  "deck/usecases/grantPremadeDeck": typeof deck_usecases_grantPremadeDeck;
   decks: typeof decks;
   games: typeof games;
   init: typeof init;
