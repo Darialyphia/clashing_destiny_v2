@@ -5,7 +5,6 @@ import { DomainError } from '../../utils/error';
 import { GamePlayer, type GamePlayerDoc } from '../entities/gamePlayer.entity';
 import { type GameId } from '../entities/game.entity';
 import { type UserId } from '../../users/entities/user.entity';
-import type { MutationContainer } from '../../shared/container';
 import type { UserRepository } from '../../users/repositories/user.repository';
 import type { GamePlayerMapper } from '../mappers/gamePlayer.mapper';
 

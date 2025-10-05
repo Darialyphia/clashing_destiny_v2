@@ -51,6 +51,9 @@ import { GetMyCollectionUseCase } from '../card/usecases/getMyCollection.usecase
 import { eventEmitter } from './eventEmitter';
 import { DeckSubscribers } from '../deck/deck.subscribers';
 import { GetDecksUseCase } from '../deck/usecases/getDecks.usecase';
+import { DeckMapper } from '../deck/mappers/deck.mapper';
+import { CreateDeckUseCase } from '../deck/usecases/createDeck.usecase';
+import { UpdateDeckUseCase } from '../deck/usecases/updateDeck.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -99,6 +102,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [UserMapper.INJECTION_KEY]: { resolver: asClass(UserMapper) },
     [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
     [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
+    [DeckMapper.INJECTION_KEY]: { resolver: asClass(DeckMapper) },
+
     // use cases
     [GetSessionUserUseCase.INJECTION_KEY]: { resolver: asClass(GetSessionUserUseCase) },
     [GetMatchmakingsUsecase.INJECTION_KEY]: { resolver: asClass(GetMatchmakingsUsecase) },
@@ -136,6 +141,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [UserMapper.INJECTION_KEY]: { resolver: asClass(UserMapper) },
     [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
     [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
+    [DeckMapper.INJECTION_KEY]: { resolver: asClass(DeckMapper) },
     // subscribers
     [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
     // use cases
@@ -150,7 +156,9 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [CancelGameUseCase.INJECTION_KEY]: { resolver: asClass(CancelGameUseCase) },
     [GrantPremadeDeckUseCase.INJECTION_KEY]: {
       resolver: asClass(GrantPremadeDeckUseCase)
-    }
+    },
+    [CreateDeckUseCase.INJECTION_KEY]: { resolver: asClass(CreateDeckUseCase) },
+    [UpdateDeckUseCase.INJECTION_KEY]: { resolver: asClass(UpdateDeckUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

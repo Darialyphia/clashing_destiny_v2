@@ -9,6 +9,7 @@ import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import type { CardId } from '@game/api';
 
 const { deckBuilder, isEditingDeck, viewMode } = useCollectionPage();
 
@@ -28,6 +29,21 @@ const cardComponents: Record<typeof viewMode.value, any> = {
 const component = computed(() => cardComponents[viewMode.value]);
 
 const isPreviewOpened = ref(false);
+
+const canAddCard = computed(() => {
+  if (!isEditingDeck.value) return false;
+  return (
+    deckBuilder.value.canAdd({
+      blueprintId: card.card.id,
+      copies: card.copiesOwned,
+      meta: {
+        cardId: card.id as CardId,
+        isFoil: card.isFoil
+      }
+    }) ||
+    card.copiesOwned <= (deckBuilder.value.getCard(card.card.id)?.copies ?? 0)
+  );
+});
 </script>
 
 <template>
@@ -45,21 +61,20 @@ const isPreviewOpened = ref(false);
           show-stats
           class="collection-card"
           :class="{
-            disabled:
-              isEditingDeck &&
-              (!deckBuilder.canAdd(card.card.id) ||
-                card.copiesOwned <=
-                  (deckBuilder.getCard(card.card.id)?.copies ?? 0))
+            disabled: isEditingDeck && !canAddCard
           }"
           @click="
             () => {
               if (!isEditingDeck) return;
-              if (!deckBuilder.canAdd(card.card.id)) return;
-              const ownsEnoughCopies =
-                card.copiesOwned >
-                (deckBuilder.getCard(card.card.id)?.copies ?? 0);
-              if (!ownsEnoughCopies) return;
-              deckBuilder.addCard(card.card.id);
+              if (!canAddCard) return;
+
+              deckBuilder.addCard({
+                blueprintId: card.card.id,
+                meta: {
+                  cardId: card.id as CardId,
+                  isFoil: card.isFoil
+                }
+              });
             }
           "
           @contextmenu.prevent="

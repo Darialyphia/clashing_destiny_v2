@@ -1,4 +1,3 @@
-import { isDefined } from '@game/shared';
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
 import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
@@ -8,17 +7,17 @@ export type DeckViolation = {
   reason: string;
 };
 
-export type ValidatableDeck = {
+export type ValidatableCard<TMeta> = {
+  blueprintId: string;
+  copies: number;
+  meta: TMeta;
+};
+export type ValidatableDeck<TMeta> = {
   id: string;
   name: string;
-  [CARD_DECK_SOURCES.MAIN_DECK]: Array<{
-    blueprintId: string;
-    copies: number;
-  }>;
-  [CARD_DECK_SOURCES.DESTINY_DECK]: Array<{
-    blueprintId: string;
-    copies: number;
-  }>;
+  isEqual(first: ValidatableCard<TMeta>, second: ValidatableCard<TMeta>): boolean;
+  mainDeck: Array<ValidatableCard<TMeta>>;
+  destinyDeck: Array<ValidatableCard<TMeta>>;
 };
 
 export type DeckValidationResult =
@@ -27,16 +26,16 @@ export type DeckValidationResult =
     }
   | { result: 'failure'; violations: Array<DeckViolation> };
 
-export type DeckValidator = {
+export type DeckValidator<TMeta> = {
   maxCopiesForMainDeckCard: number;
   maxCopiesForDestinyCard: number;
   mainDeckSize: number;
   destinyDeckSize: number;
-  validate(deck: ValidatableDeck): DeckValidationResult;
-  canAdd(card: CardBlueprint, deck: ValidatableDeck): boolean;
+  validate(deck: ValidatableDeck<TMeta>): DeckValidationResult;
+  canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean;
 };
 
-export class StandardDeckValidator implements DeckValidator {
+export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   constructor(private cardPool: Record<string, CardBlueprint>) {}
 
   get mainDeckSize(): number {
@@ -91,7 +90,7 @@ export class StandardDeckValidator implements DeckValidator {
     return cards.reduce((acc, card) => acc + card.copies, 0);
   }
 
-  validate(deck: ValidatableDeck): DeckValidationResult {
+  validate(deck: ValidatableDeck<TMeta>): DeckValidationResult {
     const violations: DeckViolation[] = [];
 
     if (
@@ -126,7 +125,7 @@ export class StandardDeckValidator implements DeckValidator {
     return { result: 'success' };
   }
 
-  canAdd(card: CardBlueprint, deck: ValidatableDeck): boolean {
+  canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean {
     const withBlueprint = {
       main: deck[CARD_DECK_SOURCES.MAIN_DECK].map(card => ({
         ...card,
@@ -142,16 +141,19 @@ export class StandardDeckValidator implements DeckValidator {
       }))
     };
 
-    if (card.deckSource === CARD_DECK_SOURCES.MAIN_DECK) {
+    const cardBlueprint = this.cardPool[card.blueprintId];
+    if (!cardBlueprint) return false;
+
+    if (cardBlueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK) {
       if (withBlueprint.main.length >= this.mainDeckSize) {
         return false;
       }
-      const existing = withBlueprint.main.find(c => c.blueprint.id === card.id);
+      const existing = withBlueprint.main.find(c => deck.isEqual(c, card));
       if (existing) {
         if (existing.copies >= this.maxCopiesForMainDeckCard) {
           return false;
         }
-        if (card.unique) {
+        if (cardBlueprint.unique) {
           return false;
         }
       }
@@ -161,12 +163,12 @@ export class StandardDeckValidator implements DeckValidator {
       if (withBlueprint.destiny.length >= this.destinyDeckSize) {
         return false;
       }
-      const existing = withBlueprint.destiny.find(c => c.blueprint.id === card.id);
+      const existing = withBlueprint.destiny.find(c => deck.isEqual(c, card));
       if (existing) {
         if (existing.copies >= this.maxCopiesForDestinyCard) {
           return false;
         }
-        if (card.unique) {
+        if (cardBlueprint.unique) {
           return false;
         }
       }

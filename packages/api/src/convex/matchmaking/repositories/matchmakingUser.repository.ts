@@ -1,6 +1,5 @@
 import type { Id } from '../../_generated/dataModel';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
-import type { MutationContainer, QueryContainer } from '../../shared/container';
 import type { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
 import {

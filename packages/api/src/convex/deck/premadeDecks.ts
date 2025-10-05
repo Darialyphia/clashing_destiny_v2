@@ -83,7 +83,7 @@ export const premadeDecks: PremadeDeck[] = [
       },
       {
         blueprintId: fireball.id,
-        copies: 3,
+        copies: 2,
         isFoil: false
       },
       {

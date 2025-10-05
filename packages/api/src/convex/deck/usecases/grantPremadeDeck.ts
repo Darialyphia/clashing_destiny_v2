@@ -19,7 +19,6 @@ export class GrantPremadeDeckUseCase
   constructor(private ctx: { deckRepo: DeckRepository }) {}
 
   async execute(input: GrantPremadeDeckInput) {
-    console.log('Granting premade deck:', input.premadeDeckId, 'to user:', input.userId);
     await this.ctx.deckRepo.grantPremadeDeckToUser(input.premadeDeckId, input.userId);
 
     return { success: true };

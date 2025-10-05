@@ -1,7 +1,11 @@
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import type { CardId } from '../../card/entities/card.entity';
 import type { CardRepository } from '../../card/repositories/card.repository';
 import type { UserId } from '../../users/entities/user.entity';
+import { AppError } from '../../utils/error';
+import { DEFAULT_DECK_NAME } from '../deck.constants';
 import { Deck, type DeckId } from '../entities/deck.entity';
+import type { DeckMapper } from '../mappers/deck.mapper';
 import { premadeDecks } from '../premadeDecks';
 
 export class DeckReadRepository {
@@ -24,7 +28,9 @@ export class DeckReadRepository {
 export class DeckRepository {
   static INJECTION_KEY = 'deckRepo' as const;
 
-  constructor(private ctx: { db: DatabaseWriter; cardRepo: CardRepository }) {}
+  constructor(
+    private ctx: { db: DatabaseWriter; cardRepo: CardRepository; deckMapper: DeckMapper }
+  ) {}
 
   async findById(id: DeckId) {
     const doc = await this.ctx.db.get(id);
@@ -91,5 +97,25 @@ export class DeckRepository {
     }
 
     return new Deck(deckDoc._id, deckDoc);
+  }
+
+  async create(ownerId: UserId) {
+    const deckDocId = await this.ctx.db.insert('decks', {
+      name: DEFAULT_DECK_NAME,
+      ownerId: ownerId,
+      mainDeck: [],
+      destinyDeck: []
+    });
+
+    const deckDoc = await this.ctx.db.get(deckDocId);
+    if (!deckDoc) {
+      throw new AppError('Failed to retrieve created deck');
+    }
+
+    return new Deck(deckDoc._id, deckDoc);
+  }
+
+  save(deck: Deck) {
+    return this.ctx.db.replace(deck.id, this.ctx.deckMapper.toPersistence(deck));
   }
 }

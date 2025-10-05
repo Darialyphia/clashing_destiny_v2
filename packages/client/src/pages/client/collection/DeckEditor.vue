@@ -11,7 +11,7 @@ import {
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import UiTextInput from '@/ui/components/UiTextInput.vue';
 
-const { deckBuilder, isEditingDeck, saveDeck } = useCollectionPage();
+const { deckBuilder, saveDeck, stopEditingDeck } = useCollectionPage();
 
 const getCountByKind = (kind: CardKind) => {
   return deckBuilder.value.cards
@@ -98,7 +98,7 @@ const getCountForCostAndUp = (minCost: number) =>
               }"
               :class="card.blueprint.kind.toLocaleLowerCase()"
               class="deck-item"
-              @click="deckBuilder.removeCard(card.blueprintId)"
+              @click="deckBuilder.removeCard(card.meta.cardId)"
             >
               <div class="mana-cost" v-if="'manaCost' in card.blueprint">
                 {{ card.blueprint.manaCost }}
@@ -119,24 +119,22 @@ const getCountForCostAndUp = (minCost: number) =>
           </HoverCardPortal>
         </HoverCardRoot>
       </ul>
-      <div class="deck-count">
-        <div>
-          Main deck ({{ deckBuilder.mainDeckSize }} /
-          {{ deckBuilder.validator.mainDeckSize }})
+      <footer>
+        <div class="deck-count">
+          <div>
+            Main deck ({{ deckBuilder.mainDeckSize }} /
+            {{ deckBuilder.validator.mainDeckSize }})
+          </div>
+          <div>
+            Destiny Deck ({{ deckBuilder.destinyDeckSize }} /
+            {{ deckBuilder.validator.destinyDeckSize }})
+          </div>
         </div>
-        <div>
-          Destiny Deck ({{ deckBuilder.destinyDeckSize }} /
-          {{ deckBuilder.validator.destinyDeckSize }})
+        <div class="flex gap-2 mt-3">
+          <FancyButton text="Back" variant="error" @click="stopEditingDeck" />
+          <FancyButton text="Save" variant="info" @click="saveDeck" />
         </div>
-      </div>
-      <div class="flex gap-2 mt-3">
-        <FancyButton
-          text="Back"
-          variant="error"
-          @click="isEditingDeck = false"
-        />
-        <FancyButton text="Save" variant="info" @click="saveDeck" />
-      </div>
+      </footer>
     </div>
   </div>
 </template>
@@ -238,9 +236,6 @@ const getCountForCostAndUp = (minCost: number) =>
   line-height: 1;
   font-weight: 500;
   text-align: right;
-  position: sticky;
-  bottom: 0;
-  background-color: #0a0e14;
   padding: var(--size-3) var(--size-3) 0;
   box-shadow: 0 -10px 1rem hsl(var(--gray-12-hsl) / 0.5);
 }
@@ -307,5 +302,10 @@ const getCountForCostAndUp = (minCost: number) =>
 .edit-icon {
   width: 24px;
   height: 24px;
+}
+footer {
+  position: sticky;
+  bottom: 0;
+  background-color: #10181e;
 }
 </style>

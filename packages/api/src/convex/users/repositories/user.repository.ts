@@ -4,7 +4,6 @@ import { Email } from '../../utils/email';
 import { Password } from '../../utils/password';
 import { User } from '../entities/user.entity';
 import { Username } from '../username';
-import type { MutationContainer } from '../../shared/container';
 import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import type { UserMapper } from '../mappers/user.mapper';
 

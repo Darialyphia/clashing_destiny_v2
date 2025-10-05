@@ -12,7 +12,7 @@ definePage({
   path: '/client/sandbox'
 });
 
-const decks = useLocalStorage<ValidatableDeck[]>(
+const decks = useLocalStorage<ValidatableDeck<any[]>[]>(
   'clashing-destinies-decks',
   []
 );

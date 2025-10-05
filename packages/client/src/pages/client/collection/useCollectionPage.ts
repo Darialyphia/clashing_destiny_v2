@@ -3,23 +3,29 @@ import {
   type CardListContext
 } from '@/card/composables/useCardList';
 import { DeckBuilderViewModel } from '@/card/deck-builder.model';
-import {
-  StandardDeckValidator,
-  type ValidatableDeck
-} from '@game/engine/src/card/validators/deck.validator';
-import { useLocalStorage } from '@vueuse/core';
+import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
 import type { Ref, InjectionKey } from 'vue';
 import { keyBy } from 'lodash-es';
 import { useSafeInject } from '@/shared/composables/useSafeInject';
+import {
+  useCreateDeck,
+  useDecks,
+  useUpdateDeck,
+  type UserDeck
+} from '@/card/composables/useDecks';
+import type { Nullable } from '@game/shared';
+import type { DeckId } from '@game/api';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
   isEditingDeck: Ref<boolean>;
   deckBuilder: Ref<DeckBuilderViewModel>;
+  decks: Ref<UserDeck[]>;
   createDeck: () => void;
-  decks: Ref<ValidatableDeck[]>;
-  editDeck: (deck: ValidatableDeck) => void;
+  editDeck: (id: DeckId) => void;
+  stopEditingDeck: () => void;
   saveDeck: () => void;
+  isSaving: Ref<boolean>;
 };
 
 export const CollectionInjectionKey = Symbol(
@@ -46,58 +52,63 @@ export const provideCollectionPage = () => {
     clearJobFilter
   } = provideCardList();
 
-  const decks = useLocalStorage<ValidatableDeck[]>(
-    'clashing-destinies-decks',
-    []
-  );
-  const collection = computed(() =>
-    cards.value.map(card => ({ blueprint: card, copiesOwned: 4 }))
-  );
+  const { data: decks, isLoading: isLoadingDecks } = useDecks();
 
   const deckBuilder = ref(
     new DeckBuilderViewModel(
-      cardPool.map(c => ({ blueprint: c })),
+      cardPool,
       new StandardDeckValidator(keyBy(cardPool, 'id'))
     )
   ) as Ref<DeckBuilderViewModel>;
-  watch(collection, newCollection => {
-    deckBuilder.value.updateCardPool(
-      newCollection.map(c => ({
-        blueprint: c.blueprint.card,
-        copiesOwned: c.copiesOwned
+
+  const selectedDeckId = ref<Nullable<DeckId>>(null);
+  const selectedDeck = computed(
+    () => decks.value?.find(deck => deck.id === selectedDeckId.value) || null
+  );
+  watch(selectedDeck, newDeck => {
+    if (!newDeck) {
+      deckBuilder.value.reset();
+      return;
+    }
+    deckBuilder.value.loadDeck({
+      name: newDeck.name,
+      id: newDeck.id,
+      isEqual(first, second) {
+        return first.meta.cardId === second.meta.cardId;
+      },
+      mainDeck: newDeck.mainDeck.map(card => ({
+        blueprintId: card.blueprintId,
+        copies: card.copies,
+        meta: {
+          isFoil: card.isFoil,
+          cardId: card.cardId
+        }
+      })),
+      destinyDeck: newDeck.destinyDeck.map(card => ({
+        blueprintId: card.blueprintId,
+        copies: card.copies,
+        meta: {
+          isFoil: card.isFoil,
+          cardId: card.cardId
+        }
       }))
-    );
+    });
   });
 
-  const isEditing = ref(false);
-  const createDeck = () => {
+  const isEditingDeck = computed(() => selectedDeckId.value !== null);
+  const { mutate: createDeck } = useCreateDeck(({ deckId }) => {
+    selectedDeckId.value = deckId as DeckId;
     deckBuilder.value.reset();
-    isEditing.value = true;
-  };
-
-  const editDeck = (deck: ValidatableDeck) => {
-    deckBuilder.value.loadDeck(deck);
-    isEditing.value = true;
-  };
-
-  const saveDeck = () => {
-    const existingDeck = decks.value.find(
-      deck => deck.id === deckBuilder.value.deck.id
-    );
-    if (existingDeck) {
-      existingDeck.name = deckBuilder.value.deck.name;
-      existingDeck.mainDeck = deckBuilder.value.deck.mainDeck;
-    } else {
-      decks.value.push(deckBuilder.value.deck);
-    }
-    isEditing.value = false;
+  });
+  const { mutate: saveDeck, isLoading: isSavingDeck } = useUpdateDeck(() => {
+    selectedDeckId.value = null;
     deckBuilder.value.reset();
-  };
+  });
 
   const viewMode = ref<'expanded' | 'compact'>('expanded');
 
   const api: CollectionContext = {
-    isLoading,
+    isLoading: computed(() => isLoading.value || isLoadingDecks.value),
     cards,
     cardPool,
     hasSpellSchoolFilter,
@@ -114,12 +125,33 @@ export const provideCollectionPage = () => {
     clearJobFilter,
     textFilter,
     viewMode,
-    isEditingDeck: isEditing,
+    isEditingDeck,
+    isSaving: isSavingDeck,
     deckBuilder,
     decks,
-    createDeck,
-    editDeck,
-    saveDeck
+    createDeck: () => createDeck({}),
+    editDeck: id => {
+      selectedDeckId.value = id;
+    },
+    stopEditingDeck: () => {
+      selectedDeckId.value = null;
+      deckBuilder.value.reset();
+    },
+    saveDeck: () => {
+      if (!selectedDeck.value) return;
+      saveDeck({
+        deckId: selectedDeck.value.id,
+        name: deckBuilder.value.deck.name,
+        mainDeck: deckBuilder.value.deck.mainDeck.map(card => ({
+          cardId: card.meta.cardId,
+          copies: card.copies
+        })),
+        destinyDeck: deckBuilder.value.deck.destinyDeck.map(card => ({
+          cardId: card.meta.cardId,
+          copies: card.copies
+        }))
+      });
+    }
   };
 
   provide(CollectionInjectionKey, api);
