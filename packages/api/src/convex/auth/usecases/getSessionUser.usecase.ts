@@ -57,7 +57,7 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
         ? {
             id: matchmaking._id,
             name: matchmaking!.name,
-            joinedAt: matchmakingUser!._creationTime
+            joinedAt: matchmakingUser!.joinedAt
           }
         : null
     };

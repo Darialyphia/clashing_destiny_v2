@@ -97,7 +97,7 @@ const getDisplayedDeck = (deck: any) => ({
 
         <!-- Matchmaking List Section -->
         <section class="matchmaking-section">
-          <h2 class="section-title">Available Matchmaking</h2>
+          <h2 class="section-title">Available queues</h2>
 
           <div v-if="isLoading" class="loading-state">
             Loading matchmakings...

@@ -9,6 +9,7 @@ export type ButtonProps = {
   to?: RouterLinkProps['to'];
   text: string;
   variant?: 'primary' | 'error' | 'info';
+  size?: 'sm' | 'md' | 'lg';
 };
 
 const {
@@ -16,6 +17,7 @@ const {
   variant = 'primary',
   isInline,
   text,
+  size = 'md',
   to
 } = defineProps<ButtonProps>();
 
@@ -33,6 +35,7 @@ const tag = computed(() => {
     :is="tag"
     class="fancy-button"
     :class="[
+      size,
       {
         'is-inline': isInline,
         'is-loading': isLoading
@@ -111,6 +114,9 @@ const tag = computed(() => {
   &:hover:not(:disabled) {
     color: var(--_ui-button-hover-color);
     filter: brightness(1.5);
+  }
+  &.sm {
+    font-size: var(--font-size-1);
   }
 }
 
