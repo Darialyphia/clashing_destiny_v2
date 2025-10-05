@@ -1,7 +1,7 @@
-import { MutationUseCase } from '../../usecase';
+import { type UseCase } from '../../usecase';
 import { AppError, DomainError } from '../../utils/error';
 import type { GameId } from '../entities/game.entity';
-import { GAME_STATUS } from '../game.constants';
+import type { GameRepository } from '../repositories/game.repository';
 
 export type CancelGameInput = {
   gameId: GameId;
@@ -11,11 +11,10 @@ export type CancelGameOutput = {
   success: true;
 };
 
-export class CancelGameUseCase extends MutationUseCase<
-  CancelGameInput,
-  CancelGameOutput
-> {
+export class CancelGameUseCase implements UseCase<CancelGameInput, CancelGameOutput> {
   static INJECTION_KEY = 'cancelGameUseCase' as const;
+
+  constructor(private ctx: { gameRepo: GameRepository }) {}
 
   async execute(input: CancelGameInput): Promise<CancelGameOutput> {
     const game = await this.ctx.gameRepo.getById(input.gameId);

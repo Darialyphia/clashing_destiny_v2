@@ -1,4 +1,4 @@
-import { asClass, asValue, createContainer, InjectionMode } from 'awilix';
+import { asClass, asValue, createContainer, InjectionMode, type Resolver } from 'awilix';
 import {
   SessionReadRepository,
   SessionRepository
@@ -35,9 +35,7 @@ import {
 import { JoinMatchmakingUseCase } from '../matchmaking/usecases/joinMatchmaking.usecase';
 import { LeaveMatchmakingUseCase } from '../matchmaking/usecases/leaveMatchmaking.usecase';
 import { RunMatchmakingUseCase } from '../matchmaking/usecases/runMatchmaking.usecase';
-import type { DatabaseReader, DatabaseWriter } from '../_generated/server';
 import type { AuthSession } from '../auth/entities/session.entity';
-import type { Scheduler } from 'convex/server';
 import { CancelGameUseCase } from '../game/usecases/cancelGame.usecase';
 import { GameMapper } from '../game/mappers/game.mapper';
 import { GamePlayerMapper } from '../game/mappers/gamePlayer.mapper';
@@ -50,116 +48,111 @@ import { CardReadRepository, CardRepository } from '../card/repositories/card.re
 import { CardMapper } from '../card/mappers/card.mapper';
 import { GrantPremadeDeckUseCase } from '../deck/usecases/grantPremadeDeck';
 import { GetMyCollectionUseCase } from '../card/usecases/getMyCollection.usecase';
+import { eventEmitter } from './eventEmitter';
 
-export type QueryContainer = {
-  db: DatabaseReader;
-  session: AuthSession | null;
-  [SessionReadRepository.INJECTION_KEY]: SessionReadRepository;
-  [UserReadRepository.INJECTION_KEY]: UserReadRepository;
-  [GameReadRepository.INJECTION_KEY]: GameReadRepository;
-  [GamePlayerReadRepository.INJECTION_KEY]: GamePlayerReadRepository;
-  [MatchmakingReadRepository.INJECTION_KEY]: MatchmakingReadRepository;
-  [MatchmakingUserReadRepository.INJECTION_KEY]: MatchmakingUserReadRepository;
-  [GameMapper.INJECTION_KEY]: GameMapper;
-  [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
-  [UserMapper.INJECTION_KEY]: UserMapper;
-  [GetSessionUserUseCase.INJECTION_KEY]: GetSessionUserUseCase;
-  [GetMatchmakingsUsecase.INJECTION_KEY]: GetMatchmakingsUsecase;
-  [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
-  [DeckReadRepository.INJECTION_KEY]: DeckReadRepository;
-  [CardReadRepository.INJECTION_KEY]: CardReadRepository;
-  [GetMyCollectionUseCase.INJECTION_KEY]: GetMyCollectionUseCase;
-  [CardMapper.INJECTION_KEY]: CardMapper;
-};
+type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
+type DependenciesMap = Record<string, Dependency<any>>;
 
-export const createQueryContainer = (ctx: QueryCtxWithSession) => {
-  const container = createContainer<QueryContainer>({
-    injectionMode: InjectionMode.PROXY
-  });
-
-  container.register({
-    db: asValue(ctx.db),
-    session: asValue(ctx.session),
-    [SessionReadRepository.INJECTION_KEY]: asClass(SessionReadRepository),
-    [UserReadRepository.INJECTION_KEY]: asClass(UserReadRepository),
-    [GameReadRepository.INJECTION_KEY]: asClass(GameReadRepository),
-    [GamePlayerReadRepository.INJECTION_KEY]: asClass(GamePlayerReadRepository),
-    [MatchmakingReadRepository.INJECTION_KEY]: asClass(MatchmakingReadRepository),
-    [MatchmakingUserReadRepository.INJECTION_KEY]: asClass(MatchmakingUserReadRepository),
-    [GameMapper.INJECTION_KEY]: asClass(GameMapper),
-    [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
-    [UserMapper.INJECTION_KEY]: asClass(UserMapper),
-    [GetSessionUserUseCase.INJECTION_KEY]: asClass(GetSessionUserUseCase),
-    [GetMatchmakingsUsecase.INJECTION_KEY]: asClass(GetMatchmakingsUsecase),
-    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
-    [DeckReadRepository.INJECTION_KEY]: asClass(DeckReadRepository),
-    [CardReadRepository.INJECTION_KEY]: asClass(CardReadRepository),
-    [GetMyCollectionUseCase.INJECTION_KEY]: asClass(GetMyCollectionUseCase),
-    [CardMapper.INJECTION_KEY]: asClass(CardMapper)
-  });
-
-  return container;
-};
-
-export type MutationContainer = {
-  db: DatabaseWriter;
-  session: AuthSession;
-  scheduler: Scheduler;
-  [SessionRepository.INJECTION_KEY]: SessionRepository;
-  [UserRepository.INJECTION_KEY]: UserRepository;
-  [GameRepository.INJECTION_KEY]: GameRepository;
-  [GamePlayerRepository.INJECTION_KEY]: GamePlayerRepository;
-  [MatchmakingRepository.INJECTION_KEY]: MatchmakingRepository;
-  [MatchmakingUserRepository.INJECTION_KEY]: MatchmakingUserRepository;
-  [LoginUseCase.INJECTION_KEY]: LoginUseCase;
-  [LogoutUseCase.INJECTION_KEY]: LogoutUseCase;
-  [RegisterUseCase.INJECTION_KEY]: RegisterUseCase;
-  [JoinMatchmakingUseCase.INJECTION_KEY]: JoinMatchmakingUseCase;
-  [LeaveMatchmakingUseCase.INJECTION_KEY]: LeaveMatchmakingUseCase;
-  [RunMatchmakingUseCase.INJECTION_KEY]: RunMatchmakingUseCase;
-  [CancelGameUseCase.INJECTION_KEY]: CancelGameUseCase;
-  [GrantPremadeDeckUseCase.INJECTION_KEY]: GrantPremadeDeckUseCase;
-  [GameMapper.INJECTION_KEY]: GameMapper;
-  [UserMapper.INJECTION_KEY]: UserMapper;
-  [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
-  [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
-  [DeckRepository.INJECTION_KEY]: DeckRepository;
-  [CardRepository.INJECTION_KEY]: CardRepository;
-  [CardMapper.INJECTION_KEY]: CardMapper;
-};
-export const createMutationContainer = (ctx: MutationCtxWithSession) => {
+const makecontainer = (deps: DependenciesMap) => {
   const container = createContainer({
     injectionMode: InjectionMode.PROXY
   });
 
-  container.register({
-    db: asValue(ctx.db),
-    session: asValue(ctx.session),
-    scheduler: asValue(ctx.scheduler),
-    [SessionRepository.INJECTION_KEY]: asClass(SessionRepository),
-    [UserRepository.INJECTION_KEY]: asClass(UserRepository),
-    [GameRepository.INJECTION_KEY]: asClass(GameRepository),
-    [GamePlayerRepository.INJECTION_KEY]: asClass(GamePlayerRepository),
-    [MatchmakingRepository.INJECTION_KEY]: asClass(MatchmakingRepository),
-    [MatchmakingUserRepository.INJECTION_KEY]: asClass(MatchmakingUserRepository),
-    [LoginUseCase.INJECTION_KEY]: asClass(LoginUseCase),
-    [LogoutUseCase.INJECTION_KEY]: asClass(LogoutUseCase),
-    [RegisterUseCase.INJECTION_KEY]: asClass(RegisterUseCase),
-    [JoinMatchmakingUseCase.INJECTION_KEY]: asClass(JoinMatchmakingUseCase),
-    [LeaveMatchmakingUseCase.INJECTION_KEY]: asClass(LeaveMatchmakingUseCase),
-    [RunMatchmakingUseCase.INJECTION_KEY]: asClass(RunMatchmakingUseCase),
-    [CancelGameUseCase.INJECTION_KEY]: asClass(CancelGameUseCase),
-    [GrantPremadeDeckUseCase.INJECTION_KEY]: asClass(GrantPremadeDeckUseCase),
-    [GameMapper.INJECTION_KEY]: asClass(GameMapper),
-    [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
-    [UserMapper.INJECTION_KEY]: asClass(UserMapper),
-    [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
-    [DeckRepository.INJECTION_KEY]: asClass(DeckRepository),
-    [CardRepository.INJECTION_KEY]: asClass(CardRepository),
-    [CardMapper.INJECTION_KEY]: asClass(CardMapper)
+  Object.entries(deps).forEach(([key, { resolver }]) => {
+    container.register(key, resolver);
   });
 
+  Object.entries(deps)
+    .filter(([, { eager }]) => eager)
+    .forEach(([key]) => {
+      // Resolve eager dependencies immediately
+      container.resolve(key);
+    });
+
   return container;
+};
+
+const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
+  const deps = {
+    db: { resolver: asValue(ctx.db) },
+    session: { resolver: asValue(ctx.session as AuthSession | null) },
+    // repositories
+    [SessionReadRepository.INJECTION_KEY]: { resolver: asClass(SessionReadRepository) },
+    [UserReadRepository.INJECTION_KEY]: { resolver: asClass(UserReadRepository) },
+    [GameReadRepository.INJECTION_KEY]: { resolver: asClass(GameReadRepository) },
+    [GamePlayerReadRepository.INJECTION_KEY]: {
+      resolver: asClass(GamePlayerReadRepository)
+    },
+    [MatchmakingReadRepository.INJECTION_KEY]: {
+      resolver: asClass(MatchmakingReadRepository)
+    },
+    [MatchmakingUserReadRepository.INJECTION_KEY]: {
+      resolver: asClass(MatchmakingUserReadRepository)
+    },
+    [DeckReadRepository.INJECTION_KEY]: { resolver: asClass(DeckReadRepository) },
+    [CardReadRepository.INJECTION_KEY]: { resolver: asClass(CardReadRepository) },
+    // mappers
+    [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
+    [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
+    [UserMapper.INJECTION_KEY]: { resolver: asClass(UserMapper) },
+    [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
+    [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
+    // use cases
+    [GetSessionUserUseCase.INJECTION_KEY]: { resolver: asClass(GetSessionUserUseCase) },
+    [GetMatchmakingsUsecase.INJECTION_KEY]: { resolver: asClass(GetMatchmakingsUsecase) },
+    [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) }
+  } as const satisfies DependenciesMap;
+
+  return deps;
+};
+
+export const createQueryContainer = (ctx: QueryCtxWithSession) => {
+  return makecontainer(makeQueryDependencies(ctx));
+};
+
+const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
+  const deps = {
+    db: { resolver: asValue(ctx.db) },
+    session: { resolver: asValue(ctx.session) },
+    scheduler: { resolver: asValue(ctx.scheduler) },
+    emitter: { resolver: asValue(eventEmitter) },
+    // repositories
+    [SessionRepository.INJECTION_KEY]: { resolver: asClass(SessionRepository) },
+    [UserRepository.INJECTION_KEY]: { resolver: asClass(UserRepository) },
+    [GameRepository.INJECTION_KEY]: { resolver: asClass(GameRepository) },
+    [GamePlayerRepository.INJECTION_KEY]: { resolver: asClass(GamePlayerRepository) },
+    [MatchmakingRepository.INJECTION_KEY]: { resolver: asClass(MatchmakingRepository) },
+    [MatchmakingUserRepository.INJECTION_KEY]: {
+      resolver: asClass(MatchmakingUserRepository)
+    },
+    [DeckRepository.INJECTION_KEY]: { resolver: asClass(DeckRepository) },
+    [CardRepository.INJECTION_KEY]: { resolver: asClass(CardRepository) },
+    // mappers
+    [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
+    [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
+    [UserMapper.INJECTION_KEY]: { resolver: asClass(UserMapper) },
+    [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
+    [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
+    // use cases
+    [LoginUseCase.INJECTION_KEY]: { resolver: asClass(LoginUseCase) },
+    [LogoutUseCase.INJECTION_KEY]: { resolver: asClass(LogoutUseCase) },
+    [RegisterUseCase.INJECTION_KEY]: { resolver: asClass(RegisterUseCase) },
+    [JoinMatchmakingUseCase.INJECTION_KEY]: { resolver: asClass(JoinMatchmakingUseCase) },
+    [LeaveMatchmakingUseCase.INJECTION_KEY]: {
+      resolver: asClass(LeaveMatchmakingUseCase)
+    },
+    [RunMatchmakingUseCase.INJECTION_KEY]: { resolver: asClass(RunMatchmakingUseCase) },
+    [CancelGameUseCase.INJECTION_KEY]: { resolver: asClass(CancelGameUseCase) },
+    [GrantPremadeDeckUseCase.INJECTION_KEY]: {
+      resolver: asClass(GrantPremadeDeckUseCase)
+    }
+  } as const satisfies DependenciesMap;
+
+  return deps;
+};
+
+export const createMutationContainer = (ctx: MutationCtxWithSession) => {
+  return makecontainer(makeMutationDependencies(ctx));
 };
 
 export const queryWithContainer = customQuery(queryWithSession, {

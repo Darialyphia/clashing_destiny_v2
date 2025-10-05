@@ -1,4 +1,4 @@
-import { MutationUseCase } from '../../usecase';
+import { type UseCase } from '../../usecase';
 import { Email } from '../../utils/email';
 import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
@@ -6,6 +6,9 @@ import { AppError } from '../../utils/error';
 import { Username } from '../../users/username';
 import { premadeDecks } from '../../deck/premadeDecks';
 import type { UserId } from '../../users/entities/user.entity';
+import type { UserRepository } from '../../users/repositories/user.repository';
+import type { DeckRepository } from '../../deck/repositories/deck.repository';
+import type { SessionRepository } from '../repositories/session.repository';
 
 export interface RegisterInput {
   email: Email;
@@ -17,9 +20,16 @@ export interface RegisterOutput {
   session: AuthSession;
 }
 
-export class RegisterUseCase extends MutationUseCase<RegisterInput, RegisterOutput> {
+export class RegisterUseCase implements UseCase<RegisterInput, RegisterOutput> {
   static INJECTION_KEY = 'registerUseCase' as const;
 
+  constructor(
+    protected ctx: {
+      userRepo: UserRepository;
+      sessionRepo: SessionRepository;
+      deckRepo: DeckRepository;
+    }
+  ) {}
   async validateEmail(email: Email) {
     const existing = await this.ctx.userRepo.getByEmail(email);
     if (existing) {

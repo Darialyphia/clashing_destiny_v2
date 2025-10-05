@@ -1,13 +1,16 @@
 import { internal } from '../../_generated/api';
 import type { Id } from '../../_generated/dataModel';
-import type { MutationContainer, QueryContainer } from '../../shared/container';
+import type { Scheduler } from 'convex/server';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import { Matchmaking, type MatchmakingDoc } from '../entities/matchmaking.entity';
+import type { MatchmakingMapper } from '../mappers/matchmaking.mapper';
 import { MATCHMAKING_SCHEDULER_INTERVAL_MS } from '../matchmaking.constants';
+import type { MatchmakingUserRepository } from './matchmakingUser.repository';
 
 export class MatchmakingReadRepository {
   static INJECTION_KEY = 'matchmakingReadRepo' as const;
 
-  constructor(protected ctx: QueryContainer) {}
+  constructor(protected ctx: { db: DatabaseReader }) {}
 
   async getById(matchmakingId: Id<'matchmaking'>) {
     return this.ctx.db.get(matchmakingId);
@@ -30,12 +33,23 @@ export class MatchmakingReadRepository {
 
     return this.getById(matchmakingUserDoc.matchmakingId);
   }
+
+  getAll() {
+    return this.ctx.db.query('matchmaking').collect();
+  }
 }
 
 export class MatchmakingRepository {
   static INJECTION_KEY = 'matchmakingRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(
+    private ctx: {
+      db: DatabaseWriter;
+      matchmakingUserRepo: MatchmakingUserRepository;
+      scheduler: Scheduler;
+      matchmakingMapper: MatchmakingMapper;
+    }
+  ) {}
 
   private async buildEntity(doc: MatchmakingDoc) {
     const matchmakingUsers = await this.ctx.matchmakingUserRepo.getByMatchmakingId(

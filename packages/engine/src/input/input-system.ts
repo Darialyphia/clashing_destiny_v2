@@ -199,7 +199,7 @@ export class InputSystem extends System<never> {
       this._currentAction = null;
       await this.game.snapshotSystem.takeSnapshot();
     } else {
-      this.game.snapshotSystem.takeErrorSnapshot();
+      await this.game.snapshotSystem.takeErrorSnapshot();
     }
     await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
   }

@@ -1,8 +1,10 @@
-import { MutationUseCase } from '../../usecase';
+import { type UseCase } from '../../usecase';
 import { Email } from '../../utils/email';
 import { AppError } from '../../utils/error';
 import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
+import type { SessionRepository } from '../repositories/session.repository';
+import type { UserRepository } from '../../users/repositories/user.repository';
 
 export interface LoginInput {
   email: Email;
@@ -13,8 +15,12 @@ export interface LoginOutput {
   session: AuthSession;
 }
 
-export class LoginUseCase extends MutationUseCase<LoginInput, LoginOutput> {
+export class LoginUseCase implements UseCase<LoginInput, LoginOutput> {
   static INJECTION_KEY = 'loginUseCase' as const;
+
+  constructor(
+    protected ctx: { userRepo: UserRepository; sessionRepo: SessionRepository }
+  ) {}
 
   async execute(input: LoginInput): Promise<LoginOutput> {
     const user = await this.ctx.userRepo.getByEmail(input.email);

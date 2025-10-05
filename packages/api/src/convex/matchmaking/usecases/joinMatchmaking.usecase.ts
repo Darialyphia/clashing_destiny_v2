@@ -1,7 +1,12 @@
+import type { AuthSession } from '../../auth/entities/session.entity';
 import type { DeckId } from '../../deck/entities/deck.entity';
 import { ensureHasNoCurrentGame } from '../../game/game.guards';
-import { MutationUseCase } from '../../usecase';
-import { DomainError } from '../../utils/error';
+import type { GameRepository } from '../../game/repositories/game.repository';
+import { type UseCase } from '../../usecase';
+import type { UserReadRepository } from '../../users/repositories/user.repository';
+import { AppError } from '../../utils/error';
+import type { MatchmakingRepository } from '../repositories/matchmaking.repository';
+import type { MatchmakingUserRepository } from '../repositories/matchmakingUser.repository';
 
 export type JoinMatchmakingInput = {
   name: string;
@@ -12,12 +17,20 @@ export interface JoinMatchmakingOutput {
   success: true;
 }
 
-export class JoinMatchmakingUseCase extends MutationUseCase<
-  JoinMatchmakingInput,
-  JoinMatchmakingOutput
-> {
+export class JoinMatchmakingUseCase
+  implements UseCase<JoinMatchmakingInput, JoinMatchmakingOutput>
+{
   static INJECTION_KEY = 'joinMatchmakingUseCase' as const;
 
+  constructor(
+    private ctx: {
+      session: AuthSession;
+      matchmakingRepo: MatchmakingRepository;
+      matchmakingUserRepo: MatchmakingUserRepository;
+      gameRepo: GameRepository;
+      userRepo: UserReadRepository;
+    }
+  ) {}
   private async leaveIfNeeded() {
     const currentMatchmaking = await this.ctx.matchmakingRepo.getByUserId(
       this.ctx.session.userId
@@ -35,14 +48,14 @@ export class JoinMatchmakingUseCase extends MutationUseCase<
     const matchmaking = await this.ctx.matchmakingRepo.getByName(input.name);
 
     if (!matchmaking) {
-      throw new DomainError('Matchmaking not found');
+      throw new AppError('Matchmaking not found');
     }
 
     await this.leaveIfNeeded();
 
     const user = await this.ctx.userRepo.getById(this.ctx.session.userId);
     if (!user) {
-      throw new DomainError('User not found');
+      throw new AppError('User not found');
     }
     await this.ctx.matchmakingUserRepo.create({
       matchmakingId: matchmaking.id,

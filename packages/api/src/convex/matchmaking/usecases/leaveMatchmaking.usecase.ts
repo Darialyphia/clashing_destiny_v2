@@ -1,5 +1,7 @@
-import { MutationUseCase } from '../../usecase';
+import type { AuthSession } from '../../auth/entities/session.entity';
+import { type UseCase } from '../../usecase';
 import { DomainError } from '../../utils/error';
+import type { MatchmakingRepository } from '../repositories/matchmaking.repository';
 
 export type LeaveMatchmakingInput = never;
 
@@ -7,11 +9,14 @@ export interface LeaveMatchmakingOutput {
   success: true;
 }
 
-export class LeaveMatchmakingUseCase extends MutationUseCase<
-  LeaveMatchmakingInput,
-  LeaveMatchmakingOutput
-> {
+export class LeaveMatchmakingUseCase
+  implements UseCase<LeaveMatchmakingInput, LeaveMatchmakingOutput>
+{
   static INJECTION_KEY = 'leaveMatchmakingUseCase' as const;
+
+  constructor(
+    private ctx: { session: AuthSession; matchmakingRepo: MatchmakingRepository }
+  ) {}
 
   async execute(): Promise<LeaveMatchmakingOutput> {
     const matchmaking = await this.ctx.matchmakingRepo.getByUserId(

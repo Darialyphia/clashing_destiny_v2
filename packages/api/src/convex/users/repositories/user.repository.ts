@@ -4,12 +4,14 @@ import { Email } from '../../utils/email';
 import { Password } from '../../utils/password';
 import { User } from '../entities/user.entity';
 import { Username } from '../username';
-import type { MutationContainer, QueryContainer } from '../../shared/container';
+import type { MutationContainer } from '../../shared/container';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import type { UserMapper } from '../mappers/user.mapper';
 
 export class UserReadRepository {
   static INJECTION_KEY = 'userReadRepo' as const;
 
-  constructor(private ctx: QueryContainer) {}
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async getByEmail(email: Email) {
     return this.ctx.db
@@ -33,7 +35,7 @@ export class UserReadRepository {
 export class UserRepository {
   static INJECTION_KEY = 'userRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(private ctx: { db: DatabaseWriter; userMapper: UserMapper }) {}
 
   async getByEmail(email: Email) {
     const doc = await this.ctx.db

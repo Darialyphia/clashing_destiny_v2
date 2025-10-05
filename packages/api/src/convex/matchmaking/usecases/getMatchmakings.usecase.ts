@@ -1,5 +1,6 @@
-import { QueryUseCase } from '../../usecase';
+import type { UseCase } from '../../usecase';
 import type { MatchmakingId } from '../entities/matchmaking.entity';
+import type { MatchmakingReadRepository } from '../repositories/matchmaking.repository';
 
 export type GetMatchmakingsOutput = Array<{
   id: MatchmakingId;
@@ -7,11 +8,13 @@ export type GetMatchmakingsOutput = Array<{
   enabled: boolean;
 }>;
 
-export class GetMatchmakingsUsecase extends QueryUseCase<never, GetMatchmakingsOutput> {
+export class GetMatchmakingsUsecase implements UseCase<never, GetMatchmakingsOutput> {
   static INJECTION_KEY = 'getMatchmakingsUsecase' as const;
 
+  constructor(private ctx: { matchmakingReadRepo: MatchmakingReadRepository }) {}
+
   async execute(): Promise<GetMatchmakingsOutput> {
-    const matchmakings = await this.ctx.db.query('matchmaking').collect();
+    const matchmakings = await this.ctx.matchmakingReadRepo.getAll();
     return matchmakings.map(m => ({
       id: m._id,
       name: m.name,

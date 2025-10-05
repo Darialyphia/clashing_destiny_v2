@@ -1,14 +1,22 @@
 import { internal } from '../../_generated/api';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import type { Scheduler } from 'convex/server';
 import type { DeckId } from '../../deck/entities/deck.entity';
-import type { MutationContainer, QueryContainer } from '../../shared/container';
 import type { UserId } from '../../users/entities/user.entity';
 import { Game, type GameDoc, type GameId } from '../entities/game.entity';
 import { GAME_STATUS, GAME_TIMEOUT_MS } from '../game.constants';
+import type { GameMapper } from '../mappers/game.mapper';
+import type {
+  GamePlayerReadRepository,
+  GamePlayerRepository
+} from './gamePlayer.repository';
 
 export class GameReadRepository {
   static INJECTION_KEY = 'gameReadRepo' as const;
 
-  constructor(private ctx: QueryContainer) {}
+  constructor(
+    private ctx: { db: DatabaseReader; gamePlayerReadRepo: GamePlayerReadRepository }
+  ) {}
 
   async getById(gameId: GameId) {
     return this.ctx.db.get(gameId);
@@ -25,7 +33,14 @@ export class GameReadRepository {
 export class GameRepository {
   static INJECTION_KEY = 'gameRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(
+    private ctx: {
+      db: DatabaseWriter;
+      gamePlayerRepo: GamePlayerRepository;
+      gameMapper: GameMapper;
+      scheduler: Scheduler;
+    }
+  ) {}
 
   private async buildEntity(doc: GameDoc) {
     const players = await this.ctx.gamePlayerRepo.byGameId(doc._id);

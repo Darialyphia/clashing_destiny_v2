@@ -1,5 +1,7 @@
-import { MutationUseCase } from '../../usecase';
+import type { GameRepository } from '../../game/repositories/game.repository';
+import { type UseCase } from '../../usecase';
 import { DomainError } from '../../utils/error';
+import type { MatchmakingRepository } from '../repositories/matchmaking.repository';
 
 export type RunMatchmakingInput = {
   name: string;
@@ -8,11 +10,14 @@ export interface RunMatchmakingOutput {
   success: true;
 }
 
-export class RunMatchmakingUseCase extends MutationUseCase<
-  RunMatchmakingInput,
-  RunMatchmakingOutput
-> {
+export class RunMatchmakingUseCase
+  implements UseCase<RunMatchmakingInput, RunMatchmakingOutput>
+{
   static INJECTION_KEY = 'runMatchmakingUseCase' as const;
+
+  constructor(
+    private ctx: { matchmakingRepo: MatchmakingRepository; gameRepo: GameRepository }
+  ) {}
 
   async execute(input: RunMatchmakingInput): Promise<RunMatchmakingOutput> {
     const matchmaking = await this.ctx.matchmakingRepo.getByName(input.name);

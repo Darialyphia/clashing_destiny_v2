@@ -1,4 +1,5 @@
-import type { MutationContainer, QueryContainer } from '../../shared/container';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import type { CardRepository } from '../../card/repositories/card.repository';
 import type { UserId } from '../../users/entities/user.entity';
 import { Deck, type DeckId } from '../entities/deck.entity';
 import { premadeDecks } from '../premadeDecks';
@@ -6,7 +7,7 @@ import { premadeDecks } from '../premadeDecks';
 export class DeckReadRepository {
   static INJECTION_KEY = 'deckReadRepo' as const;
 
-  constructor(private ctx: QueryContainer) {}
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async findById(id: DeckId) {
     return this.ctx.db.get(id);
@@ -23,7 +24,7 @@ export class DeckReadRepository {
 export class DeckRepository {
   static INJECTION_KEY = 'deckRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(private ctx: { db: DatabaseWriter; cardRepo: CardRepository }) {}
 
   async findById(id: DeckId) {
     const doc = await this.ctx.db.get(id);

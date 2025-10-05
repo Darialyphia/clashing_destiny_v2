@@ -1,11 +1,13 @@
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import type { MutationContainer, QueryContainer } from '../../shared/container';
 import type { UserId } from '../../users/entities/user.entity';
 import { Card, type CardId } from '../entities/card.entity';
+import type { CardMapper } from '../mappers/card.mapper';
 
 export class CardReadRepository {
   static INJECTION_KEY = 'cardReadRepo' as const;
 
-  constructor(private ctx: QueryContainer) {}
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async findById(cardId: CardId) {
     return this.ctx.db.get(cardId);
@@ -22,7 +24,7 @@ export class CardReadRepository {
 export class CardRepository {
   static INJECTION_KEY = 'cardRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(private ctx: { db: DatabaseWriter; cardMapper: CardMapper }) {}
 
   async getById(cardId: CardId) {
     const doc = await this.ctx.db.get(cardId);

@@ -25,6 +25,7 @@ import type * as matchmaking from "../matchmaking.js";
 import type * as ping from "../ping.js";
 import type * as shared_container from "../shared/container.js";
 import type * as shared_entity from "../shared/entity.js";
+import type * as shared_eventEmitter from "../shared/eventEmitter.js";
 import type * as usecase from "../usecase.js";
 import type * as users_username from "../users/username.js";
 import type * as utils_email from "../utils/email.js";
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   ping: typeof ping;
   "shared/container": typeof shared_container;
   "shared/entity": typeof shared_entity;
+  "shared/eventEmitter": typeof shared_eventEmitter;
   usecase: typeof usecase;
   "users/username": typeof users_username;
   "utils/email": typeof utils_email;

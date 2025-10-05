@@ -1,5 +1,7 @@
 import type { Id } from '../../_generated/dataModel';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import type { MutationContainer, QueryContainer } from '../../shared/container';
+import type { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
 import {
   MatchmakingUser,
@@ -9,7 +11,7 @@ import {
 export class MatchmakingUserReadRepository {
   static INJECTION_KEY = 'matchmakingUserReadRepo' as const;
 
-  constructor(private ctx: QueryContainer) {}
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async getById(matchmakingId: Id<'matchmakingUsers'>) {
     return this.ctx.db.get(matchmakingId);
@@ -22,7 +24,7 @@ export class MatchmakingUserReadRepository {
       .collect();
   }
 
-  async byUserId(userId: Id<'users'>) {
+  async getByUserId(userId: Id<'users'>) {
     return this.ctx.db
       .query('matchmakingUsers')
       .withIndex('by_userId', q => q.eq('userId', userId))
@@ -33,7 +35,7 @@ export class MatchmakingUserReadRepository {
 export class MatchmakingUserRepository {
   static INJECTION_KEY = 'matchmakingUserRepo' as const;
 
-  constructor(private ctx: MutationContainer) {}
+  constructor(private ctx: { db: DatabaseWriter; userRepo: UserRepository }) {}
 
   private async buildEntity(doc: MatchmakingUserDoc) {
     const userDoc = await this.ctx.userRepo.getById(doc.userId);
