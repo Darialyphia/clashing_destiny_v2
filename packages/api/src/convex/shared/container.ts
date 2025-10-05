@@ -49,6 +49,7 @@ import { DeckReadRepository, DeckRepository } from '../deck/repositories/deck.re
 import { CardReadRepository, CardRepository } from '../card/repositories/card.repository';
 import { CardMapper } from '../card/mappers/card.mapper';
 import { GrantPremadeDeckUseCase } from '../deck/usecases/grantPremadeDeck';
+import { GetMyCollectionUseCase } from '../card/usecases/getMyCollection.usecase';
 
 export type QueryContainer = {
   db: DatabaseReader;
@@ -67,6 +68,7 @@ export type QueryContainer = {
   [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
   [DeckReadRepository.INJECTION_KEY]: DeckReadRepository;
   [CardReadRepository.INJECTION_KEY]: CardReadRepository;
+  [GetMyCollectionUseCase.INJECTION_KEY]: GetMyCollectionUseCase;
   [CardMapper.INJECTION_KEY]: CardMapper;
 };
 
@@ -92,6 +94,7 @@ export const createQueryContainer = (ctx: QueryCtxWithSession) => {
     [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
     [DeckReadRepository.INJECTION_KEY]: asClass(DeckReadRepository),
     [CardReadRepository.INJECTION_KEY]: asClass(CardReadRepository),
+    [GetMyCollectionUseCase.INJECTION_KEY]: asClass(GetMyCollectionUseCase),
     [CardMapper.INJECTION_KEY]: asClass(CardMapper)
   });
 

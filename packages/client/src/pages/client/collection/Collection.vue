@@ -4,7 +4,7 @@ import { useCollectionPage } from './useCollectionPage';
 import CollectionCard from './CollectionCard.vue';
 import { useIntersectionObserver } from '@vueuse/core';
 
-const { cards, viewMode } = useCollectionPage();
+const { cards, viewMode, isLoading } = useCollectionPage();
 
 const listRoot = useTemplateRef('card-list');
 const visibleCards = ref(new Set<string>());
@@ -38,26 +38,33 @@ useIntersectionObserver(
 </script>
 
 <template>
-  <ul
-    ref="card-list"
-    class="cards fancy-scrollbar"
-    :class="viewMode"
-    v-if="cards.length"
-  >
-    <li v-for="card in cards" :key="card.id" :data-collection-card-id="card.id">
-      <!-- <Transition> -->
-      <CollectionCard v-if="visibleCards.has(card.id)" :card="card" />
-      <!-- </Transition> -->
-      <!-- <button
-        v-if="!isEditingDeck"
-        @click="screenshot(card.id, $event)"
-        class="absolute bottom-0"
+  <Transition mode="out-in">
+    <p v-if="isLoading" class="text-center">Loading Collection...</p>
+    <ul
+      ref="card-list"
+      class="cards fancy-scrollbar"
+      :class="viewMode"
+      v-else-if="cards.length"
+    >
+      <li
+        v-for="card in cards"
+        :key="card.id"
+        :data-collection-card-id="card.id"
       >
-        Screenshot
-      </button> -->
-    </li>
-  </ul>
-  <p v-else class="text-center">No cards found.</p>
+        <!-- <Transition> -->
+        <CollectionCard v-if="visibleCards.has(card.id)" :card="card" />
+        <!-- </Transition> -->
+        <!-- <button
+          v-if="!isEditingDeck"
+          @click="screenshot(card.id, $event)"
+          class="absolute bottom-0"
+        >
+          Screenshot
+        </button> -->
+      </li>
+    </ul>
+    <p v-else class="text-center">No cards found.</p>
+  </Transition>
 </template>
 
 <style scoped lang="postcss">
@@ -110,5 +117,15 @@ useIntersectionObserver(
 
 .card:not(.disabled):hover {
   cursor: url('/assets/ui/cursor-hover.png'), auto;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s var(--ease-3);
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

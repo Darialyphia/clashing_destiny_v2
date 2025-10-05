@@ -41,7 +41,7 @@ export class GamePlayerRepository {
 
     if (!userDoc) throw new DomainError('User not found');
 
-    return new GamePlayer(doc._id, { ...doc, name: userDoc.name });
+    return new GamePlayer(doc._id, { ...doc, username: userDoc.username.value });
   }
 
   async getById(gamePlayerId: Id<'gamePlayers'>) {

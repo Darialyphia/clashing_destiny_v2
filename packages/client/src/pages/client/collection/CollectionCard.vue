@@ -9,41 +9,17 @@ import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-import { waitFor } from '@game/shared';
-import { domToPng } from 'modern-screenshot';
 
 const { deckBuilder, isEditingDeck, viewMode } = useCollectionPage();
 
 const { card } = defineProps<{
-  card: CardBlueprint;
+  card: {
+    card: CardBlueprint;
+    id: string;
+    isFoil: boolean;
+    copiesOwned: number;
+  };
 }>();
-
-const screenshot = async (e: MouseEvent) => {
-  return; // Disabled for now
-  const element = (e.currentTarget as HTMLElement)?.querySelector(
-    '.card-front'
-  ) as HTMLElement;
-  const glare = element.querySelector('.glare') as HTMLElement;
-  console.log(glare);
-  if (glare) {
-    glare.style.visibility = 'hidden';
-  }
-  await waitFor(50);
-  const png = await domToPng(element, {
-    backgroundColor: 'transparent'
-  });
-  if (glare) {
-    glare.style.visibility = '';
-  }
-  const a = document.createElement('a');
-  a.href = png;
-  a.download = `${card.name
-    .replace(/\W+/g, ' ')
-    .split(/ |\B(?=[A-Z])/)
-    .map(word => word.toLowerCase())
-    .join('_')}.png`;
-  a.click();
-};
 
 const cardComponents: Record<typeof viewMode.value, any> = {
   compact: BlueprintSmallCard,
@@ -64,13 +40,12 @@ const isPreviewOpened = ref(false);
     <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
       <component
         :is="component"
-        :blueprint="card"
+        :blueprint="card.card"
         show-stats
         class="collection-card"
         :class="{
           disabled: isEditingDeck && !deckBuilder.canAdd(card.id)
         }"
-        @dblclick="screenshot($event)"
         @click="
           () => {
             if (!isEditingDeck) return;
@@ -91,7 +66,7 @@ const isPreviewOpened = ref(false);
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent v-if="viewMode === 'compact'">
-        <BlueprintCard :blueprint="card" />
+        <BlueprintCard :blueprint="card.card" />
       </HoverCardContent>
     </HoverCardPortal>
   </HoverCardRoot>

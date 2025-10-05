@@ -5,7 +5,7 @@ export type GamePlayerDoc = Doc<'gamePlayers'>;
 
 export class GamePlayer extends Entity<
   Id<'gamePlayers'>,
-  GamePlayerDoc & { name: string }
+  GamePlayerDoc & { username: string }
 > {
   get userId() {
     return this.data.userId;

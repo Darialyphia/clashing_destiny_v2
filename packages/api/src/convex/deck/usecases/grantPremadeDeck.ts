@@ -1,7 +1,5 @@
 import { MutationUseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
-import type { Deck } from '../entities/deck.entity';
-import { AppError } from '../../utils/error';
 
 export interface GrantPremadeDeckInput {
   userId: UserId;

@@ -28,6 +28,7 @@ export const CollectionInjectionKey = Symbol(
 
 export const provideCollectionPage = () => {
   const {
+    isLoading,
     cards,
     hasSpellSchoolFilter,
     toggleSpellSchoolFilter,
@@ -54,8 +55,16 @@ export const provideCollectionPage = () => {
 
   const deckBuilder = ref(
     new DeckBuilderViewModel(
-      collection.value,
-      new StandardDeckValidator(keyBy(cards.value, 'id'))
+      collection.value.map(c => ({
+        blueprint: c.blueprint.card,
+        copiesOwned: c.copiesOwned
+      })),
+      new StandardDeckValidator(
+        keyBy(
+          cards.value.map(c => c.card),
+          'id'
+        )
+      )
     )
   ) as Ref<DeckBuilderViewModel>;
 
@@ -88,6 +97,7 @@ export const provideCollectionPage = () => {
   const viewMode = ref<'expanded' | 'compact'>('expanded');
 
   const api: CollectionContext = {
+    isLoading,
     cards,
     hasSpellSchoolFilter,
     toggleSpellSchoolFilter,

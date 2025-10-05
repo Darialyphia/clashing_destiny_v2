@@ -9,12 +9,23 @@ import {
   type CardSpeed,
   type HeroJob
 } from '@game/engine/src/card/card.enums';
-import { type CardSet, CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
+import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isString } from '@game/shared';
 import type { Ref, ComputedRef, InjectionKey } from 'vue';
+import { api } from '@game/api';
+import { useAuthedQuery } from '@/auth/composables/useAuth';
 
 export type CardListContext = {
-  cards: ComputedRef<CardBlueprint[]>;
+  isLoading: Ref<boolean>;
+  cards: ComputedRef<
+    Array<{
+      card: CardBlueprint;
+      id: string;
+      blueprintId: string;
+      isFoil: boolean;
+      copiesOwned: number;
+    }>
+  >;
   textFilter: Ref<string, string>;
   hasSpellSchoolFilter(spellSchool: SpellSchool): boolean;
   toggleSpellSchoolFilter(spellSchool: SpellSchool): void;
@@ -38,7 +49,10 @@ const CardListInjectionKey = Symbol(
 ) as InjectionKey<CardListContext>;
 
 export const provideCardList = () => {
-  const authorizedSets: CardSet[] = [CARD_SET_DICTIONARY.CORE];
+  const { isLoading, data: myCollection } = useAuthedQuery(
+    api.cards.myCollection,
+    {}
+  );
 
   const KIND_ORDER = {
     [CARD_KINDS.HERO]: 1,
@@ -55,13 +69,19 @@ export const provideCardList = () => {
 
   const textFilter = ref('');
 
+  const allBlueprints = Object.values(CARD_SET_DICTIONARY).flatMap(
+    set => set.cards
+  );
   const cards = computed(() => {
-    return authorizedSets
-      .map(set => set.cards)
-      .flat()
-      .filter(card => {
-        if (!card.collectable) return false;
-
+    if (!myCollection.value) return [];
+    return myCollection.value
+      .map(c => {
+        return {
+          ...c,
+          card: allBlueprints.find(b => b.id === c.blueprintId)!
+        };
+      })
+      .filter(({ card }) => {
         if (spellSchoolFilter.value.size > 0) {
           const spellSchools =
             card.kind === CARD_KINDS.HERO
@@ -117,37 +137,38 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        if (a.deckSource !== b.deckSource) {
-          return a.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? 1 : -1;
+        if (a.card.deckSource !== b.card.deckSource) {
+          return a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? 1 : -1;
         }
 
         if (
-          a.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-          b.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-          a.manaCost !== b.manaCost
+          a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          b.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          a.card.manaCost !== b.card.manaCost
         ) {
-          return a.manaCost - b.manaCost;
+          return a.card.manaCost - b.card.manaCost;
         }
 
         if (
-          a.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          b.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          a.destinyCost !== b.destinyCost
+          a.card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          b.card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
+          a.card.destinyCost !== b.card.destinyCost
         ) {
-          return a.destinyCost - b.destinyCost;
+          return a.card.destinyCost - b.card.destinyCost;
         }
 
-        if (a.kind !== b.kind) {
-          return KIND_ORDER[a.kind] - KIND_ORDER[b.kind];
+        if (a.card.kind !== b.card.kind) {
+          return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
         }
 
-        return a.name
+        return a.card.name
           .toLocaleLowerCase()
-          .localeCompare(b.name.toLocaleLowerCase());
+          .localeCompare(b.card.name.toLocaleLowerCase());
       });
   });
 
-  const api: CardListContext = {
+  const ctx: CardListContext = {
+    isLoading,
     cards,
     textFilter,
     hasSpellSchoolFilter(affinity: SpellSchool) {
@@ -207,9 +228,9 @@ export const provideCardList = () => {
     }
   };
 
-  provide(CardListInjectionKey, api);
+  provide(CardListInjectionKey, ctx);
 
-  return api;
+  return ctx;
 };
 
 export const useCardList = () => useSafeInject(CardListInjectionKey);

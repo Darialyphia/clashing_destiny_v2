@@ -1,6 +1,6 @@
 import { internalMutation } from './_generated/server';
 
-const matchmakings = [{ name: 'Ranked' }];
+const matchmakings = [{ name: 'Ranked', enabled: true }];
 export default internalMutation(async ({ db }) => {
   for (const matchmaking of matchmakings) {
     const existing = await db
