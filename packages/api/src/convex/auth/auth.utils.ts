@@ -19,7 +19,7 @@ import {
 
 export const queryWithSession = customQuery(query, {
   args: {
-    sessionId: v.union(v.null(), v.string())
+    sessionId: v.optional(v.union(v.null(), v.string()))
   },
   input: async (ctx, args: any) => {
     const sessionRepo = new SessionReadRepository({ db: ctx.db });
@@ -33,7 +33,7 @@ export type QueryWithSessionCtx = QueryCtx & { session: AuthSession };
 
 export const internalQueryWithSession = customQuery(internalQuery, {
   args: {
-    sessionId: v.union(v.null(), v.string())
+    sessionId: v.optional(v.union(v.null(), v.string()))
   },
   input: async (ctx, args: any) => {
     const sessionRepo = new SessionReadRepository({ db: ctx.db });
@@ -46,7 +46,7 @@ export const internalQueryWithSession = customQuery(internalQuery, {
 
 export const mutationWithSession = customMutation(mutation, {
   args: {
-    sessionId: v.union(v.null(), v.string())
+    sessionId: v.optional(v.union(v.null(), v.string()))
   },
   input: async (ctx, args: any) => {
     const sessionRepo = new SessionRepository({ db: ctx.db });
@@ -60,7 +60,7 @@ export type MutationWithSessionCtx = MutationCtx & { session: AuthSession };
 
 export const internalMutationWithSession = customMutation(internalMutation, {
   args: {
-    sessionId: v.union(v.null(), v.string())
+    sessionId: v.optional(v.union(v.null(), v.string()))
   },
   input: async (ctx, args: any) => {
     const sessionRepo = new SessionRepository({ db: ctx.db });

@@ -49,6 +49,8 @@ import { CardMapper } from '../card/mappers/card.mapper';
 import { GrantPremadeDeckUseCase } from '../deck/usecases/grantPremadeDeck';
 import { GetMyCollectionUseCase } from '../card/usecases/getMyCollection.usecase';
 import { eventEmitter } from './eventEmitter';
+import { DeckSubscribers } from '../deck/deck.subscribers';
+import { GetDecksUseCase } from '../deck/usecases/getDecks.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -100,7 +102,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     // use cases
     [GetSessionUserUseCase.INJECTION_KEY]: { resolver: asClass(GetSessionUserUseCase) },
     [GetMatchmakingsUsecase.INJECTION_KEY]: { resolver: asClass(GetMatchmakingsUsecase) },
-    [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) }
+    [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) },
+    [GetDecksUseCase.INJECTION_KEY]: { resolver: asClass(GetDecksUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;
@@ -115,7 +118,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     db: { resolver: asValue(ctx.db) },
     session: { resolver: asValue(ctx.session) },
     scheduler: { resolver: asValue(ctx.scheduler) },
-    emitter: { resolver: asValue(eventEmitter) },
+    eventEmitter: { resolver: asValue(eventEmitter) },
     // repositories
     [SessionRepository.INJECTION_KEY]: { resolver: asClass(SessionRepository) },
     [UserRepository.INJECTION_KEY]: { resolver: asClass(UserRepository) },
@@ -133,6 +136,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [UserMapper.INJECTION_KEY]: { resolver: asClass(UserMapper) },
     [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
     [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
+    // subscribers
+    [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
     // use cases
     [LoginUseCase.INJECTION_KEY]: { resolver: asClass(LoginUseCase) },
     [LogoutUseCase.INJECTION_KEY]: { resolver: asClass(LogoutUseCase) },

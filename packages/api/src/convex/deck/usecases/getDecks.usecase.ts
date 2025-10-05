@@ -1,6 +1,10 @@
+import { ensureAuthenticated } from '../../auth/auth.utils';
+import type { AuthSession } from '../../auth/entities/session.entity';
 import type { CardId } from '../../card/entities/card.entity';
-import { QueryUseCase } from '../../usecase';
+import type { CardReadRepository } from '../../card/repositories/card.repository';
+import type { UseCase } from '../../usecase';
 import type { DeckDoc, DeckId } from '../entities/deck.entity';
+import type { DeckReadRepository } from '../repositories/deck.repository';
 
 export type GetDecksOutput = Array<{
   name: string;
@@ -19,8 +23,16 @@ export type GetDecksOutput = Array<{
   }>;
 }>;
 
-export class GetDecksUseCase extends QueryUseCase<never, GetDecksOutput> {
+export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
   static INJECTION_KEY = 'GetDecksUseCase' as const;
+
+  constructor(
+    private ctx: {
+      deckReadRepo: DeckReadRepository;
+      cardReadRepo: CardReadRepository;
+      session: AuthSession | null;
+    }
+  ) {}
 
   private async populateDeckList(deckList: DeckDoc['mainDeck']) {
     return Promise.all(
@@ -52,11 +64,9 @@ export class GetDecksUseCase extends QueryUseCase<never, GetDecksOutput> {
   }
 
   async execute() {
-    if (!this.ctx.session) {
-      throw new Error('Not authenticated');
-    }
+    const session = ensureAuthenticated(this.ctx.session);
 
-    const decks = await this.ctx.deckReadRepo.findByOwnerId(this.ctx.session.userId);
+    const decks = await this.ctx.deckReadRepo.findByOwnerId(session.userId);
 
     const populatedDecks = await Promise.all(decks.map(deck => this.populateDeck(deck)));
 

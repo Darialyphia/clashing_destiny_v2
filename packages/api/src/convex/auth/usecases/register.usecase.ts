@@ -9,6 +9,8 @@ import type { UserId } from '../../users/entities/user.entity';
 import type { UserRepository } from '../../users/repositories/user.repository';
 import type { DeckRepository } from '../../deck/repositories/deck.repository';
 import type { SessionRepository } from '../repositories/session.repository';
+import type { EventEmitter } from '../../shared/eventEmitter';
+import { AccountCreatedEvent } from '../events/accountCreated.event';
 
 export interface RegisterInput {
   email: Email;
@@ -28,20 +30,13 @@ export class RegisterUseCase implements UseCase<RegisterInput, RegisterOutput> {
       userRepo: UserRepository;
       sessionRepo: SessionRepository;
       deckRepo: DeckRepository;
+      eventEmitter: EventEmitter;
     }
   ) {}
   async validateEmail(email: Email) {
     const existing = await this.ctx.userRepo.getByEmail(email);
     if (existing) {
       throw new AppError('Email already in use');
-    }
-  }
-
-  private async grantStarterDecks(userId: UserId): Promise<void> {
-    const starterDecks = premadeDecks.filter(deck => deck.isGrantedOnAccountCreation);
-
-    for (const deck of starterDecks) {
-      await this.ctx.deckRepo.grantPremadeDeckToUser(deck.id, userId);
     }
   }
 
@@ -54,7 +49,10 @@ export class RegisterUseCase implements UseCase<RegisterInput, RegisterOutput> {
       password: input.password
     });
 
-    await this.grantStarterDecks(userId);
+    await this.ctx.eventEmitter.emit(
+      AccountCreatedEvent.EVENT_NAME,
+      new AccountCreatedEvent(userId)
+    );
 
     const sessionId = await this.ctx.sessionRepo.create(userId);
 

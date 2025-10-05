@@ -69,10 +69,12 @@ const { data: me } = useMe();
 }
 
 li {
-  padding: var(--size-3);
   border-radius: var(--radius-2);
   font-weight: var(--font-weight-5);
   display: grid;
+  > a {
+    padding: var(--size-3);
+  }
 }
 
 li:hover {

@@ -27,10 +27,12 @@ h1 {
   text-shadow: 3px 5px 10px hsl(from cyan h s l / 0.3);
 }
 li {
-  padding: var(--size-3);
   border-radius: var(--radius-2);
   font-weight: var(--font-weight-5);
   display: grid;
+  > a {
+    padding: var(--size-3);
+  }
 }
 
 li:hover {
