@@ -19,7 +19,6 @@ export type ValidatableDeck = {
     blueprintId: string;
     copies: number;
   }>;
-  hero: string;
 };
 
 export type DeckValidationResult =

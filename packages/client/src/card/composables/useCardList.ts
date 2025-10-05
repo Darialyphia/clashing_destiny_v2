@@ -26,6 +26,7 @@ export type CardListContext = {
       copiesOwned: number;
     }>
   >;
+  cardPool: CardBlueprint[];
   textFilter: Ref<string, string>;
   hasSpellSchoolFilter(spellSchool: SpellSchool): boolean;
   toggleSpellSchoolFilter(spellSchool: SpellSchool): void;
@@ -170,6 +171,7 @@ export const provideCardList = () => {
   const ctx: CardListContext = {
     isLoading,
     cards,
+    cardPool: allBlueprints,
     textFilter,
     hasSpellSchoolFilter(affinity: SpellSchool) {
       return spellSchoolFilter.value.has(affinity);

@@ -30,6 +30,7 @@ export const provideCollectionPage = () => {
   const {
     isLoading,
     cards,
+    cardPool,
     hasSpellSchoolFilter,
     toggleSpellSchoolFilter,
     hasKindFilter,
@@ -55,18 +56,18 @@ export const provideCollectionPage = () => {
 
   const deckBuilder = ref(
     new DeckBuilderViewModel(
-      collection.value.map(c => ({
-        blueprint: c.blueprint.card,
-        copiesOwned: c.copiesOwned
-      })),
-      new StandardDeckValidator(
-        keyBy(
-          cards.value.map(c => c.card),
-          'id'
-        )
-      )
+      cardPool.map(c => ({ blueprint: c })),
+      new StandardDeckValidator(keyBy(cardPool, 'id'))
     )
   ) as Ref<DeckBuilderViewModel>;
+  watch(collection, newCollection => {
+    deckBuilder.value.updateCardPool(
+      newCollection.map(c => ({
+        blueprint: c.blueprint.card,
+        copiesOwned: c.copiesOwned
+      }))
+    );
+  });
 
   const isEditing = ref(false);
   const createDeck = () => {
@@ -86,7 +87,6 @@ export const provideCollectionPage = () => {
     if (existingDeck) {
       existingDeck.name = deckBuilder.value.deck.name;
       existingDeck.mainDeck = deckBuilder.value.deck.mainDeck;
-      existingDeck.hero = deckBuilder.value.deck.hero;
     } else {
       decks.value.push(deckBuilder.value.deck);
     }
@@ -99,6 +99,7 @@ export const provideCollectionPage = () => {
   const api: CollectionContext = {
     isLoading,
     cards,
+    cardPool,
     hasSpellSchoolFilter,
     toggleSpellSchoolFilter,
     clearSpellSchoolFilter,

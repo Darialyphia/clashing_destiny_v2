@@ -8,7 +8,6 @@ import { nanoid } from 'nanoid';
 
 export type DeckBuilderCardPool = Array<{
   blueprint: CardBlueprint;
-  copiesOwned: number;
 }>;
 
 export class DeckBuilderViewModel {
@@ -16,8 +15,7 @@ export class DeckBuilderViewModel {
     id: nanoid(4),
     name: 'New Deck',
     [CARD_DECK_SOURCES.MAIN_DECK]: [],
-    [CARD_DECK_SOURCES.DESTINY_DECK]: [],
-    hero: null as unknown as string // will be filled later
+    [CARD_DECK_SOURCES.DESTINY_DECK]: []
   };
 
   constructor(
@@ -27,6 +25,9 @@ export class DeckBuilderViewModel {
     this.cardPool = cardPool;
   }
 
+  updateCardPool(cardPool: DeckBuilderCardPool) {
+    this.cardPool = cardPool;
+  }
   hasCard(blueprintId: string) {
     return (
       this._deck[CARD_DECK_SOURCES.MAIN_DECK].some(
@@ -34,8 +35,7 @@ export class DeckBuilderViewModel {
       ) ||
       this._deck[CARD_DECK_SOURCES.DESTINY_DECK].some(
         card => card.blueprintId === blueprintId
-      ) ||
-      this._deck.hero === blueprintId
+      )
     );
   }
 
@@ -91,14 +91,18 @@ export class DeckBuilderViewModel {
     ].filter(card => card.blueprintId !== blueprintId);
   }
 
+  getCard(blueprintId: string) {
+    return (
+      this._deck[CARD_DECK_SOURCES.MAIN_DECK].find(
+        card => card.blueprintId === blueprintId
+      ) ||
+      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].find(
+        card => card.blueprintId === blueprintId
+      )
+    );
+  }
   get validator() {
     return this._validator;
-  }
-
-  get hero() {
-    return this._deck.hero
-      ? this.cardPool.find(card => card.blueprint.id === this._deck.hero)
-      : null;
   }
 
   get deck() {
@@ -235,8 +239,7 @@ export class DeckBuilderViewModel {
       id: nanoid(4),
       name: 'New Deck',
       [CARD_DECK_SOURCES.MAIN_DECK]: [],
-      [CARD_DECK_SOURCES.DESTINY_DECK]: [],
-      hero: null as any
+      [CARD_DECK_SOURCES.DESTINY_DECK]: []
     };
   }
 }

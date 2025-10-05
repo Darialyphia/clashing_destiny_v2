@@ -38,31 +38,46 @@ const isPreviewOpened = ref(false);
     @update:open="isPreviewOpened = $event"
   >
     <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
-      <component
-        :is="component"
-        :blueprint="card.card"
-        show-stats
-        class="collection-card"
-        :class="{
-          disabled: isEditingDeck && !deckBuilder.canAdd(card.id)
-        }"
-        @click="
-          () => {
-            if (!isEditingDeck) return;
-            if (deckBuilder.canAdd(card.id)) {
-              deckBuilder.addCard(card.id);
+      <div>
+        <component
+          :is="component"
+          :blueprint="card.card"
+          show-stats
+          class="collection-card"
+          :class="{
+            disabled:
+              isEditingDeck &&
+              (!deckBuilder.canAdd(card.card.id) ||
+                card.copiesOwned <=
+                  (deckBuilder.getCard(card.card.id)?.copies ?? 0))
+          }"
+          @click="
+            () => {
+              if (!isEditingDeck) return;
+              if (!deckBuilder.canAdd(card.card.id)) return;
+              const ownsEnoughCopies =
+                card.copiesOwned >
+                (deckBuilder.getCard(card.card.id)?.copies ?? 0);
+              if (!ownsEnoughCopies) return;
+              deckBuilder.addCard(card.card.id);
             }
-          }
-        "
-        @contextmenu.prevent="
-          () => {
-            if (!isEditingDeck) return;
-            if (deckBuilder.hasCard(card.id)) {
-              deckBuilder.removeCard(card.id);
+          "
+          @contextmenu.prevent="
+            () => {
+              if (!isEditingDeck) return;
+              if (deckBuilder.hasCard(card.id)) {
+                deckBuilder.removeCard(card.id);
+              }
             }
-          }
-        "
-      />
+          "
+        />
+
+        <div
+          class="text-center text-xs text-yellow-50/90 select-none pointer-events-none py-2"
+        >
+          X{{ card.copiesOwned }}
+        </div>
+      </div>
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent v-if="viewMode === 'compact'">

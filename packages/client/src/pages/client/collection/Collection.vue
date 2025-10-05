@@ -70,7 +70,6 @@ useIntersectionObserver(
 <style scoped lang="postcss">
 .cards {
   column-gap: var(--size-4);
-  row-gap: var(--size-3);
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
@@ -90,14 +89,12 @@ useIntersectionObserver(
     perspective: 700px;
     perspective-origin: center;
     isolation: isolate;
-    height: calc(var(--card-height) * var(--pixel-scale));
     width: calc(var(--card-width) * var(--pixel-scale));
   }
 
   @screen lt-lg {
     --pixel-scale: 1;
     li {
-      height: calc(var(--card-small-height) * var(--pixel-scale));
       width: calc(var(--card-small-width) * var(--pixel-scale));
     }
   }
@@ -105,7 +102,6 @@ useIntersectionObserver(
   &.compact {
     --pixel-scale: 1;
     li {
-      height: calc(var(--card-small-height) * var(--pixel-scale));
       width: calc(var(--card-small-width) * var(--pixel-scale));
     }
   }
