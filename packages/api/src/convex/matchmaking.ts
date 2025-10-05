@@ -9,6 +9,7 @@ import {
   queryWithContainer
 } from './shared/container';
 import { GetMatchmakingsUsecase } from './matchmaking/usecases/getMatchmakings.usecase';
+import { GameRepository } from './game/repositories/game.repository';
 
 export const list = queryWithContainer({
   args: {},
@@ -25,12 +26,9 @@ export const list = queryWithContainer({
 export const join = mutationWithContainer({
   args: { name: v.string(), deckId: v.id('decks') },
   handler: async (ctx, input) => {
-    ensureAuthenticated(ctx.resolve('session'));
-
     const usecase = ctx.resolve<JoinMatchmakingUseCase>(
       JoinMatchmakingUseCase.INJECTION_KEY
     );
-
     return usecase.execute({
       name: input.name,
       deckId: input.deckId

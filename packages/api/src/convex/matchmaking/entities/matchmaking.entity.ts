@@ -18,7 +18,7 @@ export type MatchmakingId = Id<'matchmaking'>;
 export type MatchmakingDoc = Doc<'matchmaking'>;
 
 export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
-  private has(user: MatchmakingUser) {
+  isInMatchmaking(user: MatchmakingUser) {
     return this.data.matchmakingUsers.some(u => u.equals(user));
   }
 
@@ -48,11 +48,11 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
 
   canJoin(user: MatchmakingUser) {
     if (!this.enabled) return false;
-    return !this.has(user);
+    return !this.isInMatchmaking(user);
   }
 
   join(user: MatchmakingUser) {
-    if (this.has(user)) {
+    if (this.isInMatchmaking(user)) {
       throw new DomainError('User is already in the matchmaking');
     }
 

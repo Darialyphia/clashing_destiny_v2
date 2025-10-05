@@ -93,10 +93,16 @@ export class MatchmakingRepository {
   }
 
   async save(matchmaking: Matchmaking) {
-    await this.ctx.db.insert(
-      'matchmaking',
+    await this.ctx.db.replace(
+      matchmaking.id,
       this.ctx.matchmakingMapper.toPersistence(matchmaking)
     );
+
+    const matchmakingUsers = await this.ctx.matchmakingUserRepo.getByMatchmakingId(
+      matchmaking.id
+    );
+    const toDelete = matchmakingUsers.filter(mu => !matchmaking.isInMatchmaking(mu));
+    await Promise.all(toDelete.map(mu => this.ctx.matchmakingUserRepo.delete(mu.id)));
 
     await Promise.all(
       matchmaking.participants.map(async user => this.ctx.matchmakingUserRepo.save(user))

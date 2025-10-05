@@ -1,3 +1,4 @@
+import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import { type UseCase } from '../../usecase';
 import { DomainError } from '../../utils/error';
@@ -19,6 +20,7 @@ export class LeaveMatchmakingUseCase
   ) {}
 
   async execute(): Promise<LeaveMatchmakingOutput> {
+    const session = ensureAuthenticated(this.ctx.session);
     const matchmaking = await this.ctx.matchmakingRepo.getByUserId(
       this.ctx.session.userId
     );
@@ -27,9 +29,8 @@ export class LeaveMatchmakingUseCase
       throw new DomainError('User is not in matchmaking');
     }
 
-    matchmaking.leave(this.ctx.session.userId);
+    matchmaking.leave(session.userId);
     await this.ctx.matchmakingRepo.save(matchmaking);
-
     return { success: true };
   }
 }

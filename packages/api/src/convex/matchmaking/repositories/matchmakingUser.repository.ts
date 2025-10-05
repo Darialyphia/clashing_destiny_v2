@@ -4,7 +4,8 @@ import type { UserRepository } from '../../users/repositories/user.repository';
 import { DomainError } from '../../utils/error';
 import {
   MatchmakingUser,
-  type MatchmakingUserDoc
+  type MatchmakingUserDoc,
+  type MatchmakingUserId
 } from '../entities/matchmakingUser.entity';
 
 export class MatchmakingUserReadRepository {
@@ -90,6 +91,10 @@ export class MatchmakingUserRepository {
       mmr,
       joinedAt: Date.now()
     });
+  }
+
+  delete(id: MatchmakingUserId) {
+    return this.ctx.db.delete(id);
   }
 
   async save(matchmakingUser: MatchmakingUser) {
