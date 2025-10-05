@@ -120,6 +120,7 @@ export const createQueryContainer = (ctx: QueryCtxWithSession) => {
 
 const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
   const deps = {
+    nodeName: { resolver: asValue(null) }, // there is a very weird bug in awilix when using in convex where it tries to resolve the nodeName dependency, this is a workaround
     db: { resolver: asValue(ctx.db) },
     session: { resolver: asValue(ctx.session) },
     scheduler: { resolver: asValue(ctx.scheduler) },

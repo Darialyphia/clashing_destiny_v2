@@ -40,9 +40,7 @@ export class GameRepository {
       gameMapper: GameMapper;
       scheduler: Scheduler;
     }
-  ) {
-    console.log('gameRepo constructor');
-  }
+  ) {}
 
   private async buildEntity(doc: GameDoc) {
     const players = await this.ctx.gamePlayerRepo.byGameId(doc._id);
@@ -60,6 +58,7 @@ export class GameRepository {
 
   async byUserId(userId: UserId) {
     const gamePlayer = await this.ctx.gamePlayerRepo.byUserId(userId);
+
     if (!gamePlayer) return null;
 
     const gameDoc = await this.ctx.db.get(gamePlayer.gameId);

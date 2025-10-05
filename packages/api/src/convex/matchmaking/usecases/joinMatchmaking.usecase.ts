@@ -1,6 +1,7 @@
 import type { AuthSession } from '../../auth/entities/session.entity';
 import type { DeckId } from '../../deck/entities/deck.entity';
 import { ensureHasNoCurrentGame } from '../../game/game.guards';
+import type { GameRepository } from '../../game/repositories/game.repository';
 import { type UseCase } from '../../usecase';
 import type { UserReadRepository } from '../../users/repositories/user.repository';
 import { AppError } from '../../utils/error';
@@ -27,6 +28,7 @@ export class JoinMatchmakingUseCase
       matchmakingRepo: MatchmakingRepository;
       matchmakingUserRepo: MatchmakingUserRepository;
       userRepo: UserReadRepository;
+      gameRepo: GameRepository;
     }
   ) {}
   private async leaveIfNeeded() {
@@ -41,7 +43,7 @@ export class JoinMatchmakingUseCase
   }
 
   async execute(input: JoinMatchmakingInput): Promise<JoinMatchmakingOutput> {
-    // await ensureHasNoCurrentGame(this.ctx.gameRepo, this.ctx.session.userId);
+    await ensureHasNoCurrentGame(this.ctx.gameRepo, this.ctx.session.userId);
     const matchmaking = await this.ctx.matchmakingRepo.getByName(input.name);
 
     if (!matchmaking) {

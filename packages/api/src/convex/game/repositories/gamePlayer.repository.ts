@@ -64,7 +64,7 @@ export class GamePlayerRepository {
       .withIndex('by_user_id', q => q.eq('userId', userId))
       .unique();
 
-    if (!doc) throw null;
+    if (!doc) return null;
 
     return this.buildEntity(doc);
   }
