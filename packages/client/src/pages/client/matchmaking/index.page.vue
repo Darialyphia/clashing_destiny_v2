@@ -54,7 +54,7 @@ const handleLeave = () => {
         <div
           v-for="matchmaking in data"
           :key="matchmaking.id"
-          class="matchmaking-card"
+          class="matchmaking-card surface"
         >
           <div class="matchmaking-info">
             <h3 class="matchmaking-name">{{ matchmaking.name }}</h3>
@@ -125,14 +125,6 @@ const handleLeave = () => {
 }
 
 .matchmaking-card {
-  background: linear-gradient(
-    135deg,
-    hsl(240 30% 10%) 0%,
-    hsl(245 25% 15%) 100%
-  );
-  border: 1px solid hsl(45 50% 30% / 0.3);
-  border-radius: var(--radius-3);
-  padding: var(--size-6);
   display: flex;
   justify-content: space-between;
   align-items: center;
