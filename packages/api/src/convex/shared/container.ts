@@ -46,6 +46,8 @@ import { UserMapper } from '../users/mappers/user.mapper';
 import { GetMatchmakingsUsecase } from '../matchmaking/usecases/getMatchmakings.usecase';
 import { MatchmakingMapper } from '../matchmaking/mappers/matchmaking.mapper';
 import { DeckReadRepository, DeckRepository } from '../deck/repositories/deck.repository';
+import { CardReadRepository, CardRepository } from '../card/repositories/card.repository';
+import { CardMapper } from '../card/mappers/card.mapper';
 
 export type QueryContainer = {
   db: DatabaseReader;
@@ -63,6 +65,8 @@ export type QueryContainer = {
   [GetMatchmakingsUsecase.INJECTION_KEY]: GetMatchmakingsUsecase;
   [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
   [DeckReadRepository.INJECTION_KEY]: DeckReadRepository;
+  [CardReadRepository.INJECTION_KEY]: CardReadRepository;
+  [CardMapper.INJECTION_KEY]: CardMapper;
 };
 
 export const createQueryContainer = (ctx: QueryCtxWithSession) => {
@@ -85,7 +89,9 @@ export const createQueryContainer = (ctx: QueryCtxWithSession) => {
     [GetSessionUserUseCase.INJECTION_KEY]: asClass(GetSessionUserUseCase),
     [GetMatchmakingsUsecase.INJECTION_KEY]: asClass(GetMatchmakingsUsecase),
     [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
-    [DeckReadRepository.INJECTION_KEY]: asClass(DeckReadRepository)
+    [DeckReadRepository.INJECTION_KEY]: asClass(DeckReadRepository),
+    [CardReadRepository.INJECTION_KEY]: asClass(CardReadRepository),
+    [CardMapper.INJECTION_KEY]: asClass(CardMapper)
   });
 
   return container;
@@ -113,6 +119,8 @@ export type MutationContainer = {
   [GamePlayerMapper.INJECTION_KEY]: GamePlayerMapper;
   [MatchmakingMapper.INJECTION_KEY]: MatchmakingMapper;
   [DeckRepository.INJECTION_KEY]: DeckRepository;
+  [CardRepository.INJECTION_KEY]: CardRepository;
+  [CardMapper.INJECTION_KEY]: CardMapper;
 };
 export const createMutationContainer = (ctx: MutationCtxWithSession) => {
   const container = createContainer({
@@ -140,7 +148,9 @@ export const createMutationContainer = (ctx: MutationCtxWithSession) => {
     [GamePlayerMapper.INJECTION_KEY]: asClass(GamePlayerMapper),
     [UserMapper.INJECTION_KEY]: asClass(UserMapper),
     [MatchmakingMapper.INJECTION_KEY]: asClass(MatchmakingMapper),
-    [DeckRepository.INJECTION_KEY]: asClass(DeckRepository)
+    [DeckRepository.INJECTION_KEY]: asClass(DeckRepository),
+    [CardRepository.INJECTION_KEY]: asClass(CardRepository),
+    [CardMapper.INJECTION_KEY]: asClass(CardMapper)
   });
 
   return container;

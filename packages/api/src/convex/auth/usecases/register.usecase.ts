@@ -4,6 +4,8 @@ import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
 import { AppError } from '../../utils/error';
 import { Username } from '../../users/username';
+import { premadeDecks } from '../../deck/premadeDecks';
+import type { UserId } from '../../users/entities/user.entity';
 
 export interface RegisterInput {
   email: Email;
@@ -25,6 +27,14 @@ export class RegisterUseCase extends MutationUseCase<RegisterInput, RegisterOutp
     }
   }
 
+  private async grantStarterDecks(userId: UserId): Promise<void> {
+    const starterDecks = premadeDecks.filter(deck => deck.isGrantedOnAccountCreation);
+
+    for (const deck of starterDecks) {
+      await this.ctx.deckRepo.grantPremadeDeckToUser(deck.id, userId);
+    }
+  }
+
   async execute(input: RegisterInput): Promise<RegisterOutput> {
     await this.validateEmail(input.email);
 
@@ -33,6 +43,8 @@ export class RegisterUseCase extends MutationUseCase<RegisterInput, RegisterOutp
       email: input.email,
       password: input.password
     });
+
+    await this.grantStarterDecks(userId);
 
     const sessionId = await this.ctx.sessionRepo.create(userId);
 

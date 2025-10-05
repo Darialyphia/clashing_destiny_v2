@@ -59,7 +59,6 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
   background-size: cover;
   background-position: center, center, bottom;
   position: relative;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
