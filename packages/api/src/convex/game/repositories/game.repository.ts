@@ -81,7 +81,9 @@ export class GameRepository {
       });
     }
 
-    return gameId;
+    const game = await this.getById(gameId);
+
+    return game!;
   }
 
   async save(game: Game) {

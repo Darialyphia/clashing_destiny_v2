@@ -1,6 +1,8 @@
 import type { GameRepository } from '../../game/repositories/game.repository';
+import type { EventEmitter } from '../../shared/eventEmitter';
 import { type UseCase } from '../../usecase';
 import { DomainError } from '../../utils/error';
+import { PlayersPairedEvent } from '../events/playersPaired.event';
 import type { MatchmakingRepository } from '../repositories/matchmaking.repository';
 
 export type RunMatchmakingInput = {
@@ -16,7 +18,11 @@ export class RunMatchmakingUseCase
   static INJECTION_KEY = 'runMatchmakingUseCase' as const;
 
   constructor(
-    private ctx: { matchmakingRepo: MatchmakingRepository; gameRepo: GameRepository }
+    private ctx: {
+      matchmakingRepo: MatchmakingRepository;
+      gameRepo: GameRepository;
+      eventEmitter: EventEmitter;
+    }
   ) {}
 
   async execute(input: RunMatchmakingInput): Promise<RunMatchmakingOutput> {
@@ -26,13 +32,10 @@ export class RunMatchmakingUseCase
     }
 
     const { pairs, remaining } = matchmaking.matchParticipants();
-    await Promise.all(
-      pairs.map(async pair => {
-        const gameId = await this.ctx.gameRepo.create(pair.map(p => p.meta));
-        const game = await this.ctx.gameRepo.getById(gameId);
-        await this.ctx.gameRepo.scheduleCancellation(game!);
-        await this.ctx.gameRepo.save(game!);
-      })
+
+    this.ctx.eventEmitter.emit(
+      PlayersPairedEvent.EVENT_NAME,
+      new PlayersPairedEvent(pairs)
     );
 
     if (remaining.length) {

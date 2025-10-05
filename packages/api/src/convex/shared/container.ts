@@ -54,6 +54,8 @@ import { GetDecksUseCase } from '../deck/usecases/getDecks.usecase';
 import { DeckMapper } from '../deck/mappers/deck.mapper';
 import { CreateDeckUseCase } from '../deck/usecases/createDeck.usecase';
 import { UpdateDeckUseCase } from '../deck/usecases/updateDeck.usecase';
+import { SetupRankedGameUsecase } from '../game/usecases/setupRankedGame.usecase';
+import { GameSubscribers } from '../game/game.subscribers';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -145,6 +147,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [DeckMapper.INJECTION_KEY]: { resolver: asClass(DeckMapper) },
     // subscribers
     [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
+    [GameSubscribers.INJECTION_KEY]: { resolver: asClass(GameSubscribers), eager: true },
     // use cases
     [LoginUseCase.INJECTION_KEY]: { resolver: asClass(LoginUseCase) },
     [LogoutUseCase.INJECTION_KEY]: { resolver: asClass(LogoutUseCase) },
@@ -159,7 +162,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
       resolver: asClass(GrantPremadeDeckUseCase)
     },
     [CreateDeckUseCase.INJECTION_KEY]: { resolver: asClass(CreateDeckUseCase) },
-    [UpdateDeckUseCase.INJECTION_KEY]: { resolver: asClass(UpdateDeckUseCase) }
+    [UpdateDeckUseCase.INJECTION_KEY]: { resolver: asClass(UpdateDeckUseCase) },
+    [SetupRankedGameUsecase.INJECTION_KEY]: { resolver: asClass(SetupRankedGameUsecase) }
   } as const satisfies DependenciesMap;
 
   return deps;
