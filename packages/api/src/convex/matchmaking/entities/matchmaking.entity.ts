@@ -77,7 +77,7 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     this.participants.forEach(user => {
       matchmaking.join(
         {
-          id: user.id as string,
+          id: user.userId as string,
           isDemotionGame: false,
           isPromotionGame: false,
           lossStreak: 0,
@@ -96,7 +96,6 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
       this.leave(a.id as UserId);
       this.leave(b.id as UserId);
     });
-
     return { pairs, remaining };
   }
 

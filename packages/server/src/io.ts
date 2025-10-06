@@ -6,6 +6,7 @@ import type {
   SerializedPlayerState,
   SnapshotDiff
 } from '@game/engine/src/game/systems/game-snapshot.system';
+import url from 'url';
 
 type SocketData = {
   user: any;
@@ -38,9 +39,11 @@ export type IoSocket = Socket<
   SocketData
 >;
 
-const PORT = process.env.PORT || 8000;
-
-export const httpServer = createServer();
+export const httpServer = createServer((req, res) => {
+  res.writeHead(200, { 'Content-type': 'text/plain' });
+  res.write('Game server works !');
+  res.end();
+});
 export const io: Ioserver = new Server({
   cors: {
     origin: '*',

@@ -18,7 +18,7 @@ export class SetupRankedGameUsecase
 
   async execute(input: SetupRankedGameInput) {
     const game = await this.ctx.gameRepo.create(input.pair);
-    await this.ctx.gameRepo.scheduleCancellation(game);
+    // await this.ctx.gameRepo.scheduleCancellation(game);
     await this.ctx.gameRepo.save(game);
 
     return { success: true };

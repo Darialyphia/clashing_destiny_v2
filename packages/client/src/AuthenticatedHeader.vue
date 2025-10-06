@@ -1,61 +1,31 @@
 <script setup lang="ts">
-import { useIntervalFn } from '@vueuse/core';
 import { useLogout } from './auth/composables/useLogout';
 import { useMe } from './auth/composables/useMe';
 import { useLeaveMatchmaking } from '@/matchmaking/composables';
+import MatchmakingTimer from './matchmaking/components/MatchmakingTimer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { computed, ref, watch } from 'vue';
 
 const { mutate: logout } = useLogout();
 const { data: me } = useMe();
 const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
   useLeaveMatchmaking();
-
-// Timer functionality
-const currentTime = ref(Date.now());
-
-useIntervalFn(() => {
-  currentTime.value = Date.now();
-}, 1000);
-
-watch(me, newVal => {
-  if (newVal?.currentJoinedMatchmaking) {
-    currentTime.value = Date.now(); // Reset timer when joining a matchmaking
-  }
-});
-
-// Calculate elapsed time in matchmaking
-const matchmakingElapsed = computed(() => {
-  if (!me.value?.currentJoinedMatchmaking?.joinedAt) return null;
-
-  const elapsed =
-    currentTime.value - me.value.currentJoinedMatchmaking.joinedAt;
-  if (elapsed < 0) return '00:00'; // Safety check for negative durations
-  return formatDuration(elapsed);
-});
-
-// Format duration in mm:ss format
-function formatDuration(milliseconds: number): string {
-  const totalSeconds = Math.floor(milliseconds / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
 </script>
 
 <template>
   <header class="flex items-center gap-4 surface">
     <div class="welcome-section">
-      <span class="welcome-text">Welcome back, {{ me?.username }}</span>
+      <RouterLink :to="{ name: 'ClientHome' }" class="welcome-text">
+        Welcome back, {{ me?.username }}
+      </RouterLink>
       <div v-if="me?.currentJoinedMatchmaking" class="matchmaking-status">
         <span class="status-label">In matchmaking:</span>
         <span class="matchmaking-name">
           {{ me.currentJoinedMatchmaking.name }}
         </span>
-        <div v-if="matchmakingElapsed" class="matchmaking-timer">
-          <span class="timer-value">{{ matchmakingElapsed }}</span>
-        </div>
+        <MatchmakingTimer
+          v-if="me.currentJoinedMatchmaking.joinedAt"
+          :joinedAt="me.currentJoinedMatchmaking.joinedAt"
+        />
         <FancyButton
           text="Leave"
           variant="error"
@@ -116,21 +86,6 @@ function formatDuration(milliseconds: number): string {
   background: hsl(45 100% 50% / 0.1);
   border-radius: var(--radius-1);
   border: 1px solid hsl(45 100% 50% / 0.2);
-}
-
-.matchmaking-timer {
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  margin-left: var(--size-1);
-}
-
-.timer-value {
-  color: #efef9f;
-  font-weight: var(--font-weight-6);
-  font-family: 'Courier New', monospace;
-  padding: var(--size-1) var(--size-2);
-  text-align: center;
 }
 
 li {

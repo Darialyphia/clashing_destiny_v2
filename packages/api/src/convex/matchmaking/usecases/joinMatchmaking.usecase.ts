@@ -65,7 +65,6 @@ export class JoinMatchmakingUseCase
     });
 
     matchmaking.join(matchmakingUser);
-
     if (!matchmaking.isRunning) {
       await this.ctx.matchmakingRepo.scheduleRun(matchmaking);
     }

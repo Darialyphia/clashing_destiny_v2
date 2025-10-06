@@ -32,8 +32,8 @@ const deps = {
   redis: { resolver: asValue(redis) },
   convexClient: { resolver: asValue(convexClient) },
   convexHttpClient: { resolver: asValue(convexHttpClient) },
-  [GamesManager.INJECTION_KEY]: { resolver: asClass(GamesManager), eager: true },
-  [RoomManager.INJECTION_KEY]: { resolver: asClass(RoomManager), eager: true }
+  [GamesManager.INJECTION_KEY]: { resolver: asClass(GamesManager) },
+  [RoomManager.INJECTION_KEY]: { resolver: asClass(RoomManager) }
 } as const satisfies DependenciesMap;
 
 export const container = makecontainer(deps);

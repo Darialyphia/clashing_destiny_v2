@@ -11,6 +11,7 @@ import {
 import { type GameOptions } from '@game/engine/src/game/game';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { RoomManager } from './room-manager';
+import type { Nullable } from '@game/shared';
 
 const REDIS_KEYS = {
   GAME_STATE: (gameId: GameId) => `game:state:${gameId}`,
@@ -33,9 +34,7 @@ export class GamesManager {
       redis: Redis;
       roomManager: RoomManager;
     }
-  ) {
-    this.startListeningToGames();
-  }
+  ) {}
 
   private listenToGamesByStatus(
     status: GameStatus,
@@ -46,7 +45,7 @@ export class GamesManager {
     });
   }
 
-  private startListeningToGames() {
+  listen() {
     this.listenToGamesByStatus(
       GAME_STATUS.WAITING_FOR_PLAYERS,
       this.onGameCreated.bind(this)
@@ -92,7 +91,7 @@ export class GamesManager {
       const initialState = await this.buildInitialState(gameId);
       if (!initialState) return this.cancelGame(gameId);
 
-      await this.ctx.redis.set(REDIS_KEYS.GAME_STATE(gameId), initialState);
+      await this.ctx.redis.json.set(REDIS_KEYS.GAME_STATE(gameId), '$', initialState);
     }
   }
 
@@ -112,14 +111,11 @@ export class GamesManager {
   }
 
   private async buildGameOptions(gameId: GameId) {
-    let state: GameOptions | null = null;
-    const persistedState = await this.ctx.redis.get<string>(
+    let state: Nullable<GameOptions> = await this.ctx.redis.json.get<GameOptions>(
       REDIS_KEYS.GAME_STATE(gameId)
     );
-    if (!persistedState) {
+    if (!state) {
       state = await this.buildInitialState(gameId);
-    } else {
-      state = JSON.parse(persistedState) as GameOptions; // @TODO probably should use zod instead
     }
 
     return state;

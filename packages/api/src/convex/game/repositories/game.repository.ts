@@ -24,7 +24,13 @@ export class GameReadRepository {
   }
 
   async getByUserId(userId: UserId) {
-    const gamePlayer = await this.ctx.gamePlayerReadRepo.byUserId(userId);
+    const gamePlayer = await this.ctx.db
+      .query('gamePlayers')
+      .withIndex('by_creation_time')
+      .filter(q => q.eq(q.field('userId'), userId))
+      .order('desc')
+      .first();
+
     if (!gamePlayer) return null;
 
     return this.ctx.db.get(gamePlayer.gameId);

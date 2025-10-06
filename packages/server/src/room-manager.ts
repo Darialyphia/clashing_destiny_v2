@@ -48,4 +48,8 @@ export class RoomManager {
   getRoom(id: string) {
     return this.rooms.get(id);
   }
+
+  async shutdown() {
+    await Promise.all(Array.from(this.rooms.values()).map(room => room.shutdown()));
+  }
 }

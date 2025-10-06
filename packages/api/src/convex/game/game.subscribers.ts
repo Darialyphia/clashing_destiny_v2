@@ -14,7 +14,16 @@ export class GameSubscribers {
     await Promise.all(
       event.pairs.map(async ([participantA, participantB]) => {
         await this.ctx.scheduler.runAfter(0, internal.games.setupRankedGame, {
-          pair: [participantA.meta, participantB.meta]
+          pair: [
+            {
+              userId: participantA.meta.userId,
+              deckId: participantA.meta.deckId
+            },
+            {
+              userId: participantB.meta.userId,
+              deckId: participantB.meta.deckId
+            }
+          ]
         });
       })
     );

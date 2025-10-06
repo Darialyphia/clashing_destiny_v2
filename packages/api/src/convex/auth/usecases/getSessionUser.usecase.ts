@@ -9,6 +9,9 @@ import type { AuthSession, SessionId } from '../entities/session.entity';
 import type { MatchmakingUserReadRepository } from '../../matchmaking/repositories/matchmakingUser.repository';
 import type { UserReadRepository } from '../../users/repositories/user.repository';
 import type { MatchmakingReadRepository } from '../../matchmaking/repositories/matchmaking.repository';
+import type { GameStatus } from '../../game/game.constants';
+import type { GameId } from '../../game/entities/game.entity';
+import type { GameReadRepository } from '../../game/repositories/game.repository';
 
 export interface LoginInput {
   email: Email;
@@ -25,6 +28,7 @@ export interface GetSessionUserput {
     name: string;
     joinedAt: number;
   }>;
+  currentGame: Nullable<{ id: GameId; status: GameStatus }>;
 }
 
 export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> {
@@ -36,6 +40,7 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
       matchmakingUserReadRepo: MatchmakingUserReadRepository;
       matchmakingReadRepo: MatchmakingReadRepository;
       session: AuthSession | null;
+      gameReadRepo: GameReadRepository;
     }
   ) {}
 
@@ -48,6 +53,8 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
       ? await this.ctx.matchmakingReadRepo.getById(matchmakingUser.matchmakingId!)
       : null;
 
+    const currentGame = await this.ctx.gameReadRepo.getByUserId(user._id);
+
     return {
       sessionId: this.ctx.session!._id,
       id: user._id,
@@ -59,6 +66,9 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
             name: matchmaking!.name,
             joinedAt: matchmakingUser!.joinedAt
           }
+        : null,
+      currentGame: currentGame
+        ? { id: currentGame._id, status: currentGame.status }
         : null
     };
   }

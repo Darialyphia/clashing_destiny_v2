@@ -10,6 +10,7 @@ import { useDecks, type UserDeck } from '@/card/composables/useDecks';
 import PlayerDeck from '@/player/components/PlayerDeck.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { DeckId } from '@game/api';
+import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
 
 definePage({
   name: 'Matchmaking'
@@ -140,13 +141,17 @@ const getDisplayedDeck = (deck: UserDeck) => ({
             "
           />
 
-          <FancyButton
-            v-else
-            :disabled="isLeaving"
-            :text="isLeaving ? 'Leaving...' : 'Leave Queue'"
-            size="lg"
-            @click="leave({})"
-          />
+          <template v-else>
+            <FancyButton
+              :disabled="isLeaving"
+              :text="isLeaving ? 'Leaving...' : 'Leave Queue'"
+              size="lg"
+              @click="leave({})"
+            />
+            <MatchmakingTimer
+              :joined-at="me.currentJoinedMatchmaking!.joinedAt"
+            />
+          </template>
         </footer>
       </div>
     </main>
@@ -201,7 +206,7 @@ h2 {
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
-  padding-inline: var(--size-3);
+  margin-inline: var(--size-3);
 
   &:hover {
     transform: translateY(-2px);
@@ -240,17 +245,17 @@ h2 {
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   padding: var(--size-2) var(--size-4);
 
   &:hover:not(.disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px hsl(240 100% 5% / 0.3);
-    border-color: #d7ad42;
+    border-color: #efef9f;
   }
 
   &.selected {
-    border-color: #efef9f;
+    border-color: #d7ad42;
     background: rgba(239, 239, 159, 0.1);
   }
 

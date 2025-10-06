@@ -33,11 +33,6 @@ export class RunMatchmakingUseCase
 
     const { pairs, remaining } = matchmaking.matchParticipants();
 
-    this.ctx.eventEmitter.emit(
-      PlayersPairedEvent.EVENT_NAME,
-      new PlayersPairedEvent(pairs)
-    );
-
     if (remaining.length) {
       await this.ctx.matchmakingRepo.scheduleRun(matchmaking);
     } else {
@@ -45,6 +40,11 @@ export class RunMatchmakingUseCase
     }
 
     await this.ctx.matchmakingRepo.save(matchmaking);
+
+    this.ctx.eventEmitter.emit(
+      PlayersPairedEvent.EVENT_NAME,
+      new PlayersPairedEvent(pairs)
+    );
 
     return { success: true };
   }
