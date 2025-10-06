@@ -13,13 +13,8 @@ import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { RoomManager } from './room-manager';
 
 const REDIS_KEYS = {
-  GAME_PRESENCE: (gameId: GameId) => `game:presence:${gameId}`,
-  GAME_STATE: (gameId: GameId) => `game:state:${gameId}`
-};
-
-type PersistedGameState = {
-  initialState: GameOptions;
-  history: SerializedInput[];
+  GAME_STATE: (gameId: GameId) => `game:state:${gameId}`,
+  GAME_HISTORY: (gameId: GameId) => `game:history:${gameId}`
 };
 
 type GameDto = {
@@ -39,85 +34,81 @@ export class GamesManager {
       roomManager: RoomManager;
     }
   ) {
-    this.startListeningForGames();
+    this.startListeningToGames();
   }
 
-  private startListeningForGames() {
-    this.ctx.convexClient.onUpdate(
-      api.games.latest,
-      { status: GAME_STATUS.WAITING_FOR_PLAYERS },
-      async ({ games }) => {
-        await Promise.all(games.map(game => this.onGameCreated(game)));
-      }
-    );
+  private listenToGamesByStatus(
+    status: GameStatus,
+    cb: (game: GameDto) => Promise<void>
+  ) {
+    this.ctx.convexClient.onUpdate(api.games.latest, { status }, async ({ games }) => {
+      await Promise.all(games.map(game => cb(game)));
+    });
+  }
 
-    this.ctx.convexClient.onUpdate(
-      api.games.latest,
-      { status: GAME_STATUS.ONGOING },
-      async ({ games }) => {
-        await Promise.all(games.map(game => this.onGameReady(game)));
-      }
+  private startListeningToGames() {
+    this.listenToGamesByStatus(
+      GAME_STATUS.WAITING_FOR_PLAYERS,
+      this.onGameCreated.bind(this)
     );
-
-    this.ctx.convexClient.onUpdate(
-      api.games.latest,
-      { status: GAME_STATUS.FINISHED },
-      ({ games }) => {
-        games.forEach(game => {
-          this.onGameFinished(game);
-        });
-      }
-    );
-
-    this.ctx.convexClient.onUpdate(
-      api.games.latest,
-      { status: GAME_STATUS.CANCELLED },
-      async ({ games }) => {
-        await Promise.all(games.map(game => this.onGameCancelled(game)));
-      }
-    );
+    this.listenToGamesByStatus(GAME_STATUS.ONGOING, this.onGameReady.bind(this));
+    this.listenToGamesByStatus(GAME_STATUS.FINISHED, this.onGameFinished.bind(this));
+    this.listenToGamesByStatus(GAME_STATUS.CANCELLED, this.onGameCancelled.bind(this));
   }
 
   private async onGameCreated(game: GameDto) {
-    const existingState = await this.ctx.redis.get(REDIS_KEYS.GAME_STATE(game.id));
-    if (existingState) return;
-
-    const initialState = await this.buildInitialState(game.id);
-    if (!initialState) return this.cancelGame(game.id);
-
-    await this.ctx.redis.set(REDIS_KEYS.GAME_STATE(game.id), {
-      initialState,
-      history: []
-    });
-
-    const gameOptions = await this.buildGameOptions(game.id);
-    this.ctx.roomManager.createRoom(game.id, {
-      initialState: gameOptions!,
-      game: {
-        id: game.id,
-        status: game.status,
-        players: game.players.map(p => ({ userId: p.userId }))
-      }
-    });
+    await this.setupRedisState(game.id);
+    await this.createRoom(game);
   }
 
-  private async onGameReady(dto: GameDto) {
-    const room = this.ctx.roomManager.getRoom(dto.id);
-    if (!room) {
-      // @TODO handle missing room (case where server was down when game was created)
-      return;
-    }
-
+  private async onGameReady(game: GameDto) {
+    const room = this.ctx.roomManager.getRoom(game.id);
+    // @TODO handle missing room (case where server was down when game was created)
+    if (!room) return this.cancelGame(game.id);
+    this.updateRoomStatusIfExists(game.id, game.status);
     await room.start();
   }
 
-  private onGameFinished(game: GameDto) {
+  private async onGameFinished(game: GameDto) {
+    await this.ctx.roomManager.destroyRoom(game.id);
+    await this.cleanupRedisState(game.id);
+    this.updateRoomStatusIfExists(game.id, game.status);
+
     // @TODO generate game replay from engine snapshots and upload to convex
   }
 
   private async onGameCancelled(game: GameDto) {
-    await this.ctx.redis.del(REDIS_KEYS.GAME_PRESENCE(game.id));
-    await this.ctx.redis.del(REDIS_KEYS.GAME_STATE(game.id));
+    await this.cleanupRedisState(game.id);
+    await this.ctx.roomManager.destroyRoom(game.id);
+  }
+
+  private async cleanupRedisState(gameId: GameId) {
+    await this.ctx.redis.del(REDIS_KEYS.GAME_STATE(gameId));
+  }
+
+  private async setupRedisState(gameId: GameId) {
+    const existingState = await this.ctx.redis.get(REDIS_KEYS.GAME_STATE(gameId));
+    if (!existingState) {
+      const initialState = await this.buildInitialState(gameId);
+      if (!initialState) return this.cancelGame(gameId);
+
+      await this.ctx.redis.set(REDIS_KEYS.GAME_STATE(gameId), initialState);
+    }
+  }
+
+  private async createRoom(game: GameDto) {
+    const gameOptions = await this.buildGameOptions(game.id);
+    if (!gameOptions) return this.cancelGame(game.id);
+    if (!this.ctx.roomManager.hasRoom(game.id) && gameOptions) {
+      this.ctx.roomManager.createRoom(game.id, {
+        initialState: gameOptions!,
+        game: {
+          id: game.id,
+          status: game.status,
+          players: game.players.map(p => ({ userId: p.userId }))
+        }
+      });
+    }
   }
 
   private async buildGameOptions(gameId: GameId) {
@@ -128,7 +119,7 @@ export class GamesManager {
     if (!persistedState) {
       state = await this.buildInitialState(gameId);
     } else {
-      state = (JSON.parse(persistedState) as PersistedGameState).initialState; // @TODO probably should use zod instead
+      state = JSON.parse(persistedState) as GameOptions; // @TODO probably should use zod instead
     }
 
     return state;
@@ -175,5 +166,13 @@ export class GamesManager {
       gameId,
       apiKey: process.env.CONVEX_API_KEY!
     });
+    await this.ctx.roomManager.destroyRoom(gameId);
+  }
+
+  updateRoomStatusIfExists(gameId: GameId, status: GameStatus) {
+    const room = this.ctx.roomManager.getRoom(gameId);
+    if (room) {
+      room.updateStatus(status);
+    }
   }
 }

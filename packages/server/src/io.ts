@@ -2,6 +2,7 @@ import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import type {
   GameStateSnapshot,
+  SerializedOmniscientState,
   SerializedPlayerState,
   SnapshotDiff
 } from '@game/engine/src/game/systems/game-snapshot.system';
@@ -12,7 +13,9 @@ type SocketData = {
 };
 
 export type EmittedEvents = {
-  gameInitialState: (state: GameStateSnapshot<SerializedPlayerState>) => void;
+  gameInitialState: (
+    state: GameStateSnapshot<SerializedPlayerState | SerializedOmniscientState>
+  ) => void;
   gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
   error: (message: string) => void;
 };

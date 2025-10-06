@@ -41,6 +41,10 @@ export class RoomManager {
     }
   }
 
+  hasRoom(id: string) {
+    return this.rooms.has(id);
+  }
+
   getRoom(id: string) {
     return this.rooms.get(id);
   }

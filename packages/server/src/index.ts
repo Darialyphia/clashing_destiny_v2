@@ -29,11 +29,6 @@ async function main() {
     });
 
     io.on('connection', async socket => {
-      const spectator = socket.handshake.query.spectator;
-      const isSpectator = spectator === 'true';
-
-      const gameId = socket.handshake.query.gameId as GameId;
-
       if (!isSpectator) {
         // handlePlayerSocket(io, socket, ongoingGames, gameId);
       } else {

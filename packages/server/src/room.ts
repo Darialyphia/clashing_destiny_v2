@@ -2,6 +2,9 @@ import { GAME_STATUS, type GameId, type GameStatus } from '@game/api';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { Ioserver, IoSocket } from './io';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
+import type { EmptyObject } from '@game/shared';
+import type { SerializedInput } from '@game/engine/src/input/input-system';
+import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 
 export type RoomOptions = {
   game: { id: GameId; status: GameStatus; players: Array<{ userId: string }> };
@@ -9,11 +12,13 @@ export type RoomOptions = {
 };
 
 export const ROOM_EVENTS = {
-  ALL_PLAYERS_JOINED: 'allPlayersJoined'
+  ALL_PLAYERS_JOINED: 'allPlayersJoined',
+  INPUT_END: 'inputEnd'
 } as const;
 
 type RoomEventMap = {
-  [ROOM_EVENTS.ALL_PLAYERS_JOINED]: any;
+  [ROOM_EVENTS.ALL_PLAYERS_JOINED]: EmptyObject;
+  [ROOM_EVENTS.INPUT_END]: SerializedInput[];
 };
 
 export class Room {
@@ -47,6 +52,36 @@ export class Room {
 
   async start() {
     await this.engine.initialize();
+
+    this.engine.on(GAME_EVENTS.INPUT_END, async () => {
+      await this.emitter.emit(ROOM_EVENTS.INPUT_END, this.engine.inputSystem.serialize());
+    });
+
+    this.players.forEach(playerSocket => {
+      this.handlePlayersubscription(playerSocket);
+    });
+    this.spectators.forEach(spectatorSocket => {
+      this.handleSpectatorSubscription(spectatorSocket);
+    });
+  }
+
+  private handleSpectatorSubscription(spectatorSocket: IoSocket) {
+    const state = this.engine.snapshotSystem.getLatestOmniscientSnapshot();
+    spectatorSocket.emit('gameInitialState', state);
+    this.engine.subscribeOmniscient(snapshot => {
+      spectatorSocket.emit('gameSnapshot', snapshot);
+    });
+  }
+
+  private handlePlayersubscription(playerSocket: IoSocket) {
+    const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
+      playerSocket.data.user.id
+    );
+    playerSocket.emit('gameInitialState', state);
+
+    this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
+      playerSocket.emit('gameSnapshot', snapshot);
+    });
   }
 
   async join(socket: IoSocket, type: 'spectator' | 'player') {
@@ -87,5 +122,9 @@ export class Room {
     }
     await socket.join(this.id);
     this.spectators.add(socket);
+  }
+
+  updateStatus(status: GameStatus) {
+    this.options.game.status = status;
   }
 }

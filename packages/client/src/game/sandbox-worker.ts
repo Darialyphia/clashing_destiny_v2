@@ -67,7 +67,6 @@ self.addEventListener('message', ({ data }) => {
         console.warn('Game not initialized yet, cannot rewind');
       }
       const history = game.inputSystem.serialize().slice(0, payload.step + 1);
-      console.log(payload.step, history);
       game = new Game({ ...game.options, history });
 
       await game.initialize();
