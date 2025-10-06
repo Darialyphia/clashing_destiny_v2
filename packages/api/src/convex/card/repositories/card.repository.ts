@@ -8,11 +8,11 @@ export class CardReadRepository {
 
   constructor(private ctx: { db: DatabaseReader }) {}
 
-  async findById(cardId: CardId) {
+  async getById(cardId: CardId) {
     return this.ctx.db.get(cardId);
   }
 
-  async findByOwnerId(ownerId: UserId) {
+  async getByOwnerId(ownerId: UserId) {
     return this.ctx.db
       .query('cards')
       .withIndex('by_owner_id', q => q.eq('ownerId', ownerId))

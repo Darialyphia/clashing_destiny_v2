@@ -77,5 +77,9 @@ export const ensureAuthenticated = (session: Nullable<AuthSession>) => {
   return session;
 };
 
+export const ensureValidApiKey = (providedKey: string) => {
+  if (providedKey !== process.env.GAME_SERVER_API_KEY) throw new AppError(`Unauthorized`);
+};
+
 export type QueryCtxWithSession = QueryCtx & { session: AuthSession | null };
 export type MutationCtxWithSession = MutationCtx & { session: AuthSession | null };

@@ -13,11 +13,11 @@ export class DeckReadRepository {
 
   constructor(private ctx: { db: DatabaseReader }) {}
 
-  async findById(id: DeckId) {
+  async getById(id: DeckId) {
     return this.ctx.db.get(id);
   }
 
-  async findByOwnerId(ownerId: UserId) {
+  async getByOwnerId(ownerId: UserId) {
     return this.ctx.db
       .query('decks')
       .withIndex('by_owner_id', q => q.eq('ownerId', ownerId))

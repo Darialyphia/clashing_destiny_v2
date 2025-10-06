@@ -2,15 +2,17 @@ import { defineTable } from 'convex/server';
 import { v, type Validator } from 'convex/values';
 import { GAME_STATUS, type GameStatus } from './game.constants';
 
+export const gamestatusValidator = v.union(
+  v.literal(GAME_STATUS.CANCELLED),
+  v.literal(GAME_STATUS.FINISHED),
+  v.literal(GAME_STATUS.ONGOING),
+  v.literal(GAME_STATUS.WAITING_FOR_PLAYERS)
+) as Validator<GameStatus>;
+
 export const gameSchemas = {
   games: defineTable({
     seed: v.string(),
-    status: v.union(
-      v.literal(GAME_STATUS.CANCELLED),
-      v.literal(GAME_STATUS.FINISHED),
-      v.literal(GAME_STATUS.ONGOING),
-      v.literal(GAME_STATUS.WAITING_FOR_PLAYERS)
-    ) as Validator<GameStatus>,
+    status: gamestatusValidator,
     winnerId: v.optional(v.id('users')),
     cancellationId: v.optional(v.id('_scheduled_functions'))
   }).index('by_status', ['status']),

@@ -21,7 +21,7 @@ export class GetMyCollectionUseCase implements UseCase<never, GetMyCollectionOut
   async execute(): Promise<GetMyCollectionOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
-    const cards = await this.ctx.cardReadRepo.findByOwnerId(session.userId);
+    const cards = await this.ctx.cardReadRepo.getByOwnerId(session.userId);
 
     return cards.map(card => ({
       id: card._id,

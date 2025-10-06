@@ -12,7 +12,6 @@ export class DeckSubscribers {
   }
 
   private async onAccountCreated(event: AccountCreatedEvent) {
-    console.log('Handling AccountCreatedEvent for userId:', event.userId);
     const starterDecks = premadeDecks.filter(deck => deck.isGrantedOnAccountCreation);
 
     for (const deck of starterDecks) {

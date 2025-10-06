@@ -37,7 +37,7 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
   private async populateDeckList(deckList: DeckDoc['mainDeck']) {
     return Promise.all(
       deckList.map(async item => {
-        const card = await this.ctx.cardReadRepo.findById(item.cardId);
+        const card = await this.ctx.cardReadRepo.getById(item.cardId);
         if (!card) {
           throw new Error(`Card with id ${item.cardId} not found`);
         }
@@ -66,7 +66,7 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
   async execute() {
     const session = ensureAuthenticated(this.ctx.session);
 
-    const decks = await this.ctx.deckReadRepo.findByOwnerId(session.userId);
+    const decks = await this.ctx.deckReadRepo.getByOwnerId(session.userId);
 
     const populatedDecks = await Promise.all(decks.map(deck => this.populateDeck(deck)));
 

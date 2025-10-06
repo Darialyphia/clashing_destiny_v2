@@ -1,27 +1,14 @@
-import "dotenv/config";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import { api } from "@game/api";
-import { ConvexHttpClient } from "convex/browser";
-import type { GameServer } from "./types";
-import type { GameId } from "@game/api/src/convex/game/entities/game.entity";
+import 'dotenv/config';
+import { api } from '@game/api';
+import type { GameId } from '@game/api/src/convex/game/entities/game.entity';
+import { httpServer, io } from './io';
 
 const PORT = process.env.PORT || 8000;
 
 type Game = any; // TODO Replace with Game type once implemented
 
 async function main() {
-  const ongoingGames = new Map<string, Game>();
   try {
-    const httpServer = createServer();
-    const io: GameServer = new Server(httpServer, {
-      cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
-      },
-    });
-    const convexClient = new ConvexHttpClient(process.env.CONVEX_URL!);
-
     httpServer.listen(PORT);
 
     io.use(async (socket, next) => {
@@ -30,21 +17,20 @@ async function main() {
 
         // @ts-expect-error
         const user = await client.query(api.auth.me, { sessionId });
-        if (!user) return next(new Error("Unauthorized"));
+        if (!user) return next(new Error('Unauthorized'));
 
-        socket.data.convexClient = convexClient;
         socket.data.user = user;
         socket.data.sessionId = sessionId;
         next();
       } catch (err) {
         console.error(err);
-        next(new Error("Unauthorized"));
+        next(new Error('Unauthorized'));
       }
     });
 
-    io.on("connection", async (socket) => {
+    io.on('connection', async socket => {
       const spectator = socket.handshake.query.spectator;
-      const isSpectator = spectator === "true";
+      const isSpectator = spectator === 'true';
 
       const gameId = socket.handshake.query.gameId as GameId;
 
@@ -59,11 +45,9 @@ async function main() {
   } catch (err) {
     console.error(`Process error: shutting down all ongoing games`);
     console.error(err);
-    await Promise.all(
-      [...ongoingGames.values()].map((game) => game.shutdown())
-    );
+    // @TODO gracefully shutdown all ongoing games
     process.exit(0);
   }
 }
 
-main();
+void main();

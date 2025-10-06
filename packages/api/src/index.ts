@@ -8,3 +8,5 @@ export type { DeckId } from './convex/deck/entities/deck.entity';
 export type { CardId } from './convex/card/entities/card.entity';
 export type { MatchmakingId } from './convex/matchmaking/entities/matchmaking.entity';
 export type { UserId } from './convex/users/entities/user.entity';
+export { GAME_STATUS, type GameStatus } from './convex/game/game.constants';
+export type { GameId } from './convex/game/entities/game.entity';

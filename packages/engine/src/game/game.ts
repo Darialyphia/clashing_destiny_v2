@@ -20,6 +20,7 @@ import { BoardSystem } from '../board/board.system';
 import { EffectChainSystem } from './systems/effect-chain.system';
 import { GAME_PHASES } from './game.enums';
 import { TurnSystem } from './systems/turn.system';
+import { CARDS_DICTIONARY } from '../card/sets';
 
 export type GameOptions = {
   id: string;
@@ -81,7 +82,7 @@ export class Game implements Serializable<SerializedGame> {
     this.id = options.id;
     this.config = Object.assign({}, defaultConfig, options.overrides.config);
     this.isSimulation = options.isSimulation ?? false;
-    this.cardPool = options.overrides.cardPool ?? {};
+    this.cardPool = options.overrides.cardPool ?? CARDS_DICTIONARY;
   }
 
   get winCondition() {

@@ -4,12 +4,13 @@ import type { Scheduler } from 'convex/server';
 import type { DeckId } from '../../deck/entities/deck.entity';
 import type { UserId } from '../../users/entities/user.entity';
 import { Game, type GameDoc, type GameId } from '../entities/game.entity';
-import { GAME_STATUS, GAME_TIMEOUT_MS } from '../game.constants';
+import { GAME_STATUS, GAME_TIMEOUT_MS, type GameStatus } from '../game.constants';
 import type { GameMapper } from '../mappers/game.mapper';
 import type {
   GamePlayerReadRepository,
   GamePlayerRepository
 } from './gamePlayer.repository';
+import { ONE_MINUTE_IN_MS } from '@game/shared';
 
 export class GameReadRepository {
   static INJECTION_KEY = 'gameReadRepo' as const;
@@ -27,6 +28,15 @@ export class GameReadRepository {
     if (!gamePlayer) return null;
 
     return this.ctx.db.get(gamePlayer.gameId);
+  }
+
+  async getLatestByStatus(status: GameStatus) {
+    return this.ctx.db
+      .query('games')
+      .withIndex('by_status', q =>
+        q.eq('status', status).gt('_creationTime', Date.now() - ONE_MINUTE_IN_MS * 60 * 2)
+      )
+      .collect();
   }
 }
 
@@ -93,7 +103,7 @@ export class GameRepository {
   async scheduleCancellation(game: Game) {
     const cancellationId = await this.ctx.scheduler.runAfter(
       GAME_TIMEOUT_MS,
-      internal.games.cancel,
+      internal.games.internalCancel,
       { gameId: game.id }
     );
 

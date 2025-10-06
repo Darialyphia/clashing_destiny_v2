@@ -56,6 +56,9 @@ import { CreateDeckUseCase } from '../deck/usecases/createDeck.usecase';
 import { UpdateDeckUseCase } from '../deck/usecases/updateDeck.usecase';
 import { SetupRankedGameUsecase } from '../game/usecases/setupRankedGame.usecase';
 import { GameSubscribers } from '../game/game.subscribers';
+import { StartGameUseCase } from '../game/usecases/startGame.usecase';
+import { GetLatestGamesUseCase } from '../game/usecases/getLatestGames.usecase';
+import { GetGameInfosUseCase } from '../game/usecases/getGameInfos.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -72,7 +75,7 @@ const makecontainer = (deps: DependenciesMap) => {
   Object.entries(deps)
     .filter(([, { eager }]) => eager)
     .forEach(([key]) => {
-      // Resolve eager dependencies immediately
+      // Resolve eager dependencies immediately, to start domain event subscribers etc
       container.resolve(key);
     });
 
@@ -110,7 +113,9 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [GetSessionUserUseCase.INJECTION_KEY]: { resolver: asClass(GetSessionUserUseCase) },
     [GetMatchmakingsUsecase.INJECTION_KEY]: { resolver: asClass(GetMatchmakingsUsecase) },
     [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) },
-    [GetDecksUseCase.INJECTION_KEY]: { resolver: asClass(GetDecksUseCase) }
+    [GetDecksUseCase.INJECTION_KEY]: { resolver: asClass(GetDecksUseCase) },
+    [GetLatestGamesUseCase.INJECTION_KEY]: { resolver: asClass(GetLatestGamesUseCase) },
+    [GetGameInfosUseCase.INJECTION_KEY]: { resolver: asClass(GetGameInfosUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;
@@ -158,6 +163,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [RunMatchmakingUseCase.INJECTION_KEY]: { resolver: asClass(RunMatchmakingUseCase) },
     [CancelGameUseCase.INJECTION_KEY]: { resolver: asClass(CancelGameUseCase) },
+    [StartGameUseCase.INJECTION_KEY]: { resolver: asClass(StartGameUseCase) },
     [GrantPremadeDeckUseCase.INJECTION_KEY]: {
       resolver: asClass(GrantPremadeDeckUseCase)
     },

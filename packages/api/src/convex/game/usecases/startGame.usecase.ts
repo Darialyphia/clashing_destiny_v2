@@ -1,29 +1,33 @@
-import { MutationUseCase } from '../../usecase';
+import type { UseCase } from '../../usecase';
 import { AppError, DomainError } from '../../utils/error';
 import type { GameId } from '../entities/game.entity';
+import type { GameRepository } from '../repositories/game.repository';
 
-export type CancelGameInput = {
+export type StartGameInput = {
   gameId: GameId;
 };
 
-export type CancelGameOutput = {
+export type StartGameOutput = {
   success: true;
 };
 
-export class CancelGameUseCase extends MutationUseCase<
-  CancelGameInput,
-  CancelGameOutput
-> {
-  static INJECTION_KEY = 'cancelGameUseCase' as const;
+export class StartGameUseCase implements UseCase<StartGameInput, StartGameOutput> {
+  static INJECTION_KEY = 'startGameUseCase' as const;
 
-  async execute(input: CancelGameInput): Promise<CancelGameOutput> {
+  constructor(
+    private ctx: {
+      gameRepo: GameRepository;
+    }
+  ) {}
+
+  async execute(input: StartGameInput): Promise<StartGameOutput> {
     const game = await this.ctx.gameRepo.getById(input.gameId);
     if (!game) {
       throw new AppError('Game not found');
     }
 
     if (!game.canCancel) {
-      throw new DomainError('Game is not in playing status');
+      throw new DomainError('Game is not in ongoing status');
     }
 
     game.cancel();
