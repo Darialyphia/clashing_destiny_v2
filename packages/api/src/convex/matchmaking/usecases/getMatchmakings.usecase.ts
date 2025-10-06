@@ -5,6 +5,7 @@ import type { MatchmakingReadRepository } from '../repositories/matchmaking.repo
 export type GetMatchmakingsOutput = Array<{
   id: MatchmakingId;
   name: string;
+  description: string;
   enabled: boolean;
 }>;
 
@@ -18,6 +19,7 @@ export class GetMatchmakingsUsecase implements UseCase<never, GetMatchmakingsOut
     return matchmakings.map(m => ({
       id: m._id,
       name: m.name,
+      description: m.description,
       enabled: m.enabled
     }));
   }

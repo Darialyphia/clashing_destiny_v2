@@ -8,6 +8,7 @@ export class MatchmakingMapper {
     return {
       _id: matchmaking.id,
       name: matchmaking.name,
+      description: matchmaking.description,
       enabled: matchmaking.enabled,
       nextInvocationId: matchmaking.nextInvocationId
     };

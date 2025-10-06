@@ -118,6 +118,9 @@ const tag = computed(() => {
   &.sm {
     font-size: var(--font-size-1);
   }
+  &.lg {
+    font-size: var(--font-size-5);
+  }
 }
 
 .content {

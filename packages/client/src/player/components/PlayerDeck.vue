@@ -81,7 +81,8 @@ const hero = computed(() => {
     center center,
     right calc(100% + 70px);
   background-size: 200%, calc(2px * 96);
-  border: solid 1px var(--primary);
+  padding: var(--size-2) var(--size-4);
+  border: solid 1px hsl(var(--color-primary-hsl) / 0.5);
 }
 
 .deck-name {

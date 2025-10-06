@@ -4,11 +4,11 @@ import { Server } from "socket.io";
 import { api } from "@game/api";
 import { ConvexHttpClient } from "convex/browser";
 import type { GameServer } from "./types";
-import type { Id } from "@game/api/src/convex/_generated/dataModel";
+import type { GameId } from "@game/api/src/convex/game/entities/game.entity";
 
 const PORT = process.env.PORT || 8000;
 
-type Game = any; // TODO Replace with your actual Game type
+type Game = any; // TODO Replace with Game type once implemented
 
 async function main() {
   const ongoingGames = new Map<string, Game>();
@@ -20,19 +20,19 @@ async function main() {
         methods: ["GET", "POST"],
       },
     });
+    const convexClient = new ConvexHttpClient(process.env.CONVEX_URL!);
 
     httpServer.listen(PORT);
 
     io.use(async (socket, next) => {
       try {
         const sessionId = socket.handshake.auth.sessionId;
-        const client = new ConvexHttpClient(process.env.CONVEX_URL!);
 
         // @ts-expect-error
         const user = await client.query(api.auth.me, { sessionId });
         if (!user) return next(new Error("Unauthorized"));
 
-        socket.data.convexClient = client;
+        socket.data.convexClient = convexClient;
         socket.data.user = user;
         socket.data.sessionId = sessionId;
         next();
@@ -46,7 +46,7 @@ async function main() {
       const spectator = socket.handshake.query.spectator;
       const isSpectator = spectator === "true";
 
-      const gameId = socket.handshake.query.gameId as Id<"games">;
+      const gameId = socket.handshake.query.gameId as GameId;
 
       if (!isSpectator) {
         // handlePlayerSocket(io, socket, ongoingGames, gameId);

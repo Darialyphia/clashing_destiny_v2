@@ -1,9 +1,21 @@
 import { internalMutation } from './_generated/server';
 
 const matchmakings = [
-  { name: 'Ranked', enabled: true },
-  { name: 'Casual', enabled: false },
-  { name: 'VS. AI', enabled: false }
+  {
+    name: 'Ranked',
+    enabled: true,
+    description: 'Climb the ranks in a competitive environment.'
+  },
+  {
+    name: 'Casual',
+    enabled: false,
+    description: 'Relaxed matches for fun and practice.'
+  },
+  {
+    name: 'VS. AI',
+    enabled: false,
+    description: 'Play against AI opponents.'
+  }
 ];
 export default internalMutation(async ({ db }) => {
   for (const matchmaking of matchmakings) {

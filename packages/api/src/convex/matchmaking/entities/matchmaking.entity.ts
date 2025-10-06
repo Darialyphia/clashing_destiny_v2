@@ -30,6 +30,10 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     return this.data.matchmaking.name;
   }
 
+  get description() {
+    return this.data.matchmaking.description;
+  }
+
   get startedAt() {
     return this.data.matchmaking.startedAt;
   }
