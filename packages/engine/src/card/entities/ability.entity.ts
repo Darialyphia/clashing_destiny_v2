@@ -1,4 +1,4 @@
-import type { EmptyObject, Serializable } from '@game/shared';
+import type { EmptyObject, MaybePromise, Serializable } from '@game/shared';
 import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
@@ -7,13 +7,15 @@ import {
   type SerializedAbility
 } from '../card-blueprint';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { DestinyCard } from './destiny.entity';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import { EFFECT_TYPE } from '../../game/effect-chain';
+import { CARD_SPEED } from '../card.enums';
+import type { SigilCard } from './sigil.entity';
 
 export const ABILITY_EVENTS = {
   ABILITY_BEFORE_USE: 'ability.before-use',
@@ -21,7 +23,7 @@ export const ABILITY_EVENTS = {
 } as const;
 
 export class AbilityBeforeUseEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard | ArtifactCard | DestinyCard; abilityId: string },
+  { card: AbilityOwner; abilityId: string },
   {
     card: string;
     abilityId: string;
@@ -36,7 +38,7 @@ export class AbilityBeforeUseEvent extends TypedSerializableEvent<
 }
 
 export class AbilityAfterUseEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard | ArtifactCard | DestinyCard; abilityId: string },
+  { card: AbilityOwner; abilityId: string },
   {
     card: string;
     abilityId: string;
@@ -55,7 +57,7 @@ export type AbilityEventMap = {
   [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
 };
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | DestinyCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard;
 
 export class Ability<T extends AbilityOwner>
   extends Entity<EmptyObject>
@@ -73,6 +75,10 @@ export class Ability<T extends AbilityOwner>
 
   get abilityId() {
     return this.blueprint.id;
+  }
+
+  get speed() {
+    return this.blueprint.speed;
   }
 
   get shouldExhaust() {
@@ -94,9 +100,7 @@ export class Ability<T extends AbilityOwner>
 
     const exhaustCondition = this.shouldExhaust ? !this.card.isExhausted : true;
 
-    const timingCondition = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(this.card.player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(this.card.player);
+    const timingCondition = this.game.interaction.isInteractive(this.card.player);
 
     return (
       this.card.player.cardManager.hand.length >= this.manaCost &&
@@ -107,44 +111,64 @@ export class Ability<T extends AbilityOwner>
     );
   }
 
-  async use() {
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
-    this.card.abilityTargets.set(this.blueprint.id, targets);
-
+  private async resolveEffect() {
     await this.game.emit(
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
     );
+    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id)!;
+    await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
+    abilityTargets.forEach(target => {
+      if (target instanceof Card) {
+        target.clearTargetedBy({ type: 'card', card: this.card });
+      }
+    });
+    this.card.abilityTargets.delete(this.blueprint.id);
+
+    await this.game.emit(
+      ABILITY_EVENTS.ABILITY_AFTER_USE,
+      new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
+    );
+  }
+
+  protected async insertInChainOrExecute(
+    targets: PreResponseTarget[],
+    onResolved?: () => MaybePromise<void>
+  ) {
+    const effect = {
+      type: EFFECT_TYPE.ABILITY,
+      source: this.card,
+      targets,
+      handler: async () => {
+        await this.resolveEffect();
+      }
+    };
+
+    if (this.speed === CARD_SPEED.FLASH) {
+      await effect.handler();
+      return this.game.inputSystem.askForPlayerInput();
+    }
+
+    if (this.game.effectChainSystem.currentChain) {
+      await this.game.effectChainSystem.addEffect(effect, this.card.player);
+    } else {
+      void this.game.effectChainSystem.createChain({
+        initialPlayer: this.card.player,
+        initialEffect: effect,
+        onResolved
+      });
+    }
+  }
+
+  async use(onResolved?: () => MaybePromise<void>) {
+    const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
+    this.card.abilityTargets.set(this.blueprint.id, targets);
 
     if (this.shouldExhaust) {
       await this.card.exhaust();
     }
 
-    const effect = {
-      source: this.card,
-      targets,
-      handler: async () => {
-        const abilityTargets = this.card.abilityTargets.get(this.blueprint.id)!;
-        await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
-        abilityTargets.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this.card });
-          }
-        });
-        this.card.abilityTargets.delete(this.blueprint.id);
-
-        await this.game.emit(
-          ABILITY_EVENTS.ABILITY_AFTER_USE,
-          new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
-        );
-      }
-    };
-
-    if (this.game.effectChainSystem.currentChain) {
-      this.game.effectChainSystem.addEffect(effect, this.card.player);
-    } else {
-      void this.game.effectChainSystem.createChain(this.card.player, effect);
-    }
+    await this.insertInChainOrExecute(targets, onResolved);
   }
 
   seal() {
@@ -164,6 +188,8 @@ export class Ability<T extends AbilityOwner>
       description: this.blueprint.description,
       name: this.blueprint.label,
       manaCost: this.manaCost,
+      speed: this.speed,
+      isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };

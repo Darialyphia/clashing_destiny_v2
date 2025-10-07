@@ -3,11 +3,11 @@ import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-e
 import { Modifier } from '../../../../modifier/modifier.entity';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import {
-  AFFINITIES,
   ARTIFACT_KINDS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 import type { HeroCard } from '../../../entities/hero.entity';
@@ -15,26 +15,29 @@ import type { HeroCard } from '../../../entities/hero.entity';
 export const rustyBlade: ArtifactBlueprint = {
   id: 'rusty-blade',
   name: 'Rusty Blade',
-  cardIconId: 'artifact-rusty-blade',
+  cardIconId: 'artifacts/rusty-blade',
   description: '',
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
   manaCost: 1,
+  speed: CARD_SPEED.SLOW,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.ARTIFACT,
-  affinity: AFFINITIES.NORMAL,
+  job: null,
+  spellSchool: null,
   durability: 1,
   subKind: ARTIFACT_KINDS.WEAPON,
   atkBonus: 2,
   abilities: [
     {
       id: 'rusty-blade-ability',
-      label: '@[exhaust]@ : +2 Attack',
-      description: `@[exhaust]@ -1@[durability]@ : This turn, your hero gain +2@[attack]@.`,
+      label: '@[exhaust]@ : Grant hero Attack',
+      description: `-1@[durability]@ @[exhaust]@ : This turn, your hero gain @[attack]@ equal to this card's Attack bonus.`,
       manaCost: 0,
       shouldExhaust: true,
+      speed: CARD_SPEED.FLASH,
       canUse(game, card) {
         return card.location === 'board';
       },
@@ -52,7 +55,7 @@ export const rustyBlade: ArtifactBlueprint = {
               new HeroInterceptorModifierMixin(game, {
                 key: 'atk',
                 interceptor(value) {
-                  return value + card.atkBonus;
+                  return value + card.atkBonus!;
                 }
               })
             ]

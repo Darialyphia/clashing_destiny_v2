@@ -1,11 +1,4 @@
 import { type Serializable } from '@game/shared';
-import { MinionCard, type SerializedMinionCard } from '../card/entities/minion.entity';
-import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
-import type {
-  ArtifactCard,
-  SerializedArtifactCard
-} from '../card/entities/artifact.entity';
-import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
@@ -14,23 +7,13 @@ import { CARD_DECK_SOURCES } from '../card/card.enums';
 
 export type MinionSlot = number;
 
-export type MainDeckCard = MinionCard | SpellCard | ArtifactCard;
-
-export const isMainDeckCard = (card: AnyCard): card is MainDeckCard => {
+export const isMainDeckCard = (card: AnyCard) => {
   return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
 };
 
-export type SerializedMainDeckCard =
-  | SerializedMinionCard
-  | SerializedSpellCard
-  | SerializedArtifactCard;
-
-export type DestinyDeckCard = HeroCard;
-
-export const isDestinyDeckCard = (card: AnyCard): card is DestinyDeckCard => {
+export const isDestinyDeckCard = (card: AnyCard) => {
   return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
 };
-export type SerializedDestinyDeckCard = SerializedHeroCard;
 
 export type SerializedBoard = {
   sides: [SerializedBoardSide, SerializedBoardSide];
@@ -50,8 +33,8 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
     return this.sides.flatMap(side => side.getAllCardsInPlay());
   }
 
-  getColumn(row: number) {
-    return new BoardColumn(this.game, row);
+  getColumn(slot: number) {
+    return new BoardColumn(this.game, slot);
   }
 
   serialize(): SerializedBoard {

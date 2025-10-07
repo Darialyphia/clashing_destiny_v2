@@ -12,17 +12,18 @@ import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
 import {
   CARD_KINDS,
-  type Affinity,
-  type ArtifactKind,
+  type SpellSchool,
   type CardKind,
-  type SpellKind
+  type HeroJob,
+  CARD_DECK_SOURCES
 } from '../../card/card.enums';
-import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { AbilityViewModel } from './ability.model';
+import { DeclareCounterAttackAction } from '../actions/declare-counter-attack';
+import { isDefined } from '@game/shared';
 
 type CardData =
   | SerializedSpellCard
@@ -77,7 +78,7 @@ export class CardViewModel {
   }
 
   get imagePath() {
-    return `/assets/icons/${this.data.cardIconId}.png`;
+    return `/assets/cards/${this.data.cardIconId}.png`;
   }
 
   get kind() {
@@ -88,7 +89,30 @@ export class CardViewModel {
     return this.data.rarity;
   }
 
+  get keywords() {
+    return (this.data.keywords ?? []) as string[];
+  }
+
+  get countdown() {
+    if ('countdown' in this.data) {
+      return this.data.countdown as number;
+    }
+
+    return null;
+  }
+
+  get maxCountdown() {
+    if ('maxCountdown' in this.data) {
+      return this.data.maxCountdown as number;
+    }
+
+    return null;
+  }
+
   get manaCost() {
+    if (this.source === CARD_DECK_SOURCES.DESTINY_DECK) {
+      return null;
+    }
     if ('manaCost' in this.data) {
       return this.data.manaCost as number;
     }
@@ -103,6 +127,9 @@ export class CardViewModel {
   }
 
   get destinyCost() {
+    if (this.source === CARD_DECK_SOURCES.MAIN_DECK) {
+      return null;
+    }
     if ('destinyCost' in this.data) {
       return this.data.destinyCost as number;
     }
@@ -143,6 +170,10 @@ export class CardViewModel {
       return this.data.atk as number;
     }
 
+    if ('atkBonus' in this.data) {
+      return this.data.atkBonus as number | null;
+    }
+
     return null;
   }
 
@@ -177,21 +208,36 @@ export class CardViewModel {
     return null;
   }
 
-  get subKind() {
-    if ('subKind' in this.data) {
-      return this.data.subKind as SpellKind | ArtifactKind;
-    }
-
-    return null;
+  get speed() {
+    return this.data.speed;
   }
 
-  get unlockableAffinities() {
-    if ('unlockableAffinities' in this.data) {
-      return this.data.unlockableAffinities as Affinity[];
+  get unlockedSpellSchools() {
+    if ('spellSchools' in this.data) {
+      return this.data.spellSchools as SpellSchool[];
     }
+
     return [];
   }
 
+  get spellSchool() {
+    if ('spellSchool' in this.data && this.data.spellSchool) {
+      return this.data.spellSchool as SpellSchool;
+    }
+
+    return undefined;
+  }
+
+  get jobs() {
+    if ('jobs' in this.data) {
+      return this.data.jobs as HeroJob[];
+    }
+    if ('job' in this.data) {
+      return [this.data.job].filter(isDefined) as HeroJob[];
+    }
+
+    return [];
+  }
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;
@@ -226,10 +272,6 @@ export class CardViewModel {
     return null;
   }
 
-  get affinity() {
-    return this.data.affinity;
-  }
-
   get canPlay() {
     return this.data.canPlay;
   }
@@ -253,18 +295,27 @@ export class CardViewModel {
     );
   }
 
+  get canCounterattack() {
+    if ('canCounterattack' in this.data) {
+      return this.data.canCounterattack as boolean;
+    }
+    return false;
+  }
+
   get canBeTargeted() {
     const client = this.getClient();
     const state = client.stateManager.state;
     const canSelect =
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-      state.interaction.ctx.elligibleCards.some(id => id === this.id);
+      state.interaction.ctx.elligibleCards.some(id => id === this.id) &&
+      client.getActivePlayerId() === client.playerId;
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
       state.phase.state === GAME_PHASES.ATTACK &&
       state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
-      state.phase.ctx.potentialTargets.some(id => id === this.id);
+      state.phase.ctx.potentialTargets.some(id => id === this.id) &&
+      client.getActivePlayerId() === client.playerId;
 
     return canSelect || canAttack;
   }
@@ -317,14 +368,14 @@ export class CardViewModel {
     const index = hand.findIndex(card => card.equals(this));
     if (index === -1) return;
 
-    this.player.playCard(index);
+    this.getClient().declarePlayCard(this);
   }
 
   get actions(): CardActionRule[] {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
-      new DeclareBlockerAction(this.getClient()),
+      new DeclareCounterAttackAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

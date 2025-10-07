@@ -46,7 +46,7 @@ watch(
       >
         <path d="M 2 2 L 2 9 L 7 6 L 2 3" class="arrow-head" />
       </marker> -->
-      <filter :id="shadowId">
+      <filter :id="shadowId" filterUnits="userSpaceOnUse">
         <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
       </filter>
     </defs>

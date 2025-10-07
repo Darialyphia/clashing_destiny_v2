@@ -11,6 +11,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -25,6 +26,7 @@ type Token =
   | { type: 'card'; card: CardBlueprint; text: string }
   | { type: 'exhaust' }
   | { type: 'mana'; text: string }
+  | { type: 'destiny'; text: string }
   | { type: 'spellpower' }
   | { type: 'health' }
   | { type: 'attack' }
@@ -32,8 +34,8 @@ type Token =
   | { type: 'level-bonus'; text: string }
   | { type: 'lineage-bonus'; text: string }
   | { type: 'missing-affinity'; text: string }
-  | { type: 'durability' };
-
+  | { type: 'durability' }
+  | { type: CardSpeed };
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
@@ -62,6 +64,9 @@ const tokens = computed<Token[]>(() => {
     if (part === '[exhaust]') return { type: 'exhaust' };
     if (part.startsWith('[mana]')) {
       return { type: 'mana', text: part.replace('[mana] ', '') };
+    }
+    if (part.startsWith('[destiny]')) {
+      return { type: 'destiny', text: part.replace('[destiny] ', '') };
     }
     if (part.startsWith('[value]')) {
       return { type: 'dynamic-value', text: part.replace('[value] ', '') };
@@ -96,6 +101,11 @@ const tokens = computed<Token[]>(() => {
         text: part.replace('[missing-affinity] ', '')
       };
     }
+    for (const speed of Object.values(CARD_SPEED)) {
+      if (part.startsWith(`[${speed}]`)) {
+        return { type: speed };
+      }
+    }
     return { type: 'text', text: part };
   });
 });
@@ -108,56 +118,73 @@ const tokens = computed<Token[]>(() => {
       :key="index"
       :class="highlighted && `token-${token.type}`"
     >
-      <img
-        v-if="token.type === 'exhaust'"
-        src="/assets/ui/ability-exhaust.png"
-        class="inline"
-      />
+      <UiSimpleTooltip v-if="token.type === 'exhaust'">
+        <template #trigger>
+          <img src="/assets/ui/ability-exhaust.png" class="inline" />
+        </template>
+        Exhaust the card.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'spellpower'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/ability-power.png" class="inline" />
-          </template>
-          <b>Spellpower</b>
-          : is used to enhance the effects of some cards.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'spellpower'">
+        <template #trigger>
+          <img src="/assets/ui/ability-power.png" class="inline" />
+        </template>
+        <b>Spellpower</b>
+        : is used to enhance the effects of some cards.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'health'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/hp.png" class="inline" />
-          </template>
-          <b>Health</b>
-          : represents the amount of damage a minion or hero can take before
-          being destroyed.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'health'">
+        <template #trigger>
+          <img src="/assets/ui/hp.png" class="inline" />
+        </template>
+        <b>Health</b>
+        : represents the amount of damage a minion or hero can take before being
+        destroyed.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'attack'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/attack.png" class="inline" />
-          </template>
-          <b>Attack</b>
-          : is the amount of damage a minion or hero can deal in combat.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'attack'">
+        <template #trigger>
+          <img src="/assets/ui/attack.png" class="inline" />
+        </template>
+        <b>Attack</b>
+        : is the amount of damage a minion or hero can deal in combat.
+      </UiSimpleTooltip>
 
-      <template v-else-if="token.type === 'durability'">
-        <UiSimpleTooltip>
-          <template #trigger>
-            <img src="/assets/ui/shield.png" class="inline" />
-          </template>
-          <b>Durability</b>
-          : when it reaches zero, the artifact is destroyed.
-        </UiSimpleTooltip>
-      </template>
+      <UiSimpleTooltip v-else-if="token.type === 'durability'">
+        <template #trigger>
+          <img src="/assets/ui/shield.png" class="inline" />
+        </template>
+        <b>Durability</b>
+        : when it reaches zero, the artifact is destroyed.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
+        <template #trigger>
+          <img src="/assets/ui/speed-slow.png" class="inline" />
+        </template>
+
+        This can only be activated at Slow speed.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
+        <template #trigger>
+          <img src="/assets/ui/speed-fast.png" class="inline" />
+        </template>
+
+        This can be activated at Fast speed.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FLASH">
+        <template #trigger>
+          <img src="/assets/ui/speed-flash.png" class="inline" />
+        </template>
+
+        This can is activated at Flash speed and resolves instantly.
+      </UiSimpleTooltip>
 
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
         <HoverCardTrigger>
-          <span tabindex="0">
+          <span tabindex="0" v-if="'text' in token">
             {{ token.text }}
           </span>
         </HoverCardTrigger>
@@ -181,13 +208,36 @@ const tokens = computed<Token[]>(() => {
 </template>
 
 <style scoped lang="postcss">
+.card-text {
+  white-space: pre-wrap;
+  color: #d7ad42;
+  color: #efef9f;
+  line-height: 1.3;
+}
+
 :is(.token-keyword, .token-card) {
   font-weight: var(--font-weight-7);
-  color: #ffb270;
+  color: #efef9f;
+  color: #d7ad42;
+  -webkit-text-stroke: 4px black;
+  paint-order: stroke fill;
 }
 
 .token-mana {
   background: url('/assets/ui/mana-cost.png') no-repeat center center;
+  background-size: cover;
+  font-weight: var(--font-weight-5);
+  border-radius: var(--radius-round);
+  width: 22px;
+  height: 20px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1px;
+  text-shadow: 0 2px 2px black;
+}
+.token-destiny {
+  background: url('/assets/ui/destiny-cost.png') no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
@@ -216,6 +266,7 @@ const tokens = computed<Token[]>(() => {
 .token-card {
   color: var(--lime-3);
 }
+/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
   transform: translateY(4px);
 }
@@ -243,6 +294,17 @@ const tokens = computed<Token[]>(() => {
     margin-inline: var(--size-1);
   }
 }
+.token-SLOW,
+.token-FAST,
+.token-FLASH {
+  img {
+    width: 22px;
+    height: 20px;
+    aspect-ratio: 1;
+    transform: translateY(6px);
+    margin-inline: var(--size-1);
+  }
+}
 .token-health {
   color: var(--pink-6);
   font-weight: var(--font-weight-5);
@@ -259,10 +321,5 @@ const tokens = computed<Token[]>(() => {
   padding: var(--size-3);
   color: var(--text-1);
   background-color: black;
-}
-
-.card-text {
-  white-space: pre-wrap;
-  color: #fcffcb;
 }
 </style>

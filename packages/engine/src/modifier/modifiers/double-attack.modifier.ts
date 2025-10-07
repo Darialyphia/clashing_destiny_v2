@@ -25,8 +25,6 @@ export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modif
         new GameEventModifierMixin(game, {
           eventName: 'combat.after-resolve-combat',
           handler: async event => {
-            if (!game.gamePhaseSystem.currentPlayer.equals(this.target.player)) return;
-
             if (!event.data.attacker.equals(this.target)) return;
 
             if (this.hasAttackedThisturn) return;

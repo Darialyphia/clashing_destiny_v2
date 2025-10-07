@@ -11,41 +11,35 @@ import {
   type SerializedMinionCard
 } from '../card/entities/minion.entity';
 import type { HeroCard, SerializedHeroCard } from '../card/entities/hero.entity';
-import type {
-  ArtifactCard,
-  SerializedArtifactCard
-} from '../card/entities/artifact.entity';
-import type { SerializedSpellCard, SpellCard } from '../card/entities/spell.entity';
+import type { SerializedArtifactCard } from '../card/entities/artifact.entity';
+import type { SerializedSpellCard } from '../card/entities/spell.entity';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
 import { Entity } from '../entity';
-import {
-  BoardMinionSlot,
-  type SerializedBoardMinionSlot
-} from './board-minion-slot.entity';
-import type { Attacker } from '../game/phases/combat.phase';
+import { BoardSlot, type SerializedBoardSlot } from './board-slot.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '../card/card.enums';
-import type { MinionPosition } from '../game/interactions/selecting-minion-slots.interaction';
+import type { BoardPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import { GAME_EVENTS } from '../game/game.events';
+import { BOARD_SLOT_ZONES, type BoardSlotZone } from './board.constants';
+import type { SigilCard } from '../card/entities/sigil.entity';
 
 export type MinionSlot = number;
 
 type MinionZone = {
   player: Player;
-  slots: Array<BoardMinionSlot>;
+  slots: Array<BoardSlot>;
   hasEmptySlot: boolean;
   minions: MinionCard[];
-  get(slot: number): BoardMinionSlot;
-  has(position: MinionPosition): boolean;
+  sigils: SigilCard[];
+  get(slot: number): BoardSlot;
+  has(position: BoardPosition): boolean;
 };
 
 type SerializedCreatureZone = {
-  slots: Array<SerializedBoardMinionSlot>;
+  slots: Array<SerializedBoardSlot>;
 };
-
-export type MainDeckCard = MinionCard | SpellCard | ArtifactCard;
 
 export type SerializedMainDeckCard =
   | SerializedMinionCard
@@ -61,8 +55,8 @@ export type SerializedBoardSide = {
     hero: string;
     artifacts: string[];
   };
-  attackZone: SerializedCreatureZone;
-  defenseZone: SerializedCreatureZone;
+  frontRow: SerializedCreatureZone;
+  backRow: SerializedCreatureZone;
   hand: string[];
   destinyZone: string[];
   mainDeck: { total: number; remaining: number };
@@ -80,8 +74,8 @@ export class BoardSide
   implements Serializable<SerializedBoardSide>
 {
   readonly player: Player;
-  private _attackZone: MinionZone;
-  private _defenseZone: MinionZone;
+  private _frontRow: MinionZone;
+  private _backRow: MinionZone;
 
   constructor(
     private game: Game,
@@ -89,11 +83,11 @@ export class BoardSide
   ) {
     super(`board-side-${player.id}`, {});
     this.player = player;
-    this._attackZone = {
+    this._frontRow = {
       player,
       slots: Array.from(
         { length: this.game.config.ATTACK_ZONE_SLOTS },
-        (_, index) => new BoardMinionSlot(player, 'attack', index)
+        (_, index) => new BoardSlot(player, BOARD_SLOT_ZONES.FRONT_ROW, index)
       ),
       get hasEmptySlot() {
         return this.slots.some(slot => !slot.isOccupied);
@@ -101,18 +95,21 @@ export class BoardSide
       get minions() {
         return this.slots.map(slot => slot.minion).filter(isDefined);
       },
-      has(position: MinionPosition) {
+      get sigils() {
+        return this.slots.map(slot => slot.sigil).filter(isDefined);
+      },
+      has(position: BoardPosition) {
         return this.slots.some(slot => slot.isSame(position));
       },
-      get(slot: MinionSlot): BoardMinionSlot {
+      get(slot: MinionSlot): BoardSlot {
         return this.slots[slot];
       }
     };
-    this._defenseZone = {
+    this._backRow = {
       player,
       slots: Array.from(
         { length: this.game.config.DEFENSE_ZONE_SLOTS },
-        (_, index) => new BoardMinionSlot(player, 'defense', index)
+        (_, index) => new BoardSlot(player, BOARD_SLOT_ZONES.BACK_ROW, index)
       ),
       get hasEmptySlot() {
         return this.slots.some(slot => !slot.isOccupied);
@@ -120,10 +117,13 @@ export class BoardSide
       get minions() {
         return this.slots.map(slot => slot.minion).filter(isDefined);
       },
-      has(position: MinionPosition) {
+      get sigils() {
+        return this.slots.map(slot => slot.sigil).filter(isDefined);
+      },
+      has(position: BoardPosition) {
         return this.slots.some(slot => slot.isSame(position));
       },
-      get(slot: MinionSlot): BoardMinionSlot {
+      get(slot: MinionSlot): BoardSlot {
         return this.slots[slot];
       }
     };
@@ -136,43 +136,46 @@ export class BoardSide
     };
   }
 
-  get attackZone(): MinionZone {
-    return this._attackZone;
+  get frontRow(): MinionZone {
+    return this._frontRow;
   }
 
-  get defenseZone(): MinionZone {
-    return this._defenseZone;
+  get backRow(): MinionZone {
+    return this._backRow;
   }
 
-  private getZone(zone: 'attack' | 'defense'): MinionZone {
-    return zone === 'attack' ? this.attackZone : this.defenseZone;
+  private getZone(zone: BoardSlotZone): MinionZone {
+    return zone === BOARD_SLOT_ZONES.FRONT_ROW ? this.frontRow : this.backRow;
   }
 
-  getPositionFor(card: MinionCard) {
-    const attackZoneIndex = this.attackZone.slots.findIndex(slot =>
-      slot.minion?.equals(card)
+  getPositionFor(card: MinionCard | SigilCard) {
+    const frontRowIndex = this.frontRow.slots.findIndex(
+      slot => slot.minion?.equals(card) ?? slot.sigil?.equals(card)
     );
-    if (attackZoneIndex >= 0) {
-      return { zone: 'attack' as const, slot: attackZoneIndex as MinionSlot };
+    if (frontRowIndex >= 0) {
+      return {
+        zone: BOARD_SLOT_ZONES.FRONT_ROW,
+        slot: frontRowIndex as MinionSlot
+      };
     }
 
-    const defenseZoneIndex = this.defenseZone.slots.findIndex(slot =>
-      slot.minion?.equals(card)
+    const backRowIndex = this.backRow.slots.findIndex(
+      slot => slot.minion?.equals(card) ?? slot.sigil?.equals(card)
     );
-    if (defenseZoneIndex >= 0) {
-      return { zone: 'defense' as const, slot: defenseZoneIndex as MinionSlot };
+    if (backRowIndex >= 0) {
+      return { zone: BOARD_SLOT_ZONES.BACK_ROW, slot: backRowIndex as MinionSlot };
     }
 
     return null;
   }
 
   getZoneFor(card: MinionCard) {
-    const isInAttack = this.attackZone.slots.some(creature => creature?.equals(card));
+    const isInAttack = this.frontRow.slots.some(creature => creature?.equals(card));
     if (isInAttack) {
       return 'attack' as const;
     }
 
-    const isInDefense = this.defenseZone.slots.some(creature => creature?.equals(card));
+    const isInDefense = this.backRow.slots.some(creature => creature?.equals(card));
     if (isInDefense) {
       return 'defense' as const;
     }
@@ -180,34 +183,28 @@ export class BoardSide
     return null;
   }
 
-  getMinionAt(zone: 'attack' | 'defense', slot: MinionSlot): Nullable<MinionCard> {
+  getMinionAt(zone: BoardSlotZone, slot: MinionSlot): Nullable<MinionCard> {
     return this.getZone(zone).slots[slot].minion;
-  }
-
-  getAllAttackTargets(): Attacker[] {
-    return [
-      ...this.attackZone.slots.map(slot => slot.minion).filter(isDefined),
-      ...this.defenseZone.slots.map(slot => slot.minion).filter(isDefined),
-      this.heroZone.hero
-    ];
   }
 
   getAllCardsInPlay(): AnyCard[] {
     return [
-      ...this.attackZone.slots.flatMap(slot => {
-        if (!slot.minion) return slot.modifiers.list.map(modifier => modifier.source);
+      ...this.frontRow.slots.flatMap(slot => {
         return [
           ...slot.modifiers.list.map(modifier => modifier.source),
           slot.minion,
-          ...slot.minion.modifiers.list.map(modifier => modifier.source)
-        ];
+          ...(slot.minion?.modifiers.list.map(modifier => modifier.source) ?? []),
+          slot.sigil,
+          ...(slot.sigil?.modifiers.list.map(modifier => modifier.source) ?? [])
+        ].filter(isDefined);
       }),
-      ...this.defenseZone.slots.flatMap(slot => {
-        if (!slot.minion) return slot.modifiers.list.map(modifier => modifier.source);
+      ...this.backRow.slots.flatMap(slot => {
         return [
           ...slot.modifiers.list.map(modifier => modifier.source),
           slot.minion,
-          ...slot.minion.modifiers.list.map(modifier => modifier.source)
+          ...(slot.minion?.modifiers.list.map(modifier => modifier.source) ?? []),
+          slot.sigil,
+          ...(slot.sigil?.modifiers.list.map(modifier => modifier.source) ?? [])
         ];
       }),
       this.heroZone.hero,
@@ -218,53 +215,52 @@ export class BoardSide
     ].filter(isDefined);
   }
 
-  summonMinion(card: MinionCard, zone: 'attack' | 'defense', slot: MinionSlot) {
-    assert(!this.isOccupied(zone, slot), new CreatureSlotAlreadyOccupiedError());
+  summonMinion(card: MinionCard, zone: BoardSlotZone, slot: MinionSlot) {
+    assert(!this.isOccupied(zone, slot), new BoardSlotAlreadyOccupiedError());
 
-    this.getZone(zone).slots[slot].summon(card);
+    this.getZone(zone).slots[slot].summonMinion(card);
   }
 
-  isOccupied(zone: 'attack' | 'defense', slot: MinionSlot): boolean {
+  summonSigil(card: SigilCard, zone: BoardSlotZone, slot: MinionSlot) {
+    assert(!this.isOccupied(zone, slot), new BoardSlotAlreadyOccupiedError());
+
+    this.getZone(zone).slots[slot].summonSigil(card);
+  }
+
+  isOccupied(zone: BoardSlotZone, slot: MinionSlot): boolean {
     return this.getZone(zone).slots[slot].isOccupied;
   }
 
   get hasUnoccupiedSlot() {
-    return (
-      this.attackZone.slots.some(slot => !slot.isOccupied) ||
-      this.defenseZone.slots.some(slot => !slot.isOccupied)
-    );
+    return this.frontRow.hasEmptySlot || this.backRow.hasEmptySlot;
   }
 
   get unoccupiedSlots() {
     return [
-      ...this.attackZone.slots
-        .filter(slot => !slot.isOccupied)
-        .map(slot => ({ zone: 'attack' as const, slot: slot })),
-      ...this.defenseZone.slots
-        .filter(slot => !slot.isOccupied)
-        .map(slot => ({ zone: 'defense' as const, slot: slot }))
+      ...this.frontRow.slots.filter(slot => !slot.isOccupied),
+      ...this.backRow.slots.filter(slot => !slot.isOccupied)
     ];
   }
 
-  getSlot(zone: 'attack' | 'defense', slot: number): BoardMinionSlot | null {
+  getSlot(zone: BoardSlotZone, slot: number): BoardSlot | null {
     return this.getZone(zone).slots[slot] ?? null;
   }
 
-  getMinions(zone: 'attack' | 'defense'): MinionCard[] {
+  getMinions(zone: BoardSlotZone): MinionCard[] {
     return this.getZone(zone)
       .slots.map(slot => slot.minion)
       .filter(isDefined);
   }
 
   getAllMinions(): MinionCard[] {
-    return [...this.attackZone.slots, ...this.defenseZone.slots]
+    return [...this.frontRow.slots, ...this.backRow.slots]
       .map(slot => slot.minion)
       .filter(isDefined);
   }
 
   async moveMinion(
-    from: { zone: 'attack' | 'defense'; slot: MinionSlot },
-    to: { zone: 'attack' | 'defense'; slot: MinionSlot },
+    from: { zone: BoardSlotZone; slot: MinionSlot },
+    to: { zone: BoardSlotZone; slot: MinionSlot },
     { allowSwap = false }: { allowSwap: boolean } = { allowSwap: false }
   ) {
     if (from.zone === to.zone && from.slot === to.slot) return;
@@ -296,8 +292,8 @@ export class BoardSide
         })
       );
       const otherMinion = toSlot.removeMinion();
-      toSlot.summon(minion);
-      fromSlot.summon(otherMinion);
+      toSlot.summonMinion(minion);
+      fromSlot.summonMinion(otherMinion);
       await this.game.emit(
         GAME_EVENTS.MINION_AFTER_MOVE,
         new MinionMoveEvent({
@@ -316,7 +312,7 @@ export class BoardSide
       );
       return;
     }
-    toSlot.summon(minion);
+    toSlot.summonMinion(minion);
     await this.game.emit(
       GAME_EVENTS.MINION_AFTER_MOVE,
       new MinionMoveEvent({
@@ -329,22 +325,28 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(
-        CARD_KINDS.HERO,
-        CARD_KINDS.SPELL,
-        CARD_KINDS.ARTIFACT,
-        CARD_KINDS.DESTINY,
-        () => {}
-      )
+      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {})
       .with(CARD_KINDS.MINION, () => {
-        this.attackZone.slots.forEach(slot => {
+        this.frontRow.slots.forEach(slot => {
           if (slot.minion?.equals(card)) {
             slot.removeMinion();
           }
         });
-        this.defenseZone.slots.forEach(slot => {
+        this.backRow.slots.forEach(slot => {
           if (slot.minion?.equals(card)) {
             slot.removeMinion();
+          }
+        });
+      })
+      .with(CARD_KINDS.SIGIL, () => {
+        this.frontRow.slots.forEach(slot => {
+          if (slot.sigil?.equals(card)) {
+            slot.removeSigil();
+          }
+        });
+        this.backRow.slots.forEach(slot => {
+          if (slot.sigil?.equals(card)) {
+            slot.removeSigil();
           }
         });
       })
@@ -358,11 +360,11 @@ export class BoardSide
         hero: this.heroZone.hero.id,
         artifacts: this.heroZone.artifacts.map(artifact => artifact.id)
       },
-      attackZone: {
-        slots: this.attackZone.slots.map(slot => slot.serialize())
+      frontRow: {
+        slots: this.frontRow.slots.map(slot => slot.serialize())
       },
-      defenseZone: {
-        slots: this.defenseZone.slots.map(slot => slot.serialize())
+      backRow: {
+        slots: this.backRow.slots.map(slot => slot.serialize())
       },
       banishPile: [...this.player.cardManager.banishPile].map(card => card.id),
       discardPile: [...this.player.cardManager.discardPile].map(card => card.id),
@@ -377,8 +379,8 @@ export class BoardSide
   }
 }
 
-export class CreatureSlotAlreadyOccupiedError extends Error {
+export class BoardSlotAlreadyOccupiedError extends Error {
   constructor() {
-    super('Creature slot is already occupied');
+    super('Board slot is already occupied');
   }
 }

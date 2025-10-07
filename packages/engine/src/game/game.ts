@@ -19,6 +19,8 @@ import { GameInteractionSystem } from './systems/game-interaction.system';
 import { BoardSystem } from '../board/board.system';
 import { EffectChainSystem } from './systems/effect-chain.system';
 import { GAME_PHASES } from './game.enums';
+import { TurnSystem } from './systems/turn.system';
+import { CARDS_DICTIONARY } from '../card/sets';
 
 export type GameOptions = {
   id: string;
@@ -62,6 +64,8 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly effectChainSystem = new EffectChainSystem(this);
 
+  readonly turnSystem = new TurnSystem(this);
+
   // readonly unitSystem = new UnitSystem(this);
 
   // readonly interactableSystem = new InteractableSystem(this);
@@ -74,11 +78,15 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly cardPool: IndexedRecord<CardBlueprint, 'id'>;
 
+  isInitialized = false;
+
+  isInitializing = false;
+
   constructor(readonly options: GameOptions) {
     this.id = options.id;
     this.config = Object.assign({}, defaultConfig, options.overrides.config);
     this.isSimulation = options.isSimulation ?? false;
-    this.cardPool = options.overrides.cardPool ?? {};
+    this.cardPool = options.overrides.cardPool ?? CARDS_DICTIONARY;
   }
 
   get winCondition() {
@@ -89,6 +97,10 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   async initialize() {
+    if (this.isInitialized) return;
+    if (this.isInitializing) return;
+    this.isInitializing = true;
+
     const start = performance.now();
     // const now = start;
 
@@ -134,6 +146,12 @@ export class Game implements Serializable<SerializedGame> {
     // );
     // now = performance.now();
 
+    await this.turnSystem.initialize();
+    // console.log(
+    //   `Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    // );
+    // now = performance.now();
+
     this.inputSystem.initialize();
     // console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     // now = performance.now();
@@ -144,11 +162,12 @@ export class Game implements Serializable<SerializedGame> {
     if (this.options.history) {
       await this.inputSystem.applyHistory(this.options.history);
     }
-    this.snapshotSystem.takeSnapshot();
+    await this.snapshotSystem.takeSnapshot();
     console.log(
       `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,
       'color: blue; font-weight: bold;'
     );
+    this.isInitialized = true;
   }
 
   serialize() {
@@ -172,9 +191,30 @@ export class Game implements Serializable<SerializedGame> {
     return this.emitter.off.bind(this.emitter);
   }
 
+  get activePlayer() {
+    if (this.effectChainSystem.currentChain) {
+      return this.effectChainSystem.currentChain.currentPlayer;
+    }
+
+    return this.turnSystem.initiativePlayer;
+  }
+
+  onActivePlayerChange(cb: (player: Player) => void) {
+    let current = this.activePlayer;
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, () => {
+      if (this.activePlayer.equals(current)) return;
+      current = this.activePlayer;
+      cb(this.activePlayer);
+    });
+  }
+
+  onTurnStart(cb: () => void) {
+    this.on(GAME_EVENTS.TURN_START, cb);
+  }
+
   subscribeOmniscient(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
-      cb(this.snapshotSystem.getLatestOmniscientDiffSnapshot())
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getOmniscientDiffSnapshotAt(e.data.id))
     );
   }
 
@@ -182,8 +222,8 @@ export class Game implements Serializable<SerializedGame> {
     id: string,
     cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void
   ) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, () =>
-      cb(this.snapshotSystem.getLatestDiffSnapshotForPlayer(id))
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getDiffSnapshotForPlayerAt(id, e.data.id))
     );
   }
 

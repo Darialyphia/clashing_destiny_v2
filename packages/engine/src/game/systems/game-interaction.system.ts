@@ -14,16 +14,18 @@ import type { Player } from '../../player/player.entity';
 import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
 import {
   SelectingMinionSlotsContext,
-  type MinionPosition
+  type BoardPosition
 } from '../interactions/selecting-minion-slots.interaction';
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { ChoosingAffinityContext } from '../interactions/choosing-affinity.interaction';
-import type { Affinity } from '../../card/card.enums';
+import { CARD_DECK_SOURCES } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { UseAbilityContext } from '../interactions/use-ability.interaction';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import { GAME_EVENTS } from '../game.events';
+import { CardDeclareUseAbilityEvent } from '../../card/card.events';
 
 export const INTERACTION_STATES = {
   IDLE: 'idle',
@@ -219,6 +221,16 @@ export class GameInteractionSystem
 
   shutdown() {}
 
+  get interactivePlayer() {
+    return this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.currentPlayer
+      : this.game.turnSystem.initiativePlayer;
+  }
+
+  isInteractive(player: Player) {
+    return player.equals(this.interactivePlayer);
+  }
+
   serialize() {
     const context = this.getContext();
     return {
@@ -254,9 +266,9 @@ export class GameInteractionSystem
   }
 
   async selectMinionSlot(options: {
-    isElligible: (position: MinionPosition, selectedSlots: MinionPosition[]) => boolean;
-    canCommit: (selectedSlots: MinionPosition[]) => boolean;
-    isDone(selectedSlots: MinionPosition[]): boolean;
+    isElligible: (position: BoardPosition, selectedSlots: BoardPosition[]) => boolean;
+    canCommit: (selectedSlots: BoardPosition[]) => boolean;
+    isDone(selectedSlots: BoardPosition[]): boolean;
     player: Player;
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_MINION_SLOT);
@@ -265,7 +277,7 @@ export class GameInteractionSystem
       options
     );
 
-    return this.game.inputSystem.pause<MinionPosition[]>();
+    return this.game.inputSystem.pause<BoardPosition[]>();
   }
 
   async chooseCards<T extends AnyCard>(options: {
@@ -280,31 +292,17 @@ export class GameInteractionSystem
       this.game,
       options
     );
-
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async chooseAffinity(options: { player: Player; choices: Affinity[]; label: string }) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_AFFINITY);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_AFFINITY].create(
-      this.game,
-      options
-    );
-    return this.game.inputSystem.pause<Affinity | null>();
-  }
-
-  async declarePlayCardIntent(index: number, player: Player) {
+  async declarePlayCardIntent(card: AnyCard, player: Player) {
     assert(
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
     );
 
-    const canPlay = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(player);
-    assert(canPlay, new IllegalCardPlayedError());
+    assert(this.isInteractive(player), new IllegalCardPlayedError());
 
-    const card = player.cardManager.getCardInHandAt(index);
     assert(card, new IllegalCardPlayedError());
     assert(card.canPlay(), new IllegalCardPlayedError());
 
@@ -317,11 +315,11 @@ export class GameInteractionSystem
         player
       }
     );
-    if (card.manaCost === 0) {
-      await this.getContext<'playing_card'>().ctx.commit(player, []);
-    } else {
-      await this.game.inputSystem.askForPlayerInput();
+    if (card.manaCost === 0 || card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
+      await this._ctx.commit(this._ctx.player, []);
     }
+
+    await this.game.inputSystem.askForPlayerInput();
   }
 
   async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
@@ -330,22 +328,30 @@ export class GameInteractionSystem
       new CorruptedInteractionContextError()
     );
 
-    const canUse = this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.canAddEffect(player)
-      : this.game.gamePhaseSystem.currentPlayer.equals(player);
-    assert(canUse, new IllegalCardPlayedError());
+    assert(this.isInteractive(player), new IllegalCardPlayedError());
 
     assert(ability.canUse, new IllegalCardPlayedError());
-
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
-    this._ctx = await UseAbilityContext.create(this.game, { ability, player });
-
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.USING_ABILITY].create(
+      this.game,
+      {
+        ability,
+        player
+      }
+    );
+    await this.game.emit(
+      GAME_EVENTS.CARD_DECLARE_USE_ABILITY,
+      new CardDeclareUseAbilityEvent({
+        card: ability.card,
+        abilityId: ability.abilityId
+      })
+    );
     if (ability.manaCost === 0) {
-      await this.getContext<'using_ability'>().ctx.commit(player, []);
-    } else {
-      await this.game.inputSystem.askForPlayerInput();
+      await this._ctx.commit(this._ctx.player, []);
     }
+    await this.game.inputSystem.askForPlayerInput();
   }
+
   onInteractionEnd() {
     this._ctx = new IdleContext(this.game);
   }

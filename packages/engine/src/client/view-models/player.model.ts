@@ -45,10 +45,6 @@ export class PlayerViewModel {
     return this.data.maxHp;
   }
 
-  get unlockedAffinities() {
-    return this.data.unlockedAffinities;
-  }
-
   get handSize() {
     return this.data.handSize;
   }
@@ -57,8 +53,12 @@ export class PlayerViewModel {
     return this.data.influence;
   }
 
-  get remainingCardsInDeck() {
-    return this.data.remainingCardsInDeck;
+  get remainingCardsInMainDeck() {
+    return this.data.remainingCardsInMainDeck;
+  }
+
+  get remainingCardsInDestinyDeck() {
+    return this.data.remainingCardsInDestinyDeck;
   }
 
   get isPlayer1() {
@@ -83,30 +83,10 @@ export class PlayerViewModel {
     });
   }
 
-  get unlockedDestinies() {
-    return this.data.unlockedDestinyCards.map(cardId => {
-      return this.getEntities()[cardId] as CardViewModel;
-    });
-  }
-
   get opponent() {
     const entity = Object.values(this.getEntities()).find(
       entity => entity instanceof PlayerViewModel && entity.id !== this.id
     );
     return entity as PlayerViewModel;
-  }
-
-  playCard(index: number) {
-    const card = this.hand[index];
-    if (!card) return;
-    if (!card.canPlay) return;
-
-    this.getClient().networkAdapter.dispatch({
-      type: 'declarePlayCard',
-      payload: {
-        playerId: this.data.id,
-        index: index
-      }
-    });
   }
 }

@@ -2,74 +2,56 @@ import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { multipleEmptyAllySlot } from '../../../card-utils';
 import {
-  AFFINITIES,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
-  RARITIES,
-  SPELL_KINDS
+  CARD_SPEED,
+  RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
-import { friendlySlime } from '../minions/friendly-slime';
-import type { BetterExtract } from '@game/shared';
-import type { GamePhase } from '../../../../game/game.enums';
-import { GAME_EVENTS } from '../../../../game/game.events';
-import { TrapModifier } from '../../../../modifier/modifiers/trap.modifier';
+import { friendlySlime } from '../minions/friendlySlime';
+import type { BoardPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
+import { InterceptModifier } from '../../../../modifier/modifiers/intercept.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const slimesToTheRescue: SpellBlueprint = {
   id: 'slimes-to-the-rescue',
-  name: 'Slimes, to the Rescue!',
-  cardIconId: 'spell-slime-to-the-rescue',
+  name: 'Slimes, To The Rescue!',
+  cardIconId: 'spells/slimes-to-the-rescue',
   description: dedent`
-  Summon up to 2 @Friendly Slime@ in the Defense Zone.
-
-  @Trap@: An enemy declares an attack on your Hero.
+  You can only play this card if your opponent controls more minions than you.
+  Summon 2 ${friendlySlime.name} and give them @Intercept@ this turn.
   `,
   collectable: true,
   unique: false,
   manaCost: 2,
-  affinity: AFFINITIES.NORMAL,
+  speed: CARD_SPEED.FLASH,
+  spellSchool: null,
+  job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.RARE,
-  subKind: SPELL_KINDS.BURST,
+  rarity: RARITIES.COMMON,
   tags: [],
-  canPlay: multipleEmptyAllySlot.canPlay(1),
+  canPlay: (game, card) =>
+    multipleEmptyAllySlot.canPlay(1)(game, card) &&
+    card.player.opponent.minions.length > card.player.minions.length,
   getPreResponseTargets(game, card) {
     return multipleEmptyAllySlot.getPreResponseTargets({
       min: 1,
-      max: 2,
-      zone: 'defense'
+      max: 2
     })(game, card);
   },
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new TrapModifier(game, card, {
-        eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
-        predicate: event => {
-          if (!event.data.target.player.equals(card.player)) return false;
-          return event.data.target.equals(card.player.hero);
-        },
-        async handler() {
-          const phaseCtx =
-            game.gamePhaseSystem.getContext<BetterExtract<GamePhase, 'attack_phase'>>();
-
-          const targets = (await card.blueprint.getPreResponseTargets(
-            game,
-            card
-          )) as MinionPosition[];
-
-          await card.playWithTargets(targets);
-        }
-      })
-    );
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
-    for (const target of targets as MinionPosition[]) {
+    for (const target of targets as BoardPosition[]) {
       const slime = await card.player.generateCard<MinionCard>(friendlySlime.id);
-      await slime.playAt(target);
+      await slime.playImmediatelyAt(target);
+      await slime.modifiers.add(
+        new InterceptModifier(game, slime, {
+          mixins: [new UntilEndOfTurnModifierMixin(game)]
+        })
+      );
     }
   }
 };

@@ -4,7 +4,7 @@ import { InputError } from '../input/input-errors';
 import type { SerializedInput } from '../input/input-system';
 import { StarEvent, TypedSerializableEvent } from '../utils/typed-emitter';
 import type { SerializedGame } from './game';
-import { GAME_PHASE_EVENTS } from './game.enums';
+import { GAME_PHASE_EVENTS, TURN_EVENTS } from './game.enums';
 import type { GamePhaseEventMap } from './systems/game-phase.system';
 import {
   MODIFIER_EVENTS,
@@ -23,11 +23,11 @@ import {
 } from '../card/entities/artifact.entity';
 import { PLAYER_EVENTS } from '../player/player.enums';
 import type { PlayerEventMap } from '../player/player.events';
-import {
-  DESTINY_EVENTS,
-  type DestinyCardEventMap
-} from '../card/entities/destiny.entity';
 import { ABILITY_EVENTS, type AbilityEventMap } from '../card/entities/ability.entity';
+import type { TurnEventMap } from './systems/turn.system';
+import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
+import { SIGIL_EVENTS, type SigilEventMap } from '../card/entities/sigil.entity';
+import type { Player } from '../player/player.entity';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -56,6 +56,17 @@ export class GameInputQueueFlushedEvent extends TypedSerializableEvent<
   }
 }
 
+export class GameOverEvent extends TypedSerializableEvent<
+  { winners: Player[] },
+  { winners: string[] }
+> {
+  serialize() {
+    return {
+      winners: this.data.winners.map(p => p.id)
+    };
+  }
+}
+
 export class GameErrorEvent extends TypedSerializableEvent<
   { error: Error; debugDump: SerializedGame },
   { error: string; isFatal: boolean; debugDump: SerializedGame }
@@ -76,11 +87,13 @@ export class GameReadyEvent extends TypedSerializableEvent<EmptyObject, EmptyObj
 }
 
 export class GameNewSnapshotEvent extends TypedSerializableEvent<
-  EmptyObject,
-  EmptyObject
+  { id: number },
+  { id: number }
 > {
   serialize() {
-    return {};
+    return {
+      id: this.data.id
+    };
   }
 }
 
@@ -114,6 +127,7 @@ type GameEventsBase = {
   'game.input-queue-flushed': GameInputQueueFlushedEvent;
   'game.input-required': GameInputRequiredEvent;
   'game.error': GameErrorEvent;
+  'game.over': GameOverEvent;
   'game.ready': GameReadyEvent;
   'game.modifier-event': GameModifierEvent;
   'game.new-snapshot': GameNewSnapshotEvent;
@@ -128,10 +142,13 @@ export type GameEventMap = Prettify<
     MinionCardEventMap &
     HeroCardEventMap &
     ArtifactCardEventMap &
+    SigilEventMap &
     PlayerEventMap &
-    DestinyCardEventMap &
-    AbilityEventMap
+    AbilityEventMap &
+    TurnEventMap &
+    EffectChainEventMap
 >;
+
 export type GameEventName = keyof GameEventMap;
 
 export type GameStarEvent = StarEvent<GameEventMap>;
@@ -143,6 +160,8 @@ export const GAME_EVENTS = {
   INPUT_END: 'game.input-end',
   INPUT_REQUIRED: 'game.input-required',
   NEW_SNAPSHOT: 'game.new-snapshot',
+  GAME_OVER: 'game.over',
+  MODIFIER_EVENT: 'game.modifier-event',
   ...GAME_PHASE_EVENTS,
   ...MODIFIER_EVENTS,
   ...CARD_EVENTS,
@@ -151,6 +170,12 @@ export const GAME_EVENTS = {
   ...HERO_EVENTS,
   ...ARTIFACT_EVENTS,
   ...PLAYER_EVENTS,
-  ...DESTINY_EVENTS,
-  ...ABILITY_EVENTS
+  ...ABILITY_EVENTS,
+  ...SIGIL_EVENTS,
+  ...TURN_EVENTS,
+  ...EFFECT_CHAIN_EVENTS
 } as const satisfies Record<string, GameEventName>;
+
+export type SerializedEvent<T extends keyof typeof GAME_EVENTS> = ReturnType<
+  GameEventMap[(typeof GAME_EVENTS)[T]]['serialize']
+>;

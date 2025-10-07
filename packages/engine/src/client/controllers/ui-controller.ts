@@ -1,6 +1,6 @@
 import type { Override } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
-import type { MinionPosition } from '../../game/interactions/selecting-minion-slots.interaction';
+import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
 import { SelectCardAction } from '../actions/select-card';
@@ -12,20 +12,20 @@ import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 import { COMBAT_STEPS } from '../../game/phases/combat.phase';
-import { EndTurnGlobalAction } from '../actions/end-turn';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
-import { SkipBlockGlobalAction } from '../actions/skip-block';
-import { PassChainGlobalAction } from '../actions/pass-chain';
+import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
+import type { BoardSlotZone } from '../../board/board.constants';
+import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
   handler: (card: CardViewModel) => void;
 };
 
-export type UiMinionslot = Override<MinionPosition, { player: PlayerViewModel }>;
+export type UiMinionslot = Override<BoardPosition, { player: PlayerViewModel }>;
 export type MinionSlotClickRule = {
   predicate: (slot: UiMinionslot, state: GameClientState) => boolean;
   handler: (slot: UiMinionslot) => void;
@@ -45,14 +45,17 @@ export type UiOptimisticState = {
 };
 
 export class DOMSelector {
-  constructor(readonly id: string) {}
+  constructor(
+    readonly id: string,
+    private readonly selectorPrefix: string = ''
+  ) {}
 
   get selector() {
-    return `#${this.id}`;
+    return `${this.selectorPrefix} #${this.id}`;
   }
 
   get element() {
-    return document.getElementById(this.id);
+    return document.querySelector(this.selector) as HTMLElement | null;
   }
 }
 
@@ -61,13 +64,7 @@ export class UiController {
 
   private _selectedCard: CardViewModel | null = null;
 
-  private _isManaCostOverlayOpened = false;
-
-  private _isDestinyPhaseOverlayOpened = false;
-
-  private _isChooseCardsInteractionOverlayOpened = false;
-
-  private _isChooseAffinityInteractionOverlayOpened = false;
+  isHandExpanded = false;
 
   private cardClickRules: CardClickRule[] = [];
 
@@ -82,17 +79,39 @@ export class UiController {
   };
 
   DOMSelectors = {
-    p1Minionzone: new DOMSelector('p1-minion-zone'),
-    p2Minionzone: new DOMSelector('p2-minion-zone'),
-    minionSprite: (playerId: string, zone: 'attack' | 'defense', slot: number) =>
-      new DOMSelector(`${playerId}-${zone}-minion-sprite-${slot}`),
-    minionClickableArea: (playerId: string, zone: 'attack' | 'defense', slot: number) =>
-      new DOMSelector(`${playerId}-${zone}-minion-clickable-area-${slot}`),
-    heroSprite: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
+    board: new DOMSelector('board'),
+    effectChain: new DOMSelector('effect-chain'),
+    playedCardZone: new DOMSelector('played-card'),
+    hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
+    destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
+    minionPosition: (playerId: string, zone: BoardSlotZone, slot: number) =>
+      new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
+    minionOnBoard: (
+      playerId: string,
+      zone: BoardSlotZone,
+      slot: number,
+      minionId: string
+    ) =>
+      new DOMSelector(
+        minionId,
+        this.DOMSelectors.minionPosition(playerId, zone, slot).selector
+      ),
+    discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
+    banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
+    destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),
+    cardOnBoard: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.board.selector),
+    cardInHand: (cardId: string, playerId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.hand(playerId).selector),
+    cardInEffectChain: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.effectChain.selector),
+    cardInDestinyZone: (cardId: string, playerId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.destinyZone(playerId).selector),
+    hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
-    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
+    frontRow: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
+    backRow: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`)
   };
 
@@ -127,22 +146,6 @@ export class UiController {
     return this._selectedCard;
   }
 
-  get isManaCostOverlayOpened() {
-    return this._isManaCostOverlayOpened;
-  }
-
-  get isDestinyPhaseOverlayOpened() {
-    return this._isDestinyPhaseOverlayOpened;
-  }
-
-  get isChooseCardsInteractionOverlayOpened() {
-    return this._isChooseCardsInteractionOverlayOpened;
-  }
-
-  get isChooseAffinityInteractionOverlayOpened() {
-    return this._isChooseAffinityInteractionOverlayOpened;
-  }
-
   get playedCardId() {
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD)
       return null;
@@ -167,11 +170,9 @@ export class UiController {
   private buildGlobalActionRules() {
     this.globalActionRules = [
       new CancelPlayCardGlobalAction(this.client),
-      new EndTurnGlobalAction(this.client),
       new CommitMinionSlotSelectionGlobalAction(this.client),
       new CommitCardSelectionGlobalAction(this.client),
-      new SkipBlockGlobalAction(this.client),
-      new PassChainGlobalAction(this.client)
+      new PassGlobalAction(this.client)
     ];
   }
 
@@ -205,19 +206,12 @@ export class UiController {
 
   onMinionSlotClick(slot: UiMinionslot) {
     const state = this.client.state;
-
     for (const rule of this.minionSlotClickRules) {
       if (rule.predicate(slot, state)) {
         rule.handler(slot);
         return;
       }
     }
-  }
-
-  get isInteractingPlayer() {
-    return this.client.state.effectChain
-      ? this.client.playerId === this.client.state.effectChain.player
-      : this.client.playerId === this.client.state.interaction.ctx.player;
   }
 
   get isInteractivePlayer() {
@@ -229,18 +223,6 @@ export class UiController {
   }
 
   update() {
-    this._isChooseCardsInteractionOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
-
-    this._isChooseAffinityInteractionOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.interaction.state === INTERACTION_STATES.CHOOSING_AFFINITY;
-
-    this._isManaCostOverlayOpened =
-      this.isInteractingPlayer &&
-      this.client.state.interaction.state === INTERACTION_STATES.PLAYING_CARD;
-
     if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
       this.selectedManaCostIndices = [];
     }
@@ -273,18 +255,6 @@ export class UiController {
     this._selectedCard = null;
   }
 
-  getHandDOMSelector(playerId: string) {
-    return `#hand-${playerId}`;
-  }
-
-  getBoardDOMSelector() {
-    return '#board';
-  }
-
-  getEffectChainDOMSelector() {
-    return '#effect-chain';
-  }
-
   getPlayedCardZoneDOMSelector() {
     return `#played-card`;
   }
@@ -297,18 +267,6 @@ export class UiController {
     return `#${cardId}`;
   }
 
-  getCardDOMSelectorOnBoard(cardId: string) {
-    return `${this.getBoardDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getCardDOMSelectorInHand(cardId: string, playerId: string) {
-    return `${this.getHandDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getCardDOMSelectorInEffectChain(cardId: string) {
-    return `${this.getEffectChainDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
-  }
-
   getCardDOMSelectorInPLayedCardZone(cardId: string) {
     return `${this.getPlayedCardZoneDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
   }
@@ -317,19 +275,12 @@ export class UiController {
     return `${this.getDestinyZoneDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
   }
 
-  get idleMessage() {
-    if (this.client.state.effectChain) {
-      return 'Effect chain: Your turn';
-    }
-    return 'Waiting for opponent...';
-  }
-
   get explainerMessage() {
     const activePlayerId = this.client.getActivePlayerId();
     const state = this.client.state;
 
     if (activePlayerId !== this.client.playerId) {
-      return this.idleMessage;
+      return 'Waiting for opponent...';
     }
 
     if (state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT) {
@@ -352,23 +303,33 @@ export class UiController {
       return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
     }
 
+    if (
+      state.interaction.state === INTERACTION_STATES.USING_ABILITY &&
+      state.interaction.ctx.player === this.client.playerId
+    ) {
+      const ability = state.entities[state.interaction.ctx.ability] as AbilityViewModel;
+      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
+    }
+
     if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {
       return 'Select targets';
     }
 
-    if (state.effectChain) {
-      return 'Effect chain: Your turn';
+    if (this.client.state.effectChain) {
+      if (this.client.state.effectChain.state === EFFECT_CHAIN_STATES.RESOLVING) {
+        return 'Resolving effect chain...';
+      }
+      return this.client.state.effectChain.player === this.client.playerId
+        ? 'Effect chain: Your turn'
+        : 'Effect chain: Opponent turn';
     }
 
     if (state.phase.state === GAME_PHASES.ATTACK) {
       if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET) {
         return 'Declare attack target';
       }
-      if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER) {
-        return 'Declare blocker or skip';
-      }
     }
 
-    return '';
+    return 'Your turn: play a card, use an ability or declare an attack';
   }
 }

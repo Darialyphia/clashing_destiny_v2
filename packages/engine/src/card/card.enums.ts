@@ -3,8 +3,6 @@ import type { Values } from '@game/shared';
 export const CARD_EVENTS = {
   CARD_BEFORE_PLAY: 'card.before_play',
   CARD_AFTER_PLAY: 'card.after_play',
-  CARD_BEFORE_PLAY_WITHOUT_AFFINITY_MATCH: 'card.before_play_without_affinity_match',
-  CARD_AFTER_PLAY_WITHOUT_AFFINITY_MATCH: 'card.after_play_without_affinity_match',
   CARD_DISCARD: 'card.discard',
   CARD_ADD_TO_HAND: 'card.add_to_hand',
   CARD_EXHAUST: 'card.exhaust',
@@ -12,7 +10,10 @@ export const CARD_EVENTS = {
   CARD_LEAVE_BOARD: 'card.leave_board',
   CARD_BEFORE_DESTROY: 'card.before_destroy',
   CARD_AFTER_DESTROY: 'card.after_destroy',
-  CARD_DECLARE_PLAY: 'card.declare_play'
+  CARD_DISPOSED: 'card.disposed',
+  CARD_EFFECT_TRIGGERED: 'card.effect_triggered',
+  CARD_DECLARE_PLAY: 'card.declare_play',
+  CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 
@@ -25,18 +26,11 @@ export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
-  // LOCATION: 'LOCATION',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  DESTINY: 'DESTINY'
+  SIGIL: 'SIGIL'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
-
-export const SPELL_KINDS = {
-  CAST: 'CAST',
-  BURST: 'BURST'
-} as const;
-export type SpellKind = Values<typeof SPELL_KINDS>;
 
 export const ARTIFACT_KINDS = {
   WEAPON: 'WEAPON',
@@ -44,6 +38,14 @@ export const ARTIFACT_KINDS = {
   RELIC: 'RELIC'
 } as const;
 export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
+
+export const CARD_SPEED = {
+  SLOW: 'SLOW',
+  FAST: 'FAST',
+  FLASH: 'FLASH'
+  // WARP: 'WARP'
+} as const;
+export type CardSpeed = Values<typeof CARD_SPEED>;
 
 export const CARD_SETS = {
   CORE: 'CORE'
@@ -62,29 +64,23 @@ export const RARITIES = {
 
 export type Rarity = Values<typeof RARITIES>;
 
-export const AFFINITIES = {
-  NORMAL: 'NORMAL',
+export const SPELL_SCHOOLS = {
   FIRE: 'FIRE',
   WATER: 'WATER',
-  FROST: 'FROST',
   EARTH: 'EARTH',
-  WIND: 'WIND',
-  STORM: 'STORM',
-  VOID: 'VOID',
+  AIR: 'AIR',
   ARCANE: 'ARCANE',
-  BLOOD: 'BLOOD',
-  HOLY: 'HOLY',
-  SHADOW: 'SHADOW',
-  NATURE: 'NATURE',
-  DEATH: 'DEATH',
-  COSMIC: 'COSMIC',
-  CHRONO: 'CHRONO',
-  TECH: 'TECH',
-  PRIMAL: 'PRIMAL',
-  ARMS: 'ARMS'
+  LIGHT: 'LIGHT',
+  DARK: 'DARK'
 } as const;
+export type SpellSchool = Values<typeof SPELL_SCHOOLS>;
 
-export type Affinity = Values<typeof AFFINITIES>;
+export const HERO_JOBS = {
+  WARRIOR: 'WARRIOR',
+  PALADIN: 'PALADIN',
+  MAGE: 'MAGE'
+} as const;
+export type HeroJob = Values<typeof HERO_JOBS>;
 
 export const TAGS = {
   SWORD: 'sword'

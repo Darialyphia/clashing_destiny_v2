@@ -1,7 +1,8 @@
 import { KEYWORDS } from '../../card/card-keywords';
+import { isMinion } from '../../card/card-utils';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroAfterDealCombatDamageEvent } from '../../card/entities/hero.entity';
-import type { MinionCardDealCombatDamageEvent } from '../../card/entities/minion.entity';
+import type { MinionCardAfterDealCombatDamageEvent } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
@@ -16,7 +17,7 @@ export class OnKillModifier<T extends AnyCard> extends Modifier<T> {
     private options: {
       mixins?: ModifierMixin<T>[];
       handler: (
-        event: MinionCardDealCombatDamageEvent | HeroAfterDealCombatDamageEvent,
+        event: MinionCardAfterDealCombatDamageEvent | HeroAfterDealCombatDamageEvent,
         modifier: Modifier<T>
       ) => void;
     }
@@ -32,13 +33,19 @@ export class OnKillModifier<T extends AnyCard> extends Modifier<T> {
           eventName: GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
           handler: event => this.onDamage(event)
         }),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
+          handler: event => {
+            if (!isMinion(event.data.card)) return;
+          }
+        }),
         ...(options.mixins || [])
       ]
     });
   }
 
   private async onDamage(
-    event: MinionCardDealCombatDamageEvent | HeroAfterDealCombatDamageEvent
+    event: MinionCardAfterDealCombatDamageEvent | HeroAfterDealCombatDamageEvent
   ) {
     if (!event.data.card.equals(this.target)) return;
     if (event.data.target.isAlive) return;

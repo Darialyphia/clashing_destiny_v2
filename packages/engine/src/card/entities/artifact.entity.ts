@@ -1,15 +1,21 @@
-import type { Values } from '@game/shared';
+import type { MaybePromise, Values } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import { type ArtifactBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import {
-  CardBeforePlayEvent,
-  CardAfterPlayEvent,
-  CardDeclarePlayEvent
-} from '../card.events';
+  type AbilityBlueprint,
+  type ArtifactBlueprint,
+  type PreResponseTarget
+} from '../card-blueprint';
+import {
+  ARTIFACT_KINDS,
+  CARD_EVENTS,
+  type ArtifactKind,
+  type HeroJob,
+  type SpellSchool
+} from '../card.enums';
+import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -19,7 +25,6 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 
 export type SerializedArtifactCard = SerializedCard & {
@@ -29,6 +34,9 @@ export type SerializedArtifactCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
+  job: HeroJob | null;
+  spellSchool: SpellSchool | null;
+  atkBonus: number | null;
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
@@ -38,7 +46,7 @@ export type ArtifactCardInterceptors = CardInterceptors & {
     { card: ArtifactCard; ability: Ability<ArtifactCard> }
   >;
   durability: Interceptable<number, ArtifactCard>;
-  attackBonus: Interceptable<number, ArtifactCard>;
+  attackBonus: Interceptable<number | null, ArtifactCard>;
 };
 
 export const ARTIFACT_EVENTS = {
@@ -165,9 +173,9 @@ export class ArtifactCard extends Card<
     );
   }
 
-  get atkBonus(): number {
+  get atkBonus(): number | null {
     return this.interceptors.attackBonus.getValue(
-      this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : 0,
+      this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : null,
       this
     );
   }
@@ -197,47 +205,55 @@ export class ArtifactCard extends Card<
     }
   }
 
-  async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
-    if (!ability) return;
+  addAbility(ability: AbilityBlueprint<ArtifactCard, PreResponseTarget>) {
+    const newAbility = new Ability<ArtifactCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
 
-    return await ability.use();
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilityTargets.delete(abilityId);
+  }
+
+  get isCorrectJob() {
+    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
+  }
+
+  get isCorrectSpellSchool() {
+    if (!this.blueprint.spellSchool) return true;
+    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
   }
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost &&
-        !this.game.effectChainSystem.currentChain &&
-        this.location === 'hand' &&
-        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
-        this.hasAffinityMatch &&
+      this.canPlayBase &&
+        this.isCorrectJob &&
+        this.isCorrectSpellSchool &&
         this.blueprint.canPlay(this.game, this),
       this
     );
   }
 
-  async play() {
+  async play(onResolved: () => MaybePromise<void>) {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    this.updatePlayedAt();
 
-    await this.player.artifactManager.equip(this);
-    this.lostDurability = 0;
-    await this.blueprint.onPlay(this.game, this);
-    await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-      new ArtifactEquipedEvent({ card: this })
-    );
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
+    await this.insertInChainOrExecute(
+      async () => {
+        await this.player.artifactManager.equip(this);
+        this.lostDurability = 0;
+        await this.blueprint.onPlay(this.game, this);
+        await this.game.emit(
+          ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+          new ArtifactEquipedEvent({ card: this })
+        );
+      },
+      [],
+      onResolved
     );
   }
 
@@ -248,8 +264,11 @@ export class ArtifactCard extends Card<
       durability: this.remainingDurability,
       subKind: this.subkind,
       manaCost: this.manaCost,
-      baseManaCost: this.blueprint.manaCost,
-      abilities: this.abilities.map(a => a.id)
+      baseManaCost: this.manaCost,
+      abilities: this.abilities.map(a => a.id),
+      job: this.blueprint.job ?? null,
+      spellSchool: this.blueprint.spellSchool ?? null,
+      atkBonus: this.atkBonus
     };
   }
 }

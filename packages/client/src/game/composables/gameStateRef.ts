@@ -6,13 +6,15 @@ export const gameStateRef = <T>(selector: (state: GameClientState) => T) => {
 
   const value = computed(() => selector(state.value));
 
-  const client = useGameClient();
+  const { client } = useGameClient();
 
-  const unsub = client.value.onUpdateCompleted(() => {
-    triggerRef(value);
-  });
+  const unsub = [
+    client.value.onUpdateCompleted(() => {
+      triggerRef(value);
+    })
+  ];
 
-  onUnmounted(() => unsub());
+  onUnmounted(() => unsub.forEach(u => u()));
 
   return value;
 };

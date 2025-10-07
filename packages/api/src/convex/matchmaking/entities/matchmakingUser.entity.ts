@@ -2,7 +2,7 @@ import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
 
 export type MatchmakingUserDoc = Doc<'matchmakingUsers'>;
-
+export type MatchmakingUserId = Id<'matchmakingUsers'>;
 export class MatchmakingUser extends Entity<
   Id<'matchmakingUsers'>,
   MatchmakingUserDoc & { mmr: number }
@@ -21,5 +21,9 @@ export class MatchmakingUser extends Entity<
 
   get joinedAt() {
     return this.data.joinedAt;
+  }
+
+  get mmr() {
+    return this.data.mmr;
   }
 }

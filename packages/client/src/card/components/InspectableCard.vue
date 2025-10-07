@@ -18,7 +18,7 @@ const {
   side,
   sideOffset,
   closeDelay = 0,
-  openDelay,
+  openDelay = 0,
   enabled = true
 } = defineProps<
   { cardId: string; enabled?: boolean } & Pick<

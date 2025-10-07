@@ -1,203 +1,214 @@
 <script setup lang="ts">
-import { unrefElement } from '@vueuse/core';
 import {
   useCard,
   useFxEvent,
-  useGameClient,
-  useGameState
+  useGameUi,
+  useMyPlayer
 } from '../composables/useGameClient';
 import Card from '@/card/components/Card.vue';
 import {
   PopoverRoot,
   PopoverAnchor,
   PopoverPortal,
-  PopoverContent
+  PopoverContent,
+  type PopoverContentProps
 } from 'reka-ui';
-import CardResizer from './CardResizer.vue';
-import CardStats from './CardStats.vue';
 import CardActions from './CardActions.vue';
-import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
+import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { type DamageType } from '@game/engine/src/utils/damage';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { waitFor } from '@game/shared';
+import { refAutoReset } from '@vueuse/core';
 
 const {
   cardId,
-  interactive = true,
-  autoScale = true,
-  deferAutoScaling = false,
-  imageOnly = false,
-  actionsOffset = -50
+  actionsOffset = -50,
+  actionsSide,
+  variant = 'default',
+  isInteractive = true,
+  showDisabledMessage = false,
+  showStats = false,
+  portalTarget = '#card-actions-portal'
 } = defineProps<{
   cardId: string;
-  interactive?: boolean;
-  autoScale?: boolean;
-  deferAutoScaling?: boolean;
-  imageOnly?: boolean;
   actionsOffset?: number;
+  actionsSide?: PopoverContentProps['side'];
+  variant?: 'default' | 'small';
+  isInteractive?: boolean;
+  showDisabledMessage?: boolean;
+  showStats?: boolean;
+  portalTarget?: string;
 }>();
 
 const card = useCard(computed(() => cardId));
-
-const client = useGameClient();
+const ui = useGameUi();
 
 const isActionsPopoverOpened = computed({
   get() {
-    if (!client.value.ui.selectedCard) return false;
-    return client.value.ui.selectedCard.equals(card.value);
+    if (!isInteractive) return false;
+    if (!ui.value.selectedCard) return false;
+    return ui.value.selectedCard.equals(card.value);
   },
   set(value) {
     if (value) {
-      client.value.ui.select(card.value);
+      ui.value.select(card.value);
     } else {
-      client.value.ui.unselect();
+      ui.value.unselect();
     }
   }
 });
 
 const isTargetable = computed(() => {
-  if (!interactive) return false;
-
   return (
     card.value.canBeTargeted ||
-    client.value.ui.selectedManaCostIndices.includes(card.value.indexInHand!)
+    ui.value.selectedManaCostIndices.includes(card.value.indexInHand!)
   );
 });
 
-const cardComponent = useTemplateRef('card');
-const cardElement = computed(() => unrefElement(cardComponent));
+const myPlayer = useMyPlayer();
+
+const handleClick = () => {
+  if (!isInteractive) return;
+  console.log('handle card click', cardId);
+  ui.value.onCardClick(card.value);
+};
+
+const isAttacking = refAutoReset(false, 500);
+const isTakingDamage = refAutoReset(false, 500);
+const damageTaken = refAutoReset(0, 1000);
+const isUsingAbility = refAutoReset(false, 1000);
+const onAttack = async (e: { card: string }) => {
+  if (e.card !== cardId) return;
+  isAttacking.value = true;
+};
 
 const onTakeDamage = async (e: {
-  card: SerializedCard;
-  damage: {
-    type: DamageType;
-    amount: number;
-  };
+  card: string;
+  damage: { amount: number };
 }) => {
-  if (e.card.id !== cardId || !cardElement.value || e.damage.amount <= 0) {
-    return;
-  }
-
-  card.value.update(e.card);
-
-  cardElement.value.classList.add('damage');
-  cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
-  setTimeout(() => {
-    cardElement.value?.classList.remove('damage');
-    delete cardElement.value?.dataset.damage;
-  }, 1750);
-
-  const keyframes: Keyframe[] = [
-    { transform: 'translateX(0)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(0)' }
-  ];
-
-  await cardElement.value?.animate(keyframes, {
-    duration: 500,
-    easing: 'ease-in-out',
-    iterations: 1
-  }).finished;
+  if (e.card !== cardId) return;
+  isTakingDamage.value = true;
+  damageTaken.value = e.damage.amount;
+  await waitFor(500);
 };
-useFxEvent(FX_EVENTS.MINION_AFTER_TAKE_DAMAGE, onTakeDamage);
-useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
 
-const state = useGameState();
-const spriteUrl = computed(() => {
-  const card = state.value.entities[cardId] as CardViewModel;
-  if (!card) return '';
-  return `url(${card.imagePath})`;
+const waitForAttackDone = async () => {
+  await waitFor(200);
+};
+
+const onAbilityUse = async (e: { card: string }) => {
+  if (!isInteractive) return;
+  if (e.card !== cardId) return;
+  isUsingAbility.value = true;
+  await waitFor(1000);
+};
+useFxEvent(FX_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
+useFxEvent(FX_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
+useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
+useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
+useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
+useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
+
+const classes = computed(() => {
+  return [
+    card.value.keywords.map(kw => kw.toLowerCase()),
+    {
+      exhausted: isInteractive && card.value.isExhausted,
+      disabled: !card.value.canPlay && card.value.location === 'hand',
+      selected: ui.value.selectedCard?.equals(card.value),
+      targetable: isTargetable.value,
+      flipped: !myPlayer.value.equals(card.value.player),
+      'is-attacking': isAttacking.value,
+      'is-taking-damage': isTakingDamage.value,
+      'is-using-ability': isUsingAbility.value
+    }
+  ];
 });
 </script>
 
 <template>
-  <CardResizer
-    :enabled="autoScale"
-    class="game-card"
-    ref="card"
-    :class="{ 'is-enemy': card.player.id !== client.playerId }"
-    :defer="deferAutoScaling"
-  >
-    <PopoverRoot v-model:open="isActionsPopoverOpened">
-      <PopoverAnchor />
-      <div
-        v-if="imageOnly"
-        class="card sprite"
-        :id="card.id"
-        :style="{ '--bg': spriteUrl }"
-        :class="{
-          exhausted: card.isExhausted,
-          selected: client.ui.selectedCard?.equals(card),
-          targetable: isTargetable
-        }"
-        @click="
-          () => {
-            if (!interactive) return;
-            client.ui.onCardClick(card);
-          }
-        "
-      />
-      <Card
-        v-else
-        :id="card.id"
-        :card="{
-          id: card.id,
-          name: card.name,
-          affinity: card.affinity,
-          description: card.description,
-          image: card.imagePath,
-          kind: card.kind,
-          level: card.level,
-          rarity: card.rarity,
-          manaCost: card.manaCost,
-          baseManaCost: card.baseManaCost,
-          destinyCost: card.destinyCost,
-          baseDestinyCost: card.baseDestinyCost,
-          atk: card.atk,
-          hp: card.hp,
-          spellpower: card.spellpower,
-          durability: card.durability,
-          subKind: card.subKind,
-          uinlockableAffinities: card.unlockableAffinities,
-          abilities: card.abilities.map(ability => ability.description)
-        }"
-        class="card"
-        :class="{
-          exhausted: card.isExhausted,
-          disabled: interactive && !card.canPlay && card.location === 'hand',
-          selected: client.ui.selectedCard?.equals(card),
-          targetable: isTargetable
-        }"
-        @click="
-          () => {
-            if (!interactive) return;
-            client.ui.onCardClick(card);
-          }
-        "
-      />
+  <PopoverRoot v-model:open="isActionsPopoverOpened" v-if="cardId">
+    <PopoverAnchor>
+      <div class="relative">
+        <Card
+          v-if="variant === 'default'"
+          :is-animated="false"
+          :id="card.id"
+          :card="{
+            id: card.id,
+            name: card.name,
+            unlockedSpellSchools: card.unlockedSpellSchools,
+            spellSchool: card.spellSchool,
+            description: card.description,
+            image: card.imagePath,
+            kind: card.kind,
+            level: card.level,
+            rarity: card.rarity,
+            speed: card.speed,
+            manaCost: card.manaCost,
+            baseManaCost: card.baseManaCost,
+            destinyCost: card.destinyCost,
+            baseDestinyCost: card.baseDestinyCost,
+            atk: card.atk,
+            hp: card.hp,
+            countdown: card.countdown ?? card.maxCountdown,
+            spellpower: card.spellpower,
+            durability: card.durability,
+            abilities: card.abilities
+              .filter(ability => !ability.isHiddenOnCard)
+              .map(ability => `@[${ability.speed}]@ ${ability.description}`),
+            jobs: card.jobs
+          }"
+          class="game-card big"
+          :class="classes"
+          :data-damage="damageTaken"
+          @click="handleClick"
+        />
+        <SmallCard
+          v-else-if="variant === 'small'"
+          :id="card.id"
+          :card="{
+            id: card.id,
+            image: card.imagePath,
+            kind: card.kind,
+            atk: card.atk,
+            baseAtk: card.baseAtk,
+            hp: card.hp,
+            baseMaxHp: card.baseMaxHp,
+            maxHp: card.maxHp,
+            durability: card.durability,
+            countdown: card.countdown ?? card.maxCountdown
+          }"
+          class="game-card small"
+          :class="classes"
+          :show-stats="showStats"
+          :data-damage="damageTaken"
+          @click="handleClick"
+        />
 
-      <CardStats v-if="interactive" :card-id="card.id" class="stats" />
+        <div class="damage" v-if="damageTaken > 0">
+          {{ damageTaken }}
+        </div>
+        <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
+          You cannot play this card right now.
+        </p>
+      </div>
+    </PopoverAnchor>
 
-      <PopoverPortal
-        :disabled="
-          card.location === 'hand' ||
-          card.location === 'discardPile' ||
-          card.location === 'banishPile'
-        "
-      >
-        <PopoverContent :side-offset="actionsOffset" v-if="interactive">
-          <CardActions
-            :card="card"
-            v-model:is-opened="isActionsPopoverOpened"
-          />
-        </PopoverContent>
-      </PopoverPortal>
-    </PopoverRoot>
-  </CardResizer>
+    <PopoverPortal
+      :to="portalTarget"
+      :disabled="
+        card.location === 'hand' ||
+        card.location === 'discardPile' ||
+        card.location === 'banishPile'
+      "
+    >
+      <PopoverContent :side-offset="actionsOffset" :side="actionsSide">
+        <CardActions :card="card" v-model:is-opened="isActionsPopoverOpened" />
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
 </template>
 
 <style scoped lang="postcss">
@@ -212,52 +223,38 @@ const spriteUrl = computed(() => {
   }
 } */
 
-.game-card {
-  --pixel-scale: 2;
-  width: calc(var(--card-width) * var(--pixel-scale));
-  height: calc(var(--card-height) * var(--pixel-scale));
-  &.damage::after {
-    content: attr(data-damage);
-    position: absolute;
-    top: 0;
-    font-size: var(--font-size-11);
-    color: red;
-    background-size: cover;
-    transform: translateZ(30px);
-    font-weight: var(--font-weight-9);
-    -webkit-text-stroke: 2px black;
-    paint-order: fill stroke;
-    transition: all 0.3s var(--ease-in-2);
-    pointer-events: none;
-
-    @starting-style {
-      transform: translateZ(60px) translateY(-50px) scale(15);
-      filter: blur(10px);
-      opacity: 0;
-    }
-  }
-  &.is-enemy.damage::after {
-    rotate: 180deg;
-  }
-}
-
-.selected {
-  outline: solid 3px cyan;
-}
-
 /* .highlighted::after {
   content: '';
   position: absolute;
   inset: 0;
   --glow-hsl: var(--cyan-4-hsl);
   animation: card-glow 2.5s infinite;
-} */
+  } */
 
-.card {
+.selected {
+  box-shadow: 0 0 0.5rem hsl(200 100% 50% / 0.75);
+}
+@keyframes card-damage-taken {
+  0% {
+    opacity: 0;
+    transform: scale(5);
+  }
+  30%,
+  75% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5rem);
+  }
+}
+.game-card {
   transition: all 0.3s var(--ease-2);
+  position: relative;
 
   &.exhausted {
-    filter: grayscale(0.5);
+    filter: grayscale(0.4) brightness(0.6);
     transform: none;
   }
   &.targetable {
@@ -270,45 +267,111 @@ const spriteUrl = computed(() => {
   }
 }
 
-/* @keyframes horizontal-shaking {
+@keyframes card-attack {
+  to {
+    transform: rotateY(1turn);
+  }
+}
+
+.is-attacking {
+  animation: card-attack 0.2s var(--ease-in-2) forwards;
+}
+
+@keyframes horizontal-shaking {
   0% {
     transform: translateX(0);
   }
-  25% {
-    transform: translateX(5px);
+  16%,
+  48%,
+  80% {
+    transform: translateX(10px);
   }
-  50% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
+  32%,
+  64% {
+    transform: translateX(-10px);
   }
   100% {
     transform: translateX(0);
   }
-} */
+}
+.is-taking-damage {
+  animation: horizontal-shaking 0.5s linear forwards;
 
-.sprite {
-  aspect-ratio: var(--card-ratio);
-  position: relative;
-  background-image: url('/assets/ui/card-board-front.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   &::after {
     content: '';
     position: absolute;
     inset: 0;
+    background-color: hsl(0 100% 60% / 0.65);
+    mix-blend-mode: overlay;
     pointer-events: none;
-    background-image: var(--bg);
-    background-position: center -50;
-    background-size: calc(3.5 * 96px);
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-    transition: transform 0.2s var(--ease-2);
   }
-  &:hover::after {
-    transform: translateY(-10px);
+}
+.damage {
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  font-size: var(--font-size-8);
+  font-weight: var(--font-weight-9);
+  color: var(--red-9);
+  -webkit-text-stroke: 8px black;
+  paint-order: stroke fill;
+  animation: card-damage-taken 1s linear forwards;
+}
+
+@keyframes ability-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 yellow;
   }
+  50% {
+    box-shadow: 0 0 1.5rem yellow;
+  }
+}
+.is-using-ability {
+  filter: brightness(1.5) !important;
+  animation: ability-glow 1s ease-in-out;
+}
+
+.flipped:deep(.image) {
+  scale: -1 1;
+}
+
+.big.flipped:deep(.image) {
+  translate: -100% 0;
+}
+
+.disabled-message {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(0 0% 0% / 0.65);
+  color: hsl(0 0% 100% / 0.9);
+  font-size: var(--font-size--2);
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius-pill);
+  width: max-content;
+  max-width: 80%;
+  text-align: center;
+  pointer-events: none;
+  font-style: italic;
+}
+
+@keyframes fleeting {
+  0%,
+  20%,
+  80%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+.fleeting {
+  animation: fleeting 5s var(--ease-3) infinite;
 }
 </style>

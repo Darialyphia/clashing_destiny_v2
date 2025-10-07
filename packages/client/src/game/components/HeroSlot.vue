@@ -3,204 +3,103 @@ import type { PlayerViewModel } from '@game/engine/src/client/view-models/player
 import {
   useBoardSide,
   useCard,
-  useFxEvent,
-  useGameClient
+  useGameClient,
+  useGameUi
 } from '../composables/useGameClient';
-import CardStats from './CardStats.vue';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
-import type { DamageType } from '@game/engine/src/utils/damage';
-import InspectableCard from '@/card/components/InspectableCard.vue';
-import {
-  type HoverCardContentProps,
-  PopoverRoot,
-  PopoverAnchor,
-  PopoverPortal,
-  PopoverContent
-} from 'reka-ui';
-import CardActions from './CardActions.vue';
+import GameCard from './GameCard.vue';
+import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
+import { useSettingsStore } from '@/shared/composables/useSettings';
 
-const { player } = defineProps<
-  Pick<HoverCardContentProps, 'side' | 'sideOffset'> & {
-    player: PlayerViewModel;
-  }
->();
+const { player } = defineProps<{
+  player: PlayerViewModel;
+}>();
 
 const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
-const client = useGameClient();
+const { playerId } = useGameClient();
+const ui = useGameUi();
 
-const cardElement = useTemplateRef('card');
-const onTakeDamage = async (e: {
-  card: SerializedCard;
-  damage: {
-    type: DamageType;
-    amount: number;
-  };
-}) => {
-  if (!hero.value) return;
-  if (
-    e.card.id !== hero.value.id ||
-    !cardElement.value ||
-    e.damage.amount <= 0
-  ) {
-    return;
-  }
-
-  hero.value.update(e.card);
-
-  cardElement.value.classList.add('damage');
-  cardElement.value.dataset.damage = `HP -${e.damage.amount}`;
-  setTimeout(() => {
-    cardElement.value?.classList.remove('damage');
-    delete cardElement.value?.dataset.damage;
-  }, 1750);
-
-  const keyframes: Keyframe[] = [
-    { transform: 'translateX(0)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(-10px)' },
-    { transform: 'translateX(10px)' },
-    { transform: 'translateX(0)' }
-  ];
-
-  await cardElement.value?.animate(keyframes, {
-    duration: 500,
-    easing: 'ease-in-out',
-    iterations: 1
-  }).finished;
-};
-useFxEvent(FX_EVENTS.HERO_AFTER_TAKE_DAMAGE, onTakeDamage);
-
-const isActionsPopoverOpened = computed({
-  get() {
-    if (!client.value.ui.selectedCard) return false;
-    return client.value.ui.selectedCard.equals(hero.value);
-  },
-  set(value) {
-    if (value) {
-      client.value.ui.select(hero.value);
-    } else {
-      client.value.ui.unselect();
-    }
-  }
-});
+const settings = useSettingsStore();
+const getKeyLabel = useKeybordShortcutLabel();
 </script>
 
 <template>
   <div
     class="hero-slot"
-    :class="{ opponent: client.playerId !== player.id }"
-    :id="hero.id"
+    :class="{ opponent: playerId !== player.id }"
+    :id="ui.DOMSelectors.hero(player.id).id"
+    :data-keyboard-shortcut="
+      player.id === playerId
+        ? getKeyLabel(settings.settings.bindings.interactHero.control)
+        : undefined
+    "
+    data-keyboard-shortcut-centered="true"
+    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     ref="card"
-    @click="client.ui.onCardClick(hero)"
   >
-    <div>
-      <InspectableCard :card-id="hero.id" side="left" :side-offset="10">
-        <PopoverRoot v-model:open="isActionsPopoverOpened">
-          <PopoverAnchor />
-          <div
-            class="hero-sprite"
-            :style="{ '--bg': `url(${hero.imagePath})` }"
-            :class="{
-              highlighted: hero.canBeTargeted,
-              exhausted: hero.isExhausted
-            }"
-            :id="client.ui.DOMSelectors.heroSprite(player.id).id"
-          />
-          <PopoverPortal>
-            <PopoverContent :side-offset="-50" side="top">
-              <CardActions
-                :card="hero"
-                v-model:is-opened="isActionsPopoverOpened"
-              />
-            </PopoverContent>
-          </PopoverPortal>
-        </PopoverRoot>
-      </InspectableCard>
-      <CardStats :card-id="hero.id" />
+    <GameCard :card-id="hero.id" actions-side="bottom" :actions-offset="15" />
+    <div
+      class="hero-hp"
+      :style="{ '--percentage': (hero.hp! / hero.maxHp!) * 100 }"
+    >
+      {{ hero.hp }} / {{ hero.maxHp }}
     </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .hero-slot {
-  --pixel-scale: 2;
-  aspect-ratio: 1;
-  height: calc(96px * var(--pixel-scale));
-  /* transform: rotateZ(-45deg) rotateX(-60deg) translateY(-50%); */
-  /* transform: rotateX(calc(-1 * var(--board-rotation))); */
-  transform-origin: bottom center;
-  transform-style: preserve-3d;
-  justify-self: center;
-  /* overflow: hidden; */
-  &:hover {
-    .hero-sprite:not(:is(.highlighted, .exhausted)):hover {
-      filter: brightness(1.25);
-    }
-  }
+  position: relative;
 }
 
-.hero-sprite {
-  --pixel-scale: 2;
-  /* position: absolute;
-  inset: 0; */
-  aspect-ratio: 1;
-  /* max-height: calc(var(--pixel-scale) * var(--hero-height)); */
-  height: calc(96px * var(--pixel-scale));
-  overflow: hidden;
-  background: var(--bg) no-repeat center top;
-  background-size: calc(96px * var(--pixel-scale));
-  &.exhausted {
-    filter: grayscale(1) brightness(0.75);
-  }
-
-  &.highlighted {
-    filter: saturate(150%) drop-shadow(0 0 1px red);
-    position: relative;
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--bg) no-repeat center top;
-      background-size: calc(96px * var(--pixel-scale));
-      filter: sepia(100%) brightness(50%) saturate(300%) hue-rotate(-50deg)
-        blur(5px);
-      mix-blend-mode: overlay;
-    }
-  }
-
-  .opponent & {
-    transform: scaleX(-1);
-  }
-}
-
-/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
-.hero-slot.damage::before {
-  /* content: attr(data-damage);
+.hero-hp {
   position: absolute;
-  top: 0;
-  font-size: var(--font-size-5);
-  color: red;
-  background-size: cover;
-  transform: translateZ(30px);
-  font-weight: var(--font-weight-9);
-  -webkit-text-stroke: 2px black;
-  paint-order: fill stroke;
-  transition: all 0.3s var(--ease-in-2);
-  pointer-events: none;
+  bottom: calc(-1 * var(--size-1));
+  right: 0;
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-8);
+  color: white;
+  -webkit-text-stroke: 4px black;
+  paint-order: stroke fill;
+  text-shadow: var(--text-shadow-heavy);
+  z-index: 0;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-round);
+    aspect-ratio: 1;
+    background: url('/assets/ui/hero-hp-filled.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    z-index: -1;
+    transform: translateX(-50%) translateY(-50%);
+    border: solid 3px black;
+    mask: linear-gradient(
+      to top,
+      black calc(var(--percentage) * 1%),
+      transparent calc(var(--percentage) * 1%)
+    );
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-round);
+    border: solid 3px black;
+    aspect-ratio: 1;
+    background-color: #32021b;
+    z-index: -1;
+    transform: translateX(-50%) translateY(-50%);
 
-  @starting-style {
-    transform: translateZ(60px) translateY(-50px) scale(15);
-    filter: blur(10px);
-    opacity: 0;
-  } */
-}
-
-.stats {
-  left: 32px;
-  top: 12px;
+    box-shadow: inset 0 0 0 3px #5d1529;
+  }
 }
 </style>

@@ -9,11 +9,11 @@ import type {
 } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
-import { isDefined, type Nullable } from '@game/shared';
+import { isDefined, type MaybePromise, type Nullable } from '@game/shared';
 import type { InjectionKey, Ref } from 'vue';
 import { gameStateRef } from './gameStateRef';
 
-type GameClientContext = Ref<GameClient>;
+type GameClientContext = { client: Ref<GameClient>; playerId: Ref<string> };
 
 const GAME_CLIENT_INJECTION_KEY = Symbol(
   'game-client'
@@ -21,12 +21,19 @@ const GAME_CLIENT_INJECTION_KEY = Symbol(
 
 export const provideGameClient = (options: GameClientOptions) => {
   const client = ref(new GameClient(options)) as Ref<GameClient>;
-  client.value.onUpdate(() => {
+  client.value.onUpdate(async () => {
     triggerRef(client);
+    // console.log('[Client] state updated', client.value);
   });
 
-  provide(GAME_CLIENT_INJECTION_KEY, client);
-  return client;
+  const playerId = ref(client.value.playerId);
+  watch(playerId, newPlayerId => {
+    client.value.playerId = newPlayerId;
+  });
+
+  provide(GAME_CLIENT_INJECTION_KEY, { client, playerId });
+
+  return { client, playerId };
 };
 
 export const useGameClient = () => {
@@ -34,19 +41,19 @@ export const useGameClient = () => {
 };
 
 export const useGameState = () => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
   return computed(() => client.value.stateManager.state);
 };
 
 export const useGameUi = () => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
-  return computed(() => client.value.ui);
+  return gameStateRef(() => client.value.ui);
 };
 
 export const useBoardSide = (playerId: MaybeRef<string>) => {
-  const client = useGameClient();
+  const { client } = useGameClient();
   return computed(() => {
     return client.value.state.board.sides.find(
       side => side.playerId === unref(playerId)
@@ -55,23 +62,22 @@ export const useBoardSide = (playerId: MaybeRef<string>) => {
 };
 
 export const useMyBoard = () => {
-  const client = useGameClient();
+  const { client, playerId } = useGameClient();
 
-  return computed(
-    () =>
-      client.value.state.board.sides.find(
-        side => side.playerId === client.value.playerId
-      )!
-  );
+  return computed(() => {
+    return client.value.state.board.sides.find(
+      side => side.playerId === playerId.value
+    )!;
+  });
 };
 
 export const useOpponentBoard = () => {
-  const client = useGameClient();
+  const { client, playerId } = useGameClient();
 
   return computed(
     () =>
       client.value.state.board.sides.find(
-        side => side.playerId !== client.value.playerId
+        side => side.playerId !== playerId.value
       )!
   );
 };
@@ -115,9 +121,9 @@ export const useCard = (cardId: MaybeRef<string>) => {
 
 export const useFxEvent = <T extends FXEvent>(
   name: T,
-  handler: (eventArg: FXEventMap[T]) => Promise<void>
+  handler: (eventArg: FXEventMap[T]) => MaybePromise<void>
 ) => {
-  const client = useGameClient();
+  const { client } = useGameClient();
 
   const unsub = client.value.fx.on(name, handler);
 

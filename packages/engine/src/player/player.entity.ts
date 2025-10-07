@@ -2,31 +2,23 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, isDefined, type Serializable } from '@game/shared';
+import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
-  CardNotFoundError,
   NotEnoughCardsInDestinyZoneError,
   NotEnoughCardsInHandError
 } from '../card/card-errors';
-import type { HeroCard } from '../card/entities/hero.entity';
-import { AFFINITIES, type Affinity } from '../card/card.enums';
+import {
+  HERO_EVENTS,
+  HeroLevelUpEvent,
+  type HeroCard
+} from '../card/entities/hero.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import {
-  PlayerPayForDestinyCostEvent,
-  PlayerTurnEvent,
-  PlayerUnlockAffinityEvent
-} from './player.events';
-import type { MainDeckCard } from '../board/board.system';
+import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import { ModifierManager } from '../modifier/modifier-manager.component';
-import { type SerializedTalentTree } from '../card/talent-tree';
-import type { DestinyCard } from '../card/entities/destiny.entity';
-import type { SpellCard } from '../card/entities/spell.entity';
-import type { ArtifactCard } from '../card/entities/artifact.entity';
-import type { MinionCard } from '../card/entities/minion.entity';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 
@@ -35,7 +27,6 @@ export type PlayerOptions = {
   name: string;
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
-  hero: string;
 };
 
 export type SerializedPlayer = {
@@ -48,21 +39,18 @@ export type SerializedPlayer = {
   discardPile: string[];
   banishPile: string[];
   destinyZone: string[];
-  remainingCardsInDeck: number;
+  remainingCardsInMainDeck: number;
+  remainingCardsInDestinyDeck: number;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
-  unlockedAffinities: Affinity[];
-  unlockedDestinyCards: string[];
 };
 
 type PlayerInterceptors = {
-  unlockedAffinities: Interceptable<Affinity[]>;
   cardsDrawnForTurn: Interceptable<number>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    unlockedAffinities: new Interceptable<Affinity[]>(),
     cardsDrawnForTurn: new Interceptable<number>()
   };
 };
@@ -81,13 +69,14 @@ export class Player
 
   readonly artifactManager: ArtifactManagerComponent;
 
-  private readonly _unlockedAffinities: Affinity[] = [AFFINITIES.NORMAL];
-
   readonly cardTracker: CardTrackerComponent;
 
-  private _hero!: HeroCard;
+  hasPlayedDestinyCardThisTurn = false;
 
-  readonly unlockedDestinyCards: DestinyCard[] = [];
+  private _hero!: {
+    card: HeroCard;
+    lineage: HeroCard[];
+  };
 
   constructor(
     game: Game,
@@ -108,12 +97,37 @@ export class Player
   }
 
   async init() {
-    this._hero = await this.generateCard<HeroCard>(this.options.hero);
-    await this._hero.play();
+    this._hero = {
+      card: await this.generateCard<HeroCard>(this.game.config.INITIAL_HERO_BLUEPRINTID),
+      lineage: []
+    };
     await this.cardManager.init();
-    this._hero.unlockableAffinities.forEach(affinity => {
-      this._unlockedAffinities.push(affinity);
-    });
+    await this._hero.card.play(() => {});
+  }
+
+  async levelupHero(newHero: HeroCard) {
+    const oldHero = this._hero.card;
+    await this.game.emit(
+      HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
+      new HeroLevelUpEvent({ from: oldHero, to: newHero })
+    );
+
+    this._hero.lineage.push(this._hero.card);
+    this._hero = {
+      card: newHero,
+      lineage: this._hero.lineage
+    };
+
+    oldHero.removeFromCurrentLocation();
+    newHero.cloneDamageTaken(oldHero);
+    for (const modifier of oldHero.modifiers.list) {
+      await modifier.remove();
+      await this._hero.card.modifiers.add(modifier);
+    }
+    await this.game.emit(
+      HERO_EVENTS.HERO_AFTER_LEVEL_UP,
+      new HeroLevelUpEvent({ from: oldHero, to: newHero })
+    );
   }
 
   serialize() {
@@ -126,22 +140,21 @@ export class Player
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
-      remainingCardsInDeck: this.cardManager.mainDeck.cards.length,
+      remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
+      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
-      unlockedAffinities: this.unlockedAffinities,
-      influence: this.influence,
-      unlockedDestinyCards: this.unlockedDestinyCards.map(card => card.id)
+      influence: this.influence
     };
   }
 
   get cardsDrawnForTurn() {
-    const isFirstTurn = this.game.gamePhaseSystem.elapsedTurns === 0;
+    const isFirstTurn = this.game.turnSystem.elapsedTurns === 0;
 
     if (isFirstTurn) {
       return this.interceptors.cardsDrawnForTurn.getValue(
-        this.game.gamePhaseSystem.currentPlayer.isPlayer1
+        this.game.interaction.isInteractive(this)
           ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
           : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN,
         {}
@@ -163,7 +176,11 @@ export class Player
   }
 
   get hero() {
-    return this._hero;
+    return this._hero?.card;
+  }
+
+  get heroLinerage() {
+    return this._hero.lineage;
   }
 
   get enemyHero() {
@@ -186,33 +203,21 @@ export class Player
     return this.opponent.minions;
   }
 
-  get unlockedAffinities() {
-    return this.interceptors.unlockedAffinities.getValue(this._unlockedAffinities, {});
-  }
-
-  get isCurrentPlayer() {
-    return this.game.gamePhaseSystem.currentPlayer.equals(this);
+  get isInteractive() {
+    return this.game.interaction.isInteractive(this);
   }
 
   get influence() {
     return this.cardManager.hand.length + this.cardManager.destinyZone.size;
   }
 
-  async unlockAffinity(affinity: Affinity) {
-    this._unlockedAffinities.push(affinity);
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_UNLOCK_AFFINITY,
-      new PlayerUnlockAffinityEvent({
-        player: this,
-        affinity
-      })
-    );
-  }
-
-  async removeAffinity(affinity: Affinity) {
-    const index = this._unlockedAffinities.indexOf(affinity);
-    assert(index !== -1, new CardNotFoundError());
-    this._unlockedAffinities.splice(index, 1);
+  private async playCard(card: AnyCard) {
+    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
+    await card.play(async () => {
+      if (isAction) {
+        await this.game.turnSystem.switchInitiative();
+      }
+    });
   }
 
   private payForManaCost(manaCost: number, indices: number[]) {
@@ -227,42 +232,37 @@ export class Player
     });
   }
 
-  async playMainDeckCard(card: MainDeckCard, manaCostIndices: number[]) {
+  async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     this.payForManaCost(card.manaCost, manaCostIndices);
-    await card.play();
+    await this.playCard(card);
   }
 
-  async useAbility(ability: Ability<AbilityOwner>, manaCostIndices: number[]) {
+  async useAbility(
+    ability: Ability<AbilityOwner>,
+    manaCostIndices: number[],
+    onResolved: () => MaybePromise<void>
+  ) {
     this.payForManaCost(ability.manaCost, manaCostIndices);
-    await ability.use();
+    await ability.use(onResolved);
   }
 
-  async playDestinyCard(card: DestinyCard) {
+  async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
-    await card.play();
-    this.unlockedDestinyCards.push(card);
+    await this.playCard(card);
   }
 
   private async payForDestinyCost(cost: number) {
-    const prioritizedCards = Array.from(this.cardManager.discardPile).filter(
-      card => card.canBeUsedAsDestinyCost
-    );
-    const pool = [...this.cardManager.destinyZone, ...prioritizedCards];
+    const pool = [...this.cardManager.destinyZone];
     const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 
-    const banishedCards: Array<{ card: MainDeckCard; index: number }> = [];
+    const banishedCards: Array<{ card: AnyCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
-      if (prioritizedCards.length > 0) {
-        const card = prioritizedCards.shift()!;
-        card.sendToBanishPile();
-        banishedCards.push({ card, index: -1 });
-      } else {
-        const index = this.game.rngSystem.nextInt(this.cardManager.destinyZone.size - 1);
-        const card = [...this.cardManager.destinyZone][index];
-        card.sendToBanishPile();
-        banishedCards.push({ card, index });
-      }
+      const index = this.game.rngSystem.nextInt(pool.length - 1);
+      const card = pool[index];
+      card.sendToBanishPile();
+      banishedCards.push({ card, index });
+      pool.splice(index, 1);
     }
 
     await this.game.emit(
@@ -279,16 +279,10 @@ export class Player
       GAME_EVENTS.PLAYER_START_TURN,
       new PlayerTurnEvent({ player: this })
     );
+    this.hasPlayedDestinyCardThisTurn = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       await card.wakeUp();
     }
-  }
-
-  async endTurn() {
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_END_TURN,
-      new PlayerTurnEvent({ player: this })
-    );
   }
 
   generateCard<T extends AnyCard>(blueprintId: string) {

@@ -2,6 +2,7 @@ import {
   assert,
   StateMachine,
   stateTransition,
+  type EmptyObject,
   type MaybePromise,
   type Serializable,
   type Values
@@ -15,13 +16,15 @@ import {
   type PreResponseTarget,
   type SerializedPreResponseTarget
 } from '../card/card-blueprint';
+import { TypedSerializableEvent } from '../utils/typed-emitter';
+import { GAME_EVENTS } from './game.events';
 
-const EFFECT_CHAIN_STATES = {
+export const EFFECT_CHAIN_STATES = {
   BUILDING: 'BUILDING',
   RESOLVING: 'RESOLVING',
   FINISHED: 'FINISHED'
 } as const;
-type EffectChainState = Values<typeof EFFECT_CHAIN_STATES>;
+export type EffectChainState = Values<typeof EFFECT_CHAIN_STATES>;
 
 const EFFECT_CHAIN_STATE_TRANSITIONS = {
   ADD_EFFECT: 'ADD_EFFECT',
@@ -31,7 +34,15 @@ const EFFECT_CHAIN_STATE_TRANSITIONS = {
 } as const;
 type EffectChainTransition = Values<typeof EFFECT_CHAIN_STATE_TRANSITIONS>;
 
+export const EFFECT_TYPE = {
+  CARD: 'CARD',
+  ABILITY: 'ABILITY',
+  COUNTERATTACK: 'COUNTERATTACK'
+} as const;
+export type EffectType = Values<typeof EFFECT_TYPE>;
+
 export type Effect = {
+  type: EffectType;
   source: AnyCard;
   handler: (game: Game) => Promise<void>;
   targets: PreResponseTarget[];
@@ -39,10 +50,30 @@ export type Effect = {
 
 export type SerializedEffectChain = {
   stack: Array<{
+    type: EffectType;
     source: string;
     targets: SerializedPreResponseTarget[];
   }>;
+  state: EffectChainState;
   player: string;
+};
+
+export const EFFECT_CHAIN_EVENTS = {
+  EFFECT_CHAIN_STARTED: 'chain-started',
+  EFFECT_CHAIN_EFFECT_ADDED: 'effect-added',
+  EFFECT_CHAIN_PLAYER_PASSED: 'player-passed',
+  EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED: 'effect-before-resolved',
+  EFFECT_CHAIN_AFTER_EFFECT_RESOLVED: 'effect-after-resolved',
+  EFFECT_CHAIN_RESOLVED: 'chain-resolved'
+} as const;
+
+export type EffectChainEventMap = {
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_STARTED]: ChainEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_EFFECT_ADDED]: ChainEffectAddedEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_PLAYER_PASSED]: ChainPassedEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED]: ChainEffectResolvedEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED]: ChainEffectResolvedEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_RESOLVED]: ChainEvent;
 };
 
 export class EffectChain
@@ -51,20 +82,27 @@ export class EffectChain
 {
   private effectStack: Effect[] = [];
   private consecutivePasses = 0;
-  private currentPlayer: Player;
-  public onResolved: () => MaybePromise<void>;
+  private _currentPlayer: Player;
+  private resolveCallbacks: Array<() => MaybePromise<void>> = [];
 
-  constructor(
+  static async create(
+    game: Game,
+    startingPlayer: Player,
+    onResolved: () => MaybePromise<void>
+  ) {
+    const instance = new EffectChain(game, startingPlayer, onResolved);
+    await game.emit(GAME_EVENTS.EFFECT_CHAIN_STARTED, new ChainEvent({}));
+    return instance;
+  }
+  private constructor(
     private game: Game,
     startingPlayer: Player,
     onResolved: () => MaybePromise<void>
   ) {
     super(EFFECT_CHAIN_STATES.BUILDING);
-    this.onResolved = async () => {
-      await onResolved();
-      await this.game.inputSystem.askForPlayerInput();
-    };
-    this.currentPlayer = startingPlayer;
+    this.resolveCallbacks.push(() => this.game.inputSystem.askForPlayerInput());
+    this.resolveCallbacks.push(onResolved);
+    this._currentPlayer = startingPlayer;
 
     this.addTransitions([
       stateTransition(
@@ -76,8 +114,7 @@ export class EffectChain
       stateTransition(
         EFFECT_CHAIN_STATES.BUILDING,
         EFFECT_CHAIN_STATE_TRANSITIONS.PASS,
-        EFFECT_CHAIN_STATES.BUILDING,
-        this.onPass.bind(this)
+        EFFECT_CHAIN_STATES.BUILDING
       ),
       stateTransition(
         EFFECT_CHAIN_STATES.BUILDING,
@@ -102,62 +139,96 @@ export class EffectChain
     this.switchTurn();
   }
 
+  get currentPlayer() {
+    return this._currentPlayer;
+  }
+
   private get passesNeededToResolve() {
     // return this.effectStack.length <= 1 ? 1 : 2;
     return 2;
   }
 
   isCurrentPlayer(player: Player): boolean {
-    return player.equals(this.currentPlayer);
-  }
-
-  private onPass() {
-    this.consecutivePasses++;
-    if (this.consecutivePasses >= this.passesNeededToResolve) {
-      this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.RESOLVE);
-      void this.resolveEffects();
-    } else {
-      this.switchTurn();
-    }
+    return player.equals(this._currentPlayer);
   }
 
   private onEnd() {
-    void this.onResolved();
+    void this.resolveCallbacks.reverse().forEach(callback => callback());
+  }
+
+  onResolved(cb: () => MaybePromise<void>) {
+    this.resolveCallbacks.push(cb);
   }
 
   private async resolveEffects() {
     while (this.effectStack.length > 0) {
       const effect = this.effectStack.pop();
-      if (effect) await effect.handler(this.game);
+      if (effect) {
+        await this.game.emit(
+          GAME_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED,
+          new ChainEffectResolvedEvent({
+            index: this.effectStack.length,
+            effect: effect!
+          })
+        );
+        await effect.handler(this.game);
+        await this.game.emit(
+          GAME_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED,
+          new ChainEffectResolvedEvent({
+            index: this.effectStack.length,
+            effect: effect!
+          })
+        );
+      }
     }
+    await this.game.emit(GAME_EVENTS.EFFECT_CHAIN_RESOLVED, new ChainEvent({}));
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.END);
   }
 
   private switchTurn(): void {
-    this.currentPlayer = this.currentPlayer.opponent;
+    this._currentPlayer = this._currentPlayer.opponent;
   }
 
-  addEffect(effect: Effect, player: Player): void {
+  async addEffect(effect: Effect, player: Player) {
     assert(
       this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT),
-      new InactiveEffectChainError()
+      new CannotAddEffectChainPhase(this.getState())
     );
-    assert(player.equals(this.currentPlayer), new IllegalPlayerResponseError());
+    assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
 
     this.effectStack.push(effect);
+    await this.game.emit(
+      GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED,
+      new ChainEffectAddedEvent({
+        player,
+        index: this.effectStack.length - 1,
+        effect
+      })
+    );
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT);
   }
 
-  pass(player: Player): void {
+  async pass(player: Player) {
     assert(this.can(EFFECT_CHAIN_STATE_TRANSITIONS.PASS), new InactiveEffectChainError());
-    assert(player.equals(this.currentPlayer), new IllegalPlayerResponseError());
-
+    assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
+    await this.game.emit(
+      GAME_EVENTS.EFFECT_CHAIN_PLAYER_PASSED,
+      new ChainPassedEvent({ player })
+    );
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.PASS);
+
+    this.consecutivePasses++;
+    if (this.consecutivePasses >= this.passesNeededToResolve) {
+      this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.RESOLVE);
+      await this.resolveEffects();
+    } else {
+      this.switchTurn();
+    }
   }
 
   canAddEffect(player: Player): boolean {
     return (
-      player.equals(this.currentPlayer) &&
+      player.equals(this._currentPlayer) &&
       this.can(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT)
     );
   }
@@ -165,10 +236,12 @@ export class EffectChain
   serialize(): SerializedEffectChain {
     return {
       stack: this.effectStack.map(effect => ({
+        type: effect.type,
         source: effect.source.id,
         targets: effect.targets.map(serializePreResponseTarget)
       })),
-      player: this.currentPlayer.id
+      state: this.getState(),
+      player: this._currentPlayer.id
     };
   }
 }
@@ -188,5 +261,67 @@ export class ChainAlreadyStartedError extends GameError {
 export class InactiveEffectChainError extends GameError {
   constructor() {
     super('No effect chain is currently active');
+  }
+}
+
+export class CannotAddEffectChainPhase extends GameError {
+  constructor(phase: string) {
+    super(`You cannot add an effect in the ${phase} phase`);
+  }
+}
+export class ChainEvent extends TypedSerializableEvent<EmptyObject, EmptyObject> {
+  serialize() {
+    return {};
+  }
+}
+
+export class ChainEffectAddedEvent extends TypedSerializableEvent<
+  { player: Player; index: number; effect: Effect },
+  {
+    player: string;
+    index: number;
+    effect: SerializedEffectChain['stack'][number];
+  }
+> {
+  serialize() {
+    return {
+      player: this.data.player.id,
+      index: this.data.index,
+      effect: {
+        type: this.data.effect.type,
+        source: this.data.effect.source.id,
+        targets: this.data.effect.targets.map(serializePreResponseTarget)
+      }
+    };
+  }
+}
+
+export class ChainPassedEvent extends TypedSerializableEvent<
+  { player: Player },
+  { player: string }
+> {
+  serialize() {
+    return {
+      player: this.data.player.id
+    };
+  }
+}
+
+export class ChainEffectResolvedEvent extends TypedSerializableEvent<
+  { index: number; effect: Effect },
+  {
+    index: number;
+    effect: SerializedEffectChain['stack'][number];
+  }
+> {
+  serialize() {
+    return {
+      index: this.data.index,
+      effect: {
+        type: this.data.effect.type,
+        source: this.data.effect.source.id,
+        targets: this.data.effect.targets.map(serializePreResponseTarget)
+      }
+    };
   }
 }

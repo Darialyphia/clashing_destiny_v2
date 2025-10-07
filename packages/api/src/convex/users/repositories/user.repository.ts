@@ -1,29 +1,30 @@
 import type { Id } from '../../_generated/dataModel';
-import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
-import { DEFAULT_USERNAME, INITIAL_MMR } from '../../auth/auth.constants';
-import { generateDiscriminator } from '../../utils/discriminator';
+import { INITIAL_MMR } from '../../auth/auth.constants';
 import { Email } from '../../utils/email';
-import slugify from 'slugify';
 import { Password } from '../../utils/password';
-import { AppError } from '../../utils/error';
 import { User } from '../entities/user.entity';
+import { Username } from '../username';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
+import type { UserMapper } from '../mappers/user.mapper';
 
 export class UserReadRepository {
-  constructor(protected db: DatabaseReader) {}
+  static INJECTION_KEY = 'userReadRepo' as const;
+
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async getByEmail(email: Email) {
-    return this.db
+    return this.ctx.db
       .query('users')
       .withIndex('by_email', q => q.eq('email', email.value))
       .unique();
   }
 
   async getById(userId: Id<'users'>) {
-    return this.db.get(userId);
+    return this.ctx.db.get(userId);
   }
 
   async getBySlug(slug: string) {
-    return this.db
+    return this.ctx.db
       .query('users')
       .withIndex('by_slug', q => q.eq('slug', slug))
       .unique();
@@ -31,70 +32,50 @@ export class UserReadRepository {
 }
 
 export class UserRepository {
-  declare protected db: DatabaseWriter;
+  static INJECTION_KEY = 'userRepo' as const;
 
-  constructor(db: DatabaseWriter) {
-    this.db = db;
-  }
+  constructor(private ctx: { db: DatabaseWriter; userMapper: UserMapper }) {}
 
   async getByEmail(email: Email) {
-    const doc = await this.db
+    const doc = await this.ctx.db
       .query('users')
       .withIndex('by_email', q => q.eq('email', email.value))
       .unique();
 
     if (!doc) return null;
 
-    return new User(doc._id, doc);
+    return User.from(doc);
   }
 
   async getById(userId: Id<'users'>) {
-    const doc = await this.db.get(userId);
+    const doc = await this.ctx.db.get(userId);
     if (!doc) return null;
 
-    return new User(doc._id, doc);
+    return User.from(doc);
   }
 
   async getBySlug(slug: string) {
-    const doc = await this.db
+    const doc = await this.ctx.db
       .query('users')
       .withIndex('by_slug', q => q.eq('slug', slug))
       .unique();
 
     if (!doc) return null;
 
-    return new User(doc._id, doc);
+    return User.from(doc);
   }
 
-  async create(input: { email: Email; password: Password; name?: string }) {
-    const name = input.name || DEFAULT_USERNAME;
-    const discriminator = await generateDiscriminator({ db: this.db }, name);
-
-    return this.db.insert('users', {
+  async create(input: { email: Email; password: Password; username: Username }) {
+    return this.ctx.db.insert('users', {
       email: input.email.value,
+      username: input.username.value,
+      slug: input.username.toSlug(),
       passwordHash: await input.password.toHash(),
-      name,
-      slug: slugify(`${name}--${discriminator}`),
-      discriminator,
       mmr: INITIAL_MMR
     });
   }
 
   save(user: User) {
-    return this.db.replace(user.id, { ...user['data'] });
-  }
-
-  async getNewDiscriminatorIfNeeded(userId: Id<'users'>, name: string) {
-    const user = await this.getById(userId);
-    if (!user) throw new AppError('User not found');
-
-    const slug = slugify(`${name}--${user.discriminator}`);
-    const exists = await this.getBySlug(slug);
-
-    if (exists) {
-      return await generateDiscriminator({ db: this.db }, name);
-    } else {
-      return user.discriminator;
-    }
+    return this.ctx.db.replace(user.id, this.ctx.userMapper.toPersistence(user));
   }
 }

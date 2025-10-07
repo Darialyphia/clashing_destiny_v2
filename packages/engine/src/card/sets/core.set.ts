@@ -1,214 +1,91 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
-import { firebrand } from './core/artifacts/firebrand';
-import { orbOfTheTides } from './core/artifacts/orb-of-the-tides';
-import { rainbowCeremonialSword } from './core/artifacts/rainbow-sword';
-import { runedShiv } from './core/artifacts/runed-shiv';
+import { amuletOfRemembrance } from './core/artifacts/amulet-of-remembrance';
+import { arbitersMaul } from './core/artifacts/arbiters-maul';
+import { manaJewel } from './core/artifacts/mana-jewel';
 import { rustyBlade } from './core/artifacts/rusty-blade';
-import { tomeOfKnowledge } from './core/artifacts/tome-of-knowledge';
-import { arcaneAffinity } from './core/destinies/arcane-affinity';
-import { arcaneMastery } from './core/destinies/arcane-mastery';
-import { bloodAffinity } from './core/destinies/blood-affinity';
-import { bloodCovenant } from './core/destinies/blood-covenant';
-import { cabalInitiate } from './core/destinies/cabal-initiate';
-import { chronoAffinity } from './core/destinies/chrono-affinity';
-import { fearlessLeader } from './core/destinies/fearless-leader';
-import { fireAffinity } from './core/destinies/fire-affinity';
-import { fireStudies } from './core/destinies/fire-studies';
-import { insight } from './core/destinies/insight';
-import { inspiredBySteel } from './core/destinies/inspired-by-steel';
-import { manaVisions } from './core/destinies/mana-visions';
-import { mercyForTheInjured } from './core/destinies/mercy-for-the-injured';
-import { theHangedMan } from './core/destinies/the-hangman';
-import { tidesFavored } from './core/destinies/tides-favored';
-import { vaillantParagon } from './core/destinies/vaillant-paragon';
-import { waterAffinity } from './core/destinies/water-affinity';
-import { combatTutorialEnemyHero } from './core/heroes/combat-tutorial-enemy-hero';
-import { knight } from './core/heroes/knight';
-import { sage } from './core/heroes/sage';
-import { arcaneConduit } from './core/minions/arcane-conduit';
-import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
-import { ardentMonk } from './core/minions/ardent-monk';
-import { battleflameInvoker } from './core/minions/battleflame-invoker';
-import { blazingSalamander } from './core/minions/blazing-salamander';
-import { ceruleanWaveDisciple } from './core/minions/cerulean-wave-disciple';
+import { scalesOfDestiny } from './core/artifacts/scales-of-destiny';
+import { unyieldingShield } from './core/artifacts/unyielding-shield';
+import { aidenLv1 } from './core/heroes/aiden-lv1';
+import { aidenLv2 } from './core/heroes/aiden-lv2';
+import { aidenLv3 } from './core/heroes/aiden-lv3';
+import { erinaLv3 } from './core/heroes/erina-lv3';
+import { noviceLv0 } from './core/heroes/novice-lv0';
+import { angelOfRetribution } from './core/minions/angel-of-retribution';
+import { bastionGuard } from './core/minions/bastion-guard';
 import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
-import { crimsonSuppressor } from './core/minions/crimson-suppressor';
-import { enjiOneManArmy } from './core/minions/enji-one-man-army';
-import { esteemedErudite } from './core/minions/esteemed-erudite';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
-import { flameExorcist } from './core/minions/flame-exorcist';
-import { flamefistFighter } from './core/minions/flamefirst-fighter';
-import { flowkeeperSage } from './core/minions/flowkeeper-sage';
-import { friendlySlime } from './core/minions/friendly-slime';
-import { gluttonousSlime } from './core/minions/gluttonous-slime';
-import { heraldOfSalvation } from './core/minions/herald-of-salvation';
+import { flameJuggler } from './core/minions/flame-juggler';
+import { friendlySlime } from './core/minions/friendlySlime';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
-import { luminescentMystic } from './core/minions/luminescent-mystic';
-import { magicChanneler } from './core/minions/magic-channeler';
-import { magicFueledGolem } from './core/minions/magic-fueled-golem';
-import { nagaSkirmisher } from './core/minions/naga-skirmisher';
-import { nerathisMistressOfTheDepths } from './core/minions/nerathis-mistress-of-the-depths';
+import { hougenThePunisher } from './core/minions/hougen-the-punisher';
+import { manaWisp } from './core/minions/mana-wisp';
 import { phoenix } from './core/minions/phoenix';
-import { playfulEels } from './core/minions/playful-eels';
-import { poseidonEmperorOfTheSea } from './core/minions/poseidon-emperor-of-the-sea';
-import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { pyreboundLancer } from './core/minions/pyrebound-lancer';
-import { pyromancer } from './core/minions/pyromancer';
-import { seer } from './core/minions/seer';
-import { spellbladeDuelist } from './core/minions/spellblade-duelist';
-import { spiritualist } from './core/minions/spiritualist';
-import { spriteOfFadingMemories } from './core/minions/sprite-of-fading-memories';
+import { radiantCelestial } from './core/minions/radiant-celestial';
+import { royalGuard } from './core/minions/royal-guard';
+import { sharpShooter } from './core/minions/sharpshooter';
+import { shieldMaiden } from './core/minions/shield-maiden';
 import { stalwartVanguard } from './core/minions/stalwart-vanguard';
-import { sunEmperor } from './core/minions/sun-emperor';
-import { sunPalaceGuard } from './core/minions/sun-palace-guard';
-import { temporalShifter } from './core/minions/temporal-shifter';
-import { tutorialSlime1 } from './core/minions/tutorial-slime-1';
-import { tutorialSlime2 } from './core/minions/tutorial-slime-2';
-import { violetStalker } from './core/minions/violet-stalker';
-import { waterElemental } from './core/minions/water-elemental';
-import { arcaneInsight } from './core/spells/arcane-insight';
-import { calmWaters } from './core/spells/calm-waters';
-import { channelTheFlames } from './core/spells/channel-the-flames';
-import { delayTheInevitable } from './core/spells/delay-the-inevitable';
-import { dualCasting } from './core/spells/dual-casting';
-import { fireBall } from './core/spells/fire-ball';
+import { sigilOfImmortalFlame } from './core/sigils/sigil-of-immortal-flame';
+import { blindingLight } from './core/spells/blinding-light';
+import { fatedOath } from './core/spells/fated-oath';
 import { fireBolt } from './core/spells/fire-bolt';
-import { forgedInTheCrater } from './core/spells/forged-in-the-crater';
+import { fireball } from './core/spells/fireball';
+import { flamingFrenzy } from './core/spells/flaming-frenzy';
 import { gazeIntoTomorrow } from './core/spells/gaze-into-tomorrow';
-import { hourglassFracture } from './core/spells/hourglass-fracture';
-import { innerFire } from './core/spells/inner-fire';
-import { manaShield } from './core/spells/mana-shield';
-import { masquerade } from './core/spells/masquerade';
-import { moltenShield } from './core/spells/molten-shield';
-import { novaBlast } from './core/spells/nova-blast';
-import { powerOverwhelming } from './core/spells/power-overwhelming';
-import { pyroclasm } from './core/spells/pyroclasm';
-import { recollection } from './core/spells/recollection';
-import { revisedStrategy } from './core/spells/revised-strategy';
-import { shiftingCurrents } from './core/spells/shifting-currents';
-import { shoalOfEels } from './core/spells/shoal-of-eels';
+import { grandCross } from './core/spells/grand-cross';
+import { ironWall } from './core/spells/iron-wall';
+import { knightsInspiration } from './core/spells/knights-inspiration';
+import { manaSpark } from './core/spells/mana-spark';
+import { reposition } from './core/spells/reposition';
 import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
-import { slipstreamVeil } from './core/spells/slipstream-veil';
-import { surgeOfWill } from './core/spells/surge-of-will';
-import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
-import { tidalWave } from './core/spells/tidal-wave';
-import { tranquility } from './core/spells/tranquility';
-import { waterSpringLily } from './core/spells/water-spring-lily';
+import { sunburst } from './core/spells/sunburst';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
-    // Tutorial cards
-    tutorialSlime1,
-    tutorialSlime2,
-    combatTutorialEnemyHero,
-
-    // Heroes
-    sage,
-    knight,
-
-    // Normal
-    fireAffinity,
-    waterAffinity,
-    arcaneAffinity,
-    chronoAffinity,
-    bloodAffinity,
-    courageousFootsoldier,
-    friendlySlime,
-    rustyBlade,
-    inspiredBySteel,
-    insight,
-    manaVisions,
-    rainbowCeremonialSword,
-    heraldOfSalvation,
-    luminescentMystic,
-    stalwartVanguard,
-    sunEmperor,
-    sunPalaceGuard,
-    runedShiv,
-    gazeIntoTomorrow,
-    fearlessLeader,
-    revisedStrategy,
-    masquerade,
-    spiritualist,
-    tomeOfKnowledge,
-    orbOfTheTides,
-    cabalInitiate,
-    theHangedMan,
-    bloodCovenant,
-    gluttonousSlime,
-    slimesToTheRescue,
-    mercyForTheInjured,
-    vaillantParagon,
-
-    // Fire
     fireBolt,
-    fireBall,
-    flamefistFighter,
-    pyromancer,
-    blazingSalamander,
-    phoenix,
-    flagBearerOfFlame,
+    noviceLv0,
+    aidenLv1,
+    aidenLv2,
+    aidenLv3,
+    courageousFootsoldier,
     hotHeadedRecruit,
-    channelTheFlames,
-    firebrand,
-    pyroclasm,
-    innerFire,
-    pyreArchfiend,
-    enjiOneManArmy,
-    flameExorcist,
-    ardentMonk,
-    forgedInTheCrater,
-    fireStudies,
+    rustyBlade,
+    knightsInspiration,
+    shieldMaiden,
+    gazeIntoTomorrow,
+    flagBearerOfFlame,
+    flameJuggler,
+    sharpShooter,
+    friendlySlime,
+    slimesToTheRescue,
     pyreboundLancer,
-    moltenShield,
-    battleflameInvoker,
-
-    // Arcane,
-    dualCasting,
-    arcaneInsight,
-    thirstForKnowledge,
-    magicChanneler,
-    archsageOfMoonring,
-    seer,
-    magicFueledGolem,
-    spellbladeDuelist,
-    novaBlast,
-    esteemedErudite,
-    surgeOfWill,
-    arcaneMastery,
-    manaShield,
-    powerOverwhelming,
-    arcaneConduit,
-    violetStalker,
-
-    // Chrono
-    recollection,
-    hourglassFracture,
-    temporalShifter,
-    delayTheInevitable,
-
-    // Water
-    tidalWave,
-    ceruleanWaveDisciple,
-    waterSpringLily,
-    flowkeeperSage,
-    tranquility,
-    slipstreamVeil,
-    waterElemental,
-    tidesFavored,
-    playfulEels,
-    nagaSkirmisher,
-    shoalOfEels,
-    shiftingCurrents,
-    poseidonEmperorOfTheSea,
-    calmWaters,
-    spriteOfFadingMemories,
-    nerathisMistressOfTheDepths,
-
-    // Blood
-    crimsonSuppressor
+    unyieldingShield,
+    reposition,
+    fatedOath,
+    hougenThePunisher,
+    amuletOfRemembrance,
+    flamingFrenzy,
+    grandCross,
+    fireball,
+    angelOfRetribution,
+    phoenix,
+    sigilOfImmortalFlame,
+    erinaLv3,
+    stalwartVanguard,
+    ironWall,
+    royalGuard,
+    blindingLight,
+    sunburst,
+    radiantCelestial,
+    arbitersMaul,
+    manaSpark,
+    manaJewel,
+    scalesOfDestiny,
+    manaWisp,
+    bastionGuard
   ]
 };

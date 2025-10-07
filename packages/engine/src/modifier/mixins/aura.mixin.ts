@@ -1,19 +1,17 @@
-import type { Modifier } from '../modifier.entity';
+import type { Modifier, ModifierTarget } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../../card/entities/card.entity';
-import { GAME_EVENTS } from '../../game/game.events';
 import type { MaybePromise } from '@game/shared';
 
 export type AuraOptions = {
   isElligible(candidate: AnyCard): boolean;
   onGainAura(candidate: AnyCard): MaybePromise<void>;
   onLoseAura(candidate: AnyCard): MaybePromise<void>;
-  canSelfApply: boolean;
 };
 
-export class AuraModifierMixin extends ModifierMixin<AnyCard> {
-  protected modifier!: Modifier<AnyCard>;
+export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T> {
+  protected modifier!: Modifier<T>;
 
   private affectedCardIds = new Set<string>();
 
@@ -36,7 +34,6 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
     if (!this.isApplied) return;
 
     for (const card of this.game.cardSystem.cards) {
-      if (!this.options.canSelfApply && card.equals(this.modifier.target)) continue;
       const shouldGetAura = this.options.isElligible(card);
 
       const hasAura = this.affectedCardIds.has(card.id);
@@ -67,7 +64,7 @@ export class AuraModifierMixin extends ModifierMixin<AnyCard> {
     }
   }
 
-  onApplied(card: AnyCard, modifier: Modifier<AnyCard>): void {
+  onApplied(card: T, modifier: Modifier<T>): void {
     this.modifier = modifier;
     this.isApplied = true;
 

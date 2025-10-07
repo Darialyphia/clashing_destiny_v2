@@ -16,13 +16,22 @@ export type MatchmakingData = {
 
 export type MatchmakingId = Id<'matchmaking'>;
 export type MatchmakingDoc = Doc<'matchmaking'>;
+
 export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
-  private has(user: MatchmakingUser) {
+  isInMatchmaking(user: MatchmakingUser) {
     return this.data.matchmakingUsers.some(u => u.equals(user));
+  }
+
+  get enabled() {
+    return this.data.matchmaking.enabled;
   }
 
   get name() {
     return this.data.matchmaking.name;
+  }
+
+  get description() {
+    return this.data.matchmaking.description;
   }
 
   get startedAt() {
@@ -42,11 +51,12 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
   }
 
   canJoin(user: MatchmakingUser) {
-    return !this.has(user);
+    if (!this.enabled) return false;
+    return !this.isInMatchmaking(user);
   }
 
   join(user: MatchmakingUser) {
-    if (this.has(user)) {
+    if (this.isInMatchmaking(user)) {
       throw new DomainError('User is already in the matchmaking');
     }
 
@@ -60,10 +70,24 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
   }
 
   matchParticipants() {
-    const strategy = new MMRMatchmakingStrategy(createMMRMatchmakingOptions());
+    const strategy = new MMRMatchmakingStrategy<MatchmakingUser>(
+      createMMRMatchmakingOptions()
+    );
     const matchmaking = new GameMatchmaking(strategy);
     this.participants.forEach(user => {
-      matchmaking.join({} as any, user.joinedAt);
+      matchmaking.join(
+        {
+          id: user.userId as string,
+          isDemotionGame: false,
+          isPromotionGame: false,
+          lossStreak: 0,
+          meta: user,
+          mmr: user.mmr,
+          recentWinrate: 0,
+          winStreak: 0
+        },
+        user.joinedAt
+      );
     });
 
     const { pairs, remaining } = matchmaking.makePairs();
@@ -72,7 +96,6 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
       this.leave(a.id as UserId);
       this.leave(b.id as UserId);
     });
-
     return { pairs, remaining };
   }
 

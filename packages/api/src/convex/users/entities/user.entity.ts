@@ -1,17 +1,32 @@
-import slugify from 'slugify';
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
+import type { Override } from '@game/shared';
+import { Username } from '../username';
+import { Email } from '../../utils/email';
 
 export type UserId = Id<'users'>;
 export type UserDoc = Doc<'users'>;
+export type UserData = Override<UserDoc, { username: Username; email: Email }>;
 
-export class User extends Entity<Id<'users'>, UserDoc> {
-  get name() {
-    return this.data.name;
+export class User extends Entity<UserId, UserData> {
+  static from(doc: UserDoc) {
+    return new User(doc._id, {
+      ...doc,
+      email: new Email(doc.email),
+      username: new Username(doc.username)
+    });
   }
 
-  get discriminator() {
-    return this.data.discriminator;
+  constructor(id: Id<'users'>, data: UserData) {
+    super(id, data);
+  }
+
+  get username() {
+    return this.data.username;
+  }
+
+  get email() {
+    return this.data.email;
   }
 
   get passwordHash() {
@@ -26,9 +41,8 @@ export class User extends Entity<Id<'users'>, UserDoc> {
     return this.data.slug;
   }
 
-  rename(name: string, discriminator: string) {
-    this.data.name = name;
-    this.data.discriminator = discriminator;
-    this.data.slug = slugify(`${name}--${discriminator}`);
+  rename(name: string) {
+    this.data.username = new Username(name);
+    this.data.slug = this.data.username.toSlug();
   }
 }

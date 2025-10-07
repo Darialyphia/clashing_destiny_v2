@@ -1,10 +1,10 @@
-import { UseCase } from '../../usecase';
-import { UserRepository } from '../../users/repositories/user.repository';
+import { type UseCase } from '../../usecase';
 import { Email } from '../../utils/email';
 import { AppError } from '../../utils/error';
 import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
-import { SessionRepository } from '../repositories/session.repository';
+import type { SessionRepository } from '../repositories/session.repository';
+import type { UserRepository } from '../../users/repositories/user.repository';
 
 export interface LoginInput {
   email: Email;
@@ -15,12 +15,13 @@ export interface LoginOutput {
   session: AuthSession;
 }
 
-export type LoginCtx = {
-  userRepo: UserRepository;
-  sessionRepo: SessionRepository;
-};
+export class LoginUseCase implements UseCase<LoginInput, LoginOutput> {
+  static INJECTION_KEY = 'loginUseCase' as const;
 
-export class LoginUseCase extends UseCase<LoginInput, LoginOutput, LoginCtx> {
+  constructor(
+    protected ctx: { userRepo: UserRepository; sessionRepo: SessionRepository }
+  ) {}
+
   async execute(input: LoginInput): Promise<LoginOutput> {
     const user = await this.ctx.userRepo.getByEmail(input.email);
 

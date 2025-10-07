@@ -169,6 +169,12 @@ export class IllegalAttackerError extends InputError {
   }
 }
 
+export class IllegalCounterAttackError extends InputError {
+  constructor() {
+    super('Cannot counterattack with this unit');
+  }
+}
+
 export class IllegalBlockerError extends InputError {
   constructor() {
     super('Cannot block with this unit');

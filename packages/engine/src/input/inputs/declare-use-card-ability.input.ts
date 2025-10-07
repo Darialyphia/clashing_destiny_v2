@@ -2,15 +2,10 @@ import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
 import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
-import {
-  IllegalAbilityError,
-  UnknownAbilityError,
-  UnknownCardError
-} from '../input-errors';
+import { IllegalAbilityError, UnknownAbilityError } from '../input-errors';
 import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
-import { DestinyCard } from '../../card/entities/destiny.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 
@@ -37,7 +32,6 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
         P.instanceOf(MinionCard),
         P.instanceOf(HeroCard),
         P.instanceOf(ArtifactCard),
-        P.instanceOf(DestinyCard),
         card =>
           card.abilities.find(ability => ability.abilityId === this.payload.abilityId) ||
           null

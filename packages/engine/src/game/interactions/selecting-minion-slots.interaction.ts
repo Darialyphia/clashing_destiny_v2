@@ -8,17 +8,18 @@ import {
   UnableToCommitError,
   INTERACTION_STATE_TRANSITIONS
 } from '../systems/game-interaction.system';
+import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 
-export type MinionPosition = {
+export type BoardPosition = {
   player: Player;
   slot: MinionSlot;
-  zone: 'attack' | 'defense';
+  zone: BoardSlotZone;
 };
 
 type SelectingMinionSlotsContextOptions = {
-  isElligible: (position: MinionPosition, selectedSlots: MinionPosition[]) => boolean;
-  canCommit: (selectedSlots: MinionPosition[]) => boolean;
-  isDone(selectedSlots: MinionPosition[]): boolean;
+  isElligible: (position: BoardPosition, selectedSlots: BoardPosition[]) => boolean;
+  canCommit: (selectedSlots: BoardPosition[]) => boolean;
+  isDone(selectedSlots: BoardPosition[]): boolean;
   player: Player;
 };
 
@@ -32,16 +33,16 @@ export class SelectingMinionSlotsContext {
     return instance;
   }
 
-  private selectedPositions: MinionPosition[] = [];
+  private selectedPositions: BoardPosition[] = [];
 
   private isElligible: (
-    position: MinionPosition,
-    selectedSlots: MinionPosition[]
+    position: BoardPosition,
+    selectedSlots: BoardPosition[]
   ) => boolean;
 
-  private canCommit: (selectedSlots: MinionPosition[]) => boolean;
+  private canCommit: (selectedSlots: BoardPosition[]) => boolean;
 
-  private isDone: (selectedSlots: MinionPosition[]) => boolean;
+  private isDone: (selectedSlots: BoardPosition[]) => boolean;
 
   readonly player: Player;
 
@@ -58,9 +59,9 @@ export class SelectingMinionSlotsContext {
   init() {}
 
   private get elligiblePositions() {
-    const result: MinionPosition[] = [];
+    const result: BoardPosition[] = [];
     this.game.playerSystem.players.forEach(player => {
-      (['attack', 'defense'] as const).forEach(zone => {
+      Object.values(BOARD_SLOT_ZONES).forEach(zone => {
         for (let i = 0; i < this.game.config.ATTACK_ZONE_SLOTS; i++) {
           const slot = i;
           const elligible = this.isElligible(
@@ -108,7 +109,7 @@ export class SelectingMinionSlotsContext {
     }
   }
 
-  async selectPosition(player: Player, pos: MinionPosition) {
+  async selectPosition(player: Player, pos: BoardPosition) {
     assert(player.equals(this.player), new InvalidPlayerError());
     assert(this.isElligible(pos, this.selectedPositions), new IllegalTargetError());
     this.selectedPositions.push(pos);

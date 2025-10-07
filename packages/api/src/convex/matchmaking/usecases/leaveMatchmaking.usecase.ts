@@ -1,9 +1,8 @@
+import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
-import { UseCase } from '../../usecase';
-import { UserRepository } from '../../users/repositories/user.repository';
+import { type UseCase } from '../../usecase';
 import { DomainError } from '../../utils/error';
-import { MatchmakingRepository } from '../repositories/matchmaking.repository';
-import { MatchmakingUserRepository } from '../repositories/matchmakingUser.repository';
+import type { MatchmakingRepository } from '../repositories/matchmaking.repository';
 
 export type LeaveMatchmakingInput = never;
 
@@ -11,44 +10,27 @@ export interface LeaveMatchmakingOutput {
   success: true;
 }
 
-export type LeaveMatchmakingCtx = {
-  session: AuthSession;
-  matchmakingRepo: MatchmakingRepository;
-  matchmakingUserRepo: MatchmakingUserRepository;
-  userRepo: UserRepository;
-};
+export class LeaveMatchmakingUseCase
+  implements UseCase<LeaveMatchmakingInput, LeaveMatchmakingOutput>
+{
+  static INJECTION_KEY = 'leaveMatchmakingUseCase' as const;
 
-export class LeaveMatchmakingUseCase extends UseCase<
-  LeaveMatchmakingInput,
-  LeaveMatchmakingOutput,
-  LeaveMatchmakingCtx
-> {
-  get session() {
-    return this.ctx.session;
-  }
-
-  get matchmakingRepo() {
-    return this.ctx.matchmakingRepo;
-  }
-
-  get matchmakingUserRepo() {
-    return this.ctx.matchmakingUserRepo;
-  }
-
-  get userRepo() {
-    return this.ctx.userRepo;
-  }
+  constructor(
+    private ctx: { session: AuthSession; matchmakingRepo: MatchmakingRepository }
+  ) {}
 
   async execute(): Promise<LeaveMatchmakingOutput> {
-    const matchmaking = await this.matchmakingRepo.getByUserId(this.session.userId);
+    const session = ensureAuthenticated(this.ctx.session);
+    const matchmaking = await this.ctx.matchmakingRepo.getByUserId(
+      this.ctx.session.userId
+    );
 
     if (!matchmaking) {
       throw new DomainError('User is not in matchmaking');
     }
 
-    matchmaking.leave(this.session.userId);
-    await this.matchmakingRepo.save(matchmaking);
-
+    matchmaking.leave(session.userId);
+    await this.ctx.matchmakingRepo.save(matchmaking);
     return { success: true };
   }
 }

@@ -1,97 +1,124 @@
-import { firebrand } from '@game/engine/src/card/sets/core/artifacts/firebrand';
+import { amuletOfRemembrance } from '@game/engine/src/card/sets/core/artifacts/amulet-of-remembrance';
+import { arbitersMaul } from '@game/engine/src/card/sets/core/artifacts/arbiters-maul';
+import { manaJewel } from '@game/engine/src/card/sets/core/artifacts/mana-jewel';
 import { rustyBlade } from '@game/engine/src/card/sets/core/artifacts/rusty-blade';
-import { cabalInitiate } from '@game/engine/src/card/sets/core/destinies/cabal-initiate';
-import { fearlessLeader } from '@game/engine/src/card/sets/core/destinies/fearless-leader';
-import { fireAffinity } from '@game/engine/src/card/sets/core/destinies/fire-affinity';
-import { fireStudies } from '@game/engine/src/card/sets/core/destinies/fire-studies';
-import { insight } from '@game/engine/src/card/sets/core/destinies/insight';
-import { inspiredBySteel } from '@game/engine/src/card/sets/core/destinies/inspired-by-steel';
-import { theHangedMan } from '@game/engine/src/card/sets/core/destinies/the-hangman';
+import { scalesOfDestiny } from '@game/engine/src/card/sets/core/artifacts/scales-of-destiny';
+import { unyieldingShield } from '@game/engine/src/card/sets/core/artifacts/unyielding-shield';
+import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
+import { aidenLv2 } from '@game/engine/src/card/sets/core/heroes/aiden-lv2';
+import { aidenLv3 } from '@game/engine/src/card/sets/core/heroes/aiden-lv3';
+import { angelOfRetribution } from '@game/engine/src/card/sets/core/minions/angel-of-retribution';
+import { bastionGuard } from '@game/engine/src/card/sets/core/minions/bastion-guard';
 import { courageousFootsoldier } from '@game/engine/src/card/sets/core/minions/courageous-footsoldier';
 import { flagBearerOfFlame } from '@game/engine/src/card/sets/core/minions/flag-bearer-of-flame';
-import { flamefistFighter } from '@game/engine/src/card/sets/core/minions/flamefirst-fighter';
-import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendly-slime';
+import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlySlime';
 import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
-import { phoenix } from '@game/engine/src/card/sets/core/minions/phoenix';
-import { pyromancer } from '@game/engine/src/card/sets/core/minions/pyromancer';
-import { sunEmperor } from '@game/engine/src/card/sets/core/minions/sun-emperor';
-import { fireBall } from '@game/engine/src/card/sets/core/spells/fire-ball';
-import { fireBolt } from '@game/engine/src/card/sets/core/spells/fire-bolt';
-import { innerFire } from '@game/engine/src/card/sets/core/spells/inner-fire';
+import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/hougen-the-punisher';
+import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
+import { radiantCelestial } from '@game/engine/src/card/sets/core/minions/radiant-celestial';
+import { royalGuard } from '@game/engine/src/card/sets/core/minions/royal-guard';
+import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
+import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
+import { stalwartVanguard } from '@game/engine/src/card/sets/core/minions/stalwart-vanguard';
+import { blindingLight } from '@game/engine/src/card/sets/core/spells/blinding-light';
+import { fireball } from '@game/engine/src/card/sets/core/spells/fireball';
+import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
+import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
+import { grandCross } from '@game/engine/src/card/sets/core/spells/grand-cross';
+import { ironWall } from '@game/engine/src/card/sets/core/spells/iron-wall';
+import { knightsInspiration } from '@game/engine/src/card/sets/core/spells/knights-inspiration';
+import { sunburst } from '@game/engine/src/card/sets/core/spells/sunburst';
 import type { GameOptions } from '@game/engine/src/game/game';
 
 export type PremadeDeck = {
   name: string;
   mainDeck: GameOptions['players'][number]['mainDeck'];
   destinyDeck: GameOptions['players'][number]['mainDeck'];
-  hero: GameOptions['players'][number]['hero'];
 };
 
 export const premadeDecks: Array<PremadeDeck> = [
   {
-    name: 'Knight Starter Deck',
-    destinyDeck: {
-      cards: [
-        fireAffinity.id,
-        inspiredBySteel.id,
-        fireStudies.id,
-        insight.id,
-        fearlessLeader.id,
-        cabalInitiate.id,
-        theHangedMan.id
-      ]
-    },
+    name: 'Aiden Starter',
     mainDeck: {
       cards: [
-        fireBolt.id,
-        fireBolt.id,
-        fireBolt.id,
-
-        fireBall.id,
-        fireBall.id,
-
-        innerFire.id,
-        innerFire.id,
-        innerFire.id,
-
-        friendlySlime.id,
-        friendlySlime.id,
-        friendlySlime.id,
-
-        pyromancer.id,
-        pyromancer.id,
-        pyromancer.id,
-
-        flagBearerOfFlame.id,
-        flagBearerOfFlame.id,
-        flagBearerOfFlame.id,
-
-        hotHeadedRecruit.id,
-        hotHeadedRecruit.id,
-        hotHeadedRecruit.id,
-
-        flamefistFighter.id,
-        flamefistFighter.id,
-        flamefistFighter.id,
-
         courageousFootsoldier.id,
         courageousFootsoldier.id,
         courageousFootsoldier.id,
-
-        firebrand.id,
-        firebrand.id,
-
+        courageousFootsoldier.id,
         rustyBlade.id,
         rustyBlade.id,
         rustyBlade.id,
-
-        sunEmperor.id,
-        sunEmperor.id,
-
-        phoenix.id
+        rustyBlade.id,
+        flagBearerOfFlame.id,
+        flagBearerOfFlame.id,
+        flagBearerOfFlame.id,
+        shieldMaiden.id,
+        shieldMaiden.id,
+        shieldMaiden.id,
+        shieldMaiden.id,
+        knightsInspiration.id,
+        knightsInspiration.id,
+        knightsInspiration.id,
+        hotHeadedRecruit.id,
+        hotHeadedRecruit.id,
+        hotHeadedRecruit.id,
+        fireball.id,
+        fireball.id,
+        fireball.id,
+        gazeIntoTomorrow.id,
+        gazeIntoTomorrow.id,
+        gazeIntoTomorrow.id,
+        gazeIntoTomorrow.id,
+        sharpShooter.id,
+        sharpShooter.id,
+        sharpShooter.id,
+        sharpShooter.id,
+        friendlySlime.id,
+        friendlySlime.id,
+        friendlySlime.id,
+        friendlySlime.id,
+        pyreboundLancer.id,
+        pyreboundLancer.id,
+        hougenThePunisher.id,
+        hougenThePunisher.id,
+        grandCross.id,
+        grandCross.id,
+        royalGuard.id,
+        royalGuard.id,
+        royalGuard.id,
+        royalGuard.id,
+        stalwartVanguard.id,
+        stalwartVanguard.id,
+        stalwartVanguard.id,
+        blindingLight.id,
+        blindingLight.id,
+        blindingLight.id,
+        blindingLight.id,
+        sunburst.id,
+        sunburst.id,
+        sunburst.id,
+        sunburst.id,
+        bastionGuard.id,
+        bastionGuard.id,
+        bastionGuard.id,
+        bastionGuard.id
       ]
     },
-
-    hero: 'knight'
+    destinyDeck: {
+      cards: [
+        aidenLv1.id,
+        aidenLv2.id,
+        aidenLv3.id,
+        unyieldingShield.id,
+        ironWall.id,
+        amuletOfRemembrance.id,
+        flamingFrenzy.id,
+        angelOfRetribution.id,
+        radiantCelestial.id,
+        arbitersMaul.id,
+        manaJewel.id,
+        scalesOfDestiny.id
+      ]
+    }
   }
 ];

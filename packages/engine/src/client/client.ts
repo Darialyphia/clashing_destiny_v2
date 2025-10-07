@@ -1,5 +1,5 @@
-import type { EmptyObject, MaybePromise, Values } from '@game/shared';
-import type { InputDispatcher } from '../input/input-system';
+import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
+import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
   SerializedOmniscientState,
@@ -16,11 +16,10 @@ import {
 } from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
-import { GAME_PHASES } from '../game/game.enums';
-import { COMBAT_STEPS } from '../game/phases/combat.phase';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
-import type { Affinity } from '../card/card.enums';
+import type { SpellSchool } from '../card/card.enums';
 import type { AbilityViewModel } from './view-models/ability.model';
+import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -93,6 +92,8 @@ export class GameClient {
 
   private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
 
+  history: SerializedInput[] = [];
+
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
     updateCompleted: GameStateSnapshot<SnapshotDiff>;
@@ -108,7 +109,9 @@ export class GameClient {
 
     this.networkAdapter.subscribe(async snapshot => {
       console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
-      console.log('state', snapshot.state);
+      if (snapshot.kind === 'state') {
+        console.log('state', snapshot.state);
+      }
       console.log('events', snapshot.events);
       console.groupEnd();
       this.queue.push(snapshot);
@@ -152,53 +155,38 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerIdFromSnapshotState(snapshot: SnapshotDiff) {
-    if (snapshot.effectChain) {
-      return snapshot.effectChain.player;
-    }
-
-    if (
-      snapshot.phase.state === GAME_PHASES.ATTACK &&
-      snapshot.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
-    ) {
-      return snapshot.players.find(id => id !== snapshot.currentPlayer)!;
-    }
-
-    return snapshot.interaction.ctx.player;
-  }
-
   getActivePlayerId() {
-    if (this.stateManager.state.effectChain) {
-      return this.stateManager.state.effectChain.player;
-    }
-
     if (
-      this.stateManager.state.phase.state === GAME_PHASES.ATTACK &&
-      this.stateManager.state.phase.ctx.step === COMBAT_STEPS.DECLARE_BLOCKER
+      this.stateManager.state.effectChain &&
+      this.stateManager.state.effectChain.state === EFFECT_CHAIN_STATES.BUILDING
     ) {
-      return this.stateManager.state.players.find(
-        id => id !== this.stateManager.state.currentPlayer
-      )!;
+      return this.stateManager.state.effectChain.player;
     }
 
     return this.stateManager.state.interaction.ctx.player;
   }
 
-  initialize(
-    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>
+  async initialize(
+    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
+    history: SerializedInput[] = []
   ) {
+    this.isReady = false;
+    this.history = history;
+    this.lastSnapshotId = -1;
+    this.snapshots.clear();
+    this.queue = [];
+    if (snapshot.kind === 'error') {
+      throw new Error('Cannot initialize client with error snapshot');
+    }
+
     this.lastSnapshotId = snapshot.id;
     this.initialState = snapshot.state;
 
     this.stateManager.initialize(snapshot.state);
 
-    if (this.gameType === GAME_TYPES.LOCAL) {
-      this.playerId = this.getActivePlayerId();
-    }
-
     this.isReady = true;
     if (this.queue.length > 0) {
-      void this.processQueue();
+      await this.processQueue();
     }
   }
 
@@ -225,23 +213,31 @@ export class GameClient {
 
     try {
       this._isPlayingFx = true;
-      this.stateManager.preupdate(snapshot.state);
+      const isStateSnapshot = snapshot.kind === 'state';
+      if (isStateSnapshot) {
+        this.stateManager.preupdate(snapshot.state);
+      }
+
+      // console.group(`Processing events for snapshot ${snapshot.id}`);
+      // if (snapshot.events.length === 0) {
+      //   console.log('No events in this snapshot');
+      // }
+      // snapshot.events.forEach(event => {
+      //   console.log(event.eventName);
+      // });
+      // console.groupEnd();
       for (const event of snapshot.events) {
-        if (this.gameType === GAME_TYPES.LOCAL) {
-          this.playerId = this.getActivePlayerIdFromSnapshotState(snapshot.state);
-        }
-        await this.stateManager.onEvent(event, async () => {
+        await this.stateManager.onEvent(event, async postUpdateCallback => {
           await this.emitter.emit('update', {});
+          await postUpdateCallback?.();
         });
 
         await this.fx.emit(event.eventName, event.event);
       }
       this._isPlayingFx = false;
 
-      this.stateManager.update(snapshot.state);
-
-      if (this.gameType === GAME_TYPES.LOCAL) {
-        this.playerId = this.getActivePlayerId();
+      if (isStateSnapshot) {
+        this.stateManager.update(snapshot.state);
       }
 
       this.ui.update();
@@ -281,10 +277,27 @@ export class GameClient {
     this.queue.push(...snapshots);
   }
 
+  dispatch(input: SerializedInput) {
+    this.history.push(input);
+    return this.networkAdapter.dispatch(input);
+  }
+
+  declarePlayCard(card: CardViewModel) {
+    this.ui.optimisticState.playedCardId = card.id;
+
+    this.dispatch({
+      type: 'declarePlayCard',
+      payload: {
+        id: card.id,
+        playerId: this.playerId
+      }
+    });
+  }
+
   cancelPlayCard() {
     if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
 
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'cancelPlayCard',
       payload: { playerId: this.state.currentPlayer }
     });
@@ -296,7 +309,7 @@ export class GameClient {
   }
 
   commitPlayCard() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitPlayCard',
       payload: {
         playerId: this.playerId,
@@ -306,7 +319,7 @@ export class GameClient {
   }
 
   commitUseAbility() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitUseAbility',
       payload: {
         playerId: this.playerId,
@@ -318,14 +331,14 @@ export class GameClient {
   cancelUseAbility() {
     if (this.state.interaction.state !== INTERACTION_STATES.USING_ABILITY) return;
 
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'cancelUseAbility',
       payload: { playerId: this.state.currentPlayer }
     });
   }
 
   commitMinionSlotSelection() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitMinionSlotSelection',
       payload: {
         playerId: this.playerId
@@ -334,7 +347,7 @@ export class GameClient {
   }
 
   commitCardSelection() {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'commitCardSelection',
       payload: {
         playerId: this.playerId
@@ -342,36 +355,17 @@ export class GameClient {
     });
   }
 
-  skipBlock() {
-    this.networkAdapter.dispatch({
-      type: 'declareBlocker',
-      payload: {
-        blockerId: null,
-        playerId: this.playerId
-      }
-    });
-  }
-
-  endTurn() {
-    this.networkAdapter.dispatch({
-      type: 'declareEndTurn',
+  pass() {
+    this.dispatch({
+      type: 'pass',
       payload: {
         playerId: this.playerId
       }
     });
   }
 
-  passChain() {
-    this.networkAdapter.dispatch({
-      type: 'passChain',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
-  chooseAffinity(affinity: Affinity) {
-    this.networkAdapter.dispatch({
+  chooseAffinity(affinity: SpellSchool) {
+    this.dispatch({
       type: 'chooseAffinity',
       payload: {
         playerId: this.playerId,
@@ -381,7 +375,7 @@ export class GameClient {
   }
 
   chooseCards(indices: number[]) {
-    this.networkAdapter.dispatch({
+    this.dispatch({
       type: 'chooseCards',
       payload: {
         playerId: this.playerId,
@@ -390,9 +384,19 @@ export class GameClient {
     });
   }
 
-  skipDestiny() {
-    this.networkAdapter.dispatch({
-      type: 'skipDestiny',
+  declareCounterAttack(defenderId: string) {
+    this.dispatch({
+      type: 'declareCounterAttack',
+      payload: {
+        defenderId,
+        playerId: this.playerId
+      }
+    });
+  }
+
+  surrender() {
+    this.dispatch({
+      type: 'surrender',
       payload: {
         playerId: this.playerId
       }

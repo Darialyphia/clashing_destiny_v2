@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useGameClient } from '../composables/useGameClient';
+import { useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import CardResizer from './CardResizer.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 
-const client = useGameClient();
-
+const ui = useGameUi();
 const cardId = computed(() => {
-  return client.value.ui.playedCardId;
+  return ui.value.playedCardId;
 });
 </script>
 

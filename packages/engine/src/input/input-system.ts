@@ -1,6 +1,7 @@
 import {
   assert,
   isDefined,
+  waitFor,
   type AnyFunction,
   type Constructor,
   type Nullable,
@@ -15,14 +16,11 @@ import {
   GAME_EVENTS,
   GameErrorEvent,
   GameInputQueueFlushedEvent,
-  GameInputEvent,
-  GameInputRequiredEvent
+  GameInputEvent
 } from '../game/game.events';
 import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
-import { DeclareBlockerInput } from './inputs/declare-blocker.input';
-import { DeclareEndTurnInput } from './inputs/declare-end-turn.input';
-import { PassChainInput } from './inputs/pass-chain.input';
+import { PassInput } from './inputs/pass.input';
 import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
 import { SelectMinionSlotInput } from './inputs/select-minion-slot.input';
 import { CommitMinionSlotSelectionInput } from './inputs/commit-minion-slot-selection.input';
@@ -33,11 +31,11 @@ import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { ChooseAffinityInput } from './inputs/choose-affinity.input';
-import { PlayDestinyCardInput } from './inputs/play-destiny-card.input';
-import { SkipDestinyInput } from './inputs/skip-destiny.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
 import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
+import { DeclareCounterAttackInput } from './inputs/declare-counterattack.input';
+import { SurrenderInput } from './inputs/surrender.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -57,20 +55,18 @@ const inputMap = validateinputMap({
   commitPlayCard: CommitPlayCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
-  declareBlocker: DeclareBlockerInput,
-  declareEndTurn: DeclareEndTurnInput,
-  passChain: PassChainInput,
+  pass: PassInput,
   selectCardOnBoard: SelectCardOnBoardInput,
   selectMinionSlot: SelectMinionSlotInput,
   commitMinionSlotSelection: CommitMinionSlotSelectionInput,
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   chooseAffinity: ChooseAffinityInput,
-  skipDestiny: SkipDestinyInput,
-  playDestinyCard: PlayDestinyCardInput,
   declareUseCardAbility: DeclareUseCardAbilityInput,
   commitUseAbility: CommitUseAbilityInput,
-  cancelUseAbility: CancelUseAbilityInput
+  cancelUseAbility: CancelUseAbilityInput,
+  declareCounterAttack: DeclareCounterAttackInput,
+  surrender: SurrenderInput
 });
 
 type InputMap = typeof inputMap;
@@ -115,8 +111,11 @@ export class InputSystem extends System<never> {
   initialize() {}
 
   async applyHistory(rawHistory: SerializedInput[]) {
-    for (const input of rawHistory) {
-      await this.schedule(() => this.handleInput(input));
+    this.isRunning = false;
+    this._currentAction = null;
+    for (const rawInput of rawHistory) {
+      void this.dispatch(rawInput);
+      await waitFor(20);
     }
   }
 
@@ -170,7 +169,7 @@ export class InputSystem extends System<never> {
         await fn!();
       }
       this.isRunning = false;
-      this.game.snapshotSystem.takeSnapshot();
+      await this.game.snapshotSystem.takeSnapshot();
       await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
     } catch (err) {
       await this.handleError(err);
@@ -200,9 +199,11 @@ export class InputSystem extends System<never> {
       this.isRunning = false;
       this.queue = [];
       this._currentAction = null;
-      this.game.snapshotSystem.takeSnapshot();
-      await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
+      await this.game.snapshotSystem.takeSnapshot();
+    } else {
+      await this.game.snapshotSystem.takeErrorSnapshot();
     }
+    await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
   }
 
   async dispatch(input: SerializedInput) {
@@ -212,15 +213,19 @@ export class InputSystem extends System<never> {
     if (!this.isActionType(input.type)) return;
     if (this.isPaused) {
       // if the game is paused, run the input immediately
-      await this.handleInput(input);
+      try {
+        await this.handleInput(input);
+      } catch (err) {
+        await this.handleError(err);
+      }
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
-      // the currentinput could schedule new actions, so we need to wait for the flush
+      // the current input could schedule new actions, so we need to wait for the flush to preserve the correct action order
       this.game.once(GAME_EVENTS.FLUSHED, () => {
         return this.schedule(() => this.handleInput(input));
       });
     } else {
-      // if the game is not paused and not running, run the input immediately
+      // if the game is not paused and not running, schedule the input
       await this.schedule(() => {
         return this.handleInput(input);
       });
@@ -236,9 +241,9 @@ export class InputSystem extends System<never> {
     this._currentAction = input;
     await this.game.emit(GAME_EVENTS.INPUT_START, new GameInputEvent({ input }));
 
+    this.addToHistory(input);
     await input.execute();
     await this.game.emit(GAME_EVENTS.INPUT_END, new GameInputEvent({ input }));
-    this.addToHistory(input);
     this._currentAction = prevAction;
   }
 
@@ -247,8 +252,8 @@ export class InputSystem extends System<never> {
   }
 
   async askForPlayerInput() {
-    this.game.snapshotSystem.takeSnapshot();
-    await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
+    await this.game.snapshotSystem.takeSnapshot();
+    // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 
   serialize() {

@@ -11,12 +11,12 @@ export class SelectCardOnBoardAction implements CardClickRule {
     return (
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
       state.interaction.ctx.elligibleCards.includes(card.id) &&
-      this.client.ui.isInteractingPlayer
+      this.client.playerId === this.client.getActivePlayerId()
     );
   }
 
   handler(card: CardViewModel) {
-    this.client.networkAdapter.dispatch({
+    this.client.dispatch({
       type: 'selectCardOnBoard',
       payload: {
         cardId: card.id,

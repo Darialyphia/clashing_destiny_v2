@@ -1,26 +1,27 @@
 import dedent from 'dedent';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
-import { EmberModifier } from '../../../../modifier/modifiers/ember.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { PrideModifier } from '../../../../modifier/modifiers/pride.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
-  AFFINITIES,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
-  RARITIES
+  CARD_SPEED,
+  RARITIES,
+  SPELL_SCHOOLS
 } from '../../../card.enums';
-import { singleEmptyAllySlot } from '../../../card-utils';
-import type { MinionPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
+import type { SpellCard } from '../../../entities/spell.entity';
+import { fireball } from '../spells/fireball';
+import type { SigilCard } from '../../../entities/sigil.entity';
+import { sigilOfImmortalFlame } from '../sigils/sigil-of-immortal-flame';
+import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 
 export const phoenix: MinionBlueprint = {
   id: 'phoenix',
   name: 'Phoenix',
-  cardIconId: 'unit-rainbow-phoenix',
+  cardIconId: 'minions/phoenix',
   description: dedent`
-  @Pride (3)@.
-  @On Enter@ : inflicts @Burn@ to all enemy minions.
+  @On Enter@ : Put a @${fireball.name}@ in your hand.
+  @On Death@: Play a @${sigilOfImmortalFlame.name}@ on this space.
   `,
   collectable: true,
   unique: false,
@@ -30,45 +31,30 @@ export const phoenix: MinionBlueprint = {
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
-  affinity: AFFINITIES.FIRE,
+  spellSchool: SPELL_SCHOOLS.FIRE,
+  job: null,
+  speed: CARD_SPEED.SLOW,
   setId: CARD_SETS.CORE,
+  abilities: [],
   tags: [],
-  abilities: [
-    {
-      id: 'phoenix-ability',
-      description: 'Consume 5 @Ember@ stacks : Summon this from your discard pile.',
-      label: 'Resurrect',
-      manaCost: 0,
-      shouldExhaust: false,
-      canUse: (game, card) => {
-        const ember = card.player.hero.modifiers.get(EmberModifier);
-        if (!ember) return false;
-
-        return ember.stacks >= 5 && singleEmptyAllySlot.canPlay(game, card);
-      },
-      getPreResponseTargets(game, card) {
-        return singleEmptyAllySlot.getPreResponseTargets(game, card);
-      },
-      async onResolve(game, card, targets) {
-        const ember = card.player.hero.modifiers.get(EmberModifier);
-        if (!ember) return;
-        if (ember.stacks < 5) return;
-        await ember.removeStacks(5);
-
-        const position = targets[0] as MinionPosition;
-        await card.playAt(position);
-      }
-    }
-  ],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new PrideModifier(game, card, 3));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          for (const target of card.player.enemyMinions) {
-            await target.modifiers.add(new BurnModifier(game, card));
-          }
+          const createdCard = await card.player.generateCard<SpellCard>(fireball.id);
+          await createdCard.addToHand();
+        }
+      })
+    );
+
+    await card.modifiers.add(
+      new OnDeathModifier(game, card, {
+        handler: async (event, modifier, position) => {
+          const createdCard = await card.player.generateCard<SigilCard>(
+            sigilOfImmortalFlame.id
+          );
+          await createdCard.playImmediatelyAt(position);
         }
       })
     );

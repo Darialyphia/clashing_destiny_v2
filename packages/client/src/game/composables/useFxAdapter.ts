@@ -5,7 +5,7 @@ export const useFxAdapter = (): FxAdapter => {
   return {
     onDeclarePlayCard(card, client) {
       const flipState = Flip.getState(
-        client.ui.getCardDOMSelectorInHand(card.id, card.player.id)
+        client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
       );
 
       window.requestAnimationFrame(() => {
@@ -25,7 +25,8 @@ export const useFxAdapter = (): FxAdapter => {
 
       window.requestAnimationFrame(() => {
         Flip.from(flipState, {
-          targets: client.ui.getCardDOMSelectorInHand(card.id, card.player.id),
+          targets: client.ui.DOMSelectors.cardInHand(card.id, card.player.id)
+            .selector,
           duration: 0.5,
           absolute: true,
           ease: 'back.out'
@@ -36,15 +37,15 @@ export const useFxAdapter = (): FxAdapter => {
     onSelectCardForManaCost(card, client) {
       return new Promise<void>(resolve => {
         const flipState = Flip.getState(
-          client.ui.getCardDOMSelectorInHand(card.id, card.player.id)
+          client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
         );
 
         window.requestAnimationFrame(() => {
           Flip.from(flipState, {
-            targets: client.ui.getCardDOMSelectorInDestinyZone(
+            targets: client.ui.DOMSelectors.cardInDestinyZone(
               card.id,
               card.player.id
-            ),
+            ).selector,
             duration: 0.4,
             absolute: true,
             ease: Power3.easeOut,
@@ -61,7 +62,8 @@ export const useFxAdapter = (): FxAdapter => {
 
       window.requestAnimationFrame(() => {
         Flip.from(flipState, {
-          targets: client.ui.getCardDOMSelectorInHand(card.id, card.player.id),
+          targets: client.ui.DOMSelectors.cardInHand(card.id, card.player.id)
+            .selector,
           duration: 0.4,
           absolute: true,
           ease: Power3.easeOut

@@ -67,6 +67,637 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "board.png"
+          ],
+          "src": [
+            "/assets/backgrounds/board.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "home_hero.jpg"
+          ],
+          "src": [
+            "/assets/backgrounds/home_hero.jpg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards",
+      "assets": [
+        {
+          "alias": [
+            "amulet-of-remembrance.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/amulet-of-remembrance.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "arbiters-maul.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/arbiters-maul.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cleansing-hammer.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/cleansing-hammer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-jewel.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/mana-jewel.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rusty-blade.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/rusty-blade.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "scales-of-destiny.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/scales-of-destiny.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "unyielding-shield.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/unyielding-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "angel-of-retribution.png"
+          ],
+          "src": [
+            "/assets/cards/minions/angel-of-retribution.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "bastion-guard.png"
+          ],
+          "src": [
+            "/assets/cards/minions/bastion-guard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "courageous-footsoldier.png"
+          ],
+          "src": [
+            "/assets/cards/minions/courageous-footsoldier.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flag-bearer-of-flame.png"
+          ],
+          "src": [
+            "/assets/cards/minions/flag-bearer-of-flame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flame-juggler.png"
+          ],
+          "src": [
+            "/assets/cards/minions/flame-juggler.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "friendly-slime.png"
+          ],
+          "src": [
+            "/assets/cards/minions/friendly-slime.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "hot-headed-recruit.png"
+          ],
+          "src": [
+            "/assets/cards/minions/hot-headed-recruit.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "hougen-the-punisher.png"
+          ],
+          "src": [
+            "/assets/cards/minions/hougen-the-punisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-wisp.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-wisp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "phoenix.png"
+          ],
+          "src": [
+            "/assets/cards/minions/phoenix.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "pyrebound-lancer.png"
+          ],
+          "src": [
+            "/assets/cards/minions/pyrebound-lancer.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "radiant-celestial.png"
+          ],
+          "src": [
+            "/assets/cards/minions/radiant-celestial.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "royal-guard.png"
+          ],
+          "src": [
+            "/assets/cards/minions/royal-guard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sharpshooter.png"
+          ],
+          "src": [
+            "/assets/cards/minions/sharpshooter.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "shield-maiden.png"
+          ],
+          "src": [
+            "/assets/cards/minions/shield-maiden.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "stalwart-vanguard.png"
+          ],
+          "src": [
+            "/assets/cards/minions/stalwart-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards/heroes",
+      "assets": [
+        {
+          "alias": [
+            "aiden-lv1.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/aiden-lv1.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv2.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/aiden-lv2.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "aiden-lv3.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/aiden-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "erina-lv3.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/erina-lv3.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "novice-lv0.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/novice-lv0.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards/sigils",
+      "assets": [
+        {
+          "alias": [
+            "sigil-of-immortal-flame.png"
+          ],
+          "src": [
+            "/assets/cards/sigils/sigil-of-immortal-flame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards/spells",
+      "assets": [
+        {
+          "alias": [
+            "blazing-slash.png"
+          ],
+          "src": [
+            "/assets/cards/spells/blazing-slash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "blinding-light.png"
+          ],
+          "src": [
+            "/assets/cards/spells/blinding-light.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "call-to-arms.png"
+          ],
+          "src": [
+            "/assets/cards/spells/call-to-arms.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fated-oath.png"
+          ],
+          "src": [
+            "/assets/cards/spells/fated-oath.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fire-bolt.png"
+          ],
+          "src": [
+            "/assets/cards/spells/fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fireball.png"
+          ],
+          "src": [
+            "/assets/cards/spells/fireball.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "flaming-frenzy.png"
+          ],
+          "src": [
+            "/assets/cards/spells/flaming-frenzy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "gaze-into-tomorrow.png"
+          ],
+          "src": [
+            "/assets/cards/spells/gaze-into-tomorrow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "grand-cross.png"
+          ],
+          "src": [
+            "/assets/cards/spells/grand-cross.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "iron-wall.png"
+          ],
+          "src": [
+            "/assets/cards/spells/iron-wall.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "knights-inspiration.png"
+          ],
+          "src": [
+            "/assets/cards/spells/knights-inspiration.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-jewel.png"
+          ],
+          "src": [
+            "/assets/cards/spells/mana-jewel.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-spark.png"
+          ],
+          "src": [
+            "/assets/cards/spells/mana-spark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "reposition.png"
+          ],
+          "src": [
+            "/assets/cards/spells/reposition.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "slimes-to-the-rescue.png"
+          ],
+          "src": [
+            "/assets/cards/spells/slimes-to-the-rescue.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sunburst.png"
+          ],
+          "src": [
+            "/assets/cards/spells/sunburst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -3046,415 +3677,10 @@
         },
         {
           "alias": [
-            "active-unit-indicator"
-          ],
-          "src": [
-            "/assets/ui/active-unit-indicator.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "active-unit-indicator.png"
-          ],
-          "src": [
-            "/assets/ui/active-unit-indicator.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-arcane.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-arcane.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-arms.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-arms.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-armsl.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-armsl.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-blood.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-blood.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-chrono.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-chrono.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-cosmic.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-cosmic.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-death.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-death.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-earth.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-earth.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-fire.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-fire.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-frost.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-frost.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-holy.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-holy.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-ice.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-ice.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-nature.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-nature.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-normal.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-normal.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-primal.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-primal.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-shadow.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-shadow.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-storm.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-storm.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-tech.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-tech.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-void.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-void.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-water.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-water.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "affinity-wind.png"
-          ],
-          "src": [
-            "/assets/ui/affinity-wind.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ally-indicator.png"
-          ],
-          "src": [
-            "/assets/ui/ally-indicator.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator-empty-ui.png"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator-empty-ui.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator-ui.png"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator-ui.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap-indicator.png"
-          ],
-          "src": [
-            "/assets/ui/ap-indicator.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ap.png"
-          ],
-          "src": [
-            "/assets/ui/ap.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "artifact-armor.png"
           ],
           "src": [
             "/assets/ui/artifact-armor.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "artifact-durability.png"
-          ],
-          "src": [
-            "/assets/ui/artifact-durability.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "artifact-empty.png"
-          ],
-          "src": [
-            "/assets/ui/artifact-empty.png"
           ],
           "data": {
             "tags": {
@@ -3490,19 +3716,6 @@
         },
         {
           "alias": [
-            "atk.png"
-          ],
-          "src": [
-            "/assets/ui/atk.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "attack.png"
           ],
           "src": [
@@ -3516,10 +3729,10 @@
         },
         {
           "alias": [
-            "banish-icon.png"
+            "board-card-slot-boarder.png"
           ],
           "src": [
-            "/assets/ui/banish-icon.png"
+            "/assets/ui/board-card-slot-boarder.png"
           ],
           "data": {
             "tags": {
@@ -3529,10 +3742,36 @@
         },
         {
           "alias": [
-            "burst-spell.png"
+            "board-small-card-slot-selected.png"
           ],
           "src": [
-            "/assets/ui/burst-spell.png"
+            "/assets/ui/board-small-card-slot-selected.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "board-small-card-slot-targetable.png"
+          ],
+          "src": [
+            "/assets/ui/board-small-card-slot-targetable.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "board-small-card-slot.png"
+          ],
+          "src": [
+            "/assets/ui/board-small-card-slot.png"
           ],
           "data": {
             "tags": {
@@ -3594,10 +3833,36 @@
         },
         {
           "alias": [
-            "card-art-frame.png"
+            "card-art-frame-mask.png"
           ],
           "src": [
-            "/assets/ui/card-art-frame.png"
+            "/assets/ui/card-art-frame-mask.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-art-mask-export.png"
+          ],
+          "src": [
+            "/assets/ui/card-art-mask-export.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-art-mask.png"
+          ],
+          "src": [
+            "/assets/ui/card-art-mask.png"
           ],
           "data": {
             "tags": {
@@ -3620,322 +3885,23 @@
         },
         {
           "alias": [
+            "card-back-small.png"
+          ],
+          "src": [
+            "/assets/ui/card-back-small.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-back.png"
           ],
           "src": [
             "/assets/ui/card-back.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-back3.png"
-          ],
-          "src": [
-            "/assets/ui/card-back3.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-back4.png"
-          ],
-          "src": [
-            "/assets/ui/card-back4.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-back5.png"
-          ],
-          "src": [
-            "/assets/ui/card-back5.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-air.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-air.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-arcane.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-arcane.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-blood.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-blood.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-chrono.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-chrono.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-cosmic.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-cosmic.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-earth.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-earth.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-fire.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-fire.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-frost.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-frost.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-genesis.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-genesis.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-harmony.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-harmony.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-holy.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-holy.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-nature.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-nature.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-normal.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-normal.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-primal.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-primal.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-shadow.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-shadow.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-storm.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-storm.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-tech.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-tech.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-void.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-void.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-water.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-water.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-wind.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-wind.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-bg-wrath.png"
-          ],
-          "src": [
-            "/assets/ui/card-bg-wrath.png"
           ],
           "data": {
             "tags": {
@@ -3958,19 +3924,6 @@
         },
         {
           "alias": [
-            "card-board-front-2.png"
-          ],
-          "src": [
-            "/assets/ui/card-board-front-2.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "card-board-front.png"
           ],
           "src": [
@@ -3984,23 +3937,10 @@
         },
         {
           "alias": [
-            "card-description.png"
+            "card-countdown.png"
           ],
           "src": [
-            "/assets/ui/card-description.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-destiny.png"
-          ],
-          "src": [
-            "/assets/ui/card-destiny.png"
+            "/assets/ui/card-countdown.png"
           ],
           "data": {
             "tags": {
@@ -4027,6 +3967,58 @@
           ],
           "src": [
             "/assets/ui/card-exp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-front-small-mask-export.png"
+          ],
+          "src": [
+            "/assets/ui/card-front-small-mask-export.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-front-small-mask.png"
+          ],
+          "src": [
+            "/assets/ui/card-front-small-mask.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-front-small.png"
+          ],
+          "src": [
+            "/assets/ui/card-front-small.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-front.png"
+          ],
+          "src": [
+            "/assets/ui/card-front.png"
           ],
           "data": {
             "tags": {
@@ -4140,6 +4132,19 @@
         },
         {
           "alias": [
+            "card-kind-sigil.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-sigil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-kind-spell.png"
           ],
           "src": [
@@ -4166,6 +4171,19 @@
         },
         {
           "alias": [
+            "card-kind-underline.png"
+          ],
+          "src": [
+            "/assets/ui/card-kind-underline.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-level-empty.png"
           ],
           "src": [
@@ -4183,71 +4201,6 @@
           ],
           "src": [
             "/assets/ui/card-level-filled.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-level.png"
-          ],
-          "src": [
-            "/assets/ui/card-level.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-mana.png"
-          ],
-          "src": [
-            "/assets/ui/card-mana.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-mp.png"
-          ],
-          "src": [
-            "/assets/ui/card-mp.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-name.png"
-          ],
-          "src": [
-            "/assets/ui/card-name.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "card-previous-class.png"
-          ],
-          "src": [
-            "/assets/ui/card-previous-class.png"
           ],
           "data": {
             "tags": {
@@ -4309,6 +4262,58 @@
         },
         {
           "alias": [
+            "card-speed-badge-fast.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-fast.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-speed-badge-flash.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-flash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-speed-badge-slow.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-slow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card-speed-badge-warp.png"
+          ],
+          "src": [
+            "/assets/ui/card-speed-badge-warp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-spellpower.png"
           ],
           "src": [
@@ -4322,23 +4327,10 @@
         },
         {
           "alias": [
-            "card-type.png"
+            "countdown.png"
           ],
           "src": [
-            "/assets/ui/card-type.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "cast-spell.png"
-          ],
-          "src": [
-            "/assets/ui/cast-spell.png"
+            "/assets/ui/countdown.png"
           ],
           "data": {
             "tags": {
@@ -4387,49 +4379,10 @@
         },
         {
           "alias": [
-            "deck-big.png"
+            "destiny-cost.png"
           ],
           "src": [
-            "/assets/ui/deck-big.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "deck.png"
-          ],
-          "src": [
-            "/assets/ui/deck.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "destiny-deck-icon.png"
-          ],
-          "src": [
-            "/assets/ui/destiny-deck-icon.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "destiny.png"
-          ],
-          "src": [
-            "/assets/ui/destiny.png"
+            "/assets/ui/destiny-cost.png"
           ],
           "data": {
             "tags": {
@@ -4452,10 +4405,10 @@
         },
         {
           "alias": [
-            "enemy-indicator.png"
+            "effect-ability.png"
           ],
           "src": [
-            "/assets/ui/enemy-indicator.png"
+            "/assets/ui/effect-ability.png"
           ],
           "data": {
             "tags": {
@@ -4465,10 +4418,23 @@
         },
         {
           "alias": [
-            "exp.png"
+            "effect-card.png"
           ],
           "src": [
-            "/assets/ui/exp.png"
+            "/assets/ui/effect-card.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "effect-counterattack.png"
+          ],
+          "src": [
+            "/assets/ui/effect-counterattack.png"
           ],
           "data": {
             "tags": {
@@ -4517,6 +4483,19 @@
         },
         {
           "alias": [
+            "frame-sigil.png"
+          ],
+          "src": [
+            "/assets/ui/frame-sigil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "frame-spell.png"
           ],
           "src": [
@@ -4530,193 +4509,10 @@
         },
         {
           "alias": [
-            "gem-air.png"
+            "hero-hp-filled.png"
           ],
           "src": [
-            "/assets/ui/gem-air.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-arcane.png"
-          ],
-          "src": [
-            "/assets/ui/gem-arcane.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-earth.png"
-          ],
-          "src": [
-            "/assets/ui/gem-earth.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-fire.png"
-          ],
-          "src": [
-            "/assets/ui/gem-fire.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-genesis.png"
-          ],
-          "src": [
-            "/assets/ui/gem-genesis.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-harmony.png"
-          ],
-          "src": [
-            "/assets/ui/gem-harmony.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-normal.png"
-          ],
-          "src": [
-            "/assets/ui/gem-normal.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-oblivion.png"
-          ],
-          "src": [
-            "/assets/ui/gem-oblivion.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-order.png"
-          ],
-          "src": [
-            "/assets/ui/gem-order.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-void.png"
-          ],
-          "src": [
-            "/assets/ui/gem-void.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-water.png"
-          ],
-          "src": [
-            "/assets/ui/gem-water.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gem-wrath.png"
-          ],
-          "src": [
-            "/assets/ui/gem-wrath.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "graveyard-icon.png"
-          ],
-          "src": [
-            "/assets/ui/graveyard-icon.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "hovered-cell"
-          ],
-          "src": [
-            "/assets/ui/hovered-cell.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "hovered-cell.png"
-          ],
-          "src": [
-            "/assets/ui/hovered-cell.png"
+            "/assets/ui/hero-hp-filled.png"
           ],
           "data": {
             "tags": {
@@ -4739,10 +4535,10 @@
         },
         {
           "alias": [
-            "icon-banish-pile.png"
+            "jobs-knight.png"
           ],
           "src": [
-            "/assets/ui/icon-banish-pile.png"
+            "/assets/ui/jobs-knight.png"
           ],
           "data": {
             "tags": {
@@ -4752,10 +4548,10 @@
         },
         {
           "alias": [
-            "icon-deck.png"
+            "jobs-mage.png"
           ],
           "src": [
-            "/assets/ui/icon-deck.png"
+            "/assets/ui/jobs-mage.png"
           ],
           "data": {
             "tags": {
@@ -4765,10 +4561,10 @@
         },
         {
           "alias": [
-            "icon-discard-pile.png"
+            "jobs-paladin.png"
           ],
           "src": [
-            "/assets/ui/icon-discard-pile.png"
+            "/assets/ui/jobs-paladin.png"
           ],
           "data": {
             "tags": {
@@ -4778,10 +4574,10 @@
         },
         {
           "alias": [
-            "icon-influence.png"
+            "jobs-warrior.png"
           ],
           "src": [
-            "/assets/ui/icon-influence.png"
+            "/assets/ui/jobs-warrior.png"
           ],
           "data": {
             "tags": {
@@ -4804,317 +4600,10 @@
         },
         {
           "alias": [
-            "minino-slot-attacking.png"
-          ],
-          "src": [
-            "/assets/ui/minino-slot-attacking.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "minino-slot-hover.png"
-          ],
-          "src": [
-            "/assets/ui/minino-slot-hover.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "minino-slot-selected.png"
-          ],
-          "src": [
-            "/assets/ui/minino-slot-selected.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "mp.png"
-          ],
-          "src": [
-            "/assets/ui/mp.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-end-proj"
-          ],
-          "src": [
-            "/assets/ui/path-end-proj.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-end-proj.png"
-          ],
-          "src": [
-            "/assets/ui/path-end-proj.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-end"
-          ],
-          "src": [
-            "/assets/ui/path-end.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-end.png"
-          ],
-          "src": [
-            "/assets/ui/path-end.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-start-proj"
-          ],
-          "src": [
-            "/assets/ui/path-start-proj.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-start-proj.png"
-          ],
-          "src": [
-            "/assets/ui/path-start-proj.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-start"
-          ],
-          "src": [
-            "/assets/ui/path-start.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-start.png"
-          ],
-          "src": [
-            "/assets/ui/path-start.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-straight-proj"
-          ],
-          "src": [
-            "/assets/ui/path-straight-proj.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-straight-proj.png"
-          ],
-          "src": [
-            "/assets/ui/path-straight-proj.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-straight"
-          ],
-          "src": [
-            "/assets/ui/path-straight.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-straight.png"
-          ],
-          "src": [
-            "/assets/ui/path-straight.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-turn-proj"
-          ],
-          "src": [
-            "/assets/ui/path-turn-proj.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-turn-proj.png"
-          ],
-          "src": [
-            "/assets/ui/path-turn-proj.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-turn"
-          ],
-          "src": [
-            "/assets/ui/path-turn.json"
-          ],
-          "loadParser": "aseprite_loader",
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "path-turn.png"
-          ],
-          "src": [
-            "/assets/ui/path-turn.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
             "pen.png"
           ],
           "src": [
             "/assets/ui/pen.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "quest-icon-empty.png"
-          ],
-          "src": [
-            "/assets/ui/quest-icon-empty.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "quest-icon-filled.png"
-          ],
-          "src": [
-            "/assets/ui/quest-icon-filled.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "relic.png"
-          ],
-          "src": [
-            "/assets/ui/relic.png"
           ],
           "data": {
             "tags": {
@@ -5137,10 +4626,75 @@
         },
         {
           "alias": [
+            "settings-icon.png"
+          ],
+          "src": [
+            "/assets/ui/settings-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "shield.png"
           ],
           "src": [
             "/assets/ui/shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-fast.png"
+          ],
+          "src": [
+            "/assets/ui/speed-fast.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-flash.png"
+          ],
+          "src": [
+            "/assets/ui/speed-flash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-slow.png"
+          ],
+          "src": [
+            "/assets/ui/speed-slow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-warp.png"
+          ],
+          "src": [
+            "/assets/ui/speed-warp.png"
           ],
           "data": {
             "tags": {
@@ -5163,36 +4717,101 @@
         },
         {
           "alias": [
+            "spell-school-air.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-air.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-arcane.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-arcane.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-dark.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-dark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-earth.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-earth.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-fire.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-light.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-light.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-school-water.png"
+          ],
+          "src": [
+            "/assets/ui/spell-school-water.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "subkind-armor.png"
           ],
           "src": [
             "/assets/ui/subkind-armor.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "subkind-burst.png"
-          ],
-          "src": [
-            "/assets/ui/subkind-burst.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "subkind-cast.png"
-          ],
-          "src": [
-            "/assets/ui/subkind-cast.png"
           ],
           "data": {
             "tags": {
@@ -5232,6 +4851,19 @@
           ],
           "src": [
             "/assets/ui/talent-node.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "template-small-back.png"
+          ],
+          "src": [
+            "/assets/ui/template-small-back.png"
           ],
           "data": {
             "tags": {

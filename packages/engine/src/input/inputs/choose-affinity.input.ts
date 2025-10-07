@@ -1,11 +1,11 @@
-import { AFFINITIES, type Affinity } from '../../card/card.enums';
+import { SPELL_SCHOOLS, type SpellSchool } from '../../card/card.enums';
 import { GAME_PHASES } from '../../game/game.enums';
 import type { InteractionStateDict } from '../../game/systems/game-interaction.system';
 import { defaultInputSchema, Input } from '../input';
 import { z } from 'zod';
 
 const schema = defaultInputSchema.extend({
-  affinity: z.enum(Object.values(AFFINITIES) as [Affinity, ...Affinity[]])
+  affinity: z.enum(Object.values(SPELL_SCHOOLS) as [SpellSchool, ...SpellSchool[]])
 });
 
 export class ChooseAffinityInput extends Input<typeof schema> {

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import { useCard, useGameClient } from '../composables/useGameClient';
+import { useCard } from '../composables/useGameClient';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { gameStateRef } from '../composables/gameStateRef';
 
 const { cardId } = defineProps<{ cardId: string }>();
 
@@ -16,15 +17,10 @@ const isDisplayed = computed(() => {
   );
 });
 
-const visibleModifiers = computed(() => {
+const visibleModifiers = gameStateRef(() => {
   return card.value.modifiers.filter(
     modifier => modifier.icon && modifier.stacks > 0
   );
-});
-
-const client = useGameClient();
-client.value.onUpdateCompleted(() => {
-  triggerRef(visibleModifiers);
 });
 </script>
 

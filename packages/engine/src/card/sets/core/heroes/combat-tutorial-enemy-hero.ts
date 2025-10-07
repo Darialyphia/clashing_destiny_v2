@@ -1,9 +1,10 @@
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
-  AFFINITIES,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  CARD_SPEED,
+  HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
 
@@ -11,10 +12,14 @@ export const combatTutorialEnemyHero: HeroBlueprint = {
   id: 'combat-tutorial-enemy-hero',
   name: 'King Slime',
   description: '',
+  level: 1,
   cardIconId: 'hero-slime-king',
+  destinyCost: 0,
+  speed: CARD_SPEED.SLOW,
+  canPlay: () => true,
   kind: CARD_KINDS.HERO,
-  affinity: AFFINITIES.NORMAL,
-  affinities: [],
+  jobs: [HERO_JOBS.WARRIOR],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   collectable: false,

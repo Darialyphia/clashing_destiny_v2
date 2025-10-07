@@ -6,14 +6,16 @@ import {
 } from '../auth.constants';
 
 export class SessionReadRepository {
-  constructor(protected db: DatabaseReader) {}
+  static INJECTION_KEY = 'sessionReadRepo' as const;
+
+  constructor(private ctx: { db: DatabaseReader }) {}
 
   async getById(sessionId: Id<'authSessions'>) {
-    return this.db.get(sessionId);
+    return this.ctx.db.get(sessionId);
   }
 
   async getByUserId(userId: Id<'users'>) {
-    return this.db
+    return this.ctx.db
       .query('authSessions')
       .withIndex('userId', q => q.eq('userId', userId))
       .collect();
@@ -32,16 +34,24 @@ export class SessionReadRepository {
   }
 }
 
-export class SessionRepository extends SessionReadRepository {
-  declare protected db: DatabaseWriter;
+export class SessionRepository {
+  static INJECTION_KEY = 'sessionRepo' as const;
 
-  constructor(db: DatabaseWriter) {
-    super(db);
-    this.db = db;
+  constructor(private ctx: { db: DatabaseWriter }) {}
+
+  async getById(sessionId: Id<'authSessions'>) {
+    return this.ctx.db.get(sessionId);
+  }
+
+  async getByUserId(userId: Id<'users'>) {
+    return this.ctx.db
+      .query('authSessions')
+      .withIndex('userId', q => q.eq('userId', userId))
+      .collect();
   }
 
   async create(userId: Id<'users'>) {
-    return this.db.insert('authSessions', {
+    return this.ctx.db.insert('authSessions', {
       userId,
       expirationTime: Date.now() + DEFAULT_SESSION_TOTAL_DURATION_MS,
       lastVerifiedAt: Date.now()
@@ -49,29 +59,29 @@ export class SessionRepository extends SessionReadRepository {
   }
 
   async delete(sessionId: Id<'authSessions'>) {
-    await this.db.delete(sessionId);
+    await this.ctx.db.delete(sessionId);
   }
 
   async deleteAllForUser(userId: Id<'users'>) {
     const sessions = await this.getByUserId(userId);
-    await Promise.all(sessions.map(session => this.db.delete(session._id)));
+    await Promise.all(sessions.map(session => this.ctx.db.delete(session._id)));
   }
 
   async updateLastVerified(sessionId: Id<'authSessions'>) {
-    return this.db.patch(sessionId, {
+    return this.ctx.db.patch(sessionId, {
       lastVerifiedAt: Date.now()
     });
   }
 
   async refresh(sessionId: Id<'authSessions'>) {
-    return this.db.patch(sessionId, {
+    return this.ctx.db.patch(sessionId, {
       expirationTime: Date.now() + DEFAULT_SESSION_TOTAL_DURATION_MS,
       lastVerifiedAt: Date.now()
     });
   }
 
   async getValidSession(sessionId: Id<'authSessions'>) {
-    const session = await super.getValidSession(sessionId);
+    const session = await this.getById(sessionId);
     if (!session) return null;
     const now = Date.now();
 

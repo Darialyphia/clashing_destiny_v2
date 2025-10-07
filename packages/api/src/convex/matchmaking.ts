@@ -1,48 +1,34 @@
 import { v } from 'convex/values';
-
-import {
-  ensureAuthenticated,
-  internalMutationWithSession,
-  mutationWithSession
-} from './auth/auth.utils';
-import { UserRepository } from './users/repositories/user.repository';
+import { ensureAuthenticated } from './auth/auth.utils';
 import { JoinMatchmakingUseCase } from './matchmaking/usecases/joinMatchmaking.usecase';
-import { MatchmakingUserRepository } from './matchmaking/repositories/matchmakingUser.repository';
-import { MatchmakingRepository } from './matchmaking/repositories/matchmaking.repository';
 import { LeaveMatchmakingUseCase } from './matchmaking/usecases/leaveMatchmaking.usecase';
-import { ensureHasNoCurrentGame } from './game/game.guards';
-import { GameRepository } from './game/repositories/game.repository';
-import { GamePlayerRepository } from './game/repositories/gamePlayer.repository';
-import { internalMutation } from './_generated/server';
 import { RunMatchmakingUseCase } from './matchmaking/usecases/runMatchmaking.usecase';
+import {
+  internalMutationWithContainer,
+  mutationWithContainer,
+  queryWithContainer
+} from './shared/container';
+import { GetMatchmakingsUsecase } from './matchmaking/usecases/getMatchmakings.usecase';
+import { GameRepository } from './game/repositories/game.repository';
 
-export const join = mutationWithSession({
+export const list = queryWithContainer({
+  args: {},
+  handler: async ctx => {
+    ensureAuthenticated(ctx.resolve('session'));
+    const usecase = ctx.resolve<GetMatchmakingsUsecase>(
+      GetMatchmakingsUsecase.INJECTION_KEY
+    );
+
+    return usecase.execute();
+  }
+});
+
+export const join = mutationWithContainer({
   args: { name: v.string(), deckId: v.id('decks') },
   handler: async (ctx, input) => {
-    const session = ensureAuthenticated(ctx.session);
-
-    const userRepo = new UserRepository(ctx.db);
-    const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
-    const matchmakingRepo = new MatchmakingRepository({
-      db: ctx.db,
-      matchmakingUserRepo,
-      scheduler: ctx.scheduler
-    });
-    const gamePlayerRepo = new GamePlayerRepository({ db: ctx.db, userRepo });
-    const gameRepo = new GameRepository({
-      db: ctx.db,
-      userRepo,
-      gamePlayerRepo
-    });
-
-    await ensureHasNoCurrentGame(gameRepo, session.userId);
-    const usecase = new JoinMatchmakingUseCase({
-      session,
-      userRepo,
-      matchmakingUserRepo,
-      matchmakingRepo
-    });
-
+    const usecase = ctx.resolve<JoinMatchmakingUseCase>(
+      JoinMatchmakingUseCase.INJECTION_KEY
+    );
     return usecase.execute({
       name: input.name,
       deckId: input.deckId
@@ -50,42 +36,25 @@ export const join = mutationWithSession({
   }
 });
 
-export const leave = mutationWithSession({
+export const leave = mutationWithContainer({
   args: {},
   handler: async ctx => {
-    const session = ensureAuthenticated(ctx.session);
-    const userRepo = new UserRepository(ctx.db);
-    const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
-    const usecase = new LeaveMatchmakingUseCase({
-      session,
-      userRepo,
-      matchmakingUserRepo,
-      matchmakingRepo: new MatchmakingRepository({
-        db: ctx.db,
-        matchmakingUserRepo,
-        scheduler: ctx.scheduler
-      })
-    });
+    ensureAuthenticated(ctx.resolve('session'));
+
+    const usecase = ctx.resolve<LeaveMatchmakingUseCase>(
+      LeaveMatchmakingUseCase.INJECTION_KEY
+    );
 
     return usecase.execute();
   }
 });
 
-export const run = internalMutation({
+export const run = internalMutationWithContainer({
   args: { name: v.string() },
   handler: async (ctx, input) => {
-    const userRepo = new UserRepository(ctx.db);
-    const matchmakingUserRepo = new MatchmakingUserRepository({ db: ctx.db, userRepo });
-    const matchmakingRepo = new MatchmakingRepository({
-      db: ctx.db,
-      matchmakingUserRepo,
-      scheduler: ctx.scheduler
-    });
-
-    const usecase = new RunMatchmakingUseCase({
-      matchmakingRepo,
-      scheduler: ctx.scheduler
-    });
+    const usecase = ctx.resolve<RunMatchmakingUseCase>(
+      RunMatchmakingUseCase.INJECTION_KEY
+    );
 
     return usecase.execute({
       name: input.name

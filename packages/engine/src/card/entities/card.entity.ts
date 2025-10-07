@@ -1,23 +1,27 @@
-import { type JSONObject } from '@game/shared';
+import { type JSONObject, type MaybePromise } from '@game/shared';
 import { EntityWithModifiers } from '../../entity';
 import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint } from '../card-blueprint';
+import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
-  type Affinity,
+  CARD_SPEED,
   type CardDeckSource,
   type CardKind,
+  type CardSpeed,
   type Rarity
 } from '../card.enums';
 import {
   CardAddToHandevent,
   CardAfterDestroyEvent,
+  CardAfterPlayEvent,
   CardBeforeDestroyEvent,
+  CardBeforePlayEvent,
   CardDiscardEvent,
+  CardDisposedEvent,
   CardExhaustEvent,
   CardWakeUpEvent
 } from '../card.events';
@@ -26,10 +30,12 @@ import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
-import type { DestinyCard } from './destiny.entity';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
+import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS } from '../../game/phases/combat.phase';
+import { EFFECT_TYPE } from '../../game/effect-chain';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -46,6 +52,8 @@ export type CardInterceptors = {
   canBeUsedAsDestinyCost: Interceptable<boolean>;
   canBeUsedAsManaCost: Interceptable<boolean>;
   canBeRecollected: Interceptable<boolean>;
+  speed: Interceptable<CardSpeed>;
+  deckSource: Interceptable<CardDeckSource>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -56,7 +64,9 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   hasAffinityMatch: new Interceptable(),
   canBeUsedAsDestinyCost: new Interceptable(),
   canBeUsedAsManaCost: new Interceptable(),
-  canBeRecollected: new Interceptable()
+  canBeRecollected: new Interceptable(),
+  speed: new Interceptable(),
+  deckSource: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -72,10 +82,12 @@ export type SerializedCard = {
   canPlay: boolean;
   source: CardDeckSource;
   location: CardLocation | null;
-  // keywords: Array<{ id: string; name: string; description: string }>;
-  affinity: Affinity;
+  speed: CardSpeed;
   modifiers: string[];
   canBeUsedAsManaCost: boolean;
+  manaCost: number | null;
+  destinyCost: number | null;
+  keywords: string[];
 };
 
 export type CardTargetOrigin =
@@ -83,7 +95,7 @@ export type CardTargetOrigin =
   | {
       type: 'ability';
       abilityId: string;
-      card: MinionCard | HeroCard | ArtifactCard | DestinyCard;
+      card: MinionCard | HeroCard | ArtifactCard;
     };
 
 export abstract class Card<
@@ -126,10 +138,6 @@ export abstract class Card<
     return this.blueprint.kind;
   }
 
-  get affinity() {
-    return this.blueprint.affinity;
-  }
-
   get keywords() {
     return this.keywordManager.keywords;
   }
@@ -139,7 +147,7 @@ export abstract class Card<
   }
 
   get deckSource() {
-    return this.blueprint.deckSource;
+    return this.interceptors.deckSource.getValue(this.blueprint.deckSource, {});
   }
 
   get isMainDeckCard() {
@@ -211,6 +219,80 @@ export abstract class Card<
     return this._targetedBy;
   }
 
+  get speed() {
+    return this.interceptors.speed.getValue(this.blueprint.speed, {});
+  }
+
+  get canPlayDuringChain() {
+    return this.speed !== CARD_SPEED.SLOW;
+  }
+
+  protected async dispose() {
+    match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
+        this.sendToDiscardPile();
+      })
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
+        this.sendToBanishPile();
+      })
+      .exhaustive();
+    await this.game.emit(
+      CARD_EVENTS.CARD_DISPOSED,
+      new CardDisposedEvent({ card: this })
+    );
+  }
+
+  async resolve(handler: () => Promise<void>) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
+    this.updatePlayedAt();
+
+    await handler();
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardAfterPlayEvent({ card: this })
+    );
+  }
+
+  protected async insertInChainOrExecute(
+    handler: () => Promise<void>,
+    targets: PreResponseTarget[],
+    onResolved?: () => MaybePromise<void>
+  ) {
+    const effect = {
+      type: EFFECT_TYPE.CARD,
+      source: this,
+      targets,
+      handler: async () => {
+        await this.resolve(handler);
+      }
+    };
+
+    if (this.speed === CARD_SPEED.FLASH) {
+      await effect.handler();
+      return this.game.inputSystem.askForPlayerInput();
+    }
+    if (this.game.effectChainSystem.currentChain) {
+      if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
+        await this.game.effectChainSystem.addEffect(effect, this.player);
+      } else {
+        // this can happen if a card is played as part of an other card effect
+        // the card wiill be played while the current chain is resolving, so let's just execute it immediately
+        await effect.handler();
+        return this.game.inputSystem.askForPlayerInput();
+      }
+    } else {
+      await this.game.effectChainSystem.createChain({
+        initialPlayer: this.player,
+        initialEffect: effect,
+        onResolved
+      });
+    }
+  }
+
   targetBy(origin: CardTargetOrigin) {
     this._targetedBy.push(origin);
   }
@@ -249,11 +331,6 @@ export abstract class Card<
         this.player.cardManager.removeFromDiscardPile(this);
       })
       .with('banishPile', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from banish pile when it is not a main deck card.`
-          );
-        }
         this.player.cardManager.removeFromBanishPile(this);
       })
       .with('mainDeck', () => {
@@ -276,11 +353,6 @@ export abstract class Card<
         this.player.cardManager.removeFromDestinyZone(this);
       })
       .with('board', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from board pile when it is not a main deck card.`
-          );
-        }
         this.player.boardSide.remove(this);
       })
       .exhaustive();
@@ -297,11 +369,6 @@ export abstract class Card<
   }
 
   sendToBanishPile() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to banish pile when it is not a main deck card.`
-      );
-    }
     this.removeFromCurrentLocation();
     this.player.cardManager.sendToBanishPile(this);
   }
@@ -317,18 +384,54 @@ export abstract class Card<
   }
 
   protected updatePlayedAt() {
-    this.playedAtTurn = this.game.gamePhaseSystem.elapsedTurns;
+    this.playedAtTurn = this.game.turnSystem.elapsedTurns;
   }
   abstract canPlay(): boolean;
 
-  abstract play(): Promise<void>;
+  protected get canPlayAsMaindeckCard() {
+    if (this.deckSource !== CARD_DECK_SOURCES.MAIN_DECK) {
+      return false;
+    }
+    return this.location === 'hand' && this.canPayManaCost;
+  }
 
-  get hasAffinityMatch() {
-    return this.interceptors.hasAffinityMatch.getValue(
-      this.player.unlockedAffinities.includes(this.affinity),
-      {}
+  protected get canPlayAsDestinyDeckCard() {
+    if (this.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK) {
+      return false;
+    }
+    if (this.player.hasPlayedDestinyCardThisTurn) {
+      return false;
+    }
+
+    return (
+      this.location === 'destinyDeck' &&
+      this.canPayDestinyCost &&
+      this.game.turnSystem.elapsedTurns >=
+        this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
     );
   }
+
+  protected get canPlayBase() {
+    const gameStateCtx = this.game.gamePhaseSystem.getContext();
+
+    if (
+      gameStateCtx.state === GAME_PHASES.ATTACK &&
+      gameStateCtx.ctx.step !== COMBAT_STEPS.BUILDING_CHAIN
+    ) {
+      return false;
+    }
+
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+      return false;
+    }
+
+    return match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
+      .exhaustive();
+  }
+
+  abstract play(onResolved: () => MaybePromise<void>): Promise<void>;
 
   protected serializeBase(): SerializedCard {
     return {
@@ -339,7 +442,6 @@ export abstract class Card<
       rarity: this.blueprint.rarity,
       player: this.player.id,
       kind: this.kind,
-      affinity: this.affinity,
       isExhausted: this.isExhausted,
       name: this.blueprint.name,
       description: this.blueprint.description,
@@ -348,12 +450,12 @@ export abstract class Card<
       canBeUsedAsManaCost: this.canBeUsedAsManaCost,
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
-        .map(modifier => modifier.id)
-      // keywords: this.keywords.map(keyword => ({
-      //   id: keyword.id,
-      //   name: keyword.name,
-      //   description: keyword.description
-      // }))
+        .map(modifier => modifier.id),
+      manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
+      destinyCost:
+        this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
+      speed: this.blueprint.speed,
+      keywords: this.keywords.map(keyword => keyword.id)
     };
   }
 
@@ -404,10 +506,7 @@ export abstract class Card<
 
     this._isExhausted = false;
 
-    await match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.sendToDiscardPile())
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.sendToBanishPile())
-      .exhaustive();
+    await this.dispose();
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_DESTROY,
       new CardAfterDestroyEvent({ card: this })

@@ -1,13 +1,16 @@
-import type { Values } from '@game/shared';
+import type { MaybePromise, Values } from '@game/shared';
 import type { Game } from '../../game/game';
-import type { Attacker, Defender, AttackTarget } from '../../game/phases/combat.phase';
+import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
 import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import { type HeroBlueprint, type PreResponseTarget } from '../card-blueprint';
-import { CARD_EVENTS, type Affinity } from '../card.enums';
-import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
+import {
+  type AbilityBlueprint,
+  type HeroBlueprint,
+  type PreResponseTarget
+} from '../card-blueprint';
+import { type SpellSchool, type HeroJob, CARD_EVENTS } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -18,11 +21,14 @@ import {
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../../game/game.enums';
-import type { DestinyCard } from './destiny.entity';
 import { Ability } from './ability.entity';
+import { AnywhereAttackRange, type AttackRange } from '../attack-range';
+import type { MinionCard } from './minion.entity';
+import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
+import { CardDeclarePlayEvent } from '../card.events';
+import { CorruptedGamephaseContextError } from '../../game/systems/game-phase.system';
 
 export type SerializedHeroCard = SerializedCard & {
-  level: number;
   potentialAttackTargets: string[];
   atk: number;
   baseAtk: number;
@@ -32,22 +38,26 @@ export type SerializedHeroCard = SerializedCard & {
   baseMaxHp: number;
   remainingHp: number;
   abilities: string[];
-  unlockableAffinities: string[];
+  spellSchools: SpellSchool[];
+  jobs: HeroJob[];
+  canCounterattack: boolean;
 };
+
 export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
-  canBlock: Interceptable<boolean, { attacker: Attacker }>;
-  canBeBlocked: Interceptable<boolean, { blocker: Defender }>;
-  canBeCounterattacked: Interceptable<boolean, { defender: Defender }>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
-  canBeDefended: Interceptable<boolean, { defender: Defender }>;
+  canCounterattack: Interceptable<boolean, { attacker: AttackTarget }>;
+  canBeCounterattacked: Interceptable<boolean, { defender: AttackTarget }>;
+  canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
+  attackRanges: Interceptable<AttackRange[], HeroCard>;
+  attackAOEs: Interceptable<AttackAOE[], HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -60,21 +70,34 @@ export const HERO_EVENTS = {
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
-  HERO_AFTER_LEVEL_UP: 'hero.after-level-up'
+  HERO_AFTER_LEVEL_UP: 'hero.after-level-up',
+  HERO_PLAYED: 'hero.played'
 } as const;
 export type HeroEvents = Values<typeof HERO_EVENTS>;
 
-export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
-  { card: HeroCard; damage: Damage },
-  { card: SerializedHeroCard; damage: { type: DamageType; amount: number } }
+export class HeroPlayedEvent extends TypedSerializableEvent<
+  { card: HeroCard },
+  { card: string }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id
+    };
+  }
+}
+
+export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
+  { card: HeroCard; damage: Damage; source: AnyCard },
+  { card: string; damage: { type: DamageType; amount: number }; source: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
       damage: {
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
-      }
+      },
+      source: this.data.source.id
     };
   }
 }
@@ -84,14 +107,16 @@ export class HeroBeforeDealCombatDamageEvent extends TypedSerializableEvent<
     card: HeroCard;
     target: AttackTarget;
     damage: CombatDamage;
+    affectedCards: Array<MinionCard | HeroCard>;
   },
-  { card: SerializedHeroCard; target: string; damage: number }
+  { card: string; target: string; damage: number; affectedCards: string[] }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       target: this.data.target.id,
-      damage: this.data.damage.getFinalAmount(this.data.target)
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id)
     };
   }
 }
@@ -101,15 +126,23 @@ export class HeroAfterDealCombatDamageEvent extends TypedSerializableEvent<
     card: HeroCard;
     target: AttackTarget;
     damage: CombatDamage;
+    affectedCards: Array<MinionCard | HeroCard>;
   },
-  { card: SerializedHeroCard; target: string; damage: number; isFatal: boolean }
+  {
+    card: string;
+    target: string;
+    affectedCards: string[];
+    damage: number;
+    isFatal: boolean;
+  }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       target: this.data.target.id,
       damage: this.data.damage.getFinalAmount(this.data.target),
-      isFatal: !this.data.target.isAlive
+      isFatal: !this.data.target.isAlive,
+      affectedCards: this.data.affectedCards.map(card => card.id)
     };
   }
 }
@@ -127,12 +160,13 @@ export class HeroCardHealEvent extends TypedSerializableEvent<
 }
 
 export class HeroLevelUpEvent extends TypedSerializableEvent<
-  { card: HeroCard },
-  { card: SerializedHeroCard }
+  { from: HeroCard; to: HeroCard },
+  { from: SerializedHeroCard; to: SerializedHeroCard }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      from: this.data.from.serialize(),
+      to: this.data.to.serialize()
     };
   }
 }
@@ -146,14 +180,13 @@ export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;
   [HERO_EVENTS.HERO_AFTER_LEVEL_UP]: HeroLevelUpEvent;
+  [HERO_EVENTS.HERO_PLAYED]: HeroPlayedEvent;
 };
 
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
   private damageTaken = 0;
 
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
-
-  unlockedAffinity!: Affinity;
 
   readonly abilities: Ability<HeroCard>[] = [];
 
@@ -164,18 +197,19 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBlock: new Interceptable(),
-        canBeBlocked: new Interceptable(),
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canBeDefended: new Interceptable(),
+        canCounterattack: new Interceptable(),
         canBeCounterattacked: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
-        spellPower: new Interceptable()
+        spellPower: new Interceptable(),
+        attackRanges: new Interceptable(),
+        attackAOEs: new Interceptable()
       },
       options
     );
@@ -203,8 +237,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     }
   }
 
-  get level() {
-    return this.player.unlockedDestinyCards.filter(card => card.countsAsLevel).length;
+  cloneDamageTaken(previousHero: HeroCard) {
+    this.damageTaken = previousHero.damageTaken;
   }
 
   get isAlive() {
@@ -227,18 +261,17 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return Math.max(this.maxHp - this.damageTaken, 0);
   }
 
-  get unlockableAffinities() {
-    return this.blueprint.affinities;
+  get attackRanges(): AttackRange[] {
+    return this.interceptors.attackRanges.getValue([new AnywhereAttackRange()], this);
+  }
+
+  get attackAOEs(): AttackAOE[] {
+    return this.interceptors.attackAOEs.getValue([new SingleTargetAOE()], this);
   }
 
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
-  }
-
-  get isBlocking() {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.blocker?.equals(this);
   }
 
   canBeTargeted(source: AnyCard) {
@@ -250,7 +283,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   canAttack(target: AttackTarget) {
     const p1t1Condition = this.game.config.ALLOW_PLAYER_1_TURN_1_ATTACK
       ? true
-      : !this.player.isPlayer1 || this.game.gamePhaseSystem.elapsedTurns > 0;
+      : !this.player.isPlayer1 || this.game.turnSystem.elapsedTurns > 0;
 
     return this.interceptors.canAttack.getValue(
       !this._isExhausted && this.atk > 0 && target.canBeAttacked(this) && p1t1Condition,
@@ -260,38 +293,46 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  get canDealCombatDamage() {
-    return true;
-  }
-
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
     });
   }
 
-  canBeDefendedBy(defender: Defender) {
+  canBeDefendedBy(defender: AttackTarget) {
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
   }
 
-  canBlock(attacker: Attacker) {
-    return this.interceptors.canBlock.getValue(false, {
-      attacker
-    });
-  }
-
-  canBeBlocked(blocker: Defender) {
-    return this.interceptors.canBeBlocked.getValue(true, {
-      blocker
-    });
-  }
-
-  canBeCounterattackedBy(defender: Defender) {
+  canBeCounterattackedBy(defender: AttackTarget) {
     return this.interceptors.canBeCounterattacked.getValue(true, {
       defender
     });
+  }
+
+  canCounterattack(target: AttackTarget) {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
+      return false;
+    }
+
+    return this.interceptors.canCounterattack.getValue(
+      !this.isExhausted &&
+        this.atk > 0 &&
+        phaseCtx.ctx.attacker.canBeCounterattackedBy(this),
+      {
+        attacker: target
+      }
+    );
+  }
+
+  async counterattack() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
+      throw new CorruptedGamephaseContextError();
+    }
+    await phaseCtx.ctx.counterAttack();
   }
 
   getReceivedDamage(damage: Damage) {
@@ -300,23 +341,49 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     });
   }
 
+  getAffectedCardsForAttack(target: AttackTarget) {
+    if (target instanceof HeroCard) {
+      return [target];
+    }
+    const affectedCards = new Set<MinionCard | HeroCard>();
+    this.attackAOEs.forEach(aoe => {
+      aoe.getAffectedCards(target.slot!).forEach(card => affectedCards.add(card));
+    });
+
+    return Array.from(affectedCards);
+  }
+
   async dealDamage(target: AttackTarget, damage: CombatDamage) {
+    const affectedCards = this.getAffectedCardsForAttack(target);
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
-      new HeroBeforeDealCombatDamageEvent({ card: this, target, damage })
+      new HeroBeforeDealCombatDamageEvent({
+        card: this,
+        target,
+        damage,
+        affectedCards
+      })
     );
-    await target.takeDamage(this, damage);
+
+    for (const card of affectedCards) {
+      await card.takeDamage(this, damage);
+    }
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
-      new HeroAfterDealCombatDamageEvent({ card: this, target, damage })
+      new HeroAfterDealCombatDamageEvent({
+        card: this,
+        target,
+        damage,
+        affectedCards
+      })
     );
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
     await this.game.emit(
       HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE,
-      new HeroCardTakeDamageEvent({ card: this, damage })
+      new HeroCardTakeDamageEvent({ card: this, damage, source })
     );
 
     const amount = damage.getFinalAmount(this);
@@ -325,7 +392,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE,
-      new HeroCardTakeDamageEvent({ card: this, damage })
+      new HeroCardTakeDamageEvent({ card: this, damage, source })
     );
   }
 
@@ -366,56 +433,114 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     }
   }
 
-  async useAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
-    if (!ability) return;
+  addAbility(ability: AbilityBlueprint<HeroCard, PreResponseTarget>) {
+    const newAbility = new Ability<HeroCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
 
-    return await ability.use();
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilityTargets.delete(abilityId);
+  }
+
+  get spellSchools() {
+    return this.blueprint.spellSchools;
+  }
+
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
+  get level() {
+    return this.blueprint.level;
+  }
+
+  get lineage() {
+    return this.blueprint.lineage;
+  }
+
+  get hasCorrectLevelToPlay() {
+    return this.player.hero.level === this.blueprint.level - 1;
+  }
+
+  get hasCorrectLineageToPlay() {
+    if (this.level <= 1) return true;
+
+    return !this.lineage || this.player.hero.lineage === this.lineage;
   }
 
   canPlay() {
-    return this.location !== 'board';
-  }
-
-  async play() {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    this.updatePlayedAt();
-
-    await this.blueprint.onPlay(this.game, this, this);
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
+    return this.interceptors.canPlay.getValue(
+      this.canPlayBase &&
+        this.hasCorrectLevelToPlay &&
+        this.hasCorrectLineageToPlay &&
+        this.blueprint.canPlay(this.game, this),
+      this
     );
   }
 
-  async levelup(destinyCard: DestinyCard) {
+  async play(onResolved: () => MaybePromise<void>) {
+    if (this.level === 0) {
+      await this.game.emit(
+        CARD_EVENTS.CARD_BEFORE_PLAY,
+        new CardDeclarePlayEvent({ card: this })
+      );
+      await this.player.levelupHero(this);
+      await this.blueprint.onPlay(this.game, this, this);
+      await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
+      await this.game.emit(
+        CARD_EVENTS.CARD_AFTER_PLAY,
+        new CardDeclarePlayEvent({ card: this })
+      );
+      return;
+    }
+
     await this.game.emit(
-      HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
-      new HeroLevelUpEvent({ card: this })
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.player.playDestinyCard(destinyCard);
-
-    await this.game.emit(
-      HERO_EVENTS.HERO_AFTER_LEVEL_UP,
-      new HeroLevelUpEvent({ card: this })
+    await this.insertInChainOrExecute(
+      async () => {
+        await this.player.levelupHero(this);
+        await this.blueprint.onPlay(this.game, this, this);
+        await this.game.emit(
+          HERO_EVENTS.HERO_PLAYED,
+          new HeroPlayedEvent({ card: this })
+        );
+      },
+      [],
+      onResolved
     );
   }
 
   get potentialAttackTargets() {
-    return this.player.opponent.boardSide
-      .getAllAttackTargets()
-      .filter(target => this.canAttack(target));
+    if (this.location !== 'board') return [];
+
+    const result: Array<MinionCard | HeroCard> = this.player.opponent.boardSide
+      .getAllMinions()
+      .filter(
+        minion =>
+          this.attackRanges.some(range => range.canAttack(minion.slot!)) &&
+          this.canAttack(minion)
+      );
+
+    if (
+      this.attackRanges.some(range => range.canAttackHero()) &&
+      this.canAttack(this.player.opponent.hero)
+    ) {
+      result.push(this.player.opponent.hero);
+    }
+
+    return result;
   }
 
   serialize(): SerializedHeroCard {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
     return {
       ...this.serializeBase(),
-      level: this.level,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,
@@ -424,8 +549,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
-      unlockableAffinities: this.blueprint.affinities,
-      abilities: this.abilities.map(ability => ability.id)
+      abilities: this.abilities.map(ability => ability.id),
+      jobs: this.blueprint.jobs,
+      spellSchools: this.blueprint.spellSchools,
+      canCounterattack:
+        phaseCtx.state === GAME_PHASES.ATTACK &&
+        phaseCtx.ctx.target?.equals(this) &&
+        phaseCtx.ctx.target?.canCounterattack(this)
+          ? this.canCounterattack(phaseCtx.ctx.attacker) &&
+            phaseCtx.ctx.attacker.canBeCounterattackedBy(this)
+          : false
     };
   }
 }

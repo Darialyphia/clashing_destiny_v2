@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import CardBack from '@/card/components/CardBack.vue';
 import {
   useBoardSide,
   useFxEvent,
-  useGameClient
+  useGameClient,
+  useGameUi
 } from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import SmallCardBack from '@/card/components/SmallCardBack.vue';
+import CountChip from './CountChip.vue';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
 const boardSide = useBoardSide(computed(() => playerId));
 
-const client = useGameClient();
-
+const { playerId: activePlayerId } = useGameClient();
+const ui = useGameUi();
 const root = useTemplateRef<HTMLElement>('root');
 
 const cardSpacing = ref(0);
@@ -57,7 +59,7 @@ watch(
   [
     root,
     computed(() => boardSide.value.destinyZone.length),
-    computed(() => client.value.ui.selectedManaCostIndices.length)
+    computed(() => ui.value.selectedManaCostIndices.length)
   ],
   () => {
     nextTick(computeSpacing);
@@ -70,6 +72,7 @@ useResizeObserver(root, throttle(computeSpacing, 50));
 const cardBanishedAsDestinyCost = ref<Array<{ card: string; index: number }>>(
   []
 );
+
 useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async event => {
   if (event.player.id !== playerId) return;
   event.cards.forEach(card => {
@@ -90,12 +93,6 @@ const displayedCards = computed(() => {
         cardId: card
       };
     })
-    // ...client.value.ui.selectedManaCostIndices.map(index => {
-    //   return {
-    //     type: 'mana',
-    //     cardId: boardSide.value.hand[index]
-    //   };
-    // })
   ];
 });
 </script>
@@ -105,34 +102,43 @@ const displayedCards = computed(() => {
     class="destiny-zone"
     ref="root"
     :id="`destiny-zone-${playerId}`"
-    :class="{ 'player-2': playerId !== client.playerId }"
+    :class="{ 'player-2': playerId !== activePlayerId }"
   >
     <div v-for="(card, index) in displayedCards" :key="card.cardId">
       <InspectableCard
-        v-if="client.playerId === playerId"
+        v-if="activePlayerId === playerId"
         :card-id="card.cardId"
         side="top"
       >
-        <CardBack
+        <SmallCardBack
           :key="card.cardId"
           class="item"
           :style="{ '--index': index }"
         />
       </InspectableCard>
-      <CardBack v-else class="item" :style="{ '--index': index }" />
+      <SmallCardBack v-else class="item" :style="{ '--index': index }" />
     </div>
+
+    <CountChip
+      :count="displayedCards.length"
+      class="absolute bottom-0 right-0"
+    />
   </div>
 </template>
 
 <style scoped lang="postcss">
 .destiny-zone {
+  --piwxel-scale: 1;
   display: grid;
   position: relative;
   overflow: hidden;
   justify-items: start;
+  align-items: center;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
-  height: calc(var(--card-height) / 2);
+  height: 100%;
+  border: solid 1px #985e25;
+  padding-inline: 4px;
   --spacing-offset: 1;
   &.player-2 {
     justify-items: end;
@@ -149,8 +155,6 @@ const displayedCards = computed(() => {
 }
 
 .item {
-  height: calc(var(--card-height) / 2);
-  aspect-ratio: var(--card-ratio);
   transform: translateX(
     calc(var(--index) * v-bind(cardSpacing) * 1px * var(--spacing-offset))
   );

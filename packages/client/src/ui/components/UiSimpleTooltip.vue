@@ -28,7 +28,7 @@ const {
     <TooltipTrigger v-slot="triggerProps" as-child>
       <slot name="trigger" v-bind="triggerProps" />
     </TooltipTrigger>
-    <TooltipPortal :disabled="!usePortal">
+    <TooltipPortal :disabled="!usePortal" to="#tooltip-portal">
       <Transition>
         <TooltipContent
           v-slot="contentProps"
@@ -49,7 +49,7 @@ const {
 <style lang="postcss" scoped>
 .tooltip-content {
   background-color: black;
-  color: white;
+  color: #efef9f;
   padding: var(--size-1) var(--size-3);
   font-family: var(--font-system-ui);
   font-size: 14px;

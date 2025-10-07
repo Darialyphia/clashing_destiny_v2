@@ -1,32 +1,87 @@
 <script setup lang="ts">
+import Pile from './Pile.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useBoardSide } from '../composables/useGameClient';
+import {
+  useBoardSide,
+  useFxEvent,
+  useGameUi,
+  useMyPlayer
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { useSettingsStore } from '@/shared/composables/useSettings';
+import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
 
 const { player } = defineProps<{
   player: string;
 }>();
-const isOpened = defineModel<boolean>('isOpened', { required: true });
 
 const board = useBoardSide(computed(() => player));
+const isOpened = ref(false);
+
+const close = () => {
+  isOpened.value = false;
+};
+useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, close);
+useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
+const ui = useGameUi();
+
+const myPlayer = useMyPlayer();
+const settings = useSettingsStore();
+const getKeyLabel = useKeybordShortcutLabel();
 </script>
 
 <template>
+  <Pile
+    :size="board.discardPile.length"
+    v-slot="{ index }"
+    class="discard-pile"
+    :id="ui.DOMSelectors.discardPile(player).id"
+    :data-keyboard-shortcut="
+      player === myPlayer.id
+        ? getKeyLabel(settings.settings.bindings.toggleDiscardPile.control)
+        : getKeyLabel(
+            settings.settings.bindings.toggleOpponentDiscardPile.control
+          )
+    "
+    data-keyboard-shortcut-centered="true"
+    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
+    @click="isOpened = true"
+  >
+    <GameCard
+      :card-id="board.discardPile[index]"
+      :is-interactive="false"
+      variant="small"
+    />
+  </Pile>
+
   <UiModal
     v-model:is-opened="isOpened"
-    title="Discard Pile"
+    :title="
+      myPlayer.id === player ? 'Your Discard Pile' : 'Opponent Discard Pile'
+    "
     description=""
     :style="{
       '--ui-modal-size': 'var(--size-lg)'
     }"
   >
-    <div class="content">
+    <div class="content" @click="close">
       <header>
-        <h2 class="text-center">Discard Pile</h2>
+        <h2 class="text-center">
+          {{
+            myPlayer.id === player
+              ? 'Your Discard Pile'
+              : 'Opponent Discard Pile'
+          }}
+        </h2>
       </header>
       <div class="card-list fancy-scrollbar">
-        <div v-for="card in board.discardPile.toReversed()" :key="card">
+        <div
+          v-for="card in board.discardPile.toReversed()"
+          :key="card"
+          @click.stop
+        >
           <GameCard :card-id="card" :actions-offset="10" />
         </div>
       </div>
@@ -38,6 +93,11 @@ const board = useBoardSide(computed(() => player));
 </template>
 
 <style scoped lang="postcss">
+.discard-pile {
+  height: var(--card-small-height);
+  width: var(--card-small-width);
+}
+
 .content {
   height: 80dvh;
   display: grid;

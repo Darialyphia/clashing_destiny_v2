@@ -1,70 +1,88 @@
 <script setup lang="ts">
-import { AFFINITIES, type Affinity } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 
 export type DisplayedDeck = {
   name: string;
-  hero: string;
   mainDeck: { blueprintId: string }[];
+  destinyDeck: { blueprintId: string }[];
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
 }>();
 
 const hero = computed(() => {
-  return deck.hero ? CARDS_DICTIONARY[deck.hero] : null;
+  const heroes = deck.destinyDeck
+    .map(card => CARDS_DICTIONARY[card.blueprintId])
+    .filter(c => c.kind === CARD_KINDS.HERO);
+  return heroes.sort((a, b) => b.level - a.level)[0];
 });
 
-const affinities = computed(() => {
-  const result = new Set<Affinity>();
-  deck.mainDeck.forEach(card => {
-    const blueprint = CARDS_DICTIONARY[card.blueprintId];
-    if (!blueprint) return;
-    if (blueprint.affinity !== AFFINITIES.NORMAL) {
-      result.add(blueprint.affinity);
-    }
-  });
-  return Array.from(result);
-});
+// const affinities = computed(() => {
+//   const result = new Set<Affinity>();
+//   deck.mainDeck.forEach(card => {
+//     const blueprint = CARDS_DICTIONARY[card.blueprintId];
+//     if (!blueprint) return;
+//     if (blueprint.affinity !== AFFINITIES.NORMAL) {
+//       result.add(blueprint.affinity);
+//     }
+//   });
+//   return Array.from(result);
+// });
 </script>
 
 <template>
-  <article
+  <button
     class="player-deck"
     :style="{
-      '--bg': `url(/assets/icons/${hero?.cardIconId}.png)`
+      '--bg': `url(/assets/cards/${hero?.cardIconId}.png)`
     }"
   >
-    <button class="deck-name">
+    <div class="deck-name">
       {{ deck.name }}
-    </button>
+      <div class="flex gap-1" v-if="hero">
+        <img
+          v-for="jobs in hero.jobs"
+          :key="jobs"
+          :src="`/assets/ui/jobs-${jobs.toLowerCase()}.png`"
+          class="job"
+        />
+        <img
+          v-for="spellSchool in hero.spellSchools"
+          :key="spellSchool"
+          :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
+          class="spell-school"
+        />
+      </div>
+    </div>
 
-    <div
+    <!-- <div
       v-for="affinity in affinities"
       :key="affinity"
       class="deck-affinity"
       :style="{
         '--bg': `url('/assets/ui/affinity-${affinity.toLowerCase()}.png')`
       }"
-    />
-  </article>
+    /> -->
+  </button>
 </template>
 
 <style scoped lang="postcss">
 .player-deck {
   display: flex;
+  width: 100%;
   gap: var(--size-2);
   align-items: center;
   background-image:
-    linear-gradient(to right, hsl(0deg 0% 0% / 0.5), hsl(0deg 0% 0% / 0.5)),
+    linear-gradient(to right, hsl(0deg 0% 20% / 0.5), hsl(0deg 0% 0% / 0.5)),
     var(--bg);
   background-repeat: no-repeat;
   background-position:
     center center,
-    left center;
+    right calc(100% + 70px);
   background-size: 200%, calc(2px * 96);
-  border: solid 1px var(--primary);
-  padding: var(--size-2);
+  padding: var(--size-2) var(--size-4);
+  border: solid 1px hsl(var(--color-primary-hsl) / 0.5);
 }
 
 .deck-name {
@@ -84,11 +102,10 @@ const affinities = computed(() => {
   }
 }
 
-.deck-affinity {
-  background: var(--bg);
-  background-size: cover;
-  background-position: center;
-  width: calc(1 * 26px);
-  height: calc(1 * 28px);
+.job,
+.spell-school {
+  --pixel-scale: 2;
+  width: calc(22px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
 }
 </style>

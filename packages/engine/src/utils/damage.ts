@@ -3,10 +3,8 @@ import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
 
 export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',
-  HERO_ATTACK: 'HERO_ATTACK',
   ABILITY: 'ABILITY',
-  SPELL: 'SPELL',
-  LOYALTY: 'LOYALTY'
+  SPELL: 'SPELL'
 } as const;
 
 export type DamageType = Values<typeof DAMAGE_TYPES>;
@@ -21,6 +19,8 @@ export abstract class Damage {
 
   readonly type: DamageType;
 
+  private _isPrevented = false;
+
   constructor(options: DamageOptions) {
     this._baseAmount = options.baseAmount;
     this.type = options.type;
@@ -30,7 +30,12 @@ export abstract class Damage {
     return this._baseAmount;
   }
 
+  prevent() {
+    this._isPrevented = true;
+  }
+
   getFinalAmount(target: AttackTarget): number {
+    if (this._isPrevented) return 0;
     return target.getReceivedDamage(this);
   }
 }

@@ -1,20 +1,24 @@
-import type { Id } from '../../_generated/dataModel';
-import { UseCase } from '../../usecase';
-import { SessionRepository } from '../repositories/session.repository';
+import type { UseCase } from '../../usecase';
+import type { AuthSession } from '../entities/session.entity';
+import type { SessionRepository } from '../repositories/session.repository';
 
-export type LogoutInput = {
-  sessionId: Id<'authSessions'>;
-};
+export type LogoutInput = never;
 export interface LogoutOutput {
   success: true;
 }
 
-export type LogoutCtx = {
-  sessionRepo: SessionRepository;
-};
-export class LogoutUseCase extends UseCase<LogoutInput, LogoutOutput, LogoutCtx> {
-  async execute(input: LogoutInput): Promise<LogoutOutput> {
-    await this.ctx.sessionRepo.delete(input.sessionId);
+export class LogoutUseCase implements UseCase<LogoutInput, LogoutOutput> {
+  static INJECTION_KEY = 'logoutUseCase' as const;
+
+  constructor(
+    protected ctx: { sessionRepo: SessionRepository; session: AuthSession | null }
+  ) {}
+
+  async execute(): Promise<LogoutOutput> {
+    if (this.ctx.session) {
+      await this.ctx.sessionRepo.delete(this.ctx.session._id);
+    }
+
     return { success: true };
   }
 }

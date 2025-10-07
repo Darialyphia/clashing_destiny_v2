@@ -49,7 +49,9 @@ export class UseAbilityContext {
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY);
     this.game.interaction.onInteractionEnd();
 
-    await this.player.useAbility(this.ability, manaCostIndices);
+    await this.player.useAbility(this.ability, manaCostIndices, async () => {
+      await this.game.turnSystem.switchInitiative();
+    });
   }
 
   async cancel(player: Player) {

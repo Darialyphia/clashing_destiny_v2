@@ -2,43 +2,26 @@
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
-import { Icon } from '@iconify/vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
-import { vOnClickOutside } from '@vueuse/components';
 import type { GamePhase } from '@game/engine/src/game/game.enums';
-import { isDefined } from '@game/shared';
+import { DAMAGE_TYPES } from '@game/engine/src/utils/damage';
 
 const state = useGameState();
-const client = useGameClient();
+const { client } = useGameClient();
 
 onMounted(() => {
   client.value.onUpdateCompleted(snapshot => {
     snapshot.events.forEach(({ event, eventName }) => {
       const tokens: Token[] = [];
-
-      if (eventName === GAME_EVENTS.GAME_TURN_START) {
+      if (eventName === GAME_EVENTS.TURN_START) {
         tokens.push({
           kind: 'game-turn-start',
           turn: event.turnCount
         });
       }
 
-      if (eventName === GAME_EVENTS.PLAYER_START_TURN) {
-        tokens.push({
-          kind: 'player-turn_start',
-          player: state.value.entities[event.player.id] as PlayerViewModel
-        });
-      }
-
-      if (eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
-        tokens.push({
-          kind: 'game-phase-change',
-          phase: event.to.state as GamePhase
-        });
-      }
-
-      if (eventName === GAME_EVENTS.CARD_AFTER_PLAY) {
+      if (eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
         tokens.push({
           kind: 'text',
           text: `${state.value.entities[event.card.player].name} played`
@@ -46,6 +29,17 @@ onMounted(() => {
         tokens.push({
           kind: 'card',
           card: state.value.entities[event.card.id] as CardViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.ABILITY_AFTER_USE) {
+        tokens.push({
+          kind: 'card',
+          card: state.value.entities[event.card] as CardViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `Used an ability`
         });
       }
 
@@ -64,28 +58,10 @@ onMounted(() => {
         });
       }
 
-      if (eventName === GAME_EVENTS.AFTER_DECLARE_BLOCKER) {
-        if (isDefined(event.blocker)) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.blocker] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: 'declared a block.'
-          });
-        } else {
-          tokens.push({
-            kind: 'text',
-            text: 'No blocker declared.'
-          });
-        }
-      }
-
       if (eventName === GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',
@@ -100,7 +76,7 @@ onMounted(() => {
       if (eventName === GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',
@@ -114,15 +90,16 @@ onMounted(() => {
 
       if (
         eventName === GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE &&
-        event.damage.amount
+        event.damage.amount &&
+        event.damage.type === DAMAGE_TYPES.COMBAT
       ) {
         tokens.push({
           kind: 'card',
-          card: state.value.entities[event.card.id] as CardViewModel
+          card: state.value.entities[event.card] as CardViewModel
         });
         tokens.push({
           kind: 'text',
-          text: `took ${event.damage.amount} ${event.damage.type} damage.`
+          text: `took ${event.damage.amount}  damage.`
         });
       }
 
@@ -145,6 +122,80 @@ onMounted(() => {
         tokens.push({
           kind: 'text',
           text: `draw ${event.amount} card${event.amount > 1 ? 's' : ''}.`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_PLAYER_PASSED) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `passed chain priority`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED) {
+        tokens.push({
+          kind: 'text',
+          text: `Resolving Effect chain step ${event.index + 1}`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED) {
+        tokens.push({
+          kind: 'text',
+          text: `Effect chain step ${event.index + 1} has been resolved`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `added an effect to the chain at step ${event.index + 1}`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_RESOLVED) {
+        tokens.push({
+          kind: 'text',
+          text: `The effect chain has been resolved`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.TURN_INITATIVE_CHANGE) {
+        tokens.push({
+          kind: 'text',
+          text: `Initiative switched to`
+        });
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[
+            event.newInitiativePlayer
+          ] as PlayerViewModel
+        });
+      }
+
+      if (eventName === GAME_EVENTS.TURN_PASS) {
+        tokens.push({
+          kind: 'player',
+          player: state.value.entities[event.player] as PlayerViewModel
+        });
+        tokens.push({
+          kind: 'text',
+          text: `passed initiative.`
+        });
+      }
+
+      if (eventName === GAME_EVENTS.CARD_EFFECT_TRIGGERED) {
+        tokens.push({
+          kind: 'text',
+          text: event.message
         });
       }
 
@@ -173,26 +224,13 @@ type Token =
   | { kind: 'game-phase-change'; phase: GamePhase }
   | { kind: 'player-turn_start'; player: PlayerViewModel };
 
-const events = shallowRef<Token[][]>([[]]);
-
-const isCollapsed = ref(true);
+const events = ref<Token[][]>([[{ kind: 'text', text: 'Game started' }]]);
 
 const listEl = ref<HTMLElement>();
-watch(isCollapsed, collapsed => {
-  if (!collapsed) {
-    nextTick(() => {
-      listEl.value?.scrollTo({
-        top: listEl.value.scrollHeight,
-        behavior: 'instant'
-      });
-    });
-  }
-});
 
 watch(
   () => events.value.length,
   () => {
-    if (isCollapsed.value) return;
     nextTick(() => {
       listEl.value?.scrollTo({
         top: listEl.value.scrollHeight,
@@ -201,114 +239,57 @@ watch(
     });
   }
 );
-
-const close = () => {
-  isCollapsed.value = true;
-};
 </script>
 
 <template>
-  <div
-    v-on-click-outside="close"
-    class="combat-log fancy-scrollbar surface"
-    :class="isCollapsed && 'is-collapsed'"
-  >
-    <h4>Battle Log</h4>
-    <ul v-if="!isCollapsed" ref="listEl" class="fancy-scrollbar">
-      <li v-for="(event, index) in events" :key="index">
-        <span
-          v-for="(token, tokenIndex) in event"
-          :key="tokenIndex"
-          :class="token.kind"
-        >
-          <template v-if="token.kind === 'text'">{{ token.text }}</template>
+  <ul ref="listEl" class="combat-log fancy-scrollbar">
+    <li v-for="(event, index) in events" :key="index">
+      <span
+        v-for="(token, tokenIndex) in event"
+        :key="tokenIndex"
+        :class="token.kind"
+      >
+        <template v-if="token.kind === 'text'">{{ token.text }}</template>
 
-          <template v-else-if="token.kind === 'card'">
-            <InspectableCard
-              :card-id="token.card.id"
-              side="right"
-              :side-offset="50"
-              :close-delay="0"
-              :open-delay="0"
-            >
-              <span class="card">{{ token.card.name }}</span>
-            </InspectableCard>
-          </template>
+        <template v-else-if="token.kind === 'card'">
+          <InspectableCard
+            :card-id="token.card.id"
+            side="right"
+            :side-offset="50"
+            :close-delay="0"
+            :open-delay="0"
+          >
+            <span class="card">{{ token.card.name }}</span>
+          </InspectableCard>
+        </template>
 
-          <template v-else-if="token.kind === 'input'">
-            {{ token.player.name }}
-          </template>
+        <template v-else-if="token.kind === 'input'">
+          {{ token.player.name }}
+        </template>
 
-          <template v-else-if="token.kind === 'player'">
-            {{ token.player.name }}
-          </template>
-          <template v-else-if="token.kind === 'player-turn_start'">
-            {{ token.player.name }}'s turn'
-          </template>
+        <template v-else-if="token.kind === 'player'">
+          {{ token.player.name }}
+        </template>
 
-          <template v-else-if="token.kind === 'game-turn-start'">
-            TURN {{ token.turn }}
-          </template>
-          <template v-else-if="token.kind === 'game-phase-change'">
-            {{ token.phase.replace('_', ' ') }}
-          </template>
-        </span>
-      </li>
-    </ul>
-    <button class="toggle" @click="isCollapsed = !isCollapsed">
-      <Icon icon="game-icons:scroll-unfurled" />
-    </button>
-  </div>
+        <template v-else-if="token.kind === 'game-turn-start'">
+          Turn {{ token.turn }} starts.
+        </template>
+        <template v-else-if="token.kind === 'game-phase-change'">
+          {{ token.phase.replace('_', ' ') }}
+        </template>
+      </span>
+    </li>
+  </ul>
 </template>
 
 <style scoped lang="postcss">
 .combat-log {
-  position: fixed;
-  top: 35%;
-
-  pointer-events: auto;
-  font-size: 16px;
-  color: #efef9f;
-  user-select: none;
-
-  box-shadow: 3px 3px 0 black;
-
-  display: grid;
-  grid-template-rows: auto 1fr;
-
-  width: 26rem;
-  height: var(--size-15);
-  z-index: 2;
-
-  line-height: 2;
-  transition: transform 0.2s var(--ease-5);
-
-  padding-inline: 0;
-
-  @screen lt-lg {
-    width: 20rem;
-    height: var(--size-13);
-  }
-
-  &.is-collapsed {
-    transform: translateX(-100%);
-    padding: var(--size-2);
-  }
-
-  > button {
-    align-self: start;
-    margin-inline-start: auto;
-  }
-}
-
-h4 {
-  padding-block-end: var(--size-4);
-  padding-inline: var(--size-6);
-}
-
-ul {
+  height: 90%;
   overflow-y: auto;
-  margin-inline: var(--size-3);
+  background-color: black;
+  font-size: var(--font-size-0);
+  color: #985e25;
+  padding-block: var(--size-1);
 }
 
 li {
@@ -317,45 +298,6 @@ li {
   gap: 1ch;
   line-height: 1.2;
   padding-inline: var(--size-3);
-  padding-block: var(--size-2);
-  &:not(:has(:is(.game-phase-change, .player-turn-start))) {
-    margin-block: var(--size-2);
-  }
-}
-
-.toggle {
-  position: absolute;
-  bottom: 00%;
-  left: 100%;
-  transform: translateY(-6px);
-
-  width: var(--size-8);
-  height: calc(var(--size-9) + var(--size-1) + 1px);
-  padding: 0;
-
-  display: grid;
-  place-content: center;
-
-  font-family: 'Press Start 2P';
-  color: #efef9f;
-  user-select: none;
-  background-color: #32021b;
-  border: solid 2px #efef9f;
-  border-right-color: #d7ad42;
-  border-bottom-color: #d7ad42;
-  text-shadow: 0 4px 0px #4e3327;
-  box-shadow: 3px 3px 0 black;
-
-  border-left: none;
-  /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
-  > svg {
-    aspect-ratio: 1;
-    width: var(--size-7);
-  }
-
-  @screen lt-lg {
-    height: var(--size-9);
-  }
 }
 
 .player,
@@ -375,18 +317,18 @@ li {
 }
 
 .unit {
-  color: var(--orange-6);
+  color: var(--blue-6);
 }
 
 .card {
-  color: var(--orange-6);
+  color: var(--blue-6);
   z-index: 1;
 }
 
 .player-turn_start {
   flex-grow: 1;
 
-  font-size: var(--font-size-3);
+  font-size: var(--font-size-2);
   font-weight: var(--font-weight-6);
   text-align: center;
 
@@ -400,29 +342,12 @@ li {
 
 .game-phase-change {
   flex-grow: 1;
-
-  font-size: var(--font-size-3);
-  font-weight: var(--font-weight-6);
-  text-align: center;
-
-  background-color: hsl(0 0 100% / 0.1);
+  color: #efef9f;
   text-transform: capitalize;
-  padding-block: var(--size-2);
-
-  li:has(&) {
-    padding: 0;
-  }
 }
 .game-turn_start {
   flex-grow: 1;
 
   font-weight: var(--font-weight-8);
-  text-align: center;
-
-  background-color: hsl(0 0 100% / 0.5);
-
-  li:has(&) {
-    padding: 0;
-  }
 }
 </style>

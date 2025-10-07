@@ -26,7 +26,7 @@ export class DeclareAttackTargetInput extends Input<typeof schema> {
   }
 
   async impl() {
-    assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
+    assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.target, new UnknownUnitError(this.payload.targetId));
     assert(this.target.canBeAttacked, new IllegalAttackTargetError());
 

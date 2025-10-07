@@ -15,12 +15,12 @@ export class SelectMinionslotAction implements MinionSlotClickRule {
           position.zone === slot.zone &&
           position.slot === slot.slot
       ) &&
-      this.client.ui.isInteractingPlayer
+      this.client.playerId === this.client.getActivePlayerId()
     );
   }
 
   handler(slot: UiMinionslot) {
-    this.client.networkAdapter.dispatch({
+    this.client.dispatch({
       type: 'selectMinionSlot',
       payload: {
         playerId: this.client.playerId,

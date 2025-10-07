@@ -1,47 +1,60 @@
 import { internal } from '../../_generated/api';
 import type { Id } from '../../_generated/dataModel';
-import type {
-  DatabaseReader,
-  DatabaseWriter,
-  MutationCtx
-} from '../../_generated/server';
+import type { Scheduler } from 'convex/server';
+import type { DatabaseReader, DatabaseWriter } from '../../_generated/server';
 import { Matchmaking, type MatchmakingDoc } from '../entities/matchmaking.entity';
+import type { MatchmakingMapper } from '../mappers/matchmaking.mapper';
 import { MATCHMAKING_SCHEDULER_INTERVAL_MS } from '../matchmaking.constants';
-import { MatchmakingUserRepository } from './matchmakingUser.repository';
+import type { MatchmakingUserRepository } from './matchmakingUser.repository';
 
 export class MatchmakingReadRepository {
-  constructor(protected db: DatabaseReader) {}
+  static INJECTION_KEY = 'matchmakingReadRepo' as const;
+
+  constructor(protected ctx: { db: DatabaseReader }) {}
 
   async getById(matchmakingId: Id<'matchmaking'>) {
-    return this.db.get(matchmakingId);
+    return this.ctx.db.get(matchmakingId);
   }
 
   async getByName(name: string) {
-    return this.db
+    return this.ctx.db
       .query('matchmaking')
       .filter(q => q.eq(q.field('name'), name))
       .first();
   }
-}
 
-type Scheduler = MutationCtx['scheduler'];
-export class MatchmakingRepository {
-  declare protected db: DatabaseWriter;
-  declare protected matchmakingUserRepo: MatchmakingUserRepository;
-  declare protected scheduler: Scheduler;
+  async getByUserId(userId: Id<'users'>) {
+    const matchmakingUserDoc = await this.ctx.db
+      .query('matchmakingUsers')
+      .withIndex('by_userId', q => q.eq('userId', userId))
+      .first();
 
-  constructor(config: {
-    db: DatabaseWriter;
-    matchmakingUserRepo: MatchmakingUserRepository;
-    scheduler: MutationCtx['scheduler'];
-  }) {
-    this.db = config.db;
-    this.matchmakingUserRepo = config.matchmakingUserRepo;
-    this.scheduler = config.scheduler;
+    if (!matchmakingUserDoc) return null;
+
+    return this.getById(matchmakingUserDoc.matchmakingId);
   }
 
+  getAll() {
+    return this.ctx.db.query('matchmaking').collect();
+  }
+}
+
+export class MatchmakingRepository {
+  static INJECTION_KEY = 'matchmakingRepo' as const;
+
+  constructor(
+    private ctx: {
+      db: DatabaseWriter;
+      matchmakingUserRepo: MatchmakingUserRepository;
+      scheduler: Scheduler;
+      matchmakingMapper: MatchmakingMapper;
+    }
+  ) {}
+
   private async buildEntity(doc: MatchmakingDoc) {
-    const matchmakingUsers = await this.matchmakingUserRepo.getByMatchmakingId(doc._id);
+    const matchmakingUsers = await this.ctx.matchmakingUserRepo.getByMatchmakingId(
+      doc._id
+    );
 
     return new Matchmaking(doc._id, {
       matchmaking: doc,
@@ -50,7 +63,7 @@ export class MatchmakingRepository {
   }
 
   async getById(matchmakingId: Id<'matchmaking'>) {
-    const matchmakingDoc = await this.db.get(matchmakingId);
+    const matchmakingDoc = await this.ctx.db.get(matchmakingId);
 
     if (!matchmakingDoc) return null;
 
@@ -58,7 +71,7 @@ export class MatchmakingRepository {
   }
 
   async getByName(name: string) {
-    const matchmakingDoc = await this.db
+    const matchmakingDoc = await this.ctx.db
       .query('matchmaking')
       .filter(q => q.eq(q.field('name'), name))
       .first();
@@ -69,7 +82,7 @@ export class MatchmakingRepository {
   }
 
   async getByUserId(userId: Id<'users'>) {
-    const matchmakingUserDoc = await this.db
+    const matchmakingUserDoc = await this.ctx.db
       .query('matchmakingUsers')
       .withIndex('by_userId', q => q.eq('userId', userId))
       .first();
@@ -80,19 +93,24 @@ export class MatchmakingRepository {
   }
 
   async save(matchmaking: Matchmaking) {
-    await this.db.insert('matchmaking', {
-      name: matchmaking.name,
-      startedAt: matchmaking.startedAt,
-      nextInvocationId: matchmaking.nextInvocationId
-    });
+    await this.ctx.db.replace(
+      matchmaking.id,
+      this.ctx.matchmakingMapper.toPersistence(matchmaking)
+    );
+
+    const matchmakingUsers = await this.ctx.matchmakingUserRepo.getByMatchmakingId(
+      matchmaking.id
+    );
+    const toDelete = matchmakingUsers.filter(mu => !matchmaking.isInMatchmaking(mu));
+    await Promise.all(toDelete.map(mu => this.ctx.matchmakingUserRepo.delete(mu.id)));
 
     await Promise.all(
-      matchmaking.participants.map(async user => this.matchmakingUserRepo.save(user))
+      matchmaking.participants.map(async user => this.ctx.matchmakingUserRepo.save(user))
     );
   }
 
   async scheduleRun(matchmaking: Matchmaking) {
-    const nextInvocationId = await this.scheduler.runAfter(
+    const nextInvocationId = await this.ctx.scheduler.runAfter(
       MATCHMAKING_SCHEDULER_INTERVAL_MS,
       internal.matchmaking.run,
       { name: matchmaking.name }

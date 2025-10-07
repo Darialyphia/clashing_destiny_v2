@@ -24,6 +24,7 @@ const loadParserByAssetType = {
   emotes: undefined,
   portraits: undefined,
   backgrounds: undefined,
+  cards: undefined,
 };
 
 const prefixByAssetType = {
@@ -42,6 +43,7 @@ const prefixByAssetType = {
   hitboxes: "hitbox-",
   emotes: "",
   portraits: "portraits-",
+  cards: ""
 };
 
 function manifestEntryParser(tree, processor) {

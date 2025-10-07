@@ -6,8 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-  DialogPortal,
-  VisuallyHidden
+  DialogPortal
 } from 'reka-ui';
 export type ModalStyleVariables = '--ui-modal-size';
 
@@ -110,9 +109,9 @@ const {
   &:focus-visible {
     outline: none;
   }
-  > div {
+  /* > div {
     pointer-events: all;
-  }
+  } */
 
   &:is(.v-enter-active, .v-leave-active) {
     transition:

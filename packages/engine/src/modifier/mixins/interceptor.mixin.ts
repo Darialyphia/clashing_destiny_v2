@@ -16,7 +16,6 @@ import type {
   ArtifactCardInterceptors
 } from '../../card/entities/artifact.entity';
 import type { SpellCard, SpellCardInterceptors } from '../../card/entities/spell.entity';
-import type { MainDeckCard } from '../../board/board.system';
 import type { AnyCard, CardInterceptors } from '../../card/entities/card.entity';
 
 type InterceptorMap = Record<string, Interceptable<any, any>>;
@@ -71,18 +70,9 @@ export class InterceptorModifierMixin<
 
   onReapplied() {}
 }
-
-type MainDeckCardInterceptors =
-  | MinionCardInterceptors
-  | SpellCardInterceptors
-  | ArtifactCardInterceptors;
-export class MainDeckCardInterceptorModifierMixin<
-  TKey extends keyof MainDeckCardInterceptors
-> extends InterceptorModifierMixin<MainDeckCardInterceptors, TKey, MainDeckCard> {}
-
 export class CardInterceptorModifierMixin<
   TKey extends keyof CardInterceptors
-> extends InterceptorModifierMixin<MainDeckCardInterceptors, TKey, AnyCard> {}
+> extends InterceptorModifierMixin<CardInterceptors, TKey, AnyCard> {}
 
 export class MinionInterceptorModifierMixin<
   TKey extends keyof MinionCardInterceptors

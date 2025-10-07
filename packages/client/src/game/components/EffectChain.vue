@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi,
+  useMyPlayer
+} from '../composables/useGameClient';
 import Arrow from './Arrow.vue';
 import { match } from 'ts-pattern';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import GameCard from './GameCard.vue';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { EFFECT_TYPE } from '@game/engine/src/game/effect-chain';
 
-const client = useGameClient();
+const { playerId } = useGameClient();
+const ui = useGameUi();
 const state = useGameState();
 
 const paths = ref<string[][]>([]);
@@ -17,36 +26,44 @@ const buildPaths = async () => {
   }
   await nextTick();
   paths.value = state.value.effectChain?.stack.map(effect => {
+    if (effect.type === EFFECT_TYPE.COUNTERATTACK) {
+      return [];
+    }
+
     return effect.targets.map(target => {
+      const boardRect =
+        ui.value.DOMSelectors.board.element!.getBoundingClientRect();
+
       const startRect = document
         .querySelector(
-          client.value.ui.getCardDOMSelectorInEffectChain(effect.source)
+          ui.value.DOMSelectors.cardInEffectChain(effect.source).selector
         )!
         .getBoundingClientRect();
       const endRect = match(target)
         .with({ type: 'card' }, target => {
           return document
             .querySelector(
-              client.value.ui.getCardDOMSelectorOnBoard(target.card)
-            )!
-            .getBoundingClientRect();
+              ui.value.DOMSelectors.cardOnBoard(target.card).selector
+            )
+            ?.getBoundingClientRect();
         })
         .with({ type: 'minionPosition' }, target => {
-          return client.value.ui.DOMSelectors.minionSprite(
+          return ui.value.DOMSelectors.minionPosition(
             target.playerId,
             target.zone,
             target.slot
-          ).element!.getBoundingClientRect();
+          ).element?.getBoundingClientRect();
         })
         .exhaustive();
+      if (!startRect || !endRect) return '';
 
       const start = {
-        x: startRect.left + startRect.width / 2,
-        y: startRect.top + startRect.height / 2
+        x: startRect.left + startRect.width / 2 - boardRect.left,
+        y: startRect.top + startRect.height / 2 - boardRect.top
       };
       const end = {
-        x: endRect.left + endRect.width / 2,
-        y: endRect.top + endRect.height / 2
+        x: endRect.left + endRect.width / 2 - boardRect.left,
+        y: endRect.top + endRect.height / 2 - boardRect.top
       };
       const highest = Math.min(start.y, end.y);
       const halfX = (start.x + end.x) / 2;
@@ -60,41 +77,65 @@ const buildPaths = async () => {
   });
 };
 watch(() => state.value.effectChain?.stack, buildPaths);
-watch(() => client.value.playerId, buildPaths);
+watch(() => playerId.value, buildPaths);
 
+const myPlayer = useMyPlayer();
 const stack = computed(() => {
   return (
-    state.value.effectChain?.stack.map(step => ({
-      ...step,
-      image: `url(${(state.value.entities[step.source] as CardViewModel)?.imagePath})`
-    })) || []
+    state.value.effectChain?.stack.map(step => {
+      const card = state.value.entities[step.source] as CardViewModel;
+      return {
+        ...step,
+        playerType: card?.player.equals(myPlayer.value) ? 'ally' : 'enemy',
+        image: `url(${card?.imagePath})`
+      };
+    }) ?? []
   );
 });
 </script>
 
 <template>
-  <div class="effect-chain" id="effect-chain">
-    <InspectableCard
-      v-for="(effect, index) in stack"
-      :key="index"
-      :card-id="effect.source"
-      class="effect-chain-card-wrapper"
-    >
-      <div
-        :id="effect.source"
-        class="effect-chain-card"
-        :style="{ '--bg': effect.image }"
-      />
+  <div>
+    <div class="effect-chain" id="effect-chain">
+      <InspectableCard
+        v-for="(effect, index) in stack"
+        :key="index"
+        :card-id="effect.source"
+      >
+        <div class="effect" :class="effect.playerType">
+          <GameCard
+            :card-id="effect.source"
+            :is-interactive="false"
+            variant="small"
+          />
 
-      <Teleport to="#arrows">
-        <Arrow
-          v-for="(path, targetIndex) in paths[index]"
-          :key="targetIndex"
-          :path="path"
-          color="#00bcff"
-        />
-      </Teleport>
-    </InspectableCard>
+          <UiSimpleTooltip>
+            <template #trigger>
+              <div class="effect-type" :class="effect.type.toLowerCase()" />
+            </template>
+            <p v-if="effect.type === EFFECT_TYPE.ABILITY">
+              This effect with execute an ability
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.CARD">
+              This effect will play a card.
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.COUNTERATTACK">
+              This effect will trigger a counterattack.
+            </p>
+          </UiSimpleTooltip>
+        </div>
+
+        <Teleport to="#arrows">
+          <Arrow
+            v-for="(path, targetIndex) in paths[index]"
+            :key="targetIndex"
+            :path="path"
+            :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
+          />
+        </Teleport>
+      </InspectableCard>
+    </div>
+    <div class="text-center">Card chain</div>
   </div>
 </template>
 
@@ -105,13 +146,58 @@ const stack = computed(() => {
   display: flex;
   align-items: center;
   gap: var(--size-3);
+  height: calc(var(--card-small-height) + var(--size-1) * 2);
+  border: solid 1px #985e25;
 }
 
-.effect-chain-card {
-  width: var(--size-8);
+@keyframes chain-effect-pulse {
+  to {
+    box-shadow: 0 0 1rem var(--shadow-color);
+  }
+}
+.ally {
+  --shadow-color: cyan;
+  animation: chain-effect-pulse 2.5s infinite alternate;
+}
+.enemy {
+  --shadow-color: red;
+  animation: chain-effect-pulse 2.5s infinite alternate;
+}
+
+.effect {
+  position: relative;
+  perspective: 2000px;
+  transform-style: preserve-3d;
+  &:deep(.small-card) {
+    transition: all 0.5s var(--ease-4);
+    @starting-style {
+      transform: rotateY(90deg);
+      filter: brightness(4);
+      opacity: 0;
+    }
+  }
+}
+
+.effect-type {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 32px;
   aspect-ratio: 1;
-  background-image: var(--bg);
+  background-size: cover;
   background-position: center;
-  background-size: 200%;
+  background-repeat: no-repeat;
+
+  &.card {
+    background: url('/assets/ui/effect-card.png');
+  }
+
+  &.ability {
+    background: url('/assets/ui/effect-ability.png');
+  }
+
+  &.counterattack {
+    background: url('/assets/ui/effect-counterattack.png');
+  }
 }
 </style>

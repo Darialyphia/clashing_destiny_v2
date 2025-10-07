@@ -1,4 +1,4 @@
-import type { Override } from '@game/shared';
+import { type Override } from '@game/shared';
 import type {
   EntityDictionary,
   SerializedOmniscientState,
@@ -16,9 +16,15 @@ import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
-import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
+import {
+  GAME_EVENTS,
+  type SerializedEvent,
+  type SerializedStarEvent
+} from '../../game/game.events';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
+import { BOARD_SLOT_ZONES } from '../../board/board.constants';
+import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 
 export type GameStateEntities = Record<
   string,
@@ -37,6 +43,7 @@ export type SerializedEntity =
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
+  | SerializedSigilCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility;
@@ -118,10 +125,69 @@ export class ClientStateController {
     };
   }
 
-  async onEvent(event: SerializedStarEvent, flush: () => Promise<void>) {
-    if (event.eventName === GAME_EVENTS.PLAYER_START_TURN) {
-      this.state.currentPlayer = event.event.player.id;
-      await flush();
+  async onEvent(
+    event: SerializedStarEvent,
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
+      return this.onMinionSummoned(event, flush);
     }
+
+    if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
+      return this.onArtifactEquiped(event, flush);
+    }
+  }
+
+  private async onMinionSummoned(
+    event: {
+      event: SerializedEvent<'MINION_SUMMONED'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    const card = this.buildViewModel(event.event.card) as CardViewModel;
+    this.state.entities[card.id] = card;
+
+    const boardSide = this.state.board.sides.find(
+      side => side.playerId === card.player.id
+    )!;
+    if (card.position?.zone === BOARD_SLOT_ZONES.FRONT_ROW) {
+      boardSide.frontRow.slots[card.position.slot] = {
+        ...boardSide.frontRow.slots[card.position.slot],
+        minion: card.id
+      };
+    } else if (card.position?.zone === BOARD_SLOT_ZONES.BACK_ROW) {
+      boardSide.backRow.slots[card.position.slot] = {
+        ...boardSide.backRow.slots[card.position.slot],
+        minion: card.id
+      };
+    }
+    // @ts-expect-error force reactivity
+    this.state.board.sides = this.state.board.sides.map(side => ({
+      ...side
+    }));
+
+    return await flush();
+  }
+
+  private async onArtifactEquiped(
+    event: {
+      event: SerializedEvent<'ARTIFACT_EQUIPED'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    const card = this.buildViewModel(event.event.card) as CardViewModel;
+    this.state.entities[card.id] = card;
+
+    const boardSide = this.state.board.sides.find(
+      side => side.playerId === card.player.id
+    )!;
+    boardSide.heroZone.artifacts = [...boardSide.heroZone.artifacts, card.id];
+
+    // @ts-expect-error force reactivity
+    this.state.board.sides = this.state.board.sides.map(side => ({
+      ...side
+    }));
+
+    return await flush();
   }
 }

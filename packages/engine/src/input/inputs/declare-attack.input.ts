@@ -27,11 +27,13 @@ export class DeclareAttackInput extends Input<typeof schema> {
   }
 
   async impl() {
-    assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
+    assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.attacker, new UnknownUnitError(this.payload.attackerId));
     assert(this.attacker.canAttack, new IllegalAttackerError());
 
-    await this.game.gamePhaseSystem.startCombat();
+    await this.game.gamePhaseSystem.startCombat(async () => {
+      await this.game.turnSystem.switchInitiative();
+    });
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['ATTACK']>()
       .ctx.declareAttacker(this.attacker);
