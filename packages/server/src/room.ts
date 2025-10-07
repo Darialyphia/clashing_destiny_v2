@@ -27,7 +27,7 @@ type RoomPlayer = {
   socket: IoSocket;
 };
 
-const PLAYER_TURN_CLOCK_TIME = 20 * 1000;
+const PLAYER_TURN_CLOCK_TIME = 90 * 1000;
 const PLAYER_ACTION_CLOCK_TIME = 20 * 1000;
 
 export class Room {
