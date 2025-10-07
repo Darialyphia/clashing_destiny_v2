@@ -47,8 +47,8 @@ export const useGameSocket = () => {
     .then(() => {
       socket.value.connect();
 
-      // @HACK to give time to the game server to register the game room.
-      // This should be fixed by adding a new status to the game : CREATED => WAITING_FOR_PLAYERS
+      // @HACK to give time to the game server to register the game room from convex update.
+      // This should be fixed by adding a new status to the game : CREATED => WAITING_FOR_PLAYERS so that clients know when it's safe to join
       setTimeout(() => {
         socket.value.emit('join', {
           gameId: me.value.currentGame!.id as GameId,

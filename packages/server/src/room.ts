@@ -1,10 +1,11 @@
-import { GAME_STATUS, type GameId, type GameStatus } from '@game/api';
+import { GAME_STATUS, type UserId, type GameId, type GameStatus } from '@game/api';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { Ioserver, IoSocket } from './io';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
 import type { EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
+import { Clock } from './clock';
 
 export type RoomOptions = {
   game: { id: GameId; status: GameStatus; players: Array<{ userId: string }> };
@@ -21,10 +22,19 @@ type RoomEventMap = {
   [ROOM_EVENTS.INPUT_END]: SerializedInput[];
 };
 
+type RoomPlayer = {
+  userId: string;
+  socket: IoSocket;
+};
+
+const PLAYER_TURN_CLOCK_TIME = 20 * 1000;
+const PLAYER_ACTION_CLOCK_TIME = 20 * 1000;
+
 export class Room {
   private engine: Game;
 
-  private players = new Set<IoSocket>();
+  private playerClocks = new Map<string, { turnClock: Clock; actionClock: Clock }>();
+  private players = new Map<string, RoomPlayer>();
 
   private spectators = new Set<IoSocket>();
 
@@ -50,6 +60,10 @@ export class Room {
 
   async shutdown() {
     await this.engine.shutdown();
+    this.players.forEach(player => {
+      this.playerClocks.get(player.userId)!.actionClock.shutdown();
+      this.playerClocks.get(player.userId)!.turnClock.shutdown();
+    });
   }
 
   initializeEngine() {
@@ -59,19 +73,85 @@ export class Room {
     return this.engineInitPromise;
   }
 
+  private startActivePlayerclock() {
+    const activePlayerId = this.engine.activePlayer.id;
+
+    const clockToRun = this.playerClocks.get(activePlayerId)!.turnClock.isFinished
+      ? this.playerClocks.get(activePlayerId)!.actionClock
+      : this.playerClocks.get(activePlayerId)!.turnClock;
+    clockToRun.start();
+  }
+
+  private stopActivePlayerclock() {
+    const activePlayerId = this.engine.activePlayer.id;
+    const clockToStop = this.playerClocks.get(activePlayerId)!.turnClock.isRunning()
+      ? this.playerClocks.get(activePlayerId)!.turnClock
+      : this.playerClocks.get(activePlayerId)!.actionClock;
+    clockToStop?.stop();
+  }
+
   async start() {
+    console.log('[ROOM] Starting room ', this.id);
     await this.initializeEngine();
+    console.log('[ROOM] engine initialized ', this.id);
 
     this.engine.on(GAME_EVENTS.INPUT_END, async () => {
       await this.emitter.emit(ROOM_EVENTS.INPUT_END, this.engine.inputSystem.serialize());
     });
 
-    this.players.forEach(playerSocket => {
-      this.handlePlayerSubscription(playerSocket);
+    this.options.game.players.forEach(player => {
+      const clocks = {
+        turnClock: new Clock(PLAYER_TURN_CLOCK_TIME),
+        actionClock: new Clock(PLAYER_ACTION_CLOCK_TIME)
+      };
+      clocks.turnClock.on('tick', remainingTime => {
+        console.log(
+          `[ROOM] Player ${player.userId} turn clock: ${(remainingTime / 1000).toFixed()}s remaining`
+        );
+      });
+      clocks.actionClock.on('tick', remainingTime => {
+        console.log(
+          `[ROOM] Player ${player.userId} action clock: ${(remainingTime / 1000).toFixed()}s remaining`
+        );
+      });
+      this.playerClocks.set(player.userId, clocks);
+
+      clocks.turnClock.on('timeout', () => {
+        clocks.turnClock.stop();
+        clocks.actionClock.start();
+      });
+      clocks.actionClock.on('timeout', async () => {
+        // @TODO implement auto surrender input on the engine side
+      });
+    });
+
+    this.engine.onActivePlayerChange(() => {
+      this.options.game.players.forEach(player => {
+        this.playerClocks.get(player.userId)!.actionClock.reset();
+      });
+      this.stopActivePlayerclock();
+      this.startActivePlayerclock();
+    });
+
+    this.engine.on(GAME_EVENTS.TURN_START, () => {
+      this.stopActivePlayerclock();
+      this.options.game.players.forEach(player => {
+        this.playerClocks.get(player.userId)!.turnClock.reset();
+      });
+      this.startActivePlayerclock();
+    });
+    this.engine.on(GAME_EVENTS.INPUT_START, () => {
+      this.stopActivePlayerclock();
+    });
+
+    this.players.forEach(player => {
+      this.handlePlayerSubscription(player.socket);
     });
     this.spectators.forEach(spectatorSocket => {
       this.handleSpectatorSubscription(spectatorSocket);
     });
+
+    this.startActivePlayerclock();
   }
 
   private handleSpectatorSubscription(spectatorSocket: IoSocket) {
@@ -113,8 +193,8 @@ export class Room {
   }
 
   async leave(socket: IoSocket) {
-    if (this.players.has(socket)) {
-      this.players.delete(socket);
+    if (this.players.has(socket.data.user.id)) {
+      this.players.delete(socket.data.user.id);
       await socket.leave(this.id);
     }
     if (this.spectators.has(socket)) {
@@ -133,7 +213,12 @@ export class Room {
     }
 
     await socket.join(this.id);
-    this.players.add(socket);
+    const roomPlayer = {
+      userId: socket.data.user.id,
+      socket
+    };
+
+    this.players.set(socket.data.user.id, roomPlayer);
 
     socket.on('disconnect', async () => {
       await this.leave(socket);

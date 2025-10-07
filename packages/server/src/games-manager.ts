@@ -51,22 +51,25 @@ export class GamesManager {
   }
 
   private async onGameCreated(game: GameDto) {
+    console.log('[GAMES MANAGER] Game created', game.id);
     await this.setupRedisState(game.id);
     await this.createRoom(game);
   }
 
   private async onGameReady(game: GameDto) {
+    console.log('[GAMES MANAGER] Game ready', game.id);
     await this.setupRedisState(game.id);
     await this.createRoom(game);
 
     this.updateRoomStatusIfExists(game.id, game.status);
 
     const room = this.ctx.roomManager.getRoom(game.id);
-
+    console.log('should start game', game.id);
     await room!.start();
   }
 
   private async onGameFinished(game: GameDto) {
+    console.log('[GAMES MANAGER] Game finished', game.id);
     await this.ctx.roomManager.destroyRoom(game.id);
     await this.cleanupRedisState(game.id);
     this.updateRoomStatusIfExists(game.id, game.status);
@@ -75,6 +78,7 @@ export class GamesManager {
   }
 
   private async onGameCancelled(game: GameDto) {
+    console.log('[GAMES MANAGER] Game cancelled', game.id);
     await this.cleanupRedisState(game.id);
     await this.ctx.roomManager.destroyRoom(game.id);
   }

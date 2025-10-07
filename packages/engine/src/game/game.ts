@@ -191,6 +191,27 @@ export class Game implements Serializable<SerializedGame> {
     return this.emitter.off.bind(this.emitter);
   }
 
+  get activePlayer() {
+    if (this.effectChainSystem.currentChain) {
+      return this.effectChainSystem.currentChain.currentPlayer;
+    }
+
+    return this.turnSystem.initiativePlayer;
+  }
+
+  onActivePlayerChange(cb: (player: Player) => void) {
+    let current = this.activePlayer;
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, () => {
+      if (this.activePlayer.equals(current)) return;
+      current = this.activePlayer;
+      cb(this.activePlayer);
+    });
+  }
+
+  onTurnStart(cb: () => void) {
+    this.on(GAME_EVENTS.TURN_START, cb);
+  }
+
   subscribeOmniscient(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
     this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
       cb(this.snapshotSystem.getOmniscientDiffSnapshotAt(e.data.id))

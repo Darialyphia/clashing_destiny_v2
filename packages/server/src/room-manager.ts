@@ -17,8 +17,7 @@ export class RoomManager {
     this.ctx.io.use(async (socket, next) => {
       try {
         const sessionId = socket.handshake.auth.sessionId;
-        console.log('New connection, authenticating...');
-        console.log('socket session id:', sessionId);
+        console.log('[IO] Authenticating socket', sessionId);
         const user = await this.ctx.convexHttpClient.query(api.auth.me, {
           sessionId
         } as any);
@@ -34,7 +33,7 @@ export class RoomManager {
     });
 
     this.ctx.io.on('connection', socket => {
-      console.log(`Socket connected: ${socket.id}`);
+      console.log(`[IO] Socket connected: ${socket.id}`);
       socket.on('join', async ({ gameId, type }) => {
         console.log(`Socket ${socket.id} joining game ${gameId} as ${type}`);
         const room = this.getRoom(gameId);
@@ -48,7 +47,7 @@ export class RoomManager {
   }
 
   async createRoom(id: GameId, options: RoomOptions) {
-    console.log('creating room', id);
+    console.log('[ROOM MANAGER] creating room', id);
     const history = await this.ctx.redis.json.get<SerializedInput[]>(
       REDIS_KEYS.GAME_HISTORY(id)
     );
