@@ -10,16 +10,16 @@ import {
 } from '../../../card.enums';
 import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job-affinity.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { HeroInterceptModifier } from '../../../../modifier/modifiers/hero-intercept.modifier';
 import { ToughModifier } from '../../../../modifier/modifiers/tough.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 
 export const royalGuard: MinionBlueprint = {
   id: 'royal-guard',
   name: 'Royal Guard',
   cardIconId: 'minions/royal-guard',
   description: dedent`
-  @Hero Intercept@.
+  @Vigilant@.
   @Paladin affinity@: @Tough (1)@.
   `,
   collectable: true,
@@ -42,7 +42,7 @@ export const royalGuard: MinionBlueprint = {
       new HeroJobAffinityModifier(game, card, HERO_JOBS.PALADIN)
     )) as HeroJobAffinityModifier<MinionCard>;
 
-    await card.modifiers.add(new HeroInterceptModifier(game, card, {}));
+    await card.modifiers.add(new VigilantModifier(game, card, {}));
     await card.modifiers.add(
       new ToughModifier(game, card, {
         amount: 1,

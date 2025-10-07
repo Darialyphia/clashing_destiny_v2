@@ -109,9 +109,9 @@ const {
   &:focus-visible {
     outline: none;
   }
-  > div {
+  /* > div {
     pointer-events: all;
-  }
+  } */
 
   &:is(.v-enter-active, .v-leave-active) {
     transition:

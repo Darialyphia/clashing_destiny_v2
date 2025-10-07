@@ -288,12 +288,19 @@ export class UiController {
     }
 
     if (
-      (state.interaction.state === INTERACTION_STATES.PLAYING_CARD ||
-        state.interaction.state === INTERACTION_STATES.USING_ABILITY) &&
+      state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
       state.interaction.ctx.player === this.client.playerId
     ) {
       const card = state.entities[state.interaction.ctx.card] as CardViewModel;
       return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${card?.manaCost})`;
+    }
+
+    if (
+      state.interaction.state === INTERACTION_STATES.USING_ABILITY &&
+      state.interaction.ctx.player === this.client.playerId
+    ) {
+      const ability = state.entities[state.interaction.ctx.ability] as AbilityViewModel;
+      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
     }
 
     if (

@@ -1,3 +1,4 @@
+import { DefenderModifier } from '../../../../modifier/modifiers/defender.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -11,12 +12,12 @@ export const bastionGuard: MinionBlueprint = {
   id: 'bastion-guard',
   name: 'Bastion Guard',
   cardIconId: 'minions/bastion-guard',
-  description: `@Defender (1)@`,
+  description: `@Defender (2)@`,
   collectable: true,
   unique: false,
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
+  atk: 1,
   maxHp: 5,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -27,6 +28,8 @@ export const bastionGuard: MinionBlueprint = {
   abilities: [],
   tags: [],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new DefenderModifier(game, card, { amount: 2 }));
+  },
   async onPlay() {}
 };
