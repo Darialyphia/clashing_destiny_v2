@@ -78,6 +78,10 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly cardPool: IndexedRecord<CardBlueprint, 'id'>;
 
+  isInitialized = false;
+
+  isInitializing = false;
+
   constructor(readonly options: GameOptions) {
     this.id = options.id;
     this.config = Object.assign({}, defaultConfig, options.overrides.config);
@@ -93,6 +97,10 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   async initialize() {
+    if (this.isInitialized) return;
+    if (this.isInitializing) return;
+    this.isInitializing = true;
+
     const start = performance.now();
     // const now = start;
 
@@ -159,6 +167,7 @@ export class Game implements Serializable<SerializedGame> {
       `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,
       'color: blue; font-weight: bold;'
     );
+    this.isInitialized = true;
   }
 
   serialize() {

@@ -1,30 +1,16 @@
 import 'dotenv/config';
-import { api } from '@game/api';
-import { httpServer, io } from './io';
+import { httpServer } from './io';
 import { container } from './container';
 import { RoomManager } from './room-manager';
 import { GamesManager } from './games-manager';
+import net from 'net';
 
 const PORT = process.env.PORT || 8000;
 
 async function main() {
   try {
-    io.use(async (socket, next) => {
-      try {
-        const sessionId = socket.handshake.auth.sessionId;
-
-        // @ts-expect-error
-        const user = await client.query(api.auth.me, { sessionId });
-        if (!user) return next(new Error('Unauthorized'));
-
-        socket.data.user = user;
-        socket.data.sessionId = sessionId;
-        next();
-      } catch (err) {
-        console.error(err);
-        next(new Error('Unauthorized'));
-      }
-    });
+    net.setDefaultAutoSelectFamilyAttemptTimeout(1000);
+    container.resolve(RoomManager.INJECTION_KEY);
     container.resolve<GamesManager>(GamesManager.INJECTION_KEY).listen();
 
     httpServer.listen(PORT);

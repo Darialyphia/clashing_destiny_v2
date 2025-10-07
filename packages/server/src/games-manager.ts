@@ -9,7 +9,6 @@ import {
   type GameStatus
 } from '@game/api';
 import { type GameOptions } from '@game/engine/src/game/game';
-import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { RoomManager } from './room-manager';
 import type { Nullable } from '@game/shared';
 
@@ -61,11 +60,12 @@ export class GamesManager {
   }
 
   private async onGameReady(game: GameDto) {
-    const room = this.ctx.roomManager.getRoom(game.id);
-    // @TODO handle missing room (case where server was down when game was created)
-    if (!room) return this.cancelGame(game.id);
+    await this.createRoom(game);
     this.updateRoomStatusIfExists(game.id, game.status);
-    await room.start();
+
+    const room = this.ctx.roomManager.getRoom(game.id);
+
+    await room!.start();
   }
 
   private async onGameFinished(game: GameDto) {
@@ -82,14 +82,17 @@ export class GamesManager {
   }
 
   private async cleanupRedisState(gameId: GameId) {
-    await this.ctx.redis.del(REDIS_KEYS.GAME_STATE(gameId));
+    await this.ctx.redis.json.del(REDIS_KEYS.GAME_STATE(gameId));
   }
 
   private async setupRedisState(gameId: GameId) {
-    const existingState = await this.ctx.redis.get(REDIS_KEYS.GAME_STATE(gameId));
+    const existingState = await this.ctx.redis.json.get(REDIS_KEYS.GAME_STATE(gameId));
     if (!existingState) {
       const initialState = await this.buildInitialState(gameId);
-      if (!initialState) return this.cancelGame(gameId);
+      if (!initialState) {
+        console.log('No initial state, cancelling game', gameId);
+        return this.cancelGame(gameId);
+      }
 
       await this.ctx.redis.json.set(REDIS_KEYS.GAME_STATE(gameId), '$', initialState);
     }
@@ -97,17 +100,22 @@ export class GamesManager {
 
   private async createRoom(game: GameDto) {
     const gameOptions = await this.buildGameOptions(game.id);
-    if (!gameOptions) return this.cancelGame(game.id);
-    if (!this.ctx.roomManager.hasRoom(game.id) && gameOptions) {
-      this.ctx.roomManager.createRoom(game.id, {
-        initialState: gameOptions!,
-        game: {
-          id: game.id,
-          status: game.status,
-          players: game.players.map(p => ({ userId: p.userId }))
-        }
-      });
+    if (!gameOptions) {
+      console.log('No game options, cancelling game', game.id);
+      return this.cancelGame(game.id);
     }
+    if (this.ctx.roomManager.hasRoom(game.id)) {
+      console.log('Room already exists for game', game.id);
+      return;
+    }
+    this.ctx.roomManager.createRoom(game.id, {
+      initialState: gameOptions!,
+      game: {
+        id: game.id,
+        status: game.status,
+        players: game.players.map(p => ({ userId: p.userId }))
+      }
+    });
   }
 
   private async buildGameOptions(gameId: GameId) {
@@ -133,7 +141,7 @@ export class GamesManager {
       overrides: {},
       players: [
         {
-          id: gameInfos.players[0].id,
+          id: gameInfos.players[0].user.id,
           name: gameInfos.players[0].user.username,
           mainDeck: {
             cards: gameInfos.players[0].user.deck.mainDeck.map(c => c.blueprintId)
@@ -143,7 +151,7 @@ export class GamesManager {
           }
         },
         {
-          id: gameInfos.players[1].id,
+          id: gameInfos.players[1].user.id,
           name: gameInfos.players[1].user.username,
           mainDeck: {
             cards: gameInfos.players[1].user.deck.mainDeck.map(c => c.blueprintId)
@@ -158,6 +166,7 @@ export class GamesManager {
   }
 
   private async cancelGame(gameId: GameId) {
+    console.log('cancellign game', gameId);
     await this.ctx.convexHttpClient.mutation(api.games.cancel, {
       gameId,
       apiKey: process.env.CONVEX_API_KEY!

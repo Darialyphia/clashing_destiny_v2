@@ -1,48 +1,12 @@
 <script setup lang="ts">
-import {
-  useFxEvent,
-  useGameState,
-  useGameUi,
-  useOpponentBoard
-} from '@/game/composables/useGameClient';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { useGameUi, useOpponentBoard } from '@/game/composables/useGameClient';
 import { clamp } from '@game/shared';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { useResizeObserver } from '@vueuse/core';
 import CardBack from '@/card/components/CardBack.vue';
 import CountChip from './CountChip.vue';
 
-const state = useGameState();
 const opponentBoard = useOpponentBoard();
 const ui = useGameUi();
-
-useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
-  // const newCard = e.card as SerializedCard;
-  // if (newCard.player !== opponentBoard.value.playerId) return;
-  // // @FIXME this can happen on P1T1, this will probaly go away once mulligan is implemented
-  // if (opponentBoard.value.hand.includes(newCard.id)) return;
-  // if (isDefined(e.index)) {
-  //   opponentBoard.value.hand.splice(e.index, 0, newCard.id);
-  // } else {
-  //   opponentBoard.value.hand.push(newCard.id);
-  // }
-  // await nextTick();
-  // const el = document.querySelector(
-  //   client.value.ui.getCardDOMSelectorInHand(newCard.id, opponentBoard.value.playerId)
-  // );
-  // if (el) {
-  //   await el.animate(
-  //     [
-  //       { transform: 'translateY(-50%)', opacity: 0 },
-  //       { transform: 'none', opacity: 1 }
-  //     ],
-  //     {
-  //       duration: 300,
-  //       easing: 'ease-out'
-  //     }
-  //   ).finished;
-  // }
-});
 
 const handContainer = useTemplateRef('hand');
 const handContainerSize = ref({ w: 0, h: 0 });
@@ -92,7 +56,6 @@ const cards = computed(() => {
   const offset = (handContainerSize.value.w - usedSpan) / 2;
 
   return opponentBoard.value.hand.map((cardId, i) => ({
-    card: state.value.entities[cardId] as CardViewModel,
     x: offset + i * step.value,
     z: i
   }));
@@ -111,8 +74,8 @@ const cards = computed(() => {
   >
     <div
       class="hand-card"
-      v-for="card in cards"
-      :key="card.card.id"
+      v-for="(card, index) in cards"
+      :key="index"
       :style="{
         '--x': `${card.x}px`,
         '--z': card.z

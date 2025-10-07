@@ -19,8 +19,10 @@ export class GamePlayerReadRepository {
   async byUserId(userId: Id<'users'>) {
     return this.ctx.db
       .query('gamePlayers')
-      .withIndex('by_user_id', q => q.eq('userId', userId))
-      .unique();
+      .withIndex('by_creation_time')
+      .filter(q => q.eq(q.field('userId'), userId))
+      .order('desc')
+      .first();
   }
 
   async byGameId(gameId: Id<'games'>) {
@@ -61,9 +63,10 @@ export class GamePlayerRepository {
   async byUserId(userId: Id<'users'>) {
     const doc = await this.ctx.db
       .query('gamePlayers')
-      .withIndex('by_user_id', q => q.eq('userId', userId))
-      .unique();
-
+      .withIndex('by_creation_time')
+      .filter(q => q.eq(q.field('userId'), userId))
+      .order('desc')
+      .first();
     if (!doc) return null;
 
     return this.buildEntity(doc);

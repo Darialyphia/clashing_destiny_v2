@@ -30,7 +30,7 @@ export class StartGameUseCase implements UseCase<StartGameInput, StartGameOutput
       throw new DomainError('Game is not in ongoing status');
     }
 
-    game.cancel();
+    game.start();
     await this.ctx.gameRepo.save(game);
 
     return { success: true };

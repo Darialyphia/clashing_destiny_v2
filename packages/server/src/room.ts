@@ -30,6 +30,8 @@ export class Room {
 
   private emitter = new TypedEventEmitter<RoomEventMap>('parallel');
 
+  private engineInitPromise: Promise<void> | null = null;
+
   constructor(
     readonly id: string,
     private io: Ioserver,
@@ -50,15 +52,22 @@ export class Room {
     await this.engine.shutdown();
   }
 
+  initializeEngine() {
+    if (!this.engineInitPromise) {
+      this.engineInitPromise = this.engine.initialize();
+    }
+    return this.engineInitPromise;
+  }
+
   async start() {
-    await this.engine.initialize();
+    await this.initializeEngine();
 
     this.engine.on(GAME_EVENTS.INPUT_END, async () => {
       await this.emitter.emit(ROOM_EVENTS.INPUT_END, this.engine.inputSystem.serialize());
     });
 
     this.players.forEach(playerSocket => {
-      this.handlePlayersubscription(playerSocket);
+      this.handlePlayerSubscription(playerSocket);
     });
     this.spectators.forEach(spectatorSocket => {
       this.handleSpectatorSubscription(spectatorSocket);
@@ -67,20 +76,31 @@ export class Room {
 
   private handleSpectatorSubscription(spectatorSocket: IoSocket) {
     const state = this.engine.snapshotSystem.getLatestOmniscientSnapshot();
-    spectatorSocket.emit('gameInitialState', state);
+    spectatorSocket.emit('gameInitialState', {
+      snapshot: state,
+      history: this.engine.inputSystem.serialize()
+    });
     this.engine.subscribeOmniscient(snapshot => {
       spectatorSocket.emit('gameSnapshot', snapshot);
     });
   }
 
-  private handlePlayersubscription(playerSocket: IoSocket) {
+  private handlePlayerSubscription(playerSocket: IoSocket) {
     const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
       playerSocket.data.user.id
     );
-    playerSocket.emit('gameInitialState', state);
+    playerSocket.emit('gameInitialState', {
+      snapshot: state,
+      history: this.engine.inputSystem.serialize()
+    });
 
     this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
       playerSocket.emit('gameSnapshot', snapshot);
+    });
+
+    playerSocket.on('gameInput', async (input: SerializedInput) => {
+      input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating
+      await this.engine.inputSystem.dispatch(input);
     });
   }
 
@@ -89,6 +109,17 @@ export class Room {
       await this.joinAsSpectator(socket);
     } else {
       await this.joinAsPlayer(socket);
+    }
+  }
+
+  async leave(socket: IoSocket) {
+    if (this.players.has(socket)) {
+      this.players.delete(socket);
+      await socket.leave(this.id);
+    }
+    if (this.spectators.has(socket)) {
+      this.spectators.delete(socket);
+      await socket.leave(this.id);
     }
   }
 
@@ -103,6 +134,14 @@ export class Room {
 
     await socket.join(this.id);
     this.players.add(socket);
+
+    socket.on('disconnect', async () => {
+      await this.leave(socket);
+    });
+
+    if (this.options.game.status === GAME_STATUS.ONGOING) {
+      this.handlePlayerSubscription(socket);
+    }
 
     const isReady =
       this.players.size === this.options.game.players.length &&
@@ -122,6 +161,14 @@ export class Room {
     }
     await socket.join(this.id);
     this.spectators.add(socket);
+
+    socket.on('disconnect', async () => {
+      await this.leave(socket);
+    });
+
+    if (this.options.game.status === GAME_STATUS.ONGOING) {
+      this.handleSpectatorSubscription(socket);
+    }
   }
 
   updateStatus(status: GameStatus) {

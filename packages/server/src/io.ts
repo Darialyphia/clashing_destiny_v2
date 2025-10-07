@@ -6,7 +6,7 @@ import type {
   SerializedPlayerState,
   SnapshotDiff
 } from '@game/engine/src/game/systems/game-snapshot.system';
-import url from 'url';
+import type { SerializedInput } from '@game/engine/src/input/input-system';
 
 type SocketData = {
   user: any;
@@ -14,15 +14,17 @@ type SocketData = {
 };
 
 export type EmittedEvents = {
-  gameInitialState: (
-    state: GameStateSnapshot<SerializedPlayerState | SerializedOmniscientState>
-  ) => void;
+  gameInitialState: (data: {
+    snapshot: GameStateSnapshot<SerializedPlayerState | SerializedOmniscientState>;
+    history: SerializedInput[];
+  }) => void;
   gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
   error: (message: string) => void;
 };
 
 export type ReceivedEvents = {
   join: (data: { gameId: string; type: 'spectator' | 'player' }) => void;
+  gameInput: (input: SerializedInput) => void;
 };
 
 export type Ioserver = Server<
@@ -39,12 +41,8 @@ export type IoSocket = Socket<
   SocketData
 >;
 
-export const httpServer = createServer((req, res) => {
-  res.writeHead(200, { 'Content-type': 'text/plain' });
-  res.write('Game server works !');
-  res.end();
-});
-export const io: Ioserver = new Server({
+export const httpServer = createServer();
+export const io: Ioserver = new Server(httpServer, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST']

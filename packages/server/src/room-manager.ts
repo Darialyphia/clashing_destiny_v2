@@ -8,9 +8,30 @@ export class RoomManager {
 
   private rooms = new Map<string, Room>();
 
-  constructor(private ctx: { io: Ioserver; convexHttpclient: ConvexHttpClient }) {
+  constructor(private ctx: { io: Ioserver; convexHttpClient: ConvexHttpClient }) {
+    this.ctx.io.use(async (socket, next) => {
+      try {
+        const sessionId = socket.handshake.auth.sessionId;
+        console.log('New connection, authenticating...');
+        console.log('socket session id:', sessionId);
+        const user = await this.ctx.convexHttpClient.query(api.auth.me, {
+          sessionId
+        } as any);
+        if (!user) return next(new Error('Unauthorized'));
+
+        socket.data.user = user;
+        socket.data.sessionId = sessionId;
+        next();
+      } catch (err) {
+        console.error(err);
+        next(new Error('Unauthorized'));
+      }
+    });
+
     this.ctx.io.on('connection', socket => {
+      console.log(`Socket connected: ${socket.id}`);
       socket.on('join', async ({ gameId, type }) => {
+        console.log(`Socket ${socket.id} joining game ${gameId} as ${type}`);
         const room = this.getRoom(gameId);
         if (room) {
           await room.join(socket, type);
@@ -22,11 +43,12 @@ export class RoomManager {
   }
 
   createRoom(id: GameId, options: RoomOptions) {
+    console.log('creating room', id);
     const room = new Room(id, this.ctx.io, options);
     this.rooms.set(id, room);
 
     room.once(ROOM_EVENTS.ALL_PLAYERS_JOINED, async () => {
-      await this.ctx.convexHttpclient.mutation(api.games.start, {
+      await this.ctx.convexHttpClient.mutation(api.games.start, {
         gameId: id,
         apiKey: process.env.CONVEX_API_KEY!
       });

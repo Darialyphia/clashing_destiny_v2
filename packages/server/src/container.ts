@@ -1,4 +1,11 @@
-import { asClass, asValue, createContainer, InjectionMode, type Resolver } from 'awilix';
+import {
+  asClass,
+  asValue,
+  createContainer,
+  InjectionMode,
+  Lifetime,
+  type Resolver
+} from 'awilix';
 import { redis } from './redis';
 import { convexClient, convexHttpClient } from './convex';
 import { GamesManager } from './games-manager';
@@ -32,8 +39,12 @@ const deps = {
   redis: { resolver: asValue(redis) },
   convexClient: { resolver: asValue(convexClient) },
   convexHttpClient: { resolver: asValue(convexHttpClient) },
-  [GamesManager.INJECTION_KEY]: { resolver: asClass(GamesManager) },
-  [RoomManager.INJECTION_KEY]: { resolver: asClass(RoomManager) }
+  [GamesManager.INJECTION_KEY]: {
+    resolver: asClass(GamesManager, { lifetime: Lifetime.SINGLETON })
+  },
+  [RoomManager.INJECTION_KEY]: {
+    resolver: asClass(RoomManager, { lifetime: Lifetime.SINGLETON })
+  }
 } as const satisfies DependenciesMap;
 
 export const container = makecontainer(deps);
