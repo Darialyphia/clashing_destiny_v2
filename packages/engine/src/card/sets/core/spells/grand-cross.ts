@@ -12,7 +12,6 @@ import {
   HERO_JOBS,
   SPELL_SCHOOLS
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job-affinity.modifier';
 import type { SpellCard } from '../../../entities/spell.entity';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
@@ -58,21 +57,10 @@ export const grandCross: SpellBlueprint = {
   async onPlay(game, card, targets) {
     const [center] = targets as BoardPosition[];
 
-    const affectedMinions = game.boardSystem.getAllCardsInPlay().filter(card => {
-      if (!isMinion(card)) return false;
-      const slot = card.slot!;
-      if (
-        slot.player.equals(center.player) &&
-        slot.slot === center.slot &&
-        slot.zone === center.zone
-      ) {
-        return true; // include center
-      }
-
-      const samePlayer = card.player.id === center.player.id;
-
-      return samePlayer ? slot.slot === center.slot : slot.zone === center.zone;
-    }) as MinionCard[];
+    const affectedMinions = new Set([
+      ...game.boardSystem.getColumn(center.slot).minions,
+      ...center.player.boardSide.getMinions(center.zone)
+    ]);
 
     for (const minion of affectedMinions) {
       if (minion.isAlly(card)) {

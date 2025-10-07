@@ -393,4 +393,13 @@ export class GameClient {
       }
     });
   }
+
+  surrender() {
+    this.dispatch({
+      type: 'surrender',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
 }

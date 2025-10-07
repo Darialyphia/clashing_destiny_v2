@@ -39,7 +39,6 @@ export class OnEnterModifierMixin<
     if (!event.data.card.equals(this.modifier.target)) {
       return;
     }
-    console.log(this.modifier.target.id);
 
     const target = this.modifier.target;
     if (isMinion(target)) {

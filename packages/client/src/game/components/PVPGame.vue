@@ -5,6 +5,7 @@ import { provideGameClient } from '../composables/useGameClient';
 import { useFxAdapter } from '../composables/useFxAdapter';
 import { useMe } from '@/auth/composables/useMe';
 import GameBoard from './GameBoard.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 const { data: me } = useMe();
 const socket = useGameSocket();
@@ -36,5 +37,14 @@ socket.value.on('gameInitialState', async state => {
 </script>
 
 <template>
-  <GameBoard v-if="client.isReady" />
+  <GameBoard v-if="client.isReady">
+    <template #menu>
+      <FancyButton
+        text="Surrender"
+        variant="error"
+        class="w-full"
+        @click="client.surrender()"
+      />
+    </template>
+  </GameBoard>
 </template>

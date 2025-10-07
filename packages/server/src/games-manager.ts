@@ -85,6 +85,7 @@ export class GamesManager {
 
   private async cleanupRedisState(gameId: GameId) {
     await this.ctx.redis.json.del(REDIS_KEYS.GAME_STATE(gameId));
+    await this.ctx.redis.json.del(REDIS_KEYS.GAME_HISTORY(gameId));
   }
 
   private async setupRedisState(gameId: GameId) {

@@ -4626,6 +4626,19 @@
         },
         {
           "alias": [
+            "settings-icon.png"
+          ],
+          "src": [
+            "/assets/ui/settings-icon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "shield.png"
           ],
           "src": [

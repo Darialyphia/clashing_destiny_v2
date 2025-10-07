@@ -204,7 +204,11 @@ useGameKeyboardControls();
       <BattleLog class="battle-log" />
       <OpponentHand class="opponent-hand" />
       <Hand class="my-hand" />
-      <ActionsButtons />
+      <ActionsButtons>
+        <template #default>
+          <slot name="menu" />
+        </template>
+      </ActionsButtons>
       <div class="arrows" id="arrows" />
     </div>
   </div>
@@ -245,6 +249,7 @@ useGameKeyboardControls();
 }
 
 .explainer {
+  grid-row: 1;
   grid-column: 1 / -1;
 }
 

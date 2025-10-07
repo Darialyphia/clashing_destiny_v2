@@ -17,7 +17,7 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
         </p>
         <div class="hero-actions">
           <RouterLink :to="{ name: 'Register' }">
-            <FancyButton text="Play Now" variant="info" class="cta" />
+            <FancyButton text="Play Free" variant="info" class="cta" />
           </RouterLink>
         </div>
       </div>

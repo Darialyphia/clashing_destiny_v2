@@ -54,9 +54,12 @@ export class CardManagerComponent {
 
   private async buildCards<T extends AnyCard>(cards: string[]) {
     const result: T[] = [];
-    for (const card of cards) {
-      result.push(await this.game.cardSystem.addCard<T>(this.player, card));
-    }
+    await Promise.all(
+      cards.map(async card => {
+        result.push(await this.game.cardSystem.addCard<T>(this.player, card));
+      })
+    );
+
     return result;
   }
 
