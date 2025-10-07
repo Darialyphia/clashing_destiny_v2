@@ -1,7 +1,7 @@
 import type { Ioserver } from './io';
 import { Room, ROOM_EVENTS, type RoomOptions } from './room';
 import type { ConvexHttpClient } from 'convex/browser';
-import { api, type GameId } from '@game/api';
+import { api, type GameId, type UserId } from '@game/api';
 import type { Redis } from '@upstash/redis';
 import { REDIS_KEYS } from './redis';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
@@ -66,6 +66,17 @@ export class RoomManager {
 
     room.on(ROOM_EVENTS.INPUT_END, async (inputs: SerializedInput[]) => {
       await this.ctx.redis.json.set(REDIS_KEYS.GAME_HISTORY(id), '$', inputs);
+    });
+
+    room.once(ROOM_EVENTS.GAME_OVER, async ({ winnerId }) => {
+      await this.ctx.convexHttpClient.mutation(api.games.finish, {
+        gameId: id,
+        winnerId: winnerId as UserId | null,
+        apiKey: process.env.CONVEX_API_KEY!
+      });
+      await this.ctx.redis.del(REDIS_KEYS.GAME_HISTORY(id));
+      await this.destroyRoom(id);
+      this.ctx.io.in(id).disconnectSockets();
     });
   }
 

@@ -14,12 +14,14 @@ export type RoomOptions = {
 
 export const ROOM_EVENTS = {
   ALL_PLAYERS_JOINED: 'allPlayersJoined',
-  INPUT_END: 'inputEnd'
+  INPUT_END: 'inputEnd',
+  GAME_OVER: 'gameOver'
 } as const;
 
 type RoomEventMap = {
   [ROOM_EVENTS.ALL_PLAYERS_JOINED]: EmptyObject;
   [ROOM_EVENTS.INPUT_END]: SerializedInput[];
+  [ROOM_EVENTS.GAME_OVER]: { winnerId: string | null };
 };
 
 type RoomPlayer = {
@@ -99,6 +101,10 @@ export class Room {
       await this.emitter.emit(ROOM_EVENTS.INPUT_END, this.engine.inputSystem.serialize());
     });
 
+    this.engine.on(GAME_EVENTS.GAME_OVER, async event => {
+      const winnerId = event.data.winners.length > 1 ? null : event.data.winners[0].id;
+      await this.emitter.emit(ROOM_EVENTS.GAME_OVER, { winnerId });
+    });
     this.options.game.players.forEach(player => {
       const clocks = {
         turnClock: new Clock(PLAYER_TURN_CLOCK_TIME),

@@ -66,4 +66,16 @@ export class Game extends Entity<GameId, GameData> {
     }
     this.data.game.status = GAME_STATUS.ONGOING;
   }
+
+  canFinish() {
+    return this.status === GAME_STATUS.ONGOING;
+  }
+
+  finish(winnerId: UserId | null) {
+    if (!this.canFinish) {
+      throw new DomainError('Game cannot be finished');
+    }
+    this.data.game.status = GAME_STATUS.FINISHED;
+    this.data.game.winnerId = winnerId;
+  }
 }

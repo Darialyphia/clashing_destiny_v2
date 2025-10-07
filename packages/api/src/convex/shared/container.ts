@@ -59,6 +59,7 @@ import { GameSubscribers } from '../game/game.subscribers';
 import { StartGameUseCase } from '../game/usecases/startGame.usecase';
 import { GetLatestGamesUseCase } from '../game/usecases/getLatestGames.usecase';
 import { GetGameInfosUseCase } from '../game/usecases/getGameInfos.usecase';
+import { FinishGameUseCase } from '../game/usecases/finishGame.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -164,6 +165,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [RunMatchmakingUseCase.INJECTION_KEY]: { resolver: asClass(RunMatchmakingUseCase) },
     [CancelGameUseCase.INJECTION_KEY]: { resolver: asClass(CancelGameUseCase) },
     [StartGameUseCase.INJECTION_KEY]: { resolver: asClass(StartGameUseCase) },
+    [FinishGameUseCase.INJECTION_KEY]: { resolver: asClass(FinishGameUseCase) },
     [GrantPremadeDeckUseCase.INJECTION_KEY]: {
       resolver: asClass(GrantPremadeDeckUseCase)
     },

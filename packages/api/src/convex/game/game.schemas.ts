@@ -13,7 +13,7 @@ export const gameSchemas = {
   games: defineTable({
     seed: v.string(),
     status: gamestatusValidator,
-    winnerId: v.optional(v.id('users')),
+    winnerId: v.optional(v.union(v.id('users'), v.null())),
     cancellationId: v.optional(v.id('_scheduled_functions'))
   }).index('by_status', ['status']),
 

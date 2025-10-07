@@ -13,6 +13,7 @@ import { GetLatestGamesUseCase } from './game/usecases/getLatestGames.usecase';
 import { gamestatusValidator } from './game/game.schemas';
 import { GetGameInfosUseCase } from './game/usecases/getGameInfos.usecase';
 import { ensureValidApiKey } from './auth/auth.utils';
+import { FinishGameUseCase } from './game/usecases/finishGame.usecase';
 
 export const internalCancel = internalMutationWithContainer({
   args: { gameId: v.id('games') },
@@ -45,6 +46,23 @@ export const start = mutationWithContainer({
 
     return usecase.execute({
       gameId: input.gameId
+    });
+  }
+});
+
+export const finish = mutationWithContainer({
+  args: {
+    gameId: v.id('games'),
+    winnerId: v.union(v.id('users'), v.null()),
+    apiKey: v.string()
+  },
+  handler: async (ctx, input) => {
+    ensureValidApiKey(input.apiKey);
+    const usecase = ctx.resolve<FinishGameUseCase>(FinishGameUseCase.INJECTION_KEY);
+
+    return usecase.execute({
+      gameId: input.gameId,
+      winnerId: input.winnerId
     });
   }
 });

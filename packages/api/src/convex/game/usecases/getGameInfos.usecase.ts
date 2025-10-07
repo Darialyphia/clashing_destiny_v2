@@ -1,3 +1,4 @@
+import type { Nullable } from '@game/shared';
 import type { CardReadRepository } from '../../card/repositories/card.repository';
 import type { DeckReadRepository } from '../../deck/repositories/deck.repository';
 import type { UseCase } from '../../usecase';
@@ -6,6 +7,7 @@ import type { UserReadRepository } from '../../users/repositories/user.repositor
 import { AppError } from '../../utils/error';
 import type { GameId } from '../entities/game.entity';
 import type { GamePlayerDoc, GamePlayerId } from '../entities/gamePlayer.entity';
+import type { GameStatus } from '../game.constants';
 import type { GameReadRepository } from '../repositories/game.repository';
 import type { GamePlayerReadRepository } from '../repositories/gamePlayer.repository';
 
@@ -16,6 +18,8 @@ export type GetGameInfosInput = {
 export type GetGameInfosOutput = {
   id: GameId;
   seed: string;
+  winnerId: Nullable<UserId>;
+  status: GameStatus;
   players: Array<{
     id: GamePlayerId;
     user: {
@@ -51,7 +55,9 @@ export class GetGameInfosUseCase
     return {
       id: game._id,
       seed: game.seed,
-      players: playersWithUserAndDeck
+      players: playersWithUserAndDeck,
+      winnerId: game.winnerId,
+      status: game.status
     };
   }
 

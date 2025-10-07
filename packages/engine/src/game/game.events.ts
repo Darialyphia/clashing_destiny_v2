@@ -27,6 +27,7 @@ import { ABILITY_EVENTS, type AbilityEventMap } from '../card/entities/ability.e
 import type { TurnEventMap } from './systems/turn.system';
 import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
 import { SIGIL_EVENTS, type SigilEventMap } from '../card/entities/sigil.entity';
+import type { Player } from '../player/player.entity';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -52,6 +53,17 @@ export class GameInputQueueFlushedEvent extends TypedSerializableEvent<
 > {
   serialize() {
     return {};
+  }
+}
+
+export class GameOverEvent extends TypedSerializableEvent<
+  { winners: Player[] },
+  { winners: string[] }
+> {
+  serialize() {
+    return {
+      winners: this.data.winners.map(p => p.id)
+    };
   }
 }
 
@@ -115,6 +127,7 @@ type GameEventsBase = {
   'game.input-queue-flushed': GameInputQueueFlushedEvent;
   'game.input-required': GameInputRequiredEvent;
   'game.error': GameErrorEvent;
+  'game.over': GameOverEvent;
   'game.ready': GameReadyEvent;
   'game.modifier-event': GameModifierEvent;
   'game.new-snapshot': GameNewSnapshotEvent;
@@ -147,6 +160,8 @@ export const GAME_EVENTS = {
   INPUT_END: 'game.input-end',
   INPUT_REQUIRED: 'game.input-required',
   NEW_SNAPSHOT: 'game.new-snapshot',
+  GAME_OVER: 'game.over',
+  MODIFIER_EVENT: 'game.modifier-event',
   ...GAME_PHASE_EVENTS,
   ...MODIFIER_EVENTS,
   ...CARD_EVENTS,

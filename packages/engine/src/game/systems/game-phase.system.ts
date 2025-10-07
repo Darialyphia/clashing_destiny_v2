@@ -139,7 +139,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   }
 
   async initialize() {
-    const stop = this.game.on('*', async () => {
+    const stop = this.game.on(GAME_EVENTS.NEW_SNAPSHOT, async () => {
       const winners: Player[] = [];
       for (const player of this.game.playerSystem.players) {
         if (this.game.winCondition(this.game, player)) {

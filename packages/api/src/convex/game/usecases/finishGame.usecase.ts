@@ -1,18 +1,20 @@
 import type { UseCase } from '../../usecase';
+import type { UserId } from '../../users/entities/user.entity';
 import { AppError, DomainError } from '../../utils/error';
 import type { GameId } from '../entities/game.entity';
 import type { GameRepository } from '../repositories/game.repository';
 
-export type StartGameInput = {
+export type FinishGameInput = {
   gameId: GameId;
+  winnerId: UserId | null;
 };
 
-export type StartGameOutput = {
+export type FinishGameOutput = {
   success: true;
 };
 
-export class StartGameUseCase implements UseCase<StartGameInput, StartGameOutput> {
-  static INJECTION_KEY = 'startGameUseCase' as const;
+export class FinishGameUseCase implements UseCase<FinishGameInput, FinishGameOutput> {
+  static INJECTION_KEY = 'finishGameUseCase' as const;
 
   constructor(
     private ctx: {
@@ -20,17 +22,17 @@ export class StartGameUseCase implements UseCase<StartGameInput, StartGameOutput
     }
   ) {}
 
-  async execute(input: StartGameInput): Promise<StartGameOutput> {
+  async execute(input: FinishGameInput): Promise<FinishGameOutput> {
     const game = await this.ctx.gameRepo.getById(input.gameId);
     if (!game) {
       throw new AppError('Game not found');
     }
 
-    if (!game.canStart) {
-      throw new DomainError('Game is not in waiting for players status');
+    if (!game.canFinish) {
+      throw new DomainError('Game is not in ongoing status');
     }
 
-    game.start();
+    game.finish(input.winnerId);
     await this.ctx.gameRepo.save(game);
 
     return { success: true };
