@@ -7,12 +7,12 @@ COPY package-lock.json ./
 
 COPY ./configs ./configs
 COPY ./packages/api ./packages/api
-COPY ./packages/sdk ./packages/sdk
+COPY ./packages/engine ./packages/engine
 COPY ./packages/shared ./packages/shared
 COPY ./packages/server ./packages/server
 
 RUN npm install
-RUN npm --workspace=@game/game-server run build
+RUN npm --workspace=@game/server run build
 
 FROM node:20-alpine
 
