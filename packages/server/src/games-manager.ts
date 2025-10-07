@@ -11,11 +11,7 @@ import {
 import { type GameOptions } from '@game/engine/src/game/game';
 import type { RoomManager } from './room-manager';
 import type { Nullable } from '@game/shared';
-
-const REDIS_KEYS = {
-  GAME_STATE: (gameId: GameId) => `game:state:${gameId}`,
-  GAME_HISTORY: (gameId: GameId) => `game:history:${gameId}`
-};
+import { REDIS_KEYS } from './redis';
 
 type GameDto = {
   id: GameId;
@@ -60,7 +56,9 @@ export class GamesManager {
   }
 
   private async onGameReady(game: GameDto) {
+    await this.setupRedisState(game.id);
     await this.createRoom(game);
+
     this.updateRoomStatusIfExists(game.id, game.status);
 
     const room = this.ctx.roomManager.getRoom(game.id);
@@ -87,15 +85,15 @@ export class GamesManager {
 
   private async setupRedisState(gameId: GameId) {
     const existingState = await this.ctx.redis.json.get(REDIS_KEYS.GAME_STATE(gameId));
-    if (!existingState) {
-      const initialState = await this.buildInitialState(gameId);
-      if (!initialState) {
-        console.log('No initial state, cancelling game', gameId);
-        return this.cancelGame(gameId);
-      }
+    if (existingState) return;
 
-      await this.ctx.redis.json.set(REDIS_KEYS.GAME_STATE(gameId), '$', initialState);
+    const initialState = await this.buildInitialState(gameId);
+    if (!initialState) {
+      console.log('No initial state, cancelling game', gameId);
+      return this.cancelGame(gameId);
     }
+
+    await this.ctx.redis.json.set(REDIS_KEYS.GAME_STATE(gameId), '$', initialState);
   }
 
   private async createRoom(game: GameDto) {
@@ -108,7 +106,7 @@ export class GamesManager {
       console.log('Room already exists for game', game.id);
       return;
     }
-    this.ctx.roomManager.createRoom(game.id, {
+    await this.ctx.roomManager.createRoom(game.id, {
       initialState: gameOptions!,
       game: {
         id: game.id,

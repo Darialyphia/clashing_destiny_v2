@@ -190,7 +190,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     playerId: string,
     index: number
   ): GameStateSnapshot<SerializedPlayerState> {
-    console.log(playerId, Object.keys(this.playerCaches));
     const snapshot = this.playerCaches[playerId][index];
     if (!snapshot) {
       throw new Error(`Gamestate snapshot unavailable for index ${index}`);
@@ -454,16 +453,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         events: events as any,
         state: this.serializePlayerState(this.game.playerSystem.player2.id)
       });
-      console.log(`snapshot ${id} taken`);
-      console.log('omniscient cache size', this.omniscientCache.length);
-      console.log(
-        'player 1 cache size',
-        this.playerCaches[this.game.playerSystem.player1.id].length
-      );
-      console.log(
-        'player 2 cache size',
-        this.playerCaches[this.game.playerSystem.player2.id].length
-      );
+
       this.eventsSinceLastSnapshot = [];
       await this.game.emit(GAME_EVENTS.NEW_SNAPSHOT, new GameNewSnapshotEvent({ id }));
     } catch (err) {

@@ -2,13 +2,18 @@ import type { Ioserver } from './io';
 import { Room, ROOM_EVENTS, type RoomOptions } from './room';
 import type { ConvexHttpClient } from 'convex/browser';
 import { api, type GameId } from '@game/api';
+import type { Redis } from '@upstash/redis';
+import { REDIS_KEYS } from './redis';
+import type { SerializedInput } from '@game/engine/src/input/input-system';
 
 export class RoomManager {
   static INJECTION_KEY = 'roomManager' as const;
 
   private rooms = new Map<string, Room>();
 
-  constructor(private ctx: { io: Ioserver; convexHttpClient: ConvexHttpClient }) {
+  constructor(
+    private ctx: { io: Ioserver; convexHttpClient: ConvexHttpClient; redis: Redis }
+  ) {
     this.ctx.io.use(async (socket, next) => {
       try {
         const sessionId = socket.handshake.auth.sessionId;
@@ -42,8 +47,14 @@ export class RoomManager {
     });
   }
 
-  createRoom(id: GameId, options: RoomOptions) {
+  async createRoom(id: GameId, options: RoomOptions) {
     console.log('creating room', id);
+    const history = await this.ctx.redis.json.get<SerializedInput[]>(
+      REDIS_KEYS.GAME_HISTORY(id)
+    );
+    if (history) {
+      options.initialState.history = history;
+    }
     const room = new Room(id, this.ctx.io, options);
     this.rooms.set(id, room);
 
@@ -52,6 +63,10 @@ export class RoomManager {
         gameId: id,
         apiKey: process.env.CONVEX_API_KEY!
       });
+    });
+
+    room.on(ROOM_EVENTS.INPUT_END, async (inputs: SerializedInput[]) => {
+      await this.ctx.redis.json.set(REDIS_KEYS.GAME_HISTORY(id), '$', inputs);
     });
   }
 
