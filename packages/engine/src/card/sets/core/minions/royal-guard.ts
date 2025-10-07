@@ -19,14 +19,13 @@ export const royalGuard: MinionBlueprint = {
   name: 'Royal Guard',
   cardIconId: 'minions/royal-guard',
   description: dedent`
-  @Vigilant@.
   @Paladin affinity@: @Tough (1)@.
   `,
   collectable: true,
   unique: false,
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
+  atk: 3,
   maxHp: 6,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -42,7 +41,6 @@ export const royalGuard: MinionBlueprint = {
       new HeroJobAffinityModifier(game, card, HERO_JOBS.PALADIN)
     )) as HeroJobAffinityModifier<MinionCard>;
 
-    await card.modifiers.add(new VigilantModifier(game, card, {}));
     await card.modifiers.add(
       new ToughModifier(game, card, {
         amount: 1,
