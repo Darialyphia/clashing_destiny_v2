@@ -44,4 +44,5 @@ COPY --from=build /app/packages/server/dist ./dist
 # COPY --from=build /app/configs ../../configs
 
 EXPOSE 8080
+RUN node -e "console.log(process.env.CONVEX_URL)"
 CMD ["node", "dist/index.js"]
