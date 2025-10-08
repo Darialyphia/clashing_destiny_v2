@@ -4,8 +4,6 @@ import { Password } from '../../utils/password';
 import type { AuthSession } from '../entities/session.entity';
 import { AppError } from '../../utils/error';
 import { Username } from '../../users/username';
-import { premadeDecks } from '../../deck/premadeDecks';
-import type { UserId } from '../../users/entities/user.entity';
 import type { UserRepository } from '../../users/repositories/user.repository';
 import type { DeckRepository } from '../../deck/repositories/deck.repository';
 import type { SessionRepository } from '../repositories/session.repository';

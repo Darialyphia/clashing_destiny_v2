@@ -60,6 +60,17 @@ import { StartGameUseCase } from '../game/usecases/startGame.usecase';
 import { GetLatestGamesUseCase } from '../game/usecases/getLatestGames.usecase';
 import { GetGameInfosUseCase } from '../game/usecases/getGameInfos.usecase';
 import { FinishGameUseCase } from '../game/usecases/finishGame.usecase';
+import {
+  FriendRequestReadRepository,
+  FriendRequestRepository
+} from '../friend/repositories/friendRequest.repository';
+import { FriendRequestMapper } from '../friend/mappers/friendRequest.mapper';
+import { DeclineFriendRequestUseCase } from '../friend/usecases/declineFriendRequest.usecase';
+import { GetFriendsUseCase } from '../friend/usecases/getFriends.usecase';
+import { MarkFriendRequestAsSeenUseCase } from '../friend/usecases/markFriendRequestAsSeen.usecase';
+import { GetPendingRequestsUseCase } from '../friend/usecases/getPendingRequests.usecase';
+import { SendFriendRequestUseCase } from '../friend/usecases/sendFriendRequest.usecase';
+import { AcceptFriendRequestUseCase } from '../friend/usecases/acceptFriendRequest.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -102,6 +113,9 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     },
     [DeckReadRepository.INJECTION_KEY]: { resolver: asClass(DeckReadRepository) },
     [CardReadRepository.INJECTION_KEY]: { resolver: asClass(CardReadRepository) },
+    [FriendRequestReadRepository.INJECTION_KEY]: {
+      resolver: asClass(FriendRequestReadRepository)
+    },
     // mappers
     [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
     [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
@@ -109,6 +123,7 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
     [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
     [DeckMapper.INJECTION_KEY]: { resolver: asClass(DeckMapper) },
+    [FriendRequestMapper.INJECTION_KEY]: { resolver: asClass(FriendRequestMapper) },
 
     // use cases
     [GetSessionUserUseCase.INJECTION_KEY]: { resolver: asClass(GetSessionUserUseCase) },
@@ -116,7 +131,11 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) },
     [GetDecksUseCase.INJECTION_KEY]: { resolver: asClass(GetDecksUseCase) },
     [GetLatestGamesUseCase.INJECTION_KEY]: { resolver: asClass(GetLatestGamesUseCase) },
-    [GetGameInfosUseCase.INJECTION_KEY]: { resolver: asClass(GetGameInfosUseCase) }
+    [GetGameInfosUseCase.INJECTION_KEY]: { resolver: asClass(GetGameInfosUseCase) },
+    [GetFriendsUseCase.INJECTION_KEY]: { resolver: asClass(GetFriendsUseCase) },
+    [GetPendingRequestsUseCase.INJECTION_KEY]: {
+      resolver: asClass(GetPendingRequestsUseCase)
+    }
   } as const satisfies DependenciesMap;
 
   return deps;
@@ -144,6 +163,9 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [DeckRepository.INJECTION_KEY]: { resolver: asClass(DeckRepository) },
     [CardRepository.INJECTION_KEY]: { resolver: asClass(CardRepository) },
+    [FriendRequestRepository.INJECTION_KEY]: {
+      resolver: asClass(FriendRequestRepository)
+    },
     // mappers
     [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
     [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
@@ -151,6 +173,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
     [MatchmakingMapper.INJECTION_KEY]: { resolver: asClass(MatchmakingMapper) },
     [DeckMapper.INJECTION_KEY]: { resolver: asClass(DeckMapper) },
+    [FriendRequestMapper.INJECTION_KEY]: { resolver: asClass(FriendRequestMapper) },
     // subscribers
     [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
     [GameSubscribers.INJECTION_KEY]: { resolver: asClass(GameSubscribers), eager: true },
@@ -171,7 +194,19 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [CreateDeckUseCase.INJECTION_KEY]: { resolver: asClass(CreateDeckUseCase) },
     [UpdateDeckUseCase.INJECTION_KEY]: { resolver: asClass(UpdateDeckUseCase) },
-    [SetupRankedGameUsecase.INJECTION_KEY]: { resolver: asClass(SetupRankedGameUsecase) }
+    [SetupRankedGameUsecase.INJECTION_KEY]: { resolver: asClass(SetupRankedGameUsecase) },
+    [SendFriendRequestUseCase.INJECTION_KEY]: {
+      resolver: asClass(SendFriendRequestUseCase)
+    },
+    [AcceptFriendRequestUseCase.INJECTION_KEY]: {
+      resolver: asClass(AcceptFriendRequestUseCase)
+    },
+    [DeclineFriendRequestUseCase.INJECTION_KEY]: {
+      resolver: asClass(DeclineFriendRequestUseCase)
+    },
+    [MarkFriendRequestAsSeenUseCase.INJECTION_KEY]: {
+      resolver: asClass(MarkFriendRequestAsSeenUseCase)
+    }
   } as const satisfies DependenciesMap;
 
   return deps;

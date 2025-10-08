@@ -6,6 +6,7 @@ import { matchmakingSchemas } from './matchmaking/matchmaking.schemas';
 import { deckSchemas } from './deck/deck.schemas';
 import { gameSchemas } from './game/game.schemas';
 import { cardSchemas } from './card/card.schema';
+import { friendSchemas } from './friend/friend.schemas';
 
 export default defineSchema({
   ...authSchemas,
@@ -13,5 +14,6 @@ export default defineSchema({
   ...matchmakingSchemas,
   ...deckSchemas,
   ...gameSchemas,
-  ...cardSchemas
+  ...cardSchemas,
+  ...friendSchemas
 });
