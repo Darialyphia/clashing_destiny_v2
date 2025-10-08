@@ -19,6 +19,7 @@ import type * as cards from "../cards.js";
 import type * as deck_premadeDecks from "../deck/premadeDecks.js";
 import type * as deck_usecases_grantPremadeDeck from "../deck/usecases/grantPremadeDeck.js";
 import type * as decks from "../decks.js";
+import type * as friends from "../friends.js";
 import type * as games from "../games.js";
 import type * as init from "../init.js";
 import type * as matchmaking from "../matchmaking.js";
@@ -48,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   "deck/premadeDecks": typeof deck_premadeDecks;
   "deck/usecases/grantPremadeDeck": typeof deck_usecases_grantPremadeDeck;
   decks: typeof decks;
+  friends: typeof friends;
   games: typeof games;
   init: typeof init;
   matchmaking: typeof matchmaking;

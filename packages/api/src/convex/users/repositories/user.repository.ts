@@ -54,6 +54,17 @@ export class UserRepository {
     return User.from(doc);
   }
 
+  async getByUsername(username: Username) {
+    const doc = await this.ctx.db
+      .query('users')
+      .withIndex('by_username', q => q.eq('username', username.value))
+      .unique();
+
+    if (!doc) return null;
+
+    return User.from(doc);
+  }
+
   async getBySlug(slug: string) {
     const doc = await this.ctx.db
       .query('users')

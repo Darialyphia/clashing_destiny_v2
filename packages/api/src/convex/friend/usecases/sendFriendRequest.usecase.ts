@@ -1,14 +1,15 @@
 import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import type { UseCase } from '../../usecase';
-import type { UserId } from '../../users/entities/user.entity';
+import type { UserRepository } from '../../users/repositories/user.repository';
+import { Username } from '../../users/username';
 import { AppError } from '../../utils/error';
 import { FRIEND_REQUEST_STATUS } from '../friend.constants';
 import type { FriendRequestMapper } from '../mappers/friendRequest.mapper';
 import type { FriendRequestRepository } from '../repositories/friendRequest.repository';
 
 export type SendFriendRequestInput = {
-  receiverId: UserId;
+  receiverUsername: string;
 };
 
 export type SendFriendRequestOutput = {
@@ -24,6 +25,7 @@ export class SendFriendRequestUseCase
     private ctx: {
       friendRequestRepo: FriendRequestRepository;
       friendRequestMapper: FriendRequestMapper;
+      userRepo: UserRepository;
       session: AuthSession | null;
     }
   ) {}
@@ -31,13 +33,19 @@ export class SendFriendRequestUseCase
   async execute(input: SendFriendRequestInput): Promise<SendFriendRequestOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
-    if (session.userId === input.receiverId) {
+    const username = new Username(input.receiverUsername);
+    const user = await this.ctx.userRepo.getByUsername(username);
+    if (!user) {
+      return { success: true }; // Silently ignore if user does not exis1t
+    }
+
+    if (session.userId === user.id) {
       throw new AppError("You can't send a friend request to yourself");
     }
 
     const existingRequest = await this.ctx.friendRequestRepo.getBySenderAndReceiver(
       session.userId,
-      input.receiverId
+      user.id
     );
     if (existingRequest && existingRequest.status === FRIEND_REQUEST_STATUS.PENDING) {
       throw new AppError('Friend request already sent to this user');
@@ -54,7 +62,7 @@ export class SendFriendRequestUseCase
     } else {
       await this.ctx.friendRequestRepo.create({
         senderId: session.userId,
-        receiverId: input.receiverId,
+        receiverId: user.id,
         status: FRIEND_REQUEST_STATUS.PENDING,
         seen: false
       });
