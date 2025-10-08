@@ -93,6 +93,7 @@ export const arbitersMaul: ArtifactBlueprint = {
             }
           );
 
+          target.resetDamageTaken();
           await target.modifiers.add(
             new Modifier('arbiters-maul-buff', game, card, {
               mixins: [

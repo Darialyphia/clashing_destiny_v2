@@ -176,6 +176,10 @@ export class MinionCard extends Card<
     }
   }
 
+  resetDamageTaken() {
+    this.damageTaken = 0;
+  }
+
   removeFromCurrentLocation(): void {
     super.removeFromCurrentLocation();
     this.damageTaken = 0;
