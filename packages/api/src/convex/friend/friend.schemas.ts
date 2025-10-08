@@ -15,8 +15,8 @@ export const friendSchemas = {
     challengerId: v.id('users'),
     challengedId: v.id('users'),
     status: v.union(v.literal('pending'), v.literal('accepted'), v.literal('declined')),
-    challengerDeckId: v.optional(v.id('loadouts')),
-    challengedDeckId: v.optional(v.id('loadouts')),
+    challengerDeckId: v.optional(v.id('decks')),
+    challengedDeckId: v.optional(v.id('decks')),
     gameId: v.optional(v.id('games'))
   })
     .index('by_challenger_id', ['challengerId'])

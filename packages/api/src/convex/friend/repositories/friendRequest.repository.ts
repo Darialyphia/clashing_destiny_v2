@@ -125,6 +125,25 @@ export class FriendRequestRepository {
     return docs.map(doc => FriendRequest.from(doc));
   }
 
+  async areFriends(userId1: Id<'users'>, userId2: Id<'users'>) {
+    // Check if there's an accepted friend request between the two users (in either direction)
+    const request1 = await this.ctx.db
+      .query('friendRequests')
+      .withIndex('by_user_id', q => q.eq('receiverId', userId1).eq('senderId', userId2))
+      .filter(q => q.eq(q.field('status'), 'accepted'))
+      .unique();
+
+    if (request1) return true;
+
+    const request2 = await this.ctx.db
+      .query('friendRequests')
+      .withIndex('by_user_id', q => q.eq('receiverId', userId2).eq('senderId', userId1))
+      .filter(q => q.eq(q.field('status'), 'accepted'))
+      .unique();
+
+    return !!request2;
+  }
+
   async create(input: {
     senderId: Id<'users'>;
     receiverId: Id<'users'>;
