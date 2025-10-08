@@ -1,4 +1,3 @@
-import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import type {
   GameStateSnapshot,
@@ -7,6 +6,7 @@ import type {
   SnapshotDiff
 } from '@game/engine/src/game/systems/game-snapshot.system';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
+import type { HttpServer } from './http';
 
 type SocketData = {
   user: any;
@@ -41,10 +41,13 @@ export type IoSocket = Socket<
   SocketData
 >;
 
-export const httpServer = createServer();
-export const io: Ioserver = new Server(httpServer, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
-});
+export const io = ({ http }: { http: HttpServer }) => {
+  const ioServer: Ioserver = new Server(http, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST']
+    }
+  });
+
+  return ioServer;
+};

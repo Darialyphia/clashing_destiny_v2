@@ -41,6 +41,7 @@ export class GamesManager {
   }
 
   listen() {
+    console.log('[GAMES MANAGER] Listening to game events');
     this.listenToGamesByStatus(
       GAME_STATUS.WAITING_FOR_PLAYERS,
       this.onGameCreated.bind(this)
