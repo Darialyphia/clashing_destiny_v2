@@ -1,6 +1,6 @@
 import { useAuth } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
-import { type GameId } from '@game/api';
+import { type GameId, type UserId } from '@game/api';
 import type {
   GameStateSnapshot,
   SerializedPlayerState,
@@ -20,6 +20,15 @@ export type ServerToClientEvents = {
   }) => void;
   gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
   error: (message: string) => void;
+  clockUpdate: (
+    clocks: Record<
+      UserId,
+      {
+        turn: { max: number; remaining: number; isActive: boolean };
+        action: { max: number; remaining: number; isActive: boolean };
+      }
+    >
+  ) => void;
 };
 
 export type ClientToServerEvents = {

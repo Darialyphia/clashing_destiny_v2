@@ -27,7 +27,7 @@ export const noviceLv0: HeroBlueprint = {
   lineage: null,
   spellPower: 0,
   atk: 0,
-  maxHp: 15,
+  maxHp: 12,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {

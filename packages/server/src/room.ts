@@ -15,13 +15,21 @@ export type RoomOptions = {
 export const ROOM_EVENTS = {
   ALL_PLAYERS_JOINED: 'allPlayersJoined',
   INPUT_END: 'inputEnd',
-  GAME_OVER: 'gameOver'
+  GAME_OVER: 'gameOver',
+  CLOCK_TICK: 'clockTick'
 } as const;
 
 type RoomEventMap = {
   [ROOM_EVENTS.ALL_PLAYERS_JOINED]: EmptyObject;
   [ROOM_EVENTS.INPUT_END]: SerializedInput[];
   [ROOM_EVENTS.GAME_OVER]: { winnerId: string | null };
+  [ROOM_EVENTS.CLOCK_TICK]: Record<
+    UserId,
+    {
+      turn: { max: number; remaining: number; isActive: boolean };
+      action: { max: number; remaining: number; isActive: boolean };
+    }
+  >;
 };
 
 type RoomPlayer = {
@@ -114,11 +122,13 @@ export class Room {
         console.log(
           `[ROOM] Player ${player.userId} turn clock: ${(remainingTime / 1000).toFixed()}s remaining`
         );
+        this.emitClocks();
       });
       clocks.actionClock.on('tick', remainingTime => {
         console.log(
           `[ROOM] Player ${player.userId} action clock: ${(remainingTime / 1000).toFixed()}s remaining`
         );
+        this.emitClocks();
       });
       this.playerClocks.set(player.userId, clocks);
 
@@ -127,7 +137,10 @@ export class Room {
         clocks.actionClock.start();
       });
       clocks.actionClock.on('timeout', async () => {
-        // @TODO implement auto surrender input on the engine side
+        void this.engine.inputSystem.dispatch({
+          type: 'surrender',
+          payload: { playerId: player.userId }
+        });
       });
     });
 
@@ -158,6 +171,30 @@ export class Room {
     });
 
     this.startActivePlayerclock();
+  }
+
+  private emitClocks() {
+    void this.emitter.emit(ROOM_EVENTS.CLOCK_TICK, {
+      ...Object.fromEntries(
+        Array.from(this.playerClocks.entries()).map(
+          ([userId, { turnClock, actionClock }]) => [
+            userId,
+            {
+              turn: {
+                max: PLAYER_TURN_CLOCK_TIME / 1000,
+                remaining: Math.round(turnClock.getRemainingTime() / 1000),
+                isActive: turnClock.isRunning()
+              },
+              action: {
+                max: PLAYER_ACTION_CLOCK_TIME / 1000,
+                remaining: Math.round(actionClock.getRemainingTime() / 1000),
+                isActive: actionClock.isRunning()
+              }
+            }
+          ]
+        )
+      )
+    });
   }
 
   private handleSpectatorSubscription(spectatorSocket: IoSocket) {

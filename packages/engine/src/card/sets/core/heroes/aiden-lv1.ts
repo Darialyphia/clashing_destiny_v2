@@ -29,7 +29,7 @@ export const aidenLv1: HeroBlueprint = {
   lineage: 'aiden',
   spellPower: 0,
   atk: 0,
-  maxHp: 18,
+  maxHp: 15,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {

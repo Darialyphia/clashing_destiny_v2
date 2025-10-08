@@ -34,10 +34,21 @@ const { client } = provideGameClient({
 socket.value.on('gameInitialState', async state => {
   await client.value.initialize(state.snapshot, state.history);
 });
+
+const clocks = ref<{
+  [playerId: string]: {
+    turn: { max: number; remaining: number; isActive: boolean };
+    action: { max: number; remaining: number; isActive: boolean };
+  };
+}>({});
+
+socket.value.on('clockUpdate', updatedClocks => {
+  clocks.value = updatedClocks;
+});
 </script>
 
 <template>
-  <GameBoard v-if="client.isReady">
+  <GameBoard v-if="client.isReady" :clocks="clocks">
     <template #menu>
       <FancyButton
         text="Surrender"

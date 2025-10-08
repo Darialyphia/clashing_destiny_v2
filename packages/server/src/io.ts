@@ -7,6 +7,7 @@ import type {
 } from '@game/engine/src/game/systems/game-snapshot.system';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { HttpServer } from './http';
+import type { UserId } from '@game/api';
 
 type SocketData = {
   user: any;
@@ -19,6 +20,15 @@ export type EmittedEvents = {
     history: SerializedInput[];
   }) => void;
   gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
+  clockUpdate: (
+    clocks: Record<
+      UserId,
+      {
+        turn: { max: number; remaining: number; isActive: boolean };
+        action: { max: number; remaining: number; isActive: boolean };
+      }
+    >
+  ) => void;
   error: (message: string) => void;
 };
 

@@ -30,6 +30,15 @@ import DestinyCostVFX from './DestinyCostVFX.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
+const { clocks } = defineProps<{
+  clocks?: {
+    [playerId: string]: {
+      turn: { max: number; remaining: number; isActive: boolean };
+      action: { max: number; remaining: number; isActive: boolean };
+    };
+  };
+}>();
+
 const myBoard = useMyBoard();
 const myPlayer = useMyPlayer();
 const opponentBoard = useOpponentBoard();
@@ -39,6 +48,9 @@ const opponentPlayer = useOpponentPlayer();
 // useBoardResize(board);
 
 useGameKeyboardControls();
+
+const myClock = computed(() => clocks?.[myPlayer.value.id]);
+const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 </script>
 
 <template>
@@ -50,7 +62,64 @@ useGameKeyboardControls();
 
   <div class="board-perspective-wrapper">
     <div class="board" id="board" ref="board">
+      <div class="my-clock" v-if="myClock">
+        <div
+          class="turn-clock"
+          :class="{
+            active: myClock.turn.isActive,
+            warning: myClock.turn.remaining <= 10
+          }"
+          :data-count="myClock.turn.remaining"
+          data-label="turn"
+          :style="{
+            '--max': myClock.turn.max,
+            '--remaining': myClock.turn.remaining
+          }"
+        />
+        <div
+          class="action-clock"
+          :class="{
+            active: myClock.action.isActive,
+            warning: myClock.action.remaining <= 10
+          }"
+          :data-count="myClock.action.remaining"
+          data-label="action"
+          :style="{
+            '--max': myClock.action.max,
+            '--remaining': myClock.action.remaining
+          }"
+        />
+      </div>
       <ExplainerMessage class="explainer" />
+      <div class="opponent-clock" v-if="opponentClock">
+        <div
+          class="turn-clock"
+          :class="{
+            active: opponentClock.turn.isActive,
+            warning: opponentClock.turn.remaining <= 10
+          }"
+          :data-count="opponentClock.turn.remaining"
+          data-label="turn"
+          :style="{
+            '--max': opponentClock.turn.max,
+            '--remaining': opponentClock.turn.remaining
+          }"
+        />
+        <div
+          class="action-clock"
+          :class="{
+            active: opponentClock.action.isActive,
+            warning: opponentClock.action.remaining <= 10
+          }"
+          :data-count="opponentClock.action.remaining"
+          data-label="action"
+          :style="{
+            '--max': opponentClock.action.max,
+            '--remaining': opponentClock.action.remaining
+          }"
+        />
+      </div>
+
       <div class="flex gap-3 justify-center">
         <div class="flex flex-col gap-3">
           <div class="flex-1 flex flex-col">
@@ -183,18 +252,18 @@ useGameKeyboardControls();
         </div>
       </div>
 
-      <section class="p1-destiny flex gap-2">
+      <section class="p1-destiny flex gap-2 my-2">
         <span>Destiny</span>
         <div class="flex-1">
           <DestinyZone :player-id="myPlayer.id" />
         </div>
       </section>
 
-      <section>
+      <section class="my-2">
         <EffectChain />
       </section>
 
-      <section class="p2-destiny flex gap-2">
+      <section class="p2-destiny flex gap-2 my-2">
         <div class="flex-1">
           <DestinyZone :player-id="opponentPlayer.id" />
         </div>
@@ -234,7 +303,7 @@ useGameKeyboardControls();
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: min-content 1fr auto auto;
-  row-gap: var(--size-4);
+  row-gap: var(--size-0);
   column-gap: var(--size-2);
   scale: var(--board-scale, 1);
   transform-style: preserve-3d;
@@ -322,5 +391,95 @@ useGameKeyboardControls();
 :global(#arrows > *) {
   grid-column: 1;
   grid-row: 1;
+}
+
+.my-clock {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  gap: var(--size-3);
+  padding-left: var(--size-7);
+}
+
+.opponent-clock {
+  grid-row: 1;
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: var(--size-3);
+  padding-right: var(--size-7);
+}
+
+@keyframes warning-pulse {
+  0%,
+  100% {
+    color: white;
+  }
+  50% {
+    color: red;
+  }
+}
+.action-clock,
+.turn-clock {
+  aspect-ratio: 1;
+  border: 2px solid #985e25;
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(
+    var(--color) 0deg,
+    var(--color) calc(360deg * (var(--remaining) / var(--max))),
+    transparent calc(360deg * (var(--remaining) / var(--max))),
+    transparent 360deg
+  );
+
+  &:not(.active) {
+    opacity: 0.25;
+  }
+  &::before {
+    content: attr(data-count);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 75%;
+    transform: translate(-50%, -50%);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-4);
+    color: #985e25;
+    font-weight: var(--font-weight-9);
+    background-color: black;
+    border-radius: var(--radius-round);
+  }
+
+  &::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size-00);
+    font-weight: var(--font-weight-7);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.1ch;
+    -webkit-text-stroke: 4px black;
+    paint-order: stroke fill;
+  }
+
+  &.active.warning::after {
+    animation: warning-pulse 1s infinite;
+  }
+}
+
+.action-clock {
+  --color: #ffb270;
+}
+
+.turn-clock {
+  --color: #79d2c0;
 }
 </style>

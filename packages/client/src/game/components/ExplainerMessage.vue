@@ -23,6 +23,7 @@ const ui = useGameUi();
   letter-spacing: 0.25ch;
   opacity: 0;
   text-align: center;
+  padding-block: var(--size-3);
   &.displayed {
     opacity: 1;
   }

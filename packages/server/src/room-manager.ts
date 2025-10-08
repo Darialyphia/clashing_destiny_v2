@@ -78,6 +78,10 @@ export class RoomManager {
       await this.destroyRoom(id);
       this.ctx.io.in(id).disconnectSockets();
     });
+
+    room.on(ROOM_EVENTS.CLOCK_TICK, clocks => {
+      this.ctx.io.in(id).emit('clockUpdate', clocks);
+    });
   }
 
   async destroyRoom(id: string) {
