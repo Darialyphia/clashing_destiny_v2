@@ -16,6 +16,7 @@ export class CommitMinionSlotSelectionGlobalAction implements GlobalActionRule {
 
   shouldDisplay(state: GameClientState): boolean {
     return (
+      this.client.isActive() &&
       state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT &&
       state.interaction.ctx.player === this.client.playerId &&
       state.interaction.ctx.canCommit

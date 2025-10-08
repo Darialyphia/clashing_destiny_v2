@@ -2,6 +2,8 @@
 import {
   useCard,
   useFxEvent,
+  useGameClient,
+  useGameState,
   useGameUi,
   useMyPlayer
 } from '../composables/useGameClient';
@@ -57,9 +59,16 @@ const isActionsPopoverOpened = computed({
   }
 });
 
+const state = useGameState();
+const { playerId } = useGameClient();
+const activePlayerId = computed(() => {
+  if (state.value.effectChain) return state.value.effectChain.player;
+  return state.value.interaction.ctx.player;
+});
+
 const isTargetable = computed(() => {
   return (
-    card.value.canBeTargeted ||
+    (activePlayerId.value === playerId.value && card.value.canBeTargeted) ||
     ui.value.selectedManaCostIndices.includes(card.value.indexInHand!)
   );
 });

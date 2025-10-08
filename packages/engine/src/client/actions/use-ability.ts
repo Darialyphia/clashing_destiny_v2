@@ -11,7 +11,7 @@ export class UseAbilityAction implements CardActionRule {
   ) {}
 
   predicate() {
-    return this.ability.canUse;
+    return this.ability.canUse && this.client.isActive();
   }
 
   getLabel() {

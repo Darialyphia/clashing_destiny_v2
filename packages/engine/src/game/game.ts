@@ -196,7 +196,7 @@ export class Game implements Serializable<SerializedGame> {
       return this.effectChainSystem.currentChain.currentPlayer;
     }
 
-    return this.turnSystem.initiativePlayer;
+    return this.interaction.getContext().ctx.player;
   }
 
   onActivePlayerChange(cb: (player: Player) => void) {

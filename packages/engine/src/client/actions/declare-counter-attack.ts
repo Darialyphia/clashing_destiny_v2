@@ -7,7 +7,7 @@ export class DeclareCounterAttackAction implements CardActionRule {
   constructor(private client: GameClient) {}
 
   predicate(card: CardViewModel) {
-    return card.canCounterattack;
+    return card.canCounterattack && this.client.isActive();
   }
 
   getLabel() {

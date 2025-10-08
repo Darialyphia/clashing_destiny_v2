@@ -9,6 +9,7 @@ export class DeclareAttackTargetCardAction implements CardClickRule {
 
   predicate(card: CardViewModel) {
     return (
+      this.client.isActive() &&
       this.client.state.phase.state === GAME_PHASES.ATTACK &&
       this.client.state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
       this.client.state.phase.ctx.potentialTargets.some(id => id === card.id) &&

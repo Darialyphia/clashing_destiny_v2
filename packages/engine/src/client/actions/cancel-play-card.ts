@@ -16,6 +16,7 @@ export class CancelPlayCardGlobalAction implements GlobalActionRule {
 
   shouldDisplay(state: GameClientState): boolean {
     return (
+      this.client.isActive() &&
       state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
       state.interaction.ctx.player === this.client.playerId
     );

@@ -9,6 +9,7 @@ export class SelectCardOnBoardAction implements CardClickRule {
 
   predicate(card: CardViewModel, state: GameClientState) {
     return (
+      this.client.isActive() &&
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
       state.interaction.ctx.elligibleCards.includes(card.id) &&
       this.client.playerId === this.client.getActivePlayerId()

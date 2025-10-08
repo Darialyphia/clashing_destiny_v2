@@ -21,6 +21,7 @@ export class ToggleForManaCost implements CardClickRule {
 
   predicate(card: CardViewModel, state: GameClientState) {
     return (
+      this.client.isActive() &&
       card.location === 'hand' &&
       this.isValidInteractionState(state) &&
       this.client.playerId === state.interaction.ctx.player &&

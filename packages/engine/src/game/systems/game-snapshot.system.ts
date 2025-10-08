@@ -24,7 +24,6 @@ import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_PHASES } from '../game.enums';
 import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
-import type { AnyCard } from '../../card/entities/card.entity';
 
 export type GameStateSnapshot<T> =
   | {

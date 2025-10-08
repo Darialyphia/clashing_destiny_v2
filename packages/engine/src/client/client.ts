@@ -166,6 +166,10 @@ export class GameClient {
     return this.stateManager.state.interaction.ctx.player;
   }
 
+  isActive() {
+    return this.getActivePlayerId() === this.playerId;
+  }
+
   async initialize(
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
     history: SerializedInput[] = []

@@ -8,7 +8,11 @@ export class DeclareAttackAction implements CardActionRule {
   constructor(private client: GameClient) {}
 
   predicate(card: CardViewModel) {
-    return this.client.state.phase.state === GAME_PHASES.MAIN && card.canAttack;
+    return (
+      this.client.state.phase.state === GAME_PHASES.MAIN &&
+      card.canAttack &&
+      this.client.isActive()
+    );
   }
 
   getLabel() {

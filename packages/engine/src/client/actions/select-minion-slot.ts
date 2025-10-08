@@ -8,6 +8,7 @@ export class SelectMinionslotAction implements MinionSlotClickRule {
 
   predicate(slot: UiMinionslot, state: GameClientState) {
     return (
+      this.client.isActive() &&
       state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT &&
       state.interaction.ctx.elligiblePosition.some(
         position =>
