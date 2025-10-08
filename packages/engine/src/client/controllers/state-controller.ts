@@ -136,6 +136,10 @@ export class ClientStateController {
     if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
       return this.onArtifactEquiped(event, flush);
     }
+
+    if (event.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
+      return this.onChainEffectAdded(event, flush);
+    }
   }
 
   private async onMinionSummoned(
@@ -166,6 +170,17 @@ export class ClientStateController {
       ...side
     }));
 
+    return await flush();
+  }
+
+  private async onChainEffectAdded(
+    event: {
+      event: SerializedEvent<'EFFECT_CHAIN_EFFECT_ADDED'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    const card = this.buildViewModel(event.event.effect.source as any) as CardViewModel;
+    this.state.entities[card.id] = card;
     return await flush();
   }
 

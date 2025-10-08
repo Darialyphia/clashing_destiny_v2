@@ -9,7 +9,7 @@ import {
 } from '@game/shared';
 import type { Game } from './game';
 import type { Player } from '../player/player.entity';
-import type { AnyCard } from '../card/entities/card.entity';
+import type { AnyCard, SerializedCard } from '../card/entities/card.entity';
 import { GameError } from './game-error';
 import {
   serializePreResponseTarget,
@@ -51,7 +51,7 @@ export type Effect = {
 export type SerializedEffectChain = {
   stack: Array<{
     type: EffectType;
-    source: string;
+    source: SerializedCard;
     targets: SerializedPreResponseTarget[];
   }>;
   state: EffectChainState;
@@ -237,7 +237,7 @@ export class EffectChain
     return {
       stack: this.effectStack.map(effect => ({
         type: effect.type,
-        source: effect.source.id,
+        source: effect.source.serialize(),
         targets: effect.targets.map(serializePreResponseTarget)
       })),
       state: this.getState(),
@@ -289,7 +289,7 @@ export class ChainEffectAddedEvent extends TypedSerializableEvent<
       index: this.data.index,
       effect: {
         type: this.data.effect.type,
-        source: this.data.effect.source.id,
+        source: this.data.effect.source.serialize() as SerializedCard,
         targets: this.data.effect.targets.map(serializePreResponseTarget)
       }
     };
@@ -319,7 +319,7 @@ export class ChainEffectResolvedEvent extends TypedSerializableEvent<
       index: this.data.index,
       effect: {
         type: this.data.effect.type,
-        source: this.data.effect.source.id,
+        source: this.data.effect.source.serialize(),
         targets: this.data.effect.targets.map(serializePreResponseTarget)
       }
     };

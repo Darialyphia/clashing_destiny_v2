@@ -16,14 +16,15 @@ import type { SerializedArtifactCard } from '../../card/entities/artifact.entity
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
-import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.events';
-import type { SerializedEffectChain } from '../effect-chain';
+import type { CardDeclarePlayEvent, CardDiscardEvent } from '../../card/card.events';
+import type { ChainEffectAddedEvent, SerializedEffectChain } from '../effect-chain';
 import type { AnyObject } from '@game/shared';
 import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_PHASES } from '../game.enums';
 import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
 
 export type GameStateSnapshot<T> =
   | {
@@ -102,6 +103,10 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
 
   private nextId = 0;
 
+  // a set of opponent's cards that have been seen by each player
+  // once a card is marked, it will not be filtered out when sanitizing a player state snapshot
+  private seenCardsByPlayer: Record<string, Set<string>> = {};
+
   private getObjectDiff<T extends AnyObject>(obj: T, prevObj: T | undefined): Partial<T> {
     if (!prevObj) return { ...obj };
     const result: Partial<T> = {};
@@ -163,6 +168,8 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     ];
     this.playerCaches[this.game.playerSystem.player1.id] = [];
     this.playerCaches[this.game.playerSystem.player2.id] = [];
+    this.seenCardsByPlayer[this.game.playerSystem.player1.id] = new Set();
+    this.seenCardsByPlayer[this.game.playerSystem.player2.id] = new Set();
 
     this.game.on(
       '*',
@@ -319,7 +326,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       };
     }
     const previousSnapshot = this.getOmniscientSnapshotAt(index - 1);
-
     return {
       ...latestSnapshot,
       state:
@@ -373,16 +379,20 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     const state = this.serializeOmniscientState();
 
     // Remove entities that the player shouldn't have access to in order to prevent cheating
-    const opponent = this.game.playerSystem.getPlayerById(playerId)!.opponent;
-
     const hasBeenPlayed = (cardId: string) => {
       return this.eventsSinceLastSnapshot.some(e => {
         const event = e.data.event;
         if (
-          e.data.eventName === GAME_EVENTS.CARD_BEFORE_PLAY &&
-          (event as CardBeforePlayEvent).data.card.id === cardId
+          e.data.eventName === GAME_EVENTS.CARD_DECLARE_PLAY &&
+          (event as CardDeclarePlayEvent).data.card.id === cardId
         ) {
           return true;
+        }
+        if (e.data.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
+          const effect = (event as ChainEffectAddedEvent).data.effect;
+          if (effect.source.id === cardId) {
+            return true;
+          }
         }
         if (
           e.data.eventName === GAME_EVENTS.CARD_DISCARD &&
@@ -390,20 +400,44 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         ) {
           return true;
         }
-
         return false;
       });
     };
-    opponent.cardManager.mainDeck.cards.forEach(card => {
-      if (hasBeenPlayed(card.id)) return;
+    const cardsToRemove: string[] = [];
+    this.game.cardSystem.cards.forEach(card => {
+      if (card.player.id === playerId) return;
+      if (
+        card.location === 'banishPile' ||
+        card.location === 'board' ||
+        card.location === 'discardPile'
+      ) {
+        return;
+      }
+      if (this.seenCardsByPlayer[playerId].has(card.id)) {
+        return;
+      }
+      const seen = hasBeenPlayed(card.id);
 
-      delete state.entities[card.id];
+      if (seen) {
+        this.seenCardsByPlayer[playerId].add(card.id);
+        return;
+      }
+
+      cardsToRemove.push(card.id);
     });
 
-    opponent.cardManager.hand.forEach(card => {
-      if (hasBeenPlayed(card.id)) return;
+    cardsToRemove.forEach(cardId => {
+      const card = this.game.cardSystem.getCardById(cardId)!;
 
-      delete state.entities[card.id];
+      card.modifiers.list.forEach(modifier => {
+        delete state.entities[modifier.id];
+      });
+      if ('abilities' in card) {
+        (card.abilities as Ability<AbilityOwner>[]).forEach(ability => {
+          delete state.entities[ability.id];
+        });
+      }
+      delete state.entities[cardId];
     });
 
     return state;

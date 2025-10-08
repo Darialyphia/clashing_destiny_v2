@@ -36,7 +36,7 @@ const buildPaths = async () => {
 
       const startRect = document
         .querySelector(
-          ui.value.DOMSelectors.cardInEffectChain(effect.source).selector
+          ui.value.DOMSelectors.cardInEffectChain(effect.source.id).selector
         )!
         .getBoundingClientRect();
       const endRect = match(target)
@@ -76,14 +76,14 @@ const buildPaths = async () => {
     });
   });
 };
-watch(() => state.value.effectChain?.stack, buildPaths);
-watch(() => playerId.value, buildPaths);
+watch(() => state.value.effectChain?.stack, buildPaths, { immediate: true });
+watch(() => playerId.value, buildPaths, { immediate: true });
 
 const myPlayer = useMyPlayer();
 const stack = computed(() => {
   return (
     state.value.effectChain?.stack.map(step => {
-      const card = state.value.entities[step.source] as CardViewModel;
+      const card = state.value.entities[step.source.id] as CardViewModel;
       return {
         ...step,
         playerType: card?.player.equals(myPlayer.value) ? 'ally' : 'enemy',
@@ -100,11 +100,11 @@ const stack = computed(() => {
       <InspectableCard
         v-for="(effect, index) in stack"
         :key="index"
-        :card-id="effect.source"
+        :card-id="effect.source.id"
       >
         <div class="effect" :class="effect.playerType">
           <GameCard
-            :card-id="effect.source"
+            :card-id="effect.source.id"
             :is-interactive="false"
             variant="small"
           />
@@ -125,7 +125,7 @@ const stack = computed(() => {
           </UiSimpleTooltip>
         </div>
 
-        <Teleport to="#arrows">
+        <Teleport to="#arrows" defer>
           <Arrow
             v-for="(path, targetIndex) in paths[index]"
             :key="targetIndex"

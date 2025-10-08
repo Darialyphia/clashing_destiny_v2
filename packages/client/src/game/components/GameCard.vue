@@ -68,7 +68,6 @@ const myPlayer = useMyPlayer();
 
 const handleClick = () => {
   if (!isInteractive) return;
-  console.log('handle card click', cardId);
   ui.value.onCardClick(card.value);
 };
 
@@ -128,7 +127,7 @@ const classes = computed(() => {
 </script>
 
 <template>
-  <PopoverRoot v-model:open="isActionsPopoverOpened" v-if="cardId">
+  <PopoverRoot v-model:open="isActionsPopoverOpened" v-if="card">
     <PopoverAnchor>
       <div class="relative">
         <Card
