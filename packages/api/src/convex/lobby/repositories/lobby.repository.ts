@@ -54,6 +54,10 @@ export class LobbyReadRepository {
       )
       .collect();
   }
+
+  async getAll() {
+    return this.ctx.db.query('lobbies').collect();
+  }
 }
 
 export class LobbyRepository {

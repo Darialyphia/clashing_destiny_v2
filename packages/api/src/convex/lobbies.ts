@@ -6,6 +6,7 @@ import { SelectDeckForLobbyUseCase } from './lobby/usecases/selectDeckForLobby.u
 import { ChangeLobbyUserRoleUseCase } from './lobby/usecases/changeLobbyUserRole.usecase';
 import { StartLobbyUseCase } from './lobby/usecases/startLobby.usecase';
 import { GetLobbyByIdUseCase } from './lobby/usecases/getLobbyById.usecase';
+import { GetAllLobbiesUseCase } from './lobby/usecases/getAllLobbies.usecase';
 import { mutationWithContainer, queryWithContainer } from './shared/container';
 
 export const create = mutationWithContainer({
@@ -110,5 +111,14 @@ export const getById = queryWithContainer({
     return usecase.execute({
       lobbyId: args.lobbyId
     });
+  }
+});
+
+export const getAll = queryWithContainer({
+  args: {},
+  async handler(ctx) {
+    const usecase = ctx.resolve<GetAllLobbiesUseCase>(GetAllLobbiesUseCase.INJECTION_KEY);
+
+    return usecase.execute();
   }
 });
