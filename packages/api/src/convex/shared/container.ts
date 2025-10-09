@@ -97,6 +97,7 @@ import { LeaveLobbyUseCase } from '../lobby/usecases/leaveLobby.usecase';
 import { SelectDeckForLobbyUseCase } from '../lobby/usecases/selectDeckForLobby.usecase';
 import { ChangeLobbyUserRoleUseCase } from '../lobby/usecases/changeLobbyUserRole.usecase';
 import { StartLobbyUseCase } from '../lobby/usecases/startLobby.usecase';
+import { GetLobbyByIdUseCase } from '../lobby/usecases/getLobbyById.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -175,7 +176,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [GetFriendsUseCase.INJECTION_KEY]: { resolver: asClass(GetFriendsUseCase) },
     [GetPendingRequestsUseCase.INJECTION_KEY]: {
       resolver: asClass(GetPendingRequestsUseCase)
-    }
+    },
+    [GetLobbyByIdUseCase.INJECTION_KEY]: { resolver: asClass(GetLobbyByIdUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;
