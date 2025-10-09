@@ -96,6 +96,7 @@ import { JoinLobbyUseCase } from '../lobby/usecases/joinLobby.usecase';
 import { LeaveLobbyUseCase } from '../lobby/usecases/leaveLobby.usecase';
 import { SelectDeckForLobbyUseCase } from '../lobby/usecases/selectDeckForLobby.usecase';
 import { ChangeLobbyUserRoleUseCase } from '../lobby/usecases/changeLobbyUserRole.usecase';
+import { StartLobbyUseCase } from '../lobby/usecases/startLobby.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -279,7 +280,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [ChangeLobbyUserRoleUseCase.INJECTION_KEY]: {
       resolver: asClass(ChangeLobbyUserRoleUseCase)
-    }
+    },
+    [StartLobbyUseCase.INJECTION_KEY]: { resolver: asClass(StartLobbyUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;
