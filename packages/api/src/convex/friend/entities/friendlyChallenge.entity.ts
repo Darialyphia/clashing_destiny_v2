@@ -2,6 +2,7 @@ import type { UserId } from 'lucia';
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
 import { FRIENDLY_CHALLENGE_STATUS } from '../friend.constants';
+import type { DeckId } from '../../deck/entities/deck.entity';
 
 export type FriendlyChallengeId = Id<'friendlyChallenges'>;
 export type FriendlyChallengeDoc = Doc<'friendlyChallenges'>;
@@ -39,6 +40,24 @@ export class FriendlyChallenge extends Entity<FriendlyChallengeId, FriendlyChall
     return this.data.gameId;
   }
 
+  get canSelectDeck() {
+    return this.data.status === FRIENDLY_CHALLENGE_STATUS.ACCEPTED;
+  }
+
+  get options() {
+    return this.data.options;
+  }
+
+  selectDeck(userId: UserId, deckId: DeckId) {
+    if (this.data.challengerId === userId) {
+      this.data.challengerDeckId = deckId;
+    } else if (this.data.challengedId === userId) {
+      this.data.challengedDeckId = deckId;
+    } else {
+      throw new Error('User is not part of this challenge');
+    }
+  }
+
   canAccept(userId: UserId) {
     return (
       this.data.challengedId === userId &&
@@ -60,9 +79,8 @@ export class FriendlyChallenge extends Entity<FriendlyChallengeId, FriendlyChall
     );
   }
 
-  accept(challengedDeckId: Id<'decks'>) {
+  accept() {
     this.data.status = FRIENDLY_CHALLENGE_STATUS.ACCEPTED;
-    this.data.challengedDeckId = challengedDeckId;
   }
 
   decline() {

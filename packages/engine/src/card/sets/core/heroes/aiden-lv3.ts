@@ -53,7 +53,11 @@ export const aidenLv3: HeroBlueprint = {
           new AuraModifierMixin(game, {
             isElligible(candidate) {
               if (card.location !== 'board') return false;
-              return isMinion(candidate) && candidate.isAlly(card);
+              return (
+                isMinion(candidate) &&
+                candidate.isAlly(card) &&
+                candidate.location === 'board'
+              );
             },
             async onGainAura(candidate) {
               await candidate.modifiers.add(

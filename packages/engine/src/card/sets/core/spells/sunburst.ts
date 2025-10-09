@@ -1,6 +1,6 @@
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyTargetRules, singleMinionTargetRules } from '../../../card-utils';
+import { singleMinionTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -15,7 +15,7 @@ export const sunburst: SpellBlueprint = {
   id: 'sunburst',
   name: 'Sunburst',
   cardIconId: 'spells/sunburst',
-  description: 'Deal 2 damage to an enemy or heal an ally for 2.',
+  description: 'Deal 2 damage to an enemy minion or heal an ally minion for 2.',
   collectable: true,
   unique: false,
   manaCost: 2,

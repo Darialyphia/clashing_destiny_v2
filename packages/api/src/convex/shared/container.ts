@@ -78,6 +78,9 @@ import { SendFriendRequestUseCase } from '../friend/usecases/sendFriendRequest.u
 import { AcceptFriendRequestUseCase } from '../friend/usecases/acceptFriendRequest.usecase';
 import { SendFriendlyChallengeRequestUseCase } from '../friend/usecases/sendFriendlyChallengeRequest.usecase';
 import { CancelFriendlyChallengeRequestUseCase } from '../friend/usecases/cancelFriendlyChallengeRequest.usecase';
+import { AcceptFriendlyChallengeUseCase } from '../friend/usecases/acceptFriendlyChallenge.usecase';
+import { DeclineFriendlyChallengeUseCase } from '../friend/usecases/declineFriendlyChallenge.usecase';
+import { ClearAllPendingChallengesUseCase } from '../friend/usecases/clearAllPendingChallenges.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -231,6 +234,15 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [CancelFriendlyChallengeRequestUseCase.INJECTION_KEY]: {
       resolver: asClass(CancelFriendlyChallengeRequestUseCase)
+    },
+    [AcceptFriendlyChallengeUseCase.INJECTION_KEY]: {
+      resolver: asClass(AcceptFriendlyChallengeUseCase)
+    },
+    [DeclineFriendlyChallengeUseCase.INJECTION_KEY]: {
+      resolver: asClass(DeclineFriendlyChallengeUseCase)
+    },
+    [ClearAllPendingChallengesUseCase.INJECTION_KEY]: {
+      resolver: asClass(ClearAllPendingChallengesUseCase)
     }
   } as const satisfies DependenciesMap;
 

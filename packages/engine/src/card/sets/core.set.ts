@@ -17,6 +17,7 @@ import { courageousFootsoldier } from './core/minions/courageous-footsoldier';
 import { flagBearerOfFlame } from './core/minions/flag-bearer-of-flame';
 import { flameJuggler } from './core/minions/flame-juggler';
 import { friendlySlime } from './core/minions/friendlySlime';
+import { HolyCrusader } from './core/minions/holy-crusader';
 import { hotHeadedRecruit } from './core/minions/hot-headed-recruit';
 import { hougenThePunisher } from './core/minions/hougen-the-punisher';
 import { manaWisp } from './core/minions/mana-wisp';
@@ -86,6 +87,7 @@ export const coreSet: CardSet = {
     manaJewel,
     scalesOfDestiny,
     manaWisp,
-    bastionGuard
+    bastionGuard,
+    HolyCrusader
   ]
 };

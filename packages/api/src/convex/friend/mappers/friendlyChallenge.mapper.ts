@@ -15,7 +15,8 @@ export class FriendlyChallengeMapper {
       status: friendlyChallenge.status,
       challengerDeckId: friendlyChallenge.challengerDeckId,
       challengedDeckId: friendlyChallenge.challengedDeckId,
-      gameId: friendlyChallenge.gameId
+      gameId: friendlyChallenge.gameId,
+      options: friendlyChallenge.options
     };
   }
 }

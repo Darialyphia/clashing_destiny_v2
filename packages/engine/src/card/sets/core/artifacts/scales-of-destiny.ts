@@ -16,7 +16,7 @@ export const scalesOfDestiny: ArtifactBlueprint = {
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
-  destinyCost: 1,
+  destinyCost: 0,
   speed: CARD_SPEED.SLOW,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
@@ -30,10 +30,10 @@ export const scalesOfDestiny: ArtifactBlueprint = {
     {
       id: 'scales-of-destiny-ability',
       label: '@[exhaust]@ : Draw 1 in Destiny',
-      description: `-1@[durability]@ @[exhaust]@ : Draw a card into your Destiny Zone. You can use this ability only if you have the same amount of cards in your hand and Destiny Zone.`,
+      description: `-1@[durability]@ @[exhaust]@ : Draw a card. You can use this ability only if you have the same amount of cards in your hand and Destiny Zone.`,
       manaCost: 0,
       shouldExhaust: true,
-      speed: CARD_SPEED.SLOW,
+      speed: CARD_SPEED.FAST,
       canUse(game, card) {
         return (
           card.location === 'board' &&
@@ -44,7 +44,7 @@ export const scalesOfDestiny: ArtifactBlueprint = {
         return [];
       },
       async onResolve(game, card) {
-        await card.player.cardManager.drawIntoDestinyZone(1);
+        await card.player.cardManager.draw(1);
         await card.loseDurability(1);
       }
     }

@@ -121,6 +121,16 @@ export class FriendlyChallengeRepository {
     return docs.map(doc => FriendlyChallenge.from(doc));
   }
 
+  async getPendingByChallengerId(challengerId: Id<'users'>) {
+    const docs = await this.ctx.db
+      .query('friendlyChallenges')
+      .withIndex('by_challenger_id', q => q.eq('challengerId', challengerId))
+      .filter(q => q.eq(q.field('status'), 'pending'))
+      .collect();
+
+    return docs.map(doc => FriendlyChallenge.from(doc));
+  }
+
   async getPendingChallengeBetweenUsers(
     challengerId: Id<'users'>,
     challengedId: Id<'users'>

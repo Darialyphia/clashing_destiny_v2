@@ -17,7 +17,13 @@ export const friendSchemas = {
     status: v.union(v.literal('pending'), v.literal('accepted'), v.literal('declined')),
     challengerDeckId: v.optional(v.id('decks')),
     challengedDeckId: v.optional(v.id('decks')),
-    gameId: v.optional(v.id('games'))
+    gameId: v.optional(v.id('games')),
+    options: v.optional(
+      v.object({
+        disableTurnTimers: v.boolean(),
+        teachingMode: v.boolean()
+      })
+    )
   })
     .index('by_challenger_id', ['challengerId'])
     .index('by_challenged_id', ['challengedId'])
