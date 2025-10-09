@@ -13,6 +13,7 @@ import { Modifier } from '../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { Player } from '../../../../player/player.entity';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const flamingFrenzy: SpellBlueprint = {
   id: 'flaming-frenzy',
@@ -54,7 +55,8 @@ export const flamingFrenzy: SpellBlueprint = {
             async onLoseAura(candidate) {
               await candidate.modifiers.remove(FLAMING_FRENZY_AURA_ID);
             }
-          })
+          }),
+          new UntilEndOfTurnModifierMixin(game)
         ]
       })
     );

@@ -81,6 +81,21 @@ import { CancelFriendlyChallengeRequestUseCase } from '../friend/usecases/cancel
 import { AcceptFriendlyChallengeUseCase } from '../friend/usecases/acceptFriendlyChallenge.usecase';
 import { DeclineFriendlyChallengeUseCase } from '../friend/usecases/declineFriendlyChallenge.usecase';
 import { ClearAllPendingChallengesUseCase } from '../friend/usecases/clearAllPendingChallenges.usecase';
+import {
+  LobbyReadRepository,
+  LobbyRepository
+} from '../lobby/repositories/lobby.repository';
+import {
+  LobbyUserReadRepository,
+  LobbyUserRepository
+} from '../lobby/repositories/lobbyUser.repository';
+import { LobbyMapper } from '../lobby/mappers/lobby.mapper';
+import { LobbyUserMapper } from '../lobby/mappers/lobbyUser.mapper';
+import { CreateLobbyUseCase } from '../lobby/usecases/createLobby.usecase';
+import { JoinLobbyUseCase } from '../lobby/usecases/joinLobby.usecase';
+import { LeaveLobbyUseCase } from '../lobby/usecases/leaveLobby.usecase';
+import { SelectDeckForLobbyUseCase } from '../lobby/usecases/selectDeckForLobby.usecase';
+import { ChangeLobbyUserRoleUseCase } from '../lobby/usecases/changeLobbyUserRole.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -129,6 +144,12 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [FriendlyChallengeReadRepository.INJECTION_KEY]: {
       resolver: asClass(FriendlyChallengeReadRepository)
     },
+    [LobbyReadRepository.INJECTION_KEY]: {
+      resolver: asClass(LobbyReadRepository)
+    },
+    [LobbyUserReadRepository.INJECTION_KEY]: {
+      resolver: asClass(LobbyUserReadRepository)
+    },
     // mappers
     [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
     [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
@@ -140,6 +161,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [FriendlyChallengeMapper.INJECTION_KEY]: {
       resolver: asClass(FriendlyChallengeMapper)
     },
+    [LobbyMapper.INJECTION_KEY]: { resolver: asClass(LobbyMapper) },
+    [LobbyUserMapper.INJECTION_KEY]: { resolver: asClass(LobbyUserMapper) },
 
     // use cases
     [GetSessionUserUseCase.INJECTION_KEY]: { resolver: asClass(GetSessionUserUseCase) },
@@ -185,6 +208,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [FriendlyChallengeRepository.INJECTION_KEY]: {
       resolver: asClass(FriendlyChallengeRepository)
     },
+    [LobbyRepository.INJECTION_KEY]: { resolver: asClass(LobbyRepository) },
+    [LobbyUserRepository.INJECTION_KEY]: { resolver: asClass(LobbyUserRepository) },
     // mappers
     [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
     [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
@@ -196,6 +221,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [FriendlyChallengeMapper.INJECTION_KEY]: {
       resolver: asClass(FriendlyChallengeMapper)
     },
+    [LobbyMapper.INJECTION_KEY]: { resolver: asClass(LobbyMapper) },
+    [LobbyUserMapper.INJECTION_KEY]: { resolver: asClass(LobbyUserMapper) },
     // subscribers
     [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
     [GameSubscribers.INJECTION_KEY]: { resolver: asClass(GameSubscribers), eager: true },
@@ -243,6 +270,15 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [ClearAllPendingChallengesUseCase.INJECTION_KEY]: {
       resolver: asClass(ClearAllPendingChallengesUseCase)
+    },
+    [CreateLobbyUseCase.INJECTION_KEY]: { resolver: asClass(CreateLobbyUseCase) },
+    [JoinLobbyUseCase.INJECTION_KEY]: { resolver: asClass(JoinLobbyUseCase) },
+    [LeaveLobbyUseCase.INJECTION_KEY]: { resolver: asClass(LeaveLobbyUseCase) },
+    [SelectDeckForLobbyUseCase.INJECTION_KEY]: {
+      resolver: asClass(SelectDeckForLobbyUseCase)
+    },
+    [ChangeLobbyUserRoleUseCase.INJECTION_KEY]: {
+      resolver: asClass(ChangeLobbyUserRoleUseCase)
     }
   } as const satisfies DependenciesMap;
 

@@ -22,6 +22,7 @@ import type * as decks from "../decks.js";
 import type * as friends from "../friends.js";
 import type * as games from "../games.js";
 import type * as init from "../init.js";
+import type * as lobbies from "../lobbies.js";
 import type * as matchmaking from "../matchmaking.js";
 import type * as ping from "../ping.js";
 import type * as shared_container from "../shared/container.js";
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   friends: typeof friends;
   games: typeof games;
   init: typeof init;
+  lobbies: typeof lobbies;
   matchmaking: typeof matchmaking;
   ping: typeof ping;
   "shared/container": typeof shared_container;
