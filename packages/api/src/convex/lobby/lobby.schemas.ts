@@ -30,7 +30,11 @@ export const lobbySchemas = {
         author: v.string(),
         text: v.string()
       })
-    )
+    ),
+    options: v.object({
+      disableTurnTimers: v.boolean(),
+      teachingMode: v.boolean()
+    })
   })
     .index('by_owner_id', ['ownerId'])
     .index('by_game_id', ['gameId']),
