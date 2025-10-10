@@ -4,12 +4,14 @@ import type { UseCase } from '../../usecase';
 import type { LobbyReadRepository } from '../repositories/lobby.repository';
 import type { LobbyUserReadRepository } from '../repositories/lobbyUser.repository';
 import type { UserReadRepository } from '../../users/repositories/user.repository';
+import type { LobbyStatus } from '../lobby.constants';
 
 export type GetAllLobbiesInput = never;
 
 export type GetAllLobbiesOutput = Array<{
   id: LobbyId;
   name: string;
+  status: LobbyStatus;
   needsPassword: boolean;
   ownerId: UserId;
   ownerName: string;
@@ -41,6 +43,7 @@ export class GetAllLobbiesUseCase
         return {
           id: lobby._id,
           name: lobby.name,
+          status: lobby.status,
           needsPassword: !!lobby.password,
           ownerId: lobby.ownerId,
           ownerName: owner?.username || 'Unknown User',

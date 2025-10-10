@@ -39,7 +39,7 @@ const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
     <nav class="ml-auto">
       <ul class="flex gap-4">
         <li>
-          <RouterLink :to="{ name: 'Matchmaking' }">Play</RouterLink>
+          <RouterLink :to="{ name: 'SelectMode' }">Play</RouterLink>
         </li>
         <li>
           <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>

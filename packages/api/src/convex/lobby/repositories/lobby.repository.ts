@@ -4,12 +4,17 @@ import type { UserId } from '../../users/entities/user.entity';
 import { Lobby, type LobbyDoc, type LobbyId } from '../entities/lobby.entity';
 import { LOBBY_STATUS, LOBBY_USER_ROLES, type LobbyStatus } from '../lobby.constants';
 import type { LobbyMapper } from '../mappers/lobby.mapper';
-import type { LobbyUserRepository } from './lobbyUser.repository';
+import type {
+  LobbyUserReadRepository,
+  LobbyUserRepository
+} from './lobbyUser.repository';
 
 export class LobbyReadRepository {
   static INJECTION_KEY = 'lobbyReadRepo' as const;
 
-  constructor(private ctx: { db: DatabaseReader }) {}
+  constructor(
+    private ctx: { db: DatabaseReader; lobbyUserReadRepo: LobbyUserReadRepository }
+  ) {}
 
   async getById(lobbyId: LobbyId) {
     return this.ctx.db.get(lobbyId);
@@ -57,6 +62,14 @@ export class LobbyReadRepository {
 
   async getAll() {
     return this.ctx.db.query('lobbies').collect();
+  }
+
+  async getByUserId(userId: UserId) {
+    const lobbyUsers = await this.ctx.lobbyUserReadRepo.getByUserId(userId);
+    if (lobbyUsers.length === 0) return null;
+
+    const lobbyUser = lobbyUsers[0];
+    return this.getById(lobbyUser.lobbyId);
   }
 }
 

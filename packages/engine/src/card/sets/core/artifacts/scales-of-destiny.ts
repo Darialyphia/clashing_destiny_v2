@@ -29,7 +29,7 @@ export const scalesOfDestiny: ArtifactBlueprint = {
   abilities: [
     {
       id: 'scales-of-destiny-ability',
-      label: '@[exhaust]@ : Draw 1 in Destiny',
+      label: '@[exhaust]@ : Draw 1',
       description: `-1@[durability]@ @[exhaust]@ : Draw a card. You can use this ability only if you have the same amount of cards in your hand and Destiny Zone.`,
       manaCost: 0,
       shouldExhaust: true,

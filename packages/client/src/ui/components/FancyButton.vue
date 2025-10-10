@@ -33,6 +33,7 @@ const tag = computed(() => {
 <template>
   <component
     :is="tag"
+    :to="to"
     class="fancy-button"
     :class="[
       size,

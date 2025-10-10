@@ -82,10 +82,10 @@ export const angelOfRetribution: MinionBlueprint = {
           const allies = [card.player.hero, ...card.player.minions];
 
           for (const enemy of enemies) {
-            await enemy.takeDamage(card, new AbilityDamage(3));
+            await enemy.takeDamage(card, new AbilityDamage(2));
           }
           for (const ally of allies) {
-            await ally.heal(3);
+            await ally.heal(2);
           }
         }
       })

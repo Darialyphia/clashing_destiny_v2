@@ -102,7 +102,7 @@ export const start = mutationWithContainer({
   }
 });
 
-export const getById = queryWithContainer({
+export const byId = queryWithContainer({
   args: {
     lobbyId: v.id('lobbies')
   },
@@ -115,7 +115,7 @@ export const getById = queryWithContainer({
   }
 });
 
-export const getAll = queryWithContainer({
+export const list = queryWithContainer({
   args: {},
   async handler(ctx) {
     const usecase = ctx.resolve<GetAllLobbiesUseCase>(GetAllLobbiesUseCase.INJECTION_KEY);
