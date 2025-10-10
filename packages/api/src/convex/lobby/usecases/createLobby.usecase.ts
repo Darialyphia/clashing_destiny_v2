@@ -1,6 +1,7 @@
 import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import { DomainError } from '../../utils/error';
+import type { LobbyId } from '../entities/lobby.entity';
 import type { LobbyRepository } from '../repositories/lobby.repository';
 import type { LobbyUserRepository } from '../repositories/lobbyUser.repository';
 
@@ -11,6 +12,7 @@ export type CreateLobbyInput = {
 
 export type CreateLobbyOutput = {
   success: boolean;
+  lobbyId: LobbyId;
 };
 
 export class CreateLobbyUseCase {
@@ -32,7 +34,7 @@ export class CreateLobbyUseCase {
       throw new DomainError('User is already in a lobby');
     }
 
-    await this.ctx.lobbyRepo.create({
+    const lobby = await this.ctx.lobbyRepo.create({
       name: input.name,
       ownerId: session.userId,
       password: input.password,
@@ -42,6 +44,6 @@ export class CreateLobbyUseCase {
       }
     });
 
-    return { success: true };
+    return { success: true, lobbyId: lobby.id };
   }
 }

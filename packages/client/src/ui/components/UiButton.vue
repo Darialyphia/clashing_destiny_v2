@@ -37,14 +37,15 @@ const {
   rightIcon,
   isInline,
   isCta,
-  style = {}
+  style = {},
+  to
 } = defineProps<ButtonProps>();
 
 const attrs = useAttrs();
 
 const tag = computed(() => {
   if (attrs.href) return 'a';
-  if (attrs.to) return RouterLink;
+  if (to) return RouterLink;
   return 'button';
 });
 </script>
@@ -61,6 +62,7 @@ const tag = computed(() => {
     }"
     :style="style"
     :disabled="attrs.disabled || isLoading"
+    :to="to"
     v-bind="attrs"
   >
     <Icon

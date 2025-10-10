@@ -10,3 +10,9 @@ export type { MatchmakingId } from './convex/matchmaking/entities/matchmaking.en
 export type { UserId } from './convex/users/entities/user.entity';
 export { GAME_STATUS, type GameStatus } from './convex/game/game.constants';
 export type { GameId } from './convex/game/entities/game.entity';
+export {
+  LOBBY_STATUS,
+  LOBBY_USER_ROLES,
+  MAX_PLAYERS_PER_LOBBY
+} from './convex/lobby/lobby.constants';
+export type { LobbyId } from './convex/lobby/entities/lobby.entity';

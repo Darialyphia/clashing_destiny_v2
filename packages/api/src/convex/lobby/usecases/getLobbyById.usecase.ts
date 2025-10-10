@@ -8,6 +8,7 @@ import { AppError } from '../../utils/error';
 import type { LobbyReadRepository } from '../repositories/lobby.repository';
 import type { LobbyUserReadRepository } from '../repositories/lobbyUser.repository';
 import type { UserReadRepository } from '../../users/repositories/user.repository';
+import type { GameId } from '../../game/entities/game.entity';
 
 export type GetLobbyByIdInput = {
   lobbyId: LobbyId;
@@ -19,6 +20,7 @@ export type GetLobbyByIdOutput = {
   needsPassword: boolean;
   ownerId: string;
   status: LobbyStatus;
+  gameId: GameId | null;
   players: Array<{
     id: LobbyUserId;
     userId: UserId;
@@ -85,6 +87,7 @@ export class GetLobbyByIdUseCase
       name: lobby.name,
       needsPassword: !!lobby.password,
       ownerId: lobby.ownerId,
+      gameId: lobby.gameId ?? null,
       status: lobby.status,
       players: playersWithUsernames,
       spectators: spectatorsWithUsernames

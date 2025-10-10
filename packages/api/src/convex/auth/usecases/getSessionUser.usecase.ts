@@ -31,7 +31,7 @@ export interface GetSessionUserput {
     joinedAt: number;
   }>;
   currentGame: Nullable<{ id: GameId; status: GameStatus }>;
-  currentLobby: Nullable<{ id: LobbyId }>;
+  currentLobby: Nullable<{ id: LobbyId; name: string }>;
 }
 
 export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> {
@@ -75,7 +75,9 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
       currentGame: currentGame
         ? { id: currentGame._id, status: currentGame.status }
         : null,
-      currentLobby: currentLobby ? { id: currentLobby._id } : null
+      currentLobby: currentLobby
+        ? { id: currentLobby._id, name: currentLobby.name }
+        : null
     };
   }
 }

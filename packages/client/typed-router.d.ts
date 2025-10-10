@@ -24,6 +24,7 @@ declare module 'vue-router/auto-routes' {
     'CurrentGame': RouteRecordInfo<'CurrentGame', '/client/game', Record<never, never>, Record<never, never>>,
     'HowToPlay': RouteRecordInfo<'HowToPlay', '/how-to-play', Record<never, never>, Record<never, never>>,
     'Lobbies': RouteRecordInfo<'Lobbies', '/client/lobby', Record<never, never>, Record<never, never>>,
+    'Lobby': RouteRecordInfo<'Lobby', '/client/lobby/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Matchmaking': RouteRecordInfo<'Matchmaking', '/client/matchmaking', Record<never, never>, Record<never, never>>,
     'Sandbox': RouteRecordInfo<'Sandbox', '/client/sandbox', Record<never, never>, Record<never, never>>,
     'SelectMode': RouteRecordInfo<'SelectMode', '/client/select-mode', Record<never, never>, Record<never, never>>,

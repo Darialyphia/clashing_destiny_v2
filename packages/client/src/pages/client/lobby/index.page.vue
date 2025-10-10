@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
-// import { useMe } from '@/auth/composables/useMe';
+import LobbyForm from './LobbyForm.vue';
+import { useMe } from '@/auth/composables/useMe';
 import { api } from '@game/api';
 import { Icon } from '@iconify/vue';
+import UiButton from '@/ui/components/UiButton.vue';
 
 definePage({
   name: 'Lobbies'
 });
 
 const { data: lobbies, isLoading } = useAuthedQuery(api.lobbies.list, {});
-// const { data: me } = useMe();
+const { data: me } = useMe();
 </script>
 
 <template>
-  <div class="page container">
+  <div class="page" v-if="me">
     <AuthenticatedHeader />
-    <div class="grid">
-      <section class="fancy-surface">
+    <div class="grid container">
+      <section class="surface">
         <h2>Lobbies</h2>
         <div v-if="isLoading">Loading lobbies...</div>
         <div v-else-if="!lobbies.length">
@@ -30,40 +32,29 @@ const { data: lobbies, isLoading } = useAuthedQuery(api.lobbies.list, {});
             class="flex justify-between items-center"
           >
             <div>
-              <div class="font-semibold">
+              <div class="font-semibold flex items-center gap-1">
                 <Icon v-if="lobby.needsPassword" icon="material-symbols:lock" />
                 {{ lobby.name }}
               </div>
             </div>
             <div>{{ lobby.status }}</div>
 
-            <div>
+            <div class="flex items-center gap-2">
               <Icon icon="mdi:user" class="text-3 c-primary" />
               {{ lobby.playerCount }}
             </div>
-            <!-- <NuxtLink
-              v-slot="{ href, navigate }"
-              :to="{ name: 'Lobby', params: { id: lobby._id } }"
-              custom
+            <UiButton
+              :disabled="me.currentLobby && me.currentLobby.id !== lobby.id"
+              class="primary-button"
+              left-icon="fluent-emoji-high-contrast:crossed-swords"
+              :to="{ name: 'Lobby', params: { id: lobby.id } }"
             >
-              <UiButton
-                :disabled="me.currentLobby && me.currentLobby !== lobby._id"
-                class="primary-button"
-                left-icon="fluent-emoji-high-contrast:crossed-swords"
-                :href="
-                  me.currentLobby && me.currentLobby !== lobby._id
-                    ? undefined
-                    : href
-                "
-                @click="navigate"
-              >
-                Join
-              </UiButton>
-            </NuxtLink> -->
+              Join
+            </UiButton>
           </li>
         </ul>
       </section>
-      <aside class="fancy-surface">
+      <aside class="surface">
         <h2>Create a new lobby</h2>
 
         <LobbyForm />
@@ -80,10 +71,6 @@ const { data: lobbies, isLoading } = useAuthedQuery(api.lobbies.list, {});
   height: 100dvh;
   padding-top: var(--size-2);
   padding-inline: var(--size-5);
-
-  @screen lg {
-    padding-block: var(--size-10) var(--size-8);
-  }
 }
 
 h2 {
@@ -93,10 +80,6 @@ h2 {
   display: grid;
   grid-template-columns: 1fr var(--size-14);
   gap: var(--size-3);
-}
-
-aside {
-  padding-inline: var(--size-3);
 }
 
 li {

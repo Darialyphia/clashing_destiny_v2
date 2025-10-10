@@ -2,13 +2,18 @@
 import { useLogout } from './auth/composables/useLogout';
 import { useMe } from './auth/composables/useMe';
 import { useLeaveMatchmaking } from '@/matchmaking/composables';
+import { useAuthedMutation } from '@/auth/composables/useAuth';
 import MatchmakingTimer from './matchmaking/components/MatchmakingTimer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { api } from '@game/api';
 
 const { mutate: logout } = useLogout();
 const { data: me } = useMe();
 const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
   useLeaveMatchmaking();
+const { mutate: leaveLobby, isLoading: isLeavingLobby } = useAuthedMutation(
+  api.lobbies.leave
+);
 </script>
 
 <template>
@@ -33,6 +38,23 @@ const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
           size="sm"
           :isLoading="isLeavingMatchmaking"
           @click="leaveMatchmaking({})"
+        />
+      </div>
+      <div v-if="me?.currentLobby" class="lobby-status">
+        <span class="status-label">In lobby:</span>
+        <RouterLink
+          :to="{ name: 'Lobby', params: { id: me.currentLobby.id } }"
+          class="lobby-name"
+        >
+          {{ me.currentLobby.name }}
+        </RouterLink>
+        <FancyButton
+          text="Leave"
+          variant="error"
+          class="leave-button"
+          size="sm"
+          :isLoading="isLeavingLobby"
+          @click="leaveLobby({ lobbyId: me.currentLobby.id })"
         />
       </div>
     </div>
@@ -86,6 +108,30 @@ const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
   background: hsl(45 100% 50% / 0.1);
   border-radius: var(--radius-1);
   border: 1px solid hsl(45 100% 50% / 0.2);
+}
+
+.lobby-status {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.lobby-name {
+  color: #42d7a8;
+  font-weight: var(--font-weight-6);
+  padding: var(--size-1) var(--size-2);
+  background: hsl(160 100% 50% / 0.1);
+  border-radius: var(--radius-1);
+  border: 1px solid hsl(160 100% 50% / 0.2);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.lobby-name:hover {
+  background: hsl(160 100% 50% / 0.15);
+  border-color: hsl(160 100% 50% / 0.3);
 }
 
 li {
