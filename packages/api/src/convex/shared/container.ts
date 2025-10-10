@@ -99,6 +99,7 @@ import { ChangeLobbyUserRoleUseCase } from '../lobby/usecases/changeLobbyUserRol
 import { StartLobbyUseCase } from '../lobby/usecases/startLobby.usecase';
 import { GetLobbyByIdUseCase } from '../lobby/usecases/getLobbyById.usecase';
 import { GetAllLobbiesUseCase } from '../lobby/usecases/getAllLobbies.usecase';
+import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -285,7 +286,10 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [ChangeLobbyUserRoleUseCase.INJECTION_KEY]: {
       resolver: asClass(ChangeLobbyUserRoleUseCase)
     },
-    [StartLobbyUseCase.INJECTION_KEY]: { resolver: asClass(StartLobbyUseCase) }
+    [StartLobbyUseCase.INJECTION_KEY]: { resolver: asClass(StartLobbyUseCase) },
+    [UpdateLobbyOptionsUseCase.INJECTION_KEY]: {
+      resolver: asClass(UpdateLobbyOptionsUseCase)
+    }
   } as const satisfies DependenciesMap;
 
   return deps;

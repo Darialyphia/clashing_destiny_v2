@@ -8,6 +8,7 @@ import { StartLobbyUseCase } from './lobby/usecases/startLobby.usecase';
 import { GetLobbyByIdUseCase } from './lobby/usecases/getLobbyById.usecase';
 import { GetAllLobbiesUseCase } from './lobby/usecases/getAllLobbies.usecase';
 import { mutationWithContainer, queryWithContainer } from './shared/container';
+import { UpdateLobbyOptionsUseCase } from './lobby/usecases/updateLobbyOptions';
 
 export const create = mutationWithContainer({
   args: {
@@ -120,5 +121,25 @@ export const getAll = queryWithContainer({
     const usecase = ctx.resolve<GetAllLobbiesUseCase>(GetAllLobbiesUseCase.INJECTION_KEY);
 
     return usecase.execute();
+  }
+});
+
+export const updateOptions = mutationWithContainer({
+  args: {
+    lobbyId: v.id('lobbies'),
+    options: v.object({
+      disableTurnTimers: v.boolean(),
+      teachingMode: v.boolean()
+    })
+  },
+  async handler(ctx, args) {
+    const usecase = ctx.resolve<UpdateLobbyOptionsUseCase>(
+      UpdateLobbyOptionsUseCase.INJECTION_KEY
+    );
+
+    return usecase.execute({
+      lobbyId: args.lobbyId,
+      options: args.options
+    });
   }
 });
