@@ -56,7 +56,7 @@ export const leave = mutationWithContainer({
 export const selectDeck = mutationWithContainer({
   args: {
     lobbyId: v.id('lobbies'),
-    deckId: v.id('decks')
+    deckId: v.optional(v.id('decks'))
   },
   async handler(ctx, args) {
     const usecase = ctx.resolve<SelectDeckForLobbyUseCase>(

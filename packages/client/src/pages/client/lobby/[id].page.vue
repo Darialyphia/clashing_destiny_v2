@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
+import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
   api,
   LOBBY_STATUS,
+  LOBBY_USER_ROLES,
   MAX_PLAYERS_PER_LOBBY,
   type LobbyId
 } from '@game/api';
 import { until } from '@vueuse/core';
+import LobbyUserCard from './LobbyUserCard.vue';
+import UiTextInput from '@/ui/components/UiTextInput.vue';
+import UiButton from '@/ui/components/UiButton.vue';
+import UiModal from '@/ui/components/UiModal.vue';
+import LobbyRoleButton from './LobbyRoleButton.vue';
+import LobbyChat from './LobbyChat.vue';
+import LobbyFooter from './LobbyFooter.vue';
 
 definePage({
   name: 'Lobby'
@@ -72,6 +81,7 @@ const password = ref('');
       v-else-if="!myLobbyUser && lobby.needsPassword"
       :is-opened="true"
       title="Protected Lobby"
+      description="This lobby needs a password"
     >
       <p class="mb-5">
         This Lobby is private. Pleas enter the password below to access it.
@@ -85,9 +95,7 @@ const password = ref('');
     </UiModal>
 
     <template v-else-if="lobby">
-      <header>
-        <h1 class="text-5">{{ lobby.name }}</h1>
-      </header>
+      <AuthenticatedHeader />
 
       <section class="surface">
         <div>
@@ -109,6 +117,7 @@ const password = ref('');
               :key="player.id"
               :lobby-user="player"
               :lobby="lobby"
+              :role="LOBBY_USER_ROLES.PLAYER"
             />
           </ul>
 
@@ -124,6 +133,7 @@ const password = ref('');
               :key="spectator.id"
               :lobby-user="spectator"
               :lobby="lobby"
+              :role="LOBBY_USER_ROLES.SPECTATOR"
             />
           </ul>
 
@@ -140,13 +150,10 @@ const password = ref('');
   display: grid;
   grid-template-rows: auto 1fr;
 
-  height: 100dvh;
-  padding-top: var(--size-2);
-  padding-inline: var(--size-5);
+  gap: var(--size-6);
 
-  @screen lg {
-    padding-block: var(--size-8);
-  }
+  height: 100dvh;
+  padding-inline: var(--size-5);
 
   > header {
     padding-block: var(--size-6);
@@ -184,9 +191,5 @@ section {
 
     height: 100%;
   }
-}
-
-.switch-to-spectator:deep(svg) {
-  rotate: 180deg;
 }
 </style>

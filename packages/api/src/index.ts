@@ -13,6 +13,8 @@ export type { GameId } from './convex/game/entities/game.entity';
 export {
   LOBBY_STATUS,
   LOBBY_USER_ROLES,
-  MAX_PLAYERS_PER_LOBBY
+  MAX_PLAYERS_PER_LOBBY,
+  type LobbyUserRole
 } from './convex/lobby/lobby.constants';
 export type { LobbyId } from './convex/lobby/entities/lobby.entity';
+export type { GetLobbyByIdOutput as LobbyDetails } from './convex/lobby/usecases/getLobbyById.usecase';

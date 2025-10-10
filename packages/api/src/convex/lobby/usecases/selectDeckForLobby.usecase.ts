@@ -8,7 +8,7 @@ import type { LobbyUserRepository } from '../repositories/lobbyUser.repository';
 
 export type SelectDeckForLobbyInput = {
   lobbyId: Id<'lobbies'>;
-  deckId: Id<'decks'>;
+  deckId?: Id<'decks'>;
 };
 
 export type SelectDeckForLobbyOutput = {
@@ -31,15 +31,6 @@ export class SelectDeckForLobbyUseCase
   async execute(input: SelectDeckForLobbyInput): Promise<SelectDeckForLobbyOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
-    const deck = await this.ctx.deckRepo.findById(input.deckId);
-    if (!deck) {
-      throw new AppError('Deck not found');
-    }
-
-    if (deck.ownerId !== session.userId) {
-      throw new AppError('You can only select decks that you own');
-    }
-
     const lobbyUser = await this.ctx.lobbyUserRepo.getByLobbyAndUser(
       input.lobbyId,
       session.userId
@@ -51,6 +42,17 @@ export class SelectDeckForLobbyUseCase
 
     if (!lobbyUser.isPlayer) {
       throw new AppError('Only players can select decks for lobbies');
+    }
+
+    if (input.deckId) {
+      const deck = await this.ctx.deckRepo.findById(input.deckId);
+      if (!deck) {
+        throw new AppError('Deck not found');
+      }
+
+      if (deck.ownerId !== session.userId) {
+        throw new AppError('You can only select decks that you own');
+      }
     }
 
     lobbyUser.setDeck(input.deckId);

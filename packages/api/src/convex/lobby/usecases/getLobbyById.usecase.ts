@@ -1,4 +1,3 @@
-import type { UserId } from 'lucia';
 import type { LobbyId } from '../entities/lobby.entity';
 import type { LobbyStatus } from '../lobby.constants';
 import type { LobbyUserId } from '../entities/lobbyUser.entity';
@@ -9,6 +8,7 @@ import type { LobbyReadRepository } from '../repositories/lobby.repository';
 import type { LobbyUserReadRepository } from '../repositories/lobbyUser.repository';
 import type { UserReadRepository } from '../../users/repositories/user.repository';
 import type { GameId } from '../../game/entities/game.entity';
+import type { UserId } from '../../users/entities/user.entity';
 
 export type GetLobbyByIdInput = {
   lobbyId: LobbyId;
