@@ -8,6 +8,7 @@ import { gameSchemas } from './game/game.schemas';
 import { cardSchemas } from './card/card.schema';
 import { friendSchemas } from './friend/friend.schemas';
 import { lobbySchemas } from './lobby/lobby.schemas';
+import { giftSchemas } from './gift/gift.schemas';
 
 export default defineSchema({
   ...authSchemas,
@@ -17,5 +18,6 @@ export default defineSchema({
   ...gameSchemas,
   ...cardSchemas,
   ...friendSchemas,
-  ...lobbySchemas
+  ...lobbySchemas,
+  ...giftSchemas
 });

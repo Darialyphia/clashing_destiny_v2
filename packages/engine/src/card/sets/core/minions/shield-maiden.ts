@@ -20,7 +20,7 @@ export const shieldMaiden: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 6,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   job: HERO_JOBS.WARRIOR,
