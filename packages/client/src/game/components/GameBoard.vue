@@ -30,12 +30,15 @@ import DestinyCostVFX from './DestinyCostVFX.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
-const { clocks } = defineProps<{
+const { clocks, options } = defineProps<{
   clocks?: {
     [playerId: string]: {
       turn: { max: number; remaining: number; isActive: boolean };
       action: { max: number; remaining: number; isActive: boolean };
     };
+  };
+  options: {
+    teachingMode: boolean;
   };
 }>();
 
@@ -218,7 +221,12 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
           </div>
           <div>
             <div class="card-container">
-              <Deck :size="opponentPlayer.remainingCardsInDestinyDeck" />
+              <DestinyDeck
+                v-if="options.teachingMode"
+                :player-id="opponentPlayer.id"
+              />
+
+              <Deck v-else :size="opponentPlayer.remainingCardsInDestinyDeck" />
             </div>
             <div class="text-center">Destiny deck</div>
           </div>
@@ -255,7 +263,10 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
       <section class="p1-destiny flex gap-2 my-2">
         <span>Destiny</span>
         <div class="flex-1">
-          <DestinyZone :player-id="myPlayer.id" />
+          <DestinyZone
+            :player-id="myPlayer.id"
+            :teaching-mode="options.teachingMode"
+          />
         </div>
       </section>
 
@@ -265,14 +276,22 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
       <section class="p2-destiny flex gap-2 my-2">
         <div class="flex-1">
-          <DestinyZone :player-id="opponentPlayer.id" />
+          <DestinyZone
+            :player-id="opponentPlayer.id"
+            :teaching-mode="options.teachingMode"
+          />
         </div>
         <span>Destiny</span>
       </section>
 
       <BattleLog class="battle-log" />
-      <OpponentHand class="opponent-hand" />
-      <Hand class="my-hand" />
+      <Hand
+        v-if="options.teachingMode"
+        class="opponent-hand"
+        :player-id="opponentPlayer.id"
+      />
+      <OpponentHand v-else class="opponent-hand" />
+      <Hand class="my-hand" :player-id="myPlayer.id" />
       <ActionsButtons>
         <template #default>
           <slot name="menu" />
@@ -361,7 +380,8 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 }
 
 .opponent-hand {
-  grid-column: 3;
+  height: calc(var(--card-height) * 0.5 * 2);
+  grid-column: 1 / -1;
   grid-row: 4;
 }
 

@@ -66,6 +66,8 @@ export class UiController {
 
   isHandExpanded = false;
 
+  isOpponentHandExpanded = false;
+
   private cardClickRules: CardClickRule[] = [];
 
   private minionSlotClickRules: MinionSlotClickRule[] = [];

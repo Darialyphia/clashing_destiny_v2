@@ -37,7 +37,12 @@ const getKeyLabel = useKeybordShortcutLabel();
     style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     ref="card"
   >
-    <GameCard :card-id="hero.id" actions-side="bottom" :actions-offset="15" />
+    <GameCard
+      :card-id="hero.id"
+      actions-side="bottom"
+      :actions-offset="15"
+      flipped
+    />
     <div
       class="hero-hp"
       :style="{ '--percentage': (hero.hp! / hero.maxHp!) * 100 }"

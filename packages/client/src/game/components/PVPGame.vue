@@ -48,7 +48,13 @@ socket.value.on('clockUpdate', updatedClocks => {
 </script>
 
 <template>
-  <GameBoard v-if="client.isReady" :clocks="clocks">
+  <GameBoard
+    v-if="client.isReady"
+    :clocks="clocks"
+    :options="{
+      teachingMode: me.currentGame?.options.teachingMode || false
+    }"
+  >
     <template #menu>
       <FancyButton
         text="Surrender"

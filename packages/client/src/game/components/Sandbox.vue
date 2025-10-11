@@ -36,7 +36,12 @@ const allCards = Object.values(CARDS_DICTIONARY).sort((a, b) =>
 </script>
 
 <template>
-  <GameBoard v-if="sandbox.client.value.isReady">
+  <GameBoard
+    v-if="sandbox.client.value.isReady"
+    :options="{
+      teachingMode: true
+    }"
+  >
     <template #menu>
       <RouterLink
         custom

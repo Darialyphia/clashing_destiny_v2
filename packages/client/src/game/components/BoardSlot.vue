@@ -54,6 +54,7 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
         variant="small"
         :card-id="minion.id"
         show-stats
+        flipped
       />
     </InspectableCard>
   </div>

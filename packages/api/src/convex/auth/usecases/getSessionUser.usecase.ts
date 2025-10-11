@@ -30,7 +30,11 @@ export interface GetSessionUserput {
     name: string;
     joinedAt: number;
   }>;
-  currentGame: Nullable<{ id: GameId; status: GameStatus }>;
+  currentGame: Nullable<{
+    id: GameId;
+    status: GameStatus;
+    options: { teachingMode: boolean };
+  }>;
   currentLobby: Nullable<{ id: LobbyId; name: string }>;
 }
 
@@ -73,7 +77,13 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
           }
         : null,
       currentGame: currentGame
-        ? { id: currentGame._id, status: currentGame.status }
+        ? {
+            id: currentGame._id,
+            status: currentGame.status,
+            options: {
+              teachingMode: currentGame.options.teachingMode
+            }
+          }
         : null,
       currentLobby: currentLobby
         ? { id: currentLobby._id, name: currentLobby.name }

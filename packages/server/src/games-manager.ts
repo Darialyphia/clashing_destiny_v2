@@ -62,8 +62,6 @@ export class GamesManager {
     await this.setupRedisState(game.id);
     await this.createRoom(game);
 
-    this.updateRoomStatusIfExists(game.id, game.status);
-
     const room = this.ctx.roomManager.getRoom(game.id);
     console.log('should start game', game.id);
     await room!.start();

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {
+  useBoardSide,
   useFxEvent,
   useGameClient,
   useGameState,
   useGameUi,
-  useMyBoard
+  useMyPlayer
 } from '@/game/composables/useGameClient';
 import GameCard from '@/game/components/GameCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -19,40 +20,65 @@ import { OnClickOutside } from '@vueuse/components';
 import { useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 
+const { playerId } = defineProps<{ playerId: string }>();
+
 const state = useGameState();
-const myBoard = useMyBoard();
+const board = useBoardSide(playerId);
 const ui = useGameUi();
 const { client } = useGameClient();
 
+const myPlayer = useMyPlayer();
+
+const isExpanded = computed({
+  get() {
+    return playerId === myPlayer.value?.id
+      ? ui.value.isHandExpanded
+      : ui.value.isOpponentHandExpanded;
+  },
+  set(v) {
+    if (playerId === myPlayer.value?.id) {
+      ui.value.isHandExpanded = v;
+    } else {
+      ui.value.isOpponentHandExpanded = v;
+    }
+  }
+});
+
+const isMyHand = computed(() => {
+  return playerId === myPlayer.value?.id;
+});
+
 onMounted(() => {
-  if (myBoard.value.playerId === client.value.getActivePlayerId()) {
-    ui.value.isHandExpanded = true;
+  if (!isMyHand.value) return;
+  if (board.value.playerId === client.value.getActivePlayerId()) {
+    isExpanded.value = true;
   }
 });
 useFxEvent(FX_EVENTS.TURN_INITATIVE_CHANGE, e => {
+  if (!isMyHand.value) return;
   nextTick(() => {
-    if (e.newInitiativePlayer === myBoard.value.playerId) {
-      ui.value.isHandExpanded = true;
+    if (e.newInitiativePlayer === board.value.playerId) {
+      isExpanded.value = true;
     }
   });
 });
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
   const newCard = e.card as SerializedCard;
-  if (newCard.player !== myBoard.value.playerId) return;
+  if (newCard.player !== board.value.playerId) return;
 
   // @FIXME this can happen on P1T1, this will probaly go away once mulligan is implemented
-  if (myBoard.value.hand.includes(newCard.id)) return;
+  if (board.value.hand.includes(newCard.id)) return;
 
   if (isDefined(e.index)) {
-    myBoard.value.hand.splice(e.index, 0, newCard.id);
+    board.value.hand.splice(e.index, 0, newCard.id);
   } else {
-    myBoard.value.hand.push(newCard.id);
+    board.value.hand.push(newCard.id);
   }
   await nextTick();
 
   const el = ui.value.DOMSelectors.cardInHand(
     newCard.id,
-    myBoard.value.playerId
+    board.value.playerId
   ).element;
 
   if (el) {
@@ -114,7 +140,7 @@ const cardW = computed(() => {
   );
 });
 
-const handSize = computed(() => myBoard.value.hand.length);
+const handSize = computed(() => board.value.hand.length);
 
 const MAX_FAN_ANGLE = 15;
 const MAX_FAN_SAG = 150;
@@ -151,7 +177,7 @@ const cards = computed(() => {
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
   const offset = (handContainerSize.value.w - usedSpan) / 2;
 
-  return myBoard.value.hand.map((cardId, i) => ({
+  return board.value.hand.map((cardId, i) => ({
     card: state.value.entities[cardId] as CardViewModel,
     x: offset + i * step.value,
     y: yOffset(i),
@@ -163,31 +189,34 @@ const cards = computed(() => {
 watch(
   () => state.value.interaction,
   interaction => {
+    if (!isMyHand.value) return;
+
     const relevantStates: InteractionState[] = [
       INTERACTION_STATES.USING_ABILITY,
       INTERACTION_STATES.PLAYING_CARD
     ];
     if (!relevantStates.includes(interaction.state)) return;
 
-    if (interaction.ctx.player !== myBoard.value.playerId) return;
+    if (interaction.ctx.player !== board.value.playerId) return;
 
-    ui.value.isHandExpanded = true;
+    isExpanded.value = true;
   }
 );
 </script>
 
 <template>
-  <OnClickOutside @trigger="ui.isHandExpanded = false">
+  <OnClickOutside @trigger="isExpanded = false">
     <section
-      :id="`hand-${myBoard.playerId}`"
+      :id="`hand-${board.playerId}`"
       class="hand"
       :class="{
         'ui-hidden': !ui.displayedElements.hand,
         'interaction-active': isInteractionActive,
-        expanded: ui.isHandExpanded
+        expanded: isExpanded,
+        'opponent-hand': !isMyHand
       }"
       :style="{
-        '--hand-size': myBoard.hand.length,
+        '--hand-size': board.hand.length,
         '--hand-offset-y': handOffsetY
       }"
       ref="hand"
@@ -200,7 +229,7 @@ watch(
           selected: ui.selectedCard?.equals(card.card),
           disabled: !card.card.canPlay
         }"
-        :data-keyboard-shortcut="ui.isHandExpanded ? index + 1 : undefined"
+        :data-keyboard-shortcut="isMyHand && isExpanded ? index + 1 : undefined"
         data-keyboard-shortcut-centered="true"
         :style="{
           '--x': `${card.x}px`,
@@ -209,13 +238,13 @@ watch(
           '--angle': `${card.rot}deg`,
           '--keyboard-shortcut-right': '50%'
         }"
-        @click="ui.isHandExpanded = true"
+        @click="isExpanded = true"
       >
         <GameCard
           :card-id="card.card.id"
           actions-side="top"
           :actions-offset="15"
-          :is-interactive="ui.isHandExpanded"
+          :is-interactive="isExpanded && isMyHand"
           show-disabled-message
         />
       </div>
@@ -230,6 +259,10 @@ watch(
   z-index: 1;
   height: 100%;
   width: 30%;
+  &.opponent-hand:not(.expanded) {
+    position: absolute;
+    right: 0;
+  }
   /* background-color: blue; */
   &.expanded {
     left: 50%;
@@ -242,6 +275,7 @@ watch(
 .hand-card {
   position: absolute;
   left: 0;
+
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
   --rot-scale: 0;

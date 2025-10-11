@@ -29,7 +29,8 @@ const {
   isInteractive = true,
   showDisabledMessage = false,
   showStats = false,
-  portalTarget = '#card-actions-portal'
+  portalTarget = '#card-actions-portal',
+  flipped
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -39,6 +40,7 @@ const {
   showDisabledMessage?: boolean;
   showStats?: boolean;
   portalTarget?: string;
+  flipped?: boolean;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -126,7 +128,7 @@ const classes = computed(() => {
       disabled: !card.value.canPlay && card.value.location === 'hand',
       selected: ui.value.selectedCard?.equals(card.value),
       targetable: isTargetable.value,
-      flipped: !myPlayer.value.equals(card.value.player),
+      flipped: flipped && !myPlayer.value.equals(card.value.player),
       'is-attacking': isAttacking.value,
       'is-taking-damage': isTakingDamage.value,
       'is-using-ability': isUsingAbility.value

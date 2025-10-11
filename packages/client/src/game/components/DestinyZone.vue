@@ -11,8 +11,12 @@ import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import SmallCardBack from '@/card/components/SmallCardBack.vue';
 import CountChip from './CountChip.vue';
+import { clamp } from '@game/shared';
 
-const { playerId } = defineProps<{ playerId: string }>();
+const { playerId, teachingMode } = defineProps<{
+  playerId: string;
+  teachingMode: boolean;
+}>();
 
 const boardSide = useBoardSide(computed(() => playerId));
 
@@ -95,6 +99,42 @@ const displayedCards = computed(() => {
     })
   ];
 });
+
+const rootContainerSize = ref({ w: 0, h: 0 });
+useResizeObserver(root, () => {
+  const el = root.value;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  rootContainerSize.value = { w: rect.width, h: rect.height };
+});
+
+const cardW = computed(() => {
+  return parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue(
+      '--card-small-width-unitless'
+    )
+  );
+});
+
+const destinyZoneSize = computed(() => boardSide.value.destinyZone.length);
+const step = computed(() => {
+  if (destinyZoneSize.value <= 1) return 0;
+  const natural =
+    (rootContainerSize.value.w - cardW.value) / (destinyZoneSize.value - 1);
+  return clamp(natural, 0, cardW.value);
+});
+
+const cards = computed(() => {
+  if (destinyZoneSize.value === 0) return [];
+  const usedSpan = cardW.value + (destinyZoneSize.value - 1) * step.value;
+  const offset = (rootContainerSize.value.w - usedSpan) / 2;
+
+  return boardSide.value.destinyZone.map((cardId, i) => ({
+    cardId: cardId,
+    x: offset + i * step.value,
+    z: i
+  }));
+});
 </script>
 
 <template>
@@ -104,9 +144,9 @@ const displayedCards = computed(() => {
     :id="`destiny-zone-${playerId}`"
     :class="{ 'player-2': playerId !== activePlayerId }"
   >
-    <div v-for="(card, index) in displayedCards" :key="card.cardId">
+    <div v-for="(card, index) in cards" :key="card.cardId">
       <InspectableCard
-        v-if="activePlayerId === playerId"
+        v-if="activePlayerId === playerId || teachingMode"
         :card-id="card.cardId"
         side="top"
       >

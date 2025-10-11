@@ -87,8 +87,8 @@ export class Room {
   async shutdown() {
     await this.engine.shutdown();
     this.players.forEach(player => {
-      this.playerClocks.get(player.userId)!.actionClock.shutdown();
-      this.playerClocks.get(player.userId)!.turnClock.shutdown();
+      this.playerClocks.get(player.userId)?.actionClock.shutdown();
+      this.playerClocks.get(player.userId)?.turnClock.shutdown();
     });
   }
 
@@ -150,26 +150,17 @@ export class Room {
         turnClock: new Clock(PLAYER_TURN_CLOCK_TIME),
         actionClock: new Clock(PLAYER_ACTION_CLOCK_TIME)
       };
-      clocks.turnClock.on('tick', remainingTime => {
-        console.log(
-          `[ROOM] Player ${player.userId} turn clock: ${(remainingTime / 1000).toFixed()}s remaining`
-        );
-        this.emitClocks();
-      });
-      clocks.actionClock.on('tick', remainingTime => {
-        console.log(
-          `[ROOM] Player ${player.userId} action clock: ${(remainingTime / 1000).toFixed()}s remaining`
-        );
-        this.emitClocks();
-      });
       this.playerClocks.set(player.userId, clocks);
+
+      clocks.turnClock.on('tick', this.emitClocks.bind(this));
+      clocks.actionClock.on('tick', this.emitClocks.bind(this));
 
       clocks.turnClock.on('timeout', () => {
         clocks.turnClock.stop();
         clocks.actionClock.start();
       });
       clocks.actionClock.on('timeout', async () => {
-        void this.engine.inputSystem.dispatch({
+        await this.engine.inputSystem.dispatch({
           type: 'surrender',
           payload: { playerId: player.userId }
         });
@@ -185,10 +176,10 @@ export class Room {
     });
 
     this.engine.on(GAME_EVENTS.TURN_START, () => {
-      this.stopActivePlayerclock();
       this.options.game.players.forEach(player => {
         this.playerClocks.get(player.userId)!.turnClock.reset();
       });
+      this.stopActivePlayerclock();
       this.startActivePlayerclock();
     });
     this.engine.on(GAME_EVENTS.INPUT_START, () => {
