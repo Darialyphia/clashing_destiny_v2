@@ -103,6 +103,9 @@ import { SetupLobbyGameUseCase } from '../lobby/usecases/setupLobbyGame';
 import { LobbySubscribers } from '../lobby/lobby.subscribers';
 import { DeleteLobbyUseCase } from '../lobby/usecases/deleteLobby.usecase';
 import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions.usecase';
+import { MatchmakingSubscribers } from '../matchmaking/matchmaking.subscribers';
+import { KickFromMatchmakingUseCase } from '../matchmaking/usecases/kickFromMatchmaking.usecase';
+import { KickFromLobbyUseCase } from '../lobby/usecases/kickFromLobby.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -239,6 +242,10 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
       resolver: asClass(LobbySubscribers),
       eager: true
     },
+    [MatchmakingSubscribers.INJECTION_KEY]: {
+      resolver: asClass(MatchmakingSubscribers),
+      eager: true
+    },
     // use cases
     [LoginUseCase.INJECTION_KEY]: { resolver: asClass(LoginUseCase) },
     [LogoutUseCase.INJECTION_KEY]: { resolver: asClass(LogoutUseCase) },
@@ -246,6 +253,9 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [JoinMatchmakingUseCase.INJECTION_KEY]: { resolver: asClass(JoinMatchmakingUseCase) },
     [LeaveMatchmakingUseCase.INJECTION_KEY]: {
       resolver: asClass(LeaveMatchmakingUseCase)
+    },
+    [KickFromMatchmakingUseCase.INJECTION_KEY]: {
+      resolver: asClass(KickFromMatchmakingUseCase)
     },
     [RunMatchmakingUseCase.INJECTION_KEY]: { resolver: asClass(RunMatchmakingUseCase) },
     [CancelGameUseCase.INJECTION_KEY]: { resolver: asClass(CancelGameUseCase) },
@@ -298,7 +308,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
       resolver: asClass(UpdateLobbyOptionsUseCase)
     },
     [SetupLobbyGameUseCase.INJECTION_KEY]: { resolver: asClass(SetupLobbyGameUseCase) },
-    [DeleteLobbyUseCase.INJECTION_KEY]: { resolver: asClass(DeleteLobbyUseCase) }
+    [DeleteLobbyUseCase.INJECTION_KEY]: { resolver: asClass(DeleteLobbyUseCase) },
+    [KickFromLobbyUseCase.INJECTION_KEY]: { resolver: asClass(KickFromLobbyUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

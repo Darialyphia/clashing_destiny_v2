@@ -9,7 +9,7 @@ import {
   queryWithContainer
 } from './shared/container';
 import { GetMatchmakingsUsecase } from './matchmaking/usecases/getMatchmakings.usecase';
-import { GameRepository } from './game/repositories/game.repository';
+import { KickFromMatchmakingUseCase } from './matchmaking/usecases/kickFromMatchmaking.usecase';
 
 export const list = queryWithContainer({
   args: {},
@@ -59,5 +59,16 @@ export const run = internalMutationWithContainer({
     return usecase.execute({
       name: input.name
     });
+  }
+});
+
+export const kick = internalMutationWithContainer({
+  args: { userId: v.id('users') },
+  handler: async (ctx, input) => {
+    const usecase = ctx.resolve<KickFromMatchmakingUseCase>(
+      KickFromMatchmakingUseCase.INJECTION_KEY
+    );
+
+    return usecase.execute({ userId: input.userId });
   }
 });

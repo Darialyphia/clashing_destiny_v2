@@ -49,6 +49,7 @@ export class LeaveLobbyUseCase implements UseCase<LeaveLobbyInput, LeaveLobbyOut
     } else {
       await this.ctx.lobbyUserRepo.delete(lobbyUser.id);
     }
+
     return {
       success: true
     };

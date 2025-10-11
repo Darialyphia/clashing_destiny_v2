@@ -15,6 +15,7 @@ import {
 import { SetupLobbyGameUseCase } from './lobby/usecases/setupLobbyGame';
 import { DeleteLobbyUseCase } from './lobby/usecases/deleteLobby.usecase';
 import { UpdateLobbyOptionsUseCase } from './lobby/usecases/updateLobbyOptions.usecase';
+import { KickFromLobbyUseCase } from './lobby/usecases/kickFromLobby.usecase';
 
 export const create = mutationWithContainer({
   args: {
@@ -174,6 +175,19 @@ export const destroy = internalMutationWithContainer({
 
     return usecase.execute({
       lobbyId: args.lobbyId
+    });
+  }
+});
+
+export const kick = internalMutationWithContainer({
+  args: {
+    userId: v.id('users')
+  },
+  async handler(ctx, args) {
+    const usecase = ctx.resolve<KickFromLobbyUseCase>(KickFromLobbyUseCase.INJECTION_KEY);
+
+    return usecase.execute({
+      userId: args.userId
     });
   }
 });
