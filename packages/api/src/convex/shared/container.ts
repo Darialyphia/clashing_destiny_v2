@@ -99,10 +99,10 @@ import { ChangeLobbyUserRoleUseCase } from '../lobby/usecases/changeLobbyUserRol
 import { StartLobbyUseCase } from '../lobby/usecases/startLobby.usecase';
 import { GetLobbyByIdUseCase } from '../lobby/usecases/getLobbyById.usecase';
 import { GetAllLobbiesUseCase } from '../lobby/usecases/getAllLobbies.usecase';
-import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions';
 import { SetupLobbyGameUseCase } from '../lobby/usecases/setupLobbyGame';
 import { LobbySubscribers } from '../lobby/lobby.subscribers';
 import { DeleteLobbyUseCase } from '../lobby/usecases/deleteLobby.usecase';
+import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;

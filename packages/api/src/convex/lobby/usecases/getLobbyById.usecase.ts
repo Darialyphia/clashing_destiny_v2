@@ -32,6 +32,10 @@ export type GetLobbyByIdOutput = {
     userId: UserId;
     username: string;
   }>;
+  options: {
+    disableTurnTimers: boolean;
+    teachingMode: boolean;
+  };
 };
 
 export class GetLobbyByIdUseCase
@@ -90,7 +94,8 @@ export class GetLobbyByIdUseCase
       gameId: lobby.gameId ?? null,
       status: lobby.status,
       players: playersWithUsernames,
-      spectators: spectatorsWithUsernames
+      spectators: spectatorsWithUsernames,
+      options: lobby.options
     };
   }
 }

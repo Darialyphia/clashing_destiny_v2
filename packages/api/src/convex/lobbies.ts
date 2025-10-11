@@ -12,10 +12,9 @@ import {
   mutationWithContainer,
   queryWithContainer
 } from './shared/container';
-import { UpdateLobbyOptionsUseCase } from './lobby/usecases/updateLobbyOptions';
 import { SetupLobbyGameUseCase } from './lobby/usecases/setupLobbyGame';
-import { internalMutation } from './_generated/server';
 import { DeleteLobbyUseCase } from './lobby/usecases/deleteLobby.usecase';
+import { UpdateLobbyOptionsUseCase } from './lobby/usecases/updateLobbyOptions.usecase';
 
 export const create = mutationWithContainer({
   args: {

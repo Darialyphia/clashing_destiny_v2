@@ -17,6 +17,7 @@ import UiModal from '@/ui/components/UiModal.vue';
 import LobbyRoleButton from './LobbyRoleButton.vue';
 import LobbyChat from './LobbyChat.vue';
 import LobbyFooter from './LobbyFooter.vue';
+import UiSwitch from '@/ui/components/UiSwitch.vue';
 
 definePage({
   name: 'Lobby'
@@ -47,6 +48,8 @@ const isSpectator = computed(() =>
   lobby.value?.spectators.some(u => u.userId === me.value?.id)
 );
 
+const isOwner = computed(() => lobby.value.ownerId === me.value?.id);
+
 const { mutate: join, error: joinError } = useAuthedMutation(
   api.lobbies.join,
   {}
@@ -70,6 +73,39 @@ watchEffect(() => {
 });
 
 const password = ref('');
+
+const { mutate: updateOptions } = useAuthedMutation(
+  api.lobbies.updateOptions,
+  {}
+);
+
+const disableTurnTimers = computed({
+  get: () => lobby.value!.options.disableTurnTimers || false,
+  set: (val: boolean) => {
+    if (!lobby.value) return;
+    updateOptions({
+      lobbyId: lobby.value.id,
+      options: {
+        ...lobby.value.options,
+        disableTurnTimers: val
+      }
+    });
+  }
+});
+
+const teachingMode = computed({
+  get: () => lobby.value!.options.teachingMode || false,
+  set: (val: boolean) => {
+    if (!lobby.value) return;
+    updateOptions({
+      lobbyId: lobby.value.id,
+      options: {
+        ...lobby.value.options,
+        teachingMode: val
+      }
+    });
+  }
+});
 </script>
 
 <template>
@@ -145,6 +181,40 @@ const password = ref('');
               :role="LOBBY_USER_ROLES.SPECTATOR"
             />
           </ul>
+
+          <h2>Options</h2>
+          <div v-if="isOwner" class="grid gap-3 my-3">
+            <label class="flex items-center gap-1">
+              <UiSwitch v-model="disableTurnTimers" />
+              Disable turn timers
+            </label>
+            <p class="text-0">
+              If disabled, players will have as much time as they want to
+              perform actions
+            </p>
+            <label class="flex items-center gap-1">
+              <UiSwitch v-model="teachingMode" />
+              Teaching mode
+            </label>
+            <p class="text-0">
+              If enabled, both players will be able to see each other's hand,
+              destiny zone and destiny deck
+            </p>
+          </div>
+          <div v-else>
+            <p>
+              Turn timers are
+              <strong>
+                {{ lobby.options.disableTurnTimers ? 'disabled' : 'enabled' }}
+              </strong>
+            </p>
+            <p>
+              Teaching mode is
+              <strong>
+                {{ lobby.options.teachingMode ? 'enabled' : 'disabled' }}
+              </strong>
+            </p>
+          </div>
 
           <LobbyFooter :lobby="lobby" />
         </div>
