@@ -56,6 +56,22 @@ export class DeckRepository {
 
     const mainDeckCards = [];
     for (const deckCard of premadeDeck.mainDeck) {
+      const identicalCard = await this.ctx.cardRepo.findIdentitcal(
+        userId,
+        deckCard.blueprintId,
+        deckCard.isFoil
+      );
+
+      if (identicalCard) {
+        identicalCard.addCopies(deckCard.copies);
+        await this.ctx.cardRepo.save(identicalCard);
+        mainDeckCards.push({
+          cardId: identicalCard.id,
+          copies: deckCard.copies
+        });
+        continue;
+      }
+
       const cardId = await this.ctx.cardRepo.create({
         ownerId: userId,
         blueprintId: deckCard.blueprintId,

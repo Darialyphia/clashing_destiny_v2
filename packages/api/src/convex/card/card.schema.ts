@@ -10,4 +10,5 @@ export const cardSchemas = {
   })
     .index('by_blueprint_id', ['blueprintId'])
     .index('by_owner_id', ['ownerId'])
+    .index('by_owner_id_blueprint_id', ['ownerId', 'blueprintId', 'isFoil'])
 };

@@ -39,6 +39,18 @@ export class CardRepository {
     return docs.map(Card.from);
   }
 
+  async findIdentitcal(ownerId: UserId, blueprintId: string, isFoil: boolean) {
+    const docs = await this.ctx.db
+      .query('cards')
+      .withIndex('by_owner_id_blueprint_id', q =>
+        q.eq('ownerId', ownerId).eq('blueprintId', blueprintId).eq('isFoil', isFoil)
+      )
+      .first();
+    if (!docs) return null;
+
+    return Card.from(docs);
+  }
+
   async create(input: {
     ownerId: UserId;
     blueprintId: string;
