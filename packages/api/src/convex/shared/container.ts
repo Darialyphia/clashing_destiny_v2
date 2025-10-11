@@ -106,6 +106,12 @@ import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions.
 import { MatchmakingSubscribers } from '../matchmaking/matchmaking.subscribers';
 import { KickFromMatchmakingUseCase } from '../matchmaking/usecases/kickFromMatchmaking.usecase';
 import { KickFromLobbyUseCase } from '../lobby/usecases/kickFromLobby.usecase';
+import {
+  GiftReadRepository,
+  GiftRepository
+} from '../gift/repositories/gift.repository.clean';
+import { GiftMapper } from '../gift/mappers/gift.mapper';
+import { GiveGiftUseCase } from '../gift/usecases/giveGift.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -160,6 +166,7 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     [LobbyUserReadRepository.INJECTION_KEY]: {
       resolver: asClass(LobbyUserReadRepository)
     },
+    [GiftReadRepository.INJECTION_KEY]: { resolver: asClass(GiftReadRepository) },
     // mappers
     [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
     [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
@@ -222,6 +229,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [LobbyRepository.INJECTION_KEY]: { resolver: asClass(LobbyRepository) },
     [LobbyUserRepository.INJECTION_KEY]: { resolver: asClass(LobbyUserRepository) },
+    [GiftRepository.INJECTION_KEY]: { resolver: asClass(GiftRepository) },
     // mappers
     [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
     [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
@@ -235,6 +243,7 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [LobbyMapper.INJECTION_KEY]: { resolver: asClass(LobbyMapper) },
     [LobbyUserMapper.INJECTION_KEY]: { resolver: asClass(LobbyUserMapper) },
+    [GiftMapper.INJECTION_KEY]: { resolver: asClass(GiftMapper) },
     // subscribers
     [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
     [GameSubscribers.INJECTION_KEY]: { resolver: asClass(GameSubscribers), eager: true },
@@ -309,7 +318,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     },
     [SetupLobbyGameUseCase.INJECTION_KEY]: { resolver: asClass(SetupLobbyGameUseCase) },
     [DeleteLobbyUseCase.INJECTION_KEY]: { resolver: asClass(DeleteLobbyUseCase) },
-    [KickFromLobbyUseCase.INJECTION_KEY]: { resolver: asClass(KickFromLobbyUseCase) }
+    [KickFromLobbyUseCase.INJECTION_KEY]: { resolver: asClass(KickFromLobbyUseCase) },
+    [GiveGiftUseCase.INJECTION_KEY]: { resolver: asClass(GiveGiftUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

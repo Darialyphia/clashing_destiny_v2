@@ -21,6 +21,7 @@ import type * as deck_usecases_grantPremadeDeck from "../deck/usecases/grantPrem
 import type * as decks from "../decks.js";
 import type * as friends from "../friends.js";
 import type * as games from "../games.js";
+import type * as gifts from "../gifts.js";
 import type * as init from "../init.js";
 import type * as lobbies from "../lobbies.js";
 import type * as lobby_usecases_setupLobbyGame from "../lobby/usecases/setupLobbyGame.js";
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   decks: typeof decks;
   friends: typeof friends;
   games: typeof games;
+  gifts: typeof gifts;
   init: typeof init;
   lobbies: typeof lobbies;
   "lobby/usecases/setupLobbyGame": typeof lobby_usecases_setupLobbyGame;
