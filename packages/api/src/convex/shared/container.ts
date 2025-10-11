@@ -112,6 +112,7 @@ import {
 } from '../gift/repositories/gift.repository.clean';
 import { GiftMapper } from '../gift/mappers/gift.mapper';
 import { GiveGiftUseCase } from '../gift/usecases/giveGift.usecase';
+import { ClaimGiftUseCase } from '../gift/usecases/claimGift.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -319,7 +320,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [SetupLobbyGameUseCase.INJECTION_KEY]: { resolver: asClass(SetupLobbyGameUseCase) },
     [DeleteLobbyUseCase.INJECTION_KEY]: { resolver: asClass(DeleteLobbyUseCase) },
     [KickFromLobbyUseCase.INJECTION_KEY]: { resolver: asClass(KickFromLobbyUseCase) },
-    [GiveGiftUseCase.INJECTION_KEY]: { resolver: asClass(GiveGiftUseCase) }
+    [GiveGiftUseCase.INJECTION_KEY]: { resolver: asClass(GiveGiftUseCase) },
+    [ClaimGiftUseCase.INJECTION_KEY]: { resolver: asClass(ClaimGiftUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

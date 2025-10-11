@@ -39,7 +39,7 @@ export class CardRepository {
     return docs.map(Card.from);
   }
 
-  async findIdentitcal(ownerId: UserId, blueprintId: string, isFoil: boolean) {
+  async findIdentical(ownerId: UserId, blueprintId: string, isFoil: boolean) {
     const docs = await this.ctx.db
       .query('cards')
       .withIndex('by_owner_id_blueprint_id', q =>
@@ -57,7 +57,19 @@ export class CardRepository {
     isFoil: boolean;
     copiesOwned: number;
   }) {
-    return this.ctx.db.insert('cards', input);
+    const identicalCard = await this.findIdentical(
+      input.ownerId,
+      input.blueprintId,
+      input.isFoil
+    );
+
+    if (identicalCard) {
+      identicalCard.addCopies(input.copiesOwned);
+      await this.save(identicalCard);
+      return identicalCard.id;
+    } else {
+      return this.ctx.db.insert('cards', input);
+    }
   }
 
   save(card: Card) {

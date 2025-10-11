@@ -46,7 +46,7 @@ export class GiveGiftUseCase implements UseCase<GiveGiftInput, GiveGiftOutput> {
       throw new AppError('Receiver not found');
     }
 
-    if (!input.contents || input.contents.length === 0) {
+    if (input.contents.length === 0) {
       throw new AppError('Gift must have contents');
     }
 

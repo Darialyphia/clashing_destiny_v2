@@ -56,7 +56,7 @@ export class DeckRepository {
 
     const mainDeckCards = [];
     for (const deckCard of premadeDeck.mainDeck) {
-      const identicalCard = await this.ctx.cardRepo.findIdentitcal(
+      const identicalCard = await this.ctx.cardRepo.findIdentical(
         userId,
         deckCard.blueprintId,
         deckCard.isFoil

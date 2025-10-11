@@ -1,5 +1,6 @@
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
+import type { UserId } from '../../users/entities/user.entity';
 import { GIFT_STATES } from '../gift.constants';
 
 export type GiftDoc = Doc<'gifts'>;
@@ -48,6 +49,10 @@ export class Gift extends Entity<GiftId, GiftDoc> {
 
   canBeClaimed(): boolean {
     return this.isIssued();
+  }
+
+  canBeClaimedBy(userId: UserId) {
+    return this.canBeClaimed() && this.receiverId === userId;
   }
 
   canBeRevoked(): boolean {
