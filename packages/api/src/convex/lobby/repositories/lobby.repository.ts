@@ -140,6 +140,10 @@ export class LobbyRepository {
 
   async delete(lobbyId: LobbyId) {
     await this.ctx.db.delete(lobbyId);
+    const lobbyUsers = await this.ctx.lobbyUserRepo.getByLobbyId(lobbyId);
+    for (const lobbyUser of lobbyUsers) {
+      await this.ctx.lobbyUserRepo.delete(lobbyUser.id);
+    }
   }
 
   async getByGameId(gameId: Id<'games'>) {

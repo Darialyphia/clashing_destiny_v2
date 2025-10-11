@@ -14,6 +14,7 @@ import {
 import { Icon } from '@iconify/vue';
 import UiIconButton from '@/ui/components/UiIconButton.vue';
 import UiButton from '@/ui/components/UiButton.vue';
+import LobbyDeckDrawer from './LobbyDeckDrawer.vue';
 
 const { lobbyUser, lobby, role } = defineProps<{
   lobby: LobbyDetails;

@@ -1,7 +1,9 @@
+import type { EventEmitter } from '../../shared/eventEmitter';
 import type { UseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
 import { AppError, DomainError } from '../../utils/error';
-import type { GameId } from '../entities/game.entity';
+import { Game, type GameId } from '../entities/game.entity';
+import { GameEndedEvent } from '../events/gameEnded.event';
 import type { GameRepository } from '../repositories/game.repository';
 
 export type FinishGameInput = {
@@ -19,6 +21,7 @@ export class FinishGameUseCase implements UseCase<FinishGameInput, FinishGameOut
   constructor(
     private ctx: {
       gameRepo: GameRepository;
+      eventEmitter: EventEmitter;
     }
   ) {}
 
@@ -34,7 +37,10 @@ export class FinishGameUseCase implements UseCase<FinishGameInput, FinishGameOut
 
     game.finish(input.winnerId);
     await this.ctx.gameRepo.save(game);
-
+    await this.ctx.eventEmitter.emit(
+      GameEndedEvent.EVENT_NAME,
+      new GameEndedEvent(game.id)
+    );
     return { success: true };
   }
 }

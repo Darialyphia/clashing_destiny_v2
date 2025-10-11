@@ -14,7 +14,11 @@ export const gameSchemas = {
     seed: v.string(),
     status: gamestatusValidator,
     winnerId: v.optional(v.union(v.id('users'), v.null())),
-    cancellationId: v.optional(v.id('_scheduled_functions'))
+    cancellationId: v.optional(v.id('_scheduled_functions')),
+    options: v.object({
+      disableTurnTimers: v.boolean(),
+      teachingMode: v.boolean()
+    })
   }).index('by_status', ['status']),
 
   gamePlayers: defineTable({

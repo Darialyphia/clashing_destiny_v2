@@ -10,7 +10,8 @@ export class GameMapper {
       seed: game.seed,
       status: game.status,
       winnerId: game.winnerId,
-      cancellationId: game.cancellationId
+      cancellationId: game.cancellationId,
+      options: game.options
     };
   }
 }

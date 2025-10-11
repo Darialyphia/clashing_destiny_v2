@@ -71,10 +71,6 @@ export class Lobby extends Entity<LobbyId, LobbyDoc> {
     return this.isWaitingForPlayers;
   }
 
-  canAddMessage(): boolean {
-    return this.isWaitingForPlayers || this.isOngoing;
-  }
-
   canStartGame(): boolean {
     return this.isWaitingForPlayers;
   }
@@ -84,14 +80,6 @@ export class Lobby extends Entity<LobbyId, LobbyDoc> {
       return true;
     }
     return this.data.password === password;
-  }
-
-  addMessage(author: string, text: string): void {
-    if (!this.canAddMessage()) {
-      throw new DomainError('Cannot add message to lobby in current status');
-    }
-
-    this.data.messages.push({ author, text });
   }
 
   startCreatingGame(): void {
@@ -109,15 +97,6 @@ export class Lobby extends Entity<LobbyId, LobbyDoc> {
 
     this.data.gameId = gameId;
     this.data.status = LOBBY_STATUS.ONGOING;
-  }
-
-  endGame(): void {
-    if (!this.isOngoing) {
-      throw new DomainError('Cannot end game for lobby not in ongoing status');
-    }
-
-    this.data.status = LOBBY_STATUS.WAITING_FOR_PLAYERS;
-    this.data.gameId = undefined;
   }
 
   updateOptions(options: Partial<LobbyOptions>): void {

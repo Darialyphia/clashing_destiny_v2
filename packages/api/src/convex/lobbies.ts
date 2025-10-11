@@ -7,8 +7,15 @@ import { ChangeLobbyUserRoleUseCase } from './lobby/usecases/changeLobbyUserRole
 import { StartLobbyUseCase } from './lobby/usecases/startLobby.usecase';
 import { GetLobbyByIdUseCase } from './lobby/usecases/getLobbyById.usecase';
 import { GetAllLobbiesUseCase } from './lobby/usecases/getAllLobbies.usecase';
-import { mutationWithContainer, queryWithContainer } from './shared/container';
+import {
+  internalMutationWithContainer,
+  mutationWithContainer,
+  queryWithContainer
+} from './shared/container';
 import { UpdateLobbyOptionsUseCase } from './lobby/usecases/updateLobbyOptions';
+import { SetupLobbyGameUseCase } from './lobby/usecases/setupLobbyGame';
+import { internalMutation } from './_generated/server';
+import { DeleteLobbyUseCase } from './lobby/usecases/deleteLobby.usecase';
 
 export const create = mutationWithContainer({
   args: {
@@ -140,6 +147,34 @@ export const updateOptions = mutationWithContainer({
     return usecase.execute({
       lobbyId: args.lobbyId,
       options: args.options
+    });
+  }
+});
+
+export const setupLobbyGame = internalMutationWithContainer({
+  args: {
+    lobbyId: v.id('lobbies')
+  },
+  async handler(ctx, args) {
+    const usecase = ctx.resolve<SetupLobbyGameUseCase>(
+      SetupLobbyGameUseCase.INJECTION_KEY
+    );
+
+    return usecase.execute({
+      lobbyId: args.lobbyId
+    });
+  }
+});
+
+export const destroy = internalMutationWithContainer({
+  args: {
+    lobbyId: v.id('lobbies')
+  },
+  async handler(ctx, args) {
+    const usecase = ctx.resolve<DeleteLobbyUseCase>(DeleteLobbyUseCase.INJECTION_KEY);
+
+    return usecase.execute({
+      lobbyId: args.lobbyId
     });
   }
 });

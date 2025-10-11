@@ -8,7 +8,7 @@ export class LobbyUserMapper {
     return {
       _id: lobbyUser.id,
       userId: lobbyUser.userId,
-      decksId: lobbyUser.decksId,
+      deckId: lobbyUser.deckId,
       lobbyId: lobbyUser.lobbyId,
       role: lobbyUser.role
     };

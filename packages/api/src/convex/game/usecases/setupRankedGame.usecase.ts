@@ -17,7 +17,10 @@ export class SetupRankedGameUsecase
   constructor(private ctx: { gameRepo: GameRepository }) {}
 
   async execute(input: SetupRankedGameInput) {
-    const game = await this.ctx.gameRepo.create(input.pair);
+    const game = await this.ctx.gameRepo.create(input.pair, {
+      disableTurnTimers: false,
+      teachingMode: false
+    });
     // await this.ctx.gameRepo.scheduleCancellation(game);
     await this.ctx.gameRepo.save(game);
 

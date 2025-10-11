@@ -121,13 +121,13 @@ export class LobbyUserRepository {
     userId: UserId;
     lobbyId: Id<'lobbies'>;
     role: LobbyUserRole;
-    decksId?: Id<'decks'>;
+    deckId?: Id<'decks'>;
   }) {
     const lobbyUserId = await this.ctx.db.insert('lobbyUsers', {
       userId: data.userId,
       lobbyId: data.lobbyId,
       role: data.role,
-      decksId: data.decksId
+      deckId: data.deckId
     });
 
     const lobbyUser = await this.getById(lobbyUserId);

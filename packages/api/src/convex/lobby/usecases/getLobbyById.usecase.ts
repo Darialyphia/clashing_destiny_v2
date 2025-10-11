@@ -66,7 +66,7 @@ export class GetLobbyByIdUseCase
           id: player._id,
           userId: player.userId,
           username: user?.username || 'Unknown User',
-          deckId: player.decksId
+          deckId: player.deckId
         };
       })
     );

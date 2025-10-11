@@ -41,13 +41,11 @@ export class ChangeLobbyUserRoleUseCase
   async execute(input: ChangeLobbyUserRoleInput): Promise<ChangeLobbyUserRoleOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
-    // Get the lobby
     const lobby = await this.ctx.lobbyRepo.getById(input.lobbyId);
     if (!lobby) {
       throw new AppError('Lobby not found');
     }
 
-    // Get the target lobby user
     const targetLobbyUser = await this.ctx.lobbyUserRepo.getByLobbyAndUser(
       input.lobbyId,
       input.targetUserId
@@ -56,7 +54,6 @@ export class ChangeLobbyUserRoleUseCase
       throw new AppError('Target user is not in this lobby');
     }
 
-    // Get the requesting user's lobby membership
     const requestingLobbyUser = await this.ctx.lobbyUserRepo.getByLobbyAndUser(
       input.lobbyId,
       session.userId
@@ -65,7 +62,6 @@ export class ChangeLobbyUserRoleUseCase
       throw new AppError('You are not in this lobby');
     }
 
-    // Check permissions: owner can change anyone's role, others can only change their own
     const isOwner = lobby.isOwner(session.userId);
     const isChangingSelf = session.userId === input.targetUserId;
 
@@ -75,12 +71,10 @@ export class ChangeLobbyUserRoleUseCase
       );
     }
 
-    // If trying to become a player, check if there's room
     if (
       input.newRole === LOBBY_USER_ROLES.PLAYER &&
       targetLobbyUser.role === LOBBY_USER_ROLES.SPECTATOR
     ) {
-      // Count current players
       const currentPlayers = await this.ctx.lobbyUserRepo.getPlayersByLobbyId(
         input.lobbyId
       );
@@ -92,14 +86,13 @@ export class ChangeLobbyUserRoleUseCase
       }
     }
 
-    // Update the role
     targetLobbyUser.setRole(input.newRole);
-
-    // If changing from player to spectator, clear their deck selection
+    console.log(targetLobbyUser.role, input.newRole);
     if (
       targetLobbyUser.role === LOBBY_USER_ROLES.PLAYER &&
       input.newRole === LOBBY_USER_ROLES.SPECTATOR
     ) {
+      console.log('reset deck');
       targetLobbyUser.setDeck(undefined);
     }
 

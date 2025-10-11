@@ -100,6 +100,9 @@ import { StartLobbyUseCase } from '../lobby/usecases/startLobby.usecase';
 import { GetLobbyByIdUseCase } from '../lobby/usecases/getLobbyById.usecase';
 import { GetAllLobbiesUseCase } from '../lobby/usecases/getAllLobbies.usecase';
 import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions';
+import { SetupLobbyGameUseCase } from '../lobby/usecases/setupLobbyGame';
+import { LobbySubscribers } from '../lobby/lobby.subscribers';
+import { DeleteLobbyUseCase } from '../lobby/usecases/deleteLobby.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -232,6 +235,10 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     // subscribers
     [DeckSubscribers.INJECTION_KEY]: { resolver: asClass(DeckSubscribers), eager: true },
     [GameSubscribers.INJECTION_KEY]: { resolver: asClass(GameSubscribers), eager: true },
+    [LobbySubscribers.INJECTION_KEY]: {
+      resolver: asClass(LobbySubscribers),
+      eager: true
+    },
     // use cases
     [LoginUseCase.INJECTION_KEY]: { resolver: asClass(LoginUseCase) },
     [LogoutUseCase.INJECTION_KEY]: { resolver: asClass(LogoutUseCase) },
@@ -289,7 +296,9 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [StartLobbyUseCase.INJECTION_KEY]: { resolver: asClass(StartLobbyUseCase) },
     [UpdateLobbyOptionsUseCase.INJECTION_KEY]: {
       resolver: asClass(UpdateLobbyOptionsUseCase)
-    }
+    },
+    [SetupLobbyGameUseCase.INJECTION_KEY]: { resolver: asClass(SetupLobbyGameUseCase) },
+    [DeleteLobbyUseCase.INJECTION_KEY]: { resolver: asClass(DeleteLobbyUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

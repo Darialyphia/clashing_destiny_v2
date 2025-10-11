@@ -41,7 +41,7 @@ export const lobbySchemas = {
 
   lobbyUsers: defineTable({
     userId: v.id('users'),
-    decksId: v.optional(v.id('decks')),
+    deckId: v.optional(v.id('decks')),
     lobbyId: v.id('lobbies'),
     role: LOBBY_USER_ROLE_VALIDATOR
   })

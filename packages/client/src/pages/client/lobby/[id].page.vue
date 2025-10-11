@@ -25,7 +25,11 @@ definePage({
 const route = useRoute<'Lobby'>();
 const lobbyId = computed(() => route.params.id as LobbyId);
 const { data: me } = useMe();
-const { data: lobby, isLoading } = useAuthedQuery(
+const {
+  data: lobby,
+  isLoading,
+  error
+} = useAuthedQuery(
   api.lobbies.byId,
   computed(() => ({
     lobbyId: lobbyId.value
@@ -70,11 +74,16 @@ const password = ref('');
 
 <template>
   <div class="page container" style="--container-size: var(--size-xl)">
+    <div v-if="isLoading" class="loader">Loading lobby...</div>
+
     <div
-      v-if="isLoading || (!myLobbyUser && !lobby.needsPassword)"
-      class="loader"
+      v-else-if="error"
+      class="h-screen flex flex-col items-center justify-center"
     >
-      Loading lobby...
+      <p class="c-red-6">{{ (error as any).data }}</p>
+      <UiButton class="error-button" :to="{ name: 'Lobbies' }">
+        Return to lobbies list
+      </UiButton>
     </div>
 
     <UiModal

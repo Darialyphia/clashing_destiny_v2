@@ -23,6 +23,7 @@ import type * as friends from "../friends.js";
 import type * as games from "../games.js";
 import type * as init from "../init.js";
 import type * as lobbies from "../lobbies.js";
+import type * as lobby_usecases_setupLobbyGame from "../lobby/usecases/setupLobbyGame.js";
 import type * as lobby_usecases_updateLobbyOptions from "../lobby/usecases/updateLobbyOptions.js";
 import type * as matchmaking from "../matchmaking.js";
 import type * as ping from "../ping.js";
@@ -55,6 +56,7 @@ declare const fullApi: ApiFromModules<{
   games: typeof games;
   init: typeof init;
   lobbies: typeof lobbies;
+  "lobby/usecases/setupLobbyGame": typeof lobby_usecases_setupLobbyGame;
   "lobby/usecases/updateLobbyOptions": typeof lobby_usecases_updateLobbyOptions;
   matchmaking: typeof matchmaking;
   ping: typeof ping;

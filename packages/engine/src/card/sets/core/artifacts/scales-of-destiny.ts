@@ -24,8 +24,7 @@ export const scalesOfDestiny: ArtifactBlueprint = {
   job: null,
   spellSchool: null,
   durability: 2,
-  subKind: ARTIFACT_KINDS.WEAPON,
-  atkBonus: 1,
+  subKind: ARTIFACT_KINDS.RELIC,
   abilities: [
     {
       id: 'scales-of-destiny-ability',

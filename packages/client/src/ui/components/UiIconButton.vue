@@ -2,6 +2,7 @@
 import type { StyleProp } from '../ui-utils';
 import type { ButtonProps, ButtonStyleVariables } from './UiButton.vue';
 import { Icon } from '@iconify/vue';
+import UiButton from './UiButton.vue';
 
 type IconButtonStyleVariables =
   | '--ui-icon-button-size'

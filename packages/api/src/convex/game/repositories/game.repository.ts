@@ -83,10 +83,14 @@ export class GameRepository {
     return this.buildEntity(gameDoc);
   }
 
-  async create(players: Array<{ userId: UserId; deckId: DeckId }>) {
+  async create(
+    players: Array<{ userId: UserId; deckId: DeckId }>,
+    options: GameDoc['options']
+  ) {
     const gameId = await this.ctx.db.insert('games', {
       seed: `${Date.now()}`,
-      status: GAME_STATUS.WAITING_FOR_PLAYERS
+      status: GAME_STATUS.WAITING_FOR_PLAYERS,
+      options
     });
 
     for (const player of players) {

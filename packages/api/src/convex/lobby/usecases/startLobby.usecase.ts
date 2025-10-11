@@ -6,6 +6,8 @@ import type { Id } from '../../_generated/dataModel';
 import { MAX_PLAYERS_PER_LOBBY } from '../lobby.constants';
 import type { LobbyRepository } from '../repositories/lobby.repository';
 import type { LobbyUserRepository } from '../repositories/lobbyUser.repository';
+import type { EventEmitter } from '../../shared/eventEmitter';
+import { LobbyGameStartedEvent } from '../events/lobbyGameStarted.event';
 
 export type StartLobbyInput = {
   lobbyId: Id<'lobbies'>;
@@ -23,6 +25,7 @@ export class StartLobbyUseCase implements UseCase<StartLobbyInput, StartLobbyOut
       lobbyRepo: LobbyRepository;
       lobbyUserRepo: LobbyUserRepository;
       session: AuthSession | null;
+      eventEmitter: EventEmitter;
     }
   ) {}
 
@@ -50,7 +53,7 @@ export class StartLobbyUseCase implements UseCase<StartLobbyInput, StartLobbyOut
       );
     }
 
-    const playersWithoutDecks = players.filter(player => !player.decksId);
+    const playersWithoutDecks = players.filter(player => !player.deckId);
     if (playersWithoutDecks.length > 0) {
       throw new AppError(
         'Cannot start game. All players must select their decks before starting'
@@ -60,6 +63,10 @@ export class StartLobbyUseCase implements UseCase<StartLobbyInput, StartLobbyOut
     lobby.startCreatingGame();
 
     await this.ctx.lobbyRepo.save(lobby);
+    await this.ctx.eventEmitter.emit(
+      LobbyGameStartedEvent.EVENT_NAME,
+      new LobbyGameStartedEvent(lobby.id)
+    );
 
     return { success: true };
   }

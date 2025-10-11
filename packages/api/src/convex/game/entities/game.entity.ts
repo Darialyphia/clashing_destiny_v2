@@ -34,6 +34,10 @@ export class Game extends Entity<GameId, GameData> {
     return this.data.game.winnerId;
   }
 
+  get options() {
+    return { ...this.data.game.options };
+  }
+
   hasPlayer(userId: UserId) {
     return this.data.players.some(player => player.userId === userId);
   }
@@ -77,5 +81,12 @@ export class Game extends Entity<GameId, GameData> {
     }
     this.data.game.status = GAME_STATUS.FINISHED;
     this.data.game.winnerId = winnerId;
+  }
+
+  setOptions(options: Partial<GameDoc['options']>) {
+    this.data.game.options = {
+      ...this.data.game.options,
+      ...options
+    };
   }
 }

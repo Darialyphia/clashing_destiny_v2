@@ -11,8 +11,8 @@ export class LobbyUser extends Entity<LobbyUserId, LobbyUserDoc> {
     return this.data.userId;
   }
 
-  get decksId() {
-    return this.data.decksId;
+  get deckId() {
+    return this.data.deckId;
   }
 
   get lobbyId() {
@@ -36,7 +36,7 @@ export class LobbyUser extends Entity<LobbyUserId, LobbyUserDoc> {
   }
 
   setDeck(deckId?: Id<'decks'>): void {
-    this.data.decksId = deckId;
+    this.data.deckId = deckId;
   }
 
   setRole(role: (typeof LOBBY_USER_ROLES)[keyof typeof LOBBY_USER_ROLES]): void {
