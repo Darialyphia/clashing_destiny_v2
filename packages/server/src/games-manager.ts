@@ -112,12 +112,18 @@ export class GamesManager {
       console.log('Room already exists for game', game.id);
       return;
     }
+
+    const gameInfos = await this.ctx.convexHttpClient.query(api.games.infosById, {
+      gameId: game.id
+    });
+
     await this.ctx.roomManager.createRoom(game.id, {
       initialState: gameOptions!,
       game: {
         id: game.id,
         status: game.status,
-        players: game.players.map(p => ({ userId: p.userId }))
+        players: game.players.map(p => ({ userId: p.userId })),
+        options: gameInfos.options
       }
     });
   }

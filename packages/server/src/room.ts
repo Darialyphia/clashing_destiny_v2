@@ -8,7 +8,15 @@ import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { Clock } from './clock';
 
 export type RoomOptions = {
-  game: { id: GameId; status: GameStatus; players: Array<{ userId: string }> };
+  game: {
+    id: GameId;
+    status: GameStatus;
+    players: Array<{ userId: string }>;
+    options: {
+      disableTurnTimers: boolean;
+      teachingMode: boolean;
+    };
+  };
   initialState: GameOptions;
 };
 
@@ -58,6 +66,14 @@ export class Room {
     private options: RoomOptions
   ) {
     this.engine = new Game(this.options.initialState);
+  }
+
+  get disableTurnTimers() {
+    return this.options.game.options.disableTurnTimers;
+  }
+
+  get teachingMode() {
+    return this.options.game.options.teachingMode;
   }
 
   get on() {
@@ -113,6 +129,22 @@ export class Room {
       const winnerId = event.data.winners.length > 1 ? null : event.data.winners[0].id;
       await this.emitter.emit(ROOM_EVENTS.GAME_OVER, { winnerId });
     });
+
+    this.players.forEach(player => {
+      this.handlePlayerSubscription(player.socket);
+    });
+
+    this.spectators.forEach(spectatorSocket => {
+      this.handleSpectatorSubscription(spectatorSocket);
+    });
+
+    if (!this.disableTurnTimers) {
+      this.handleClocks();
+      this.startActivePlayerclock();
+    }
+  }
+
+  private handleClocks() {
     this.options.game.players.forEach(player => {
       const clocks = {
         turnClock: new Clock(PLAYER_TURN_CLOCK_TIME),
@@ -162,15 +194,6 @@ export class Room {
     this.engine.on(GAME_EVENTS.INPUT_START, () => {
       this.stopActivePlayerclock();
     });
-
-    this.players.forEach(player => {
-      this.handlePlayerSubscription(player.socket);
-    });
-    this.spectators.forEach(spectatorSocket => {
-      this.handleSpectatorSubscription(spectatorSocket);
-    });
-
-    this.startActivePlayerclock();
   }
 
   private emitClocks() {
@@ -217,9 +240,16 @@ export class Room {
       history: this.engine.inputSystem.serialize()
     });
 
-    this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
-      playerSocket.emit('gameSnapshot', snapshot);
-    });
+    if (this.teachingMode) {
+      this.engine.subscribeOmniscient(snapshot => {
+        playerSocket.emit('gameSnapshot', snapshot);
+      });
+      return;
+    } else {
+      this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
+        playerSocket.emit('gameSnapshot', snapshot);
+      });
+    }
 
     playerSocket.on('gameInput', async (input: SerializedInput) => {
       input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating

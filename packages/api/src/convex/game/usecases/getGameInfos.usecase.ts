@@ -31,6 +31,10 @@ export type GetGameInfosOutput = {
       };
     };
   }>;
+  options: {
+    disableTurnTimers: boolean;
+    teachingMode: boolean;
+  };
 };
 export class GetGameInfosUseCase
   implements UseCase<GetGameInfosInput, GetGameInfosOutput>
@@ -57,7 +61,8 @@ export class GetGameInfosUseCase
       seed: game.seed,
       players: playersWithUserAndDeck,
       winnerId: game.winnerId,
-      status: game.status
+      status: game.status,
+      options: game.options
     };
   }
 
