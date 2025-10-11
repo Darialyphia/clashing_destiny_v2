@@ -79,7 +79,8 @@ export const useTutorial = (options: UseTutorialOptions) => {
     networkAdapter,
     fxAdapter,
     gameType: 'online',
-    playerId: 'p1'
+    playerId: 'p1',
+    isSpectator: false
   });
 
   const currentStep = ref<TutorialStep | null>(null);

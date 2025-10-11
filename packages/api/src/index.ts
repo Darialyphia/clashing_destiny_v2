@@ -18,3 +18,4 @@ export {
 } from './convex/lobby/lobby.constants';
 export type { LobbyId } from './convex/lobby/entities/lobby.entity';
 export type { GetLobbyByIdOutput as LobbyDetails } from './convex/lobby/usecases/getLobbyById.usecase';
+export { type GetGameInfosOutput as GameInfos } from './convex/game/usecases/getGameInfos.usecase';

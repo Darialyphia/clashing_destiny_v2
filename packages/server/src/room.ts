@@ -302,11 +302,12 @@ export class Room {
   }
 
   private async joinAsSpectator(socket: IoSocket) {
-    const canSpectate = this.options.game.players.some(
-      p => p.userId === socket.data.user.id
+    const canSpectate = this.options.game.players.every(
+      p => p.userId !== socket.data.user.id
     );
     if (!canSpectate) {
-      throw new Error('Players cannot join as spectators');
+      console.log('User is a player, cannot spectate');
+      return;
     }
     await socket.join(this.id);
     this.spectators.add(socket);

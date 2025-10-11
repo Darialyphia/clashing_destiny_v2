@@ -57,7 +57,8 @@ export const useSandbox = (
     networkAdapter,
     fxAdapter,
     gameType: 'local',
-    playerId: 'p1'
+    playerId: 'p1',
+    isSpectator: false
   });
 
   client.value.onUpdateCompleted(() => {

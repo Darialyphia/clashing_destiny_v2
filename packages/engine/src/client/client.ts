@@ -61,6 +61,7 @@ export type GameClientOptions = {
   fxAdapter: FxAdapter;
   gameType: GameType;
   playerId: string;
+  isSpectator: boolean;
 };
 
 export class GameClient {
@@ -99,6 +100,8 @@ export class GameClient {
     updateCompleted: GameStateSnapshot<SnapshotDiff>;
   }>('sequential');
 
+  readonly isSpectator: boolean = false;
+
   constructor(options: GameClientOptions) {
     this.networkAdapter = options.networkAdapter;
     this.fxAdapter = options.fxAdapter;
@@ -106,6 +109,7 @@ export class GameClient {
     this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.playerId = options.playerId;
+    this.isSpectator = options.isSpectator;
 
     this.networkAdapter.subscribe(async snapshot => {
       console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
@@ -282,6 +286,8 @@ export class GameClient {
   }
 
   dispatch(input: SerializedInput) {
+    if (this.isSpectator) return;
+
     this.history.push(input);
     return this.networkAdapter.dispatch(input);
   }

@@ -24,7 +24,7 @@ const RECT_PADDING = 15;
 </script>
 
 <template>
-  <GameBoard v-if="client.isReady" />
+  <GameBoard v-if="client.isReady" :options="{ teachingMode: false }" />
   <div
     class="highlight"
     v-if="client.ui.highlightedElement"

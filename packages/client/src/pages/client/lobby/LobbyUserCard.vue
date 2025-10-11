@@ -61,7 +61,7 @@ const isLoadoutDrawerOpened = ref(false);
         />
       </template>
       <UiButton
-        v-else
+        v-else-if="role === LOBBY_USER_ROLES.PLAYER"
         class="primary-button"
         @click="isLoadoutDrawerOpened = true"
       >

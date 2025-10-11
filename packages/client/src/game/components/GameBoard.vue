@@ -51,7 +51,6 @@ const opponentPlayer = useOpponentPlayer();
 // useBoardResize(board);
 
 useGameKeyboardControls();
-
 const myClock = computed(() => clocks?.[myPlayer.value.id]);
 const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 </script>
@@ -64,7 +63,12 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
   <CombatArrows />
 
   <div class="board-perspective-wrapper">
-    <div class="board" id="board" ref="board">
+    <div
+      class="board"
+      id="board"
+      ref="board"
+      :class="{ 'teaching-mode': options.teachingMode }"
+    >
       <div class="my-clock" v-if="myClock">
         <div
           class="turn-clock"
@@ -380,9 +384,13 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 }
 
 .opponent-hand {
-  height: calc(var(--card-height) * 0.5 * 2);
-  grid-column: 1 / -1;
+  grid-column: 3;
   grid-row: 4;
+
+  .teaching-mode & {
+    height: calc(var(--card-height) * 0.5 * 2);
+    grid-column: 1 / -1;
+  }
 }
 
 .hero-slot {

@@ -106,6 +106,14 @@ const teachingMode = computed({
     });
   }
 });
+
+const router = useRouter();
+watchEffect(() => {
+  if (!isSpectator.value) return;
+  if (lobby.value?.gameId && lobby.value?.status === LOBBY_STATUS.ONGOING) {
+    router.push({ name: 'WatchGame', params: { id: lobby.value.gameId } });
+  }
+});
 </script>
 
 <template>

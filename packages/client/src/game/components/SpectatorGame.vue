@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import type { NetworkAdapter } from '@game/engine/src/client/client';
-import { useGameSocket } from '../composables/useGameSocket';
 import { provideGameClient } from '../composables/useGameClient';
 import { useFxAdapter } from '../composables/useFxAdapter';
-import { useMe } from '@/auth/composables/useMe';
 import GameBoard from './GameBoard.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import type { GameInfos } from '@game/api';
+import { useSpectatorSocket } from '../composables/useSpectatorSocket';
 
-const { data: me } = useMe();
-const socket = useGameSocket();
+const { game } = defineProps<{ game: GameInfos }>();
+
+const socket = useSpectatorSocket(game.id);
 const networkAdapter: NetworkAdapter = {
-  dispatch: input => {
-    socket.value.emit('gameInput', input);
-  },
+  dispatch: () => {},
   subscribe(cb) {
     socket.value.on('gameSnapshot', cb);
   },
@@ -28,8 +27,8 @@ const { client } = provideGameClient({
   networkAdapter,
   fxAdapter,
   gameType: 'online',
-  playerId: me.value!.id,
-  isSpectator: false
+  playerId: game.players[0].user.id,
+  isSpectator: true
 });
 
 socket.value.on('gameInitialState', async state => {
@@ -53,7 +52,7 @@ socket.value.on('clockUpdate', updatedClocks => {
     v-if="client.isReady"
     :clocks="clocks"
     :options="{
-      teachingMode: me.currentGame?.options.teachingMode || false
+      teachingMode: true
     }"
   >
     <template #menu>

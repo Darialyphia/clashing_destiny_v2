@@ -63,7 +63,6 @@ export const useBoardSide = (playerId: MaybeRef<string>) => {
 
 export const useMyBoard = () => {
   const { client, playerId } = useGameClient();
-
   return computed(() => {
     return client.value.state.board.sides.find(
       side => side.playerId === playerId.value
