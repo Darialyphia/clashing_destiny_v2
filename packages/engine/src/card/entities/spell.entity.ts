@@ -64,6 +64,8 @@ export class SpellCard extends Card<
 
   get isCorrectSpellSchool() {
     if (!this.blueprint.spellSchool) return true;
+    if (this.shouldIgnorespellSchoolRequirements) return true;
+
     return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
   }
 

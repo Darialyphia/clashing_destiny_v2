@@ -52,6 +52,7 @@ export type CardInterceptors = {
   canBeRecollected: Interceptable<boolean>;
   speed: Interceptable<CardSpeed>;
   deckSource: Interceptable<CardDeckSource>;
+  shouldIgnorespellSchoolRequirements: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -64,7 +65,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   canBeUsedAsManaCost: new Interceptable(),
   canBeRecollected: new Interceptable(),
   speed: new Interceptable(),
-  deckSource: new Interceptable()
+  deckSource: new Interceptable(),
+  shouldIgnorespellSchoolRequirements: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -162,6 +164,10 @@ export abstract class Card<
 
   get isExhausted() {
     return this._isExhausted;
+  }
+
+  get shouldIgnorespellSchoolRequirements() {
+    return this.interceptors.shouldIgnorespellSchoolRequirements.getValue(false, {});
   }
 
   get location() {

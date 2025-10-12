@@ -10,6 +10,7 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
+import type { SpellCard } from '../../../entities/spell.entity';
 
 export const spellTwist: SpellBlueprint = {
   id: 'spell-twist',
@@ -31,5 +32,15 @@ export const spellTwist: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
-  async onPlay(game, card) {}
+  async onPlay(game, card) {
+    const lastOpponentSpell = card.player.opponent.cardTracker.getLastCardPlayedByKind(
+      CARD_KINDS.SPELL,
+      card.player.opponent
+    );
+    if (!lastOpponentSpell) return;
+    const copiedCard = await card.player.generateCard<SpellCard>(
+      lastOpponentSpell.card.blueprintId
+    );
+    await copiedCard.addToHand();
+  }
 };

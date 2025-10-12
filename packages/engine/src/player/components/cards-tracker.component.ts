@@ -77,4 +77,24 @@ export class CardTrackerComponent {
     }
     return cards;
   }
+
+  getLastCardPlayedByKind<
+    TKind extends CardKind,
+    TCard extends AnyCard & { kind: TKind } = AnyCard & { kind: TKind }
+  >(kind: TKind, player: Player) {
+    // Iterate through turns in reverse order to find the most recent card
+    for (let turn = this.game.turnSystem.elapsedTurns; turn >= 0; turn--) {
+      const turnCards = this.cardsPlayedByGameTurn.get(turn);
+      if (turnCards) {
+        // Search in reverse order within the turn to get the last played card
+        for (let i = turnCards.length - 1; i >= 0; i--) {
+          const playedCard = turnCards[i];
+          if (playedCard.card.kind === kind && playedCard.player.equals(player)) {
+            return playedCard as PlayedCard<TCard>;
+          }
+        }
+      }
+    }
+    return null;
+  }
 }
