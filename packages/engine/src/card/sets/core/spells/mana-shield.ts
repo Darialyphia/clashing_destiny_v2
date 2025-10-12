@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
@@ -10,16 +11,19 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  RARITIES
+  RARITIES,
+  HERO_JOBS
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job-affinity.modifier';
 
 export const manaShield: SpellBlueprint = {
   id: 'mana-shield',
   name: 'Mana Shield',
   cardIconId: 'spells/mana-shield',
-  description:
-    'The next time target ally takes damage this turn, negate 1 + Hero level of that damage. Draw a card into your Destiny zone.',
+  description: dedent`
+  The next time target ally takes damage this turn, negate 1 + Hero level of that damage. 
+  @Mage Affinity@ : Draw a card into your Destiny zone.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -38,7 +42,9 @@ export const manaShield: SpellBlueprint = {
       card
     });
   },
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new HeroJobAffinityModifier(game, card, HERO_JOBS.MAGE));
+  },
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
     await target.modifiers.add(
@@ -66,6 +72,9 @@ export const manaShield: SpellBlueprint = {
       })
     );
 
-    await card.player.cardManager.drawIntoDestinyZone(1);
+    const heroMod = card.modifiers.get(HeroJobAffinityModifier);
+    if (heroMod?.isActive) {
+      await card.player.cardManager.drawIntoDestinyZone(1);
+    }
   }
 };
