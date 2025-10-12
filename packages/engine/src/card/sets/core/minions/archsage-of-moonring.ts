@@ -1,0 +1,59 @@
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { AbilityDamage } from '../../../../utils/damage';
+import type { MinionBlueprint } from '../../../card-blueprint';
+import { singleEnemyTargetRules } from '../../../card-utils';
+import {
+  CARD_DECK_SOURCES,
+  CARD_KINDS,
+  CARD_SETS,
+  CARD_SPEED,
+  RARITIES
+} from '../../../card.enums';
+
+export const archsageOfMoonring: MinionBlueprint = {
+  id: 'archsage-of-moonring',
+  name: 'Archsage of Moonring',
+  cardIconId: 'minions/archsage-of-moonring',
+  description: `@On Enter@: Deal damage to an enemy. Repeat this for every spell you played this turn.`,
+  collectable: true,
+  unique: false,
+  manaCost: 1,
+  speed: CARD_SPEED.SLOW,
+  atk: 2,
+  maxHp: 2,
+  rarity: RARITIES.COMMON,
+  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
+  kind: CARD_KINDS.MINION,
+  job: null,
+  spellSchool: null,
+  setId: CARD_SETS.CORE,
+  abilities: [],
+  tags: [],
+  canPlay: () => true,
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          let count = 0;
+          const max = card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(
+            CARD_KINDS.SPELL
+          ).length;
+          while (count < max + 1) {
+            const [target] = await singleEnemyTargetRules.getPreResponseTargets(
+              game,
+              card,
+              {
+                type: 'card',
+                card
+              }
+            );
+
+            await target.takeDamage(card, new AbilityDamage(1));
+            count++;
+          }
+        }
+      })
+    );
+  },
+  async onPlay() {}
+};

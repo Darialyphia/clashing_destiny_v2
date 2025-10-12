@@ -49,6 +49,12 @@ import { dualCasting } from './core/spells/dual-casting';
 import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
 import { arcaneRay } from './core/spells/arcane-ray';
 import { arcaneConduit } from './core/minions/arcane-conduit';
+import { shiftingCurrents } from './core/spells/shifting-currents';
+import { archsageOfMoonring } from './core/minions/archsage-of-moonring';
+import { magicInsight } from './core/spells/magic-insight';
+import { fatedSeer } from './core/minions/fated-seer';
+import { temporalRecollection } from './core/spells/temporal-recollection';
+import { ceruleanWaveDisciple } from './core/minions/cerulean-wave-disciple';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -102,6 +108,12 @@ export const coreSet: CardSet = {
     dualCasting,
     thirstForKnowledge,
     arcaneRay,
-    arcaneConduit
+    arcaneConduit,
+    shiftingCurrents,
+    archsageOfMoonring,
+    magicInsight,
+    fatedSeer,
+    temporalRecollection,
+    ceruleanWaveDisciple
   ]
 };
