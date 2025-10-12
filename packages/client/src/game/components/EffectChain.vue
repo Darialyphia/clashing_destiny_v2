@@ -11,7 +11,7 @@ import { match } from 'ts-pattern';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import { EFFECT_TYPE } from '@game/engine/src/game/effect-chain';
+import { EFFECT_TYPE } from '@game/engine/src/game/game.enums';
 
 const { playerId } = useGameClient();
 const ui = useGameUi();

@@ -42,6 +42,13 @@ import { reposition } from './core/spells/reposition';
 import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
 import { sunburst } from './core/spells/sunburst';
 import { arbitersMaul } from './core/artifacts/arbiters-maul';
+import { innerfire } from './core/spells/inner-fire';
+import { erinaLv1 } from './core/heroes/erina-lv1';
+import { erinaLv2 } from './core/heroes/erina-lv2';
+import { dualCasting } from './core/spells/dual-casting';
+import { thirstForKnowledge } from './core/spells/thirst-for-knowledge';
+import { arcaneRay } from './core/spells/arcane-ray';
+import { arcaneConduit } from './core/minions/arcane-conduit';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -76,6 +83,8 @@ export const coreSet: CardSet = {
     angelOfRetribution,
     phoenix,
     sigilOfImmortalFlame,
+    erinaLv1,
+    erinaLv2,
     erinaLv3,
     stalwartVanguard,
     ironWall,
@@ -88,6 +97,11 @@ export const coreSet: CardSet = {
     scalesOfDestiny,
     manaWisp,
     bastionGuard,
-    HolyCrusader
+    HolyCrusader,
+    innerfire,
+    dualCasting,
+    thirstForKnowledge,
+    arcaneRay,
+    arcaneConduit
   ]
 };

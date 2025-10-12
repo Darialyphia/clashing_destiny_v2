@@ -1,6 +1,11 @@
+import dedent from 'dedent';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
+import {
+  isMinion,
+  multipleEnemyTargetRules,
+  singleEnemyTargetRules
+} from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -11,37 +16,39 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const fireBolt: SpellBlueprint = {
-  id: 'fire-bolt',
-  name: 'Fire Bolt',
-  cardIconId: 'spells/fire-bolt',
-  description:
-    'Deal 1 damage to target enemy. If the target is a minion, deal 1 damage to the enemy Hero.',
+export const dualCasting: SpellBlueprint = {
+  id: 'dual-casting',
+  name: 'Dual Casting',
+  cardIconId: 'spells/dual-casting',
+  description: dedent`
+  Deal 1 damage to 2 enemy targets.
+  `,
   collectable: true,
   unique: false,
   manaCost: 1,
   speed: CARD_SPEED.FAST,
-  spellSchool: SPELL_SCHOOLS.FIRE,
+  spellSchool: SPELL_SCHOOLS.ARCANE,
   job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  canPlay: singleEnemyTargetRules.canPlay,
+  canPlay: multipleEnemyTargetRules.canPlay(2),
   getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
+    return multipleEnemyTargetRules.getPreResponseTargets({
+      min: 2,
+      max: 2,
+      allowRepeat: false
+    })(game, card, {
       type: 'card',
       card
     });
   },
   async onInit() {},
   async onPlay(game, card, targets) {
-    const target = targets[0] as MinionCard;
-    await target.takeDamage(card, new SpellDamage(1));
-    if (isMinion(target)) {
-      const enemyHero = target.player.hero;
-      await enemyHero.takeDamage(card, new SpellDamage(1));
+    for (const target of targets as MinionCard[]) {
+      await target.takeDamage(card, new SpellDamage(1));
     }
   }
 };

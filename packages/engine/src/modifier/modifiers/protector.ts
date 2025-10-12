@@ -1,18 +1,14 @@
 import { KEYWORDS } from '../../card/card-keywords';
-import { CARD_SPEED } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
-import { GrantAbilityModifierMixin } from '../mixins/grant-ability.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { BetterExtract } from '@game/shared';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../game/game.events';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
-import { AbilityDamage, Damage, DAMAGE_TYPES } from '../../utils/damage';
+import { AbilityDamage, DAMAGE_TYPES } from '../../utils/damage';
 import { CardEffectTriggeredEvent } from '../../card/card.events';
 
 export class ProtectorModifier extends Modifier<MinionCard> {
@@ -24,7 +20,7 @@ export class ProtectorModifier extends Modifier<MinionCard> {
     super(KEYWORDS.PROTECTOR.id, game, source, {
       name: KEYWORDS.PROTECTOR.name,
       description: KEYWORDS.PROTECTOR.description,
-      icon: 'keyword-protector',
+      icon: 'keyword-provoke',
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.PROTECTOR),

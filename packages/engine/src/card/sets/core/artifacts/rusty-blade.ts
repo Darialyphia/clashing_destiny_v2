@@ -34,7 +34,7 @@ export const rustyBlade: ArtifactBlueprint = {
     {
       id: 'rusty-blade-ability',
       label: '@[exhaust]@ : Grant hero Attack',
-      description: `-1@[durability]@ @[exhaust]@ : This turn, your hero gain @[attack]@ equal to this card's Attack bonus.`,
+      description: `-1@[durability]@ @[exhaust]@ : @Equip Weapon@.`,
       manaCost: 0,
       shouldExhaust: true,
       speed: CARD_SPEED.FLASH,

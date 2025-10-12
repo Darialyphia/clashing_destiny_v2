@@ -147,7 +147,7 @@ export class CardManagerComponent {
   }
 
   async draw(amount: number) {
-    if (this.isHandFull) return;
+    if (this.isHandFull) return [];
 
     const amountToDraw = Math.min(
       amount,
@@ -155,7 +155,7 @@ export class CardManagerComponent {
       this.options.maxHandSize - this.hand.length
     );
 
-    if (amountToDraw <= 0) return;
+    if (amountToDraw <= 0) return [];
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_DRAW,
       new PlayerDrawEvent({
@@ -176,6 +176,8 @@ export class CardManagerComponent {
         amount: amountToDraw
       })
     );
+
+    return cards;
   }
 
   async drawIntoDestinyZone(amount: number) {

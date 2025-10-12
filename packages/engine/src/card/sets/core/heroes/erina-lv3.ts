@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEmptyAllySlot } from '../../../card-utils';
+import { isMinion, isSpell, singleEmptyAllySlot } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -16,6 +16,9 @@ import { Modifier } from '../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
 import { SimpleMinionStatsModifier } from '../../../../modifier/modifiers/simple-minion-stats.modifier';
+import { EchoModifier } from '../../../../modifier/modifiers/echo.modifier';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../game/game.events';
 
 export const erinaLv3: HeroBlueprint = {
   id: 'erina-lv3',
@@ -30,7 +33,7 @@ export const erinaLv3: HeroBlueprint = {
   level: 3,
   destinyCost: 3,
   speed: CARD_SPEED.SLOW,
-  jobs: [HERO_JOBS.MAGE],
+  jobs: [HERO_JOBS.MAGE, HERO_JOBS.SAGE],
   spellSchools: [SPELL_SCHOOLS.WATER, SPELL_SCHOOLS.AIR, SPELL_SCHOOLS.ARCANE],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
@@ -45,27 +48,18 @@ export const erinaLv3: HeroBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const BUFF_ID = 'aiden-lv3-aura';
-
     await card.modifiers.add(
-      new Modifier<HeroCard>('aiden-lv3', game, card, {
+      new Modifier('erina-lv3-aura', game, card, {
         mixins: [
           new AuraModifierMixin(game, {
             isElligible(candidate) {
-              if (card.location !== 'board') return false;
-              return isMinion(candidate) && candidate.isAlly(card);
+              return candidate.isAlly(card) && isSpell(candidate);
             },
             async onGainAura(candidate) {
-              await candidate.modifiers.add(
-                new SimpleMinionStatsModifier(BUFF_ID, game, card, {
-                  name: 'Aiden, Justicebringer',
-                  attackAmount: 1,
-                  healthAmount: 1
-                })
-              );
+              await candidate.modifiers.add(new EchoModifier(game, card));
             },
-            onLoseAura(candidate) {
-              return candidate.modifiers.remove(BUFF_ID);
+            async onLoseAura(candidate) {
+              await candidate.modifiers.remove(EchoModifier);
             }
           })
         ]
@@ -73,42 +67,24 @@ export const erinaLv3: HeroBlueprint = {
     );
 
     await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        handler: async () => {
-          if (!singleEmptyAllySlot.canPlay(game, card)) return;
+      new Modifier<HeroCard>('erina-lv3-spellwatch', game, card, {
+        mixins: [
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            handler: async event => {
+              if (!event.data.card.player.equals(card.player)) return;
+              if (!isSpell(event.data.card)) return;
+              const spellCountThisTurn =
+                card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(
+                  CARD_KINDS.SPELL
+                ).length;
 
-          const [minionToSummon] = await game.interaction.chooseCards<MinionCard>({
-            player: card.player,
-            label: 'Choose a Warrior minion that costs 2 or less to summon',
-            minChoiceCount: 0,
-            maxChoiceCount: 1,
-            choices: card.player.cardManager.mainDeck.cards.filter(c => {
-              if (!isMinion(c)) return false;
-              if (c.manaCost > 2) return false;
-              if (c.job !== HERO_JOBS.WARRIOR) return false;
-              return true;
-            })
-          });
-
-          if (!minionToSummon) return;
-
-          const [slot] = await game.interaction.selectMinionSlot({
-            player: card.player,
-            isElligible: position =>
-              position.player.equals(card.player) &&
-              !card.player.boardSide.getSlot(position.zone, position.slot)?.isOccupied,
-            canCommit(selectedSlots) {
-              return selectedSlots.length === 1;
-            },
-            isDone(selectedSlots) {
-              return selectedSlots.length === 1;
+              if (spellCountThisTurn > 0 && spellCountThisTurn % 3 === 0) {
+                await card.player.cardManager.draw(1);
+              }
             }
-          });
-
-          minionToSummon.removeFromCurrentLocation();
-          await minionToSummon.playAt(slot);
-          await minionToSummon.exhaust();
-        }
+          })
+        ]
       })
     );
   },

@@ -5,6 +5,8 @@ import { useGameUi, useMaybeEntity } from '../composables/useGameClient';
 import { useMinionSlot } from '../composables/useMinionSlot';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
+import { gameStateRef } from '../composables/gameStateRef';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const { boardSlot: minionSlot } = defineProps<{
   boardSlot: SerializedBoardSlot;
@@ -17,6 +19,14 @@ const { player, isHighlighted, isSelected } = useMinionSlot(
 );
 
 const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
+
+const visibleModifiers = gameStateRef(() => {
+  return (
+    minion.value?.modifiers.filter(
+      modifier => modifier.icon && modifier.stacks > 0
+    ) ?? []
+  );
+});
 </script>
 
 <template>
@@ -49,12 +59,29 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
       side="left"
       :side-offset="50"
     >
-      <GameCard
-        class="minion-clickable-area"
-        variant="small"
-        :card-id="minion.id"
-        show-stats
-      />
+      <div class="relative">
+        <GameCard variant="small" :card-id="minion.id" show-stats />
+        <div class="modifiers">
+          <UiSimpleTooltip
+            v-for="modifier in visibleModifiers"
+            :key="modifier.id"
+            use-portal
+            side="left"
+          >
+            <template #trigger>
+              <div
+                :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+                :alt="modifier.name"
+                :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
+                class="modifier"
+              />
+            </template>
+
+            <div class="font-7">{{ modifier.name }}</div>
+            {{ modifier.description }}
+          </UiSimpleTooltip>
+        </div>
+      </div>
     </InspectableCard>
   </div>
 </template>
@@ -80,6 +107,34 @@ const minion = useMaybeEntity<CardViewModel>(computed(() => minionSlot.minion));
   &.selected {
     background: url('/assets/ui/board-small-card-slot-selected.png') no-repeat
       center;
+  }
+}
+
+.modifiers {
+  position: absolute;
+  top: var(--size-2);
+  left: var(--size-2);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--size-2);
+  --pixel-scale: 2;
+}
+
+.modifier {
+  width: 24px;
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center center;
+  background-size: cover;
+  pointer-events: auto;
+  position: relative;
+  &::after {
+    content: attr(data-stacks);
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    font-size: var(--font-size-2);
+    color: white;
+    -webkit-text-stroke: 1px black;
   }
 }
 </style>

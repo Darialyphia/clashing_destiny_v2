@@ -113,6 +113,12 @@ export const KEYWORDS = {
       'When you play this card, add a Fleeting copy of it to your hand without Echo.',
     aliases: []
   },
+  EFFICIENCY: {
+    id: 'efficiency',
+    name: 'Efficiency',
+    description: 'This card costs X less to play where X is your Hero level.',
+    aliases: [/efficiency \([0-9]+\)/]
+  },
   PROTECTOR: {
     id: 'protector',
     name: 'Protector',
@@ -289,11 +295,10 @@ export const KEYWORDS = {
       'This unit cannot be targeted by attacks as long as it is not exhausted.',
     aliases: []
   },
-  PREEMPTIVE_RETALIATION: {
-    id: 'preemptive-retaliation',
-    name: 'Preemptive Retaliation',
-    description:
-      'When this minion is attacked and retaliates, it deals damage before the attacker.',
+  EQUIP_WEAPON: {
+    id: 'equip-weapon',
+    name: 'Equip Weapon',
+    description: "This turn, your hero gains attack equal to this card's Attack bonus",
     aliases: []
   }
 };
