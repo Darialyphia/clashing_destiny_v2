@@ -180,7 +180,10 @@ export abstract class Card<
 
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
-      return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
+      return Math.max(
+        0,
+        this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0
+      );
     }
     return 0;
   }
