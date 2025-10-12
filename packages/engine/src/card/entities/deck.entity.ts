@@ -98,7 +98,7 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
   }
 
   pluck(card: TCard) {
-    this.cards = this.cards.filter(c => c !== card);
+    this.cards = this.cards.filter(c => !c.equals(card));
     return card;
   }
 }

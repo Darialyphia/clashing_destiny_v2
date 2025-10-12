@@ -57,7 +57,8 @@ export const EFFECT_CHAIN_EVENTS = {
   EFFECT_CHAIN_PLAYER_PASSED: 'player-passed',
   EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED: 'effect-before-resolved',
   EFFECT_CHAIN_AFTER_EFFECT_RESOLVED: 'effect-after-resolved',
-  EFFECT_CHAIN_RESOLVED: 'chain-resolved'
+  EFFECT_CHAIN_AFTER_RESOLVED: 'chain-rafter-esolved',
+  EFFECT_CHAIN_BEFORE_RESOLVED: 'chain-before-resolved'
 } as const;
 
 export type EffectChainEventMap = {
@@ -66,7 +67,8 @@ export type EffectChainEventMap = {
   [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_PLAYER_PASSED]: ChainPassedEvent;
   [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED]: ChainEffectResolvedEvent;
   [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED]: ChainEffectResolvedEvent;
-  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_RESOLVED]: ChainEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_RESOLVED]: ChainEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED]: ChainEvent;
 };
 
 export class EffectChain
@@ -154,6 +156,10 @@ export class EffectChain
   }
 
   private async resolveEffects() {
+    await this.game.emit(
+      EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_RESOLVED,
+      new ChainEvent({})
+    );
     while (this.effectStack.length > 0) {
       const effect = this.effectStack.pop();
       if (effect) {
@@ -174,7 +180,10 @@ export class EffectChain
         );
       }
     }
-    await this.game.emit(EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_RESOLVED, new ChainEvent({}));
+    await this.game.emit(
+      EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED,
+      new ChainEvent({})
+    );
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.END);
   }
 

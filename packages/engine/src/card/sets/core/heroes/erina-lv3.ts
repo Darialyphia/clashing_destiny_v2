@@ -19,6 +19,7 @@ import { SimpleMinionStatsModifier } from '../../../../modifier/modifiers/simple
 import { EchoModifier } from '../../../../modifier/modifiers/echo.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const erinaLv3: HeroBlueprint = {
   id: 'erina-lv3',
@@ -69,6 +70,7 @@ export const erinaLv3: HeroBlueprint = {
     await card.modifiers.add(
       new Modifier<HeroCard>('erina-lv3-spellwatch', game, card, {
         mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             handler: async event => {

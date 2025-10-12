@@ -292,10 +292,11 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
       <Hand
         v-if="options.teachingMode"
         class="opponent-hand"
+        :key="opponentPlayer.id"
         :player-id="opponentPlayer.id"
       />
       <OpponentHand v-else class="opponent-hand" />
-      <Hand class="my-hand" :player-id="myPlayer.id" />
+      <Hand class="my-hand" :player-id="myPlayer.id" :key="myPlayer.id" />
       <ActionsButtons>
         <template #default>
           <slot name="menu" />

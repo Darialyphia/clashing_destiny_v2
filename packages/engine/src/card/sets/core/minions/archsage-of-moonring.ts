@@ -7,6 +7,7 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
+  HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
 
@@ -17,14 +18,14 @@ export const archsageOfMoonring: MinionBlueprint = {
   description: `@On Enter@: Deal damage to an enemy. Repeat this for every spell you played this turn.`,
   collectable: true,
   unique: false,
-  manaCost: 1,
+  manaCost: 4,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
-  maxHp: 2,
+  atk: 1,
+  maxHp: 5,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
-  job: null,
+  job: HERO_JOBS.MAGE,
   spellSchool: null,
   setId: CARD_SETS.CORE,
   abilities: [],

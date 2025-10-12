@@ -55,6 +55,7 @@ import { magicInsight } from './core/spells/magic-insight';
 import { fatedSeer } from './core/minions/fated-seer';
 import { temporalRecollection } from './core/spells/temporal-recollection';
 import { ceruleanWaveDisciple } from './core/minions/cerulean-wave-disciple';
+import { navalaSurgingCatalyst } from './core/minions/navala-surging-catalyst';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -114,6 +115,7 @@ export const coreSet: CardSet = {
     magicInsight,
     fatedSeer,
     temporalRecollection,
-    ceruleanWaveDisciple
+    ceruleanWaveDisciple,
+    navalaSurgingCatalyst
   ]
 };

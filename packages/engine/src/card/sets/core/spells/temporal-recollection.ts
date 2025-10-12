@@ -27,7 +27,7 @@ export const temporalRecollection: SpellBlueprint = {
   unique: false,
   manaCost: 3,
   speed: CARD_SPEED.FAST,
-  spellSchool: SPELL_SCHOOLS.FIRE,
+  spellSchool: SPELL_SCHOOLS.ARCANE,
   job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -42,7 +42,11 @@ export const temporalRecollection: SpellBlueprint = {
   async onPlay(game, card) {
     const cardsPlayedLastTurn = card.player.cardTracker
       .getCardsPlayedOnGameTurn(game.turnSystem.elapsedTurns - 1)
-      .filter(c => c.player.equals(card.player));
+      .filter(
+        c =>
+          c.player.equals(card.player) &&
+          c.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK
+      );
 
     const levelMod = card.modifiers.get(LevelBonusModifier);
 

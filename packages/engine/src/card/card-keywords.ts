@@ -110,7 +110,7 @@ export const KEYWORDS = {
     id: 'echo',
     name: 'Echo',
     description:
-      'When you play this card, add a Fleeting copy of it to your hand without Echo.',
+      'When you play this card, add it to your hand as a Fleeting copy of it without Echo.',
     aliases: []
   },
   EFFICIENCY: {

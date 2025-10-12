@@ -218,6 +218,19 @@
         },
         {
           "alias": [
+            "archsage-of-moonring.png"
+          ],
+          "src": [
+            "/assets/cards/minions/archsage-of-moonring.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "bastion-guard.png"
           ],
           "src": [
@@ -231,10 +244,36 @@
         },
         {
           "alias": [
+            "cerulean-wave-disciple.png"
+          ],
+          "src": [
+            "/assets/cards/minions/cerulean-wave-disciple.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "courageous-footsoldier.png"
           ],
           "src": [
             "/assets/cards/minions/courageous-footsoldier.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fated-seer.png"
+          ],
+          "src": [
+            "/assets/cards/minions/fated-seer.png"
           ],
           "data": {
             "tags": {
@@ -326,6 +365,19 @@
           ],
           "src": [
             "/assets/cards/minions/mana-wisp.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "navala-surging-catalyst.png"
+          ],
+          "src": [
+            "/assets/cards/minions/navala-surging-catalyst.png"
           ],
           "data": {
             "tags": {
@@ -727,6 +779,19 @@
         },
         {
           "alias": [
+            "magic-insight.png"
+          ],
+          "src": [
+            "/assets/cards/spells/magic-insight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "mana-jewel.png"
           ],
           "src": [
@@ -779,6 +844,19 @@
         },
         {
           "alias": [
+            "shifting-currents.png"
+          ],
+          "src": [
+            "/assets/cards/spells/shifting-currents.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "slimes-to-the-rescue.png"
           ],
           "src": [
@@ -796,6 +874,19 @@
           ],
           "src": [
             "/assets/cards/spells/sunburst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "temporal-recollection.png"
+          ],
+          "src": [
+            "/assets/cards/spells/temporal-recollection.png"
           ],
           "data": {
             "tags": {
