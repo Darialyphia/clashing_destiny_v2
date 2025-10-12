@@ -1,5 +1,4 @@
-import { GAME_PHASES } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import type { GameClient } from '../client';
 import type { CardClickRule } from '../controllers/ui-controller';
 import type { CardViewModel } from '../view-models/card.model';

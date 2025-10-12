@@ -14,9 +14,8 @@ import {
 } from './card.entity';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { GAME_EVENTS } from '../../game/game.events';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASE_EVENTS, GAME_PHASES } from '../../game/game.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 
 export type SerializedSigilCard = SerializedCard & {
@@ -74,7 +73,7 @@ export class SigilCard extends Card<
       this.abilities.push(new Ability<SigilCard>(this.game, this, ability));
     });
 
-    this.game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async ({ data }) => {
+    this.game.on(GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE, async ({ data }) => {
       if (data.to.state !== GAME_PHASES.MAIN || data.from !== GAME_PHASES.DRAW) return;
       if (!this.shouldDecreaseCountdownOnMainPhaseStart) return;
       if (!isDefined(this.countdown)) return;

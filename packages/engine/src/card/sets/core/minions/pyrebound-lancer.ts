@@ -8,9 +8,7 @@ import {
   RARITIES,
   SPELL_SCHOOLS
 } from '../../../card.enums';
-import { fireBolt } from '../spells/fire-bolt';
 import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
-import { OnHitModifier } from '../../../../modifier/modifiers/on-hit.modifier';
 import { SpellSchoolAffinityModifier } from '../../../../modifier/modifiers/spell-school-affinity.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
@@ -22,7 +20,7 @@ export const pyreboundLancer: MinionBlueprint = {
   cardIconId: 'minions/pyrebound-lancer',
   description: dedent`
   @Piercing@.
-  @Fire Affinity@: @On Kill@ : for each target hit, add a @${fireBolt.name}@ to your hand.
+  @Fire Affinity@: @On Kill@ : for each target hit, add a @Fire Bolt@ to your hand.
   `,
   collectable: true,
   unique: false,
@@ -50,7 +48,7 @@ export const pyreboundLancer: MinionBlueprint = {
         handler: async event => {
           const count = event.data.affectedCards.length;
           for (let i = 0; i < count; i++) {
-            const spell = await card.player.generateCard(fireBolt.id);
+            const spell = await card.player.generateCard('fire-bolt');
             await card.player.cardManager.addToHand(spell);
           }
         },

@@ -10,9 +10,7 @@ import {
   SPELL_SCHOOLS
 } from '../../../card.enums';
 import type { SpellCard } from '../../../entities/spell.entity';
-import { fireball } from '../spells/fireball';
 import type { SigilCard } from '../../../entities/sigil.entity';
-import { sigilOfImmortalFlame } from '../sigils/sigil-of-immortal-flame';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 
 export const phoenix: MinionBlueprint = {
@@ -20,10 +18,10 @@ export const phoenix: MinionBlueprint = {
   name: 'Phoenix',
   cardIconId: 'minions/phoenix',
   description: dedent`
-  @On Enter@ : Put a @${fireball.name}@ in your hand.
-  @On Death@: Play a @${sigilOfImmortalFlame.name}@ on this space.
+  @On Enter@ : Put a @Fireball@ in your hand.
+  @On Death@: Play a @Sigil of Immortal Flame@ on this space.
   `,
-  collectable: true,
+  collectable: false,
   unique: false,
   manaCost: 5,
   atk: 4,
@@ -42,7 +40,7 @@ export const phoenix: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const createdCard = await card.player.generateCard<SpellCard>(fireball.id);
+          const createdCard = await card.player.generateCard<SpellCard>('fireball');
           await createdCard.addToHand();
         }
       })
@@ -52,7 +50,7 @@ export const phoenix: MinionBlueprint = {
       new OnDeathModifier(game, card, {
         handler: async (event, modifier, position) => {
           const createdCard = await card.player.generateCard<SigilCard>(
-            sigilOfImmortalFlame.id
+            'sigil-of-immortal-flame'
           );
           await createdCard.playImmediatelyAt(position);
         }

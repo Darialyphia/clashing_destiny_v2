@@ -43,14 +43,3 @@ export abstract class Entity<TI extends Record<string, Interceptable<any, any>>>
     await this.onInterceptorRemoved(key);
   }
 }
-
-export abstract class EntityWithModifiers<
-  TI extends Record<string, Interceptable<any, any>>
-> extends Entity<TI> {
-  modifiers: ModifierManager<this>;
-
-  constructor(id: string, interceptables: TI) {
-    super(id, interceptables);
-    this.modifiers = new ModifierManager(this);
-  }
-}

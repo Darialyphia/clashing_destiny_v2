@@ -6,14 +6,13 @@ import {
   type PreResponseTarget,
   type SerializedAbility
 } from '../card-blueprint';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { EFFECT_TYPE, GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { EFFECT_TYPE } from '../../game/effect-chain';
 import { CARD_SPEED } from '../card.enums';
 import type { SigilCard } from './sigil.entity';
 

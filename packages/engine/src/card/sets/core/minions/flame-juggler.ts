@@ -9,14 +9,13 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { SpellCard } from '../../../entities/spell.entity';
-import { fireBolt } from '../spells/fire-bolt';
 
 export const flameJuggler: MinionBlueprint = {
   id: 'flame-juggler',
   name: 'Flame Juggler',
   cardIconId: 'minions/flame-juggler',
   description: dedent`
-  @On Enter@ : Put a @${fireBolt.name}@ in your hand.
+  @On Enter@ : Put a @Fire Bolt@ in your hand.
   `,
   collectable: true,
   unique: false,
@@ -37,7 +36,7 @@ export const flameJuggler: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const createdCard = await card.player.generateCard<SpellCard>(fireBolt.id);
+          const createdCard = await card.player.generateCard<SpellCard>('fire-bolt');
           await createdCard.addToHand();
         }
       })

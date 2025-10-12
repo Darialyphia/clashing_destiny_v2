@@ -4,6 +4,7 @@
     "src/**/*.ts",
     "__test__/**/*.ts",
     "tsup.config.ts",
+    "src/scripts/**/*.ts"
   ],
   "exclude": [".git", "node_modules"],
   "compilerOptions": {

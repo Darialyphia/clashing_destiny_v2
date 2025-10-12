@@ -1,5 +1,5 @@
 import type { Override } from '@game/shared';
-import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
@@ -11,7 +11,6 @@ import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
 import { SelectMinionslotAction } from '../actions/select-minion-slot';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';

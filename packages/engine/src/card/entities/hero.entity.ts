@@ -26,7 +26,7 @@ import { AnywhereAttackRange, type AttackRange } from '../attack-range';
 import type { MinionCard } from './minion.entity';
 import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
 import { CardDeclarePlayEvent } from '../card.events';
-import { CorruptedGamephaseContextError } from '../../game/systems/game-phase.system';
+import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];

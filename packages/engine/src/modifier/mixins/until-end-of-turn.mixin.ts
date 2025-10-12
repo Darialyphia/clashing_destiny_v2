@@ -1,5 +1,5 @@
 import { Game } from '../../game/game';
-import { GAME_EVENTS } from '../../game/game.events';
+import { TURN_EVENTS } from '../../game/game.enums';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier, ModifierTarget } from '../modifier.entity';
 
@@ -19,11 +19,11 @@ export class UntilEndOfTurnModifierMixin<
 
   onApplied(target: T, modifier: Modifier<T>): void {
     this.modifier = modifier;
-    this.game.once(GAME_EVENTS.TURN_END, this.onTurnEnd);
+    this.game.once(TURN_EVENTS.TURN_END, this.onTurnEnd);
   }
 
   onRemoved(): void {
-    this.game.off(GAME_EVENTS.TURN_END, this.onTurnEnd);
+    this.game.off(TURN_EVENTS.TURN_END, this.onTurnEnd);
   }
 
   onReapplied(): void {}

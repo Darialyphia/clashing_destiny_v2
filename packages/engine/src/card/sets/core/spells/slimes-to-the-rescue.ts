@@ -9,7 +9,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { friendlySlime } from '../minions/friendlySlime';
 import type { BoardPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { InterceptModifier } from '../../../../modifier/modifiers/intercept.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
@@ -20,7 +19,7 @@ export const slimesToTheRescue: SpellBlueprint = {
   cardIconId: 'spells/slimes-to-the-rescue',
   description: dedent`
   You can only play this card if your opponent controls more minions than you.
-  Summon 2 ${friendlySlime.name} and give them @Intercept@ this turn.
+  Summon 2 @Friendly Slime@ and give them @Intercept@ this turn.
   `,
   collectable: true,
   unique: false,
@@ -45,7 +44,7 @@ export const slimesToTheRescue: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card, targets) {
     for (const target of targets as BoardPosition[]) {
-      const slime = await card.player.generateCard<MinionCard>(friendlySlime.id);
+      const slime = await card.player.generateCard<MinionCard>('friendly-slime');
       await slime.playImmediatelyAt(target);
       await slime.modifiers.add(
         new InterceptModifier(game, slime, {

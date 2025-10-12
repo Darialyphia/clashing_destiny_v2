@@ -1,8 +1,13 @@
 import { v } from 'convex/values';
 import { GIFT_CONTENTS_VALIDATOR, GIFT_SOURCE_VALIDATOR } from './gift/gift.schemas';
 import { GiveGiftUseCase } from './gift/usecases/giveGift.usecase';
-import { internalMutationWithContainer, mutationWithContainer } from './shared/container';
+import {
+  internalMutationWithContainer,
+  mutationWithContainer,
+  queryWithContainer
+} from './shared/container';
 import { ClaimGiftUseCase } from './gift/usecases/claimGift.usecase';
+import { GetMyGiftsUseCase } from './gift/usecases/getMyGifts.usecase';
 
 export const give = internalMutationWithContainer({
   args: {
@@ -33,5 +38,14 @@ export const claim = mutationWithContainer({
     return usecase.execute({
       giftId: input.giftId
     });
+  }
+});
+
+export const list = queryWithContainer({
+  args: {},
+  handler: async ctx => {
+    const usecase = ctx.resolve<GetMyGiftsUseCase>(GetMyGiftsUseCase.INJECTION_KEY);
+
+    return usecase.execute();
   }
 });

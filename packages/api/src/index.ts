@@ -19,3 +19,9 @@ export {
 export type { LobbyId } from './convex/lobby/entities/lobby.entity';
 export type { GetLobbyByIdOutput as LobbyDetails } from './convex/lobby/usecases/getLobbyById.usecase';
 export { type GetGameInfosOutput as GameInfos } from './convex/game/usecases/getGameInfos.usecase';
+export {
+  GIFT_KINDS,
+  type GiftKind,
+  GIFT_STATES,
+  type GiftState
+} from './convex/gift/gift.constants';

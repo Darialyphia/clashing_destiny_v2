@@ -1,33 +1,4 @@
-import { amuletOfRemembrance } from '@game/engine/src/card/sets/core/artifacts/amulet-of-remembrance';
-import { arbitersMaul } from '@game/engine/src/card/sets/core/artifacts/arbiters-maul';
-import { manaJewel } from '@game/engine/src/card/sets/core/artifacts/mana-jewel';
-import { rustyBlade } from '@game/engine/src/card/sets/core/artifacts/rusty-blade';
-import { scalesOfDestiny } from '@game/engine/src/card/sets/core/artifacts/scales-of-destiny';
-import { unyieldingShield } from '@game/engine/src/card/sets/core/artifacts/unyielding-shield';
-import { aidenLv1 } from '@game/engine/src/card/sets/core/heroes/aiden-lv1';
-import { aidenLv2 } from '@game/engine/src/card/sets/core/heroes/aiden-lv2';
-import { aidenLv3 } from '@game/engine/src/card/sets/core/heroes/aiden-lv3';
-import { angelOfRetribution } from '@game/engine/src/card/sets/core/minions/angel-of-retribution';
-import { bastionGuard } from '@game/engine/src/card/sets/core/minions/bastion-guard';
-import { courageousFootsoldier } from '@game/engine/src/card/sets/core/minions/courageous-footsoldier';
-import { flagBearerOfFlame } from '@game/engine/src/card/sets/core/minions/flag-bearer-of-flame';
-import { friendlySlime } from '@game/engine/src/card/sets/core/minions/friendlySlime';
-import { hotHeadedRecruit } from '@game/engine/src/card/sets/core/minions/hot-headed-recruit';
-import { hougenThePunisher } from '@game/engine/src/card/sets/core/minions/hougen-the-punisher';
-import { pyreboundLancer } from '@game/engine/src/card/sets/core/minions/pyrebound-lancer';
-import { radiantCelestial } from '@game/engine/src/card/sets/core/minions/radiant-celestial';
-import { royalGuard } from '@game/engine/src/card/sets/core/minions/royal-guard';
-import { sharpShooter } from '@game/engine/src/card/sets/core/minions/sharpshooter';
-import { shieldMaiden } from '@game/engine/src/card/sets/core/minions/shield-maiden';
-import { stalwartVanguard } from '@game/engine/src/card/sets/core/minions/stalwart-vanguard';
-import { blindingLight } from '@game/engine/src/card/sets/core/spells/blinding-light';
-import { fireball } from '@game/engine/src/card/sets/core/spells/fireball';
-import { flamingFrenzy } from '@game/engine/src/card/sets/core/spells/flaming-frenzy';
-import { gazeIntoTomorrow } from '@game/engine/src/card/sets/core/spells/gaze-into-tomorrow';
-import { grandCross } from '@game/engine/src/card/sets/core/spells/grand-cross';
-import { ironWall } from '@game/engine/src/card/sets/core/spells/iron-wall';
-import { knightsInspiration } from '@game/engine/src/card/sets/core/spells/knights-inspiration';
-import { sunburst } from '@game/engine/src/card/sets/core/spells/sunburst';
+import { cards } from '@game/engine/src/generated/cards';
 
 type PremadeDeck = {
   id: string;
@@ -52,154 +23,154 @@ export const premadeDecks: PremadeDeck[] = [
     name: 'Aiden Starter',
     mainDeck: [
       {
-        blueprintId: courageousFootsoldier.id,
+        blueprintId: cards['courageous-footsoldier'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: rustyBlade.id,
+        blueprintId: cards['rusty-blade'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: flagBearerOfFlame.id,
+        blueprintId: cards['flagbearer-of-flame'],
         copies: 3,
         isFoil: false
       },
       {
-        blueprintId: shieldMaiden.id,
+        blueprintId: cards['shield-maiden'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: knightsInspiration.id,
+        blueprintId: cards['knights-inspiration'],
         copies: 3,
         isFoil: false
       },
       {
-        blueprintId: hotHeadedRecruit.id,
+        blueprintId: cards['hot-headed-recruit'],
         copies: 3,
         isFoil: false
       },
       {
-        blueprintId: fireball.id,
+        blueprintId: cards['fireball'],
         copies: 2,
         isFoil: false
       },
       {
-        blueprintId: gazeIntoTomorrow.id,
+        blueprintId: cards['gaze-into-tomorrow'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: sharpShooter.id,
+        blueprintId: cards['sharpshooter'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: friendlySlime.id,
+        blueprintId: cards['friendly-slime'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: pyreboundLancer.id,
+        blueprintId: cards['pyrebound-lancer'],
         copies: 2,
         isFoil: false
       },
       {
-        blueprintId: hougenThePunisher.id,
+        blueprintId: cards['hougen-the-punisher'],
         copies: 2,
         isFoil: false
       },
       {
-        blueprintId: grandCross.id,
+        blueprintId: cards['grand-cross'],
         copies: 2,
         isFoil: false
       },
       {
-        blueprintId: royalGuard.id,
+        blueprintId: cards['royal-guard'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: stalwartVanguard.id,
+        blueprintId: cards['stalwart-vanguard'],
         copies: 3,
         isFoil: false
       },
       {
-        blueprintId: blindingLight.id,
+        blueprintId: cards['blinding-light'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: sunburst.id,
+        blueprintId: cards['sunburst'],
         copies: 4,
         isFoil: false
       },
       {
-        blueprintId: bastionGuard.id,
+        blueprintId: cards['bastion-guard'],
         copies: 4,
         isFoil: false
       }
     ],
     destinyDeck: [
       {
-        blueprintId: aidenLv1.id,
+        blueprintId: cards['aiden-lv1'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: aidenLv2.id,
+        blueprintId: cards['aiden-lv2'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: aidenLv3.id,
+        blueprintId: cards['aiden-lv3'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: unyieldingShield.id,
+        blueprintId: cards['unyielding-shield'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: ironWall.id,
+        blueprintId: cards['iron-wall'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: amuletOfRemembrance.id,
+        blueprintId: cards['amulet-of-remembrance'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: flamingFrenzy.id,
+        blueprintId: cards['flaming-frenzy'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: angelOfRetribution.id,
+        blueprintId: cards['angel-of-retribution'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: radiantCelestial.id,
+        blueprintId: cards['radiant-celestial'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: arbitersMaul.id,
+        blueprintId: cards['arbiter-maul'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: manaJewel.id,
+        blueprintId: cards['mana-jewel'],
         copies: 1,
         isFoil: false
       },
       {
-        blueprintId: scalesOfDestiny.id,
+        blueprintId: cards['scales-of-destiny'],
         copies: 1,
         isFoil: false
       }

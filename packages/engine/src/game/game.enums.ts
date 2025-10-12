@@ -24,3 +24,29 @@ export const TURN_EVENTS = {
   TURN_PASS: 'turn_pass'
 } as const;
 export type TurnEventName = Values<typeof TURN_EVENTS>;
+
+export const GAME_PHASE_TRANSITIONS = {
+  DRAW_FOR_TURN: 'draw_for_turn',
+  DECLARE_ATTACK: 'declare_attack',
+  FINISH_ATTACK: 'finish_attack',
+  DECLARE_END_TURN: 'declare_end_turn',
+  END_TURN: 'end_turn',
+  PLAYER_WON: 'player_won'
+} as const;
+export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
+
+export const COMBAT_STEPS = {
+  DECLARE_ATTACKER: 'declare-attacker',
+  DECLARE_TARGET: 'declare-target',
+  BUILDING_CHAIN: 'chain',
+  RESOLVING_COMBAT: 'resolving'
+} as const;
+
+export type CombatStep = Values<typeof COMBAT_STEPS>;
+
+export const EFFECT_TYPE = {
+  CARD: 'CARD',
+  ABILITY: 'ABILITY',
+  COUNTERATTACK: 'COUNTERATTACK'
+} as const;
+export type EffectType = Values<typeof EFFECT_TYPE>;

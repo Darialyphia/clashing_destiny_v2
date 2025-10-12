@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -8,7 +7,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { manaSpark } from '../spells/mana-spark';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -18,7 +16,7 @@ export const manaWisp: MinionBlueprint = {
   name: 'Mana Wisp',
   cardIconId: 'minions/mana-wisp',
   description: dedent`
-  @On Death@ : Add a @${manaSpark.name}@ to your hand.
+  @On Death@ : Add a @Mana Spark@ to your hand.
   @[level] 3 bonus@ : add 2 more.
   `,
   collectable: true,
@@ -45,7 +43,7 @@ export const manaWisp: MinionBlueprint = {
         handler: async () => {
           const count = 1 + (levelMod.isActive ? 2 : 0);
           for (let i = 0; i < count; i++) {
-            const spark = await card.player.generateCard(manaSpark.id);
+            const spark = await card.player.generateCard('mana-spark');
             await spark.addToHand();
           }
         }

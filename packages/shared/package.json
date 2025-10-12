@@ -2,6 +2,7 @@
   "name": "@game/shared",
   "version": "1.0.0",
   "main": "./src/index.ts",
+  "type": "module",
   "devDependencies": {
     "tsup": "^6.4.0",
     "typescript": "~5.0.0",

@@ -7,7 +7,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { manaSpark } from '../spells/mana-spark';
 
 export const manaJewel: ArtifactBlueprint = {
   id: 'mana-jewel',
@@ -30,7 +29,7 @@ export const manaJewel: ArtifactBlueprint = {
     {
       id: 'mana-jewel-ability',
       label: '@[exhaust]@ : Gain 2 Mana Sparks',
-      description: `-1@[durability]@ @[exhaust]@ : Add 2 @${manaSpark.name}@ to your hand.`,
+      description: `-1@[durability]@ @[exhaust]@ : Add 2 @Mana Spark@ to your hand.`,
       manaCost: 0,
       shouldExhaust: true,
       speed: CARD_SPEED.FLASH,
@@ -42,8 +41,8 @@ export const manaJewel: ArtifactBlueprint = {
       },
       async onResolve(game, card) {
         const sparks = [
-          await card.player.generateCard(manaSpark.id),
-          await card.player.generateCard(manaSpark.id)
+          await card.player.generateCard('mana-spark'),
+          await card.player.generateCard('mana-spark')
         ];
 
         for (const spark of sparks) {

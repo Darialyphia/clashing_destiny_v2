@@ -9,27 +9,19 @@ import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
-import { GameError } from '../game-error';
-import {
-  CorruptedGamephaseContextError,
-  GAME_PHASE_TRANSITIONS
-} from '../systems/game-phase.system';
+import { CorruptedGamephaseContextError, GameError } from '../game-error';
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES } from '../game.enums';
-import { EFFECT_TYPE } from '../effect-chain';
+import {
+  COMBAT_STEPS,
+  EFFECT_TYPE,
+  GAME_PHASE_TRANSITIONS,
+  GAME_PHASES,
+  type CombatStep
+} from '../game.enums';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
-
-export const COMBAT_STEPS = {
-  DECLARE_ATTACKER: 'declare-attacker',
-  DECLARE_TARGET: 'declare-target',
-  BUILDING_CHAIN: 'chain',
-  RESOLVING_COMBAT: 'resolving'
-} as const;
-
-export type CombatStep = Values<typeof COMBAT_STEPS>;
 
 export const COMBAT_STEP_TRANSITIONS = {
   ATTACKER_DECLARED: 'attacker-declared',

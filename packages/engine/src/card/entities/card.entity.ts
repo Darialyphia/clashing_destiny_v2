@@ -1,5 +1,4 @@
 import { type JSONObject, type MaybePromise } from '@game/shared';
-import { EntityWithModifiers } from '../../entity';
 import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
@@ -33,9 +32,8 @@ import { isMainDeckCard } from '../../board/board.system';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
-import { GAME_PHASES } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
-import { EFFECT_TYPE } from '../../game/effect-chain';
+import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
+import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;

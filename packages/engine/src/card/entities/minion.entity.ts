@@ -29,7 +29,7 @@ import { type BoardSlotZone } from '../../board/board.constants';
 import { MeleeAttackRange, type AttackRange } from '../attack-range';
 import { HeroCard } from './hero.entity';
 import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
-import { CorruptedGamephaseContextError } from '../../game/systems/game-phase.system';
+import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];

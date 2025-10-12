@@ -17,7 +17,7 @@ import {
   type SerializedPreResponseTarget
 } from '../card/card-blueprint';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
-import { GAME_EVENTS } from './game.events';
+import type { EffectType } from './game.enums';
 
 export const EFFECT_CHAIN_STATES = {
   BUILDING: 'BUILDING',
@@ -33,13 +33,6 @@ const EFFECT_CHAIN_STATE_TRANSITIONS = {
   END: 'END'
 } as const;
 type EffectChainTransition = Values<typeof EFFECT_CHAIN_STATE_TRANSITIONS>;
-
-export const EFFECT_TYPE = {
-  CARD: 'CARD',
-  ABILITY: 'ABILITY',
-  COUNTERATTACK: 'COUNTERATTACK'
-} as const;
-export type EffectType = Values<typeof EFFECT_TYPE>;
 
 export type Effect = {
   type: EffectType;
@@ -91,7 +84,7 @@ export class EffectChain
     onResolved: () => MaybePromise<void>
   ) {
     const instance = new EffectChain(game, startingPlayer, onResolved);
-    await game.emit(GAME_EVENTS.EFFECT_CHAIN_STARTED, new ChainEvent({}));
+    await game.emit(EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_STARTED, new ChainEvent({}));
     return instance;
   }
   private constructor(
@@ -165,7 +158,7 @@ export class EffectChain
       const effect = this.effectStack.pop();
       if (effect) {
         await this.game.emit(
-          GAME_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED,
+          EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED,
           new ChainEffectResolvedEvent({
             index: this.effectStack.length,
             effect: effect!
@@ -173,7 +166,7 @@ export class EffectChain
         );
         await effect.handler(this.game);
         await this.game.emit(
-          GAME_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED,
+          EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED,
           new ChainEffectResolvedEvent({
             index: this.effectStack.length,
             effect: effect!
@@ -181,7 +174,7 @@ export class EffectChain
         );
       }
     }
-    await this.game.emit(GAME_EVENTS.EFFECT_CHAIN_RESOLVED, new ChainEvent({}));
+    await this.game.emit(EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_RESOLVED, new ChainEvent({}));
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.END);
   }
 
@@ -198,7 +191,7 @@ export class EffectChain
 
     this.effectStack.push(effect);
     await this.game.emit(
-      GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED,
+      EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_EFFECT_ADDED,
       new ChainEffectAddedEvent({
         player,
         index: this.effectStack.length - 1,
@@ -212,7 +205,7 @@ export class EffectChain
     assert(this.can(EFFECT_CHAIN_STATE_TRANSITIONS.PASS), new InactiveEffectChainError());
     assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
     await this.game.emit(
-      GAME_EVENTS.EFFECT_CHAIN_PLAYER_PASSED,
+      EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_PLAYER_PASSED,
       new ChainPassedEvent({ player })
     );
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.PASS);

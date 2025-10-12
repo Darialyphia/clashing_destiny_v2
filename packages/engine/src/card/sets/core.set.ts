@@ -1,7 +1,6 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { amuletOfRemembrance } from './core/artifacts/amulet-of-remembrance';
-import { arbitersMaul } from './core/artifacts/arbiters-maul';
 import { manaJewel } from './core/artifacts/mana-jewel';
 import { rustyBlade } from './core/artifacts/rusty-blade';
 import { scalesOfDestiny } from './core/artifacts/scales-of-destiny';
@@ -42,11 +41,13 @@ import { manaSpark } from './core/spells/mana-spark';
 import { reposition } from './core/spells/reposition';
 import { slimesToTheRescue } from './core/spells/slimes-to-the-rescue';
 import { sunburst } from './core/spells/sunburst';
+import { arbitersMaul } from './core/artifacts/arbiters-maul';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
+    arbitersMaul,
     fireBolt,
     noviceLv0,
     aidenLv1,
@@ -82,7 +83,6 @@ export const coreSet: CardSet = {
     blindingLight,
     sunburst,
     radiantCelestial,
-    arbitersMaul,
     manaSpark,
     manaJewel,
     scalesOfDestiny,

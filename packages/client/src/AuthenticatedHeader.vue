@@ -2,10 +2,10 @@
 import { useLogout } from './auth/composables/useLogout';
 import { useMe } from './auth/composables/useMe';
 import { useLeaveMatchmaking } from '@/matchmaking/composables';
-import { useAuthedMutation } from '@/auth/composables/useAuth';
+import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import MatchmakingTimer from './matchmaking/components/MatchmakingTimer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { api } from '@game/api';
+import { api, GIFT_STATES } from '@game/api';
 
 const { mutate: logout } = useLogout();
 const { data: me } = useMe();
@@ -14,6 +14,14 @@ const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
 const { mutate: leaveLobby, isLoading: isLeavingLobby } = useAuthedMutation(
   api.lobbies.leave
 );
+
+const { data: gifts } = useAuthedQuery(api.gifts.list, {});
+
+const unclaimedGiftsCount = computed(() => {
+  return (
+    gifts.value?.filter(gift => gift.state === GIFT_STATES.ISSUED).length ?? 0
+  );
+});
 </script>
 
 <template>
@@ -65,6 +73,17 @@ const { mutate: leaveLobby, isLoading: isLeavingLobby } = useAuthedMutation(
         </li>
         <li>
           <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Gifts' }">
+            Gifts
+            <span
+              v-if="unclaimedGiftsCount > 0"
+              class="ml-1 px-2 py-0.5 text-xs font-medium bg-red-600 text-white rounded-full"
+            >
+              {{ unclaimedGiftsCount }}
+            </span>
+          </RouterLink>
         </li>
         <li>
           <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>

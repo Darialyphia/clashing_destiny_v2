@@ -17,6 +17,7 @@ export class GiftReadRepository {
     return this.ctx.db
       .query('gifts')
       .withIndex('by_receiver_id', q => q.eq('receiverId', receiverId))
+      .order('desc')
       .collect();
   }
 

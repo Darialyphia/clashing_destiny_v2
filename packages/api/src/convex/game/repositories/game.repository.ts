@@ -39,10 +39,8 @@ export class GameReadRepository {
   async getLatestByStatus(status: GameStatus) {
     return this.ctx.db
       .query('games')
-      .withIndex('by_status', q =>
-        q.eq('status', status).gt('_creationTime', Date.now() - ONE_MINUTE_IN_MS * 60 * 2)
-      )
-      .collect();
+      .withIndex('by_status', q => q.eq('status', status))
+      .take(1);
   }
 }
 

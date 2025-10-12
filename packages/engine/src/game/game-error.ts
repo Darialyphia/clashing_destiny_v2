@@ -10,3 +10,15 @@ export class IllegalGameStateError extends GameError {
     super(`Illegal game state: ${message}`);
   }
 }
+
+export class WrongGamePhaseError extends Error {
+  constructor() {
+    super('Wrong game phase');
+  }
+}
+
+export class CorruptedGamephaseContextError extends Error {
+  constructor() {
+    super('Corrupted game phase context');
+  }
+}

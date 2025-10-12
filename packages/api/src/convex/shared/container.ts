@@ -106,13 +106,11 @@ import { UpdateLobbyOptionsUseCase } from '../lobby/usecases/updateLobbyOptions.
 import { MatchmakingSubscribers } from '../matchmaking/matchmaking.subscribers';
 import { KickFromMatchmakingUseCase } from '../matchmaking/usecases/kickFromMatchmaking.usecase';
 import { KickFromLobbyUseCase } from '../lobby/usecases/kickFromLobby.usecase';
-import {
-  GiftReadRepository,
-  GiftRepository
-} from '../gift/repositories/gift.repository.clean';
+import { GiftReadRepository, GiftRepository } from '../gift/repositories/gift.repository';
 import { GiftMapper } from '../gift/mappers/gift.mapper';
 import { GiveGiftUseCase } from '../gift/usecases/giveGift.usecase';
 import { ClaimGiftUseCase } from '../gift/usecases/claimGift.usecase';
+import { GetMyGiftsUseCase } from '../gift/usecases/getMyGifts.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -194,7 +192,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
       resolver: asClass(GetPendingRequestsUseCase)
     },
     [GetLobbyByIdUseCase.INJECTION_KEY]: { resolver: asClass(GetLobbyByIdUseCase) },
-    [GetAllLobbiesUseCase.INJECTION_KEY]: { resolver: asClass(GetAllLobbiesUseCase) }
+    [GetAllLobbiesUseCase.INJECTION_KEY]: { resolver: asClass(GetAllLobbiesUseCase) },
+    [GetMyGiftsUseCase.INJECTION_KEY]: { resolver: asClass(GetMyGiftsUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

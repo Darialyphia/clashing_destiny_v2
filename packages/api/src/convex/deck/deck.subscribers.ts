@@ -3,8 +3,8 @@ import { eventEmitter, type EventEmitter } from '../shared/eventEmitter';
 import type { Scheduler } from 'convex/server';
 import { premadeDecks } from './premadeDecks';
 import { internal } from '../_generated/api';
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { GIFT_KINDS, GIFT_SOURCES } from '../gift/gift.constants';
+import { collectableCards } from '@game/engine/src/generated/cards';
 export class DeckSubscribers {
   static INJECTION_KEY = 'deckSubscribers' as const;
 
@@ -36,13 +36,11 @@ export class DeckSubscribers {
       contents: [
         {
           kind: GIFT_KINDS.CARDS,
-          cards: Object.values(CARDS_DICTIONARY)
-            .filter(card => card.collectable)
-            .map(card => ({
-              blueprintId: card.id,
-              isFoil: false,
-              amount: 4
-            }))
+          cards: Object.values(collectableCards).map(card => ({
+            blueprintId: card,
+            isFoil: false,
+            amount: 4
+          }))
         }
       ]
     });

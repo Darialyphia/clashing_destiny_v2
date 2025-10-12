@@ -3,29 +3,25 @@ import {
   StateMachine,
   stateTransition,
   type BetterExtract,
-  type MaybePromise,
-  type Values
+  type MaybePromise
 } from '@game/shared';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES, GAME_PHASE_EVENTS, type GamePhase } from '../game.enums';
+import {
+  GAME_PHASES,
+  GAME_PHASE_EVENTS,
+  GAME_PHASE_TRANSITIONS,
+  type GamePhase,
+  type GamePhaseTransition
+} from '../game.enums';
 import { CombatPhase } from '../phases/combat.phase';
 import { DrawPhase } from '../phases/draw.phase';
 import { MainPhase } from '../phases/main.phase';
 import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
 import { GAME_EVENTS } from '../game.events';
-
-export const GAME_PHASE_TRANSITIONS = {
-  DRAW_FOR_TURN: 'draw_for_turn',
-  DECLARE_ATTACK: 'declare_attack',
-  FINISH_ATTACK: 'finish_attack',
-  DECLARE_END_TURN: 'declare_end_turn',
-  END_TURN: 'end_turn',
-  PLAYER_WON: 'player_won'
-} as const;
-export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
+import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-error';
 
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
@@ -272,17 +268,5 @@ export class GamePhaseAfterChangeEvent extends TypedSerializableEvent<
         ctx: this.data.to.ctx.serialize() as any // Type assertion to match SerializedGamePhaseContext
       }
     };
-  }
-}
-
-export class WrongGamePhaseError extends Error {
-  constructor() {
-    super('Wrong game phase');
-  }
-}
-
-export class CorruptedGamephaseContextError extends Error {
-  constructor() {
-    super('Corrupted game phase context');
   }
 }

@@ -19,8 +19,7 @@ import {
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { GAME_PHASES } from '../../game/game.enums';
-import { COMBAT_STEPS } from '../../game/phases/combat.phase';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { DeclareCounterAttackAction } from '../actions/declare-counter-attack';
 import { isDefined } from '@game/shared';

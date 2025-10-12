@@ -1,7 +1,7 @@
 import type { EmptyObject, Serializable } from '@game/shared';
 import type { Game } from '../game';
-import { GAME_PHASE_TRANSITIONS } from '../systems/game-phase.system';
 import type { GamePhaseController } from './game-phase';
+import { GAME_PHASE_TRANSITIONS } from '../game.enums';
 
 export class DrawPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
