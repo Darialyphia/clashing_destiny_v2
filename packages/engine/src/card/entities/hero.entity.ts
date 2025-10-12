@@ -552,7 +552,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
       jobs: this.blueprint.jobs,
-      spellSchools: this.blueprint.spellSchools,
+      spellSchools: this.spellSchools,
       canCounterattack:
         phaseCtx.state === GAME_PHASES.ATTACK &&
         phaseCtx.ctx.target?.equals(this) &&

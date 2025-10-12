@@ -3,6 +3,7 @@ import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   isMinion,
+  isSpell,
   multipleEnemyTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
@@ -14,15 +15,16 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { EfficiencyModifier } from '../../../../modifier/modifiers/efficiency.modifier';
+import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
 
 export const thirstForKnowledge: SpellBlueprint = {
   id: 'thirst-for-knowledge',
   name: 'Thirst For Knowledge',
   cardIconId: 'spells/thirst-for-knowledge',
   description: dedent`
-  Draw 2 cards. @Efficiency@
+  Search your deck for a Spell card and add it to your hand. It has @Fleeting@.
+  @Efficiency@.
   `,
   collectable: true,
   unique: false,
@@ -41,6 +43,15 @@ export const thirstForKnowledge: SpellBlueprint = {
     await card.modifiers.add(new EfficiencyModifier(game, card));
   },
   async onPlay(game, card) {
-    await card.player.cardManager.draw(2);
+    const [searchedCard] = await game.interaction.chooseCards({
+      player: card.player,
+      label: 'Choose a Spell card to add to your hand',
+      minChoiceCount: 1,
+      maxChoiceCount: 1,
+      choices: card.player.cardManager.mainDeck.cards.filter(c => isSpell(c))
+    });
+
+    await searchedCard.addToHand();
+    await searchedCard.modifiers.add(new FleetingModifier(game, card));
   }
 };

@@ -59,7 +59,8 @@ export const cards = {
 "magic-insight": "magic-insight",
 "fated-seer": "fated-seer",
 "temporal-recollection": "temporal-recollection",
-"cerulean-wave-disciple": "cerulean-wave-disciple"
+"cerulean-wave-disciple": "cerulean-wave-disciple",
+"navala-surging-catalyst": "navala-surging-catalyst"
 } as const;
 
 export const collectableCards = {
@@ -114,5 +115,6 @@ export const collectableCards = {
 "magic-insight": "magic-insight",
 "fated-seer": "fated-seer",
 "temporal-recollection": "temporal-recollection",
-"cerulean-wave-disciple": "cerulean-wave-disciple"
+"cerulean-wave-disciple": "cerulean-wave-disciple",
+"navala-surging-catalyst": "navala-surging-catalyst"
 } as const;

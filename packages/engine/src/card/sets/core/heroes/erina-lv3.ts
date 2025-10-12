@@ -38,7 +38,7 @@ export const erinaLv3: HeroBlueprint = {
   unique: false,
   lineage: 'erina',
   spellPower: 0,
-  atk: 0,
+  atk: 1,
   maxHp: 24,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [],
@@ -48,6 +48,7 @@ export const erinaLv3: HeroBlueprint = {
     await card.modifiers.add(
       new Modifier('erina-lv3-aura', game, card, {
         mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
           new AuraModifierMixin(game, {
             isElligible(candidate) {
               return candidate.isAlly(card) && isSpell(candidate);

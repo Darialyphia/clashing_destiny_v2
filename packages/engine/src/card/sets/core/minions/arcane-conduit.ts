@@ -1,5 +1,6 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
@@ -23,7 +24,7 @@ export const arcaneConduit: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 1,
+  maxHp: 3,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
@@ -37,6 +38,7 @@ export const arcaneConduit: MinionBlueprint = {
     await card.modifiers.add(
       new Modifier<MinionCard>('arcane-conduit-spellwatch', game, card, {
         mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             handler: async event => {
