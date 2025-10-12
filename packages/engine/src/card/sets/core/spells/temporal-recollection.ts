@@ -1,7 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -10,17 +8,17 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
+import { isDefined } from '@game/shared';
 
 export const temporalRecollection: SpellBlueprint = {
   id: 'temporal-recollection',
   name: 'Temporal Recollection',
   cardIconId: 'spells/temporal-recollection',
   description: dedent`
-  Add @Fleeting@ copies of cards you played last turn to your hand
+  Add @Fleeting@ copies of non @Fleeting@ cards you played last turn to your hand
   @[level] 3 bonus@ : They costs @[mana] 1@ less.
   `,
   collectable: true,
@@ -46,7 +44,8 @@ export const temporalRecollection: SpellBlueprint = {
         c =>
           c.player.equals(card.player) &&
           c.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK
-      );
+      )
+      .filter(c => !isDefined(c.card.modifiers.get(FleetingModifier)));
 
     const levelMod = card.modifiers.get(LevelBonusModifier);
 

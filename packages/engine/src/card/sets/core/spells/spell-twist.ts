@@ -17,11 +17,11 @@ export const spellTwist: SpellBlueprint = {
   name: 'Spell Twist',
   cardIconId: 'spells/spell-twist',
   description:
-    'Add a copy of the last spell played by your opponent to your hand. Ignore its spell school requirements',
+    'Add a copy of the last spell played by your opponent to your hand. Ignore its spell school requirements.',
   collectable: true,
   unique: false,
   manaCost: 3,
-  speed: CARD_SPEED.FLASH,
+  speed: CARD_SPEED.WARP,
   spellSchool: SPELL_SCHOOLS.ARCANE,
   job: null,
   kind: CARD_KINDS.SPELL,

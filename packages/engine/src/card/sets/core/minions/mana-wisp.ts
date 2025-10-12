@@ -17,7 +17,7 @@ export const manaWisp: MinionBlueprint = {
   cardIconId: 'minions/mana-wisp',
   description: dedent`
   @On Death@ : Add a @Mana Spark@ to your hand.
-  @[level] 3 bonus@ : add 2 more.
+  @[level] 3 bonus@ : add 1 more.
   `,
   collectable: true,
   unique: false,
@@ -41,7 +41,7 @@ export const manaWisp: MinionBlueprint = {
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         handler: async () => {
-          const count = 1 + (levelMod.isActive ? 2 : 0);
+          const count = 1 + (levelMod.isActive ? 1 : 0);
           for (let i = 0; i < count; i++) {
             const spark = await card.player.generateCard('mana-spark');
             await spark.addToHand();

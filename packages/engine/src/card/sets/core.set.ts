@@ -59,6 +59,7 @@ import { navalaSurgingCatalyst } from './core/minions/navala-surging-catalyst';
 import { sigilOfVoid } from './core/sigils/sigil-of-void';
 import { spellTwist } from './core/spells/spell-twist';
 import { manaShield } from './core/spells/mana-shield';
+import { cosmicAvatar } from './core/minions/cosmic-avatar';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -122,6 +123,7 @@ export const coreSet: CardSet = {
     navalaSurgingCatalyst,
     sigilOfVoid,
     spellTwist,
-    manaShield
+    manaShield,
+    cosmicAvatar
   ]
 };

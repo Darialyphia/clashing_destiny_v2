@@ -18,7 +18,7 @@ export const ceruleanWaveDisciple: MinionBlueprint = {
   name: 'Cerulean Wave Disciple',
   cardIconId: 'minions/cerulean-wave-disciple',
   description: dedent`@Intercept@.
-  @On death@: Draw a card.
+  @On Death@: Draw a card.
   `,
   collectable: true,
   unique: false,

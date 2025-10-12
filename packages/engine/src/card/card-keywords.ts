@@ -300,6 +300,13 @@ export const KEYWORDS = {
     name: 'Equip Weapon',
     description: "This turn, your hero gains attack equal to this card's Attack bonus",
     aliases: []
+  },
+  OVERWHELM: {
+    id: 'overwhelm',
+    name: 'Overwhelm',
+    description:
+      'When this attacks and destroy a minion, deal excess damage to the enemy Hero.',
+    aliases: []
   }
 };
 
