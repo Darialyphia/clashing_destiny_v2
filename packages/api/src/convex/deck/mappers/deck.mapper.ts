@@ -10,7 +10,8 @@ export class DeckMapper {
       name: deck.name,
       ownerId: deck.ownerId,
       mainDeck: deck.mainDeck,
-      destinyDeck: deck.destinyDeck
+      destinyDeck: deck.destinyDeck,
+      spellSchools: deck.spellSchools
     };
   }
 }

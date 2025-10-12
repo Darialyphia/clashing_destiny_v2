@@ -76,6 +76,7 @@ export const provideCollectionPage = () => {
       isEqual(first, second) {
         return first.meta.cardId === second.meta.cardId;
       },
+      spellSchools: newDeck.spellSchools,
       mainDeck: newDeck.mainDeck.map(card => ({
         blueprintId: card.blueprintId,
         copies: card.copies,
@@ -142,6 +143,7 @@ export const provideCollectionPage = () => {
       saveDeck({
         deckId: selectedDeck.value.id,
         name: deckBuilder.value.deck.name,
+        spellSchools: deckBuilder.value.deck.spellSchools,
         mainDeck: deckBuilder.value.deck.mainDeck.map(card => ({
           cardId: card.meta.cardId,
           copies: card.copies

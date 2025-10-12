@@ -9,21 +9,20 @@ import {
   HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
-import { EchoModifier } from '../../../../modifier/modifiers/echo.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { isSpell } from '../../../card-utils';
+import { scry } from '../../../card-actions-utils';
 
 export const erinaLv1: HeroBlueprint = {
   id: 'erina-lv1',
   name: 'Erina, Council Mage',
-  description: dedent`@On Enter@: Draw a card. If it's a Spell, it gains @Echo@.`,
+  description: dedent`@On Enter@: @Scry 2@.`,
   cardIconId: 'heroes/erina-lv1',
   kind: CARD_KINDS.HERO,
   level: 1,
   destinyCost: 1,
   speed: CARD_SPEED.SLOW,
   jobs: [HERO_JOBS.MAGE],
-  spellSchools: [SPELL_SCHOOLS.ARCANE, SPELL_SCHOOLS.WATER],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,
@@ -40,10 +39,7 @@ export const erinaLv1: HeroBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const [drawnCard] = await card.player.cardManager.draw(1);
-          if (drawnCard && isSpell(drawnCard)) {
-            await drawnCard.modifiers.add(new EchoModifier(game, card));
-          }
+          await scry(game, card, 2);
         }
       })
     );

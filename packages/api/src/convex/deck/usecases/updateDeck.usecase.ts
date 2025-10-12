@@ -1,3 +1,4 @@
+import type { SpellSchool } from '@game/engine/src/card/card.enums';
 import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import type { CardId } from '../../card/entities/card.entity';
@@ -9,6 +10,7 @@ import type { DeckRepository } from '../repositories/deck.repository';
 export interface UpdateDeckInput {
   deckId: DeckId;
   name: string;
+  spellSchools: SpellSchool[];
   mainDeck: Array<{ cardId: CardId; copies: number }>;
   destinyDeck: Array<{ cardId: CardId; copies: number }>;
 }

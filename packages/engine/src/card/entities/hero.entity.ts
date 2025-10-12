@@ -446,7 +446,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get spellSchools() {
-    return this.blueprint.spellSchools;
+    // return this.blueprint.spellSchools;
+    return this.player.spellSchools;
   }
 
   get jobs() {

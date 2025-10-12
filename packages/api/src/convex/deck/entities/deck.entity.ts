@@ -19,6 +19,10 @@ export class Deck extends Entity<DeckId, DeckDoc> {
     return this.data.destinyDeck;
   }
 
+  get spellSchools() {
+    return this.data.spellSchools;
+  }
+
   get ownerId() {
     return this.data.ownerId;
   }

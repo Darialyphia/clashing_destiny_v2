@@ -6,31 +6,46 @@ import {
   HoverCardContent
 } from 'reka-ui';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
+import {
+  SPELL_SCHOOLS,
+  type SpellSchool
+} from '@game/engine/src/card/card.enums';
+import { useCollectionPage } from './useCollectionPage';
+import { uppercaseFirstLetter } from '@game/shared';
 
-type DeckCard = {
-  blueprint: any;
-  meta?: {
-    cardId: string;
-  };
-  copies?: number;
-};
+const { deckBuilder } = useCollectionPage();
 
-defineProps<{
-  cards: DeckCard[];
-}>();
-
-defineEmits<{
-  removeCard: [cardId: string];
-}>();
+const spellSchools: Array<{
+  id: SpellSchool;
+  img: string;
+  label: string;
+}> = Object.values(SPELL_SCHOOLS).map(spellSchool => ({
+  id: spellSchool,
+  img: `/assets/ui/spell-school-${spellSchool.toLocaleLowerCase()}.png`,
+  label: uppercaseFirstLetter(spellSchool)
+}));
 </script>
 
 <template>
   <div class="overflow-y-auto fancy-scrollbar flex flex-col">
+    <div class="flex gap-1 mb-3">
+      <button
+        v-for="spellSchool in spellSchools"
+        :key="spellSchool.id"
+        class="spell-school"
+        :class="{
+          selected: deckBuilder.deck.spellSchools.includes(spellSchool.id)
+        }"
+        @click="deckBuilder.toggleSpellSchool(spellSchool.id)"
+      >
+        <img :src="spellSchool.img" :alt="spellSchool.label" />
+      </button>
+    </div>
     <ul>
       <HoverCardRoot
         :open-delay="100"
         :close-delay="0"
-        v-for="(card, index) in cards"
+        v-for="(card, index) in deckBuilder.cards"
         :key="index"
       >
         <HoverCardTrigger class="inspectable-card" v-bind="$attrs" as-child>
@@ -40,7 +55,7 @@ defineEmits<{
             }"
             :class="card.blueprint.kind.toLocaleLowerCase()"
             class="deck-item"
-            @click="$emit('removeCard', card.meta?.cardId || '')"
+            @click="deckBuilder.removeCard(card.meta!.cardId)"
           >
             <div class="mana-cost" v-if="'manaCost' in card.blueprint">
               {{ card.blueprint.manaCost }}
@@ -141,5 +156,23 @@ defineEmits<{
   white-space: nowrap;
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;
+}
+
+.spell-school {
+  --pixel-scale: 2;
+  width: calc(var(--pixel-scale) * 22px);
+  height: calc(var(--pixel-scale) * 20px);
+  aspect-ratio: 1;
+  padding: 0;
+  display: grid;
+  opacity: 0.5;
+  &.selected {
+    opacity: 1;
+  }
+  > img {
+    width: 100%;
+    height: 100%;
+    cursor: url('/assets/ui/cursor-hover.png'), auto;
+  }
 }
 </style>

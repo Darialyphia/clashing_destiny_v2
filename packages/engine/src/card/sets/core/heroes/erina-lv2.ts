@@ -26,7 +26,7 @@ export const erinaLv2: HeroBlueprint = {
   destinyCost: 2,
   speed: CARD_SPEED.SLOW,
   jobs: [HERO_JOBS.MAGE],
-  spellSchools: [SPELL_SCHOOLS.ARCANE, SPELL_SCHOOLS.WATER],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,

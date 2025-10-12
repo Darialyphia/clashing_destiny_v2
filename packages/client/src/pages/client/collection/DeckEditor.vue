@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { useCollectionPage } from './useCollectionPage';
 import DeckHeader from './DeckHeader.vue';
 import ManaCurveChart from './ManaCurveChart.vue';
 import CardTypeStats from './CardTypeStats.vue';
 import DeckCardList from './DeckCardList.vue';
 import DeckFooter from './DeckFooter.vue';
-
-const { deckBuilder } = useCollectionPage();
-
-const handleCardRemove = (cardId: string) => {
-  deckBuilder.value.removeCard(cardId);
-};
 </script>
 
 <template>
@@ -20,7 +13,7 @@ const handleCardRemove = (cardId: string) => {
       <ManaCurveChart />
       <CardTypeStats />
     </div>
-    <DeckCardList :cards="deckBuilder.cards" @remove-card="handleCardRemove" />
+    <DeckCardList />
     <DeckFooter />
   </div>
 </template>

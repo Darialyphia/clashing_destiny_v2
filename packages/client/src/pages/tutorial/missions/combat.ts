@@ -36,6 +36,7 @@ export const combatTutorial: TutorialMission = {
       {
         id: 'p1',
         name: 'You',
+        spellSchools: [],
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
@@ -46,6 +47,7 @@ export const combatTutorial: TutorialMission = {
       {
         id: 'p2',
         name: 'Opponent',
+        spellSchools: [],
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },

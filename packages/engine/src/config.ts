@@ -24,6 +24,8 @@ export type Config = {
   INITIAL_HERO_BLUEPRINTID: string;
 
   MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: number;
+
+  MAX_SPELL_SCHOOLS_PER_DECK: number;
 };
 
 export const defaultConfig: Config = {
@@ -51,5 +53,7 @@ export const defaultConfig: Config = {
 
   INITIAL_HERO_BLUEPRINTID: 'novice-lv0',
 
-  MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: 0
+  MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: 0,
+
+  MAX_SPELL_SCHOOLS_PER_DECK: 2
 };

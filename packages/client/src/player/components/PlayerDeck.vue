@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, type SpellSchool } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 
 export type DisplayedDeck = {
   name: string;
+  spellSchools: SpellSchool[];
   mainDeck: { blueprintId: string }[];
   destinyDeck: { blueprintId: string }[];
 };
@@ -42,13 +43,7 @@ const hero = computed(() => {
       {{ deck.name }}
       <div class="flex gap-1" v-if="hero">
         <img
-          v-for="jobs in hero.jobs"
-          :key="jobs"
-          :src="`/assets/ui/jobs-${jobs.toLowerCase()}.png`"
-          class="job"
-        />
-        <img
-          v-for="spellSchool in hero.spellSchools"
+          v-for="spellSchool in deck.spellSchools"
           :key="spellSchool"
           :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
           class="spell-school"

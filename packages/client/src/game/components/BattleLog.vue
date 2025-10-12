@@ -161,7 +161,7 @@ onMounted(() => {
         });
       }
 
-      if (eventName === GAME_EVENTS.EFFECT_CHAIN_RESOLVED) {
+      if (eventName === GAME_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED) {
         tokens.push({
           kind: 'text',
           text: `The effect chain has been resolved`

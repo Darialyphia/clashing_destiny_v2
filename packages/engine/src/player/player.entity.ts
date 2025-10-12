@@ -21,10 +21,12 @@ import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
+import type { SpellSchool } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
   name: string;
+  spellSchools: SpellSchool[];
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
 };
@@ -103,6 +105,10 @@ export class Player
     };
     await this.cardManager.init();
     await this._hero.card.play(() => {});
+  }
+
+  get spellSchools() {
+    return this.options.spellSchools;
   }
 
   async levelupHero(newHero: HeroCard) {

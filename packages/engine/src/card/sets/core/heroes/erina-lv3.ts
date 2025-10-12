@@ -1,9 +1,7 @@
 import dedent from 'dedent';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { HeroBlueprint } from '../../../card-blueprint';
-import { isMinion, isSpell, singleEmptyAllySlot } from '../../../card-utils';
+import { isSpell } from '../../../card-utils';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -14,8 +12,6 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import { MinionCard } from '../../../entities/minion.entity';
-import { SimpleMinionStatsModifier } from '../../../../modifier/modifiers/simple-minion-stats.modifier';
 import { EchoModifier } from '../../../../modifier/modifiers/echo.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
@@ -35,7 +31,7 @@ export const erinaLv3: HeroBlueprint = {
   destinyCost: 3,
   speed: CARD_SPEED.SLOW,
   jobs: [HERO_JOBS.MAGE, HERO_JOBS.SAGE],
-  spellSchools: [SPELL_SCHOOLS.WATER, SPELL_SCHOOLS.AIR, SPELL_SCHOOLS.ARCANE],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
   collectable: true,

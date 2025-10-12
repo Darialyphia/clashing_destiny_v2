@@ -168,13 +168,14 @@ until(nameBox)
 
 const multiLineChecker = useTemplateRef('multi-line-checker');
 const isMultiLine = computed(() => {
-  if (!multiLineChecker.value) return;
-  if (!descriptionBox.value) return;
-  if (card.description.includes('\n')) return true;
-  if (card.abilities?.length) return true;
-  const boxRect = descriptionBox.value.getBoundingClientRect();
-  const checkerRect = multiLineChecker.value.getBoundingClientRect();
-  return checkerRect.top > boxRect.top;
+  // if (!multiLineChecker.value) return;
+  // if (!descriptionBox.value) return;
+  // if (card.description.includes('\n')) return true;
+  // if (card.abilities?.length) return true;
+  // const boxRect = descriptionBox.value.getBoundingClientRect();
+  // const checkerRect = multiLineChecker.value.getBoundingClientRect();
+  // return checkerRect.top > boxRect.top;
+  return true;
 });
 
 const costStatus = computed(() => {

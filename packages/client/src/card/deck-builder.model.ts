@@ -1,6 +1,9 @@
 import type { CardId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-import { CARD_DECK_SOURCES } from '@game/engine/src/card/card.enums';
+import {
+  CARD_DECK_SOURCES,
+  type SpellSchool
+} from '@game/engine/src/card/card.enums';
 import type {
   DeckValidator,
   ValidatableCard,
@@ -20,6 +23,7 @@ export class DeckBuilderViewModel {
   private _deck: DeckBuilderDeck = {
     id: nanoid(4),
     name: 'New Deck',
+    spellSchools: [],
     mainDeck: [],
     destinyDeck: [],
     isEqual: (first, second) => first.meta.cardId === second.meta.cardId
@@ -35,6 +39,7 @@ export class DeckBuilderViewModel {
   updateCardPool(cardPool: DeckBuilderCardPool) {
     this.cardPool = cardPool;
   }
+
   hasCard(blueprintId: string) {
     return (
       this._deck[CARD_DECK_SOURCES.MAIN_DECK].some(
@@ -114,6 +119,7 @@ export class DeckBuilderViewModel {
       )
     );
   }
+
   get validator() {
     return this._validator;
   }
@@ -226,6 +232,16 @@ export class DeckBuilderViewModel {
       });
   }
 
+  toggleSpellSchool(school: SpellSchool) {
+    if (this._deck.spellSchools.includes(school)) {
+      this._deck.spellSchools = this._deck.spellSchools.filter(
+        s => s !== school
+      );
+    } else if (this._deck.spellSchools.length < 2) {
+      this._deck.spellSchools.push(school);
+    }
+  }
+
   getErrors() {
     return this._validator.validate(this._deck);
   }
@@ -243,8 +259,9 @@ export class DeckBuilderViewModel {
       id: nanoid(4),
       name: 'New Deck',
       isEqual: (first, second) => first.meta.cardId === second.meta.cardId,
-      [CARD_DECK_SOURCES.MAIN_DECK]: [],
-      [CARD_DECK_SOURCES.DESTINY_DECK]: []
+      mainDeck: [],
+      destinyDeck: [],
+      spellSchools: []
     };
   }
 }

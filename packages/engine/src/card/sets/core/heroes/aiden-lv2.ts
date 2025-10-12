@@ -5,7 +5,6 @@ import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifi
 import type { HeroBlueprint } from '../../../card-blueprint';
 import { singleAllyMinionTargetRules } from '../../../card-utils';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -29,7 +28,7 @@ export const aidenLv2: HeroBlueprint = {
   destinyCost: 2,
   speed: CARD_SPEED.SLOW,
   jobs: [HERO_JOBS.WARRIOR],
-  spellSchools: [SPELL_SCHOOLS.FIRE, SPELL_SCHOOLS.LIGHT],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   collectable: true,

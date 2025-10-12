@@ -31,7 +31,7 @@ export const aidenLv3: HeroBlueprint = {
   destinyCost: 3,
   speed: CARD_SPEED.SLOW,
   jobs: [HERO_JOBS.WARRIOR, HERO_JOBS.PALADIN],
-  spellSchools: [SPELL_SCHOOLS.FIRE, SPELL_SCHOOLS.LIGHT],
+  spellSchools: [],
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
   collectable: true,
