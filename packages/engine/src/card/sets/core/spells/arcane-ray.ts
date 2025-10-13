@@ -23,7 +23,7 @@ export const arcaneRay: SpellBlueprint = {
   `,
   collectable: true,
   unique: false,
-  manaCost: 3,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   spellSchool: SPELL_SCHOOLS.ARCANE,
   job: null,

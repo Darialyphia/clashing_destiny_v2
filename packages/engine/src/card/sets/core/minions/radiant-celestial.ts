@@ -20,14 +20,14 @@ export const radiantCelestial: MinionBlueprint = {
   description: dedent`
   You need to pay an additional @[mana] 2@ to play this card.
   @Hero Intercept@.
-  @On Enter@ and @On Attack@: Heal your hero and all other allied minions for 4.
+  @On Enter@ and @On Attack@: Heal your hero and all other allied minions for 3.
   `,
   collectable: true,
   unique: false,
   destinyCost: 3,
   speed: CARD_SPEED.FAST,
   atk: 3,
-  maxHp: 8,
+  maxHp: 7,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   kind: CARD_KINDS.MINION,
@@ -36,7 +36,7 @@ export const radiantCelestial: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   abilities: [],
   tags: [],
-  canPlay: () => true,
+  canPlay: (game, card) => card.player.cardManager.hand.length >= 2,
   async onInit(game, card) {
     game.on(GAME_EVENTS.CARD_DECLARE_PLAY, async event => {
       if (!event.data.card.equals(card)) return;
@@ -60,7 +60,7 @@ export const radiantCelestial: MinionBlueprint = {
         ...card.player.minions.filter(m => !m.equals(card))
       ];
       for (const target of healTargets) {
-        await target.heal(4);
+        await target.heal(3);
       }
     };
     await card.modifiers.add(new OnAttackModifier(game, card, { handler: heal }));

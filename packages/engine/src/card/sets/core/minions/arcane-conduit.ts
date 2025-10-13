@@ -36,10 +36,10 @@ export const arcaneConduit: MinionBlueprint = {
   abilities: [
     {
       id: 'arcane-conduit-ability',
-      label: '@[mana] 1@ : Deal 1 damage to all enemies.',
-      description: `@[mana] 1@ : Remove 2 stacks of Arcane Static to deal 1 damage to all enemies.`,
+      label: 'Deal 1 damage to all enemies.',
+      description: `Remove 2 stacks of Arcane Static to deal 1 damage to all enemies.`,
       speed: CARD_SPEED.FAST,
-      manaCost: 1,
+      manaCost: 0,
       shouldExhaust: false,
       canUse(game, card) {
         const mod = card.modifiers.get(ArcaneStaticModifier);

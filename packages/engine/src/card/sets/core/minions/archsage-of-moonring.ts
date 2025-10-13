@@ -48,7 +48,7 @@ export const archsageOfMoonring: MinionBlueprint = {
           let count = 0;
           const max = mageMod.isActive ? 4 : 3;
 
-          while (count < max + 1) {
+          while (count < max) {
             const [target] = await singleEnemyTargetRules.getPreResponseTargets(
               game,
               card,

@@ -257,6 +257,19 @@
         },
         {
           "alias": [
+            "cosmic-avatar.png"
+          ],
+          "src": [
+            "/assets/cards/minions/cosmic-avatar.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "courageous-footsoldier.png"
           ],
           "src": [
@@ -589,6 +602,19 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "sigil-of-void.png"
+          ],
+          "src": [
+            "/assets/cards/sigils/sigil-of-void.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -861,6 +887,32 @@
           ],
           "src": [
             "/assets/cards/spells/slimes-to-the-rescue.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-mana-shield.png"
+          ],
+          "src": [
+            "/assets/cards/spells/spell-mana-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spell-twist.png"
+          ],
+          "src": [
+            "/assets/cards/spells/spell-twist.png"
           ],
           "data": {
             "tags": {
@@ -1343,6 +1395,19 @@
           ],
           "src": [
             "/assets/icons/keyword-altar.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-arcane-conduit"
+          ],
+          "src": [
+            "/assets/icons/keyword-arcane-conduit.png"
           ],
           "data": {
             "tags": {
