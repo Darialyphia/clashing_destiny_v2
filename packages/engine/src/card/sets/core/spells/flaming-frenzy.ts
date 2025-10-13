@@ -32,6 +32,7 @@ export const flamingFrenzy: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
+  abilities: [],
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

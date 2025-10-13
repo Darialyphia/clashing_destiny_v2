@@ -31,6 +31,7 @@ export const temporalRecollection: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
+  abilities: [],
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

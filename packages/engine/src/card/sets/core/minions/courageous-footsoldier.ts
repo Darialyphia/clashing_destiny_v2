@@ -1,3 +1,4 @@
+import { LingeringDestinyModifier } from '../../../../modifier/modifiers/lingering-destiny.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -11,7 +12,7 @@ export const courageousFootsoldier: MinionBlueprint = {
   id: 'courageous-footsoldier',
   name: 'Courageous Footsoldier',
   cardIconId: 'minions/courageous-footsoldier',
-  description: ``,
+  description: `@Lingering Destiny@`,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -27,6 +28,8 @@ export const courageousFootsoldier: MinionBlueprint = {
   abilities: [],
   tags: [],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new LingeringDestinyModifier(game, card));
+  },
   async onPlay() {}
 };

@@ -29,6 +29,7 @@ export const shiftingCurrents: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
+  abilities: [],
   tags: [],
   canPlay(game, card) {
     return singleEnemyTargetRules.canPlay(game, card, candidate => candidate.isAttacking);

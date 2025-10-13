@@ -26,6 +26,7 @@ export const sunburst: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
+  abilities: [],
   tags: [],
   canPlay: singleMinionTargetRules.canPlay,
   getPreResponseTargets(game, card) {

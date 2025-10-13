@@ -35,6 +35,7 @@ export const grandCross: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
+  abilities: [],
   tags: [],
   canPlay: anyMinionSlot.canPlay,
   getPreResponseTargets: anyMinionSlot.getPreResponseTargets({

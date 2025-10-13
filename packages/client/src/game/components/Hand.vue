@@ -12,10 +12,6 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { SerializedCard } from '@game/engine/src/card/entities/card.entity';
 import { clamp, isDefined } from '@game/shared';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import {
-  INTERACTION_STATES,
-  type InteractionState
-} from '@game/engine/src/game/systems/game-interaction.system';
 import { OnClickOutside } from '@vueuse/components';
 import { useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
@@ -93,13 +89,6 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async e => {
       }
     ).finished;
   }
-});
-
-const isInteractionActive = computed(() => {
-  return (
-    state.value.interaction.state === INTERACTION_STATES.PLAYING_CARD ||
-    state.value.interaction.state === INTERACTION_STATES.USING_ABILITY
-  );
 });
 
 const handContainer = useTemplateRef('hand') as Readonly<
@@ -186,22 +175,22 @@ const cards = computed(() => {
   }));
 });
 
-watch(
-  () => state.value.interaction,
-  interaction => {
-    if (!isMyHand.value) return;
+// watch(
+//   () => state.value.interaction,
+//   interaction => {
+//     if (!isMyHand.value) return;
 
-    const relevantStates: InteractionState[] = [
-      INTERACTION_STATES.USING_ABILITY,
-      INTERACTION_STATES.PLAYING_CARD
-    ];
-    if (!relevantStates.includes(interaction.state)) return;
+//     const relevantStates: InteractionState[] = [
+//       INTERACTION_STATES.USING_ABILITY,
+//       INTERACTION_STATES.PLAYING_CARD
+//     ];
+//     if (!relevantStates.includes(interaction.state)) return;
 
-    if (interaction.ctx.player !== board.value.playerId) return;
+//     if (interaction.ctx.player !== board.value.playerId) return;
 
-    isExpanded.value = true;
-  }
-);
+//     isExpanded.value = true;
+//   }
+// );
 </script>
 
 <template>
@@ -211,7 +200,6 @@ watch(
       class="hand"
       :class="{
         'ui-hidden': !ui.displayedElements.hand,
-        'interaction-active': isInteractionActive,
         expanded: isExpanded,
         'opponent-hand': !isMyHand
       }"

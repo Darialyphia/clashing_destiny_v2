@@ -32,6 +32,7 @@ export const innerfire: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
+  abilities: [],
   tags: [],
   canPlay: singleAllyMinionTargetRules.canPlay,
   getPreResponseTargets(game, card) {

@@ -2,12 +2,10 @@
 import {
   useBoardSide,
   useFxEvent,
-  useGameClient,
-  useGameUi
+  useGameClient
 } from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
-import { throttle } from 'lodash-es';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import SmallCardBack from '@/card/components/SmallCardBack.vue';
 import CountChip from './CountChip.vue';
@@ -21,57 +19,7 @@ const { playerId, teachingMode } = defineProps<{
 const boardSide = useBoardSide(computed(() => playerId));
 
 const { playerId: activePlayerId } = useGameClient();
-const ui = useGameUi();
 const root = useTemplateRef<HTMLElement>('root');
-
-const cardSpacing = ref(0);
-
-const computeSpacing = () => {
-  if (!root.value) return 0;
-  if (!boardSide.value.destinyZone.length) {
-    cardSpacing.value = 0;
-    return;
-  }
-
-  const allowedWidth = root.value.clientWidth;
-  // const totalWidth = [...root.value.children].reduce((total, child) => {
-  //   return total + child.clientWidth;
-  // }, 0);
-
-  // const excess = totalWidth - allowedWidth;
-
-  // cardSpacing.value = Math.min(
-  //   -excess / (boardSide.value.destinyZone.length - 1),
-  //   0
-  // );
-
-  const lastCardWidth = [...root.value.children].at(-1)!.clientWidth;
-  const childrenWidth = [...root.value.children].reduce(
-    (total, child) => total + child.clientWidth,
-    0
-  );
-  if (childrenWidth <= allowedWidth) {
-    cardSpacing.value = lastCardWidth;
-    return;
-  }
-  cardSpacing.value = Math.round(
-    (allowedWidth - lastCardWidth) / root.value.children.length
-  );
-};
-
-watch(
-  [
-    root,
-    computed(() => boardSide.value.destinyZone.length),
-    computed(() => ui.value.selectedManaCostIndices.length)
-  ],
-  () => {
-    nextTick(computeSpacing);
-  },
-  { immediate: true }
-);
-
-useResizeObserver(root, throttle(computeSpacing, 50));
 
 const cardBanishedAsDestinyCost = ref<Array<{ card: string; index: number }>>(
   []
@@ -87,17 +35,6 @@ useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async event => {
 useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
   if (event.player.id !== playerId) return;
   cardBanishedAsDestinyCost.value = [];
-});
-
-const displayedCards = computed(() => {
-  return [
-    ...boardSide.value.destinyZone.map(card => {
-      return {
-        type: 'destiny',
-        cardId: card
-      };
-    })
-  ];
 });
 
 const rootContainerSize = ref({ w: 0, h: 0 });
@@ -126,12 +63,10 @@ const step = computed(() => {
 
 const cards = computed(() => {
   if (destinyZoneSize.value === 0) return [];
-  const usedSpan = cardW.value + (destinyZoneSize.value - 1) * step.value;
-  const offset = (rootContainerSize.value.w - usedSpan) / 2;
 
   return boardSide.value.destinyZone.map((cardId, i) => ({
     cardId: cardId,
-    x: offset + i * step.value,
+    x: i * step.value,
     z: i
   }));
 });
@@ -144,24 +79,29 @@ const cards = computed(() => {
     :id="`destiny-zone-${playerId}`"
     :class="{ 'player-2': playerId !== activePlayerId }"
   >
-    <div v-for="(card, index) in cards" :key="card.cardId">
+    <div
+      v-for="card in cards"
+      :key="card.cardId"
+      class="item"
+      :style="{
+        '--x': `${card.x}px`,
+        '--z': card.z
+      }"
+    >
       <InspectableCard
         v-if="activePlayerId === playerId || teachingMode"
         :card-id="card.cardId"
         side="top"
       >
-        <SmallCardBack
-          :key="card.cardId"
-          class="item"
-          :style="{ '--index': index }"
-        />
+        <SmallCardBack :key="card.cardId" />
       </InspectableCard>
-      <SmallCardBack v-else class="item" :style="{ '--index': index }" />
+      <SmallCardBack v-else />
     </div>
 
     <CountChip
-      :count="displayedCards.length"
-      class="absolute bottom-0 right-0"
+      :count="cards.length"
+      :style="{ '--z': cards.length + 1 }"
+      class="count-chip"
     />
   </div>
 </template>
@@ -195,8 +135,26 @@ const cards = computed(() => {
 }
 
 .item {
-  transform: translateX(
-    calc(var(--index) * v-bind(cardSpacing) * 1px * var(--spacing-offset))
-  );
+  position: absolute;
+  .destiny-zone.player-2 & {
+    right: 0;
+  }
+  .destiny-zone:not(.player-2) & {
+    left: 0;
+  }
+  transform: translateX(calc(var(--spacing-offset) * var(--x)));
+  z-index: var(--z);
+}
+
+.count-chip {
+  position: absolute;
+  bottom: 0;
+  z-index: var(--z);
+  .destiny-zone.player-2 & {
+    left: 0;
+  }
+  .destiny-zone:not(.player-2) & {
+    right: 0;
+  }
 }
 </style>

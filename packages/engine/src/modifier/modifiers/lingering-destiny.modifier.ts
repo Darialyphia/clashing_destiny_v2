@@ -1,9 +1,11 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import { CARD_SPEED } from '../../card/card.enums';
+import { CardEffectTriggeredEvent } from '../../card/card.events';
 import type { AbilityOwner } from '../../card/entities/ability.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
+import { GAME_EVENTS } from '../../game/game.events';
 import { GrantAbilityModifierMixin } from '../mixins/grant-ability.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -29,8 +31,8 @@ export class LingeringDestinyModifier<T extends AbilityOwner> extends Modifier<T
           },
           manaCost: 0,
           shouldExhaust: false,
-          speed: CARD_SPEED.FAST,
-          async onResolve(game, card) {
+          speed: CARD_SPEED.FLASH,
+          onResolve: async (game, card) => {
             await card.sendToBanishPile();
             const spark = await card.player.generateCard<MinionCard>('mana-spark');
             await spark.sendToDestinyZone();

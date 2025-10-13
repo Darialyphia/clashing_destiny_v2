@@ -1,18 +1,22 @@
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { DefenderModifier } from '../../../../modifier/modifiers/defender.modifier';
+import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job-affinity.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
+  HERO_JOBS,
   RARITIES
 } from '../../../card.enums';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const bastionGuard: MinionBlueprint = {
   id: 'bastion-guard',
   name: 'Bastion Guard',
   cardIconId: 'minions/bastion-guard',
-  description: `@Defender (2)@`,
+  description: `@Warrior Affinity@: @Defender (2)@`,
   collectable: true,
   unique: false,
   manaCost: 3,
@@ -29,7 +33,15 @@ export const bastionGuard: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new DefenderModifier(game, card, { amount: 2 }));
+    const warriorMod = (await card.modifiers.add(
+      new HeroJobAffinityModifier(game, card, HERO_JOBS.WARRIOR)
+    )) as HeroJobAffinityModifier<MinionCard>;
+    await card.modifiers.add(
+      new DefenderModifier(game, card, {
+        amount: 2,
+        mixins: [new TogglableModifierMixin(game, () => warriorMod.isActive)]
+      })
+    );
   },
   async onPlay() {}
 };

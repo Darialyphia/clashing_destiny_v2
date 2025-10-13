@@ -19,7 +19,9 @@ export const magicInsight: SpellBlueprint = {
   cardIconId: 'spells/magic-insight',
   description: dedent`
   Draw a card into your Destiny Zone.
-  @[level] 3 bonus@ : This costs @[mana] 1@ less`,
+  @[level] 3 bonus@ : This costs @[mana] 1@ less
+  @Lingering Destiny@
+  `,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -30,6 +32,7 @@ export const magicInsight: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
+  abilities: [],
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

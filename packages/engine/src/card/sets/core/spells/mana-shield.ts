@@ -34,6 +34,7 @@ export const manaShield: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
+  abilities: [],
   tags: [],
   canPlay: singleAllyTargetRules.canPlay,
   getPreResponseTargets(game, card) {

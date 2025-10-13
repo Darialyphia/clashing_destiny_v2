@@ -106,7 +106,6 @@ const waitForAttackDone = async () => {
 };
 
 const onAbilityUse = async (e: { card: string }) => {
-  if (!isInteractive) return;
   if (e.card !== cardId) return;
   isUsingAbility.value = true;
   await waitFor(1000);

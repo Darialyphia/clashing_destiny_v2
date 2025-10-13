@@ -8,6 +8,8 @@ import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import { SpellCard } from '../../card/entities/spell.entity';
+import { SigilCard } from '../../card/entities/sigil.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -32,6 +34,8 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
         P.instanceOf(MinionCard),
         P.instanceOf(HeroCard),
         P.instanceOf(ArtifactCard),
+        P.instanceOf(SpellCard),
+        P.instanceOf(SigilCard),
         card =>
           card.abilities.find(ability => ability.abilityId === this.payload.abilityId) ||
           null

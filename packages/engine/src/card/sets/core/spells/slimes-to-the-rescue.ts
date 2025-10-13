@@ -31,6 +31,7 @@ export const slimesToTheRescue: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
+  abilities: [],
   tags: [],
   canPlay: (game, card) =>
     multipleEmptyAllySlot.canPlay(1)(game, card) &&
