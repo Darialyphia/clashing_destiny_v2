@@ -39,6 +39,9 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
           ? GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE
           : GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
         handler: async event => {
+          if (this.target.location !== 'board') return;
+          if (!event.data.card.equals(this.target)) return;
+
           for (const target of event.data.affectedCards) {
             if (isHero(target)) continue;
             const amount = event.data.damage.getFinalAmount(target);
@@ -55,6 +58,9 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
           ? GAME_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE
           : GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
         handler: async event => {
+          if (this.target.location !== 'board') return;
+          if (!event.data.card.equals(this.target)) return;
+
           for (const target of event.data.affectedCards) {
             if (isHero(target)) continue;
             const excessDamage = this.excessDamageByTarget[target.id];
