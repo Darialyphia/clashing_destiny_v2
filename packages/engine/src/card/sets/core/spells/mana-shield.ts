@@ -47,8 +47,9 @@ export const manaShield: SpellBlueprint = {
   },
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
+    const MODIFIER_ID = 'mana-shield-damage-negation';
     await target.modifiers.add(
-      new Modifier<MinionCard>('mana-shield', game, target, {
+      new Modifier<MinionCard>(MODIFIER_ID, game, target, {
         mixins: [
           new MinionInterceptorModifierMixin(game, {
             key: 'receivedDamage',
@@ -62,9 +63,10 @@ export const manaShield: SpellBlueprint = {
             eventName: isMinion(target)
               ? GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE
               : GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
-            async handler(event, modifier) {
-              if (event.data.card.equals(card)) {
-                await card.modifiers.remove(modifier.modifierType);
+            async handler(event) {
+              if (event.data.card.equals(target)) {
+                console.log(event.data.card.id);
+                await card.modifiers.remove(MODIFIER_ID);
               }
             }
           })
