@@ -62,7 +62,9 @@ export const cards = {
 "cerulean-wave-disciple": "cerulean-wave-disciple",
 "navala-surging-catalyst": "navala-surging-catalyst",
 "sigil-of-void": "sigil-of-void",
-"spell-twist": "spell-twist"
+"spell-twist": "spell-twist",
+"mana-shield": "mana-shield",
+"cosmic-avatar": "cosmic-avatar"
 } as const;
 
 export const collectableCards = {
@@ -120,5 +122,7 @@ export const collectableCards = {
 "cerulean-wave-disciple": "cerulean-wave-disciple",
 "navala-surging-catalyst": "navala-surging-catalyst",
 "sigil-of-void": "sigil-of-void",
-"spell-twist": "spell-twist"
+"spell-twist": "spell-twist",
+"mana-shield": "mana-shield",
+"cosmic-avatar": "cosmic-avatar"
 } as const;
