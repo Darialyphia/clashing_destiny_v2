@@ -9,6 +9,7 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
+import { LingeringDestinyModifier } from '../../../../modifier/modifiers/lingering-destiny.modifier';
 
 export const gazeIntoTomorrow: SpellBlueprint = {
   id: 'gaze-into-tomorrow',
@@ -16,7 +17,7 @@ export const gazeIntoTomorrow: SpellBlueprint = {
   cardIconId: 'spells/gaze-into-tomorrow',
   description: dedent`
   @Scry 1@, then draw a card.
-  @Echoed Destiny@.
+  @Lingering Destiny@.
   `,
   collectable: true,
   unique: false,
@@ -32,7 +33,7 @@ export const gazeIntoTomorrow: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
+    await card.modifiers.add(new LingeringDestinyModifier(game, card));
   },
   async onPlay(game, card) {
     await scry(game, card, 1);

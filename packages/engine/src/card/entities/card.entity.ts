@@ -34,6 +34,7 @@ import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
+import type { AbilityOwner } from './ability.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -95,7 +96,7 @@ export type CardTargetOrigin =
   | {
       type: 'ability';
       abilityId: string;
-      card: MinionCard | HeroCard | ArtifactCard;
+      card: AbilityOwner;
     };
 
 export abstract class Card<

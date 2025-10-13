@@ -61,17 +61,15 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
           if (this.target.location !== 'board') return;
           if (!event.data.card.equals(this.target)) return;
 
-          for (const target of event.data.affectedCards) {
-            if (isHero(target)) continue;
-            const excessDamage = this.excessDamageByTarget[target.id];
-            if (!excessDamage) continue;
-            delete this.excessDamageByTarget[target.id];
+          const totalAmount = Object.values(this.excessDamageByTarget).reduce(
+            (sum, val) => sum + val,
+            0
+          );
 
-            await target.player.hero.takeDamage(
-              this.target,
-              new AbilityDamage(excessDamage)
-            );
-          }
+          await target.player.hero.takeDamage(
+            this.target,
+            new AbilityDamage(totalAmount)
+          );
         }
       })
     );

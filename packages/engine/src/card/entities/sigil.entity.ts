@@ -1,7 +1,11 @@
 import { isDefined, type MaybePromise } from '@game/shared';
 import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { Interceptable } from '../../utils/interceptable';
-import type { PreResponseTarget, SigilBlueprint } from '../card-blueprint';
+import type {
+  AbilityBlueprint,
+  PreResponseTarget,
+  SigilBlueprint
+} from '../card-blueprint';
 import { CARD_EVENTS, type HeroJob, type SpellSchool } from '../card.enums';
 import { Ability } from './ability.entity';
 import {
@@ -101,6 +105,43 @@ export class SigilCard extends Card<
     this.player.boardSide.summonSigil(this, position.zone, position.slot);
     this._countdown = this.maxCountdown;
     await this.blueprint.onPlay(this.game, this);
+  }
+
+  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
+    const targets = this.abilityTargets.get(abilityId);
+    if (!targets) return;
+    if (newTarget instanceof Card) {
+      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
+      if (index === -1) return;
+
+      const oldTarget = targets[index] as AnyCard;
+      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
+
+      targets[index] = newTarget;
+      newTarget.targetBy({ type: 'ability', abilityId, card: this });
+    }
+  }
+
+  canUseAbility(id: string) {
+    const ability = this.abilities.find(ability => ability.abilityId === id);
+    if (!ability) return false;
+
+    return this.interceptors.canUseAbility.getValue(ability.canUse, {
+      card: this,
+      ability
+    });
+  }
+
+  addAbility(ability: AbilityBlueprint<SigilCard, PreResponseTarget>) {
+    const newAbility = new Ability<SigilCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
+
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilityTargets.delete(abilityId);
   }
 
   canPlay() {

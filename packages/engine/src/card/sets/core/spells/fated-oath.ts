@@ -27,6 +27,7 @@ export const fatedOath: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.LEGENDARY,
   tags: [],
+  abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},

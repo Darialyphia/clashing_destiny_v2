@@ -32,6 +32,7 @@ export const arcaneRay: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
+  abilities: [],
   canPlay: anyMinionSlot.canPlay,
   getPreResponseTargets(game, card) {
     return anyMinionSlot.getPreResponseTargets({ min: 1, max: 1, allowRepeat: false })(

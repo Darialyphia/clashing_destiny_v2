@@ -1,14 +1,10 @@
 import type { AbilityBlueprint, PreResponseTarget } from '../../card/card-blueprint';
-import type { ArtifactCard } from '../../card/entities/artifact.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
-import type { MinionCard } from '../../card/entities/minion.entity';
+import type { AbilityOwner } from '../../card/entities/ability.entity';
 import type { Game } from '../../game/game';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';
 
-export class GrantAbilityModifierMixin<
-  T extends MinionCard | HeroCard | ArtifactCard
-> extends ModifierMixin<T> {
+export class GrantAbilityModifierMixin<T extends AbilityOwner> extends ModifierMixin<T> {
   protected modifier!: Modifier<T>;
 
   protected abilityId!: string;

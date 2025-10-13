@@ -121,6 +121,7 @@ export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   spellSchool: SpellSchool | null;
   job: HeroJob | null;
+  abilities: AbilityBlueprint<SpellCard, PreResponseTarget>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;

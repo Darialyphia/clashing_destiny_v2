@@ -28,6 +28,7 @@ import type { TurnEventMap } from './systems/turn.system';
 import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
 import { SIGIL_EVENTS, type SigilEventMap } from '../card/entities/sigil.entity';
 import type { Player } from '../player/player.entity';
+import { SPELL_EVENTS, type SpellCardEventMap } from '../card/entities/spell.entity';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -142,6 +143,7 @@ export type GameEventMap = Prettify<
     MinionCardEventMap &
     HeroCardEventMap &
     ArtifactCardEventMap &
+    SpellCardEventMap &
     SigilEventMap &
     PlayerEventMap &
     AbilityEventMap &
@@ -172,6 +174,7 @@ export const GAME_EVENTS = {
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
   ...SIGIL_EVENTS,
+  ...SPELL_EVENTS,
   ...TURN_EVENTS,
   ...EFFECT_CHAIN_EVENTS
 } as const satisfies Record<string, GameEventName>;

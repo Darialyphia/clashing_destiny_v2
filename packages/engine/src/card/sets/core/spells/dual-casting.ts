@@ -1,11 +1,7 @@
 import dedent from 'dedent';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import {
-  isMinion,
-  multipleEnemyTargetRules,
-  singleEnemyTargetRules
-} from '../../../card-utils';
+import { multipleEnemyTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -34,6 +30,7 @@ export const dualCasting: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
+  abilities: [],
   canPlay: multipleEnemyTargetRules.canPlay(2),
   getPreResponseTargets(game, card) {
     return multipleEnemyTargetRules.getPreResponseTargets({

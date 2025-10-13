@@ -15,6 +15,7 @@ import { Entity } from '../../entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CARD_SPEED } from '../card.enums';
 import type { SigilCard } from './sigil.entity';
+import type { SpellCard } from './spell.entity';
 
 export const ABILITY_EVENTS = {
   ABILITY_BEFORE_USE: 'ability.before-use',
@@ -56,7 +57,7 @@ export type AbilityEventMap = {
   [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
 };
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard | SpellCard;
 
 export class Ability<T extends AbilityOwner>
   extends Entity<EmptyObject>

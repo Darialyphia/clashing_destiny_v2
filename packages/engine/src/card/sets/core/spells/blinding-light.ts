@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../card-utils';
 import {
@@ -12,8 +11,6 @@ import {
 } from '../../../card.enums';
 import { MinionCard } from '../../../entities/minion.entity';
 import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
-import { Modifier } from '../../../../modifier/modifier.entity';
-import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
@@ -34,6 +31,7 @@ export const blindingLight: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
+  abilities: [],
   canPlay(game, card) {
     return singleEnemyTargetRules.canPlay(game, card, candidate => candidate.isAttacking);
   },

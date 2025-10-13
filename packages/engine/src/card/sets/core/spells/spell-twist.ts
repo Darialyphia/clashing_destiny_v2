@@ -1,6 +1,4 @@
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -9,7 +7,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import type { SpellCard } from '../../../entities/spell.entity';
 
 export const spellTwist: SpellBlueprint = {
@@ -21,7 +18,7 @@ export const spellTwist: SpellBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 3,
-  speed: CARD_SPEED.WARP,
+  speed: CARD_SPEED.FAST,
   spellSchool: SPELL_SCHOOLS.ARCANE,
   job: null,
   kind: CARD_KINDS.SPELL,
@@ -29,6 +26,7 @@ export const spellTwist: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   tags: [],
+  abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},

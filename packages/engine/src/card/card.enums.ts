@@ -42,8 +42,8 @@ export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
 export const CARD_SPEED = {
   SLOW: 'SLOW',
   FAST: 'FAST',
-  FLASH: 'FLASH',
-  WARP: 'WARP'
+  FLASH: 'FLASH'
+  // WARP: 'WARP'
 } as const;
 export type CardSpeed = Values<typeof CARD_SPEED>;
 
