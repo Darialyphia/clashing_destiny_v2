@@ -25,6 +25,13 @@ export const KEYWORDS = {
       'If this card is banished while paying for the cost of a Destiny card, add it to your hand instead and give it Fleeting.',
     aliases: []
   },
+  LINGERING_DESTINY: {
+    id: 'lingering-destiny',
+    name: 'Lingering Destiny',
+    description:
+      'You can banish this card from your Discard pile to add a Mana Spark into your Destiny Zone.',
+    aliases: []
+  },
   SUMMONING_SICKNESS: {
     id: 'summoning-sickness',
     name: 'Summoning Sickness',

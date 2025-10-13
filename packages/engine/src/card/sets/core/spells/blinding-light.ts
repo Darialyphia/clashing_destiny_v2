@@ -15,17 +15,17 @@ import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-des
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const blindingLight: SpellBlueprint = {
   id: 'blinding-light',
   name: 'Blinding Light',
   cardIconId: 'spells/blinding-light',
   description: dedent`
-  Set an enemy minion attack to 0 this turn.
-  @Echoed Destiny@`,
+  Give an attacking enemy minion -3 @[attack]@ this turn.`,
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.FAST,
   spellSchool: SPELL_SCHOOLS.LIGHT,
   job: null,
@@ -34,12 +34,19 @@ export const blindingLight: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   tags: [],
-  canPlay: singleEnemyTargetRules.canPlay,
+  canPlay(game, card) {
+    return singleEnemyTargetRules.canPlay(game, card, candidate => candidate.isAttacking);
+  },
   getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
-    });
+    return singleEnemyTargetRules.getPreResponseTargets(
+      game,
+      card,
+      {
+        type: 'card',
+        card
+      },
+      candidate => candidate.isAttacking
+    );
   },
   async onInit(game, card) {
     await card.modifiers.add(new EchoedDestinyModifier(game, card, {}));
@@ -47,14 +54,9 @@ export const blindingLight: SpellBlueprint = {
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
     await target.modifiers.add(
-      new Modifier<MinionCard>('blinding-light', game, card, {
-        mixins: [
-          new MinionInterceptorModifierMixin(game, {
-            key: 'atk',
-            interceptor: () => 0
-          }),
-          new UntilEndOfTurnModifierMixin(game)
-        ]
+      new SimpleAttackBuffModifier<MinionCard>('blinding-light', game, card, {
+        amount: -3,
+        mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );
   }

@@ -1,11 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import {
-  isMinion,
-  multipleEnemyTargetRules,
-  singleEnemyTargetRules
-} from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -14,8 +8,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { EfficiencyModifier } from '../../../../modifier/modifiers/efficiency.modifier';
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 import type { SpellCard } from '../../../entities/spell.entity';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
@@ -27,9 +19,7 @@ export const magicInsight: SpellBlueprint = {
   cardIconId: 'spells/magic-insight',
   description: dedent`
   Draw a card into your Destiny Zone.
-  @[level] 3 bonus@ : This costs @[mana] 1@ less.
-  @Echoed Destiny@
-  `,
+  @[level] 3 bonus@ : This costs @[mana] 1@ less`,
   collectable: true,
   unique: false,
   manaCost: 1,
@@ -54,7 +44,6 @@ export const magicInsight: SpellBlueprint = {
         mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
       })
     );
-    await card.modifiers.add(new EchoedDestinyModifier(game, card));
   },
   async onPlay(game, card) {
     await card.player.cardManager.drawIntoDestinyZone(1);
