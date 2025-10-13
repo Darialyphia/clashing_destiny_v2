@@ -32,6 +32,7 @@ const isPreviewOpened = ref(false);
 
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
+
   return (
     deckBuilder.value.canAdd({
       blueprintId: card.card.id,
@@ -40,8 +41,8 @@ const canAddCard = computed(() => {
         cardId: card.id as CardId,
         isFoil: card.isFoil
       }
-    }) ||
-    card.copiesOwned <= (deckBuilder.value.getCard(card.card.id)?.copies ?? 0)
+    }) &&
+    card.copiesOwned > (deckBuilder.value.getCard(card.card.id)?.copies ?? 0)
   );
 });
 </script>

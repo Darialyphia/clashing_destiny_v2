@@ -34,7 +34,7 @@ export const erinaLv2: HeroBlueprint = {
   lineage: 'erina',
   spellPower: 0,
   atk: 0,
-  maxHp: 16,
+  maxHp: 20,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {

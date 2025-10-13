@@ -90,12 +90,14 @@ useIntersectionObserver(
     perspective-origin: center;
     isolation: isolate;
     width: calc(var(--card-width) * var(--pixel-scale));
+    aspect-ratio: var(--card-ratio);
   }
 
   @screen lt-lg {
     --pixel-scale: 1;
     li {
       width: calc(var(--card-small-width) * var(--pixel-scale));
+      aspect-ratio: var(--card-small-ratio);
     }
   }
 
@@ -103,6 +105,7 @@ useIntersectionObserver(
     --pixel-scale: 1;
     li {
       width: calc(var(--card-small-width) * var(--pixel-scale));
+      aspect-ratio: var(--card-small-ratio);
     }
   }
 }
