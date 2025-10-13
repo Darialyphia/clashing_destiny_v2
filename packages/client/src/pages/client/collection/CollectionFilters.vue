@@ -4,7 +4,9 @@ import {
   SPELL_SCHOOLS,
   CARD_KINDS,
   type SpellSchool,
-  type CardKind
+  type CardKind,
+  type HeroJob,
+  HERO_JOBS
 } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
@@ -33,7 +35,19 @@ const spellSchools: Array<{
 }> = Object.values(SPELL_SCHOOLS).map(spellSchool => ({
   id: spellSchool,
   img: `/assets/ui/spell-school-${spellSchool.toLocaleLowerCase()}.png`,
-  label: uppercaseFirstLetter(spellSchool),
+  label: uppercaseFirstLetter(spellSchool.toLocaleLowerCase()),
+  color: 'white'
+}));
+
+const heroJobs: Array<{
+  id: HeroJob;
+  img: string;
+  label: string;
+  color: string;
+}> = Object.values(HERO_JOBS).map(job => ({
+  id: job,
+  img: `/assets/ui/jobs-${job.toLocaleLowerCase()}.png`,
+  label: uppercaseFirstLetter(job.toLocaleLowerCase()),
   color: 'white'
 }));
 
@@ -95,7 +109,7 @@ const cardKinds: Array<{
 
     <section>
       <h4>Spell Schools</h4>
-      <div class="affinity-filter">
+      <div class="filter">
         <UiSimpleTooltip
           v-for="spellSchool in spellSchools"
           :key="spellSchool.label"
@@ -119,6 +133,26 @@ const cardKinds: Array<{
     </section>
 
     <section>
+      <h4>Hero Class</h4>
+      <div class="filter">
+        <UiSimpleTooltip v-for="heroJob in heroJobs" :key="heroJob.label">
+          <template #trigger>
+            <button
+              :class="hasJobFilter(heroJob.id) && 'active'"
+              :style="{ '--color': heroJob.color }"
+              :aria-label="heroJob.label"
+              @click="toggleJobFilter(heroJob.id)"
+            >
+              <img :src="heroJob.img" :alt="heroJob.label" />
+            </button>
+          </template>
+          {{ heroJob.label }}
+        </UiSimpleTooltip>
+      </div>
+      <button class="clear-button" @click="clearJobFilter">Clear</button>
+    </section>
+
+    <section>
       <h4>Card type</h4>
       <div class="kind-filter">
         <button
@@ -138,7 +172,7 @@ const cardKinds: Array<{
 </template>
 
 <style scoped lang="postcss">
-.affinity-filter {
+.filter {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--size-1);
@@ -209,8 +243,5 @@ const cardKinds: Array<{
     border-color: #ffb270;
     outline: none;
   }
-}
-
-.clear-button {
 }
 </style>

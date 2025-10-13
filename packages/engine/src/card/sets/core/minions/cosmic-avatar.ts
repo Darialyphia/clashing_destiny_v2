@@ -10,7 +10,6 @@ import {
 } from '../../../card.enums';
 import { PiercingModifier } from '../../../../modifier/modifiers/percing.modifier';
 import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
-import { OnHitModifier } from '../../../../modifier/modifiers/on-hit.modifier';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
@@ -28,8 +27,8 @@ export const cosmicAvatar: MinionBlueprint = {
   unique: false,
   destinyCost: 3,
   speed: CARD_SPEED.SLOW,
-  atk: 4,
-  maxHp: 5,
+  atk: 3,
+  maxHp: 4,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   kind: CARD_KINDS.MINION,

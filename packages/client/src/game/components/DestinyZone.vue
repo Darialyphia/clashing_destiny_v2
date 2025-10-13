@@ -119,6 +119,7 @@ const cards = computed(() => {
   height: 100%;
   border: solid 1px #985e25;
   padding-inline: 4px;
+  z-index: 1;
   --spacing-offset: 1;
   &.player-2 {
     justify-items: end;

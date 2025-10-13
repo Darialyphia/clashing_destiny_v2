@@ -46,9 +46,7 @@ export const blindingLight: SpellBlueprint = {
       candidate => candidate.isAttacking
     );
   },
-  async onInit(game, card) {
-    await card.modifiers.add(new EchoedDestinyModifier(game, card, {}));
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
     await target.modifiers.add(

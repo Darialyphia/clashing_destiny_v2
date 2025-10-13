@@ -12,6 +12,7 @@ import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.m
 import type { SpellCard } from '../../../entities/spell.entity';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { LingeringDestinyModifier } from '../../../../modifier/modifiers/lingering-destiny.modifier';
 
 export const magicInsight: SpellBlueprint = {
   id: 'magic-insight',
@@ -47,6 +48,8 @@ export const magicInsight: SpellBlueprint = {
         mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
       })
     );
+
+    await card.modifiers.add(new LingeringDestinyModifier(game, card));
   },
   async onPlay(game, card) {
     await card.player.cardManager.drawIntoDestinyZone(1);
