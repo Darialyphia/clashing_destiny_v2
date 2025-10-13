@@ -53,11 +53,11 @@ export const arcaneRay: SpellBlueprint = {
       .minions.filter(m => m.isEnemy(card));
 
     for (const minion of minions) {
-      await minion.takeDamage(card, new SpellDamage(2));
+      await minion.takeDamage(card, new SpellDamage(2, card));
     }
 
     if (levelMod?.isActive) {
-      await card.player.opponent.hero.takeDamage(card, new SpellDamage(2));
+      await card.player.opponent.hero.takeDamage(card, new SpellDamage(2, card));
     }
   }
 };

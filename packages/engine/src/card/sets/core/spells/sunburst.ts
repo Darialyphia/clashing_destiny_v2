@@ -42,7 +42,7 @@ export const sunburst: SpellBlueprint = {
     if (target.isAlly(card)) {
       await target.heal(3);
     } else {
-      await target.takeDamage(card, new SpellDamage(2));
+      await target.takeDamage(card, new SpellDamage(2, card));
     }
   }
 };

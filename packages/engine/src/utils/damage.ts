@@ -1,5 +1,6 @@
 import type { Values } from '@game/shared';
 import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
+import type { AnyCard } from '../card/entities/card.entity';
 
 export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',
@@ -19,7 +20,7 @@ export abstract class Damage {
 
   readonly type: DamageType;
 
-  private _isPrevented = false;
+  protected _isPrevented = false;
 
   constructor(options: DamageOptions) {
     this._baseAmount = options.baseAmount;
@@ -54,8 +55,17 @@ export class CombatDamage extends Damage {
 }
 
 export class SpellDamage extends Damage {
-  constructor(amount: number) {
+  constructor(
+    amount: number,
+    private source: AnyCard
+  ) {
     super({ baseAmount: amount, type: DAMAGE_TYPES.SPELL });
+  }
+
+  getFinalAmount(target: AttackTarget): number {
+    const finalAmount = super.getFinalAmount(target);
+    if (this._isPrevented) return 0;
+    return finalAmount + this.source.player.hero.spellPower;
   }
 }
 

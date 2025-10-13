@@ -314,6 +314,12 @@ export const KEYWORDS = {
     description:
       'When this attacks and destroy a minion, deal excess damage to the enemy Hero.',
     aliases: []
+  },
+  SPELLPOWER: {
+    id: 'spellpower',
+    name: 'Spellpower (X)',
+    description: 'Increase the damage of your spells by X.',
+    aliases: [/spellpower \([0-9]+\)/]
   }
 };
 

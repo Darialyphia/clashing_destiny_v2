@@ -60,6 +60,7 @@ import { sigilOfVoid } from './core/sigils/sigil-of-void';
 import { spellTwist } from './core/spells/spell-twist';
 import { manaShield } from './core/spells/mana-shield';
 import { cosmicAvatar } from './core/minions/cosmic-avatar';
+import { cosmicAscension } from './core/spells/cosmic-ascension';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -124,6 +125,7 @@ export const coreSet: CardSet = {
     sigilOfVoid,
     spellTwist,
     manaShield,
-    cosmicAvatar
+    cosmicAvatar,
+    cosmicAscension
   ]
 };

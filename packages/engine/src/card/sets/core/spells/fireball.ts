@@ -40,9 +40,9 @@ export const fireball: SpellBlueprint = {
     const target = targets[0] as MinionCard;
 
     const adjacentMinions = target.slot!.adjacentMinions;
-    await target.takeDamage(card, new SpellDamage(4));
+    await target.takeDamage(card, new SpellDamage(4, card));
     for (const minion of adjacentMinions) {
-      await minion.takeDamage(card, new SpellDamage(4));
+      await minion.takeDamage(card, new SpellDamage(4, card));
     }
   }
 };

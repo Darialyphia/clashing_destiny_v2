@@ -48,7 +48,7 @@ export const shiftingCurrents: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
-    await target.takeDamage(card, new SpellDamage(1));
+    await target.takeDamage(card, new SpellDamage(1, card));
     const phaseCtx =
       game.gamePhaseSystem.getContext<BetterExtract<GamePhase, 'attack_phase'>>();
     await phaseCtx.ctx.cancelAttack();

@@ -39,10 +39,10 @@ export const fireBolt: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
-    await target.takeDamage(card, new SpellDamage(1));
+    await target.takeDamage(card, new SpellDamage(1, card));
     if (isMinion(target)) {
       const enemyHero = target.player.hero;
-      await enemyHero.takeDamage(card, new SpellDamage(1));
+      await enemyHero.takeDamage(card, new SpellDamage(1, card));
     }
   }
 };

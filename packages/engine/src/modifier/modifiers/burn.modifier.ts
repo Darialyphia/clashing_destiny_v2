@@ -24,7 +24,7 @@ export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
           handler: async () => {
             await this.target.takeDamage(
               source,
-              isSpell(source) ? new SpellDamage(1) : new AbilityDamage(1)
+              isSpell(source) ? new SpellDamage(1, this.target) : new AbilityDamage(1)
             );
           }
         })

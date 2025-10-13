@@ -67,7 +67,7 @@ export const grandCross: SpellBlueprint = {
       if (minion.isAlly(card)) {
         await minion.heal(3);
       } else {
-        await minion.takeDamage(card, new SpellDamage(3));
+        await minion.takeDamage(card, new SpellDamage(3, card));
       }
     }
   }
