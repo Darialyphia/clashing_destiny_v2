@@ -116,7 +116,7 @@ export class Ability<T extends AbilityOwner>
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
     );
-    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id)!;
+    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id) ?? [];
     await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
     abilityTargets.forEach(target => {
       if (target instanceof Card) {

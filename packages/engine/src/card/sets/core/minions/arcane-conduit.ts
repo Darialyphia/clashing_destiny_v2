@@ -47,11 +47,13 @@ export const arcaneConduit: MinionBlueprint = {
         if (mod.stacks < 2) return false;
         return card.location === 'board';
       },
-      getPreResponseTargets: () => Promise.resolve([]),
-      async onResolve(game, card) {
+      getPreResponseTargets: async (game, card) => {
         const mod = card.modifiers.get(ArcaneStaticModifier);
         await mod!.removeStacks(2);
 
+        return [];
+      },
+      async onResolve(game, card) {
         const enemies = [card.player.enemyHero, ...card.player.enemyMinions];
         for (const enemy of enemies) {
           await enemy.takeDamage(card, new AbilityDamage(1));

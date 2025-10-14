@@ -675,6 +675,19 @@
         },
         {
           "alias": [
+            "cosmic-ascension.png"
+          ],
+          "src": [
+            "/assets/cards/spells/cosmic-ascension.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "dual-casting.png"
           ],
           "src": [
