@@ -97,13 +97,17 @@ const handContainer = useTemplateRef('hand') as Readonly<
 
 const handContainerSize = ref({ w: 0, h: 0 });
 const handOffsetY = ref(0);
-useResizeObserver(handContainer, () => {
+useResizeObserver(handContainer, async () => {
+  await nextTick();
   const el = handContainer.value;
   if (!el) return;
   const rect = el.getBoundingClientRect();
   handContainerSize.value = { w: rect.width, h: rect.height };
-  handOffsetY.value =
-    handContainer.value.scrollHeight - handContainer.value.clientHeight;
+  console.log(
+    handContainer.value.scrollHeight,
+    handContainer.value.clientHeight
+  );
+  handOffsetY.value = handContainer.value.clientHeight;
 });
 
 const pixelScale = computed(() => {

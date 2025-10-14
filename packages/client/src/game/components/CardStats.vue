@@ -163,7 +163,8 @@ const visibleModifiers = gameStateRef(() => {
     right: -5px;
     font-size: var(--font-size-2);
     color: white;
-    -webkit-text-stroke: 1px black;
+    paint-order: stroke fill;
+    font-weight: var(--font-weight-7);
   }
 }
 </style>
