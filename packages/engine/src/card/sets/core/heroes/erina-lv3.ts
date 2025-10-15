@@ -12,18 +12,18 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import { EchoModifier } from '../../../../modifier/modifiers/echo.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const erinaLv3: HeroBlueprint = {
   id: 'erina-lv3',
   name: 'Erina, Arcane Weaver',
   description: dedent`
   @Erina Lineage@.
-  Your Spells have @Echo@.
+  Your Spells cost @[mana] 1@ less.
   Every 3 spells you play during a turn, draw a card.
    `,
   cardIconId: 'heroes/erina-lv3',
@@ -46,6 +46,7 @@ export const erinaLv3: HeroBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    const DISCOUT_MODIFIER_ID = 'erina-lv3-discount';
     await card.modifiers.add(
       new Modifier('erina-lv3-aura', game, card, {
         mixins: [
@@ -55,10 +56,12 @@ export const erinaLv3: HeroBlueprint = {
               return candidate.isAlly(card) && isSpell(candidate);
             },
             async onGainAura(candidate) {
-              await candidate.modifiers.add(new EchoModifier(game, card));
+              await candidate.modifiers.add(
+                new SimpleManacostModifier(DISCOUT_MODIFIER_ID, game, card, { amount: 1 })
+              );
             },
             async onLoseAura(candidate) {
-              await candidate.modifiers.remove(EchoModifier);
+              await candidate.modifiers.remove(DISCOUT_MODIFIER_ID);
             }
           })
         ]

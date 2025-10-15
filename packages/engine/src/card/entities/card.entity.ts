@@ -497,11 +497,13 @@ export abstract class Card<
   }
 
   async exhaust() {
+    if (this.isExhausted) return;
     await this.game.emit(CARD_EVENTS.CARD_EXHAUST, new CardExhaustEvent({ card: this }));
     this._isExhausted = true;
   }
 
   async wakeUp() {
+    if (!this.isExhausted) return;
     await this.game.emit(CARD_EVENTS.CARD_WAKE_UP, new CardWakeUpEvent({ card: this }));
     this._isExhausted = false;
   }

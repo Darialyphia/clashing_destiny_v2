@@ -19,7 +19,8 @@ export const channelTheFlames: SpellBlueprint = {
   id: 'channel-the-flames',
   name: 'Channel the Flames',
   cardIconId: 'spells/channel-the-flames',
-  description: 'Give your Hero: @On Level Up@: Take 3 damage and draw a card.',
+  description:
+    'Give your Hero: @On Level Up@: Take 2 damage, draw a card, then discard a card.',
   collectable: true,
   unique: false,
   destinyCost: 1,
@@ -45,6 +46,15 @@ export const channelTheFlames: SpellBlueprint = {
               if (event.data.to.player.equals(card.player)) {
                 await event.data.to.takeDamage(card, new SpellDamage(3, card));
                 await card.player.cardManager.draw(1);
+                const [cardToDiscard] = await game.interaction.chooseCards({
+                  player: card.player,
+                  label: 'Choose a card to discard',
+                  minChoiceCount: 1,
+                  maxChoiceCount: 1,
+                  choices: card.player.cardManager.hand
+                });
+
+                await cardToDiscard.discard();
               }
             }
           })

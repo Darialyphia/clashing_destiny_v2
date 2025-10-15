@@ -63,6 +63,7 @@ import { cosmicAvatar } from './core/minions/cosmic-avatar';
 import { cosmicAscension } from './core/spells/cosmic-ascension';
 import { engulfInFlames } from './core/spells/engulf';
 import { channelTheFlames } from './core/spells/channel-the-flames';
+import { flashfire } from './core/spells/flashfire';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -130,6 +131,7 @@ export const coreSet: CardSet = {
     cosmicAvatar,
     cosmicAscension,
     engulfInFlames,
-    channelTheFlames
+    channelTheFlames,
+    flashfire
   ]
 };

@@ -24,7 +24,7 @@ export const navalaSurgingCatalyst: MinionBlueprint = {
   cardIconId: 'minions/navala-surging-catalyst',
   description: dedent`
   @On Enter@ : draw a spell.
-  @Sage Affinity@ : Before a card chain resolves, your hero gain @Spellpower@ equal to the number of cards in the chain, until it is resolved.
+  @Sage Affinity@ :After you play a spell deal 1 damage to all enemies.
   `,
   collectable: true,
   unique: false,
@@ -54,25 +54,23 @@ export const navalaSurgingCatalyst: MinionBlueprint = {
       })
     );
 
-    const SPELLPOWER_MODIFIER_ID = 'navala-spellpower-buff';
     await card.modifiers.add(
-      new Modifier<MinionCard>('navala', game, card, {
+      new Modifier<MinionCard>('arcane-conduit-spellwatch', game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => sageMod.isActive),
+          new TogglableModifierMixin(
+            game,
+            () => card.location === 'board' && sageMod.isActive
+          ),
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.EFFECT_CHAIN_BEFORE_RESOLVED,
-            handler: async () => {
-              await card.player.hero.modifiers.add(
-                new SimpleSpellpowerBuffModifier(SPELLPOWER_MODIFIER_ID, game, card, {
-                  amount: game.effectChainSystem.currentChain?.size ?? 0
-                })
-              );
-            }
-          }),
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED,
-            handler: async () => {
-              await card.player.hero.modifiers.remove(SPELLPOWER_MODIFIER_ID);
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            handler: async event => {
+              if (!event.data.card.isAlly(card)) return;
+              if (event.data.card.kind !== CARD_KINDS.SPELL) return;
+
+              const targets = [card.player.enemyHero, ...card.player.enemyMinions];
+              for (const target of targets) {
+                await target.takeDamage(card, new AbilityDamage(1));
+              }
             }
           })
         ]

@@ -325,7 +325,13 @@ export const KEYWORDS = {
     id: 'spellpower',
     name: 'Spellpower (X)',
     description: 'Increase the damage of your spells by X.',
-    aliases: [/spellpower \([0-9]+\)/]
+    aliases: [/spellpower \([0-9]+\)/, 'spellpower']
+  },
+  REACTION: {
+    id: 'reaction',
+    name: 'Reaction',
+    description: 'You can only play this card if a card chain is already ongoing.',
+    aliases: [/reaction \([0-9]+\)/, 'reaction']
   }
 };
 
