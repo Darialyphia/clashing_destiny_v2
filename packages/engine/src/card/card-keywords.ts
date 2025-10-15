@@ -75,6 +75,12 @@ export const KEYWORDS = {
       'Does something when this card kills another unit via combat while being the attacker.',
     aliases: []
   },
+  ON_LEVEL_UP: {
+    id: 'on-level-up',
+    name: 'On Level Up',
+    description: 'Does something when this hero levels up.',
+    aliases: []
+  },
   UNIQUE: {
     id: 'unique',
     name: 'Unique',

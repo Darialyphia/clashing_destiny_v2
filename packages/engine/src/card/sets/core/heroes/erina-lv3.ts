@@ -16,6 +16,7 @@ import { EchoModifier } from '../../../../modifier/modifiers/echo.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { CardEffectTriggeredEvent } from '../../../card.events';
 
 export const erinaLv3: HeroBlueprint = {
   id: 'erina-lv3',
@@ -79,6 +80,13 @@ export const erinaLv3: HeroBlueprint = {
                 ).length;
 
               if (spellCountThisTurn > 0 && spellCountThisTurn % 3 === 0) {
+                await game.emit(
+                  GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                  new CardEffectTriggeredEvent({
+                    card,
+                    message: 'Erina Lv3 effect triggered: drawing a card'
+                  })
+                );
                 await card.player.cardManager.draw(1);
               }
             }

@@ -61,6 +61,8 @@ import { spellTwist } from './core/spells/spell-twist';
 import { manaShield } from './core/spells/mana-shield';
 import { cosmicAvatar } from './core/minions/cosmic-avatar';
 import { cosmicAscension } from './core/spells/cosmic-ascension';
+import { engulfInFlames } from './core/spells/engulf';
+import { channelTheFlames } from './core/spells/channel-the-flames';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -126,6 +128,8 @@ export const coreSet: CardSet = {
     spellTwist,
     manaShield,
     cosmicAvatar,
-    cosmicAscension
+    cosmicAscension,
+    engulfInFlames,
+    channelTheFlames
   ]
 };

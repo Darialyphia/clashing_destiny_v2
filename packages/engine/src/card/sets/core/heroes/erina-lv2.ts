@@ -12,13 +12,14 @@ import {
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { isSpell } from '../../../card-utils';
 import { GAME_EVENTS } from '../../../../game/game.events';
+import { scry } from '../../../card-actions-utils';
 
 export const erinaLv2: HeroBlueprint = {
   id: 'erina-lv2',
   name: 'Erina, Aether Scholar',
   description: dedent`
   @Erina Lineage@.
-  @On Enter@: this turn, when you play a spell, add a @Mana Spark@ to your hand.
+  @On Enter@: @Scry 2@.
   `,
   cardIconId: 'heroes/erina-lv2',
   kind: CARD_KINDS.HERO,
@@ -44,12 +45,22 @@ export const erinaLv2: HeroBlueprint = {
       },
       description: dedent`@[mana] 2@@[exhaust]@ : Draw a card in your Destiny Zone.`,
       getPreResponseTargets: async () => [],
-      label: '@[mana] 2@@[exhaust]@ : Draw a card in your Destiny Zone.',
+      label: '@[mana] 2@@[exhaust]@ : Draw a card, then discard a card.',
       manaCost: 2,
       shouldExhaust: true,
-      speed: CARD_SPEED.SLOW,
+      speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
-        await card.player.cardManager.drawIntoDestinyZone(1);
+        await card.player.cardManager.draw(1);
+        if (card.player.cardManager.hand.length === 0) return;
+
+        const [cardToDiscard] = await game.interaction.chooseCards({
+          player: card.player,
+          label: 'Choose a card to discard',
+          minChoiceCount: 1,
+          maxChoiceCount: 1,
+          choices: card.player.cardManager.hand
+        });
+        await cardToDiscard.discard();
       }
     }
   ],
@@ -59,16 +70,7 @@ export const erinaLv2: HeroBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const stop = game.on(GAME_EVENTS.CARD_AFTER_PLAY, async event => {
-            if (event.data.card.isAlly(card) && isSpell(event.data.card)) {
-              const manaSpark = await card.player.generateCard('mana-spark');
-              await manaSpark.addToHand();
-            }
-          });
-
-          game.once(GAME_EVENTS.TURN_END, () => {
-            stop();
-          });
+          await scry(game, card, 2);
         }
       })
     );

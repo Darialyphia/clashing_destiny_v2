@@ -60,7 +60,7 @@ const visibleModifiers = gameStateRef(() => {
       :side-offset="50"
     >
       <div class="relative">
-        <GameCard variant="small" :card-id="minion.id" show-stats />
+        <GameCard variant="small" :card-id="minion.id" show-stats flipped />
         <div class="modifiers">
           <UiSimpleTooltip
             v-for="modifier in visibleModifiers"

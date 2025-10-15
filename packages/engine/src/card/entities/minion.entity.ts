@@ -192,7 +192,11 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    const base = !this._isExhausted && this.atk > 0 && target.canBeAttacked(this);
+    const base =
+      !this._isExhausted &&
+      this.atk > 0 &&
+      target.canBeAttacked(this) &&
+      !this.game.effectChainSystem.currentChain;
 
     return this.interceptors.canAttack.getValue(base, {
       target

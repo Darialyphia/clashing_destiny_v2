@@ -16,7 +16,6 @@ definePage({
       <h1>Choose Your Game Mode</h1>
 
       <div class="mode-options">
-        <!-- Matchmaking Option -->
         <div class="mode-card surface">
           <h2 class="mode-title">
             <Icon icon="mdi:sword-cross" class="icon" />
@@ -35,14 +34,13 @@ definePage({
           />
         </div>
 
-        <!-- Lobby Option -->
         <div class="mode-card surface">
           <h2 class="mode-title">
             <Icon icon="mdi:account-group" class="icon" />
             Lobby Games
           </h2>
           <p class="mode-description">
-            Create or join custom lobbies to practice with friends.
+            Create or join custom lobbies to practice and spectate with friends.
           </p>
 
           <FancyButton
@@ -50,6 +48,24 @@ definePage({
             text="Browse Lobbies"
             class="mode-button"
             size="lg"
+          />
+        </div>
+
+        <div class="mode-card surface">
+          <h2 class="mode-title">
+            <Icon icon="garden:sandbox-fill-12" class="icon" />
+            Sandbox
+          </h2>
+          <p class="mode-description">
+            Play a game where you control both players to practice strategies.
+          </p>
+
+          <FancyButton
+            :to="{ name: 'Sandbox' }"
+            text="Create sandbox"
+            variant="primary"
+            size="lg"
+            class="mode-button"
           />
         </div>
       </div>
@@ -82,7 +98,7 @@ h1 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--size-6);
   margin: 0 auto;
-  & > .mode-card:nth-child(1) {
+  & > .mode-card:nth-child(odd) {
     justify-self: end;
   }
 }

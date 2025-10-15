@@ -675,6 +675,19 @@
         },
         {
           "alias": [
+            "channel-the-flames.png"
+          ],
+          "src": [
+            "/assets/cards/spells/channel-the-flames.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "cosmic-ascension.png"
           ],
           "src": [
@@ -701,6 +714,19 @@
         },
         {
           "alias": [
+            "engulf-in-flames.png"
+          ],
+          "src": [
+            "/assets/cards/spells/engulf-in-flames.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "fated-oath.png"
           ],
           "src": [
@@ -718,6 +744,19 @@
           ],
           "src": [
             "/assets/cards/spells/fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "fire-studies.png"
+          ],
+          "src": [
+            "/assets/cards/spells/fire-studies.png"
           ],
           "data": {
             "tags": {
@@ -874,6 +913,19 @@
           ],
           "src": [
             "/assets/cards/spells/reposition.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "searing-pain.png"
+          ],
+          "src": [
+            "/assets/cards/spells/searing-pain.png"
           ],
           "data": {
             "tags": {

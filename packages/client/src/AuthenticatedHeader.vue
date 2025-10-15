@@ -22,10 +22,18 @@ const unclaimedGiftsCount = computed(() => {
     gifts.value?.filter(gift => gift.state === GIFT_STATES.ISSUED).length ?? 0
   );
 });
+
+const router = useRouter();
 </script>
 
 <template>
   <header class="flex items-center gap-4 surface">
+    <FancyButton
+      v-if="router.currentRoute.value.name !== 'ClientHome'"
+      text="Back"
+      size="md"
+      @click="router.go(-1)"
+    />
     <div class="welcome-section">
       <RouterLink :to="{ name: 'ClientHome' }" class="welcome-text">
         Welcome back, {{ me?.username }}
@@ -84,9 +92,6 @@ const unclaimedGiftsCount = computed(() => {
               {{ unclaimedGiftsCount }}
             </span>
           </RouterLink>
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'Sandbox' }">Sandbox</RouterLink>
         </li>
         <li>
           <button @click="logout({})">Logout</button>

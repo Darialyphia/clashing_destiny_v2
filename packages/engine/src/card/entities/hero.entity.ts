@@ -281,15 +281,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canAttack(target: AttackTarget) {
-    const p1t1Condition = this.game.config.ALLOW_PLAYER_1_TURN_1_ATTACK
-      ? true
-      : !this.player.isPlayer1 || this.game.turnSystem.elapsedTurns > 0;
-
     return this.interceptors.canAttack.getValue(
-      !this._isExhausted && this.atk > 0 && target.canBeAttacked(this) && p1t1Condition,
-      {
-        target
-      }
+      !this._isExhausted &&
+        this.atk > 0 &&
+        target.canBeAttacked(this) &&
+        !this.game.effectChainSystem.currentChain,
+      { target }
     );
   }
 

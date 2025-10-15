@@ -16,6 +16,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../utils/damage';
 import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job-affinity.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 
 export const navalaSurgingCatalyst: MinionBlueprint = {
   id: 'navala-surging-catalyst',
@@ -23,7 +24,7 @@ export const navalaSurgingCatalyst: MinionBlueprint = {
   cardIconId: 'minions/navala-surging-catalyst',
   description: dedent`
   @On Enter@ : draw a spell.
-  @Sage Affinity@ : After a card chain resolves, deal damage to the enemy hero equals to the number of cards in that chain.
+  @Sage Affinity@ : Before a card chain resolves, your hero gain @Spellpower@ equal to the number of cards in the chain, until it is resolved.
   `,
   collectable: true,
   unique: false,
@@ -53,7 +54,7 @@ export const navalaSurgingCatalyst: MinionBlueprint = {
       })
     );
 
-    let damageAmount = 0;
+    const SPELLPOWER_MODIFIER_ID = 'navala-spellpower-buff';
     await card.modifiers.add(
       new Modifier<MinionCard>('navala', game, card, {
         mixins: [
@@ -61,19 +62,17 @@ export const navalaSurgingCatalyst: MinionBlueprint = {
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.EFFECT_CHAIN_BEFORE_RESOLVED,
             handler: async () => {
-              damageAmount = game.effectChainSystem.currentChain?.size ?? 0;
+              await card.player.hero.modifiers.add(
+                new SimpleSpellpowerBuffModifier(SPELLPOWER_MODIFIER_ID, game, card, {
+                  amount: game.effectChainSystem.currentChain?.size ?? 0
+                })
+              );
             }
           }),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED,
             handler: async () => {
-              if (card.location !== 'board') return;
-              if (damageAmount > 0) {
-                await card.player.opponent.hero.takeDamage(
-                  card,
-                  new AbilityDamage(damageAmount)
-                );
-              }
+              await card.player.hero.modifiers.remove(SPELLPOWER_MODIFIER_ID);
             }
           })
         ]

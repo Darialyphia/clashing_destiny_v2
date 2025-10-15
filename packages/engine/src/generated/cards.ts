@@ -65,7 +65,9 @@ export const cards = {
 "spell-twist": "spell-twist",
 "mana-shield": "mana-shield",
 "cosmic-avatar": "cosmic-avatar",
-"cosmic-ascension": "cosmic-ascension"
+"cosmic-ascension": "cosmic-ascension",
+"engulf-in-flames": "engulf-in-flames",
+"channel-the-flames": "channel-the-flames"
 } as const;
 
 export const collectableCards = {
@@ -126,5 +128,7 @@ export const collectableCards = {
 "spell-twist": "spell-twist",
 "mana-shield": "mana-shield",
 "cosmic-avatar": "cosmic-avatar",
-"cosmic-ascension": "cosmic-ascension"
+"cosmic-ascension": "cosmic-ascension",
+"engulf-in-flames": "engulf-in-flames",
+"channel-the-flames": "channel-the-flames"
 } as const;

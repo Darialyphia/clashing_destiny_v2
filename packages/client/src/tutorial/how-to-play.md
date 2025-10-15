@@ -1,189 +1,165 @@
-# Clashing Destiny
+# Clashing Destinies
 
-## What is this game about ?
+## Overview
 
-Clashing Destiny is a PVP digital Collectible Card Game, where 2 players control a hero, summon creatures, cast spells and equip artifacts to defeat the opponent hero.
+2 players PVP card game
 
-Main inspirations: Grand Archive TCG, Carte Online, Duelyst
+The goal of the game is to reduce the enemy Health Points (HP) to 0. To do so they will attack with their own hero or minions, cast spells and equip artifacts.
 
-## Start of the game
+Inspirations: Grand Archive, Might and Magic: Duel of Champions, Legends of Runeterra
 
-Both players prepare 2 decks: a **Main deck** and a **Destiny deck**. 
+## Turn structure
 
-When the game starts they draw 6 cards from their main deck.
+At the start of a turn, both players draw 2 cards, then recollect all cards in their Destiny zone (see below) to their hand.
 
-## Win Condition
+During a turn, players alternate taking action. On the first turn, Player 1 starts with the initiative and is able to play the first card. On the following turns, initiative switches back and forth between players.
 
-The goal of the game is to reduce the Health of the opponent's **Hero** to zero.
+The actions available are:
 
-## Board
+- Play a card from their hand
+- Play a card from their Destiny Deck (see below)
+- Declare an attack
+- Use a card ability
+- Pass
 
-The board is comprised of 2 symmetrical board sides, one for each player.
+The player who can performe an action is called the **initiative player**. On the first turn, player 1 gets the initiative first. After that it goes back and forth between the two players.
 
+## Actions
 
-The content of a board side is as follows:
+### Play a Card from hand
 
+In order to play a card, players must put card from their hand face down into their Destiny Zone equal to the card's cost.
+Playing any card starts an Card Chain (see below).
 
-### Hero Zone
- 
-This zone contains:
-- The player's hero: **Hero cards** are placed on top of each other as the hero levels up
-- Artifacts : one slot for each kind of **Artifact card**: Weapon, Armor and Relic
-- Location: one slot for the player current **Location card**
+### Play a Card from Destiny deck
 
-### Minion Zone
+Each player has a Destiny Deck with 12 unique cards (the content of which is unknown to the opponent). Once per turn, A player may pay a card from their Destiny deck by banishing cards at random from their Destiny Zone equal to its cost.
+As with playing cards from hand, playing a card from the Destiny Deck starts a Card Chain
 
-This zone contains 2 other zone: the Attack zone and the Defense zone. They have 5 slots each where players put the **Minion cards** they summon. That means a player can have a maximum of 10 minions on the board at the same time.
+### Declare an attack
 
-### Deck Zone
+A player may declare an attack with one of their minions of their hero. To do so, they declare its target (more info in the combat sectiob below).
+Declaring an attack starts a Card Chain with the opponent having priority.
 
-This zone contains
-- The **Main deck**
-- The **Destiny deck**
-- The **Discard pile**
-- The **Banish pile**
-- The Destiny Zone where the player will put cards face down in order to play cards from the **Main deck**.
+### Use a card ability
 
-## Heroes
+A player may use one of their card's ability. Abilities may be activated from different locations depending on the card (from hand, from the board, from the graveyard, etc).
+Using a ability starts a Card Chain with the opponent having priority.
 
-Hero are the main cards of this game. If a hero's hp reach 0, its player loses the game.
+### Pass
 
-They have a level stat that increases over the course of the game by playing **Destiny Cards**. The level can be relevant for some card effects and other mechanics.
-
-Heroes have an Attack stat, that typically starts at 0, but can be increased by various means.
-
-In addition to HP and Attack, Heroes have another stat called Spellpower, that may enhance the effect of some other cards. For example, "Deal 1 + Power damage to an enemy".
+Passing makes the opponent the initiative player. If both players pass in a row. The turn ends.
 
 ## Cards
 
-The game has two types of card: **Main deck cards** and **Destiny deck cards**
+### Playing restriction
 
-### Main Deck Cards
+In order to be played, a card needs to match the class ans spell shcools of your Hero (see below).
+The also need to match your deck's chosen **spell School**.
 
-Main deck cards are located in the **Main Deck**. In order to be played, a player must put cards from their hand into their **Destiny Zone** face down equal to the card's mana cost. Those cards will return to its owner's hand during their next turn (see the Destiny Phase section).
+### Spell Schools
 
-When a Main deck card leaves the board, it goes into the **Discard pile**.
+There are 7 spell schools in the game: Fire, Water, Earth, Air, Light, Dark and Arcane. When building a deck, you choose up to 2 spell schools, and can only play cards that match one of these spell schools (or that don't have any spell school requirements).
 
-The main deck can contain between 40 and 60 cards. The same card can be added up to 4 times.
+### Card Source
 
-Here are the different types of Main deck cards:
+There are 2 kinds of cards: Main deck cards, and Destiny Deck Cards. This defines which deck they go to, and thus how they are played.
 
-#### Minions
+### Card Speed
 
-Minions go into the Minion zone's Attack of Defense Zone. They have attack and hp stats. They are able to attack other minions or the enemy hero, block attacks and use abilities, except on the turn they are summoned : this is called *Summoning Sickness*.
+Every card has a _Speed_ stat:
 
-Once a minion has been summoned on one of the slots in the Creature Zone, it cannot move except as a result of another card's effect.
+- Slow: this card cannot be played during an ongoing Card chain and can only be played when its owner is the initiative player.
+- Fast: this card can be played during a Card Chain, or to start one. It can be played even if its owner is not the initiative player.
+- Warp: this card can only be played as a response to another card (cannot be played at slow speed). However, instead of placing it on top of the chain, you may insert it at any point in the chain
+- Instant: this card can be played at the same time a Fast card can be played. However, it will not go into the Card Chain and will resolve instantly. Furthermore, playing an Instant speed card does not pass card chain priority, nor switch the initiative player.
 
-Minions cannot attack the turn they are summoned. They can, however, use abilities or block as they are not exhausted.
+### Card Chain
 
-Minion damage persists between turns.
+Card Chains are the mechanism used to resolve multiple card that happen at the same time. Priority alternates between players during a card chain. When they have priority, a player can
 
-##### Positioning clarifications
-
-Positioning plays an important role in Clashing Destinies. Some card effects may targets specific spaces:
-- **in front**: if the minion is in the defense zone, it means the minion on the same slot of that minion's controller attack zone. If the minion is in the attack zone, it means the minion on the attack zone of that card's player's opponent.
-- **behind**: if the minion is in the defense zone, this whiffs. If the minion is in the attack zone, it means the minion on the same slot of that minion's controller defense zone.
-- **adjacent**: This means the spaces in front of, behind, and to the sides of that minion. Diagonals do not count.
-- **same row**: all spaces on the same attack or defense zone
-- **same column**: all spaces on the same positional slot of both players's attack and defense zone
-
-#### Spells
-
-Spells are one time effects. Once resolved, they go directly to the **Discard pile**. 
-
-There are two types of spells: **Cast** and **Burst**. Only Burst spells can be played during an Effect Chain (see the Effect Chain section).
-
-#### Artifacts
-
-Artifacts are attached to your Hero and enhance their performance in battle or give them new abilities. Every Artifact has a **durability** stat, When it reaches 0, the artifact is removed and sent to the **Discard pile**.
-
-Players can have a maximum of 3 artifact equiped at the same time.If another one is equiped, they chose one to destroy and send to the **Discard pile**.
-
-#### Card Affinity
-
-A card has an **Affinity** associated to it. There are many affinities in the game, such as fire, frost, arcane, shadow, etc... To play a card, its player must have unlocked the corresponding affinity. 
-
-A player can unlock affinities through Destiny cards. The Destiny cost of Affinity Destiny Card increases by 1 for every unlocked affinity.
-
-### Destiny Deck Cards 
-
-Destiny deck cards are located in the **Destiny Deck**. In order to be played, a player must send cards from their **Destiny Zone** to their **Banish pile** at random equal to the card's Destiny Cost.
-
-The destiny deck can contain exactly 12 different cards.
-
-Here are the different types of Destiny Deck Cards :
-
-#### Talents
-
-Talents are passive bonuses tha persist throughout the whole game. They may give bonus to minions, add new effect that trigger under specific conditions, or give activated abilities to the Hero. 
-
-Talents remain on the board when played, in the Talent Zone.
-
-### Exhaustion
-
-An *exhausted* card cannot attack, block or use an ability. A card becomes exhausted when
-- it declares an attacks
-- it declares a block
-- it uses an ability (note: not all abilities exhaust the card).
-
-A card loses its exhausted status at the start of its player's turn. Losing the exhausted status is referred as *activating*.
-
-## Turn Structure
-
-Each turn has a few phases that always happen in the same order:
-
-### Start Phase
-
-During the Start Phase, all of the turn player's card are activated, then they draw 1 card. Player can not take any action during this phase.
-
-Once they have draw for turn, the turn player moves to the **Destiny Phase**.
-
-### Destiny Phase
-
-During the Destiny phase, the turn player player have the opportunity to play one and only one card from their Destiny Deck (either a Hero or Talent card), by banishing cards at random from their Destiny Zone. They may choose not to play any card.
-
-Once they have done so, all cards in the turn player's Destiny Zone return to their hand.
-
-### Main Phase 
-
-During the Main phase, the turn player can:
-- Play cards from their hand
-- Declare an attack: this will automatically progress the game to the Combat Phase.
-- Use a card ability
-
-### Combat phase
-
-The Combat Phase starts when the turn player declares an attack. To do so, they will select their Hero or one of their minion in the Attack Zone, and select a target, which is any enemy Minion, or the Enemy Hero.
-
-Declaring the attack immediately exausts the attacker.
-
-Once done, and after **On Declare Attack** effects have resolved, control passes to the Opponent who has the opportunity to:
-- Declare a blocker by selecting one of their minion in the Defense Zone. This minion will then participate in combat instead of the initial attack target. They may chose not to block the attack.
-- Start an **Effect Chain** (see below)
-
-Declaring a blocker immediately exhausts the blocker.
-
-Once the blocker has been declared, and the effect chain resolved, both combat participant deal damage to each other equal to their attack.
-
-After combat has resolved, the game goes back to the Main Phase where the turn player may play other cards and declare other attacks.
-
-### End Phase
-
-During the end Phase, the turn player's opponent may start an effect Chain. Once it is resolve, or if no chain is declared, The turn ends.
-
-## Effect Chains
-
-Effect chains are the mechanism used to resolve multiple card that happen at the same time. Control alternates between players during  an effect chain.
-When they have control, a player can
 - pass
-- add another effect to the chain. Only **Burst** Spells or card abilities are valid effects.
+- add another effect to the chain. This can done by :
+  - playing a card from their hand
+  - playing a card from their Destiny Deck
+  - using a card ability
+  - choosing to retaliate. This can only happen when one of your unit is getting attacked.
 
-Once both players are successively passed, the chains resolves in a FILO (First In, Last Out) manner, until the chain is empty.
+Once both players have successively passed, the chains resolves in a FILO (First In, Last Out) manner, until the chain is empty.
 
-An effect chain automatically starts:
-- When a Spell is played
-- When a card ability is used
+Note that the priority is independant from the initiative player : if player 1 is the initiative player, but player 2 is the last player to add a card to the chain, once the chain resolves, player 2 still becomes the initiative player.
 
-An effect chain may be declared by the turn player's opponent :
-- When the turn player declares an attack
-- When the turn player declares the end of their turn
+Example:
+
+- player 1 plays **Fireball**, targeting the opponent's hero, trying to deal damage
+- player 2 adds **Holy Barrier** to the chain, trying to mitigate all damage their heero takes this turn
+- player 1 adds **Unrelenting Destruction**, which negates all effects that prevent damage this turn
+- player 2 passes
+- player 1 passes
+  The chain now resolves backwards
+- **Unrelenting Destruction** resolves, preventing damage negation
+- **Holy Barrier** resolves, however, because of **Unrelenting Destruction**, its effect is negated and does nothing
+- **Fireball** resolves, dealing damage to the opponent's hero
+
+#### Exhaustion
+
+An exhausted card cannot attack, retaliate, or use an ability. A card becomes exhausted when it declares an attacks, retaliates, or uses an ability (note: not all abilities exhaust the card).
+A card loses its exhausted status at the start of the turn. Taking damage from an attack does not exhaust if you choose not to retaliate.
+
+Losing the exhausted status is referred as waking up the card.
+
+### Hero
+
+The hero card is the most important card in a deck. If its HP are reduced to 0, its owner loses the game.
+Heroes have the following stats:
+
+- HP
+- Attack
+- Level
+- Class
+
+Player start the game with a fixed lvl 0 hero on the board.
+
+Heroes are always Destiny Deck cards. To play a hero of level greater than 1, a player's current hero must meet the following requirements:
+
+- have exactly one level less than the hero (a lvl 2 hero can only be played over a lvl 1 hero)
+- share the same **lineage**. For example, "Erina, Aether Scholar", can only be lpayed over a level 1 "Erina" hero.
+
+When a hero levels up, it keeps the ongoing effects
+
+### Minions
+
+Each player has 2 columns of 4 slots each: the front line and the back line. A minion can usually be player on any slot of any column, even though specific restrictions may apply.
+Minions remain on the board until their HP is reduced to 0.
+
+### Spells
+
+Spells are one time effects. Once resolved, they go directly to the discard pile.
+
+### Artifacts
+
+Artifacts are attached to your Hero and enhance their performance in battle or give them new abilities. Every Artifact has a durability stat; when it reaches 0, the artifact is removed and sent to the discard pile. In most cases, using an artifact's ability will consume one or more durability.
+
+A hero can only have 3 artifacts equiped at the same time. If they try to play a fourth one, they must choose one of their already equiped artifacts to destroy.
+
+### Sigils
+
+Sigils are played on your front row or back row, like minions. However, they cannot attack or retaliate. They just take space on the board.Sigils have a Countsown start. At the start of each turn, this countdown decreases by 1. When it raches zero, the Sigil is destroyed and sent to the Discard pile.
+
+## Combat
+
+A combat occurs between 2 participants which can be a hero or a minion. A unit with 0 attack cannot declare an attack.
+
+During combat:
+
+- A Card chain is created, with the defending player having priority
+- The defender may choose to retaliate or not. If it does, exhaust the card.
+- Once the chain is resolved, combat occurs
+- The attacker and defender (if they chose to retaliate) deal damage to each other at the same time, reducing each other's HP by their Attack value.
+- once resolved, the game goes back to the Main Phase and the iniative player is switched.
+
+### Targeting restriction
+
+Under normal circumstances, a minion may only attack a minion in the same column as them. In addition, if the enemy column has a minion in both the front row and back row, they may only attack the one in the front row.
+If there no enemy minion in a row,a minion may attack the enemy hero directly.
+A hero can attack anywhere (any other enemy minion or hero)

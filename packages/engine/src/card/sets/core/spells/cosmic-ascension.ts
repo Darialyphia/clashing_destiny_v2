@@ -25,7 +25,7 @@ export const cosmicAscension: SpellBlueprint = {
   cardIconId: 'spells/cosmic-ascension',
   description: dedent`
   Draw a card into your Destiny Zone. 
-  @Sage Affinity@ : This turn, after you play a spell, @Scry 1@. If the scryed card was a spell, banish it and deal 2 damage to an enemy.
+  @Sage Affinity@ : This turn, after you play a spell, @Scry 1@. If the scryed card was a spell, banish it and deal 1 damage to an enemy.
   `,
   collectable: true,
   unique: false,
@@ -69,7 +69,7 @@ export const cosmicAscension: SpellBlueprint = {
                 );
                 if (!targets.length) return;
                 const target = targets[0];
-                await target.takeDamage(card, new SpellDamage(2, card));
+                await target.takeDamage(card, new SpellDamage(1, card));
               }
             }
           })
