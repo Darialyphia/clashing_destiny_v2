@@ -192,6 +192,19 @@
         },
         {
           "alias": [
+            "wrath-of-the-skies.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/wrath-of-the-skies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "angel-of-retribution.png"
           ],
           "src": [
@@ -222,6 +235,19 @@
           ],
           "src": [
             "/assets/cards/minions/archsage-of-moonring.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "avatar-of-peace.png"
+          ],
+          "src": [
+            "/assets/cards/minions/avatar-of-peace.png"
           ],
           "data": {
             "tags": {
@@ -322,10 +348,36 @@
         },
         {
           "alias": [
+            "flamefist-fighter.png"
+          ],
+          "src": [
+            "/assets/cards/minions/flamefist-fighter.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "friendly-slime.png"
           ],
           "src": [
             "/assets/cards/minions/friendly-slime.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "herald-of-salvation.png"
+          ],
+          "src": [
+            "/assets/cards/minions/herald-of-salvation.png"
           ],
           "data": {
             "tags": {
@@ -391,6 +443,19 @@
           ],
           "src": [
             "/assets/cards/minions/navala-surging-catalyst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "oni-bound-emberblade.png"
+          ],
+          "src": [
+            "/assets/cards/minions/oni-bound-emberblade.png"
           ],
           "data": {
             "tags": {
@@ -478,10 +543,36 @@
         },
         {
           "alias": [
+            "sprite-of-fading-memories.png"
+          ],
+          "src": [
+            "/assets/cards/minions/sprite-of-fading-memories.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "stalwart-vanguard.png"
           ],
           "src": [
             "/assets/cards/minions/stalwart-vanguard.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tobihana-the-temptress.png"
+          ],
+          "src": [
+            "/assets/cards/minions/tobihana-the-temptress.png"
           ],
           "data": {
             "tags": {
@@ -590,6 +681,19 @@
     {
       "name": "cards/sigils",
       "assets": [
+        {
+          "alias": [
+            "sigil-of-holy-protection.png"
+          ],
+          "src": [
+            "/assets/cards/sigils/sigil-of-holy-protection.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
         {
           "alias": [
             "sigil-of-immortal-flame.png"
@@ -792,6 +896,19 @@
         },
         {
           "alias": [
+            "flashfire.png"
+          ],
+          "src": [
+            "/assets/cards/spells/flashfire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "gaze-into-tomorrow.png"
           ],
           "src": [
@@ -900,6 +1017,19 @@
           ],
           "src": [
             "/assets/cards/spells/mana-spark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "purify-the-malevolent.png"
+          ],
+          "src": [
+            "/assets/cards/spells/purify-the-malevolent.png"
           ],
           "data": {
             "tags": {
@@ -1668,6 +1798,19 @@
           ],
           "src": [
             "/assets/icons/keyword-frozen.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-hero-intercept"
+          ],
+          "src": [
+            "/assets/icons/keyword-hero-intercept.png"
           ],
           "data": {
             "tags": {

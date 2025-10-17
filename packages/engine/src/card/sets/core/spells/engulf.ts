@@ -40,7 +40,7 @@ export const engulfInFlames: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
-    await target.takeDamage(card, new SpellDamage(1, card));
+    await target.takeDamage(card, new SpellDamage(3, card));
     if (isMinion(target)) {
       await target.modifiers.add(new BurnModifier(game, card));
     }

@@ -64,6 +64,13 @@ import { cosmicAscension } from './core/spells/cosmic-ascension';
 import { engulfInFlames } from './core/spells/engulf';
 import { channelTheFlames } from './core/spells/channel-the-flames';
 import { flashfire } from './core/spells/flashfire';
+import { flamefistFighter } from './core/minions/flamefist-fighter';
+import { sigilOfHolyProtection } from './core/sigils/sigil-of-holy-protection';
+import { oniBoundEmberblade } from './core/minions/oni-bound-emberblade';
+import { avatarOfPeace } from './core/minions/avartar-of-peace';
+import { tobihanatheTemptress } from './core/minions/tobihana-the-temptress';
+import { spriteOfFadingMemories } from './core/minions/sprite-of-fading-memories';
+import { heraldOfSalvation } from './core/minions/herald-of-salvation';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -132,6 +139,13 @@ export const coreSet: CardSet = {
     cosmicAscension,
     engulfInFlames,
     channelTheFlames,
-    flashfire
+    flashfire,
+    flamefistFighter,
+    sigilOfHolyProtection,
+    oniBoundEmberblade,
+    avatarOfPeace,
+    tobihanatheTemptress,
+    spriteOfFadingMemories,
+    heraldOfSalvation
   ]
 };

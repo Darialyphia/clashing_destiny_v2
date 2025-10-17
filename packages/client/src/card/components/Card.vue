@@ -166,7 +166,7 @@ until(nameBox)
     setVariableFontSize(box, nameFontSize, NAME_MIN_TEXT_SIZE);
   });
 
-const multiLineChecker = useTemplateRef('multi-line-checker');
+// const multiLineChecker = useTemplateRef('multi-line-checker');
 const isMultiLine = computed(() => {
   // if (!multiLineChecker.value) return;
   // if (!descriptionBox.value) return;
@@ -361,7 +361,7 @@ const onMouseleave = () => {
           </div>
           <span ref="multi-line-checker" />
         </div>
-        <!-- <CardGlare /> -->
+        <CardGlare />
       </div>
       <div class="card-back">
         <CardFoil v-if="isFoil" />

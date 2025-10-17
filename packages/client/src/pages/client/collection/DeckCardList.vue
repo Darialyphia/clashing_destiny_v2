@@ -96,14 +96,9 @@ const spellSchools: Array<{
   &.artifact,
   &.spell,
   &.sigil {
-    background-position:
-      center center,
-      calc(100% + 40px),
-      calc(100% + 40px);
-    background-size: 200%, calc(2px * 96), calc(2px * 96);
-    background-image:
-      linear-gradient(to right, hsl(0deg 0% 0% / 0.5), hsl(0deg 0% 0% / 0.5)),
-      var(--bg), var(--frame-bg);
+    background-position: calc(100% + 40px), calc(100% + 40px);
+    background-size: calc(2px * 96), calc(2px * 96);
+    background-image: var(--bg), var(--frame-bg);
   }
 
   &.spell {

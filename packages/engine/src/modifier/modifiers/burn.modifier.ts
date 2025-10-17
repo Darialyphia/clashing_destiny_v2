@@ -20,7 +20,7 @@ export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
       mixins: [
         new RemoveOnDestroyedMixin(game),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.PLAYER_START_TURN,
+          eventName: GAME_EVENTS.TURN_START,
           handler: async () => {
             await this.target.takeDamage(
               source,

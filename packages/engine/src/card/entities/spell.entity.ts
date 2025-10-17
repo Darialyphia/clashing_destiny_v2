@@ -87,6 +87,10 @@ export class SpellCard extends Card<
     });
   }
 
+  get spellSchool() {
+    return this.blueprint.spellSchool;
+  }
+
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
     const targets = this.abilityTargets.get(abilityId);
     if (!targets) return;

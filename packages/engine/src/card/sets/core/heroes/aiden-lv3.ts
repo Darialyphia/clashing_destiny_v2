@@ -3,7 +3,6 @@ import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifie
 import type { HeroBlueprint } from '../../../card-blueprint';
 import { isMinion, singleEmptyAllySlot } from '../../../card-utils';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,

@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import type { HeroBlueprint } from '../../../card-blueprint';
 import {
-  SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
@@ -10,8 +9,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { isSpell } from '../../../card-utils';
-import { GAME_EVENTS } from '../../../../game/game.events';
 import { scry } from '../../../card-actions-utils';
 
 export const erinaLv2: HeroBlueprint = {
@@ -35,7 +32,7 @@ export const erinaLv2: HeroBlueprint = {
   lineage: 'erina',
   spellPower: 0,
   atk: 0,
-  maxHp: 20,
+  maxHp: 21,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   abilities: [
     {

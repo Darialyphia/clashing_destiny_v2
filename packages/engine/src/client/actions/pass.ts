@@ -13,7 +13,7 @@ export class PassGlobalAction implements GlobalActionRule {
   constructor(private client: GameClient) {}
 
   getLabel(): string {
-    return 'Pass';
+    return this.client.state.effectChain ? 'Pass Chain' : 'Pass Turn';
   }
 
   shouldDisplay(state: GameClientState): boolean {

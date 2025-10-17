@@ -57,7 +57,9 @@ export const erinaLv3: HeroBlueprint = {
             },
             async onGainAura(candidate) {
               await candidate.modifiers.add(
-                new SimpleManacostModifier(DISCOUT_MODIFIER_ID, game, card, { amount: 1 })
+                new SimpleManacostModifier(DISCOUT_MODIFIER_ID, game, card, {
+                  amount: -1
+                })
               );
             },
             async onLoseAura(candidate) {

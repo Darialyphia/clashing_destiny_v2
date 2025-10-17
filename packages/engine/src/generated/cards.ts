@@ -67,7 +67,15 @@ export const cards = {
 "cosmic-avatar": "cosmic-avatar",
 "cosmic-ascension": "cosmic-ascension",
 "engulf-in-flames": "engulf-in-flames",
-"channel-the-flames": "channel-the-flames"
+"channel-the-flames": "channel-the-flames",
+"flashfire": "flashfire",
+"flamefist-fighter": "flamefist-fighter",
+"sigil-of-holy-protection": "sigil-of-holy-protection",
+"oni-bound-emberblade": "oni-bound-emberblade",
+"avatar-of-peace": "avatar-of-peace",
+"tobihana-the-temptress": "tobihana-the-temptress",
+"sprite-of-fading-memories": "sprite-of-fading-memories",
+"herald-of-salvation": "herald-of-salvation"
 } as const;
 
 export const collectableCards = {
@@ -130,5 +138,13 @@ export const collectableCards = {
 "cosmic-avatar": "cosmic-avatar",
 "cosmic-ascension": "cosmic-ascension",
 "engulf-in-flames": "engulf-in-flames",
-"channel-the-flames": "channel-the-flames"
+"channel-the-flames": "channel-the-flames",
+"flashfire": "flashfire",
+"flamefist-fighter": "flamefist-fighter",
+"sigil-of-holy-protection": "sigil-of-holy-protection",
+"oni-bound-emberblade": "oni-bound-emberblade",
+"avatar-of-peace": "avatar-of-peace",
+"tobihana-the-temptress": "tobihana-the-temptress",
+"sprite-of-fading-memories": "sprite-of-fading-memories",
+"herald-of-salvation": "herald-of-salvation"
 } as const;

@@ -20,7 +20,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   cardIconId: 'minions/archsage-of-moonring',
   description: dedent`
   @On Enter@: Deal 3 damage split among enemies.
-  @Mage Affinity@ : Deal 1 additional damage.
+  @Sage Affinity@ : Deal 1 additional damage.
   `,
   collectable: true,
   unique: false,
@@ -38,15 +38,15 @@ export const archsageOfMoonring: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const mageMod = (await card.modifiers.add(
-      new HeroJobAffinityModifier(game, card, HERO_JOBS.MAGE)
+    const sageMod = (await card.modifiers.add(
+      new HeroJobAffinityModifier(game, card, HERO_JOBS.SAGE)
     )) as HeroJobAffinityModifier<MinionCard>;
 
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
           let count = 0;
-          const max = mageMod.isActive ? 4 : 3;
+          const max = sageMod.isActive ? 4 : 3;
 
           while (count < max) {
             const [target] = await singleEnemyTargetRules.getPreResponseTargets(
