@@ -71,6 +71,12 @@ import { avatarOfPeace } from './core/minions/avartar-of-peace';
 import { tobihanatheTemptress } from './core/minions/tobihana-the-temptress';
 import { spriteOfFadingMemories } from './core/minions/sprite-of-fading-memories';
 import { heraldOfSalvation } from './core/minions/herald-of-salvation';
+import { angelOfMercy } from './core/minions/angel-of-mercy';
+import { mercifulRedemption } from './core/spells/merciful-redemption';
+import { kenWizardProdigy } from './core/minions/ken-wizard-prodigy';
+import { healingLight } from './core/spells/healing-light';
+import { magicChanneler } from './core/minions/magic-channeler';
+import { flameExorcist } from './core/minions/flame-exorcist';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -146,6 +152,12 @@ export const coreSet: CardSet = {
     avatarOfPeace,
     tobihanatheTemptress,
     spriteOfFadingMemories,
-    heraldOfSalvation
+    heraldOfSalvation,
+    angelOfMercy,
+    mercifulRedemption,
+    kenWizardProdigy,
+    healingLight,
+    magicChanneler,
+    flameExorcist
   ]
 };

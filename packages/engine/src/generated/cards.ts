@@ -75,7 +75,13 @@ export const cards = {
 "avatar-of-peace": "avatar-of-peace",
 "tobihana-the-temptress": "tobihana-the-temptress",
 "sprite-of-fading-memories": "sprite-of-fading-memories",
-"herald-of-salvation": "herald-of-salvation"
+"herald-of-salvation": "herald-of-salvation",
+"angel-of-mercy": "angel-of-mercy",
+"merciful-redemption": "merciful-redemption",
+"ken-wizard-prodigy": "ken-wizard-prodigy",
+"healing-light": "healing-light",
+"magic-channeler": "magic-channeler",
+"flame-exorcist": "flame-exorcist"
 } as const;
 
 export const collectableCards = {
@@ -146,5 +152,11 @@ export const collectableCards = {
 "avatar-of-peace": "avatar-of-peace",
 "tobihana-the-temptress": "tobihana-the-temptress",
 "sprite-of-fading-memories": "sprite-of-fading-memories",
-"herald-of-salvation": "herald-of-salvation"
+"herald-of-salvation": "herald-of-salvation",
+"angel-of-mercy": "angel-of-mercy",
+"merciful-redemption": "merciful-redemption",
+"ken-wizard-prodigy": "ken-wizard-prodigy",
+"healing-light": "healing-light",
+"magic-channeler": "magic-channeler",
+"flame-exorcist": "flame-exorcist"
 } as const;

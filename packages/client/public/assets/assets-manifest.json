@@ -205,6 +205,19 @@
         },
         {
           "alias": [
+            "angel-of-mercy.png"
+          ],
+          "src": [
+            "/assets/cards/minions/angel-of-mercy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "angel-of-retribution.png"
           ],
           "src": [
@@ -335,6 +348,19 @@
         },
         {
           "alias": [
+            "flame-exorcist.png"
+          ],
+          "src": [
+            "/assets/cards/minions/flame-exorcist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "flame-juggler.png"
           ],
           "src": [
@@ -417,6 +443,32 @@
           ],
           "src": [
             "/assets/cards/minions/hougen-the-punisher.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ken-wizard-prodigy.png"
+          ],
+          "src": [
+            "/assets/cards/minions/ken-wizard-prodigy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "magic-channeler.png"
+          ],
+          "src": [
+            "/assets/cards/minions/magic-channeler.png"
           ],
           "data": {
             "tags": {
@@ -1017,6 +1069,19 @@
           ],
           "src": [
             "/assets/cards/spells/mana-spark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "merciful-redemption.png"
+          ],
+          "src": [
+            "/assets/cards/spells/merciful-redemption.png"
           ],
           "data": {
             "tags": {
@@ -1863,6 +1928,19 @@
           ],
           "src": [
             "/assets/icons/keyword-intercept.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-on-death"
+          ],
+          "src": [
+            "/assets/icons/keyword-on-death.png"
           ],
           "data": {
             "tags": {

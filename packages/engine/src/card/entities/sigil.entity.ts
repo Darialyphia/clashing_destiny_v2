@@ -89,11 +89,15 @@ export class SigilCard extends Card<
     return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
   }
 
+  get spellSchool() {
+    return this.blueprint.spellSchool;
+  }
+
   get isCorrectSpellSchool() {
-    if (!this.blueprint.spellSchool) return true;
+    if (!this.spellSchool) return true;
     if (this.shouldIgnorespellSchoolRequirements) return true;
 
-    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
+    return this.player.hero.spellSchools.includes(this.spellSchool);
   }
 
   private async summon(position: BoardPosition) {

@@ -11,6 +11,8 @@ import {
 import { singleEmptyAllySlot, singleEnemyMinionTargetRules } from '../../../card-utils';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const tobihanatheTemptress: MinionBlueprint = {
   id: 'tobihana-the-temptress',
@@ -18,12 +20,12 @@ export const tobihanatheTemptress: MinionBlueprint = {
   cardIconId: 'minions/tobihana-the-temptress',
   description: dedent`
   @Unique@.
-  @On Enter@ : take control of an enemy minion with 2 @[attack]@ or less and exhaust it.
+  @[level] 2+@ @On Enter@ : take control of an enemy minion with 2 @[attack]@ or less and exhaust it.
   `,
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 3,
+  atk: 1,
   maxHp: 3,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -36,9 +38,14 @@ export const tobihanatheTemptress: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    const levelMode = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 2)
+    )) as LevelBonusModifier<MinionCard>;
+
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
+          if (!levelMode.isActive) return;
           if (!singleEnemyMinionTargetRules.canPlay(game, card)) return;
           if (!singleEmptyAllySlot.canPlay(game, card)) return;
 
@@ -52,7 +59,8 @@ export const tobihanatheTemptress: MinionBlueprint = {
             game,
             card
           );
-          await target.exhaust();
+          await target.removeFromCurrentLocation();
+
           const modifierId = 'tobihana-the-temptress-control';
           await target.modifiers.add(
             new Modifier(modifierId, game, card, {
@@ -66,7 +74,12 @@ export const tobihanatheTemptress: MinionBlueprint = {
               ]
             })
           );
-          await target.moveTo(newPosition);
+          await target.player.boardSide.summonMinion(
+            target,
+            newPosition.zone,
+            newPosition.slot
+          );
+          await target.exhaust();
         }
       })
     );

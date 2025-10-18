@@ -1,6 +1,6 @@
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleMinionTargetRules } from '../../../card-utils';
+import { singleAllyTargetRules, singleMinionTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -11,26 +11,26 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
-export const sunburst: SpellBlueprint = {
-  id: 'sunburst',
-  name: 'Sunburst',
-  cardIconId: 'spells/sunburst',
-  description: 'Deal 2 damage to an enemy minion or heal an ally minion for 2.',
+export const healingLight: SpellBlueprint = {
+  id: 'healing-light',
+  name: 'Healing Light',
+  cardIconId: 'spells/healing-light',
+  description: 'Heal an ally for 3.',
   collectable: true,
   unique: false,
-  manaCost: 2,
-  speed: CARD_SPEED.FAST,
+  manaCost: 1,
+  speed: CARD_SPEED.SLOW,
   spellSchool: SPELL_SCHOOLS.LIGHT,
   job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   abilities: [],
   tags: [],
-  canPlay: singleMinionTargetRules.canPlay,
+  canPlay: singleAllyTargetRules.canPlay,
   getPreResponseTargets(game, card) {
-    return singleMinionTargetRules.getPreResponseTargets(game, card, {
+    return singleAllyTargetRules.getPreResponseTargets(game, card, {
       type: 'card',
       card
     });
@@ -39,10 +39,6 @@ export const sunburst: SpellBlueprint = {
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
 
-    if (target.isAlly(card)) {
-      await target.heal(2);
-    } else {
-      await target.takeDamage(card, new SpellDamage(2, card));
-    }
+    await target.heal(3);
   }
 };

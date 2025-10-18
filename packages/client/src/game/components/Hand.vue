@@ -103,10 +103,7 @@ useResizeObserver(handContainer, async () => {
   if (!el) return;
   const rect = el.getBoundingClientRect();
   handContainerSize.value = { w: rect.width, h: rect.height };
-  console.log(
-    handContainer.value.scrollHeight,
-    handContainer.value.clientHeight
-  );
+
   handOffsetY.value = handContainer.value.clientHeight;
 });
 

@@ -65,7 +65,7 @@ useKeyboardControl(
   position: absolute;
   bottom: var(--size-6);
   right: var(--size-6);
-  z-index: 1;
+  z-index: 2;
 }
 
 .settings-button {

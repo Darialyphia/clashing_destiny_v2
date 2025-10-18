@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { multipleEnemyTargetRules } from '../../../card-utils';
+import { isMinion, multipleEnemyTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -17,7 +17,7 @@ export const dualCasting: SpellBlueprint = {
   name: 'Dual Casting',
   cardIconId: 'spells/dual-casting',
   description: dedent`
-  Deal 1 damage to 2 enemy targets.
+  Deal 1 damage to 2 enemy minions.
   `,
   collectable: true,
   unique: false,
@@ -31,16 +31,23 @@ export const dualCasting: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   tags: [],
   abilities: [],
-  canPlay: multipleEnemyTargetRules.canPlay(2),
+  canPlay(game, card) {
+    return multipleEnemyTargetRules.canPlay(2)(game, card, c => isMinion(c));
+  },
   getPreResponseTargets(game, card) {
     return multipleEnemyTargetRules.getPreResponseTargets({
       min: 2,
       max: 2,
       allowRepeat: false
-    })(game, card, {
-      type: 'card',
-      card
-    });
+    })(
+      game,
+      card,
+      {
+        type: 'card',
+        card
+      },
+      c => isMinion(c)
+    );
   },
   async onInit() {},
   async onPlay(game, card, targets) {

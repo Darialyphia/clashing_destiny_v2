@@ -323,7 +323,7 @@ export const KEYWORDS = {
   },
   SPELLPOWER: {
     id: 'spellpower',
-    name: 'Spellpower (X)',
+    name: 'Spellpower X',
     description: 'Increase the damage of your spells by X.',
     aliases: [/spellpower \([0-9]+\)/, 'spellpower']
   },
@@ -332,6 +332,12 @@ export const KEYWORDS = {
     name: 'Reaction',
     description: 'You can only play this card if a card chain is already ongoing.',
     aliases: [/reaction \([0-9]+\)/, 'reaction']
+  },
+  FLANK: {
+    id: 'flank',
+    name: 'Flank',
+    description: 'This minion can attack minions on adjacent rows.',
+    aliases: []
   }
 };
 

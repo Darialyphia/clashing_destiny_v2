@@ -378,10 +378,10 @@ export class MinionCard extends Card<
   }
 
   get isCorrectSpellSchool() {
-    if (!this.blueprint.spellSchool) return true;
+    if (!this.spellSchool) return true;
     if (this.shouldIgnorespellSchoolRequirements) return true;
 
-    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
+    return this.player.hero.spellSchools.includes(this.spellSchool);
   }
 
   private async summon(position: BoardPosition) {
@@ -391,18 +391,17 @@ export class MinionCard extends Card<
     }
 
     this.player.boardSide.summonMinion(this, position.zone, position.slot);
+    if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
+      await (this as MinionCard).modifiers.add(
+        new SummoningSicknessModifier(this.game, this)
+      );
+    }
     await this.blueprint.onPlay(this.game, this);
 
     await this.game.emit(
       MINION_EVENTS.MINION_SUMMONED,
       new MinionSummonedEvent({ card: this, position })
     );
-
-    if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
-      await (this as MinionCard).modifiers.add(
-        new SummoningSicknessModifier(this.game, this)
-      );
-    }
   }
 
   canPlay() {

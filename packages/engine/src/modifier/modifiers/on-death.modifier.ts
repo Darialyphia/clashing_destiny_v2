@@ -29,6 +29,9 @@ export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
     }
   ) {
     super(KEYWORDS.ON_DESTROYED.id, game, source, {
+      name: KEYWORDS.ON_DESTROYED.name,
+      description: KEYWORDS.ON_DESTROYED.description,
+      icon: 'keyword-on-death',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_DESTROYED),
         new GameEventModifierMixin(game, {

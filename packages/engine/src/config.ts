@@ -7,10 +7,13 @@ export type Config = {
 
   INITIAL_HAND_SIZE: number;
   INITAL_CARDS_IN_DESTINY_ZONE: number;
+
   MAX_HAND_SIZE: number;
   CARDS_DRAWN_PER_TURN: number;
+
   PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: number;
   PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: number;
+
   SHUFFLE_DECK_ON_GAME_START: boolean;
 
   ATTACK_ZONE_SLOTS: number;
@@ -19,13 +22,16 @@ export type Config = {
   MAX_EQUIPPED_ARTIFACTS: number;
 
   SUMMONING_SICKNESS: boolean;
-  ALLOW_PLAYER_1_TURN_1_ATTACK: boolean;
 
   INITIAL_HERO_BLUEPRINTID: string;
 
   MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: number;
 
   MAX_SPELL_SCHOOLS_PER_DECK: number;
+
+  DEFINITIVE_PASSES: boolean;
+
+  ALLOW_MINION_MOVEMENT: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -48,12 +54,15 @@ export const defaultConfig: Config = {
 
   MAX_EQUIPPED_ARTIFACTS: 3,
 
-  SUMMONING_SICKNESS: false,
-  ALLOW_PLAYER_1_TURN_1_ATTACK: true,
+  SUMMONING_SICKNESS: true,
 
   INITIAL_HERO_BLUEPRINTID: 'novice-lv0',
 
   MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: 0,
 
-  MAX_SPELL_SCHOOLS_PER_DECK: 2
+  MAX_SPELL_SCHOOLS_PER_DECK: 2,
+
+  DEFINITIVE_PASSES: true,
+
+  ALLOW_MINION_MOVEMENT: false
 };

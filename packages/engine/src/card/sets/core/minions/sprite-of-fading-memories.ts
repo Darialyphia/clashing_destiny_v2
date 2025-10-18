@@ -16,7 +16,7 @@ export const spriteOfFadingMemories: MinionBlueprint = {
   description: `@On Enter@: your opponent puts one card from their hand in their Destiny Zone.`,
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 1,

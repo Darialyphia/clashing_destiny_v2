@@ -217,14 +217,18 @@ export class ArtifactCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
+  get spellSchool() {
+    return this.blueprint.spellSchool;
+  }
+
   get isCorrectJob() {
     return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
   }
 
   get isCorrectSpellSchool() {
-    if (!this.blueprint.spellSchool) return true;
+    if (!this.spellSchool) return true;
     if (this.shouldIgnorespellSchoolRequirements) return true;
-    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
+    return this.player.hero.spellSchools.includes(this.spellSchool);
   }
 
   canPlay() {

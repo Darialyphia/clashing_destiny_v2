@@ -264,7 +264,7 @@ const tokens = computed<Token[]>(() => {
   text-decoration: underline;
 }
 .token-card {
-  color: var(--lime-3);
+  color: var(--lime-4);
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
