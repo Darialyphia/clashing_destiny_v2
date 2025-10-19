@@ -52,7 +52,6 @@ export type CardInterceptors = {
   deckSource: Interceptable<CardDeckSource>;
   shouldIgnorespellSchoolRequirements: Interceptable<boolean>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
-  shouldBeRecollectedFromDestinyZone: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -67,8 +66,7 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   speed: new Interceptable(),
   deckSource: new Interceptable(),
   shouldIgnorespellSchoolRequirements: new Interceptable(),
-  shouldWakeUpAtTurnStart: new Interceptable(),
-  shouldBeRecollectedFromDestinyZone: new Interceptable()
+  shouldWakeUpAtTurnStart: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -174,10 +172,6 @@ export abstract class Card<
 
   get shouldWakeUpAtTurnStart() {
     return this.interceptors.shouldWakeUpAtTurnStart.getValue(true, {});
-  }
-
-  get shouldBeRecollectedFromDestinyZone() {
-    return this.interceptors.shouldBeRecollectedFromDestinyZone.getValue(true, {});
   }
 
   get location() {

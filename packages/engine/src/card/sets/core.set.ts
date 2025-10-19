@@ -84,6 +84,7 @@ import { avalanche } from './core/spells/avalanche';
 import { slipstreamVeil } from './core/spells/slipstream-veil';
 import { clearwaterDivination } from './core/spells/clearwater-divination';
 import { spiritualist } from './core/minions/spiritualist';
+import { brainFreeze } from './core/spells/brain-freeze';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -172,6 +173,7 @@ export const coreSet: CardSet = {
     avalanche,
     slipstreamVeil,
     clearwaterDivination,
-    spiritualist
+    spiritualist,
+    brainFreeze
   ]
 };

@@ -10,6 +10,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import SmallCardBack from '@/card/components/SmallCardBack.vue';
 import CountChip from './CountChip.vue';
 import { clamp } from '@game/shared';
+import CardActionsPopover from './CardActionsPopover.vue';
 
 const { playerId, teachingMode } = defineProps<{
   playerId: string;
@@ -88,14 +89,16 @@ const cards = computed(() => {
         '--z': card.z
       }"
     >
-      <InspectableCard
-        v-if="activePlayerId === playerId || teachingMode"
-        :card-id="card.cardId"
-        side="top"
-      >
-        <SmallCardBack :key="card.cardId" />
-      </InspectableCard>
-      <SmallCardBack v-else />
+      <CardActionsPopover :card-id="card.cardId">
+        <InspectableCard
+          v-if="activePlayerId === playerId || teachingMode"
+          :card-id="card.cardId"
+          side="top"
+        >
+          <SmallCardBack :key="card.cardId" />
+        </InspectableCard>
+        <SmallCardBack v-else />
+      </CardActionsPopover>
     </div>
 
     <CountChip

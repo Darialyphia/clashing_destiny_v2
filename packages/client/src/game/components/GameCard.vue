@@ -8,18 +8,12 @@ import {
   useMyPlayer
 } from '../composables/useGameClient';
 import Card from '@/card/components/Card.vue';
-import {
-  PopoverRoot,
-  PopoverAnchor,
-  PopoverPortal,
-  PopoverContent,
-  type PopoverContentProps
-} from 'reka-ui';
-import CardActions from './CardActions.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
+import CardActionsPopover from './CardActionsPopover.vue';
+import type { PopoverContentProps } from 'reka-ui';
 
 const {
   cardId,
@@ -45,21 +39,6 @@ const {
 
 const card = useCard(computed(() => cardId));
 const ui = useGameUi();
-
-const isActionsPopoverOpened = computed({
-  get() {
-    if (!isInteractive) return false;
-    if (!ui.value.selectedCard) return false;
-    return ui.value.selectedCard.equals(card.value);
-  },
-  set(value) {
-    if (value) {
-      ui.value.select(card.value);
-    } else {
-      ui.value.unselect();
-    }
-  }
-});
 
 const state = useGameState();
 const { playerId } = useGameClient();
@@ -137,87 +116,78 @@ const classes = computed(() => {
 </script>
 
 <template>
-  <PopoverRoot v-model:open="isActionsPopoverOpened" v-if="card">
-    <PopoverAnchor>
-      <div class="relative">
-        <Card
-          v-if="variant === 'default'"
-          :is-animated="false"
-          :id="card.id"
-          :card="{
-            id: card.id,
-            name: card.name,
-            unlockedSpellSchools: card.unlockedSpellSchools,
-            spellSchool: card.spellSchool,
-            description: card.description,
-            image: card.imagePath,
-            kind: card.kind,
-            level: card.level,
-            rarity: card.rarity,
-            speed: card.speed,
-            manaCost: card.manaCost,
-            baseManaCost: card.baseManaCost,
-            destinyCost: card.destinyCost,
-            baseDestinyCost: card.baseDestinyCost,
-            atk: card.atk,
-            hp: card.hp,
-            countdown: card.countdown ?? card.maxCountdown,
-            spellpower: card.spellpower,
-            durability: card.durability,
-            abilities: card.abilities
-              .filter(ability => !ability.isHiddenOnCard)
-              .map(ability => `@[${ability.speed}]@ ${ability.description}`),
-            jobs: card.jobs
-          }"
-          class="game-card big"
-          :class="classes"
-          :data-damage="damageTaken"
-          @click="handleClick"
-        />
-        <SmallCard
-          v-else-if="variant === 'small'"
-          :id="card.id"
-          :card="{
-            id: card.id,
-            image: card.imagePath,
-            kind: card.kind,
-            atk: card.atk,
-            baseAtk: card.baseAtk,
-            hp: card.hp,
-            baseMaxHp: card.baseMaxHp,
-            maxHp: card.maxHp,
-            durability: card.durability,
-            countdown: card.countdown ?? card.maxCountdown
-          }"
-          class="game-card small"
-          :class="classes"
-          :show-stats="showStats"
-          :data-damage="damageTaken"
-          @click="handleClick"
-        />
+  <CardActionsPopover
+    :card-id="card.id"
+    :is-interactive="isInteractive"
+    :actions-offset="actionsOffset"
+    :actions-side="actionsSide"
+    :portal-target="portalTarget"
+  >
+    <div class="relative">
+      <Card
+        v-if="variant === 'default'"
+        :is-animated="false"
+        :id="card.id"
+        :card="{
+          id: card.id,
+          name: card.name,
+          unlockedSpellSchools: card.unlockedSpellSchools,
+          spellSchool: card.spellSchool,
+          description: card.description,
+          image: card.imagePath,
+          kind: card.kind,
+          level: card.level,
+          rarity: card.rarity,
+          speed: card.speed,
+          manaCost: card.manaCost,
+          baseManaCost: card.baseManaCost,
+          destinyCost: card.destinyCost,
+          baseDestinyCost: card.baseDestinyCost,
+          atk: card.atk,
+          hp: card.hp,
+          countdown: card.countdown ?? card.maxCountdown,
+          spellpower: card.spellpower,
+          durability: card.durability,
+          abilities: card.abilities
+            .filter(ability => !ability.isHiddenOnCard)
+            .map(ability => `@[${ability.speed}]@ ${ability.description}`),
+          jobs: card.jobs
+        }"
+        class="game-card big"
+        :class="classes"
+        :data-damage="damageTaken"
+        @click="handleClick"
+      />
+      <SmallCard
+        v-else-if="variant === 'small'"
+        :id="card.id"
+        :card="{
+          id: card.id,
+          image: card.imagePath,
+          kind: card.kind,
+          atk: card.atk,
+          baseAtk: card.baseAtk,
+          hp: card.hp,
+          baseMaxHp: card.baseMaxHp,
+          maxHp: card.maxHp,
+          durability: card.durability,
+          countdown: card.countdown ?? card.maxCountdown
+        }"
+        class="game-card small"
+        :class="classes"
+        :show-stats="showStats"
+        :data-damage="damageTaken"
+        @click="handleClick"
+      />
 
-        <div class="damage" v-if="damageTaken > 0">
-          {{ damageTaken }}
-        </div>
-        <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
-          You cannot play this card right now.
-        </p>
+      <div class="damage" v-if="damageTaken > 0">
+        {{ damageTaken }}
       </div>
-    </PopoverAnchor>
-
-    <PopoverPortal
-      :to="portalTarget"
-      :disabled="
-        card.location === 'hand' ||
-        card.location === 'discardPile' ||
-        card.location === 'banishPile'
-      "
-    >
-      <PopoverContent :side-offset="actionsOffset" :side="actionsSide">
-        <CardActions :card="card" v-model:is-opened="isActionsPopoverOpened" />
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+      <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
+        You cannot play this card right now.
+      </p>
+    </div>
+  </CardActionsPopover>
 </template>
 
 <style scoped lang="postcss">

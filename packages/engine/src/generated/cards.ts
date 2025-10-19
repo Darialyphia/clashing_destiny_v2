@@ -87,7 +87,9 @@ export const cards = {
 "tidal-wave": "tidal-wave",
 "avalanche": "avalanche",
 "slipstream-veil": "slipstream-veil",
-"clearwater-divination": "clearwater-divination"
+"clearwater-divination": "clearwater-divination",
+"spiritualist": "spiritualist",
+"brain-freeze": "brain-freeze"
 } as const;
 
 export const collectableCards = {
@@ -170,5 +172,7 @@ export const collectableCards = {
 "tidal-wave": "tidal-wave",
 "avalanche": "avalanche",
 "slipstream-veil": "slipstream-veil",
-"clearwater-divination": "clearwater-divination"
+"clearwater-divination": "clearwater-divination",
+"spiritualist": "spiritualist",
+"brain-freeze": "brain-freeze"
 } as const;

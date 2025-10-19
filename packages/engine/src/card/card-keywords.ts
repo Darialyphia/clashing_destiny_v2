@@ -337,6 +337,13 @@ export const KEYWORDS = {
     name: 'Flank',
     description: 'This minion can attack minions on adjacent rows.',
     aliases: []
+  },
+  LOCKED: {
+    id: 'locked',
+    name: 'Locked',
+    description:
+      'This card cannot be played. If it is in the Destiny Zone, it is not recollected at the start of the turn.',
+    aliases: ['lock']
   }
 };
 
