@@ -26,7 +26,7 @@ export const oniBoundEmberblade: MinionBlueprint = {
   unique: false,
   destinyCost: 2,
   atk: 2,
-  maxHp: 3,
+  maxHp: 4,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   kind: CARD_KINDS.MINION,

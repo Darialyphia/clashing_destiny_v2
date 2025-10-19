@@ -19,6 +19,17 @@ const state = useGameState();
 
 const paths = ref<string[][]>([]);
 
+const waitUntilTransitionend = (element: HTMLElement) => {
+  return new Promise<void>(resolve => {
+    const onEnd = (event: TransitionEvent) => {
+      if (event.target === element) {
+        element.removeEventListener('transitionend', onEnd);
+        resolve();
+      }
+    };
+    element.addEventListener('transitionend', onEnd);
+  });
+};
 const buildPaths = async () => {
   if (!state.value.effectChain?.stack) {
     paths.value = [];
@@ -34,18 +45,18 @@ const buildPaths = async () => {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();
 
-      const startRect = document
-        .querySelector(
-          ui.value.DOMSelectors.cardInEffectChain(effect.source.id).selector
-        )!
-        .getBoundingClientRect();
+      waitUntilTransitionend(
+        ui.value.DOMSelectors.cardInEffectChain(effect.source.id).element!
+      );
+      const startRect = ui.value.DOMSelectors.cardInEffectChain(
+        effect.source.id
+      ).element!.getBoundingClientRect();
+
       const endRect = match(target)
         .with({ type: 'card' }, target => {
-          return document
-            .querySelector(
-              ui.value.DOMSelectors.cardOnBoard(target.card).selector
-            )
-            ?.getBoundingClientRect();
+          return ui.value.DOMSelectors.cardOnBoard(
+            target.card
+          ).element!.getBoundingClientRect();
         })
         .with({ type: 'minionPosition' }, target => {
           return ui.value.DOMSelectors.minionPosition(
@@ -168,13 +179,10 @@ const stack = computed(() => {
   position: relative;
   perspective: 2000px;
   transform-style: preserve-3d;
-  &:deep(.small-card) {
-    transition: all 0.5s var(--ease-4);
-    @starting-style {
-      transform: rotateY(90deg);
-      filter: brightness(4);
-      opacity: 0;
-    }
+  transition: all 0.5s var(--ease-3);
+  transition-delay: 1s;
+  @starting-style {
+    transform: translateY(-30dvh) scale(1.5);
   }
 }
 

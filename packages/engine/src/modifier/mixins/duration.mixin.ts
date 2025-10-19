@@ -19,18 +19,18 @@ export class DurationModifierMixin<T extends AnyCard = AnyCard> extends Modifier
 
   async onTurnEnd() {
     this.duration--;
-    if (this.duration === 0) {
+    if (this.duration <= 0) {
       await this.modifier.target.modifiers.remove(this.modifier.modifierType);
     }
   }
 
   onApplied(target: T, modifier: Modifier<T>): void {
     this.modifier = modifier;
-    this.game.on(GAME_EVENTS.PLAYER_END_TURN, this.onTurnEnd);
+    this.game.on(GAME_EVENTS.TURN_END, this.onTurnEnd);
   }
 
   onRemoved() {
-    this.game.off(GAME_EVENTS.PLAYER_END_TURN, this.onTurnEnd);
+    this.game.off(GAME_EVENTS.TURN_END, this.onTurnEnd);
   }
 
   onReapplied(): void {

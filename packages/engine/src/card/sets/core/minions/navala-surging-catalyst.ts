@@ -16,7 +16,6 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../utils/damage';
 import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job-affinity.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { SimpleSpellpowerBuffModifier } from '../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 
 export const navalaSurgingCatalyst: MinionBlueprint = {
   id: 'navala-surging-catalyst',

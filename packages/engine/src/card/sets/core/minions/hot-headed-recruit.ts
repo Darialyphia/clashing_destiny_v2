@@ -1,3 +1,4 @@
+import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
@@ -13,11 +14,11 @@ export const hotHeadedRecruit: MinionBlueprint = {
   id: 'hot-headed-recruit',
   name: 'Hot-Headed Recruit',
   cardIconId: 'minions/hot-headed-recruit',
-  description: `@Double Attack@.`,
+  description: `@Attacker(3)@.`,
   collectable: true,
   unique: false,
   manaCost: 2,
-  atk: 3,
+  atk: 2,
   maxHp: 1,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -30,7 +31,7 @@ export const hotHeadedRecruit: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new DoubleAttackModifier(game, card, {}));
+    await card.modifiers.add(new AttackerModifier(game, card, { amount: 2 }));
   },
   async onPlay() {}
 };

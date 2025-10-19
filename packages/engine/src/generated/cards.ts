@@ -81,7 +81,13 @@ export const cards = {
 "ken-wizard-prodigy": "ken-wizard-prodigy",
 "healing-light": "healing-light",
 "magic-channeler": "magic-channeler",
-"flame-exorcist": "flame-exorcist"
+"flame-exorcist": "flame-exorcist",
+"ice-bolt": "ice-bolt",
+"frost-nova": "frost-nova",
+"tidal-wave": "tidal-wave",
+"avalanche": "avalanche",
+"slipstream-veil": "slipstream-veil",
+"clearwater-divination": "clearwater-divination"
 } as const;
 
 export const collectableCards = {
@@ -158,5 +164,11 @@ export const collectableCards = {
 "ken-wizard-prodigy": "ken-wizard-prodigy",
 "healing-light": "healing-light",
 "magic-channeler": "magic-channeler",
-"flame-exorcist": "flame-exorcist"
+"flame-exorcist": "flame-exorcist",
+"ice-bolt": "ice-bolt",
+"frost-nova": "frost-nova",
+"tidal-wave": "tidal-wave",
+"avalanche": "avalanche",
+"slipstream-veil": "slipstream-veil",
+"clearwater-divination": "clearwater-divination"
 } as const;

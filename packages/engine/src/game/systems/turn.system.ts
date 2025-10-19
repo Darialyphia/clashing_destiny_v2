@@ -18,7 +18,7 @@ export class TurnSystem extends System<never> {
 
   private nextInitiativePlayer!: Player;
 
-  private consecutivePasses = 0;
+  private firstPlayerToPassThisRound: Player | null = null;
 
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
@@ -27,11 +27,6 @@ export class TurnSystem extends System<never> {
   }
 
   shutdown() {}
-
-  private get passesNeededToResolve() {
-    // return this.effectStack.length <= 1 ? 1 : 2;
-    return 2;
-  }
 
   get initiativePlayer() {
     return this._initiativePlayer;
@@ -47,8 +42,14 @@ export class TurnSystem extends System<never> {
       TURN_EVENTS.TURN_PASS,
       new TurnPassEvent({ player: this._initiativePlayer })
     );
-    this.consecutivePasses++;
-    if (this.consecutivePasses === this.passesNeededToResolve) {
+    player.passTurn();
+    if (!this.firstPlayerToPassThisRound) {
+      this.firstPlayerToPassThisRound = player;
+    }
+    const allPlayersPassed = this.game.playerSystem.players.every(
+      p => p.hasPassedThisRound
+    );
+    if (allPlayersPassed) {
       await this.game.gamePhaseSystem.declareEndTurn();
     } else {
       this._initiativePlayer = this._initiativePlayer.opponent;
@@ -59,10 +60,15 @@ export class TurnSystem extends System<never> {
     }
   }
 
-  startTurn() {
+  async startTurn() {
     this._initiativePlayer = this.nextInitiativePlayer;
     this.nextInitiativePlayer = this._initiativePlayer.opponent;
-    this.consecutivePasses = 0;
+    if (this.game.config.REWARD_FOR_PASSING_FIRST && this.firstPlayerToPassThisRound) {
+      const spark = await this.firstPlayerToPassThisRound.generateCard('mana-spark');
+      await spark.addToHand();
+    }
+    this.firstPlayerToPassThisRound = null;
+
     return this.game.emit(
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })
@@ -79,7 +85,11 @@ export class TurnSystem extends System<never> {
   }
 
   async switchInitiative() {
-    this.consecutivePasses = 0;
+    const opponentCanReceiveInitiative =
+      !this._initiativePlayer.opponent.hasPassedThisRound;
+
+    if (!opponentCanReceiveInitiative) return;
+
     this._initiativePlayer = this._initiativePlayer.opponent;
 
     await this.game.emit(

@@ -77,6 +77,13 @@ import { kenWizardProdigy } from './core/minions/ken-wizard-prodigy';
 import { healingLight } from './core/spells/healing-light';
 import { magicChanneler } from './core/minions/magic-channeler';
 import { flameExorcist } from './core/minions/flame-exorcist';
+import { iceBolt } from './core/spells/ice-bolt';
+import { frostNova } from './core/spells/frost-nova';
+import { tidalWave } from './core/spells/tidal-wave';
+import { avalanche } from './core/spells/avalanche';
+import { slipstreamVeil } from './core/spells/slipstream-veil';
+import { clearwaterDivination } from './core/spells/clearwater-divination';
+import { spiritualist } from './core/minions/spiritualist';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -158,6 +165,13 @@ export const coreSet: CardSet = {
     kenWizardProdigy,
     healingLight,
     magicChanneler,
-    flameExorcist
+    flameExorcist,
+    iceBolt,
+    frostNova,
+    tidalWave,
+    avalanche,
+    slipstreamVeil,
+    clearwaterDivination,
+    spiritualist
   ]
 };

@@ -143,7 +143,7 @@ export const KEYWORDS = {
     id: 'elusive',
     name: 'Elusive',
     description:
-      'The first time this minion is attacked each turn, it moves to a adjacent position on the same row if possible (prioritizing down). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
+      'The first time this minion is attacked each turn, it moves to a adjacent position on the same row if possible (prioritizing up) and cancel the attack.',
     aliases: []
   },
   ATTACKER: {
@@ -163,8 +163,7 @@ export const KEYWORDS = {
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',
-    description:
-      "This unit is exhausted and will not wake up during its owner's the next turn.",
+    description: "Exhaust this unit. it doesn't exhaust at the start of the next turn.",
     aliases: ['Freeze']
   },
   INHERITED_EFFECT: {

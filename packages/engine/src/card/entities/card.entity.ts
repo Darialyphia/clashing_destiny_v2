@@ -29,9 +29,6 @@ import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
-import type { ArtifactCard } from './artifact.entity';
-import type { HeroCard } from './hero.entity';
-import type { MinionCard } from './minion.entity';
 import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
@@ -54,6 +51,8 @@ export type CardInterceptors = {
   speed: Interceptable<CardSpeed>;
   deckSource: Interceptable<CardDeckSource>;
   shouldIgnorespellSchoolRequirements: Interceptable<boolean>;
+  shouldWakeUpAtTurnStart: Interceptable<boolean>;
+  shouldBeRecollectedFromDestinyZone: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -67,7 +66,9 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   canBeRecollected: new Interceptable(),
   speed: new Interceptable(),
   deckSource: new Interceptable(),
-  shouldIgnorespellSchoolRequirements: new Interceptable()
+  shouldIgnorespellSchoolRequirements: new Interceptable(),
+  shouldWakeUpAtTurnStart: new Interceptable(),
+  shouldBeRecollectedFromDestinyZone: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -169,6 +170,14 @@ export abstract class Card<
 
   get shouldIgnorespellSchoolRequirements() {
     return this.interceptors.shouldIgnorespellSchoolRequirements.getValue(false, {});
+  }
+
+  get shouldWakeUpAtTurnStart() {
+    return this.interceptors.shouldWakeUpAtTurnStart.getValue(true, {});
+  }
+
+  get shouldBeRecollectedFromDestinyZone() {
+    return this.interceptors.shouldBeRecollectedFromDestinyZone.getValue(true, {});
   }
 
   get location() {

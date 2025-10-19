@@ -27,7 +27,7 @@ export class AttackerModifier<T extends MinionCard | HeroCard> extends Modifier<
         new TogglableModifierMixin(game, () => {
           const phaseCtx = game.gamePhaseSystem.getContext();
           if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
-          return phaseCtx.ctx.attacker.equals(this.target);
+          return phaseCtx.ctx.attacker?.equals(this.target);
         }),
         ...(options.mixins ?? [])
       ]

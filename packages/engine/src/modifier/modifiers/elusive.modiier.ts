@@ -19,6 +19,12 @@ export class ElusiveModifier<T extends MinionCard> extends Modifier<T> {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ELUSIVE),
         new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.TURN_START,
+          handler: async () => {
+            this.hasBeenAttacked = 0;
+          }
+        }),
+        new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.BEFORE_RESOLVE_COMBAT,
           handler: async ({ data }) => {
             if (!data.target.equals(this.target)) return;

@@ -32,6 +32,8 @@ export type Config = {
   DEFINITIVE_PASSES: boolean;
 
   ALLOW_MINION_MOVEMENT: boolean;
+
+  REWARD_FOR_PASSING_FIRST: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -54,7 +56,7 @@ export const defaultConfig: Config = {
 
   MAX_EQUIPPED_ARTIFACTS: 3,
 
-  SUMMONING_SICKNESS: true,
+  SUMMONING_SICKNESS: false,
 
   INITIAL_HERO_BLUEPRINTID: 'novice-lv0',
 
@@ -64,5 +66,7 @@ export const defaultConfig: Config = {
 
   DEFINITIVE_PASSES: true,
 
-  ALLOW_MINION_MOVEMENT: false
+  ALLOW_MINION_MOVEMENT: false,
+
+  REWARD_FOR_PASSING_FIRST: false
 };

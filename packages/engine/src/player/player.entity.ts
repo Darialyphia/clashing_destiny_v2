@@ -73,6 +73,8 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
+  _hasPassedThisRound = false;
+
   hasPlayedDestinyCardThisTurn = false;
 
   private _hero!: {
@@ -217,6 +219,14 @@ export class Player
     return this.cardManager.hand.length + this.cardManager.destinyZone.size;
   }
 
+  get hasPassedThisRound() {
+    return this._hasPassedThisRound;
+  }
+
+  passTurn() {
+    this._hasPassedThisRound = true;
+  }
+
   private async playCard(card: AnyCard) {
     const isAction = !isDefined(this.game.effectChainSystem.currentChain);
     await card.play(async () => {
@@ -286,8 +296,11 @@ export class Player
       new PlayerTurnEvent({ player: this })
     );
     this.hasPlayedDestinyCardThisTurn = false;
+    this._hasPassedThisRound = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
-      await card.wakeUp();
+      if (card.shouldWakeUpAtTurnStart) {
+        await card.wakeUp();
+      }
     }
   }
 

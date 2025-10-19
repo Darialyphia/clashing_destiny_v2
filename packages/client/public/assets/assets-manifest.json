@@ -595,6 +595,19 @@
         },
         {
           "alias": [
+            "spiritualist.png"
+          ],
+          "src": [
+            "/assets/cards/minions/spiritualist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "sprite-of-fading-memories.png"
           ],
           "src": [
@@ -792,6 +805,19 @@
         },
         {
           "alias": [
+            "avalanche.png"
+          ],
+          "src": [
+            "/assets/cards/spells/avalanche.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "blazing-slash.png"
           ],
           "src": [
@@ -835,6 +861,19 @@
           ],
           "src": [
             "/assets/cards/spells/channel-the-flames.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "clearwater-divination.png"
+          ],
+          "src": [
+            "/assets/cards/spells/clearwater-divination.png"
           ],
           "data": {
             "tags": {
@@ -961,6 +1000,19 @@
         },
         {
           "alias": [
+            "frost-nova.png"
+          ],
+          "src": [
+            "/assets/cards/spells/frost-nova.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "gaze-into-tomorrow.png"
           ],
           "src": [
@@ -978,6 +1030,19 @@
           ],
           "src": [
             "/assets/cards/spells/grand-cross.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "ice-bolt.png"
+          ],
+          "src": [
+            "/assets/cards/spells/ice-bolt.png"
           ],
           "data": {
             "tags": {
@@ -1156,6 +1221,19 @@
         },
         {
           "alias": [
+            "slipstream-veil.png"
+          ],
+          "src": [
+            "/assets/cards/spells/slipstream-veil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "spell-mana-shield.png"
           ],
           "src": [
@@ -1212,6 +1290,19 @@
           ],
           "src": [
             "/assets/cards/spells/thirst-for-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tidal-wave.png"
+          ],
+          "src": [
+            "/assets/cards/spells/tidal-wave.png"
           ],
           "data": {
             "tags": {
