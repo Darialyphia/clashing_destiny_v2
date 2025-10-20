@@ -18,8 +18,8 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
       const cards = [...player.cardManager.destinyZone];
 
       for (const card of cards) {
-        await card.removeFromCurrentLocation();
         if (card.canBeRecollected) {
+          await card.removeFromCurrentLocation();
           await card.player.cardManager.addToHand(card);
         }
       }

@@ -16,14 +16,11 @@ export class TurnSystem extends System<never> {
   // the initiative player is the one that can start an action
   private _initiativePlayer!: Player;
 
-  private nextInitiativePlayer!: Player;
-
   private firstPlayerToPassThisRound: Player | null = null;
 
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._initiativePlayer = this.game.playerSystem.player1;
-    this.nextInitiativePlayer = this._initiativePlayer.opponent;
   }
 
   shutdown() {}
@@ -61,8 +58,7 @@ export class TurnSystem extends System<never> {
   }
 
   async startTurn() {
-    this._initiativePlayer = this.nextInitiativePlayer;
-    this.nextInitiativePlayer = this._initiativePlayer.opponent;
+    this._initiativePlayer = this.firstPlayerToPassThisRound ?? this.initiativePlayer;
     if (this.game.config.REWARD_FOR_PASSING_FIRST && this.firstPlayerToPassThisRound) {
       const spark = await this.firstPlayerToPassThisRound.generateCard('mana-spark');
       await spark.addToHand();
