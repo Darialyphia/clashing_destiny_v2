@@ -1,7 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, multipleEnemyTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -10,7 +8,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { LockedeModifier } from '../../../../modifier/modifiers/locked.modifier';
 
 export const brainFreeze: SpellBlueprint = {
@@ -18,7 +15,7 @@ export const brainFreeze: SpellBlueprint = {
   name: 'Brain Freeze',
   cardIconId: 'spells/brain-freeze',
   description: dedent`
-  @Lock@ the 2 most expensive cards in the opponent Destiny Zone.
+  @Lock@ the 2 most expensive cards in the opponent Destiny Zone until the end of next turn.
   `,
   collectable: true,
   unique: false,

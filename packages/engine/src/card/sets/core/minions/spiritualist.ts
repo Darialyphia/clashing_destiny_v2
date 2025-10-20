@@ -7,9 +7,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
@@ -18,7 +15,7 @@ export const spiritualist: MinionBlueprint = {
   name: 'Spiritualist',
   cardIconId: 'minions/spiritualist',
   description: dedent`
-  This costs @[mana] 1@ less if you've played a spell this turn.
+  This costs @[mana] 1@ less if you've played at least 1 spells this turn.
   `,
   collectable: true,
   unique: false,
@@ -44,7 +41,7 @@ export const spiritualist: MinionBlueprint = {
             game,
             () =>
               card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
-                .length > 0
+                .length >= 1
           )
         ]
       })

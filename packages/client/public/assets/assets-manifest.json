@@ -844,6 +844,19 @@
         },
         {
           "alias": [
+            "brain-freeze.png"
+          ],
+          "src": [
+            "/assets/cards/spells/brain-freeze.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "call-to-arms.png"
           ],
           "src": [
@@ -1030,6 +1043,19 @@
           ],
           "src": [
             "/assets/cards/spells/grand-cross.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "healing-light.png"
+          ],
+          "src": [
+            "/assets/cards/spells/healing-light.png"
           ],
           "data": {
             "tags": {
@@ -2019,6 +2045,19 @@
           ],
           "src": [
             "/assets/icons/keyword-intercept.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-locked"
+          ],
+          "src": [
+            "/assets/icons/keyword-locked.png"
           ],
           "data": {
             "tags": {
