@@ -1065,6 +1065,19 @@
         },
         {
           "alias": [
+            "hourglass-fracture.png"
+          ],
+          "src": [
+            "/assets/cards/spells/hourglass-fracture.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "ice-bolt.png"
           ],
           "src": [
@@ -1182,6 +1195,19 @@
         },
         {
           "alias": [
+            "orb-of-inhibition.png"
+          ],
+          "src": [
+            "/assets/cards/spells/orb-of-inhibition.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "purify-the-malevolent.png"
           ],
           "src": [
@@ -1290,6 +1316,19 @@
           ],
           "src": [
             "/assets/cards/spells/sunburst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sunlit-formation.png"
+          ],
+          "src": [
+            "/assets/cards/spells/sunlit-formation.png"
           ],
           "data": {
             "tags": {

@@ -48,12 +48,14 @@ export type SerializedPlayer = {
   isPlayer1: boolean;
 };
 
-type PlayerInterceptors = {
+export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
+  spellSchools: Interceptable<SpellSchool[]>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    cardsDrawnForTurn: new Interceptable<number>()
+    cardsDrawnForTurn: new Interceptable<number>(),
+    spellSchools: new Interceptable<SpellSchool[]>()
   };
 };
 
@@ -110,7 +112,7 @@ export class Player
   }
 
   get spellSchools() {
-    return this.options.spellSchools;
+    return this.interceptors.spellSchools.getValue(this.options.spellSchools, {});
   }
 
   async levelupHero(newHero: HeroCard) {

@@ -85,6 +85,9 @@ import { slipstreamVeil } from './core/spells/slipstream-veil';
 import { clearwaterDivination } from './core/spells/clearwater-divination';
 import { spiritualist } from './core/minions/spiritualist';
 import { brainFreeze } from './core/spells/brain-freeze';
+import { sunlitFormation } from './core/spells/sunlit-formation';
+import { hourglassFracture } from './core/spells/hourglass-fracture';
+import { orbOfInhibition } from './core/spells/orb-of-inhibition';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -174,6 +177,9 @@ export const coreSet: CardSet = {
     slipstreamVeil,
     clearwaterDivination,
     spiritualist,
-    brainFreeze
+    brainFreeze,
+    sunlitFormation,
+    hourglassFracture,
+    orbOfInhibition
   ]
 };
