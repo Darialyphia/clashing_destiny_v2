@@ -12,7 +12,7 @@ Inspirations: Grand Archive, Might and Magic: Duel of Champions, Legends of Rune
 
 At the start of a turn, both players draw 2 cards, then recollect all cards in their Destiny zone (see below) to their hand.
 
-During a turn, players alternate taking action. On the first turn, Player 1 starts with the initiative and is able to play the first card. On the following turns, initiative switches back and forth between players.
+During a turn, players alternate taking action. On the first turn, Player 1 starts with the initiative and is able to play the first card. On the following turns, the first player who passed on the previous starts the turn with initiative.
 
 The actions available are:
 
@@ -49,6 +49,7 @@ Using a ability starts a Card Chain with the opponent having priority.
 ### Pass
 
 Passing makes the opponent the initiative player. If both players pass in a row. The turn ends.
+Once a player have passed, they will no longer get initiative this turn. They can, however, still react to their opponent's plays (by add cards to card chains, declaring a retaliation, etc...)
 
 ## Cards
 
@@ -71,8 +72,7 @@ Every card has a _Speed_ stat:
 
 - Slow: this card cannot be played during an ongoing Card chain and can only be played when its owner is the initiative player.
 - Fast: this card can be played during a Card Chain, or to start one. It can be played even if its owner is not the initiative player.
-- Warp: this card can only be played as a response to another card (cannot be played at slow speed). However, instead of placing it on top of the chain, you may insert it at any point in the chain
-- Instant: this card can be played at the same time a Fast card can be played. However, it will not go into the Card Chain and will resolve instantly. Furthermore, playing an Instant speed card does not pass card chain priority, nor switch the initiative player.
+- Flash: this card can be played at the same time a Fast card can be played. However, it will not go into the Card Chain and will resolve instantly. Furthermore, playing an Instant speed card does not pass card chain priority, nor switch the initiative player.
 
 ### Card Chain
 

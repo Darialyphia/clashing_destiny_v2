@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
 // @ts-expect-error
 import { VueComponent as HowToPlay } from '@/tutorial/how-to-play.md';
+import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 
 definePage({
   name: 'HowToPlay',
@@ -11,23 +11,8 @@ definePage({
 
 <template>
   <div class="how-to-play-page">
+    <AuthenticatedHeader />
     <h1>How To Play</h1>
-    <nav class="pointer-events-auto">
-      <ul class="flex gap-4">
-        <li>
-          <!-- <RouterLink :to="{ name: 'Settings' }">Settings</RouterLink> -->
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'HowToPlay' }">How to play</RouterLink>
-        </li>
-        <li>
-          <!-- <RouterLink :to="{ name: 'Tutorial1' }">Tutorial</RouterLink> -->
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'Collection' }">Collection</RouterLink>
-        </li>
-      </ul>
-    </nav>
 
     <div class="how-to-play-container">
       <HowToPlay />
