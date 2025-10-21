@@ -13,14 +13,14 @@ import type { SpellCard } from '../../../entities/spell.entity';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { LingeringDestinyModifier } from '../../../../modifier/modifiers/lingering-destiny.modifier';
+import { empower } from '../../../card-actions-utils';
 
 export const magicInsight: SpellBlueprint = {
   id: 'magic-insight',
   name: 'Magic Insight',
   cardIconId: 'spells/magic-insight',
   description: dedent`
-  Draw a card into your Destiny Zone.
-  @[level] 3 bonus@ : This costs @[mana] 1@ less
+  @Empower 1@.
   @Lingering Destiny@
   `,
   collectable: true,
@@ -38,20 +38,9 @@ export const magicInsight: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
-    )) as LevelBonusModifier<SpellCard>;
-
-    await card.modifiers.add(
-      new SimpleManacostModifier('magic-insight-discount', game, card, {
-        amount: -1,
-        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
-      })
-    );
-
     await card.modifiers.add(new LingeringDestinyModifier(game, card));
   },
   async onPlay(game, card) {
-    await card.player.cardManager.drawIntoDestinyZone(1);
+    empower(game, card, 1);
   }
 };

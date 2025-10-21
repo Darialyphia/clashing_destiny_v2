@@ -27,6 +27,7 @@ import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
+import AnswerQuestionModal from './answerQuestionModal.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
@@ -59,6 +60,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
   <SVGFilters />
   <DestinyCostVFX />
   <ChooseCardModal />
+  <AnswerQuestionModal />
   <PlayedCard />
   <CombatArrows />
 

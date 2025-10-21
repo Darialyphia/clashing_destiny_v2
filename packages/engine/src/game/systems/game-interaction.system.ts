@@ -26,6 +26,7 @@ import { UseAbilityContext } from '../interactions/use-ability.interaction';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_EVENTS } from '../game.events';
 import { CardDeclareUseAbilityEvent } from '../../card/card.events';
+import { AskQuestionContext } from '../interactions/ask-question.interaction';
 
 export const INTERACTION_STATES = {
   IDLE: 'idle',
@@ -34,7 +35,8 @@ export const INTERACTION_STATES = {
   SELECTING_MINION_SLOT: 'selecting_minion_slot',
   CHOOSING_AFFINITY: 'choosing_affinity',
   PLAYING_CARD: 'playing_card',
-  USING_ABILITY: 'using_ability'
+  USING_ABILITY: 'using_ability',
+  ASK_QUESTION: 'ask_question'
 } as const;
 export type InteractionStateDict = typeof INTERACTION_STATES;
 export type InteractionState = Values<typeof INTERACTION_STATES>;
@@ -53,7 +55,10 @@ export const INTERACTION_STATE_TRANSITIONS = {
   CANCEL_PLAYING_CARD: 'cancel_playing_card',
   START_USING_ABILITY: 'start_using_ability',
   COMMIT_USING_ABILITY: 'commit_using_ability',
-  CANCEL_USING_ABILITY: 'cancel_using_ability'
+  CANCEL_USING_ABILITY: 'cancel_using_ability',
+  START_ASKING_QUESTION: 'start_asking_question',
+  COMMIT_ASKING_QUESTION: 'commit_asking_question',
+  CANCEL_ASKING_QUESTION: 'cancel_asking_question'
 };
 export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;
 
@@ -85,6 +90,10 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'using_ability'>;
       ctx: UseAbilityContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'ask_question'>;
+      ctx: AskQuestionContext;
     };
 
 export type SerializedInteractionContext =
@@ -115,6 +124,10 @@ export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'using_ability'>;
       ctx: ReturnType<UseAbilityContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'ask_question'>;
+      ctx: ReturnType<AskQuestionContext['serialize']>;
     };
 
 export class GameInteractionSystem
@@ -128,7 +141,8 @@ export class GameInteractionSystem
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
     [INTERACTION_STATES.CHOOSING_AFFINITY]: ChoosingAffinityContext,
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
-    [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext
+    [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
+    [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext
   } as const;
 
   private _ctx:
@@ -138,7 +152,8 @@ export class GameInteractionSystem
     | ChoosingCardsContext
     | ChoosingAffinityContext
     | PlayCardContext
-    | UseAbilityContext;
+    | UseAbilityContext
+    | AskQuestionContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);
@@ -211,6 +226,21 @@ export class GameInteractionSystem
       stateTransition(
         INTERACTION_STATES.USING_ABILITY,
         INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION,
+        INTERACTION_STATES.ASK_QUESTION
+      ),
+      stateTransition(
+        INTERACTION_STATES.ASK_QUESTION,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.ASK_QUESTION,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
         INTERACTION_STATES.IDLE
       )
     ]);
@@ -293,6 +323,22 @@ export class GameInteractionSystem
       options
     );
     return this.game.inputSystem.pause<T[]>();
+  }
+
+  async askQuestion(options: {
+    player: Player;
+    choices: Array<{ id: string; label: string }>;
+    source: AnyCard;
+    minChoiceCount: number;
+    maxChoiceCount: number;
+    label: string;
+  }) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(
+      this.game,
+      options
+    );
+    return this.game.inputSystem.pause<string[]>();
   }
 
   async declarePlayCardIntent(card: AnyCard, player: Player) {

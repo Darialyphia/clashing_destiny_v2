@@ -138,6 +138,12 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
+        if (!a.card) {
+          console.log(a);
+        }
+        if (!b.card) {
+          console.log(b);
+        }
         if (a.card.deckSource !== b.card.deckSource) {
           return a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? 1 : -1;
         }

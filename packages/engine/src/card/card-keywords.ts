@@ -326,6 +326,13 @@ export const KEYWORDS = {
     description: 'Increase the damage of your spells by X.',
     aliases: [/spellpower \([0-9]+\)/, 'spellpower']
   },
+  EMPOWER: {
+    id: 'empower',
+    name: 'Empower X',
+    description:
+      'The next Spell you play this turn resolves as if you had +X Spellpower.',
+    aliases: [/empower \([0-9]+\)/]
+  },
   REACTION: {
     id: 'reaction',
     name: 'Reaction',

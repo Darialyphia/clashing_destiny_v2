@@ -1,4 +1,9 @@
 import type { Game } from '../game/game';
+import { GAME_EVENTS } from '../game/game.events';
+import { GameEndPhase } from '../game/phases/game-end.phase';
+import { SimpleSpellpowerBuffModifier } from '../modifier/modifiers/simple-spellpower.buff.modifier';
+import { KEYWORDS } from './card-keywords';
+import { isSpell } from './card-utils';
 import type { AnyCard } from './entities/card.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
@@ -60,4 +65,34 @@ export const discardFromHand = async (
   }
 
   return cardsToDiscard;
+};
+
+export const empower = (game: Game, card: AnyCard, amount: number) => {
+  const cleanups = [
+    game.on(GAME_EVENTS.CARD_BEFORE_PLAY, async event => {
+      if (!event.data.card.player.equals(card.player)) return;
+      if (!isSpell(event.data.card)) return;
+
+      await card.player.hero.modifiers.add(
+        new SimpleSpellpowerBuffModifier(
+          `${KEYWORDS.EMPOWER.id}-${card.id}`,
+          game,
+          card,
+          {
+            amount
+          }
+        )
+      );
+    }),
+    game.on(GAME_EVENTS.CARD_AFTER_PLAY, async event => {
+      if (!event.data.card.player.equals(card.player)) return;
+      if (!isSpell(event.data.card)) return;
+      await card.player.hero.modifiers.remove(`${KEYWORDS.EMPOWER.id}-${card.id}`);
+      cleanups.forEach(cleanup => cleanup());
+    }),
+    game.on(GAME_EVENTS.TURN_END, async () => {
+      await card.player.hero.modifiers.remove(`${KEYWORDS.EMPOWER.id}-${card.id}`);
+      cleanups.forEach(cleanup => cleanup());
+    })
+  ];
 };

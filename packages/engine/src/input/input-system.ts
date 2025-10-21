@@ -36,6 +36,7 @@ import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
 import { DeclareCounterAttackInput } from './inputs/declare-counterattack.input';
 import { SurrenderInput } from './inputs/surrender.input';
+import { AnswerQuestionInput } from './inputs/answer-question.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -66,7 +67,8 @@ const inputMap = validateinputMap({
   commitUseAbility: CommitUseAbilityInput,
   cancelUseAbility: CancelUseAbilityInput,
   declareCounterAttack: DeclareCounterAttackInput,
-  surrender: SurrenderInput
+  surrender: SurrenderInput,
+  answerQuestion: AnswerQuestionInput
 });
 
 type InputMap = typeof inputMap;

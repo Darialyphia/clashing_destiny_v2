@@ -270,6 +270,19 @@
         },
         {
           "alias": [
+            "axe-forger.png"
+          ],
+          "src": [
+            "/assets/cards/minions/axe-forger.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "bastion-guard.png"
           ],
           "src": [

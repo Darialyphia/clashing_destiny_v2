@@ -394,6 +394,16 @@ export class GameClient {
     });
   }
 
+  answerQuestion(indices: number[]) {
+    this.dispatch({
+      type: 'answerQuestion',
+      payload: {
+        playerId: this.playerId,
+        indices
+      }
+    });
+  }
+
   declareCounterAttack(defenderId: string) {
     this.dispatch({
       type: 'declareCounterAttack',
