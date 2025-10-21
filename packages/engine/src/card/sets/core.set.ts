@@ -88,6 +88,12 @@ import { brainFreeze } from './core/spells/brain-freeze';
 import { sunlitFormation } from './core/spells/sunlit-formation';
 import { hourglassFracture } from './core/spells/hourglass-fracture';
 import { orbOfInhibition } from './core/spells/orb-of-inhibition';
+import { unpredictableJester } from './core/minions/unpredictable-jester';
+import { underhandedTactician } from './core/minions/underhanded-tactician';
+import { axeforger } from './core/minions/axe-forger';
+import { chainmail } from './core/artifacts/chainmail';
+import { cunningMinister } from './core/minions/cunning-minister';
+import { stoicOverlord } from './core/minions/stoic-overlord';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -180,6 +186,12 @@ export const coreSet: CardSet = {
     brainFreeze,
     sunlitFormation,
     hourglassFracture,
-    orbOfInhibition
+    orbOfInhibition,
+    unpredictableJester,
+    underhandedTactician,
+    axeforger,
+    chainmail,
+    cunningMinister,
+    stoicOverlord
   ]
 };

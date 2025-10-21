@@ -505,6 +505,10 @@ export abstract class Card<
     this._isExhausted = true;
   }
 
+  exhaustSilently() {
+    this._isExhausted = true;
+  }
+
   async wakeUp() {
     if (!this.isExhausted) return;
     await this.game.emit(CARD_EVENTS.CARD_WAKE_UP, new CardWakeUpEvent({ card: this }));

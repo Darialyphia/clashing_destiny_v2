@@ -134,6 +134,9 @@ export class Player
       await modifier.remove();
       await this._hero.card.modifiers.add(modifier);
     }
+    if (oldHero.isExhausted) {
+      newHero.exhaustSilently();
+    }
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_LEVEL_UP,
       new HeroLevelUpEvent({ from: oldHero, to: newHero })

@@ -186,6 +186,8 @@ export type HeroCardEventMap = {
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
   private damageTaken = 0;
 
+  private shield = 0;
+
   readonly abilityTargets = new Map<string, PreResponseTarget[]>();
 
   readonly abilities: Ability<HeroCard>[] = [];
@@ -384,8 +386,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
 
     const amount = damage.getFinalAmount(this);
-
-    this.damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
+    const amountBlocked = Math.min(this.shield, amount);
+    this.shield -= amountBlocked;
+    const remainingDamage = amount - amountBlocked;
+    this.damageTaken = Math.min(this.damageTaken + remainingDamage, this.maxHp);
 
     await this.game.emit(
       HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE,
@@ -403,6 +407,18 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       HERO_EVENTS.HERO_AFTER_HEAL,
       new HeroCardHealEvent({ card: this, amount: heal })
     );
+  }
+
+  gainShield(amount: number) {
+    this.shield += amount;
+  }
+
+  depleteShield(amount?: number) {
+    if (amount === undefined) {
+      this.shield = 0;
+    } else {
+      this.shield = Math.max(this.shield - amount, 0);
+    }
   }
 
   canUseAbility(id: string) {
