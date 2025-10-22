@@ -17,12 +17,12 @@ export const clearwaterDivination: SpellBlueprint = {
   name: 'Clearwater Divination',
   cardIconId: 'spells/clearwater-divination',
   description: dedent`
-  @Scry 4.
+  @Scry 3.
   @Lingering Destiny@
   `,
   collectable: true,
   unique: false,
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
   spellSchool: SPELL_SCHOOLS.WATER,
   job: null,
@@ -38,6 +38,6 @@ export const clearwaterDivination: SpellBlueprint = {
     await card.modifiers.add(new LingeringDestinyModifier(game, card));
   },
   async onPlay(game, card) {
-    await scry(game, card, 4);
+    await scry(game, card, 3);
   }
 };

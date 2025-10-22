@@ -1,5 +1,6 @@
 import type { BoardSlotZone } from '../board/board.constants';
 import type { Game } from '../game/game';
+import type { Player } from '../player/player.entity';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
@@ -392,4 +393,86 @@ export const anyMinionSlot = {
         }
       });
     }
+};
+
+export const cardsInAllyDiscardPile = {
+  canPlay(
+    game: Game,
+    card: AnyCard,
+    options: { min?: number; predicate: (c: AnyCard) => boolean }
+  ) {
+    return (
+      Array.from(card.player.cardManager.discardPile).filter(c => {
+        if ('canBeTargeted' in c && !c.canBeTargeted) {
+          return false;
+        }
+        return options.predicate ? options.predicate(c) : true;
+      }).length >= (options.min ?? 1)
+    );
+  },
+  async getPreResponseTargets<T extends AnyCard = AnyCard>(
+    game: Game,
+    card: AnyCard,
+    options: {
+      player: Player;
+      predicate?: (c: AnyCard) => boolean;
+      minChoiceCount?: number;
+      maxChoiceCount?: number;
+      label: string;
+    }
+  ) {
+    return await game.interaction.chooseCards<T>({
+      player: options.player,
+      label: options.label,
+      choices: Array.from(card.player.cardManager.discardPile).filter(c => {
+        if ('canBeTargeted' in c && !c.canBeTargeted) {
+          return false;
+        }
+        return options.predicate ? options.predicate(c) : true;
+      }) as T[],
+      minChoiceCount: options.minChoiceCount ?? 1,
+      maxChoiceCount: options.maxChoiceCount ?? 1
+    });
+  }
+};
+
+export const cardsInEnemyDiscardPile = {
+  canPlay(
+    game: Game,
+    card: AnyCard,
+    options: { min?: number; predicate: (c: AnyCard) => boolean }
+  ) {
+    return (
+      Array.from(card.player.opponent.cardManager.discardPile).filter(c => {
+        if ('canBeTargeted' in c && !c.canBeTargeted) {
+          return false;
+        }
+        return options.predicate ? options.predicate(c) : true;
+      }).length >= (options.min ?? 1)
+    );
+  },
+  async getPreResponseTargets<T extends AnyCard = AnyCard>(
+    game: Game,
+    card: AnyCard,
+    options: {
+      player: Player;
+      predicate?: (c: AnyCard) => boolean;
+      minChoiceCount?: number;
+      maxChoiceCount?: number;
+      label: string;
+    }
+  ) {
+    return await game.interaction.chooseCards<T>({
+      player: options.player,
+      label: options.label,
+      choices: Array.from(card.player.opponent.cardManager.discardPile).filter(c => {
+        if ('canBeTargeted' in c && !c.canBeTargeted) {
+          return false;
+        }
+        return options.predicate ? options.predicate(c) : true;
+      }) as T[],
+      minChoiceCount: options.minChoiceCount ?? 1,
+      maxChoiceCount: options.maxChoiceCount ?? 1
+    });
+  }
 };

@@ -34,6 +34,7 @@ export type SerializedSpellCard = SerializedCard & {
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
   canUseAbility: Interceptable<boolean, { card: SpellCard; ability: Ability<SpellCard> }>;
+  canBeTargeted: Interceptable<boolean, SpellCard>;
 };
 
 export const SPELL_EVENTS = {
@@ -77,6 +78,7 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
+        canBeTargeted: new Interceptable(),
         canUseAbility: new Interceptable()
       },
       options
@@ -89,6 +91,10 @@ export class SpellCard extends Card<
 
   get spellSchool() {
     return this.blueprint.spellSchool;
+  }
+
+  get canBeTargeted(): boolean {
+    return this.interceptors.canBeTargeted.getValue(true, this);
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {

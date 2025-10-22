@@ -92,7 +92,15 @@ export const cards = {
 "brain-freeze": "brain-freeze",
 "sunlit-formation": "sunlit-formation",
 "hourglass-fracture": "hourglass-fracture",
-"orb-of-inhibition": "orb-of-inhibition"
+"orb-of-inhibition": "orb-of-inhibition",
+"unpredictable-jester": "unpredictable-jester",
+"underhandedTactician": "underhandedTactician",
+"axe-forger": "axe-forger",
+"chainmail": "chainmail",
+"cunning-minister": "cunning-minister",
+"stoic-overlord": "stoic-overlord",
+"sigil-of-hope": "sigil-of-hope",
+"ruler-of-tempest-fire": "ruler-of-tempest-fire"
 } as const;
 
 export const collectableCards = {
@@ -180,5 +188,13 @@ export const collectableCards = {
 "brain-freeze": "brain-freeze",
 "sunlit-formation": "sunlit-formation",
 "hourglass-fracture": "hourglass-fracture",
-"orb-of-inhibition": "orb-of-inhibition"
+"orb-of-inhibition": "orb-of-inhibition",
+"unpredictable-jester": "unpredictable-jester",
+"underhandedTactician": "underhandedTactician",
+"axe-forger": "axe-forger",
+"chainmail": "chainmail",
+"cunning-minister": "cunning-minister",
+"stoic-overlord": "stoic-overlord",
+"sigil-of-hope": "sigil-of-hope",
+"ruler-of-tempest-fire": "ruler-of-tempest-fire"
 } as const;

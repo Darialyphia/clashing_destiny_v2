@@ -302,7 +302,6 @@ const tokens = computed<Token[]>(() => {
     height: 20px;
     aspect-ratio: 1;
     transform: translateY(6px);
-    margin-inline: var(--size-1);
   }
 }
 .token-health {

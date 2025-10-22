@@ -582,6 +582,19 @@
         },
         {
           "alias": [
+            "ruler-of-tempest-fire.png"
+          ],
+          "src": [
+            "/assets/cards/minions/ruler-of-tempest-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "sharpshooter.png"
           ],
           "src": [
@@ -2110,6 +2123,19 @@
           ],
           "src": [
             "/assets/icons/keyword-locked.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-on-attack"
+          ],
+          "src": [
+            "/assets/icons/keyword-on-attack.png"
           ],
           "data": {
             "tags": {

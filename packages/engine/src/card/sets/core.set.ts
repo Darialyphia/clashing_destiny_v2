@@ -95,6 +95,7 @@ import { chainmail } from './core/artifacts/chainmail';
 import { cunningMinister } from './core/minions/cunning-minister';
 import { stoicOverlord } from './core/minions/stoic-overlord';
 import { sigilOfHope } from './core/sigils/sigil-of-hope';
+import { rulerOfTempestFire } from './core/minions/ruler-of-tempest-fire';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -194,6 +195,7 @@ export const coreSet: CardSet = {
     chainmail,
     cunningMinister,
     stoicOverlord,
-    sigilOfHope
+    sigilOfHope,
+    rulerOfTempestFire
   ]
 };

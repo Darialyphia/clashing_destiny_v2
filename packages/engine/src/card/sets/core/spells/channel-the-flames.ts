@@ -1,10 +1,8 @@
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { SpellDamage } from '../../../../utils/damage';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { isMinion, singleEnemyTargetRules } from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -23,7 +21,7 @@ export const channelTheFlames: SpellBlueprint = {
     'Give your Hero: @On Level Up@: Take 2 damage, draw a card, then discard a card.',
   collectable: true,
   unique: false,
-  destinyCost: 1,
+  destinyCost: 0,
   speed: CARD_SPEED.SLOW,
   spellSchool: SPELL_SCHOOLS.FIRE,
   job: null,
