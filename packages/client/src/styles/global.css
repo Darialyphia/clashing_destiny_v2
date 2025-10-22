@@ -4,14 +4,7 @@
 @import url('./utils.css') layer(utilities);
 @import './theme.css';
 
-@font-face {
-  font-family: 'NotJamSlab14';
-  src: url('/fonts/NotJamSlab14.ttf');
-}
-@font-face {
-  font-family: 'NotJamSlab11';
-  src: url('/fonts/NotJamSlabSerif11.ttf');
-}
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700&display=swap');
 
 @layer base {
   @unocss preflights;

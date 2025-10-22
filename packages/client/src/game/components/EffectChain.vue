@@ -19,17 +19,6 @@ const state = useGameState();
 
 const paths = ref<string[][]>([]);
 
-const waitUntilTransitionend = (element: HTMLElement) => {
-  return new Promise<void>(resolve => {
-    const onEnd = (event: TransitionEvent) => {
-      if (event.target === element) {
-        element.removeEventListener('transitionend', onEnd);
-        resolve();
-      }
-    };
-    element.addEventListener('transitionend', onEnd);
-  });
-};
 const buildPaths = async () => {
   if (!state.value.effectChain?.stack) {
     paths.value = [];
@@ -45,9 +34,6 @@ const buildPaths = async () => {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();
 
-      waitUntilTransitionend(
-        ui.value.DOMSelectors.cardInEffectChain(effect.source.id).element!
-      );
       const startRect = ui.value.DOMSelectors.cardInEffectChain(
         effect.source.id
       ).element!.getBoundingClientRect();
@@ -181,9 +167,6 @@ const stack = computed(() => {
   transform-style: preserve-3d;
   transition: all 0.5s var(--ease-3);
   transition-delay: 1s;
-  @starting-style {
-    transform: translateY(-30dvh) scale(1.5);
-  }
 }
 
 .effect-type {

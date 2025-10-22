@@ -6,7 +6,8 @@ import type {
 } from '@game/engine/src/card/card-blueprint';
 import BlueprintSmallCard from './BlueprintSmallCard.vue';
 import { domToPng } from 'modern-screenshot';
-import { Icon } from '@iconify/vue';
+import BlueprintCard from './BlueprintCard.vue';
+import UiButton from '@/ui/components/UiButton.vue';
 
 const { spellSchools, mainDeck, destinyDeck, name } = defineProps<{
   spellSchools: SpellSchool[];
@@ -42,10 +43,11 @@ const sigils = computed(() =>
 );
 
 const root = useTemplateRef('root');
-const saveButton = useTemplateRef('saveButton');
+const optionsBar = useTemplateRef('optionsBar');
 const saveImage = async () => {
   if (!root.value) return;
-  saveButton.value!.style.display = 'none';
+  optionsBar.value!.style.display = 'none';
+  root.value.style.maxHeight = 'none';
   await nextTick();
   const dataUrl = await domToPng(root.value);
   const link = document.createElement('a');
@@ -54,14 +56,30 @@ const saveImage = async () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  saveButton.value!.style.display = '';
+  optionsBar.value!.style.display = '';
+  root.value.style.maxHeight = '';
 };
+
+const mode = ref('condensed' as 'full' | 'condensed');
+
+const cardComponent = computed(() =>
+  mode.value === 'full' ? BlueprintCard : BlueprintSmallCard
+);
 </script>
 
 <template>
-  <div class="surface p-8" ref="root">
+  <div class="surface deck-poster-root" :class="mode" ref="root">
+    <div class="flex gap-3 items-center" ref="optionsBar">
+      <UiButton class="primary-button" @click="saveImage">
+        Download PNG
+      </UiButton>
+      <input type="radio" id="full" value="full" v-model="mode" />
+      <label for="full">Full</label>
+      <input type="radio" id="condensed" value="condensed" v-model="mode" />
+      <label for="condensed">Condensed</label>
+    </div>
     <header class="flex gap-4 items-center mb-5">
-      <h2 class="dual-text" :data-text="name">{{ name }}</h2>
+      <h2 :data-text="name">{{ name }}</h2>
       <div class="spellschools">
         <img
           v-for="spellSchool in spellSchools"
@@ -96,45 +114,44 @@ const saveImage = async () => {
           {{ sigils.length <= 1 ? 'Sigil' : 'Sigils' }}
         </div>
       </div>
-      <button @click="saveImage" ref="saveButton">
-        <Icon icon="material-symbols-light:download" class="w-7 h-7" />
-      </button>
     </header>
 
     <div class="content">
       <div>
         <section>
-          <BlueprintSmallCard
+          <component
             v-for="item in heroes"
             :key="item.blueprint.id"
+            :is="cardComponent"
             :blueprint="item.blueprint"
-            :show-text="false"
           />
-          <BlueprintSmallCard
+          <component
             v-for="item in otherDestinyCards"
             :key="item.blueprint.id"
+            :is="cardComponent"
             :blueprint="item.blueprint"
-            :show-text="false"
           />
         </section>
+
+        <div class="divider" />
         <section>
           <div
             v-for="item in [...minions, ...spells, ...artifacts, ...sigils]"
             :key="item.blueprint.id"
             class="card-wrapper"
           >
-            <BlueprintSmallCard
+            <component
               v-for="i in item.copies"
               :key="i"
+              :is="cardComponent"
               :blueprint="item.blueprint"
-              :show-text="false"
             />
           </div>
         </section>
       </div>
 
       <div class="listing">
-        <h3 class="dual-text" data-text="Destiny Deck">Destiny Deck</h3>
+        <h3 data-text="Destiny Deck">Destiny Deck</h3>
         <ul>
           <li
             v-for="item in heroes"
@@ -152,7 +169,7 @@ const saveImage = async () => {
             {{ item.copies }}x {{ item.blueprint.name }}
           </li>
         </ul>
-        <h3 class="dual-text" data-text="Main Deck">Main Deck</h3>
+        <h3 data-text="Main Deck">Main Deck</h3>
         <ul>
           <li v-for="item in minions" :key="item.blueprint.id">
             {{ item.copies }}x
@@ -185,64 +202,72 @@ const saveImage = async () => {
 </template>
 
 <style scoped lang="postcss">
-@layer components {
-  .dual-text {
-    color: transparent;
-    position: relative;
-    --_top-color: var(--top-color, #fcfcfc);
-    --_bottom-color: var(--bottom-color, #ffb270);
-    &::before,
-    &::after {
-      position: absolute;
-      content: attr(data-text);
-      color: transparent;
-      inset: 0;
-    }
-    &:after {
-      background: linear-gradient(
-        var(--_top-color),
-        var(--_top-color) 50%,
-        var(--_bottom-color) 50%
-      );
-      line-height: 1.2;
-      background-clip: text;
-      background-size: 100% 1lh;
-      background-repeat: repeat-y;
-      translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-    }
-    &:before {
-      -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
-      z-index: -1;
-      translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-    }
-  }
+.deck-poster-root {
+  padding: var(--size-8);
+  max-height: 100dvh;
+  overflow: auto;
 
-  h2 {
-    font-family: 'Cinzel Decorative', serif;
-    --dual-text-offset-y: 5px;
+  &.full {
+    --pixel-scale: 2;
   }
-
-  .spellschools {
-    display: flex;
-    gap: var(--size-2);
-    img {
-      --pixel-scale: 2;
-      width: calc(var(--pixel-scale) * 22px);
-      height: calc(var(--pixel-scale) * 20px);
-    }
-  }
-
-  h3 {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: var(--font-size-3);
-  }
-
-  section {
+  &.condensed {
     --pixel-scale: 1;
-    display: flex;
-    flex-wrap: wrap;
-    margin-block-end: var(--size-4);
-    gap: var(--size-2);
+  }
+}
+/* the modern-screenshot library seems to not understand the backface-visibility css rule */
+:global(.deck-poster-root .card-back) {
+  display: none;
+}
+
+h2 {
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.spellschools {
+  display: flex;
+  gap: var(--size-2);
+  img {
+    --pixel-scale: 2;
+    width: calc(var(--pixel-scale) * 22px);
+    height: calc(var(--pixel-scale) * 20px);
+  }
+}
+
+h3 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: var(--font-size-3);
+}
+
+section {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-end: var(--size-4);
+  gap: var(--size-2);
+}
+
+.divider {
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #d7ad42 20%,
+    #975e35 80%,
+    transparent
+  );
+  margin-block: var(--size-6);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #d7ad42;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--surface-1);
   }
 }
 

@@ -799,7 +799,7 @@ const onMouseleave = () => {
   padding-left: calc(4px * var(--pixel-scale));
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
-  font-size: calc(var(--pixel-scale) * 18px);
+  font-size: calc(var(--pixel-scale) * 9px);
   --dual-text-offset-y: 2px;
 }
 
@@ -817,7 +817,7 @@ const onMouseleave = () => {
   padding-left: calc(4px * var(--pixel-scale));
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
-  font-size: 18px;
+  font-size: calc(var(--pixel-scale) * 9px);
   --dual-text-offset-y: 2px;
 }
 

@@ -70,13 +70,10 @@ const onAttack = async (e: { card: string }) => {
   isAttacking.value = true;
 };
 
-const onTakeDamage = async (e: {
-  card: string;
-  damage: { amount: number };
-}) => {
+const onTakeDamage = async (e: { card: string; amount: number }) => {
   if (e.card !== cardId) return;
   isTakingDamage.value = true;
-  damageTaken.value = e.damage.amount;
+  damageTaken.value = e.amount;
   await waitFor(500);
 };
 

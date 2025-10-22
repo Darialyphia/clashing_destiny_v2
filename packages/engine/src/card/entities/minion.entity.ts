@@ -330,7 +330,12 @@ export class MinionCard extends Card<
   async takeDamage(source: AnyCard, damage: Damage) {
     await this.game.emit(
       MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE,
-      new MinionCardBeforeTakeDamageEvent({ card: this, source, damage })
+      new MinionCardBeforeTakeDamageEvent({
+        card: this,
+        source,
+        damage,
+        amount: damage.getFinalAmount(this)
+      })
     );
 
     this.damageTaken = Math.min(
@@ -343,6 +348,7 @@ export class MinionCard extends Card<
         card: this,
         source,
         damage,
+        amount: damage.getFinalAmount(this),
         isFatal: this.remainingHp <= 0
       })
     );
@@ -571,8 +577,13 @@ export class MinionCardAfterDealCombatDamageEvent extends TypedSerializableEvent
 }
 
 export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard; source: AnyCard; damage: Damage },
-  { card: string; source: string; damage: { type: DamageType; amount: number } }
+  { card: MinionCard; source: AnyCard; damage: Damage; amount: number },
+  {
+    card: string;
+    source: string;
+    damage: { type: DamageType; amount: number };
+    amount: number;
+  }
 > {
   serialize() {
     return {
@@ -581,18 +592,20 @@ export class MinionCardBeforeTakeDamageEvent extends TypedSerializableEvent<
       damage: {
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
-      }
+      },
+      amount: this.data.amount
     };
   }
 }
 
 export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard; source: AnyCard; damage: Damage; isFatal: boolean },
+  { card: MinionCard; source: AnyCard; damage: Damage; isFatal: boolean; amount: number },
   {
     card: SerializedMinionCard;
     source: string;
     damage: { type: DamageType; amount: number };
     isFatal: boolean;
+    amount: number;
   }
 > {
   serialize() {
@@ -603,7 +616,8 @@ export class MinionCardAfterTakeDamageEvent extends TypedSerializableEvent<
         type: this.data.damage.type,
         amount: this.data.damage.getFinalAmount(this.data.card)
       },
-      isFatal: this.data.isFatal
+      isFatal: this.data.isFatal,
+      amount: this.data.amount
     };
   }
 }

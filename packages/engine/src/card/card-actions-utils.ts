@@ -85,12 +85,15 @@ export const empower = (game: Game, card: AnyCard, amount: number) => {
       );
     }),
     game.on(GAME_EVENTS.CARD_AFTER_PLAY, async event => {
+      if (event.data.card.equals(card)) return;
       if (!event.data.card.player.equals(card.player)) return;
       if (!isSpell(event.data.card)) return;
+      console.log('clean up');
       await card.player.hero.modifiers.remove(`${KEYWORDS.EMPOWER.id}-${card.id}`);
       cleanups.forEach(cleanup => cleanup());
     }),
     game.on(GAME_EVENTS.TURN_END, async () => {
+      console.log('clean up');
       await card.player.hero.modifiers.remove(`${KEYWORDS.EMPOWER.id}-${card.id}`);
       cleanups.forEach(cleanup => cleanup());
     })
