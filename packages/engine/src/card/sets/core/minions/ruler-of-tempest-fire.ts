@@ -41,7 +41,7 @@ export const rulerOfTempestFire: MinionBlueprint = {
     {
       id: 'ruler-of-tempest-fire-ability',
       description:
-        '@[mana] 1@ Banish a Fire Spell in your discard pile : Add a @fleeting@ @Fire Bolt@ to your hand.',
+        '@[mana] 1@ Banish a Fire Spell in your discard pile : Add a @Fleeting@ @Fire Bolt@ to your hand.',
       label: '@[mana] 1@Banish Fire Spell',
       canUse(game, card) {
         return cardsInAllyDiscardPile.canPlay(game, card, {

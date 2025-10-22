@@ -67,7 +67,7 @@ export const heraldOfSalvation: MinionBlueprint = {
           });
 
           const [position] = await singleEmptyAllySlot.getPreResponseTargets(game, card);
-
+          await minionToSummon.removeFromCurrentLocation();
           await minionToSummon.playImmediatelyAt(position);
           await minionToSummon.exhaust();
         }

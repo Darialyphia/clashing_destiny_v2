@@ -670,6 +670,19 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "unpredictable-jester.png"
+          ],
+          "src": [
+            "/assets/cards/minions/unpredictable-jester.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -778,6 +791,19 @@
           ],
           "src": [
             "/assets/cards/sigils/sigil-of-holy-protection.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "sigil-of-hope.png"
+          ],
+          "src": [
+            "/assets/cards/sigils/sigil-of-hope.png"
           ],
           "data": {
             "tags": {
