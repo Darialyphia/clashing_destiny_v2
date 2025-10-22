@@ -27,7 +27,7 @@ import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
-import AnswerQuestionModal from './answerQuestionModal.vue';
+import AnswerQuestionModal from './AnswerQuestionModal.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
