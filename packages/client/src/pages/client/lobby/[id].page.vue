@@ -157,11 +157,6 @@ watchEffect(() => {
         </div>
 
         <div class="flex flex-col pt-8">
-          <h2>Format</h2>
-          <div class="flex items-center text-3 mb-4">
-            <!-- <LobbyFormatDetails :lobby="lobby" /> -->
-          </div>
-
           <h2>Players ({{ players.length }}/{{ MAX_PLAYERS_PER_LOBBY }})</h2>
           <p v-if="!players.length">There are no players at the moment.</p>
           <ul v-auto-animate>
@@ -241,11 +236,6 @@ watchEffect(() => {
 
   height: 100dvh;
   padding-inline: var(--size-5);
-
-  > header {
-    padding-block: var(--size-6);
-    text-shadow: black 0px 4px 1px;
-  }
 }
 
 .loader {

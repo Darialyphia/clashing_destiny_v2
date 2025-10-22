@@ -29,11 +29,11 @@ declare module 'vue-router/auto-routes' {
     'Matchmaking': RouteRecordInfo<'Matchmaking', '/client/matchmaking', Record<never, never>, Record<never, never>>,
     'Sandbox': RouteRecordInfo<'Sandbox', '/client/sandbox', Record<never, never>, Record<never, never>>,
     'SelectMode': RouteRecordInfo<'SelectMode', '/client/select-mode', Record<never, never>, Record<never, never>>,
+    'TutorialList': RouteRecordInfo<'TutorialList', '/client/tutorial', Record<never, never>, Record<never, never>>,
+    'TutorialMission': RouteRecordInfo<'TutorialMission', '/client/tutorial/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'WatchGame': RouteRecordInfo<'WatchGame', '/client/watch/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Home': RouteRecordInfo<'Home', '/', Record<never, never>, Record<never, never>>,
     'Login': RouteRecordInfo<'Login', '/login', Record<never, never>, Record<never, never>>,
     'Register': RouteRecordInfo<'Register', '/register', Record<never, never>, Record<never, never>>,
-    'TutorialList': RouteRecordInfo<'TutorialList', '/tutorial', Record<never, never>, Record<never, never>>,
-    'TutorialMission': RouteRecordInfo<'TutorialMission', '/tutorial/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }

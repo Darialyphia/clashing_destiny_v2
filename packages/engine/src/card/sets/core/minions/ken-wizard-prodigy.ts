@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { LingeringDestinyModifier } from '../../../../modifier/modifiers/lingering-destiny.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,

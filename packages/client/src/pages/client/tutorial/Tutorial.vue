@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useTutorial } from './useTutorial';
 import GameBoard from '@/game/components/GameBoard.vue';
 import { useElementBounding } from '@vueuse/core';
+import { useTutorial } from './useTutorial';
 
 const { options } = defineProps<{
   options: Parameters<typeof useTutorial>[0];

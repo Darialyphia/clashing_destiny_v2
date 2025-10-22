@@ -32,14 +32,26 @@ const otherDestinyCards = computed(() =>
 const minions = computed(() =>
   mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
 );
+const minionsCount = computed(() =>
+  minions.value.reduce((sum, item) => sum + item.copies, 0)
+);
 const spells = computed(() =>
   mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
+);
+const spellsCount = computed(() =>
+  spells.value.reduce((sum, item) => sum + item.copies, 0)
 );
 const artifacts = computed(() =>
   mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
+const artifactsCount = computed(() =>
+  artifacts.value.reduce((sum, item) => sum + item.copies, 0)
+);
 const sigils = computed(() =>
   mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.SIGIL)
+);
+const sigilsCount = computed(() =>
+  sigils.value.reduce((sum, item) => sum + item.copies, 0)
 );
 
 const root = useTemplateRef('root');
@@ -91,27 +103,27 @@ const cardComponent = computed(() =>
       <div class="flex gap-2 ml-auto">
         <div>
           <span class="font-bold text-3">
-            {{ minions.length }}
+            {{ minionsCount }}
           </span>
-          {{ minions.length <= 1 ? 'Minion' : 'Minions' }}
+          {{ minionsCount <= 1 ? 'Minion' : 'Minions' }}
         </div>
         <div>
           <span class="font-bold text-3">
-            {{ spells.length }}
+            {{ spellsCount }}
           </span>
-          {{ spells.length <= 1 ? 'Spell' : 'Spells' }}
+          {{ spellsCount <= 1 ? 'Spell' : 'Spells' }}
         </div>
         <div>
           <span class="font-bold text-3">
-            {{ artifacts.length }}
+            {{ artifactsCount }}
           </span>
-          {{ artifacts.length <= 1 ? 'Artifact' : 'Artifacts' }}
+          {{ artifactsCount <= 1 ? 'Artifact' : 'Artifacts' }}
         </div>
         <div>
           <span class="font-bold text-3">
-            {{ sigils.length }}
+            {{ sigilsCount }}
           </span>
-          {{ sigils.length <= 1 ? 'Sigil' : 'Sigils' }}
+          {{ sigilsCount <= 1 ? 'Sigil' : 'Sigils' }}
         </div>
       </div>
     </header>
