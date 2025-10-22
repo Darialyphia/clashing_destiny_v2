@@ -22,7 +22,8 @@ import CardGlare from './CardGlare.vue';
 const {
   card,
   isFoil,
-  isAnimated = true
+  isAnimated = true,
+  showText = true
 } = defineProps<{
   card: {
     id: string;
@@ -51,6 +52,7 @@ const {
   };
   isFoil?: boolean;
   isAnimated?: boolean;
+  showText?: boolean;
 }>();
 
 const rarityBg = computed(() => {
@@ -247,28 +249,28 @@ const onMouseleave = () => {
           <div class="art" />
         </div>
 
-        <div ref="name-box" class="name" :data-text="card.name">
+        <div ref="name-box" v-if="showText" class="name" :data-text="card.name">
           <div class="dual-text" :data-text="card.name">
             {{ card.name }}
           </div>
         </div>
         <div v-if="isDefined(card.atk)" class="atk">
-          <div class="dual-text" :data-text="card.atk">
+          <div v-if="showText" class="dual-text" :data-text="card.atk">
             {{ card.atk }}
           </div>
         </div>
         <div v-if="isDefined(card.hp)" class="hp">
-          <div class="dual-text" :data-text="card.hp">
+          <div v-if="showText" class="dual-text" :data-text="card.hp">
             {{ card.hp }}
           </div>
         </div>
         <div v-if="isDefined(card.durability)" class="durability">
-          <div class="dual-text" :data-text="card.durability">
+          <div v-if="showText" class="dual-text" :data-text="card.durability">
             {{ card.durability }}
           </div>
         </div>
         <div v-if="isDefined(card.countdown)" class="countdown">
-          <div class="dual-text" :data-text="card.countdown">
+          <div v-if="showText" class="dual-text" :data-text="card.countdown">
             {{ card.countdown }}
           </div>
         </div>
@@ -336,7 +338,7 @@ const onMouseleave = () => {
           />
         </div>
 
-        <div class="kind">
+        <div class="kind" v-if="showText">
           {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
           <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
           <span v-if="isDefined(card.subKind)">
@@ -347,6 +349,7 @@ const onMouseleave = () => {
           </span>
         </div>
         <div
+          v-if="showText"
           class="description"
           ref="description-box"
           :class="{ 'is-multi-line': isMultiLine }"
@@ -796,7 +799,7 @@ const onMouseleave = () => {
   padding-left: calc(4px * var(--pixel-scale));
   padding-top: calc(1px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
-  font-size: 18px;
+  font-size: calc(var(--pixel-scale) * 18px);
   --dual-text-offset-y: 2px;
 }
 

@@ -143,7 +143,8 @@ export class DeckBuilderViewModel {
 
         return {
           ...card,
-          blueprint
+          blueprint,
+          copies: card.copies
         };
       })
       .sort((a, b) => {
@@ -165,7 +166,8 @@ export class DeckBuilderViewModel {
 
         return {
           ...card,
-          blueprint
+          blueprint,
+          copies: card.copies
         };
       })
       .sort((a, b) => {

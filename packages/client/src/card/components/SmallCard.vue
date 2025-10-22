@@ -147,6 +147,8 @@ const pointerStyle = computed(() => {
   display: grid;
   font-family: 'Lato', sans-serif;
   transform-style: preserve-3d;
+  --art-pixel-scale: calc(2 * var(--pixel-scale));
+  --root-pixel-scale: var(--pixel-scale);
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -159,7 +161,7 @@ const pointerStyle = computed(() => {
   background-size: cover;
   color: #fcffcb;
   font-size: 16px;
-  padding: 1rem;
+  padding: calc(1rem * var(--pixel-scale));
   position: relative;
   transform-style: preserve-3d;
   --glare-mask: url('/assets/ui/card-front-small.png');
@@ -180,6 +182,7 @@ const pointerStyle = computed(() => {
   inset: 0;
   pointer-events: none;
   mask: url('/assets/ui/card-front-small-mask.png');
+  mask-size: cover;
   display: grid;
   transform-origin: center center;
   > * {
@@ -202,21 +205,21 @@ const pointerStyle = computed(() => {
   }
 
   :is(.minion, .hero) & .art {
-    --pixel-scale: 2;
+    --pixel-scale: var(--art-pixel-scale);
     background-position: center calc(50% + 20px);
   }
   .spell & .art {
-    --pixel-scale: 2;
+    --pixel-scale: var(--art-pixel-scale);
     background-image: v-bind(imageBg), url('/assets/ui/frame-spell.png');
   }
 
   .sigil & .art {
-    --pixel-scale: 2;
+    --pixel-scale: var(--art-pixel-scale);
     background-image: v-bind(imageBg), url('/assets/ui/frame-sigil.png');
   }
 
   .artifact & .art {
-    --pixel-scale: 2;
+    --pixel-scale: var(--art-pixel-scale);
     background-image: v-bind(imageBg), url('/assets/ui/frame-artifact.png');
   }
 }
