@@ -4,6 +4,7 @@ import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
 import { BoardColumn } from './board-column';
 import { CARD_DECK_SOURCES } from '../card/card.enums';
+import type { BoardPosition } from '../game/interactions/selecting-minion-slots.interaction';
 
 export type MinionSlot = number;
 
@@ -35,6 +36,11 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
 
   getColumn(slot: number) {
     return new BoardColumn(this.game, slot);
+  }
+
+  getSlot(position: BoardPosition) {
+    const side = this.sides.find(side => side.player.equals(position.player))!;
+    return side.getSlot(position.zone, position.slot);
   }
 
   serialize(): SerializedBoard {

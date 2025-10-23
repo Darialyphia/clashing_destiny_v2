@@ -25,7 +25,7 @@ export const kenWizardProdigy: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 4,
+  maxHp: 3,
   rarity: RARITIES.EPIC,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,

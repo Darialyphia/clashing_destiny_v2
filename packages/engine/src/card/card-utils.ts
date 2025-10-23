@@ -229,6 +229,29 @@ export const singleMinionTargetRules = {
   }
 };
 
+export const singleEmptySlot = {
+  canPlay(game: Game, card: AnyCard) {
+    return (
+      card.player.boardSide.hasUnoccupiedSlot ||
+      card.player.opponent.boardSide.hasUnoccupiedSlot
+    );
+  },
+  async getPreResponseTargets(game: Game, card: AnyCard) {
+    return await game.interaction.selectMinionSlot({
+      player: card.player,
+      isElligible(slot) {
+        return !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied;
+      },
+      canCommit(selectedSlots) {
+        return selectedSlots.length === 1;
+      },
+      isDone(selectedSlots) {
+        return selectedSlots.length === 1;
+      }
+    });
+  }
+};
+
 export const singleEmptyAllySlot = {
   canPlay(game: Game, card: AnyCard) {
     return card.player.boardSide.hasUnoccupiedSlot;

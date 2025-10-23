@@ -88,11 +88,14 @@ export const provideCardList = () => {
             card.kind === CARD_KINDS.HERO
               ? card.spellSchools
               : [card.spellSchool];
-          const matchspellSchool = [...spellSchoolFilter.value].some(
-            school =>
-              spellSchools.includes(school) ??
-              card.description.toLocaleLowerCase().includes(school)
-          );
+          const matchspellSchool = [...spellSchoolFilter.value].some(school => {
+            return (
+              spellSchools.includes(school) ||
+              card.description
+                .toLocaleLowerCase()
+                .includes(school.toLocaleLowerCase())
+            );
+          });
           if (!matchspellSchool) {
             return false;
           }
@@ -103,7 +106,9 @@ export const provideCardList = () => {
           const matchJob = [...jobFilter.value].some(
             job =>
               jobs.includes(job!) ||
-              card.description.toLocaleLowerCase().includes(job)
+              card.description
+                .toLocaleLowerCase()
+                .includes(job.toLocaleLowerCase())
           );
           if (!matchJob) {
             return false;

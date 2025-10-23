@@ -23,7 +23,7 @@ export const underhandedTactician: MinionBlueprint = {
   unique: false,
   manaCost: 3,
   speed: CARD_SPEED.FAST,
-  atk: 2,
+  atk: 3,
   maxHp: 4,
   rarity: RARITIES.RARE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,

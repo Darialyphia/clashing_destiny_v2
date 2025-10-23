@@ -1,6 +1,11 @@
+import type { BoardPosition } from '../../../../game/interactions/selecting-minion-slots.interaction';
 import { FreezeModifier } from '../../../../modifier/modifiers/freeze.modifier';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { singleEnemyTargetRules } from '../../../card-utils';
+import {
+  singleEmptyAllySlot,
+  singleEmptySlot,
+  singleEnemyTargetRules
+} from '../../../card-utils';
 import {
   SPELL_SCHOOLS,
   CARD_DECK_SOURCES,
@@ -15,7 +20,7 @@ export const frostNova: SpellBlueprint = {
   id: 'frost-nova',
   name: 'Frost Nova',
   cardIconId: 'spells/frost-nova',
-  description: '@Freeze@ target enemy minion and all adjacent minions.',
+  description: 'Target an empty space. @Freeze@ all minion adjacent to that space.',
   collectable: true,
   unique: false,
   manaCost: 4,
@@ -28,19 +33,15 @@ export const frostNova: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   abilities: [],
   tags: [],
-  canPlay: singleEnemyTargetRules.canPlay,
+  canPlay: singleEmptySlot.canPlay,
   getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
-    });
+    return singleEmptySlot.getPreResponseTargets(game, card);
   },
   async onInit() {},
   async onPlay(game, card, targets) {
-    const target = targets[0] as MinionCard;
+    const target = targets[0] as BoardPosition;
 
-    const adjacentMinions = target.slot!.adjacentMinions;
-    await target.modifiers.add(new FreezeModifier<MinionCard>(game, card));
+    const adjacentMinions = game.boardSystem.getSlot(target)?.adjacentMinions ?? [];
     for (const minion of adjacentMinions) {
       await minion.modifiers.add(new FreezeModifier<MinionCard>(game, card));
     }
