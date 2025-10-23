@@ -270,10 +270,12 @@ export class Room {
   private async joinAsPlayer(socket: IoSocket) {
     const canPlay = this.options.game.players.some(p => p.userId === socket.data.user.id);
     if (!canPlay) {
-      throw new Error('Only game players can join as players');
+      console.error('Room is full, cannot join as player');
+      return;
     }
     if (this.players.size >= this.options.game.players.length) {
-      throw new Error('Room is full');
+      console.error('Room is full, cannot join as player');
+      return;
     }
 
     await socket.join(this.id);

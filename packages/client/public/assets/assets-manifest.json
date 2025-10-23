@@ -660,6 +660,19 @@
         },
         {
           "alias": [
+            "stoic-overlord.png"
+          ],
+          "src": [
+            "/assets/cards/minions/stoic-overlord.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "tobihana-the-temptress.png"
           ],
           "src": [

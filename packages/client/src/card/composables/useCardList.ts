@@ -88,14 +88,24 @@ export const provideCardList = () => {
             card.kind === CARD_KINDS.HERO
               ? card.spellSchools
               : [card.spellSchool];
-          if (spellSchools.every(s => !spellSchoolFilter.value.has(s!))) {
+          const matchspellSchool = [...spellSchoolFilter.value].some(
+            school =>
+              spellSchools.includes(school) ??
+              card.description.toLocaleLowerCase().includes(school)
+          );
+          if (!matchspellSchool) {
             return false;
           }
         }
 
         if (jobFilter.value.size > 0) {
           const jobs = card.kind === CARD_KINDS.HERO ? card.jobs : [card.job];
-          if (jobs.every(j => !jobFilter.value.has(j!))) {
+          const matchJob = [...jobFilter.value].some(
+            job =>
+              jobs.includes(job!) ||
+              card.description.toLocaleLowerCase().includes(job)
+          );
+          if (!matchJob) {
             return false;
           }
         }

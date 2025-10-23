@@ -80,7 +80,11 @@ const cardComponent = computed(() =>
 </script>
 
 <template>
-  <div class="surface deck-poster-root" :class="mode" ref="root">
+  <div
+    class="surface deck-poster-root fancy-scrollbar"
+    :class="mode"
+    ref="root"
+  >
     <div class="flex gap-3 items-center" ref="optionsBar">
       <UiButton class="primary-button" @click="saveImage">
         Download PNG
