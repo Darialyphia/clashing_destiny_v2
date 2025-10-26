@@ -10,7 +10,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import { MinionCard } from '../../../entities/minion.entity';
-import { EchoedDestinyModifier } from '../../../../modifier/modifiers/echoed-destiny.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 

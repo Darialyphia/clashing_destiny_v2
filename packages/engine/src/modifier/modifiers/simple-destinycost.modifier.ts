@@ -23,7 +23,7 @@ export class SimpleDestinyCostModifier<T extends AnyCard> extends Modifier<T> {
           interceptor: value => {
             if (value === null) return value;
 
-            return value + options.amount;
+            return Math.max(0, value + options.amount);
           }
         }),
         ...(options.mixins ?? [])

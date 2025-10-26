@@ -99,6 +99,8 @@ import { rulerOfTempestFire } from './core/minions/ruler-of-tempest-fire';
 import { poseidonEmperorOfTheSea } from './core/minions/poseidon-emperor-of-the-sea';
 import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { alluringDancer } from './core/minions/alluring-dancer';
+import { foxPriestess } from './core/minions/fox-priestess';
+import { philosophersStone } from './core/artifacts/philosophers-stone';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -202,6 +204,8 @@ export const coreSet: CardSet = {
     rulerOfTempestFire,
     poseidonEmperorOfTheSea,
     pyreArchfiend,
-    alluringDancer
+    alluringDancer,
+    foxPriestess,
+    philosophersStone
   ]
 };

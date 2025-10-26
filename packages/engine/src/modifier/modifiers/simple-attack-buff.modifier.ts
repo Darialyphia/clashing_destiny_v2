@@ -30,7 +30,7 @@ export class SimpleAttackBuffModifier<
         new UnitInterceptorModifierMixin(game, {
           key: 'atk',
           interceptor: value => {
-            return value + options.amount * this._stacks;
+            return Math.max(0, value + options.amount * this._stacks);
           }
         }),
         ...(options.mixins ?? [])

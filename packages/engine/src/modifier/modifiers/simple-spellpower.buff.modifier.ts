@@ -25,7 +25,7 @@ export class SimpleSpellpowerBuffModifier extends Modifier<HeroCard> {
         new HeroInterceptorModifierMixin(game, {
           key: 'spellPower',
           interceptor: value => {
-            return value + options.amount * this._stacks;
+            return Math.max(0, value + options.amount * this._stacks);
           }
         }),
         ...(options.mixins ?? [])

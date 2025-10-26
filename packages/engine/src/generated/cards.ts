@@ -103,7 +103,9 @@ export const cards = {
 "ruler-of-tempest-fire": "ruler-of-tempest-fire",
 "poseidon-emperor-of-the-sea": "poseidon-emperor-of-the-sea",
 "pyre-archfiend": "pyre-archfiend",
-"alluring-dancer": "alluring-dancer"
+"alluring-dancer": "alluring-dancer",
+"fox-priestess": "fox-priestess",
+"philosophers-stone": "philosophers-stone"
 } as const;
 
 export const collectableCards = {
@@ -202,5 +204,7 @@ export const collectableCards = {
 "ruler-of-tempest-fire": "ruler-of-tempest-fire",
 "poseidon-emperor-of-the-sea": "poseidon-emperor-of-the-sea",
 "pyre-archfiend": "pyre-archfiend",
-"alluring-dancer": "alluring-dancer"
+"alluring-dancer": "alluring-dancer",
+"fox-priestess": "fox-priestess",
+"philosophers-stone": "philosophers-stone"
 } as const;
