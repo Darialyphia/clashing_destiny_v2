@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { isMinion } from '../../../card-utils';
 import {
@@ -8,15 +9,19 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
+import { EfficiencyModifier } from '../../../../modifier/modifiers/efficiency.modifier';
 
 export const tidalWave: SpellBlueprint = {
   id: 'tidal-wave',
   name: 'Tidal Wave',
   cardIconId: 'spells/tidal-wave',
-  description: "Put all minions in their owner's Destiny Zone.",
+  description: dedent`
+  Put all minions in their owner's Destiny Zone.
+  @Efficiency@.
+  `,
   collectable: true,
   unique: false,
-  manaCost: 5,
+  manaCost: 7,
   speed: CARD_SPEED.SLOW,
   spellSchool: SPELL_SCHOOLS.WATER,
   job: null,
@@ -28,7 +33,9 @@ export const tidalWave: SpellBlueprint = {
   tags: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new EfficiencyModifier(game, card));
+  },
   async onPlay(game) {
     const minions = game.boardSystem.getAllCardsInPlay().filter(isMinion);
 

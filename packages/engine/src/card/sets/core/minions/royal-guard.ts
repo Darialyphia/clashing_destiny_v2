@@ -12,7 +12,6 @@ import { HeroJobAffinityModifier } from '../../../../modifier/modifiers/hero-job
 import type { MinionCard } from '../../../entities/minion.entity';
 import { ToughModifier } from '../../../../modifier/modifiers/tough.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 
 export const royalGuard: MinionBlueprint = {
   id: 'royal-guard',

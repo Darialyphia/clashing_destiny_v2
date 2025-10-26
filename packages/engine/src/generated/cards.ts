@@ -100,7 +100,10 @@ export const cards = {
 "cunning-minister": "cunning-minister",
 "stoic-overlord": "stoic-overlord",
 "sigil-of-hope": "sigil-of-hope",
-"ruler-of-tempest-fire": "ruler-of-tempest-fire"
+"ruler-of-tempest-fire": "ruler-of-tempest-fire",
+"poseidon-emperor-of-the-sea": "poseidon-emperor-of-the-sea",
+"pyre-archfiend": "pyre-archfiend",
+"alluring-dancer": "alluring-dancer"
 } as const;
 
 export const collectableCards = {
@@ -196,5 +199,8 @@ export const collectableCards = {
 "cunning-minister": "cunning-minister",
 "stoic-overlord": "stoic-overlord",
 "sigil-of-hope": "sigil-of-hope",
-"ruler-of-tempest-fire": "ruler-of-tempest-fire"
+"ruler-of-tempest-fire": "ruler-of-tempest-fire",
+"poseidon-emperor-of-the-sea": "poseidon-emperor-of-the-sea",
+"pyre-archfiend": "pyre-archfiend",
+"alluring-dancer": "alluring-dancer"
 } as const;

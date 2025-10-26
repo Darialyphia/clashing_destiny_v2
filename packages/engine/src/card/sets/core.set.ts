@@ -96,6 +96,9 @@ import { cunningMinister } from './core/minions/cunning-minister';
 import { stoicOverlord } from './core/minions/stoic-overlord';
 import { sigilOfHope } from './core/sigils/sigil-of-hope';
 import { rulerOfTempestFire } from './core/minions/ruler-of-tempest-fire';
+import { poseidonEmperorOfTheSea } from './core/minions/poseidon-emperor-of-the-sea';
+import { pyreArchfiend } from './core/minions/pyre-archfiend';
+import { alluringDancer } from './core/minions/alluring-dancer';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -196,6 +199,9 @@ export const coreSet: CardSet = {
     cunningMinister,
     stoicOverlord,
     sigilOfHope,
-    rulerOfTempestFire
+    rulerOfTempestFire,
+    poseidonEmperorOfTheSea,
+    pyreArchfiend,
+    alluringDancer
   ]
 };
