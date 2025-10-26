@@ -233,7 +233,6 @@ export class Room {
       this.engine.subscribeOmniscient(snapshot => {
         playerSocket.emit('gameSnapshot', snapshot);
       });
-      return;
     } else {
       const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
         playerSocket.data.user.id
@@ -249,6 +248,7 @@ export class Room {
     }
 
     playerSocket.on('gameInput', async (input: SerializedInput) => {
+      console.log(input);
       input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating
       await this.engine.inputSystem.dispatch(input);
     });
