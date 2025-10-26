@@ -329,6 +329,7 @@ export abstract class Card<
     if (!this.location) {
       return;
     }
+    this.interceptors.player.clear();
     match(this.location)
       .with('hand', () => {
         this.player.cardManager.removeFromHand(this);
@@ -376,12 +377,12 @@ export abstract class Card<
       );
     }
     this.removeFromCurrentLocation();
-    this.player.cardManager.sendToDiscardPile(this);
+    this.originalPlayer.cardManager.sendToDiscardPile(this);
   }
 
   sendToBanishPile() {
     this.removeFromCurrentLocation();
-    this.player.cardManager.sendToBanishPile(this);
+    this.originalPlayer.cardManager.sendToBanishPile(this);
   }
 
   sendToDestinyZone() {
@@ -391,7 +392,7 @@ export abstract class Card<
       );
     }
     this.removeFromCurrentLocation();
-    this.player.cardManager.sendToDestinyZone(this);
+    this.originalPlayer.cardManager.sendToDestinyZone(this);
   }
 
   protected updatePlayedAt() {

@@ -18,7 +18,7 @@ export const hourglassFracture: SpellBlueprint = {
   unique: false,
   destinyCost: 4,
   speed: CARD_SPEED.SLOW,
-  spellSchool: SPELL_SCHOOLS.FIRE,
+  spellSchool: null,
   job: null,
   kind: CARD_KINDS.SPELL,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,

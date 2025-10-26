@@ -45,6 +45,7 @@ export class OnEnterModifierMixin<
       const unsub = this.game.on(GAME_EVENTS.MINION_SUMMONED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
+          if (event.data.card.location !== 'board') return;
           await this.handler(event as any);
         }
       });
@@ -52,6 +53,7 @@ export class OnEnterModifierMixin<
       const unsub = this.game.on(GAME_EVENTS.ARTIFACT_EQUIPED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
+          if (event.data.card.location !== 'board') return;
           await this.handler(event as any);
         }
       });
@@ -59,6 +61,7 @@ export class OnEnterModifierMixin<
       const unsub = this.game.on(GAME_EVENTS.HERO_PLAYED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
+          if (event.data.card.location !== 'board') return;
           await this.handler(event as any);
         }
       });

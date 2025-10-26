@@ -19,8 +19,7 @@ export const flashfire: SpellBlueprint = {
   cardIconId: 'spells/flashfire',
   description: dedent`
   @Reaction@. 
-  Deal 2 damage to the next minion summoned during this card chain. If I has an @On Enter@ effect, deal 2 damage to the enemy hero as well
-  `,
+  Deal 2 damage to the next minion summoned during this card chain. If I has an @On Enter@ effect, deal 4 damage instead.`,
   collectable: true,
   unique: false,
   manaCost: 2,
@@ -40,15 +39,12 @@ export const flashfire: SpellBlueprint = {
   },
   async onPlay(game, card) {
     const stop = game.on(GAME_EVENTS.MINION_SUMMONED, async event => {
-      await event.data.card.takeDamage(card, new SpellDamage(2, card));
-      if (!event.data.card.modifiers.has(OnEnterModifier)) return;
-
-      await event.data.card.player.opponent.hero.takeDamage(
+      await event.data.card.takeDamage(
         card,
-        new SpellDamage(2, card)
+        new SpellDamage(event.data.card.modifiers.has(OnEnterModifier) ? 4 : 2, card)
       );
     });
 
-    await game.once(GAME_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED, stop);
+    await game.once(GAME_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED, stop);
   }
 };

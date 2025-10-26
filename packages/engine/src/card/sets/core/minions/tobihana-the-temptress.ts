@@ -25,7 +25,7 @@ export const tobihanatheTemptress: MinionBlueprint = {
   collectable: true,
   unique: false,
   manaCost: 4,
-  atk: 1,
+  atk: 2,
   maxHp: 3,
   rarity: RARITIES.LEGENDARY,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
@@ -46,13 +46,14 @@ export const tobihanatheTemptress: MinionBlueprint = {
       new OnEnterModifier(game, card, {
         handler: async () => {
           if (!levelMode.isActive) return;
-          if (!singleEnemyMinionTargetRules.canPlay(game, card)) return;
+          if (!singleEnemyMinionTargetRules.canPlay(game, card, c => c.atk <= 2)) return;
           if (!singleEmptyAllySlot.canPlay(game, card)) return;
 
           const [target] = await singleEnemyMinionTargetRules.getPreResponseTargets(
             game,
             card,
-            { type: 'card', card }
+            { type: 'card', card },
+            c => c.atk <= 2
           );
 
           const [newPosition] = await singleEmptyAllySlot.getPreResponseTargets(

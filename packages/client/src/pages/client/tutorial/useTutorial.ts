@@ -6,13 +6,20 @@ import { Game, type GameOptions } from '@game/engine/src/game/game';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
   Tutorial,
-  type TutorialStep
+  type TutorialStep,
+  type TutorialTextBox
 } from '@game/engine/src/tutorial/tutorial';
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
 import { provideGameClient } from '@/game/composables/useGameClient';
 import type { Config } from '@game/engine/src/config';
 import type { IndexedRecord, MaybePromise, Override } from '@game/shared';
 
+type ClientTutorialTextBox = TutorialTextBox & {
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+};
 export type UseTutorialOptions = Pick<
   GameOptions,
   'players' | 'rngSeed' | 'history'
@@ -26,6 +33,7 @@ export type UseTutorialOptions = Pick<
           step: TutorialStep,
           client: GameClient
         ): MaybePromise<void>;
+        textBoxes: ClientTutorialTextBox[];
       }
     >,
     'id'
