@@ -33,6 +33,7 @@ const { client } = provideGameClient({
 });
 
 socket.value.on('gameInitialState', async state => {
+  console.log('Received initial game state', state);
   await client.value.initialize(state.snapshot, state.history);
 });
 
@@ -65,4 +66,5 @@ socket.value.on('clockUpdate', updatedClocks => {
       />
     </template>
   </GameBoard>
+  <p>Waiting for initial state...</p>
 </template>

@@ -223,20 +223,26 @@ export class Room {
   }
 
   private handlePlayerSubscription(playerSocket: IoSocket) {
-    const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
-      playerSocket.data.user.id
-    );
-    playerSocket.emit('gameInitialState', {
-      snapshot: state,
-      history: this.engine.inputSystem.serialize()
-    });
-
     if (this.teachingMode) {
+      const state = this.engine.snapshotSystem.getLatestOmniscientSnapshot();
+      playerSocket.emit('gameInitialState', {
+        snapshot: state,
+        history: this.engine.inputSystem.serialize()
+      });
+
       this.engine.subscribeOmniscient(snapshot => {
         playerSocket.emit('gameSnapshot', snapshot);
       });
       return;
     } else {
+      const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
+        playerSocket.data.user.id
+      );
+      playerSocket.emit('gameInitialState', {
+        snapshot: state,
+        history: this.engine.inputSystem.serialize()
+      });
+
       this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
         playerSocket.emit('gameSnapshot', snapshot);
       });
