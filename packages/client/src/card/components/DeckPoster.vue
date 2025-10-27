@@ -261,32 +261,6 @@ section {
   gap: var(--size-2);
 }
 
-.divider {
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    #d7ad42 20%,
-    #975e35 80%,
-    transparent
-  );
-  margin-block: var(--size-6);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    background: #d7ad42;
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px var(--surface-1);
-  }
-}
-
 .card-wrapper {
   display: grid;
   grid-template-columns: 1fr;

@@ -13,7 +13,9 @@ definePage({
     <AuthenticatedHeader />
 
     <div class="page-container">
-      <h1>Choose Your Game Mode</h1>
+      <h1 class="dual-text" data-text="Choose Your Game Mode">
+        Choose Your Game Mode
+      </h1>
 
       <div class="mode-options">
         <div class="mode-card surface">
@@ -91,6 +93,38 @@ h1 {
   font-weight: var(--font-weight-7);
   color: var(--text-1);
   margin-bottom: var(--size-3);
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.dual-text {
+  color: transparent;
+  position: relative;
+  --_top-color: var(--top-color, #efef9f);
+  --_bottom-color: var(--bottom-color, #d7ad42);
+  &::before,
+  &::after {
+    position: absolute;
+    content: attr(data-text);
+    color: transparent;
+    inset: 0;
+  }
+  &:after {
+    background: linear-gradient(
+      var(--_top-color),
+      var(--_top-color) 50%,
+      var(--_bottom-color) 50%
+    );
+    line-height: 1.2;
+    background-clip: text;
+    background-size: 100% 1lh;
+    background-repeat: repeat-y;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
+  }
+  &:before {
+    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
+    z-index: -1;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
+  }
 }
 
 .mode-options {
