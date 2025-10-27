@@ -41,8 +41,8 @@ export const rulerOfTempestFire: MinionBlueprint = {
     {
       id: 'ruler-of-tempest-fire-ability',
       description:
-        '@[mana] 1@ Banish a Fire Spell in your discard pile : Add a @Fleeting@ @Fire Bolt@ to your hand.',
-      label: '@[mana] 1@Banish Fire Spell',
+        '@[mana] 2@ Banish a Fire Spell in your discard pile : Add a @Fleeting@ @Fire Bolt@ to your hand.',
+      label: '@[mana] 2@Banish Fire Spell',
       canUse(game, card) {
         return cardsInAllyDiscardPile.canPlay(game, card, {
           predicate: c => isSpell(c) && c.spellSchool === SPELL_SCHOOLS.FIRE
@@ -59,7 +59,7 @@ export const rulerOfTempestFire: MinionBlueprint = {
 
         return [];
       },
-      manaCost: 1,
+      manaCost: 2,
       shouldExhaust: false,
       speed: CARD_SPEED.SLOW,
       async onResolve(game, card) {
