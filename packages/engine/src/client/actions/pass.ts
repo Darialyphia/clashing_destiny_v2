@@ -4,6 +4,8 @@ import type { GameClientState } from '../controllers/state-controller';
 import type { GlobalActionRule } from '../controllers/ui-controller';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { GAME_PHASES } from '../../game/game.enums';
+import type { PlayerViewModel } from '../view-models/player.model';
+import type { CardViewModel } from '../view-models/card.model';
 
 export class PassGlobalAction implements GlobalActionRule {
   readonly variant = 'error' as const;
@@ -11,6 +13,30 @@ export class PassGlobalAction implements GlobalActionRule {
   readonly id = 'pass';
 
   constructor(private client: GameClient) {}
+
+  get hasRemainingAction() {
+    const state = this.client.state;
+
+    const player = state.entities[this.client.playerId] as PlayerViewModel;
+
+    const hand = player.hand;
+    const boardSide = state.board.sides.find(side => side.playerId === player.id)!;
+    const destinyDeck = boardSide.destinyDeck.map(
+      id => state.entities[id] as CardViewModel
+    );
+    const minions = [
+      ...boardSide.frontRow.slots.map(slot => slot.minion),
+      ...boardSide.backRow.slots.map(slot => slot.minion)
+    ]
+      .filter(isDefined)
+      .map(id => state.entities[id] as CardViewModel);
+
+    return (
+      hand.some(card => card.canPlay) ||
+      destinyDeck.some(card => card.canPlay) ||
+      minions.some(card => !card.isExhausted)
+    );
+  }
 
   getLabel(): string {
     return this.client.state.effectChain ? 'Pass Chain' : 'Pass Turn';
@@ -36,6 +62,15 @@ export class PassGlobalAction implements GlobalActionRule {
   }
 
   onClick(): void {
-    this.client.pass();
+    const shouldConfirm =
+      !this.client.state.effectChain &&
+      this.hasRemainingAction &&
+      !this.client.ui.shouldBypassConfirmation;
+
+    if (shouldConfirm) {
+      this.client.ui.isPassConfirmationModalOpened = true;
+    } else {
+      this.client.pass();
+    }
   }
 }

@@ -42,7 +42,7 @@ export const channelTheFlames: SpellBlueprint = {
             eventName: GAME_EVENTS.HERO_AFTER_LEVEL_UP,
             handler: async event => {
               if (event.data.to.player.equals(card.player)) {
-                await event.data.to.takeDamage(card, new SpellDamage(3, card));
+                await event.data.to.takeDamage(card, new SpellDamage(2, card));
                 await card.player.cardManager.draw(1);
                 const [cardToDiscard] = await game.interaction.chooseCards({
                   player: card.player,

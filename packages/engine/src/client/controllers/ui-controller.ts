@@ -65,6 +65,10 @@ export class UiController {
 
   isHandExpanded = false;
 
+  isPassConfirmationModalOpened = false;
+
+  shouldBypassConfirmation = false;
+
   isOpponentHandExpanded = false;
 
   private cardClickRules: CardClickRule[] = [];
