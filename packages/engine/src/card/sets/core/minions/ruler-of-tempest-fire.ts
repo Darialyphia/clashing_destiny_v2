@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -17,6 +16,7 @@ import { MinionCard } from '../../../entities/minion.entity';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { EFFECT_TYPE } from '../../../../game/game.enums';
 import { empower } from '../../../card-actions-utils';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const rulerOfTempestFire: MinionBlueprint = {
   id: 'ruler-of-tempest-fire',
@@ -74,6 +74,7 @@ export const rulerOfTempestFire: MinionBlueprint = {
     await card.modifiers.add(
       new Modifier<MinionCard>('ruler-of-tempest-fire-empower', game, card, {
         mixins: [
+          new TogglableModifierMixin(game, () => card.location === 'board'),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED,
             handler: event => {
