@@ -68,7 +68,7 @@ export class MatchmakingUserRepository {
       .withIndex('by_userId', q => q.eq('userId', userId))
       .unique();
 
-    if (!doc) throw null;
+    if (!doc) return null;
 
     return this.buildEntity(doc);
   }

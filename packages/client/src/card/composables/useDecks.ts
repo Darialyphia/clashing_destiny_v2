@@ -20,3 +20,7 @@ export const useCreateDeck = (
 export const useUpdateDeck = (onSuccess?: AnyFunction) => {
   return useAuthedMutation(api.decks.update, { onSuccess });
 };
+
+export const useDeleteDeck = (onSuccess?: AnyFunction) => {
+  return useAuthedMutation(api.decks.destroy, { onSuccess });
+};

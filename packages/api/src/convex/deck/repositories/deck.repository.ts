@@ -133,6 +133,10 @@ export class DeckRepository {
     return new Deck(deckDoc._id, deckDoc);
   }
 
+  delete(deck: Deck) {
+    return this.ctx.db.delete(deck.id);
+  }
+
   save(deck: Deck) {
     return this.ctx.db.replace(deck.id, this.ctx.deckMapper.toPersistence(deck));
   }

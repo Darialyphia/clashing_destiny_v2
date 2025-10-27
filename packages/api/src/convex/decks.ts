@@ -9,6 +9,7 @@ import {
   queryWithContainer
 } from './shared/container';
 import { v, type Validator } from 'convex/values';
+import { DeleteDeckUseCase } from './deck/usecases/deleteDeck.usecase';
 
 export const list = queryWithContainer({
   args: {},
@@ -72,6 +73,19 @@ export const update = mutationWithContainer({
       mainDeck: arg.mainDeck,
       destinyDeck: arg.destinyDeck,
       spellSchools: arg.spellSchools
+    });
+  }
+});
+
+export const destroy = mutationWithContainer({
+  args: {
+    deckId: v.id('decks')
+  },
+  handler: async (ctx, arg) => {
+    const usecase = ctx.resolve<DeleteDeckUseCase>(DeleteDeckUseCase.INJECTION_KEY);
+
+    return usecase.execute({
+      deckId: arg.deckId
     });
   }
 });

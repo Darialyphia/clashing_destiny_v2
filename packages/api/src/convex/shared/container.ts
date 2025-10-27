@@ -112,6 +112,7 @@ import { GiveGiftUseCase } from '../gift/usecases/giveGift.usecase';
 import { ClaimGiftUseCase } from '../gift/usecases/claimGift.usecase';
 import { GetMyGiftsUseCase } from '../gift/usecases/getMyGifts.usecase';
 import { GrantMissingCardsUseCase } from '../card/usecases/grantMissingCards.usecase';
+import { DeleteDeckUseCase } from '../deck/usecases/deleteDeck.usecase';
 
 type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 type DependenciesMap = Record<string, Dependency<any>>;
@@ -324,7 +325,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     [ClaimGiftUseCase.INJECTION_KEY]: { resolver: asClass(ClaimGiftUseCase) },
     [GrantMissingCardsUseCase.INJECTION_KEY]: {
       resolver: asClass(GrantMissingCardsUseCase)
-    }
+    },
+    [DeleteDeckUseCase.INJECTION_KEY]: { resolver: asClass(DeleteDeckUseCase) }
   } as const satisfies DependenciesMap;
 
   return deps;

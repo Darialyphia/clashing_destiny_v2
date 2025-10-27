@@ -10,6 +10,7 @@ import { useSafeInject } from '@/shared/composables/useSafeInject';
 import {
   useCreateDeck,
   useDecks,
+  useDeleteDeck,
   useUpdateDeck,
   type UserDeck
 } from '@/card/composables/useDecks';
@@ -26,6 +27,8 @@ export type CollectionContext = CardListContext & {
   stopEditingDeck: () => void;
   saveDeck: () => void;
   isSaving: Ref<boolean>;
+  deleteDeck: () => void;
+  isDeleting: Ref<boolean>;
 };
 
 export const CollectionInjectionKey = Symbol(
@@ -106,6 +109,13 @@ export const provideCollectionPage = () => {
     deckBuilder.value.reset();
   });
 
+  const { mutate: deleteDeck, isLoading: isDeletingDeck } = useDeleteDeck(
+    () => {
+      selectedDeckId.value = null;
+      deckBuilder.value.reset();
+    }
+  );
+
   const viewMode = ref<'expanded' | 'compact'>('expanded');
 
   const api: CollectionContext = {
@@ -128,6 +138,7 @@ export const provideCollectionPage = () => {
     viewMode,
     isEditingDeck,
     isSaving: isSavingDeck,
+    isDeleting: isDeletingDeck,
     deckBuilder,
     decks,
     createDeck: () => createDeck({}),
@@ -153,6 +164,10 @@ export const provideCollectionPage = () => {
           copies: card.copies
         }))
       });
+    },
+    deleteDeck: () => {
+      if (!selectedDeck.value) return;
+      deleteDeck({ deckId: selectedDeck.value.id });
     }
   };
 

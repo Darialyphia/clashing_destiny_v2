@@ -153,6 +153,19 @@
         },
         {
           "alias": [
+            "philosophers-stone.png"
+          ],
+          "src": [
+            "/assets/cards/artifacts/philosophers-stone.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "rusty-blade.png"
           ],
           "src": [
@@ -196,6 +209,19 @@
           ],
           "src": [
             "/assets/cards/artifacts/wrath-of-the-skies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "alluring-dancer.png"
+          ],
+          "src": [
+            "/assets/cards/minions/alluring-dancer.png"
           ],
           "data": {
             "tags": {
@@ -400,6 +426,19 @@
         },
         {
           "alias": [
+            "fox-priestess.png"
+          ],
+          "src": [
+            "/assets/cards/minions/fox-priestess.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "friendly-slime.png"
           ],
           "src": [
@@ -534,6 +573,32 @@
           ],
           "src": [
             "/assets/cards/minions/phoenix.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "poseidon-emperor-of-the-sea.png"
+          ],
+          "src": [
+            "/assets/cards/minions/poseidon-emperor-of-the-sea.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "pyre-archfiend.png"
+          ],
+          "src": [
+            "/assets/cards/minions/pyre-archfiend.png"
           ],
           "data": {
             "tags": {
@@ -1303,6 +1368,19 @@
           ],
           "src": [
             "/assets/cards/spells/searing-pain.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "serene-mind.png"
+          ],
+          "src": [
+            "/assets/cards/spells/serene-mind.png"
           ],
           "data": {
             "tags": {
@@ -2409,6 +2487,19 @@
           ],
           "src": [
             "/assets/icons/keyword-vigilant.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-modifier-bloodstone"
+          ],
+          "src": [
+            "/assets/icons/modifier-bloodstone.png"
           ],
           "data": {
             "tags": {

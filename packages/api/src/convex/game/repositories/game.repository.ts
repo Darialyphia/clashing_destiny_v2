@@ -10,7 +10,6 @@ import type {
   GamePlayerReadRepository,
   GamePlayerRepository
 } from './gamePlayer.repository';
-import { ONE_MINUTE_IN_MS } from '@game/shared';
 
 export class GameReadRepository {
   static INJECTION_KEY = 'gameReadRepo' as const;
@@ -34,6 +33,18 @@ export class GameReadRepository {
     if (!gamePlayer) return null;
 
     return this.ctx.db.get(gamePlayer.gameId);
+  }
+
+  async getByUserIdAndStatus(userId: UserId, status: GameStatus) {
+    const gamePlayer = await this.ctx.gamePlayerReadRepo.byUserId(userId);
+
+    if (!gamePlayer) return null;
+
+    const game = await this.ctx.db.get(gamePlayer.gameId);
+
+    if (!game || game.status !== status) return null;
+
+    return game;
   }
 
   async getLatestByStatus(status: GameStatus) {
@@ -77,6 +88,17 @@ export class GameRepository {
 
     const gameDoc = await this.ctx.db.get(gamePlayer.gameId);
     if (!gameDoc) return null;
+
+    return this.buildEntity(gameDoc);
+  }
+
+  async byUserIdAndStatus(userId: UserId, status: GameStatus) {
+    const gamePlayer = await this.ctx.gamePlayerRepo.byUserId(userId);
+
+    if (!gamePlayer) return null;
+
+    const gameDoc = await this.ctx.db.get(gamePlayer.gameId);
+    if (!gameDoc || gameDoc.status !== status) return null;
 
     return this.buildEntity(gameDoc);
   }
