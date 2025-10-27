@@ -41,6 +41,7 @@ export type SerializedHeroCard = SerializedCard & {
   spellSchools: SpellSchool[];
   jobs: HeroJob[];
   canCounterattack: boolean;
+  level: number;
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -573,6 +574,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       abilities: this.abilities.map(ability => ability.id),
       jobs: this.blueprint.jobs,
       spellSchools: this.spellSchools,
+      level: this.level,
       canCounterattack:
         phaseCtx.state === GAME_PHASES.ATTACK &&
         phaseCtx.ctx.target?.equals(this) &&
