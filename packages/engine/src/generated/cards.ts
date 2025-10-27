@@ -105,7 +105,8 @@ export const cards = {
 "pyre-archfiend": "pyre-archfiend",
 "alluring-dancer": "alluring-dancer",
 "fox-priestess": "fox-priestess",
-"philosophers-stone": "philosophers-stone"
+"philosophers-stone": "philosophers-stone",
+"serene-mind": "serene-mind"
 } as const;
 
 export const collectableCards = {
@@ -206,5 +207,6 @@ export const collectableCards = {
 "pyre-archfiend": "pyre-archfiend",
 "alluring-dancer": "alluring-dancer",
 "fox-priestess": "fox-priestess",
-"philosophers-stone": "philosophers-stone"
+"philosophers-stone": "philosophers-stone",
+"serene-mind": "serene-mind"
 } as const;

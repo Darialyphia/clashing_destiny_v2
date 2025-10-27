@@ -101,6 +101,7 @@ import { pyreArchfiend } from './core/minions/pyre-archfiend';
 import { alluringDancer } from './core/minions/alluring-dancer';
 import { foxPriestess } from './core/minions/fox-priestess';
 import { philosophersStone } from './core/artifacts/philosophers-stone';
+import { sereneMind } from './core/spells/serene-mind';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -206,6 +207,7 @@ export const coreSet: CardSet = {
     pyreArchfiend,
     alluringDancer,
     foxPriestess,
-    philosophersStone
+    philosophersStone,
+    sereneMind
   ]
 };
