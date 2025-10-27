@@ -94,7 +94,7 @@ const router = useRouter();
           </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'HowToPlay' }">How To Play</RouterLink>
+          <RouterLink :to="{ name: 'TutorialHome' }">How To Play</RouterLink>
         </li>
         <li>
           <button @click="logout({})">Logout</button>

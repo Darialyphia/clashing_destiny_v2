@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 import { missions } from './missions';
+import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 
 definePage({
-  name: 'TutorialList'
+  name: 'TutorialHome'
 });
 </script>
 <template>
   <div class="page">
-    <section class="surface px-8">
-      <h1>Tutorial</h1>
+    <AuthenticatedHeader />
+    <section class="surface">
+      <h2>How to play</h2>
 
+      <h3>Rule book</h3>
+      <p>
+        For a comprehensive guide on how to play the game, please refer to our
+        <RouterLink :to="{ name: 'HowToPlay' }">How To Play</RouterLink>
+        section.
+      </p>
+
+      <h3>Tutorial Missions</h3>
       <ul>
         <li v-for="mission in missions" :key="mission.id">
           <RouterLink
@@ -28,15 +38,14 @@ definePage({
 
 <style scoped lang="postcss">
 .page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100dvh;
-  font-size: var(--font-size-2);
 }
 
-h1 {
+section {
+  max-width: fit-content;
+  margin: var(--size-8) auto;
+}
+h2 {
   font-size: var(--font-size-6);
   font-weight: var(--font-weight-7);
   margin-block-end: var(--size-3);

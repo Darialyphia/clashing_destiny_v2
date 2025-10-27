@@ -29,8 +29,8 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
     {
       id: 'amulet-of-remembrance-ability',
       label: '@[exhaust]@ : Draw a card',
-      description: `-1@[durability]@ @[exhaust]@ : Draw a card. You can only activate this ability if an ally minion died this turn.`,
-      manaCost: 0,
+      description: `-1@[durability]@ @[exhaust]@ @[mana] 2@ : Draw a card. You can only activate this ability if an ally minion died this turn.`,
+      manaCost: 2,
       shouldExhaust: true,
       speed: CARD_SPEED.FLASH,
       canUse(game, card) {

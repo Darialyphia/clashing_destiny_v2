@@ -179,6 +179,9 @@ export class ClientStateController {
     },
     flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
   ) {
+    if (!this.state.entities[event.event.effect.source.id]) {
+      return;
+    }
     const card = this.buildViewModel(event.event.effect.source as any) as CardViewModel;
     this.state.entities[card.id] = card;
     return await flush();

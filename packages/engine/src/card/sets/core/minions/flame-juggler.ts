@@ -15,7 +15,7 @@ export const flameJuggler: MinionBlueprint = {
   name: 'Flame Juggler',
   cardIconId: 'minions/flame-juggler',
   description: dedent`
-  @On Enter@ : Put a @Fire Bolt@ in your hand.
+  @On Enter@ : Put a @Fire Bolt@ in your hand. 
   `,
   collectable: true,
   unique: false,

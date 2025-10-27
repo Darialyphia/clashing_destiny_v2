@@ -13,6 +13,12 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   await waitFor(1200);
   card.value = null;
 });
+
+useFxEvent(FX_EVENTS.EFFECT_CHAIN_EFFECT_ADDED, async event => {
+  card.value = state.value.entities[event.effect.source.id] as CardViewModel;
+  await waitFor(800);
+  card.value = null;
+});
 </script>
 
 <template>

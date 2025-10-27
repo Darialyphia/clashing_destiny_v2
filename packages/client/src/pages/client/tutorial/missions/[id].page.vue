@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Tutorial from './Tutorial.vue';
-import { missions } from './missions';
+import Tutorial from '../Tutorial.vue';
+import { missions } from '../missions';
 
 definePage({
   name: 'TutorialMission'
@@ -19,7 +19,7 @@ const options = computed(
     <section class="surface px-8 text-center">
       <h1>Tutorial Mission Not Found</h1>
       <p>The requested tutorial mission does not exist.</p>
-      <RouterLink class="back" :to="{ name: 'TutorialList' }">
+      <RouterLink class="back" :to="{ name: 'TutorialHome' }">
         Back to Tutorial List
       </RouterLink>
     </section>

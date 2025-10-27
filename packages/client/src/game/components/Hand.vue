@@ -15,6 +15,10 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import { OnClickOutside } from '@vueuse/components';
 import { useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
+import {
+  INTERACTION_STATES,
+  type InteractionState
+} from '@game/engine/src/game/systems/game-interaction.system';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -176,22 +180,22 @@ const cards = computed(() => {
   }));
 });
 
-// watch(
-//   () => state.value.interaction,
-//   interaction => {
-//     if (!isMyHand.value) return;
+watch(
+  () => state.value.interaction.state,
+  interactionState => {
+    if (!isMyHand.value) return;
 
-//     const relevantStates: InteractionState[] = [
-//       INTERACTION_STATES.USING_ABILITY,
-//       INTERACTION_STATES.PLAYING_CARD
-//     ];
-//     if (!relevantStates.includes(interaction.state)) return;
+    const relevantStates: InteractionState[] = [
+      INTERACTION_STATES.USING_ABILITY
+      // INTERACTION_STATES.PLAYING_CARD
+    ];
+    if (!relevantStates.includes(interactionState)) return;
 
-//     if (interaction.ctx.player !== board.value.playerId) return;
+    if (state.value.interaction.ctx.player !== board.value.playerId) return;
 
-//     isExpanded.value = true;
-//   }
-// );
+    isExpanded.value = true;
+  }
+);
 </script>
 
 <template>
@@ -265,7 +269,7 @@ const cards = computed(() => {
   position: absolute;
   left: 0;
 
-  --hover-offset: 0px;
+  --hover-offset: 50px;
   --offset-y: var(--hover-offset);
   --rot-scale: 0;
   --_y: var(--offset-y);
@@ -288,7 +292,7 @@ const cards = computed(() => {
   }
   .hand.expanded &:hover,
   &.selected {
-    --hover-offset: -30px;
+    --hover-offset: -20px;
     --rot-scale: 0;
     --_y: var(--offset-y);
   }

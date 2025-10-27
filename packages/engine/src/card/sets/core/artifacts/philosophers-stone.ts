@@ -35,7 +35,7 @@ export const philosophersStone: ArtifactBlueprint = {
     {
       id: 'philosophers-stone-ability',
       label: '@[exhaust]@ : Get card from Discard pile',
-      description: `-1@[durability]@ @[exhaust]@ : Put a card in your discard pile that costs less or equal to the amount of Bloodstone stacks on this card into your hand.`,
+      description: `-1@[durability]@ @[exhaust]@ : Put a card from your discard pile that costs less or equal to the Bloodstone stacks on this card into your hand.`,
       manaCost: 0,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,

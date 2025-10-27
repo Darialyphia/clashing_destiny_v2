@@ -4,8 +4,7 @@ import { VueComponent as HowToPlay } from '@/tutorial/how-to-play.md';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 
 definePage({
-  name: 'HowToPlay',
-  path: '/how-to-play'
+  name: 'HowToPlay'
 });
 </script>
 
