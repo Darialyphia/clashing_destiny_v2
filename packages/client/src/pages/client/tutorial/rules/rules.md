@@ -6,8 +6,6 @@
 
 The goal of the game is to reduce the enemy Health Points (HP) to 0. To do so they will attack with their own hero or minions, cast spells and equip artifacts.
 
-Inspirations: Grand Archive, Might and Magic: Duel of Champions, Legends of Runeterra
-
 ## Turn structure
 
 At the start of a turn, both players draw 2 cards, then recollect all cards in their Destiny zone (see below) to their hand.

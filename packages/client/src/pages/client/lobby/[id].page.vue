@@ -117,7 +117,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="page container" style="--container-size: var(--size-xl)">
+  <div class="page" style="--container-size: var(--size-xl)">
     <div v-if="isLoading" class="loader">Loading lobby...</div>
 
     <div
@@ -150,13 +150,13 @@ watchEffect(() => {
     <template v-else-if="lobby">
       <AuthenticatedHeader />
 
-      <section class="surface">
+      <section class="surface container">
         <div>
           <h2>Chat</h2>
           <LobbyChat :lobby="lobby" />
         </div>
 
-        <div class="flex flex-col pt-8">
+        <div class="sidebar">
           <h2>Players ({{ players.length }}/{{ MAX_PLAYERS_PER_LOBBY }})</h2>
           <p v-if="!players.length">There are no players at the moment.</p>
           <ul v-auto-animate>
@@ -171,7 +171,7 @@ watchEffect(() => {
 
           <LobbyRoleButton :lobby="lobby" />
 
-          <h2 class="mt-5">Spectators</h2>
+          <h2>Spectators</h2>
           <p v-if="!spectators.length">
             There are no spectators at the moment.
           </p>
@@ -191,17 +191,17 @@ watchEffect(() => {
               <UiSwitch v-model="disableTurnTimers" />
               Disable turn timers
             </label>
-            <p class="text-0">
+            <p class="opacity-80 italic">
               If disabled, players will have as much time as they want to
-              perform actions
+              perform actions.
             </p>
             <label class="flex items-center gap-1">
               <UiSwitch v-model="teachingMode" />
               Teaching mode
             </label>
-            <p class="text-0">
+            <p class="opacity-80 italic">
               If enabled, both players will be able to see each other's hand,
-              destiny zone and destiny deck
+              destiny zone and destiny deck.
             </p>
           </div>
           <div v-else>
@@ -246,6 +246,20 @@ watchEffect(() => {
   width: 100%;
   height: 100%;
 }
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--size-8);
+
+  h2 {
+    margin-block: var(--size-4);
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+}
+
 h2 {
   font-size: var(--font-size-3);
 }

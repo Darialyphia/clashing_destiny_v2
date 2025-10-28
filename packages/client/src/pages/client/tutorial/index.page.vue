@@ -16,7 +16,12 @@ definePage({
       <h2 class="dual-text" data-text="Rule book">Rule book</h2>
       <p>
         For a comprehensive guide on how to play the game, please refer to our
-        <RouterLink :to="{ name: 'HowToPlay' }">How To Play</RouterLink>
+        <RouterLink
+          :to="{ name: 'HowToPlay' }"
+          class="c-primary underline font-bold"
+        >
+          How To Play
+        </RouterLink>
         section.
       </p>
 

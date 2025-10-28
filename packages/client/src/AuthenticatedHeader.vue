@@ -35,9 +35,6 @@ const router = useRouter();
       @click="router.go(-1)"
     />
     <div class="welcome-section">
-      <RouterLink :to="{ name: 'ClientHome' }" class="welcome-text">
-        Welcome back, {{ me?.username }}
-      </RouterLink>
       <div v-if="me?.currentJoinedMatchmaking" class="matchmaking-status">
         <span class="status-label">In matchmaking:</span>
         <span class="matchmaking-name">
@@ -109,11 +106,6 @@ const router = useRouter();
   display: flex;
   flex-direction: column;
   gap: var(--size-1);
-}
-
-.welcome-text {
-  font-weight: var(--font-weight-5);
-  color: #efef9f;
 }
 
 .matchmaking-status {
