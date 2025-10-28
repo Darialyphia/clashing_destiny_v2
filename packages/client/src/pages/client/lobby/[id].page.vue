@@ -150,78 +150,133 @@ watchEffect(() => {
     <template v-else-if="lobby">
       <AuthenticatedHeader />
 
-      <section class="surface container">
+      <aside class="surface container">
         <div>
           <h2>Chat</h2>
           <LobbyChat :lobby="lobby" />
         </div>
 
         <div class="sidebar">
-          <h2>Players ({{ players.length }}/{{ MAX_PLAYERS_PER_LOBBY }})</h2>
-          <p v-if="!players.length">There are no players at the moment.</p>
-          <ul v-auto-animate>
-            <LobbyUserCard
-              v-for="player in players"
-              :key="player.id"
-              :lobby-user="player"
-              :lobby="lobby"
-              :role="LOBBY_USER_ROLES.PLAYER"
-            />
-          </ul>
+          <div class="sidebar-section">
+            <div class="section-header">
+              <h2 class="section-title">Players</h2>
+              <span class="player-count">
+                {{ players.length }}/{{ MAX_PLAYERS_PER_LOBBY }}
+              </span>
+            </div>
 
-          <LobbyRoleButton :lobby="lobby" />
+            <div class="section-content">
+              <p v-if="!players.length" class="empty-state">
+                No players in the lobby yet
+              </p>
+              <ul v-else class="user-list" v-auto-animate>
+                <LobbyUserCard
+                  v-for="player in players"
+                  :key="player.id"
+                  :lobby-user="player"
+                  :lobby="lobby"
+                  :role="LOBBY_USER_ROLES.PLAYER"
+                />
+              </ul>
 
-          <h2>Spectators</h2>
-          <p v-if="!spectators.length">
-            There are no spectators at the moment.
-          </p>
-          <ul v-auto-animate>
-            <LobbyUserCard
-              v-for="spectator in spectators"
-              :key="spectator.id"
-              :lobby-user="spectator"
-              :lobby="lobby"
-              :role="LOBBY_USER_ROLES.SPECTATOR"
-            />
-          </ul>
-
-          <h2>Options</h2>
-          <div v-if="isOwner" class="grid gap-3 my-3">
-            <label class="flex items-center gap-1">
-              <UiSwitch v-model="disableTurnTimers" />
-              Disable turn timers
-            </label>
-            <p class="opacity-80 italic">
-              If disabled, players will have as much time as they want to
-              perform actions.
-            </p>
-            <label class="flex items-center gap-1">
-              <UiSwitch v-model="teachingMode" />
-              Teaching mode
-            </label>
-            <p class="opacity-80 italic">
-              If enabled, both players will be able to see each other's hand,
-              destiny zone and destiny deck.
-            </p>
-          </div>
-          <div v-else>
-            <p>
-              Turn timers are
-              <strong>
-                {{ lobby.options.disableTurnTimers ? 'disabled' : 'enabled' }}
-              </strong>
-            </p>
-            <p>
-              Teaching mode is
-              <strong>
-                {{ lobby.options.teachingMode ? 'enabled' : 'disabled' }}
-              </strong>
-            </p>
+              <div class="role-action">
+                <LobbyRoleButton :lobby="lobby" />
+              </div>
+            </div>
           </div>
 
-          <LobbyFooter :lobby="lobby" />
+          <div class="sidebar-section">
+            <div class="section-header">
+              <h2 class="section-title">Spectators</h2>
+              <span v-if="spectators.length" class="spectator-count">
+                {{ spectators.length }}
+              </span>
+            </div>
+
+            <div class="section-content">
+              <p v-if="!spectators.length" class="empty-state">
+                No spectators watching
+              </p>
+              <ul v-else class="user-list" v-auto-animate>
+                <LobbyUserCard
+                  v-for="spectator in spectators"
+                  :key="spectator.id"
+                  :lobby-user="spectator"
+                  :lobby="lobby"
+                  :role="LOBBY_USER_ROLES.SPECTATOR"
+                />
+              </ul>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="section-header">
+              <h2 class="section-title">Game Options</h2>
+              <span v-if="!isOwner" class="readonly-badge">View Only</span>
+            </div>
+
+            <div class="section-content">
+              <div v-if="isOwner" class="options-grid">
+                <div class="option-item">
+                  <label class="option-label">
+                    <UiSwitch v-model="disableTurnTimers" />
+                    <span class="option-title">Disable turn timers</span>
+                  </label>
+                  <p class="option-description">
+                    Players will have unlimited time to perform actions
+                  </p>
+                </div>
+
+                <div class="option-item">
+                  <label class="option-label">
+                    <UiSwitch v-model="teachingMode" />
+                    <span class="option-title">Teaching mode</span>
+                  </label>
+                  <p class="option-description">
+                    Both players can see each other's hand, destiny zone and
+                    destiny deck
+                  </p>
+                </div>
+              </div>
+
+              <div v-else class="options-readonly">
+                <div class="readonly-option">
+                  <span class="readonly-label">Turn timers:</span>
+                  <span
+                    class="readonly-value"
+                    :class="{
+                      enabled: !lobby.options.disableTurnTimers,
+                      disabled: lobby.options.disableTurnTimers
+                    }"
+                  >
+                    {{
+                      lobby.options.disableTurnTimers ? 'Disabled' : 'Enabled'
+                    }}
+                  </span>
+                </div>
+
+                <div class="readonly-option">
+                  <span class="readonly-label">Teaching mode:</span>
+                  <span
+                    class="readonly-value"
+                    :class="{
+                      enabled: lobby.options.teachingMode,
+                      disabled: !lobby.options.teachingMode
+                    }"
+                  >
+                    {{ lobby.options.teachingMode ? 'Enabled' : 'Disabled' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions Section -->
+          <div class="sidebar-section sidebar-footer">
+            <LobbyFooter :lobby="lobby" />
+          </div>
         </div>
-      </section>
+      </aside>
     </template>
   </div>
 </template>
@@ -250,21 +305,172 @@ watchEffect(() => {
 .sidebar {
   display: flex;
   flex-direction: column;
+  gap: var(--size-6);
   padding-top: var(--size-8);
-
-  h2 {
-    margin-block: var(--size-4);
-    &:first-of-type {
-      margin-top: 0;
-    }
-  }
 }
 
+/* Sidebar Section Structure */
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: var(--size-4);
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-2);
+}
+
+.section-title {
+  font-size: var(--font-size-3);
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-color-primary, inherit);
+}
+
+.player-count,
+.spectator-count {
+  font-size: var(--font-size-1);
+  font-weight: 500;
+  padding: var(--size-1) var(--size-2);
+  background: var(--surface-3, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-2);
+  color: var(--text-color-secondary, rgba(255, 255, 255, 0.8));
+}
+
+.readonly-badge {
+  font-size: var(--font-size-0);
+  font-weight: 500;
+  padding: var(--size-1) var(--size-2);
+  background: var(--orange-6, #f59e0b);
+  color: var(--orange-1, #fef3c7);
+  border-radius: var(--radius-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Section Content */
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+}
+
+/* User Lists */
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.empty-state {
+  font-size: var(--font-size-1);
+  color: var(--text-color-secondary, rgba(255, 255, 255, 0.6));
+  font-style: italic;
+  text-align: center;
+  padding: var(--size-4);
+  background: var(--surface-2, rgba(255, 255, 255, 0.05));
+  border-radius: var(--radius-2);
+  margin: 0;
+}
+
+/* Role Action */
+.role-action {
+  padding-top: var(--size-2);
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+/* Game Options */
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+
+.option-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.option-title {
+  color: var(--text-color-primary, inherit);
+}
+
+.option-description {
+  font-size: var(--font-size-1);
+  color: var(--text-color-secondary, rgba(255, 255, 255, 0.7));
+  margin: 0;
+  padding-left: calc(var(--size-5) + var(--size-2)); /* Align with switch */
+  line-height: 1.4;
+}
+
+/* Readonly Options */
+.options-readonly {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+}
+
+.readonly-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--size-3);
+  background: var(--surface-2, rgba(255, 255, 255, 0.05));
+  border-radius: var(--radius-2);
+}
+
+.readonly-label {
+  font-weight: 500;
+  color: var(--text-color-primary, inherit);
+}
+
+.readonly-value {
+  font-size: var(--font-size-1);
+  font-weight: 600;
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.readonly-value.enabled {
+  background: var(--green-6, #10b981);
+  color: var(--green-1, #d1fae5);
+}
+
+.readonly-value.disabled {
+  background: var(--red-6, #ef4444);
+  color: var(--red-1, #fee2e2);
+}
+
+/* Main Layout */
 h2 {
   font-size: var(--font-size-3);
 }
 
-section {
+aside {
   overflow-y: hidden;
   display: grid;
   grid-template-columns: 1fr var(--size-sm);
