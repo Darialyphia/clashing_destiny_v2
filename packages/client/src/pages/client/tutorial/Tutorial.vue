@@ -25,38 +25,20 @@ const RECT_PADDING = 15;
 
 <template>
   <GameBoard v-if="client.isReady" :options="{ teachingMode: false }">
-    <template #board-additional>
-      <div
-        v-if="currentStepTextBox"
-        class="surface text-box"
-        :key="currentStepTextBox?.text"
-        :style="{
-          '--left': currentStepTextBox.left,
-          '--right': currentStepTextBox.right,
-          '--top': currentStepTextBox.top,
-          '--bottom': currentStepTextBox.bottom,
-          '--x-offset': currentStepTextBox.centered?.x ? '-50%' : '0',
-          '--y-offset': currentStepTextBox.centered?.y ? '-50%' : '0'
-        }"
+    <template #menu>
+      <RouterLink
+        custom
+        v-slot="{ navigate, href }"
+        :to="{ name: 'ClientHome' }"
       >
-        {{ currentStepTextBox?.text }}
         <FancyButton
-          v-if="currentStepTextBox?.canGoNext"
-          text="Next"
-          class="mt-4 ml-auto"
-          @click="next"
+          text="Quit"
+          class="w-full"
+          :href="href"
+          variant="error"
+          @click="navigate"
         />
-        <FancyButton
-          v-if="isFinished"
-          class="mt-4 ml-auto"
-          :to="
-            nextMission
-              ? { name: 'TutorialMission', params: { id: nextMission } }
-              : { name: 'TutorialHome' }
-          "
-          :text="nextMission ? 'New Mission' : 'Back to Missions'"
-        />
-      </div>
+      </RouterLink>
     </template>
   </GameBoard>
   <div
@@ -69,12 +51,58 @@ const RECT_PADDING = 15;
       '--height': `${rect.height.value + RECT_PADDING * 2}`
     }"
   />
-  <div v-if="currentStepError" class="error">{{ currentStepError }}</div>
+  <div v-if="currentStepError" class="tutorial-error">
+    {{ currentStepError }}
+  </div>
+
+  <div class="text-box-container">
+    <div
+      v-if="currentStepTextBox"
+      class="surface text-box"
+      :key="currentStepTextBox?.text"
+      :style="{
+        '--left': currentStepTextBox.left,
+        '--right': currentStepTextBox.right,
+        '--top': currentStepTextBox.top,
+        '--bottom': currentStepTextBox.bottom,
+        '--x-offset': currentStepTextBox.centered?.x ? '-50%' : '0',
+        '--y-offset': currentStepTextBox.centered?.y ? '-50%' : '0'
+      }"
+    >
+      {{ currentStepTextBox?.text }}
+      <FancyButton
+        v-if="currentStepTextBox?.canGoNext"
+        text="Next"
+        class="mt-4 ml-auto"
+        @click="next"
+      />
+      <FancyButton
+        v-if="isFinished"
+        class="mt-4 ml-auto"
+        :to="
+          nextMission
+            ? { name: 'TutorialMission', params: { id: nextMission } }
+            : { name: 'TutorialHome' }
+        "
+        :text="nextMission ? 'New Mission' : 'Back to Missions'"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped lang="postcss">
-.text-box {
+.text-box-container {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   position: fixed;
+  height: 100dvh;
+  aspect-ratio: 16 / 9;
+  pointer-events: none;
+}
+.text-box {
+  pointer-events: auto;
+  position: absolute;
   right: var(--right);
   left: var(--left);
   top: var(--top);
@@ -93,7 +121,7 @@ const RECT_PADDING = 15;
   }
 }
 
-.error {
+.tutorial-error {
   z-index: 10;
   background-color: var(--red-8);
   position: fixed;
@@ -102,6 +130,12 @@ const RECT_PADDING = 15;
   max-width: var(--size-sm);
   translate: -50% 0;
   font-size: var(--font-size-4);
+}
+
+@keyframes highlight-pulse {
+  50% {
+    backdrop-filter: brightness(1.5);
+  }
 }
 
 .highlight {
@@ -117,5 +151,6 @@ const RECT_PADDING = 15;
   transform:
     translate 0.5s var(--ease-3),
     scale 0.5s var(--ease-3);
+  animation: highlight-pulse 2s infinite;
 }
 </style>

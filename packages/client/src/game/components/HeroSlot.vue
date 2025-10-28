@@ -44,6 +44,7 @@ const getKeyLabel = useKeybordShortcutLabel();
       flipped
     />
     <div
+      :id="ui.DOMSelectors.heroHealthIndicator(player.id).id"
       class="hero-hp"
       :style="{ '--percentage': (hero.hp! / hero.maxHp!) * 100 }"
     >

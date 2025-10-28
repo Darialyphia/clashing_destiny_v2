@@ -29,7 +29,7 @@ import type { TutorialMission } from '.';
 
 export const combatTutorial: TutorialMission = {
   id: 'combat',
-  name: 'Mission 1 : Attacking and Blocking',
+  name: 'Mission 2 : Combat',
   options: {
     next: 'play-cards',
     players: [

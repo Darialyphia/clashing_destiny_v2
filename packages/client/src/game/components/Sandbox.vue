@@ -52,6 +52,7 @@ const allCards = Object.values(CARDS_DICTIONARY).sort((a, b) =>
           text="Quit"
           class="w-full"
           :href="href"
+          variant="error"
           @click="navigate"
         />
       </RouterLink>

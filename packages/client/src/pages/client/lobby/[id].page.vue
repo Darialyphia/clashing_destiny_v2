@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
+import {
+  useAuth,
+  useAuthedMutation,
+  useAuthedQuery
+} from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
@@ -74,10 +78,34 @@ watchEffect(() => {
 
 const password = ref('');
 
-const { mutate: updateOptions } = useAuthedMutation(
-  api.lobbies.updateOptions,
-  {}
-);
+const session = useAuth();
+const { mutate: updateOptions } = useAuthedMutation(api.lobbies.updateOptions, {
+  optimisticUpdate: (store, arg) => {
+    const query = store.getQuery(api.lobbies.byId, {
+      lobbyId: arg.lobbyId,
+      // @ts-expect-error
+      sessionId: session.sessionId.value
+    });
+    if (!query) return;
+
+    store.setQuery(
+      api.lobbies.byId,
+      {
+        lobbyId: arg.lobbyId,
+        // @ts-expect-error
+        sessionId: session.sessionId.value
+      },
+      {
+        ...query,
+        options: {
+          ...query.options,
+          ...arg.options
+        }
+      }
+    );
+    console.log('Optimistic update applied');
+  }
+});
 
 const disableTurnTimers = computed({
   get: () => lobby.value!.options.disableTurnTimers || false,

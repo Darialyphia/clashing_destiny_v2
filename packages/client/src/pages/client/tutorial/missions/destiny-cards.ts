@@ -9,9 +9,9 @@ const meta: {
   enemyHero: null
 };
 
-export const playCardTutorial: TutorialMission = {
+export const destinyCardsTutorial: TutorialMission = {
   id: 'play-card',
-  name: 'Mission 1 : Playing Cards',
+  name: 'Mission 4 : Destiny Cards',
   options: {
     players: [
       {
@@ -61,22 +61,11 @@ export const playCardTutorial: TutorialMission = {
         next: () => null,
         textBoxes: [
           {
-            text: 'Welcome to the Clashing Destinies tutorial!',
+            text: 'Just play the mfkn game',
             canGoNext: true,
             top: '25%',
             left: '50%',
             centered: { x: true }
-          },
-          {
-            text: "The goal of the game is to reduce your opponent's hero health to 0.",
-            canGoNext: true,
-            top: '25%',
-            left: '50%',
-            centered: { x: true },
-            onEnter(game, client) {
-              client.ui.highlightedElement =
-                client.ui.DOMSelectors.heroHealthIndicator('p2').element;
-            }
           }
         ]
       }

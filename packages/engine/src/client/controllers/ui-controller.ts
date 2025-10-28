@@ -87,6 +87,8 @@ export class UiController {
     board: new DOMSelector('board'),
     effectChain: new DOMSelector('effect-chain'),
     playedCardZone: new DOMSelector('played-card'),
+    heroHealthIndicator: (playerId: string) =>
+      new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
     minionPosition: (playerId: string, zone: BoardSlotZone, slot: number) =>
