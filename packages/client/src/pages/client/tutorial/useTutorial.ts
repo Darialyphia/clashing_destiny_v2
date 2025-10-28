@@ -12,13 +12,19 @@ import {
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
 import { provideGameClient } from '@/game/composables/useGameClient';
 import type { Config } from '@game/engine/src/config';
-import type { IndexedRecord, MaybePromise, Override } from '@game/shared';
+import type {
+  IndexedRecord,
+  MaybePromise,
+  Nullable,
+  Override
+} from '@game/shared';
 
 type ClientTutorialTextBox = TutorialTextBox & {
   top?: string;
   left?: string;
   right?: string;
   bottom?: string;
+  centered?: { x?: boolean; y?: boolean };
 };
 export type UseTutorialOptions = Pick<
   GameOptions,
@@ -94,7 +100,8 @@ export const useTutorial = (options: UseTutorialOptions) => {
   const currentStep = ref<TutorialStep | null>(null);
   const currentStepTextboxIndex = ref(0);
   const currentStepTextBox = computed(() => {
-    return currentStep.value?.textBoxes[currentStepTextboxIndex.value] || null;
+    return (currentStep.value?.textBoxes[currentStepTextboxIndex.value] ||
+      null) as Nullable<ClientTutorialTextBox>;
   });
   const currentStepError = ref<string | null>(null);
 

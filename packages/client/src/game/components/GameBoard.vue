@@ -73,8 +73,10 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
       ref="board"
       :class="{ 'teaching-mode': options.teachingMode }"
     >
-      <div class="my-clock" v-if="myClock">
+      <div class="my-infos">
+        <span class="text-4 pl-2">{{ myPlayer.name }}</span>
         <div
+          v-if="myClock"
           class="turn-clock"
           :class="{
             active: myClock.turn.isActive,
@@ -88,6 +90,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
           }"
         />
         <div
+          v-if="myClock"
           class="action-clock"
           :class="{
             active: myClock.action.isActive,
@@ -102,8 +105,9 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
         />
       </div>
       <ExplainerMessage class="explainer" />
-      <div class="opponent-clock" v-if="opponentClock">
+      <div class="opponent-infos">
         <div
+          v-if="opponentClock"
           class="turn-clock"
           :class="{
             active: opponentClock.turn.isActive,
@@ -117,6 +121,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
           }"
         />
         <div
+          v-if="opponentClock"
           class="action-clock"
           :class="{
             active: opponentClock.action.isActive,
@@ -129,6 +134,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
             '--remaining': opponentClock.action.remaining
           }"
         />
+        <span class="text-4 pr-2">{{ opponentPlayer.name }}</span>
       </div>
 
       <div class="flex gap-3 justify-center">
@@ -306,6 +312,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
           <slot name="menu" />
         </template>
       </ActionsButtons>
+      <slot name="board-additional" />
       <div class="arrows" id="arrows" />
     </div>
   </div>
@@ -426,23 +433,31 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
   grid-row: 1;
 }
 
-.my-clock {
+.my-infos {
   grid-row: 1;
   grid-column: 1;
   justify-self: start;
+  align-items: center;
   display: flex;
   gap: var(--size-3);
   padding-left: var(--size-7);
+  > span {
+    color: #ffb270;
+  }
 }
 
-.opponent-clock {
+.opponent-infos {
   grid-row: 1;
   grid-column: 3;
   justify-self: end;
   display: flex;
   flex-direction: row-reverse;
+  align-items: center;
   gap: var(--size-3);
   padding-right: var(--size-7);
+  > span {
+    color: #ffb270;
+  }
 }
 
 @keyframes warning-pulse {

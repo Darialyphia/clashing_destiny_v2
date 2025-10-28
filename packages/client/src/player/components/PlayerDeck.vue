@@ -1,12 +1,19 @@
 <script setup lang="ts">
+import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARD_KINDS, type SpellSchool } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
+import {
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardRoot,
+  HoverCardTrigger
+} from 'reka-ui';
 
 export type DisplayedDeck = {
   name: string;
   spellSchools: SpellSchool[];
-  mainDeck: { blueprintId: string }[];
-  destinyDeck: { blueprintId: string }[];
+  mainDeck: { blueprintId: string; copies: number }[];
+  destinyDeck: { blueprintId: string; copies: number }[];
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
@@ -19,47 +26,121 @@ const hero = computed(() => {
   return heroes.sort((a, b) => b.level - a.level)[0];
 });
 
-// const affinities = computed(() => {
-//   const result = new Set<Affinity>();
-//   deck.mainDeck.forEach(card => {
-//     const blueprint = CARDS_DICTIONARY[card.blueprintId];
-//     if (!blueprint) return;
-//     if (blueprint.affinity !== AFFINITIES.NORMAL) {
-//       result.add(blueprint.affinity);
-//     }
-//   });
-//   return Array.from(result);
-// });
+const mainDeck = computed(() =>
+  deck.mainDeck.map(card => ({
+    ...card,
+    blueprint: CARDS_DICTIONARY[card.blueprintId]
+  }))
+);
+const destinyDeck = computed(() =>
+  deck.destinyDeck.map(card => ({
+    ...card,
+    blueprint: CARDS_DICTIONARY[card.blueprintId]
+  }))
+);
+const heroes = computed(() =>
+  destinyDeck.value
+    .filter(item => item.blueprint.kind === CARD_KINDS.HERO)
+    .sort(
+      (a, b) =>
+        (a.blueprint as HeroBlueprint).level -
+        (b.blueprint as HeroBlueprint).level
+    )
+);
+const otherDestinyCards = computed(() =>
+  destinyDeck.value.filter(item => item.blueprint.kind !== CARD_KINDS.HERO)
+);
+
+const minions = computed(() =>
+  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
+);
+
+const spells = computed(() =>
+  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
+);
+
+const artifacts = computed(() =>
+  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
+);
+
+const sigils = computed(() =>
+  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SIGIL)
+);
 </script>
 
 <template>
-  <button
-    class="player-deck"
-    :style="{
-      '--bg': `url(/assets/cards/${hero?.cardIconId}.png)`
-    }"
-  >
-    <div class="deck-name">
-      {{ deck.name }}
-      <div class="flex gap-1" v-if="hero">
-        <img
-          v-for="spellSchool in deck.spellSchools"
-          :key="spellSchool"
-          :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
-          class="spell-school"
-        />
-      </div>
-    </div>
+  <HoverCardRoot>
+    <HoverCardTrigger as-child>
+      <button
+        class="player-deck"
+        :style="{
+          '--bg': `url(/assets/cards/${hero?.cardIconId}.png)`
+        }"
+      >
+        <div class="deck-name">
+          {{ deck.name }}
+          <div class="flex gap-1" v-if="hero">
+            <img
+              v-for="spellSchool in deck.spellSchools"
+              :key="spellSchool"
+              :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
+              class="spell-school"
+            />
+          </div>
+        </div>
+      </button>
+    </HoverCardTrigger>
 
-    <!-- <div
-      v-for="affinity in affinities"
-      :key="affinity"
-      class="deck-affinity"
-      :style="{
-        '--bg': `url('/assets/ui/affinity-${affinity.toLowerCase()}.png')`
-      }"
-    /> -->
-  </button>
+    <HoverCardPortal>
+      <HoverCardContent side="left" align="center" :side-offset="8">
+        <div class="deck-details">
+          <ul>
+            <li v-for="item in minions" :key="item.blueprint.id">
+              {{ item.copies }}x
+              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                {{ item.blueprint.name }}
+              </span>
+            </li>
+            <li v-for="item in spells" :key="item.blueprint.id">
+              {{ item.copies }}x
+              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                {{ item.blueprint.name }}
+              </span>
+            </li>
+            <li v-for="item in artifacts" :key="item.blueprint.id">
+              {{ item.copies }}x
+              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                {{ item.blueprint.name }}
+              </span>
+            </li>
+            <li v-for="item in sigils" :key="item.blueprint.id">
+              {{ item.copies }}x
+              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                {{ item.blueprint.name }}
+              </span>
+            </li>
+          </ul>
+          <ul>
+            <li
+              v-for="item in heroes"
+              :key="item.blueprint.id"
+              :class="item.blueprint.rarity.toLocaleLowerCase()"
+            >
+              {{ item.copies }}x {{ item.blueprint.name }}
+            </li>
+
+            <li
+              v-for="item in otherDestinyCards"
+              :key="item.blueprint.id"
+              :class="item.blueprint.rarity.toLocaleLowerCase()"
+            >
+              {{ item.copies }}x {{ item.blueprint.name }}
+            </li>
+          </ul>
+        </div>
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
 </template>
 
 <style scoped lang="postcss">
@@ -97,10 +178,26 @@ const hero = computed(() => {
   }
 }
 
-.job,
-.spell-school {
-  --pixel-scale: 2;
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
+.deck-details {
+  padding: var(--size-4);
+  --un-bg-opacity: 1;
+  background-color: hsl(var(--gray-10-hsl) / var(--un-bg-opacity));
+  border-radius: var(--radius-2);
+  box-shadow: var(--shadow-3);
+  color: white;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rare {
+  color: var(--blue-4);
+}
+
+.epic {
+  color: var(--purple-4);
+}
+
+.legendary {
+  color: var(--orange-4);
 }
 </style>

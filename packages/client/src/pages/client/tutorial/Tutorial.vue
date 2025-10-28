@@ -24,7 +24,41 @@ const RECT_PADDING = 15;
 </script>
 
 <template>
-  <GameBoard v-if="client.isReady" :options="{ teachingMode: false }" />
+  <GameBoard v-if="client.isReady" :options="{ teachingMode: false }">
+    <template #board-additional>
+      <div
+        v-if="currentStepTextBox"
+        class="surface text-box"
+        :key="currentStepTextBox?.text"
+        :style="{
+          '--left': currentStepTextBox.left,
+          '--right': currentStepTextBox.right,
+          '--top': currentStepTextBox.top,
+          '--bottom': currentStepTextBox.bottom,
+          '--x-offset': currentStepTextBox.centered?.x ? '-50%' : '0',
+          '--y-offset': currentStepTextBox.centered?.y ? '-50%' : '0'
+        }"
+      >
+        {{ currentStepTextBox?.text }}
+        <FancyButton
+          v-if="currentStepTextBox?.canGoNext"
+          text="Next"
+          class="mt-4 ml-auto"
+          @click="next"
+        />
+        <FancyButton
+          v-if="isFinished"
+          class="mt-4 ml-auto"
+          :to="
+            nextMission
+              ? { name: 'TutorialMission', params: { id: nextMission } }
+              : { name: 'TutorialHome' }
+          "
+          :text="nextMission ? 'New Mission' : 'Back to Missions'"
+        />
+      </div>
+    </template>
+  </GameBoard>
   <div
     class="highlight"
     v-if="client.ui.highlightedElement"
@@ -36,42 +70,26 @@ const RECT_PADDING = 15;
     }"
   />
   <div v-if="currentStepError" class="error">{{ currentStepError }}</div>
-  <div
-    class="surface text-box"
-    v-if="currentStepTextBox"
-    :key="currentStepTextBox?.text"
-  >
-    {{ currentStepTextBox?.text }}
-    <FancyButton
-      v-if="currentStepTextBox?.canGoNext"
-      text="Next"
-      class="mt-4 ml-auto"
-      @click="next"
-    />
-    <FancyButton
-      v-if="isFinished"
-      class="mt-4 ml-auto"
-      :to="
-        nextMission
-          ? { name: 'TutorialMission', params: { id: nextMission } }
-          : { name: 'TutorialList' }
-      "
-      :text="nextMission ? 'New Mission' : 'Back to Missions'"
-    />
-  </div>
 </template>
 
 <style scoped lang="postcss">
 .text-box {
   position: fixed;
-  right: 0;
-  bottom: 55%;
+  right: var(--right);
+  left: var(--left);
+  top: var(--top);
+  bottom: var(--bottom);
+  transform: translate(var(--x-offset), var(--y-offset));
   max-width: var(--size-xs);
   font-size: var(--font-size-3);
-  transition: all 0.4s var(--ease-2);
+  color: white;
+  padding-inline: var(--size-8);
+  transition:
+    scale 0.4s var(--ease-2),
+    opacity 0.4s var(--ease-2);
   @starting-style {
     opacity: 0;
-    transform: scale(0.5);
+    scale: 0.5;
   }
 }
 

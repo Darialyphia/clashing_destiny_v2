@@ -39,11 +39,13 @@ const canJoin = computed(() => {
 const getDisplayedDeck = (deck: UserDeck) => ({
   name: deck.name,
   spellSchools: deck.spellSchools,
-  mainDeck: deck.mainDeck.map((card: any) => ({
-    blueprintId: card.blueprintId
+  mainDeck: deck.mainDeck.map(card => ({
+    blueprintId: card.blueprintId,
+    copies: card.copies
   })),
-  destinyDeck: deck.destinyDeck.map((card: any) => ({
-    blueprintId: card.blueprintId
+  destinyDeck: deck.destinyDeck.map(card => ({
+    blueprintId: card.blueprintId,
+    copies: card.copies
   }))
 });
 </script>

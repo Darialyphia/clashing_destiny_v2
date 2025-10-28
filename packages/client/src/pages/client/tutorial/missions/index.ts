@@ -8,4 +8,4 @@ export type TutorialMission = {
   options: UseTutorialOptions;
 };
 
-export const missions = [combatTutorial, playCardTutorial];
+export const missions = [playCardTutorial, combatTutorial];

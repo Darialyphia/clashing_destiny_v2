@@ -22,7 +22,7 @@ export const playCardTutorial: TutorialMission = {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
         destinyDeck: {
-          cards: ['fire-affinity']
+          cards: ['aiden-lv1']
         }
       },
       {
@@ -33,27 +33,19 @@ export const playCardTutorial: TutorialMission = {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
         destinyDeck: {
-          cards: ['fire-affinity']
+          cards: ['aiden-lv1']
         }
       }
     ],
     rngSeed: 'tutorial-seed',
-    history: [
-      // {
-      //   type: 'skipDestiny',
-      //   payload: { playerId: 'p1' }
-      // }
-    ],
+    history: [],
     config: {
-      INITIAL_HAND_SIZE: 4,
-      PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
-      PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
       SHUFFLE_DECK_ON_GAME_START: false
     },
-    async setup(game, client) {
-      client.ui.displayedElements.artifacts = false;
-      client.ui.displayedElements.destinyPhaseModal = false;
-      client.ui.displayedElements.phaseTracker = false;
+    async setup(game) {
+      // client.ui.displayedElements.artifacts = false;
+      // client.ui.displayedElements.destinyPhaseModal = false;
+      // client.ui.displayedElements.phaseTracker = false;
 
       meta.allyHero = game.playerSystem.player1.hero;
       meta.allyHero.abilities.splice(0, -1);
@@ -69,8 +61,11 @@ export const playCardTutorial: TutorialMission = {
         next: () => null,
         textBoxes: [
           {
-            text: 'TODO',
-            canGoNext: true
+            text: 'Just play the mfkn game',
+            canGoNext: true,
+            top: '25%',
+            left: '50%',
+            centered: { x: true }
           }
         ]
       }
