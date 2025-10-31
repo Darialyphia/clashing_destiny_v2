@@ -6,7 +6,6 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import Hand from '@/game/components/Hand.vue';
-import ExplainerMessage from './ExplainerMessage.vue';
 import Deck from './Deck.vue';
 
 import ActionsButtons from './ActionsButtons.vue';
@@ -17,7 +16,6 @@ import EffectChain from './EffectChain.vue';
 import BanishPile from './BanishPile.vue';
 import BoardSlot from './BoardSlot.vue';
 import OpponentHand from './OpponentHand.vue';
-import BattleLog from './BattleLog.vue';
 import EquipedArtifacts from './EquipedArtifacts.vue';
 import HeroSlot from './HeroSlot.vue';
 import CombatArrows from './CombatArrows.vue';
@@ -29,6 +27,8 @@ import GameErrorModal from './GameErrorModal.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
 import PassConfirmationModal from './PassConfirmationModal.vue';
+import UiModal from '@/ui/components/UiModal.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 // import { useBoardResize } from '../composables/useBoardResize';
 
@@ -55,6 +55,8 @@ const opponentPlayer = useOpponentPlayer();
 useGameKeyboardControls();
 const myClock = computed(() => clocks?.[myPlayer.value.id]);
 const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
+
+const isSettingsOpened = ref(false);
 </script>
 
 <template>
@@ -104,7 +106,11 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
           }"
         />
       </div>
-      <ExplainerMessage class="explainer" />
+
+      <div class="effect-chain pt-3">
+        <EffectChain />
+      </div>
+
       <div class="opponent-infos">
         <span class="text-4 pr-2">{{ opponentPlayer.name }}</span>
 
@@ -138,7 +144,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
         />
       </div>
 
-      <div class="flex gap-3 justify-center">
+      <div class="cards-zone flex gap-3 justify-center">
         <div class="flex flex-col gap-3">
           <div class="flex-1 flex flex-col">
             <div class="text-center">Artifacts</div>
@@ -226,7 +232,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
         </div>
       </div>
 
-      <div class="flex gap-3 flex-row-reverse justify-center">
+      <div class="cards-zone flex gap-3 flex-row-reverse justify-center">
         <div class="flex flex-col gap-3">
           <div class="flex-1 flex flex-col">
             <div class="text-center">Artifacts</div>
@@ -285,9 +291,9 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
         </div>
       </section>
 
-      <section class="my-2">
-        <EffectChain />
-      </section>
+      <!-- <section class="my-2">
+        <ExplainerMessage />
+      </section> -->
 
       <section class="p2-destiny flex gap-2 my-2">
         <div class="flex-1">
@@ -299,7 +305,8 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
         <span>Destiny</span>
       </section>
 
-      <BattleLog class="battle-log" />
+      <ActionsButtons class="global-actions" />
+      <!-- <BattleLog class="battle-log" /> -->
       <Hand
         v-if="options.teachingMode"
         class="opponent-hand"
@@ -308,11 +315,23 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
       />
       <OpponentHand v-else class="opponent-hand" />
       <Hand class="my-hand" :player-id="myPlayer.id" :key="myPlayer.id" />
-      <ActionsButtons>
-        <template #default>
+
+      <button
+        aria-label="Settings"
+        class="settings-button"
+        @click="isSettingsOpened = true"
+      />
+      <UiModal
+        v-model:is-opened="isSettingsOpened"
+        title="Menu"
+        description="Game settings"
+        :style="{ '--ui-modal-size': 'var(--size-xs)' }"
+      >
+        <div class="game-board-menu">
+          <FancyButton text="Close" @click="isSettingsOpened = false" />
           <slot name="menu" />
-        </template>
-      </ActionsButtons>
+        </div>
+      </UiModal>
       <slot name="board-additional" />
       <div class="arrows" id="arrows" />
     </div>
@@ -338,7 +357,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
   filter: brightness(1);
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: min-content 1fr auto auto;
+  grid-template-rows: min-content min-content 1fr auto auto;
   row-gap: var(--size-0);
   column-gap: var(--size-2);
   scale: var(--board-scale, 1);
@@ -349,13 +368,14 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
   font-size: var(--font-size-0);
   color: #985e25;
   padding-inline: var(--size-6);
+  padding-block-start: var(--size-2);
   aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 
-.explainer {
-  grid-row: 1;
-  grid-column: 1 / -1;
+.effect-chain {
+  grid-row: 1 / span 2;
+  grid-column: 2;
 }
 
 .card-container {
@@ -367,6 +387,7 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
 .minions-zone {
   display: flex;
+  justify-content: center;
   gap: var(--size-10);
 }
 
@@ -388,17 +409,21 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 .my-hand {
   height: calc(var(--card-height) * 0.5 * 2);
   grid-column: 1 / -1;
-  grid-row: 4;
+  grid-row: 5;
 }
 
-.battle-log {
+.global-actions {
   grid-column: 2;
-  grid-row: 4;
+  grid-row: 4 / span 2;
+  padding-bottom: var(--size-6);
 }
 
+.cards-zone {
+  grid-row: 2 / span 2;
+}
 .opponent-hand {
   grid-column: 3;
-  grid-row: 4;
+  grid-row: 5;
 
   .teaching-mode & {
     height: calc(var(--card-height) * 0.5 * 2);
@@ -532,5 +557,28 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
 .turn-clock {
   --color: #79d2c0;
+}
+
+.settings-button {
+  --pixel-scale: 2;
+  position: fixed;
+  right: var(--size-8);
+  bottom: var(--size-6);
+  width: calc(32px * var(--pixel-scale));
+  aspect-ratio: 1;
+  background: url('/assets/ui/settings-icon.png');
+  background-size: cover;
+  z-index: 2;
+  &:hover {
+    filter: brightness(1.2);
+  }
+}
+
+.game-board-menu {
+  display: grid;
+  gap: var(--size-2);
+  > * {
+    width: 100%;
+  }
 }
 </style>

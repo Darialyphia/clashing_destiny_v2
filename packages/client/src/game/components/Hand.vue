@@ -199,7 +199,10 @@ watch(
 </script>
 
 <template>
-  <OnClickOutside @trigger="isExpanded = false">
+  <OnClickOutside
+    :options="{ ignore: [`${ui.DOMSelectors.globalActionButtons.selector} *`] }"
+    @trigger="isExpanded = false"
+  >
     <section
       :id="`hand-${board.playerId}`"
       class="hand"
@@ -269,7 +272,7 @@ watch(
   position: absolute;
   left: 0;
 
-  --hover-offset: 50px;
+  --hover-offset: 30px;
   --offset-y: var(--hover-offset);
   --rot-scale: 0;
   --_y: var(--offset-y);

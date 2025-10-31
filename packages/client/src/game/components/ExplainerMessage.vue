@@ -17,13 +17,14 @@ const ui = useGameUi();
 
 <style scoped lang="postcss">
 .explainer-message {
-  margin-inline-start: var(--size-9);
-  font-size: var(--font-size-4);
+  font-size: var(--font-size-3);
   color: #ffb270;
   letter-spacing: 0.25ch;
   opacity: 0;
   text-align: center;
+  max-width: 50ch;
   padding-block: var(--size-3);
+  text-wrap: balance;
   &.displayed {
     opacity: 1;
   }

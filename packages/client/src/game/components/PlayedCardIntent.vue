@@ -1,43 +1,30 @@
 <script setup lang="ts">
-import { useGameUi } from '../composables/useGameClient';
+import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { useGameState, useMyPlayer } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import CardResizer from './CardResizer.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 
-const ui = useGameUi();
+const state = useGameState();
+const player = useMyPlayer();
 const cardId = computed(() => {
-  return ui.value.playedCardId;
+  if (state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
+    return null;
+  }
+  if (player.value.id !== state.value.interaction.ctx.player) {
+    return null;
+  }
+
+  return state.value.interaction.ctx.card;
 });
 </script>
 
 <template>
-  <teleport to="#card-portal">
-    <div id="played-card">
-      <InspectableCard :card-id="cardId" v-if="cardId" side="left">
-        <CardResizer :card-id="cardId" :forced-scale="0.5">
-          <GameCard
-            :interactive="false"
-            :card-id="cardId"
-            :auto-scale="false"
-          />
-        </CardResizer>
-      </InspectableCard>
-    </div>
-  </teleport>
+  <InspectableCard :card-id="cardId" v-if="cardId" side="left">
+    <GameCard
+      :interactive="false"
+      :card-id="cardId"
+      variant="small"
+      style="--pixel-scale: 1"
+    />
+  </InspectableCard>
 </template>
-
-<style scoped lang="postcss">
-#played-card {
-  position: fixed;
-  top: 33%;
-  right: var(--size-6);
-  width: var(--card-width);
-  height: var(--card-height);
-  pointer-events: none;
-  & > * {
-    display: block;
-    width: var(--card-width);
-    height: var(--card-height);
-  }
-}
-</style>

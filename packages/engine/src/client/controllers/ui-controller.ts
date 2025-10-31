@@ -119,7 +119,8 @@ export class UiController {
       new DOMSelector(`${cardId}-action-${actionId}`),
     frontRow: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
     backRow: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
-    actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`)
+    actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
+    globalActionButtons: new DOMSelector('global-action-buttons')
   };
 
   displayedElements = {
