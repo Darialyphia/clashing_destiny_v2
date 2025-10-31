@@ -106,6 +106,8 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
       </div>
       <ExplainerMessage class="explainer" />
       <div class="opponent-infos">
+        <span class="text-4 pr-2">{{ opponentPlayer.name }}</span>
+
         <div
           v-if="opponentClock"
           class="turn-clock"
@@ -134,7 +136,6 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
             '--remaining': opponentClock.action.remaining
           }"
         />
-        <span class="text-4 pr-2">{{ opponentPlayer.name }}</span>
       </div>
 
       <div class="flex gap-3 justify-center">
@@ -475,6 +476,8 @@ const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
   border: 2px solid #985e25;
   border-radius: 50%;
   position: relative;
+  height: 100%;
+  aspect-ratio: 1;
   background: conic-gradient(
     var(--color) 0deg,
     var(--color) calc(360deg * (var(--remaining) / var(--max))),

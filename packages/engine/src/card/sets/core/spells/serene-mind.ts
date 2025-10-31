@@ -13,7 +13,7 @@ export const sereneMind: SpellBlueprint = {
   id: 'serene-mind',
   name: 'Serene Mind',
   cardIconId: 'spells/serene-mind',
-  description: dedent`Look at your opponent's hand and choose a card that they are able to play. At the end of the turn, if they haven't played that card, draw a card and heal your Hero for 3.`,
+  description: dedent`Look at your opponent's hand and choose a card that can play. At the end of the turn, if they haven't played that card, draw a card and heal your Hero for 3.`,
   collectable: true,
   unique: false,
   destinyCost: 1,

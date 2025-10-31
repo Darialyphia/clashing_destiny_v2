@@ -15,7 +15,7 @@ export const spiritualist: MinionBlueprint = {
   name: 'Spiritualist',
   cardIconId: 'minions/spiritualist',
   description: dedent`
-  This costs @[mana] 1@ less if you've played at least 1 spells this turn.
+  This costs @[mana] 1@ less if you've played at least 1 spell this turn.
   `,
   collectable: true,
   unique: false,

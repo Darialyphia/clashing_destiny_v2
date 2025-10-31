@@ -65,7 +65,8 @@ export class GamesManager {
 
     const room = this.ctx.roomManager.getRoom(game.id);
     console.log('should start game', game.id);
-    await room!.start();
+    await room?.start();
+    room?.updateStatus(GAME_STATUS.ONGOING);
   }
 
   private async onGameFinished(game: GameDto) {

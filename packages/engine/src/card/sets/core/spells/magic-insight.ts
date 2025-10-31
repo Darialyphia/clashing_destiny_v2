@@ -8,10 +8,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
-import type { SpellCard } from '../../../entities/spell.entity';
-import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { LingeringDestinyModifier } from '../../../../modifier/modifiers/lingering-destiny.modifier';
 import { empower } from '../../../card-actions-utils';
 

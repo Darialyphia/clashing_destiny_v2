@@ -11,14 +11,13 @@ import {
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { HeroInterceptModifier } from '../../../../modifier/modifiers/hero-intercept.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
-import { OnAttackModifier } from '../../../../modifier/modifiers/on-attack.modifier';
 
 export const radiantCelestial: MinionBlueprint = {
   id: 'radiant-celestial',
   name: 'Radiant Celestial',
   cardIconId: 'minions/radiant-celestial',
   description: dedent`
-  You need to pay an additional @[mana] 2@ to play this card.
+  This card also costs @[mana] 2@ to play.
   @Hero Intercept@.
   @On Enter@ Heal your hero and all other allied minions for 4.
   `,

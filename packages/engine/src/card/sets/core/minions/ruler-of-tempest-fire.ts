@@ -44,9 +44,12 @@ export const rulerOfTempestFire: MinionBlueprint = {
         '@[mana] 2@ Banish a Fire Spell in your discard pile : Add a @Fleeting@ @Fire Bolt@ to your hand.',
       label: '@[mana] 2@Banish Fire Spell',
       canUse(game, card) {
-        return cardsInAllyDiscardPile.canPlay(game, card, {
-          predicate: c => isSpell(c) && c.spellSchool === SPELL_SCHOOLS.FIRE
-        });
+        return (
+          card.location === 'board' &&
+          cardsInAllyDiscardPile.canPlay(game, card, {
+            predicate: c => isSpell(c) && c.spellSchool === SPELL_SCHOOLS.FIRE
+          })
+        );
       },
       async getPreResponseTargets(game, card) {
         const [cardToBanish] =

@@ -1,5 +1,4 @@
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
-import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -31,7 +30,7 @@ export const hotHeadedRecruit: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(new AttackerModifier(game, card, { amount: 2 }));
+    await card.modifiers.add(new AttackerModifier(game, card, { amount: 3 }));
   },
   async onPlay() {}
 };

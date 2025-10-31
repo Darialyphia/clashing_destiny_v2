@@ -39,6 +39,7 @@ export type ClientToServerEvents = {
 export const useGameSocket = () => {
   const auth = useAuth();
   const { data: me } = useMe();
+  const socketError = ref(null as string | null);
 
   const socket = shallowRef(
     io(import.meta.env.VITE_GAME_SERVER_URL, {
@@ -64,12 +65,14 @@ export const useGameSocket = () => {
           type: 'player'
         });
       }, 2000);
-
+      socket.value.on('gameInitialState', data => {
+        console.log('Received initial game state from server', data);
+      });
       socket.value.on('connect_error', err => {
-        console.log('socket connect error', err);
+        socketError.value = err.message;
       });
       socket.value.on('error', err => {
-        console.log('socket error', err);
+        socketError.value = err;
       });
     });
 
@@ -77,5 +80,5 @@ export const useGameSocket = () => {
     socket.value.disconnect();
   });
 
-  return socket;
+  return { socket, socketError };
 };

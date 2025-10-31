@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import type { Game } from '../../../../game/game';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
@@ -18,7 +19,9 @@ export const philosophersStone: ArtifactBlueprint = {
   id: 'philosophers-stone',
   name: "Philosopher's Stone",
   cardIconId: 'artifacts/philosophers-stone',
-  description: 'When your hero takes damage, this card gains a stack of Bloodstone.',
+  description: dedent`
+  When your hero takes damage, gains a stack of Bloodstone.
+  `,
   collectable: true,
   setId: CARD_SETS.CORE,
   unique: false,
@@ -35,22 +38,26 @@ export const philosophersStone: ArtifactBlueprint = {
     {
       id: 'philosophers-stone-ability',
       label: '@[exhaust]@ : Get card from Discard pile',
-      description: `-1@[durability]@ @[exhaust]@ : Put a card from your discard pile that costs less or equal to the Bloodstone stacks on this card into your hand.`,
+      description: `-1@[durability]@ @[exhaust]@ : Remove 4 stacks of Bloodstone. Add a card from your Discard pile to your hand.`,
       manaCost: 0,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,
       canUse(game, card) {
-        return card.location === 'board';
+        return (
+          card.location === 'board' &&
+          (card.modifiers.get(BloodstoneModifier)?.stacks ?? 0) >= 4
+        );
       },
       async getPreResponseTargets() {
         return [];
       },
       async onResolve(game, card) {
-        const bloodstoneStacks = card.modifiers.get(BloodstoneModifier)?.stacks || 0;
+        const bloodstoneMod = card.modifiers.get(BloodstoneModifier);
+        if (!bloodstoneMod) return;
 
-        const choices = Array.from(card.player.cardManager.discardPile).filter(
-          c => c.manaCost <= bloodstoneStacks
-        );
+        await bloodstoneMod.removeStacks(4);
+
+        const choices = Array.from(card.player.cardManager.discardPile);
         if (choices.length === 0) return;
         const [selectedCard] = await game.interaction.chooseCards({
           player: card.player,
@@ -61,7 +68,6 @@ export const philosophersStone: ArtifactBlueprint = {
         });
 
         await selectedCard.addToHand();
-        await card.modifiers.remove(BloodstoneModifier);
         await card.loseDurability(1);
       }
     }

@@ -637,7 +637,7 @@ const onMouseleave = () => {
   width: calc(12px * var(--pixel-scale));
   height: calc(15px * var(--pixel-scale));
   position: absolute;
-  bottom: calc(0px * var(--pixel-scale));
+  bottom: calc(-3px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
 }
@@ -858,11 +858,11 @@ const onMouseleave = () => {
 }
 
 .description {
-  width: calc(96px * var(--pixel-scale));
-  height: calc(50px * var(--pixel-scale));
+  width: calc(102px * var(--pixel-scale));
+  height: calc(54px * var(--pixel-scale));
   position: absolute;
-  top: calc(114px * var(--pixel-scale));
-  left: calc(16px * var(--pixel-scale));
+  top: calc(113px * var(--pixel-scale));
+  left: calc(13px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;

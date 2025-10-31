@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isDefined } from '@game/shared';
 import type { NetworkAdapter } from '@game/engine/src/client/client';
 import { useGameSocket } from '../composables/useGameSocket';
 import { provideGameClient } from '../composables/useGameClient';
@@ -6,9 +7,10 @@ import { useFxAdapter } from '../composables/useFxAdapter';
 import { useMe } from '@/auth/composables/useMe';
 import GameBoard from './GameBoard.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import UiModal from '@/ui/components/UiModal.vue';
 
 const { data: me } = useMe();
-const socket = useGameSocket();
+const { socket, socketError } = useGameSocket();
 const networkAdapter: NetworkAdapter = {
   dispatch: input => {
     socket.value.emit('gameInput', input);
@@ -66,5 +68,13 @@ socket.value.on('clockUpdate', updatedClocks => {
       />
     </template>
   </GameBoard>
-  <p>Waiting for initial state...</p>
+  <p v-else>Waiting for initial state...</p>
+  <UiModal
+    :is-opened="isDefined(socketError)"
+    title="Connection Error"
+    description="''"
+  >
+    <p v-if="socketError">{{ socketError }}</p>
+    <p>Try Refreshing your browser.</p>
+  </UiModal>
 </template>

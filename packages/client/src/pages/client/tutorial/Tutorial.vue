@@ -100,6 +100,7 @@ const RECT_PADDING = 15;
   aspect-ratio: 16 / 9;
   pointer-events: none;
 }
+
 .text-box {
   pointer-events: auto;
   position: absolute;

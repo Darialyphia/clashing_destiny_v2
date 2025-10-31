@@ -24,7 +24,7 @@ export const ironWall: SpellBlueprint = {
   `,
   collectable: true,
   unique: false,
-  destinyCost: 2,
+  destinyCost: 1,
   speed: CARD_SPEED.FLASH,
   spellSchool: null,
   job: null,

@@ -260,6 +260,12 @@ export const KEYWORDS = {
       "When an adjacent ally minion is attacked, at flash speed, you may swap this minion's position with the attack target, and have the attack target this minion instead.",
     aliases: []
   },
+  BALANCE: {
+    id: 'balance',
+    name: 'Balance',
+    description: 'You have the same amount of cards in your hand and your Destiny zone.',
+    aliases: []
+  },
   HERO_INTERCEPT: {
     id: 'hero-intercept',
     name: 'Hero Intercept',
@@ -331,7 +337,7 @@ export const KEYWORDS = {
     name: 'Empower X',
     description:
       'The next Spell you play this turn resolves as if you had +X Spellpower.',
-    aliases: [/empower \([0-9]+\)/]
+    aliases: [/empower [0-9]+/, 'empower']
   },
   REACTION: {
     id: 'reaction',

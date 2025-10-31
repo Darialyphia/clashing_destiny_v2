@@ -17,7 +17,7 @@ export const foxPriestess: MinionBlueprint = {
   name: 'Fox Priestess',
   cardIconId: 'minions/fox-priestess',
   description: dedent`
-  @[level] 1 bonus@ : @On Enter@ : if you have the same amount of cards in your hand and Destiny Zone, exhaust an enemy minion and draw a card.`,
+  @[level] 1 bonus@ : @On Enter@ : if you have @Balance@, exhaust an enemy minion and draw a card.`,
   collectable: true,
   unique: false,
   destinyCost: 1,

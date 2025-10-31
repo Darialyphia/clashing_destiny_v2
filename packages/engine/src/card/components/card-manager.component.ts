@@ -154,6 +154,7 @@ export class CardManagerComponent {
       this.mainDeck.remaining,
       this.options.maxHandSize - this.hand.length
     );
+    console.log(amount, kind, amountToDraw);
 
     if (amountToDraw <= 0) return [];
     await this.game.emit(
@@ -164,7 +165,7 @@ export class CardManagerComponent {
       })
     );
     const candidates = this.mainDeck.cards.filter(c => c.kind === kind);
-    const cards = candidates.slice(0, amountToDraw + 1);
+    const cards = candidates.slice(0, amountToDraw);
 
     for (const card of cards) {
       this.mainDeck.pluck(card);

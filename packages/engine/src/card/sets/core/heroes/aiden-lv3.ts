@@ -22,7 +22,7 @@ export const aidenLv3: HeroBlueprint = {
   description: dedent`
   @Aiden Lineage@
   Your minions have +1 @[attack]@ and +1 @[health]@.
-  @On Enter@: You may search your deck for a Warrior minion that costs @[mana] 2@ or less and summon it exhausted.
+  @On Enter@: Summon a Warrior minion from your deck that costs @[mana] 2@ or less.
   `,
   cardIconId: 'heroes/aiden-lv3',
   kind: CARD_KINDS.HERO,

@@ -15,8 +15,8 @@ export const poseidonEmperorOfTheSea: MinionBlueprint = {
   name: 'Poseidon, Emperor of the Sea',
   cardIconId: 'minions/poseidon-emperor-of-the-sea',
   description: dedent`
-  You need to pay an additional @[mana] 2@ to play this card.
-  @On Enter@ and @On Attack@: You may reveal a Water Spell in your Destiny Zone. If you do, put target card on top of its owner's deck.
+  This card also costs @[mana] 2@ to play.
+  @On Enter@ and @On Attack@: Reveal a Water Spell in your Destiny Zone. If you do, put target card on top of its owner's deck.
   `,
   collectable: true,
   unique: false,

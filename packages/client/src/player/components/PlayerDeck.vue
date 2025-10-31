@@ -69,78 +69,80 @@ const sigils = computed(() =>
 </script>
 
 <template>
-  <HoverCardRoot>
-    <HoverCardTrigger as-child>
-      <button
-        class="player-deck"
-        :style="{
-          '--bg': `url(/assets/cards/${hero?.cardIconId}.png)`
-        }"
-      >
-        <div class="deck-name">
-          {{ deck.name }}
-          <div class="flex gap-1" v-if="hero">
-            <img
-              v-for="spellSchool in deck.spellSchools"
-              :key="spellSchool"
-              :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
-              class="spell-school"
-            />
+  <div>
+    <HoverCardRoot>
+      <HoverCardTrigger as-child>
+        <button
+          class="player-deck"
+          :style="{
+            '--bg': `url(/assets/cards/${hero?.cardIconId}.png)`
+          }"
+        >
+          <div class="deck-name">
+            {{ deck.name }}
+            <div class="flex gap-1" v-if="hero">
+              <img
+                v-for="spellSchool in deck.spellSchools"
+                :key="spellSchool"
+                :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
+                class="spell-school"
+              />
+            </div>
           </div>
-        </div>
-      </button>
-    </HoverCardTrigger>
+        </button>
+      </HoverCardTrigger>
 
-    <HoverCardPortal>
-      <HoverCardContent side="left" align="center" :side-offset="8">
-        <div class="deck-details">
-          <ul>
-            <li v-for="item in minions" :key="item.blueprint.id">
-              {{ item.copies }}x
-              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                {{ item.blueprint.name }}
-              </span>
-            </li>
-            <li v-for="item in spells" :key="item.blueprint.id">
-              {{ item.copies }}x
-              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                {{ item.blueprint.name }}
-              </span>
-            </li>
-            <li v-for="item in artifacts" :key="item.blueprint.id">
-              {{ item.copies }}x
-              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                {{ item.blueprint.name }}
-              </span>
-            </li>
-            <li v-for="item in sigils" :key="item.blueprint.id">
-              {{ item.copies }}x
-              <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                {{ item.blueprint.name }}
-              </span>
-            </li>
-          </ul>
-          <ul>
-            <li
-              v-for="item in heroes"
-              :key="item.blueprint.id"
-              :class="item.blueprint.rarity.toLocaleLowerCase()"
-            >
-              {{ item.copies }}x {{ item.blueprint.name }}
-            </li>
+      <HoverCardPortal>
+        <HoverCardContent side="left" align="center" :side-offset="8">
+          <div class="deck-details">
+            <ul>
+              <li v-for="item in minions" :key="item.blueprint.id">
+                {{ item.copies }}x
+                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                  {{ item.blueprint.name }}
+                </span>
+              </li>
+              <li v-for="item in spells" :key="item.blueprint.id">
+                {{ item.copies }}x
+                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                  {{ item.blueprint.name }}
+                </span>
+              </li>
+              <li v-for="item in artifacts" :key="item.blueprint.id">
+                {{ item.copies }}x
+                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                  {{ item.blueprint.name }}
+                </span>
+              </li>
+              <li v-for="item in sigils" :key="item.blueprint.id">
+                {{ item.copies }}x
+                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
+                  {{ item.blueprint.name }}
+                </span>
+              </li>
+            </ul>
+            <ul>
+              <li
+                v-for="item in heroes"
+                :key="item.blueprint.id"
+                :class="item.blueprint.rarity.toLocaleLowerCase()"
+              >
+                {{ item.copies }}x {{ item.blueprint.name }}
+              </li>
 
-            <li
-              v-for="item in otherDestinyCards"
-              :key="item.blueprint.id"
-              :class="item.blueprint.rarity.toLocaleLowerCase()"
-            >
-              {{ item.copies }}x {{ item.blueprint.name }}
-            </li>
-          </ul>
-        </div>
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
+              <li
+                v-for="item in otherDestinyCards"
+                :key="item.blueprint.id"
+                :class="item.blueprint.rarity.toLocaleLowerCase()"
+              >
+                {{ item.copies }}x {{ item.blueprint.name }}
+              </li>
+            </ul>
+          </div>
+        </HoverCardContent>
+      </HoverCardPortal>
+    </HoverCardRoot>
+  </div>
 </template>
 
 <style scoped lang="postcss">

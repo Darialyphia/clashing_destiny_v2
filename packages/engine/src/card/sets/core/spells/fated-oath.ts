@@ -15,7 +15,7 @@ export const fatedOath: SpellBlueprint = {
   name: 'Fated Oath',
   cardIconId: 'spells/fated-oath',
   description:
-    '@[level] 1+ bonus@: Search your deck for a card and banish it. At the end of your next turn, add it to your Destiny Deck as a Destiny Card that costs @[destiny] 1@.',
+    '@[level] 1+ bonus@: Banish a card in your deck. At the end of your next turn, add it to your Destiny Deck. It costs @[destiny] 1@.',
   collectable: true,
   unique: false,
   destinyCost: 1,

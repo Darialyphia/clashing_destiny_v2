@@ -24,7 +24,7 @@ export const angelOfRetribution: MinionBlueprint = {
   name: 'Angel of Retribution',
   cardIconId: 'minions/angel-of-retribution',
   description: dedent`
-  @Paladin Affinity@ : Every time your hero takes damage from an enemy source, reduce the cost of this card by 1 this turn.
+  @Paladin Affinity@ : Whenever your hero takes damage, this card costs @[mana] 1@ less this turn.
   @On Enter@ : Deal 2 damage to all enemies, and heal all allies for 2.
   `,
   collectable: true,
@@ -55,7 +55,6 @@ export const angelOfRetribution: MinionBlueprint = {
             eventName: GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
             handler(event, modifier) {
               if (!event.data.card.equals(card.player.hero)) return;
-              if (event.data.source.isAlly(card)) return;
               modifier.addStacks(1);
             }
           }),
