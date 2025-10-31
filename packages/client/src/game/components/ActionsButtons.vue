@@ -4,7 +4,10 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import PlayedCardIntent from './PlayedCardIntent.vue';
 import ExplainerMessage from './ExplainerMessage.vue';
-
+import { Icon } from '@iconify/vue';
+import UiButton from '@/ui/components/UiButton.vue';
+import UiDrawer from '@/ui/components/UiDrawer.vue';
+import BattleLog from './BattleLog.vue';
 const ui = useGameUi();
 
 const isSettingsOpened = ref(false);
@@ -29,8 +32,10 @@ const offsetY = computed(() => {
   // }
   if (!ui.value.isHandExpanded) return 0;
 
-  return '-240px';
+  return '-260px';
 });
+
+const isBattleLogOpened = ref(false);
 </script>
 
 <template>
@@ -54,7 +59,23 @@ const offsetY = computed(() => {
         @click="action.onClick"
       />
     </div>
-    <ExplainerMessage v-if="!ui.isHandExpanded" />
+    <footer>
+      <UiButton
+        class="battle-log-toggle"
+        @click="isBattleLogOpened = !isBattleLogOpened"
+      >
+        <Icon icon="game-icons:black-book" class="w-7 aspect-square" />
+      </UiButton>
+
+      <UiDrawer
+        v-model:is-opened="isBattleLogOpened"
+        side="right"
+        title="Battle Log"
+      >
+        <BattleLog />
+      </UiDrawer>
+      <ExplainerMessage v-if="!ui.isHandExpanded" />
+    </footer>
   </div>
 </template>
 
@@ -73,5 +94,27 @@ const offsetY = computed(() => {
   gap: var(--size-4);
   justify-content: center;
   align-items: flex-end;
+}
+
+footer {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+
+  align-content: center;
+}
+.battle-log-toggle {
+  justify-self: start;
+  margin-left: var(--size-4);
+  color: #ffb270;
+  background-color: #10181e;
+  border-radius: var(--radius-round);
+  aspect-ratio: 1;
+  height: var(--size-9);
+  padding: var(--size-2);
+  &:hover {
+    filter: brightness(1.2);
+  }
 }
 </style>

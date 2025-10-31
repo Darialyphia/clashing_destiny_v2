@@ -284,7 +284,6 @@ watch(
 
 <style scoped lang="postcss">
 .combat-log {
-  height: 90%;
   overflow-y: auto;
   background-color: black;
   font-size: var(--font-size-0);
