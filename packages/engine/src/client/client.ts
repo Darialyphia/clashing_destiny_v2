@@ -202,6 +202,7 @@ export class GameClient {
     this.queue = [];
     await this.sync();
   }
+
   async update(snapshot: GameStateSnapshot<SnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(

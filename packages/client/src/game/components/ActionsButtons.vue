@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGameUi } from '../composables/useGameClient';
+import { useGameUi, useMyPlayer } from '../composables/useGameClient';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import PlayedCardIntent from './PlayedCardIntent.vue';
@@ -8,6 +8,7 @@ import { Icon } from '@iconify/vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import UiDrawer from '@/ui/components/UiDrawer.vue';
 import BattleLog from './BattleLog.vue';
+import { useBattleLog } from '../composables/useBattleLog';
 const ui = useGameUi();
 
 const isSettingsOpened = ref(false);
@@ -23,6 +24,7 @@ useKeyboardControl(
   }
 );
 
+const myPlayer = useMyPlayer();
 const offsetY = computed(() => {
   // if (state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
   //   return 0;
@@ -31,17 +33,21 @@ const offsetY = computed(() => {
   //   return 0;
   // }
   if (!ui.value.isHandExpanded) return 0;
+  if (myPlayer.value.hand.length === 0) return '0';
 
   return '-260px';
 });
 
 const isBattleLogOpened = ref(false);
+
+const battleLog = useBattleLog();
 </script>
 
 <template>
   <div
     class="action-buttons"
     :style="{ '--offset-y': offsetY }"
+    :class="{ elevated: ui.isHandExpanded }"
     :id="ui.DOMSelectors.globalActionButtons.id"
   >
     <PlayedCardIntent />
@@ -72,7 +78,7 @@ const isBattleLogOpened = ref(false);
         side="right"
         title="Battle Log"
       >
-        <BattleLog />
+        <BattleLog :events="battleLog" />
       </UiDrawer>
       <ExplainerMessage v-if="!ui.isHandExpanded" />
     </footer>
@@ -88,6 +94,9 @@ const isBattleLogOpened = ref(false);
   align-items: center;
   translate: 0 var(--offset-y);
   transition: translate 0.2s var(--ease-3);
+  &.elevated {
+    justify-content: flex-end;
+  }
 }
 .actions {
   display: flex;

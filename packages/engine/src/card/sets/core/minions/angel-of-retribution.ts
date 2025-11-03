@@ -24,8 +24,9 @@ export const angelOfRetribution: MinionBlueprint = {
   name: 'Angel of Retribution',
   cardIconId: 'minions/angel-of-retribution',
   description: dedent`
+  This card also costs @[mana] 2@ to play.
   @Paladin Affinity@ : Whenever your hero takes damage, this card costs @[mana] 1@ less this turn.
-  @On Enter@ : Deal 2 damage to all enemies, and heal all allies for 2.
+  @On Enter@ : Deal 2 damage to all enemy minions, and heal all allies for 2.
   `,
   collectable: true,
   unique: false,
@@ -43,6 +44,20 @@ export const angelOfRetribution: MinionBlueprint = {
   tags: [],
   canPlay: () => true,
   async onInit(game, card) {
+    game.on(GAME_EVENTS.CARD_DECLARE_PLAY, async event => {
+      if (!event.data.card.equals(card)) return;
+      const cards = await game.interaction.chooseCards({
+        player: card.player,
+        label: 'Select cards to pay for this card',
+        minChoiceCount: 2,
+        maxChoiceCount: 2,
+        choices: card.player.cardManager.hand
+      });
+      for (const c of cards) {
+        await c.sendToDestinyZone();
+      }
+    });
+
     const paladinMod = (await card.modifiers.add(
       new HeroJobAffinityModifier(game, card, HERO_JOBS.PALADIN)
     )) as HeroJobAffinityModifier<MinionCard>;
@@ -77,7 +92,7 @@ export const angelOfRetribution: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const enemies = [card.player.opponent.hero, ...card.player.opponent.minions];
+          const enemies = card.player.opponent.minions;
           const allies = [card.player.hero, ...card.player.minions];
 
           for (const enemy of enemies) {
