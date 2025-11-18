@@ -346,8 +346,8 @@ const isSettingsOpened = ref(false);
   perspective-origin: center top;
   margin-inline: auto;
   background-size: cover;
-  display: flex;
-  justify-content: center;
+  /* display: flex;
+  justify-content: center; */
   height: 100dvh;
 }
 .board {
@@ -369,7 +369,6 @@ const isSettingsOpened = ref(false);
   color: #985e25;
   padding-inline: var(--size-6);
   padding-block-start: var(--size-2);
-  aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 

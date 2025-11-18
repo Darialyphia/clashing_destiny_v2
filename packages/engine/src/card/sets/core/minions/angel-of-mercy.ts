@@ -13,6 +13,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { OnDeathModifier } from '../../../../modifier/modifiers/on-death.modifier';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { LevelBonusModifier } from '../../../../modifier/modifiers/level-bonus.modifier';
 
 export const angelOfMercy: MinionBlueprint = {
   id: 'angel-of-mercy',
@@ -42,17 +43,22 @@ export const angelOfMercy: MinionBlueprint = {
       new SpellSchoolAffinityModifier(game, card, SPELL_SCHOOLS.LIGHT)
     )) as SpellSchoolAffinityModifier<MinionCard>;
 
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 3)
+    )) as LevelBonusModifier<MinionCard>;
+
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         async handler() {
           await card.player.hero.heal(6);
-        }
+        },
+        mixins: [new TogglableModifierMixin(game, () => lightMod.isActive)]
       })
     );
 
     await card.modifiers.add(
       new ProtectorModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => lightMod.isActive)]
+        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
       })
     );
   },

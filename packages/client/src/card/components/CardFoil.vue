@@ -57,7 +57,8 @@
   mask-size: cover;
   mix-blend-mode: color-dodge;
   background-image:
-    url('/assets/ui/foil-texture.webp'),
+    /* url('/assets/ui/foil-texture.webp'), */
+    linear-gradient(white, white),
     repeating-linear-gradient(
       0deg,
       rgb(255, 119, 115) calc(var(--space) * 1),
@@ -122,9 +123,14 @@
   mask: var(--foil-mask) center/cover no-repeat;
   transition: opacity 1s;
   transition-delay: 0;
-  :has(> &):hover & {
+  /* :has(> &):hover & {
     opacity: 0.12;
     transition-delay: 0.5s;
-  }
+  } */
+}
+
+:global(.card-perspective-wrapper:hover .foil-oil) {
+  opacity: 0.12;
+  transition-delay: 0.3s;
 }
 </style>

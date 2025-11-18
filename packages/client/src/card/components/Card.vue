@@ -149,7 +149,7 @@ useResizeObserver(descriptionChild, () => {
   );
 });
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
-const DESCRIPTION_MAX_TEXT_SIZE = 14;
+const DESCRIPTION_MAX_TEXT_SIZE = 13.5;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
@@ -418,7 +418,7 @@ const onMouseleave = () => {
     background-repeat: no-repeat;
     background-size: cover;
     z-index: -1;
-    filter: brightness(3) saturate(2) blur(50px);
+    filter: brightness(3) saturate(2) blur(calc(25px * var(--pixel-scale)));
     opacity: 1;
     mix-blend-mode: screen;
     animation: pulse 5s var(--ease-out-3) infinite;
@@ -578,7 +578,7 @@ const onMouseleave = () => {
 
   :is(.minion, .hero) & .shadow {
     filter: blur(12px);
-    opacity: 0.33;
+    opacity: 0.15;
     transform: scale(1.1);
     &::after {
       content: '';
@@ -858,11 +858,11 @@ const onMouseleave = () => {
 }
 
 .description {
-  width: calc(102px * var(--pixel-scale));
+  width: calc(100px * var(--pixel-scale));
   height: calc(54px * var(--pixel-scale));
   position: absolute;
-  top: calc(113px * var(--pixel-scale));
-  left: calc(13px * var(--pixel-scale));
+  top: calc(115px * var(--pixel-scale));
+  left: calc(14px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;

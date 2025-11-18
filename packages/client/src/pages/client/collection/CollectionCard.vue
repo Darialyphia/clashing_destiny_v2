@@ -60,6 +60,7 @@ const canAddCard = computed(() => {
           :is="component"
           :blueprint="card.card"
           show-stats
+          is-foil
           class="collection-card"
           :class="{
             disabled: isEditingDeck && !canAddCard

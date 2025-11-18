@@ -24,20 +24,23 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
       <div class="hero-visual">
         <div class="floating-cards">
           <div class="card-phantom card-4">
-            <BlueprintCard :blueprint="CARDS_DICTIONARY['fireball']" is-foil />
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['radiant-celestial']"
+              is-foil
+            />
           </div>
           <div class="card-phantom card-5">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['gaze-into-tomorrow']"
+              :blueprint="CARDS_DICTIONARY['ruler-of-tempest-fire']"
               is-foil
             />
           </div>
           <div class="card-phantom card-1">
-            <BlueprintCard :blueprint="CARDS_DICTIONARY['phoenix']" is-foil />
+            <BlueprintCard :blueprint="CARDS_DICTIONARY['erina-lv2']" is-foil />
           </div>
           <div class="card-phantom card-2">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['royal-guard']"
+              :blueprint="CARDS_DICTIONARY['navala-surging-catalyst']"
               is-foil
             />
           </div>

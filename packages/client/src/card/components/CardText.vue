@@ -212,7 +212,7 @@ const tokens = computed<Token[]>(() => {
   white-space: pre-wrap;
   color: #d7ad42;
   color: #efef9f;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 :is(.token-keyword, .token-card) {

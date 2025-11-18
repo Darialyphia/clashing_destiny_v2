@@ -260,7 +260,7 @@ watch(
     right: 0;
   }
   /* background-color: blue; */
-  &.expanded {
+  &.expanded:not(:empty) {
     left: 50%;
     width: 80%;
     transform: translateX(-50%);
