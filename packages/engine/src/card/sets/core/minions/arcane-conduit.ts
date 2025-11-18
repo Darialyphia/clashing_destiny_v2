@@ -24,8 +24,7 @@ export const arcaneConduit: MinionBlueprint = {
   name: 'Arcane Conduit',
   cardIconId: 'minions/arcane-conduit',
   description: dedent`
-  When you play a spell, and give it +1 @[attack]@ this turn.
-  @[level] 3 Bonus@: When you play a spell, wake up this minion.
+  When you play a spell, gains +1 @[attack]@ this turn.  @[level] 3 Bonus@: wake up this minion
   `,
   collectable: true,
   unique: false,
