@@ -8,13 +8,7 @@ import {
   type ArtifactBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import {
-  ARTIFACT_KINDS,
-  CARD_EVENTS,
-  type ArtifactKind,
-  type HeroJob,
-  type SpellSchool
-} from '../card.enums';
+import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -34,8 +28,6 @@ export type SerializedArtifactCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
   atkBonus: number | null;
 };
 
@@ -217,26 +209,9 @@ export class ArtifactCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
-  get spellSchool() {
-    return this.blueprint.spellSchool;
-  }
-
-  get isCorrectJob() {
-    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
-  }
-
-  get isCorrectSpellSchool() {
-    if (!this.spellSchool) return true;
-    if (this.shouldIgnorespellSchoolRequirements) return true;
-    return this.player.hero.spellSchools.includes(this.spellSchool);
-  }
-
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
-        this.isCorrectJob &&
-        this.isCorrectSpellSchool &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -271,8 +246,6 @@ export class ArtifactCard extends Card<
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
       abilities: this.abilities.map(a => a.id),
-      job: this.blueprint.job ?? null,
-      spellSchool: this.blueprint.spellSchool ?? null,
       atkBonus: this.atkBonus
     };
   }

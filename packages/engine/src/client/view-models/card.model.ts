@@ -10,19 +10,14 @@ import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import {
-  CARD_KINDS,
-  type SpellSchool,
-  type CardKind,
-  type HeroJob,
-  CARD_DECK_SOURCES
-} from '../../card/card.enums';
+import { CARD_KINDS, type CardKind, CARD_DECK_SOURCES } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
-import { DeclareCounterAttackAction } from '../actions/declare-counter-attack';
+import { DeclareBlockerAction } from '../actions/declare-counter-attack';
 import { isDefined } from '@game/shared';
+import type { BoardSlotZone } from '../../board/board.constants';
 
 type CardData =
   | SerializedSpellCard
@@ -152,16 +147,16 @@ export class CardViewModel {
     return this.data.source;
   }
 
-  get position() {
-    if ('position' in this.data) {
-      return this.data.position as SerializedMinionCard['position'];
+  get location() {
+    return this.data.location;
+  }
+
+  get zone() {
+    if ('zone' in this.data) {
+      return this.data.zone as BoardSlotZone;
     }
 
     return null;
-  }
-
-  get location() {
-    return this.data.location;
   }
 
   get atk() {
@@ -211,32 +206,6 @@ export class CardViewModel {
     return this.data.speed;
   }
 
-  get unlockedSpellSchools() {
-    if ('spellSchools' in this.data) {
-      return this.data.spellSchools as SpellSchool[];
-    }
-
-    return [];
-  }
-
-  get spellSchool() {
-    if ('spellSchool' in this.data && this.data.spellSchool) {
-      return this.data.spellSchool as SpellSchool;
-    }
-
-    return undefined;
-  }
-
-  get jobs() {
-    if ('jobs' in this.data) {
-      return this.data.jobs as HeroJob[];
-    }
-    if ('job' in this.data) {
-      return [this.data.job].filter(isDefined) as HeroJob[];
-    }
-
-    return [];
-  }
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;
@@ -374,7 +343,7 @@ export class CardViewModel {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
-      new DeclareCounterAttackAction(this.getClient()),
+      new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

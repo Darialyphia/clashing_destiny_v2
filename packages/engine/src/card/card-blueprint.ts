@@ -1,25 +1,22 @@
 import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
-import type { BoardPosition } from '../game/interactions/selecting-minion-slots.interaction';
 import type {
   CARD_KINDS,
   CardKind,
   CardSetId,
   Rarity,
-  SpellSchool,
   ArtifactKind,
   Tag,
   CARD_DECK_SOURCES,
   CardSpeed,
-  HeroJob
+  Faction
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
-import { Card, type AnyCard } from './entities/card.entity';
+import { type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
-import type { BoardSlotZone } from '../board/board.constants';
 import type { SigilCard } from './entities/sigil.entity';
 
 export type CardSourceBlueprint =
@@ -41,6 +38,7 @@ export type CardBlueprintBase = {
   collectable: boolean;
   unique?: boolean;
   speed: CardSpeed;
+  faction: Faction;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
 } & CardSourceBlueprint;
@@ -76,33 +74,13 @@ export type SerializedAbility = {
   isHiddenOnCard: boolean;
 };
 
-export type PreResponseTarget = AnyCard | BoardPosition;
-export type SerializedPreResponseTarget =
-  | {
-      type: 'card';
-      card: string;
-    }
-  | {
-      type: 'minionPosition';
-      playerId: string;
-      slot: number;
-      zone: BoardSlotZone;
-    };
+export type PreResponseTarget = AnyCard;
+export type SerializedPreResponseTarget = string;
+
 export const serializePreResponseTarget = (
   target: PreResponseTarget
 ): SerializedPreResponseTarget => {
-  if (target instanceof Card) {
-    return {
-      type: 'card',
-      card: target.id
-    };
-  }
-  return {
-    type: 'minionPosition',
-    playerId: target.player.id,
-    slot: target.slot,
-    zone: target.zone
-  };
+  return target.id;
 };
 
 export type MinionBlueprint = CardBlueprintBase & {
@@ -110,8 +88,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
+
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
@@ -119,8 +96,6 @@ export type MinionBlueprint = CardBlueprintBase & {
 
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
-  spellSchool: SpellSchool | null;
-  job: HeroJob | null;
   abilities: AbilityBlueprint<SpellCard, PreResponseTarget>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
@@ -135,11 +110,9 @@ export type HeroBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;
-  jobs: HeroJob[];
   atk: number;
   maxHp: number;
   spellPower: number;
-  spellSchools: SpellSchool[];
   abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
 };
 
@@ -148,8 +121,6 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
   abilities: AbilityBlueprint<ArtifactCard, PreResponseTarget>[];
   durability: number;
 } & (
@@ -167,8 +138,6 @@ export type SigilBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: SigilCard) => Promise<void>;
   canPlay: (game: Game, card: SigilCard) => boolean;
   onPlay: (game: Game, card: SigilCard) => Promise<void>;
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
   maxCountdown: number;
   abilities: AbilityBlueprint<SigilCard, PreResponseTarget>[];
 };

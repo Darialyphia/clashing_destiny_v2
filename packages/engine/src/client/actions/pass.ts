@@ -24,10 +24,7 @@ export class PassGlobalAction implements GlobalActionRule {
     const destinyDeck = boardSide.destinyDeck.map(
       id => state.entities[id] as CardViewModel
     );
-    const minions = [
-      ...boardSide.attackZone.slots.map(slot => slot.minion),
-      ...boardSide.defenseZone.slots.map(slot => slot.minion)
-    ]
+    const minions = [...boardSide.attackZone, ...boardSide.defenseZone]
       .filter(isDefined)
       .map(id => state.entities[id] as CardViewModel);
 

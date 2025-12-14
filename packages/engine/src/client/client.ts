@@ -17,7 +17,6 @@ import {
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
-import type { SpellSchool } from '../card/card.enums';
 import type { AbilityViewModel } from './view-models/ability.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 
@@ -348,15 +347,6 @@ export class GameClient {
     });
   }
 
-  commitMinionSlotSelection() {
-    this.dispatch({
-      type: 'commitMinionSlotSelection',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
   commitCardSelection() {
     this.dispatch({
       type: 'commitCardSelection',
@@ -371,16 +361,6 @@ export class GameClient {
       type: 'pass',
       payload: {
         playerId: this.playerId
-      }
-    });
-  }
-
-  chooseAffinity(affinity: SpellSchool) {
-    this.dispatch({
-      type: 'chooseAffinity',
-      payload: {
-        playerId: this.playerId,
-        affinity
       }
     });
   }
@@ -405,11 +385,11 @@ export class GameClient {
     });
   }
 
-  declareCounterAttack(defenderId: string) {
+  declareBlocker(blockerId: string) {
     this.dispatch({
-      type: 'declareCounterAttack',
+      type: 'declareBlocker',
       payload: {
-        defenderId,
+        blockerId,
         playerId: this.playerId
       }
     });

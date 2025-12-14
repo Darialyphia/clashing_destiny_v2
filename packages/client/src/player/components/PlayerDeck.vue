@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
-import { CARD_KINDS, type SpellSchool } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
   HoverCardContent,
@@ -11,7 +11,6 @@ import {
 
 export type DisplayedDeck = {
   name: string;
-  spellSchools: SpellSchool[];
   mainDeck: { blueprintId: string; copies: number }[];
   destinyDeck: { blueprintId: string; copies: number }[];
 };
@@ -80,14 +79,6 @@ const sigils = computed(() =>
         >
           <div class="deck-name">
             {{ deck.name }}
-            <div class="flex gap-1" v-if="hero">
-              <img
-                v-for="spellSchool in deck.spellSchools"
-                :key="spellSchool"
-                :src="`/assets/ui/spell-school-${spellSchool.toLowerCase()}.png`"
-                class="spell-school"
-              />
-            </div>
           </div>
         </button>
       </HoverCardTrigger>

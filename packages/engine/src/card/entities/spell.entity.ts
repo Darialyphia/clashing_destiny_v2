@@ -18,7 +18,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS, type HeroJob } from '../card.enums';
+import { CARD_EVENTS } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
@@ -27,8 +27,6 @@ export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   preResponseTargets: SerializedPreResponseTarget[] | null;
-  spellSchool: string | null;
-  job: HeroJob | null;
   abilities: string[];
 };
 export type SpellCardInterceptors = CardInterceptors & {
@@ -89,10 +87,6 @@ export class SpellCard extends Card<
     });
   }
 
-  get spellSchool() {
-    return this.blueprint.spellSchool;
-  }
-
   get canBeTargeted(): boolean {
     return this.interceptors.canBeTargeted.getValue(true, this);
   }
@@ -127,17 +121,6 @@ export class SpellCard extends Card<
     }
   }
 
-  get isCorrectSpellSchool() {
-    if (!this.blueprint.spellSchool) return true;
-    if (this.shouldIgnorespellSchoolRequirements) return true;
-
-    return this.player.hero.spellSchools.includes(this.blueprint.spellSchool);
-  }
-
-  get isCorrectJob() {
-    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
-  }
-
   canUseAbility(id: string) {
     const ability = this.abilities.find(ability => ability.abilityId === id);
     if (!ability) return false;
@@ -162,10 +145,7 @@ export class SpellCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
-        this.isCorrectSpellSchool &&
-        this.isCorrectJob &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -208,9 +188,7 @@ export class SpellCard extends Card<
       ...this.serializeBase(),
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
-      spellSchool: this.blueprint.spellSchool,
       abilities: this.abilities.map(ability => ability.id),
-      job: this.blueprint.job ?? null,
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
         : null

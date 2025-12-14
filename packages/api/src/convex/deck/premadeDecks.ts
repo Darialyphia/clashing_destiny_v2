@@ -1,11 +1,9 @@
-import { SPELL_SCHOOLS, type SpellSchool } from '@game/engine/src/card/card.enums';
 import { cards } from '@game/engine/src/generated/cards';
 
 type PremadeDeck = {
   id: string;
   isGrantedOnAccountCreation: boolean;
   name: string;
-  spellSchools: SpellSchool[];
   mainDeck: Array<{
     blueprintId: string;
     copies: number;
@@ -23,7 +21,6 @@ export const premadeDecks: PremadeDeck[] = [
     id: 'aiden-starter',
     isGrantedOnAccountCreation: true,
     name: 'Aiden Starter',
-    spellSchools: [SPELL_SCHOOLS.FIRE, SPELL_SCHOOLS.LIGHT],
     mainDeck: [
       {
         blueprintId: cards['courageous-footsoldier'],

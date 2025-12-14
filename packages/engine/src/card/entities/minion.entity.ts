@@ -9,7 +9,7 @@ import {
   type MinionBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { CARD_EVENTS, type HeroJob, type SpellSchool } from '../card.enums';
+import { CARD_EVENTS } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardBeforeDealCombatDamageEvent,
@@ -24,15 +24,11 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { GAME_PHASES } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
-import type { BoardSlot, SerializedBoardSlot } from '../../board/board-slot.entity';
 import { Ability } from './ability.entity';
-import { type BoardSlotZone } from '../../board/board.constants';
-import { MeleeAttackRange, type AttackRange } from '../attack-range';
+import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import { HeroCard } from './hero.entity';
-import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -44,19 +40,18 @@ export type SerializedMinionCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
-  position: Pick<BoardPosition, 'zone' | 'slot'> | null;
-  canCounterattack: boolean;
+  zone: BoardSlotZone | null;
+  canBlock: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
   canPlay: Interceptable<boolean, MinionCard>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
+  canBlock: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
-  canBeCounterattacked: Interceptable<boolean, { defender: AttackTarget }>;
-  canCounterattack: Interceptable<boolean, { attacker: AttackTarget }>;
+  canBeBlocked: Interceptable<boolean, { attacker: Attacker }>;
+  canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canUseAbility: Interceptable<
     boolean,
     { card: MinionCard; ability: Ability<MinionCard> }
@@ -65,7 +60,6 @@ export type MinionCardInterceptors = CardInterceptors & {
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
-  attackRanges: Interceptable<AttackRange[], MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -88,16 +82,16 @@ export class MinionCard extends Card<
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
         canAttack: new Interceptable(),
+        canBlock: new Interceptable(),
         canBeAttacked: new Interceptable(),
-        canCounterattack: new Interceptable(),
-        canBeCounterattacked: new Interceptable(),
+        canBeBlocked: new Interceptable(),
+        canBeDefended: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        atk: new Interceptable(),
-        attackRanges: new Interceptable()
+        atk: new Interceptable()
       },
       options
     );
@@ -111,13 +105,8 @@ export class MinionCard extends Card<
     return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
-  get position() {
-    return this.player.boardSide.getPositionFor(this);
-  }
-
-  get slot() {
-    if (!this.position) return null;
-    return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
+  get zone(): BoardSlotZone | null {
+    return this.player.boardSide.getZoneFor(this);
   }
 
   get isAlive() {
@@ -134,21 +123,6 @@ export class MinionCard extends Card<
 
   get remainingHp(): number {
     return Math.max(this.maxHp - this.damageTaken, 0);
-  }
-
-  get job() {
-    return this.blueprint.job;
-  }
-
-  get spellSchool() {
-    return this.blueprint.spellSchool;
-  }
-
-  get attackRanges(): AttackRange[] {
-    return this.interceptors.attackRanges.getValue(
-      [new MeleeAttackRange(this.game, this)],
-      this
-    );
   }
 
   get isAttacking() {
@@ -200,46 +174,36 @@ export class MinionCard extends Card<
     });
   }
 
+  canBlock(attacker: AttackTarget, target: AttackTarget) {
+    const base = !this._isExhausted && attacker.canBeBlocked(this, target);
+    return this.interceptors.canBlock.getValue(base, {
+      attacker,
+      target
+    });
+  }
+
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
     });
   }
 
-  canBeCounterattackedBy(defender: AttackTarget) {
-    return this.interceptors.canBeCounterattacked.getValue(true, {
+  canBeBlocked(attacker: AttackTarget) {
+    return this.interceptors.canBeBlocked.getValue(true, {
+      attacker
+    });
+  }
+
+  canBeDefended(defender: AttackTarget) {
+    return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
   }
 
-  canCounterattack(target: AttackTarget) {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
-      return false;
-    }
+  async moveTo() {
+    if (this.location !== 'board') return;
 
-    return this.interceptors.canCounterattack.getValue(
-      !this.isExhausted &&
-        this.atk > 0 &&
-        phaseCtx.ctx.attacker.canBeCounterattackedBy(this),
-      {
-        attacker: target
-      }
-    );
-  }
-
-  async counterattack() {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
-      throw new CorruptedGamephaseContextError();
-    }
-    await phaseCtx.ctx.counterAttack();
-  }
-
-  async moveTo(position: BoardPosition, allowSwap = false) {
-    if (!this.position) return;
-
-    return this.player.boardSide.moveMinion(this.position, position, { allowSwap });
+    return this.player.boardSide.move(this);
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
@@ -364,24 +328,8 @@ export class MinionCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
-  get isCorrectJob() {
-    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
-  }
-
-  get isCorrectSpellSchool() {
-    if (!this.spellSchool) return true;
-    if (this.shouldIgnorespellSchoolRequirements) return true;
-
-    return this.player.hero.spellSchools.includes(this.spellSchool);
-  }
-
-  private async summon(position: BoardPosition) {
-    if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
-      await this.dispose();
-      return;
-    }
-
-    this.player.boardSide.summonMinion(this, position.zone, position.slot);
+  private async summon(zone: BoardSlotZone) {
+    this.player.boardSide.summonMinion(this, zone);
     if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
       await (this as MinionCard).modifiers.add(
         new SummoningSicknessModifier(this.game, this)
@@ -391,85 +339,66 @@ export class MinionCard extends Card<
 
     await this.game.emit(
       MINION_EVENTS.MINION_SUMMONED,
-      new MinionSummonedEvent({ card: this, position })
+      new MinionSummonedEvent({ card: this, zone })
     );
   }
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
-        this.player.boardSide.hasUnoccupiedSlot &&
-        this.isCorrectJob &&
-        this.isCorrectSpellSchool &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
 
-  async playAt(position: BoardPosition, onResolved?: () => MaybePromise<void>) {
+  async playAt(zone: BoardSlotZone, onResolved?: () => MaybePromise<void>) {
     await this.insertInChainOrExecute(
       async () => {
-        await this.summon(position);
+        await this.summon(zone);
       },
-      [position],
+      [],
       onResolved
     );
   }
 
   // immediately plays the minion regardless of current chain or interaction state
   // this is useful when summoning minions as part of another card effect
-  playImmediatelyAt(position: BoardPosition) {
-    return this.resolve(() => this.summon(position));
+  playImmediatelyAt(zone: BoardSlotZone) {
+    return this.resolve(() => this.summon(zone));
   }
 
-  private async promptForSummonPosition() {
-    const [position] = await this.game.interaction.selectMinionSlot({
+  private async promptForSummonZone() {
+    const [zone] = await this.game.interaction.askQuestion({
+      label: 'Select which zone to summon the minion to',
       player: this.player,
-      isElligible(position) {
-        return (
-          position.player.equals(this.player) &&
-          !this.player.boardSide.isOccupied(position.zone, position.slot)
-        );
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
+      source: this,
+      minChoiceCount: 1,
+      maxChoiceCount: 1,
+      choices: [
+        { id: BOARD_SLOT_ZONES.ATTACK_ZONE, label: 'Attack Zone' },
+        { id: BOARD_SLOT_ZONES.DEFENSE_ZONE, label: 'Defense Zone' }
+      ]
     });
 
-    return position;
+    return zone as BoardSlotZone;
   }
+
   async play(onResolved: () => MaybePromise<void>) {
-    const position = await this.promptForSummonPosition();
+    const zone = await this.promptForSummonZone();
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.playAt(position, onResolved);
+    await this.playAt(zone, onResolved);
   }
 
-  get potentialAttackTargets() {
+  get potentialAttackTargets(): Array<MinionCard | HeroCard> {
     if (this.location !== 'board') return [];
 
-    const result: Array<MinionCard | HeroCard> = this.player.opponent.boardSide
-      .getAllMinions()
-      .filter(minion =>
-        this.attackRanges.some(
-          range => range.canAttack(minion.slot!) && this.canAttack(minion)
-        )
-      );
-
-    if (
-      this.attackRanges.some(range => range.canAttackHero()) &&
-      this.canAttack(this.player.opponent.hero)
-    ) {
-      result.push(this.player.opponent.hero);
-    }
-
-    return result;
+    return [
+      this.player.opponent.hero,
+      ...this.player.opponent.boardSide.getAllMinions()
+    ].filter(minion => this.canAttack(minion));
   }
 
   serialize(): SerializedMinionCard {
@@ -484,18 +413,14 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
-      position: this.position
-        ? { zone: this.position.zone, slot: this.position.slot }
-        : null,
+      zone: this.zone,
       abilities: this.abilities.map(ability => ability.id),
-      job: this.blueprint.job ?? null,
-      spellSchool: this.blueprint.spellSchool ?? null,
-      canCounterattack:
+      canBlock:
         phaseCtx.state === GAME_PHASES.ATTACK &&
-        phaseCtx.ctx.target?.equals(this) &&
-        phaseCtx.ctx.target?.canCounterattack(this)
-          ? this.canCounterattack(phaseCtx.ctx.attacker) &&
-            phaseCtx.ctx.attacker.canBeCounterattackedBy(this)
+        !phaseCtx.ctx.attacker.player.equals(this.player) &&
+        !phaseCtx.ctx.target?.equals(this) &&
+        !phaseCtx.ctx.blocker
+          ? this.canBlock(phaseCtx.ctx.attacker, phaseCtx.ctx.target!)
           : false
     };
   }
@@ -508,9 +433,7 @@ export const MINION_EVENTS = {
   MINION_BEFORE_HEAL: 'minion.before-heal',
   MINION_AFTER_HEAL: 'minion.after-heal',
   MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability',
-  MINION_BEFORE_MOVE: 'minion.before-move',
-  MINION_AFTER_MOVE: 'minion.after-move'
+  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability'
 } as const;
 export type MinionEvents = Values<typeof MINION_EVENTS>;
 
@@ -585,33 +508,13 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard; position: { zone: BoardSlotZone; slot: number } },
-  { card: SerializedMinionCard; position: { zone: BoardSlotZone; slot: number } }
+  { card: MinionCard; zone: BoardSlotZone },
+  { card: SerializedMinionCard; zone: BoardSlotZone }
 > {
   serialize() {
     return {
       card: this.data.card.serialize(),
-      position: {
-        zone: this.data.position.zone,
-        slot: this.data.position.slot
-      }
-    };
-  }
-}
-
-export class MinionMoveEvent extends TypedSerializableEvent<
-  { card: MinionCard; from: BoardSlot; to: BoardSlot },
-  {
-    card: SerializedMinionCard;
-    from: SerializedBoardSlot;
-    to: SerializedBoardSlot;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      from: this.data.from.serialize(),
-      to: this.data.to.serialize()
+      zone: this.data.zone
     };
   }
 }
@@ -624,6 +527,4 @@ export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
   [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
   [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
-  [MINION_EVENTS.MINION_BEFORE_MOVE]: MinionMoveEvent;
-  [MINION_EVENTS.MINION_AFTER_MOVE]: MinionMoveEvent;
 };

@@ -1,5 +1,4 @@
 import { uppercaseFirstLetter, type Values } from '@game/shared';
-import { HERO_JOBS, SPELL_SCHOOLS, type HeroJob, type SpellSchool } from './card.enums';
 
 export type Keyword = {
   id: string;
@@ -30,6 +29,12 @@ export const KEYWORDS = {
     name: 'Lingering Destiny',
     description:
       'You can banish this card from your Discard pile to add a Mana Spark into your Destiny Zone.',
+    aliases: []
+  },
+  CONSUME: {
+    id: 'consume',
+    name: 'Consume',
+    description: 'Destroy the mentioned runes when this card is played.',
     aliases: []
   },
   SUMMONING_SICKNESS: {
@@ -109,7 +114,7 @@ export const KEYWORDS = {
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'After it counterattacks, wake up this unit.',
+    description: 'After this blocks, wake up this unit.',
     aliases: []
   },
   FLEETING: {
@@ -132,26 +137,17 @@ export const KEYWORDS = {
     description: 'This card costs X less to play where X is your Hero level.',
     aliases: [/efficiency \([0-9]+\)/]
   },
-  PROTECTOR: {
-    id: 'protector',
-    name: 'Protector',
-    description:
-      'As long as this unit is awake, when an adjacent minion takes combat damage, this minion takes the damage instead.',
-    aliases: []
-  },
   ATTACKER: {
     id: 'attacker',
-    name: 'Attacker (X)',
-    description:
-      'When this units attacks, it gains X attack until the end of the combat phase.',
-    aliases: [/attacker \([0-9]+\)/]
+    name: 'Attacker',
+    description: 'Gain a bonus while in the attack zone.',
+    aliases: []
   },
   DEFENDER: {
     id: 'defender',
-    name: 'Defender (X)',
-    description:
-      'When this unit is retaliates, it gains X armor until the end of the combat phase.',
-    aliases: [/defender \([0-9]+\)/]
+    name: 'Defender',
+    description: 'Gain a bonus while in the defense zone.',
+    aliases: []
   },
   FROZEN: {
     id: 'frozen',
@@ -190,30 +186,6 @@ export const KEYWORDS = {
       'Look at the top X cards of your deck, then put any number of them at the bottom of your deck.',
     aliases: [/scry [0-9]+/]
   },
-  ...Object.values(HERO_JOBS).reduce(
-    (acc, job) => {
-      acc[`${job}_affinity`.toUpperCase() as ToAffinityKeywordKey<typeof job>] = {
-        id: `${job.toLowerCase()}-affinity`,
-        name: `${uppercaseFirstLetter(job.toLowerCase())} Affinity`,
-        description: `This card has a bonus effect if your hero has the ${uppercaseFirstLetter(job.toLowerCase())} class.`,
-        aliases: []
-      };
-      return acc;
-    },
-    {} as Record<ToAffinityKeywordKey<HeroJob>, Keyword>
-  ),
-  ...Object.values(SPELL_SCHOOLS).reduce(
-    (acc, school) => {
-      acc[`${school}_affinity`.toUpperCase() as ToAffinityKeywordKey<typeof school>] = {
-        id: `${school.toLowerCase()}-affinity`,
-        name: `${uppercaseFirstLetter(school.toLowerCase())} Affinity`,
-        description: `This card has a bonus effect if your hero has the ${uppercaseFirstLetter(school.toLowerCase())} spell school.`,
-        aliases: []
-      };
-      return acc;
-    },
-    {} as Record<ToAffinityKeywordKey<SpellSchool>, Keyword>
-  ),
   SEAL: {
     id: 'seal',
     name: 'Seal',

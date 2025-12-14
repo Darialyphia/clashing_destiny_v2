@@ -10,7 +10,7 @@ import {
   type HeroBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { type SpellSchool, type HeroJob, CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -22,14 +22,12 @@ import {
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
-import { AnywhereAttackRange, type AttackRange } from '../attack-range';
 import type { MinionCard } from './minion.entity';
 import {
   CardAfterDealCombatDamageEvent,
   CardBeforeDealCombatDamageEvent,
   CardDeclarePlayEvent
 } from '../card.events';
-import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -41,18 +39,15 @@ export type SerializedHeroCard = SerializedCard & {
   baseMaxHp: number;
   remainingHp: number;
   abilities: string[];
-  spellSchools: SpellSchool[];
-  jobs: HeroJob[];
-  canCounterattack: boolean;
   level: number;
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
+  canBlock: Interceptable<boolean, { attacker: AttackTarget }>;
+  canBeBlocked: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
-  canCounterattack: Interceptable<boolean, { attacker: AttackTarget }>;
-  canBeCounterattacked: Interceptable<boolean, { defender: AttackTarget }>;
   canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
@@ -60,7 +55,6 @@ export type HeroCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
-  attackRanges: Interceptable<AttackRange[], HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -160,17 +154,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
         canAttack: new Interceptable(),
+        canBlock: new Interceptable(),
+        canBeBlocked: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canBeDefended: new Interceptable(),
-        canCounterattack: new Interceptable(),
-        canBeCounterattacked: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
-        spellPower: new Interceptable(),
-        attackRanges: new Interceptable()
+        spellPower: new Interceptable()
       },
       options
     );
@@ -222,10 +215,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return Math.max(this.maxHp - this.damageTaken, 0);
   }
 
-  get attackRanges(): AttackRange[] {
-    return this.interceptors.attackRanges.getValue([new AnywhereAttackRange()], this);
-  }
-
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
@@ -253,40 +242,17 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     });
   }
 
-  canBeDefendedBy(defender: AttackTarget) {
+  canBeBlocked(attacker: AttackTarget, target: AttackTarget) {
+    return this.interceptors.canBeBlocked.getValue(true, {
+      attacker,
+      target
+    });
+  }
+
+  canBeDefended(defender: AttackTarget) {
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
-  }
-
-  canBeCounterattackedBy(defender: AttackTarget) {
-    return this.interceptors.canBeCounterattacked.getValue(true, {
-      defender
-    });
-  }
-
-  canCounterattack(target: AttackTarget) {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
-      return false;
-    }
-
-    return this.interceptors.canCounterattack.getValue(
-      !this.isExhausted &&
-        this.atk > 0 &&
-        phaseCtx.ctx.attacker.canBeCounterattackedBy(this),
-      {
-        attacker: target
-      }
-    );
-  }
-
-  async counterattack() {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK || !phaseCtx.ctx.target?.equals(this)) {
-      throw new CorruptedGamephaseContextError();
-    }
-    await phaseCtx.ctx.counterAttack();
   }
 
   getReceivedDamage(damage: Damage) {
@@ -402,15 +368,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     this.abilityTargets.delete(abilityId);
   }
 
-  get spellSchools() {
-    // return this.blueprint.spellSchools;
-    return this.player.spellSchools;
-  }
-
-  get jobs() {
-    return this.blueprint.jobs;
-  }
-
   get level() {
     return this.blueprint.level;
   }
@@ -474,29 +431,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
   }
 
-  get potentialAttackTargets() {
+  get potentialAttackTargets(): Array<MinionCard | HeroCard> {
     if (this.location !== 'board') return [];
 
-    const result: Array<MinionCard | HeroCard> = this.player.opponent.boardSide
-      .getAllMinions()
-      .filter(
-        minion =>
-          this.attackRanges.some(range => range.canAttack(minion.slot!)) &&
-          this.canAttack(minion)
-      );
-
-    if (
-      this.attackRanges.some(range => range.canAttackHero()) &&
-      this.canAttack(this.player.opponent.hero)
-    ) {
-      result.push(this.player.opponent.hero);
-    }
-
-    return result;
+    return [
+      this.player.opponent.hero,
+      ...this.player.opponent.boardSide.getAllMinions()
+    ].filter(target => this.canAttack(target));
   }
 
   serialize(): SerializedHeroCard {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
     return {
       ...this.serializeBase(),
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
@@ -508,16 +452,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
-      jobs: this.blueprint.jobs,
-      spellSchools: this.spellSchools,
-      level: this.level,
-      canCounterattack:
-        phaseCtx.state === GAME_PHASES.ATTACK &&
-        phaseCtx.ctx.target?.equals(this) &&
-        phaseCtx.ctx.target?.canCounterattack(this)
-          ? this.canCounterattack(phaseCtx.ctx.attacker) &&
-            phaseCtx.ctx.attacker.canBeCounterattackedBy(this)
-          : false
+      level: this.level
     };
   }
 }

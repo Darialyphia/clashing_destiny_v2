@@ -1,3 +1,4 @@
+import type { BoardSlotZone } from '../board/board.constants';
 import type { AttackTarget } from '../game/phases/combat.phase';
 import type { CombatDamage } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
@@ -5,6 +6,7 @@ import type { CARD_EVENTS } from './card.enums';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
+import type { SigilCard } from './entities/sigil.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
   { card: AnyCard },
@@ -197,6 +199,23 @@ export class CardAfterDealCombatDamageEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardChangeZoneEvent extends TypedSerializableEvent<
+  { card: MinionCard | SigilCard; from: BoardSlotZone; to: BoardSlotZone },
+  {
+    card: string;
+    from: BoardSlotZone;
+    to: BoardSlotZone;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      from: this.data.from,
+      to: this.data.to
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -213,4 +232,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_EFFECT_TRIGGERED]: CardEffectTriggeredEvent;
   [CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE]: CardBeforeDealCombatDamageEvent;
   [CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE]: CardAfterDealCombatDamageEvent;
+  [CARD_EVENTS.CARd_BEFORE_CHANGE_ZONE]: CardChangeZoneEvent;
+  [CARD_EVENTS.CARD_AFTER_CHANGE_ZONE]: CardChangeZoneEvent;
 };

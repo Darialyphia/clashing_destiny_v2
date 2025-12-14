@@ -22,21 +22,18 @@ import { GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
 import { PassInput } from './inputs/pass.input';
 import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
-import { SelectMinionSlotInput } from './inputs/select-minion-slot.input';
-import { CommitMinionSlotSelectionInput } from './inputs/commit-minion-slot-selection.input';
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
-import { ChooseAffinityInput } from './inputs/choose-affinity.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
 import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
-import { DeclareCounterAttackInput } from './inputs/declare-counterattack.input';
 import { SurrenderInput } from './inputs/surrender.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
+import { DeclareBlockerInput } from './inputs/declare-blocker.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -58,15 +55,12 @@ const inputMap = validateinputMap({
   declareAttackTarget: DeclareAttackTargetInput,
   pass: PassInput,
   selectCardOnBoard: SelectCardOnBoardInput,
-  selectMinionSlot: SelectMinionSlotInput,
-  commitMinionSlotSelection: CommitMinionSlotSelectionInput,
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
-  chooseAffinity: ChooseAffinityInput,
   declareUseCardAbility: DeclareUseCardAbilityInput,
   commitUseAbility: CommitUseAbilityInput,
   cancelUseAbility: CancelUseAbilityInput,
-  declareCounterAttack: DeclareCounterAttackInput,
+  declareBlocker: DeclareBlockerInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput
 });

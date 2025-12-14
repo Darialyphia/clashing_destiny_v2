@@ -15,7 +15,9 @@ export const CARD_EVENTS = {
   CARD_DECLARE_PLAY: 'card.declare_play',
   CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability',
   CARD_BEFORE_DEAL_COMBAT_DAMAGE: 'card.before_deal_combat_damage',
-  CARD_AFTER_DEAL_COMBAT_DAMAGE: 'card.after_deal_combat_damage'
+  CARD_AFTER_DEAL_COMBAT_DAMAGE: 'card.after_deal_combat_damage',
+  CARd_BEFORE_CHANGE_ZONE: 'card.before_change_zone',
+  CARD_AFTER_CHANGE_ZONE: 'card.after_change_zone'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 
@@ -66,26 +68,79 @@ export const RARITIES = {
 
 export type Rarity = Values<typeof RARITIES>;
 
-export const SPELL_SCHOOLS = {
-  FIRE: 'FIRE',
-  WATER: 'WATER',
-  EARTH: 'EARTH',
-  AIR: 'AIR',
-  ARCANE: 'ARCANE',
-  LIGHT: 'LIGHT',
-  DARK: 'DARK'
-} as const;
-export type SpellSchool = Values<typeof SPELL_SCHOOLS>;
-
-export const HERO_JOBS = {
-  WARRIOR: 'WARRIOR',
-  PALADIN: 'PALADIN',
-  MAGE: 'MAGE',
-  SAGE: 'SAGE'
-} as const;
-export type HeroJob = Values<typeof HERO_JOBS>;
-
 export const TAGS = {
   SWORD: 'sword'
 } as const;
 export type Tag = Values<typeof TAGS>;
+
+export type CardTint = {
+  colors: string[];
+  mode:
+    | {
+        type: 'linear';
+        angle: number;
+      }
+    | {
+        type: 'radial';
+      };
+  blendMode: 'multiply' | 'screen' | 'overlay' | 'hard-light' | 'soft-light' | 'color';
+  opacity: number;
+};
+
+export type Faction = {
+  id: string;
+  name: string;
+  defaultCardTint: CardTint;
+};
+export const FACTIONS = {
+  NEUTRAL: {
+    id: 'neutral',
+    name: 'Neutral',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
+  },
+  ORDER: {
+    id: 'order',
+    name: 'Order',
+    defaultCardTint: {
+      colors: ['#FFD700', '#FFA500'],
+      mode: { type: 'linear', angle: 45 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  CHAOS: {
+    id: 'chaos',
+    name: 'Chaos',
+    defaultCardTint: {
+      colors: ['#8B0000', '#FF4500'],
+      mode: { type: 'linear', angle: 45 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  HARMONY: {
+    id: 'harmony',
+    name: 'Harmony',
+    defaultCardTint: {
+      colors: ['#006400', '#32CD32'],
+      mode: { type: 'linear', angle: 45 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  ARCANE: {
+    id: 'arcane',
+    name: 'Arcane',
+    defaultCardTint: {
+      colors: ['#4B0082', '#8A2BE2'],
+      mode: { type: 'linear', angle: 45 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  }
+} as const satisfies Record<string, Faction>;

@@ -19,7 +19,6 @@ import {
   GAME_PHASES,
   type CombatStep
 } from '../game.enums';
-import { GAME_EVENTS } from '../game.events';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -149,6 +148,7 @@ export class CombatPhase
 {
   attacker!: Attacker;
   target: AttackTarget | null = null;
+  blocker: AttackTarget | null = null;
   isTargetCounterattacking = false;
 
   private isCancelled = false;
@@ -231,6 +231,23 @@ export class CombatPhase
     }
   }
 
+  async declareBlocker(blocker: AttackTarget) {
+    if (this.getState() !== COMBAT_STEPS.BUILDING_CHAIN) {
+      throw new WrongCombatStepError();
+    }
+    this.blocker = blocker;
+
+    await this.game.effectChainSystem.currentChain?.addEffect(
+      {
+        source: blocker,
+        type: EFFECT_TYPE.DECLARE_BLOCKER,
+        targets: [this.attacker],
+        handler: async () => {}
+      },
+      blocker.player
+    );
+  }
+
   changeTarget(newTarget: AttackTarget) {
     if (!this.target) return;
     this.target = newTarget;
@@ -262,29 +279,18 @@ export class CombatPhase
   }
 
   private async performAttacks() {
-    const attackTarget = this.target;
-    if (!attackTarget) return;
+    const defender = this.blocker ?? this.target;
+    if (!defender) return;
 
-    const canResolve = attackTarget.isAlive && this.attacker.isAlive;
+    const canResolve = defender.isAlive && this.attacker.isAlive;
     if (canResolve) {
-      const isInRange = this.attacker.potentialAttackTargets.some(t =>
-        t.equals(attackTarget!)
-      );
-      if (!isInRange) {
-        await this.attacker.dealDamage(attackTarget, new CombatDamage(this.attacker));
-        if (this.isTargetCounterattacking && this.attacker.isAlive) {
-          await attackTarget.dealDamage(this.attacker, new CombatDamage(attackTarget));
-        }
-      } else {
-        await this.game.emit(
-          COMBAT_EVENTS.ATTACK_FIZZLED,
-          new AttackFizzledResolveCombatEvent({
-            attacker: this.attacker,
-            target: attackTarget
-          })
-        );
+      await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
+      if (this.attacker.isAlive) {
+        await defender.dealDamage(this.attacker, new CombatDamage(defender));
       }
     }
+
+    await this.blocker?.exhaust();
 
     await this.game.emit(
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
@@ -297,36 +303,13 @@ export class CombatPhase
 
   private async end() {
     this.game.interaction.onInteractionEnd();
-    // phase can be different if combat was aborted early, eg. Elusive
+    // phase can be different if combat was aborted early
     if (this.game.gamePhaseSystem.getState() === GAME_PHASES.ATTACK) {
       await this.game.gamePhaseSystem.sendTransition(
         GAME_PHASE_TRANSITIONS.FINISH_ATTACK
       );
     }
     await this.game.inputSystem.askForPlayerInput();
-  }
-
-  async counterAttack() {
-    if (!this.target) {
-      throw new WrongCombatStepError();
-    }
-    if (
-      !this.attacker.canBeCounterattackedBy(this.target) ||
-      !this.target.canCounterattack(this.attacker)
-    ) {
-      throw new InvalidCounterattackError();
-    }
-    await this.target.exhaust();
-    this.isTargetCounterattacking = true; // mark the counterattack immediately so it can be displayed inthe UI
-    await this.game.effectChainSystem.currentChain?.addEffect(
-      {
-        source: this.target,
-        type: EFFECT_TYPE.COUNTERATTACK,
-        targets: [this.attacker],
-        handler: async () => {}
-      },
-      this.target.player
-    );
   }
 
   async cancelAttack() {

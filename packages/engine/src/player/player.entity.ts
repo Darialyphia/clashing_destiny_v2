@@ -21,12 +21,10 @@ import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
-import type { SpellSchool } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
   name: string;
-  spellSchools: SpellSchool[];
   mainDeck: { cards: string[] };
   destinyDeck: { cards: string[] };
 };
@@ -50,12 +48,10 @@ export type SerializedPlayer = {
 
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
-  spellSchools: Interceptable<SpellSchool[]>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    cardsDrawnForTurn: new Interceptable<number>(),
-    spellSchools: new Interceptable<SpellSchool[]>()
+    cardsDrawnForTurn: new Interceptable<number>()
   };
 };
 
@@ -109,10 +105,6 @@ export class Player
     };
     await this.cardManager.init();
     await this._hero.card.play(() => {});
-  }
-
-  get spellSchools() {
-    return this.interceptors.spellSchools.getValue(this.options.spellSchools, {});
   }
 
   async levelupHero(newHero: HeroCard) {

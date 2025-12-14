@@ -1,6 +1,6 @@
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, type CardDeckSource, type SpellSchool } from '../card.enums';
+import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -16,7 +16,6 @@ export type ValidatableDeck<TMeta> = {
   id: string;
   name: string;
   isEqual(first: ValidatableCard<TMeta>, second: ValidatableCard<TMeta>): boolean;
-  spellSchools: SpellSchool[];
   mainDeck: Array<ValidatableCard<TMeta>>;
   destinyDeck: Array<ValidatableCard<TMeta>>;
 };

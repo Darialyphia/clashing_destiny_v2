@@ -1,4 +1,3 @@
-import type { BoardSlotZone } from '../board/board.constants';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import { CARD_KINDS } from './card.enums';
@@ -229,78 +228,6 @@ export const singleMinionTargetRules = {
   }
 };
 
-export const singleEmptySlot = {
-  canPlay(game: Game, card: AnyCard) {
-    return (
-      card.player.boardSide.hasUnoccupiedSlot ||
-      card.player.opponent.boardSide.hasUnoccupiedSlot
-    );
-  },
-  async getPreResponseTargets(game: Game, card: AnyCard) {
-    return await game.interaction.selectMinionSlot({
-      player: card.player,
-      isElligible(slot) {
-        return !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied;
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
-    });
-  }
-};
-
-export const singleEmptyAllySlot = {
-  canPlay(game: Game, card: AnyCard) {
-    return card.player.boardSide.hasUnoccupiedSlot;
-  },
-  async getPreResponseTargets(game: Game, card: AnyCard) {
-    return await game.interaction.selectMinionSlot({
-      player: card.player,
-      isElligible(slot) {
-        return (
-          slot.player.equals(card.player) &&
-          !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied
-        );
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
-    });
-  }
-};
-
-export const multipleEmptyAllySlot = {
-  canPlay: (min: number) => (game: Game, card: AnyCard) => {
-    return card.player.boardSide.unoccupiedSlots.length >= min;
-  },
-  getPreResponseTargets:
-    ({ min, max, zone }: { min: number; max: number; zone?: BoardSlotZone }) =>
-    async (game: Game, card: AnyCard) => {
-      return await game.interaction.selectMinionSlot({
-        player: card.player,
-        isElligible(slot) {
-          return slot.player.equals(card.player) &&
-            !slot.player.boardSide.getSlot(slot.zone, slot.slot)?.isOccupied &&
-            zone
-            ? slot.zone === zone
-            : true;
-        },
-        canCommit(selectedSlots) {
-          return selectedSlots.length >= min;
-        },
-        isDone(selectedSlots) {
-          return selectedSlots.length === max;
-        }
-      });
-    }
-};
-
 export const multipleEnemyTargetRules = {
   canPlay:
     (min: number) =>
@@ -389,33 +316,6 @@ export const singleArtifactTargetRules = {
       }
     });
   }
-};
-
-export const anyMinionSlot = {
-  canPlay: () => true,
-  getPreResponseTargets:
-    ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat: boolean }) =>
-    async (game: Game, card: AnyCard) => {
-      return await game.interaction.selectMinionSlot({
-        player: card.player,
-        isElligible(slot, selectedSlots) {
-          return allowRepeat
-            ? true
-            : !selectedSlots.some(
-                selected =>
-                  selected.player.equals(slot.player) &&
-                  selected.slot === slot.slot &&
-                  selected.zone === slot.zone
-              );
-        },
-        canCommit(selectedSlots) {
-          return selectedSlots.length >= min;
-        },
-        isDone(selectedSlots) {
-          return selectedSlots.length === max;
-        }
-      });
-    }
 };
 
 export const cardsInAllyDiscardPile = {
