@@ -6,10 +6,8 @@ import { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { Modifier } from '../modifier.entity';
 import type { ModifierMixin } from '../modifier-mixin';
-import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
-import { PiercingAOE } from '../../card/attack-aoe';
 import { GAME_EVENTS } from '../../game/game.events';
-import { isHero, isMinion } from '../../card/card-utils';
+import { isHero } from '../../card/card-utils';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { AbilityDamage } from '../../utils/damage';
 
@@ -35,9 +33,7 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
 
     this.addMixin(
       new GameEventModifierMixin(this.game, {
-        eventName: isMinion(this.target)
-          ? GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE
-          : GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
+        eventName: GAME_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE,
         handler: async event => {
           if (this.target.location !== 'board') return;
           if (!event.data.card.equals(this.target)) return;
@@ -54,9 +50,7 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
 
     this.addMixin(
       new GameEventModifierMixin(this.game, {
-        eventName: isMinion(this.target)
-          ? GAME_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE
-          : GAME_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
+        eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
         handler: async event => {
           if (this.target.location !== 'board') return;
           if (!event.data.card.equals(this.target)) return;

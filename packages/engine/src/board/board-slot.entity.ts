@@ -1,9 +1,9 @@
-import { assert, isDefined, type Serializable } from '@game/shared';
+import { assert, type Serializable } from '@game/shared';
 import type { MinionCard } from '../card/entities/minion.entity';
 import type { Player } from '../player/player.entity';
 import { Interceptable } from '../utils/interceptable';
 import type { BoardPosition } from '../game/interactions/selecting-minion-slots.interaction';
-import { BOARD_SLOT_ZONES, type BoardSlotZone } from './board.constants';
+import { type BoardSlotZone } from './board.constants';
 import type { SigilCard } from '../card/entities/sigil.entity';
 import { isMinion, isSigil } from '../card/card-utils';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
@@ -121,42 +121,5 @@ export class BoardSlot
     this._occupant = null;
 
     return sigil;
-  }
-
-  get left(): BoardSlot | null {
-    return this._player.boardSide.getSlot(this._zone, this._position - 1);
-  }
-
-  get right(): BoardSlot | null {
-    return this._player.boardSide.getSlot(this._zone, this._position + 1);
-  }
-
-  get inFront(): BoardSlot | null {
-    return this._zone === BOARD_SLOT_ZONES.FRONT_ROW
-      ? this._player.opponent.boardSide.getSlot(
-          BOARD_SLOT_ZONES.FRONT_ROW,
-          this._position
-        )
-      : this._player.boardSide.getSlot(BOARD_SLOT_ZONES.FRONT_ROW, this._position);
-  }
-
-  get behind(): BoardSlot | null {
-    return this._zone === BOARD_SLOT_ZONES.FRONT_ROW
-      ? this._player.boardSide.getSlot(BOARD_SLOT_ZONES.BACK_ROW, this._position)
-      : null;
-  }
-
-  get adjacentSlots(): BoardSlot[] {
-    return [this.left, this.right, this.inFront, this.behind].filter(
-      isDefined
-    ) as BoardSlot[];
-  }
-
-  get adjacentMinions() {
-    return this.adjacentSlots.map(slot => slot.minion).filter(isDefined);
-  }
-
-  get adjacentSigils() {
-    return this.adjacentSlots.map(slot => slot.sigil).filter(isDefined);
   }
 }

@@ -13,7 +13,9 @@ export const CARD_EVENTS = {
   CARD_DISPOSED: 'card.disposed',
   CARD_EFFECT_TRIGGERED: 'card.effect_triggered',
   CARD_DECLARE_PLAY: 'card.declare_play',
-  CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability'
+  CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability',
+  CARD_BEFORE_DEAL_COMBAT_DAMAGE: 'card.before_deal_combat_damage',
+  CARD_AFTER_DEAL_COMBAT_DAMAGE: 'card.after_deal_combat_damage'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 

@@ -1,6 +1,10 @@
+import type { AttackTarget } from '../game/phases/combat.phase';
+import type { CombatDamage } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS } from './card.enums';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
+import type { HeroCard } from './entities/hero.entity';
+import type { MinionCard } from './entities/minion.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
   { card: AnyCard },
@@ -148,6 +152,51 @@ export class CardEffectTriggeredEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardBeforeDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard | HeroCard;
+    target: AttackTarget;
+    affectedCards: Array<MinionCard | HeroCard>;
+    damage: CombatDamage;
+  },
+  { card: string; target: string; damage: number; affectedCards: string[] }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id)
+    };
+  }
+}
+
+export class CardAfterDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard | HeroCard;
+    target: AttackTarget;
+    damage: CombatDamage;
+    affectedCards: Array<MinionCard | HeroCard>;
+  },
+  {
+    card: string;
+    target: string;
+    damage: number;
+    affectedCards: string[];
+    isFatal: boolean;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id),
+      isFatal: !this.data.target.isAlive
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -162,4 +211,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_DECLARE_USE_ABILITY]: CardDeclareUseAbilityEvent;
   [CARD_EVENTS.CARD_DISPOSED]: CardDisposedEvent;
   [CARD_EVENTS.CARD_EFFECT_TRIGGERED]: CardEffectTriggeredEvent;
+  [CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE]: CardBeforeDealCombatDamageEvent;
+  [CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE]: CardAfterDealCombatDamageEvent;
 };

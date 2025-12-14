@@ -139,13 +139,6 @@ export const KEYWORDS = {
       'As long as this unit is awake, when an adjacent minion takes combat damage, this minion takes the damage instead.',
     aliases: []
   },
-  ELUSIVE: {
-    id: 'elusive',
-    name: 'Elusive',
-    description:
-      'The first time this minion is attacked each turn, it moves to a adjacent position on the same row if possible (prioritizing up) and cancel the attack.',
-    aliases: []
-  },
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker (X)',
@@ -188,19 +181,6 @@ export const KEYWORDS = {
     id: 'influence',
     name: 'Influence',
     description: 'The sum of the cards in your hand and Destiny zone.',
-    aliases: []
-  },
-  CLEAVE: {
-    id: 'cleave',
-    name: 'Cleave',
-    description:
-      'Damages minions to the right and to the left of the target as well when attacking.',
-    aliases: []
-  },
-  PIERCING: {
-    id: 'piercing',
-    name: 'Piercing',
-    description: 'Damages the minion behind the target when attacking.',
     aliases: []
   },
   SCRY: {

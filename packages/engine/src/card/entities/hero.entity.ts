@@ -24,8 +24,11 @@ import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 import { AnywhereAttackRange, type AttackRange } from '../attack-range';
 import type { MinionCard } from './minion.entity';
-import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
-import { CardDeclarePlayEvent } from '../card.events';
+import {
+  CardAfterDealCombatDamageEvent,
+  CardBeforeDealCombatDamageEvent,
+  CardDeclarePlayEvent
+} from '../card.events';
 import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 export type SerializedHeroCard = SerializedCard & {
@@ -58,7 +61,6 @@ export type HeroCardInterceptors = CardInterceptors & {
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
   attackRanges: Interceptable<AttackRange[], HeroCard>;
-  attackAOEs: Interceptable<AttackAOE[], HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -66,8 +68,6 @@ export type HeroCardInterceptorName = keyof HeroCardInterceptors;
 export const HERO_EVENTS = {
   HERO_BEFORE_TAKE_DAMAGE: 'hero.before-take-damage',
   HERO_AFTER_TAKE_DAMAGE: 'hero.after-take-damage',
-  HERO_BEFORE_DEAL_COMBAT_DAMAGE: 'hero.before-deal-combat-damage',
-  HERO_AFTER_DEAL_COMBAT_DAMAGE: 'hero.after-deal-combat-damage',
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
@@ -109,51 +109,6 @@ export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
   }
 }
 
-export class HeroBeforeDealCombatDamageEvent extends TypedSerializableEvent<
-  {
-    card: HeroCard;
-    target: AttackTarget;
-    damage: CombatDamage;
-    affectedCards: Array<MinionCard | HeroCard>;
-  },
-  { card: string; target: string; damage: number; affectedCards: string[] }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      target: this.data.target.id,
-      damage: this.data.damage.getFinalAmount(this.data.target),
-      affectedCards: this.data.affectedCards.map(card => card.id)
-    };
-  }
-}
-
-export class HeroAfterDealCombatDamageEvent extends TypedSerializableEvent<
-  {
-    card: HeroCard;
-    target: AttackTarget;
-    damage: CombatDamage;
-    affectedCards: Array<MinionCard | HeroCard>;
-  },
-  {
-    card: string;
-    target: string;
-    affectedCards: string[];
-    damage: number;
-    isFatal: boolean;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      target: this.data.target.id,
-      damage: this.data.damage.getFinalAmount(this.data.target),
-      isFatal: !this.data.target.isAlive,
-      affectedCards: this.data.affectedCards.map(card => card.id)
-    };
-  }
-}
-
 export class HeroCardHealEvent extends TypedSerializableEvent<
   { card: HeroCard; amount: number },
   { card: SerializedHeroCard; amount: number }
@@ -181,8 +136,6 @@ export class HeroLevelUpEvent extends TypedSerializableEvent<
 export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
   [HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
-  [HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE]: HeroBeforeDealCombatDamageEvent;
-  [HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE]: HeroAfterDealCombatDamageEvent;
   [HERO_EVENTS.HERO_BEFORE_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;
@@ -217,8 +170,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         spellPower: new Interceptable(),
-        attackRanges: new Interceptable(),
-        attackAOEs: new Interceptable()
+        attackRanges: new Interceptable()
       },
       options
     );
@@ -272,10 +224,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get attackRanges(): AttackRange[] {
     return this.interceptors.attackRanges.getValue([new AnywhereAttackRange()], this);
-  }
-
-  get attackAOEs(): AttackAOE[] {
-    return this.interceptors.attackAOEs.getValue([new SingleTargetAOE()], this);
   }
 
   get isAttacking() {
@@ -347,23 +295,11 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     });
   }
 
-  getAffectedCardsForAttack(target: AttackTarget) {
-    if (target instanceof HeroCard) {
-      return [target];
-    }
-    const affectedCards = new Set<MinionCard | HeroCard>();
-    this.attackAOEs.forEach(aoe => {
-      aoe.getAffectedCards(target.slot!).forEach(card => affectedCards.add(card));
-    });
-
-    return Array.from(affectedCards);
-  }
-
   async dealDamage(target: AttackTarget, damage: CombatDamage) {
-    const affectedCards = this.getAffectedCardsForAttack(target);
+    const affectedCards = [target];
     await this.game.emit(
-      HERO_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE,
-      new HeroBeforeDealCombatDamageEvent({
+      CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE,
+      new CardBeforeDealCombatDamageEvent({
         card: this,
         target,
         damage,
@@ -376,8 +312,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     }
 
     await this.game.emit(
-      HERO_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE,
-      new HeroAfterDealCombatDamageEvent({
+      CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
+      new CardAfterDealCombatDamageEvent({
         card: this,
         target,
         damage,
