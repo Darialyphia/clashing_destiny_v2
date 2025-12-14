@@ -16,8 +16,6 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       description: blueprint.description,
       image: `/assets/cards/${blueprint.cardIconId}.png`,
       kind: blueprint.kind,
-      spellSchool: (blueprint as any).spellSchool,
-      unlockedSpellSchools: (blueprint as any).spellSchools,
       manaCost: (blueprint as any).manaCost,
       destinyCost: (blueprint as any).destinyCost,
       rarity: (blueprint as any).rarity,
@@ -34,9 +32,6 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
         (a: AbilityBlueprint<any, any>) => `@[${a.speed}]@ ${a.description}`
       ),
       subKind: (blueprint as any).subKind,
-      jobs:
-        (blueprint as any).jobs ??
-        ((blueprint as any).job ? [(blueprint as any).job] : []),
       speed: blueprint.speed
     }"
   />

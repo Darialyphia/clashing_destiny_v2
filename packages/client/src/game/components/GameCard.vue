@@ -86,10 +86,8 @@ const onAbilityUse = async (e: { card: string }) => {
   isUsingAbility.value = true;
   await waitFor(1000);
 };
-useFxEvent(FX_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
-useFxEvent(FX_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
-useFxEvent(FX_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
-useFxEvent(FX_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
+useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
 useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
@@ -128,8 +126,6 @@ const classes = computed(() => {
         :card="{
           id: card.id,
           name: card.name,
-          unlockedSpellSchools: card.unlockedSpellSchools,
-          spellSchool: card.spellSchool,
           description: card.description,
           image: card.imagePath,
           kind: card.kind,
@@ -147,8 +143,7 @@ const classes = computed(() => {
           durability: card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
-            .map(ability => `@[${ability.speed}]@ ${ability.description}`),
-          jobs: card.jobs
+            .map(ability => `@[${ability.speed}]@ ${ability.description}`)
         }"
         class="game-card big"
         :class="classes"

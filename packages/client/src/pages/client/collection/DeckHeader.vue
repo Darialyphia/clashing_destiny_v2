@@ -23,7 +23,6 @@ const isPosterOpened = ref(false);
       }"
     >
       <DeckPoster
-        :spell-schools="deckBuilder.deck.spellSchools"
         :main-deck="deckBuilder.mainDeckCards"
         :destiny-deck="deckBuilder.destinyDeckCards"
         :name="deckBuilder.deck.name"

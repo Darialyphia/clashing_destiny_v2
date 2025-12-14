@@ -77,22 +77,7 @@ export const useBattleLog = () => {
           });
         }
 
-        if (eventName === GAME_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.card] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `dealt ${event.damage} combat damage to`
-          });
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.target] as CardViewModel
-          });
-        }
-
-        if (eventName === GAME_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE) {
+        if (eventName === GAME_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE) {
           tokens.push({
             kind: 'card',
             card: state.value.entities[event.card] as CardViewModel

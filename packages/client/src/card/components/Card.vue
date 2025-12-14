@@ -3,9 +3,7 @@ import {
   RARITIES,
   type CardKind,
   type CardSpeed,
-  type HeroJob,
-  type Rarity,
-  type SpellSchool
+  type Rarity
 } from '@game/engine/src/card/card.enums';
 import { clamp, isDefined, mapRange, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -31,9 +29,6 @@ const {
     description: string;
     image: string;
     kind: CardKind;
-    spellSchool?: SpellSchool;
-    unlockedSpellSchools?: SpellSchool[];
-    jobs?: HeroJob[];
     manaCost?: number | null;
     baseManaCost?: number | null;
     destinyCost?: number | null;
@@ -286,15 +281,6 @@ const onMouseleave = () => {
           >
             {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
           </div>
-          <div
-            v-for="school in card.unlockedSpellSchools ?? []"
-            :key="school"
-            class="spell-school"
-            :style="{
-              '--bg': `url('/assets/ui/spell-school-${school.toLowerCase()}.png')`
-            }"
-            :data-label="school.toLocaleLowerCase()"
-          />
         </div>
         <div class="top-left parallax" style="--parallax-strength: 0.35">
           <div
@@ -317,25 +303,6 @@ const onMouseleave = () => {
               {{ card.destinyCost }}
             </div>
           </div>
-
-          <div
-            v-for="job in card.jobs ?? []"
-            :key="job"
-            class="job"
-            :style="{
-              '--bg': `url('/assets/ui/jobs-${job.toLowerCase()}.png')`
-            }"
-            :data-label="job.toLocaleLowerCase()"
-          />
-
-          <div
-            v-if="card.spellSchool"
-            class="spell-school"
-            :style="{
-              '--bg': `url('/assets/ui/spell-school-${card.spellSchool.toLowerCase()}.png')`
-            }"
-            :data-label="card.spellSchool.toLocaleLowerCase()"
-          />
         </div>
 
         <div class="kind" v-if="showText">

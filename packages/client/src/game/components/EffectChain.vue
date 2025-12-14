@@ -7,7 +7,6 @@ import {
   useMyPlayer
 } from '../composables/useGameClient';
 import Arrow from './Arrow.vue';
-import { match } from 'ts-pattern';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
@@ -26,7 +25,7 @@ const buildPaths = async () => {
   }
   await nextTick();
   paths.value = state.value.effectChain?.stack.map(effect => {
-    if (effect.type === EFFECT_TYPE.COUNTERATTACK) {
+    if (effect.type === EFFECT_TYPE.DECLARE_BLOCKER) {
       return [];
     }
 
@@ -38,20 +37,11 @@ const buildPaths = async () => {
         effect.source.id
       ).element!.getBoundingClientRect();
 
-      const endRect = match(target)
-        .with({ type: 'card' }, target => {
-          return ui.value.DOMSelectors.cardOnBoard(
-            target.card
-          ).element!.getBoundingClientRect();
-        })
-        .with({ type: 'minionPosition' }, target => {
-          return ui.value.DOMSelectors.minionPosition(
-            target.playerId,
-            target.zone,
-            target.slot
-          ).element?.getBoundingClientRect();
-        })
-        .exhaustive();
+      const endRect =
+        ui.value.DOMSelectors.cardOnBoard(
+          target
+        ).element?.getBoundingClientRect();
+
       if (!startRect || !endRect) return '';
 
       const start = {
@@ -116,8 +106,8 @@ const stack = computed(() => {
             <p v-if="effect.type === EFFECT_TYPE.CARD">
               This effect will play a card.
             </p>
-            <p v-if="effect.type === EFFECT_TYPE.COUNTERATTACK">
-              This effect will trigger a counterattack.
+            <p v-if="effect.type === EFFECT_TYPE.DECLARE_BLOCKER">
+              This effect declares a blocker
             </p>
           </UiSimpleTooltip>
         </div>

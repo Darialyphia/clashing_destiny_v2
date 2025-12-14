@@ -1,55 +1,12 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import {
-  SPELL_SCHOOLS,
-  CARD_KINDS,
-  type SpellSchool,
-  type CardKind,
-  type HeroJob,
-  HERO_JOBS
-} from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useCollectionPage } from './useCollectionPage';
 
-const {
-  textFilter,
-  hasSpellSchoolFilter,
-  toggleSpellSchoolFilter,
-  clearSpellSchoolFilter,
-  hasJobFilter,
-  toggleJobFilter,
-  clearJobFilter,
-  hasKindFilter,
-  toggleKindFilter,
-  hasSpeedFilter,
-  toggleSpeedFilter,
-  viewMode
-} = useCollectionPage();
-
-const spellSchools: Array<{
-  id: SpellSchool;
-  img: string;
-  label: string;
-  color: string;
-}> = Object.values(SPELL_SCHOOLS).map(spellSchool => ({
-  id: spellSchool,
-  img: `/assets/ui/spell-school-${spellSchool.toLocaleLowerCase()}.png`,
-  label: uppercaseFirstLetter(spellSchool.toLocaleLowerCase()),
-  color: 'white'
-}));
-
-const heroJobs: Array<{
-  id: HeroJob;
-  img: string;
-  label: string;
-  color: string;
-}> = Object.values(HERO_JOBS).map(job => ({
-  id: job,
-  img: `/assets/ui/jobs-${job.toLocaleLowerCase()}.png`,
-  label: uppercaseFirstLetter(job.toLocaleLowerCase()),
-  color: 'white'
-}));
+const { textFilter, hasKindFilter, toggleKindFilter, viewMode } =
+  useCollectionPage();
 
 const cardKinds: Array<{
   id: CardKind;
@@ -105,51 +62,6 @@ const cardKinds: Array<{
         </template>
         Compact view
       </UiSimpleTooltip>
-    </section>
-
-    <section>
-      <h4>Spell Schools</h4>
-      <div class="filter">
-        <UiSimpleTooltip
-          v-for="spellSchool in spellSchools"
-          :key="spellSchool.label"
-        >
-          <template #trigger>
-            <button
-              :class="hasSpellSchoolFilter(spellSchool.id) && 'active'"
-              :style="{ '--color': spellSchool.color }"
-              :aria-label="spellSchool.label"
-              @click="toggleSpellSchoolFilter(spellSchool.id)"
-            >
-              <img :src="spellSchool.img" :alt="spellSchool.label" />
-            </button>
-          </template>
-          {{ spellSchool.label }}
-        </UiSimpleTooltip>
-      </div>
-      <button class="clear-button" @click="clearSpellSchoolFilter">
-        Clear
-      </button>
-    </section>
-
-    <section>
-      <h4>Hero Class</h4>
-      <div class="filter">
-        <UiSimpleTooltip v-for="heroJob in heroJobs" :key="heroJob.label">
-          <template #trigger>
-            <button
-              :class="hasJobFilter(heroJob.id) && 'active'"
-              :style="{ '--color': heroJob.color }"
-              :aria-label="heroJob.label"
-              @click="toggleJobFilter(heroJob.id)"
-            >
-              <img :src="heroJob.img" :alt="heroJob.label" />
-            </button>
-          </template>
-          {{ heroJob.label }}
-        </UiSimpleTooltip>
-      </div>
-      <button class="clear-button" @click="clearJobFilter">Clear</button>
     </section>
 
     <section>

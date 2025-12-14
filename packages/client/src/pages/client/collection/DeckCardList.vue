@@ -6,41 +6,13 @@ import {
   HoverCardContent
 } from 'reka-ui';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
-import {
-  SPELL_SCHOOLS,
-  type SpellSchool
-} from '@game/engine/src/card/card.enums';
 import { useCollectionPage } from './useCollectionPage';
-import { uppercaseFirstLetter } from '@game/shared';
 
 const { deckBuilder } = useCollectionPage();
-
-const spellSchools: Array<{
-  id: SpellSchool;
-  img: string;
-  label: string;
-}> = Object.values(SPELL_SCHOOLS).map(spellSchool => ({
-  id: spellSchool,
-  img: `/assets/ui/spell-school-${spellSchool.toLocaleLowerCase()}.png`,
-  label: uppercaseFirstLetter(spellSchool)
-}));
 </script>
 
 <template>
   <div class="overflow-y-auto fancy-scrollbar flex flex-col">
-    <div class="flex gap-1 mb-3">
-      <button
-        v-for="spellSchool in spellSchools"
-        :key="spellSchool.id"
-        class="spell-school"
-        :class="{
-          selected: deckBuilder.deck.spellSchools.includes(spellSchool.id)
-        }"
-        @click="deckBuilder.toggleSpellSchool(spellSchool.id)"
-      >
-        <img :src="spellSchool.img" :alt="spellSchool.label" />
-      </button>
-    </div>
     <ul>
       <HoverCardRoot
         :open-delay="100"
@@ -151,23 +123,5 @@ const spellSchools: Array<{
   white-space: nowrap;
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;
-}
-
-.spell-school {
-  --pixel-scale: 2;
-  width: calc(var(--pixel-scale) * 22px);
-  height: calc(var(--pixel-scale) * 20px);
-  aspect-ratio: 1;
-  padding: 0;
-  display: grid;
-  opacity: 0.5;
-  &.selected {
-    opacity: 1;
-  }
-  > img {
-    width: 100%;
-    height: 100%;
-    cursor: url('/assets/ui/cursor-hover.png'), auto;
-  }
 }
 </style>

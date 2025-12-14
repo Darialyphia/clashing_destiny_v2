@@ -5,9 +5,7 @@ import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
   type CardKind,
-  type SpellSchool,
-  type CardSpeed,
-  type HeroJob
+  type CardSpeed
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isString } from '@game/shared';
@@ -28,9 +26,6 @@ export type CardListContext = {
   >;
   cardPool: CardBlueprint[];
   textFilter: Ref<string, string>;
-  hasSpellSchoolFilter(spellSchool: SpellSchool): boolean;
-  toggleSpellSchoolFilter(spellSchool: SpellSchool): void;
-  clearSpellSchoolFilter(): void;
 
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
@@ -39,10 +34,6 @@ export type CardListContext = {
   hasSpeedFilter(speed: CardSpeed): boolean;
   toggleSpeedFilter(speed: CardSpeed): void;
   clearSpeedFilter(): void;
-
-  hasJobFilter(job: HeroJob): boolean;
-  toggleJobFilter(job: HeroJob): void;
-  clearJobFilter(): void;
 };
 
 const CardListInjectionKey = Symbol(
@@ -63,10 +54,8 @@ export const provideCardList = () => {
     [CARD_KINDS.SIGIL]: 5
   };
 
-  const spellSchoolFilter = ref(new Set<SpellSchool>());
   const kindFilter = ref(new Set<CardKind>());
   const speedFilter = ref(new Set<CardSpeed>());
-  const jobFilter = ref(new Set<HeroJob>());
 
   const textFilter = ref('');
 
@@ -83,38 +72,6 @@ export const provideCardList = () => {
         };
       })
       .filter(({ card }) => {
-        if (spellSchoolFilter.value.size > 0) {
-          const spellSchools =
-            card.kind === CARD_KINDS.HERO
-              ? card.spellSchools
-              : [card.spellSchool];
-          const matchspellSchool = [...spellSchoolFilter.value].some(school => {
-            return (
-              spellSchools.includes(school) ||
-              card.description
-                .toLocaleLowerCase()
-                .includes(school.toLocaleLowerCase())
-            );
-          });
-          if (!matchspellSchool) {
-            return false;
-          }
-        }
-
-        if (jobFilter.value.size > 0) {
-          const jobs = card.kind === CARD_KINDS.HERO ? card.jobs : [card.job];
-          const matchJob = [...jobFilter.value].some(
-            job =>
-              jobs.includes(job!) ||
-              card.description
-                .toLocaleLowerCase()
-                .includes(job.toLocaleLowerCase())
-          );
-          if (!matchJob) {
-            return false;
-          }
-        }
-
         if (speedFilter.value.size > 0 && !speedFilter.value.has(card.speed)) {
           return false;
         }
@@ -194,19 +151,6 @@ export const provideCardList = () => {
     cards,
     cardPool: allBlueprints,
     textFilter,
-    hasSpellSchoolFilter(affinity: SpellSchool) {
-      return spellSchoolFilter.value.has(affinity);
-    },
-    toggleSpellSchoolFilter(affinity: SpellSchool) {
-      if (spellSchoolFilter.value.has(affinity)) {
-        spellSchoolFilter.value.delete(affinity);
-      } else {
-        spellSchoolFilter.value.add(affinity);
-      }
-    },
-    clearSpellSchoolFilter: () => {
-      spellSchoolFilter.value.clear();
-    },
 
     hasKindFilter(kind: CardKind) {
       return kindFilter.value.has(kind);
@@ -234,20 +178,6 @@ export const provideCardList = () => {
     },
     clearSpeedFilter: () => {
       speedFilter.value.clear();
-    },
-
-    hasJobFilter(job: HeroJob) {
-      return jobFilter.value.has(job);
-    },
-    toggleJobFilter(job: HeroJob) {
-      if (jobFilter.value.has(job)) {
-        jobFilter.value.delete(job);
-      } else {
-        jobFilter.value.add(job);
-      }
-    },
-    clearJobFilter: () => {
-      jobFilter.value.clear();
     }
   };
 
