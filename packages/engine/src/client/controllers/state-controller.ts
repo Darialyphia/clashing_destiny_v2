@@ -155,13 +155,13 @@ export class ClientStateController {
       side => side.playerId === card.player.id
     )!;
     if (card.position?.zone === BOARD_SLOT_ZONES.FRONT_ROW) {
-      boardSide.frontRow.slots[card.position.slot] = {
-        ...boardSide.frontRow.slots[card.position.slot],
+      boardSide.attackZone.slots[card.position.slot] = {
+        ...boardSide.attackZone.slots[card.position.slot],
         minion: card.id
       };
     } else if (card.position?.zone === BOARD_SLOT_ZONES.BACK_ROW) {
-      boardSide.backRow.slots[card.position.slot] = {
-        ...boardSide.backRow.slots[card.position.slot],
+      boardSide.defenseZone.slots[card.position.slot] = {
+        ...boardSide.defenseZone.slots[card.position.slot],
         minion: card.id
       };
     }

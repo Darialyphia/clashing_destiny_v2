@@ -25,8 +25,8 @@ export class PassGlobalAction implements GlobalActionRule {
       id => state.entities[id] as CardViewModel
     );
     const minions = [
-      ...boardSide.frontRow.slots.map(slot => slot.minion),
-      ...boardSide.backRow.slots.map(slot => slot.minion)
+      ...boardSide.attackZone.slots.map(slot => slot.minion),
+      ...boardSide.defenseZone.slots.map(slot => slot.minion)
     ]
       .filter(isDefined)
       .map(id => state.entities[id] as CardViewModel);

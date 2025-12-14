@@ -50592,14 +50592,14 @@ var MeleeAttackRange = class {
     if (position.slot !== this.minion.position.slot)
       return false;
     if (position.zone === BOARD_SLOT_ZONES.BACK_ROW) {
-      return !position.player.boardSide.frontRow.get(position.slot).minion;
+      return !position.player.boardSide.attackZone.get(position.slot).minion;
     }
     return true;
   }
   canAttackHero() {
     const opponentBoard = this.minion.player.opponent.boardSide;
     const slot = this.minion.position.slot;
-    return !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion;
+    return !opponentBoard.attackZone.get(slot).minion && !opponentBoard.defenseZone.get(slot).minion;
   }
 };
 var RangedAttackRange = class {
@@ -50613,7 +50613,7 @@ var RangedAttackRange = class {
   canAttackHero() {
     const opponentBoard = this.minion.player.opponent.boardSide;
     const slot = this.minion.position.slot;
-    return !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion;
+    return !opponentBoard.attackZone.get(slot).minion && !opponentBoard.defenseZone.get(slot).minion;
   }
 };
 var AnywhereAttackRange = class {
@@ -53706,7 +53706,7 @@ var BoardSide = class extends Entity {
     super(`board-side-${player.id}`, {});
     this.game = game;
     this.player = player;
-    this._frontRow = {
+    this._attackZone = {
       player,
       slots: Array.from(
         { length: this.game.config.ATTACK_ZONE_SLOTS },
@@ -53728,7 +53728,7 @@ var BoardSide = class extends Entity {
         return this.slots[slot];
       }
     };
-    this._backRow = {
+    this._defenseZone = {
       player,
       slots: Array.from(
         { length: this.game.config.DEFENSE_ZONE_SLOTS },
@@ -53757,39 +53757,39 @@ var BoardSide = class extends Entity {
       artifacts: this.player.artifactManager.artifacts
     };
   }
-  get frontRow() {
-    return this._frontRow;
+  get attackZone() {
+    return this._attackZone;
   }
-  get backRow() {
-    return this._backRow;
+  get defenseZone() {
+    return this._defenseZone;
   }
   getZone(zone) {
-    return zone === BOARD_SLOT_ZONES.FRONT_ROW ? this.frontRow : this.backRow;
+    return zone === BOARD_SLOT_ZONES.FRONT_ROW ? this.attackZone : this.defenseZone;
   }
   getPositionFor(card) {
-    const frontRowIndex = this.frontRow.slots.findIndex(
+    const attackZoneIndex = this.attackZone.slots.findIndex(
       (slot) => slot.minion?.equals(card) ?? slot.sigil?.equals(card)
     );
-    if (frontRowIndex >= 0) {
+    if (attackZoneIndex >= 0) {
       return {
         zone: BOARD_SLOT_ZONES.FRONT_ROW,
-        slot: frontRowIndex
+        slot: attackZoneIndex
       };
     }
-    const backRowIndex = this.backRow.slots.findIndex(
+    const defenseZoneIndex = this.defenseZone.slots.findIndex(
       (slot) => slot.minion?.equals(card) ?? slot.sigil?.equals(card)
     );
-    if (backRowIndex >= 0) {
-      return { zone: BOARD_SLOT_ZONES.BACK_ROW, slot: backRowIndex };
+    if (defenseZoneIndex >= 0) {
+      return { zone: BOARD_SLOT_ZONES.BACK_ROW, slot: defenseZoneIndex };
     }
     return null;
   }
   getZoneFor(card) {
-    const isInAttack = this.frontRow.slots.some((creature) => creature?.equals(card));
+    const isInAttack = this.attackZone.slots.some((creature) => creature?.equals(card));
     if (isInAttack) {
       return "attack";
     }
-    const isInDefense = this.backRow.slots.some((creature) => creature?.equals(card));
+    const isInDefense = this.defenseZone.slots.some((creature) => creature?.equals(card));
     if (isInDefense) {
       return "defense";
     }
@@ -53800,7 +53800,7 @@ var BoardSide = class extends Entity {
   }
   getAllCardsInPlay() {
     return [
-      ...this.frontRow.slots.flatMap((slot) => {
+      ...this.attackZone.slots.flatMap((slot) => {
         return [
           ...slot.modifiers.list.map((modifier) => modifier.source),
           slot.minion,
@@ -53809,7 +53809,7 @@ var BoardSide = class extends Entity {
           ...slot.sigil?.modifiers.list.map((modifier) => modifier.source) ?? []
         ].filter(isDefined);
       }),
-      ...this.backRow.slots.flatMap((slot) => {
+      ...this.defenseZone.slots.flatMap((slot) => {
         return [
           ...slot.modifiers.list.map((modifier) => modifier.source),
           slot.minion,
@@ -53837,12 +53837,12 @@ var BoardSide = class extends Entity {
     return this.getZone(zone).slots[slot].isOccupied;
   }
   get hasUnoccupiedSlot() {
-    return this.frontRow.hasEmptySlot || this.backRow.hasEmptySlot;
+    return this.attackZone.hasEmptySlot || this.defenseZone.hasEmptySlot;
   }
   get unoccupiedSlots() {
     return [
-      ...this.frontRow.slots.filter((slot) => !slot.isOccupied),
-      ...this.backRow.slots.filter((slot) => !slot.isOccupied)
+      ...this.attackZone.slots.filter((slot) => !slot.isOccupied),
+      ...this.defenseZone.slots.filter((slot) => !slot.isOccupied)
     ];
   }
   getSlot(zone, slot) {
@@ -53852,7 +53852,7 @@ var BoardSide = class extends Entity {
     return this.getZone(zone).slots.map((slot) => slot.minion).filter(isDefined);
   }
   getAllMinions() {
-    return [...this.frontRow.slots, ...this.backRow.slots].map((slot) => slot.minion).filter(isDefined);
+    return [...this.attackZone.slots, ...this.defenseZone.slots].map((slot) => slot.minion).filter(isDefined);
   }
   async moveMinion(from, to, { allowSwap = false } = { allowSwap: false }) {
     if (from.zone === to.zone && from.slot === to.slot)
@@ -53915,23 +53915,23 @@ var BoardSide = class extends Entity {
   remove(card) {
     z2(card.kind).with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {
     }).with(CARD_KINDS.MINION, () => {
-      this.frontRow.slots.forEach((slot) => {
+      this.attackZone.slots.forEach((slot) => {
         if (slot.minion?.equals(card)) {
           slot.removeMinion();
         }
       });
-      this.backRow.slots.forEach((slot) => {
+      this.defenseZone.slots.forEach((slot) => {
         if (slot.minion?.equals(card)) {
           slot.removeMinion();
         }
       });
     }).with(CARD_KINDS.SIGIL, () => {
-      this.frontRow.slots.forEach((slot) => {
+      this.attackZone.slots.forEach((slot) => {
         if (slot.sigil?.equals(card)) {
           slot.removeSigil();
         }
       });
-      this.backRow.slots.forEach((slot) => {
+      this.defenseZone.slots.forEach((slot) => {
         if (slot.sigil?.equals(card)) {
           slot.removeSigil();
         }
@@ -53945,11 +53945,11 @@ var BoardSide = class extends Entity {
         hero: this.heroZone.hero.id,
         artifacts: this.heroZone.artifacts.map((artifact) => artifact.id)
       },
-      frontRow: {
-        slots: this.frontRow.slots.map((slot) => slot.serialize())
+      attackZone: {
+        slots: this.attackZone.slots.map((slot) => slot.serialize())
       },
-      backRow: {
-        slots: this.backRow.slots.map((slot) => slot.serialize())
+      defenseZone: {
+        slots: this.defenseZone.slots.map((slot) => slot.serialize())
       },
       banishPile: [...this.player.cardManager.banishPile].map((card) => card.id),
       discardPile: [...this.player.cardManager.discardPile].map((card) => card.id),

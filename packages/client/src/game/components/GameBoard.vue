@@ -196,7 +196,7 @@ const isSettingsOpened = ref(false);
           <div class="minion-row">
             <div>Back line</div>
             <BoardSlot
-              v-for="slot in myBoard.backRow.slots"
+              v-for="slot in myBoard.defenseZone.slots"
               :key="slot.position"
               :boardSlot="slot"
             />
@@ -204,7 +204,7 @@ const isSettingsOpened = ref(false);
           <div class="minion-row">
             <div>Front line</div>
             <BoardSlot
-              v-for="slot in myBoard.frontRow.slots"
+              v-for="slot in myBoard.attackZone.slots"
               :key="slot.position"
               :boardSlot="slot"
             />
@@ -216,7 +216,7 @@ const isSettingsOpened = ref(false);
             <div>Front line</div>
 
             <BoardSlot
-              v-for="slot in opponentBoard.frontRow.slots"
+              v-for="slot in opponentBoard.attackZone.slots"
               :key="slot.position"
               :boardSlot="slot"
             />
@@ -224,7 +224,7 @@ const isSettingsOpened = ref(false);
           <div class="minion-row">
             <div>Back line</div>
             <BoardSlot
-              v-for="slot in opponentBoard.backRow.slots"
+              v-for="slot in opponentBoard.defenseZone.slots"
               :key="slot.position"
               :boardSlot="slot"
             />

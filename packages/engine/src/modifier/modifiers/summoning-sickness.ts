@@ -20,10 +20,6 @@ export class SummoningSicknessModifier extends Modifier<MinionCard> {
           key: 'canAttack',
           interceptor: () => false
         }),
-        // new MinionInterceptorModifierMixin(game, {
-        //   key: 'canUseAbility',
-        //   interceptor: () => false
-        // }),
         new UntilEndOfTurnModifierMixin(game)
       ]
     });

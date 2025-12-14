@@ -19,6 +19,7 @@ import {
   GAME_PHASES,
   type CombatStep
 } from '../game.enums';
+import { GAME_EVENTS } from '../game.events';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -264,7 +265,8 @@ export class CombatPhase
     const attackTarget = this.target;
     if (!attackTarget) return;
 
-    if (attackTarget.isAlive && this.attacker.isAlive) {
+    const canResolve = attackTarget.isAlive && this.attacker.isAlive;
+    if (canResolve) {
       const isInRange = this.attacker.potentialAttackTargets.some(t =>
         t.equals(attackTarget!)
       );

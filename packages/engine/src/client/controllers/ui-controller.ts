@@ -117,8 +117,8 @@ export class UiController {
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    frontRow: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
-    backRow: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
+    attackZone: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
+    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
     globalActionButtons: new DOMSelector('global-action-buttons')
   };

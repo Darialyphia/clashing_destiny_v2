@@ -17,7 +17,7 @@ export class MeleeAttackRange implements AttackRange {
     if (position.slot !== this.minion.position!.slot) return false;
 
     if (position.zone === BOARD_SLOT_ZONES.BACK_ROW) {
-      return !position.player.boardSide.frontRow.get(position.slot).minion;
+      return !position.player.boardSide.attackZone.get(position.slot).minion;
     }
 
     return true;
@@ -28,7 +28,8 @@ export class MeleeAttackRange implements AttackRange {
     const slot = this.minion.position!.slot;
 
     return (
-      !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion
+      !opponentBoard.attackZone.get(slot).minion &&
+      !opponentBoard.defenseZone.get(slot).minion
     );
   }
 }
@@ -48,7 +49,8 @@ export class RangedAttackRange implements AttackRange {
     const slot = this.minion.position!.slot;
 
     return (
-      !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion
+      !opponentBoard.attackZone.get(slot).minion &&
+      !opponentBoard.defenseZone.get(slot).minion
     );
   }
 }
@@ -68,7 +70,8 @@ export class FlankAttackRange implements AttackRange {
     const slot = this.minion.position!.slot;
 
     return (
-      !opponentBoard.frontRow.get(slot).minion && !opponentBoard.backRow.get(slot).minion
+      !opponentBoard.attackZone.get(slot).minion &&
+      !opponentBoard.defenseZone.get(slot).minion
     );
   }
 }
