@@ -1,4 +1,5 @@
 import type { Values } from '@game/shared';
+import { DESTRUCTION } from 'dns';
 
 export const CARD_EVENTS = {
   CARD_BEFORE_PLAY: 'card.before_play',
@@ -133,6 +134,16 @@ export const FACTIONS = {
       opacity: 1
     }
   },
+  DESTRUCTION: {
+    id: 'destruction',
+    name: 'Destruction',
+    defaultCardTint: {
+      colors: ['#708090', '#A9A9A9'],
+      mode: { type: 'linear', angle: 45 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
   ARCANE: {
     id: 'arcane',
     name: 'Arcane',
@@ -144,3 +155,12 @@ export const FACTIONS = {
     }
   }
 } as const satisfies Record<string, Faction>;
+export type FactionId = Values<typeof FACTIONS>['id'];
+
+export const RUNES = {
+  MIGHT: 'POWER',
+  KNOWLEDGE: 'KNOWLEDGE',
+  COURAGE: 'COURAGE',
+  FOCUS: 'FOCUS'
+} as const;
+export type Rune = Values<typeof RUNES>;

@@ -253,6 +253,10 @@ export abstract class Card<
     );
   }
 
+  get hasUnlockedRunes() {
+    return this.player.hasRunes(this.blueprint.runeCost);
+  }
+
   async resolve(handler: () => Promise<void>) {
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
@@ -436,6 +440,8 @@ export abstract class Card<
     if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
       return false;
     }
+
+    if (!this.hasUnlockedRunes) return false;
 
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)

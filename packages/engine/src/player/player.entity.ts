@@ -17,10 +17,17 @@ import {
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
+import {
+  PlayerGainRuneEvent,
+  PlayerPayForDestinyCostEvent,
+  PlayerSpendRuneEvent,
+  PlayerTurnEvent
+} from './player.events';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
+import type { RuneCost } from '../card/card-blueprint';
+import type { Rune } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -70,6 +77,8 @@ export class Player
   readonly artifactManager: ArtifactManagerComponent;
 
   readonly cardTracker: CardTrackerComponent;
+
+  private readonly _unlockedRunes: RuneCost = {};
 
   _hasPassedThisRound = false;
 
@@ -222,6 +231,56 @@ export class Player
 
   passTurn() {
     this._hasPassedThisRound = true;
+  }
+
+  get unlockdRunes() {
+    return { ...this._unlockedRunes };
+  }
+
+  async gainRune(rune: RuneCost) {
+    await this.game.emit(
+      GAME_EVENTS.BEFORE_GAIN_RUNE,
+      new PlayerGainRuneEvent({ player: this, rune })
+    );
+    for (const [key, value] of Object.entries(rune)) {
+      const k = key as keyof RuneCost;
+      if (!this._unlockedRunes[k]) {
+        this._unlockedRunes[k] = 0;
+      }
+      this._unlockedRunes[k]! += value!;
+    }
+    await this.game.emit(
+      GAME_EVENTS.AFTER_GAIN_RUNE,
+      new PlayerGainRuneEvent({ player: this, rune })
+    );
+  }
+
+  async spendRune(rune: RuneCost) {
+    await this.game.emit(
+      GAME_EVENTS.BEFORE_SPEND_RUNE,
+      new PlayerSpendRuneEvent({ player: this, rune })
+    );
+    for (const [key, value] of Object.entries(rune)) {
+      const k = key as keyof RuneCost;
+      const currentAmount = this._unlockedRunes[k] ?? 0;
+      assert(currentAmount >= (value ?? 0), new GameError(`Not enough ${key} runes`));
+      this._unlockedRunes[k]! -= value!;
+    }
+    await this.game.emit(
+      GAME_EVENTS.AFTER_SPEND_RUNE,
+      new PlayerSpendRuneEvent({ player: this, rune })
+    );
+  }
+
+  hasRunes(runes: RuneCost) {
+    for (const [key, value] of Object.entries(runes)) {
+      const k = key as keyof RuneCost;
+      const currentAmount = this._unlockedRunes[k] ?? 0;
+      if (currentAmount < (value ?? 0)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private async playCard(card: AnyCard) {

@@ -9,7 +9,8 @@ import type {
   Tag,
   CARD_DECK_SOURCES,
   CardSpeed,
-  Faction
+  Faction,
+  Rune
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -39,6 +40,7 @@ export type CardBlueprintBase = {
   unique?: boolean;
   speed: CardSpeed;
   faction: Faction;
+  runeCost: RuneCost;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
 } & CardSourceBlueprint;
@@ -59,6 +61,7 @@ export type AbilityBlueprint<
   onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
 };
 
+export type RuneCost = Partial<Record<Rune, number>>;
 export type AnyAbility = AbilityBlueprint<AbilityOwner, PreResponseTarget>;
 
 export type SerializedAbility = {
@@ -68,6 +71,7 @@ export type SerializedAbility = {
   canUse: boolean;
   name: string;
   manaCost: number;
+  runeCost: RuneCost;
   description: string;
   speed: CardSpeed;
   targets: SerializedPreResponseTarget[] | null;
@@ -88,7 +92,6 @@ export type MinionBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
-
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
@@ -140,6 +143,7 @@ export type SigilBlueprint = CardBlueprintBase & {
   onPlay: (game: Game, card: SigilCard) => Promise<void>;
   maxCountdown: number;
   abilities: AbilityBlueprint<SigilCard, PreResponseTarget>[];
+  runeCost: RuneCost;
 };
 
 export type CardBlueprint =
