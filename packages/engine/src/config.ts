@@ -23,8 +23,6 @@ export type Config = {
 
   SUMMONING_SICKNESS: boolean;
 
-  INITIAL_HERO_BLUEPRINTID: string;
-
   MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: number;
 
   MAX_SPELL_SCHOOLS_PER_DECK: number;
@@ -34,6 +32,8 @@ export type Config = {
   ALLOW_MINION_MOVEMENT: boolean;
 
   REWARD_FOR_PASSING_FIRST: boolean;
+
+  MAX_RESOURCE_ACTIONS_PER_TURN: number;
 };
 
 export const defaultConfig: Config = {
@@ -58,8 +58,6 @@ export const defaultConfig: Config = {
 
   SUMMONING_SICKNESS: true,
 
-  INITIAL_HERO_BLUEPRINTID: 'novice-lv0',
-
   MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD: 0,
 
   MAX_SPELL_SCHOOLS_PER_DECK: 2,
@@ -68,5 +66,7 @@ export const defaultConfig: Config = {
 
   ALLOW_MINION_MOVEMENT: false,
 
-  REWARD_FOR_PASSING_FIRST: false
+  REWARD_FOR_PASSING_FIRST: false,
+
+  MAX_RESOURCE_ACTIONS_PER_TURN: 1
 };

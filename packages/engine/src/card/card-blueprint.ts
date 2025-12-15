@@ -51,6 +51,7 @@ export type AbilityBlueprint<
 > = {
   id: string;
   manaCost: number;
+  runeCost: RuneCost;
   shouldExhaust: boolean;
   description: string;
   label: string;

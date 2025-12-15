@@ -27,7 +27,8 @@ import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 import type { RuneCost } from '../card/card-blueprint';
-import type { Rune } from '../card/card.enums';
+import { CARD_KINDS, type Rune } from '../card/card.enums';
+import { match } from 'ts-pattern';
 
 export type PlayerOptions = {
   id: string;
@@ -48,6 +49,7 @@ export type SerializedPlayer = {
   destinyZone: string[];
   remainingCardsInMainDeck: number;
   remainingCardsInDestinyDeck: number;
+  canPerformResourceAction: boolean;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -55,12 +57,18 @@ export type SerializedPlayer = {
 
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
+  maxResourceActionPerTurn: Interceptable<number>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    cardsDrawnForTurn: new Interceptable<number>()
+    cardsDrawnForTurn: new Interceptable<number>(),
+    maxResourceActionPerTurn: new Interceptable<number>()
   };
 };
+
+export type PlayerResourceAction =
+  | { type: 'gain_rune'; rune: Rune }
+  | { type: 'draw_card' };
 
 export class Player
   extends Entity<PlayerInterceptors>
@@ -83,6 +91,8 @@ export class Player
   _hasPassedThisRound = false;
 
   hasPlayedDestinyCardThisTurn = false;
+
+  _resourceActionPerformedThisTurn = 0;
 
   private _hero!: {
     card: HeroCard;
@@ -108,8 +118,17 @@ export class Player
   }
 
   async init() {
+    const heroblueprint = this.options.destinyDeck.cards.find(cardId => {
+      const blueprint = this.game.cardSystem.getBlueprint(cardId);
+      return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 1;
+    });
+    if (!heroblueprint) {
+      throw new GameError(
+        `No level 1 hero card found in destiny deck for player '${this.options.name}'`
+      );
+    }
     this._hero = {
-      card: await this.generateCard<HeroCard>(this.game.config.INITIAL_HERO_BLUEPRINTID),
+      card: await this.generateCard<HeroCard>(heroblueprint),
       lineage: []
     };
     await this.cardManager.init();
@@ -159,7 +178,9 @@ export class Player
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
-      influence: this.influence
+      influence: this.influence,
+      canPerformResourceAction:
+        this.resourceActionPerformedThisTurn < this.maxResourceActionPerTurn
     };
   }
 
@@ -283,6 +304,29 @@ export class Player
     return true;
   }
 
+  get maxResourceActionPerTurn() {
+    return this.interceptors.maxResourceActionPerTurn.getValue(
+      this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
+      {}
+    );
+  }
+
+  get resourceActionPerformedThisTurn() {
+    return this._resourceActionPerformedThisTurn;
+  }
+
+  async performResourceAction(action: PlayerResourceAction) {
+    await match(action)
+      .with({ type: 'gain_rune' }, async ({ rune }) => {
+        await this.gainRune({ [rune]: 1 });
+      })
+      .with({ type: 'draw_card' }, async () => {
+        await this.cardManager.draw(1);
+      })
+      .exhaustive();
+    this._resourceActionPerformedThisTurn++;
+  }
+
   private async playCard(card: AnyCard) {
     const isAction = !isDefined(this.game.effectChainSystem.currentChain);
     await card.play(async () => {
@@ -352,6 +396,7 @@ export class Player
       new PlayerTurnEvent({ player: this })
     );
     this.hasPlayedDestinyCardThisTurn = false;
+    this._resourceActionPerformedThisTurn = 0;
     this._hasPassedThisRound = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       if (card.shouldWakeUpAtTurnStart) {

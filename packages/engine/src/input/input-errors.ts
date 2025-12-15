@@ -198,3 +198,9 @@ export class NoOngoingEffectChainsError extends InputError {
     super('No ongoing effect chains');
   }
 }
+
+export class IllegalResourceActionError extends InputError {
+  constructor() {
+    super('Cannot perform this resource action');
+  }
+}

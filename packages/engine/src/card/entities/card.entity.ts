@@ -3,7 +3,7 @@ import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
+import type { CardBlueprint, PreResponseTarget, RuneCost } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
@@ -87,7 +87,9 @@ export type SerializedCard = {
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
   destinyCost: number | null;
+  runeCost: RuneCost;
   keywords: string[];
+  faction: string;
 };
 
 export type CardTargetOrigin =
@@ -286,7 +288,7 @@ export abstract class Card<
       }
     };
 
-    if (this.speed === CARD_SPEED.FLASH) {
+    if (this.speed === CARD_SPEED.BURST) {
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
@@ -461,6 +463,8 @@ export abstract class Card<
       player: this.player.id,
       kind: this.kind,
       isExhausted: this.isExhausted,
+      runeCost: this.blueprint.runeCost,
+      faction: this.blueprint.faction.id,
       name: this.blueprint.name,
       description: this.blueprint.description,
       canPlay: this.canPlay(),

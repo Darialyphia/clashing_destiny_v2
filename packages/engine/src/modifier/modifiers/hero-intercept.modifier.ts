@@ -39,7 +39,7 @@ export class HeroInterceptModifier extends Modifier<MinionCard> {
           },
           manaCost: 0,
           shouldExhaust: false,
-          speed: CARD_SPEED.FLASH,
+          speed: CARD_SPEED.BURST,
           async onResolve(game, card) {
             const phaseCtx =
               game.gamePhaseSystem.getContext<BetterExtract<GamePhase, 'attack_phase'>>();

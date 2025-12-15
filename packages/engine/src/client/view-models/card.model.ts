@@ -16,7 +16,6 @@ import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-counter-attack';
-import { isDefined } from '@game/shared';
 import type { BoardSlotZone } from '../../board/board.constants';
 
 type CardData =
@@ -137,6 +136,14 @@ export class CardViewModel {
     }
 
     return null;
+  }
+
+  get runeCost() {
+    return this.data.runeCost;
+  }
+
+  get faction() {
+    return this.data.faction;
   }
 
   get canBeUsedAsManaCost() {

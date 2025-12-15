@@ -1,6 +1,11 @@
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, type CardDeckSource } from '../card.enums';
+import {
+  CARD_DECK_SOURCES,
+  CARD_KINDS,
+  FACTIONS,
+  type CardDeckSource
+} from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -125,6 +130,18 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return { result: 'success' };
   }
 
+  private getLevel1Hero(deck: ValidatableDeck<TMeta>) {
+    return (
+      deck[CARD_DECK_SOURCES.DESTINY_DECK]
+        .map(card => {
+          return this.cardPool[card.blueprintId]!;
+        })
+        .find(blueprint => {
+          return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 1;
+        }) ?? null
+    );
+  }
+
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean {
     const withBlueprint = {
       main: deck[CARD_DECK_SOURCES.MAIN_DECK].map(card => ({
@@ -143,6 +160,18 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
     const cardBlueprint = this.cardPool[card.blueprintId];
     if (!cardBlueprint) return false;
+
+    const hero = this.getLevel1Hero(deck);
+    if (!hero) {
+      return cardBlueprint.kind === CARD_KINDS.HERO && cardBlueprint.level === 1;
+    }
+
+    if (
+      hero.faction.id !== cardBlueprint.faction.id &&
+      cardBlueprint.faction.id !== FACTIONS.NEUTRAL.id
+    ) {
+      return false;
+    }
 
     if (cardBlueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK) {
       if (withBlueprint.main.length >= this.mainDeckSize) {

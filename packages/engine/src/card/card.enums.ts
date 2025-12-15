@@ -1,5 +1,4 @@
 import type { Values } from '@game/shared';
-import { DESTRUCTION } from 'dns';
 
 export const CARD_EVENTS = {
   CARD_BEFORE_PLAY: 'card.before_play',
@@ -47,7 +46,7 @@ export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
 export const CARD_SPEED = {
   SLOW: 'SLOW',
   FAST: 'FAST',
-  FLASH: 'FLASH'
+  BURST: 'BURST'
   // WARP: 'WARP'
 } as const;
 export type CardSpeed = Values<typeof CARD_SPEED>;
@@ -108,7 +107,7 @@ export const FACTIONS = {
     id: 'order',
     name: 'Order',
     defaultCardTint: {
-      colors: ['#FFD700', '#FFA500'],
+      colors: ['#FFD700', '#45A5dd'],
       mode: { type: 'linear', angle: 45 },
       blendMode: 'overlay',
       opacity: 1
@@ -118,27 +117,27 @@ export const FACTIONS = {
     id: 'chaos',
     name: 'Chaos',
     defaultCardTint: {
-      colors: ['#8B0000', '#FF4500'],
+      mode: { type: 'linear', angle: 45 },
+      colors: ['#483D8B', '#7E2042'],
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  GENESIS: {
+    id: 'genesis',
+    name: 'Genesis',
+    defaultCardTint: {
+      colors: ['#0064a9', '#a2dd92'],
       mode: { type: 'linear', angle: 45 },
       blendMode: 'overlay',
       opacity: 1
     }
   },
-  HARMONY: {
-    id: 'harmony',
-    name: 'Harmony',
+  OBLIVION: {
+    id: 'oblivion',
+    name: 'Oblivion',
     defaultCardTint: {
-      colors: ['#006400', '#32CD32'],
-      mode: { type: 'linear', angle: 45 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
-  },
-  DESTRUCTION: {
-    id: 'destruction',
-    name: 'Destruction',
-    defaultCardTint: {
-      colors: ['#708090', '#A9A9A9'],
+      colors: ['#8B0064', '#aa2442'],
       mode: { type: 'linear', angle: 45 },
       blendMode: 'overlay',
       opacity: 1
@@ -153,14 +152,25 @@ export const FACTIONS = {
       blendMode: 'overlay',
       opacity: 1
     }
+  },
+  PRIMAL: {
+    id: 'primal',
+    name: 'Primal',
+    defaultCardTint: {
+      colors: ['#8B4513', '#DEB887'],
+      mode: { type: 'linear', angle: 45 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
   }
 } as const satisfies Record<string, Faction>;
 export type FactionId = Values<typeof FACTIONS>['id'];
 
 export const RUNES = {
-  MIGHT: 'POWER',
+  MIGHT: 'MIGHT',
   KNOWLEDGE: 'KNOWLEDGE',
   COURAGE: 'COURAGE',
-  FOCUS: 'FOCUS'
+  FOCUS: 'FOCUS',
+  RESONANCE: 'RESONANCE'
 } as const;
 export type Rune = Values<typeof RUNES>;

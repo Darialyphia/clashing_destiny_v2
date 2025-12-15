@@ -144,7 +144,7 @@ export class Ability<T extends AbilityOwner>
       }
     };
 
-    if (this.speed === CARD_SPEED.FLASH) {
+    if (this.speed === CARD_SPEED.BURST) {
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
@@ -188,6 +188,7 @@ export class Ability<T extends AbilityOwner>
       description: this.blueprint.description,
       name: this.blueprint.label,
       manaCost: this.manaCost,
+      runeCost: this.blueprint.runeCost,
       speed: this.speed,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       targets:
