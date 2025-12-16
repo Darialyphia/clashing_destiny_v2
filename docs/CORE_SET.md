@@ -40,24 +40,24 @@ Has +1 attack as long as you played a spell this turn
 -> (1)(burst): The next spell you play this turn has Echo and Empower 2.
 
 Splitting Beam
-Spell | Arcane | (2) | KK | (fast)
+Spell | Arcane | (2) | K | (fast)
 Deal 1 damage to 2 units.
 
 Archsage of Moonring | (slow)
-Minion | Arcane| (4) | KKK | 1 / 3
+Minion | Arcane| (4) | MKK | 1 / 3
 Loyalty 1.
 On Enter: Deal 1 damage to a unit. Repeat for every Knowledge rune you have.
 
 Magic Channeler
-Minion | Arcane | (2) | K | 1 / 2 | (slow)
+Minion | Arcane | (2) | M | 1 / 2 | (slow)
 Spellpower 1.
 
 Astral Explorer
-Minion | Arcane | (3) | KR | 2 / 2 | (slow)
+Minion | Arcane | (3) | KM | 2 / 2 | (slow)
 Spellpower 1.
 
 Cosmic Divinator
-Minion | Arcane | (4) | KR | 2 / 4 | (slow)
+Minion | Arcane | (4) | KM | 2 / 4 | (slow)
 Loyalty 1.
 Consume K. Spellpower 2.
 
@@ -85,7 +85,7 @@ On Enter: You can consume K. If you do, this gains Rush.
 This has Preemptive Strike as long as you have Spellpower.
 
 Little Witch
-Minion | Arcane | (2) | K | 1/1 | (slow)
+Minion | Arcane | (2) | F | 1/1 | (slow)
 -> (1) (fast): Deal 1 damage to an enemy minion. Increase thecost of this ability by 1.
 
 Comet
@@ -108,7 +108,7 @@ Draw a card.
 Foresight.
 
 Mana wisp
-Minion | Arcane | (1) | R | 1 / 1 | (slow)
+Minion | Arcane | (1) | K | 1 / 1 | (slow)
 On Death: Add a Mana Spark to your hand.
 Level 3 bonus: add 2.
 
@@ -117,7 +117,7 @@ Spell | Arcane | (3) | KF | (slow)
 Deal 3 manage to a minion. If it dies, deal 1 damage to all other minions in the same zone
 
 Power Overwhelming
-Spell | Arcane | ((2)) | KKKR | (slow)
+Spell | Arcane | ((2)) | KKMM | (slow)
 You may consume KR to play this at Burst speed.
 Your hero gains Atk equals to your Spellpower until the end of the turn.
 
@@ -130,7 +130,7 @@ Minion | Arcane | (2) | K | 1/1 | (slow)
 -> (1): Consume K, Draw a card into your Destiny Zone.
 
 Cosmic Avatar
-Minion | Arcane | ((3)) | KRR | 3 / 4 | (slow)
+Minion | Arcane | ((3)) | KKFF | 3 / 4 | (slow)
 Rush.
 On Hero Hit: Add Mana Sparks to your hand equal to the amount of damage dealt.
 On Hit: you may consume R. If you do, this gaint +1ATK and Overwhelm this turn.
@@ -153,11 +153,11 @@ Artifact | Arcane | (2) | K | 2 durability | (slow)
 ->, -1, (fast): durability: Scry 2.
 
 Orb of Constellations
-Artifact | Arcane | (3) | KR | 3 durability | (slow)
+Artifact | Arcane | (3) | KF | 3 durability | (slow)
 Whenever you Consume, draw a card in your Destiny Zone and this loses 1 durability
 
 Simurgh
-Minion | Arcane | (6) | KKRRR | 4 / 4
+Minion | Arcane | (6) | KKFFM | 4 / 4
 Spellpower 1.
 On Attack: Put 2 Spliting Beams in your hand, then reduce the cost of Arcane spells in your hand by 1.
 
@@ -166,12 +166,12 @@ Sigil | Arcane | (3) | KKK | Countdown 3 | (slow)
 On Destroyed: Summon a Simurgh in the same zone this was in.
 
 Jeweller
-Minion | Arcane | (2) | K | 0 / 2 | (slow)
+Minion | Arcane | (2) | M | 0 / 2 | (slow)
 -> add a Fleeting Mana Spark to your hand.
 -> (4) Put a Plotting Consellor into your Attack Zone. Banish this minion.
 
 Plotting Consellor
-Minion | Arcane | (2) | KKR | 3 / 3 | (slow)
+Minion | Arcane | (2) | FFM | 3 / 3 | (slow)
 At the end of each turn, if this minion has 1HP, summon a Jeweller in your Defense Zone, then Banish this minion.
 -> (3): Deal 1 damage to this minion, then choose:
 
@@ -179,7 +179,7 @@ At the end of each turn, if this minion has 1HP, summon a Jeweller in your Defen
 - Draw a card.
 
 Galactic Explosion
-Spell | Arcane | (10) | KKKKR | (slow)
+Spell | Arcane | (10) | KKKKF | (slow)
 This costs 1 less for every K rune you have.
 Deal 8 Damage to a unit.
 
