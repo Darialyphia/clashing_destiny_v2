@@ -152,7 +152,7 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === 'durability'">
         <template #trigger>
-          <img src="/assets/ui/shield.png" class="inline" />
+          <img src="/assets/ui/shield.png" class="inline token-durability" />
         </template>
         <b>Durability</b>
         : when it reaches zero, the artifact is destroyed.
@@ -160,7 +160,7 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
         <template #trigger>
-          <img src="/assets/ui/speed-slow.png" class="inline" />
+          <img src="/assets/ui/speed-slow.png" class="inline token speed" />
         </template>
 
         This can only be activated at Slow speed.
@@ -168,7 +168,7 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
         <template #trigger>
-          <img src="/assets/ui/speed-fast.png" class="inline" />
+          <img src="/assets/ui/speed-fast.png" class="inline token-speed" />
         </template>
 
         This can be activated at Fast speed.
@@ -228,24 +228,30 @@ const tokens = computed<Token[]>(() => {
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: 22px;
-  height: 20px;
+  width: calc(22px * var(--pixel-scale) / 2);
+  height: calc(20px * var(--pixel-scale) / 2);
   display: inline-flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
+  color: white;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
 }
 .token-destiny {
   background: url('/assets/ui/destiny-cost.png') no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: var(--size-5);
-  height: var(--size-5);
+  width: calc(22px * var(--pixel-scale) / 2);
+  height: calc(20px * var(--pixel-scale) / 2);
   display: inline-flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
+  color: white;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
 }
 
 .token-missing-affinity {
@@ -267,6 +273,8 @@ const tokens = computed<Token[]>(() => {
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
   transform: translateY(4px);
+  width: calc(23px * var(--pixel-scale) / 2);
+  height: calc(16px * var(--pixel-scale) / 2);
 }
 .token-dynamic-value {
   color: var(--blue-4);
