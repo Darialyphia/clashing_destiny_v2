@@ -210,8 +210,8 @@ const tokens = computed<Token[]>(() => {
 <style scoped lang="postcss">
 .card-text {
   white-space: pre-wrap;
-  color: #d7ad42;
-  color: #efef9f;
+  color: black;
+
   line-height: 1.2;
 }
 
@@ -234,7 +234,6 @@ const tokens = computed<Token[]>(() => {
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
-  text-shadow: 0 2px 2px black;
 }
 .token-destiny {
   background: url('/assets/ui/destiny-cost.png') no-repeat center center;
@@ -247,7 +246,6 @@ const tokens = computed<Token[]>(() => {
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
-  text-shadow: 0 2px 2px black;
 }
 
 .token-missing-affinity {

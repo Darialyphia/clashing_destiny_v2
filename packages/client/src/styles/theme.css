@@ -128,6 +128,13 @@
   --card-small-ratio: var(--card-small-width-unitless) /
     var(--card-small-height-unitless);
 
+  --card-art-frame-width-unitless: 162;
+  --card-art-frame-height-unitless: 136;
+  --card-art-frame-width: calc(var(--card-art-frame-width-unitless) * 1px);
+  --card-art-frame-height: calc(var(--card-art-frame-height-unitless) * 1px);
+  --card-art-frame-ratio: var(--card-art-frame-width-unitless) /
+    var(--card-art-frame-height-unitless);
+
   --minion-slot-width-unitless: 128;
   --minion-slot-height-unitless: 128;
   --minion-slot-width: calc(var(--minion-slot-width-unitless) * 1px);

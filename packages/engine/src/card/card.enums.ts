@@ -90,12 +90,14 @@ export type CardTint = {
 export type Faction = {
   id: string;
   name: string;
+  shortName: string;
   defaultCardTint: CardTint;
 };
 export const FACTIONS = {
   NEUTRAL: {
     id: 'neutral',
     name: 'Neutral',
+    shortName: 'Neutr',
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },
@@ -106,6 +108,7 @@ export const FACTIONS = {
   ORDER: {
     id: 'order',
     name: 'Order',
+    shortName: 'Order',
     defaultCardTint: {
       colors: ['#FFD700', '#45A5dd'],
       mode: { type: 'linear', angle: 135 },
@@ -116,6 +119,7 @@ export const FACTIONS = {
   CHAOS: {
     id: 'chaos',
     name: 'Chaos',
+    shortName: 'Chaos',
     defaultCardTint: {
       mode: { type: 'linear', angle: 135 },
       colors: ['#483D8B', '#7E2042'],
@@ -126,6 +130,7 @@ export const FACTIONS = {
   GENESIS: {
     id: 'genesis',
     name: 'Genesis',
+    shortName: 'Genesis',
     defaultCardTint: {
       colors: ['#0064a9', '#a2dd92'],
       mode: { type: 'linear', angle: 135 },
@@ -136,6 +141,7 @@ export const FACTIONS = {
   OBLIVION: {
     id: 'oblivion',
     name: 'Oblivion',
+    shortName: 'Obliv',
     defaultCardTint: {
       colors: ['#8B0064', '#aa2442'],
       mode: { type: 'linear', angle: 135 },
@@ -146,6 +152,7 @@ export const FACTIONS = {
   ARCANE: {
     id: 'arcane',
     name: 'Arcane',
+    shortName: 'Arcane',
     defaultCardTint: {
       colors: ['#cc0081', '#0268b5'],
       mode: { type: 'linear', angle: 135 },
@@ -156,6 +163,7 @@ export const FACTIONS = {
   PRIMAL: {
     id: 'primal',
     name: 'Primal',
+    shortName: 'Primal',
     defaultCardTint: {
       colors: ['#8B4513', '#DEB887'],
       mode: { type: 'linear', angle: 135 },
