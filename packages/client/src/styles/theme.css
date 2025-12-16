@@ -115,14 +115,14 @@
     hsl(250 30% 0% / 0.6);
   --fancy-border: solid var(--border-size-2) hsl(var(--color-primary-hsl) / 0.5);
 
-  --card-width-unitless: 128;
-  --card-height-unitless: 179;
+  --card-width-unitless: 174;
+  --card-height-unitless: 245;
   --card-width: calc(var(--card-width-unitless) * 1px);
   --card-height: calc(var(--card-height-unitless) * 1px);
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
 
-  --card-small-width-unitless: 128;
-  --card-small-height-unitless: 112;
+  --card-small-width-unitless: 180;
+  --card-small-height-unitless: 157;
   --card-small-width: calc(var(--card-small-width-unitless) * 1px);
   --card-small-height: calc(var(--card-small-height-unitless) * 1px);
   --card-small-ratio: var(--card-small-width-unitless) /
@@ -134,19 +134,6 @@
   --minion-slot-height: calc(var(--minion-slot-height-unitless) * 1px);
   --minion-slot-ratio: var(--minion-slot-width-unitless) /
     var(--minion-slot-height-unitless);
-
-  --hero-width-unitless: 120;
-  --hero-height-unitless: 168;
-  --hero-width: calc(var(--hero-width-unitless) * 1px);
-  --hero-height: calc(var(--hero-height-unitless) * 1px);
-  --hero-ratio: var(--hero-width-unitless) / var(--hero-height-unitless);
-
-  --artifact-width-unitless: 48;
-  --artifact-height-unitless: 64;
-  --artifact-width: calc(var(--artifact-width-unitless) * 1px);
-  --artifact-height: calc(var(--artifact-height-unitless) * 1px);
-  --artifact-ratio: var(--artifact-width-unitless) /
-    var(--artifact-height-unitless);
 
   --pixel-scale: 2;
 }

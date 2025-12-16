@@ -204,7 +204,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get spellPower(): number {
-    return this.interceptors.spellPower.getValue(this.blueprint.spellPower, this);
+    return this.interceptors.spellPower.getValue(0, this);
   }
 
   get maxHp(): number {
@@ -447,7 +447,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       atk: this.atk,
       baseAtk: this.blueprint.atk,
       spellPower: this.spellPower,
-      baseSpellPower: this.blueprint.spellPower,
+      baseSpellPower: this.spellPower,
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
+import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import { api, GIFT_STATES } from '@game/api';
+import { erinaLv1 } from '@game/engine/src/card/sets/core/arcane/heroes/erina-lv1';
 
 definePage({
   name: 'ClientHome',
@@ -29,6 +31,7 @@ const unclaimedGiftsCount = computed(() => {
         View Gifts
       </UiButton>
     </div>
+    <BlueprintCard :blueprint="erinaLv1" />
   </div>
 </template>
 

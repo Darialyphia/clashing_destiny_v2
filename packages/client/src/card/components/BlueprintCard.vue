@@ -14,7 +14,13 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       id: blueprint.id,
       name: blueprint.name,
       description: blueprint.description,
-      image: `/assets/cards/${blueprint.cardIconId}.png`,
+      art: {
+        main: `/assets/cards/${blueprint.art.default.main}.png`,
+        foilBreakout: `/assets/cards/${blueprint.art.default.foilBreakout}-breakout.png`,
+        frame: `/assets/cards/frames/${blueprint.art.default.frame}.png`,
+        foilFrame: `/assets/cards/frames/${blueprint.art.default.foilFrame}.png`,
+        tint: blueprint.art.default.tint
+      },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
       destinyCost: (blueprint as any).destinyCost,
@@ -32,7 +38,8 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
         (a: AbilityBlueprint<any, any>) => `@[${a.speed}]@ ${a.description}`
       ),
       subKind: (blueprint as any).subKind,
-      speed: blueprint.speed
+      speed: blueprint.speed,
+      faction: blueprint.faction
     }"
   />
 </template>

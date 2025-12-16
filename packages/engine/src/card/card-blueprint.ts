@@ -10,7 +10,8 @@ import type {
   CARD_DECK_SOURCES,
   CardSpeed,
   Faction,
-  Rune
+  Rune,
+  CardTint
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -35,7 +36,16 @@ export type CardBlueprintBase = {
   description: string;
   setId: CardSetId;
   rarity: Rarity;
-  cardIconId: string;
+  art: Record<
+    string,
+    {
+      main: string;
+      foilBreakout: string;
+      frame: string;
+      foilFrame: string;
+      tint: CardTint;
+    }
+  >;
   collectable: boolean;
   unique?: boolean;
   speed: CardSpeed;
@@ -116,7 +126,6 @@ export type HeroBlueprint = CardBlueprintBase & {
   canPlay: (game: Game, card: HeroCard) => boolean;
   atk: number;
   maxHp: number;
-  spellPower: number;
   abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
 };
 

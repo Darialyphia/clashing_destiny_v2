@@ -108,7 +108,7 @@ export const FACTIONS = {
     name: 'Order',
     defaultCardTint: {
       colors: ['#FFD700', '#45A5dd'],
-      mode: { type: 'linear', angle: 45 },
+      mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1
     }
@@ -117,7 +117,7 @@ export const FACTIONS = {
     id: 'chaos',
     name: 'Chaos',
     defaultCardTint: {
-      mode: { type: 'linear', angle: 45 },
+      mode: { type: 'linear', angle: 135 },
       colors: ['#483D8B', '#7E2042'],
       blendMode: 'overlay',
       opacity: 1
@@ -128,7 +128,7 @@ export const FACTIONS = {
     name: 'Genesis',
     defaultCardTint: {
       colors: ['#0064a9', '#a2dd92'],
-      mode: { type: 'linear', angle: 45 },
+      mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1
     }
@@ -138,7 +138,7 @@ export const FACTIONS = {
     name: 'Oblivion',
     defaultCardTint: {
       colors: ['#8B0064', '#aa2442'],
-      mode: { type: 'linear', angle: 45 },
+      mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1
     }
@@ -147,8 +147,8 @@ export const FACTIONS = {
     id: 'arcane',
     name: 'Arcane',
     defaultCardTint: {
-      colors: ['#4B0082', '#8A2BE2'],
-      mode: { type: 'linear', angle: 45 },
+      colors: ['#cc0081', '#0268b5'],
+      mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1
     }
@@ -158,7 +158,7 @@ export const FACTIONS = {
     name: 'Primal',
     defaultCardTint: {
       colors: ['#8B4513', '#DEB887'],
-      mode: { type: 'linear', angle: 45 },
+      mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1
     }

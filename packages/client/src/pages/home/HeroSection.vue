@@ -21,7 +21,7 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
           </RouterLink>
         </div>
       </div>
-      <div class="hero-visual">
+      <!-- <div class="hero-visual">
         <div class="floating-cards">
           <div class="card-phantom card-4">
             <BlueprintCard
@@ -48,7 +48,7 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
             <BlueprintCard :blueprint="CARDS_DICTIONARY['aiden-lv2']" is-foil />
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>

@@ -4743,6 +4743,474 @@
         },
         {
           "alias": [
+            "attack.png"
+          ],
+          "src": [
+            "/assets/ui/card/attack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "default-small.png"
+          ],
+          "src": [
+            "/assets/ui/card/card_backs/default-small.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "default.gif"
+          ],
+          "src": [
+            "/assets/ui/card/card_backs/default.gif"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "card_front.png"
+          ],
+          "src": [
+            "/assets/ui/card/card_front.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "cost.png"
+          ],
+          "src": [
+            "/assets/ui/card/cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "countdown.png"
+          ],
+          "src": [
+            "/assets/ui/card/countdown.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "destiny-cost.png"
+          ],
+          "src": [
+            "/assets/ui/card/destiny-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "durability.png"
+          ],
+          "src": [
+            "/assets/ui/card/durability.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-arcane.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-arcane.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-chaos.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-chaos.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-genesis.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-genesis.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-neutral.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-neutral.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-oblivion.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-oblivion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-order.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-order.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "faction-primal.png"
+          ],
+          "src": [
+            "/assets/ui/card/faction-primal.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "default.png"
+          ],
+          "src": [
+            "/assets/ui/card/frames/default.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "health.png"
+          ],
+          "src": [
+            "/assets/ui/card/health.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kind-artifact.png"
+          ],
+          "src": [
+            "/assets/ui/card/kind-artifact.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kind-hero.png"
+          ],
+          "src": [
+            "/assets/ui/card/kind-hero.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kind-minion.png"
+          ],
+          "src": [
+            "/assets/ui/card/kind-minion.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kind-sigil.png"
+          ],
+          "src": [
+            "/assets/ui/card/kind-sigil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kind-spell.png"
+          ],
+          "src": [
+            "/assets/ui/card/kind-spell.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "kind-srtifact.png"
+          ],
+          "src": [
+            "/assets/ui/card/kind-srtifact.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-cost.png"
+          ],
+          "src": [
+            "/assets/ui/card/mana-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-destiny-cost.png"
+          ],
+          "src": [
+            "/assets/ui/card/mana-destiny-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rarity-epic.png"
+          ],
+          "src": [
+            "/assets/ui/card/rarity-epic.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rarity-legendary.png"
+          ],
+          "src": [
+            "/assets/ui/card/rarity-legendary.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rarity-rare.png"
+          ],
+          "src": [
+            "/assets/ui/card/rarity-rare.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rune-focus.png"
+          ],
+          "src": [
+            "/assets/ui/card/rune-focus.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rune-knowledge.png"
+          ],
+          "src": [
+            "/assets/ui/card/rune-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rune-might.png"
+          ],
+          "src": [
+            "/assets/ui/card/rune-might.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rune-resonance.png"
+          ],
+          "src": [
+            "/assets/ui/card/rune-resonance.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-burst.png"
+          ],
+          "src": [
+            "/assets/ui/card/speed-burst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-fast.png"
+          ],
+          "src": [
+            "/assets/ui/card/speed-fast.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "speed-slow.png"
+          ],
+          "src": [
+            "/assets/ui/card/speed-slow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "tint-mask.png"
+          ],
+          "src": [
+            "/assets/ui/card/tint-mask.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "card-art-frame-mask.png"
           ],
           "src": [

@@ -70,8 +70,14 @@ export class CardViewModel {
     return this.data.description;
   }
 
-  get imagePath() {
-    return `/assets/cards/${this.data.cardIconId}.png`;
+  get art() {
+    return {
+      main: `/assets/cards/${this.data.art.main}.png`,
+      foilBreakout: `/assets/cards/${this.data.art.foilBreakout}.png`,
+      frame: `/assets/ui/card/frames/${this.data.art.frame}.png`,
+      foilFrame: `/assets/ui/card/frames/${this.data.art.foilFrame}.png`,
+      tint: this.data.art.tint
+    };
   }
 
   get kind() {

@@ -72,7 +72,7 @@ export const makeCardInterceptors = (): CardInterceptors => ({
 export type SerializedCard = {
   id: string;
   entityType: 'card';
-  cardIconId: string;
+  art: CardBlueprint['art'];
   kind: CardKind;
   rarity: Rarity;
   player: string;
@@ -456,7 +456,7 @@ export abstract class Card<
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
-      cardIconId: this.blueprint.cardIconId,
+      art: this.blueprint.art,
       source: this.deckSource,
       entityType: 'card',
       rarity: this.blueprint.rarity,

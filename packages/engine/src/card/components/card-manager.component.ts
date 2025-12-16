@@ -146,7 +146,7 @@ export class CardManagerComponent {
     return this.destinyDeck.cards[index];
   }
 
-  async drawOfKind(amount: number, kind: CardKind) {
+  async drawWithFilter(amount: number, filter: (card: AnyCard) => boolean) {
     if (this.isHandFull) return [];
 
     const amountToDraw = Math.min(
@@ -154,7 +154,6 @@ export class CardManagerComponent {
       this.mainDeck.remaining,
       this.options.maxHandSize - this.hand.length
     );
-    console.log(amount, kind, amountToDraw);
 
     if (amountToDraw <= 0) return [];
     await this.game.emit(
@@ -164,7 +163,7 @@ export class CardManagerComponent {
         amount: amountToDraw
       })
     );
-    const candidates = this.mainDeck.cards.filter(c => c.kind === kind);
+    const candidates = this.mainDeck.cards.filter(filter);
     const cards = candidates.slice(0, amountToDraw);
 
     for (const card of cards) {

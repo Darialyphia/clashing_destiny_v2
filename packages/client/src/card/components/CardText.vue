@@ -174,7 +174,7 @@ const tokens = computed<Token[]>(() => {
         This can be activated at Fast speed.
       </UiSimpleTooltip>
 
-      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FLASH">
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.BURST">
         <template #trigger>
           <img src="/assets/ui/speed-flash.png" class="inline" />
         </template>

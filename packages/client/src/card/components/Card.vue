@@ -3,6 +3,8 @@ import {
   RARITIES,
   type CardKind,
   type CardSpeed,
+  type CardTint,
+  type Faction,
   type Rarity
 } from '@game/engine/src/card/card.enums';
 import { clamp, isDefined, mapRange, uppercaseFirstLetter } from '@game/shared';
@@ -16,6 +18,7 @@ import {
 } from '@vueuse/core';
 import CardFoil from './CardFoil.vue';
 import CardGlare from './CardGlare.vue';
+import { match } from 'ts-pattern';
 
 const {
   card,
@@ -27,7 +30,13 @@ const {
     id: string;
     name: string;
     description: string;
-    image: string;
+    art: {
+      main: string;
+      foilBreakout: string;
+      frame: string;
+      foilFrame: string;
+      tint: CardTint;
+    };
     kind: CardKind;
     manaCost?: number | null;
     baseManaCost?: number | null;
@@ -44,6 +53,7 @@ const {
     subKind?: string | null;
     speed: CardSpeed;
     tags?: string[];
+    faction: Faction;
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -154,7 +164,7 @@ until(descriptionBox)
 
 const nameBox = useTemplateRef('name-box');
 const NAME_MIN_TEXT_SIZE = 11;
-const NAME_MAX_TEXT_SIZE = 16;
+const NAME_MAX_TEXT_SIZE = 18;
 
 const nameFontSize = ref(NAME_MAX_TEXT_SIZE);
 until(nameBox)
@@ -221,6 +231,19 @@ const onMouseleave = () => {
     ease: Power2.easeOut
   });
 };
+
+const tintGradient = computed(() => {
+  return match(card.art.tint)
+    .with({ mode: { type: 'linear' } }, tint => {
+      return `linear-gradient(${tint.mode.angle}deg, ${tint.colors.join(
+        ', '
+      )})`;
+    })
+    .with({ mode: { type: 'radial' } }, tint => {
+      return `radial-gradient(circle at center, ${tint.colors.join(', ')})`;
+    })
+    .exhaustive();
+});
 </script>
 
 <template>
@@ -236,10 +259,45 @@ const onMouseleave = () => {
       ref="card"
     >
       <div class="card-front">
-        <!-- <div class="fx flame" /> -->
         <CardFoil v-if="isFoil" />
 
-        <div class="image">
+        <div ref="name-box" v-if="showText" class="name">
+          <div>
+            {{ card.name }}
+          </div>
+        </div>
+
+        <div class="top-left parallax" style="--parallax-strength: 0.35">
+          <div
+            v-if="isDefined(card.manaCost)"
+            class="mana-cost"
+            :class="costStatus"
+            data-label="Cost"
+          >
+            <div class="dual-text" :data-text="card.manaCost">
+              {{ card.manaCost }}
+            </div>
+          </div>
+          <div
+            v-if="isDefined(card.destinyCost)"
+            class="destiny-cost"
+            :class="costStatus"
+            data-label="Cost"
+          >
+            <div class="dual-text" :data-text="card.destinyCost">
+              {{ card.destinyCost }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="faction parallax"
+          :style="{
+            '--parallax-strength': 0.35,
+            '--bg': `url(/assets/ui/card/faction-${card.faction.id}.png)`
+          }"
+        />
+        <!-- <div class="image">
           <div class="shadow" />
           <div class="art" />
         </div>
@@ -330,7 +388,7 @@ const onMouseleave = () => {
             />
           </div>
           <span ref="multi-line-checker" />
-        </div>
+        </div> -->
         <CardGlare />
       </div>
       <div class="card-back">
@@ -381,7 +439,7 @@ const onMouseleave = () => {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: url('/assets/ui/card-front.png');
+    background: url('/assets/ui/card/card_front.png');
     background-repeat: no-repeat;
     background-size: cover;
     z-index: -1;
@@ -398,15 +456,28 @@ const onMouseleave = () => {
 
 .card-front {
   backface-visibility: hidden;
-  background: url('/assets/ui/card-front.png');
+  background: url('/assets/ui/card/card_front.png');
   background-size: cover;
   color: #fcffcb;
   font-size: calc(var(--pixel-scale) * 8px);
   padding: 1rem;
   position: relative;
   transform-style: preserve-3d;
+  position: relative;
   --glare-mask: url('/assets/ui/card-front.png');
   --foil-mask: url('/assets/ui/card-front.png');
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: v-bind(tintGradient);
+    mix-blend-mode: v-bind('card.art.tint.blendMode');
+    opacity: v-bind('card.art.tint.opacity');
+    mask-image: url('/assets/ui/card/tint-mask.png');
+    mask-size: cover;
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 .card.animated:has(.foil) .parallax {
@@ -568,7 +639,7 @@ const onMouseleave = () => {
   text-align: center;
   text-wrap: pretty;
   position: absolute;
-  top: calc(88px * var(--pixel-scale));
+  top: calc(15px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(nameFontSize));
@@ -576,8 +647,7 @@ const onMouseleave = () => {
   font-weight: var(--font-weight-7);
   height: calc(16px * var(--pixel-scale));
   overflow: hidden;
-  display: grid;
-  place-content: center;
+  color: black;
 }
 
 .affinity-zone {
@@ -611,17 +681,12 @@ const onMouseleave = () => {
 
 .top-left {
   position: absolute;
-  top: calc(3px * var(--pixel-scale));
+  top: calc(7px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
-  display: flex;
-  flex-direction: column;
-  gap: calc(1.5px * var(--pixel-scale));
   > * {
     z-index: 0;
     background-size: cover;
     background-position: center;
-    width: calc(22px * var(--pixel-scale));
-    height: calc(20px * var(--pixel-scale));
     display: grid;
     place-content: center;
     font-size: calc(var(--pixel-scale) * 11px);
@@ -643,14 +708,14 @@ const onMouseleave = () => {
   }
 }
 
-.top-right {
+.faction {
   position: absolute;
-  top: calc(5px * var(--pixel-scale));
+  top: calc(7px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: calc(1.5px * var(--pixel-scale));
+  width: calc(24px * var(--pixel-scale));
+  aspect-ratio: 1;
+  background: var(--bg);
+  background-size: cover;
 }
 
 .speed {
@@ -709,7 +774,7 @@ const onMouseleave = () => {
   --bottom-color: var(--red-6);
 }
 .mana-cost {
-  background-image: url('/assets/ui/mana-cost.png');
+  background-image: url('/assets/ui/card/mana-cost.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(3px * var(--pixel-scale));
   .dual-text::before {
@@ -718,9 +783,11 @@ const onMouseleave = () => {
 }
 
 .destiny-cost {
-  background-image: url('/assets/ui/destiny-cost.png');
+  background-image: url('/assets/ui/card/destiny-cost.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(3px * var(--pixel-scale));
+  width: calc(24px * var(--pixel-scale));
+  aspect-ratio: 1;
   .dual-text::before {
     transform: translateY(-3px); /* *shrug* */
   }

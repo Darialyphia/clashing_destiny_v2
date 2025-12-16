@@ -23,7 +23,7 @@ const { deckBuilder } = useCollectionPage();
         <HoverCardTrigger class="inspectable-card" v-bind="$attrs" as-child>
           <li
             :style="{
-              '--bg': `url(/assets/cards/${card.blueprint.cardIconId}.png)`
+              '--bg': `url(/assets/cards/${card.blueprint.art.default.main}.png)`
             }"
             :class="card.blueprint.kind.toLocaleLowerCase()"
             class="deck-item"
