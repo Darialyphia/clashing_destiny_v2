@@ -5,6 +5,414 @@
       "assets": [
         {
           "alias": [
+            "undefinedamulet-of-remembrance.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/amulet-of-remembrance.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedarbiters-maul.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/arbiters-maul.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedcleansing-hammer.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/cleansing-hammer.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedmana-jewel.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/mana-jewel.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedphilosophers-stone.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/philosophers-stone.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedrusty-blade.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/rusty-blade.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedscales-of-destiny.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/scales-of-destiny.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedunyielding-shield.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/unyielding-shield.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedwrath-of-the-skies.png"
+          ],
+          "src": [
+            "/assets/cards_old/artifacts/wrath-of-the-skies.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedalluring-dancer.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/alluring-dancer.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedangel-of-mercy.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/angel-of-mercy.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedangel-of-retribution.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/angel-of-retribution.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedarcane-conduit.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/arcane-conduit.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedarchsage-of-moonring.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/archsage-of-moonring.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedavatar-of-peace.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/avatar-of-peace.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedaxe-forger.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/axe-forger.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedbastion-guard.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/bastion-guard.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedcerulean-wave-disciple.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/cerulean-wave-disciple.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedcosmic-avatar.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/cosmic-avatar.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedcourageous-footsoldier.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/courageous-footsoldier.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedfated-seer.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/fated-seer.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedflag-bearer-of-flame.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/flag-bearer-of-flame.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedflame-exorcist.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/flame-exorcist.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedflame-juggler.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/flame-juggler.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedflamefist-fighter.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/flamefist-fighter.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedfox-priestess.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/fox-priestess.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedfriendly-slime.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/friendly-slime.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedherald-of-salvation.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/herald-of-salvation.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedholy-crusader.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/holy-crusader.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedhot-headed-recruit.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/hot-headed-recruit.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedhougen-the-punisher.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/hougen-the-punisher.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedken-wizard-prodigy.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/ken-wizard-prodigy.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedmagic-channeler.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/magic-channeler.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedmana-wisp.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/mana-wisp.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinednavala-surging-catalyst.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/navala-surging-catalyst.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedoni-bound-emberblade.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/oni-bound-emberblade.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedphoenix.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/phoenix.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedposeidon-emperor-of-the-sea.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/poseidon-emperor-of-the-sea.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedpyre-archfiend.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/pyre-archfiend.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedpyrebound-lancer.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/pyrebound-lancer.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedradiant-celestial.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/radiant-celestial.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedroyal-guard.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/royal-guard.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedruler-of-tempest-fire.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/ruler-of-tempest-fire.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedsharpshooter.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/sharpshooter.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedshield-maiden.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/shield-maiden.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedspiritualist.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/spiritualist.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedsprite-of-fading-memories.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/sprite-of-fading-memories.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedstalwart-vanguard.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/stalwart-vanguard.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedstoic-overlord.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/stoic-overlord.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedtobihana-the-temptress.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/tobihana-the-temptress.png"
+          ]
+        },
+        {
+          "alias": [
+            "undefinedunpredictable-jester.png"
+          ],
+          "src": [
+            "/assets/cards_old/minions/unpredictable-jester.png"
+          ]
+        },
+        {
+          "alias": [
             "undefinedlogo.svg"
           ],
           "src": [
@@ -97,14 +505,14 @@
       ]
     },
     {
-      "name": "cards",
+      "name": "cards_old/heroes",
       "assets": [
         {
           "alias": [
-            "amulet-of-remembrance.png"
+            "undefinedaiden-lv1.png"
           ],
           "src": [
-            "/assets/cards/artifacts/amulet-of-remembrance.png"
+            "/assets/cards_old/heroes/aiden-lv1.png"
           ],
           "data": {
             "tags": {
@@ -114,10 +522,10 @@
         },
         {
           "alias": [
-            "arbiters-maul.png"
+            "undefinedaiden-lv2.png"
           ],
           "src": [
-            "/assets/cards/artifacts/arbiters-maul.png"
+            "/assets/cards_old/heroes/aiden-lv2.png"
           ],
           "data": {
             "tags": {
@@ -127,10 +535,10 @@
         },
         {
           "alias": [
-            "cleansing-hammer.png"
+            "undefinedaiden-lv3.png"
           ],
           "src": [
-            "/assets/cards/artifacts/cleansing-hammer.png"
+            "/assets/cards_old/heroes/aiden-lv3.png"
           ],
           "data": {
             "tags": {
@@ -140,10 +548,10 @@
         },
         {
           "alias": [
-            "mana-jewel.png"
+            "undefinederina-lv1.png"
           ],
           "src": [
-            "/assets/cards/artifacts/mana-jewel.png"
+            "/assets/cards_old/heroes/erina-lv1.png"
           ],
           "data": {
             "tags": {
@@ -153,10 +561,10 @@
         },
         {
           "alias": [
-            "philosophers-stone.png"
+            "undefinederina-lv2.png"
           ],
           "src": [
-            "/assets/cards/artifacts/philosophers-stone.png"
+            "/assets/cards_old/heroes/erina-lv2.png"
           ],
           "data": {
             "tags": {
@@ -166,10 +574,10 @@
         },
         {
           "alias": [
-            "rusty-blade.png"
+            "undefinederina-lv3.png"
           ],
           "src": [
-            "/assets/cards/artifacts/rusty-blade.png"
+            "/assets/cards_old/heroes/erina-lv3.png"
           ],
           "data": {
             "tags": {
@@ -179,582 +587,10 @@
         },
         {
           "alias": [
-            "scales-of-destiny.png"
+            "undefinednovice-lv0.png"
           ],
           "src": [
-            "/assets/cards/artifacts/scales-of-destiny.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "unyielding-shield.png"
-          ],
-          "src": [
-            "/assets/cards/artifacts/unyielding-shield.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "wrath-of-the-skies.png"
-          ],
-          "src": [
-            "/assets/cards/artifacts/wrath-of-the-skies.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "alluring-dancer.png"
-          ],
-          "src": [
-            "/assets/cards/minions/alluring-dancer.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "angel-of-mercy.png"
-          ],
-          "src": [
-            "/assets/cards/minions/angel-of-mercy.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "angel-of-retribution.png"
-          ],
-          "src": [
-            "/assets/cards/minions/angel-of-retribution.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "arcane-conduit.png"
-          ],
-          "src": [
-            "/assets/cards/minions/arcane-conduit.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "archsage-of-moonring.png"
-          ],
-          "src": [
-            "/assets/cards/minions/archsage-of-moonring.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "avatar-of-peace.png"
-          ],
-          "src": [
-            "/assets/cards/minions/avatar-of-peace.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "axe-forger.png"
-          ],
-          "src": [
-            "/assets/cards/minions/axe-forger.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "bastion-guard.png"
-          ],
-          "src": [
-            "/assets/cards/minions/bastion-guard.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "cerulean-wave-disciple.png"
-          ],
-          "src": [
-            "/assets/cards/minions/cerulean-wave-disciple.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "cosmic-avatar.png"
-          ],
-          "src": [
-            "/assets/cards/minions/cosmic-avatar.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "courageous-footsoldier.png"
-          ],
-          "src": [
-            "/assets/cards/minions/courageous-footsoldier.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "fated-seer.png"
-          ],
-          "src": [
-            "/assets/cards/minions/fated-seer.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "flag-bearer-of-flame.png"
-          ],
-          "src": [
-            "/assets/cards/minions/flag-bearer-of-flame.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "flame-exorcist.png"
-          ],
-          "src": [
-            "/assets/cards/minions/flame-exorcist.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "flame-juggler.png"
-          ],
-          "src": [
-            "/assets/cards/minions/flame-juggler.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "flamefist-fighter.png"
-          ],
-          "src": [
-            "/assets/cards/minions/flamefist-fighter.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "fox-priestess.png"
-          ],
-          "src": [
-            "/assets/cards/minions/fox-priestess.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "friendly-slime.png"
-          ],
-          "src": [
-            "/assets/cards/minions/friendly-slime.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "herald-of-salvation.png"
-          ],
-          "src": [
-            "/assets/cards/minions/herald-of-salvation.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "holy-crusader.png"
-          ],
-          "src": [
-            "/assets/cards/minions/holy-crusader.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "hot-headed-recruit.png"
-          ],
-          "src": [
-            "/assets/cards/minions/hot-headed-recruit.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "hougen-the-punisher.png"
-          ],
-          "src": [
-            "/assets/cards/minions/hougen-the-punisher.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ken-wizard-prodigy.png"
-          ],
-          "src": [
-            "/assets/cards/minions/ken-wizard-prodigy.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "magic-channeler.png"
-          ],
-          "src": [
-            "/assets/cards/minions/magic-channeler.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "mana-wisp.png"
-          ],
-          "src": [
-            "/assets/cards/minions/mana-wisp.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "navala-surging-catalyst.png"
-          ],
-          "src": [
-            "/assets/cards/minions/navala-surging-catalyst.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "oni-bound-emberblade.png"
-          ],
-          "src": [
-            "/assets/cards/minions/oni-bound-emberblade.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "phoenix.png"
-          ],
-          "src": [
-            "/assets/cards/minions/phoenix.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "poseidon-emperor-of-the-sea.png"
-          ],
-          "src": [
-            "/assets/cards/minions/poseidon-emperor-of-the-sea.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "pyre-archfiend.png"
-          ],
-          "src": [
-            "/assets/cards/minions/pyre-archfiend.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "pyrebound-lancer.png"
-          ],
-          "src": [
-            "/assets/cards/minions/pyrebound-lancer.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "radiant-celestial.png"
-          ],
-          "src": [
-            "/assets/cards/minions/radiant-celestial.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "royal-guard.png"
-          ],
-          "src": [
-            "/assets/cards/minions/royal-guard.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ruler-of-tempest-fire.png"
-          ],
-          "src": [
-            "/assets/cards/minions/ruler-of-tempest-fire.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sharpshooter.png"
-          ],
-          "src": [
-            "/assets/cards/minions/sharpshooter.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "shield-maiden.png"
-          ],
-          "src": [
-            "/assets/cards/minions/shield-maiden.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "spiritualist.png"
-          ],
-          "src": [
-            "/assets/cards/minions/spiritualist.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sprite-of-fading-memories.png"
-          ],
-          "src": [
-            "/assets/cards/minions/sprite-of-fading-memories.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "stalwart-vanguard.png"
-          ],
-          "src": [
-            "/assets/cards/minions/stalwart-vanguard.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "stoic-overlord.png"
-          ],
-          "src": [
-            "/assets/cards/minions/stoic-overlord.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "tobihana-the-temptress.png"
-          ],
-          "src": [
-            "/assets/cards/minions/tobihana-the-temptress.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "unpredictable-jester.png"
-          ],
-          "src": [
-            "/assets/cards/minions/unpredictable-jester.png"
+            "/assets/cards_old/heroes/novice-lv0.png"
           ],
           "data": {
             "tags": {
@@ -765,14 +601,14 @@
       ]
     },
     {
-      "name": "cards/heroes",
+      "name": "cards_old/sigils",
       "assets": [
         {
           "alias": [
-            "aiden-lv1.png"
+            "undefinedsigil-of-holy-protection.png"
           ],
           "src": [
-            "/assets/cards/heroes/aiden-lv1.png"
+            "/assets/cards_old/sigils/sigil-of-holy-protection.png"
           ],
           "data": {
             "tags": {
@@ -782,10 +618,10 @@
         },
         {
           "alias": [
-            "aiden-lv2.png"
+            "undefinedsigil-of-hope.png"
           ],
           "src": [
-            "/assets/cards/heroes/aiden-lv2.png"
+            "/assets/cards_old/sigils/sigil-of-hope.png"
           ],
           "data": {
             "tags": {
@@ -795,10 +631,670 @@
         },
         {
           "alias": [
-            "aiden-lv3.png"
+            "undefinedsigil-of-immortal-flame.png"
           ],
           "src": [
-            "/assets/cards/heroes/aiden-lv3.png"
+            "/assets/cards_old/sigils/sigil-of-immortal-flame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedsigil-of-void.png"
+          ],
+          "src": [
+            "/assets/cards_old/sigils/sigil-of-void.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards_old/spells",
+      "assets": [
+        {
+          "alias": [
+            "undefinedarcane-ray.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/arcane-ray.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedavalanche.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/avalanche.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedblazing-slash.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/blazing-slash.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedblinding-light.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/blinding-light.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedbrain-freeze.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/brain-freeze.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedcall-to-arms.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/call-to-arms.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedchannel-the-flames.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/channel-the-flames.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedclearwater-divination.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/clearwater-divination.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedcosmic-ascension.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/cosmic-ascension.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefineddual-casting.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/dual-casting.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedengulf-in-flames.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/engulf-in-flames.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedfated-oath.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/fated-oath.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedfire-bolt.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/fire-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedfire-studies.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/fire-studies.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedfireball.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/fireball.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedflaming-frenzy.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/flaming-frenzy.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedflashfire.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/flashfire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedfrost-nova.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/frost-nova.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedgaze-into-tomorrow.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/gaze-into-tomorrow.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedgrand-cross.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/grand-cross.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedhealing-light.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/healing-light.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedhourglass-fracture.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/hourglass-fracture.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedice-bolt.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/ice-bolt.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedinner-fire.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/inner-fire.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinediron-wall.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/iron-wall.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedknights-inspiration.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/knights-inspiration.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedmagic-insight.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/magic-insight.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedmana-jewel.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/mana-jewel.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedmana-shield.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/mana-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedmana-spark.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/mana-spark.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedmerciful-redemption.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/merciful-redemption.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedorb-of-inhibition.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/orb-of-inhibition.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedpurify-the-malevolent.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/purify-the-malevolent.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedreposition.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/reposition.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedsearing-pain.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/searing-pain.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedserene-mind.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/serene-mind.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedshifting-currents.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/shifting-currents.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedslimes-to-the-rescue.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/slimes-to-the-rescue.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedslipstream-veil.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/slipstream-veil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedspell-mana-shield.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/spell-mana-shield.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedspell-twist.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/spell-twist.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedsunburst.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/sunburst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedsunlit-formation.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/sunlit-formation.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedtemporal-recollection.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/temporal-recollection.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedthirst-for-knowledge.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/thirst-for-knowledge.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "undefinedtidal-wave.png"
+          ],
+          "src": [
+            "/assets/cards_old/spells/tidal-wave.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cards",
+      "assets": [
+        {
+          "alias": [
+            "erina-breakout.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/erina-breakout.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "erina-lv1-bg.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/erina-lv1-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "erina-lv1-breakout.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/erina-lv1-breakout.png"
           ],
           "data": {
             "tags": {
@@ -812,705 +1308,6 @@
           ],
           "src": [
             "/assets/cards/heroes/erina-lv1.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "erina-lv2.png"
-          ],
-          "src": [
-            "/assets/cards/heroes/erina-lv2.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "erina-lv3.png"
-          ],
-          "src": [
-            "/assets/cards/heroes/erina-lv3.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "novice-lv0.png"
-          ],
-          "src": [
-            "/assets/cards/heroes/novice-lv0.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "cards/sigils",
-      "assets": [
-        {
-          "alias": [
-            "sigil-of-holy-protection.png"
-          ],
-          "src": [
-            "/assets/cards/sigils/sigil-of-holy-protection.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sigil-of-hope.png"
-          ],
-          "src": [
-            "/assets/cards/sigils/sigil-of-hope.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sigil-of-immortal-flame.png"
-          ],
-          "src": [
-            "/assets/cards/sigils/sigil-of-immortal-flame.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sigil-of-void.png"
-          ],
-          "src": [
-            "/assets/cards/sigils/sigil-of-void.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "cards/spells",
-      "assets": [
-        {
-          "alias": [
-            "arcane-ray.png"
-          ],
-          "src": [
-            "/assets/cards/spells/arcane-ray.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "avalanche.png"
-          ],
-          "src": [
-            "/assets/cards/spells/avalanche.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "blazing-slash.png"
-          ],
-          "src": [
-            "/assets/cards/spells/blazing-slash.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "blinding-light.png"
-          ],
-          "src": [
-            "/assets/cards/spells/blinding-light.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "brain-freeze.png"
-          ],
-          "src": [
-            "/assets/cards/spells/brain-freeze.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "call-to-arms.png"
-          ],
-          "src": [
-            "/assets/cards/spells/call-to-arms.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "channel-the-flames.png"
-          ],
-          "src": [
-            "/assets/cards/spells/channel-the-flames.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "clearwater-divination.png"
-          ],
-          "src": [
-            "/assets/cards/spells/clearwater-divination.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "cosmic-ascension.png"
-          ],
-          "src": [
-            "/assets/cards/spells/cosmic-ascension.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "dual-casting.png"
-          ],
-          "src": [
-            "/assets/cards/spells/dual-casting.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "engulf-in-flames.png"
-          ],
-          "src": [
-            "/assets/cards/spells/engulf-in-flames.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "fated-oath.png"
-          ],
-          "src": [
-            "/assets/cards/spells/fated-oath.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "fire-bolt.png"
-          ],
-          "src": [
-            "/assets/cards/spells/fire-bolt.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "fire-studies.png"
-          ],
-          "src": [
-            "/assets/cards/spells/fire-studies.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "fireball.png"
-          ],
-          "src": [
-            "/assets/cards/spells/fireball.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "flaming-frenzy.png"
-          ],
-          "src": [
-            "/assets/cards/spells/flaming-frenzy.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "flashfire.png"
-          ],
-          "src": [
-            "/assets/cards/spells/flashfire.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "frost-nova.png"
-          ],
-          "src": [
-            "/assets/cards/spells/frost-nova.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "gaze-into-tomorrow.png"
-          ],
-          "src": [
-            "/assets/cards/spells/gaze-into-tomorrow.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "grand-cross.png"
-          ],
-          "src": [
-            "/assets/cards/spells/grand-cross.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "healing-light.png"
-          ],
-          "src": [
-            "/assets/cards/spells/healing-light.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "hourglass-fracture.png"
-          ],
-          "src": [
-            "/assets/cards/spells/hourglass-fracture.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "ice-bolt.png"
-          ],
-          "src": [
-            "/assets/cards/spells/ice-bolt.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "inner-fire.png"
-          ],
-          "src": [
-            "/assets/cards/spells/inner-fire.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "iron-wall.png"
-          ],
-          "src": [
-            "/assets/cards/spells/iron-wall.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "knights-inspiration.png"
-          ],
-          "src": [
-            "/assets/cards/spells/knights-inspiration.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "magic-insight.png"
-          ],
-          "src": [
-            "/assets/cards/spells/magic-insight.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "mana-jewel.png"
-          ],
-          "src": [
-            "/assets/cards/spells/mana-jewel.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "mana-shield.png"
-          ],
-          "src": [
-            "/assets/cards/spells/mana-shield.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "mana-spark.png"
-          ],
-          "src": [
-            "/assets/cards/spells/mana-spark.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "merciful-redemption.png"
-          ],
-          "src": [
-            "/assets/cards/spells/merciful-redemption.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "orb-of-inhibition.png"
-          ],
-          "src": [
-            "/assets/cards/spells/orb-of-inhibition.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "purify-the-malevolent.png"
-          ],
-          "src": [
-            "/assets/cards/spells/purify-the-malevolent.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "reposition.png"
-          ],
-          "src": [
-            "/assets/cards/spells/reposition.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "searing-pain.png"
-          ],
-          "src": [
-            "/assets/cards/spells/searing-pain.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "serene-mind.png"
-          ],
-          "src": [
-            "/assets/cards/spells/serene-mind.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "shifting-currents.png"
-          ],
-          "src": [
-            "/assets/cards/spells/shifting-currents.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "slimes-to-the-rescue.png"
-          ],
-          "src": [
-            "/assets/cards/spells/slimes-to-the-rescue.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "slipstream-veil.png"
-          ],
-          "src": [
-            "/assets/cards/spells/slipstream-veil.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "spell-mana-shield.png"
-          ],
-          "src": [
-            "/assets/cards/spells/spell-mana-shield.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "spell-twist.png"
-          ],
-          "src": [
-            "/assets/cards/spells/spell-twist.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sunburst.png"
-          ],
-          "src": [
-            "/assets/cards/spells/sunburst.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "sunlit-formation.png"
-          ],
-          "src": [
-            "/assets/cards/spells/sunlit-formation.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "temporal-recollection.png"
-          ],
-          "src": [
-            "/assets/cards/spells/temporal-recollection.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "thirst-for-knowledge.png"
-          ],
-          "src": [
-            "/assets/cards/spells/thirst-for-knowledge.png"
-          ],
-          "data": {
-            "tags": {
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "tidal-wave.png"
-          ],
-          "src": [
-            "/assets/cards/spells/tidal-wave.png"
           ],
           "data": {
             "tags": {
@@ -4821,6 +4618,19 @@
         },
         {
           "alias": [
+            "description-frame.png"
+          ],
+          "src": [
+            "/assets/ui/card/description-frame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "destiny-cost.png"
           ],
           "src": [
@@ -5059,6 +4869,32 @@
           ],
           "src": [
             "/assets/ui/card/mana-destiny-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "name-frame.png"
+          ],
+          "src": [
+            "/assets/ui/card/name-frame.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "rarity-common.png"
+          ],
+          "src": [
+            "/assets/ui/card/rarity-common.png"
           ],
           "data": {
             "tags": {

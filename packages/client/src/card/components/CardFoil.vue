@@ -130,7 +130,7 @@
 }
 
 :global(.card-perspective-wrapper:hover .foil-oil) {
-  opacity: 0.12;
+  opacity: 0.2;
   transition-delay: 0.3s;
 }
 </style>

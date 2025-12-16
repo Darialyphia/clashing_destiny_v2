@@ -39,10 +39,14 @@ export type CardBlueprintBase = {
   art: Record<
     string,
     {
+      dimensions: {
+        width: number;
+        height: number;
+      };
+      bg: string;
       main: string;
-      foilBreakout: string;
+      breakout?: string;
       frame: string;
-      foilFrame: string;
       tint: CardTint;
     }
   >;

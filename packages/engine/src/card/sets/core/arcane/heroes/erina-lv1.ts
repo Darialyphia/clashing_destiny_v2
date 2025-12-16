@@ -18,16 +18,20 @@ export const erinaLv1: HeroBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Council Mage',
   description: '',
-  faction: FACTIONS.ARCANE,
+  faction: FACTIONS.OBLIVION,
   rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {
-      main: 'erina-lv1',
-      foilBreakout: 'erina-lv1-breakout',
-      frame: 'default-frame',
-      foilFrame: 'default-frame',
-      tint: FACTIONS.ARCANE.defaultCardTint
+      dimensions: {
+        width: 174,
+        height: 133
+      },
+      bg: 'heroes/erina-lv1-bg',
+      main: 'heroes/erina-lv1',
+      breakout: 'heroes/erina-lv1-breakout',
+      frame: 'default',
+      tint: FACTIONS.OBLIVION.defaultCardTint
     }
   },
   destinyCost: 1,
@@ -45,7 +49,7 @@ export const erinaLv1: HeroBlueprint = {
       shouldExhaust: true,
       manaCost: 1,
       runeCost: {},
-      description: ' Draw a spell, then discard 1 card',
+      description: 'Draw a spell, then discard 1 card.',
       getPreResponseTargets: () => Promise.resolve([]),
       label: 'Draw a spell and discard',
       speed: CARD_SPEED.FAST,

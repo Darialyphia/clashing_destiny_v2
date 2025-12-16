@@ -31,7 +31,9 @@ const unclaimedGiftsCount = computed(() => {
         View Gifts
       </UiButton>
     </div>
-    <BlueprintCard :blueprint="erinaLv1" />
+    <div class="card-container">
+      <BlueprintCard :blueprint="erinaLv1" />
+    </div>
   </div>
 </template>
 
@@ -44,5 +46,12 @@ const unclaimedGiftsCount = computed(() => {
   font-size: var(--size-4);
   width: fit-content;
   margin-inline: auto;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+  transform-style: preserve-3d;
 }
 </style>
