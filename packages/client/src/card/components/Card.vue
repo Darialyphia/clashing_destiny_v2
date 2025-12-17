@@ -668,6 +668,7 @@ const kindBg = computed(() => {
   background-size: cover;
   position: absolute;
   display: grid;
+  bottom: 0;
   place-content: center;
   font-weight: var(--font-weight-7);
   font-size: calc(var(--pixel-scale) * 11px);
@@ -676,28 +677,24 @@ const kindBg = computed(() => {
 
 .atk {
   background-image: url('/assets/ui/card/attack.png');
-  bottom: calc(2px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
   padding-right: calc(2px * var(--pixel-scale));
 }
 
 .hp {
   background-image: url('/assets/ui/card/health.png');
-  bottom: calc(2px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
 
 .durability {
   background-image: url('/assets/ui/card/durability.png');
-  bottom: calc(2px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
 
 .countdown {
   background-image: url('/assets/ui/card/countdown.png');
-  bottom: calc(2px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
@@ -750,7 +747,7 @@ const kindBg = computed(() => {
   background-size: cover;
 }
 .description {
-  padding: 2px;
+  padding: 0 4px;
   width: calc(144px * var(--pixel-scale));
   height: calc(48px * var(--pixel-scale));
   position: absolute;
@@ -759,7 +756,7 @@ const kindBg = computed(() => {
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1;
   &.is-multi-line {
     text-align: left;
   }

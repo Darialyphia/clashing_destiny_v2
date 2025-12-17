@@ -80,16 +80,16 @@ const tokens = computed<Token[]>(() => {
     if (part.startsWith('[spellpower]')) {
       return { type: 'spellpower' };
     }
-    if (part.startsWith('[health]')) {
+    if (part.startsWith('[hp]')) {
       return { type: 'health' };
     }
-    if (part.startsWith('[attack]')) {
+    if (part.startsWith('[atk]')) {
       return { type: 'attack' };
     }
-    if (part.startsWith('[durability]')) {
+    if (part.startsWith('[dur]')) {
       return { type: 'durability' };
     }
-    if (part.startsWith('[level]')) {
+    if (part.startsWith('[lvll]')) {
       return {
         type: 'level-bonus',
         text: part.replace('[level] ', 'Level ')
@@ -184,7 +184,6 @@ const tokens = computed<Token[]>(() => {
         <template #trigger>
           <img src="/assets/ui/card/rune-focus.png" class="inline token rune" />
         </template>
-
         Focus Rune
       </UiSimpleTooltip>
 
@@ -192,7 +191,6 @@ const tokens = computed<Token[]>(() => {
         <template #trigger>
           <img src="/assets/ui/card/rune-might.png" class="inline token rune" />
         </template>
-
         Might Rune
       </UiSimpleTooltip>
 
@@ -200,7 +198,6 @@ const tokens = computed<Token[]>(() => {
         <template #trigger>
           <img src="/assets/ui/speed-slow.png" class="inline token speed" />
         </template>
-
         This can only be activated at Slow speed.
       </UiSimpleTooltip>
 
@@ -208,16 +205,14 @@ const tokens = computed<Token[]>(() => {
         <template #trigger>
           <img src="/assets/ui/speed-fast.png" class="inline token-speed" />
         </template>
-
         This can be activated at Fast speed.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.BURST">
         <template #trigger>
-          <img src="/assets/ui/speed-flash.png" class="inline" />
+          <img src="/assets/ui/speed-burst.png" class="inline" />
         </template>
-
-        This can is activated at Flash speed and resolves instantly.
+        This can is activated at Burst speed and resolves instantly.
       </UiSimpleTooltip>
 
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
@@ -263,8 +258,8 @@ const tokens = computed<Token[]>(() => {
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: calc(22px * var(--pixel-scale) / 2);
-  height: calc(20px * var(--pixel-scale) / 2);
+  width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(18px * var(--pixel-scale) / 2);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -278,8 +273,8 @@ const tokens = computed<Token[]>(() => {
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: calc(22px * var(--pixel-scale) / 2);
-  height: calc(20px * var(--pixel-scale) / 2);
+  width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(18px * var(--pixel-scale) / 2);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -308,8 +303,8 @@ const tokens = computed<Token[]>(() => {
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
   transform: translateY(4px);
-  width: calc(23px * var(--pixel-scale) / 2);
-  height: calc(16px * var(--pixel-scale) / 2);
+  width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(12px * var(--pixel-scale) / 2);
 }
 .token-dynamic-value {
   color: var(--blue-4);
@@ -332,17 +327,16 @@ const tokens = computed<Token[]>(() => {
     width: 1.2em;
     aspect-ratio: 1;
     transform: translateY(3px);
-    margin-inline: var(--size-1);
   }
 }
 .token-SLOW,
 .token-FAST,
-.token-FLASH {
+.token-BURST {
   img {
-    width: calc(22px * var(--pixel-scale) / 2);
-    height: calc(20px * var(--pixel-scale) / 2);
+    width: calc(10px * var(--pixel-scale) / 2);
+    height: calc(10px * var(--pixel-scale) / 2);
     aspect-ratio: 1;
-    transform: translateY(6px);
+    transform: translateY(2px);
   }
 }
 
@@ -363,7 +357,6 @@ const tokens = computed<Token[]>(() => {
     width: 1.2em;
     aspect-ratio: 1;
     transform: translateY(3px);
-    margin-inline: var(--size-1);
   }
 }
 .keyword-card {

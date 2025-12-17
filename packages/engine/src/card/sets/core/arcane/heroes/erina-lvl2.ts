@@ -1,3 +1,5 @@
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
@@ -9,17 +11,17 @@ import {
   RARITIES
 } from '../../../../card.enums';
 
-export const erinaLv1: HeroBlueprint = {
-  id: 'erina-council-mage',
+export const erinaLv2: HeroBlueprint = {
+  id: 'erina-aether-scholar',
   kind: CARD_KINDS.HERO,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
-  name: 'Erina, Council Mage',
-  description: '',
+  name: 'Erina, Aether Scholar',
+  description: 'Has +1@[atk]@as long as you played a spell this turn.',
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.EPIC,
   tags: [],
   art: {
     default: {
@@ -41,17 +43,17 @@ export const erinaLv1: HeroBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 2,
   runeCost: {},
-  level: 1,
+  level: 2,
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 15,
+  maxHp: 18,
   canPlay: () => true,
   abilities: [
     {
-      id: 'erina-lv1-ability-1',
+      id: 'erina-lv2-ability-1',
       canUse: () => true,
       shouldExhaust: true,
       manaCost: 2,
@@ -73,6 +75,20 @@ export const erinaLv1: HeroBlueprint = {
       }
     }
   ],
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier('erina-lv2-attack-buff', game, card, {
+        amount: 1,
+        mixins: [
+          new TogglableModifierMixin(
+            game,
+            () =>
+              card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
+                .length > 0
+          )
+        ]
+      })
+    );
+  },
   async onPlay() {}
 };

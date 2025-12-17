@@ -7,11 +7,15 @@
 export const cards = {
 "spirit-of-arcane": "spirit-of-arcane",
 "erina-council-mage": "erina-council-mage",
+"erina-aether-scholar": "erina-aether-scholar",
+"erina-arcane-weaver": "erina-arcane-weaver",
 "mana-looter": "mana-looter"
 } as const;
 
 export const collectableCards = {
 "spirit-of-arcane": "spirit-of-arcane",
 "erina-council-mage": "erina-council-mage",
+"erina-aether-scholar": "erina-aether-scholar",
+"erina-arcane-weaver": "erina-arcane-weaver",
 "mana-looter": "mana-looter"
 } as const;
