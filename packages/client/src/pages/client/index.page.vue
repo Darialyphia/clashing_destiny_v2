@@ -34,7 +34,7 @@ const unclaimedGiftsCount = computed(() => {
     </div>
     <div class="card-container">
       <BlueprintSmallCard
-        :blueprint="CARDS_DICTIONARY['spirit-of-arcane']"
+        :blueprint="CARDS_DICTIONARY['erina-council-mage']"
         is-foil
         show-stats
       />

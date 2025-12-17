@@ -33,7 +33,10 @@
     rgb(216, 117, 255),
     rgb(255, 119, 115)
   );
-  mask: var(--foil-mask) center/cover no-repeat;
+  mask: var(--foil-mask);
+  mask-size: var(--foil-mask-size, cover);
+  mask-position: var(--foil-mask-position, center);
+  mask-repeat: no-repeat;
   opacity: 1;
   --opacity-from: 0;
   --opacity-to: 0.3;

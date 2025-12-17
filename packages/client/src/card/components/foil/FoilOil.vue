@@ -46,13 +46,16 @@
     );
   background-blend-mode: screen, hard-light;
   filter: saturate(1.6) contrast(1.2);
-  mask: var(--foil-mask) center/cover no-repeat;
+  mask: var(--foil-mask);
+  mask-size: var(--foil-mask-size, cover);
+  mask-position: var(--foil-mask-position, center);
+  mask-repeat: no-repeat;
   transition: opacity 1s;
   transition-delay: 0;
   animation: foil-oil 5s linear infinite;
 }
 
-:global(.card-perspective-wrapper:hover .foil-oil) {
+:global(:is(.card-perspective-wrapper, .small-card):hover .foil-oil) {
   opacity: 0.15;
   transition-delay: 0.3s;
 }

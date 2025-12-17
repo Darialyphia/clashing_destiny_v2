@@ -51,7 +51,9 @@
   opacity: 0.25;
   pointer-events: none;
   mask-image: var(--foil-mask);
-  mask-size: cover;
+  mask-size: var(--foil-mask-size, cover);
+  mask-position: var(--foil-mask-position, center);
+  mask-repeat: no-repeat;
   mix-blend-mode: color-dodge;
   background-image:
     linear-gradient(white, white),

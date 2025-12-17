@@ -4,6 +4,10 @@ import { type CardKind, type CardTint } from '@game/engine/src/card/card.enums';
 import CardGlare from './CardGlare.vue';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilScanlines from './foil/FoilScanlines.vue';
+import FoilSheen from './foil/FoilSheen.vue';
+import FoilOil from './foil/FoilOil.vue';
+import FoilGradient from './foil/FoilGradient.vue';
+import FoilLightGradient from './foil/FoilLightGradient.vue';
 
 const {
   card,
@@ -130,6 +134,12 @@ watchEffect(() => {
           </div>
         </div>
       </template>
+      <template v-if="isFoil">
+        <FoilSheen v-if="card.art.foil.sheen" />
+        <FoilOil v-if="card.art.foil.oil" />
+        <FoilGradient v-if="card.art.foil.gradient" />
+        <FoilLightGradient v-if="card.art.foil.lightGradient" />
+      </template>
       <CardGlare />
     </div>
     <div class="card-back">
@@ -145,6 +155,7 @@ watchEffect(() => {
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   --foil-animated-toggle: ;
+
   width: calc(var(--card-small-width) * var(--pixel-scale));
   height: calc(var(--card-small-height) * var(--pixel-scale));
   display: grid;
@@ -152,6 +163,11 @@ watchEffect(() => {
   transform-style: preserve-3d;
   --art-pixel-scale: calc(2 * var(--pixel-scale));
   --root-pixel-scale: var(--pixel-scale);
+  &:hover {
+    --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
+    --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
+    --foil-animated-toggle: initial;
+  }
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -165,8 +181,83 @@ watchEffect(() => {
   font-size: 16px;
   position: relative;
   transform-style: preserve-3d;
-  --glare-mask: v-bind(artBgImage);
-  --foil-mask: v-bind(artBgImage);
+  --bg-size: calc(
+      1px * v-bind('card.art.dimensions.width') * var(--pixel-scale)
+    )
+    calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  --frame-size: calc(var(--card-art-frame-width) * var(--pixel-scale))
+    calc(var(--card-art-frame-height) * var(--pixel-scale));
+  --stat-size: calc(39px * var(--pixel-scale)) calc(39px * var(--pixel-scale));
+  --stat-left-position: left 0px bottom calc(4px * var(--pixel-scale));
+  --stat-right-position: right 0px bottom calc(4px * var(--pixel-scale));
+
+  --glare-mask: var(--mask);
+  --glare-mask-size: var(--mask-size);
+  --glare-mask-position: var(--mask-position);
+  --foil-mask: var(--mask);
+  --foil-mask-size: var(--mask-size);
+  --foil-mask-position: var(--mask-position);
+  .small-card:is(.minion, .hero) & {
+    --mask:
+      v-bind(artBgImage), v-bind(artFrameImage),
+      url('/assets/ui/card/attack-large.png'),
+      url('/assets/ui/card/health-large.png');
+    --mask-size:
+      var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
+    --mask-position:
+      center, center, var(--stat-left-position), var(--stat-right-position);
+  }
+
+  .small-card:is(.minion, .hero) & {
+    --mask:
+      v-bind(artBgImage), v-bind(artFrameImage),
+      url('/assets/ui/card/attack-large.png'),
+      url('/assets/ui/card/durability-large.png');
+    --mask-size:
+      var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
+    --mask-position:
+      center, center, var(--stat-left-position), var(--stat-right-position);
+    &:has(.foil) {
+      --mask:
+        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
+        url('/assets/ui/card/attack-large.png'),
+        url('/assets/ui/card/durability-large.png');
+      --mask-size:
+        var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size),
+        var(--stat-size);
+      --mask-position:
+        center, center, center, var(--stat-left-position),
+        var(--stat-right-position);
+    }
+  }
+
+  .small-card.spell & {
+    --mask: v-bind(artBgImage), v-bind(artFrameImage);
+    --mask-size: var(--bg-size), var(--frame-size);
+    --mask-position: center, center;
+    &:has(.foil) {
+      --mask:
+        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage);
+      --mask-size: var(--bg-size), var(--frame-size), var(--frame-size);
+      --mask-position: center, center, center;
+    }
+  }
+
+  .small-card.sigil & {
+    --mask:
+      v-bind(artBgImage), v-bind(artFrameImage),
+      url('/assets/ui/card/countdown-large.png');
+    --mask-size: var(--bg-size), var(--frame-size), var(--stat-size);
+    --mask-position: center, center, var(--stat-right-position);
+    &:has(.foil) {
+      --mask:
+        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
+        url('/assets/ui/card/countdown-large.png');
+      --mask-size:
+        var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size);
+      --mask-position: center, center, center, var(--stat-right-position);
+    }
+  }
 }
 
 .card-back {

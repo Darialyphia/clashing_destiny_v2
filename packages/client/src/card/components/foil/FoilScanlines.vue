@@ -58,10 +58,11 @@
   filter: brightness(1.1) contrast(1.1) saturate(1.2);
   mix-blend-mode: color-dodge;
   opacity: 0;
-  transition: opacity 0.3s var(--ease-3);
+  transition: opacity 1s var(--ease-3);
   mask-image: var(--foil-mask);
-  mask-size: cover;
-
+  mask-size: var(--foil-mask-size, cover);
+  mask-position: var(--foil-mask-position, center);
+  mask-repeat: no-repeat;
   &::before {
     content: '';
     position: absolute;
@@ -119,8 +120,7 @@
   }
 }
 
-:global(.card-perspective-wrapper:hover .foil-scanlines) {
+:global(:is(.card-perspective-wrapper, .small-card):hover .foil-scanlines) {
   opacity: 1;
-  transition-delay: 0.3s;
 }
 </style>
