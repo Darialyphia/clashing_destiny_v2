@@ -1314,6 +1314,45 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "spirit-of-arcane-bg.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/spirit-of-arcane-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spirit-of-arcane-breakout.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/spirit-of-arcane-breakout.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spirit-of-arcane.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/spirit-of-arcane.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -4540,6 +4579,19 @@
         },
         {
           "alias": [
+            "attack-large.png"
+          ],
+          "src": [
+            "/assets/ui/card/attack-large.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "attack.png"
           ],
           "src": [
@@ -4635,6 +4687,19 @@
           ],
           "src": [
             "/assets/ui/card/destiny-cost.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "durability-large.png"
+          ],
+          "src": [
+            "/assets/ui/card/durability-large.png"
           ],
           "data": {
             "tags": {
@@ -4752,6 +4817,19 @@
           ],
           "src": [
             "/assets/ui/card/frames/default.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "health-large.png"
+          ],
+          "src": [
+            "/assets/ui/card/health-large.png"
           ],
           "data": {
             "tags": {

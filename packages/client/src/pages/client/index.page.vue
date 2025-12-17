@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
-import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import { api, GIFT_STATES } from '@game/api';
-import { spiritOfArcane } from '@game/engine/src/card/sets/core/arcane/heroes/spirit-of-arcane';
-import { erinaLv1 } from '@game/engine/src/card/sets/core/arcane/heroes/erina-lv1';
+import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
+import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
+import BlueprintCard from '@/card/components/BlueprintCard.vue';
+
 definePage({
   name: 'ClientHome',
   meta: {
@@ -32,8 +33,16 @@ const unclaimedGiftsCount = computed(() => {
       </UiButton>
     </div>
     <div class="card-container">
-      <BlueprintCard :blueprint="erinaLv1" />
-      <BlueprintCard :blueprint="spiritOfArcane" />
+      <BlueprintSmallCard
+        :blueprint="CARDS_DICTIONARY['spirit-of-arcane']"
+        is-foil
+        show-stats
+      />
+      <BlueprintCard
+        :blueprint="CARDS_DICTIONARY['spirit-of-arcane']"
+        is-foil
+      />
+      <!-- <BlueprintSmallCard :blueprint="spiritOfArcane" is-foil /> -->
     </div>
   </div>
 </template>

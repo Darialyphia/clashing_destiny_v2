@@ -27,6 +27,7 @@ export const erinaLv1: HeroBlueprint = {
         sheen: true,
         oil: true,
         gradient: true,
+        lightGradient: false,
         scanlines: false
       },
       dimensions: {

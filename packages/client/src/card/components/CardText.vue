@@ -303,8 +303,8 @@ const tokens = computed<Token[]>(() => {
 .token-FAST,
 .token-FLASH {
   img {
-    width: 22px;
-    height: 20px;
+    width: calc(22px * var(--pixel-scale) / 2);
+    height: calc(20px * var(--pixel-scale) / 2);
     aspect-ratio: 1;
     transform: translateY(6px);
   }

@@ -18,6 +18,7 @@ import FoilSheen from './foil/FoilSheen.vue';
 import FoilOil from './foil/FoilOil.vue';
 import FoilGradient from './foil/FoilGradient.vue';
 import FoilScanlines from './foil/FoilScanlines.vue';
+import FoilLightGradient from './foil/FoilLightGradient.vue';
 
 const {
   card,
@@ -35,6 +36,7 @@ const {
         sheen?: boolean;
         oil?: boolean;
         gradient?: boolean;
+        lightGradient?: boolean;
         scanlines?: boolean;
       };
       dimensions: {
@@ -339,6 +341,7 @@ const kindBg = computed(() => {
           <FoilSheen v-if="card.art.foil.sheen" />
           <FoilOil v-if="card.art.foil.oil" />
           <FoilGradient v-if="card.art.foil.gradient" />
+          <FoilLightGradient v-if="card.art.foil.lightGradient" />
         </template>
 
         <CardGlare />
@@ -432,8 +435,9 @@ const kindBg = computed(() => {
 
 .card.animated:has(.foil) .parallax {
   --parallax-strength: 1;
-  --parallax-x: calc(v-bind('angle.y') * var(--parallax-strength) * 1px);
-  --parallax-y: calc(v-bind('angle.x') * var(--parallax-strength) * -1px);
+  --_parallax-strength: calc(var(--parallax-strength) * var(--pixel-scale) / 2);
+  --parallax-x: calc(v-bind('angle.y') * var(--_parallax-strength) * 1px);
+  --parallax-y: calc(v-bind('angle.x') * var(--_parallax-strength) * -1px);
   --_parallax-offset-x: var(--parallax-offset-x, 0px);
   --_parallax-offset-y: var(--parallax-offset-y, 0px);
   translate: calc(var(--_parallax-offset-x) + var(--parallax-x))

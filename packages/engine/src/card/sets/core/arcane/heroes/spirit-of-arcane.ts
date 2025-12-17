@@ -26,7 +26,8 @@ export const spiritOfArcane: HeroBlueprint = {
       foil: {
         sheen: false,
         oil: true,
-        gradient: true,
+        gradient: false,
+        lightGradient: true,
         scanlines: true
       },
       dimensions: {

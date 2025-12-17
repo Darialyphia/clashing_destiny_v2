@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="foil foil-gradient" />
+  <div class="foil foil-light-gradient" />
 </template>
 
 <style scoped lang="postcss">
@@ -18,11 +18,11 @@
     opacity: var(--opacity-to);
   }
 }
-.foil-gradient {
+.foil-light-gradient {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  mix-blend-mode: hard-light;
+  mix-blend-mode: plus-lighter;
   background: linear-gradient(
     45deg,
     rgb(255, 119, 115),
@@ -36,7 +36,7 @@
   mask: var(--foil-mask) center/cover no-repeat;
   opacity: 1;
   --opacity-from: 0;
-  --opacity-to: 0.25;
+  --opacity-to: 0.3;
   animation:
     foil-gradient 5s linear infinite,
     foil-opacity 3.5s linear alternate infinite;

@@ -21,7 +21,7 @@
   mask-size: cover;
 }
 
-:global(.card-perspective-wrapper:hover .glare) {
+:global(:is(.card-perspective-wrapper, .small-card):hover .glare) {
   opacity: 1;
 }
 </style>

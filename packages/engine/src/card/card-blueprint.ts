@@ -47,6 +47,7 @@ export type CardBlueprintBase = {
         sheen?: boolean;
         oil?: boolean;
         gradient?: boolean;
+        lightGradient?: boolean;
         scanlines?: boolean;
       };
       bg: string;
