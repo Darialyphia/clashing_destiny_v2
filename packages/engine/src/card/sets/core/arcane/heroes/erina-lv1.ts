@@ -23,6 +23,12 @@ export const erinaLv1: HeroBlueprint = {
   tags: [],
   art: {
     default: {
+      foil: {
+        sheen: true,
+        oil: true,
+        gradient: true,
+        scanlines: false
+      },
       dimensions: {
         width: 174,
         height: 133

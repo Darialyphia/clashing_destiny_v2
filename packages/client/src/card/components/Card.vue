@@ -8,30 +8,35 @@ import {
   type Rarity,
   type Rune
 } from '@game/engine/src/card/card.enums';
-import { clamp, isDefined, mapRange, uppercaseFirstLetter } from '@game/shared';
+import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import {
-  unrefElement,
-  until,
-  useElementBounding,
-  useMouse,
-  useResizeObserver
-} from '@vueuse/core';
-import CardFoil from './CardFoil.vue';
+import { until, useResizeObserver } from '@vueuse/core';
 import CardGlare from './CardGlare.vue';
 import { match } from 'ts-pattern';
+import { useCardTilt } from '../composables/useCardtilt';
+import FoilSheen from './foil/FoilSheen.vue';
+import FoilOil from './foil/FoilOil.vue';
+import FoilGradient from './foil/FoilGradient.vue';
+import FoilScanlines from './foil/FoilScanlines.vue';
 
 const {
   card,
   isFoil,
   isAnimated = true,
-  showText = true
+  showText = true,
+  maxTiltAngle = 30
 } = defineProps<{
   card: {
     id: string;
     name: string;
     description: string;
     art: {
+      foil: {
+        sheen?: boolean;
+        oil?: boolean;
+        gradient?: boolean;
+        scanlines?: boolean;
+      };
       dimensions: {
         width: number;
         height: number;
@@ -64,6 +69,7 @@ const {
   isFoil?: boolean;
   isAnimated?: boolean;
   showText?: boolean;
+  maxTiltAngle?: number;
 }>();
 
 const rarityBg = computed(() => {
@@ -79,7 +85,7 @@ const rarityBg = computed(() => {
 });
 
 const speedBg = computed(() => {
-  return `url('/assets/ui/card-speed-badge-${card.speed.toLowerCase()}.png')`;
+  return `url('/assets/ui/card/speed-${card.speed.toLowerCase()}.png')`;
 });
 
 const artFrameImage = computed(() => {
@@ -99,43 +105,6 @@ const artBreakoutImage = computed(() => {
 });
 
 const root = useTemplateRef('card');
-const { x, y } = useMouse({
-  scroll: false
-});
-
-const rect = useElementBounding(root);
-
-const pointerStyle = computed(() => {
-  const left = rect.left.value ?? 0;
-  const top = rect.top.value ?? 0;
-  const width = rect.width.value ?? 0;
-  const height = rect.height.value ?? 0;
-
-  const pointer = {
-    x: clamp(x.value - left, 0, width),
-    y: clamp(y.value - top, 0, height)
-  };
-  const percent = {
-    x: (pointer.x / width) * 100,
-    y: (pointer.y / height) * 100
-  };
-  return {
-    glareX: pointer.x,
-    glareY: pointer.y,
-    foilX: mapRange(percent.x, [0, 100], [0, 37.9]),
-    foilY: percent.y,
-    foilOilX: width - pointer.x,
-    foilOilY: height - pointer.y,
-    pointerFromCenter: clamp(
-      Math.sqrt(
-        (percent.y - 50) * (percent.y - 50) +
-          (percent.x - 50) * (percent.x - 50)
-      ) / 50,
-      0,
-      1
-    )
-  };
-});
 
 const setVariableFontSize = (
   box: HTMLElement,
@@ -222,33 +191,9 @@ const costStatus = computed(() => {
   return '';
 });
 
-const angle = ref({
-  x: 0,
-  y: 0
+const { pointerStyle, angle, onMousemove, onMouseleave } = useCardTilt(root, {
+  maxAngle: maxTiltAngle
 });
-
-const MAX_ANGLE = 30;
-const onMousemove = (e: MouseEvent) => {
-  if (!root.value) return;
-
-  const { clientX, clientY } = e;
-  const { left, top, width, height } = unrefElement(
-    root.value
-  )!.getBoundingClientRect();
-  angle.value = {
-    y: ((clientX - left) / width - 0.5) * MAX_ANGLE,
-    x: ((clientY - top) / height - 0.5) * MAX_ANGLE
-  };
-};
-
-const onMouseleave = () => {
-  gsap.to(angle.value, {
-    x: 0,
-    y: 0,
-    duration: 0.5,
-    ease: Power2.easeOut
-  });
-};
 
 const tintGradient = computed(() => {
   return match(card.art.tint)
@@ -275,17 +220,18 @@ const kindBg = computed(() => {
     @mouseleave="onMouseleave"
   >
     <div
+      ref="card"
       class="card"
       :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
       :data-flip-id="`card_${card.id}`"
-      ref="card"
     >
       <div class="card-front">
         <div class="image">
           <div class="art-bg" />
-          <div class="art-main parallax" />
-          <div class="art-frame" />
-          <div class="art-breakout parallax" />
+          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+          <div class="art-main parallax" style="--parallax-strength: 2" />
+          <div class="art-frame parallax" style="--parallax-strength: 0.5" />
+          <div class="art-breakout parallax" style="--parallax-strength: 2" />
         </div>
 
         <div ref="name-box" v-if="showText" class="name">
@@ -294,7 +240,7 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <div class="top-left parallax" style="--parallax-strength: 0.5">
+        <div class="top-left parallax">
           <div
             v-if="isDefined(card.manaCost)"
             class="mana-cost"
@@ -319,20 +265,18 @@ const kindBg = computed(() => {
         <div
           class="faction parallax"
           :style="{
-            '--parallax-strength': 0.5,
             '--bg': `url(/assets/ui/card/faction-${card.faction.id}.png)`
           }"
         />
 
-        <div class="rarity parallax" style="--parallax-strength: 0.35" />
+        <div class="rarity parallax" />
 
         <div class="description-frame">
           <div class="kind" />
-          <div
-            v-if="showText"
-            class="attributes"
-            style="--parallax-strength: 0.35"
-          >
+          <div class="speed">
+            {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
+          </div>
+          <div v-if="showText" class="attributes">
             {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
             <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
             <span v-if="isDefined(card.subKind)">
@@ -347,7 +291,6 @@ const kindBg = computed(() => {
             class="description"
             ref="description-box"
             :class="{ 'is-multi-line': isMultiLine }"
-            style="--parallax-strength: 0.35"
           >
             <div>
               <CardText :text="card.description" />
@@ -361,22 +304,22 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <div v-if="isDefined(card.atk)" class="stat atk">
+        <div v-if="isDefined(card.atk)" class="stat atk parallax">
           <div v-if="showText" class="dual-text" :data-text="card.atk">
             {{ card.atk }}
           </div>
         </div>
-        <div v-if="isDefined(card.hp)" class="stat hp">
+        <div v-if="isDefined(card.hp)" class="stat hp parallax">
           <div v-if="showText" class="dual-text" :data-text="card.hp">
             {{ card.hp }}
           </div>
         </div>
-        <div v-if="isDefined(card.durability)" class="stat durability">
+        <div v-if="isDefined(card.durability)" class="stat durability parallax">
           <div v-if="showText" class="dual-text" :data-text="card.durability">
             {{ card.durability }}
           </div>
         </div>
-        <div v-if="isDefined(card.countdown)" class="stat countdown">
+        <div v-if="isDefined(card.countdown)" class="stat countdown parallax">
           <div v-if="showText" class="dual-text" :data-text="card.countdown">
             {{ card.countdown }}
           </div>
@@ -392,12 +335,15 @@ const kindBg = computed(() => {
             }"
           />
         </div>
-        <CardFoil v-if="isFoil" />
+        <template v-if="isFoil">
+          <FoilSheen v-if="card.art.foil.sheen" />
+          <FoilOil v-if="card.art.foil.oil" />
+          <FoilGradient v-if="card.art.foil.gradient" />
+        </template>
 
         <CardGlare />
       </div>
       <div class="card-back">
-        <CardFoil v-if="isFoil" />
         <CardGlare />
       </div>
     </div>
@@ -405,6 +351,17 @@ const kindBg = computed(() => {
 </template>
 
 <style scoped lang="postcss">
+@property --foil-x {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+@property --foil-y {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
 .card-perspective-wrapper {
   position: relative;
   transform-style: preserve-3d;
@@ -428,11 +385,16 @@ const kindBg = computed(() => {
 
   --foil-animated-toggle: ;
   .card-perspective-wrapper:hover:has(.foil) &.animated {
-    transform: rotateY(calc(1deg * v-bind('angle.y')))
-      rotateX(calc(1deg * v-bind('angle.x')));
     --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
     --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
     --foil-animated-toggle: initial;
+
+    transform: rotateY(calc(1deg * v-bind('angle.y')))
+      rotateX(calc(1deg * v-bind('angle.x')));
+  }
+
+  .card-perspective-wrapper:not(:hover):has(.foil) &.animated {
+    transition: transform 0.5s;
   }
 
   > * {
@@ -558,6 +520,7 @@ const kindBg = computed(() => {
   translate: -50% 0;
   background: v-bind(artBreakoutImage);
   background-size: cover;
+  --parallax-offset-x: -50%;
 }
 .art-bg {
   position: absolute;
@@ -568,21 +531,30 @@ const kindBg = computed(() => {
   translate: -50% 0;
   background: v-bind(artBgImage);
   background-size: cover;
+  --parallax-offset-x: -50%;
 }
 
 .image {
+  pointer-events: none;
   width: calc(var(--card-art-frame-width) * var(--pixel-scale));
   height: calc(var(--card-art-frame-height) * var(--pixel-scale));
   position: absolute;
   top: calc(27px * var(--pixel-scale));
   left: 50%;
-
-  --parallax-offset-x: -50%;
-  /* .card.animated:has(.foil) & {
-    --parallax-x: calc(v-bind('angle.y') * 0.5px);
-    --parallax-y: calc(v-bind('angle.x') * -0.5px);
-  } */
   translate: -50% 0;
+
+  .foil {
+    --foil-mask: v-bind(artBgImage);
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+    height: calc(
+      1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
+    );
+    translate: -50% 0;
+    --parallax-offset-x: -50%;
+  }
 }
 
 .name {
@@ -640,22 +612,6 @@ const kindBg = computed(() => {
   aspect-ratio: 1;
   background: var(--bg);
   background-size: cover;
-}
-
-.speed {
-  background-image: var(--bg);
-  background-size: cover;
-  width: calc(40px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 7px);
-  text-align: right;
-  padding-right: calc(8px * var(--pixel-scale));
-
-  --dual-text-offset-x: calc(-17px * var(--pixel-scale));
-  --dual-text-offset-y: calc(3.5px * var(--pixel-scale));
-  + * {
-    margin-top: calc(2px * var(--pixel-scale));
-  }
 }
 
 .buffed {
@@ -735,7 +691,6 @@ const kindBg = computed(() => {
 
 .kind {
   position: absolute;
-  inset: 0;
   width: calc(16px * var(--pixel-scale));
   aspect-ratio: 1;
   background: v-bind(kindBg);
@@ -744,11 +699,29 @@ const kindBg = computed(() => {
   left: calc(3px * var(--pixel-scale));
 }
 
+.speed {
+  background: v-bind(speedBg);
+  background-size: cover;
+  position: absolute;
+  top: calc(0.5px * var(--pixel-scale));
+  right: calc(3px * var(--pixel-scale));
+  width: calc(40px * var(--pixel-scale));
+  height: calc(16px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 7px);
+  text-align: right;
+  padding-top: calc(2.5px * var(--pixel-scale));
+  padding-right: calc(17px * var(--pixel-scale));
+  font-family: 'Lato', sans-serif;
+  + * {
+    margin-top: calc(2px * var(--pixel-scale));
+  }
+}
+
 .attributes {
   width: calc(92px * var(--pixel-scale));
   position: absolute;
-  top: calc(5px * var(--pixel-scale));
-  left: calc(25px * var(--pixel-scale));
+  top: calc(3px * var(--pixel-scale));
+  left: calc(22px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 7px);
   color: black;
 }
@@ -764,6 +737,7 @@ const kindBg = computed(() => {
   background-size: cover;
 }
 .description {
+  padding: 2px;
   width: calc(144px * var(--pixel-scale));
   height: calc(48px * var(--pixel-scale));
   position: absolute;

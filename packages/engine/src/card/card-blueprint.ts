@@ -43,6 +43,12 @@ export type CardBlueprintBase = {
         width: number;
         height: number;
       };
+      foil: {
+        sheen?: boolean;
+        oil?: boolean;
+        gradient?: boolean;
+        scanlines?: boolean;
+      };
       bg: string;
       main: string;
       breakout?: string;

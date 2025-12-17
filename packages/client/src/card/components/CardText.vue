@@ -217,8 +217,7 @@ const tokens = computed<Token[]>(() => {
 
 :is(.token-keyword, .token-card) {
   font-weight: var(--font-weight-7);
-  color: #efef9f;
-  color: #d7ad42;
+  color: #ccf;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
 }

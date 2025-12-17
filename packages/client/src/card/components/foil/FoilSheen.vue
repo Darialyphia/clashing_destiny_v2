@@ -1,21 +1,18 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="foil" />
-  <div class="foil-oil" />
+  <div class="foil foil-sheen" />
 </template>
 
 <style scoped lang="postcss">
-@property --foil-x {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 0%;
+.foil {
+  --red: #f80e35;
+  --yellow: #eedf10;
+  --green: #21e985;
+  --blue: #0dbde9;
+  --violet: #c929f1;
 }
-@property --foil-y {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 0%;
-}
+
 @property --foil-brightness {
   syntax: '<number>';
   inherits: false;
@@ -45,19 +42,18 @@
   }
 }
 
-.foil {
+.foil-sheen {
   --space: 5%;
   --angle: 133deg;
   --foil-brightness: 0.6;
   position: absolute;
   inset: 0;
-  opacity: 0.3;
+  opacity: 0.25;
   pointer-events: none;
   mask-image: var(--foil-mask);
   mask-size: cover;
   mix-blend-mode: color-dodge;
   background-image:
-    /* url('/assets/ui/foil-texture.webp'), */
     linear-gradient(white, white),
     repeating-linear-gradient(
       0deg,
@@ -78,6 +74,7 @@
       #0e152e 10%,
       #0e152e 12%
     );
+  /* url('/assets/ui/foil-texture.webp'); */
   background-size:
     40%,
     200% 700%,
@@ -93,44 +90,5 @@
   animation:
     foil-move 10s infinite linear,
     foil-brightness 5s infinite ease-in-out;
-}
-
-.foil-oil {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: color-dodge;
-  opacity: 0;
-  background:
-    radial-gradient(
-      120% 80% at var(--foil-oil-x) var(--foil-oil-y),
-      #fff8 0%,
-      #fff2 40%,
-      #0000 60%
-    ),
-    conic-gradient(
-      from 0deg at var(--foil-oil-x) var(--foil-oil-y),
-      #ff7 0deg,
-      #a8ff5f 60deg,
-      #83fff7 120deg,
-      #7894ff 180deg,
-      #d875ff 240deg,
-      #ff7773 300deg,
-      #ff7 360deg
-    );
-  background-blend-mode: screen, hard-light;
-  filter: saturate(1.6) contrast(1.2);
-  mask: var(--foil-mask) center/cover no-repeat;
-  transition: opacity 1s;
-  transition-delay: 0;
-  /* :has(> &):hover & {
-    opacity: 0.12;
-    transition-delay: 0.5s;
-  } */
-}
-
-:global(.card-perspective-wrapper:hover .foil-oil) {
-  opacity: 0.2;
-  transition-delay: 0.3s;
 }
 </style>

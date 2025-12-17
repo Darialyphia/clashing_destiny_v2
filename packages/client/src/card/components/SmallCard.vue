@@ -2,7 +2,6 @@
 import { type CardKind } from '@game/engine/src/card/card.enums';
 import { clamp, isDefined } from '@game/shared';
 import { useElementBounding, useMouse } from '@vueuse/core';
-import CardFoil from './CardFoil.vue';
 import CardGlare from './CardGlare.vue';
 
 const {
@@ -76,7 +75,7 @@ const pointerStyle = computed(() => {
     ref="card"
   >
     <div class="card-front">
-      <CardFoil v-if="isFoil" />
+      <!-- <CardFoil v-if="isFoil" /> -->
       <div class="image">
         <div class="art" />
       </div>
@@ -129,7 +128,6 @@ const pointerStyle = computed(() => {
       <CardGlare />
     </div>
     <div class="card-back">
-      <CardFoil v-if="isFoil" />
       <CardGlare />
     </div>
   </div>

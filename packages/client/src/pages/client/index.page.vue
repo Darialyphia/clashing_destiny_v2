@@ -4,8 +4,8 @@ import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import { api, GIFT_STATES } from '@game/api';
+import { spiritOfArcane } from '@game/engine/src/card/sets/core/arcane/heroes/spirit-of-arcane';
 import { erinaLv1 } from '@game/engine/src/card/sets/core/arcane/heroes/erina-lv1';
-
 definePage({
   name: 'ClientHome',
   meta: {
@@ -33,6 +33,7 @@ const unclaimedGiftsCount = computed(() => {
     </div>
     <div class="card-container">
       <BlueprintCard :blueprint="erinaLv1" />
+      <BlueprintCard :blueprint="spiritOfArcane" />
     </div>
   </div>
 </template>
@@ -49,9 +50,11 @@ const unclaimedGiftsCount = computed(() => {
 }
 
 .card-container {
+  padding: var(--size-8);
   display: flex;
   justify-content: center;
   perspective: 1000px;
   transform-style: preserve-3d;
+  gap: var(--size-6);
 }
 </style>

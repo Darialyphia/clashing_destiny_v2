@@ -120,7 +120,7 @@ export class Player
   async init() {
     const heroblueprint = this.options.destinyDeck.cards.find(cardId => {
       const blueprint = this.game.cardSystem.getBlueprint(cardId);
-      return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 1;
+      return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 0;
     });
     if (!heroblueprint) {
       throw new GameError(

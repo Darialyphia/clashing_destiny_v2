@@ -16,6 +16,7 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       name: blueprint.name,
       description: blueprint.description,
       art: {
+        foil: blueprint.art.default.foil,
         dimensions: blueprint.art.default.dimensions,
         bg: `/assets/cards/${blueprint.art.default.bg}.png`,
         main: `/assets/cards/${blueprint.art.default.main}.png`,
