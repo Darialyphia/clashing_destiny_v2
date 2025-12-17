@@ -82,7 +82,6 @@ useIntersectionObserver(
   padding-inline: var(--size-4);
   padding-bottom: var(--size-10);
   padding-top: var(--size-3);
-
   li {
     position: relative;
     transform-style: preserve-3d;

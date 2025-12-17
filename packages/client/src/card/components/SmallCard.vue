@@ -87,7 +87,7 @@ watchEffect(() => {
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
         <div class="art-main" />
         <div class="art-frame" />
-        <div class="art-breakout" />
+        <div v-if="isFoil" class="art-breakout" />
       </div>
 
       <template v-if="showStats">

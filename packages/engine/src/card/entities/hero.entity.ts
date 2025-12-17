@@ -386,11 +386,16 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return !this.lineage || this.player.hero.lineage === this.lineage;
   }
 
+  get hasCorrectFactionToPlay() {
+    return this.player.hero.faction.id === this.faction.id;
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
         this.hasCorrectLevelToPlay &&
         this.hasCorrectLineageToPlay &&
+        this.hasCorrectFactionToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
     );

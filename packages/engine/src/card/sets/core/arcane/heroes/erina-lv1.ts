@@ -18,7 +18,7 @@ export const erinaLv1: HeroBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Council Mage',
   description: '',
-  faction: FACTIONS.OBLIVION,
+  faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
   art: {
@@ -34,11 +34,11 @@ export const erinaLv1: HeroBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'heroes/erina-lv1-bg',
-      main: 'heroes/erina-lv1',
-      breakout: 'heroes/erina-lv1-breakout',
+      bg: 'placeholder-bg',
+      main: 'placeholder',
+      breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.OBLIVION.defaultCardTint
+      tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
   destinyCost: 1,

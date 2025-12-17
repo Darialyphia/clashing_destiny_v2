@@ -154,7 +154,7 @@ export const FACTIONS = {
     name: 'Arcane',
     shortName: 'Arcane',
     defaultCardTint: {
-      colors: ['#cc0081', '#0268b5'],
+      colors: ['#cc0081', '#006ab6'],
       mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1

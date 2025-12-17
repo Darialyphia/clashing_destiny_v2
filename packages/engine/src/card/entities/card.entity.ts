@@ -52,6 +52,9 @@ export type CardInterceptors = {
   deckSource: Interceptable<CardDeckSource>;
   shouldIgnorespellSchoolRequirements: Interceptable<boolean>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
+  loyaltyManaCostIncrease: Interceptable<number>;
+  loyaltyDestinyCostIncrease: Interceptable<number>;
+  loyaltyHpCost: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -66,7 +69,10 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   speed: new Interceptable(),
   deckSource: new Interceptable(),
   shouldIgnorespellSchoolRequirements: new Interceptable(),
-  shouldWakeUpAtTurnStart: new Interceptable()
+  shouldWakeUpAtTurnStart: new Interceptable(),
+  loyaltyManaCostIncrease: new Interceptable(),
+  loyaltyDestinyCostIncrease: new Interceptable(),
+  loyaltyHpCost: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -140,6 +146,10 @@ export abstract class Card<
     return this.blueprint.kind;
   }
 
+  get faction() {
+    return this.blueprint.faction;
+  }
+
   get keywords() {
     return this.keywordManager.keywords;
   }
@@ -184,11 +194,35 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
+  get loyaltyManaCostIncrease() {
+    return this.interceptors.loyaltyManaCostIncrease.getValue(
+      this.game.config.BASE_LOYALTY_COST_INCREASE,
+      {}
+    );
+  }
+
+  get loyaltyDestinyCostIncrease() {
+    return this.interceptors.loyaltyDestinyCostIncrease.getValue(
+      this.game.config.BASE_LOYALTY_COST_INCREASE,
+      {}
+    );
+  }
+
+  get loyaltyHpCost() {
+    return this.interceptors.loyaltyHpCost.getValue(
+      this.game.config.BASE_LOYALTY_HP_COST,
+      {}
+    );
+  }
+
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       return Math.max(
         0,
-        this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0
+        this.interceptors.manaCost.getValue(
+          this.blueprint.manaCost + this.loyaltyManaCostIncrease,
+          {}
+        ) ?? 0
       );
     }
     return 0;
@@ -203,7 +237,12 @@ export abstract class Card<
 
   get destinyCost(): number {
     if ('destinyCost' in this.blueprint) {
-      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
+      return (
+        this.interceptors.destinyCost.getValue(
+          this.blueprint.destinyCost + this.loyaltyDestinyCostIncrease,
+          {}
+        ) ?? 0
+      );
     }
     return 0;
   }
@@ -464,7 +503,7 @@ export abstract class Card<
       kind: this.kind,
       isExhausted: this.isExhausted,
       runeCost: this.blueprint.runeCost,
-      faction: this.blueprint.faction.id,
+      faction: this.faction.id,
       name: this.blueprint.name,
       description: this.blueprint.description,
       canPlay: this.canPlay(),

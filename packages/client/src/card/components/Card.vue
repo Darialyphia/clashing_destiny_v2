@@ -233,7 +233,11 @@ const kindBg = computed(() => {
           <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <div class="art-main parallax" style="--parallax-strength: 2" />
           <div class="art-frame parallax" style="--parallax-strength: 0.5" />
-          <div class="art-breakout parallax" style="--parallax-strength: 2" />
+          <div
+            v-if="isFoil"
+            class="art-breakout parallax"
+            style="--parallax-strength: 2"
+          />
         </div>
 
         <div ref="name-box" v-if="showText" class="name">
@@ -271,7 +275,7 @@ const kindBg = computed(() => {
           }"
         />
 
-        <div class="rarity parallax" />
+        <div class="rarity parallax" style="--parallax-strength: 0.5" />
 
         <div class="description-frame">
           <div class="kind" />
@@ -584,10 +588,10 @@ const kindBg = computed(() => {
   background: v-bind(rarityBg);
   background-size: cover;
   background-position: center;
-  width: calc(12px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
+  width: calc(14px * var(--pixel-scale));
+  height: calc(18px * var(--pixel-scale));
   position: absolute;
-  bottom: calc(88px * var(--pixel-scale));
+  bottom: calc(87px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
 }
@@ -631,6 +635,8 @@ const kindBg = computed(() => {
   font-weight: var(--font-weight-7);
   font-size: calc(var(--pixel-scale) * 14px);
   padding-top: calc(3px * var(--pixel-scale));
+  width: calc(24px * var(--pixel-scale));
+  aspect-ratio: 1;
   .dual-text::before {
     transform: translateY(-3px);
   }

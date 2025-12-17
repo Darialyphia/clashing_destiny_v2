@@ -29,6 +29,7 @@ import { GameError } from '../game/game-error';
 import type { RuneCost } from '../card/card-blueprint';
 import { CARD_KINDS, type Rune } from '../card/card.enums';
 import { match } from 'ts-pattern';
+import { UnpreventableDamage } from '../utils/damage';
 
 export type PlayerOptions = {
   id: string;
@@ -348,8 +349,17 @@ export class Player
     });
   }
 
+  async payForLoyaltyCost(card: AnyCard) {
+    if (card.faction.id === this.hero.faction.id) return;
+
+    const loyaltyHpCost = card.loyaltyHpCost;
+    if (loyaltyHpCost > 0) {
+      await this.hero.takeDamage(card, new UnpreventableDamage(loyaltyHpCost));
+    }
+  }
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     this.payForManaCost(card.manaCost, manaCostIndices);
+    await this.payForLoyaltyCost(card);
     await this.playCard(card);
   }
 
@@ -364,6 +374,7 @@ export class Player
 
   async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
+    await this.payForLoyaltyCost(card);
     await this.playCard(card);
   }
 

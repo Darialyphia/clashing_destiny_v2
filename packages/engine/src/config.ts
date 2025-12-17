@@ -34,6 +34,9 @@ export type Config = {
   REWARD_FOR_PASSING_FIRST: boolean;
 
   MAX_RESOURCE_ACTIONS_PER_TURN: number;
+
+  BASE_LOYALTY_HP_COST: number;
+  BASE_LOYALTY_COST_INCREASE: number;
 };
 
 export const defaultConfig: Config = {
@@ -68,5 +71,8 @@ export const defaultConfig: Config = {
 
   REWARD_FOR_PASSING_FIRST: false,
 
-  MAX_RESOURCE_ACTIONS_PER_TURN: 1
+  MAX_RESOURCE_ACTIONS_PER_TURN: 1,
+
+  BASE_LOYALTY_HP_COST: 1,
+  BASE_LOYALTY_COST_INCREASE: 0
 };

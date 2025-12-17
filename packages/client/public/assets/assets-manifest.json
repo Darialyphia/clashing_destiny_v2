@@ -1353,6 +1353,84 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "mana-looter-bg.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-looter-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-looter-breakout.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-looter-breakout.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-looter.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-looter.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "placeholder-bg.png"
+          ],
+          "src": [
+            "/assets/cards/placeholder-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "placeholder-breakout.png"
+          ],
+          "src": [
+            "/assets/cards/placeholder-breakout.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "placeholder.png"
+          ],
+          "src": [
+            "/assets/cards/placeholder.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
