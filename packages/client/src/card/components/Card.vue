@@ -420,7 +420,10 @@ const kindBg = computed(() => {
   position: relative;
   transform-style: preserve-3d;
   position: relative;
-  filter: drop-shadow(0 2px 2px hsl(0 0% 100% / 0.35));
+  filter: drop-shadow(0 2px 0 hsl(0 0% 100% / 0.2))
+    drop-shadow(0 -2px 0 hsl(0 0% 100% / 0.2))
+    drop-shadow(-2px 0 0 hsl(0 0% 100% / 0.2))
+    drop-shadow(2px 0 0 hsl(0 0% 100% / 0.2));
   --glare-mask: url('/assets/ui/card/card_front.png');
   --foil-mask: url('/assets/ui/card/card_front.png');
   &::after {

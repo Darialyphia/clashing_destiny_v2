@@ -130,14 +130,14 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return { result: 'success' };
   }
 
-  private getLevel1Hero(deck: ValidatableDeck<TMeta>) {
+  private getLevel0Hero(deck: ValidatableDeck<TMeta>) {
     return (
       deck[CARD_DECK_SOURCES.DESTINY_DECK]
         .map(card => {
           return this.cardPool[card.blueprintId]!;
         })
         .find(blueprint => {
-          return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 1;
+          return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 0;
         }) ?? null
     );
   }
@@ -161,9 +161,9 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     const cardBlueprint = this.cardPool[card.blueprintId];
     if (!cardBlueprint) return false;
 
-    const hero = this.getLevel1Hero(deck);
+    const hero = this.getLevel0Hero(deck);
     if (!hero) {
-      return cardBlueprint.kind === CARD_KINDS.HERO && cardBlueprint.level === 1;
+      return cardBlueprint.kind === CARD_KINDS.HERO && cardBlueprint.level === 0;
     }
 
     if (

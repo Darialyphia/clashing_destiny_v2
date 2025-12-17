@@ -69,9 +69,6 @@ const artMainImage = computed(() => {
 const artBreakoutImage = computed(() => {
   return card.art.breakout ? `url('${card.art.breakout}')` : 'none';
 });
-watchEffect(() => {
-  console.log(pointerStyle.value.glareX);
-});
 </script>
 
 <template>

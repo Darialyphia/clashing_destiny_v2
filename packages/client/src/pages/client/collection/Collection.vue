@@ -109,10 +109,6 @@ useIntersectionObserver(
   }
 }
 
-.card.disabled {
-  filter: grayscale(100%);
-}
-
 .card:not(.disabled):hover {
   cursor: url('/assets/ui/cursor-hover.png'), auto;
 }

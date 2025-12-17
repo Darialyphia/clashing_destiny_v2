@@ -111,7 +111,8 @@ const canAddCard = computed(() => {
 }
 
 .collection-card.disabled {
-  filter: grayscale(50%) brightness(80%);
+  filter: grayscale(50%) brightness(60%);
+  opacity: 0.75;
 }
 
 .collection-card:not(.disabled):hover {
