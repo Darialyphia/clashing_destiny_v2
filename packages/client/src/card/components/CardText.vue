@@ -108,7 +108,7 @@ const tokens = computed<Token[]>(() => {
       };
     }
     for (const rune of Object.values(RUNES)) {
-      if (part.startsWith(`[${rune}]`)) {
+      if (part.startsWith(`[${rune.toLocaleLowerCase()}]`)) {
         return { type: rune };
       }
     }

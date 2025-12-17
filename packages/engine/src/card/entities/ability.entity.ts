@@ -16,6 +16,7 @@ import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CARD_SPEED } from '../card.enums';
 import type { SigilCard } from './sigil.entity';
 import type { SpellCard } from './spell.entity';
+import { Interceptable } from '../../utils/interceptable';
 
 export const ABILITY_EVENTS = {
   ABILITY_BEFORE_USE: 'ability.before-use',
@@ -59,8 +60,12 @@ export type AbilityEventMap = {
 
 export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard | SpellCard;
 
+export type AbilityInterceptors<T extends AbilityOwner> = {
+  manaCost: Interceptable<number, Ability<T>>;
+};
+
 export class Ability<T extends AbilityOwner>
-  extends Entity<EmptyObject>
+  extends Entity<AbilityInterceptors<T>>
   implements Serializable<SerializedAbility>
 {
   _isSealed = false;
@@ -70,7 +75,9 @@ export class Ability<T extends AbilityOwner>
     readonly card: T,
     public blueprint: AbilityBlueprint<T, PreResponseTarget>
   ) {
-    super(`${card.id}-${blueprint.id}`, {});
+    super(`${card.id}-${blueprint.id}`, {
+      manaCost: new Interceptable()
+    });
   }
 
   get abilityId() {
@@ -85,8 +92,8 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.shouldExhaust;
   }
 
-  get manaCost() {
-    return this.blueprint.manaCost;
+  get manaCost(): number {
+    return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
   }
 
   get canUse() {

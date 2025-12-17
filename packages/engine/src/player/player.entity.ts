@@ -360,6 +360,7 @@ export class Player
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     this.payForManaCost(card.manaCost, manaCostIndices);
     await this.payForLoyaltyCost(card);
+    card.isPlayedFromHand = true;
     await this.playCard(card);
   }
 
@@ -375,6 +376,7 @@ export class Player
   async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
     await this.payForLoyaltyCost(card);
+    card.isPlayedFromHand = true;
     await this.playCard(card);
   }
 

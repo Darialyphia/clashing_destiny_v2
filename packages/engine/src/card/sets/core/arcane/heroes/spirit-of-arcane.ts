@@ -41,7 +41,7 @@ export const spiritOfArcane: HeroBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 0,
   runeCost: {},
   level: 0,
   lineage: null,

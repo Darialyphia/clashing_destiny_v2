@@ -177,7 +177,6 @@ export type FactionId = Values<typeof FACTIONS>['id'];
 export const RUNES = {
   MIGHT: 'MIGHT',
   KNOWLEDGE: 'KNOWLEDGE',
-  COURAGE: 'COURAGE',
   FOCUS: 'FOCUS'
   // RESONANCE: 'RESONANCE'
 } as const;

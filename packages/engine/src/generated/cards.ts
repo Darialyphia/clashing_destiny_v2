@@ -9,7 +9,21 @@ export const cards = {
 "erina-council-mage": "erina-council-mage",
 "erina-aether-scholar": "erina-aether-scholar",
 "erina-arcane-weaver": "erina-arcane-weaver",
-"mana-looter": "mana-looter"
+"splitting-beam": "splitting-beam",
+"archsage-of-moonring": "archsage-of-moonring",
+"mana-looter": "mana-looter",
+"magic-channeler": "magic-channeler",
+"astral-explorer": "astral-explorer",
+"cosmic-divinator": "cosmic-divinator",
+"mana-fueled-golem": "mana-fueled-golem",
+"amplify-magic": "amplify-magic",
+"thirst-for-knowledge": "thirst-for-knowledge",
+"little-witch": "little-witch",
+"comet": "comet",
+"astral-soldier": "astral-soldier",
+"magic-missile": "magic-missile",
+"wizards-insight": "wizards-insight",
+"lightning-bolt": "lightning-bolt"
 } as const;
 
 export const collectableCards = {
@@ -17,5 +31,19 @@ export const collectableCards = {
 "erina-council-mage": "erina-council-mage",
 "erina-aether-scholar": "erina-aether-scholar",
 "erina-arcane-weaver": "erina-arcane-weaver",
-"mana-looter": "mana-looter"
+"splitting-beam": "splitting-beam",
+"archsage-of-moonring": "archsage-of-moonring",
+"mana-looter": "mana-looter",
+"magic-channeler": "magic-channeler",
+"astral-explorer": "astral-explorer",
+"cosmic-divinator": "cosmic-divinator",
+"mana-fueled-golem": "mana-fueled-golem",
+"amplify-magic": "amplify-magic",
+"thirst-for-knowledge": "thirst-for-knowledge",
+"little-witch": "little-witch",
+"comet": "comet",
+"astral-soldier": "astral-soldier",
+"magic-missile": "magic-missile",
+"wizards-insight": "wizards-insight",
+"lightning-bolt": "lightning-bolt"
 } as const;

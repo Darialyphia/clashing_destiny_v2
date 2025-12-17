@@ -19,9 +19,9 @@ export const manaLooter: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana Looter',
-  description: '@On Hero Hit@: draw a card.',
+  description: '@On Hero Hit@: draw a card.\n\n',
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

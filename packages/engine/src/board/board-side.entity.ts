@@ -103,7 +103,7 @@ export class BoardSide
     return this._defenseZone;
   }
 
-  private getZone(zone: BoardSlotZone): MinionZone {
+  getZone(zone: BoardSlotZone): MinionZone {
     return zone === BOARD_SLOT_ZONES.ATTACK_ZONE ? this.attackZone : this.defenseZone;
   }
 

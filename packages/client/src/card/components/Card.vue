@@ -756,7 +756,7 @@ const kindBg = computed(() => {
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;
-  line-height: 1;
+  line-height: 1.2;
   &.is-multi-line {
     text-align: left;
   }

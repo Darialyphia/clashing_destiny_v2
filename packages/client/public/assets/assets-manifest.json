@@ -6035,6 +6035,19 @@
         },
         {
           "alias": [
+            "speed-burst.png"
+          ],
+          "src": [
+            "/assets/ui/speed-burst.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "speed-fast.png"
           ],
           "src": [

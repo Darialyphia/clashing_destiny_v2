@@ -125,6 +125,8 @@ export abstract class Card<
 
   protected _targetedBy: CardTargetOrigin[] = [];
 
+  isPlayedFromHand = false;
+
   constructor(
     game: Game,
     player: Player,
@@ -324,6 +326,7 @@ export abstract class Card<
       targets,
       handler: async () => {
         await this.resolve(handler);
+        this.isPlayedFromHand = false;
       }
     };
 

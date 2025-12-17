@@ -32,7 +32,7 @@ export const KEYWORDS = {
   CONSUME: {
     id: 'consume',
     name: 'Consume',
-    description: 'Destroy the mentioned runes when this card is played.',
+    description: 'Destroy the mentioned runes.',
     aliases: []
   },
   SUMMONING_SICKNESS: {
@@ -245,7 +245,7 @@ export const KEYWORDS = {
     id: 'spellpower',
     name: 'Spellpower X',
     description: 'Increase the damage of your spells by X.',
-    aliases: [/spellpower \([0-9]+\)/, 'spellpower']
+    aliases: [/spellpower [0-9]+/, 'spellpower']
   },
   EMPOWER: {
     id: 'empower',

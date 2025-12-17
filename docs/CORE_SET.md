@@ -131,7 +131,7 @@ Empower 1. Draw a card.
 
 Thirst for Knowledge
 
-Spell | Arcane | (2) | KKK | (fast)
+Spell | Arcane | (3) | KKK | (fast)
 
 Loyalty 2.
 
@@ -143,7 +143,7 @@ Spellblade Duelyst
 
 Minion | Arcane | (3) | MMK | 2 / 3 | (slow)
 
-On Enter: You can consume K. If you do, this gains Rush.
+On Enter: You may consume K. If you do, this gains Rush.
 
 This has Preemptive Strike as long as you have Spellpower.
 
@@ -161,7 +161,7 @@ Comet
 
 Spell | Arcane | (4) | KKF | (slow)
 
-Consume K. Deal 4 damage to all minions in a zone.
+Consume K. Deal 4 damage to all minions in an enemy zone.
 
 ---
 

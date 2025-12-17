@@ -27,11 +27,16 @@ export class OnEnterModifierMixin<
   T extends MinionCard | ArtifactCard | HeroCard
 > extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
+  private handler: OnEnterHandler<T>;
+  private onlyWhenPlayedFromHand: boolean;
+
   constructor(
     game: Game,
-    private handler: OnEnterHandler<T>
+    options: { handler: OnEnterHandler<T>; onlyWhenPlayedFromHand?: boolean }
   ) {
     super(game);
+    this.handler = options.handler;
+    this.onlyWhenPlayedFromHand = options.onlyWhenPlayedFromHand ?? false;
     this.onBeforePlay = this.onBeforePlay.bind(this);
   }
 
@@ -39,6 +44,7 @@ export class OnEnterModifierMixin<
     if (!event.data.card.equals(this.modifier.target)) {
       return;
     }
+    if (this.onlyWhenPlayedFromHand && !event.data.card.isPlayedFromHand) return;
 
     const target = this.modifier.target;
     if (isMinion(target)) {
