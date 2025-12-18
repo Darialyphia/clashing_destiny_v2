@@ -8,6 +8,8 @@ import FoilSheen from './foil/FoilSheen.vue';
 import FoilOil from './foil/FoilOil.vue';
 import FoilGradient from './foil/FoilGradient.vue';
 import FoilLightGradient from './foil/FoilLightGradient.vue';
+import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
+import FoilGlitter from './foil/FoilGlitter.vue';
 
 const {
   card,
@@ -23,6 +25,8 @@ const {
         gradient?: boolean;
         lightGradient?: boolean;
         scanlines?: boolean;
+        goldenGlare?: boolean;
+        glitter?: boolean;
       };
       dimensions: {
         width: number;
@@ -82,6 +86,7 @@ const artBreakoutImage = computed(() => {
       <div class="image">
         <div class="art-bg" />
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+        <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
         <div class="art-main" />
         <div class="art-frame" />
         <div v-if="isFoil" class="art-breakout" />
@@ -136,6 +141,7 @@ const artBreakoutImage = computed(() => {
         <FoilOil v-if="card.art.foil.oil" />
         <FoilGradient v-if="card.art.foil.gradient" />
         <FoilLightGradient v-if="card.art.foil.lightGradient" />
+        <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
       </template>
       <CardGlare />
     </div>

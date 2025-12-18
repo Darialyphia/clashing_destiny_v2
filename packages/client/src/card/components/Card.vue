@@ -19,6 +19,8 @@ import FoilOil from './foil/FoilOil.vue';
 import FoilGradient from './foil/FoilGradient.vue';
 import FoilScanlines from './foil/FoilScanlines.vue';
 import FoilLightGradient from './foil/FoilLightGradient.vue';
+import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
+import FoilGlitter from './foil/FoilGlitter.vue';
 
 const {
   card,
@@ -38,6 +40,8 @@ const {
         gradient?: boolean;
         lightGradient?: boolean;
         scanlines?: boolean;
+        goldenGlare?: boolean;
+        glitter?: boolean;
       };
       dimensions: {
         width: number;
@@ -228,9 +232,16 @@ const kindBg = computed(() => {
       :data-flip-id="`card_${card.id}`"
     >
       <div class="card-front">
+        <div ref="name-box" v-if="showText" class="name">
+          <div>
+            {{ card.name }}
+          </div>
+        </div>
+
         <div class="image">
           <div class="art-bg" />
           <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+          <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
           <div class="art-main parallax" style="--parallax-strength: 2" />
           <div class="art-frame parallax" style="--parallax-strength: 0.5" />
           <div
@@ -238,12 +249,6 @@ const kindBg = computed(() => {
             class="art-breakout parallax"
             style="--parallax-strength: 2"
           />
-        </div>
-
-        <div ref="name-box" v-if="showText" class="name">
-          <div>
-            {{ card.name }}
-          </div>
         </div>
 
         <div class="top-left parallax">
@@ -346,6 +351,7 @@ const kindBg = computed(() => {
           <FoilOil v-if="card.art.foil.oil" />
           <FoilGradient v-if="card.art.foil.gradient" />
           <FoilLightGradient v-if="card.art.foil.lightGradient" />
+          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
         </template>
 
         <CardGlare />
@@ -382,7 +388,7 @@ const kindBg = computed(() => {
 
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
-  /* --pointer-from-center: v-bind('pointerStyle?.pointerFromCenter'); */
+  /* --pointer-from-center: calc(1% * v-bind('pointerStyle?.pointerFromCenter')); */
   width: calc(var(--card-width) * var(--pixel-scale));
   height: calc(var(--card-height) * var(--pixel-scale));
   display: grid;

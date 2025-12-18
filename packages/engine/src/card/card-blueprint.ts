@@ -49,6 +49,8 @@ export type CardBlueprintBase = {
         gradient?: boolean;
         lightGradient?: boolean;
         scanlines?: boolean;
+        goldenGlare?: boolean;
+        glitter?: boolean;
       };
       bg: string;
       main: string;

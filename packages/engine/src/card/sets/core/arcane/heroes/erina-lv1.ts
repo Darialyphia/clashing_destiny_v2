@@ -24,19 +24,21 @@ export const erinaLv1: HeroBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
-        oil: true,
-        gradient: true,
-        lightGradient: false,
-        scanlines: false
+        sheen: false,
+        oil: false,
+        gradient: false,
+        lightGradient: true,
+        scanlines: false,
+        goldenGlare: false,
+        glitter: true
       },
       dimensions: {
         width: 174,
-        height: 133
+        height: 140
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'heroes/erina-lv1-bg',
+      main: 'heroes/erina-lv1',
+      breakout: 'heroes/erina-lv1-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

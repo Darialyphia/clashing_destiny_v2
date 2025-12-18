@@ -22,7 +22,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  mix-blend-mode: hard-light;
+  mix-blend-mode: multiply;
   background: linear-gradient(
     45deg,
     rgb(255, 119, 115),
@@ -39,7 +39,7 @@
   mask-repeat: no-repeat;
   opacity: 1;
   --opacity-from: 0;
-  --opacity-to: 0.25;
+  --opacity-to: 0.75;
   animation:
     foil-gradient 5s linear infinite,
     foil-opacity 3.5s linear alternate infinite;
