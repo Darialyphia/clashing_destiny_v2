@@ -215,9 +215,19 @@ const visibleModifiers = gameStateRef(() => {
             />
           </template>
 
-          <div class="font-7">{{ modifier.name }}</div>
-          {{ modifier.description }}
-          <div class="font-0">from: {{ modifier.source.name }}</div>
+          <div class="modifier-tooltip">
+            <div class="modifier-name">{{ modifier.name }}</div>
+            <div
+              class="modifier-description"
+              :class="{
+                ally: modifier.source.player.id === playerId,
+                enemy: modifier.source.player.id !== playerId
+              }"
+            >
+              {{ modifier.description }}
+            </div>
+            <div class="modifier-source">{{ modifier.source.name }}</div>
+          </div>
         </UiSimpleTooltip>
       </div>
 
@@ -431,5 +441,35 @@ const visibleModifiers = gameStateRef(() => {
     font-weight: var(--font-weight-7);
     -webkit-text-stroke: 2px black;
   }
+}
+
+.modifier-tooltip {
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+  padding-bottom: var(--size-1);
+}
+
+.modifier-name {
+  font-size: var(--font-size-2);
+  font-weight: var(--font-weight-7);
+  color: var(--gray-0);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modifier-description {
+  font-size: var(--font-size-0);
+  line-height: 1.4;
+  color: var(--gray-2);
+  margin-block-end: var(--size-2);
+}
+
+.modifier-source {
+  font-size: var(--font-size-00);
+  color: var(--gray-5);
+  padding-top: var(--size-1);
+  border-top: 1px solid var(--gray-7);
+  font-style: italic;
 }
 </style>
