@@ -109,8 +109,6 @@ export class Player
     this.cardTracker = new CardTrackerComponent(game, this);
     this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
-      mainDeck: this.options.mainDeck.cards,
-      destinyDeck: this.options.destinyDeck.cards,
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
@@ -125,15 +123,23 @@ export class Player
     });
     if (!heroblueprint) {
       throw new GameError(
-        `No level 1 hero card found in destiny deck for player '${this.options.name}'`
+        `No level 0 hero card found in destiny deck for player '${this.options.name}'`
       );
     }
+    this.options.destinyDeck.cards = this.options.destinyDeck.cards.filter(
+      cardId => cardId !== heroblueprint
+    );
+
     this._hero = {
       card: await this.generateCard<HeroCard>(heroblueprint),
       lineage: []
     };
-    await this.cardManager.init();
+    await this.cardManager.init(
+      this.options.mainDeck.cards,
+      this.options.destinyDeck.cards
+    );
     await this._hero.card.play(() => {});
+    await this._hero.card.removeFromCurrentLocation();
   }
 
   async levelupHero(newHero: HeroCard) {

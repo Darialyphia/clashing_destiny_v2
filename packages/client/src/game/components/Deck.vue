@@ -11,7 +11,7 @@ const { size } = defineProps<{ size: number }>();
 
 <style scoped lang="postcss">
 .card {
-  background: url('/assets/ui/card-back-small.png') no-repeat;
+  background: url('/assets/ui/card/card_backs/default-small.png') no-repeat;
   background-size: contain;
   width: var(--card-small-width);
   aspect-ratio: var(--card-small-ratio);

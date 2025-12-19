@@ -41,15 +41,9 @@ const getKeyLabel = useKeybordShortcutLabel();
       :card-id="hero.id"
       actions-side="bottom"
       :actions-offset="15"
-      flipped
+      variant="small"
+      show-stats
     />
-    <div
-      :id="ui.DOMSelectors.heroHealthIndicator(player.id).id"
-      class="hero-hp"
-      :style="{ '--percentage': (hero.hp! / hero.maxHp!) * 100 }"
-    >
-      {{ hero.hp }} / {{ hero.maxHp }}
-    </div>
   </div>
 </template>
 

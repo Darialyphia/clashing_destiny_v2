@@ -19,26 +19,23 @@ export const erinaLv2: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Aether Scholar',
-  description: 'This has +1@[atk]@ as long as you played a spell this turn.',
+  description: 'This has +1 Attack as long as you played a spell this turn.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
   art: {
     default: {
       foil: {
-        sheen: true,
         oil: true,
-        gradient: true,
-        lightGradient: false,
-        scanlines: false
+        lightGradient: true
       },
       dimensions: {
         width: 174,
-        height: 133
+        height: 140
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'heroes/erina-lv2-bg',
+      main: 'heroes/erina-lv2',
+      breakout: 'heroes/erina-lv2-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

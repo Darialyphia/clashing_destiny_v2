@@ -82,47 +82,44 @@ const stack = computed(() => {
 </script>
 
 <template>
-  <div>
-    <div class="effect-chain" id="effect-chain">
-      <InspectableCard
-        v-for="(effect, index) in stack"
-        :key="index"
-        :card-id="effect.source.id"
-      >
-        <div class="effect" :class="effect.playerType">
-          <GameCard
-            :card-id="effect.source.id"
-            :is-interactive="false"
-            variant="small"
-          />
+  <div class="effect-chain" id="effect-chain">
+    <InspectableCard
+      v-for="(effect, index) in stack"
+      :key="index"
+      :card-id="effect.source.id"
+    >
+      <div class="effect" :class="effect.playerType">
+        <GameCard
+          :card-id="effect.source.id"
+          :is-interactive="false"
+          variant="small"
+        />
 
-          <UiSimpleTooltip>
-            <template #trigger>
-              <div class="effect-type" :class="effect.type.toLowerCase()" />
-            </template>
-            <p v-if="effect.type === EFFECT_TYPE.ABILITY">
-              This effect with execute an ability
-            </p>
-            <p v-if="effect.type === EFFECT_TYPE.CARD">
-              This effect will play a card.
-            </p>
-            <p v-if="effect.type === EFFECT_TYPE.DECLARE_BLOCKER">
-              This effect declares a blocker
-            </p>
-          </UiSimpleTooltip>
-        </div>
+        <UiSimpleTooltip>
+          <template #trigger>
+            <div class="effect-type" :class="effect.type.toLowerCase()" />
+          </template>
+          <p v-if="effect.type === EFFECT_TYPE.ABILITY">
+            This effect with execute an ability
+          </p>
+          <p v-if="effect.type === EFFECT_TYPE.CARD">
+            This effect will play a card.
+          </p>
+          <p v-if="effect.type === EFFECT_TYPE.DECLARE_BLOCKER">
+            This effect declares a blocker
+          </p>
+        </UiSimpleTooltip>
+      </div>
 
-        <Teleport to="#arrows" defer>
-          <Arrow
-            v-for="(path, targetIndex) in paths[index]"
-            :key="targetIndex"
-            :path="path"
-            :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
-          />
-        </Teleport>
-      </InspectableCard>
-    </div>
-    <div class="text-center">Card chain</div>
+      <Teleport to="#arrows" defer>
+        <Arrow
+          v-for="(path, targetIndex) in paths[index]"
+          :key="targetIndex"
+          :path="path"
+          :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
+        />
+      </Teleport>
+    </InspectableCard>
   </div>
 </template>
 
@@ -133,7 +130,8 @@ const stack = computed(() => {
   display: flex;
   align-items: center;
   gap: var(--size-3);
-  height: calc(var(--card-small-height) + var(--size-1) * 2);
+  --pixel-scale: 0.75;
+  height: calc(var(--card-small-height) * var(--pixel-scale));
   border: solid 1px #985e25;
 }
 

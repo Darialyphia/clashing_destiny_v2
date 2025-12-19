@@ -266,10 +266,9 @@ const artBreakoutImage = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('/assets/ui/card-back-small.png');
+  background: url('/assets/ui/card/card_backs/default-small.png');
   background-size: cover;
-  --glare-mask: url('/assets/ui/card-front-small.png');
-  --foil-mask: url('/assets/ui/card-front-small.png');
+  --glare-mask: url('/assets/ui/card/card_backs/default-small.png');
 }
 
 .image {

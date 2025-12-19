@@ -60,6 +60,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
+  dealsDamageFirst: Interceptable<boolean, MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -91,7 +92,8 @@ export class MinionCard extends Card<
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        atk: new Interceptable()
+        atk: new Interceptable(),
+        dealsDamageFirst: new Interceptable()
       },
       options
     );
@@ -198,6 +200,10 @@ export class MinionCard extends Card<
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
+  }
+
+  get dealsDamageFirst(): boolean {
+    return this.interceptors.dealsDamageFirst.getValue(false, this);
   }
 
   async moveTo() {

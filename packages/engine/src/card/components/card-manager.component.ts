@@ -8,8 +8,6 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 
 export type CardManagerComponentOptions = {
-  mainDeck: string[];
-  destinyDeck: string[];
   maxHandSize: number;
   shouldShuffleDeck: boolean;
 };
@@ -63,10 +61,10 @@ export class CardManagerComponent {
     return result;
   }
 
-  async init() {
+  async init(mainDeck: string[], destinyDeck: string[]) {
     const [mainDeckCards, destinyDeckCards] = await Promise.all([
-      this.buildCards<AnyCard>(this.options.mainDeck),
-      this.buildCards<AnyCard>(this.options.destinyDeck)
+      this.buildCards<AnyCard>(mainDeck),
+      this.buildCards<AnyCard>(destinyDeck)
     ]);
 
     this.mainDeck.populate(mainDeckCards);

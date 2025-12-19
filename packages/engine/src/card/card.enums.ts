@@ -95,7 +95,7 @@ export type Faction = {
 };
 export const FACTIONS = {
   NEUTRAL: {
-    id: 'neutral',
+    id: 'NEUTRAL',
     name: 'Neutral',
     shortName: 'Neutr',
     defaultCardTint: {
@@ -106,7 +106,7 @@ export const FACTIONS = {
     }
   },
   ORDER: {
-    id: 'order',
+    id: 'ORDER',
     name: 'Order',
     shortName: 'Order',
     defaultCardTint: {
@@ -117,7 +117,7 @@ export const FACTIONS = {
     }
   },
   CHAOS: {
-    id: 'chaos',
+    id: 'CHAOS',
     name: 'Chaos',
     shortName: 'Chaos',
     defaultCardTint: {
@@ -128,7 +128,7 @@ export const FACTIONS = {
     }
   },
   GENESIS: {
-    id: 'genesis',
+    id: 'GENESIS',
     name: 'Genesis',
     shortName: 'Genesis',
     defaultCardTint: {
@@ -139,7 +139,7 @@ export const FACTIONS = {
     }
   },
   OBLIVION: {
-    id: 'oblivion',
+    id: 'OBLIVION',
     name: 'Oblivion',
     shortName: 'Obliv',
     defaultCardTint: {
@@ -150,7 +150,7 @@ export const FACTIONS = {
     }
   },
   ARCANE: {
-    id: 'arcane',
+    id: 'ARCANE',
     name: 'Arcane',
     shortName: 'Arcane',
     defaultCardTint: {

@@ -19,7 +19,7 @@ export const erinaLv3: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Arcane Weaver',
-  description: 'This has +1@[atk]@ as long as you played a spell this turn.',
+  description: 'This has +1 Attack as long as you played a spell this turn.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
   tags: [],

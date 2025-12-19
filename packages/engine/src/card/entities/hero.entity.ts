@@ -55,6 +55,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
+  dealsDamageFirst: Interceptable<boolean, HeroCard>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -163,7 +164,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
-        spellPower: new Interceptable()
+        spellPower: new Interceptable(),
+        dealsDamageFirst: new Interceptable()
       },
       options
     );
@@ -218,6 +220,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
+  }
+
+  get dealsDamageFirst(): boolean {
+    return this.interceptors.dealsDamageFirst.getValue(false, this);
   }
 
   canBeTargeted(source: AnyCard) {

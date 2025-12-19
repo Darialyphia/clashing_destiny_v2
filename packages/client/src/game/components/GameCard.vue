@@ -14,6 +14,7 @@ import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
+import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
 
 const {
   cardId,
@@ -125,9 +126,9 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
+          art: card.art,
           name: card.name,
           description: card.description,
-          image: card.imagePath,
           kind: card.kind,
           level: card.level,
           rarity: card.rarity,
@@ -143,7 +144,13 @@ const classes = computed(() => {
           durability: card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
-            .map(ability => `@[${ability.speed}]@ ${ability.description}`)
+            .map(ability => `@[${ability.speed}]@ ${ability.description}`),
+          faction: FACTIONS[card.faction],
+          runes: Object.entries(card.runeCost)
+            .map(([rune, amount]) =>
+              Array.from({ length: amount }, () => rune as Rune)
+            )
+            .flat()
         }"
         class="game-card big"
         :class="classes"
@@ -155,7 +162,7 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
-          image: card.imagePath,
+          art: card.art,
           kind: card.kind,
           atk: card.atk,
           baseAtk: card.baseAtk,

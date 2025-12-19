@@ -4,13 +4,21 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
+import type {
+  CardBlueprint,
+  SerializedPreResponseTarget
+} from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import { CARD_KINDS, type CardKind, CARD_DECK_SOURCES } from '../../card/card.enums';
+import {
+  CARD_KINDS,
+  type CardKind,
+  CARD_DECK_SOURCES,
+  FACTIONS
+} from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
 import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
@@ -70,12 +78,16 @@ export class CardViewModel {
     return this.data.description;
   }
 
-  get art() {
+  get art(): CardBlueprint['art'][string] {
     return {
+      dimensions: this.data.art.dimensions,
+      foil: this.data.art.foil,
       main: `/assets/cards/${this.data.art.main}.png`,
-      foilBreakout: `/assets/cards/${this.data.art.foilBreakout}.png`,
       frame: `/assets/ui/card/frames/${this.data.art.frame}.png`,
-      foilFrame: `/assets/ui/card/frames/${this.data.art.foilFrame}.png`,
+      bg: `/assets/cards/${this.data.art.bg}.png`,
+      breakout: this.data.art.breakout
+        ? `/assets/cards/${this.data.art.breakout}.png`
+        : undefined,
       tint: this.data.art.tint
     };
   }
@@ -149,7 +161,7 @@ export class CardViewModel {
   }
 
   get faction() {
-    return this.data.faction;
+    return this.data.faction as keyof typeof FACTIONS;
   }
 
   get canBeUsedAsManaCost() {

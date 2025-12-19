@@ -58,7 +58,7 @@ const getKeyLabel = useKeybordShortcutLabel();
         : undefined
     "
     data-keyboard-shortcut-centered="true"
-    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
+    style="--keyboard-shortcut-top: 100%; --keyboard-shortcut-right: 50%"
     @click="isOpened = true"
   />
 
@@ -104,6 +104,7 @@ const getKeyLabel = useKeybordShortcutLabel();
 
 <style scoped lang="postcss">
 .content {
+  --pixel-scale: 1.5;
   height: 80dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;

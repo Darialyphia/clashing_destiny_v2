@@ -18,7 +18,7 @@ export const manaFueledGolem: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana-Fueled Golem',
-  description: 'This has +@[atk]@ equal to your @Spellpower@.',
+  description: 'This has +Attack equal to your @Spellpower@.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
