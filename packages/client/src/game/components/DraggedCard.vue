@@ -64,8 +64,8 @@ const { client } = useGameClient();
 const container = useTemplateRef<HTMLDivElement>('container');
 watchEffect(() => {
   const shouldPin =
-    state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD ||
-    !isDefined(ui.value.selectedCard);
+    state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD &&
+    !isDefined(ui.value.draggedCard);
   if (shouldPin === isPinned.value) return;
 
   if (shouldPin) {

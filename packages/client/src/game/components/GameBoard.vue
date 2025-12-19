@@ -64,7 +64,11 @@ const isSettingsOpened = ref(false);
   <DraggedCard />
   <div class="game-board-container">
     <Camera>
-      <div class="board" :id="ui.DOMSelectors.board.id">
+      <div
+        class="board"
+        :id="ui.DOMSelectors.board.id"
+        :class="{ 'is-dragging': ui.draggedCard }"
+      >
         <OpponentBoard />
         <div class="flex justify-between gap-3">
           <EffectChain />
@@ -80,6 +84,7 @@ const isSettingsOpened = ref(false);
   <div class="my-hand">
     <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
   </div>
+  <div id="dragged-card-container" />
 
   <button
     aria-label="Settings"
@@ -119,6 +124,19 @@ const isSettingsOpened = ref(false);
   grid-template-rows: 1fr auto 1fr;
   gap: var(--size-2);
   transform-style: preserve-3d;
+
+  &.is-dragging {
+    background-color: hsla(260, 50%, 20%, 0.2);
+    box-shadow: 0 0 30px #985e25;
+  }
+}
+
+:global(
+  .board.is-dragging:not(
+      :has(:is(.attack-zone, .defense-zone).is-dragging:hover)
+    ):hover
+) {
+  background-color: hsla(from cyan h s l / 0.15);
 }
 
 .my-hand {

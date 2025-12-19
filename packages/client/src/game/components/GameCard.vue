@@ -28,6 +28,7 @@ const {
   showStats = false,
   useActionsPortal = true,
   showModifiers = false,
+  showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
   flipped
 } = defineProps<{
@@ -43,6 +44,7 @@ const {
   useActionsPortal?: boolean;
   actionsPortalTarget?: string;
   flipped?: boolean;
+  showActionEmptyState?: boolean;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -127,16 +129,21 @@ const visibleModifiers = gameStateRef(() => {
 </script>
 
 <template>
-  <CardActionsPopover
-    :card-id="card.id"
-    :is-interactive="isInteractive"
-    :actions-offset="actionsOffset"
-    :actions-align="actionsAlign"
-    :actions-side="actionsSide"
-    :use-portal="useActionsPortal"
-    :portal-target="actionsPortalTarget"
+  <div
+    class="game-card-container"
+    :data-game-card="card.id"
+    :data-flip-id="`card_${card.id}`"
   >
-    <div class="game-card-container">
+    <CardActionsPopover
+      :card-id="card.id"
+      :is-interactive="isInteractive"
+      :actions-offset="actionsOffset"
+      :actions-align="actionsAlign"
+      :actions-side="actionsSide"
+      :use-portal="useActionsPortal"
+      :portal-target="actionsPortalTarget"
+      :show-action-empty-state="showActionEmptyState"
+    >
       <Card
         v-if="variant === 'default'"
         :is-animated="false"
@@ -216,7 +223,13 @@ const visibleModifiers = gameStateRef(() => {
           </template>
 
           <div class="modifier-tooltip">
-            <div class="modifier-name">{{ modifier.name }}</div>
+            <div class="modifier-header">
+              <div
+                class="modifier-icon"
+                :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+              />
+              <div class="modifier-name">{{ modifier.name }}</div>
+            </div>
             <div
               class="modifier-description"
               :class="{
@@ -237,8 +250,8 @@ const visibleModifiers = gameStateRef(() => {
       <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
         You cannot play this card right now.
       </p>
-    </div>
-  </CardActionsPopover>
+    </CardActionsPopover>
+  </div>
 </template>
 
 <style scoped lang="postcss">
@@ -448,6 +461,20 @@ const visibleModifiers = gameStateRef(() => {
   flex-direction: column;
   max-width: 250px;
   padding-bottom: var(--size-1);
+}
+
+.modifier-header {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+}
+
+.modifier-icon {
+  width: 36px;
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center center;
+  background-size: cover;
+  flex-shrink: 0;
 }
 
 .modifier-name {

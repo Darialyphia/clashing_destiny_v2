@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import HeroSlot from './HeroSlot.vue';
 import {
+  useGameUi,
   useOpponentBoard,
   useOpponentPlayer
 } from '../composables/useGameClient';
@@ -14,6 +15,8 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const opponent = useOpponentPlayer();
 const opponentBoard = useOpponentBoard();
+
+const ui = useGameUi();
 </script>
 
 <template>
@@ -24,7 +27,10 @@ const opponentBoard = useOpponentBoard();
     </div>
 
     <div class="center-zone">
-      <div class="defense-zone">
+      <div
+        class="defense-zone"
+        :id="ui.DOMSelectors.defenseZone(opponent.id).id"
+      >
         <InspectableCard
           v-for="card in opponentBoard.defenseZone"
           :key="card"
@@ -33,7 +39,7 @@ const opponentBoard = useOpponentBoard();
           <GameCard :card-id="card" variant="small" show-stats show-modifiers />
         </InspectableCard>
       </div>
-      <div class="attack-zone">
+      <div class="attack-zone" :id="ui.DOMSelectors.attackZone(opponent.id).id">
         <InspectableCard
           v-for="card in opponentBoard.attackZone"
           :key="card"

@@ -52,6 +52,7 @@ export class UiController {
 
   private _selectedCard: CardViewModel | null = null;
 
+  private __draggedCard: CardViewModel | null = null;
   isHandExpanded = false;
 
   isPassConfirmationModalOpened = false;
@@ -104,8 +105,8 @@ export class UiController {
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    attackZone: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
-    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
+    attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
+    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
     globalActionButtons: new DOMSelector('global-action-buttons')
   };
@@ -138,6 +139,10 @@ export class UiController {
 
   get selectedCard() {
     return this._selectedCard;
+  }
+
+  get draggedCard() {
+    return this.__draggedCard;
   }
 
   get playedCardId() {
@@ -179,6 +184,14 @@ export class UiController {
           }
         };
       });
+  }
+
+  startDraggingCard(card: CardViewModel) {
+    this.__draggedCard = card;
+  }
+
+  stopDraggingCard() {
+    this.__draggedCard = null;
   }
 
   onCardClick(card: CardViewModel) {

@@ -14,6 +14,7 @@ const {
   actionsOffset = -50,
   actionsSide,
   actionsAlign,
+  showActionEmptyState = true,
   isInteractive = true,
   usePortal = true,
   portalTarget = '#card-actions-portal'
@@ -22,6 +23,7 @@ const {
   actionsOffset?: number;
   actionsSide?: PopoverContentProps['side'];
   actionsAlign?: PopoverContentProps['align'];
+  showActionEmptyState?: boolean;
   isInteractive?: boolean;
   usePortal?: boolean;
   portalTarget?: string;
@@ -66,7 +68,11 @@ const isActionsPopoverOpened = computed({
         :side="actionsSide"
         :align="actionsAlign"
       >
-        <CardActions :card="card" v-model:is-opened="isActionsPopoverOpened" />
+        <CardActions
+          :card="card"
+          v-model:is-opened="isActionsPopoverOpened"
+          :show-empty-state="showActionEmptyState"
+        />
       </PopoverContent>
     </PopoverPortal>
   </PopoverRoot>

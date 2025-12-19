@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useMyBoard, useMyPlayer } from '../composables/useGameClient';
+import {
+  useGameUi,
+  useMyBoard,
+  useMyPlayer
+} from '../composables/useGameClient';
 import HeroSlot from './HeroSlot.vue';
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
@@ -8,9 +12,18 @@ import DestinyDeck from './DestinyDeck.vue';
 import GameCard from './GameCard.vue';
 import DestinyZone from './DestinyZone.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
 const myPlayer = useMyPlayer();
 const myBoard = useMyBoard();
+
+const ui = useGameUi();
+
+const isDraggedCardPlayedInMinionZones = computed(() => {
+  if (!ui.value.draggedCard) return false;
+  const card = ui.value.draggedCard;
+  return card.kind === CARD_KINDS.MINION || card.kind === CARD_KINDS.SIGIL;
+});
 </script>
 
 <template>
@@ -21,7 +34,11 @@ const myBoard = useMyBoard();
     </div>
 
     <div class="center-zone">
-      <div class="attack-zone">
+      <div
+        class="attack-zone"
+        :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
+        :id="ui.DOMSelectors.attackZone(myPlayer.id).id"
+      >
         <InspectableCard
           v-for="card in myBoard.attackZone"
           :key="card"
@@ -30,7 +47,11 @@ const myBoard = useMyBoard();
           <GameCard :card-id="card" variant="small" show-stats show-modifiers />
         </InspectableCard>
       </div>
-      <div class="defense-zone">
+      <div
+        class="defense-zone"
+        :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
+        :id="ui.DOMSelectors.defenseZone(myPlayer.id).id"
+      >
         <InspectableCard
           v-for="card in myBoard.defenseZone"
           :key="card"
@@ -112,6 +133,13 @@ const myBoard = useMyBoard();
   }
 }
 
+:is(.attack-zone, .defense-zone) {
+  &.is-dragging:hover {
+    border-color: cyan;
+    box-shadow: 0 0 10px cyan;
+    background-color: hsla(from cyan h s l / 0.15);
+  }
+}
 :global(.destiny-zone .game-card) {
   transform: rotateY(180deg);
 }

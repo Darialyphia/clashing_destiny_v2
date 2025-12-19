@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { Teleport } from 'vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { useGameState, useGameUi } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { usePageLeave } from '@vueuse/core';
 import { Flip } from 'gsap/Flip';
@@ -14,11 +18,11 @@ const { card, isInteractive } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
+const { client } = useGameClient();
 
 const DRAG_THRESHOLD_PX = 60;
 
 const isOutOfScreen = usePageLeave();
-const isDragging = ref(false);
 
 const isShaking = ref(false);
 const violationWarning = ref('');
@@ -26,24 +30,22 @@ const violationWarning = ref('');
 const unselectCard = () => {
   const el = document.querySelector('#dragged-card [data-game-card]');
   if (!el) return;
-
   const flipState = Flip.getState(el);
-  ui.value.unselect();
-  window.requestAnimationFrame(() => {
-    const target = document.querySelector(
-      `.hand-card [data-game-card="${card.id}"]`
-    );
-    Flip.from(flipState, {
-      targets: target,
-      duration: 0.25,
-      absolute: true,
-      ease: Power1.easeOut
-    });
-  });
+  // @FIXME issue will scrollbar briefly appearing on the screen, lets disable the animation for now
+  // window.requestAnimationFrame(() => {
+  //   const target = document.querySelector(
+  //     `.hand-card [data-game-card="${card.id}"]`
+  //   );
+  //   Flip.from(flipState, {
+  //     targets: target,
+  //     duration: 0.25,
+  //     absolute: true,
+  //     ease: Power1.easeOut
+  //   });
+  // });
 };
 const onMouseDown = (e: MouseEvent) => {
-  return;
-  if (state.value.currentPlayer !== card.player.id) {
+  if (!client.value.isActive()) {
     return;
   }
   if (!card.canPlay) {
@@ -56,14 +58,13 @@ const onMouseDown = (e: MouseEvent) => {
     }, 2500);
     return;
   }
-
-  ui.value.select(card);
+  ui.value.startDraggingCard(card);
 
   const startY = e.clientY;
 
   const stopDragging = () => {
     nextTick(() => {
-      isDragging.value = false;
+      ui.value.stopDraggingCard();
     });
     document.body.removeEventListener('mouseup', onMouseup);
     document.body.removeEventListener('mousemove', onMousemove);
@@ -71,9 +72,9 @@ const onMouseDown = (e: MouseEvent) => {
 
   const onMousemove = (e: MouseEvent) => {
     const deltaY = startY - e.clientY;
-    if (deltaY >= DRAG_THRESHOLD_PX && !isDragging.value) {
-      isDragging.value = true;
-      card.play();
+    if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
+      ui.value.startDraggingCard(card);
+      // card.play();
     }
   };
 
@@ -88,30 +89,19 @@ const onMouseDown = (e: MouseEvent) => {
   document.body.addEventListener('mousemove', onMousemove);
   document.body.addEventListener('mouseup', onMouseup);
   const unwatch = watch(
-    [
-      () => state.value.interaction.state,
-      isOutOfScreen,
-      () => ui.value.selectedCard
-    ],
-    ([newState, outOfScreen, selectedCard]) => {
-      if (newState !== INTERACTION_STATES.PLAYING_CARD) {
+    [isOutOfScreen, () => ui.value.draggedCard],
+    ([outOfScreen, draggedCard]) => {
+      if (outOfScreen && draggedCard) {
         stopDragging();
         unselectCard();
         unwatch();
-        return;
-      }
-      if (outOfScreen && selectedCard) {
-        stopDragging();
-        unselectCard();
-        unwatch();
-        return;
       }
     }
   );
 };
 
 const isDetachedFromHand = computed(() => {
-  if (isDragging.value) return true;
+  if (ui.value.draggedCard?.equals(card)) return true;
   return (
     state.value.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
     state.value.interaction.ctx.card === card.id &&
@@ -142,8 +132,9 @@ const isDisabled = computed(() => {
         :card-id="card.id"
         actions-side="top"
         :actions-offset="15"
-        :is-interactive="isInteractive"
+        :is-interactive="isInteractive && !ui.draggedCard"
         class="game-card"
+        :show-action-empty-state="false"
       />
     </component>
   </div>

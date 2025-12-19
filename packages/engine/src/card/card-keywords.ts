@@ -29,6 +29,12 @@ export const KEYWORDS = {
       'You can banish this card from your Discard pile, to banish a card in your Destiny Zone. Reduce the cost of the next Destiny card you play this turn by 1.',
     aliases: []
   },
+  LINGERING_DESTINY: {
+    id: 'lingering-destiny',
+    name: 'Lingering Destiny',
+    description: 'When you play this card, add a Mana Spark into your Destiny Zone.',
+    aliases: []
+  },
   CONSUME: {
     id: 'consume',
     name: 'Consume',
