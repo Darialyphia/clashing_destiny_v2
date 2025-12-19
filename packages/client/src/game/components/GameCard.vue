@@ -20,21 +20,25 @@ const {
   cardId,
   actionsOffset = -50,
   actionsSide,
+  actionsAlign = 'center',
   variant = 'default',
   isInteractive = true,
   showDisabledMessage = false,
   showStats = false,
-  portalTarget = '#card-actions-portal',
+  useActionsPortal = true,
+  actionsPortalTarget = '#card-actions-portal',
   flipped
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
   actionsSide?: PopoverContentProps['side'];
+  actionsAlign?: PopoverContentProps['align'];
   variant?: 'default' | 'small';
   isInteractive?: boolean;
   showDisabledMessage?: boolean;
   showStats?: boolean;
-  portalTarget?: string;
+  useActionsPortal?: boolean;
+  actionsPortalTarget?: string;
   flipped?: boolean;
 }>();
 
@@ -116,10 +120,12 @@ const classes = computed(() => {
     :card-id="card.id"
     :is-interactive="isInteractive"
     :actions-offset="actionsOffset"
+    :actions-align="actionsAlign"
     :actions-side="actionsSide"
-    :portal-target="portalTarget"
+    :use-portal="useActionsPortal"
+    :portal-target="actionsPortalTarget"
   >
-    <div class="relative">
+    <div class="game-card-container">
       <Card
         v-if="variant === 'default'"
         :is-animated="false"
@@ -144,7 +150,10 @@ const classes = computed(() => {
           durability: card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
-            .map(ability => `@[${ability.speed}]@ ${ability.description}`),
+            .map(
+              a =>
+                `@[${a.speed}]@${a.shouldExhaust ? ' @[exhaust]@' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
+            ),
           faction: FACTIONS[card.faction],
           runes: Object.entries(card.runeCost)
             .map(([rune, amount]) =>
@@ -227,8 +236,16 @@ const classes = computed(() => {
     transform: translateY(-5rem);
   }
 }
+
+.game-card-container {
+  position: relative;
+  transform: translateZ(1px);
+}
+
 .game-card {
-  transition: all 0.3s var(--ease-2);
+  transition:
+    filter 0.3s var(--ease-2),
+    transform 0.3s var(--ease-2);
   position: relative;
 
   &.exhausted {

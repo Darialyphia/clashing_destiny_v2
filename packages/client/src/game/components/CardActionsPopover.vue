@@ -13,13 +13,17 @@ const {
   cardId,
   actionsOffset = -50,
   actionsSide,
+  actionsAlign,
   isInteractive = true,
+  usePortal = true,
   portalTarget = '#card-actions-portal'
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
   actionsSide?: PopoverContentProps['side'];
+  actionsAlign?: PopoverContentProps['align'];
   isInteractive?: boolean;
+  usePortal?: boolean;
   portalTarget?: string;
 }>();
 
@@ -51,12 +55,17 @@ const isActionsPopoverOpened = computed({
     <PopoverPortal
       :to="portalTarget"
       :disabled="
+        !usePortal ||
         card.location === 'hand' ||
         card.location === 'discardPile' ||
         card.location === 'banishPile'
       "
     >
-      <PopoverContent :side-offset="actionsOffset" :side="actionsSide">
+      <PopoverContent
+        :side-offset="actionsOffset"
+        :side="actionsSide"
+        :align="actionsAlign"
+      >
         <CardActions :card="card" v-model:is-opened="isActionsPopoverOpened" />
       </PopoverContent>
     </PopoverPortal>

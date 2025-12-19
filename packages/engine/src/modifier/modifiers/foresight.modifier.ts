@@ -25,6 +25,7 @@ export class ForesightModifier<T extends AbilityOwner> extends Modifier<T> {
           runeCost: {},
           shouldExhaust: false,
           speed: CARD_SPEED.BURST,
+          isHiddenOnCard: true,
           canUse: (game, card) => {
             if (card.location !== 'discardPile') return false;
             return card.player.cardManager.destinyZone.size > 0;

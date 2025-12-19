@@ -375,12 +375,12 @@ export class GameClient {
     });
   }
 
-  answerQuestion(indices: number[]) {
+  answerQuestion(id: string) {
     this.dispatch({
       type: 'answerQuestion',
       payload: {
         playerId: this.playerId,
-        indices
+        id
       }
     });
   }

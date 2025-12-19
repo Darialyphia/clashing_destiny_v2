@@ -95,9 +95,11 @@ const getKeyLabel = useKeybordShortcutLabel();
 .banish-pile {
   height: var(--card-small-height);
   width: var(--card-small-width);
+  --pixel-scale: 1;
 }
 
 .content {
+  --pixel-scale: 1.5;
   height: 80dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;

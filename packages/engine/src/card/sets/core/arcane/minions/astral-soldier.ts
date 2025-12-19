@@ -63,7 +63,9 @@ export const astralSoldier: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          const [shouldConsume] = await game.interaction.askQuestion({
+          if (!card.player.hasRunes({ KNOWLEDGE: 1 })) return;
+
+          const shouldConsume = await game.interaction.askQuestion({
             player: card.player,
             source: card,
             label: 'Consume 1 Knowledge to Empower 1?',

@@ -17,7 +17,8 @@ import {
   CARD_KINDS,
   type CardKind,
   CARD_DECK_SOURCES,
-  FACTIONS
+  FACTIONS,
+  RUNES
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
@@ -25,6 +26,8 @@ import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-counter-attack';
 import type { BoardSlotZone } from '../../board/board.constants';
+import { GainRuneAction } from '../actions/gain-rune';
+import { DrawCardAction } from '../actions/draw-card';
 
 type CardData =
   | SerializedSpellCard
@@ -90,6 +93,10 @@ export class CardViewModel {
         : undefined,
       tint: this.data.art.tint
     };
+  }
+
+  get isSelected() {
+    return this.getClient().ui.selectedCard?.equals(this) ?? false;
   }
 
   get kind() {
@@ -366,6 +373,14 @@ export class CardViewModel {
 
   get actions(): CardActionRule[] {
     const actions = [
+      ...(this.kind === CARD_KINDS.HERO
+        ? [
+            new GainRuneAction(this.getClient(), RUNES.MIGHT),
+            new GainRuneAction(this.getClient(), RUNES.FOCUS),
+            new GainRuneAction(this.getClient(), RUNES.KNOWLEDGE),
+            new DrawCardAction(this.getClient())
+          ]
+        : []),
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),

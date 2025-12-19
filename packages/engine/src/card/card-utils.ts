@@ -237,8 +237,8 @@ export const multipleEnemyTargetRules = {
       predicate: (c: MinionCard | HeroCard) => boolean = () => true
     ) => {
       return (
-        card.player.allEnemies.filter(c => c.canBeTargeted(card) && predicate(c)).length >
-        min
+        card.player.allEnemies.filter(c => c.canBeTargeted(card) && predicate(c))
+          .length >= min
       );
     },
   getPreResponseTargets:

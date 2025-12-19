@@ -9,6 +9,7 @@ import {
 import GameCard from './GameCard.vue';
 import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
 import { useSettingsStore } from '@/shared/composables/useSettings';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -37,13 +38,28 @@ const getKeyLabel = useKeybordShortcutLabel();
     style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     ref="card"
   >
-    <GameCard
-      :card-id="hero.id"
-      actions-side="bottom"
-      :actions-offset="15"
-      variant="small"
-      show-stats
-    />
+    <InspectableCard :card-id="hero.id" :open-delay="150">
+      <GameCard
+        :card-id="hero.id"
+        actions-side="right"
+        actions-align="start"
+        :actions-offset="0"
+        variant="small"
+        show-stats
+      />
+    </InspectableCard>
+
+    <div class="runes">
+      <div class="rune" style="--bg: url(/assets/ui/card/rune-might.png)">
+        {{ player.unlockedRunes.MIGHT ?? 0 }}
+      </div>
+      <div class="rune" style="--bg: url(/assets/ui/card/rune-focus.png)">
+        {{ player.unlockedRunes.FOCUS ?? 0 }}
+      </div>
+      <div class="rune" style="--bg: url(/assets/ui/card/rune-knowledge.png)">
+        {{ player.unlockedRunes.KNOWLEDGE ?? 0 }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -52,54 +68,25 @@ const getKeyLabel = useKeybordShortcutLabel();
   position: relative;
 }
 
-.hero-hp {
+.runes {
   position: absolute;
-  bottom: calc(-1 * var(--size-1));
-  right: 0;
-  font-size: var(--font-size-3);
-  font-weight: var(--font-weight-8);
-  color: white;
-  -webkit-text-stroke: 4px black;
-  paint-order: stroke fill;
-  text-shadow: var(--text-shadow-heavy);
-  z-index: 0;
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-round);
-    aspect-ratio: 1;
-    background: url('/assets/ui/hero-hp-filled.png');
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    z-index: -1;
-    transform: translateX(-50%) translateY(-50%);
-    border: solid 3px black;
-    mask: linear-gradient(
-      to top,
-      black calc(var(--percentage) * 1%),
-      transparent calc(var(--percentage) * 1%)
-    );
-  }
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-round);
-    border: solid 3px black;
-    aspect-ratio: 1;
-    background-color: #32021b;
-    z-index: -1;
-    transform: translateX(-50%) translateY(-50%);
+  top: var(--size-8);
+  right: var(--size-7);
+  display: grid;
+  gap: var(--size-2);
 
-    box-shadow: inset 0 0 0 3px #5d1529;
+  .rune {
+    padding-left: calc(20px * var(--pixel-scale));
+    height: calc(17px * var(--pixel-scale));
+    background-image: var(--bg);
+    background-size: contain;
+    background-position: top left;
+    width: calc(27px * var(--pixel-scale));
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-5);
+    color: white;
+    -webkit-text-stroke: 6px black;
+    paint-order: stroke fill;
   }
 }
 </style>

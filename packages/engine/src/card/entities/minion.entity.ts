@@ -373,7 +373,7 @@ export class MinionCard extends Card<
   }
 
   private async promptForSummonZone() {
-    const [zone] = await this.game.interaction.askQuestion({
+    return (await this.game.interaction.askQuestion({
       label: 'Select which zone to summon the minion to',
       player: this.player,
       source: this,
@@ -383,9 +383,7 @@ export class MinionCard extends Card<
         { id: BOARD_SLOT_ZONES.ATTACK_ZONE, label: 'Attack Zone' },
         { id: BOARD_SLOT_ZONES.DEFENSE_ZONE, label: 'Defense Zone' }
       ]
-    });
-
-    return zone as BoardSlotZone;
+    })) as BoardSlotZone;
   }
 
   async play(onResolved: () => MaybePromise<void>) {

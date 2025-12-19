@@ -45,7 +45,6 @@ export const astralExplorer: MinionBlueprint = {
   },
   manaCost: 3,
   runeCost: {
-    KNOWLEDGE: 1,
     MIGHT: 1
   },
   speed: CARD_SPEED.SLOW,

@@ -49,6 +49,10 @@ export class AbilityViewModel {
     return this.data.isHiddenOnCard;
   }
 
+  get shouldExhaust() {
+    return this.data.shouldExhaust;
+  }
+
   get speed() {
     return this.data.speed;
   }

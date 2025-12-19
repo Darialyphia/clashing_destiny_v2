@@ -1,30 +1,46 @@
 <script setup lang="ts">
 import HeroSlot from './HeroSlot.vue';
-import { useOpponentPlayer } from '../composables/useGameClient';
+import {
+  useOpponentBoard,
+  useOpponentPlayer
+} from '../composables/useGameClient';
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
 import Deck from './Deck.vue';
 import DestinyDeck from './DestinyDeck.vue';
+import GameCard from './GameCard.vue';
+import DestinyZone from './DestinyZone.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const opponent = useOpponentPlayer();
+const opponentBoard = useOpponentBoard();
 </script>
 
 <template>
   <div class="opponent-board">
-    <div>
+    <div class="left-zone">
+      <DestinyZone :player-id="opponent.id" :teaching-mode="false" />
       <HeroSlot :player="opponent" class="hero" />
-      <div class="destiny-zone">
-        <HeroSlot :player="opponent" />
-      </div>
     </div>
 
     <div class="center-zone">
       <div class="defense-zone">
-        <HeroSlot :player="opponent" />
+        <InspectableCard
+          v-for="card in opponentBoard.defenseZone"
+          :key="card"
+          :card-id="card"
+        >
+          <GameCard :card-id="card" variant="small" show-stats />
+        </InspectableCard>
       </div>
       <div class="attack-zone">
-        <HeroSlot :player="opponent" />
-        <HeroSlot :player="opponent" />
+        <InspectableCard
+          v-for="card in opponentBoard.attackZone"
+          :key="card"
+          :card-id="card"
+        >
+          <GameCard :card-id="card" variant="small" show-stats />
+        </InspectableCard>
       </div>
     </div>
 
@@ -42,32 +58,60 @@ const opponent = useOpponentPlayer();
   display: grid;
   grid-template-columns: auto 1fr auto;
   transform-style: preserve-3d;
+  gap: var(--size-2);
+  padding-top: var(--size-5);
+}
+
+.left-zone {
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.hero {
+  --pixel-scale: 1.75;
+  /* fixes some mouse hit detection issues*/
+  transform: translateZ(1px);
 }
 
 .center-zone {
   --pixel-scale: 1;
   display: grid;
   grid-template-rows: 1fr 1fr;
+  row-gap: var(--size-1);
+  /* fixes some mouse hit detection issues*/
+  transform: translateZ(1px);
 }
 
 .attack-zone {
+  border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  &::after {
+    content: 'Attack Zone';
+    position: absolute;
+    bottom: var(--size-1);
+    left: var(--size-3);
+    color: #d7ad42;
+    font-size: var(--font-size-0);
+  }
 }
 
 .defense-zone {
+  border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.destiny-zone {
-  --pixel-scale: 0.5;
-}
-
-:global(.destiny-zone .game-card) {
-  transform: rotateY(180deg);
+  position: relative;
+  &::after {
+    content: 'Defense Zone';
+    position: absolute;
+    bottom: var(--size-1);
+    left: var(--size-3);
+    color: #d7ad42;
+    font-size: var(--font-size-0);
+  }
 }
 
 .piles-zone {

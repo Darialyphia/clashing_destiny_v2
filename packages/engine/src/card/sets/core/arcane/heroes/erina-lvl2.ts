@@ -51,7 +51,7 @@ export const erinaLv2: HeroBlueprint = {
   abilities: [
     {
       id: 'erina-lv2-ability-1',
-      canUse: () => true,
+      canUse: (game, card) => card.location === 'board',
       shouldExhaust: true,
       manaCost: 2,
       runeCost: {},

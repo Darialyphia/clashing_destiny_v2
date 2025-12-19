@@ -35,7 +35,12 @@ const {
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
-      <HoverCardContent :side="side" :side-offset="sideOffset" v-if="enabled">
+      <HoverCardContent
+        :side="side"
+        :side-offset="sideOffset"
+        v-if="enabled"
+        style="--pixel-scale: 1.5"
+      >
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>
     </HoverCardPortal>

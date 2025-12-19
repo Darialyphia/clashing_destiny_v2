@@ -59,11 +59,12 @@ export class PassGlobalAction implements GlobalActionRule {
   }
 
   onClick(): void {
-    const shouldConfirm =
-      !this.client.state.effectChain &&
-      this.hasRemainingAction &&
-      !this.client.ui.shouldBypassConfirmation;
-
+    // const shouldConfirm =
+    //   !this.client.state.effectChain &&
+    //   this.hasRemainingAction &&
+    //   !this.client.ui.shouldBypassConfirmation;
+    const shouldConfirm = false;
+    console.log('PassGlobalAction onClick, shouldConfirm:', shouldConfirm);
     if (shouldConfirm) {
       this.client.ui.isPassConfirmationModalOpened = true;
     } else {

@@ -1,5 +1,11 @@
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { empower } from '../../../../card-actions-utils';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
@@ -10,6 +16,8 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { CardBeforePlayEvent } from '../../../../card.events';
+import type { HeroCard } from '../../../../entities/hero.entity';
 
 export const erinaLv3: HeroBlueprint = {
   id: 'erina-arcane-weaver',
@@ -54,7 +62,7 @@ export const erinaLv3: HeroBlueprint = {
   abilities: [
     {
       id: 'erina-lv3-ability-1',
-      canUse: () => true,
+      canUse: (game, card) => card.location === 'board',
       shouldExhaust: true,
       manaCost: 2,
       runeCost: {},
@@ -80,11 +88,32 @@ export const erinaLv3: HeroBlueprint = {
       shouldExhaust: true,
       manaCost: 1,
       runeCost: {},
-      description: 'The next spell you play this turn has @Echo@ and @Empower 2@',
+      description: '@Empower 2@. The next spell you play this turn has @Echo@',
       getPreResponseTargets: () => Promise.resolve([]),
       label: 'Improve next spell',
       speed: CARD_SPEED.BURST,
-      async onResolve(game, card) {}
+      async onResolve(game, card) {
+        await card.modifiers.add(
+          new Modifier<HeroCard>('erina-lv3-improve-next-spell', game, card, {
+            mixins: [
+              new GameEventModifierMixin(game, {
+                eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
+                filter: event =>
+                  event.data.card.player.equals(card.player) && isSpell(event.data.card),
+                async handler(event: CardBeforePlayEvent) {
+                  empower(game, card, 2);
+                  await event.data.card.modifiers.add(new EchoModifier(game, card));
+                }
+              }),
+              new UntilEventModifierMixin(game, {
+                eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+                filter: event =>
+                  event.data.card.player.equals(card.player) && isSpell(event.data.card)
+              })
+            ]
+          })
+        );
+      }
     }
   ],
   async onInit(game, card) {

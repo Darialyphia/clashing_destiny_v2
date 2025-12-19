@@ -46,6 +46,7 @@ const ui = useGameUi();
   }
 }
 .action {
+  --card-text-color: #d1c6c2;
   background: black;
   padding: 0.5rem;
   min-width: 10rem;

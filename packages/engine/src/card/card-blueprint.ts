@@ -100,6 +100,7 @@ export type SerializedAbility = {
   speed: CardSpeed;
   targets: SerializedPreResponseTarget[] | null;
   isHiddenOnCard: boolean;
+  shouldExhaust: boolean;
 };
 
 export type PreResponseTarget = AnyCard;

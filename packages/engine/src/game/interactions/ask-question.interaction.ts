@@ -1,9 +1,7 @@
-import { assert } from '@game/shared';
+import { assert, type Nullable } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
 import {
-  NotEnoughCardsError,
-  TooManyCardsError,
   INTERACTION_STATE_TRANSITIONS,
   InvalidPlayerError
 } from '../systems/game-interaction.system';
@@ -13,8 +11,6 @@ type AskQuestionContextOptions = {
   player: Player;
   source: AnyCard;
   choices: Array<{ id: string; label: string }>;
-  minChoiceCount: number;
-  maxChoiceCount: number;
   label: string;
 };
 export class AskQuestionContext {
@@ -24,13 +20,9 @@ export class AskQuestionContext {
     return instance;
   }
 
-  private selectedChoices: Array<{ id: string; label: string }> = [];
+  private selectedChoice: Nullable<{ id: string; label: string }> = null;
 
   private choices: Array<{ id: string; label: string }> = [];
-
-  private minChoiceCount: number;
-
-  private maxChoiceCount: number;
 
   readonly player: Player;
 
@@ -43,8 +35,6 @@ export class AskQuestionContext {
     options: AskQuestionContextOptions
   ) {
     this.choices = options.choices;
-    this.minChoiceCount = options.minChoiceCount;
-    this.maxChoiceCount = options.maxChoiceCount;
     this.player = options.player;
     this.label = options.label;
     this.source = options.source;
@@ -57,29 +47,16 @@ export class AskQuestionContext {
       player: this.player.id,
       source: this.source.id,
       choices: this.choices,
-      minChoiceCount: this.minChoiceCount,
-      maxChoiceCount: this.maxChoiceCount,
       label: this.label
     };
   }
 
-  commit(player: Player, indices: number[]) {
+  commit(player: Player, id: string) {
     assert(player.equals(this.player), new InvalidPlayerError());
 
-    assert(
-      indices.length >= this.minChoiceCount,
-      new NotEnoughCardsError(this.minChoiceCount, indices.length)
-    );
-    assert(
-      indices.length <= this.maxChoiceCount,
-      new TooManyCardsError(this.maxChoiceCount, indices.length)
-    );
-
-    const selectedCards = indices.map(index => this.choices[index]);
-    this.selectedChoices.push(...selectedCards);
-
+    this.selectedChoice = this.choices.find(choice => choice.id === id);
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION);
     this.game.interaction.onInteractionEnd();
-    this.game.inputSystem.unpause(this.selectedChoices.map(c => c.id));
+    this.game.inputSystem.unpause(this.selectedChoice!.id);
   }
 }

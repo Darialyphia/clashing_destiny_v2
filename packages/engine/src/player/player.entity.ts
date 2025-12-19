@@ -54,6 +54,7 @@ export type SerializedPlayer = {
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
+  unlockedRunes: RuneCost;
 };
 
 export type PlayerInterceptors = {
@@ -186,6 +187,7 @@ export class Player
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       influence: this.influence,
+      unlockedRunes: { ...this._unlockedRunes },
       canPerformResourceAction:
         this.resourceActionPerformedThisTurn < this.maxResourceActionPerTurn
     };

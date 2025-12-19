@@ -11,6 +11,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import GameCard from './GameCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { EFFECT_TYPE } from '@game/engine/src/game/game.enums';
+import ExplainerMessage from './ExplainerMessage.vue';
 
 const { playerId } = useGameClient();
 const ui = useGameUi();
@@ -74,7 +75,7 @@ const stack = computed(() => {
       return {
         ...step,
         playerType: card?.player.equals(myPlayer.value) ? 'ally' : 'enemy',
-        image: `url(${card?.imagePath})`
+        image: `url(${card?.art.main})`
       };
     }) ?? []
   );
@@ -120,6 +121,7 @@ const stack = computed(() => {
         />
       </Teleport>
     </InspectableCard>
+    <ExplainerMessage class="ml-auto" />
   </div>
 </template>
 

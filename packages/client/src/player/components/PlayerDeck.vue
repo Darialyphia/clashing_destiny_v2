@@ -85,7 +85,7 @@ const sigils = computed(() =>
 
       <HoverCardPortal>
         <HoverCardContent side="left" align="center" :side-offset="8">
-          <div class="deck-details">
+          <!-- <div class="deck-details">
             <ul>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
@@ -129,7 +129,7 @@ const sigils = computed(() =>
                 {{ item.copies }}x {{ item.blueprint.name }}
               </li>
             </ul>
-          </div>
+          </div> -->
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCardRoot>

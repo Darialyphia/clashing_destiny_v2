@@ -1,6 +1,5 @@
 import type { Game } from '../game/game';
 import { GAME_EVENTS } from '../game/game.events';
-import { GameEndPhase } from '../game/phases/game-end.phase';
 import { SimpleSpellpowerBuffModifier } from '../modifier/modifiers/simple-spellpower.buff.modifier';
 import { KEYWORDS } from './card-keywords';
 import { isSpell } from './card-utils';

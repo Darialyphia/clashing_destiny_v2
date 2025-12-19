@@ -46,7 +46,7 @@ export const amplifyMagic: SpellBlueprint = {
   },
   manaCost: 2,
   runeCost: {
-    KNOWLEDGE: 2
+    KNOWLEDGE: 1
   },
   speed: CARD_SPEED.BURST,
   abilities: [],

@@ -57,7 +57,7 @@ export const manaLooter: MinionBlueprint = {
       id: 'mana-looter-ability',
       description: 'Give this unit @Stealth@ this turn, then wake up this minion.',
       label: 'Gain Stealth',
-      canUse: () => true,
+      canUse: (game, card) => card.location === 'board',
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 2,
       shouldExhaust: true,

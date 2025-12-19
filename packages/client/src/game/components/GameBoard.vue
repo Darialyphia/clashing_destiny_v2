@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useGameUi,
   useMyBoard,
   useMyPlayer,
   useOpponentBoard,
@@ -21,7 +22,9 @@ import Camera from './Camera.vue';
 import MyBoard from './MyBoard.vue';
 import OpponentBoard from './OpponentBoard.vue';
 import EffectChain from './EffectChain.vue';
-
+import Hand from './Hand.vue';
+import DraggedCard from './DraggedCard.vue';
+import { useEventListener } from '@vueuse/core';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const { clocks, options } = defineProps<{
@@ -36,9 +39,8 @@ const { clocks, options } = defineProps<{
   };
 }>();
 
-const myBoard = useMyBoard();
+const ui = useGameUi();
 const myPlayer = useMyPlayer();
-const opponentBoard = useOpponentBoard();
 const opponentPlayer = useOpponentPlayer();
 
 // const board = useTemplateRef('board');
@@ -52,25 +54,34 @@ const isSettingsOpened = ref(false);
 </script>
 
 <template>
-  <!-- <SVGFilters />
+  <SVGFilters />
   <DestinyCostVFX />
-  <ChooseCardModal />
-  <AnswerQuestionModal />
-  <PassConfirmationModal />
+  <!-- <PassConfirmationModal /> -->
   <PlayedCard />
+  <ChooseCardModal />
   <CombatArrows />
-
-  <ActionsButtons class="global-actions" /> -->
+  <AnswerQuestionModal />
+  <DraggedCard />
   <div class="game-board-container">
     <Camera>
-      <div class="board">
+      <div class="board" :id="ui.DOMSelectors.board.id">
         <OpponentBoard />
-        <EffectChain />
+        <div class="flex justify-between gap-3">
+          <EffectChain />
+          <ActionsButtons />
+        </div>
         <MyBoard />
+        <div id="card-actions-portal"></div>
+        <div class="arrows" id="arrows" />
       </div>
     </Camera>
   </div>
-  <!-- <button
+
+  <div class="my-hand">
+    <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
+  </div>
+
+  <button
     aria-label="Settings"
     class="settings-button"
     @click="isSettingsOpened = true"
@@ -87,7 +98,6 @@ const isSettingsOpened = ref(false);
     </div>
   </UiModal>
   <slot name="board-additional" />
-  <div class="arrows" id="arrows" /> -->
 
   <GameErrorModal />
 </template>
@@ -111,6 +121,13 @@ const isSettingsOpened = ref(false);
   transform-style: preserve-3d;
 }
 
+.my-hand {
+  position: fixed;
+  width: 100%;
+  bottom: 8%;
+  left: 0;
+}
+
 #arrows {
   position: fixed;
   z-index: 1;
@@ -125,6 +142,9 @@ const isSettingsOpened = ref(false);
   grid-row: 1;
 }
 
+#card-actions-portal {
+  transform: translateZ(10px);
+}
 @keyframes warning-pulse {
   0%,
   100% {

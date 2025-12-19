@@ -198,6 +198,7 @@ export class Ability<T extends AbilityOwner>
       runeCost: this.blueprint.runeCost,
       speed: this.speed,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
+      shouldExhaust: this.shouldExhaust,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };

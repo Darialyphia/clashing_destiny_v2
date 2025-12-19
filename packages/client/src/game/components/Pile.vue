@@ -27,7 +27,8 @@ const maxSize = 25;
   transform-style: preserve-3d;
   justify-self: center;
   position: relative;
-  border: solid 1px black;
+  border: solid 1px #985e25;
+
   > * {
     grid-column: 1;
     grid-row: 1;

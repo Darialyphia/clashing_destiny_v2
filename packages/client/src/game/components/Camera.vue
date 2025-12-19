@@ -8,8 +8,8 @@ const ui = useGameUi();
 const camera = ref({
   origin: { x: 0, y: 0 },
   scale: 1,
-  angle: { x: 0, y: 0, z: 0 },
-  offset: { x: 0, y: 0 }
+  angle: { x: 15, y: 0, z: 0 },
+  offset: { x: 0, y: -7 }
 });
 
 const isTilted = computed({
@@ -20,11 +20,11 @@ const isTilted = computed({
     if (value) {
       camera.value.angle.x = 15;
       camera.value.angle.y = 0;
-      camera.value.offset.y = -5;
+      camera.value.offset.y = -7;
     } else {
       camera.value.angle.x = 0;
       camera.value.angle.y = 0;
-      camera.value.offset.y = 0;
+      camera.value.offset.y = -2;
     }
   }
 });
@@ -64,6 +64,8 @@ const isTilted = computed({
   position: absolute;
   pointer-events: none;
   transform-style: preserve-3d;
+  pointer-events: none;
+  transform: translateZ(0px);
 }
 
 .camera-rotate {
@@ -75,6 +77,7 @@ const isTilted = computed({
   transform: rotateY(var(--board-angle-Y)) rotateX(var(--board-angle-X))
     rotateZ(var(--board-angle-Z));
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 .options {
@@ -94,12 +97,16 @@ const isTilted = computed({
 
 .camera-viewport {
   position: absolute;
-  top: 0%;
-  left: 50%;
-  translate: -50% calc(v-bind('camera.offset.y') * 1%);
+  pointer-events: auto;
+  top: 0;
+  left: 10%;
+  translate: calc(v-bind('camera.offset.x') * 1%)
+    calc(v-bind('camera.offset.y') * 1%);
   transform-style: preserve-3d;
   width: 80vw;
   height: 100dvh;
   transition: translate 1s var(--ease-4);
+  /* solves some hover detection issues because of 3D transforms */
+  transform: translateZ(0px);
 }
 </style>
