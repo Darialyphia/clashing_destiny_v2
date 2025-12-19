@@ -15,7 +15,8 @@ import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
 import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
-
+import { gameStateRef } from '../composables/gameStateRef';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 const {
   cardId,
   actionsOffset = -50,
@@ -26,6 +27,7 @@ const {
   showDisabledMessage = false,
   showStats = false,
   useActionsPortal = true,
+  showModifiers = false,
   actionsPortalTarget = '#card-actions-portal',
   flipped
 } = defineProps<{
@@ -36,6 +38,7 @@ const {
   variant?: 'default' | 'small';
   isInteractive?: boolean;
   showDisabledMessage?: boolean;
+  showModifiers?: boolean;
   showStats?: boolean;
   useActionsPortal?: boolean;
   actionsPortalTarget?: string;
@@ -113,6 +116,14 @@ const classes = computed(() => {
     }
   ];
 });
+
+const visibleModifiers = gameStateRef(() => {
+  return (
+    card.value?.modifiers.filter(
+      modifier => modifier.icon && modifier.stacks > 0
+    ) ?? []
+  );
+});
 </script>
 
 <template>
@@ -187,6 +198,28 @@ const classes = computed(() => {
         :data-damage="damageTaken"
         @click="handleClick"
       />
+
+      <div class="modifiers" v-if="showModifiers">
+        <UiSimpleTooltip
+          v-for="modifier in visibleModifiers"
+          :key="modifier.id"
+          use-portal
+          side="left"
+        >
+          <template #trigger>
+            <div
+              :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+              :alt="modifier.name"
+              :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
+              class="modifier"
+            />
+          </template>
+
+          <div class="font-7">{{ modifier.name }}</div>
+          {{ modifier.description }}
+          <div class="font-0">from: {{ modifier.source.name }}</div>
+        </UiSimpleTooltip>
+      </div>
 
       <div class="damage" v-if="damageTaken > 0">
         {{ damageTaken }}
@@ -368,5 +401,35 @@ const classes = computed(() => {
 }
 .fleeting {
   animation: fleeting 5s var(--ease-3) infinite;
+}
+
+.modifiers {
+  position: absolute;
+  top: var(--size-2);
+  left: var(--size-2);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--size-2);
+  --pixel-scale: 2;
+}
+
+.modifier {
+  width: 24px;
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center center;
+  background-size: cover;
+  pointer-events: auto;
+  position: relative;
+  &::after {
+    content: attr(data-stacks);
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    font-size: var(--font-size-2);
+    color: white;
+    paint-order: stroke fill;
+    font-weight: var(--font-weight-7);
+    -webkit-text-stroke: 2px black;
+  }
 }
 </style>

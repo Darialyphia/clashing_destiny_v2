@@ -15,7 +15,8 @@ export class UseAbilityAction implements CardActionRule {
   }
 
   getLabel() {
-    return this.ability.name;
+    const a = this.ability;
+    return `@[${a.speed}]@${a.shouldExhaust ? ' @[exhaust]@' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.name}`;
   }
 
   handler(card: CardViewModel) {

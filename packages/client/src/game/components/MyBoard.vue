@@ -27,7 +27,7 @@ const myBoard = useMyBoard();
           :key="card"
           :card-id="card"
         >
-          <GameCard :card-id="card" variant="small" show-stats />
+          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
         </InspectableCard>
       </div>
       <div class="defense-zone">
@@ -36,7 +36,7 @@ const myBoard = useMyBoard();
           :key="card"
           :card-id="card"
         >
-          <GameCard :card-id="card" variant="small" show-stats />
+          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
         </InspectableCard>
       </div>
     </div>

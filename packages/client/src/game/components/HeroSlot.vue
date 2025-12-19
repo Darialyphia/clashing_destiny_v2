@@ -46,6 +46,7 @@ const getKeyLabel = useKeybordShortcutLabel();
         :actions-offset="0"
         variant="small"
         show-stats
+        show-modifiers
       />
     </InspectableCard>
 
