@@ -263,7 +263,7 @@ export class Player
     this._hasPassedThisRound = true;
   }
 
-  get unlockdRunes() {
+  get unlockedRunes() {
     return { ...this._unlockedRunes };
   }
 
@@ -293,8 +293,7 @@ export class Player
     for (const [key, value] of Object.entries(rune)) {
       const k = key as keyof RuneCost;
       const currentAmount = this._unlockedRunes[k] ?? 0;
-      assert(currentAmount >= (value ?? 0), new GameError(`Not enough ${key} runes`));
-      this._unlockedRunes[k]! -= value!;
+      this._unlockedRunes[k]! = Math.max(0, currentAmount - (value ?? 0));
     }
     await this.game.emit(
       GAME_EVENTS.AFTER_SPEND_RUNE,
@@ -345,16 +344,16 @@ export class Player
     });
   }
 
-  private payForManaCost(manaCost: number, indices: number[]) {
+  private async payForManaCost(manaCost: number, indices: number[]) {
     const hasEnough = this.cardManager.hand.length >= manaCost;
     assert(hasEnough, new NotEnoughCardsInHandError());
     const cards = this.cardManager.hand.filter((_, i) => indices.includes(i));
-    cards.forEach(card => {
+    for (const card of cards) {
       if (!card.canBeUsedAsManaCost) {
         throw new GameError(`Cannot use card '${card.id}' as mana cost`);
       }
-      card.sendToDestinyZone();
-    });
+      await card.sendToDestinyZone();
+    }
   }
 
   async payForLoyaltyCost(card: AnyCard) {
@@ -366,7 +365,7 @@ export class Player
     }
   }
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
-    this.payForManaCost(card.manaCost, manaCostIndices);
+    await this.payForManaCost(card.manaCost, manaCostIndices);
     await this.payForLoyaltyCost(card);
     card.isPlayedFromHand = true;
     await this.playCard(card);
@@ -377,7 +376,7 @@ export class Player
     manaCostIndices: number[],
     onResolved: () => MaybePromise<void>
   ) {
-    this.payForManaCost(ability.manaCost, manaCostIndices);
+    await this.payForManaCost(ability.manaCost, manaCostIndices);
     await ability.use(onResolved);
   }
 
@@ -397,7 +396,7 @@ export class Player
     for (let i = 0; i < cost; i++) {
       const index = this.game.rngSystem.nextInt(pool.length - 1);
       const card = pool[index];
-      card.sendToBanishPile();
+      await card.sendToBanishPile();
       banishedCards.push({ card, index });
       pool.splice(index, 1);
     }

@@ -66,7 +66,7 @@ export const archsageOfMoonring: MinionBlueprint = {
       new OnEnterModifier(game, card, {
         handler: async () => {
           let count = 0;
-          const max = card.player.unlockdRunes.KNOWLEDGE ?? 0;
+          const max = card.player.unlockedRunes.KNOWLEDGE ?? 0;
 
           while (count < max) {
             const [target] = await singleEnemyMinionTargetRules.getPreResponseTargets(

@@ -1,3 +1,4 @@
+import { isFunction } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
@@ -11,7 +12,7 @@ export class SimpleManacostModifier<T extends AnyCard> extends Modifier<T> {
     game: Game,
     card: AnyCard,
     options: {
-      amount: number;
+      amount: number | (() => number);
       mixins?: ModifierMixin<T>[];
     }
   ) {
@@ -23,7 +24,10 @@ export class SimpleManacostModifier<T extends AnyCard> extends Modifier<T> {
           interceptor: value => {
             if (value === null) return value;
 
-            return Math.max(0, value + options.amount);
+            return Math.max(
+              0,
+              value + (isFunction(options.amount) ? options.amount() : options.amount)
+            );
           }
         }),
         ...(options.mixins ?? [])

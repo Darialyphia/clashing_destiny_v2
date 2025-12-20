@@ -19,6 +19,10 @@ import { magicMissile } from './core/arcane/spells/magic-missile';
 import { splittingBeam } from './core/arcane/spells/splitting-beam';
 import { thirstForKnowledge } from './core/arcane/spells/thirst-for-knowledge';
 import { wizardsInsight } from './core/arcane/spells/wizards-insight';
+// import { sigilOfWisdom } from './core/arcane/sigils/sigil-of-widom';
+// import { galacticExplosion } from './core/arcane/spells/galactic-explosion';
+// import { powerOverwhelming } from './core/arcane/spells/power-overwhelming';
+// import { arcaneConduit } from './core/arcane/minions/arcane-conduit';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -43,5 +47,9 @@ export const coreSet: CardSet = {
     magicMissile,
     wizardsInsight,
     lightningBolt
+    // powerOverwhelming,
+    // galacticExplosion,
+    // arcaneConduit,
+    // sigilOfWisdom
   ]
 };
