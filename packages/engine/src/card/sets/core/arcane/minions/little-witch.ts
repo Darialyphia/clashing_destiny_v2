@@ -1,5 +1,3 @@
-import { MinionInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { AbilityDamage } from '../../../../../utils/damage';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { singleEnemyMinionTargetRules } from '../../../../card-utils';
@@ -47,7 +45,7 @@ export const littleWitch: MinionBlueprint = {
   },
   manaCost: 1,
   runeCost: {
-    KNOWLEDGE: 1
+    KNOWLEDGE: 2
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,

@@ -17,7 +17,7 @@ import type { PopoverContentProps } from 'reka-ui';
 import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
 import { gameStateRef } from '../composables/gameStateRef';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import { CARD_LOCATIONS } from '@game/engine/src/card/components/card-manager.component';
+import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 const {
   cardId,
   actionsOffset = -50,

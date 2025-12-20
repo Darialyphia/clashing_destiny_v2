@@ -12,13 +12,13 @@ import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonu
 import type { SigilCard } from '../../../../entities/sigil.entity';
 
 export const sigilOfWisdom: SigilBlueprint = {
-  id: 'mana-looter',
+  id: 'sigil-of-wisdom',
   kind: CARD_KINDS.SIGIL,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Mana Looter',
+  name: 'Sigil of Wisdom',
   description:
     '@On Destroyed@: Draw 2 cards into your Destiny Zone. @[lvl] 3 Bonus@: Draw them into your hand instead.',
   faction: FACTIONS.ARCANE,
@@ -37,9 +37,9 @@ export const sigilOfWisdom: SigilBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'minions/mana-looter-bg',
-      main: 'minions/mana-looter',
-      breakout: 'minions/mana-looter-breakout',
+      bg: 'placeholder-bg',
+      main: 'placeholder',
+      breakout: 'placeholder-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

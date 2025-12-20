@@ -1,4 +1,4 @@
-import { CARD_LOCATIONS } from '../../card/components/card-manager.component';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 import { INTERACTION_STATES, type InteractionState } from '../../game/game.enums';
 import { type SerializedInteractionContext } from '../../game/systems/game-interaction.system';
 import type { GameClient } from '../client';

@@ -9,10 +9,10 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES
+  RARITIES,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
-import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const cosmicDivinator: MinionBlueprint = {
   id: 'cosmic-divinator',

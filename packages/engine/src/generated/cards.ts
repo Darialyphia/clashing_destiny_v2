@@ -23,7 +23,11 @@ export const cards = {
 "astral-soldier": "astral-soldier",
 "magic-missile": "magic-missile",
 "wizards-insight": "wizards-insight",
-"lightning-bolt": "lightning-bolt"
+"lightning-bolt": "lightning-bolt",
+"power-overwhelming": "power-overwhelming",
+"galactic-explosion": "galactic-explosion",
+"arcane-conduit": "arcane-conduit",
+"sigil-of-wisdom": "sigil-of-wisdom"
 } as const;
 
 export const collectableCards = {
@@ -45,5 +49,9 @@ export const collectableCards = {
 "astral-soldier": "astral-soldier",
 "magic-missile": "magic-missile",
 "wizards-insight": "wizards-insight",
-"lightning-bolt": "lightning-bolt"
+"lightning-bolt": "lightning-bolt",
+"power-overwhelming": "power-overwhelming",
+"galactic-explosion": "galactic-explosion",
+"arcane-conduit": "arcane-conduit",
+"sigil-of-wisdom": "sigil-of-wisdom"
 } as const;

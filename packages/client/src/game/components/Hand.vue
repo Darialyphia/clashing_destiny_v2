@@ -8,7 +8,7 @@ import {
   usePlayer
 } from '@/game/composables/useGameClient';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { clamp } from '@game/shared';
 import { OnClickOutside } from '@vueuse/components';
 import { useElementBounding, useResizeObserver } from '@vueuse/core';

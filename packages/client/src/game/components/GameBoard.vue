@@ -22,7 +22,7 @@ import OpponentBoard from './OpponentBoard.vue';
 import EffectChain from './EffectChain.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';

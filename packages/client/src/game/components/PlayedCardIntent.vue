@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import {
   useGameState,
   useGameUi,

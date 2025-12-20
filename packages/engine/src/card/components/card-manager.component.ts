@@ -1,9 +1,9 @@
-import { isDefined, type Values } from '@game/shared';
+import { isDefined } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
-import { CARD_DECK_SOURCES } from '../card.enums';
+import { CARD_DECK_SOURCES, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 
@@ -11,17 +11,6 @@ export type CardManagerComponentOptions = {
   maxHandSize: number;
   shouldShuffleDeck: boolean;
 };
-
-export const CARD_LOCATIONS = {
-  HAND: 'hand',
-  MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck',
-  DISCARD_PILE: 'discardPile',
-  BANISH_PILE: 'banishPile',
-  DESTINY_ZONE: 'destinyZone',
-  BOARD: 'board'
-} as const;
-export type CardLocation = Values<typeof CARD_LOCATIONS>;
 
 export class CardManagerComponent {
   private game: Game;

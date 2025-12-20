@@ -9,7 +9,7 @@ import {
   type MinionBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardBeforeDealCombatDamageEvent,
@@ -29,7 +29,6 @@ import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-si
 import { Ability } from './ability.entity';
 import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import { HeroCard } from './hero.entity';
-import { CARD_LOCATIONS } from '../components/card-manager.component';
 import {
   MINION_EVENTS,
   MinionCardAfterTakeDamageEvent,

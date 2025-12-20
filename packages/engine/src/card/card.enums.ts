@@ -183,3 +183,14 @@ export const RUNES = {
   // RESONANCE: 'RESONANCE'
 } as const;
 export type Rune = Values<typeof RUNES>;
+
+export const CARD_LOCATIONS = {
+  HAND: 'hand',
+  MAIN_DECK: 'mainDeck',
+  DESTINY_DECK: 'destinyDeck',
+  DISCARD_PILE: 'discardPile',
+  BANISH_PILE: 'banishPile',
+  DESTINY_ZONE: 'destinyZone',
+  BOARD: 'board'
+} as const;
+export type CardLocation = Values<typeof CARD_LOCATIONS>;

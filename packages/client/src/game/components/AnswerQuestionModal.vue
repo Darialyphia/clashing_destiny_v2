@@ -7,7 +7,7 @@ import {
   useGameUi
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { GAME_QUESTIONS } from '@game/engine/src/game/game.enums';
 
 const { client, playerId } = useGameClient();

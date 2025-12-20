@@ -6,9 +6,9 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES
+  RARITIES,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
-import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const erinaLv1: HeroBlueprint = {
   id: 'erina-council-mage',

@@ -6,10 +6,10 @@ import {
   CARD_DECK_SOURCES,
   CARD_SETS,
   RARITIES,
-  FACTIONS
+  FACTIONS,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 import { GAME_EVENTS } from '../../../../../game/game.events';
-import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const manaSpark: SpellBlueprint = {
   id: 'mana-spark',

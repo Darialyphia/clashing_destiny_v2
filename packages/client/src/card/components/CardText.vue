@@ -89,10 +89,10 @@ const tokens = computed<Token[]>(() => {
     if (part.startsWith('[dur]')) {
       return { type: 'durability' };
     }
-    if (part.startsWith('[lvll]')) {
+    if (part.startsWith('[lvl]')) {
       return {
         type: 'level-bonus',
-        text: part.replace('[level] ', 'Level ')
+        text: part.replace('[lvl] ', 'Level ')
       };
     }
     if (part.startsWith('[lineage]')) {

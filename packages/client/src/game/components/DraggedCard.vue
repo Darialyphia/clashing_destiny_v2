@@ -7,7 +7,7 @@ import {
   useGameClient,
   useFxEvent
 } from '../composables/useGameClient';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { Flip } from 'gsap/Flip';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import GameCard from './GameCard.vue';

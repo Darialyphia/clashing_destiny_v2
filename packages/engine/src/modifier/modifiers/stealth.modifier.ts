@@ -1,5 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
-import { CARD_LOCATIONS } from '../../card/components/card-manager.component';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';

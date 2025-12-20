@@ -14,10 +14,10 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES
+  RARITIES,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 import { CardBeforePlayEvent } from '../../../../card.events';
-import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 import type { HeroCard } from '../../../../entities/hero.entity';
 
 export const erinaLv3: HeroBlueprint = {

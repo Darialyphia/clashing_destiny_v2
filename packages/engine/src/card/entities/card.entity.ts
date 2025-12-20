@@ -11,7 +11,9 @@ import {
   type CardDeckSource,
   type CardKind,
   type CardSpeed,
-  type Rarity
+  type Rarity,
+  CARD_LOCATIONS,
+  type CardLocation
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -26,7 +28,6 @@ import {
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';
-import { CARD_LOCATIONS, type CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';

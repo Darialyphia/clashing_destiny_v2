@@ -7,7 +7,7 @@ import {
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { usePageLeave } from '@vueuse/core';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 
 const { card, isInteractive } = defineProps<{
   card: CardViewModel;

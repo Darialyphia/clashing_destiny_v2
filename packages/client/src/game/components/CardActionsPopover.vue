@@ -8,8 +8,7 @@ import {
   type PopoverContentProps
 } from 'reka-ui';
 import CardActions from './CardActions.vue';
-import { CARD_LOCATIONS } from '@game/engine/src/card/components/card-manager.component';
-
+import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 const {
   cardId,
   actionsOffset = -50,

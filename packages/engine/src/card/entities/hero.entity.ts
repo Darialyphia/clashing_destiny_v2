@@ -10,7 +10,7 @@ import {
   type HeroBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -28,7 +28,6 @@ import {
   CardBeforeDealCombatDamageEvent,
   CardDeclarePlayEvent
 } from '../card.events';
-import { CARD_LOCATIONS } from '../components/card-manager.component';
 import {
   HERO_EVENTS,
   HeroCardHealEvent,
