@@ -27,7 +27,6 @@ import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import TurnIndicator from './TurnIndicator.vue';
-// import { useBoardResize } from '../composables/useBoardResize';
 
 const { clocks, options } = defineProps<{
   clocks?: {

@@ -2,7 +2,10 @@ import dedent from 'dedent';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../../utils/damage';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import { singleEnemyMinionTargetRules } from '../../../../card-utils';
+import {
+  singleEnemyMinionTargetRules,
+  singleEnemyTargetRules
+} from '../../../../card-utils';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
@@ -69,7 +72,9 @@ export const archsageOfMoonring: MinionBlueprint = {
           const max = card.player.unlockedRunes.KNOWLEDGE ?? 0;
 
           while (count < max) {
-            const [target] = await singleEnemyMinionTargetRules.getPreResponseTargets(
+            const hasRemainingTargets = singleEnemyTargetRules.canPlay(game, card);
+            if (!hasRemainingTargets) break;
+            const [target] = await singleEnemyTargetRules.getPreResponseTargets(
               game,
               card,
               {

@@ -26,19 +26,20 @@ export const littleWitch: MinionBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
+        sheen: false,
         oil: false,
-        gradient: false,
+        gradient: true,
         lightGradient: false,
-        scanlines: false
+        scanlines: false,
+        glitter: true
       },
       dimensions: {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/little-witch-bg',
+      main: 'minions/little-witch',
+      breakout: 'minions/little-witch-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

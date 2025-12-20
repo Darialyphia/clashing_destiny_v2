@@ -59,29 +59,14 @@ const { deckBuilder } = useCollectionPage();
   border: solid var(--border-size-1) #d7ad42;
   padding: var(--size-2) var(--size-3);
   cursor: url('/assets/ui/cursor-hover.png'), auto;
-  background-image: var(--bg);
+  background-image:
+    linear-gradient(to right, #0c0c0c 25%, transparent), var(--bg);
   background-repeat: no-repeat;
-  background-position: calc(100% + 40px) -35px;
-  background-size: calc(2px * 96);
+  background-position:
+    center center,
+    calc(100% + 40px) -35px;
+  background-size: cover, calc(2px * 96);
   transition: transform 0.3s var(--ease-2);
-
-  &.artifact,
-  &.spell,
-  &.sigil {
-    background-position: calc(100% + 40px), calc(100% + 40px);
-    background-size: calc(2px * 96), calc(2px * 96);
-    background-image: var(--bg), var(--frame-bg);
-  }
-
-  &.spell {
-    --frame-bg: url('/assets/ui/frame-spell.png');
-  }
-  &.artifact {
-    --frame-bg: url('/assets/ui/frame-artifact.png');
-  }
-  &.sigil {
-    --frame-bg: url('/assets/ui/frame-sigil.png');
-  }
 
   @starting-style {
     opacity: 0;
@@ -121,7 +106,7 @@ const { deckBuilder } = useCollectionPage();
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  -webkit-text-stroke: 2px black;
+  -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
 }
 </style>

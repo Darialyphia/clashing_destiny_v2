@@ -11,6 +11,7 @@ import {
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { empower } from '../../../../card-actions-utils';
 import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
+import { LingeringDestinyModifier } from '../../../../../modifier/modifiers/lingering-destiny.modifier';
 
 export const astralSoldier: MinionBlueprint = {
   id: 'astral-soldier',
@@ -23,7 +24,7 @@ export const astralSoldier: MinionBlueprint = {
   description: dedent`
   @On Enter@: You may @Consume@ @[knowledge]@. If you do, @Empower 1@.
   
-  @Foresight@.
+  @Lingering Destiny@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -48,17 +49,17 @@ export const astralSoldier: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 3,
   runeCost: {
     KNOWLEDGE: 1
   },
   speed: CARD_SPEED.SLOW,
-  atk: 1,
+  atk: 2,
   maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new ForesightModifier(game, card));
+    await card.modifiers.add(new LingeringDestinyModifier(game, card));
 
     await card.modifiers.add(
       new OnEnterModifier(game, card, {

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { useFxEvent, useGameState } from '../composables/useGameClient';
+import { useFxEvent } from '../composables/useGameClient';
 import { waitFor } from '@game/shared';
 
-const state = useGameState();
+const turnCount = ref(0);
 const isDisplayed = ref(false);
 
-useFxEvent(FX_EVENTS.TURN_START, async () => {
+useFxEvent(FX_EVENTS.TURN_START, async event => {
+  turnCount.value = event.turnCount;
   isDisplayed.value = true;
   await waitFor(1500);
   isDisplayed.value = false;
@@ -14,9 +15,7 @@ useFxEvent(FX_EVENTS.TURN_START, async () => {
 </script>
 
 <template>
-  <div v-if="isDisplayed" class="turn-indicator">
-    Turn {{ state.turnCount + 1 }}
-  </div>
+  <div v-if="isDisplayed" class="turn-indicator">Turn {{ turnCount + 1 }}</div>
 </template>
 
 <style scoped lang="postcss">
