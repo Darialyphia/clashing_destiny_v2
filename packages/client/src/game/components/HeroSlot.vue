@@ -4,12 +4,15 @@ import {
   useBoardSide,
   useCard,
   useGameClient,
-  useGameUi
+  useGameUi,
+  useMyPlayer
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { type Rune, RUNES } from '@game/engine/src/card/card.enums';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -17,11 +20,22 @@ const { player } = defineProps<{
 
 const boardSide = useBoardSide(computed(() => player.id));
 const hero = useCard(computed(() => boardSide.value.heroZone.hero));
-const { playerId } = useGameClient();
+const { client, playerId } = useGameClient();
 const ui = useGameUi();
 
 const settings = useSettingsStore();
 const getKeyLabel = useKeybordShortcutLabel();
+const myPlayer = useMyPlayer();
+
+const canGainRune = computed(() => {
+  return (
+    player.id === playerId.value && myPlayer.value.canPerformResourceAction
+  );
+});
+
+const gainRune = (rune: Rune) => {
+  client.value.gainRune(rune);
+};
 </script>
 
 <template>
@@ -51,15 +65,45 @@ const getKeyLabel = useKeybordShortcutLabel();
     </InspectableCard>
 
     <div class="runes">
-      <div class="rune" style="--bg: url(/assets/ui/card/rune-might.png)">
-        {{ player.unlockedRunes.MIGHT ?? 0 }}
-      </div>
-      <div class="rune" style="--bg: url(/assets/ui/card/rune-focus.png)">
-        {{ player.unlockedRunes.FOCUS ?? 0 }}
-      </div>
-      <div class="rune" style="--bg: url(/assets/ui/card/rune-knowledge.png)">
-        {{ player.unlockedRunes.KNOWLEDGE ?? 0 }}
-      </div>
+      <UiSimpleTooltip :disabled="!canGainRune">
+        <template #trigger>
+          <button
+            class="rune"
+            style="--bg: url(/assets/ui/card/rune-might.png)"
+            :disabled="!canGainRune"
+            @click="gainRune(RUNES.MIGHT)"
+          >
+            {{ player.unlockedRunes.MIGHT ?? 0 }}
+          </button>
+        </template>
+        Gain a Might Rune.
+      </UiSimpleTooltip>
+      <UiSimpleTooltip :disabled="!canGainRune">
+        <template #trigger>
+          <button
+            class="rune"
+            style="--bg: url(/assets/ui/card/rune-focus.png)"
+            :disabled="!canGainRune"
+            @click="gainRune(RUNES.FOCUS)"
+          >
+            {{ player.unlockedRunes.FOCUS ?? 0 }}
+          </button>
+        </template>
+        Gain a Focus Rune.
+      </UiSimpleTooltip>
+      <UiSimpleTooltip :disabled="!canGainRune">
+        <template #trigger>
+          <button
+            class="rune"
+            style="--bg: url(/assets/ui/card/rune-knowledge.png)"
+            :disabled="!canGainRune"
+            @click="gainRune(RUNES.KNOWLEDGE)"
+          >
+            {{ player.unlockedRunes.KNOWLEDGE ?? 0 }}
+          </button>
+        </template>
+        Gain a Knowledge Rune.
+      </UiSimpleTooltip>
     </div>
   </div>
 </template>
@@ -88,6 +132,9 @@ const getKeyLabel = useKeybordShortcutLabel();
     color: white;
     -webkit-text-stroke: 6px black;
     paint-order: stroke fill;
+    &:not(:disabled):hover {
+      filter: brightness(1.5);
+    }
   }
 }
 </style>

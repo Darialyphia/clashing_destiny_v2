@@ -4,7 +4,8 @@ import {
   TooltipTrigger,
   TooltipPortal,
   TooltipContent,
-  type TooltipContentProps
+  type TooltipContentProps,
+  type TooltipRootProps
 } from 'reka-ui';
 
 export type UITooltipProps = {
@@ -12,6 +13,7 @@ export type UITooltipProps = {
   delay?: number;
   side?: TooltipContentProps['side'];
   align?: TooltipContentProps['align'];
+  disabled?: TooltipRootProps['disabled'];
   usePortal?: boolean;
 };
 
@@ -24,7 +26,7 @@ const {
 </script>
 
 <template>
-  <TooltipRoot>
+  <TooltipRoot :disabled="disabled">
     <TooltipTrigger v-slot="triggerProps" as-child>
       <slot name="trigger" v-bind="triggerProps" />
     </TooltipTrigger>
