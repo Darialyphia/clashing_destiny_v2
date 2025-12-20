@@ -19,6 +19,7 @@ import {
   CardAfterPlayEvent,
   CardBeforeDestroyEvent,
   CardBeforePlayEvent,
+  CardChangeLocationEvent,
   CardDiscardEvent,
   CardDisposedEvent,
   CardExhaustEvent,
@@ -284,12 +285,12 @@ export abstract class Card<
   }
 
   protected async dispose() {
-    match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
-        this.sendToDiscardPile();
+    await match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, async () => {
+        await this.sendToDiscardPile();
       })
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
-        this.sendToBanishPile();
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, async () => {
+        await this.sendToBanishPile();
       })
       .exhaustive();
     await this.game.emit(
@@ -429,29 +430,80 @@ export abstract class Card<
       .exhaustive();
   }
 
-  sendToDiscardPile() {
+  async sendToDiscardPile() {
     if (!isMainDeckCard(this)) {
       throw new IllegalGameStateError(
         `Cannot send card ${this.id} to discard pile when it is not a main deck card.`
       );
     }
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DISCARD_PILE,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     this.originalPlayer.cardManager.sendToDiscardPile(this);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DISCARD_PILE,
+        from: currentLocation
+      })
+    );
   }
 
-  sendToBanishPile() {
+  async sendToBanishPile() {
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.BANISH_PILE,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     this.originalPlayer.cardManager.sendToBanishPile(this);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.BANISH_PILE,
+        from: currentLocation
+      })
+    );
   }
 
-  sendToDestinyZone() {
+  async sendToDestinyZone() {
     if (!isMainDeckCard(this)) {
       throw new IllegalGameStateError(
         `Cannot send card ${this.id} to destiny zone when it is not a main deck card.`
       );
     }
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DESTINY_ZONE,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     this.originalPlayer.cardManager.sendToDestinyZone(this);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DESTINY_ZONE,
+        from: currentLocation
+      })
+    );
   }
 
   protected updatePlayedAt() {
@@ -618,11 +670,28 @@ export abstract class Card<
         `Cannot add card ${this.id} to hand because it is not a main deck card.`
       );
     }
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.HAND,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     await this.player.cardManager.addToHand(this, index);
     await (this as this).game.emit(
       CARD_EVENTS.CARD_ADD_TO_HAND,
       new CardAddToHandevent({ card: this, index: index ?? null })
+    );
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.HAND,
+        from: currentLocation
+      })
     );
   }
 

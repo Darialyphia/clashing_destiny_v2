@@ -3,6 +3,7 @@ import type { AttackTarget } from '../game/phases/combat.phase';
 import type { CombatDamage } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS } from './card.enums';
+import type { CardLocation } from './components/card-manager.component';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
@@ -216,6 +217,19 @@ export class CardChangeZoneEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardChangeLocationEvent extends TypedSerializableEvent<
+  { card: AnyCard; from: CardLocation | null; to: CardLocation },
+  { card: string; from: CardLocation | null; to: CardLocation }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      from: this.data.from,
+      to: this.data.to
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -234,4 +248,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE]: CardAfterDealCombatDamageEvent;
   [CARD_EVENTS.CARd_BEFORE_CHANGE_ZONE]: CardChangeZoneEvent;
   [CARD_EVENTS.CARD_AFTER_CHANGE_ZONE]: CardChangeZoneEvent;
+  [CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION]: CardChangeLocationEvent;
+  [CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION]: CardChangeLocationEvent;
 };
