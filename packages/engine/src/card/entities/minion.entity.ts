@@ -29,6 +29,7 @@ import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-si
 import { Ability } from './ability.entity';
 import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import { HeroCard } from './hero.entity';
+import { CARD_LOCATIONS } from '../components/card-manager.component';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -112,7 +113,7 @@ export class MinionCard extends Card<
   }
 
   get isAlive() {
-    return this.remainingHp > 0 && this.location === 'board';
+    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
   }
 
   get atk(): number {

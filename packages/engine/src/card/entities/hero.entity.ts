@@ -28,6 +28,7 @@ import {
   CardBeforeDealCombatDamageEvent,
   CardDeclarePlayEvent
 } from '../card.events';
+import { CARD_LOCATIONS } from '../components/card-manager.component';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -198,7 +199,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get isAlive() {
-    return this.remainingHp > 0 && this.location === 'board';
+    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
   }
 
   get atk(): number {

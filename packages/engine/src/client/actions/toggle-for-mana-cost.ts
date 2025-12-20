@@ -1,3 +1,4 @@
+import { CARD_LOCATIONS } from '../../card/components/card-manager.component';
 import {
   INTERACTION_STATES,
   type InteractionState,
@@ -22,7 +23,7 @@ export class ToggleForManaCost implements CardClickRule {
   predicate(card: CardViewModel, state: GameClientState) {
     return (
       this.client.isActive() &&
-      card.location === 'hand' &&
+      card.location === CARD_LOCATIONS.HAND &&
       this.isValidInteractionState(state) &&
       this.client.playerId === state.interaction.ctx.player &&
       card.canBeUsedAsManaCost

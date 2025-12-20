@@ -10,6 +10,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const manaLooter: MinionBlueprint = {
   id: 'mana-looter',
@@ -57,7 +58,7 @@ export const manaLooter: MinionBlueprint = {
       id: 'mana-looter-ability',
       description: 'Give this unit @Stealth@ this turn, then wake up this minion.',
       label: 'Gain Stealth',
-      canUse: (game, card) => card.location === 'board',
+      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 2,
       shouldExhaust: true,

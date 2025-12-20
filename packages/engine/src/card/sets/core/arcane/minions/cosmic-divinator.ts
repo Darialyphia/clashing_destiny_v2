@@ -12,6 +12,7 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
+import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const cosmicDivinator: MinionBlueprint = {
   id: 'cosmic-divinator',
@@ -68,7 +69,10 @@ export const cosmicDivinator: MinionBlueprint = {
         mixins: [
           new AuraModifierMixin(game, {
             isElligible(candidate) {
-              return card.location === 'board' && candidate.equals(card.player.hero);
+              return (
+                card.location === CARD_LOCATIONS.BOARD &&
+                candidate.equals(card.player.hero)
+              );
             },
             async onGainAura(candidate) {
               await candidate.modifiers.add(

@@ -25,7 +25,7 @@ import {
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';
-import type { CardLocation } from '../components/card-manager.component';
+import { CARD_LOCATIONS, type CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
@@ -463,7 +463,7 @@ export abstract class Card<
     if (this.deckSource !== CARD_DECK_SOURCES.MAIN_DECK) {
       return false;
     }
-    return this.location === 'hand' && this.canPayManaCost;
+    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
   protected get canPlayAsDestinyDeckCard() {
@@ -475,7 +475,7 @@ export abstract class Card<
     }
 
     return (
-      this.location === 'destinyDeck' &&
+      this.location === CARD_LOCATIONS.DESTINY_DECK &&
       this.canPayDestinyCost &&
       this.game.turnSystem.elapsedTurns >=
         this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD

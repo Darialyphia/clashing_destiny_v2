@@ -32,7 +32,8 @@ export const KEYWORDS = {
   LINGERING_DESTINY: {
     id: 'lingering-destiny',
     name: 'Lingering Destiny',
-    description: 'When you play this card, add a Mana Spark into your Destiny Zone.',
+    description:
+      'When this is sent to the discard pile, add a Mana Spark into your Destiny Zone.',
     aliases: []
   },
   CONSUME: {

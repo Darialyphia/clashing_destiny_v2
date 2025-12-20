@@ -24,6 +24,7 @@ import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_PHASES } from '../game.enums';
 import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
+import { CARD_LOCATIONS } from '../../card/components/card-manager.component';
 
 export type GameStateSnapshot<T> =
   | {
@@ -406,9 +407,9 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     this.game.cardSystem.cards.forEach(card => {
       if (card.player.id === playerId) return;
       if (
-        card.location === 'banishPile' ||
-        card.location === 'board' ||
-        card.location === 'discardPile'
+        card.location === CARD_LOCATIONS.BANISH_PILE ||
+        card.location === CARD_LOCATIONS.BOARD ||
+        card.location === CARD_LOCATIONS.DISCARD_PILE
       ) {
         return;
       }

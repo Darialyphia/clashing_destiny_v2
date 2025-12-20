@@ -9,6 +9,7 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import { GAME_EVENTS } from '../../../../../game/game.events';
+import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const manaSpark: SpellBlueprint = {
   id: 'mana-spark',
@@ -53,7 +54,7 @@ export const manaSpark: SpellBlueprint = {
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
     game.on(GAME_EVENTS.TURN_END, () => {
-      if (card.location === 'destinyZone') {
+      if (card.location === CARD_LOCATIONS.DESTINY_ZONE) {
         card.sendToBanishPile();
       }
     });

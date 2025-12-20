@@ -273,7 +273,7 @@ Arcane Conduit
 
 Minion | Arcane | (2) | KK | 1 / 1 | (slow)
 
-When you play an Arcane spell, this gains +1 ATK until the end of turn. Then, you may consume K. If you do, wake up this minion.
+When you play an Arcane spell, this gains +1 ATK until the end of turn Level 3 bonus: wake up this minion.
 
 ---
 

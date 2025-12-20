@@ -17,6 +17,7 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { CardBeforePlayEvent } from '../../../../card.events';
+import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 import type { HeroCard } from '../../../../entities/hero.entity';
 
 export const erinaLv3: HeroBlueprint = {
@@ -62,7 +63,7 @@ export const erinaLv3: HeroBlueprint = {
   abilities: [
     {
       id: 'erina-lv3-ability-1',
-      canUse: (game, card) => card.location === 'board',
+      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       shouldExhaust: true,
       manaCost: 2,
       runeCost: {},

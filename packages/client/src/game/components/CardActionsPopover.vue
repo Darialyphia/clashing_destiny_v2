@@ -8,6 +8,7 @@ import {
   type PopoverContentProps
 } from 'reka-ui';
 import CardActions from './CardActions.vue';
+import { CARD_LOCATIONS } from '@game/engine/src/card/components/card-manager.component';
 
 const {
   cardId,
@@ -58,9 +59,9 @@ const isActionsPopoverOpened = computed({
       :to="portalTarget"
       :disabled="
         !usePortal ||
-        card.location === 'hand' ||
-        card.location === 'discardPile' ||
-        card.location === 'banishPile'
+        card.location === CARD_LOCATIONS.HAND ||
+        card.location === CARD_LOCATIONS.DISCARD_PILE ||
+        card.location === CARD_LOCATIONS.BANISH_PILE
       "
     >
       <PopoverContent

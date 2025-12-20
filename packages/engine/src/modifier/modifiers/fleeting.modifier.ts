@@ -1,4 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
+import { CARD_LOCATIONS } from '../../card/components/card-manager.component';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
@@ -19,7 +20,7 @@ export class FleetingModifier<T extends AnyCard> extends Modifier<T> {
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.TURN_END,
           handler: async () => {
-            if (this.target.location === 'hand') {
+            if (this.target.location === CARD_LOCATIONS.HAND) {
               this.target.removeFromCurrentLocation();
             }
           }

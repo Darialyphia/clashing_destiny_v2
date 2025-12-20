@@ -10,6 +10,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const astralExplorer: MinionBlueprint = {
   id: 'astral-explorer',
@@ -59,7 +60,10 @@ export const astralExplorer: MinionBlueprint = {
         mixins: [
           new AuraModifierMixin(game, {
             isElligible(candidate) {
-              return card.location === 'board' && candidate.equals(card.player.hero);
+              return (
+                card.location === CARD_LOCATIONS.BOARD &&
+                candidate.equals(card.player.hero)
+              );
             },
             async onGainAura(candidate) {
               await candidate.modifiers.add(

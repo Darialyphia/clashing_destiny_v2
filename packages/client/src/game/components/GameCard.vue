@@ -17,6 +17,7 @@ import type { PopoverContentProps } from 'reka-ui';
 import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
 import { gameStateRef } from '../composables/gameStateRef';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { CARD_LOCATIONS } from '@game/engine/src/card/components/card-manager.component';
 const {
   cardId,
   actionsOffset = -50,
@@ -108,7 +109,8 @@ const classes = computed(() => {
     card.value.keywords.map(kw => kw.toLowerCase()),
     {
       exhausted: isInteractive && card.value.isExhausted,
-      disabled: !card.value.canPlay && card.value.location === 'hand',
+      disabled:
+        !card.value.canPlay && card.value.location === CARD_LOCATIONS.HAND,
       selected: ui.value.selectedCard?.equals(card.value),
       targetable: isTargetable.value,
       flipped: flipped && !myPlayer.value.equals(card.value.player),

@@ -10,6 +10,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { CARD_LOCATIONS } from '../../../../components/card-manager.component';
 
 export const erinaLv2: HeroBlueprint = {
   id: 'erina-aether-scholar',
@@ -51,7 +52,7 @@ export const erinaLv2: HeroBlueprint = {
   abilities: [
     {
       id: 'erina-lv2-ability-1',
-      canUse: (game, card) => card.location === 'board',
+      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       shouldExhaust: true,
       manaCost: 2,
       runeCost: {},
