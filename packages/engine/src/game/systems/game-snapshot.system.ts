@@ -150,7 +150,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       phase: state.phase,
       interaction: state.interaction,
       board: state.board,
-      turnCount: state.turnCount - prevState.turnCount,
+      turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
       effectChain: state.effectChain
