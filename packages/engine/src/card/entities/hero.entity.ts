@@ -1,4 +1,4 @@
-import type { MaybePromise, Values } from '@game/shared';
+import { uppercaseFirstLetter, type MaybePromise, type Values } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 
@@ -405,6 +405,23 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         this.blueprint.canPlay(this.game, this),
       this
     );
+  }
+
+  get unplayableReason() {
+    const base = super.unplayableReason;
+    if (base !== 'You cannot play this card.') return base;
+
+    if (!this.hasCorrectLevelToPlay) {
+      return `Your hero must be level ${this.blueprint.level - 1}.`;
+    }
+    if (!this.hasCorrectLineageToPlay) {
+      return `Your hero must be ${uppercaseFirstLetter(this.lineage ?? '')}.`;
+    }
+    if (!this.hasCorrectFactionToPlay) {
+      return `Your hero must be of the ${this.faction.name} faction.`;
+    }
+
+    return base;
   }
 
   async play(onResolved: () => MaybePromise<void>) {

@@ -20,6 +20,7 @@ const state = useGameState();
 const paths = ref<string[][]>([]);
 
 const buildPaths = async () => {
+  console.log('Building effect chain paths');
   if (!state.value.effectChain?.stack) {
     paths.value = [];
     return;
@@ -29,7 +30,36 @@ const buildPaths = async () => {
     if (effect.type === EFFECT_TYPE.DECLARE_BLOCKER) {
       return [];
     }
-
+    if (effect.zone) {
+      const boardRect =
+        ui.value.DOMSelectors.board.element!.getBoundingClientRect();
+      const startRect = ui.value.DOMSelectors.cardInEffectChain(
+        effect.source.id
+      ).element!.getBoundingClientRect();
+      const endRect = ui.value.DOMSelectors.zone(
+        effect.zone?.player,
+        effect.zone?.zone
+      ).element?.getBoundingClientRect();
+      if (!startRect || !endRect) return [];
+      const start = {
+        x: startRect.left + startRect.width / 2 - boardRect.left,
+        y: startRect.top + startRect.height / 2 - boardRect.top
+      };
+      const end = {
+        x: endRect.left + endRect.width / 2 - boardRect.left,
+        y: endRect.top + endRect.height / 2 - boardRect.top
+      };
+      const highest = Math.min(start.y, end.y);
+      const halfX = (start.x + end.x) / 2;
+      const yDiff = Math.abs(start.y - end.y);
+      return [
+        `
+        M${start.x},${start.y}
+        Q${halfX},${highest - yDiff / 2}
+         ${end.x},${end.y}
+      `
+      ];
+    }
     return effect.targets.map(target => {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();
@@ -168,6 +198,7 @@ const stack = computed(() => {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  transform: translateZ(1px);
 
   &.card {
     background: url('/assets/ui/effect-card.png');

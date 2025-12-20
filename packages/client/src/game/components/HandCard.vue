@@ -51,7 +51,8 @@ const onMouseDown = (e: MouseEvent) => {
   }
   if (!card.canPlay) {
     isShaking.value = true;
-    violationWarning.value = 'You cannot play this card.';
+    violationWarning.value =
+      card.unplayableReason ?? 'You cannot play this card.';
 
     setTimeout(() => {
       violationWarning.value = '';

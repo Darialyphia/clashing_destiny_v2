@@ -11,8 +11,9 @@ import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
-import type { BoardSlotZone } from '../../board/board.constants';
+import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
+import { match } from 'ts-pattern';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -108,6 +109,13 @@ export class UiController {
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
+    zone: (playerId: string, zone: BoardSlotZone) =>
+      match(zone)
+        .with(BOARD_SLOT_ZONES.ATTACK_ZONE, () => this.DOMSelectors.attackZone(playerId))
+        .with(BOARD_SLOT_ZONES.DEFENSE_ZONE, () =>
+          this.DOMSelectors.defenseZone(playerId)
+        )
+        .exhaustive(),
     attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
     defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),

@@ -97,6 +97,7 @@ export type SerializedCard = {
   runeCost: RuneCost;
   keywords: string[];
   faction: string;
+  unplayableReason: string | null;
 };
 
 export type CardTargetOrigin =
@@ -481,17 +482,31 @@ export abstract class Card<
     );
   }
 
-  protected get canPlayBase() {
+  get isIncombatPhaseBeforeChain() {
     const gameStateCtx = this.game.gamePhaseSystem.getContext();
-
     if (
       gameStateCtx.state === GAME_PHASES.ATTACK &&
       gameStateCtx.ctx.step !== COMBAT_STEPS.BUILDING_CHAIN
     ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  get isCorrectChainToPlay() {
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+      return false;
+    }
+    return true;
+  }
+
+  protected get canPlayBase() {
+    if (this.isIncombatPhaseBeforeChain) {
       return false;
     }
 
-    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+    if (!this.isCorrectChainToPlay) {
       return false;
     }
 
@@ -500,6 +515,54 @@ export abstract class Card<
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
+      .exhaustive();
+  }
+
+  get unplayableReason(): string | null {
+    if (this.canPlay()) {
+      return null;
+    }
+
+    if (this.isIncombatPhaseBeforeChain) {
+      return 'You need to declare the attack target before playing cards.';
+    }
+
+    if (!this.isCorrectChainToPlay) {
+      return "Can't play during an effect chain.";
+    }
+
+    if (!this.hasUnlockedRunes) {
+      return 'You are missing some runes.';
+    }
+
+    return match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
+        if (this.location !== 'hand') {
+          return 'Card must be in hand.';
+        }
+        if (!this.canPayManaCost) {
+          return 'Cannot pay mana cost.';
+        }
+        return 'You cannot play this card';
+      })
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
+        if (this.player.hasPlayedDestinyCardThisTurn) {
+          return 'You have already played a Destiny card this turn.';
+        }
+        if (this.location !== 'destinyDeck') {
+          return 'Card must be in destiny deck.';
+        }
+        if (!this.canPayDestinyCost) {
+          return 'Cannot pay destiny cost.';
+        }
+        if (
+          this.game.turnSystem.elapsedTurns <
+          this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
+        ) {
+          return `Cann't play destiny cards yet.`;
+        }
+        return 'You cannot play this card.';
+      })
       .exhaustive();
   }
 
@@ -529,7 +592,8 @@ export abstract class Card<
       destinyCost:
         this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
       speed: this.blueprint.speed,
-      keywords: this.keywords.map(keyword => keyword.id)
+      keywords: this.keywords.map(keyword => keyword.id),
+      unplayableReason: this.unplayableReason
     };
   }
 

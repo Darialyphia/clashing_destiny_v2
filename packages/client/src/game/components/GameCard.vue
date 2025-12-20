@@ -248,7 +248,7 @@ const visibleModifiers = gameStateRef(() => {
         {{ damageTaken }}
       </div>
       <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
-        You cannot play this card right now.
+        {{ card.unplayableReason ?? 'You cannot play this card right now.' }}
       </p>
     </CardActionsPopover>
   </div>

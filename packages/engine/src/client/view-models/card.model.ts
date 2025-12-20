@@ -171,6 +171,10 @@ export class CardViewModel {
     return this.data.faction as keyof typeof FACTIONS;
   }
 
+  get unplayableReason() {
+    return this.data.unplayableReason;
+  }
+
   get canBeUsedAsManaCost() {
     return this.data.canBeUsedAsManaCost;
   }

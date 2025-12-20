@@ -53,7 +53,7 @@ export const splittingBeam: SpellBlueprint = {
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
-    return multipleEnemyTargetRules.canPlay(2)(game, card, isMinion);
+    return multipleEnemyTargetRules.canPlay(2)(game, card);
   },
   getPreResponseTargets(game, card) {
     return multipleEnemyTargetRules.getPreResponseTargets({
