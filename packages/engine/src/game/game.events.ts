@@ -15,20 +15,20 @@ import {
 import { CARD_EVENTS } from '../card/card.enums';
 import type { CardEventMap } from '../card/card.events';
 import { COMBAT_EVENTS, type CombatEventMap } from './phases/combat.phase';
-import { MINION_EVENTS, type MinionCardEventMap } from '../card/entities/minion.entity';
-import { HERO_EVENTS, type HeroCardEventMap } from '../card/entities/hero.entity';
+import { PLAYER_EVENTS } from '../player/player.enums';
+import type { PlayerEventMap } from '../player/player.events';
+import { ABILITY_EVENTS, type AbilityEventMap } from '../card/events/ability.events';
+import type { TurnEventMap } from './systems/turn.system';
+import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
+import { SIGIL_EVENTS, type SigilEventMap } from '../card/events/sigil.events';
+import type { Player } from '../player/player.entity';
+
+import { MINION_EVENTS, type MinionCardEventMap } from '../card/events/minion.events';
+import { HERO_EVENTS, type HeroCardEventMap } from '../card/events/hero.events';
 import {
   ARTIFACT_EVENTS,
   type ArtifactCardEventMap
-} from '../card/entities/artifact.entity';
-import { PLAYER_EVENTS } from '../player/player.enums';
-import type { PlayerEventMap } from '../player/player.events';
-import { ABILITY_EVENTS, type AbilityEventMap } from '../card/entities/ability.entity';
-import type { TurnEventMap } from './systems/turn.system';
-import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
-import { SIGIL_EVENTS, type SigilEventMap } from '../card/entities/sigil.entity';
-import type { Player } from '../player/player.entity';
-import { SPELL_EVENTS, type SpellCardEventMap } from '../card/entities/spell.entity';
+} from '../card/events/artifact.events';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -143,7 +143,6 @@ export type GameEventMap = Prettify<
     MinionCardEventMap &
     HeroCardEventMap &
     ArtifactCardEventMap &
-    SpellCardEventMap &
     SigilEventMap &
     PlayerEventMap &
     AbilityEventMap &
@@ -174,7 +173,6 @@ export const GAME_EVENTS = {
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
   ...SIGIL_EVENTS,
-  ...SPELL_EVENTS,
   ...TURN_EVENTS,
   ...EFFECT_CHAIN_EVENTS
 } as const satisfies Record<string, GameEventName>;

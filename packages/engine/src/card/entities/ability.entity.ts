@@ -1,4 +1,4 @@
-import type { EmptyObject, MaybePromise, Serializable } from '@game/shared';
+import type { MaybePromise, Serializable } from '@game/shared';
 import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
@@ -12,51 +12,15 @@ import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CARD_SPEED } from '../card.enums';
 import type { SigilCard } from './sigil.entity';
 import type { SpellCard } from './spell.entity';
 import { Interceptable } from '../../utils/interceptable';
-
-export const ABILITY_EVENTS = {
-  ABILITY_BEFORE_USE: 'ability.before-use',
-  ABILITY_AFTER_USE: 'ability.after-use'
-} as const;
-
-export class AbilityBeforeUseEvent extends TypedSerializableEvent<
-  { card: AbilityOwner; abilityId: string },
-  {
-    card: string;
-    abilityId: string;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export class AbilityAfterUseEvent extends TypedSerializableEvent<
-  { card: AbilityOwner; abilityId: string },
-  {
-    card: string;
-    abilityId: string;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export type AbilityEventMap = {
-  [ABILITY_EVENTS.ABILITY_BEFORE_USE]: AbilityBeforeUseEvent;
-  [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
-};
+import {
+  ABILITY_EVENTS,
+  AbilityAfterUseEvent,
+  AbilityBeforeUseEvent
+} from '../events/ability.events';
 
 export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard | SpellCard;
 

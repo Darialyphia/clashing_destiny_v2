@@ -1,11 +1,9 @@
 import { assert, type Nullable } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
-import {
-  INTERACTION_STATE_TRANSITIONS,
-  InvalidPlayerError
-} from '../systems/game-interaction.system';
 import type { Player } from '../../player/player.entity';
+import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
+import { InvalidPlayerError } from '../game-error';
 
 type AskQuestionContextOptions = {
   questionId: string;

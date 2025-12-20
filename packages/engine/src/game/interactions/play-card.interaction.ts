@@ -1,13 +1,11 @@
 import { assert } from '@game/shared';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
-import {
-  InvalidPlayerError,
-  INTERACTION_STATE_TRANSITIONS
-} from '../systems/game-interaction.system';
+import { InvalidPlayerError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
 import { match } from 'ts-pattern';
 import { CARD_DECK_SOURCES } from '../../card/card.enums';
+import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 
 type PlayCardContextOptions = {
   card: AnyCard;

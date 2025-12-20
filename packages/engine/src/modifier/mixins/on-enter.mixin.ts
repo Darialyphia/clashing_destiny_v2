@@ -2,16 +2,17 @@ import type { Modifier } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import { CARD_EVENTS } from '../../card/card.enums';
 import type { Game } from '../../game/game';
-import type { MinionCard, MinionSummonedEvent } from '../../card/entities/minion.entity';
-import type {
-  ArtifactCard,
-  ArtifactEquipedEvent
-} from '../../card/entities/artifact.entity';
+
 import type { CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
 import { isArtifact, isHero, isMinion } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
-import type { HeroCard, HeroPlayedEvent } from '../../card/entities/hero.entity';
+import type { HeroCard } from '../../card/entities/hero.entity';
+import type { MinionCard } from '../../card/entities/minion.entity';
+import type { MinionSummonedEvent } from '../../card/events/minion.events';
+import type { HeroPlayedEvent } from '../../card/events/hero.events';
+import type { ArtifactCard } from '../../card/entities/artifact.entity';
+import type { ArtifactEquipedEvent } from '../../card/events/artifact.events';
 
 export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard> = (
   event: T extends MinionCard

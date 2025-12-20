@@ -9,11 +9,7 @@ import {
   NotEnoughCardsInDestinyZoneError,
   NotEnoughCardsInHandError
 } from '../card/card-errors';
-import {
-  HERO_EVENTS,
-  HeroLevelUpEvent,
-  type HeroCard
-} from '../card/entities/hero.entity';
+import { type HeroCard } from '../card/entities/hero.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
@@ -30,6 +26,7 @@ import type { RuneCost } from '../card/card-blueprint';
 import { CARD_KINDS, type Rune } from '../card/card.enums';
 import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
+import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 
 export type PlayerOptions = {
   id: string;

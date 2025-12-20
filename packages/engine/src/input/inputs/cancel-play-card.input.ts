@@ -1,6 +1,5 @@
 import { defaultInputSchema, Input } from '../input';
-import { GAME_PHASES } from '../../game/game.enums';
-import { type InteractionStateDict } from '../../game/systems/game-interaction.system';
+import { GAME_PHASES, type InteractionStateDict } from '../../game/game.enums';
 
 const schema = defaultInputSchema;
 

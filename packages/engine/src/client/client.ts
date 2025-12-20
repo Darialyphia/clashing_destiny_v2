@@ -16,10 +16,10 @@ import {
 } from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
-import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
 import type { AbilityViewModel } from './view-models/ability.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import type { Rune } from '../card/card.enums';
+import { INTERACTION_STATES } from '../game/game.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',

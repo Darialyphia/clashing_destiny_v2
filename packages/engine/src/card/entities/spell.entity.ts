@@ -21,7 +21,6 @@ import {
 import { CARD_EVENTS } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
@@ -33,29 +32,6 @@ export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
   canUseAbility: Interceptable<boolean, { card: SpellCard; ability: Ability<SpellCard> }>;
   canBeTargeted: Interceptable<boolean, SpellCard>;
-};
-
-export const SPELL_EVENTS = {
-  MINION_BEFORE_USE_ABILITY: 'spell.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'spell.after-use-ability'
-} as const;
-export type SpellEvents = Values<typeof SPELL_EVENTS>;
-
-export class SpellUsedAbilityEvent extends TypedSerializableEvent<
-  { card: SpellCard; abilityId: string },
-  { card: SerializedSpellCard; abilityId: string }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export type SpellCardEventMap = {
-  [SPELL_EVENTS.MINION_BEFORE_USE_ABILITY]: SpellUsedAbilityEvent;
-  [SPELL_EVENTS.MINION_AFTER_USE_ABILITY]: SpellUsedAbilityEvent;
 };
 
 export class SpellCard extends Card<

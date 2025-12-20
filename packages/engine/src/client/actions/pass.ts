@@ -2,8 +2,7 @@ import { isDefined } from '@game/shared';
 import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
 import type { GlobalActionRule } from '../controllers/ui-controller';
-import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { GAME_PHASES } from '../../game/game.enums';
+import { INTERACTION_STATES, GAME_PHASES } from '../../game/game.enums';
 import type { PlayerViewModel } from '../view-models/player.model';
 import type { CardViewModel } from '../view-models/card.model';
 

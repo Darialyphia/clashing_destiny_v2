@@ -3,11 +3,9 @@ import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity'
 import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
-import {
-  InvalidPlayerError,
-  UnableToCommitError,
-  INTERACTION_STATE_TRANSITIONS
-} from '../systems/game-interaction.system';
+
+import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
+import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 
 type SelectingCardOnBoardContextOptions = {
   player: Player;

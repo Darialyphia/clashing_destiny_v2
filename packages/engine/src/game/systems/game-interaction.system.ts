@@ -1,7 +1,6 @@
 import {
   type BetterExtract,
   type Serializable,
-  type Values,
   assert,
   StateMachine,
   stateTransition
@@ -9,7 +8,7 @@ import {
 
 import type { Game } from '../game';
 import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
-import { GameError } from '../game-error';
+import { CorruptedInteractionContextError } from '../game-error';
 import type { Player } from '../../player/player.entity';
 import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
@@ -22,34 +21,12 @@ import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_EVENTS } from '../game.events';
 import { CardDeclareUseAbilityEvent } from '../../card/card.events';
 import { AskQuestionContext } from '../interactions/ask-question.interaction';
-
-export const INTERACTION_STATES = {
-  IDLE: 'idle',
-  SELECTING_CARDS_ON_BOARD: 'selecting_cards_on_board',
-  CHOOSING_CARDS: 'choosing_cards',
-  PLAYING_CARD: 'playing_card',
-  USING_ABILITY: 'using_ability',
-  ASK_QUESTION: 'ask_question'
-} as const;
-export type InteractionStateDict = typeof INTERACTION_STATES;
-export type InteractionState = Values<typeof INTERACTION_STATES>;
-
-export const INTERACTION_STATE_TRANSITIONS = {
-  START_SELECTING_CARDS_ON_BOARD: 'start_selecting_cards_on_board',
-  COMMIT_SELECTING_CARDS_ON_BOARD: 'commit_selecting_cards_on_board',
-  START_CHOOSING_CARDS: 'start_choosing_cards',
-  COMMIT_CHOOSING_CARDS: 'commit_choosing_cards',
-  START_PLAYING_CARD: 'start_playing_card',
-  COMMIT_PLAYING_CARD: 'commit_playing_card',
-  CANCEL_PLAYING_CARD: 'cancel_playing_card',
-  START_USING_ABILITY: 'start_using_ability',
-  COMMIT_USING_ABILITY: 'commit_using_ability',
-  CANCEL_USING_ABILITY: 'cancel_using_ability',
-  START_ASKING_QUESTION: 'start_asking_question',
-  COMMIT_ASKING_QUESTION: 'commit_asking_question',
-  CANCEL_ASKING_QUESTION: 'cancel_asking_question'
-};
-export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;
+import {
+  INTERACTION_STATE_TRANSITIONS,
+  INTERACTION_STATES,
+  type InteractionState,
+  type InteractionStateTransition
+} from '../game.enums';
 
 export type InteractionContext =
   | {
@@ -335,35 +312,5 @@ export class GameInteractionSystem
 
   onInteractionEnd() {
     this._ctx = new IdleContext(this.game);
-  }
-}
-
-export class CorruptedInteractionContextError extends GameError {
-  constructor() {
-    super('Corrupted interaction context');
-  }
-}
-
-export class InvalidPlayerError extends GameError {
-  constructor() {
-    super('Invalid player trying to interact');
-  }
-}
-
-export class UnableToCommitError extends GameError {
-  constructor() {
-    super('Unable to commit');
-  }
-}
-
-export class NotEnoughCardsError extends GameError {
-  constructor(expected: number, received: number) {
-    super(`Not enough cards selected, expected ${expected}, received ${received}`);
-  }
-}
-
-export class TooManyCardsError extends GameError {
-  constructor(expected: number, received: number) {
-    super(`Too many cards selected, expected ${expected}, received ${received}`);
   }
 }

@@ -21,8 +21,7 @@ import {
   RUNES
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
-import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
+import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-counter-attack';
 import type { BoardSlotZone } from '../../board/board.constants';

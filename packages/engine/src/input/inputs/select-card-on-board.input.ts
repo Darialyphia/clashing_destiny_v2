@@ -1,8 +1,7 @@
 import { assert } from '@game/shared';
 import { defaultInputSchema, Input } from '../input';
 import { z } from 'zod';
-import { type InteractionStateDict } from '../../game/systems/game-interaction.system';
-import { GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASES, type InteractionStateDict } from '../../game/game.enums';
 import { CardNotFoundError } from '../../card/card-errors';
 
 const schema = defaultInputSchema.extend({

@@ -1,4 +1,4 @@
-import type { MaybePromise, Values } from '@game/shared';
+import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
@@ -18,8 +18,12 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { Ability } from './ability.entity';
+import {
+  ARTIFACT_EVENTS,
+  ArtifactDurabilityEvent,
+  ArtifactEquipedEvent
+} from '../events/artifact.events';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -39,47 +43,6 @@ export type ArtifactCardInterceptors = CardInterceptors & {
   >;
   durability: Interceptable<number, ArtifactCard>;
   attackBonus: Interceptable<number | null, ArtifactCard>;
-};
-
-export const ARTIFACT_EVENTS = {
-  ARTIFACT_BEFORE_LOSE_DURABILITY: 'artifact.lose-durability',
-  ARTIFACT_AFTER_LOSE_DURABILITY: 'artifact.after-lose-durability',
-  ARTIFACT_BEFORE_GAIN_DURABILITY: 'artifact.gain-durability',
-  ARTIFACT_AFTER_GAIN_DURABILITY: 'artifact.after-gain-durability',
-  ARTIFACT_EQUIPED: 'artifact.equiped'
-} as const;
-
-export type ArtifactEvents = Values<typeof ARTIFACT_EVENTS>;
-
-export class ArtifactDurabilityEvent extends TypedSerializableEvent<
-  { card: ArtifactCard; amount: number },
-  { card: SerializedArtifactCard; amount: number }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      amount: this.data.amount
-    };
-  }
-}
-
-export class ArtifactEquipedEvent extends TypedSerializableEvent<
-  { card: ArtifactCard },
-  { card: SerializedArtifactCard }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize()
-    };
-  }
-}
-
-export type ArtifactCardEventMap = {
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_LOSE_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_LOSE_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_GAIN_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_GAIN_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_EQUIPED]: ArtifactEquipedEvent;
 };
 
 export class ArtifactCard extends Card<

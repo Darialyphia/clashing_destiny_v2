@@ -1,9 +1,6 @@
 import { CARD_LOCATIONS } from '../../card/components/card-manager.component';
-import {
-  INTERACTION_STATES,
-  type InteractionState,
-  type SerializedInteractionContext
-} from '../../game/systems/game-interaction.system';
+import { INTERACTION_STATES, type InteractionState } from '../../game/game.enums';
+import { type SerializedInteractionContext } from '../../game/systems/game-interaction.system';
 import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
 import type { CardClickRule } from '../controllers/ui-controller';

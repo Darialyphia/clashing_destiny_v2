@@ -1,5 +1,4 @@
-import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
-import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
+import { COMBAT_STEPS, GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
 import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
 import { SelectCardAction } from '../actions/select-card';
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
