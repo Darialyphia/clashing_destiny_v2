@@ -361,8 +361,7 @@ export class MinionCard extends Card<
       async () => {
         await this.summon(zone);
       },
-      [],
-      onResolved
+      { targets: [], onResolved, zone }
     );
   }
 

@@ -232,8 +232,10 @@ export class ArtifactCard extends Card<
           new ArtifactEquipedEvent({ card: this })
         );
       },
-      [],
-      onResolved
+      {
+        targets: [],
+        onResolved
+      }
     );
   }
 

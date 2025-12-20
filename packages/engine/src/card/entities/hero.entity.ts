@@ -437,8 +437,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
           new HeroPlayedEvent({ card: this })
         );
       },
-      [],
-      onResolved
+      { targets: [], onResolved }
     );
   }
 

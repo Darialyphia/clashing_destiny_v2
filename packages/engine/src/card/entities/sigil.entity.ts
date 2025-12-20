@@ -137,8 +137,7 @@ export class SigilCard extends Card<
       async () => {
         await this.summon(zone);
       },
-      [],
-      onResolved
+      { targets: [], onResolved, zone }
     );
   }
 

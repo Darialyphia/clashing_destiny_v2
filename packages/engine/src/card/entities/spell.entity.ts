@@ -169,8 +169,7 @@ export class SpellCard extends Card<
         });
         this.preResponseTargets = null;
       },
-      targets,
-      onResolved
+      { targets, onResolved }
     );
   }
 
