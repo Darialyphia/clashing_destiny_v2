@@ -52,7 +52,10 @@ export class UiController {
 
   private _selectedCard: CardViewModel | null = null;
 
-  private __draggedCard: CardViewModel | null = null;
+  private _draggedCard: CardViewModel | null = null;
+
+  private _bufferedPlayedZone: BoardSlotZone | null = null;
+
   isHandExpanded = false;
 
   isPassConfirmationModalOpened = false;
@@ -142,7 +145,24 @@ export class UiController {
   }
 
   get draggedCard() {
-    return this.__draggedCard;
+    return this._draggedCard;
+  }
+
+  get bufferedPlayedZone() {
+    return this._bufferedPlayedZone;
+  }
+
+  clearBufferedPlayedZone() {
+    this._bufferedPlayedZone = null;
+  }
+
+  playDraggedCard(zone?: BoardSlotZone) {
+    if (!this._draggedCard) return;
+    if (zone) {
+      this._bufferedPlayedZone = zone;
+    }
+    this._draggedCard.play();
+    this._draggedCard = null;
   }
 
   get playedCardId() {
@@ -187,11 +207,11 @@ export class UiController {
   }
 
   startDraggingCard(card: CardViewModel) {
-    this.__draggedCard = card;
+    this._draggedCard = card;
   }
 
   stopDraggingCard() {
-    this.__draggedCard = null;
+    this._draggedCard = null;
   }
 
   onCardClick(card: CardViewModel) {

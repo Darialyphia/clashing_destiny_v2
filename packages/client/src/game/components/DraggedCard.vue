@@ -10,6 +10,7 @@ import {
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import { Flip } from 'gsap/Flip';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { cp } from 'fs';
 
 const ui = useGameUi();
 const cardRotation = ref({ x: 0, y: 0 });
@@ -30,7 +31,7 @@ const MAX_ANGLE = 45;
 const SCALE_FACTOR = 1.4;
 const LERP_FACTOR = 0.3;
 
-const rotationAnimation = useRafFn(() => {
+useRafFn(() => {
   delta = {
     x: x.value - prev.x,
     y: y.value - prev.y
@@ -91,11 +92,11 @@ watchEffect(() => {
 });
 
 watch(isPinned, pinned => {
-  if (pinned) {
-    rotationAnimation.pause();
-  } else {
-    rotationAnimation.resume();
-  }
+  // if (pinned) {
+  //   rotationAnimation.pause();
+  // } else {
+  //   rotationAnimation.resume();
+  // }
 });
 
 const isHidden = ref(false);
@@ -117,10 +118,6 @@ onBeforeUnmount(() => {
       ref="container"
       id="dragged-card"
       data-flip-id="dragged-card"
-      :class="{
-        'is-pinned': isPinned,
-        'is-pinning': isPinning
-      }"
       :style="{
         '--pixel-scale': 1.5,
         '--x': `${x}px`,
@@ -139,17 +136,18 @@ onBeforeUnmount(() => {
   z-index: 99;
   transform-style: preserve-3d;
   transform-origin: center center;
-
-  &:not(.is-pinned) {
-    top: 0;
-    left: 0;
-    transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
-      rotateX(calc(1deg * v-bind('cardRotation.x')))
-      rotateY(calc(1deg * v-bind('cardRotation.y')));
+  top: 0;
+  left: 0;
+  transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
+    rotateX(calc(1deg * v-bind('cardRotation.x')))
+    rotateY(calc(1deg * v-bind('cardRotation.y')));
+  min-width: 10px;
+  min-height: 10px;
+  /* &:not(.is-pinned) {
   }
   &.is-pinned {
     top: var(--size-13);
     right: var(--size-8);
-  }
+  } */
 }
 </style>

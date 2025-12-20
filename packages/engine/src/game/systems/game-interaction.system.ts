@@ -266,6 +266,7 @@ export class GameInteractionSystem
     minChoiceCount: number;
     maxChoiceCount: number;
     label: string;
+    questionId: string;
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(

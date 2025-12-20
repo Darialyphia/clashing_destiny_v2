@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { GAME_QUESTIONS } from '@game/engine/src/game/game.enums';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
 const state = useGameState();
+const ui = useGameUi();
 
 const isOpened = computed({
   get() {
@@ -17,17 +23,38 @@ const isOpened = computed({
     _isOpened.value = value;
   }
 });
+
+const currentQuestion = ref<string | null>(null);
+
 watchEffect(() => {
+  const interactionState = state.value.interaction.state;
+  console.log('interactionState', interactionState);
+  if (interactionState !== INTERACTION_STATES.ASK_QUESTION) {
+    _isOpened.value = false;
+    currentQuestion.value = null;
+    return;
+  }
+
+  if (currentQuestion.value === state.value.interaction.ctx.questionId) {
+    return;
+  }
+
+  currentQuestion.value = state.value.interaction.ctx.questionId;
+
+  if (
+    currentQuestion.value === GAME_QUESTIONS.SUMMON_POSITION &&
+    ui.value.bufferedPlayedZone
+  ) {
+    client.value.answerQuestion(ui.value.bufferedPlayedZone);
+    ui.value.clearBufferedPlayedZone();
+    return;
+  }
+
   _isOpened.value =
-    state.value.interaction.state === INTERACTION_STATES.ASK_QUESTION &&
+    state.value.interaction.ctx.player === playerId.value &&
     playerId.value === client.value.getActivePlayerId();
 });
 const isShowingBoard = ref(false);
-
-const selectedIndices = ref<number[]>([]);
-watch(_isOpened, () => {
-  selectedIndices.value = [];
-});
 
 const label = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.ASK_QUESTION)

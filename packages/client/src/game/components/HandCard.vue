@@ -8,7 +8,6 @@ import {
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { usePageLeave } from '@vueuse/core';
-import { Flip } from 'gsap/Flip';
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 
 const { card, isInteractive } = defineProps<{
@@ -30,8 +29,8 @@ const violationWarning = ref('');
 const unselectCard = () => {
   const el = document.querySelector('#dragged-card [data-game-card]');
   if (!el) return;
-  const flipState = Flip.getState(el);
   // @FIXME issue will scrollbar briefly appearing on the screen, lets disable the animation for now
+  // const flipState = Flip.getState(el);
   // window.requestAnimationFrame(() => {
   //   const target = document.querySelector(
   //     `.hand-card [data-game-card="${card.id}"]`
@@ -48,6 +47,9 @@ const onMouseDown = (e: MouseEvent) => {
   if (!client.value.isActive()) {
     return;
   }
+  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) {
+    return;
+  }
   if (!card.canPlay) {
     isShaking.value = true;
     violationWarning.value = 'You cannot play this card.';
@@ -58,7 +60,6 @@ const onMouseDown = (e: MouseEvent) => {
     }, 2500);
     return;
   }
-  ui.value.startDraggingCard(card);
 
   const startY = e.clientY;
 
@@ -74,7 +75,7 @@ const onMouseDown = (e: MouseEvent) => {
     const deltaY = startY - e.clientY;
     if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
       ui.value.startDraggingCard(card);
-      // card.play();
+      document.body.removeEventListener('mousemove', onMousemove);
     }
   };
 

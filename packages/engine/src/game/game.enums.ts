@@ -50,3 +50,7 @@ export const EFFECT_TYPE = {
   DECLARE_BLOCKER: 'DECLARE_BLOCKER'
 } as const;
 export type EffectType = Values<typeof EFFECT_TYPE>;
+
+export const GAME_QUESTIONS = {
+  SUMMON_POSITION: 'summon_position'
+};

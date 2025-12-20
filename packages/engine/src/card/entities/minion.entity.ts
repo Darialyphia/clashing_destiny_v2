@@ -24,7 +24,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASES, GAME_QUESTIONS } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
 import { Ability } from './ability.entity';
 import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
@@ -374,6 +374,7 @@ export class MinionCard extends Card<
 
   private async promptForSummonZone() {
     return (await this.game.interaction.askQuestion({
+      questionId: GAME_QUESTIONS.SUMMON_POSITION,
       label: 'Select which zone to summon the minion to',
       player: this.player,
       source: this,

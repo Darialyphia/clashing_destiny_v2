@@ -66,6 +66,7 @@ export const astralSoldier: MinionBlueprint = {
           if (!card.player.hasRunes({ KNOWLEDGE: 1 })) return;
 
           const shouldConsume = await game.interaction.askQuestion({
+            questionId: 'astral-soldier-consume-knowledge',
             player: card.player,
             source: card,
             label: 'Consume 1 Knowledge to Empower 1?',

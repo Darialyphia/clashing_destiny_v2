@@ -61,6 +61,7 @@ export const comet: SpellBlueprint = {
   canPlay: () => true,
   async getPreResponseTargets(game, card) {
     const [zone] = await game.interaction.askQuestion({
+      questionId: 'comet-enemy-zone-selection',
       player: card.player,
       source: card,
       label: 'Select an enemy Zone',

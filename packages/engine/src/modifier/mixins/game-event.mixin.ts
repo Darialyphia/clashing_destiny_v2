@@ -4,6 +4,7 @@ import type { Game } from '../../game/game';
 import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
 import type { EventMapWithStarEvent } from '../../utils/typed-emitter';
 import { ModifierMixin } from '../modifier-mixin';
+import type { Modifier } from '../modifier.entity';
 
 export class GameEventModifierMixin<
   TEvent extends keyof EventMapWithStarEvent<GameEventMap>
@@ -12,11 +13,16 @@ export class GameEventModifierMixin<
 
   private occurencesThisGameTurn = 0;
 
+  private modifier!: Modifier<AnyCard>;
+
   constructor(
     game: Game,
     private options: {
       eventName: TEvent;
-      handler: (event: EventMapWithStarEvent<GameEventMap>[TEvent]) => void;
+      handler: (
+        event: EventMapWithStarEvent<GameEventMap>[TEvent],
+        modifier: Modifier<AnyCard>
+      ) => void;
       filter?: (event: EventMapWithStarEvent<GameEventMap>[TEvent]) => boolean;
       frequencyPerGameTurn?: number;
     }
@@ -45,14 +51,15 @@ export class GameEventModifierMixin<
     this.occurencesThisPlayerTurn++;
     this.occurencesThisGameTurn++;
 
-    return this.options.handler(event);
+    return this.options.handler(event, this.modifier);
   }
 
   private onGameTurnEnd() {
     this.occurencesThisGameTurn = 0;
   }
 
-  onApplied(): void {
+  onApplied(target: AnyCard, modifier: Modifier<AnyCard>): void {
+    this.modifier = modifier;
     this.game.on(this.options.eventName, this.wrappedHandler as any);
 
     if (isDefined(this.options.frequencyPerGameTurn)) {

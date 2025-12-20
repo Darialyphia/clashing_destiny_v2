@@ -18,7 +18,7 @@ import {
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASE_EVENTS, GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASE_EVENTS, GAME_PHASES, GAME_QUESTIONS } from '../../game/game.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 
@@ -150,6 +150,7 @@ export class SigilCard extends Card<
 
   private async promptForSummonZone() {
     const [zone] = await this.game.interaction.askQuestion({
+      questionId: GAME_QUESTIONS.SUMMON_POSITION,
       label: 'Select which zone to summon the sigil to',
       player: this.player,
       source: this,

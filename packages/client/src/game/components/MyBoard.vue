@@ -13,6 +13,10 @@ import GameCard from './GameCard.vue';
 import DestinyZone from './DestinyZone.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import {
+  BOARD_SLOT_ZONES,
+  type BoardSlotZone
+} from '@game/engine/src/board/board.constants';
 
 const myPlayer = useMyPlayer();
 const myBoard = useMyBoard();
@@ -24,6 +28,13 @@ const isDraggedCardPlayedInMinionZones = computed(() => {
   const card = ui.value.draggedCard;
   return card.kind === CARD_KINDS.MINION || card.kind === CARD_KINDS.SIGIL;
 });
+
+const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
+  if (!ui.value.draggedCard) return;
+  if (!isDraggedCardPlayedInMinionZones.value) return;
+  ui.value.playDraggedCard(zone);
+  e.stopPropagation();
+};
 </script>
 
 <template>
@@ -38,6 +49,7 @@ const isDraggedCardPlayedInMinionZones = computed(() => {
         class="attack-zone"
         :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
         :id="ui.DOMSelectors.attackZone(myPlayer.id).id"
+        @mouseup="onMouseup($event, BOARD_SLOT_ZONES.ATTACK_ZONE)"
       >
         <InspectableCard
           v-for="card in myBoard.attackZone"
@@ -51,6 +63,7 @@ const isDraggedCardPlayedInMinionZones = computed(() => {
         class="defense-zone"
         :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
         :id="ui.DOMSelectors.defenseZone(myPlayer.id).id"
+        @mouseup="onMouseup($event, BOARD_SLOT_ZONES.DEFENSE_ZONE)"
       >
         <InspectableCard
           v-for="card in myBoard.defenseZone"

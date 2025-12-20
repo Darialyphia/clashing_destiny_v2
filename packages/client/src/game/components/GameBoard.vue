@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import {
   useGameUi,
-  useMyBoard,
   useMyPlayer,
-  useOpponentBoard,
   useOpponentPlayer
 } from '../composables/useGameClient';
 import ActionsButtons from './ActionsButtons.vue';
@@ -15,7 +13,6 @@ import { useGameKeyboardControls } from '../composables/useGameKeyboardControls'
 import GameErrorModal from './GameErrorModal.vue';
 import DestinyCostVFX from './DestinyCostVFX.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
-import PassConfirmationModal from './PassConfirmationModal.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import Camera from './Camera.vue';
@@ -24,7 +21,6 @@ import OpponentBoard from './OpponentBoard.vue';
 import EffectChain from './EffectChain.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
-import { useEventListener } from '@vueuse/core';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const { clocks, options } = defineProps<{
@@ -51,6 +47,11 @@ const myClock = computed(() => clocks?.[myPlayer.value.id]);
 const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
 const isSettingsOpened = ref(false);
+
+const onBoardMouseup = () => {
+  if (!ui.value.draggedCard) return;
+  ui.value.playDraggedCard();
+};
 </script>
 
 <template>
@@ -68,6 +69,7 @@ const isSettingsOpened = ref(false);
         class="board"
         :id="ui.DOMSelectors.board.id"
         :class="{ 'is-dragging': ui.draggedCard }"
+        @mouseup="onBoardMouseup"
       >
         <OpponentBoard />
         <div class="flex justify-between gap-3">
@@ -163,7 +165,7 @@ const isSettingsOpened = ref(false);
 #card-actions-portal {
   transform: translateZ(10px);
 }
-@keyframes warning-pulse {
+/* @keyframes warning-pulse {
   0%,
   100% {
     color: white;
@@ -171,7 +173,16 @@ const isSettingsOpened = ref(false);
   50% {
     color: red;
   }
+} */
+/*
+.action-clock {
+  --color: #ffb270;
 }
+
+.turn-clock {
+  --color: #79d2c0;
+}
+
 .action-clock,
 .turn-clock {
   aspect-ratio: 1;
@@ -226,15 +237,7 @@ const isSettingsOpened = ref(false);
   &.active.warning::after {
     animation: warning-pulse 1s infinite;
   }
-}
-
-.action-clock {
-  --color: #ffb270;
-}
-
-.turn-clock {
-  --color: #79d2c0;
-}
+} */
 
 .settings-button {
   --pixel-scale: 2;

@@ -8,6 +8,7 @@ import {
 import type { Player } from '../../player/player.entity';
 
 type AskQuestionContextOptions = {
+  questionId: string;
   player: Player;
   source: AnyCard;
   choices: Array<{ id: string; label: string }>;
@@ -30,6 +31,8 @@ export class AskQuestionContext {
 
   private source: AnyCard;
 
+  private questionId!: string;
+
   private constructor(
     private game: Game,
     options: AskQuestionContextOptions
@@ -37,6 +40,7 @@ export class AskQuestionContext {
     this.choices = options.choices;
     this.player = options.player;
     this.label = options.label;
+    this.questionId = options.questionId;
     this.source = options.source;
   }
 
@@ -44,6 +48,7 @@ export class AskQuestionContext {
 
   serialize() {
     return {
+      questionId: this.questionId,
       player: this.player.id,
       source: this.source.id,
       choices: this.choices,
