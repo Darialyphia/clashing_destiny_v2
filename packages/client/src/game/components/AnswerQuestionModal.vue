@@ -28,7 +28,6 @@ const currentQuestion = ref<string | null>(null);
 
 watchEffect(() => {
   const interactionState = state.value.interaction.state;
-  console.log('interactionState', interactionState);
   if (interactionState !== INTERACTION_STATES.ASK_QUESTION) {
     _isOpened.value = false;
     currentQuestion.value = null;

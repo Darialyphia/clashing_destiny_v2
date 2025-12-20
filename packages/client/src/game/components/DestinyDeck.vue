@@ -90,7 +90,7 @@ const getKeyLabel = useKeybordShortcutLabel();
             :card-id="card.id"
             :actions-offset="10"
             show-disabled-message
-            :portal-target="'#destiny-deck-actions-portal'"
+            :actions-portal-target="'#destiny-deck-actions-portal'"
           />
         </div>
       </div>

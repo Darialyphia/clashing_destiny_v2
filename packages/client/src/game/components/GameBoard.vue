@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useGameState,
   useGameUi,
   useMyPlayer,
   useOpponentPlayer
@@ -21,6 +22,10 @@ import OpponentBoard from './OpponentBoard.vue';
 import EffectChain from './EffectChain.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
+import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import GameCard from './GameCard.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 // import { useBoardResize } from '../composables/useBoardResize';
 
 const { clocks, options } = defineProps<{
@@ -36,6 +41,7 @@ const { clocks, options } = defineProps<{
 }>();
 
 const ui = useGameUi();
+const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponentPlayer = useOpponentPlayer();
 
@@ -50,6 +56,13 @@ const isSettingsOpened = ref(false);
 
 const onBoardMouseup = () => {
   if (!ui.value.draggedCard) return;
+  if (
+    ui.value.draggedCard.kind === CARD_KINDS.MINION ||
+    ui.value.draggedCard.kind === CARD_KINDS.SIGIL
+  ) {
+    return;
+  }
+
   ui.value.playDraggedCard();
 };
 </script>
@@ -74,6 +87,25 @@ const onBoardMouseup = () => {
         <OpponentBoard />
         <div class="flex justify-between gap-3">
           <EffectChain />
+          <Transition>
+            <div
+              class="card-being-played"
+              v-if="
+                state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
+                state.interaction.ctx.player === myPlayer.id
+              "
+            >
+              <InspectableCard
+                :card-id="state.interaction.ctx.card"
+                side="left"
+              >
+                <GameCard
+                  :card-id="state.interaction.ctx.card"
+                  variant="small"
+                />
+              </InspectableCard>
+            </div>
+          </Transition>
           <ActionsButtons />
         </div>
         <MyBoard />
@@ -126,25 +158,25 @@ const onBoardMouseup = () => {
   grid-template-rows: 1fr auto 1fr;
   gap: var(--size-2);
   transform-style: preserve-3d;
-
-  &.is-dragging {
-    background-color: hsla(260, 50%, 20%, 0.2);
-    box-shadow: 0 0 30px #985e25;
-  }
 }
 
 :global(
-  .board.is-dragging:not(
-      :has(:is(.attack-zone, .defense-zone).is-dragging:hover)
-    ):hover
+  .board.is-dragging:not(:has(:is(.attack-zone, .defense-zone).is-dragging))
 ) {
-  background-color: hsla(from cyan h s l / 0.15);
+  background-color: hsla(260, 50%, 20%, 0.2);
+  box-shadow: 0 0 30px #985e25;
+  &:hover {
+    background-color: hsla(from cyan h s l / 0.15);
+  }
 }
 
+.arrows {
+  transform: translateZ(10px);
+}
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 8%;
+  bottom: 10%;
   left: 0;
 }
 
@@ -162,6 +194,22 @@ const onBoardMouseup = () => {
   grid-row: 1;
 }
 
+.card-being-played {
+  --pixel-scale: 0.75;
+  &:is(.v-enter-active, .v-leave-active) {
+    transition: all 0.3s var(--ease-2);
+  }
+  &.v-enter-from {
+    filter: brightness(3);
+    scale: 1.25;
+    opacity: 0.5;
+  }
+  &.v-leave-to {
+    scale: 0;
+    transform-origin: center;
+    opacity: 0;
+  }
+}
 #card-actions-portal {
   transform: translateZ(10px);
 }

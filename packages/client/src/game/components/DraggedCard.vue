@@ -10,7 +10,7 @@ import {
 import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
 import { Flip } from 'gsap/Flip';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { cp } from 'fs';
+import GameCard from './GameCard.vue';
 
 const ui = useGameUi();
 const cardRotation = ref({ x: 0, y: 0 });
@@ -91,13 +91,13 @@ watchEffect(() => {
   }
 });
 
-watch(isPinned, pinned => {
-  // if (pinned) {
-  //   rotationAnimation.pause();
-  // } else {
-  //   rotationAnimation.resume();
-  // }
-});
+// watch(isPinned, pinned => {
+//   if (pinned) {
+//     rotationAnimation.pause();
+//   } else {
+//     rotationAnimation.resume();
+//   }
+// });
 
 const isHidden = ref(false);
 useFxEvent(FX_EVENTS.PRE_CARD_BEFORE_PLAY, () => {
@@ -108,6 +108,10 @@ const unsub = client.value.onUpdateCompleted(() => {
 });
 onBeforeUnmount(() => {
   unsub();
+});
+
+const card = computed(() => {
+  return ui.value.draggedCard;
 });
 </script>
 
@@ -124,7 +128,12 @@ onBeforeUnmount(() => {
         '--y': `${y}px`
       }"
     >
-      <slot />
+      <GameCard
+        v-if="card"
+        :card-id="card.id"
+        :is-interactive="false"
+        :show-action-empty-state="false"
+      />
     </div>
   </Teleport>
 </template>

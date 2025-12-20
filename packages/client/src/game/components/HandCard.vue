@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Teleport } from 'vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import {
   useGameClient,
@@ -128,16 +127,15 @@ const isDisabled = computed(() => {
     <p class="violation-warning" v-if="violationWarning">
       {{ violationWarning }}
     </p>
-    <component :is="isDetachedFromHand ? Teleport : 'div'" to="#dragged-card">
-      <GameCard
-        :card-id="card.id"
-        actions-side="top"
-        :actions-offset="15"
-        :is-interactive="isInteractive && !ui.draggedCard"
-        class="game-card"
-        :show-action-empty-state="false"
-      />
-    </component>
+    <GameCard
+      v-if="!isDetachedFromHand"
+      :card-id="card.id"
+      actions-side="top"
+      :actions-offset="15"
+      :is-interactive="isInteractive && !ui.draggedCard"
+      class="game-card"
+      :show-action-empty-state="false"
+    />
   </div>
 </template>
 

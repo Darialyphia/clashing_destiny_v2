@@ -45,7 +45,7 @@ export class ForesightModifier<T extends AbilityOwner> extends Modifier<T> {
             const [target] = targets;
             await target.sendToBanishPile();
 
-            for (const destinyCard of card.player.cardManager.destinyZone) {
+            for (const destinyCard of card.player.cardManager.destinyDeck.cards) {
               await destinyCard.modifiers.add(
                 new Modifier<AnyCard>('foresight-cost-reduction', game, card, {
                   mixins: [

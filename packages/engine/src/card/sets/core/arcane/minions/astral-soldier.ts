@@ -50,7 +50,7 @@ export const astralSoldier: MinionBlueprint = {
   },
   manaCost: 2,
   runeCost: {
-    MIGHT: 1
+    KNOWLEDGE: 1
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,

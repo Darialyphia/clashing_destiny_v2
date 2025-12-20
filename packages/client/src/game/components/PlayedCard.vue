@@ -66,4 +66,8 @@ useFxEvent(FX_EVENTS.EFFECT_CHAIN_EFFECT_ADDED, async event => {
 .v-leave-to {
   transform: translateY(-30px);
 }
+
+.wrapper {
+  --pixel-scale: 1.5;
+}
 </style>

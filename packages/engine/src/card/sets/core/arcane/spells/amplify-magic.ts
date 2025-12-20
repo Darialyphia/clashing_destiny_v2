@@ -19,7 +19,7 @@ export const amplifyMagic: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Amplify Magic',
   description: dedent`
-    @Empower 1@. Draw a card.
+    @Empower 2@. Draw a card.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -54,7 +54,7 @@ export const amplifyMagic: SpellBlueprint = {
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    empower(game, card, 1);
+    empower(game, card, 2);
     await card.player.cardManager.draw(1);
   }
 };

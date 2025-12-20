@@ -147,10 +147,14 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
 }
 
 :is(.attack-zone, .defense-zone) {
-  &.is-dragging:hover {
-    border-color: cyan;
-    box-shadow: 0 0 10px cyan;
-    background-color: hsla(from cyan h s l / 0.15);
+  &.is-dragging {
+    background-color: hsla(260, 50%, 20%, 0.2);
+    box-shadow: 0 0 30px #985e25;
+    &:hover {
+      border-color: cyan;
+      box-shadow: 0 0 10px cyan;
+      background-color: hsla(from cyan h s l / 0.15);
+    }
   }
 }
 :global(.destiny-zone .game-card) {

@@ -23,7 +23,7 @@ const ui = useGameUi();
   opacity: 0;
   text-align: center;
   max-width: 60ch;
-  padding-block: var(--size-3);
+  padding: var(--size-3);
   text-wrap: balance;
   &.displayed {
     opacity: 1;
