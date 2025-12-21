@@ -27,6 +27,10 @@ import {
   type InteractionState,
   type InteractionStateTransition
 } from '../game.enums';
+import {
+  RearrangeCardsContext,
+  type RearrangeCardBucket
+} from '../interactions/rearrange-cards.interaction';
 
 export type InteractionContext =
   | {
@@ -52,6 +56,10 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'ask_question'>;
       ctx: AskQuestionContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'rearranging_cards'>;
+      ctx: RearrangeCardsContext;
     };
 
 export type SerializedInteractionContext =
@@ -78,8 +86,11 @@ export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'ask_question'>;
       ctx: ReturnType<AskQuestionContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'rearranging_cards'>;
+      ctx: ReturnType<RearrangeCardsContext['serialize']>;
     };
-
 export class GameInteractionSystem
   extends StateMachine<InteractionState, InteractionStateTransition>
   implements Serializable<SerializedInteractionContext>
@@ -90,7 +101,8 @@ export class GameInteractionSystem
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
-    [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext
+    [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
+    [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext
   } as const;
 
   private _ctx:
@@ -99,7 +111,8 @@ export class GameInteractionSystem
     | ChoosingCardsContext
     | PlayCardContext
     | UseAbilityContext
-    | AskQuestionContext;
+    | AskQuestionContext
+    | RearrangeCardsContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);
@@ -168,6 +181,21 @@ export class GameInteractionSystem
         INTERACTION_STATES.ASK_QUESTION,
         INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
         INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS,
+        INTERACTION_STATES.REARRANGING_CARDS
+      ),
+      stateTransition(
+        INTERACTION_STATES.REARRANGING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_REARRANGING_CARDS,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.REARRANGING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_REARRANGING_CARDS,
+        INTERACTION_STATES.IDLE
       )
     ]);
     this._ctx = new IdleContext(this.game);
@@ -234,6 +262,20 @@ export class GameInteractionSystem
       options
     );
     return this.game.inputSystem.pause<T[]>();
+  }
+
+  async rearrangeCards<T extends AnyCard>(options: {
+    player: Player;
+    buckets: RearrangeCardBucket[];
+    label: string;
+    source: AnyCard;
+  }) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.REARRANGING_CARDS].create(
+      this.game,
+      options
+    );
+    return this.game.inputSystem.pause<Record<string, AnyCard[]>>();
   }
 
   async askQuestion(options: {

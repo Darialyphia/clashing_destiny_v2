@@ -59,6 +59,7 @@ export const INTERACTION_STATES = {
   IDLE: 'idle',
   SELECTING_CARDS_ON_BOARD: 'selecting_cards_on_board',
   CHOOSING_CARDS: 'choosing_cards',
+  REARRANGING_CARDS: 'rearranging_cards',
   PLAYING_CARD: 'playing_card',
   USING_ABILITY: 'using_ability',
   ASK_QUESTION: 'ask_question'
@@ -79,6 +80,9 @@ export const INTERACTION_STATE_TRANSITIONS = {
   CANCEL_USING_ABILITY: 'cancel_using_ability',
   START_ASKING_QUESTION: 'start_asking_question',
   COMMIT_ASKING_QUESTION: 'commit_asking_question',
-  CANCEL_ASKING_QUESTION: 'cancel_asking_question'
-};
+  CANCEL_ASKING_QUESTION: 'cancel_asking_question',
+  START_REARRANGING_CARDS: 'start_rearranging_cards',
+  COMMIT_REARRANGING_CARDS: 'commit_rearranging_cards',
+  CANCEL_REARRANGING_CARDS: 'cancel_rearranging_cards'
+} as const;
 export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;

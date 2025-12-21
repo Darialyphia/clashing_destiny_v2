@@ -35,6 +35,7 @@ import { SurrenderInput } from './inputs/surrender.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
 import { DeclareBlockerInput } from './inputs/declare-blocker.input';
 import { CommitResourceActionInput } from './inputs/commit-resource-action';
+import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -64,7 +65,8 @@ const inputMap = validateinputMap({
   declareBlocker: DeclareBlockerInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,
-  commitResourceAction: CommitResourceActionInput
+  commitResourceAction: CommitResourceActionInput,
+  commitRearrangeCards: CommitRearrangeCardsInput
 });
 
 type InputMap = typeof inputMap;
