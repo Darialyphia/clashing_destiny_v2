@@ -264,7 +264,9 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async rearrangeCards<T extends AnyCard>(options: {
+  async rearrangeCards<
+    T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>
+  >(options: {
     player: Player;
     buckets: RearrangeCardBucket[];
     label: string;
@@ -275,7 +277,7 @@ export class GameInteractionSystem
       this.game,
       options
     );
-    return this.game.inputSystem.pause<Record<string, AnyCard[]>>();
+    return this.game.inputSystem.pause<T>();
   }
 
   async askQuestion(options: {

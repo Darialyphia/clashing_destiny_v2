@@ -368,6 +368,16 @@ export class GameClient {
     });
   }
 
+  commitRearrangeCards(buckets: Array<{ id: string; cards: string[] }>) {
+    this.dispatch({
+      type: 'commitRearrangeCards',
+      payload: {
+        playerId: this.playerId,
+        buckets
+      }
+    });
+  }
+
   pass() {
     this.dispatch({
       type: 'pass',
