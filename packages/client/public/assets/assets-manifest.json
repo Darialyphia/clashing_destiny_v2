@@ -1421,6 +1421,19 @@
         },
         {
           "alias": [
+            "erina-lv3-foil.png"
+          ],
+          "src": [
+            "/assets/cards/heroes/erina-lv3-foil.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "erina-lv3.png"
           ],
           "src": [
@@ -2180,6 +2193,19 @@
           ],
           "src": [
             "/assets/icons/keyword-ember.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "icon-keyword-empower-buff"
+          ],
+          "src": [
+            "/assets/icons/keyword-empower-buff.png"
           ],
           "data": {
             "tags": {
