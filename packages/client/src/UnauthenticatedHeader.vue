@@ -30,6 +30,13 @@ h1 {
   background-image: linear-gradient(#efef9f, #efef9f 50%, #d7ad42 50%);
   background-clip: text;
   text-shadow: 3px 5px 10px hsl(from cyan h s l / 0.3);
+
+  @screen lt-md {
+    font-size: var(--font-size-3);
+  }
+  @screen lt-sm {
+    display: none;
+  }
 }
 li {
   border-radius: var(--radius-2);
