@@ -155,6 +155,10 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
           <h2>Foil Effects</h2>
           <div class="foil-controls">
             <label class="control-item">
+              <UiSwitch v-model="foilOptions.foilLayer" />
+              <span>Foil art</span>
+            </label>
+            <label class="control-item">
               <UiSwitch v-model="foilOptions.sheen" />
               <span>Sheen</span>
             </label>

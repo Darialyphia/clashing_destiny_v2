@@ -42,6 +42,7 @@ const {
         scanlines?: boolean;
         goldenGlare?: boolean;
         glitter?: boolean;
+        foilLayer?: boolean;
       };
       dimensions: {
         width: number;
@@ -50,6 +51,7 @@ const {
       bg: string;
       main: string;
       breakout?: string;
+      foilArt?: string;
       frame: string;
       tint: CardTint;
     };
@@ -104,6 +106,10 @@ const artBgImage = computed(() => {
 
 const artMainImage = computed(() => {
   return `url('${card.art.main}')`;
+});
+
+const artFoilImage = computed(() => {
+  return `url('${card.art.foilArt}')`;
 });
 
 const artBreakoutImage = computed(() => {
@@ -247,6 +253,11 @@ const kindBg = computed(() => {
           <div
             v-if="isFoil && card.art.breakout"
             class="art-breakout parallax"
+            style="--parallax-strength: 2"
+          />
+          <div
+            v-if="isFoil && card.art.foil.foilLayer"
+            class="art-foil parallax"
             style="--parallax-strength: 2"
           />
         </div>
@@ -542,6 +553,17 @@ const kindBg = computed(() => {
   height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
   translate: -50% 0;
   background: v-bind(artMainImage);
+  background-size: cover;
+  --parallax-offset-x: -50%;
+}
+.art-foil {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  translate: -50% 0;
+  background: v-bind(artFoilImage);
   background-size: cover;
   --parallax-offset-x: -50%;
 }

@@ -90,6 +90,9 @@ export class CardViewModel {
       breakout: this.data.art.breakout
         ? `/assets/cards/${this.data.art.breakout}.png`
         : undefined,
+      foilArt: this.data.art.foilArt
+        ? `/assets/cards/${this.data.art.foilArt}.png`
+        : undefined,
       tint: this.data.art.tint
     };
   }

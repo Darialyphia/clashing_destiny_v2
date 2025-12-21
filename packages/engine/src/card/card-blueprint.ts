@@ -51,10 +51,12 @@ export type CardBlueprintBase = {
         scanlines?: boolean;
         goldenGlare?: boolean;
         glitter?: boolean;
+        foilLayer?: boolean;
       };
       bg: string;
       main: string;
       breakout?: string;
+      foilArt?: string;
       frame: string;
       tint: CardTint;
     }

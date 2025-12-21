@@ -31,6 +31,9 @@ const mergedFoilOptions = computed(() => ({
         breakout: blueprint.art.default.breakout
           ? `/assets/cards/${blueprint.art.default.breakout}.png`
           : undefined,
+        foilArt: blueprint.art.default.foilArt
+          ? `/assets/cards/${blueprint.art.default.foilArt}.png`
+          : undefined,
         frame: `/assets/ui/card/frames/${blueprint.art.default.frame}.png`,
         tint: blueprint.art.default.tint
       },

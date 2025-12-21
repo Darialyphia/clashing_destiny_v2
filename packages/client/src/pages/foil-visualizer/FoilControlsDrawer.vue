@@ -35,6 +35,13 @@ const updateOption = (
       <div class="foil-controls">
         <label class="control-item">
           <UiSwitch
+            :model-value="foilOptions.foilLayer"
+            @update:model-value="updateOption('foilLayer', $event)"
+          />
+          <span>Foil art</span>
+        </label>
+        <label class="control-item">
+          <UiSwitch
             :model-value="foilOptions.sheen"
             @update:model-value="updateOption('sheen', $event)"
           />

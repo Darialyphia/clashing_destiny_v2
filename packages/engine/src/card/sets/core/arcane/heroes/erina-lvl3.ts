@@ -37,9 +37,10 @@ export const erinaLv3: HeroBlueprint = {
       foil: {
         sheen: false,
         oil: false,
-        gradient: true,
+        gradient: false,
         lightGradient: true,
-        scanlines: true
+        scanlines: true,
+        foilLayer: true
       },
       dimensions: {
         width: 174,
@@ -48,6 +49,7 @@ export const erinaLv3: HeroBlueprint = {
       bg: 'heroes/erina-lv3-bg',
       main: 'heroes/erina-lv3',
       breakout: 'heroes/erina-lv3-breakout',
+      foilArt: 'heroes/erina-lv3-foil',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
