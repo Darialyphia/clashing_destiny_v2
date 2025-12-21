@@ -32,7 +32,7 @@ declare module 'vue-router/auto-routes' {
     'TutorialMission': RouteRecordInfo<'TutorialMission', '/client/tutorial/missions/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'HowToPlay': RouteRecordInfo<'HowToPlay', '/client/tutorial/rules', Record<never, never>, Record<never, never>>,
     'WatchGame': RouteRecordInfo<'WatchGame', '/client/watch/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
-    '/foil-visualizer/': RouteRecordInfo<'/foil-visualizer/', '/foil-visualizer', Record<never, never>, Record<never, never>>,
+    'FoilVisualizer': RouteRecordInfo<'FoilVisualizer', '/foil-visualizer', Record<never, never>, Record<never, never>>,
     'Home': RouteRecordInfo<'Home', '/', Record<never, never>, Record<never, never>>,
     'Login': RouteRecordInfo<'Login', '/login', Record<never, never>, Record<never, never>>,
     'Register': RouteRecordInfo<'Register', '/register', Record<never, never>, Record<never, never>>,

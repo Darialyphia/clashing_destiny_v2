@@ -6,6 +6,11 @@
     <nav class="ml-auto">
       <ul class="flex gap-4">
         <li>
+          <RouterLink :to="{ name: 'FoilVisualizer' }">
+            Foil Visualizer
+          </RouterLink>
+        </li>
+        <li>
           <RouterLink :to="{ name: 'Login' }">Login</RouterLink>
         </li>
         <li>
