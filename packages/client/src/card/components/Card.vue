@@ -10,17 +10,16 @@ import {
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until, useResizeObserver } from '@vueuse/core';
+import {
+  unrefElement,
+  until,
+  useElementBounding,
+  useEventListener,
+  useResizeObserver
+} from '@vueuse/core';
+import CardFoil from './CardFoil.vue';
 import CardGlare from './CardGlare.vue';
-import { match } from 'ts-pattern';
-import { useCardTilt } from '../composables/useCardtilt';
-import FoilSheen from './foil/FoilSheen.vue';
-import FoilOil from './foil/FoilOil.vue';
-import FoilGradient from './foil/FoilGradient.vue';
-import FoilScanlines from './foil/FoilScanlines.vue';
-import FoilLightGradient from './foil/FoilLightGradient.vue';
-import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
-import FoilGlitter from './foil/FoilGlitter.vue';
+import { throttle } from 'lodash-es';
 
 const {
   card,
@@ -111,6 +110,46 @@ const artBreakoutImage = computed(() => {
 });
 
 const root = useTemplateRef('card');
+const x = ref(0);
+const y = ref(0);
+useEventListener(root, 'mousemove', (e: MouseEvent) => {
+  x.value = e.clientX;
+  y.value = e.clientY;
+});
+
+const rect = useElementBounding(root);
+
+const pointerStyle = computed(() => {
+  const left = rect.left.value ?? 0;
+  const top = rect.top.value ?? 0;
+  const width = rect.width.value ?? 0;
+  const height = rect.height.value ?? 0;
+
+  const pointer = {
+    x: clamp(x.value - left, 0, width),
+    y: clamp(y.value - top, 0, height)
+  };
+  const percent = {
+    x: (pointer.x / width) * 100,
+    y: (pointer.y / height) * 100
+  };
+  return {
+    glareX: pointer.x,
+    glareY: pointer.y,
+    foilX: mapRange(percent.x, [0, 100], [0, 37.9]),
+    foilY: percent.y,
+    foilOilX: width - pointer.x,
+    foilOilY: height - pointer.y,
+    pointerFromCenter: clamp(
+      Math.sqrt(
+        (percent.y - 50) * (percent.y - 50) +
+          (percent.x - 50) * (percent.x - 50)
+      ) / 50,
+      0,
+      1
+    )
+  };
+});
 
 const setVariableFontSize = (
   box: HTMLElement,
@@ -201,22 +240,47 @@ const { pointerStyle, angle, onMousemove, onMouseleave } = useCardTilt(root, {
   maxAngle: maxTiltAngle
 });
 
-const tintGradient = computed(() => {
-  return match(card.art.tint)
-    .with({ mode: { type: 'linear' } }, tint => {
-      return `linear-gradient(${tint.mode.angle}deg, ${tint.colors.join(
-        ', '
-      )})`;
-    })
-    .with({ mode: { type: 'radial' } }, tint => {
-      return `radial-gradient(circle at center, ${tint.colors.join(', ')})`;
-    })
-    .exhaustive();
+const MAX_ANGLE = 30;
+
+const boundingRect = ref<Omit<DOMRect, 'toJSON'>>({
+  bottom: 0,
+  height: 0,
+  left: 0,
+  right: 0,
+  top: 0,
+  width: 0,
+  x: 0,
+  y: 0
+});
+const setBoundingRect = () => {
+  if (!root.value) return;
+  boundingRect.value = unrefElement(root.value)!.getBoundingClientRect();
+};
+onMounted(setBoundingRect);
+useEventListener('scroll', throttle(setBoundingRect, 100), {
+  passive: true,
+  capture: true
 });
 
-const kindBg = computed(() => {
-  return `url('/assets/ui/card/kind-${card.kind.toLowerCase()}.png')`;
-});
+const onMousemove = (e: MouseEvent) => {
+  if (!root.value) return;
+
+  const { clientX, clientY } = e;
+  const { left, top, width, height } = boundingRect.value;
+  angle.value = {
+    y: ((clientX - left) / width - 0.5) * MAX_ANGLE,
+    x: ((clientY - top) / height - 0.5) * MAX_ANGLE
+  };
+};
+
+const onMouseleave = () => {
+  gsap.to(angle.value, {
+    x: 0,
+    y: 0,
+    duration: 0.5,
+    ease: Power2.easeOut
+  });
+};
 </script>
 
 <template>
@@ -224,6 +288,7 @@ const kindBg = computed(() => {
     class="card-perspective-wrapper"
     @mousemove="onMousemove"
     @mouseleave="onMouseleave"
+    @mouseenter="setBoundingRect"
   >
     <div
       ref="card"
