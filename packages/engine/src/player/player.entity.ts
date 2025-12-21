@@ -58,11 +58,15 @@ export type SerializedPlayer = {
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
   maxResourceActionPerTurn: Interceptable<number>;
+  maxResourceActionsPerType: Interceptable<Record<PlayerResourceAction['type'], number>>;
 };
 const makeInterceptors = (): PlayerInterceptors => {
   return {
     cardsDrawnForTurn: new Interceptable<number>(),
-    maxResourceActionPerTurn: new Interceptable<number>()
+    maxResourceActionPerTurn: new Interceptable<number>(),
+    maxResourceActionsPerType: new Interceptable<
+      Record<PlayerResourceAction['type'], number>
+    >()
   };
 };
 
@@ -324,15 +328,37 @@ export class Player
     );
   }
 
+  getMaxResourceActionsPerType(actionType: PlayerResourceAction['type']): number {
+    const defaultLimits: Record<PlayerResourceAction['type'], number> = {
+      draw_card: 1,
+      gain_rune: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
+    };
+
+    const limits = this.interceptors.maxResourceActionsPerType.getValue(
+      defaultLimits,
+      {}
+    );
+
+    return limits[actionType];
+  }
+
   async performResourceAction(action: PlayerResourceAction) {
-    // Check if draw_card action has already been performed this turn
-    if (action.type === 'draw_card') {
-      const hasDrawnCardThisTurn = this._resourceActionsPerformedThisTurn.some(
-        a => a.type === 'draw_card'
+    // Check if the action type has reached its maximum limit for this turn
+    const maxForType = this.getMaxResourceActionsPerType(action.type);
+    const performedCountForType = this._resourceActionsPerformedThisTurn.filter(
+      a => a.type === action.type
+    ).length;
+
+    if (performedCountForType >= maxForType) {
+      throw new GameError(
+        `Cannot perform '${action.type}' more than ${maxForType} time(s) per turn`
       );
-      if (hasDrawnCardThisTurn) {
-        throw new GameError('Cannot draw card more than once per turn');
-      }
+    }
+
+    if (this._resourceActionsPerformedThisTurn.length >= this.maxResourceActionPerTurn) {
+      throw new GameError(
+        `Cannot perform more than ${this.maxResourceActionPerTurn} resource actions per turn`
+      );
     }
 
     await match(action)
