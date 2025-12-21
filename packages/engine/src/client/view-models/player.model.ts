@@ -69,6 +69,14 @@ export class PlayerViewModel {
     return this.data.remainingResourceActions;
   }
 
+  get maxResourceActionPerTurn() {
+    return this.data.maxResourceActionPerTurn;
+  }
+
+  get remainingTotalResourceActions() {
+    return this.data.remainingTotalResourceActions;
+  }
+
   get isPlayer1() {
     return this.data.isPlayer1;
   }

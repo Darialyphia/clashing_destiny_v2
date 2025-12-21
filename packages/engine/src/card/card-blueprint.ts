@@ -52,6 +52,8 @@ export type CardBlueprintBase = {
         goldenGlare?: boolean;
         glitter?: boolean;
         foilLayer?: boolean;
+        noBackground?: boolean;
+        noFrame?: boolean;
       };
       bg: string;
       main: string;

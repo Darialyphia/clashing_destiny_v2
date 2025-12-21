@@ -25,10 +25,14 @@ There are 4 kinds of runes: Power, Knowledge, Focus and Resonance. A player must
 
 ### Resource Action
 
-Once per turn, players can do one of the following action
+Twice per turn, players can do one of the following action
 
-- Draw an additional Card
+- Draw a card
 - Gain a rune of their choosing
+
+These actions can be done at any point, even during a card chain, and do not pass priority.
+
+Note that, unlike most TCGs, players do not automatically draw a card at the start of the turn. Using resources actions is the primary way to draw cards.
 
 ### Factions
 
@@ -36,9 +40,9 @@ The Game has 6 Factions: Order, Chaos, Genesis, Oblivion, Arcane and Primal. A p
 
 ## Turn structure
 
-At the start of a turn, both players draw 1 card, then recollect all cards in their Destiny zone to their hand.
+At the start of a turn, both players recollect all cards in their Destiny zone to their hand, and wake up all of their cards on the board.
 
-During a turn, players alternate taking actions. On the first turnturns, initiative switches back and forth between players.
+During a turn, players alternate taking actions. On the first turn, initiative switches back and forth between players.
 
 The actions available are:
 

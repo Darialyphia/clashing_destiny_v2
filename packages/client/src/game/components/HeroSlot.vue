@@ -78,10 +78,20 @@ const enableFullCardPreview = () => {
     </InspectableCard>
 
     <div
-      class="runes"
+      class="resources"
       @mouseenter="isFullCardPreviewenabled = false"
       @mouseleave="enableFullCardPreview"
     >
+      <UiSimpleTooltip>
+        <template #trigger>
+          <div class="text-right text-3 text-bold">
+            {{ player.remainingTotalResourceActions }} /
+            {{ player.maxResourceActionPerTurn }}
+          </div>
+        </template>
+        You have {{ player.remainingTotalResourceActions }} resource actions
+        left this turn.
+      </UiSimpleTooltip>
       <UiSimpleTooltip :disabled="!canGainRune">
         <template #trigger>
           <button
@@ -143,12 +153,15 @@ const enableFullCardPreview = () => {
   position: relative;
 }
 
-.runes {
+.resources {
   position: absolute;
-  top: var(--size-8);
+  top: var(--size-6);
   right: var(--size-7);
   display: grid;
   gap: var(--size-2);
+  color: white;
+  -webkit-text-stroke: 6px black;
+  paint-order: stroke fill;
 
   .rune {
     padding-left: calc(20px * var(--pixel-scale));
@@ -159,9 +172,6 @@ const enableFullCardPreview = () => {
     width: calc(27px * var(--pixel-scale));
     font-size: var(--font-size-3);
     font-weight: var(--font-weight-5);
-    color: white;
-    -webkit-text-stroke: 6px black;
-    paint-order: stroke fill;
     &:not(:disabled):hover {
       filter: brightness(1.5);
     }

@@ -42,6 +42,20 @@ const updateOption = (
         </label>
         <label class="control-item">
           <UiSwitch
+            :model-value="foilOptions.noBackground"
+            @update:model-value="updateOption('noBackground', $event)"
+          />
+          <span>No background</span>
+        </label>
+        <label class="control-item">
+          <UiSwitch
+            :model-value="foilOptions.noFrame"
+            @update:model-value="updateOption('noFrame', $event)"
+          />
+          <span>No frame</span>
+        </label>
+        <label class="control-item">
+          <UiSwitch
             :model-value="foilOptions.sheen"
             @update:model-value="updateOption('sheen', $event)"
           />

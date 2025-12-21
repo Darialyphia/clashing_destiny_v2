@@ -43,6 +43,8 @@ const {
         goldenGlare?: boolean;
         glitter?: boolean;
         foilLayer?: boolean;
+        noBackground?: boolean;
+        noFrame?: boolean;
       };
       dimensions: {
         width: number;
@@ -245,11 +247,15 @@ const kindBg = computed(() => {
         </div>
 
         <div class="image">
-          <div class="art-bg" />
+          <div v-if="!isFoil || !card.art.foil.noBackground" class="art-bg" />
           <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
           <div class="art-main parallax" style="--parallax-strength: 2" />
-          <div class="art-frame parallax" style="--parallax-strength: 0.5" />
+          <div
+            v-if="!isFoil || !card.art.foil.noFrame"
+            class="art-frame parallax"
+            style="--parallax-strength: 0.5"
+          />
           <div
             v-if="isFoil && card.art.breakout"
             class="art-breakout parallax"
@@ -794,7 +800,7 @@ const kindBg = computed(() => {
 .description {
   padding: 0 4px;
   width: calc(144px * var(--pixel-scale));
-  height: calc(48px * var(--pixel-scale));
+  height: calc(45px * var(--pixel-scale));
   position: absolute;
   top: calc(18px * var(--pixel-scale));
   left: calc(8px * var(--pixel-scale));
@@ -818,7 +824,7 @@ const kindBg = computed(() => {
 
 .runes {
   position: absolute;
-  bottom: calc(4px * var(--pixel-scale));
+  bottom: calc(2px * var(--pixel-scale));
   left: 50%;
   translate: -50% 0;
   display: flex;

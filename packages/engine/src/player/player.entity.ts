@@ -27,6 +27,7 @@ import { CARD_KINDS, type Rune } from '../card/card.enums';
 import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
+import { max } from 'lodash-es';
 
 export type PlayerOptions = {
   id: string;
@@ -49,6 +50,8 @@ export type SerializedPlayer = {
   remainingCardsInDestinyDeck: number;
   canPerformResourceAction: boolean;
   remainingResourceActions: Record<PlayerResourceAction['type'], number>;
+  maxResourceActionPerTurn: number;
+  remainingTotalResourceActions: number;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -205,7 +208,10 @@ export class Player
           this.getMaxResourceActionsPerType('gain_rune') -
           this._resourceActionsPerformedThisTurn.filter(a => a.type === 'gain_rune')
             .length
-      }
+      },
+      remainingTotalResourceActions:
+        this.maxResourceActionPerTurn - this._resourceActionsPerformedThisTurn.length,
+      maxResourceActionPerTurn: this.maxResourceActionPerTurn
     };
   }
 
