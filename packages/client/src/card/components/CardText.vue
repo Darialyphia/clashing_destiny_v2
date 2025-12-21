@@ -11,7 +11,12 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
+import {
+  CARD_SPEED,
+  RUNES,
+  type CardSpeed,
+  type Rune
+} from '@game/engine/src/card/card.enums';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -35,7 +40,8 @@ type Token =
   | { type: 'lineage-bonus'; text: string }
   | { type: 'missing-affinity'; text: string }
   | { type: 'durability' }
-  | { type: CardSpeed };
+  | { type: CardSpeed }
+  | { type: Rune };
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
@@ -74,19 +80,19 @@ const tokens = computed<Token[]>(() => {
     if (part.startsWith('[spellpower]')) {
       return { type: 'spellpower' };
     }
-    if (part.startsWith('[health]')) {
+    if (part.startsWith('[hp]')) {
       return { type: 'health' };
     }
-    if (part.startsWith('[attack]')) {
+    if (part.startsWith('[atk]')) {
       return { type: 'attack' };
     }
-    if (part.startsWith('[durability]')) {
+    if (part.startsWith('[dur]')) {
       return { type: 'durability' };
     }
-    if (part.startsWith('[level]')) {
+    if (part.startsWith('[lvl]')) {
       return {
         type: 'level-bonus',
-        text: part.replace('[level] ', 'Level ')
+        text: part.replace('[lvl] ', 'Level ')
       };
     }
     if (part.startsWith('[lineage]')) {
@@ -100,6 +106,11 @@ const tokens = computed<Token[]>(() => {
         type: 'missing-affinity',
         text: part.replace('[missing-affinity] ', '')
       };
+    }
+    for (const rune of Object.values(RUNES)) {
+      if (part.startsWith(`[${rune.toLocaleLowerCase()}]`)) {
+        return { type: rune };
+      }
     }
     for (const speed of Object.values(CARD_SPEED)) {
       if (part.startsWith(`[${speed}]`)) {
@@ -152,34 +163,66 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === 'durability'">
         <template #trigger>
-          <img src="/assets/ui/shield.png" class="inline" />
+          <img src="/assets/ui/shield.png" class="inline token-durability" />
         </template>
         <b>Durability</b>
         : when it reaches zero, the artifact is destroyed.
       </UiSimpleTooltip>
 
-      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
+      <UiSimpleTooltip v-else-if="token.type === RUNES.KNOWLEDGE">
         <template #trigger>
-          <img src="/assets/ui/speed-slow.png" class="inline" />
+          <img
+            src="/assets/ui/card/rune-knowledge.png"
+            class="inline token rune"
+          />
         </template>
 
+        Knowledge Rune
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === RUNES.FOCUS">
+        <template #trigger>
+          <img src="/assets/ui/card/rune-focus.png" class="inline token rune" />
+        </template>
+        Focus Rune
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-else-if="token.type === RUNES.MIGHT">
+        <template #trigger>
+          <img src="/assets/ui/card/rune-might.png" class="inline token rune" />
+        </template>
+        Might Rune
+      </UiSimpleTooltip>
+
+      <!-- <UiSimpleTooltip v-else-if="token.type === RUNES.RESONANCE">
+        <template #trigger>
+          <img
+            src="/assets/ui/card/rune-resonance.png"
+            class="inline token rune"
+          />
+        </template>
+        Resonance Rune
+      </UiSimpleTooltip> -->
+
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
+        <template #trigger>
+          <img src="/assets/ui/speed-slow.png" class="inline token speed" />
+        </template>
         This can only be activated at Slow speed.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
         <template #trigger>
-          <img src="/assets/ui/speed-fast.png" class="inline" />
+          <img src="/assets/ui/speed-fast.png" class="inline token-speed" />
         </template>
-
         This can be activated at Fast speed.
       </UiSimpleTooltip>
 
-      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FLASH">
+      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.BURST">
         <template #trigger>
-          <img src="/assets/ui/speed-flash.png" class="inline" />
+          <img src="/assets/ui/speed-burst.png" class="inline" />
         </template>
-
-        This can is activated at Flash speed and resolves instantly.
+        This can is activated at Burst speed and resolves instantly.
       </UiSimpleTooltip>
 
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
@@ -210,17 +253,14 @@ const tokens = computed<Token[]>(() => {
 <style scoped lang="postcss">
 .card-text {
   white-space: pre-wrap;
-  color: #d7ad42;
-  color: #efef9f;
+  color: var(--card-text-color, black);
+
   line-height: 1.2;
 }
 
 :is(.token-keyword, .token-card) {
   font-weight: var(--font-weight-7);
-  color: #efef9f;
-  color: #d7ad42;
-  -webkit-text-stroke: 4px black;
-  paint-order: stroke fill;
+  text-decoration: underline;
 }
 
 .token-mana {
@@ -228,26 +268,30 @@ const tokens = computed<Token[]>(() => {
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: 22px;
-  height: 20px;
+  width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(18px * var(--pixel-scale) / 2);
   display: inline-flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
-  text-shadow: 0 2px 2px black;
+  color: white;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
 }
 .token-destiny {
   background: url('/assets/ui/destiny-cost.png') no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: var(--size-5);
-  height: var(--size-5);
+  width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(18px * var(--pixel-scale) / 2);
   display: inline-flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
-  text-shadow: 0 2px 2px black;
+  color: white;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
 }
 
 .token-missing-affinity {
@@ -269,6 +313,8 @@ const tokens = computed<Token[]>(() => {
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
   transform: translateY(4px);
+  width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(12px * var(--pixel-scale) / 2);
 }
 .token-dynamic-value {
   color: var(--blue-4);
@@ -291,15 +337,26 @@ const tokens = computed<Token[]>(() => {
     width: 1.2em;
     aspect-ratio: 1;
     transform: translateY(3px);
-    margin-inline: var(--size-1);
   }
 }
 .token-SLOW,
 .token-FAST,
-.token-FLASH {
+.token-BURST {
   img {
-    width: 22px;
-    height: 20px;
+    width: calc(10px * var(--pixel-scale) / 2);
+    height: calc(10px * var(--pixel-scale) / 2);
+    aspect-ratio: 1;
+    transform: translateY(2px);
+  }
+}
+
+.token-KNOWLEDGE,
+.token-FOCUS,
+.token-RESONANCE,
+.token-MIGHT {
+  img {
+    width: calc(17px * var(--pixel-scale) / 2);
+    height: calc(18px * var(--pixel-scale) / 2);
     aspect-ratio: 1;
     transform: translateY(6px);
   }
@@ -311,7 +368,6 @@ const tokens = computed<Token[]>(() => {
     width: 1.2em;
     aspect-ratio: 1;
     transform: translateY(3px);
-    margin-inline: var(--size-1);
   }
 }
 .keyword-card {

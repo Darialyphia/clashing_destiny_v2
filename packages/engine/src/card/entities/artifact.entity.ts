@@ -1,4 +1,4 @@
-import type { MaybePromise, Values } from '@game/shared';
+import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
@@ -8,13 +8,7 @@ import {
   type ArtifactBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import {
-  ARTIFACT_KINDS,
-  CARD_EVENTS,
-  type ArtifactKind,
-  type HeroJob,
-  type SpellSchool
-} from '../card.enums';
+import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -24,8 +18,12 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { Ability } from './ability.entity';
+import {
+  ARTIFACT_EVENTS,
+  ArtifactDurabilityEvent,
+  ArtifactEquipedEvent
+} from '../events/artifact.events';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -34,8 +32,6 @@ export type SerializedArtifactCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
   atkBonus: number | null;
 };
 
@@ -47,47 +43,6 @@ export type ArtifactCardInterceptors = CardInterceptors & {
   >;
   durability: Interceptable<number, ArtifactCard>;
   attackBonus: Interceptable<number | null, ArtifactCard>;
-};
-
-export const ARTIFACT_EVENTS = {
-  ARTIFACT_BEFORE_LOSE_DURABILITY: 'artifact.lose-durability',
-  ARTIFACT_AFTER_LOSE_DURABILITY: 'artifact.after-lose-durability',
-  ARTIFACT_BEFORE_GAIN_DURABILITY: 'artifact.gain-durability',
-  ARTIFACT_AFTER_GAIN_DURABILITY: 'artifact.after-gain-durability',
-  ARTIFACT_EQUIPED: 'artifact.equiped'
-} as const;
-
-export type ArtifactEvents = Values<typeof ARTIFACT_EVENTS>;
-
-export class ArtifactDurabilityEvent extends TypedSerializableEvent<
-  { card: ArtifactCard; amount: number },
-  { card: SerializedArtifactCard; amount: number }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      amount: this.data.amount
-    };
-  }
-}
-
-export class ArtifactEquipedEvent extends TypedSerializableEvent<
-  { card: ArtifactCard },
-  { card: SerializedArtifactCard }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize()
-    };
-  }
-}
-
-export type ArtifactCardEventMap = {
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_LOSE_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_LOSE_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_GAIN_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_GAIN_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_EQUIPED]: ArtifactEquipedEvent;
 };
 
 export class ArtifactCard extends Card<
@@ -217,26 +172,9 @@ export class ArtifactCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
-  get spellSchool() {
-    return this.blueprint.spellSchool;
-  }
-
-  get isCorrectJob() {
-    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
-  }
-
-  get isCorrectSpellSchool() {
-    if (!this.spellSchool) return true;
-    if (this.shouldIgnorespellSchoolRequirements) return true;
-    return this.player.hero.spellSchools.includes(this.spellSchool);
-  }
-
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
-        this.isCorrectJob &&
-        this.isCorrectSpellSchool &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -257,8 +195,10 @@ export class ArtifactCard extends Card<
           new ArtifactEquipedEvent({ card: this })
         );
       },
-      [],
-      onResolved
+      {
+        targets: [],
+        onResolved
+      }
     );
   }
 
@@ -271,8 +211,6 @@ export class ArtifactCard extends Card<
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
       abilities: this.abilities.map(a => a.id),
-      job: this.blueprint.job ?? null,
-      spellSchool: this.blueprint.spellSchool ?? null,
       atkBonus: this.atkBonus
     };
   }

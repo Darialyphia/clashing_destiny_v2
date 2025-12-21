@@ -1,4 +1,3 @@
-import type { SpellSchool } from '@game/engine/src/card/card.enums';
 import { CreateDeckUseCase } from './deck/usecases/createDeck.usecase';
 import { GetDecksUseCase } from './deck/usecases/getDecks.usecase';
 import { GrantPremadeDeckUseCase } from './deck/usecases/grantPremadeDeck';
@@ -8,7 +7,7 @@ import {
   mutationWithContainer,
   queryWithContainer
 } from './shared/container';
-import { v, type Validator } from 'convex/values';
+import { v } from 'convex/values';
 import { DeleteDeckUseCase } from './deck/usecases/deleteDeck.usecase';
 
 export const list = queryWithContainer({
@@ -50,7 +49,6 @@ export const update = mutationWithContainer({
   args: {
     deckId: v.id('decks'),
     name: v.string(),
-    spellSchools: v.array(v.string()) as Validator<SpellSchool[]>,
     mainDeck: v.array(
       v.object({
         cardId: v.id('cards'),
@@ -71,8 +69,7 @@ export const update = mutationWithContainer({
       deckId: arg.deckId,
       name: arg.name,
       mainDeck: arg.mainDeck,
-      destinyDeck: arg.destinyDeck,
-      spellSchools: arg.spellSchools
+      destinyDeck: arg.destinyDeck
     });
   }
 });

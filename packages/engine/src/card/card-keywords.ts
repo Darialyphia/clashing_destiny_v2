@@ -1,5 +1,4 @@
-import { uppercaseFirstLetter, type Values } from '@game/shared';
-import { HERO_JOBS, SPELL_SCHOOLS, type HeroJob, type SpellSchool } from './card.enums';
+import { type Values } from '@game/shared';
 
 export type Keyword = {
   id: string;
@@ -7,8 +6,6 @@ export type Keyword = {
   description: string;
   aliases: (string | RegExp)[];
 };
-
-type ToAffinityKeywordKey<T extends string> = `${Uppercase<T>}_AFFINITY`;
 
 export const KEYWORDS = {
   LINEAGE: {
@@ -18,18 +15,31 @@ export const KEYWORDS = {
       'This Hero must be leveled up from a previous hero with the same lineage.',
     aliases: [/^[a-z\s]+\slineage+/]
   },
-  ECHOED_DESTINY: {
-    id: 'echoed-destiny',
-    name: 'Echoed Destiny',
+  LOYALTY: {
+    id: 'loyalty',
+    name: 'Loyalty X',
     description:
-      'If this card is banished while paying for the cost of a Destiny card, add it to your hand instead and give it Fleeting.',
+      'If this card is from a different faction than your hero, Deal X additional unpreventable damage to your hero when you play it.',
+    aliases: [/^loyalty [0-9]+/]
+  },
+  FORESIGHT: {
+    id: 'foresight',
+    name: 'Foresight',
+    description:
+      'You can banish this card from your Discard pile, to banish a card in your Destiny Zone. Reduce the cost of the next Destiny card you play this turn by 1.',
     aliases: []
   },
   LINGERING_DESTINY: {
     id: 'lingering-destiny',
     name: 'Lingering Destiny',
     description:
-      'You can banish this card from your Discard pile to add a Mana Spark into your Destiny Zone.',
+      'When this is sent to the discard pile, add a Mana Spark into your Destiny Zone.',
+    aliases: []
+  },
+  CONSUME: {
+    id: 'consume',
+    name: 'Consume',
+    description: 'Destroy the mentioned runes.',
     aliases: []
   },
   SUMMONING_SICKNESS: {
@@ -56,6 +66,12 @@ export const KEYWORDS = {
     description: 'Does something when this card declares an attack.',
     aliases: ['on minion attack', 'on hero attack']
   },
+  ON_BLOCK: {
+    id: 'on-block',
+    name: 'On Block',
+    description: 'Does something when this card declares a block.',
+    aliases: ['on minion block', 'on hero block']
+  },
   ON_RETALIATE: {
     id: 'on-retaliate',
     name: 'On Retaliate',
@@ -72,13 +88,13 @@ export const KEYWORDS = {
     id: 'on-kill',
     name: 'On Kill',
     description:
-      'Does something when this card kills another unit via combat while being the attacker.',
+      'Does something when this card kills another unit by combat while being the attacker.',
     aliases: []
   },
   ON_LEVEL_UP: {
     id: 'on-level-up',
     name: 'On Level Up',
-    description: 'Does something when this hero levels up.',
+    description: 'Does something when your hero levels up.',
     aliases: []
   },
   UNIQUE: {
@@ -91,7 +107,7 @@ export const KEYWORDS = {
     id: 'lineage-bonus',
     name: 'Lineage Bonus',
     description: 'This card has a bonus effect if this is your hero.',
-    aliases: [/lineage bonus\([a-z\s]\)/]
+    aliases: [/lineage bonus [0-9]+/]
   },
   LEVEL_BONUS: {
     id: 'level-bonus',
@@ -101,15 +117,15 @@ export const KEYWORDS = {
   },
   PRIDE: {
     id: 'pride',
-    name: 'Pride(X)',
+    name: 'Pride X',
     description:
       "This minion cannot attack, retaliate or use abilities unless its owner's hero is at least level X.",
-    aliases: [/pride \([0-9]+\)/]
+    aliases: [/pride [0-9]+/]
   },
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'After it counterattacks, wake up this unit.',
+    description: 'After this blocks, wake up this unit.',
     aliases: []
   },
   FLEETING: {
@@ -126,44 +142,22 @@ export const KEYWORDS = {
       'When you play this card, add it to your hand as a Fleeting copy of it without Echo.',
     aliases: []
   },
-  EFFICIENCY: {
-    id: 'efficiency',
-    name: 'Efficiency',
-    description: 'This card costs X less to play where X is your Hero level.',
-    aliases: [/efficiency \([0-9]+\)/]
-  },
-  PROTECTOR: {
-    id: 'protector',
-    name: 'Protector',
-    description:
-      'As long as this unit is awake, when an adjacent minion takes combat damage, this minion takes the damage instead.',
-    aliases: []
-  },
-  ELUSIVE: {
-    id: 'elusive',
-    name: 'Elusive',
-    description:
-      'The first time this minion is attacked each turn, it moves to a adjacent position on the same row if possible (prioritizing up) and cancel the attack.',
-    aliases: []
-  },
   ATTACKER: {
     id: 'attacker',
-    name: 'Attacker (X)',
-    description:
-      'When this units attacks, it gains X attack until the end of the combat phase.',
-    aliases: [/attacker \([0-9]+\)/]
+    name: 'Attacker',
+    description: 'Gain a bonus while in the attack zone.',
+    aliases: []
   },
   DEFENDER: {
     id: 'defender',
-    name: 'Defender (X)',
-    description:
-      'When this unit is retaliates, it gains X armor until the end of the combat phase.',
-    aliases: [/defender \([0-9]+\)/]
+    name: 'Defender',
+    description: 'Gain a bonus while in the defense zone.',
+    aliases: []
   },
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',
-    description: "Exhaust this unit. it doesn't exhaust at the start of the next turn.",
+    description: "This unit doesn't exhaust at the start of the next turn.",
     aliases: ['Freeze']
   },
   INHERITED_EFFECT: {
@@ -190,50 +184,13 @@ export const KEYWORDS = {
     description: 'The sum of the cards in your hand and Destiny zone.',
     aliases: []
   },
-  CLEAVE: {
-    id: 'cleave',
-    name: 'Cleave',
-    description:
-      'Damages minions to the right and to the left of the target as well when attacking.',
-    aliases: []
-  },
-  PIERCING: {
-    id: 'piercing',
-    name: 'Piercing',
-    description: 'Damages the minion behind the target when attacking.',
-    aliases: []
-  },
   SCRY: {
     id: 'scry',
-    name: 'Scry (X)',
+    name: 'Scry X',
     description:
       'Look at the top X cards of your deck, then put any number of them at the bottom of your deck.',
     aliases: [/scry [0-9]+/]
   },
-  ...Object.values(HERO_JOBS).reduce(
-    (acc, job) => {
-      acc[`${job}_affinity`.toUpperCase() as ToAffinityKeywordKey<typeof job>] = {
-        id: `${job.toLowerCase()}-affinity`,
-        name: `${uppercaseFirstLetter(job.toLowerCase())} Affinity`,
-        description: `This card has a bonus effect if your hero has the ${uppercaseFirstLetter(job.toLowerCase())} class.`,
-        aliases: []
-      };
-      return acc;
-    },
-    {} as Record<ToAffinityKeywordKey<HeroJob>, Keyword>
-  ),
-  ...Object.values(SPELL_SCHOOLS).reduce(
-    (acc, school) => {
-      acc[`${school}_affinity`.toUpperCase() as ToAffinityKeywordKey<typeof school>] = {
-        id: `${school.toLowerCase()}-affinity`,
-        name: `${uppercaseFirstLetter(school.toLowerCase())} Affinity`,
-        description: `This card has a bonus effect if your hero has the ${uppercaseFirstLetter(school.toLowerCase())} spell school.`,
-        aliases: []
-      };
-      return acc;
-    },
-    {} as Record<ToAffinityKeywordKey<SpellSchool>, Keyword>
-  ),
   SEAL: {
     id: 'seal',
     name: 'Seal',
@@ -247,51 +204,17 @@ export const KEYWORDS = {
       'The first time this attacks each turn, wake up this minion after combat.',
     aliases: []
   },
-  EMBER: {
-    id: 'ember',
-    name: 'Ember',
-    description: 'Consumed by other cards to gain additional effects.',
-    aliases: []
-  },
-  INTERCEPT: {
-    id: 'intercept',
-    name: 'Intercept',
-    description:
-      "When an adjacent ally minion is attacked, at flash speed, you may swap this minion's position with the attack target, and have the attack target this minion instead.",
-    aliases: []
-  },
   BALANCE: {
     id: 'balance',
     name: 'Balance',
     description: 'You have the same amount of cards in your hand and your Destiny zone.',
     aliases: []
   },
-  HERO_INTERCEPT: {
-    id: 'hero-intercept',
-    name: 'Hero Intercept',
-    description:
-      'When your hero is attacked, at flash speed, you may redirect the attack to this minion instead.',
-    aliases: []
-  },
-  TRAP: {
-    id: 'trap',
-    name: 'Trap',
-    description:
-      'This card is not recollected after your Destiny Phase and is sent to the discard pile instead. If the condition is met while this card is in your Destiny zone, it is played for free.',
-    aliases: []
-  },
   TOUGH: {
     id: 'tough',
-    name: 'Tough (X)',
+    name: 'Tough X',
     description: 'This minion takes X less damage from all sources.',
-    aliases: [/tough \([0-9]+\)/]
-  },
-  RANGED: {
-    id: 'ranged',
-    name: 'Ranged',
-    description:
-      'This minion can attack minions in the back row even if they are behind another minion. When attacking from the back-row, non ranged minions cannot counterattack.',
-    aliases: []
+    aliases: [/tough [0-9]+/]
   },
   MILL: {
     id: 'mill',
@@ -301,10 +224,9 @@ export const KEYWORDS = {
   },
   INTIMIDATE: {
     id: 'intimidate',
-    name: 'Intimidate (X)',
-    description:
-      'Minions that cost X or less attacked by this cannot counterattack when attacked by this.',
-    aliases: [/intimidate \([0-9]+\)/]
+    name: 'Intimidate X',
+    description: 'This unit cannot be blocked by minions that cost X or less.',
+    aliases: [/intimidate [0-9]+/]
   },
   STEALTH: {
     id: 'stealth',
@@ -330,7 +252,7 @@ export const KEYWORDS = {
     id: 'spellpower',
     name: 'Spellpower X',
     description: 'Increase the damage of your spells by X.',
-    aliases: [/spellpower \([0-9]+\)/, 'spellpower']
+    aliases: [/spellpower [0-9]+/, 'spellpower']
   },
   EMPOWER: {
     id: 'empower',
@@ -338,12 +260,6 @@ export const KEYWORDS = {
     description:
       'The next Spell you play this turn resolves as if you had +X Spellpower.',
     aliases: [/empower [0-9]+/, 'empower']
-  },
-  REACTION: {
-    id: 'reaction',
-    name: 'Reaction',
-    description: 'You can only play this card if a card chain is already ongoing.',
-    aliases: [/reaction \([0-9]+\)/, 'reaction']
   },
   FLANK: {
     id: 'flank',
@@ -357,6 +273,32 @@ export const KEYWORDS = {
     description:
       'This card cannot be played. If it is in the Destiny Zone, it is not recollected at the start of the turn.',
     aliases: ['lock']
+  },
+  RUSH: {
+    id: 'rush',
+    name: 'Rush',
+    description: 'This unit can attack the turn it is played.',
+    aliases: []
+  },
+  BLAST: {
+    id: 'blast',
+    name: 'Blast X',
+    description: 'When this card is destroyed in combat, deal X damage to an enemy.',
+    aliases: [/blast [0-9]+/]
+  },
+  PREEMPTIVE_STRIKE: {
+    id: 'preemptive-strike',
+    name: 'Preemptive Strike',
+    description:
+      'This unit deals its combat damage before the defending unit during combat.',
+    aliases: []
+  },
+  PREEMPTIVE_RETALIATION: {
+    id: 'preemptive-retaliation',
+    name: 'Preemptive Retaliation',
+    description:
+      'This unit deals its combat damage before the attacking unit during combat.',
+    aliases: []
   }
 };
 

@@ -17,11 +17,11 @@ const { decks, createDeck, editDeck } = useCollectionPage();
         <PlayerDeck :deck="deck" @click="editDeck(deck.id)" />
       </li>
     </ul>
-    <FancyButton
-      class="primary-button"
-      :class="!decks.length && 'mx-auto'"
-      text="New Deck"
-      @click="createDeck"
-    />
   </template>
+  <FancyButton
+    class="primary-button mt-4"
+    :class="!decks?.length && 'mx-auto'"
+    text="New Deck"
+    @click="createDeck"
+  />
 </template>

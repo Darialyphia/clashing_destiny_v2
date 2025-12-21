@@ -17,7 +17,7 @@ const maxSize = 25;
       <slot :index="i - 1" />
     </div>
 
-    <CountChip :count="size" class="absolute bottom-0 right-0" />
+    <CountChip :count="size" class="count" />
   </div>
 </template>
 
@@ -27,6 +27,8 @@ const maxSize = 25;
   transform-style: preserve-3d;
   justify-self: center;
   position: relative;
+  border: solid 1px #985e25;
+
   > * {
     grid-column: 1;
     grid-row: 1;
@@ -36,6 +38,14 @@ const maxSize = 25;
 .pile-item {
   background: url('/assets/ui/card-back-small.png') no-repeat;
   background-size: contain;
-  transform: translateY(calc(var(--i) * -1px));
+  transform: translateZ(calc(var(--i) * 1px));
+}
+
+.count {
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: 99;
+  transform: translateZ(calc(v-bind(size) * 1px));
 }
 </style>

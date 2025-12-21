@@ -30,7 +30,7 @@ const generateCardsFile = () => {
   fs.writeFileSync(outputPath, fileContent);
 
   console.log(
-    `Generated cards.ts with ${cards.length} total cards and ${collectableCards.length} collectable cards`
+    `Generated cards.ts with ${Object.keys(cards).length} total cards and ${Object.keys(collectableCards).length} collectable cards`
   );
 };
 

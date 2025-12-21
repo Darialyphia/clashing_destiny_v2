@@ -4,10 +4,10 @@ import type { Game } from '../game';
 import {
   NotEnoughCardsError,
   TooManyCardsError,
-  INTERACTION_STATE_TRANSITIONS,
   InvalidPlayerError
-} from '../systems/game-interaction.system';
+} from '../game-error';
 import type { Player } from '../../player/player.entity';
+import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 
 type ChoosingCardsContextOptions = {
   player: Player;

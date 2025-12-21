@@ -1,12 +1,11 @@
 import { isDefined, type MaybePromise } from '@game/shared';
-import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
 import { Interceptable } from '../../utils/interceptable';
 import type {
   AbilityBlueprint,
   PreResponseTarget,
   SigilBlueprint
 } from '../card-blueprint';
-import { CARD_EVENTS, type HeroJob, type SpellSchool } from '../card.enums';
+import { CARD_EVENTS } from '../card.enums';
 import { Ability } from './ability.entity';
 import {
   Card,
@@ -18,15 +17,20 @@ import {
 } from './card.entity';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import { GAME_PHASE_EVENTS, GAME_PHASES } from '../../game/game.enums';
+import { GAME_PHASE_EVENTS, GAME_PHASES, GAME_QUESTIONS } from '../../game/game.enums';
 import { CardDeclarePlayEvent } from '../card.events';
+import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
+import {
+  SIGIL_EVENTS,
+  SigilAfterCountdownDecreaseEvent,
+  SigilAfterCountdownIncreaseEvent,
+  SigilBeforeCountdownDecreaseEvent,
+  SigilBeforeCountdownIncreaseEvent,
+  SigilCountdownReachedEvent
+} from '../events/sigil.events';
 
 export type SerializedSigilCard = SerializedCard & {
   abilities: string[];
-  job: HeroJob | null;
-  spellSchool: SpellSchool | null;
-  position: Pick<BoardPosition, 'zone' | 'slot'> | null;
   maxCountdown: number;
   countdown: number | null;
 };
@@ -38,14 +42,6 @@ export type SigilCardInterceptors = CardInterceptors & {
   maxCountdown: Interceptable<number, SigilCard>;
   shouldDecreaseCountdownOnMainPhaseStart: Interceptable<boolean, SigilCard>;
 };
-
-export const SIGIL_EVENTS = {
-  SIGIL_BEFORE_COUNTDOWN_DECREASE: 'artifact.before-countdown-decrease',
-  SIGIL_AFTER_COUNTDOWN_DECREASE: 'artifact.after-countdown-decrease',
-  SIGIL_BEFORE_COUNTDOWN_INCREASE: 'artifact.before-countdown-increase',
-  SIGIL_AFTER_COUNTDOWN_INCREASE: 'artifact.after-countdown-increase',
-  SIGIL_COUNTDOWN_REACHED: 'artifact.countdown-reached'
-} as const;
 
 export class SigilCard extends Card<
   SerializedCard,
@@ -85,30 +81,14 @@ export class SigilCard extends Card<
     });
   }
 
-  get isCorrectJob() {
-    return this.blueprint.job ? this.player.hero.jobs.includes(this.blueprint.job) : true;
-  }
-
-  get spellSchool() {
-    return this.blueprint.spellSchool;
-  }
-
-  get isCorrectSpellSchool() {
-    if (!this.spellSchool) return true;
-    if (this.shouldIgnorespellSchoolRequirements) return true;
-
-    return this.player.hero.spellSchools.includes(this.spellSchool);
-  }
-
-  private async summon(position: BoardPosition) {
-    if (this.player.boardSide.getSlot(position.zone, position.slot)!.isOccupied) {
-      await this.dispose();
-      return;
-    }
-
-    this.player.boardSide.summonSigil(this, position.zone, position.slot);
+  private async summon(zone: BoardSlotZone) {
+    this.player.boardSide.summonSigil(this, zone);
     this._countdown = this.maxCountdown;
     await this.blueprint.onPlay(this.game, this);
+  }
+
+  get zone(): BoardSlotZone | null {
+    return this.player.boardSide.getZoneFor(this);
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
@@ -150,66 +130,50 @@ export class SigilCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
-        this.player.boardSide.hasUnoccupiedSlot &&
-        this.isCorrectJob &&
-        this.isCorrectSpellSchool &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
 
-  async playAt(position: BoardPosition, onResolved?: () => MaybePromise<void>) {
+  async playAt(zone: BoardSlotZone, onResolved?: () => MaybePromise<void>) {
     await this.insertInChainOrExecute(
       async () => {
-        await this.summon(position);
+        await this.summon(zone);
       },
-      [position],
-      onResolved
+      { targets: [], onResolved, zone }
     );
   }
 
   // immediately plays the minion regardless of current chain or interaction state
   // this is useful when summoning minions as part of another card effect
-  playImmediatelyAt(position: BoardPosition) {
-    return this.resolve(() => this.summon(position));
+  playImmediatelyAt(zone: BoardSlotZone) {
+    return this.resolve(() => this.summon(zone));
   }
 
-  private async promptForSummonPosition() {
-    const [position] = await this.game.interaction.selectMinionSlot({
+  private async promptForSummonZone() {
+    const [zone] = await this.game.interaction.askQuestion({
+      questionId: GAME_QUESTIONS.SUMMON_POSITION,
+      label: 'Select which zone to summon the sigil to',
       player: this.player,
-      isElligible(position) {
-        return (
-          position.player.equals(this.player) &&
-          !this.player.boardSide.isOccupied(position.zone, position.slot)
-        );
-      },
-      canCommit(selectedSlots) {
-        return selectedSlots.length === 1;
-      },
-      isDone(selectedSlots) {
-        return selectedSlots.length === 1;
-      }
+      source: this,
+      minChoiceCount: 1,
+      maxChoiceCount: 1,
+      choices: [
+        { id: BOARD_SLOT_ZONES.ATTACK_ZONE, label: 'Attack Zone' },
+        { id: BOARD_SLOT_ZONES.DEFENSE_ZONE, label: 'Defense Zone' }
+      ]
     });
 
-    return position;
+    return zone as BoardSlotZone;
   }
+
   async play(onResolved: () => MaybePromise<void>) {
-    const position = await this.promptForSummonPosition();
+    const zone = await this.promptForSummonZone();
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    await this.playAt(position, onResolved);
-  }
-
-  get position() {
-    return this.player.boardSide.getPositionFor(this);
-  }
-
-  get slot() {
-    if (!this.position) return null;
-    return this.player.boardSide.getSlot(this.position.zone, this.position.slot);
+    await this.playAt(zone, onResolved);
   }
 
   get countdown() {
@@ -286,66 +250,8 @@ export class SigilCard extends Card<
     return {
       ...this.serializeBase(),
       abilities: this.abilities.map(a => a.id),
-      job: this.blueprint.job,
-      spellSchool: this.blueprint.spellSchool,
-      position: this.position
-        ? { zone: this.position.zone, slot: this.position.slot }
-        : null,
       maxCountdown: this.maxCountdown,
       countdown: this.countdown
     };
   }
 }
-
-export class SigilBeforeCountdownDecreaseEvent extends TypedSerializableEvent<
-  { card: SigilCard },
-  { card: string }
-> {
-  serialize() {
-    return { card: this.data.card.id };
-  }
-}
-
-export class SigilAfterCountdownDecreaseEvent extends TypedSerializableEvent<
-  { card: SigilCard },
-  { card: string }
-> {
-  serialize() {
-    return { card: this.data.card.id };
-  }
-}
-
-export class SigilBeforeCountdownIncreaseEvent extends TypedSerializableEvent<
-  { card: SigilCard },
-  { card: string }
-> {
-  serialize() {
-    return { card: this.data.card.id };
-  }
-}
-
-export class SigilAfterCountdownIncreaseEvent extends TypedSerializableEvent<
-  { card: SigilCard },
-  { card: string }
-> {
-  serialize() {
-    return { card: this.data.card.id };
-  }
-}
-
-export class SigilCountdownReachedEvent extends TypedSerializableEvent<
-  { card: SigilCard },
-  { card: string }
-> {
-  serialize() {
-    return { card: this.data.card.id };
-  }
-}
-
-export type SigilEventMap = {
-  [SIGIL_EVENTS.SIGIL_BEFORE_COUNTDOWN_DECREASE]: SigilBeforeCountdownDecreaseEvent;
-  [SIGIL_EVENTS.SIGIL_AFTER_COUNTDOWN_DECREASE]: SigilAfterCountdownDecreaseEvent;
-  [SIGIL_EVENTS.SIGIL_BEFORE_COUNTDOWN_INCREASE]: SigilBeforeCountdownIncreaseEvent;
-  [SIGIL_EVENTS.SIGIL_AFTER_COUNTDOWN_INCREASE]: SigilAfterCountdownIncreaseEvent;
-  [SIGIL_EVENTS.SIGIL_COUNTDOWN_REACHED]: SigilCountdownReachedEvent;
-};

@@ -9,7 +9,17 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
   <SmallCard
     :card="{
       id: blueprint.id,
-      image: `/assets/cards/${blueprint.cardIconId}.png`,
+      art: {
+        foil: blueprint.art.default.foil,
+        dimensions: blueprint.art.default.dimensions,
+        bg: `/assets/cards/${blueprint.art.default.bg}.png`,
+        main: `/assets/cards/${blueprint.art.default.main}.png`,
+        breakout: blueprint.art.default.breakout
+          ? `/assets/cards/${blueprint.art.default.breakout}.png`
+          : undefined,
+        frame: `/assets/ui/card/frames/${blueprint.art.default.frame}.png`,
+        tint: blueprint.art.default.tint
+      },
       kind: blueprint.kind,
       atk: (blueprint as any).atk ?? (blueprint as any).damage,
       hp: (blueprint as any).maxHp,

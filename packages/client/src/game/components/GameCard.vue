@@ -14,29 +14,44 @@ import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
-
+import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
+import { gameStateRef } from '../composables/gameStateRef';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 const {
   cardId,
   actionsOffset = -50,
   actionsSide,
+  actionsAlign = 'center',
   variant = 'default',
   isInteractive = true,
   showDisabledMessage = false,
   showStats = false,
-  portalTarget = '#card-actions-portal',
+  useActionsPortal = true,
+  showModifiers = false,
+  showActionEmptyState = true,
+  actionsPortalTarget = '#card-actions-portal',
   flipped
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
   actionsSide?: PopoverContentProps['side'];
+  actionsAlign?: PopoverContentProps['align'];
   variant?: 'default' | 'small';
   isInteractive?: boolean;
   showDisabledMessage?: boolean;
+  showModifiers?: boolean;
   showStats?: boolean;
-  portalTarget?: string;
+  useActionsPortal?: boolean;
+  actionsPortalTarget?: string;
   flipped?: boolean;
+  showActionEmptyState?: boolean;
 }>();
 
+const emit = defineEmits<{
+  modifiersMouseEnter: [];
+  modifiersMouseLeave: [];
+}>();
 const card = useCard(computed(() => cardId));
 const ui = useGameUi();
 
@@ -86,10 +101,8 @@ const onAbilityUse = async (e: { card: string }) => {
   isUsingAbility.value = true;
   await waitFor(1000);
 };
-useFxEvent(FX_EVENTS.MINION_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
-useFxEvent(FX_EVENTS.MINION_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
-useFxEvent(FX_EVENTS.HERO_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
-useFxEvent(FX_EVENTS.HERO_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
+useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
+useFxEvent(FX_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
 useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
@@ -100,7 +113,8 @@ const classes = computed(() => {
     card.value.keywords.map(kw => kw.toLowerCase()),
     {
       exhausted: isInteractive && card.value.isExhausted,
-      disabled: !card.value.canPlay && card.value.location === 'hand',
+      disabled:
+        !card.value.canPlay && card.value.location === CARD_LOCATIONS.HAND,
       selected: ui.value.selectedCard?.equals(card.value),
       targetable: isTargetable.value,
       flipped: flipped && !myPlayer.value.equals(card.value.player),
@@ -110,28 +124,41 @@ const classes = computed(() => {
     }
   ];
 });
+
+const visibleModifiers = gameStateRef(() => {
+  return (
+    card.value?.modifiers.filter(
+      modifier => modifier.icon && modifier.stacks > 0
+    ) ?? []
+  );
+});
 </script>
 
 <template>
-  <CardActionsPopover
-    :card-id="card.id"
-    :is-interactive="isInteractive"
-    :actions-offset="actionsOffset"
-    :actions-side="actionsSide"
-    :portal-target="portalTarget"
+  <div
+    class="game-card-container"
+    :data-game-card="card.id"
+    :data-flip-id="`card_${card.id}`"
   >
-    <div class="relative">
+    <CardActionsPopover
+      :card-id="card.id"
+      :is-interactive="isInteractive"
+      :actions-offset="actionsOffset"
+      :actions-align="actionsAlign"
+      :actions-side="actionsSide"
+      :use-portal="useActionsPortal"
+      :portal-target="actionsPortalTarget"
+      :show-action-empty-state="showActionEmptyState"
+    >
       <Card
         v-if="variant === 'default'"
         :is-animated="false"
         :id="card.id"
         :card="{
           id: card.id,
+          art: card.art,
           name: card.name,
-          unlockedSpellSchools: card.unlockedSpellSchools,
-          spellSchool: card.spellSchool,
           description: card.description,
-          image: card.imagePath,
           kind: card.kind,
           level: card.level,
           rarity: card.rarity,
@@ -147,8 +174,16 @@ const classes = computed(() => {
           durability: card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
-            .map(ability => `@[${ability.speed}]@ ${ability.description}`),
-          jobs: card.jobs
+            .map(
+              a =>
+                `@[${a.speed}]@${a.shouldExhaust ? ' @[exhaust]@' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
+            ),
+          faction: FACTIONS[card.faction],
+          runes: Object.entries(card.runeCost)
+            .map(([rune, amount]) =>
+              Array.from({ length: amount }, () => rune as Rune)
+            )
+            .flat()
         }"
         class="game-card big"
         :class="classes"
@@ -160,7 +195,7 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
-          image: card.imagePath,
+          art: card.art,
           kind: card.kind,
           atk: card.atk,
           baseAtk: card.baseAtk,
@@ -177,14 +212,57 @@ const classes = computed(() => {
         @click="handleClick"
       />
 
+      <div
+        class="modifiers"
+        v-if="showModifiers"
+        @mouseenter="emit('modifiersMouseEnter')"
+        @mouseleave="emit('modifiersMouseLeave')"
+      >
+        <UiSimpleTooltip
+          v-for="modifier in visibleModifiers"
+          :key="modifier.id"
+          use-portal
+          side="left"
+        >
+          <template #trigger>
+            <div
+              :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+              :alt="modifier.name"
+              :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
+              class="modifier"
+            />
+          </template>
+
+          <div class="modifier-tooltip">
+            <div class="modifier-header">
+              <div
+                class="modifier-icon"
+                :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+              />
+              <div class="modifier-name">{{ modifier.name }}</div>
+            </div>
+            <div
+              class="modifier-description"
+              :class="{
+                ally: modifier.source.player.id === playerId,
+                enemy: modifier.source.player.id !== playerId
+              }"
+            >
+              {{ modifier.description }}
+            </div>
+            <div class="modifier-source">{{ modifier.source.name }}</div>
+          </div>
+        </UiSimpleTooltip>
+      </div>
+
       <div class="damage" v-if="damageTaken > 0">
         {{ damageTaken }}
       </div>
       <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
-        You cannot play this card right now.
+        {{ card.unplayableReason ?? 'You cannot play this card right now.' }}
       </p>
-    </div>
-  </CardActionsPopover>
+    </CardActionsPopover>
+  </div>
 </template>
 
 <style scoped lang="postcss">
@@ -225,8 +303,16 @@ const classes = computed(() => {
     transform: translateY(-5rem);
   }
 }
+
+.game-card-container {
+  position: relative;
+  transform: translateZ(1px);
+}
+
 .game-card {
-  transition: all 0.3s var(--ease-2);
+  transition:
+    filter 0.3s var(--ease-2),
+    transform 0.3s var(--ease-2);
   position: relative;
 
   &.exhausted {
@@ -349,5 +435,79 @@ const classes = computed(() => {
 }
 .fleeting {
   animation: fleeting 5s var(--ease-3) infinite;
+}
+
+.modifiers {
+  position: absolute;
+  top: var(--size-2);
+  left: var(--size-2);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--size-2);
+  --pixel-scale: 2;
+}
+
+.modifier {
+  width: 24px;
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center center;
+  background-size: cover;
+  pointer-events: auto;
+  position: relative;
+  &::after {
+    content: attr(data-stacks);
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    font-size: var(--font-size-2);
+    color: white;
+    paint-order: stroke fill;
+    font-weight: var(--font-weight-7);
+    -webkit-text-stroke: 2px black;
+  }
+}
+
+.modifier-tooltip {
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+  padding-bottom: var(--size-1);
+}
+
+.modifier-header {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+}
+
+.modifier-icon {
+  width: 36px;
+  aspect-ratio: 1;
+  background: var(--bg) no-repeat center center;
+  background-size: cover;
+  flex-shrink: 0;
+}
+
+.modifier-name {
+  font-size: var(--font-size-2);
+  font-weight: var(--font-weight-7);
+  color: var(--gray-0);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modifier-description {
+  font-size: var(--font-size-0);
+  line-height: 1.4;
+  color: var(--gray-2);
+  margin-block-end: var(--size-2);
+}
+
+.modifier-source {
+  font-size: var(--font-size-00);
+  color: var(--gray-5);
+  padding-top: var(--size-1);
+  border-top: 1px solid var(--gray-7);
+  font-style: italic;
 }
 </style>

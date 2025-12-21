@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CARD_KINDS, type SpellSchool } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import type {
   CardBlueprint,
   HeroBlueprint
@@ -9,8 +9,7 @@ import { domToPng } from 'modern-screenshot';
 import BlueprintCard from './BlueprintCard.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 
-const { spellSchools, mainDeck, destinyDeck, name } = defineProps<{
-  spellSchools: SpellSchool[];
+const { mainDeck, destinyDeck, name } = defineProps<{
   mainDeck: Array<{ blueprint: CardBlueprint; copies: number }>;
   destinyDeck: Array<{ blueprint: CardBlueprint; copies: number }>;
   name: string;
@@ -96,14 +95,7 @@ const cardComponent = computed(() =>
     </div>
     <header class="flex gap-4 items-center mb-5">
       <h2 :data-text="name">{{ name }}</h2>
-      <div class="spellschools">
-        <img
-          v-for="spellSchool in spellSchools"
-          :key="spellSchool"
-          :src="`/assets/ui/spell-school-${spellSchool.toLocaleLowerCase()}.png`"
-          :alt="spellSchool"
-        />
-      </div>
+
       <div class="flex gap-2 ml-auto">
         <div>
           <span class="font-bold text-3">
@@ -237,16 +229,6 @@ const cardComponent = computed(() =>
 
 h2 {
   font-family: 'Cinzel Decorative', serif;
-}
-
-.spellschools {
-  display: flex;
-  gap: var(--size-2);
-  img {
-    --pixel-scale: 2;
-    width: calc(var(--pixel-scale) * 22px);
-    height: calc(var(--pixel-scale) * 20px);
-  }
 }
 
 h3 {

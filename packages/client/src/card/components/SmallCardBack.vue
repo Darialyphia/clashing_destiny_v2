@@ -6,7 +6,8 @@
 
 <style scoped lang="postcss">
 .small-card-back {
-  background: url('/assets/ui/card-back-small.png') no-repeat center center;
+  background: url('/assets/ui/card/card_backs/default-small.png') no-repeat
+    center center;
   background-size: cover;
   aspect-ratio: var(--card-small-ratio);
   width: calc(var(--pixel-scale) * var(--card-small-width));

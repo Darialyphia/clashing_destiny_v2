@@ -16,10 +16,10 @@ import {
 } from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
-import { INTERACTION_STATES } from '../game/systems/game-interaction.system';
-import type { SpellSchool } from '../card/card.enums';
 import type { AbilityViewModel } from './view-models/ability.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
+import type { Rune } from '../card/card.enums';
+import { INTERACTION_STATES } from '../game/game.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -329,6 +329,17 @@ export class GameClient {
     });
   }
 
+  gainRune(rune: Rune) {
+    this.dispatch({
+      type: 'commitResourceAction',
+      payload: {
+        playerId: this.playerId,
+        type: 'gain_rune',
+        rune
+      }
+    });
+  }
+
   commitUseAbility() {
     this.dispatch({
       type: 'commitUseAbility',
@@ -345,15 +356,6 @@ export class GameClient {
     this.dispatch({
       type: 'cancelUseAbility',
       payload: { playerId: this.state.currentPlayer }
-    });
-  }
-
-  commitMinionSlotSelection() {
-    this.dispatch({
-      type: 'commitMinionSlotSelection',
-      payload: {
-        playerId: this.playerId
-      }
     });
   }
 
@@ -375,16 +377,6 @@ export class GameClient {
     });
   }
 
-  chooseAffinity(affinity: SpellSchool) {
-    this.dispatch({
-      type: 'chooseAffinity',
-      payload: {
-        playerId: this.playerId,
-        affinity
-      }
-    });
-  }
-
   chooseCards(indices: number[]) {
     this.dispatch({
       type: 'chooseCards',
@@ -395,21 +387,21 @@ export class GameClient {
     });
   }
 
-  answerQuestion(indices: number[]) {
+  answerQuestion(id: string) {
     this.dispatch({
       type: 'answerQuestion',
       payload: {
         playerId: this.playerId,
-        indices
+        id
       }
     });
   }
 
-  declareCounterAttack(defenderId: string) {
+  declareBlocker(blockerId: string) {
     this.dispatch({
-      type: 'declareCounterAttack',
+      type: 'declareBlocker',
       payload: {
-        defenderId,
+        blockerId,
         playerId: this.playerId
       }
     });

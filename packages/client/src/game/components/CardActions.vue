@@ -3,7 +3,10 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import CardText from '@/card/components/CardText.vue';
 import { useGameUi } from '../composables/useGameClient';
 
-const { card } = defineProps<{ card: CardViewModel }>();
+const { card, showEmptyState = true } = defineProps<{
+  card: CardViewModel;
+  showEmptyState?: boolean;
+}>();
 const isOpened = defineModel<boolean>('isOpened', { required: true });
 watchEffect(() => {
   if (!isOpened.value) return;
@@ -19,7 +22,7 @@ const ui = useGameUi();
 
 <template>
   <div class="actions-list">
-    <p v-if="!card.actions.length">No actions available</p>
+    <p v-if="!card.actions.length && showEmptyState">No actions available</p>
     <button
       v-for="action in card.actions"
       :key="action.id"
@@ -46,6 +49,7 @@ const ui = useGameUi();
   }
 }
 .action {
+  --card-text-color: #d1c6c2;
   background: black;
   padding: 0.5rem;
   min-width: 10rem;

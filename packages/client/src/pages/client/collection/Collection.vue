@@ -82,7 +82,6 @@ useIntersectionObserver(
   padding-inline: var(--size-4);
   padding-bottom: var(--size-10);
   padding-top: var(--size-3);
-
   li {
     position: relative;
     transform-style: preserve-3d;
@@ -108,10 +107,6 @@ useIntersectionObserver(
       aspect-ratio: var(--card-small-ratio);
     }
   }
-}
-
-.card.disabled {
-  filter: grayscale(100%);
 }
 
 .card:not(.disabled):hover {

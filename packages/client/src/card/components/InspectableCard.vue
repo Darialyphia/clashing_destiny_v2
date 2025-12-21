@@ -8,6 +8,7 @@ import {
   type HoverCardRootProps
 } from 'reka-ui';
 import GameCard from '@/game/components/GameCard.vue';
+import { useGameUi } from '@/game/composables/useGameClient';
 
 defineOptions({
   inheritAttrs: false
@@ -27,6 +28,8 @@ const {
   > &
     Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
+
+const ui = useGameUi();
 </script>
 
 <template>
@@ -35,7 +38,12 @@ const {
       <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
-      <HoverCardContent :side="side" :side-offset="sideOffset" v-if="enabled">
+      <HoverCardContent
+        v-if="!ui.draggedCard && enabled"
+        :side="side"
+        :side-offset="sideOffset"
+        style="--pixel-scale: 1.5"
+      >
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>
     </HoverCardPortal>

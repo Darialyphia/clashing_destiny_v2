@@ -3,25 +3,14 @@ import type { Game } from '../../game/game';
 import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
-import { CARD_DECK_SOURCES, type CardKind } from '../card.enums';
+import { CARD_DECK_SOURCES, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 
 export type CardManagerComponentOptions = {
-  mainDeck: string[];
-  destinyDeck: string[];
   maxHandSize: number;
   shouldShuffleDeck: boolean;
 };
-
-export type CardLocation =
-  | 'hand'
-  | 'mainDeck'
-  | 'destinyDeck'
-  | 'discardPile'
-  | 'banishPile'
-  | 'destinyZone'
-  | 'board';
 
 export class CardManagerComponent {
   private game: Game;
@@ -63,10 +52,10 @@ export class CardManagerComponent {
     return result;
   }
 
-  async init() {
+  async init(mainDeck: string[], destinyDeck: string[]) {
     const [mainDeckCards, destinyDeckCards] = await Promise.all([
-      this.buildCards<AnyCard>(this.options.mainDeck),
-      this.buildCards<AnyCard>(this.options.destinyDeck)
+      this.buildCards<AnyCard>(mainDeck),
+      this.buildCards<AnyCard>(destinyDeck)
     ]);
 
     this.mainDeck.populate(mainDeckCards);
@@ -146,7 +135,7 @@ export class CardManagerComponent {
     return this.destinyDeck.cards[index];
   }
 
-  async drawOfKind(amount: number, kind: CardKind) {
+  async drawWithFilter(amount: number, filter: (card: AnyCard) => boolean) {
     if (this.isHandFull) return [];
 
     const amountToDraw = Math.min(
@@ -154,7 +143,6 @@ export class CardManagerComponent {
       this.mainDeck.remaining,
       this.options.maxHandSize - this.hand.length
     );
-    console.log(amount, kind, amountToDraw);
 
     if (amountToDraw <= 0) return [];
     await this.game.emit(
@@ -164,7 +152,7 @@ export class CardManagerComponent {
         amount: amountToDraw
       })
     );
-    const candidates = this.mainDeck.cards.filter(c => c.kind === kind);
+    const candidates = this.mainDeck.cards.filter(filter);
     const cards = candidates.slice(0, amountToDraw);
 
     for (const card of cards) {

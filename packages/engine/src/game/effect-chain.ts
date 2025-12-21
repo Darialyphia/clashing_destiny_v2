@@ -18,6 +18,7 @@ import {
 } from '../card/card-blueprint';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { EffectType } from './game.enums';
+import type { BoardSlotZone } from '../board/board.constants';
 
 export const EFFECT_CHAIN_STATES = {
   BUILDING: 'BUILDING',
@@ -39,6 +40,10 @@ export type Effect = {
   source: AnyCard;
   handler: (game: Game) => Promise<void>;
   targets: PreResponseTarget[];
+  summonZone?: {
+    zone: BoardSlotZone;
+    player: Player;
+  };
 };
 
 export type SerializedEffectChain = {
@@ -46,6 +51,7 @@ export type SerializedEffectChain = {
     type: EffectType;
     source: SerializedCard;
     targets: SerializedPreResponseTarget[];
+    zone: { zone: BoardSlotZone; player: string } | null;
   }>;
   state: EffectChainState;
   player: string;
@@ -240,7 +246,13 @@ export class EffectChain
       stack: this.effectStack.map(effect => ({
         type: effect.type,
         source: effect.source.serialize(),
-        targets: effect.targets.map(serializePreResponseTarget)
+        targets: effect.targets.map(serializePreResponseTarget),
+        zone: effect.summonZone
+          ? {
+              zone: effect.summonZone.zone,
+              player: effect.summonZone.player.id
+            }
+          : null
       })),
       state: this.getState(),
       player: this._currentPlayer.id
@@ -292,7 +304,13 @@ export class ChainEffectAddedEvent extends TypedSerializableEvent<
       effect: {
         type: this.data.effect.type,
         source: this.data.effect.source.serialize() as SerializedCard,
-        targets: this.data.effect.targets.map(serializePreResponseTarget)
+        targets: this.data.effect.targets.map(serializePreResponseTarget),
+        zone: this.data.effect.summonZone
+          ? {
+              zone: this.data.effect.summonZone.zone,
+              player: this.data.effect.summonZone.player.id
+            }
+          : null
       }
     };
   }
@@ -322,7 +340,13 @@ export class ChainEffectResolvedEvent extends TypedSerializableEvent<
       effect: {
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
-        targets: this.data.effect.targets.map(serializePreResponseTarget)
+        targets: this.data.effect.targets.map(serializePreResponseTarget),
+        zone: this.data.effect.summonZone
+          ? {
+              zone: this.data.effect.summonZone.zone,
+              player: this.data.effect.summonZone.player.id
+            }
+          : null
       }
     };
   }

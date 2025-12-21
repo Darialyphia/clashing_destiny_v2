@@ -5,7 +5,6 @@ import {
   HoverCardPortal,
   HoverCardContent
 } from 'reka-ui';
-import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
@@ -21,12 +20,6 @@ const { card } = defineProps<{
     copiesOwned: number;
   };
 }>();
-
-const cardComponents: Record<typeof viewMode.value, any> = {
-  compact: BlueprintSmallCard,
-  expanded: BlueprintCard
-};
-const component = computed(() => cardComponents[viewMode.value]);
 
 const isPreviewOpened = ref(false);
 
@@ -56,11 +49,10 @@ const canAddCard = computed(() => {
   >
     <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
       <div>
-        <component
-          :is="component"
+        <BlueprintCard
           :blueprint="card.card"
           show-stats
-          is-foil
+          :is-foil="card.isFoil"
           class="collection-card"
           :class="{
             disabled: isEditingDeck && !canAddCard
@@ -119,7 +111,8 @@ const canAddCard = computed(() => {
 }
 
 .collection-card.disabled {
-  filter: grayscale(50%) brightness(80%);
+  filter: grayscale(50%) brightness(60%);
+  opacity: 0.75;
 }
 
 .collection-card:not(.disabled):hover {

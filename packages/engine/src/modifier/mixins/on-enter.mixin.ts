@@ -2,16 +2,17 @@ import type { Modifier } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import { CARD_EVENTS } from '../../card/card.enums';
 import type { Game } from '../../game/game';
-import type { MinionCard, MinionSummonedEvent } from '../../card/entities/minion.entity';
-import type {
-  ArtifactCard,
-  ArtifactEquipedEvent
-} from '../../card/entities/artifact.entity';
+
 import type { CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
 import { isArtifact, isHero, isMinion } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
-import type { HeroCard, HeroPlayedEvent } from '../../card/entities/hero.entity';
+import type { HeroCard } from '../../card/entities/hero.entity';
+import type { MinionCard } from '../../card/entities/minion.entity';
+import type { MinionSummonedEvent } from '../../card/events/minion.events';
+import type { HeroPlayedEvent } from '../../card/events/hero.events';
+import type { ArtifactCard } from '../../card/entities/artifact.entity';
+import type { ArtifactEquipedEvent } from '../../card/events/artifact.events';
 
 export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard> = (
   event: T extends MinionCard
@@ -27,11 +28,16 @@ export class OnEnterModifierMixin<
   T extends MinionCard | ArtifactCard | HeroCard
 > extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
+  private handler: OnEnterHandler<T>;
+  private onlyWhenPlayedFromHand: boolean;
+
   constructor(
     game: Game,
-    private handler: OnEnterHandler<T>
+    options: { handler: OnEnterHandler<T>; onlyWhenPlayedFromHand?: boolean }
   ) {
     super(game);
+    this.handler = options.handler;
+    this.onlyWhenPlayedFromHand = options.onlyWhenPlayedFromHand ?? false;
     this.onBeforePlay = this.onBeforePlay.bind(this);
   }
 
@@ -39,6 +45,7 @@ export class OnEnterModifierMixin<
     if (!event.data.card.equals(this.modifier.target)) {
       return;
     }
+    if (this.onlyWhenPlayedFromHand && !event.data.card.isPlayedFromHand) return;
 
     const target = this.modifier.target;
     if (isMinion(target)) {

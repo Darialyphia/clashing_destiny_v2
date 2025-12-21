@@ -104,8 +104,7 @@ export class DeckRepository {
       name: premadeDeck.name,
       ownerId: userId,
       mainDeck: mainDeckCards,
-      destinyDeck: destinyDeckCards,
-      spellSchools: premadeDeck.spellSchools
+      destinyDeck: destinyDeckCards
     });
 
     const deckDoc = await this.ctx.db.get(deckDocId);
@@ -121,8 +120,7 @@ export class DeckRepository {
       name: DEFAULT_DECK_NAME,
       ownerId: ownerId,
       mainDeck: [],
-      destinyDeck: [],
-      spellSchools: []
+      destinyDeck: []
     });
 
     const deckDoc = await this.ctx.db.get(deckDocId);

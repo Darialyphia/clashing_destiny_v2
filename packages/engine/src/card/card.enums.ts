@@ -13,7 +13,13 @@ export const CARD_EVENTS = {
   CARD_DISPOSED: 'card.disposed',
   CARD_EFFECT_TRIGGERED: 'card.effect_triggered',
   CARD_DECLARE_PLAY: 'card.declare_play',
-  CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability'
+  CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability',
+  CARD_BEFORE_DEAL_COMBAT_DAMAGE: 'card.before_deal_combat_damage',
+  CARD_AFTER_DEAL_COMBAT_DAMAGE: 'card.after_deal_combat_damage',
+  CARd_BEFORE_CHANGE_ZONE: 'card.before_change_zone',
+  CARD_AFTER_CHANGE_ZONE: 'card.after_change_zone',
+  CARD_BEFORE_CHANGE_LOCATION: 'card.before_change_location',
+  CARD_AFTER_CHANGE_LOCATION: 'card.after_change_location'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 
@@ -42,7 +48,7 @@ export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
 export const CARD_SPEED = {
   SLOW: 'SLOW',
   FAST: 'FAST',
-  FLASH: 'FLASH'
+  BURST: 'BURST'
   // WARP: 'WARP'
 } as const;
 export type CardSpeed = Values<typeof CARD_SPEED>;
@@ -64,26 +70,127 @@ export const RARITIES = {
 
 export type Rarity = Values<typeof RARITIES>;
 
-export const SPELL_SCHOOLS = {
-  FIRE: 'FIRE',
-  WATER: 'WATER',
-  EARTH: 'EARTH',
-  AIR: 'AIR',
-  ARCANE: 'ARCANE',
-  LIGHT: 'LIGHT',
-  DARK: 'DARK'
-} as const;
-export type SpellSchool = Values<typeof SPELL_SCHOOLS>;
-
-export const HERO_JOBS = {
-  WARRIOR: 'WARRIOR',
-  PALADIN: 'PALADIN',
-  MAGE: 'MAGE',
-  SAGE: 'SAGE'
-} as const;
-export type HeroJob = Values<typeof HERO_JOBS>;
-
 export const TAGS = {
   SWORD: 'sword'
 } as const;
 export type Tag = Values<typeof TAGS>;
+
+export type CardTint = {
+  colors: string[];
+  mode:
+    | {
+        type: 'linear';
+        angle: number;
+      }
+    | {
+        type: 'radial';
+      };
+  blendMode: 'multiply' | 'screen' | 'overlay' | 'hard-light' | 'soft-light' | 'color';
+  opacity: number;
+};
+
+export type Faction = {
+  id: string;
+  name: string;
+  shortName: string;
+  defaultCardTint: CardTint;
+};
+export const FACTIONS = {
+  NEUTRAL: {
+    id: 'NEUTRAL',
+    name: 'Neutral',
+    shortName: 'Neutr',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
+  },
+  ORDER: {
+    id: 'ORDER',
+    name: 'Order',
+    shortName: 'Order',
+    defaultCardTint: {
+      colors: ['#FFD700', '#45A5dd'],
+      mode: { type: 'linear', angle: 135 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  CHAOS: {
+    id: 'CHAOS',
+    name: 'Chaos',
+    shortName: 'Chaos',
+    defaultCardTint: {
+      mode: { type: 'linear', angle: 135 },
+      colors: ['#483D8B', '#7E2042'],
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  GENESIS: {
+    id: 'GENESIS',
+    name: 'Genesis',
+    shortName: 'Genesis',
+    defaultCardTint: {
+      colors: ['#0064a9', '#a2dd92'],
+      mode: { type: 'linear', angle: 135 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  OBLIVION: {
+    id: 'OBLIVION',
+    name: 'Oblivion',
+    shortName: 'Obliv',
+    defaultCardTint: {
+      colors: ['#8B0064', '#aa2442'],
+      mode: { type: 'linear', angle: 135 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  ARCANE: {
+    id: 'ARCANE',
+    name: 'Arcane',
+    shortName: 'Arcane',
+    defaultCardTint: {
+      colors: ['#cc0081', '#006ab6'],
+      mode: { type: 'linear', angle: 135 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  },
+  PRIMAL: {
+    id: 'primal',
+    name: 'Primal',
+    shortName: 'Primal',
+    defaultCardTint: {
+      colors: ['#8B4513', '#DEB887'],
+      mode: { type: 'linear', angle: 135 },
+      blendMode: 'overlay',
+      opacity: 1
+    }
+  }
+} as const satisfies Record<string, Faction>;
+export type FactionId = Values<typeof FACTIONS>['id'];
+
+export const RUNES = {
+  MIGHT: 'MIGHT',
+  KNOWLEDGE: 'KNOWLEDGE',
+  FOCUS: 'FOCUS',
+  RESONANCE: 'RESONANCE'
+} as const;
+export type Rune = Values<typeof RUNES>;
+
+export const CARD_LOCATIONS = {
+  HAND: 'hand',
+  MAIN_DECK: 'mainDeck',
+  DESTINY_DECK: 'destinyDeck',
+  DISCARD_PILE: 'discardPile',
+  BANISH_PILE: 'banishPile',
+  DESTINY_ZONE: 'destinyZone',
+  BOARD: 'board'
+} as const;
+export type CardLocation = Values<typeof CARD_LOCATIONS>;

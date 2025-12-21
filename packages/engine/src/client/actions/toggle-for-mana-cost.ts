@@ -1,8 +1,6 @@
-import {
-  INTERACTION_STATES,
-  type InteractionState,
-  type SerializedInteractionContext
-} from '../../game/systems/game-interaction.system';
+import { CARD_LOCATIONS } from '../../card/card.enums';
+import { INTERACTION_STATES, type InteractionState } from '../../game/game.enums';
+import { type SerializedInteractionContext } from '../../game/systems/game-interaction.system';
 import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
 import type { CardClickRule } from '../controllers/ui-controller';
@@ -22,7 +20,7 @@ export class ToggleForManaCost implements CardClickRule {
   predicate(card: CardViewModel, state: GameClientState) {
     return (
       this.client.isActive() &&
-      card.location === 'hand' &&
+      card.location === CARD_LOCATIONS.HAND &&
       this.isValidInteractionState(state) &&
       this.client.playerId === state.interaction.ctx.player &&
       card.canBeUsedAsManaCost

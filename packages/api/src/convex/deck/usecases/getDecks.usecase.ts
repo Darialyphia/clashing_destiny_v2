@@ -1,4 +1,3 @@
-import type { SpellSchool } from '@game/engine/src/card/card.enums';
 import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import type { CardId } from '../../card/entities/card.entity';
@@ -10,7 +9,6 @@ import type { DeckReadRepository } from '../repositories/deck.repository';
 export type GetDecksOutput = Array<{
   name: string;
   id: DeckId;
-  spellSchools: SpellSchool[];
   mainDeck: Array<{
     cardId: CardId;
     isFoil: boolean;
@@ -60,7 +58,6 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
     return {
       id: deck._id,
       name: deck.name,
-      spellSchools: deck.spellSchools,
       mainDeck,
       destinyDeck
     };

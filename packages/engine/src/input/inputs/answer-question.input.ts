@@ -1,10 +1,9 @@
-import { GAME_PHASES } from '../../game/game.enums';
-import type { InteractionStateDict } from '../../game/systems/game-interaction.system';
+import { GAME_PHASES, type InteractionStateDict } from '../../game/game.enums';
 import { defaultInputSchema, Input } from '../input';
 import { z } from 'zod';
 
 const schema = defaultInputSchema.extend({
-  indices: z.array(z.number())
+  id: z.string()
 });
 
 export class AnswerQuestionInput extends Input<typeof schema> {
@@ -18,6 +17,6 @@ export class AnswerQuestionInput extends Input<typeof schema> {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['ASK_QUESTION']>();
 
-    interactionContext.ctx.commit(this.player, this.payload.indices);
+    interactionContext.ctx.commit(this.player, this.payload.id);
   }
 }

@@ -3,7 +3,7 @@ import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useGameClient, useGameState } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/systems/game-interaction.system';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
@@ -117,7 +117,7 @@ const maxChoices = computed(() => {
   pointer-events: auto;
 }
 .card-list {
-  --pixel-scale: 2;
+  --pixel-scale: 1.5;
   display: grid;
   grid-template-columns: repeat(
     auto-fit,

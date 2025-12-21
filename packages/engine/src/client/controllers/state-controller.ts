@@ -154,16 +154,10 @@ export class ClientStateController {
     const boardSide = this.state.board.sides.find(
       side => side.playerId === card.player.id
     )!;
-    if (card.position?.zone === BOARD_SLOT_ZONES.FRONT_ROW) {
-      boardSide.frontRow.slots[card.position.slot] = {
-        ...boardSide.frontRow.slots[card.position.slot],
-        minion: card.id
-      };
-    } else if (card.position?.zone === BOARD_SLOT_ZONES.BACK_ROW) {
-      boardSide.backRow.slots[card.position.slot] = {
-        ...boardSide.backRow.slots[card.position.slot],
-        minion: card.id
-      };
+    if (card.zone === BOARD_SLOT_ZONES.ATTACK_ZONE) {
+      boardSide.attackZone = [...boardSide.attackZone, card.id];
+    } else if (card.zone === BOARD_SLOT_ZONES.DEFENSE_ZONE) {
+      boardSide.defenseZone = [...boardSide.defenseZone, card.id];
     }
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({

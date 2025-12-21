@@ -26,7 +26,6 @@ export type GetGameInfosOutput = {
       id: UserId;
       username: string;
       deck: {
-        spellSchools: string[];
         mainDeck: Array<{ blueprintId: string }>;
         destinyDeck: Array<{ blueprintId: string }>;
       };
@@ -99,7 +98,6 @@ export class GetGameInfosUseCase
         id: user._id,
         username: user.username,
         deck: {
-          spellSchools: deck.spellSchools,
           mainDeck: mainDeckCards,
           destinyDeck: destinyDeckCards
         }

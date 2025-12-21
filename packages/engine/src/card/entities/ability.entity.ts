@@ -1,4 +1,4 @@
-import type { EmptyObject, MaybePromise, Serializable } from '@game/shared';
+import type { MaybePromise, Serializable } from '@game/shared';
 import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
@@ -12,55 +12,24 @@ import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CARD_SPEED } from '../card.enums';
 import type { SigilCard } from './sigil.entity';
 import type { SpellCard } from './spell.entity';
-
-export const ABILITY_EVENTS = {
-  ABILITY_BEFORE_USE: 'ability.before-use',
-  ABILITY_AFTER_USE: 'ability.after-use'
-} as const;
-
-export class AbilityBeforeUseEvent extends TypedSerializableEvent<
-  { card: AbilityOwner; abilityId: string },
-  {
-    card: string;
-    abilityId: string;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export class AbilityAfterUseEvent extends TypedSerializableEvent<
-  { card: AbilityOwner; abilityId: string },
-  {
-    card: string;
-    abilityId: string;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export type AbilityEventMap = {
-  [ABILITY_EVENTS.ABILITY_BEFORE_USE]: AbilityBeforeUseEvent;
-  [ABILITY_EVENTS.ABILITY_AFTER_USE]: AbilityAfterUseEvent;
-};
+import { Interceptable } from '../../utils/interceptable';
+import {
+  ABILITY_EVENTS,
+  AbilityAfterUseEvent,
+  AbilityBeforeUseEvent
+} from '../events/ability.events';
 
 export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard | SpellCard;
 
+export type AbilityInterceptors<T extends AbilityOwner> = {
+  manaCost: Interceptable<number, Ability<T>>;
+};
+
 export class Ability<T extends AbilityOwner>
-  extends Entity<EmptyObject>
+  extends Entity<AbilityInterceptors<T>>
   implements Serializable<SerializedAbility>
 {
   _isSealed = false;
@@ -70,7 +39,9 @@ export class Ability<T extends AbilityOwner>
     readonly card: T,
     public blueprint: AbilityBlueprint<T, PreResponseTarget>
   ) {
-    super(`${card.id}-${blueprint.id}`, {});
+    super(`${card.id}-${blueprint.id}`, {
+      manaCost: new Interceptable()
+    });
   }
 
   get abilityId() {
@@ -85,8 +56,8 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.shouldExhaust;
   }
 
-  get manaCost() {
-    return this.blueprint.manaCost;
+  get manaCost(): number {
+    return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
   }
 
   get canUse() {
@@ -144,7 +115,7 @@ export class Ability<T extends AbilityOwner>
       }
     };
 
-    if (this.speed === CARD_SPEED.FLASH) {
+    if (this.speed === CARD_SPEED.BURST) {
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
@@ -188,8 +159,10 @@ export class Ability<T extends AbilityOwner>
       description: this.blueprint.description,
       name: this.blueprint.label,
       manaCost: this.manaCost,
+      runeCost: this.blueprint.runeCost,
       speed: this.speed,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
+      shouldExhaust: this.shouldExhaust,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };

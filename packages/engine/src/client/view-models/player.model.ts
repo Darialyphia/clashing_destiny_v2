@@ -61,8 +61,20 @@ export class PlayerViewModel {
     return this.data.remainingCardsInDestinyDeck;
   }
 
+  get canPerformResourceAction() {
+    return this.data.canPerformResourceAction;
+  }
+
+  get remainingResourceActions() {
+    return this.data.remainingResourceActions;
+  }
+
   get isPlayer1() {
     return this.data.isPlayer1;
+  }
+
+  get unlockedRunes() {
+    return this.data.unlockedRunes;
   }
 
   get hand() {

@@ -3,7 +3,7 @@ import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
+import type { CardBlueprint, PreResponseTarget, RuneCost } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
@@ -11,7 +11,9 @@ import {
   type CardDeckSource,
   type CardKind,
   type CardSpeed,
-  type Rarity
+  type Rarity,
+  CARD_LOCATIONS,
+  type CardLocation
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -19,19 +21,20 @@ import {
   CardAfterPlayEvent,
   CardBeforeDestroyEvent,
   CardBeforePlayEvent,
+  CardChangeLocationEvent,
   CardDiscardEvent,
   CardDisposedEvent,
   CardExhaustEvent,
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';
-import type { CardLocation } from '../components/card-manager.component';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
 import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
+import type { BoardSlotZone } from '../../board/board.constants';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -52,6 +55,9 @@ export type CardInterceptors = {
   deckSource: Interceptable<CardDeckSource>;
   shouldIgnorespellSchoolRequirements: Interceptable<boolean>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
+  loyaltyManaCostIncrease: Interceptable<number>;
+  loyaltyDestinyCostIncrease: Interceptable<number>;
+  loyaltyHpCost: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -66,13 +72,16 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   speed: new Interceptable(),
   deckSource: new Interceptable(),
   shouldIgnorespellSchoolRequirements: new Interceptable(),
-  shouldWakeUpAtTurnStart: new Interceptable()
+  shouldWakeUpAtTurnStart: new Interceptable(),
+  loyaltyManaCostIncrease: new Interceptable(),
+  loyaltyDestinyCostIncrease: new Interceptable(),
+  loyaltyHpCost: new Interceptable()
 });
 
 export type SerializedCard = {
   id: string;
   entityType: 'card';
-  cardIconId: string;
+  art: CardBlueprint['art'][string];
   kind: CardKind;
   rarity: Rarity;
   player: string;
@@ -87,7 +96,10 @@ export type SerializedCard = {
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
   destinyCost: number | null;
+  runeCost: RuneCost;
   keywords: string[];
+  faction: string;
+  unplayableReason: string | null;
 };
 
 export type CardTargetOrigin =
@@ -117,6 +129,8 @@ export abstract class Card<
 
   protected _targetedBy: CardTargetOrigin[] = [];
 
+  isPlayedFromHand = false;
+
   constructor(
     game: Game,
     player: Player,
@@ -136,6 +150,10 @@ export abstract class Card<
 
   get kind() {
     return this.blueprint.kind;
+  }
+
+  get faction() {
+    return this.blueprint.faction;
   }
 
   get keywords() {
@@ -182,11 +200,35 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
+  get loyaltyManaCostIncrease() {
+    return this.interceptors.loyaltyManaCostIncrease.getValue(
+      this.game.config.BASE_LOYALTY_COST_INCREASE,
+      {}
+    );
+  }
+
+  get loyaltyDestinyCostIncrease() {
+    return this.interceptors.loyaltyDestinyCostIncrease.getValue(
+      this.game.config.BASE_LOYALTY_COST_INCREASE,
+      {}
+    );
+  }
+
+  get loyaltyHpCost() {
+    return this.interceptors.loyaltyHpCost.getValue(
+      this.game.config.BASE_LOYALTY_HP_COST,
+      {}
+    );
+  }
+
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       return Math.max(
         0,
-        this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0
+        this.interceptors.manaCost.getValue(
+          this.blueprint.manaCost + this.loyaltyManaCostIncrease,
+          {}
+        ) ?? 0
       );
     }
     return 0;
@@ -201,7 +243,12 @@ export abstract class Card<
 
   get destinyCost(): number {
     if ('destinyCost' in this.blueprint) {
-      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
+      return (
+        this.interceptors.destinyCost.getValue(
+          this.blueprint.destinyCost + this.loyaltyDestinyCostIncrease,
+          {}
+        ) ?? 0
+      );
     }
     return 0;
   }
@@ -239,18 +286,22 @@ export abstract class Card<
   }
 
   protected async dispose() {
-    match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
-        this.sendToDiscardPile();
+    await match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, async () => {
+        await this.sendToDiscardPile();
       })
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
-        this.sendToBanishPile();
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, async () => {
+        await this.sendToBanishPile();
       })
       .exhaustive();
     await this.game.emit(
       CARD_EVENTS.CARD_DISPOSED,
       new CardDisposedEvent({ card: this })
     );
+  }
+
+  get hasUnlockedRunes() {
+    return this.player.hasRunes(this.blueprint.runeCost);
   }
 
   async resolve(handler: () => Promise<void>) {
@@ -270,19 +321,29 @@ export abstract class Card<
 
   protected async insertInChainOrExecute(
     handler: () => Promise<void>,
-    targets: PreResponseTarget[],
-    onResolved?: () => MaybePromise<void>
+    options: {
+      zone?: BoardSlotZone;
+      targets: PreResponseTarget[];
+      onResolved?: () => MaybePromise<void>;
+    }
   ) {
     const effect = {
       type: EFFECT_TYPE.CARD,
       source: this,
-      targets,
+      targets: options.targets,
+      summonZone: options.zone
+        ? {
+            zone: options.zone,
+            player: this.player
+          }
+        : undefined,
       handler: async () => {
         await this.resolve(handler);
+        this.isPlayedFromHand = false;
       }
     };
 
-    if (this.speed === CARD_SPEED.FLASH) {
+    if (this.speed === CARD_SPEED.BURST) {
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
@@ -299,7 +360,7 @@ export abstract class Card<
       await this.game.effectChainSystem.createChain({
         initialPlayer: this.player,
         initialEffect: effect,
-        onResolved
+        onResolved: options.onResolved
       });
     }
   }
@@ -370,29 +431,80 @@ export abstract class Card<
       .exhaustive();
   }
 
-  sendToDiscardPile() {
+  async sendToDiscardPile() {
     if (!isMainDeckCard(this)) {
       throw new IllegalGameStateError(
         `Cannot send card ${this.id} to discard pile when it is not a main deck card.`
       );
     }
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DISCARD_PILE,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     this.originalPlayer.cardManager.sendToDiscardPile(this);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DISCARD_PILE,
+        from: currentLocation
+      })
+    );
   }
 
-  sendToBanishPile() {
+  async sendToBanishPile() {
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.BANISH_PILE,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     this.originalPlayer.cardManager.sendToBanishPile(this);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.BANISH_PILE,
+        from: currentLocation
+      })
+    );
   }
 
-  sendToDestinyZone() {
+  async sendToDestinyZone() {
     if (!isMainDeckCard(this)) {
       throw new IllegalGameStateError(
         `Cannot send card ${this.id} to destiny zone when it is not a main deck card.`
       );
     }
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DESTINY_ZONE,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     this.originalPlayer.cardManager.sendToDestinyZone(this);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.DESTINY_ZONE,
+        from: currentLocation
+      })
+    );
   }
 
   protected updatePlayedAt() {
@@ -404,7 +516,7 @@ export abstract class Card<
     if (this.deckSource !== CARD_DECK_SOURCES.MAIN_DECK) {
       return false;
     }
-    return this.location === 'hand' && this.canPayManaCost;
+    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
   protected get canPlayAsDestinyDeckCard() {
@@ -416,30 +528,94 @@ export abstract class Card<
     }
 
     return (
-      this.location === 'destinyDeck' &&
+      this.location === CARD_LOCATIONS.DESTINY_DECK &&
       this.canPayDestinyCost &&
       this.game.turnSystem.elapsedTurns >=
         this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
     );
   }
 
-  protected get canPlayBase() {
+  get isIncombatPhaseBeforeChain() {
     const gameStateCtx = this.game.gamePhaseSystem.getContext();
-
     if (
       gameStateCtx.state === GAME_PHASES.ATTACK &&
       gameStateCtx.ctx.step !== COMBAT_STEPS.BUILDING_CHAIN
     ) {
-      return false;
+      return true;
     }
 
+    return false;
+  }
+
+  get isCorrectChainToPlay() {
     if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
       return false;
     }
+    return true;
+  }
+
+  protected get canPlayBase() {
+    if (this.isIncombatPhaseBeforeChain) {
+      return false;
+    }
+
+    if (!this.isCorrectChainToPlay) {
+      return false;
+    }
+
+    if (!this.hasUnlockedRunes) return false;
 
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
+      .exhaustive();
+  }
+
+  get unplayableReason(): string | null {
+    if (this.canPlay()) {
+      return null;
+    }
+
+    if (this.isIncombatPhaseBeforeChain) {
+      return 'You need to declare the attack target before playing cards.';
+    }
+
+    if (!this.isCorrectChainToPlay) {
+      return "Can't play during an effect chain.";
+    }
+
+    if (!this.hasUnlockedRunes) {
+      return 'You are missing some runes.';
+    }
+
+    return match(this.deckSource)
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
+        if (this.location !== 'hand') {
+          return 'Card must be in hand.';
+        }
+        if (!this.canPayManaCost) {
+          return 'Cannot pay mana cost.';
+        }
+        return 'You cannot play this card';
+      })
+      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
+        if (this.player.hasPlayedDestinyCardThisTurn) {
+          return 'You have already played a Destiny card this turn.';
+        }
+        if (this.location !== 'destinyDeck') {
+          return 'Card must be in destiny deck.';
+        }
+        if (!this.canPayDestinyCost) {
+          return 'Cannot pay destiny cost.';
+        }
+        if (
+          this.game.turnSystem.elapsedTurns <
+          this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
+        ) {
+          return `Cann't play destiny cards yet.`;
+        }
+        return 'You cannot play this card.';
+      })
       .exhaustive();
   }
 
@@ -448,13 +624,15 @@ export abstract class Card<
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
-      cardIconId: this.blueprint.cardIconId,
+      art: this.blueprint.art.default,
       source: this.deckSource,
       entityType: 'card',
       rarity: this.blueprint.rarity,
       player: this.player.id,
       kind: this.kind,
       isExhausted: this.isExhausted,
+      runeCost: this.blueprint.runeCost,
+      faction: this.faction.id,
       name: this.blueprint.name,
       description: this.blueprint.description,
       canPlay: this.canPlay(),
@@ -467,7 +645,8 @@ export abstract class Card<
       destinyCost:
         this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
       speed: this.blueprint.speed,
-      keywords: this.keywords.map(keyword => keyword.id)
+      keywords: this.keywords.map(keyword => keyword.id),
+      unplayableReason: this.unplayableReason
     };
   }
 
@@ -492,11 +671,28 @@ export abstract class Card<
         `Cannot add card ${this.id} to hand because it is not a main deck card.`
       );
     }
+    const currentLocation = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.HAND,
+        from: currentLocation
+      })
+    );
     this.removeFromCurrentLocation();
     await this.player.cardManager.addToHand(this, index);
     await (this as this).game.emit(
       CARD_EVENTS.CARD_ADD_TO_HAND,
       new CardAddToHandevent({ card: this, index: index ?? null })
+    );
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({
+        card: this,
+        to: CARD_LOCATIONS.HAND,
+        from: currentLocation
+      })
     );
   }
 

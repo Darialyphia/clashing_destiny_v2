@@ -2,8 +2,7 @@ import { isDefined } from '@game/shared';
 import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
 import type { GlobalActionRule } from '../controllers/ui-controller';
-import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { GAME_PHASES } from '../../game/game.enums';
+import { INTERACTION_STATES, GAME_PHASES } from '../../game/game.enums';
 import type { PlayerViewModel } from '../view-models/player.model';
 import type { CardViewModel } from '../view-models/card.model';
 
@@ -24,10 +23,7 @@ export class PassGlobalAction implements GlobalActionRule {
     const destinyDeck = boardSide.destinyDeck.map(
       id => state.entities[id] as CardViewModel
     );
-    const minions = [
-      ...boardSide.frontRow.slots.map(slot => slot.minion),
-      ...boardSide.backRow.slots.map(slot => slot.minion)
-    ]
+    const minions = [...boardSide.attackZone, ...boardSide.defenseZone]
       .filter(isDefined)
       .map(id => state.entities[id] as CardViewModel);
 
@@ -62,11 +58,12 @@ export class PassGlobalAction implements GlobalActionRule {
   }
 
   onClick(): void {
-    const shouldConfirm =
-      !this.client.state.effectChain &&
-      this.hasRemainingAction &&
-      !this.client.ui.shouldBypassConfirmation;
-
+    // const shouldConfirm =
+    //   !this.client.state.effectChain &&
+    //   this.hasRemainingAction &&
+    //   !this.client.ui.shouldBypassConfirmation;
+    const shouldConfirm = false;
+    console.log('PassGlobalAction onClick, shouldConfirm:', shouldConfirm);
     if (shouldConfirm) {
       this.client.ui.isPassConfirmationModalOpened = true;
     } else {

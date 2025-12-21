@@ -1,9 +1,6 @@
 import type { CardId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-import {
-  CARD_DECK_SOURCES,
-  type SpellSchool
-} from '@game/engine/src/card/card.enums';
+import { CARD_DECK_SOURCES } from '@game/engine/src/card/card.enums';
 import type {
   DeckValidator,
   ValidatableCard,
@@ -23,7 +20,6 @@ export class DeckBuilderViewModel {
   private _deck: DeckBuilderDeck = {
     id: nanoid(4),
     name: 'New Deck',
-    spellSchools: [],
     mainDeck: [],
     destinyDeck: [],
     isEqual: (first, second) => first.meta.cardId === second.meta.cardId
@@ -234,16 +230,6 @@ export class DeckBuilderViewModel {
       });
   }
 
-  toggleSpellSchool(school: SpellSchool) {
-    if (this._deck.spellSchools.includes(school)) {
-      this._deck.spellSchools = this._deck.spellSchools.filter(
-        s => s !== school
-      );
-    } else if (this._deck.spellSchools.length < 2) {
-      this._deck.spellSchools.push(school);
-    }
-  }
-
   getErrors() {
     return this._validator.validate(this._deck);
   }
@@ -262,8 +248,7 @@ export class DeckBuilderViewModel {
       name: 'New Deck',
       isEqual: (first, second) => first.meta.cardId === second.meta.cardId,
       mainDeck: [],
-      destinyDeck: [],
-      spellSchools: []
+      destinyDeck: []
     };
   }
 }

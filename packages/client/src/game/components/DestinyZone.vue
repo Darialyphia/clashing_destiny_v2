@@ -111,7 +111,7 @@ const cards = computed(() => {
 
 <style scoped lang="postcss">
 .destiny-zone {
-  --piwxel-scale: 1;
+  --pixel-scale: 0.75;
   display: grid;
   position: relative;
   overflow: hidden;
@@ -123,7 +123,9 @@ const cards = computed(() => {
   border: solid 1px #985e25;
   padding-inline: 4px;
   z-index: 1;
+  transform: translateZ(1px);
   --spacing-offset: 1;
+
   &.player-2 {
     justify-items: end;
     --spacing-offset: -1;
@@ -135,6 +137,15 @@ const cards = computed(() => {
   > * {
     grid-column: 1;
     grid-row: 1;
+  }
+
+  &::after {
+    content: 'Destiny Zone';
+    position: absolute;
+    bottom: var(--size-1);
+    left: var(--size-3);
+    color: #d7ad42;
+    font-size: var(--font-size-0);
   }
 }
 
@@ -154,11 +165,6 @@ const cards = computed(() => {
   position: absolute;
   bottom: 0;
   z-index: var(--z);
-  .destiny-zone.player-2 & {
-    left: 0;
-  }
-  .destiny-zone:not(.player-2) & {
-    right: 0;
-  }
+  right: 0;
 }
 </style>

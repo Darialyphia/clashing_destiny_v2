@@ -17,19 +17,26 @@ export class OnEnterModifier<
   constructor(
     game: Game,
     source: AnyCard,
-    options: { handler: OnEnterHandler<T>; mixins?: ModifierMixin<T>[] }
+    options: {
+      handler: OnEnterHandler<T>;
+      mixins?: ModifierMixin<T>[];
+      onlyWhenPlayedFromHand?: boolean;
+    }
   ) {
     super(KEYWORDS.ON_ENTER.id, game, source, {
       mixins: [
-        new OnEnterModifierMixin<T>(game, async event => {
-          await game.emit(
-            CARD_EVENTS.CARD_EFFECT_TRIGGERED,
-            new CardEffectTriggeredEvent({
-              card: this.target,
-              message: `${this.target.blueprint.name} triggered its On Enter effect.`
-            })
-          );
-          await options.handler(event);
+        new OnEnterModifierMixin<T>(game, {
+          onlyWhenPlayedFromHand: options.onlyWhenPlayedFromHand,
+          handler: async event => {
+            await game.emit(
+              CARD_EVENTS.CARD_EFFECT_TRIGGERED,
+              new CardEffectTriggeredEvent({
+                card: this.target,
+                message: `${this.target.blueprint.name} triggered its On Enter effect.`
+              })
+            );
+            await options.handler(event);
+          }
         }),
         new KeywordModifierMixin(game, KEYWORDS.ON_ENTER),
         ...(options.mixins ?? [])

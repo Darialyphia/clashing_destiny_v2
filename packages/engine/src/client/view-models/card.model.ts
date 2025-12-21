@@ -4,7 +4,10 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
+import type {
+  CardBlueprint,
+  SerializedPreResponseTarget
+} from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
@@ -12,17 +15,18 @@ import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
 import {
   CARD_KINDS,
-  type SpellSchool,
   type CardKind,
-  type HeroJob,
-  CARD_DECK_SOURCES
+  CARD_DECK_SOURCES,
+  FACTIONS,
+  RUNES
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
-import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
-import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
+import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
-import { DeclareCounterAttackAction } from '../actions/declare-counter-attack';
-import { isDefined } from '@game/shared';
+import { DeclareBlockerAction } from '../actions/declare-counter-attack';
+import type { BoardSlotZone } from '../../board/board.constants';
+import { GainRuneAction } from '../actions/gain-rune';
+import { DrawCardAction } from '../actions/draw-card';
 
 type CardData =
   | SerializedSpellCard
@@ -76,8 +80,22 @@ export class CardViewModel {
     return this.data.description;
   }
 
-  get imagePath() {
-    return `/assets/cards/${this.data.cardIconId}.png`;
+  get art(): CardBlueprint['art'][string] {
+    return {
+      dimensions: this.data.art.dimensions,
+      foil: this.data.art.foil,
+      main: `/assets/cards/${this.data.art.main}.png`,
+      frame: `/assets/ui/card/frames/${this.data.art.frame}.png`,
+      bg: `/assets/cards/${this.data.art.bg}.png`,
+      breakout: this.data.art.breakout
+        ? `/assets/cards/${this.data.art.breakout}.png`
+        : undefined,
+      tint: this.data.art.tint
+    };
+  }
+
+  get isSelected() {
+    return this.getClient().ui.selectedCard?.equals(this) ?? false;
   }
 
   get kind() {
@@ -144,6 +162,18 @@ export class CardViewModel {
     return null;
   }
 
+  get runeCost() {
+    return this.data.runeCost;
+  }
+
+  get faction() {
+    return this.data.faction as keyof typeof FACTIONS;
+  }
+
+  get unplayableReason() {
+    return this.data.unplayableReason;
+  }
+
   get canBeUsedAsManaCost() {
     return this.data.canBeUsedAsManaCost;
   }
@@ -152,16 +182,16 @@ export class CardViewModel {
     return this.data.source;
   }
 
-  get position() {
-    if ('position' in this.data) {
-      return this.data.position as SerializedMinionCard['position'];
+  get location() {
+    return this.data.location;
+  }
+
+  get zone() {
+    if ('zone' in this.data) {
+      return this.data.zone as BoardSlotZone;
     }
 
     return null;
-  }
-
-  get location() {
-    return this.data.location;
   }
 
   get atk() {
@@ -211,32 +241,6 @@ export class CardViewModel {
     return this.data.speed;
   }
 
-  get unlockedSpellSchools() {
-    if ('spellSchools' in this.data) {
-      return this.data.spellSchools as SpellSchool[];
-    }
-
-    return [];
-  }
-
-  get spellSchool() {
-    if ('spellSchool' in this.data && this.data.spellSchool) {
-      return this.data.spellSchool as SpellSchool;
-    }
-
-    return undefined;
-  }
-
-  get jobs() {
-    if ('jobs' in this.data) {
-      return this.data.jobs as HeroJob[];
-    }
-    if ('job' in this.data) {
-      return [this.data.job].filter(isDefined) as HeroJob[];
-    }
-
-    return [];
-  }
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;
@@ -372,9 +376,18 @@ export class CardViewModel {
 
   get actions(): CardActionRule[] {
     const actions = [
+      ...(this.kind === CARD_KINDS.HERO
+        ? [
+            new GainRuneAction(this.getClient(), RUNES.MIGHT),
+            new GainRuneAction(this.getClient(), RUNES.FOCUS),
+            new GainRuneAction(this.getClient(), RUNES.KNOWLEDGE),
+            new GainRuneAction(this.getClient(), RUNES.RESONANCE),
+            new DrawCardAction(this.getClient())
+          ]
+        : []),
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
-      new DeclareCounterAttackAction(this.getClient()),
+      new DeclareBlockerAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

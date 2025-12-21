@@ -1,33 +1,22 @@
-import type { Override } from '@game/shared';
-import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
-import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
-import { INTERACTION_STATES } from '../../game/systems/game-interaction.system';
+import { COMBAT_STEPS, GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
 import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
 import { SelectCardAction } from '../actions/select-card';
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
-import type { PlayerViewModel } from '../view-models/player.model';
 import type { GameClientState } from './state-controller';
-import { SelectMinionslotAction } from '../actions/select-minion-slot';
 import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
-import { CommitMinionSlotSelectionGlobalAction } from '../actions/commit-minion-slot-selection';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
-import type { BoardSlotZone } from '../../board/board.constants';
+import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
+import { match } from 'ts-pattern';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
   handler: (card: CardViewModel) => void;
-};
-
-export type UiMinionslot = Override<BoardPosition, { player: PlayerViewModel }>;
-export type MinionSlotClickRule = {
-  predicate: (slot: UiMinionslot, state: GameClientState) => boolean;
-  handler: (slot: UiMinionslot) => void;
 };
 
 export type GlobalActionRule = {
@@ -63,6 +52,10 @@ export class UiController {
 
   private _selectedCard: CardViewModel | null = null;
 
+  private _draggedCard: CardViewModel | null = null;
+
+  private _bufferedPlayedZone: BoardSlotZone | null = null;
+
   isHandExpanded = false;
 
   isPassConfirmationModalOpened = false;
@@ -72,8 +65,6 @@ export class UiController {
   isOpponentHandExpanded = false;
 
   private cardClickRules: CardClickRule[] = [];
-
-  private minionSlotClickRules: MinionSlotClickRule[] = [];
 
   private globalActionRules: GlobalActionRule[] = [];
 
@@ -117,8 +108,15 @@ export class UiController {
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    frontRow: (playerId: string) => new DOMSelector(`${playerId}-front-row`),
-    backRow: (playerId: string) => new DOMSelector(`${playerId}-back-row`),
+    zone: (playerId: string, zone: BoardSlotZone) =>
+      match(zone)
+        .with(BOARD_SLOT_ZONES.ATTACK_ZONE, () => this.DOMSelectors.attackZone(playerId))
+        .with(BOARD_SLOT_ZONES.DEFENSE_ZONE, () =>
+          this.DOMSelectors.defenseZone(playerId)
+        )
+        .exhaustive(),
+    attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
+    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
     globalActionButtons: new DOMSelector('global-action-buttons')
   };
@@ -142,7 +140,6 @@ export class UiController {
 
   constructor(private client: GameClient) {
     this.buildCardClickRules();
-    this.buildMinionSlotClickRules();
     this.buildGlobalActionRules();
   }
 
@@ -152,6 +149,27 @@ export class UiController {
 
   get selectedCard() {
     return this._selectedCard;
+  }
+
+  get draggedCard() {
+    return this._draggedCard;
+  }
+
+  get bufferedPlayedZone() {
+    return this._bufferedPlayedZone;
+  }
+
+  clearBufferedPlayedZone() {
+    this._bufferedPlayedZone = null;
+  }
+
+  playDraggedCard(zone?: BoardSlotZone) {
+    if (!this._draggedCard) return;
+    if (zone) {
+      this._bufferedPlayedZone = zone;
+    }
+    this._draggedCard.play();
+    this._draggedCard = null;
   }
 
   get playedCardId() {
@@ -171,14 +189,9 @@ export class UiController {
     ];
   }
 
-  private buildMinionSlotClickRules() {
-    this.minionSlotClickRules = [new SelectMinionslotAction(this.client)];
-  }
-
   private buildGlobalActionRules() {
     this.globalActionRules = [
       new CancelPlayCardGlobalAction(this.client),
-      new CommitMinionSlotSelectionGlobalAction(this.client),
       new CommitCardSelectionGlobalAction(this.client),
       new PassGlobalAction(this.client)
     ];
@@ -200,6 +213,14 @@ export class UiController {
       });
   }
 
+  startDraggingCard(card: CardViewModel) {
+    this._draggedCard = card;
+  }
+
+  stopDraggingCard() {
+    this._draggedCard = null;
+  }
+
   onCardClick(card: CardViewModel) {
     const state = this.client.state;
     for (const rule of this.cardClickRules) {
@@ -210,16 +231,6 @@ export class UiController {
     }
 
     this.unselect();
-  }
-
-  onMinionSlotClick(slot: UiMinionslot) {
-    const state = this.client.state;
-    for (const rule of this.minionSlotClickRules) {
-      if (rule.predicate(slot, state)) {
-        rule.handler(slot);
-        return;
-      }
-    }
   }
 
   get isInteractivePlayer() {
@@ -289,10 +300,6 @@ export class UiController {
 
     if (activePlayerId !== this.client.playerId) {
       return 'Waiting for opponent...';
-    }
-
-    if (state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT) {
-      return 'Select a minion slot';
     }
 
     if (

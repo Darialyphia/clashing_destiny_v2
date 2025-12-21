@@ -1,8 +1,8 @@
 import type { GameClient } from '../client';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
-export class DeclareCounterAttackAction implements CardActionRule {
-  readonly id = 'declare_counter_attack';
+export class DeclareBlockerAction implements CardActionRule {
+  readonly id = 'declare_blocker';
 
   constructor(private client: GameClient) {}
 
@@ -11,10 +11,10 @@ export class DeclareCounterAttackAction implements CardActionRule {
   }
 
   getLabel() {
-    return `Retaliate`;
+    return `Block`;
   }
 
   handler(card: CardViewModel) {
-    this.client.declareCounterAttack(card.id);
+    this.client.declareBlocker(card.id);
   }
 }
