@@ -15,6 +15,7 @@ export class DrawCardAction implements CardActionRule {
       this.client.state.phase.state === GAME_PHASES.MAIN &&
       !this.client.state.effectChain &&
       card.player.canPerformResourceAction &&
+      card.player.remainingResourceActions.draw_card > 0 &&
       this.client.isActive()
     );
   }

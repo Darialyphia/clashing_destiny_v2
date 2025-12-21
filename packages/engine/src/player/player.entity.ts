@@ -48,7 +48,7 @@ export type SerializedPlayer = {
   remainingCardsInMainDeck: number;
   remainingCardsInDestinyDeck: number;
   canPerformResourceAction: boolean;
-  canPerformDrawCardResourceAction: boolean;
+  remainingResourceActions: Record<PlayerResourceAction['type'], number>;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -196,9 +196,16 @@ export class Player
       unlockedRunes: { ...this._unlockedRunes },
       canPerformResourceAction:
         this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
-      canPerformDrawCardResourceAction: !this._resourceActionsPerformedThisTurn.some(
-        a => a.type === 'draw_card'
-      )
+      remainingResourceActions: {
+        draw_card:
+          this.getMaxResourceActionsPerType('draw_card') -
+          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'draw_card')
+            .length,
+        gain_rune:
+          this.getMaxResourceActionsPerType('gain_rune') -
+          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'gain_rune')
+            .length
+      }
     };
   }
 
@@ -330,7 +337,7 @@ export class Player
 
   getMaxResourceActionsPerType(actionType: PlayerResourceAction['type']): number {
     const defaultLimits: Record<PlayerResourceAction['type'], number> = {
-      draw_card: 1,
+      draw_card: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
       gain_rune: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
     };
 
@@ -340,6 +347,20 @@ export class Player
     );
 
     return limits[actionType];
+  }
+
+  canPerformResourceActionOfType(actionType: PlayerResourceAction['type']): boolean {
+    if (this._resourceActionsPerformedThisTurn.length >= this.maxResourceActionPerTurn) {
+      return false;
+    }
+
+    // Check if the specific action type limit has been reached
+    const maxForType = this.getMaxResourceActionsPerType(actionType);
+    const performedCountForType = this._resourceActionsPerformedThisTurn.filter(
+      a => a.type === actionType
+    ).length;
+
+    return performedCountForType < maxForType;
   }
 
   async performResourceAction(action: PlayerResourceAction) {

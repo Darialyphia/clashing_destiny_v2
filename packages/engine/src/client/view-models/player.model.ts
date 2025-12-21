@@ -65,6 +65,10 @@ export class PlayerViewModel {
     return this.data.canPerformResourceAction;
   }
 
+  get remainingResourceActions() {
+    return this.data.remainingResourceActions;
+  }
+
   get isPlayer1() {
     return this.data.isPlayer1;
   }

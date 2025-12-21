@@ -256,7 +256,7 @@ const kindBg = computed(() => {
             v-if="isDefined(card.manaCost)"
             class="mana-cost"
             :class="costStatus"
-            data-label="Cost"
+            data-label="Mana"
           >
             <div class="dual-text" :data-text="card.manaCost">
               {{ card.manaCost }}
@@ -266,6 +266,7 @@ const kindBg = computed(() => {
             v-if="isDefined(card.destinyCost)"
             class="destiny-cost"
             :class="costStatus"
+            data-label="Dest."
           >
             <div class="dual-text" :data-text="card.destinyCost">
               {{ card.destinyCost }}
@@ -276,8 +277,9 @@ const kindBg = computed(() => {
         <div
           class="faction parallax"
           :style="{
-            '--bg': `url(/assets/ui/card/faction-${card.faction.id}.png)`
+            '--bg': `url(/assets/ui/card/faction-${card.faction.id.toLocaleLowerCase()}.png)`
           }"
+          :data-label="card.faction.shortName"
         />
 
         <div class="rarity parallax" style="--parallax-strength: 0.5" />
@@ -416,11 +418,26 @@ const kindBg = computed(() => {
   }
 }
 
+[data-label] {
+  &::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: calc(-5px * var(--pixel-scale));
+    width: 100%;
+    font-size: calc(var(--pixel-scale) * 6px);
+    color: #fcfcfc;
+    text-align: center;
+    paint-order: stroke fill;
+    font-weight: var(--font-weight-5);
+    -webkit-text-stroke: 4px black;
+    font-family: 'Lato', sans-serif;
+  }
+}
 .card-front {
   backface-visibility: hidden;
   background: url('/assets/ui/card/card_front.png');
   background-size: cover;
-  color: #fcffcb;
+  color: #fcfcfc;
   font-size: calc(var(--pixel-scale) * 8px);
   padding: 1rem;
   position: relative;

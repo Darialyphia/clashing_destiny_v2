@@ -19,7 +19,7 @@ export class CommitResourceActionInput extends Input<typeof schema> {
 
   async impl() {
     assert(
-      this.player.resourceActionPerformedThisTurn < this.player.maxResourceActionPerTurn,
+      this.player.canPerformResourceActionOfType(this.payload.type),
       new IllegalResourceActionError()
     );
     await this.player.performResourceAction({

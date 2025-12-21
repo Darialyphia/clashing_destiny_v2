@@ -23,6 +23,7 @@ export class GainRuneAction implements CardActionRule {
       this.client.state.phase.state === GAME_PHASES.MAIN &&
       !this.client.state.effectChain &&
       card.player.canPerformResourceAction &&
+      card.player.remainingResourceActions.gain_rune > 0 &&
       this.client.isActive()
     );
   }

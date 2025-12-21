@@ -11,7 +11,7 @@ import {
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { MinionInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { isMinion } from '../../../../card-utils';
+import { isMinion, singleAllyTargetRules } from '../../../../card-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 
@@ -24,7 +24,7 @@ export const manaShield: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana Shield',
   description: dedent`
-    The next time an ally would take damage this turn, prevent  1 + Hero level of that damage and add a @Mana Spark@ to your hand equal to the prevented damage.
+    The next time target ally would take damage this turn, prevent  1 + Hero level of that damage and add a @Mana Spark@ to your hand equal to the prevented damage.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -56,8 +56,9 @@ export const manaShield: SpellBlueprint = {
   },
   speed: CARD_SPEED.FAST,
   abilities: [],
-  canPlay: () => true,
-  getPreResponseTargets: () => Promise.resolve([]),
+  canPlay: singleAllyTargetRules.canPlay,
+  getPreResponseTargets: (game, card) =>
+    singleAllyTargetRules.getPreResponseTargets(game, card, { type: 'card', card }),
   async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;

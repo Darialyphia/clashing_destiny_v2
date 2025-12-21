@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import { singleEnemyMinionTargetRules } from '../../../../card-utils';
+import { singleEnemyTargetRules } from '../../../../card-utils';
 import {
   CARD_SPEED,
   CARD_KINDS,
@@ -22,9 +22,7 @@ export const magicMissile: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Magic Missile',
   description: dedent`
-    Deal 1 damage to an enemy minion.
-
-    @Foresight@.
+    Deal 1 damage to an enemy..
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -49,17 +47,17 @@ export const magicMissile: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 1,
   runeCost: {
     KNOWLEDGE: 1
   },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
-    return singleEnemyMinionTargetRules.canPlay(game, card);
+    return singleEnemyTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
       type: 'card',
       card
     });
