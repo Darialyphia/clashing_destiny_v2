@@ -3,8 +3,6 @@ import { useAuthedQuery } from '@/auth/composables/useAuth';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import { api, GIFT_STATES } from '@game/api';
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
-import BlueprintCard from '@/card/components/BlueprintCard.vue';
 
 definePage({
   name: 'ClientHome',
