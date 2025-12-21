@@ -245,7 +245,7 @@ const kindBg = computed(() => {
           <div class="art-main parallax" style="--parallax-strength: 2" />
           <div class="art-frame parallax" style="--parallax-strength: 0.5" />
           <div
-            v-if="isFoil"
+            v-if="isFoil && card.art.breakout"
             class="art-breakout parallax"
             style="--parallax-strength: 2"
           />

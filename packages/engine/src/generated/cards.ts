@@ -27,7 +27,9 @@ export const cards = {
 "power-overwhelming": "power-overwhelming",
 "galactic-explosion": "galactic-explosion",
 "arcane-conduit": "arcane-conduit",
-"sigil-of-wisdom": "sigil-of-wisdom"
+"sigil-of-wisdom": "sigil-of-wisdom",
+"mana-shield": "mana-shield",
+"time-bomb": "time-bomb"
 } as const;
 
 export const collectableCards = {
@@ -53,5 +55,7 @@ export const collectableCards = {
 "power-overwhelming": "power-overwhelming",
 "galactic-explosion": "galactic-explosion",
 "arcane-conduit": "arcane-conduit",
-"sigil-of-wisdom": "sigil-of-wisdom"
+"sigil-of-wisdom": "sigil-of-wisdom",
+"mana-shield": "mana-shield",
+"time-bomb": "time-bomb"
 } as const;

@@ -23,6 +23,8 @@ import { sigilOfWisdom } from './core/arcane/sigils/sigil-of-widom';
 import { galacticExplosion } from './core/arcane/spells/galactic-explosion';
 import { powerOverwhelming } from './core/arcane/spells/power-overwhelming';
 import { arcaneConduit } from './core/arcane/minions/arcane-conduit';
+import { manaShield } from './core/arcane/spells/mana-shield';
+import { timeBomb } from './core/arcane/sigils/time-bomb';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -50,6 +52,8 @@ export const coreSet: CardSet = {
     powerOverwhelming,
     galacticExplosion,
     arcaneConduit,
-    sigilOfWisdom
+    sigilOfWisdom,
+    manaShield,
+    timeBomb
   ]
 };

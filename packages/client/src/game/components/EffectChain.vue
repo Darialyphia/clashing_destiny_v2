@@ -20,7 +20,6 @@ const state = useGameState();
 const paths = ref<string[][]>([]);
 
 const buildPaths = async () => {
-  console.log('Building effect chain paths');
   if (!state.value.effectChain?.stack) {
     paths.value = [];
     return;

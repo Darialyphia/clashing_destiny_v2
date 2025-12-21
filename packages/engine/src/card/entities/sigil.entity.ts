@@ -87,6 +87,10 @@ export class SigilCard extends Card<
     await this.blueprint.onPlay(this.game, this);
   }
 
+  get zone(): BoardSlotZone | null {
+    return this.player.boardSide.getZoneFor(this);
+  }
+
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
     const targets = this.abilityTargets.get(abilityId);
     if (!targets) return;

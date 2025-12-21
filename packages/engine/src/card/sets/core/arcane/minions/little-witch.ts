@@ -41,7 +41,6 @@ export const littleWitch: MinionBlueprint = {
       },
       bg: 'minions/little-witch-bg',
       main: 'minions/little-witch',
-      breakout: 'minions/little-witch-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

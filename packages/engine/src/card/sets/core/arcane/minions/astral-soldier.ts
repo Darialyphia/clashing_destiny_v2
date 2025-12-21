@@ -9,9 +9,7 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { empower } from '../../../../card-actions-utils';
-import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
-import { LingeringDestinyModifier } from '../../../../../modifier/modifiers/lingering-destiny.modifier';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
 export const astralSoldier: MinionBlueprint = {
   id: 'astral-soldier',
@@ -22,9 +20,7 @@ export const astralSoldier: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Astral Soldier',
   description: dedent`
-  @On Enter@: You may @Consume@ @[knowledge]@. If you do, @Empower 1@.
-  
-  @Lingering Destiny@.
+  @On Enter@: @Empower 1@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -59,30 +55,12 @@ export const astralSoldier: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new LingeringDestinyModifier(game, card));
-
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          if (!card.player.hasRunes({ KNOWLEDGE: 1 })) return;
-
-          const shouldConsume = await game.interaction.askQuestion({
-            questionId: 'astral-soldier-consume-knowledge',
-            player: card.player,
-            source: card,
-            label: 'Consume 1 Knowledge to Empower 1?',
-            minChoiceCount: 0,
-            maxChoiceCount: 1,
-            choices: [
-              { id: 'yes', label: 'Yes' },
-              { id: 'no', label: 'No' }
-            ]
-          });
-
-          if (shouldConsume === 'no') return;
-
-          await card.player.spendRune({ KNOWLEDGE: 1 });
-          empower(game, card, 1);
+          await card.player.hero.modifiers.add(
+            new EmpowerModifier(game, card, { amount: 1 })
+          );
         }
       })
     );

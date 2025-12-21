@@ -4,8 +4,8 @@ import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { empower } from '../../../../card-actions-utils';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
@@ -102,7 +102,9 @@ export const erinaLv3: HeroBlueprint = {
                 filter: event =>
                   event.data.card.player.equals(card.player) && isSpell(event.data.card),
                 async handler(event: CardBeforePlayEvent) {
-                  empower(game, card, 2);
+                  await card.modifiers.add(
+                    new EmpowerModifier(game, card, { amount: 2 })
+                  );
                   await event.data.card.modifiers.add(new EchoModifier(game, card));
                 }
               }),

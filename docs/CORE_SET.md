@@ -84,7 +84,7 @@ Spellpower 1.
 
 ---
 
-Astral Explorer
+[x] Astral Explorer
 
 Minion | Arcane | (3) | KR | 2 / 2 | (slow)
 
@@ -141,8 +141,6 @@ Consume KKK. Draw 3 cards.
 [ ] Spellblade Duelyst
 
 Minion | Arcane | (3) | MMK | 2 / 3 | (slow)
-
-On Enter: You may consume K. If you do, this gains Rush.
 
 This has Preemptive Strike as long as you have Spellpower.
 

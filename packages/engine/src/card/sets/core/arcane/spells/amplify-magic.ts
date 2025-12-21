@@ -8,7 +8,7 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { empower } from '../../../../card-actions-utils';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
 export const amplifyMagic: SpellBlueprint = {
   id: 'amplify-magic',
@@ -54,7 +54,7 @@ export const amplifyMagic: SpellBlueprint = {
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    empower(game, card, 2);
+    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 2 }));
     await card.player.cardManager.draw(1);
   }
 };

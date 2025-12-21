@@ -89,7 +89,7 @@ const artBreakoutImage = computed(() => {
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
         <div class="art-main" />
         <div class="art-frame" />
-        <div v-if="isFoil" class="art-breakout" />
+        <div v-if="isFoil && card.art.breakout" class="art-breakout" />
       </div>
 
       <template v-if="showStats">
