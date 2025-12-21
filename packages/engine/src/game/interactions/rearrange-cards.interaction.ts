@@ -48,10 +48,11 @@ export class RearrangeCardsContext {
     return {
       player: this.player.id,
       label: this.label,
-      source: this.source.serialize(),
+      source: this.source.id,
       buckets: this.buckets.map(bucket => ({
+        id: bucket.id,
         label: bucket.label,
-        cards: bucket.cards.map(card => card.serialize())
+        cards: bucket.cards.map(card => card.id)
       }))
     };
   }

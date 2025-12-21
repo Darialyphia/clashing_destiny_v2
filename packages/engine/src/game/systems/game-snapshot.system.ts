@@ -22,7 +22,7 @@ import type { AnyObject } from '@game/shared';
 import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
-import { GAME_PHASES } from '../game.enums';
+import { GAME_PHASES, INTERACTION_STATES } from '../game.enums';
 import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 import { CARD_LOCATIONS } from '../../card/card.enums';
 
@@ -379,7 +379,24 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     const state = this.serializeOmniscientState();
 
     // Remove entities that the player shouldn't have access to in order to prevent cheating
-    const hasBeenPlayed = (cardId: string) => {
+    const shouldBeSeen = (cardId: string) => {
+      if (state.interaction.ctx.player === playerId) {
+        if (state.interaction.state === INTERACTION_STATES.REARRANGING_CARDS) {
+          const buckets = state.interaction.ctx.buckets;
+          for (const bucket of buckets) {
+            if (bucket.cards.includes(cardId)) {
+              return true;
+            }
+          }
+        }
+        if (state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS) {
+          const choices = state.interaction.ctx.choices;
+          if (choices.includes(cardId)) {
+            return true;
+          }
+        }
+      }
+
       return this.eventsSinceLastSnapshot.some(e => {
         const event = e.data.event;
         if (
@@ -416,7 +433,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       if (this.seenCardsByPlayer[playerId].has(card.id)) {
         return;
       }
-      const seen = hasBeenPlayed(card.id);
+      const seen = shouldBeSeen(card.id);
 
       if (seen) {
         this.seenCardsByPlayer[playerId].add(card.id);

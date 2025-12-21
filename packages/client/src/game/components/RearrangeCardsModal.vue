@@ -24,10 +24,26 @@ watchEffect(() => {
 });
 const isShowingBoard = ref(false);
 
-const buckets = ref<Array<{ id: string; cards: string[] }>>([]);
+const result = ref<Array<{ id: string; cards: string[]; label: string }>>([]);
+
+const interactionState = computed(() => {
+  if (state.value.interaction.state !== INTERACTION_STATES.REARRANGING_CARDS)
+    return null;
+  return state.value.interaction.ctx;
+});
+
+watch(interactionState, state => {
+  if (!state) return;
+  result.value = state.buckets.map(bucket => ({
+    label: bucket.label,
+    id: bucket.id,
+    cards: [...bucket.cards]
+  }));
+  result.value = [];
+});
 
 watch(_isOpened, () => {
-  buckets.value = [];
+  result.value = [];
 });
 
 const label = computed(() => {
@@ -61,7 +77,7 @@ const label = computed(() => {
           text="Confirm"
           @click="
             _isOpened = false;
-            client.commitRearrangeCards(buckets);
+            client.commitRearrangeCards(result);
           "
         />
       </footer>
