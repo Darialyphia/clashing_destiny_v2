@@ -36,6 +36,13 @@ const canGainRune = computed(() => {
 const gainRune = (rune: Rune) => {
   client.value.gainRune(rune);
 };
+
+const isFullCardPreviewenabled = ref(true);
+const enableFullCardPreview = () => {
+  setTimeout(() => {
+    isFullCardPreviewenabled.value = true;
+  }, 100);
+};
 </script>
 
 <template>
@@ -52,7 +59,11 @@ const gainRune = (rune: Rune) => {
     style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
     ref="card"
   >
-    <InspectableCard :card-id="hero.id" :open-delay="150">
+    <InspectableCard
+      :card-id="hero.id"
+      :open-delay="150"
+      :enabled="isFullCardPreviewenabled"
+    >
       <GameCard
         :card-id="hero.id"
         actions-side="right"
@@ -61,10 +72,16 @@ const gainRune = (rune: Rune) => {
         variant="small"
         show-stats
         show-modifiers
+        @modifiers-mouse-enter="isFullCardPreviewenabled = false"
+        @modifiers-mouse-leave="enableFullCardPreview"
       />
     </InspectableCard>
 
-    <div class="runes">
+    <div
+      class="runes"
+      @mouseenter="isFullCardPreviewenabled = false"
+      @mouseleave="enableFullCardPreview"
+    >
       <UiSimpleTooltip :disabled="!canGainRune">
         <template #trigger>
           <button

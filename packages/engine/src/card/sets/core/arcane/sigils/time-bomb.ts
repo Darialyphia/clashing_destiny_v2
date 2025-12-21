@@ -11,10 +11,11 @@ import {
 import { AbilityDamage } from '../../../../../utils/damage';
 import type { BoardSlotZone } from '../../../../../board/board.constants';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { RemoveOnDestroyedMixin } from '../../../../../modifier/mixins/remove-on-destroyed';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { SigilCard } from '../../../../entities/sigil.entity';
+import dedent from 'dedent';
+import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 
 export const timeBomb: SigilBlueprint = {
   id: 'time-bomb',
@@ -24,8 +25,10 @@ export const timeBomb: SigilBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
-  description:
-    '@On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If There is another Time Bomb in the same zone, exhaust them as well.',
+  description: dedent`
+  @Echo@.
+    
+  @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If There is another Time Bomb in the same zone, exhaust them as well.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -58,8 +61,10 @@ export const timeBomb: SigilBlueprint = {
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   async onInit(game, card) {
-    let zone: BoardSlotZone | null = null;
+    await card.modifiers.add(new EchoModifier(game, card));
 
+    // Tracks the zone the Time Bomb was in when it dies since OnDeath triggers after it has left the board
+    let zone: BoardSlotZone | null = null;
     await card.modifiers.add(
       new Modifier<SigilCard>('time-bomb-zone-tracker', game, card, {
         mixins: [

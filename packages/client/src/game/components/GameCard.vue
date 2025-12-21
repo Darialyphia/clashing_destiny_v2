@@ -48,6 +48,10 @@ const {
   showActionEmptyState?: boolean;
 }>();
 
+const emit = defineEmits<{
+  modifiersMouseEnter: [];
+  modifiersMouseLeave: [];
+}>();
 const card = useCard(computed(() => cardId));
 const ui = useGameUi();
 
@@ -208,7 +212,12 @@ const visibleModifiers = gameStateRef(() => {
         @click="handleClick"
       />
 
-      <div class="modifiers" v-if="showModifiers">
+      <div
+        class="modifiers"
+        v-if="showModifiers"
+        @mouseenter="emit('modifiersMouseEnter')"
+        @mouseleave="emit('modifiersMouseLeave')"
+      >
         <UiSimpleTooltip
           v-for="modifier in visibleModifiers"
           :key="modifier.id"
