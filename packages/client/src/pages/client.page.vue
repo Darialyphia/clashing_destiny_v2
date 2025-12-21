@@ -13,8 +13,10 @@ definePage({
 const router = useRouter();
 const auth = useAuth();
 const { data: me, error } = useMe();
-watch(error, () => {
-  auth.sessionId.value = null;
+watch(error, err => {
+  if (err) {
+    auth.sessionId.value = null;
+  }
 });
 
 watch(
