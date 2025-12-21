@@ -46,7 +46,8 @@ export const magicChanneler: MinionBlueprint = {
   },
   manaCost: 2,
   runeCost: {
-    MIGHT: 1
+    MIGHT: 1,
+    KNOWLEDGE: 1
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,

@@ -25,7 +25,7 @@ export const cosmicDivinator: MinionBlueprint = {
   description: dedent`
   @Loyalty 1@, @Consume@ @[knowledge]@.
 
-  @Spellpower 1@.
+  @Spellpower 2@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -52,8 +52,8 @@ export const cosmicDivinator: MinionBlueprint = {
   },
   manaCost: 4,
   runeCost: {
-    KNOWLEDGE: 1,
-    MIGHT: 2
+    KNOWLEDGE: 2,
+    RESONANCE: 1
   },
   speed: CARD_SPEED.SLOW,
   atk: 2,

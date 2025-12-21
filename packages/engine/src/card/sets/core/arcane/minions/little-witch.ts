@@ -4,6 +4,7 @@ import { singleEnemyMinionTargetRules } from '../../../../card-utils';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
+  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
@@ -28,10 +29,11 @@ export const littleWitch: MinionBlueprint = {
       foil: {
         sheen: false,
         oil: false,
-        gradient: true,
-        lightGradient: false,
+        gradient: false,
+        lightGradient: true,
         scanlines: false,
-        glitter: true
+        glitter: true,
+        goldenGlare: false
       },
       dimensions: {
         width: 174,
@@ -55,10 +57,11 @@ export const littleWitch: MinionBlueprint = {
   abilities: [
     {
       id: 'little-witch-ability-1',
-      description:
-        'Deal 1 damage to an enemy minion. Increase the cost of this ability by 1.',
+      description: 'Deal 1 damage to an enemy minion. @Seal@ this ability.',
       label: 'Deal 1 Damage',
-      canUse: singleEnemyMinionTargetRules.canPlay,
+      canUse: (game, card) =>
+        card.location === CARD_LOCATIONS.BOARD &&
+        singleEnemyMinionTargetRules.canPlay(game, card),
       getPreResponseTargets(game, card) {
         return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
           type: 'ability',
@@ -75,7 +78,7 @@ export const littleWitch: MinionBlueprint = {
         if (!target) return;
         if (target.location !== 'board') return;
         await target.takeDamage(card, new AbilityDamage(1));
-        await ability.addInterceptor('manaCost', val => val + 1);
+        ability.seal();
       }
     }
   ],

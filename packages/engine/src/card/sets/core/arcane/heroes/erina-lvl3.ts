@@ -35,19 +35,19 @@ export const erinaLv3: HeroBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
-        oil: true,
+        sheen: false,
+        oil: false,
         gradient: true,
-        lightGradient: false,
-        scanlines: false
+        lightGradient: true,
+        scanlines: true
       },
       dimensions: {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'heroes/erina-lv3-bg',
+      main: 'heroes/erina-lv3',
+      breakout: 'heroes/erina-lv3-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
@@ -87,7 +87,7 @@ export const erinaLv3: HeroBlueprint = {
       id: 'erina-lv3-ability-2',
       canUse: () => true,
       shouldExhaust: true,
-      manaCost: 1,
+      manaCost: 0,
       runeCost: {},
       description: '@Empower 2@. The next spell you play this turn has @Echo@',
       getPreResponseTargets: () => Promise.resolve([]),

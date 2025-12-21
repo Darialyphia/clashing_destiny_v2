@@ -11,6 +11,7 @@ export class DrawCardAction implements CardActionRule {
   predicate(card: CardViewModel) {
     return (
       card.kind === CARD_KINDS.HERO &&
+      card.location === 'board' &&
       this.client.state.phase.state === GAME_PHASES.MAIN &&
       !this.client.state.effectChain &&
       card.player.canPerformResourceAction &&

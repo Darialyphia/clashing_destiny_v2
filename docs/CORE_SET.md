@@ -40,7 +40,6 @@ Hero | Arcane | Lvl 1 | 0 / 15 | (slow)
 [x] Erina Lvl 2
 
 Hero | Arcane | Lvl 2 | 0 / 18 | (slow)
-[x]
 Has +1 attack as long as you played a spell this turn.
 
 -> (2)(fast): Draw a spell, then discard 1.
@@ -223,7 +222,7 @@ Your hero gains Atk equals to your Spellpower until the end of the turn.
 
 ---
 
-[ ] Sigil of Wisdom
+[x] Sigil of Wisdom
 
 Sigil | Arcane | (2) | K | Countdown 2 | (slow)
 

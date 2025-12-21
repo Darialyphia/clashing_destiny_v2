@@ -1,10 +1,7 @@
 import dedent from 'dedent';
 import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import {
-  singleEnemyMinionTargetRules,
-  singleEnemyTargetRules
-} from '../../../../card-utils';
+import { singleEnemyTargetRules } from '../../../../card-utils';
 import {
   CARD_SPEED,
   CARD_KINDS,
@@ -14,7 +11,6 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const galacticExplosion: SpellBlueprint = {
@@ -53,10 +49,10 @@ export const galacticExplosion: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 10,
+  manaCost: 11,
   runeCost: {
     KNOWLEDGE: 3,
-    FOCUS: 2
+    RESONANCE: 3
   },
   speed: CARD_SPEED.SLOW,
   abilities: [],

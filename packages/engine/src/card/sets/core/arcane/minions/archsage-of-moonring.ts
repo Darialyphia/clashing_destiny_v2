@@ -2,10 +2,7 @@ import dedent from 'dedent';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../../utils/damage';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  singleEnemyMinionTargetRules,
-  singleEnemyTargetRules
-} from '../../../../card-utils';
+import { singleEnemyTargetRules } from '../../../../card-utils';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
@@ -55,7 +52,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   manaCost: 4,
   runeCost: {
     KNOWLEDGE: 2,
-    MIGHT: 1
+    RESONANCE: 2
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,

@@ -44,7 +44,7 @@ export const manaFueledGolem: MinionBlueprint = {
   },
   manaCost: 3,
   runeCost: {
-    MIGHT: 1
+    MIGHT: 2
   },
   speed: CARD_SPEED.SLOW,
   atk: 0,

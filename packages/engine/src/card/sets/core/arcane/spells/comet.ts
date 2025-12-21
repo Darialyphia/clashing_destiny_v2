@@ -54,7 +54,7 @@ export const comet: SpellBlueprint = {
   manaCost: 4,
   runeCost: {
     KNOWLEDGE: 3,
-    FOCUS: 1
+    RESONANCE: 2
   },
   speed: CARD_SPEED.SLOW,
   abilities: [],

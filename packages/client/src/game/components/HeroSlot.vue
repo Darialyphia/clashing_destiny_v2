@@ -104,6 +104,19 @@ const gainRune = (rune: Rune) => {
         </template>
         Gain a Knowledge Rune.
       </UiSimpleTooltip>
+      <UiSimpleTooltip :disabled="!canGainRune">
+        <template #trigger>
+          <button
+            class="rune"
+            style="--bg: url(/assets/ui/card/rune-resonance.png)"
+            :disabled="!canGainRune"
+            @click="gainRune(RUNES.RESONANCE)"
+          >
+            {{ player.unlockedRunes.RESONANCE ?? 0 }}
+          </button>
+        </template>
+        Gain a Resonance Rune.
+      </UiSimpleTooltip>
     </div>
   </div>
 </template>

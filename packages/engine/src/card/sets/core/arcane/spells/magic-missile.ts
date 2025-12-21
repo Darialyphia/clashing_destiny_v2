@@ -22,7 +22,7 @@ export const magicMissile: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Magic Missile',
   description: dedent`
-    Deal 1 damage to an enemy minions.
+    Deal 1 damage to an enemy minion.
 
     @Foresight@.
 `,

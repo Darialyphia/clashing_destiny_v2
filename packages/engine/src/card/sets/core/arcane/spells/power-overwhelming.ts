@@ -24,7 +24,7 @@ export const powerOverwhelming: SpellBlueprint = {
   name: 'Power Overwhelming',
   description: dedent`
   If you have @[knowledge]@ @[knowledge]@ @[knowledge]@ @[knowledge]@ @[knowledge]@, this is Burst speed.
-  Your hero gains Atk equals to your Spellpower until the end of the turn.
+  Your hero gains Atk equals to your @Spellpower@ until the end of the turn.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,

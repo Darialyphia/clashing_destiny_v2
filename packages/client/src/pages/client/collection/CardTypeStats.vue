@@ -89,7 +89,7 @@ const getHighestRuneCostByRune = (rune: Rune) => {
 .rune-counts {
   flex-grow: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--size-1);
   justify-items: center;
   margin-block: var(--size-1) var(--size-2);

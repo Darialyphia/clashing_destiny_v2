@@ -47,7 +47,7 @@ export const sigilOfWisdom: SigilBlueprint = {
   manaCost: 3,
   runeCost: {
     KNOWLEDGE: 1,
-    FOCUS: 1
+    RESONANCE: 1
   },
   abilities: [],
   maxCountdown: 2,

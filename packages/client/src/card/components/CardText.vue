@@ -194,6 +194,16 @@ const tokens = computed<Token[]>(() => {
         Might Rune
       </UiSimpleTooltip>
 
+      <!-- <UiSimpleTooltip v-else-if="token.type === RUNES.RESONANCE">
+        <template #trigger>
+          <img
+            src="/assets/ui/card/rune-resonance.png"
+            class="inline token rune"
+          />
+        </template>
+        Resonance Rune
+      </UiSimpleTooltip> -->
+
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
         <template #trigger>
           <img src="/assets/ui/speed-slow.png" class="inline token speed" />
@@ -342,6 +352,7 @@ const tokens = computed<Token[]>(() => {
 
 .token-KNOWLEDGE,
 .token-FOCUS,
+.token-RESONANCE,
 .token-MIGHT {
   img {
     width: calc(17px * var(--pixel-scale) / 2);

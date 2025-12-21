@@ -211,7 +211,6 @@ export class CombatPhase
     );
 
     this.target = target;
-    await this.attacker.exhaust();
 
     this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
     await this.game.emit(
@@ -284,12 +283,14 @@ export class CombatPhase
 
     const canResolve = defender.isAlive && this.attacker.isAlive;
     if (canResolve) {
-      await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
-      if (this.attacker.isAlive) {
+      if (!this.attacker.isExhausted) {
+        await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
+        await this.attacker.exhaust();
+      }
+      if (this.attacker.isAlive && !defender.isExhausted) {
         await defender.dealDamage(this.attacker, new CombatDamage(defender));
       }
     }
-
     await this.blocker?.exhaust();
 
     await this.game.emit(

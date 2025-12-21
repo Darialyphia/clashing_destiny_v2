@@ -381,6 +381,7 @@ export class CardViewModel {
             new GainRuneAction(this.getClient(), RUNES.MIGHT),
             new GainRuneAction(this.getClient(), RUNES.FOCUS),
             new GainRuneAction(this.getClient(), RUNES.KNOWLEDGE),
+            new GainRuneAction(this.getClient(), RUNES.RESONANCE),
             new DrawCardAction(this.getClient())
           ]
         : []),
