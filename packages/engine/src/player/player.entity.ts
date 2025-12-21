@@ -48,6 +48,7 @@ export type SerializedPlayer = {
   remainingCardsInMainDeck: number;
   remainingCardsInDestinyDeck: number;
   canPerformResourceAction: boolean;
+  canPerformDrawCardResourceAction: boolean;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -87,11 +88,11 @@ export class Player
 
   private readonly _unlockedRunes: RuneCost = {};
 
+  private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
+
   _hasPassedThisRound = false;
 
   hasPlayedDestinyCardThisTurn = false;
-
-  _resourceActionPerformedThisTurn = 0;
 
   private _hero!: {
     card: HeroCard;
@@ -168,6 +169,10 @@ export class Player
     );
   }
 
+  get resourceActionsPerformedThisTurn() {
+    return [...this._resourceActionsPerformedThisTurn];
+  }
+
   serialize() {
     return {
       id: this.id,
@@ -186,7 +191,10 @@ export class Player
       influence: this.influence,
       unlockedRunes: { ...this._unlockedRunes },
       canPerformResourceAction:
-        this.resourceActionPerformedThisTurn < this.maxResourceActionPerTurn
+        this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
+      canPerformDrawCardResourceAction: !this._resourceActionsPerformedThisTurn.some(
+        a => a.type === 'draw_card'
+      )
     };
   }
 
@@ -316,11 +324,17 @@ export class Player
     );
   }
 
-  get resourceActionPerformedThisTurn() {
-    return this._resourceActionPerformedThisTurn;
-  }
-
   async performResourceAction(action: PlayerResourceAction) {
+    // Check if draw_card action has already been performed this turn
+    if (action.type === 'draw_card') {
+      const hasDrawnCardThisTurn = this._resourceActionsPerformedThisTurn.some(
+        a => a.type === 'draw_card'
+      );
+      if (hasDrawnCardThisTurn) {
+        throw new GameError('Cannot draw card more than once per turn');
+      }
+    }
+
     await match(action)
       .with({ type: 'gain_rune' }, async ({ rune }) => {
         await this.gainRune({ [rune]: 1 });
@@ -329,7 +343,8 @@ export class Player
         await this.cardManager.draw(1);
       })
       .exhaustive();
-    this._resourceActionPerformedThisTurn++;
+
+    this._resourceActionsPerformedThisTurn.push(action);
   }
 
   private async playCard(card: AnyCard) {
@@ -413,7 +428,7 @@ export class Player
       new PlayerTurnEvent({ player: this })
     );
     this.hasPlayedDestinyCardThisTurn = false;
-    this._resourceActionPerformedThisTurn = 0;
+    this._resourceActionsPerformedThisTurn = [];
     this._hasPassedThisRound = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       if (card.shouldWakeUpAtTurnStart) {
