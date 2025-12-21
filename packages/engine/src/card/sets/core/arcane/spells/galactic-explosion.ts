@@ -49,7 +49,7 @@ export const galacticExplosion: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 11,
+  manaCost: 10,
   runeCost: {
     KNOWLEDGE: 3,
     RESONANCE: 3

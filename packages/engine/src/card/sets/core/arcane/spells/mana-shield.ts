@@ -51,7 +51,7 @@ export const manaShield: SpellBlueprint = {
   },
   manaCost: 2,
   runeCost: {
-    KNOWLEDGE: 2,
+    KNOWLEDGE: 1,
     RESONANCE: 1
   },
   speed: CARD_SPEED.FAST,

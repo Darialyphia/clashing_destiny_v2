@@ -52,7 +52,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   manaCost: 4,
   runeCost: {
     KNOWLEDGE: 2,
-    RESONANCE: 2
+    RESONANCE: 1
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,

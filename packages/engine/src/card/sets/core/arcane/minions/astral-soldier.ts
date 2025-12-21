@@ -51,7 +51,7 @@ export const astralSoldier: MinionBlueprint = {
   },
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 2,
+  maxHp: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
