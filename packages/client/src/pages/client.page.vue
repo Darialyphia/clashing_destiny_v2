@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuth } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import { GAME_STATUS } from '@game/api';
 
@@ -9,9 +10,12 @@ definePage({
   }
 });
 
-const { data: me } = useMe();
-
 const router = useRouter();
+const auth = useAuth();
+const { data: me, error } = useMe();
+watch(error, () => {
+  auth.sessionId.value = null;
+});
 
 watch(
   me,
