@@ -46,13 +46,13 @@ export const astralExplorer: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 2,
   runeCost: {
     KNOWLEDGE: 1,
     RESONANCE: 1
   },
   speed: CARD_SPEED.SLOW,
-  atk: 2,
+  atk: 1,
   maxHp: 2,
   canPlay: () => true,
   abilities: [],
@@ -60,7 +60,7 @@ export const astralExplorer: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          await scry(game, card, 2);
+          await scry(game, card, 3);
         }
       })
     );

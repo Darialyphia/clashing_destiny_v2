@@ -19,5 +19,8 @@
       "packages/*",
       "configs/*"
     ]
+  },
+  "dependencies": {
+    "@formkit/drag-and-drop": "^0.5.3"
   }
 }
