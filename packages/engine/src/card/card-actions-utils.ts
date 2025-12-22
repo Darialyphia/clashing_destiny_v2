@@ -7,20 +7,27 @@ import type { AnyCard } from './entities/card.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
-  const cardsToPutAtBottom = await game.interaction.chooseCards<AnyCard>({
+
+  const buckets = await game.interaction.rearrangeCards({
     player: card.player,
-    minChoiceCount: 0,
-    maxChoiceCount: amount,
-    choices: cards,
-    label: `Choose up to ${amount} cards to put at the bottom of your deck`
+    source: card,
+    label: `Drag cards to put them at the top or bottom of your deck`,
+    buckets: [
+      { id: 'top', label: 'Top', cards: cards.slice() },
+      { id: 'bottom', label: 'Bottom', cards: [] }
+    ]
   });
 
-  for (const card of cardsToPutAtBottom) {
+  buckets.top.reverse().forEach(card => {
+    card.player.cardManager.mainDeck.pluck(card);
+    card.player.cardManager.mainDeck.addToTop(card);
+  });
+  buckets.bottom.reverse().forEach(card => {
     card.player.cardManager.mainDeck.pluck(card);
     card.player.cardManager.mainDeck.addToBottom(card);
-  }
+  });
 
-  return { cards, cardsToPutAtBottom };
+  return { cards, result: buckets };
 };
 
 export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[]) => {

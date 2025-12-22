@@ -1,6 +1,8 @@
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
+import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleSpellpowerBuffModifier } from '../../../../../modifier/modifiers/simple-spellpower.buff.modifier';
+import { scry } from '../../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -20,7 +22,7 @@ export const astralExplorer: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Astral Explorer',
-  description: '@Spellpower 1@.',
+  description: '@On Enter@: @Scry 2@.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -55,27 +57,11 @@ export const astralExplorer: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    const MODIFIER_ID = 'astral-explorer-spellpower';
     await card.modifiers.add(
-      new Modifier('astral-explorer-aura', game, card, {
-        mixins: [
-          new AuraModifierMixin(game, {
-            isElligible(candidate) {
-              return (
-                card.location === CARD_LOCATIONS.BOARD &&
-                candidate.equals(card.player.hero)
-              );
-            },
-            async onGainAura(candidate) {
-              await candidate.modifiers.add(
-                new SimpleSpellpowerBuffModifier(MODIFIER_ID, game, card, { amount: 1 })
-              );
-            },
-            async onLoseAura(candidate) {
-              await candidate.modifiers.remove(MODIFIER_ID);
-            }
-          })
-        ]
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          await scry(game, card, 2);
+        }
       })
     );
   },

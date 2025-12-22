@@ -27,6 +27,7 @@ import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import TurnIndicator from './TurnIndicator.vue';
+import RearrangeCardsModal from './RearrangeCardsModal.vue';
 
 const { clocks, options } = defineProps<{
   clocks?: {
@@ -73,6 +74,7 @@ const onBoardMouseup = () => {
   <!-- <PassConfirmationModal /> -->
   <PlayedCard />
   <ChooseCardModal />
+  <RearrangeCardsModal />
   <CombatArrows />
   <AnswerQuestionModal />
   <DraggedCard />
