@@ -290,7 +290,7 @@ Whenever you Consume, draw a card in your Destiny Zone and this loses 1 durabili
 
 Simurgh
 
-[ ] Minion | Arcane | (6) | KKRRR | 4 / 4 | (slow)
+[x] Minion | Arcane | (6) | KKRRR | 4 / 4 | (slow)
 
 Spellpower 1.
 
@@ -298,7 +298,7 @@ On Attack: Put 2 Splitting Beams in your hand, then reduce the cost of Arcane sp
 
 ---
 
-[ ] Sigil of Simurgh
+[x] Sigil of Simurgh
 
 Sigil | Arcane | (3) | KKK | Countdown 3 | (slow)
 
