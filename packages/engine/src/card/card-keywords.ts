@@ -299,6 +299,13 @@ export const KEYWORDS = {
     description:
       'This unit deals its combat damage before the attacking unit during combat.',
     aliases: []
+  },
+  TRUE_DAMAGE: {
+    id: 'true-damage',
+    name: 'True Damage',
+    description:
+      'This damage cannot be prevented or reduced, and is not affected by Spellpower.',
+    aliases: []
   }
 };
 

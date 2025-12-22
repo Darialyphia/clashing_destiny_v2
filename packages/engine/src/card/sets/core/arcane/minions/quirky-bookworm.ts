@@ -1,5 +1,4 @@
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { scry } from '../../../../card-actions-utils';
+import { GAME_EVENTS } from '../../../../../game/game.events';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -7,18 +6,19 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES
+  RARITIES,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 
-export const astralExplorer: MinionBlueprint = {
-  id: 'astral-explorer',
+export const quirkyBookworm: MinionBlueprint = {
+  id: 'quirky-bookworm',
   kind: CARD_KINDS.MINION,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Astral Explorer',
-  description: '@On Enter@: @Scry 2@.',
+  name: 'Quirky Bookworm',
+  description: '',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -42,24 +42,33 @@ export const astralExplorer: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 1,
   runeCost: {
-    KNOWLEDGE: 1,
-    RESONANCE: 1
+    KNOWLEDGE: 1
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 2,
+  maxHp: 1,
   canPlay: () => true,
-  abilities: [],
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        handler: async () => {
-          await scry(game, card, 3);
-        }
-      })
-    );
-  },
+  abilities: [
+    {
+      id: 'quirky-bookworm-ability',
+      description: 'Gain @[knowledge]@ until end of turn.',
+      label: 'Gain @[knowledge]@',
+      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
+      getPreResponseTargets: () => Promise.resolve([]),
+      manaCost: 1,
+      shouldExhaust: true,
+      runeCost: {},
+      speed: CARD_SPEED.FAST,
+      async onResolve(game, card) {
+        await card.player.gainRune({ KNOWLEDGE: 1 });
+        game.once(GAME_EVENTS.TURN_END, async () => {
+          await card.player.spendRune({ KNOWLEDGE: 1 });
+        });
+      }
+    }
+  ],
+  async onInit() {},
   async onPlay() {}
 };

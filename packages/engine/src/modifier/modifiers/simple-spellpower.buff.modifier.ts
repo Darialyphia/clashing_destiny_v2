@@ -1,7 +1,9 @@
+import { CARD_LOCATIONS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { Game } from '../../game/game';
 import { HeroInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -28,6 +30,7 @@ export class SimpleSpellpowerBuffModifier extends Modifier<HeroCard> {
             return Math.max(0, value + options.amount * this._stacks);
           }
         }),
+        new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.BOARD),
         ...(options.mixins ?? [])
       ]
     });

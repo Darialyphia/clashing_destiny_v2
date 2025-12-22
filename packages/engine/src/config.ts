@@ -35,6 +35,7 @@ export type Config = {
 
   BASE_LOYALTY_HP_COST: number;
   BASE_LOYALTY_COST_INCREASE: number;
+  BASE_LOYALTY_RUNE_CONSUMPTION: number;
 };
 
 export const defaultConfig: Config = {
@@ -69,6 +70,7 @@ export const defaultConfig: Config = {
 
   MAX_RESOURCE_ACTIONS_PER_TURN: 2,
 
-  BASE_LOYALTY_HP_COST: 1,
-  BASE_LOYALTY_COST_INCREASE: 0
+  BASE_LOYALTY_HP_COST: 0,
+  BASE_LOYALTY_COST_INCREASE: 0,
+  BASE_LOYALTY_RUNE_CONSUMPTION: 1
 };

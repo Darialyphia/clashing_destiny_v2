@@ -53,9 +53,9 @@ export const manaSpark: SpellBlueprint = {
   canPlay: () => false,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
-    game.on(GAME_EVENTS.TURN_END, () => {
+    game.on(GAME_EVENTS.TURN_END, async () => {
       if (card.location === CARD_LOCATIONS.DESTINY_ZONE) {
-        card.sendToBanishPile();
+        await card.sendToBanishPile();
       }
     });
   },

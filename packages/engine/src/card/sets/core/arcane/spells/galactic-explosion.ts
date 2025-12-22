@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../../utils/damage';
+import { SpellDamage, UnpreventableDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../../card-utils';
 import {
@@ -22,9 +22,9 @@ export const galacticExplosion: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Galactic Explosion',
   description: dedent`
-  This costs 1 less for every @[knowledge]@ you have.
+  The mana cost of this card is reduced by your @Spellpower@.
 
-  Deal 8 Damage to a unit.
+  Deal 7 @True Damage@ to a unit.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
@@ -49,10 +49,10 @@ export const galacticExplosion: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 10,
+  manaCost: 7,
   runeCost: {
     KNOWLEDGE: 3,
-    RESONANCE: 2
+    RESONANCE: 3
   },
   speed: CARD_SPEED.SLOW,
   abilities: [],
@@ -68,13 +68,13 @@ export const galacticExplosion: SpellBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('galactic-explosion-manacost-modifier', game, card, {
-        amount: () => -(card.player.unlockedRunes.KNOWLEDGE ?? 0)
+        amount: () => -card.player.hero.spellPower
       })
     );
   },
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {
-      await target.takeDamage(card, new SpellDamage(8, card));
+      await target.takeDamage(card, new UnpreventableDamage(8));
     }
   }
 };

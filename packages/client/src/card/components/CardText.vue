@@ -60,13 +60,16 @@ const tokens = computed<Token[]>(() => {
       );
     });
     if (keyword) return { type: 'keyword', text: part, keyword };
-    const card = Object.values(CARDS_DICTIONARY).find(c => c.name === part);
-    if (card)
+    const card = Object.values(CARDS_DICTIONARY).find(c => {
+      return c.name === part;
+    });
+    if (card) {
       return {
         type: 'card',
         text: part,
         card: card
       };
+    }
     if (part === '[exhaust]') return { type: 'exhaust' };
     if (part.startsWith('[mana]')) {
       return { type: 'mana', text: part.replace('[mana] ', '') };
@@ -254,13 +257,14 @@ const tokens = computed<Token[]>(() => {
 .card-text {
   white-space: pre-wrap;
   color: var(--card-text-color, black);
-
   line-height: 1.2;
 }
 
-:is(.token-keyword, .token-card) {
+.token-keyword {
   font-weight: var(--font-weight-7);
-  text-decoration: underline;
+  padding: var(--size-1);
+  --color: var(--blue-10);
+  color: var(--blue-11);
 }
 
 .token-mana {
@@ -304,11 +308,12 @@ const tokens = computed<Token[]>(() => {
 }
 .token-level-bonus,
 .token-lineage-bonus {
-  font-weight: var(--font-weight-7);
+  font-style: italic;
   text-decoration: underline;
 }
 .token-card {
-  color: var(--lime-4);
+  font-weight: var(--font-weight-5);
+  color: var(--blue-10);
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {

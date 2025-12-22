@@ -26,11 +26,18 @@ import { arcaneConduit } from './core/arcane/minions/arcane-conduit';
 import { manaShield } from './core/arcane/spells/mana-shield';
 import { timeBomb } from './core/arcane/sigils/time-bomb';
 import { spellbladeDuelist } from './core/arcane/minions/spellblade-duelist';
+import { manaWisp } from './core/neutral/minions/mana-wisp';
+import { quirkyBookworm } from './core/arcane/minions/quirky-bookworm';
+import { orbOfConstellations } from './core/arcane/artifact/orb-of-constellations';
+import { manaSpark } from './core/neutral/spells/mana-spark';
+import { simurgh } from './core/arcane/minions/simurgh';
+import { sigilOfSimurgh } from './core/arcane/sigils/sigil-of-simurgh';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
+    manaSpark,
     spiritOfArcane,
     erinaLv1,
     erinaLv2,
@@ -56,6 +63,11 @@ export const coreSet: CardSet = {
     sigilOfWisdom,
     manaShield,
     timeBomb,
-    spellbladeDuelist
+    spellbladeDuelist,
+    manaWisp,
+    quirkyBookworm,
+    orbOfConstellations,
+    simurgh,
+    sigilOfSimurgh
   ]
 };

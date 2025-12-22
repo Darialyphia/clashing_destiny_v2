@@ -155,7 +155,7 @@ useResizeObserver(descriptionChild, () => {
   );
 });
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
-const DESCRIPTION_MAX_TEXT_SIZE = 15;
+const DESCRIPTION_MAX_TEXT_SIZE = 14;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
@@ -800,9 +800,9 @@ const kindBg = computed(() => {
 .description {
   padding: 0 4px;
   width: calc(144px * var(--pixel-scale));
-  height: calc(45px * var(--pixel-scale));
+  height: calc(44px * var(--pixel-scale));
   position: absolute;
-  top: calc(18px * var(--pixel-scale));
+  top: calc(19px * var(--pixel-scale));
   left: calc(8px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;

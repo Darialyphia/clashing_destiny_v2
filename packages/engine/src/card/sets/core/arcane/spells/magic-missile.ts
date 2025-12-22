@@ -21,9 +21,7 @@ export const magicMissile: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Magic Missile',
-  description: dedent`
-    Deal 1 damage to an enemy..
-`,
+  description: dedent`Deal 1 damage to an enemy.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],

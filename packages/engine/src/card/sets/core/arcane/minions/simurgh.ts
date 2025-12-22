@@ -1,0 +1,122 @@
+import dedent from 'dedent';
+import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { SimpleSpellpowerBuffModifier } from '../../../../../modifier/modifiers/simple-spellpower.buff.modifier';
+import type { MinionBlueprint } from '../../../../card-blueprint';
+import {
+  CARD_DECK_SOURCES,
+  CARD_KINDS,
+  CARD_SETS,
+  CARD_SPEED,
+  FACTIONS,
+  RARITIES,
+  CARD_LOCATIONS
+} from '../../../../card.enums';
+import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
+import { splittingBeam } from '../spells/splitting-beam';
+import { isSpell } from '../../../../card-utils';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+
+export const simurgh: MinionBlueprint = {
+  id: 'simurgh',
+  kind: CARD_KINDS.MINION,
+  collectable: false,
+  unique: false,
+  setId: CARD_SETS.CORE,
+  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
+  name: 'Simurgh',
+  description: dedent`
+  @Spellpower 1@.
+  
+  @On Attack@: Put 2 Splitting Beams in your hand, then reduce the cost of Arcane spells in your hand by 1.
+  `,
+  faction: FACTIONS.ARCANE,
+  rarity: RARITIES.TOKEN,
+  tags: [],
+  art: {
+    default: {
+      foil: {
+        sheen: true,
+        oil: false,
+        gradient: false,
+        lightGradient: false,
+        scanlines: false
+      },
+      dimensions: {
+        width: 174,
+        height: 133
+      },
+      bg: 'placeholder-bg',
+      main: 'placeholder',
+      breakout: 'placeholder-breakout',
+      frame: 'default',
+      tint: FACTIONS.ARCANE.defaultCardTint
+    }
+  },
+  manaCost: 6,
+  runeCost: {
+    KNOWLEDGE: 2,
+    MIGHT: 2,
+    RESONANCE: 1
+  },
+  speed: CARD_SPEED.SLOW,
+  atk: 4,
+  maxHp: 4,
+  canPlay: () => true,
+  abilities: [],
+  async onInit(game, card) {
+    const spellpowerBuff = new SimpleSpellpowerBuffModifier(
+      'simurgh-spellpower',
+      game,
+      card,
+      { amount: 1 }
+    );
+
+    await card.modifiers.add(
+      new Modifier('simurgh-aura', game, card, {
+        mixins: [
+          new AuraModifierMixin(game, {
+            isElligible(candidate) {
+              return (
+                card.location === CARD_LOCATIONS.BOARD &&
+                candidate.equals(card.player.hero)
+              );
+            },
+            async onGainAura(candidate) {
+              await candidate.modifiers.add(spellpowerBuff);
+            },
+            async onLoseAura(candidate) {
+              await candidate.modifiers.remove(spellpowerBuff);
+            }
+          })
+        ]
+      })
+    );
+    await card.modifiers.add(
+      new OnAttackModifier(game, card, {
+        async handler() {
+          const cardsToAdd = [
+            await card.player.generateCard(splittingBeam.id),
+            await card.player.generateCard(splittingBeam.id)
+          ];
+          for (const c of cardsToAdd) {
+            await c.addToHand();
+          }
+
+          const arcaneSpellsInHand = card.player.cardManager.hand.filter(
+            c => c.faction === FACTIONS.ARCANE && isSpell(c)
+          );
+
+          for (const arcaneSpell of arcaneSpellsInHand) {
+            await arcaneSpell.modifiers.add(
+              new SimpleManacostModifier('simurgh-cost-reduction', game, card, {
+                amount: 1
+              })
+            );
+          }
+        }
+      })
+    );
+  },
+  async onPlay(game, card) {}
+};

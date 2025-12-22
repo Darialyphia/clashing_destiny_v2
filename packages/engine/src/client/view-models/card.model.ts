@@ -301,6 +301,13 @@ export class CardViewModel {
     );
   }
 
+  get canBlock() {
+    if ('canBlock' in this.data) {
+      return this.data.canBlock as boolean;
+    }
+    return false;
+  }
+
   get canCounterattack() {
     if ('canCounterattack' in this.data) {
       return this.data.canCounterattack as boolean;

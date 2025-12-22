@@ -174,6 +174,7 @@ export class MinionCard extends Card<
     const base =
       !this._isExhausted &&
       this.atk > 0 &&
+      this.zone === BOARD_SLOT_ZONES.ATTACK_ZONE &&
       target.canBeAttacked(this) &&
       !this.game.effectChainSystem.currentChain;
 
@@ -183,7 +184,11 @@ export class MinionCard extends Card<
   }
 
   canBlock(attacker: AttackTarget, target: AttackTarget) {
-    const base = !this._isExhausted && attacker.canBeBlocked(this, target);
+    const base =
+      !this._isExhausted &&
+      this.zone === BOARD_SLOT_ZONES.DEFENSE_ZONE &&
+      attacker.canBeBlocked(this, target);
+
     return this.interceptors.canBlock.getValue(base, {
       attacker,
       target

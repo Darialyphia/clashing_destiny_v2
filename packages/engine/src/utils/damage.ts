@@ -6,7 +6,7 @@ export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',
   ABILITY: 'ABILITY',
   SPELL: 'SPELL',
-  UBPREVENTABLE: 'UNPREVENTABLE'
+  UNPREVENTABLE: 'UNPREVENTABLE'
 } as const;
 
 export type DamageType = Values<typeof DAMAGE_TYPES>;
@@ -78,7 +78,7 @@ export class AbilityDamage extends Damage {
 
 export class UnpreventableDamage extends Damage {
   constructor(amount: number) {
-    super({ baseAmount: amount, type: DAMAGE_TYPES.UBPREVENTABLE });
+    super({ baseAmount: amount, type: DAMAGE_TYPES.UNPREVENTABLE });
   }
 
   getFinalAmount(): number {

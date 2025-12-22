@@ -1,6 +1,5 @@
 import type { AnyObject } from '@game/shared';
 import type { inferInterceptor, Interceptable } from './utils/interceptable';
-import { ModifierManager } from './modifier/modifier-manager.component';
 
 export type EmptyInterceptables = Record<string, never>;
 export type AnyEntity = Entity<AnyObject>;

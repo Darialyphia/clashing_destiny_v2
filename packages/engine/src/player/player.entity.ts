@@ -2,7 +2,13 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
+import {
+  assert,
+  isDefined,
+  uppercaseFirstLetter,
+  type MaybePromise,
+  type Serializable
+} from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -23,7 +29,7 @@ import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 import type { RuneCost } from '../card/card-blueprint';
-import { CARD_KINDS, type Rune } from '../card/card.enums';
+import { CARD_KINDS, RUNES, type Rune } from '../card/card.enums';
 import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
@@ -428,10 +434,25 @@ export class Player
     if (loyaltyHpCost > 0) {
       await this.hero.takeDamage(card, new UnpreventableDamage(loyaltyHpCost));
     }
+
+    for (let i = 1; i <= card.loyaltyRuneConsumption; i++) {
+      await this.game.interaction.askQuestion({
+        source: card,
+        player: this,
+        questionId: 'PLAY_CARD_LOYALTY_COST',
+        label: `Loyalty cost: Choose a rune to consume (${i} / ${card.loyaltyRuneConsumption})`,
+        minChoiceCount: 1,
+        maxChoiceCount: 1,
+        choices: Object.values(RUNES).map(rune => ({
+          id: rune,
+          label: uppercaseFirstLetter(rune.toLocaleLowerCase())
+        }))
+      });
+    }
   }
+
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     await this.payForManaCost(card.manaCost, manaCostIndices);
-    await this.payForLoyaltyCost(card);
     card.isPlayedFromHand = true;
     await this.playCard(card);
   }
@@ -447,7 +468,6 @@ export class Player
 
   async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
-    await this.payForLoyaltyCost(card);
     card.isPlayedFromHand = true;
     await this.playCard(card);
   }

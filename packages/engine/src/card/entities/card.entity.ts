@@ -58,6 +58,7 @@ export type CardInterceptors = {
   loyaltyManaCostIncrease: Interceptable<number>;
   loyaltyDestinyCostIncrease: Interceptable<number>;
   loyaltyHpCost: Interceptable<number>;
+  loyaltyRuneConsumption: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -75,7 +76,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   shouldWakeUpAtTurnStart: new Interceptable(),
   loyaltyManaCostIncrease: new Interceptable(),
   loyaltyDestinyCostIncrease: new Interceptable(),
-  loyaltyHpCost: new Interceptable()
+  loyaltyHpCost: new Interceptable(),
+  loyaltyRuneConsumption: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -203,6 +205,13 @@ export abstract class Card<
   get loyaltyManaCostIncrease() {
     return this.interceptors.loyaltyManaCostIncrease.getValue(
       this.game.config.BASE_LOYALTY_COST_INCREASE,
+      {}
+    );
+  }
+
+  get loyaltyRuneConsumption() {
+    return this.interceptors.loyaltyRuneConsumption.getValue(
+      this.game.config.BASE_LOYALTY_RUNE_CONSUMPTION,
       {}
     );
   }

@@ -8,32 +8,26 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { AbilityDamage } from '../../../../../utils/damage';
 import type { BoardSlotZone } from '../../../../../board/board.constants';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { SigilCard } from '../../../../entities/sigil.entity';
 import dedent from 'dedent';
-import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { simurgh } from '../minions/simurgh';
+import type { MinionCard } from '../../../../entities/minion.entity';
 
-export const timeBomb: SigilBlueprint = {
-  id: 'time-bomb',
+export const sigilOfSimurgh: SigilBlueprint = {
+  id: 'sigil-of-simurgh',
   kind: CARD_KINDS.SIGIL,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Time Bomb',
-  description: dedent`
-  @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If There is another Time Bomb in the same zone, exhaust them as well.
-  
-  @[lvl] 3 Bonus]: @Echo@.
-  `,
+  name: 'Sigil of Simurgh',
+  description: dedent`On Destroyed: Summon a ${simurgh.name} in the same zone this was in.`,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.EPIC,
   tags: [],
   art: {
     default: {
@@ -55,29 +49,20 @@ export const timeBomb: SigilBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 3,
   runeCost: {
-    RESONANCE: 1
+    KNOWLEDGE: 1,
+    RESONANCE: 2
   },
   abilities: [],
-  maxCountdown: 1,
+  maxCountdown: 3,
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
-    )) as LevelBonusModifier<SigilCard>;
-
-    await card.modifiers.add(
-      new EchoModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
-      })
-    );
-
     // Tracks the zone the Time Bomb was in when it dies since OnDeath triggers after it has left the board
     let zone: BoardSlotZone | null = null;
     await card.modifiers.add(
-      new Modifier<SigilCard>('time-bomb-zone-tracker', game, card, {
+      new Modifier<SigilCard>('sigil-of-simurgh-zone-tracker', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_BEFORE_DESTROY,
@@ -93,21 +78,8 @@ export const timeBomb: SigilBlueprint = {
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         handler: async () => {
-          const enemyMinions = card.player.enemyMinions.filter(
-            minion => minion.zone === zone
-          );
-
-          const hasOtherTimeBomb = card.player.boardSide
-            .getZone(card.zone!)
-            .sigils.some(sigil => {
-              sigil.blueprintId === 'time-bomb' && !sigil.equals(card);
-            });
-          for (const minion of enemyMinions) {
-            await minion.takeDamage(card, new AbilityDamage(1));
-            if (hasOtherTimeBomb) {
-              await minion.exhaust();
-            }
-          }
+          const simurghCard = await card.player.generateCard<MinionCard>(simurgh.id);
+          await simurghCard.playImmediatelyAt(zone!);
         }
       })
     );

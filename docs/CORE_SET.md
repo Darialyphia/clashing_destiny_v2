@@ -192,7 +192,7 @@ Foresight.
 
 ---
 
-Mana wisp
+[x] Mana wisp
 
 Minion | Arcane | (1) | R | 1 / 1 | (slow)
 
@@ -240,15 +240,13 @@ Minion | Arcane | (2) | K | 1 / 1 | (slow)
 
 Minion | Arcane | ((3)) | KRR | 3 / 4 | (slow)
 
-Rush.
-
 On Hero Hit: Add Mana Sparks to your hand equal to the amount of damage dealt.
 
 On Hit: you may consume R. If you do, this gains +1 ATK and Overwhelm this turn.
 
 ---
 
-[ ] Library Bookworm
+[x] Quirky Bookworm
 
 Minion | Arcane | (1) | K | 1 / 1 | (slow)
 
@@ -278,13 +276,13 @@ When you play an Arcane spell, this gains +1 ATK until the end of turn Level 3 b
 
 Artifact | Arcane | (2) | K | 2 durability | (slow)
 
-->, -1 durability, (fast): Scry 2.
+->, -1 durability, (fast): Empower 2.
 
 ---
 
-[ ] Orb of Constellations
+[x] Orb of Constellations
 
-Artifact | Arcane | (3) | KR | 3 durability | (slow)
+Artifact | Arcane | (3) | KK | 3 durability | (slow)
 
 Whenever you Consume, draw a card in your Destiny Zone and this loses 1 durability.
 
@@ -310,7 +308,7 @@ On Destroyed: Summon a Simurgh in the same zone this was in.
 
 [ ] Jeweller
 
-Minion | Arcane | (2) | K | 0 / 2 | (slow)
+Minion | Arcane | (2) | K | 0 / 3 | (slow)
 
 -> add a Fleeting Mana Spark to your hand.
 
@@ -320,7 +318,7 @@ Minion | Arcane | (2) | K | 0 / 2 | (slow)
 
 [ ] Plotting Consellor
 
-Minion | Arcane | (2) | KKR | 3 / 3 | (slow)
+Minion | Arcane | (4) | KKF | 3 / 3 | (slow)
 
 At the end of each turn, if this minion has 1 HP, summon a Jeweller in your Defense Zone, then Banish this minion.
 
@@ -333,7 +331,7 @@ At the end of each turn, if this minion has 1 HP, summon a Jeweller in your Defe
 
 [x] Galactic Explosion
 
-Spell | Arcane | (10) | KKKKR | (slow)
+Spell | Arcane | (10) | KKKRR | (slow)
 
 This costs 1 less for every K rune you have.
 
@@ -343,7 +341,7 @@ Deal 8 Damage to a unit.
 
 [ ] Starseeker
 
-Minion | Arcane | ((1)) | K | 1 / 2 | (slow)
+Minion | Arcane | ((1)) | K | 2 / 2 | (slow)
 
 On Enter: Scry 3, then, if you have Balance, Draw a card.
 

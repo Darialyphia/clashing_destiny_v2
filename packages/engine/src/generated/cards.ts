@@ -5,6 +5,7 @@
    */
 
 export const cards = {
+"mana-spark": "mana-spark",
 "spirit-of-arcane": "spirit-of-arcane",
 "erina-council-mage": "erina-council-mage",
 "erina-aether-scholar": "erina-aether-scholar",
@@ -29,7 +30,13 @@ export const cards = {
 "arcane-conduit": "arcane-conduit",
 "sigil-of-wisdom": "sigil-of-wisdom",
 "mana-shield": "mana-shield",
-"time-bomb": "time-bomb"
+"time-bomb": "time-bomb",
+"spellblade-duelist": "spellblade-duelist",
+"mana-wisp": "mana-wisp",
+"quirky-bookworm": "quirky-bookworm",
+"orb-of-constellations": "orb-of-constellations",
+"simurgh": "simurgh",
+"sigil-of-simurgh": "sigil-of-simurgh"
 } as const;
 
 export const collectableCards = {
@@ -57,5 +64,10 @@ export const collectableCards = {
 "arcane-conduit": "arcane-conduit",
 "sigil-of-wisdom": "sigil-of-wisdom",
 "mana-shield": "mana-shield",
-"time-bomb": "time-bomb"
+"time-bomb": "time-bomb",
+"spellblade-duelist": "spellblade-duelist",
+"mana-wisp": "mana-wisp",
+"quirky-bookworm": "quirky-bookworm",
+"orb-of-constellations": "orb-of-constellations",
+"sigil-of-simurgh": "sigil-of-simurgh"
 } as const;

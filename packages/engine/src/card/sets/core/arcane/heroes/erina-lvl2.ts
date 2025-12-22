@@ -54,7 +54,7 @@ export const erinaLv2: HeroBlueprint = {
       id: 'erina-lv2-ability-1',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       shouldExhaust: true,
-      manaCost: 2,
+      manaCost: 1,
       runeCost: {},
       description: 'Draw a spell, then discard 1 card.',
       getPreResponseTargets: () => Promise.resolve([]),
