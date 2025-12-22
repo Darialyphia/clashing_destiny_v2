@@ -1,8 +1,8 @@
-import type { MaybePromise, Values } from '@game/shared';
+import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
-import { CombatDamage, type Damage, type DamageType } from '../../utils/damage';
+import { CombatDamage, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   type AbilityBlueprint,
@@ -23,7 +23,6 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES, GAME_QUESTIONS } from '../../game/game.enums';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
 import { Ability } from './ability.entity';

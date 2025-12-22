@@ -63,6 +63,7 @@ const enableFullCardPreview = () => {
       :card-id="hero.id"
       :open-delay="150"
       :enabled="isFullCardPreviewenabled"
+      side="right"
     >
       <GameCard
         :card-id="hero.id"

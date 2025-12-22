@@ -52,7 +52,7 @@ export const timeBomb: SigilBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 1,
+  manaCost: 2,
   runeCost: {
     RESONANCE: 1
   },

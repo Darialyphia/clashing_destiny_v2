@@ -283,12 +283,37 @@ export class CombatPhase
 
     const canResolve = defender.isAlive && this.attacker.isAlive;
     if (canResolve) {
-      if (!this.attacker.isExhausted) {
-        await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
-        await this.attacker.exhaust();
-      }
-      if (this.attacker.isAlive && !defender.isExhausted) {
-        await defender.dealDamage(this.attacker, new CombatDamage(defender));
+      const attackerDealsFirst = !!this.attacker.dealsDamageFirst;
+      const defenderDealsFirst = !!defender.dealsDamageFirst;
+
+      const performAtttackerStrike = async () => {
+        if (!this.attacker.isExhausted && this.attacker.isAlive && defender.isAlive) {
+          await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
+          await this.attacker.exhaust();
+        }
+      };
+
+      const performDefenderStrike = async () => {
+        if (!defender.isExhausted && defender.isAlive && this.attacker.isAlive) {
+          await defender.dealDamage(this.attacker, new CombatDamage(defender));
+        }
+      };
+
+      if (attackerDealsFirst && !defenderDealsFirst) {
+        await performAtttackerStrike();
+        if (this.attacker.isAlive && defender.isAlive) {
+          await performDefenderStrike();
+        }
+      } else if (!attackerDealsFirst && defenderDealsFirst) {
+        await performDefenderStrike();
+        if (this.attacker.isAlive && defender.isAlive) {
+          await performAtttackerStrike();
+        }
+      } else {
+        await performAtttackerStrike();
+        if (this.attacker.isAlive && defender.isAlive) {
+          await performDefenderStrike();
+        }
       }
     }
     await this.blocker?.exhaust();
