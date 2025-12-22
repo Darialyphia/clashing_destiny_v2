@@ -258,8 +258,8 @@ export const KEYWORDS = {
     id: 'empower',
     name: 'Empower X',
     description:
-      'The next Spell you play this turn resolves as if you had +X Spellpower.',
-    aliases: [/empower [0-9]+/, 'empower']
+      'The next spell you cast has + X Spellpower. Lasts until the end of the turn.',
+    aliases: [/empower [0-9]+/, 'empower', /empowered/]
   },
   FLANK: {
     id: 'flank',
@@ -272,7 +272,7 @@ export const KEYWORDS = {
     name: 'Locked',
     description:
       'This card cannot be played. If it is in the Destiny Zone, it is not recollected at the start of the turn.',
-    aliases: ['lock']
+    aliases: [/^lock$/]
   },
   RUSH: {
     id: 'rush',

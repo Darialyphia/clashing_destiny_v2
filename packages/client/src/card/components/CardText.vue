@@ -59,6 +59,7 @@ const tokens = computed<Token[]>(() => {
         })
       );
     });
+
     if (keyword) return { type: 'keyword', text: part, keyword };
     const card = Object.values(CARDS_DICTIONARY).find(c => {
       return c.name === part;
@@ -262,9 +263,7 @@ const tokens = computed<Token[]>(() => {
 
 .token-keyword {
   font-weight: var(--font-weight-7);
-  padding: var(--size-1);
-  --color: var(--blue-10);
-  color: var(--blue-11);
+  text-decoration: underline;
 }
 
 .token-mana {
@@ -313,7 +312,10 @@ const tokens = computed<Token[]>(() => {
 }
 .token-card {
   font-weight: var(--font-weight-5);
-  color: var(--blue-10);
+  color: var(--blue-2);
+  -webkit-text-stroke: calc(4px * var(--pixel-scale) / 2) black;
+  paint-order: stroke fill;
+  padding-inline: var(--size-1);
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {

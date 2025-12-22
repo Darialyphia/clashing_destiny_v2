@@ -23,7 +23,7 @@ import {
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
-import { DeclareBlockerAction } from '../actions/declare-counter-attack';
+import { DeclareBlockerAction } from '../actions/declare-blocker';
 import type { BoardSlotZone } from '../../board/board.constants';
 import { GainRuneAction } from '../actions/gain-rune';
 import { DrawCardAction } from '../actions/draw-card';

@@ -184,7 +184,14 @@ export class MinionCard extends Card<
   }
 
   canBlock(attacker: AttackTarget, target: AttackTarget) {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    const isCorrectPhase =
+      phaseCtx.state === GAME_PHASES.ATTACK &&
+      phaseCtx.ctx.attacker.equals(attacker) &&
+      !phaseCtx.ctx.target?.equals(target) &&
+      !phaseCtx.ctx.blocker;
     const base =
+      isCorrectPhase &&
       !this._isExhausted &&
       this.zone === BOARD_SLOT_ZONES.DEFENSE_ZONE &&
       attacker.canBeBlocked(this, target);

@@ -25,10 +25,8 @@ export const simurgh: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Simurgh',
-  description: dedent`
-  @Spellpower 1@.
-  
-  @On Attack@: Put 2 Splitting Beams in your hand, then reduce the cost of Arcane spells in your hand by 1.
+  description: dedent`  
+  @On Attack@: Put 2 copies of @${splittingBeam.name}@ in your hand, then reduce the cost of Arcane spells in your hand by 1.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.TOKEN,

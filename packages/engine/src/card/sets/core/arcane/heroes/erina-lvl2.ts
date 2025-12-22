@@ -8,8 +8,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
 
 export const erinaLv2: HeroBlueprint = {
@@ -20,7 +19,7 @@ export const erinaLv2: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Aether Scholar',
-  description: 'This has +1 Attack as long as you played a spell this turn.',
+  description: 'This has +2 Attack as long as you played a spell this turn.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -49,30 +48,7 @@ export const erinaLv2: HeroBlueprint = {
   atk: 0,
   maxHp: 18,
   canPlay: () => true,
-  abilities: [
-    {
-      id: 'erina-lv2-ability-1',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
-      shouldExhaust: true,
-      manaCost: 1,
-      runeCost: {},
-      description: 'Draw a spell, then discard 1 card.',
-      getPreResponseTargets: () => Promise.resolve([]),
-      label: 'Draw a spell and discard',
-      speed: CARD_SPEED.FAST,
-      async onResolve(game, card) {
-        await card.player.cardManager.drawWithFilter(1, isSpell);
-        const [cardToDiscard] = await game.interaction.chooseCards({
-          player: card.player,
-          label: 'Choose a card to discard',
-          minChoiceCount: 1,
-          maxChoiceCount: 1,
-          choices: card.player.cardManager.hand
-        });
-        await cardToDiscard.discard();
-      }
-    }
-  ],
+  abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleAttackBuffModifier('erina-lv2-attack-buff', game, card, {

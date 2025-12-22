@@ -13,6 +13,7 @@ import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modif
 import { PreemptiveStrikeModifier } from '../../../../../modifier/modifiers/preemptive-strike.mofier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const spellbladeDuelist: MinionBlueprint = {
   id: 'spellblade-duelist',
@@ -23,7 +24,7 @@ export const spellbladeDuelist: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Spellblade Duelist',
   description: dedent`
-  This has @Preemptive Strike@ and +1 ATK as long as your hero has @Spellpower@ .
+  This has @Preemptive Strike@ and +1 ATK as long as your hero is @Empowered@ .
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -61,14 +62,14 @@ export const spellbladeDuelist: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new PreemptiveStrikeModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower > 0)]
+        mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)]
       })
     );
 
     await card.modifiers.add(
       new SimpleAttackBuffModifier('spellblade-duelist-attack-buff', game, card, {
         amount: 1,
-        mixins: [new TogglableModifierMixin(game, () => card.player.hero.spellPower > 0)]
+        mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)]
       })
     );
   },

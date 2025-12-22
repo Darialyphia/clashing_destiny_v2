@@ -274,9 +274,9 @@ When you play an Arcane spell, this gains +1 ATK until the end of turn Level 3 b
 
 [ ] Book of Knowledge
 
-Artifact | Arcane | (2) | K | 2 durability | (slow)
+Artifact | Arcane | (2) | K | 1 durability | (slow)
 
-->, -1 durability, (fast): Empower 2.
+->, -1 durability, (fast): Scry 2. If you scried any Arcane spell, Empower.
 
 ---
 

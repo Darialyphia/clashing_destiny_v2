@@ -1,3 +1,5 @@
+import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
+import { discover, getEmpowerStacks } from '../../../../card-actions-utils';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
@@ -6,8 +8,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
 
 export const erinaLv1: HeroBlueprint = {
@@ -18,7 +19,7 @@ export const erinaLv1: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Council Mage',
-  description: '',
+  description: '@On Enter@: If you are @Empowered@, @Discover@ a spell from your deck.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
@@ -52,30 +53,20 @@ export const erinaLv1: HeroBlueprint = {
   atk: 0,
   maxHp: 15,
   canPlay: () => true,
-  abilities: [
-    {
-      id: 'erina-lv1-ability-1',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
-      shouldExhaust: true,
-      manaCost: 1,
-      runeCost: {},
-      description: 'Draw a spell, then discard 1 card.',
-      getPreResponseTargets: () => Promise.resolve([]),
-      label: 'Draw a spell and discard',
-      speed: CARD_SPEED.FAST,
-      async onResolve(game, card) {
-        await card.player.cardManager.drawWithFilter(1, isSpell);
-        const [cardToDiscard] = await game.interaction.chooseCards({
-          player: card.player,
-          label: 'Choose a card to discard',
-          minChoiceCount: 1,
-          maxChoiceCount: 1,
-          choices: card.player.cardManager.hand
-        });
-        await cardToDiscard.discard();
-      }
-    }
-  ],
-  async onInit() {},
+  abilities: [],
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        async handler() {
+          const empowerStacks = getEmpowerStacks(card);
+          if (!empowerStacks) return;
+          const spellCardsInDeck = card.player.cardManager.mainDeck.cards.filter(isSpell);
+          if (spellCardsInDeck.length === 0) return;
+
+          await discover(game, card, spellCardsInDeck);
+        }
+      })
+    );
+  },
   async onPlay() {}
 };

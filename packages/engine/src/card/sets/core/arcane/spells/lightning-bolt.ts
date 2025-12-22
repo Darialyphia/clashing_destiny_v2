@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../../utils/damage';
+import { SpellDamage, UnpreventableDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { singleEnemyMinionTargetRules } from '../../../../card-utils';
 import {
@@ -12,6 +12,7 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const lightningBolt: SpellBlueprint = {
   id: 'lightning-bolt',
@@ -22,7 +23,7 @@ export const lightningBolt: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Lightning Bolt',
   description: dedent`
-  Deal 3 damage to an enemy minion. If it dies, deal 1 damage to all other enemy minions.
+  Deal 3 damage to an enemy minion. If you are @Empowered@, deal 1 @True Damage@ to all other enemy minions.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -49,7 +50,7 @@ export const lightningBolt: SpellBlueprint = {
   },
   manaCost: 3,
   runeCost: {
-    KNOWLEDGE: 1,
+    KNOWLEDGE: 2,
     FOCUS: 1
   },
   speed: CARD_SPEED.FAST,
@@ -69,11 +70,11 @@ export const lightningBolt: SpellBlueprint = {
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {
       await target.takeDamage(card, new SpellDamage(3, card));
-      if (!target.isAlive) {
-        const enemyMinions = card.player.opponent.minions;
-        for (const enemyMinion of enemyMinions) {
-          await enemyMinion.takeDamage(card, new SpellDamage(1, card));
-        }
+      if (!getEmpowerStacks(card)) return;
+
+      const enemyMinions = card.player.opponent.minions;
+      for (const enemyMinion of enemyMinions) {
+        await enemyMinion.takeDamage(card, new UnpreventableDamage(1));
       }
     }
   }

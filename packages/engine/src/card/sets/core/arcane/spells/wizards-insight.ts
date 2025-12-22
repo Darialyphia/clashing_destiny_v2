@@ -9,6 +9,7 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
+import { scry } from '../../../../card-actions-utils';
 
 export const wizardsInsight: SpellBlueprint = {
   id: 'wizards-insight',
@@ -19,7 +20,7 @@ export const wizardsInsight: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: "Wizard's Insight",
   description: dedent`
-    Draw a card into your Destiny Zone.
+    @Scry 1@, then draw a card into your Destiny Zone.
 
     @Foresight@.
 `,
@@ -58,6 +59,7 @@ export const wizardsInsight: SpellBlueprint = {
     await card.modifiers.add(new ForesightModifier(game, card));
   },
   async onPlay(game, card) {
+    await scry(game, card, 1);
     await card.player.cardManager.drawIntoDestinyZone(1);
   }
 };

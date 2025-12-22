@@ -12,7 +12,9 @@ import {
   RARITIES,
   CARD_LOCATIONS
 } from '../../../../card.enums';
-import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
+import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 
 export const cosmicDivinator: MinionBlueprint = {
   id: 'cosmic-divinator',
@@ -23,9 +25,10 @@ export const cosmicDivinator: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Cosmic Divinator',
   description: dedent`
-  @Loyalty 1@, @Consume@ @[knowledge]@.
+  @Consume@ @[knowledge]@.
 
-  @Spellpower 2@.
+  @On Enter@: @Empower 1@.
+  @On Hit@: @Empower 2@..
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -61,29 +64,23 @@ export const cosmicDivinator: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new LoyaltyModifier(game, card, { amount: 1 }));
-
-    const MODIFIER_ID = 'cosmic-divinator-spellpower';
     await card.modifiers.add(
-      new Modifier('cosmic-divinator-aura', game, card, {
-        mixins: [
-          new AuraModifierMixin(game, {
-            isElligible(candidate) {
-              return (
-                card.location === CARD_LOCATIONS.BOARD &&
-                candidate.equals(card.player.hero)
-              );
-            },
-            async onGainAura(candidate) {
-              await candidate.modifiers.add(
-                new SimpleSpellpowerBuffModifier(MODIFIER_ID, game, card, { amount: 2 })
-              );
-            },
-            async onLoseAura(candidate) {
-              await candidate.modifiers.remove(MODIFIER_ID);
-            }
-          })
-        ]
+      new OnEnterModifier(game, card, {
+        handler: async () => {
+          await card.player.hero.modifiers.add(
+            new EmpowerModifier(game, card, { amount: 1 })
+          );
+        }
+      })
+    );
+
+    await card.modifiers.add(
+      new OnAttackModifier(game, card, {
+        handler: async () => {
+          await card.player.hero.modifiers.add(
+            new EmpowerModifier(game, card, { amount: 2 })
+          );
+        }
       })
     );
   },

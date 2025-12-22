@@ -12,6 +12,7 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const galacticExplosion: SpellBlueprint = {
   id: 'galactic-explosion',
@@ -22,7 +23,7 @@ export const galacticExplosion: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Galactic Explosion',
   description: dedent`
-  The mana cost of this card is reduced by your @Spellpower@.
+  The mana cost of this card is reduced by your @Empower@ level.
 
   Deal 7 @True Damage@ to a unit.
   `,
@@ -68,7 +69,7 @@ export const galacticExplosion: SpellBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('galactic-explosion-manacost-modifier', game, card, {
-        amount: () => -card.player.hero.spellPower
+        amount: () => -1 * getEmpowerStacks(card)
       })
     );
   },

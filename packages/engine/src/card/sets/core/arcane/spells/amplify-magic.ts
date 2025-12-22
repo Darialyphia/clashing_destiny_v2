@@ -19,7 +19,7 @@ export const amplifyMagic: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Amplify Magic',
   description: dedent`
-    @Empower 2@. Draw a card.
+    @Empower@.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -44,7 +44,7 @@ export const amplifyMagic: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 1,
   runeCost: {
     KNOWLEDGE: 1
   },

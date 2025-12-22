@@ -1,5 +1,6 @@
 import type { Game } from '../game/game';
 import { GAME_EVENTS } from '../game/game.events';
+import { EmpowerModifier } from '../modifier/modifiers/empower.modifier';
 import { SimpleSpellpowerBuffModifier } from '../modifier/modifiers/simple-spellpower.buff.modifier';
 import { KEYWORDS } from './card-keywords';
 import { isSpell } from './card-utils';
@@ -32,7 +33,9 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
 
 export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[]) => {
   const choices: AnyCard[] = [];
-  for (let i = 0; i < 3; i++) {
+  const maxChoices = Math.min(3, choicePool.length);
+
+  for (let i = 0; i < maxChoices; i++) {
     const index = game.rngSystem.nextInt(choicePool.length - 1);
     choices.push(...choicePool.splice(index, 1));
   }
@@ -72,3 +75,6 @@ export const discardFromHand = async (
 
   return cardsToDiscard;
 };
+
+export const getEmpowerStacks = (card: AnyCard) =>
+  card.player.hero.modifiers.get(EmpowerModifier)?.stacks ?? 0;

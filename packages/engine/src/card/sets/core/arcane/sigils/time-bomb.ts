@@ -30,7 +30,7 @@ export const timeBomb: SigilBlueprint = {
   description: dedent`
   @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If There is another Time Bomb in the same zone, exhaust them as well.
   
-  @[lvl] 3 Bonus]: @Echo@.
+  @[lvl] 3 Bonus@: @Echo@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,

@@ -1,5 +1,7 @@
 import { MinionInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -18,7 +20,7 @@ export const manaFueledGolem: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana-Fueled Golem',
-  description: 'This has +Attack equal to your @Spellpower@.',
+  description: 'This cannot attack or block unless your hero is @Empowered@',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
@@ -35,34 +37,38 @@ export const manaFueledGolem: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/mana-fueled-golem-bg',
+      main: 'minions/mana-fueled-golem',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 2,
   runeCost: {
     MIGHT: 2
   },
   speed: CARD_SPEED.SLOW,
-  atk: 0,
-  maxHp: 4,
+  atk: 3,
+  maxHp: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
       new Modifier('mana-fueled-golem-atk-buff', game, card, {
         isUnique: true,
-        name: 'Mana-Fueled Golem Attack Buff',
-        description: 'This has +ATK equals to your Spellpower.',
-        icon: 'keyword-attack-buff',
+        name: 'Powered Down',
+        description: 'Cannot attack or block.',
+        icon: 'keyword-cannot',
         mixins: [
           new MinionInterceptorModifierMixin(game, {
-            key: 'atk',
-            interceptor: value => value + card.player.hero.spellPower
-          })
+            key: 'canAttack',
+            interceptor: () => false
+          }),
+          new MinionInterceptorModifierMixin(game, {
+            key: 'canBlock',
+            interceptor: () => false
+          }),
+          new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)
         ]
       })
     );

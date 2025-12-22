@@ -13,6 +13,7 @@ import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/int
 import { SpellCard } from '../../../../entities/spell.entity';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const powerOverwhelming: SpellBlueprint = {
   id: 'power-overwhelming',
@@ -23,8 +24,7 @@ export const powerOverwhelming: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Power Overwhelming',
   description: dedent`
-  If you have @[knowledge]@ @[knowledge]@ @[knowledge]@ @[knowledge]@ @[knowledge]@, this is Burst speed.
-  Your hero gains Atk equals to your @Spellpower@ until the end of the turn.
+  Your hero gains Atk equals to your @Empower@ until the end of the turn.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -58,28 +58,11 @@ export const powerOverwhelming: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new Modifier<SpellCard>('power-overwhekming-dynamic-speed', game, card, {
-        mixins: [
-          new CardInterceptorModifierMixin(game, {
-            key: 'speed',
-            interceptor(value) {
-              if (card.player.hasRunes({ KNOWLEDGE: 5 })) {
-                return CARD_SPEED.BURST;
-              }
-              return value;
-            }
-          })
-        ]
-      })
-    );
-  },
+  async onInit() {},
   async onPlay(game, card) {
-    const buff = card.player.hero.spellPower;
     await card.player.hero.modifiers.add(
       new SimpleAttackBuffModifier('power-overwhelming-attack-buff', game, card, {
-        amount: buff,
+        amount: getEmpowerStacks(card),
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );

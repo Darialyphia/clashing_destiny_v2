@@ -39,9 +39,8 @@ export const splittingBeam: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/splitting-beam-bg',
+      main: 'spells/splitting-beam',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

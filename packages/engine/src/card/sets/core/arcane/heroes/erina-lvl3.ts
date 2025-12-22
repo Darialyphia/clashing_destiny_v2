@@ -1,4 +1,5 @@
 import { GAME_EVENTS } from '../../../../../game/game.events';
+import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
@@ -6,16 +7,17 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
+  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
 import { CardBeforePlayEvent } from '../../../../card.events';
 import type { HeroCard } from '../../../../entities/hero.entity';
@@ -28,7 +30,7 @@ export const erinaLv3: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Arcane Weaver',
-  description: 'This has +1 Attack as long as you played a spell this turn.',
+  description: 'Your Arcane spells have @Echo@.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
   tags: [],
@@ -65,49 +67,39 @@ export const erinaLv3: HeroBlueprint = {
   abilities: [
     {
       id: 'erina-lv3-ability-1',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
-      shouldExhaust: true,
-      manaCost: 1,
-      runeCost: {},
-      description: 'Draw a spell, then discard 1 card.',
-      getPreResponseTargets: () => Promise.resolve([]),
-      label: 'Draw a spell and discard',
-      speed: CARD_SPEED.FAST,
-      async onResolve(game, card) {
-        await card.player.cardManager.drawWithFilter(1, isSpell);
-        const [cardToDiscard] = await game.interaction.chooseCards({
-          player: card.player,
-          label: 'Choose a card to discard',
-          minChoiceCount: 1,
-          maxChoiceCount: 1,
-          choices: card.player.cardManager.hand
-        });
-        await cardToDiscard.discard();
-      }
-    },
-    {
-      id: 'erina-lv3-ability-2',
       canUse: () => true,
       shouldExhaust: true,
       manaCost: 0,
       runeCost: {},
-      description: '@Empower 2@. The next spell you play this turn has @Echo@.',
+      description: '@Empower 2@. The next spell you play this turn costs 1 less.',
       getPreResponseTargets: () => Promise.resolve([]),
       label: 'Improve next spell',
       speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
+        await card.modifiers.add(new EmpowerModifier(game, card, { amount: 2 }));
+
+        const MANA_COST_MODIFIER_ID = 'erina-lv3-manacost-reduction';
+
         await card.modifiers.add(
           new Modifier<HeroCard>('erina-lv3-improve-next-spell', game, card, {
             mixins: [
-              new GameEventModifierMixin(game, {
-                eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-                filter: event =>
-                  event.data.card.player.equals(card.player) && isSpell(event.data.card),
-                async handler(event: CardBeforePlayEvent) {
-                  await card.modifiers.add(
-                    new EmpowerModifier(game, card, { amount: 2 })
+              new AuraModifierMixin(game, {
+                isElligible(candidate) {
+                  return (
+                    candidate.player.equals(card.player) &&
+                    isSpell(candidate) &&
+                    candidate.location === CARD_LOCATIONS.HAND
                   );
-                  await event.data.card.modifiers.add(new EchoModifier(game, card));
+                },
+                async onGainAura(candidate) {
+                  await candidate.modifiers.add(
+                    new SimpleManacostModifier(MANA_COST_MODIFIER_ID, game, candidate, {
+                      amount: -1
+                    })
+                  );
+                },
+                async onLoseAura(candidate) {
+                  await candidate.modifiers.remove(MANA_COST_MODIFIER_ID);
                 }
               }),
               new UntilEventModifierMixin(game, {
@@ -121,20 +113,6 @@ export const erinaLv3: HeroBlueprint = {
       }
     }
   ],
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new SimpleAttackBuffModifier('erina-lv2-attack-buff', game, card, {
-        amount: 1,
-        mixins: [
-          new TogglableModifierMixin(
-            game,
-            () =>
-              card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
-                .length > 0
-          )
-        ]
-      })
-    );
-  },
+  async onInit(game, card) {},
   async onPlay() {}
 };
