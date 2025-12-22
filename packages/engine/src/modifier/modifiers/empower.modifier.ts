@@ -5,6 +5,7 @@ import type { HeroCard } from '../../card/entities/hero.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import { UntilEventModifierMixin } from '../mixins/until-event';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
@@ -39,9 +40,7 @@ export class EmpowerModifier extends Modifier<HeroCard> {
             );
           }
         }),
-        new UntilEventModifierMixin(game, {
-          eventName: GAME_EVENTS.TURN_END
-        }),
+        new UntilEndOfTurnModifierMixin(game),
         new UntilEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_PLAY,
           filter: event => {
