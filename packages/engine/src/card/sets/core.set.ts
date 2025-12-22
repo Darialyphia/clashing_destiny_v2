@@ -25,6 +25,7 @@ import { powerOverwhelming } from './core/arcane/spells/power-overwhelming';
 import { arcaneConduit } from './core/arcane/minions/arcane-conduit';
 import { manaShield } from './core/arcane/spells/mana-shield';
 import { timeBomb } from './core/arcane/sigils/time-bomb';
+import { spellbladeDuelist } from './core/arcane/minions/spellblade-duelist';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -54,6 +55,7 @@ export const coreSet: CardSet = {
     arcaneConduit,
     sigilOfWisdom,
     manaShield,
-    timeBomb
+    timeBomb,
+    spellbladeDuelist
   ]
 };

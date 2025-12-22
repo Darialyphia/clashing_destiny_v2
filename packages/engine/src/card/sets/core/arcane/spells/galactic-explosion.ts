@@ -52,7 +52,7 @@ export const galacticExplosion: SpellBlueprint = {
   manaCost: 10,
   runeCost: {
     KNOWLEDGE: 3,
-    RESONANCE: 3
+    RESONANCE: 2
   },
   speed: CARD_SPEED.SLOW,
   abilities: [],

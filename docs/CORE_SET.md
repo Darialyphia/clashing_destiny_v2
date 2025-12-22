@@ -138,11 +138,11 @@ Consume KKK. Draw 3 cards.
 
 ---
 
-[ ] Spellblade Duelyst
+[x] Spellblade Duelyst
 
 Minion | Arcane | (3) | MMK | 2 / 3 | (slow)
 
-This has Preemptive Strike as long as you have Spellpower.
+This has Preemptive Strike and +1 attack as long as you have Spellpower.
 
 ---
 
