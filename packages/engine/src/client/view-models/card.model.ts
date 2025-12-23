@@ -84,15 +84,11 @@ export class CardViewModel {
     return {
       dimensions: this.data.art.dimensions,
       foil: this.data.art.foil,
-      main: `/assets/cards/${this.data.art.main}.png`,
-      frame: `/assets/ui/card/frames/${this.data.art.frame}.png`,
-      bg: `/assets/cards/${this.data.art.bg}.png`,
-      breakout: this.data.art.breakout
-        ? `/assets/cards/${this.data.art.breakout}.png`
-        : undefined,
-      foilArt: this.data.art.foilArt
-        ? `/assets/cards/${this.data.art.foilArt}.png`
-        : undefined,
+      main: `cards/${this.data.art.main}`,
+      frame: `ui/card/frames/${this.data.art.frame}`,
+      bg: `cards/${this.data.art.bg}`,
+      breakout: this.data.art.breakout ? `cards/${this.data.art.breakout}` : undefined,
+      foilArt: this.data.art.foilArt ? `cards/${this.data.art.foilArt}` : undefined,
       tint: this.data.art.tint
     };
   }

@@ -13,6 +13,7 @@ import { useSettingsStore } from '@/shared/composables/useSettings';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { type Rune, RUNES } from '@game/engine/src/card/card.enums';
+import { assets } from '@/assets';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -97,7 +98,7 @@ const enableFullCardPreview = () => {
         <template #trigger>
           <button
             class="rune"
-            style="--bg: url(/assets/ui/card/rune-might.png)"
+            :style="{ '--bg': assets['ui/card/rune-might'].css }"
             :disabled="!canGainRune"
             @click="gainRune(RUNES.MIGHT)"
           >
@@ -110,7 +111,7 @@ const enableFullCardPreview = () => {
         <template #trigger>
           <button
             class="rune"
-            style="--bg: url(/assets/ui/card/rune-focus.png)"
+            :style="{ '--bg': assets['ui/card/rune-focus'].css }"
             :disabled="!canGainRune"
             @click="gainRune(RUNES.FOCUS)"
           >
@@ -123,7 +124,7 @@ const enableFullCardPreview = () => {
         <template #trigger>
           <button
             class="rune"
-            style="--bg: url(/assets/ui/card/rune-knowledge.png)"
+            :style="{ '--bg': assets['ui/card/rune-knowledge'].css }"
             :disabled="!canGainRune"
             @click="gainRune(RUNES.KNOWLEDGE)"
           >
@@ -136,7 +137,7 @@ const enableFullCardPreview = () => {
         <template #trigger>
           <button
             class="rune"
-            style="--bg: url(/assets/ui/card/rune-resonance.png)"
+            :style="{ '--bg': assets['ui/card/rune-resonance'].css }"
             :disabled="!canGainRune"
             @click="gainRune(RUNES.RESONANCE)"
           >

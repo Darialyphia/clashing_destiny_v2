@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {
+  RARITIES,
   type CardKind,
   type CardSpeed,
   type CardTint,
   type Faction,
-  type FactionId,
   type Rarity,
   type Rune
 } from '@game/engine/src/card/card.enums';
@@ -21,7 +21,7 @@ import FoilScanlines from './foil/FoilScanlines.vue';
 import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
-import { assets, uiAssets } from '@/assets';
+import { assets } from '@/assets';
 
 const {
   card,
@@ -84,15 +84,23 @@ const {
 }>();
 
 const rarityBg = computed(() => {
-  return uiAssets.card.rarity[card.rarity].css;
+  if (
+    [RARITIES.BASIC, RARITIES.COMMON, RARITIES.TOKEN].includes(
+      card.rarity as any
+    )
+  ) {
+    return assets[`ui/card/rarity-common`].css;
+  }
+
+  return assets[`ui/card/rarity-${card.rarity}`].css;
 });
 
 const speedBg = computed(() => {
-  return uiAssets.card.speed[card.speed].css;
+  return assets[`ui/card/speed-${card.speed.toLowerCase()}`].css;
 });
 
 const artFrameImage = computed(() => {
-  return assets[`ui/card/frame/${card.art.frame}`].css;
+  return assets[card.art.frame].css;
 });
 
 const artBgImage = computed(() => {
@@ -109,7 +117,7 @@ const artFoilImage = computed(() => {
 });
 
 const artBreakoutImage = computed(() => {
-  return card.art.breakout ? assets[card.art.breakout].css : 'transparent';
+  return card.art.breakout ? assets[card.art.breakout].css : 'none';
 });
 
 const root = useTemplateRef('card');
@@ -217,7 +225,7 @@ const tintGradient = computed(() => {
 });
 
 const kindBg = computed(() => {
-  return uiAssets.card.kind[card.kind].css;
+  return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
 </script>
 
@@ -288,7 +296,9 @@ const kindBg = computed(() => {
         <div
           class="faction parallax"
           :style="{
-            '--bg': uiAssets.card.faction[card.faction.id as FactionId].css
+            '--bg':
+              assets[`ui/card/faction-${card.faction.id.toLocaleLowerCase()}`]
+                .css
           }"
           :data-label="card.faction.shortName"
         />
@@ -355,7 +365,7 @@ const kindBg = computed(() => {
             :key="index"
             class="rune"
             :style="{
-              '--bg': uiAssets.card.rune[rune].css
+              '--bg': assets[`ui/card/rune-${rune.toLowerCase()}`].css
             }"
           />
         </div>
@@ -446,8 +456,7 @@ const kindBg = computed(() => {
 }
 .card-front {
   backface-visibility: hidden;
-  --card-bg: v-bind('uiAssets.card.front.css');
-  background: var(--card-bg);
+  background: url('@/assets/ui/card/card_front.png');
   background-size: cover;
   color: #fcfcfc;
   font-size: calc(var(--pixel-scale) * 8px);
@@ -459,8 +468,8 @@ const kindBg = computed(() => {
     drop-shadow(0 -2px 0 hsl(0 0% 100% / 0.2))
     drop-shadow(-2px 0 0 hsl(0 0% 100% / 0.2))
     drop-shadow(2px 0 0 hsl(0 0% 100% / 0.2));
-  --glare-mask: var(--card-bg);
-  --foil-mask: var(--card-bg);
+  --glare-mask: url('@/assets/ui/card/card_front.png');
+  --foil-mask: url('@/assets/ui/card/card_front.png');
   &::after {
     content: '';
     position: absolute;
@@ -468,7 +477,7 @@ const kindBg = computed(() => {
     background: v-bind(tintGradient);
     mix-blend-mode: v-bind('card.art.tint.blendMode');
     opacity: v-bind('card.art.tint.opacity');
-    mask-image: v-bind('uiAssets.card.tintMask.css');
+    mask-image: url('@/assets/ui/card/tint-mask.png');
     mask-size: cover;
     z-index: -1;
     pointer-events: none;
@@ -496,10 +505,10 @@ const kindBg = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: v-bind('uiAssets.card.back.css');
+  background: url('@/assets/ui/card-back.png');
   background-size: cover;
-  --glare-mask: v-bind('uiAssets.card.back.css');
-  --foil-mask: v-bind('uiAssets.card.back.css');
+  --glare-mask: url('@/assets/ui/card-back.png');
+  --foil-mask: url('@/assets/ui/card-back.png');
 }
 
 .dual-text {
@@ -627,7 +636,7 @@ const kindBg = computed(() => {
   height: calc(16px * var(--pixel-scale));
   overflow: hidden;
   color: black;
-  background: v-bind('uiAssets.card.nameFrame.css');
+  background: url('@/assets/ui/card/name-frame.png');
   background-size: cover;
   display: grid;
   place-content: center;
@@ -680,7 +689,7 @@ const kindBg = computed(() => {
   --bottom-color: var(--red-6);
 }
 .mana-cost {
-  background-image: v-bind('uiAssets.card.manaCost.css');
+  background-image: url('@/assets/ui/card/mana-cost.png');
   font-weight: var(--font-weight-7);
   font-size: calc(var(--pixel-scale) * 14px);
   padding-top: calc(3px * var(--pixel-scale));
@@ -692,7 +701,7 @@ const kindBg = computed(() => {
 }
 
 .destiny-cost {
-  background-image: v-bind('uiAssets.card.destinyCost.css');
+  background-image: url('@/assets/ui/card/destiny-cost.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(3px * var(--pixel-scale));
   width: calc(24px * var(--pixel-scale));
@@ -722,25 +731,25 @@ const kindBg = computed(() => {
 }
 
 .atk {
-  background-image: v-bind('uiAssets.card.attack.css');
+  background-image: url('@/assets/ui/card/attack.png');
   left: calc(3px * var(--pixel-scale));
   padding-right: calc(2px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: v-bind('uiAssets.card.health.css');
+  background-image: url('@/assets/ui/card/health.png');
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
 
 .durability {
-  background-image: v-bind('uiAssets.card.durability.css');
+  background-image: url('@/assets/ui/card/durability.png');
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
 
 .countdown {
-  background-image: v-bind('uiAssets.card.countdown.css');
+  background-image: url('@/assets/ui/card/countdown.png');
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
@@ -789,7 +798,7 @@ const kindBg = computed(() => {
   bottom: calc(11px * var(--pixel-scale));
   left: 50%;
   translate: -50% 0;
-  background: v-bind('uiAssets.card.descriptionFrame.css');
+  background: url('@/assets/ui/card/description-frame.png');
   background-size: cover;
 }
 .description {

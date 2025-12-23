@@ -10,6 +10,7 @@ import FoilGradient from './foil/FoilGradient.vue';
 import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
+import { assets } from '@/assets';
 
 const {
   card,
@@ -59,19 +60,19 @@ const { pointerStyle } = useCardTilt(root, {
 });
 
 const artFrameImage = computed(() => {
-  return `url('${card.art.frame}')`;
+  return assets[card.art.frame].css;
 });
 
 const artBgImage = computed(() => {
-  return `url('${card.art.bg}')`;
+  return assets[card.art.bg].css;
 });
 
 const artMainImage = computed(() => {
-  return `url('${card.art.main}')`;
+  return assets[card.art.main].css;
 });
 
 const artBreakoutImage = computed(() => {
-  return card.art.breakout ? `url('${card.art.breakout}')` : 'none';
+  return card.art.breakout ? assets[card.art.breakout].css : 'none';
 });
 </script>
 
@@ -203,8 +204,8 @@ const artBreakoutImage = computed(() => {
   .small-card:is(.minion, .hero) & {
     --mask:
       v-bind(artBgImage), v-bind(artFrameImage),
-      url('/assets/ui/card/attack-large.png'),
-      url('/assets/ui/card/health-large.png');
+      url('@/assets/ui/card/attack-large.png'),
+      url('@/assets/ui/card/health-large.png');
     --mask-size:
       var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
     --mask-position:
@@ -214,8 +215,8 @@ const artBreakoutImage = computed(() => {
   .small-card:is(.minion, .hero) & {
     --mask:
       v-bind(artBgImage), v-bind(artFrameImage),
-      url('/assets/ui/card/attack-large.png'),
-      url('/assets/ui/card/durability-large.png');
+      url('@/assets/ui/card/attack-large.png'),
+      url('@/assets/ui/card/durability-large.png');
     --mask-size:
       var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
     --mask-position:
@@ -223,8 +224,8 @@ const artBreakoutImage = computed(() => {
     &:has(.foil) {
       --mask:
         v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
-        url('/assets/ui/card/attack-large.png'),
-        url('/assets/ui/card/durability-large.png');
+        url('@/assets/ui/card/attack-large.png'),
+        url('@/assets/ui/card/durability-large.png');
       --mask-size:
         var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size),
         var(--stat-size);
@@ -249,13 +250,13 @@ const artBreakoutImage = computed(() => {
   .small-card.sigil & {
     --mask:
       v-bind(artBgImage), v-bind(artFrameImage),
-      url('/assets/ui/card/countdown-large.png');
+      url('@/assets/ui/card/countdown-large.png');
     --mask-size: var(--bg-size), var(--frame-size), var(--stat-size);
     --mask-position: center, center, var(--stat-right-position);
     &:has(.foil) {
       --mask:
         v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
-        url('/assets/ui/card/countdown-large.png');
+        url('@/assets/ui/card/countdown-large.png');
       --mask-size:
         var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size);
       --mask-position: center, center, center, var(--stat-right-position);
@@ -266,9 +267,9 @@ const artBreakoutImage = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('/assets/ui/card/card_backs/default-small.png');
+  background: url('@/assets/ui/card/card_backs/default-small.png');
   background-size: cover;
-  --glare-mask: url('/assets/ui/card/card_backs/default-small.png');
+  --glare-mask: url('@/assets/ui/card/card_backs/default-small.png');
 }
 
 .image {
@@ -360,27 +361,27 @@ const artBreakoutImage = computed(() => {
 }
 
 .atk {
-  background-image: url('/assets/ui/card/attack-large.png');
+  background-image: url('@/assets/ui/card/attack-large.png');
   left: 0;
 }
 
 .hp {
-  background-image: url('/assets/ui/card/health-large.png');
+  background-image: url('@/assets/ui/card/health-large.png');
   right: 0;
 }
 
 .durability {
-  background-image: url('/assets/ui/card/durability.png');
+  background-image: url('@/assets/ui/card/durability.png');
   right: 0;
 }
 
 .countdown {
-  background-image: url('/assets/ui/card/countdown.png');
+  background-image: url('@/assets/ui/card/countdown.png');
   right: 0;
 }
 
 .mana-cost {
-  background-image: url('/assets/ui/mana-cost.png');
+  background-image: url('@/assets/ui/mana-cost.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(22px * var(--pixel-scale));
@@ -399,7 +400,7 @@ const artBreakoutImage = computed(() => {
 }
 
 .destiny-cost {
-  background-image: url('/assets/ui/destiny-cost.png');
+  background-image: url('@/assets/ui/destiny-cost.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(22px * var(--pixel-scale));

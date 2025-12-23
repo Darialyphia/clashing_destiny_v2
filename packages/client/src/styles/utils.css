@@ -23,7 +23,7 @@
 .surface {
   border-image-slice: 63 fill;
   border-image-width: 64px;
-  border-image-source: url('/assets/ui/ui-surface.png');
+  border-image-source: url('@/assets/ui/ui-surface.png');
   padding: var(--size-6);
 }
 

@@ -7,6 +7,7 @@ import {
 } from 'reka-ui';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import { useCollectionPage } from './useCollectionPage';
+import { assets } from '@/assets';
 
 const { deckBuilder } = useCollectionPage();
 </script>
@@ -23,7 +24,7 @@ const { deckBuilder } = useCollectionPage();
         <HoverCardTrigger class="inspectable-card" v-bind="$attrs" as-child>
           <li
             :style="{
-              '--bg': `url(/assets/cards/${card.blueprint.art.default.main}.png)`
+              '--bg': assets[`cards/${card.blueprint.art.default.main}`].css
             }"
             :class="card.blueprint.kind.toLocaleLowerCase()"
             class="deck-item"
@@ -58,7 +59,7 @@ const { deckBuilder } = useCollectionPage();
   align-items: center;
   border: solid var(--border-size-1) #d7ad42;
   padding: var(--size-2) var(--size-3);
-  cursor: url('/assets/ui/cursor-hover.png'), auto;
+  cursor: url('@/assets/ui/cursor-hover.png'), auto;
   background-image:
     linear-gradient(to right, #0c0c0c 25%, transparent), var(--bg);
   background-repeat: no-repeat;
@@ -75,7 +76,7 @@ const { deckBuilder } = useCollectionPage();
 }
 
 .mana-cost {
-  background: url(/assets/ui/mana-cost.png) no-repeat center center;
+  background: url(@/assets/ui/mana-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);
@@ -89,7 +90,7 @@ const { deckBuilder } = useCollectionPage();
 }
 
 .destiny-cost {
-  background: url(/assets/ui/destiny-cost.png) no-repeat center center;
+  background: url(@/assets/ui/destiny-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);

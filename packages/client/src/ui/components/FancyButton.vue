@@ -10,6 +10,7 @@ export type ButtonProps = {
   text: string;
   variant?: 'primary' | 'error' | 'info';
   size?: 'sm' | 'md' | 'lg';
+  as?: string;
 };
 
 const {
@@ -18,12 +19,14 @@ const {
   isInline,
   text,
   size = 'md',
-  to
+  to,
+  as
 } = defineProps<ButtonProps>();
 
 const attrs = useAttrs();
 
 const tag = computed(() => {
+  if (as) return as;
   if (attrs.href) return 'a';
   if (to) return RouterLink;
   return 'button';
@@ -81,19 +84,19 @@ const tag = computed(() => {
 
     transition: filter 0.2s var(--ease-2);
     &.primary {
-      border-image-source: url('/assets/ui/button.png');
+      border-image-source: url('@/assets/ui/button.png');
     }
 
     &.error {
-      border-image-source: url('/assets/ui/button-error.png');
+      border-image-source: url('@/assets/ui/button-error.png');
     }
 
     &.info {
-      border-image-source: url('/assets/ui/button-blue.png');
+      border-image-source: url('@ /assets/ui/button-blue.png');
     }
 
     &:disabled {
-      border-image-source: url('/assets/ui/button-disabled.png');
+      border-image-source: url('@/assets/ui/button-disabled.png');
       cursor: not-allowed;
     }
 

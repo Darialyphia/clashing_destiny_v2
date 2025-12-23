@@ -17,6 +17,7 @@ import {
   type CardSpeed,
   type Rune
 } from '@game/engine/src/card/card.enums';
+import { assets } from '@/assets';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -135,14 +136,14 @@ const tokens = computed<Token[]>(() => {
     >
       <UiSimpleTooltip v-if="token.type === 'exhaust'">
         <template #trigger>
-          <img src="/assets/ui/ability-exhaust.png" class="inline" />
+          <img :src="assets['ui/ability-exhaust'].path" class="inline" />
         </template>
         Exhaust the card.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === 'spellpower'">
         <template #trigger>
-          <img src="/assets/ui/ability-power.png" class="inline" />
+          <img :src="assets['ui/ability-power'].path" class="inline" />
         </template>
         <b>Spellpower</b>
         : is used to enhance the effects of some cards.
@@ -150,7 +151,7 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === 'health'">
         <template #trigger>
-          <img src="/assets/ui/hp.png" class="inline" />
+          <img :src="assets['ui/hp'].path" class="inline" />
         </template>
         <b>Health</b>
         : represents the amount of damage a minion or hero can take before being
@@ -159,7 +160,7 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === 'attack'">
         <template #trigger>
-          <img src="/assets/ui/attack.png" class="inline" />
+          <img :src="assets['ui/attack'].path" class="inline" />
         </template>
         <b>Attack</b>
         : is the amount of damage a minion or hero can deal in combat.
@@ -167,7 +168,10 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === 'durability'">
         <template #trigger>
-          <img src="/assets/ui/shield.png" class="inline token-durability" />
+          <img
+            :src="assets['ui/shield'].path"
+            class="inline token-durability"
+          />
         </template>
         <b>Durability</b>
         : when it reaches zero, the artifact is destroyed.
@@ -176,7 +180,7 @@ const tokens = computed<Token[]>(() => {
       <UiSimpleTooltip v-else-if="token.type === RUNES.KNOWLEDGE">
         <template #trigger>
           <img
-            src="/assets/ui/card/rune-knowledge.png"
+            :src="assets['ui/card/rune-knowledge'].path"
             class="inline token rune"
           />
         </template>
@@ -186,14 +190,20 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === RUNES.FOCUS">
         <template #trigger>
-          <img src="/assets/ui/card/rune-focus.png" class="inline token rune" />
+          <img
+            :src="assets['ui/card/rune-focus'].path"
+            class="inline token rune"
+          />
         </template>
         Focus Rune
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === RUNES.MIGHT">
         <template #trigger>
-          <img src="/assets/ui/card/rune-might.png" class="inline token rune" />
+          <img
+            :src="assets['ui/card/rune-might'].path"
+            class="inline token rune"
+          />
         </template>
         Might Rune
       </UiSimpleTooltip>
@@ -210,21 +220,21 @@ const tokens = computed<Token[]>(() => {
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
         <template #trigger>
-          <img src="/assets/ui/speed-slow.png" class="inline token speed" />
+          <img :src="assets['ui/speed-slow'].path" class="inline token speed" />
         </template>
         This can only be activated at Slow speed.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
         <template #trigger>
-          <img src="/assets/ui/speed-fast.png" class="inline token-speed" />
+          <img :src="assets['ui/speed-fast'].path" class="inline token-speed" />
         </template>
         This can be activated at Fast speed.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.BURST">
         <template #trigger>
-          <img src="/assets/ui/speed-burst.png" class="inline" />
+          <img :src="assets['ui/speed-burst'].path" class="inline" />
         </template>
         This can is activated at Burst speed and resolves instantly.
       </UiSimpleTooltip>
@@ -267,7 +277,7 @@ const tokens = computed<Token[]>(() => {
 }
 
 .token-mana {
-  background: url('/assets/ui/mana-cost.png') no-repeat center center;
+  background: url('@/assets/ui/mana-cost.png') no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
@@ -282,7 +292,7 @@ const tokens = computed<Token[]>(() => {
   paint-order: stroke fill;
 }
 .token-destiny {
-  background: url('/assets/ui/destiny-cost.png') no-repeat center center;
+  background: url('@/assets/ui/destiny-cost.png') no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);

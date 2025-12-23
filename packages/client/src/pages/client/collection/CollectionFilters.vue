@@ -136,7 +136,7 @@ const cardKinds: Array<{
 }
 
 .view-toggle {
-  cursor: url('/assets/ui/cursor-hover.png'), auto;
+  cursor: url('@/assets/ui/cursor-hover.png'), auto;
 }
 
 .search-input {

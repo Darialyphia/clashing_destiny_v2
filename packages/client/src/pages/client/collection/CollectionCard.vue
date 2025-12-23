@@ -116,6 +116,6 @@ const canAddCard = computed(() => {
 }
 
 .collection-card:not(.disabled):hover {
-  cursor: url('/assets/ui/cursor-hover.png'), auto;
+  cursor: url('@/assets/ui/cursor-hover.png'), auto;
 }
 </style>

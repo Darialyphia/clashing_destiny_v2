@@ -298,7 +298,7 @@ const onBoardMouseup = () => {
   bottom: var(--size-6);
   width: calc(32px * var(--pixel-scale));
   aspect-ratio: 1;
-  background: url('/assets/ui/settings-icon.png');
+  background: url('@/assets/ui/settings-icon.png');
   background-size: cover;
   z-index: 2;
   &:hover {

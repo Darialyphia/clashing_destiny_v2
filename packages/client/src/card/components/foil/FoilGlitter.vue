@@ -21,7 +21,7 @@
   --violet: hsla(288, 100%, 57%, 0.6);
 }
 .foil-glitter {
-  --glitter: url('/assets/fx/glitter.png');
+  --glitter: url('@/assets/fx/glitter.png');
   position: absolute;
   inset: 0;
   pointer-events: none;

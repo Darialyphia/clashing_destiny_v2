@@ -21,11 +21,11 @@
   }
 
   :is(button, a, input, select, textarea):hover {
-    cursor: url('/assets/ui/cursor-hover.png'), auto;
+    cursor: url('@/assets/ui/cursor-hover.png'), auto;
   }
 
   *:disabled {
-    cursor: url('/assets/ui/cursor-disabled.png'), auto;
+    cursor: url('@/assets/ui/cursor-disabled.png'), auto;
   }
 }
 

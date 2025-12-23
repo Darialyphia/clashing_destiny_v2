@@ -18,6 +18,8 @@ import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
 import { gameStateRef } from '../composables/gameStateRef';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
+import { assets } from '@/assets';
+
 const {
   cardId,
   actionsOffset = -50,
@@ -226,7 +228,7 @@ const visibleModifiers = gameStateRef(() => {
         >
           <template #trigger>
             <div
-              :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+              :style="{ '--bg': assets[`icons/${modifier.icon}`].css }"
               :alt="modifier.name"
               :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
               class="modifier"
@@ -237,7 +239,7 @@ const visibleModifiers = gameStateRef(() => {
             <div class="modifier-header">
               <div
                 class="modifier-icon"
-                :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+                :style="{ '--bg': assets[`icons/${modifier.icon}`].css }"
               />
               <div class="modifier-name">{{ modifier.name }}</div>
             </div>

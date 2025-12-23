@@ -29,7 +29,7 @@ input {
   color: black;
   -webkit-text-fill-color: black;
   padding: var(--size-2);
-  border-image-source: url('/assets/ui/text-input.png');
+  border-image-source: url('@/assets/ui/text-input.png');
   background: transparent;
 }
 </style>

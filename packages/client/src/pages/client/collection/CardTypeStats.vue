@@ -6,6 +6,7 @@ import {
   RUNES
 } from '@game/engine/src/card/card.enums';
 import { useCollectionPage } from './useCollectionPage';
+import { assets } from '@/assets';
 
 const { deckBuilder } = useCollectionPage();
 const getCountByKind = (kind: CardKind) => {
@@ -57,7 +58,7 @@ const getHighestRuneCostByRune = (rune: Rune) => {
         v-for="rune in RUNES"
         :key="rune"
         :style="{
-          '--bg': `url(/assets/ui/card/rune-${rune.toLocaleLowerCase()}.png)`
+          '--bg': assets[`ui/card/rune-${rune.toLocaleLowerCase()}`].css
         }"
       >
         {{ getHighestRuneCostByRune(rune) }}

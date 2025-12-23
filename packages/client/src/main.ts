@@ -14,7 +14,7 @@ import App from './App.vue';
 import gsap from 'gsap';
 import { MotionPathPlugin, Flip } from 'gsap/all';
 import { createConvexVue } from '@convex-vue/core';
-
+import '@/assets';
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(Flip);

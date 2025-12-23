@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
@@ -8,6 +7,9 @@ import {
   HoverCardRoot,
   HoverCardTrigger
 } from 'reka-ui';
+import { assets } from '@/assets';
+import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 export type DisplayedDeck = {
   name: string;
@@ -37,6 +39,7 @@ const destinyDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
+
 const heroes = computed(() =>
   destinyDeck.value
     .filter(item => item.blueprint.kind === CARD_KINDS.HERO)
@@ -70,22 +73,24 @@ const sigils = computed(() =>
 <template>
   <div>
     <HoverCardRoot>
-      <HoverCardTrigger as-child>
-        <button
-          class="player-deck"
-          :style="{
-            '--bg': `url(/assets/cards/${hero?.art.default.main}.png)`
-          }"
-        >
-          <div class="deck-name">
-            {{ deck.name }}
-          </div>
-        </button>
-      </HoverCardTrigger>
+      <button
+        class="player-deck"
+        :style="{
+          '--bg': assets[`cards/${hero?.art.default.main}`].css
+        }"
+      >
+        <div class="deck-name">
+          {{ deck.name }}
+        </div>
+
+        <HoverCardTrigger as-child>
+          <FancyButton as="div" text="?"></FancyButton>
+        </HoverCardTrigger>
+      </button>
 
       <HoverCardPortal>
-        <HoverCardContent side="left" align="center" :side-offset="8">
-          <!-- <div class="deck-details">
+        <HoverCardContent side="right" align="center" :side-offset="8">
+          <div class="deck-details">
             <ul>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
@@ -129,7 +134,7 @@ const sigils = computed(() =>
                 {{ item.copies }}x {{ item.blueprint.name }}
               </li>
             </ul>
-          </div> -->
+          </div>
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCardRoot>

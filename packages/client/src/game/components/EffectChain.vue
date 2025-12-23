@@ -200,15 +200,15 @@ const stack = computed(() => {
   transform: translateZ(1px);
 
   &.card {
-    background: url('/assets/ui/effect-card.png');
+    background: url('@/assets/ui/effect-card.png');
   }
 
   &.ability {
-    background: url('/assets/ui/effect-ability.png');
+    background: url('@/assets/ui/effect-ability.png');
   }
 
   &.counterattack {
-    background: url('/assets/ui/effect-counterattack.png');
+    background: url('@/assets/ui/effect-counterattack.png');
   }
 }
 </style>

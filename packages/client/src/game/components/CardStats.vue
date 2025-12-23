@@ -4,6 +4,7 @@ import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { useCard } from '../composables/useGameClient';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { gameStateRef } from '../composables/gameStateRef';
+import { assets } from '@/assets';
 
 const { cardId } = defineProps<{ cardId: string }>();
 
@@ -35,7 +36,7 @@ const visibleModifiers = gameStateRef(() => {
       >
         <template #trigger>
           <div
-            :style="{ '--bg': `url(/assets/icons/${modifier.icon}.png)` }"
+            :style="{ '--bg': assets[`icons/${modifier.icon}`].css }"
             :alt="modifier.name"
             :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
             class="modifier"
@@ -109,7 +110,7 @@ const visibleModifiers = gameStateRef(() => {
   }
 
   .atk {
-    background-image: url('/assets/ui/attack.png');
+    background-image: url('@/assets/ui/attack.png');
     background-position: left center;
     background-size: 20px;
     padding-left: var(--size-6);
@@ -119,7 +120,7 @@ const visibleModifiers = gameStateRef(() => {
   }
 
   .spellpower {
-    background-image: url('/assets/ui/ability-power.png');
+    background-image: url('@/assets/ui/ability-power.png');
     background-position: left center;
     background-size: 20px;
     padding-left: var(--size-6);
@@ -129,7 +130,7 @@ const visibleModifiers = gameStateRef(() => {
   }
 
   .hp {
-    background-image: url('/assets/ui/hp.png');
+    background-image: url('@/assets/ui/hp.png');
     background-position: left center;
     background-size: 20px;
     padding-left: var(--size-6);
