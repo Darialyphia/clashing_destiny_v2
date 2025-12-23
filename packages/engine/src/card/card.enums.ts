@@ -97,8 +97,8 @@ export type Faction = {
 };
 export const FACTIONS = {
   NEUTRAL: {
-    id: 'NEUTRAL',
-    name: 'Neutral',
+    id: 'NEUTRAL' as const,
+    name: 'Neutral' as const,
     shortName: 'Neutr',
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
@@ -163,7 +163,7 @@ export const FACTIONS = {
     }
   },
   PRIMAL: {
-    id: 'primal',
+    id: 'PRIMAL',
     name: 'Primal',
     shortName: 'Primal',
     defaultCardTint: {

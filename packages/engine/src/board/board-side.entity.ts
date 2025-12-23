@@ -124,18 +124,27 @@ export class BoardSide
   getAllCardsInPlay(): AnyCard[] {
     return [
       ...this.attackZone.cards.flatMap(card => {
-        return [card, ...card.modifiers.list.map(modifier => modifier.source)].filter(
-          isDefined
-        );
+        return [
+          card,
+          ...card.modifiers.list.flatMap(modifier => Array.from(modifier.sources))
+        ].filter(isDefined);
       }),
       ...this.defenseZone.cards.flatMap(card => {
-        return [card, ...card.modifiers.list.map(modifier => modifier.source)];
+        return [
+          card,
+          ...card.modifiers.list.flatMap(modifier => Array.from(modifier.sources))
+        ].filter(isDefined);
       }),
       this.heroZone.hero,
       ...this.heroZone.artifacts.flatMap(artifact => {
-        return [artifact, ...artifact.modifiers.list.map(modifier => modifier.source)];
+        return [
+          artifact,
+          ...artifact.modifiers.list.flatMap(modifier => Array.from(modifier.sources))
+        ].filter(isDefined);
       }),
-      ...this.heroZone.hero.modifiers.list.flatMap(modifier => modifier.source)
+      ...this.heroZone.hero.modifiers.list.flatMap(modifier =>
+        Array.from(modifier.sources)
+      )
     ].filter(isDefined);
   }
 

@@ -4,13 +4,16 @@ import { Modifier, type ModifierTarget } from './modifier.entity';
 export class ModifierManager<T extends ModifierTarget> {
   private _modifiers: Modifier<T>[] = [];
 
-  constructor(private target: T) {}
+  constructor(private target: T) {
+    this.onModifierRemoved = this.onModifierRemoved.bind(this);
+  }
 
   has(modifierOrId: string | Modifier<T, any> | Constructor<Modifier<T>>) {
     if (modifierOrId instanceof Modifier) {
-      return this._modifiers.some(
-        modifier =>
-          modifier.modifierType === modifierOrId.modifierType && modifier.isUnique
+      return this._modifiers.some(modifier =>
+        modifier.modifierType === modifierOrId.modifierType && modifier.isUnique
+          ? true
+          : modifier.equals(modifierOrId)
       );
     } else if (isString(modifierOrId)) {
       return this._modifiers.some(modifier => modifier.modifierType === modifierOrId);
@@ -45,12 +48,19 @@ export class ModifierManager<T extends ModifierTarget> {
     } else {
       this._modifiers.push(modifier);
       await modifier.applyTo(this.target);
+      await modifier.onRemoved(this.onModifierRemoved);
+
       return modifier;
     }
   }
 
+  private onModifierRemoved(modifier: Modifier<T>) {
+    this._modifiers = this._modifiers.filter(mod => !mod.equals(modifier));
+    modifier;
+  }
+
   async remove(modifierOrType: string | Modifier<T> | Constructor<Modifier<T>>) {
-    const idx = this._modifiers.findIndex(mod => {
+    const modToRemove = this._modifiers.find(mod => {
       if (modifierOrType instanceof Modifier) {
         return mod.equals(modifierOrType);
       } else if (isString(modifierOrType)) {
@@ -59,12 +69,9 @@ export class ModifierManager<T extends ModifierTarget> {
         return mod.constructor === modifierOrType;
       }
     });
-    if (idx < 0) return;
+    if (!modToRemove) return;
 
-    const modifier = this._modifiers[idx];
-
-    this._modifiers.splice(idx, 1);
-    await modifier.remove();
+    await modToRemove.remove();
   }
 
   get list() {

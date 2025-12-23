@@ -1,4 +1,10 @@
-import { isString, type EmptyObject, type Serializable, type Values } from '@game/shared';
+import {
+  isString,
+  type AnyFunction,
+  type EmptyObject,
+  type Serializable,
+  type Values
+} from '@game/shared';
 import type { ModifierMixin } from './modifier-mixin';
 import { Entity } from '../entity';
 import type { Game } from '../game/game';
@@ -94,7 +100,11 @@ export class Modifier<
 
   protected game: Game;
 
-  readonly source: AnyCard;
+  readonly initialSource: AnyCard;
+
+  // A unique modifier of the same type could be applied from different sources (for example auras)
+  // We need to keep track of those so can remove the modifier only when it has no source left
+  _sources = new Set<AnyCard>();
 
   protected _target!: T;
 
@@ -124,7 +134,8 @@ export class Modifier<
     });
     this.game = game;
     this.modifierType = modifierType;
-    this.source = source;
+    this._sources.add(source);
+    this.initialSource = source;
     this.mixins = options.mixins;
     this.infos = {
       description: options.description,
@@ -152,6 +163,14 @@ export class Modifier<
 
   get stacks() {
     return this._stacks;
+  }
+
+  get sources() {
+    return this._sources;
+  }
+
+  async onRemoved(cb: AnyFunction) {
+    await this.game.once(MODIFIER_EVENTS.MODIFIER_AFTER_REMOVED, cb);
   }
 
   checkEnabled() {
@@ -238,6 +257,13 @@ export class Modifier<
     );
   }
 
+  async removeSource(source: AnyCard) {
+    this._sources.delete(source);
+    if (this._sources.size === 0) {
+      return this.remove();
+    }
+  }
+
   addStacks(count: number) {
     this._stacks += count;
   }
@@ -267,7 +293,7 @@ export class Modifier<
         : this.infos.description?.(),
       icon: this.infos.icon,
       target: this._target.id,
-      source: this.source.id,
+      source: this.initialSource.id,
       stacks: this._stacks,
       isEnabled: this.isEnabled
     };

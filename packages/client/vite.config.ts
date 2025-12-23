@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig, Plugin, ResolvedConfig } from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 import vueDevTools from 'vite-plugin-vue-devtools';
@@ -11,8 +11,8 @@ import unoCSS from 'unocss/vite';
 import icons from 'unplugin-icons/vite';
 import markdown, { Mode } from 'vite-plugin-markdown';
 import { isCustomElement, transformAssetUrls } from 'vue3-pixi/compiler';
-//@ts-expect-error no types for this package
-import assetpackConfig from '@game/assetpack';
+
+// import assetpackConfig from '@game/assetpack';
 
 const customElements = [
   'viewport',
@@ -35,36 +35,36 @@ const customElements = [
 ];
 const prefix = 'pixi-';
 
-import { AssetPack } from '@assetpack/core';
+// import { AssetPack } from '@assetpack/core';
 
-function assetpackPlugin(): Plugin {
-  const apConfig = assetpackConfig('./src/assets/', './public/assets/');
+// function assetpackPlugin(): Plugin {
+//   const apConfig = assetpackConfig('./src/assets/', './public/assets/');
 
-  let mode: ResolvedConfig['command'];
-  let ap: AssetPack | undefined;
+//   let mode: ResolvedConfig['command'];
+//   let ap: AssetPack | undefined;
 
-  return {
-    name: 'vite-plugin-assetpack',
-    configResolved(resolvedConfig) {
-      mode = resolvedConfig.command;
-    },
-    buildStart: async () => {
-      if (mode === 'serve') {
-        if (ap) return;
-        ap = new AssetPack(apConfig);
-        void ap.watch();
-      } else {
-        await new AssetPack(apConfig).run();
-      }
-    },
-    buildEnd: async () => {
-      if (ap) {
-        await ap.stop();
-        ap = undefined;
-      }
-    }
-  };
-}
+//   return {
+//     name: 'vite-plugin-assetpack',
+//     configResolved(resolvedConfig) {
+//       mode = resolvedConfig.command;
+//     },
+//     buildStart: async () => {
+//       if (mode === 'serve') {
+//         if (ap) return;
+//         ap = new AssetPack(apConfig);
+//         void ap.watch();
+//       } else {
+//         await new AssetPack(apConfig).run();
+//       }
+//     },
+//     buildEnd: async () => {
+//       if (ap) {
+//         await ap.stop();
+//         ap = undefined;
+//       }
+//     }
+//   };
+// }
 
 export default defineConfig({
   plugins: [
@@ -107,7 +107,7 @@ export default defineConfig({
     }),
     unoCSS(),
     icons({}),
-    assetpackPlugin(),
+    // assetpackPlugin(),
     // @ts-expect-error
     markdown.default({
       mode: [Mode.VUE]

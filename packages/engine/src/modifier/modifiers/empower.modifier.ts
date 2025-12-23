@@ -32,9 +32,9 @@ export class EmpowerModifier extends Modifier<HeroCard> {
 
             await this.target.modifiers.add(
               new SimpleSpellpowerBuffModifier(
-                `${KEYWORDS.EMPOWER.id}-${this.source.id}`,
+                `${KEYWORDS.EMPOWER.id}-${this.initialSource.id}`,
                 game,
-                this.source,
+                this.initialSource,
                 { amount: options.amount }
               )
             );
