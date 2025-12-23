@@ -92,7 +92,7 @@ const tag = computed(() => {
     }
 
     &.info {
-      border-image-source: url('@ /assets/ui/button-blue.png');
+      border-image-source: url('@/assets/ui/button-blue.png');
     }
 
     &:disabled {
