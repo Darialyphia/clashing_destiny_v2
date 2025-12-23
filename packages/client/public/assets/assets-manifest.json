@@ -1512,6 +1512,32 @@
         },
         {
           "alias": [
+            "mana-fueled-golem-bg.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-fueled-golem-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "mana-fueled-golem.png"
+          ],
+          "src": [
+            "/assets/cards/minions/mana-fueled-golem.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "mana-looter-bg.png"
           ],
           "src": [
@@ -1581,6 +1607,32 @@
           ],
           "src": [
             "/assets/cards/placeholder.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "splitting-beam-bg.png"
+          ],
+          "src": [
+            "/assets/cards/spells/splitting-beam-bg.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "splitting-beam.png"
+          ],
+          "src": [
+            "/assets/cards/spells/splitting-beam.png"
           ],
           "data": {
             "tags": {

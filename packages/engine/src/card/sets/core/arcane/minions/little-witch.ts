@@ -47,7 +47,7 @@ export const littleWitch: MinionBlueprint = {
   },
   manaCost: 1,
   runeCost: {
-    KNOWLEDGE: 2
+    KNOWLEDGE: 1
   },
   speed: CARD_SPEED.SLOW,
   atk: 1,

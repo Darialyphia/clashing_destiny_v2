@@ -22,8 +22,6 @@ export const archsageOfMoonring: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
   description: dedent`
-    @Loyalty 1@.
-    
     On Enter: Deal 1 damage to a unit. Repeat for every @[knowledge]@ you have.
     `,
   faction: FACTIONS.ARCANE,
@@ -60,8 +58,6 @@ export const archsageOfMoonring: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new LoyaltyModifier(game, card, { amount: 1 }));
-
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {

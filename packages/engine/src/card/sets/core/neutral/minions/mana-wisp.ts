@@ -48,9 +48,7 @@ export const manaWisp: MinionBlueprint = {
     }
   },
   manaCost: 1,
-  runeCost: {
-    RESONANCE: 1
-  },
+  runeCost: {},
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 2,
