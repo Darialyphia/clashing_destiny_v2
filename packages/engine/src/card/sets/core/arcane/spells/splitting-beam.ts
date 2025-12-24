@@ -29,11 +29,11 @@ export const splittingBeam: SpellBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
+        sheen: false,
         oil: true,
-        gradient: true,
-        lightGradient: false,
-        scanlines: false
+        gradient: false,
+        lightGradient: true,
+        scanlines: true
       },
       dimensions: {
         width: 174,
@@ -41,6 +41,7 @@ export const splittingBeam: SpellBlueprint = {
       },
       bg: 'spells/splitting-beam-bg',
       main: 'spells/splitting-beam',
+      breakout: 'spells/splitting-beam-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

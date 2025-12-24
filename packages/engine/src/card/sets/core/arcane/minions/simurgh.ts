@@ -63,33 +63,28 @@ export const simurgh: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    const spellpowerBuff = new SimpleSpellpowerBuffModifier(
-      'simurgh-spellpower',
-      game,
-      card,
-      { amount: 1 }
-    );
-
     await card.modifiers.add(
       new Modifier('simurgh-aura', game, card, {
         mixins: [
-          new AuraModifierMixin(game, {
+          new AuraModifierMixin(game, card, {
             isElligible(candidate) {
               return (
                 card.location === CARD_LOCATIONS.BOARD &&
                 candidate.equals(card.player.hero)
               );
             },
-            async onGainAura(candidate) {
-              await candidate.modifiers.add(spellpowerBuff);
-            },
-            async onLoseAura(candidate) {
-              await candidate.modifiers.remove(spellpowerBuff);
+            getModifiers() {
+              return [
+                new SimpleSpellpowerBuffModifier('simurgh-spellpower', game, card, {
+                  amount: 1
+                })
+              ];
             }
           })
         ]
       })
     );
+
     await card.modifiers.add(
       new OnAttackModifier(game, card, {
         async handler() {
@@ -116,5 +111,5 @@ export const simurgh: MinionBlueprint = {
       })
     );
   },
-  async onPlay(game, card) {}
+  async onPlay() {}
 };

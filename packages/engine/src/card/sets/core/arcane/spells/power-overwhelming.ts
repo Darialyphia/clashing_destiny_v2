@@ -8,9 +8,6 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
-import { SpellCard } from '../../../../entities/spell.entity';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { getEmpowerStacks } from '../../../../card-actions-utils';
@@ -42,16 +39,15 @@ export const powerOverwhelming: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/power-overwhelming-bg',
+      main: 'spells/power-overwhelming',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
   destinyCost: 2,
   runeCost: {
-    KNOWLEDGE: 3,
+    KNOWLEDGE: 2,
     FOCUS: 1
   },
   speed: CARD_SPEED.FAST,

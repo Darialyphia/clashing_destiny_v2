@@ -8,6 +8,7 @@ export class DurationModifierMixin<T extends AnyCard = AnyCard> extends Modifier
   private modifier!: Modifier<T>;
 
   private initialDuration: number;
+
   constructor(
     game: Game,
     private duration = 1

@@ -6,15 +6,13 @@ import type { MaybePromise } from '@game/shared';
 
 export type AuraOptions = {
   isElligible(candidate: AnyCard): boolean;
-  onGainAura(candidate: AnyCard): MaybePromise<void>;
-  onLoseAura(candidate: AnyCard): MaybePromise<void>;
+  getModifiers: (candidate: AnyCard) => Modifier<AnyCard>[];
 };
 
 export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T> {
   protected modifier!: Modifier<T>;
 
-  private affectedCardIds = new Set<string>();
-
+  private affectedCards = new Map<string, Modifier<AnyCard>[]>();
   // we need to track this variable because of how the event emitter works
   // basically if we have an event that says "after unit moves, remove this aura modifier"
   // It will not clean up aura's "after unit move" event before all the current listeners have been ran
@@ -23,6 +21,7 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
 
   constructor(
     game: Game,
+    private source: AnyCard,
     private options: AuraOptions
   ) {
     super(game);
@@ -36,17 +35,23 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
     for (const card of this.game.cardSystem.cards) {
       const shouldGetAura = this.options.isElligible(card);
 
-      const hasAura = this.affectedCardIds.has(card.id);
+      const hasAura = this.affectedCards.has(card.id);
 
       if (!shouldGetAura && hasAura) {
-        this.affectedCardIds.delete(card.id);
-        await this.options.onLoseAura(card);
+        const modifierstoRemove = this.affectedCards.get(card.id)!;
+        for (const mod of modifierstoRemove) {
+          await mod.removeSource(this.source);
+        }
+        this.affectedCards.delete(card.id);
         continue;
       }
 
       if (shouldGetAura && !hasAura) {
-        this.affectedCardIds.add(card.id);
-        await this.options.onGainAura(card);
+        const modifiers = this.options.getModifiers(card);
+        this.affectedCards.set(card.id, modifiers);
+        for (const mod of modifiers) {
+          await card.modifiers.add(mod);
+        }
         continue;
       }
     }
@@ -55,12 +60,15 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
   private async cleanup() {
     this.game.off('*', this.checkAura);
 
-    for (const id of this.affectedCardIds) {
+    for (const id of this.affectedCards.keys()) {
       const card = this.game.cardSystem.getCardById(id);
       if (!card) return;
 
-      this.affectedCardIds.delete(id);
-      await this.options.onLoseAura(card);
+      this.affectedCards.delete(id);
+      const modifierstoRemove = this.affectedCards.get(card.id)!;
+      for (const mod of modifierstoRemove) {
+        await mod.removeSource(this.source);
+      }
     }
   }
 

@@ -4,6 +4,7 @@ import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useCollectionPage } from './useCollectionPage';
+import { assets } from '@/assets';
 
 const { textFilter, hasKindFilter, toggleKindFilter, viewMode } =
   useCollectionPage();
@@ -15,7 +16,7 @@ const cardKinds: Array<{
   color: string;
 }> = Object.values(CARD_KINDS).map(kind => ({
   id: kind,
-  img: `/assets/ui/card-kind-${kind.toLocaleLowerCase()}.png`,
+  img: assets[`ui/card-kind-${kind.toLocaleLowerCase()}`].path,
   label: uppercaseFirstLetter(kind),
   color: 'white'
 }));

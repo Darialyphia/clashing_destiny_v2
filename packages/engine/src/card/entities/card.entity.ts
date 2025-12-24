@@ -13,7 +13,8 @@ import {
   type CardSpeed,
   type Rarity,
   CARD_LOCATIONS,
-  type CardLocation
+  type CardLocation,
+  FACTIONS
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -310,6 +311,14 @@ export abstract class Card<
   }
 
   get hasUnlockedRunes() {
+    if (
+      this.faction.id !== this.player.hero.faction.id &&
+      this.faction.id !== FACTIONS.NEUTRAL.id &&
+      this.player.totalRunes < this.loyaltyRuneConsumption
+    ) {
+      return false;
+    }
+
     return this.player.hasRunes(this.blueprint.runeCost);
   }
 

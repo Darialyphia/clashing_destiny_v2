@@ -158,7 +158,6 @@ const onBoardMouseup = () => {
 
 .board {
   display: grid;
-  height: 100%;
   grid-template-rows: 1fr auto 1fr;
   gap: var(--size-2);
   transform-style: preserve-3d;

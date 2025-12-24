@@ -170,21 +170,14 @@ const isDisabled = computed(() => {
       left: calc(-1 * var(--size-1));
       right: calc(-1 * var(--size-1));
       z-index: -1;
-      filter: blur(4px);
-      background:
-        conic-gradient(
-          from var(--hand-card-conic-gradient-angle) at center,
-          cyan 0deg,
-          orange 40deg,
-          transparent 40deg
-        ),
-        conic-gradient(
-          from var(--hand-card-conic-gradient-angle-2) at center,
-          magenta 0deg,
-          yellow 40deg,
-          transparent 40deg
-        );
-      animation: booster-border-gradient-rotate 4s linear infinite;
+      border-radius: var(--radius-3);
+      background: conic-gradient(
+        from var(--hand-card-conic-gradient-angle) at center,
+        cyan 0deg,
+        orange 40deg,
+        transparent 40deg
+      );
+      animation: booster-border-gradient-rotate 2s linear infinite;
     }
   }
   &.disabled {

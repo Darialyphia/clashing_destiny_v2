@@ -47,8 +47,9 @@ const isStarted = ref(false);
         </ul>
       </div>
       <FancyButton
-        class="mt-4"
+        class="mt-4 mx-auto"
         text="Start Game"
+        size="lg"
         :disabled="!p1Deck || !p2Deck"
         @click="isStarted = true"
       />

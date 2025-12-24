@@ -29,7 +29,7 @@ import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 import type { RuneCost } from '../card/card-blueprint';
-import { CARD_KINDS, RUNES, type Rune } from '../card/card.enums';
+import { CARD_KINDS, FACTIONS, RUNES, type Rune } from '../card/card.enums';
 import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
@@ -295,6 +295,10 @@ export class Player
     return { ...this._unlockedRunes };
   }
 
+  get totalRunes() {
+    return Object.values(this._unlockedRunes).reduce((a, b) => a + b, 0);
+  }
+
   async gainRune(rune: RuneCost) {
     await this.game.emit(
       GAME_EVENTS.BEFORE_GAIN_RUNE,
@@ -349,7 +353,7 @@ export class Player
 
   getMaxResourceActionsPerType(actionType: PlayerResourceAction['type']): number {
     const defaultLimits: Record<PlayerResourceAction['type'], number> = {
-      draw_card: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
+      draw_card: 1,
       gain_rune: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
     };
 
@@ -428,7 +432,12 @@ export class Player
   }
 
   async payForLoyaltyCost(card: AnyCard) {
-    if (card.faction.id === this.hero.faction.id) return;
+    if (
+      card.faction.id === this.hero.faction.id ||
+      card.faction.id === FACTIONS.NEUTRAL.id
+    ) {
+      return;
+    }
 
     const loyaltyHpCost = card.loyaltyHpCost;
     if (loyaltyHpCost > 0) {

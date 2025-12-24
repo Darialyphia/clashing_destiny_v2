@@ -1,4 +1,4 @@
-import type { MaybePromise } from '@game/shared';
+import { isDefined, type MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
@@ -184,12 +184,15 @@ export class MinionCard extends Card<
   }
 
   canBlock(attacker: AttackTarget, target: AttackTarget) {
+    if (this.location !== CARD_LOCATIONS.BOARD) return false;
+
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     const isCorrectPhase =
+      attacker.player.equals(this.player.opponent) &&
+      !target?.equals(this) &&
       phaseCtx.state === GAME_PHASES.ATTACK &&
-      phaseCtx.ctx.attacker.equals(attacker) &&
-      !phaseCtx.ctx.target?.equals(target) &&
-      !phaseCtx.ctx.blocker;
+      !isDefined(phaseCtx.ctx.blocker);
+
     const base =
       isCorrectPhase &&
       !this._isExhausted &&

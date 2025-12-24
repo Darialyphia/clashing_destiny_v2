@@ -1,5 +1,6 @@
 import { isString, type Constructor, type Nullable } from '@game/shared';
 import { Modifier, type ModifierTarget } from './modifier.entity';
+import type { EmpowerModifier } from './modifiers/empower.modifier';
 
 export class ModifierManager<T extends ModifierTarget> {
   private _modifiers: Modifier<T>[] = [];

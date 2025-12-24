@@ -1,9 +1,6 @@
-import { GAME_EVENTS } from '../../../../../game/game.events';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { getEmpowerStacks } from '../../../../card-actions-utils';
@@ -62,14 +59,31 @@ export const erinaLv3: HeroBlueprint = {
   atk: 0,
   maxHp: 21,
   canPlay: () => true,
-  abilities: [],
+  abilities: [
+    {
+      id: 'erina-lv3-ability',
+      description: `@Consume@ @[knowledge]@ and @Empower@, then Wake up this Hero.`,
+      label: 'Consume and Empower',
+      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
+      getPreResponseTargets: () => Promise.resolve([]),
+      manaCost: 0,
+      runeCost: { KNOWLEDGE: 1 },
+      shouldExhaust: true,
+      speed: CARD_SPEED.BURST,
+      async onResolve(game, card) {
+        await card.player.spendRune({ KNOWLEDGE: 1 });
+        await card.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
+        await card.wakeUp();
+      }
+    }
+  ],
   async onInit(game, card) {
     const MANA_COST_MODIFIER_ID = 'erina-lv3-manacost-reduction';
 
     await card.modifiers.add(
       new Modifier<HeroCard>('erina-lv3-aura', game, card, {
         mixins: [
-          new AuraModifierMixin(game, {
+          new AuraModifierMixin(game, card, {
             isElligible(candidate) {
               return (
                 candidate.player.equals(card.player) &&
@@ -77,17 +91,12 @@ export const erinaLv3: HeroBlueprint = {
                 candidate.location === CARD_LOCATIONS.HAND
               );
             },
-            async onGainAura(candidate) {
-              await candidate.modifiers.add(
+            getModifiers(candidate) {
+              return [
                 new SimpleManacostModifier(MANA_COST_MODIFIER_ID, game, candidate, {
                   amount: -1
                 })
-              );
-              await candidate.modifiers.add(new EchoModifier(game, candidate));
-            },
-            async onLoseAura(candidate) {
-              await candidate.modifiers.remove(MANA_COST_MODIFIER_ID);
-              await candidate.modifiers.remove(EchoModifier);
+              ];
             }
           }),
           new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)

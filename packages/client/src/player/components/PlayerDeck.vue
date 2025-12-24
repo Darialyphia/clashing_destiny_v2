@@ -72,7 +72,7 @@ const sigils = computed(() =>
 
 <template>
   <div>
-    <HoverCardRoot>
+    <HoverCardRoot :open-delay="200">
       <button
         class="player-deck"
         :style="{

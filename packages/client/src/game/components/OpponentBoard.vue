@@ -74,7 +74,7 @@ const ui = useGameUi();
 }
 
 .hero {
-  --pixel-scale: 1.75;
+  --pixel-scale: 1.5;
   /* fixes some mouse hit detection issues*/
   transform: translateZ(1px);
 }
