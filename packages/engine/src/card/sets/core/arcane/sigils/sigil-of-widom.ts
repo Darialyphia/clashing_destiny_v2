@@ -45,10 +45,6 @@ export const sigilOfWisdom: SigilBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 1,
-    RESONANCE: 1
-  },
   abilities: [],
   maxCountdown: 2,
   speed: CARD_SPEED.SLOW,
@@ -72,3 +68,5 @@ export const sigilOfWisdom: SigilBlueprint = {
   },
   async onPlay() {}
 };
+
+

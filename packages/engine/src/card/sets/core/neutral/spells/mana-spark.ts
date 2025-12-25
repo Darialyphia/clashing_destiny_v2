@@ -47,7 +47,6 @@ export const manaSpark: SpellBlueprint = {
     }
   },
   manaCost: 0,
-  runeCost: {},
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => false,
@@ -61,3 +60,5 @@ export const manaSpark: SpellBlueprint = {
   },
   async onPlay() {}
 };
+
+

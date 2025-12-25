@@ -25,7 +25,6 @@ export const comet: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Comet',
   description: dedent`
-  @Consume@ @[knowledge]@.
   Deal 4 damage to every minion in an enemy Zone.
   `,
   faction: FACTIONS.ARCANE,
@@ -51,11 +50,7 @@ export const comet: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 4,
-  runeCost: {
-    KNOWLEDGE: 3,
-    RESONANCE: 2
-  },
+  manaCost: 5,
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,

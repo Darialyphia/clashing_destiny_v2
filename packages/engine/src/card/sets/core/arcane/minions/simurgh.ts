@@ -52,11 +52,6 @@ export const simurgh: MinionBlueprint = {
     }
   },
   manaCost: 6,
-  runeCost: {
-    KNOWLEDGE: 2,
-    MIGHT: 2,
-    RESONANCE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 4,
   maxHp: 4,
@@ -113,3 +108,5 @@ export const simurgh: MinionBlueprint = {
   },
   async onPlay() {}
 };
+
+

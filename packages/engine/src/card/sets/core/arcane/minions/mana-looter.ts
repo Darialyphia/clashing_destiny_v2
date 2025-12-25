@@ -45,10 +45,6 @@ export const manaLooter: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 1,
-    FOCUS: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 3,
@@ -62,8 +58,7 @@ export const manaLooter: MinionBlueprint = {
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 2,
       shouldExhaust: true,
-      runeCost: {},
-      speed: CARD_SPEED.FAST,
+  speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
         await card.modifiers.add(
           new StealthModifier(game, card, {
@@ -86,3 +81,5 @@ export const manaLooter: MinionBlueprint = {
   },
   async onPlay() {}
 };
+
+

@@ -51,10 +51,6 @@ export const galacticExplosion: SpellBlueprint = {
     }
   },
   manaCost: 7,
-  runeCost: {
-    KNOWLEDGE: 3,
-    RESONANCE: 3
-  },
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {
@@ -79,3 +75,5 @@ export const galacticExplosion: SpellBlueprint = {
     }
   }
 };
+
+

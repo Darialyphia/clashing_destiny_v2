@@ -21,10 +21,8 @@ export const cosmicDivinator: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Cosmic Divinator',
   description: dedent`
-  @Consume@ @[knowledge]@.
-
   @On Enter@: @Empower 1@.
-  @On Hit@: @Empower 2@..
+  @On Hit@: @Empower 2@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -50,10 +48,6 @@ export const cosmicDivinator: MinionBlueprint = {
     }
   },
   manaCost: 4,
-  runeCost: {
-    KNOWLEDGE: 2,
-    RESONANCE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 4,
@@ -80,9 +74,5 @@ export const cosmicDivinator: MinionBlueprint = {
       })
     );
   },
-  async onPlay(game, card) {
-    if (card.isPlayedFromHand) {
-      await card.player.spendRune({ KNOWLEDGE: 1 });
-    }
-  }
+  async onPlay() {}
 };

@@ -37,24 +37,19 @@ export const amplifyMagic: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/amplify-magic-bg',
+      main: 'spells/amplify-magic',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
   manaCost: 1,
-  runeCost: {
-    KNOWLEDGE: 2
-  },
   speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 2 }));
-    await card.player.cardManager.draw(1);
+    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
   }
 };

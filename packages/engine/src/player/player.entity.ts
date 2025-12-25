@@ -2,13 +2,7 @@ import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import {
-  assert,
-  isDefined,
-  uppercaseFirstLetter,
-  type MaybePromise,
-  type Serializable
-} from '@game/shared';
+import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
@@ -19,21 +13,14 @@ import { type HeroCard } from '../card/entities/hero.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import {
-  PlayerGainRuneEvent,
-  PlayerPayForDestinyCostEvent,
-  PlayerSpendRuneEvent,
-  PlayerTurnEvent
-} from './player.events';
+import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
-import type { RuneCost } from '../card/card-blueprint';
-import { CARD_KINDS, FACTIONS, RUNES, type Rune } from '../card/card.enums';
+import { CARD_KINDS, FACTIONS } from '../card/card.enums';
 import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
-import { max } from 'lodash-es';
 
 export type PlayerOptions = {
   id: string;
@@ -54,14 +41,13 @@ export type SerializedPlayer = {
   destinyZone: string[];
   remainingCardsInMainDeck: number;
   remainingCardsInDestinyDeck: number;
-  canPerformResourceAction: boolean;
-  remainingResourceActions: Record<PlayerResourceAction['type'], number>;
-  maxResourceActionPerTurn: number;
-  remainingTotalResourceActions: number;
+  // canPerformResourceAction: boolean;
+  // remainingResourceActions: Record<PlayerResourceAction['type'], number>;
+  // maxResourceActionPerTurn: number;
+  // remainingTotalResourceActions: number;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
-  unlockedRunes: RuneCost;
 };
 
 export type PlayerInterceptors = {
@@ -80,8 +66,8 @@ const makeInterceptors = (): PlayerInterceptors => {
 };
 
 export type PlayerResourceAction =
-  | { type: 'gain_rune'; rune: Rune }
-  | { type: 'draw_card' };
+  | { type: 'put_card_in_shard_zone'; cardId: string }
+  | { type: 'put_card_in_mana_zone'; cardId: string };
 
 export class Player
   extends Entity<PlayerInterceptors>
@@ -98,8 +84,6 @@ export class Player
   readonly artifactManager: ArtifactManagerComponent;
 
   readonly cardTracker: CardTrackerComponent;
-
-  private readonly _unlockedRunes: RuneCost = {};
 
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
 
@@ -201,23 +185,22 @@ export class Player
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
-      influence: this.influence,
-      unlockedRunes: { ...this._unlockedRunes },
-      canPerformResourceAction:
-        this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
-      remainingResourceActions: {
-        draw_card:
-          this.getMaxResourceActionsPerType('draw_card') -
-          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'draw_card')
-            .length,
-        gain_rune:
-          this.getMaxResourceActionsPerType('gain_rune') -
-          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'gain_rune')
-            .length
-      },
-      remainingTotalResourceActions:
-        this.maxResourceActionPerTurn - this._resourceActionsPerformedThisTurn.length,
-      maxResourceActionPerTurn: this.maxResourceActionPerTurn
+      influence: this.influence
+      // canPerformResourceAction:
+      //   this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
+      // remainingResourceActions: {
+      //   draw_card:
+      //     this.getMaxResourceActionsPerType('draw_card') -
+      //     this._resourceActionsPerformedThisTurn.filter(a => a.type === 'draw_card')
+      //       .length,
+      //   gain_rune:
+      //     this.getMaxResourceActionsPerType('gain_rune') -
+      //     this._resourceActionsPerformedThisTurn.filter(a => a.type === 'gain_rune')
+      //       .length
+      // },
+      // remainingTotalResourceActions:
+      //   this.maxResourceActionPerTurn - this._resourceActionsPerformedThisTurn.length,
+      // maxResourceActionPerTurn: this.maxResourceActionPerTurn
     };
   }
 
@@ -291,59 +274,6 @@ export class Player
     this._hasPassedThisRound = true;
   }
 
-  get unlockedRunes() {
-    return { ...this._unlockedRunes };
-  }
-
-  get totalRunes() {
-    return Object.values(this._unlockedRunes).reduce((a, b) => a + b, 0);
-  }
-
-  async gainRune(rune: RuneCost) {
-    await this.game.emit(
-      GAME_EVENTS.BEFORE_GAIN_RUNE,
-      new PlayerGainRuneEvent({ player: this, rune })
-    );
-    for (const [key, value] of Object.entries(rune)) {
-      const k = key as keyof RuneCost;
-      if (!this._unlockedRunes[k]) {
-        this._unlockedRunes[k] = 0;
-      }
-      this._unlockedRunes[k]! += value!;
-    }
-    await this.game.emit(
-      GAME_EVENTS.AFTER_GAIN_RUNE,
-      new PlayerGainRuneEvent({ player: this, rune })
-    );
-  }
-
-  async spendRune(rune: RuneCost) {
-    await this.game.emit(
-      GAME_EVENTS.BEFORE_SPEND_RUNE,
-      new PlayerSpendRuneEvent({ player: this, rune })
-    );
-    for (const [key, value] of Object.entries(rune)) {
-      const k = key as keyof RuneCost;
-      const currentAmount = this._unlockedRunes[k] ?? 0;
-      this._unlockedRunes[k]! = Math.max(0, currentAmount - (value ?? 0));
-    }
-    await this.game.emit(
-      GAME_EVENTS.AFTER_SPEND_RUNE,
-      new PlayerSpendRuneEvent({ player: this, rune })
-    );
-  }
-
-  hasRunes(runes: RuneCost) {
-    for (const [key, value] of Object.entries(runes)) {
-      const k = key as keyof RuneCost;
-      const currentAmount = this._unlockedRunes[k] ?? 0;
-      if (currentAmount < (value ?? 0)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   get maxResourceActionPerTurn() {
     return this.interceptors.maxResourceActionPerTurn.getValue(
       this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
@@ -353,8 +283,8 @@ export class Player
 
   getMaxResourceActionsPerType(actionType: PlayerResourceAction['type']): number {
     const defaultLimits: Record<PlayerResourceAction['type'], number> = {
-      draw_card: 1,
-      gain_rune: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
+      put_card_in_mana_zone: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
+      put_card_in_shard_zone: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
     };
 
     const limits = this.interceptors.maxResourceActionsPerType.getValue(
@@ -399,12 +329,8 @@ export class Player
     }
 
     await match(action)
-      .with({ type: 'gain_rune' }, async ({ rune }) => {
-        await this.gainRune({ [rune]: 1 });
-      })
-      .with({ type: 'draw_card' }, async () => {
-        await this.cardManager.draw(1);
-      })
+      .with({ type: 'put_card_in_mana_zone' }, async () => {})
+      .with({ type: 'put_card_in_shard_zone' }, async () => {})
       .exhaustive();
 
     this._resourceActionsPerformedThisTurn.push(action);
@@ -442,21 +368,6 @@ export class Player
     const loyaltyHpCost = card.loyaltyHpCost;
     if (loyaltyHpCost > 0) {
       await this.hero.takeDamage(card, new UnpreventableDamage(loyaltyHpCost));
-    }
-
-    for (let i = 1; i <= card.loyaltyRuneConsumption; i++) {
-      await this.game.interaction.askQuestion({
-        source: card,
-        player: this,
-        questionId: 'PLAY_CARD_LOYALTY_COST',
-        label: `Loyalty cost: Choose a rune to consume (${i} / ${card.loyaltyRuneConsumption})`,
-        minChoiceCount: 1,
-        maxChoiceCount: 1,
-        choices: Object.values(RUNES).map(rune => ({
-          id: rune,
-          label: uppercaseFirstLetter(rune.toLocaleLowerCase())
-        }))
-      });
     }
   }
 

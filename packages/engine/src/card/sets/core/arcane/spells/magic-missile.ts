@@ -29,26 +29,20 @@ export const magicMissile: SpellBlueprint = {
     default: {
       foil: {
         sheen: true,
-        oil: true,
-        gradient: true,
-        lightGradient: false,
-        scanlines: false
+        oil: true
       },
       dimensions: {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/magic-missile-bg',
+      main: 'spells/magic-missile',
+      breakout: 'spells/magic-missile-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
   manaCost: 1,
-  runeCost: {
-    KNOWLEDGE: 1
-  },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {

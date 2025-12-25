@@ -56,9 +56,6 @@ export const timeBomb: SigilBlueprint = {
     }
   },
   manaCost: 2,
-  runeCost: {
-    RESONANCE: 1
-  },
   abilities: [],
   maxCountdown: 1,
   speed: CARD_SPEED.SLOW,
@@ -114,3 +111,5 @@ export const timeBomb: SigilBlueprint = {
   },
   async onPlay() {}
 };
+
+

@@ -48,9 +48,6 @@ export const wizardsInsight: SpellBlueprint = {
     }
   },
   manaCost: 1,
-  runeCost: {
-    KNOWLEDGE: 1
-  },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
@@ -63,3 +60,5 @@ export const wizardsInsight: SpellBlueprint = {
     await card.player.cardManager.drawIntoDestinyZone(1);
   }
 };
+
+

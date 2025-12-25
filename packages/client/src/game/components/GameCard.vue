@@ -14,7 +14,7 @@ import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
-import { FACTIONS, type Rune } from '@game/engine/src/card/card.enums';
+import { FACTIONS } from '@game/engine/src/card/card.enums';
 import { gameStateRef } from '../composables/gameStateRef';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
@@ -180,12 +180,7 @@ const visibleModifiers = gameStateRef(() => {
               a =>
                 `@[${a.speed}]@${a.shouldExhaust ? ' @[exhaust]@' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
             ),
-          faction: FACTIONS[card.faction],
-          runes: Object.entries(card.runeCost)
-            .map(([rune, amount]) =>
-              Array.from({ length: amount }, () => rune as Rune)
-            )
-            .flat()
+          faction: FACTIONS[card.faction]
         }"
         class="game-card big"
         :class="classes"

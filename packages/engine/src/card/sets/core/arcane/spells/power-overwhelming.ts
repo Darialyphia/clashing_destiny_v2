@@ -21,7 +21,7 @@ export const powerOverwhelming: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Power Overwhelming',
   description: dedent`
-  Your hero gains Atk equals to your @Empower@ until the end of the turn.
+  Your hero gains Atk equals to your @Empower@ level until the end of the turn.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -46,10 +46,6 @@ export const powerOverwhelming: SpellBlueprint = {
     }
   },
   destinyCost: 2,
-  runeCost: {
-    KNOWLEDGE: 2,
-    FOCUS: 1
-  },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,

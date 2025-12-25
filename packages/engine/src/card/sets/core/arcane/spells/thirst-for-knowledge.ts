@@ -6,9 +6,11 @@ import {
   CARD_DECK_SOURCES,
   CARD_SETS,
   RARITIES,
-  FACTIONS
+  FACTIONS,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
+import { GAME_EVENTS } from '../../../../../game/game.events';
 
 export const thirstForKnowledge: SpellBlueprint = {
   id: 'thirst-for-knowledge',
@@ -19,9 +21,9 @@ export const thirstForKnowledge: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Thirst for Knowledge',
   description: dedent`
-    @Loyalty 2@, @Consume@ @[knowledge]@ @[knowledge]@ @[knowledge]@.
+    @Loyalty 2@.
 
-    Draw 3 cards.
+    Draw 3 cards. Discard them at the end of the turn.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -47,9 +49,6 @@ export const thirstForKnowledge: SpellBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 3
-  },
   speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay: () => true,
@@ -58,9 +57,13 @@ export const thirstForKnowledge: SpellBlueprint = {
     await card.modifiers.add(new LoyaltyModifier(game, card, { amount: 2 }));
   },
   async onPlay(game, card) {
-    if (card.isPlayedFromHand) {
-      await card.player.spendRune({ KNOWLEDGE: 3 });
+    const cards = await card.player.cardManager.draw(3);
+    for (const drawnCard of cards) {
+      game.once(GAME_EVENTS.TURN_END, async () => {
+        if (drawnCard.location === CARD_LOCATIONS.HAND) {
+          await drawnCard.discard();
+        }
+      });
     }
-    await card.player.cardManager.draw(3);
   }
 };

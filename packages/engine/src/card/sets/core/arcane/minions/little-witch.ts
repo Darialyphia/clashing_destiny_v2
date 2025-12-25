@@ -46,9 +46,6 @@ export const littleWitch: MinionBlueprint = {
     }
   },
   manaCost: 1,
-  runeCost: {
-    KNOWLEDGE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 1,
@@ -70,8 +67,7 @@ export const littleWitch: MinionBlueprint = {
       },
       manaCost: 1,
       shouldExhaust: true,
-      runeCost: {},
-      speed: CARD_SPEED.FAST,
+  speed: CARD_SPEED.FAST,
       async onResolve(game, card, targets, ability) {
         const target = targets[0] as MinionCard;
         if (!target) return;
@@ -84,3 +80,5 @@ export const littleWitch: MinionBlueprint = {
   async onInit() {},
   async onPlay() {}
 };
+
+

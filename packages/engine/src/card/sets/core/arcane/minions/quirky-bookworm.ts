@@ -43,9 +43,6 @@ export const quirkyBookworm: MinionBlueprint = {
     }
   },
   manaCost: 1,
-  runeCost: {
-    KNOWLEDGE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 1,
@@ -53,19 +50,15 @@ export const quirkyBookworm: MinionBlueprint = {
   abilities: [
     {
       id: 'quirky-bookworm-ability',
-      description: 'Gain @[knowledge]@ until end of turn.',
-      label: 'Gain @[knowledge]@',
+      description: 'todo',
+      label: 'todo',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 1,
       shouldExhaust: true,
-      runeCost: {},
       speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
-        await card.player.gainRune({ KNOWLEDGE: 1 });
-        game.once(GAME_EVENTS.TURN_END, async () => {
-          await card.player.spendRune({ KNOWLEDGE: 1 });
-        });
+        //
       }
     }
   ],

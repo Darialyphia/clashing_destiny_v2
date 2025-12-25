@@ -5,8 +5,7 @@ import {
   type CardSpeed,
   type CardTint,
   type Faction,
-  type Rarity,
-  type Rune
+  type Rarity
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -75,7 +74,6 @@ const {
     speed: CardSpeed;
     tags?: string[];
     faction: Faction;
-    runes: Rune[];
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -359,16 +357,6 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <div class="runes">
-          <div
-            v-for="(rune, index) in card.runes"
-            :key="index"
-            class="rune"
-            :style="{
-              '--bg': assets[`ui/card/rune-${rune.toLowerCase()}`].css
-            }"
-          />
-        </div>
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
           <FoilOil v-if="card.art.foil.oil" />
@@ -824,21 +812,5 @@ const kindBg = computed(() => {
     align-self: start;
     vertical-align: top;
   }
-}
-
-.runes {
-  position: absolute;
-  bottom: calc(2px * var(--pixel-scale));
-  left: 50%;
-  translate: -50% 0;
-  display: flex;
-  gap: calc(3px * var(--pixel-scale));
-}
-
-.rune {
-  width: calc(17px * var(--pixel-scale));
-  height: calc(18px * var(--pixel-scale));
-  background: var(--bg);
-  background-size: cover;
 }
 </style>

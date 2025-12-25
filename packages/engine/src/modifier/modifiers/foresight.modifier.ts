@@ -22,7 +22,6 @@ export class ForesightModifier<T extends AbilityOwner> extends Modifier<T> {
             'Banish this card from your Discard pile, and a card in your Destiny Zone. Reduce the cost of the next Destiny card you play this turn by 1.',
           label: 'Foresight',
           manaCost: 0,
-          runeCost: {},
           shouldExhaust: false,
           speed: CARD_SPEED.BURST,
           isHiddenOnCard: true,

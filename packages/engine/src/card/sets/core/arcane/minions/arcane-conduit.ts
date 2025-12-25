@@ -44,18 +44,13 @@ export const arcaneConduit: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/arcane-conduit-bg',
+      main: 'minions/arcane-conduit',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
   manaCost: 2,
-  runeCost: {
-    MIGHT: 1,
-    KNOWLEDGE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 2,

@@ -43,10 +43,6 @@ export const astralExplorer: MinionBlueprint = {
     }
   },
   manaCost: 2,
-  runeCost: {
-    KNOWLEDGE: 1,
-    RESONANCE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 2,
@@ -63,3 +59,5 @@ export const astralExplorer: MinionBlueprint = {
   },
   async onPlay() {}
 };
+
+

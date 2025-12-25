@@ -50,10 +50,6 @@ export const manaShield: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  runeCost: {
-    KNOWLEDGE: 1,
-    RESONANCE: 1
-  },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: singleAllyTargetRules.canPlay,
@@ -85,3 +81,5 @@ export const manaShield: SpellBlueprint = {
     );
   }
 };
+
+

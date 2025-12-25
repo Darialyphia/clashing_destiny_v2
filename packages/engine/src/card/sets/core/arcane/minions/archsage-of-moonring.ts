@@ -11,7 +11,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
 
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
@@ -22,7 +21,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
   description: dedent`
-    On Enter: Deal 1 damage to a unit. Repeat for every @[knowledge]@ you have.
+    On Enter: Deal 3 damage split among enemies.
     `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -48,10 +47,6 @@ export const archsageOfMoonring: MinionBlueprint = {
     }
   },
   manaCost: 4,
-  runeCost: {
-    KNOWLEDGE: 2,
-    RESONANCE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 3,
@@ -62,9 +57,8 @@ export const archsageOfMoonring: MinionBlueprint = {
       new OnEnterModifier(game, card, {
         handler: async () => {
           let count = 0;
-          const max = card.player.unlockedRunes.KNOWLEDGE ?? 0;
 
-          while (count < max) {
+          while (count < 3) {
             const hasRemainingTargets = singleEnemyTargetRules.canPlay(game, card);
             if (!hasRemainingTargets) break;
             const [target] = await singleEnemyTargetRules.getPreResponseTargets(

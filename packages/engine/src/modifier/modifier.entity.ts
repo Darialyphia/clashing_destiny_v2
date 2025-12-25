@@ -2,6 +2,7 @@ import {
   isString,
   type AnyFunction,
   type EmptyObject,
+  type MaybePromise,
   type Serializable,
   type Values
 } from '@game/shared';
@@ -38,7 +39,7 @@ export type ModifierOptions<
   stacks?: number;
 };
 
-class ModifierLifecycleEvent extends TypedSerializableEvent<
+export class ModifierLifecycleEvent extends TypedSerializableEvent<
   Modifier<any>,
   SerializedModifier
 > {
@@ -169,7 +170,7 @@ export class Modifier<
     return this._sources;
   }
 
-  async onRemoved(cb: AnyFunction) {
+  async onRemoved(cb: (event: ModifierLifecycleEvent) => MaybePromise<void>) {
     await this.game.once(MODIFIER_EVENTS.MODIFIER_AFTER_REMOVED, cb);
   }
 

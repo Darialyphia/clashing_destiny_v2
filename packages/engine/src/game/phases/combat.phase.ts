@@ -283,8 +283,8 @@ export class CombatPhase
 
     const canResolve = defender.isAlive && this.attacker.isAlive;
     if (canResolve) {
-      const attackerDealsFirst = !!this.attacker.dealsDamageFirst;
-      const defenderDealsFirst = !!defender.dealsDamageFirst;
+      const attackerDealsFirst = this.attacker.dealsDamageFirst;
+      const defenderDealsFirst = defender.dealsDamageFirst;
 
       const performAtttackerStrike = async () => {
         if (!this.attacker.isExhausted && this.attacker.isAlive && defender.isAlive) {
@@ -311,7 +311,7 @@ export class CombatPhase
         }
       } else {
         await performAtttackerStrike();
-        if (this.attacker.isAlive && defender.isAlive) {
+        if (this.attacker.isAlive) {
           await performDefenderStrike();
         }
       }

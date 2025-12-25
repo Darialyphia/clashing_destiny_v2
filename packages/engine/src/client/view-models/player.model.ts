@@ -61,28 +61,24 @@ export class PlayerViewModel {
     return this.data.remainingCardsInDestinyDeck;
   }
 
-  get canPerformResourceAction() {
-    return this.data.canPerformResourceAction;
-  }
+  // get canPerformResourceAction() {
+  //   return this.data.canPerformResourceAction;
+  // }
 
-  get remainingResourceActions() {
-    return this.data.remainingResourceActions;
-  }
+  // get remainingResourceActions() {
+  //   return this.data.remainingResourceActions;
+  // }
 
-  get maxResourceActionPerTurn() {
-    return this.data.maxResourceActionPerTurn;
-  }
+  // get maxResourceActionPerTurn() {
+  //   return this.data.maxResourceActionPerTurn;
+  // }
 
-  get remainingTotalResourceActions() {
-    return this.data.remainingTotalResourceActions;
-  }
+  // get remainingTotalResourceActions() {
+  //   return this.data.remainingTotalResourceActions;
+  // }
 
   get isPlayer1() {
     return this.data.isPlayer1;
-  }
-
-  get unlockedRunes() {
-    return this.data.unlockedRunes;
   }
 
   get hand() {

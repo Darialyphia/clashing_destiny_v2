@@ -50,10 +50,6 @@ export const sigilOfSimurgh: SigilBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 1,
-    RESONANCE: 2
-  },
   abilities: [],
   maxCountdown: 3,
   speed: CARD_SPEED.SLOW,
@@ -86,3 +82,5 @@ export const sigilOfSimurgh: SigilBlueprint = {
   },
   async onPlay() {}
 };
+
+

@@ -3,7 +3,6 @@ import type {
   AbilityBlueprint,
   CardBlueprint
 } from '@game/engine/src/card/card-blueprint';
-import { type Rune } from '@game/engine/src/card/card.enums';
 import Card from './Card.vue';
 
 const { blueprint, foilOverrides = {} } = defineProps<{
@@ -56,12 +55,7 @@ const mergedFoilOptions = computed(() => ({
       ),
       subKind: (blueprint as any).subKind,
       speed: blueprint.speed,
-      faction: blueprint.faction,
-      runes: Object.entries(blueprint.runeCost)
-        .map(([rune, amount]) =>
-          Array.from({ length: amount }, () => rune as Rune)
-        )
-        .flat()
+      faction: blueprint.faction
     }"
   />
 </template>

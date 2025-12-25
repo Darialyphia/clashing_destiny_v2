@@ -52,7 +52,6 @@ export const erinaLv3: HeroBlueprint = {
     }
   },
   destinyCost: 3,
-  runeCost: {},
   level: 3,
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,
@@ -62,16 +61,14 @@ export const erinaLv3: HeroBlueprint = {
   abilities: [
     {
       id: 'erina-lv3-ability',
-      description: `@Consume@ @[knowledge]@ and @Empower@, then Wake up this Hero.`,
+      description: `@Empower@, then Wake up this Hero.`,
       label: 'Consume and Empower',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 0,
-      runeCost: { KNOWLEDGE: 1 },
+      manaCost: 2,
       shouldExhaust: true,
       speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
-        await card.player.spendRune({ KNOWLEDGE: 1 });
         await card.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
         await card.wakeUp();
       }
@@ -99,7 +96,10 @@ export const erinaLv3: HeroBlueprint = {
               ];
             }
           }),
-          new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)
+          new TogglableModifierMixin(
+            game,
+            () => card.location === CARD_LOCATIONS.BOARD && getEmpowerStacks(card) > 0
+          )
         ]
       })
     );

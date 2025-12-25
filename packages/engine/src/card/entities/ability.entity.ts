@@ -159,7 +159,6 @@ export class Ability<T extends AbilityOwner>
       description: this.blueprint.description,
       name: this.blueprint.label,
       manaCost: this.manaCost,
-      runeCost: this.blueprint.runeCost,
       speed: this.speed,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       shouldExhaust: this.shouldExhaust,

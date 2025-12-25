@@ -49,10 +49,6 @@ export const lightningBolt: SpellBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 2,
-    FOCUS: 1
-  },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
@@ -79,3 +75,5 @@ export const lightningBolt: SpellBlueprint = {
     }
   }
 };
+
+

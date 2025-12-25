@@ -1,6 +1,5 @@
 import { isString, type Constructor, type Nullable } from '@game/shared';
-import { Modifier, type ModifierTarget } from './modifier.entity';
-import type { EmpowerModifier } from './modifiers/empower.modifier';
+import { Modifier, ModifierLifecycleEvent, type ModifierTarget } from './modifier.entity';
 
 export class ModifierManager<T extends ModifierTarget> {
   private _modifiers: Modifier<T>[] = [];
@@ -55,9 +54,8 @@ export class ModifierManager<T extends ModifierTarget> {
     }
   }
 
-  private onModifierRemoved(modifier: Modifier<T>) {
-    this._modifiers = this._modifiers.filter(mod => !mod.equals(modifier));
-    modifier;
+  private onModifierRemoved(event: ModifierLifecycleEvent) {
+    this._modifiers = this._modifiers.filter(mod => !mod.equals(event.data));
   }
 
   async remove(modifierOrType: string | Modifier<T> | Constructor<Modifier<T>>) {

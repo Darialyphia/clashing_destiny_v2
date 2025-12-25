@@ -42,7 +42,6 @@ export const spiritOfArcane: HeroBlueprint = {
     }
   },
   destinyCost: 0,
-  runeCost: {},
   level: 0,
   lineage: null,
   speed: CARD_SPEED.SLOW,
@@ -61,3 +60,5 @@ export const spiritOfArcane: HeroBlueprint = {
   },
   async onPlay() {}
 };
+
+

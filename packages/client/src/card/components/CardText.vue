@@ -11,12 +11,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import {
-  CARD_SPEED,
-  RUNES,
-  type CardSpeed,
-  type Rune
-} from '@game/engine/src/card/card.enums';
+import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
 import { assets } from '@/assets';
 
 const { text, highlighted = true } = defineProps<{
@@ -41,8 +36,7 @@ type Token =
   | { type: 'lineage-bonus'; text: string }
   | { type: 'missing-affinity'; text: string }
   | { type: 'durability' }
-  | { type: CardSpeed }
-  | { type: Rune };
+  | { type: CardSpeed };
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
@@ -112,11 +106,7 @@ const tokens = computed<Token[]>(() => {
         text: part.replace('[missing-affinity] ', '')
       };
     }
-    for (const rune of Object.values(RUNES)) {
-      if (part.startsWith(`[${rune.toLocaleLowerCase()}]`)) {
-        return { type: rune };
-      }
-    }
+
     for (const speed of Object.values(CARD_SPEED)) {
       if (part.startsWith(`[${speed}]`)) {
         return { type: speed };
@@ -176,47 +166,6 @@ const tokens = computed<Token[]>(() => {
         <b>Durability</b>
         : when it reaches zero, the artifact is destroyed.
       </UiSimpleTooltip>
-
-      <UiSimpleTooltip v-else-if="token.type === RUNES.KNOWLEDGE">
-        <template #trigger>
-          <img
-            :src="assets['ui/card/rune-knowledge'].path"
-            class="inline token rune"
-          />
-        </template>
-
-        Knowledge Rune
-      </UiSimpleTooltip>
-
-      <UiSimpleTooltip v-else-if="token.type === RUNES.FOCUS">
-        <template #trigger>
-          <img
-            :src="assets['ui/card/rune-focus'].path"
-            class="inline token rune"
-          />
-        </template>
-        Focus Rune
-      </UiSimpleTooltip>
-
-      <UiSimpleTooltip v-else-if="token.type === RUNES.MIGHT">
-        <template #trigger>
-          <img
-            :src="assets['ui/card/rune-might'].path"
-            class="inline token rune"
-          />
-        </template>
-        Might Rune
-      </UiSimpleTooltip>
-
-      <!-- <UiSimpleTooltip v-else-if="token.type === RUNES.RESONANCE">
-        <template #trigger>
-          <img
-            src="/assets/ui/card/rune-resonance.png"
-            class="inline token rune"
-          />
-        </template>
-        Resonance Rune
-      </UiSimpleTooltip> -->
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
         <template #trigger>
@@ -360,8 +309,8 @@ const tokens = computed<Token[]>(() => {
 .token-FAST,
 .token-BURST {
   img {
-    width: calc(10px * var(--pixel-scale) / 2);
-    height: calc(10px * var(--pixel-scale) / 2);
+    width: calc(14px * var(--pixel-scale) / 2);
+    height: calc(14px * var(--pixel-scale) / 2);
     aspect-ratio: 1;
     transform: translateY(2px);
   }

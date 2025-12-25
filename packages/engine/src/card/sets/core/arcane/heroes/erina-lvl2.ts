@@ -41,7 +41,6 @@ export const erinaLv2: HeroBlueprint = {
     }
   },
   destinyCost: 2,
-  runeCost: {},
   level: 2,
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,
@@ -66,3 +65,5 @@ export const erinaLv2: HeroBlueprint = {
   },
   async onPlay() {}
 };
+
+

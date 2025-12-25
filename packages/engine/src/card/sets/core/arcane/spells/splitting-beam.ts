@@ -47,9 +47,6 @@ export const splittingBeam: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  runeCost: {
-    KNOWLEDGE: 2
-  },
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
@@ -77,3 +74,5 @@ export const splittingBeam: SpellBlueprint = {
     }
   }
 };
+
+

@@ -17,16 +17,13 @@ import {
   CARD_KINDS,
   type CardKind,
   CARD_DECK_SOURCES,
-  FACTIONS,
-  RUNES
+  FACTIONS
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import type { BoardSlotZone } from '../../board/board.constants';
-import { GainRuneAction } from '../actions/gain-rune';
-import { DrawCardAction } from '../actions/draw-card';
 
 type CardData =
   | SerializedSpellCard
@@ -159,10 +156,6 @@ export class CardViewModel {
     }
 
     return null;
-  }
-
-  get runeCost() {
-    return this.data.runeCost;
   }
 
   get faction() {
@@ -382,15 +375,7 @@ export class CardViewModel {
 
   get actions(): CardActionRule[] {
     const actions = [
-      ...(this.kind === CARD_KINDS.HERO
-        ? [
-            new GainRuneAction(this.getClient(), RUNES.MIGHT),
-            new GainRuneAction(this.getClient(), RUNES.FOCUS),
-            new GainRuneAction(this.getClient(), RUNES.KNOWLEDGE),
-            new GainRuneAction(this.getClient(), RUNES.RESONANCE),
-            new DrawCardAction(this.getClient())
-          ]
-        : []),
+      ...(this.kind === CARD_KINDS.HERO ? [] : []),
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),

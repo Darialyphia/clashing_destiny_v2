@@ -50,10 +50,6 @@ export const spellbladeDuelist: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 1,
-    MIGHT: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 3,
@@ -75,3 +71,5 @@ export const spellbladeDuelist: MinionBlueprint = {
   },
   async onPlay() {}
 };
+
+

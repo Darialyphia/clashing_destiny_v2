@@ -5,6 +5,7 @@ import type { HeroCard } from '../../card/entities/hero.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { HeroInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import { UntilEventModifierMixin } from '../mixins/until-event';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -29,16 +30,11 @@ export class EmpowerModifier extends Modifier<HeroCard> {
           handler: async event => {
             if (!event.data.card.player.equals(this.target.player)) return;
             if (!isSpell(event.data.card)) return;
-
-            await this.target.modifiers.add(
-              new SimpleSpellpowerBuffModifier(
-                `${KEYWORDS.EMPOWER.id}-${this.initialSource.id}`,
-                game,
-                this.initialSource,
-                { amount: options.amount }
-              )
-            );
           }
+        }),
+        new HeroInterceptorModifierMixin(game, {
+          key: 'spellPower',
+          interceptor: value => value + this.stacks
         }),
         new UntilEndOfTurnModifierMixin(game),
         new UntilEventModifierMixin(game, {

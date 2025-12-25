@@ -46,9 +46,6 @@ export const astralSoldier: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  runeCost: {
-    KNOWLEDGE: 1
-  },
   speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 3,
@@ -67,3 +64,5 @@ export const astralSoldier: MinionBlueprint = {
   },
   async onPlay() {}
 };
+
+

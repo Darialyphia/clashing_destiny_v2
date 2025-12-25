@@ -176,14 +176,6 @@ export const FACTIONS = {
 } as const satisfies Record<string, Faction>;
 export type FactionId = Values<typeof FACTIONS>['id'];
 
-export const RUNES = {
-  MIGHT: 'MIGHT',
-  KNOWLEDGE: 'KNOWLEDGE',
-  FOCUS: 'FOCUS',
-  RESONANCE: 'RESONANCE'
-} as const;
-export type Rune = Values<typeof RUNES>;
-
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',

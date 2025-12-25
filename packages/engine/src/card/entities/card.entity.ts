@@ -3,7 +3,7 @@ import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint, PreResponseTarget, RuneCost } from '../card-blueprint';
+import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
@@ -13,8 +13,7 @@ import {
   type CardSpeed,
   type Rarity,
   CARD_LOCATIONS,
-  type CardLocation,
-  FACTIONS
+  type CardLocation
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -59,7 +58,6 @@ export type CardInterceptors = {
   loyaltyManaCostIncrease: Interceptable<number>;
   loyaltyDestinyCostIncrease: Interceptable<number>;
   loyaltyHpCost: Interceptable<number>;
-  loyaltyRuneConsumption: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -77,8 +75,7 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   shouldWakeUpAtTurnStart: new Interceptable(),
   loyaltyManaCostIncrease: new Interceptable(),
   loyaltyDestinyCostIncrease: new Interceptable(),
-  loyaltyHpCost: new Interceptable(),
-  loyaltyRuneConsumption: new Interceptable()
+  loyaltyHpCost: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -99,7 +96,6 @@ export type SerializedCard = {
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
   destinyCost: number | null;
-  runeCost: RuneCost;
   keywords: string[];
   faction: string;
   unplayableReason: string | null;
@@ -210,13 +206,6 @@ export abstract class Card<
     );
   }
 
-  get loyaltyRuneConsumption() {
-    return this.interceptors.loyaltyRuneConsumption.getValue(
-      this.game.config.BASE_LOYALTY_RUNE_CONSUMPTION,
-      {}
-    );
-  }
-
   get loyaltyDestinyCostIncrease() {
     return this.interceptors.loyaltyDestinyCostIncrease.getValue(
       this.game.config.BASE_LOYALTY_COST_INCREASE,
@@ -308,18 +297,6 @@ export abstract class Card<
       CARD_EVENTS.CARD_DISPOSED,
       new CardDisposedEvent({ card: this })
     );
-  }
-
-  get hasUnlockedRunes() {
-    if (
-      this.faction.id !== this.player.hero.faction.id &&
-      this.faction.id !== FACTIONS.NEUTRAL.id &&
-      this.player.totalRunes < this.loyaltyRuneConsumption
-    ) {
-      return false;
-    }
-
-    return this.player.hasRunes(this.blueprint.runeCost);
   }
 
   async resolve(handler: () => Promise<void>) {
@@ -581,8 +558,6 @@ export abstract class Card<
       return false;
     }
 
-    if (!this.hasUnlockedRunes) return false;
-
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
@@ -600,10 +575,6 @@ export abstract class Card<
 
     if (!this.isCorrectChainToPlay) {
       return "Can't play during an effect chain.";
-    }
-
-    if (!this.hasUnlockedRunes) {
-      return 'You are missing some runes.';
     }
 
     return match(this.deckSource)
@@ -649,7 +620,6 @@ export abstract class Card<
       player: this.player.id,
       kind: this.kind,
       isExhausted: this.isExhausted,
-      runeCost: this.blueprint.runeCost,
       faction: this.faction.id,
       name: this.blueprint.name,
       description: this.blueprint.description,

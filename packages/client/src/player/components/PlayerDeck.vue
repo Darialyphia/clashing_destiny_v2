@@ -76,7 +76,7 @@ const sigils = computed(() =>
       <button
         class="player-deck"
         :style="{
-          '--bg': assets[`cards/${hero?.art.default.main}`].css
+          '--bg': assets[`cards/${hero?.art.default.main}`]?.css
         }"
       >
         <div class="deck-name">
