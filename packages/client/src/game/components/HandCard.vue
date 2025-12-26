@@ -152,7 +152,7 @@ const isDisabled = computed(() => {
   padding-block: var(--size-3) var(--size-6);
   z-index: var(--z);
   transition:
-    transform 0.2s var(--ease-2),
+    transform 0.15s var(--ease-elastic-2),
     filter 1s var(--ease-2);
   pointer-events: auto;
 

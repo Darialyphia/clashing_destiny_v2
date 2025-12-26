@@ -28,7 +28,7 @@ useEventListener(
 let prev = { x: x.value, y: y.value };
 let delta = { x: 0, y: 0 };
 const MAX_ANGLE = 45;
-const SCALE_FACTOR = 1.4;
+const SCALE_FACTOR = 2;
 const LERP_FACTOR = 0.3;
 
 useRafFn(() => {
@@ -123,7 +123,7 @@ const card = computed(() => {
       id="dragged-card"
       data-flip-id="dragged-card"
       :style="{
-        '--pixel-scale': 1.5,
+        '--pixel-scale': 1,
         '--x': `${x}px`,
         '--y': `${y}px`
       }"

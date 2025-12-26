@@ -151,7 +151,7 @@ export class SigilCard extends Card<
   }
 
   private async promptForSummonZone() {
-    const [zone] = await this.game.interaction.askQuestion({
+    const zone = await this.game.interaction.askQuestion({
       questionId: GAME_QUESTIONS.SUMMON_POSITION,
       label: 'Select which zone to summon the sigil to',
       player: this.player,

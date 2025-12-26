@@ -197,17 +197,18 @@ watch(width, v => {
   height: 50px;
 }
 .hand {
-  --pixel-scale: 1.5;
+  --pixel-scale: 1.25;
   position: relative;
   z-index: 1;
   width: 100%;
-  transition: transform 0.15s var(--ease-in-3);
+  transition: transform 0.15s var(--ease-elastic-2);
   &.opponent-hand:not(.expanded) {
     position: absolute;
     right: 0;
   }
   &.elevated,
   &:hover {
+    --pixel-scale: 1.5;
     transform: translateY(-290px);
   }
 }

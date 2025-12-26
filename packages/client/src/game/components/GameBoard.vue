@@ -89,6 +89,8 @@ const onBoardMouseup = () => {
         @mouseup="onBoardMouseup"
       >
         <OpponentBoard />
+
+        <MyBoard />
         <div class="flex justify-between gap-3">
           <EffectChain />
           <Transition>
@@ -112,7 +114,6 @@ const onBoardMouseup = () => {
           </Transition>
           <ActionsButtons />
         </div>
-        <MyBoard />
         <div id="card-actions-portal"></div>
         <div class="arrows" id="arrows" />
       </div>
@@ -158,7 +159,7 @@ const onBoardMouseup = () => {
 
 .board {
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: 1fr 1fr auto;
   gap: var(--size-2);
   transform-style: preserve-3d;
 }

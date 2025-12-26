@@ -32,6 +32,8 @@ import { orbOfConstellations } from './core/arcane/artifact/orb-of-constellation
 import { manaSpark } from './core/neutral/spells/mana-spark';
 import { simurgh } from './core/arcane/minions/simurgh';
 import { sigilOfSimurgh } from './core/arcane/sigils/sigil-of-simurgh';
+import { jeweller } from './core/arcane/minions/jeweller';
+import { plottingConsellor } from './core/arcane/minions/plotting-consellor';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -68,6 +70,8 @@ export const coreSet: CardSet = {
     quirkyBookworm,
     orbOfConstellations,
     simurgh,
-    sigilOfSimurgh
+    sigilOfSimurgh,
+    jeweller,
+    plottingConsellor
   ]
 };

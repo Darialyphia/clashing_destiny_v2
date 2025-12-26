@@ -55,7 +55,7 @@ export const comet: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   async getPreResponseTargets(game, card) {
-    const [zone] = await game.interaction.askQuestion({
+    const zone = await game.interaction.askQuestion({
       questionId: 'comet-enemy-zone-selection',
       player: card.player,
       source: card,
@@ -73,7 +73,6 @@ export const comet: SpellBlueprint = {
         }
       ]
     });
-
     return card.player.opponent.boardSide.getZone(zone as BoardSlotZone).minions;
   },
   async onInit() {},

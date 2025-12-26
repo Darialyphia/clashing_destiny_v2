@@ -38,9 +38,8 @@ export const astralSoldier: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/astral-soldier-bg',
+      main: 'minions/astral-soldier',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
@@ -64,5 +63,3 @@ export const astralSoldier: MinionBlueprint = {
   },
   async onPlay() {}
 };
-
-

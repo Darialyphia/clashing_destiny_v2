@@ -108,5 +108,7 @@ const isTilted = computed({
   transition: translate 1s var(--ease-4);
   /* solves some hover detection issues because of 3D transforms */
   transform: translateZ(0px);
+  display: grid;
+  align-items: center;
 }
 </style>

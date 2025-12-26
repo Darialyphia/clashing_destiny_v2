@@ -36,7 +36,9 @@ export const cards = {
 "quirky-bookworm": "quirky-bookworm",
 "orb-of-constellations": "orb-of-constellations",
 "simurgh": "simurgh",
-"sigil-of-simurgh": "sigil-of-simurgh"
+"sigil-of-simurgh": "sigil-of-simurgh",
+"jeweller": "jeweller",
+"plotting-consellor": "plotting-consellor"
 } as const;
 
 export const collectableCards = {
@@ -69,5 +71,7 @@ export const collectableCards = {
 "mana-wisp": "mana-wisp",
 "quirky-bookworm": "quirky-bookworm",
 "orb-of-constellations": "orb-of-constellations",
-"sigil-of-simurgh": "sigil-of-simurgh"
+"sigil-of-simurgh": "sigil-of-simurgh",
+"jeweller": "jeweller",
+"plotting-consellor": "plotting-consellor"
 } as const;

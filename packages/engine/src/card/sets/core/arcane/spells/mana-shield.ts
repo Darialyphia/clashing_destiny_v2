@@ -14,6 +14,9 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { isMinion, singleAllyTargetRules } from '../../../../card-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
+import { FleetingModifier } from '../../../../../modifier/modifiers/fleeting.modifier';
 
 export const manaShield: SpellBlueprint = {
   id: 'mana-shield',
@@ -24,7 +27,7 @@ export const manaShield: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana Shield',
   description: dedent`
-    The next time target ally would take damage this turn, prevent  1 + Hero level of that damage and add a @Mana Spark@ to your hand equal to the prevented damage.
+    The next time target ally would take damage this turn, prevent  1 + Hero level of that damage and add a @Fleeting@  @Mana Spark@ to your hand equal to the prevented damage.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -42,9 +45,8 @@ export const manaShield: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/mana-shield-bg',
+      main: 'spells/mana-shield',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
@@ -59,6 +61,7 @@ export const manaShield: SpellBlueprint = {
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;
     const MODIFIER_ID = 'mana-shield-damage-negation';
+
     await target.modifiers.add(
       new Modifier<MinionCard>(MODIFIER_ID, game, target, {
         mixins: [
@@ -70,6 +73,22 @@ export const manaShield: SpellBlueprint = {
               return newValue;
             }
           }),
+          new GameEventModifierMixin(game, {
+            eventName: isMinion(target)
+              ? GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE
+              : GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
+            async handler(event) {
+              if (event.data.card.equals(target)) {
+                const prevented = event.data.damage.baseAmount - event.data.amount;
+                for (let i = 0; i < prevented; i++) {
+                  const spark = await card.player.generateCard('mana-spark');
+                  await spark.modifiers.add(new FleetingModifier(game, spark));
+                  await spark.addToHand();
+                }
+              }
+            }
+          }),
+          new UntilEndOfTurnModifierMixin(game),
           new UntilEventModifierMixin(game, {
             eventName: isMinion(target)
               ? GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE
@@ -81,5 +100,3 @@ export const manaShield: SpellBlueprint = {
     );
   }
 };
-
-

@@ -1,4 +1,4 @@
-import { GAME_EVENTS } from '../../../../../game/game.events';
+import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -6,8 +6,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
 
 export const quirkyBookworm: MinionBlueprint = {
@@ -18,7 +17,7 @@ export const quirkyBookworm: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Quirky Bookworm',
-  description: '',
+  description: '@On Enter@: Draw a card in your Destiny Zone.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -42,26 +41,20 @@ export const quirkyBookworm: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 1,
   canPlay: () => true,
-  abilities: [
-    {
-      id: 'quirky-bookworm-ability',
-      description: 'todo',
-      label: 'todo',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
-      getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 1,
-      shouldExhaust: true,
-      speed: CARD_SPEED.FAST,
-      async onResolve(game, card) {
-        //
-      }
-    }
-  ],
-  async onInit() {},
+  abilities: [],
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        async handler() {
+          await card.player.cardManager.draw(1);
+        }
+      })
+    );
+  },
   async onPlay() {}
 };

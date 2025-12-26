@@ -30,7 +30,7 @@ export const timeBomb: SigilBlueprint = {
   description: dedent`
   @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If There is another Time Bomb in the same zone, exhaust them as well.
   
-  @[lvl] 3 Bonus@: @Echo@.
+  @[lvl] 2 Bonus@: @Echo@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -62,7 +62,7 @@ export const timeBomb: SigilBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
+      new LevelBonusModifier(game, card, 2)
     )) as LevelBonusModifier<SigilCard>;
 
     await card.modifiers.add(
@@ -111,5 +111,3 @@ export const timeBomb: SigilBlueprint = {
   },
   async onPlay() {}
 };
-
-

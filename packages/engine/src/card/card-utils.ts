@@ -253,15 +253,15 @@ export const multipleEnemyTargetRules = {
         player: card.player,
         origin,
         isElligible(candidate, selectedCards) {
-          if (card.isAlly(candidate) || !isMinionOrHero(candidate)) {
+          if (!isMinionOrHero(candidate)) {
             return false;
           }
+
           return (
             card.player.allEnemies.some(enemy => enemy.equals(candidate)) &&
             candidate.canBeTargeted(card) &&
-            (allowRepeat
-              ? true
-              : !selectedCards.some(selected => selected.equals(candidate))) &&
+            (allowRepeat ||
+              !selectedCards.some(selected => selected.equals(candidate))) &&
             predicate(candidate)
           );
         },

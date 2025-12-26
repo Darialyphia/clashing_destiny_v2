@@ -271,10 +271,8 @@ const tokens = computed<Token[]>(() => {
 }
 .token-card {
   font-weight: var(--font-weight-5);
-  color: var(--blue-2);
-  -webkit-text-stroke: calc(4px * var(--pixel-scale) / 2) black;
-  paint-order: stroke fill;
-  padding-inline: var(--size-1);
+  color: var(--blue-10);
+  text-decoration: underline;
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {

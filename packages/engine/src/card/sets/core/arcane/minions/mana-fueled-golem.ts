@@ -65,12 +65,10 @@ export const manaFueledGolem: MinionBlueprint = {
             key: 'canBlock',
             interceptor: () => false
           }),
-          new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)
+          new TogglableModifierMixin(game, () => getEmpowerStacks(card) === 0)
         ]
       })
     );
   },
   async onPlay() {}
 };
-
-

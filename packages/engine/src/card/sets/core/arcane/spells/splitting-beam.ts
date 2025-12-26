@@ -57,15 +57,10 @@ export const splittingBeam: SpellBlueprint = {
       min: 2,
       max: 2,
       allowRepeat: false
-    })(
-      game,
-      card,
-      {
-        type: 'card',
-        card
-      },
-      c => isMinion(c)
-    );
+    })(game, card, {
+      type: 'card',
+      card
+    });
   },
   async onInit() {},
   async onPlay(game, card, targets) {
@@ -74,5 +69,3 @@ export const splittingBeam: SpellBlueprint = {
     }
   }
 };
-
-

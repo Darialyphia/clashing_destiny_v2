@@ -289,7 +289,6 @@ export class CombatPhase
       const performAtttackerStrike = async () => {
         if (!this.attacker.isExhausted && this.attacker.isAlive && defender.isAlive) {
           await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
-          await this.attacker.exhaust();
         }
       };
 
@@ -316,6 +315,8 @@ export class CombatPhase
         }
       }
     }
+
+    await this.attacker.exhaust();
     await this.blocker?.exhaust();
 
     await this.game.emit(
