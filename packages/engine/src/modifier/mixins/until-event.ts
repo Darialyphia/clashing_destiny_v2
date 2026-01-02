@@ -24,7 +24,7 @@ export class UntilEventModifierMixin<
     if (this.options.filter && !this.options.filter(event)) {
       return;
     }
-
+    console.log('UntilEventModifierMixin removing modifier', this.modifier);
     await this.modifier.remove();
   }
 

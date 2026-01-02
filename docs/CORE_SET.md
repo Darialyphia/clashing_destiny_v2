@@ -306,7 +306,7 @@ On Destroyed: Summon a Simurgh in the same zone this was in.
 
 ---
 
-[ ] Jeweller
+[x] Jeweller
 
 Minion | Arcane | (2) | K | 0 / 3 | (slow)
 
@@ -316,7 +316,7 @@ Minion | Arcane | (2) | K | 0 / 3 | (slow)
 
 ---
 
-[ ] Plotting Consellor
+[x] Plotting Consellor
 
 Minion | Arcane | (4) | KKF | 3 / 3 | (slow)
 

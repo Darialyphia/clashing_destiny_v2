@@ -10,7 +10,6 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { manaSpark } from '../../neutral/spells/mana-spark';
-import { FleetingModifier } from '../../../../../modifier/modifiers/fleeting.modifier';
 import { plottingCounsellor } from './plotting-counsellor';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { BOARD_SLOT_ZONES } from '../../../../../board/board.constants';
@@ -55,7 +54,7 @@ export const jeweller: MinionBlueprint = {
   abilities: [
     {
       id: 'jeweller-ability-1',
-      description: dedent`Add a @Fleeting@ @Mana Spark@ to your hand.`,
+      description: dedent`Add a @Mana Spark@ to your hand.`,
       label: 'Add Mana Spark',
       canUse: () => true,
       getPreResponseTargets: () => Promise.resolve([]),

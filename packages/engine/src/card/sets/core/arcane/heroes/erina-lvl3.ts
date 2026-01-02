@@ -3,6 +3,7 @@ import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { getEmpowerStacks } from '../../../../card-actions-utils';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
@@ -78,7 +79,7 @@ export const erinaLv3: HeroBlueprint = {
     const MANA_COST_MODIFIER_ID = 'erina-lv3-manacost-reduction';
 
     await card.modifiers.add(
-      new Modifier<HeroCard>('erina-lv3-aura', game, card, {
+      new WhileOnBoardModifier<HeroCard>('erina-lv3-aura', game, card, {
         mixins: [
           new AuraModifierMixin(game, card, {
             isElligible(candidate) {
@@ -96,10 +97,7 @@ export const erinaLv3: HeroBlueprint = {
               ];
             }
           }),
-          new TogglableModifierMixin(
-            game,
-            () => card.location === CARD_LOCATIONS.BOARD && getEmpowerStacks(card) > 0
-          )
+          new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)
         ]
       })
     );

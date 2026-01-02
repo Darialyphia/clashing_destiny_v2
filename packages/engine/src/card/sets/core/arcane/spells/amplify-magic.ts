@@ -9,6 +9,7 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 
 export const amplifyMagic: SpellBlueprint = {
   id: 'amplify-magic',
@@ -20,6 +21,7 @@ export const amplifyMagic: SpellBlueprint = {
   name: 'Amplify Magic',
   description: dedent`
     @Empower 1@.
+    @[lvl] 2 Bonus@: @Empower 2@ instead.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -48,8 +50,13 @@ export const amplifyMagic: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
+  },
   async onPlay(game, card) {
-    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 2 }));
+    const levelMod = card.modifiers.get(LevelBonusModifier);
+    await card.player.hero.modifiers.add(
+      new EmpowerModifier(game, card, { amount: levelMod?.isActive ? 2 : 1 })
+    );
   }
 };

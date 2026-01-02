@@ -1,7 +1,6 @@
 <script setup lang="ts">
+import { assets } from '@/assets';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
-import { Icon } from '@iconify/vue';
 
 definePage({
   name: 'SelectMode'
@@ -18,58 +17,38 @@ definePage({
       </h1>
 
       <div class="mode-options">
-        <div class="mode-card surface">
-          <h2 class="mode-title">
-            <Icon icon="mdi:sword-cross" class="icon" />
-            Matchmaking
-          </h2>
+        <RouterLink
+          :to="{ name: 'Matchmaking' }"
+          class="mode-card"
+          :style="{ '--bg': assets['backgrounds/ranked'].css }"
+        >
+          <h2 class="mode-title">Matchmaking</h2>
           <p class="mode-description">
             Join a queue and get matched with players of similar skill level.
           </p>
+        </RouterLink>
 
-          <FancyButton
-            :to="{ name: 'Matchmaking' }"
-            text="Enter Matchmaking"
-            variant="primary"
-            size="lg"
-            class="mode-button"
-          />
-        </div>
-
-        <div class="mode-card surface">
-          <h2 class="mode-title">
-            <Icon icon="mdi:account-group" class="icon" />
-            Lobby Games
-          </h2>
+        <RouterLink
+          :to="{ name: 'Lobbies' }"
+          class="mode-card"
+          :style="{ '--bg': assets['backgrounds/lobbies'].css }"
+        >
+          <h2 class="mode-title">Lobby Games</h2>
           <p class="mode-description">
             Create or join custom lobbies to practice and spectate with friends.
           </p>
+        </RouterLink>
 
-          <FancyButton
-            :to="{ name: 'Lobbies' }"
-            text="Browse Lobbies"
-            class="mode-button"
-            size="lg"
-          />
-        </div>
-
-        <div class="mode-card surface">
-          <h2 class="mode-title">
-            <Icon icon="garden:sandbox-fill-12" class="icon" />
-            Sandbox
-          </h2>
+        <RouterLink
+          :to="{ name: 'Sandbox' }"
+          class="mode-card"
+          :style="{ '--bg': assets['backgrounds/sandbox'].css }"
+        >
+          <h2 class="mode-title">Sandbox</h2>
           <p class="mode-description">
             Play a game where you control both players to practice strategies.
           </p>
-
-          <FancyButton
-            :to="{ name: 'Sandbox' }"
-            text="Create sandbox"
-            variant="primary"
-            size="lg"
-            class="mode-button"
-          />
-        </div>
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -128,13 +107,10 @@ h1 {
 }
 
 .mode-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  justify-content: center;
   gap: var(--size-6);
   margin: 0 auto;
-  & > .mode-card:nth-child(odd) {
-    justify-self: end;
-  }
 }
 
 .mode-card {
@@ -142,19 +118,18 @@ h1 {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  width: calc(var(--size-sm) + var(--size-9));
   padding: var(--size-7);
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  width: var(--size-xs);
+  aspect-ratio: 9 / 12;
+  position: relative;
+  background: linear-gradient(to bottom, black, transparent, black), var(--bg);
+  background-size: cover;
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-4);
+    box-shadow: 0 0 20px #efef9f;
   }
-}
-
-.icon {
-  font-size: var(--font-size-9);
-  color: var(--brand);
 }
 
 .mode-title {
@@ -165,20 +140,15 @@ h1 {
   font-size: var(--font-size-5);
   font-weight: var(--font-weight-6);
   color: var(--text-1);
-  margin-bottom: var(--size-3);
 }
 
 .mode-description {
+  padding-top: var(--size-3);
   font-size: var(--font-size-3);
   color: var(--text-2);
   line-height: var(--line-height-3);
   margin-bottom: var(--size-5);
   text-wrap: balance;
-}
-
-.mode-button {
-  width: 100%;
-  margin-block-start: auto;
 }
 
 @container (max-width: 500px) {

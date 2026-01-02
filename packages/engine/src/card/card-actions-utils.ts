@@ -1,9 +1,5 @@
 import type { Game } from '../game/game';
-import { GAME_EVENTS } from '../game/game.events';
 import { EmpowerModifier } from '../modifier/modifiers/empower.modifier';
-import { SimpleSpellpowerBuffModifier } from '../modifier/modifiers/simple-spellpower.buff.modifier';
-import { KEYWORDS } from './card-keywords';
-import { isSpell } from './card-utils';
 import type { AnyCard } from './entities/card.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {

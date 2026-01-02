@@ -45,9 +45,8 @@ export const simurgh: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/simurgh-bg',
+      main: 'minions/simurgh',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

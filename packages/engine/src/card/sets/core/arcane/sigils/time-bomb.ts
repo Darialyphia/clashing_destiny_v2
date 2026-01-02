@@ -28,8 +28,7 @@ export const timeBomb: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Time Bomb',
   description: dedent`
-  @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If There is another Time Bomb in the same zone, exhaust them as well.
-  
+  @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If there is another Time Bomb in the same zone, exhaust them as well.
   @[lvl] 2 Bonus@: @Echo@.
   `,
   faction: FACTIONS.ARCANE,

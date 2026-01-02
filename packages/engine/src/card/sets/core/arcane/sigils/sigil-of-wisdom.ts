@@ -14,7 +14,9 @@ import dedent from 'dedent';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { isSpell } from '../../../../card-utils';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
+import { CardEffectTriggeredEvent } from '../../../../card.events';
 
 export const sigilOfWisdom: SigilBlueprint = {
   id: 'sigil-of-wisdom',
@@ -25,7 +27,7 @@ export const sigilOfWisdom: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
   description: dedent`
-  At the start of each turn, @Empower@.
+  The first time you play an Arcane Spell each turn, draw a card into your Destiny Zone.
   @On Destroyed@: Draw a card.
   `,
   faction: FACTIONS.ARCANE,
@@ -58,15 +60,27 @@ export const sigilOfWisdom: SigilBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new Modifier<SigilCard>('sigil-of-wisdom-empower', game, card, {
+      new WhileOnBoardModifier<SigilCard>('sigil-of-wisdom-spellWatch', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.TURN_START,
-            filter: () => card.location === CARD_LOCATIONS.BOARD,
-            handler: async () => {
-              await card.player.hero.modifiers.add(
-                new EmpowerModifier(game, card, { amount: 1 })
+            eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
+            frequencyPerGameTurn: 1,
+            filter: event => {
+              return (
+                event.data.card.player.equals(card.player) &&
+                event.data.card.faction === FACTIONS.ARCANE &&
+                isSpell(event.data.card)
               );
+            },
+            handler: async () => {
+              await game.emit(
+                GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                new CardEffectTriggeredEvent({
+                  card,
+                  message: 'Sigil of Wisdom triggered'
+                })
+              );
+              await card.player.cardManager.drawIntoDestinyZone(1);
             }
           })
         ]

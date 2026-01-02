@@ -36,6 +36,9 @@ import { jeweller } from './core/arcane/minions/jeweller';
 import { plottingCounsellor } from './core/arcane/minions/plotting-counsellor';
 import { replenishEnergy } from './core/arcane/spells/replenish-energy';
 import { frostNova } from './core/arcane/spells/frost-nova';
+import { rayOfFrost } from './core/arcane/spells/ray-of-frost';
+import { bookOfKnowledge } from './core/arcane/artifact/book-of-knowledge';
+import { starseeker } from './core/arcane/minions/starseeker';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -76,6 +79,9 @@ export const coreSet: CardSet = {
     jeweller,
     plottingCounsellor,
     replenishEnergy,
-    frostNova
+    frostNova,
+    rayOfFrost,
+    bookOfKnowledge,
+    starseeker
   ]
 };

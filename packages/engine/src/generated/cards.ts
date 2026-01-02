@@ -40,7 +40,9 @@ export const cards = {
 "jeweller": "jeweller",
 "plotting-consellor": "plotting-consellor",
 "replenish-energy": "replenish-energy",
-"frost-nova": "frost-nova"
+"frost-nova": "frost-nova",
+"ray-of-frost": "ray-of-frost",
+"book-of-knowledge": "book-of-knowledge"
 } as const;
 
 export const collectableCards = {
@@ -77,5 +79,7 @@ export const collectableCards = {
 "jeweller": "jeweller",
 "plotting-consellor": "plotting-consellor",
 "replenish-energy": "replenish-energy",
-"frost-nova": "frost-nova"
+"frost-nova": "frost-nova",
+"ray-of-frost": "ray-of-frost",
+"book-of-knowledge": "book-of-knowledge"
 } as const;

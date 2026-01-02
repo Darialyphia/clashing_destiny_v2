@@ -14,6 +14,7 @@ export class UntilEndOfTurnModifierMixin<
   }
 
   async onTurnEnd() {
+    console.log('UntilEndOfTurnModifierMixin removing modifier', this.modifier);
     await this.modifier.remove();
   }
 
