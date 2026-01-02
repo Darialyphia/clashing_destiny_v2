@@ -7,6 +7,7 @@ This guide covers how to implement new cards in the `@game/engine` package.
 - [Card Types Overview](#card-types-overview)
 - [File Structure](#file-structure)
 - [Card Blueprint Structure](#card-blueprint-structure)
+- [Writing Card Descriptions](#writing-card-descriptions)
 - [Implementation Steps](#implementation-steps)
 - [Common Patterns](#common-patterns)
 - [Examples](#examples)
@@ -59,7 +60,7 @@ All cards share common properties defined in `CardBlueprintBase`:
   id: string;                    // Unique identifier (kebab-case)
   kind: CardKind;                // CARD_KINDS.MINION | SPELL | HERO | ARTIFACT
   name: string;                  // Display name
-  description: string;           // Card text (use dedent for multiline)
+  description: string;           // Card text with rich formatting (see Writing Card Descriptions)
 
   // Card metadata
   collectable: boolean;          // Can players add this to decks?
@@ -97,6 +98,178 @@ All cards share common properties defined in `CardBlueprintBase`:
   abilities: AbilityBlueprint[];  // Card abilities (can be [])
 }
 ```
+
+## Writing Card Descriptions
+
+Card descriptions support rich text formatting using special delimiters and syntax tokens. The `CardText.vue` component parses these tokens to display icons, tooltips, and styled text.
+
+### The `@` Delimiter
+
+All special tokens must be wrapped with the `@` delimiter on both sides:
+
+```typescript
+description: 'Deal @[mana] 3@ damage to an enemy @minion@.';
+// Displays: Deal [3 mana icon] damage to an enemy minion.
+//           (where "minion" is underlined and has a tooltip)
+```
+
+### Keywords
+
+Any keyword defined in `card-keywords.ts` can be referenced by name or alias. Keywords appear underlined with tooltips:
+
+```typescript
+description: 'This minion has @Rush@.';
+// Displays: This minion has Rush. (underlined with hover tooltip)
+```
+
+Common keywords: `Rush`, `Stealth`, `Taunt`, `Guard`, `Preemptive Strike`, `Foresight`, etc.
+
+### Card References
+
+Reference other cards by their exact name to create card preview tooltips:
+
+```typescript
+description: 'Summon a @Little Witch@.';
+// Displays: Summon a Little Witch. (underlined with card preview on hover)
+```
+
+### Icon Tokens
+
+#### Cost Icons
+
+Display mana or destiny costs with icons:
+
+```typescript
+'@[mana] 3@'; // Mana cost icon with number 3
+'@[destiny] 2@'; // Destiny cost icon with number 2
+```
+
+#### Stat Icons
+
+Display combat stat icons:
+
+```typescript
+'@[atk]@'; // Attack icon
+'@[hp]@'; // Health icon
+'@[dur]@'; // Durability icon (for artifacts)
+'@[spellpower]@'; // Spellpower icon
+```
+
+#### Ability Icons
+
+Display ability-related icons:
+
+```typescript
+'@[exhaust]@'; // Exhaust icon
+```
+
+#### Speed Icons
+
+Display speed indicators:
+
+```typescript
+'@[SLOW]@'; // Slow speed icon
+'@[FAST]@'; // Fast speed icon
+'@[BURST]@'; // Burst speed icon
+```
+
+### Styled Text
+
+#### Dynamic Values
+
+Highlight dynamic values in blue:
+
+```typescript
+'@[value] X@'; // Where X is a placeholder or formula
+// Example: 'Deal @[value] X@ damage, where X is your hero\'s spellpower.'
+```
+
+#### Level Bonuses
+
+Format level-dependent effects:
+
+```typescript
+'@[lvl] 2+@'; // Displays: "Level 2+" (italic, underlined)
+// Example: '@[lvl] 2+@: This has +1 @[atk]@.'
+```
+
+#### Lineage Bonuses
+
+Format lineage-dependent effects:
+
+```typescript
+'@[lineage] Fire@'; // Displays lineage text (italic, underlined)
+// Example: '@[lineage] Fire@: Deal 2 damage to a random enemy.'
+```
+
+#### Missing Affinity Penalties
+
+Highlight penalties in red:
+
+```typescript
+'@[missing-affinity] Penalty@'; // Red bold text
+// Example: '@[missing-affinity] -2/-2@'
+```
+
+### Complete Examples
+
+#### Example 1: Simple Spell
+
+```typescript
+description: dedent`
+  Deal @[mana] 3@ damage to an enemy @minion@.
+  @Foresight@: Draw a card.
+`;
+```
+
+#### Example 2: Minion with Keywords
+
+```typescript
+description: dedent`
+  @Rush@, @Stealth@
+  When this attacks, deal 1 damage to the enemy hero.
+`;
+```
+
+#### Example 3: Complex Ability
+
+```typescript
+description: dedent`
+  @[FAST]@ Costs @[mana] 1@
+  Deal @[value] X@ damage to an enemy @minion@, 
+  where X is your hero's @[spellpower]@.
+`;
+```
+
+#### Example 4: Level-Dependent Effect
+
+```typescript
+description: dedent`
+  @[lvl] 2+@: This has +1 @[atk]@ and @Guard@.
+  @[lvl] 3+@: This has +2 @[hp]@.
+`;
+```
+
+#### Example 5: Exhaust Ability
+
+```typescript
+abilities: [
+  {
+    description: '@[exhaust]@ Deal 2 damage to an enemy @minion@.'
+    // ...
+  }
+];
+```
+
+### Best Practices
+
+1. **Always wrap special tokens with `@`** - `@keyword@`, not `keyword`
+2. **Use exact keyword names** - Match the names in `card-keywords.ts`
+3. **Use exact card names** - Match the `name` property of card blueprints
+4. **Use `dedent`** for multi-line descriptions to maintain clean formatting
+5. **Be consistent with spacing** - `@[mana] 3@` not `@[mana]3@`
+6. **Capitalize keywords** - `@Rush@` not `@rush@` (though matching is case-insensitive)
+7. **Preview your card** - Test in the card viewer to ensure tokens parse correctly
 
 ## Implementation Steps
 
