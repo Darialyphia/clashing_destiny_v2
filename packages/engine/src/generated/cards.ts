@@ -38,7 +38,9 @@ export const cards = {
 "simurgh": "simurgh",
 "sigil-of-simurgh": "sigil-of-simurgh",
 "jeweller": "jeweller",
-"plotting-consellor": "plotting-consellor"
+"plotting-consellor": "plotting-consellor",
+"replenish-energy": "replenish-energy",
+"frost-nova": "frost-nova"
 } as const;
 
 export const collectableCards = {
@@ -73,5 +75,7 @@ export const collectableCards = {
 "orb-of-constellations": "orb-of-constellations",
 "sigil-of-simurgh": "sigil-of-simurgh",
 "jeweller": "jeweller",
-"plotting-consellor": "plotting-consellor"
+"plotting-consellor": "plotting-consellor",
+"replenish-energy": "replenish-energy",
+"frost-nova": "frost-nova"
 } as const;

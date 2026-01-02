@@ -4,7 +4,9 @@ import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
+import { GAME_PHASES } from '../../game/game.enums';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -20,13 +22,15 @@ export class VigilantModifier<T extends MinionCard | HeroCard> extends Modifier<
       description: KEYWORDS.VIGILANT.description,
       isUnique: true,
       mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.VIGILANT),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.AFTER_RESOLVE_COMBAT,
           handler: async event => {
-            if (!event.data.target.equals(this.target)) return;
+            const blocker = event.data.blocker;
+            if (!blocker || !blocker.equals(this.target)) return;
 
-            if (event.data.target.isAlive) {
-              await event.data.target.wakeUp();
+            if (blocker.isAlive) {
+              await blocker.wakeUp();
             }
           }
         }),

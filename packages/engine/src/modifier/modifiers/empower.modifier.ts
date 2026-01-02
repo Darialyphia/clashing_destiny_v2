@@ -24,13 +24,6 @@ export class EmpowerModifier extends Modifier<HeroCard> {
       description: KEYWORDS.EMPOWER.description,
       icon: 'keyword-empower-buff',
       mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-          handler: async event => {
-            if (!event.data.card.player.equals(this.target.player)) return;
-            if (!isSpell(event.data.card)) return;
-          }
-        }),
         new HeroInterceptorModifierMixin(game, {
           key: 'spellPower',
           interceptor: value => value + this.stacks

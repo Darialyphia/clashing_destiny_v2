@@ -64,10 +64,12 @@ Comprehensive guides for implementing cards and game mechanics:
 - **[Targeting and Interactions](./docs/TARGETING_AND_INTERACTIONS.md)** - Card targeting system and player interaction
 - **[Abilities System](./docs/ABILITIES_SYSTEM.md)** - Implementing activated abilities on cards
 - **[Damage and Combat](./docs/DAMAGE_AND_COMBAT.md)** - Damage types, combat mechanics, and card states
+- **[Game Phases and Events](./docs/GAME_PHASES_AND_EVENTS.md)** - Phase system, combat phase details, and event handling
 
 ### Quick Links
 
-- [How to Draw Cards](./docs/CARD_MANIPULATION.md#drawing-cards)
+- [How to Draw Cards](./docs/CARD_MANIPULATION.md#drawing-cards) - **Important:** Use `player.cardManager.draw()` not `player.drawCards()`
+- [Accessing Combat Phase](./docs/GAME_PHASES_AND_EVENTS.md#accessing-phase-context) - **Important:** Use `game.gamePhaseSystem.getContext()` not `game.combatPhase`
 - [Available Modifiers](./docs/MODIFIERS_AND_KEYWORDS.md#available-modifiers)
 - [Pre-built Targeting Rules](./docs/TARGETING_AND_INTERACTIONS.md#pre-built-targeting-rules)
 - [Common Card Patterns](./docs/CARD_IMPLEMENTATION_GUIDE.md#common-patterns)

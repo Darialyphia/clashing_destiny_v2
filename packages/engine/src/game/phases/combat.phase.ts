@@ -2,6 +2,7 @@ import {
   assert,
   StateMachine,
   stateTransition,
+  type Nullable,
   type Serializable,
   type Values
 } from '@game/shared';
@@ -87,25 +88,27 @@ export class AfterDeclareAttackTargetEvent extends TypedSerializableEvent<
 }
 
 export class BeforeResolveCombatEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget },
-  { attacker: string; target: string }
+  { attacker: Attacker; target: AttackTarget; blocker: Nullable<AttackTarget> },
+  { attacker: string; target: string; blocker: string | null }
 > {
   serialize() {
     return {
       attacker: this.data.attacker.id,
-      target: this.data.target.id
+      target: this.data.target.id,
+      blocker: this.data.blocker?.id ?? null
     };
   }
 }
 
 export class AfterResolveCombatEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget },
-  { attacker: string; target: string }
+  { attacker: Attacker; target: AttackTarget; blocker: Nullable<AttackTarget> },
+  { attacker: string; target: string; blocker: string | null }
 > {
   serialize() {
     return {
       attacker: this.data.attacker.id,
-      target: this.data.target.id
+      target: this.data.target.id,
+      blocker: this.data.blocker?.id ?? null
     };
   }
 }
@@ -292,7 +295,8 @@ export class CombatPhase
       COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
       new BeforeResolveCombatEvent({
         attacker: this.attacker,
-        target: this.target
+        target: this.target,
+        blocker: this.blocker
       })
     );
 
@@ -348,7 +352,8 @@ export class CombatPhase
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
       new AfterResolveCombatEvent({
         attacker: this.attacker,
-        target: this.target!
+        target: this.target!,
+        blocker: this.blocker
       })
     );
   }

@@ -157,7 +157,7 @@ const isDisabled = computed(() => {
   pointer-events: auto;
 
   &:hover {
-    --hover-offset: -30px;
+    --hover-offset: -20px;
     z-index: var(--hand-size);
   }
 

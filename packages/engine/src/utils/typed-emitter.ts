@@ -151,6 +151,7 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
   ) {
     const listeners = this._listeners[eventName];
     if (!listeners) return;
+
     listeners.splice(
       listeners.findIndex(l => l.handler === handler),
       1
