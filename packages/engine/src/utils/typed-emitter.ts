@@ -67,17 +67,26 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     eventName: TEventName,
     eventArg: TEvents[TEventName]
   ) {
-    const listeners = Array.from(this._listeners[eventName] ?? []).map(listener =>
-      // @ts-expect-error
-      listener.handler(eventArg)
-    );
+    const listeners = Array.from(this._listeners[eventName] ?? []);
+    const starListeners = Array.from(this._listeners['*'] ?? []);
 
-    await Promise.all(listeners);
+    // Combine and sort all listeners by priority to maintain order
+    const allListeners = [
+      ...listeners.map(l => ({ type: 'regular' as const, listener: l })),
+      ...starListeners.map(l => ({ type: 'star' as const, listener: l }))
+    ].sort((a, b) => b.listener.priority - a.listener.priority);
 
-    const starListeners = Array.from(this._listeners['*'] ?? []).map(listener =>
-      listener.handler(new StarEvent({ eventName, event: eventArg }) as any)
+    // Execute all listeners in parallel while respecting priority order
+    await Promise.all(
+      allListeners.map(({ type, listener }) => {
+        if (type === 'regular') {
+          // @ts-expect-error
+          return listener.handler(eventArg);
+        } else {
+          return listener.handler(new StarEvent({ eventName, event: eventArg }) as any);
+        }
+      })
     );
-    await Promise.all(starListeners);
   }
 
   async emit<TEventName extends keyof TEvents & string>(
@@ -102,7 +111,7 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     if (!this._listeners[eventName]) {
       this._listeners[eventName] = [];
     }
-    this.insertSorted(this._listeners[eventName], { handler, priority });
+    this.insertSorted(this._listeners[eventName]!, { handler, priority });
 
     return () => this.off(eventName, handler as any);
   }
@@ -123,7 +132,7 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
       this.off(eventName, onceHandler as any);
       return handler(eventArg);
     };
-    this.insertSorted(this._listeners[eventName], { handler: onceHandler, priority });
+    this.insertSorted(this._listeners[eventName]!, { handler: onceHandler, priority });
 
     return () => this.off(eventName, onceHandler as any);
   }
@@ -152,10 +161,10 @@ export class TypedEventEmitter<TEvents extends GenericEventMap> {
     const listeners = this._listeners[eventName];
     if (!listeners) return;
 
-    listeners.splice(
-      listeners.findIndex(l => l.handler === handler),
-      1
-    );
+    const index = listeners.findIndex(l => l.handler === handler);
+    if (index !== -1) {
+      listeners.splice(index, 1);
+    }
     if (listeners.length === 0) {
       delete this._listeners[eventName];
     }
