@@ -11,8 +11,9 @@ import {
 } from '../../../../card.enums';
 import { manaSpark } from '../../neutral/spells/mana-spark';
 import { FleetingModifier } from '../../../../../modifier/modifiers/fleeting.modifier';
-import { plottingConsellor } from './plotting-consellor';
+import { plottingCounsellor } from './plotting-counsellor';
 import type { MinionCard } from '../../../../entities/minion.entity';
+import { BOARD_SLOT_ZONES } from '../../../../../board/board.constants';
 
 export const jeweller: MinionBlueprint = {
   id: 'jeweller',
@@ -63,13 +64,12 @@ export const jeweller: MinionBlueprint = {
       speed: CARD_SPEED.SLOW,
       async onResolve(game, card) {
         const spark = await card.player.generateCard(manaSpark.id);
-        await spark.modifiers.add(new FleetingModifier(game, spark));
         await spark.addToHand();
       }
     },
     {
       id: 'jeweller-ability-2',
-      description: dedent`Banish this card and summon a @Plotting Consellor@ in its place.`,
+      description: dedent`Banish this card and summon a @Plotting Counsellor@ in the Attack zone exhausted.`,
       label: 'Summon Plotting Consellor',
       canUse: () => true,
       getPreResponseTargets: () => Promise.resolve([]),
@@ -78,12 +78,12 @@ export const jeweller: MinionBlueprint = {
       speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
         if (card.location !== CARD_LOCATIONS.BOARD) return;
-        const zone = card.zone!;
         await card.sendToBanishPile();
         const consellor = await card.player.generateCard<MinionCard>(
-          plottingConsellor.id
+          plottingCounsellor.id
         );
-        await consellor.playImmediatelyAt(zone);
+        await consellor.playImmediatelyAt(BOARD_SLOT_ZONES.ATTACK_ZONE);
+        await consellor.exhaust();
       }
     }
   ],

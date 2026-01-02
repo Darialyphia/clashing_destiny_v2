@@ -89,9 +89,9 @@ const onBoardMouseup = () => {
         @mouseup="onBoardMouseup"
       >
         <OpponentBoard />
-
+        <div class="h-3" />
         <MyBoard />
-        <div class="flex justify-between gap-3">
+        <div class="bottom-row">
           <EffectChain />
           <Transition>
             <div
@@ -159,7 +159,7 @@ const onBoardMouseup = () => {
 
 .board {
   display: grid;
-  grid-template-rows: 1fr 1fr auto;
+  grid-template-rows: 1fr auto 1fr auto;
   gap: var(--size-2);
   transform-style: preserve-3d;
 }
@@ -177,6 +177,7 @@ const onBoardMouseup = () => {
 .arrows {
   transform: translateZ(10px);
 }
+
 .my-hand {
   position: fixed;
   width: 100%;
@@ -312,5 +313,12 @@ const onBoardMouseup = () => {
   > * {
     width: 100%;
   }
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-3);
+  transform: translateZ(1px);
 }
 </style>

@@ -2,13 +2,11 @@
 import {
   useFxEvent,
   useGameClient,
-  useGameState,
   useGameUi,
   useMyPlayer,
   usePlayer
 } from '@/game/composables/useGameClient';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { clamp } from '@game/shared';
 import { OnClickOutside } from '@vueuse/components';
 import { useElementBounding, useResizeObserver } from '@vueuse/core';
@@ -19,7 +17,6 @@ const { playerId } = defineProps<{ playerId: string }>();
 
 const player = usePlayer(playerId);
 const ui = useGameUi();
-const state = useGameState();
 const { client } = useGameClient();
 
 const myPlayer = useMyPlayer();
@@ -161,10 +158,7 @@ watch(width, v => {
       class="hand"
       :class="{
         'ui-hidden': !ui.displayedElements.hand,
-        'opponent-hand': !isMyHand,
-        elevated:
-          state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
-          state.interaction.ctx.player === player.id
+        'opponent-hand': !isMyHand
       }"
       :style="{
         '--hand-size': player.hand.length,
@@ -206,7 +200,6 @@ watch(width, v => {
     position: absolute;
     right: 0;
   }
-  &.elevated,
   &:hover {
     --pixel-scale: 1.5;
     transform: translateY(-290px);

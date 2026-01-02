@@ -10,7 +10,6 @@ import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import { UntilEventModifierMixin } from '../mixins/until-event';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
-import { SimpleSpellpowerBuffModifier } from './simple-spellpower.buff.modifier';
 
 export class EmpowerModifier extends Modifier<HeroCard> {
   constructor(

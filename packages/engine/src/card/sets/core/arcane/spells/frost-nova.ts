@@ -10,19 +10,17 @@ import {
 } from '../../../../card.enums';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
-export const amplifyMagic: SpellBlueprint = {
-  id: 'amplify-magic',
+export const frostNova: SpellBlueprint = {
+  id: 'frost-nova',
   kind: CARD_KINDS.SPELL,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
-  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Amplify Magic',
-  description: dedent`
-    @Empower 1@.
-  `,
+  deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
+  name: 'Frost Nova',
+  description: dedent`Exhaust all minions in both players' Attack zone.`,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.RARE,
   tags: [],
   art: {
     default: {
@@ -37,19 +35,27 @@ export const amplifyMagic: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'spells/amplify-magic-bg',
-      main: 'spells/amplify-magic',
+      bg: 'placeholder-bg',
+      main: 'placeholder',
+      breakout: 'placeholder-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 0,
-  speed: CARD_SPEED.BURST,
+  destinyCost: 1,
+  speed: CARD_SPEED.FAST,
   abilities: [],
-  canPlay: () => true,
+  canPlay: (game, card) => card.player.hero.modifiers.has(EmpowerModifier),
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 2 }));
+    const minionsToExhaust = [
+      ...card.player.boardSide.attackZone.minions,
+      ...card.player.opponent.boardSide.attackZone.minions
+    ];
+
+    for (const minion of minionsToExhaust) {
+      await minion.exhaust();
+    }
   }
 };

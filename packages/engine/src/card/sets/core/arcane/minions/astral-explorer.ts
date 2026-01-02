@@ -35,9 +35,8 @@ export const astralExplorer: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/astral-explorer-bg',
+      main: 'minions/astral-explorer',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
@@ -59,5 +58,3 @@ export const astralExplorer: MinionBlueprint = {
   },
   async onPlay() {}
 };
-
-

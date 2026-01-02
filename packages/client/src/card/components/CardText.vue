@@ -270,8 +270,7 @@ const tokens = computed<Token[]>(() => {
   text-decoration: underline;
 }
 .token-card {
-  font-weight: var(--font-weight-5);
-  color: var(--blue-10);
+  font-weight: var(--font-weight-7);
   text-decoration: underline;
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */

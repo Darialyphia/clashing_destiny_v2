@@ -19,7 +19,7 @@ import { magicMissile } from './core/arcane/spells/magic-missile';
 import { splittingBeam } from './core/arcane/spells/splitting-beam';
 import { thirstForKnowledge } from './core/arcane/spells/thirst-for-knowledge';
 import { wizardsInsight } from './core/arcane/spells/wizards-insight';
-import { sigilOfWisdom } from './core/arcane/sigils/sigil-of-widom';
+import { sigilOfWisdom } from './core/arcane/sigils/sigil-of-wisdom';
 import { galacticExplosion } from './core/arcane/spells/galactic-explosion';
 import { powerOverwhelming } from './core/arcane/spells/power-overwhelming';
 import { arcaneConduit } from './core/arcane/minions/arcane-conduit';
@@ -33,7 +33,9 @@ import { manaSpark } from './core/neutral/spells/mana-spark';
 import { simurgh } from './core/arcane/minions/simurgh';
 import { sigilOfSimurgh } from './core/arcane/sigils/sigil-of-simurgh';
 import { jeweller } from './core/arcane/minions/jeweller';
-import { plottingConsellor } from './core/arcane/minions/plotting-consellor';
+import { plottingCounsellor } from './core/arcane/minions/plotting-counsellor';
+import { replenishEnergy } from './core/arcane/spells/replenish-energy';
+import { frostNova } from './core/arcane/spells/frost-nova';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -72,6 +74,8 @@ export const coreSet: CardSet = {
     simurgh,
     sigilOfSimurgh,
     jeweller,
-    plottingConsellor
+    plottingCounsellor,
+    replenishEnergy,
+    frostNova
   ]
 };

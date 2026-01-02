@@ -16,7 +16,6 @@ import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { FleetingModifier } from '../../../../../modifier/modifiers/fleeting.modifier';
 
 export const manaShield: SpellBlueprint = {
   id: 'mana-shield',
@@ -27,7 +26,7 @@ export const manaShield: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana Shield',
   description: dedent`
-    The next time target ally would take damage this turn, prevent  1 + Hero level of that damage and add a @Fleeting@  @Mana Spark@ to your hand equal to the prevented damage.
+    The next time target ally would take damage this turn, prevent  1 + Hero level of that damage and add a @Mana Spark@ to your hand equal to the prevented damage.
 `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -82,7 +81,6 @@ export const manaShield: SpellBlueprint = {
                 const prevented = event.data.damage.baseAmount - event.data.amount;
                 for (let i = 0; i < prevented; i++) {
                   const spark = await card.player.generateCard('mana-spark');
-                  await spark.modifiers.add(new FleetingModifier(game, spark));
                   await spark.addToHand();
                 }
               }

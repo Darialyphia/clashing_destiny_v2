@@ -16,6 +16,7 @@ import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.mo
 import { splittingBeam } from '../spells/splitting-beam';
 import { isSpell } from '../../../../card-utils';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import { FleetingModifier } from '../../../../../modifier/modifiers/fleeting.modifier';
 
 export const simurgh: MinionBlueprint = {
   id: 'simurgh',
@@ -26,7 +27,7 @@ export const simurgh: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Simurgh',
   description: dedent`  
-  @On Attack@: Put 2 copies of @${splittingBeam.name}@ in your hand, then reduce the cost of Arcane spells in your hand by 1.
+  @On Attack@: Put 2 @Fleeting@ copies of @${splittingBeam.name}@ in your hand, then reduce the cost of Arcane spells in your hand by 1.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.TOKEN,
@@ -59,28 +60,6 @@ export const simurgh: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new Modifier('simurgh-aura', game, card, {
-        mixins: [
-          new AuraModifierMixin(game, card, {
-            isElligible(candidate) {
-              return (
-                card.location === CARD_LOCATIONS.BOARD &&
-                candidate.equals(card.player.hero)
-              );
-            },
-            getModifiers() {
-              return [
-                new SimpleSpellpowerBuffModifier('simurgh-spellpower', game, card, {
-                  amount: 1
-                })
-              ];
-            }
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
       new OnAttackModifier(game, card, {
         async handler() {
           const cardsToAdd = [
@@ -88,6 +67,7 @@ export const simurgh: MinionBlueprint = {
             await card.player.generateCard(splittingBeam.id)
           ];
           for (const c of cardsToAdd) {
+            await c.modifiers.add(new FleetingModifier(game, c));
             await c.addToHand();
           }
 
@@ -108,5 +88,3 @@ export const simurgh: MinionBlueprint = {
   },
   async onPlay() {}
 };
-
-

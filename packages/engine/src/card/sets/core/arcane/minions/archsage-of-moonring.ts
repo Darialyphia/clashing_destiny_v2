@@ -20,28 +20,26 @@ export const archsageOfMoonring: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
-  description: dedent`
-    On Enter: Deal 3 damage split among enemies.
-    `,
+  description: dedent`@On Enter@: Deal 3 damage split among enemies.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
   art: {
     default: {
       foil: {
-        sheen: true,
-        oil: false,
+        sheen: false,
+        oil: true,
         gradient: false,
         lightGradient: false,
-        scanlines: false
+        scanlines: true,
+        goldenGlare: true
       },
       dimensions: {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder',
+      bg: 'minions/archsage-of-moonring-bg',
+      main: 'minions/archsage-of-moonring',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

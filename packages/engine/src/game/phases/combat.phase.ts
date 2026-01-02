@@ -34,7 +34,8 @@ export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 export type SerializedCombatPhase = {
   attacker: string;
   target: string | null;
-  isTargetCounterattacking: boolean;
+  blocker: string | null;
+  isTargetRetaliating: boolean;
   step: CombatStep;
   potentialTargets: string[];
 };
@@ -149,7 +150,7 @@ export class CombatPhase
   attacker!: Attacker;
   target: AttackTarget | null = null;
   blocker: AttackTarget | null = null;
-  isTargetCounterattacking = false;
+  isTargetRetaliating = false;
 
   private isCancelled = false;
 
@@ -211,6 +212,7 @@ export class CombatPhase
     );
 
     this.target = target;
+    await this.attacker.exhaust();
 
     this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
     await this.game.emit(
@@ -235,6 +237,7 @@ export class CombatPhase
       throw new WrongCombatStepError();
     }
     this.blocker = blocker;
+    await blocker.exhaust();
 
     await this.game.effectChainSystem.currentChain?.addEffect(
       {
@@ -244,6 +247,29 @@ export class CombatPhase
         handler: async () => {}
       },
       blocker.player
+    );
+  }
+
+  async declareRetaliation() {
+    if (!this.target) {
+      throw new WrongCombatStepError();
+    }
+    if (
+      !this.attacker.canBeRetaliatedBy(this.target) ||
+      !this.target.canRetaliate(this.attacker)
+    ) {
+      throw new InvalidCounterattackError();
+    }
+    await this.target.exhaust();
+    this.isTargetRetaliating = true; // mark the retaliation immediately so it can be displayed inthe UI
+    await this.game.effectChainSystem.currentChain?.addEffect(
+      {
+        source: this.target,
+        type: EFFECT_TYPE.RETALIATION,
+        targets: [this.attacker],
+        handler: async () => {}
+      },
+      this.target.player
     );
   }
 
@@ -287,37 +313,36 @@ export class CombatPhase
       const defenderDealsFirst = defender.dealsDamageFirst;
 
       const performAtttackerStrike = async () => {
-        if (!this.attacker.isExhausted && this.attacker.isAlive && defender.isAlive) {
+        if (defender.isAlive) {
           await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
         }
       };
 
       const performDefenderStrike = async () => {
-        if (!defender.isExhausted && defender.isAlive && this.attacker.isAlive) {
+        const shouldStrike = this.blocker?.equals(defender)
+          ? true
+          : this.isTargetRetaliating;
+        if (!shouldStrike) return;
+        if (this.attacker.isAlive) {
           await defender.dealDamage(this.attacker, new CombatDamage(defender));
         }
       };
 
       if (attackerDealsFirst && !defenderDealsFirst) {
         await performAtttackerStrike();
-        if (this.attacker.isAlive && defender.isAlive) {
+        if (defender.isAlive) {
           await performDefenderStrike();
         }
       } else if (!attackerDealsFirst && defenderDealsFirst) {
         await performDefenderStrike();
-        if (this.attacker.isAlive && defender.isAlive) {
+        if (defender.isAlive) {
           await performAtttackerStrike();
         }
       } else {
         await performAtttackerStrike();
-        if (this.attacker.isAlive) {
-          await performDefenderStrike();
-        }
+        await performDefenderStrike();
       }
     }
-
-    await this.attacker.exhaust();
-    await this.blocker?.exhaust();
 
     await this.game.emit(
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
@@ -357,9 +382,10 @@ export class CombatPhase
     return {
       attacker: this.attacker.id,
       target: this.target?.id ?? null,
+      blocker: this.blocker?.id ?? null,
       step: this.getState(),
       potentialTargets: this.potentialTargets.map(t => t.id),
-      isTargetCounterattacking: this.isTargetCounterattacking
+      isTargetRetaliating: this.isTargetRetaliating
     };
   }
 }

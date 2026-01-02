@@ -82,17 +82,12 @@ export class UiController {
       new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
-    minionPosition: (playerId: string, zone: BoardSlotZone, slot: number) =>
-      new DOMSelector(`${playerId}-${zone}-minion-position-${slot}`),
-    minionOnBoard: (
-      playerId: string,
-      zone: BoardSlotZone,
-      slot: number,
-      minionId: string
-    ) =>
+    minionPosition: (playerId: string, zone: BoardSlotZone, minionId: string) =>
+      new DOMSelector(`${playerId}-${zone}-minion-position-${minionId}`),
+    minionOnBoard: (playerId: string, zone: BoardSlotZone, minionId: string) =>
       new DOMSelector(
         minionId,
-        this.DOMSelectors.minionPosition(playerId, zone, slot).selector
+        this.DOMSelectors.minionPosition(playerId, zone, minionId).selector
       ),
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),

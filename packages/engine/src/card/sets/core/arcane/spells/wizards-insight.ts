@@ -8,8 +8,8 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
 import { scry } from '../../../../card-actions-utils';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
 export const wizardsInsight: SpellBlueprint = {
   id: 'wizards-insight',
@@ -20,10 +20,8 @@ export const wizardsInsight: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: "Wizard's Insight",
   description: dedent`
-    @Scry 1@, then draw a card into your Destiny Zone.
-
-    @Foresight@.
-`,
+  @Scry 1@, @Empower 1@. If you were already @Empowered@, draw a card into your Destiny zone.
+  `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -47,18 +45,18 @@ export const wizardsInsight: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit(game, card) {
-    await card.modifiers.add(new ForesightModifier(game, card));
-  },
+  async onInit() {},
   async onPlay(game, card) {
+    const isEmpowered = card.player.hero.modifiers.has(EmpowerModifier);
     await scry(game, card, 1);
-    await card.player.cardManager.drawIntoDestinyZone(1);
+    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
+    if (isEmpowered) {
+      await card.player.cardManager.drawIntoDestinyZone(1);
+    }
   }
 };
-
-

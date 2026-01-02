@@ -24,6 +24,7 @@ import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.e
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import type { BoardSlotZone } from '../../board/board.constants';
+import { DeclareRetaliationAction } from '../actions/declare-retaliation';
 
 type CardData =
   | SerializedSpellCard
@@ -297,9 +298,9 @@ export class CardViewModel {
     return false;
   }
 
-  get canCounterattack() {
-    if ('canCounterattack' in this.data) {
-      return this.data.canCounterattack as boolean;
+  get canRetaliate() {
+    if ('canRetaliate' in this.data) {
+      return this.data.canRetaliate as boolean;
     }
     return false;
   }
@@ -379,6 +380,7 @@ export class CardViewModel {
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
+      new DeclareRetaliationAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

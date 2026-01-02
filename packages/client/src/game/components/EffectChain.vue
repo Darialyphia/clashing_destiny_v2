@@ -29,6 +29,9 @@ const buildPaths = async () => {
     if (effect.type === EFFECT_TYPE.DECLARE_BLOCKER) {
       return [];
     }
+    if (effect.type === EFFECT_TYPE.RETALIATION) {
+      return [];
+    }
     if (effect.zone) {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();
@@ -138,6 +141,9 @@ const stack = computed(() => {
           <p v-if="effect.type === EFFECT_TYPE.DECLARE_BLOCKER">
             This effect declares a blocker
           </p>
+          <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
+            This effect declares a retaliation
+          </p>
         </UiSimpleTooltip>
       </div>
 
@@ -207,7 +213,7 @@ const stack = computed(() => {
     background: url('@/assets/ui/effect-ability.png');
   }
 
-  &.counterattack {
+  &:is(.retaliation, .declare-blocker) {
     background: url('@/assets/ui/effect-counterattack.png');
   }
 }

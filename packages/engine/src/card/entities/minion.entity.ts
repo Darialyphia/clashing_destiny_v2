@@ -48,6 +48,7 @@ export type SerializedMinionCard = SerializedCard & {
   abilities: string[];
   zone: BoardSlotZone | null;
   canBlock: boolean;
+  canRetaliate: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -57,6 +58,8 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBlock: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { attacker: Attacker }>;
+  canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
+  canBeRetaliatedAgainst: Interceptable<boolean, { defender: AttackTarget }>;
   canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canUseAbility: Interceptable<
     boolean,
@@ -93,6 +96,8 @@ export class MinionCard extends Card<
         canBeAttacked: new Interceptable(),
         canBeBlocked: new Interceptable(),
         canBeDefended: new Interceptable(),
+        canRetaliate: new Interceptable(),
+        canBeRetaliatedAgainst: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
@@ -221,6 +226,27 @@ export class MinionCard extends Card<
     return this.interceptors.canBeDefended.getValue(true, {
       defender
     });
+  }
+
+  canBeRetaliatedBy(defender: AttackTarget) {
+    return this.interceptors.canBeRetaliatedAgainst.getValue(true, {
+      defender
+    });
+  }
+
+  canRetaliate(target: AttackTarget) {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (!phaseCtx.ctx.target?.equals(this)) return false;
+    if (phaseCtx.ctx.blocker) return false;
+    if (phaseCtx.ctx.isTargetRetaliating) return false;
+
+    return this.interceptors.canRetaliate.getValue(
+      !this.isExhausted && this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
+      {
+        attacker: target
+      }
+    );
   }
 
   get dealsDamageFirst(): boolean {
@@ -441,11 +467,12 @@ export class MinionCard extends Card<
       zone: this.zone,
       abilities: this.abilities.map(ability => ability.id),
       canBlock:
-        phaseCtx.state === GAME_PHASES.ATTACK &&
-        !phaseCtx.ctx.attacker.player.equals(this.player) &&
-        !phaseCtx.ctx.target?.equals(this) &&
-        !phaseCtx.ctx.blocker
+        phaseCtx.state === GAME_PHASES.ATTACK
           ? this.canBlock(phaseCtx.ctx.attacker, phaseCtx.ctx.target!)
+          : false,
+      canRetaliate:
+        phaseCtx.state === GAME_PHASES.ATTACK
+          ? this.canRetaliate(phaseCtx.ctx.attacker)
           : false
     };
   }

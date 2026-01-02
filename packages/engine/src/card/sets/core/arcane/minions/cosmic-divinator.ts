@@ -22,7 +22,7 @@ export const cosmicDivinator: MinionBlueprint = {
   name: 'Cosmic Divinator',
   description: dedent`
   @On Enter@: @Empower 1@.
-  @On Hit@: @Empower 2@.
+  @On Hit@: @Empower 1@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -68,7 +68,7 @@ export const cosmicDivinator: MinionBlueprint = {
       new OnAttackModifier(game, card, {
         handler: async () => {
           await card.player.hero.modifiers.add(
-            new EmpowerModifier(game, card, { amount: 2 })
+            new EmpowerModifier(game, card, { amount: 1 })
           );
         }
       })

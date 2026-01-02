@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { provideCollectionPage } from './useCollectionPage';
 
-import CollectionFilters from './CollectionFilters.vue';
+// import CollectionFilters from './CollectionFilters.vue';
 import DeckList from './DeckList.vue';
 import DeckEditor from './DeckEditor.vue';
 import Collection from './Collection.vue';
@@ -21,7 +21,6 @@ const { isEditingDeck } = provideCollectionPage();
 <template>
   <div class="page">
     <AuthenticatedHeader class="collection-header" />
-    <CollectionFilters class="filters lt-lg:hidden" />
 
     <Collection />
 
@@ -38,7 +37,7 @@ const { isEditingDeck } = provideCollectionPage();
   height: 100dvh;
   pointer-events: auto;
   display: grid;
-  grid-template-columns: auto 1fr 24rem;
+  grid-template-columns: 1fr 24rem;
   grid-template-rows: auto 1fr;
 
   transform-style: preserve-3d;
@@ -50,7 +49,7 @@ const { isEditingDeck } = provideCollectionPage();
 
 .collection-header {
   grid-row: 1;
-  grid-column: 1 / span 2;
+  grid-column: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -61,15 +60,10 @@ const { isEditingDeck } = provideCollectionPage();
 .right-sidebar {
   overflow-y: hidden;
   grid-row: 1 / -1;
-  grid-column: 3;
+  grid-column: 2;
 
   @screen lt-lg {
     grid-column: 2;
   }
-}
-
-.filters {
-  grid-row: 2;
-  grid-column: 1;
 }
 </style>

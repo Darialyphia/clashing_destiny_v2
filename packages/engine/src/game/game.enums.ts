@@ -47,7 +47,8 @@ export type CombatStep = Values<typeof COMBAT_STEPS>;
 export const EFFECT_TYPE = {
   CARD: 'CARD',
   ABILITY: 'ABILITY',
-  DECLARE_BLOCKER: 'DECLARE_BLOCKER'
+  DECLARE_BLOCKER: 'DECLARE_BLOCKER',
+  RETALIATION: 'RETALIATION'
 } as const;
 export type EffectType = Values<typeof EFFECT_TYPE>;
 

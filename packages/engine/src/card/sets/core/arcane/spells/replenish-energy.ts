@@ -6,24 +6,24 @@ import {
   CARD_DECK_SOURCES,
   CARD_SETS,
   RARITIES,
-  FACTIONS,
-  CARD_LOCATIONS
+  FACTIONS
 } from '../../../../card.enums';
-import { GAME_EVENTS } from '../../../../../game/game.events';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
-export const manaSpark: SpellBlueprint = {
-  id: 'mana-spark',
+export const replenishEnergy: SpellBlueprint = {
+  id: 'replenish-energy',
   kind: CARD_KINDS.SPELL,
-  collectable: false,
+  collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
-  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Mana Spark',
+  deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
+  name: 'Replenish Energy',
   description: dedent`
-  Cannot be played. Banish this card at the end of the turn.
-`,
-  faction: FACTIONS.NEUTRAL,
-  rarity: RARITIES.TOKEN,
+  You can only play this card if your Hero is @Empowered@.
+  Draw a card.
+  `,
+  faction: FACTIONS.ARCANE,
+  rarity: RARITIES.EPIC,
   tags: [],
   art: {
     default: {
@@ -42,18 +42,16 @@ export const manaSpark: SpellBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.NEUTRAL.defaultCardTint
+      tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 0,
-  speed: CARD_SPEED.SLOW,
+  destinyCost: 0,
+  speed: CARD_SPEED.FAST,
   abilities: [],
-  canPlay: () => false,
+  canPlay: (game, card) => card.player.hero.modifiers.has(EmpowerModifier),
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit(game, card) {
-    game.on(GAME_EVENTS.TURN_END, async () => {
-      await card.sendToBanishPile();
-    });
-  },
-  async onPlay() {}
+  async onInit() {},
+  async onPlay(game, card) {
+    await card.player.cardManager.draw(1);
+  }
 };

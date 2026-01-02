@@ -1,6 +1,5 @@
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import dedent from 'dedent';
 import { OnHitModifier } from '../../../../../modifier/modifiers/on-hit.modifier';
-import { StealthModifier } from '../../../../../modifier/modifiers/stealth.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -8,9 +7,11 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
+import { manaSpark } from '../../neutral/spells/mana-spark';
+import { StealthModifier } from '../../../../../modifier/modifiers/stealth.modifier';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const manaLooter: MinionBlueprint = {
   id: 'mana-looter',
@@ -20,7 +21,9 @@ export const manaLooter: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana Looter',
-  description: '@On Hero Hit@: draw a card.\n\n',
+  description: dedent`
+  @Stealth@.
+  @On Hero Hit@: Add a  @${manaSpark.name}@ to your hand. If your hero is @Empowered@, draw a card instead.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -49,37 +52,24 @@ export const manaLooter: MinionBlueprint = {
   atk: 1,
   maxHp: 3,
   canPlay: () => true,
-  abilities: [
-    {
-      id: 'mana-looter-ability',
-      description: 'Give this unit @Stealth@ this turn, then wake up this minion.',
-      label: 'Gain Stealth',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
-      getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 2,
-      shouldExhaust: true,
-  speed: CARD_SPEED.FAST,
-      async onResolve(game, card) {
-        await card.modifiers.add(
-          new StealthModifier(game, card, {
-            mixins: [new UntilEndOfTurnModifierMixin(game)]
-          })
-        );
-        await card.wakeUp();
-      }
-    }
-  ],
+  abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new StealthModifier(game, card, {}));
+
     await card.modifiers.add(
       new OnHitModifier(game, card, {
         async handler(event) {
           if (!event.data.target.equals(card.player.opponent.hero)) return;
-          await card.player.cardManager.draw(1);
+          const isEmpowered = getEmpowerStacks(card) > 0;
+          if (isEmpowered) {
+            return await card.player.cardManager.draw(1);
+          } else {
+            const spark = await card.player.generateCard(manaSpark.id);
+            await spark.addToHand();
+          }
         }
       })
     );
   },
   async onPlay() {}
 };
-
-

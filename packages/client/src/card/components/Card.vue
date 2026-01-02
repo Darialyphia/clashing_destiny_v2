@@ -337,22 +337,22 @@ const kindBg = computed(() => {
         </div>
 
         <div v-if="isDefined(card.atk)" class="stat atk parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.atk">
+          <div v-if="showText">
             {{ card.atk }}
           </div>
         </div>
         <div v-if="isDefined(card.hp)" class="stat hp parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.hp">
+          <div v-if="showText">
             {{ card.hp }}
           </div>
         </div>
         <div v-if="isDefined(card.durability)" class="stat durability parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.durability">
+          <div v-if="showText">
             {{ card.durability }}
           </div>
         </div>
         <div v-if="isDefined(card.countdown)" class="stat countdown parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.countdown">
+          <div v-if="showText">
             {{ card.countdown }}
           </div>
         </div>
@@ -705,39 +705,40 @@ const kindBg = computed(() => {
 }
 
 .stat {
-  width: calc(27px * var(--pixel-scale));
-  height: calc(25px * var(--pixel-scale));
+  width: calc(31px * var(--pixel-scale));
+  height: calc(16px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
-  display: grid;
-  bottom: 0;
-  place-content: center;
+  bottom: calc(3px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 8px);
+  text-align: right;
+  padding-top: calc(2.5px * var(--pixel-scale));
+  padding-right: calc(17px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
-  font-size: calc(var(--pixel-scale) * 11px);
+  font-family: 'Lato', sans-serif;
   --dual-text-offset-y: 2px;
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/attack.png');
-  left: calc(3px * var(--pixel-scale));
-  padding-right: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/attack-small.png');
+  right: calc(36px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health.png');
+  background-image: url('@/assets/ui/card/health-small.png');
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
 
 .durability {
-  background-image: url('@/assets/ui/card/durability.png');
+  background-image: url('@/assets/ui/card/durability-small.png');
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }
 
 .countdown {
-  background-image: url('@/assets/ui/card/countdown.png');
+  background-image: url('@/assets/ui/card/countdown-small.png');
   right: calc(3px * var(--pixel-scale));
   padding-left: calc(2px * var(--pixel-scale));
 }

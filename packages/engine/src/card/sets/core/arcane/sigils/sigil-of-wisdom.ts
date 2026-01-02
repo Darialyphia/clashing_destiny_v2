@@ -3,13 +3,18 @@ import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modi
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
+  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import type { SigilCard } from '../../../../entities/sigil.entity';
+import { SigilCard } from '../../../../entities/sigil.entity';
+import dedent from 'dedent';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
 export const sigilOfWisdom: SigilBlueprint = {
   id: 'sigil-of-wisdom',
@@ -19,8 +24,10 @@ export const sigilOfWisdom: SigilBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
-  description:
-    '@On Destroyed@: Draw 2 cards into your Destiny Zone. @[lvl] 3 Bonus@: Draw them into your hand instead.',
+  description: dedent`
+  At the start of each turn, @Empower@.
+  @On Destroyed@: Draw a card.
+  `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -46,27 +53,33 @@ export const sigilOfWisdom: SigilBlueprint = {
   },
   manaCost: 3,
   abilities: [],
-  maxCountdown: 2,
+  maxCountdown: 3,
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
-    )) as LevelBonusModifier<SigilCard>;
+    await card.modifiers.add(
+      new Modifier<SigilCard>('sigil-of-wisdom-empower', game, card, {
+        mixins: [
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.TURN_START,
+            filter: () => card.location === CARD_LOCATIONS.BOARD,
+            handler: async () => {
+              await card.player.hero.modifiers.add(
+                new EmpowerModifier(game, card, { amount: 1 })
+              );
+            }
+          })
+        ]
+      })
+    );
 
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         handler: async () => {
-          if (levelMod.isActive) {
-            await card.player.cardManager.draw(2);
-          } else {
-            await card.player.cardManager.drawIntoDestinyZone(2);
-          }
+          await card.player.cardManager.draw(1);
         }
       })
     );
   },
   async onPlay() {}
 };
-
-
