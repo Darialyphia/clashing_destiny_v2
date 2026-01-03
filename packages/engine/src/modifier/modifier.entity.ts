@@ -170,10 +170,6 @@ export class Modifier<
     return this._sources;
   }
 
-  async onRemoved(cb: (event: ModifierLifecycleEvent) => MaybePromise<void>) {
-    await this.game.once(MODIFIER_EVENTS.MODIFIER_AFTER_REMOVED, cb);
-  }
-
   checkEnabled() {
     if (!this._isApplied) return;
     if (this.isEnabled !== this._prevEnabled) {

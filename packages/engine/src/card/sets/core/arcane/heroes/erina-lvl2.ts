@@ -51,7 +51,7 @@ export const erinaLv2: HeroBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleAttackBuffModifier('erina-lv2-attack-buff', game, card, {
-        amount: 1,
+        amount: 2,
         mixins: [
           new TogglableModifierMixin(
             game,
@@ -65,5 +65,3 @@ export const erinaLv2: HeroBlueprint = {
   },
   async onPlay() {}
 };
-
-

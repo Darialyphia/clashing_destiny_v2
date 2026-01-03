@@ -147,7 +147,9 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
-  abilities: AbilityBlueprint<ArtifactCard, PreResponseTarget>[];
+  abilities: Array<
+    AbilityBlueprint<ArtifactCard, PreResponseTarget> & { durabilityCost: number }
+  >;
   durability: number;
 } & (
     | {

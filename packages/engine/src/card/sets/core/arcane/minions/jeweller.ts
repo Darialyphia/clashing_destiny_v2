@@ -72,7 +72,7 @@ export const jeweller: MinionBlueprint = {
       label: 'Summon Plotting Consellor',
       canUse: () => true,
       getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 4,
+      manaCost: 3,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,
       async onResolve(game, card) {

@@ -71,7 +71,15 @@ export class ArtifactCard extends Card<
     );
 
     this.blueprint.abilities.forEach(ability => {
-      this.abilities.push(new Ability<ArtifactCard>(this.game, this, ability));
+      this.abilities.push(
+        new Ability<ArtifactCard>(this.game, this, {
+          ...ability,
+          onResolve: async (...args) => {
+            await ability.onResolve(...args);
+            await this.loseDurability(ability.durabilityCost);
+          }
+        })
+      );
     });
   }
 

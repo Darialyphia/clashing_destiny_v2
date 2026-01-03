@@ -1,11 +1,21 @@
 import { isString, type Constructor, type Nullable } from '@game/shared';
 import { Modifier, ModifierLifecycleEvent, type ModifierTarget } from './modifier.entity';
+import type { Game } from '../game/game';
+import { GAME_EVENTS } from '../game/game.events';
 
 export class ModifierManager<T extends ModifierTarget> {
   private _modifiers: Modifier<T>[] = [];
 
-  constructor(private target: T) {
+  constructor(
+    private game: Game,
+    private target: T
+  ) {
     this.onModifierRemoved = this.onModifierRemoved.bind(this);
+    game.on(GAME_EVENTS.MODIFIER_AFTER_REMOVED, this.onModifierRemoved);
+  }
+
+  cleanup() {
+    this.game.off(GAME_EVENTS.MODIFIER_AFTER_REMOVED, this.onModifierRemoved);
   }
 
   has(modifierOrId: string | Modifier<T, any> | Constructor<Modifier<T>>) {
@@ -48,7 +58,6 @@ export class ModifierManager<T extends ModifierTarget> {
     } else {
       this._modifiers.push(modifier);
       await modifier.applyTo(this.target);
-      await modifier.onRemoved(this.onModifierRemoved);
 
       return modifier;
     }

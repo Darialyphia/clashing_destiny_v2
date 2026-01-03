@@ -157,7 +157,8 @@ export const KEYWORDS = {
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',
-    description: "This unit doesn't exhaust at the start of the next turn.",
+    description:
+      "This unit has 0 attack and doesn't exhaust at the start of the next turn.",
     aliases: ['Freeze']
   },
   INHERITED_EFFECT: {
@@ -257,8 +258,7 @@ export const KEYWORDS = {
   EMPOWER: {
     id: 'empower',
     name: 'Empower X',
-    description:
-      'The next spell you cast has + X Spellpower. Lasts until the end of the turn.',
+    description: 'The next spell you cast this turn has + X Spellpower.',
     aliases: [/empower [0-9]+/, 'empower', /empowered/]
   },
   FLANK: {
@@ -305,6 +305,13 @@ export const KEYWORDS = {
     name: 'True Damage',
     description:
       'This damage cannot be prevented or reduced, and is not affected by Spellpower.',
+    aliases: []
+  },
+  SPELLBOOST: {
+    id: 'spellboost',
+    name: 'Spellboost',
+    description:
+      'When you play a spell, the Spellboost effects of cards in your hand activate. Effects vary by card',
     aliases: []
   }
 };

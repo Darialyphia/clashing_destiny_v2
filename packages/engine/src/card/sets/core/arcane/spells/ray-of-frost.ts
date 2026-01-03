@@ -62,7 +62,7 @@ export const rayOfFrost: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {
-      await target.takeDamage(card, new SpellDamage(2, card));
+      await target.takeDamage(card, new SpellDamage(1, card));
 
       const wasExhausted = target.isExhausted;
 

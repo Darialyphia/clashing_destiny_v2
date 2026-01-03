@@ -77,7 +77,7 @@ export const simurgh: MinionBlueprint = {
           for (const arcaneSpell of arcaneSpellsInHand) {
             await arcaneSpell.modifiers.add(
               new SimpleManacostModifier('simurgh-cost-reduction', game, card, {
-                amount: 1
+                amount: -1
               })
             );
           }

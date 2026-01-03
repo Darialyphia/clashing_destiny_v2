@@ -4,8 +4,12 @@ import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { DurationModifierMixin } from '../mixins/duration.mixin';
-import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import {
+  CardInterceptorModifierMixin,
+  MinionInterceptorModifierMixin
+} from '../mixins/interceptor.mixin';
 import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
+import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
 export class FreezeModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
@@ -21,7 +25,11 @@ export class FreezeModifier<T extends MinionCard | HeroCard> extends Modifier<T>
         new CardInterceptorModifierMixin(game, {
           key: 'shouldWakeUpAtTurnStart',
           interceptor: () => false
-        })
+        }),
+        new MinionInterceptorModifierMixin(game, {
+          key: 'atk',
+          interceptor: () => 0
+        }) as ModifierMixin<T>
       ]
     });
   }

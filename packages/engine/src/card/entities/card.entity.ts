@@ -114,8 +114,6 @@ export abstract class Card<
   TInterceptors extends CardInterceptors = CardInterceptors,
   TBlueprint extends CardBlueprint = CardBlueprint
 > extends EntityWithModifiers<TInterceptors> {
-  protected game: Game;
-
   blueprint: TBlueprint;
 
   protected originalPlayer: Player;
@@ -136,11 +134,10 @@ export abstract class Card<
     interceptors: TInterceptors,
     options: CardOptions<TBlueprint>
   ) {
-    super(options.id, interceptors);
+    super(options.id, game, interceptors);
     this.game = game;
     this.originalPlayer = player;
     this.blueprint = options.blueprint as any;
-    this.modifiers = new ModifierManager(this);
   }
 
   async init() {

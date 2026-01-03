@@ -21,6 +21,7 @@ import { CARD_KINDS, FACTIONS } from '../card/card.enums';
 import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
+import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 
 export type PlayerOptions = {
   id: string;
@@ -70,16 +71,12 @@ export type PlayerResourceAction =
   | { type: 'put_card_in_mana_zone'; cardId: string };
 
 export class Player
-  extends Entity<PlayerInterceptors>
+  extends EntityWithModifiers<PlayerInterceptors>
   implements Serializable<SerializedPlayer>
 {
-  private game: Game;
-
   readonly boardSide: BoardSide;
 
   readonly cardManager: CardManagerComponent;
-
-  readonly modifiers: ModifierManager<Player>;
 
   readonly artifactManager: ArtifactManagerComponent;
 
@@ -100,7 +97,7 @@ export class Player
     game: Game,
     private options: PlayerOptions
   ) {
-    super(options.id, makeInterceptors());
+    super(options.id, game, makeInterceptors());
     this.game = game;
     this.cardTracker = new CardTrackerComponent(game, this);
     this.boardSide = new BoardSide(this.game, this);
@@ -108,7 +105,6 @@ export class Player
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
-    this.modifiers = new ModifierManager<Player>(this);
     this.artifactManager = new ArtifactManagerComponent(game, this);
   }
 

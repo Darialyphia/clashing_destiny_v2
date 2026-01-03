@@ -55,7 +55,7 @@ export const sigilOfWisdom: SigilBlueprint = {
   },
   manaCost: 3,
   abilities: [],
-  maxCountdown: 3,
+  maxCountdown: 2,
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   async onInit(game, card) {

@@ -66,7 +66,7 @@ export const erinaLv3: HeroBlueprint = {
       label: 'Consume and Empower',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 2,
+      manaCost: 1,
       shouldExhaust: true,
       speed: CARD_SPEED.BURST,
       async onResolve(game, card) {

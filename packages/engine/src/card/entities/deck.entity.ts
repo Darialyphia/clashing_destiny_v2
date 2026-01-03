@@ -41,10 +41,10 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
   cards: TCard[];
 
   constructor(
-    private game: Game,
+    game: Game,
     private player: Player
   ) {
-    super(`deck_${nanoid(4)}`, {});
+    super(`deck_${nanoid(4)}`, game, {});
     this.cards = [];
   }
 

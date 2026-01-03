@@ -13,7 +13,7 @@ export type PlayedCard<T extends AnyCard = AnyCard> = {
 
 export class CardTrackerComponent {
   private cardsPlayedByGameTurn = new Map<number, PlayedCard[]>();
-  private minionsDestroyedByGameTurn = new Map<number, PlayedCard[]>();
+  private cardsDestroyedByGameTurn = new Map<number, PlayedCard[]>();
 
   constructor(
     private game: Game,
@@ -36,10 +36,10 @@ export class CardTrackerComponent {
       if (!event.data.card.player.equals(this.player)) return;
       if (!isMinion(event.data.card)) return;
       const turn = game.turnSystem.elapsedTurns;
-      if (!this.minionsDestroyedByGameTurn.has(turn)) {
-        this.minionsDestroyedByGameTurn.set(turn, []);
+      if (!this.cardsDestroyedByGameTurn.has(turn)) {
+        this.cardsDestroyedByGameTurn.set(turn, []);
       }
-      this.minionsDestroyedByGameTurn.get(turn)?.push({
+      this.cardsDestroyedByGameTurn.get(turn)?.push({
         player: event.data.card.player,
         card: event.data.card
       });
@@ -50,8 +50,8 @@ export class CardTrackerComponent {
     return this.cardsPlayedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
   }
 
-  get minionsDestroyedThisGameTurn() {
-    return this.minionsDestroyedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
+  get cardsDestroyedThisGameTurn() {
+    return this.cardsDestroyedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
   }
 
   getCardsPlayedThisGameTurnOfKind<

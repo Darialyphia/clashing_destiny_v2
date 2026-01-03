@@ -29,8 +29,8 @@ export class DefenderModifier<T extends MinionCard | HeroCard> extends Modifier<
           if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
 
           return (
-            !!phaseCtx.ctx.target?.equals(this.target) &&
-            phaseCtx.ctx.isTargetCounterattacking
+            !!phaseCtx.ctx.target?.equals(this.target) ||
+            !!phaseCtx.ctx.blocker?.equals(this.target)
           );
         }),
         ...(options.mixins ?? [])

@@ -21,7 +21,7 @@ export const powerOverwhelming: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Power Overwhelming',
   description: dedent`
-  Your hero gains Atk equals to your @Empower@ level until the end of the turn.
+  Your hero gains Atk equals to the amount of spells you played this turn.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -54,7 +54,9 @@ export const powerOverwhelming: SpellBlueprint = {
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new SimpleAttackBuffModifier('power-overwhelming-attack-buff', game, card, {
-        amount: getEmpowerStacks(card),
+        amount: card.player.cardTracker
+          .getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
+          .filter(c => c.player.equals(card.player)).length,
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );

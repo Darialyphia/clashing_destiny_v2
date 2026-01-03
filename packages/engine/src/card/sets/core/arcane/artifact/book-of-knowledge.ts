@@ -56,15 +56,16 @@ export const bookOfKnowledge: ArtifactBlueprint = {
     {
       id: 'book-of-knowledge-ability',
       description:
-        '@Scry 3@. If you scried an Arcane spell, @Empower 1@. Lose 1 durability.',
+        '@ @Scry 3@. If you scried an Arcane spell, @Empower 1@ and draw a card.',
       label: 'Scry and Empower',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 0,
+      durabilityCost: 1,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
-        const { cards } = await scry(game, card, 2);
+        const { cards } = await scry(game, card, 3);
 
         const hasArcaneSpell = cards.some(
           c => isSpell(c) && c.faction === FACTIONS.ARCANE
@@ -75,15 +76,13 @@ export const bookOfKnowledge: ArtifactBlueprint = {
             GAME_EVENTS.CARD_EFFECT_TRIGGERED,
             new CardEffectTriggeredEvent({
               card,
-              message: 'Book of Knowledge scried an Arcane spell'
+              message: 'Book of Knowledge scryed an Arcane spell'
             })
           );
           await card.player.hero.modifiers.add(
             new EmpowerModifier(game, card, { amount: 1 })
           );
         }
-
-        await card.loseDurability(1);
       }
     }
   ],
