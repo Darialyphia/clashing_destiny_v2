@@ -7,6 +7,7 @@ import { spiritOfArcane } from './core/arcane/heroes/spirit-of-arcane';
 import { archsageOfMoonring } from './core/arcane/minions/archsage-of-moonring';
 import { astralExplorer } from './core/arcane/minions/astral-explorer';
 import { astralSoldier } from './core/arcane/minions/astral-soldier';
+import { cosmicAvatar } from './core/arcane/minions/cosmic-avatar';
 import { cosmicDivinator } from './core/arcane/minions/cosmic-divinator';
 import { littleWitch } from './core/arcane/minions/little-witch';
 import { magicChanneler } from './core/arcane/minions/magic-channeler';
@@ -82,6 +83,7 @@ export const coreSet: CardSet = {
     frostNova,
     rayOfFrost,
     bookOfKnowledge,
-    starseeker
+    starseeker,
+    cosmicAvatar
   ]
 };

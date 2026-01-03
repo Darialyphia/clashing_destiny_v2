@@ -10,6 +10,8 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { isHero } from '../../card/card-utils';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { AbilityDamage } from '../../utils/damage';
+import { CARD_LOCATIONS } from '../../card/card.enums';
+import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 
 export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
   private excessDamageByTarget: Record<string, number> = {};
@@ -24,7 +26,14 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
       description: KEYWORDS.OVERWHELM.description,
       icon: 'keyword-overwhelm',
       isUnique: true,
-      mixins: [new KeywordModifierMixin(game, KEYWORDS.OVERWHELM), ...(mixins ?? [])]
+      mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.OVERWHELM),
+        new TogglableModifierMixin(
+          game,
+          () => this.target.location === CARD_LOCATIONS.BOARD
+        ),
+        ...(mixins ?? [])
+      ]
     });
   }
 
@@ -35,7 +44,6 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
       new GameEventModifierMixin(this.game, {
         eventName: GAME_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE,
         handler: async event => {
-          if (this.target.location !== 'board') return;
           if (!event.data.card.equals(this.target)) return;
 
           for (const target of event.data.affectedCards) {

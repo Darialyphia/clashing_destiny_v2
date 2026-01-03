@@ -119,8 +119,14 @@ export const KEYWORDS = {
     id: 'pride',
     name: 'Pride X',
     description:
-      "This minion cannot attack, retaliate or use abilities unless its owner's hero is at least level X.",
+      "This minion cannot attack, block, retaliate or use abilities unless its owner's hero is at least level X.",
     aliases: [/pride [0-9]+/]
+  },
+  HINDERED: {
+    id: 'hindered',
+    name: 'Hindered X',
+    description: 'This card comes into play exhausted unless you pay X.',
+    aliases: [/^hindered [0-9]+$/, 'hindered']
   },
   VIGILANT: {
     id: 'vigilant',

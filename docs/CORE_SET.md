@@ -236,13 +236,12 @@ Minion | Arcane | (2) | K | 1 / 1 | (slow)
 
 ---
 
-[ ] Cosmic Avatar
+[x] Cosmic Avatar
 
 Minion | Arcane | ((3)) | KRR | 3 / 4 | (slow)
 
-On Hero Hit: Add Mana Sparks to your hand equal to the amount of damage dealt.
-
-On Hit: you may consume R. If you do, this gains +1 ATK and Overwhelm this turn.
+Pride 3, Hindered 2, Overwhelm.
+On Hero Hit: You may Empower 2. If you don't, add Mana Sparks to your hand equal to the amount of damage dealt.
 
 ---
 
@@ -272,7 +271,7 @@ When you play an Arcane spell, this gains +1 ATK until the end of turn Level 3 b
 
 ---
 
-[ ] Book of Knowledge
+[x] Book of Knowledge
 
 Artifact | Arcane | (2) | K | 1 durability | (slow)
 
@@ -339,7 +338,7 @@ Deal 8 Damage to a unit.
 
 ---
 
-[ ] Starseeker
+[x] Starseeker
 
 Minion | Arcane | ((1)) | K | 2 / 2 | (slow)
 
