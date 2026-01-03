@@ -43,7 +43,8 @@ export const cards = {
 "frost-nova": "frost-nova",
 "ray-of-frost": "ray-of-frost",
 "book-of-knowledge": "book-of-knowledge",
-"starseeker": "starseeker"
+"starseeker": "starseeker",
+"cosmic-avatar": "cosmic-avatar"
 } as const;
 
 export const collectableCards = {
@@ -83,5 +84,6 @@ export const collectableCards = {
 "frost-nova": "frost-nova",
 "ray-of-frost": "ray-of-frost",
 "book-of-knowledge": "book-of-knowledge",
-"starseeker": "starseeker"
+"starseeker": "starseeker",
+"cosmic-avatar": "cosmic-avatar"
 } as const;

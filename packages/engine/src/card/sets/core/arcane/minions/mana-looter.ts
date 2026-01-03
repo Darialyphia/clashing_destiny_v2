@@ -59,7 +59,7 @@ export const manaLooter: MinionBlueprint = {
     await card.modifiers.add(
       new OnHitModifier(game, card, {
         async handler(event) {
-          if (!event.data.target.equals(card.player.opponent.hero)) return;
+          if (!event.data.card.equals(card.player.opponent.hero)) return;
           const isEmpowered = getEmpowerStacks(card) > 0;
           if (isEmpowered) {
             return await card.player.cardManager.draw(1);

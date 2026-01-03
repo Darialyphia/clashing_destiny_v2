@@ -29,7 +29,7 @@ import { timeBomb } from './core/arcane/sigils/time-bomb';
 import { spellbladeDuelist } from './core/arcane/minions/spellblade-duelist';
 import { manaWisp } from './core/neutral/minions/mana-wisp';
 import { quirkyBookworm } from './core/arcane/minions/quirky-bookworm';
-import { orbOfConstellations } from './core/arcane/artifact/orb-of-constellations';
+import { orbOfConstellations } from './core/arcane/artifacts/orb-of-constellations';
 import { manaSpark } from './core/neutral/spells/mana-spark';
 import { simurgh } from './core/arcane/minions/simurgh';
 import { sigilOfSimurgh } from './core/arcane/sigils/sigil-of-simurgh';
@@ -38,7 +38,7 @@ import { plottingCounsellor } from './core/arcane/minions/plotting-counsellor';
 import { replenishEnergy } from './core/arcane/spells/replenish-energy';
 import { frostNova } from './core/arcane/spells/frost-nova';
 import { rayOfFrost } from './core/arcane/spells/ray-of-frost';
-import { bookOfKnowledge } from './core/arcane/artifact/book-of-knowledge';
+import { bookOfKnowledge } from './core/arcane/artifacts/book-of-knowledge';
 import { starseeker } from './core/arcane/minions/starseeker';
 
 export const coreSet: CardSet = {

@@ -1,5 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
-import type { CardAfterDealCombatDamageEvent } from '../../card/card.events';
+import type { CardAfterTakeDamageEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
@@ -14,14 +14,17 @@ export class OnHitModifier<T extends AnyCard> extends Modifier<T> {
     source: AnyCard,
     private options: {
       mixins?: ModifierMixin<T>[];
-      handler: (event: CardAfterDealCombatDamageEvent, modifier: Modifier<T>) => void;
+      handler: (event: CardAfterTakeDamageEvent, modifier: Modifier<T>) => void;
     }
   ) {
     super(KEYWORDS.ON_HIT.id, game, source, {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_HIT),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
+          eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,
+          filter: event => {
+            return event.data.source.equals(this.target);
+          },
           handler: event => this.onDamage(event)
         }),
         ...(options.mixins || [])
@@ -29,9 +32,7 @@ export class OnHitModifier<T extends AnyCard> extends Modifier<T> {
     });
   }
 
-  private async onDamage(event: CardAfterDealCombatDamageEvent) {
-    if (!event.data.card.equals(this.target)) return;
-    if (event.data.target.isAttacking) return;
+  private async onDamage(event: CardAfterTakeDamageEvent) {
     await this.options.handler(event, this);
   }
 }

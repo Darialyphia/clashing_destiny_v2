@@ -14,7 +14,6 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { manaSpark } from '../../neutral/spells/mana-spark';
-import type { HeroCard } from '../../../../entities/hero.entity';
 
 export const cosmicAvatar: MinionBlueprint = {
   id: 'cosmic-avatar',
@@ -44,9 +43,8 @@ export const cosmicAvatar: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/cosmic-avatar-bg',
+      main: 'minions/cosmic-avatar',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
@@ -65,7 +63,7 @@ export const cosmicAvatar: MinionBlueprint = {
     await card.modifiers.add(
       new OnHitModifier(game, card, {
         async handler(event) {
-          if (!event.data.target.equals(card.player.opponent.hero)) return;
+          if (!event.data.card.equals(card.player.opponent.hero)) return;
 
           const damageDealt = event.data.damage.baseAmount;
 
@@ -73,7 +71,7 @@ export const cosmicAvatar: MinionBlueprint = {
             player: card.player,
             source: card,
             questionId: `cosmic-avatar-empower-${card.id}`,
-            label: `@Empower@ 2, or add ${damageDealt} @Mana Spark@(s) to your hand?`,
+            label: `Empower 2, or add ${damageDealt} Mana Spark(s) to your hand?`,
             minChoiceCount: 1,
             maxChoiceCount: 1,
             choices: [
