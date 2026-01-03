@@ -1,12 +1,8 @@
 import type { Values } from '@game/shared';
-import type { AnyCard } from '../entities/card.entity';
 import type { HeroCard, SerializedHeroCard } from '../entities/hero.entity';
-import type { Damage, DamageType } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
 export const HERO_EVENTS = {
-  HERO_BEFORE_TAKE_DAMAGE: 'hero.before-take-damage',
-  HERO_AFTER_TAKE_DAMAGE: 'hero.after-take-damage',
   HERO_BEFORE_HEAL: 'hero.before-heal',
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
@@ -22,28 +18,6 @@ export class HeroPlayedEvent extends TypedSerializableEvent<
   serialize() {
     return {
       card: this.data.card.id
-    };
-  }
-}
-
-export class HeroCardTakeDamageEvent extends TypedSerializableEvent<
-  { card: HeroCard; damage: Damage; source: AnyCard; amount: number },
-  {
-    card: string;
-    damage: { type: DamageType; amount: number };
-    source: string;
-    amount: number;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      damage: {
-        type: this.data.damage.type,
-        amount: this.data.damage.getFinalAmount(this.data.card)
-      },
-      amount: this.data.amount,
-      source: this.data.source.id
     };
   }
 }
@@ -73,8 +47,6 @@ export class HeroLevelUpEvent extends TypedSerializableEvent<
 }
 
 export type HeroCardEventMap = {
-  [HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
-  [HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE]: HeroCardTakeDamageEvent;
   [HERO_EVENTS.HERO_BEFORE_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;

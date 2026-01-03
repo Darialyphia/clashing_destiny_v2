@@ -1,9 +1,9 @@
-import { uppercaseFirstLetter, type MaybePromise, type Values } from '@game/shared';
+import { uppercaseFirstLetter, type MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 
 import type { Player } from '../../player/player.entity';
-import type { CombatDamage, Damage, DamageType } from '../../utils/damage';
+import type { CombatDamage, Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import {
   type AbilityBlueprint,
@@ -19,21 +19,17 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 import type { MinionCard } from './minion.entity';
 import {
   CardAfterDealCombatDamageEvent,
+  CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
+  CardBeforeTakeDamageEvent,
   CardDeclarePlayEvent
 } from '../card.events';
-import {
-  HERO_EVENTS,
-  HeroCardHealEvent,
-  HeroCardTakeDamageEvent,
-  HeroPlayedEvent
-} from '../events/hero.events';
+import { HERO_EVENTS, HeroCardHealEvent, HeroPlayedEvent } from '../events/hero.events';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -254,15 +250,26 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     const remainingDamage = amount - amountBlocked;
 
     await this.game.emit(
-      HERO_EVENTS.HERO_BEFORE_TAKE_DAMAGE,
-      new HeroCardTakeDamageEvent({ card: this, damage, source, amount: remainingDamage })
+      CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
+      new CardBeforeTakeDamageEvent({
+        card: this,
+        damage,
+        source,
+        amount: remainingDamage
+      })
     );
 
     this.damageTaken = Math.min(this.damageTaken + remainingDamage, this.maxHp);
 
     await this.game.emit(
-      HERO_EVENTS.HERO_AFTER_TAKE_DAMAGE,
-      new HeroCardTakeDamageEvent({ card: this, damage, source, amount: remainingDamage })
+      CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE,
+      new CardAfterTakeDamageEvent({
+        card: this,
+        damage,
+        source,
+        amount: remainingDamage,
+        isFatal: this.remainingHp <= 0
+      })
     );
   }
 

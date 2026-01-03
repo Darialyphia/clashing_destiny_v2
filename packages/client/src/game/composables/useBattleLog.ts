@@ -93,28 +93,17 @@ export const useBattleLog = () => {
         }
 
         if (
-          eventName === GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE &&
+          eventName === GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE &&
           event.damage.amount &&
           event.damage.type === DAMAGE_TYPES.COMBAT
         ) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.card] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `took ${event.damage.amount}  damage.`
-          });
-        }
-
-        if (eventName === GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE) {
           tokens.push({
             kind: 'card',
             card: state.value.entities[event.card.id] as CardViewModel
           });
           tokens.push({
             kind: 'text',
-            text: `took ${event.damage.amount} ${event.damage.type} damage.`
+            text: `took ${event.damage.amount}  damage.`
           });
         }
 

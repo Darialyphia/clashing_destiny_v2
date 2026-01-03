@@ -1,11 +1,11 @@
 import type { BoardSlotZone } from '../board/board.constants';
 import type { AttackTarget } from '../game/phases/combat.phase';
-import type { CombatDamage } from '../utils/damage';
+import type { CombatDamage, Damage, DamageType } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS, CardLocation } from './card.enums';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
-import type { HeroCard } from './entities/hero.entity';
-import type { MinionCard } from './entities/minion.entity';
+import type { HeroCard, SerializedHeroCard } from './entities/hero.entity';
+import type { MinionCard, SerializedMinionCard } from './entities/minion.entity';
 import type { SigilCard } from './entities/sigil.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
@@ -229,6 +229,58 @@ export class CardChangeLocationEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardBeforeTakeDamageEvent extends TypedSerializableEvent<
+  { card: MinionCard | HeroCard; source: AnyCard; damage: Damage; amount: number },
+  {
+    card: string;
+    source: string;
+    damage: { type: DamageType; amount: number };
+    amount: number;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      source: this.data.source.id,
+      damage: {
+        type: this.data.damage.type,
+        amount: this.data.damage.getFinalAmount(this.data.card)
+      },
+      amount: this.data.amount
+    };
+  }
+}
+
+export class CardAfterTakeDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard | HeroCard;
+    source: AnyCard;
+    damage: Damage;
+    isFatal: boolean;
+    amount: number;
+  },
+  {
+    card: SerializedMinionCard | SerializedHeroCard;
+    source: string;
+    damage: { type: DamageType; amount: number };
+    isFatal: boolean;
+    amount: number;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      source: this.data.source.id,
+      damage: {
+        type: this.data.damage.type,
+        amount: this.data.damage.getFinalAmount(this.data.card)
+      },
+      isFatal: this.data.isFatal,
+      amount: this.data.amount
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -249,4 +301,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_CHANGE_ZONE]: CardChangeZoneEvent;
   [CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION]: CardChangeLocationEvent;
   [CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION]: CardChangeLocationEvent;
+  [CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE]: CardBeforeTakeDamageEvent;
+  [CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE]: CardAfterTakeDamageEvent;
 };

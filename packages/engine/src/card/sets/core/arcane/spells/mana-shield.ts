@@ -73,9 +73,7 @@ export const manaShield: SpellBlueprint = {
             }
           }),
           new GameEventModifierMixin(game, {
-            eventName: isMinion(target)
-              ? GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE
-              : GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
+            eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,
             async handler(event) {
               if (event.data.card.equals(target)) {
                 const prevented = event.data.damage.baseAmount - event.data.amount;
@@ -88,9 +86,7 @@ export const manaShield: SpellBlueprint = {
           }),
           new UntilEndOfTurnModifierMixin(game),
           new UntilEventModifierMixin(game, {
-            eventName: isMinion(target)
-              ? GAME_EVENTS.MINION_AFTER_TAKE_DAMAGE
-              : GAME_EVENTS.HERO_AFTER_TAKE_DAMAGE,
+            eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,
             filter: event => event.data.card.equals(target)
           })
         ]

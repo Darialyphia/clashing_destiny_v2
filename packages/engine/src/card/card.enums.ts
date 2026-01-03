@@ -19,7 +19,9 @@ export const CARD_EVENTS = {
   CARd_BEFORE_CHANGE_ZONE: 'card.before_change_zone',
   CARD_AFTER_CHANGE_ZONE: 'card.after_change_zone',
   CARD_BEFORE_CHANGE_LOCATION: 'card.before_change_location',
-  CARD_AFTER_CHANGE_LOCATION: 'card.after_change_location'
+  CARD_AFTER_CHANGE_LOCATION: 'card.after_change_location',
+  CARD_BEFORE_TAKE_DAMAGE: 'card.before_take_damage',
+  CARD_AFTER_TAKE_DAMAGE: 'card.after_take_damage'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 

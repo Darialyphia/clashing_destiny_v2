@@ -105,8 +105,7 @@ const onAbilityUse = async (e: { card: string }) => {
 };
 useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
 useFxEvent(FX_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
-useFxEvent(FX_EVENTS.MINION_BEFORE_TAKE_DAMAGE, onTakeDamage);
-useFxEvent(FX_EVENTS.HERO_BEFORE_TAKE_DAMAGE, onTakeDamage);
+useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
 useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 

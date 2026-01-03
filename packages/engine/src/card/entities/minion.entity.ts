@@ -12,7 +12,9 @@ import {
 import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
+  CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
+  CardBeforeTakeDamageEvent,
   CardDeclarePlayEvent
 } from '../card.events';
 import {
@@ -30,8 +32,6 @@ import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constant
 import { HeroCard } from './hero.entity';
 import {
   MINION_EVENTS,
-  MinionCardAfterTakeDamageEvent,
-  MinionCardBeforeTakeDamageEvent,
   MinionCardHealEvent,
   MinionSummonedEvent
 } from '../events/minion.events';
@@ -331,8 +331,8 @@ export class MinionCard extends Card<
 
   async takeDamage(source: AnyCard, damage: Damage) {
     await this.game.emit(
-      MINION_EVENTS.MINION_BEFORE_TAKE_DAMAGE,
-      new MinionCardBeforeTakeDamageEvent({
+      CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
+      new CardBeforeTakeDamageEvent({
         card: this,
         source,
         damage,
@@ -345,8 +345,8 @@ export class MinionCard extends Card<
       this.maxHp
     );
     await this.game.emit(
-      MINION_EVENTS.MINION_AFTER_TAKE_DAMAGE,
-      new MinionCardAfterTakeDamageEvent({
+      CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE,
+      new CardAfterTakeDamageEvent({
         card: this,
         source,
         damage,
