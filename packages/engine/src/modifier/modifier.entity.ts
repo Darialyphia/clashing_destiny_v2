@@ -1,11 +1,4 @@
-import {
-  isString,
-  type AnyFunction,
-  type EmptyObject,
-  type MaybePromise,
-  type Serializable,
-  type Values
-} from '@game/shared';
+import { isFunction, isString, type Serializable, type Values } from '@game/shared';
 import type { ModifierMixin } from './modifier-mixin';
 import { Entity } from '../entity';
 import type { Game } from '../game/game';
@@ -14,27 +7,11 @@ import type { ModifierManager } from './modifier-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import { Interceptable } from '../utils/interceptable';
 
-export type ModifierInfos<TCustomEvents extends Record<string, any>> =
-  TCustomEvents extends EmptyObject
-    ? {
-        name?: string;
-        description?: string | (() => string);
-        icon?: string;
-        isUnique?: boolean;
-        customEventNames?: never;
-      }
-    : {
-        name?: string;
-        description?: string;
-        isUnique?: boolean;
-        icon?: string;
-        customEventNames: TCustomEvents;
-      };
-
-export type ModifierOptions<
-  T extends ModifierTarget,
-  TCustomEvents extends Record<string, any>
-> = ModifierInfos<TCustomEvents> & {
+export type ModifierOptions<T extends ModifierTarget> = {
+  name?: string | (() => string);
+  description?: string | (() => string);
+  icon?: string | (() => string);
+  isUnique?: boolean;
   mixins: ModifierMixin<T>[];
   stacks?: number;
 };
@@ -90,10 +67,7 @@ export type ModifierInterceptors = {
   isEnabled: Interceptable<boolean>;
 };
 
-export class Modifier<
-    T extends ModifierTarget,
-    TEventsMap extends ModifierEventMap = ModifierEventMap
-  >
+export class Modifier<T extends ModifierTarget>
   extends Entity<ModifierInterceptors>
   implements Serializable<SerializedModifier>
 {
@@ -111,7 +85,11 @@ export class Modifier<
 
   private _isApplied = false;
 
-  readonly infos: { name?: string; description?: string | (() => string); icon?: string };
+  readonly infos: {
+    name?: string | (() => string);
+    description?: string | (() => string);
+    icon?: string | (() => string);
+  };
 
   readonly modifierType: string;
 
@@ -125,10 +103,7 @@ export class Modifier<
     modifierType: string,
     game: Game,
     source: AnyCard,
-    options: ModifierOptions<
-      T,
-      Record<Exclude<keyof TEventsMap, keyof ModifierEventMap>, boolean>
-    >
+    options: ModifierOptions<T>
   ) {
     super(game.modifierIdFactory(modifierType), {
       isEnabled: new Interceptable()
@@ -284,11 +259,11 @@ export class Modifier<
       id: this.id,
       modifierType: this.modifierType,
       entityType: 'modifier' as const,
-      name: this.infos.name,
-      description: isString(this.infos.description)
-        ? this.infos.description
-        : this.infos.description?.(),
-      icon: this.infos.icon,
+      name: isFunction(this.infos.name) ? this.infos.name() : this.infos.name,
+      description: isFunction(this.infos.description)
+        ? this.infos.description()
+        : this.infos.description,
+      icon: isFunction(this.infos.icon) ? this.infos.icon() : this.infos.icon,
       target: this._target.id,
       source: this.initialSource.id,
       stacks: this._stacks,

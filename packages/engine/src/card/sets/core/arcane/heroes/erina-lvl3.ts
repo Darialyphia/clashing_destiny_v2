@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
@@ -17,6 +18,8 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import type { HeroCard } from '../../../../entities/hero.entity';
+import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const erinaLv3: HeroBlueprint = {
   id: 'erina-arcane-weaver',
@@ -26,7 +29,9 @@ export const erinaLv3: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Arcane Weaver',
-  description: `Your Arcane spells have @Echo@ and cost @[mana] 1@ less as long as you are @Empowered@.`,
+  description: dedent`
+  This card has +Atk equals to your @Empower@ stacks.
+  While @Empowered@ Arcane spells in your hand have @Echo@`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
   tags: [],
@@ -59,25 +64,8 @@ export const erinaLv3: HeroBlueprint = {
   atk: 0,
   maxHp: 21,
   canPlay: () => true,
-  abilities: [
-    {
-      id: 'erina-lv3-ability',
-      description: `@Empower@, then Wake up this Hero.`,
-      label: 'Consume and Empower',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
-      getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 1,
-      shouldExhaust: true,
-      speed: CARD_SPEED.BURST,
-      async onResolve(game, card) {
-        await card.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
-        await card.wakeUp();
-      }
-    }
-  ],
+  abilities: [],
   async onInit(game, card) {
-    const MANA_COST_MODIFIER_ID = 'erina-lv3-manacost-reduction';
-
     await card.modifiers.add(
       new WhileOnBoardModifier<HeroCard>('erina-lv3-aura', game, card, {
         mixins: [
@@ -89,16 +77,18 @@ export const erinaLv3: HeroBlueprint = {
                 candidate.location === CARD_LOCATIONS.HAND
               );
             },
-            getModifiers(candidate) {
-              return [
-                new SimpleManacostModifier(MANA_COST_MODIFIER_ID, game, candidate, {
-                  amount: -1
-                })
-              ];
+            getModifiers() {
+              return [new EchoModifier(game, card)];
             }
           }),
           new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)
         ]
+      })
+    );
+
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier('erina-lv3-attack-buff', game, card, {
+        amount: () => getEmpowerStacks(card)
       })
     );
   },

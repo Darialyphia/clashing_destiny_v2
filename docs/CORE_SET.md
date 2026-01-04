@@ -25,6 +25,14 @@ Cannot be played. Banish this card at the end of the turn.
 
 ---
 
+[x] Spirit of Arcane
+
+Hero | Arcane | Lvl 0 | ((0)) | 0 / 12 | (slow)
+
+On Enter: draw 6 cards.
+
+---
+
 [x] Erina Lvl 1
 
 Hero | Arcane | Lvl 1 | ((1)) | 0 / 15 | (slow)
@@ -316,5 +324,48 @@ Deal 7 True Damage to a unit.
 Minion | Arcane | ((1)) | 2 / 1 | (slow)
 
 On Enter: Scry 2, then if you have Balance, draw a card.
+
+---
+
+[x] Time Bomb
+
+Sigil | Arcane | (2) | Countdown 1 | (slow)
+
+On Destroyed: Deal 1 damage to all enemy minions in the same zone as this. If there is another Time Bomb in the same zone, exhaust them as well.
+Level 2 Bonus: Echo.
+
+---
+
+[x] Frost Nova
+
+Spell | Arcane | ((1)) | (fast)
+
+You can only play this card if your Hero is Empowered.
+Exhaust all minions in both players' Attack zone.
+
+---
+
+[x] Mana Shield
+
+Spell | Arcane | (2) | (fast)
+
+The next time target ally would take damage this turn, prevent 1 + Hero level of that damage and add a Mana Spark to your hand equal to the prevented damage.
+
+---
+
+[x] Replenish Energy
+
+Spell | Arcane | ((0)) | (burst)
+
+You can only play this card if your Hero is Empowered.
+Draw a card.
+
+---
+
+[x] Ray of Frost
+
+Spell | Arcane | (2) | (fast)
+
+Deal 1 damage to an enemy minion, and exhaust it. If it was already exhausted, Freeze it instead.
 
 ---
