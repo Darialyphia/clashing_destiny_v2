@@ -216,7 +216,7 @@ const cardComponent = computed(() =>
   overflow: auto;
 
   &.full {
-    --pixel-scale: 2;
+    --pixel-scale: 1;
   }
   &.condensed {
     --pixel-scale: 1;

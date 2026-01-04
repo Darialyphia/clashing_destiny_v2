@@ -12,12 +12,12 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       art: {
         foil: blueprint.art.default.foil,
         dimensions: blueprint.art.default.dimensions,
-        bg: `/assets/cards/${blueprint.art.default.bg}.png`,
-        main: `/assets/cards/${blueprint.art.default.main}.png`,
+        bg: `cards/${blueprint.art.default.bg}`,
+        main: `cards/${blueprint.art.default.main}`,
         breakout: blueprint.art.default.breakout
-          ? `/assets/cards/${blueprint.art.default.breakout}.png`
+          ? `cards/${blueprint.art.default.breakout}`
           : undefined,
-        frame: `/assets/ui/card/frames/${blueprint.art.default.frame}.png`,
+        frame: `ui/card/frames/${blueprint.art.default.frame}`,
         tint: blueprint.art.default.tint
       },
       kind: blueprint.kind,

@@ -20,7 +20,7 @@ export const wizardsInsight: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: "Wizard's Insight",
   description: dedent`
-  @Scry 1@, @Empower 1@. If you were already @Empowered@, draw a card into your Destiny zone.
+  Draw a card and @Empower 1@. If you were already @Empowered@, draw a card into your Destiny zone.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,

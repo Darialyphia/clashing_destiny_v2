@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage, UnpreventableDamage } from '../../../../../utils/damage';
+import { UnpreventableDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../../card-utils';
 import {
@@ -50,7 +50,7 @@ export const galacticExplosion: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 7,
+  manaCost: 8,
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {
@@ -71,9 +71,7 @@ export const galacticExplosion: SpellBlueprint = {
   },
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {
-      await target.takeDamage(card, new UnpreventableDamage(8));
+      await target.takeDamage(card, new UnpreventableDamage(7));
     }
   }
 };
-
-

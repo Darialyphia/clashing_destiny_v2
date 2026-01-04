@@ -226,14 +226,6 @@ export class GameClient {
         this.stateManager.preupdate(snapshot.state);
       }
 
-      // console.group(`Processing events for snapshot ${snapshot.id}`);
-      // if (snapshot.events.length === 0) {
-      //   console.log('No events in this snapshot');
-      // }
-      // snapshot.events.forEach(event => {
-      //   console.log(event.eventName);
-      // });
-      // console.groupEnd();
       for (const event of snapshot.events) {
         await this.stateManager.onEvent(event, async postUpdateCallback => {
           await this.emitter.emit('update', {});

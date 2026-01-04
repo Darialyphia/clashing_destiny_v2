@@ -1,5 +1,7 @@
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
@@ -10,6 +12,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { HeroCard } from '../../../../entities/hero.entity';
 
 export const erinaLv2: HeroBlueprint = {
   id: 'erina-aether-scholar',
@@ -19,7 +22,8 @@ export const erinaLv2: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Erina, Aether Scholar',
-  description: 'This has +2 Attack as long as you played a spell this turn.',
+  description:
+    'The first time you play a Spell each turn while @Empowered@, draw a card.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -50,15 +54,22 @@ export const erinaLv2: HeroBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new SimpleAttackBuffModifier('erina-lv2-attack-buff', game, card, {
-        amount: 2,
+      new Modifier<HeroCard>('erina-lv2-draw-spell-watch', game, card, {
         mixins: [
-          new TogglableModifierMixin(
-            game,
-            () =>
-              card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
-                .length > 0
-          )
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            frequencyPerGameTurn: 1,
+            filter(event) {
+              return (
+                event.data.card.player.equals(card.player) &&
+                isSpell(event.data.card) &&
+                card.player.hero.modifiers.has(EmpowerModifier)
+              );
+            },
+            async handler() {
+              await card.player.cardManager.draw(1);
+            }
+          })
         ]
       })
     );

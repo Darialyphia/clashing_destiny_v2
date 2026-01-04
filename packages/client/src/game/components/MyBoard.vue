@@ -168,5 +168,6 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   column-gap: var(--size-4);
   place-content: center;
   transform-style: preserve-3d;
+  transform: translateZ(1px);
 }
 </style>

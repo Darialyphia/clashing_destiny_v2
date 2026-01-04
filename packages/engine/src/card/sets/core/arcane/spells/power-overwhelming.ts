@@ -10,7 +10,6 @@ import {
 } from '../../../../card.enums';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
-import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const powerOverwhelming: SpellBlueprint = {
   id: 'power-overwhelming',
@@ -21,7 +20,7 @@ export const powerOverwhelming: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Power Overwhelming',
   description: dedent`
-  Your hero gains Atk equals to the amount of spells you played this turn.
+  Your hero gains Atk equals to the amount of Arcane spells in your Banish pile.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -54,9 +53,9 @@ export const powerOverwhelming: SpellBlueprint = {
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new SimpleAttackBuffModifier('power-overwhelming-attack-buff', game, card, {
-        amount: card.player.cardTracker
-          .getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
-          .filter(c => c.player.equals(card.player)).length,
+        amount: Array.from(card.player.cardManager.banishPile).filter(
+          c => c.kind === CARD_KINDS.SPELL && c.faction === FACTIONS.ARCANE
+        ).length,
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );
