@@ -499,6 +499,8 @@ Grant Drifter to an ally minion. Draw a card into your Destiny zone
 
 Spell | Order | (4) | Slow
 
+Loyalty: this costs 2 more.
+
 Grant Honor and Pusher to allied Order minions until the end of the turn.
 
 ---
