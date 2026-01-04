@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
@@ -8,6 +9,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { LingeringDestinyModifier } from '../../../../../modifier/modifiers/lingering-destiny.modifier';
 
 export const quirkyBookworm: MinionBlueprint = {
   id: 'quirky-bookworm',
@@ -17,7 +19,10 @@ export const quirkyBookworm: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Quirky Bookworm',
-  description: '@On Enter@: Draw a card in your Destiny Zone.',
+  description: dedent`
+  @On Enter@: Draw a card in your Destiny Zone.
+  @Lingering Destiny@.
+  `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -48,6 +53,7 @@ export const quirkyBookworm: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new LingeringDestinyModifier(game, card));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {

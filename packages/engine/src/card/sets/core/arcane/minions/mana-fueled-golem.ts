@@ -43,7 +43,7 @@ export const manaFueledGolem: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 3,
   speed: CARD_SPEED.SLOW,
   atk: 3,
   maxHp: 3,

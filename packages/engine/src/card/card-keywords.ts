@@ -20,7 +20,7 @@ export const KEYWORDS = {
     name: 'Loyalty X',
     description:
       'If this card is from a different faction than your hero, Deal X additional unpreventable damage to your hero when you play it.',
-    aliases: [/^loyalty [0-9]+/]
+    aliases: [/^loyalty [0-9]+/, 'loyalty']
   },
   FORESIGHT: {
     id: 'foresight',
@@ -34,12 +34,6 @@ export const KEYWORDS = {
     name: 'Lingering Destiny',
     description:
       'You can banish this card from your discard pile to add a Mana Spark to your hand.',
-    aliases: []
-  },
-  CONSUME: {
-    id: 'consume',
-    name: 'Consume',
-    description: 'Destroy the mentioned runes.',
     aliases: []
   },
   SUMMONING_SICKNESS: {
@@ -232,8 +226,14 @@ export const KEYWORDS = {
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
-    description: 'This unit cannot be blocked by minions that cost X or less.',
+    description: 'This unit cannot be attacked by minions that cost X or less.',
     aliases: [/intimidate [0-9]+/]
+  },
+  ELUSIVE: {
+    id: 'elusive',
+    name: 'Elusive X',
+    description: 'This unit cannot be blocked by minions that cost X or less.',
+    aliases: [/elusive [0-9]+/]
   },
   STEALTH: {
     id: 'stealth',
@@ -264,14 +264,8 @@ export const KEYWORDS = {
   EMPOWER: {
     id: 'empower',
     name: 'Empower X',
-    description: 'The next spell you cast this turn has + X Spellpower.',
+    description: 'The next spell you cast this turn deals X more damage.',
     aliases: [/empower [0-9]+/, 'empower', /empowered/]
-  },
-  FLANK: {
-    id: 'flank',
-    name: 'Flank',
-    description: 'This minion can attack minions on adjacent rows.',
-    aliases: []
   },
   LOCKED: {
     id: 'locked',
@@ -279,12 +273,6 @@ export const KEYWORDS = {
     description:
       'This card cannot be played. If it is in the Destiny Zone, it is not recollected at the start of the turn.',
     aliases: [/^lock$/]
-  },
-  RUSH: {
-    id: 'rush',
-    name: 'Rush',
-    description: 'This unit can attack the turn it is played.',
-    aliases: []
   },
   BLAST: {
     id: 'blast',
@@ -318,6 +306,31 @@ export const KEYWORDS = {
     name: 'Spellboost',
     description:
       'When you play a spell, the Spellboost effects of cards in your hand activate. Effects vary by card',
+    aliases: []
+  },
+  DRIFTER: {
+    id: 'drifter',
+    name: 'Drifter',
+    description: 'At the start of your turn, this moves to the opposite zone.',
+    aliases: []
+  },
+  PUSHER: {
+    id: 'pusher',
+    name: 'Pusher',
+    description:
+      'When this deals combat damage to a minion, move it to the Defense zone.',
+    aliases: []
+  },
+  PULLER: {
+    id: 'puller',
+    name: 'Puller',
+    description: 'When this deals combat damage to a minion, move it to the Attack zone.',
+    aliases: []
+  },
+  HONOR: {
+    id: 'honor',
+    name: 'Honor',
+    description: 'This unit cannot be blocked or defended.',
     aliases: []
   }
 };

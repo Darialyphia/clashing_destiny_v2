@@ -235,6 +235,12 @@ export class SigilCard extends Card<
     this._countdown = this.maxCountdown;
   }
 
+  async move() {
+    if (this.location !== 'board') return;
+
+    return this.player.boardSide.move(this);
+  }
+
   canBeTargeted(source: AnyCard) {
     return this.interceptors.canBeTargeted.getValue(true, {
       source

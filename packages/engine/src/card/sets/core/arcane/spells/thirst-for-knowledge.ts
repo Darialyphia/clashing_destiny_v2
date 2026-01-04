@@ -22,7 +22,6 @@ export const thirstForKnowledge: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Thirst for Knowledge',
   description: dedent`
-  @Loyalty 2@.
   Draw 2 cards, then discard a card. If it's an Arcane Spell, @Empower 1@.
   `,
   faction: FACTIONS.ARCANE,
@@ -53,9 +52,7 @@ export const thirstForKnowledge: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit(game, card) {
-    await card.modifiers.add(new LoyaltyModifier(game, card, { amount: 2 }));
-  },
+  async onInit() {},
   async onPlay(game, card) {
     await card.player.cardManager.draw(2);
 

@@ -48,7 +48,8 @@ export const EFFECT_TYPE = {
   CARD: 'CARD',
   ABILITY: 'ABILITY',
   DECLARE_BLOCKER: 'DECLARE_BLOCKER',
-  RETALIATION: 'RETALIATION'
+  RETALIATION: 'RETALIATION',
+  NEGATE: 'NEGATE'
 } as const;
 export type EffectType = Values<typeof EFFECT_TYPE>;
 

@@ -8,8 +8,8 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { scry } from '../../../../card-actions-utils';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { LingeringDestinyModifier } from '../../../../../modifier/modifiers/lingering-destiny.modifier';
 
 export const wizardsInsight: SpellBlueprint = {
   id: 'wizards-insight',
@@ -20,7 +20,8 @@ export const wizardsInsight: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: "Wizard's Insight",
   description: dedent`
-  Draw a card and @Empower 1@. If you were already @Empowered@, draw a card into your Destiny zone.
+  @Empower 1@. If you were already @Empowered@, draw a card into your Destiny zone.
+  @Lingering Destiny@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -50,7 +51,9 @@ export const wizardsInsight: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new LingeringDestinyModifier(game, card));
+  },
   async onPlay(game, card) {
     const isEmpowered = card.player.hero.modifiers.has(EmpowerModifier);
     await card.player.cardManager.draw(1);

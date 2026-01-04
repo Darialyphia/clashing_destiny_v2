@@ -11,6 +11,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
 
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
@@ -20,7 +21,9 @@ export const archsageOfMoonring: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
-  description: dedent`@On Enter@: Deal 3 damage split among enemies.`,
+  description: dedent`
+  @Loyalty@ : this costs @[mana] 1@ more.
+  @On Enter@: Deal 3 damage split among enemies.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -51,6 +54,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new LoyaltyModifier(game, card, { manaAmount: 1 }));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {

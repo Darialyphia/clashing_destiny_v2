@@ -51,7 +51,7 @@ export const astralExplorer: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          await scry(game, card, 3);
+          await scry(game, card, 2);
         }
       })
     );

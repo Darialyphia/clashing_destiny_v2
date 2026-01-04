@@ -31,7 +31,7 @@ export const erinaLv3: HeroBlueprint = {
   name: 'Erina, Arcane Weaver',
   description: dedent`
   This card has +Atk equals to your @Empower@ stacks.
-  While @Empowered@ Arcane spells in your hand have @Echo@`,
+  While @Empowered@, Arcane spells in your hand have @Echo@`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
   tags: [],

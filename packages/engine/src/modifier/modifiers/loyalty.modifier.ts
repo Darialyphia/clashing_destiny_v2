@@ -10,7 +10,17 @@ export class LoyaltyModifier<T extends AnyCard> extends Modifier<T> {
   constructor(
     game: Game,
     source: AnyCard,
-    { mixins, amount }: { mixins?: ModifierMixin<T>[]; amount: number }
+    {
+      mixins,
+      hpAmount,
+      manaAmount,
+      destinyAmount
+    }: {
+      mixins?: ModifierMixin<T>[];
+      hpAmount?: number;
+      manaAmount?: number;
+      destinyAmount?: number;
+    }
   ) {
     super(KEYWORDS.OVERWHELM.id, game, source, {
       name: KEYWORDS.OVERWHELM.name,
@@ -21,7 +31,15 @@ export class LoyaltyModifier<T extends AnyCard> extends Modifier<T> {
         new KeywordModifierMixin(game, KEYWORDS.LOYALTY),
         new CardInterceptorModifierMixin(game, {
           key: 'loyaltyHpCost',
-          interceptor: value => value + amount
+          interceptor: value => value + (hpAmount ?? 0)
+        }),
+        new CardInterceptorModifierMixin(game, {
+          key: 'loyaltyManaCostIncrease',
+          interceptor: value => value + (manaAmount ?? 0)
+        }),
+        new CardInterceptorModifierMixin(game, {
+          key: 'loyaltyDestinyCostIncrease',
+          interceptor: value => value + (destinyAmount ?? 0)
         }),
         ...(mixins ?? [])
       ]

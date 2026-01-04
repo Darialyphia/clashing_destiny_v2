@@ -13,10 +13,12 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { PreemptiveStrikeModifier } from '../../../../../modifier/modifiers/preemptive-strike.mofier';
-import { GAME_EVENTS } from '../../../../../game/game.events';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
+import { AbilityDamage } from '../../../../../utils/damage';
 
 export const cosmicAvatar: MinionBlueprint = {
   id: 'cosmic-avatar',
@@ -28,7 +30,10 @@ export const cosmicAvatar: MinionBlueprint = {
   name: 'Cosmic Avatar',
   description: dedent`
     @Pride 3@, @Hindered 2@.
-    @On Attack@: You may @Empower 2@. If you don't, this gains @Preemptive Strike@ and @Overwhelm@ for this attack.
+    Depending on your hero's @Empower@ stacks:
+    1: @Preemptive Strike@.
+    2-3: @Overwhelm@ and +2 Atk.
+    4+: @On Attack@: Deal 3 damage to all enemies.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
@@ -36,11 +41,9 @@ export const cosmicAvatar: MinionBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
         oil: true,
-        gradient: true,
-        lightGradient: false,
-        scanlines: false
+        lightGradient: true,
+        scanlines: true
       },
       dimensions: {
         width: 174,
@@ -48,6 +51,7 @@ export const cosmicAvatar: MinionBlueprint = {
       },
       bg: 'minions/cosmic-avatar-bg',
       main: 'minions/cosmic-avatar',
+      breakout: 'minions/cosmic-avatar-breakout',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
@@ -62,47 +66,31 @@ export const cosmicAvatar: MinionBlueprint = {
     await card.modifiers.add(new PrideModifier(game, card, 3));
     await card.modifiers.add(new HinderedModifier(game, card, 2));
 
-    let isBuffed = false;
     await card.modifiers.add(
-      new OverwhelmModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => isBuffed)]
+      new PreemptiveStrikeModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)]
       })
     );
     await card.modifiers.add(
-      new PreemptiveStrikeModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => isBuffed)]
+      new OverwhelmModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) >= 2)]
+      })
+    );
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier('cosmic-avatar-empower-atk-buff', game, card, {
+        amount: 2,
+        mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) >= 2)]
       })
     );
 
     await card.modifiers.add(
       new OnAttackModifier(game, card, {
         async handler() {
-          const answer = await game.interaction.askQuestion({
-            player: card.player,
-            source: card,
-            questionId: `cosmic-avatar-empower-${card.id}`,
-            label: `Empower 2, or gain Preemptive Strike and Overwhelm for this attack ?`,
-            minChoiceCount: 1,
-            maxChoiceCount: 1,
-            choices: [
-              { id: 'empower', label: 'Empower' },
-              { id: 'buff', label: `Gain Preemptive Strike and Overwhelm` }
-            ]
-          });
-
-          if (answer === 'empower') {
-            await card.player.hero.modifiers.add(
-              new EmpowerModifier(game, card, { amount: 2 })
-            );
-          } else {
-            isBuffed = true;
-            game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, event => {
-              if (event.data.attacker.equals(card)) {
-                isBuffed = false;
-              }
-            });
+          for (const enemy of card.player.allEnemies) {
+            await enemy.takeDamage(card, new AbilityDamage(3));
           }
-        }
+        },
+        mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) >= 4)]
       })
     );
   },

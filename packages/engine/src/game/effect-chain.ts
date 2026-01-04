@@ -17,7 +17,7 @@ import {
   type SerializedPreResponseTarget
 } from '../card/card-blueprint';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
-import type { EffectType } from './game.enums';
+import { EFFECT_TYPE, type EffectType } from './game.enums';
 import type { BoardSlotZone } from '../board/board.constants';
 
 export const EFFECT_CHAIN_STATES = {
@@ -36,6 +36,7 @@ const EFFECT_CHAIN_STATE_TRANSITIONS = {
 type EffectChainTransition = Values<typeof EFFECT_CHAIN_STATE_TRANSITIONS>;
 
 export type Effect = {
+  id: string;
   type: EffectType;
   source: AnyCard;
   handler: (game: Game) => Promise<void>;
@@ -44,14 +45,17 @@ export type Effect = {
     zone: BoardSlotZone;
     player: Player;
   };
+  isNegated?: boolean;
 };
 
 export type SerializedEffectChain = {
   stack: Array<{
+    id: string;
     type: EffectType;
     source: SerializedCard;
     targets: SerializedPreResponseTarget[];
     zone: { zone: BoardSlotZone; player: string } | null;
+    isNegated: boolean | null;
   }>;
   state: EffectChainState;
   player: string;
@@ -64,7 +68,8 @@ export const EFFECT_CHAIN_EVENTS = {
   EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED: 'effect-before-resolved',
   EFFECT_CHAIN_AFTER_EFFECT_RESOLVED: 'effect-after-resolved',
   EFFECT_CHAIN_AFTER_RESOLVED: 'chain-rafter-esolved',
-  EFFECT_CHAIN_BEFORE_RESOLVED: 'chain-before-resolved'
+  EFFECT_CHAIN_BEFORE_RESOLVED: 'chain-before-resolved',
+  EFFECT_CHAIN_EFFECT_NEGATED: 'effect-negated'
 } as const;
 
 export type EffectChainEventMap = {
@@ -75,6 +80,7 @@ export type EffectChainEventMap = {
   [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED]: ChainEffectResolvedEvent;
   [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_RESOLVED]: ChainEvent;
   [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED]: ChainEvent;
+  [EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_EFFECT_NEGATED]: ChainEffectNegatedEvent;
 };
 
 export class EffectChain
@@ -176,7 +182,22 @@ export class EffectChain
             effect: effect!
           })
         );
-        await effect.handler(this.game);
+
+        if (effect.isNegated) {
+          await this.game.emit(
+            EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_EFFECT_NEGATED,
+            new ChainEffectNegatedEvent({
+              effect: effect
+            })
+          );
+
+          if (effect.type === EFFECT_TYPE.CARD) {
+            await effect.source.sendToDiscardPile();
+          }
+        } else {
+          await effect.handler(this.game);
+        }
+
         await this.game.emit(
           EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED,
           new ChainEffectResolvedEvent({
@@ -216,6 +237,13 @@ export class EffectChain
     this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.ADD_EFFECT);
   }
 
+  negateEffect(effectId: string) {
+    const effect = this.effectStack.find(e => e.id === effectId);
+    if (effect) {
+      effect.isNegated = true;
+    }
+  }
+
   async pass(player: Player) {
     assert(this.can(EFFECT_CHAIN_STATE_TRANSITIONS.PASS), new InactiveEffectChainError());
     assert(player.equals(this._currentPlayer), new IllegalPlayerResponseError());
@@ -243,17 +271,21 @@ export class EffectChain
 
   serialize(): SerializedEffectChain {
     return {
-      stack: this.effectStack.map(effect => ({
-        type: effect.type,
-        source: effect.source.serialize(),
-        targets: effect.targets.map(serializePreResponseTarget),
-        zone: effect.summonZone
-          ? {
-              zone: effect.summonZone.zone,
-              player: effect.summonZone.player.id
-            }
-          : null
-      })),
+      stack: this.effectStack.map(effect => {
+        return {
+          id: effect.id,
+          type: effect.type,
+          source: effect.source.serialize(),
+          targets: effect.targets.map(serializePreResponseTarget),
+          zone: effect.summonZone
+            ? {
+                zone: effect.summonZone.zone,
+                player: effect.summonZone.player.id
+              }
+            : null,
+          isNegated: effect.isNegated ?? null
+        };
+      }),
       state: this.getState(),
       player: this._currentPlayer.id
     };
@@ -302,15 +334,17 @@ export class ChainEffectAddedEvent extends TypedSerializableEvent<
       player: this.data.player.id,
       index: this.data.index,
       effect: {
+        id: this.data.effect.id,
         type: this.data.effect.type,
-        source: this.data.effect.source.serialize() as SerializedCard,
+        source: this.data.effect.source.serialize(),
         targets: this.data.effect.targets.map(serializePreResponseTarget),
         zone: this.data.effect.summonZone
           ? {
               zone: this.data.effect.summonZone.zone,
               player: this.data.effect.summonZone.player.id
             }
-          : null
+          : null,
+        isNegated: this.data.effect.isNegated ?? null
       }
     };
   }
@@ -338,6 +372,7 @@ export class ChainEffectResolvedEvent extends TypedSerializableEvent<
     return {
       index: this.data.index,
       effect: {
+        id: this.data.effect.id,
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
         targets: this.data.effect.targets.map(serializePreResponseTarget),
@@ -346,7 +381,33 @@ export class ChainEffectResolvedEvent extends TypedSerializableEvent<
               zone: this.data.effect.summonZone.zone,
               player: this.data.effect.summonZone.player.id
             }
-          : null
+          : null,
+        isNegated: this.data.effect.isNegated ?? null
+      }
+    };
+  }
+}
+
+export class ChainEffectNegatedEvent extends TypedSerializableEvent<
+  { effect: Effect },
+  {
+    effect: SerializedEffectChain['stack'][number];
+  }
+> {
+  serialize() {
+    return {
+      effect: {
+        id: this.data.effect.id,
+        type: this.data.effect.type,
+        source: this.data.effect.source.serialize(),
+        targets: this.data.effect.targets.map(serializePreResponseTarget),
+        zone: this.data.effect.summonZone
+          ? {
+              zone: this.data.effect.summonZone.zone,
+              player: this.data.effect.summonZone.player.id
+            }
+          : null,
+        isNegated: this.data.effect.isNegated ?? null
       }
     };
   }

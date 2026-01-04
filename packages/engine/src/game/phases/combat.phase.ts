@@ -6,6 +6,7 @@ import {
   type Serializable,
   type Values
 } from '@game/shared';
+import { nanoid } from 'nanoid';
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import type { HeroCard } from '../../card/entities/hero.entity';
@@ -244,6 +245,7 @@ export class CombatPhase
 
     await this.game.effectChainSystem.currentChain?.addEffect(
       {
+        id: nanoid(),
         source: blocker,
         type: EFFECT_TYPE.DECLARE_BLOCKER,
         targets: [this.attacker],
@@ -267,6 +269,7 @@ export class CombatPhase
     this.isTargetRetaliating = true; // mark the retaliation immediately so it can be displayed inthe UI
     await this.game.effectChainSystem.currentChain?.addEffect(
       {
+        id: nanoid(),
         source: this.target,
         type: EFFECT_TYPE.RETALIATION,
         targets: [this.attacker],

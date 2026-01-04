@@ -1,4 +1,5 @@
 import type { MaybePromise, Serializable } from '@game/shared';
+import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
@@ -107,6 +108,7 @@ export class Ability<T extends AbilityOwner>
     onResolved?: () => MaybePromise<void>
   ) {
     const effect = {
+      id: nanoid(),
       type: EFFECT_TYPE.ABILITY,
       source: this.card,
       targets,

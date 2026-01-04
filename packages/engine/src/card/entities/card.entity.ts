@@ -1,4 +1,5 @@
 import { type JSONObject, type MaybePromise } from '@game/shared';
+import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
@@ -320,6 +321,7 @@ export abstract class Card<
     }
   ) {
     const effect = {
+      id: nanoid(),
       type: EFFECT_TYPE.CARD,
       source: this,
       targets: options.targets,

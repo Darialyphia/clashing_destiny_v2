@@ -253,7 +253,7 @@ export class MinionCard extends Card<
     return this.interceptors.dealsDamageFirst.getValue(false, this);
   }
 
-  async moveTo() {
+  async move() {
     if (this.location !== 'board') return;
 
     return this.player.boardSide.move(this);
