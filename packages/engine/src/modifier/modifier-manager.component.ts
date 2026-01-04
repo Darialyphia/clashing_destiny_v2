@@ -18,7 +18,7 @@ export class ModifierManager<T extends ModifierTarget> {
     this.game.off(GAME_EVENTS.MODIFIER_AFTER_REMOVED, this.onModifierRemoved);
   }
 
-  has(modifierOrId: string | Modifier<T, any> | Constructor<Modifier<T>>) {
+  has(modifierOrId: string | Modifier<T> | Constructor<Modifier<T>>) {
     if (modifierOrId instanceof Modifier) {
       return this._modifiers.some(modifier =>
         modifier.modifierType === modifierOrId.modifierType && modifier.isUnique
@@ -32,7 +32,7 @@ export class ModifierManager<T extends ModifierTarget> {
     }
   }
 
-  get<TArg extends string | Modifier<T, any> | Constructor<Modifier<T>>>(
+  get<TArg extends string | Modifier<T> | Constructor<Modifier<T>>>(
     modifierOrType: TArg
   ): TArg extends Constructor<Modifier<T>>
     ? Nullable<InstanceType<TArg>>

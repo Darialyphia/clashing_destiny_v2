@@ -50,17 +50,15 @@ export const splittingBeam: SpellBlueprint = {
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
-    return multipleEnemyTargetRules.canPlay(2)(game, card);
+    return multipleEnemyTargetRules.canPlay(game, card, 2);
   },
   getPreResponseTargets(game, card) {
-    return multipleEnemyTargetRules.getPreResponseTargets({
-      min: 2,
-      max: 2,
-      allowRepeat: false
-    })(game, card, {
-      type: 'card',
-      card
-    });
+    return multipleEnemyTargetRules.getPreResponseTargets(
+      game,
+      card,
+      { type: 'card', card },
+      { min: 2, max: 2 }
+    );
   },
   async onInit() {},
   async onPlay(game, card, targets) {

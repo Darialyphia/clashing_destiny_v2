@@ -32,203 +32,7 @@ export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => 
   return isMinion(card) || isHero(card);
 };
 
-export const singleEnemyTargetRules = {
-  canPlay(
-    game: Game,
-    card: AnyCard,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
-  ) {
-    return (
-      card.player.allEnemies.filter(c => c.canBeTargeted(card) && predicate(c)).length > 0
-    );
-  },
-  async getPreResponseTargets(
-    game: Game,
-    card: AnyCard,
-    origin: CardTargetOrigin,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
-  ) {
-    return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
-      origin,
-      player: card.player,
-      isElligible(candidate, selectedCards) {
-        if (!isMinion(candidate) && !isHero(candidate)) {
-          return false;
-        }
-        return (
-          card.player.allEnemies.some(enemy => enemy.equals(candidate)) &&
-          candidate.canBeTargeted(card) &&
-          !selectedCards.some(selected => selected.equals(candidate)) &&
-          predicate(candidate)
-        );
-      },
-      canCommit(selectedCards) {
-        return selectedCards.length === 1;
-      },
-      isDone(selectedCards) {
-        return selectedCards.length === 1;
-      }
-    });
-  }
-};
-
-export const singleAllyTargetRules = {
-  canPlay(
-    game: Game,
-    card: AnyCard,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
-  ) {
-    return (
-      card.player.allAllies.filter(c => c.canBeTargeted(card) && predicate(c)).length > 0
-    );
-  },
-  async getPreResponseTargets(
-    game: Game,
-    card: AnyCard,
-    origin: CardTargetOrigin,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
-  ) {
-    return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
-      player: card.player,
-      origin,
-      isElligible(candidate, selectedCards) {
-        if (!isMinion(candidate) && !isHero(candidate)) {
-          return false;
-        }
-        return (
-          card.player.allAllies.some(ally => ally.equals(candidate)) &&
-          candidate.canBeTargeted(card) &&
-          !selectedCards.some(selected => selected.equals(candidate)) &&
-          predicate(candidate)
-        );
-      },
-      canCommit(selectedCards) {
-        return selectedCards.length === 1;
-      },
-      isDone(selectedCards) {
-        return selectedCards.length === 1;
-      }
-    });
-  }
-};
-
-export const singleEnemyMinionTargetRules = {
-  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
-    return (
-      card.player.enemyMinions.filter(c => c.canBeTargeted(card) && predicate(c)).length >
-      0
-    );
-  },
-  async getPreResponseTargets(
-    game: Game,
-    card: AnyCard,
-    origin: CardTargetOrigin,
-    predicate: (c: MinionCard) => boolean = () => true
-  ) {
-    return await game.interaction.selectCardsOnBoard<MinionCard>({
-      origin,
-      player: card.player,
-      isElligible(candidate, selectedCards) {
-        if (!isMinion(candidate)) {
-          return false;
-        }
-
-        return (
-          card.player.enemyMinions.some(enemy => enemy.equals(candidate)) &&
-          candidate.canBeTargeted(card) &&
-          !selectedCards.some(selected => selected.equals(candidate)) &&
-          predicate(candidate)
-        );
-      },
-      canCommit(selectedCards) {
-        return selectedCards.length === 1;
-      },
-      isDone(selectedCards) {
-        return selectedCards.length === 1;
-      }
-    });
-  }
-};
-
-export const singleAllyMinionTargetRules = {
-  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
-    return (
-      card.player.minions.filter(c => c.canBeTargeted(card) && predicate(c)).length > 0
-    );
-  },
-  async getPreResponseTargets(
-    game: Game,
-    card: AnyCard,
-    origin: CardTargetOrigin,
-    predicate: (c: MinionCard) => boolean = () => true
-  ) {
-    return await game.interaction.selectCardsOnBoard<MinionCard>({
-      origin,
-      player: card.player,
-      isElligible(candidate, selectedCards) {
-        if (!isMinion(candidate)) {
-          return false;
-        }
-
-        return (
-          card.player.minions.some(minion => minion.equals(candidate)) &&
-          candidate.canBeTargeted(card) &&
-          !selectedCards.some(selected => selected.equals(candidate)) &&
-          predicate(candidate)
-        );
-      },
-      canCommit(selectedCards) {
-        return selectedCards.length === 1;
-      },
-      isDone(selectedCards) {
-        return selectedCards.length === 1;
-      }
-    });
-  }
-};
-
-export const singleMinionTargetRules = {
-  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
-    return (
-      [...card.player.minions, ...card.player.enemyMinions].filter(
-        c => c.canBeTargeted(card) && predicate(c)
-      ).length > 0
-    );
-  },
-  async getPreResponseTargets(
-    game: Game,
-    card: AnyCard,
-    origin: CardTargetOrigin,
-    predicate: (c: MinionCard) => boolean = () => true
-  ) {
-    return await game.interaction.selectCardsOnBoard<MinionCard>({
-      origin,
-      player: card.player,
-      isElligible(candidate, selectedCards) {
-        if (!isMinion(candidate)) {
-          return false;
-        }
-
-        return (
-          [...card.player.enemyMinions, ...card.player.minions].some(minion =>
-            minion.equals(candidate)
-          ) &&
-          candidate.canBeTargeted(card) &&
-          !selectedCards.some(selected => selected.equals(candidate)) &&
-          predicate(candidate)
-        );
-      },
-      canCommit(selectedCards) {
-        return selectedCards.length === 1;
-      },
-      isDone(selectedCards) {
-        return selectedCards.length === 1;
-      }
-    });
-  }
-};
-
-export const multipleEnemyTargetRules = {
+export const minionOrHeroTargetRules = {
   canPlay:
     (min: number) =>
     (
@@ -237,8 +41,9 @@ export const multipleEnemyTargetRules = {
       predicate: (c: MinionCard | HeroCard) => boolean = () => true
     ) => {
       return (
-        card.player.allEnemies.filter(c => c.canBeTargeted(card) && predicate(c))
-          .length >= min
+        [...card.player.allAllies, ...card.player.allEnemies].filter(
+          c => c.canBeTargeted(card) && predicate(c)
+        ).length >= min
       );
     },
   getPreResponseTargets:
@@ -258,7 +63,9 @@ export const multipleEnemyTargetRules = {
           }
 
           return (
-            card.player.allEnemies.some(enemy => enemy.equals(candidate)) &&
+            [...card.player.allAllies, ...card.player.allEnemies].some(enemy =>
+              enemy.equals(candidate)
+            ) &&
             candidate.canBeTargeted(card) &&
             (allowRepeat ||
               !selectedCards.some(selected => selected.equals(candidate))) &&
@@ -273,6 +80,151 @@ export const multipleEnemyTargetRules = {
         }
       });
     }
+};
+
+export const singleEnemyTargetRules = {
+  canPlay: (
+    game: Game,
+    card: AnyCard,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) =>
+    minionOrHeroTargetRules.canPlay(1)(
+      game,
+      card,
+      c => !c.player.equals(card.player) && predicate(c)
+    ),
+  getPreResponseTargets: async (
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) =>
+    await minionOrHeroTargetRules.getPreResponseTargets({
+      min: 1,
+      max: 1,
+      allowRepeat: false
+    })(game, card, origin, predicate)
+};
+
+export const singleAllyTargetRules = {
+  canPlay: (
+    game: Game,
+    card: AnyCard,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) =>
+    minionOrHeroTargetRules.canPlay(1)(
+      game,
+      card,
+      c => c.player.equals(card.player) && predicate(c)
+    ),
+  getPreResponseTargets: async (
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) =>
+    await minionOrHeroTargetRules.getPreResponseTargets({
+      min: 1,
+      max: 1,
+      allowRepeat: false
+    })(game, card, origin, predicate)
+};
+
+export const singleEnemyMinionTargetRules = {
+  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
+    return singleEnemyTargetRules.canPlay(game, card, c => isMinion(c) && predicate(c));
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: MinionCard) => boolean = () => true
+  ) {
+    return (await singleEnemyTargetRules.getPreResponseTargets(
+      game,
+      card,
+      origin,
+      c => isMinion(c) && predicate(c)
+    )) as MinionCard[];
+  }
+};
+
+export const singleAllyMinionTargetRules = {
+  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
+    return singleAllyTargetRules.canPlay(game, card, c => isMinion(c) && predicate(c));
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: MinionCard) => boolean = () => true
+  ) {
+    return (await singleAllyTargetRules.getPreResponseTargets(
+      game,
+      card,
+      origin,
+      c => isMinion(c) && predicate(c)
+    )) as MinionCard[];
+  }
+};
+
+export const singleMinionTargetRules = {
+  canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
+    return minionOrHeroTargetRules.canPlay(1)(
+      game,
+      card,
+      c => isMinion(c) && predicate(c)
+    );
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    predicate: (c: MinionCard) => boolean = () => true
+  ) {
+    return (await minionOrHeroTargetRules.getPreResponseTargets({
+      min: 1,
+      max: 1,
+      allowRepeat: false
+    })(game, card, origin, c => isMinion(c) && predicate(c))) as MinionCard[];
+  }
+};
+
+export const multipleEnemyTargetRules = {
+  canPlay(
+    game: Game,
+    card: AnyCard,
+    min: number,
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+  ) {
+    return minionOrHeroTargetRules.canPlay(min)(
+      game,
+      card,
+      c => !c.player.equals(card.player) && predicate(c)
+    );
+  },
+  async getPreResponseTargets(
+    game: Game,
+    card: AnyCard,
+    origin: CardTargetOrigin,
+    options: {
+      min: number;
+      max: number;
+      allowRepeat?: boolean;
+      predicate?: (c: MinionCard | HeroCard) => boolean;
+    }
+  ) {
+    return await minionOrHeroTargetRules.getPreResponseTargets({
+      min: options.min,
+      max: options.max,
+      allowRepeat: options.allowRepeat ?? false
+    })(
+      game,
+      card,
+      origin,
+      c => !c.player.equals(card.player) && (options.predicate?.(c) ?? true)
+    );
+  }
 };
 
 export const singleArtifactTargetRules = {
