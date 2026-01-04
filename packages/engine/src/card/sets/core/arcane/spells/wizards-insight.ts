@@ -53,7 +53,7 @@ export const wizardsInsight: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card) {
     const isEmpowered = card.player.hero.modifiers.has(EmpowerModifier);
-    await scry(game, card, 1);
+    await card.player.cardManager.draw(1);
     await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
     if (isEmpowered) {
       await card.player.cardManager.drawIntoDestinyZone(1);

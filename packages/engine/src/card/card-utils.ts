@@ -278,9 +278,6 @@ export const cardsInAllyDiscardPile = {
   ) {
     return (
       Array.from(card.player.cardManager.discardPile).filter(c => {
-        if ('canBeTargeted' in c && !c.canBeTargeted) {
-          return false;
-        }
         return options.predicate ? options.predicate(c) : true;
       }).length >= (options.min ?? 1)
     );
@@ -300,9 +297,6 @@ export const cardsInAllyDiscardPile = {
       player: options.player,
       label: options.label,
       choices: Array.from(card.player.cardManager.discardPile).filter(c => {
-        if ('canBeTargeted' in c && !c.canBeTargeted) {
-          return false;
-        }
         return options.predicate ? options.predicate(c) : true;
       }) as T[],
       minChoiceCount: options.minChoiceCount ?? 1,
@@ -319,9 +313,6 @@ export const cardsInEnemyDiscardPile = {
   ) {
     return (
       Array.from(card.player.opponent.cardManager.discardPile).filter(c => {
-        if ('canBeTargeted' in c && !c.canBeTargeted) {
-          return false;
-        }
         return options.predicate ? options.predicate(c) : true;
       }).length >= (options.min ?? 1)
     );
@@ -341,9 +332,6 @@ export const cardsInEnemyDiscardPile = {
       player: options.player,
       label: options.label,
       choices: Array.from(card.player.opponent.cardManager.discardPile).filter(c => {
-        if ('canBeTargeted' in c && !c.canBeTargeted) {
-          return false;
-        }
         return options.predicate ? options.predicate(c) : true;
       }) as T[],
       minChoiceCount: options.minChoiceCount ?? 1,
