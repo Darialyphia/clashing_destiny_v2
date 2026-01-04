@@ -411,7 +411,9 @@ Pride 1.
 
 Attacker: +1 Attack
 
-Defender: +1 Defender
+Defender: +1 Health
+
+---
 
 [ ] Blow of Judgment
 
@@ -425,11 +427,11 @@ Deal damage to a minion equals to the number of cards in your hand
 
 Minion | Order | (4) | 3 / 3 | slow
 
-Tough
+Tough, Pusher
 
 ---
 
-[ ] Dusk Cleanser
+[ ] Dusk Purifier
 
 Minion | Order | (3) | 2 / 2
 
@@ -495,6 +497,16 @@ Grant Drifter to an ally minion. Draw a card into your Destiny zone
 
 [ ] Protect the Holy Spire
 
-Spell | Order | (3) | Slow
+Spell | Order | (4) | Slow
 
-Grant Honor to allied minions until the end of the turn.
+Grant Honor and Pusher to allied Order minions until the end of the turn.
+
+---
+
+[ ] Second Wings
+
+Minion | Order | (3) | 2 / 2 | Slow
+
+Honor
+
+On Death: if this was destroyed by combat by a minion, destroy the minion that destroyed it.
