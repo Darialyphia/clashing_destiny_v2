@@ -40,6 +40,18 @@ import { frostNova } from './core/arcane/spells/frost-nova';
 import { rayOfFrost } from './core/arcane/spells/ray-of-frost';
 import { bookOfKnowledge } from './core/arcane/artifacts/book-of-knowledge';
 import { starseeker } from './core/arcane/minions/starseeker';
+import { impromptuChallenger } from './core/order/minions/impromptu-challenger';
+import { devotedNurse } from './core/order/minions/devoted-nurse';
+import { braveCitizen } from './core/order/minions/brave-citizen';
+import { royalGuard } from './core/order/minions/royal-guard';
+import { duskPurifier } from './core/order/minions/dusk-purifier';
+import { exaltedAngel } from './core/order/minions/exalted-angel';
+import { promisingRecruit } from './core/order/minions/promising-recruit';
+import { blowOfJudgment } from './core/order/spells/blow-of-judgment';
+import { callToHeaven } from './core/order/spells/call-to-heaven';
+import { rebuke } from './core/order/spells/rebuke';
+import { angelWings } from './core/order/spells/angel-wings';
+import { protectTheHolySpire } from './core/order/spells/protect-the-holy-spire';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -84,6 +96,18 @@ export const coreSet: CardSet = {
     rayOfFrost,
     bookOfKnowledge,
     starseeker,
-    cosmicAvatar
+    cosmicAvatar,
+    impromptuChallenger,
+    devotedNurse,
+    braveCitizen,
+    royalGuard,
+    duskPurifier,
+    exaltedAngel,
+    promisingRecruit,
+    blowOfJudgment,
+    callToHeaven,
+    rebuke,
+    angelWings,
+    protectTheHolySpire
   ]
 };

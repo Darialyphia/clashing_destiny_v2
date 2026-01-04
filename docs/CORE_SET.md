@@ -387,7 +387,7 @@ Drifter
 
 ---
 
-[ ] Impromptu Challenger
+[x] Impromptu Challenger
 
 Minion | Order | (2) | 1 / 2 | slow
 
@@ -395,7 +395,7 @@ Puller
 
 ---
 
-[ ] Devoted Nurse
+[x] Devoted Nurse
 
 Minion | Order | (2) | 1 / 1 | slow
 
@@ -403,7 +403,7 @@ On Enter: Give a minion -1/+2.
 
 ---
 
-[ ] Brave Citizen
+[x] Brave Citizen
 
 Minion | Order | (1) | 1/1 | slow
 
@@ -415,7 +415,7 @@ Defender: +1 Health
 
 ---
 
-[ ] Blow of Judgment
+[x] Blow of Judgment
 
 Spell | Order | (3) | slow
 
@@ -423,7 +423,7 @@ Deal damage to a minion equals to the number of cards in your hand
 
 ---
 
-[ ] Royal Guard
+[x] Royal Guard
 
 Minion | Order | (4) | 3 / 3 | slow
 
@@ -431,7 +431,7 @@ Tough, Pusher
 
 ---
 
-[ ] Dusk Purifier
+[x] Dusk Purifier
 
 Minion | Order | (3) | 2 / 2
 
@@ -441,7 +441,7 @@ Lingering Destiny
 
 ---
 
-[ ] Call to Heaven
+[x] Call to Heaven
 
 Spell | Order | (4) | Fast
 
@@ -449,7 +449,7 @@ Return all minions with a mana cost of 2 or less to their owner's hand
 
 ---
 
-[ ] Exalted Angel
+[x] Exalted Angel
 
 Minion | Order | (4) | 3 / 3 | slow
 
@@ -469,7 +469,7 @@ This card does't wake up at the start of the turn. When you summon a minion, wak
 
 ---
 
-[ ] Promising Recruit
+[x] Promising Recruit
 
 Minion | Order | (1) | 1 / 2 | slow
 
@@ -477,7 +477,7 @@ Lingering Destiny
 
 ---
 
-[ ] Rebuke
+[x] Rebuke
 
 Spell | Order | (3) | Fast
 
@@ -487,7 +487,7 @@ Level 2 bonus: this costs 1 less
 
 ---
 
-[ ] Angel Wings
+[x] Angel Wings
 
 Spell | Order | (1) | Fast
 
@@ -495,7 +495,7 @@ Grant Drifter to an ally minion. Draw a card into your Destiny zone
 
 ---
 
-[ ] Protect the Holy Spire
+[x] Protect the Holy Spire
 
 Spell | Order | (4) | Slow
 
