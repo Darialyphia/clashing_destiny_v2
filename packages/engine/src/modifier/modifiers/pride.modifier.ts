@@ -60,7 +60,6 @@ export class PrideModifier extends Modifier<MinionCard> {
   }
 
   private isLevelRequirementMet(): boolean {
-    if (!this.target.player.hero) return false;
     return this.target.player.hero.level >= this.requiredLevel;
   }
 }

@@ -22,7 +22,7 @@ export const manaWisp: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mana Wisp',
   description: dedent`
-  @On Death@: add a @Mana Spark@ to your hand. @[lvl] 3 Bonus@: Add another one.
+  @On Death@: add 2 copies of @Mana Spark@ to your hand. @[lvl] 3 Bonus@: Add another one.
   `,
   faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.COMMON,
@@ -66,6 +66,7 @@ export const manaWisp: MinionBlueprint = {
             await spark.addToHand();
           };
 
+          await addManaShard();
           await addManaShard();
           if (levelMod.isActive) {
             await addManaShard();

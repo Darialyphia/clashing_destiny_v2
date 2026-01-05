@@ -558,3 +558,35 @@ Artifact | Order | ((1)) | 2 durability | 1 atk | slow
 ->, 1 mana, -1 durability, burst : Equip Weapon
 
 Your Hero has "On Kill: draw a card"
+
+---
+
+[ ] Frontline Skirmisher
+
+Minion | Order | (1) | 1 / 1 | slow
+
+Honor
+
+(not collectable)
+
+---
+
+[ ] Dawn Assault
+
+Spell | Order | (3) | fast
+
+Summon 2 copies of Frontline Skirmisher in the Attack zone
+
+Level 3 Bonus: Summon one more
+
+---
+
+[ ] Revise the Strategy
+
+spell | 1 | (1) | slow
+
+Select up to 3 cards from your deck and remove them from play. Draw a card in your Destiny zone.
+
+Lingering Destiny
+
+(implementation detail: to remove a card from play, call card.removeFromCurrentLocation())
