@@ -18,7 +18,7 @@ export const royalGuard: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Royal Guard',
-  description: '@Tough@, @Pusher@',
+  description: '@Tough 1@, @Pusher@',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],

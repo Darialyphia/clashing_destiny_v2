@@ -14,7 +14,8 @@ import {
   type CardSpeed,
   type Rarity,
   CARD_LOCATIONS,
-  type CardLocation
+  type CardLocation,
+  FACTIONS
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -220,12 +221,16 @@ export abstract class Card<
 
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
+      const loyaltyCost =
+        this.faction.id === this.player.hero.faction.id ||
+        this.faction.id === FACTIONS.NEUTRAL.id
+          ? 0
+          : this.loyaltyManaCostIncrease;
+
       return Math.max(
         0,
-        this.interceptors.manaCost.getValue(
-          this.blueprint.manaCost + this.loyaltyManaCostIncrease,
-          {}
-        ) ?? 0
+        this.interceptors.manaCost.getValue(this.blueprint.manaCost + loyaltyCost, {}) ??
+          0
       );
     }
     return 0;
@@ -240,9 +245,15 @@ export abstract class Card<
 
   get destinyCost(): number {
     if ('destinyCost' in this.blueprint) {
+      const loyaltyCost =
+        this.faction.id === this.player.hero.faction.id ||
+        this.faction.id === FACTIONS.NEUTRAL.id
+          ? 0
+          : this.loyaltyManaCostIncrease;
+
       return (
         this.interceptors.destinyCost.getValue(
-          this.blueprint.destinyCost + this.loyaltyDestinyCostIncrease,
+          this.blueprint.destinyCost + loyaltyCost,
           {}
         ) ?? 0
       );
@@ -699,10 +710,10 @@ export abstract class Card<
     this._isExhausted = false;
   }
 
-  async destroy() {
+  async destroy(source: AnyCard) {
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_DESTROY,
-      new CardBeforeDestroyEvent({ card: this })
+      new CardBeforeDestroyEvent({ card: this, source })
     );
 
     this._isExhausted = false;
@@ -710,7 +721,7 @@ export abstract class Card<
     await this.dispose();
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_DESTROY,
-      new CardAfterDestroyEvent({ card: this })
+      new CardAfterDestroyEvent({ card: this, source })
     );
   }
 

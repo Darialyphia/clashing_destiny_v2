@@ -58,7 +58,13 @@ export const cards = {
 "angel-wings": "angel-wings",
 "protect-the-holy-spire": "protect-the-holy-spire",
 "wandering-paladin": "wandering-paladin",
-"stalwart-vanguard": "stalwart-vanguard"
+"stalwart-vanguard": "stalwart-vanguard",
+"harold-knight-of-prophecy": "harold-knight-of-prophecy",
+"harold-vowed-crusader": "harold-vowed-crusader",
+"harold-scended-seraph": "harold-scended-seraph",
+"spirit-of-order": "spirit-of-order",
+"mercy-of-dawn": "mercy-of-dawn",
+"second-wings": "second-wings"
 } as const;
 
 export const collectableCards = {
@@ -113,5 +119,11 @@ export const collectableCards = {
 "angel-wings": "angel-wings",
 "protect-the-holy-spire": "protect-the-holy-spire",
 "wandering-paladin": "wandering-paladin",
-"stalwart-vanguard": "stalwart-vanguard"
+"stalwart-vanguard": "stalwart-vanguard",
+"harold-knight-of-prophecy": "harold-knight-of-prophecy",
+"harold-vowed-crusader": "harold-vowed-crusader",
+"harold-scended-seraph": "harold-scended-seraph",
+"spirit-of-order": "spirit-of-order",
+"mercy-of-dawn": "mercy-of-dawn",
+"second-wings": "second-wings"
 } as const;

@@ -64,7 +64,6 @@ const artFrameImage = computed(() => {
 });
 
 const artBgImage = computed(() => {
-  console.log(card.art.bg, assets[card.art.bg]);
   return assets[card.art.bg].css;
 });
 

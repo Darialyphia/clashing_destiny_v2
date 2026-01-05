@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { provideCollectionPage } from './useCollectionPage';
-
-// import CollectionFilters from './CollectionFilters.vue';
 import DeckList from './DeckList.vue';
 import DeckEditor from './DeckEditor.vue';
 import Collection from './Collection.vue';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
+import CollectionFilters from './CollectionFilters.vue';
 
 definePage({
   name: 'Collection',
@@ -20,7 +18,7 @@ const { isEditingDeck } = provideCollectionPage();
 
 <template>
   <div class="page">
-    <AuthenticatedHeader class="collection-header" />
+    <CollectionFilters class="collection-header" />
 
     <Collection />
 

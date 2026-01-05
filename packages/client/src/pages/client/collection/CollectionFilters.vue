@@ -1,13 +1,25 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
+import {
+  CARD_KINDS,
+  FACTIONS,
+  type CardKind,
+  type Faction
+} from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useCollectionPage } from './useCollectionPage';
 import { assets } from '@/assets';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
-const { textFilter, hasKindFilter, toggleKindFilter, viewMode } =
-  useCollectionPage();
+const {
+  textFilter,
+  hasKindFilter,
+  toggleKindFilter,
+  hasFactionFilter,
+  toggleFactionFilter,
+  viewMode
+} = useCollectionPage();
 
 const cardKinds: Array<{
   id: CardKind;
@@ -20,10 +32,30 @@ const cardKinds: Array<{
   label: uppercaseFirstLetter(kind),
   color: 'white'
 }));
+
+const factions: Array<{
+  id: string;
+  img: string;
+  label: string;
+  faction: Faction;
+}> = Object.values(FACTIONS).map(faction => ({
+  id: faction.id,
+  img: assets[`ui/card/faction-${faction.id.toLocaleLowerCase()}`].path,
+  label: faction.name,
+  faction
+}));
+
+const router = useRouter();
 </script>
 
 <template>
-  <aside class="flex flex-col gap-3 surface">
+  <header class="flex gap-3 surface">
+    <FancyButton
+      v-if="router.currentRoute.value.name !== 'ClientHome'"
+      text="Back"
+      size="md"
+      @click="router.push({ name: 'ClientHome' })"
+    />
     <section class="flex gap-3 items-center">
       <input
         v-model="textFilter"
@@ -66,7 +98,20 @@ const cardKinds: Array<{
     </section>
 
     <section>
-      <h4>Card type</h4>
+      <div class="faction-filter">
+        <button
+          v-for="faction in factions"
+          :key="faction.id"
+          :class="hasFactionFilter(faction.faction) && 'active'"
+          :aria-label="faction.label"
+          @click="toggleFactionFilter(faction.faction)"
+        >
+          <img :src="faction.img" :alt="faction.label" />
+        </button>
+      </div>
+    </section>
+
+    <section>
       <div class="kind-filter">
         <button
           v-for="kind in cardKinds"
@@ -77,45 +122,37 @@ const cardKinds: Array<{
           @click="toggleKindFilter(kind.id)"
         >
           <img :src="kind.img" :alt="kind.label" />
-          {{ kind.label }}
         </button>
       </div>
     </section>
-  </aside>
+  </header>
 </template>
 
 <style scoped lang="postcss">
-.filter {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--size-1);
-  --pixel-scale: 3;
-
+.faction-filter {
+  display: flex;
   button {
     border: solid var(--border-size-2) transparent;
     border-radius: var(--radius-pill);
-    width: calc(var(--pixel-scale) * 22px);
-    height: calc(var(--pixel-scale) * 20px);
-    aspect-ratio: 1;
-    padding: 0;
-    display: grid;
-    > img {
-      width: 100%;
-      height: 100%;
-    }
-    &:not(.active) {
-      filter: brightness(70%);
-    }
+    text-align: left;
+    display: flex;
+    gap: var(--size-2);
+    align-items: center;
+
     &.active {
       background-color: hsl(from var(--color) h s l / 0.25);
-      /* border-color: var(--color); */
+      border-color: var(--color);
+    }
+
+    & > img {
+      width: 32px;
+      aspect-ratio: 1;
     }
   }
 }
 
 .kind-filter {
   display: flex;
-  flex-direction: column;
   button {
     border: solid var(--border-size-2) transparent;
     border-radius: var(--radius-pill);

@@ -46,7 +46,10 @@ export const provideCollectionPage = () => {
     textFilter,
     hasSpeedFilter,
     toggleSpeedFilter,
-    clearSpeedFilter
+    clearSpeedFilter,
+    hasFactionFilter,
+    toggleFactionFilter,
+    clearFactionFilter
   } = provideCardList();
 
   const { data: decks, isLoading: isLoadingDecks } = useDecks();
@@ -121,6 +124,9 @@ export const provideCollectionPage = () => {
     hasSpeedFilter,
     toggleSpeedFilter,
     clearSpeedFilter,
+    hasFactionFilter,
+    toggleFactionFilter,
+    clearFactionFilter,
     textFilter,
     viewMode,
     isEditingDeck,

@@ -150,13 +150,13 @@ export class MinionCard extends Card<
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
     if (key === 'maxHp') {
-      await this.checkHp();
+      await this.checkHp(this);
     }
   }
 
   protected async onInterceptorRemoved(key: MinionCardInterceptorName) {
     if (key === 'maxHp') {
-      await this.checkHp();
+      await this.checkHp(this);
     }
   }
 
@@ -290,15 +290,9 @@ export class MinionCard extends Card<
     });
   }
 
-  private async checkHp(shouldDelay = false) {
+  private async checkHp(source: AnyCard) {
     if (this.remainingHp <= 0) {
-      if (shouldDelay) {
-        await this.game.inputSystem.schedule(async () => {
-          await this.destroy();
-        });
-      } else {
-        await this.destroy();
-      }
+      await this.destroy(source);
     }
   }
 
@@ -354,7 +348,7 @@ export class MinionCard extends Card<
         isFatal: this.remainingHp <= 0
       })
     );
-    await this.checkHp(damage instanceof CombatDamage);
+    await this.checkHp(source);
   }
 
   async heal(heal: number) {

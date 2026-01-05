@@ -69,6 +69,6 @@ export const defaultConfig: Config = {
 
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 
-  BASE_LOYALTY_HP_COST: 0,
+  BASE_LOYALTY_HP_COST: 1,
   BASE_LOYALTY_COST_INCREASE: 0
 };

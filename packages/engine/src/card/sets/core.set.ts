@@ -57,6 +57,9 @@ import { haroldLv1 } from './core/order/heroes/harold-lv1';
 import { stalwartVanguard } from './core/order/minions/stalwart-vanguard';
 import { haroldLv2 } from './core/order/heroes/harold-lv2';
 import { haroldLv3 } from './core/order/heroes/harold-lv3';
+import { spiritOfOrder } from './core/order/heroes/spirit-of-order';
+import { mercyOfDawn } from './core/order/artifacts/mercy-of-dawn';
+import { secondWings } from './core/order/minions/second-wings';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -118,6 +121,9 @@ export const coreSet: CardSet = {
     stalwartVanguard,
     haroldLv1,
     haroldLv2,
-    haroldLv3
+    haroldLv3,
+    spiritOfOrder,
+    mercyOfDawn,
+    secondWings
   ]
 };

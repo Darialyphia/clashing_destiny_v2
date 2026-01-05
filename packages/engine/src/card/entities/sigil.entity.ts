@@ -209,7 +209,7 @@ export class SigilCard extends Card<
     );
 
     if (this.countdown === 0) {
-      await this.destroy();
+      await this.destroy(this);
       await this.game.emit(
         SIGIL_EVENTS.SIGIL_COUNTDOWN_REACHED,
         new SigilCountdownReachedEvent({ card: this })

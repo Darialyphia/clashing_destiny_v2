@@ -41,7 +41,7 @@ export const promisingRecruit: MinionBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 2,

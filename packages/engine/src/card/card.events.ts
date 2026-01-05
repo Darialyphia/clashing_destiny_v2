@@ -76,23 +76,25 @@ export class CardAfterPlayEvent extends TypedSerializableEvent<
 }
 
 export class CardBeforeDestroyEvent extends TypedSerializableEvent<
-  { card: AnyCard },
-  { card: SerializedCard }
+  { card: AnyCard; source: AnyCard },
+  { card: SerializedCard; source: SerializedCard }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.serialize(),
+      source: this.data.source.serialize()
     };
   }
 }
 
 export class CardAfterDestroyEvent extends TypedSerializableEvent<
-  { card: AnyCard },
-  { card: SerializedCard }
+  { card: AnyCard; source: AnyCard },
+  { card: SerializedCard; source: SerializedCard }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.serialize(),
+      source: this.data.source.serialize()
     };
   }
 }

@@ -44,13 +44,13 @@ export const haroldLv3: HeroBlueprint = {
       },
       dimensions: {
         width: 174,
-        height: 140
+        height: 133
       },
-      bg: 'heroes/erina-lv1-bg',
-      main: 'heroes/erina-lv1',
-      breakout: 'heroes/erina-lv1-breakout',
+      bg: 'placeholder-bg',
+      main: 'placeholder',
+      breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ARCANE.defaultCardTint
+      tint: FACTIONS.ORDER.defaultCardTint
     }
   },
   destinyCost: 3,

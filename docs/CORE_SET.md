@@ -485,11 +485,11 @@ On Enter: give Honor to a minion with 2 or less Atk until the end of the turn
 
 ---
 
-[ ] Mercy of Dawn
+[x] Mercy of Dawn
 
 Artifact | Order | (3) | 1 Atk | 1 durability | slow
 
-This card does't wake up at the start of the turn. When you summon a minion, wake up this card.
+This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card.
 
 -> , burst: Equip Weapon
 
@@ -531,7 +531,7 @@ Grant Honor and Pusher to allied Order minions until the end of the turn.
 
 ---
 
-[ ] Second Wings
+[x] Second Wings
 
 Minion | Order | (3) | 2 / 2 | Slow
 

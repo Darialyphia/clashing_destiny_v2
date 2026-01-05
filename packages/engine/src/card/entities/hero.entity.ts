@@ -106,19 +106,19 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   protected async onInterceptorAdded(key: HeroCardInterceptorName) {
     if (key === 'maxHp') {
-      await this.checkHp();
+      await this.checkHp(this);
     }
   }
 
   protected async onInterceptorRemoved(key: HeroCardInterceptorName) {
     if (key === 'maxHp') {
-      await this.checkHp();
+      await this.checkHp(this);
     }
   }
 
-  private async checkHp() {
+  private async checkHp(source: AnyCard) {
     if (this.remainingHp <= 0) {
-      await this.destroy();
+      await this.destroy(source);
     }
   }
 

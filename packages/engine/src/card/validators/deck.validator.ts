@@ -1,11 +1,6 @@
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import {
-  CARD_DECK_SOURCES,
-  CARD_KINDS,
-  FACTIONS,
-  type CardDeckSource
-} from '../card.enums';
+import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -164,13 +159,6 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     const hero = this.getLevel0Hero(deck);
     if (!hero) {
       return cardBlueprint.kind === CARD_KINDS.HERO && cardBlueprint.level === 0;
-    }
-
-    if (
-      hero.faction.id !== cardBlueprint.faction.id &&
-      cardBlueprint.faction.id !== FACTIONS.NEUTRAL.id
-    ) {
-      return false;
     }
 
     if (cardBlueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK) {

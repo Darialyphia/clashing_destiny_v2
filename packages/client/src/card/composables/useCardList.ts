@@ -5,7 +5,8 @@ import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
   type CardKind,
-  type CardSpeed
+  type CardSpeed,
+  type Faction
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isString } from '@game/shared';
@@ -34,6 +35,10 @@ export type CardListContext = {
   hasSpeedFilter(speed: CardSpeed): boolean;
   toggleSpeedFilter(speed: CardSpeed): void;
   clearSpeedFilter(): void;
+
+  hasFactionFilter(faction: Faction): boolean;
+  toggleFactionFilter(faction: Faction): void;
+  clearFactionFilter(): void;
 };
 
 const CardListInjectionKey = Symbol(
@@ -56,6 +61,7 @@ export const provideCardList = () => {
 
   const kindFilter = ref(new Set<CardKind>());
   const speedFilter = ref(new Set<CardSpeed>());
+  const factionFilter = ref(new Set<Faction>());
 
   const textFilter = ref('');
 
@@ -77,6 +83,13 @@ export const provideCardList = () => {
         }
 
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
+          return false;
+        }
+
+        if (
+          factionFilter.value.size > 0 &&
+          !factionFilter.value.has(card.faction)
+        ) {
           return false;
         }
 
@@ -178,6 +191,20 @@ export const provideCardList = () => {
     },
     clearSpeedFilter: () => {
       speedFilter.value.clear();
+    },
+
+    hasFactionFilter(faction: Faction) {
+      return factionFilter.value.has(faction);
+    },
+    toggleFactionFilter(faction: Faction) {
+      if (factionFilter.value.has(faction)) {
+        factionFilter.value.delete(faction);
+      } else {
+        factionFilter.value.add(faction);
+      }
+    },
+    clearFactionFilter: () => {
+      factionFilter.value.clear();
     }
   };
 
