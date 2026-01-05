@@ -114,7 +114,7 @@ export const FACTIONS = {
     name: 'Order',
     shortName: 'Order',
     defaultCardTint: {
-      colors: ['#FFD700', '#45A5dd'],
+      colors: ['#be9019', '#bc8720', '#156ba8'],
       mode: { type: 'linear', angle: 135 },
       blendMode: 'overlay',
       opacity: 1

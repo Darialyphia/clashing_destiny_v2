@@ -44,7 +44,21 @@ export const cards = {
 "ray-of-frost": "ray-of-frost",
 "book-of-knowledge": "book-of-knowledge",
 "starseeker": "starseeker",
-"cosmic-avatar": "cosmic-avatar"
+"cosmic-avatar": "cosmic-avatar",
+"impromptu-challenger": "impromptu-challenger",
+"devoted-nurse": "devoted-nurse",
+"brave-citizen": "brave-citizen",
+"royal-guard": "royal-guard",
+"dusk-purifier": "dusk-purifier",
+"exalted-angel": "exalted-angel",
+"promising-recruit": "promising-recruit",
+"blow-of-judgment": "blow-of-judgment",
+"call-to-heaven": "call-to-heaven",
+"rebuke": "rebuke",
+"angel-wings": "angel-wings",
+"protect-the-holy-spire": "protect-the-holy-spire",
+"wandering-paladin": "wandering-paladin",
+"stalwart-vanguard": "stalwart-vanguard"
 } as const;
 
 export const collectableCards = {
@@ -85,5 +99,19 @@ export const collectableCards = {
 "ray-of-frost": "ray-of-frost",
 "book-of-knowledge": "book-of-knowledge",
 "starseeker": "starseeker",
-"cosmic-avatar": "cosmic-avatar"
+"cosmic-avatar": "cosmic-avatar",
+"impromptu-challenger": "impromptu-challenger",
+"devoted-nurse": "devoted-nurse",
+"brave-citizen": "brave-citizen",
+"royal-guard": "royal-guard",
+"dusk-purifier": "dusk-purifier",
+"exalted-angel": "exalted-angel",
+"promising-recruit": "promising-recruit",
+"blow-of-judgment": "blow-of-judgment",
+"call-to-heaven": "call-to-heaven",
+"rebuke": "rebuke",
+"angel-wings": "angel-wings",
+"protect-the-holy-spire": "protect-the-holy-spire",
+"wandering-paladin": "wandering-paladin",
+"stalwart-vanguard": "stalwart-vanguard"
 } as const;

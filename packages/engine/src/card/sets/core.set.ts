@@ -52,6 +52,11 @@ import { callToHeaven } from './core/order/spells/call-to-heaven';
 import { rebuke } from './core/order/spells/rebuke';
 import { angelWings } from './core/order/spells/angel-wings';
 import { protectTheHolySpire } from './core/order/spells/protect-the-holy-spire';
+import { wanderingPaladin } from './core/order/minions/wandering-paladin';
+import { haroldLv1 } from './core/order/heroes/harold-lv1';
+import { stalwartVanguard } from './core/order/minions/stalwart-vanguard';
+import { haroldLv2 } from './core/order/heroes/harold-lv2';
+import { haroldLv3 } from './core/order/heroes/harold-lv3';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -108,6 +113,11 @@ export const coreSet: CardSet = {
     callToHeaven,
     rebuke,
     angelWings,
-    protectTheHolySpire
+    protectTheHolySpire,
+    wanderingPaladin,
+    stalwartVanguard,
+    haroldLv1,
+    haroldLv2,
+    haroldLv3
   ]
 };

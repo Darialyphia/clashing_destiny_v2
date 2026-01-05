@@ -60,6 +60,32 @@ Your Arcane spells have Echo and cost 1 less as long as you are Empowered.
 
 ---
 
+[x] Harold Lvl 1
+
+Hero | Order | Lvl 1 | ((1)) | 0 / 15 | slow
+
+On Enter: Scry 2. Give an allied minion +1/+1.
+
+---
+
+[x] Harold Lvl 2
+
+Hero | Order | Lvl 2 | ((2)) | 0 / 18 | slow
+
+On Enter: If you control a minion with Honor, draw a card.
+
+-> (1)fast: Grant a minion Honor this turn. If it dies this turn, wake up this card and give it +1 Atk this turn.
+
+---
+
+[x] Harold Lvl 3
+
+Hero | Order | Lvl 3 | ((3)) | 0 / 21 | slow
+
+When an allied minion with Honor Dies, draw a card and give this and all allies +1 Atk this turn.
+
+---
+
 [x] Splitting Beam
 
 Spell | Arcane | (2) | KK | fast
@@ -371,15 +397,15 @@ Deal 1 damage to an enemy minion, and exhaust it. If it was already exhausted, F
 
 ---
 
-[ ] Stalwart Vanguard
+[x] Stalwart Vanguard
 
-Minion | Order | (3) | 1 / 4 | slow
+Minion | Order | (2) | 0 / 4 | slow
 
 Vigilant
 
 ---
 
-[ ] Wandering Paladin
+[x] Wandering Paladin
 
 Minion | Order | (4) | 2 / 4 | slow
 
