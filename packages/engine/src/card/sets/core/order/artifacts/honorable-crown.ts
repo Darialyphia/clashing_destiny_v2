@@ -1,4 +1,3 @@
-import dedent from 'dedent';
 import type { ArtifactBlueprint } from '../../../../card-blueprint';
 import {
   CARD_SPEED,
@@ -10,8 +9,6 @@ import {
   ARTIFACT_KINDS,
   CARD_LOCATIONS
 } from '../../../../card.enums';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { singleAllyMinionTargetRules } from '../../../../card-utils';
@@ -25,8 +22,7 @@ export const honorableCrown: ArtifactBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Honorable Crown',
-  description: dedent`
-  @On Enter@: @[lvl] 2 Bonus@: Draw a card.`,
+  description: '',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.RARE,
   subKind: ARTIFACT_KINDS.RELIC,
@@ -51,8 +47,8 @@ export const honorableCrown: ArtifactBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 1,
-  durability: 1,
+  destinyCost: 0,
+  durability: 2,
   speed: CARD_SPEED.SLOW,
   abilities: [
     {
@@ -87,20 +83,6 @@ export const honorableCrown: ArtifactBlueprint = {
     }
   ],
   canPlay: () => true,
-  async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 2)
-    )) as LevelBonusModifier<typeof card>;
-
-    await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        async handler() {
-          if (levelMod.isActive) {
-            await card.player.cardManager.draw(1);
-          }
-        }
-      })
-    );
-  },
+  async onInit() {},
   async onPlay() {}
 };

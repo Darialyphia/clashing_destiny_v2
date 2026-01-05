@@ -48,10 +48,10 @@ export const devotedNurse: MinionBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
-  atk: 1,
-  maxHp: 2,
+  atk: 0,
+  maxHp: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

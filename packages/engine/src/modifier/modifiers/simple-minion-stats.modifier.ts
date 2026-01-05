@@ -21,7 +21,7 @@ export class SimpleMinionStatsModifier<T extends MinionCard> extends Modifier<T>
   ) {
     super(modifierType, game, card, {
       isUnique: true,
-      icon: options.isDebuff ? 'stats-debuff' : 'stats-buff',
+      icon: options.isDebuff ? 'keyword-stats-debuff' : 'keyword-stats-buff',
       name: options.name ?? (options.isDebuff ? 'Stats Debuff' : 'Stats Buff'),
       description: `${options.attackAmount > 0 ? '+' : '-'}${options.attackAmount} Attack / ${options.healthAmount > 0 ? '+' : '-'}${options.healthAmount} Health`,
       mixins: [

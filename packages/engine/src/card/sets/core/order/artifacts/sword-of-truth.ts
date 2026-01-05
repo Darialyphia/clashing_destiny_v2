@@ -54,6 +54,7 @@ export const swordOfTruth: ArtifactBlueprint = {
   speed: CARD_SPEED.SLOW,
   abilities: [
     equipWeapon({
+      modifierType: 'sword-of-truth-attack-buff',
       durabilityCost: 1,
       manaCost: 0,
       speed: CARD_SPEED.BURST

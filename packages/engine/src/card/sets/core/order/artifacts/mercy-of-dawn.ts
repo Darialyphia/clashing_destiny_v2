@@ -58,6 +58,7 @@ export const mercyOfDawn: ArtifactBlueprint = {
   speed: CARD_SPEED.SLOW,
   abilities: [
     equipWeapon({
+      modifierType: 'mercy-of-dawn-attack-buff',
       durabilityCost: 0,
       manaCost: 0,
       speed: CARD_SPEED.BURST

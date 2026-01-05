@@ -49,7 +49,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 0,
   durability: 1,
   speed: CARD_SPEED.SLOW,
   abilities: [

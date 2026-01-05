@@ -1,4 +1,5 @@
 import type { Game } from '../game/game';
+import { UntilEndOfTurnModifierMixin } from '../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import type { Player } from '../player/player.entity';
 import { CARD_KINDS, CARD_LOCATIONS, type CardSpeed } from './card.enums';
@@ -345,6 +346,7 @@ export const equipWeapon = (options: {
   durabilityCost: number;
   manaCost: number;
   speed: CardSpeed;
+  modifierType: string;
 }) => {
   return {
     id: 'equip-weapon-ability',
@@ -358,8 +360,9 @@ export const equipWeapon = (options: {
     durabilityCost: options.durabilityCost,
     onResolve: async (game: Game, card: ArtifactCard) => {
       await card.player.hero.modifiers.add(
-        new SimpleAttackBuffModifier('equip-weapon-attack-buff', game, card, {
-          amount: card.atkBonus ?? 0
+        new SimpleAttackBuffModifier(options.modifierType, game, card, {
+          amount: card.atkBonus ?? 0,
+          mixins: [new UntilEndOfTurnModifierMixin(game)]
         })
       );
     }
