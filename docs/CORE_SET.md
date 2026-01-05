@@ -541,7 +541,7 @@ On Death: if this was destroyed by combat by a minion, destroy the minion that d
 
 ---
 
-[ ] Honorable Crown
+[x] Honorable Crown
 
 Artifact | Order | ((1)) | 1 durability | slow
 
@@ -551,7 +551,7 @@ On Enter: Level 2 bonus: Draw a card
 
 ---
 
-[ ] Sword of Truth
+[x] Sword of Truth
 
 Artifact | Order | ((1)) | 2 durability | 1 atk | slow
 

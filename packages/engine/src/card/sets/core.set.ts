@@ -60,6 +60,8 @@ import { haroldLv3 } from './core/order/heroes/harold-lv3';
 import { spiritOfOrder } from './core/order/heroes/spirit-of-order';
 import { mercyOfDawn } from './core/order/artifacts/mercy-of-dawn';
 import { secondWings } from './core/order/minions/second-wings';
+import { honorableCrown } from './core/order/artifacts/honorable-crown';
+import { swordOfTruth } from './core/order/artifacts/sword-of-truth';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -124,6 +126,8 @@ export const coreSet: CardSet = {
     haroldLv3,
     spiritOfOrder,
     mercyOfDawn,
-    secondWings
+    secondWings,
+    honorableCrown,
+    swordOfTruth
   ]
 };

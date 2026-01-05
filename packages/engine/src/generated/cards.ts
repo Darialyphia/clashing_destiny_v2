@@ -64,7 +64,9 @@ export const cards = {
 "harold-scended-seraph": "harold-scended-seraph",
 "spirit-of-order": "spirit-of-order",
 "mercy-of-dawn": "mercy-of-dawn",
-"second-wings": "second-wings"
+"second-wings": "second-wings",
+"honorable-crown": "honorable-crown",
+"sword-of-truth": "sword-of-truth"
 } as const;
 
 export const collectableCards = {
@@ -125,5 +127,7 @@ export const collectableCards = {
 "harold-scended-seraph": "harold-scended-seraph",
 "spirit-of-order": "spirit-of-order",
 "mercy-of-dawn": "mercy-of-dawn",
-"second-wings": "second-wings"
+"second-wings": "second-wings",
+"honorable-crown": "honorable-crown",
+"sword-of-truth": "sword-of-truth"
 } as const;

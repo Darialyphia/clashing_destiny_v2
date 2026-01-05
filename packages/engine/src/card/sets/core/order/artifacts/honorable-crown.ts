@@ -1,0 +1,106 @@
+import dedent from 'dedent';
+import type { ArtifactBlueprint } from '../../../../card-blueprint';
+import {
+  CARD_SPEED,
+  CARD_KINDS,
+  CARD_DECK_SOURCES,
+  CARD_SETS,
+  RARITIES,
+  FACTIONS,
+  ARTIFACT_KINDS,
+  CARD_LOCATIONS
+} from '../../../../card.enums';
+import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { singleAllyMinionTargetRules } from '../../../../card-utils';
+import type { MinionCard } from '../../../../entities/minion.entity';
+
+export const honorableCrown: ArtifactBlueprint = {
+  id: 'honorable-crown',
+  kind: CARD_KINDS.ARTIFACT,
+  collectable: true,
+  unique: false,
+  setId: CARD_SETS.CORE,
+  deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
+  name: 'Honorable Crown',
+  description: dedent`
+  @On Enter@: @[lvl] 2 Bonus@: Draw a card.`,
+  faction: FACTIONS.ORDER,
+  rarity: RARITIES.RARE,
+  subKind: ARTIFACT_KINDS.RELIC,
+  tags: [],
+  art: {
+    default: {
+      foil: {
+        sheen: true,
+        oil: true,
+        gradient: true,
+        lightGradient: false,
+        scanlines: false
+      },
+      dimensions: {
+        width: 174,
+        height: 133
+      },
+      bg: 'placeholder-bg',
+      main: 'placeholder',
+      breakout: 'placeholder-breakout',
+      frame: 'default',
+      tint: FACTIONS.ORDER.defaultCardTint
+    }
+  },
+  destinyCost: 1,
+  durability: 1,
+  speed: CARD_SPEED.SLOW,
+  abilities: [
+    {
+      id: 'honorable-crown-ability',
+      description: 'Give an allied minion @Honor@ until the end of the turn.',
+      label: 'Grant Honor',
+      canUse: (game, card) =>
+        card.location === CARD_LOCATIONS.BOARD &&
+        singleAllyMinionTargetRules.canPlay(game, card),
+      getPreResponseTargets(game, card) {
+        return singleAllyMinionTargetRules.getPreResponseTargets(game, card, {
+          type: 'ability',
+          abilityId: 'honorable-crown-ability',
+          card
+        });
+      },
+      manaCost: 0,
+      durabilityCost: 1,
+      shouldExhaust: true,
+      speed: CARD_SPEED.BURST,
+      async onResolve(game, card, targets) {
+        for (const target of targets as MinionCard[]) {
+          if (target.location !== CARD_LOCATIONS.BOARD) continue;
+
+          await target.modifiers.add(
+            new HonorModifier(game, card, {
+              mixins: [new UntilEndOfTurnModifierMixin(game)]
+            })
+          );
+        }
+      }
+    }
+  ],
+  canPlay: () => true,
+  async onInit(game, card) {
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 2)
+    )) as LevelBonusModifier<typeof card>;
+
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        async handler() {
+          if (levelMod.isActive) {
+            await card.player.cardManager.draw(1);
+          }
+        }
+      })
+    );
+  },
+  async onPlay() {}
+};
