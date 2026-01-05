@@ -20,7 +20,7 @@ export const royalGuard: MinionBlueprint = {
   name: 'Royal Guard',
   description: '@Tough 1@, @Pusher@',
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.RARE,
   tags: [],
   art: {
     default: {

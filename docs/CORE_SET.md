@@ -538,3 +538,23 @@ Minion | Order | (3) | 2 / 2 | Slow
 Honor
 
 On Death: if this was destroyed by combat by a minion, destroy the minion that destroyed it.
+
+---
+
+[ ] Honorable Crown
+
+Artifact | Order | ((1)) | 1 durability | slow
+
+On Enter: Level 2 bonus: Draw a card
+
+->, burst, lose 1 durability: Give an allied minion honor until the end of the turn.
+
+---
+
+[ ] Sword of Truth
+
+Artifact | Order | ((1)) | 2 durability | 1 atk | slow
+
+->, 1 mana, -1 durability, burst : Equip Weapon
+
+Your Hero has "On Kill: draw a card"

@@ -10,6 +10,8 @@ import {
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleMinionStatsModifier } from '../../../../../modifier/modifiers/simple-minion-stats.modifier';
 import { singleMinionTargetRules } from '../../../../card-utils';
+import dedent from 'dedent';
+import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 
 export const devotedNurse: MinionBlueprint = {
   id: 'devoted-nurse',
@@ -19,7 +21,10 @@ export const devotedNurse: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Devoted Nurse',
-  description: '@On Enter@: Give another minion -1/+2.',
+  description: dedent`
+  @On Enter@: Give another minion -1/+2.
+  @On Death@: Draw a card into your Destiny zone.
+  `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -46,7 +51,7 @@ export const devotedNurse: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 1,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -70,6 +75,14 @@ export const devotedNurse: MinionBlueprint = {
               })
             );
           }
+        }
+      })
+    );
+
+    await card.modifiers.add(
+      new OnDeathModifier(game, card, {
+        async handler() {
+          await card.player.cardManager.drawIntoDestinyZone(1);
         }
       })
     );

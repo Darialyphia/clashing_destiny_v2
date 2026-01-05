@@ -29,7 +29,7 @@ export const mercyOfDawn: ArtifactBlueprint = {
   This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card.
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.EPIC,
   subKind: ARTIFACT_KINDS.WEAPON,
   atkBonus: 1,
   tags: [],
