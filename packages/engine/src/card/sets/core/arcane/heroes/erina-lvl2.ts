@@ -2,6 +2,7 @@ import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { isSpell } from '../../../../card-utils';
 import {
@@ -54,7 +55,7 @@ export const erinaLv2: HeroBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new Modifier<HeroCard>('erina-lv2-draw-spell-watch', game, card, {
+      new WhileOnBoardModifier<HeroCard>('erina-lv2-draw-spell-watch', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,

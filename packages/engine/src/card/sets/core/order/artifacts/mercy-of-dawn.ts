@@ -13,8 +13,7 @@ import {
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { EquipWeaponModifier } from '../../../../../modifier/modifiers/equip-weapon.modifier';
-import { isMinion } from '../../../../card-utils';
+import { equipWeapon, isMinion } from '../../../../card-utils';
 import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 import { ArtifactCard } from '../../../../entities/artifact.entity';
 
@@ -27,7 +26,8 @@ export const mercyOfDawn: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mercy of Dawn',
   description: dedent`
-  This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card.`,
+  This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card.
+  `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.RARE,
   subKind: ARTIFACT_KINDS.WEAPON,
@@ -56,7 +56,13 @@ export const mercyOfDawn: ArtifactBlueprint = {
   manaCost: 3,
   durability: 1,
   speed: CARD_SPEED.SLOW,
-  abilities: [],
+  abilities: [
+    equipWeapon({
+      durabilityCost: 0,
+      manaCost: 0,
+      speed: CARD_SPEED.BURST
+    })
+  ],
   canPlay: () => true,
   async onInit(game, card) {
     // Prevent wake-up at start of turn
@@ -71,7 +77,6 @@ export const mercyOfDawn: ArtifactBlueprint = {
       })
     );
 
-    // Wake up when a min
     await card.modifiers.add(
       new Modifier<ArtifactCard>('mercy-of-dawn-wakeup-on-summon', game, card, {
         mixins: [
@@ -91,14 +96,6 @@ export const mercyOfDawn: ArtifactBlueprint = {
             }
           })
         ]
-      })
-    );
-
-    // Add Equip Weapon ability
-    await card.modifiers.add(
-      new EquipWeaponModifier(game, card, {
-        manaCost: 0,
-        speed: CARD_SPEED.BURST
       })
     );
   },

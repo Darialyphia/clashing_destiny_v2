@@ -1,6 +1,7 @@
 import type { Game } from '../game/game';
+import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import type { Player } from '../player/player.entity';
-import { CARD_KINDS } from './card.enums';
+import { CARD_KINDS, type CardSpeed } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
@@ -338,4 +339,29 @@ export const cardsInEnemyDiscardPile = {
       maxChoiceCount: options.maxChoiceCount ?? 1
     });
   }
+};
+
+export const equipWeapon = (options: {
+  durabilityCost: number;
+  manaCost: number;
+  speed: CardSpeed;
+}) => {
+  return {
+    id: 'equip-weapon-ability',
+    description: '@Equip Weapon@',
+    label: 'Equip Weapon',
+    canUse: () => true,
+    getPreResponseTargets: () => Promise.resolve([]),
+    manaCost: options.manaCost,
+    shouldExhaust: true,
+    speed: options.speed,
+    durabilityCost: options.durabilityCost,
+    onResolve: async (game: Game, card: ArtifactCard) => {
+      await card.player.hero.modifiers.add(
+        new SimpleAttackBuffModifier('equip-weapon-attack-buff', game, card, {
+          amount: card.atkBonus ?? 0
+        })
+      );
+    }
+  };
 };

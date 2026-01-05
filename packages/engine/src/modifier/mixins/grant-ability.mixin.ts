@@ -1,5 +1,6 @@
 import type { AbilityBlueprint, PreResponseTarget } from '../../card/card-blueprint';
 import type { AbilityOwner } from '../../card/entities/ability.entity';
+import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { Game } from '../../game/game';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';
@@ -11,7 +12,9 @@ export class GrantAbilityModifierMixin<T extends AbilityOwner> extends ModifierM
 
   constructor(
     game: Game,
-    private blueprint: AbilityBlueprint<T, PreResponseTarget>
+    private blueprint: T extends ArtifactCard
+      ? AbilityBlueprint<T, PreResponseTarget> & { durabilityCost: number }
+      : AbilityBlueprint<T, PreResponseTarget>
   ) {
     super(game);
   }
