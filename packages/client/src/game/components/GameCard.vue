@@ -222,11 +222,13 @@ const visibleModifiers = gameStateRef(() => {
         >
           <template #trigger>
             <div
+              v-if="assets[`icons/${modifier.icon}`]"
               :style="{ '--bg': assets[`icons/${modifier.icon}`].css }"
               :alt="modifier.name"
               :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
               class="modifier"
             />
+            <div v-else>{{ modifier.icon }}</div>
           </template>
 
           <div class="modifier-tooltip">

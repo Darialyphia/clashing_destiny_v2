@@ -3,7 +3,6 @@ import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modi
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
@@ -11,7 +10,6 @@ import {
 } from '../../../../card.enums';
 import { SigilCard } from '../../../../entities/sigil.entity';
 import dedent from 'dedent';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { isSpell } from '../../../../card-utils';
@@ -28,7 +26,6 @@ export const sigilOfWisdom: SigilBlueprint = {
   name: 'Sigil of Wisdom',
   description: dedent`
   The first time you play an Arcane Spell each turn, draw a card into your Destiny Zone.
-  @On Destroyed@: Draw a card.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -84,14 +81,6 @@ export const sigilOfWisdom: SigilBlueprint = {
             }
           })
         ]
-      })
-    );
-
-    await card.modifiers.add(
-      new OnDeathModifier(game, card, {
-        handler: async () => {
-          await card.player.cardManager.draw(1);
-        }
       })
     );
   },

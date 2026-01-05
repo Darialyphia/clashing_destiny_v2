@@ -66,7 +66,10 @@ export const cards = {
 "mercy-of-dawn": "mercy-of-dawn",
 "second-wings": "second-wings",
 "honorable-crown": "honorable-crown",
-"sword-of-truth": "sword-of-truth"
+"sword-of-truth": "sword-of-truth",
+"frontline-skirmisher": "frontline-skirmisher",
+"dawn-assault": "dawn-assault",
+"revise-the-strategy": "revise-the-strategy"
 } as const;
 
 export const collectableCards = {
@@ -129,5 +132,7 @@ export const collectableCards = {
 "mercy-of-dawn": "mercy-of-dawn",
 "second-wings": "second-wings",
 "honorable-crown": "honorable-crown",
-"sword-of-truth": "sword-of-truth"
+"sword-of-truth": "sword-of-truth",
+"dawn-assault": "dawn-assault",
+"revise-the-strategy": "revise-the-strategy"
 } as const;

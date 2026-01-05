@@ -76,7 +76,7 @@ const interactionState = computed(() => {
   return state.value.interaction.ctx;
 });
 
-watch(interactionState, state => {
+watch([interactionState, playerId], ([state]) => {
   if (!state) return;
   if (playerId.value !== client.value.getActivePlayerId()) return;
   result.value = state.buckets.map(bucket => ({

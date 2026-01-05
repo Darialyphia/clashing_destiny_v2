@@ -172,7 +172,6 @@ export class CardManagerComponent {
   }
 
   async draw(amount: number) {
-    console.trace('Drawing cards:', { amount });
     if (this.isHandFull) return [];
 
     const amountToDraw = Math.min(

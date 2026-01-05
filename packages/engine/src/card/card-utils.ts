@@ -350,7 +350,7 @@ export const equipWeapon = (options: {
     id: 'equip-weapon-ability',
     description: '@Equip Weapon@',
     label: 'Equip Weapon',
-    canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
+    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BOARD,
     getPreResponseTargets: () => Promise.resolve([]),
     manaCost: options.manaCost,
     shouldExhaust: true,

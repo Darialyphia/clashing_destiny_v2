@@ -561,7 +561,7 @@ Your Hero has "On Kill: draw a card"
 
 ---
 
-[ ] Frontline Skirmisher
+[x] Frontline Skirmisher
 
 Minion | Order | (1) | 1 / 1 | slow
 
@@ -571,7 +571,7 @@ Honor
 
 ---
 
-[ ] Dawn Assault
+[x] Dawn Assault
 
 Spell | Order | (3) | fast
 
@@ -581,9 +581,9 @@ Level 3 Bonus: Summon one more
 
 ---
 
-[ ] Revise the Strategy
+[x] Revise the Strategy
 
-spell | 1 | (1) | slow
+spell | Neutral | 1 | (1) | slow
 
 Select up to 3 cards from your deck and remove them from play. Draw a card in your Destiny zone.
 

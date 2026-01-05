@@ -62,6 +62,9 @@ import { mercyOfDawn } from './core/order/artifacts/mercy-of-dawn';
 import { secondWings } from './core/order/minions/second-wings';
 import { honorableCrown } from './core/order/artifacts/honorable-crown';
 import { swordOfTruth } from './core/order/artifacts/sword-of-truth';
+import { frontlineSkirmisher } from './core/order/minions/frontline-skirmisher';
+import { dawnAssault } from './core/order/spells/dawn-assault';
+import { reviseTheStrategy } from './core/neutral/spells/revise-the-strategy';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -128,6 +131,9 @@ export const coreSet: CardSet = {
     mercyOfDawn,
     secondWings,
     honorableCrown,
-    swordOfTruth
+    swordOfTruth,
+    frontlineSkirmisher,
+    dawnAssault,
+    reviseTheStrategy
   ]
 };
