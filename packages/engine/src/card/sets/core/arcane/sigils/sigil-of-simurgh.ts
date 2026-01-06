@@ -25,7 +25,7 @@ export const sigilOfSimurgh: SigilBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Simurgh',
-  description: dedent`On Destroyed: Summon a @${simurgh.name}@ in the same zone this was in.`,
+  description: dedent`@On Destroyed@: Summon a @${simurgh.name}@ in the same zone this was in.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],

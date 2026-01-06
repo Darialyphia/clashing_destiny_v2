@@ -25,7 +25,7 @@ export const protectTheHolySpire: SpellBlueprint = {
   description: dedent`
     @Loyalty@: this costs 2 more.
     Grant @Honor@ and @Pusher@ to allied @minion@s until the end of the turn.
-    @[lvl] 2 bonus@: Summon 2 Frontline Skirmisher @minion@s.
+    @[lvl] 2 bonus@: Summon 2 copies of @${frontlineSkirmisher.name}@.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
