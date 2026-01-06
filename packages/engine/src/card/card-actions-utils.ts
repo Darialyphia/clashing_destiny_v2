@@ -5,7 +5,10 @@ import type { AnyCard } from './entities/card.entity';
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
 
-  const buckets = await game.interaction.rearrangeCards({
+  const buckets = await game.interaction.rearrangeCards<{
+    top: AnyCard[];
+    bottom: AnyCard[];
+  }>({
     player: card.player,
     source: card,
     label: `Drag cards to put them at the top or bottom of your deck`,

@@ -31,7 +31,7 @@ export const erinaLv3: HeroBlueprint = {
   name: 'Erina, Arcane Weaver',
   description: dedent`
   This card has +Atk equals to your @Empower@ stacks.
-  While @Empowered@, Arcane spells in your hand have @Echo@`,
+  While @Empowered@, Arcane spells in your hand have @Echo@ and cost 2 less`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
   tags: [],
@@ -78,7 +78,12 @@ export const erinaLv3: HeroBlueprint = {
               );
             },
             getModifiers() {
-              return [new EchoModifier(game, card)];
+              return [
+                new EchoModifier(game, card),
+                new SimpleManacostModifier('erina-lv3-manacost-reduction', game, card, {
+                  amount: 2
+                })
+              ];
             }
           }),
           new TogglableModifierMixin(game, () => getEmpowerStacks(card) > 0)

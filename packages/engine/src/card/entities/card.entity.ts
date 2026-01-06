@@ -1,7 +1,6 @@
 import { type JSONObject, type MaybePromise } from '@game/shared';
 import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
-import { ModifierManager } from '../../modifier/modifier-manager.component';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
@@ -725,11 +724,14 @@ export abstract class Card<
     );
   }
 
-  isAlly(card: AnyCard) {
-    return this.player.equals(card.player);
+  isAlly(card: AnyCard | Player) {
+    if (card instanceof Card) {
+      return this.player.equals(card.player);
+    }
+    return this.player.equals(card);
   }
 
-  isEnemy(card: AnyCard) {
+  isEnemy(card: AnyCard | Player) {
     return !this.isAlly(card);
   }
 }

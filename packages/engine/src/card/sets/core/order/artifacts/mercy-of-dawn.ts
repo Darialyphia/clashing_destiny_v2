@@ -7,15 +7,15 @@ import {
   CARD_SETS,
   RARITIES,
   FACTIONS,
-  ARTIFACT_KINDS,
-  CARD_LOCATIONS
+  ARTIFACT_KINDS
 } from '../../../../card.enums';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { equipWeapon, isMinion } from '../../../../card-utils';
 import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 import { ArtifactCard } from '../../../../entities/artifact.entity';
+import { UniqueModifier } from '../../../../../modifier/modifiers/unique.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 
 export const mercyOfDawn: ArtifactBlueprint = {
   id: 'mercy-of-dawn',
@@ -26,6 +26,7 @@ export const mercyOfDawn: ArtifactBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Mercy of Dawn',
   description: dedent`
+  @Unique@.
   This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card.
   `,
   faction: FACTIONS.ORDER,
@@ -66,29 +67,19 @@ export const mercyOfDawn: ArtifactBlueprint = {
   ],
   canPlay: () => true,
   async onInit(game, card) {
-    // Prevent wake-up at start of turn
+    await card.modifiers.add(new UniqueModifier(game, card));
+
     await card.modifiers.add(
-      new Modifier<ArtifactCard>('mercy-of-dawn-no-wakeup', game, card, {
+      new WhileOnBoardModifier<ArtifactCard>('mercy-of-dawn-custom-wakeup', game, card, {
         mixins: [
           new CardInterceptorModifierMixin(game, {
             key: 'shouldWakeUpAtTurnStart',
             interceptor: () => false
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new Modifier<ArtifactCard>('mercy-of-dawn-wakeup-on-summon', game, card, {
-        mixins: [
+          }),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             filter(event) {
-              if (!isMinion(event.data.card)) return false;
-              if (!event.data.card.player.equals(card.player)) return false;
-              if (event.data.card.location !== CARD_LOCATIONS.BOARD) return false;
-
-              return true;
+              return isMinion(event.data.card) && event.data.card.isAlly(card);
             },
             async handler() {
               if (card.isExhausted) {

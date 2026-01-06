@@ -8,6 +8,12 @@ export const useSandbox = (
   options: Pick<GameOptions, 'players' | 'rngSeed'>
 ) => {
   const worker = new SandboxWorker();
+  worker.onerror = event => {
+    console.error('Sandbox worker error:', event.message);
+  };
+  worker.onmessageerror = event => {
+    console.error('Sandbox worker message error:', event);
+  };
   const autoSwitchPlayer = ref(true);
 
   worker.postMessage({

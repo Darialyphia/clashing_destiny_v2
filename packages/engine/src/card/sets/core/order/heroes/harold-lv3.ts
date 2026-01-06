@@ -17,6 +17,7 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { isMinion } from '../../../../card-utils';
 import { HeroCard } from '../../../../entities/hero.entity';
 import type { MinionCard } from '../../../../entities/minion.entity';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 
 export const haroldLv3: HeroBlueprint = {
   id: 'harold-scended-seraph',
@@ -63,10 +64,7 @@ export const haroldLv3: HeroBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new Modifier<HeroCard>('harold-lv3-honor-death-trigger', game, card, {
-        name: 'Honor Death Trigger',
-        description:
-          'When an allied minion with Honor Dies, draw a card and give this and all allies +1 Atk this turn.',
+      new WhileOnBoardModifier<HeroCard>('harold-lv3-honor-death-trigger', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_DESTROY,

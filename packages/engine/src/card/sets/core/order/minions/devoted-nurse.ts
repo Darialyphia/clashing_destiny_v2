@@ -23,7 +23,6 @@ export const devotedNurse: MinionBlueprint = {
   name: 'Devoted Nurse',
   description: dedent`
   @On Enter@: Give another minion -1/+2.
-  @On Death@: Draw a card into your Destiny zone.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -75,14 +74,6 @@ export const devotedNurse: MinionBlueprint = {
               })
             );
           }
-        }
-      })
-    );
-
-    await card.modifiers.add(
-      new OnDeathModifier(game, card, {
-        async handler() {
-          await card.player.cardManager.drawIntoDestinyZone(1);
         }
       })
     );

@@ -11,6 +11,8 @@ import {
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { frontlineSkirmisher } from '../minions/frontline-skirmisher';
 
 export const protectTheHolySpire: SpellBlueprint = {
   id: 'protect-the-holy-spire',
@@ -23,6 +25,7 @@ export const protectTheHolySpire: SpellBlueprint = {
   description: dedent`
     @Loyalty@: this costs 2 more.
     Grant @Honor@ and @Pusher@ to allied @minion@s until the end of the turn.
+    @[lvl] 2 bonus@: Summon 2 Frontline Skirmisher @minion@s.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
@@ -62,8 +65,17 @@ export const protectTheHolySpire: SpellBlueprint = {
         manaAmount: 2
       })
     );
+
+    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
   },
   async onPlay(game, card) {
+    const lvlMod = card.modifiers.get(LevelBonusModifier);
+
+    if (lvlMod?.isActive) {
+      await (await card.player.generateCard(frontlineSkirmisher.id)).addToHand();
+      await (await card.player.generateCard(frontlineSkirmisher.id)).addToHand();
+    }
+
     const alliedMinions = card.player.boardSide.getAllMinions();
 
     for (const minion of alliedMinions) {

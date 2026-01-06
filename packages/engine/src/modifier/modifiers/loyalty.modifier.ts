@@ -22,10 +22,7 @@ export class LoyaltyModifier<T extends AnyCard> extends Modifier<T> {
       destinyAmount?: number;
     }
   ) {
-    super(KEYWORDS.OVERWHELM.id, game, source, {
-      name: KEYWORDS.OVERWHELM.name,
-      description: KEYWORDS.OVERWHELM.description,
-      icon: 'keyword-overwhelm',
+    super(KEYWORDS.LOYALTY.id, game, source, {
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.LOYALTY),

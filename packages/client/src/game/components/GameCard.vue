@@ -235,7 +235,7 @@ const visibleModifiers = gameStateRef(() => {
             <div class="modifier-header">
               <div
                 class="modifier-icon"
-                :style="{ '--bg': assets[`icons/${modifier.icon}`].css }"
+                :style="{ '--bg': assets[`icons/${modifier.icon}`]?.css }"
               />
               <div class="modifier-name">{{ modifier.name }}</div>
             </div>

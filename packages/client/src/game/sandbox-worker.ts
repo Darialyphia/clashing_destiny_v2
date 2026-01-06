@@ -20,7 +20,7 @@ type SandboxWorkerEvent =
 let game: Game;
 self.addEventListener('message', ({ data }) => {
   const options = data as SandboxWorkerEvent;
-
+  console.log('Sandbox worker received message', options);
   match(options)
     .with({ type: 'debug' }, () => {
       console.log(game);

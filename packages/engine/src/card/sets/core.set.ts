@@ -65,6 +65,7 @@ import { swordOfTruth } from './core/order/artifacts/sword-of-truth';
 import { frontlineSkirmisher } from './core/order/minions/frontline-skirmisher';
 import { dawnAssault } from './core/order/spells/dawn-assault';
 import { reviseTheStrategy } from './core/neutral/spells/revise-the-strategy';
+import { amuletOfRemembrance } from './core/neutral/artifacts/amulet-of-remembrance';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -134,6 +135,7 @@ export const coreSet: CardSet = {
     swordOfTruth,
     frontlineSkirmisher,
     dawnAssault,
-    reviseTheStrategy
+    reviseTheStrategy,
+    amuletOfRemembrance
   ]
 };

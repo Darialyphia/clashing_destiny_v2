@@ -3,18 +3,15 @@ import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleHealthBuffModifier } from '../../../../../modifier/modifiers/simple-health-buff.modifier';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { GAME_PHASES } from '../../../../../game/game.enums';
-import { BOARD_SLOT_ZONES } from '../../../../../board/board.constants';
+import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
+import { DefenderModifier } from '../../../../../modifier/modifiers/defender.modifier';
+import { MinionInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 
 export const braveCitizen: MinionBlueprint = {
   id: 'brave-citizen',
@@ -62,30 +59,22 @@ export const braveCitizen: MinionBlueprint = {
     await card.modifiers.add(new PrideModifier(game, card, 1));
 
     await card.modifiers.add(
-      new SimpleAttackBuffModifier(`${card.id}-attacker`, game, card, {
-        amount: 1,
+      new AttackerModifier(game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => {
-            return (
-              card.location === CARD_LOCATIONS.BOARD &&
-              card.zone === BOARD_SLOT_ZONES.ATTACK_ZONE
-            );
+          new MinionInterceptorModifierMixin(game, {
+            key: 'atk',
+            interceptor: value => value + 1
           })
         ]
       })
     );
 
-    // Defender bonus: +1 HP when defending
     await card.modifiers.add(
-      new SimpleHealthBuffModifier(`${card.id}-defender`, game, card, {
-        amount: 1,
+      new DefenderModifier(game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => {
-            const phaseCtx = game.gamePhaseSystem.getContext();
-            if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
-            return (
-              !!phaseCtx.ctx.target?.equals(card) || !!phaseCtx.ctx.blocker?.equals(card)
-            );
+          new MinionInterceptorModifierMixin(game, {
+            key: 'maxHp',
+            interceptor: value => value + 1
           })
         ]
       })

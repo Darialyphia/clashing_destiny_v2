@@ -11,21 +11,19 @@ import {
   CARD_LOCATIONS
 } from '../../../../card.enums';
 import { scry } from '../../../../card-actions-utils';
-import { isSpell } from '../../../../card-utils';
+import { isMinion, isSpell } from '../../../../card-utils';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
-import { CardEffectTriggeredEvent } from '../../../../card.events';
-import { GAME_EVENTS } from '../../../../../game/game.events';
 
-export const bookOfKnowledge: ArtifactBlueprint = {
-  id: 'book-of-knowledge',
+export const amuletOfRemembrance: ArtifactBlueprint = {
+  id: 'amulet-of-remembrance',
   kind: CARD_KINDS.ARTIFACT,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
-  name: 'Book of Knowledge',
+  name: 'Amulet of Remembrance',
   description: dedent``,
-  faction: FACTIONS.ARCANE,
+  faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.RARE,
   subKind: ARTIFACT_KINDS.RELIC,
   tags: [],
@@ -46,7 +44,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ARCANE.defaultCardTint
+      tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
   destinyCost: 0,
@@ -54,30 +52,22 @@ export const bookOfKnowledge: ArtifactBlueprint = {
   speed: CARD_SPEED.SLOW,
   abilities: [
     {
-      id: 'book-of-knowledge-ability',
+      id: 'amulet-of-remembrance-ability',
       description:
-        '@Scry 2@. If you kept an Arcane spell on top of your deck, @Empower 1@, otherwise draw a card.',
-      label: 'Scry and Empower',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
+        'Draw a card. You can activate this card only if an allied minion has died this turn.',
+      label: 'Draw Card',
+      canUse: (game, card) =>
+        card.location === CARD_LOCATIONS.BOARD &&
+        card.player.cardTracker.cardsDestroyedThisGameTurn.some(
+          c => c.card.isAlly(card) && isMinion(c.card)
+        ),
       getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 0,
+      manaCost: 1,
       durabilityCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.FAST,
+      speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
-        const { result } = await scry(game, card, 2);
-
-        const hasArcaneSpell = result.top.some(
-          c => isSpell(c) && c.faction === FACTIONS.ARCANE
-        );
-
-        if (hasArcaneSpell) {
-          await card.player.hero.modifiers.add(
-            new EmpowerModifier(game, card, { amount: 1 })
-          );
-        } else {
-          await card.player.cardManager.draw(1);
-        }
+        await card.player.cardManager.draw(1);
       }
     }
   ],

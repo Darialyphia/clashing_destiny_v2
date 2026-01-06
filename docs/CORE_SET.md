@@ -583,10 +583,16 @@ Level 3 Bonus: Summon one more
 
 [x] Revise the Strategy
 
-spell | Neutral | 1 | (1) | slow
+Spell | Neutral | (1) | slow
 
 Select up to 3 cards from your deck and remove them from play. Draw a card in your Destiny zone.
 
 Lingering Destiny
 
-(implementation detail: to remove a card from play, call card.removeFromCurrentLocation())
+---
+
+[x] Amulet of Remembrance
+
+Artifact | Neutral | ((0)) | slow
+
+->, -1 durability, (1), burst: Draw a card. You can activate this ability only if an allied minion died this turn
