@@ -1,8 +1,8 @@
 import type { SigilBlueprint } from '../../../../card-blueprint';
-import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
+  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
@@ -14,7 +14,10 @@ import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-even
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { isSpell } from '../../../../card-utils';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
-import { CardEffectTriggeredEvent } from '../../../../card.events';
+import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const sigilOfWisdom: SigilBlueprint = {
   id: 'sigil-of-wisdom',
@@ -25,7 +28,9 @@ export const sigilOfWisdom: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
   description: dedent`
-  The first time you play an Arcane Spell each turn, draw a card into your Destiny Zone.
+  The first spell you play each turn costs 1 less.
+
+  @On Destroyed@: Draw a card.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -57,31 +62,45 @@ export const sigilOfWisdom: SigilBlueprint = {
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBoardModifier<SigilCard>('sigil-of-wisdom-spellWatch', game, card, {
-        mixins: [
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-            frequencyPerGameTurn: 1,
-            filter: event => {
-              return (
-                event.data.card.player.equals(card.player) &&
-                event.data.card.faction === FACTIONS.ARCANE &&
-                isSpell(event.data.card)
-              );
-            },
-            handler: async () => {
-              await game.emit(
-                GAME_EVENTS.CARD_EFFECT_TRIGGERED,
-                new CardEffectTriggeredEvent({
-                  card,
-                  message: 'Sigil of Wisdom triggered'
-                })
-              );
-              await card.player.cardManager.drawIntoDestinyZone(1);
-            }
-          })
-        ]
+      new OnDeathModifier(game, card, {
+        async handler() {
+          await card.player.cardManager.draw(1);
+        }
       })
+    );
+    await card.modifiers.add(
+      new WhileOnBoardModifier<SigilCard>(
+        'sigil-of-wisdom-cost-reduction-aura',
+        game,
+        card,
+        {
+          mixins: [
+            new TogglableModifierMixin(
+              game,
+              () =>
+                card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
+                  .length === 0
+            ),
+            new AuraModifierMixin(game, card, {
+              isElligible(candidate) {
+                return isSpell(candidate) && candidate.location === CARD_LOCATIONS.HAND;
+              },
+              getModifiers(candidate) {
+                return [
+                  new SimpleManacostModifier(
+                    'sigil-of-wisdom-mana-cost-reduction',
+                    game,
+                    candidate,
+                    {
+                      amount: -1
+                    }
+                  )
+                ];
+              }
+            })
+          ]
+        }
+      )
     );
   },
   async onPlay() {}

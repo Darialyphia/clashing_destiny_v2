@@ -39,9 +39,8 @@ export const haroldLv1: HeroBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'heroes/harold-lv1-bg',
+      main: 'heroes/harold-lv1',
       frame: 'default',
       tint: FACTIONS.ORDER.defaultCardTint
     }
