@@ -13,11 +13,13 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { isMinion } from '../../../../card-utils';
 import { HeroCard } from '../../../../entities/hero.entity';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
+import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { BurstAttackModifier } from '../../../../../modifier/modifiers/burst(attack.modifier';
+import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 
 export const haroldLv3: HeroBlueprint = {
   id: 'harold-scended-seraph',
@@ -63,41 +65,33 @@ export const haroldLv3: HeroBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(
-      new WhileOnBoardModifier<HeroCard>('harold-lv3-honor-death-trigger', game, card, {
-        mixins: [
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
-            async handler(event) {
-              const destroyedCard = event.data.card;
-
-              if (!isMinion(destroyedCard)) return;
-              if (!destroyedCard.player.equals(card.player)) return;
-              if (!destroyedCard.modifiers.has(HonorModifier)) return;
-
-              await card.player.cardManager.draw(1);
-
-              const buffTargets = [card, ...card.player.minions];
-              for (const ally of buffTargets) {
-                if (ally.location !== CARD_LOCATIONS.BOARD) continue;
-
-                await (ally as MinionCard).modifiers.add(
-                  new SimpleAttackBuffModifier(
-                    'harold-lv3-attack-buff-ally',
-                    game,
-                    card,
-                    {
+    const aura = new WhileOnBoardModifier<HeroCard>('harold-lv3-aura', game, card, {
+      mixins: [
+        new AuraModifierMixin(game, card, {
+          isElligible(candidate) {
+            return isMinion(candidate) && candidate.modifiers.has(HonorModifier);
+          },
+          getModifiers() {
+            return [
+              new BurstAttackModifier(game, card),
+              new OnDeathModifier(game, card, {
+                async handler() {
+                  await card.player.cardManager.draw(1);
+                  await card.modifiers.add(
+                    new SimpleAttackBuffModifier('harold-lvl3-attack-buff', game, card, {
                       amount: 1,
                       mixins: [new UntilEndOfTurnModifierMixin(game)]
-                    }
-                  )
-                );
-              }
-            }
-          })
-        ]
-      })
-    );
+                    })
+                  );
+                }
+              })
+            ];
+          }
+        })
+      ]
+    });
+
+    await card.modifiers.add(aura);
   },
   async onPlay() {}
 };

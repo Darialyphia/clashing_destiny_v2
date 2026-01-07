@@ -80,9 +80,8 @@ const tag = computed(() => {
 
     border-image-slice: 38 fill;
     border-image-width: 38px;
-    border-radius: var(--_ui-button-radius);
-
     transition: filter 0.2s var(--ease-2);
+
     &.primary {
       border-image-source: url('@/assets/ui/button.png');
     }
@@ -109,15 +108,7 @@ const tag = computed(() => {
       display: inline-flex;
     }
 
-    & > .icon {
-      display: block;
-      flex-shrink: 0;
-      aspect-ratio: 1;
-      font-size: var(--font-size-4);
-    }
-
     &:hover:not(:disabled) {
-      color: var(--_ui-button-hover-color);
       filter: brightness(1.5);
     }
     &.sm {
