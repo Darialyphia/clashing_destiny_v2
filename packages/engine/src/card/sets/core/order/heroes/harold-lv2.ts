@@ -60,7 +60,7 @@ export const haroldLv2: HeroBlueprint = {
     {
       id: 'harold-vowed-crusader-ability-1',
       description:
-        'Grant a minion @Honor@ "@On Death@: Wake up your hero and give it +1 Atk" until the end of the turn.',
+        'Grant a minion with @Honor@ "@On Death@: Wake up your hero and give it +1 Atk" until the end of the turn.',
       label: 'Grant Honor',
       canUse: singleMinionTargetRules.canPlay,
       getPreResponseTargets(game, card) {
@@ -72,7 +72,7 @@ export const haroldLv2: HeroBlueprint = {
       },
       manaCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.FAST,
+      speed: CARD_SPEED.BURST,
       isHiddenOnCard: false,
       async onResolve(game, card, targets) {
         for (const target of targets) {

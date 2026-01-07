@@ -238,9 +238,9 @@ Foresight.
 
 [x] Power Overwhelming
 
-Spell | Arcane | ((2)) | fast
+Spell | Arcane | ((1)) | fast
 
-Your hero gains Atk equals to the amount of Arcane spells in your Banish pile.
+This turn, when your hero becomes @Empowered@, it gains one more @Empower@ stack and takes 2 @True Damage@.
 
 ---
 
