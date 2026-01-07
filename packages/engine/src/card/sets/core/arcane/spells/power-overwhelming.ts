@@ -20,7 +20,7 @@ export const powerOverwhelming: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Power Overwhelming',
   description: dedent`
-  Your hero gains Atk equals to the amount of Arcane spells in your Banish pile.
+  Your hero gains Atk equals to the amount of Arcane spells in your Banish pile until the end of the turn.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,

@@ -30,7 +30,7 @@ Cannot be played. Banish this card at the end of the turn.
 
 Hero | Arcane | Lvl 0 | ((0)) | 0 / 12 | slow
 
-On Enter: draw 6 cards.
+On Enter: draw 7 cards.
 
 ---
 
@@ -54,9 +54,9 @@ The first time you play a Spell each turn while Empowered, draw a card.
 
 Hero | Arcane | Lvl 3 | ((3)) | 0 / 21 | slow
 
-Your Arcane spells have Echo and cost 1 less as long as you are Empowered.
+This card has +Atk equals to your Empower stacks.
 
--> (1)burst: Empower, then Wake up this Hero.
+While Empowered, Arcane spells in your hand have Echo and cost 2 less.
 
 ---
 
@@ -74,7 +74,7 @@ Hero | Order | Lvl 2 | ((2)) | 0 / 18 | slow
 
 On Enter: If you control a minion with Honor, draw a card.
 
--> (1)fast: Grant a minion Honor this turn. If it dies this turn, wake up this card and give it +1 Atk this turn.
+-> (1)fast: Grant a minion Honor 'On Death: Wake up your hero and give it +1 Atk' until the end of the turn.
 
 ---
 
@@ -82,13 +82,13 @@ On Enter: If you control a minion with Honor, draw a card.
 
 Hero | Order | Lvl 3 | ((3)) | 0 / 21 | slow
 
-When an allied minion with Honor Dies, draw a card and give this and all allies +1 Atk this turn.
+Your minions with Honor have Burst Attack and 'On Death: draw a card and give your Hero +1 Atk this turn'.
 
 ---
 
 [x] Splitting Beam
 
-Spell | Arcane | (2) | KK | fast
+Spell | Arcane | (2) | fast
 
 Deal 1 damage to 2 enemies.
 
@@ -97,6 +97,8 @@ Deal 1 damage to 2 enemies.
 [x] Archsage of Moonring
 
 Minion | Arcane | (4) | 1 / 3 | slow
+
+Loyalty: this costs 1 more.
 
 On Enter: Deal 3 damage split among enemies.
 
@@ -114,7 +116,7 @@ On Enter: Empower.
 
 Minion | Arcane | (2) | 1 / 2 | slow
 
-On Enter: Scry 3.
+On Enter: Scry 2.
 
 ---
 
@@ -139,7 +141,7 @@ On Enter: Transform into an exact copy of target minion.
 
 [x] Mana-Fueled Golem
 
-Minion | Arcane | (2) | 3 / 3 | slow
+Minion | Arcane | (3) | 3 / 3 | slow
 
 This cannot attack or block unless your hero is Empowered.
 
@@ -210,7 +212,9 @@ Foresight.
 
 Spell | Arcane | (2) | fast
 
-Draw a card and Empower 1. If you were already Empowered, draw a card into your Destiny zone.
+Empower 1. If you were already Empowered, draw a card into your Destiny zone.
+
+Lingering Destiny.
 
 ---
 
@@ -218,7 +222,7 @@ Draw a card and Empower 1. If you were already Empowered, draw a card into your 
 
 Minion | Neutral | (1) | 1 / 1 | slow
 
-On Death: Add a Mana Spark to your hand. Level 3 bonus: add another one.
+On Death: Add 2 copies of Mana Spark to your hand. Level 3 bonus: add another one.
 
 ---
 
@@ -233,9 +237,10 @@ Foresight.
 ---
 
 [x] Power Overwhelming
-fast
 
-Your hero gains ATK equals to the amount of Arcane spells in your Banish pile until the end of the turn.
+Spell | Arcane | ((2)) | fast
+
+Your hero gains Atk equals to the amount of Arcane spells in your Banish pile.
 
 ---
 
@@ -243,16 +248,20 @@ Your hero gains ATK equals to the amount of Arcane spells in your Banish pile un
 
 Sigil | Arcane | (3) | Countdown 3 | slow
 
-The first time you play an Arcane Spell each turn, draw a card into your Destiny Zone.
-On Destroyed: Draw a car
-On Destroyed: draw 2 cards into your Destiny Zone. Level 3 bonus: Draw them into your hand instead.
+The first spell you play each turn costs 1 less.
+
+On Destroyed: Draw a card.
 
 [x] Cosmic Avatar
 
 Minion | Arcane | ((3)) | 4 / 4 | slow
 
 Pride 3, Hindered 2.
-On Attack: You may Empower 2. If you don't, this gains Preemptive Strike and Overwhelm for this attack.
+
+Depending on your hero's Empower stacks:
+1: Preemptive Strike.
+2-3: Overwhelm and +2 Atk.
+4+: On Attack: Deal 3 damage to all enemies.
 
 ---
 
@@ -261,6 +270,8 @@ On Attack: You may Empower 2. If you don't, this gains Preemptive Strike and Ove
 Minion | Arcane | (2) | 1 / 1 | slow
 
 On Enter: Draw a card in your Destiny Zone.
+
+Lingering Destiny.
 
 ---
 
@@ -283,9 +294,9 @@ When you play an Arcane spell, this gains +1 ATK until the end of turn Level 3 b
 
 [x] Book of Knowledge
 
-Artifact | Arcane | ((1)) | 1 durability | slow
+Artifact | Arcane | ((0)) | 1 durability | slow
 
-->, -1 durability, fast: Scry 3. If you scried an Arcane spell, Empower 1 and draw a card.
+->, -1 durability, fast: Scry 2. If you kept an Arcane spell on top of your deck, Empower 1, otherwise draw a card.
 
 ---
 
@@ -368,6 +379,7 @@ Level 2 Bonus: Echo.
 Spell | Arcane | ((1)) | fast
 
 You can only play this card if your Hero is Empowered.
+
 Exhaust all minions in both players' Attack zone.
 
 ---
@@ -423,9 +435,9 @@ Puller
 
 [x] Devoted Nurse
 
-Minion | Order | (2) | 1 / 1 | slow
+Minion | Order | (1) | 0 / 1 | slow
 
-On Enter: Give a minion -1/+2.
+On Enter: Give another minion -1/+2.
 
 ---
 
@@ -459,9 +471,9 @@ Tough, Pusher
 
 [x] Dusk Purifier
 
-Minion | Order | (3) | 2 / 2
+Minion | Order | (3) | 3 / 2 | slow
 
-When this survives damage, draw a card;
+When this survives damage, draw a card.
 
 Lingering Destiny
 
@@ -469,9 +481,9 @@ Lingering Destiny
 
 [x] Call to Heaven
 
-Spell | Order | (4) | Fast
+Spell | Order | (4) | fast
 
-Return all minions with a mana cost of 2 or less to their owner's hand
+Return all minions who cost 2 or less to their owner's hand. Draw a card.
 
 ---
 
@@ -481,7 +493,7 @@ Minion | Order | (4) | 3 / 3 | slow
 
 Honor
 
-On Enter: give Honor to a minion with 2 or less Atk until the end of the turn
+On Enter: Give Honor to a minion with 3 or less Atk until the end of the turn.
 
 ---
 
@@ -497,7 +509,7 @@ This card doesn't wake up at the start of the turn. When you summon a minion, wa
 
 [x] Promising Recruit
 
-Minion | Order | (1) | 1 / 2 | slow
+Minion | Order | (2) | 1 / 2 | slow
 
 Lingering Destiny
 
@@ -523,11 +535,13 @@ Grant Drifter to an ally minion. Draw a card into your Destiny zone
 
 [x] Protect the Holy Spire
 
-Spell | Order | (4) | Slow
+Spell | Order | (4) | slow
 
 Loyalty: this costs 2 more.
 
-Grant Honor and Pusher to allied Order minions until the end of the turn.
+Grant Honor and Pusher to allied minions until the end of the turn.
+
+Level 2 bonus: Summon 2 copies of Frontline Skirmisher.
 
 ---
 
@@ -545,9 +559,7 @@ On Death: if this was destroyed by combat by a minion, destroy the minion that d
 
 Artifact | Order | ((1)) | 1 durability | slow
 
-On Enter: Level 2 bonus: Draw a card
-
-->, burst, lose 1 durability: Give an allied minion honor until the end of the turn.
+->, burst, lose 1 durability: Give an allied minion Honor until the end of the turn.
 
 ---
 

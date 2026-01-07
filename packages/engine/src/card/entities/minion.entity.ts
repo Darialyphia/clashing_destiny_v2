@@ -70,6 +70,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
   dealsDamageFirst: Interceptable<boolean, MinionCard>;
+  shouldCreateChainOnAttack: Interceptable<boolean, { target: AttackTarget }>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -104,7 +105,8 @@ export class MinionCard extends Card<
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
-        dealsDamageFirst: new Interceptable()
+        dealsDamageFirst: new Interceptable(),
+        shouldCreateChainOnAttack: new Interceptable()
       },
       options
     );
@@ -146,6 +148,17 @@ export class MinionCard extends Card<
   get isAttackTarget() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.target?.equals(this);
+  }
+
+  get shouldCreateChainOnAttack(): boolean {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (!phaseCtx.ctx.attacker.equals(this)) return false;
+    if (!phaseCtx.ctx.target) return false;
+
+    return this.interceptors.shouldCreateChainOnAttack.getValue(true, {
+      target: phaseCtx.ctx.target
+    });
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {

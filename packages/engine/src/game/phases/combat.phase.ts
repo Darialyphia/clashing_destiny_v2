@@ -224,6 +224,9 @@ export class CombatPhase
       new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
     );
 
+    if (!this.attacker.shouldCreateChainOnAttack) {
+      return this.resolveCombat();
+    }
     if (!this.game.effectChainSystem.currentChain) {
       void this.game.effectChainSystem.createChain({
         initialPlayer: this.attacker.player.opponent,
