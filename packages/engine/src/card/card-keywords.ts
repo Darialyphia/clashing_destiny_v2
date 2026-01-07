@@ -332,6 +332,13 @@ export const KEYWORDS = {
     name: 'Honor',
     description: 'This unit cannot be blocked or defended.',
     aliases: []
+  },
+  BURST_ATTACK: {
+    id: 'burst-attack',
+    name: 'Burst Attack',
+    description:
+      'This unit can attack at burst speed (it does not create a stack, cannot be blocked or retaliated and resolves instantly).',
+    aliases: []
   }
 };
 

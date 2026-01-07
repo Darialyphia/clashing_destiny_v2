@@ -53,7 +53,7 @@ export const spiritOfOrder: HeroBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await card.player.cardManager.draw(7);
+          await card.player.cardManager.draw(6);
         }
       })
     );

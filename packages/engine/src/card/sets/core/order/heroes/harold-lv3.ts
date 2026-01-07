@@ -28,7 +28,7 @@ export const haroldLv3: HeroBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Harold, Ascended Seraph',
   description:
-    'When an allied minion with Honor Dies, draw a card and give this and all allies +1 Atk this turn.',
+    'Your minion with @Honor@ have @Burst Attack@ and "@On Death@: draw a card give your Hero +1 Atk this turn".',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.LEGENDARY,
   tags: [],

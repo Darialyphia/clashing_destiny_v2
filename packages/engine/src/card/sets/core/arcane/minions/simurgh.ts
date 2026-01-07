@@ -1,7 +1,4 @@
 import dedent from 'dedent';
-import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { SimpleSpellpowerBuffModifier } from '../../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -9,8 +6,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
 import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 import { splittingBeam } from '../spells/splitting-beam';

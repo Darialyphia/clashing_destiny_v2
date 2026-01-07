@@ -43,9 +43,8 @@ export const haroldLv2: HeroBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'heroes/harold-lv2-bg',
+      main: 'heroes/harold-lv2',
       frame: 'default',
       tint: FACTIONS.ORDER.defaultCardTint
     }
@@ -61,7 +60,7 @@ export const haroldLv2: HeroBlueprint = {
     {
       id: 'harold-vowed-crusader-ability-1',
       description:
-        'Grant a minion @Honor@ this turn. If it dies this turn, wake up this card and give it +1 Atk this turn.',
+        'Grant a minion @Honor@ "@On Death@: Wake up your hero and give it +1 Atk" until the end of the turn.',
       label: 'Grant Honor',
       canUse: singleMinionTargetRules.canPlay,
       getPreResponseTargets(game, card) {
