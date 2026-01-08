@@ -313,9 +313,9 @@ On Enter: Draw a card in your Destiny zone.
 
 [x] Simurgh
 
-Minion | Arcane | (6) | 4 / 4 | slow | Token
+Minion | Arcane | (6) | 4 / 4 | slow | Token (not collectable)
 
-On Attack: Put 2 Fleeting copies of Splitting Beam in your hand, then reduce the cost of Arcane spells in your hand by 1.
+On Attack: Add a Wing of Simurgh or Tail of Simurgh to Your hand.
 
 ---
 
@@ -324,6 +324,22 @@ On Attack: Put 2 Fleeting copies of Splitting Beam in your hand, then reduce the
 Sigil | Arcane | (3) | Countdown 3 | slow
 
 On Destroyed: Summon a Simurgh in the same zone this was in.
+
+---
+
+[x] Wing of Simurgh
+
+Spell | Arcane | (1) | fast
+
+Deal 1 damage to all enemy minions
+
+---
+
+[x] Tail of Simurgh
+
+Spell | Arcane | (1) | fast
+
+Select up to 2 enemy minions and return them to their owner's hand. If you're empowered, return them to the top of the deck instead.
 
 ---
 

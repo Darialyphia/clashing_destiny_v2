@@ -171,6 +171,7 @@ watch(width, v => {
         :key="card.card.id"
         :card="card.card"
         :is-interactive="isMyHand"
+        class="hand-card"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
@@ -192,6 +193,7 @@ watch(width, v => {
 }
 .hand {
   --pixel-scale: 1.25;
+  --hover-offset: -20px; /* used in HandCard.vue */
   position: relative;
   z-index: 1;
   width: 100%;
@@ -204,5 +206,9 @@ watch(width, v => {
     --pixel-scale: 1.5;
     transform: translateY(-290px);
   }
+}
+
+.hand-card {
+  padding-block: var(--size-3) var(--size-6);
 }
 </style>

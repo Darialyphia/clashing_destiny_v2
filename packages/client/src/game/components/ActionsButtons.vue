@@ -3,7 +3,13 @@ import { useGameUi } from '../composables/useGameClient';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 const ui = useGameUi();
+import BattleLog from './BattleLog.vue';
+import { useBattleLog } from '../composables/useBattleLog';
+import UiDrawer from '@/ui/components/UiDrawer.vue';
+import UiButton from '@/ui/components/UiButton.vue';
+import { Icon } from '@iconify/vue';
 
+const battleLog = useBattleLog();
 const isSettingsOpened = ref(false);
 
 useKeyboardControl(
@@ -16,6 +22,8 @@ useKeyboardControl(
     isSettingsOpened.value = !isSettingsOpened.value;
   }
 );
+
+const isBattleLogOpened = ref(false);
 </script>
 
 <template>
@@ -37,24 +45,23 @@ useKeyboardControl(
         :disabled="action.isDisabled"
         @click="action.onClick"
       />
-    </div>
-    <!-- <footer>
       <UiButton
         class="battle-log-toggle"
         @click="isBattleLogOpened = !isBattleLogOpened"
       >
         <Icon icon="game-icons:black-book" class="w-7 aspect-square" />
       </UiButton>
-
       <UiDrawer
         v-model:is-opened="isBattleLogOpened"
         side="right"
         title="Battle Log"
       >
-        <BattleLog :events="battleLog" />
+        <div class="surface h-full flex flex-col gap-4">
+          <h3>Battle Log</h3>
+          <BattleLog :events="battleLog" />
+        </div>
       </UiDrawer>
-      <ExplainerMessage v-if="!ui.isHandExpanded" />
-    </footer> -->
+    </div>
   </div>
 </template>
 

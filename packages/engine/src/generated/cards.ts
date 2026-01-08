@@ -11,6 +11,8 @@ export const cards = {
 "erina-aether-scholar": "erina-aether-scholar",
 "erina-arcane-weaver": "erina-arcane-weaver",
 "splitting-beam": "splitting-beam",
+"wing-of-simurgh": "wing-of-simurgh",
+"tail-of-simurgh": "tail-of-simurgh",
 "archsage-of-moonring": "archsage-of-moonring",
 "mana-looter": "mana-looter",
 "magic-channeler": "magic-channeler",

@@ -144,12 +144,10 @@ const isDisabled = computed(() => {
 .hand-card {
   position: absolute;
   left: 0;
-  --hover-offset: 0px;
-  --offset-y: var(--hover-offset);
+  --offset-y: var(--_hover-offset, 0px);
   --_y: var(--offset-y);
   transform-origin: 50% 100%;
   transform: translateX(var(--x)) translateY(var(--_y));
-  padding-block: var(--size-3) var(--size-6);
   z-index: var(--z);
   transition:
     transform 0.15s var(--ease-elastic-2),
@@ -157,7 +155,7 @@ const isDisabled = computed(() => {
   pointer-events: auto;
 
   &:hover {
-    --hover-offset: -20px;
+    --_hover-offset: var(--hover-offset);
     z-index: var(--hand-size);
   }
 

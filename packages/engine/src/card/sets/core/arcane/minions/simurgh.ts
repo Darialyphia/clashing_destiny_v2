@@ -9,10 +9,8 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
-import { splittingBeam } from '../spells/splitting-beam';
-import { isSpell } from '../../../../card-utils';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
-import { FleetingModifier } from '../../../../../modifier/modifiers/fleeting.modifier';
+import { wingOfSimurgh } from '../spells/wing-of-simurgh';
+import { tailOfSimurgh } from '../spells/tail-of-simurgh';
 
 export const simurgh: MinionBlueprint = {
   id: 'simurgh',
@@ -23,7 +21,7 @@ export const simurgh: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Simurgh',
   description: dedent`  
-  @On Attack@: Put 2 @Fleeting@ copies of @${splittingBeam.name}@ in your hand, then reduce the cost of Arcane spells in your hand by 1.
+  @On Attack@: Add a @${wingOfSimurgh.name}@ or @${tailOfSimurgh.name}@ to Your hand.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.TOKEN,
@@ -57,26 +55,17 @@ export const simurgh: MinionBlueprint = {
     await card.modifiers.add(
       new OnAttackModifier(game, card, {
         async handler() {
-          const cardsToAdd = [
-            await card.player.generateCard(splittingBeam.id),
-            await card.player.generateCard(splittingBeam.id)
-          ];
-          for (const c of cardsToAdd) {
-            await c.modifiers.add(new FleetingModifier(game, c));
-            await c.addToHand();
-          }
+          const wing = await card.player.generateCard(wingOfSimurgh.id);
+          const tail = await card.player.generateCard(tailOfSimurgh.id);
+          const [selected] = await game.interaction.chooseCards({
+            player: card.player,
+            choices: [wing, tail],
+            minChoiceCount: 1,
+            maxChoiceCount: 1,
+            label: 'Select a spell to add to your hand'
+          });
 
-          const arcaneSpellsInHand = card.player.cardManager.hand.filter(
-            c => c.faction === FACTIONS.ARCANE && isSpell(c)
-          );
-
-          for (const arcaneSpell of arcaneSpellsInHand) {
-            await arcaneSpell.modifiers.add(
-              new SimpleManacostModifier('simurgh-cost-reduction', game, card, {
-                amount: -1
-              })
-            );
-          }
+          await selected.addToHand();
         }
       })
     );

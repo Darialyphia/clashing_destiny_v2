@@ -20,6 +20,8 @@ import { magicMissile } from './core/arcane/spells/magic-missile';
 import { splittingBeam } from './core/arcane/spells/splitting-beam';
 import { thirstForKnowledge } from './core/arcane/spells/thirst-for-knowledge';
 import { wizardsInsight } from './core/arcane/spells/wizards-insight';
+import { wingOfSimurgh } from './core/arcane/spells/wing-of-simurgh';
+import { tailOfSimurgh } from './core/arcane/spells/tail-of-simurgh';
 import { sigilOfWisdom } from './core/arcane/sigils/sigil-of-wisdom';
 import { galacticExplosion } from './core/arcane/spells/galactic-explosion';
 import { powerOverwhelming } from './core/arcane/spells/power-overwhelming';
@@ -77,6 +79,8 @@ export const coreSet: CardSet = {
     erinaLv2,
     erinaLv3,
     splittingBeam,
+    wingOfSimurgh,
+    tailOfSimurgh,
     archsageOfMoonring,
     manaLooter,
     magicChanneler,

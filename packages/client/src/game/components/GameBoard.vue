@@ -28,6 +28,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
+import OpponentHand from './OpponentHand.vue';
 
 const { clocks, options } = defineProps<{
   clocks?: {
@@ -120,9 +121,14 @@ const onBoardMouseup = () => {
     </Camera>
   </div>
 
+  <div class="opponent-hand">
+    <OpponentHand :player-id="opponentPlayer.id" :key="opponentPlayer.id" />
+  </div>
+
   <div class="my-hand">
     <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
   </div>
+
   <div id="dragged-card-container" />
 
   <button
@@ -176,6 +182,13 @@ const onBoardMouseup = () => {
 
 .arrows {
   transform: translateZ(10px);
+}
+
+.opponent-hand {
+  position: fixed;
+  width: 100%;
+  top: 0%;
+  left: 0;
 }
 
 .my-hand {

@@ -129,4 +129,10 @@ li {
 
   font-weight: var(--font-weight-8);
 }
+
+.separator {
+  flex-grow: 1;
+  border-bottom: 1px dashed currentColor;
+  margin-block: var(--size-2);
+}
 </style>

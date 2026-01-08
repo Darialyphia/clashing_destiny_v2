@@ -21,7 +21,8 @@ type BattleLogEventToken =
     }
   | { kind: 'game-turn-start'; turn: number }
   | { kind: 'game-phase-change'; phase: GamePhase }
-  | { kind: 'player-turn_start'; player: PlayerViewModel };
+  | { kind: 'player-turn_start'; player: PlayerViewModel }
+  | { kind: 'separator' };
 
 export type BattleLogEvents = BattleLogEventToken[][];
 
@@ -162,6 +163,7 @@ export const useBattleLog = () => {
         }
 
         if (eventName === GAME_EVENTS.TURN_INITATIVE_CHANGE) {
+          events.value.push([{ kind: 'separator' }]);
           tokens.push({
             kind: 'text',
             text: `Initiative switched to`
