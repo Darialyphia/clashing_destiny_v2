@@ -42,9 +42,8 @@ export const swordOfTruth: ArtifactBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'artifacts/sword-of-truth-bg',
+      main: 'artifacts/sword-of-truth',
       frame: 'default',
       tint: FACTIONS.ORDER.defaultCardTint
     }
