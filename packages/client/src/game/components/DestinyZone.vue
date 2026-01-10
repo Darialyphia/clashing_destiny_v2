@@ -111,7 +111,7 @@ const cards = computed(() => {
 
 <style scoped lang="postcss">
 .destiny-zone {
-  --pixel-scale: 0.75;
+  --pixel-scale: 1;
   display: grid;
   position: relative;
   overflow: hidden;

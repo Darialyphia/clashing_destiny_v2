@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import { isMinion, multipleEnemyTargetRules } from '../../../../card-utils';
 import {
   CARD_SPEED,
   CARD_KINDS,
@@ -11,10 +10,6 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import {
-  BOARD_SLOT_ZONES,
-  type BoardSlotZone
-} from '../../../../../board/board.constants';
 
 export const comet: SpellBlueprint = {
   id: 'comet',
@@ -25,7 +20,7 @@ export const comet: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Comet',
   description: dedent`
-  Deal 4 damage to every minion in an enemy Zone.
+  Deal 4 damage to all enemy minions.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -54,30 +49,12 @@ export const comet: SpellBlueprint = {
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
-  async getPreResponseTargets(game, card) {
-    const zone = await game.interaction.askQuestion({
-      questionId: 'comet-enemy-zone-selection',
-      player: card.player,
-      source: card,
-      label: 'Select an enemy Zone',
-      minChoiceCount: 1,
-      maxChoiceCount: 1,
-      choices: [
-        {
-          id: BOARD_SLOT_ZONES.ATTACK_ZONE,
-          label: 'Attack Zone'
-        },
-        {
-          id: BOARD_SLOT_ZONES.DEFENSE_ZONE,
-          label: 'Defense Zone'
-        }
-      ]
-    });
-    return card.player.opponent.boardSide.getZone(zone as BoardSlotZone).minions;
+  async getPreResponseTargets() {
+    return Promise.resolve([]);
   },
   async onInit() {},
-  async onPlay(game, card, targets) {
-    for (const target of targets as MinionCard[]) {
+  async onPlay(game, card) {
+    for (const target of card.player.enemyMinions as MinionCard[]) {
       await target.takeDamage(card, new SpellDamage(4, card));
     }
   }

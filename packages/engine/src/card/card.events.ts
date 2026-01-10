@@ -1,4 +1,3 @@
-import type { BoardSlotZone } from '../board/board.constants';
 import type { AttackTarget } from '../game/phases/combat.phase';
 import type { CombatDamage, Damage, DamageType } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
@@ -201,23 +200,6 @@ export class CardAfterDealCombatDamageEvent extends TypedSerializableEvent<
   }
 }
 
-export class CardChangeZoneEvent extends TypedSerializableEvent<
-  { card: MinionCard | SigilCard; from: BoardSlotZone; to: BoardSlotZone },
-  {
-    card: string;
-    from: BoardSlotZone;
-    to: BoardSlotZone;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      from: this.data.from,
-      to: this.data.to
-    };
-  }
-}
-
 export class CardChangeLocationEvent extends TypedSerializableEvent<
   { card: AnyCard; from: CardLocation | null; to: CardLocation },
   { card: string; from: CardLocation | null; to: CardLocation }
@@ -299,8 +281,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_EFFECT_TRIGGERED]: CardEffectTriggeredEvent;
   [CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE]: CardBeforeDealCombatDamageEvent;
   [CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE]: CardAfterDealCombatDamageEvent;
-  [CARD_EVENTS.CARd_BEFORE_CHANGE_ZONE]: CardChangeZoneEvent;
-  [CARD_EVENTS.CARD_AFTER_CHANGE_ZONE]: CardChangeZoneEvent;
   [CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION]: CardChangeLocationEvent;
   [CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION]: CardChangeLocationEvent;
   [CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE]: CardBeforeTakeDamageEvent;

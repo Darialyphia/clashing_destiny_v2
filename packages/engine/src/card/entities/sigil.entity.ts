@@ -17,9 +17,8 @@ import {
 } from './card.entity';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { GAME_PHASE_EVENTS, GAME_PHASES, GAME_QUESTIONS } from '../../game/game.enums';
+import { GAME_PHASE_EVENTS, GAME_PHASES } from '../../game/game.enums';
 import { CardDeclarePlayEvent } from '../card.events';
-import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import {
   SIGIL_EVENTS,
   SigilAfterCountdownDecreaseEvent,
@@ -81,14 +80,10 @@ export class SigilCard extends Card<
     });
   }
 
-  private async summon(zone: BoardSlotZone) {
-    this.player.boardSide.summonSigil(this, zone);
+  private async summon() {
+    this.player.boardSide.summonSigil(this);
     this._countdown = this.maxCountdown;
     await this.blueprint.onPlay(this.game, this);
-  }
-
-  get zone(): BoardSlotZone | null {
-    return this.player.boardSide.getZoneFor(this);
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
@@ -135,45 +130,27 @@ export class SigilCard extends Card<
     );
   }
 
-  async playAt(zone: BoardSlotZone, onResolved?: () => MaybePromise<void>) {
+  async playAt(onResolved?: () => MaybePromise<void>) {
     await this.insertInChainOrExecute(
       async () => {
-        await this.summon(zone);
+        await this.summon();
       },
-      { targets: [], onResolved, zone }
+      { targets: [], onResolved }
     );
   }
 
   // immediately plays the minion regardless of current chain or interaction state
   // this is useful when summoning minions as part of another card effect
-  playImmediatelyAt(zone: BoardSlotZone) {
-    return this.resolve(() => this.summon(zone));
-  }
-
-  private async promptForSummonZone() {
-    const zone = await this.game.interaction.askQuestion({
-      questionId: GAME_QUESTIONS.SUMMON_POSITION,
-      label: 'Select which zone to summon the sigil to',
-      player: this.player,
-      source: this,
-      minChoiceCount: 1,
-      maxChoiceCount: 1,
-      choices: [
-        { id: BOARD_SLOT_ZONES.ATTACK_ZONE, label: 'Attack Zone' },
-        { id: BOARD_SLOT_ZONES.DEFENSE_ZONE, label: 'Defense Zone' }
-      ]
-    });
-
-    return zone as BoardSlotZone;
+  playImmediately() {
+    return this.resolve(() => this.summon());
   }
 
   async play(onResolved: () => MaybePromise<void>) {
-    const zone = await this.promptForSummonZone();
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    await this.playAt(zone, onResolved);
+    await this.playAt(onResolved);
   }
 
   get countdown() {
@@ -233,12 +210,6 @@ export class SigilCard extends Card<
 
   resetCountdown() {
     this._countdown = this.maxCountdown;
-  }
-
-  async move() {
-    if (this.location !== 'board') return;
-
-    return this.player.boardSide.move(this);
   }
 
   canBeTargeted(source: AnyCard) {

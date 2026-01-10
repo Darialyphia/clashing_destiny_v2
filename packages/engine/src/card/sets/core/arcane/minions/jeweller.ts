@@ -12,7 +12,6 @@ import {
 import { manaSpark } from '../../neutral/spells/mana-spark';
 import { plottingCounsellor } from './plotting-counsellor';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { BOARD_SLOT_ZONES } from '../../../../../board/board.constants';
 
 export const jeweller: MinionBlueprint = {
   id: 'jeweller',
@@ -68,7 +67,7 @@ export const jeweller: MinionBlueprint = {
     },
     {
       id: 'jeweller-ability-2',
-      description: dedent`Banish this card and summon a @Plotting Counsellor@ in the Attack zone exhausted.`,
+      description: dedent`Banish this card and summon a @Plotting Counsellor@ exhausted.`,
       label: 'Summon Plotting Consellor',
       canUse: () => true,
       getPreResponseTargets: () => Promise.resolve([]),
@@ -81,11 +80,11 @@ export const jeweller: MinionBlueprint = {
         const consellor = await card.player.generateCard<MinionCard>(
           plottingCounsellor.id
         );
-        await consellor.playImmediatelyAt(BOARD_SLOT_ZONES.ATTACK_ZONE);
+        await consellor.playImmediately();
         await consellor.exhaust();
       }
     }
   ],
-  async onInit(game, card) {},
+  async onInit() {},
   async onPlay() {}
 };

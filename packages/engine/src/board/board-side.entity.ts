@@ -9,25 +9,15 @@ import type { Game } from '../game/game';
 import { Entity } from '../entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '../card/card.enums';
-import { GAME_EVENTS } from '../game/game.events';
-import { BOARD_SLOT_ZONES, type BoardSlotZone } from './board.constants';
-import type { SigilCard } from '../card/entities/sigil.entity';
-import { isMinion, isSigil } from '../card/card-utils';
-import { CardChangeZoneEvent } from '../card/card.events';
+import type { SerializedSigilCard, SigilCard } from '../card/entities/sigil.entity';
 
 export type MinionSlot = number;
-
-type MinionZone = {
-  player: Player;
-  cards: Array<MinionCard | SigilCard>;
-  minions: MinionCard[];
-  sigils: SigilCard[];
-};
 
 export type SerializedMainDeckCard =
   | SerializedMinionCard
   | SerializedSpellCard
-  | SerializedArtifactCard;
+  | SerializedArtifactCard
+  | SerializedSigilCard;
 
 export type DestinyDeckCard = HeroCard;
 export type SerializedDestinyDeckCard = SerializedHeroCard;
@@ -38,8 +28,8 @@ export type SerializedBoardSide = {
     hero: string;
     artifacts: string[];
   };
-  attackZone: string[];
-  defenseZone: string[];
+  minions: string[];
+  sigils: string[];
   hand: string[];
   destinyZone: string[];
   mainDeck: { total: number; remaining: number };
@@ -57,8 +47,8 @@ export class BoardSide
   implements Serializable<SerializedBoardSide>
 {
   readonly player: Player;
-  private _attackZone: MinionZone;
-  private _defenseZone: MinionZone;
+  private _minions: MinionCard[] = [];
+  private _sigils: SigilCard[] = [];
 
   constructor(
     private game: Game,
@@ -66,26 +56,6 @@ export class BoardSide
   ) {
     super(`board-side-${player.id}`, {});
     this.player = player;
-    this._attackZone = {
-      player,
-      cards: [],
-      get minions() {
-        return this.cards.filter(isMinion);
-      },
-      get sigils() {
-        return this.cards.filter(isSigil);
-      }
-    };
-    this._defenseZone = {
-      player,
-      cards: [],
-      get minions() {
-        return this.cards.filter(isMinion);
-      },
-      get sigils() {
-        return this.cards.filter(isSigil);
-      }
-    };
   }
 
   get heroZone() {
@@ -95,41 +65,23 @@ export class BoardSide
     };
   }
 
-  get attackZone(): MinionZone {
-    return this._attackZone;
+  get minions() {
+    return this._minions;
   }
 
-  get defenseZone(): MinionZone {
-    return this._defenseZone;
-  }
-
-  getZone(zone: BoardSlotZone): MinionZone {
-    return zone === BOARD_SLOT_ZONES.ATTACK_ZONE ? this.attackZone : this.defenseZone;
-  }
-
-  getZoneFor(card: MinionCard | SigilCard) {
-    const attackZoneIndex = this.attackZone.cards.findIndex(slot => slot.equals(card));
-    if (attackZoneIndex >= 0) {
-      return BOARD_SLOT_ZONES.ATTACK_ZONE;
-    }
-
-    const defenseZoneIndex = this.defenseZone.cards.findIndex(slot => slot.equals(card));
-    if (defenseZoneIndex >= 0) {
-      return BOARD_SLOT_ZONES.DEFENSE_ZONE;
-    }
-
-    return null;
+  get sigils() {
+    return this._sigils;
   }
 
   getAllCardsInPlay(): AnyCard[] {
     return [
-      ...this.attackZone.cards.flatMap(card => {
+      ...this.minions.flatMap(card => {
         return [
           card,
           ...card.modifiers.list.flatMap(modifier => Array.from(modifier.sources))
         ].filter(isDefined);
       }),
-      ...this.defenseZone.cards.flatMap(card => {
+      ...this.sigils.flatMap(card => {
         return [
           card,
           ...card.modifiers.list.flatMap(modifier => Array.from(modifier.sources))
@@ -148,62 +100,20 @@ export class BoardSide
     ].filter(isDefined);
   }
 
-  summonMinion(card: MinionCard, zone: BoardSlotZone) {
-    this.getZone(zone).cards.push(card);
+  summonMinion(card: MinionCard) {
+    this.minions.push(card);
   }
 
-  summonSigil(card: SigilCard, zone: BoardSlotZone) {
-    this.getZone(zone).cards.push(card);
-  }
-
-  getMinions(zone: BoardSlotZone): MinionCard[] {
-    return this.getZone(zone).minions;
-  }
-
-  getAllMinions(): MinionCard[] {
-    return [...this.attackZone.minions, ...this.defenseZone.minions];
-  }
-
-  async move(card: MinionCard | SigilCard) {
-    const zone = this.getZoneFor(card);
-    const destination =
-      zone === BOARD_SLOT_ZONES.ATTACK_ZONE
-        ? BOARD_SLOT_ZONES.DEFENSE_ZONE
-        : BOARD_SLOT_ZONES.ATTACK_ZONE;
-    assert(isDefined(zone), 'Card is not on board');
-
-    await this.game.emit(
-      GAME_EVENTS.CARD_AFTER_CHANGE_ZONE,
-      new CardChangeZoneEvent({
-        card,
-        from: zone,
-        to: destination
-      })
-    );
-
-    const fromZone = this.getZone(zone);
-    const toZone = this.getZone(destination);
-    const fromIndex = fromZone.cards.findIndex(c => c.equals(card));
-    assert(fromIndex >= 0, 'Card not found in the expected zone');
-    fromZone.cards.splice(fromIndex, 1);
-    toZone.cards.push(card);
-
-    await this.game.emit(
-      GAME_EVENTS.CARD_AFTER_CHANGE_ZONE,
-      new CardChangeZoneEvent({
-        card,
-        from: zone,
-        to: destination
-      })
-    );
+  summonSigil(card: SigilCard) {
+    this.sigils.push(card);
   }
 
   remove(card: AnyCard) {
     match(card.kind)
       .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {})
       .with(CARD_KINDS.MINION, CARD_KINDS.SIGIL, () => {
-        this.attackZone.cards = this.attackZone.cards.filter(c => !c.equals(card));
-        this.defenseZone.cards = this.defenseZone.cards.filter(c => !c.equals(card));
+        this._minions = this.minions.filter(c => !c.equals(card));
+        this._sigils = this.sigils.filter(c => !c.equals(card));
       })
       .exhaustive();
   }
@@ -215,8 +125,8 @@ export class BoardSide
         hero: this.heroZone.hero.id,
         artifacts: this.heroZone.artifacts.map(artifact => artifact.id)
       },
-      attackZone: this.attackZone.cards.map(card => card.id),
-      defenseZone: this.defenseZone.cards.map(card => card.id),
+      minions: this.minions.map(card => card.id),
+      sigils: this.sigils.map(card => card.id),
       banishPile: [...this.player.cardManager.banishPile].map(card => card.id),
       discardPile: [...this.player.cardManager.discardPile].map(card => card.id),
       hand: this.player.cardManager.hand.map(card => card.id),

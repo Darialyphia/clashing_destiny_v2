@@ -11,7 +11,6 @@ import {
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { frontlineSkirmisher } from '../minions/frontline-skirmisher';
-import { BOARD_SLOT_ZONES } from '../../../../../board/board.constants';
 
 export const dawnAssault: SpellBlueprint = {
   id: 'dawn-assault',
@@ -22,7 +21,7 @@ export const dawnAssault: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Dawn Assault',
   description: dedent`
-    Summon 2 copies of @Frontline Skirmisher@ in the Attack zone.
+    Summon 2 copies of @Frontline Skirmisher@ .
     
     @Level 3 Bonus@: Summon one more.
   `,
@@ -65,7 +64,7 @@ export const dawnAssault: SpellBlueprint = {
       const skirmisher = await card.player.generateCard<MinionCard>(
         frontlineSkirmisher.id
       );
-      await skirmisher.playImmediatelyAt(BOARD_SLOT_ZONES.ATTACK_ZONE);
+      await skirmisher.playImmediately();
     }
   }
 };

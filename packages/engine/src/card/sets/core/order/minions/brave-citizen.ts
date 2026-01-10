@@ -9,9 +9,9 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
-import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
-import { DefenderModifier } from '../../../../../modifier/modifiers/defender.modifier';
-import { MinionInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
+import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const braveCitizen: MinionBlueprint = {
   id: 'brave-citizen',
@@ -22,9 +22,8 @@ export const braveCitizen: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Brave Citizen',
   description: dedent`
-    @Pride 1@
-    @Attacker@: +1 Atk
-    @Defender@: +1 Hp
+   @Pride 1@
+   @On Attack@: this gains +1 Atk this turn.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -59,24 +58,15 @@ export const braveCitizen: MinionBlueprint = {
     await card.modifiers.add(new PrideModifier(game, card, 1));
 
     await card.modifiers.add(
-      new AttackerModifier(game, card, {
-        mixins: [
-          new MinionInterceptorModifierMixin(game, {
-            key: 'atk',
-            interceptor: value => value + 1
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new DefenderModifier(game, card, {
-        mixins: [
-          new MinionInterceptorModifierMixin(game, {
-            key: 'maxHp',
-            interceptor: value => value + 1
-          })
-        ]
+      new OnAttackModifier(game, card, {
+        async handler() {
+          await card.modifiers.add(
+            new SimpleAttackBuffModifier('brave-citizen-attack-buff', game, card, {
+              amount: 1,
+              mixins: [new UntilEndOfTurnModifierMixin(game)]
+            })
+          );
+        }
       })
     );
   },

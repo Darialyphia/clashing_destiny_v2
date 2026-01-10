@@ -8,7 +8,6 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { ToughModifier } from '../../../../../modifier/modifiers/tough.modifier';
-import { PusherModifier } from '../../../../../modifier/modifiers/pusher.modifier';
 
 export const royalGuard: MinionBlueprint = {
   id: 'royal-guard',
@@ -18,7 +17,7 @@ export const royalGuard: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Royal Guard',
-  description: '@Tough 1@, @Pusher@',
+  description: '@Tough 1@',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.RARE,
   tags: [],
@@ -50,7 +49,6 @@ export const royalGuard: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new ToughModifier(game, card, { amount: 1 }));
-    await card.modifiers.add(new PusherModifier(game, card));
   },
   async onPlay() {}
 };

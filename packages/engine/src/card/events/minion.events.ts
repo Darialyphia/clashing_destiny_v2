@@ -1,5 +1,4 @@
 import type { Values } from '@game/shared';
-import type { BoardSlotZone } from '../../board/board.constants';
 import type { MinionCard, SerializedMinionCard } from '../entities/minion.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
@@ -37,13 +36,12 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard; zone: BoardSlotZone },
-  { card: SerializedMinionCard; zone: BoardSlotZone }
+  { card: MinionCard },
+  { card: SerializedMinionCard }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
-      zone: this.data.zone
+      card: this.data.card.serialize()
     };
   }
 }

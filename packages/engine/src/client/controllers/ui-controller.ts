@@ -10,7 +10,6 @@ import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
-import { BOARD_SLOT_ZONES, type BoardSlotZone } from '../../board/board.constants';
 import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
 import { match } from 'ts-pattern';
 
@@ -54,8 +53,6 @@ export class UiController {
 
   private _draggedCard: CardViewModel | null = null;
 
-  private _bufferedPlayedZone: BoardSlotZone | null = null;
-
   isHandExpanded = false;
 
   isPassConfirmationModalOpened = false;
@@ -82,12 +79,12 @@ export class UiController {
       new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
-    minionPosition: (playerId: string, zone: BoardSlotZone, minionId: string) =>
-      new DOMSelector(`${playerId}-${zone}-minion-position-${minionId}`),
-    minionOnBoard: (playerId: string, zone: BoardSlotZone, minionId: string) =>
+    minionPosition: (playerId: string, minionId: string) =>
+      new DOMSelector(`${playerId}-minion-position-${minionId}`),
+    minionOnBoard: (playerId: string, minionId: string) =>
       new DOMSelector(
         minionId,
-        this.DOMSelectors.minionPosition(playerId, zone, minionId).selector
+        this.DOMSelectors.minionPosition(playerId, minionId).selector
       ),
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
@@ -103,15 +100,7 @@ export class UiController {
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    zone: (playerId: string, zone: BoardSlotZone) =>
-      match(zone)
-        .with(BOARD_SLOT_ZONES.ATTACK_ZONE, () => this.DOMSelectors.attackZone(playerId))
-        .with(BOARD_SLOT_ZONES.DEFENSE_ZONE, () =>
-          this.DOMSelectors.defenseZone(playerId)
-        )
-        .exhaustive(),
-    attackZone: (playerId: string) => new DOMSelector(`${playerId}-attack-zone`),
-    defenseZone: (playerId: string) => new DOMSelector(`${playerId}-defense-zone`),
+    minionZone: (playerId: string) => new DOMSelector(`${playerId}-minion-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
     globalActionButtons: new DOMSelector('global-action-buttons')
   };
@@ -150,19 +139,8 @@ export class UiController {
     return this._draggedCard;
   }
 
-  get bufferedPlayedZone() {
-    return this._bufferedPlayedZone;
-  }
-
-  clearBufferedPlayedZone() {
-    this._bufferedPlayedZone = null;
-  }
-
-  playDraggedCard(zone?: BoardSlotZone) {
+  playDraggedCard() {
     if (!this._draggedCard) return;
-    if (zone) {
-      this._bufferedPlayedZone = zone;
-    }
     this._draggedCard.play();
     this._draggedCard = null;
   }

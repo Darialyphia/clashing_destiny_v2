@@ -23,7 +23,6 @@ import {
 } from '../../game/game.events';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
-import { BOARD_SLOT_ZONES } from '../../board/board.constants';
 import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 
 export type GameStateEntities = Record<
@@ -154,11 +153,8 @@ export class ClientStateController {
     const boardSide = this.state.board.sides.find(
       side => side.playerId === card.player.id
     )!;
-    if (card.zone === BOARD_SLOT_ZONES.ATTACK_ZONE) {
-      boardSide.attackZone = [...boardSide.attackZone, card.id];
-    } else if (card.zone === BOARD_SLOT_ZONES.DEFENSE_ZONE) {
-      boardSide.defenseZone = [...boardSide.defenseZone, card.id];
-    }
+    boardSide.minions = [...boardSide.minions, card.id];
+
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({
       ...side

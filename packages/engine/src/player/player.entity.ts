@@ -239,7 +239,7 @@ export class Player
   }
 
   get minions() {
-    return this.boardSide.getAllMinions();
+    return this.boardSide.minions;
   }
 
   get allAllies() {

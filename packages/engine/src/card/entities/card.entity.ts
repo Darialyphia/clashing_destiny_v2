@@ -35,7 +35,6 @@ import { isMainDeckCard } from '../../board/board.system';
 import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
-import type { BoardSlotZone } from '../../board/board.constants';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -325,7 +324,6 @@ export abstract class Card<
   protected async insertInChainOrExecute(
     handler: () => Promise<void>,
     options: {
-      zone?: BoardSlotZone;
       targets: PreResponseTarget[];
       onResolved?: () => MaybePromise<void>;
     }
@@ -335,12 +333,6 @@ export abstract class Card<
       type: EFFECT_TYPE.CARD,
       source: this,
       targets: options.targets,
-      summonZone: options.zone
-        ? {
-            zone: options.zone,
-            player: this.player
-          }
-        : undefined,
       handler: async () => {
         await this.resolve(handler);
         this.isPlayedFromHand = false;

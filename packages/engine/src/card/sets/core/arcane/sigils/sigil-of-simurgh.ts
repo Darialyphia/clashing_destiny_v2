@@ -8,7 +8,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import type { BoardSlotZone } from '../../../../../board/board.constants';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
@@ -25,7 +24,7 @@ export const sigilOfSimurgh: SigilBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Simurgh',
-  description: dedent`@On Destroyed@: Summon a @${simurgh.name}@ in the same zone this was in.`,
+  description: dedent`@On Destroyed@: Summon a @${simurgh.name}@ .`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -55,27 +54,11 @@ export const sigilOfSimurgh: SigilBlueprint = {
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   async onInit(game, card) {
-    // Tracks the zone the Time Bomb was in when it dies since OnDeath triggers after it has left the board
-    let zone: BoardSlotZone | null = null;
-    await card.modifiers.add(
-      new Modifier<SigilCard>('sigil-of-simurgh-zone-tracker', game, card, {
-        mixins: [
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_BEFORE_DESTROY,
-            filter: event => event.data.card.equals(card),
-            handler: async () => {
-              zone = card.zone;
-            }
-          })
-        ]
-      })
-    );
-
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         handler: async () => {
           const simurghCard = await card.player.generateCard<MinionCard>(simurgh.id);
-          await simurghCard.playImmediatelyAt(zone!);
+          await simurghCard.playImmediately();
         }
       })
     );

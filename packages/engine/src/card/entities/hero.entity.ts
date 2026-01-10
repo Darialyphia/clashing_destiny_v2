@@ -434,10 +434,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {
     if (this.location !== 'board') return [];
 
-    return [
-      this.player.opponent.hero,
-      ...this.player.opponent.boardSide.getAllMinions()
-    ].filter(target => this.canAttack(target));
+    return [this.player.opponent.hero, ...this.player.opponent.boardSide.minions].filter(
+      target => this.canAttack(target)
+    );
   }
 
   serialize(): SerializedHeroCard {

@@ -54,10 +54,7 @@ export const callToHeaven: SpellBlueprint = {
   },
   async onInit() {},
   async onPlay(game, card) {
-    const allMinions = [
-      ...card.player.boardSide.getAllMinions(),
-      ...card.player.opponent.boardSide.getAllMinions()
-    ];
+    const allMinions = [...card.player.minions, ...card.player.enemyMinions];
 
     const targetMinions = allMinions.filter(minion => minion.manaCost <= 2);
 

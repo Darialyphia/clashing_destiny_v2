@@ -62,20 +62,6 @@ const enableFullCardPreview = () => {
         @modifiers-mouse-enter="isFullCardPreviewenabled = false"
         @modifiers-mouse-leave="enableFullCardPreview"
       />
-
-      <div class="artifacts">
-        <InspectableCard
-          v-for="artifact in boardSide.heroZone.artifacts"
-          :key="artifact"
-          :card-id="artifact"
-          :open-delay="0"
-          side="right"
-          @mouseenter="isFullCardPreviewenabled = false"
-          @mouseleave="enableFullCardPreview"
-        >
-          <GameCard :card-id="artifact" variant="small" />
-        </InspectableCard>
-      </div>
     </InspectableCard>
   </div>
 </template>
@@ -83,15 +69,5 @@ const enableFullCardPreview = () => {
 <style scoped lang="postcss">
 .hero-slot {
   position: relative;
-}
-
-.artifacts {
-  --pixel-scale: 0.5;
-  position: absolute;
-  top: var(--size-1);
-  right: var(--size-1);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-1);
 }
 </style>

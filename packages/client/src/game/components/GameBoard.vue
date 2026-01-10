@@ -170,9 +170,7 @@ const onBoardMouseup = () => {
   transform-style: preserve-3d;
 }
 
-:global(
-  .board.is-dragging:not(:has(:is(.attack-zone, .defense-zone).is-dragging))
-) {
+:global(.board.is-dragging:not(:has(:is(.minion-zone).is-dragging))) {
   background-color: hsla(260, 50%, 20%, 0.2);
   box-shadow: 0 0 30px #985e25;
   &:hover {

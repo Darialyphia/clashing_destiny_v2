@@ -1,3 +1,4 @@
+import { VigilantModifier } from '../../../../../modifier/modifiers/vigilant.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -7,7 +8,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { DrifterModifier } from '../../../../../modifier/modifiers/drifter.modifier';
 
 export const wanderingPaladin: MinionBlueprint = {
   id: 'wandering-paladin',
@@ -17,7 +17,7 @@ export const wanderingPaladin: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Wandering Paladin',
-  description: '@Drifter@.',
+  description: '@Vigilant@.',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -48,7 +48,7 @@ export const wanderingPaladin: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new DrifterModifier(game, card));
+    await card.modifiers.add(new VigilantModifier(game, card));
   },
   async onPlay() {}
 };

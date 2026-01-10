@@ -7,7 +7,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { PullerModifier } from '../../../../../modifier/modifiers/puller.modifier';
 
 export const impromptuChallenger: MinionBlueprint = {
   id: 'impromptu-challenger',
@@ -17,7 +16,7 @@ export const impromptuChallenger: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Impromptu Challenger',
-  description: '@Puller@',
+  description: 'TODO REWORK',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -47,8 +46,6 @@ export const impromptuChallenger: MinionBlueprint = {
   maxHp: 2,
   canPlay: () => true,
   abilities: [],
-  async onInit(game, card) {
-    await card.modifiers.add(new PullerModifier(game, card));
-  },
+  async onInit(game, card) {},
   async onPlay() {}
 };

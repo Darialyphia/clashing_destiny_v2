@@ -18,7 +18,7 @@ export const frostNova: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Frost Nova',
-  description: dedent`Exhaust all minions in both players' Attack zone.`,
+  description: dedent`Exhaust all minions.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
@@ -49,10 +49,7 @@ export const frostNova: SpellBlueprint = {
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    const minionsToExhaust = [
-      ...card.player.boardSide.attackZone.minions,
-      ...card.player.opponent.boardSide.attackZone.minions
-    ];
+    const minionsToExhaust = [...card.player.minions, ...card.player.opponent.minions];
 
     for (const minion of minionsToExhaust) {
       await minion.exhaust();

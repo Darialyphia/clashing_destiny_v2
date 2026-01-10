@@ -18,7 +18,6 @@ import {
 } from '../card/card-blueprint';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import { EFFECT_TYPE, type EffectType } from './game.enums';
-import type { BoardSlotZone } from '../board/board.constants';
 
 export const EFFECT_CHAIN_STATES = {
   BUILDING: 'BUILDING',
@@ -41,10 +40,6 @@ export type Effect = {
   source: AnyCard;
   handler: (game: Game) => Promise<void>;
   targets: PreResponseTarget[];
-  summonZone?: {
-    zone: BoardSlotZone;
-    player: Player;
-  };
   isNegated?: boolean;
 };
 
@@ -54,7 +49,6 @@ export type SerializedEffectChain = {
     type: EffectType;
     source: SerializedCard;
     targets: SerializedPreResponseTarget[];
-    zone: { zone: BoardSlotZone; player: string } | null;
     isNegated: boolean | null;
   }>;
   state: EffectChainState;
@@ -277,12 +271,6 @@ export class EffectChain
           type: effect.type,
           source: effect.source.serialize(),
           targets: effect.targets.map(serializePreResponseTarget),
-          zone: effect.summonZone
-            ? {
-                zone: effect.summonZone.zone,
-                player: effect.summonZone.player.id
-              }
-            : null,
           isNegated: effect.isNegated ?? null
         };
       }),
@@ -338,12 +326,6 @@ export class ChainEffectAddedEvent extends TypedSerializableEvent<
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
         targets: this.data.effect.targets.map(serializePreResponseTarget),
-        zone: this.data.effect.summonZone
-          ? {
-              zone: this.data.effect.summonZone.zone,
-              player: this.data.effect.summonZone.player.id
-            }
-          : null,
         isNegated: this.data.effect.isNegated ?? null
       }
     };
@@ -376,12 +358,6 @@ export class ChainEffectResolvedEvent extends TypedSerializableEvent<
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
         targets: this.data.effect.targets.map(serializePreResponseTarget),
-        zone: this.data.effect.summonZone
-          ? {
-              zone: this.data.effect.summonZone.zone,
-              player: this.data.effect.summonZone.player.id
-            }
-          : null,
         isNegated: this.data.effect.isNegated ?? null
       }
     };
@@ -401,12 +377,6 @@ export class ChainEffectNegatedEvent extends TypedSerializableEvent<
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
         targets: this.data.effect.targets.map(serializePreResponseTarget),
-        zone: this.data.effect.summonZone
-          ? {
-              zone: this.data.effect.summonZone.zone,
-              player: this.data.effect.summonZone.player.id
-            }
-          : null,
         isNegated: this.data.effect.isNegated ?? null
       }
     };

@@ -1,19 +1,13 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import {
-  useGameClient,
-  useGameState,
-  useGameUi
-} from '../composables/useGameClient';
+import { useGameClient, useGameState } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-import { GAME_QUESTIONS } from '@game/engine/src/game/game.enums';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
 const state = useGameState();
-const ui = useGameUi();
 
 const isOpened = computed({
   get() {
@@ -39,15 +33,6 @@ watchEffect(() => {
   }
 
   currentQuestion.value = state.value.interaction.ctx.questionId;
-
-  if (
-    currentQuestion.value === GAME_QUESTIONS.SUMMON_POSITION &&
-    ui.value.bufferedPlayedZone
-  ) {
-    client.value.answerQuestion(ui.value.bufferedPlayedZone);
-    ui.value.clearBufferedPlayedZone();
-    return;
-  }
 
   _isOpened.value =
     state.value.interaction.ctx.player === playerId.value &&

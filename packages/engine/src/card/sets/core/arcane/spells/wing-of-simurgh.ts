@@ -50,7 +50,7 @@ export const wingOfSimurgh: SpellBlueprint = {
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    const enemyMinions = card.player.opponent.boardSide.getAllMinions();
+    const enemyMinions = card.player.opponent.minions;
 
     for (const minion of enemyMinions) {
       await minion.takeDamage(card, new SpellDamage(1, card));

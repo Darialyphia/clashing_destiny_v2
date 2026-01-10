@@ -22,26 +22,39 @@ const ui = useGameUi();
 <template>
   <div class="opponent-board">
     <div class="left-zone">
-      <DestinyZone :player-id="opponent.id" :teaching-mode="false" />
+      <div
+        class="artifacts"
+        :class="{ 'is-condensed': opponentBoard.heroZone.artifacts.length > 2 }"
+      >
+        <InspectableCard
+          v-for="artifact in opponentBoard.heroZone.artifacts"
+          :key="artifact"
+          :card-id="artifact"
+          :open-delay="0"
+          side="right"
+        >
+          <GameCard :card-id="artifact" variant="small" show-stats />
+        </InspectableCard>
+      </div>
       <HeroSlot :player="opponent" class="hero" />
     </div>
 
     <div class="center-zone">
-      <div
-        class="defense-zone"
-        :id="ui.DOMSelectors.defenseZone(opponent.id).id"
-      >
+      <DestinyZone
+        class="destiny-zone"
+        :player-id="opponent.id"
+        :teaching-mode="false"
+      />
+      <div class="minion-zone" :id="ui.DOMSelectors.minionZone(opponent.id).id">
         <InspectableCard
-          v-for="card in opponentBoard.defenseZone"
+          v-for="card in opponentBoard.minions"
           :key="card"
           :card-id="card"
         >
           <GameCard :card-id="card" variant="small" show-stats show-modifiers />
         </InspectableCard>
-      </div>
-      <div class="attack-zone" :id="ui.DOMSelectors.attackZone(opponent.id).id">
         <InspectableCard
-          v-for="card in opponentBoard.attackZone"
+          v-for="card in opponentBoard.sigils"
           :key="card"
           :card-id="card"
         >
@@ -71,6 +84,7 @@ const ui = useGameUi();
 .left-zone {
   display: grid;
   grid-template-rows: 1fr auto;
+  padding-inline-end: var(--size-5);
 }
 
 .hero {
@@ -88,14 +102,14 @@ const ui = useGameUi();
   transform: translateZ(1px);
 }
 
-.attack-zone {
+.minion-zone {
   border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   &::after {
-    content: 'Attack Zone';
+    content: 'Minion Zone';
     position: absolute;
     bottom: var(--size-1);
     left: var(--size-3);
@@ -104,14 +118,14 @@ const ui = useGameUi();
   }
 }
 
-.defense-zone {
+.destiny-zone {
   border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   &::after {
-    content: 'Defense Zone';
+    content: 'Destiny Zone';
     position: absolute;
     bottom: var(--size-1);
     left: var(--size-3);
@@ -127,5 +141,38 @@ const ui = useGameUi();
   column-gap: var(--size-4);
   place-content: center;
   transform-style: preserve-3d;
+}
+
+.artifacts {
+  --pixel-scale: 0.75;
+  display: flex;
+  gap: var(--size-1);
+  align-self: center;
+
+  &.is-condensed {
+    --pixel-scale: 0.5;
+  }
+}
+
+.artifacts {
+  --pixel-scale: 0.75;
+  border: solid 1px #985e25;
+  display: flex;
+  gap: var(--size-1);
+  align-self: stretch;
+  align-items: center;
+  transform: translateZ(1px);
+  position: relative;
+  &::after {
+    content: 'Artifacts';
+    position: absolute;
+    top: var(--size-1);
+    left: var(--size-3);
+    color: #d7ad42;
+    font-size: var(--font-size-0);
+  }
+  &.is-condensed {
+    --pixel-scale: 0.5;
+  }
 }
 </style>

@@ -142,18 +142,6 @@ export const KEYWORDS = {
       'When you play this card, add it to your hand as a Fleeting copy of it without Echo.',
     aliases: []
   },
-  ATTACKER: {
-    id: 'attacker',
-    name: 'Attacker',
-    description: 'Gain a bonus while in the attack zone.',
-    aliases: []
-  },
-  DEFENDER: {
-    id: 'defender',
-    name: 'Defender',
-    description: 'Gain a bonus while in the defense zone.',
-    aliases: []
-  },
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',
@@ -306,25 +294,6 @@ export const KEYWORDS = {
     name: 'Spellboost',
     description:
       'When you play a spell, the Spellboost effects of cards in your hand activate. Effects vary by card',
-    aliases: []
-  },
-  DRIFTER: {
-    id: 'drifter',
-    name: 'Drifter',
-    description: 'At the start of your turn, this moves to the opposite zone.',
-    aliases: []
-  },
-  PUSHER: {
-    id: 'pusher',
-    name: 'Pusher',
-    description:
-      'When this deals combat damage to a minion, move it to the Defense zone.',
-    aliases: []
-  },
-  PULLER: {
-    id: 'puller',
-    name: 'Puller',
-    description: 'When this deals combat damage to a minion, move it to the Attack zone.',
     aliases: []
   },
   HONOR: {

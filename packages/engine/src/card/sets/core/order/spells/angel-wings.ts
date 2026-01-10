@@ -9,8 +9,6 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import type { MinionCard } from '../../../../entities/minion.entity';
-import { DrifterModifier } from '../../../../../modifier/modifiers/drifter.modifier';
 
 export const angelWings: SpellBlueprint = {
   id: 'angel-wings',
@@ -21,8 +19,7 @@ export const angelWings: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Angel Wings',
   description: dedent`
-    Grant @Drifter@ to an ally @minion@.
-    Draw a card into your Destiny zone.
+   TODO REWORK
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -60,11 +57,5 @@ export const angelWings: SpellBlueprint = {
     });
   },
   async onInit() {},
-  async onPlay(game, card, targets) {
-    for (const target of targets as MinionCard[]) {
-      await target.modifiers.add(new DrifterModifier(game, card));
-    }
-
-    await card.player.cardManager.drawIntoDestinyZone(1);
-  }
+  async onPlay(game, card, targets) {}
 };

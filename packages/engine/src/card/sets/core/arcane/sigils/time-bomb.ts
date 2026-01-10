@@ -9,7 +9,6 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { AbilityDamage } from '../../../../../utils/damage';
-import type { BoardSlotZone } from '../../../../../board/board.constants';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
@@ -28,7 +27,7 @@ export const timeBomb: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Time Bomb',
   description: dedent`
-  @On Destroyed@: deal 1 damage to all enemy minions in the same zone as this. If there is another Time Bomb in the same zone, exhaust them as well.
+  @On Destroyed@: deal 1 damage to all enemy minions. If there is another allied Time Bomb in play, exhaust them as well.
   @[lvl] 2 Bonus@: @Echo@.
   `,
   faction: FACTIONS.ARCANE,
@@ -70,34 +69,14 @@ export const timeBomb: SigilBlueprint = {
       })
     );
 
-    // Tracks the zone the Time Bomb was in when it dies since OnDeath triggers after it has left the board
-    let zone: BoardSlotZone | null = null;
-    await card.modifiers.add(
-      new Modifier<SigilCard>('time-bomb-zone-tracker', game, card, {
-        mixins: [
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_BEFORE_DESTROY,
-            filter: event => event.data.card.equals(card),
-            handler: async () => {
-              zone = card.zone;
-            }
-          })
-        ]
-      })
-    );
-
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
         handler: async () => {
-          const enemyMinions = card.player.enemyMinions.filter(
-            minion => minion.zone === zone
-          );
+          const enemyMinions = card.player.enemyMinions;
 
-          const hasOtherTimeBomb = card.player.boardSide
-            .getZone(card.zone!)
-            .sigils.some(sigil => {
-              sigil.blueprintId === 'time-bomb' && !sigil.equals(card);
-            });
+          const hasOtherTimeBomb = card.player.boardSide.sigils.some(sigil => {
+            sigil.blueprintId === 'time-bomb' && !sigil.equals(card);
+          });
           for (const minion of enemyMinions) {
             await minion.takeDamage(card, new AbilityDamage(1));
             if (hasOtherTimeBomb) {

@@ -76,7 +76,7 @@ export const protectTheHolySpire: SpellBlueprint = {
       await (await card.player.generateCard(frontlineSkirmisher.id)).addToHand();
     }
 
-    const alliedMinions = card.player.boardSide.getAllMinions();
+    const alliedMinions = card.player.boardSide.minions;
 
     for (const minion of alliedMinions) {
       await minion.modifiers.add(

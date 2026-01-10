@@ -13,10 +13,6 @@ import GameCard from './GameCard.vue';
 import DestinyZone from './DestinyZone.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import {
-  BOARD_SLOT_ZONES,
-  type BoardSlotZone
-} from '@game/engine/src/board/board.constants';
 
 const myPlayer = useMyPlayer();
 const myBoard = useMyBoard();
@@ -29,10 +25,10 @@ const isDraggedCardPlayedInMinionZones = computed(() => {
   return card.kind === CARD_KINDS.MINION || card.kind === CARD_KINDS.SIGIL;
 });
 
-const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
+const onMouseup = (e: MouseEvent) => {
   if (!ui.value.draggedCard) return;
   if (!isDraggedCardPlayedInMinionZones.value) return;
-  ui.value.playDraggedCard(zone);
+  ui.value.playDraggedCard();
   e.stopPropagation();
 };
 </script>
@@ -41,38 +37,50 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   <div class="my-board">
     <div class="left-zone">
       <HeroSlot :player="myPlayer" class="hero" />
-      <DestinyZone :player-id="myPlayer.id" :teaching-mode="false" />
+      <div
+        class="artifacts"
+        :class="{ 'is-condensed': myBoard.heroZone.artifacts.length > 2 }"
+      >
+        <InspectableCard
+          v-for="artifact in myBoard.heroZone.artifacts"
+          :key="artifact"
+          :card-id="artifact"
+          :open-delay="0"
+          side="right"
+        >
+          <GameCard :card-id="artifact" variant="small" show-stats />
+        </InspectableCard>
+      </div>
     </div>
 
     <div class="center-zone">
       <div
-        class="attack-zone"
+        class="minion-zone"
         :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
-        :id="ui.DOMSelectors.attackZone(myPlayer.id).id"
-        @mouseup="onMouseup($event, BOARD_SLOT_ZONES.ATTACK_ZONE)"
+        :id="ui.DOMSelectors.minionZone(myPlayer.id).id"
+        @mouseup="onMouseup($event)"
       >
         <InspectableCard
-          v-for="card in myBoard.attackZone"
+          v-for="card in myBoard.minions"
+          :key="card"
+          :card-id="card"
+        >
+          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
+        </InspectableCard>
+        <InspectableCard
+          v-for="card in myBoard.sigils"
           :key="card"
           :card-id="card"
         >
           <GameCard :card-id="card" variant="small" show-stats show-modifiers />
         </InspectableCard>
       </div>
-      <div
-        class="defense-zone"
-        :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
-        :id="ui.DOMSelectors.defenseZone(myPlayer.id).id"
-        @mouseup="onMouseup($event, BOARD_SLOT_ZONES.DEFENSE_ZONE)"
-      >
-        <InspectableCard
-          v-for="card in myBoard.defenseZone"
-          :key="card"
-          :card-id="card"
-        >
-          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
-        </InspectableCard>
-      </div>
+
+      <DestinyZone
+        class="destiny-zone"
+        :player-id="myPlayer.id"
+        :teaching-mode="false"
+      />
     </div>
 
     <div class="piles-zone">
@@ -97,6 +105,7 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   transform-style: preserve-3d;
   display: grid;
   grid-template-rows: auto 1fr;
+  padding-inline-end: var(--size-5);
 }
 
 .hero {
@@ -114,14 +123,14 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   transform: translateZ(1px);
 }
 
-.attack-zone {
+.minion-zone {
   border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   &::after {
-    content: 'Attack Zone';
+    content: 'Minion Zone';
     position: absolute;
     top: var(--size-1);
     left: var(--size-3);
@@ -130,14 +139,14 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   }
 }
 
-.defense-zone {
+.destiny-zone {
   border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   &::after {
-    content: 'Defense Zone';
+    content: 'Destiny Zone';
     position: absolute;
     top: var(--size-1);
     left: var(--size-3);
@@ -146,7 +155,7 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   }
 }
 
-:is(.attack-zone, .defense-zone) {
+:is(.minion-zone) {
   &.is-dragging {
     background-color: hsla(260, 50%, 20%, 0.2);
     box-shadow: 0 0 30px #985e25;
@@ -169,5 +178,27 @@ const onMouseup = (e: MouseEvent, zone: BoardSlotZone) => {
   place-content: center;
   transform-style: preserve-3d;
   transform: translateZ(1px);
+}
+
+.artifacts {
+  --pixel-scale: 0.75;
+  border: solid 1px #985e25;
+  display: flex;
+  gap: var(--size-1);
+  align-self: stretch;
+  align-items: center;
+  transform: translateZ(1px);
+  position: relative;
+  &::after {
+    content: 'Artifacts';
+    position: absolute;
+    top: var(--size-1);
+    left: var(--size-3);
+    color: #d7ad42;
+    font-size: var(--font-size-0);
+  }
+  &.is-condensed {
+    --pixel-scale: 0.5;
+  }
 }
 </style>

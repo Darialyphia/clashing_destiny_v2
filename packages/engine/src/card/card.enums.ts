@@ -16,8 +16,6 @@ export const CARD_EVENTS = {
   CARD_DECLARE_USE_ABILITY: 'card.declare_use_ability',
   CARD_BEFORE_DEAL_COMBAT_DAMAGE: 'card.before_deal_combat_damage',
   CARD_AFTER_DEAL_COMBAT_DAMAGE: 'card.after_deal_combat_damage',
-  CARd_BEFORE_CHANGE_ZONE: 'card.before_change_zone',
-  CARD_AFTER_CHANGE_ZONE: 'card.after_change_zone',
   CARD_BEFORE_CHANGE_LOCATION: 'card.before_change_location',
   CARD_AFTER_CHANGE_LOCATION: 'card.after_change_location',
   CARD_BEFORE_TAKE_DAMAGE: 'card.before_take_damage',

@@ -12,10 +12,8 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { MinionCard } from '../../../../entities/minion.entity';
-import { match } from 'ts-pattern';
 import { scry } from '../../../../card-actions-utils';
 import { AbilityDamage } from '../../../../../utils/damage';
-import { BOARD_SLOT_ZONES } from '../../../../../board/board.constants';
 
 export const plottingCounsellor: MinionBlueprint = {
   id: 'plotting-consellor',
@@ -25,7 +23,7 @@ export const plottingCounsellor: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Plotting Counsellor',
-  description: dedent`At the end of each turn, if this card has only 1 Hp, banish this and summon a @Jeweller@ in the Defense zone.`,
+  description: dedent`At the end of each turn, if this card has only 1 Hp, banish this and summon a @Jeweller@.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
@@ -84,7 +82,7 @@ export const plottingCounsellor: MinionBlueprint = {
               if (card.remainingHp > 1) return;
               await card.sendToBanishPile();
               const jeweller = await card.player.generateCard<MinionCard>('jeweller');
-              await jeweller.playImmediatelyAt(BOARD_SLOT_ZONES.DEFENSE_ZONE);
+              await jeweller.playImmediately();
             }
           })
         ]

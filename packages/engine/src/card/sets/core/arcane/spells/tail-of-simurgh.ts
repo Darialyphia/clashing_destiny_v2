@@ -50,7 +50,7 @@ export const tailOfSimurgh: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   async getPreResponseTargets(game, card) {
-    const enemyMinions = card.player.opponent.boardSide.getAllMinions();
+    const enemyMinions = card.player.opponent.minions;
 
     if (enemyMinions.length === 0) {
       return [];
