@@ -580,8 +580,8 @@ export abstract class Card<
 
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
-        if (this.location !== 'hand') {
-          return 'Card must be in hand.';
+        if (this.location !== CARD_LOCATIONS.HAND) {
+          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
         }
         if (!this.canPayManaCost) {
           return 'Cannot pay mana cost.';
@@ -593,7 +593,7 @@ export abstract class Card<
           return 'You have already played a Destiny card this turn.';
         }
         if (this.location !== 'destinyDeck') {
-          return 'Card must be in destiny deck.';
+          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
         }
         if (!this.canPayDestinyCost) {
           return 'Cannot pay destiny cost.';

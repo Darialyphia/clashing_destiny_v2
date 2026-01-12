@@ -2,7 +2,8 @@ import { type Override } from '@game/shared';
 import type {
   SerializedOmniscientState,
   SerializedPlayerState,
-  SnapshotDiff
+  SnapshotDiff,
+  PatchBasedSnapshotDiff
 } from '../../game/systems/game-snapshot.system';
 import type { EntityDictionary } from '../../game/systems/game-serializer';
 import { CardViewModel } from '../view-models/card.model';
@@ -117,6 +118,42 @@ export class ClientStateController {
       delete this.state.entities[id];
     });
 
+    this.state = {
+      ...this.state,
+      ...rest,
+      config: { ...this.state.config, ...config }
+    };
+  }
+
+  /**
+   * Update with patch-based diff for more granular updates
+   */
+  updateWithPatches(newState: PatchBasedSnapshotDiff): void {
+    const { entityPatches, addedEntities, removedEntities, config, ...rest } = newState;
+
+    // Apply patches to existing entities
+    for (const [id, patches] of Object.entries(entityPatches)) {
+      if (this.state.entities[id]) {
+        // Entity exists - apply patches
+        this.state.entities[id] = this.state.entities[id]
+          .updateWithPatches(patches)
+          .clone();
+      } else {
+        console.warn(`Entity ${id} not found for patching`);
+      }
+    }
+
+    // Add new entities
+    for (const [id, entity] of Object.entries(addedEntities)) {
+      this.state.entities[id] = this.buildViewModel(entity as any);
+    }
+
+    // Remove deleted entities
+    removedEntities.forEach(id => {
+      delete this.state.entities[id];
+    });
+
+    // Update top-level state
     this.state = {
       ...this.state,
       ...rest,

@@ -19,6 +19,8 @@ import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
 import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 import { CARD_LOCATIONS } from '../../card/card.enums';
+import { DeepDiffer } from './deep-differ';
+import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 
 export type EntityDictionary = Record<
   string,
@@ -77,6 +79,7 @@ export class GameSerializer {
   // a set of opponent's cards that have been seen by each player
   // once a card is marked, it will not be filtered out when sanitizing a player state snapshot
   private seenCardsByPlayer: Record<string, Set<string>> = {};
+  private deepDiffer = new DeepDiffer();
 
   constructor(game: Game) {
     this.game = game;
@@ -134,6 +137,59 @@ export class GameSerializer {
       currentPlayer: state.currentPlayer,
       players: state.players,
       effectChain: state.effectChain
+    };
+  }
+
+  /**
+   * Generate patch-based snapshot diff
+   * This performs deep diffing and generates granular patches for entity changes
+   */
+  diffSnapshotsWithPatches(
+    state: SerializedOmniscientState,
+    prevState: SerializedOmniscientState
+  ): PatchBasedSnapshotDiff {
+    const entityPatches: EntityPatchMap = {};
+    const addedEntities: Record<string, any> = {};
+    const removedEntityIds: string[] = [];
+
+    // Find added entities
+    for (const [id, entity] of Object.entries(state.entities)) {
+      if (!(id in prevState.entities)) {
+        addedEntities[id] = entity;
+      }
+    }
+
+    // Find removed entities
+    for (const id in prevState.entities) {
+      if (!(id in state.entities)) {
+        removedEntityIds.push(id);
+      }
+    }
+
+    // Generate patches for existing entities that changed
+    for (const [id, entity] of Object.entries(state.entities)) {
+      if (id in prevState.entities) {
+        const patches = this.deepDiffer.generatePatches(entity, prevState.entities[id]);
+
+        // Only include if there are actual changes
+        if (patches.length > 0) {
+          entityPatches[id] = patches;
+        }
+      }
+    }
+
+    return {
+      entityPatches,
+      addedEntities,
+      removedEntities: removedEntityIds,
+      phase: state.phase,
+      interaction: state.interaction,
+      board: state.board,
+      turnCount: state.turnCount,
+      currentPlayer: state.currentPlayer,
+      players: state.players,
+      effectChain: state.effectChain,
+      config: this.getObjectDiff(state.config, prevState.config)
     };
   }
 

@@ -2,8 +2,11 @@ import type { GameClient, GameStateEntities } from '../client';
 
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { CardViewModel } from './card.model';
+import { PatchApplier } from '../patch-applier';
+import type { PatchOperation } from '../../game/systems/patch-types';
 
 export class PlayerViewModel {
+  private static patchApplier = new PatchApplier();
   private getEntities: () => GameStateEntities;
   private getClient: () => GameClient;
 
@@ -22,6 +25,14 @@ export class PlayerViewModel {
 
   update(data: Partial<SerializedPlayer>) {
     this.data = Object.assign({}, this.data, data);
+    return this;
+  }
+
+  /**
+   * Update using patch operations for granular changes
+   */
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = PlayerViewModel.patchApplier.applyPatches(this.data, patches);
     return this;
   }
 

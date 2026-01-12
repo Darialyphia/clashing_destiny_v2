@@ -24,6 +24,8 @@ import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.e
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { DeclareRetaliationAction } from '../actions/declare-retaliation';
+import { PatchApplier } from '../patch-applier';
+import type { PatchOperation } from '../../game/systems/patch-types';
 
 type CardData =
   | SerializedSpellCard
@@ -39,6 +41,7 @@ export type CardActionRule = {
 };
 
 export class CardViewModel {
+  private static patchApplier = new PatchApplier();
   private getEntities: () => GameStateEntities;
 
   private getClient: () => GameClient;
@@ -58,6 +61,14 @@ export class CardViewModel {
 
   update<T extends CardKind>(data: Partial<CardData & { kind: T }>) {
     this.data = Object.assign({}, this.data, data);
+    return this;
+  }
+
+  /**
+   * Update using patch operations for granular changes
+   */
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = CardViewModel.patchApplier.applyPatches(this.data, patches);
     return this;
   }
 
