@@ -2,10 +2,12 @@ import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
 import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
-  SerializedOmniscientState,
-  SerializedPlayerState,
   SnapshotDiff
 } from '../game/systems/game-snapshot.system';
+import type {
+  SerializedOmniscientState,
+  SerializedPlayerState
+} from '../game/systems/game-serializer';
 import { ModifierViewModel } from './view-models/modifier.model';
 import { CardViewModel } from './view-models/card.model';
 import { PlayerViewModel } from './view-models/player.model';

@@ -1,10 +1,10 @@
 import { type Override } from '@game/shared';
 import type {
-  EntityDictionary,
   SerializedOmniscientState,
   SerializedPlayerState,
   SnapshotDiff
 } from '../../game/systems/game-snapshot.system';
+import type { EntityDictionary } from '../../game/systems/game-serializer';
 import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
