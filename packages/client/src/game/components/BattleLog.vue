@@ -122,12 +122,15 @@ li {
 .game-phase-change {
   flex-grow: 1;
   color: #efef9f;
+  display: block;
   text-transform: capitalize;
+  width: 100%;
 }
-.game-turn_start {
+.game-turn-start {
   flex-grow: 1;
-
+  display: block;
   font-weight: var(--font-weight-8);
+  width: 100%;
 }
 
 .separator {

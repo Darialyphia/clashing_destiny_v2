@@ -168,6 +168,7 @@ const onBoardMouseup = () => {
   grid-template-rows: 1fr auto 1fr auto;
   gap: var(--size-2);
   transform-style: preserve-3d;
+  background: radial-gradient(circle at center, #223, transparent);
 }
 
 :global(.board.is-dragging:not(:has(:is(.minion-zone).is-dragging))) {

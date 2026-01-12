@@ -36,8 +36,12 @@ export const useBattleLog = () => {
         const tokens: BattleLogEventToken[] = [];
         if (eventName === GAME_EVENTS.TURN_START) {
           tokens.push({
+            kind: 'separator'
+          });
+
+          tokens.push({
             kind: 'game-turn-start',
-            turn: event.turnCount
+            turn: event.turnCount + 1
           });
         }
 
@@ -151,7 +155,7 @@ export const useBattleLog = () => {
           });
           tokens.push({
             kind: 'text',
-            text: `added an effect to the chain at step ${event.index + 1}`
+            text: `added a ${event.effect.type} effect to the chain at step ${event.index + 1}`
           });
         }
 
