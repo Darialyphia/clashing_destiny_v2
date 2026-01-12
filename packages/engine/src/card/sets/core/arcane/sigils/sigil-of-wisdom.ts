@@ -2,7 +2,6 @@ import type { SigilBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
@@ -10,14 +9,12 @@ import {
 } from '../../../../card.enums';
 import { SigilCard } from '../../../../entities/sigil.entity';
 import dedent from 'dedent';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { GAME_EVENTS } from '../../../../../game/game.events';
-import { isSpell } from '../../../../card-utils';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
 export const sigilOfWisdom: SigilBlueprint = {
   id: 'sigil-of-wisdom',
@@ -28,7 +25,7 @@ export const sigilOfWisdom: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
   description: dedent`
-  The first spell you play each turn costs 1 less.
+  Whenever your hero levels up, @Empower@.
 
   @On Destroyed@: Draw a card.
   `,
@@ -81,21 +78,12 @@ export const sigilOfWisdom: SigilBlueprint = {
                 card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
                   .length === 0
             ),
-            new AuraModifierMixin(game, card, {
-              isElligible(candidate) {
-                return isSpell(candidate) && candidate.location === CARD_LOCATIONS.HAND;
-              },
-              getModifiers(candidate) {
-                return [
-                  new SimpleManacostModifier(
-                    'sigil-of-wisdom-mana-cost-reduction',
-                    game,
-                    candidate,
-                    {
-                      amount: -1
-                    }
-                  )
-                ];
+            new GameEventModifierMixin(game, {
+              eventName: GAME_EVENTS.HERO_AFTER_LEVEL_UP,
+              async handler() {
+                await card.player.hero.modifiers.add(
+                  new EmpowerModifier(game, card, { amount: 1 })
+                );
               }
             })
           ]

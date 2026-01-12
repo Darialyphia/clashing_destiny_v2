@@ -22,6 +22,10 @@ useEventListener(
   (e: MouseEvent) => {
     x.value = e.clientX;
     y.value = e.clientY;
+    // we set the css variables manually for better performance
+    // devtools profiling shows that it triggers style recalculation for way less elements
+    container.value?.style.setProperty('--x', `${e.clientX}px`);
+    container.value?.style.setProperty('--y', `${e.clientY}px`);
   },
   { passive: true, capture: true }
 );
@@ -55,6 +59,17 @@ useRafFn(() => {
       LERP_FACTOR
     )
   };
+
+  // we set the css variables manually for better performance
+  // devtools profiling shows that it triggers style recalculation for way less elements
+  container.value?.style.setProperty(
+    '--rotation-x',
+    cardRotation.value.x + 'deg'
+  );
+  container.value?.style.setProperty(
+    '--rotation-y',
+    cardRotation.value.y + 'deg'
+  );
 });
 
 const state = useGameState();
@@ -122,11 +137,7 @@ const card = computed(() => {
       ref="container"
       id="dragged-card"
       data-flip-id="dragged-card"
-      :style="{
-        '--pixel-scale': 1,
-        '--x': `${x}px`,
-        '--y': `${y}px`
-      }"
+      style="--pixel-scale: 1"
     >
       <GameCard
         v-if="card"
@@ -148,8 +159,7 @@ const card = computed(() => {
   top: 0;
   left: 0;
   transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
-    rotateX(calc(1deg * v-bind('cardRotation.x')))
-    rotateY(calc(1deg * v-bind('cardRotation.y')));
+    rotateX(var(--rotation-x)) rotateY(var(--rotation-y));
   min-width: 10px;
   min-height: 10px;
   /* &:not(.is-pinned) {

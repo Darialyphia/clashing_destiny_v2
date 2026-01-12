@@ -158,11 +158,9 @@ Level 2 Bonus: Empower 2 instead.
 
 [x] Thirst for Knowledge
 
-Spell | Arcane | (3) | fast
+Spell | Arcane | (4) | fast
 
-Loyalty 2.
-
-Draw 2 cards, then discard a card. If it's an Arcane Spell, Empower 1.
+Draw cards equal to your Empower stacks. Then, you may discard an Arcane Spell. If you do, Empower.
 
 ---
 

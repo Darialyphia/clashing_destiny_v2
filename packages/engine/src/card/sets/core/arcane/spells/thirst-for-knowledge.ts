@@ -8,10 +8,8 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
-import { discardFromHand } from '../../../../card-actions-utils';
-import { isSpell } from '../../../../card-utils';
+import { discardFromHand, getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const thirstForKnowledge: SpellBlueprint = {
   id: 'thirst-for-knowledge',
@@ -22,7 +20,7 @@ export const thirstForKnowledge: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Thirst for Knowledge',
   description: dedent`
-  Draw 2 cards, then discard a card. If it's an Arcane Spell, @Empower 1@.
+  Draw cards equal to your @Empower@ stacks. Then, you may discard an Arcane Spell. If you do, @Empower@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -47,24 +45,19 @@ export const thirstForKnowledge: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 4,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.cardManager.draw(2);
+    await card.player.cardManager.draw(getEmpowerStacks(card));
 
-    const [discardedCard] = await discardFromHand(game, card, { min: 1, max: 1 });
+    const [discardedCard] = await discardFromHand(game, card, { min: 0, max: 1 });
 
-    const shouldEmpower =
-      discardedCard &&
-      isSpell(discardedCard) &&
-      discardedCard.faction === FACTIONS.ARCANE;
-
-    if (!shouldEmpower) return;
-
-    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
+    if (discardedCard) {
+      new EmpowerModifier(game, card, { amount: 1 });
+    }
   }
 };
