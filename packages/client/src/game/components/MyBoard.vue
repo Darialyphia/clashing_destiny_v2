@@ -98,7 +98,6 @@ const onMouseup = (e: MouseEvent) => {
   grid-template-columns: auto 1fr auto;
   transform-style: preserve-3d;
   gap: var(--size-2);
-  padding-bottom: var(--size-5);
 }
 
 .left-zone {
@@ -124,35 +123,16 @@ const onMouseup = (e: MouseEvent) => {
 }
 
 .minion-zone {
-  border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  &::after {
-    content: 'Minion Zone';
-    position: absolute;
-    top: var(--size-1);
-    left: var(--size-3);
-    color: #d7ad42;
-    font-size: var(--font-size-0);
-  }
 }
 
 .destiny-zone {
-  border: solid 1px #985e25;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  &::after {
-    content: 'Destiny Zone';
-    position: absolute;
-    top: var(--size-1);
-    left: var(--size-3);
-    color: #d7ad42;
-    font-size: var(--font-size-0);
-  }
 }
 
 :is(.minion-zone) {
@@ -182,21 +162,13 @@ const onMouseup = (e: MouseEvent) => {
 
 .artifacts {
   --pixel-scale: 0.75;
-  border: solid 1px #985e25;
   display: flex;
   gap: var(--size-1);
   align-self: stretch;
   align-items: center;
   transform: translateZ(1px);
   position: relative;
-  &::after {
-    content: 'Artifacts';
-    position: absolute;
-    top: var(--size-1);
-    left: var(--size-3);
-    color: #d7ad42;
-    font-size: var(--font-size-0);
-  }
+
   &.is-condensed {
     --pixel-scale: 0.5;
   }

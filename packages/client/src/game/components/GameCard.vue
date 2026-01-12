@@ -314,8 +314,8 @@ const visibleModifiers = gameStateRef(() => {
   position: relative;
 
   &.exhausted {
-    filter: grayscale(0.4) brightness(0.6);
-    transform: none;
+    filter: grayscale(0.25) brightness(0.8);
+    transform: rotate(5deg);
   }
   &.targetable {
     &::after {

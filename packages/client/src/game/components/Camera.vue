@@ -99,11 +99,11 @@ const isTilted = computed({
   position: absolute;
   pointer-events: auto;
   top: 0;
-  left: 10%;
+  left: 5%;
   translate: calc(v-bind('camera.offset.x') * 1%)
     calc(v-bind('camera.offset.y') * 1%);
   transform-style: preserve-3d;
-  width: 80vw;
+  width: 90vw;
   height: 100dvh;
   transition: translate 1s var(--ease-4);
   /* solves some hover detection issues because of 3D transforms */

@@ -49,7 +49,7 @@ const buildPaths = async () => {
       if (!startRect || !endRect) return '';
 
       const start = {
-        x: startRect.left + startRect.width / 2 - boardRect.left,
+        x: startRect.left - boardRect.left,
         y: startRect.top + startRect.height / 2 - boardRect.top
       };
       const end = {
@@ -69,6 +69,7 @@ const buildPaths = async () => {
 };
 watch(() => state.value.effectChain?.stack, buildPaths, { immediate: true });
 watch(() => playerId.value, buildPaths, { immediate: true });
+watch(() => ui.value.explainerMessage, buildPaths);
 
 const myPlayer = useMyPlayer();
 const stack = computed(() => {
@@ -87,46 +88,44 @@ const stack = computed(() => {
 
 <template>
   <div class="effect-chain" id="effect-chain">
-    <InspectableCard
-      v-for="(effect, index) in stack"
-      :key="index"
-      :card-id="effect.source.id"
-    >
-      <div class="effect" :class="effect.playerType">
-        <GameCard
-          :card-id="effect.source.id"
-          :is-interactive="false"
-          variant="small"
-        />
+    <div class="effect-wrapper" v-for="(effect, index) in stack" :key="index">
+      <InspectableCard :card-id="effect.source.id">
+        <div class="effect" :class="effect.playerType">
+          <GameCard
+            :card-id="effect.source.id"
+            :is-interactive="false"
+            variant="small"
+          />
 
-        <UiSimpleTooltip>
-          <template #trigger>
-            <div class="effect-type" :class="effect.type.toLowerCase()" />
-          </template>
-          <p v-if="effect.type === EFFECT_TYPE.ABILITY">
-            This effect with execute an ability
-          </p>
-          <p v-if="effect.type === EFFECT_TYPE.CARD">
-            This effect will play a card.
-          </p>
-          <p v-if="effect.type === EFFECT_TYPE.DECLARE_BLOCKER">
-            This effect declares a blocker
-          </p>
-          <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
-            This effect declares a retaliation
-          </p>
-        </UiSimpleTooltip>
-      </div>
+          <UiSimpleTooltip>
+            <template #trigger>
+              <div class="effect-type" :class="effect.type.toLowerCase()" />
+            </template>
+            <p v-if="effect.type === EFFECT_TYPE.ABILITY">
+              This effect with execute an ability
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.CARD">
+              This effect will play a card.
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.DECLARE_BLOCKER">
+              This effect declares a blocker
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
+              This effect declares a retaliation
+            </p>
+          </UiSimpleTooltip>
+        </div>
 
-      <Teleport to="#arrows" defer>
-        <Arrow
-          v-for="(path, targetIndex) in paths[index]"
-          :key="targetIndex"
-          :path="path"
-          :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
-        />
-      </Teleport>
-    </InspectableCard>
+        <Teleport to="#arrows" defer>
+          <Arrow
+            v-for="(path, targetIndex) in paths[index]"
+            :key="targetIndex"
+            :path="path"
+            :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
+          />
+        </Teleport>
+      </InspectableCard>
+    </div>
     <ExplainerMessage class="ml-auto" />
   </div>
 </template>
@@ -138,9 +137,12 @@ const stack = computed(() => {
   display: flex;
   align-items: center;
   gap: var(--size-3);
-  --pixel-scale: 0.75;
+  --pixel-scale: 0.5;
   height: calc(var(--card-small-height) * var(--pixel-scale));
-  border: solid 1px #985e25;
+  justify-content: center;
+  > .effect-wrapper:first-child {
+    margin-left: auto;
+  }
 }
 
 @keyframes chain-effect-pulse {

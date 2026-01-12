@@ -120,7 +120,6 @@ const cards = computed(() => {
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
   height: 100%;
-  border: solid 1px #985e25;
   padding-inline: 4px;
   z-index: 1;
   transform: translateZ(1px);
@@ -137,15 +136,6 @@ const cards = computed(() => {
   > * {
     grid-column: 1;
     grid-row: 1;
-  }
-
-  &::after {
-    content: 'Destiny Zone';
-    position: absolute;
-    bottom: var(--size-1);
-    left: var(--size-3);
-    color: #d7ad42;
-    font-size: var(--font-size-0);
   }
 }
 
