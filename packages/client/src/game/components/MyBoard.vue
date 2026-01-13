@@ -25,16 +25,19 @@ const isDraggedCardPlayedInMinionZones = computed(() => {
   return card.kind === CARD_KINDS.MINION || card.kind === CARD_KINDS.SIGIL;
 });
 
-const onMouseup = (e: MouseEvent) => {
+const onMouseup = () => {
   if (!ui.value.draggedCard) return;
-  if (!isDraggedCardPlayedInMinionZones.value) return;
+
   ui.value.playDraggedCard();
-  e.stopPropagation();
 };
 </script>
 
 <template>
-  <div class="my-board">
+  <div
+    class="my-board"
+    :class="{ 'is-dragging': ui.draggedCard }"
+    @mouseup="onMouseup"
+  >
     <div class="left-zone">
       <HeroSlot :player="myPlayer" class="hero" />
       <div
@@ -58,7 +61,6 @@ const onMouseup = (e: MouseEvent) => {
         class="minion-zone"
         :class="{ 'is-dragging': isDraggedCardPlayedInMinionZones }"
         :id="ui.DOMSelectors.minionZone(myPlayer.id).id"
-        @mouseup="onMouseup($event)"
       >
         <InspectableCard
           v-for="card in myBoard.minions"
@@ -98,6 +100,14 @@ const onMouseup = (e: MouseEvent) => {
   grid-template-columns: auto 1fr auto;
   transform-style: preserve-3d;
   gap: var(--size-2);
+
+  &.is-dragging {
+    background-color: hsla(260, 50%, 20%, 0.2);
+    box-shadow: 0 0 30px #985e25;
+    &:hover {
+      background-color: hsla(from cyan h s l / 0.15);
+    }
+  }
 }
 
 .left-zone {
@@ -135,17 +145,6 @@ const onMouseup = (e: MouseEvent) => {
   align-items: center;
 }
 
-:is(.minion-zone) {
-  &.is-dragging {
-    background-color: hsla(260, 50%, 20%, 0.2);
-    box-shadow: 0 0 30px #985e25;
-    &:hover {
-      border-color: cyan;
-      box-shadow: 0 0 10px cyan;
-      background-color: hsla(from cyan h s l / 0.15);
-    }
-  }
-}
 :global(.destiny-zone .game-card) {
   transform: rotateY(180deg);
 }
