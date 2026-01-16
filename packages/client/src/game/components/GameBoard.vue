@@ -55,18 +55,6 @@ const myClock = computed(() => clocks?.[myPlayer.value.id]);
 const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
 const isSettingsOpened = ref(false);
-
-const onBoardMouseup = () => {
-  if (!ui.value.draggedCard) return;
-  if (
-    ui.value.draggedCard.kind === CARD_KINDS.MINION ||
-    ui.value.draggedCard.kind === CARD_KINDS.SIGIL
-  ) {
-    return;
-  }
-
-  ui.value.playDraggedCard();
-};
 </script>
 
 <template>
@@ -83,14 +71,9 @@ const onBoardMouseup = () => {
 
   <div class="game-board-container">
     <Camera>
-      <div
-        class="board"
-        :id="ui.DOMSelectors.board.id"
-        :class="{ 'is-dragging': ui.draggedCard }"
-        @mouseup="onBoardMouseup"
-      >
+      <div class="board" :id="ui.DOMSelectors.board.id">
         <OpponentBoard />
-        <div class="h-3" />
+        <div class="separator" />
         <MyBoard />
         <div class="bottom-row">
           <EffectChain />
@@ -171,14 +154,6 @@ const onBoardMouseup = () => {
   background: radial-gradient(circle at center, #112, transparent 75%);
 }
 
-:global(.board.is-dragging:not(:has(:is(.minion-zone).is-dragging))) {
-  background-color: hsla(260, 50%, 20%, 0.2);
-  box-shadow: 0 0 30px #985e25;
-  &:hover {
-    background-color: hsla(from cyan h s l / 0.15);
-  }
-}
-
 .arrows {
   transform: translateZ(10px);
 }
@@ -229,6 +204,12 @@ const onBoardMouseup = () => {
 }
 #card-actions-portal {
   transform: translateZ(10px);
+}
+
+.separator {
+  margin-block: var(--size-2);
+  height: 1px;
+  border: solid 1px hsl(from #985e25 h s l / 0.35);
 }
 /* @keyframes warning-pulse {
   0%,

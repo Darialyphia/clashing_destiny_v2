@@ -11,7 +11,7 @@ import {
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { MinionInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { isMinion, singleAllyTargetRules } from '../../../../card-utils';
+import { singleAllyTargetRules } from '../../../../card-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';

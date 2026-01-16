@@ -68,6 +68,8 @@ import { frontlineSkirmisher } from './core/order/minions/frontline-skirmisher';
 import { dawnAssault } from './core/order/spells/dawn-assault';
 import { reviseTheStrategy } from './core/neutral/spells/revise-the-strategy';
 import { amuletOfRemembrance } from './core/neutral/artifacts/amulet-of-remembrance';
+import { belovedMentor } from './core/neutral/minions/beloved-mentor';
+import { whiteLion } from './core/order/minions/white-lion';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -140,6 +142,8 @@ export const coreSet: CardSet = {
     frontlineSkirmisher,
     dawnAssault,
     reviseTheStrategy,
-    amuletOfRemembrance
+    amuletOfRemembrance,
+    belovedMentor,
+    whiteLion
   ]
 };

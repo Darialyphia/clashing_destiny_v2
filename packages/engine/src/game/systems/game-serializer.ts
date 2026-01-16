@@ -110,40 +110,6 @@ export class GameSerializer {
     return result;
   }
 
-  diffSnapshots(
-    state: SerializedOmniscientState,
-    prevState: SerializedOmniscientState
-  ): SnapshotDiff {
-    const entities: EntityDiffDictionary = {};
-    for (const [key, entity] of Object.entries(state.entities)) {
-      const diff = this.getObjectDiff(entity, prevState.entities[key]);
-      if (Object.keys(diff).length > 0) {
-        entities[key] = diff;
-      }
-    }
-    return {
-      config: this.getObjectDiff(state.config, prevState.config),
-      entities,
-      removedEntities: Object.keys(prevState.entities).filter(
-        key => !(key in state.entities)
-      ),
-      addedEntities: Object.keys(state.entities).filter(
-        key => !(key in prevState.entities)
-      ),
-      phase: state.phase,
-      interaction: state.interaction,
-      board: state.board,
-      turnCount: state.turnCount,
-      currentPlayer: state.currentPlayer,
-      players: state.players,
-      effectChain: state.effectChain
-    };
-  }
-
-  /**
-   * Generate patch-based snapshot diff
-   * This performs deep diffing and generates granular patches for entity changes
-   */
   diffSnapshotsWithPatches(
     state: SerializedOmniscientState,
     prevState: SerializedOmniscientState
@@ -152,26 +118,22 @@ export class GameSerializer {
     const addedEntities: Record<string, any> = {};
     const removedEntityIds: string[] = [];
 
-    // Find added entities
     for (const [id, entity] of Object.entries(state.entities)) {
       if (!(id in prevState.entities)) {
         addedEntities[id] = entity;
       }
     }
 
-    // Find removed entities
     for (const id in prevState.entities) {
       if (!(id in state.entities)) {
         removedEntityIds.push(id);
       }
     }
 
-    // Generate patches for existing entities that changed
     for (const [id, entity] of Object.entries(state.entities)) {
       if (id in prevState.entities) {
         const patches = this.deepDiffer.generatePatches(entity, prevState.entities[id]);
 
-        // Only include if there are actual changes
         if (patches.length > 0) {
           entityPatches[id] = patches;
         }

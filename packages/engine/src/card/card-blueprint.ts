@@ -102,7 +102,7 @@ export type SerializedAbility = {
   shouldExhaust: boolean;
 };
 
-export type PreResponseTarget = AnyCard;
+export type PreResponseTarget = AnyCard & { effectId?: string };
 export type SerializedPreResponseTarget = string;
 
 export const serializePreResponseTarget = (
