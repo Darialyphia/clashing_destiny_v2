@@ -20,6 +20,7 @@ import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
+import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 
 export type PlayerOptions = {
   id: string;
@@ -392,12 +393,13 @@ export class Player
     const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 
-    const banishedCards: Array<{ card: AnyCard; index: number }> = [];
+    const lockedCards: Array<{ card: AnyCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
       const index = this.game.rngSystem.nextInt(pool.length - 1);
       const card = pool[index];
-      await card.sendToBanishPile();
-      banishedCards.push({ card, index });
+      // await card.sendToBanishPile();
+      await card.modifiers.add(new LockedModifier(this.game, card, { duration: 2 }));
+      lockedCards.push({ card, index });
       pool.splice(index, 1);
     }
 
@@ -405,7 +407,7 @@ export class Player
       GAME_EVENTS.PLAYER_PAY_FOR_DESTINY_COST,
       new PlayerPayForDestinyCostEvent({
         player: this,
-        cards: banishedCards
+        cards: lockedCards
       })
     );
   }

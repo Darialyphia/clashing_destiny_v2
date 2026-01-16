@@ -90,7 +90,7 @@ export class GameSerializer {
     this.seenCardsByPlayer[this.game.playerSystem.player2.id] = new Set();
   }
 
-  getObjectDiff<T extends AnyObject>(obj: T, prevObj: T | undefined): Partial<T> {
+  private getObjectDiff<T extends AnyObject>(obj: T, prevObj: T | undefined): Partial<T> {
     if (!prevObj) return { ...obj };
     const result: Partial<T> = {};
     for (const key in obj) {
@@ -177,9 +177,6 @@ export class GameSerializer {
     return entities;
   }
 
-  /**
-   * Serializes the complete game state with full visibility (for spectator / sandbox mode)
-   */
   serializeOmniscientState(): SerializedOmniscientState {
     return {
       config: this.game.config,
@@ -194,9 +191,6 @@ export class GameSerializer {
     };
   }
 
-  /**
-   * Serializes the game state for a specific player, hiding opponent's hidden information
-   */
   serializePlayerState(
     playerId: string,
     eventsSinceLastSnapshot: GameStarEvent[]
@@ -287,5 +281,35 @@ export class GameSerializer {
     });
 
     return state;
+  }
+
+  diffSnapshots(
+    state: SerializedOmniscientState,
+    prevState: SerializedOmniscientState
+  ): SnapshotDiff {
+    const entities: EntityDiffDictionary = {};
+    for (const [key, entity] of Object.entries(state.entities)) {
+      const diff = this.getObjectDiff(entity, prevState.entities[key]);
+      if (Object.keys(diff).length > 0) {
+        entities[key] = diff;
+      }
+    }
+    return {
+      config: this.getObjectDiff(state.config, prevState.config),
+      entities,
+      removedEntities: Object.keys(prevState.entities).filter(
+        key => !(key in state.entities)
+      ),
+      addedEntities: Object.keys(state.entities).filter(
+        key => !(key in prevState.entities)
+      ),
+      phase: state.phase,
+      interaction: state.interaction,
+      board: state.board,
+      turnCount: state.turnCount,
+      currentPlayer: state.currentPlayer,
+      players: state.players,
+      effectChain: state.effectChain
+    };
   }
 }

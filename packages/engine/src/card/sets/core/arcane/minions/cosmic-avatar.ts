@@ -1,9 +1,7 @@
 import dedent from 'dedent';
-import { OnHitModifier } from '../../../../../modifier/modifiers/on-hit.modifier';
 import { OverwhelmModifier } from '../../../../../modifier/modifiers/overwhelm.modifier';
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
 import { HinderedModifier } from '../../../../../modifier/modifiers/hindered.modifier';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,

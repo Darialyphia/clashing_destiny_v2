@@ -5,7 +5,10 @@ import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import type { AfterDeclareAttackEvent } from '../../game/phases/combat.phase';
+import type {
+  AfterDeclareAttackEvent,
+  AfterDeclareAttackTargetEvent
+} from '../../game/phases/combat.phase';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -17,7 +20,7 @@ export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<
     source: AnyCard,
     private options: {
       mixins?: ModifierMixin<T>[];
-      handler: (event: AfterDeclareAttackEvent, modifier: Modifier<T>) => void;
+      handler: (event: AfterDeclareAttackTargetEvent, modifier: Modifier<T>) => void;
     }
   ) {
     super(KEYWORDS.ON_ATTACK.id, game, source, {
@@ -27,7 +30,7 @@ export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_ATTACK),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK,
+          eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
           handler: event => this.onDamage(event)
         }),
         ...(options.mixins || [])
@@ -35,7 +38,7 @@ export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<
     });
   }
 
-  private async onDamage(event: AfterDeclareAttackEvent) {
+  private async onDamage(event: AfterDeclareAttackTargetEvent) {
     if (!event.data.attacker.equals(this.target)) return;
     await this.game.emit(
       GAME_EVENTS.CARD_EFFECT_TRIGGERED,

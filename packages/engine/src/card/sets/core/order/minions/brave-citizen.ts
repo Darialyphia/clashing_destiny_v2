@@ -12,6 +12,7 @@ import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier'
 import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { AbilityDamage } from '../../../../../utils/damage';
 
 export const braveCitizen: MinionBlueprint = {
   id: 'brave-citizen',
@@ -23,7 +24,7 @@ export const braveCitizen: MinionBlueprint = {
   name: 'Brave Citizen',
   description: dedent`
    @Pride 1@
-   @On Attack@: this gains +1 Atk this turn.
+   @On Attack@: if the attack target costs more than this card, deal 1 damage to it.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -31,11 +32,7 @@ export const braveCitizen: MinionBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
-        oil: false,
-        gradient: false,
-        lightGradient: false,
-        scanlines: false
+        sheen: true
       },
       dimensions: {
         width: 174,
@@ -59,13 +56,10 @@ export const braveCitizen: MinionBlueprint = {
 
     await card.modifiers.add(
       new OnAttackModifier(game, card, {
-        async handler() {
-          await card.modifiers.add(
-            new SimpleAttackBuffModifier('brave-citizen-attack-buff', game, card, {
-              amount: 1,
-              mixins: [new UntilEndOfTurnModifierMixin(game)]
-            })
-          );
+        async handler(event) {
+          if (event.data.target.manaCost > card.manaCost) {
+            await event.data.target.takeDamage(card, new AbilityDamage(1));
+          }
         }
       })
     );

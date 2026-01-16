@@ -9,10 +9,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { manaSpark } from '../spells/mana-spark';
-import type { MinionCard } from '../../../../entities/minion.entity';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { SimpleDestinyCostModifier } from '../../../../../modifier/modifiers/simple-destinycost.modifier';

@@ -10,7 +10,7 @@ import {
 } from '../../../../card.enums';
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { LockedeModifier } from '../../../../../modifier/modifiers/locked.modifier';
+import { LockedModifier } from '../../../../../modifier/modifiers/locked.modifier';
 
 export const whiteLion: MinionBlueprint = {
   id: 'white-lion',
@@ -73,7 +73,7 @@ export const whiteLion: MinionBlueprint = {
           });
 
           await cardToLock.modifiers.add(
-            new LockedeModifier(game, card, {
+            new LockedModifier(game, card, {
               duration: 2
             })
           );

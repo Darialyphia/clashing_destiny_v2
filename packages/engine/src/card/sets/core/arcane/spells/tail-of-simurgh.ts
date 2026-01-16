@@ -45,7 +45,7 @@ export const tailOfSimurgh: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,

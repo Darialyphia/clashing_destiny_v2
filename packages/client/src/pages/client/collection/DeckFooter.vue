@@ -5,7 +5,7 @@ import { Icon } from '@iconify/vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 
-const { deckBuilder, saveDeck, stopEditingDeck, deleteDeck, isDeleting } =
+const { saveDeck, stopEditingDeck, deleteDeck, isDeleting } =
   useCollectionPage();
 
 const isDeleteModalOpened = ref(false);
@@ -13,16 +13,6 @@ const isDeleteModalOpened = ref(false);
 
 <template>
   <footer>
-    <div class="deck-count">
-      <div>
-        Main deck ({{ deckBuilder.mainDeckSize }} /
-        {{ deckBuilder.validator.mainDeckSize }})
-      </div>
-      <div>
-        Destiny Deck ({{ deckBuilder.destinyDeckSize }} /
-        {{ deckBuilder.validator.destinyDeckSize }})
-      </div>
-    </div>
     <div class="actions">
       <FancyButton text="Back" variant="error" @click="stopEditingDeck" />
       <FancyButton text="Save" variant="info" @click="saveDeck" />

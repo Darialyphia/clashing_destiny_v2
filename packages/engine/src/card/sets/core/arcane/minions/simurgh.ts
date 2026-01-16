@@ -47,7 +47,7 @@ export const simurgh: MinionBlueprint = {
   },
   manaCost: 6,
   speed: CARD_SPEED.SLOW,
-  atk: 4,
+  atk: 3,
   maxHp: 4,
   canPlay: () => true,
   abilities: [],
