@@ -16,6 +16,7 @@ const cardElements = computed(() => {
     listRoot.value.querySelectorAll('li[data-collection-card-id]')
   ) as HTMLLIElement[];
 });
+
 useIntersectionObserver(
   cardElements,
   entries => {
