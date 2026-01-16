@@ -1,6 +1,5 @@
 import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
-import { Entity } from '../entity';
 import { type Game } from '../game/game';
 import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
@@ -14,7 +13,6 @@ import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
-import { ModifierManager } from '../modifier/modifier-manager.component';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 import { CARD_KINDS, FACTIONS } from '../card/card.enums';

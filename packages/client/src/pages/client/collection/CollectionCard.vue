@@ -9,7 +9,7 @@ import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
-
+import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
 const { deckBuilder, isEditingDeck, viewMode } = useCollectionPage();
 
 const { card } = defineProps<{
@@ -49,7 +49,7 @@ const canAddCard = computed(() => {
   >
     <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
       <div>
-        <BlueprintCard
+        <BlueprintSmallCard
           :blueprint="card.card"
           show-stats
           :is-foil="card.isFoil"
