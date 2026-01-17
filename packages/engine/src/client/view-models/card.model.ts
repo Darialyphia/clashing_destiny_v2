@@ -105,6 +105,10 @@ export class CardViewModel {
     return this.getClient().ui.selectedCard?.equals(this) ?? false;
   }
 
+  get isRevealed() {
+    return this.data.isRevealed;
+  }
+
   get kind() {
     return this.data.kind;
   }

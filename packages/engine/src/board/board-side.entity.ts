@@ -10,6 +10,7 @@ import { Entity } from '../entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '../card/card.enums';
 import type { SerializedSigilCard, SigilCard } from '../card/entities/sigil.entity';
+import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 
 export type MinionSlot = number;
 
@@ -31,7 +32,11 @@ export type SerializedBoardSide = {
   minions: string[];
   sigils: string[];
   hand: string[];
-  destinyZone: string[];
+  destinyZone: Array<{
+    cardId: string;
+    isRevealed: boolean;
+    isLocked: boolean;
+  }>;
   mainDeck: { total: number; remaining: number };
   discardPile: string[];
   banishPile: string[];
@@ -130,7 +135,11 @@ export class BoardSide
       banishPile: [...this.player.cardManager.banishPile].map(card => card.id),
       discardPile: [...this.player.cardManager.discardPile].map(card => card.id),
       hand: this.player.cardManager.hand.map(card => card.id),
-      destinyZone: [...this.player.cardManager.destinyZone].map(card => card.id),
+      destinyZone: [...this.player.cardManager.destinyZone].map(card => ({
+        cardId: card.id,
+        isRevealed: card.isRevealed,
+        isLocked: card.modifiers.has(LockedModifier)
+      })),
       mainDeck: {
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck

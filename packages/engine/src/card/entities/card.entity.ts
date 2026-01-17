@@ -26,6 +26,7 @@ import {
   CardDiscardEvent,
   CardDisposedEvent,
   CardExhaustEvent,
+  CardRevealEvent,
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';
@@ -99,6 +100,7 @@ export type SerializedCard = {
   keywords: string[];
   faction: string;
   unplayableReason: string | null;
+  isRevealed: boolean;
 };
 
 export type CardTargetOrigin =
@@ -177,6 +179,25 @@ export abstract class Card<
   get isRevealed() {
     return this._isRevealed;
   }
+
+  async reveal() {
+    if (this.isRevealed) return;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_REVEAL,
+      new CardRevealEvent({ card: this })
+    );
+    this._isRevealed = true;
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_REVEAL,
+      new CardRevealEvent({ card: this })
+    );
+  }
+
+  async hide() {
+    if (!this.isRevealed) return;
+    this._isRevealed = false;
+  }
+
   get blueprintId() {
     return this.blueprint.id;
   }
@@ -640,7 +661,8 @@ export abstract class Card<
         this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
       speed: this.blueprint.speed,
       keywords: this.keywords.map(keyword => keyword.id),
-      unplayableReason: this.unplayableReason
+      unplayableReason: this.unplayableReason,
+      isRevealed: this.isRevealed
     };
   }
 

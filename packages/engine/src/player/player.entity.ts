@@ -400,6 +400,7 @@ export class Player
       // await card.sendToBanishPile();
       await card.modifiers.add(new LockedModifier(this.game, card, { duration: 2 }));
       lockedCards.push({ card, index });
+      await card.reveal();
       pool.splice(index, 1);
     }
 

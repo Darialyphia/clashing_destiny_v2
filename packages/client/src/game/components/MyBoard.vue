@@ -145,10 +145,6 @@ const onMouseup = () => {
   align-items: center;
 }
 
-:global(.destiny-zone .game-card) {
-  transform: rotateY(180deg);
-}
-
 .piles-zone {
   display: grid;
   grid-template-columns: 1fr 1fr;

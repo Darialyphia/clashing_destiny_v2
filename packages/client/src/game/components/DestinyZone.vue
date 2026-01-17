@@ -2,7 +2,8 @@
 import {
   useBoardSide,
   useFxEvent,
-  useGameClient
+  useGameClient,
+  useGameState
 } from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
@@ -11,6 +12,8 @@ import SmallCardBack from '@/card/components/SmallCardBack.vue';
 import CountChip from './CountChip.vue';
 import { clamp } from '@game/shared';
 import CardActionsPopover from './CardActionsPopover.vue';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import GameCard from './GameCard.vue';
 
 const { playerId, teachingMode } = defineProps<{
   playerId: string;
@@ -18,7 +21,7 @@ const { playerId, teachingMode } = defineProps<{
 }>();
 
 const boardSide = useBoardSide(computed(() => playerId));
-
+const state = useGameState();
 const { playerId: activePlayerId } = useGameClient();
 const root = useTemplateRef<HTMLElement>('root');
 
@@ -65,8 +68,13 @@ const step = computed(() => {
 const cards = computed(() => {
   if (destinyZoneSize.value === 0) return [];
 
-  return boardSide.value.destinyZone.map((cardId, i) => ({
-    cardId: cardId,
+  return boardSide.value.destinyZone.map((card, i) => ({
+    cardId: card.cardId,
+    isRevealed: card.isRevealed,
+    isLocked: card.isLocked,
+    card: card.isRevealed
+      ? (state.value.entities[card.cardId] as CardViewModel)
+      : null,
     x: i * step.value,
     z: i
   }));
@@ -91,11 +99,22 @@ const cards = computed(() => {
     >
       <CardActionsPopover :card-id="card.cardId">
         <InspectableCard
-          v-if="activePlayerId === playerId || teachingMode"
+          v-if="
+            activePlayerId === playerId ||
+            teachingMode ||
+            (card.isRevealed && card.card)
+          "
           :card-id="card.cardId"
           side="top"
         >
-          <SmallCardBack :key="card.cardId" />
+          <GameCard
+            v-if="card.isRevealed && card.card"
+            :is-interactive="false"
+            :card-id="card.cardId"
+            variant="small"
+            show-modifiers
+          />
+          <SmallCardBack :key="card.cardId" v-else />
         </InspectableCard>
         <SmallCardBack v-else />
       </CardActionsPopover>

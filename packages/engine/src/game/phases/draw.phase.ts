@@ -19,6 +19,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
 
       for (const card of cards) {
         if (card.canBeRecollected) {
+          await card.hide();
           await card.removeFromCurrentLocation();
           await card.player.cardManager.addToHand(card);
         }
