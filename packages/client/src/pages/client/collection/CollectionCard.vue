@@ -89,7 +89,7 @@ const canAddCard = computed(() => {
       </div>
     </HoverCardTrigger>
     <HoverCardPortal>
-      <HoverCardContent v-if="viewMode === 'compact'">
+      <HoverCardContent v-if="viewMode === 'compact'" side="bottom">
         <BlueprintCard :blueprint="card.card" />
       </HoverCardContent>
     </HoverCardPortal>

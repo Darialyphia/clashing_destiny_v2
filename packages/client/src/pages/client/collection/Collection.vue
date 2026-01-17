@@ -32,7 +32,7 @@ useIntersectionObserver(
   },
   {
     root: listRoot,
-    rootMargin: '300px 0px',
+    rootMargin: '500px 0px',
     threshold: 0
   }
 );
@@ -41,29 +41,29 @@ useIntersectionObserver(
 <template>
   <Transition mode="out-in">
     <p v-if="isLoading" class="text-center">Loading Collection...</p>
-    <ul
-      ref="card-list"
-      class="cards fancy-scrollbar"
-      :class="viewMode"
-      v-else-if="cards.length"
-    >
-      <li
-        v-for="card in cards"
-        :key="card.id"
-        :data-collection-card-id="card.id"
-      >
-        <!-- <Transition> -->
-        <CollectionCard v-if="visibleCards.has(card.id)" :card="card" />
-        <!-- </Transition> -->
-        <!-- <button
-          v-if="!isEditingDeck"
-          @click="screenshot(card.id, $event)"
-          class="absolute bottom-0"
+    <div v-else-if="cards.length">
+      <ul ref="card-list" class="cards fancy-scrollbar" :class="viewMode">
+        <li
+          v-for="card in cards"
+          :key="card.id"
+          :data-collection-card-id="card.id"
         >
-          Screenshot
-        </button> -->
-      </li>
-    </ul>
+          <Transition>
+            <div v-if="visibleCards.has(card.id)">
+              <CollectionCard :card="card" />
+            </div>
+          </Transition>
+          <!-- <button
+            v-if="!isEditingDeck"
+            @click="screenshot(card.id, $event)"
+            class="absolute bottom-0"
+          >
+            Screenshot
+          </button> -->
+        </li>
+      </ul>
+      <div id="collection-card-details-portal" />
+    </div>
     <p v-else class="text-center">No cards found.</p>
   </Transition>
 </template>

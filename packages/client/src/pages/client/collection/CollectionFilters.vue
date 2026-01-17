@@ -284,7 +284,7 @@ const toggleMinDestinyCostFilter = (cost: number) => {
   max-width: 400px;
   padding: var(--size-2) var(--size-4);
   border-radius: var(--radius-pill);
-  border: solid var(--border-size-1) #b96b45;
+  border: solid var(--border-size-1) #d1c6c2;
   background-color: var(--color-gray-1);
   color: var(--color-gray-9);
   transition: border-color 0.2s var(--ease-1);
@@ -317,9 +317,9 @@ const toggleMinDestinyCostFilter = (cost: number) => {
   }
 
   &.active {
-    background-color: hsl(from #b96b45 h s l / 0.2);
-    border-color: #b96b45;
-    color: #b96b45;
+    background-color: hsl(from #d1c6c2 h s l / 0.2);
+    border-color: #d1c6c2;
+    color: #d1c6c2;
   }
 }
 

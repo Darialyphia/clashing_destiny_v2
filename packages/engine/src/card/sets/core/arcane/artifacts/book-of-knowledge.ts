@@ -13,8 +13,6 @@ import {
 import { scry } from '../../../../card-actions-utils';
 import { isSpell } from '../../../../card-utils';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
-import { CardEffectTriggeredEvent } from '../../../../card.events';
-import { GAME_EVENTS } from '../../../../../game/game.events';
 
 export const bookOfKnowledge: ArtifactBlueprint = {
   id: 'book-of-knowledge',
@@ -49,7 +47,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 0,
+  destinyCost: 1,
   durability: 1,
   speed: CARD_SPEED.SLOW,
   abilities: [

@@ -27,7 +27,7 @@ export const arcaneConduit: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Arcane Conduit',
   description:
-    'When you play an Arcane spell, this gains +1 ATK until the end of turn @[lvl] 3 Bonus@: wake up this minion.',
+    'When you play an Arcane spell, this gains +1 ATK until the end of turn, then wake up this minion.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
@@ -57,10 +57,6 @@ export const arcaneConduit: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
-    )) as LevelBonusModifier<MinionCard>;
-
     const onCardPlayed = async (event: CardAfterPlayEvent) => {
       if (!event.data.card.isAlly(card)) return;
       if (event.data.card.kind !== CARD_KINDS.SPELL) return;
@@ -77,9 +73,7 @@ export const arcaneConduit: MinionBlueprint = {
           }
         )
       );
-      if (levelMod.isActive) {
-        await card.wakeUp();
-      }
+      await card.wakeUp();
     };
 
     await card.modifiers.add(
