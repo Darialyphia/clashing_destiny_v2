@@ -25,3 +25,13 @@ export {
   GIFT_STATES,
   type GiftState
 } from './convex/gift/gift.constants';
+export type { WalletId } from './convex/currency/entities/wallet.entity';
+export type { TransactionId } from './convex/currency/entities/transaction.entity';
+export type { CurrencyTransaction } from './convex/currency/entities/transaction.entity';
+export {
+  CURRENCY_SOURCES,
+  CURRENCY_TYPES,
+  CURRENCY_REWARDS,
+  type CurrencySource,
+  type CurrencyType
+} from './convex/currency/currency.constants';

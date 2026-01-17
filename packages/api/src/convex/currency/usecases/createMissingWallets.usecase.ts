@@ -1,0 +1,50 @@
+import type { EmptyObject } from '@game/shared';
+import type { UseCase } from '../../usecase';
+import type { UserReadRepository } from '../../users/repositories/user.repository';
+import type { WalletRepository } from '../repositories/wallet.repository';
+
+export type CreateMissingWalletsInput = EmptyObject;
+
+export interface CreateMissingWalletsOutput {
+  created: number;
+  skipped: number;
+  total: number;
+}
+
+export class CreateMissingWalletsUseCase
+  implements UseCase<CreateMissingWalletsInput, CreateMissingWalletsOutput>
+{
+  static INJECTION_KEY = 'createMissingWalletsUseCase' as const;
+
+  constructor(
+    protected ctx: {
+      userReadRepo: UserReadRepository;
+      walletRepo: WalletRepository;
+    }
+  ) {}
+
+  async execute(): Promise<CreateMissingWalletsOutput> {
+    const users = await this.ctx.userReadRepo.getAll();
+
+    let created = 0;
+    let skipped = 0;
+
+    for (const user of users) {
+      const existingWallet = await this.ctx.walletRepo.getByUserId(user._id);
+
+      if (existingWallet) {
+        skipped++;
+        continue;
+      }
+
+      await this.ctx.walletRepo.create(user._id);
+      created++;
+    }
+
+    return {
+      created,
+      skipped,
+      total: users.length
+    };
+  }
+}

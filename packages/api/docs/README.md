@@ -20,6 +20,7 @@ Welcome to the API package documentation for the Clashing Destiny game. This pac
 14. [Module Guide](./14-module-guide.md) - Deep dive into each module
 15. [Common Tasks](./15-common-tasks.md) - Step-by-step tutorials
 16. [Convex Integration](./16-convex-integration.md) - Convex-specific patterns
+17. [AI Implementation Guide](./17-ai-implementation-guide.md) - **Prescriptive checklist-driven guide for AI assistants**
 
 ## 🚀 Quick Start
 

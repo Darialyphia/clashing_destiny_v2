@@ -29,6 +29,10 @@ export class UserReadRepository {
       .withIndex('by_slug', q => q.eq('slug', slug))
       .unique();
   }
+
+  async getAll() {
+    return this.ctx.db.query('users').collect();
+  }
 }
 
 export class UserRepository {

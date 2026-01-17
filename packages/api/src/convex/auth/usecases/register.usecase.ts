@@ -9,6 +9,7 @@ import type { DeckRepository } from '../../deck/repositories/deck.repository';
 import type { SessionRepository } from '../repositories/session.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';
 import { AccountCreatedEvent } from '../events/accountCreated.event';
+import type { WalletRepository } from '../../currency/repositories/wallet.repository';
 
 export interface RegisterInput {
   email: Email;
@@ -28,6 +29,7 @@ export class RegisterUseCase implements UseCase<RegisterInput, RegisterOutput> {
       userRepo: UserRepository;
       sessionRepo: SessionRepository;
       deckRepo: DeckRepository;
+      walletRepo: WalletRepository;
       eventEmitter: EventEmitter;
     }
   ) {}
@@ -46,6 +48,8 @@ export class RegisterUseCase implements UseCase<RegisterInput, RegisterOutput> {
       email: input.email,
       password: input.password
     });
+
+    await this.ctx.walletRepo.create(userId);
 
     await this.ctx.eventEmitter.emit(
       AccountCreatedEvent.EVENT_NAME,

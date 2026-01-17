@@ -9,6 +9,7 @@ import { cardSchemas } from './card/card.schema';
 import { friendSchemas } from './friend/friend.schemas';
 import { lobbySchemas } from './lobby/lobby.schemas';
 import { giftSchemas } from './gift/gift.schemas';
+import { currencySchemas } from './currency/currency.schemas';
 
 export default defineSchema({
   ...authSchemas,
@@ -19,5 +20,6 @@ export default defineSchema({
   ...cardSchemas,
   ...friendSchemas,
   ...lobbySchemas,
-  ...giftSchemas
+  ...giftSchemas,
+  ...currencySchemas
 });
