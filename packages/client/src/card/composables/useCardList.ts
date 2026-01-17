@@ -39,6 +39,9 @@ export type CardListContext = {
   hasFactionFilter(faction: Faction): boolean;
   toggleFactionFilter(faction: Faction): void;
   clearFactionFilter(): void;
+
+  manaCostFilter: Ref<{ min: number; max: number } | null>;
+  destinyCostFilter: Ref<{ min: number; max: number } | null>;
 };
 
 const CardListInjectionKey = Symbol(
@@ -62,6 +65,8 @@ export const provideCardList = () => {
   const kindFilter = ref(new Set<CardKind>());
   const speedFilter = ref(new Set<CardSpeed>());
   const factionFilter = ref(new Set<Faction>());
+  const manaCostFilter = ref<{ min: number; max: number } | null>(null);
+  const destinyCostFilter = ref<{ min: number; max: number } | null>(null);
 
   const textFilter = ref('');
 
@@ -91,6 +96,32 @@ export const provideCardList = () => {
           !factionFilter.value.has(card.faction)
         ) {
           return false;
+        }
+
+        if (manaCostFilter.value !== null) {
+          if (!('manaCost' in card)) {
+            return false;
+          }
+          if (
+            'manaCost' in card &&
+            (card.manaCost < manaCostFilter.value.min ||
+              card.manaCost > manaCostFilter.value.max)
+          ) {
+            return false;
+          }
+        }
+
+        if (destinyCostFilter.value !== null) {
+          if (!('destinyCost' in card)) {
+            return false;
+          }
+          if (
+            'destinyCost' in card &&
+            (card.destinyCost < destinyCostFilter.value.min ||
+              card.destinyCost > destinyCostFilter.value.max)
+          ) {
+            return false;
+          }
         }
 
         if (textFilter.value) {
@@ -205,7 +236,9 @@ export const provideCardList = () => {
     },
     clearFactionFilter: () => {
       factionFilter.value.clear();
-    }
+    },
+    manaCostFilter,
+    destinyCostFilter
   };
 
   provide(CardListInjectionKey, ctx);

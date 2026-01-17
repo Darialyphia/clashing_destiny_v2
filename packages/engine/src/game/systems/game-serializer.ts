@@ -1,7 +1,11 @@
 import type { Game } from '../game';
 import type { Config } from '../../config';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
-import type { CardDeclarePlayEvent, CardDiscardEvent } from '../../card/card.events';
+import type {
+  CardDeclarePlayEvent,
+  CardDiscardEvent,
+  CardRevealEvent
+} from '../../card/card.events';
 import type { ChainEffectAddedEvent, SerializedEffectChain } from '../effect-chain';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
@@ -235,6 +239,12 @@ export class GameSerializer {
         if (
           e.data.eventName === GAME_EVENTS.CARD_DISCARD &&
           (event as CardDiscardEvent).data.card.id === cardId
+        ) {
+          return true;
+        }
+        if (
+          e.data.eventName === GAME_EVENTS.CARD_AFTER_REVEAL &&
+          (event as CardRevealEvent).data.card.id === cardId
         ) {
           return true;
         }

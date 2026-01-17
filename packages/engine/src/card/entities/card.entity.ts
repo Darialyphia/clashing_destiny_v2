@@ -126,6 +126,8 @@ export abstract class Card<
 
   protected _targetedBy: CardTargetOrigin[] = [];
 
+  protected _isRevealed = false;
+
   isPlayedFromHand = false;
 
   constructor(
@@ -172,6 +174,9 @@ export abstract class Card<
     return this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
   }
 
+  get isRevealed() {
+    return this._isRevealed;
+  }
   get blueprintId() {
     return this.blueprint.id;
   }

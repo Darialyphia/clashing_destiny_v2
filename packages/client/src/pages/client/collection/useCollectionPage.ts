@@ -49,7 +49,9 @@ export const provideCollectionPage = () => {
     clearSpeedFilter,
     hasFactionFilter,
     toggleFactionFilter,
-    clearFactionFilter
+    clearFactionFilter,
+    manaCostFilter,
+    destinyCostFilter
   } = provideCardList();
 
   const { data: decks, isLoading: isLoadingDecks } = useDecks();
@@ -127,6 +129,8 @@ export const provideCollectionPage = () => {
     hasFactionFilter,
     toggleFactionFilter,
     clearFactionFilter,
+    manaCostFilter,
+    destinyCostFilter,
     textFilter,
     viewMode,
     isEditingDeck,

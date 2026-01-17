@@ -24,6 +24,8 @@ const {
   toggleKindFilter,
   hasFactionFilter,
   toggleFactionFilter,
+  manaCostFilter,
+  destinyCostFilter,
   viewMode
 } = useCollectionPage();
 
@@ -54,6 +56,42 @@ const factions: Array<{
 }));
 
 const router = useRouter();
+
+const toggleManaFilter = (cost: number) => {
+  if (manaCostFilter.value?.min === cost) {
+    manaCostFilter.value = null;
+  } else {
+    manaCostFilter.value = { min: cost, max: cost };
+    destinyCostFilter.value = null;
+  }
+};
+
+const toggleMinManaCostFilter = (cost: number) => {
+  if (manaCostFilter.value?.min === cost) {
+    manaCostFilter.value = null;
+  } else {
+    manaCostFilter.value = { min: cost, max: Infinity };
+    destinyCostFilter.value = null;
+  }
+};
+
+const toggleDestinyFilter = (cost: number) => {
+  if (destinyCostFilter.value?.min === cost) {
+    destinyCostFilter.value = null;
+  } else {
+    destinyCostFilter.value = { min: cost, max: cost };
+    manaCostFilter.value = null;
+  }
+};
+
+const toggleMinDestinyCostFilter = (cost: number) => {
+  if (destinyCostFilter.value?.min === cost) {
+    destinyCostFilter.value = null;
+  } else {
+    destinyCostFilter.value = { min: cost, max: Infinity };
+    manaCostFilter.value = null;
+  }
+};
 </script>
 
 <template>
@@ -64,6 +102,78 @@ const router = useRouter();
       size="md"
       @click="router.push({ name: 'ClientHome' })"
     />
+
+    <button
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 0 }"
+      @click="toggleManaFilter(0)"
+    >
+      0
+    </button>
+    <button
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 1 }"
+      @click="toggleManaFilter(1)"
+    >
+      1
+    </button>
+    <button
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 2 }"
+      @click="toggleManaFilter(2)"
+    >
+      2
+    </button>
+    <button
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 3 }"
+      @click="toggleManaFilter(3)"
+    >
+      3
+    </button>
+    <button
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 4 }"
+      @click="toggleManaFilter(4)"
+    >
+      4
+    </button>
+    <button
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 5 }"
+      @click="toggleMinManaCostFilter(5)"
+    >
+      5+
+    </button>
+
+    <button
+      class="destiny-cost"
+      :class="{ active: destinyCostFilter?.min === 0 }"
+      @click="toggleDestinyFilter(0)"
+    >
+      0
+    </button>
+    <button
+      class="destiny-cost"
+      :class="{ active: destinyCostFilter?.min === 1 }"
+      @click="toggleDestinyFilter(1)"
+    >
+      1
+    </button>
+    <button
+      class="destiny-cost"
+      :class="{ active: destinyCostFilter?.min === 2 }"
+      @click="toggleDestinyFilter(2)"
+    >
+      2
+    </button>
+    <button
+      class="destiny-cost"
+      :class="{ active: destinyCostFilter?.min === 3 }"
+      @click="toggleMinDestinyCostFilter(3)"
+    >
+      3+
+    </button>
 
     <input
       v-model="textFilter"
@@ -117,15 +227,23 @@ const router = useRouter();
           <section class="filter-section">
             <h4 class="filter-title">Faction</h4>
             <div class="faction-filter">
-              <button
+              <UiSimpleTooltip
                 v-for="faction in factions"
                 :key="faction.id"
-                :class="{ active: hasFactionFilter(faction.faction) }"
-                :aria-label="faction.label"
-                @click="toggleFactionFilter(faction.faction)"
+                :content="faction.label"
+                side="bottom"
               >
-                <img :src="faction.img" :alt="faction.label" />
-              </button>
+                <template #trigger>
+                  <button
+                    :class="{ active: hasFactionFilter(faction.faction) }"
+                    :aria-label="faction.label"
+                    @click="toggleFactionFilter(faction.faction)"
+                  >
+                    <img :src="faction.img" :alt="faction.label" />
+                  </button>
+                </template>
+                {{ faction.label }}
+              </UiSimpleTooltip>
             </div>
           </section>
 
@@ -221,25 +339,21 @@ const router = useRouter();
 
 .filter-section {
   & + & {
-    margin-top: var(--size-4);
-    padding-top: var(--size-4);
+    margin-top: var(--size-2);
     border-top: solid var(--border-size-1) var(--color-gray-4);
   }
 }
 
 .filter-title {
-  font-size: var(--font-size-2);
-  font-weight: 700;
-  color: var(--color-gray-9);
-  margin-bottom: var(--size-3);
-  text-transform: uppercase;
+  font-size: var(--font-size-0);
+  font-weight: 300;
+  text-transform: capitalize;
   letter-spacing: 0.05em;
 }
 
 .faction-filter {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--size-2);
 
   button {
     cursor: url('@/assets/ui/cursor-hover.png'), auto;
@@ -249,11 +363,9 @@ const router = useRouter();
     display: flex;
     align-items: center;
     background-color: var(--color-gray-2);
-    transition: all 0.2s var(--ease-1);
 
     &:hover {
-      background-color: var(--color-gray-3);
-      transform: scale(1.05);
+      filter: brightness(1.2);
     }
 
     &.active {
@@ -301,6 +413,30 @@ const router = useRouter();
       height: 32px;
       object-fit: contain;
     }
+  }
+}
+
+.mana-cost {
+  background-image: url('@/assets/ui/card/mana-cost.png');
+  background-size: cover;
+  font-weight: 700;
+  font-size: var(--font-size-2);
+  width: 48px;
+  aspect-ratio: 1;
+
+  &.active {
+    filter: drop-shadow(0 0 5px hsl(from #4a90e2 h s l / 0.8)) brightness(1.25);
+  }
+}
+.destiny-cost {
+  background-image: url('@/assets/ui/card/destiny-cost.png');
+  background-size: cover;
+  font-weight: 700;
+  font-size: var(--font-size-2);
+  width: 48px;
+  aspect-ratio: 1;
+  &.active {
+    filter: drop-shadow(0 0 5px hsl(from #b945a3 h s l / 0.8)) brightness(1.25);
   }
 }
 

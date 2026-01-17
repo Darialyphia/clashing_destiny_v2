@@ -5,7 +5,6 @@ import type { CARD_EVENTS, CardLocation } from './card.enums';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
 import type { HeroCard, SerializedHeroCard } from './entities/hero.entity';
 import type { MinionCard, SerializedMinionCard } from './entities/minion.entity';
-import type { SigilCard } from './entities/sigil.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
   { card: AnyCard },
@@ -265,6 +264,17 @@ export class CardAfterTakeDamageEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardRevealEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -285,4 +295,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION]: CardChangeLocationEvent;
   [CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE]: CardBeforeTakeDamageEvent;
   [CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE]: CardAfterTakeDamageEvent;
+  [CARD_EVENTS.CARD_BEFORE_REVEAL]: CardRevealEvent;
+  [CARD_EVENTS.CARD_AFTER_REVEAL]: CardRevealEvent;
 };
