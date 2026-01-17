@@ -13,7 +13,10 @@ import { useElementBounding, useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
 
-const { playerId } = defineProps<{ playerId: string }>();
+const { playerId, teachingMode } = defineProps<{
+  playerId: string;
+  teachingMode: boolean;
+}>();
 
 const player = usePlayer(playerId);
 const ui = useGameUi();
@@ -145,11 +148,16 @@ watch(width, v => {
   if (client.value.isPlayingFx) return;
   handWidth.value = v * 0.75;
 });
+
+const isHoverable = computed(
+  () => teachingMode || cards.value.some(c => c.card.isRevealed)
+);
 </script>
 
 <template>
   <OnClickOutside
     class="hand-wrapper"
+    :class="{ 'is-hoverable': isHoverable }"
     :options="{ ignore: [`${ui.DOMSelectors.globalActionButtons.selector} *`] }"
     @trigger="isExpanded = false"
   >
@@ -168,9 +176,11 @@ watch(width, v => {
     >
       <HandCard
         v-for="card in cards"
-        :key="card.card.id"
-        :card="card.card"
+        :key="card.card.cardId"
         :is-interactive="isMyHand"
+        :card-id="
+          teachingMode || card.card.isRevealed ? card.card.cardId : undefined
+        "
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
@@ -189,6 +199,12 @@ watch(width, v => {
   left: 50%;
   transform: translateX(-50%);
   height: 50px;
+  &:not(.is-hoverable) {
+    pointer-events: none;
+    * {
+      pointer-events: none;
+    }
+  }
 }
 .hand {
   --pixel-scale: 1.25;

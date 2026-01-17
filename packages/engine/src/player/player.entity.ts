@@ -33,7 +33,7 @@ export type SerializedPlayer = {
   id: string;
   entityType: 'player';
   name: string;
-  hand: string[];
+  hand: Array<{ cardId: string; isLocked: boolean; isRevealed: boolean }>;
   handSize: number;
   influence: number;
   discardPile: string[];
@@ -170,7 +170,11 @@ export class Player
       id: this.id,
       entityType: 'player' as const,
       name: this.options.name,
-      hand: this.cardManager.hand.map(card => card.id),
+      hand: this.cardManager.hand.map(card => ({
+        cardId: card.id,
+        isLocked: card.modifiers.has(LockedModifier),
+        isRevealed: card.isRevealed
+      })),
       handSize: this.cardManager.hand.length,
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),

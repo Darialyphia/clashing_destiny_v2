@@ -30,7 +30,7 @@ export const cosmicAvatar: MinionBlueprint = {
     @Pride 3@, @Hindered 2@.
     Depending on your hero's @Empower@ stacks:
     1: @Preemptive Strike@.
-    2-3: @Overwhelm@ and +2 Atk.
+    2-3: @Overwhelm@ and +1 Atk.
     4+: @On Attack@: Deal 3 damage to all enemies.
   `,
   faction: FACTIONS.ARCANE,
@@ -54,7 +54,7 @@ export const cosmicAvatar: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 3,
+  destinyCost: 4,
   speed: CARD_SPEED.SLOW,
   atk: 4,
   maxHp: 4,
@@ -76,7 +76,7 @@ export const cosmicAvatar: MinionBlueprint = {
     );
     await card.modifiers.add(
       new SimpleAttackBuffModifier('cosmic-avatar-empower-atk-buff', game, card, {
-        amount: 2,
+        amount: 1,
         mixins: [new TogglableModifierMixin(game, () => getEmpowerStacks(card) >= 2)]
       })
     );

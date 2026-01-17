@@ -45,7 +45,7 @@ export const replenishEnergy: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 0,
+  destinyCost: 1,
   speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay: (game, card) => card.player.hero.modifiers.has(EmpowerModifier),

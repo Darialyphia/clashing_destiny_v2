@@ -42,7 +42,7 @@ export const frostNova: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 2,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: (game, card) => card.player.hero.modifiers.has(EmpowerModifier),

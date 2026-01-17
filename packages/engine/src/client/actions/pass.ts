@@ -13,27 +13,6 @@ export class PassGlobalAction implements GlobalActionRule {
 
   constructor(private client: GameClient) {}
 
-  get hasRemainingAction() {
-    const state = this.client.state;
-
-    const player = state.entities[this.client.playerId] as PlayerViewModel;
-
-    const hand = player.hand;
-    const boardSide = state.board.sides.find(side => side.playerId === player.id)!;
-    const destinyDeck = boardSide.destinyDeck.map(
-      id => state.entities[id] as CardViewModel
-    );
-    const minions = boardSide.minions
-      .filter(isDefined)
-      .map(id => state.entities[id] as CardViewModel);
-
-    return (
-      hand.some(card => card.canPlay) ||
-      destinyDeck.some(card => card.canPlay) ||
-      minions.some(card => !card.isExhausted)
-    );
-  }
-
   getLabel(): string {
     return this.client.state.effectChain ? 'Pass Chain' : 'Pass Turn';
   }

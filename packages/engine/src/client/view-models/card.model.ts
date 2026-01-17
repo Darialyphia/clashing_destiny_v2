@@ -338,7 +338,7 @@ export class CardViewModel {
       return null;
     }
 
-    return this.player.hand.findIndex(card => card.equals(this));
+    return this.player.hand.findIndex(card => card.cardId === this.id);
   }
 
   get preResponseTargets() {
@@ -374,7 +374,7 @@ export class CardViewModel {
   play() {
     const hand = this.player.hand;
 
-    const index = hand.findIndex(card => card.equals(this));
+    const index = hand.findIndex(card => card.cardId === this.id);
     if (index === -1) return;
 
     this.getClient().declarePlayCard(this);

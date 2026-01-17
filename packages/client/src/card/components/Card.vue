@@ -493,7 +493,7 @@ const kindBg = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('@/assets/ui/card-back.png');
+  background: url('@/assets/ui/card/card_backs/default.png');
   background-size: cover;
   --glare-mask: url('@/assets/ui/card-back.png');
   --foil-mask: url('@/assets/ui/card-back.png');

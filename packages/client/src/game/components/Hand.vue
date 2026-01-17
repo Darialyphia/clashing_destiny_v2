@@ -168,8 +168,8 @@ watch(width, v => {
     >
       <HandCard
         v-for="card in cards"
-        :key="card.card.id"
-        :card="card.card"
+        :key="card.card.cardId"
+        :card-id="card.card.cardId"
         :is-interactive="isMyHand"
         class="hand-card"
         :style="{

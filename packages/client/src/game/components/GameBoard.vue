@@ -25,7 +25,6 @@ import DraggedCard from './DraggedCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import OpponentHand from './OpponentHand.vue';
@@ -105,7 +104,11 @@ const isSettingsOpened = ref(false);
   </div>
 
   <div class="opponent-hand">
-    <OpponentHand :player-id="opponentPlayer.id" :key="opponentPlayer.id" />
+    <OpponentHand
+      :player-id="opponentPlayer.id"
+      :key="opponentPlayer.id"
+      :teaching-mode="options.teachingMode"
+    />
   </div>
 
   <div class="my-hand">
@@ -151,7 +154,7 @@ const isSettingsOpened = ref(false);
   grid-template-rows: 1fr auto 1fr auto;
   gap: var(--size-2);
   transform-style: preserve-3d;
-  background: radial-gradient(circle at center, #112, transparent 75%);
+  background: radial-gradient(circle at center, #0e151b, transparent 75%);
 }
 
 .arrows {

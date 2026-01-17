@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import {
   useGameClient,
   useGameState,
-  useGameUi
+  useGameUi,
+  useMyPlayer
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { usePageLeave } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import CardBack from '@/card/components/CardBack.vue';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
-const { card, isInteractive } = defineProps<{
-  card: CardViewModel;
+const { cardId, isInteractive } = defineProps<{
+  cardId?: string;
   isInteractive: boolean;
 }>();
 
@@ -42,17 +44,22 @@ const unselectCard = () => {
   //   });
   // });
 };
+const card = computed(() => {
+  if (!cardId) return null;
+  return (state.value.entities[cardId] as CardViewModel) ?? null;
+});
 const onMouseDown = (e: MouseEvent) => {
+  if (!card.value) return;
   if (!client.value.isActive()) {
     return;
   }
   if (state.value.interaction.state !== INTERACTION_STATES.IDLE) {
     return;
   }
-  if (!card.canPlay) {
+  if (!card.value.canPlay) {
     isShaking.value = true;
     violationWarning.value =
-      card.unplayableReason ?? 'You cannot play this card.';
+      card.value.unplayableReason ?? 'You cannot play this card.';
 
     setTimeout(() => {
       violationWarning.value = '';
@@ -72,9 +79,10 @@ const onMouseDown = (e: MouseEvent) => {
   };
 
   const onMousemove = (e: MouseEvent) => {
+    if (!card.value) return;
     const deltaY = startY - e.clientY;
     if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
-      ui.value.startDraggingCard(card);
+      ui.value.startDraggingCard(card.value);
       document.body.removeEventListener('mousemove', onMousemove);
     }
   };
@@ -102,26 +110,30 @@ const onMouseDown = (e: MouseEvent) => {
 };
 
 const isDetachedFromHand = computed(() => {
-  if (ui.value.draggedCard?.equals(card)) return true;
+  if (!card.value) return false;
+  if (ui.value.draggedCard?.equals(card.value)) return true;
   return (
     state.value.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
-    state.value.interaction.ctx.card === card.id &&
-    !card.isSelected
+    state.value.interaction.ctx.card === card.value.id &&
+    !card.value.isSelected
   );
 });
 
 const isDisabled = computed(() => {
-  return !card.canPlay;
+  if (!card.value) return false;
+  return !card.value.canPlay;
 });
+const myPlayer = useMyPlayer();
 </script>
 
 <template>
   <div
     class="hand-card"
     :class="{
-      selected: ui.selectedCard?.equals(card),
+      selected: card && ui.selectedCard?.equals(card),
       disabled: isDisabled,
-      'is-shaking': isShaking
+      'is-shaking': isShaking,
+      'is-own-card': card && card.player.equals(myPlayer)
     }"
     @mousedown="onMouseDown($event)"
   >
@@ -129,7 +141,7 @@ const isDisabled = computed(() => {
       {{ violationWarning }}
     </p>
     <GameCard
-      v-if="!isDetachedFromHand"
+      v-if="card && !isDetachedFromHand"
       :card-id="card.id"
       actions-side="top"
       :actions-offset="15"
@@ -137,6 +149,7 @@ const isDisabled = computed(() => {
       class="game-card"
       :show-action-empty-state="false"
     />
+    <CardBack v-else-if="!card" />
   </div>
 </template>
 
@@ -159,7 +172,7 @@ const isDisabled = computed(() => {
     z-index: var(--hand-size);
   }
 
-  &:not(.disabled) {
+  &.is-own-card:not(.disabled) {
     &::before {
       content: '';
       position: absolute;

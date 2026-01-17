@@ -93,9 +93,7 @@ export class PlayerViewModel {
   }
 
   get hand() {
-    return this.data.hand.map(cardId => {
-      return this.getEntities()[cardId] as CardViewModel;
-    });
+    return this.data.hand;
   }
 
   get discardPile() {
