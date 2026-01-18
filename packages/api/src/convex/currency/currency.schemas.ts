@@ -2,9 +2,7 @@ import { defineTable } from 'convex/server';
 import { v } from 'convex/values';
 import { CURRENCY_SOURCES, CURRENCY_TYPES } from './currency.constants';
 
-export const CURRENCY_TRANSACTION_TYPE_VALIDATOR = v.union(
-  v.literal(CURRENCY_TYPES.GOLD)
-);
+export const CURRENCY_TRANSACTION_TYPE_VALIDATOR = v.literal(CURRENCY_TYPES.GOLD);
 
 export const CURRENCY_SOURCE_VALIDATOR = v.union(
   v.literal(CURRENCY_SOURCES.ADMIN_GRANT),

@@ -37,6 +37,7 @@ const isOpeningPacks = ref(false);
 const boosterPackFactory = new StandardBoosterPack(coreSet.cards);
 const packOptions: BoosterPackOptions = {
   packSize: 5,
+  foilChance: 0.05,
   blueprintWeightModifier: () => 1,
   rarityWeightModifier: () => 1
 };

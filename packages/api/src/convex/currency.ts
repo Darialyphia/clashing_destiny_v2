@@ -1,17 +1,14 @@
 import { v } from 'convex/values';
-import {
-  queryWithContainer,
-  internalMutationWithContainer,
-  mutationWithContainer
-} from './shared/container';
+import { queryWithContainer, internalMutationWithContainer } from './shared/container';
 import { GetWalletBalanceUseCase } from './currency/usecases/getWalletBalance.usecase';
 import { SpendCurrencyUseCase } from './currency/usecases/spendCurrency.usecase';
 import { GetTransactionHistoryUseCase } from './currency/usecases/getTransactionHistory.usecase';
 import { AwardCurrencyUseCase } from './currency/usecases/awardCurrency.usecase';
 import { CreateMissingWalletsUseCase } from './currency/usecases/createMissingWallets.usecase';
+// import { CreateMissingWalletsUseCase } from './currency/usecases/createMissingWallets.usecase';
 
 export const balance = queryWithContainer({
-  args: { sessionId: v.string() },
+  args: {},
   handler: async container => {
     const useCase = container.resolve<GetWalletBalanceUseCase>(
       GetWalletBalanceUseCase.INJECTION_KEY
@@ -22,7 +19,6 @@ export const balance = queryWithContainer({
 
 export const history = queryWithContainer({
   args: {
-    sessionId: v.string(),
     limit: v.optional(v.number())
   },
   handler: async (container, args) => {
@@ -35,7 +31,6 @@ export const history = queryWithContainer({
 
 export const spendInternal = internalMutationWithContainer({
   args: {
-    sessionId: v.string(),
     amount: v.number(),
     currencyType: v.string(),
     purpose: v.string(),
@@ -84,6 +79,6 @@ export const createMissingWalletsInternal = internalMutationWithContainer({
     const useCase = container.resolve<CreateMissingWalletsUseCase>(
       CreateMissingWalletsUseCase.INJECTION_KEY
     );
-    return useCase.execute({});
+    return useCase.execute();
   }
 });

@@ -2,6 +2,7 @@ import type { Rarity } from '../card.enums';
 
 export type BoosterPackOptions = {
   packSize: number;
+  foilChance: number;
   blueprintWeightModifier: (blueprintId: string) => number;
   rarityWeightModifier: (rarity: Rarity) => number;
 };
