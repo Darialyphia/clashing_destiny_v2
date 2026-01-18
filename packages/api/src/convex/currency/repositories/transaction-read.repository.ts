@@ -1,6 +1,6 @@
 import type { DatabaseReader } from '../../_generated/server';
 import type { UserId } from '../../users/entities/user.entity';
-import type { CurrencyTransaction } from '../entities/transaction.entity';
+import type { TransactionDoc } from '../entities/transaction.entity';
 import type { CurrencySource, CurrencyType } from '../currency.constants';
 
 export class TransactionReadRepository {
@@ -13,7 +13,7 @@ export class TransactionReadRepository {
     options?: {
       limit?: number;
     }
-  ): Promise<CurrencyTransaction[]> {
+  ): Promise<TransactionDoc[]> {
     const limit = options?.limit ?? 50;
 
     return await this.ctx.db
@@ -26,7 +26,7 @@ export class TransactionReadRepository {
   async getBySource(
     source: CurrencySource,
     sourceId?: string
-  ): Promise<CurrencyTransaction[]> {
+  ): Promise<TransactionDoc[]> {
     return await this.ctx.db
       .query('currencyTransactions')
       .withIndex('by_source', q => q.eq('source', source).eq('sourceId', sourceId))

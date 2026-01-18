@@ -19,6 +19,7 @@ import * as cardProviders from '../card/card.providers';
 import * as friendProviders from '../friend/friend.providers';
 import * as lobbyProviders from '../lobby/lobby.providers';
 import * as giftProviders from '../gift/gift.providers';
+import * as currencyProviders from '../currency/currency.providers';
 
 export type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 export type DependenciesMap = Record<string, Dependency<any>>;
@@ -54,7 +55,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     ...cardProviders.queryDependencies,
     ...friendProviders.queryDependencies,
     ...lobbyProviders.queryDependencies,
-    ...giftProviders.queryDependencies
+    ...giftProviders.queryDependencies,
+    ...currencyProviders.queryDependencies
   } as const satisfies DependenciesMap;
 
   return deps;
@@ -79,7 +81,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     ...cardProviders.mutationDependencies,
     ...friendProviders.mutationDependencies,
     ...lobbyProviders.mutationDependencies,
-    ...giftProviders.mutationDependencies
+    ...giftProviders.mutationDependencies,
+    ...currencyProviders.mutationDependencies
   } as const satisfies DependenciesMap;
 
   return deps;

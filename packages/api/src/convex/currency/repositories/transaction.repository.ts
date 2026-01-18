@@ -1,5 +1,9 @@
 import type { DatabaseWriter } from '../../_generated/server';
-import type { TransactionId } from '../entities/transaction.entity';
+import {
+  CurrencyTransaction,
+  type TransactionDoc,
+  type TransactionId
+} from '../entities/transaction.entity';
 import type { UserId } from '../../users/entities/user.entity';
 import type { CurrencySource, CurrencyType } from '../currency.constants';
 
@@ -19,6 +23,17 @@ export class TransactionRepository {
 
   constructor(private ctx: { db: DatabaseWriter }) {}
 
+  private buildEntity(doc: TransactionDoc) {
+    return new CurrencyTransaction(doc._id, doc);
+  }
+
+  async getById(transactionId: TransactionId): Promise<CurrencyTransaction | null> {
+    const doc = await this.ctx.db.get(transactionId);
+    if (!doc) return null;
+
+    return this.buildEntity(doc);
+  }
+
   async create(data: CreateTransactionData): Promise<TransactionId> {
     const transactionId = await this.ctx.db.insert('currencyTransactions', {
       userId: data.userId,
@@ -32,6 +47,6 @@ export class TransactionRepository {
       createdAt: Date.now()
     });
 
-    return transactionId as TransactionId;
+    return transactionId;
   }
 }

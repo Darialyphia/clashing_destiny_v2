@@ -1,7 +1,11 @@
 import type { EmptyObject } from '@game/shared';
 import type { UseCase } from '../../usecase';
-import type { UserReadRepository } from '../../users/repositories/user.repository';
+import type {
+  UserReadRepository,
+  UserRepository
+} from '../../users/repositories/user.repository';
 import type { WalletRepository } from '../repositories/wallet.repository';
+import type { DatabaseWriter } from '../../_generated/server';
 
 export type CreateMissingWalletsInput = EmptyObject;
 
@@ -18,13 +22,14 @@ export class CreateMissingWalletsUseCase
 
   constructor(
     protected ctx: {
-      userReadRepo: UserReadRepository;
+      userRepo: UserRepository;
       walletRepo: WalletRepository;
+      db: DatabaseWriter;
     }
   ) {}
 
   async execute(): Promise<CreateMissingWalletsOutput> {
-    const users = await this.ctx.userReadRepo.getAll();
+    const users = await this.ctx.db.query('users').collect();
 
     let created = 0;
     let skipped = 0;
