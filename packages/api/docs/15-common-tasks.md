@@ -113,23 +113,6 @@ export const destroy = mutationWithContainer({
 export { type DeckId } from './convex/deck/entities/deck.entity';
 ```
 
-**5. Use from Client**
-
-```typescript
-import { useMutation } from 'convex/react';
-import { api } from '@game/api';
-
-function useDeckActions() {
-  const deleteDeck = useMutation(api.decks.destroy);
-
-  const handleDelete = async (deckId: string) => {
-    await deleteDeck({ deckId });
-  };
-
-  return { handleDelete };
-}
-```
-
 ---
 
 ## Creating a New Use Case

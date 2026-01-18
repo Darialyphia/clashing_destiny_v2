@@ -53,7 +53,7 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
       session: AuthSession | null;
       gameReadRepo: GameReadRepository;
       lobbyReadRepo: LobbyReadRepository;
-      walletRepo: WalletReadRepository;
+      walletReadRepo: WalletReadRepository;
     }
   ) {}
 
@@ -69,7 +69,7 @@ export class GetSessionUserUseCase implements UseCase<never, GetSessionUserput> 
     const currentGame = await this.ctx.gameReadRepo.getByUserId(user._id);
 
     const currentLobby = await this.ctx.lobbyReadRepo.getByUserId(user._id);
-    const wallet = await this.ctx.walletRepo.getBalances(user._id);
+    const wallet = await this.ctx.walletReadRepo.getBalances(user._id);
 
     return {
       sessionId: this.ctx.session!._id,

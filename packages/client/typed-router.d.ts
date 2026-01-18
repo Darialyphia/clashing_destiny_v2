@@ -28,6 +28,7 @@ declare module 'vue-router/auto-routes' {
     'Matchmaking': RouteRecordInfo<'Matchmaking', '/client/matchmaking', Record<never, never>, Record<never, never>>,
     'Sandbox': RouteRecordInfo<'Sandbox', '/client/sandbox', Record<never, never>, Record<never, never>>,
     'SelectMode': RouteRecordInfo<'SelectMode', '/client/select-mode', Record<never, never>, Record<never, never>>,
+    'Shop': RouteRecordInfo<'Shop', '/client/shop', Record<never, never>, Record<never, never>>,
     'TutorialHome': RouteRecordInfo<'TutorialHome', '/client/tutorial', Record<never, never>, Record<never, never>>,
     'TutorialMission': RouteRecordInfo<'TutorialMission', '/client/tutorial/missions/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'HowToPlay': RouteRecordInfo<'HowToPlay', '/client/tutorial/rules', Record<never, never>, Record<never, never>>,
