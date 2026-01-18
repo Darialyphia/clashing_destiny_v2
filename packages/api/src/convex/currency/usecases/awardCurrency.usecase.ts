@@ -45,9 +45,8 @@ export class AwardCurrencyUseCase
 
     const wallet = await this.ctx.walletRepo.getOrCreate(input.userId);
     const balanceBefore = wallet.gold;
-
-    await this.ctx.walletRepo.addGold(input.userId, input.amount);
-
+    wallet.grant(input.amount);
+    await this.ctx.walletRepo.save(wallet);
     const balanceAfter = balanceBefore + input.amount;
 
     await this.ctx.transactionRepo.create({

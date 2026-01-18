@@ -11,6 +11,7 @@ export const BOOSTER_PACK_STATUS = {
 export type BoosterPackStatus = Values<typeof BOOSTER_PACK_STATUS>;
 
 type BoosterPackCatalogEntry = {
+  id: string;
   set: CardSetId;
   name: string;
   packSize: number;
@@ -20,13 +21,14 @@ type BoosterPackCatalogEntry = {
 };
 export const BOOSTER_PACKS_CATALOG = {
   CORE_STANDARD: {
+    id: 'CORE_STANDARD',
     set: CARD_SETS.CORE,
     name: 'Core Set Standard Booster',
     packSize: 5,
     packGoldCost: 100,
     foilChance: 0.05,
     getContents() {
-      return new StandardBoosterPack(cardsBySet[CARD_SETS.CORE]).getContents({
+      return new StandardBoosterPack(cardsBySet[this.set]).getContents({
         packSize: this.packSize,
         foilChance: this.foilChance,
         blueprintWeightModifier: () => 1,

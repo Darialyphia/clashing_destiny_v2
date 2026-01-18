@@ -6,9 +6,9 @@ import type { WalletRepository } from '../repositories/wallet.repository';
 import type { TransactionRepository } from '../repositories/transaction.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';
 import { CurrencySpentEvent } from '../events/currencySpent.event';
-import { AppError } from '../../utils/error';
+import { AppError, DomainError } from '../../utils/error';
 import { ensureAuthenticated } from '../../auth/auth.utils';
-import { ensureCanAffordGold } from '../entities/wallet.entity';
+import { assert } from '@game/shared';
 
 export interface SpendCurrencyInput {
   amount: number;
@@ -48,17 +48,16 @@ export class SpendCurrencyUseCase
 
     const userId = session.userId;
 
-    // Get wallet and validate balance
     const wallet = await this.ctx.walletRepo.getByUserId(userId);
     if (!wallet) {
       throw new AppError('Wallet not found');
     }
 
-    ensureCanAffordGold(wallet, input.amount);
+    assert(wallet.canAfford(input.amount), new DomainError('Insufficient funds'));
 
     const balanceBefore = wallet.gold;
-
-    await this.ctx.walletRepo.subtractGold(userId, input.amount);
+    wallet.spend(input.amount);
+    await this.ctx.walletRepo.save(wallet);
 
     const balanceAfter = balanceBefore - input.amount;
 

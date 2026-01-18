@@ -8,6 +8,8 @@ Repositories abstract data access, providing a clean interface to query and mani
 
 ### Read Repository (Queries)
 
+Read repositories should not return with entities, or expect entities as input. they only deal with plain documents returned from the database.
+
 ```typescript
 export class DeckReadRepository {
   static INJECTION_KEY = 'deckReadRepo' as const;
@@ -28,6 +30,8 @@ export class DeckReadRepository {
 ```
 
 ### Write Repository (Mutations)
+
+Write repositories should always return entities.
 
 ```typescript
 export class DeckRepository {

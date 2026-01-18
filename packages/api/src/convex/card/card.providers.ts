@@ -3,12 +3,21 @@ import { CardReadRepository, CardRepository } from './repositories/card.reposito
 import { CardMapper } from './mappers/card.mapper';
 import { GetMyCollectionUseCase } from './usecases/getMyCollection.usecase';
 import { GrantMissingCardsUseCase } from './usecases/grantMissingCards.usecase';
+import { BoosterPackReadRepository } from './repositories/booster-pack-read.repository';
+import { BoosterPackRepository } from './repositories/booster-pack.repository';
+import { GetUnopenedPacksUseCase } from './usecases/getUnopenedPacks.usecase';
+import { PurchaseBoosterPacksUseCase } from './usecases/purchaseBoosterPacks.usecase';
+import { OpenBoosterPackUseCase } from './usecases/openBoosterPack.usecase';
 import type { DependenciesMap } from '../shared/container';
 
 export const queryDependencies = {
   [CardReadRepository.INJECTION_KEY]: { resolver: asClass(CardReadRepository) },
   [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
-  [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) }
+  [GetMyCollectionUseCase.INJECTION_KEY]: { resolver: asClass(GetMyCollectionUseCase) },
+  [BoosterPackReadRepository.INJECTION_KEY]: {
+    resolver: asClass(BoosterPackReadRepository)
+  },
+  [GetUnopenedPacksUseCase.INJECTION_KEY]: { resolver: asClass(GetUnopenedPacksUseCase) }
 } as const satisfies DependenciesMap;
 
 export const mutationDependencies = {
@@ -16,5 +25,13 @@ export const mutationDependencies = {
   [CardMapper.INJECTION_KEY]: { resolver: asClass(CardMapper) },
   [GrantMissingCardsUseCase.INJECTION_KEY]: {
     resolver: asClass(GrantMissingCardsUseCase)
-  }
+  },
+  [BoosterPackRepository.INJECTION_KEY]: { resolver: asClass(BoosterPackRepository) },
+  [BoosterPackReadRepository.INJECTION_KEY]: {
+    resolver: asClass(BoosterPackReadRepository)
+  },
+  [PurchaseBoosterPacksUseCase.INJECTION_KEY]: {
+    resolver: asClass(PurchaseBoosterPacksUseCase)
+  },
+  [OpenBoosterPackUseCase.INJECTION_KEY]: { resolver: asClass(OpenBoosterPackUseCase) }
 } as const satisfies DependenciesMap;

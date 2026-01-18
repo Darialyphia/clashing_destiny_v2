@@ -12,7 +12,8 @@ export const CURRENCY_SOURCE_VALIDATOR = v.union(
   v.literal(CURRENCY_SOURCES.GAME_VICTORY),
   v.literal(CURRENCY_SOURCES.QUEST_COMPLETION),
   v.literal(CURRENCY_SOURCES.SEASON_REWARD),
-  v.literal(CURRENCY_SOURCES.SPEND)
+  v.literal(CURRENCY_SOURCES.SPEND),
+  v.literal(CURRENCY_SOURCES.BOOSTER_PACK_PURCHASE)
 );
 
 export const currencySchemas = {

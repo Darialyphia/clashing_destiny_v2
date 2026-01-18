@@ -1,13 +1,13 @@
 import type { DatabaseReader } from '../../_generated/server';
 import type { UserId } from '../../users/entities/user.entity';
-import type { Wallet } from '../entities/wallet.entity';
+import type { WalletDoc } from '../entities/wallet.entity';
 
 export class WalletReadRepository {
   static INJECTION_KEY = 'walletReadRepo' as const;
 
   constructor(private ctx: { db: DatabaseReader }) {}
 
-  async getByUserId(userId: UserId): Promise<Wallet | null> {
+  async getByUserId(userId: UserId): Promise<WalletDoc | null> {
     const wallet = await this.ctx.db
       .query('wallets')
       .withIndex('by_user', q => q.eq('userId', userId))

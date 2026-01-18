@@ -17,6 +17,26 @@ export type User = Doc<'users'>;
 export type UserId = User['_id'];
 ```
 
+Entities should always be class instances, not just type definition, and extend the base class Entity. They encapsulate business operations and invariants.
+
+```typescript
+export class User extends Entity<UserId, UserData> {
+  static from(doc: UserDoc) {
+    return new User(doc._id, {
+      ...doc,
+      email: new Email(doc.email),
+      username: new Username(doc.username)
+    });
+  }
+
+  constructor(id: Id<'users'>, data: UserData) {
+    super(id, data);
+  }
+
+  // rest of the Entity implementation
+}
+```
+
 Benefits:
 
 - Type-safe database access

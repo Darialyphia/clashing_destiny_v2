@@ -9,6 +9,7 @@ import { AwardCurrencyUseCase } from './usecases/awardCurrency.usecase';
 import { SpendCurrencyUseCase } from './usecases/spendCurrency.usecase';
 import { GetTransactionHistoryUseCase } from './usecases/getTransactionHistory.usecase';
 import { CreateMissingWalletsUseCase } from './usecases/createMissingWallets.usecase';
+import { WalletMapper } from './mappers/wallet.mapper';
 
 export const queryDependencies = {
   [WalletReadRepository.INJECTION_KEY]: { resolver: asClass(WalletReadRepository) },
@@ -28,5 +29,6 @@ export const mutationDependencies = {
   [SpendCurrencyUseCase.INJECTION_KEY]: { resolver: asClass(SpendCurrencyUseCase) },
   [CreateMissingWalletsUseCase.INJECTION_KEY]: {
     resolver: asClass(CreateMissingWalletsUseCase)
-  }
+  },
+  [WalletMapper.INJECTION_KEY]: { resolver: asClass(WalletMapper) }
 } as const satisfies DependenciesMap;

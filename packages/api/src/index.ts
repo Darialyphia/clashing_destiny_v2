@@ -6,6 +6,8 @@ export { PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from './convex/auth/auth.con
 export { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from './convex/users/username';
 export type { DeckId } from './convex/deck/entities/deck.entity';
 export type { CardId } from './convex/card/entities/card.entity';
+export type { BoosterPackId } from './convex/card/entities/booster-pack.entity';
+export { BOOSTER_PACKS_CATALOG } from './convex/card/card.constants';
 export type { MatchmakingId } from './convex/matchmaking/entities/matchmaking.entity';
 export type { UserId } from './convex/users/entities/user.entity';
 export { GAME_STATUS, type GameStatus } from './convex/game/game.constants';

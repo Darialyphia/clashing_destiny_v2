@@ -1,9 +1,10 @@
 import { defineTable } from 'convex/server';
 import { v } from 'convex/values';
-import { CARD_SETS } from '@game/engine/src/card/card.enums';
-import { BOOSTER_PACK_STATUS } from './card.constants';
+import { BOOSTER_PACK_STATUS, BOOSTER_PACKS_CATALOG } from './card.constants';
 
-export const CARD_SET_VALIDATOR = v.union(v.literal(CARD_SETS.CORE));
+export const CARD_SET_VALIDATOR = v.union(
+  v.literal(BOOSTER_PACKS_CATALOG.CORE_STANDARD.id)
+);
 export const BOOSTER_STATUS_VALIDATOR = v.union(
   v.literal(BOOSTER_PACK_STATUS.PENDING),
   v.literal(BOOSTER_PACK_STATUS.OPENED)
@@ -22,7 +23,7 @@ export const cardSchemas = {
 
   boosterPacks: defineTable({
     ownerId: v.id('users'),
-    setId: CARD_SET_VALIDATOR,
+    packType: CARD_SET_VALIDATOR,
     status: BOOSTER_STATUS_VALIDATOR,
     acquiredAt: v.number(),
     openedAt: v.optional(v.number()),
