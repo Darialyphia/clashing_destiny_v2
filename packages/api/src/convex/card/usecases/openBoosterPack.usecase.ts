@@ -1,14 +1,13 @@
 import type { UseCase } from '../../usecase';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import { ensureAuthenticated } from '../../auth/auth.utils';
-import { AppError } from '../../utils/error';
-import type { BoosterPackReadRepository } from '../repositories/booster-pack-read.repository';
+import { AppError, DomainError } from '../../utils/error';
 import type { BoosterPackRepository } from '../repositories/booster-pack.repository';
 import type { CardRepository } from '../repositories/card.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';
 import type { BoosterPackId } from '../entities/booster-pack.entity';
-import { ensurePending, ensureOwnership } from '../entities/booster-pack.entity';
 import { BoosterPackOpenedEvent } from '../events/boosterPackOpened.event';
+import { assert, isDefined } from '@game/shared';
 
 export interface OpenBoosterPackInput {
   packId: BoosterPackId;
@@ -30,7 +29,6 @@ export class OpenBoosterPackUseCase
   constructor(
     protected ctx: {
       session: AuthSession | null;
-      boosterPackReadRepo: BoosterPackReadRepository;
       boosterPackRepo: BoosterPackRepository;
       cardRepo: CardRepository;
       eventEmitter: EventEmitter;
@@ -40,17 +38,16 @@ export class OpenBoosterPackUseCase
   async execute(input: OpenBoosterPackInput): Promise<OpenBoosterPackOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
-    // Fetch pack
-    const pack = await this.ctx.boosterPackReadRepo.getById(input.packId);
-    if (!pack) {
-      throw new AppError('Booster pack not found');
-    }
+    const pack = await this.ctx.boosterPackRepo.getById(input.packId);
+    assert(isDefined(pack), new AppError('Booster pack not found'));
 
-    // Validate ownership and status
-    ensureOwnership(pack, session.userId);
-    ensurePending(pack);
+    assert(
+      pack.isOwnedBy(session.userId),
+      new DomainError('Not authorized to open this pack')
+    );
+    assert(!pack.isOpened, new DomainError('Booster pack already opened'));
 
-    // Add cards to collection
+    pack.open();
     const cardsObtained: Array<{
       blueprintId: string;
       isFoil: boolean;
@@ -72,10 +69,8 @@ export class OpenBoosterPackUseCase
       });
     }
 
-    // Mark pack as opened
-    await this.ctx.boosterPackRepo.markAsOpened(input.packId);
+    await this.ctx.boosterPackRepo.save(pack);
 
-    // Emit event
     await this.ctx.eventEmitter.emit(
       BoosterPackOpenedEvent.EVENT_NAME,
       new BoosterPackOpenedEvent({

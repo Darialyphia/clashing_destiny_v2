@@ -1,6 +1,6 @@
 import type { DatabaseReader } from '../../_generated/server';
 import type { UserId } from '../../users/entities/user.entity';
-import type { BoosterPack, BoosterPackId } from '../entities/booster-pack.entity';
+import type { BoosterPackDoc, BoosterPackId } from '../entities/booster-pack.entity';
 import { BOOSTER_PACK_STATUS } from '../card.constants';
 
 export class BoosterPackReadRepository {
@@ -8,18 +8,18 @@ export class BoosterPackReadRepository {
 
   constructor(private ctx: { db: DatabaseReader }) {}
 
-  async getById(packId: BoosterPackId): Promise<BoosterPack | null> {
+  async getById(packId: BoosterPackId): Promise<BoosterPackDoc | null> {
     return this.ctx.db.get(packId);
   }
 
-  async getByOwnerId(userId: UserId): Promise<BoosterPack[]> {
+  async getByOwnerId(userId: UserId): Promise<BoosterPackDoc[]> {
     return this.ctx.db
       .query('boosterPacks')
       .withIndex('by_owner_id', q => q.eq('ownerId', userId))
       .collect();
   }
 
-  async getPendingByOwnerId(userId: UserId): Promise<BoosterPack[]> {
+  async getPendingByOwnerId(userId: UserId): Promise<BoosterPackDoc[]> {
     return this.ctx.db
       .query('boosterPacks')
       .withIndex('by_owner_id_status', q =>

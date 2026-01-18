@@ -9,6 +9,7 @@ import { GetUnopenedPacksUseCase } from './usecases/getUnopenedPacks.usecase';
 import { PurchaseBoosterPacksUseCase } from './usecases/purchaseBoosterPacks.usecase';
 import { OpenBoosterPackUseCase } from './usecases/openBoosterPack.usecase';
 import type { DependenciesMap } from '../shared/container';
+import { BoosterPackMapper } from './mappers/boosterPack.mapper';
 
 export const queryDependencies = {
   [CardReadRepository.INJECTION_KEY]: { resolver: asClass(CardReadRepository) },
@@ -33,5 +34,6 @@ export const mutationDependencies = {
   [PurchaseBoosterPacksUseCase.INJECTION_KEY]: {
     resolver: asClass(PurchaseBoosterPacksUseCase)
   },
-  [OpenBoosterPackUseCase.INJECTION_KEY]: { resolver: asClass(OpenBoosterPackUseCase) }
+  [OpenBoosterPackUseCase.INJECTION_KEY]: { resolver: asClass(OpenBoosterPackUseCase) },
+  [BoosterPackMapper.INJECTION_KEY]: { resolver: asClass(BoosterPackMapper) }
 } as const satisfies DependenciesMap;

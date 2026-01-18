@@ -37,3 +37,4 @@ export const BOOSTER_PACKS_CATALOG = {
     }
   }
 } as const satisfies Record<string, BoosterPackCatalogEntry>;
+export type PackType = keyof typeof BOOSTER_PACKS_CATALOG;

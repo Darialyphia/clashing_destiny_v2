@@ -1,40 +1,56 @@
+import { assert } from '@game/shared';
 import type { Doc, Id } from '../../_generated/dataModel';
-import type { UserId } from '../../users/entities/user.entity';
-import { AppError } from '../../utils/error';
-import { BOOSTER_PACK_STATUS, type BoosterPackStatus } from '../card.constants';
+import { Entity } from '../../shared/entity';
+import type { User, UserId } from '../../users/entities/user.entity';
+import {
+  BOOSTER_PACK_STATUS,
+  type BoosterPackStatus,
+  type PackType
+} from '../card.constants';
 
 export type BoosterPackId = Id<'boosterPacks'>;
 export type BoosterPackDoc = Doc<'boosterPacks'>;
 
-export interface BoosterPack {
-  _id: BoosterPackId;
-  ownerId: UserId;
-  packType: string;
-  status: BoosterPackStatus;
-  acquiredAt: number;
-  openedAt?: number;
-  content: Array<{
-    blueprintId: string;
-    isFoil: boolean;
-  }>;
-}
-
-export function isPending(pack: BoosterPack): boolean {
-  return pack.status === BOOSTER_PACK_STATUS.PENDING;
-}
-
-export function isOpened(pack: BoosterPack): boolean {
-  return pack.status === BOOSTER_PACK_STATUS.OPENED;
-}
-
-export function ensurePending(pack: BoosterPack): void {
-  if (!isPending(pack)) {
-    throw new AppError('Booster pack has already been opened');
+export class BoosterPack extends Entity<BoosterPackId, BoosterPackDoc> {
+  get packType(): PackType {
+    return this.data.packType;
   }
-}
 
-export function ensureOwnership(pack: BoosterPack, userId: UserId): void {
-  if (pack.ownerId !== userId) {
-    throw new AppError('Not authorized to access this booster pack');
+  get status() {
+    return this.data.status;
+  }
+
+  get ownerId() {
+    return this.data.ownerId;
+  }
+
+  get content() {
+    return this.data.content;
+  }
+
+  get acquiredAt() {
+    return this.data.acquiredAt;
+  }
+
+  get openedAt() {
+    return this.data.openedAt;
+  }
+
+  get isOpened() {
+    return this.data.status === BOOSTER_PACK_STATUS.OPENED;
+  }
+
+  get isPending() {
+    return this.data.status === BOOSTER_PACK_STATUS.PENDING;
+  }
+
+  isOwnedBy(userId: UserId) {
+    return this.data.ownerId === userId;
+  }
+
+  open() {
+    assert(this.isPending, 'Booster pack is already opened');
+    this.data.status = BOOSTER_PACK_STATUS.OPENED;
+    this.data.openedAt = Date.now();
   }
 }
