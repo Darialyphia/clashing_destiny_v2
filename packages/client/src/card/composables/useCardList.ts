@@ -81,7 +81,10 @@ export const provideCardList = () => {
       ? myCollection.value.concat(
           allBlueprints
             .filter(bp => {
-              return !myCollection.value!.some(c => c.blueprintId === bp.id);
+              return (
+                bp.collectable &&
+                !myCollection.value!.some(c => c.blueprintId === bp.id)
+              );
             })
             .map(bp => ({
               id: `unowned-${bp.id}` as CardId,
