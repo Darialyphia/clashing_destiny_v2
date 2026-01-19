@@ -17,6 +17,7 @@ type BoosterPackCatalogEntry = {
   packSize: number;
   packGoldCost: number;
   foilChance: number;
+  enabled: boolean;
   getContents: () => ReturnType<BoosterPack['getContents']>;
 };
 export const BOOSTER_PACKS_CATALOG = {
@@ -27,6 +28,7 @@ export const BOOSTER_PACKS_CATALOG = {
     packSize: 5,
     packGoldCost: 100,
     foilChance: 0.05,
+    enabled: true,
     getContents() {
       return new StandardBoosterPack(cardsBySet[this.set]).getContents({
         packSize: this.packSize,

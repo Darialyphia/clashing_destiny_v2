@@ -31,6 +31,7 @@ import {
   RearrangeCardsContext,
   type RearrangeCardBucket
 } from '../interactions/rearrange-cards.interaction';
+import { ChooseChainEffectContext } from '../interactions/choose-chain-effect';
 
 export type InteractionContext =
   | {
@@ -44,6 +45,10 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'choosing_cards'>;
       ctx: ChoosingCardsContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'choosing_chain_effect'>;
+      ctx: ChooseChainEffectContext;
     }
   | {
       state: BetterExtract<InteractionState, 'playing_card'>;
@@ -76,6 +81,10 @@ export type SerializedInteractionContext =
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
     }
   | {
+      state: Extract<InteractionState, 'choosing_chain_effect'>;
+      ctx: ReturnType<ChooseChainEffectContext['serialize']>;
+    }
+  | {
       state: Extract<InteractionState, 'playing_card'>;
       ctx: ReturnType<PlayCardContext['serialize']>;
     }
@@ -99,6 +108,7 @@ export class GameInteractionSystem
     [INTERACTION_STATES.IDLE]: IdleContext,
     [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
+    [INTERACTION_STATES.CHOOSING_CHAIN_EFFECT]: ChooseChainEffectContext,
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
     [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
@@ -109,6 +119,7 @@ export class GameInteractionSystem
     | IdleContext
     | SelectingCardOnBoardContext
     | ChoosingCardsContext
+    | ChooseChainEffectContext
     | PlayCardContext
     | UseAbilityContext
     | AskQuestionContext
@@ -126,6 +137,16 @@ export class GameInteractionSystem
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
         INTERACTION_STATES.CHOOSING_CARDS
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT
+      ),
+      stateTransition(
+        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATES.IDLE
       ),
       stateTransition(
         INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,

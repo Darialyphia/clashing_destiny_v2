@@ -72,6 +72,7 @@ import { belovedMentor } from './core/neutral/minions/beloved-mentor';
 import { whiteLion } from './core/order/minions/white-lion';
 import { blitzTactics } from './core/order/spells/blitz-tactics';
 import { firstWings } from './core/order/minions/first-wings';
+import { littleAngel } from './core/order/minions/little-angel';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -148,6 +149,7 @@ export const coreSet: CardSet = {
     belovedMentor,
     whiteLion,
     blitzTactics,
-    firstWings
+    firstWings,
+    littleAngel
   ]
 };

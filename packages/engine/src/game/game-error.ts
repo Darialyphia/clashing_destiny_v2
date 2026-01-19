@@ -47,8 +47,20 @@ export class NotEnoughCardsError extends GameError {
   }
 }
 
+export class NotEnoughChoicesError extends GameError {
+  constructor(expected: number, received: number) {
+    super(`Not enough choices selected, expected ${expected}, received ${received}`);
+  }
+}
+
 export class TooManyCardsError extends GameError {
   constructor(expected: number, received: number) {
     super(`Too many cards selected, expected ${expected}, received ${received}`);
+  }
+}
+
+export class TooManyChoicesError extends GameError {
+  constructor(expected: number, received: number) {
+    super(`Too many choices selected, expected ${expected}, received ${received}`);
   }
 }

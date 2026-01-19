@@ -10,8 +10,8 @@ export interface GetUnopenedPacksInput {}
 
 export interface GetUnopenedPacksOutput {
   packs: Array<{
-    packId: BoosterPackId;
-    packType: string;
+    id: BoosterPackId;
+    type: string;
     packName: string;
     acquiredAt: number;
   }>;
@@ -41,8 +41,8 @@ export class GetUnopenedPacksUseCase
         BOOSTER_PACKS_CATALOG[pack.packType as keyof typeof BOOSTER_PACKS_CATALOG];
 
       return {
-        packId: pack._id,
-        packType: pack.packType,
+        id: pack._id,
+        type: pack.packType,
         packName: packConfig?.name ?? 'Unknown Pack',
         acquiredAt: pack.acquiredAt
       };

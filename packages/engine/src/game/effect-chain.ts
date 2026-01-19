@@ -131,6 +131,10 @@ export class EffectChain
     ]);
   }
 
+  get stack() {
+    return [...this.effectStack];
+  }
+
   get size() {
     return this.effectStack.length;
   }
@@ -142,6 +146,10 @@ export class EffectChain
 
   get currentPlayer() {
     return this._currentPlayer;
+  }
+
+  getEffectById(id: string) {
+    return this.effectStack.find(e => e.id === id);
   }
 
   private get passesNeededToResolve() {

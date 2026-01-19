@@ -1,12 +1,8 @@
 import { assert } from '@game/shared';
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
-import type { User, UserId } from '../../users/entities/user.entity';
-import {
-  BOOSTER_PACK_STATUS,
-  type BoosterPackStatus,
-  type PackType
-} from '../card.constants';
+import type { UserId } from '../../users/entities/user.entity';
+import { BOOSTER_PACK_STATUS, type PackType } from '../card.constants';
 
 export type BoosterPackId = Id<'boosterPacks'>;
 export type BoosterPackDoc = Doc<'boosterPacks'>;

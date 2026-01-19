@@ -291,16 +291,12 @@ export class UiController {
       return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
     }
 
-    if (
-      state.interaction.state === INTERACTION_STATES.USING_ABILITY &&
-      state.interaction.ctx.player === this.client.playerId
-    ) {
-      const ability = state.entities[state.interaction.ctx.ability] as AbilityViewModel;
-      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
-    }
-
     if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {
       return 'Select targets';
+    }
+
+    if (state.interaction.state === INTERACTION_STATES.CHOOSING_CHAIN_EFFECT) {
+      return 'Choose an effect in the chain';
     }
 
     if (this.client.state.effectChain) {

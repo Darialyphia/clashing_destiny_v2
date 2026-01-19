@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { useAuthedQuery } from '@/auth/composables/useAuth';
+import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import BoosterPackContent from '@/card/components/BoosterPackContent.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiButton from '@/ui/components/UiButton.vue';
-import { api, GIFT_STATES } from '@game/api';
+import { api, GIFT_STATES, BOOSTER_PACKS_CATALOG } from '@game/api';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
-import { StandardBoosterPack } from '@game/engine/src/card/booster/standard.booster-pack';
-import { coreSet } from '@game/engine/src/card/sets/core.set';
-import type { BoosterPackOptions } from '@game/engine/src/card/booster/booster';
+import { useMe } from '@/auth/composables/useMe';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 
 definePage({
   name: 'ClientHome',
@@ -25,27 +24,32 @@ const unclaimedGiftsCount = computed(() => {
   );
 });
 
-const packs = ref<Array<{ blueprintId: string; isFoil: boolean }[]>>([]);
-const currentPackContent = computed(() => {
-  if (!packs.value.length) return null;
-  return packs.value[0].map(card => ({
-    blueprint: CARDS_DICTIONARY[card.blueprintId],
-    isFoil: card.isFoil
-  }));
-});
-const isOpeningPacks = ref(false);
-const boosterPackFactory = new StandardBoosterPack(coreSet.cards);
-const packOptions: BoosterPackOptions = {
-  packSize: 5,
-  foilChance: 0.05,
-  blueprintWeightModifier: () => 1,
-  rarityWeightModifier: () => 1
-};
+const { data: me } = useMe();
+const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
+  useAuthedQuery(api.cards.unopenedPacks, {});
+const { mutate: buyPack, isLoading: isBuyingPack } = useAuthedMutation(
+  api.cards.purchasePacks
+);
+const { mutate: openPack, isLoading: isOpeningPack } = useAuthedMutation(
+  api.cards.openPack,
+  {
+    onSuccess(data) {
+      latestPackOpened.value = data.cards.map(card => ({
+        blueprint: CARDS_DICTIONARY[card.blueprintId],
+        isFoil: card.isFoil
+      }));
+    }
+  }
+);
+const latestPackOpened = ref<Array<{
+  blueprint: CardBlueprint;
+  isFoil: boolean;
+}> | null>(null);
 </script>
 
 <template>
   <div class="client-home-page">
-    <AuthenticatedHeader v-if="!isOpeningPacks" />
+    <AuthenticatedHeader v-if="!latestPackOpened" />
     <div class="surface gifts-notification" v-if="unclaimedGiftsCount > 0">
       You have some unclaimed gifts waiting for you !
       <UiButton :to="{ name: 'Gifts' }" class="primary-button">
@@ -54,41 +58,56 @@ const packOptions: BoosterPackOptions = {
     </div>
 
     <BoosterPackContent
-      v-if="isOpeningPacks && currentPackContent"
-      :cards="currentPackContent"
+      v-if="latestPackOpened"
+      :cards="latestPackOpened"
       class="h-screen"
     >
       <template #done>
         <FancyButton
           class="primary-button"
           size="lg"
-          :text="
-            packs.length > 1
-              ? `Next Pack (${packs.length - 1} remaining)`
-              : 'Done'
-          "
-          @click="
-            packs.shift();
-            if (packs.length === 0) {
-              isOpeningPacks = false;
-            }
-          "
+          text="Back to home"
+          @click="latestPackOpened = null"
         />
       </template>
     </BoosterPackContent>
 
-    <div class="flex justify-center gap-5 mt-5" v-else>
-      <FancyButton
-        text="Buy Pack"
-        size="lg"
-        @click="packs.push(boosterPackFactory.getContents(packOptions))"
-      />
-      <FancyButton
-        :text="`Open Packs (${packs.length})`"
-        size="lg"
-        :disabled="packs.length === 0"
-        @click="isOpeningPacks = true"
-      />
+    <div v-else-if="me" class="container">
+      Your gold: {{ me.wallet.gold }}
+      <p v-if="isLoadingUnopenedPacks">Loading unopened packs...</p>
+      <p v-else-if="!unopenedPacks.packs.length">You have no pack to open</p>
+      <template v-else>
+        <ul class="flex flex-wrap gap-3">
+          <li
+            v-for="pack in unopenedPacks.packs"
+            :key="pack.id"
+            class="flex gap-4 items-center text-4 my-3 surface"
+          >
+            {{ pack.packName }}
+            <FancyButton
+              text="Open"
+              :disabled="isOpeningPack"
+              @click="openPack({ packId: pack.id })"
+            />
+          </li>
+        </ul>
+      </template>
+
+      <h2>Shop</h2>
+      <div v-for="entry in BOOSTER_PACKS_CATALOG" :key="entry.id" class="my-5">
+        <h3 class="font-bold">{{ entry.name }}</h3>
+        <p>{{ entry.packSize }} cards</p>
+        <p>Price: {{ entry.packGoldCost }} gold</p>
+        <FancyButton
+          :disabled="
+            me.wallet.gold < entry.packGoldCost ||
+            isBuyingPack ||
+            !entry.enabled
+          "
+          text="Buy Pack"
+          @click="buyPack({ packType: entry.id, quantity: 1 })"
+        />
+      </div>
     </div>
   </div>
 </template>

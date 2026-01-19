@@ -34,7 +34,7 @@ export const grantMissing = internalMutationWithContainer({
   }
 });
 
-export const getUnopenedPacks = queryWithContainer({
+export const unopenedPacks = queryWithContainer({
   args: {},
   handler: async ctx => {
     const usecase = ctx.resolve<GetUnopenedPacksUseCase>(
