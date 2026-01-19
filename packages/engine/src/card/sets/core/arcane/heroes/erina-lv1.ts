@@ -45,7 +45,7 @@ export const erinaLv1: HeroBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 2,
   level: 1,
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,
@@ -69,5 +69,3 @@ export const erinaLv1: HeroBlueprint = {
   },
   async onPlay() {}
 };
-
-

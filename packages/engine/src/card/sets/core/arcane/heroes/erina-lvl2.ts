@@ -1,6 +1,5 @@
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
@@ -45,7 +44,7 @@ export const erinaLv2: HeroBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 2,
+  destinyCost: 3,
   level: 2,
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,

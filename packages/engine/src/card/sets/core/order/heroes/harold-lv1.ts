@@ -45,7 +45,7 @@ export const haroldLv1: HeroBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 2,
   level: 1,
   lineage: 'harold',
   speed: CARD_SPEED.SLOW,

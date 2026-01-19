@@ -1,5 +1,3 @@
-import { GAME_EVENTS } from '../../../../../game/game.events';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
@@ -7,7 +5,6 @@ import type { HeroBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
@@ -15,7 +12,6 @@ import {
 } from '../../../../card.enums';
 import { isMinion } from '../../../../card-utils';
 import { HeroCard } from '../../../../entities/hero.entity';
-import type { MinionCard } from '../../../../entities/minion.entity';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { BurstAttackModifier } from '../../../../../modifier/modifiers/burst(attack.modifier';
@@ -56,7 +52,7 @@ export const haroldLv3: HeroBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 3,
+  destinyCost: 4,
   level: 3,
   lineage: 'harold',
   speed: CARD_SPEED.SLOW,

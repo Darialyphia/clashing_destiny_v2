@@ -1,8 +1,6 @@
 import dedent from 'dedent';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { getEmpowerStacks } from '../../../../card-actions-utils';
@@ -57,7 +55,7 @@ export const erinaLv3: HeroBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 3,
+  destinyCost: 4,
   level: 3,
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,
