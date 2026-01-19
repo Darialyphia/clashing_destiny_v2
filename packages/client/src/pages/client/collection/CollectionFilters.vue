@@ -229,7 +229,6 @@ const toggleMinDestinyCostFilter = (cost: number) => {
             <h4 class="filter-title flex gap-3 items-center">
               Include Unowned
               <UiSwitch v-model="includeUnowned" />
-              {{ includeUnowned }}
             </h4>
             <h4 class="filter-title">Faction</h4>
             <div class="faction-filter">

@@ -73,6 +73,7 @@ import { whiteLion } from './core/order/minions/white-lion';
 import { blitzTactics } from './core/order/spells/blitz-tactics';
 import { firstWings } from './core/order/minions/first-wings';
 import { littleAngel } from './core/order/minions/little-angel';
+import { crossCounter } from './core/order/spells/cross-counter';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -150,6 +151,7 @@ export const coreSet: CardSet = {
     whiteLion,
     blitzTactics,
     firstWings,
-    littleAngel
+    littleAngel,
+    crossCounter
   ]
 };

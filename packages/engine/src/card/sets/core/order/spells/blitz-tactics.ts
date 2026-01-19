@@ -8,11 +8,7 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { frontlineSkirmisher } from '../minions/frontline-skirmisher';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
