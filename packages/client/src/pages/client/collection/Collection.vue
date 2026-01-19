@@ -39,10 +39,15 @@ useIntersectionObserver(
 </script>
 
 <template>
-  <Transition mode="out-in" class="h-full overflow-auto fancy-scrollbar">
+  <Transition mode="out-in" class="h-full overflow-hidden fancy-scrollbar">
     <p v-if="isLoading" class="text-center">Loading Collection...</p>
-    <div v-else-if="cards.length">
-      <ul ref="card-list" class="cards fancy-scrollbar" :class="viewMode">
+    <div v-else-if="cards.length" class="h-full">
+      <ul
+        ref="card-list"
+        class="cards fancy-scrollbar h-full overflow-auto"
+        id="collection-cards"
+        :class="viewMode"
+      >
         <li
           v-for="card in cards"
           :key="card.id"

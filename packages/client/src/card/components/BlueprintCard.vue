@@ -5,9 +5,14 @@ import type {
 } from '@game/engine/src/card/card-blueprint';
 import Card from './Card.vue';
 
-const { blueprint, foilOverrides = {} } = defineProps<{
+const {
+  blueprint,
+  foilOverrides = {},
+  isTiltEnabled = true
+} = defineProps<{
   blueprint: CardBlueprint;
   foilOverrides?: Partial<CardBlueprint['art'][string]['foil']>;
+  isTiltEnabled?: boolean;
 }>();
 
 const mergedFoilOptions = computed(() => ({
@@ -57,6 +62,7 @@ const mergedFoilOptions = computed(() => ({
       speed: blueprint.speed,
       faction: blueprint.faction
     }"
+    :is-tilt-enabled="isTiltEnabled"
   />
 </template>
 

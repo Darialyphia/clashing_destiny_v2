@@ -18,6 +18,7 @@ const { card } = defineProps<{
 
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
+  if (card.copiesOwned === 0) return false;
 
   return (
     deckBuilder.value.canAdd({
@@ -33,17 +34,18 @@ const canAddCard = computed(() => {
 });
 
 const isModalOpened = ref(false);
+const root = useTemplateRef('root');
 </script>
 
 <template>
-  <div>
+  <div ref="root">
     <BlueprintCard
       :blueprint="card.card"
       show-stats
       :is-foil="card.isFoil"
       class="collection-card"
       :class="{
-        disabled: isEditingDeck && !canAddCard
+        disabled: card.copiesOwned === 0 || (isEditingDeck && !canAddCard)
       }"
       @click="
         () => {

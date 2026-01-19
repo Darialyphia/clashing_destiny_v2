@@ -6,7 +6,11 @@ import gsap from 'gsap';
 
 export const useCardTilt = (
   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
-  options: { maxAngle: number }
+  options: {
+    maxAngle: number;
+    isEnabled: Ref<boolean>;
+    visiblityRoot?: Ref<HTMLElement | null | undefined>;
+  }
 ) => {
   const x = ref(0);
   const y = ref(0);
@@ -32,11 +36,11 @@ export const useCardTilt = (
   });
 
   const setBoundingRect = () => {
+    if (!options.isEnabled.value) return;
     const el = unrefElement(target);
     if (!el) return;
     boundingRect.value = el.getBoundingClientRect();
   };
-
   onMounted(setBoundingRect);
 
   useEventListener('scroll', throttle(setBoundingRect, 100), {
@@ -80,6 +84,8 @@ export const useCardTilt = (
   });
 
   const onMousemove = (e: MouseEvent) => {
+    if (!options.isEnabled.value) return;
+
     const el = unrefElement(target);
     if (!el) return;
 

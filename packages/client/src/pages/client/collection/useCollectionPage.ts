@@ -51,7 +51,8 @@ export const provideCollectionPage = () => {
     toggleFactionFilter,
     clearFactionFilter,
     manaCostFilter,
-    destinyCostFilter
+    destinyCostFilter,
+    includeUnowned
   } = provideCardList();
 
   const { data: decks, isLoading: isLoadingDecks } = useDecks();
@@ -119,6 +120,7 @@ export const provideCollectionPage = () => {
   const api: CollectionContext = {
     isLoading: computed(() => isLoading.value || isLoadingDecks.value),
     cards,
+    includeUnowned,
     cardPool,
     hasKindFilter,
     toggleKindFilter,

@@ -27,7 +27,8 @@ const {
   isFoil,
   isAnimated = true,
   showText = true,
-  maxTiltAngle = 30
+  maxTiltAngle = 30,
+  isTiltEnabled = true
 } = defineProps<{
   card: {
     id: string;
@@ -79,6 +80,7 @@ const {
   isAnimated?: boolean;
   showText?: boolean;
   maxTiltAngle?: number;
+  isTiltEnabled?: boolean;
 }>();
 
 const rarityBg = computed(() => {
@@ -206,7 +208,8 @@ const costStatus = computed(() => {
 });
 
 const { pointerStyle, angle, onMousemove, onMouseleave } = useCardTilt(root, {
-  maxAngle: maxTiltAngle
+  maxAngle: maxTiltAngle,
+  isEnabled: computed(() => isTiltEnabled && isFoil)
 });
 
 const tintGradient = computed(() => {

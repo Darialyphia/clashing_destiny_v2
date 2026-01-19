@@ -56,7 +56,8 @@ const {
 
 const root = useTemplateRef('card');
 const { pointerStyle } = useCardTilt(root, {
-  maxAngle: 10
+  maxAngle: 10,
+  isEnabled: ref(true)
 });
 
 const artFrameImage = computed(() => {
