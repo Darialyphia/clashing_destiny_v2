@@ -36,6 +36,7 @@ import { isMainDeckCard } from '../../board/board.system';
 import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
+import { LockedModifier } from '../../modifier/modifiers/locked.modifier';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -48,13 +49,11 @@ export type CardInterceptors = {
   destinyCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
-  hasAffinityMatch: Interceptable<boolean>;
   canBeUsedAsDestinyCost: Interceptable<boolean>;
   canBeUsedAsManaCost: Interceptable<boolean>;
   canBeRecollected: Interceptable<boolean>;
   speed: Interceptable<CardSpeed>;
   deckSource: Interceptable<CardDeckSource>;
-  shouldIgnorespellSchoolRequirements: Interceptable<boolean>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
   loyaltyManaCostIncrease: Interceptable<number>;
   loyaltyDestinyCostIncrease: Interceptable<number>;
@@ -66,13 +65,11 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  hasAffinityMatch: new Interceptable(),
   canBeUsedAsDestinyCost: new Interceptable(),
   canBeUsedAsManaCost: new Interceptable(),
   canBeRecollected: new Interceptable(),
   speed: new Interceptable(),
   deckSource: new Interceptable(),
-  shouldIgnorespellSchoolRequirements: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
   loyaltyManaCostIncrease: new Interceptable(),
   loyaltyDestinyCostIncrease: new Interceptable(),
@@ -206,10 +203,6 @@ export abstract class Card<
     return this._isExhausted;
   }
 
-  get shouldIgnorespellSchoolRequirements() {
-    return this.interceptors.shouldIgnorespellSchoolRequirements.getValue(false, {});
-  }
-
   get shouldWakeUpAtTurnStart() {
     return this.interceptors.shouldWakeUpAtTurnStart.getValue(true, {});
   }
@@ -287,7 +280,7 @@ export abstract class Card<
 
   get canPayDestinyCost() {
     const pool = Array.from(this.player.cardManager.discardPile)
-      .filter(card => card.canBeUsedAsDestinyCost)
+      .filter(card => card.canBeUsedAsDestinyCost && !card.modifiers.has(LockedModifier))
       .concat([...this.player.cardManager.destinyZone]);
 
     return pool.length >= this.destinyCost;

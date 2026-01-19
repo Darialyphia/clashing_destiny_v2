@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import {
-  HoverCardRoot,
-  HoverCardTrigger,
-  HoverCardPortal,
-  HoverCardContent
-} from 'reka-ui';
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
 import UiModal from '@/ui/components/UiModal.vue';
 
-const { deckBuilder, isEditingDeck, viewMode } = useCollectionPage();
+const { deckBuilder, isEditingDeck } = useCollectionPage();
 
 const { card } = defineProps<{
   card: {
@@ -21,8 +15,6 @@ const { card } = defineProps<{
     copiesOwned: number;
   };
 }>();
-
-const isPreviewOpened = ref(false);
 
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;

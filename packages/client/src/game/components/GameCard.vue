@@ -310,12 +310,13 @@ const visibleModifiers = gameStateRef(() => {
 .game-card {
   transition:
     filter 0.3s var(--ease-2),
-    transform 0.3s var(--ease-2);
+    transform 0.3s var(--ease-2),
+    rotate 0.3s var(--ease-2);
   position: relative;
 
   &.exhausted {
     filter: grayscale(0.25) brightness(0.8);
-    transform: rotate(5deg);
+    rotate: 5deg;
   }
   &.targetable {
     &::after {
