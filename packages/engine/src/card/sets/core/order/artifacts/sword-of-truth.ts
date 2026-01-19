@@ -48,7 +48,7 @@ export const swordOfTruth: ArtifactBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 1,
+  destinyCost: 2,
   durability: 2,
   speed: CARD_SPEED.SLOW,
   abilities: [

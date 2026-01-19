@@ -9,33 +9,31 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
+import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
+import { SilencedModifier } from '../../../../../modifier/modifiers/silenced.modifier';
+import { MinionCard } from '../../../../entities/minion.entity';
 import { isMinion } from '../../../../card-utils';
-import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
-import { GAME_PHASES } from '../../../../../game/game.enums';
 
-export const secondWings: MinionBlueprint = {
-  id: 'second-wings',
+export const firstWings: MinionBlueprint = {
+  id: 'first-wings',
   kind: CARD_KINDS.MINION,
   collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Second Wings',
+  name: 'First Wings',
   description: dedent`
-    @Honor@.
-    @On Death@: If this was destroyed by combat by a minion, destroy the minion that destroyed it.
+    @Honor@, @Loyalty 1@.
+    @On Attack@: if the attack target is a minion, @Silence@ it.
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.LEGENDARY,
   tags: [],
   art: {
     default: {
       foil: {
         sheen: true,
-        oil: false,
-        gradient: false,
-        lightGradient: false,
-        scanlines: false
+        lightGradient: true
       },
       dimensions: {
         width: 174,
@@ -48,29 +46,21 @@ export const secondWings: MinionBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 6,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
-  maxHp: 2,
+  atk: 4,
+  maxHp: 4,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new HonorModifier(game, card));
     await card.modifiers.add(
-      new OnDeathModifier(game, card, {
+      new OnAttackModifier(game, card, {
         async handler(event) {
-          const phaseCtx = game.gamePhaseSystem.getContext();
-          if (phaseCtx.state !== GAME_PHASES.ATTACK) return;
-          if (!isMinion(event.data.source)) return;
-          if (!event.data.source.isAlive) return;
-
-          if (
-            phaseCtx.ctx.attacker.equals(event.data.source) ||
-            phaseCtx.ctx.target?.equals(event.data.source) ||
-            phaseCtx.ctx.blocker?.equals(event.data.source)
-          ) {
-            await event.data.source.destroy(card);
-          }
+          if (!isMinion(event.data.target)) return;
+          await event.data.target.modifiers.add(
+            new SilencedModifier<MinionCard>(game, event.data.target)
+          );
         }
       })
     );

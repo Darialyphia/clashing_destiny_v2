@@ -58,7 +58,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       label: 'Scry and Empower',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 0,
+      manaCost: 1,
       durabilityCost: 1,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,

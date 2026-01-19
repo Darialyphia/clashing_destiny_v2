@@ -105,6 +105,18 @@ export const testGameBuilder = () => {
             if (blocker) {
               await ctx.declareBlocker(blocker);
             }
+          },
+
+          skipEffectChain: async () => {
+            if (!game.effectChainSystem.currentChain) return;
+
+            const player = game.effectChainSystem.currentChain.currentPlayer;
+            await game.effectChainSystem.pass(player);
+            await game.effectChainSystem.pass(player.opponent);
+          },
+
+          async pass() {
+            await game.turnSystem.pass(game.activePlayer);
           }
         }
       };

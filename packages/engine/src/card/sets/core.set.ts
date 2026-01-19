@@ -48,7 +48,7 @@ import { braveCitizen } from './core/order/minions/brave-citizen';
 import { royalGuard } from './core/order/minions/royal-guard';
 import { duskPurifier } from './core/order/minions/dusk-purifier';
 import { exaltedAngel } from './core/order/minions/exalted-angel';
-import { promisingRecruit } from './core/order/minions/promising-recruit';
+import { promisingRecruit } from './core/neutral/minions/promising-recruit';
 import { blowOfJudgment } from './core/order/spells/blow-of-judgment';
 import { callToHeaven } from './core/order/spells/call-to-heaven';
 import { rebuke } from './core/order/spells/rebuke';
@@ -70,6 +70,8 @@ import { reviseTheStrategy } from './core/neutral/spells/revise-the-strategy';
 import { amuletOfRemembrance } from './core/neutral/artifacts/amulet-of-remembrance';
 import { belovedMentor } from './core/neutral/minions/beloved-mentor';
 import { whiteLion } from './core/order/minions/white-lion';
+import { blitzTactics } from './core/order/spells/blitz-tactics';
+import { firstWings } from './core/order/minions/first-wings';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -144,6 +146,8 @@ export const coreSet: CardSet = {
     reviseTheStrategy,
     amuletOfRemembrance,
     belovedMentor,
-    whiteLion
+    whiteLion,
+    blitzTactics,
+    firstWings
   ]
 };

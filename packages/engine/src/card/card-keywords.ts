@@ -180,6 +180,12 @@ export const KEYWORDS = {
       'Look at the top X cards of your deck, then put any number of them at the bottom of your deck.',
     aliases: [/scry [0-9]+/]
   },
+  SILENCED: {
+    id: 'silenced',
+    name: 'Silenced',
+    description: "All of this card's activated abilities are Sealed.",
+    aliases: ['silence']
+  },
   SEAL: {
     id: 'seal',
     name: 'Seal',

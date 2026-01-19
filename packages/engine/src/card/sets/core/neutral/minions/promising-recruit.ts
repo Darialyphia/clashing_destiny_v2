@@ -18,7 +18,7 @@ export const promisingRecruit: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Promising Recruit',
   description: '@Lingering Destiny@',
-  faction: FACTIONS.ORDER,
+  faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.COMMON,
   tags: [],
   art: {

@@ -18,7 +18,7 @@ export const callToHeaven: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Call to Heaven',
   description: dedent`
-    Return all minions with who cost @[mana] 2@ or less to their owner's hand. Draw a card.
+    Return all minions with a cost of @[mana] 2@ or less to their owner's hand. Draw a card.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.RARE,
@@ -43,7 +43,7 @@ export const callToHeaven: SpellBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 4,
+  manaCost: 3,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay() {

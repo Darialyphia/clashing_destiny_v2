@@ -21,7 +21,7 @@ export const tailOfSimurgh: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Tail of Simurgh',
   description: dedent`
-    Select up to 2 enemy minions and return them to their owner's hand. If you're @Empowered@, return them to the top of the deck instead.
+    Return an enemy minion to its owner's hand. If you're @Empowered@, place it on the top of the deck instead.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.TOKEN,
@@ -45,7 +45,7 @@ export const tailOfSimurgh: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
@@ -60,8 +60,8 @@ export const tailOfSimurgh: SpellBlueprint = {
       player: card.player,
       label: 'Select up to 2 enemy minions',
       choices: enemyMinions,
-      minChoiceCount: 0,
-      maxChoiceCount: Math.min(2, enemyMinions.length)
+      minChoiceCount: 1,
+      maxChoiceCount: 1
     });
   },
   async onInit() {},

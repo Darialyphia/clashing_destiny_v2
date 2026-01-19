@@ -8,6 +8,7 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { ToughModifier } from '../../../../../modifier/modifiers/tough.modifier';
+import { HinderedModifier } from '../../../../../modifier/modifiers/hindered.modifier';
 
 export const royalGuard: MinionBlueprint = {
   id: 'royal-guard',
@@ -17,7 +18,7 @@ export const royalGuard: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Royal Guard',
-  description: '@Tough 1@',
+  description: '@Hindered 1@, @Tough 1@',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.RARE,
   tags: [],
@@ -41,13 +42,14 @@ export const royalGuard: MinionBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 4,
+  manaCost: 5,
   speed: CARD_SPEED.SLOW,
-  atk: 3,
+  atk: 4,
   maxHp: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new HinderedModifier(game, card, 1));
     await card.modifiers.add(new ToughModifier(game, card, { amount: 1 }));
   },
   async onPlay() {}

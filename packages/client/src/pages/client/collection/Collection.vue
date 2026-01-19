@@ -39,7 +39,7 @@ useIntersectionObserver(
 </script>
 
 <template>
-  <Transition mode="out-in">
+  <Transition mode="out-in" class="h-full overflow-auto fancy-scrollbar">
     <p v-if="isLoading" class="text-center">Loading Collection...</p>
     <div v-else-if="cards.length">
       <ul ref="card-list" class="cards fancy-scrollbar" :class="viewMode">

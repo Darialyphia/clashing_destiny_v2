@@ -22,8 +22,8 @@ export const lightningBolt: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Lightning Bolt',
   description: dedent`
-  Deal 2 damage to an enemy minion and exhaust it..
-`,
+  Deal 2 damage to an enemy minion and exhaust it.
+  `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],

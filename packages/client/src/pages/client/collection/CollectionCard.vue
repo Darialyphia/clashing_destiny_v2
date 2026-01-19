@@ -9,6 +9,7 @@ import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
+import UiModal from '@/ui/components/UiModal.vue';
 
 const { deckBuilder, isEditingDeck, viewMode } = useCollectionPage();
 
@@ -38,62 +39,50 @@ const canAddCard = computed(() => {
     card.copiesOwned > (deckBuilder.value.getCard(card.card.id)?.copies ?? 0)
   );
 });
+
+const isModalOpened = ref(false);
 </script>
 
 <template>
-  <HoverCardRoot
-    :open-delay="250"
-    :close-delay="0"
-    :open="viewMode === 'expanded' ? false : isPreviewOpened"
-    @update:open="isPreviewOpened = $event"
-  >
-    <HoverCardTrigger class="inspectable-card" v-bind="$attrs">
-      <div>
-        <BlueprintCard
-          :blueprint="card.card"
-          show-stats
-          :is-foil="card.isFoil"
-          class="collection-card"
-          :class="{
-            disabled: isEditingDeck && !canAddCard
-          }"
-          @click="
-            () => {
-              if (!isEditingDeck) return;
-              if (!canAddCard) return;
+  <div>
+    <BlueprintCard
+      :blueprint="card.card"
+      show-stats
+      :is-foil="card.isFoil"
+      class="collection-card"
+      :class="{
+        disabled: isEditingDeck && !canAddCard
+      }"
+      @click="
+        () => {
+          if (!isEditingDeck) return;
+          if (!canAddCard) return;
 
-              deckBuilder.addCard({
-                blueprintId: card.card.id,
-                meta: {
-                  cardId: card.id as CardId,
-                  isFoil: card.isFoil
-                }
-              });
+          deckBuilder.addCard({
+            blueprintId: card.card.id,
+            meta: {
+              cardId: card.id as CardId,
+              isFoil: card.isFoil
             }
-          "
-          @contextmenu.prevent="
-            () => {
-              if (!isEditingDeck) return;
-              if (deckBuilder.hasCard(card.id)) {
-                deckBuilder.removeCard(card.id);
-              }
-            }
-          "
-        />
+          });
+        }
+      "
+      @contextmenu.prevent="isModalOpened = true"
+    />
 
-        <div
-          class="text-center text-xs text-yellow-50/90 select-none pointer-events-none py-2"
-        >
-          X{{ card.copiesOwned }}
-        </div>
-      </div>
-    </HoverCardTrigger>
-    <HoverCardPortal>
-      <HoverCardContent v-if="viewMode === 'compact'" side="bottom">
-        <BlueprintCard :blueprint="card.card" />
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
+    <UiModal
+      v-model:is-opened="isModalOpened"
+      :title="card.card.name"
+      :description="card.card.description"
+    >
+      <BlueprintCard :blueprint="card.card" show-stats :is-foil="card.isFoil" />
+    </UiModal>
+    <div
+      class="text-center text-xs text-yellow-50/90 select-none pointer-events-none py-2"
+    >
+      X{{ card.copiesOwned }}
+    </div>
+  </div>
 </template>
 
 <style scoped lang="postcss">

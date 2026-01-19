@@ -205,7 +205,10 @@ export class MinionCard extends Card<
       !isDefined(phaseCtx.ctx.blocker);
 
     const base =
-      isCorrectPhase && !this._isExhausted && attacker.canBeBlocked(this, target);
+      isCorrectPhase &&
+      !this._isExhausted &&
+      attacker.canBeBlocked(this, target) &&
+      target.canBeDefended(attacker);
 
     return this.interceptors.canBlock.getValue(base, {
       attacker,

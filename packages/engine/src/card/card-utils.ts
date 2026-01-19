@@ -347,6 +347,7 @@ export const equipWeapon = (options: {
   manaCost: number;
   speed: CardSpeed;
   modifierType: string;
+  onResolve?: (game: Game, card: ArtifactCard) => Promise<void>;
 }) => {
   return {
     id: 'equip-weapon-ability',
@@ -365,6 +366,7 @@ export const equipWeapon = (options: {
           mixins: [new UntilEndOfTurnModifierMixin(game)]
         })
       );
+      await options.onResolve?.(game, card);
     }
   };
 };
