@@ -10,10 +10,13 @@ import Arrow from './Arrow.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import { EFFECT_TYPE } from '@game/engine/src/game/game.enums';
+import {
+  EFFECT_TYPE,
+  INTERACTION_STATES
+} from '@game/engine/src/game/game.enums';
 import ExplainerMessage from './ExplainerMessage.vue';
 
-const { playerId } = useGameClient();
+const { playerId, client } = useGameClient();
 const ui = useGameUi();
 const state = useGameState();
 
@@ -84,13 +87,33 @@ const stack = computed(() => {
     }) ?? []
   );
 });
+
+const isSelectable = (effectId: string) => {
+  return (
+    state.value.interaction.state ===
+      INTERACTION_STATES.CHOOSING_CHAIN_EFFECT &&
+    state.value.interaction.ctx.elligibleEffectsIds.includes(effectId)
+  );
+};
+const onEffectClick = (effectId: string) => {
+  if (isSelectable(effectId)) {
+    client.value.chooseChainEffect(effectId);
+  }
+};
 </script>
 
 <template>
   <div class="effect-chain" id="effect-chain">
     <div class="effect-wrapper" v-for="(effect, index) in stack" :key="index">
       <InspectableCard :card-id="effect.source.id">
-        <div class="effect" :class="effect.playerType">
+        <div
+          class="effect"
+          :class="[
+            effect.playerType,
+            { 'is-selectable': isSelectable(effect.id) }
+          ]"
+          @click="onEffectClick(effect.id)"
+        >
           <GameCard
             :card-id="effect.source.id"
             :is-interactive="false"
@@ -165,6 +188,13 @@ const stack = computed(() => {
   transform-style: preserve-3d;
   transition: all 0.5s var(--ease-3);
   transition-delay: 1s;
+
+  &.is-selectable::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: hsl(200 100% 50% / 0.25);
+  }
 }
 
 .effect-type {

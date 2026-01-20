@@ -9,9 +9,6 @@ import {
   RARITIES
 } from '../../../../card.enums';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
-import { singleMinionTargetRules } from '../../../../card-utils';
 
 export const littleAngel: MinionBlueprint = {
   id: 'little-angel',

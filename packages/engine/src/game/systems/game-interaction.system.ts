@@ -32,6 +32,7 @@ import {
   type RearrangeCardBucket
 } from '../interactions/rearrange-cards.interaction';
 import { ChooseChainEffectContext } from '../interactions/choose-chain-effect';
+import type { Effect } from '../effect-chain';
 
 export type InteractionContext =
   | {
@@ -283,6 +284,19 @@ export class GameInteractionSystem
       options
     );
     return this.game.inputSystem.pause<T[]>();
+  }
+
+  async chooseChainEffect(options: {
+    player: Player;
+    isElligible: (effect: Effect) => boolean;
+    label: string;
+  }) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CHAIN_EFFECT].create(
+      this.game,
+      options
+    );
+    return this.game.inputSystem.pause<Effect>();
   }
 
   async rearrangeCards<
