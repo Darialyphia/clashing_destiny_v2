@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type {
-  AbilityBlueprint,
-  CardBlueprint
-} from '@game/engine/src/card/card-blueprint';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import { formatAbilityText } from '@/utils/formatters';
 import Card from './Card.vue';
 
 const {
@@ -54,10 +52,7 @@ const mergedFoilOptions = computed(() => ({
       spellpower: (blueprint as any).spellPower,
       level: (blueprint as any).level,
       durability: (blueprint as any).durability,
-      abilities: (blueprint as any).abilities?.map(
-        (a: AbilityBlueprint<any, any>) =>
-          `@[${a.speed}]@${a.shouldExhaust ? ' @[exhaust]@' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}: ${(a as any).durabilityCost ? `Lose ${(a as any).durabilityCost} durability.` : ''} ${a.description}`
-      ),
+      abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
       speed: blueprint.speed,
       faction: blueprint.faction

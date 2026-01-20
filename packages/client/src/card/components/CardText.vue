@@ -216,7 +216,7 @@ const tokens = computed<Token[]>(() => {
 <style scoped lang="postcss">
 .card-text {
   white-space: pre-wrap;
-  color: var(--card-text-color, black);
+  color: var(--card-text-color, var(--card-text-color, black));
   line-height: 1.2;
 }
 
