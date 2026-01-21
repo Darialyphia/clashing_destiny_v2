@@ -10,7 +10,7 @@ export const BOOSTER_PACK_STATUS = {
 } as const;
 export type BoosterPackStatus = Values<typeof BOOSTER_PACK_STATUS>;
 
-type BoosterPackCatalogEntry = {
+export type BoosterPackCatalogEntry = {
   id: string;
   set: CardSetId;
   name: string;

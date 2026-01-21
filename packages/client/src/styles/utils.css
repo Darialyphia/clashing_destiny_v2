@@ -88,8 +88,8 @@ button:is(.primary-button, .error-button) {
 }
 
 .primary-button {
-  --ui-button-bg: #9f938f;
-  --ui-button-hover-bg: #736357;
+  --ui-button-bg: #d7ad42;
+  --ui-button-hover-bg: #bb8225;
 
   --ui-button-color: var(--text-on-primary);
 }
