@@ -8,7 +8,11 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import { api, GIFT_STATES } from '@game/api';
 import PlayerBadge from './player/components/PlayerBadge.vue';
 import GodlIcon from './player/components/GodlIcon.vue';
+import { type RouterLinkProps } from 'vue-router';
 
+const { backTo = { name: 'ClientHome' } } = defineProps<{
+  backTo?: RouterLinkProps['to'];
+}>();
 const { mutate: logout } = useLogout();
 const { data: me } = useMe();
 const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
@@ -34,7 +38,7 @@ const router = useRouter();
       v-if="router.currentRoute.value.name !== 'ClientHome'"
       text="Back"
       size="md"
-      @click="router.go(-1)"
+      :to="backTo"
     />
     <div class="welcome-section">
       <div v-if="me?.currentJoinedMatchmaking" class="matchmaking-status">
@@ -214,14 +218,8 @@ li.hot {
   align-items: center;
   gap: var(--size-2);
   font-weight: var(--font-weight-6);
-  font-size: var(--font-size-4);
   padding: var(--size-2) var(--size-3);
-  border-radius: var(--radius-3);
-  background: radial-gradient(
-    circle at top left,
-    hsl(230 20% 15%),
-    hsl(230 50% 8%) 75%
-  );
-  border: 2px solid #9f938f;
+  border-left: 1px solid #9f938f;
+  border-right: 1px solid #9f938f;
 }
 </style>

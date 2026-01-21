@@ -27,7 +27,7 @@ export const hadranielGodsMajesty: MinionBlueprint = {
   description: dedent`
     @Pride 2@, @Intimidate 2@.
 
-    @On Enter@: negate target ability activation from a Minion, Artifact or Sigil, then @Silence@ it.
+    @On Enter@: Negate target ability activation from a Minion, Artifact or Sigil, then @Silence@ it.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.TOKEN,
@@ -52,7 +52,7 @@ export const hadranielGodsMajesty: MinionBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 3,
+  destinyCost: 4,
   speed: CARD_SPEED.FAST,
   atk: 2,
   maxHp: 4,

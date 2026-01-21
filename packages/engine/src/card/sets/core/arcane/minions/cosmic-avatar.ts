@@ -27,7 +27,7 @@ export const cosmicAvatar: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Cosmic Avatar',
   description: dedent`
-    @Pride 3@, @Hindered 2@.
+    @Pride 3@.
     Depending on your hero's @Empower@ stacks:
     1: @Preemptive Strike@.
     2-3: @Overwhelm@ and +1 Atk.
@@ -54,7 +54,7 @@ export const cosmicAvatar: MinionBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  destinyCost: 4,
+  destinyCost: 5,
   speed: CARD_SPEED.SLOW,
   atk: 4,
   maxHp: 4,
@@ -62,7 +62,6 @@ export const cosmicAvatar: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new PrideModifier(game, card, 3));
-    await card.modifiers.add(new HinderedModifier(game, card, 2));
 
     await card.modifiers.add(
       new PreemptiveStrikeModifier(game, card, {

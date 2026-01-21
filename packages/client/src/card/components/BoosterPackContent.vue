@@ -113,10 +113,12 @@ const cardsWithParticles = computed(() => {
         </Transition>
         <Transition name="done">
           <div
-            v-if="dealingStatus === 'done' && allRevealed"
+            v-if="
+              !cardStyles.length || (dealingStatus === 'done' && allRevealed)
+            "
             class="absolute bottom-7"
           >
-            <slot name="done"></slot>
+            <slot name="done" :dealing-status="dealingStatus"></slot>
           </div>
         </Transition>
       </div>

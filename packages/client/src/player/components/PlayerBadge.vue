@@ -34,8 +34,8 @@ const { name } = defineProps<{
   &:after {
     background: linear-gradient(
       var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
+      var(--_top-color) 70%,
+      var(--_bottom-color) 70%
     );
     line-height: 1.2;
     background-clip: text;
@@ -44,7 +44,7 @@ const { name } = defineProps<{
     translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
   }
   &:before {
-    -webkit-text-stroke: calc(2px * var(--pixel-scale))
+    -webkit-text-stroke: calc(1px * var(--pixel-scale))
       var(--dual-text-stroke, black);
     z-index: -1;
     translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
@@ -52,21 +52,18 @@ const { name } = defineProps<{
 }
 
 .user-badge {
+  z-index: 0;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: var(--size-2) var(--size-4);
+  padding-left: var(--size-3);
   background: radial-gradient(
     circle at top left,
-    hsl(230 20% 15%),
-    hsl(230 50% 8%) 75%
+    hsl(210 20% 15%),
+    hsl(210 50% 8%) 75%
   );
-  border: 2px solid #9f938f;
-  border-radius: 48px;
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 0 20px rgba(99, 102, 241, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid #9f938f;
+  border-radius: var(--radius-pill);
   position: relative;
   overflow: hidden;
 }
@@ -89,5 +86,6 @@ const { name } = defineProps<{
     0 0 15px rgba(99, 102, 241, 0.3),
     inset 0 -2px 4px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
+  transform: translateX(2px);
 }
 </style>
