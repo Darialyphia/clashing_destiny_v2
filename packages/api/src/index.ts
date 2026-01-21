@@ -9,7 +9,9 @@ export type { CardId } from './convex/card/entities/card.entity';
 export type { BoosterPackId } from './convex/card/entities/booster-pack.entity';
 export {
   BOOSTER_PACKS_CATALOG,
-  type BoosterPackCatalogEntry
+  type BoosterPackCatalogEntry,
+  CRAFTING_COST_PER_RARITY,
+  DECRAFTING_REWARD_PER_RARITY
 } from './convex/card/card.constants';
 export type { MatchmakingId } from './convex/matchmaking/entities/matchmaking.entity';
 export type { UserId } from './convex/users/entities/user.entity';

@@ -9,6 +9,7 @@ export class WalletMapper {
       _id: wallet.id,
       userId: wallet.userId,
       gold: wallet.gold,
+      craftingShards: wallet.craftingShards,
       createdAt: wallet.createdAt,
       updatedAt: wallet.updatedAt
     };

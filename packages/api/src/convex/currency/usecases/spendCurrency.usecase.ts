@@ -56,7 +56,7 @@ export class SpendCurrencyUseCase
     assert(wallet.canAfford(input.amount), new DomainError('Insufficient funds'));
 
     const balanceBefore = wallet.gold;
-    wallet.spend(input.amount);
+    wallet.spend(input.amount, input.currencyType);
     await this.ctx.walletRepo.save(wallet);
 
     const balanceAfter = balanceBefore - input.amount;

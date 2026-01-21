@@ -1,4 +1,9 @@
-import { CARD_SETS, type CardSetId } from '@game/engine/src/card/card.enums';
+import {
+  CARD_SETS,
+  RARITIES,
+  type CardSetId,
+  type Rarity
+} from '@game/engine/src/card/card.enums';
 import type { BoosterPack } from '@game/engine/src/card/booster/booster';
 import { StandardBoosterPack } from '@game/engine/src/card/booster/standard.booster-pack';
 import type { Values } from '@game/shared';
@@ -40,3 +45,21 @@ export const BOOSTER_PACKS_CATALOG = {
   }
 } as const satisfies Record<string, BoosterPackCatalogEntry>;
 export type PackType = keyof typeof BOOSTER_PACKS_CATALOG;
+
+export const CRAFTING_COST_PER_RARITY: Record<Rarity, number> = {
+  [RARITIES.COMMON]: 20,
+  [RARITIES.RARE]: 50,
+  [RARITIES.EPIC]: 200,
+  [RARITIES.LEGENDARY]: 500,
+  [RARITIES.BASIC]: 0,
+  [RARITIES.TOKEN]: 0
+};
+
+export const DECRAFTING_REWARD_PER_RARITY: Record<Rarity, number> = {
+  [RARITIES.COMMON]: 10,
+  [RARITIES.RARE]: 25,
+  [RARITIES.EPIC]: 100,
+  [RARITIES.LEGENDARY]: 250,
+  [RARITIES.BASIC]: 0,
+  [RARITIES.TOKEN]: 0
+};
