@@ -8,7 +8,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
 import { IntimidateModifier } from '../../../../../modifier/modifiers/intimidate.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
@@ -20,7 +19,7 @@ import { SilencedModifier } from '../../../../../modifier/modifiers/silenced.mod
 export const hadranielGodsMajesty: MinionBlueprint = {
   id: 'hadraniel-gods-majesty',
   kind: CARD_KINDS.MINION,
-  collectable: false,
+  collectable: true,
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,

@@ -6,6 +6,8 @@ import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import MatchmakingTimer from './matchmaking/components/MatchmakingTimer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { api, GIFT_STATES } from '@game/api';
+import PlayerBadge from './player/components/PlayerBadge.vue';
+import GodlIcon from './player/components/GodlIcon.vue';
 
 const { mutate: logout } = useLogout();
 const { data: me } = useMe();
@@ -95,6 +97,12 @@ const router = useRouter();
         </li>
       </ul>
     </nav>
+
+    <div class="currencies" v-if="me">
+      <GodlIcon />
+      {{ me.wallet.gold }}
+    </div>
+    <PlayerBadge v-if="me" :name="me.username" />
   </header>
 </template>
 
@@ -198,5 +206,22 @@ li.hot {
   background-color: var(--red-8);
   color: white;
   border-radius: var(--radius-round);
+}
+
+.currencies {
+  --pixel-scale: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  font-weight: var(--font-weight-6);
+  font-size: var(--font-size-4);
+  padding: var(--size-2) var(--size-3);
+  border-radius: var(--radius-3);
+  background: radial-gradient(
+    circle at top left,
+    hsl(230 20% 15%),
+    hsl(230 50% 8%) 75%
+  );
+  border: 2px solid #9f938f;
 }
 </style>

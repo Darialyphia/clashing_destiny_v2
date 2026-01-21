@@ -4,7 +4,7 @@ import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import BoosterPackContent from '@/card/components/BoosterPackContent.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiButton from '@/ui/components/UiButton.vue';
-import { api, GIFT_STATES, BOOSTER_PACKS_CATALOG } from '@game/api';
+import { api, GIFT_STATES } from '@game/api';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { useMe } from '@/auth/composables/useMe';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
@@ -27,9 +27,7 @@ const unclaimedGiftsCount = computed(() => {
 const { data: me } = useMe();
 const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
   useAuthedQuery(api.cards.unopenedPacks, {});
-const { mutate: buyPack, isLoading: isBuyingPack } = useAuthedMutation(
-  api.cards.purchasePacks
-);
+
 const { mutate: openPack, isLoading: isOpeningPack } = useAuthedMutation(
   api.cards.openPack,
   {
@@ -73,7 +71,6 @@ const latestPackOpened = ref<Array<{
     </BoosterPackContent>
 
     <div v-else-if="me" class="container">
-      Your gold: {{ me.wallet.gold }}
       <p v-if="isLoadingUnopenedPacks">Loading unopened packs...</p>
       <p v-else-if="!unopenedPacks.packs.length">You have no pack to open</p>
       <template v-else>
@@ -92,22 +89,6 @@ const latestPackOpened = ref<Array<{
           </li>
         </ul>
       </template>
-
-      <h2>Shop</h2>
-      <div v-for="entry in BOOSTER_PACKS_CATALOG" :key="entry.id" class="my-5">
-        <h3 class="font-bold">{{ entry.name }}</h3>
-        <p>{{ entry.packSize }} cards</p>
-        <p>Price: {{ entry.packGoldCost }} gold</p>
-        <FancyButton
-          :disabled="
-            me.wallet.gold < entry.packGoldCost ||
-            isBuyingPack ||
-            !entry.enabled
-          "
-          text="Buy Pack"
-          @click="buyPack({ packType: entry.id, quantity: 1 })"
-        />
-      </div>
     </div>
   </div>
 </template>
