@@ -39,6 +39,7 @@ export interface GetSessionUserput {
   currentLobby: Nullable<{ id: LobbyId; name: string }>;
   wallet: {
     gold: number;
+    craftingShards: number;
   };
 }
 

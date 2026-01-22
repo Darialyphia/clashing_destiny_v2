@@ -10,6 +10,7 @@ import PlayerBadge from './player/components/PlayerBadge.vue';
 import GodlIcon from './player/components/GodlIcon.vue';
 import { type RouterLinkProps } from 'vue-router';
 import { useLeaveLobby } from './lobby/composables/useLobby';
+import CraftignShardIcon from './player/components/CraftignShardIcon.vue';
 
 const { backTo = { name: 'ClientHome' } } = defineProps<{
   backTo?: RouterLinkProps['to'];
@@ -104,6 +105,8 @@ const router = useRouter();
     <div class="currencies" v-if="me">
       <GodlIcon />
       {{ me.wallet.gold }}
+      <CraftignShardIcon />
+      {{ me.wallet.craftingShards }}
     </div>
     <PlayerBadge v-if="me" :name="me.username" />
   </header>
@@ -163,7 +166,6 @@ const router = useRouter();
 
 li {
   border-radius: var(--radius-2);
-  font-weight: var(--font-weight-5);
   display: grid;
 }
 
@@ -216,7 +218,7 @@ li.hot {
   display: flex;
   align-items: center;
   gap: var(--size-2);
-  font-weight: var(--font-weight-6);
+  font-weight: var(--font-weight-3);
   padding: var(--size-2) var(--size-3);
   border-left: 1px solid #9f938f;
   border-right: 1px solid #9f938f;
