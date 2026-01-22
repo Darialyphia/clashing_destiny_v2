@@ -144,7 +144,7 @@
 
   --pixel-scale: 2;
 
-  --rarity-common: var(--gray-12);
+  --rarity-common: var(--gray-1);
   --rarity-rare: var(--blue-4);
   --rarity-epic: var(--purple-4);
   --rarity-legendary: var(--orange-4);

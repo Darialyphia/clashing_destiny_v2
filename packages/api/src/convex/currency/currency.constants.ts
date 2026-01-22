@@ -8,7 +8,8 @@ export const CURRENCY_SOURCES = {
   ADMIN_GRANT: 'admin_grant',
   SPEND: 'spend',
   BOOSTER_PACK_PURCHASE: 'booster_pack_purchase',
-  DECRAFTING: 'decrafting'
+  DECRAFTING: 'decrafting',
+  CRAFTING: 'crafting'
 } as const;
 
 export type CurrencySource = (typeof CURRENCY_SOURCES)[keyof typeof CURRENCY_SOURCES];

@@ -80,7 +80,7 @@ export const openPack = mutationWithContainer({
   }
 });
 
-export const craftCard = mutationWithContainer({
+export const craft = mutationWithContainer({
   args: {
     blueprintId: v.string(),
     isFoil: v.boolean()
@@ -95,7 +95,7 @@ export const craftCard = mutationWithContainer({
   }
 });
 
-export const decraftCard = mutationWithContainer({
+export const decraft = mutationWithContainer({
   args: {
     cardId: v.id('cards'),
     amount: v.number()

@@ -39,10 +39,6 @@ export class AwardCurrencyUseCase
       throw new AppError('Award amount must be positive');
     }
 
-    if (input.currencyType !== CURRENCY_TYPES.GOLD) {
-      throw new AppError(`Unsupported currency type: ${input.currencyType}`);
-    }
-
     const wallet = await this.ctx.walletRepo.getOrCreate(input.userId);
     const balanceBefore = wallet.gold;
     wallet.grant(input.amount, input.currencyType);

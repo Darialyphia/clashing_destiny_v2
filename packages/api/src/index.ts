@@ -11,7 +11,9 @@ export {
   BOOSTER_PACKS_CATALOG,
   type BoosterPackCatalogEntry,
   CRAFTING_COST_PER_RARITY,
-  DECRAFTING_REWARD_PER_RARITY
+  DECRAFTING_REWARD_PER_RARITY,
+  FOIL_DECRAFTING_REWARD_MULTIPLIER,
+  FOIL_CRAFTING_COST_MULTIPLIER
 } from './convex/card/card.constants';
 export type { MatchmakingId } from './convex/matchmaking/entities/matchmaking.entity';
 export type { UserId } from './convex/users/entities/user.entity';
