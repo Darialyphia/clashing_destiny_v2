@@ -2,13 +2,14 @@
 import { useLogout } from './auth/composables/useLogout';
 import { useMe } from './auth/composables/useMe';
 import { useLeaveMatchmaking } from '@/matchmaking/composables';
-import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
+import { useAuthedQuery } from '@/auth/composables/useAuth';
 import MatchmakingTimer from './matchmaking/components/MatchmakingTimer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { api, GIFT_STATES } from '@game/api';
 import PlayerBadge from './player/components/PlayerBadge.vue';
 import GodlIcon from './player/components/GodlIcon.vue';
 import { type RouterLinkProps } from 'vue-router';
+import { useLeaveLobby } from './lobby/composables/useLobby';
 
 const { backTo = { name: 'ClientHome' } } = defineProps<{
   backTo?: RouterLinkProps['to'];
@@ -17,9 +18,7 @@ const { mutate: logout } = useLogout();
 const { data: me } = useMe();
 const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
   useLeaveMatchmaking();
-const { mutate: leaveLobby, isLoading: isLeavingLobby } = useAuthedMutation(
-  api.lobbies.leave
-);
+const { mutate: leaveLobby, isLoading: isLeavingLobby } = useLeaveLobby();
 
 const { data: gifts } = useAuthedQuery(api.gifts.list, {});
 

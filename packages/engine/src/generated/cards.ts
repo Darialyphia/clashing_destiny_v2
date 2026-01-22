@@ -3,7 +3,7 @@
    * This file should be used in the api package  to reference card ids
    *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
    */
-import type { Rarity } from '../card/card.enums';
+import type { Rarity, CardDeckSource } from '../card/card.enums';
 export const cards = {
 "mana-spark": "mana-spark",
 "spirit-of-arcane": "spirit-of-arcane",
@@ -157,388 +157,464 @@ export const collectableCards = {
 "seraph-of-liberation": "seraph-of-liberation"
 } as const;
 
-type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
+type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
 export const cardsBySet: Record<string, CardSet> = {
 "CORE": [
   {
     "id": "mana-spark",
     "collectable": false,
-    "rarity": "token"
+    "rarity": "token",
+    "deckSource": "mainDeck"
   },
   {
     "id": "spirit-of-arcane",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "erina-council-mage",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "erina-aether-scholar",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "erina-arcane-weaver",
     "collectable": true,
-    "rarity": "legendary"
+    "rarity": "legendary",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "splitting-beam",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "wing-of-simurgh",
     "collectable": false,
-    "rarity": "token"
+    "rarity": "token",
+    "deckSource": "mainDeck"
   },
   {
     "id": "tail-of-simurgh",
     "collectable": false,
-    "rarity": "token"
+    "rarity": "token",
+    "deckSource": "mainDeck"
   },
   {
     "id": "archsage-of-moonring",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "mana-looter",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "magic-channeler",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "astral-explorer",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "cosmic-divinator",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "mana-fueled-golem",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "amplify-magic",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "thirst-for-knowledge",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "little-witch",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "comet",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "astral-soldier",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "magic-missile",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "wizards-insight",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "lightning-bolt",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "power-overwhelming",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "galactic-explosion",
     "collectable": true,
-    "rarity": "legendary"
+    "rarity": "legendary",
+    "deckSource": "mainDeck"
   },
   {
     "id": "arcane-conduit",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "sigil-of-wisdom",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "mana-shield",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "time-bomb",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "spellblade-duelist",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "mana-wisp",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "quirky-bookworm",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "orb-of-constellations",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "simurgh",
     "collectable": false,
-    "rarity": "token"
+    "rarity": "token",
+    "deckSource": "mainDeck"
   },
   {
     "id": "sigil-of-simurgh",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "jeweller",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "plotting-consellor",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "replenish-energy",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "frost-nova",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "ray-of-frost",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "book-of-knowledge",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "starseeker",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "cosmic-avatar",
     "collectable": true,
-    "rarity": "legendary"
+    "rarity": "legendary",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "impromptu-challenger",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "devoted-nurse",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "brave-citizen",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "royal-guard",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "dusk-purifier",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "exalted-angel",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "promising-recruit",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "blow-of-judgment",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "call-to-heaven",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "rebuke",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "angel-wings",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "protect-the-holy-spire",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "wandering-paladin",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "stalwart-vanguard",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "harold-knight-of-prophecy",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "harold-vowed-crusader",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "harold-scended-seraph",
     "collectable": true,
-    "rarity": "legendary"
+    "rarity": "legendary",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "spirit-of-order",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "mercy-of-dawn",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "second-wings",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "honorable-crown",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "sword-of-truth",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "frontline-skirmisher",
     "collectable": false,
-    "rarity": "token"
+    "rarity": "token",
+    "deckSource": "mainDeck"
   },
   {
     "id": "dawn-assault",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "revise-the-strategy",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "amulet-of-remembrance",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "beloved-mentor",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "deckSource": "mainDeck"
   },
   {
     "id": "white-lion",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   },
   {
     "id": "blitz-tactics",
     "collectable": true,
-    "rarity": "legendary"
+    "rarity": "legendary",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "first-wings",
     "collectable": true,
-    "rarity": "legendary"
+    "rarity": "legendary",
+    "deckSource": "mainDeck"
   },
   {
     "id": "little-angel",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "cross-counter",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "deckSource": "mainDeck"
   },
   {
     "id": "hadraniel-gods-majesty",
     "collectable": true,
-    "rarity": "token"
+    "rarity": "token",
+    "deckSource": "destinyDeck"
   },
   {
     "id": "seraph-of-liberation",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   }
 ]
 };

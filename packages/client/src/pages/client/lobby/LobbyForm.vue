@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import { useAuthedMutation } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
-import { api } from '@game/api';
 import UiTextInput from '@/ui/components/UiTextInput.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { useCreateLobby } from '@/lobby/composables/useLobby';
 
 const router = useRouter();
-const { mutate: createLobby, isLoading } = useAuthedMutation(
-  api.lobbies.create,
-  {
-    onSuccess({ lobbyId }) {
-      router.push({ name: 'Lobby', params: { id: lobbyId } });
-    }
-  }
-);
+const { mutate: createLobby, isLoading } = useCreateLobby(({ lobbyId }) => {
+  router.push({ name: 'Lobby', params: { id: lobbyId } });
+});
 
 const formData = ref({
   name: '',

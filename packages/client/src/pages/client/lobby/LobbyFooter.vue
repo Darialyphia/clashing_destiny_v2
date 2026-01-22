@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useAuthedMutation } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
-import { api } from '@game/api';
 import {
   LOBBY_STATUS,
   MAX_PLAYERS_PER_LOBBY,
   type LobbyDetails
 } from '@game/api';
 import UiButton from '@/ui/components/UiButton.vue';
+import { useLeaveLobby, useStartLobby } from '@/lobby/composables/useLobby';
 
 const { lobby } = defineProps<{ lobby: LobbyDetails }>();
 const { data: me } = useMe();
@@ -15,17 +14,9 @@ const router = useRouter();
 
 const isOwner = computed(() => lobby.ownerId === me.value.id);
 
-const { mutate: start, isLoading: isStarting } = useAuthedMutation(
-  api.lobbies.start
-);
-
-const { mutate: leaveLobby, isLoading: isLeaving } = useAuthedMutation(
-  api.lobbies.leave,
-  {
-    onSuccess() {
-      router.push({ name: 'Lobbies' });
-    }
-  }
+const { mutate: start, isLoading: isStarting } = useStartLobby();
+const { mutate: leaveLobby, isLoading: isLeaving } = useLeaveLobby(() =>
+  router.push({ name: 'Lobbies' })
 );
 
 const isReady = computed(() => {

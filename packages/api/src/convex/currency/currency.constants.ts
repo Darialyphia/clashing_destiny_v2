@@ -7,7 +7,8 @@ export const CURRENCY_SOURCES = {
   SEASON_REWARD: 'season_reward',
   ADMIN_GRANT: 'admin_grant',
   SPEND: 'spend',
-  BOOSTER_PACK_PURCHASE: 'booster_pack_purchase'
+  BOOSTER_PACK_PURCHASE: 'booster_pack_purchase',
+  DECRAFTING: 'decrafting'
 } as const;
 
 export type CurrencySource = (typeof CURRENCY_SOURCES)[keyof typeof CURRENCY_SOURCES];

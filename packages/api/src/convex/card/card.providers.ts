@@ -8,6 +8,9 @@ import { BoosterPackRepository } from './repositories/booster-pack.repository';
 import { GetUnopenedPacksUseCase } from './usecases/getUnopenedPacks.usecase';
 import { PurchaseBoosterPacksUseCase } from './usecases/purchaseBoosterPacks.usecase';
 import { OpenBoosterPackUseCase } from './usecases/openBoosterPack.usecase';
+import { CraftCardUseCase } from './usecases/craftCard.usecase';
+import { DecraftCardUseCase } from './usecases/decraftCard.usecase';
+import { DecraftExtraCardsUseCase } from './usecases/decraftExtraCards.usecase';
 import type { DependenciesMap } from '../shared/container';
 import { BoosterPackMapper } from './mappers/boosterPack.mapper';
 
@@ -35,5 +38,10 @@ export const mutationDependencies = {
     resolver: asClass(PurchaseBoosterPacksUseCase)
   },
   [OpenBoosterPackUseCase.INJECTION_KEY]: { resolver: asClass(OpenBoosterPackUseCase) },
+  [CraftCardUseCase.INJECTION_KEY]: { resolver: asClass(CraftCardUseCase) },
+  [DecraftCardUseCase.INJECTION_KEY]: { resolver: asClass(DecraftCardUseCase) },
+  [DecraftExtraCardsUseCase.INJECTION_KEY]: {
+    resolver: asClass(DecraftExtraCardsUseCase)
+  },
   [BoosterPackMapper.INJECTION_KEY]: { resolver: asClass(BoosterPackMapper) }
 } as const satisfies DependenciesMap;

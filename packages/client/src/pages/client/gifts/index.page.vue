@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { api, GIFT_KINDS, GIFT_STATES } from '@game/api';
+import { GIFT_KINDS, GIFT_STATES } from '@game/api';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
   AccordionContent,
@@ -15,14 +14,15 @@ import {
 } from 'reka-ui';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
+import { useClaimGift, useGifts } from '@/player/composables/useGifts';
 
 definePage({
   name: 'Gifts'
 });
 
-const { isLoading, data: gifts } = useAuthedQuery(api.gifts.list, {});
+const { isLoading, data: gifts } = useGifts();
 
-const { mutate: claim } = useAuthedMutation(api.gifts.claim);
+const { mutate: claim } = useClaimGift();
 
 const formatTimeAgo = (timestamp: number) => {
   const now = Date.now();

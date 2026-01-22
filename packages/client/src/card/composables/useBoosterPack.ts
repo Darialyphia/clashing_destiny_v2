@@ -12,6 +12,8 @@ import { useBoosterPixiEffects } from './useBoosterPixiEffects';
 import { useBoosterDealingState } from './useBoosterDealingState';
 import { useBoosterRevealState } from './useBoosterRevealState';
 import { useBoosterCardLayout } from './useBoosterCardLayout';
+import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
+import { api, type OpenBoosterPackOutput } from '@game/api';
 
 export type DealingStatus = 'waiting' | 'dealing' | 'done';
 
@@ -143,3 +145,21 @@ export const provideBoosterPack = ({
 };
 
 export const useBoosterPack = () => useSafeInject(BOOSTER_PACK_INJECTION_KEY);
+
+export const useOpenBoosterPack = (
+  onSuccess?: (data: OpenBoosterPackOutput) => void
+) => {
+  return useAuthedMutation(api.cards.openPack, {
+    onSuccess
+  });
+};
+
+export const useUnopenedBoosterPacks = () => {
+  return useAuthedQuery(api.cards.unopenedPacks, {});
+};
+
+export const usePurchaseBoosterPacks = (onSuccess?: () => void) => {
+  return useAuthedMutation(api.cards.purchasePacks, {
+    onSuccess
+  });
+};

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import BoosterPackContent from '@/card/components/BoosterPackContent.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { api } from '@game/api';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import {
+  useOpenBoosterPack,
+  useUnopenedBoosterPacks
+} from '@/card/composables/useBoosterPack';
 
 definePage({
   name: 'Boosters',
@@ -13,20 +15,15 @@ definePage({
   }
 });
 
-const { data: unopenedPacks } = useAuthedQuery(api.cards.unopenedPacks, {});
-
-const { mutate: openPack, isLoading: isOpeningPack } = useAuthedMutation(
-  api.cards.openPack,
-  {
-    onSuccess(data) {
-      latestPackOpened.value = data.cards.map(card => ({
-        blueprint: CARDS_DICTIONARY[card.blueprintId],
-        isFoil: card.isFoil
-      }));
-    }
+const { data: unopenedPacks } = useUnopenedBoosterPacks();
+const { mutate: openPack, isLoading: isOpeningPack } = useOpenBoosterPack(
+  data => {
+    latestPackOpened.value = data.cards.map(card => ({
+      blueprint: CARDS_DICTIONARY[card.blueprintId],
+      isFoil: card.isFoil
+    }));
   }
 );
-
 const latestPackOpened = ref<
   Array<{
     blueprint: CardBlueprint;

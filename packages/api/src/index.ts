@@ -42,3 +42,4 @@ export {
   type CurrencySource,
   type CurrencyType
 } from './convex/currency/currency.constants';
+export type { OpenBoosterPackOutput } from './convex/card/usecases/openBoosterPack.usecase';

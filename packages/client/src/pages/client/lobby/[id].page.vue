@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  useAuth,
-  useAuthedMutation,
-  useAuthedQuery
-} from '@/auth/composables/useAuth';
+import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
@@ -22,6 +18,10 @@ import LobbyRoleButton from './LobbyRoleButton.vue';
 import LobbyChat from './LobbyChat.vue';
 import LobbyFooter from './LobbyFooter.vue';
 import UiSwitch from '@/ui/components/UiSwitch.vue';
+import {
+  useJoinLobby,
+  useUpdateLobbyOptions
+} from '@/lobby/composables/useLobby';
 
 definePage({
   name: 'Lobby'
@@ -54,10 +54,7 @@ const isSpectator = computed(() =>
 
 const isOwner = computed(() => lobby.value.ownerId === me.value?.id);
 
-const { mutate: join, error: joinError } = useAuthedMutation(
-  api.lobbies.join,
-  {}
-);
+const { mutate: join, error: joinError } = useJoinLobby();
 
 until(lobby)
   .toBeTruthy()
@@ -72,40 +69,12 @@ until(lobby)
 watchEffect(() => {
   if (!isSpectator.value) return;
   if (lobby.value?.gameId && lobby.value?.status === LOBBY_STATUS.ONGOING) {
-    // @TODO handle spectator more when the feature is implemented
+    // @TODO handle spectator mode when the feature is implemented
   }
 });
 
 const password = ref('');
-
-const session = useAuth();
-const { mutate: updateOptions } = useAuthedMutation(api.lobbies.updateOptions, {
-  optimisticUpdate: (store, arg) => {
-    const query = store.getQuery(api.lobbies.byId, {
-      lobbyId: arg.lobbyId,
-      // @ts-expect-error
-      sessionId: session.sessionId.value
-    });
-    if (!query) return;
-
-    store.setQuery(
-      api.lobbies.byId,
-      {
-        lobbyId: arg.lobbyId,
-        // @ts-expect-error
-        sessionId: session.sessionId.value
-      },
-      {
-        ...query,
-        options: {
-          ...query.options,
-          ...arg.options
-        }
-      }
-    );
-    console.log('Optimistic update applied');
-  }
-});
+const { mutate: updateOptions } = useUpdateLobbyOptions();
 
 const disableTurnTimers = computed({
   get: () => lobby.value!.options.disableTurnTimers || false,
