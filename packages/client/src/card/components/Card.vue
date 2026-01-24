@@ -207,10 +207,11 @@ const costStatus = computed(() => {
   return '';
 });
 
-const { pointerStyle, angle, onMousemove, onMouseleave } = useCardTilt(root, {
-  maxAngle: maxTiltAngle,
-  isEnabled: computed(() => isTiltEnabled && isFoil)
-});
+const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
+  useCardTilt(root, {
+    maxAngle: maxTiltAngle,
+    isEnabled: computed(() => isTiltEnabled && isFoil)
+  });
 
 const tintGradient = computed(() => {
   return match(card.art.tint)
@@ -234,6 +235,7 @@ const kindBg = computed(() => {
   <div
     class="card-perspective-wrapper"
     @mousemove="onMousemove"
+    @mouseenter="onMouseEnter"
     @mouseleave="onMouseleave"
   >
     <div

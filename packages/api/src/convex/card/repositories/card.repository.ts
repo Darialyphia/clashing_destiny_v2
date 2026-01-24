@@ -73,6 +73,9 @@ export class CardRepository {
   }
 
   save(card: Card) {
+    if (card.copiesOwned.value === 0) {
+      return this.ctx.db.delete(card.id);
+    }
     return this.ctx.db.replace(card.id, this.ctx.cardMapper.toPersistence(card));
   }
 }

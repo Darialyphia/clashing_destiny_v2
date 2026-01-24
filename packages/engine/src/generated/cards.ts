@@ -80,7 +80,8 @@ export const cards = {
 "little-angel": "little-angel",
 "cross-counter": "cross-counter",
 "hadraniel-gods-majesty": "hadraniel-gods-majesty",
-"seraph-of-liberation": "seraph-of-liberation"
+"seraph-of-liberation": "seraph-of-liberation",
+"the-hangman": "the-hangman"
 } as const;
 
 export const collectableCards = {
@@ -154,7 +155,8 @@ export const collectableCards = {
 "little-angel": "little-angel",
 "cross-counter": "cross-counter",
 "hadraniel-gods-majesty": "hadraniel-gods-majesty",
-"seraph-of-liberation": "seraph-of-liberation"
+"seraph-of-liberation": "seraph-of-liberation",
+"the-hangman": "the-hangman"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
@@ -615,6 +617,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "deckSource": "mainDeck"
+  },
+  {
+    "id": "the-hangman",
+    "collectable": true,
+    "rarity": "epic",
+    "deckSource": "destinyDeck"
   }
 ]
 };

@@ -29,18 +29,39 @@ const { card } = defineProps<{
 const isOpened = defineModel<boolean>('isOpened', { required: true });
 const { data: me } = useMe();
 
+const successMessage = ref<string | null>(null);
+let successTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const showSuccess = (message: string) => {
+  successMessage.value = message;
+  if (successTimeout) clearTimeout(successTimeout);
+  successTimeout = setTimeout(() => {
+    successMessage.value = null;
+  }, 1500);
+};
+
 const { mutate: craft, isLoading: isCrafting } = useAuthedMutation(
-  api.cards.craft
+  api.cards.craft,
+  {
+    onSuccess: () => {
+      showSuccess(
+        `Craft succesful ${card.isFoil ? 'Foil ' : ''}${card.card.name}!`
+      );
+    }
+  }
 );
 
 const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
-  api.cards.decraft
+  api.cards.decraft,
+  {
+    onSuccess: () => {
+      showSuccess(`Disenchant succesful for ${decraftingReward.value} shards!`);
+    }
+  }
 );
 
 const craftingCost = computed(() => {
-  const multiplier = card.isFoil ? FOIL_CRAFTING_COST_MULTIPLIER : 1;
-
-  return CRAFTING_COST_PER_RARITY[card.card.rarity] * multiplier;
+  return CRAFTING_COST_PER_RARITY[card.card.rarity];
 });
 
 const decraftingReward = computed(() => {
@@ -58,11 +79,13 @@ const decraftingReward = computed(() => {
   >
     <article class="card-details">
       <aside class="card-preview">
-        <BlueprintCard
-          :blueprint="card.card"
-          show-stats
-          :is-foil="card.isFoil"
-        />
+        <Transition name="card" appear>
+          <BlueprintCard
+            :blueprint="card.card"
+            show-stats
+            :is-foil="card.isFoil"
+          />
+        </Transition>
       </aside>
 
       <section class="card-info surface">
@@ -100,11 +123,33 @@ const decraftingReward = computed(() => {
           </ul>
         </section>
 
+        <Transition name="success-message">
+          <aside v-if="successMessage" class="success-notification">
+            {{ successMessage }}
+          </aside>
+        </Transition>
+
         <footer>
           <FancyButton
             :text="`Craft (${craftingCost})`"
             :disabled="isCrafting || isDecrafting"
-            @click="craft({ blueprintId: card.card.id, isFoil: card.isFoil })"
+            size="sm"
+            @click="craft({ blueprintId: card.card.id, isFoil: false })"
+          >
+            <template #left>
+              <CraftignShardIcon />
+            </template>
+
+            <template v-if="isCrafting" #right>
+              <UiSpinner size="5" />
+            </template>
+          </FancyButton>
+
+          <FancyButton
+            :text="`Craft Foil (${craftingCost * FOIL_CRAFTING_COST_MULTIPLIER})`"
+            :disabled="isCrafting || isDecrafting"
+            size="sm"
+            @click="craft({ blueprintId: card.card.id, isFoil: true })"
           >
             <template #left>
               <CraftignShardIcon />
@@ -117,6 +162,8 @@ const decraftingReward = computed(() => {
           <FancyButton
             :text="`Disenchant (${decraftingReward})`"
             :disabled="card.copiesOwned === 0 || isCrafting || isDecrafting"
+            size="sm"
+            variant="error"
             @click="decraft({ cardId: card.id as CardId, amount: 1 })"
           >
             <template #left>
@@ -135,6 +182,14 @@ const decraftingReward = computed(() => {
 </template>
 
 <style scoped lang="postcss">
+.card-enter-active,
+.card-leave-active {
+  transition: translate 1s var(--ease-spring-3);
+}
+.card-enter-from {
+  translate: 0 -15rem;
+}
+
 .card-details {
   display: flex;
   gap: var(--size-5);
@@ -149,7 +204,7 @@ const decraftingReward = computed(() => {
 
 .card-info {
   --card-text-color: currentColor;
-  flex: 1;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: var(--size-4);
@@ -252,11 +307,61 @@ const decraftingReward = computed(() => {
   background: var(--surface-3);
 }
 
+.success-notification {
+  padding: var(--size-3) var(--size-4);
+  background: linear-gradient(135deg, var(--green-7), var(--green-10));
+  color: var(--green-0);
+  font-size: var(--font-size-1);
+  font-weight: var(--font-weight-6);
+  text-align: center;
+  border-radius: var(--radius-3);
+  border: var(--border-size-2) solid var(--green-7);
+  box-shadow: var(--shadow-4);
+  animation: pulse 0.5s ease-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-message-enter-active {
+  transition:
+    opacity var(--speed-3) var(--ease-3),
+    transform var(--speed-3) var(--ease-spring-3);
+}
+
+.success-message-leave-active {
+  transition:
+    opacity var(--speed-2) var(--ease-2),
+    transform var(--speed-2) var(--ease-2);
+}
+
+.success-message-enter-from {
+  opacity: 0;
+  transform: translateY(-1rem);
+}
+
+.success-message-leave-to {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
 footer {
   --pixel-scale: 1;
   margin-block-start: auto;
   padding-block-start: var(--size-4);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--size-3);
   justify-content: center;
   border-block-start: var(--border-size-1) solid var(--border-dimmed);

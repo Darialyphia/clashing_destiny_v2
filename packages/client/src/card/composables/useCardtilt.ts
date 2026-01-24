@@ -109,10 +109,15 @@ export const useCardTilt = (
     });
   };
 
+  const onMouseEnter = () => {
+    setBoundingRect();
+  };
+
   return {
     pointerStyle,
     angle,
     onMousemove,
-    onMouseleave
+    onMouseleave,
+    onMouseEnter
   };
 };
