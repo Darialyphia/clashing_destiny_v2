@@ -9,7 +9,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { SimpleDestinyCostModifier } from '../../../../../modifier/modifiers/simple-destinycost.modifier';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
@@ -62,7 +61,8 @@ export const belovedMentor: MinionBlueprint = {
             isElligible(candidate) {
               return (
                 candidate.kind === CARD_KINDS.HERO &&
-                candidate.location === CARD_LOCATIONS.DESTINY_DECK
+                candidate.location === CARD_LOCATIONS.DESTINY_DECK &&
+                candidate.isAlly(card)
               );
             },
             getModifiers(candidate) {

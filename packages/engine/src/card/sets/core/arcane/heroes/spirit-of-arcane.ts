@@ -53,7 +53,7 @@ export const spiritOfArcane: HeroBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await card.player.cardManager.draw(6);
+          await card.player.cardManager.draw(7);
         }
       })
     );
