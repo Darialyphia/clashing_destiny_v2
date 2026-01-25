@@ -30,7 +30,7 @@ export const hadranielGodsMajesty: MinionBlueprint = {
     @On Enter@: Negate target ability activation from a Minion, Artifact or Sigil, then @Silence@ it.
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.TOKEN,
+  rarity: RARITIES.LEGENDARY,
   tags: [],
   art: {
     default: {

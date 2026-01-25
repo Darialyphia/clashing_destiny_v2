@@ -78,6 +78,7 @@ import { hadranielGodsMajesty } from './core/order/minions/hadraniel-gods-majest
 import { seraphOfLiberation } from './core/order/minions/seraph-of-liberation';
 import { theHangman } from './core/neutral/spells/the-hangman';
 import { radiantBlow } from './core/arcane/spells/radiant-blow';
+import { defendTheOppressed } from './core/order/spells/defend-the-oppressed';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -160,6 +161,7 @@ export const coreSet: CardSet = {
     hadranielGodsMajesty,
     seraphOfLiberation,
     theHangman,
-    radiantBlow
+    radiantBlow,
+    defendTheOppressed
   ]
 };

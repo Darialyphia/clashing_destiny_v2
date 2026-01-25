@@ -23,7 +23,7 @@ export const radiantBlow: SpellBlueprint = {
   description: dedent`
   @[lvl] 3 bonus@: give your Hero +3 Atk this turn.
   `,
-  faction: FACTIONS.ARCANE,
+  faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
   art: {
@@ -43,7 +43,7 @@ export const radiantBlow: SpellBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ARCANE.defaultCardTint
+      tint: FACTIONS.ORDER.defaultCardTint
     }
   },
   destinyCost: 1,
