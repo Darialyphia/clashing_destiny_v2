@@ -8,10 +8,6 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 import { GAME_PHASES } from '../../../../../game/game.enums';
 import { isMinion } from '../../../../card-utils';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';

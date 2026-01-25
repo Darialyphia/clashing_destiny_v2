@@ -206,7 +206,7 @@ const costStatus = computed(() => {
 
   return '';
 });
-
+console.log(isTiltEnabled, isFoil);
 const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
   useCardTilt(root, {
     maxAngle: maxTiltAngle,
@@ -548,6 +548,12 @@ const kindBg = computed(() => {
   background: v-bind(artFrameImage);
   background-size: cover;
 }
+
+@keyframes foil-art-glow {
+  to {
+    opacity: 0;
+  }
+}
 .art-main {
   position: absolute;
   bottom: 0;
@@ -557,7 +563,21 @@ const kindBg = computed(() => {
   translate: -50% 0;
   background: v-bind(artMainImage);
   background-size: cover;
+  overflow: hidden;
   --parallax-offset-x: -50%;
+  .card:has(.foil) &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: v-bind(artMainImage);
+    background-size: cover;
+    filter: blur(calc(12px * var(--pixel-scale))) brightness(1.1);
+    z-index: -1;
+    transform: scale(1.05);
+    mix-blend-mode: plus-lighter;
+    opacity: 0.35;
+    animation: foil-art-glow 5s linear alternate infinite;
+  }
 }
 .art-foil {
   position: absolute;

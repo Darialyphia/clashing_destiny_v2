@@ -33,21 +33,15 @@ export const haroldLv3: HeroBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: false,
-        oil: false,
-        gradient: false,
         lightGradient: true,
-        scanlines: false,
-        goldenGlare: false,
-        glitter: true
+        goldenGlare: true
       },
       dimensions: {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'heroes/harold-lv3-bg',
+      main: 'heroes/harold-lv3',
       frame: 'default',
       tint: FACTIONS.ORDER.defaultCardTint
     }

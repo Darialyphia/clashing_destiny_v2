@@ -1,3 +1,4 @@
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { scry } from '../../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../../card-blueprint';
@@ -18,7 +19,7 @@ export const starseeker: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Starseeker',
-  description: '@On Enter@: @Scry@ 2, then if you have @Balance@, draw a card.',
+  description: '@On Enter@: @Empower 1@.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -52,13 +53,9 @@ export const starseeker: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await scry(game, card, 2);
-          if (
-            card.player.cardManager.hand.length ===
-            card.player.cardManager.destinyZone.size
-          ) {
-            await card.player.cardManager.draw(1);
-          }
+          await card.player.hero.modifiers.add(
+            new EmpowerModifier(game, card, { amount: 1 })
+          );
         }
       })
     );

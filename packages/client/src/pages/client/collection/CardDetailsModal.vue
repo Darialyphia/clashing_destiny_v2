@@ -184,10 +184,10 @@ const decraftingReward = computed(() => {
 <style scoped lang="postcss">
 .card-enter-active,
 .card-leave-active {
-  transition: translate 1s var(--ease-spring-3);
+  transition: rotate 1s var(--ease-spring-3);
 }
 .card-enter-from {
-  translate: 0 -15rem;
+  rotate: 45deg;
 }
 
 .card-details {
