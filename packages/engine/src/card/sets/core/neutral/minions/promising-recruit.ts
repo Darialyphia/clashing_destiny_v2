@@ -38,7 +38,7 @@ export const promisingRecruit: MinionBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ORDER.defaultCardTint
+      tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
   manaCost: 2,

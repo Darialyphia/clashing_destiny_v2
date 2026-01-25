@@ -12,6 +12,7 @@ import {
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { SimpleDestinyCostModifier } from '../../../../../modifier/modifiers/simple-destinycost.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 
 export const belovedMentor: MinionBlueprint = {
   id: 'beloved-mentor',
@@ -55,7 +56,7 @@ export const belovedMentor: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new Modifier('beloved-mentor-aura', game, card, {
+      new WhileOnBoardModifier('beloved-mentor-aura', game, card, {
         mixins: [
           new AuraModifierMixin(game, card, {
             isElligible(candidate) {

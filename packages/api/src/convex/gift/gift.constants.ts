@@ -19,6 +19,8 @@ export type GiftSource = Values<typeof GIFT_SOURCES>;
 
 export const GIFT_KINDS = {
   DECK: 'DECK',
-  CARDS: 'CARDS'
+  CARDS: 'CARDS',
+  GOLD: 'GOLD',
+  CRAFTING_DUST: 'CRAFTING_DUST'
 } as const;
 export type GiftKind = Values<typeof GIFT_KINDS>;
