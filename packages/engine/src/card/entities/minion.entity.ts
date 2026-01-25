@@ -443,8 +443,8 @@ export class MinionCard extends Card<
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
       canBlock:
-        phaseCtx.state === GAME_PHASES.ATTACK
-          ? this.canBlock(phaseCtx.ctx.attacker, phaseCtx.ctx.target!)
+        phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.target
+          ? this.canBlock(phaseCtx.ctx.attacker, phaseCtx.ctx.target)
           : false,
       canRetaliate:
         phaseCtx.state === GAME_PHASES.ATTACK
