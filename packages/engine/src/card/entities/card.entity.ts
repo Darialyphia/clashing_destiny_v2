@@ -287,7 +287,10 @@ export abstract class Card<
   }
 
   get canBeUsedAsDestinyCost() {
-    return this.interceptors.canBeUsedAsDestinyCost.getValue(false, {});
+    return this.interceptors.canBeUsedAsDestinyCost.getValue(
+      this.location === CARD_LOCATIONS.DESTINY_ZONE,
+      {}
+    );
   }
 
   get canBeUsedAsManaCost() {
