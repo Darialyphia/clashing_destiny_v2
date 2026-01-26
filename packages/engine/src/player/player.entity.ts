@@ -393,7 +393,9 @@ export class Player
   }
 
   private async payForDestinyCost(cost: number) {
-    const pool = [...this.cardManager.destinyZone];
+    const pool = [...this.cardManager.destinyZone].filter(
+      card => card.canBeUsedAsDestinyCost
+    );
     const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 

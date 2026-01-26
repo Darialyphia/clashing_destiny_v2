@@ -107,8 +107,7 @@ const onMouseup = () => {
   gap: var(--size-2);
 
   &.is-active {
-    outline: 2px solid #ffb270;
-    outline-offset: var(--size-1);
+    box-shadow: inset 0 0 40px #25a9e099;
   }
   &.is-dragging {
     background-color: hsla(260, 50%, 20%, 0.2);

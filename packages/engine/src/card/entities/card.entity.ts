@@ -280,7 +280,7 @@ export abstract class Card<
 
   get canPayDestinyCost() {
     const pool = Array.from(this.player.cardManager.discardPile)
-      .filter(card => card.canBeUsedAsDestinyCost && !card.modifiers.has(LockedModifier))
+      .filter(card => card.canBeUsedAsDestinyCost)
       .concat([...this.player.cardManager.destinyZone]);
 
     return pool.length >= this.destinyCost;

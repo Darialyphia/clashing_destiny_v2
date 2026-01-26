@@ -35,6 +35,18 @@ export class LockedModifier<T extends AnyCard> extends Modifier<T> {
             return false;
           }
         }),
+        new CardInterceptorModifierMixin(game, {
+          key: 'canBeUsedAsDestinyCost',
+          interceptor: () => {
+            return false;
+          }
+        }),
+        new CardInterceptorModifierMixin(game, {
+          key: 'canBeUsedAsManaCost',
+          interceptor: () => {
+            return false;
+          }
+        }),
         new DurationModifierMixin(game, options.duration),
         ...(options.mixins || [])
       ]
