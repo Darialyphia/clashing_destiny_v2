@@ -1,9 +1,11 @@
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { Modifier } from '../../../../../modifier/modifier.entity';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { singleMinionTargetRules } from '../../../../card-utils';
 import {
@@ -60,9 +62,14 @@ export const haroldLv2: HeroBlueprint = {
     {
       id: 'harold-vowed-crusader-ability-1',
       description:
-        'Grant a minion with @Honor@ "@On Death@: Wake up your hero and give it +1 Atk" until the end of the turn.',
-      label: 'Grant Honor',
-      canUse: singleMinionTargetRules.canPlay,
+        'Grant a minion with @Honor@: "@On Death@: Wake up your hero and give it +1 Atk" until the end of the turn.',
+      label: 'Buff Honor Minion',
+      canUse(game, card) {
+        return (
+          singleMinionTargetRules.canPlay(game, card) &&
+          card.location === CARD_LOCATIONS.BOARD
+        );
+      },
       getPreResponseTargets(game, card) {
         return singleMinionTargetRules.getPreResponseTargets(game, card, {
           type: 'ability',
@@ -79,7 +86,7 @@ export const haroldLv2: HeroBlueprint = {
           if (target.location !== CARD_LOCATIONS.BOARD) continue;
 
           await target.modifiers.add(
-            new HonorModifier(game, card, {
+            new Modifier('harold-lv2-on-death', game, card, {
               mixins: [
                 new UntilEndOfTurnModifierMixin(game),
                 new GameEventModifierMixin(game, {

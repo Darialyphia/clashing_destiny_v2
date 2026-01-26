@@ -9,7 +9,7 @@ type SandboxWorkerEvent =
   | {
       type: 'init';
       payload: {
-        options: Pick<GameOptions, 'players' | 'rngSeed'>;
+        options: Pick<GameOptions, 'players' | 'rngSeed' | 'history'>;
       };
     }
   | { type: 'dispatch'; payload: { input: SerializedInput } }
@@ -23,6 +23,7 @@ self.addEventListener('message', ({ data }) => {
   console.groupCollapsed('[SandboxWorker] new message');
   console.log(options);
   console.groupEnd();
+
   match(options)
     .with({ type: 'debug' }, () => {
       console.log(game);
@@ -31,7 +32,7 @@ self.addEventListener('message', ({ data }) => {
       game = new Game({
         id: 'sandbox',
         rngSeed: payload.options.rngSeed,
-        history: [],
+        history: payload.options.history ?? [],
         overrides: {
           cardPool: CARDS_DICTIONARY
         },

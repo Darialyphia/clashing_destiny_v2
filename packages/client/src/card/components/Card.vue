@@ -206,7 +206,6 @@ const costStatus = computed(() => {
 
   return '';
 });
-console.log(isTiltEnabled, isFoil);
 const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
   useCardTilt(root, {
     maxAngle: maxTiltAngle,
