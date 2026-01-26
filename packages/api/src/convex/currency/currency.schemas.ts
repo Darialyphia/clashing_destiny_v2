@@ -2,7 +2,10 @@ import { defineTable } from 'convex/server';
 import { v } from 'convex/values';
 import { CURRENCY_SOURCES, CURRENCY_TYPES } from './currency.constants';
 
-export const CURRENCY_TRANSACTION_TYPE_VALIDATOR = v.literal(CURRENCY_TYPES.GOLD);
+export const CURRENCY_TRANSACTION_TYPE_VALIDATOR = v.union(
+  v.literal(CURRENCY_TYPES.GOLD),
+  v.literal(CURRENCY_TYPES.CRAFTING_SHARDS)
+);
 
 export const CURRENCY_SOURCE_VALIDATOR = v.union(
   v.literal(CURRENCY_SOURCES.ADMIN_GRANT),
@@ -13,13 +16,16 @@ export const CURRENCY_SOURCE_VALIDATOR = v.union(
   v.literal(CURRENCY_SOURCES.QUEST_COMPLETION),
   v.literal(CURRENCY_SOURCES.SEASON_REWARD),
   v.literal(CURRENCY_SOURCES.SPEND),
-  v.literal(CURRENCY_SOURCES.BOOSTER_PACK_PURCHASE)
+  v.literal(CURRENCY_SOURCES.BOOSTER_PACK_PURCHASE),
+  v.literal(CURRENCY_SOURCES.CRAFTING),
+  v.literal(CURRENCY_SOURCES.DECRAFTING)
 );
 
 export const currencySchemas = {
   wallets: defineTable({
     userId: v.id('users'),
     gold: v.number(),
+    craftingShards: v.number(),
     createdAt: v.number(),
     updatedAt: v.number()
   }).index('by_user', ['userId']),

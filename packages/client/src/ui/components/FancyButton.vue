@@ -50,9 +50,11 @@ const tag = computed(() => {
     v-bind="attrs"
   >
     <!-- <UiSpinner v-if="isLoading" /> -->
+    <slot name="left" />
     <span class="content" :data-text="text">
       {{ text }}
     </span>
+    <slot name="right" />
   </component>
 </template>
 
@@ -97,6 +99,7 @@ const tag = computed(() => {
     &:disabled {
       border-image-source: url('@/assets/ui/button-disabled.png');
       cursor: not-allowed;
+      opacity: 0.8;
     }
 
     &,

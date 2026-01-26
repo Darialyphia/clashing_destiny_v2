@@ -1,4 +1,3 @@
-import type { CardBlueprint } from '../card-blueprint';
 import type { BoosterPack, BoosterPackOptions } from './booster';
 import { RARITIES, type Rarity } from '../card.enums';
 
@@ -9,7 +8,7 @@ const DROP_RATES: Record<string, Record<string, number>> = {
     [RARITIES.EPIC]: 4,
     [RARITIES.LEGENDARY]: 1
   },
-  guaranteed_rare: {
+  guaranteedRare: {
     [RARITIES.COMMON]: 0,
     [RARITIES.RARE]: 80,
     [RARITIES.EPIC]: 15,
@@ -52,7 +51,7 @@ export class StandardBoosterPack implements BoosterPack {
     for (let i = 0; i < options.packSize; i++) {
       const isHeroSlot = i === 0;
       const rates = isHeroSlot
-        ? StandardBoosterPack.dropRates.guaranteed_rare
+        ? StandardBoosterPack.dropRates.guaranteedRare
         : StandardBoosterPack.dropRates.standard;
       const rarity = this.rollRarity(rates, options.rarityWeightModifier);
       let card = this.pickCard(rarity, pickedIds, options.blueprintWeightModifier);

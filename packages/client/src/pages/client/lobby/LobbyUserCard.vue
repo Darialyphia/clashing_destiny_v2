@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { useAuthedMutation } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import { useDecks } from '@/card/composables/useDecks';
 import PlayerDeck from '@/player/components/PlayerDeck.vue';
 import {
-  api,
   LOBBY_USER_ROLES,
   type DeckId,
   type LobbyDetails,
@@ -15,6 +13,7 @@ import { Icon } from '@iconify/vue';
 import UiIconButton from '@/ui/components/UiIconButton.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import LobbyDeckDrawer from './LobbyDeckDrawer.vue';
+import { useSelectLobbyDeck } from '@/lobby/composables/useLobby';
 
 const { lobbyUser, lobby, role } = defineProps<{
   lobby: LobbyDetails;
@@ -27,8 +26,7 @@ const isMe = computed(() => me.value.id === lobbyUser.userId);
 const isOwner = computed(() => lobby.ownerId === lobbyUser.userId);
 
 const { data: decks } = useDecks();
-const { mutate: selectDeck } = useAuthedMutation(api.lobbies.selectDeck);
-
+const { mutate: selectDeck } = useSelectLobbyDeck();
 const selectedDeck = computed(() =>
   decks.value?.find(d => d.id === lobbyUser.deckId)
 );

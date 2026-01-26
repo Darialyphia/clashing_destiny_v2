@@ -2,18 +2,24 @@
 import { useLogout } from './auth/composables/useLogout';
 import { useMe } from './auth/composables/useMe';
 import { useLeaveMatchmaking } from '@/matchmaking/composables';
-import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
+import { useAuthedQuery } from '@/auth/composables/useAuth';
 import MatchmakingTimer from './matchmaking/components/MatchmakingTimer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { api, GIFT_STATES } from '@game/api';
+import PlayerBadge from './player/components/PlayerBadge.vue';
+import GodlIcon from './player/components/GodlIcon.vue';
+import { type RouterLinkProps } from 'vue-router';
+import { useLeaveLobby } from './lobby/composables/useLobby';
+import CraftignShardIcon from './player/components/CraftignShardIcon.vue';
 
+const { backTo = { name: 'ClientHome' } } = defineProps<{
+  backTo?: RouterLinkProps['to'];
+}>();
 const { mutate: logout } = useLogout();
 const { data: me } = useMe();
 const { mutate: leaveMatchmaking, isLoading: isLeavingMatchmaking } =
   useLeaveMatchmaking();
-const { mutate: leaveLobby, isLoading: isLeavingLobby } = useAuthedMutation(
-  api.lobbies.leave
-);
+const { mutate: leaveLobby, isLoading: isLeavingLobby } = useLeaveLobby();
 
 const { data: gifts } = useAuthedQuery(api.gifts.list, {});
 
@@ -32,7 +38,7 @@ const router = useRouter();
       v-if="router.currentRoute.value.name !== 'ClientHome'"
       text="Back"
       size="md"
-      @click="router.go(-1)"
+      :to="backTo"
     />
     <div class="welcome-section">
       <div v-if="me?.currentJoinedMatchmaking" class="matchmaking-status">
@@ -95,6 +101,14 @@ const router = useRouter();
         </li>
       </ul>
     </nav>
+
+    <div class="currencies" v-if="me">
+      <GodlIcon />
+      {{ me.wallet.gold }}
+      <CraftignShardIcon />
+      {{ me.wallet.craftingShards }}
+    </div>
+    <PlayerBadge v-if="me" :name="me.username" />
   </header>
 </template>
 
@@ -152,7 +166,6 @@ const router = useRouter();
 
 li {
   border-radius: var(--radius-2);
-  font-weight: var(--font-weight-5);
   display: grid;
 }
 
@@ -198,5 +211,16 @@ li.hot {
   background-color: var(--red-8);
   color: white;
   border-radius: var(--radius-round);
+}
+
+.currencies {
+  --pixel-scale: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  font-weight: var(--font-weight-3);
+  padding: var(--size-2) var(--size-3);
+  border-left: 1px solid #9f938f;
+  border-right: 1px solid #9f938f;
 }
 </style>

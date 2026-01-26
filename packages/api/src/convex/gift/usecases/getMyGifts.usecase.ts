@@ -26,6 +26,14 @@ export type GetMyGiftsOutput = Array<{
           amount: number;
         }>;
       }
+    | {
+        kind: BetterExtract<GiftKind, 'GOLD'>;
+        amount: number;
+      }
+    | {
+        kind: BetterExtract<GiftKind, 'CRAFTING_DUST'>;
+        amount: number;
+      }
   >;
 }>;
 

@@ -40,3 +40,12 @@ watch(
     <router-view />
   </div>
 </template>
+
+<style scoped lang="postcss">
+.client-page {
+  background: url('@/assets/backgrounds/main-menu.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100dvh;
+}
+</style>

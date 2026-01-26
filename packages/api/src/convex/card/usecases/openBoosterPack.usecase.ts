@@ -14,6 +14,7 @@ export interface OpenBoosterPackInput {
 }
 
 export interface OpenBoosterPackOutput {
+  packId: BoosterPackId;
   cards: Array<{
     blueprintId: string;
     isFoil: boolean;
@@ -82,6 +83,7 @@ export class OpenBoosterPackUseCase
     );
 
     return {
+      packId: input.packId,
       cards: cardsObtained
     };
   }

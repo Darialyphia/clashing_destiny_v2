@@ -4,6 +4,7 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { RemoveAbilitiesModifierMixin } from '../mixins/remove-abilities.mixin';
+import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -14,9 +15,13 @@ export class SilencedModifier<T extends AbilityOwner> extends Modifier<T> {
     options: { mixins?: ModifierMixin<T>[] } = {}
   ) {
     super(KEYWORDS.SILENCED.id, game, source, {
+      name: 'Silenced',
+      description: 'This card is Silenced.',
+      icon: 'keyword-silenced',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.SILENCED),
         new RemoveAbilitiesModifierMixin(game),
+        new RemoveOnDestroyedMixin(game),
         ...(options.mixins ?? [])
       ]
     });

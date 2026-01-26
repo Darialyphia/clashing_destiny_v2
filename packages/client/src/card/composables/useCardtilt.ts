@@ -15,6 +15,8 @@ export const useCardTilt = (
   const x = ref(0);
   const y = ref(0);
 
+  const isHovered = ref(false);
+
   useEventListener(
     'mousemove',
     (e: MouseEvent) => {
@@ -36,7 +38,6 @@ export const useCardTilt = (
   });
 
   const setBoundingRect = () => {
-    if (!options.isEnabled.value) return;
     const el = unrefElement(target);
     if (!el) return;
     boundingRect.value = el.getBoundingClientRect();
@@ -49,6 +50,17 @@ export const useCardTilt = (
   });
 
   const pointerStyle = computed(() => {
+    if (!isHovered.value) {
+      return {
+        glareX: 0,
+        glareY: 0,
+        foilX: 0,
+        foilY: 0,
+        foilOilX: 0,
+        foilOilY: 0,
+        pointerFromCenter: 0
+      };
+    }
     const { left, top, width, height } = boundingRect.value;
 
     const pointer = {
@@ -85,12 +97,14 @@ export const useCardTilt = (
 
   const onMousemove = (e: MouseEvent) => {
     if (!options.isEnabled.value) return;
+    if (!isHovered.value) return;
 
     const el = unrefElement(target);
     if (!el) return;
 
     const { clientX, clientY } = e;
     const { left, top, width, height } = boundingRect.value;
+
     gsap.killTweensOf(angle.value);
     gsap.to(angle.value, {
       y: ((clientX - left) / width - 0.5) * options.maxAngle,
@@ -108,11 +122,16 @@ export const useCardTilt = (
       ease: 'power2.out'
     });
   };
+  const onMouseEnter = () => {
+    setBoundingRect();
+    isHovered.value = true;
+  };
 
   return {
     pointerStyle,
     angle,
     onMousemove,
-    onMouseleave
+    onMouseleave,
+    onMouseEnter
   };
 };

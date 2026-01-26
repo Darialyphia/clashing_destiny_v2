@@ -1,9 +1,6 @@
 import type { EmptyObject } from '@game/shared';
 import type { UseCase } from '../../usecase';
-import type {
-  UserReadRepository,
-  UserRepository
-} from '../../users/repositories/user.repository';
+import type { UserRepository } from '../../users/repositories/user.repository';
 import type { WalletRepository } from '../repositories/wallet.repository';
 import type { DatabaseWriter } from '../../_generated/server';
 

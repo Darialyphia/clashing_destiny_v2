@@ -74,6 +74,11 @@ import { blitzTactics } from './core/order/spells/blitz-tactics';
 import { firstWings } from './core/order/minions/first-wings';
 import { littleAngel } from './core/order/minions/little-angel';
 import { crossCounter } from './core/order/spells/cross-counter';
+import { hadranielGodsMajesty } from './core/order/minions/hadraniel-gods-majesty';
+import { seraphOfLiberation } from './core/order/minions/seraph-of-liberation';
+import { theHangman } from './core/neutral/spells/the-hangman';
+import { radiantBlow } from './core/arcane/spells/radiant-blow';
+import { defendTheOppressed } from './core/order/spells/defend-the-oppressed';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -152,6 +157,11 @@ export const coreSet: CardSet = {
     blitzTactics,
     firstWings,
     littleAngel,
-    crossCounter
+    crossCounter,
+    hadranielGodsMajesty,
+    seraphOfLiberation,
+    theHangman,
+    radiantBlow,
+    defendTheOppressed
   ]
 };

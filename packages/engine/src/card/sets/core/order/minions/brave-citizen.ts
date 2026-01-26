@@ -10,8 +10,6 @@ import {
 } from '../../../../card.enums';
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
 import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { AbilityDamage } from '../../../../../utils/damage';
 
 export const braveCitizen: MinionBlueprint = {

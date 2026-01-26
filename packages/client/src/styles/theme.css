@@ -143,6 +143,11 @@
     var(--minion-slot-height-unitless);
 
   --pixel-scale: 2;
+
+  --rarity-common: var(--gray-1);
+  --rarity-rare: var(--blue-4);
+  --rarity-epic: #bb00e0;
+  --rarity-legendary: var(--orange-4);
 }
 
 html.dark {

@@ -8,6 +8,9 @@ import { AppError, DomainError } from '../../utils/error';
 import type { GiftId } from '../entities/gift.entity';
 import type { GiftRepository } from '../repositories/gift.repository';
 import { GIFT_KINDS } from '../gift.constants';
+import type { AwardCurrencyUseCase } from '../../currency/usecases/awardCurrency.usecase';
+import type { UserId } from '../../users/entities/user.entity';
+import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
 
 export type ClaimGiftInput = {
   giftId: GiftId;
@@ -26,6 +29,7 @@ export class ClaimGiftUseCase implements UseCase<ClaimGiftInput, ClaimGiftOutput
       cardRepo: CardRepository;
       deckRepo: DeckRepository;
       session: AuthSession | null;
+      awardCurrencyUseCase: AwardCurrencyUseCase;
     }
   ) {}
 
@@ -52,6 +56,24 @@ export class ClaimGiftUseCase implements UseCase<ClaimGiftInput, ClaimGiftOutput
     );
   }
 
+  private async giftGold(userId: UserId, amount: number) {
+    await this.ctx.awardCurrencyUseCase.execute({
+      userId,
+      amount,
+      currencyType: CURRENCY_TYPES.GOLD,
+      source: CURRENCY_SOURCES.GAME_PARTICIPATION
+    });
+  }
+
+  private async giftCraftingShard(userId: UserId, amount: number) {
+    await this.ctx.awardCurrencyUseCase.execute({
+      userId,
+      amount,
+      currencyType: CURRENCY_TYPES.CRAFTING_SHARDS,
+      source: CURRENCY_SOURCES.GAME_PARTICIPATION
+    });
+  }
+
   async execute(input: ClaimGiftInput): Promise<ClaimGiftOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
@@ -74,6 +96,12 @@ export class ClaimGiftUseCase implements UseCase<ClaimGiftInput, ClaimGiftOutput
         })
         .with({ kind: GIFT_KINDS.CARDS }, async content => {
           return await this.giftCards(content);
+        })
+        .with({ kind: GIFT_KINDS.GOLD }, async content => {
+          return await this.giftGold(session.userId, content.amount);
+        })
+        .with({ kind: GIFT_KINDS.CRAFTING_DUST }, async content => {
+          return await this.giftCraftingShard(session.userId, content.amount);
         })
         .exhaustive();
     }

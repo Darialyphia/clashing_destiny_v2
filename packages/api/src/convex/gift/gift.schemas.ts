@@ -1,15 +1,15 @@
 import { defineTable } from 'convex/server';
 import { v } from 'convex/values';
-import { GIFT_SOURCES, GIFT_STATES } from './gift.constants';
+import { GIFT_KINDS, GIFT_SOURCES, GIFT_STATES } from './gift.constants';
 
 export const GIFT_CONTENTS_VALIDATOR = v.array(
   v.union(
     v.object({
-      kind: v.literal('DECK'),
+      kind: v.literal(GIFT_KINDS.DECK),
       deckId: v.string()
     }),
     v.object({
-      kind: v.literal('CARDS'),
+      kind: v.literal(GIFT_KINDS.CARDS),
       cards: v.array(
         v.object({
           blueprintId: v.string(),
@@ -17,6 +17,14 @@ export const GIFT_CONTENTS_VALIDATOR = v.array(
           amount: v.number()
         })
       )
+    }),
+    v.object({
+      kind: v.literal(GIFT_KINDS.GOLD),
+      amount: v.number()
+    }),
+    v.object({
+      kind: v.literal(GIFT_KINDS.CRAFTING_DUST),
+      amount: v.number()
     })
   )
 );

@@ -3,6 +3,7 @@
 import { useCollectionPage } from './useCollectionPage';
 import CollectionCard from './CollectionCard.vue';
 import { useIntersectionObserver } from '@vueuse/core';
+import UiSpinner from '@/ui/components/UiSpinner.vue';
 
 const { cards, viewMode, isLoading } = useCollectionPage();
 
@@ -39,8 +40,14 @@ useIntersectionObserver(
 </script>
 
 <template>
-  <Transition mode="out-in" class="h-full overflow-hidden fancy-scrollbar">
-    <p v-if="isLoading" class="text-center">Loading Collection...</p>
+  <Transition
+    mode="out-in"
+    :appear="false"
+    class="h-full overflow-hidden fancy-scrollbar"
+  >
+    <div v-if="isLoading" class="h-full flex items-center justify-center">
+      <UiSpinner size="11" />
+    </div>
     <div v-else-if="cards.length" class="h-full">
       <ul
         ref="card-list"

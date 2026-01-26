@@ -20,7 +20,7 @@ export class WalletRepository {
     return this.buildEntity(doc);
   }
 
-  async create(userId: UserId): Promise<WalletId> {
+  async create(userId: UserId): Promise<Wallet> {
     const existing = await this.ctx.db
       .query('wallets')
       .withIndex('by_user', q => q.eq('userId', userId))
@@ -33,11 +33,17 @@ export class WalletRepository {
     const walletId = await this.ctx.db.insert('wallets', {
       userId,
       gold: 0,
+      craftingShards: 0,
       createdAt: Date.now(),
       updatedAt: Date.now()
     });
 
-    return walletId as WalletId;
+    const wallet = await this.ctx.db.get(walletId);
+    if (!wallet) {
+      throw new AppError('Failed to create wallet');
+    }
+
+    return this.buildEntity(wallet);
   }
 
   async getOrCreate(userId: UserId): Promise<Wallet> {
@@ -50,19 +56,7 @@ export class WalletRepository {
       return this.buildEntity(existing);
     }
 
-    const walletId = await this.ctx.db.insert('wallets', {
-      userId,
-      gold: 0,
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    });
-
-    const wallet = await this.ctx.db.get(walletId);
-    if (!wallet) {
-      throw new AppError('Failed to create wallet');
-    }
-
-    return this.buildEntity(wallet);
+    return this.create(userId);
   }
 
   async getByUserId(userId: UserId): Promise<Wallet | null> {

@@ -22,6 +22,14 @@ export type GiveGiftInput = {
           amount: number;
         }>;
       }
+    | {
+        kind: 'GOLD';
+        amount: number;
+      }
+    | {
+        kind: 'CRAFTING_DUST';
+        amount: number;
+      }
   >;
 };
 

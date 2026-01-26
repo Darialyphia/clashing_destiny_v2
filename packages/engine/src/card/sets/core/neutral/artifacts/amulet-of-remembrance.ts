@@ -10,9 +10,7 @@ import {
   ARTIFACT_KINDS,
   CARD_LOCATIONS
 } from '../../../../card.enums';
-import { scry } from '../../../../card-actions-utils';
-import { isMinion, isSpell } from '../../../../card-utils';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { isMinion } from '../../../../card-utils';
 
 export const amuletOfRemembrance: ArtifactBlueprint = {
   id: 'amulet-of-remembrance',

@@ -16,10 +16,11 @@ export class WalletReadRepository {
     return wallet;
   }
 
-  async getBalances(userId: UserId): Promise<{ gold: number }> {
+  async getBalances(userId: UserId): Promise<{ gold: number; craftingShards: number }> {
     const wallet = await this.getByUserId(userId);
     return {
-      gold: wallet?.gold ?? 0
+      gold: wallet?.gold ?? 0,
+      craftingShards: wallet?.craftingShards ?? 0
     };
   }
 }

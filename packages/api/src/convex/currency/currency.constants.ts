@@ -7,13 +7,16 @@ export const CURRENCY_SOURCES = {
   SEASON_REWARD: 'season_reward',
   ADMIN_GRANT: 'admin_grant',
   SPEND: 'spend',
-  BOOSTER_PACK_PURCHASE: 'booster_pack_purchase'
+  BOOSTER_PACK_PURCHASE: 'booster_pack_purchase',
+  DECRAFTING: 'decrafting',
+  CRAFTING: 'crafting'
 } as const;
 
 export type CurrencySource = (typeof CURRENCY_SOURCES)[keyof typeof CURRENCY_SOURCES];
 
 export const CURRENCY_TYPES = {
-  GOLD: 'gold'
+  GOLD: 'gold',
+  CRAFTING_SHARDS: 'crafting_shards'
 } as const;
 
 export type CurrencyType = (typeof CURRENCY_TYPES)[keyof typeof CURRENCY_TYPES];

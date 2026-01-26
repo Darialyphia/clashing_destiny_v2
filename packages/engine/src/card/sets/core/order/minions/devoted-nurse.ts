@@ -11,7 +11,6 @@ import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modi
 import { SimpleMinionStatsModifier } from '../../../../../modifier/modifiers/simple-minion-stats.modifier';
 import { singleMinionTargetRules } from '../../../../card-utils';
 import dedent from 'dedent';
-import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 
 export const devotedNurse: MinionBlueprint = {
   id: 'devoted-nurse',
@@ -40,9 +39,8 @@ export const devotedNurse: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/devoted-nurse-bg',
+      main: 'minions/devoted-nurse',
       frame: 'default',
       tint: FACTIONS.ORDER.defaultCardTint
     }

@@ -9,6 +9,10 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
+import type { MinionCard } from '../../../../entities/minion.entity';
+import { SimpleHealthBuffModifier } from '../../../../../modifier/modifiers/simple-health-buff.modifier';
+import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const angelWings: SpellBlueprint = {
   id: 'angel-wings',
@@ -19,7 +23,7 @@ export const angelWings: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Angel Wings',
   description: dedent`
-   TODO REWORK
+  Give an allied minion +1 Health, and @Honor@ this turn.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -57,5 +61,17 @@ export const angelWings: SpellBlueprint = {
     });
   },
   async onInit() {},
-  async onPlay(game, card, targets) {}
+  async onPlay(game, card, targets) {
+    const targetMinion = targets[0] as MinionCard;
+
+    await targetMinion.modifiers.add(
+      new SimpleHealthBuffModifier('angel-wings-buff', game, targetMinion, {
+        amount: 1
+      })
+    );
+
+    await targetMinion.modifiers.add(
+      new HonorModifier(game, card, { mixins: [new UntilEndOfTurnModifierMixin(game)] })
+    );
+  }
 };

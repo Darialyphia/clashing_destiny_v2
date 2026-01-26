@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { useAuthedMutation } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import {
-  api,
   LOBBY_USER_ROLES,
   MAX_PLAYERS_PER_LOBBY,
   type LobbyDetails
 } from '@game/api';
 import UiButton from '@/ui/components/UiButton.vue';
+import { useChangeLobbyRole } from '@/lobby/composables/useLobby';
 
 const { lobby } = defineProps<{ lobby: LobbyDetails }>();
 
-const { mutate: changeRole } = useAuthedMutation(api.lobbies.changeRole, {});
+const { mutate: changeRole } = useChangeLobbyRole();
 const { data: me } = useMe();
 
 const isPlayer = computed(() =>
@@ -29,7 +28,7 @@ const isPlayer = computed(() =>
       changeRole({
         newRole: LOBBY_USER_ROLES.PLAYER,
         lobbyId: lobby.id,
-        targetUserId: me.id
+        targetUserId: me?.id
       })
     "
   >

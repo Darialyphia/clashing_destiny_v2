@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { useAuthedMutation } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import { useDecks } from '@/card/composables/useDecks';
-import { api, type LobbyDetails } from '@game/api';
+import { type LobbyDetails } from '@game/api';
 import UiDrawer from '@/ui/components/UiDrawer.vue';
 import PlayerDeck from '@/player/components/PlayerDeck.vue';
+import { useSelectLobbyDeck } from '@/lobby/composables/useLobby';
 
 const { lobby } = defineProps<{ lobby: LobbyDetails }>();
 const isOpened = defineModel<boolean>('isOpened', { required: true });
 
 const { data: decks } = useDecks();
 
-const { mutate: selectLoadout } = useAuthedMutation(api.lobbies.selectDeck);
+const { mutate: selectLoadout } = useSelectLobbyDeck();
 const { data: me } = useMe();
 
 const myLobbyUser = computed(

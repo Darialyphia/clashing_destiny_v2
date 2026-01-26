@@ -379,6 +379,16 @@ export class GameClient {
     });
   }
 
+  chooseChainEffect(effectId: string) {
+    this.dispatch({
+      type: 'chooseChainEffects',
+      payload: {
+        playerId: this.playerId,
+        id: effectId
+      }
+    });
+  }
+
   answerQuestion(id: string) {
     this.dispatch({
       type: 'answerQuestion',

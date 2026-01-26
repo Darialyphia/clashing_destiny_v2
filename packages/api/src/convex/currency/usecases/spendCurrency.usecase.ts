@@ -42,10 +42,6 @@ export class SpendCurrencyUseCase
       throw new AppError('Spend amount must be positive');
     }
 
-    if (input.currencyType !== CURRENCY_TYPES.GOLD) {
-      throw new AppError(`Unsupported currency type: ${input.currencyType}`);
-    }
-
     const userId = session.userId;
 
     const wallet = await this.ctx.walletRepo.getByUserId(userId);
@@ -56,7 +52,7 @@ export class SpendCurrencyUseCase
     assert(wallet.canAfford(input.amount), new DomainError('Insufficient funds'));
 
     const balanceBefore = wallet.gold;
-    wallet.spend(input.amount);
+    wallet.spend(input.amount, input.currencyType);
     await this.ctx.walletRepo.save(wallet);
 
     const balanceAfter = balanceBefore - input.amount;
