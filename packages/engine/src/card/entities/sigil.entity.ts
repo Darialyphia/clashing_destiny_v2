@@ -167,13 +167,6 @@ export class SigilCard extends Card<
 
   async decreaseCountdown(amount: number) {
     if (this.countdown === null) return;
-    console.log(
-      'decreasing countdown',
-      this.id,
-      this.countdown,
-      '->',
-      Math.max(0, this.countdown - amount)
-    );
 
     await this.game.emit(
       SIGIL_EVENTS.SIGIL_BEFORE_COUNTDOWN_DECREASE,
