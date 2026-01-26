@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import HeroSlot from './HeroSlot.vue';
 import {
+  useGameClient,
   useGameUi,
   useOpponentBoard,
   useOpponentPlayer
@@ -15,12 +16,15 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const opponent = useOpponentPlayer();
 const opponentBoard = useOpponentBoard();
-
+const { playerId: activePlayerId } = useGameClient();
 const ui = useGameUi();
 </script>
 
 <template>
-  <div class="opponent-board">
+  <div
+    class="opponent-board"
+    :class="{ 'is-active': opponent.id === activePlayerId }"
+  >
     <div class="left-zone">
       <div
         class="artifacts"
@@ -79,6 +83,11 @@ const ui = useGameUi();
   transform-style: preserve-3d;
   gap: var(--size-2);
   padding-top: var(--size-5);
+
+  &.is-active {
+    outline: 2px solid #ffb270;
+    outline-offset: var(--size-1);
+  }
 }
 
 .left-zone {

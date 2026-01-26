@@ -562,19 +562,12 @@ export abstract class Card<
     return false;
   }
 
-  get isCorrectChainToPlay() {
-    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
-      return false;
-    }
-    return true;
-  }
-
   protected get canPlayBase() {
     if (this.isIncombatPhaseBeforeChain) {
       return false;
     }
 
-    if (!this.isCorrectChainToPlay) {
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
       return false;
     }
 
@@ -593,7 +586,7 @@ export abstract class Card<
       return 'You need to declare the attack target before playing cards.';
     }
 
-    if (!this.isCorrectChainToPlay) {
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
       return "Can't play during an effect chain.";
     }
 
@@ -611,7 +604,7 @@ export abstract class Card<
         if (this.player.hasPlayedDestinyCardThisTurn) {
           return 'You have already played a Destiny card this turn.';
         }
-        if (this.location !== 'destinyDeck') {
+        if (this.location !== CARD_LOCATIONS.DESTINY_DECK) {
           return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
         }
         if (!this.canPayDestinyCost) {
@@ -621,7 +614,7 @@ export abstract class Card<
           this.game.turnSystem.elapsedTurns <
           this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
         ) {
-          return `Cann't play destiny cards yet.`;
+          return `Cannot play destiny cards yet.`;
         }
         return 'You cannot play this card.';
       })

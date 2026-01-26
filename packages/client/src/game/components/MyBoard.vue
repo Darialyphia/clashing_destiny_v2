@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useGameClient,
   useGameUi,
   useMyBoard,
   useMyPlayer
@@ -16,6 +17,7 @@ import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
 const myPlayer = useMyPlayer();
 const myBoard = useMyBoard();
+const { playerId: activePlayerId } = useGameClient();
 
 const ui = useGameUi();
 
@@ -35,7 +37,10 @@ const onMouseup = () => {
 <template>
   <div
     class="my-board"
-    :class="{ 'is-dragging': ui.draggedCard }"
+    :class="{
+      'is-dragging': ui.draggedCard,
+      'is-active': myPlayer.id === activePlayerId
+    }"
     @mouseup="onMouseup"
   >
     <div class="left-zone">
@@ -101,6 +106,10 @@ const onMouseup = () => {
   transform-style: preserve-3d;
   gap: var(--size-2);
 
+  &.is-active {
+    outline: 2px solid #ffb270;
+    outline-offset: var(--size-1);
+  }
   &.is-dragging {
     background-color: hsla(260, 50%, 20%, 0.2);
     box-shadow: 0 0 30px #985e25;
