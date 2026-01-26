@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage } from '../../../../../utils/damage';
+import { SpellDamage, UnpreventableDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { singleEnemyMinionTargetRules } from '../../../../card-utils';
 import {
@@ -22,7 +22,7 @@ export const lightningBolt: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Lightning Bolt',
   description: dedent`
-  Deal 2 damage to an enemy minion and exhaust it.
+  Deal 2 damage to an enemy minion and 1 @True Damage@ to all other enemy minions.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -63,9 +63,11 @@ export const lightningBolt: SpellBlueprint = {
     await card.modifiers.add(new ForesightModifier(game, card));
   },
   async onPlay(game, card, targets) {
-    for (const target of targets as MinionCard[]) {
-      await target.takeDamage(card, new SpellDamage(2, card));
-      await target.exhaust();
+    const targetMinion = targets[0] as MinionCard;
+    await targetMinion.takeDamage(card, new SpellDamage(2, card));
+    for (const enemyMinion of targetMinion.player.minions) {
+      if (enemyMinion.equals(targetMinion)) continue;
+      await enemyMinion.takeDamage(card, new UnpreventableDamage(1));
     }
   }
 };

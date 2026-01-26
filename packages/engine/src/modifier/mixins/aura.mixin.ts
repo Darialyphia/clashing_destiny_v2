@@ -38,7 +38,7 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
       const hasAura = this.affectedCards.has(card.id);
 
       if (!shouldGetAura && hasAura) {
-        const modifierstoRemove = this.affectedCards.get(card.id)!;
+        const modifierstoRemove = this.affectedCards.get(card.id) ?? [];
         for (const mod of modifierstoRemove) {
           await mod.removeSource(this.source);
         }

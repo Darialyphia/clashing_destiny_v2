@@ -6,7 +6,6 @@ import { type GamePhasesDict } from '../src/game/game.enums';
 import type { HeroCard } from '../src/card/entities/hero.entity';
 import { MinionCard } from '../src/card/entities/minion.entity';
 import type { AnyCard } from '../src/card/entities/card.entity';
-import type { MinionBlueprint } from '../src/card/card-blueprint';
 
 export const testGameBuilder = () => {
   const options: Partial<GameOptions> = {};

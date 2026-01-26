@@ -81,7 +81,9 @@ export const cards = {
 "cross-counter": "cross-counter",
 "hadraniel-gods-majesty": "hadraniel-gods-majesty",
 "seraph-of-liberation": "seraph-of-liberation",
-"the-hangman": "the-hangman"
+"the-hangman": "the-hangman",
+"radiant-blow": "radiant-blow",
+"defend-the-oppressed": "defend-the-oppressed"
 } as const;
 
 export const collectableCards = {
@@ -156,7 +158,9 @@ export const collectableCards = {
 "cross-counter": "cross-counter",
 "hadraniel-gods-majesty": "hadraniel-gods-majesty",
 "seraph-of-liberation": "seraph-of-liberation",
-"the-hangman": "the-hangman"
+"the-hangman": "the-hangman",
+"radiant-blow": "radiant-blow",
+"defend-the-oppressed": "defend-the-oppressed"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
@@ -609,7 +613,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "hadraniel-gods-majesty",
     "collectable": true,
-    "rarity": "token",
+    "rarity": "legendary",
     "deckSource": "destinyDeck"
   },
   {
@@ -622,6 +626,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "the-hangman",
     "collectable": true,
     "rarity": "epic",
+    "deckSource": "destinyDeck"
+  },
+  {
+    "id": "radiant-blow",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "destinyDeck"
+  },
+  {
+    "id": "defend-the-oppressed",
+    "collectable": true,
+    "rarity": "rare",
     "deckSource": "destinyDeck"
   }
 ]

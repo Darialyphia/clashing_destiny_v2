@@ -50,7 +50,7 @@ export const rebuke: SpellBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {

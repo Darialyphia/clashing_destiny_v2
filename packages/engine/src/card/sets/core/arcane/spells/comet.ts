@@ -10,6 +10,10 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import type { SpellCard } from '../../../../entities/spell.entity';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const comet: SpellBlueprint = {
   id: 'comet',
@@ -21,6 +25,7 @@ export const comet: SpellBlueprint = {
   name: 'Comet',
   description: dedent`
   Deal 4 damage to all enemy minions.
+  @[lvl] 3@: This costs @[mana] 2@ less.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
@@ -45,14 +50,24 @@ export const comet: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 5,
+  manaCost: 6,
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
   async getPreResponseTargets() {
     return Promise.resolve([]);
   },
-  async onInit() {},
+  async onInit(game, card) {
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 3)
+    )) as LevelBonusModifier<SpellCard>;
+    await card.modifiers.add(
+      new SimpleManacostModifier('comet-cost-discount', game, card, {
+        amount: -2,
+        mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
+      })
+    );
+  },
   async onPlay(game, card) {
     for (const target of card.player.enemyMinions as MinionCard[]) {
       await target.takeDamage(card, new SpellDamage(4, card));

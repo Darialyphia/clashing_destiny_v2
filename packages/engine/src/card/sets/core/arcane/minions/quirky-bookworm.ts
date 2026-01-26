@@ -39,9 +39,8 @@ export const quirkyBookworm: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/quirky-bookworm-bg',
+      main: 'minions/quirky-bookworm',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

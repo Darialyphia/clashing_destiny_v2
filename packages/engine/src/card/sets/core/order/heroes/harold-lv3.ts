@@ -14,7 +14,7 @@ import { isMinion } from '../../../../card-utils';
 import { HeroCard } from '../../../../entities/hero.entity';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import { BurstAttackModifier } from '../../../../../modifier/modifiers/burst(attack.modifier';
+import { BurstAttackModifier } from '../../../../../modifier/modifiers/burst-attack.modifier';
 import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 
 export const haroldLv3: HeroBlueprint = {
