@@ -71,7 +71,7 @@ const saveImage = async () => {
   root.value.style.maxHeight = '';
 };
 
-const mode = ref('condensed' as 'full' | 'condensed');
+const mode = ref('full' as 'full' | 'condensed');
 
 const cardComponent = computed(() =>
   mode.value === 'full' ? BlueprintCard : BlueprintSmallCard

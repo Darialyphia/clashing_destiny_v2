@@ -25,7 +25,7 @@ export const rayOfFrost: SpellBlueprint = {
     Deal 1 damage to an enemy minion, and exhaust it. If it was already exhausted, @Freeze@ it instead.
   `,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

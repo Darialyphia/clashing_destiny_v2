@@ -68,5 +68,9 @@ export const defaultKeyBindings = {
   pass: {
     label: 'Pass',
     control: { key: 'KeyP', modifier: null }
+  },
+  showFullCardText: {
+    label: 'Show full card text when hovering cards',
+    control: { key: 'ShiftLeft', modifier: null }
   }
 } as const satisfies Record<string, { label: string; control: Control }>;

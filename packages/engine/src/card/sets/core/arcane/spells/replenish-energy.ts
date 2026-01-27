@@ -23,7 +23,7 @@ export const replenishEnergy: SpellBlueprint = {
   Draw a card.
   `,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.EPIC,
+  rarity: RARITIES.RARE,
   tags: [],
   art: {
     default: {

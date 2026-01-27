@@ -638,7 +638,9 @@ export abstract class Card<
       isExhausted: this.isExhausted,
       faction: this.faction.id,
       name: this.blueprint.name,
-      description: this.blueprint.description,
+      description:
+        this.blueprint?.dynamicDescription?.(this.game, this) ??
+        this.blueprint.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
       canBeUsedAsManaCost: this.canBeUsedAsManaCost,

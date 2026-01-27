@@ -33,6 +33,7 @@ export type CardBlueprintBase = {
   id: string;
   name: string;
   description: string;
+  dynamicDescription?: (game: Game, card: AnyCard) => string;
   setId: CardSetId;
   rarity: Rarity;
   art: Record<
@@ -78,6 +79,7 @@ export type AbilityBlueprint<
   manaCost: number;
   shouldExhaust: boolean;
   description: string;
+  dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
   speed: CardSpeed;
   isHiddenOnCard?: boolean;

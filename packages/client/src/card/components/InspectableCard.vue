@@ -42,7 +42,7 @@ const ui = useGameUi();
         v-if="!ui.draggedCard && enabled"
         :side="side"
         :side-offset="sideOffset"
-        style="--pixel-scale: 1.5"
+        style="--pixel-scale: 2"
       >
         <GameCard :card-id="cardId" :interactive="false" />
       </HoverCardContent>

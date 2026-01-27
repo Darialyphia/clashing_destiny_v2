@@ -22,7 +22,7 @@ export const manaFueledGolem: MinionBlueprint = {
   name: 'Mana-Fueled Golem',
   description: 'This cannot attack or block unless your hero is @Empowered@',
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

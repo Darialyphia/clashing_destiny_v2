@@ -13,6 +13,10 @@ import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
 import { assets } from '@/assets';
+import {
+  useIsKeyboardControlPressed,
+  useKeyboardControl
+} from '@/shared/composables/useKeyboardControl';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -36,7 +40,8 @@ type Token =
   | { type: 'lineage-bonus'; text: string }
   | { type: 'missing-affinity'; text: string }
   | { type: 'durability' }
-  | { type: CardSpeed };
+  | { type: CardSpeed }
+  | { type: 'dynamic'; text: string; tooltipText: string };
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
@@ -106,7 +111,17 @@ const tokens = computed<Token[]>(() => {
         text: part.replace('[missing-affinity] ', '')
       };
     }
-
+    if (part.startsWith('[dynamic]')) {
+      const [text, tooltipText] = part
+        .replace('[dynamic]', '')
+        .split('|')
+        .map(p => p.trim());
+      return {
+        type: 'dynamic',
+        text,
+        tooltipText
+      };
+    }
     for (const speed of Object.values(CARD_SPEED)) {
       if (part.startsWith(`[${speed}]`)) {
         return { type: speed };
@@ -115,10 +130,15 @@ const tokens = computed<Token[]>(() => {
     return { type: 'text', text: part };
   });
 });
+
+const showFullText = useIsKeyboardControlPressed({
+  key: 'ShiftLeft',
+  modifier: null
+});
 </script>
 
 <template>
-  <div class="card-text">
+  <div class="card-text" :class="{ 'show-full-text': showFullText }">
     <span
       v-for="(token, index) in tokens"
       :key="index"
@@ -129,6 +149,13 @@ const tokens = computed<Token[]>(() => {
           <img :src="assets['ui/ability-exhaust'].path" class="inline" />
         </template>
         Exhaust the card.
+      </UiSimpleTooltip>
+
+      <UiSimpleTooltip v-if="token.type === 'dynamic'" :disabled="showFullText">
+        <template #trigger>
+          <span>{{ showFullText ? token.tooltipText : token.text }}</span>
+        </template>
+        {{ token.tooltipText }}
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === 'spellpower'">
@@ -339,5 +366,15 @@ const tokens = computed<Token[]>(() => {
   padding: var(--size-3);
   color: var(--text-1);
   background-color: black;
+}
+.card-text:not(.show-full-text) .token-dynamic {
+  font-weight: var(--font-weight-7);
+  color: var(--green-6);
+  font-size: 1.25em;
+  -webkit-text-stroke: calc(var(--pixel-scale) * 2px) black;
+  paint-order: stroke fill;
+  span {
+    padding-inline: calc(var(--pixel-scale) * var(--size-05));
+  }
 }
 </style>

@@ -25,7 +25,7 @@ export const orbOfConstellations: ArtifactBlueprint = {
   @Hindered 1@.
   @On Enter@: Draw a card in your Destiny zone.`,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.EPIC,
   subKind: ARTIFACT_KINDS.RELIC,
   tags: [],
   art: {
@@ -82,8 +82,21 @@ export const orbOfConstellations: ArtifactBlueprint = {
           choices
         });
       },
-      async onResolve(game, card, [cardToBanish]) {
-        if (!cardToBanish) return;
+      async onResolve(game, card) {
+        const choices = Array.from(card.player.cardManager.discardPile).filter(
+          c => c.kind === CARD_KINDS.SPELL && c.faction === FACTIONS.ARCANE
+        );
+
+        if (choices.length === 0) {
+          return;
+        }
+        const [cardToBanish] = await game.interaction.chooseCards({
+          player: card.player,
+          label: 'Select an Arcane Spell in your Discard pile to banish.',
+          minChoiceCount: 1,
+          maxChoiceCount: 1,
+          choices
+        });
 
         await cardToBanish.sendToBanishPile();
         const copy = await card.player.generateCard(cardToBanish.blueprintId);

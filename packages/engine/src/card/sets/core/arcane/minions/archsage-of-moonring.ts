@@ -11,7 +11,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
@@ -22,8 +22,12 @@ export const archsageOfMoonring: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
   description: dedent`
-  @Loyalty@ : this costs @[mana] 1@ more.
-  @On Enter@: Deal 3 damage split among enemies.`,
+  @On Enter@: Deal 3 + @Empowered@ stacks damage split among enemies.`,
+  dynamicDescription: (game, card) => {
+    const totalDamage = 3 + getEmpowerStacks(card);
+    return dedent`
+    @On Enter@: Deal @[dynamic]${totalDamage}|3 + Empowered stacks@ damage split among enemies.`;
+  },
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -54,13 +58,13 @@ export const archsageOfMoonring: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new LoyaltyModifier(game, card, { manaAmount: 1 }));
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
           let count = 0;
 
-          while (count < 3) {
+          const amount = 3 + getEmpowerStacks(card);
+          while (count < amount) {
             const hasRemainingTargets = singleEnemyTargetRules.canPlay(game, card);
             if (!hasRemainingTargets) break;
             const [target] = await singleEnemyTargetRules.getPreResponseTargets(

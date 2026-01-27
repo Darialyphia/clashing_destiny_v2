@@ -23,7 +23,7 @@ export const jeweller: MinionBlueprint = {
   name: 'Jeweller',
   description: dedent``,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

@@ -25,6 +25,16 @@ export const defendTheOppressed: SpellBlueprint = {
    Summon 2 @${braveCitizen.name}@.
    Costs 1 less for each ally minion that died this turn.
   `,
+  dynamicDescription: (game, card) => {
+    const discount = card.player.cardTracker.cardsDestroyedThisGameTurn.filter(
+      c => c.card.isAlly(card) && isMinion(c.card)
+    ).length;
+    const destinyCost = Math.max(0, 3 - discount);
+    return dedent`
+   Summon 2 @${braveCitizen.name}@.
+   Costs @[dynamic]${destinyCost}|3 - 1 for each ally minion that died this turn@ less.
+  `;
+  },
   faction: FACTIONS.ORDER,
   rarity: RARITIES.RARE,
   tags: [],

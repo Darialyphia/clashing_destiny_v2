@@ -22,7 +22,7 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
   name: 'Amulet of Remembrance',
   description: dedent``,
   faction: FACTIONS.NEUTRAL,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   subKind: ARTIFACT_KINDS.RELIC,
   tags: [],
   art: {

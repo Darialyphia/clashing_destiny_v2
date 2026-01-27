@@ -28,7 +28,7 @@ export const comet: SpellBlueprint = {
   @[lvl] 3@: This costs @[mana] 2@ less.
   `,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.EPIC,
+  rarity: RARITIES.RARE,
   tags: [],
   art: {
     default: {
