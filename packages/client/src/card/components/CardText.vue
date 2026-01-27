@@ -13,10 +13,7 @@ import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
 import { assets } from '@/assets';
-import {
-  useIsKeyboardControlPressed,
-  useKeyboardControl
-} from '@/shared/composables/useKeyboardControl';
+import { useIsKeyboardControlPressed } from '@/shared/composables/useKeyboardControl';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
