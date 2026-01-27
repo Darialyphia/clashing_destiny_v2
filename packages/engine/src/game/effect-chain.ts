@@ -311,6 +311,7 @@ export class CannotAddEffectChainPhase extends GameError {
     super(`You cannot add an effect in the ${phase} phase`);
   }
 }
+
 export class ChainEvent extends TypedSerializableEvent<EmptyObject, EmptyObject> {
   serialize() {
     return {};

@@ -44,7 +44,7 @@ export const wanderingPaladin: MinionBlueprint = {
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 5,
+  maxHp: 4,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

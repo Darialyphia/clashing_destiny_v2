@@ -314,7 +314,9 @@ const isSettingsOpened = ref(false);
 .bottom-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: var(--size-3);
   transform: translateZ(1px);
+  height: 127px;
 }
 </style>

@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { UnpreventableDamage } from '../../../../../utils/damage';
+import { SpellDamage, UnpreventableDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../../card-utils';
 import {
@@ -25,7 +25,7 @@ export const galacticExplosion: SpellBlueprint = {
   description: dedent`
   The mana cost of this card is reduced by your @Empower@ level.
 
-  Deal 7 @True Damage@ to a unit.
+  Deal 10 damage to a unit.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.LEGENDARY,
@@ -50,7 +50,7 @@ export const galacticExplosion: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 8,
+  manaCost: 10,
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {
@@ -71,7 +71,7 @@ export const galacticExplosion: SpellBlueprint = {
   },
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {
-      await target.takeDamage(card, new UnpreventableDamage(7));
+      await target.takeDamage(card, new SpellDamage(10, card));
     }
   }
 };

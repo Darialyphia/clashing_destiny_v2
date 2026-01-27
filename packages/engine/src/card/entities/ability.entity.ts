@@ -61,8 +61,16 @@ export class Ability<T extends AbilityOwner>
     return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
   }
 
+  get canUseDuringChain() {
+    return this.speed !== CARD_SPEED.SLOW;
+  }
+
   get canUse() {
     if (this._isSealed) return false;
+
+    if (this.game.effectChainSystem.currentChain && !this.canUseDuringChain) {
+      return false;
+    }
 
     const authorizedPhases: GamePhase[] = [
       GAME_PHASES.MAIN,
@@ -71,7 +79,6 @@ export class Ability<T extends AbilityOwner>
     ];
 
     const exhaustCondition = this.shouldExhaust ? !this.card.isExhausted : true;
-
     const timingCondition = this.game.interaction.isInteractive(this.card.player);
 
     return (

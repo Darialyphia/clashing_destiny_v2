@@ -3,13 +3,11 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { useFxEvent, useGameUi } from '../composables/useGameClient';
 import { waitFor } from '@game/shared';
 import GameCard from './GameCard.vue';
-import { useDissolveVFX } from '../composables/useDissolve';
 import { Flip } from 'gsap/Flip';
 
 const isDisplayed = ref(false);
 const cards = ref<{ card: string; flipState: any }[]>([]);
 const root = useTemplateRef('root');
-const disolve = useDissolveVFX();
 const ui = useGameUi();
 
 useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async e => {
@@ -39,12 +37,6 @@ useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async () => {
     });
   });
 
-  await waitFor(500);
-
-  const cardEls = root.value!.querySelectorAll('.card');
-  cardEls.forEach(el => {
-    disolve.play(el as HTMLElement, 1500);
-  });
   await waitFor(1500);
   cards.value = [];
   isDisplayed.value = false;

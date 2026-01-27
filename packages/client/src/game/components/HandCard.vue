@@ -74,6 +74,9 @@ const onMouseDown = (e: MouseEvent) => {
     nextTick(() => {
       ui.value.stopDraggingCard();
     });
+    setTimeout(() => {
+      document.body.style.overflow = '';
+    }, 300);
     document.body.removeEventListener('mouseup', onMouseup);
     document.body.removeEventListener('mousemove', onMousemove);
   };
@@ -97,6 +100,7 @@ const onMouseDown = (e: MouseEvent) => {
 
   document.body.addEventListener('mousemove', onMousemove);
   document.body.addEventListener('mouseup', onMouseup);
+  document.body.style.overflow = 'hidden';
   const unwatch = watch(
     [isOutOfScreen, () => ui.value.draggedCard],
     ([outOfScreen, draggedCard]) => {

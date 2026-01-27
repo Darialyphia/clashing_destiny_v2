@@ -156,11 +156,11 @@ const onEffectClick = (effectId: string) => {
 <style scoped lang="postcss">
 .effect-chain {
   flex-grow: 1;
-  align-self: stretch;
   display: flex;
   align-items: center;
   gap: var(--size-3);
-  --pixel-scale: 0.5;
+  --pixel-scale: 0.75;
+
   height: calc(var(--card-small-height) * var(--pixel-scale));
   justify-content: center;
   > .effect-wrapper:first-child {

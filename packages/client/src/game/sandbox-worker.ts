@@ -38,7 +38,6 @@ self.addEventListener('message', ({ data }) => {
         },
         players: payload.options.players
       });
-
       await game.initialize();
       self.postMessage({
         type: 'ready',
@@ -68,8 +67,9 @@ self.addEventListener('message', ({ data }) => {
     .with({ type: 'rewind' }, async ({ payload }) => {
       if (!game) {
         console.warn('Game not initialized yet, cannot rewind');
+        return;
       }
-      const history = game.inputSystem.serialize().slice(0, payload.step + 1);
+      const history = game.inputSystem.serialize().slice(0, payload.step);
       game = new Game({ ...game.options, history });
 
       await game.initialize();

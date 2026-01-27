@@ -13,6 +13,7 @@ import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.mo
 import { SilencedModifier } from '../../../../../modifier/modifiers/silenced.modifier';
 import { MinionCard } from '../../../../entities/minion.entity';
 import { isMinion } from '../../../../card-utils';
+import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
 
 export const firstWings: MinionBlueprint = {
   id: 'first-wings',
@@ -23,7 +24,7 @@ export const firstWings: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'First Wings',
   description: dedent`
-    @Honor@, @Loyalty 1@.
+    @Pride 2@, @Honor@, @Loyalty 1@.
     @On Attack@: if the attack target is a minion, @Silence@ it.
   `,
   faction: FACTIONS.ORDER,
@@ -53,6 +54,7 @@ export const firstWings: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new PrideModifier(game, card, 2));
     await card.modifiers.add(new HonorModifier(game, card));
     await card.modifiers.add(
       new OnAttackModifier(game, card, {

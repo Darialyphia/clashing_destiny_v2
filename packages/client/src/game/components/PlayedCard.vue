@@ -4,17 +4,36 @@ import { useFxEvent, useGameState } from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { waitFor } from '@game/shared';
 import GameCard from './GameCard.vue';
+import { CARD_SPEED } from '@game/engine/src/card/card.enums';
+import { EFFECT_TYPE } from '@game/engine/src/game/game.enums';
 
 const card = ref<CardViewModel | null>(null);
 const state = useGameState();
 
 useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
-  card.value = state.value.entities[event.card.id] as CardViewModel;
+  const playedCard = state.value.entities[event.card.id] as CardViewModel;
+  if (playedCard.speed === CARD_SPEED.BURST) return;
+
+  card.value = playedCard;
+
+  await waitFor(1200);
+  card.value = null;
+});
+
+useFxEvent(FX_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED, async event => {
+  if (event.effect.source.type !== EFFECT_TYPE.CARD) return;
+  const resolvedCard = state.value.entities[
+    event.effect.source.id
+  ] as CardViewModel;
+  if (resolvedCard.speed === CARD_SPEED.BURST) return;
+
+  card.value = resolvedCard;
   await waitFor(1200);
   card.value = null;
 });
 
 useFxEvent(FX_EVENTS.EFFECT_CHAIN_EFFECT_ADDED, async event => {
+  if (event.effect.source.type !== EFFECT_TYPE.CARD) return;
   card.value = state.value.entities[event.effect.source.id] as CardViewModel;
   await waitFor(800);
   card.value = null;

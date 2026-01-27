@@ -21,6 +21,7 @@ import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { LockedModifier } from '../modifier/modifiers/locked.modifier';
+import { cloneDeep } from 'lodash-es';
 
 export type PlayerOptions = {
   id: string;
@@ -92,11 +93,11 @@ export class Player
     lineage: HeroCard[];
   };
 
-  constructor(
-    game: Game,
-    private options: PlayerOptions
-  ) {
+  private options: PlayerOptions;
+
+  constructor(game: Game, options: PlayerOptions) {
     super(options.id, game, makeInterceptors());
+    this.options = cloneDeep(options);
     this.game = game;
     this.cardTracker = new CardTrackerComponent(game, this);
     this.boardSide = new BoardSide(this.game, this);
