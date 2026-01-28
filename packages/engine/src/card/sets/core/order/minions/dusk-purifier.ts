@@ -27,7 +27,7 @@ export const duskPurifier: MinionBlueprint = {
     @Lingering Destiny@
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.RARE,
   tags: [],
   art: {
     default: {

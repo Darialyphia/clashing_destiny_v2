@@ -25,7 +25,7 @@ export const lightningBolt: SpellBlueprint = {
   Deal 2 damage to an enemy minion and 1 @True Damage@ to all other enemy minions.
   `,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

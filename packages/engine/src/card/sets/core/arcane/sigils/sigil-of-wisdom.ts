@@ -25,7 +25,7 @@ export const sigilOfWisdom: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
   description: dedent`
-  Whenever your hero levels up, @Empower@.
+  Whenever any hero levels up, @Empower@.
 
   @On Destroyed@: Draw a card.
   `,
@@ -72,12 +72,6 @@ export const sigilOfWisdom: SigilBlueprint = {
         card,
         {
           mixins: [
-            new TogglableModifierMixin(
-              game,
-              () =>
-                card.player.cardTracker.getCardsPlayedThisGameTurnOfKind(CARD_KINDS.SPELL)
-                  .length === 0
-            ),
             new GameEventModifierMixin(game, {
               eventName: GAME_EVENTS.HERO_AFTER_LEVEL_UP,
               async handler() {

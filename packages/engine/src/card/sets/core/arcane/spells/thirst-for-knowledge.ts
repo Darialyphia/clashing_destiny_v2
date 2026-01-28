@@ -38,9 +38,8 @@ export const thirstForKnowledge: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/thirst-for-knowledge-bg',
+      main: 'spells/thirst-for-knowledge',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

@@ -56,7 +56,7 @@ export const quirkyBookworm: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await card.player.cardManager.draw(1);
+          await card.player.cardManager.drawIntoDestinyZone(1);
         }
       })
     );

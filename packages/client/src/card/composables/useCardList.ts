@@ -9,7 +9,7 @@ import {
   type Faction
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
-import { isString } from '@game/shared';
+import { isFunction, isString } from '@game/shared';
 import type { Ref, ComputedRef, InjectionKey } from 'vue';
 import { api, type CardId } from '@game/api';
 import { useAuthedQuery } from '@/auth/composables/useAuth';
@@ -146,25 +146,27 @@ export const provideCardList = () => {
 
         if (textFilter.value) {
           const searchText = textFilter.value.toLocaleLowerCase();
-
+          const description = isFunction(card.description)
+            ? card.description()
+            : card.description;
           return (
             card.name.toLocaleLowerCase().includes(searchText) ||
-            card.description.toLocaleLowerCase().includes(searchText) ||
+            description.toLocaleLowerCase().includes(searchText) ||
             card.tags.some(tag =>
               tag.toLocaleLowerCase().includes(searchText)
             ) ||
             Object.values(KEYWORDS).some(k => {
               return (
                 (k.name.toLocaleLowerCase().includes(searchText) &&
-                  card.description.includes(searchText)) ||
+                  description.includes(searchText)) ||
                 k.aliases.some(alias => {
                   return isString(alias)
                     ? alias.includes(searchText) &&
-                        card.description
+                        description
                           .toLocaleLowerCase()
                           .includes(alias.toLocaleLowerCase())
                     : searchText.match(alias) &&
-                        card.description.toLocaleLowerCase().match(alias);
+                        description.toLocaleLowerCase().match(alias);
                 })
               );
             })

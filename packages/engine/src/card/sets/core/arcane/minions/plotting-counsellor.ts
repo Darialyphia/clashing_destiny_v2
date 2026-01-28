@@ -14,6 +14,7 @@ import { GAME_EVENTS } from '../../../../../game/game.events';
 import { MinionCard } from '../../../../entities/minion.entity';
 import { scry } from '../../../../card-actions-utils';
 import { AbilityDamage } from '../../../../../utils/damage';
+import { jeweller } from './jeweller';
 
 export const plottingCounsellor: MinionBlueprint = {
   id: 'plotting-consellor',
@@ -23,7 +24,9 @@ export const plottingCounsellor: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Plotting Counsellor',
-  description: dedent`At the end of each turn, if this card has only 1 Hp, banish this and summon a @Jeweller@.`,
+  // use a function for description to avoid circular dependency issues
+  description: () =>
+    dedent`At the end of each turn, if this card has only 1 Hp, banish this and summon a @${jeweller.name}@.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],

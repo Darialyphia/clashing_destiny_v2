@@ -66,8 +66,8 @@ export const littleWitch: MinionBlueprint = {
         });
       },
       manaCost: 1,
-      shouldExhaust: true,
-  speed: CARD_SPEED.FAST,
+      shouldExhaust: false,
+      speed: CARD_SPEED.FAST,
       async onResolve(game, card, targets, ability) {
         const target = targets[0] as MinionCard;
         if (!target) return;
@@ -80,5 +80,3 @@ export const littleWitch: MinionBlueprint = {
   async onInit() {},
   async onPlay() {}
 };
-
-

@@ -26,7 +26,7 @@ export const dawnAssault: SpellBlueprint = {
     @Level 3 Bonus@: Summon one more.
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

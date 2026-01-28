@@ -62,7 +62,8 @@ self.addEventListener('message', ({ data }) => {
       });
     })
     .with({ type: 'dispatch' }, async ({ payload }) => {
-      game.dispatch(payload.input);
+      await game.dispatch(payload.input);
+      console.log('dispatched', payload.input.type);
     })
     .with({ type: 'rewind' }, async ({ payload }) => {
       if (!game) {

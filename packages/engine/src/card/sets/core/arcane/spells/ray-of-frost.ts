@@ -40,9 +40,8 @@ export const rayOfFrost: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/ray-of-frost-bg',
+      main: 'spells/ray-of-frost',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

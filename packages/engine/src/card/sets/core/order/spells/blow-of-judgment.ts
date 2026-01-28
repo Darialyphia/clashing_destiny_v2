@@ -24,7 +24,7 @@ export const blowOfJudgment: SpellBlueprint = {
     Deal damage to an enemy minion equal to the number of cards in your hand.
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

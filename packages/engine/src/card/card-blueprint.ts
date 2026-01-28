@@ -32,7 +32,7 @@ export type CardSourceBlueprint =
 export type CardBlueprintBase = {
   id: string;
   name: string;
-  description: string;
+  description: string | (() => string);
   dynamicDescription?: (game: Game, card: AnyCard) => string;
   setId: CardSetId;
   rarity: Rarity;

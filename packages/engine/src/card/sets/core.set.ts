@@ -79,6 +79,8 @@ import { seraphOfLiberation } from './core/order/minions/seraph-of-liberation';
 import { theHangman } from './core/neutral/spells/the-hangman';
 import { radiantBlow } from './core/arcane/spells/radiant-blow';
 import { defendTheOppressed } from './core/order/spells/defend-the-oppressed';
+import { birdOfGoodLuck } from './core/neutral/minions/bird-of-good-luck';
+import { solemnDecree } from './core/order/spells/solemn-decree';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -162,6 +164,8 @@ export const coreSet: CardSet = {
     seraphOfLiberation,
     theHangman,
     radiantBlow,
-    defendTheOppressed
+    defendTheOppressed,
+    birdOfGoodLuck,
+    solemnDecree
   ]
 };

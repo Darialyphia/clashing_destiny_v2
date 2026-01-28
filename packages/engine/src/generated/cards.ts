@@ -83,7 +83,9 @@ export const cards = {
 "seraph-of-liberation": "seraph-of-liberation",
 "the-hangman": "the-hangman",
 "radiant-blow": "radiant-blow",
-"defend-the-oppressed": "defend-the-oppressed"
+"defend-the-oppressed": "defend-the-oppressed",
+"bird-of-good-luck": "bird-of-good-luck",
+"solemn-decree": "solemn-decree"
 } as const;
 
 export const collectableCards = {
@@ -160,7 +162,9 @@ export const collectableCards = {
 "seraph-of-liberation": "seraph-of-liberation",
 "the-hangman": "the-hangman",
 "radiant-blow": "radiant-blow",
-"defend-the-oppressed": "defend-the-oppressed"
+"defend-the-oppressed": "defend-the-oppressed",
+"bird-of-good-luck": "bird-of-good-luck",
+"solemn-decree": "solemn-decree"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
@@ -247,7 +251,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "mana-fueled-golem",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -271,7 +275,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "comet",
     "collectable": true,
-    "rarity": "epic",
+    "rarity": "rare",
     "deckSource": "mainDeck"
   },
   {
@@ -355,7 +359,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "orb-of-constellations",
     "collectable": true,
-    "rarity": "common",
+    "rarity": "epic",
     "deckSource": "mainDeck"
   },
   {
@@ -373,7 +377,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "jeweller",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -385,7 +389,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "replenish-energy",
     "collectable": true,
-    "rarity": "epic",
+    "rarity": "rare",
     "deckSource": "destinyDeck"
   },
   {
@@ -397,7 +401,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "ray-of-frost",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -571,7 +575,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "amulet-of-remembrance",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "destinyDeck"
   },
   {
@@ -639,6 +643,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "deckSource": "destinyDeck"
+  },
+  {
+    "id": "bird-of-good-luck",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "destinyDeck"
+  },
+  {
+    "id": "solemn-decree",
+    "collectable": true,
+    "rarity": "rare",
+    "deckSource": "mainDeck"
   }
 ]
 };

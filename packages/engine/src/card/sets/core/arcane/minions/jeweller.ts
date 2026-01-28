@@ -20,7 +20,7 @@ export const jeweller: MinionBlueprint = {
   unique: false,
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  name: 'Jeweller',
+  name: 'Jewel Crafter',
   description: dedent``,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
@@ -38,9 +38,8 @@ export const jeweller: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/jeweller-bg',
+      main: 'minions/jeweller',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

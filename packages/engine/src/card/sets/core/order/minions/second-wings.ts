@@ -26,7 +26,7 @@ export const secondWings: MinionBlueprint = {
     @On Death@: If this was destroyed by combat by a minion, destroy the minion that destroyed it.
   `,
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {

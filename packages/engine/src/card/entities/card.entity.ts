@@ -1,4 +1,4 @@
-import { type JSONObject, type MaybePromise } from '@game/shared';
+import { isFunction, type JSONObject, type MaybePromise } from '@game/shared';
 import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
@@ -626,6 +626,12 @@ export abstract class Card<
 
   abstract play(onResolved: () => MaybePromise<void>): Promise<void>;
 
+  get description() {
+    return isFunction(this.blueprint.description)
+      ? this.blueprint.description()
+      : this.blueprint.description;
+  }
+
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
@@ -639,8 +645,7 @@ export abstract class Card<
       faction: this.faction.id,
       name: this.blueprint.name,
       description:
-        this.blueprint?.dynamicDescription?.(this.game, this) ??
-        this.blueprint.description,
+        this.blueprint?.dynamicDescription?.(this.game, this) ?? this.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
       canBeUsedAsManaCost: this.canBeUsedAsManaCost,

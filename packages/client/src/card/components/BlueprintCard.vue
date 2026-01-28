@@ -2,6 +2,7 @@
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
 import Card from './Card.vue';
+import { isFunction } from '@game/shared';
 
 const {
   blueprint,
@@ -24,7 +25,9 @@ const mergedFoilOptions = computed(() => ({
     :card="{
       id: blueprint.id,
       name: blueprint.name,
-      description: blueprint.description,
+      description: isFunction(blueprint.description)
+        ? blueprint.description()
+        : blueprint.description,
       art: {
         foil: mergedFoilOptions,
         dimensions: blueprint.art.default.dimensions,

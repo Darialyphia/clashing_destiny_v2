@@ -16,6 +16,7 @@ import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import { useAuthedMutation } from '@/auth/composables/useAuth';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import { useMe } from '@/auth/composables/useMe';
+import { isFunction } from '@game/shared';
 
 const { card } = defineProps<{
   card: {
@@ -68,13 +69,19 @@ const decraftingReward = computed(() => {
   const multiplier = card.isFoil ? FOIL_DECRAFTING_REWARD_MULTIPLIER : 1;
   return DECRAFTING_REWARD_PER_RARITY[card.card.rarity] * multiplier;
 });
+
+const description = computed(() => {
+  return isFunction(card.card.description)
+    ? card.card.description()
+    : card.card.description;
+});
 </script>
 
 <template>
   <UiModal
     v-model:is-opened="isOpened"
     :title="card.card.name"
-    :description="card.card.description"
+    :description="description"
     :style="{ '--ui-modal-size': 'var(--size-lg)' }"
   >
     <article class="card-details">
@@ -111,7 +118,7 @@ const decraftingReward = computed(() => {
 
         <section class="description">
           <h3>Description</h3>
-          <CardText :text="card.card.description" />
+          <CardText :text="description" />
         </section>
 
         <section v-if="card.card.abilities.length" class="abilities">
