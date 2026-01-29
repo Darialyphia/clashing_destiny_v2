@@ -12,6 +12,7 @@ import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier'
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { singleMinionTargetRules } from '../../../../card-utils';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const exaltedAngel: MinionBlueprint = {
   id: 'exalted-angel',
@@ -23,7 +24,7 @@ export const exaltedAngel: MinionBlueprint = {
   name: 'Exalted Angel',
   description: dedent`
     @Honor@
-    @On Enter@: Give @Honor@ to a minion with 3 or less Atk until the end of the turn.
+    @On Enter@: Give +1 Atk to your minions with @Honor@ this turn.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
@@ -60,19 +61,11 @@ export const exaltedAngel: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
-          const hasElligible = await singleMinionTargetRules.canPlay(game, card);
-          if (!hasElligible) return;
-
-          const targets = await singleMinionTargetRules.getPreResponseTargets(
-            game,
-            card,
-            { type: 'card', card },
-            card => card.deckSource === CARD_DECK_SOURCES.MAIN_DECK && card.atk <= 3
-          );
-
-          for (const target of targets) {
-            await target.modifiers.add(
-              new HonorModifier(game, card, {
+          for (const minion of card.player.minions) {
+            if (!minion.modifiers.has(HonorModifier)) return;
+            await minion.modifiers.add(
+              new SimpleAttackBuffModifier('exalted-angel-honor-buff', game, card, {
+                amount: 1,
                 mixins: [new UntilEndOfTurnModifierMixin(game)]
               })
             );

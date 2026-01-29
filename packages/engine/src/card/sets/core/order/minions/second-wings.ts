@@ -12,6 +12,7 @@ import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier'
 import { isMinion } from '../../../../card-utils';
 import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 import { GAME_PHASES } from '../../../../../game/game.enums';
+import type { MinionCard } from '../../../../entities/minion.entity';
 
 export const secondWings: MinionBlueprint = {
   id: 'second-wings',
@@ -23,7 +24,7 @@ export const secondWings: MinionBlueprint = {
   name: 'Second Wings',
   description: dedent`
     @Honor@.
-    @On Death@: If this was destroyed by combat by a minion, destroy the minion that destroyed it.
+    @On Death@: Summon a minion from your deck with @Honor@ that costs 2 or less.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -58,19 +59,22 @@ export const secondWings: MinionBlueprint = {
     await card.modifiers.add(new HonorModifier(game, card));
     await card.modifiers.add(
       new OnDeathModifier(game, card, {
-        async handler(event) {
-          const phaseCtx = game.gamePhaseSystem.getContext();
-          if (phaseCtx.state !== GAME_PHASES.ATTACK) return;
-          if (!isMinion(event.data.source)) return;
-          if (!event.data.source.isAlive) return;
+        async handler() {
+          const choices = card.player.cardManager.mainDeck.cards.filter(
+            c => isMinion(c) && c.manaCost <= 2 && c.modifiers.has(HonorModifier)
+          );
 
-          if (
-            phaseCtx.ctx.attacker.equals(event.data.source) ||
-            phaseCtx.ctx.target?.equals(event.data.source) ||
-            phaseCtx.ctx.blocker?.equals(event.data.source)
-          ) {
-            await event.data.source.destroy(card);
-          }
+          if (choices.length === 0) return;
+
+          const [selected] = await game.interaction.chooseCards<MinionCard>({
+            player: card.player,
+            minChoiceCount: 1,
+            maxChoiceCount: 1,
+            choices,
+            label: 'Select a minion to summon '
+          });
+
+          await selected.playImmediately();
         }
       })
     );

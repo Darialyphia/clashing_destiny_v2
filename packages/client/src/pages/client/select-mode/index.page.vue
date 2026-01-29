@@ -57,7 +57,6 @@ definePage({
 <style lang="postcss" scoped>
 .page {
   min-height: 100vh;
-  background: var(--surface-1);
   display: grid;
   grid-template-rows: auto 1fr;
 }

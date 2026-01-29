@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { SpellDamage, UnpreventableDamage } from '../../../../../utils/damage';
+import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { singleEnemyTargetRules } from '../../../../card-utils';
 import {

@@ -29,10 +29,9 @@ export const defendTheOppressed: SpellBlueprint = {
     const discount = card.player.cardTracker.cardsDestroyedThisGameTurn.filter(
       c => c.card.isAlly(card) && isMinion(c.card)
     ).length;
-    const destinyCost = Math.max(0, 3 - discount);
     return dedent`
    Summon 2 @${braveCitizen.name}@.
-   Costs @[dynamic]${destinyCost}|3 - 1 for each ally minion that died this turn@ less.
+   Costs @[dynamic]${discount}| 1 for each ally minion that died this turn@ less.
   `;
   },
   faction: FACTIONS.ORDER,
@@ -75,7 +74,7 @@ export const defendTheOppressed: SpellBlueprint = {
         card,
         {
           amount: () =>
-            card.player.cardTracker.cardsDestroyedThisGameTurn.filter(
+            -card.player.cardTracker.cardsDestroyedThisGameTurn.filter(
               c => c.card.isAlly(card) && isMinion(c.card)
             ).length
         }

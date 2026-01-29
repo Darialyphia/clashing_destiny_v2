@@ -21,10 +21,12 @@
 }
 
 .surface {
-  border-image-slice: 63 fill;
+  border-image-slice: 63;
   border-image-width: 64px;
   border-image-source: url('@/assets/ui/ui-surface.png');
   padding: var(--size-6) var(--size-7);
+  background: url('@/assets/ui/ui-surface-bg.png');
+  background-clip: content-box;
 }
 
 .fancy-surface {

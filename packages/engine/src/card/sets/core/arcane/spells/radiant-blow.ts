@@ -21,7 +21,7 @@ export const radiantBlow: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Radiant Blow',
   description: dedent`
-  @[lvl] 3 bonus@: give your Hero +3 Atk this turn.
+  @[lvl] 2 bonus@: give your Hero +3 Atk this turn.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -52,7 +52,7 @@ export const radiantBlow: SpellBlueprint = {
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
+    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
   },
   async onPlay(game, card) {
     const levelMod = card.modifiers.get(LevelBonusModifier);

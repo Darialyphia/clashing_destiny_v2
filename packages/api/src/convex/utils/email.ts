@@ -1,5 +1,6 @@
 import { AppError } from './error';
 import { z } from 'zod';
+
 export class Email {
   constructor(private _value: string) {
     if (!this.isValid(_value)) {
@@ -8,7 +9,7 @@ export class Email {
   }
 
   private get schema() {
-    return z.string().email();
+    return z.email();
   }
 
   private isValid(value: string): boolean {

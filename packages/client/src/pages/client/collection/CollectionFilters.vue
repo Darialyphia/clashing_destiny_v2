@@ -96,7 +96,7 @@ const toggleMinDestinyCostFilter = (cost: number) => {
 </script>
 
 <template>
-  <header class="filters-header">
+  <header class="filters-header surface">
     <FancyButton
       v-if="router.currentRoute.value.name !== 'ClientHome'"
       text="Back"
@@ -278,8 +278,6 @@ const toggleMinDestinyCostFilter = (cost: number) => {
   display: flex;
   gap: var(--size-3);
   align-items: center;
-  padding: var(--size-3);
-  background: var(--surface-1);
   border-radius: var(--radius-2);
 }
 

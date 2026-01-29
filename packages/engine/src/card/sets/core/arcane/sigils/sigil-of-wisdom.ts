@@ -10,8 +10,6 @@ import {
 import { SigilCard } from '../../../../entities/sigil.entity';
 import dedent from 'dedent';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
-import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
@@ -25,10 +23,7 @@ export const sigilOfWisdom: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
   description: dedent`
-  Whenever any hero levels up, @Empower@.
-
-  @On Destroyed@: Draw a card.
-  `,
+  Whenever any hero levels up, @Empower@.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -52,19 +47,12 @@ export const sigilOfWisdom: SigilBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 2,
   abilities: [],
   maxCountdown: 3,
   speed: CARD_SPEED.SLOW,
   canPlay: () => true,
   async onInit(game, card) {
-    await card.modifiers.add(
-      new OnDeathModifier(game, card, {
-        async handler() {
-          await card.player.cardManager.draw(1);
-        }
-      })
-    );
     await card.modifiers.add(
       new WhileOnBoardModifier<SigilCard>(
         'sigil-of-wisdom-cost-reduction-aura',

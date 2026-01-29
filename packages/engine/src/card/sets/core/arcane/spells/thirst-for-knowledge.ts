@@ -20,7 +20,7 @@ export const thirstForKnowledge: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Thirst for Knowledge',
   description: dedent`
-  Draw cards equal to your @Empower@ stacks. Then, you may discard an Arcane Spell. If you do, @Empower@.
+  Draw cards equal to your @Empower@ stacks. Then, you may discard a card. If you do, @Empower@.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -56,7 +56,9 @@ export const thirstForKnowledge: SpellBlueprint = {
     const [discardedCard] = await discardFromHand(game, card, { min: 0, max: 1 });
 
     if (discardedCard) {
-      new EmpowerModifier(game, card, { amount: 1 });
+      await card.player.hero.modifiers.add(
+        new EmpowerModifier(game, card, { amount: 1 })
+      );
     }
   }
 };

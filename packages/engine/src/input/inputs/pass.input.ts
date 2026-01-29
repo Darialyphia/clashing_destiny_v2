@@ -25,11 +25,9 @@ export class PassInput extends Input<typeof schema> {
         new NotCurrentPlayerError()
       );
       await this.game.effectChainSystem.pass(this.player);
-      console.log('Passed effect chain for player', this.player.id);
     } else {
       assert(this.player.isInteractive, new NotCurrentPlayerError());
       await this.game.turnSystem.pass(this.player);
-      console.log('Passed turn for player', this.player.id);
     }
   }
 }
