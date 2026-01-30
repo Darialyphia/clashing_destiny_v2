@@ -85,7 +85,8 @@ export const cards = {
 "radiant-blow": "radiant-blow",
 "defend-the-oppressed": "defend-the-oppressed",
 "bird-of-good-luck": "bird-of-good-luck",
-"solemn-decree": "solemn-decree"
+"solemn-decree": "solemn-decree",
+"angel-devotee": "angel-devotee"
 } as const;
 
 export const collectableCards = {
@@ -164,7 +165,8 @@ export const collectableCards = {
 "radiant-blow": "radiant-blow",
 "defend-the-oppressed": "defend-the-oppressed",
 "bird-of-good-luck": "bird-of-good-luck",
-"solemn-decree": "solemn-decree"
+"solemn-decree": "solemn-decree",
+"angel-devotee": "angel-devotee"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
@@ -299,7 +301,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "lightning-bolt",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -449,7 +451,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "dusk-purifier",
     "collectable": true,
-    "rarity": "common",
+    "rarity": "rare",
     "deckSource": "mainDeck"
   },
   {
@@ -467,7 +469,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "blow-of-judgment",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -539,7 +541,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "second-wings",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -563,7 +565,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "dawn-assault",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -654,6 +656,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "solemn-decree",
     "collectable": true,
     "rarity": "rare",
+    "deckSource": "destinyDeck"
+  },
+  {
+    "id": "angel-devotee",
+    "collectable": true,
+    "rarity": "common",
     "deckSource": "mainDeck"
   }
 ]

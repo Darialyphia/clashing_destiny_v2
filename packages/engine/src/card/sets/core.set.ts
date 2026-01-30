@@ -81,6 +81,7 @@ import { radiantBlow } from './core/arcane/spells/radiant-blow';
 import { defendTheOppressed } from './core/order/spells/defend-the-oppressed';
 import { birdOfGoodLuck } from './core/neutral/minions/bird-of-good-luck';
 import { solemnDecree } from './core/order/spells/solemn-decree';
+import { angelDevotee } from './core/order/minions/angel-devotee';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -166,6 +167,7 @@ export const coreSet: CardSet = {
     radiantBlow,
     defendTheOppressed,
     birdOfGoodLuck,
-    solemnDecree
+    solemnDecree,
+    angelDevotee
   ]
 };

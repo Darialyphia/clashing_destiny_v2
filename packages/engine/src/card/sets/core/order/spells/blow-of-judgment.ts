@@ -46,7 +46,7 @@ export const blowOfJudgment: SpellBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 2,
   speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {

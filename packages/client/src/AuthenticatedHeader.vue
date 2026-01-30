@@ -169,8 +169,10 @@ li {
   display: grid;
 }
 
-li a {
+li > :is(a, button) {
   padding: var(--size-3);
+  width: 12ch;
+  text-align: center;
 }
 
 li:hover {

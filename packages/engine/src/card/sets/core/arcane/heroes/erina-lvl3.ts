@@ -70,9 +70,9 @@ export const erinaLv3: HeroBlueprint = {
           new AuraModifierMixin(game, card, {
             isElligible(candidate) {
               return (
-                candidate.player.equals(card.player) &&
-                isSpell(candidate) &&
-                candidate.location === CARD_LOCATIONS.HAND
+                candidate.isAlly(card) &&
+                candidate.location === CARD_LOCATIONS.HAND &&
+                isSpell(candidate)
               );
             },
             getModifiers() {
