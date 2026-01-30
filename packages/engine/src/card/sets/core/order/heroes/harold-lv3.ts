@@ -26,7 +26,7 @@ export const haroldLv3: HeroBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Harold, Ascended Seraph',
   description:
-    'Your minions with @Honor@ have @Burst Attack@ and "@On Death@: give your Hero +1 Atk this turn".',
+    'Your minions with @Honor@ have @Burst Attack@ and "@On Death@: give your Hero +1 Atk and @Honor@this turn".',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.LEGENDARY,
   tags: [],
@@ -69,6 +69,11 @@ export const haroldLv3: HeroBlueprint = {
                   await card.modifiers.add(
                     new SimpleAttackBuffModifier('harold-lvl3-attack-buff', game, card, {
                       amount: 1,
+                      mixins: [new UntilEndOfTurnModifierMixin(game)]
+                    })
+                  );
+                  await card.modifiers.add(
+                    new HonorModifier(game, card, {
                       mixins: [new UntilEndOfTurnModifierMixin(game)]
                     })
                   );

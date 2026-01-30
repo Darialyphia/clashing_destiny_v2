@@ -23,11 +23,10 @@ export class PreemptiveStrikeModifier<
         new UnitInterceptorModifierMixin(game, {
           key: 'dealsDamageFirst',
           interceptor: value => {
-            if (!value) return value;
             const gamePhaseCtx = game.gamePhaseSystem.getContext();
             if (gamePhaseCtx.state !== GAME_PHASES.ATTACK) return value;
 
-            return gamePhaseCtx.ctx.attacker === this.target;
+            return gamePhaseCtx.ctx.attacker.equals(this.target);
           }
         }),
         ...(options.mixins || [])

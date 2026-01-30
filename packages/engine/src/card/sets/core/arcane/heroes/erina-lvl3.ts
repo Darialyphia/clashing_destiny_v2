@@ -79,7 +79,7 @@ export const erinaLv3: HeroBlueprint = {
               return [
                 new EchoModifier(game, card),
                 new SimpleManacostModifier('erina-lv3-manacost-reduction', game, card, {
-                  amount: 2
+                  amount: -2
                 })
               ];
             }

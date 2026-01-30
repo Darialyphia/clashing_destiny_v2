@@ -8,8 +8,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { PreemptiveStrikeModifier } from '../../../../../modifier/modifiers/preemptive-strike.mofier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
@@ -71,5 +69,3 @@ export const spellbladeDuelist: MinionBlueprint = {
   },
   async onPlay() {}
 };
-
-
