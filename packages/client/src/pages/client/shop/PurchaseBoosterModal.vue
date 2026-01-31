@@ -2,12 +2,16 @@
 import { useMe } from '@/auth/composables/useMe';
 import { usePurchaseBoosterPacks } from '@/card/composables/useBoosterPack';
 import type { BoosterPackCatalogEntry } from '@game/api';
+import UiModal from '@/ui/components/UiModal.vue';
+import UiButton from '@/ui/components/UiButton.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
+import GodlIcon from '@/player/components/GodlIcon.vue';
 
 const { pack } = defineProps<{
   pack: BoosterPackCatalogEntry | null;
 }>();
 
-const isOpened = defineModel<boolean>('isOpened');
+const isOpened = defineModel<boolean>('isOpened', { required: true });
 
 const { mutate: buyPack, isLoading: isBuyingPack } = usePurchaseBoosterPacks(
   () => {
@@ -199,10 +203,6 @@ const handlePurchase = () => {
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-  }
-
-  &[type='number'] {
-    -moz-appearance: textfield;
   }
 }
 

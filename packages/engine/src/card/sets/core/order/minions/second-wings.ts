@@ -74,6 +74,7 @@ export const secondWings: MinionBlueprint = {
             label: 'Select a minion to summon '
           });
 
+          await selected.removeFromCurrentLocation();
           await selected.playImmediately();
         }
       })

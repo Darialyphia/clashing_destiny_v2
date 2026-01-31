@@ -25,7 +25,7 @@ export const cosmicDivinator: MinionBlueprint = {
   @On Hit@: @Empower 1@.
   `,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   tags: [],
   art: {
     default: {
@@ -40,9 +40,8 @@ export const cosmicDivinator: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/cosmic-divinator-bg',
+      main: 'minions/cosmic-divinator',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

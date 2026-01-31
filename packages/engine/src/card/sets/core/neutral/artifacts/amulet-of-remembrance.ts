@@ -45,7 +45,7 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
       tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
-  destinyCost: 0,
+  destinyCost: 1,
   durability: 1,
   speed: CARD_SPEED.SLOW,
   abilities: [

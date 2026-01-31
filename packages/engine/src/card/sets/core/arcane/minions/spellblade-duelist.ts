@@ -31,26 +31,22 @@ export const spellbladeDuelist: MinionBlueprint = {
     default: {
       foil: {
         sheen: true,
-        oil: false,
-        gradient: false,
-        lightGradient: false,
-        scanlines: false
+        glitter: true
       },
       dimensions: {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/spellblade-duellist-bg',
+      main: 'minions/spellblade-duellist',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
-  maxHp: 3,
+  atk: 3,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

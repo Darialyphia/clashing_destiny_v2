@@ -13,6 +13,14 @@ import {
 import { scry } from '../../../../card-actions-utils';
 import { isSpell } from '../../../../card-utils';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { match } from 'ts-pattern';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { Player } from '../../../../../player/player.entity';
+import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const bookOfKnowledge: ArtifactBlueprint = {
   id: 'book-of-knowledge',
@@ -24,7 +32,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
   name: 'Book of Knowledge',
   description: dedent``,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   subKind: ARTIFACT_KINDS.RELIC,
   tags: [],
   art: {
@@ -53,33 +61,86 @@ export const bookOfKnowledge: ArtifactBlueprint = {
   abilities: [
     {
       id: 'book-of-knowledge-ability',
-      description:
-        '@Scry 2@. If you kept an Arcane spell on top of your deck, @Empower 1@, otherwise draw a card.',
-      label: 'Scry and Empower',
+      description: dedent`
+      Choose 1:
+        • @Scry@ 3
+        • @Empower 1@
+        • the next spell you play this turn costs @[mana] 1@ less.
+      @[lvl] 3 bonus@: choose 2.
+        `,
+      label: 'Choose an Effect',
       canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
       getPreResponseTargets: () => Promise.resolve([]),
-      manaCost: 1,
+      manaCost: 0,
       durabilityCost: 1,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
-        const { result } = await scry(game, card, 2);
+        const levelMod = card.modifiers.get(LevelBonusModifier);
 
-        const hasArcaneSpell = result.top.some(
-          c => isSpell(c) && c.faction === FACTIONS.ARCANE
-        );
+        const choices = await game.interaction.askQuestion<
+          'scry' | 'empower' | 'discount'
+        >({
+          player: card.player,
+          label: levelMod?.isActive ? 'Choose 2 effects' : 'Choose an effect',
+          questionId: 'book-of-knowledge-choice',
+          source: card,
+          minChoiceCount: levelMod?.isActive ? 2 : 1,
+          maxChoiceCount: levelMod?.isActive ? 2 : 1,
+          choices: [
+            { id: 'scry', label: 'Scry 3' },
+            { id: 'empower', label: 'Empower 1' },
+            { id: 'discount', label: 'Next Spell Cost -1' }
+          ]
+        });
 
-        if (hasArcaneSpell) {
-          await card.player.hero.modifiers.add(
-            new EmpowerModifier(game, card, { amount: 1 })
-          );
-        } else {
-          await card.player.cardManager.draw(1);
+        for (const choice of choices) {
+          await match(choice)
+            .with('scry', async () => {
+              await scry(game, card, 3);
+            })
+            .with('empower', async () => {
+              await card.player.hero.modifiers.add(
+                new EmpowerModifier(game, card, { amount: 1 })
+              );
+            })
+            .with('discount', async () => {
+              await card.player.modifiers.add(
+                new Modifier<Player>('book-of-knowledge-discount', game, card, {
+                  mixins: [
+                    new AuraModifierMixin(game, card, {
+                      isElligible(candidate) {
+                        return isSpell(candidate) && candidate.isAlly(card);
+                      },
+                      getModifiers(candidate) {
+                        return [
+                          new SimpleManacostModifier(
+                            'book-of-knowledge-aura',
+                            game,
+                            candidate,
+                            { amount: -1 }
+                          )
+                        ];
+                      }
+                    }),
+                    new UntilEventModifierMixin(game, {
+                      eventName: GAME_EVENTS.CARD_DECLARE_PLAY,
+                      filter(event) {
+                        return event.data.card.isAlly(card) && isSpell(event.data.card);
+                      }
+                    })
+                  ]
+                })
+              );
+            })
+            .exhaustive();
         }
       }
     }
   ],
   canPlay: () => true,
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
+  },
   async onPlay() {}
 };

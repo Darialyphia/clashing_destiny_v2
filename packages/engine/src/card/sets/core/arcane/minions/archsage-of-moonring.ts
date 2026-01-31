@@ -22,12 +22,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
   description: dedent`
-  @On Enter@: Deal 3 + @Empowered@ stacks damage split among enemies.`,
-  dynamicDescription: (game, card) => {
-    const totalDamage = 3 + getEmpowerStacks(card);
-    return dedent`
-    @On Enter@: Deal @[dynamic]${totalDamage}|3 + Empowered stacks@ damage split among enemies.`;
-  },
+  @On Enter@: Deal 3 damage split among enemies.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -63,7 +58,7 @@ export const archsageOfMoonring: MinionBlueprint = {
         handler: async () => {
           let count = 0;
 
-          const amount = 3 + getEmpowerStacks(card);
+          const amount = 3;
           while (count < amount) {
             const hasRemainingTargets = singleEnemyTargetRules.canPlay(game, card);
             if (!hasRemainingTargets) break;

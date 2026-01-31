@@ -10,8 +10,6 @@ import {
 } from '../../../../card.enums';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
-import { singleMinionTargetRules } from '../../../../card-utils';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const exaltedAngel: MinionBlueprint = {
@@ -24,7 +22,7 @@ export const exaltedAngel: MinionBlueprint = {
   name: 'Exalted Angel',
   description: dedent`
     @Honor@
-    @On Enter@: Give +1 Atk to your minions with @Honor@ this turn.
+    @On Enter@: Give +1 Atk to your minions with @Honor@.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
@@ -65,8 +63,7 @@ export const exaltedAngel: MinionBlueprint = {
             if (!minion.modifiers.has(HonorModifier)) return;
             await minion.modifiers.add(
               new SimpleAttackBuffModifier('exalted-angel-honor-buff', game, card, {
-                amount: 1,
-                mixins: [new UntilEndOfTurnModifierMixin(game)]
+                amount: 1
               })
             );
           }

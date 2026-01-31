@@ -24,7 +24,7 @@ export const honorableCrown: ArtifactBlueprint = {
   name: 'Honorable Crown',
   description: '',
   faction: FACTIONS.ORDER,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   subKind: ARTIFACT_KINDS.RELIC,
   tags: [],
   art: {

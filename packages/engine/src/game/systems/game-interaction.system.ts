@@ -315,7 +315,7 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T>();
   }
 
-  async askQuestion(options: {
+  async askQuestion<T extends string = string>(options: {
     player: Player;
     choices: Array<{ id: string; label: string }>;
     source: AnyCard;
@@ -329,7 +329,7 @@ export class GameInteractionSystem
       this.game,
       options
     );
-    return this.game.inputSystem.pause<string>();
+    return this.game.inputSystem.pause<T[]>();
   }
 
   async declarePlayCardIntent(card: AnyCard, player: Player) {

@@ -18,6 +18,8 @@ export class GrantAbilityModifierMixin<T extends AbilityOwner> extends ModifierM
 
   async onApplied(target: T, modifier: Modifier<T>) {
     this.modifier = modifier;
+    if (target.abilities.some(a => a.blueprint.id === this.blueprint.id)) return;
+
     const ability = target.addAbility(this.blueprint as any);
     this.abilityId = ability.abilityId;
   }

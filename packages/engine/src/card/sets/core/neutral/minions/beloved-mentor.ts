@@ -40,9 +40,8 @@ export const belovedMentor: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/beloved-mentor-bg',
+      main: 'minions/beloved-mentor',
       frame: 'default',
       tint: FACTIONS.NEUTRAL.defaultCardTint
     }
