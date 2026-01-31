@@ -20,7 +20,7 @@ export const replenishEnergy: SpellBlueprint = {
   name: 'Replenish Energy',
   description: dedent`
   You can only play this card if your Hero is @Empowered@.
-  Draw a card.
+  Select up to 2 cards in your Destiny Zone and add them to your hand.
   `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
@@ -52,6 +52,16 @@ export const replenishEnergy: SpellBlueprint = {
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.cardManager.draw(1);
+    const selectedCards = await game.interaction.chooseCards({
+      player: card.player,
+      label: 'Select up to 2 cards in your Destiny Zone to add to your hand',
+      minChoiceCount: 0,
+      maxChoiceCount: 2,
+      choices: Array.from(card.player.cardManager.destinyZone)
+    });
+
+    for (const selectedCard of selectedCards) {
+      await selectedCard.addToHand();
+    }
   }
 };

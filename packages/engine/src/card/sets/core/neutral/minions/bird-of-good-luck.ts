@@ -39,9 +39,8 @@ export const birdOfGoodLuck: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/bird-of-good-luck-bg',
+      main: 'minions/bird-of-good-luck',
       frame: 'default',
       tint: FACTIONS.NEUTRAL.defaultCardTint
     }

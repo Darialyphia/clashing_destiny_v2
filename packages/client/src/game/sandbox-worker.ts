@@ -18,13 +18,13 @@ type SandboxWorkerEvent =
   | { type: 'playCard'; payload: { blueprintId: string; playerId: string } };
 
 let game: Game;
-self.addEventListener('message', ({ data }) => {
-  const options = data as SandboxWorkerEvent;
-  console.groupCollapsed('[SandboxWorker] new message');
-  console.log(options);
-  console.groupEnd();
 
-  match(options)
+// Message queue to ensure sequential processing of async operations
+const messageQueue: SandboxWorkerEvent[] = [];
+let isProcessing = false;
+
+async function processMessage(options: SandboxWorkerEvent): Promise<void> {
+  await match(options)
     .with({ type: 'debug' }, () => {
       console.log(game);
     })
@@ -104,4 +104,30 @@ self.addEventListener('message', ({ data }) => {
       await card.play(() => {});
     })
     .exhaustive();
+}
+
+async function processQueue(): Promise<void> {
+  if (isProcessing) return;
+  isProcessing = true;
+
+  while (messageQueue.length > 0) {
+    const message = messageQueue.shift()!;
+    try {
+      await processMessage(message);
+    } catch (error) {
+      console.error('[SandboxWorker] Error processing message:', error);
+    }
+  }
+
+  isProcessing = false;
+}
+
+self.addEventListener('message', ({ data }) => {
+  const options = data as SandboxWorkerEvent;
+  console.groupCollapsed('[SandboxWorker] new message');
+  console.log(options);
+  console.groupEnd();
+
+  messageQueue.push(options);
+  void processQueue();
 });

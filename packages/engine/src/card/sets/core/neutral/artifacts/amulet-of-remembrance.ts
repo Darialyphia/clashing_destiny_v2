@@ -52,12 +52,22 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
     {
       id: 'amulet-of-remembrance-ability',
       description:
-        'Draw a card. You can activate this card only if an allied minion has died this turn.',
+        'Choose a minion you control that was destroyed this turn with cost equal or less than 1 + your hero level and put it into your Destiny Zone.',
+      dynamicDescription(game, card) {
+        const heroLevel = card.player.hero.level;
+        const maxCost = 1 + heroLevel;
+        return dedent`
+        Choose a minion you control that was destroyed this turn with cost equal or less than @[dynamic]${maxCost}| 1 + your hero level@ and put it into your Destiny Zone.
+        `;
+      },
       label: 'Draw Card',
       canUse: (game, card) =>
         card.location === CARD_LOCATIONS.BOARD &&
         card.player.cardTracker.cardsDestroyedThisGameTurn.some(
-          c => c.card.isAlly(card) && isMinion(c.card)
+          c =>
+            c.card.isAlly(card) &&
+            isMinion(c.card) &&
+            c.card.manaCost <= 1 + card.player.hero.level
         ),
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 1,
@@ -65,7 +75,20 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
       shouldExhaust: true,
       speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
-        await card.player.cardManager.draw(1);
+        const [selected] = await game.interaction.chooseCards({
+          player: card.player,
+          label: 'Choose a minion to put into your Destiny Zone',
+          minChoiceCount: 1,
+          maxChoiceCount: 1,
+          choices: card.player.cardTracker.cardsDestroyedThisGameTurn
+            .map(c => c.card)
+            .filter(
+              c =>
+                c.isAlly(card) && isMinion(c) && c.manaCost <= 1 + card.player.hero.level
+            )
+        });
+
+        await selected.sendToDestinyZone();
       }
     }
   ],
