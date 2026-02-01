@@ -430,6 +430,10 @@ const toggleMinDestinyCostFilter = (cost: number) => {
   &.active {
     filter: drop-shadow(0 0 5px hsl(from #4a90e2 h s l / 0.8)) brightness(1.25);
   }
+
+  @screen lt-lg {
+    display: none;
+  }
 }
 .destiny-cost {
   background-image: url('@/assets/ui/card/destiny-cost.png');
@@ -440,6 +444,10 @@ const toggleMinDestinyCostFilter = (cost: number) => {
   aspect-ratio: 1;
   &.active {
     filter: drop-shadow(0 0 5px hsl(from #b945a3 h s l / 0.8)) brightness(1.25);
+  }
+
+  @screen lt-lg {
+    display: none;
   }
 }
 

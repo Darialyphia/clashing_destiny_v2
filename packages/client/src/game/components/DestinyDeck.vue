@@ -105,6 +105,9 @@ const getKeyLabel = useKeybordShortcutLabel();
 <style scoped lang="postcss">
 .content {
   --pixel-scale: 1.5;
+  @screen lt-lg {
+    --pixel-scale: 1;
+  }
   height: 80dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;

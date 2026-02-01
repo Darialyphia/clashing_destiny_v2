@@ -47,7 +47,7 @@ export const whiteLion: MinionBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  manaCost: 3,
+  manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 1,

@@ -172,7 +172,6 @@ export class InputSystem extends System<never> {
         const fn = this.queue.shift();
         await fn!();
       }
-      console.log('input queue flushed');
       this.isRunning = false;
       await this.game.snapshotSystem.takeSnapshot();
       await this.game.emit(GAME_EVENTS.FLUSHED, new GameInputQueueFlushedEvent({}));
@@ -219,7 +218,6 @@ export class InputSystem extends System<never> {
     if (this.isPaused) {
       // if the game is paused, run the input immediately
       try {
-        console.log('dispatching input while paused');
         await this.handleInput(input);
       } catch (err) {
         await this.handleError(err);
@@ -229,14 +227,11 @@ export class InputSystem extends System<never> {
       // the current input could schedule new actions, so we need to wait for the flush to preserve the correct action order
       console.log('scheduling input after current run');
       this.game.once(GAME_EVENTS.FLUSHED, () => {
-        console.log('now scheduling input after flush');
         return this.schedule(() => this.handleInput(input));
       });
     } else {
       // if the game is not paused and not running, schedule the input
-      console.log('scheduling input');
       await this.schedule(() => {
-        console.log('now handling scheduled input');
         return this.handleInput(input);
       });
     }

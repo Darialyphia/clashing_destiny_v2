@@ -33,7 +33,8 @@ const {
   showModifiers = false,
   showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
-  flipped
+  flipped,
+  modifiersPosition = 'top'
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -48,6 +49,7 @@ const {
   actionsPortalTarget?: string;
   flipped?: boolean;
   showActionEmptyState?: boolean;
+  modifiersPosition?: 'top' | 'bottom';
 }>();
 
 const emit = defineEmits<{
@@ -210,6 +212,10 @@ const visibleModifiers = gameStateRef(() => {
 
       <div
         class="modifiers"
+        :class="{
+          top: modifiersPosition === 'top',
+          bottom: modifiersPosition === 'bottom'
+        }"
         v-if="showModifiers"
         @mouseenter="emit('modifiersMouseEnter')"
         @mouseleave="emit('modifiersMouseLeave')"
@@ -438,12 +444,17 @@ const visibleModifiers = gameStateRef(() => {
 
 .modifiers {
   position: absolute;
-  top: var(--size-2);
   left: var(--size-2);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--size-2);
   --pixel-scale: 2;
+  &.top {
+    top: var(--size-2);
+  }
+  &.bottom {
+    bottom: var(--size-6);
+  }
 }
 
 .modifier {

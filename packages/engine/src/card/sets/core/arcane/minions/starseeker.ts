@@ -1,6 +1,5 @@
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { scry } from '../../../../card-actions-utils';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -36,9 +35,8 @@ export const starseeker: MinionBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'minions/starseeker-bg',
+      main: 'minions/starseeker',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

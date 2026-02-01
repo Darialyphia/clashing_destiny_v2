@@ -1,4 +1,4 @@
-import { assert, isDefined } from '@game/shared';
+import { assert } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import { defaultInputSchema, Input } from '../input';
 import { NotCurrentPlayerError } from '../input-errors';
@@ -13,12 +13,6 @@ export class PassInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    console.log(
-      'Executing PassInput for player',
-      this.player.id,
-      'with chain ?',
-      isDefined(this.game.effectChainSystem.currentChain)
-    );
     if (this.game.effectChainSystem.currentChain) {
       assert(
         this.game.effectChainSystem.currentChain.currentPlayer.equals(this.player),

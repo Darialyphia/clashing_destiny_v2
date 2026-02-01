@@ -319,8 +319,6 @@ export class GameInteractionSystem
     player: Player;
     choices: Array<{ id: string; label: string }>;
     source: AnyCard;
-    minChoiceCount: number;
-    maxChoiceCount: number;
     label: string;
     questionId: string;
   }) {
@@ -329,7 +327,7 @@ export class GameInteractionSystem
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T[]>();
+    return this.game.inputSystem.pause<T>();
   }
 
   async declarePlayCardIntent(card: AnyCard, player: Player) {

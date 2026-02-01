@@ -46,8 +46,6 @@ export class HinderedModifier<T extends AnyCard> extends Modifier<T> {
               source: this.target,
               questionId: `hindered-${this.target.id}`,
               label: `Pay @[mana] ${this.cost}@ to prevent @${this.target.blueprint.name}@ from being exhausted?`,
-              minChoiceCount: 1,
-              maxChoiceCount: 1,
               choices: [
                 { id: 'yes', label: `Yes, pay ${this.cost}` },
                 { id: 'no', label: 'No, exhaust instead' }

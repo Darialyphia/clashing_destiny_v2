@@ -94,13 +94,19 @@ const getKeyLabel = useKeybordShortcutLabel();
 
 <style scoped lang="postcss">
 .discard-pile {
-  height: var(--card-small-height);
-  width: var(--card-small-width);
+  height: calc(var(--pixel-scale) * var(--card-small-height));
+  width: calc(var(--pixel-scale) * var(--card-small-width));
   --pixel-scale: 1;
+  @screen lt-lg {
+    --pixel-scale: 0.5;
+  }
 }
 
 .content {
   --pixel-scale: 1.5;
+  @screen lt-lg {
+    --pixel-scale: 1;
+  }
   height: 80dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;

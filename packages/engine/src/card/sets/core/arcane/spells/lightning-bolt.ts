@@ -40,9 +40,8 @@ export const lightningBolt: SpellBlueprint = {
         width: 174,
         height: 133
       },
-      bg: 'placeholder-bg',
-      main: 'placeholder',
-      breakout: 'placeholder-breakout',
+      bg: 'spells/lightning-bolt-bg',
+      main: 'spells/lightning-bolt',
       frame: 'default',
       tint: FACTIONS.ARCANE.defaultCardTint
     }

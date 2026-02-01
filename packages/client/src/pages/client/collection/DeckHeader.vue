@@ -12,7 +12,7 @@ const isPosterOpened = ref(false);
 
 <template>
   <div class="flex gap-2 items-center">
-    <button @click="isPosterOpened = true">
+    <button class="lt-lg:hidden" @click="isPosterOpened = true">
       <Icon icon="material-symbols:image-outline" class="w-7 h-7 c-primary" />
     </button>
     <UiModal

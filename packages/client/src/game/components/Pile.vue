@@ -28,7 +28,8 @@ const maxSize = 25;
   justify-self: center;
   position: relative;
   border: solid 1px hsl(from #985e25 h s l / 0.5);
-
+  height: calc(var(--pixel-scale) * var(--card-small-height));
+  width: calc(var(--pixel-scale) * var(--card-small-width));
   > * {
     grid-column: 1;
     grid-row: 1;

@@ -49,7 +49,7 @@ export const angelWings: SpellBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.FAST,
+  speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay(game, card) {
     return singleAllyMinionTargetRules.canPlay(game, card);

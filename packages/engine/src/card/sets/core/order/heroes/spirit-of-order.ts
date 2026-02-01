@@ -17,7 +17,7 @@ export const spiritOfOrder: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Spirit of Order',
-  description: '@On Enter@: draw 6 cards.',
+  description: '@On Enter@: draw 7 cards.',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -53,7 +53,7 @@ export const spiritOfOrder: HeroBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await card.player.cardManager.draw(6);
+          await card.player.cardManager.draw(7);
         }
       })
     );

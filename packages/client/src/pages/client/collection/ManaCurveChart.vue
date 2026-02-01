@@ -24,7 +24,10 @@ const getCountForCostAndUp = (minCost: number) =>
 </script>
 
 <template>
-  <div class="bars" :style="{ '--total': deckBuilder.mainDeckSize }">
+  <div
+    class="bars lt-lg:hidden"
+    :style="{ '--total': deckBuilder.mainDeckSize }"
+  >
     <div
       v-for="i in 7"
       :key="i"
@@ -40,46 +43,48 @@ const getCountForCostAndUp = (minCost: number) =>
 </template>
 
 <style scoped lang="postcss">
-.bars {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: var(--size-1);
-  height: var(--size-10);
-  margin-top: var(--size-2);
-
-  > div {
+@layer components {
+  .bars {
     display: grid;
-    grid-template-rows: 1fr auto;
+    grid-template-columns: repeat(7, 1fr);
     gap: var(--size-1);
+    height: var(--size-10);
+    margin-top: var(--size-2);
+
+    > div {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: var(--size-1);
+    }
   }
-}
 
-.cost {
-  display: grid;
-  place-content: center;
-  color: var(--primary);
-}
+  .cost {
+    display: grid;
+    place-content: center;
+    color: var(--primary);
+  }
 
-.bar {
-  --percent: calc(1% * (var(--count) * 100 / var(--total)));
+  .bar {
+    --percent: calc(1% * (var(--count) * 100 / var(--total)));
 
-  position: relative;
-  background: linear-gradient(
-    to top,
-    var(--primary) 0%,
-    var(--primary) var(--percent),
-    hsl(var(--gray-12-hsl) / 0.5) var(--percent)
-  );
+    position: relative;
+    background: linear-gradient(
+      to top,
+      var(--primary) 0%,
+      var(--primary) var(--percent),
+      hsl(var(--gray-12-hsl) / 0.5) var(--percent)
+    );
 
-  &:not([data-count='0'])::after {
-    content: attr(data-count);
+    &:not([data-count='0'])::after {
+      content: attr(data-count);
 
-    position: absolute;
-    bottom: var(--percent);
-    left: 50%;
-    transform: translateX(-50%);
+      position: absolute;
+      bottom: var(--percent);
+      left: 50%;
+      transform: translateX(-50%);
 
-    font-size: var(--font-size-0);
+      font-size: var(--font-size-0);
+    }
   }
 }
 </style>

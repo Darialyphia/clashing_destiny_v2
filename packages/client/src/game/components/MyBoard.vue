@@ -127,12 +127,18 @@ const onMouseup = () => {
 
 .hero {
   --pixel-scale: 1.5;
+  @screen lt-lg {
+    --pixel-scale: 1;
+  }
   /* fixes some mouse hit detection issues*/
   transform: translateZ(1px);
 }
 
 .center-zone {
   --pixel-scale: 1;
+  @screen lt-lg {
+    --pixel-scale: 0.5;
+  }
   display: grid;
   grid-template-rows: 1fr 1fr;
   row-gap: var(--size-1);
@@ -165,6 +171,9 @@ const onMouseup = () => {
 
 .artifacts {
   --pixel-scale: 0.75;
+  @screen lt-lg {
+    --pixel-scale: 0.33;
+  }
   display: flex;
   gap: var(--size-1);
   align-self: stretch;

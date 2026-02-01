@@ -99,10 +99,16 @@ const ui = useGameUi();
   --pixel-scale: 1.5;
   /* fixes some mouse hit detection issues*/
   transform: translateZ(1px);
+  @screen lt-lg {
+    --pixel-scale: 1;
+  }
 }
 
 .center-zone {
   --pixel-scale: 1;
+  @screen lt-lg {
+    --pixel-scale: 0.5;
+  }
   display: grid;
   grid-template-rows: 1fr 1fr;
   row-gap: var(--size-1);
@@ -135,23 +141,12 @@ const ui = useGameUi();
 
 .artifacts {
   --pixel-scale: 0.75;
+  @screen lt-lg {
+    --pixel-scale: 0.33;
+  }
   display: flex;
   gap: var(--size-1);
   align-self: center;
-
-  &.is-condensed {
-    --pixel-scale: 0.5;
-  }
-}
-
-.artifacts {
-  --pixel-scale: 0.75;
-  display: flex;
-  gap: var(--size-1);
-  align-self: stretch;
-  align-items: center;
-  transform: translateZ(1px);
-  position: relative;
 
   &.is-condensed {
     --pixel-scale: 0.5;

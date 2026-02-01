@@ -62,8 +62,7 @@ async function processMessage(options: SandboxWorkerEvent): Promise<void> {
       });
     })
     .with({ type: 'dispatch' }, async ({ payload }) => {
-      await game.dispatch(payload.input);
-      console.log('dispatched', payload.input.type);
+      void game.dispatch(payload.input);
     })
     .with({ type: 'rewind' }, async ({ payload }) => {
       if (!game) {

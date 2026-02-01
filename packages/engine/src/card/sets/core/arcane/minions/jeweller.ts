@@ -58,7 +58,7 @@ export const jeweller: MinionBlueprint = {
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 0,
       shouldExhaust: true,
-      speed: CARD_SPEED.SLOW,
+      speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
         const spark = await card.player.generateCard(manaSpark.id);
         await spark.addToHand();

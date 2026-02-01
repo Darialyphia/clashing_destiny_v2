@@ -63,7 +63,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       id: 'book-of-knowledge-ability',
       description: dedent`
       Choose 1:
-        • @Scry@ 3
+        • @Scry 3@
         • @Empower 1@
         • the next spell you play this turn costs @[mana] 1@ less.
       @[lvl] 3 bonus@: choose 2.
@@ -74,27 +74,25 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       manaCost: 0,
       durabilityCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.FAST,
+      speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
         const levelMod = card.modifiers.get(LevelBonusModifier);
 
-        const choices = await game.interaction.askQuestion<
-          'scry' | 'empower' | 'discount'
-        >({
-          player: card.player,
-          label: levelMod?.isActive ? 'Choose 2 effects' : 'Choose an effect',
-          questionId: 'book-of-knowledge-choice',
-          source: card,
-          minChoiceCount: levelMod?.isActive ? 2 : 1,
-          maxChoiceCount: levelMod?.isActive ? 2 : 1,
-          choices: [
-            { id: 'scry', label: 'Scry 3' },
-            { id: 'empower', label: 'Empower 1' },
-            { id: 'discount', label: 'Next Spell Cost -1' }
-          ]
-        });
+        const choose = async () => {
+          const choice = await game.interaction.askQuestion<
+            'scry' | 'empower' | 'discount'
+          >({
+            player: card.player,
+            label: levelMod?.isActive ? 'Choose 2 effects' : 'Choose an effect',
+            questionId: 'book-of-knowledge-choice',
+            source: card,
+            choices: [
+              { id: 'scry', label: 'Scry 3' },
+              { id: 'empower', label: 'Empower 1' },
+              { id: 'discount', label: 'Next Spell Cost -1' }
+            ]
+          });
 
-        for (const choice of choices) {
           await match(choice)
             .with('scry', async () => {
               await scry(game, card, 3);
@@ -134,6 +132,11 @@ export const bookOfKnowledge: ArtifactBlueprint = {
               );
             })
             .exhaustive();
+        };
+
+        await choose();
+        if (levelMod?.isActive) {
+          await choose();
         }
       }
     }

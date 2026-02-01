@@ -65,7 +65,7 @@ export const plottingCounsellor: MinionBlueprint = {
       canUse: () => true,
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 2,
-      shouldExhaust: true,
+      shouldExhaust: false,
       speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
         await scry(game, card, 2);

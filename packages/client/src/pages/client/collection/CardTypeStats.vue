@@ -16,7 +16,7 @@ const getCountByKind = (kind: CardKind) => {
 </script>
 
 <template>
-  <div class="flex">
+  <div class="flex lt-lg:hidden">
     <div class="kind-counts">
       <div>
         <span>{{ getCountByKind(CARD_KINDS.MINION) }}</span>
