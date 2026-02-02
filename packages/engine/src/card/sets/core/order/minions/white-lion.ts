@@ -21,7 +21,7 @@ export const whiteLion: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'White Lion',
   description: dedent`
-   @Pride 1@
+   @Pride 2@
    @On Enter@: @Lock@ a card in the opponent's Destiny zone until the end of next turn.
   `,
   faction: FACTIONS.ORDER,
@@ -54,7 +54,7 @@ export const whiteLion: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new PrideModifier(game, card, 1));
+    await card.modifiers.add(new PrideModifier(game, card, 2));
 
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
