@@ -20,7 +20,7 @@ export const wizardsInsight: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: "Wizard's Insight",
   description: dedent`
-  @Empower 1@. If you were already @Empowered@, draw a card into your Destiny zone.
+  @Empower 1@. Draw a card.
   @Lingering Destiny@.
   `,
   faction: FACTIONS.ARCANE,
@@ -55,11 +55,7 @@ export const wizardsInsight: SpellBlueprint = {
     await card.modifiers.add(new LingeringDestinyModifier(game, card));
   },
   async onPlay(game, card) {
-    const isEmpowered = card.player.hero.modifiers.has(EmpowerModifier);
     await card.player.cardManager.draw(1);
     await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 1 }));
-    if (isEmpowered) {
-      await card.player.cardManager.drawIntoDestinyZone(1);
-    }
   }
 };

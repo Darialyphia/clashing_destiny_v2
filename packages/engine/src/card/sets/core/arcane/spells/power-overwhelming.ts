@@ -8,14 +8,14 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { Modifier, MODIFIER_EVENTS } from '../../../../../modifier/modifier.entity';
+import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { UnpreventableDamage } from '../../../../../utils/damage';
-import { TURN_EVENTS } from '../../../../../game/game.enums';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { HeroCard } from '../../../../entities/hero.entity';
+import type { MinionCard } from '../../../../entities/minion.entity';
 
 export const powerOverwhelming: SpellBlueprint = {
   id: 'power-overwhelming',
@@ -25,7 +25,7 @@ export const powerOverwhelming: SpellBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Power Overwhelming',
-  description: dedent`This turn, when your hero becomes @Empowered@, it gains one more @Empower@ stack and takes 2 @True Damage@.`,
+  description: dedent`This turn, when your hero becomes @Empowered@, Deal 2 @True Damage@ to an enemy.`,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -65,9 +65,23 @@ export const powerOverwhelming: SpellBlueprint = {
               if (!(event.data instanceof EmpowerModifier)) return;
               if (!event.data.target.equals(card.player.hero)) return;
 
-              event.data.addStacks(1);
+              const targets = [
+                card.player.opponent.hero,
+                ...card.player.opponent.minions
+              ].filter(c => c.canBeTargeted(card));
 
-              await card.player.hero.takeDamage(card, new UnpreventableDamage(2));
+              if (targets.length === 0) return;
+              const [selected] = await game.interaction.chooseCards<
+                MinionCard | HeroCard
+              >({
+                player: card.player,
+                label: 'Select an enemy to deal 2 True Damage to',
+                choices: targets,
+                minChoiceCount: 1,
+                maxChoiceCount: 1
+              });
+
+              await selected.takeDamage(card, new UnpreventableDamage(2));
             }
           })
         ]

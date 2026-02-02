@@ -125,7 +125,7 @@ export const KEYWORDS = {
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'After this blocks, wake up this unit.',
+    description: 'This can block while being exhausted.',
     aliases: []
   },
   FLEETING: {

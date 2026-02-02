@@ -5,10 +5,11 @@ import { Icon } from '@iconify/vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 
-const { saveDeck, stopEditingDeck, deleteDeck, isDeleting } =
+const { saveDeck, stopEditingDeck, deleteDeck, isDeleting, deckBuilder } =
   useCollectionPage();
 
 const isDeleteModalOpened = ref(false);
+const isExportModalOpened = ref(false);
 </script>
 
 <template>
@@ -19,8 +20,11 @@ const isDeleteModalOpened = ref(false);
 
       <UiButton
         class="aspect-square ml-auto"
-        @click="isDeleteModalOpened = true"
+        @click="isExportModalOpened = true"
       >
+        <Icon icon="mdi:export" class="export-icon" />
+      </UiButton>
+      <UiButton class="aspect-square" @click="isDeleteModalOpened = true">
         <Icon
           icon="material-symbols:delete-outline-sharp"
           class="delete-icon"
@@ -46,21 +50,28 @@ const isDeleteModalOpened = ref(false);
           </footer>
         </div>
       </UiModal>
+
+      <UiModal
+        v-model:is-opened="isExportModalOpened"
+        title="Export Deck Code"
+        description=""
+      >
+        <div class="surface">
+          <p class="text-center mb-5 text-4">Deck Code:</p>
+          <pre
+            class="bg-black/20 p-4 rounded text-center break-all select-all"
+            >{{ deckBuilder.deckCode }}</pre
+          >
+          <footer class="flex justify-center mt-6">
+            <UiButton @click="isExportModalOpened = false">Close</UiButton>
+          </footer>
+        </div>
+      </UiModal>
     </div>
   </footer>
 </template>
 
 <style scoped lang="postcss">
-.deck-count {
-  margin-top: auto;
-  font-size: var(--font-size-1);
-  line-height: 1;
-  font-weight: 500;
-  text-align: right;
-  padding: var(--size-3) var(--size-3) 0;
-  box-shadow: 0 -10px 1rem hsl(var(--gray-12-hsl) / 0.5);
-}
-
 footer {
   position: sticky;
   bottom: 0;
@@ -75,10 +86,26 @@ footer {
   }
 }
 
+.export-icon {
+  width: var(--size-6);
+  color: var(--yellow-5);
+  &:hover {
+    color: var(--red-7);
+  }
+}
+
+:has(.delete-icon, .export-icon) {
+  padding: var(--size-0);
+}
+
 .actions {
   display: flex;
   gap: var(--size-2);
   margin-top: var(--size-3);
   align-items: center;
+}
+
+pre {
+  white-space: pre-wrap;
 }
 </style>

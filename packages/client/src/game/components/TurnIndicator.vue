@@ -33,5 +33,7 @@ useFxEvent(FX_EVENTS.TURN_START, async event => {
   font-family: 'Cinzel Decorative', cursive;
   font-weight: var(--font-weight-7);
   z-index: 10;
+  -webkit-text-stroke: solic 4px black;
+  paint-order: stroke fill;
 }
 </style>

@@ -174,6 +174,19 @@ export class DeckBuilderViewModel {
       });
   }
 
+  get deckCode() {
+    // Simple deck code: BASE64 encoded JSON of the deck
+    const main = this._deck.mainDeck.map(
+      card => `${card.blueprintId}@${card.copies}`
+    );
+    const destiny = this._deck.destinyDeck.map(
+      card => `${card.blueprintId}@${card.copies}`
+    );
+    const deckJson = JSON.stringify([main, destiny]);
+
+    return btoa(`${this._deck.name}|${deckJson}`);
+  }
+
   get destinyDeckSize() {
     return this._deck[CARD_DECK_SOURCES.DESTINY_DECK].length;
   }

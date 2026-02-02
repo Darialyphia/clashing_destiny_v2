@@ -54,6 +54,10 @@ export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBlock: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
+  canBlockWhileExhausted: Interceptable<
+    boolean,
+    { attacker: AttackTarget; target: AttackTarget }
+  >;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canBeBlocked: Interceptable<boolean, { attacker: Attacker }>;
   canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
@@ -94,6 +98,7 @@ export class MinionCard extends Card<
         canBlock: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canBeBlocked: new Interceptable(),
+        canBlockWhileExhausted: new Interceptable(),
         canBeDefended: new Interceptable(),
         canRetaliate: new Interceptable(),
         canBeRetaliatedAgainst: new Interceptable(),
@@ -204,9 +209,16 @@ export class MinionCard extends Card<
       phaseCtx.state === GAME_PHASES.ATTACK &&
       !isDefined(phaseCtx.ctx.blocker);
 
+    const exhaustionCheck = this.isExhausted
+      ? this.interceptors.canBlockWhileExhausted.getValue(false, {
+          attacker,
+          target
+        })
+      : true;
+
     const base =
       isCorrectPhase &&
-      !this._isExhausted &&
+      exhaustionCheck &&
       attacker.canBeBlocked(this, target) &&
       target.canBeDefended(attacker);
 
