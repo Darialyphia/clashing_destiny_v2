@@ -11,7 +11,6 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { getEmpowerStacks } from '../../../../card-actions-utils';
 
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',

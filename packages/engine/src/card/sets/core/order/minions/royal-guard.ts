@@ -44,8 +44,8 @@ export const royalGuard: MinionBlueprint = {
   },
   manaCost: 5,
   speed: CARD_SPEED.SLOW,
-  atk: 4,
-  maxHp: 3,
+  atk: 3,
+  maxHp: 5,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

@@ -52,8 +52,8 @@ export const plottingCounsellor: MinionBlueprint = {
   },
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
-  atk: 3,
-  maxHp: 3,
+  atk: 2,
+  maxHp: 4,
   canPlay: () => true,
   abilities: [
     {
