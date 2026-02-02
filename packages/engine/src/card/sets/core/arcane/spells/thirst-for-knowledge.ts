@@ -10,6 +10,7 @@ import {
 } from '../../../../card.enums';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { discardFromHand, getEmpowerStacks } from '../../../../card-actions-utils';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const thirstForKnowledge: SpellBlueprint = {
   id: 'thirst-for-knowledge',
@@ -20,8 +21,17 @@ export const thirstForKnowledge: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Thirst for Knowledge',
   description: dedent`
-  Draw cards equal to your @Empower@ stacks. Then, you may discard a card. If you do, @Empower@.
+  This costs @[mana] 1@ less for each @Empower@ on your @hero@.
+  Draw 2 cards.
   `,
+
+  dynamicDescription(game, card) {
+    const empowerStacks = getEmpowerStacks(card);
+    return dedent`
+  This costs @[dynamic]${empowerStacks}| 1@ less.
+  Draw 2 cards.
+  `;
+  },
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.RARE,
   tags: [],
@@ -44,21 +54,20 @@ export const thirstForKnowledge: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 4,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.cardManager.draw(getEmpowerStacks(card));
-
-    const [discardedCard] = await discardFromHand(game, card, { min: 0, max: 1 });
-
-    if (discardedCard) {
-      await card.player.hero.modifiers.add(
-        new EmpowerModifier(game, card, { amount: 1 })
-      );
-    }
+    await card.modifiers.add(
+      new SimpleManacostModifier('thirst-for-knowledge-cost-discount', game, card, {
+        amount() {
+          return -getEmpowerStacks(card);
+        }
+      })
+    );
+    await card.player.cardManager.draw(2);
   }
 };
