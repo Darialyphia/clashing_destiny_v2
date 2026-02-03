@@ -8,6 +8,7 @@
     "@types/deep-equal": "^1.0.4",
     "@types/lodash-es": "^4.17.12",
     "@types/seedrandom": "^3.0.8",
+    "chokidar": "^3.6.0",
     "eslint-config-daria": "*",
     "tsx": "^4.20.6",
     "vitest": "^2.1.9"

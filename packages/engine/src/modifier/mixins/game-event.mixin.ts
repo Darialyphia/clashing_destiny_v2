@@ -25,6 +25,7 @@ export class GameEventModifierMixin<
       ) => void;
       filter?: (event: EventMapWithStarEvent<GameEventMap>[TEvent]) => boolean;
       frequencyPerGameTurn?: number;
+      priority?: number;
     }
   ) {
     super(game);
@@ -60,7 +61,11 @@ export class GameEventModifierMixin<
 
   onApplied(target: AnyCard, modifier: Modifier<AnyCard>): void {
     this.modifier = modifier;
-    this.game.on(this.options.eventName, this.wrappedHandler as any);
+    this.game.on(
+      this.options.eventName,
+      this.wrappedHandler as any,
+      this.options.priority
+    );
 
     if (isDefined(this.options.frequencyPerGameTurn)) {
       this.game.on(GAME_EVENTS.TURN_END, this.onGameTurnEnd);

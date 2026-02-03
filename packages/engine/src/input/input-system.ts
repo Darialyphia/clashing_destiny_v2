@@ -249,7 +249,6 @@ export class InputSystem extends System<never> {
     this.addToHistory(input);
     await input.execute();
     await this.game.emit(GAME_EVENTS.INPUT_END, new GameInputEvent({ input }));
-    console.log('input end');
     this._currentAction = prevAction;
   }
 

@@ -102,7 +102,7 @@ docs/                  # Documentation guides
 
 1. **Create card file** in appropriate folder (e.g., `src/card/sets/core/arcane/minions/`)
 2. **Implement blueprint** following the card type interface
-3. **Add to set index** to register the card
+3. **Run the card watcher** with `npm run dev` to auto-update the set file and regenerate the card dictionary
 4. **Test in game** using the dev server
 
 ## Testing

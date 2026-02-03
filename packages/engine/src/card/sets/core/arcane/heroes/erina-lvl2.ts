@@ -59,6 +59,7 @@ export const erinaLv2: HeroBlueprint = {
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             frequencyPerGameTurn: 1,
+            priority: 10, // we need this to run first to ensure it doesnt ru nafter empowered stats was removed
             filter(event) {
               return (
                 event.data.card.player.equals(card.player) &&

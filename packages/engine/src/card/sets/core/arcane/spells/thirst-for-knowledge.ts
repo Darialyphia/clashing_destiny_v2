@@ -8,8 +8,7 @@ import {
   RARITIES,
   FACTIONS
 } from '../../../../card.enums';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
-import { discardFromHand, getEmpowerStacks } from '../../../../card-actions-utils';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const thirstForKnowledge: SpellBlueprint = {
@@ -24,11 +23,10 @@ export const thirstForKnowledge: SpellBlueprint = {
   This costs @[mana] 1@ less for each @Empower@ on your @hero@.
   Draw 2 cards.
   `,
-
   dynamicDescription(game, card) {
     const empowerStacks = getEmpowerStacks(card);
     return dedent`
-  This costs @[dynamic]${empowerStacks}| 1@ less.
+  This costs @[dynamic]${empowerStacks}|1 * empowered stacks@ less.
   Draw 2 cards.
   `;
   },
