@@ -108,14 +108,18 @@ export const bookOfKnowledge: ArtifactBlueprint = {
                   mixins: [
                     new AuraModifierMixin(game, card, {
                       isElligible(candidate) {
-                        return isSpell(candidate) && candidate.isAlly(card);
+                        return (
+                          isSpell(candidate) &&
+                          candidate.isAlly(card) &&
+                          candidate.location === CARD_LOCATIONS.HAND
+                        );
                       },
-                      getModifiers(candidate) {
+                      getModifiers() {
                         return [
                           new SimpleManacostModifier(
                             'book-of-knowledge-aura',
                             game,
-                            candidate,
+                            card,
                             { amount: -1 }
                           )
                         ];
@@ -124,6 +128,7 @@ export const bookOfKnowledge: ArtifactBlueprint = {
                     new UntilEventModifierMixin(game, {
                       eventName: GAME_EVENTS.CARD_DECLARE_PLAY,
                       filter(event) {
+                        console.log(event);
                         return event.data.card.isAlly(card) && isSpell(event.data.card);
                       }
                     })

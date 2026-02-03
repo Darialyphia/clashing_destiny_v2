@@ -13,6 +13,7 @@ export type ModifierOptions<T extends ModifierTarget> = {
   icon?: string | (() => string);
   isUnique?: boolean;
   mixins: ModifierMixin<T>[];
+  groupKey?: string;
   stacks?: number;
 };
 
@@ -61,6 +62,7 @@ export type SerializedModifier = {
   source: string;
   stacks: number;
   isEnabled: boolean;
+  groupKey: string; // Optional key to group similar modifiers in the UI
 };
 
 export type ModifierInterceptors = {
@@ -89,6 +91,7 @@ export class Modifier<T extends ModifierTarget>
     name?: string | (() => string);
     description?: string | (() => string);
     icon?: string | (() => string);
+    groupKey?: string;
   };
 
   readonly modifierType: string;
@@ -267,7 +270,8 @@ export class Modifier<T extends ModifierTarget>
       target: this._target.id,
       source: this.initialSource.id,
       stacks: this._stacks,
-      isEnabled: this.isEnabled
+      isEnabled: this.isEnabled,
+      groupKey: this.infos.groupKey ?? this.modifierType
     };
   }
 }

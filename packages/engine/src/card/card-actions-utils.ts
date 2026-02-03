@@ -76,7 +76,9 @@ export const discardFromHand = async (
 };
 
 export const getEmpowerStacks = (card: AnyCard) =>
-  card.player.hero.modifiers.get(EmpowerModifier)?.stacks ?? 0;
+  card.player.hero.modifiers.list
+    .filter(mod => mod instanceof EmpowerModifier)
+    .reduce((acc, mod) => acc + mod.stacks, 0);
 
 export const hasBalance = (card: AnyCard) => {
   return card.player.cardManager.hand.length !== card.player.cardManager.destinyZone.size;

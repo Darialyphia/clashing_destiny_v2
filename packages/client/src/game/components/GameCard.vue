@@ -15,10 +15,8 @@ import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
 import { FACTIONS } from '@game/engine/src/card/card.enums';
-import { gameStateRef } from '../composables/gameStateRef';
-import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
-import { assets } from '@/assets';
+import CardModifiers from './CardModifiers.vue';
 
 const {
   cardId,
@@ -127,14 +125,6 @@ const classes = computed(() => {
     }
   ];
 });
-
-const visibleModifiers = gameStateRef(() => {
-  return (
-    card.value?.modifiers.filter(
-      modifier => modifier.icon && modifier.stacks > 0
-    ) ?? []
-  );
-});
 </script>
 
 <template>
@@ -210,54 +200,13 @@ const visibleModifiers = gameStateRef(() => {
         @click="handleClick"
       />
 
-      <div
-        class="modifiers"
-        :class="{
-          top: modifiersPosition === 'top',
-          bottom: modifiersPosition === 'bottom'
-        }"
+      <CardModifiers
         v-if="showModifiers"
-        @mouseenter="emit('modifiersMouseEnter')"
-        @mouseleave="emit('modifiersMouseLeave')"
-      >
-        <UiSimpleTooltip
-          v-for="modifier in visibleModifiers"
-          :key="modifier.id"
-          use-portal
-          side="left"
-        >
-          <template #trigger>
-            <div
-              v-if="assets[`icons/${modifier.icon}`]"
-              :style="{ '--bg': assets[`icons/${modifier.icon}`].css }"
-              :alt="modifier.name"
-              :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
-              class="modifier"
-            />
-            <div v-else>{{ modifier.icon }}</div>
-          </template>
-
-          <div class="modifier-tooltip">
-            <div class="modifier-header">
-              <div
-                class="modifier-icon"
-                :style="{ '--bg': assets[`icons/${modifier.icon}`]?.css }"
-              />
-              <div class="modifier-name">{{ modifier.name }}</div>
-            </div>
-            <div
-              class="modifier-description"
-              :class="{
-                ally: modifier.source.player.id === playerId,
-                enemy: modifier.source.player.id !== playerId
-              }"
-            >
-              {{ modifier.description }}
-            </div>
-            <div class="modifier-source">{{ modifier.source.name }}</div>
-          </div>
-        </UiSimpleTooltip>
-      </div>
+        :position="modifiersPosition"
+        :card="card"
+        @modifiers-mouse-enter="emit('modifiersMouseEnter')"
+        @modifiers-mouse-leave="emit('modifiersMouseLeave')"
+      />
 
       <div class="damage" v-if="damageTaken > 0">
         {{ damageTaken }}
@@ -440,84 +389,5 @@ const visibleModifiers = gameStateRef(() => {
 }
 .fleeting {
   animation: fleeting 5s var(--ease-3) infinite;
-}
-
-.modifiers {
-  position: absolute;
-  left: var(--size-2);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--size-2);
-  --pixel-scale: 2;
-  &.top {
-    top: var(--size-2);
-  }
-  &.bottom {
-    bottom: var(--size-6);
-  }
-}
-
-.modifier {
-  width: 24px;
-  aspect-ratio: 1;
-  background: var(--bg) no-repeat center center;
-  background-size: cover;
-  pointer-events: auto;
-  position: relative;
-  &::after {
-    content: attr(data-stacks);
-    position: absolute;
-    bottom: -5px;
-    right: -5px;
-    font-size: var(--font-size-2);
-    color: white;
-    paint-order: stroke fill;
-    font-weight: var(--font-weight-7);
-    -webkit-text-stroke: 2px black;
-  }
-}
-
-.modifier-tooltip {
-  display: flex;
-  flex-direction: column;
-  max-width: 250px;
-  padding-bottom: var(--size-1);
-}
-
-.modifier-header {
-  display: flex;
-  align-items: center;
-  gap: var(--size-2);
-}
-
-.modifier-icon {
-  width: 36px;
-  aspect-ratio: 1;
-  background: var(--bg) no-repeat center center;
-  background-size: cover;
-  flex-shrink: 0;
-}
-
-.modifier-name {
-  font-size: var(--font-size-2);
-  font-weight: var(--font-weight-7);
-  color: var(--gray-0);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.modifier-description {
-  font-size: var(--font-size-0);
-  line-height: 1.4;
-  color: var(--gray-2);
-  margin-block-end: var(--size-2);
-}
-
-.modifier-source {
-  font-size: var(--font-size-00);
-  color: var(--gray-5);
-  padding-top: var(--size-1);
-  border-top: 1px solid var(--gray-7);
-  font-style: italic;
 }
 </style>

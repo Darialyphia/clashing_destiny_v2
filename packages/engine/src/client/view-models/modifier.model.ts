@@ -48,6 +48,10 @@ export class ModifierViewModel {
     return this.data.modifierType;
   }
 
+  get groupKey() {
+    return this.data.groupKey ?? this.data.modifierType;
+  }
+
   get name() {
     return this.data.name;
   }

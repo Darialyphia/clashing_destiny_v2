@@ -4,7 +4,6 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { HeroInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import { UntilEventModifierMixin } from '../mixins/until-event';
@@ -17,7 +16,7 @@ export class EmpowerModifier extends Modifier<HeroCard> {
     source: AnyCard,
     options: { amount: number; mixins?: ModifierMixin<HeroCard>[] }
   ) {
-    super(KEYWORDS.EMPOWER.id, game, source, {
+    super(`${KEYWORDS.EMPOWER.id}-${source.id}`, game, source, {
       isUnique: true,
       stacks: options.amount,
       name: KEYWORDS.EMPOWER.name,

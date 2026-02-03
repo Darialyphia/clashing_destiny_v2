@@ -57,8 +57,7 @@ export const thirstForKnowledge: SpellBlueprint = {
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),
-  async onInit() {},
-  async onPlay(game, card) {
+  async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('thirst-for-knowledge-cost-discount', game, card, {
         amount() {
@@ -66,6 +65,8 @@ export const thirstForKnowledge: SpellBlueprint = {
         }
       })
     );
+  },
+  async onPlay(game, card) {
     await card.player.cardManager.draw(2);
   }
 };
