@@ -82,6 +82,7 @@ import { defendTheOppressed } from './core/order/spells/defend-the-oppressed';
 import { birdOfGoodLuck } from './core/neutral/minions/bird-of-good-luck';
 import { solemnDecree } from './core/order/spells/solemn-decree';
 import { angelDevotee } from './core/order/minions/angel-devotee';
+import { sunArmor } from './core/order/artifacts/sun-armor';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -168,6 +169,7 @@ export const coreSet: CardSet = {
     defendTheOppressed,
     birdOfGoodLuck,
     solemnDecree,
-    angelDevotee
+    angelDevotee,
+    sunArmor
   ]
 };

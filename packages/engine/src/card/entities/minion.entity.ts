@@ -34,6 +34,7 @@ import {
   MinionCardHealEvent,
   MinionSummonedEvent
 } from '../events/minion.events';
+import { DamageTrackerComponent } from '../components/damage-tracker.component';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -87,6 +88,8 @@ export class MinionCard extends Card<
 
   readonly abilities: Ability<MinionCard>[] = [];
 
+  readonly damageTracker: DamageTrackerComponent;
+
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
       game,
@@ -117,6 +120,8 @@ export class MinionCard extends Card<
     this.blueprint.abilities.forEach(ability => {
       this.abilities.push(new Ability<MinionCard>(this.game, this, ability));
     });
+
+    this.damageTracker = new DamageTrackerComponent(game, this);
   }
 
   get hasSummoningSickness(): boolean {

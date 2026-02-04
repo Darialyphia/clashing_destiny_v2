@@ -30,6 +30,7 @@ import {
   CardDeclarePlayEvent
 } from '../card.events';
 import { HERO_EVENTS, HeroCardHealEvent, HeroPlayedEvent } from '../events/hero.events';
+import { DamageTrackerComponent } from '../components/damage-tracker.component';
 
 export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -75,6 +76,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   readonly abilities: Ability<HeroCard>[] = [];
 
+  readonly damageTracker: DamageTrackerComponent;
+
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
     super(
       game,
@@ -101,6 +104,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       options
     );
 
+    this.damageTracker = new DamageTrackerComponent(game, this);
     this.blueprint.abilities.forEach(ability => {
       this.abilities.push(new Ability<HeroCard>(this.game, this, ability));
     });

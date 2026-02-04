@@ -86,7 +86,8 @@ export const cards = {
 "defend-the-oppressed": "defend-the-oppressed",
 "bird-of-good-luck": "bird-of-good-luck",
 "solemn-decree": "solemn-decree",
-"angel-devotee": "angel-devotee"
+"angel-devotee": "angel-devotee",
+"sun-armor": "sun-armor"
 } as const;
 
 export const collectableCards = {
@@ -166,7 +167,8 @@ export const collectableCards = {
 "defend-the-oppressed": "defend-the-oppressed",
 "bird-of-good-luck": "bird-of-good-luck",
 "solemn-decree": "solemn-decree",
-"angel-devotee": "angel-devotee"
+"angel-devotee": "angel-devotee",
+"sun-armor": "sun-armor"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
@@ -247,7 +249,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "cosmic-divinator",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "mainDeck"
   },
   {
@@ -409,7 +411,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "book-of-knowledge",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "destinyDeck"
   },
   {
@@ -547,7 +549,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "honorable-crown",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "deckSource": "destinyDeck"
   },
   {
@@ -663,6 +665,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "deckSource": "mainDeck"
+  },
+  {
+    "id": "sun-armor",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "destinyDeck"
   }
 ]
 };
