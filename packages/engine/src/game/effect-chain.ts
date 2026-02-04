@@ -102,12 +102,7 @@ export class EffectChain
   ) {
     super(EFFECT_CHAIN_STATES.BUILDING);
     this.resolveCallbacks.push(async () => {
-      console.log(
-        '%ceffect chain resolved, asking for player input',
-        'background: #222; color: #0f0'
-      );
       await this.game.inputSystem.askForPlayerInput();
-      console.log('%cplayer input asked', 'background: #222; color: #0f0');
     });
     this.resolveCallbacks.push(onResolved);
     this._currentPlayer = startingPlayer;
@@ -169,17 +164,8 @@ export class EffectChain
   }
 
   private async onEnd() {
-    console.log(
-      `%ceffect chain ended, ${this.resolveCallbacks.length} callbacks to execute`,
-      'background: #222; color: #0f0'
-    );
-
-    let i = 0;
     for (const callback of this.resolveCallbacks) {
-      console.log(`executing callback ${i}`, 'background: #222; color: #0f0');
       await callback();
-      console.log(`executed callback ${i}`, 'background: #222; color: #0f0');
-      i++;
     }
   }
 
@@ -192,13 +178,9 @@ export class EffectChain
       EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_RESOLVED,
       new ChainEvent({})
     );
-    console.log(
-      `%cresolving effect chain with ${this.effectStack.length} effects`,
-      'background: #222; color: #0f0'
-    );
+
     while (this.effectStack.length > 0) {
       const effect = this.effectStack.pop();
-      console.log(`%cresolving effect ${effect?.id}`, 'background: #222; color: #0f0');
       if (effect) {
         await this.game.emit(
           EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED,
@@ -220,11 +202,9 @@ export class EffectChain
             await effect.source.sendToDiscardPile();
           }
         } else {
-          console.log(effect.handler);
           await effect.handler(this.game);
         }
 
-        console.log(`%cresolved effect ${effect.id}`, 'background: #222; color: #0f0');
         await this.game.emit(
           EFFECT_CHAIN_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED,
           new ChainEffectResolvedEvent({
@@ -282,7 +262,6 @@ export class EffectChain
 
     this.consecutivePasses++;
     if (this.consecutivePasses >= this.passesNeededToResolve) {
-      console.log('%cpass, resolving effect chain', 'background: #222; color: #0f0');
       this.dispatch(EFFECT_CHAIN_STATE_TRANSITIONS.RESOLVE);
       await this.resolveEffects();
     } else {

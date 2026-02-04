@@ -10,9 +10,9 @@ import {
   CARD_LOCATIONS
 } from '../../../../card.enums';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { singleAllyMinionTargetRules } from '../../../../card-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
+import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 
 export const honorableCrown: ArtifactBlueprint = {
   id: 'honorable-crown',
@@ -47,25 +47,31 @@ export const honorableCrown: ArtifactBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 1,
-  durability: 2,
+  destinyCost: 0,
+  durability: 1,
   speed: CARD_SPEED.SLOW,
   abilities: [
     {
       id: 'honorable-crown-ability',
-      description: 'Give an allied minion @Honor@ until the end of the turn.',
-      label: 'Grant Honor',
+      description:
+        'Give an allied minion @Honor@: @On Death@ : Put this in the Destiny Zone',
+      label: 'Buff Ally Minion',
       canUse: (game, card) =>
         card.location === CARD_LOCATIONS.BOARD &&
         singleAllyMinionTargetRules.canPlay(game, card),
       getPreResponseTargets(game, card) {
-        return singleAllyMinionTargetRules.getPreResponseTargets(game, card, {
-          type: 'ability',
-          abilityId: 'honorable-crown-ability',
-          card
-        });
+        return singleAllyMinionTargetRules.getPreResponseTargets(
+          game,
+          card,
+          {
+            type: 'ability',
+            abilityId: 'honorable-crown-ability',
+            card
+          },
+          c => c.modifiers.has(HonorModifier)
+        );
       },
-      manaCost: 0,
+      manaCost: 1,
       durabilityCost: 1,
       shouldExhaust: true,
       speed: CARD_SPEED.BURST,
@@ -74,8 +80,11 @@ export const honorableCrown: ArtifactBlueprint = {
           if (target.location !== CARD_LOCATIONS.BOARD) continue;
 
           await target.modifiers.add(
-            new HonorModifier(game, card, {
-              mixins: [new UntilEndOfTurnModifierMixin(game)]
+            new OnDeathModifier(game, card, {
+              async handler(event, modifier) {
+                await card.sendToDestinyZone();
+                await modifier.remove();
+              }
             })
           );
         }

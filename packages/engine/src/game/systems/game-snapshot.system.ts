@@ -415,6 +415,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           if (prevJSON === currentJSON) {
             this.nextId--;
             this.eventsSinceLastSnapshot = [];
+
             return;
           }
         }

@@ -8,7 +8,6 @@ import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
-import { isMinion, isSigil } from '../../card/card-utils';
 
 export class OnDeathModifier<T extends AnyCard> extends Modifier<T> {
   constructor(

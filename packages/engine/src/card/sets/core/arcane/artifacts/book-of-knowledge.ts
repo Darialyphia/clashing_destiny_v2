@@ -140,9 +140,9 @@ export const bookOfKnowledge: ArtifactBlueprint = {
         };
 
         await choose();
-        if (levelMod?.isActive) {
-          await choose();
-        }
+        // if (levelMod?.isActive) {
+        await choose();
+        // }
       }
     }
   ],

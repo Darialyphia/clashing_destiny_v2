@@ -3,13 +3,16 @@ import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
+  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
+import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { isMinion } from '../../../../card-utils';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const exaltedAngel: MinionBlueprint = {
@@ -21,8 +24,8 @@ export const exaltedAngel: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Exalted Angel',
   description: dedent`
-    @Honor@
-    @On Enter@: Give +1 Atk to your minions with @Honor@.
+    @Honor@.
+    Your other minions with @Honor@ have +1 Atk.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
@@ -57,17 +60,27 @@ export const exaltedAngel: MinionBlueprint = {
     await card.modifiers.add(new HonorModifier(game, card));
 
     await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        handler: async () => {
-          for (const minion of card.player.minions) {
-            if (!minion.modifiers.has(HonorModifier)) return;
-            await minion.modifiers.add(
-              new SimpleAttackBuffModifier('exalted-angel-honor-buff', game, card, {
-                amount: 1
-              })
-            );
-          }
-        }
+      new WhileOnBoardModifier('exalted-angel-aura', game, card, {
+        mixins: [
+          new AuraModifierMixin(game, card, {
+            isElligible(candidate) {
+              return (
+                candidate.isAlly(card) &&
+                !candidate.equals(card) &&
+                candidate.modifiers.has(HonorModifier) &&
+                isMinion(candidate) &&
+                candidate.location === CARD_LOCATIONS.HAND
+              );
+            },
+            getModifiers() {
+              return [
+                new SimpleAttackBuffModifier('exalted-angel-attack-buff', game, card, {
+                  amount: 1
+                })
+              ];
+            }
+          })
+        ]
       })
     );
   },

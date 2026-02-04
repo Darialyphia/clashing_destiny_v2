@@ -1,8 +1,13 @@
-import type { Modifier, ModifierTarget } from '../modifier.entity';
+import {
+  ModifierLifecycleEvent,
+  type Modifier,
+  type ModifierTarget
+} from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { MaybePromise } from '@game/shared';
+import type { StarEvent } from '../../utils/typed-emitter';
+import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
 
 export type AuraOptions = {
   isElligible(candidate: AnyCard): boolean;
@@ -29,7 +34,7 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
     this.cleanup = this.cleanup.bind(this);
   }
 
-  private async checkAura() {
+  private async checkAura(event: StarEvent<GameEventMap>) {
     if (!this.isApplied) return;
 
     for (const card of this.game.cardSystem.cards) {
@@ -39,10 +44,10 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
 
       if (!shouldGetAura && hasAura) {
         const modifierstoRemove = this.affectedCards.get(card.id) ?? [];
+        this.affectedCards.delete(card.id);
         for (const mod of modifierstoRemove) {
           await mod.removeSource(this.source);
         }
-        this.affectedCards.delete(card.id);
         continue;
       }
 
