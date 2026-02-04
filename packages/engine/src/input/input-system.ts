@@ -18,7 +18,7 @@ import {
   GameInputQueueFlushedEvent,
   GameInputEvent
 } from '../game/game.events';
-import { GameNotPausedError, InputError } from './input-errors';
+import { GameAlreadyPausedError, GameNotPausedError, InputError } from './input-errors';
 import { DeclareAttackInput } from './inputs/declare-attack.input';
 import { PassInput } from './inputs/pass.input';
 import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
@@ -145,6 +145,7 @@ export class InputSystem extends System<never> {
   }
 
   pause<T>() {
+    assert(!this.isPaused, new GameAlreadyPausedError());
     return new Promise<T>(resolve => {
       this.onUnpause = data => {
         this.onUnpause = null;

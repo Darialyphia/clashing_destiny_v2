@@ -115,7 +115,7 @@ export class Ability<T extends AbilityOwner>
     onResolved?: () => MaybePromise<void>
   ) {
     const effect = {
-      id: nanoid(),
+      id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
       type: EFFECT_TYPE.ABILITY,
       source: this.card,
       targets,
@@ -132,7 +132,7 @@ export class Ability<T extends AbilityOwner>
     if (this.game.effectChainSystem.currentChain) {
       await this.game.effectChainSystem.addEffect(effect, this.card.player);
     } else {
-      void this.game.effectChainSystem.createChain({
+      await this.game.effectChainSystem.createChain({
         initialPlayer: this.card.player,
         initialEffect: effect,
         onResolved

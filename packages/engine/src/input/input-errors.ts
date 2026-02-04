@@ -13,6 +13,12 @@ export class GameNotPausedError extends InputError {
   }
 }
 
+export class GameAlreadyPausedError extends InputError {
+  constructor() {
+    super('Game is already paused');
+  }
+}
+
 export class InvalidInteractionStateError extends InputError {
   constructor() {
     super('Invalid interaction state');

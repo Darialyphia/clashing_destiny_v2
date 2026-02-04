@@ -351,7 +351,7 @@ export abstract class Card<
     }
   ) {
     const effect = {
-      id: nanoid(),
+      id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
       type: EFFECT_TYPE.CARD,
       source: this,
       targets: options.targets,

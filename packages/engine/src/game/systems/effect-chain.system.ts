@@ -28,7 +28,7 @@ export class EffectChainSystem extends System<never> {
     if (opts.initialEffect) {
       await this._currentChain.addEffect(opts.initialEffect, opts.initialPlayer);
     }
-    void this.game.inputSystem.askForPlayerInput();
+    await this.game.inputSystem.askForPlayerInput();
 
     return this.currentChain;
   }

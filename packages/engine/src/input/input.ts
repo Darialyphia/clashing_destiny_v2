@@ -52,12 +52,9 @@ export abstract class Input<TSchema extends DefaultSchema>
 
   async execute() {
     this.parsePayload();
-
     assert(this.payload, new MissingPayloadError());
     assert(this.isValidPhase, new WrongGamePhaseError());
-    console.log('[Input] Executing input:', this.name);
     await this.impl();
-    console.log('[Input] Executed input:', this.name);
   }
 
   serialize() {
