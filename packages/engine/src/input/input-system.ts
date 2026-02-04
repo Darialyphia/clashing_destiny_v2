@@ -211,9 +211,6 @@ export class InputSystem extends System<never> {
   }
 
   async dispatch(input: SerializedInput) {
-    console.groupCollapsed(`[InputSystem]: ${input.type}`);
-    console.log(input);
-    console.groupEnd();
     if (!this.isActionType(input.type)) return;
     if (this.isPaused) {
       // if the game is paused, run the input immediately

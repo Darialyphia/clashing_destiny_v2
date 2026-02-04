@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   useGameClient,
+  useGameState,
   useGameUi,
   useMyBoard,
   useMyPlayer
@@ -14,11 +15,12 @@ import GameCard from './GameCard.vue';
 import DestinyZone from './DestinyZone.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import { isDefined } from '@game/shared';
 
 const myPlayer = useMyPlayer();
 const myBoard = useMyBoard();
 const { playerId: activePlayerId } = useGameClient();
-
+const state = useGameState();
 const ui = useGameUi();
 
 const isDraggedCardPlayedInMinionZones = computed(() => {
@@ -32,6 +34,8 @@ const onMouseup = () => {
 
   ui.value.playDraggedCard();
 };
+
+const hasChain = computed(() => isDefined(state.value.effectChain));
 </script>
 
 <template>
@@ -39,6 +43,7 @@ const onMouseup = () => {
     class="my-board"
     :class="{
       'is-dragging': ui.draggedCard,
+      'has-chain': hasChain,
       'is-active': myPlayer.id === activePlayerId
     }"
     @mouseup="onMouseup"
@@ -105,9 +110,12 @@ const onMouseup = () => {
   grid-template-columns: auto 1fr auto;
   transform-style: preserve-3d;
   gap: var(--size-2);
-
+  --active-color: hsl(from var(--cyan-6) h s l / 0.6);
+  &.has-chain {
+    --active-color: hsl(from var(--indigo-6) h s l / 0.6);
+  }
   &.is-active {
-    box-shadow: inset 0 0 40px #25a9e099;
+    box-shadow: inset 0 0 40px var(--active-color);
   }
   &.is-dragging {
     background-color: hsla(260, 50%, 20%, 0.2);

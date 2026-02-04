@@ -27,7 +27,7 @@ export const mercyOfDawn: ArtifactBlueprint = {
   name: 'Mercy of Dawn',
   description: dedent`
   @Unique@.
-  This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card.
+  This card doesn't wake up at the start of the turn. When you summon a minion, wake up this card and this loses 1 durability.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
@@ -55,7 +55,7 @@ export const mercyOfDawn: ArtifactBlueprint = {
     }
   },
   manaCost: 3,
-  durability: 1,
+  durability: 5,
   speed: CARD_SPEED.SLOW,
   abilities: [
     equipWeapon({
@@ -84,6 +84,7 @@ export const mercyOfDawn: ArtifactBlueprint = {
             async handler() {
               if (card.isExhausted) {
                 await card.wakeUp();
+                await card.loseDurability(1);
               }
             }
           })

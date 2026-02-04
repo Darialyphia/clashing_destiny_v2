@@ -52,7 +52,7 @@ export const thirstForKnowledge: SpellBlueprint = {
       tint: FACTIONS.ARCANE.defaultCardTint
     }
   },
-  manaCost: 4,
+  manaCost: 5,
   speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
