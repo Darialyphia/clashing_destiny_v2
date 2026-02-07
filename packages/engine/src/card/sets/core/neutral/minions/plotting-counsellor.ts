@@ -27,8 +27,8 @@ export const plottingCounsellor: MinionBlueprint = {
   // use a function for description to avoid circular dependency issues
   description: () =>
     dedent`At the end of each turn, if this card has only 1 Hp, banish this and summon a @${jeweller.name}@.`,
-  faction: FACTIONS.ARCANE,
-  rarity: RARITIES.RARE,
+  faction: FACTIONS.NEUTRAL,
+  rarity: RARITIES.TOKEN,
   tags: [],
   art: {
     default: {
@@ -47,7 +47,7 @@ export const plottingCounsellor: MinionBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ARCANE.defaultCardTint
+      tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
   manaCost: 4,

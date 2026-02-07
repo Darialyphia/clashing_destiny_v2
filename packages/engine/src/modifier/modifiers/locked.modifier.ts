@@ -1,7 +1,10 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
+import { GAME_PHASES } from '../../game/game.enums';
+import { GAME_EVENTS } from '../../game/game.events';
 import { DurationModifierMixin } from '../mixins/duration.mixin';
+import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -13,13 +16,14 @@ export class LockedModifier<T extends AnyCard> extends Modifier<T> {
   constructor(
     game: Game,
     source: AnyCard,
-    options: { duration: number; mixins?: ModifierMixin<T>[] }
+    options: { stacks: number; mixins?: ModifierMixin<T>[] }
   ) {
     super(KEYWORDS.LOCKED.id, game, source, {
       name: KEYWORDS.LOCKED.name,
       description: KEYWORDS.LOCKED.description,
       icon: 'keyword-locked',
       isUnique: true,
+      stacks: options.stacks,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.LOCKED),
         new CardInterceptorModifierMixin(game, {
@@ -47,7 +51,17 @@ export class LockedModifier<T extends AnyCard> extends Modifier<T> {
             return false;
           }
         }),
-        new DurationModifierMixin(game, options.duration),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.AFTER_CHANGE_PHASE,
+          filter(event) {
+            return event.data.from === GAME_PHASES.DRAW;
+          },
+          handler: async e => {
+            console.log(e);
+            console.log('LockedModifier:remove stack', this.stacks);
+            await this.removeStacks(1);
+          }
+        }),
         ...(options.mixins || [])
       ]
     });

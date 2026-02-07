@@ -37,7 +37,7 @@ const ui = useGameUi();
           :open-delay="0"
           side="right"
         >
-          <GameCard :card-id="artifact" variant="small" show-stats />
+          <GameCard :card-id="artifact" variant="small" show-stats can-tilt />
         </InspectableCard>
       </div>
       <HeroSlot :player="opponent" class="hero" />
@@ -54,15 +54,29 @@ const ui = useGameUi();
           v-for="card in opponentBoard.minions"
           :key="card"
           :card-id="card"
+          side="left"
         >
-          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
+          <GameCard
+            :card-id="card"
+            variant="small"
+            show-stats
+            show-modifiers
+            can-tilt
+          />
         </InspectableCard>
         <InspectableCard
           v-for="card in opponentBoard.sigils"
           :key="card"
+          side="left"
           :card-id="card"
         >
-          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
+          <GameCard
+            :card-id="card"
+            variant="small"
+            show-stats
+            show-modifiers
+            can-tilt
+          />
         </InspectableCard>
       </div>
     </div>

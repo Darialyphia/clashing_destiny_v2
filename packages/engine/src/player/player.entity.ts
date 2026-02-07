@@ -405,7 +405,7 @@ export class Player
       const index = this.game.rngSystem.nextInt(pool.length - 1);
       const card = pool[index];
       // await card.sendToBanishPile();
-      await card.modifiers.add(new LockedModifier(this.game, card, { duration: 2 }));
+      await card.modifiers.add(new LockedModifier(this.game, card, { stacks: 1 }));
       lockedCards.push({ card, index });
       await card.reveal();
       pool.splice(index, 1);

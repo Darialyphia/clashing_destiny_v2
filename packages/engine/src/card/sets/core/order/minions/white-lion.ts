@@ -74,7 +74,7 @@ export const whiteLion: MinionBlueprint = {
 
           await cardToLock.modifiers.add(
             new LockedModifier(game, card, {
-              duration: 2
+              stacks: 2
             })
           );
         }

@@ -36,7 +36,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint ./src --fix",
     "fix-circular-deps": "dpdm -T --no-tree ./src/**/*.ts",
-    "generate-cards": "tsx ./src/scripts/generate-card-dict-for-convex.ts",
+    "generate-cards": "tsx ./src/scripts/generate-card-dict.ts",
     "analyze-minion-stats": "tsx ./src/scripts/analyze-minion-stats.ts"
   }
 }

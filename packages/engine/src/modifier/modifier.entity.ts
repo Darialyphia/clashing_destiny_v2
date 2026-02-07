@@ -246,6 +246,7 @@ export class Modifier<T extends ModifierTarget>
   async removeStacks(count: number) {
     this._stacks = Math.max(0, this._stacks - count);
     if (this._stacks <= 0) {
+      console.log(`Modifier ${this.id} has no stacks left, removing`);
       await this.remove();
     }
   }

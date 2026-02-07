@@ -193,21 +193,21 @@ const showFullText = useIsKeyboardControlPressed({
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
         <template #trigger>
-          <img :src="assets['ui/speed-slow'].path" class="inline token speed" />
+          <span>SLOW</span>
         </template>
         This can only be activated at Slow speed.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
         <template #trigger>
-          <img :src="assets['ui/speed-fast'].path" class="inline token-speed" />
+          <span>FAST</span>
         </template>
         This can be activated at Fast speed.
       </UiSimpleTooltip>
 
       <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.BURST">
         <template #trigger>
-          <img :src="assets['ui/speed-burst'].path" class="inline" />
+          <span>BURST</span>
         </template>
         This can is activated at Burst speed and resolves instantly.
       </UiSimpleTooltip>
@@ -329,12 +329,29 @@ const showFullText = useIsKeyboardControlPressed({
 .token-SLOW,
 .token-FAST,
 .token-BURST {
-  img {
-    width: calc(14px * var(--pixel-scale) / 2);
-    height: calc(14px * var(--pixel-scale) / 2);
-    aspect-ratio: 1;
-    transform: translateY(2px);
-  }
+  font-size: 0.8em;
+  background-color: black;
+  padding-inline: calc(6px * var(--pixel-scale));
+  clip-path: polygon(
+    calc(3px * var(--pixel-scale)) 0,
+    calc(100% - 3px * var(--pixel-scale)) 0,
+    100% 50%,
+    calc(100% - 3px * var(--pixel-scale)) 100%,
+    calc(3px * var(--pixel-scale)) 100%,
+    0 50%
+  );
+}
+
+.token-SLOW {
+  color: red;
+}
+
+.token-FAST {
+  color: cyan;
+}
+
+.token-BURST {
+  color: white;
 }
 
 .token-KNOWLEDGE,

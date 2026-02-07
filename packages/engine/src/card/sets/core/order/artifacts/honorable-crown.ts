@@ -47,7 +47,7 @@ export const honorableCrown: ArtifactBlueprint = {
       tint: FACTIONS.ORDER.defaultCardTint
     }
   },
-  destinyCost: 0,
+  destinyCost: 1,
   durability: 1,
   speed: CARD_SPEED.SLOW,
   abilities: [

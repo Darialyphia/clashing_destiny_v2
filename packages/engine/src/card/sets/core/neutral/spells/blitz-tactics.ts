@@ -25,7 +25,7 @@ export const blitzTactics: SpellBlueprint = {
     @Loyalty 2@.
     The next card you play this turn has Burst speed.
   `,
-  faction: FACTIONS.ORDER,
+  faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.LEGENDARY,
   tags: [],
   art: {
@@ -45,7 +45,7 @@ export const blitzTactics: SpellBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ORDER.defaultCardTint
+      tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
   destinyCost: 3,

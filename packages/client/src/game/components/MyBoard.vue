@@ -61,7 +61,7 @@ const hasChain = computed(() => isDefined(state.value.effectChain));
           :open-delay="0"
           side="right"
         >
-          <GameCard :card-id="artifact" variant="small" show-stats />
+          <GameCard :card-id="artifact" variant="small" show-stats can-tilt />
         </InspectableCard>
       </div>
     </div>
@@ -76,15 +76,29 @@ const hasChain = computed(() => isDefined(state.value.effectChain));
           v-for="card in myBoard.minions"
           :key="card"
           :card-id="card"
+          size="left"
         >
-          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
+          <GameCard
+            :card-id="card"
+            variant="small"
+            show-stats
+            show-modifiers
+            can-tilt
+          />
         </InspectableCard>
         <InspectableCard
           v-for="card in myBoard.sigils"
           :key="card"
+          size="left"
           :card-id="card"
         >
-          <GameCard :card-id="card" variant="small" show-stats show-modifiers />
+          <GameCard
+            :card-id="card"
+            variant="small"
+            show-stats
+            show-modifiers
+            can-tilt
+          />
         </InspectableCard>
       </div>
 

@@ -59,6 +59,7 @@ const enableFullCardPreview = () => {
         variant="small"
         show-stats
         show-modifiers
+        can-tilt
         @modifiers-mouse-enter="isFullCardPreviewenabled = false"
         @modifiers-mouse-leave="enableFullCardPreview"
       />

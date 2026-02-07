@@ -6,13 +6,17 @@ import {
   CARD_DECK_SOURCES,
   CARD_SETS,
   RARITIES,
-  FACTIONS
+  FACTIONS,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
-import { LoyaltyModifier } from '../../../../../modifier/modifiers/loyalty.modifier';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { frontlineSkirmisher } from '../minions/frontline-skirmisher';
+import { shuffleArray } from '@game/shared';
+import { isMinion } from '../../../../card-utils';
+import type { MinionCard } from '../../../../entities/minion.entity';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
+import type { SpellCard } from '../../../../entities/spell.entity';
 
 export const protectTheHolySpire: SpellBlueprint = {
   id: 'protect-the-holy-spire',
@@ -23,10 +27,15 @@ export const protectTheHolySpire: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Protect the Holy Spire',
   description: dedent`
-    @Loyalty@: this costs 2 more.
-    Grant @Honor@ to allied @minion@s until the end of the turn.
-    @[lvl] 2 bonus@: Summon 2 copies of @${frontlineSkirmisher.name}@.
+  Summon 2 minions with @Honor@ from your deck with a mana cost equal or less than your Hero's level.
+  @[lvl] 3 Bonus@: This is Burst speed.
   `,
+  dynamicDescription(game, card) {
+    return dedent`
+    Summon 2 minions with @Honor@ from your deck with a mana cost of @[dynamic]${card.player.hero.level}|Hero level@ or less.
+    @[lvl] 3 Bonus@: This is Burst speed.
+    `;
+  },
   faction: FACTIONS.ORDER,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -60,30 +69,38 @@ export const protectTheHolySpire: SpellBlueprint = {
     return Promise.resolve([]);
   },
   async onInit(game, card) {
-    await card.modifiers.add(
-      new LoyaltyModifier(game, card, {
-        manaAmount: 2
-      })
-    );
-
-    await card.modifiers.add(new LevelBonusModifier(game, card, 2));
+    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
   },
   async onPlay(game, card) {
     const lvlMod = card.modifiers.get(LevelBonusModifier);
+    await card.modifiers.add(
+      new Modifier<SpellCard>('protect-the-holy-spire-speed-bonus', game, card, {
+        mixins: [
+          new CardInterceptorModifierMixin(game, {
+            key: 'speed',
+            interceptor: value => (lvlMod?.isActive ? CARD_SPEED.BURST : value)
+          })
+        ]
+      })
+    );
 
-    if (lvlMod?.isActive) {
-      await (await card.player.generateCard(frontlineSkirmisher.id)).addToHand();
-      await (await card.player.generateCard(frontlineSkirmisher.id)).addToHand();
-    }
+    const candidates = shuffleArray(
+      game.cardSystem.cards.filter(
+        c =>
+          c.isAlly(card) &&
+          isMinion(c) &&
+          c.location === CARD_LOCATIONS.MAIN_DECK &&
+          c.modifiers.has(HonorModifier) &&
+          c.manaCost <= card.player.hero.level
+      ),
+      game.rngSystem.next
+    );
+    if (candidates.length === 0) return;
 
-    const alliedMinions = card.player.boardSide.minions;
-
-    for (const minion of alliedMinions) {
-      await minion.modifiers.add(
-        new HonorModifier(game, card, {
-          mixins: [new UntilEndOfTurnModifierMixin(game)]
-        })
-      );
+    const toSummon = candidates.slice(0, 2) as MinionCard[];
+    for (const summonCard of toSummon) {
+      await summonCard.removeFromCurrentLocation();
+      await summonCard.playImmediately();
     }
   }
 };

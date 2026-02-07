@@ -154,7 +154,8 @@ const isSettingsOpened = ref(false);
   grid-template-rows: 1fr auto 1fr auto;
   gap: var(--size-2);
   transform-style: preserve-3d;
-  background: radial-gradient(circle at center, #0e151b, transparent 75%);
+  /* background: radial-gradient(circle at center, #0e151b, transparent 75%); */
+  transform-origin: center center;
 }
 
 .arrows {

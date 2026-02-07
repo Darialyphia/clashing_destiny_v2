@@ -130,7 +130,3 @@ self.addEventListener('message', ({ data }) => {
   messageQueue.push(options);
   void processQueue();
 });
-
-setInterval(() => {
-  console.log('[SANDBOX WORKER] Heartbeat: alive and processing messages');
-}, 5000);

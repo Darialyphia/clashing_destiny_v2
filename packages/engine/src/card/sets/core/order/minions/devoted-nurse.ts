@@ -47,7 +47,7 @@ export const devotedNurse: MinionBlueprint = {
   },
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
-  atk: 0,
+  atk: 1,
   maxHp: 1,
   canPlay: () => true,
   abilities: [],

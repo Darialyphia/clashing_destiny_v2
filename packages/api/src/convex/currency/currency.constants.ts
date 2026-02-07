@@ -1,3 +1,5 @@
+import type { Values } from '@game/shared';
+
 export const CURRENCY_SOURCES = {
   GAME_VICTORY: 'game_victory',
   GAME_PARTICIPATION: 'game_participation',
@@ -12,14 +14,14 @@ export const CURRENCY_SOURCES = {
   CRAFTING: 'crafting'
 } as const;
 
-export type CurrencySource = (typeof CURRENCY_SOURCES)[keyof typeof CURRENCY_SOURCES];
+export type CurrencySource = Values<typeof CURRENCY_SOURCES>;
 
 export const CURRENCY_TYPES = {
   GOLD: 'gold',
   CRAFTING_SHARDS: 'crafting_shards'
 } as const;
 
-export type CurrencyType = (typeof CURRENCY_TYPES)[keyof typeof CURRENCY_TYPES];
+export type CurrencyType = Values<typeof CURRENCY_TYPES>;
 
 export const CURRENCY_REWARDS = {
   GAME_VICTORY_BASE: 50,

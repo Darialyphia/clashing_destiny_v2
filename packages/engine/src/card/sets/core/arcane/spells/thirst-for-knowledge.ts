@@ -20,7 +20,7 @@ export const thirstForKnowledge: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Thirst for Knowledge',
   description: dedent`
-  This costs @[mana] 1@ less for each @Empower@ on your @hero@.
+  This costs @[mana] 1@ less for each @Empower@ stack on your @hero@.
   Draw 2 cards.
   `,
   dynamicDescription(game, card) {

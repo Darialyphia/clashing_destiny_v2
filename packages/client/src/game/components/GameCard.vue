@@ -32,7 +32,8 @@ const {
   showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
   flipped,
-  modifiersPosition = 'top'
+  modifiersPosition = 'top',
+  canTilt = false
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -48,6 +49,7 @@ const {
   flipped?: boolean;
   showActionEmptyState?: boolean;
   modifiersPosition?: 'top' | 'bottom';
+  canTilt?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -114,6 +116,7 @@ const classes = computed(() => {
     card.value.keywords.map(kw => kw.toLowerCase()),
     {
       exhausted: isInteractive && card.value.isExhausted,
+      'can-tilt': canTilt,
       disabled:
         !card.value.canPlay && card.value.location === CARD_LOCATIONS.HAND,
       selected: ui.value.selectedCard?.equals(card.value),
@@ -271,7 +274,9 @@ const classes = computed(() => {
 
   &.exhausted {
     filter: grayscale(0.25) brightness(0.8);
-    rotate: 5deg;
+    &.can-tilt {
+      rotate: 5deg;
+    }
   }
   &.targetable {
     &::after {

@@ -9,7 +9,7 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { manaSpark } from '../../neutral/spells/mana-spark';
+import { manaSpark } from '../spells/mana-spark';
 import { plottingCounsellor } from './plotting-counsellor';
 import type { MinionCard } from '../../../../entities/minion.entity';
 
@@ -22,7 +22,7 @@ export const jeweller: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Jewel Crafter',
   description: dedent``,
-  faction: FACTIONS.ARCANE,
+  faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.COMMON,
   tags: [],
   art: {
@@ -41,7 +41,7 @@ export const jeweller: MinionBlueprint = {
       bg: 'minions/jeweller-bg',
       main: 'minions/jeweller',
       frame: 'default',
-      tint: FACTIONS.ARCANE.defaultCardTint
+      tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
   manaCost: 2,
