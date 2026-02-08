@@ -301,7 +301,7 @@ const showFullText = useIsKeyboardControlPressed({
 .token-exhaust > img {
   transform: translateY(4px);
   width: calc(20px * var(--pixel-scale) / 2);
-  height: calc(12px * var(--pixel-scale) / 2);
+  height: calc(14px * var(--pixel-scale) / 2);
 }
 .token-dynamic-value {
   color: var(--blue-4);
@@ -330,7 +330,9 @@ const showFullText = useIsKeyboardControlPressed({
 .token-FAST,
 .token-BURST {
   font-size: 0.8em;
-  background-color: black;
+  color: white;
+  -webkit-text-stroke: calc(var(--pixel-scale) * 1 px) black;
+  paint-order: stroke fill;
   padding-inline: calc(6px * var(--pixel-scale));
   clip-path: polygon(
     calc(3px * var(--pixel-scale)) 0,
@@ -343,15 +345,15 @@ const showFullText = useIsKeyboardControlPressed({
 }
 
 .token-SLOW {
-  color: red;
+  background: linear-gradient(to bottom, var(--red-8) 50%, var(--red-11) 50%);
 }
 
 .token-FAST {
-  color: cyan;
+  background: linear-gradient(to bottom, var(--cyan-8) 50%, var(--cyan-11) 50%);
 }
 
 .token-BURST {
-  color: white;
+  background: linear-gradient(to bottom, var(--gray-8) 50%, var(--gray-11) 50%);
 }
 
 .token-KNOWLEDGE,
