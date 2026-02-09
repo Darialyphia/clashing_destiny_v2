@@ -5,7 +5,7 @@ import type { Game } from '../../game/game';
 
 import type { CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
-import { isArtifact, isHero, isMinion } from '../../card/card-utils';
+import { isArtifact, isHero, isMinion, isSigil } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -13,19 +13,23 @@ import type { MinionSummonedEvent } from '../../card/events/minion.events';
 import type { HeroPlayedEvent } from '../../card/events/hero.events';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { ArtifactEquipedEvent } from '../../card/events/artifact.events';
+import type { SigilCard } from '../../card/entities/sigil.entity';
+import type { SigilSummonedEvent } from '../../card/events/sigil.events';
 
-export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard> = (
+export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard | SigilCard> = (
   event: T extends MinionCard
     ? MinionSummonedEvent
-    : T extends ArtifactCard
-      ? ArtifactEquipedEvent
-      : T extends HeroCard
-        ? HeroPlayedEvent
-        : never
+    : T extends SigilCard
+      ? SigilSummonedEvent
+      : T extends ArtifactCard
+        ? ArtifactEquipedEvent
+        : T extends HeroCard
+          ? HeroPlayedEvent
+          : never
 ) => MaybePromise<void>;
 
 export class OnEnterModifierMixin<
-  T extends MinionCard | ArtifactCard | HeroCard
+  T extends MinionCard | ArtifactCard | HeroCard | SigilCard
 > extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
   private handler: OnEnterHandler<T>;
@@ -50,6 +54,14 @@ export class OnEnterModifierMixin<
     const target = this.modifier.target;
     if (isMinion(target)) {
       const unsub = this.game.on(GAME_EVENTS.MINION_SUMMONED, async event => {
+        if (event.data.card.equals(target)) {
+          unsub();
+          if (event.data.card.location !== 'board') return;
+          await this.handler(event as any);
+        }
+      });
+    } else if (isSigil(target)) {
+      const unsub = this.game.on(GAME_EVENTS.SIGIL_SUMMONED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
           if (event.data.card.location !== 'board') return;

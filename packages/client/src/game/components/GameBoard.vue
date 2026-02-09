@@ -29,7 +29,7 @@ import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import OpponentHand from './OpponentHand.vue';
 
-const { clocks, options } = defineProps<{
+const { options } = defineProps<{
   clocks?: {
     [playerId: string]: {
       turn: { max: number; remaining: number; isActive: boolean };
@@ -50,8 +50,8 @@ const opponentPlayer = useOpponentPlayer();
 // useBoardResize(board);
 
 useGameKeyboardControls();
-const myClock = computed(() => clocks?.[myPlayer.value.id]);
-const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
+// const myClock = computed(() => clocks?.[myPlayer.value.id]);
+// const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
 const isSettingsOpened = ref(false);
 </script>

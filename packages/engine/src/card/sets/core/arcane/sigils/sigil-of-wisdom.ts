@@ -13,6 +13,9 @@ import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const sigilOfWisdom: SigilBlueprint = {
   id: 'sigil-of-wisdom',
@@ -23,7 +26,9 @@ export const sigilOfWisdom: SigilBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Sigil of Wisdom',
   description: dedent`
-  Whenever any hero levels up, @Empower@.`,
+  Whenever any hero levels up, @Empower@.
+  @[lvl] 3 Bonus@: @On Enter@: Draw a card.
+  `,
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -71,6 +76,19 @@ export const sigilOfWisdom: SigilBlueprint = {
           ]
         }
       )
+    );
+
+    const levelBonusMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 3)
+    )) as LevelBonusModifier<SigilCard>;
+
+    await card.modifiers.add(
+      new OnEnterModifier<SigilCard>(game, card, {
+        handler: async () => {
+          await card.player.cardManager.draw(1);
+        },
+        mixins: [new TogglableModifierMixin(game, () => levelBonusMod.isActive)]
+      })
     );
   },
   async onPlay() {}

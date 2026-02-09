@@ -25,7 +25,8 @@ import {
   SigilAfterCountdownIncreaseEvent,
   SigilBeforeCountdownDecreaseEvent,
   SigilBeforeCountdownIncreaseEvent,
-  SigilCountdownReachedEvent
+  SigilCountdownReachedEvent,
+  SigilSummonedEvent
 } from '../events/sigil.events';
 
 export type SerializedSigilCard = SerializedCard & {
@@ -84,6 +85,10 @@ export class SigilCard extends Card<
     this.player.boardSide.summonSigil(this);
     this._countdown = this.maxCountdown;
     await this.blueprint.onPlay(this.game, this);
+    await this.game.emit(
+      SIGIL_EVENTS.SIGIL_SUMMONED,
+      new SigilSummonedEvent({ card: this })
+    );
   }
 
   replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {

@@ -23,7 +23,7 @@ export const angelWings: SpellBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Angel Wings',
   description: dedent`
-  Give an allied minion +1 Health, and @Honor@ this turn.
+  Give an allied minion +1 Health, and @Honor@ this turn. If it already had @Honor@, draw a card into your Destiny zone.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -70,8 +70,13 @@ export const angelWings: SpellBlueprint = {
       })
     );
 
+    const hasHonor = targetMinion.modifiers.has(HonorModifier);
     await targetMinion.modifiers.add(
       new HonorModifier(game, card, { mixins: [new UntilEndOfTurnModifierMixin(game)] })
     );
+
+    if (hasHonor) {
+      await card.player.cardManager.drawIntoDestinyZone(1);
+    }
   }
 };

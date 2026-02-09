@@ -25,7 +25,7 @@ export const crossCounter: SpellBlueprint = {
   description: dedent`
    Wake up target exhausted ally minion that is targeted by an attack. Give it @Preemptive Retaliation@ this turn.
   `,
-  faction: FACTIONS.ORDER,
+  faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.COMMON,
   tags: [],
   art: {
@@ -41,7 +41,7 @@ export const crossCounter: SpellBlueprint = {
       main: 'placeholder',
       breakout: 'placeholder-breakout',
       frame: 'default',
-      tint: FACTIONS.ORDER.defaultCardTint
+      tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
   manaCost: 1,

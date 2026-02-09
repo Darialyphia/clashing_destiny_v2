@@ -5,6 +5,7 @@ import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
+import type { SigilCard } from '../../card/entities/sigil.entity';
 import type { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { OnEnterModifierMixin, type OnEnterHandler } from '../mixins/on-enter.mixin';
@@ -12,7 +13,7 @@ import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
 export class OnEnterModifier<
-  T extends MinionCard | ArtifactCard | HeroCard
+  T extends MinionCard | ArtifactCard | HeroCard | SigilCard
 > extends Modifier<T> {
   constructor(
     game: Game,

@@ -73,7 +73,7 @@ import { whiteLion } from './core/order/minions/white-lion';
 import { blitzTactics } from './core/neutral/spells/blitz-tactics';
 import { firstWings } from './core/order/minions/first-wings';
 import { littleAngel } from './core/order/minions/little-angel';
-import { crossCounter } from './core/order/spells/cross-counter';
+import { crossCounter } from './core/neutral/spells/cross-counter';
 import { hadranielGodsMajesty } from './core/order/minions/hadraniel-gods-majesty';
 import { seraphOfLiberation } from './core/order/minions/seraph-of-liberation';
 import { theHangman } from './core/neutral/spells/the-hangman';
