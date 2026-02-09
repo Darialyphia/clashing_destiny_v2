@@ -2,6 +2,8 @@ import { CARD_SET_DICTIONARY, CARDS_DICTIONARY } from '../card/sets';
 import fs from 'fs-extra';
 import path from 'path';
 import dedent from 'dedent';
+import { cardIdByShortId, cardShortIds } from '../generated/cards';
+import { isDefined } from '@game/shared';
 
 const generateCardsFile = () => {
   const cards = Object.fromEntries(
@@ -27,6 +29,24 @@ const generateCardsFile = () => {
       deckSource: card.deckSource
     }));
   }
+  let maxShortId = Math.max(...Object.values(cardShortIds)) ?? 1;
+
+  const updatedCardShortIds = Object.fromEntries(
+    Object.keys(cards).map(cardId => {
+      if (!isDefined(cardShortIds[cardId])) {
+        maxShortId++;
+        cardShortIds[cardId] = maxShortId;
+        cardIdByShortId[maxShortId] = cardId;
+        return [cardId, maxShortId];
+      } else {
+        return [cardId, cardShortIds[cardId]];
+      }
+    })
+  );
+
+  const updatedCardIdByShortId = Object.fromEntries(
+    Object.entries(updatedCardShortIds).map(([cardId, shortId]) => [shortId, cardId])
+  );
 
   const fileContent = dedent`
     /** This file is auto-generated. Do not edit manually.
@@ -41,6 +61,10 @@ const generateCardsFile = () => {
 
   type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
   export const cardsBySet: Record<string, CardSet> = ${JSON.stringify(cardsBySet, null, 2)};
+
+  export const cardShortIds: Record<string, number> = ${JSON.stringify(updatedCardShortIds, null, 2)} as const;
+
+  export const cardIdByShortId: Record<number, string> = ${JSON.stringify(updatedCardIdByShortId, null, 2)} as const;
   `;
 
   const outputPath = path.join(process.cwd(), 'src/generated/cards.ts');

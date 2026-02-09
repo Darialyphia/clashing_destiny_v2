@@ -6,6 +6,10 @@ import type {
   ValidatableCard,
   ValidatableDeck
 } from '@game/engine/src/card/validators/deck.validator';
+import {
+  cardShortIds,
+  cardIdByShortId
+} from '@game/engine/src/generated/cards';
 import { nanoid } from 'nanoid';
 
 export type DeckBuilderCardPool = Array<CardBlueprint>;
@@ -17,6 +21,52 @@ type DeckBuilderCardMeta = {
 
 export type DeckBuilderDeck = ValidatableDeck<DeckBuilderCardMeta>;
 export class DeckBuilderViewModel {
+  /**
+   * Decode a deck code string into deck data
+   * Format: base64(name~copies:card.card|copies:card~copies:card.card)
+   */
+  static decodeDeckCode(deckCode: string): {
+    name: string;
+    mainDeck: Array<{ blueprintId: string; copies: number }>;
+    destinyDeck: Array<{ blueprintId: string; copies: number }>;
+  } {
+    try {
+      const decoded = atob(deckCode);
+      const [name, mainEncoded, destinyEncoded] = decoded.split('~');
+
+      const decodeDeckList = (encoded: string) => {
+        if (!encoded) return [];
+
+        const cards: Array<{ blueprintId: string; copies: number }> = [];
+        const groups = encoded.split('|');
+
+        for (const group of groups) {
+          const [copiesStr, cardsStr] = group.split(':');
+          const copies = parseInt(copiesStr, 10);
+          const shortIds = cardsStr.split('.').map(id => parseInt(id, 10));
+
+          for (const shortId of shortIds) {
+            const blueprintId = cardIdByShortId[shortId];
+            if (blueprintId) {
+              cards.push({ blueprintId, copies });
+            }
+          }
+        }
+
+        return cards;
+      };
+
+      return {
+        name: name || 'Imported Deck',
+        mainDeck: decodeDeckList(mainEncoded),
+        destinyDeck: decodeDeckList(destinyEncoded)
+      };
+    } catch (error) {
+      console.error('Failed to decode deck code:', error);
+      throw new Error('Invalid deck code format');
+    }
+  }
+
   private _deck: DeckBuilderDeck = {
     id: nanoid(4),
     name: 'New Deck',
@@ -175,16 +225,32 @@ export class DeckBuilderViewModel {
   }
 
   get deckCode() {
-    // Simple deck code: BASE64 encoded JSON of the deck
-    const main = this._deck.mainDeck.map(
-      card => `${card.blueprintId}@${card.copies}`
-    );
-    const destiny = this._deck.destinyDeck.map(
-      card => `${card.blueprintId}@${card.copies}`
-    );
-    const deckJson = JSON.stringify([main, destiny]);
+    // Optimized deck code format:
+    // Group cards by copy count for better compression
+    // Format: name|{copies}:{card,card}|{copies}:{card}|...
 
-    return btoa(`${this._deck.name}|${deckJson}`);
+    const encodeDeckList = (cards: typeof this._deck.mainDeck) => {
+      // Group by copy count
+      const grouped = new Map<number, number[]>();
+      for (const card of cards) {
+        const shortId = cardShortIds[card.blueprintId];
+        const existing = grouped.get(card.copies) || [];
+        existing.push(shortId);
+        grouped.set(card.copies, existing);
+      }
+
+      // Format: copies:card,card,card
+      return Array.from(grouped.entries())
+        .map(([copies, cardIds]) => `${copies}:${cardIds.join('.')}`)
+        .join('|');
+    };
+
+    const mainEncoded = encodeDeckList(this._deck.mainDeck);
+    const destinyEncoded = encodeDeckList(this._deck.destinyDeck);
+
+    const deckString = `${this._deck.name}~${mainEncoded}~${destinyEncoded}`;
+
+    return btoa(deckString);
   }
 
   get destinyDeckSize() {
