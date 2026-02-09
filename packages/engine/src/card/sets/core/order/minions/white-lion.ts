@@ -49,8 +49,8 @@ export const whiteLion: MinionBlueprint = {
   },
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
-  atk: 2,
-  maxHp: 1,
+  atk: 3,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

@@ -4,12 +4,16 @@ import { useCollectionPage } from './useCollectionPage';
 import { Icon } from '@iconify/vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import UiButton from '@/ui/components/UiButton.vue';
-
+import { useClipboard } from '@vueuse/core';
 const { saveDeck, stopEditingDeck, deleteDeck, isDeleting, deckBuilder } =
   useCollectionPage();
 
 const isDeleteModalOpened = ref(false);
 const isExportModalOpened = ref(false);
+
+const { copy, copied } = useClipboard({
+  copiedDuring: 1500
+});
 </script>
 
 <template>
@@ -57,12 +61,21 @@ const isExportModalOpened = ref(false);
         description=""
       >
         <div class="surface">
-          <p class="text-center mb-5 text-4">Deck Code:</p>
+          <p class="text-center my-4 text-4">Deck Code</p>
           <pre
             class="bg-black/20 p-4 rounded text-center break-all select-all"
             >{{ deckBuilder.deckCode }}</pre
           >
-          <footer class="flex justify-center mt-6">
+          <footer class="flex justify-center mt-6 gap-6">
+            <UiButton
+              class="primary-button"
+              @click="copy(deckBuilder.deckCode)"
+            >
+              Copy code
+              <span v-if="copied">
+                <Icon icon="mdi:check" />
+              </span>
+            </UiButton>
             <UiButton @click="isExportModalOpened = false">Close</UiButton>
           </footer>
         </div>

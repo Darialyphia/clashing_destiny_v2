@@ -49,7 +49,7 @@ export const belovedMentor: MinionBlueprint = {
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 3,
+  maxHp: 4,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

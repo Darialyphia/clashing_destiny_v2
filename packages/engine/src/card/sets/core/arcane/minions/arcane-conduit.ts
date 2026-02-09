@@ -3,7 +3,6 @@ import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-even
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
@@ -53,7 +52,7 @@ export const arcaneConduit: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 2,
+  maxHp: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

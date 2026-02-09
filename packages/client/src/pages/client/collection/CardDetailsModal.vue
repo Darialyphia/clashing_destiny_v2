@@ -204,6 +204,7 @@ const description = computed(() => {
 }
 
 .card-preview {
+  --pixel-scale: 2.5;
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;

@@ -11,6 +11,9 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
+import { getEmpowerStacks } from '../../../../card-actions-utils';
+import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import type { MinionCard } from '../../../../entities/minion.entity';
 
 export const archsageOfMoonring: MinionBlueprint = {
   id: 'archsage-of-moonring',
@@ -21,7 +24,15 @@ export const archsageOfMoonring: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Archsage of Moonring',
   description: dedent`
-  @On Enter@: Deal 3 damage split among enemies.`,
+  @On Enter@: Deal 3 damage split among enemies.
+  @[lvl] 2 Bonus@: Deal 3 + @Empowered@ stacks instead`,
+  dynamicDescription(game, card) {
+    const empoweredStacks = getEmpowerStacks(card);
+    const bonusDamage = 3 + empoweredStacks;
+    return dedent`
+    @On Enter@: Deal 3 damage split among enemies.
+    @[lvl] 2 Bonus@: Deal @[dynamic]${bonusDamage}|3+ Empowered stacks@ damage split among enemies.`;
+  },
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.EPIC,
   tags: [],
@@ -52,12 +63,16 @@ export const archsageOfMoonring: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    const levelMod = (await card.modifiers.add(
+      new LevelBonusModifier(game, card, 2)
+    )) as LevelBonusModifier<MinionCard>;
+
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: async () => {
           let count = 0;
 
-          const amount = 3;
+          const amount = levelMod.isActive ? 3 + getEmpowerStacks(card) : 3;
           while (count < amount) {
             const hasRemainingTargets = singleEnemyTargetRules.canPlay(game, card);
             if (!hasRemainingTargets) break;

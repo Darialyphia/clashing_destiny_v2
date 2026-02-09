@@ -12,14 +12,14 @@ const { decks, createDeck, editDeck } = useCollectionPage();
     You haven't created any deck.
   </p>
   <template v-else>
-    <ul class="mb-5">
+    <ul>
       <li v-for="(deck, index) in decks" :key="index">
         <PlayerDeck :deck="deck" @click="editDeck(deck.id)" />
       </li>
     </ul>
   </template>
   <FancyButton
-    class="primary-button mt-4"
+    class="w-full"
     :class="!decks?.length && 'mx-auto'"
     text="New Deck"
     @click="createDeck"
