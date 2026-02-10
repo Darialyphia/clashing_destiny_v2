@@ -71,14 +71,21 @@ export const powerOverwhelming: SpellBlueprint = {
               ].filter(c => c.canBeTargeted(card));
 
               if (targets.length === 0) return;
-              const [selected] = await game.interaction.chooseCards<
+              const [selected] = await game.interaction.selectCardsOnBoard<
                 MinionCard | HeroCard
               >({
                 player: card.player,
-                label: 'Select an enemy to deal 2 True Damage to',
-                choices: targets,
-                minChoiceCount: 1,
-                maxChoiceCount: 1
+                origin: { type: 'card', card },
+                isElligible(candidate, selectedCards) {
+                  if (selectedCards.length > 0) return false;
+                  return targets.some(t => t.equals(candidate));
+                },
+                canCommit(selectedCards) {
+                  return selectedCards.length === 1;
+                },
+                isDone(selectedCards) {
+                  return selectedCards.length === 1;
+                }
               });
 
               await selected.takeDamage(card, new UnpreventableDamage(2));

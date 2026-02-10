@@ -41,8 +41,9 @@ socket.value.on('gameInitialState', async state => {
 
 const clocks = ref<{
   [playerId: string]: {
-    turn: { max: number; remaining: number; isActive: boolean };
-    action: { max: number; remaining: number; isActive: boolean };
+    max: number;
+    remaining: number;
+    isActive: boolean;
   };
 }>({});
 

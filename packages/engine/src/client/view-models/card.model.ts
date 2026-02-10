@@ -23,7 +23,6 @@ import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { DeclareBlockerAction } from '../actions/declare-blocker';
-import { DeclareRetaliationAction } from '../actions/declare-retaliation';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
 
@@ -382,11 +381,9 @@ export class CardViewModel {
 
   get actions(): CardActionRule[] {
     const actions = [
-      ...(this.kind === CARD_KINDS.HERO ? [] : []),
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
       new DeclareBlockerAction(this.getClient()),
-      new DeclareRetaliationAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

@@ -94,7 +94,6 @@ class CombatPhase {
   attacker: Attacker; // The attacking card
   target: AttackTarget | null; // The declared attack target
   blocker: AttackTarget | null; // The blocking card (if any)
-  isTargetRetaliating: boolean;
   potentialTargets: AttackTarget[];
 }
 ```

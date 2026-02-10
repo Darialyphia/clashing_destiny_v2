@@ -47,7 +47,7 @@ export const jeweller: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 3,
+  maxHp: 4,
   canPlay: () => true,
   abilities: [
     {

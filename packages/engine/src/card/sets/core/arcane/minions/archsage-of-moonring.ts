@@ -59,7 +59,7 @@ export const archsageOfMoonring: MinionBlueprint = {
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 3,
+  maxHp: 4,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

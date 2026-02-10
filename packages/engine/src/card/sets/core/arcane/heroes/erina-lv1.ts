@@ -50,7 +50,7 @@ export const erinaLv1: HeroBlueprint = {
   lineage: 'erina',
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 15,
+  maxHp: 12,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

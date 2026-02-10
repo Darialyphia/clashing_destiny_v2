@@ -409,15 +409,6 @@ export class GameClient {
     });
   }
 
-  declareRetaliation() {
-    this.dispatch({
-      type: 'declareRetaliation',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
   surrender() {
     this.dispatch({
       type: 'surrender',

@@ -218,10 +218,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
     if (!phaseCtx.ctx.target?.equals(this)) return false;
     if (phaseCtx.ctx.blocker) return false;
-    if (phaseCtx.ctx.isTargetRetaliating) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      !this.isExhausted && this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
+      this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
       {
         attacker: target
       }

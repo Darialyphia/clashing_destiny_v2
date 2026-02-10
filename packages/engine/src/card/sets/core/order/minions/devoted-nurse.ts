@@ -48,7 +48,7 @@ export const devotedNurse: MinionBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 1,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

@@ -56,8 +56,8 @@ export const cosmicAvatar: MinionBlueprint = {
   },
   destinyCost: 5,
   speed: CARD_SPEED.SLOW,
-  atk: 4,
-  maxHp: 4,
+  atk: 3,
+  maxHp: 6,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

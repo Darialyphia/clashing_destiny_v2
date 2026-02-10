@@ -34,8 +34,9 @@ type RoomEventMap = {
   [ROOM_EVENTS.CLOCK_TICK]: Record<
     UserId,
     {
-      turn: { max: number; remaining: number; isActive: boolean };
-      action: { max: number; remaining: number; isActive: boolean };
+      max: number;
+      remaining: number;
+      isActive: boolean;
     }
   >;
 };
@@ -45,13 +46,12 @@ type RoomPlayer = {
   socket: IoSocket;
 };
 
-const PLAYER_TURN_CLOCK_TIME = 90 * 1000;
-const PLAYER_ACTION_CLOCK_TIME = 20 * 1000;
+const PLAYER_ACTION_CLOCK_TIME = 60 * 1000;
 
 export class Room {
   private engine: Game;
 
-  private playerClocks = new Map<string, { turnClock: Clock; actionClock: Clock }>();
+  private playerClocks = new Map<string, Clock>();
   private players = new Map<string, RoomPlayer>();
 
   private spectators = new Set<IoSocket>();
@@ -87,8 +87,7 @@ export class Room {
   async shutdown() {
     await this.engine.shutdown();
     this.players.forEach(player => {
-      this.playerClocks.get(player.userId)?.actionClock.shutdown();
-      this.playerClocks.get(player.userId)?.turnClock.shutdown();
+      this.playerClocks.get(player.userId)?.shutdown();
     });
   }
 
@@ -102,18 +101,13 @@ export class Room {
   private startActivePlayerclock() {
     const activePlayerId = this.engine.activePlayer.id;
 
-    const clockToRun = this.playerClocks.get(activePlayerId)!.turnClock.isFinished
-      ? this.playerClocks.get(activePlayerId)!.actionClock
-      : this.playerClocks.get(activePlayerId)!.turnClock;
-    clockToRun.start();
+    this.playerClocks.get(activePlayerId)!.start();
   }
 
   private stopActivePlayerclock() {
     const activePlayerId = this.engine.activePlayer.id;
-    const clockToStop = this.playerClocks.get(activePlayerId)!.turnClock.isRunning()
-      ? this.playerClocks.get(activePlayerId)!.turnClock
-      : this.playerClocks.get(activePlayerId)!.actionClock;
-    clockToStop?.stop();
+
+    this.playerClocks.get(activePlayerId)!.stop();
   }
 
   async start() {
@@ -146,20 +140,12 @@ export class Room {
 
   private handleClocks() {
     this.options.game.players.forEach(player => {
-      const clocks = {
-        turnClock: new Clock(PLAYER_TURN_CLOCK_TIME),
-        actionClock: new Clock(PLAYER_ACTION_CLOCK_TIME)
-      };
-      this.playerClocks.set(player.userId, clocks);
+      const clock = new Clock(PLAYER_ACTION_CLOCK_TIME);
+      this.playerClocks.set(player.userId, clock);
 
-      clocks.turnClock.on('tick', this.emitClocks.bind(this));
-      clocks.actionClock.on('tick', this.emitClocks.bind(this));
+      clock.on('tick', this.emitClocks.bind(this));
 
-      clocks.turnClock.on('timeout', () => {
-        clocks.turnClock.stop();
-        clocks.actionClock.start();
-      });
-      clocks.actionClock.on('timeout', async () => {
+      clock.on('timeout', async () => {
         await this.engine.inputSystem.dispatch({
           type: 'surrender',
           payload: { playerId: player.userId }
@@ -169,16 +155,13 @@ export class Room {
 
     this.engine.onActivePlayerChange(() => {
       this.options.game.players.forEach(player => {
-        this.playerClocks.get(player.userId)!.actionClock.reset();
+        this.playerClocks.get(player.userId)!.reset();
       });
       this.stopActivePlayerclock();
       this.startActivePlayerclock();
     });
 
     this.engine.on(GAME_EVENTS.TURN_START, () => {
-      this.options.game.players.forEach(player => {
-        this.playerClocks.get(player.userId)!.turnClock.reset();
-      });
       this.stopActivePlayerclock();
       this.startActivePlayerclock();
     });
@@ -190,23 +173,14 @@ export class Room {
   private emitClocks() {
     void this.emitter.emit(ROOM_EVENTS.CLOCK_TICK, {
       ...Object.fromEntries(
-        Array.from(this.playerClocks.entries()).map(
-          ([userId, { turnClock, actionClock }]) => [
-            userId,
-            {
-              turn: {
-                max: PLAYER_TURN_CLOCK_TIME / 1000,
-                remaining: Math.round(turnClock.getRemainingTime() / 1000),
-                isActive: turnClock.isRunning()
-              },
-              action: {
-                max: PLAYER_ACTION_CLOCK_TIME / 1000,
-                remaining: Math.round(actionClock.getRemainingTime() / 1000),
-                isActive: actionClock.isRunning()
-              }
-            }
-          ]
-        )
+        Array.from(this.playerClocks.entries()).map(([userId, clock]) => [
+          userId,
+          {
+            max: PLAYER_ACTION_CLOCK_TIME / 1000,
+            remaining: Math.round(clock.getRemainingTime() / 1000),
+            isActive: clock.isRunning()
+          }
+        ])
       )
     });
   }

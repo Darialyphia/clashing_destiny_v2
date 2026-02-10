@@ -24,8 +24,9 @@ export type EmittedEvents = {
     clocks: Record<
       UserId,
       {
-        turn: { max: number; remaining: number; isActive: boolean };
-        action: { max: number; remaining: number; isActive: boolean };
+        max: number;
+        remaining: number;
+        isActive: boolean;
       }
     >
   ) => void;

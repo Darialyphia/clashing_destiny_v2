@@ -44,7 +44,7 @@ export const starseeker: MinionBlueprint = {
   destinyCost: 1,
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 1,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

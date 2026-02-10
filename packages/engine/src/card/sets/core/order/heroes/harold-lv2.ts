@@ -5,7 +5,6 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { singleMinionTargetRules } from '../../../../card-utils';
 import {
@@ -56,7 +55,7 @@ export const haroldLv2: HeroBlueprint = {
   lineage: 'harold',
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 18,
+  maxHp: 14,
   canPlay: () => true,
   abilities: [
     {

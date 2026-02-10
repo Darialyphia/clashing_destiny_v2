@@ -17,7 +17,7 @@ export const stalwartVanguard: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Stalwart Vanguard',
-  description: '@vigilant@.',
+  description: '@Vigilant@.',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -44,7 +44,7 @@ export const stalwartVanguard: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 4,
+  maxHp: 5,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

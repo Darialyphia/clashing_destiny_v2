@@ -32,8 +32,9 @@ import OpponentHand from './OpponentHand.vue';
 const { options } = defineProps<{
   clocks?: {
     [playerId: string]: {
-      turn: { max: number; remaining: number; isActive: boolean };
-      action: { max: number; remaining: number; isActive: boolean };
+      max: number;
+      remaining: number;
+      isActive: boolean;
     };
   };
   options: {

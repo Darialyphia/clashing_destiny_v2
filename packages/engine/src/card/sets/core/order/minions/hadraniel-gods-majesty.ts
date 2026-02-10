@@ -55,7 +55,7 @@ export const hadranielGodsMajesty: MinionBlueprint = {
   destinyCost: 4,
   speed: CARD_SPEED.FAST,
   atk: 2,
-  maxHp: 5,
+  maxHp: 6,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

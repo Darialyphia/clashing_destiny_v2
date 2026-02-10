@@ -37,7 +37,6 @@ export type SerializedCombatPhase = {
   attacker: string;
   target: string | null;
   blocker: string | null;
-  isTargetRetaliating: boolean;
   step: CombatStep;
   potentialTargets: string[];
 };
@@ -154,7 +153,6 @@ export class CombatPhase
   attacker!: Attacker;
   target: AttackTarget | null = null;
   blocker: AttackTarget | null = null;
-  isTargetRetaliating = false;
 
   private isCancelled = false;
 
@@ -258,30 +256,6 @@ export class CombatPhase
     );
   }
 
-  async declareRetaliation() {
-    if (!this.target) {
-      throw new WrongCombatStepError();
-    }
-    if (
-      !this.attacker.canBeRetaliatedBy(this.target) ||
-      !this.target.canRetaliate(this.attacker)
-    ) {
-      throw new InvalidCounterattackError();
-    }
-    await this.target.exhaust();
-    this.isTargetRetaliating = true; // mark the retaliation immediately so it can be displayed inthe UI
-    await this.game.effectChainSystem.currentChain?.addEffect(
-      {
-        id: nanoid(),
-        source: this.target,
-        type: EFFECT_TYPE.RETALIATION,
-        targets: [this.attacker],
-        handler: async () => {}
-      },
-      this.target.player
-    );
-  }
-
   changeTarget(newTarget: AttackTarget) {
     if (!this.target) return;
     this.target = newTarget;
@@ -329,10 +303,11 @@ export class CombatPhase
       };
 
       const performDefenderStrike = async () => {
-        const shouldStrike = this.blocker?.equals(defender)
-          ? true
-          : this.isTargetRetaliating;
-        if (!shouldStrike) return;
+        const shouldretaliate =
+          this.attacker.canBeRetaliatedBy(defender) ||
+          defender.canRetaliate(this.attacker);
+
+        if (!shouldretaliate) return;
         if (this.attacker.isAlive) {
           await defender.dealDamage(this.attacker, new CombatDamage(defender));
         }
@@ -395,8 +370,7 @@ export class CombatPhase
       target: this.target?.id ?? null,
       blocker: this.blocker?.id ?? null,
       step: this.getState(),
-      potentialTargets: this.potentialTargets.map(t => t.id),
-      isTargetRetaliating: this.isTargetRetaliating
+      potentialTargets: this.potentialTargets.map(t => t.id)
     };
   }
 }

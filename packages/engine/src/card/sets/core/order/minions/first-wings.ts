@@ -50,7 +50,7 @@ export const firstWings: MinionBlueprint = {
   manaCost: 6,
   speed: CARD_SPEED.SLOW,
   atk: 5,
-  maxHp: 5,
+  maxHp: 6,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

@@ -48,7 +48,7 @@ export const quirkyBookworm: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   atk: 1,
-  maxHp: 1,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

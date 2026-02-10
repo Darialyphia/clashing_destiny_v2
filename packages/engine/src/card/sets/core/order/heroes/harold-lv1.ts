@@ -50,7 +50,7 @@ export const haroldLv1: HeroBlueprint = {
   lineage: 'harold',
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 15,
+  maxHp: 12,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

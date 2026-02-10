@@ -49,7 +49,7 @@ export const duskPurifier: MinionBlueprint = {
   },
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
-  atk: 3,
+  atk: 4,
   maxHp: 2,
   canPlay: () => true,
   abilities: [],
