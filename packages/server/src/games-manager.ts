@@ -12,7 +12,6 @@ import { type GameOptions } from '@game/engine/src/game/game';
 import type { RoomManager } from './room-manager';
 import type { Nullable } from '@game/shared';
 import { REDIS_KEYS } from './redis';
-import type { SpellSchool } from '@game/engine/src/card/card.enums';
 
 type GameDto = {
   id: GameId;
@@ -64,7 +63,6 @@ export class GamesManager {
     await this.createRoom(game);
 
     const room = this.ctx.roomManager.getRoom(game.id);
-    console.log('should start game', game.id);
     await room?.start();
     room?.updateStatus(GAME_STATUS.ONGOING);
   }
@@ -153,7 +151,6 @@ export class GamesManager {
         {
           id: gameInfos.players[0].user.id,
           name: gameInfos.players[0].user.username,
-          spellSchools: gameInfos.players[0].user.deck.spellSchools as SpellSchool[],
           mainDeck: {
             cards: gameInfos.players[0].user.deck.mainDeck.map(c => c.blueprintId)
           },
@@ -164,7 +161,6 @@ export class GamesManager {
         {
           id: gameInfos.players[1].user.id,
           name: gameInfos.players[1].user.username,
-          spellSchools: gameInfos.players[1].user.deck.spellSchools as SpellSchool[],
           mainDeck: {
             cards: gameInfos.players[1].user.deck.mainDeck.map(c => c.blueprintId)
           },

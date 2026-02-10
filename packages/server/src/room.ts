@@ -2,7 +2,7 @@ import { GAME_STATUS, type UserId, type GameId, type GameStatus } from '@game/ap
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { Ioserver, IoSocket } from './io';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
-import type { EmptyObject } from '@game/shared';
+import type { AnyFunction, EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { Clock } from './clock';
@@ -60,6 +60,11 @@ export class Room {
 
   private engineInitPromise: Promise<void> | null = null;
 
+  callbackSubscriptionsBysocket = new Map<
+    IoSocket,
+    { eventName: string; callback: AnyFunction }[]
+  >();
+
   constructor(
     readonly id: string,
     private io: Ioserver,
@@ -89,6 +94,15 @@ export class Room {
     this.players.forEach(player => {
       this.playerClocks.get(player.userId)?.shutdown();
     });
+
+    this.callbackSubscriptionsBysocket.forEach((subscriptions, socket) => {
+      subscriptions.forEach(({ eventName, callback }) => {
+        socket.off(eventName, callback);
+      });
+    });
+    this.callbackSubscriptionsBysocket.clear();
+
+    this.io.in(this.id).disconnectSockets();
   }
 
   initializeEngine() {
@@ -221,11 +235,19 @@ export class Room {
       });
     }
 
-    playerSocket.on('gameInput', async (input: SerializedInput) => {
+    if (!this.callbackSubscriptionsBysocket.has(playerSocket)) {
+      this.callbackSubscriptionsBysocket.set(playerSocket, []);
+    }
+    const onInput = async (input: SerializedInput) => {
       console.log(input);
       input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating
       await this.engine.inputSystem.dispatch(input);
+    };
+    this.callbackSubscriptionsBysocket.get(playerSocket)!.push({
+      eventName: 'gameInput',
+      callback: onInput
     });
+    playerSocket.on('gameInput', onInput);
   }
 
   async join(socket: IoSocket, type: 'spectator' | 'player') {
@@ -266,9 +288,17 @@ export class Room {
 
     this.players.set(socket.data.user.id, roomPlayer);
 
-    socket.on('disconnect', async () => {
+    const onDisconnect = async () => {
       await this.leave(socket);
+    };
+    if (!this.callbackSubscriptionsBysocket.has(socket)) {
+      this.callbackSubscriptionsBysocket.set(socket, []);
+    }
+    this.callbackSubscriptionsBysocket.get(socket)!.push({
+      eventName: 'disconnect',
+      callback: onDisconnect
     });
+    socket.on('disconnect', onDisconnect);
 
     if (this.options.game.status === GAME_STATUS.ONGOING) {
       this.handlePlayerSubscription(socket);
@@ -294,10 +324,18 @@ export class Room {
     await socket.join(this.id);
     this.spectators.add(socket);
 
-    socket.on('disconnect', async () => {
+    const onDisconnect = async () => {
       await this.leave(socket);
-    });
+    };
 
+    if (!this.callbackSubscriptionsBysocket.has(socket)) {
+      this.callbackSubscriptionsBysocket.set(socket, []);
+    }
+    this.callbackSubscriptionsBysocket.get(socket)!.push({
+      eventName: 'disconnect',
+      callback: onDisconnect
+    });
+    socket.on('disconnect', onDisconnect);
     if (this.options.game.status === GAME_STATUS.ONGOING) {
       this.handleSpectatorSubscription(socket);
     }

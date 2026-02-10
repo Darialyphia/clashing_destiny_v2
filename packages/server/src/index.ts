@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8000;
 async function main() {
   try {
     net.setDefaultAutoSelectFamilyAttemptTimeout(1000);
-    container.resolve(RoomManager.INJECTION_KEY);
+    container.resolve<RoomManager>(RoomManager.INJECTION_KEY).init();
     container.resolve<GamesManager>(GamesManager.INJECTION_KEY).listen();
 
     const httpServer = container.resolve('http');

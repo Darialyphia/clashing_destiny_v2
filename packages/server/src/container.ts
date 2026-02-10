@@ -1,7 +1,6 @@
 import {
   asClass,
   asFunction,
-  asValue,
   createContainer,
   InjectionMode,
   Lifetime,

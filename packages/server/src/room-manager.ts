@@ -13,7 +13,9 @@ export class RoomManager {
 
   constructor(
     private ctx: { io: Ioserver; convexHttpClient: ConvexHttpClient; redis: Redis }
-  ) {
+  ) {}
+
+  init() {
     this.ctx.io.use(async (socket, next) => {
       try {
         const sessionId = socket.handshake.auth.sessionId;
@@ -76,7 +78,6 @@ export class RoomManager {
       });
       await this.ctx.redis.del(REDIS_KEYS.GAME_HISTORY(id));
       await this.destroyRoom(id);
-      this.ctx.io.in(id).disconnectSockets();
     });
 
     room.on(ROOM_EVENTS.CLOCK_TICK, clocks => {
