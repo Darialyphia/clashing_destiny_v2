@@ -54,7 +54,7 @@ export const honorableCrown: ArtifactBlueprint = {
     {
       id: 'honorable-crown-ability',
       description:
-        'Give an allied minion @Honor@: @On Death@ : Put this in the Destiny Zone',
+        'Give an allied minion with @Honor@: @On Death@ : Put this in the Destiny Zone',
       label: 'Buff Ally Minion',
       canUse: (game, card) =>
         card.location === CARD_LOCATIONS.BOARD &&

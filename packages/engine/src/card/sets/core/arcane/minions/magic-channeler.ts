@@ -1,8 +1,5 @@
-import { AuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleSpellpowerBuffModifier } from '../../../../../modifier/modifiers/simple-spellpower.buff.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
@@ -10,8 +7,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   FACTIONS,
-  RARITIES,
-  CARD_LOCATIONS
+  RARITIES
 } from '../../../../card.enums';
 
 export const magicChanneler: MinionBlueprint = {
@@ -65,5 +61,3 @@ export const magicChanneler: MinionBlueprint = {
   },
   async onPlay() {}
 };
-
-

@@ -183,7 +183,7 @@ const showFullText = useIsKeyboardControlPressed({
       <UiSimpleTooltip v-else-if="token.type === 'durability'">
         <template #trigger>
           <img
-            :src="assets['ui/shield'].path"
+            :src="assets['ui/durability'].path"
             class="inline token-durability"
           />
         </template>
@@ -299,8 +299,14 @@ const showFullText = useIsKeyboardControlPressed({
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-exhaust > img {
-  transform: translateY(4px);
+  transform: translateY(calc(1px * var(--pixel-scale)));
   width: calc(20px * var(--pixel-scale) / 2);
+  height: calc(14px * var(--pixel-scale) / 2);
+}
+/* eslint-disable-next-line vue-scoped-css/no-unused-selector */
+.token-durability > img {
+  transform: translateY(calc(1px * var(--pixel-scale)));
+  width: calc(14px * var(--pixel-scale) / 2);
   height: calc(14px * var(--pixel-scale) / 2);
 }
 .token-dynamic-value {
