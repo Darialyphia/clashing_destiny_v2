@@ -43,6 +43,7 @@ export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[])
     minChoiceCount: 1,
     maxChoiceCount: 1,
     choices,
+    timeoutFallback: [choicePool[0]],
     label: 'Choose a card to add to your hand'
   });
 
@@ -62,6 +63,7 @@ export const discardFromHand = async (
     minChoiceCount: options.min,
     maxChoiceCount: options.max,
     choices: cards,
+    timeoutFallback: cards.slice(0, options.min),
     label:
       options.min === options.max
         ? `Choose ${options.max} cards to discard`

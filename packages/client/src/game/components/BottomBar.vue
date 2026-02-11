@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import EffectChain from './EffectChain.vue';
-import ActionsButtons from './ActionsButtons.vue';
-import InspectableCard from '@/card/components/InspectableCard.vue';
-import GameCard from './GameCard.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { useGameState, useMyPlayer } from '../composables/useGameClient';
+import ActionsButtons from './ActionsButtons.vue';
+import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
+import EffectChain from './EffectChain.vue';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import GameCard from './GameCard.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const state = useGameState();
 const myPlayer = useMyPlayer();
+
+useGameKeyboardControls();
 </script>
 
 <template>
-  <div class="bottom-row">
+  <div class="bottom-bar">
     <EffectChain />
     <Transition>
       <div
@@ -31,13 +34,6 @@ const myPlayer = useMyPlayer();
 </template>
 
 <style scoped lang="postcss">
-.bottom-row {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--size-3);
-  transform: translateZ(1px);
-}
-
 .card-being-played {
   --pixel-scale: 0.75;
   &:is(.v-enter-active, .v-leave-active) {
@@ -53,5 +49,14 @@ const myPlayer = useMyPlayer();
     transform-origin: center;
     opacity: 0;
   }
+}
+
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--size-3);
+  transform: translateZ(1px);
+  height: 127px;
 }
 </style>

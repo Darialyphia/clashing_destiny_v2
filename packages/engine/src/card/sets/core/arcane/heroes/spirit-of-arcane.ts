@@ -17,7 +17,7 @@ export const spiritOfArcane: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Spirit of Arcane',
-  description: '@On Enter@: draw 7 cards.',
+  description: '@On Enter@: draw 6 cards.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -46,14 +46,14 @@ export const spiritOfArcane: HeroBlueprint = {
   lineage: null,
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 10,
+  maxHp: 12,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await card.player.cardManager.draw(7);
+          await card.player.cardManager.draw(6);
         }
       })
     );

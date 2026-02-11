@@ -52,7 +52,7 @@ export const secondWings: MinionBlueprint = {
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
   atk: 3,
-  maxHp: 3,
+  maxHp: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -71,6 +71,7 @@ export const secondWings: MinionBlueprint = {
             minChoiceCount: 1,
             maxChoiceCount: 1,
             choices,
+            timeoutFallback: choices.slice(0, 1),
             label: 'Select a minion to summon '
           });
 

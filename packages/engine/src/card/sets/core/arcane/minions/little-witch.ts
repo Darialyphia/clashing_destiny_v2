@@ -59,10 +59,16 @@ export const littleWitch: MinionBlueprint = {
         card.location === CARD_LOCATIONS.BOARD &&
         singleEnemyMinionTargetRules.canPlay(game, card),
       getPreResponseTargets(game, card) {
-        return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
-          type: 'ability',
+        return singleEnemyMinionTargetRules.getPreResponseTargets({
+          game,
           card,
-          abilityId: 'little-witch-ability-1'
+          origin: {
+            type: 'ability',
+            card,
+            abilityId: 'little-witch-ability-1'
+          },
+          label: 'Select an enemy to deal damage',
+          timeoutFallback: [card.player.opponent.minions[0]]
         });
       },
       manaCost: 1,

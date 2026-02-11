@@ -264,7 +264,7 @@ export class MinionCard extends Card<
     if (phaseCtx.ctx.blocker) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
+      !this.isExhausted && this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
       {
         attacker: target
       }

@@ -62,7 +62,8 @@ export const solemnDecree: SpellBlueprint = {
       label: 'Choose a card to discard',
       minChoiceCount: 1,
       maxChoiceCount: 1,
-      choices: card.player.cardManager.hand
+      choices: card.player.cardManager.hand,
+      timeoutFallback: card.player.cardManager.hand.slice(0, 1)
     });
 
     await cardToDiscard.discard();

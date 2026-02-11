@@ -55,14 +55,21 @@ export const angelWings: SpellBlueprint = {
     return singleAllyMinionTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleAllyMinionTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
+    return singleAllyMinionTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: {
+        type: 'card',
+        card
+      },
+      label: 'Select an allied minion to buff',
+      timeoutFallback: []
     });
   },
   async onInit() {},
   async onPlay(game, card, targets) {
     const targetMinion = targets[0] as MinionCard;
+    if (!targetMinion) return;
 
     await targetMinion.modifiers.add(
       new SimpleHealthBuffModifier('angel-wings-buff', game, targetMinion, {

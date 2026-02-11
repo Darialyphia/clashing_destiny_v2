@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import {
-  useGameState,
   useGameUi,
   useMyPlayer,
   useOpponentPlayer
 } from '../composables/useGameClient';
-import ActionsButtons from './ActionsButtons.vue';
 import CombatArrows from './CombatArrows.vue';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
@@ -19,15 +17,12 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import Camera from './Camera.vue';
 import MyBoard from './MyBoard.vue';
 import OpponentBoard from './OpponentBoard.vue';
-import EffectChain from './EffectChain.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-import GameCard from './GameCard.vue';
-import InspectableCard from '@/card/components/InspectableCard.vue';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import OpponentHand from './OpponentHand.vue';
+import BottomBar from './BottomBar.vue';
 
 const { options } = defineProps<{
   clocks?: {
@@ -43,7 +38,6 @@ const { options } = defineProps<{
 }>();
 
 const ui = useGameUi();
-const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponentPlayer = useOpponentPlayer();
 
@@ -60,7 +54,6 @@ const isSettingsOpened = ref(false);
 <template>
   <SVGFilters />
   <DestinyCostVFX />
-  <!-- <PassConfirmationModal /> -->
   <PlayedCard />
   <ChooseCardModal />
   <RearrangeCardsModal />
@@ -75,29 +68,7 @@ const isSettingsOpened = ref(false);
         <OpponentBoard />
         <div class="separator" />
         <MyBoard />
-        <div class="bottom-row">
-          <EffectChain />
-          <Transition>
-            <div
-              class="card-being-played"
-              v-if="
-                state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
-                state.interaction.ctx.player === myPlayer.id
-              "
-            >
-              <InspectableCard
-                :card-id="state.interaction.ctx.card"
-                side="left"
-              >
-                <GameCard
-                  :card-id="state.interaction.ctx.card"
-                  variant="small"
-                />
-              </InspectableCard>
-            </div>
-          </Transition>
-          <ActionsButtons />
-        </div>
+        <BottomBar />
         <div id="card-actions-portal"></div>
         <div class="arrows" id="arrows" />
       </div>
@@ -191,22 +162,6 @@ const isSettingsOpened = ref(false);
   grid-row: 1;
 }
 
-.card-being-played {
-  --pixel-scale: 0.75;
-  &:is(.v-enter-active, .v-leave-active) {
-    transition: all 0.3s var(--ease-2);
-  }
-  &.v-enter-from {
-    filter: brightness(3);
-    scale: 1.25;
-    opacity: 0.5;
-  }
-  &.v-leave-to {
-    scale: 0;
-    transform-origin: center;
-    opacity: 0;
-  }
-}
 #card-actions-portal {
   transform: translateZ(10px);
 }
@@ -311,14 +266,5 @@ const isSettingsOpened = ref(false);
   > * {
     width: 100%;
   }
-}
-
-.bottom-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--size-3);
-  transform: translateZ(1px);
-  height: 127px;
 }
 </style>

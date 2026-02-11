@@ -75,7 +75,9 @@ export const powerOverwhelming: SpellBlueprint = {
                 MinionCard | HeroCard
               >({
                 player: card.player,
+                label: 'Select a target to deal 2 damage to',
                 origin: { type: 'card', card },
+                timeoutFallback: [targets[0]],
                 isElligible(candidate, selectedCards) {
                   if (selectedCards.length > 0) return false;
                   return targets.some(t => t.equals(candidate));

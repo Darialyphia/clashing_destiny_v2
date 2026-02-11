@@ -11,6 +11,7 @@ type AskQuestionContextOptions = {
   source: AnyCard;
   choices: Array<{ id: string; label: string }>;
   label: string;
+  timeoutFallback: string;
 };
 export class AskQuestionContext {
   static async create(game: Game, options: AskQuestionContextOptions) {
@@ -31,6 +32,8 @@ export class AskQuestionContext {
 
   private questionId!: string;
 
+  private timeoutFallback: string;
+
   private constructor(
     private game: Game,
     options: AskQuestionContextOptions
@@ -40,6 +43,7 @@ export class AskQuestionContext {
     this.label = options.label;
     this.questionId = options.questionId;
     this.source = options.source;
+    this.timeoutFallback = options.timeoutFallback;
   }
 
   async init() {}
@@ -54,10 +58,12 @@ export class AskQuestionContext {
     };
   }
 
-  commit(player: Player, id: string) {
+  commit(player: Player, id: string | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
 
-    this.selectedChoice = this.choices.find(choice => choice.id === id);
+    this.selectedChoice = this.choices.find(
+      choice => choice.id === (id ?? this.timeoutFallback)
+    );
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION);
     this.game.interaction.onInteractionEnd();
     this.game.inputSystem.unpause(this.selectedChoice!.id);

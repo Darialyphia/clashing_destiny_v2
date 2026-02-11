@@ -58,9 +58,15 @@ export const galacticExplosion: SpellBlueprint = {
     return singleEnemyTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
+    return singleEnemyTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: {
+        type: 'card',
+        card
+      },
+      label: 'Select an enemy to deal damage',
+      timeoutFallback: [card.player.opponent.hero]
     });
   },
   async onInit(game, card) {

@@ -76,7 +76,7 @@ const hasChain = computed(() => isDefined(state.value.effectChain));
           v-for="card in myBoard.minions"
           :key="card"
           :card-id="card"
-          size="left"
+          side="left"
         >
           <GameCard
             :card-id="card"

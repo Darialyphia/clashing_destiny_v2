@@ -76,14 +76,16 @@ export const archsageOfMoonring: MinionBlueprint = {
           while (count < amount) {
             const hasRemainingTargets = singleEnemyTargetRules.canPlay(game, card);
             if (!hasRemainingTargets) break;
-            const [target] = await singleEnemyTargetRules.getPreResponseTargets(
+            const [target] = await singleEnemyTargetRules.getPreResponseTargets({
               game,
               card,
-              {
+              origin: {
                 type: 'card',
                 card
-              }
-            );
+              },
+              label: 'Select an enemy to deal damage',
+              timeoutFallback: [card.player.opponent.hero]
+            });
 
             await target.takeDamage(card, new AbilityDamage(1));
             count++;

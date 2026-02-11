@@ -70,7 +70,8 @@ export const duskPurifier: MinionBlueprint = {
             label: "Choose a card to lock in opponent's Destiny zone",
             minChoiceCount: 1,
             maxChoiceCount: 1,
-            choices: opponentDestinyZone
+            choices: opponentDestinyZone,
+            timeoutFallback: opponentDestinyZone.slice(0, 1)
           });
 
           await cardToLock.modifiers.add(

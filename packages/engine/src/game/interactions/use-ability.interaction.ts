@@ -42,12 +42,16 @@ export class UseAbilityContext {
     };
   }
 
-  async commit(player: Player, manaCostIndices: number[]) {
+  async commit(player: Player, manaCostIndices: number[] | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY);
     this.game.interaction.onInteractionEnd();
 
-    await this.player.useAbility(this.ability, manaCostIndices, async () => {
+    const indicesToUse =
+      manaCostIndices ??
+      Array.from({ length: this.ability.card.manaCost }, (_, index) => index);
+
+    await this.player.useAbility(this.ability, indicesToUse, async () => {
       await this.game.turnSystem.switchInitiative();
     });
   }

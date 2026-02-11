@@ -75,17 +75,19 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
       shouldExhaust: true,
       speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
+        const choices = card.player.cardTracker.cardsDestroyedThisGameTurn
+          .map(c => c.card)
+          .filter(
+            c => c.isAlly(card) && isMinion(c) && c.manaCost <= 1 + card.player.hero.level
+          );
+
         const [selected] = await game.interaction.chooseCards({
           player: card.player,
           label: 'Choose a minion to put into your Destiny Zone',
           minChoiceCount: 1,
           maxChoiceCount: 1,
-          choices: card.player.cardTracker.cardsDestroyedThisGameTurn
-            .map(c => c.card)
-            .filter(
-              c =>
-                c.isAlly(card) && isMinion(c) && c.manaCost <= 1 + card.player.hero.level
-            )
+          choices,
+          timeoutFallback: choices.slice(0, 1)
         });
 
         await selected.sendToDestinyZone();

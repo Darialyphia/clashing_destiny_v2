@@ -37,6 +37,8 @@ import { DeclareBlockerInput } from './inputs/declare-blocker.input';
 import { CommitResourceActionInput } from './inputs/commit-resource-action';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { ChooseChainEffectsInput } from './inputs/choose-chain-effects.input';
+import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
+import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -64,11 +66,13 @@ const inputMap = validateinputMap({
   commitUseAbility: CommitUseAbilityInput,
   cancelUseAbility: CancelUseAbilityInput,
   declareBlocker: DeclareBlockerInput,
+  declareRetaliation: DeclareRetaliationInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,
   commitResourceAction: CommitResourceActionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
-  chooseChainEffects: ChooseChainEffectsInput
+  chooseChainEffects: ChooseChainEffectsInput,
+  interactionTimeout: InteractionTimeoutInput
 });
 
 type InputMap = typeof inputMap;

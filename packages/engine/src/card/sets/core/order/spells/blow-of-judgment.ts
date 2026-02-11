@@ -53,9 +53,15 @@ export const blowOfJudgment: SpellBlueprint = {
     return singleEnemyMinionTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
+    return singleEnemyMinionTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: {
+        type: 'card',
+        card
+      },
+      label: 'Select an enemy minion to damage',
+      timeoutFallback: []
     });
   },
   async onInit() {},

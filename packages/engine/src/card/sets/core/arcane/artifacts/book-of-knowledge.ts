@@ -90,7 +90,8 @@ export const bookOfKnowledge: ArtifactBlueprint = {
               { id: 'scry', label: 'Scry 3' },
               { id: 'empower', label: 'Empower 1' },
               { id: 'discount', label: 'Next Spell Cost -1' }
-            ]
+            ],
+            timeoutFallback: 'scry'
           });
 
           await match(choice)

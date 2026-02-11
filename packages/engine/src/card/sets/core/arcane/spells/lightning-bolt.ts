@@ -11,7 +11,6 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
 
 export const lightningBolt: SpellBlueprint = {
   id: 'lightning-bolt',
@@ -53,14 +52,18 @@ export const lightningBolt: SpellBlueprint = {
     return singleEnemyMinionTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
+    return singleEnemyMinionTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: {
+        type: 'card',
+        card
+      },
+      label: 'Select an enemy to deal damage to',
+      timeoutFallback: [card.player.opponent.minions[0]]
     });
   },
-  async onInit(game, card) {
-    await card.modifiers.add(new ForesightModifier(game, card));
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
     const targetMinion = targets[0] as MinionCard;
     await targetMinion.takeDamage(card, new SpellDamage(2, card));

@@ -57,11 +57,17 @@ export class RearrangeCardsContext {
     };
   }
 
-  commit(player: Player, buckets: Array<{ id: string; cards: string[] }>) {
+  commit(player: Player, buckets: Array<{ id: string; cards: string[] }> | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
+    const bucketsToUse =
+      buckets ??
+      this.buckets.map(bucket => ({
+        id: bucket.id,
+        cards: bucket.cards.map(card => card.id)
+      }));
 
     const result = Object.fromEntries(
-      buckets.map(bucket => {
+      bucketsToUse.map(bucket => {
         return [
           bucket.id,
           bucket.cards.map(cardId => {

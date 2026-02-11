@@ -1,4 +1,4 @@
-import { assert } from '@game/shared';
+import { assert, isDefined } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
 import {
@@ -15,6 +15,7 @@ type ChoosingCardsContextOptions = {
   minChoiceCount: number;
   maxChoiceCount: number;
   label: string;
+  timeoutFallback: AnyCard[];
 };
 export class ChoosingCardsContext {
   static async create(game: Game, options: ChoosingCardsContextOptions) {
@@ -35,6 +36,8 @@ export class ChoosingCardsContext {
 
   private label: string;
 
+  private timeoutFallback: AnyCard[];
+
   private constructor(
     private game: Game,
     options: ChoosingCardsContextOptions
@@ -44,6 +47,7 @@ export class ChoosingCardsContext {
     this.maxChoiceCount = options.maxChoiceCount;
     this.player = options.player;
     this.label = options.label;
+    this.timeoutFallback = options.timeoutFallback;
   }
 
   async init() {}
@@ -58,20 +62,22 @@ export class ChoosingCardsContext {
     };
   }
 
-  commit(player: Player, indices: number[]) {
+  commit(player: Player, indices: number[] | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
+    if (isDefined(indices)) {
+      assert(
+        indices.length >= this.minChoiceCount,
+        new NotEnoughCardsError(this.minChoiceCount, indices.length)
+      );
+      assert(
+        indices.length <= this.maxChoiceCount,
+        new TooManyCardsError(this.maxChoiceCount, indices.length)
+      );
 
-    assert(
-      indices.length >= this.minChoiceCount,
-      new NotEnoughCardsError(this.minChoiceCount, indices.length)
-    );
-    assert(
-      indices.length <= this.maxChoiceCount,
-      new TooManyCardsError(this.maxChoiceCount, indices.length)
-    );
-
-    const selectedCards = indices.map(index => this.choices[index]);
-    this.selectedCards.push(...selectedCards);
+      this.selectedCards.push(...indices.map(index => this.choices[index]));
+    } else {
+      this.selectedCards.push(...this.timeoutFallback);
+    }
 
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS);
     this.game.interaction.onInteractionEnd();

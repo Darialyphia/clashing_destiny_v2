@@ -11,7 +11,6 @@ import {
   FACTIONS
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { ForesightModifier } from '../../../../../modifier/modifiers/foresight.modifier';
 
 export const magicMissile: SpellBlueprint = {
   id: 'magic-missile',
@@ -49,14 +48,18 @@ export const magicMissile: SpellBlueprint = {
     return singleEnemyTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
+    return singleEnemyTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: {
+        type: 'card',
+        card
+      },
+      label: 'Select an enemy to deal damage',
+      timeoutFallback: [card.player.opponent.hero]
     });
   },
-  async onInit(game, card) {
-    await card.modifiers.add(new ForesightModifier(game, card));
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {
       await target.takeDamage(card, new SpellDamage(1, card));

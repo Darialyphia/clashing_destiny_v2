@@ -161,7 +161,7 @@ export class Room {
 
       clock.on('timeout', async () => {
         await this.engine.inputSystem.dispatch({
-          type: 'surrender',
+          type: 'interactionTimeout',
           payload: { playerId: player.userId }
         });
       });

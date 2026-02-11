@@ -49,15 +49,18 @@ export class PlayCardContext {
     };
   }
 
-  async commit(player: Player, manaCostIndices: number[]) {
+  async commit(player: Player, manaCostIndices: number[] | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
 
     await match(this.card.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () =>
-        this.player.playMainDeckCard(this.card, manaCostIndices)
-      )
+      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
+        const indicesToUse =
+          manaCostIndices ??
+          Array.from({ length: this.card.manaCost }, (_, index) => index);
+        return this.player.playMainDeckCard(this.card, indicesToUse);
+      })
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
         this.card.player.hasPlayedDestinyCardThisTurn = true;
         return this.player.playDestinyDeckCard(this.card);

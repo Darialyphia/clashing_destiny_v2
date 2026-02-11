@@ -58,9 +58,15 @@ export const rayOfFrost: SpellBlueprint = {
     return singleEnemyMinionTargetRules.canPlay(game, card);
   },
   getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
-      type: 'card',
-      card
+    return singleEnemyMinionTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: {
+        type: 'card',
+        card
+      },
+      label: 'Select an enemy to exhaust or freeze',
+      timeoutFallback: [card.player.opponent.minions[0]]
     });
   },
   async onInit(game, card) {

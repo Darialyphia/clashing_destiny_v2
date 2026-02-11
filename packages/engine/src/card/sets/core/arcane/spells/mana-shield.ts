@@ -56,7 +56,13 @@ export const manaShield: SpellBlueprint = {
   abilities: [],
   canPlay: singleAllyTargetRules.canPlay,
   getPreResponseTargets: (game, card) =>
-    singleAllyTargetRules.getPreResponseTargets(game, card, { type: 'card', card }),
+    singleAllyTargetRules.getPreResponseTargets({
+      game,
+      card,
+      origin: { type: 'card', card },
+      label: 'Select an ally to protect',
+      timeoutFallback: [card.player.hero]
+    }),
   async onInit() {},
   async onPlay(game, card, targets) {
     const target = targets[0] as MinionCard;

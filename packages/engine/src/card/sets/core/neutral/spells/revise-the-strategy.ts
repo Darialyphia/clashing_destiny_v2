@@ -69,7 +69,8 @@ export const reviseTheStrategy: SpellBlueprint = {
       label: 'Select up to 3 cards from your deck to remove from play.',
       minChoiceCount: 0,
       maxChoiceCount: maxChoices,
-      choices: cardsInDeck
+      choices: cardsInDeck,
+      timeoutFallback: []
     });
 
     for (const selectedCard of selectedCards) {

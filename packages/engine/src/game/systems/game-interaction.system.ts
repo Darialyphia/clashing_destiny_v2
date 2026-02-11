@@ -258,10 +258,12 @@ export class GameInteractionSystem
 
   async selectCardsOnBoard<T extends AnyCard>(options: {
     isElligible: (candidate: AnyCard, selectedCards: AnyCard[]) => boolean;
+    label: string;
     canCommit: (selectedCards: AnyCard[]) => boolean;
     isDone(selectedCards: AnyCard[]): boolean;
     player: Player;
     origin: CardTargetOrigin;
+    timeoutFallback: AnyCard[];
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD);
     this._ctx = await this.ctxDictionary[
@@ -277,6 +279,7 @@ export class GameInteractionSystem
     maxChoiceCount: number;
     choices: AnyCard[];
     label: string;
+    timeoutFallback: AnyCard[];
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
@@ -321,6 +324,7 @@ export class GameInteractionSystem
     source: AnyCard;
     label: string;
     questionId: string;
+    timeoutFallback: string;
   }) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(

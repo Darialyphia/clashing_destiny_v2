@@ -58,10 +58,11 @@ export const tailOfSimurgh: SpellBlueprint = {
 
     return await game.interaction.chooseCards<MinionCard>({
       player: card.player,
-      label: 'Select up to 2 enemy minions',
+      label: 'Select an enemy minion',
       choices: enemyMinions,
       minChoiceCount: 1,
-      maxChoiceCount: 1
+      maxChoiceCount: 1,
+      timeoutFallback: enemyMinions.slice(0, 1)
     });
   },
   async onInit() {},

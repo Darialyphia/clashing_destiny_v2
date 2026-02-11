@@ -60,16 +60,20 @@ export const honorableCrown: ArtifactBlueprint = {
         card.location === CARD_LOCATIONS.BOARD &&
         singleAllyMinionTargetRules.canPlay(game, card),
       getPreResponseTargets(game, card) {
-        return singleAllyMinionTargetRules.getPreResponseTargets(
+        return singleAllyMinionTargetRules.getPreResponseTargets({
           game,
           card,
-          {
+          origin: {
             type: 'ability',
             abilityId: 'honorable-crown-ability',
             card
           },
-          c => c.modifiers.has(HonorModifier)
-        );
+          label: 'Select an allied minion with Honor',
+          predicate: c => c.modifiers.has(HonorModifier),
+          timeoutFallback: [
+            card.player.minions.filter(m => m.modifiers.has(HonorModifier))[0]
+          ]
+        });
       },
       manaCost: 1,
       durabilityCost: 1,

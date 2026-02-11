@@ -55,7 +55,7 @@ export const haroldLv2: HeroBlueprint = {
   lineage: 'harold',
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 14,
+  maxHp: 16,
   canPlay: () => true,
   abilities: [
     {
@@ -70,10 +70,16 @@ export const haroldLv2: HeroBlueprint = {
         );
       },
       getPreResponseTargets(game, card) {
-        return singleMinionTargetRules.getPreResponseTargets(game, card, {
-          type: 'ability',
-          abilityId: 'harold-vowed-crusader-ability-1',
-          card
+        return singleMinionTargetRules.getPreResponseTargets({
+          game,
+          card,
+          label: 'Select a minion with Honor to buff',
+          origin: {
+            type: 'ability',
+            abilityId: 'harold-vowed-crusader-ability-1',
+            card
+          },
+          timeoutFallback: []
         });
       },
       manaCost: 1,

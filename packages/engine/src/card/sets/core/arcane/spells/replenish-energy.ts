@@ -57,7 +57,8 @@ export const replenishEnergy: SpellBlueprint = {
       label: 'Select up to 2 cards in your Destiny Zone to add to your hand',
       minChoiceCount: 0,
       maxChoiceCount: 2,
-      choices: Array.from(card.player.cardManager.destinyZone)
+      choices: Array.from(card.player.cardManager.destinyZone),
+      timeoutFallback: []
     });
 
     for (const selectedCard of selectedCards) {

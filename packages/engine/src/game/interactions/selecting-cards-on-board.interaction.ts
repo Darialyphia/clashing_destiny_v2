@@ -9,10 +9,12 @@ import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 
 type SelectingCardOnBoardContextOptions = {
   player: Player;
+  label: string;
   isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
   canCommit: (selectedCards: AnyCard[]) => boolean;
   isDone(selectedCards: AnyCard[]): boolean;
   origin: CardTargetOrigin;
+  timeoutFallback: AnyCard[];
 };
 
 export class SelectingCardOnBoardContext {
@@ -22,6 +24,8 @@ export class SelectingCardOnBoardContext {
     return instance;
   }
   private selectedCards: AnyCard[] = [];
+
+  private timeoutFallback: AnyCard[];
 
   private origin: CardTargetOrigin;
 
@@ -33,6 +37,8 @@ export class SelectingCardOnBoardContext {
 
   readonly player: Player;
 
+  readonly label: string;
+
   private constructor(
     private game: Game,
     options: SelectingCardOnBoardContextOptions
@@ -42,6 +48,8 @@ export class SelectingCardOnBoardContext {
     this.canCommit = options.canCommit;
     this.isDone = options.isDone;
     this.origin = options.origin;
+    this.label = options.label;
+    this.timeoutFallback = options.timeoutFallback;
   }
 
   serialize() {
@@ -52,7 +60,8 @@ export class SelectingCardOnBoardContext {
         .getAllCardsInPlay()
         .filter(card => this.isElligible(card, this.selectedCards))
         .map(card => card.id),
-      canCommit: this.canCommit(this.selectedCards)
+      canCommit: this.canCommit(this.selectedCards),
+      label: this.label
     };
   }
 
@@ -76,7 +85,10 @@ export class SelectingCardOnBoardContext {
     await this.autoCommitIfAble();
   }
 
-  commit(player: Player) {
+  commit(player: Player, isTimeout = false) {
+    if (isTimeout) {
+      this.selectedCards = [...this.timeoutFallback];
+    }
     assert(this.canCommit, new UnableToCommitError());
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(

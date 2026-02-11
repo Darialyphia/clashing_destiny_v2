@@ -49,7 +49,8 @@ export class HinderedModifier<T extends AnyCard> extends Modifier<T> {
               choices: [
                 { id: 'yes', label: `Yes, pay ${this.cost}` },
                 { id: 'no', label: 'No, exhaust instead' }
-              ]
+              ],
+              timeoutFallback: 'no'
             });
 
             if (answer === 'yes') {
@@ -62,7 +63,8 @@ export class HinderedModifier<T extends AnyCard> extends Modifier<T> {
                 choices: cardsInHand,
                 minChoiceCount: this.cost,
                 maxChoiceCount: this.cost,
-                label: `Select ${this.cost} card(s) to pay for Hindered`
+                label: `Select ${this.cost} card(s) to pay for Hindered`,
+                timeoutFallback: cardsInHand.slice(0, this.cost)
               });
 
               for (const card of selectedCards) {

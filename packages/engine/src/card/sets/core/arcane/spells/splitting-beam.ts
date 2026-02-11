@@ -57,7 +57,7 @@ export const splittingBeam: SpellBlueprint = {
       game,
       card,
       { type: 'card', card },
-      { min: 2, max: 2 }
+      { min: 2, max: 2, label: 'Select 2 enemies to deal damage', timeoutFallback: [] }
     );
   },
   async onInit() {},

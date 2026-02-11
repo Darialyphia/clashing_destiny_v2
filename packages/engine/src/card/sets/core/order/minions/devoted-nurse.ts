@@ -58,11 +58,13 @@ export const devotedNurse: MinionBlueprint = {
           const hasElligible = singleMinionTargetRules.canPlay(game, card);
           if (!hasElligible) return;
 
-          const targets = await singleMinionTargetRules.getPreResponseTargets(
+          const targets = await singleMinionTargetRules.getPreResponseTargets({
             game,
             card,
-            { type: 'card', card }
-          );
+            origin: { type: 'card', card },
+            label: 'Select a minion to buff',
+            timeoutFallback: []
+          });
 
           for (const target of targets) {
             await target.modifiers.add(

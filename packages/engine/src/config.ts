@@ -35,6 +35,8 @@ export type Config = {
 
   BASE_LOYALTY_HP_COST: number;
   BASE_LOYALTY_COST_INCREASE: number;
+
+  ALLOW_DESTINY_CARDS_ON_TURN_1: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -70,5 +72,7 @@ export const defaultConfig: Config = {
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 
   BASE_LOYALTY_HP_COST: 1,
-  BASE_LOYALTY_COST_INCREASE: 0
+  BASE_LOYALTY_COST_INCREASE: 0,
+
+  ALLOW_DESTINY_CARDS_ON_TURN_1: false
 };

@@ -50,7 +50,7 @@ export const haroldLv1: HeroBlueprint = {
   lineage: 'harold',
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 12,
+  maxHp: 14,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -62,11 +62,13 @@ export const haroldLv1: HeroBlueprint = {
           const hasElligible = singleAllyMinionTargetRules.canPlay(game, card);
           if (!hasElligible) return;
 
-          const targets = await singleAllyMinionTargetRules.getPreResponseTargets(
+          const targets = await singleAllyMinionTargetRules.getPreResponseTargets({
             game,
             card,
-            { type: 'card', card }
-          );
+            origin: { type: 'card', card },
+            label: 'Select an allied minion to buff',
+            timeoutFallback: []
+          });
 
           for (const target of targets) {
             await target.modifiers.add(

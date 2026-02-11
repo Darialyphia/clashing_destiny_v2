@@ -62,6 +62,7 @@ export const simurgh: MinionBlueprint = {
             choices: [wing, tail],
             minChoiceCount: 1,
             maxChoiceCount: 1,
+            timeoutFallback: [wing],
             label: 'Select a spell to add to your hand'
           });
 

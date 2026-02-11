@@ -66,21 +66,8 @@ export const orbOfConstellations: ArtifactBlueprint = {
       manaCost: 0,
       shouldExhaust: true,
       speed: CARD_SPEED.FAST,
-      async getPreResponseTargets(game, card) {
-        const choices = Array.from(card.player.cardManager.discardPile).filter(
-          c => c.kind === CARD_KINDS.SPELL && c.faction === FACTIONS.ARCANE
-        );
-
-        if (choices.length === 0) {
-          return [];
-        }
-        return game.interaction.chooseCards({
-          player: card.player,
-          label: 'Select an Arcane Spell in your Discard pile to banish.',
-          minChoiceCount: 1,
-          maxChoiceCount: 1,
-          choices
-        });
+      async getPreResponseTargets() {
+        return [];
       },
       async onResolve(game, card) {
         const choices = Array.from(card.player.cardManager.discardPile).filter(
@@ -95,7 +82,8 @@ export const orbOfConstellations: ArtifactBlueprint = {
           label: 'Select an Arcane Spell in your Discard pile to banish.',
           minChoiceCount: 1,
           maxChoiceCount: 1,
-          choices
+          choices,
+          timeoutFallback: choices.slice(0, 1)
         });
 
         await cardToBanish.sendToBanishPile();
