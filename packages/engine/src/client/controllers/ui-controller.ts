@@ -11,7 +11,6 @@ import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selectio
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
 import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
-import { match } from 'ts-pattern';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -34,15 +33,20 @@ export type UiOptimisticState = {
 export class DOMSelector {
   constructor(
     readonly id: string,
-    private readonly selectorPrefix: string = ''
+    private readonly selectorPrefix: string = '',
+    private readonly selectorSuffix: string = ''
   ) {}
 
   get selector() {
-    return `${this.selectorPrefix} #${this.id}`;
+    return `${this.selectorPrefix} #${this.id} ${this.selectorSuffix}`;
   }
 
   get element() {
     return document.querySelector(this.selector) as HTMLElement | null;
+  }
+
+  get elements() {
+    return document.querySelectorAll(this.selector) as NodeListOf<HTMLElement>;
   }
 }
 
@@ -97,9 +101,12 @@ export class UiController {
       new DOMSelector(cardId, this.DOMSelectors.effectChain.selector),
     cardInDestinyZone: (cardId: string, playerId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.destinyZone(playerId).selector),
+    cardInPlayedCardZone: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.playedCardZone.selector),
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
+    anyCardOnPlayCardZone: new DOMSelector('#played-card', '', '.card'),
     minionZone: (playerId: string) => new DOMSelector(`${playerId}-minion-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
     globalActionButtons: new DOMSelector('global-action-buttons')

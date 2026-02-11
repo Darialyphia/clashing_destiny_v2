@@ -28,12 +28,12 @@ export const protectTheHolySpire: SpellBlueprint = {
   name: 'Protect the Holy Spire',
   description: dedent`
   Summon 2 minions with @Honor@ from your deck with a mana cost equal or less than your Hero's level.
-  @[lvl] 3 Bonus@: This is Burst speed.
+  @[lvl] 3 Bonus@: This is @[BURST]@ speed.
   `,
   dynamicDescription(game, card) {
     return dedent`
     Summon 2 minions with @Honor@ from your deck with a mana cost of @[dynamic]${card.player.hero.level}|Hero level@ or less.
-    @[lvl] 3 Bonus@: This is Burst speed.
+    @[lvl] 3 Bonus@: This is @[BURST]@ speed.
     `;
   },
   faction: FACTIONS.ORDER,

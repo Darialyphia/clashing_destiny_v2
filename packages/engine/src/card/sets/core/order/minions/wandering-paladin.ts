@@ -24,7 +24,7 @@ export const wanderingPaladin: MinionBlueprint = {
   name: 'Wandering Paladin',
   description: dedent`
   @Vigilant@.
-  @[lvl] 3 Bonus@: +2 Health.
+  @[lvl] 3 Bonus@: +1 Health.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
@@ -52,7 +52,7 @@ export const wanderingPaladin: MinionBlueprint = {
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
   atk: 2,
-  maxHp: 4,
+  maxHp: 5,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -63,7 +63,7 @@ export const wanderingPaladin: MinionBlueprint = {
 
     await card.modifiers.add(
       new SimpleHealthBuffModifier('wandering-paladin-hp-buff', game, card, {
-        amount: 2,
+        amount: 1,
         mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
       })
     );

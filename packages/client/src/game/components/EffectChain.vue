@@ -151,6 +151,7 @@ const onEffectClick = (effectId: string) => {
     </div>
     <ExplainerMessage class="ml-auto" />
   </div>
+  effect
 </template>
 
 <style scoped lang="postcss">
@@ -194,6 +195,10 @@ const onEffectClick = (effectId: string) => {
     position: absolute;
     inset: 0;
     background-color: hsl(200 100% 50% / 0.25);
+  }
+  @starting-style {
+    transform: scale(2) translateY(-10rem);
+    animation: none;
   }
 }
 

@@ -23,7 +23,7 @@ export const blitzTactics: SpellBlueprint = {
   name: 'Blitz Tactics',
   description: dedent`
     @Loyalty 2@.
-    The next card you play this turn has Burst speed.
+    The next card you play this turn is @[BURST]@ speed.
   `,
   faction: FACTIONS.NEUTRAL,
   rarity: RARITIES.LEGENDARY,

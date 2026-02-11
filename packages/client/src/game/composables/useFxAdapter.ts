@@ -10,7 +10,7 @@ export const useFxAdapter = (): FxAdapter => {
 
       window.requestAnimationFrame(() => {
         Flip.from(flipState, {
-          targets: '#played-card .card',
+          targets: client.ui.DOMSelectors.anyCardOnPlayCardZone.selector,
           duration: 0.4,
           absolute: true,
           ease: Power3.easeOut
@@ -20,7 +20,7 @@ export const useFxAdapter = (): FxAdapter => {
 
     onCancelPlayCard(card, client) {
       const flipState = Flip.getState(
-        client.ui.getCardDOMSelectorInPLayedCardZone(card.id)
+        client.ui.DOMSelectors.cardInPlayedCardZone(card.id).selector
       );
 
       window.requestAnimationFrame(() => {
@@ -34,41 +34,39 @@ export const useFxAdapter = (): FxAdapter => {
       });
     },
 
-    onSelectCardForManaCost(card, client) {
-      return new Promise<void>(resolve => {
-        const flipState = Flip.getState(
-          client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
-        );
-
-        window.requestAnimationFrame(() => {
-          Flip.from(flipState, {
-            targets: client.ui.DOMSelectors.cardInDestinyZone(
-              card.id,
-              card.player.id
-            ).selector,
-            duration: 0.4,
-            absolute: true,
-            ease: Power3.easeOut,
-            onComplete: resolve
-          });
-        });
-      });
+    onSelectCardForManaCost() {
+      // return new Promise<void>(resolve => {
+      //   const flipState = Flip.getState(
+      //     client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
+      //   );
+      //   window.requestAnimationFrame(() => {
+      //     Flip.from(flipState, {
+      //       targets: client.ui.DOMSelectors.cardInDestinyZone(
+      //         card.id,
+      //         card.player.id
+      //       ).selector,
+      //       duration: 0.4,
+      //       absolute: true,
+      //       ease: Power3.easeOut,
+      //       onComplete: resolve
+      //     });
+      //   });
+      // });
     },
 
-    onUnselectCardForManaCost(card, client) {
-      const flipState = Flip.getState(
-        client.ui.getCardDOMSelectorInDestinyZone(card.id, card.player.id)
-      );
-
-      window.requestAnimationFrame(() => {
-        Flip.from(flipState, {
-          targets: client.ui.DOMSelectors.cardInHand(card.id, card.player.id)
-            .selector,
-          duration: 0.4,
-          absolute: true,
-          ease: Power3.easeOut
-        });
-      });
+    onUnselectCardForManaCost() {
+      // const flipState = Flip.getState(
+      //   client.ui.getCardDOMSelectorInDestinyZone(card.id, card.player.id)
+      // );
+      // window.requestAnimationFrame(() => {
+      //   Flip.from(flipState, {
+      //     targets: client.ui.DOMSelectors.cardInHand(card.id, card.player.id)
+      //       .selector,
+      //     duration: 0.4,
+      //     absolute: true,
+      //     ease: Power3.easeOut
+      //   });
+      // });
     }
   };
 };
