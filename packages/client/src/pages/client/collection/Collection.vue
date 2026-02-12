@@ -48,7 +48,7 @@ useIntersectionObserver(
     <div v-if="isLoading" class="h-full flex items-center justify-center">
       <UiSpinner size="11" />
     </div>
-    <div v-else-if="cards.length" class="h-full">
+    <div v-else-if="cards.length" class="h-full relative">
       <ul
         ref="card-list"
         class="cards fancy-scrollbar h-full overflow-auto"
@@ -74,6 +74,7 @@ useIntersectionObserver(
           </button> -->
         </li>
       </ul>
+
       <div id="collection-card-details-portal" />
     </div>
     <p v-else class="text-center">No cards found.</p>
@@ -86,7 +87,7 @@ useIntersectionObserver(
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(calc(var(--card-width) * var(--pixel-scale)), 1fr)
+    minmax(calc(var(--card-width) * var(--card-scale)), 1fr)
   );
   justify-items: center;
   overflow-x: hidden;
@@ -96,6 +97,7 @@ useIntersectionObserver(
   padding-bottom: var(--size-10);
   padding-top: var(--size-3);
   li {
+    --pixel-scale: var(--card-scale);
     position: relative;
     transform-style: preserve-3d;
     perspective: 700px;
@@ -106,7 +108,6 @@ useIntersectionObserver(
   }
 
   @screen lt-lg {
-    --pixel-scale: 1;
     li {
       width: calc(var(--card-small-width) * var(--pixel-scale));
       aspect-ratio: var(--card-small-ratio);
@@ -114,7 +115,6 @@ useIntersectionObserver(
   }
 
   &.compact {
-    --pixel-scale: 1;
     li {
       width: calc(var(--card-small-width) * var(--pixel-scale));
       aspect-ratio: var(--card-small-ratio);

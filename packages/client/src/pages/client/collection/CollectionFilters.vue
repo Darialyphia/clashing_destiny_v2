@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
 import {
   CARD_KINDS,
   FACTIONS,
@@ -18,6 +17,8 @@ import {
   PopoverContent
 } from 'reka-ui';
 import UiSwitch from '@/ui/components/UiSwitch.vue';
+import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui';
+import { Icon } from '@iconify/vue';
 
 const {
   textFilter,
@@ -27,8 +28,8 @@ const {
   toggleFactionFilter,
   manaCostFilter,
   destinyCostFilter,
-  viewMode,
-  includeUnowned
+  includeUnowned,
+  cardScale
 } = useCollectionPage();
 const isFiltersOpen = ref(false);
 
@@ -176,42 +177,26 @@ const toggleMinDestinyCostFilter = (cost: number) => {
       3+
     </button>
 
+    <Icon icon="material-symbols:zoom-in" width="2rem" />
+    <SliderRoot
+      v-model="cardScale"
+      :min="0.5"
+      :max="2"
+      :step="0.25"
+      class="card-scale"
+    >
+      <SliderTrack class="card-scale-track">
+        <SliderRange class="card-scale-range" />
+      </SliderTrack>
+      <SliderThumb class="card-scale-thumb" />
+    </SliderRoot>
+
     <input
       v-model="textFilter"
       type="text"
       placeholder="Search cards..."
       class="search-input"
     />
-
-    <UiSimpleTooltip>
-      <template #trigger>
-        <label class="view-toggle" :class="{ active: viewMode === 'expanded' }">
-          <Icon icon="material-symbols-light:view-column-2" width="1.5rem" />
-          <input
-            v-model="viewMode"
-            type="radio"
-            value="expanded"
-            class="sr-only"
-          />
-        </label>
-      </template>
-      Normal view
-    </UiSimpleTooltip>
-
-    <UiSimpleTooltip>
-      <template #trigger>
-        <label class="view-toggle" :class="{ active: viewMode === 'compact' }">
-          <Icon icon="heroicons:squares-2x2-16-solid" width="1.5rem" />
-          <input
-            v-model="viewMode"
-            type="radio"
-            value="compact"
-            class="sr-only"
-          />
-        </label>
-      </template>
-      Compact view
-    </UiSimpleTooltip>
 
     <PopoverRoot v-model:open="isFiltersOpen">
       <PopoverTrigger as-child>
@@ -300,29 +285,6 @@ const toggleMinDestinyCostFilter = (cost: number) => {
   &:focus {
     border-color: #ffb270;
     outline: none;
-  }
-}
-
-.view-toggle {
-  cursor: url('@/assets/ui/cursor-hover.png'), auto;
-  padding: var(--size-2);
-  border-radius: var(--radius-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: solid var(--border-size-2) transparent;
-  transition: all 0.2s var(--ease-1);
-  color: var(--color-gray-7);
-
-  &:hover {
-    background-color: var(--color-gray-2);
-    color: var(--color-gray-9);
-  }
-
-  &.active {
-    background-color: hsl(from #d1c6c2 h s l / 0.2);
-    border-color: #d1c6c2;
-    color: #d1c6c2;
   }
 }
 
@@ -471,5 +433,46 @@ const toggleMinDestinyCostFilter = (cost: number) => {
     opacity: 0;
     transform: translateY(-10px);
   }
+}
+
+.card-scale {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: 200px;
+  height: 20px;
+  z-index: 1;
+}
+
+.card-scale-track {
+  background-color: var(--red-5);
+  position: relative;
+  flex-grow: 1;
+  border-radius: var(--radius-pill);
+  height: 3px;
+}
+
+.card-scale-range {
+  position: absolute;
+  background-color: white;
+  border-radius: var(--radius-pill);
+  height: 100%;
+}
+
+.card-scale-thumb {
+  display: block;
+  width: var(--size-4);
+  height: var(--size-4);
+  background-color: white;
+  border-radius: var(--radius-3);
+}
+.card-scale-thumb:hover {
+  background-color: var(--primary);
+}
+.card-scale-thumb:focus {
+  outline: none;
+  box-shadow: 0 0 0 5px var(--primary-dark);
 }
 </style>

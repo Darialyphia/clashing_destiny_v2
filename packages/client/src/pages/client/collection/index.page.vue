@@ -13,11 +13,11 @@ definePage({
   }
 });
 
-const { isEditingDeck } = provideCollectionPage();
+const { isEditingDeck, cardScale } = provideCollectionPage();
 </script>
 
 <template>
-  <div class="page">
+  <div class="page" :style="{ '--card-scale': cardScale[0] }">
     <CollectionFilters class="collection-header" />
 
     <Collection />
