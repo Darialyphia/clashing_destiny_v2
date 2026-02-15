@@ -8,13 +8,11 @@ import {
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
-import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { frontlineSkirmisher } from './frontline-skirmisher';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { DoubleAttackModifier } from '../../../../../modifier/modifiers/double-attack.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 import { OnHitModifier } from '../../../../../modifier/modifiers/on-hit.modifier';
 
 export const seraphOfLiberation: MinionBlueprint = {
@@ -54,7 +52,7 @@ export const seraphOfLiberation: MinionBlueprint = {
   },
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
-  atk: 1,
+  atk: 2,
   maxHp: 3,
   canPlay: () => true,
   abilities: [],

@@ -25,7 +25,7 @@ export const cosmicDivinator: MinionBlueprint = {
   @On Hit@: @Empower 1@.
   `,
   faction: FACTIONS.ARCANE,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.EPIC,
   tags: [],
   art: {
     default: {

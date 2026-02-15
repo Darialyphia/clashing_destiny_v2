@@ -124,7 +124,6 @@ const isSettingsOpened = ref(false);
 .board {
   display: grid;
   grid-template-rows: 1fr auto 1fr auto;
-  gap: var(--size-2);
   transform-style: preserve-3d;
   /* background: radial-gradient(circle at center, #0e151b, transparent 75%); */
   transform-origin: center center;
@@ -167,7 +166,6 @@ const isSettingsOpened = ref(false);
 }
 
 .separator {
-  margin-block: var(--size-2);
   height: 1px;
   border: solid 1px hsl(from #985e25 h s l / 0.35);
 }

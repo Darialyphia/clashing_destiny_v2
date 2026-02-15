@@ -11,7 +11,6 @@ import {
 import { HonorModifier } from '../../../../../modifier/modifiers/honor.modifier';
 import { isMinion } from '../../../../card-utils';
 import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
-import { GAME_PHASES } from '../../../../../game/game.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 
 export const secondWings: MinionBlueprint = {
@@ -51,7 +50,7 @@ export const secondWings: MinionBlueprint = {
   },
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
-  atk: 3,
+  atk: 4,
   maxHp: 2,
   canPlay: () => true,
   abilities: [],

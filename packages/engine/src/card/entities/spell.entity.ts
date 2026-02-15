@@ -1,4 +1,4 @@
-import type { MaybePromise, Values } from '@game/shared';
+import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';

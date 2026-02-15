@@ -49,17 +49,20 @@ useResizeObserver(root, () => {
   rootContainerSize.value = { w: rect.width, h: rect.height };
 });
 
+const pixelScale = 0.75;
 const cardW = computed(() => {
-  return parseInt(
+  const baseWidth = parseInt(
     getComputedStyle(document.documentElement).getPropertyValue(
       '--card-small-width-unitless'
     )
   );
+  return baseWidth * pixelScale;
 });
 
 const destinyZoneSize = computed(() => boardSide.value.destinyZone.length);
 const step = computed(() => {
   if (destinyZoneSize.value <= 1) return 0;
+
   const natural =
     (rootContainerSize.value.w - cardW.value) / (destinyZoneSize.value - 1);
   return clamp(natural, 0, cardW.value);
@@ -87,6 +90,7 @@ const cards = computed(() => {
     ref="root"
     :id="`destiny-zone-${playerId}`"
     :class="{ 'player-2': playerId !== activePlayerId }"
+    :style="{ '--pixel-scale': pixelScale }"
   >
     <div
       v-for="card in cards"
@@ -130,7 +134,6 @@ const cards = computed(() => {
 
 <style scoped lang="postcss">
 .destiny-zone {
-  --pixel-scale: 1;
   display: grid;
   position: relative;
   overflow: hidden;

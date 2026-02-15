@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import UiSwitch from '@/ui/components/UiSwitch.vue';
-import { useGameUi } from '../composables/useGameClient';
+import { useFxEvent, useGameUi } from '../composables/useGameClient';
+import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 // import { useMouse, useWindowSize } from '@vueuse/core';
 
 const ui = useGameUi();
@@ -9,7 +10,23 @@ const camera = ref({
   origin: { x: 0, y: 0 },
   scale: 1,
   angle: { x: 15, y: 0, z: 0 },
-  offset: { x: 0, y: -7 }
+  offset: { x: 0, y: -5 }
+});
+
+useFxEvent(GAME_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async () => {
+  const tl = gsap.timeline();
+  tl.to(camera.value.offset, {
+    duration: 0.1,
+    y: 0,
+    ease: Power1.easeOut
+  });
+  tl.to(camera.value.offset, {
+    duration: 0.25,
+    y: -5,
+    ease: Elastic.easeOut.config(1, 0.5)
+  });
+
+  tl.play();
 });
 
 const isTilted = computed({

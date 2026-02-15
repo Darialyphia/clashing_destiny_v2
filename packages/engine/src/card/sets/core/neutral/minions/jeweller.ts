@@ -44,10 +44,10 @@ export const jeweller: MinionBlueprint = {
       tint: FACTIONS.NEUTRAL.defaultCardTint
     }
   },
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
   atk: 0,
-  maxHp: 4,
+  maxHp: 3,
   canPlay: () => true,
   abilities: [
     {

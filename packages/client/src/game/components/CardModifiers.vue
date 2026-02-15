@@ -111,18 +111,19 @@ const emit = defineEmits<{
   left: var(--size-2);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--size-2);
-  --pixel-scale: 2;
+  --scale-factor: min(2, 2 * var(--pixel-scale));
+  gap: calc(var(--size-2) * var(--scale-factor));
+
   &.top {
-    top: var(--size-2);
+    top: calc(var(--size-2) * var(--scale-factor));
   }
   &.bottom {
-    bottom: var(--size-6);
+    bottom: calc(var(--size-6) * var(--scale-factor));
   }
 }
 
 .modifier {
-  width: 24px;
+  width: calc(var(--pixel-scale) * 2 * 12px);
   aspect-ratio: 1;
   background: var(--bg) no-repeat center center;
   background-size: cover;
@@ -131,8 +132,8 @@ const emit = defineEmits<{
   &::after {
     content: attr(data-stacks);
     position: absolute;
-    bottom: -5px;
-    right: -5px;
+    bottom: calc(-5px * var(--pixel-scale));
+    right: calc(-5px * var(--pixel-scale));
     font-size: var(--font-size-2);
     color: white;
     paint-order: stroke fill;

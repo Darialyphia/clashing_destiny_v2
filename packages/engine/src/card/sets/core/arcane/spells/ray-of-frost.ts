@@ -52,7 +52,7 @@ export const rayOfFrost: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.FAST,
+  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {
     return singleEnemyMinionTargetRules.canPlay(game, card);

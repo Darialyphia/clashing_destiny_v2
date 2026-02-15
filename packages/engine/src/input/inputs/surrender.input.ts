@@ -1,4 +1,3 @@
-import { assert } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import { defaultInputSchema, Input } from '../input';
 

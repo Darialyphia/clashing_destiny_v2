@@ -13,7 +13,7 @@ const { size } = defineProps<{ size: number }>();
 .deck {
   height: calc(var(--pixel-scale) * var(--card-small-height));
   width: calc(var(--pixel-scale) * var(--card-small-width));
-  --pixel-scale: 1;
+  --pixel-scale: 0.75;
   @screen lt-lg {
     --pixel-scale: 0.5;
   }
