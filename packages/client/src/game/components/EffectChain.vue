@@ -187,7 +187,7 @@ const onEffectClick = (effectId: string) => {
   perspective: 2000px;
   transform-style: preserve-3d;
   transition: all 0.5s var(--ease-3);
-  transition-delay: 1s;
+  transition-delay: 0.5s;
 
   &.is-selectable::after {
     content: '';
@@ -196,7 +196,7 @@ const onEffectClick = (effectId: string) => {
     background-color: hsl(200 100% 50% / 0.25);
   }
   @starting-style {
-    transform: scale(2) translateY(-10rem);
+    transform: scale(1.5) translateY(-15rem);
     animation: none;
   }
 }

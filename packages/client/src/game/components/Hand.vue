@@ -192,7 +192,7 @@ watch(width, v => {
   height: 50px;
 }
 .hand {
-  --pixel-scale: 1.25;
+  --pixel-scale: 1.5;
   --hover-offset: -20px; /* used in HandCard.vue */
   position: relative;
   z-index: 1;

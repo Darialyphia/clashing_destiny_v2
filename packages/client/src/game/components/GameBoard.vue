@@ -123,6 +123,9 @@ const isSettingsOpened = ref(false);
 
 .board {
   display: grid;
+  width: 100%;
+  max-width: 80vw;
+  margin-inline: auto;
   grid-template-rows: 1fr auto 1fr auto;
   transform-style: preserve-3d;
   /* background: radial-gradient(circle at center, #0e151b, transparent 75%); */

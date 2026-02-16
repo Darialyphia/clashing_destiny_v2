@@ -125,22 +125,36 @@ const root = useTemplateRef('card');
 const setVariableFontSize = (
   box: HTMLElement,
   sizeRef: Ref<number>,
-  min: number
+  min: number,
+  ideal: number
 ) => {
   const inner = box.firstChild as HTMLElement;
   const outerHeight = box.clientHeight;
 
   let innerHeight = inner.clientHeight;
+  if (innerHeight > outerHeight) {
+    while (innerHeight > outerHeight) {
+      sizeRef.value -= 0.5;
+      box.style.fontSize = `${sizeRef.value}px`;
 
-  while (innerHeight > outerHeight) {
-    sizeRef.value -= 0.5;
-    box.style.fontSize = `${sizeRef.value}px`;
+      innerHeight = inner.clientHeight;
 
-    innerHeight = inner.clientHeight;
+      if (sizeRef.value <= min) {
+        box.style.fontSize = '';
+        break;
+      }
+    }
+  } else if (innerHeight < outerHeight && sizeRef.value < ideal) {
+    while (innerHeight < outerHeight) {
+      sizeRef.value += 0.5;
+      box.style.fontSize = `${sizeRef.value}px`;
 
-    if (sizeRef.value <= min) {
-      box.style.fontSize = '';
-      break;
+      innerHeight = inner.clientHeight;
+
+      if (sizeRef.value >= min) {
+        box.style.fontSize = '';
+        break;
+      }
     }
   }
 };
@@ -154,27 +168,40 @@ useResizeObserver(descriptionChild, () => {
   setVariableFontSize(
     descriptionBox.value!,
     descriptionFontSize,
-    DESCRIPTION_MIN_TEXT_SIZE
+    DESCRIPTION_MIN_TEXT_SIZE,
+    DESCRIPTION_IDEAL_TEXT_SIZE
   );
 });
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
+const DESCRIPTION_IDEAL_TEXT_SIZE = 12;
 const DESCRIPTION_MAX_TEXT_SIZE = 15;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
   .then(box => {
-    setVariableFontSize(box, descriptionFontSize, DESCRIPTION_MIN_TEXT_SIZE);
+    setVariableFontSize(
+      box,
+      descriptionFontSize,
+      DESCRIPTION_MIN_TEXT_SIZE,
+      DESCRIPTION_IDEAL_TEXT_SIZE
+    );
   });
 
 const nameBox = useTemplateRef('name-box');
 const NAME_MIN_TEXT_SIZE = 11;
+const NAME_IDEAL_TEXT_SIZE = 14;
 const NAME_MAX_TEXT_SIZE = 18;
 
 const nameFontSize = ref(NAME_MAX_TEXT_SIZE);
 until(nameBox)
   .toBeTruthy()
   .then(box => {
-    setVariableFontSize(box, nameFontSize, NAME_MIN_TEXT_SIZE);
+    setVariableFontSize(
+      box,
+      nameFontSize,
+      NAME_MIN_TEXT_SIZE,
+      NAME_IDEAL_TEXT_SIZE
+    );
   });
 
 // const multiLineChecker = useTemplateRef('multi-line-checker');
