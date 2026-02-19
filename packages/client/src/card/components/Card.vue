@@ -9,7 +9,7 @@ import {
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until } from '@vueuse/core';
+import { until, useResizeObserver } from '@vueuse/core';
 import CardGlare from './CardGlare.vue';
 import { match } from 'ts-pattern';
 import { useCardTilt } from '../composables/useCardtilt';
@@ -144,7 +144,6 @@ const setVariableFontSize = (
   const inner = box.firstChild as HTMLElement;
   const outerHeight = box.clientHeight;
   if (inner.clientHeight <= outerHeight) {
-    sizeRef.value = max;
     return;
   }
   let size = max;
@@ -159,6 +158,7 @@ const setVariableFontSize = (
   sizeRef.value = size;
 };
 const descriptionBox = useTemplateRef('description-box');
+const descriptionInner = useTemplateRef('description-inner');
 
 const resizeDescription = () => {
   if (!descriptionBox.value) return;
@@ -170,16 +170,7 @@ const resizeDescription = () => {
   );
 };
 
-// Listen for image load events inside the description to recalculate size
-const setupImageLoadListeners = () => {
-  if (!descriptionBox.value) return;
-  const images = descriptionBox.value.querySelectorAll('img');
-  images.forEach(img => {
-    if (!img.complete) {
-      img.addEventListener('load', resizeDescription, { once: true });
-    }
-  });
-};
+useResizeObserver(descriptionInner, resizeDescription);
 
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
 const DESCRIPTION_MAX_TEXT_SIZE = 15;
@@ -188,7 +179,6 @@ until(descriptionBox)
   .toBeTruthy()
   .then(() => {
     resizeDescription();
-    setupImageLoadListeners();
   });
 
 const nameBox = useTemplateRef('name-box');
@@ -359,7 +349,7 @@ const kindBg = computed(() => {
             ref="description-box"
             :class="{ 'is-multi-line': isMultiLine }"
           >
-            <div>
+            <div ref="description-inner">
               <CardText :text="card.description" />
               <CardText
                 v-for="ability in card.abilities"

@@ -155,14 +155,6 @@ const showFullText = useIsKeyboardControlPressed({
         {{ token.tooltipText }}
       </UiSimpleTooltip>
 
-      <UiSimpleTooltip v-else-if="token.type === 'spellpower'">
-        <template #trigger>
-          <img :src="assets['ui/ability-power'].path" class="inline" />
-        </template>
-        <b>Spellpower</b>
-        : is used to enhance the effects of some cards.
-      </UiSimpleTooltip>
-
       <UiSimpleTooltip v-else-if="token.type === 'health'">
         <template #trigger>
           <img :src="assets['ui/hp'].path" class="inline" />
@@ -301,7 +293,7 @@ const showFullText = useIsKeyboardControlPressed({
 .token-exhaust > img {
   transform: translateY(calc(1px * var(--pixel-scale)));
   width: calc(20px * var(--pixel-scale) / 2);
-  height: calc(14px * var(--pixel-scale) / 2);
+  height: calc(16px * var(--pixel-scale) / 2);
 }
 /* eslint-disable-next-line vue-scoped-css/no-unused-selector */
 .token-durability > img {
