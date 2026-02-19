@@ -9,7 +9,7 @@ import {
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
-import { until, useResizeObserver } from '@vueuse/core';
+import { until } from '@vueuse/core';
 import CardGlare from './CardGlare.vue';
 import { match } from 'ts-pattern';
 import { useCardTilt } from '../composables/useCardtilt';
@@ -122,74 +122,77 @@ const artBreakoutImage = computed(() => {
 
 const root = useTemplateRef('card');
 
+const getPixelScale = () => {
+  let el: HTMLElement | null = root.value;
+  if (!el) return 1;
+  let scale = getComputedStyle(el).getPropertyValue('--pixel-scale');
+  while (!scale) {
+    if (!el!.parentElement) return 1;
+    el = el!.parentElement;
+    scale = getComputedStyle(el).getPropertyValue('--pixel-scale');
+  }
+
+  return parseFloat(scale) || 1;
+};
+
 const setVariableFontSize = (
   box: HTMLElement,
   sizeRef: Ref<number>,
   min: number,
-  ideal: number
+  max: number
 ) => {
   const inner = box.firstChild as HTMLElement;
   const outerHeight = box.clientHeight;
-
-  let innerHeight = inner.clientHeight;
-  if (innerHeight > outerHeight) {
-    while (innerHeight > outerHeight) {
-      sizeRef.value -= 0.5;
-      box.style.fontSize = `${sizeRef.value}px`;
-
-      innerHeight = inner.clientHeight;
-
-      if (sizeRef.value <= min) {
-        box.style.fontSize = '';
-        break;
-      }
-    }
-  } else if (innerHeight < outerHeight && sizeRef.value < ideal) {
-    while (innerHeight < outerHeight) {
-      sizeRef.value += 0.5;
-      box.style.fontSize = `${sizeRef.value}px`;
-
-      innerHeight = inner.clientHeight;
-
-      if (sizeRef.value >= min) {
-        box.style.fontSize = '';
-        break;
-      }
-    }
+  if (inner.clientHeight <= outerHeight) {
+    sizeRef.value = max;
+    return;
   }
+  let size = max;
+  const step = 0.5;
+  const scale = getPixelScale() / 2; // text size uses half pixel scale in calculation
+
+  while (inner.clientHeight > outerHeight) {
+    size -= step;
+    box.style.fontSize = `${size * scale}px`;
+  }
+  box.style.fontSize = '';
+  sizeRef.value = size;
 };
 const descriptionBox = useTemplateRef('description-box');
-const descriptionChild = computed(() => {
+
+const resizeDescription = () => {
   if (!descriptionBox.value) return;
-  return descriptionBox.value.firstChild as HTMLElement;
-});
-// we need a resize observer because the description box size change change when description icons are loaded for the first time
-useResizeObserver(descriptionChild, () => {
   setVariableFontSize(
-    descriptionBox.value!,
+    descriptionBox.value,
     descriptionFontSize,
     DESCRIPTION_MIN_TEXT_SIZE,
-    DESCRIPTION_IDEAL_TEXT_SIZE
+    DESCRIPTION_MAX_TEXT_SIZE
   );
-});
+};
+
+// Listen for image load events inside the description to recalculate size
+const setupImageLoadListeners = () => {
+  if (!descriptionBox.value) return;
+  const images = descriptionBox.value.querySelectorAll('img');
+  images.forEach(img => {
+    if (!img.complete) {
+      img.addEventListener('load', resizeDescription, { once: true });
+    }
+  });
+};
+
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
-const DESCRIPTION_IDEAL_TEXT_SIZE = 12;
 const DESCRIPTION_MAX_TEXT_SIZE = 15;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
-  .then(box => {
-    setVariableFontSize(
-      box,
-      descriptionFontSize,
-      DESCRIPTION_MIN_TEXT_SIZE,
-      DESCRIPTION_IDEAL_TEXT_SIZE
-    );
+  .then(() => {
+    resizeDescription();
+    setupImageLoadListeners();
   });
 
 const nameBox = useTemplateRef('name-box');
 const NAME_MIN_TEXT_SIZE = 11;
-const NAME_IDEAL_TEXT_SIZE = 14;
 const NAME_MAX_TEXT_SIZE = 18;
 
 const nameFontSize = ref(NAME_MAX_TEXT_SIZE);
@@ -200,7 +203,7 @@ until(nameBox)
       box,
       nameFontSize,
       NAME_MIN_TEXT_SIZE,
-      NAME_IDEAL_TEXT_SIZE
+      NAME_MAX_TEXT_SIZE
     );
   });
 

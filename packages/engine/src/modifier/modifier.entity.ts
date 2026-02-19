@@ -1,4 +1,4 @@
-import { isFunction, isString, type Serializable, type Values } from '@game/shared';
+import { isFunction, type Serializable, type Values } from '@game/shared';
 import type { ModifierMixin } from './modifier-mixin';
 import { Entity } from '../entity';
 import type { Game } from '../game/game';
@@ -119,7 +119,8 @@ export class Modifier<T extends ModifierTarget>
     this.infos = {
       description: options.description,
       name: options.name,
-      icon: options.icon
+      icon: options.icon,
+      groupKey: options.groupKey
     };
     this._isUnique = options.isUnique ?? false;
     if (options.stacks) {

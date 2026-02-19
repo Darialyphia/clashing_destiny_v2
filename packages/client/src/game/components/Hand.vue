@@ -204,7 +204,7 @@ watch(width, v => {
   }
   &:hover {
     --pixel-scale: 1.5;
-    transform: translateY(-290px);
+    transform: translateY(-240px);
   }
 }
 

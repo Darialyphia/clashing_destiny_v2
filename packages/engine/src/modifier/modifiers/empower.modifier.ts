@@ -22,6 +22,7 @@ export class EmpowerModifier extends Modifier<HeroCard> {
       name: KEYWORDS.EMPOWER.name,
       description: KEYWORDS.EMPOWER.description,
       icon: 'keyword-empower-buff',
+      groupKey: 'empower',
       mixins: [
         new HeroInterceptorModifierMixin(game, {
           key: 'spellPower',

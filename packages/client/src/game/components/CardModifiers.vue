@@ -41,6 +41,8 @@ const visibleModifiers = gameStateRef(() => {
         sources: [modifier.source]
       };
       result.push(group);
+    } else {
+      group.sources.push(modifier.source);
     }
     group.totalStacks += modifier.stacks;
   });
@@ -99,7 +101,9 @@ const emit = defineEmits<{
         >
           {{ group.description }}
         </div>
-        <div class="modifier-source">{{ group.name }}</div>
+        <div class="modifier-source">
+          {{ group.sources.map(source => source.name).join(' / ') }}
+        </div>
       </div>
     </UiSimpleTooltip>
   </div>

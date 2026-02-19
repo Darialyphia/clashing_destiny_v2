@@ -17,7 +17,7 @@ export const spiritOfArcane: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: 'Spirit of Arcane',
-  description: '@On Enter@: draw 6 cards.',
+  description: '@On Enter@: draw 7 cards.',
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],

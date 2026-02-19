@@ -146,7 +146,7 @@ const isSettingsOpened = ref(false);
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 10%;
+  bottom: 15%;
   left: 0;
 }
 

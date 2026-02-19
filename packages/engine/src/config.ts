@@ -74,5 +74,5 @@ export const defaultConfig: Config = {
   BASE_LOYALTY_HP_COST: 1,
   BASE_LOYALTY_COST_INCREASE: 0,
 
-  ALLOW_DESTINY_CARDS_ON_TURN_1: false
+  ALLOW_DESTINY_CARDS_ON_TURN_1: true
 };

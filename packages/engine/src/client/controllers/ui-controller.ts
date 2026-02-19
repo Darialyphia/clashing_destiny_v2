@@ -106,7 +106,7 @@ export class UiController {
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    anyCardOnPlayCardZone: new DOMSelector('#played-card', '', '.card'),
+    anyCardOnPlayCardZone: new DOMSelector('played-card', '', '.card'),
     minionZone: (playerId: string) => new DOMSelector(`${playerId}-minion-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
     globalActionButtons: new DOMSelector('global-action-buttons')
