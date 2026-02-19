@@ -23,6 +23,8 @@ import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import OpponentHand from './OpponentHand.vue';
 import BottomBar from './BottomBar.vue';
+import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
+import { useSettingsStore } from '@/shared/composables/useSettings';
 
 const { options } = defineProps<{
   clocks?: {
@@ -48,7 +50,16 @@ useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);
 // const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
-const isSettingsOpened = ref(false);
+const isGameSettingsOpened = ref(false);
+const settings = useSettingsStore();
+
+useKeyboardControl(
+  'keyup',
+  settings.settings.bindings.openSettings.control,
+  () => {
+    isGameSettingsOpened.value = !isGameSettingsOpened.value;
+  }
+);
 </script>
 
 <template>
@@ -92,16 +103,16 @@ const isSettingsOpened = ref(false);
   <button
     aria-label="Settings"
     class="settings-button"
-    @click="isSettingsOpened = true"
+    @click="isGameSettingsOpened = true"
   />
   <UiModal
-    v-model:is-opened="isSettingsOpened"
+    v-model:is-opened="isGameSettingsOpened"
     title="Menu"
     description="Game settings"
     :style="{ '--ui-modal-size': 'var(--size-xs)' }"
   >
     <div class="game-board-menu">
-      <FancyButton text="Close" @click="isSettingsOpened = false" />
+      <FancyButton text="Close" @click="isGameSettingsOpened = false" />
       <slot name="menu" />
     </div>
   </UiModal>

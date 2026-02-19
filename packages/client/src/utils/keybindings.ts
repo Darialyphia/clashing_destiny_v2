@@ -72,5 +72,9 @@ export const defaultKeyBindings = {
   showFullCardText: {
     label: 'Show full card text when hovering cards',
     control: { key: 'ShiftLeft', modifier: null }
+  },
+  openSettings: {
+    label: 'Open settings',
+    control: { key: 'Escape', modifier: null }
   }
 } as const satisfies Record<string, { label: string; control: Control }>;
