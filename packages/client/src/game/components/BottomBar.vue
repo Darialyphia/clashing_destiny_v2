@@ -25,7 +25,7 @@ useGameKeyboardControls();
         "
       >
         <InspectableCard :card-id="state.interaction.ctx.card" side="left">
-          <GameCard :card-id="state.interaction.ctx.card" variant="small" />
+          <GameCard :card-id="state.interaction.ctx.card" variant="default" />
         </InspectableCard>
       </div>
     </Transition>

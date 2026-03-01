@@ -8,10 +8,23 @@ import BlueprintSmallCard from './BlueprintSmallCard.vue';
 import { domToPng } from 'modern-screenshot';
 import BlueprintCard from './BlueprintCard.vue';
 import UiButton from '@/ui/components/UiButton.vue';
+import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
+import {
+  CRAFTING_COST_PER_RARITY,
+  FOIL_CRAFTING_COST_MULTIPLIER
+} from '@game/api';
 
 const { mainDeck, destinyDeck, name } = defineProps<{
-  mainDeck: Array<{ blueprint: CardBlueprint; copies: number }>;
-  destinyDeck: Array<{ blueprint: CardBlueprint; copies: number }>;
+  mainDeck: Array<{
+    blueprint: CardBlueprint;
+    copies: number;
+    meta: { isFoil: boolean };
+  }>;
+  destinyDeck: Array<{
+    blueprint: CardBlueprint;
+    copies: number;
+    meta: { isFoil: boolean };
+  }>;
   name: string;
 }>();
 
@@ -76,6 +89,16 @@ const mode = ref('full' as 'full' | 'condensed');
 const cardComponent = computed(() =>
   mode.value === 'full' ? BlueprintCard : BlueprintSmallCard
 );
+
+const craftingCost = computed(() => {
+  const allCards = [...mainDeck, ...destinyDeck];
+  return allCards.reduce((sum, item) => {
+    const cost =
+      CRAFTING_COST_PER_RARITY[item.blueprint.rarity] *
+      (item.meta.isFoil ? FOIL_CRAFTING_COST_MULTIPLIER : 1);
+    return sum + cost * item.copies;
+  }, 0);
+});
 </script>
 
 <template>
@@ -96,7 +119,7 @@ const cardComponent = computed(() =>
     <header class="flex gap-4 items-center mb-5">
       <h2 :data-text="name">{{ name }}</h2>
 
-      <div class="flex gap-2 ml-auto">
+      <div class="flex gap-2 ml-auto items-center">
         <div>
           <span class="font-bold text-3">
             {{ minionsCount }}
@@ -120,6 +143,10 @@ const cardComponent = computed(() =>
             {{ sigilsCount }}
           </span>
           {{ sigilsCount <= 1 ? 'Sigil' : 'Sigils' }}
+        </div>
+        <div class="flex items-center">
+          <CraftignShardIcon />
+          {{ craftingCost }}
         </div>
       </div>
     </header>
