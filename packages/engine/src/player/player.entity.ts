@@ -311,7 +311,9 @@ export class Player
 
   private async playCard(card: AnyCard) {
     await card.play();
-    await this.game.turnSystem.switchInitiative();
+    if (card.shouldSwitchInitiativeAfterPlay) {
+      await this.game.turnSystem.switchInitiative();
+    }
   }
 
   private async payForManaCost(manaCost: number, indices: number[]) {

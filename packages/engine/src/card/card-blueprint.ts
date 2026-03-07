@@ -65,7 +65,6 @@ export type CardBlueprintBase = {
   >;
   collectable: boolean;
   unique?: boolean;
-  speed: CardSpeed;
   faction: Faction;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];

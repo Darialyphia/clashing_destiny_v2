@@ -1,9 +1,8 @@
-import { isFunction, type JSONObject, type MaybePromise } from '@game/shared';
-import { nanoid } from 'nanoid';
+import { isFunction, type JSONObject } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
+import type { CardBlueprint } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
@@ -33,7 +32,7 @@ import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
-import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
 
@@ -51,9 +50,9 @@ export type CardInterceptors = {
   canBeUsedAsDestinyCost: Interceptable<boolean>;
   canBeUsedAsManaCost: Interceptable<boolean>;
   canBeRecollected: Interceptable<boolean>;
-  speed: Interceptable<CardSpeed>;
   deckSource: Interceptable<CardDeckSource>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
+  shouldSwitchInitiativeAfterPlay: Interceptable<boolean>;
   loyaltyManaCostIncrease: Interceptable<number>;
   loyaltyDestinyCostIncrease: Interceptable<number>;
   loyaltyHpCost: Interceptable<number>;
@@ -70,6 +69,7 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   speed: new Interceptable(),
   deckSource: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
+  shouldSwitchInitiativeAfterPlay: new Interceptable(),
   loyaltyManaCostIncrease: new Interceptable(),
   loyaltyDestinyCostIncrease: new Interceptable(),
   loyaltyHpCost: new Interceptable()
@@ -206,6 +206,10 @@ export abstract class Card<
     return this.interceptors.shouldWakeUpAtTurnStart.getValue(true, {});
   }
 
+  get shouldSwitchInitiativeAfterPlay() {
+    return this.interceptors.shouldSwitchInitiativeAfterPlay.getValue(true, {});
+  }
+
   get location() {
     return this.player.cardManager.findCard(this.id)?.location;
   }
@@ -302,14 +306,6 @@ export abstract class Card<
 
   get targetedBy() {
     return this._targetedBy;
-  }
-
-  get speed() {
-    return this.interceptors.speed.getValue(this.blueprint.speed, {});
-  }
-
-  get canPlayDuringChain() {
-    return this.speed !== CARD_SPEED.SLOW;
   }
 
   protected async dispose() {
@@ -618,7 +614,6 @@ export abstract class Card<
       manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
       destinyCost:
         this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
-      speed: this.blueprint.speed,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed
