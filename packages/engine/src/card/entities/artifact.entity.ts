@@ -187,26 +187,18 @@ export class ArtifactCard extends Card<
     );
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.insertInChainOrExecute(
-      async () => {
-        await this.player.artifactManager.equip(this);
-        this.lostDurability = 0;
-        await this.blueprint.onPlay(this.game, this);
-        await this.game.emit(
-          ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-          new ArtifactEquipedEvent({ card: this })
-        );
-      },
-      {
-        targets: [],
-        onResolved
-      }
+    await this.player.artifactManager.equip(this);
+    this.lostDurability = 0;
+    await this.blueprint.onPlay(this.game, this);
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+      new ArtifactEquipedEvent({ card: this })
     );
   }
 

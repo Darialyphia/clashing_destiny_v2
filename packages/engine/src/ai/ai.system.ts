@@ -18,10 +18,6 @@ export class AISystem {
   }
 
   get isActive() {
-    if (this.game.effectChainSystem.currentChain) {
-      return this.game.effectChainSystem.currentChain.isCurrentPlayer(this.player);
-    }
-
     return this.game.interaction.getContext().ctx.player;
   }
 

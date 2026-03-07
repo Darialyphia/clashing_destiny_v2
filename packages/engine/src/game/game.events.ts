@@ -19,7 +19,6 @@ import { PLAYER_EVENTS } from '../player/player.enums';
 import type { PlayerEventMap } from '../player/player.events';
 import { ABILITY_EVENTS, type AbilityEventMap } from '../card/events/ability.events';
 import type { TurnEventMap } from './systems/turn.system';
-import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
 import { SIGIL_EVENTS, type SigilEventMap } from '../card/events/sigil.events';
 import type { Player } from '../player/player.entity';
 
@@ -146,8 +145,7 @@ export type GameEventMap = Prettify<
     SigilEventMap &
     PlayerEventMap &
     AbilityEventMap &
-    TurnEventMap &
-    EffectChainEventMap
+    TurnEventMap
 >;
 
 export type GameEventName = keyof GameEventMap;
@@ -173,8 +171,7 @@ export const GAME_EVENTS = {
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
   ...SIGIL_EVENTS,
-  ...TURN_EVENTS,
-  ...EFFECT_CHAIN_EVENTS
+  ...TURN_EVENTS
 } as const satisfies Record<string, GameEventName>;
 
 export type SerializedEvent<T extends keyof typeof GAME_EVENTS> = ReturnType<

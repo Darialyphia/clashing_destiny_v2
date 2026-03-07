@@ -6,7 +6,6 @@ import type {
   CardDiscardEvent,
   CardRevealEvent
 } from '../../card/card.events';
-import type { ChainEffectAddedEvent, SerializedEffectChain } from '../effect-chain';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
@@ -59,7 +58,6 @@ export type SerializedOmniscientState = {
   board: SerializedBoard;
   currentPlayer: string;
   turnCount: number;
-  effectChain: SerializedEffectChain | null;
 };
 
 export type SnapshotDiff = {
@@ -73,7 +71,6 @@ export type SnapshotDiff = {
   turnCount: number;
   currentPlayer: string;
   players: string[];
-  effectChain: SerializedEffectChain | null;
 };
 
 export type SerializedPlayerState = SerializedOmniscientState;
@@ -154,7 +151,6 @@ export class GameSerializer {
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
-      effectChain: state.effectChain,
       config: this.getObjectDiff(state.config, prevState.config)
     };
   }
@@ -190,8 +186,7 @@ export class GameSerializer {
       board: this.game.boardSystem.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
       currentPlayer: this.game.interaction.interactivePlayer.id,
-      turnCount: this.game.turnSystem.elapsedTurns,
-      effectChain: this.game.effectChainSystem.serialize()
+      turnCount: this.game.turnSystem.elapsedTurns
     };
   }
 
@@ -229,12 +224,6 @@ export class GameSerializer {
           (event as CardDeclarePlayEvent).data.card.id === cardId
         ) {
           return true;
-        }
-        if (e.data.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
-          const effect = (event as ChainEffectAddedEvent).data.effect;
-          if (effect.source.id === cardId) {
-            return true;
-          }
         }
         if (
           e.data.eventName === GAME_EVENTS.CARD_DISCARD &&
@@ -318,8 +307,7 @@ export class GameSerializer {
       board: state.board,
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
-      players: state.players,
-      effectChain: state.effectChain
+      players: state.players
     };
   }
 }

@@ -36,7 +36,6 @@ import { isMainDeckCard } from '../../board/board.system';
 import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
-import { LockedModifier } from '../../modifier/modifiers/locked.modifier';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -343,46 +342,6 @@ export abstract class Card<
     );
   }
 
-  protected async insertInChainOrExecute(
-    handler: () => Promise<void>,
-    options: {
-      targets: PreResponseTarget[];
-      onResolved?: () => MaybePromise<void>;
-    }
-  ) {
-    const effect = {
-      id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
-      type: EFFECT_TYPE.CARD,
-      source: this,
-      targets: options.targets,
-      handler: async () => {
-        await this.resolve(handler);
-        this.isPlayedFromHand = false;
-      }
-    };
-
-    if (this.speed === CARD_SPEED.BURST) {
-      await effect.handler();
-      return this.game.inputSystem.askForPlayerInput();
-    }
-    if (this.game.effectChainSystem.currentChain) {
-      if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
-        await this.game.effectChainSystem.addEffect(effect, this.player);
-      } else {
-        // this can happen if a card is played as part of an other card effect
-        // the card wiill be played while the current chain is resolving, so let's just execute it immediately
-        await effect.handler();
-        return this.game.inputSystem.askForPlayerInput();
-      }
-    } else {
-      await this.game.effectChainSystem.createChain({
-        initialPlayer: this.player,
-        initialEffect: effect,
-        onResolved: options.onResolved
-      });
-    }
-  }
-
   targetBy(origin: CardTargetOrigin) {
     this._targetedBy.push(origin);
   }
@@ -576,10 +535,6 @@ export abstract class Card<
       return false;
     }
 
-    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
-      return false;
-    }
-
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
@@ -593,10 +548,6 @@ export abstract class Card<
 
     if (this.isIncombatPhaseBeforeChain) {
       return 'You need to declare the attack target before playing cards.';
-    }
-
-    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
-      return "Can't play during an effect chain.";
     }
 
     return match(this.deckSource)
@@ -636,7 +587,7 @@ export abstract class Card<
       .exhaustive();
   }
 
-  abstract play(onResolved: () => MaybePromise<void>): Promise<void>;
+  abstract play(): Promise<void>;
 
   get description() {
     return isFunction(this.blueprint.description)

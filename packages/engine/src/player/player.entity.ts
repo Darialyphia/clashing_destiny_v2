@@ -130,7 +130,7 @@ export class Player
       this.options.mainDeck.cards,
       this.options.destinyDeck.cards
     );
-    await this._hero.card.play(() => {});
+    await this._hero.card.play();
     await this._hero.card.removeFromCurrentLocation();
   }
 
@@ -309,40 +309,9 @@ export class Player
     return performedCountForType < maxForType;
   }
 
-  async performResourceAction(action: PlayerResourceAction) {
-    // Check if the action type has reached its maximum limit for this turn
-    const maxForType = this.getMaxResourceActionsPerType(action.type);
-    const performedCountForType = this._resourceActionsPerformedThisTurn.filter(
-      a => a.type === action.type
-    ).length;
-
-    if (performedCountForType >= maxForType) {
-      throw new GameError(
-        `Cannot perform '${action.type}' more than ${maxForType} time(s) per turn`
-      );
-    }
-
-    if (this._resourceActionsPerformedThisTurn.length >= this.maxResourceActionPerTurn) {
-      throw new GameError(
-        `Cannot perform more than ${this.maxResourceActionPerTurn} resource actions per turn`
-      );
-    }
-
-    await match(action)
-      .with({ type: 'put_card_in_mana_zone' }, async () => {})
-      .with({ type: 'put_card_in_shard_zone' }, async () => {})
-      .exhaustive();
-
-    this._resourceActionsPerformedThisTurn.push(action);
-  }
-
   private async playCard(card: AnyCard) {
-    const isAction = !isDefined(this.game.effectChainSystem.currentChain);
-    await card.play(async () => {
-      if (isAction) {
-        await this.game.turnSystem.switchInitiative();
-      }
-    });
+    await card.play();
+    await this.game.turnSystem.switchInitiative();
   }
 
   private async payForManaCost(manaCost: number, indices: number[]) {

@@ -227,59 +227,8 @@ export class CombatPhase
     if (!this.attacker.shouldCreateChainOnAttack) {
       return this.resolveCombat();
     }
-    if (!this.game.effectChainSystem.currentChain) {
-      await this.game.effectChainSystem.createChain({
-        initialPlayer: this.attacker.player.opponent,
-        onResolved: async () => this.resolveCombat()
-      });
 
-      await this.game.inputSystem.askForPlayerInput();
-    } else {
-      await this.resolveCombat();
-    }
-  }
-
-  async declareRetaliation() {
-    if (!this.target) {
-      throw new WrongCombatStepError();
-    }
-    if (
-      !this.attacker.canBeRetaliatedBy(this.target) ||
-      !this.target.canRetaliate(this.attacker)
-    ) {
-      throw new InvalidCounterattackError();
-    }
-    await this.target.exhaust();
-    this.isTargetRetaliating = true;
-    await this.game.effectChainSystem.currentChain?.addEffect(
-      {
-        id: nanoid(),
-        source: this.target,
-        type: EFFECT_TYPE.RETALIATION,
-        targets: [this.attacker],
-        handler: async () => {}
-      },
-      this.target.player
-    );
-  }
-
-  async declareBlocker(blocker: AttackTarget) {
-    if (this.getState() !== COMBAT_STEPS.BUILDING_CHAIN) {
-      throw new WrongCombatStepError();
-    }
-    this.blocker = blocker;
-    await blocker.exhaust();
-
-    await this.game.effectChainSystem.currentChain?.addEffect(
-      {
-        id: nanoid(),
-        source: blocker,
-        type: EFFECT_TYPE.DECLARE_BLOCKER,
-        targets: [this.attacker],
-        handler: async () => {}
-      },
-      blocker.player
-    );
+    await this.resolveCombat();
   }
 
   changeTarget(newTarget: AttackTarget) {

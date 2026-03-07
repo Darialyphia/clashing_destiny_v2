@@ -19,7 +19,6 @@ import {
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
-import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import { INTERACTION_STATES } from '../game/game.enums';
 
 export const GAME_TYPES = {
@@ -161,13 +160,6 @@ export class GameClient {
   }
 
   getActivePlayerId() {
-    if (
-      this.stateManager.state.effectChain &&
-      this.stateManager.state.effectChain.state === EFFECT_CHAIN_STATES.BUILDING
-    ) {
-      return this.stateManager.state.effectChain.player;
-    }
-
     return this.stateManager.state.interaction.ctx.player;
   }
 
@@ -379,16 +371,6 @@ export class GameClient {
     });
   }
 
-  chooseChainEffect(effectId: string) {
-    this.dispatch({
-      type: 'chooseChainEffects',
-      payload: {
-        playerId: this.playerId,
-        id: effectId
-      }
-    });
-  }
-
   answerQuestion(id: string) {
     this.dispatch({
       type: 'answerQuestion',
@@ -399,28 +381,9 @@ export class GameClient {
     });
   }
 
-  declareBlocker(blockerId: string) {
-    this.dispatch({
-      type: 'declareBlocker',
-      payload: {
-        blockerId,
-        playerId: this.playerId
-      }
-    });
-  }
-
   surrender() {
     this.dispatch({
       type: 'surrender',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
-  declareRetaliation() {
-    this.dispatch({
-      type: 'declareRetaliation',
       payload: {
         playerId: this.playerId
       }

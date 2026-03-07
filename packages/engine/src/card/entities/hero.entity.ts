@@ -180,10 +180,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   canAttack(target: AttackTarget) {
     return this.interceptors.canAttack.getValue(
-      !this._isExhausted &&
-        this.atk > 0 &&
-        target.canBeAttacked(this) &&
-        !this.game.effectChainSystem.currentChain,
+      !this._isExhausted && this.atk > 0 && target.canBeAttacked(this),
       { target }
     );
   }
@@ -400,7 +397,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return base;
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  async play() {
     if (this.level === 0) {
       await this.game.emit(
         CARD_EVENTS.CARD_BEFORE_PLAY,
@@ -421,17 +418,9 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.insertInChainOrExecute(
-      async () => {
-        await this.player.levelupHero(this);
-        await this.blueprint.onPlay(this.game, this, this);
-        await this.game.emit(
-          HERO_EVENTS.HERO_PLAYED,
-          new HeroPlayedEvent({ card: this })
-        );
-      },
-      { targets: [], onResolved }
-    );
+    await this.player.levelupHero(this);
+    await this.blueprint.onPlay(this.game, this, this);
+    await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {

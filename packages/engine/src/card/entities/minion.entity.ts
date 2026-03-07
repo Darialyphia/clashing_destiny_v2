@@ -193,11 +193,7 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    const base =
-      !this._isExhausted &&
-      this.atk > 0 &&
-      target.canBeAttacked(this) &&
-      !this.game.effectChainSystem.currentChain;
+    const base = !this._isExhausted && this.atk > 0 && target.canBeAttacked(this);
 
     return this.interceptors.canAttack.getValue(base, {
       target
@@ -413,13 +409,8 @@ export class MinionCard extends Card<
     );
   }
 
-  async playAt(onResolved?: () => MaybePromise<void>) {
-    await this.insertInChainOrExecute(
-      async () => {
-        await this.summon();
-      },
-      { targets: [], onResolved }
-    );
+  async playAt() {
+    await this.summon();
   }
 
   // immediately plays the minion regardless of current chain or interaction state
@@ -428,13 +419,13 @@ export class MinionCard extends Card<
     return this.resolve(() => this.summon());
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.playAt(onResolved);
+    await this.playAt();
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {

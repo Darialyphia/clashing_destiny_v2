@@ -11,10 +11,6 @@ import {
 import { PrideModifier } from '../../../../../modifier/modifiers/pride.modifier';
 import { IntimidateModifier } from '../../../../../modifier/modifiers/intimidate.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { EFFECT_TYPE } from '../../../../../game/game.enums';
-import type { Effect } from '../../../../../game/effect-chain';
-import { isArtifact, isMinion, isSigil } from '../../../../card-utils';
-import { SilencedModifier } from '../../../../../modifier/modifiers/silenced.modifier';
 
 export const hadranielGodsMajesty: MinionBlueprint = {
   id: 'hadraniel-gods-majesty',
@@ -25,9 +21,7 @@ export const hadranielGodsMajesty: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.DESTINY_DECK,
   name: "Hadraniel, God's Majesty",
   description: dedent`
-    @Pride 2@, @Intimidate 2@.
-
-    @On Enter@: Negate target ability activation from a Minion, Artifact or Sigil, then @Silence@ it.
+   TODO rework.
   `,
   faction: FACTIONS.ORDER,
   rarity: RARITIES.LEGENDARY,
@@ -64,28 +58,7 @@ export const hadranielGodsMajesty: MinionBlueprint = {
 
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
-        async handler() {
-          const isElligible = (effect: Effect) =>
-            effect.type === EFFECT_TYPE.ABILITY &&
-            (isMinion(effect.source) ||
-              isSigil(effect.source) ||
-              isArtifact(effect.source));
-          if (!game.effectChainSystem.currentChain) return;
-          const hasTarget =
-            await game.effectChainSystem.currentChain.stack.some(isElligible);
-          if (!hasTarget) return;
-
-          const effect = await game.interaction.chooseChainEffect({
-            player: card.player,
-            isElligible,
-            label: `Select an ability activation to negate.`
-          });
-
-          if (!effect) return;
-
-          game.effectChainSystem.currentChain.negateEffect(effect.id);
-          await effect.source.modifiers.add(new SilencedModifier(game, card));
-        }
+        async handler() {}
       })
     );
   },

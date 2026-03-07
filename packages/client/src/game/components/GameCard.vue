@@ -62,7 +62,6 @@ const ui = useGameUi();
 const state = useGameState();
 const { playerId } = useGameClient();
 const activePlayerId = computed(() => {
-  if (state.value.effectChain) return state.value.effectChain.player;
   return state.value.interaction.ctx.player;
 });
 

@@ -251,7 +251,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           turnCount: latestSnapshot.state.turnCount,
           currentPlayer: latestSnapshot.state.currentPlayer,
           players: latestSnapshot.state.players,
-          effectChain: latestSnapshot.state.effectChain,
           config: latestSnapshot.state.config
         }
       };
@@ -273,7 +272,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               turnCount: latestSnapshot.state.turnCount,
               currentPlayer: latestSnapshot.state.currentPlayer,
               players: latestSnapshot.state.players,
-              effectChain: latestSnapshot.state.effectChain,
               config: latestSnapshot.state.config
             }
           : this.serializer.diffSnapshotsWithPatches(
@@ -307,7 +305,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           turnCount: latestSnapshot.state.turnCount,
           currentPlayer: latestSnapshot.state.currentPlayer,
           players: latestSnapshot.state.players,
-          effectChain: latestSnapshot.state.effectChain,
           config: latestSnapshot.state.config
         }
       };
@@ -329,7 +326,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               turnCount: latestSnapshot.state.turnCount,
               currentPlayer: latestSnapshot.state.currentPlayer,
               players: latestSnapshot.state.players,
-              effectChain: latestSnapshot.state.effectChain,
               config: latestSnapshot.state.config
             }
           : this.serializer.diffSnapshotsWithPatches(
@@ -363,7 +359,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           turnCount: latestSnapshot.state.turnCount,
           currentPlayer: latestSnapshot.state.currentPlayer,
           players: latestSnapshot.state.players,
-          effectChain: latestSnapshot.state.effectChain,
           config: latestSnapshot.state.config
         }
       };
@@ -385,7 +380,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               turnCount: latestSnapshot.state.turnCount,
               currentPlayer: latestSnapshot.state.currentPlayer,
               players: latestSnapshot.state.players,
-              effectChain: latestSnapshot.state.effectChain,
               config: latestSnapshot.state.config
             }
           : this.serializer.diffSnapshotsWithPatches(

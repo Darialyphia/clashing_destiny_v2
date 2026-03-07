@@ -10,7 +10,6 @@ import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
-import { EFFECT_CHAIN_STATES } from '../../game/effect-chain';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -300,19 +299,6 @@ export class UiController {
 
     if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {
       return state.interaction.ctx.label;
-    }
-
-    if (state.interaction.state === INTERACTION_STATES.CHOOSING_CHAIN_EFFECT) {
-      return 'Choose an effect in the chain';
-    }
-
-    if (this.client.state.effectChain) {
-      if (this.client.state.effectChain.state === EFFECT_CHAIN_STATES.RESOLVING) {
-        return 'Resolving effect chain...';
-      }
-      return this.client.state.effectChain.player === this.client.playerId
-        ? 'Effect chain: Your turn'
-        : 'Effect chain: Opponent turn';
     }
 
     if (state.phase.state === GAME_PHASES.ATTACK) {

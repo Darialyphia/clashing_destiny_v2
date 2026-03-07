@@ -31,8 +31,6 @@ import {
   RearrangeCardsContext,
   type RearrangeCardBucket
 } from '../interactions/rearrange-cards.interaction';
-import { ChooseChainEffectContext } from '../interactions/choose-chain-effect';
-import type { Effect } from '../effect-chain';
 
 export type InteractionContext =
   | {
@@ -46,10 +44,6 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'choosing_cards'>;
       ctx: ChoosingCardsContext;
-    }
-  | {
-      state: BetterExtract<InteractionState, 'choosing_chain_effect'>;
-      ctx: ChooseChainEffectContext;
     }
   | {
       state: BetterExtract<InteractionState, 'playing_card'>;
@@ -82,10 +76,6 @@ export type SerializedInteractionContext =
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
     }
   | {
-      state: Extract<InteractionState, 'choosing_chain_effect'>;
-      ctx: ReturnType<ChooseChainEffectContext['serialize']>;
-    }
-  | {
       state: Extract<InteractionState, 'playing_card'>;
       ctx: ReturnType<PlayCardContext['serialize']>;
     }
@@ -109,7 +99,6 @@ export class GameInteractionSystem
     [INTERACTION_STATES.IDLE]: IdleContext,
     [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
-    [INTERACTION_STATES.CHOOSING_CHAIN_EFFECT]: ChooseChainEffectContext,
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
     [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
@@ -120,7 +109,6 @@ export class GameInteractionSystem
     | IdleContext
     | SelectingCardOnBoardContext
     | ChoosingCardsContext
-    | ChooseChainEffectContext
     | PlayCardContext
     | UseAbilityContext
     | AskQuestionContext
@@ -138,16 +126,6 @@ export class GameInteractionSystem
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
         INTERACTION_STATES.CHOOSING_CARDS
-      ),
-      stateTransition(
-        INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT,
-        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT
-      ),
-      stateTransition(
-        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CHAIN_EFFECT,
-        INTERACTION_STATES.IDLE
       ),
       stateTransition(
         INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
@@ -228,9 +206,7 @@ export class GameInteractionSystem
   shutdown() {}
 
   get interactivePlayer() {
-    return this.game.effectChainSystem.currentChain
-      ? this.game.effectChainSystem.currentChain.currentPlayer
-      : this.game.turnSystem.initiativePlayer;
+    return this.game.turnSystem.initiativePlayer;
   }
 
   isInteractive(player: Player) {
@@ -287,19 +263,6 @@ export class GameInteractionSystem
       options
     );
     return this.game.inputSystem.pause<T[]>();
-  }
-
-  async chooseChainEffect(options: {
-    player: Player;
-    isElligible: (effect: Effect) => boolean;
-    label: string;
-  }) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CHAIN_EFFECT].create(
-      this.game,
-      options
-    );
-    return this.game.inputSystem.pause<Effect>();
   }
 
   async rearrangeCards<

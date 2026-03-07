@@ -17,7 +17,6 @@ import { CardSystem } from '../card/card.system';
 import type { CardBlueprint } from '../card/card-blueprint';
 import { GameInteractionSystem } from './systems/game-interaction.system';
 import { BoardSystem } from '../board/board.system';
-import { EffectChainSystem } from './systems/effect-chain.system';
 import { GAME_PHASES } from './game.enums';
 import { TurnSystem } from './systems/turn.system';
 import { CARDS_DICTIONARY } from '../card/sets';
@@ -61,8 +60,6 @@ export class Game implements Serializable<SerializedGame> {
   readonly cardSystem = new CardSystem(this);
 
   readonly boardSystem = new BoardSystem(this);
-
-  readonly effectChainSystem = new EffectChainSystem(this);
 
   readonly turnSystem = new TurnSystem(this);
 
@@ -134,12 +131,6 @@ export class Game implements Serializable<SerializedGame> {
     // );
     // now = performance.now();
 
-    this.effectChainSystem.initialize();
-    // console.log(
-    //   `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    // );
-    // now = performance.now();
-
     await this.gamePhaseSystem.initialize();
     // console.log(
     //   `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
@@ -192,10 +183,6 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   get activePlayer() {
-    if (this.effectChainSystem.currentChain) {
-      return this.effectChainSystem.currentChain.currentPlayer;
-    }
-
     return this.interaction.getContext().ctx.player;
   }
 

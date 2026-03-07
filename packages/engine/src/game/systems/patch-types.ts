@@ -2,7 +2,6 @@ import type { Config } from '../../config';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedBoard } from '../../board/board-side.entity';
-import type { SerializedEffectChain } from '../effect-chain';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
@@ -73,7 +72,6 @@ export type PatchBasedSnapshotDiff = {
   turnCount: number;
   currentPlayer: string;
   players: string[];
-  effectChain: SerializedEffectChain | null;
   config: Partial<Config>;
 };
 

@@ -1,5 +1,4 @@
 import type { MaybePromise, Serializable } from '@game/shared';
-import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
@@ -7,7 +6,7 @@ import {
   type PreResponseTarget,
   type SerializedAbility
 } from '../card-blueprint';
-import { EFFECT_TYPE, GAME_PHASES, type GamePhase } from '../../game/game.enums';
+import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
@@ -68,10 +67,6 @@ export class Ability<T extends AbilityOwner>
   get canUse() {
     if (this._isSealed) return false;
 
-    if (this.game.effectChainSystem.currentChain && !this.canUseDuringChain) {
-      return false;
-    }
-
     const authorizedPhases: GamePhase[] = [
       GAME_PHASES.MAIN,
       GAME_PHASES.ATTACK,
@@ -110,36 +105,6 @@ export class Ability<T extends AbilityOwner>
     );
   }
 
-  protected async insertInChainOrExecute(
-    targets: PreResponseTarget[],
-    onResolved?: () => MaybePromise<void>
-  ) {
-    const effect = {
-      id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
-      type: EFFECT_TYPE.ABILITY,
-      source: this.card,
-      targets,
-      handler: async () => {
-        await this.resolveEffect();
-      }
-    };
-
-    if (this.speed === CARD_SPEED.BURST) {
-      await effect.handler();
-      return this.game.inputSystem.askForPlayerInput();
-    }
-
-    if (this.game.effectChainSystem.currentChain) {
-      await this.game.effectChainSystem.addEffect(effect, this.card.player);
-    } else {
-      await this.game.effectChainSystem.createChain({
-        initialPlayer: this.card.player,
-        initialEffect: effect,
-        onResolved
-      });
-    }
-  }
-
   async use(onResolved?: () => MaybePromise<void>) {
     const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
     this.card.abilityTargets.set(this.blueprint.id, targets);
@@ -148,7 +113,8 @@ export class Ability<T extends AbilityOwner>
       await this.card.exhaust();
     }
 
-    await this.insertInChainOrExecute(targets, onResolved);
+    await this.resolveEffect();
+    await onResolved?.();
   }
 
   seal() {

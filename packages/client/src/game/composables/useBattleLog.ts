@@ -123,49 +123,6 @@ export const useBattleLog = () => {
           });
         }
 
-        if (eventName === GAME_EVENTS.EFFECT_CHAIN_PLAYER_PASSED) {
-          tokens.push({
-            kind: 'player',
-            player: state.value.entities[event.player] as PlayerViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `passed chain priority`
-          });
-        }
-
-        if (eventName === GAME_EVENTS.EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED) {
-          tokens.push({
-            kind: 'text',
-            text: `Resolving Effect chain step ${event.index + 1}`
-          });
-        }
-
-        if (eventName === GAME_EVENTS.EFFECT_CHAIN_AFTER_EFFECT_RESOLVED) {
-          tokens.push({
-            kind: 'text',
-            text: `Effect chain step ${event.index + 1} has been resolved`
-          });
-        }
-
-        if (eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
-          tokens.push({
-            kind: 'player',
-            player: state.value.entities[event.player] as PlayerViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `added a ${event.effect.type} effect to the chain at step ${event.index + 1}`
-          });
-        }
-
-        if (eventName === GAME_EVENTS.EFFECT_CHAIN_AFTER_RESOLVED) {
-          tokens.push({
-            kind: 'text',
-            text: `The effect chain has been resolved`
-          });
-        }
-
         if (eventName === GAME_EVENTS.TURN_INITATIVE_CHANGE) {
           events.value.push([{ kind: 'separator' }]);
           tokens.push({

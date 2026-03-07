@@ -32,13 +32,9 @@ import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.in
 import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
 import { SurrenderInput } from './inputs/surrender.input';
-import { AnswerQuestionInput } from './inputs/answer-question.input';
-import { DeclareBlockerInput } from './inputs/declare-blocker.input';
-import { CommitResourceActionInput } from './inputs/commit-resource-action';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
-import { ChooseChainEffectsInput } from './inputs/choose-chain-effects.input';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
-import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
+import { AnswerQuestionInput } from './inputs/answer-question.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -65,13 +61,9 @@ const inputMap = validateinputMap({
   declareUseCardAbility: DeclareUseCardAbilityInput,
   commitUseAbility: CommitUseAbilityInput,
   cancelUseAbility: CancelUseAbilityInput,
-  declareBlocker: DeclareBlockerInput,
-  declareRetaliation: DeclareRetaliationInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,
-  commitResourceAction: CommitResourceActionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
-  chooseChainEffects: ChooseChainEffectsInput,
   interactionTimeout: InteractionTimeoutInput
 });
 

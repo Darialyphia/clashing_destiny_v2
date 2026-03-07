@@ -100,7 +100,7 @@ async function processMessage(options: SandboxWorkerEvent): Promise<void> {
     .with({ type: 'playCard' }, async ({ payload }) => {
       const player = game.playerSystem.getPlayerById(payload.playerId)!;
       const card = await player.generateCard(payload.blueprintId);
-      await card.play(() => {});
+      await card.play();
     })
     .exhaustive();
 }

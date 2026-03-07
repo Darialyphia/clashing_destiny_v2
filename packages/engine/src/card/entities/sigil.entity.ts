@@ -135,13 +135,8 @@ export class SigilCard extends Card<
     );
   }
 
-  async playAt(onResolved?: () => MaybePromise<void>) {
-    await this.insertInChainOrExecute(
-      async () => {
-        await this.summon();
-      },
-      { targets: [], onResolved }
-    );
+  async playAt() {
+    await this.summon();
   }
 
   // immediately plays the minion regardless of current chain or interaction state
@@ -150,12 +145,12 @@ export class SigilCard extends Card<
     return this.resolve(() => this.summon());
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    await this.playAt(onResolved);
+    await this.playAt();
   }
 
   get countdown() {

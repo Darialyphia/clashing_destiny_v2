@@ -89,29 +89,16 @@ export const testGameBuilder = () => {
 
           async declareAttack({
             attacker,
-            target,
-            blocker
+            target
           }: {
             attacker: MinionCard | HeroCard;
             target: MinionCard | HeroCard;
-            blocker?: MinionCard;
           }) {
             await game.gamePhaseSystem.startCombat();
             const { ctx } = game.gamePhaseSystem.getContext<GamePhasesDict['ATTACK']>();
 
             await ctx.declareAttacker(attacker);
             await ctx.declareAttackTarget(target);
-            if (blocker) {
-              await ctx.declareBlocker(blocker);
-            }
-          },
-
-          skipEffectChain: async () => {
-            if (!game.effectChainSystem.currentChain) return;
-
-            const player = game.effectChainSystem.currentChain.currentPlayer;
-            await game.effectChainSystem.pass(player);
-            await game.effectChainSystem.pass(player.opponent);
           },
 
           async pass() {

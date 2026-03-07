@@ -126,36 +126,28 @@ export class SpellCard extends Card<
     );
   }
 
-  async playWithTargets(
-    targets: PreResponseTarget[],
-    onResolved?: () => MaybePromise<void>
-  ) {
+  async playWithTargets(targets: PreResponseTarget[]) {
     this.preResponseTargets = targets;
 
-    await this.insertInChainOrExecute(
-      async () => {
-        await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
+    await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
 
-        await this.dispose();
+    await this.dispose();
 
-        this.preResponseTargets?.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        this.preResponseTargets = null;
-      },
-      { targets, onResolved }
-    );
+    this.preResponseTargets?.forEach(target => {
+      if (target instanceof Card) {
+        target.clearTargetedBy({ type: 'card', card: this });
+      }
+    });
+    this.preResponseTargets = null;
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
     const targets = await this.blueprint.getPreResponseTargets(this.game, this);
-    await this.playWithTargets(targets, onResolved);
+    await this.playWithTargets(targets);
   }
 
   serialize(): SerializedSpellCard {

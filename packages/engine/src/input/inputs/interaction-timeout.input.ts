@@ -15,19 +15,12 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
     const interactionCtx = this.game.interaction.getContext();
     await match(interactionCtx)
       .with({ state: INTERACTION_STATES.IDLE }, async () => {
-        if (this.game.effectChainSystem.currentChain) {
-          await this.game.effectChainSystem.pass(this.player);
-        } else {
-          await this.game.turnSystem.pass(this.player);
-        }
+        await this.game.turnSystem.pass(this.player);
       })
       .with({ state: INTERACTION_STATES.ASK_QUESTION }, async ctx => {
         await ctx.ctx.commit(this.player, null);
       })
       .with({ state: INTERACTION_STATES.CHOOSING_CARDS }, async ctx => {
-        await ctx.ctx.commit(this.player, null);
-      })
-      .with({ state: INTERACTION_STATES.CHOOSING_CHAIN_EFFECT }, async ctx => {
         await ctx.ctx.commit(this.player, null);
       })
       .with({ state: INTERACTION_STATES.PLAYING_CARD }, async ctx => {

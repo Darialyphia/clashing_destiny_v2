@@ -2,10 +2,10 @@
 import { useGameState, useMyPlayer } from '../composables/useGameClient';
 import ActionsButtons from './ActionsButtons.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
-import EffectChain from './EffectChain.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import ExplainerMessage from './ExplainerMessage.vue';
 
 const state = useGameState();
 const myPlayer = useMyPlayer();
@@ -15,7 +15,7 @@ useGameKeyboardControls();
 
 <template>
   <div class="bottom-bar">
-    <EffectChain />
+    <ExplainerMessage class="ml-auto" />
     <Transition>
       <div
         class="card-being-played"
