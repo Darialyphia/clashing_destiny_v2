@@ -157,7 +157,6 @@ const classes = computed(() => {
           kind: card.kind,
           level: card.level,
           rarity: card.rarity,
-          speed: card.speed,
           manaCost: card.manaCost,
           baseManaCost: card.baseManaCost,
           destinyCost: card.destinyCost,
@@ -171,7 +170,7 @@ const classes = computed(() => {
             .filter(ability => !ability.isHiddenOnCard)
             .map(
               a =>
-                `@[${a.speed}]@${a.shouldExhaust ? ' @[exhaust]@' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
+                `${a.shouldExhaust ? '@[exhaust]@ ' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
             ),
           faction: FACTIONS[card.faction]
         }"

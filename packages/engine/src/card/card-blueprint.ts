@@ -8,7 +8,6 @@ import type {
   ArtifactKind,
   Tag,
   CARD_DECK_SOURCES,
-  CardSpeed,
   Faction,
   CardTint
 } from './card.enums';
@@ -18,7 +17,6 @@ import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
-import type { SigilCard } from './entities/sigil.entity';
 
 export type CardSourceBlueprint =
   | {
@@ -80,7 +78,6 @@ export type AbilityBlueprint<
   description: string;
   dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
-  speed: CardSpeed;
   isHiddenOnCard?: boolean;
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
@@ -97,7 +94,6 @@ export type SerializedAbility = {
   name: string;
   manaCost: number;
   description: string;
-  speed: CardSpeed;
   targets: SerializedPreResponseTarget[] | null;
   isHiddenOnCard: boolean;
   shouldExhaust: boolean;
@@ -162,18 +158,8 @@ export type ArtifactBlueprint = CardBlueprintBase & {
       }
   );
 
-export type SigilBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.SIGIL>;
-  onInit: (game: Game, card: SigilCard) => Promise<void>;
-  canPlay: (game: Game, card: SigilCard) => boolean;
-  onPlay: (game: Game, card: SigilCard) => Promise<void>;
-  maxCountdown: number;
-  abilities: AbilityBlueprint<SigilCard, PreResponseTarget>[];
-};
-
 export type CardBlueprint =
   | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
-  | HeroBlueprint
-  | SigilBlueprint;
+  | HeroBlueprint;

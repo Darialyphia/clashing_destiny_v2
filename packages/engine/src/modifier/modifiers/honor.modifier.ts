@@ -19,18 +19,7 @@ export class HonorModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
       description: KEYWORDS.HONOR.description,
       icon: 'keyword-honor',
       isUnique: true,
-      mixins: [
-        new KeywordModifierMixin(game, KEYWORDS.HONOR),
-        new UnitInterceptorModifierMixin(game, {
-          key: 'canBeBlocked',
-          interceptor: () => false
-        }),
-        new UnitInterceptorModifierMixin(game, {
-          key: 'canBeDefended',
-          interceptor: () => false
-        }),
-        ...(options.mixins || [])
-      ]
+      mixins: [new KeywordModifierMixin(game, KEYWORDS.HONOR), ...(options.mixins || [])]
     });
   }
 }

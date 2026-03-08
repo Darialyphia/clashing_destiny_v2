@@ -24,6 +24,7 @@ import {
   ArtifactDurabilityEvent,
   ArtifactEquipedEvent
 } from '../events/artifact.events';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -37,6 +38,7 @@ export type SerializedArtifactCard = SerializedCard & {
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
+  canPlayDuringCombatPhase: Interceptable<boolean, ArtifactCard>;
   canUseAbility: Interceptable<
     boolean,
     { card: ArtifactCard; ability: Ability<ArtifactCard> }
@@ -63,6 +65,7 @@ export class ArtifactCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
+        canPlayDuringCombatPhase: new Interceptable(),
         canUseAbility: new Interceptable(),
         durability: new Interceptable(),
         attackBonus: new Interceptable()
@@ -102,7 +105,7 @@ export class ArtifactCard extends Card<
 
   async checkDurability() {
     if (this.remainingDurability <= 0) {
-      await this.player.artifactManager.unequip(this);
+      await this.player.boardSide.remove(this);
     }
   }
 
@@ -180,9 +183,22 @@ export class ArtifactCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
+  get canPlayDuringCombatPhase(): boolean {
+    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
+  }
+
+  get isCorrectPhaseToPlay() {
+    const validPhases: string[] = this.canPlayDuringCombatPhase
+      ? [GAME_PHASES.MAIN, GAME_PHASES.COMBAT]
+      : [GAME_PHASES.MAIN];
+    return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase &&
+        this.isCorrectPhaseToPlay &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -193,7 +209,7 @@ export class ArtifactCard extends Card<
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.player.artifactManager.equip(this);
+    await this.player.boardSide.equipArtifact(this);
     this.lostDurability = 0;
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(

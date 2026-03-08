@@ -1,8 +1,7 @@
 import { BoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { type Game } from '../game/game';
-import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
-import { ArtifactManagerComponent } from './components/artifact-manager.component';
+import { assert, type MaybePromise, type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
   NotEnoughCardsInDestinyZoneError,
@@ -16,7 +15,6 @@ import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 import { CARD_KINDS, FACTIONS } from '../card/card.enums';
-import { match } from 'ts-pattern';
 import { UnpreventableDamage } from '../utils/damage';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
@@ -78,8 +76,6 @@ export class Player
 
   readonly cardManager: CardManagerComponent;
 
-  readonly artifactManager: ArtifactManagerComponent;
-
   readonly cardTracker: CardTrackerComponent;
 
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
@@ -105,7 +101,6 @@ export class Player
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true
     });
-    this.artifactManager = new ArtifactManagerComponent(game, this);
   }
 
   async init() {
@@ -242,8 +237,16 @@ export class Player
     return this.opponent.hero;
   }
 
+  get minionsInBase() {
+    return this.boardSide.base.minions;
+  }
+
+  get minionsInBattleField() {
+    return this.boardSide.battlefield.minions;
+  }
+
   get minions() {
-    return this.boardSide.minions;
+    return [...this.minionsInBase, ...this.minionsInBattleField];
   }
 
   get allAllies() {

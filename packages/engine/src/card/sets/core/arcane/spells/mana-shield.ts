@@ -52,7 +52,6 @@ export const manaShield: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: singleAllyTargetRules.canPlay,
   getPreResponseTargets: (game, card) =>

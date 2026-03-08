@@ -44,7 +44,6 @@ export const callToHeaven: SpellBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay() {
     return true;

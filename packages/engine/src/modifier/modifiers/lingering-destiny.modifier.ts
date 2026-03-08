@@ -31,7 +31,6 @@ export class LingeringDestinyModifier<T extends AbilityOwner> extends Modifier<T
           getPreResponseTargets: () => Promise.resolve([]),
           manaCost: 0,
           shouldExhaust: false,
-          speed: CARD_SPEED.BURST,
           isHiddenOnCard: true,
           onResolve: async (game, card) => {
             await card.sendToBanishPile();

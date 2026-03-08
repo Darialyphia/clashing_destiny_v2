@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import type { ArtifactBlueprint } from '../../../../card-blueprint';
 import {
-  CARD_SPEED,
   CARD_KINDS,
   CARD_DECK_SOURCES,
   CARD_SETS,
@@ -47,7 +46,6 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
   },
   destinyCost: 1,
   durability: 1,
-  speed: CARD_SPEED.SLOW,
   abilities: [
     {
       id: 'amulet-of-remembrance-ability',
@@ -62,7 +60,7 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
       },
       label: 'Draw Card',
       canUse: (game, card) =>
-        card.location === CARD_LOCATIONS.BOARD &&
+        card.location === CARD_LOCATIONS.BASE &&
         card.player.cardTracker.cardsDestroyedThisGameTurn.some(
           c =>
             c.card.isAlly(card) &&
@@ -73,7 +71,6 @@ export const amuletOfRemembrance: ArtifactBlueprint = {
       manaCost: 1,
       durabilityCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
         const choices = card.player.cardTracker.cardsDestroyedThisGameTurn
           .map(c => c.card)

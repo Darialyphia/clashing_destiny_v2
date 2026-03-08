@@ -44,7 +44,6 @@ export const wingOfSimurgh: SpellBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

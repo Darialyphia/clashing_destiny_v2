@@ -20,7 +20,6 @@ import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
-import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
@@ -31,7 +30,6 @@ export type EntityDictionary = Record<
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedSigilCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility
@@ -43,7 +41,6 @@ export type EntityDiffDictionary = Record<
   | Partial<SerializedSpellCard>
   | Partial<SerializedArtifactCard>
   | Partial<SerializedHeroCard>
-  | Partial<SerializedSigilCard>
   | Partial<SerializedPlayer>
   | Partial<SerializedModifier>
   | Partial<SerializedAbility>
@@ -246,7 +243,8 @@ export class GameSerializer {
       if (card.player.id === playerId) return;
       if (
         card.location === CARD_LOCATIONS.BANISH_PILE ||
-        card.location === CARD_LOCATIONS.BOARD ||
+        card.location === CARD_LOCATIONS.BASE ||
+        card.location === CARD_LOCATIONS.BATTLEFIELD ||
         card.location === CARD_LOCATIONS.DISCARD_PILE
       ) {
         return;

@@ -53,7 +53,6 @@ export const thirstForKnowledge: SpellBlueprint = {
     }
   },
   manaCost: 5,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

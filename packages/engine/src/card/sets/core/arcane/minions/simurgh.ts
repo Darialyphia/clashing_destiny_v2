@@ -4,7 +4,6 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
-  CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
@@ -46,7 +45,6 @@ export const simurgh: MinionBlueprint = {
     }
   },
   manaCost: 6,
-  speed: CARD_SPEED.SLOW,
   atk: 3,
   maxHp: 4,
   canPlay: () => true,

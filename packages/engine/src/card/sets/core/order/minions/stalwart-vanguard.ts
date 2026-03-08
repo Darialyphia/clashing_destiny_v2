@@ -42,7 +42,6 @@ export const stalwartVanguard: MinionBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.SLOW,
   atk: 0,
   maxHp: 5,
   canPlay: () => true,

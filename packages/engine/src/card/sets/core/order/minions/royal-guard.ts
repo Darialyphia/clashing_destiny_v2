@@ -43,7 +43,6 @@ export const royalGuard: MinionBlueprint = {
     }
   },
   manaCost: 5,
-  speed: CARD_SPEED.SLOW,
   atk: 3,
   maxHp: 5,
   canPlay: () => true,

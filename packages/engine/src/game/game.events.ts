@@ -19,7 +19,6 @@ import { PLAYER_EVENTS } from '../player/player.enums';
 import type { PlayerEventMap } from '../player/player.events';
 import { ABILITY_EVENTS, type AbilityEventMap } from '../card/events/ability.events';
 import type { TurnEventMap } from './systems/turn.system';
-import { SIGIL_EVENTS, type SigilEventMap } from '../card/events/sigil.events';
 import type { Player } from '../player/player.entity';
 
 import { MINION_EVENTS, type MinionCardEventMap } from '../card/events/minion.events';
@@ -142,7 +141,6 @@ export type GameEventMap = Prettify<
     MinionCardEventMap &
     HeroCardEventMap &
     ArtifactCardEventMap &
-    SigilEventMap &
     PlayerEventMap &
     AbilityEventMap &
     TurnEventMap
@@ -170,7 +168,6 @@ export const GAME_EVENTS = {
   ...ARTIFACT_EVENTS,
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
-  ...SIGIL_EVENTS,
   ...TURN_EVENTS
 } as const satisfies Record<string, GameEventName>;
 

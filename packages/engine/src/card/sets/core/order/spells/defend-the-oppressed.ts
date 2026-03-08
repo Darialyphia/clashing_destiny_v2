@@ -58,7 +58,6 @@ export const defendTheOppressed: SpellBlueprint = {
     }
   },
   destinyCost: 3,
-  speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay() {
     return true;

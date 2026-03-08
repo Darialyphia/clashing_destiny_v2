@@ -60,7 +60,6 @@ export const protectTheHolySpire: SpellBlueprint = {
     }
   },
   manaCost: 4,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay() {
     return true;
@@ -72,18 +71,6 @@ export const protectTheHolySpire: SpellBlueprint = {
     await card.modifiers.add(new LevelBonusModifier(game, card, 3));
   },
   async onPlay(game, card) {
-    const lvlMod = card.modifiers.get(LevelBonusModifier);
-    await card.modifiers.add(
-      new Modifier<SpellCard>('protect-the-holy-spire-speed-bonus', game, card, {
-        mixins: [
-          new CardInterceptorModifierMixin(game, {
-            key: 'speed',
-            interceptor: value => (lvlMod?.isActive ? CARD_SPEED.BURST : value)
-          })
-        ]
-      })
-    );
-
     const candidates = shuffleArray(
       game.cardSystem.cards.filter(
         c =>

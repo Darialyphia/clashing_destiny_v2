@@ -52,7 +52,6 @@ export const galacticExplosion: SpellBlueprint = {
     }
   },
   manaCost: 10,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {
     return singleEnemyTargetRules.canPlay(game, card);

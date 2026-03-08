@@ -64,10 +64,6 @@ export class AbilityViewModel {
     return this.data.shouldExhaust;
   }
 
-  get speed() {
-    return this.data.speed;
-  }
-
   get canUse() {
     return this.data.canUse;
   }

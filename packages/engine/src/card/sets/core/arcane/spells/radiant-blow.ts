@@ -47,7 +47,6 @@ export const radiantBlow: SpellBlueprint = {
     }
   },
   destinyCost: 1,
-  speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

@@ -47,7 +47,6 @@ export const wizardsInsight: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

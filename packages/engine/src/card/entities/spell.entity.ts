@@ -1,4 +1,3 @@
-import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 
 import type { Player } from '../../player/player.entity';
@@ -21,6 +20,7 @@ import {
 import { CARD_EVENTS } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
@@ -30,6 +30,7 @@ export type SerializedSpellCard = SerializedCard & {
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
+  canPlayDuringCombatPhase: Interceptable<boolean, SpellCard>;
   canUseAbility: Interceptable<boolean, { card: SpellCard; ability: Ability<SpellCard> }>;
   canBeTargeted: Interceptable<boolean, SpellCard>;
 };
@@ -52,6 +53,7 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
+        canPlayDuringCombatPhase: new Interceptable(),
         canBeTargeted: new Interceptable(),
         canUseAbility: new Interceptable()
       },
@@ -119,9 +121,22 @@ export class SpellCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
+  get canPlayDuringCombatPhase(): boolean {
+    return this.interceptors.canPlayDuringCombatPhase.getValue(true, this);
+  }
+
+  get isCorrectPhaseToPlay() {
+    const validPhases: string[] = this.canPlayDuringCombatPhase
+      ? [GAME_PHASES.MAIN, GAME_PHASES.COMBAT]
+      : [GAME_PHASES.MAIN];
+    return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase &&
+        this.blueprint.canPlay(this.game, this) &&
+        this.isCorrectPhaseToPlay,
       this
     );
   }

@@ -46,7 +46,6 @@ export const replenishEnergy: SpellBlueprint = {
     }
   },
   destinyCost: 1,
-  speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay: (game, card) => card.player.hero.modifiers.has(EmpowerModifier),
   getPreResponseTargets: () => Promise.resolve([]),

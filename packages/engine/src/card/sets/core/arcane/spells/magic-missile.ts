@@ -42,7 +42,6 @@ export const magicMissile: SpellBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
     return singleEnemyTargetRules.canPlay(game, card);

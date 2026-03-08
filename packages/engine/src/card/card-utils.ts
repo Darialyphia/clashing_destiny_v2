@@ -2,12 +2,11 @@ import type { Game } from '../game/game';
 import { UntilEndOfTurnModifierMixin } from '../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import type { Player } from '../player/player.entity';
-import { CARD_KINDS, CARD_LOCATIONS, type CardSpeed } from './card.enums';
+import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
-import type { SigilCard } from './entities/sigil.entity';
 import type { SpellCard } from './entities/spell.entity';
 
 export const isHero = (card: AnyCard): card is HeroCard => {
@@ -16,10 +15,6 @@ export const isHero = (card: AnyCard): card is HeroCard => {
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
   return card.kind === CARD_KINDS.MINION;
-};
-
-export const isSigil = (card: AnyCard): card is SigilCard => {
-  return card.kind === CARD_KINDS.SIGIL;
 };
 
 export const isSpell = (card: AnyCard): card is SpellCard => {
@@ -440,7 +435,6 @@ export const cardsInEnemyDiscardPile = {
 export const equipWeapon = (options: {
   durabilityCost: number;
   manaCost: number;
-  speed: CardSpeed;
   modifierType: string;
   onResolve?: (game: Game, card: ArtifactCard) => Promise<void>;
 }) => {
@@ -448,11 +442,10 @@ export const equipWeapon = (options: {
     id: 'equip-weapon-ability',
     description: '@Equip Weapon@',
     label: 'Equip Weapon',
-    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BOARD,
+    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BASE,
     getPreResponseTargets: () => Promise.resolve([]),
     manaCost: options.manaCost,
     shouldExhaust: true,
-    speed: options.speed,
     durabilityCost: options.durabilityCost,
     onResolve: async (game: Game, card: ArtifactCard) => {
       await card.player.hero.modifiers.add(

@@ -49,7 +49,6 @@ export const dawnAssault: SpellBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

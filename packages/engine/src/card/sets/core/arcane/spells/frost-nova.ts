@@ -43,7 +43,6 @@ export const frostNova: SpellBlueprint = {
     }
   },
   destinyCost: 2,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: (game, card) => card.player.hero.modifiers.has(EmpowerModifier),
   getPreResponseTargets: () => Promise.resolve([]),

@@ -53,7 +53,6 @@ export const haroldLv2: HeroBlueprint = {
   destinyCost: 3,
   level: 2,
   lineage: 'harold',
-  speed: CARD_SPEED.SLOW,
   atk: 0,
   maxHp: 16,
   canPlay: () => true,
@@ -66,7 +65,7 @@ export const haroldLv2: HeroBlueprint = {
       canUse(game, card) {
         return (
           singleMinionTargetRules.canPlay(game, card) &&
-          card.location === CARD_LOCATIONS.BOARD
+          card.location === CARD_LOCATIONS.BATTLEFIELD
         );
       },
       getPreResponseTargets(game, card) {
@@ -84,11 +83,10 @@ export const haroldLv2: HeroBlueprint = {
       },
       manaCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.BURST,
       isHiddenOnCard: false,
       async onResolve(game, card, targets) {
         for (const target of targets) {
-          if (target.location !== CARD_LOCATIONS.BOARD) continue;
+          if (target.location !== CARD_LOCATIONS.BATTLEFIELD) continue;
 
           await target.modifiers.add(
             new Modifier('harold-lv2-on-death', game, card, {

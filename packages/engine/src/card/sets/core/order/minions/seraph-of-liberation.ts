@@ -51,7 +51,6 @@ export const seraphOfLiberation: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 3,
   canPlay: () => true,

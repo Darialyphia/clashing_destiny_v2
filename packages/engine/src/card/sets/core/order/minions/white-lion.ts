@@ -48,7 +48,6 @@ export const whiteLion: MinionBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 4,
   canPlay: () => true,

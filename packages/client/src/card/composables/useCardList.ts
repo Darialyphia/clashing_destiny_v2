@@ -5,7 +5,6 @@ import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
   type CardKind,
-  type CardSpeed,
   type Faction
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
@@ -32,10 +31,6 @@ export type CardListContext = {
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
-
-  hasSpeedFilter(speed: CardSpeed): boolean;
-  toggleSpeedFilter(speed: CardSpeed): void;
-  clearSpeedFilter(): void;
 
   hasFactionFilter(faction: Faction): boolean;
   toggleFactionFilter(faction: Faction): void;
@@ -64,7 +59,6 @@ export const provideCardList = () => {
   };
 
   const kindFilter = ref(new Set<CardKind>());
-  const speedFilter = ref(new Set<CardSpeed>());
   const factionFilter = ref(new Set<Faction>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const destinyCostFilter = ref<{ min: number; max: number } | null>(null);
@@ -103,10 +97,6 @@ export const provideCardList = () => {
         };
       })
       .filter(({ card }) => {
-        if (speedFilter.value.size > 0 && !speedFilter.value.has(card.speed)) {
-          return false;
-        }
-
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
           return false;
         }
@@ -231,20 +221,6 @@ export const provideCardList = () => {
     },
     clearKindFilter: () => {
       kindFilter.value.clear();
-    },
-
-    hasSpeedFilter(speed: CardSpeed) {
-      return speedFilter.value.has(speed);
-    },
-    toggleSpeedFilter(speed: CardSpeed) {
-      if (speedFilter.value.has(speed)) {
-        speedFilter.value.delete(speed);
-      } else {
-        speedFilter.value.add(speed);
-      }
-    },
-    clearSpeedFilter: () => {
-      speedFilter.value.clear();
     },
 
     hasFactionFilter(faction: Faction) {

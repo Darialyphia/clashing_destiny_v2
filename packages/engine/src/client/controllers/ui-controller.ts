@@ -301,7 +301,7 @@ export class UiController {
       return state.interaction.ctx.label;
     }
 
-    if (state.phase.state === GAME_PHASES.ATTACK) {
+    if (state.phase.state === GAME_PHASES.COMBAT) {
       if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET) {
         return 'Declare attack target';
       }

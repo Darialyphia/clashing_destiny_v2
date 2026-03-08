@@ -51,7 +51,6 @@ export const comet: SpellBlueprint = {
     }
   },
   manaCost: 6,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
   async getPreResponseTargets() {

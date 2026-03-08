@@ -316,7 +316,7 @@ export class CombatPhase
   private async end() {
     this.game.interaction.onInteractionEnd();
     // phase can be different if combat was aborted early
-    if (this.game.gamePhaseSystem.getState() === GAME_PHASES.ATTACK) {
+    if (this.game.gamePhaseSystem.getState() === GAME_PHASES.COMBAT) {
       await this.game.gamePhaseSystem.sendTransition(
         GAME_PHASE_TRANSITIONS.FINISH_ATTACK
       );

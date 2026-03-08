@@ -1,21 +1,19 @@
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
-  CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
 import type { CardAfterPlayEvent } from '../../../../card.events';
 import type { AnyCard } from '../../../../entities/card.entity';
-import type { MinionCard } from '../../../../entities/minion.entity';
+import { MinionCard } from '../../../../entities/minion.entity';
 
 export const arcaneConduit: MinionBlueprint = {
   id: 'arcane-conduit',
@@ -50,7 +48,6 @@ export const arcaneConduit: MinionBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 3,
   canPlay: () => true,
@@ -76,9 +73,8 @@ export const arcaneConduit: MinionBlueprint = {
     };
 
     await card.modifiers.add(
-      new Modifier<MinionCard>('arcane-conduit-spellwatch', game, card, {
+      new WhileOnBoardModifier<MinionCard>('arcane-conduit-spellwatch', game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => card.location === 'board'),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             handler: onCardPlayed

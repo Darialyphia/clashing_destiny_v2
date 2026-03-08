@@ -49,7 +49,6 @@ export const blitzTactics: SpellBlueprint = {
     }
   },
   destinyCost: 3,
-  speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay() {
     return true;
@@ -65,28 +64,6 @@ export const blitzTactics: SpellBlueprint = {
     );
   },
   async onPlay(game, card) {
-    await card.player.modifiers.add(
-      new Modifier('blitz-tactics-aura', game, card, {
-        mixins: [
-          new AuraModifierMixin(game, card, {
-            isElligible(candidate) {
-              return candidate.player.equals(card.player) && !candidate.equals(card);
-            },
-            getModifiers() {
-              return [
-                new Modifier('blitz-tactics-speed-modifier', game, card, {
-                  mixins: [
-                    new CardInterceptorModifierMixin(game, {
-                      key: 'speed',
-                      interceptor: () => CARD_SPEED.BURST
-                    })
-                  ]
-                })
-              ];
-            }
-          })
-        ]
-      })
-    );
+    // Speed system has been removed - this spell now just provides the loyalty cost
   }
 };

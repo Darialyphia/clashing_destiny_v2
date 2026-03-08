@@ -57,7 +57,6 @@ export const bookOfKnowledge: ArtifactBlueprint = {
   },
   destinyCost: 1,
   durability: 1,
-  speed: CARD_SPEED.SLOW,
   abilities: [
     {
       id: 'book-of-knowledge-ability',
@@ -69,12 +68,11 @@ export const bookOfKnowledge: ArtifactBlueprint = {
       @[lvl] 3 bonus@: choose 2.
         `,
       label: 'Choose an Effect',
-      canUse: (game, card) => card.location === CARD_LOCATIONS.BOARD,
+      canUse: (game, card) => card.location === CARD_LOCATIONS.BASE,
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 0,
       durabilityCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
         const levelMod = card.modifiers.get(LevelBonusModifier);
 

@@ -47,7 +47,6 @@ export const reviseTheStrategy: SpellBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

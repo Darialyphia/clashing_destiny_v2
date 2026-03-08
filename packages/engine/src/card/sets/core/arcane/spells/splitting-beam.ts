@@ -47,7 +47,6 @@ export const splittingBeam: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
     return multipleEnemyTargetRules.canPlay(game, card, 2);

@@ -6,10 +6,8 @@ import type { CardBlueprint } from '../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_EVENTS,
-  CARD_SPEED,
   type CardDeckSource,
   type CardKind,
-  type CardSpeed,
   type Rarity,
   CARD_LOCATIONS,
   type CardLocation,
@@ -66,7 +64,6 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   canBeUsedAsDestinyCost: new Interceptable(),
   canBeUsedAsManaCost: new Interceptable(),
   canBeRecollected: new Interceptable(),
-  speed: new Interceptable(),
   deckSource: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
   shouldSwitchInitiativeAfterPlay: new Interceptable(),
@@ -88,7 +85,6 @@ export type SerializedCard = {
   canPlay: boolean;
   source: CardDeckSource;
   location: CardLocation | null;
-  speed: CardSpeed;
   modifiers: string[];
   canBeUsedAsManaCost: boolean;
   manaCost: number | null;
@@ -365,10 +361,10 @@ export abstract class Card<
     }
     this.interceptors.player.clear();
     match(this.location)
-      .with('hand', () => {
+      .with(CARD_LOCATIONS.HAND, () => {
         this.player.cardManager.removeFromHand(this);
       })
-      .with('discardPile', () => {
+      .with(CARD_LOCATIONS.DISCARD_PILE, () => {
         if (!isMainDeckCard(this)) {
           throw new IllegalGameStateError(
             `Cannot remove card ${this.id} from discard pile when it is not a main deck card.`
@@ -376,10 +372,10 @@ export abstract class Card<
         }
         this.player.cardManager.removeFromDiscardPile(this);
       })
-      .with('banishPile', () => {
+      .with(CARD_LOCATIONS.BANISH_PILE, () => {
         this.player.cardManager.removeFromBanishPile(this);
       })
-      .with('mainDeck', () => {
+      .with(CARD_LOCATIONS.MAIN_DECK, () => {
         if (!isMainDeckCard(this)) {
           throw new IllegalGameStateError(
             `Cannot remove card ${this.id} from main deck when it is not a main deck card.`
@@ -387,10 +383,10 @@ export abstract class Card<
         }
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with('destinyDeck', () => {
+      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
         this.player.cardManager.removeFromDestinyDeck(this);
       })
-      .with('destinyZone', () => {
+      .with(CARD_LOCATIONS.DESTINY_ZONE, () => {
         if (!isMainDeckCard(this)) {
           throw new IllegalGameStateError(
             `Cannot remove card ${this.id} from destiny zone pile when it is not a main deck card.`
@@ -398,7 +394,7 @@ export abstract class Card<
         }
         this.player.cardManager.removeFromDestinyZone(this);
       })
-      .with('board', () => {
+      .with(CARD_LOCATIONS.BASE, CARD_LOCATIONS.BATTLEFIELD, () => {
         this.player.boardSide.remove(this);
       })
       .exhaustive();
@@ -514,23 +510,7 @@ export abstract class Card<
     );
   }
 
-  get isIncombatPhaseBeforeChain() {
-    const gameStateCtx = this.game.gamePhaseSystem.getContext();
-    if (
-      gameStateCtx.state === GAME_PHASES.ATTACK &&
-      gameStateCtx.ctx.step !== COMBAT_STEPS.BUILDING_CHAIN
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
   protected get canPlayBase() {
-    if (this.isIncombatPhaseBeforeChain) {
-      return false;
-    }
-
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
@@ -540,10 +520,6 @@ export abstract class Card<
   get unplayableReason(): string | null {
     if (this.canPlay()) {
       return null;
-    }
-
-    if (this.isIncombatPhaseBeforeChain) {
-      return 'You need to declare the attack target before playing cards.';
     }
 
     return match(this.deckSource)

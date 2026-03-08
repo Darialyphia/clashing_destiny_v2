@@ -49,7 +49,6 @@ export const haroldLv3: HeroBlueprint = {
   destinyCost: 4,
   level: 3,
   lineage: 'harold',
-  speed: CARD_SPEED.SLOW,
   atk: 0,
   maxHp: 18,
   canPlay: () => true,

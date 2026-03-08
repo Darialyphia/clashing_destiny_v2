@@ -35,8 +35,7 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
-  ARTIFACT: 'ARTIFACT',
-  SIGIL: 'SIGIL'
+  ARTIFACT: 'ARTIFACT'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -185,6 +184,7 @@ export const CARD_LOCATIONS = {
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   DESTINY_ZONE: 'destinyZone',
-  BOARD: 'board'
+  BASE: 'base',
+  BATTLEFIELD: 'battlefield'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;

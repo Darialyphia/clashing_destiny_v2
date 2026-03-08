@@ -2,7 +2,6 @@
 import {
   RARITIES,
   type CardKind,
-  type CardSpeed,
   type CardTint,
   type Faction,
   type Rarity
@@ -72,7 +71,6 @@ const {
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
-    speed: CardSpeed;
     tags?: string[];
     faction: Faction;
   };
@@ -93,10 +91,6 @@ const rarityBg = computed(() => {
   }
 
   return assets[`ui/card/rarity-${card.rarity}`].css;
-});
-
-const speedBg = computed(() => {
-  return assets[`ui/card/speed-${card.speed.toLowerCase()}`].css;
 });
 
 const artFrameImage = computed(() => {
@@ -330,9 +324,7 @@ const kindBg = computed(() => {
 
         <div class="description-frame">
           <div class="kind" />
-          <div class="speed">
-            {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
-          </div>
+
           <div v-if="showText" class="attributes">
             {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
             <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
@@ -796,24 +788,6 @@ const kindBg = computed(() => {
   background-size: cover;
   top: calc(0.5px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
-}
-
-.speed {
-  background: v-bind(speedBg);
-  background-size: cover;
-  position: absolute;
-  top: calc(0.5px * var(--pixel-scale));
-  right: calc(3px * var(--pixel-scale));
-  width: calc(40px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 7px);
-  text-align: right;
-  padding-top: calc(2.5px * var(--pixel-scale));
-  padding-right: calc(17px * var(--pixel-scale));
-  font-family: 'Lato', sans-serif;
-  + * {
-    margin-top: calc(2px * var(--pixel-scale));
-  }
 }
 
 .attributes {

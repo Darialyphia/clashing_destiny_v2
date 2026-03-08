@@ -5,7 +5,6 @@ import {
   CARD_KINDS,
   CARD_LOCATIONS,
   CARD_SETS,
-  CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
@@ -45,7 +44,6 @@ export const jeweller: MinionBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.SLOW,
   atk: 0,
   maxHp: 3,
   canPlay: () => true,
@@ -58,7 +56,6 @@ export const jeweller: MinionBlueprint = {
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 0,
       shouldExhaust: true,
-      speed: CARD_SPEED.BURST,
       async onResolve(game, card) {
         const spark = await card.player.generateCard(manaSpark.id);
         await spark.addToHand();
@@ -72,9 +69,12 @@ export const jeweller: MinionBlueprint = {
       getPreResponseTargets: () => Promise.resolve([]),
       manaCost: 3,
       shouldExhaust: true,
-      speed: CARD_SPEED.FAST,
       async onResolve(game, card) {
-        if (card.location !== CARD_LOCATIONS.BOARD) return;
+        if (
+          card.location !== CARD_LOCATIONS.BASE &&
+          card.location !== CARD_LOCATIONS.BATTLEFIELD
+        )
+          return;
         await card.sendToBanishPile();
         const consellor = await card.player.generateCard<MinionCard>(
           plottingCounsellor.id

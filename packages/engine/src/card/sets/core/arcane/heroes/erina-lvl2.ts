@@ -47,7 +47,6 @@ export const erinaLv2: HeroBlueprint = {
   destinyCost: 3,
   level: 2,
   lineage: 'erina',
-  speed: CARD_SPEED.SLOW,
   atk: 0,
   maxHp: 16,
   canPlay: () => true,

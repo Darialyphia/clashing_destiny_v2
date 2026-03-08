@@ -47,7 +47,6 @@ export const cosmicDivinator: MinionBlueprint = {
     }
   },
   manaCost: 4,
-  speed: CARD_SPEED.SLOW,
   atk: 2,
   maxHp: 5,
   canPlay: () => true,

@@ -49,7 +49,6 @@ export const honorableCrown: ArtifactBlueprint = {
   },
   destinyCost: 1,
   durability: 1,
-  speed: CARD_SPEED.SLOW,
   abilities: [
     {
       id: 'honorable-crown-ability',
@@ -57,7 +56,7 @@ export const honorableCrown: ArtifactBlueprint = {
         'Give an allied minion with @Honor@: @On Death@ : Put this in the Destiny Zone',
       label: 'Buff Ally Minion',
       canUse: (game, card) =>
-        card.location === CARD_LOCATIONS.BOARD &&
+        card.location === CARD_LOCATIONS.BASE &&
         singleAllyMinionTargetRules.canPlay(game, card),
       getPreResponseTargets(game, card) {
         return singleAllyMinionTargetRules.getPreResponseTargets({
@@ -78,10 +77,14 @@ export const honorableCrown: ArtifactBlueprint = {
       manaCost: 1,
       durabilityCost: 1,
       shouldExhaust: true,
-      speed: CARD_SPEED.BURST,
       async onResolve(game, card, targets) {
         for (const target of targets as MinionCard[]) {
-          if (target.location !== CARD_LOCATIONS.BOARD) continue;
+          if (
+            target.location !== CARD_LOCATIONS.BASE &&
+            target.location !== CARD_LOCATIONS.BATTLEFIELD
+          ) {
+            continue;
+          }
 
           await target.modifiers.add(
             new OnDeathModifier(game, card, {

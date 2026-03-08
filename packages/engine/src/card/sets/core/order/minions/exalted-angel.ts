@@ -51,7 +51,6 @@ export const exaltedAngel: MinionBlueprint = {
     }
   },
   manaCost: 4,
-  speed: CARD_SPEED.SLOW,
   atk: 4,
   maxHp: 4,
   canPlay: () => true,

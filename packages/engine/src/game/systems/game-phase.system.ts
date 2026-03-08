@@ -38,7 +38,7 @@ export type GamePhaseContext =
       ctx: MainPhase;
     }
   | {
-      state: BetterExtract<GamePhase, 'attack_phase'>;
+      state: BetterExtract<GamePhase, 'combat_phase'>;
       ctx: CombatPhase;
     }
   | {
@@ -60,7 +60,7 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<MainPhase['serialize']>;
     }
   | {
-      state: BetterExtract<GamePhase, 'attack_phase'>;
+      state: BetterExtract<GamePhase, 'combat_phase'>;
       ctx: ReturnType<CombatPhase['serialize']>;
     }
   | {
@@ -78,7 +78,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
     [GAME_PHASES.MAIN]: MainPhase,
-    [GAME_PHASES.ATTACK]: CombatPhase,
+    [GAME_PHASES.COMBAT]: CombatPhase,
     [GAME_PHASES.END]: EndPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
   };
@@ -97,10 +97,10 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.DECLARE_ATTACK,
-        GAME_PHASES.ATTACK
+        GAME_PHASES.COMBAT
       ),
       stateTransition(
-        GAME_PHASES.ATTACK,
+        GAME_PHASES.COMBAT,
         GAME_PHASE_TRANSITIONS.FINISH_ATTACK,
         GAME_PHASES.MAIN
       ),
@@ -122,7 +122,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.GAME_END
       ),
       stateTransition(
-        GAME_PHASES.ATTACK,
+        GAME_PHASES.COMBAT,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       ),

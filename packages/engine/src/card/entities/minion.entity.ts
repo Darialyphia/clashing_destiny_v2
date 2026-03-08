@@ -1,4 +1,3 @@
-import { isDefined, type MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 import type { Player } from '../../player/player.entity';
@@ -46,13 +45,13 @@ export type SerializedMinionCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
-  canBlock: boolean;
   canRetaliate: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
   canPlay: Interceptable<boolean, MinionCard>;
+  canPlayDuringCombatPhase: Interceptable<boolean, MinionCard>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBlock: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
   canBlockWhileExhausted: Interceptable<
@@ -60,10 +59,8 @@ export type MinionCardInterceptors = CardInterceptors & {
     { attacker: AttackTarget; target: AttackTarget }
   >;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
-  canBeBlocked: Interceptable<boolean, { attacker: Attacker }>;
   canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
   canBeRetaliatedAgainst: Interceptable<boolean, { defender: AttackTarget }>;
-  canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canUseAbility: Interceptable<
     boolean,
     { card: MinionCard; ability: Ability<MinionCard> }
@@ -97,12 +94,11 @@ export class MinionCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
+        canPlayDuringCombatPhase: new Interceptable(),
         canAttack: new Interceptable(),
         canBlock: new Interceptable(),
         canBeAttacked: new Interceptable(),
-        canBeBlocked: new Interceptable(),
         canBlockWhileExhausted: new Interceptable(),
-        canBeDefended: new Interceptable(),
         canRetaliate: new Interceptable(),
         canBeRetaliatedAgainst: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
@@ -129,7 +125,11 @@ export class MinionCard extends Card<
   }
 
   get isAlive() {
-    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
+    return (
+      this.remainingHp > 0 &&
+      (this.location === CARD_LOCATIONS.BATTLEFIELD ||
+        this.location === CARD_LOCATIONS.BASE)
+    );
   }
 
   get atk(): number {
@@ -146,17 +146,17 @@ export class MinionCard extends Card<
 
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker.equals(this);
   }
 
   get isAttackTarget() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.target?.equals(this);
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.target?.equals(this);
   }
 
   get shouldCreateChainOnAttack(): boolean {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
     if (!phaseCtx.ctx.attacker.equals(this)) return false;
     if (!phaseCtx.ctx.target) return false;
 
@@ -200,50 +200,9 @@ export class MinionCard extends Card<
     });
   }
 
-  canBlock(attacker: AttackTarget, target: AttackTarget) {
-    if (this.location !== CARD_LOCATIONS.BOARD) return false;
-
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    const isCorrectPhase =
-      attacker.player.equals(this.player.opponent) &&
-      !target?.equals(this) &&
-      phaseCtx.state === GAME_PHASES.ATTACK &&
-      !isDefined(phaseCtx.ctx.blocker);
-
-    const exhaustionCheck = this.isExhausted
-      ? this.interceptors.canBlockWhileExhausted.getValue(false, {
-          attacker,
-          target
-        })
-      : true;
-
-    const base =
-      isCorrectPhase &&
-      exhaustionCheck &&
-      attacker.canBeBlocked(this, target) &&
-      target.canBeDefended(attacker);
-
-    return this.interceptors.canBlock.getValue(base, {
-      attacker,
-      target
-    });
-  }
-
   canBeAttacked(attacker: AttackTarget) {
     return this.interceptors.canBeAttacked.getValue(true, {
       attacker
-    });
-  }
-
-  canBeBlocked(attacker: AttackTarget) {
-    return this.interceptors.canBeBlocked.getValue(true, {
-      attacker
-    });
-  }
-
-  canBeDefended(defender: AttackTarget) {
-    return this.interceptors.canBeDefended.getValue(true, {
-      defender
     });
   }
 
@@ -255,7 +214,7 @@ export class MinionCard extends Card<
 
   canRetaliate(target: AttackTarget) {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
     if (!phaseCtx.ctx.target?.equals(this)) return false;
     if (phaseCtx.ctx.blocker) return false;
 
@@ -388,7 +347,7 @@ export class MinionCard extends Card<
   }
 
   private async summon() {
-    this.player.boardSide.summonMinion(this);
+    this.player.boardSide.summonMinion(this, CARD_LOCATIONS.BASE);
     if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
       await (this as MinionCard).modifiers.add(
         new SummoningSicknessModifier(this.game, this)
@@ -402,9 +361,22 @@ export class MinionCard extends Card<
     );
   }
 
+  get canPlayDuringCombatPhase(): boolean {
+    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
+  }
+
+  get isCorrectPhaseToPlay() {
+    const validPhases: string[] = this.canPlayDuringCombatPhase
+      ? [GAME_PHASES.MAIN, GAME_PHASES.COMBAT]
+      : [GAME_PHASES.MAIN];
+    return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase &&
+        this.isCorrectPhaseToPlay &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -429,11 +401,12 @@ export class MinionCard extends Card<
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {
-    if (this.location !== 'board') return [];
+    if (this.location !== CARD_LOCATIONS.BATTLEFIELD) return [];
 
-    return [this.player.opponent.hero, ...this.player.opponent.boardSide.minions].filter(
-      minion => this.canAttack(minion)
-    );
+    return [
+      this.player.opponent.hero,
+      ...this.player.opponent.boardSide.battlefield.minions
+    ].filter(minion => this.canAttack(minion));
   }
 
   serialize(): SerializedMinionCard {
@@ -449,12 +422,8 @@ export class MinionCard extends Card<
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
-      canBlock:
-        phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.target
-          ? this.canBlock(phaseCtx.ctx.attacker, phaseCtx.ctx.target)
-          : false,
       canRetaliate:
-        phaseCtx.state === GAME_PHASES.ATTACK
+        phaseCtx.state === GAME_PHASES.COMBAT
           ? this.canRetaliate(phaseCtx.ctx.attacker)
           : false
     };

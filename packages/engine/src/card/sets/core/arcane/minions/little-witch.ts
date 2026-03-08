@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   CARD_LOCATIONS,
   CARD_SETS,
-  CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
@@ -46,7 +45,6 @@ export const littleWitch: MinionBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 1,
   canPlay: () => true,
@@ -56,7 +54,7 @@ export const littleWitch: MinionBlueprint = {
       description: 'Deal 1 damage to an enemy minion. @Seal@ this ability.',
       label: 'Deal 1 Damage',
       canUse: (game, card) =>
-        card.location === CARD_LOCATIONS.BOARD &&
+        card.location === CARD_LOCATIONS.BASE &&
         singleEnemyMinionTargetRules.canPlay(game, card),
       getPreResponseTargets(game, card) {
         return singleEnemyMinionTargetRules.getPreResponseTargets({
@@ -73,11 +71,15 @@ export const littleWitch: MinionBlueprint = {
       },
       manaCost: 1,
       shouldExhaust: false,
-      speed: CARD_SPEED.FAST,
       async onResolve(game, card, targets, ability) {
         const target = targets[0] as MinionCard;
         if (!target) return;
-        if (target.location !== 'board') return;
+        if (
+          target.location !== CARD_LOCATIONS.BASE &&
+          target.location !== CARD_LOCATIONS.BATTLEFIELD
+        ) {
+          return;
+        }
         await target.takeDamage(card, new AbilityDamage(1));
         ability.seal();
       }

@@ -48,7 +48,6 @@ export const manaLooter: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 3,
   canPlay: () => true,

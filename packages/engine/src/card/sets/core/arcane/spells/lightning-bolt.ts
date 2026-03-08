@@ -46,7 +46,6 @@ export const lightningBolt: SpellBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
     return singleEnemyMinionTargetRules.canPlay(game, card);

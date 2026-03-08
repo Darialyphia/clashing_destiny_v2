@@ -41,7 +41,6 @@ export const impromptuChallenger: MinionBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 2,
   canPlay: () => true,

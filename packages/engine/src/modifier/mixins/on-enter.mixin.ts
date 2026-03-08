@@ -1,11 +1,11 @@
 import type { Modifier } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
-import { CARD_EVENTS } from '../../card/card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS } from '../../card/card.enums';
 import type { Game } from '../../game/game';
 
 import type { CardBeforePlayEvent } from '../../card/card.events';
 import { GAME_EVENTS } from '../../game/game.events';
-import { isArtifact, isHero, isMinion, isSigil } from '../../card/card-utils';
+import { isArtifact, isHero, isMinion } from '../../card/card-utils';
 import type { MaybePromise } from '@game/shared';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -13,23 +13,19 @@ import type { MinionSummonedEvent } from '../../card/events/minion.events';
 import type { HeroPlayedEvent } from '../../card/events/hero.events';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { ArtifactEquipedEvent } from '../../card/events/artifact.events';
-import type { SigilCard } from '../../card/entities/sigil.entity';
-import type { SigilSummonedEvent } from '../../card/events/sigil.events';
 
-export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard | SigilCard> = (
+export type OnEnterHandler<T extends MinionCard | ArtifactCard | HeroCard> = (
   event: T extends MinionCard
     ? MinionSummonedEvent
-    : T extends SigilCard
-      ? SigilSummonedEvent
-      : T extends ArtifactCard
-        ? ArtifactEquipedEvent
-        : T extends HeroCard
-          ? HeroPlayedEvent
-          : never
+    : T extends ArtifactCard
+      ? ArtifactEquipedEvent
+      : T extends HeroCard
+        ? HeroPlayedEvent
+        : never
 ) => MaybePromise<void>;
 
 export class OnEnterModifierMixin<
-  T extends MinionCard | ArtifactCard | HeroCard | SigilCard
+  T extends MinionCard | ArtifactCard | HeroCard
 > extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
   private handler: OnEnterHandler<T>;
@@ -56,31 +52,28 @@ export class OnEnterModifierMixin<
       const unsub = this.game.on(GAME_EVENTS.MINION_SUMMONED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
-          if (event.data.card.location !== 'board') return;
-          await this.handler(event as any);
-        }
-      });
-    } else if (isSigil(target)) {
-      const unsub = this.game.on(GAME_EVENTS.SIGIL_SUMMONED, async event => {
-        if (event.data.card.equals(target)) {
-          unsub();
-          if (event.data.card.location !== 'board') return;
-          await this.handler(event as any);
+          if (
+            event.data.card.location === CARD_LOCATIONS.BASE ||
+            event.data.card.location === CARD_LOCATIONS.BATTLEFIELD
+          ) {
+            await this.handler(event as any);
+          }
         }
       });
     } else if (isArtifact(target)) {
       const unsub = this.game.on(GAME_EVENTS.ARTIFACT_EQUIPED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
-          if (event.data.card.location !== 'board') return;
-          await this.handler(event as any);
+          if (event.data.card.location === CARD_LOCATIONS.BASE) {
+            await this.handler(event as any);
+          }
         }
       });
     } else if (isHero(target)) {
       const unsub = this.game.on(GAME_EVENTS.HERO_PLAYED, async event => {
         if (event.data.card.equals(target)) {
           unsub();
-          if (event.data.card.location !== 'board') return;
+          if (event.data.card.location !== CARD_LOCATIONS.BATTLEFIELD) return;
           await this.handler(event as any);
         }
       });

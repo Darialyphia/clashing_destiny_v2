@@ -50,13 +50,11 @@ export const swordOfTruth: ArtifactBlueprint = {
   },
   destinyCost: 1,
   durability: 2,
-  speed: CARD_SPEED.SLOW,
   abilities: [
     equipWeapon({
       modifierType: 'sword-of-truth-attack-buff',
       durabilityCost: 1,
-      manaCost: 0,
-      speed: CARD_SPEED.BURST
+      manaCost: 0
     })
   ],
   canPlay: () => true,

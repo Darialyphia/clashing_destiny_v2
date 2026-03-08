@@ -44,7 +44,6 @@ export const spiritOfOrder: HeroBlueprint = {
   destinyCost: 0,
   level: 0,
   lineage: null,
-  speed: CARD_SPEED.SLOW,
   atk: 0,
   maxHp: 12,
   canPlay: () => true,

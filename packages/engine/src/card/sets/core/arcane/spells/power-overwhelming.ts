@@ -49,7 +49,6 @@ export const powerOverwhelming: SpellBlueprint = {
     }
   },
   destinyCost: 1,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

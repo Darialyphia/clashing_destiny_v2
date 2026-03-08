@@ -58,7 +58,6 @@ export const sunArmor: ArtifactBlueprint = {
   },
   manaCost: 3,
   durability: 3,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {

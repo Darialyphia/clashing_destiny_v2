@@ -51,11 +51,10 @@ export const rebuke: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay(game, card) {
     const phaseCtx = game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
 
     const attacker = phaseCtx.ctx.attacker;
     const target = phaseCtx.ctx.target;
@@ -81,7 +80,7 @@ export const rebuke: SpellBlueprint = {
   },
   async onPlay(game) {
     const phaseCtx = game.gamePhaseSystem.getContext();
-    if (phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker) {
+    if (phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker) {
       const attacker = phaseCtx.ctx.attacker;
       if (isMinion(attacker)) {
         attacker.removeFromCurrentLocation();

@@ -46,7 +46,6 @@ export const manaSpark: SpellBlueprint = {
     }
   },
   manaCost: 0,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => false,
   getPreResponseTargets: () => Promise.resolve([]),

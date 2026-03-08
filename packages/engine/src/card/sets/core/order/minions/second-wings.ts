@@ -49,7 +49,6 @@ export const secondWings: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.SLOW,
   atk: 4,
   maxHp: 2,
   canPlay: () => true,

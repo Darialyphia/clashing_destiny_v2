@@ -12,8 +12,6 @@ import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
 import { Entity } from '../../entity';
-import { CARD_SPEED } from '../card.enums';
-import type { SigilCard } from './sigil.entity';
 import type { SpellCard } from './spell.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
@@ -22,7 +20,7 @@ import {
   AbilityBeforeUseEvent
 } from '../events/ability.events';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard | SpellCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;
@@ -48,10 +46,6 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.id;
   }
 
-  get speed() {
-    return this.blueprint.speed;
-  }
-
   get shouldExhaust() {
     return this.blueprint.shouldExhaust;
   }
@@ -61,7 +55,8 @@ export class Ability<T extends AbilityOwner>
   }
 
   get canUseDuringChain() {
-    return this.speed !== CARD_SPEED.SLOW;
+    // Speed system removed - all abilities can now be used during chain
+    return true;
   }
 
   get canUse() {
@@ -69,7 +64,7 @@ export class Ability<T extends AbilityOwner>
 
     const authorizedPhases: GamePhase[] = [
       GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
+      GAME_PHASES.COMBAT,
       GAME_PHASES.END
     ];
 
@@ -134,7 +129,6 @@ export class Ability<T extends AbilityOwner>
       description: this.blueprint.description,
       name: this.blueprint.label,
       manaCost: this.manaCost,
-      speed: this.speed,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       shouldExhaust: this.shouldExhaust,
       targets:

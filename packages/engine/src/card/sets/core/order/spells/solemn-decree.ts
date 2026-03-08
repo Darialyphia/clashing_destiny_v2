@@ -49,7 +49,6 @@ export const solemnDecree: SpellBlueprint = {
     }
   },
   destinyCost: 0,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

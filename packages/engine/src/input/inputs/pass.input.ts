@@ -8,7 +8,7 @@ const schema = defaultInputSchema;
 export class PassInput extends Input<typeof schema> {
   readonly name = 'pass';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.COMBAT, GAME_PHASES.END];
 
   protected payloadSchema = schema;
 

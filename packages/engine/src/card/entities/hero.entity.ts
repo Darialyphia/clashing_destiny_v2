@@ -52,7 +52,6 @@ export type HeroCardInterceptors = CardInterceptors & {
   canBlock: Interceptable<boolean, { attacker: AttackTarget }>;
   canBeBlocked: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
-  canBeDefended: Interceptable<boolean, { defender: AttackTarget }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
   canBeRetaliatedAgainst: Interceptable<boolean, { defender: AttackTarget }>;
@@ -89,7 +88,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         canBlock: new Interceptable(),
         canBeBlocked: new Interceptable(),
         canBeAttacked: new Interceptable(),
-        canBeDefended: new Interceptable(),
         canRetaliate: new Interceptable(),
         canBeRetaliatedAgainst: new Interceptable(),
         canUseAbility: new Interceptable(),
@@ -133,7 +131,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get isAlive() {
-    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
+    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BATTLEFIELD;
   }
 
   get atk(): number {
@@ -154,12 +152,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.ATTACK && phaseCtx.ctx.attacker.equals(this);
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker.equals(this);
   }
 
   get shouldCreateChainOnAttack(): boolean {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
     if (!phaseCtx.ctx.attacker.equals(this)) return false;
     if (!phaseCtx.ctx.target) return false;
 
@@ -191,19 +189,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     });
   }
 
-  canBeBlocked(attacker: AttackTarget, target: AttackTarget) {
-    return this.interceptors.canBeBlocked.getValue(true, {
-      attacker,
-      target
-    });
-  }
-
-  canBeDefended(defender: AttackTarget) {
-    return this.interceptors.canBeDefended.getValue(true, {
-      defender
-    });
-  }
-
   canBeRetaliatedBy(defender: AttackTarget) {
     return this.interceptors.canBeRetaliatedAgainst.getValue(true, {
       defender
@@ -212,7 +197,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   canRetaliate(target: AttackTarget) {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.ATTACK) return false;
+    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
     if (!phaseCtx.ctx.target?.equals(this)) return false;
     if (phaseCtx.ctx.blocker) return false;
 
@@ -223,6 +208,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       }
     );
   }
+
   getReceivedDamage(damage: Damage) {
     return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
       damage
@@ -369,12 +355,17 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.player.hero.faction.id === this.faction.id;
   }
 
+  get isCorrectPhaseToPlay() {
+    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
         this.hasCorrectLevelToPlay &&
         this.hasCorrectLineageToPlay &&
         this.hasCorrectFactionToPlay &&
+        this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
     );
@@ -424,11 +415,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {
-    if (this.location !== 'board') return [];
+    if (this.location !== CARD_LOCATIONS.BATTLEFIELD) return [];
 
-    return [this.player.opponent.hero, ...this.player.opponent.boardSide.minions].filter(
-      target => this.canAttack(target)
-    );
+    return [
+      this.player.opponent.hero,
+      ...this.player.opponent.boardSide.battlefield.minions
+    ].filter(target => this.canAttack(target));
   }
 
   serialize(): SerializedHeroCard {
@@ -447,7 +439,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       abilities: this.abilities.map(ability => ability.id),
       level: this.level,
       canRetaliate:
-        phaseCtx.state === GAME_PHASES.ATTACK
+        phaseCtx.state === GAME_PHASES.COMBAT
           ? this.canRetaliate(phaseCtx.ctx.attacker)
           : false
     };

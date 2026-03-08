@@ -46,7 +46,6 @@ export const amplifyMagic: SpellBlueprint = {
     }
   },
   manaCost: 0,
-  speed: CARD_SPEED.BURST,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

@@ -46,7 +46,6 @@ export const tailOfSimurgh: SpellBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.FAST,
   abilities: [],
   canPlay: () => true,
   async getPreResponseTargets(game, card) {
@@ -70,7 +69,12 @@ export const tailOfSimurgh: SpellBlueprint = {
     const isEmpowered = getEmpowerStacks(card) > 0;
 
     for (const target of targets as MinionCard[]) {
-      if (target.location !== CARD_LOCATIONS.BOARD) continue;
+      if (
+        target.location !== CARD_LOCATIONS.BASE &&
+        target.location !== CARD_LOCATIONS.BATTLEFIELD
+      ) {
+        continue;
+      }
 
       target.removeFromCurrentLocation();
 

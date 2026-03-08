@@ -45,7 +45,6 @@ export const theHangman: SpellBlueprint = {
     }
   },
   destinyCost: 3,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay: () => true,
   getPreResponseTargets: () => Promise.resolve([]),

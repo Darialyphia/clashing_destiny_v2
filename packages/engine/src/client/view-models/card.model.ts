@@ -234,10 +234,6 @@ export class CardViewModel {
     return null;
   }
 
-  get speed() {
-    return this.data.speed;
-  }
-
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;
@@ -319,7 +315,7 @@ export class CardViewModel {
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      state.phase.state === GAME_PHASES.ATTACK &&
+      state.phase.state === GAME_PHASES.COMBAT &&
       state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
       state.phase.ctx.potentialTargets.some(id => id === this.id) &&
       client.getActivePlayerId() === client.playerId;
@@ -355,7 +351,7 @@ export class CardViewModel {
     const state = this.getClient().state;
 
     return (
-      state.phase.state === GAME_PHASES.ATTACK && state.phase.ctx.attacker === this.id
+      state.phase.state === GAME_PHASES.COMBAT && state.phase.ctx.attacker === this.id
     );
   }
 

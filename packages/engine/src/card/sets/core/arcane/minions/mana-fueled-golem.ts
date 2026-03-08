@@ -44,7 +44,6 @@ export const manaFueledGolem: MinionBlueprint = {
     }
   },
   manaCost: 3,
-  speed: CARD_SPEED.SLOW,
   atk: 3,
   maxHp: 4,
   canPlay: () => true,

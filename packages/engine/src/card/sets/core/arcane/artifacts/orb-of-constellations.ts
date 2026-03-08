@@ -50,7 +50,6 @@ export const orbOfConstellations: ArtifactBlueprint = {
   },
   manaCost: 3,
   durability: 1,
-  speed: CARD_SPEED.FAST,
   abilities: [
     {
       id: 'orb-of-constellations-ability',
@@ -65,7 +64,6 @@ export const orbOfConstellations: ArtifactBlueprint = {
       durabilityCost: 1,
       manaCost: 0,
       shouldExhaust: true,
-      speed: CARD_SPEED.FAST,
       async getPreResponseTargets() {
         return [];
       },

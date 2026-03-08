@@ -45,7 +45,6 @@ export const frontlineSkirmisher: MinionBlueprint = {
     }
   },
   manaCost: 1,
-  speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 1,
   canPlay: () => true,

@@ -45,7 +45,6 @@ export const littleAngel: MinionBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.SLOW,
   atk: 1,
   maxHp: 3,
   canPlay: () => true,

@@ -22,19 +22,16 @@ import { thirstForKnowledge } from './core/arcane/spells/thirst-for-knowledge';
 import { wizardsInsight } from './core/arcane/spells/wizards-insight';
 import { wingOfSimurgh } from './core/arcane/spells/wing-of-simurgh';
 import { tailOfSimurgh } from './core/arcane/spells/tail-of-simurgh';
-import { sigilOfWisdom } from './core/arcane/sigils/sigil-of-wisdom';
 import { galacticExplosion } from './core/arcane/spells/galactic-explosion';
 import { powerOverwhelming } from './core/arcane/spells/power-overwhelming';
 import { arcaneConduit } from './core/arcane/minions/arcane-conduit';
 import { manaShield } from './core/arcane/spells/mana-shield';
-import { timeBomb } from './core/arcane/sigils/time-bomb';
 import { spellbladeDuelist } from './core/arcane/minions/spellblade-duelist';
 import { manaWisp } from './core/neutral/minions/mana-wisp';
 import { quirkyBookworm } from './core/arcane/minions/quirky-bookworm';
 import { orbOfConstellations } from './core/arcane/artifacts/orb-of-constellations';
 import { manaSpark } from './core/neutral/spells/mana-spark';
 import { simurgh } from './core/arcane/minions/simurgh';
-import { sigilOfSimurgh } from './core/arcane/sigils/sigil-of-simurgh';
 import { jeweller } from './core/neutral/minions/jeweller';
 import { plottingCounsellor } from './core/neutral/minions/plotting-counsellor';
 import { replenishEnergy } from './core/arcane/spells/replenish-energy';
@@ -113,15 +110,12 @@ export const coreSet: CardSet = {
     powerOverwhelming,
     galacticExplosion,
     arcaneConduit,
-    sigilOfWisdom,
     manaShield,
-    timeBomb,
     spellbladeDuelist,
     manaWisp,
     quirkyBookworm,
     orbOfConstellations,
     simurgh,
-    sigilOfSimurgh,
     jeweller,
     plottingCounsellor,
     replenishEnergy,

@@ -24,7 +24,7 @@ export class PreemptiveStrikeModifier<
           key: 'dealsDamageFirst',
           interceptor: value => {
             const gamePhaseCtx = game.gamePhaseSystem.getContext();
-            if (gamePhaseCtx.state !== GAME_PHASES.ATTACK) return value;
+            if (gamePhaseCtx.state !== GAME_PHASES.COMBAT) return value;
 
             return gamePhaseCtx.ctx.attacker.equals(this.target);
           }

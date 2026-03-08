@@ -30,7 +30,9 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
         new KeywordModifierMixin(game, KEYWORDS.OVERWHELM),
         new TogglableModifierMixin(
           game,
-          () => this.target.location === CARD_LOCATIONS.BOARD
+          () =>
+            this.target.location === CARD_LOCATIONS.BATTLEFIELD ||
+            this.target.location === CARD_LOCATIONS.BASE
         ),
         ...(mixins ?? [])
       ]
@@ -60,7 +62,7 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
       new GameEventModifierMixin(this.game, {
         eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
         handler: async event => {
-          if (this.target.location !== 'board') return;
+          if (this.target.location !== CARD_LOCATIONS.BATTLEFIELD) return;
           if (!event.data.card.equals(this.target)) return;
 
           const totalAmount = Object.values(this.excessDamageByTarget).reduce(

@@ -24,7 +24,7 @@ import {
 } from '../../game/game.events';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
-import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 
 export type GameStateEntities = Record<
   string,
@@ -43,7 +43,6 @@ export type SerializedEntity =
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedSigilCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility;
@@ -186,7 +185,17 @@ export class ClientStateController {
     const boardSide = this.state.board.sides.find(
       side => side.playerId === card.player.id
     )!;
-    boardSide.minions = [...boardSide.minions, card.id];
+    if (event.event.card.location === CARD_LOCATIONS.BASE) {
+      boardSide.base = {
+        ...boardSide.base,
+        minions: [...boardSide.base.minions, card.id]
+      };
+    } else if (event.event.card.location === CARD_LOCATIONS.BATTLEFIELD) {
+      boardSide.battlefield = {
+        ...boardSide.battlefield,
+        minions: [...boardSide.battlefield.minions, card.id]
+      };
+    }
 
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({
@@ -208,7 +217,7 @@ export class ClientStateController {
     const boardSide = this.state.board.sides.find(
       side => side.playerId === card.player.id
     )!;
-    boardSide.heroZone.artifacts = [...boardSide.heroZone.artifacts, card.id];
+    boardSide.base.artifacts = [...boardSide.base.artifacts, card.id];
 
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({

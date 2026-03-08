@@ -23,7 +23,8 @@ export class StealthModifier<T extends MinionCard | HeroCard> extends Modifier<T
           interceptor: value => {
             if (!value) return value;
             return (
-              this.target.isExhausted && this.target.location === CARD_LOCATIONS.BOARD
+              this.target.isExhausted &&
+              this.target.location === CARD_LOCATIONS.BATTLEFIELD
             );
           }
         }),

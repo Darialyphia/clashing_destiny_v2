@@ -52,7 +52,6 @@ export const rayOfFrost: SpellBlueprint = {
     }
   },
   manaCost: 2,
-  speed: CARD_SPEED.SLOW,
   abilities: [],
   canPlay(game, card) {
     return singleEnemyMinionTargetRules.canPlay(game, card);
@@ -70,21 +69,7 @@ export const rayOfFrost: SpellBlueprint = {
     });
   },
   async onInit(game, card) {
-    const levelMod = (await card.modifiers.add(
-      new LevelBonusModifier(game, card, 3)
-    )) as LevelBonusModifier<SpellCard>;
-
-    await card.modifiers.add(
-      new Modifier<SpellCard>('ray-of-frost-speed-buff', game, card, {
-        mixins: [
-          new CardInterceptorModifierMixin(game, {
-            key: 'speed',
-            interceptor: () => CARD_SPEED.FAST
-          }),
-          new TogglableModifierMixin(game, () => levelMod.isActive)
-        ]
-      })
-    );
+    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
   },
   async onPlay(game, card, targets) {
     for (const target of targets as MinionCard[]) {

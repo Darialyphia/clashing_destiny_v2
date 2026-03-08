@@ -9,7 +9,6 @@ import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { SpellCard } from '../../card/entities/spell.entity';
-import { SigilCard } from '../../card/entities/sigil.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -19,7 +18,7 @@ const schema = defaultInputSchema.extend({
 export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   readonly name = 'declareUseCardAbility';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.COMBAT, GAME_PHASES.END];
 
   protected payloadSchema = schema;
 
@@ -35,7 +34,6 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
         P.instanceOf(HeroCard),
         P.instanceOf(ArtifactCard),
         P.instanceOf(SpellCard),
-        P.instanceOf(SigilCard),
         card =>
           card.abilities.find(ability => ability.abilityId === this.payload.abilityId) ||
           null
