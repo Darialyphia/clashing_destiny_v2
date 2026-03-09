@@ -1,11 +1,9 @@
 import dedent from 'dedent';
-import { VigilantModifier } from '../../../../../modifier/modifiers/vigilant.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
-  CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
@@ -23,7 +21,6 @@ export const wanderingPaladin: MinionBlueprint = {
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Wandering Paladin',
   description: dedent`
-  @Vigilant@.
   @[lvl] 3 Bonus@: +1 Health.
   `,
   faction: FACTIONS.ORDER,
@@ -58,7 +55,6 @@ export const wanderingPaladin: MinionBlueprint = {
     const levelMod = (await card.modifiers.add(
       new LevelBonusModifier(game, card, 3)
     )) as LevelBonusModifier<MinionCard>;
-    await card.modifiers.add(new VigilantModifier(game, card));
 
     await card.modifiers.add(
       new SimpleHealthBuffModifier('wandering-paladin-hp-buff', game, card, {

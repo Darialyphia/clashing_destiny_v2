@@ -57,7 +57,7 @@ export const rebuke: SpellBlueprint = {
     if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
 
     const attacker = phaseCtx.ctx.attacker;
-    const target = phaseCtx.ctx.target;
+    const target = phaseCtx.ctx.defender;
 
     return (
       !!attacker && isMinion(attacker) && !!target && target.equals(card.player.hero)

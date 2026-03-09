@@ -27,9 +27,8 @@ export type TurnEventName = Values<typeof TURN_EVENTS>;
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
-  DECLARE_ATTACK: 'declare_attack',
-  FINISH_ATTACK: 'finish_attack',
-  DECLARE_END_TURN: 'declare_end_turn',
+  START_COMBAT_PHASE: 'start_combat_phase',
+  END_COMBAT_PHASE: 'end_combat_phase',
   END_TURN: 'end_turn',
   PLAYER_WON: 'player_won'
 } as const;
@@ -38,11 +37,19 @@ export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 export const COMBAT_STEPS = {
   DECLARE_ATTACKER: 'declare-attacker',
   DECLARE_TARGET: 'declare-target',
-  BUILDING_CHAIN: 'chain',
   RESOLVING_COMBAT: 'resolving'
 } as const;
 
 export type CombatStep = Values<typeof COMBAT_STEPS>;
+
+export const COMBAT_STEP_TRANSITIONS = {
+  ATTACKER_DECLARED: 'attacker-declared',
+  ATTACKER_TARGET_DECLARED: 'attacker-target-declared',
+  FINISHED: 'finished',
+  CANCEL: 'cancel'
+} as const;
+
+export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 
 export const EFFECT_TYPE = {
   CARD: 'CARD',

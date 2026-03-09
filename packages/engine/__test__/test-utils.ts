@@ -95,10 +95,10 @@ export const testGameBuilder = () => {
             target: MinionCard | HeroCard;
           }) {
             await game.gamePhaseSystem.startCombat();
-            const { ctx } = game.gamePhaseSystem.getContext<GamePhasesDict['ATTACK']>();
+            const { ctx } = game.gamePhaseSystem.getContext<GamePhasesDict['COMBAT']>();
 
-            await ctx.declareAttacker(attacker);
-            await ctx.declareAttackTarget(target);
+            // await ctx.declareAttacker(attacker);
+            // await ctx.declareAttackTarget(target);
           },
 
           async pass() {

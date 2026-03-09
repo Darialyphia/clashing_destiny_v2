@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HeroSlot from './HeroSlot.vue';
 import {
   useGameClient,
   useGameUi,
@@ -25,23 +24,7 @@ const ui = useGameUi();
     class="opponent-board"
     :class="{ 'is-active': opponent.id === activePlayerId }"
   >
-    <div class="left-zone">
-      <div
-        class="artifacts"
-        :class="{ 'is-condensed': opponentBoard.heroZone.artifacts.length > 2 }"
-      >
-        <InspectableCard
-          v-for="artifact in opponentBoard.heroZone.artifacts"
-          :key="artifact"
-          :card-id="artifact"
-          :open-delay="0"
-          side="right"
-        >
-          <GameCard :card-id="artifact" variant="small" show-stats can-tilt />
-        </InspectableCard>
-      </div>
-      <HeroSlot :player="opponent" class="hero" />
-    </div>
+    <div class="left-zone"></div>
 
     <div class="center-zone">
       <DestinyZone
@@ -51,24 +34,10 @@ const ui = useGameUi();
       />
       <div class="minion-zone" :id="ui.DOMSelectors.minionZone(opponent.id).id">
         <InspectableCard
-          v-for="card in opponentBoard.minions"
+          v-for="card in opponentBoard.base.minions"
           :key="card"
           :card-id="card"
           side="left"
-        >
-          <GameCard
-            :card-id="card"
-            variant="small"
-            show-stats
-            show-modifiers
-            can-tilt
-          />
-        </InspectableCard>
-        <InspectableCard
-          v-for="card in opponentBoard.sigils"
-          :key="card"
-          side="left"
-          :card-id="card"
         >
           <GameCard
             :card-id="card"

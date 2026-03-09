@@ -30,10 +30,6 @@ const getCountByKind = (kind: CardKind) => {
         <span>{{ getCountByKind(CARD_KINDS.ARTIFACT) }}</span>
         Artifacts
       </div>
-      <div>
-        <span>{{ getCountByKind(CARD_KINDS.SIGIL) }}</span>
-        Sigils
-      </div>
     </div>
   </div>
 </template>

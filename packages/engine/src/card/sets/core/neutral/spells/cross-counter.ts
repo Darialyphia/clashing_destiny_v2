@@ -51,7 +51,7 @@ export const crossCounter: SpellBlueprint = {
     if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
 
     const attacker = phaseCtx.ctx.attacker;
-    const target = phaseCtx.ctx.target;
+    const target = phaseCtx.ctx.defender;
 
     return (
       !!attacker &&
@@ -67,9 +67,9 @@ export const crossCounter: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card) {
     const phaseCtx = game.gamePhaseSystem.getContext();
-    if (phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.target) {
-      await phaseCtx.ctx.target.wakeUp();
-      await (phaseCtx.ctx.target as MinionCard).modifiers.add(
+    if (phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.defender) {
+      await phaseCtx.ctx.defender.wakeUp();
+      await (phaseCtx.ctx.defender as MinionCard).modifiers.add(
         new PreemptiveRetaliationModifier(game, card, {
           mixins: [new UntilEndOfTurnModifierMixin(game)]
         })

@@ -15,7 +15,7 @@ const schema = defaultInputSchema.extend({
 export class DeclareAttackInput extends Input<typeof schema> {
   readonly name = 'declareAttack';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN];
+  readonly allowedPhases = [GAME_PHASES.COMBAT];
 
   protected payloadSchema = schema;
 
@@ -35,7 +35,7 @@ export class DeclareAttackInput extends Input<typeof schema> {
       await this.game.turnSystem.switchInitiative();
     });
     await this.game.gamePhaseSystem
-      .getContext<GamePhasesDict['ATTACK']>()
+      .getContext<GamePhasesDict['COMBAT']>()
       .ctx.declareAttacker(this.attacker);
   }
 }

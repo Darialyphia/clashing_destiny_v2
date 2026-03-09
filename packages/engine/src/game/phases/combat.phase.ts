@@ -1,12 +1,12 @@
 import {
   assert,
+  isDefined,
   StateMachine,
   stateTransition,
   type Nullable,
   type Serializable,
   type Values
 } from '@game/shared';
-import { nanoid } from 'nanoid';
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import type { HeroCard } from '../../card/entities/hero.entity';
@@ -15,32 +15,226 @@ import { CorruptedGamephaseContextError, GameError } from '../game-error';
 import { CombatDamage } from '../../utils/damage';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import {
+  COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
-  EFFECT_TYPE,
   GAME_PHASE_TRANSITIONS,
-  GAME_PHASES,
-  type CombatStep
+  type CombatStep,
+  type CombatStepTransition
 } from '../game.enums';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
 
-export const COMBAT_STEP_TRANSITIONS = {
-  ATTACKER_DECLARED: 'attacker-declared',
-  ATTACKER_TARGET_DECLARED: 'attacker-target-declared',
-  CHAIN_RESOLVED: 'chain-resolved'
-} as const;
-
-export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
-
 export type SerializedCombatPhase = {
-  attacker: string;
+  attacker: string | null;
   target: string | null;
-  blocker: string | null;
   step: CombatStep;
   potentialTargets: string[];
-  isTargetRetaliating: boolean;
 };
+
+export class CombatPhase
+  extends StateMachine<CombatStep, CombatStepTransition>
+  implements GamePhaseController, Serializable<SerializedCombatPhase>
+{
+  attacker: Attacker | null = null;
+  defender: AttackTarget | null = null;
+
+  constructor(private game: Game) {
+    super(COMBAT_STEPS.DECLARE_ATTACKER);
+
+    this.addTransitions([
+      stateTransition(
+        COMBAT_STEPS.DECLARE_ATTACKER,
+        COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED,
+        COMBAT_STEPS.DECLARE_TARGET
+      ),
+      stateTransition(
+        COMBAT_STEPS.DECLARE_TARGET,
+        COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED,
+        COMBAT_STEPS.RESOLVING_COMBAT
+      ),
+      stateTransition(
+        COMBAT_STEPS.DECLARE_TARGET,
+        COMBAT_STEP_TRANSITIONS.CANCEL,
+        COMBAT_STEPS.DECLARE_ATTACKER
+      ),
+      stateTransition(
+        COMBAT_STEPS.RESOLVING_COMBAT,
+        COMBAT_STEP_TRANSITIONS.FINISHED,
+        COMBAT_STEPS.DECLARE_ATTACKER
+      )
+    ]);
+  }
+
+  get potentialTargets(): Nullable<AttackTarget[]> {
+    return this.attacker?.potentialAttackTargets;
+  }
+
+  async declareAttacker(attacker: Attacker) {
+    assert(
+      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED),
+      new WrongCombatStepError()
+    );
+    await this.game.emit(
+      COMBAT_EVENTS.BEFORE_DECLARE_ATTACK,
+      new BeforeDeclareAttackEvent({ attacker })
+    );
+
+    this.attacker = attacker;
+
+    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
+    await this.game.emit(
+      COMBAT_EVENTS.AFTER_DECLARE_ATTACK,
+      new AfterDeclareAttackEvent({ attacker })
+    );
+  }
+
+  async declareAttackTarget(target: AttackTarget) {
+    assert(
+      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
+      new WrongCombatStepError()
+    );
+    assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
+
+    await this.game.emit(
+      COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET,
+      new BeforeDeclareAttackTargetEvent({ target, attacker: this.attacker })
+    );
+
+    this.defender = target;
+    await this.attacker.exhaust();
+
+    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
+    await this.game.emit(
+      COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
+      new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
+    );
+
+    await this.resolveCombat();
+  }
+
+  changeTarget(newTarget: AttackTarget) {
+    if (!this.defender) return;
+    this.defender = newTarget;
+  }
+
+  changeAttacker(newAttacker: Attacker) {
+    if (!this.attacker) return;
+    this.attacker = newAttacker;
+  }
+
+  private async resolveCombat() {
+    assert(isDefined(this.defender), new CorruptedGamephaseContextError());
+    assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
+
+    await this.game.emit(
+      COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
+      new BeforeResolveCombatEvent({
+        attacker: this.attacker,
+        target: this.defender
+      })
+    );
+
+    await this.performAttacks();
+
+    await this.game.emit(
+      COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
+      new AfterResolveCombatEvent({
+        attacker: this.attacker!,
+        target: this.defender!
+      })
+    );
+
+    this.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
+  }
+
+  private async performAttacks() {
+    const defender = this.defender;
+    const attacker = this.attacker;
+    if (!defender || !attacker) return;
+
+    const canResolve = defender.isAlive && attacker.isAlive;
+    if (canResolve) {
+      const attackerFirst = attacker.dealsDamageFirst;
+      const defenderFirst = defender.dealsDamageFirst;
+
+      const performAtttackerStrike = async () => {
+        if (defender.isAlive) {
+          await attacker.dealDamage(defender, new CombatDamage(attacker));
+        }
+      };
+
+      const performDefenderStrike = async () => {
+        if (!attacker.isAlive) return;
+
+        const shouldStrikeBack =
+          defender.canRetaliate(attacker) && attacker.canBeRetaliatedBy(defender);
+        if (!shouldStrikeBack) return;
+
+        await defender.dealDamage(attacker, new CombatDamage(defender));
+      };
+
+      if (attackerFirst && !defenderFirst) {
+        await performAtttackerStrike();
+        if (defender.isAlive) {
+          await performDefenderStrike();
+        }
+      } else if (!attackerFirst && defenderFirst) {
+        await performDefenderStrike();
+        if (attacker.isAlive) {
+          await performAtttackerStrike();
+        }
+      } else {
+        await performAtttackerStrike();
+        await performDefenderStrike();
+      }
+    }
+  }
+
+  private async end() {
+    this.game.interaction.onInteractionEnd();
+    await this.game.gamePhaseSystem.sendTransition(
+      GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE
+    );
+    await this.game.inputSystem.askForPlayerInput();
+  }
+
+  async cancelAttack() {
+    assert(this.can(COMBAT_STEP_TRANSITIONS.CANCEL), new WrongCombatStepError());
+    this.attacker = null;
+    this.defender = null;
+    this.dispatch(COMBAT_STEP_TRANSITIONS.CANCEL);
+  }
+
+  get step() {
+    return this.getState();
+  }
+
+  async onEnter() {}
+
+  async onExit() {}
+
+  serialize(): SerializedCombatPhase {
+    return {
+      attacker: this.attacker?.id ?? null,
+      target: this.defender?.id ?? null,
+      step: this.getState(),
+      potentialTargets: this.potentialTargets?.map(t => t.id) ?? []
+    };
+  }
+}
+
+export class WrongCombatStepError extends GameError {
+  constructor() {
+    super('Wrong combat step');
+  }
+}
+
+export class InvalidCounterattackError extends GameError {
+  constructor() {
+    super('This unit cannot counterattack this target');
+  }
+}
 
 export class BeforeDeclareAttackEvent extends TypedSerializableEvent<
   { attacker: Attacker },
@@ -89,27 +283,25 @@ export class AfterDeclareAttackTargetEvent extends TypedSerializableEvent<
 }
 
 export class BeforeResolveCombatEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget; blocker: Nullable<AttackTarget> },
-  { attacker: string; target: string; blocker: string | null }
+  { attacker: Attacker; target: AttackTarget },
+  { attacker: string; target: string }
 > {
   serialize() {
     return {
       attacker: this.data.attacker.id,
-      target: this.data.target.id,
-      blocker: this.data.blocker?.id ?? null
+      target: this.data.target.id
     };
   }
 }
 
 export class AfterResolveCombatEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget; blocker: Nullable<AttackTarget> },
-  { attacker: string; target: string; blocker: string | null }
+  { attacker: Attacker; target: AttackTarget },
+  { attacker: string; target: string }
 > {
   serialize() {
     return {
       attacker: this.data.attacker.id,
-      target: this.data.target.id,
-      blocker: this.data.blocker?.id ?? null
+      target: this.data.target.id
     };
   }
 }
@@ -146,218 +338,3 @@ export type CombatEventMap = {
   [COMBAT_EVENTS.AFTER_RESOLVE_COMBAT]: AfterResolveCombatEvent;
   [COMBAT_EVENTS.ATTACK_FIZZLED]: AttackFizzledResolveCombatEvent;
 };
-
-export class CombatPhase
-  extends StateMachine<CombatStep, CombatStepTransition>
-  implements GamePhaseController, Serializable<SerializedCombatPhase>
-{
-  attacker!: Attacker;
-  target: AttackTarget | null = null;
-  blocker: AttackTarget | null = null;
-  isTargetRetaliating = false;
-
-  private isCancelled = false;
-
-  constructor(private game: Game) {
-    super(COMBAT_STEPS.DECLARE_ATTACKER);
-
-    this.addTransitions([
-      stateTransition(
-        COMBAT_STEPS.DECLARE_ATTACKER,
-        COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED,
-        COMBAT_STEPS.DECLARE_TARGET
-      ),
-      stateTransition(
-        COMBAT_STEPS.DECLARE_TARGET,
-        COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED,
-        COMBAT_STEPS.BUILDING_CHAIN
-      ),
-      stateTransition(
-        COMBAT_STEPS.BUILDING_CHAIN,
-        COMBAT_STEP_TRANSITIONS.CHAIN_RESOLVED,
-        COMBAT_STEPS.RESOLVING_COMBAT
-      )
-    ]);
-  }
-
-  get potentialTargets(): AttackTarget[] {
-    return this.attacker.potentialAttackTargets;
-  }
-
-  async declareAttacker(attacker: Attacker) {
-    assert(
-      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED),
-      new WrongCombatStepError()
-    );
-    await this.game.emit(
-      COMBAT_EVENTS.BEFORE_DECLARE_ATTACK,
-      new BeforeDeclareAttackEvent({ attacker })
-    );
-
-    this.attacker = attacker;
-
-    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
-    await this.game.emit(
-      COMBAT_EVENTS.AFTER_DECLARE_ATTACK,
-      new AfterDeclareAttackEvent({ attacker })
-    );
-
-    await this.game.inputSystem.askForPlayerInput();
-  }
-
-  async declareAttackTarget(target: AttackTarget) {
-    assert(
-      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
-      new WrongCombatStepError()
-    );
-    await this.game.emit(
-      COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET,
-      new BeforeDeclareAttackTargetEvent({ target, attacker: this.attacker })
-    );
-
-    this.target = target;
-    await this.attacker.exhaust();
-
-    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
-    await this.game.emit(
-      COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
-      new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
-    );
-
-    if (!this.attacker.shouldCreateChainOnAttack) {
-      return this.resolveCombat();
-    }
-
-    await this.resolveCombat();
-  }
-
-  changeTarget(newTarget: AttackTarget) {
-    if (!this.target) return;
-    this.target = newTarget;
-  }
-
-  changeAttacker(newAttacker: Attacker) {
-    if (!this.attacker) return;
-    this.attacker = newAttacker;
-  }
-
-  private async resolveCombat() {
-    assert(this.target, new CorruptedGamephaseContextError());
-
-    this.dispatch(COMBAT_STEP_TRANSITIONS.CHAIN_RESOLVED);
-
-    await this.game.emit(
-      COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
-      new BeforeResolveCombatEvent({
-        attacker: this.attacker,
-        target: this.target,
-        blocker: this.blocker
-      })
-    );
-
-    if (!this.isCancelled) {
-      await this.performAttacks();
-    }
-
-    await this.end();
-  }
-
-  private async performAttacks() {
-    const defender = this.blocker ?? this.target;
-    if (!defender) return;
-
-    const canResolve = defender.isAlive && this.attacker.isAlive;
-    if (canResolve) {
-      const attackerDealsFirst = this.attacker.dealsDamageFirst;
-      const defenderDealsFirst = defender.dealsDamageFirst;
-
-      const performAtttackerStrike = async () => {
-        if (defender.isAlive) {
-          await this.attacker.dealDamage(defender, new CombatDamage(this.attacker));
-        }
-      };
-
-      const performDefenderStrike = async () => {
-        const shouldStrike = this.blocker?.equals(defender)
-          ? true
-          : this.isTargetRetaliating;
-        if (!shouldStrike) return;
-        if (this.attacker.isAlive) {
-          await defender.dealDamage(this.attacker, new CombatDamage(defender));
-        }
-      };
-
-      if (attackerDealsFirst && !defenderDealsFirst) {
-        await performAtttackerStrike();
-        if (defender.isAlive) {
-          await performDefenderStrike();
-        }
-      } else if (!attackerDealsFirst && defenderDealsFirst) {
-        await performDefenderStrike();
-        if (defender.isAlive) {
-          await performAtttackerStrike();
-        }
-      } else {
-        await performAtttackerStrike();
-        await performDefenderStrike();
-      }
-    }
-
-    await this.game.emit(
-      COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
-      new AfterResolveCombatEvent({
-        attacker: this.attacker,
-        target: this.target!,
-        blocker: this.blocker
-      })
-    );
-  }
-
-  private async end() {
-    this.game.interaction.onInteractionEnd();
-    // phase can be different if combat was aborted early
-    if (this.game.gamePhaseSystem.getState() === GAME_PHASES.COMBAT) {
-      await this.game.gamePhaseSystem.sendTransition(
-        GAME_PHASE_TRANSITIONS.FINISH_ATTACK
-      );
-    }
-    await this.game.inputSystem.askForPlayerInput();
-  }
-
-  async cancelAttack() {
-    if (this.isCancelled) return;
-    this.isCancelled = true;
-    await this.end();
-  }
-
-  get step() {
-    return this.getState();
-  }
-
-  async onEnter() {}
-
-  async onExit() {}
-
-  serialize(): SerializedCombatPhase {
-    return {
-      attacker: this.attacker.id,
-      target: this.target?.id ?? null,
-      blocker: this.blocker?.id ?? null,
-      step: this.getState(),
-      potentialTargets: this.potentialTargets.map(t => t.id),
-      isTargetRetaliating: this.isTargetRetaliating
-    };
-  }
-}
-
-export class WrongCombatStepError extends GameError {
-  constructor() {
-    super('Wrong combat step');
-  }
-}
-
-export class InvalidCounterattackError extends GameError {
-  constructor() {
-    super('This unit cannot counterattack this target');
-  }
-}

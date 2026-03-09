@@ -26,7 +26,7 @@ export class PreemptiveStrikeModifier<
             const gamePhaseCtx = game.gamePhaseSystem.getContext();
             if (gamePhaseCtx.state !== GAME_PHASES.COMBAT) return value;
 
-            return gamePhaseCtx.ctx.attacker.equals(this.target);
+            return !!gamePhaseCtx.ctx.attacker?.equals(this.target);
           }
         }),
         ...(options.mixins || [])

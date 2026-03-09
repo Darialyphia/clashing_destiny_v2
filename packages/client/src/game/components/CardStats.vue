@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import { useCard } from '../composables/useGameClient';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { gameStateRef } from '../composables/gameStateRef';
@@ -10,7 +10,12 @@ const { cardId } = defineProps<{ cardId: string }>();
 
 const card = useCard(computed(() => cardId));
 const isDisplayed = computed(() => {
-  if (card.value.location !== 'board') return false;
+  if (
+    card.value.location !== CARD_LOCATIONS.BASE &&
+    card.value.location !== CARD_LOCATIONS.BATTLEFIELD
+  ) {
+    return false;
+  }
   return (
     card.value.kind === CARD_KINDS.HERO ||
     card.value.kind === CARD_KINDS.MINION ||

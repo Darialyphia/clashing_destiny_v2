@@ -26,10 +26,7 @@ export class PreemptiveRetaliationModifier<
             const gamePhaseCtx = game.gamePhaseSystem.getContext();
             if (gamePhaseCtx.state !== GAME_PHASES.COMBAT) return value;
 
-            return !!(
-              gamePhaseCtx.ctx.target?.equals(this.target) ||
-              gamePhaseCtx.ctx.blocker?.equals(this.target)
-            );
+            return !!gamePhaseCtx.ctx.defender?.equals(this.target);
           }
         }),
         ...(options.mixins || [])

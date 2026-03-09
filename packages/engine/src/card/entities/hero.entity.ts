@@ -43,7 +43,6 @@ export type SerializedHeroCard = SerializedCard & {
   remainingHp: number;
   abilities: string[];
   level: number;
-  canRetaliate: boolean;
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -61,7 +60,6 @@ export type HeroCardInterceptors = CardInterceptors & {
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
   dealsDamageFirst: Interceptable<boolean, HeroCard>;
-  shouldCreateChainOnAttack: Interceptable<boolean, { target: AttackTarget }>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -96,8 +94,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         spellPower: new Interceptable(),
-        dealsDamageFirst: new Interceptable(),
-        shouldCreateChainOnAttack: new Interceptable()
+        dealsDamageFirst: new Interceptable()
       },
       options
     );
@@ -152,18 +149,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker.equals(this);
-  }
-
-  get shouldCreateChainOnAttack(): boolean {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
-    if (!phaseCtx.ctx.attacker.equals(this)) return false;
-    if (!phaseCtx.ctx.target) return false;
-
-    return this.interceptors.shouldCreateChainOnAttack.getValue(true, {
-      target: phaseCtx.ctx.target
-    });
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker?.equals(this);
   }
 
   get dealsDamageFirst(): boolean {
@@ -198,11 +184,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   canRetaliate(target: AttackTarget) {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
-    if (!phaseCtx.ctx.target?.equals(this)) return false;
-    if (phaseCtx.ctx.blocker) return false;
+    if (!phaseCtx.ctx.defender?.equals(this)) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      !this.isExhausted && this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
+      !this.isExhausted &&
+        this.atk > 0 &&
+        !!phaseCtx.ctx.attacker?.canBeRetaliatedBy(this),
       {
         attacker: target
       }
@@ -437,11 +424,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
-      level: this.level,
-      canRetaliate:
-        phaseCtx.state === GAME_PHASES.COMBAT
-          ? this.canRetaliate(phaseCtx.ctx.attacker)
-          : false
+      level: this.level
     };
   }
 }

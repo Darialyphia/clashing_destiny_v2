@@ -5,7 +5,6 @@ import {
   useMyBoard,
   useMyPlayer
 } from '../composables/useGameClient';
-import HeroSlot from './HeroSlot.vue';
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
 import Deck from './Deck.vue';
@@ -23,7 +22,7 @@ const ui = useGameUi();
 const isDraggedCardPlayedInMinionZones = computed(() => {
   if (!ui.value.draggedCard) return false;
   const card = ui.value.draggedCard;
-  return card.kind === CARD_KINDS.MINION || card.kind === CARD_KINDS.SIGIL;
+  return card.kind === CARD_KINDS.MINION || card.kind === CARD_KINDS.ARTIFACT;
 });
 
 const onMouseup = () => {
@@ -42,23 +41,7 @@ const onMouseup = () => {
     }"
     @mouseup="onMouseup"
   >
-    <div class="left-zone">
-      <HeroSlot :player="myPlayer" class="hero" />
-      <div
-        class="artifacts"
-        :class="{ 'is-condensed': myBoard.heroZone.artifacts.length > 2 }"
-      >
-        <InspectableCard
-          v-for="artifact in myBoard.heroZone.artifacts"
-          :key="artifact"
-          :card-id="artifact"
-          :open-delay="0"
-          side="right"
-        >
-          <GameCard :card-id="artifact" variant="small" show-stats can-tilt />
-        </InspectableCard>
-      </div>
-    </div>
+    <div class="left-zone"></div>
 
     <div class="center-zone">
       <div
@@ -67,24 +50,10 @@ const onMouseup = () => {
         :id="ui.DOMSelectors.minionZone(myPlayer.id).id"
       >
         <InspectableCard
-          v-for="card in myBoard.minions"
+          v-for="card in myBoard.base.minions"
           :key="card"
           :card-id="card"
           side="left"
-        >
-          <GameCard
-            :card-id="card"
-            variant="small"
-            show-stats
-            show-modifiers
-            can-tilt
-          />
-        </InspectableCard>
-        <InspectableCard
-          v-for="card in myBoard.sigils"
-          :key="card"
-          size="left"
-          :card-id="card"
         >
           <GameCard
             :card-id="card"

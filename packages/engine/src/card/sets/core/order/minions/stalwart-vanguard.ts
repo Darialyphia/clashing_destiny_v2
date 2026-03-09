@@ -1,10 +1,8 @@
-import { VigilantModifier } from '../../../../../modifier/modifiers/vigilant.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
-  CARD_SPEED,
   FACTIONS,
   RARITIES
 } from '../../../../card.enums';
@@ -17,7 +15,7 @@ export const stalwartVanguard: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   name: 'Stalwart Vanguard',
-  description: '@Vigilant@.',
+  description: '',
   faction: FACTIONS.ORDER,
   rarity: RARITIES.COMMON,
   tags: [],
@@ -46,8 +44,6 @@ export const stalwartVanguard: MinionBlueprint = {
   maxHp: 5,
   canPlay: () => true,
   abilities: [],
-  async onInit(game, card) {
-    await card.modifiers.add(new VigilantModifier(game, card));
-  },
+  async onInit(game, card) {},
   async onPlay() {}
 };

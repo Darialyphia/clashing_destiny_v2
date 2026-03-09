@@ -34,6 +34,7 @@ import {
   MinionSummonedEvent
 } from '../events/minion.events';
 import { DamageTrackerComponent } from '../components/damage-tracker.component';
+import { GAME_EVENTS } from '../../game/game.events';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -45,7 +46,7 @@ export type SerializedMinionCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   abilities: string[];
-  canRetaliate: boolean;
+  canMove: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -70,7 +71,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
   dealsDamageFirst: Interceptable<boolean, MinionCard>;
-  shouldCreateChainOnAttack: Interceptable<boolean, { target: AttackTarget }>;
+  canMove: Interceptable<boolean, MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -86,6 +87,8 @@ export class MinionCard extends Card<
   readonly abilities: Ability<MinionCard>[] = [];
 
   readonly damageTracker: DamageTrackerComponent;
+
+  private hasMovedThisTurn = false;
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
@@ -108,7 +111,7 @@ export class MinionCard extends Card<
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         dealsDamageFirst: new Interceptable(),
-        shouldCreateChainOnAttack: new Interceptable()
+        canMove: new Interceptable()
       },
       options
     );
@@ -118,6 +121,10 @@ export class MinionCard extends Card<
     });
 
     this.damageTracker = new DamageTrackerComponent(game, this);
+
+    this.game.on(GAME_EVENTS.TURN_END, async () => {
+      this.hasMovedThisTurn = false;
+    });
   }
 
   get hasSummoningSickness(): boolean {
@@ -146,23 +153,12 @@ export class MinionCard extends Card<
 
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker.equals(this);
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker?.equals(this);
   }
 
   get isAttackTarget() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
-    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.target?.equals(this);
-  }
-
-  get shouldCreateChainOnAttack(): boolean {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
-    if (!phaseCtx.ctx.attacker.equals(this)) return false;
-    if (!phaseCtx.ctx.target) return false;
-
-    return this.interceptors.shouldCreateChainOnAttack.getValue(true, {
-      target: phaseCtx.ctx.target
-    });
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.defender?.equals(this);
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
@@ -215,11 +211,12 @@ export class MinionCard extends Card<
   canRetaliate(target: AttackTarget) {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
-    if (!phaseCtx.ctx.target?.equals(this)) return false;
-    if (phaseCtx.ctx.blocker) return false;
+    if (!phaseCtx.ctx.defender?.equals(this)) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      !this.isExhausted && this.atk > 0 && phaseCtx.ctx.attacker.canBeRetaliatedBy(this),
+      !this.isExhausted &&
+        this.atk > 0 &&
+        !!phaseCtx.ctx.attacker?.canBeRetaliatedBy(this),
       {
         attacker: target
       }
@@ -346,6 +343,28 @@ export class MinionCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
+  get canMove(): boolean {
+    return this.interceptors.canMove.getValue(
+      !this.hasMovedThisTurn &&
+        (this.location === CARD_LOCATIONS.BATTLEFIELD ||
+          this.location === CARD_LOCATIONS.BASE),
+      this
+    );
+  }
+
+  async move() {
+    if (!this.canMove) return;
+    if (
+      this.location !== CARD_LOCATIONS.BATTLEFIELD &&
+      this.location !== CARD_LOCATIONS.BASE
+    ) {
+      return;
+    }
+
+    await this.player.boardSide.moveMinion(this.id);
+    this.hasMovedThisTurn = true;
+  }
+
   private async summon() {
     this.player.boardSide.summonMinion(this, CARD_LOCATIONS.BASE);
     if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
@@ -410,7 +429,6 @@ export class MinionCard extends Card<
   }
 
   serialize(): SerializedMinionCard {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
@@ -422,10 +440,7 @@ export class MinionCard extends Card<
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
-      canRetaliate:
-        phaseCtx.state === GAME_PHASES.COMBAT
-          ? this.canRetaliate(phaseCtx.ctx.attacker)
-          : false
+      canMove: this.canMove
     };
   }
 }

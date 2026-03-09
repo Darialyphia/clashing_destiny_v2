@@ -96,17 +96,12 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(
         GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_ATTACK,
+        GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE,
         GAME_PHASES.COMBAT
       ),
       stateTransition(
-        GAME_PHASES.COMBAT,
-        GAME_PHASE_TRANSITIONS.FINISH_ATTACK,
-        GAME_PHASES.MAIN
-      ),
-      stateTransition(
         GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_END_TURN,
+        GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE,
         GAME_PHASES.END
       ),
       stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
@@ -193,9 +188,9 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await this._ctx.onEnter();
   }
 
-  async declareEndTurn() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN), new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN);
+  async endCombatPhase() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE);
   }
 
   async endTurn() {
@@ -210,11 +205,14 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   }
 
   async startCombat(onResolved?: () => MaybePromise<void>) {
-    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK), new WrongGamePhaseError());
+    assert(
+      this.can(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE),
+      new WrongGamePhaseError()
+    );
     if (onResolved) {
       this.game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, onResolved);
     }
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK);
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE);
   }
 
   async declareWinner(players: Player[]) {

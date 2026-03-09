@@ -13,6 +13,8 @@ import { Entity } from '../entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import { LockedModifier } from '../modifier/modifiers/locked.modifier';
+import { GAME_EVENTS } from '../game/game.events';
+import { MinionMoveEvent } from '../card/events/minion.events';
 
 export type MinionSlot = number;
 
@@ -168,6 +170,54 @@ export class BoardSide
 
   isInBattlefield(cardId: string) {
     return this.battlefield.minions.some(c => c.id === cardId);
+  }
+
+  async moveMinion(id: string) {
+    const minionInBase = this.getCardInBase(id);
+    if (minionInBase) {
+      await this.game.emit(
+        GAME_EVENTS.MINION_BEFORE_MOVE,
+        new MinionMoveEvent({
+          card: minionInBase,
+          from: CARD_LOCATIONS.BASE,
+          to: CARD_LOCATIONS.BATTLEFIELD
+        })
+      );
+      this._base.minions = this._base.minions.filter(c => c.id !== id);
+      this._battlefield.minions.push(minionInBase);
+      await this.game.emit(
+        GAME_EVENTS.MINION_BEFORE_MOVE,
+        new MinionMoveEvent({
+          card: minionInBase,
+          from: CARD_LOCATIONS.BASE,
+          to: CARD_LOCATIONS.BATTLEFIELD
+        })
+      );
+      return;
+    }
+
+    const minionInBattlefield = this.getCardInBattlefield(id);
+    if (minionInBattlefield) {
+      await this.game.emit(
+        GAME_EVENTS.MINION_BEFORE_MOVE,
+        new MinionMoveEvent({
+          card: minionInBattlefield,
+          from: CARD_LOCATIONS.BATTLEFIELD,
+          to: CARD_LOCATIONS.BASE
+        })
+      );
+      this._battlefield.minions = this._battlefield.minions.filter(c => c.id !== id);
+      this._base.minions.push(minionInBattlefield);
+      await this.game.emit(
+        GAME_EVENTS.MINION_AFTER_MOVE,
+        new MinionMoveEvent({
+          card: minionInBattlefield,
+          from: CARD_LOCATIONS.BATTLEFIELD,
+          to: CARD_LOCATIONS.BASE
+        })
+      );
+      return;
+    }
   }
 
   serialize(): SerializedBoardSide {

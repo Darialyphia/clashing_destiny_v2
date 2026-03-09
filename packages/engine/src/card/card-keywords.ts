@@ -39,7 +39,7 @@ export const KEYWORDS = {
   SUMMONING_SICKNESS: {
     id: 'summoning-sickness',
     name: 'Summoning Sickness',
-    description: 'This unit cannot attack the turn it is played.',
+    description: 'This unit cannot move the turn it is played.',
     aliases: []
   },
   ON_ENTER: {
