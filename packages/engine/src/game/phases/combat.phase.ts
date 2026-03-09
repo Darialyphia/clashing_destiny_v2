@@ -145,6 +145,10 @@ export class CombatPhase
       })
     );
 
+    if (this.attacker.shouldSwitchInitiativeAfterAttacking(this.defender)) {
+      await this.game.turnSystem.switchInitiative();
+    }
+
     this.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
   }
 

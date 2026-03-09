@@ -35,6 +35,7 @@ import { SurrenderInput } from './inputs/surrender.input';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
+import { MoveInput } from './inputs/move.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -64,7 +65,8 @@ const inputMap = validateinputMap({
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
-  interactionTimeout: InteractionTimeoutInput
+  interactionTimeout: InteractionTimeoutInput,
+  move: MoveInput
 });
 
 type InputMap = typeof inputMap;

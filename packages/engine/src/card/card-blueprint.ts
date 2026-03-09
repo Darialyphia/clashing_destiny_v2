@@ -8,8 +8,9 @@ import type {
   ArtifactKind,
   Tag,
   CARD_DECK_SOURCES,
-  Faction,
-  CardTint
+  CardTint,
+  Job,
+  SpellSchool
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -63,7 +64,6 @@ export type CardBlueprintBase = {
   >;
   collectable: boolean;
   unique?: boolean;
-  faction: Faction;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
 } & CardSourceBlueprint;
@@ -116,10 +116,12 @@ export type MinionBlueprint = CardBlueprintBase & {
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
+  jobs: Job[];
 };
 
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
+  spellSchools: SpellSchool[];
   abilities: AbilityBlueprint<SpellCard, PreResponseTarget>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
@@ -131,6 +133,7 @@ export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
   lineage: string | null;
   level: number;
+  jobs: Job[];
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;
@@ -141,6 +144,7 @@ export type HeroBlueprint = CardBlueprintBase & {
 
 export type ArtifactBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
+  jobs: Job[];
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;

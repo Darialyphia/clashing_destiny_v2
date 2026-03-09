@@ -60,6 +60,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   atk: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
   dealsDamageFirst: Interceptable<boolean, HeroCard>;
+  shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
 };
 
 export type HeroCardInterceptorName = keyof HeroCardInterceptors;
@@ -94,7 +95,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         spellPower: new Interceptable(),
-        dealsDamageFirst: new Interceptable()
+        dealsDamageFirst: new Interceptable(),
+        shouldSwitchInitiativeAfterattacking: new Interceptable()
       },
       options
     );
@@ -150,6 +152,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   get isAttacking() {
     const phaseCtx = this.game.gamePhaseSystem.getContext();
     return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker?.equals(this);
+  }
+
+  shouldSwitchInitiativeAfterAttacking(attackTarget: AttackTarget): boolean {
+    return this.interceptors.shouldSwitchInitiativeAfterattacking.getValue(true, {
+      target: attackTarget
+    });
   }
 
   get dealsDamageFirst(): boolean {

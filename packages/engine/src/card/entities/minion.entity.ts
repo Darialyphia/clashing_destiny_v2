@@ -54,11 +54,6 @@ export type MinionCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, MinionCard>;
   canPlayDuringCombatPhase: Interceptable<boolean, MinionCard>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
-  canBlock: Interceptable<boolean, { attacker: AttackTarget; target: AttackTarget }>;
-  canBlockWhileExhausted: Interceptable<
-    boolean,
-    { attacker: AttackTarget; target: AttackTarget }
-  >;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
   canBeRetaliatedAgainst: Interceptable<boolean, { defender: AttackTarget }>;
@@ -72,6 +67,9 @@ export type MinionCardInterceptors = CardInterceptors & {
   atk: Interceptable<number, MinionCard>;
   dealsDamageFirst: Interceptable<boolean, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
+
+  shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
+  shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -99,9 +97,7 @@ export class MinionCard extends Card<
         canPlay: new Interceptable(),
         canPlayDuringCombatPhase: new Interceptable(),
         canAttack: new Interceptable(),
-        canBlock: new Interceptable(),
         canBeAttacked: new Interceptable(),
-        canBlockWhileExhausted: new Interceptable(),
         canRetaliate: new Interceptable(),
         canBeRetaliatedAgainst: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
@@ -111,7 +107,9 @@ export class MinionCard extends Card<
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         dealsDamageFirst: new Interceptable(),
-        canMove: new Interceptable()
+        canMove: new Interceptable(),
+        shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
+        shouldSwitchInitiativeAfterattacking: new Interceptable()
       },
       options
     );
@@ -264,6 +262,12 @@ export class MinionCard extends Card<
     }
   }
 
+  shouldSwitchInitiativeAfterAttacking(attackTarget: AttackTarget): boolean {
+    return this.interceptors.shouldSwitchInitiativeAfterattacking.getValue(true, {
+      target: attackTarget
+    });
+  }
+
   async dealDamage(target: AttackTarget, damage: CombatDamage) {
     const affectedCards = [target];
     await this.game.emit(
@@ -350,6 +354,29 @@ export class MinionCard extends Card<
           this.location === CARD_LOCATIONS.BASE),
       this
     );
+  }
+
+  get canMoveManually(): boolean {
+    return this.interceptors.canMove.getValue(
+      this.location === CARD_LOCATIONS.BATTLEFIELD ||
+        this.location === CARD_LOCATIONS.BASE,
+      this
+    );
+  }
+
+  get shouldSwitchInitiativeAfterMovingManually(): boolean {
+    return this.interceptors.shouldSwitchInitiativeAfterMovingManually.getValue(
+      true,
+      this
+    );
+  }
+
+  async moveManually() {
+    await this.move();
+    this.hasMovedThisTurn = true;
+    if (this.shouldSwitchInitiativeAfterMovingManually) {
+      await this.game.turnSystem.switchInitiative();
+    }
   }
 
   async move() {
@@ -440,7 +467,7 @@ export class MinionCard extends Card<
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
-      canMove: this.canMove
+      canMove: this.canMoveManually
     };
   }
 }

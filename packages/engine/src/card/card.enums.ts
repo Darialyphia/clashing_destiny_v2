@@ -90,92 +90,80 @@ export type CardTint = {
   opacity: number;
 };
 
-export type Faction = {
+export type Job = {
   id: string;
   name: string;
   shortName: string;
-  defaultCardTint: CardTint;
 };
-export const FACTIONS = {
-  NEUTRAL: {
-    id: 'NEUTRAL' as const,
-    name: 'Neutral' as const,
-    shortName: 'Neutr',
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+
+export const JOBS = {
+  WARRIOR: {
+    id: 'warrior',
+    name: 'Warrior',
+    shortName: 'War'
   },
-  ORDER: {
-    id: 'ORDER',
-    name: 'Order',
-    shortName: 'Order',
-    defaultCardTint: {
-      colors: ['#be9019', '#bc8720', '#156ba8'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  MAGE: {
+    id: 'mage',
+    name: 'Mage',
+    shortName: 'Mag'
   },
-  CHAOS: {
-    id: 'CHAOS',
-    name: 'Chaos',
-    shortName: 'Chaos',
-    defaultCardTint: {
-      mode: { type: 'linear', angle: 135 },
-      colors: ['#483D8B', '#7E2042'],
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  ROGUE: {
+    id: 'rogue',
+    name: 'Rogue',
+    shortName: 'Rog'
   },
-  GENESIS: {
-    id: 'GENESIS',
-    name: 'Genesis',
-    shortName: 'Genesis',
-    defaultCardTint: {
-      colors: ['#0064a9', '#a2dd92'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  PRIEST: {
+    id: 'priest',
+    name: 'Priest',
+    shortName: 'Pri'
   },
-  OBLIVION: {
-    id: 'OBLIVION',
-    name: 'Oblivion',
-    shortName: 'Obliv',
-    defaultCardTint: {
-      colors: ['#8B0064', '#aa2442'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
-  },
-  ARCANE: {
-    id: 'ARCANE',
-    name: 'Arcane',
-    shortName: 'Arcane',
-    defaultCardTint: {
-      colors: ['#cc0081', '#006ab6'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
-  },
-  PRIMAL: {
-    id: 'PRIMAL',
-    name: 'Primal',
-    shortName: 'Primal',
-    defaultCardTint: {
-      colors: ['#8B4513', '#DEB887'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  RANGER: {
+    id: 'ranger',
+    name: 'Ranger',
+    shortName: 'Ran'
   }
-} as const satisfies Record<string, Faction>;
-export type FactionId = Values<typeof FACTIONS>['id'];
+} as const satisfies Record<string, Job>;
+export type JobId = Values<typeof JOBS>['id'];
+
+export type SpellSchool = {
+  id: string;
+  name: string;
+  shortName: string;
+};
+
+export const SPELL_SCHOOLS = {
+  FIRE: {
+    id: 'fire',
+    name: 'Fire',
+    shortName: 'Fir'
+  },
+  WATER: {
+    id: 'water',
+    name: 'Water',
+    shortName: 'Wat'
+  },
+  EARTH: {
+    id: 'earth',
+    name: 'Earth',
+    shortName: 'Ear'
+  },
+  AIR: {
+    id: 'air',
+    name: 'Air',
+    shortName: 'Air'
+  },
+  LIGHT: {
+    id: 'light',
+    name: 'Light',
+    shortName: 'Lig'
+  },
+  DARK: {
+    id: 'dark',
+    name: 'Dark',
+    shortName: 'Dar'
+  }
+} as const satisfies Record<string, SpellSchool>;
+export type SpellSchoolId = Values<typeof SPELL_SCHOOLS>['id'];
 
 export const CARD_LOCATIONS = {
   HAND: 'hand',
