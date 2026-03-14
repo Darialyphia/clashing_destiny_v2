@@ -17,7 +17,7 @@ import {
   CARD_KINDS,
   type CardKind,
   CARD_DECK_SOURCES,
-  FACTIONS
+  type Job
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
@@ -172,8 +172,11 @@ export class CardViewModel {
     return null;
   }
 
-  get faction() {
-    return this.data.faction as keyof typeof FACTIONS;
+  get jobs() {
+    if ('jobs' in this.data) {
+      return this.data.jobs as Job[];
+    }
+    return [];
   }
 
   get unplayableReason() {

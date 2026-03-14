@@ -17,7 +17,7 @@ export class SummoningSicknessModifier extends Modifier<MinionCard> {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.SUMMONING_SICKNESS),
         new MinionInterceptorModifierMixin(game, {
-          key: 'canMove',
+          key: 'canMoveManually',
           interceptor: () => false
         }),
         new UntilEndOfTurnModifierMixin(game)

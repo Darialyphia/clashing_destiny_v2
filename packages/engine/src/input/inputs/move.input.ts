@@ -7,7 +7,8 @@ import { CardNotFoundError } from '../../card/card-errors';
 import { isMinion } from '../../card/card-utils';
 
 const schema = defaultInputSchema.extend({
-  cardId: z.string()
+  cardId: z.string(),
+  index: z.number()
 });
 
 export class MoveInput extends Input<typeof schema> {
@@ -27,6 +28,6 @@ export class MoveInput extends Input<typeof schema> {
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.minion.canMoveManually, new Error('Minion cannot be moved manually'));
-    await this.minion.move();
+    await this.minion.moveManually(this.payload.index);
   }
 }

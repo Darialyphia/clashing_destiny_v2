@@ -172,7 +172,7 @@ export class BoardSide
     return this.battlefield.minions.some(c => c.id === cardId);
   }
 
-  async moveMinion(id: string) {
+  async moveMinion(id: string, index: number) {
     const minionInBase = this.getCardInBase(id);
     if (minionInBase) {
       await this.game.emit(
@@ -184,7 +184,7 @@ export class BoardSide
         })
       );
       this._base.minions = this._base.minions.filter(c => c.id !== id);
-      this._battlefield.minions.push(minionInBase);
+      this._battlefield.minions.splice(index, 0, minionInBase);
       await this.game.emit(
         GAME_EVENTS.MINION_BEFORE_MOVE,
         new MinionMoveEvent({
@@ -207,7 +207,7 @@ export class BoardSide
         })
       );
       this._battlefield.minions = this._battlefield.minions.filter(c => c.id !== id);
-      this._base.minions.push(minionInBattlefield);
+      this._base.minions.splice(index, 0, minionInBattlefield);
       await this.game.emit(
         GAME_EVENTS.MINION_AFTER_MOVE,
         new MinionMoveEvent({

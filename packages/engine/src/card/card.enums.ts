@@ -94,76 +94,67 @@ export type Job = {
   id: string;
   name: string;
   shortName: string;
+  defaultCardTint: CardTint;
 };
 
 export const JOBS = {
   WARRIOR: {
     id: 'warrior',
     name: 'Warrior',
-    shortName: 'War'
+    shortName: 'War',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
   },
   MAGE: {
     id: 'mage',
     name: 'Mage',
-    shortName: 'Mag'
+    shortName: 'Mag',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
   },
   ROGUE: {
     id: 'rogue',
     name: 'Rogue',
-    shortName: 'Rog'
+    shortName: 'Rog',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
   },
-  PRIEST: {
-    id: 'priest',
-    name: 'Priest',
-    shortName: 'Pri'
+  ACOLYTE: {
+    id: 'acolyte',
+    name: 'Acolyte',
+    shortName: 'Aco',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
   },
   RANGER: {
     id: 'ranger',
     name: 'Ranger',
-    shortName: 'Ran'
+    shortName: 'Ran',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
   }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
-
-export type SpellSchool = {
-  id: string;
-  name: string;
-  shortName: string;
-};
-
-export const SPELL_SCHOOLS = {
-  FIRE: {
-    id: 'fire',
-    name: 'Fire',
-    shortName: 'Fir'
-  },
-  WATER: {
-    id: 'water',
-    name: 'Water',
-    shortName: 'Wat'
-  },
-  EARTH: {
-    id: 'earth',
-    name: 'Earth',
-    shortName: 'Ear'
-  },
-  AIR: {
-    id: 'air',
-    name: 'Air',
-    shortName: 'Air'
-  },
-  LIGHT: {
-    id: 'light',
-    name: 'Light',
-    shortName: 'Lig'
-  },
-  DARK: {
-    id: 'dark',
-    name: 'Dark',
-    shortName: 'Dar'
-  }
-} as const satisfies Record<string, SpellSchool>;
-export type SpellSchoolId = Values<typeof SPELL_SCHOOLS>['id'];
 
 export const CARD_LOCATIONS = {
   HAND: 'hand',

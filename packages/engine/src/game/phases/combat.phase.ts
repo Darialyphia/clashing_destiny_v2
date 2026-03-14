@@ -18,9 +18,12 @@ import {
   COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
   GAME_PHASE_TRANSITIONS,
+  TURN_EVENTS,
   type CombatStep,
   type CombatStepTransition
 } from '../game.enums';
+import type { Player } from '../../player/player.entity';
+import { TurnPassEvent } from '../systems/turn.system';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -38,6 +41,8 @@ export class CombatPhase
 {
   attacker: Attacker | null = null;
   defender: AttackTarget | null = null;
+
+  private playersWhoHavePassedThisRound: Set<Player> = new Set();
 
   constructor(private game: Game) {
     super(COMBAT_STEPS.DECLARE_ATTACKER);
@@ -121,6 +126,24 @@ export class CombatPhase
   changeAttacker(newAttacker: Attacker) {
     if (!this.attacker) return;
     this.attacker = newAttacker;
+  }
+
+  async pass(player: Player) {
+    if (!player.equals(this.game.turnSystem.initiativePlayer)) return;
+    await this.game.emit(
+      TURN_EVENTS.TURN_PASS,
+      new TurnPassEvent({ player: this.game.turnSystem.initiativePlayer })
+    );
+
+    this.playersWhoHavePassedThisRound.add(player);
+    const allPlayersPassed =
+      this.playersWhoHavePassedThisRound.size === this.game.playerSystem.players.length;
+
+    if (allPlayersPassed) {
+      await this.game.gamePhaseSystem.endCombatPhase();
+    } else {
+      await this.game.turnSystem.switchInitiative();
+    }
   }
 
   private async resolveCombat() {

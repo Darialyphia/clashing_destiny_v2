@@ -13,14 +13,19 @@ export type TurnEventMap = {
 export class TurnSystem extends System<never> {
   private _elapsedTurns = 0;
 
-  // the initiative player is the one that can start an action
+  // the initiative player is the one that can takestart an action
   private _initiativePlayer!: Player;
 
-  private firstPlayerToPassThisRound: Player | null = null;
+  // the player that started the current turn with the initiative
+  private _turnInitiativePlayer!: Player;
+  // the player who will start next turn with initiative
+  private _nextTurnInitiativePlayer!: Player;
 
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._initiativePlayer = this.game.playerSystem.player1;
+    this._turnInitiativePlayer = this._initiativePlayer;
+    this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
   }
 
   shutdown() {}
@@ -33,37 +38,10 @@ export class TurnSystem extends System<never> {
     return this._elapsedTurns;
   }
 
-  async pass(player: Player) {
-    if (!player.equals(this._initiativePlayer)) return;
-    await this.game.emit(
-      TURN_EVENTS.TURN_PASS,
-      new TurnPassEvent({ player: this._initiativePlayer })
-    );
-    player.passTurn();
-    if (!this.firstPlayerToPassThisRound) {
-      this.firstPlayerToPassThisRound = player;
-    }
-    const allPlayersPassed = this.game.playerSystem.players.every(
-      p => p.hasPassedThisRound
-    );
-    if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.endCombatPhase();
-    } else {
-      this._initiativePlayer = this._initiativePlayer.opponent;
-      await this.game.emit(
-        TURN_EVENTS.TURN_INITATIVE_CHANGE,
-        new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
-      );
-    }
-  }
-
   async startTurn() {
-    this._initiativePlayer = this.firstPlayerToPassThisRound ?? this.initiativePlayer;
-    if (this.game.config.REWARD_FOR_PASSING_FIRST && this.firstPlayerToPassThisRound) {
-      const spark = await this.firstPlayerToPassThisRound.generateCard('mana-spark');
-      await spark.addToHand();
-    }
-    this.firstPlayerToPassThisRound = null;
+    this._initiativePlayer = this._nextTurnInitiativePlayer;
+    this._turnInitiativePlayer = this._initiativePlayer;
+    this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
 
     return this.game.emit(
       TURN_EVENTS.TURN_START,
@@ -81,11 +59,6 @@ export class TurnSystem extends System<never> {
   }
 
   async switchInitiative() {
-    const opponentCanReceiveInitiative =
-      !this._initiativePlayer.opponent.hasPassedThisRound;
-
-    if (!opponentCanReceiveInitiative) return;
-
     this._initiativePlayer = this._initiativePlayer.opponent;
 
     await this.game.emit(

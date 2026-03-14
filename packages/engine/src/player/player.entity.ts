@@ -14,8 +14,7 @@ import { GAME_EVENTS } from '../game/game.events';
 import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
-import { CARD_KINDS, FACTIONS } from '../card/card.enums';
-import { UnpreventableDamage } from '../utils/damage';
+import { CARD_KINDS } from '../card/card.enums';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { LockedModifier } from '../modifier/modifiers/locked.modifier';
@@ -79,8 +78,6 @@ export class Player
   readonly cardTracker: CardTrackerComponent;
 
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
-
-  _hasPassedThisRound = false;
 
   hasPlayedDestinyCardThisTurn = false;
 
@@ -269,14 +266,6 @@ export class Player
     return this.cardManager.hand.length + this.cardManager.destinyZone.size;
   }
 
-  get hasPassedThisRound() {
-    return this._hasPassedThisRound;
-  }
-
-  passTurn() {
-    this._hasPassedThisRound = true;
-  }
-
   get maxResourceActionPerTurn() {
     return this.interceptors.maxResourceActionPerTurn.getValue(
       this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
@@ -331,23 +320,8 @@ export class Player
     }
   }
 
-  async payForLoyaltyCost(card: AnyCard) {
-    if (
-      card.faction.id === this.hero.faction.id ||
-      card.faction.id === FACTIONS.NEUTRAL.id
-    ) {
-      return;
-    }
-
-    const loyaltyHpCost = card.loyaltyHpCost;
-    if (loyaltyHpCost > 0) {
-      await this.hero.takeDamage(card, new UnpreventableDamage(loyaltyHpCost));
-    }
-  }
-
   async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
     await this.payForManaCost(card.manaCost, manaCostIndices);
-    await this.payForLoyaltyCost(card);
     card.isPlayedFromHand = true;
     await this.playCard(card);
   }
@@ -363,7 +337,6 @@ export class Player
 
   async playDestinyDeckCard(card: AnyCard) {
     await this.payForDestinyCost(card.destinyCost);
-    await this.payForLoyaltyCost(card);
     await this.playCard(card);
   }
 
@@ -374,14 +347,12 @@ export class Player
     const hasEnough = pool.length >= cost;
     assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
 
-    const lockedCards: Array<{ card: AnyCard; index: number }> = [];
+    const cardsToBanish: Array<{ card: AnyCard; index: number }> = [];
     for (let i = 0; i < cost; i++) {
       const index = this.game.rngSystem.nextInt(pool.length - 1);
       const card = pool[index];
-      // await card.sendToBanishPile();
-      await card.modifiers.add(new LockedModifier(this.game, card, { stacks: 1 }));
-      lockedCards.push({ card, index });
-      await card.reveal();
+      await card.sendToBanishPile();
+      cardsToBanish.push({ card, index });
       pool.splice(index, 1);
     }
 
@@ -389,7 +360,7 @@ export class Player
       GAME_EVENTS.PLAYER_PAY_FOR_DESTINY_COST,
       new PlayerPayForDestinyCostEvent({
         player: this,
-        cards: lockedCards
+        cards: cardsToBanish
       })
     );
   }
@@ -401,7 +372,6 @@ export class Player
     );
     this.hasPlayedDestinyCardThisTurn = false;
     this._resourceActionsPerformedThisTurn = [];
-    this._hasPassedThisRound = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       if (card.shouldWakeUpAtTurnStart) {
         await card.wakeUp();

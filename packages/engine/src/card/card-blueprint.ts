@@ -9,8 +9,7 @@ import type {
   Tag,
   CARD_DECK_SOURCES,
   CardTint,
-  Job,
-  SpellSchool
+  Job
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -121,7 +120,7 @@ export type MinionBlueprint = CardBlueprintBase & {
 
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
-  spellSchools: SpellSchool[];
+  jobs: Job[];
   abilities: AbilityBlueprint<SpellCard, PreResponseTarget>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;

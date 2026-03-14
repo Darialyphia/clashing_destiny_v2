@@ -8,7 +8,7 @@ import {
   type MinionBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -47,6 +47,7 @@ export type SerializedMinionCard = SerializedCard & {
   baseManaCost: number;
   abilities: string[];
   canMove: boolean;
+  jobs: JobId[];
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -67,6 +68,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   atk: Interceptable<number, MinionCard>;
   dealsDamageFirst: Interceptable<boolean, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
+  canMoveManually: Interceptable<boolean, MinionCard>;
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
@@ -108,6 +110,7 @@ export class MinionCard extends Card<
         atk: new Interceptable(),
         dealsDamageFirst: new Interceptable(),
         canMove: new Interceptable(),
+        canMoveManually: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
         shouldSwitchInitiativeAfterattacking: new Interceptable()
       },
@@ -143,6 +146,10 @@ export class MinionCard extends Card<
 
   get maxHp(): number {
     return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
+  }
+
+  get jobs() {
+    return this.blueprint.jobs;
   }
 
   get remainingHp(): number {
@@ -357,8 +364,8 @@ export class MinionCard extends Card<
   }
 
   get canMoveManually(): boolean {
-    return this.interceptors.canMove.getValue(
-      this.location === CARD_LOCATIONS.BATTLEFIELD ||
+    return this.interceptors.canMoveManually.getValue(
+      (this.canMove && this.location === CARD_LOCATIONS.BATTLEFIELD) ||
         this.location === CARD_LOCATIONS.BASE,
       this
     );
@@ -371,15 +378,15 @@ export class MinionCard extends Card<
     );
   }
 
-  async moveManually() {
-    await this.move();
+  async moveManually(index: number) {
+    await this.move(index);
     this.hasMovedThisTurn = true;
     if (this.shouldSwitchInitiativeAfterMovingManually) {
       await this.game.turnSystem.switchInitiative();
     }
   }
 
-  async move() {
+  async move(index: number) {
     if (!this.canMove) return;
     if (
       this.location !== CARD_LOCATIONS.BATTLEFIELD &&
@@ -388,7 +395,7 @@ export class MinionCard extends Card<
       return;
     }
 
-    await this.player.boardSide.moveMinion(this.id);
+    await this.player.boardSide.moveMinion(this.id, index);
     this.hasMovedThisTurn = true;
   }
 
@@ -467,7 +474,8 @@ export class MinionCard extends Card<
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
-      canMove: this.canMoveManually
+      canMove: this.canMoveManually,
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }

@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, type JobId } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { GAME_PHASES } from '../../game/game.enums';
@@ -27,6 +27,7 @@ export type SerializedSpellCard = SerializedCard & {
   baseManaCost: number;
   preResponseTargets: SerializedPreResponseTarget[] | null;
   abilities: string[];
+  jobs: JobId[];
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
@@ -63,6 +64,10 @@ export class SpellCard extends Card<
     this.blueprint.abilities.forEach(ability => {
       this.abilities.push(new Ability<SpellCard>(this.game, this, ability));
     });
+  }
+
+  get jobs() {
+    return this.blueprint.jobs;
   }
 
   get canBeTargeted(): boolean {
@@ -173,7 +178,8 @@ export class SpellCard extends Card<
       abilities: this.abilities.map(ability => ability.id),
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
-        : null
+        : null,
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }

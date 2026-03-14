@@ -1,4 +1,4 @@
-import { uppercaseFirstLetter, type MaybePromise } from '@game/shared';
+import { uppercaseFirstLetter } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 
@@ -10,7 +10,7 @@ import {
   type HeroBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -43,6 +43,7 @@ export type SerializedHeroCard = SerializedCard & {
   remainingHp: number;
   abilities: string[];
   level: number;
+  jobs: JobId[];
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -336,6 +337,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.blueprint.lineage;
   }
 
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
   get hasCorrectLevelToPlay() {
     return this.player.hero.level === this.blueprint.level - 1;
   }
@@ -344,10 +349,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     if (this.level <= 1) return true;
 
     return !this.lineage || this.player.hero.lineage === this.lineage;
-  }
-
-  get hasCorrectFactionToPlay() {
-    return this.player.hero.faction.id === this.faction.id;
   }
 
   get isCorrectPhaseToPlay() {
@@ -359,7 +360,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       this.canPlayBase &&
         this.hasCorrectLevelToPlay &&
         this.hasCorrectLineageToPlay &&
-        this.hasCorrectFactionToPlay &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
@@ -375,9 +375,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     }
     if (!this.hasCorrectLineageToPlay) {
       return `Your hero must be ${uppercaseFirstLetter(this.lineage ?? '')}.`;
-    }
-    if (!this.hasCorrectFactionToPlay) {
-      return `Your hero must be of the ${this.faction.name} faction.`;
     }
 
     return base;
@@ -419,8 +416,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   serialize(): SerializedHeroCard {
-    const phaseCtx = this.game.gamePhaseSystem.getContext();
-
     return {
       ...this.serializeBase(),
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
@@ -432,7 +427,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
-      level: this.level
+      level: this.level,
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }

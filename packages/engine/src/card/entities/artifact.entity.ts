@@ -8,7 +8,13 @@ import {
   type ArtifactBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
+import {
+  ARTIFACT_KINDS,
+  CARD_EVENTS,
+  type ArtifactKind,
+  type Job,
+  type JobId
+} from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
   Card,
@@ -34,6 +40,7 @@ export type SerializedArtifactCard = SerializedCard & {
   baseManaCost: number;
   abilities: string[];
   atkBonus: number | null;
+  jobs: JobId[];
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
@@ -194,6 +201,10 @@ export class ArtifactCard extends Card<
     return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
   }
 
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
@@ -227,7 +238,8 @@ export class ArtifactCard extends Card<
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
       abilities: this.abilities.map(a => a.id),
-      atkBonus: this.atkBonus
+      atkBonus: this.atkBonus,
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }
