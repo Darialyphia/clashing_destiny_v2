@@ -99,10 +99,6 @@ export const testGameBuilder = () => {
 
             // await ctx.declareAttacker(attacker);
             // await ctx.declareAttackTarget(target);
-          },
-
-          async pass() {
-            await game.turnSystem.pass(game.activePlayer);
           }
         }
       };

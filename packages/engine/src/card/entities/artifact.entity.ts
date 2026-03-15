@@ -1,6 +1,4 @@
-import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
-
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
@@ -12,7 +10,6 @@ import {
   ARTIFACT_KINDS,
   CARD_EVENTS,
   type ArtifactKind,
-  type Job,
   type JobId
 } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';

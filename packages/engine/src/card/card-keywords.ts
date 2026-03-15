@@ -22,13 +22,6 @@ export const KEYWORDS = {
       'If this card is from a different faction than your hero, Deal X additional unpreventable damage to your hero when you play it.',
     aliases: [/^loyalty [0-9]+/, 'loyalty']
   },
-  FORESIGHT: {
-    id: 'foresight',
-    name: 'Foresight',
-    description:
-      'You can banish this card from your Discard pile, to banish a card in your Destiny Zone. Reduce the cost of the next Destiny card you play this turn by 1.',
-    aliases: []
-  },
   LINGERING_DESTINY: {
     id: 'lingering-destiny',
     name: 'Lingering Destiny',
@@ -60,23 +53,11 @@ export const KEYWORDS = {
     description: 'Does something when this card declares an attack.',
     aliases: ['on minion attack', 'on hero attack']
   },
-  ON_BLOCK: {
-    id: 'on-block',
-    name: 'On Block',
-    description: 'Does something when this card declares a block.',
-    aliases: ['on minion block', 'on hero block']
-  },
   ON_RETALIATE: {
     id: 'on-retaliate',
     name: 'On Retaliate',
     description: 'Does something when this card retaliates.',
     aliases: []
-  },
-  ON_HIT: {
-    id: 'on-hit',
-    name: 'On Hit',
-    description: 'Does something when this card deals combat damage.',
-    aliases: ['on minion hit', 'on hero hit']
   },
   ON_KILL: {
     id: 'on-kill',
@@ -89,6 +70,30 @@ export const KEYWORDS = {
     id: 'on-level-up',
     name: 'On Level Up',
     description: 'Does something when your hero levels up.',
+    aliases: []
+  },
+  ON_RETREAT: {
+    id: 'on-retreat',
+    name: 'On Retreat',
+    description: 'Does something when this card moves from the battlefield to the base.',
+    aliases: []
+  },
+  ON_ENGAGE: {
+    id: 'on-engage',
+    name: 'On Engage',
+    description: 'Does something when this card moves from the base to the battlefield.',
+    aliases: []
+  },
+  IN_BASE: {
+    id: 'in-base',
+    name: 'In Base',
+    description: 'Does something while this card is in base.',
+    aliases: []
+  },
+  IN_BATTLEFIELD: {
+    id: 'in-battlefield',
+    name: 'In Battlefield',
+    description: 'Does something while this card is in the battlefield.',
     aliases: []
   },
   UNIQUE: {
@@ -113,7 +118,7 @@ export const KEYWORDS = {
     id: 'pride',
     name: 'Pride X',
     description:
-      "This minion cannot attack, block, retaliate or use abilities unless its owner's hero is at least level X.",
+      "This minion cannot attack, move, or use abilities unless its owner's hero is at least level X.",
     aliases: [/pride [0-9]+/]
   },
   HINDERED: {
@@ -122,10 +127,10 @@ export const KEYWORDS = {
     description: 'This card comes into play exhausted unless you pay X.',
     aliases: [/^hindered [0-9]+$/, 'hindered']
   },
-  VIGILANT: {
-    id: 'vigilant',
-    name: 'Vigilant',
-    description: 'This can block while being exhausted.',
+  PROTECTOR: {
+    id: 'protector',
+    name: 'Protector',
+    description: 'Enemy units cannot attack other minions without Protector',
     aliases: []
   },
   FLEETING: {
@@ -146,7 +151,7 @@ export const KEYWORDS = {
     id: 'frozen',
     name: 'Frozen',
     description:
-      "This unit has 0 attack and doesn't exhaust at the start of the next turn.",
+      "This unit has 0 attack and doesn't wake up at the start of the next turn.",
     aliases: ['Freeze']
   },
   INHERITED_EFFECT: {
@@ -163,9 +168,9 @@ export const KEYWORDS = {
   },
   BURN: {
     id: 'burn',
-    name: 'Burn',
-    description: 'This takes 1 damage at the start of every turn.',
-    aliases: []
+    name: 'Burn X',
+    description: 'This takes X damage at the start of every turn.',
+    aliases: [/burn [0-9]+/]
   },
   INFLUENCE: {
     id: 'influence',
@@ -222,12 +227,6 @@ export const KEYWORDS = {
     name: 'Intimidate X',
     description: 'This unit cannot be attacked by minions that cost X or less.',
     aliases: [/intimidate [0-9]+/]
-  },
-  ELUSIVE: {
-    id: 'elusive',
-    name: 'Elusive X',
-    description: 'This unit cannot be blocked by minions that cost X or less.',
-    aliases: [/elusive [0-9]+/]
   },
   STEALTH: {
     id: 'stealth',
@@ -302,17 +301,28 @@ export const KEYWORDS = {
       'When you play a spell, the Spellboost effects of cards in your hand activate. Effects vary by card',
     aliases: []
   },
-  HONOR: {
-    id: 'honor',
-    name: 'Honor',
-    description: 'This unit cannot be blocked or defended.',
-    aliases: []
-  },
   BURST_ATTACK: {
     id: 'burst-attack',
     name: 'Burst Attack',
-    description:
-      'This unit can attack at burst speed (it does not create a stack, cannot be blocked or retaliated and resolves instantly).',
+    description: "This unit's owner keeps initiativer after this unit attacks.",
+    aliases: []
+  },
+  COURAGE: {
+    id: 'courage',
+    name: 'Courage X',
+    description: 'This unit has +X attack when attacking.',
+    aliases: [/courage [0-9]+/]
+  },
+  STEADFAST: {
+    id: 'steadfast',
+    name: 'Steadfast X',
+    description: 'This unit has +X attack when getting attacked.',
+    aliases: [/steadfast [0-9]+/]
+  },
+  CHALLENGE: {
+    id: 'challenge',
+    name: 'Challenge',
+    description: 'Move a minino from the base to the battlefield',
     aliases: []
   }
 };

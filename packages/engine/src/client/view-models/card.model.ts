@@ -24,7 +24,6 @@ import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.e
 import { AbilityViewModel } from './ability.model';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { MoveAction } from '../actions/move';
 
 type CardData =
   | SerializedSpellCard
@@ -390,7 +389,6 @@ export class CardViewModel {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
-      new MoveAction(this.getClient()),
       ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
     ].filter(rule => rule.predicate(this));
 

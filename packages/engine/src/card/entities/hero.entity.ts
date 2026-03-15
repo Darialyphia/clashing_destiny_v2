@@ -326,7 +326,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   removeAbility(abilityId: string) {
     const index = this.abilities.findIndex(a => a.abilityId === abilityId);
     if (index === -1) return;
-    this.abilityTargets.delete(abilityId);
+    this.abilities.splice(index, 1);
   }
 
   get level() {

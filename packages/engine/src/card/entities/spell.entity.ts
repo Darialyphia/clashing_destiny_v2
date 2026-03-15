@@ -123,7 +123,7 @@ export class SpellCard extends Card<
   removeAbility(abilityId: string) {
     const index = this.abilities.findIndex(a => a.abilityId === abilityId);
     if (index === -1) return;
-    this.abilityTargets.delete(abilityId);
+    this.abilities.splice(index, 1);
   }
 
   get canPlayDuringCombatPhase(): boolean {

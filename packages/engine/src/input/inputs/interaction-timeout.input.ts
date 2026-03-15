@@ -15,7 +15,13 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
     const interactionCtx = this.game.interaction.getContext();
     await match(interactionCtx)
       .with({ state: INTERACTION_STATES.IDLE }, async () => {
-        await this.game.turnSystem.pass(this.player);
+        const phaseCtx = this.game.gamePhaseSystem.getContext();
+        if (
+          phaseCtx?.state === GAME_PHASES.COMBAT ||
+          phaseCtx?.state === GAME_PHASES.MAIN
+        ) {
+          await phaseCtx.ctx.pass(this.player);
+        }
       })
       .with({ state: INTERACTION_STATES.ASK_QUESTION }, async ctx => {
         await ctx.ctx.commit(this.player, null);
