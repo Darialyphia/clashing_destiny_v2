@@ -81,6 +81,9 @@ export type AbilityBlueprint<
   getPreResponseTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
   canUse(game: Game, card: TCard): boolean;
   onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
+  aiHints: {
+    shouldUse: (game: Game, card: TCard) => number;
+  };
 };
 
 export type AnyAbility = AbilityBlueprint<AbilityOwner, PreResponseTarget>;
@@ -116,6 +119,12 @@ export type MinionBlueprint = CardBlueprintBase & {
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
   jobs: Job[];
+  aiHints: {
+    shouldChoose: (game: Game, card: MinionCard) => number;
+    shouldPlay: (game: Game, card: MinionCard) => number;
+    shouldMove: (game: Game, card: MinionCard) => number;
+    shouldAttack: (game: Game, card: MinionCard) => number;
+  };
 };
 
 export type SpellBlueprint = CardBlueprintBase & {
@@ -126,6 +135,10 @@ export type SpellBlueprint = CardBlueprintBase & {
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
   getPreResponseTargets: (game: Game, card: SpellCard) => Promise<PreResponseTarget[]>;
+  aiHints: {
+    shouldChoose: (game: Game, card: SpellCard) => number;
+    shouldPlay: (game: Game, card: SpellCard) => number;
+  };
 };
 
 export type HeroBlueprint = CardBlueprintBase & {
@@ -139,6 +152,11 @@ export type HeroBlueprint = CardBlueprintBase & {
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
+  aiHints: {
+    shouldChoose: (game: Game, card: HeroCard) => number;
+    shouldPlay: (game: Game, card: HeroCard) => number;
+    shouldAttack: (game: Game, card: HeroCard) => number;
+  };
 };
 
 export type ArtifactBlueprint = CardBlueprintBase & {
@@ -151,6 +169,10 @@ export type ArtifactBlueprint = CardBlueprintBase & {
     AbilityBlueprint<ArtifactCard, PreResponseTarget> & { durabilityCost: number }
   >;
   durability: number;
+  aiHints: {
+    shouldChoose: (game: Game, card: ArtifactCard) => number;
+    shouldPlay: (game: Game, card: ArtifactCard) => number;
+  };
 } & (
     | {
         subKind: BetterExtract<ArtifactKind, 'ARMOR' | 'RELIC'>;

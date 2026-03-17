@@ -26,5 +26,5 @@ export class UntilEndOfTurnModifierMixin<
     this.game.off(TURN_EVENTS.TURN_END, this.onTurnEnd);
   }
 
-  onReapplied(): void {}
+  async onReapplied() {}
 }

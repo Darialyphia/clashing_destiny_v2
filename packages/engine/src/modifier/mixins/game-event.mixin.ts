@@ -81,5 +81,5 @@ export class GameEventModifierMixin<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onReapplied(): void {}
+  async onReapplied() {}
 }

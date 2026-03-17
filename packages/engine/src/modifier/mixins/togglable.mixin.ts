@@ -32,5 +32,5 @@ export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMi
     }
   }
 
-  onReapplied() {}
+  async onReapplied() {}
 }

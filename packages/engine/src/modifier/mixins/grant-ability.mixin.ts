@@ -28,5 +28,5 @@ export class GrantAbilityModifierMixin<T extends AbilityOwner> extends ModifierM
     this.modifier.target.removeAbility(this.abilityId);
   }
 
-  onReapplied() {}
+  async onReapplied() {}
 }

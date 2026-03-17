@@ -36,5 +36,5 @@ export class UntilEventModifierMixin<
 
   onRemoved(): void {}
 
-  onReapplied(): void {}
+  async onReapplied() {}
 }

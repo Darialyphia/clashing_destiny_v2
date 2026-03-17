@@ -19,5 +19,5 @@ export class KeywordModifierMixin<T extends AnyCard> extends ModifierMixin<T> {
     target.keywordManager.remove(this.keyword);
   }
 
-  onReapplied(): void {}
+  async onReapplied() {}
 }

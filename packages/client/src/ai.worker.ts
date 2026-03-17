@@ -1,37 +1,34 @@
 /// <reference lib="webworker" />
-// import { AI } from '@game/engine/src/ai/ai';
-// import { createEntityId } from '@game/engine/src/entity';
-// import type { SerializedInput } from '@game/engine/src/input/input-system';
-// import {
-//   ServerSession,
-//   type ServerSessionOptions
-// } from '@game/engine/src/server-session';
-// import { match } from 'ts-pattern';
 
-// type AIWorkerEvent =
-//   | {
-//       type: 'init';
-//       payload: {
-//         options: ServerSessionOptions;
-//         playerId: string;
-//       };
-//     }
-//   | { type: 'compute'; payload: { action: SerializedInput } };
+import { Game, type GameOptions } from '@game/engine/src/game/game';
+import type { SerializedInput } from '@game/engine/src/input/input-system';
+import { AISystem } from '@game/engine/src/ai/ai.system';
+import { match } from 'ts-pattern';
 
-// let ai: AI;
-// self.addEventListener('message', ({ data }) => {
-//   const options = data as AIWorkerEvent;
+type AIWorkerEvent =
+  | {
+      type: 'init';
+      payload: {
+        options: GameOptions;
+        playerId: string;
+      };
+    }
+  | { type: 'dispatch'; payload: { input: SerializedInput } };
 
-//   match(options)
-//     .with({ type: 'init' }, ({ payload }) => {
-//       const session = new ServerSession({ ...payload.options, id: 'AI' });
-//       session.initialize();
-//       ai = new AI(session, createEntityId(payload.playerId));
-//     })
-//     .with({ type: 'compute' }, async ({ payload }) => {
-//       const nextAction = await ai.onUpdate(payload.action);
+let ai: AISystem;
+self.addEventListener('message', ({ data }) => {
+  const options = data as AIWorkerEvent;
 
-//       self.postMessage(nextAction);
-//     })
-//     .exhaustive();
-// });
+  match(options)
+    .with({ type: 'init' }, ({ payload }) => {
+      const game = new Game({ ...payload.options, id: 'AI' });
+      ai = new AISystem(game, payload.playerId, (nextAction: SerializedInput) =>
+        self.postMessage(nextAction)
+      );
+      ai.initialize();
+    })
+    .with({ type: 'dispatch' }, async ({ payload }) => {
+      ai.onUpdate(payload.input);
+    })
+    .exhaustive();
+});

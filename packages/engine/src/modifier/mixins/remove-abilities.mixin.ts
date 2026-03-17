@@ -21,7 +21,7 @@ export class RemoveAbilitiesModifierMixin<
     }
   }
 
-  onReapplied(target: T): void {
+  async onReapplied(target: T) {
     for (const ability of target.abilities) {
       ability.seal();
     }

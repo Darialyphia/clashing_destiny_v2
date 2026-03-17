@@ -47,8 +47,16 @@ export class HinderedModifier<T extends AnyCard> extends Modifier<T> {
               questionId: `hindered-${this.target.id}`,
               label: `Pay @[mana] ${this.cost}@ to prevent @${this.target.blueprint.name}@ from being exhausted?`,
               choices: [
-                { id: 'yes', label: `Yes, pay ${this.cost}` },
-                { id: 'no', label: 'No, exhaust instead' }
+                {
+                  id: 'yes',
+                  label: `Yes, pay ${this.cost}`,
+                  aiHints: { shouldPick: () => 1 }
+                },
+                {
+                  id: 'no',
+                  label: 'No, exhaust instead',
+                  aiHints: { shouldPick: () => 0 }
+                }
               ],
               timeoutFallback: 'no'
             });

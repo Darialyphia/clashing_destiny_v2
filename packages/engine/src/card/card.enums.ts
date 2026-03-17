@@ -94,6 +94,7 @@ export type Job = {
   id: string;
   name: string;
   shortName: string;
+  isAdvanced: boolean;
   defaultCardTint: CardTint;
 };
 
@@ -102,6 +103,7 @@ export const JOBS = {
     id: 'neutral',
     name: 'Neutral',
     shortName: 'Neu',
+    isAdvanced: false,
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },
@@ -113,6 +115,7 @@ export const JOBS = {
     id: 'warrior',
     name: 'Warrior',
     shortName: 'War',
+    isAdvanced: false,
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },
@@ -124,6 +127,7 @@ export const JOBS = {
     id: 'mage',
     name: 'Mage',
     shortName: 'Mag',
+    isAdvanced: false,
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },
@@ -135,6 +139,7 @@ export const JOBS = {
     id: 'rogue',
     name: 'Rogue',
     shortName: 'Rog',
+    isAdvanced: false,
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },
@@ -146,6 +151,7 @@ export const JOBS = {
     id: 'acolyte',
     name: 'Acolyte',
     shortName: 'Aco',
+    isAdvanced: false,
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },
@@ -157,6 +163,7 @@ export const JOBS = {
     id: 'ranger',
     name: 'Ranger',
     shortName: 'Ran',
+    isAdvanced: false,
     defaultCardTint: {
       colors: ['#FFFFFF', '#FFFFFF'],
       mode: { type: 'radial' },

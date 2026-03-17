@@ -89,5 +89,5 @@ export class OnEnterModifierMixin<
     this.game.off(CARD_EVENTS.CARD_BEFORE_PLAY, this.onBeforePlay);
   }
 
-  onReapplied(): void {}
+  async onReapplied() {}
 }

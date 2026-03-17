@@ -30,5 +30,5 @@ export class RemoveOnDestroyedMixin extends ModifierMixin<AnyCard> {
     this.game.off(GAME_EVENTS.CARD_AFTER_DESTROY, this.onCardDestroyed);
   }
 
-  onReapplied(): void {}
+  async onReapplied() {}
 }

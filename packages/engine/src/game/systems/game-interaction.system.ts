@@ -10,7 +10,10 @@ import type { Game } from '../game';
 import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
 import { CorruptedInteractionContextError } from '../game-error';
 import type { Player } from '../../player/player.entity';
-import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
+import {
+  SelectingCardOnBoardContext,
+  type SelectingCardOnBoardContextOptions
+} from '../interactions/selecting-cards-on-board.interaction';
 import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { CARD_DECK_SOURCES } from '../../card/card.enums';
@@ -20,7 +23,10 @@ import { UseAbilityContext } from '../interactions/use-ability.interaction';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_EVENTS } from '../game.events';
 import { CardDeclareUseAbilityEvent } from '../../card/card.events';
-import { AskQuestionContext } from '../interactions/ask-question.interaction';
+import {
+  AskQuestionContext,
+  type AskQuestionContextOptions
+} from '../interactions/ask-question.interaction';
 import {
   INTERACTION_STATE_TRANSITIONS,
   INTERACTION_STATES,
@@ -232,15 +238,9 @@ export class GameInteractionSystem
     } as InteractionContext & { state: T };
   }
 
-  async selectCardsOnBoard<T extends AnyCard>(options: {
-    isElligible: (candidate: AnyCard, selectedCards: AnyCard[]) => boolean;
-    label: string;
-    canCommit: (selectedCards: AnyCard[]) => boolean;
-    isDone(selectedCards: AnyCard[]): boolean;
-    player: Player;
-    origin: CardTargetOrigin;
-    timeoutFallback: AnyCard[];
-  }) {
+  async selectCardsOnBoard<T extends AnyCard>(
+    options: SelectingCardOnBoardContextOptions
+  ) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD);
     this._ctx = await this.ctxDictionary[
       INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
@@ -281,14 +281,7 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T>();
   }
 
-  async askQuestion<T extends string = string>(options: {
-    player: Player;
-    choices: Array<{ id: string; label: string }>;
-    source: AnyCard;
-    label: string;
-    questionId: string;
-    timeoutFallback: string;
-  }) {
+  async askQuestion<T extends string = string>(options: AskQuestionContextOptions) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(
       this.game,

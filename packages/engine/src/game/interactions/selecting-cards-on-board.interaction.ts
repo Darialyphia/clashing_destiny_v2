@@ -7,7 +7,7 @@ import type { Game } from '../game';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 
-type SelectingCardOnBoardContextOptions = {
+export type SelectingCardOnBoardContextOptions = {
   player: Player;
   label: string;
   isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
@@ -15,6 +15,9 @@ type SelectingCardOnBoardContextOptions = {
   isDone(selectedCards: AnyCard[]): boolean;
   origin: CardTargetOrigin;
   timeoutFallback: AnyCard[];
+  aiHints: {
+    shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+  };
 };
 
 export class SelectingCardOnBoardContext {

@@ -34,7 +34,7 @@ export class DurationModifierMixin<T extends AnyCard = AnyCard> extends Modifier
     this.game.off(GAME_EVENTS.TURN_END, this.onTurnEnd);
   }
 
-  onReapplied(): void {
+  async onReapplied() {
     this.duration = this.initialDuration;
   }
 }

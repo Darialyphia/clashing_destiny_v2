@@ -5,3 +5,14 @@ export const areArraysIdentical = <T>(arr1: T[], arr2: T[]): boolean => {
   }
   return true;
 };
+
+export function generateRandomString(length: number): string {
+  const alphabet = 'abcdefghijkmnpqrstuvwxyz23456789';
+
+  let str = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * alphabet.length);
+    str += alphabet[randomIndex];
+  }
+  return str;
+}

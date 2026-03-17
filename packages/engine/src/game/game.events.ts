@@ -155,7 +155,6 @@ export const GAME_EVENTS = {
   FLUSHED: 'game.input-queue-flushed',
   INPUT_START: 'game.input-start',
   INPUT_END: 'game.input-end',
-  INPUT_REQUIRED: 'game.input-required',
   NEW_SNAPSHOT: 'game.new-snapshot',
   GAME_OVER: 'game.over',
   MODIFIER_EVENT: 'game.modifier-event',

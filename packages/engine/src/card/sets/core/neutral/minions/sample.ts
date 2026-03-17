@@ -26,5 +26,11 @@ export const sample: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {},
-  async onPlay(game, card) {}
+  async onPlay(game, card) {},
+  aiHints: {
+    shouldPlay: () => 0,
+    shouldMove: () => 0,
+    shouldAttack: () => 0,
+    shouldChoose: () => 0
+  }
 };

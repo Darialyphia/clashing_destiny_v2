@@ -252,7 +252,6 @@ export class InputSystem extends System<never> {
 
   async askForPlayerInput() {
     await this.game.snapshotSystem.takeSnapshot();
-    // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 
   serialize() {

@@ -69,7 +69,7 @@ export class InterceptorModifierMixin<
     );
   }
 
-  onReapplied() {}
+  async onReapplied() {}
 }
 export class CardInterceptorModifierMixin<
   TKey extends keyof CardInterceptors
