@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {
   CARD_KINDS,
-  FACTIONS,
+  JOBS,
   type CardKind,
-  type Faction
+  type Job
 } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
@@ -24,8 +24,8 @@ const {
   textFilter,
   hasKindFilter,
   toggleKindFilter,
-  hasFactionFilter,
-  toggleFactionFilter,
+  hasJobFilter,
+  toggleJobFilter,
   manaCostFilter,
   destinyCostFilter,
   includeUnowned,
@@ -45,16 +45,16 @@ const cardKinds: Array<{
   color: 'white'
 }));
 
-const factions: Array<{
+const jobs: Array<{
   id: string;
   img: string;
   label: string;
-  faction: Faction;
-}> = Object.values(FACTIONS).map(faction => ({
-  id: faction.id,
-  img: assets[`ui/card/faction-${faction.id.toLocaleLowerCase()}`].path,
-  label: faction.name,
-  faction
+  job: Job;
+}> = Object.values(JOBS).map(job => ({
+  id: job.id,
+  img: assets[`ui/card/job-${job.id.toLocaleLowerCase()}`].path,
+  label: job.name,
+  job
 }));
 
 const router = useRouter();
@@ -218,21 +218,21 @@ const toggleMinDestinyCostFilter = (cost: number) => {
             <h4 class="filter-title">Faction</h4>
             <div class="faction-filter">
               <UiSimpleTooltip
-                v-for="faction in factions"
-                :key="faction.id"
-                :content="faction.label"
+                v-for="job in jobs"
+                :key="job.id"
+                :content="job.label"
                 side="bottom"
               >
                 <template #trigger>
                   <button
-                    :class="{ active: hasFactionFilter(faction.faction) }"
-                    :aria-label="faction.label"
-                    @click="toggleFactionFilter(faction.faction)"
+                    :class="{ active: hasJobFilter(job.job) }"
+                    :aria-label="job.label"
+                    @click="toggleJobFilter(job.job)"
                   >
-                    <img :src="faction.img" :alt="faction.label" />
+                    <img :src="job.img" :alt="job.label" />
                   </button>
                 </template>
-                {{ faction.label }}
+                {{ job.label }}
               </UiSimpleTooltip>
             </div>
           </section>

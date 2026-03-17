@@ -5,7 +5,7 @@ import {
   CARD_KINDS,
   CARD_DECK_SOURCES,
   type CardKind,
-  type Faction
+  type Job
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isFunction, isString } from '@game/shared';
@@ -32,9 +32,9 @@ export type CardListContext = {
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
 
-  hasFactionFilter(faction: Faction): boolean;
-  toggleFactionFilter(faction: Faction): void;
-  clearFactionFilter(): void;
+  hasJobFilter(job: Job): boolean;
+  toggleJobFilter(job: Job): void;
+  clearJobFilter(): void;
 
   manaCostFilter: Ref<{ min: number; max: number } | null>;
   destinyCostFilter: Ref<{ min: number; max: number } | null>;
@@ -58,7 +58,7 @@ export const provideCardList = () => {
   };
 
   const kindFilter = ref(new Set<CardKind>());
-  const factionFilter = ref(new Set<Faction>());
+  const jobFilter = ref(new Set<Job>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const destinyCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
@@ -100,11 +100,9 @@ export const provideCardList = () => {
           return false;
         }
 
-        if (
-          factionFilter.value.size > 0 &&
-          !factionFilter.value.has(card.faction)
-        ) {
-          return false;
+        if (jobFilter.value.size > 0) {
+          const isMatch = card.jobs.some(job => jobFilter.value.has(job));
+          return isMatch;
         }
 
         if (manaCostFilter.value !== null) {
@@ -222,18 +220,18 @@ export const provideCardList = () => {
       kindFilter.value.clear();
     },
 
-    hasFactionFilter(faction: Faction) {
-      return factionFilter.value.has(faction);
+    hasJobFilter(job: Job) {
+      return jobFilter.value.has(job);
     },
-    toggleFactionFilter(faction: Faction) {
-      if (factionFilter.value.has(faction)) {
-        factionFilter.value.delete(faction);
+    toggleJobFilter(job: Job) {
+      if (jobFilter.value.has(job)) {
+        jobFilter.value.delete(job);
       } else {
-        factionFilter.value.add(faction);
+        jobFilter.value.add(job);
       }
     },
-    clearFactionFilter: () => {
-      factionFilter.value.clear();
+    clearJobFilter: () => {
+      jobFilter.value.clear();
     },
     manaCostFilter,
     destinyCostFilter

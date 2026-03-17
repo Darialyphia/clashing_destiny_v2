@@ -9,6 +9,7 @@ import type { SerializedArtifactCard } from '../../card/entities/artifact.entity
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedAbility } from '../../card/card-blueprint';
+import type { SerializedEntity } from './game-serializer';
 
 /**
  * JSON Patch operations (RFC 6902 inspired)
@@ -37,18 +38,6 @@ export interface RemovePatch {
  * Entity patches are grouped by entity ID
  */
 export type EntityPatchMap = Record<string, PatchOperation[]>;
-
-/**
- * Serialized entity union type
- */
-export type SerializedEntity =
-  | SerializedMinionCard
-  | SerializedHeroCard
-  | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedPlayer
-  | SerializedModifier
-  | SerializedAbility;
 
 /**
  * New snapshot diff format using patches

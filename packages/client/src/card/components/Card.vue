@@ -3,8 +3,8 @@ import {
   RARITIES,
   type CardKind,
   type CardTint,
-  type Faction,
-  type Rarity
+  type Rarity,
+  type Job
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -72,7 +72,7 @@ const {
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    faction: Faction;
+    jobs: Job[];
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -310,7 +310,7 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <div
+        <!--<div
           class="faction parallax"
           :style="{
             '--bg':
@@ -318,7 +318,7 @@ const kindBg = computed(() => {
                 .css
           }"
           :data-label="card.faction.shortName"
-        />
+        />-->
 
         <div class="rarity parallax" style="--parallax-strength: 0.5" />
 

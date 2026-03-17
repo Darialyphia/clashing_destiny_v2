@@ -24,27 +24,18 @@ import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 
-export type EntityDictionary = Record<
-  string,
+export type SerializedEntity =
   | SerializedMinionCard
   | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
   | SerializedPlayer
   | SerializedModifier
-  | SerializedAbility
->;
+  | SerializedAbility;
 
-export type EntityDiffDictionary = Record<
-  string,
-  | Partial<SerializedMinionCard>
-  | Partial<SerializedSpellCard>
-  | Partial<SerializedArtifactCard>
-  | Partial<SerializedHeroCard>
-  | Partial<SerializedPlayer>
-  | Partial<SerializedModifier>
-  | Partial<SerializedAbility>
->;
+export type EntityDictionary = Record<string, SerializedEntity>;
+
+export type EntityDiffDictionary = Record<string, Partial<SerializedEntity>>;
 
 export type SerializedOmniscientState = {
   config: Config;

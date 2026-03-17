@@ -57,7 +57,7 @@ const mergedFoilOptions = computed(() => ({
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
-      faction: blueprint.faction
+      jobs: blueprint.jobs
     }"
     :is-tilt-enabled="isTiltEnabled"
   />

@@ -14,7 +14,6 @@ import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
-import { FACTIONS } from '@game/engine/src/card/card.enums';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import CardModifiers from './CardModifiers.vue';
 
@@ -172,7 +171,7 @@ const classes = computed(() => {
               a =>
                 `${a.shouldExhaust ? '@[exhaust]@ ' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
             ),
-          faction: FACTIONS[card.faction]
+          jobs: card.jobs
         }"
         class="game-card big"
         :class="classes"

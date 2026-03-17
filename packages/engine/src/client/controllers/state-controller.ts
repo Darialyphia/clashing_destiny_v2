@@ -5,24 +5,20 @@ import type {
   SnapshotDiff,
   PatchBasedSnapshotDiff
 } from '../../game/systems/game-snapshot.system';
-import type { EntityDictionary } from '../../game/systems/game-serializer';
+import type {
+  EntityDictionary,
+  SerializedEntity
+} from '../../game/systems/game-serializer';
 import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
 import { match } from 'ts-pattern';
 import type { GameClient } from '../client';
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
-import type { SerializedMinionCard } from '../../card/entities/minion.entity';
-import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedModifier } from '../../modifier/modifier.entity';
-import type { SerializedPlayer } from '../../player/player.entity';
 import {
   GAME_EVENTS,
   type SerializedEvent,
   type SerializedStarEvent
 } from '../../game/game.events';
-import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
 import { CARD_LOCATIONS } from '../../card/card.enums';
 
@@ -37,15 +33,6 @@ export type GameClientState = Override<
     entities: GameStateEntities;
   }
 >;
-
-export type SerializedEntity =
-  | SerializedMinionCard
-  | SerializedHeroCard
-  | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedPlayer
-  | SerializedModifier
-  | SerializedAbility;
 
 export class ClientStateController {
   state!: GameClientState;

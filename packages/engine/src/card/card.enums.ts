@@ -98,6 +98,17 @@ export type Job = {
 };
 
 export const JOBS = {
+  NEUTRAL: {
+    id: 'neutral',
+    name: 'Neutral',
+    shortName: 'Neu',
+    defaultCardTint: {
+      colors: ['#FFFFFF', '#FFFFFF'],
+      mode: { type: 'radial' },
+      blendMode: 'overlay',
+      opacity: 0
+    }
+  },
   WARRIOR: {
     id: 'warrior',
     name: 'Warrior',
