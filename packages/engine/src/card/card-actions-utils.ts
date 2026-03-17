@@ -42,7 +42,14 @@ export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[])
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
-    choices,
+    choices: choices.map(c => ({
+      card: c,
+      aiHints: {
+        shouldPick() {
+          return 1;
+        }
+      }
+    })),
     timeoutFallback: [choicePool[0]],
     label: 'Choose a card to add to your hand'
   });
@@ -62,7 +69,14 @@ export const discardFromHand = async (
     player: card.player,
     minChoiceCount: options.min,
     maxChoiceCount: options.max,
-    choices: cards,
+    choices: cards.map(c => ({
+      card: c,
+      aiHints: {
+        shouldPick() {
+          return 1;
+        }
+      }
+    })),
     timeoutFallback: cards.slice(0, options.min),
     label:
       options.min === options.max

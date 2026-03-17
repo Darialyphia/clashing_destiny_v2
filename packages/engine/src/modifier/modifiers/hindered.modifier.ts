@@ -68,7 +68,14 @@ export class HinderedModifier<T extends AnyCard> extends Modifier<T> {
 
               const selectedCards = await game.interaction.chooseCards({
                 player,
-                choices: cardsInHand,
+                choices: cardsInHand.map(card => ({
+                  card,
+                  aiHints: {
+                    shouldPick() {
+                      return 1;
+                    }
+                  }
+                })),
                 minChoiceCount: this.cost,
                 maxChoiceCount: this.cost,
                 label: `Select ${this.cost} card(s) to pay for Hindered`,

@@ -9,9 +9,14 @@ import {
 import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 
-type ChoosingCardsContextOptions = {
+export type ChoosingCardsContextOptions = {
   player: Player;
-  choices: AnyCard[];
+  choices: Array<{
+    card: AnyCard;
+    aiHints: {
+      shouldPick: (game: Game, player: Player) => number;
+    };
+  }>;
   minChoiceCount: number;
   maxChoiceCount: number;
   label: string;
@@ -26,11 +31,16 @@ export class ChoosingCardsContext {
 
   private selectedCards: AnyCard[] = [];
 
-  private choices: AnyCard[] = [];
+  private choices: Array<{
+    card: AnyCard;
+    aiHints: {
+      shouldPick: (game: Game, player: Player) => number;
+    };
+  }> = [];
 
-  private minChoiceCount: number;
+  readonly minChoiceCount: number;
 
-  private maxChoiceCount: number;
+  readonly maxChoiceCount: number;
 
   readonly player: Player;
 
@@ -55,7 +65,7 @@ export class ChoosingCardsContext {
   serialize() {
     return {
       player: this.player.id,
-      choices: this.choices.map(card => card.id),
+      choices: this.choices.map(choice => choice.card.id),
       minChoiceCount: this.minChoiceCount,
       maxChoiceCount: this.maxChoiceCount,
       label: this.label
@@ -74,7 +84,7 @@ export class ChoosingCardsContext {
         new TooManyCardsError(this.maxChoiceCount, indices.length)
       );
 
-      this.selectedCards.push(...indices.map(index => this.choices[index]));
+      this.selectedCards.push(...indices.map(index => this.choices[index].card));
     } else {
       this.selectedCards.push(...this.timeoutFallback);
     }
@@ -82,5 +92,9 @@ export class ChoosingCardsContext {
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS);
     this.game.interaction.onInteractionEnd();
     this.game.inputSystem.unpause(this.selectedCards);
+  }
+
+  getChoices() {
+    return [...this.choices];
   }
 }

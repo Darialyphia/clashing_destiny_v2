@@ -120,10 +120,11 @@ export type MinionBlueprint = CardBlueprintBase & {
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
   jobs: Job[];
   aiHints: {
-    shouldChoose: (game: Game, card: MinionCard) => number;
     shouldPlay: (game: Game, card: MinionCard) => number;
     shouldMove: (game: Game, card: MinionCard) => number;
     shouldAttack: (game: Game, card: MinionCard) => number;
+    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
+    getThreatScore: (game: Game, card: MinionCard) => number;
   };
 };
 
@@ -136,8 +137,8 @@ export type SpellBlueprint = CardBlueprintBase & {
   canPlay: (game: Game, card: SpellCard) => boolean;
   getPreResponseTargets: (game: Game, card: SpellCard) => Promise<PreResponseTarget[]>;
   aiHints: {
-    shouldChoose: (game: Game, card: SpellCard) => number;
     shouldPlay: (game: Game, card: SpellCard) => number;
+    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
   };
 };
 
@@ -153,9 +154,9 @@ export type HeroBlueprint = CardBlueprintBase & {
   maxHp: number;
   abilities: AbilityBlueprint<HeroCard, PreResponseTarget>[];
   aiHints: {
-    shouldChoose: (game: Game, card: HeroCard) => number;
     shouldPlay: (game: Game, card: HeroCard) => number;
     shouldAttack: (game: Game, card: HeroCard) => number;
+    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
   };
 };
 
@@ -170,8 +171,8 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   >;
   durability: number;
   aiHints: {
-    shouldChoose: (game: Game, card: ArtifactCard) => number;
     shouldPlay: (game: Game, card: ArtifactCard) => number;
+    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
   };
 } & (
     | {

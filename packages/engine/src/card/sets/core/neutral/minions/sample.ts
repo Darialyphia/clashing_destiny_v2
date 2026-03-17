@@ -31,6 +31,7 @@ export const sample: MinionBlueprint = {
     shouldPlay: () => 0,
     shouldMove: () => 0,
     shouldAttack: () => 0,
-    shouldChoose: () => 0
+    shouldUseAsMainDeckCardManacost: () => 1,
+    getThreatScore: () => 0
   }
 };

@@ -7,14 +7,17 @@ import {
 } from '@game/shared';
 
 import type { Game } from '../game';
-import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
 import { CorruptedInteractionContextError } from '../game-error';
 import type { Player } from '../../player/player.entity';
 import {
   SelectingCardOnBoardContext,
   type SelectingCardOnBoardContextOptions
 } from '../interactions/selecting-cards-on-board.interaction';
-import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
+import {
+  ChoosingCardsContext,
+  type ChoosingCardsContextOptions
+} from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { CARD_DECK_SOURCES } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
@@ -249,14 +252,7 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async chooseCards<T extends AnyCard>(options: {
-    player: Player;
-    minChoiceCount: number;
-    maxChoiceCount: number;
-    choices: AnyCard[];
-    label: string;
-    timeoutFallback: AnyCard[];
-  }) {
+  async chooseCards<T extends AnyCard>(options: ChoosingCardsContextOptions) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
       this.game,

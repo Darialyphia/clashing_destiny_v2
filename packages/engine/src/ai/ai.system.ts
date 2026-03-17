@@ -45,13 +45,46 @@ export class AISystem {
         // TODO
       })
       .with({ state: INTERACTION_STATES.ASK_QUESTION }, ctx => {
-        // TODO
+        const choices = ctx.ctx.getChoices();
+        const [bestChoice] = choices.sort(
+          (a, b) =>
+            b.aiHints.shouldPick(this.game, this.player, a.id) -
+            a.aiHints.shouldPick(this.game, this.player, b.id)
+        );
+        moves.push({
+          input: {
+            type: 'answerQuestion',
+            payload: {
+              playerId: this.playerId,
+              id: bestChoice.id
+            }
+          },
+          score: 100
+        });
       })
       .with({ state: INTERACTION_STATES.CHOOSING_CARDS }, ctx => {
-        // TODO
+        const choices = ctx.ctx.getChoices();
+        const cardsToChoose = Math.min(ctx.ctx.maxChoiceCount, choices.length);
+        const sortedChoices = choices.sort(
+          (a, b) =>
+            b.aiHints.shouldPick(this.game, this.player) -
+            a.aiHints.shouldPick(this.game, this.player)
+        );
+        const selectedCards = sortedChoices.slice(0, cardsToChoose);
+        moves.push({
+          input: {
+            type: 'chooseCards',
+            payload: {
+              playerId: this.playerId,
+              indices: selectedCards.map(card => choices.indexOf(card))
+            }
+          },
+          score: 100
+        });
       })
       .with({ state: INTERACTION_STATES.PLAYING_CARD }, ctx => {
-        // TODO
+        // moves.push({
+        // })
       })
       .with({ state: INTERACTION_STATES.REARRANGING_CARDS }, ctx => {
         // TODO

@@ -61,19 +61,24 @@ export const minionOrHeroTargetRules = {
       card,
       origin,
       timeoutFallback,
-      predicate = () => true
+      predicate = () => true,
+      aiHints
     }: {
       game: Game;
       card: AnyCard;
       origin: CardTargetOrigin;
       timeoutFallback: AnyCard[];
-      predicate: (c: MinionCard | HeroCard) => boolean;
+      predicate: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
+      aiHints: {
+        shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+      };
     }) => {
       return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
         player: card.player,
         origin,
         label,
         timeoutFallback,
+        aiHints,
         isElligible(candidate, selectedCards) {
           if (!isMinionOrHero(candidate)) {
             return false;
@@ -103,7 +108,7 @@ export const singleEnemyTargetRules = {
   canPlay: (
     game: Game,
     card: AnyCard,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+    predicate: (c: MinionCard | HeroCard | ArtifactCard) => boolean = () => true
   ) =>
     minionOrHeroTargetRules.canPlay(1)(
       game,
@@ -116,7 +121,8 @@ export const singleEnemyTargetRules = {
     origin,
     label,
     timeoutFallback,
-    predicate = () => true
+    predicate = () => true,
+    aiHints
   }: {
     game: Game;
     card: AnyCard;
@@ -124,13 +130,26 @@ export const singleEnemyTargetRules = {
     label: string;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard | HeroCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
   }) =>
     await minionOrHeroTargetRules.getPreResponseTargets({
       min: 1,
       max: 1,
       allowRepeat: false,
       label
-    })({ game, card, origin, predicate, timeoutFallback })
+    })({
+      game,
+      card,
+      origin,
+      predicate: card => {
+        if (!isMinion(card) && !isHero(card)) return false;
+        return predicate(card);
+      },
+      aiHints,
+      timeoutFallback
+    })
 };
 
 export const singleAllyTargetRules = {
@@ -150,21 +169,25 @@ export const singleAllyTargetRules = {
     origin,
     label,
     timeoutFallback,
-    predicate = () => true
+    predicate = () => true,
+    aiHints
   }: {
     game: Game;
     card: AnyCard;
     origin: CardTargetOrigin;
     label: string;
     timeoutFallback: AnyCard[];
-    predicate?: (c: MinionCard | HeroCard) => boolean;
+    predicate?: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
   }) =>
     await minionOrHeroTargetRules.getPreResponseTargets({
       min: 1,
       max: 1,
       label,
       allowRepeat: false
-    })({ game, card, origin, predicate, timeoutFallback })
+    })({ game, card, origin, predicate, aiHints, timeoutFallback })
 };
 
 export const singleEnemyMinionTargetRules = {
@@ -177,7 +200,8 @@ export const singleEnemyMinionTargetRules = {
     origin,
     label,
     timeoutFallback,
-    predicate = () => true
+    predicate = () => true,
+    aiHints
   }: {
     game: Game;
     card: AnyCard;
@@ -185,6 +209,9 @@ export const singleEnemyMinionTargetRules = {
     origin: CardTargetOrigin;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
   }) {
     return (await singleEnemyTargetRules.getPreResponseTargets({
       game,
@@ -192,7 +219,8 @@ export const singleEnemyMinionTargetRules = {
       origin,
       label,
       timeoutFallback,
-      predicate: c => isMinion(c) && predicate(c)
+      predicate: c => isMinion(c) && predicate(c),
+      aiHints
     })) as MinionCard[];
   }
 };
@@ -207,7 +235,8 @@ export const singleAllyMinionTargetRules = {
     origin,
     label,
     timeoutFallback,
-    predicate = () => true
+    predicate = () => true,
+    aiHints
   }: {
     game: Game;
     card: AnyCard;
@@ -215,6 +244,9 @@ export const singleAllyMinionTargetRules = {
     label: string;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
   }) {
     return (await singleAllyTargetRules.getPreResponseTargets({
       game,
@@ -222,7 +254,8 @@ export const singleAllyMinionTargetRules = {
       origin,
       label,
       timeoutFallback,
-      predicate: c => isMinion(c) && predicate(c)
+      predicate: c => isMinion(c) && predicate(c),
+      aiHints
     })) as MinionCard[];
   }
 };
@@ -241,7 +274,8 @@ export const singleMinionTargetRules = {
     origin,
     label,
     timeoutFallback,
-    predicate = () => true
+    predicate = () => true,
+    aiHints
   }: {
     game: Game;
     card: AnyCard;
@@ -249,6 +283,9 @@ export const singleMinionTargetRules = {
     label: string;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
   }) {
     return (await minionOrHeroTargetRules.getPreResponseTargets({
       min: 1,
@@ -260,7 +297,8 @@ export const singleMinionTargetRules = {
       card,
       origin,
       predicate: c => isMinion(c) && predicate(c),
-      timeoutFallback
+      timeoutFallback,
+      aiHints
     })) as MinionCard[];
   }
 };
@@ -287,8 +325,11 @@ export const multipleEnemyTargetRules = {
       max: number;
       allowRepeat?: boolean;
       label: string;
-      predicate?: (c: MinionCard | HeroCard) => boolean;
+      predicate?: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
       timeoutFallback: AnyCard[];
+      aiHints: {
+        shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+      };
     }
   ) {
     return await minionOrHeroTargetRules.getPreResponseTargets({
@@ -301,7 +342,8 @@ export const multipleEnemyTargetRules = {
       card,
       origin,
       predicate: c => !c.player.equals(card.player) && (options.predicate?.(c) ?? true),
-      timeoutFallback: options.timeoutFallback
+      timeoutFallback: options.timeoutFallback,
+      aiHints: options.aiHints
     });
   }
 };
@@ -322,7 +364,8 @@ export const singleArtifactTargetRules = {
     origin,
     label,
     timeoutFallback,
-    predicate = () => true
+    predicate = () => true,
+    aiHints
   }: {
     game: Game;
     card: AnyCard;
@@ -330,12 +373,16 @@ export const singleArtifactTargetRules = {
     label: string;
     timeoutFallback: AnyCard[];
     predicate: (c: ArtifactCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
   }) {
     return await game.interaction.selectCardsOnBoard<ArtifactCard>({
       origin,
       label,
       player: card.player,
       timeoutFallback,
+      aiHints,
       isElligible(candidate, selectedCards) {
         if (!isArtifact(candidate)) {
           return false;
@@ -381,14 +428,25 @@ export const cardsInAllyDiscardPile = {
       maxChoiceCount?: number;
       label: string;
       timeoutFallback: T[];
+      aiHints: {
+        shouldPick: (game: Game, player: Player, card: AnyCard) => number;
+      };
     }
   ) {
     return await game.interaction.chooseCards<T>({
       player: options.player,
       label: options.label,
-      choices: Array.from(card.player.cardManager.discardPile).filter(c => {
-        return options.predicate ? options.predicate(c) : true;
-      }) as T[],
+      choices: Array.from(card.player.cardManager.discardPile)
+        .filter(c => {
+          return options.predicate ? options.predicate(c) : true;
+        })
+        .map(c => ({
+          card: c,
+          aiHints: {
+            shouldPick: (game: Game, player: Player) =>
+              options.aiHints.shouldPick(game, player, c)
+          }
+        })),
       timeoutFallback: options.timeoutFallback,
       minChoiceCount: options.minChoiceCount ?? 1,
       maxChoiceCount: options.maxChoiceCount ?? 1
@@ -418,14 +476,25 @@ export const cardsInEnemyDiscardPile = {
       maxChoiceCount?: number;
       label: string;
       timeoutFallback: T[];
+      aiHints: {
+        shouldPick: (game: Game, player: Player, card: AnyCard) => number;
+      };
     }
   ) {
     return await game.interaction.chooseCards<T>({
       player: options.player,
       label: options.label,
-      choices: Array.from(card.player.opponent.cardManager.discardPile).filter(c => {
-        return options.predicate ? options.predicate(c) : true;
-      }) as T[],
+      choices: Array.from(card.player.cardManager.discardPile)
+        .filter(c => {
+          return options.predicate ? options.predicate(c) : true;
+        })
+        .map(c => ({
+          card: c,
+          aiHints: {
+            shouldPick: (game: Game, player: Player) =>
+              options.aiHints.shouldPick(game, player, c)
+          }
+        })),
       timeoutFallback: options.timeoutFallback,
       minChoiceCount: options.minChoiceCount ?? 1,
       maxChoiceCount: options.maxChoiceCount ?? 1
