@@ -29,9 +29,9 @@ import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
-import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
+import type { RuneCard } from './rune.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -41,12 +41,8 @@ export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
 export type AnyCard = Card<any, any, any>;
 export type CardInterceptors = {
   manaCost: Interceptable<number | null>;
-  destinyCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
-  canBeUsedAsDestinyCost: Interceptable<boolean>;
-  canBeUsedAsManaCost: Interceptable<boolean>;
-  canBeRecollected: Interceptable<boolean>;
   deckSource: Interceptable<CardDeckSource>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
   shouldSwitchInitiativeAfterPlay: Interceptable<boolean>;
@@ -54,12 +50,8 @@ export type CardInterceptors = {
 
 export const makeCardInterceptors = (): CardInterceptors => ({
   manaCost: new Interceptable(),
-  destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  canBeUsedAsDestinyCost: new Interceptable(),
-  canBeUsedAsManaCost: new Interceptable(),
-  canBeRecollected: new Interceptable(),
   deckSource: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
   shouldSwitchInitiativeAfterPlay: new Interceptable()
@@ -79,9 +71,7 @@ export type SerializedCard = {
   source: CardDeckSource;
   location: CardLocation | null;
   modifiers: string[];
-  canBeUsedAsManaCost: boolean;
   manaCost: number | null;
-  destinyCost: number | null;
   keywords: string[];
   unplayableReason: string | null;
   isRevealed: boolean;
@@ -152,10 +142,6 @@ export abstract class Card<
     return this.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
   }
 
-  get isDestinyDeckCard() {
-    return this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
-  }
-
   get isRevealed() {
     return this._isRevealed;
   }
@@ -219,36 +205,6 @@ export abstract class Card<
     );
   }
 
-  get destinyCost(): number {
-    if ('destinyCost' in this.blueprint) {
-      return this.interceptors.destinyCost.getValue(this.blueprint.destinyCost, {}) ?? 0;
-    }
-    return 0;
-  }
-
-  get canPayDestinyCost() {
-    const pool = Array.from(this.player.cardManager.destinyZone).filter(
-      card => card.canBeUsedAsDestinyCost
-    );
-
-    return pool.length >= this.destinyCost;
-  }
-
-  get canBeUsedAsDestinyCost() {
-    return this.interceptors.canBeUsedAsDestinyCost.getValue(
-      this.location === CARD_LOCATIONS.DESTINY_ZONE,
-      {}
-    );
-  }
-
-  get canBeUsedAsManaCost() {
-    return this.interceptors.canBeUsedAsManaCost.getValue(true, {});
-  }
-
-  get canBeRecollected() {
-    return this.interceptors.canBeRecollected.getValue(true, {});
-  }
-
   get targetedBy() {
     return this._targetedBy;
   }
@@ -258,7 +214,7 @@ export abstract class Card<
       .with(CARD_DECK_SOURCES.MAIN_DECK, async () => {
         await this.sendToDiscardPile();
       })
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, async () => {
+      .with(CARD_DECK_SOURCES.RUNE_DECK, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
@@ -332,16 +288,16 @@ export abstract class Card<
         }
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
-        this.player.cardManager.removeFromDestinyDeck(this);
+      .with(CARD_LOCATIONS.RUNE_DECK, () => {
+        this.player.cardManager.removeFromRuneDeck(this);
       })
-      .with(CARD_LOCATIONS.DESTINY_ZONE, () => {
+      .with(CARD_LOCATIONS.RUNE_ZONE, () => {
         if (!isMainDeckCard(this)) {
           throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from destiny zone pile when it is not a main deck card.`
+            `Cannot remove card ${this.id} from rune zone pile when it is not a main deck card.`
           );
         }
-        this.player.cardManager.removeFromDestinyZone(this);
+        this.player.cardManager.removeFromRuneZone(this as unknown as RuneCard);
       })
       .with(CARD_LOCATIONS.BASE, CARD_LOCATIONS.BATTLEFIELD, () => {
         this.player.boardSide.remove(this);
@@ -398,28 +354,23 @@ export abstract class Card<
     );
   }
 
-  async sendToDestinyZone() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to destiny zone when it is not a main deck card.`
-      );
-    }
+  async sendToRuneZone() {
     const currentLocation = this.location ?? null;
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
       new CardChangeLocationEvent({
         card: this,
-        to: CARD_LOCATIONS.DESTINY_ZONE,
+        to: CARD_LOCATIONS.RUNE_ZONE,
         from: currentLocation
       })
     );
     this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToDestinyZone(this);
+    this.originalPlayer.cardManager.sendToRuneZone(this as unknown as RuneCard);
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
       new CardChangeLocationEvent({
         card: this,
-        to: CARD_LOCATIONS.DESTINY_ZONE,
+        to: CARD_LOCATIONS.RUNE_ZONE,
         from: currentLocation
       })
     );
@@ -437,26 +388,10 @@ export abstract class Card<
     return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
-  protected get canPlayAsDestinyDeckCard() {
-    if (this.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK) {
-      return false;
-    }
-    if (this.player.hasPlayedDestinyCardThisTurn) {
-      return false;
-    }
-
-    return (
-      this.location === CARD_LOCATIONS.DESTINY_DECK &&
-      this.canPayDestinyCost &&
-      this.game.turnSystem.elapsedTurns >=
-        this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
-    );
-  }
-
   protected get canPlayBase() {
     return match(this.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
+      .with(CARD_DECK_SOURCES.RUNE_DECK, () => true)
       .exhaustive();
   }
 
@@ -475,22 +410,7 @@ export abstract class Card<
         }
         return 'You cannot play this card';
       })
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
-        if (this.player.hasPlayedDestinyCardThisTurn) {
-          return 'You have already played a Destiny card this turn.';
-        }
-        if (this.location !== CARD_LOCATIONS.DESTINY_DECK) {
-          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
-        }
-        if (!this.canPayDestinyCost) {
-          return 'Cannot pay destiny cost.';
-        }
-        if (
-          this.game.turnSystem.elapsedTurns <
-          this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
-        ) {
-          return `Cannot play destiny cards yet.`;
-        }
+      .with(CARD_DECK_SOURCES.RUNE_DECK, () => {
         return 'You cannot play this card.';
       })
       .exhaustive();
@@ -519,13 +439,10 @@ export abstract class Card<
         this.blueprint?.dynamicDescription?.(this.game, this) ?? this.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
-      canBeUsedAsManaCost: this.canBeUsedAsManaCost,
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
       manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
-      destinyCost:
-        this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed

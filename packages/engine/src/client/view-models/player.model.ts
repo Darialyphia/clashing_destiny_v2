@@ -64,8 +64,8 @@ export class PlayerViewModel {
     return this.data.remainingCardsInMainDeck;
   }
 
-  get remainingCardsInDestinyDeck() {
-    return this.data.remainingCardsInDestinyDeck;
+  get remainingCardsInRuneDeck() {
+    return this.data.remainingCardsInRuneDeck;
   }
 
   // get canPerformResourceAction() {

@@ -386,7 +386,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         CARD_EVENTS.CARD_BEFORE_PLAY,
         new CardDeclarePlayEvent({ card: this })
       );
-      await this.player.levelupHero(this);
+      // await this.player.levelupHero(this);
+      this.player.boardSide.summonHero(this);
       await this.blueprint.onPlay(this.game, this, this);
       await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
       await this.game.emit(

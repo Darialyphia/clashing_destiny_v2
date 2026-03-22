@@ -306,11 +306,7 @@ export class GameInteractionSystem
         player
       }
     );
-    if (card.manaCost === 0 || card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
-      await this._ctx.commit(this._ctx.player, []);
-    }
-
-    await this.game.inputSystem.askForPlayerInput();
+    await this._ctx.commit(this._ctx.player);
   }
 
   async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
@@ -337,10 +333,7 @@ export class GameInteractionSystem
         abilityId: ability.abilityId
       })
     );
-    if (ability.manaCost === 0) {
-      await this._ctx.commit(this._ctx.player, []);
-    }
-    await this.game.inputSystem.askForPlayerInput();
+    await this._ctx.commit(this._ctx.player);
   }
 
   onInteractionEnd() {

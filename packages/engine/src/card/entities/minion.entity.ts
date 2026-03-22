@@ -8,7 +8,7 @@ import {
   type MinionBlueprint,
   type PreResponseTarget
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type JobId, type RuneId } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -48,6 +48,7 @@ export type SerializedMinionCard = SerializedCard & {
   abilities: string[];
   canMove: boolean;
   jobs: JobId[];
+  runeCost: Partial<Record<RuneId, number>>;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -425,9 +426,14 @@ export class MinionCard extends Card<
     return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
   }
 
+  get hasCorrectRunes() {
+    return this.player.runeManager.satisfiesRuneCost(this.blueprint.runeCost);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
+        this.hasCorrectRunes &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
@@ -475,7 +481,8 @@ export class MinionCard extends Card<
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
       canMove: this.canMoveManually,
-      jobs: this.jobs.map(job => job.id) as JobId[]
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      runeCost: this.blueprint.runeCost
     };
   }
 }

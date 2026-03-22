@@ -20,11 +20,6 @@ export class DeclarePlayCardInput extends Input<typeof schema> {
     const card = this.game.cardSystem.getCardById(this.payload.id);
     assert(isDefined(card), new IllegalCardPlayedError());
     assert(card.canPlay(), new IllegalCardPlayedError());
-    assert(
-      card.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK ||
-        !card.player.hasPlayedDestinyCardThisTurn,
-      new IllegalCardPlayedError()
-    );
 
     await this.game.interaction.declarePlayCardIntent(card, this.player);
   }

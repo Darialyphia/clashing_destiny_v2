@@ -124,7 +124,6 @@ export class GameClient {
     });
 
     this.cancelPlayCard = this.cancelPlayCard.bind(this);
-    this.commitPlayCard = this.commitPlayCard.bind(this);
   }
 
   get nextSnapshotId() {
@@ -302,26 +301,6 @@ export class GameClient {
     ] as CardViewModel;
 
     void this.fxAdapter.onCancelPlayCard(playedCard, this);
-  }
-
-  commitPlayCard() {
-    this.dispatch({
-      type: 'commitPlayCard',
-      payload: {
-        playerId: this.playerId,
-        manaCostIndices: this.ui.selectedManaCostIndices
-      }
-    });
-  }
-
-  commitUseAbility() {
-    this.dispatch({
-      type: 'commitUseAbility',
-      payload: {
-        playerId: this.playerId,
-        manaCostIndices: this.ui.selectedManaCostIndices
-      }
-    });
   }
 
   cancelUseAbility() {

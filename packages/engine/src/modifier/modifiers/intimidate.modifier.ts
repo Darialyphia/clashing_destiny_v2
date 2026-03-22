@@ -29,7 +29,7 @@ export class IntimidateModifier<T extends MinionCard | HeroCard> extends Modifie
           key: 'canBeAttacked',
           interceptor: (value, { attacker }) => {
             if (!value) return value;
-            if (attacker.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) return value;
+            if (attacker.deckSource === CARD_DECK_SOURCES.RUNE_DECK) return value;
 
             return attacker.manaCost > options.level;
           }

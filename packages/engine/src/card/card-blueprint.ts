@@ -1,4 +1,4 @@
-import type { BetterExtract } from '@game/shared';
+import type { BetterExtract, EmptyObject } from '@game/shared';
 import type { Game } from '../game/game';
 import type {
   CARD_KINDS,
@@ -9,7 +9,8 @@ import type {
   Tag,
   CARD_DECK_SOURCES,
   CardTint,
-  Job
+  Job,
+  RuneId
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -17,6 +18,7 @@ import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
+import type { RuneCard } from './entities/rune.entity';
 
 export type CardSourceBlueprint =
   | {
@@ -24,9 +26,9 @@ export type CardSourceBlueprint =
       manaCost: number;
     }
   | {
-      deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
-      destinyCost: number;
+      deckSource: typeof CARD_DECK_SOURCES.RUNE_DECK;
     };
+
 export type CardBlueprintBase = {
   id: string;
   name: string;
@@ -112,18 +114,18 @@ export const serializePreResponseTarget = (
 
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
-  onInit: (game: Game, card: MinionCard) => Promise<void>;
-  canPlay: (game: Game, card: MinionCard) => boolean;
-  onPlay: (game: Game, card: MinionCard) => Promise<void>;
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, PreResponseTarget>[];
   jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
+  canPlay: (game: Game, card: MinionCard) => boolean;
+  onInit: (game: Game, card: MinionCard) => Promise<void>;
+  onPlay: (game: Game, card: MinionCard) => Promise<void>;
   aiHints: {
     shouldPlay: (game: Game, card: MinionCard) => number;
     shouldMove: (game: Game, card: MinionCard) => number;
     shouldAttack: (game: Game, card: MinionCard) => number;
-    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
     getThreatScore: (game: Game, card: MinionCard) => number;
   };
 };
@@ -131,6 +133,7 @@ export type MinionBlueprint = CardBlueprintBase & {
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
   abilities: AbilityBlueprint<SpellCard, PreResponseTarget>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: PreResponseTarget[]) => Promise<void>;
@@ -138,7 +141,6 @@ export type SpellBlueprint = CardBlueprintBase & {
   getPreResponseTargets: (game: Game, card: SpellCard) => Promise<PreResponseTarget[]>;
   aiHints: {
     shouldPlay: (game: Game, card: SpellCard) => number;
-    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
   };
 };
 
@@ -156,13 +158,13 @@ export type HeroBlueprint = CardBlueprintBase & {
   aiHints: {
     shouldPlay: (game: Game, card: HeroCard) => number;
     shouldAttack: (game: Game, card: HeroCard) => number;
-    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
   };
 };
 
 export type ArtifactBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
@@ -172,7 +174,6 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   durability: number;
   aiHints: {
     shouldPlay: (game: Game, card: ArtifactCard) => number;
-    shouldUseAsMainDeckCardManacost: (game: Game, card: MinionCard) => number;
   };
 } & (
     | {
@@ -184,8 +185,19 @@ export type ArtifactBlueprint = CardBlueprintBase & {
       }
   );
 
+export type RuneBlueprint = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.RUNE>;
+  jobs: Job[];
+  runeProduction: RuneId[];
+  onInit: (game: Game, card: AnyCard) => Promise<void>;
+  onPlay: (game: Game, card: AnyCard) => Promise<void>;
+  abilities: AbilityBlueprint<RuneCard, PreResponseTarget>[];
+  aiHints: EmptyObject;
+};
+
 export type CardBlueprint =
   | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
-  | HeroBlueprint;
+  | HeroBlueprint
+  | RuneBlueprint;

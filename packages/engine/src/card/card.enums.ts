@@ -27,7 +27,7 @@ export type CardEvent = Values<typeof CARD_EVENTS>;
 
 export const CARD_DECK_SOURCES = {
   MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck'
+  RUNE_DECK: 'runeDeck'
 } as const;
 export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 
@@ -35,7 +35,8 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
-  ARTIFACT: 'ARTIFACT'
+  ARTIFACT: 'ARTIFACT',
+  RUNE: 'RUNE'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -94,82 +95,38 @@ export type Job = {
   id: string;
   name: string;
   shortName: string;
-  isAdvanced: boolean;
-  defaultCardTint: CardTint;
 };
 
 export const JOBS = {
   NEUTRAL: {
     id: 'neutral',
     name: 'Neutral',
-    shortName: 'Neu',
-    isAdvanced: false,
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+    shortName: 'Neu'
   },
   WARRIOR: {
     id: 'warrior',
     name: 'Warrior',
-    shortName: 'War',
-    isAdvanced: false,
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+    shortName: 'War'
   },
   MAGE: {
     id: 'mage',
     name: 'Mage',
-    shortName: 'Mag',
-    isAdvanced: false,
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+    shortName: 'Mag'
   },
   ROGUE: {
     id: 'rogue',
     name: 'Rogue',
-    shortName: 'Rog',
-    isAdvanced: false,
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+    shortName: 'Rog'
   },
   ACOLYTE: {
     id: 'acolyte',
     name: 'Acolyte',
-    shortName: 'Aco',
-    isAdvanced: false,
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+    shortName: 'Aco'
   },
   RANGER: {
     id: 'ranger',
     name: 'Ranger',
-    shortName: 'Ran',
-    isAdvanced: false,
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+    shortName: 'Ran'
   }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
@@ -177,11 +134,56 @@ export type JobId = Values<typeof JOBS>['id'];
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck',
+  RUNE_DECK: 'runeDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
-  DESTINY_ZONE: 'destinyZone',
+  RUNE_ZONE: 'runeZone',
   BASE: 'base',
   BATTLEFIELD: 'battlefield'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
+
+export type Rune = {
+  id: string;
+  name: string;
+  tint: CardTint;
+};
+export const defaultCardTint: CardTint = {
+  colors: ['#FFFFFF', '#FFFFFF'],
+  mode: { type: 'radial' },
+  blendMode: 'overlay',
+  opacity: 0
+};
+export const RUNES = {
+  RED: {
+    id: 'RED',
+    name: 'Might',
+    tint: defaultCardTint
+  },
+  BLUE: {
+    id: 'BLUE',
+    name: 'Wisdom',
+    tint: defaultCardTint
+  },
+  YELLOW: {
+    id: 'YELLOW',
+    name: 'Cunning',
+    tint: defaultCardTint
+  },
+  GREEN: {
+    id: 'GREEN',
+    name: 'Focus',
+    tint: defaultCardTint
+  },
+  PURPLE: {
+    id: 'PURPLE',
+    name: 'Resonance',
+    tint: defaultCardTint
+  },
+  COLORLESS: {
+    id: 'COLORLESS',
+    name: 'Colorless',
+    tint: defaultCardTint
+  }
+} as const satisfies Record<string, Rune>;
+export type RuneId = Values<typeof RUNES>['id'];

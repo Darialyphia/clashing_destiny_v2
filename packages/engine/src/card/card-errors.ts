@@ -25,6 +25,11 @@ export class NotEnoughCardsInHandError extends InputError {
   }
 }
 
+export class NotEnoughManaError extends InputError {
+  constructor() {
+    super('Not enough mana.');
+  }
+}
 export class NoTalentSlotAvailableError extends InputError {
   constructor() {
     super('No talent slot available.');

@@ -33,24 +33,6 @@ export class LockedModifier<T extends AnyCard> extends Modifier<T> {
             return false;
           }
         }),
-        new CardInterceptorModifierMixin(game, {
-          key: 'canBeRecollected',
-          interceptor: () => {
-            return false;
-          }
-        }),
-        new CardInterceptorModifierMixin(game, {
-          key: 'canBeUsedAsDestinyCost',
-          interceptor: () => {
-            return false;
-          }
-        }),
-        new CardInterceptorModifierMixin(game, {
-          key: 'canBeUsedAsManaCost',
-          interceptor: () => {
-            return false;
-          }
-        }),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.AFTER_CHANGE_PHASE,
           filter(event) {

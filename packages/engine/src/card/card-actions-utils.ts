@@ -97,5 +97,5 @@ export const getEmpowerStacks = (card: AnyCard) =>
     .reduce((acc, mod) => acc + mod.stacks, 0);
 
 export const hasBalance = (card: AnyCard) => {
-  return card.player.cardManager.hand.length !== card.player.cardManager.destinyZone.size;
+  return card.player.cardManager.hand.length !== card.player.cardManager.runeZone.size;
 };

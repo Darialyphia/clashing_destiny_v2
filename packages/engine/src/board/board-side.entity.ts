@@ -32,15 +32,14 @@ export type SerializedBoardSide = {
     hero: string;
   };
   hand: string[];
-  destinyZone: Array<{
+  runeZone: Array<{
     cardId: string;
     isRevealed: boolean;
-    isLocked: boolean;
   }>;
   mainDeck: { total: number; remaining: number };
   discardPile: string[];
   banishPile: string[];
-  destinyDeck: string[];
+  runeDeck: string[];
   base: {
     minions: string[];
     artifacts: string[];
@@ -61,6 +60,7 @@ export type BoardBase = {
 
 export type BoardBattlefield = {
   minions: MinionCard[];
+  hero: HeroCard | null;
 };
 export class BoardSide
   extends Entity<EmptyObject>
@@ -74,7 +74,8 @@ export class BoardSide
   };
 
   readonly _battlefield: BoardBattlefield = {
-    minions: []
+    minions: [],
+    hero: null as HeroCard | null
   };
 
   constructor(
@@ -137,6 +138,10 @@ export class BoardSide
     }
   }
 
+  summonHero(card: HeroCard) {
+    this._battlefield.hero = card;
+  }
+
   equipArtifact(card: ArtifactCard) {
     this._base.artifacts.push(card);
   }
@@ -152,6 +157,9 @@ export class BoardSide
         this._battlefield.minions = this._battlefield.minions.filter(
           c => c.id !== card.id
         );
+      })
+      .with(CARD_KINDS.RUNE, () => {
+        card.removeFromCurrentLocation();
       })
       .exhaustive();
   }
@@ -229,16 +237,15 @@ export class BoardSide
       banishPile: [...this.player.cardManager.banishPile].map(card => card.id),
       discardPile: [...this.player.cardManager.discardPile].map(card => card.id),
       hand: this.player.cardManager.hand.map(card => card.id),
-      destinyZone: [...this.player.cardManager.destinyZone].map(card => ({
+      runeZone: [...this.player.cardManager.runeZone].map(card => ({
         cardId: card.id,
-        isRevealed: card.isRevealed,
-        isLocked: card.modifiers.has(LockedModifier)
+        isRevealed: card.isRevealed
       })),
       mainDeck: {
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck
       },
-      destinyDeck: this.player.cardManager.destinyDeck.cards.map(card => card.id),
+      runeDeck: this.player.cardManager.runeDeck.cards.map(card => card.id),
       base: {
         minions: this.base.minions.map(card => card.id),
         artifacts: this.base.artifacts.map(card => card.id)

@@ -26,11 +26,9 @@ import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
-import { CommitPlayCardInput } from './inputs/commit-play-card';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
 import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
-import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
 import { SurrenderInput } from './inputs/surrender.input';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
@@ -52,7 +50,6 @@ const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>)
 const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
   cancelPlayCard: CancelPlayCardInput,
-  commitPlayCard: CommitPlayCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
   pass: PassInput,
@@ -60,7 +57,6 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   declareUseCardAbility: DeclareUseCardAbilityInput,
-  commitUseAbility: CommitUseAbilityInput,
   cancelUseAbility: CancelUseAbilityInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,

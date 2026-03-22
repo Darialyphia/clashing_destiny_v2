@@ -5,7 +5,8 @@ import { assert, type MaybePromise, type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import {
   NotEnoughCardsInDestinyZoneError,
-  NotEnoughCardsInHandError
+  NotEnoughCardsInHandError,
+  NotEnoughManaError
 } from '../card/card-errors';
 import { type HeroCard } from '../card/entities/hero.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
@@ -13,18 +14,19 @@ import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerManaChangeEvent, PlayerTurnEvent } from './player.events';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
-import { GameError } from '../game/game-error';
-import { CARD_KINDS } from '../card/card.enums';
 import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 import { cloneDeep } from 'lodash-es';
+import { RuneManagerComponent } from './components/rune-manager.component';
+import type { RuneCard } from '../card/entities/rune.entity';
 
 export type PlayerOptions = {
   id: string;
   name: string;
+  hero: string;
   mainDeck: { cards: string[] };
-  destinyDeck: { cards: string[] };
+  runeDeck: { cards: string[] };
 };
 
 export type SerializedPlayer = {
@@ -35,9 +37,9 @@ export type SerializedPlayer = {
   handSize: number;
   discardPile: string[];
   banishPile: string[];
-  destinyZone: string[];
+  runeZone: string[];
   remainingCardsInMainDeck: number;
-  remainingCardsInDestinyDeck: number;
+  remainingCardsInRuneDeck: number;
   canPerformResourceAction: boolean;
   remainingResourceActions: Record<PlayerResourceAction['type'], number>;
   maxResourceActionPerTurn: number;
@@ -82,13 +84,15 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
+  readonly runeManager: RuneManagerComponent;
+
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
+
+  private _hasReceivedInitiativeThisTurn = false;
 
   private _mana = 0;
 
   private _baseMaxMana = 0;
-
-  hasPlayedDestinyCardThisTurn = false;
 
   private _hero!: {
     card: HeroCard;
@@ -102,6 +106,7 @@ export class Player
     this.options = cloneDeep(options);
     this.game = game;
     this.cardTracker = new CardTrackerComponent(game, this);
+    this.runeManager = new RuneManagerComponent(game, this);
     this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
@@ -110,27 +115,48 @@ export class Player
   }
 
   async init() {
-    const heroblueprint = this.options.destinyDeck.cards.find(cardId => {
-      const blueprint = this.game.cardSystem.getBlueprint(cardId);
-      return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 0;
+    await this.setupHero();
+    await this.cardManager.init(this.options.mainDeck.cards, this.options.runeDeck.cards);
+    this.game.on(GAME_EVENTS.TURN_INITATIVE_CHANGE, async event => {
+      if (!event.data.newInitiativePlayer.equals(this)) return;
+      await this.playRuneForTurn();
     });
-    if (!heroblueprint) {
-      throw new GameError(
-        `No level 0 hero card found in destiny deck for player '${this.options.name}'`
-      );
-    }
-    this.options.destinyDeck.cards = this.options.destinyDeck.cards.filter(
-      cardId => cardId !== heroblueprint
-    );
+  }
 
+  private async playRuneForTurn() {
+    if (this._hasReceivedInitiativeThisTurn) return;
+    this._hasReceivedInitiativeThisTurn = true;
+
+    const topRunes = this.cardManager.runeDeck.cards.slice(0, 2);
+    if (topRunes.length === 0) return;
+
+    const [runeToPlay] = await this.game.interaction.chooseCards<RuneCard>({
+      player: this,
+      timeoutFallback: [topRunes[0]],
+      label: 'Choose a Rune to put in the Rune Zone',
+      minChoiceCount: 1,
+      maxChoiceCount: 1,
+      choices: topRunes.map(card => ({
+        card,
+        aiHints: {
+          shouldPick: () => 1
+        }
+      }))
+    });
+    await runeToPlay.play();
+
+    for (const rune of topRunes) {
+      if (rune.equals(runeToPlay)) continue;
+      this.cardManager.runeDeck.pluckById(rune.id);
+      this.cardManager.runeDeck.addCardAtRandomPosition(rune);
+    }
+    this.cardManager.runeDeck.shuffle();
+  }
+  private async setupHero() {
     this._hero = {
-      card: await this.generateCard<HeroCard>(heroblueprint),
+      card: await this.generateCard<HeroCard>(this.options.hero),
       lineage: []
     };
-    await this.cardManager.init(
-      this.options.mainDeck.cards,
-      this.options.destinyDeck.cards
-    );
     await this._hero.card.play();
     await this._hero.card.removeFromCurrentLocation();
   }
@@ -234,7 +260,7 @@ export class Player
   }
 
   get influence() {
-    return this.cardManager.hand.length + this.cardManager.destinyZone.size;
+    return this.cardManager.hand.length + this.cardManager.runeZone.size;
   }
 
   get maxResourceActionPerTurn() {
@@ -279,53 +305,20 @@ export class Player
     }
   }
 
-  private async payForManaCost(manaCost: number, indices: number[]) {
-    const hasEnough = this.cardManager.hand.length >= manaCost;
-    assert(hasEnough, new NotEnoughCardsInHandError());
-    const cards = this.cardManager.hand.filter((_, i) => indices.includes(i));
-    for (const card of cards) {
-      if (!card.canBeUsedAsManaCost) {
-        throw new GameError(`Cannot use card '${card.id}' as mana cost`);
-      }
-      await card.sendToDestinyZone();
-    }
+  private async payForManaCost(manaCost: number) {
+    assert(this.canSpendMana(manaCost), new NotEnoughManaError());
+    await this.spendMana(manaCost);
   }
 
-  async playMainDeckCard(card: AnyCard, manaCostIndices: number[]) {
-    await this.payForManaCost(card.manaCost, manaCostIndices);
+  async playMainDeckCard(card: AnyCard) {
+    await this.payForManaCost(card.manaCost);
     card.isPlayedFromHand = true;
     await this.playCard(card);
   }
 
-  async useAbility(
-    ability: Ability<AbilityOwner>,
-    manaCostIndices: number[],
-    onResolved: () => MaybePromise<void>
-  ) {
-    await this.payForManaCost(ability.manaCost, manaCostIndices);
+  async useAbility(ability: Ability<AbilityOwner>, onResolved: () => MaybePromise<void>) {
+    await this.payForManaCost(ability.manaCost);
     await ability.use(onResolved);
-  }
-
-  async playDestinyDeckCard(card: AnyCard) {
-    await this.payForDestinyCost(card.destinyCost);
-    await this.playCard(card);
-  }
-
-  private async payForDestinyCost(cost: number) {
-    const pool = [...this.cardManager.destinyZone].filter(
-      card => card.canBeUsedAsDestinyCost
-    );
-    const hasEnough = pool.length >= cost;
-    assert(hasEnough, new NotEnoughCardsInDestinyZoneError());
-
-    const cardsToBanish: Array<{ card: AnyCard; index: number }> = [];
-    for (let i = 0; i < cost; i++) {
-      const index = this.game.rngSystem.nextInt(pool.length - 1);
-      const card = pool[index];
-      await card.sendToBanishPile();
-      cardsToBanish.push({ card, index });
-      pool.splice(index, 1);
-    }
   }
 
   async startTurn() {
@@ -333,8 +326,8 @@ export class Player
       GAME_EVENTS.PLAYER_START_TURN,
       new PlayerTurnEvent({ player: this })
     );
-    this.hasPlayedDestinyCardThisTurn = false;
     this._resourceActionsPerformedThisTurn = [];
+    this._hasReceivedInitiativeThisTurn = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       if (card.shouldWakeUpAtTurnStart) {
         await card.wakeUp();
@@ -407,9 +400,9 @@ export class Player
       handSize: this.cardManager.hand.length,
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
-      destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
+      runeZone: [...this.cardManager.runeZone].map(card => card.id),
       remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
-      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
+      remainingCardsInRuneDeck: this.cardManager.runeDeck.cards.length,
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,

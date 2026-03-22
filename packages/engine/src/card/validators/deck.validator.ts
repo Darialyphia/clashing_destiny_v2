@@ -17,7 +17,7 @@ export type ValidatableDeck<TMeta> = {
   name: string;
   isEqual(first: ValidatableCard<TMeta>, second: ValidatableCard<TMeta>): boolean;
   mainDeck: Array<ValidatableCard<TMeta>>;
-  destinyDeck: Array<ValidatableCard<TMeta>>;
+  runeDeck: Array<ValidatableCard<TMeta>>;
 };
 
 export type DeckValidationResult =
@@ -127,7 +127,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
   private getLevel0Hero(deck: ValidatableDeck<TMeta>) {
     return (
-      deck[CARD_DECK_SOURCES.DESTINY_DECK]
+      deck[CARD_DECK_SOURCES.RUNE_DECK]
         .map(card => {
           return this.cardPool[card.blueprintId]!;
         })
@@ -145,10 +145,10 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
           decksource: typeof CARD_DECK_SOURCES.MAIN_DECK;
         }
       })),
-      destiny: deck[CARD_DECK_SOURCES.DESTINY_DECK].map(card => ({
+      destiny: deck[CARD_DECK_SOURCES.RUNE_DECK].map(card => ({
         ...card,
         blueprint: this.cardPool[card.blueprintId] as CardBlueprint & {
-          decksource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
+          decksource: typeof CARD_DECK_SOURCES.RUNE_DECK;
         }
       }))
     };

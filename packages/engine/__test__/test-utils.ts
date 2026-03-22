@@ -21,14 +21,14 @@ export const testGameBuilder = () => {
     },
     withP1Deck(deck: {
       main: PlayerOptions['mainDeck']['cards'];
-      destiny: PlayerOptions['destinyDeck']['cards'];
+      destiny: PlayerOptions['runeDeck']['cards'];
     }) {
       // @ts-expect-error
       options.players ??= [];
 
       options.players![0] = {
         mainDeck: { cards: deck.main },
-        destinyDeck: { cards: deck.destiny },
+        runeDeck: { cards: deck.destiny },
         id: 'p1',
         name: 'player1'
       };
@@ -36,14 +36,14 @@ export const testGameBuilder = () => {
     },
     withP2Deck(deck: {
       main: PlayerOptions['mainDeck']['cards'];
-      destiny: PlayerOptions['destinyDeck']['cards'];
+      destiny: PlayerOptions['runeDeck']['cards'];
     }) {
       // @ts-expect-error
       options.players ??= [];
 
       options.players![1] = {
         mainDeck: { cards: deck.main },
-        destinyDeck: { cards: deck.destiny },
+        runeDeck: { cards: deck.destiny },
         id: 'p2',
         name: 'player2'
       };
@@ -77,12 +77,11 @@ export const testGameBuilder = () => {
         testHelpers: {
           generateAndPlayCard: async <T extends AnyCard>(
             player: Player,
-            blueprintId: string,
-            manaCostIndices: number[]
+            blueprintId: string
           ) => {
             const card = await player.generateCard<T>(blueprintId);
 
-            await player.playMainDeckCard(card, manaCostIndices);
+            await player.playMainDeckCard(card);
 
             return card;
           },

@@ -4,8 +4,10 @@ import {
   CARD_DECK_SOURCES,
   CARD_KINDS,
   CARD_SETS,
+  defaultCardTint,
   JOBS,
-  RARITIES
+  RARITIES,
+  RUNES
 } from '../../../../card.enums';
 
 export const sample: MinionBlueprint = {
@@ -14,15 +16,18 @@ export const sample: MinionBlueprint = {
   description: 'This is a sample minion.',
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder', JOBS.NEUTRAL),
+  art: defaultCardArt('placeholder', defaultCardTint),
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL],
+  manaCost: 1,
+  runeCost: {
+    [RUNES.COLORLESS.id]: 1
+  },
   tags: [],
   atk: 1,
   maxHp: 1,
-  manaCost: 1,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {},
@@ -31,7 +36,6 @@ export const sample: MinionBlueprint = {
     shouldPlay: () => 0,
     shouldMove: () => 0,
     shouldAttack: () => 0,
-    shouldUseAsMainDeckCardManacost: () => 1,
     getThreatScore: () => 0
   }
 };

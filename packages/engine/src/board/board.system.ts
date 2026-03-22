@@ -11,7 +11,7 @@ export const isMainDeckCard = (card: AnyCard) => {
 };
 
 export const isDestinyDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
+  return card.deckSource === CARD_DECK_SOURCES.RUNE_DECK;
 };
 
 export type SerializedBoard = {

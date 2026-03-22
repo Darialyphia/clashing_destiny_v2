@@ -39,13 +39,16 @@ export class TurnSystem extends System<never> {
   }
 
   async startTurn() {
+    await this.game.emit(
+      TURN_EVENTS.TURN_START,
+      new TurnEvent({ turnCount: this.elapsedTurns })
+    );
     this._initiativePlayer = this._nextTurnInitiativePlayer;
     this._turnInitiativePlayer = this._initiativePlayer;
     this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
-
-    return this.game.emit(
-      TURN_EVENTS.TURN_START,
-      new TurnEvent({ turnCount: this.elapsedTurns })
+    await this.game.emit(
+      TURN_EVENTS.TURN_INITATIVE_CHANGE,
+      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
     );
   }
 

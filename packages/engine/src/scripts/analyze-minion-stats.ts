@@ -27,18 +27,18 @@ const analyzeMinions = () => {
         totalAtk: existing.totalAtk + minion.atk,
         totalMaxHp: existing.totalMaxHp + minion.maxHp
       });
-    } else if (minion.deckSource === 'destinyDeck') {
-      const cost = minion.destinyCost;
-      const existing = byDestinyCost.get(cost) ?? {
-        count: 0,
-        totalAtk: 0,
-        totalMaxHp: 0
-      };
-      byDestinyCost.set(cost, {
-        count: existing.count + 1,
-        totalAtk: existing.totalAtk + minion.atk,
-        totalMaxHp: existing.totalMaxHp + minion.maxHp
-      });
+    } else if (minion.deckSource === 'runeDeck') {
+      // const cost = minion.destinyCost;
+      // const existing = byDestinyCost.get(cost) ?? {
+      //   count: 0,
+      //   totalAtk: 0,
+      //   totalMaxHp: 0
+      // };
+      // byDestinyCost.set(cost, {
+      //   count: existing.count + 1,
+      //   totalAtk: existing.totalAtk + minion.atk,
+      //   totalMaxHp: existing.totalMaxHp + minion.maxHp
+      // });
     }
   }
 

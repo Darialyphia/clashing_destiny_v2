@@ -136,7 +136,7 @@ export class CardViewModel {
   }
 
   get manaCost() {
-    if (this.source === CARD_DECK_SOURCES.DESTINY_DECK) {
+    if (this.source === CARD_DECK_SOURCES.RUNE_DECK) {
       return null;
     }
     if ('manaCost' in this.data) {
@@ -180,10 +180,6 @@ export class CardViewModel {
 
   get unplayableReason() {
     return this.data.unplayableReason;
-  }
-
-  get canBeUsedAsManaCost() {
-    return this.data.canBeUsedAsManaCost;
   }
 
   get source() {

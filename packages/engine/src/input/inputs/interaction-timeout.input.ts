@@ -30,7 +30,7 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
         await ctx.ctx.commit(this.player, null);
       })
       .with({ state: INTERACTION_STATES.PLAYING_CARD }, async ctx => {
-        await ctx.ctx.commit(this.player, null);
+        await ctx.ctx.commit(this.player);
       })
       .with({ state: INTERACTION_STATES.REARRANGING_CARDS }, async ctx => {
         await ctx.ctx.commit(this.player, null);
@@ -39,7 +39,7 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
         await ctx.ctx.commit(this.player, true);
       })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, async ctx => {
-        await ctx.ctx.commit(this.player, null);
+        await ctx.ctx.commit(this.player);
       })
       .exhaustive();
   }

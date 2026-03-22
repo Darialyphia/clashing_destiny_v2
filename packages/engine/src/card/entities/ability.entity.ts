@@ -19,8 +19,9 @@ import {
   AbilityAfterUseEvent,
   AbilityBeforeUseEvent
 } from '../events/ability.events';
+import type { RuneCard } from './rune.entity';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard | RuneCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;

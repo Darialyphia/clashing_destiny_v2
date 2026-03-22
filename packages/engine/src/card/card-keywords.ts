@@ -121,12 +121,6 @@ export const KEYWORDS = {
       "This minion cannot attack, move, or use abilities unless its owner's hero is at least level X.",
     aliases: [/pride [0-9]+/]
   },
-  HINDERED: {
-    id: 'hindered',
-    name: 'Hindered X',
-    description: 'This card comes into play exhausted unless you pay X.',
-    aliases: [/^hindered [0-9]+$/, 'hindered']
-  },
   PROTECTOR: {
     id: 'protector',
     name: 'Protector',

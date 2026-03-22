@@ -86,30 +86,15 @@ export class AISystem {
         });
       })
       .with({ state: INTERACTION_STATES.PLAYING_CARD }, ctx => {
-        moves.push({
-          input: {
-            type: 'commitPlayCard',
-            payload: {
-              playerId: this.playerId,
-              manaCostIndices: this.player.cardManager.hand
-                .filter(card => card.canBeUsedAsManaCost)
-                .sort(
-                  (a, b) =>
-                    b.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
-                      this.game,
-                      b as any
-                    ) -
-                    a.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
-                      this.game,
-                      a as any
-                    )
-                )
-                .slice(0, ctx.ctx.card.manaCost)
-                .map(card => this.player.cardManager.hand.indexOf(card))
-            }
-          },
-          score: 100
-        });
+        // moves.push({
+        //   input: {
+        //     type: 'commitPlayCard',
+        //     payload: {
+        //       playerId: this.playerId
+        //     }
+        //   },
+        //   score: 100
+        // });
       })
       .with({ state: INTERACTION_STATES.REARRANGING_CARDS }, ctx => {
         moves.push({
@@ -130,30 +115,30 @@ export class AISystem {
         // TODO
       })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, ctx => {
-        moves.push({
-          input: {
-            type: 'commitUseAbility',
-            payload: {
-              playerId: this.playerId,
-              manaCostIndices: this.player.cardManager.hand
-                .filter(card => card.canBeUsedAsManaCost)
-                .sort(
-                  (a, b) =>
-                    b.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
-                      this.game,
-                      b as any
-                    ) -
-                    a.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
-                      this.game,
-                      a as any
-                    )
-                )
-                .slice(0, ctx.ctx.ability.manaCost)
-                .map(card => this.player.cardManager.hand.indexOf(card))
-            }
-          },
-          score: 100
-        });
+        // moves.push({
+        //   input: {
+        //     type: 'commitUseAbility',
+        //     payload: {
+        //       playerId: this.playerId,
+        //       manaCostIndices: this.player.cardManager.hand
+        //         .filter(card => card.canBeUsedAsManaCost)
+        //         .sort(
+        //           (a, b) =>
+        //             b.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
+        //               this.game,
+        //               b as any
+        //             ) -
+        //             a.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
+        //               this.game,
+        //               a as any
+        //             )
+        //         )
+        //         .slice(0, ctx.ctx.ability.manaCost)
+        //         .map(card => this.player.cardManager.hand.indexOf(card))
+        //     }
+        //   },
+        //   score: 100
+        // });
       })
       .exhaustive();
 

@@ -1,8 +1,6 @@
 import type { MaybePromise } from '@game/shared';
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
-import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -36,8 +34,8 @@ export class SpellboostModifier<T extends AnyCard> extends Modifier<T> {
             return (
               isSpell(event.data.card) &&
               (this.target.location === CARD_LOCATIONS.HAND ||
-                this.target.location === CARD_LOCATIONS.DESTINY_ZONE ||
-                this.target.location === CARD_LOCATIONS.DESTINY_DECK)
+                this.target.location === CARD_LOCATIONS.RUNE_ZONE ||
+                this.target.location === CARD_LOCATIONS.RUNE_DECK)
             );
           },
           handler: async () => {

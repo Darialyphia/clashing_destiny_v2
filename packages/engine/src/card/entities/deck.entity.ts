@@ -101,4 +101,9 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
     this.cards = this.cards.filter(c => !c.equals(card));
     return card;
   }
+
+  addCardAtRandomPosition(card: TCard) {
+    const index = Math.floor(this.game.rngSystem.next() * (this.cards.length + 1));
+    this.cards.splice(index, 0, card);
+  }
 }

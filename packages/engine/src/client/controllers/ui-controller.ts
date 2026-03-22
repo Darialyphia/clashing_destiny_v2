@@ -5,7 +5,6 @@ import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
-import { ToggleForManaCost } from '../actions/toggle-for-mana-cost';
 import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
@@ -161,7 +160,6 @@ export class UiController {
 
   private buildCardClickRules() {
     this.cardClickRules = [
-      new ToggleForManaCost(this.client),
       new SelectCardAction(this.client),
       new DeclareAttackTargetCardAction(this.client),
       new SelectCardOnBoardAction(this.client)

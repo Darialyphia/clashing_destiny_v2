@@ -3,7 +3,7 @@ import { UntilEndOfTurnModifierMixin } from '../modifier/mixins/until-end-of-tur
 import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import type { Player } from '../player/player.entity';
 import type { CardBlueprint } from './card-blueprint';
-import { CARD_KINDS, CARD_LOCATIONS, type Job } from './card.enums';
+import { CARD_KINDS, CARD_LOCATIONS, type CardTint, type Job } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
@@ -529,7 +529,7 @@ export const equipWeapon = (options: {
   };
 };
 
-export const defaultCardArt = (name: string, job: Job): CardBlueprint['art'] => ({
+export const defaultCardArt = (name: string, tint: CardTint): CardBlueprint['art'] => ({
   default: {
     foil: {
       sheen: true,
@@ -542,6 +542,6 @@ export const defaultCardArt = (name: string, job: Job): CardBlueprint['art'] => 
     bg: `${name}-bg`,
     main: `${name}`,
     frame: 'default',
-    tint: job.defaultCardTint
+    tint
   }
 });
