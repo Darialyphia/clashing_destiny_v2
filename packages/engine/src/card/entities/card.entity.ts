@@ -444,12 +444,6 @@ export abstract class Card<
     if (this.player.hasPlayedDestinyCardThisTurn) {
       return false;
     }
-    if (
-      !this.game.config.ALLOW_DESTINY_CARDS_ON_TURN_1 &&
-      this.game.turnSystem.elapsedTurns === 0
-    ) {
-      return false;
-    }
 
     return (
       this.location === CARD_LOCATIONS.DESTINY_DECK &&
@@ -487,12 +481,6 @@ export abstract class Card<
         }
         if (this.location !== CARD_LOCATIONS.DESTINY_DECK) {
           return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
-        }
-        if (
-          !this.game.config.ALLOW_DESTINY_CARDS_ON_TURN_1 &&
-          this.game.turnSystem.elapsedTurns === 0
-        ) {
-          return 'Cannot play on the first turn.';
         }
         if (!this.canPayDestinyCost) {
           return 'Cannot pay destiny cost.';

@@ -60,10 +60,6 @@ export class PlayerViewModel {
     return this.data.handSize;
   }
 
-  get influence() {
-    return this.data.influence;
-  }
-
   get remainingCardsInMainDeck() {
     return this.data.remainingCardsInMainDeck;
   }

@@ -20,7 +20,7 @@ export class UseAbilityContext {
     return instance;
   }
 
-  private ability: Ability<AbilityOwner>;
+  private _ability: Ability<AbilityOwner>;
 
   readonly player: Player;
 
@@ -29,17 +29,21 @@ export class UseAbilityContext {
     options: UseAbilityContextOptions
   ) {
     this.player = options.player;
-    this.ability = options.ability;
+    this._ability = options.ability;
   }
 
   async init() {}
 
   serialize() {
     return {
-      ability: this.ability.id,
-      card: this.ability.card.id,
+      ability: this._ability.id,
+      card: this._ability.card.id,
       player: this.player.id
     };
+  }
+
+  get ability() {
+    return this._ability;
   }
 
   async commit(player: Player, manaCostIndices: number[] | null) {
@@ -49,9 +53,9 @@ export class UseAbilityContext {
 
     const indicesToUse =
       manaCostIndices ??
-      Array.from({ length: this.ability.card.manaCost }, (_, index) => index);
+      Array.from({ length: this._ability.card.manaCost }, (_, index) => index);
 
-    await this.player.useAbility(this.ability, indicesToUse, async () => {
+    await this.player.useAbility(this._ability, indicesToUse, async () => {
       await this.game.turnSystem.switchInitiative();
     });
   }

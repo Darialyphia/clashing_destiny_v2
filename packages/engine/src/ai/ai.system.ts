@@ -3,6 +3,9 @@ import type { Game } from '../game/game';
 import { GAME_EVENTS } from '../game/game.events';
 import type { SerializedInput } from '../input/input-system';
 import { INTERACTION_STATES } from '../game/game.enums';
+import { SpellCard } from '../card/entities/spell.entity';
+import { ArtifactCard } from '../card/entities/artifact.entity';
+import type { MinionCard } from '../card/entities/minion.entity';
 
 export type AIMove = {
   input: SerializedInput;
@@ -83,17 +86,74 @@ export class AISystem {
         });
       })
       .with({ state: INTERACTION_STATES.PLAYING_CARD }, ctx => {
-        // moves.push({
-        // })
+        moves.push({
+          input: {
+            type: 'commitPlayCard',
+            payload: {
+              playerId: this.playerId,
+              manaCostIndices: this.player.cardManager.hand
+                .filter(card => card.canBeUsedAsManaCost)
+                .sort(
+                  (a, b) =>
+                    b.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
+                      this.game,
+                      b as any
+                    ) -
+                    a.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
+                      this.game,
+                      a as any
+                    )
+                )
+                .slice(0, ctx.ctx.card.manaCost)
+                .map(card => this.player.cardManager.hand.indexOf(card))
+            }
+          },
+          score: 100
+        });
       })
       .with({ state: INTERACTION_STATES.REARRANGING_CARDS }, ctx => {
-        // TODO
+        moves.push({
+          input: {
+            type: 'commitRearrangeCards',
+            payload: {
+              playerId: this.playerId,
+              buckets: ctx.ctx.buckets.map(bucket => ({
+                id: bucket.id,
+                cards: bucket.cards.map(c => c.id)
+              }))
+            }
+          },
+          score: 100
+        });
       })
       .with({ state: INTERACTION_STATES.SELECTING_CARDS_ON_BOARD }, ctx => {
         // TODO
       })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, ctx => {
-        // TODO
+        moves.push({
+          input: {
+            type: 'commitUseAbility',
+            payload: {
+              playerId: this.playerId,
+              manaCostIndices: this.player.cardManager.hand
+                .filter(card => card.canBeUsedAsManaCost)
+                .sort(
+                  (a, b) =>
+                    b.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
+                      this.game,
+                      b as any
+                    ) -
+                    a.blueprint.aiHints.shouldUseAsMainDeckCardManacost(
+                      this.game,
+                      a as any
+                    )
+                )
+                .slice(0, ctx.ctx.ability.manaCost)
+                .map(card => this.player.cardManager.hand.indexOf(card))
+            }
+          },
+          score: 100
+        });
       })
       .exhaustive();
 

@@ -22,7 +22,7 @@ export class PlayCardContext {
     return instance;
   }
 
-  private card: AnyCard;
+  private _card: AnyCard;
   private cardIndexInHand: number;
 
   readonly player: Player;
@@ -32,21 +32,25 @@ export class PlayCardContext {
     options: PlayCardContextOptions
   ) {
     this.player = options.player;
-    this.card = options.card;
+    this._card = options.card;
     this.cardIndexInHand = this.player.cardManager.hand.findIndex(c =>
-      c.equals(this.card)
+      c.equals(this._card)
     );
   }
 
   async init() {
-    this.card.removeFromCurrentLocation();
+    this._card.removeFromCurrentLocation();
   }
 
   serialize() {
     return {
-      card: this.card.id,
+      card: this._card.id,
       player: this.player.id
     };
+  }
+
+  get card() {
+    return this._card;
   }
 
   async commit(player: Player, manaCostIndices: number[] | null) {
@@ -54,23 +58,23 @@ export class PlayCardContext {
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
 
-    await match(this.card.deckSource)
+    await match(this._card.deckSource)
       .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
         const indicesToUse =
           manaCostIndices ??
-          Array.from({ length: this.card.manaCost }, (_, index) => index);
-        return this.player.playMainDeckCard(this.card, indicesToUse);
+          Array.from({ length: this._card.manaCost }, (_, index) => index);
+        return this.player.playMainDeckCard(this._card, indicesToUse);
       })
       .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
-        this.card.player.hasPlayedDestinyCardThisTurn = true;
-        return this.player.playDestinyDeckCard(this.card);
+        this._card.player.hasPlayedDestinyCardThisTurn = true;
+        return this.player.playDestinyDeckCard(this._card);
       })
       .exhaustive();
   }
 
   async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.card.player.cardManager.addToHand(this.card, this.cardIndexInHand);
+    this._card.player.cardManager.addToHand(this._card, this.cardIndexInHand);
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
   }

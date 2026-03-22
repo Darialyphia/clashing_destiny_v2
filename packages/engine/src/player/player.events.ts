@@ -5,37 +5,34 @@ import type { PLAYER_EVENTS } from './player.enums';
 
 export class PlayerTurnEvent extends TypedSerializableEvent<
   { player: Player },
-  { player: SerializedPlayer }
+  { player: string }
 > {
   serialize() {
     return {
-      player: this.data.player.serialize()
-    };
-  }
-}
-
-export class PlayerPayForDestinyCostEvent extends TypedSerializableEvent<
-  { player: Player; cards: Array<{ card: AnyCard; index: number }> },
-  { player: SerializedPlayer; cards: Array<{ card: string; index: number }> }
-> {
-  serialize() {
-    return {
-      player: this.data.player.serialize(),
-      cards: this.data.cards.map(({ card, index }) => ({
-        card: card.id,
-        index
-      }))
+      player: this.data.player.id
     };
   }
 }
 
 export class PlayerDrawEvent extends TypedSerializableEvent<
   { player: Player; amount: number },
-  { player: SerializedPlayer; amount: number }
+  { player: string; amount: number }
 > {
   serialize() {
     return {
-      player: this.data.player.serialize(),
+      player: this.data.player.id,
+      amount: this.data.amount
+    };
+  }
+}
+
+export class PlayerManaChangeEvent extends TypedSerializableEvent<
+  { player: Player; amount: number },
+  { player: string; amount: number }
+> {
+  serialize() {
+    return {
+      player: this.data.player.id,
       amount: this.data.amount
     };
   }
@@ -44,7 +41,8 @@ export class PlayerDrawEvent extends TypedSerializableEvent<
 export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_START_TURN]: PlayerTurnEvent;
   [PLAYER_EVENTS.PLAYER_END_TURN]: PlayerTurnEvent;
-  [PLAYER_EVENTS.PLAYER_PAY_FOR_DESTINY_COST]: PlayerPayForDestinyCostEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_DRAW]: PlayerDrawEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_DRAW]: PlayerDrawEvent;
+  [PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE]: PlayerManaChangeEvent;
+  [PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE]: PlayerManaChangeEvent;
 };

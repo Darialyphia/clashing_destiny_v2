@@ -29,14 +29,10 @@ export type Config = {
 
   ALLOW_MINION_MOVEMENT: boolean;
 
-  REWARD_FOR_PASSING_FIRST: boolean;
-
   MAX_RESOURCE_ACTIONS_PER_TURN: number;
 
-  BASE_LOYALTY_HP_COST: number;
-  BASE_LOYALTY_COST_INCREASE: number;
-
-  ALLOW_DESTINY_CARDS_ON_TURN_1: boolean;
+  MAX_MANA: number;
+  MANA_REGEN_PER_TURN: number;
 };
 
 export const defaultConfig: Config = {
@@ -67,12 +63,9 @@ export const defaultConfig: Config = {
 
   ALLOW_MINION_MOVEMENT: false,
 
-  REWARD_FOR_PASSING_FIRST: false,
-
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 
-  BASE_LOYALTY_HP_COST: 1,
-  BASE_LOYALTY_COST_INCREASE: 0,
+  MAX_MANA: 9,
 
-  ALLOW_DESTINY_CARDS_ON_TURN_1: true
+  MANA_REGEN_PER_TURN: 5
 };

@@ -11,7 +11,7 @@ import { type HeroCard } from '../card/entities/hero.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
-import { PlayerPayForDestinyCostEvent, PlayerTurnEvent } from './player.events';
+import { PlayerManaChangeEvent, PlayerTurnEvent } from './player.events';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { GameError } from '../game/game-error';
 import { CARD_KINDS } from '../card/card.enums';
@@ -33,39 +33,44 @@ export type SerializedPlayer = {
   name: string;
   hand: Array<{ cardId: string; isLocked: boolean; isRevealed: boolean }>;
   handSize: number;
-  influence: number;
   discardPile: string[];
   banishPile: string[];
   destinyZone: string[];
   remainingCardsInMainDeck: number;
   remainingCardsInDestinyDeck: number;
-  // canPerformResourceAction: boolean;
-  // remainingResourceActions: Record<PlayerResourceAction['type'], number>;
-  // maxResourceActionPerTurn: number;
-  // remainingTotalResourceActions: number;
+  canPerformResourceAction: boolean;
+  remainingResourceActions: Record<PlayerResourceAction['type'], number>;
+  maxResourceActionPerTurn: number;
+  remainingTotalResourceActions: number;
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
+  maxMana: number;
+  currentMana: number;
+  manaRegen: number;
 };
 
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
   maxResourceActionPerTurn: Interceptable<number>;
   maxResourceActionsPerType: Interceptable<Record<PlayerResourceAction['type'], number>>;
+  manaRegen: Interceptable<number>;
+  maxManathreshold: Interceptable<number>;
+  maxMana: Interceptable<number>;
 };
+
 const makeInterceptors = (): PlayerInterceptors => {
   return {
-    cardsDrawnForTurn: new Interceptable<number>(),
-    maxResourceActionPerTurn: new Interceptable<number>(),
-    maxResourceActionsPerType: new Interceptable<
-      Record<PlayerResourceAction['type'], number>
-    >()
+    cardsDrawnForTurn: new Interceptable(),
+    maxResourceActionPerTurn: new Interceptable(),
+    maxResourceActionsPerType: new Interceptable(),
+    manaRegen: new Interceptable(),
+    maxManathreshold: new Interceptable(),
+    maxMana: new Interceptable()
   };
 };
 
-export type PlayerResourceAction =
-  | { type: 'put_card_in_shard_zone'; cardId: string }
-  | { type: 'put_card_in_mana_zone'; cardId: string };
+export type PlayerResourceAction = { type: 'rune' } | { type: 'draw' };
 
 export class Player
   extends EntityWithModifiers<PlayerInterceptors>
@@ -78,6 +83,10 @@ export class Player
   readonly cardTracker: CardTrackerComponent;
 
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
+
+  private _mana = 0;
+
+  private _baseMaxMana = 0;
 
   hasPlayedDestinyCardThisTurn = false;
 
@@ -156,44 +165,6 @@ export class Player
 
   get resourceActionsPerformedThisTurn() {
     return [...this._resourceActionsPerformedThisTurn];
-  }
-
-  serialize() {
-    return {
-      id: this.id,
-      entityType: 'player' as const,
-      name: this.options.name,
-      hand: this.cardManager.hand.map(card => ({
-        cardId: card.id,
-        isLocked: card.modifiers.has(LockedModifier),
-        isRevealed: card.isRevealed
-      })),
-      handSize: this.cardManager.hand.length,
-      discardPile: [...this.cardManager.discardPile].map(card => card.id),
-      banishPile: [...this.cardManager.banishPile].map(card => card.id),
-      destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
-      remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
-      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
-      maxHp: this.hero.maxHp,
-      currentHp: this.hero.remainingHp,
-      isPlayer1: this.isPlayer1,
-      influence: this.influence
-      // canPerformResourceAction:
-      //   this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
-      // remainingResourceActions: {
-      //   draw_card:
-      //     this.getMaxResourceActionsPerType('draw_card') -
-      //     this._resourceActionsPerformedThisTurn.filter(a => a.type === 'draw_card')
-      //       .length,
-      //   gain_rune:
-      //     this.getMaxResourceActionsPerType('gain_rune') -
-      //     this._resourceActionsPerformedThisTurn.filter(a => a.type === 'gain_rune')
-      //       .length
-      // },
-      // remainingTotalResourceActions:
-      //   this.maxResourceActionPerTurn - this._resourceActionsPerformedThisTurn.length,
-      // maxResourceActionPerTurn: this.maxResourceActionPerTurn
-    };
   }
 
   get cardsDrawnForTurn() {
@@ -275,8 +246,8 @@ export class Player
 
   getMaxResourceActionsPerType(actionType: PlayerResourceAction['type']): number {
     const defaultLimits: Record<PlayerResourceAction['type'], number> = {
-      put_card_in_mana_zone: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
-      put_card_in_shard_zone: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
+      draw: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
+      rune: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
     };
 
     const limits = this.interceptors.maxResourceActionsPerType.getValue(
@@ -355,14 +326,6 @@ export class Player
       cardsToBanish.push({ card, index });
       pool.splice(index, 1);
     }
-
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_PAY_FOR_DESTINY_COST,
-      new PlayerPayForDestinyCostEvent({
-        player: this,
-        cards: cardsToBanish
-      })
-    );
   }
 
   async startTurn() {
@@ -383,5 +346,89 @@ export class Player
     const card = this.game.cardSystem.addCard<T>(this, blueprintId);
 
     return card;
+  }
+
+  refillMana() {
+    this._mana = Math.min(this._mana + this.manaRegen, this.maxMana);
+  }
+
+  get mana() {
+    return this._mana;
+  }
+
+  get maxMana() {
+    return this.interceptors.maxMana.getValue(this._baseMaxMana, {});
+  }
+
+  get manaRegen() {
+    return this.interceptors.manaRegen.getValue(this.game.config.MANA_REGEN_PER_TURN, {});
+  }
+
+  async spendMana(amount: number) {
+    if (amount === 0) return;
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this, amount })
+    );
+    this._mana = Math.max(this._mana - amount, 0);
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this, amount })
+    );
+  }
+
+  async gainMana(amount: number) {
+    if (amount === 0) return;
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this, amount })
+    );
+    this._mana = this._mana + amount; // dont clamp to max mana because of effects that go over max mana (ex: mana tile)
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this, amount })
+    );
+  }
+
+  canSpendMana(amount: number) {
+    return this.mana >= amount;
+  }
+
+  serialize() {
+    return {
+      id: this.id,
+      entityType: 'player' as const,
+      name: this.options.name,
+      hand: this.cardManager.hand.map(card => ({
+        cardId: card.id,
+        isLocked: card.modifiers.has(LockedModifier),
+        isRevealed: card.isRevealed
+      })),
+      handSize: this.cardManager.hand.length,
+      discardPile: [...this.cardManager.discardPile].map(card => card.id),
+      banishPile: [...this.cardManager.banishPile].map(card => card.id),
+      destinyZone: [...this.cardManager.destinyZone].map(card => card.id),
+      remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
+      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
+      maxHp: this.hero.maxHp,
+      currentHp: this.hero.remainingHp,
+      isPlayer1: this.isPlayer1,
+      canPerformResourceAction:
+        this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
+      remainingResourceActions: {
+        draw:
+          this.getMaxResourceActionsPerType('draw') -
+          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'draw').length,
+        rune:
+          this.getMaxResourceActionsPerType('rune') -
+          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'rune').length
+      },
+      remainingTotalResourceActions:
+        this.maxResourceActionPerTurn - this._resourceActionsPerformedThisTurn.length,
+      maxResourceActionPerTurn: this.maxResourceActionPerTurn,
+      currentMana: this._mana,
+      maxMana: this.maxMana,
+      manaRegen: this.manaRegen
+    };
   }
 }
