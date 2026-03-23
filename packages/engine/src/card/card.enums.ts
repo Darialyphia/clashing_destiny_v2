@@ -180,9 +180,9 @@ export const RUNES = {
     name: 'Enigma',
     tint: defaultCardTint
   },
-  DARK: {
-    id: 'DARK',
-    name: 'Dark',
+  COLORLESS: {
+    id: 'COLORLESS',
+    name: 'Neutral',
     tint: defaultCardTint
   }
 } as const satisfies Record<string, Rune>;

@@ -12,11 +12,11 @@ export class RuneManagerComponent {
   get runes() {
     const cards = this.player.cardManager.runeZone;
     const runeCounts: Record<RuneId, number> = {
-      [RUNES.RED.id]: 0,
-      [RUNES.BLUE.id]: 0,
-      [RUNES.YELLOW.id]: 0,
-      [RUNES.GREEN.id]: 0,
-      [RUNES.PURPLE.id]: 0,
+      [RUNES.MIGHT.id]: 0,
+      [RUNES.WISDOM.id]: 0,
+      [RUNES.FOCUS.id]: 0,
+      [RUNES.RESONANCE.id]: 0,
+      [RUNES.ENIGMA.id]: 0,
       [RUNES.COLORLESS.id]: 0
     };
 
@@ -34,11 +34,11 @@ export class RuneManagerComponent {
   satisfiesRuneCost(cost: Partial<Record<RuneId, number>>) {
     const { COLORLESS, ...coloredRunes } = cost;
     const used: Record<Exclude<RuneId, 'COLORLESS'>, number> = {
-      [RUNES.RED.id]: 0,
-      [RUNES.BLUE.id]: 0,
-      [RUNES.YELLOW.id]: 0,
-      [RUNES.GREEN.id]: 0,
-      [RUNES.PURPLE.id]: 0
+      [RUNES.MIGHT.id]: 0,
+      [RUNES.WISDOM.id]: 0,
+      [RUNES.FOCUS.id]: 0,
+      [RUNES.RESONANCE.id]: 0,
+      [RUNES.ENIGMA.id]: 0
     };
     for (const [runeType, amount] of Object.entries(coloredRunes)) {
       const available = this.runes[runeType as RuneId];

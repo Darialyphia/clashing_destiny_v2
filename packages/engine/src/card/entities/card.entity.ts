@@ -192,7 +192,7 @@ export abstract class Card<
     if ('manaCost' in this.blueprint) {
       return Math.max(
         0,
-        this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0
+        this.interceptors.manaCost.getValue(this.blueprint.manaCost ?? null, {}) ?? 0
       );
     }
     return 0;

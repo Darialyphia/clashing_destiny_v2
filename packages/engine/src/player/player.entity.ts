@@ -16,6 +16,8 @@ import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 import { cloneDeep } from 'lodash-es';
 import { RuneManagerComponent } from './components/rune-manager.component';
 import type { RuneCard } from '../card/entities/rune.entity';
+import { match } from 'ts-pattern';
+import { IllegalResourceActionError } from '../input/input-errors';
 
 export type PlayerOptions = {
   id: string;
@@ -83,8 +85,6 @@ export class Player
 
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
 
-  private _hasReceivedInitiativeThisTurn = false;
-
   private _mana = 0;
 
   private _baseMaxMana = 0;
@@ -112,16 +112,9 @@ export class Player
   async init() {
     await this.setupHero();
     await this.cardManager.init(this.options.mainDeck.cards, this.options.runeDeck.cards);
-    this.game.on(GAME_EVENTS.TURN_INITATIVE_CHANGE, async event => {
-      if (!event.data.newInitiativePlayer.equals(this)) return;
-      await this.playRuneForTurn();
-    });
   }
 
-  private async playRuneForTurn() {
-    if (this._hasReceivedInitiativeThisTurn) return;
-    this._hasReceivedInitiativeThisTurn = true;
-
+  private async playRune() {
     const topRunes = this.cardManager.runeDeck.cards.slice(0, 2);
     if (topRunes.length === 0) return;
 
@@ -293,6 +286,23 @@ export class Player
     return performedCountForType < maxForType;
   }
 
+  async performResourceAction(action: PlayerResourceAction) {
+    if (!this.canPerformResourceActionOfType(action.type)) {
+      throw new IllegalResourceActionError();
+    }
+
+    this._resourceActionsPerformedThisTurn.push(action);
+
+    return match(action)
+      .with({ type: 'rune' }, async () => {
+        await this.playRune();
+      })
+      .with({ type: 'draw' }, async () => {
+        await this.cardManager.draw(1);
+      })
+      .exhaustive();
+  }
+
   private async playCard(card: AnyCard) {
     await card.play();
     if (card.shouldSwitchInitiativeAfterPlay) {
@@ -322,7 +332,6 @@ export class Player
       new PlayerTurnEvent({ player: this })
     );
     this._resourceActionsPerformedThisTurn = [];
-    this._hasReceivedInitiativeThisTurn = false;
     for (const card of this.boardSide.getAllCardsInPlay()) {
       if (card.shouldWakeUpAtTurnStart) {
         await card.wakeUp();
@@ -371,7 +380,7 @@ export class Player
       GAME_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
       new PlayerManaChangeEvent({ player: this, amount })
     );
-    this._mana = this._mana + amount; // dont clamp to max mana because of effects that go over max mana (ex: mana tile)
+    this._mana = Math.min(this._mana + amount, this.maxMana);
     await this.game.emit(
       GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE,
       new PlayerManaChangeEvent({ player: this, amount })

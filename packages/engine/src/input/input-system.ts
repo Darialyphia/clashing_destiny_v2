@@ -34,6 +34,7 @@ import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
 import { MoveInput } from './inputs/move.input';
+import { CommitResourceActionInput } from './inputs/commit-resource-action.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -62,7 +63,8 @@ const inputMap = validateinputMap({
   answerQuestion: AnswerQuestionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
   interactionTimeout: InteractionTimeoutInput,
-  move: MoveInput
+  move: MoveInput,
+  commitResourceAction: CommitResourceActionInput
 });
 
 type InputMap = typeof inputMap;
