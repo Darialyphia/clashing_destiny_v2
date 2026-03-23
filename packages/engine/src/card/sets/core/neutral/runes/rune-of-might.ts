@@ -9,17 +9,17 @@ import {
   RUNES
 } from '../../../../card.enums';
 
-export const runeOfFire: RuneBlueprint = {
-  id: 'rune_of_fire',
-  name: 'Rune of Fire',
-  description: 'While this is in the Rune Zone, gain 1 Fire Rune.',
+export const runeOfMight: RuneBlueprint = {
+  id: 'rune_of_might',
+  name: 'Rune of Might',
+  description: 'While this is in the Rune Zone, gain 1 Might Rune.',
   collectable: true,
   setId: CARD_SETS.CORE,
   kind: CARD_KINDS.RUNE,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.RUNE_DECK,
   art: defaultCardArt('placeholder', defaultCardTint),
-  runeProduction: [RUNES.FIRE.id],
+  runeProduction: [RUNES.MIGHT.id],
   abilities: [],
   aiHints: {},
   jobs: [],

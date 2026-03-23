@@ -155,29 +155,29 @@ export const defaultCardTint: CardTint = {
   opacity: 0
 };
 export const RUNES = {
-  FIRE: {
-    id: 'FIRE',
-    name: 'Fire',
+  MIGHT: {
+    id: 'MIGHT',
+    name: 'Might',
     tint: defaultCardTint
   },
-  WATER: {
-    id: 'WATER',
-    name: 'Water',
+  WISDOM: {
+    id: 'WISDOM',
+    name: 'Wisdom',
     tint: defaultCardTint
   },
-  AIR: {
-    id: 'AIR',
-    name: 'Air',
+  FOCUS: {
+    id: 'FOCUS',
+    name: 'Focus',
     tint: defaultCardTint
   },
-  EARTH: {
-    id: 'EARTH',
-    name: 'Earth',
+  RESONANCE: {
+    id: 'RESONANCE',
+    name: 'Resonance',
     tint: defaultCardTint
   },
-  LIGHT: {
-    id: 'LIGHT',
-    name: 'Light',
+  ENIGMA: {
+    id: 'ENIGMA',
+    name: 'Enigma',
     tint: defaultCardTint
   },
   DARK: {

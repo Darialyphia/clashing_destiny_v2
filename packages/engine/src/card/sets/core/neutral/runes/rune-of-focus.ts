@@ -9,17 +9,17 @@ import {
   RUNES
 } from '../../../../card.enums';
 
-export const runeOfLight: RuneBlueprint = {
-  id: 'rune_of_light',
-  name: 'Rune of Light',
-  description: 'While this is in the Rune Zone, gain 1 Light Rune.',
+export const runeOfFocus: RuneBlueprint = {
+  id: 'rune_of_focus',
+  name: 'Rune of Focus',
+  description: 'While this is in the Rune Zone, gain 1 Focus Rune.',
   collectable: true,
   setId: CARD_SETS.CORE,
   kind: CARD_KINDS.RUNE,
   rarity: RARITIES.COMMON,
   deckSource: CARD_DECK_SOURCES.RUNE_DECK,
   art: defaultCardArt('placeholder', defaultCardTint),
-  runeProduction: [RUNES.LIGHT.id],
+  runeProduction: [RUNES.FOCUS.id],
   abilities: [],
   aiHints: {},
   jobs: [],
