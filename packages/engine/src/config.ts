@@ -30,6 +30,7 @@ export type Config = {
   ALLOW_MINION_MOVEMENT: boolean;
 
   MAX_RESOURCE_ACTIONS_PER_TURN: number;
+  RESOURCE_ACTION_COST: number;
 
   MAX_MANA: number;
   MANA_REGEN_PER_TURN: number;
@@ -64,8 +65,9 @@ export const defaultConfig: Config = {
   ALLOW_MINION_MOVEMENT: false,
 
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
+  RESOURCE_ACTION_COST: 1,
 
   MAX_MANA: 9,
 
-  MANA_REGEN_PER_TURN: 5
+  MANA_REGEN_PER_TURN: 6
 };

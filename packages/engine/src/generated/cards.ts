@@ -1,38 +1,63 @@
 /** This file is auto-generated. Do not edit manually.
- * This files export the list of all card ids
- * This file should be used in the api package  to reference card ids
- *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
- */
+   * This files export the list of all card ids
+   * This file should be used in the api package  to reference card ids
+   *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
+   */
 import type { Rarity, CardDeckSource } from '../card/card.enums';
 export const cards = {
-  sample: 'sample'
+"sample": "sample",
+"rune_of_might": "rune_of_might",
+"rune_of_wisdom": "rune_of_wisdom",
+"rune_of_order": "rune_of_order"
 } as const;
 
 export const collectableCards = {
-  sample: 'sample'
+"sample": "sample",
+"rune_of_might": "rune_of_might",
+"rune_of_wisdom": "rune_of_wisdom",
+"rune_of_order": "rune_of_order"
 } as const;
 
-type CardSet = Array<{
-  id: string;
-  collectable: boolean;
-  rarity: Rarity;
-  deckSource: CardDeckSource;
-}>;
+type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
 export const cardsBySet: Record<string, CardSet> = {
-  CORE: [
-    {
-      id: 'sample',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'mainDeck'
-    }
-  ]
+"CORE": [
+  {
+    "id": "sample",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "mainDeck"
+  },
+  {
+    "id": "rune_of_might",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "runeDeck"
+  },
+  {
+    "id": "rune_of_wisdom",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "runeDeck"
+  },
+  {
+    "id": "rune_of_order",
+    "collectable": true,
+    "rarity": "common",
+    "deckSource": "runeDeck"
+  }
+]
 };
 
 export const cardShortIds: Record<string, number> = {
-  sample: 1
+"sample": 1,
+"rune_of_might": 2,
+"rune_of_wisdom": 3,
+"rune_of_order": 4
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
-  '1': 'sample'
+"1": "sample",
+"2": "rune_of_might",
+"3": "rune_of_wisdom",
+"4": "rune_of_order"
 } as const;

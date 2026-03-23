@@ -155,34 +155,34 @@ export const defaultCardTint: CardTint = {
   opacity: 0
 };
 export const RUNES = {
-  RED: {
-    id: 'RED',
-    name: 'Might',
+  FIRE: {
+    id: 'FIRE',
+    name: 'Fire',
     tint: defaultCardTint
   },
-  BLUE: {
-    id: 'BLUE',
-    name: 'Wisdom',
+  WATER: {
+    id: 'WATER',
+    name: 'Water',
     tint: defaultCardTint
   },
-  YELLOW: {
-    id: 'YELLOW',
-    name: 'Cunning',
+  AIR: {
+    id: 'AIR',
+    name: 'Air',
     tint: defaultCardTint
   },
-  GREEN: {
-    id: 'GREEN',
-    name: 'Focus',
+  EARTH: {
+    id: 'EARTH',
+    name: 'Earth',
     tint: defaultCardTint
   },
-  PURPLE: {
-    id: 'PURPLE',
-    name: 'Resonance',
+  LIGHT: {
+    id: 'LIGHT',
+    name: 'Light',
     tint: defaultCardTint
   },
-  COLORLESS: {
-    id: 'COLORLESS',
-    name: 'Colorless',
+  DARK: {
+    id: 'DARK',
+    name: 'Dark',
     tint: defaultCardTint
   }
 } as const satisfies Record<string, Rune>;

@@ -27,6 +27,7 @@ export type CardSourceBlueprint =
     }
   | {
       deckSource: typeof CARD_DECK_SOURCES.RUNE_DECK;
+      manaCost?: never;
     };
 
 export type CardBlueprintBase = {

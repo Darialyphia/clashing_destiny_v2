@@ -3,11 +3,7 @@ import { CardManagerComponent } from '../card/components/card-manager.component'
 import { type Game } from '../game/game';
 import { assert, type MaybePromise, type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
-import {
-  NotEnoughCardsInDestinyZoneError,
-  NotEnoughCardsInHandError,
-  NotEnoughManaError
-} from '../card/card-errors';
+import { NotEnoughManaError } from '../card/card-errors';
 import { type HeroCard } from '../card/entities/hero.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
@@ -41,7 +37,6 @@ export type SerializedPlayer = {
   remainingCardsInMainDeck: number;
   remainingCardsInRuneDeck: number;
   canPerformResourceAction: boolean;
-  remainingResourceActions: Record<PlayerResourceAction['type'], number>;
   maxResourceActionPerTurn: number;
   remainingTotalResourceActions: number;
   maxHp: number;
@@ -407,15 +402,8 @@ export class Player
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       canPerformResourceAction:
+        this.mana >= this.game.config.RESOURCE_ACTION_COST &&
         this._resourceActionsPerformedThisTurn.length < this.maxResourceActionPerTurn,
-      remainingResourceActions: {
-        draw:
-          this.getMaxResourceActionsPerType('draw') -
-          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'draw').length,
-        rune:
-          this.getMaxResourceActionsPerType('rune') -
-          this._resourceActionsPerformedThisTurn.filter(a => a.type === 'rune').length
-      },
       remainingTotalResourceActions:
         this.maxResourceActionPerTurn - this._resourceActionsPerformedThisTurn.length,
       maxResourceActionPerTurn: this.maxResourceActionPerTurn,
