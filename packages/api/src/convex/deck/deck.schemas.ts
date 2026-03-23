@@ -11,7 +11,10 @@ export const deckSchemas = {
         copies: v.number()
       })
     ),
-    destinyDeck: v.array(
+    hero: v.object({
+      cardId: v.optional(v.id('cards'))
+    }),
+    runeDeck: v.array(
       v.object({
         cardId: v.id('cards'),
         copies: v.number()

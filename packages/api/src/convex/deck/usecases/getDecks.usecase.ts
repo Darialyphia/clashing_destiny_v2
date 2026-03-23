@@ -15,12 +15,17 @@ export type GetDecksOutput = Array<{
     blueprintId: string;
     copies: number;
   }>;
-  destinyDeck: Array<{
+  runeDeck: Array<{
     cardId: CardId;
     isFoil: boolean;
     blueprintId: string;
     copies: number;
   }>;
+  hero: {
+    cardId: CardId;
+    isFoil: boolean;
+    blueprintId: string;
+  } | null;
 }>;
 
 export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
@@ -51,15 +56,36 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
     );
   }
 
+  private async populateHero(hero: DeckDoc['hero']) {
+    if (!hero.cardId) {
+      return null;
+    }
+
+    const card = await this.ctx.cardReadRepo.getById(hero.cardId);
+    if (!card) {
+      throw new Error(`Card with id ${hero.cardId} not found`);
+    }
+
+    return {
+      cardId: hero.cardId,
+      isFoil: card.isFoil,
+      blueprintId: card.blueprintId
+    };
+  }
+
   private async populateDeck(deck: DeckDoc) {
-    const mainDeck = await this.populateDeckList(deck.mainDeck);
-    const destinyDeck = await this.populateDeckList(deck.destinyDeck);
+    const [hero, mainDeck, runeDeck] = await Promise.all([
+      this.populateHero(deck.hero),
+      this.populateDeckList(deck.mainDeck),
+      this.populateDeckList(deck.runeDeck)
+    ]);
 
     return {
       id: deck._id,
       name: deck.name,
       mainDeck,
-      destinyDeck
+      runeDeck,
+      hero
     };
   }
 

@@ -90,7 +90,7 @@ export class GetGameInfosUseCase
     if (!deck) throw new AppError('Deck not found');
 
     const mainDeckCards = await this.buildDeckCards(deck.mainDeck);
-    const destinyDeckCards = await this.buildDeckCards(deck.destinyDeck);
+    const destinyDeckCards = await this.buildDeckCards(deck.runeDeck);
 
     return {
       id: player._id,

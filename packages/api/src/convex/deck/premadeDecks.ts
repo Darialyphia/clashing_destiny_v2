@@ -1,5 +1,3 @@
-import { cards } from '@game/engine/src/generated/cards';
-
 type PremadeDeck = {
   id: string;
   isGrantedOnAccountCreation: boolean;
@@ -9,11 +7,15 @@ type PremadeDeck = {
     copies: number;
     isFoil: boolean;
   }>;
-  destinyDeck: Array<{
+  runeDeck: Array<{
     blueprintId: string;
     copies: number;
     isFoil: boolean;
   }>;
+  hero: {
+    blueprintId: string;
+    isFoil: boolean;
+  };
 };
 
 export const premadeDecks: PremadeDeck[] = [];
