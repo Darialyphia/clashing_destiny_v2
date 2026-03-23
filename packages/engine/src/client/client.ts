@@ -368,4 +368,14 @@ export class GameClient {
       }
     });
   }
+
+  commitResourceAction(kind: 'draw' | 'rune') {
+    this.dispatch({
+      type: 'commitResourceAction',
+      payload: {
+        playerId: this.playerId,
+        kind
+      }
+    });
+  }
 }

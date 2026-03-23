@@ -9,6 +9,8 @@ import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
+import { RuneResourceAction } from '../actions/rune-resource-action';
+import { DrawResourceAction } from '../actions/draw-resource-action';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -170,7 +172,9 @@ export class UiController {
     this.globalActionRules = [
       new CancelPlayCardGlobalAction(this.client),
       new CommitCardSelectionGlobalAction(this.client),
-      new PassGlobalAction(this.client)
+      new PassGlobalAction(this.client),
+      new DrawResourceAction(this.client),
+      new RuneResourceAction(this.client)
     ];
   }
 

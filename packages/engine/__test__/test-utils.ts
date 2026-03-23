@@ -26,12 +26,12 @@ export const testGameBuilder = () => {
       // @ts-expect-error
       options.players ??= [];
 
-      options.players![0] = {
-        mainDeck: { cards: deck.main },
-        runeDeck: { cards: deck.destiny },
-        id: 'p1',
-        name: 'player1'
-      };
+      // options.players![0] = {
+      //   mainDeck: { cards: deck.main },
+      //   runeDeck: { cards: deck.destiny },
+      //   id: 'p1',
+      //   name: 'player1'
+      // };
       return this;
     },
     withP2Deck(deck: {
@@ -41,12 +41,12 @@ export const testGameBuilder = () => {
       // @ts-expect-error
       options.players ??= [];
 
-      options.players![1] = {
-        mainDeck: { cards: deck.main },
-        runeDeck: { cards: deck.destiny },
-        id: 'p2',
-        name: 'player2'
-      };
+      // options.players![1] = {
+      //   mainDeck: { cards: deck.main },
+      //   runeDeck: { cards: deck.destiny },
+      //   id: 'p2',
+      //   name: 'player2'
+      // };
       return this;
     },
     async build(withSnapshots = false) {

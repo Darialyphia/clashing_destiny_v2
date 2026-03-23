@@ -68,9 +68,9 @@ export class PlayerViewModel {
     return this.data.remainingCardsInRuneDeck;
   }
 
-  // get canPerformResourceAction() {
-  //   return this.data.canPerformResourceAction;
-  // }
+  get canPerformResourceAction() {
+    return this.data.canPerformResourceAction;
+  }
 
   // get remainingResourceActions() {
   //   return this.data.remainingResourceActions;
