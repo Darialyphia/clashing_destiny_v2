@@ -4,10 +4,13 @@
 
 - ->: exhaust
 - (X): mana cost
-- ((X)): destiny cost
-- slow: slow speed
-- fast: fast speed
-- burst: burst speed
+- ((X)) rune cost
+- M : Might rune
+- W : Wisdom Rune
+- F : Focus Rune
+- R : Resonance Rune
+- E : Enigma Rune
+- C : Colorless Rune
 - [ ] : not implemented
 - [x] : implemented
 - < xxx > : tags
@@ -18,10 +21,22 @@
 
 [] Mana Spark
 
-Spell | Neutral | (0) | slow
+Spell | (0)
 
-Cannot be played. Banish this card at the end of the turn.
-
-[dev note]: (this card exists as a way to enable soft ramping without including card draw, because of the mana system).
+Gain 1 mana.
 
 ---
+
+[] Bold Leader
+
+Minion | (3) | ((RRC)) | 2 / 4
+
+On Enter: Move an ally from your base to your battlefield
+
+---
+
+[] Heroic Slash
+
+Spell | (2) | ((R))
+
+Deal damage to an enemy on the battlefield equal to your Hero's Attack.
