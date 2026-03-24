@@ -190,6 +190,7 @@ export type RuneBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.RUNE>;
   jobs: Job[];
   runeProduction: RuneId[];
+  isBasic: boolean;
   onInit: (game: Game, card: AnyCard) => Promise<void>;
   onPlay: (game: Game, card: AnyCard) => Promise<void>;
   abilities: AbilityBlueprint<RuneCard, PreResponseTarget>[];

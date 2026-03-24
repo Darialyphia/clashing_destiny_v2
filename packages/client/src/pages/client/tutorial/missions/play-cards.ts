@@ -20,9 +20,10 @@ export const playCardTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        destinyDeck: {
+        runeDeck: {
           cards: ['aiden-lv1']
-        }
+        },
+        hero: 'todo'
       },
       {
         id: 'p2',
@@ -30,9 +31,10 @@ export const playCardTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        destinyDeck: {
+        runeDeck: {
           cards: ['aiden-lv1']
-        }
+        },
+        hero: 'todo'
       }
     ],
     rngSeed: 'tutorial-seed',

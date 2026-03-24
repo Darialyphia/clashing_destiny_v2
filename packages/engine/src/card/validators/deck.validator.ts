@@ -1,3 +1,4 @@
+import { isDefined, type Nullable } from '@game/shared';
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
 import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
@@ -18,6 +19,7 @@ export type ValidatableDeck<TMeta> = {
   isEqual(first: ValidatableCard<TMeta>, second: ValidatableCard<TMeta>): boolean;
   mainDeck: Array<ValidatableCard<TMeta>>;
   runeDeck: Array<ValidatableCard<TMeta>>;
+  hero: Nullable<ValidatableCard<TMeta>>;
 };
 
 export type DeckValidationResult =
@@ -30,7 +32,7 @@ export type DeckValidator<TMeta> = {
   maxCopiesForMainDeckCard: number;
   maxCopiesForDestinyCard: number;
   mainDeckSize: number;
-  destinyDeckSize: number;
+  runeDeckSize: number;
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult;
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean;
 };
@@ -42,7 +44,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return defaultConfig.MAX_MAIN_DECK_SIZE;
   }
 
-  get destinyDeckSize(): number {
+  get runeDeckSize(): number {
     return defaultConfig.MAX_DESTINY_DECK_SIZE;
   }
 
@@ -93,6 +95,12 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult {
     const violations: DeckViolation[] = [];
 
+    if (!isDefined(deck.hero)) {
+      violations.push({
+        type: 'missing_hero',
+        reason: 'Deck must include a hero card.'
+      });
+    }
     if (
       this.getSize(deck[CARD_DECK_SOURCES.MAIN_DECK]) !== defaultConfig.MAX_MAIN_DECK_SIZE
     ) {
@@ -177,7 +185,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
       return true;
     } else {
-      if (withBlueprint.destiny.length >= this.destinyDeckSize) {
+      if (withBlueprint.destiny.length >= this.runeDeckSize) {
         return false;
       }
       const existing = withBlueprint.destiny.find(c => deck.isEqual(c, card));

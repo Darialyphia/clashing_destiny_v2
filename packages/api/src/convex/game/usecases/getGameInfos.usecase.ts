@@ -26,8 +26,9 @@ export type GetGameInfosOutput = {
       id: UserId;
       username: string;
       deck: {
+        hero: { blueprintId: string };
         mainDeck: Array<{ blueprintId: string }>;
-        destinyDeck: Array<{ blueprintId: string }>;
+        runeDeck: Array<{ blueprintId: string }>;
       };
     };
   }>;
@@ -90,16 +91,19 @@ export class GetGameInfosUseCase
     if (!deck) throw new AppError('Deck not found');
 
     const mainDeckCards = await this.buildDeckCards(deck.mainDeck);
-    const destinyDeckCards = await this.buildDeckCards(deck.runeDeck);
-
+    const runeDeckCards = await this.buildDeckCards(deck.runeDeck);
+    const [heroCard] = await this.buildDeckCards([
+      { cardId: deck.hero.cardId, copies: 1 }
+    ]);
     return {
       id: player._id,
       user: {
         id: user._id,
         username: user.username,
         deck: {
+          hero: { blueprintId: heroCard.blueprintId },
           mainDeck: mainDeckCards,
-          destinyDeck: destinyDeckCards
+          runeDeck: runeDeckCards
         }
       }
     };

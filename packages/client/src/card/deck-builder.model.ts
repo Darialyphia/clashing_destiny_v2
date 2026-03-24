@@ -1,6 +1,9 @@
 import type { CardId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-import { CARD_DECK_SOURCES } from '@game/engine/src/card/card.enums';
+import {
+  CARD_DECK_SOURCES,
+  CARD_KINDS
+} from '@game/engine/src/card/card.enums';
 import type {
   DeckValidator,
   ValidatableCard,
@@ -71,7 +74,8 @@ export class DeckBuilderViewModel {
     id: nanoid(4),
     name: 'New Deck',
     mainDeck: [],
-    destinyDeck: [],
+    runeDeck: [],
+    hero: null,
     isEqual: (first, second) => first.meta.cardId === second.meta.cardId
   };
 
@@ -91,7 +95,7 @@ export class DeckBuilderViewModel {
       this._deck[CARD_DECK_SOURCES.MAIN_DECK].some(
         card => card.blueprintId === blueprintId
       ) ||
-      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].some(
+      this._deck[CARD_DECK_SOURCES.RUNE_DECK].some(
         card => card.blueprintId === blueprintId
       )
     );
@@ -105,15 +109,22 @@ export class DeckBuilderViewModel {
       );
     }
 
-    if (blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
-      const existing = this._deck.destinyDeck.find(
+    if (blueprint.kind === CARD_KINDS.HERO) {
+      this._deck.hero = {
+        blueprintId: card.blueprintId,
+        copies: 1,
+        meta: card.meta
+      };
+      return;
+    } else if (blueprint.deckSource === CARD_DECK_SOURCES.RUNE_DECK) {
+      const existing = this._deck.runeDeck.find(
         c => c.meta.cardId === card.meta.cardId
       );
 
       if (existing) {
         existing.copies++;
       } else {
-        this._deck.destinyDeck.push({
+        this._deck.runeDeck.push({
           blueprintId: card.blueprintId,
           copies: 1,
           meta: card.meta
@@ -138,6 +149,11 @@ export class DeckBuilderViewModel {
   }
 
   removeCard(cardId: string) {
+    if (this._deck.hero?.meta.cardId === cardId) {
+      this._deck.hero = null;
+      return;
+    }
+
     const isMainDeck = this._deck.mainDeck.find(
       card => card.meta.cardId === cardId
     );
@@ -149,8 +165,8 @@ export class DeckBuilderViewModel {
         );
       }
     } else {
-      this._deck[CARD_DECK_SOURCES.DESTINY_DECK] = this._deck[
-        CARD_DECK_SOURCES.DESTINY_DECK
+      this._deck[CARD_DECK_SOURCES.RUNE_DECK] = this._deck[
+        CARD_DECK_SOURCES.RUNE_DECK
       ].filter(card => card.meta.cardId !== cardId);
     }
   }
@@ -160,7 +176,7 @@ export class DeckBuilderViewModel {
       this._deck[CARD_DECK_SOURCES.MAIN_DECK].find(
         card => card.blueprintId === blueprintId
       ) ||
-      this._deck[CARD_DECK_SOURCES.DESTINY_DECK].find(
+      this._deck[CARD_DECK_SOURCES.RUNE_DECK].find(
         card => card.blueprintId === blueprintId
       )
     );
@@ -201,13 +217,13 @@ export class DeckBuilderViewModel {
       });
   }
 
-  get destinyDeckCards() {
-    return this._deck[CARD_DECK_SOURCES.DESTINY_DECK]
+  get runeDeckCards() {
+    return this._deck[CARD_DECK_SOURCES.RUNE_DECK]
       .map(card => {
         const blueprint = this.cardPool.find(
           c => c.id === card.blueprintId
         ) as CardBlueprint & {
-          deckSource: (typeof CARD_DECK_SOURCES)['DESTINY_DECK'];
+          deckSource: (typeof CARD_DECK_SOURCES)['RUNE_DECK'];
         };
 
         return {
@@ -217,10 +233,7 @@ export class DeckBuilderViewModel {
         };
       })
       .sort((a, b) => {
-        if (a.blueprint.destinyCost === b.blueprint.destinyCost) {
-          return a.blueprint.name.localeCompare(b.blueprint.name);
-        }
-        return a.blueprint.destinyCost - b.blueprint.destinyCost;
+        return a.blueprint.name.localeCompare(b.blueprint.name);
       });
   }
 
@@ -246,21 +259,30 @@ export class DeckBuilderViewModel {
     };
 
     const mainEncoded = encodeDeckList(this._deck.mainDeck);
-    const destinyEncoded = encodeDeckList(this._deck.destinyDeck);
+    const runeEncoded = encodeDeckList(this._deck.runeDeck);
+    const heroEncoded = this._deck.hero
+      ? encodeDeckList([
+          {
+            blueprintId: this._deck.hero.blueprintId,
+            copies: 1,
+            meta: this._deck.hero.meta
+          }
+        ])
+      : '';
 
-    const deckString = `${this._deck.name}~${mainEncoded}~${destinyEncoded}`;
+    const deckString = `${this._deck.name}~${mainEncoded}~${runeEncoded}~${heroEncoded}`;
 
     return btoa(deckString);
   }
 
-  get destinyDeckSize() {
-    return this._deck[CARD_DECK_SOURCES.DESTINY_DECK].length;
+  get runeDeckSize() {
+    return this._deck[CARD_DECK_SOURCES.RUNE_DECK].length;
   }
 
   get cards() {
     return [
       ...this._deck[CARD_DECK_SOURCES.MAIN_DECK],
-      ...this._deck[CARD_DECK_SOURCES.DESTINY_DECK]
+      ...this._deck[CARD_DECK_SOURCES.RUNE_DECK]
     ]
       .map(card => {
         const blueprint = this.cardPool.find(c => c.id === card.blueprintId)!;
@@ -272,15 +294,15 @@ export class DeckBuilderViewModel {
       })
       .toSorted((a, b) => {
         if (
-          a.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          b.blueprint.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK
+          a.blueprint.deckSource === CARD_DECK_SOURCES.RUNE_DECK &&
+          b.blueprint.deckSource !== CARD_DECK_SOURCES.RUNE_DECK
         ) {
           return -1;
         }
 
         if (
-          a.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          b.blueprint.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK
+          a.blueprint.deckSource === CARD_DECK_SOURCES.RUNE_DECK &&
+          b.blueprint.deckSource !== CARD_DECK_SOURCES.RUNE_DECK
         ) {
           return 1;
         }
@@ -296,13 +318,10 @@ export class DeckBuilderViewModel {
         }
 
         if (
-          a.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          b.blueprint.deckSource === CARD_DECK_SOURCES.DESTINY_DECK
+          a.blueprint.deckSource === CARD_DECK_SOURCES.RUNE_DECK &&
+          b.blueprint.deckSource === CARD_DECK_SOURCES.RUNE_DECK
         ) {
-          if (a.blueprint.destinyCost === b.blueprint.destinyCost) {
-            return a.blueprint.name.localeCompare(b.blueprint.name);
-          }
-          return a.blueprint.destinyCost - b.blueprint.destinyCost;
+          return a.blueprint.name.localeCompare(b.blueprint.name);
         }
 
         return 0;
@@ -327,7 +346,8 @@ export class DeckBuilderViewModel {
       name: 'New Deck',
       isEqual: (first, second) => first.meta.cardId === second.meta.cardId,
       mainDeck: [],
-      destinyDeck: []
+      runeDeck: [],
+      hero: null
     };
   }
 }

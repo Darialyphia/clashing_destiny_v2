@@ -66,11 +66,12 @@ const isStarted = ref(false);
             .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
             .flat()
         },
-        destinyDeck: {
-          cards: p1Deck.destinyDeck
+        runeDeck: {
+          cards: p1Deck.runeDeck
             .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
             .flat()
-        }
+        },
+        hero: p1Deck.hero!.blueprintId
       },
       {
         id: 'p2',
@@ -80,11 +81,12 @@ const isStarted = ref(false);
             .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
             .flat()
         },
-        destinyDeck: {
-          cards: p2Deck.destinyDeck
+        runeDeck: {
+          cards: p2Deck.runeDeck
             .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
             .flat()
-        }
+        },
+        hero: p2Deck.hero!.blueprintId
       }
     ]"
   />

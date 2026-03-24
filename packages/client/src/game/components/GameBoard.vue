@@ -10,7 +10,6 @@ import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
-import DestinyCostVFX from './DestinyCostVFX.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
@@ -64,7 +63,6 @@ useKeyboardControl(
 
 <template>
   <SVGFilters />
-  <DestinyCostVFX />
   <PlayedCard />
   <ChooseCardModal />
   <RearrangeCardsModal />

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import {
   useBoardSide,
-  useFxEvent,
   useGameClient,
   useGameState
 } from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useResizeObserver } from '@vueuse/core';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import SmallCardBack from '@/card/components/SmallCardBack.vue';
 import CountChip from './CountChip.vue';
 import { clamp } from '@game/shared';
@@ -24,22 +22,6 @@ const boardSide = useBoardSide(computed(() => playerId));
 const state = useGameState();
 const { playerId: activePlayerId } = useGameClient();
 const root = useTemplateRef<HTMLElement>('root');
-
-const cardBanishedAsDestinyCost = ref<Array<{ card: string; index: number }>>(
-  []
-);
-
-useFxEvent(FX_EVENTS.PRE_PLAYER_PAY_FOR_DESTINY_COST, async event => {
-  if (event.player.id !== playerId) return;
-  event.cards.forEach(card => {
-    cardBanishedAsDestinyCost.value[card.index] = card;
-  });
-});
-
-useFxEvent(FX_EVENTS.PLAYER_PAY_FOR_DESTINY_COST, async event => {
-  if (event.player.id !== playerId) return;
-  cardBanishedAsDestinyCost.value = [];
-});
 
 const rootContainerSize = ref({ w: 0, h: 0 });
 useResizeObserver(root, () => {
@@ -59,22 +41,21 @@ const cardW = computed(() => {
   return baseWidth * pixelScale;
 });
 
-const destinyZoneSize = computed(() => boardSide.value.destinyZone.length);
+const runeZoneSize = computed(() => boardSide.value.runeZone.length);
 const step = computed(() => {
-  if (destinyZoneSize.value <= 1) return 0;
+  if (runeZoneSize.value <= 1) return 0;
 
   const natural =
-    (rootContainerSize.value.w - cardW.value) / (destinyZoneSize.value - 1);
+    (rootContainerSize.value.w - cardW.value) / (runeZoneSize.value - 1);
   return clamp(natural, 0, cardW.value);
 });
 
 const cards = computed(() => {
-  if (destinyZoneSize.value === 0) return [];
+  if (runeZoneSize.value === 0) return [];
 
-  return boardSide.value.destinyZone.map((card, i) => ({
+  return boardSide.value.runeZone.map((card, i) => ({
     cardId: card.cardId,
     isRevealed: card.isRevealed,
-    isLocked: card.isLocked,
     card: card.isRevealed
       ? (state.value.entities[card.cardId] as CardViewModel)
       : null,

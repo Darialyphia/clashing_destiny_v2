@@ -37,7 +37,6 @@ export type CardListContext = {
   clearJobFilter(): void;
 
   manaCostFilter: Ref<{ min: number; max: number } | null>;
-  destinyCostFilter: Ref<{ min: number; max: number } | null>;
 };
 
 const CardListInjectionKey = Symbol(
@@ -54,13 +53,13 @@ export const provideCardList = () => {
     [CARD_KINDS.HERO]: 1,
     [CARD_KINDS.MINION]: 2,
     [CARD_KINDS.SPELL]: 3,
-    [CARD_KINDS.ARTIFACT]: 4
+    [CARD_KINDS.ARTIFACT]: 4,
+    [CARD_KINDS.RUNE]: 5
   };
 
   const kindFilter = ref(new Set<CardKind>());
   const jobFilter = ref(new Set<Job>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
-  const destinyCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
 
   const textFilter = ref('');
@@ -111,21 +110,8 @@ export const provideCardList = () => {
           }
           if (
             'manaCost' in card &&
-            (card.manaCost < manaCostFilter.value.min ||
-              card.manaCost > manaCostFilter.value.max)
-          ) {
-            return false;
-          }
-        }
-
-        if (destinyCostFilter.value !== null) {
-          if (!('destinyCost' in card)) {
-            return false;
-          }
-          if (
-            'destinyCost' in card &&
-            (card.destinyCost < destinyCostFilter.value.min ||
-              card.destinyCost > destinyCostFilter.value.max)
+            ((card.manaCost ?? 0) < manaCostFilter.value.min ||
+              (card.manaCost ?? 0) > manaCostFilter.value.max)
           ) {
             return false;
           }
@@ -181,14 +167,6 @@ export const provideCardList = () => {
           return a.card.manaCost - b.card.manaCost;
         }
 
-        if (
-          a.card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          b.card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          a.card.destinyCost !== b.card.destinyCost
-        ) {
-          return a.card.destinyCost - b.card.destinyCost;
-        }
-
         if (a.card.kind !== b.card.kind) {
           return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
         }
@@ -233,8 +211,7 @@ export const provideCardList = () => {
     clearJobFilter: () => {
       jobFilter.value.clear();
     },
-    manaCostFilter,
-    destinyCostFilter
+    manaCostFilter
   };
 
   provide(CardListInjectionKey, ctx);

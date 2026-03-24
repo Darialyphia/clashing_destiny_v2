@@ -17,6 +17,7 @@ export const runeOfWisdom: RuneBlueprint = {
   setId: CARD_SETS.CORE,
   kind: CARD_KINDS.RUNE,
   rarity: RARITIES.COMMON,
+  isBasic: true,
   deckSource: CARD_DECK_SOURCES.RUNE_DECK,
   art: defaultCardArt('placeholder', defaultCardTint),
   runeProduction: [RUNES.WISDOM.id],

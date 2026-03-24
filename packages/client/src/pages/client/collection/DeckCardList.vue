@@ -16,8 +16,8 @@ const { deckBuilder } = useCollectionPage();
             {{ deckBuilder.validator.mainDeckSize }})
           </TabsTrigger>
           <TabsTrigger value="destiny">
-            Destiny ({{ deckBuilder.destinyDeckSize }} /
-            {{ deckBuilder.validator.destinyDeckSize }})
+            Destiny ({{ deckBuilder.runeDeckSize }} /
+            {{ deckBuilder.validator.runeDeckSize }})
           </TabsTrigger>
         </header>
       </TabsList>
@@ -29,7 +29,7 @@ const { deckBuilder } = useCollectionPage();
       </TabsContent>
       <TabsContent as-child value="destiny">
         <DeckCardListItems
-          :cards="deckBuilder.destinyDeckCards"
+          :cards="deckBuilder.runeDeckCards"
           :deck-builder="deckBuilder"
         />
       </TabsContent>

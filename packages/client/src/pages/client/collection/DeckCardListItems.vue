@@ -12,7 +12,7 @@ import type { DeckBuilderViewModel } from '@/card/deck-builder.model';
 const { cards, deckBuilder } = defineProps<{
   cards:
     | DeckBuilderViewModel['mainDeckCards']
-    | DeckBuilderViewModel['destinyDeckCards'];
+    | DeckBuilderViewModel['runeDeckCards'];
   deckBuilder: DeckBuilderViewModel;
 }>();
 </script>

@@ -8,9 +8,8 @@ import {
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
 import Deck from './Deck.vue';
-import DestinyDeck from './DestinyDeck.vue';
 import GameCard from './GameCard.vue';
-import DestinyZone from './DestinyZone.vue';
+import RuneZone from './RuneZone.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const opponent = useOpponentPlayer();
@@ -27,8 +26,8 @@ const ui = useGameUi();
     <div class="left-zone"></div>
 
     <div class="center-zone">
-      <DestinyZone
-        class="destiny-zone"
+      <RuneZone
+        class="rune-zone"
         :player-id="opponent.id"
         :teaching-mode="false"
       />
@@ -52,7 +51,6 @@ const ui = useGameUi();
 
     <div class="piles-zone">
       <Deck :size="opponent.remainingCardsInMainDeck" />
-      <DestinyDeck :player-id="opponent.id" />
       <DiscardPile :player="opponent.id" />
       <BanishPile :player="opponent.id" />
     </div>
@@ -106,7 +104,7 @@ const ui = useGameUi();
   position: relative;
 }
 
-.destiny-zone {
+.rune-zone {
   display: flex;
   justify-content: center;
   align-items: center;

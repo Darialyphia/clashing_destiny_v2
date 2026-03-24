@@ -49,7 +49,6 @@ export const provideCollectionPage = () => {
     toggleJobFilter,
     clearJobFilter,
     manaCostFilter,
-    destinyCostFilter,
     includeUnowned
   } = provideCardList();
 
@@ -85,14 +84,24 @@ export const provideCollectionPage = () => {
           cardId: card.cardId
         }
       })),
-      destinyDeck: newDeck.destinyDeck.map(card => ({
+      runeDeck: newDeck.runeDeck.map(card => ({
         blueprintId: card.blueprintId,
         copies: card.copies,
         meta: {
           isFoil: card.isFoil,
           cardId: card.cardId
         }
-      }))
+      })),
+      hero: newDeck.hero
+        ? {
+            blueprintId: newDeck.hero.blueprintId,
+            copies: 1,
+            meta: {
+              isFoil: newDeck.hero.isFoil,
+              cardId: newDeck.hero.cardId
+            }
+          }
+        : null
     });
   });
 
@@ -127,7 +136,6 @@ export const provideCollectionPage = () => {
     toggleJobFilter,
     clearJobFilter,
     manaCostFilter,
-    destinyCostFilter,
     textFilter,
     viewMode,
     isEditingDeck,
@@ -153,10 +161,13 @@ export const provideCollectionPage = () => {
           cardId: card.meta.cardId,
           copies: card.copies
         })),
-        destinyDeck: deckBuilder.value.deck.destinyDeck.map(card => ({
+        runeDeck: deckBuilder.value.deck.runeDeck.map(card => ({
           cardId: card.meta.cardId,
           copies: card.copies
-        }))
+        })),
+        hero: {
+          cardId: deckBuilder.value.deck.hero?.meta.cardId
+        }
       });
     },
     deleteDeck: () => {

@@ -8,9 +8,8 @@ import {
 import DiscardPile from './DiscardPile.vue';
 import BanishPile from './BanishPile.vue';
 import Deck from './Deck.vue';
-import DestinyDeck from './DestinyDeck.vue';
 import GameCard from './GameCard.vue';
-import DestinyZone from './DestinyZone.vue';
+import RuneZone from './RuneZone.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
@@ -41,8 +40,6 @@ const onMouseup = () => {
     }"
     @mouseup="onMouseup"
   >
-    <div class="left-zone"></div>
-
     <div class="center-zone">
       <div
         class="minion-zone"
@@ -50,7 +47,7 @@ const onMouseup = () => {
         :id="ui.DOMSelectors.minionZone(myPlayer.id).id"
       >
         <InspectableCard
-          v-for="card in myBoard.base.minions"
+          v-for="card in myBoard.battlefield.minions"
           :key="card"
           :card-id="card"
           side="left"
@@ -65,8 +62,8 @@ const onMouseup = () => {
         </InspectableCard>
       </div>
 
-      <DestinyZone
-        class="destiny-zone"
+      <RuneZone
+        class="rune-zone"
         :player-id="myPlayer.id"
         :teaching-mode="false"
       />
@@ -76,7 +73,6 @@ const onMouseup = () => {
       <DiscardPile :player="myPlayer.id" />
       <BanishPile :player="myPlayer.id" />
       <Deck :size="myPlayer.remainingCardsInMainDeck" />
-      <DestinyDeck :player-id="myPlayer.id" />
     </div>
   </div>
 </template>
@@ -135,7 +131,7 @@ const onMouseup = () => {
   position: relative;
 }
 
-.destiny-zone {
+.rune-zone {
   display: flex;
   justify-content: center;
   align-items: center;

@@ -39,9 +39,10 @@ export const combatTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        destinyDeck: {
+        runeDeck: {
           cards: ['fire-affinity']
-        }
+        },
+        hero: 'todo'
       },
       {
         id: 'p2',
@@ -49,9 +50,10 @@ export const combatTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        destinyDeck: {
+        runeDeck: {
           cards: ['fire-affinity']
-        }
+        },
+        hero: 'todo'
       }
     ],
     rngSeed: 'tutorial-seed',

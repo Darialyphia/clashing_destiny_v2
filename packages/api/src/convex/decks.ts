@@ -55,12 +55,15 @@ export const update = mutationWithContainer({
         copies: v.number()
       })
     ),
-    destinyDeck: v.array(
+    runeDeck: v.array(
       v.object({
         cardId: v.id('cards'),
         copies: v.number()
       })
-    )
+    ),
+    hero: v.object({
+      cardId: v.optional(v.id('cards'))
+    })
   },
   handler: async (ctx, arg) => {
     const usecase = ctx.resolve<UpdateDeckUseCase>(UpdateDeckUseCase.INJECTION_KEY);
@@ -69,7 +72,8 @@ export const update = mutationWithContainer({
       deckId: arg.deckId,
       name: arg.name,
       mainDeck: arg.mainDeck,
-      destinyDeck: arg.destinyDeck
+      runeDeck: arg.runeDeck,
+      hero: arg.hero
     });
   }
 });

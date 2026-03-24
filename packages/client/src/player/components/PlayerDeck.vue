@@ -10,22 +10,17 @@ import {
 import { assets } from '@/assets';
 import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import type { Nullable } from '@game/shared';
 
 export type DisplayedDeck = {
   name: string;
+  hero: Nullable<{ blueprintId: string }>;
   mainDeck: { blueprintId: string; copies: number }[];
-  destinyDeck: { blueprintId: string; copies: number }[];
+  runeDeck: { blueprintId: string; copies: number }[];
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
 }>();
-
-const hero = computed(() => {
-  const heroes = deck.destinyDeck
-    .map(card => CARDS_DICTIONARY[card.blueprintId])
-    .filter(c => c.kind === CARD_KINDS.HERO);
-  return heroes.sort((a, b) => b.level - a.level)[0];
-});
 
 const mainDeck = computed(() =>
   deck.mainDeck.map(card => ({
@@ -33,25 +28,18 @@ const mainDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
-const destinyDeck = computed(() =>
-  deck.destinyDeck.map(card => ({
+const runeDeck = computed(() =>
+  deck.runeDeck.map(card => ({
     ...card,
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
 
-const heroes = computed(() =>
-  destinyDeck.value
-    .filter(item => item.blueprint.kind === CARD_KINDS.HERO)
-    .sort(
-      (a, b) =>
-        (a.blueprint as HeroBlueprint).level -
-        (b.blueprint as HeroBlueprint).level
-    )
-);
-const otherDestinyCards = computed(() =>
-  destinyDeck.value.filter(item => item.blueprint.kind !== CARD_KINDS.HERO)
-);
+const hero = computed(() => {
+  if (!deck.hero) return null;
+  const blueprint = CARDS_DICTIONARY[deck.hero.blueprintId] as HeroBlueprint;
+  return blueprint;
+});
 
 const minions = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
@@ -88,6 +76,9 @@ const artifacts = computed(() =>
         <HoverCardContent side="right" align="center" :side-offset="8">
           <div class="deck-details">
             <ul>
+              <li v-if="hero" :class="hero.rarity.toLocaleLowerCase()">
+                1 x {{ hero.name }}
+              </li>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
                 <span :class="item.blueprint.rarity.toLocaleLowerCase()">
@@ -109,15 +100,7 @@ const artifacts = computed(() =>
             </ul>
             <ul>
               <li
-                v-for="item in heroes"
-                :key="item.blueprint.id"
-                :class="item.blueprint.rarity.toLocaleLowerCase()"
-              >
-                {{ item.copies }}x {{ item.blueprint.name }}
-              </li>
-
-              <li
-                v-for="item in otherDestinyCards"
+                v-for="item in runeDeck"
                 :key="item.blueprint.id"
                 :class="item.blueprint.rarity.toLocaleLowerCase()"
               >

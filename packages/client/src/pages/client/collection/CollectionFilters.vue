@@ -27,7 +27,6 @@ const {
   hasJobFilter,
   toggleJobFilter,
   manaCostFilter,
-  destinyCostFilter,
   includeUnowned,
   cardScale
 } = useCollectionPage();
@@ -64,7 +63,6 @@ const toggleManaFilter = (cost: number) => {
     manaCostFilter.value = null;
   } else {
     manaCostFilter.value = { min: cost, max: cost };
-    destinyCostFilter.value = null;
   }
 };
 
@@ -73,25 +71,6 @@ const toggleMinManaCostFilter = (cost: number) => {
     manaCostFilter.value = null;
   } else {
     manaCostFilter.value = { min: cost, max: Infinity };
-    destinyCostFilter.value = null;
-  }
-};
-
-const toggleDestinyFilter = (cost: number) => {
-  if (destinyCostFilter.value?.min === cost) {
-    destinyCostFilter.value = null;
-  } else {
-    destinyCostFilter.value = { min: cost, max: cost };
-    manaCostFilter.value = null;
-  }
-};
-
-const toggleMinDestinyCostFilter = (cost: number) => {
-  if (destinyCostFilter.value?.min === cost) {
-    destinyCostFilter.value = null;
-  } else {
-    destinyCostFilter.value = { min: cost, max: Infinity };
-    manaCostFilter.value = null;
   }
 };
 </script>
@@ -143,38 +122,16 @@ const toggleMinDestinyCostFilter = (cost: number) => {
     <button
       class="mana-cost"
       :class="{ active: manaCostFilter?.min === 5 }"
-      @click="toggleMinManaCostFilter(5)"
+      @click="toggleManaFilter(5)"
     >
-      5+
-    </button>
-
-    <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 0 }"
-      @click="toggleDestinyFilter(0)"
-    >
-      0
+      5
     </button>
     <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 1 }"
-      @click="toggleDestinyFilter(1)"
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 6 }"
+      @click="toggleMinManaCostFilter(6)"
     >
-      1
-    </button>
-    <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 2 }"
-      @click="toggleDestinyFilter(2)"
-    >
-      2
-    </button>
-    <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 3 }"
-      @click="toggleMinDestinyCostFilter(3)"
-    >
-      3+
+      6+
     </button>
 
     <Icon icon="material-symbols:zoom-in" width="2rem" />
