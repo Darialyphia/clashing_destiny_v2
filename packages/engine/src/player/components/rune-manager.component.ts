@@ -16,7 +16,6 @@ export class RuneManagerComponent {
       [RUNES.WISDOM.id]: 0,
       [RUNES.FOCUS.id]: 0,
       [RUNES.RESONANCE.id]: 0,
-      [RUNES.ENIGMA.id]: 0,
       [RUNES.COLORLESS.id]: 0
     };
 
@@ -37,8 +36,7 @@ export class RuneManagerComponent {
       [RUNES.MIGHT.id]: 0,
       [RUNES.WISDOM.id]: 0,
       [RUNES.FOCUS.id]: 0,
-      [RUNES.RESONANCE.id]: 0,
-      [RUNES.ENIGMA.id]: 0
+      [RUNES.RESONANCE.id]: 0
     };
     for (const [runeType, amount] of Object.entries(coloredRunes)) {
       const available = this.runes[runeType as RuneId];

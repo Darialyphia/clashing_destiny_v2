@@ -128,7 +128,7 @@ export class SpellCard extends Card<
   }
 
   get canPlayDuringCombatPhase(): boolean {
-    return this.interceptors.canPlayDuringCombatPhase.getValue(true, this);
+    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
   }
 
   get isCorrectPhaseToPlay() {

@@ -39,8 +39,6 @@ export class LockedModifier<T extends AnyCard> extends Modifier<T> {
             return event.data.from === GAME_PHASES.DRAW;
           },
           handler: async e => {
-            console.log(e);
-            console.log('LockedModifier:remove stack', this.stacks);
             await this.removeStacks(1);
           }
         }),

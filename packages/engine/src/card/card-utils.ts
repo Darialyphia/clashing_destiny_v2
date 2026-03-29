@@ -535,13 +535,12 @@ export const defaultCardArt = (name: string, tint: CardTint): CardBlueprint['art
       sheen: true,
       lightGradient: true
     },
+    isFullArt: false,
     dimensions: {
       width: 162,
       height: 121
     },
     bg: `${name}-bg`,
-    main: `${name}`,
-    frame: 'default',
-    tint
+    main: `${name}`
   }
 });

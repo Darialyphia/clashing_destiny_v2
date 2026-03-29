@@ -3,7 +3,6 @@ import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
-  serializePreResponseTarget,
   type AbilityBlueprint,
   type PreResponseTarget,
   type RuneBlueprint
@@ -130,6 +129,10 @@ export class RuneCard extends Card<
 
   get jobs() {
     return this.blueprint.jobs;
+  }
+
+  get isBasic() {
+    return this.blueprint.isBasic;
   }
 
   serialize(): SerializedRuneCard {

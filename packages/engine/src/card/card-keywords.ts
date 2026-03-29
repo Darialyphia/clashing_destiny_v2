@@ -102,6 +102,13 @@ export const KEYWORDS = {
     description: 'You can only have one copy of this card on the board at the same time.',
     aliases: []
   },
+  HEXED: {
+    id: 'hexed',
+    name: 'Hexed',
+    description:
+      'Other card effects benefit from units being Hexed. The opponent can pay 2 mana to remove the hex.',
+    aliases: ['hex']
+  },
   LINEAGE_BONUS: {
     id: 'lineage-bonus',
     name: 'Lineage Bonus',

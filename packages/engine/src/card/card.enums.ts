@@ -95,38 +95,105 @@ export type Job = {
   id: string;
   name: string;
   shortName: string;
+  isAdvanced: boolean;
 };
 
 export const JOBS = {
   NEUTRAL: {
     id: 'neutral',
     name: 'Neutral',
-    shortName: 'Neu'
+    shortName: 'Neu',
+    isAdvanced: false
   },
   WARRIOR: {
     id: 'warrior',
     name: 'Warrior',
-    shortName: 'War'
+    shortName: 'War',
+    isAdvanced: false
   },
   MAGE: {
     id: 'mage',
     name: 'Mage',
-    shortName: 'Mag'
+    shortName: 'Mag',
+    isAdvanced: false
   },
   ROGUE: {
     id: 'rogue',
     name: 'Rogue',
-    shortName: 'Rog'
+    shortName: 'Rog',
+    isAdvanced: false
   },
   ACOLYTE: {
     id: 'acolyte',
     name: 'Acolyte',
-    shortName: 'Aco'
+    shortName: 'Aco',
+    isAdvanced: true
   },
   RANGER: {
     id: 'ranger',
     name: 'Ranger',
-    shortName: 'Ran'
+    shortName: 'Ran',
+    isAdvanced: true
+  },
+  WITCH: {
+    id: 'witch',
+    name: 'Witch',
+    shortName: 'Wit',
+    isAdvanced: true
+  },
+  ALCHEMIST: {
+    id: 'alchemist',
+    name: 'Alchemist',
+    shortName: 'Alc',
+    isAdvanced: true
+  },
+  ELEMENTALIST: {
+    id: 'elementalist',
+    name: 'Elementalist',
+    shortName: 'Ele',
+    isAdvanced: true
+  },
+  BERZERKER: {
+    id: 'berzerker',
+    name: 'Berzerker',
+    shortName: 'Ber',
+    isAdvanced: true
+  },
+  PALADIN: {
+    id: 'paladin',
+    name: 'Paladin',
+    shortName: 'Pal',
+    isAdvanced: true
+  },
+  NECROMANCER: {
+    id: 'necromancer',
+    name: 'Necromancer',
+    shortName: 'Nec',
+    isAdvanced: true
+  },
+  DRUID: {
+    id: 'druid',
+    name: 'Druid',
+    shortName: 'Dru',
+    isAdvanced: true
+  },
+  ASSASSIN: {
+    id: 'assassin',
+    name: 'Assassin',
+    shortName: 'Ass',
+    isAdvanced: true
+  },
+  STALKER: {
+    id: 'stalker',
+    name: 'Stalker',
+    shortName: 'Sta',
+    isAdvanced: true
+  },
+  BOUNTY_HUNTER: {
+    id: 'bounty_hunter',
+    name: 'Bounty Hunter',
+    shortName: 'Bou',
+    isAdvanced: true
   }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
@@ -173,11 +240,6 @@ export const RUNES = {
   RESONANCE: {
     id: 'RESONANCE',
     name: 'Resonance',
-    tint: defaultCardTint
-  },
-  ENIGMA: {
-    id: 'ENIGMA',
-    name: 'Enigma',
     tint: defaultCardTint
   },
   COLORLESS: {

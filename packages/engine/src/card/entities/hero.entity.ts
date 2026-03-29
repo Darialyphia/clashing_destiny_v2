@@ -1,4 +1,3 @@
-import { uppercaseFirstLetter } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
 
@@ -42,7 +41,6 @@ export type SerializedHeroCard = SerializedCard & {
   baseMaxHp: number;
   remainingHp: number;
   abilities: string[];
-  level: number;
   jobs: JobId[];
 };
 
@@ -329,26 +327,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     this.abilities.splice(index, 1);
   }
 
-  get level() {
-    return this.blueprint.level;
-  }
-
-  get lineage() {
-    return this.blueprint.lineage;
-  }
-
   get jobs() {
     return this.blueprint.jobs;
-  }
-
-  get hasCorrectLevelToPlay() {
-    return this.player.hero.level === this.blueprint.level - 1;
-  }
-
-  get hasCorrectLineageToPlay() {
-    if (this.level <= 1) return true;
-
-    return !this.lineage || this.player.hero.lineage === this.lineage;
   }
 
   get isCorrectPhaseToPlay() {
@@ -358,8 +338,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
-        this.hasCorrectLevelToPlay &&
-        this.hasCorrectLineageToPlay &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
@@ -370,41 +348,22 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     const base = super.unplayableReason;
     if (base !== 'You cannot play this card.') return base;
 
-    if (!this.hasCorrectLevelToPlay) {
-      return `Your hero must be level ${this.blueprint.level - 1}.`;
-    }
-    if (!this.hasCorrectLineageToPlay) {
-      return `Your hero must be ${uppercaseFirstLetter(this.lineage ?? '')}.`;
-    }
-
     return base;
   }
 
   async play() {
-    if (this.level === 0) {
-      await this.game.emit(
-        CARD_EVENTS.CARD_BEFORE_PLAY,
-        new CardDeclarePlayEvent({ card: this })
-      );
-      // await this.player.levelupHero(this);
-      this.player.boardSide.summonHero(this);
-      await this.blueprint.onPlay(this.game, this, this);
-      await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
-      await this.game.emit(
-        CARD_EVENTS.CARD_AFTER_PLAY,
-        new CardDeclarePlayEvent({ card: this })
-      );
-      return;
-    }
-
     await this.game.emit(
-      CARD_EVENTS.CARD_DECLARE_PLAY,
+      CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-
-    await this.player.levelupHero(this);
+    // await this.player.levelupHero(this);
+    this.player.boardSide.summonHero(this);
     await this.blueprint.onPlay(this.game, this, this);
     await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardDeclarePlayEvent({ card: this })
+    );
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {
@@ -428,7 +387,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
-      level: this.level,
       jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }

@@ -20,6 +20,7 @@ import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
+import type { CardArt } from '@game/engine/src/card/card-blueprint';
 
 const {
   card,
@@ -33,30 +34,7 @@ const {
     id: string;
     name: string;
     description: string;
-    art: {
-      foil: {
-        sheen?: boolean;
-        oil?: boolean;
-        gradient?: boolean;
-        lightGradient?: boolean;
-        scanlines?: boolean;
-        goldenGlare?: boolean;
-        glitter?: boolean;
-        foilLayer?: boolean;
-        noBackground?: boolean;
-        noFrame?: boolean;
-      };
-      dimensions: {
-        width: number;
-        height: number;
-      };
-      bg: string;
-      main: string;
-      breakout?: string;
-      foilArt?: string;
-      frame: string;
-      tint: CardTint;
-    };
+    art: CardArt;
     kind: CardKind;
     manaCost?: number | null;
     baseManaCost?: number | null;

@@ -40,10 +40,6 @@ export type CardBlueprintBase = {
   art: Record<
     string,
     {
-      dimensions: {
-        width: number;
-        height: number;
-      };
       foil: {
         sheen?: boolean;
         oil?: boolean;
@@ -58,17 +54,28 @@ export type CardBlueprintBase = {
       };
       bg: string;
       main: string;
-      breakout?: string;
-      foilArt?: string;
-      frame: string;
-      tint: CardTint;
-    }
+      foilBg?: string;
+      foilMain?: string;
+    } & (
+      | {
+          isFullArt: true;
+        }
+      | {
+          isFullArt: false;
+          dimensions: {
+            width: number;
+            height: number;
+          };
+        }
+    )
   >;
   collectable: boolean;
   unique?: boolean;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
 } & CardSourceBlueprint;
+
+export type CardArt = CardBlueprintBase['art'][string];
 
 export type AbilityBlueprint<
   TCard extends AbilityOwner,
@@ -147,8 +154,6 @@ export type SpellBlueprint = CardBlueprintBase & {
 
 export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
-  lineage: string | null;
-  level: number;
   jobs: Job[];
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;

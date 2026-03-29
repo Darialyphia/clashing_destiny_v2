@@ -1,6 +1,6 @@
 import { isDefined, type Nullable } from '@game/shared';
 import { defaultConfig } from '../../config';
-import type { CardBlueprint } from '../card-blueprint';
+import type { CardBlueprint, RuneBlueprint } from '../card-blueprint';
 import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
 
 export type DeckViolation = {
@@ -30,7 +30,8 @@ export type DeckValidationResult =
 
 export type DeckValidator<TMeta> = {
   maxCopiesForMainDeckCard: number;
-  maxCopiesForDestinyCard: number;
+  maxCopiesForRuneDeckCard: number;
+  maxCopiesForBasicRuneCard: number;
   mainDeckSize: number;
   runeDeckSize: number;
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult;
@@ -45,15 +46,19 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   }
 
   get runeDeckSize(): number {
-    return defaultConfig.MAX_DESTINY_DECK_SIZE;
+    return defaultConfig.MAX_RUNE_DECK_SIZE;
   }
 
   get maxCopiesForMainDeckCard(): number {
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
   }
 
-  get maxCopiesForDestinyCard(): number {
-    return defaultConfig.MAX_DESTINY_DECK_CARD_COPIES;
+  get maxCopiesForRuneDeckCard(): number {
+    return defaultConfig.MAX_RUNE_DECK_CARD_COPIES;
+  }
+
+  get maxCopiesForBasicRuneCard(): number {
+    return defaultConfig.MAX_BASIC_RUNE_DECK_CARD_COPIES;
   }
 
   private validateCard(
@@ -133,18 +138,6 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return { result: 'success' };
   }
 
-  private getLevel0Hero(deck: ValidatableDeck<TMeta>) {
-    return (
-      deck[CARD_DECK_SOURCES.RUNE_DECK]
-        .map(card => {
-          return this.cardPool[card.blueprintId]!;
-        })
-        .find(blueprint => {
-          return blueprint.kind === CARD_KINDS.HERO && blueprint.level === 0;
-        }) ?? null
-    );
-  }
-
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean {
     const withBlueprint = {
       main: deck[CARD_DECK_SOURCES.MAIN_DECK].map(card => ({
@@ -153,7 +146,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
           decksource: typeof CARD_DECK_SOURCES.MAIN_DECK;
         }
       })),
-      destiny: deck[CARD_DECK_SOURCES.RUNE_DECK].map(card => ({
+      rune: deck[CARD_DECK_SOURCES.RUNE_DECK].map(card => ({
         ...card,
         blueprint: this.cardPool[card.blueprintId] as CardBlueprint & {
           decksource: typeof CARD_DECK_SOURCES.RUNE_DECK;
@@ -164,9 +157,9 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     const cardBlueprint = this.cardPool[card.blueprintId];
     if (!cardBlueprint) return false;
 
-    const hero = this.getLevel0Hero(deck);
+    const hero = deck.hero;
     if (!hero) {
-      return cardBlueprint.kind === CARD_KINDS.HERO && cardBlueprint.level === 0;
+      return cardBlueprint.kind === CARD_KINDS.HERO;
     }
 
     if (cardBlueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK) {
@@ -185,12 +178,15 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
       return true;
     } else {
-      if (withBlueprint.destiny.length >= this.runeDeckSize) {
+      if (withBlueprint.rune.length >= this.runeDeckSize) {
         return false;
       }
-      const existing = withBlueprint.destiny.find(c => deck.isEqual(c, card));
+      const existing = withBlueprint.rune.find(c => deck.isEqual(c, card));
       if (existing) {
-        if (existing.copies >= this.maxCopiesForDestinyCard) {
+        const maxCopies = (cardBlueprint as RuneBlueprint).isBasic
+          ? this.maxCopiesForBasicRuneCard
+          : this.maxCopiesForRuneDeckCard;
+        if (existing.copies >= maxCopies) {
           return false;
         }
         if (cardBlueprint.unique) {
