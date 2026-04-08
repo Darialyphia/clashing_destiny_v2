@@ -1,7 +1,5 @@
-import type { RuneId } from '../card/card.enums';
-import type { AnyCard } from '../card/entities/card.entity';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
-import type { Player, SerializedPlayer } from './player.entity';
+import type { Player } from './player.entity';
 import type { PLAYER_EVENTS } from './player.enums';
 
 export class PlayerTurnEvent extends TypedSerializableEvent<
@@ -39,26 +37,26 @@ export class PlayerManaChangeEvent extends TypedSerializableEvent<
   }
 }
 
-export class PlayerGainRuneEvent extends TypedSerializableEvent<
-  { player: Player; runes: Partial<Record<RuneId, number>> },
-  { player: string; runes: Partial<Record<RuneId, number>> }
+export class PlayerLevelUpEvent extends TypedSerializableEvent<
+  { player: Player; newLevel: number },
+  { player: string; newLevel: number }
 > {
   serialize() {
     return {
       player: this.data.player.id,
-      runes: this.data.runes
+      newLevel: this.data.newLevel
     };
   }
 }
 
-export class PlayerLoseRuneEvent extends TypedSerializableEvent<
-  { player: Player; runes: Partial<Record<RuneId, number>> },
-  { player: string; runes: Partial<Record<RuneId, number>> }
+export class PlayerGainExpEvent extends TypedSerializableEvent<
+  { player: Player; amount: number },
+  { player: string; amount: number }
 > {
   serialize() {
     return {
       player: this.data.player.id,
-      runes: this.data.runes
+      amount: this.data.amount
     };
   }
 }
@@ -70,4 +68,6 @@ export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_AFTER_DRAW]: PlayerDrawEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE]: PlayerManaChangeEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE]: PlayerManaChangeEvent;
+  [PLAYER_EVENTS.PLAYER_LEVEL_UP]: PlayerLevelUpEvent;
+  [PLAYER_EVENTS.PLAYER_GAIN_EXP]: PlayerGainExpEvent;
 };

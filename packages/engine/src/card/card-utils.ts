@@ -39,12 +39,12 @@ export const minionOrHeroTargetRules = {
       predicate: (c: MinionCard | HeroCard) => boolean = () => true
     ) => {
       return (
-        [...card.player.allAllies, ...card.player.allEnemies].filter(
+        [...card.player.allies, ...card.player.enemies].filter(
           c => c.canBeTargeted(card) && predicate(c)
         ).length >= min
       );
     },
-  getPreResponseTargets:
+  getTargets:
     ({
       min,
       max,
@@ -85,7 +85,7 @@ export const minionOrHeroTargetRules = {
           }
 
           return (
-            [...card.player.allAllies, ...card.player.allEnemies].some(enemy =>
+            [...card.player.allies, ...card.player.enemies].some(enemy =>
               enemy.equals(candidate)
             ) &&
             candidate.canBeTargeted(card) &&
@@ -115,7 +115,7 @@ export const singleEnemyTargetRules = {
       card,
       c => !c.player.equals(card.player) && predicate(c)
     ),
-  getPreResponseTargets: async ({
+  getTargets: async ({
     game,
     card,
     origin,
@@ -134,7 +134,7 @@ export const singleEnemyTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) =>
-    await minionOrHeroTargetRules.getPreResponseTargets({
+    await minionOrHeroTargetRules.getTargets({
       min: 1,
       max: 1,
       allowRepeat: false,
@@ -163,7 +163,7 @@ export const singleAllyTargetRules = {
       card,
       c => c.player.equals(card.player) && predicate(c)
     ),
-  getPreResponseTargets: async ({
+  getTargets: async ({
     game,
     card,
     origin,
@@ -182,7 +182,7 @@ export const singleAllyTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) =>
-    await minionOrHeroTargetRules.getPreResponseTargets({
+    await minionOrHeroTargetRules.getTargets({
       min: 1,
       max: 1,
       label,
@@ -194,7 +194,7 @@ export const singleEnemyMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
     return singleEnemyTargetRules.canPlay(game, card, c => isMinion(c) && predicate(c));
   },
-  async getPreResponseTargets({
+  async getTargets({
     game,
     card,
     origin,
@@ -213,7 +213,7 @@ export const singleEnemyMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    return (await singleEnemyTargetRules.getPreResponseTargets({
+    return (await singleEnemyTargetRules.getTargets({
       game,
       card,
       origin,
@@ -229,7 +229,7 @@ export const singleAllyMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
     return singleAllyTargetRules.canPlay(game, card, c => isMinion(c) && predicate(c));
   },
-  async getPreResponseTargets({
+  async getTargets({
     game,
     card,
     origin,
@@ -248,7 +248,7 @@ export const singleAllyMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    return (await singleAllyTargetRules.getPreResponseTargets({
+    return (await singleAllyTargetRules.getTargets({
       game,
       card,
       origin,
@@ -268,7 +268,7 @@ export const singleMinionTargetRules = {
       c => isMinion(c) && predicate(c)
     );
   },
-  async getPreResponseTargets({
+  async getTargets({
     game,
     card,
     origin,
@@ -287,7 +287,7 @@ export const singleMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    return (await minionOrHeroTargetRules.getPreResponseTargets({
+    return (await minionOrHeroTargetRules.getTargets({
       min: 1,
       max: 1,
       label,
@@ -316,7 +316,7 @@ export const multipleEnemyTargetRules = {
       c => !c.player.equals(card.player) && predicate(c)
     );
   },
-  async getPreResponseTargets(
+  async getTargets(
     game: Game,
     card: AnyCard,
     origin: CardTargetOrigin,
@@ -332,7 +332,7 @@ export const multipleEnemyTargetRules = {
       };
     }
   ) {
-    return await minionOrHeroTargetRules.getPreResponseTargets({
+    return await minionOrHeroTargetRules.getTargets({
       min: options.min,
       max: options.max,
       label: options.label,
@@ -358,7 +358,7 @@ export const singleArtifactTargetRules = {
         .length > 0
     );
   },
-  async getPreResponseTargets({
+  async getTargets({
     game,
     card,
     origin,
@@ -418,7 +418,7 @@ export const cardsInAllyDiscardPile = {
       }).length >= (options.min ?? 1)
     );
   },
-  async getPreResponseTargets<T extends AnyCard = AnyCard>(
+  async getTargets<T extends AnyCard = AnyCard>(
     game: Game,
     card: AnyCard,
     options: {
@@ -466,7 +466,7 @@ export const cardsInEnemyDiscardPile = {
       }).length >= (options.min ?? 1)
     );
   },
-  async getPreResponseTargets<T extends AnyCard = AnyCard>(
+  async getTargets<T extends AnyCard = AnyCard>(
     game: Game,
     card: AnyCard,
     options: {
@@ -512,8 +512,8 @@ export const equipWeapon = (options: {
     id: 'equip-weapon-ability',
     description: '@Equip Weapon@',
     label: 'Equip Weapon',
-    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BASE,
-    getPreResponseTargets: () => Promise.resolve([]),
+    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BOARD,
+    getTargets: () => Promise.resolve([]),
     manaCost: options.manaCost,
     shouldExhaust: true,
     durabilityCost: options.durabilityCost,
@@ -536,10 +536,6 @@ export const defaultCardArt = (name: string, tint: CardTint): CardBlueprint['art
       lightGradient: true
     },
     isFullArt: false,
-    dimensions: {
-      width: 162,
-      height: 121
-    },
     bg: `${name}-bg`,
     main: `${name}`
   }

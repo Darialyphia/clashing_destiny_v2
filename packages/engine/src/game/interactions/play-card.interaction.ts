@@ -4,9 +4,10 @@ import type { Game } from '../game';
 import { InvalidPlayerError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
 import { match } from 'ts-pattern';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { IllegalCardPlayedError } from '../../input/input-errors';
+import { CARD_KINDS } from '../../card/card.enums';
+import type { DestinyCard } from '../../card/entities/destiny.entity';
 
 type PlayCardContextOptions = {
   card: AnyCard;
@@ -59,14 +60,10 @@ export class PlayCardContext {
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD);
     this.game.interaction.onInteractionEnd();
 
-    await match(this._card.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
-        return this.player.playMainDeckCard(this._card);
-      })
-      .with(CARD_DECK_SOURCES.RUNE_DECK, () => {
-        throw new IllegalCardPlayedError();
-      })
-      .exhaustive();
+    if (this._card.kind === CARD_KINDS.DESTINY) {
+      return await this.player.playDestinyDeckCard(this._card as DestinyCard);
+    }
+    return await this.player.playMainDeckCard(this._card);
   }
 
   async cancel(player: Player) {

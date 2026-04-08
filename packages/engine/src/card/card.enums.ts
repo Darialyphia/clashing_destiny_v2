@@ -25,18 +25,12 @@ export const CARD_EVENTS = {
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 
-export const CARD_DECK_SOURCES = {
-  MAIN_DECK: 'mainDeck',
-  RUNE_DECK: 'runeDeck'
-} as const;
-export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
-
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  RUNE: 'RUNE'
+  DESTINY: 'DESTINY'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -46,6 +40,12 @@ export const ARTIFACT_KINDS = {
   RELIC: 'RELIC'
 } as const;
 export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
+
+export const CARD_SOURCES = {
+  MAIN_DECK: 'mainDeck',
+  DESTINY_DECK: 'destinyDeck'
+} as const;
+export type CardSource = Values<typeof CARD_SOURCES>;
 
 export const CARD_SPEED = {
   SLOW: 'SLOW',
@@ -105,147 +105,112 @@ export const JOBS = {
     shortName: 'Neu',
     isAdvanced: false
   },
-  WARRIOR: {
-    id: 'warrior',
-    name: 'Warrior',
-    shortName: 'War',
-    isAdvanced: false
-  },
+  // WARRIOR: {
+  //   id: 'warrior',
+  //   name: 'Warrior',
+  //   shortName: 'War',
+  //   isAdvanced: false
+  // },
   MAGE: {
     id: 'mage',
     name: 'Mage',
     shortName: 'Mag',
     isAdvanced: false
-  },
-  ROGUE: {
-    id: 'rogue',
-    name: 'Rogue',
-    shortName: 'Rog',
-    isAdvanced: false
-  },
-  ACOLYTE: {
-    id: 'acolyte',
-    name: 'Acolyte',
-    shortName: 'Aco',
-    isAdvanced: true
-  },
-  RANGER: {
-    id: 'ranger',
-    name: 'Ranger',
-    shortName: 'Ran',
-    isAdvanced: true
-  },
-  WITCH: {
-    id: 'witch',
-    name: 'Witch',
-    shortName: 'Wit',
-    isAdvanced: true
-  },
-  ALCHEMIST: {
-    id: 'alchemist',
-    name: 'Alchemist',
-    shortName: 'Alc',
-    isAdvanced: true
-  },
-  ELEMENTALIST: {
-    id: 'elementalist',
-    name: 'Elementalist',
-    shortName: 'Ele',
-    isAdvanced: true
-  },
-  BERZERKER: {
-    id: 'berzerker',
-    name: 'Berzerker',
-    shortName: 'Ber',
-    isAdvanced: true
-  },
-  PALADIN: {
-    id: 'paladin',
-    name: 'Paladin',
-    shortName: 'Pal',
-    isAdvanced: true
-  },
-  NECROMANCER: {
-    id: 'necromancer',
-    name: 'Necromancer',
-    shortName: 'Nec',
-    isAdvanced: true
-  },
-  DRUID: {
-    id: 'druid',
-    name: 'Druid',
-    shortName: 'Dru',
-    isAdvanced: true
-  },
-  ASSASSIN: {
-    id: 'assassin',
-    name: 'Assassin',
-    shortName: 'Ass',
-    isAdvanced: true
-  },
-  STALKER: {
-    id: 'stalker',
-    name: 'Stalker',
-    shortName: 'Sta',
-    isAdvanced: true
-  },
-  BOUNTY_HUNTER: {
-    id: 'bounty_hunter',
-    name: 'Bounty Hunter',
-    shortName: 'Bou',
-    isAdvanced: true
   }
+  // ROGUE: {
+  //   id: 'rogue',
+  //   name: 'Rogue',
+  //   shortName: 'Rog',
+  //   isAdvanced: false
+  // },
+  // ACOLYTE: {
+  //   id: 'acolyte',
+  //   name: 'Acolyte',
+  //   shortName: 'Aco',
+  //   isAdvanced: true
+  // },
+  // RANGER: {
+  //   id: 'ranger',
+  //   name: 'Ranger',
+  //   shortName: 'Ran',
+  //   isAdvanced: true
+  // },
+  // WITCH: {
+  //   id: 'witch',
+  //   name: 'Witch',
+  //   shortName: 'Wit',
+  //   isAdvanced: true
+  // },
+  // ALCHEMIST: {
+  //   id: 'alchemist',
+  //   name: 'Alchemist',
+  //   shortName: 'Alc',
+  //   isAdvanced: true
+  // },
+  // ELEMENTALIST: {
+  //   id: 'elementalist',
+  //   name: 'Elementalist',
+  //   shortName: 'Ele',
+  //   isAdvanced: true
+  // },
+  // BERZERKER: {
+  //   id: 'berzerker',
+  //   name: 'Berzerker',
+  //   shortName: 'Ber',
+  //   isAdvanced: true
+  // },
+  // PALADIN: {
+  //   id: 'paladin',
+  //   name: 'Paladin',
+  //   shortName: 'Pal',
+  //   isAdvanced: true
+  // },
+  // NECROMANCER: {
+  //   id: 'necromancer',
+  //   name: 'Necromancer',
+  //   shortName: 'Nec',
+  //   isAdvanced: true
+  // },
+  // DRUID: {
+  //   id: 'druid',
+  //   name: 'Druid',
+  //   shortName: 'Dru',
+  //   isAdvanced: true
+  // },
+  // ASSASSIN: {
+  //   id: 'assassin',
+  //   name: 'Assassin',
+  //   shortName: 'Ass',
+  //   isAdvanced: true
+  // },
+  // STALKER: {
+  //   id: 'stalker',
+  //   name: 'Stalker',
+  //   shortName: 'Sta',
+  //   isAdvanced: true
+  // },
+  // BOUNTY_HUNTER: {
+  //   id: 'bounty_hunter',
+  //   name: 'Bounty Hunter',
+  //   shortName: 'Bou',
+  //   isAdvanced: true
+  // }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
 
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
-  RUNE_DECK: 'runeDeck',
+  DESTINY_DECK: 'destinyDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
-  RUNE_ZONE: 'runeZone',
-  BASE: 'base',
-  BATTLEFIELD: 'battlefield'
+  BOARD: 'board'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 
-export type Rune = {
-  id: string;
-  name: string;
-  tint: CardTint;
-};
 export const defaultCardTint: CardTint = {
   colors: ['#FFFFFF', '#FFFFFF'],
   mode: { type: 'radial' },
   blendMode: 'overlay',
   opacity: 0
 };
-export const RUNES = {
-  MIGHT: {
-    id: 'MIGHT',
-    name: 'Might',
-    tint: defaultCardTint
-  },
-  WISDOM: {
-    id: 'WISDOM',
-    name: 'Wisdom',
-    tint: defaultCardTint
-  },
-  FOCUS: {
-    id: 'FOCUS',
-    name: 'Focus',
-    tint: defaultCardTint
-  },
-  RESONANCE: {
-    id: 'RESONANCE',
-    name: 'Resonance',
-    tint: defaultCardTint
-  },
-  COLORLESS: {
-    id: 'COLORLESS',
-    name: 'Neutral',
-    tint: defaultCardTint
-  }
-} as const satisfies Record<string, Rune>;
-export type RuneId = Values<typeof RUNES>['id'];

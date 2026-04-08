@@ -19,7 +19,6 @@ import {
   type ChoosingCardsContextOptions
 } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
 import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { UseAbilityContext } from '../interactions/use-ability.interaction';
@@ -40,6 +39,11 @@ import {
   RearrangeCardsContext,
   type RearrangeCardBucket
 } from '../interactions/rearrange-cards.interaction';
+import {
+  SelectingMinionSlotsContext,
+  type BoardPosition,
+  type SelectingMinionSlotsContextOptions
+} from '../interactions/selecting-minion-slots.interaction';
 
 export type InteractionContext =
   | {
@@ -69,6 +73,10 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'rearranging_cards'>;
       ctx: RearrangeCardsContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'selecting_minion_slot'>;
+      ctx: SelectingMinionSlotsContext;
     };
 
 export type SerializedInteractionContext =
@@ -99,6 +107,10 @@ export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'rearranging_cards'>;
       ctx: ReturnType<RearrangeCardsContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'selecting_minion_slot'>;
+      ctx: ReturnType<SelectingMinionSlotsContext['serialize']>;
     };
 export class GameInteractionSystem
   extends StateMachine<InteractionState, InteractionStateTransition>
@@ -111,7 +123,8 @@ export class GameInteractionSystem
     [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
     [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
-    [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext
+    [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext,
+    [INTERACTION_STATES.SELECTING_MINION_SLOT]: SelectingMinionSlotsContext
   } as const;
 
   private _ctx:
@@ -121,7 +134,8 @@ export class GameInteractionSystem
     | PlayCardContext
     | UseAbilityContext
     | AskQuestionContext
-    | RearrangeCardsContext;
+    | RearrangeCardsContext
+    | SelectingMinionSlotsContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);
@@ -205,6 +219,16 @@ export class GameInteractionSystem
         INTERACTION_STATES.REARRANGING_CARDS,
         INTERACTION_STATE_TRANSITIONS.CANCEL_REARRANGING_CARDS,
         INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_SELECTING_MINION_SLOT,
+        INTERACTION_STATES.SELECTING_MINION_SLOT
+      ),
+      stateTransition(
+        INTERACTION_STATES.SELECTING_MINION_SLOT,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_MINION_SLOT,
+        INTERACTION_STATES.IDLE
       )
     ]);
     this._ctx = new IdleContext(this.game);
@@ -250,6 +274,16 @@ export class GameInteractionSystem
     ].create(this.game, options);
 
     return this.game.inputSystem.pause<T[]>();
+  }
+
+  async selectMinionSlot(options: SelectingMinionSlotsContextOptions) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_MINION_SLOT);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.SELECTING_MINION_SLOT].create(
+      this.game,
+      options
+    );
+
+    return this.game.inputSystem.pause<BoardPosition[]>();
   }
 
   async chooseCards<T extends AnyCard>(options: ChoosingCardsContextOptions) {

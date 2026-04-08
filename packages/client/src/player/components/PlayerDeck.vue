@@ -16,7 +16,7 @@ export type DisplayedDeck = {
   name: string;
   hero: Nullable<{ blueprintId: string }>;
   mainDeck: { blueprintId: string; copies: number }[];
-  runeDeck: { blueprintId: string; copies: number }[];
+  destinyDeck: { blueprintId: string; copies: number }[];
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
@@ -28,8 +28,8 @@ const mainDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
-const runeDeck = computed(() =>
-  deck.runeDeck.map(card => ({
+const destinyDeck = computed(() =>
+  deck.destinyDeck.map(card => ({
     ...card,
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
@@ -100,7 +100,7 @@ const artifacts = computed(() =>
             </ul>
             <ul>
               <li
-                v-for="item in runeDeck"
+                v-for="item in destinyDeck"
                 :key="item.blueprint.id"
                 :class="item.blueprint.rarity.toLocaleLowerCase()"
               >

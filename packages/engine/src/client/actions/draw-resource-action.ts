@@ -35,6 +35,8 @@ export class DrawResourceAction implements GlobalActionRule {
   }
 
   onClick(): void {
-    this.client.commitResourceAction('draw');
+    this.client.commitResourceAction({
+      type: 'draw'
+    });
   }
 }

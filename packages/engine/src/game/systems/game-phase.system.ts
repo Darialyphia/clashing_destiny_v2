@@ -100,12 +100,16 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.COMBAT
       ),
       stateTransition(
-        GAME_PHASES.MAIN,
+        GAME_PHASES.COMBAT,
         GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE,
+        GAME_PHASES.MAIN
+      ),
+      stateTransition(
+        GAME_PHASES.MAIN,
+        GAME_PHASE_TRANSITIONS.DECLARE_END_TURN,
         GAME_PHASES.END
       ),
       stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
-
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
@@ -193,6 +197,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await this.sendTransition(GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE);
   }
 
+  async declareEndTurn() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN);
+  }
+
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.END_TURN), new WrongGamePhaseError());
 
@@ -204,14 +213,12 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     });
   }
 
-  async startCombat(onResolved?: () => MaybePromise<void>) {
+  async startCombat() {
     assert(
       this.can(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE),
       new WrongGamePhaseError()
     );
-    if (onResolved) {
-      this.game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, onResolved);
-    }
+
     await this.sendTransition(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE);
   }
 

@@ -16,11 +16,11 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
     await match(interactionCtx)
       .with({ state: INTERACTION_STATES.IDLE }, async () => {
         const phaseCtx = this.game.gamePhaseSystem.getContext();
-        if (
-          phaseCtx?.state === GAME_PHASES.COMBAT ||
-          phaseCtx?.state === GAME_PHASES.MAIN
-        ) {
+        if (phaseCtx?.state === GAME_PHASES.MAIN) {
           await phaseCtx.ctx.pass(this.player);
+        }
+        if (phaseCtx?.state === GAME_PHASES.COMBAT) {
+          await phaseCtx.ctx.cancelAttack();
         }
       })
       .with({ state: INTERACTION_STATES.ASK_QUESTION }, async ctx => {
@@ -39,6 +39,9 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
         await ctx.ctx.commit(this.player, true);
       })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, async ctx => {
+        await ctx.ctx.commit(this.player);
+      })
+      .with({ state: INTERACTION_STATES.SELECTING_MINION_SLOT }, async ctx => {
         await ctx.ctx.commit(this.player);
       })
       .exhaustive();

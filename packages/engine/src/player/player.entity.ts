@@ -10,21 +10,23 @@ import { Interceptable } from '../utils/interceptable';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerManaChangeEvent, PlayerTurnEvent } from './player.events';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
-import { HERO_EVENTS, HeroLevelUpEvent } from '../card/events/hero.events';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 import { cloneDeep } from 'lodash-es';
-import { RuneManagerComponent } from './components/rune-manager.component';
-import type { RuneCard } from '../card/entities/rune.entity';
 import { match } from 'ts-pattern';
 import { IllegalResourceActionError } from '../input/input-errors';
+import { ArtifactManagerComponent } from './components/artifact-manager.component';
+import { GAME_PHASES } from '../game/game.enums';
+import type { MainPhase } from '../game/phases/main.phase';
+import { LevelManagerComponent } from './components/level-manager.component';
+import type { DestinyCard } from '../card/entities/destiny.entity';
 
 export type PlayerOptions = {
   id: string;
   name: string;
   hero: string;
   mainDeck: { cards: string[] };
-  runeDeck: { cards: string[] };
+  destinyDeck: { cards: string[] };
 };
 
 export type SerializedPlayer = {
@@ -35,9 +37,7 @@ export type SerializedPlayer = {
   handSize: number;
   discardPile: string[];
   banishPile: string[];
-  runeZone: string[];
   remainingCardsInMainDeck: number;
-  remainingCardsInRuneDeck: number;
   canPerformResourceAction: boolean;
   maxResourceActionPerTurn: number;
   remainingTotalResourceActions: number;
@@ -47,6 +47,9 @@ export type SerializedPlayer = {
   maxMana: number;
   currentMana: number;
   manaRegen: number;
+  exp: number;
+  level: number;
+  talents: string[];
 };
 
 export type PlayerInterceptors = {
@@ -69,7 +72,7 @@ const makeInterceptors = (): PlayerInterceptors => {
   };
 };
 
-export type PlayerResourceAction = { type: 'rune' } | { type: 'draw' };
+export type PlayerResourceAction = { type: 'draw' };
 
 export class Player
   extends EntityWithModifiers<PlayerInterceptors>
@@ -81,9 +84,9 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly runeManager: RuneManagerComponent;
-
   private _resourceActionsPerformedThisTurn: PlayerResourceAction[] = [];
+
+  private _hasPassedThisTurn = false;
 
   private _mana = 0;
 
@@ -96,12 +99,17 @@ export class Player
 
   private options: PlayerOptions;
 
+  readonly artifactManager: ArtifactManagerComponent;
+
+  readonly levelManager: LevelManagerComponent;
+
   constructor(game: Game, options: PlayerOptions) {
     super(options.id, game, makeInterceptors());
     this.options = cloneDeep(options);
     this.game = game;
     this.cardTracker = new CardTrackerComponent(game, this);
-    this.runeManager = new RuneManagerComponent(game, this);
+    this.artifactManager = new ArtifactManagerComponent(game, this);
+    this.levelManager = new LevelManagerComponent(game, this);
     this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
@@ -111,35 +119,12 @@ export class Player
 
   async init() {
     await this.setupHero();
-    await this.cardManager.init(this.options.mainDeck.cards, this.options.runeDeck.cards);
+    await this.cardManager.init(
+      this.options.mainDeck.cards,
+      this.options.destinyDeck.cards
+    );
   }
 
-  private async playRune() {
-    const topRunes = this.cardManager.runeDeck.cards.slice(0, 2);
-    if (topRunes.length === 0) return;
-
-    const [runeToPlay] = await this.game.interaction.chooseCards<RuneCard>({
-      player: this,
-      timeoutFallback: [topRunes[0]],
-      label: 'Choose a Rune to put in the Rune Zone',
-      minChoiceCount: 1,
-      maxChoiceCount: 1,
-      choices: topRunes.map(card => ({
-        card,
-        aiHints: {
-          shouldPick: () => 1
-        }
-      }))
-    });
-    await runeToPlay.play();
-
-    for (const rune of topRunes) {
-      if (rune.equals(runeToPlay)) continue;
-      this.cardManager.runeDeck.pluckById(rune.id);
-      this.cardManager.runeDeck.addCardAtRandomPosition(rune);
-    }
-    this.cardManager.runeDeck.shuffle();
-  }
   private async setupHero() {
     this._hero = {
       card: await this.generateCard<HeroCard>(this.options.hero),
@@ -147,34 +132,6 @@ export class Player
     };
     await this._hero.card.play();
     await this._hero.card.removeFromCurrentLocation();
-  }
-
-  async levelupHero(newHero: HeroCard) {
-    const oldHero = this._hero.card;
-    await this.game.emit(
-      HERO_EVENTS.HERO_BEFORE_LEVEL_UP,
-      new HeroLevelUpEvent({ from: oldHero, to: newHero })
-    );
-
-    this._hero.lineage.push(this._hero.card);
-    this._hero = {
-      card: newHero,
-      lineage: this._hero.lineage
-    };
-
-    oldHero.removeFromCurrentLocation();
-    newHero.cloneDamageTaken(oldHero);
-    for (const modifier of oldHero.modifiers.list) {
-      await modifier.remove();
-      await this._hero.card.modifiers.add(modifier);
-    }
-    if (oldHero.isExhausted) {
-      newHero.exhaustSilently();
-    }
-    await this.game.emit(
-      HERO_EVENTS.HERO_AFTER_LEVEL_UP,
-      new HeroLevelUpEvent({ from: oldHero, to: newHero })
-    );
   }
 
   get resourceActionsPerformedThisTurn() {
@@ -211,31 +168,27 @@ export class Player
     return this._hero?.card;
   }
 
-  get heroLinerage() {
+  get heroLineage() {
     return this._hero.lineage;
+  }
+
+  get level() {
+    return this.levelManager.level;
   }
 
   get enemyHero() {
     return this.opponent.hero;
   }
 
-  get minionsInBase() {
-    return this.boardSide.base.minions;
-  }
-
-  get minionsInBattleField() {
-    return this.boardSide.battlefield.minions;
-  }
-
   get minions() {
-    return [...this.minionsInBase, ...this.minionsInBattleField];
+    return this.boardSide.getAllMinions();
   }
 
-  get allAllies() {
+  get allies() {
     return [this.hero, ...this.minions];
   }
 
-  get allEnemies() {
+  get enemies() {
     return [this.enemyHero, ...this.enemyMinions];
   }
 
@@ -247,10 +200,6 @@ export class Player
     return this.game.interaction.isInteractive(this);
   }
 
-  get influence() {
-    return this.cardManager.hand.length + this.cardManager.runeZone.size;
-  }
-
   get maxResourceActionPerTurn() {
     return this.interceptors.maxResourceActionPerTurn.getValue(
       this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
@@ -260,8 +209,7 @@ export class Player
 
   getMaxResourceActionsPerType(actionType: PlayerResourceAction['type']): number {
     const defaultLimits: Record<PlayerResourceAction['type'], number> = {
-      draw: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
-      rune: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
+      draw: this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
     };
 
     const limits = this.interceptors.maxResourceActionsPerType.getValue(
@@ -294,9 +242,6 @@ export class Player
     this._resourceActionsPerformedThisTurn.push(action);
 
     return match(action)
-      .with({ type: 'rune' }, async () => {
-        await this.playRune();
-      })
       .with({ type: 'draw' }, async () => {
         await this.cardManager.draw(1);
       })
@@ -321,6 +266,10 @@ export class Player
     await this.playCard(card);
   }
 
+  async playDestinyDeckCard(card: DestinyCard) {
+    await this.levelManager.levelUp(card as DestinyCard);
+  }
+
   async useAbility(ability: Ability<AbilityOwner>, onResolved: () => MaybePromise<void>) {
     await this.payForManaCost(ability.manaCost);
     await ability.use(onResolved);
@@ -332,11 +281,17 @@ export class Player
       new PlayerTurnEvent({ player: this })
     );
     this._resourceActionsPerformedThisTurn = [];
+    this._hasPassedThisTurn = false;
+
+    this.refillMana();
+
     for (const card of this.boardSide.getAllCardsInPlay()) {
       if (card.shouldWakeUpAtTurnStart) {
         await card.wakeUp();
       }
     }
+
+    await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
   }
 
   generateCard<T extends AnyCard>(blueprintId: string) {
@@ -391,6 +346,21 @@ export class Player
     return this.mana >= amount;
   }
 
+  get hasPassedThisTurn() {
+    return this._hasPassedThisTurn;
+  }
+
+  get canPass() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.MAIN && !this._hasPassedThisTurn;
+  }
+
+  async pass() {
+    this._hasPassedThisTurn = true;
+    const phaseCtx = this.game.gamePhaseSystem.getContext().ctx as MainPhase;
+    await phaseCtx.pass(this);
+  }
+
   serialize() {
     return {
       id: this.id,
@@ -404,9 +374,7 @@ export class Player
       handSize: this.cardManager.hand.length,
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
-      runeZone: [...this.cardManager.runeZone].map(card => card.id),
       remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
-      remainingCardsInRuneDeck: this.cardManager.runeDeck.cards.length,
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
@@ -418,7 +386,10 @@ export class Player
       maxResourceActionPerTurn: this.maxResourceActionPerTurn,
       currentMana: this._mana,
       maxMana: this.maxMana,
-      manaRegen: this.manaRegen
+      manaRegen: this.manaRegen,
+      exp: this.levelManager.exp,
+      level: this.levelManager.level,
+      talents: this.levelManager.talents.map(t => t.id)
     };
   }
 }

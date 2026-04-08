@@ -4,9 +4,7 @@ import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import type { CardBlueprint } from '../card-blueprint';
 import {
-  CARD_DECK_SOURCES,
   CARD_EVENTS,
-  type CardDeckSource,
   type CardKind,
   type Rarity,
   CARD_LOCATIONS,
@@ -28,10 +26,9 @@ import {
 import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { IllegalGameStateError } from '../../game/game-error';
-import { isMainDeckCard } from '../../board/board.system';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
-import type { RuneCard } from './rune.entity';
+import type { DestinyCard } from './destiny.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -43,7 +40,6 @@ export type CardInterceptors = {
   manaCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
-  deckSource: Interceptable<CardDeckSource>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
   shouldSwitchInitiativeAfterPlay: Interceptable<boolean>;
 };
@@ -52,7 +48,6 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   manaCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  deckSource: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
   shouldSwitchInitiativeAfterPlay: new Interceptable()
 });
@@ -68,7 +63,6 @@ export type SerializedCard = {
   name: string;
   description: string;
   canPlay: boolean;
-  source: CardDeckSource;
   location: CardLocation | null;
   modifiers: string[];
   manaCost: number | null;
@@ -132,14 +126,6 @@ export abstract class Card<
 
   get player() {
     return this.interceptors.player.getValue(this.originalPlayer, {});
-  }
-
-  get deckSource() {
-    return this.interceptors.deckSource.getValue(this.blueprint.deckSource, {});
-  }
-
-  get isMainDeckCard() {
-    return this.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
   }
 
   get isRevealed() {
@@ -210,14 +196,8 @@ export abstract class Card<
   }
 
   protected async dispose() {
-    await match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, async () => {
-        await this.sendToDiscardPile();
-      })
-      .with(CARD_DECK_SOURCES.RUNE_DECK, async () => {
-        await this.sendToBanishPile();
-      })
-      .exhaustive();
+    await this.sendToDiscardPile();
+
     await this.game.emit(
       CARD_EVENTS.CARD_DISPOSED,
       new CardDisposedEvent({ card: this })
@@ -270,47 +250,24 @@ export abstract class Card<
         this.player.cardManager.removeFromHand(this);
       })
       .with(CARD_LOCATIONS.DISCARD_PILE, () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from discard pile when it is not a main deck card.`
-          );
-        }
         this.player.cardManager.removeFromDiscardPile(this);
       })
       .with(CARD_LOCATIONS.BANISH_PILE, () => {
         this.player.cardManager.removeFromBanishPile(this);
       })
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from main deck when it is not a main deck card.`
-          );
-        }
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with(CARD_LOCATIONS.RUNE_DECK, () => {
-        this.player.cardManager.removeFromRuneDeck(this);
+      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
+        this.player.cardManager.destinyDeck.pluck(this as unknown as DestinyCard);
       })
-      .with(CARD_LOCATIONS.RUNE_ZONE, () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from rune zone pile when it is not a main deck card.`
-          );
-        }
-        this.player.cardManager.removeFromRuneZone(this as unknown as RuneCard);
-      })
-      .with(CARD_LOCATIONS.BASE, CARD_LOCATIONS.BATTLEFIELD, () => {
+      .with(CARD_LOCATIONS.BOARD, () => {
         this.player.boardSide.remove(this);
       })
       .exhaustive();
   }
 
   async sendToDiscardPile() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to discard pile when it is not a main deck card.`
-      );
-    }
     const currentLocation = this.location ?? null;
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
@@ -354,45 +311,13 @@ export abstract class Card<
     );
   }
 
-  async sendToRuneZone() {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.RUNE_ZONE,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToRuneZone(this as unknown as RuneCard);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.RUNE_ZONE,
-        from: currentLocation
-      })
-    );
-  }
-
   protected updatePlayedAt() {
     this.playedAtTurn = this.game.turnSystem.elapsedTurns;
   }
   abstract canPlay(): boolean;
 
-  protected get canPlayAsMaindeckCard() {
-    if (this.deckSource !== CARD_DECK_SOURCES.MAIN_DECK) {
-      return false;
-    }
-    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
-  }
-
   protected get canPlayBase() {
-    return match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
-      .with(CARD_DECK_SOURCES.RUNE_DECK, () => true)
-      .exhaustive();
+    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
   get unplayableReason(): string | null {
@@ -400,20 +325,13 @@ export abstract class Card<
       return null;
     }
 
-    return match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
-        if (this.location !== CARD_LOCATIONS.HAND) {
-          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
-        }
-        if (!this.canPayManaCost) {
-          return 'Cannot pay mana cost.';
-        }
-        return 'You cannot play this card';
-      })
-      .with(CARD_DECK_SOURCES.RUNE_DECK, () => {
-        return 'You cannot play this card.';
-      })
-      .exhaustive();
+    if (this.location !== CARD_LOCATIONS.HAND) {
+      return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
+    }
+    if (!this.canPayManaCost) {
+      return 'Cannot pay mana cost.';
+    }
+    return 'You cannot play this card';
   }
 
   abstract play(): Promise<void>;
@@ -428,7 +346,6 @@ export abstract class Card<
     return {
       id: this.id,
       art: this.blueprint.art.default,
-      source: this.deckSource,
       entityType: 'card',
       rarity: this.blueprint.rarity,
       player: this.player.id,
@@ -442,7 +359,7 @@ export abstract class Card<
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
-      manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
+      manaCost: this.manaCost,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed
@@ -452,11 +369,6 @@ export abstract class Card<
   abstract serialize(): TSerialized;
 
   async discard() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot discard card ${this.id} when it is not a main deck card.`
-      );
-    }
     await (this as this).game.emit(
       CARD_EVENTS.CARD_DISCARD,
       new CardDiscardEvent({ card: this })
@@ -465,11 +377,6 @@ export abstract class Card<
   }
 
   async addToHand(index?: number) {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot add card ${this.id} to hand because it is not a main deck card.`
-      );
-    }
     const currentLocation = this.location ?? null;
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,

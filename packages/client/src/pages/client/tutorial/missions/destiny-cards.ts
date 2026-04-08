@@ -20,7 +20,7 @@ export const destinyCardsTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        runeDeck: {
+        destinyDeck: {
           cards: ['aiden-lv1']
         },
         hero: 'todo'
@@ -31,7 +31,7 @@ export const destinyCardsTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        runeDeck: {
+        destinyDeck: {
           cards: ['aiden-lv1']
         },
         hero: 'todo'

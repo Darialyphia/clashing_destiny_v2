@@ -21,6 +21,7 @@ import {
 } from '../../game/game.events';
 import { AbilityViewModel } from '../view-models/ability.model';
 import { CARD_LOCATIONS } from '../../card/card.enums';
+import { BOARD_SLOT_ROWS } from '../../board/board.constants';
 
 export type GameStateEntities = Record<
   string,
@@ -172,15 +173,15 @@ export class ClientStateController {
     const boardSide = this.state.board.sides.find(
       side => side.playerId === card.player.id
     )!;
-    if (event.event.card.location === CARD_LOCATIONS.BASE) {
-      boardSide.base = {
-        ...boardSide.base,
-        minions: [...boardSide.base.minions, card.id]
+    if (card.position?.row === BOARD_SLOT_ROWS.FRONT_ROW) {
+      boardSide.frontRow.slots[card.position.slot] = {
+        ...boardSide.frontRow.slots[card.position.slot],
+        minion: card.id
       };
-    } else if (event.event.card.location === CARD_LOCATIONS.BATTLEFIELD) {
-      boardSide.battlefield = {
-        ...boardSide.battlefield,
-        minions: [...boardSide.battlefield.minions, card.id]
+    } else if (card.position?.row === BOARD_SLOT_ROWS.BACK_ROW) {
+      boardSide.backRow.slots[card.position.slot] = {
+        ...boardSide.backRow.slots[card.position.slot],
+        minion: card.id
       };
     }
 
@@ -204,7 +205,7 @@ export class ClientStateController {
     const boardSide = this.state.board.sides.find(
       side => side.playerId === card.player.id
     )!;
-    boardSide.base.artifacts = [...boardSide.base.artifacts, card.id];
+    boardSide.heroZone.artifacts = [...boardSide.heroZone.artifacts, card.id];
 
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({

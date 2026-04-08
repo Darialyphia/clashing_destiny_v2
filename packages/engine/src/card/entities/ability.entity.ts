@@ -19,9 +19,8 @@ import {
   AbilityAfterUseEvent,
   AbilityBeforeUseEvent
 } from '../events/ability.events';
-import type { RuneCard } from './rune.entity';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard | RuneCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;
@@ -102,7 +101,7 @@ export class Ability<T extends AbilityOwner>
   }
 
   async use(onResolved?: () => MaybePromise<void>) {
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
+    const targets = await this.blueprint.getTargets(this.game, this.card);
     this.card.abilityTargets.set(this.blueprint.id, targets);
 
     if (this.shouldExhaust) {

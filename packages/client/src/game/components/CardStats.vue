@@ -10,10 +10,7 @@ const { cardId } = defineProps<{ cardId: string }>();
 
 const card = useCard(computed(() => cardId));
 const isDisplayed = computed(() => {
-  if (
-    card.value.location !== CARD_LOCATIONS.BASE &&
-    card.value.location !== CARD_LOCATIONS.BATTLEFIELD
-  ) {
+  if (card.value.location !== CARD_LOCATIONS.BOARD) {
     return false;
   }
   return (

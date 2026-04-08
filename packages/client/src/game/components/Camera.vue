@@ -9,8 +9,8 @@ const ui = useGameUi();
 const camera = ref({
   origin: { x: 0, y: 0 },
   scale: 1,
-  angle: { x: 15, y: 0, z: 0 },
-  offset: { x: 0, y: -5 }
+  angle: { x: 0, y: 0, z: 0 },
+  offset: { x: 0, y: 0 }
 });
 
 useFxEvent(GAME_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async () => {
@@ -37,11 +37,11 @@ const isTilted = computed({
     if (value) {
       camera.value.angle.x = 15;
       camera.value.angle.y = 0;
-      camera.value.offset.y = -7;
+      camera.value.offset.y = 7;
     } else {
       camera.value.angle.x = 0;
       camera.value.angle.y = 0;
-      camera.value.offset.y = -2;
+      camera.value.offset.y = 0;
     }
   }
 });
@@ -116,11 +116,11 @@ const isTilted = computed({
   position: absolute;
   pointer-events: auto;
   top: 0;
-  left: 5%;
+  left: 0;
   translate: calc(v-bind('camera.offset.x') * 1%)
     calc(v-bind('camera.offset.y') * 1%);
   transform-style: preserve-3d;
-  width: 90vw;
+  width: 100vw;
   height: 100dvh;
   transition: translate 1s var(--ease-4);
   /* solves some hover detection issues because of 3D transforms */

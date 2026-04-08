@@ -24,6 +24,8 @@ import OpponentHand from './OpponentHand.vue';
 import BottomBar from './BottomBar.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
+import { config } from '@/utils/config';
+import { useWindowSize } from '@vueuse/core';
 
 const { options } = defineProps<{
   clocks?: {
@@ -53,12 +55,28 @@ const isGameSettingsOpened = ref(false);
 const settings = useSettingsStore();
 
 useKeyboardControl(
-  'keyup',
+  'keydown',
   settings.settings.bindings.openSettings.control,
   () => {
     isGameSettingsOpened.value = !isGameSettingsOpened.value;
   }
 );
+
+const { width, height } = useWindowSize();
+const boardScale = computed(() => {
+  const scaleX = width.value / config.BOARD_SIZE.x;
+  const scaleY = height.value / config.BOARD_SIZE.y;
+  return Math.min(scaleX, scaleY);
+});
+
+const boardMargin = computed(() => {
+  const scaledBoardWidth = config.BOARD_SIZE.x * boardScale.value;
+  const scaledBoardHeight = config.BOARD_SIZE.y * boardScale.value;
+  return {
+    x: (width.value - scaledBoardWidth) / 2,
+    y: (height.value - scaledBoardHeight) / 2
+  };
+});
 </script>
 
 <template>
@@ -74,11 +92,11 @@ useKeyboardControl(
   <div class="game-board-container">
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
-        <OpponentBoard />
+        <!-- <OpponentBoard />
         <div class="separator" />
         <MyBoard />
         <BottomBar />
-        <div id="card-actions-portal"></div>
+        <div id="card-actions-portal"></div> -->
         <div class="arrows" id="arrows" />
       </div>
     </Camera>
@@ -132,13 +150,16 @@ useKeyboardControl(
 
 .board {
   display: grid;
-  width: 100%;
-  max-width: 80vw;
   margin-inline: auto;
   grid-template-rows: 1fr auto 1fr auto;
   transform-style: preserve-3d;
-  /* background: radial-gradient(circle at center, #0e151b, transparent 75%); */
-  transform-origin: center center;
+  transform-origin: top left;
+  width: var(--board-width);
+  height: var(--board-height);
+  background: url(@/assets/backgrounds/battle-background.png);
+  transform: scale(v-bind('boardScale'))
+    translateX(calc(v-bind('boardMargin.x') * 1px))
+    translateY(calc(v-bind('boardMargin.y') * 1px));
 }
 
 .arrows {

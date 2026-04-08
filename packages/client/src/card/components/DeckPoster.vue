@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import type {
-  CardBlueprint,
-  HeroBlueprint
-} from '@game/engine/src/card/card-blueprint';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import BlueprintSmallCard from './BlueprintSmallCard.vue';
 import { domToPng } from 'modern-screenshot';
 import BlueprintCard from './BlueprintCard.vue';
@@ -29,13 +26,7 @@ const { mainDeck, destinyDeck, name } = defineProps<{
 }>();
 
 const heroes = computed(() =>
-  destinyDeck
-    .filter(item => item.blueprint.kind === CARD_KINDS.HERO)
-    .sort(
-      (a, b) =>
-        (a.blueprint as HeroBlueprint).level -
-        (b.blueprint as HeroBlueprint).level
-    )
+  destinyDeck.filter(item => item.blueprint.kind === CARD_KINDS.HERO)
 );
 const otherDestinyCards = computed(() =>
   destinyDeck.filter(item => item.blueprint.kind !== CARD_KINDS.HERO)

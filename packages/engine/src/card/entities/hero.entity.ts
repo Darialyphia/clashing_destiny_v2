@@ -35,6 +35,8 @@ export type SerializedHeroCard = SerializedCard & {
   potentialAttackTargets: string[];
   atk: number;
   baseAtk: number;
+  retaliation: number;
+  baseRetaliation: number;
   spellPower: number;
   baseSpellPower: number;
   maxHp: number;
@@ -57,6 +59,7 @@ export type HeroCardInterceptors = CardInterceptors & {
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, HeroCard>;
   atk: Interceptable<number, HeroCard>;
+  retaliation: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
   dealsDamageFirst: Interceptable<boolean, HeroCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
@@ -93,6 +96,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
+        retaliation: new Interceptable(),
         spellPower: new Interceptable(),
         dealsDamageFirst: new Interceptable(),
         shouldSwitchInitiativeAfterattacking: new Interceptable()
@@ -129,11 +133,15 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get isAlive() {
-    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BATTLEFIELD;
+    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
   }
 
   get atk(): number {
     return this.interceptors.atk.getValue(this.blueprint.atk, this);
+  }
+
+  get retaliation(): number {
+    return this.interceptors.retaliation.getValue(this.blueprint.retaliation, this);
   }
 
   get spellPower(): number {
@@ -356,8 +364,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    // await this.player.levelupHero(this);
-    this.player.boardSide.summonHero(this);
+
     await this.blueprint.onPlay(this.game, this, this);
     await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
     await this.game.emit(
@@ -367,11 +374,11 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {
-    if (this.location !== CARD_LOCATIONS.BATTLEFIELD) return [];
+    if (this.location !== CARD_LOCATIONS.BOARD) return [];
 
     return [
       this.player.opponent.hero,
-      ...this.player.opponent.boardSide.battlefield.minions
+      ...this.player.opponent.boardSide.getAllMinions()
     ].filter(target => this.canAttack(target));
   }
 
@@ -381,6 +388,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,
+      retaliation: this.retaliation,
+      baseRetaliation: this.blueprint.retaliation,
       spellPower: this.spellPower,
       baseSpellPower: this.spellPower,
       maxHp: this.maxHp,

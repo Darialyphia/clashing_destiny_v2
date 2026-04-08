@@ -4,21 +4,13 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type {
-  CardBlueprint,
-  SerializedPreResponseTarget
-} from '../../card/card-blueprint';
+import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
 import { DeclareAttackAction } from '../actions/declare-attack';
-import {
-  CARD_KINDS,
-  type CardKind,
-  CARD_DECK_SOURCES,
-  type Job
-} from '../../card/card.enums';
+import { CARD_KINDS, type CardKind, type Job } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
@@ -86,16 +78,15 @@ export class CardViewModel {
     return this.data.description;
   }
 
-  get art(): CardBlueprint['art'][string] {
+  get art() {
     return {
-      dimensions: this.data.art.dimensions,
+      isFullArt: this.data.art.isFullArt,
+      dimensions: 'dimensions' in this.data.art ? this.data.art.dimensions : undefined,
       foil: this.data.art.foil,
       main: `cards/${this.data.art.main}`,
-      frame: `ui/card/frames/${this.data.art.frame}`,
       bg: `cards/${this.data.art.bg}`,
-      breakout: this.data.art.breakout ? `cards/${this.data.art.breakout}` : undefined,
-      foilArt: this.data.art.foilArt ? `cards/${this.data.art.foilArt}` : undefined,
-      tint: this.data.art.tint
+      foilBg: this.data.art.foilBg ? `cards/${this.data.art.foilBg}` : undefined,
+      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined
     };
   }
 
@@ -136,9 +127,6 @@ export class CardViewModel {
   }
 
   get manaCost() {
-    if (this.source === CARD_DECK_SOURCES.RUNE_DECK) {
-      return null;
-    }
     if ('manaCost' in this.data) {
       return this.data.manaCost as number;
     }
@@ -152,25 +140,6 @@ export class CardViewModel {
     return null;
   }
 
-  get destinyCost() {
-    if (this.source === CARD_DECK_SOURCES.MAIN_DECK) {
-      return null;
-    }
-    if ('destinyCost' in this.data) {
-      return this.data.destinyCost as number;
-    }
-
-    return null;
-  }
-
-  get baseDestinyCost() {
-    if ('baseDestinyCost' in this.data) {
-      return this.data.baseDestinyCost as number;
-    }
-
-    return null;
-  }
-
   get jobs() {
     if ('jobs' in this.data) {
       return this.data.jobs as Job[];
@@ -180,10 +149,6 @@ export class CardViewModel {
 
   get unplayableReason() {
     return this.data.unplayableReason;
-  }
-
-  get source() {
-    return this.data.source;
   }
 
   get location() {
@@ -370,6 +335,14 @@ export class CardViewModel {
     return this.data.modifiers.map(modifierId => {
       return this.getEntities()[modifierId] as ModifierViewModel;
     });
+  }
+
+  get position() {
+    if ('position' in this.data) {
+      return this.data.position as SerializedMinionCard['position'];
+    }
+
+    return null;
   }
 
   play() {

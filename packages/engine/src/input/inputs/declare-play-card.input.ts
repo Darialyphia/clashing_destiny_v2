@@ -3,7 +3,6 @@ import { defaultInputSchema, Input } from '../input';
 import { GAME_PHASES } from '../../game/game.enums';
 import { assert, isDefined } from '@game/shared';
 import { IllegalCardPlayedError } from '../input-errors';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
 
 const schema = defaultInputSchema.extend({
   id: z.string()

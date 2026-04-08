@@ -20,6 +20,7 @@ import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
 import { INTERACTION_STATES } from '../game/game.enums';
+import type { PlayerResourceAction } from '../player/player.entity';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -369,12 +370,12 @@ export class GameClient {
     });
   }
 
-  commitResourceAction(kind: 'draw' | 'rune') {
+  commitResourceAction(action: PlayerResourceAction) {
     this.dispatch({
       type: 'commitResourceAction',
       payload: {
         playerId: this.playerId,
-        kind
+        ...action
       }
     });
   }

@@ -39,7 +39,7 @@ export const combatTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        runeDeck: {
+        destinyDeck: {
           cards: ['fire-affinity']
         },
         hero: 'todo'
@@ -50,7 +50,7 @@ export const combatTutorial: TutorialMission = {
         mainDeck: {
           cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
         },
-        runeDeck: {
+        destinyDeck: {
           cards: ['fire-affinity']
         },
         hero: 'todo'

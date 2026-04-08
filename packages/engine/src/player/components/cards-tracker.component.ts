@@ -1,4 +1,3 @@
-import { isDestinyDeckCard } from '../../board/board.system';
 import { isMinion } from '../../card/card-utils';
 import type { CardKind } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
@@ -20,7 +19,6 @@ export class CardTrackerComponent {
     private player: Player
   ) {
     game.on(GAME_EVENTS.CARD_AFTER_PLAY, event => {
-      if (isDestinyDeckCard(event.data.card)) return;
       if (!event.data.card.player.equals(this.player)) return;
 
       const turn = game.turnSystem.elapsedTurns;

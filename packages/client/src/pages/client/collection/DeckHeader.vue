@@ -25,7 +25,7 @@ const isPosterOpened = ref(false);
     >
       <DeckPoster
         :main-deck="deckBuilder.mainDeckCards"
-        :destiny-deck="deckBuilder.runeDeckCards"
+        :destiny-deck="deckBuilder.destinyDeckCards"
         :name="deckBuilder.deck.name"
       />
     </UiModal>

@@ -45,8 +45,8 @@ export abstract class Damage {
 export class CombatDamage extends Damage {
   private _attacker: Attacker;
 
-  constructor(attacker: Attacker) {
-    super({ baseAmount: attacker.atk, type: DAMAGE_TYPES.COMBAT });
+  constructor(attacker: Attacker, baseAmount: number) {
+    super({ baseAmount, type: DAMAGE_TYPES.COMBAT });
     this._attacker = attacker;
   }
 

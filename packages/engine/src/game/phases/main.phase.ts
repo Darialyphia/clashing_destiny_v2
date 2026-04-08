@@ -8,11 +8,13 @@ import type { EmptyObject, Serializable } from '@game/shared';
 export class MainPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
 
-  private playersWhoHavePassedThisRound: Set<Player> = new Set();
-
   async onEnter() {}
 
   async onExit() {}
+
+  get allPlayersPassedThisTurn() {
+    return this.game.playerSystem.players.every(p => p.hasPassedThisTurn);
+  }
 
   async pass(player: Player) {
     if (!player.equals(this.game.turnSystem.initiativePlayer)) return;
@@ -21,12 +23,8 @@ export class MainPhase implements GamePhaseController, Serializable<EmptyObject>
       new TurnPassEvent({ player: this.game.turnSystem.initiativePlayer })
     );
 
-    this.playersWhoHavePassedThisRound.add(player);
-    const allPlayersPassed =
-      this.playersWhoHavePassedThisRound.size === this.game.playerSystem.players.length;
-
-    if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.startCombat();
+    if (this.allPlayersPassedThisTurn) {
+      await this.game.gamePhaseSystem.declareEndTurn();
     } else {
       await this.game.turnSystem.switchInitiative();
     }

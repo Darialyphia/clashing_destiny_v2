@@ -177,8 +177,8 @@ const toggleMinManaCostFilter = (cost: number) => {
               <UiSimpleTooltip
                 v-for="job in jobs"
                 :key="job.id"
-                :content="job.label"
                 side="bottom"
+                use-portal
               >
                 <template #trigger>
                   <button
@@ -197,16 +197,24 @@ const toggleMinManaCostFilter = (cost: number) => {
           <section class="filter-section">
             <h4 class="filter-title">Card Type</h4>
             <div class="kind-filter">
-              <button
+              <UiSimpleTooltip
                 v-for="kind in cardKinds"
-                :key="kind.label"
-                :class="{ active: hasKindFilter(kind.id) }"
-                :style="{ '--color': kind.color }"
-                :aria-label="kind.label"
-                @click="toggleKindFilter(kind.id)"
+                :key="kind.id"
+                side="top"
+                use-portal
               >
-                <img :src="kind.img" :alt="kind.label" />
-              </button>
+                <template #trigger>
+                  <button
+                    :class="{ active: hasKindFilter(kind.id) }"
+                    :style="{ '--color': kind.color }"
+                    :aria-label="kind.label"
+                    @click="toggleKindFilter(kind.id)"
+                  >
+                    <img :src="kind.img" :alt="kind.label" />
+                  </button>
+                </template>
+                {{ uppercaseFirstLetter(kind.label.toLocaleLowerCase()) }}
+              </UiSimpleTooltip>
             </div>
           </section>
         </PopoverContent>
@@ -297,8 +305,8 @@ const toggleMinManaCostFilter = (cost: number) => {
     }
 
     & > img {
-      width: 32px;
-      height: 32px;
+      width: calc(24px * var(--pixel-scale));
+      aspect-ratio: 1;
       object-fit: contain;
     }
   }

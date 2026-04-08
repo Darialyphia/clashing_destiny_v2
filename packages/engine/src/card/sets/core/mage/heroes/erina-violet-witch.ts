@@ -10,7 +10,6 @@ import {
   CARD_KINDS,
   RARITIES,
   defaultCardTint,
-  CARD_DECK_SOURCES,
   JOBS
 } from '../../../../card.enums';
 
@@ -19,16 +18,15 @@ export const erinaVioletWitch: HeroBlueprint = {
   kind: CARD_KINDS.HERO,
   collectable: true,
   name: 'Erina, Violet Witch',
-  description:
-    '<trigger>On Minion Attack</trigger> If the attack target is @Hexed@, give it -1/-1 this turn.',
+  description: '',
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder', defaultCardTint),
-  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  jobs: [JOBS.MAGE, JOBS.WITCH],
+  jobs: [JOBS.MAGE],
   tags: [],
-  manaCost: 0,
+
   atk: 2,
+  retaliation: 0,
   maxHp: 25,
   canPlay: () => true,
   abilities: [],

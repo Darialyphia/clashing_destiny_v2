@@ -15,7 +15,7 @@ export type GetDecksOutput = Array<{
     blueprintId: string;
     copies: number;
   }>;
-  runeDeck: Array<{
+  destinyDeck: Array<{
     cardId: CardId;
     isFoil: boolean;
     blueprintId: string;
@@ -74,17 +74,17 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
   }
 
   private async populateDeck(deck: DeckDoc) {
-    const [hero, mainDeck, runeDeck] = await Promise.all([
+    const [hero, mainDeck, destinyDeck] = await Promise.all([
       this.populateHero(deck.hero),
       this.populateDeckList(deck.mainDeck),
-      this.populateDeckList(deck.runeDeck)
+      this.populateDeckList(deck.destinyDeck)
     ]);
 
     return {
       id: deck._id,
       name: deck.name,
       mainDeck,
-      runeDeck,
+      destinyDeck,
       hero
     };
   }

@@ -1,7 +1,7 @@
 import { isDefined, type Nullable } from '@game/shared';
 import { defaultConfig } from '../../config';
-import type { CardBlueprint, RuneBlueprint } from '../card-blueprint';
-import { CARD_DECK_SOURCES, CARD_KINDS, type CardDeckSource } from '../card.enums';
+import type { CardBlueprint } from '../card-blueprint';
+import { CARD_KINDS } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -18,7 +18,7 @@ export type ValidatableDeck<TMeta> = {
   name: string;
   isEqual(first: ValidatableCard<TMeta>, second: ValidatableCard<TMeta>): boolean;
   mainDeck: Array<ValidatableCard<TMeta>>;
-  runeDeck: Array<ValidatableCard<TMeta>>;
+  destinyDeck: Array<ValidatableCard<TMeta>>;
   hero: Nullable<ValidatableCard<TMeta>>;
 };
 
@@ -30,10 +30,9 @@ export type DeckValidationResult =
 
 export type DeckValidator<TMeta> = {
   maxCopiesForMainDeckCard: number;
-  maxCopiesForRuneDeckCard: number;
-  maxCopiesForBasicRuneCard: number;
+  maxCopiesForDestinyDeckCard: number;
   mainDeckSize: number;
-  runeDeckSize: number;
+  destinyDeckSize: number;
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult;
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean;
 };
@@ -45,36 +44,23 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return defaultConfig.MAX_MAIN_DECK_SIZE;
   }
 
-  get runeDeckSize(): number {
-    return defaultConfig.MAX_RUNE_DECK_SIZE;
+  get destinyDeckSize(): number {
+    return defaultConfig.MAX_DESTINY_DECK_SIZE;
   }
 
   get maxCopiesForMainDeckCard(): number {
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
   }
 
-  get maxCopiesForRuneDeckCard(): number {
-    return defaultConfig.MAX_RUNE_DECK_CARD_COPIES;
+  get maxCopiesForDestinyDeckCard(): number {
+    return defaultConfig.MAX_DESTINY_DECK_CARD_COPIES;
   }
 
-  get maxCopiesForBasicRuneCard(): number {
-    return defaultConfig.MAX_BASIC_RUNE_DECK_CARD_COPIES;
-  }
-
-  private validateCard(
-    card: {
-      blueprint: CardBlueprint;
-      copies: number;
-    },
-    source: CardDeckSource
-  ): DeckViolation[] {
+  private validateCard(card: {
+    blueprint: CardBlueprint;
+    copies: number;
+  }): DeckViolation[] {
     const violations: DeckViolation[] = [];
-    if (card.blueprint.deckSource !== source) {
-      violations.push({
-        type: 'invalid_card_source',
-        reason: `Card ${card.blueprint.name} is not allowed in ${source}.`
-      });
-    }
 
     if (card.blueprint.unique && card.copies > 1) {
       violations.push({
@@ -83,7 +69,12 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       });
     }
 
-    if (card.copies > defaultConfig.MAX_MAIN_DECK_CARD_COPIES) {
+    const maxCopies =
+      card.blueprint.kind === CARD_KINDS.DESTINY
+        ? this.maxCopiesForDestinyDeckCard
+        : this.maxCopiesForMainDeckCard;
+
+    if (card.copies > maxCopies) {
       violations.push({
         type: 'too_many_copies',
         reason: `Card ${card.blueprint.name} has too many copies.`
@@ -106,16 +97,14 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
         reason: 'Deck must include a hero card.'
       });
     }
-    if (
-      this.getSize(deck[CARD_DECK_SOURCES.MAIN_DECK]) !== defaultConfig.MAX_MAIN_DECK_SIZE
-    ) {
+    if (this.getSize(deck.mainDeck) !== defaultConfig.MAX_MAIN_DECK_SIZE) {
       violations.push({
         type: 'invalid_deck_size',
         reason: `Main deck must have exactly ${defaultConfig.MAX_MAIN_DECK_SIZE} cards.`
       });
     }
 
-    for (const card of deck[CARD_DECK_SOURCES.MAIN_DECK]) {
+    for (const card of deck.mainDeck) {
       const blueprint = this.cardPool[card.blueprintId];
       if (!blueprint) {
         violations.push({
@@ -125,13 +114,34 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       }
 
       violations.push(
-        ...this.validateCard(
-          {
-            blueprint,
-            copies: card.copies
-          },
-          CARD_DECK_SOURCES.MAIN_DECK
-        )
+        ...this.validateCard({
+          blueprint,
+          copies: card.copies
+        })
+      );
+    }
+
+    if (this.getSize(deck.destinyDeck) !== defaultConfig.MAX_DESTINY_DECK_SIZE) {
+      violations.push({
+        type: 'invalid_deck_size',
+        reason: `Destiny deck must have exactly ${defaultConfig.MAX_DESTINY_DECK_SIZE} cards.`
+      });
+    }
+
+    for (const card of deck.destinyDeck) {
+      const blueprint = this.cardPool[card.blueprintId];
+      if (!blueprint) {
+        violations.push({
+          type: 'unknown_card',
+          reason: `Card with Id ${card.blueprintId} not found in card pool.`
+        });
+      }
+
+      violations.push(
+        ...this.validateCard({
+          blueprint,
+          copies: card.copies
+        })
       );
     }
 
@@ -140,17 +150,9 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean {
     const withBlueprint = {
-      main: deck[CARD_DECK_SOURCES.MAIN_DECK].map(card => ({
+      main: deck.mainDeck.map(card => ({
         ...card,
-        blueprint: this.cardPool[card.blueprintId] as CardBlueprint & {
-          decksource: typeof CARD_DECK_SOURCES.MAIN_DECK;
-        }
-      })),
-      rune: deck[CARD_DECK_SOURCES.RUNE_DECK].map(card => ({
-        ...card,
-        blueprint: this.cardPool[card.blueprintId] as CardBlueprint & {
-          decksource: typeof CARD_DECK_SOURCES.RUNE_DECK;
-        }
+        blueprint: this.cardPool[card.blueprintId] as CardBlueprint
       }))
     };
 
@@ -162,39 +164,19 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       return cardBlueprint.kind === CARD_KINDS.HERO;
     }
 
-    if (cardBlueprint.deckSource === CARD_DECK_SOURCES.MAIN_DECK) {
-      if (withBlueprint.main.length >= this.mainDeckSize) {
-        return false;
-      }
-      const existing = withBlueprint.main.find(c => deck.isEqual(c, card));
-      if (existing) {
-        if (existing.copies >= this.maxCopiesForMainDeckCard) {
-          return false;
-        }
-        if (cardBlueprint.unique) {
-          return false;
-        }
-      }
-
-      return true;
-    } else {
-      if (withBlueprint.rune.length >= this.runeDeckSize) {
-        return false;
-      }
-      const existing = withBlueprint.rune.find(c => deck.isEqual(c, card));
-      if (existing) {
-        const maxCopies = (cardBlueprint as RuneBlueprint).isBasic
-          ? this.maxCopiesForBasicRuneCard
-          : this.maxCopiesForRuneDeckCard;
-        if (existing.copies >= maxCopies) {
-          return false;
-        }
-        if (cardBlueprint.unique) {
-          return false;
-        }
-      }
-
-      return true;
+    if (withBlueprint.main.length >= this.mainDeckSize) {
+      return false;
     }
+    const existing = withBlueprint.main.find(c => deck.isEqual(c, card));
+    if (existing) {
+      if (existing.copies >= this.maxCopiesForMainDeckCard) {
+        return false;
+      }
+      if (cardBlueprint.unique) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

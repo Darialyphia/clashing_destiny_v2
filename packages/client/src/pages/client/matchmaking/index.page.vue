@@ -42,7 +42,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
     blueprintId: card.blueprintId,
     copies: card.copies
   })),
-  runeDeck: deck.runeDeck.map(card => ({
+  destinyDeck: deck.destinyDeck.map(card => ({
     blueprintId: card.blueprintId,
     copies: card.copies
   })),

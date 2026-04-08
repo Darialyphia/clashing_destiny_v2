@@ -10,7 +10,7 @@ export class DeckMapper {
       name: deck.name,
       ownerId: deck.ownerId,
       mainDeck: deck.mainDeck,
-      runeDeck: deck.runeDeck,
+      destinyDeck: deck.destinyDeck,
       hero: deck.hero
     };
   }

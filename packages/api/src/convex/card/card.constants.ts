@@ -1,8 +1,6 @@
 import {
-  CARD_DECK_SOURCES,
   CARD_SETS,
   RARITIES,
-  type CardDeckSource,
   type CardSetId,
   type Rarity
 } from '@game/engine/src/card/card.enums';
@@ -70,7 +68,4 @@ export const DECRAFTING_REWARD_PER_RARITY: Record<Rarity, number> = {
 
 export const FOIL_DECRAFTING_REWARD_MULTIPLIER = 2;
 
-export const MAX_COPIES_PER_CARD_DECK_SOURCE: Record<CardDeckSource, number> = {
-  [CARD_DECK_SOURCES.MAIN_DECK]: 3,
-  [CARD_DECK_SOURCES.RUNE_DECK]: 1
-};
+export const MAX_COPIES_PER_CARD = 3;

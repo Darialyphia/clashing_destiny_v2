@@ -11,14 +11,9 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       id: blueprint.id,
       art: {
         foil: blueprint.art.default.foil,
-        dimensions: blueprint.art.default.dimensions,
         bg: `cards/${blueprint.art.default.bg}`,
         main: `cards/${blueprint.art.default.main}`,
-        breakout: blueprint.art.default.breakout
-          ? `cards/${blueprint.art.default.breakout}`
-          : undefined,
-        frame: `ui/card/frames/${blueprint.art.default.frame}`,
-        tint: blueprint.art.default.tint
+        isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
       atk: (blueprint as any).atk ?? (blueprint as any).damage,

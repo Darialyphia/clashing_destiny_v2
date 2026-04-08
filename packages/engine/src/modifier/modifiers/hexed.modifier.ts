@@ -29,7 +29,7 @@ export class HexedModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
           manaCost: 2,
           shouldExhaust: false,
           canUse: () => true,
-          getPreResponseTargets: () => Promise.resolve([]),
+          getTargets: () => Promise.resolve([]),
           isHiddenOnCard: true,
           onResolve: () => {
             return this.target.modifiers.remove(KEYWORDS.HEXED.id);

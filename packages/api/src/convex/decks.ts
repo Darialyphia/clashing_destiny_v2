@@ -55,7 +55,7 @@ export const update = mutationWithContainer({
         copies: v.number()
       })
     ),
-    runeDeck: v.array(
+    destinyDeck: v.array(
       v.object({
         cardId: v.id('cards'),
         copies: v.number()
@@ -72,7 +72,7 @@ export const update = mutationWithContainer({
       deckId: arg.deckId,
       name: arg.name,
       mainDeck: arg.mainDeck,
-      runeDeck: arg.runeDeck,
+      destinyDeck: arg.destinyDeck,
       hero: arg.hero
     });
   }

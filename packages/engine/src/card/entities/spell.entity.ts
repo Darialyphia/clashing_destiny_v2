@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS, type JobId, type RuneId } from '../card.enums';
+import { CARD_EVENTS, type JobId } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { GAME_PHASES } from '../../game/game.enums';
@@ -28,7 +28,6 @@ export type SerializedSpellCard = SerializedCard & {
   preResponseTargets: SerializedPreResponseTarget[] | null;
   abilities: string[];
   jobs: JobId[];
-  runeCost: Partial<Record<RuneId, number>>;
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
@@ -138,14 +137,9 @@ export class SpellCard extends Card<
     return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
   }
 
-  get hasCorrectRunes() {
-    return this.player.runeManager.satisfiesRuneCost(this.blueprint.runeCost);
-  }
-
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
-        this.hasCorrectRunes &&
         this.blueprint.canPlay(this.game, this) &&
         this.isCorrectPhaseToPlay,
       this
@@ -172,7 +166,7 @@ export class SpellCard extends Card<
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this);
+    const targets = await this.blueprint.getTargets(this.game, this);
     await this.playWithTargets(targets);
   }
 
@@ -185,8 +179,7 @@ export class SpellCard extends Card<
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
         : null,
-      jobs: this.jobs.map(job => job.id) as JobId[],
-      runeCost: this.blueprint.runeCost
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }

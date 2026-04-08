@@ -1,4 +1,3 @@
-import type { MaybePromise } from '@game/shared';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -24,55 +23,7 @@ export class WhileOnBoardModifier<
       mixins: [
         new TogglableModifierMixin(
           game,
-          () =>
-            this.target.location === CARD_LOCATIONS.BASE ||
-            this.target.location === CARD_LOCATIONS.BATTLEFIELD
-        ),
-        ...options.mixins
-      ]
-    });
-  }
-}
-
-export class WhileOnBaseModifier<
-  T extends MinionCard | ArtifactCard | HeroCard
-> extends Modifier<T> {
-  constructor(
-    modifierType: string,
-    game: Game,
-    source: AnyCard,
-    private options: {
-      mixins: Array<ModifierMixin<T>>;
-    }
-  ) {
-    super(modifierType, game, source, {
-      mixins: [
-        new TogglableModifierMixin(
-          game,
-          () => this.target.location === CARD_LOCATIONS.BASE
-        ),
-        ...options.mixins
-      ]
-    });
-  }
-}
-
-export class WhileOnBattlefieldModifier<
-  T extends MinionCard | ArtifactCard | HeroCard
-> extends Modifier<T> {
-  constructor(
-    modifierType: string,
-    game: Game,
-    source: AnyCard,
-    private options: {
-      mixins: Array<ModifierMixin<T>>;
-    }
-  ) {
-    super(modifierType, game, source, {
-      mixins: [
-        new TogglableModifierMixin(
-          game,
-          () => this.target.location === CARD_LOCATIONS.BATTLEFIELD
+          () => this.target.location === CARD_LOCATIONS.BOARD
         ),
         ...options.mixins
       ]

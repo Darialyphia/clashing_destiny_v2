@@ -7,7 +7,7 @@ type PremadeDeck = {
     copies: number;
     isFoil: boolean;
   }>;
-  runeDeck: Array<{
+  destinyDeck: Array<{
     blueprintId: string;
     copies: number;
     isFoil: boolean;

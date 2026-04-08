@@ -3,101 +3,54 @@
    * This file should be used in the api package  to reference card ids
    *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
    */
-import type { Rarity, CardDeckSource } from '../card/card.enums';
+import type { Rarity } from '../card/card.enums';
 export const cards = {
 "sample": "sample",
-"rune_of_focus": "rune_of_focus",
-"rune_of_might": "rune_of_might",
-"rune_of_resonance": "rune_of_resonance",
-"rune_of_wisdom": "rune_of_wisdom"
+"erina-violet-witch": "erina-violet-witch"
 } as const;
 
 export const collectableCards = {
 "sample": "sample",
-"rune_of_focus": "rune_of_focus",
-"rune_of_might": "rune_of_might",
-"rune_of_resonance": "rune_of_resonance",
-"rune_of_wisdom": "rune_of_wisdom"
+"erina-violet-witch": "erina-violet-witch"
 } as const;
 
-type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
+type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
 export const cardsBySet: Record<string, CardSet> = {
 "CORE": [
   {
     "id": "sample",
     "collectable": true,
-    "rarity": "common",
-    "deckSource": "mainDeck"
+    "rarity": "common"
   },
   {
-    "id": "rune_of_focus",
+    "id": "erina-violet-witch",
     "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
-  },
-  {
-    "id": "rune_of_might",
-    "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
-  },
-  {
-    "id": "rune_of_resonance",
-    "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
-  },
-  {
-    "id": "rune_of_wisdom",
-    "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
+    "rarity": "epic"
   },
   {
     "id": "sample",
     "collectable": true,
-    "rarity": "common",
-    "deckSource": "mainDeck"
+    "rarity": "common"
   },
   {
-    "id": "rune_of_focus",
+    "id": "erina-violet-witch",
     "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
+    "rarity": "epic"
   },
   {
-    "id": "rune_of_might",
+    "id": "sample",
     "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
-  },
-  {
-    "id": "rune_of_resonance",
-    "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
-  },
-  {
-    "id": "rune_of_wisdom",
-    "collectable": true,
-    "rarity": "common",
-    "deckSource": "runeDeck"
+    "rarity": "common"
   }
 ]
 };
 
 export const cardShortIds: Record<string, number> = {
 "sample": 1,
-"rune_of_focus": 5,
-"rune_of_might": 2,
-"rune_of_resonance": 6,
-"rune_of_wisdom": 3
+"erina-violet-witch": 2
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
 "1": "sample",
-"2": "rune_of_might",
-"3": "rune_of_wisdom",
-"5": "rune_of_focus",
-"6": "rune_of_resonance"
+"2": "erina-violet-witch"
 } as const;

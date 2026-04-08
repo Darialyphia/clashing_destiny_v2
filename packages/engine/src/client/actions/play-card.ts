@@ -1,7 +1,5 @@
-import { match } from 'ts-pattern';
 import type { GameClient } from '../client';
 import type { CardActionRule, CardViewModel } from '../view-models/card.model';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
 
 export class PlayCardAction implements CardActionRule {
   readonly id = 'play';
@@ -13,10 +11,7 @@ export class PlayCardAction implements CardActionRule {
   }
 
   getLabel(card: CardViewModel) {
-    return match(card.source)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => `@[mana] ${card.manaCost}@ Play`)
-      .with(CARD_DECK_SOURCES.RUNE_DECK, () => `@[destiny] ${card.destinyCost}@ Play`)
-      .exhaustive();
+    return `@[mana] ${card.manaCost}@ Play`;
   }
 
   handler(card: CardViewModel) {

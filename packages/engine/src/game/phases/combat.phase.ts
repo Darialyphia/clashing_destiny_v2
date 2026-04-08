@@ -18,12 +18,9 @@ import {
   COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
   GAME_PHASE_TRANSITIONS,
-  TURN_EVENTS,
   type CombatStep,
   type CombatStepTransition
 } from '../game.enums';
-import type { Player } from '../../player/player.entity';
-import { TurnPassEvent } from '../systems/turn.system';
 
 export type Attacker = MinionCard | HeroCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -42,8 +39,6 @@ export class CombatPhase
   attacker: Attacker | null = null;
   defender: AttackTarget | null = null;
 
-  private playersWhoHavePassedThisRound: Set<Player> = new Set();
-
   constructor(private game: Game) {
     super(COMBAT_STEPS.DECLARE_ATTACKER);
 
@@ -61,11 +56,6 @@ export class CombatPhase
       stateTransition(
         COMBAT_STEPS.DECLARE_TARGET,
         COMBAT_STEP_TRANSITIONS.CANCEL,
-        COMBAT_STEPS.DECLARE_ATTACKER
-      ),
-      stateTransition(
-        COMBAT_STEPS.RESOLVING_COMBAT,
-        COMBAT_STEP_TRANSITIONS.FINISHED,
         COMBAT_STEPS.DECLARE_ATTACKER
       )
     ]);
@@ -128,24 +118,6 @@ export class CombatPhase
     this.attacker = newAttacker;
   }
 
-  async pass(player: Player) {
-    if (!player.equals(this.game.turnSystem.initiativePlayer)) return;
-    await this.game.emit(
-      TURN_EVENTS.TURN_PASS,
-      new TurnPassEvent({ player: this.game.turnSystem.initiativePlayer })
-    );
-
-    this.playersWhoHavePassedThisRound.add(player);
-    const allPlayersPassed =
-      this.playersWhoHavePassedThisRound.size === this.game.playerSystem.players.length;
-
-    if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.endCombatPhase();
-    } else {
-      await this.game.turnSystem.switchInitiative();
-    }
-  }
-
   private async resolveCombat() {
     assert(isDefined(this.defender), new CorruptedGamephaseContextError());
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
@@ -172,7 +144,7 @@ export class CombatPhase
       await this.game.turnSystem.switchInitiative();
     }
 
-    this.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
+    await this.end();
   }
 
   private async performAttacks() {
@@ -187,7 +159,7 @@ export class CombatPhase
 
       const performAtttackerStrike = async () => {
         if (defender.isAlive) {
-          await attacker.dealDamage(defender, new CombatDamage(attacker));
+          await attacker.dealDamage(defender, new CombatDamage(attacker, attacker.atk));
         }
       };
 
@@ -198,7 +170,10 @@ export class CombatPhase
           defender.canRetaliate(attacker) && attacker.canBeRetaliatedBy(defender);
         if (!shouldStrikeBack) return;
 
-        await defender.dealDamage(attacker, new CombatDamage(defender));
+        await defender.dealDamage(
+          attacker,
+          new CombatDamage(defender, defender.retaliation)
+        );
       };
 
       if (attackerFirst && !defenderFirst) {
@@ -219,10 +194,7 @@ export class CombatPhase
   }
 
   private async end() {
-    this.game.interaction.onInteractionEnd();
-    await this.game.gamePhaseSystem.sendTransition(
-      GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE
-    );
+    await this.game.gamePhaseSystem.endCombatPhase();
     await this.game.inputSystem.askForPlayerInput();
   }
 

@@ -234,8 +234,7 @@ export class GameSerializer {
       if (card.player.id === playerId) return;
       if (
         card.location === CARD_LOCATIONS.BANISH_PILE ||
-        card.location === CARD_LOCATIONS.BASE ||
-        card.location === CARD_LOCATIONS.BATTLEFIELD ||
+        card.location === CARD_LOCATIONS.BOARD ||
         card.location === CARD_LOCATIONS.DISCARD_PILE
       ) {
         return;

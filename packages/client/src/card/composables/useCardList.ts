@@ -3,7 +3,6 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
-  CARD_DECK_SOURCES,
   type CardKind,
   type Job
 } from '@game/engine/src/card/card.enums';
@@ -51,10 +50,10 @@ export const provideCardList = () => {
 
   const KIND_ORDER = {
     [CARD_KINDS.HERO]: 1,
-    [CARD_KINDS.MINION]: 2,
-    [CARD_KINDS.SPELL]: 3,
-    [CARD_KINDS.ARTIFACT]: 4,
-    [CARD_KINDS.RUNE]: 5
+    [CARD_KINDS.DESTINY]: 2,
+    [CARD_KINDS.MINION]: 3,
+    [CARD_KINDS.SPELL]: 4,
+    [CARD_KINDS.ARTIFACT]: 5
   };
 
   const kindFilter = ref(new Set<CardKind>());
@@ -155,13 +154,10 @@ export const provideCardList = () => {
         if (!b.card) {
           console.log(b);
         }
-        if (a.card.deckSource !== b.card.deckSource) {
-          return a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? 1 : -1;
-        }
 
         if (
-          a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-          b.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          'manaCost' in a.card &&
+          'manaCost' in b.card &&
           a.card.manaCost !== b.card.manaCost
         ) {
           return a.card.manaCost - b.card.manaCost;

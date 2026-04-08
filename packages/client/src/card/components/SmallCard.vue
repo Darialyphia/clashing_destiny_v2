@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
-import { type CardKind, type CardTint } from '@game/engine/src/card/card.enums';
+import { type CardKind } from '@game/engine/src/card/card.enums';
 import CardGlare from './CardGlare.vue';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilScanlines from './foil/FoilScanlines.vue';
@@ -11,6 +11,7 @@ import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
+import type { CardArt } from '@game/engine/src/card/card-blueprint';
 
 const {
   card,
@@ -19,26 +20,7 @@ const {
 } = defineProps<{
   card: {
     id: string;
-    art: {
-      foil: {
-        sheen?: boolean;
-        oil?: boolean;
-        gradient?: boolean;
-        lightGradient?: boolean;
-        scanlines?: boolean;
-        goldenGlare?: boolean;
-        glitter?: boolean;
-      };
-      dimensions: {
-        width: number;
-        height: number;
-      };
-      bg: string;
-      main: string;
-      breakout?: string;
-      frame: string;
-      tint: CardTint;
-    };
+    art: CardArt;
     kind: CardKind;
     atk?: number | null;
     baseAtk?: number | null;
@@ -60,20 +42,12 @@ const { pointerStyle } = useCardTilt(root, {
   isEnabled: ref(true)
 });
 
-const artFrameImage = computed(() => {
-  return assets[card.art.frame].css;
-});
-
 const artBgImage = computed(() => {
   return assets[card.art.bg].css;
 });
 
 const artMainImage = computed(() => {
   return assets[card.art.main].css;
-});
-
-const artBreakoutImage = computed(() => {
-  return card.art.breakout ? assets[card.art.breakout].css : 'none';
 });
 </script>
 
@@ -91,7 +65,6 @@ const artBreakoutImage = computed(() => {
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
         <div class="art-main" />
         <div class="art-frame" />
-        <div v-if="isFoil && card.art.breakout" class="art-breakout" />
       </div>
 
       <template v-if="showStats">
@@ -186,7 +159,7 @@ const artBreakoutImage = computed(() => {
   font-size: 16px;
   position: relative;
   transform-style: preserve-3d;
-  --bg-size: calc(
+  /* --bg-size: calc(
       1px * v-bind('card.art.dimensions.width') * var(--pixel-scale)
     )
     calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
@@ -201,12 +174,12 @@ const artBreakoutImage = computed(() => {
   --glare-mask-position: var(--mask-position);
   --foil-mask: var(--mask);
   --foil-mask-size: var(--mask-size);
-  --foil-mask-position: var(--mask-position);
+  --foil-mask-position: var(--mask-position); */
   .small-card:is(.minion, .hero) & {
-    --mask:
+    /* --mask:
       v-bind(artBgImage), v-bind(artFrameImage),
       url('@/assets/ui/card/attack-large.png'),
-      url('@/assets/ui/card/health-large.png');
+      url('@/assets/ui/card/health-large.png'); */
     --mask-size:
       var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
     --mask-position:
@@ -214,18 +187,17 @@ const artBreakoutImage = computed(() => {
   }
 
   .small-card:is(.minion, .hero) & {
-    --mask:
+    /* --mask:
       v-bind(artBgImage), v-bind(artFrameImage),
       url('@/assets/ui/card/attack-large.png'),
       url('@/assets/ui/card/durability-large.png');
     --mask-size:
       var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
     --mask-position:
-      center, center, var(--stat-left-position), var(--stat-right-position);
+      center, center, var(--stat-left-position), var(--stat-right-position); */
     &:has(.foil) {
       --mask:
-        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
-        url('@/assets/ui/card/attack-large.png'),
+        v-bind(artBgImage), url('@/assets/ui/card/attack-large.png'),
         url('@/assets/ui/card/durability-large.png');
       --mask-size:
         var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size),
@@ -237,27 +209,22 @@ const artBreakoutImage = computed(() => {
   }
 
   .small-card.spell & {
-    --mask: v-bind(artBgImage), v-bind(artFrameImage);
+    --mask: v-bind(artBgImage);
     --mask-size: var(--bg-size), var(--frame-size);
     --mask-position: center, center;
     &:has(.foil) {
-      --mask:
-        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage);
+      --mask: v-bind(artBgImage);
       --mask-size: var(--bg-size), var(--frame-size), var(--frame-size);
       --mask-position: center, center, center;
     }
   }
 
   .small-card.sigil & {
-    --mask:
-      v-bind(artBgImage), v-bind(artFrameImage),
-      url('@/assets/ui/card/countdown-large.png');
+    --mask: v-bind(artBgImage), url('@/assets/ui/card/countdown-large.png');
     --mask-size: var(--bg-size), var(--frame-size), var(--stat-size);
     --mask-position: center, center, var(--stat-right-position);
     &:has(.foil) {
-      --mask:
-        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
-        url('@/assets/ui/card/countdown-large.png');
+      --mask: v-bind(artBgImage), url('@/assets/ui/card/countdown-large.png');
       --mask-size:
         var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size);
       --mask-position: center, center, center, var(--stat-right-position);
@@ -288,10 +255,10 @@ const artBreakoutImage = computed(() => {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+    /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
     height: calc(
       1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
-    );
+    ); */
     translate: -50% 0;
     --parallax-offset-x: -50%;
   }
@@ -300,15 +267,15 @@ const artBreakoutImage = computed(() => {
 .art-frame {
   position: absolute;
   inset: 0;
-  background: v-bind(artFrameImage);
+  /* background: v-bind(artFrameImage); */
   background-size: cover;
 }
 .art-main {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
   background: v-bind(artMainImage);
   background-size: cover;
@@ -317,18 +284,18 @@ const artBreakoutImage = computed(() => {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
-  background: v-bind(artBreakoutImage);
+  /* background: v-bind(artBreakoutImage); */
   background-size: cover;
 }
 .art-bg {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
   background: v-bind(artBgImage);
   background-size: cover;

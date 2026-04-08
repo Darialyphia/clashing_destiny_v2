@@ -56,22 +56,6 @@ export class DeckRepository {
 
     const mainDeckCards = [];
     for (const deckCard of premadeDeck.mainDeck) {
-      const identicalCard = await this.ctx.cardRepo.findIdentical(
-        userId,
-        deckCard.blueprintId,
-        deckCard.isFoil
-      );
-
-      if (identicalCard) {
-        identicalCard.addCopies(deckCard.copies);
-        await this.ctx.cardRepo.save(identicalCard);
-        mainDeckCards.push({
-          cardId: identicalCard.id,
-          copies: deckCard.copies
-        });
-        continue;
-      }
-
       const cardId = await this.ctx.cardRepo.create({
         ownerId: userId,
         blueprintId: deckCard.blueprintId,
@@ -85,8 +69,8 @@ export class DeckRepository {
       });
     }
 
-    const runeDeckCards = [];
-    for (const deckCard of premadeDeck.runeDeck) {
+    const destinyDeckCards = [];
+    for (const deckCard of premadeDeck.destinyDeck) {
       const cardId = await this.ctx.cardRepo.create({
         ownerId: userId,
         blueprintId: deckCard.blueprintId,
@@ -94,7 +78,7 @@ export class DeckRepository {
         copiesOwned: deckCard.copies
       });
 
-      runeDeckCards.push({
+      destinyDeckCards.push({
         cardId,
         copies: deckCard.copies
       });
@@ -111,7 +95,7 @@ export class DeckRepository {
       name: premadeDeck.name,
       ownerId: userId,
       mainDeck: mainDeckCards,
-      runeDeck: runeDeckCards,
+      destinyDeck: destinyDeckCards,
       hero: {
         cardId: heroCard
       }
@@ -130,7 +114,7 @@ export class DeckRepository {
       name: DEFAULT_DECK_NAME,
       ownerId: ownerId,
       mainDeck: [],
-      runeDeck: [],
+      destinyDeck: [],
       hero: {}
     });
 

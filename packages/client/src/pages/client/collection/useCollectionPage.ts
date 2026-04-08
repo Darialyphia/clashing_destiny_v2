@@ -84,7 +84,7 @@ export const provideCollectionPage = () => {
           cardId: card.cardId
         }
       })),
-      runeDeck: newDeck.runeDeck.map(card => ({
+      destinyDeck: newDeck.destinyDeck.map(card => ({
         blueprintId: card.blueprintId,
         copies: card.copies,
         meta: {
@@ -161,7 +161,7 @@ export const provideCollectionPage = () => {
           cardId: card.meta.cardId,
           copies: card.copies
         })),
-        runeDeck: deckBuilder.value.deck.runeDeck.map(card => ({
+        destinyDeck: deckBuilder.value.deck.destinyDeck.map(card => ({
           cardId: card.meta.cardId,
           copies: card.copies
         })),

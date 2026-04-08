@@ -2,17 +2,8 @@ import { type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide, SerializedBoardSide } from './board-side.entity';
-import { CARD_DECK_SOURCES } from '../card/card.enums';
 
 export type MinionSlot = number;
-
-export const isMainDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
-};
-
-export const isDestinyDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.RUNE_DECK;
-};
 
 export type SerializedBoard = {
   sides: [SerializedBoardSide, SerializedBoardSide];

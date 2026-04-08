@@ -1,7 +1,7 @@
-import type { BetterExtract, Values } from '@game/shared';
+import type { Values } from '@game/shared';
 import type { MinionCard, SerializedMinionCard } from '../entities/minion.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { CardLocation } from '../card.enums';
+import type { BoardSlot, SerializedBoardSlot } from '../../board/board-slot.entity';
 
 export const MINION_EVENTS = {
   MINION_SUMMONED: 'minion.summoned',
@@ -50,26 +50,21 @@ export class MinionSummonedEvent extends TypedSerializableEvent<
 }
 
 export class MinionMoveEvent extends TypedSerializableEvent<
+  { card: MinionCard; from: BoardSlot; to: BoardSlot },
   {
-    card: MinionCard;
-    from: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-    to: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-  },
-  {
-    card: string;
-    from: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-    to: BetterExtract<CardLocation, 'base' | 'battlefield'>;
+    card: SerializedMinionCard;
+    from: SerializedBoardSlot;
+    to: SerializedBoardSlot;
   }
 > {
   serialize() {
     return {
-      card: this.data.card.id,
-      from: this.data.from,
-      to: this.data.to
+      card: this.data.card.serialize(),
+      from: this.data.from.serialize(),
+      to: this.data.to.serialize()
     };
   }
 }
-
 export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_BEFORE_USE_ABILITY]: MinionUsedAbilityEvent;
   [MINION_EVENTS.MINION_AFTER_USE_ABILITY]: MinionUsedAbilityEvent;

@@ -28,7 +28,7 @@ export type GetGameInfosOutput = {
       deck: {
         hero: { blueprintId: string };
         mainDeck: Array<{ blueprintId: string }>;
-        runeDeck: Array<{ blueprintId: string }>;
+        destinyDeck: Array<{ blueprintId: string }>;
       };
     };
   }>;
@@ -91,7 +91,6 @@ export class GetGameInfosUseCase
     if (!deck) throw new AppError('Deck not found');
 
     const mainDeckCards = await this.buildDeckCards(deck.mainDeck);
-    const runeDeckCards = await this.buildDeckCards(deck.runeDeck);
     const [heroCard] = await this.buildDeckCards([
       { cardId: deck.hero.cardId, copies: 1 }
     ]);
@@ -103,7 +102,7 @@ export class GetGameInfosUseCase
         deck: {
           hero: { blueprintId: heroCard.blueprintId },
           mainDeck: mainDeckCards,
-          runeDeck: runeDeckCards
+          destinyDeck: await this.buildDeckCards(deck.destinyDeck)
         }
       }
     };

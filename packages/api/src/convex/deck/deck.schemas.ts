@@ -11,14 +11,14 @@ export const deckSchemas = {
         copies: v.number()
       })
     ),
-    hero: v.object({
-      cardId: v.optional(v.id('cards'))
-    }),
-    runeDeck: v.array(
+    destinyDeck: v.array(
       v.object({
         cardId: v.id('cards'),
         copies: v.number()
       })
-    )
+    ),
+    hero: v.object({
+      cardId: v.optional(v.id('cards'))
+    })
   }).index('by_owner_id', ['ownerId'])
 };

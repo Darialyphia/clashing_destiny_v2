@@ -3,9 +3,8 @@ import { GAME_PHASES } from '../../game/game.enums';
 import { z } from 'zod';
 
 const schema = defaultInputSchema.extend({
-  kind: z.enum(['draw', 'rune'])
+  type: z.literal('draw')
 });
-
 export class CommitResourceActionInput extends Input<typeof schema> {
   readonly name = 'commitResourceAction';
 
@@ -14,6 +13,8 @@ export class CommitResourceActionInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    await this.player.performResourceAction({ type: this.payload.kind });
+    await this.player.performResourceAction({
+      type: this.payload.type
+    } as any);
   }
 }

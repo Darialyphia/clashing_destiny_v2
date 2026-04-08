@@ -140,6 +140,9 @@ export class AISystem {
         //   score: 100
         // });
       })
+      .with({ state: INTERACTION_STATES.SELECTING_MINION_SLOT }, ctx => {
+        // TODO
+      })
       .exhaustive();
 
     return moves;

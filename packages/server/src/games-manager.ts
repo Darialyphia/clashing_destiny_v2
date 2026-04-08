@@ -155,8 +155,8 @@ export class GamesManager {
           mainDeck: {
             cards: gameInfos.players[0].user.deck.mainDeck.map(c => c.blueprintId)
           },
-          runeDeck: {
-            cards: gameInfos.players[0].user.deck.runeDeck.map(c => c.blueprintId)
+          destinyDeck: {
+            cards: gameInfos.players[0].user.deck.destinyDeck.map(c => c.blueprintId)
           }
         },
         {
@@ -166,8 +166,8 @@ export class GamesManager {
           mainDeck: {
             cards: gameInfos.players[1].user.deck.mainDeck.map(c => c.blueprintId)
           },
-          runeDeck: {
-            cards: gameInfos.players[1].user.deck.runeDeck.map(c => c.blueprintId)
+          destinyDeck: {
+            cards: gameInfos.players[1].user.deck.destinyDeck.map(c => c.blueprintId)
           }
         }
       ]

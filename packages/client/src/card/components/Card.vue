@@ -2,7 +2,6 @@
 import {
   RARITIES,
   type CardKind,
-  type CardTint,
   type Rarity,
   type Job
 } from '@game/engine/src/card/card.enums';
@@ -10,7 +9,6 @@ import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
 import { until, useResizeObserver } from '@vueuse/core';
 import CardGlare from './CardGlare.vue';
-import { match } from 'ts-pattern';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilSheen from './foil/FoilSheen.vue';
 import FoilOil from './foil/FoilOil.vue';
@@ -71,10 +69,6 @@ const rarityBg = computed(() => {
   return assets[`ui/card/rarity-${card.rarity}`].css;
 });
 
-const artFrameImage = computed(() => {
-  return assets[card.art.frame].css;
-});
-
 const artBgImage = computed(() => {
   return assets[card.art.bg].css;
 });
@@ -84,12 +78,8 @@ const artMainImage = computed(() => {
 });
 
 const artFoilImage = computed(() => {
-  if (!card.art.foilArt) return 'transparent';
-  return assets[card.art.foilArt].css;
-});
-
-const artBreakoutImage = computed(() => {
-  return card.art.breakout ? assets[card.art.breakout].css : 'none';
+  if (!card.art.foilMain) return 'transparent';
+  return assets[card.art.foilMain].css;
 });
 
 const root = useTemplateRef('card');
@@ -205,19 +195,6 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
     isEnabled: computed(() => isTiltEnabled && isFoil)
   });
 
-const tintGradient = computed(() => {
-  return match(card.art.tint)
-    .with({ mode: { type: 'linear' } }, tint => {
-      return `linear-gradient(${tint.mode.angle}deg, ${tint.colors.join(
-        ', '
-      )})`;
-    })
-    .with({ mode: { type: 'radial' } }, tint => {
-      return `radial-gradient(circle at center, ${tint.colors.join(', ')})`;
-    })
-    .exhaustive();
-});
-
 const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
@@ -248,16 +225,7 @@ const kindBg = computed(() => {
           <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
           <div class="art-main parallax" style="--parallax-strength: 2" />
-          <div
-            v-if="!isFoil || !card.art.foil.noFrame"
-            class="art-frame parallax"
-            style="--parallax-strength: 0.5"
-          />
-          <div
-            v-if="isFoil && card.art.breakout"
-            class="art-breakout parallax"
-            style="--parallax-strength: 2"
-          />
+
           <div
             v-if="isFoil && card.art.foil.foilLayer"
             class="art-foil parallax"
@@ -453,18 +421,6 @@ const kindBg = computed(() => {
     drop-shadow(2px 0 0 hsl(0 0% 100% / 0.2));
   --glare-mask: url('@/assets/ui/card/card_front.png');
   --foil-mask: url('@/assets/ui/card/card_front.png');
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: v-bind(tintGradient);
-    mix-blend-mode: v-bind('card.art.tint.blendMode');
-    opacity: v-bind('card.art.tint.opacity');
-    mask-image: url('@/assets/ui/card/tint-mask.png');
-    mask-size: cover;
-    z-index: -1;
-    pointer-events: none;
-  }
 }
 
 .card.animated:has(.foil) .parallax {
@@ -532,13 +488,6 @@ const kindBg = computed(() => {
   initial-value: 0;
 }
 
-.art-frame {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artFrameImage);
-  background-size: cover;
-}
-
 @keyframes foil-art-glow {
   to {
     opacity: 0;
@@ -548,8 +497,8 @@ const kindBg = computed(() => {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+        height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
   background: v-bind(artMainImage);
   background-size: cover;
@@ -573,30 +522,20 @@ const kindBg = computed(() => {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
   background: v-bind(artFoilImage);
   background-size: cover;
   --parallax-offset-x: -50%;
 }
-.art-breakout {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
-  background: v-bind(artBreakoutImage);
-  background-size: cover;
-  --parallax-offset-x: -50%;
-}
+
 .art-bg {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
   background: v-bind(artBgImage);
   background-size: cover;
@@ -617,10 +556,10 @@ const kindBg = computed(() => {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+    /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
     height: calc(
       1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
-    );
+    ); */
     translate: -50% 0;
     --parallax-offset-x: -50%;
   }

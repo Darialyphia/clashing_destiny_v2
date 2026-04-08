@@ -30,17 +30,9 @@ const mergedFoilOptions = computed(() => ({
         : blueprint.description,
       art: {
         foil: mergedFoilOptions,
-        dimensions: blueprint.art.default.dimensions,
         bg: `cards/${blueprint.art.default.bg}`,
         main: `cards/${blueprint.art.default.main}`,
-        breakout: blueprint.art.default.breakout
-          ? `cards/${blueprint.art.default.breakout}`
-          : undefined,
-        foilArt: blueprint.art.default.foilArt
-          ? `cards/${blueprint.art.default.foilArt}`
-          : undefined,
-        frame: `ui/card/frames/${blueprint.art.default.frame}`,
-        tint: blueprint.art.default.tint
+        isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,

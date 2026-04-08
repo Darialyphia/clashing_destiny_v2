@@ -33,7 +33,7 @@ const ui = useGameUi();
       />
       <div class="minion-zone" :id="ui.DOMSelectors.minionZone(opponent.id).id">
         <InspectableCard
-          v-for="card in opponentBoard.base.minions"
+          v-for="card in opponentBoard.backRow.slots"
           :key="card"
           :card-id="card"
           side="left"

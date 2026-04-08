@@ -29,6 +29,7 @@ export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
   START_COMBAT_PHASE: 'start_combat_phase',
   END_COMBAT_PHASE: 'end_combat_phase',
+  DECLARE_END_TURN: 'declare_end_turn',
   END_TURN: 'end_turn',
   PLAYER_WON: 'player_won'
 } as const;
@@ -45,7 +46,6 @@ export type CombatStep = Values<typeof COMBAT_STEPS>;
 export const COMBAT_STEP_TRANSITIONS = {
   ATTACKER_DECLARED: 'attacker-declared',
   ATTACKER_TARGET_DECLARED: 'attacker-target-declared',
-  FINISHED: 'finished',
   CANCEL: 'cancel'
 } as const;
 
@@ -71,7 +71,8 @@ export const INTERACTION_STATES = {
   REARRANGING_CARDS: 'rearranging_cards',
   PLAYING_CARD: 'playing_card',
   USING_ABILITY: 'using_ability',
-  ASK_QUESTION: 'ask_question'
+  ASK_QUESTION: 'ask_question',
+  SELECTING_MINION_SLOT: 'selecting_minion_slot'
 } as const;
 export type InteractionStateDict = typeof INTERACTION_STATES;
 export type InteractionState = Values<typeof INTERACTION_STATES>;
@@ -92,6 +93,8 @@ export const INTERACTION_STATE_TRANSITIONS = {
   CANCEL_ASKING_QUESTION: 'cancel_asking_question',
   START_REARRANGING_CARDS: 'start_rearranging_cards',
   COMMIT_REARRANGING_CARDS: 'commit_rearranging_cards',
-  CANCEL_REARRANGING_CARDS: 'cancel_rearranging_cards'
+  CANCEL_REARRANGING_CARDS: 'cancel_rearranging_cards',
+  START_SELECTING_MINION_SLOT: 'start_selecting_minion_slot',
+  COMMIT_SELECTING_MINION_SLOT: 'commit_selecting_minion_slot'
 } as const;
 export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;

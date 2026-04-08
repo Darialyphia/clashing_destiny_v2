@@ -19,31 +19,25 @@ export const testGameBuilder = () => {
       options.overrides = overrides;
       return this;
     },
-    withP1Deck(deck: {
-      main: PlayerOptions['mainDeck']['cards'];
-      destiny: PlayerOptions['runeDeck']['cards'];
-    }) {
+    withP1Deck(deck: { main: PlayerOptions['mainDeck']['cards'] }) {
       // @ts-expect-error
       options.players ??= [];
 
       // options.players![0] = {
       //   mainDeck: { cards: deck.main },
-      //   runeDeck: { cards: deck.destiny },
+      //   destinyDeck: { cards: deck.destiny },
       //   id: 'p1',
       //   name: 'player1'
       // };
       return this;
     },
-    withP2Deck(deck: {
-      main: PlayerOptions['mainDeck']['cards'];
-      destiny: PlayerOptions['runeDeck']['cards'];
-    }) {
+    withP2Deck(deck: { main: PlayerOptions['mainDeck']['cards'] }) {
       // @ts-expect-error
       options.players ??= [];
 
       // options.players![1] = {
       //   mainDeck: { cards: deck.main },
-      //   runeDeck: { cards: deck.destiny },
+      //   destinyDeck: { cards: deck.destiny },
       //   id: 'p2',
       //   name: 'player2'
       // };

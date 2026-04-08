@@ -15,31 +15,15 @@ const analyzeMinions = () => {
 
   // Group by manaCost
   const byManaCost = new Map<number, MinionStats>();
-  // Group by destinyCost
-  const byDestinyCost = new Map<number, MinionStats>();
 
   for (const minion of minions) {
-    if (minion.deckSource === 'mainDeck') {
-      const cost = minion.manaCost;
-      const existing = byManaCost.get(cost) ?? { count: 0, totalAtk: 0, totalMaxHp: 0 };
-      byManaCost.set(cost, {
-        count: existing.count + 1,
-        totalAtk: existing.totalAtk + minion.atk,
-        totalMaxHp: existing.totalMaxHp + minion.maxHp
-      });
-    } else if (minion.deckSource === 'runeDeck') {
-      // const cost = minion.destinyCost;
-      // const existing = byDestinyCost.get(cost) ?? {
-      //   count: 0,
-      //   totalAtk: 0,
-      //   totalMaxHp: 0
-      // };
-      // byDestinyCost.set(cost, {
-      //   count: existing.count + 1,
-      //   totalAtk: existing.totalAtk + minion.atk,
-      //   totalMaxHp: existing.totalMaxHp + minion.maxHp
-      // });
-    }
+    const cost = minion.manaCost;
+    const existing = byManaCost.get(cost) ?? { count: 0, totalAtk: 0, totalMaxHp: 0 };
+    byManaCost.set(cost, {
+      count: existing.count + 1,
+      totalAtk: existing.totalAtk + minion.atk,
+      totalMaxHp: existing.totalMaxHp + minion.maxHp
+    });
   }
 
   console.log('=== MINION STATS ANALYSIS ===\n');
@@ -52,21 +36,6 @@ const analyzeMinions = () => {
     const avgAtk = (stats.totalAtk / stats.count).toFixed(1);
     const avgMaxHp = (stats.totalMaxHp / stats.count).toFixed(1);
     console.log(`Mana Cost ${cost}: ${stats.count} minion(s)\t| ${avgAtk} / ${avgMaxHp}`);
-  }
-
-  console.log('\n--- By Destiny Cost (Destiny Deck) ---');
-  const sortedDestinyCosts = [...byDestinyCost.keys()].sort((a, b) => a - b);
-  if (sortedDestinyCosts.length === 0) {
-    console.log('No destiny deck minions found.');
-  } else {
-    for (const cost of sortedDestinyCosts) {
-      const stats = byDestinyCost.get(cost)!;
-      const avgAtk = (stats.totalAtk / stats.count).toFixed(1);
-      const avgMaxHp = (stats.totalMaxHp / stats.count).toFixed(1);
-      console.log(
-        `Destiny Cost ${cost}: ${stats.count} minion(s)\t| ${avgAtk} / ${avgMaxHp}`
-      );
-    }
   }
 };
 
