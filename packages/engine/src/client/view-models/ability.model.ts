@@ -1,11 +1,10 @@
-import type { SerializedAbility } from '../../card/card-blueprint';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import { PatchApplier } from '../patch-applier';
+import type { SerializedAbility } from '../../card/entities/ability.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
+import { applyPatchToData } from '../utils/apply-patch';
 
 export class AbilityViewModel {
-  private static patchApplier = new PatchApplier();
   private getEntities: () => GameStateEntities;
 
   private getClient: () => GameClient;
@@ -28,11 +27,8 @@ export class AbilityViewModel {
     return this;
   }
 
-  /**
-   * Update using patch operations for granular changes
-   */
-  updateWithPatches(patches: PatchOperation[]) {
-    this.data = AbilityViewModel.patchApplier.applyPatches(this.data, patches);
+  applyPatch(patch: PatchOperation) {
+    applyPatchToData(this.data, patch);
     return this;
   }
 
@@ -44,24 +40,8 @@ export class AbilityViewModel {
     return this.data.id;
   }
 
-  get abilityId() {
-    return this.data.abilityId;
-  }
-
-  get name() {
-    return this.data.name;
-  }
-
   get description() {
     return this.data.description;
-  }
-
-  get isHiddenOnCard() {
-    return this.data.isHiddenOnCard;
-  }
-
-  get shouldExhaust() {
-    return this.data.shouldExhaust;
   }
 
   get canUse() {
@@ -70,9 +50,5 @@ export class AbilityViewModel {
 
   get manaCost() {
     return this.data.manaCost;
-  }
-
-  get targets() {
-    return this.data.targets;
   }
 }

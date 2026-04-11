@@ -1,44 +1,43 @@
-import type { MaybePromise, Serializable } from '@game/shared';
+import type { Serializable } from '@game/shared';
 import type { Game } from '../../game/game';
-import {
-  serializePreResponseTarget,
-  type AbilityBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
-} from '../card-blueprint';
-import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { ArtifactCard } from './artifact.entity';
-import type { HeroCard } from './hero.entity';
-import type { MinionCard } from './minion.entity';
-import { Card } from './card.entity';
-import { Entity } from '../../entity';
-import type { SpellCard } from './spell.entity';
+import type { AbilityBlueprint } from '../card-blueprint';
+import type { AnyCard } from './card.entity';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  ABILITY_EVENTS,
-  AbilityAfterUseEvent,
-  AbilityBeforeUseEvent
-} from '../events/ability.events';
+import { EntityWithModifiers } from '../../utils/entity-with-modifiers';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard;
-
-export type AbilityInterceptors<T extends AbilityOwner> = {
-  manaCost: Interceptable<number, Ability<T>>;
+export type SerializedAbility = {
+  entityType: 'ability';
+  id: string;
+  canUse: boolean;
+  description: string;
+  cooldown: number;
+  manaCost: number;
+  lastUsedAt: number | null;
 };
 
-export class Ability<T extends AbilityOwner>
-  extends Entity<AbilityInterceptors<T>>
+export type AbilityInterceptor = {
+  manaCost: Interceptable<number>;
+  canUse: Interceptable<boolean>;
+  cooldown: Interceptable<number>;
+  shouldSwitchInitiativeAfterUse: Interceptable<boolean>;
+};
+
+export class Ability<T extends AnyCard>
+  extends EntityWithModifiers<AbilityInterceptor>
   implements Serializable<SerializedAbility>
 {
-  _isSealed = false;
+  private lastUsedAt: number | null = null;
 
   constructor(
-    private game: Game,
-    readonly card: T,
-    public blueprint: AbilityBlueprint<T, PreResponseTarget>
+    game: Game,
+    private card: T,
+    public blueprint: AbilityBlueprint<T>
   ) {
-    super(`${card.id}-${blueprint.id}`, {
-      manaCost: new Interceptable()
+    super(`${card.id}-ability-${blueprint.id}`, game, {
+      manaCost: new Interceptable(),
+      canUse: new Interceptable(),
+      cooldown: new Interceptable(),
+      shouldSwitchInitiativeAfterUse: new Interceptable()
     });
   }
 
@@ -46,93 +45,58 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.id;
   }
 
-  get shouldExhaust() {
-    return this.blueprint.shouldExhaust;
+  get manaCost() {
+    return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {});
   }
 
-  get manaCost(): number {
-    return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
+  get cooldown() {
+    return this.interceptors.cooldown.getValue(
+      this.blueprint.getCooldown(this.game, this.card),
+      {}
+    );
   }
 
-  get canUseDuringChain() {
-    // Speed system removed - all abilities can now be used during chain
-    return true;
+  get isOnCooldown() {
+    if (this.lastUsedAt === null) {
+      return false;
+    }
+    return this.lastUsedAt + this.cooldown > this.game.turnSystem.elapsedTurns;
   }
 
   get canUse() {
-    if (this._isSealed) return false;
-
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.COMBAT,
-      GAME_PHASES.END
-    ];
-
-    const exhaustCondition = this.shouldExhaust ? !this.card.isExhausted : true;
-    const timingCondition = this.game.interaction.isInteractive(this.card.player);
-
-    return (
-      this.card.player.cardManager.hand.length >= this.manaCost &&
-      authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
-      timingCondition &&
-      exhaustCondition &&
-      this.blueprint.canUse(this.game, this.card)
+    return this.interceptors.canUse.getValue(
+      this.blueprint.canUse(this.game, this.card) &&
+        this.card.player.canSpendMana(this.blueprint.manaCost) &&
+        !this.isOnCooldown,
+      {}
     );
   }
 
-  private async resolveEffect() {
-    await this.game.emit(
-      ABILITY_EVENTS.ABILITY_BEFORE_USE,
-      new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
-    );
-    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id) ?? [];
-    await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
-    abilityTargets.forEach(target => {
-      if (target instanceof Card) {
-        target.clearTargetedBy({ type: 'card', card: this.card });
-      }
-    });
-    this.card.abilityTargets.delete(this.blueprint.id);
-
-    await this.game.emit(
-      ABILITY_EVENTS.ABILITY_AFTER_USE,
-      new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
-    );
+  get shouldSwitchInitiativeAfterUse() {
+    return this.interceptors.shouldSwitchInitiativeAfterUse.getValue(true, {});
   }
 
-  async use(onResolved?: () => MaybePromise<void>) {
+  async use() {
+    this.lastUsedAt = this.game.turnSystem.elapsedTurns;
+    await this.card.player.spendMana(this.manaCost);
     const targets = await this.blueprint.getTargets(this.game, this.card);
-    this.card.abilityTargets.set(this.blueprint.id, targets);
+    const aoe = this.blueprint.getAoe(this.game, this.card, targets);
 
-    if (this.shouldExhaust) {
-      await this.card.exhaust();
-    }
-
-    await this.resolveEffect();
-    await onResolved?.();
-  }
-
-  seal() {
-    this._isSealed = true;
-  }
-
-  unseal() {
-    this._isSealed = false;
+    await this.blueprint.onResolve(this.game, this.card, {
+      targets,
+      aoe
+    });
   }
 
   serialize(): SerializedAbility {
     return {
-      id: this.id,
       entityType: 'ability',
-      abilityId: this.abilityId,
+      id: this.id,
       canUse: this.canUse,
       description: this.blueprint.description,
-      name: this.blueprint.label,
+      cooldown: this.cooldown,
       manaCost: this.manaCost,
-      isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
-      shouldExhaust: this.shouldExhaust,
-      targets:
-        this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
+      lastUsedAt: this.lastUsedAt
     };
   }
 }

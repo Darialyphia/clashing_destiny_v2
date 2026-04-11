@@ -67,10 +67,9 @@ export class Tutorial {
     const result = step.validate(input);
 
     if (result.status === 'success') {
-      await this.game.dispatch(input);
+      void this.game.dispatch(input);
       const next = step.next(input);
       await step.onSuccess?.(this.game, input, next ? this.steps[next] : null);
-
       if (isDefined(next)) {
         this.currentStepId = next;
         await this.currentStep.onEnter?.(this.game, this.currentStep);

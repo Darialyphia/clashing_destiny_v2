@@ -1,33 +1,68 @@
-import { KEYWORDS } from '../../card/card-keywords';
-import { CARD_LOCATIONS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
-import type { MinionCard } from '../../card/entities/minion.entity';
+import type { MinionCard } from '../../card/entities/minion-card.entity';
 import type { Game } from '../../game/game';
-import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
-import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
+import { KEYWORDS } from '../../card/card-keywords';
+import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
+import type { Unit } from '../../unit/unit.entity';
+import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { UNIT_EVENTS } from '../../unit/unit.enums';
+import type { UnitAttackEvent } from '../../unit/unit-events';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
+import { TogglableModifierMixin } from '../mixins/togglable.mixin';
+import type { Nullable } from '@game/shared';
 
-export class StealthModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard, options: { mixins?: ModifierMixin<T>[] }) {
+export class StealthModifier extends Modifier<MinionCard> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options?: { mixins: ModifierMixin<MinionCard>[] }
+  ) {
     super(KEYWORDS.STEALTH.id, game, source, {
-      name: KEYWORDS.STEALTH.name,
-      description: KEYWORDS.STEALTH.description,
-      icon: 'keyword-stealth',
-      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.STEALTH),
+        new UnitEffectModifierMixin(game, {
+          getModifier: () => new StealthUnitModifier(game, source, {})
+        }),
+        ...(options?.mixins ?? [])
+      ]
+    });
+  }
+}
+
+export class StealthUnitModifier extends Modifier<Unit> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: {
+      mixins?: ModifierMixin<Unit>[];
+      modifierType?: string;
+      isRemovable?: boolean;
+    }
+  ) {
+    super(options.modifierType ?? KEYWORDS.STEALTH.id, game, source, {
+      name: KEYWORDS.STEALTH.name,
+      description: KEYWORDS.STEALTH.description,
+      icon: 'icons/keyword-stealth',
+      mixins: [
         new UnitInterceptorModifierMixin(game, {
-          key: 'canBeAttacked',
-          interceptor: value => {
-            if (!value) return value;
-            return (
-              this.target.isExhausted && this.target.location === CARD_LOCATIONS.BOARD
-            );
+          key: 'canBeAttackTarget',
+          interceptor: val => {
+            if (!val) return val;
+            return this.target.isExhausted;
           }
         }),
-        ...(options.mixins || [])
+        new UnitInterceptorModifierMixin(game, {
+          key: 'canBeCardTarget',
+          interceptor: (val, ctx) => {
+            if (!val) return val;
+            if (ctx.card.player.equals(this.target.player)) return true;
+            return this.target.isExhausted;
+          }
+        }),
+        ...(options.mixins ?? [])
       ]
     });
   }

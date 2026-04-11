@@ -1,8 +1,6 @@
-import { isFunction } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
-import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -12,22 +10,21 @@ export class SimpleManacostModifier<T extends AnyCard> extends Modifier<T> {
     game: Game,
     card: AnyCard,
     options: {
-      amount: number | (() => number);
+      amount: number;
       mixins?: ModifierMixin<T>[];
+      isRemovable?: boolean;
     }
   ) {
     super(modifierType, game, card, {
+      isRemovable: options.isRemovable,
       mixins: [
-        new RemoveOnDestroyedMixin(game),
+        // @ts-expect-error
         new CardInterceptorModifierMixin(game, {
           key: 'manaCost',
           interceptor: value => {
             if (value === null) return value;
 
-            return Math.max(
-              0,
-              value + (isFunction(options.amount) ? options.amount() : options.amount)
-            );
+            return Math.max(0, value + options.amount);
           }
         }),
         ...(options.mixins ?? [])

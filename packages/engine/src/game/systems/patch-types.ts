@@ -1,15 +1,17 @@
 import type { Config } from '../../config';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
-import type { SerializedBoard } from '../../board/board-side.entity';
-import type { SerializedMinionCard } from '../../card/entities/minion.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
-import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
+
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
-import type { SerializedAbility } from '../../card/card-blueprint';
-import type { SerializedEntity } from './game-serializer';
+import type { SerializedBoard } from '../../board/board.system';
+import type { SerializedCell } from '../../board/entities/board-cell.entity';
+import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
+import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
+import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
+import type { SerializedTile } from '../../tile/tile.entity';
+import type { SerializedUnit } from '../../unit/unit.entity';
+import type { SerializedAbility } from '../../card/entities/ability.entity';
 
 /**
  * JSON Patch operations (RFC 6902 inspired)
@@ -40,26 +42,34 @@ export interface RemovePatch {
 export type EntityPatchMap = Record<string, PatchOperation[]>;
 
 /**
- * New snapshot diff format using patches
+ * Serialized entity union type
  */
+export type SerializedEntity =
+  | SerializedMinionCard
+  | SerializedSpellCard
+  | SerializedArtifactCard
+  | SerializedPlayer
+  | SerializedModifier
+  | SerializedCell
+  | SerializedUnit
+  | SerializedTile
+  | SerializedAbility;
+
 export type PatchBasedSnapshotDiff = {
-  // Entities that changed - now as patches instead of partial objects
   entityPatches: EntityPatchMap;
 
-  // Entities added (send full serialized data for these)
   addedEntities: Record<string, SerializedEntity>;
-
-  // Entity IDs that were removed
   removedEntities: string[];
 
-  // Top-level state changes (these are infrequent, so keep as partial)
+  config: Partial<Config>;
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  board: SerializedBoard;
+  board: Partial<SerializedBoard>;
   turnCount: number;
-  currentPlayer: string;
+  turnPlayer: string;
   players: string[];
-  config: Partial<Config>;
+  tiles: string[];
+  units: string[];
 };
 
 /**

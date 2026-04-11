@@ -1,14 +1,12 @@
-import type { Modifier } from '../modifier.entity';
+import type { Modifier, ModifierTarget } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
-import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 
-export class DurationModifierMixin<T extends AnyCard = AnyCard> extends ModifierMixin<T> {
+export class DurationModifierMixin<T extends ModifierTarget> extends ModifierMixin<T> {
   private modifier!: Modifier<T>;
 
   private initialDuration: number;
-
   constructor(
     game: Game,
     private duration = 1
@@ -20,7 +18,7 @@ export class DurationModifierMixin<T extends AnyCard = AnyCard> extends Modifier
 
   async onTurnEnd() {
     this.duration--;
-    if (this.duration <= 0) {
+    if (this.duration === 0) {
       await this.modifier.target.modifiers.remove(this.modifier.modifierType);
     }
   }
@@ -34,7 +32,7 @@ export class DurationModifierMixin<T extends AnyCard = AnyCard> extends Modifier
     this.game.off(GAME_EVENTS.TURN_END, this.onTurnEnd);
   }
 
-  async onReapplied() {
+  onReapplied(): void {
     this.duration = this.initialDuration;
   }
 }

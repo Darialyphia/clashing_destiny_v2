@@ -1,0 +1,384 @@
+import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
+import type { SerializedCard } from '../../card/entities/card.entity';
+import type { SerializedHeroCard } from '../../card/entities/hero.entity';
+import type { SerializedMinionCard } from '../../card/entities/minion.entity';
+import type { SerializedSpellCard } from '../../card/entities/spell.entity';
+import type { GameClient, GameStateEntities } from '../client';
+import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
+import type { PlayerViewModel } from './player.model';
+import type { ModifierViewModel } from './modifier.model';
+import type { GameClientState } from '../controllers/state-controller';
+import { PlayCardAction } from '../actions/play-card';
+import { DeclareAttackAction } from '../actions/declare-attack';
+import { CARD_KINDS, type CardKind, type Job } from '../../card/card.enums';
+import { UseAbilityAction } from '../actions/use-ability';
+import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
+import { AbilityViewModel } from './ability.model';
+import { PatchApplier } from '../patch-applier';
+import type { PatchOperation } from '../../game/systems/patch-types';
+
+type CardData =
+  | SerializedSpellCard
+  | SerializedArtifactCard
+  | SerializedHeroCard
+  | SerializedMinionCard;
+
+export type CardActionRule = {
+  id: string;
+  predicate: (card: CardViewModel, state: GameClientState) => boolean;
+  getLabel: (card: CardViewModel) => string;
+  handler: (card: CardViewModel) => void;
+};
+
+export class CardViewModel {
+  private static patchApplier = new PatchApplier();
+  private getEntities: () => GameStateEntities;
+
+  private getClient: () => GameClient;
+
+  constructor(
+    private data: SerializedCard,
+    entityDictionary: GameStateEntities,
+    client: GameClient
+  ) {
+    this.getEntities = () => entityDictionary;
+    this.getClient = () => client;
+  }
+
+  equals(unit: CardViewModel | SerializedCard) {
+    return this.id === unit.id;
+  }
+
+  update<T extends CardKind>(data: Partial<CardData & { kind: T }>) {
+    this.data = Object.assign({}, this.data, data);
+    return this;
+  }
+
+  /**
+   * Update using patch operations for granular changes
+   */
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = CardViewModel.patchApplier.applyPatches(this.data, patches);
+    return this;
+  }
+
+  clone() {
+    return new CardViewModel(this.data, this.getEntities(), this.getClient());
+  }
+
+  get id() {
+    return this.data.id;
+  }
+
+  get name() {
+    return this.data.name;
+  }
+
+  get description() {
+    return this.data.description;
+  }
+
+  get art() {
+    return {
+      isFullArt: this.data.art.isFullArt,
+      dimensions: 'dimensions' in this.data.art ? this.data.art.dimensions : undefined,
+      foil: this.data.art.foil,
+      main: `cards/${this.data.art.main}`,
+      bg: `cards/${this.data.art.bg}`,
+      foilBg: this.data.art.foilBg ? `cards/${this.data.art.foilBg}` : undefined,
+      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined
+    };
+  }
+
+  get isSelected() {
+    return this.getClient().ui.selectedCard?.equals(this) ?? false;
+  }
+
+  get isRevealed() {
+    return this.data.isRevealed;
+  }
+
+  get kind() {
+    return this.data.kind;
+  }
+
+  get rarity() {
+    return this.data.rarity;
+  }
+
+  get keywords() {
+    return (this.data.keywords ?? []) as string[];
+  }
+
+  get countdown() {
+    if ('countdown' in this.data) {
+      return this.data.countdown as number;
+    }
+
+    return null;
+  }
+
+  get maxCountdown() {
+    if ('maxCountdown' in this.data) {
+      return this.data.maxCountdown as number;
+    }
+
+    return null;
+  }
+
+  get manaCost() {
+    if ('manaCost' in this.data) {
+      return this.data.manaCost as number;
+    }
+    return null;
+  }
+
+  get baseManaCost() {
+    if ('baseManaCost' in this.data) {
+      return this.data.baseManaCost as number;
+    }
+    return null;
+  }
+
+  get jobs() {
+    if ('jobs' in this.data) {
+      return this.data.jobs as Job[];
+    }
+    return [];
+  }
+
+  get unplayableReason() {
+    return this.data.unplayableReason;
+  }
+
+  get location() {
+    return this.data.location;
+  }
+
+  get atk() {
+    if ('atk' in this.data) {
+      return this.data.atk as number;
+    }
+
+    if ('atkBonus' in this.data) {
+      return this.data.atkBonus as number | null;
+    }
+
+    return null;
+  }
+
+  get baseAtk() {
+    if ('baseAtk' in this.data) {
+      return this.data.baseAtk as number;
+    }
+    return null;
+  }
+
+  get maxHp() {
+    if ('maxHp' in this.data) {
+      return this.data.maxHp as number;
+    }
+
+    return null;
+  }
+
+  get baseMaxHp() {
+    if ('baseMaxHp' in this.data) {
+      return this.data.baseMaxHp as number;
+    }
+
+    return null;
+  }
+
+  get hp() {
+    if ('remainingHp' in this.data) {
+      return this.data.remainingHp as number;
+    }
+
+    return null;
+  }
+
+  get level() {
+    if ('level' in this.data) {
+      return this.data.level as number;
+    }
+    if ('minLevel' in this.data) {
+      return this.data.minLevel as number;
+    }
+
+    return null;
+  }
+
+  get spellpower() {
+    if ('spellPower' in this.data) {
+      return this.data.spellPower as number;
+    }
+
+    return null;
+  }
+
+  get baseSpellpower() {
+    if ('baseSpellPower' in this.data) {
+      return this.data.baseSpellPower as number;
+    }
+    return null;
+  }
+
+  get durability() {
+    if ('durability' in this.data) {
+      return this.data.durability as number;
+    }
+
+    return null;
+  }
+
+  get canPlay() {
+    return this.data.canPlay;
+  }
+
+  get potentialAttackTargets() {
+    if ('potentialAttackTargets' in this.data) {
+      return (
+        this.data.potentialAttackTargets as SerializedMinionCard['potentialAttackTargets']
+      ).map(targetId => {
+        return this.getEntities()[targetId] as CardViewModel;
+      });
+    }
+
+    return [];
+  }
+
+  get canAttack() {
+    return (
+      this.player.id === this.getClient().state.currentPlayer &&
+      this.potentialAttackTargets.length > 0
+    );
+  }
+
+  get canBlock() {
+    if ('canBlock' in this.data) {
+      return this.data.canBlock as boolean;
+    }
+    return false;
+  }
+
+  get canRetaliate() {
+    if ('canRetaliate' in this.data) {
+      return this.data.canRetaliate as boolean;
+    }
+    return false;
+  }
+
+  get canBeTargeted() {
+    const client = this.getClient();
+    const state = client.stateManager.state;
+    const canSelect =
+      state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
+      state.interaction.ctx.elligibleCards.some(id => id === this.id) &&
+      client.getActivePlayerId() === client.playerId;
+
+    const canAttack =
+      state.interaction.state === INTERACTION_STATES.IDLE &&
+      state.phase.state === GAME_PHASES.COMBAT &&
+      state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
+      state.phase.ctx.potentialTargets.some(id => id === this.id) &&
+      client.getActivePlayerId() === client.playerId;
+
+    return canSelect || canAttack;
+  }
+
+  get isExhausted() {
+    return this.data.isExhausted;
+  }
+
+  get indexInHand() {
+    if (this.data.location !== 'hand') {
+      return null;
+    }
+
+    return this.player.hand.findIndex(card => card.cardId === this.id);
+  }
+
+  get preResponseTargets() {
+    if ('preResponseTargets' in this.data) {
+      return this.data.preResponseTargets as SerializedPreResponseTarget[];
+    }
+
+    return null;
+  }
+
+  get isAttacking() {
+    const relevantKinds: CardKind[] = [CARD_KINDS.MINION, CARD_KINDS.HERO];
+    if (!relevantKinds.includes(this.kind)) {
+      return false;
+    }
+    const state = this.getClient().state;
+
+    return (
+      state.phase.state === GAME_PHASES.COMBAT && state.phase.ctx.attacker === this.id
+    );
+  }
+
+  get canMove() {
+    if ('canMove' in this.data) {
+      return this.data.canMove as boolean;
+    }
+
+    return false;
+  }
+
+  get player() {
+    return this.getEntities()[this.data.player] as PlayerViewModel;
+  }
+
+  get modifiers() {
+    return this.data.modifiers.map(modifierId => {
+      return this.getEntities()[modifierId] as ModifierViewModel;
+    });
+  }
+
+  get position() {
+    if ('position' in this.data) {
+      return this.data.position as SerializedMinionCard['position'];
+    }
+
+    return null;
+  }
+
+  play() {
+    const hand = this.player.hand;
+
+    const index = hand.findIndex(card => card.cardId === this.id);
+    if (index === -1) return;
+
+    this.getClient().declarePlayCard(this);
+  }
+
+  get actions(): CardActionRule[] {
+    const actions = [
+      new PlayCardAction(this.getClient()),
+      new DeclareAttackAction(this.getClient()),
+      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
+    ].filter(rule => rule.predicate(this));
+
+    return actions;
+  }
+
+  get abilities() {
+    if ('abilities' in this.data) {
+      return (this.data.abilities as string[]).map(
+        ability => this.getEntities()[ability] as AbilityViewModel
+      );
+    }
+
+    return [];
+  }
+
+  cancelPlay() {
+    const state = this.getClient().state;
+    if (state.phase.state !== GAME_PHASES.PLAYING_CARD) return;
+    if (state.phase.ctx.card !== this.id) return;
+    if (!state.phase.ctx.canCancel) return;
+    this.getClient().cancelPlayCard();
+  }
+}

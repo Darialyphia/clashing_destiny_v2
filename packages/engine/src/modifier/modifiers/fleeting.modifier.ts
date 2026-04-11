@@ -5,7 +5,6 @@ import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
-import { UntilEventModifierMixin } from '../mixins/until-event';
 import { Modifier } from '../modifier.entity';
 
 export class FleetingModifier<T extends AnyCard> extends Modifier<T> {
@@ -13,19 +12,15 @@ export class FleetingModifier<T extends AnyCard> extends Modifier<T> {
     super(KEYWORDS.FLEETING.id, game, source, {
       name: KEYWORDS.FLEETING.name,
       description: KEYWORDS.FLEETING.description,
-      isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.FLEETING),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.TURN_END,
           handler: async () => {
             if (this.target.location === CARD_LOCATIONS.HAND) {
-              this.target.removeFromCurrentLocation();
+              await this.target.removeFromCurrentLocation();
             }
           }
-        }),
-        new UntilEventModifierMixin(game, {
-          eventName: GAME_EVENTS.TURN_START
         })
       ]
     });

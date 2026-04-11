@@ -1,76 +1,43 @@
-import type { Values } from '@game/shared';
-import type { MinionCard, SerializedMinionCard } from '../entities/minion.entity';
+import type { BoardCell } from '../../board/entities/board-cell.entity';
+import type { SerializedUnit, Unit } from '../../unit/unit.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { BoardSlot, SerializedBoardSlot } from '../../board/board-slot.entity';
+import type { MinionCard, SerializedMinionCard } from '../entities/minion-card.entity';
+import type { Point, Values } from '@game/shared';
 
 export const MINION_EVENTS = {
-  MINION_SUMMONED: 'minion.summoned',
-  MINION_BEFORE_HEAL: 'minion.before-heal',
-  MINION_AFTER_HEAL: 'minion.after-heal',
-  MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability',
-  MINION_BEFORE_MOVE: 'minion.before-move',
-  MINION_AFTER_MOVE: 'minion.after-move'
+  MINION_BEFORE_SUMMON: 'minion:before-summon',
+  MINION_AFTER_SUMMON: 'minion:after-summon'
 } as const;
-export type MinionEvents = Values<typeof MINION_EVENTS>;
+export type MinionEvent = Values<typeof MINION_EVENTS>;
 
-export class MinionCardHealEvent extends TypedSerializableEvent<
-  { card: MinionCard; amount: number },
-  { card: SerializedMinionCard; amount: number }
+export class MinionBeforeSummonedEvent extends TypedSerializableEvent<
+  { card: MinionCard; cell: BoardCell },
+  { card: SerializedMinionCard; position: Point }
 > {
   serialize() {
     return {
       card: this.data.card.serialize(),
-      amount: this.data.amount
+      position: this.data.cell.position.serialize()
     };
   }
 }
 
-export class MinionUsedAbilityEvent extends TypedSerializableEvent<
-  { card: MinionCard; abilityId: string },
-  { card: SerializedMinionCard; abilityId: string }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize(),
-      abilityId: this.data.abilityId
-    };
-  }
-}
-
-export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard },
-  { card: SerializedMinionCard }
-> {
-  serialize() {
-    return {
-      card: this.data.card.serialize()
-    };
-  }
-}
-
-export class MinionMoveEvent extends TypedSerializableEvent<
-  { card: MinionCard; from: BoardSlot; to: BoardSlot },
+export class MinionAfterSummonedEvent extends TypedSerializableEvent<
+  { card: MinionCard; unit: Unit },
   {
     card: SerializedMinionCard;
-    from: SerializedBoardSlot;
-    to: SerializedBoardSlot;
+    unit: SerializedUnit;
   }
 > {
   serialize() {
     return {
       card: this.data.card.serialize(),
-      from: this.data.from.serialize(),
-      to: this.data.to.serialize()
+      unit: this.data.unit.serialize()
     };
   }
 }
-export type MinionCardEventMap = {
-  [MINION_EVENTS.MINION_BEFORE_USE_ABILITY]: MinionUsedAbilityEvent;
-  [MINION_EVENTS.MINION_AFTER_USE_ABILITY]: MinionUsedAbilityEvent;
-  [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
-  [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
-  [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
-  [MINION_EVENTS.MINION_BEFORE_MOVE]: MinionMoveEvent;
-  [MINION_EVENTS.MINION_AFTER_MOVE]: MinionMoveEvent;
+
+export type MinionEventMap = {
+  [MINION_EVENTS.MINION_BEFORE_SUMMON]: MinionBeforeSummonedEvent;
+  [MINION_EVENTS.MINION_AFTER_SUMMON]: MinionAfterSummonedEvent;
 };

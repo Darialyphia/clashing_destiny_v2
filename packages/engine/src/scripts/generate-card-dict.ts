@@ -58,7 +58,7 @@ const generateCardsFile = () => {
 
   export const collectableCards = ${JSON.stringify(collectableCards, null, 2)} as const;
 
-  type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
+  type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; }>;
   export const cardsBySet: Record<string, CardSet> = ${JSON.stringify(cardsBySet, null, 2)};
 
   export const cardShortIds: Record<string, number> = ${JSON.stringify(updatedCardShortIds, null, 2)} as const;

@@ -13,12 +13,6 @@ export class GameNotPausedError extends InputError {
   }
 }
 
-export class GameAlreadyPausedError extends InputError {
-  constructor() {
-    super('Game is already paused');
-  }
-}
-
 export class InvalidInteractionStateError extends InputError {
   constructor() {
     super('Invalid interaction state');
@@ -40,6 +34,12 @@ export class TooManyMulliganedCardsError extends InputError {
 export class NotCurrentPlayerError extends InputError {
   constructor() {
     super('You are not the active player.');
+  }
+}
+
+export class CannotUseResourceActionError extends InputError {
+  constructor() {
+    super('You cannot use anymore resource action this turn.');
   }
 }
 
@@ -79,15 +79,15 @@ export class UnknownUnitError extends InputError {
   }
 }
 
-export class UnknownCardError extends Error {
-  constructor(cardId: string) {
-    super(`Unknown card id: ${cardId}`);
+export class UnknownShrineError extends InputError {
+  constructor(shrineId: string) {
+    super(`Unknown shrine id: ${shrineId}`);
   }
 }
 
-export class UnknownAbilityError extends Error {
-  constructor(cardId: string, abilityId: string) {
-    super(`Unknown ability id: ${abilityId} on card id: ${cardId}`);
+export class UnknownCardError extends Error {
+  constructor(cardId: string) {
+    super(`Unknown card id: ${cardId}`);
   }
 }
 
@@ -112,6 +112,12 @@ export class IllegalTalentUnlockError extends InputError {
 export class IllegalAttackTargetError extends InputError {
   constructor() {
     super(`Cannot attack at position this target`);
+  }
+}
+
+export class IllegalCaptureError extends InputError {
+  constructor() {
+    super(`Cannot capture this shrine`);
   }
 }
 
@@ -175,12 +181,6 @@ export class IllegalAttackerError extends InputError {
   }
 }
 
-export class IllegalCounterAttackError extends InputError {
-  constructor() {
-    super('Cannot counterattack with this unit');
-  }
-}
-
 export class IllegalBlockerError extends InputError {
   constructor() {
     super('Cannot block with this unit');
@@ -205,8 +205,8 @@ export class NoOngoingEffectChainsError extends InputError {
   }
 }
 
-export class IllegalResourceActionError extends InputError {
+export class CardNotOwnedError extends InputError {
   constructor() {
-    super('Cannot perform this resource action');
+    super('You do not own this card.');
   }
 }

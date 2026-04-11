@@ -1,0 +1,90 @@
+import { assert, type Nullable } from '@game/shared';
+import type { AnyCard } from '../../card/entities/card.entity';
+import type { Game } from '../game';
+import type { Player } from '../../player/player.entity';
+import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
+import { InvalidPlayerError } from '../game-error';
+
+export type AskQuestionContextOptions = {
+  questionId: string;
+  player: Player;
+  source: AnyCard;
+  choices: Array<{
+    id: string;
+    label: string;
+    aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
+  }>;
+  label: string;
+  timeoutFallback: string;
+};
+export class AskQuestionContext {
+  static async create(game: Game, options: AskQuestionContextOptions) {
+    const instance = new AskQuestionContext(game, options);
+    await instance.init();
+    return instance;
+  }
+
+  private selectedChoice: Nullable<{ id: string; label: string }> = null;
+
+  private choices: Array<{
+    id: string;
+    label: string;
+    aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
+  }> = [];
+
+  readonly player: Player;
+
+  private label: string;
+
+  private source: AnyCard;
+
+  private questionId!: string;
+
+  private timeoutFallback: string;
+
+  private constructor(
+    private game: Game,
+    options: AskQuestionContextOptions
+  ) {
+    this.choices = options.choices;
+    this.player = options.player;
+    this.label = options.label;
+    this.questionId = options.questionId;
+    this.source = options.source;
+    this.timeoutFallback = options.timeoutFallback;
+  }
+
+  async init() {}
+
+  serialize() {
+    return {
+      questionId: this.questionId,
+      player: this.player.id,
+      source: this.source.id,
+      choices: this.choices.map(choice => ({ id: choice.id, label: choice.label })),
+      label: this.label
+    };
+  }
+
+  commit(player: Player, id: string | null) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+
+    this.selectedChoice = this.choices.find(
+      choice => choice.id === (id ?? this.timeoutFallback)
+    );
+    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION);
+    this.game.interaction.onInteractionEnd();
+    this.game.inputSystem.unpause(this.selectedChoice!.id);
+  }
+
+  cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION);
+    this.game.interaction.onInteractionEnd();
+    this.game.inputSystem.unpause([]);
+  }
+
+  getChoices() {
+    return [...this.choices];
+  }
+}

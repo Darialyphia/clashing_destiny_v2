@@ -133,6 +133,7 @@ const classes = computed(() => {
     class="game-card-container"
     :data-game-card="card.id"
     :data-flip-id="`card_${card.id}`"
+    :id="ui.DOMSelectors.cardInHand(card.id, card.player.id).id"
   >
     <CardActionsPopover
       :card-id="card.id"

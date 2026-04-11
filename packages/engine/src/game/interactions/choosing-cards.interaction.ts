@@ -1,26 +1,21 @@
-import { assert, isDefined } from '@game/shared';
+import { assert } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
-import {
-  NotEnoughCardsError,
-  TooManyCardsError,
-  InvalidPlayerError
-} from '../game-error';
 import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
+import {
+  InvalidPlayerError,
+  NotEnoughCardsError,
+  TooManyCardsError
+} from '../game-error';
 
-export type ChoosingCardsContextOptions = {
+type ChoosingCardsContextOptions = {
   player: Player;
-  choices: Array<{
-    card: AnyCard;
-    aiHints: {
-      shouldPick: (game: Game, player: Player) => number;
-    };
-  }>;
+  choices: AnyCard[];
   minChoiceCount: number;
   maxChoiceCount: number;
   label: string;
-  timeoutFallback: AnyCard[];
+  source: AnyCard;
 };
 export class ChoosingCardsContext {
   static async create(game: Game, options: ChoosingCardsContextOptions) {
@@ -31,22 +26,17 @@ export class ChoosingCardsContext {
 
   private selectedCards: AnyCard[] = [];
 
-  private choices: Array<{
-    card: AnyCard;
-    aiHints: {
-      shouldPick: (game: Game, player: Player) => number;
-    };
-  }> = [];
+  private choices: AnyCard[] = [];
 
-  readonly minChoiceCount: number;
+  private minChoiceCount: number;
 
-  readonly maxChoiceCount: number;
+  private maxChoiceCount: number;
 
   readonly player: Player;
 
   private label: string;
 
-  private timeoutFallback: AnyCard[];
+  public source: AnyCard;
 
   private constructor(
     private game: Game,
@@ -57,7 +47,7 @@ export class ChoosingCardsContext {
     this.maxChoiceCount = options.maxChoiceCount;
     this.player = options.player;
     this.label = options.label;
-    this.timeoutFallback = options.timeoutFallback;
+    this.source = options.source;
   }
 
   async init() {}
@@ -65,36 +55,37 @@ export class ChoosingCardsContext {
   serialize() {
     return {
       player: this.player.id,
-      choices: this.choices.map(choice => choice.card.id),
+      choices: this.choices.map(card => card.id),
       minChoiceCount: this.minChoiceCount,
       maxChoiceCount: this.maxChoiceCount,
       label: this.label
     };
   }
 
-  commit(player: Player, indices: number[] | null) {
+  commit(player: Player, indices: number[]) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    if (isDefined(indices)) {
-      assert(
-        indices.length >= this.minChoiceCount,
-        new NotEnoughCardsError(this.minChoiceCount, indices.length)
-      );
-      assert(
-        indices.length <= this.maxChoiceCount,
-        new TooManyCardsError(this.maxChoiceCount, indices.length)
-      );
 
-      this.selectedCards.push(...indices.map(index => this.choices[index].card));
-    } else {
-      this.selectedCards.push(...this.timeoutFallback);
-    }
+    assert(
+      indices.length >= this.minChoiceCount,
+      new NotEnoughCardsError(this.minChoiceCount, indices.length)
+    );
+    assert(
+      indices.length <= this.maxChoiceCount,
+      new TooManyCardsError(this.maxChoiceCount, indices.length)
+    );
+
+    const selectedCards = indices.map(index => this.choices[index]);
+    this.selectedCards.push(...selectedCards);
 
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS);
     this.game.interaction.onInteractionEnd();
     this.game.inputSystem.unpause(this.selectedCards);
   }
 
-  getChoices() {
-    return [...this.choices];
+  cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS);
+    this.game.interaction.onInteractionEnd();
+    this.game.inputSystem.unpause([]);
   }
 }

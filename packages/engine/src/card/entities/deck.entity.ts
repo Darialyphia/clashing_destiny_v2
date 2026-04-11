@@ -3,9 +3,9 @@ import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { shuffleArray } from '@game/shared';
 import type { Game } from '../../game/game';
 import { nanoid } from 'nanoid';
+import { EntityWithModifiers } from '../../utils/entity-with-modifiers';
 import type { AnyCard, SerializedCard } from './card.entity';
 import type { Player } from '../../player/player.entity';
-import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 
 export const DECK_EVENTS = {
   BEFORE_DRAW: 'before_draw',
@@ -76,12 +76,37 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
     return this.draw(1)[0];
   }
 
+  randomReplace(replacedCard: TCard) {
+    let replacement: TCard;
+    let index: number;
+
+    const shouldForceDifferentCard = this.cards.some(
+      c => c.blueprintId !== replacedCard.blueprintId
+    );
+
+    do {
+      index = this.game.rngSystem.nextInt(this.cards.length - 1);
+      replacement = this.cards[index];
+    } while (
+      shouldForceDifferentCard &&
+      replacement.blueprintId === replacedCard.blueprintId
+    );
+
+    this.cards[index] = replacedCard;
+    return replacement;
+  }
+
   addToTop(card: TCard) {
     this.cards.unshift(card);
   }
 
   addToBottom(card: TCard) {
     this.cards.push(card);
+  }
+
+  addAtRandomPosition(card: TCard) {
+    const index = this.game.rngSystem.nextInt(this.cards.length);
+    this.cards.splice(index, 0, card);
   }
 
   peek(amount: number) {
@@ -98,12 +123,7 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
   }
 
   pluck(card: TCard) {
-    this.cards = this.cards.filter(c => !c.equals(card));
+    this.cards = this.cards.filter(c => c !== card);
     return card;
-  }
-
-  addCardAtRandomPosition(card: TCard) {
-    const index = Math.floor(this.game.rngSystem.next() * (this.cards.length + 1));
-    this.cards.splice(index, 0, card);
   }
 }

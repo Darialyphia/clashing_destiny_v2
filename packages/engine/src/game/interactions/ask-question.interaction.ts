@@ -5,15 +5,11 @@ import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError } from '../game-error';
 
-export type AskQuestionContextOptions = {
+type AskQuestionContextOptions = {
   questionId: string;
   player: Player;
   source: AnyCard;
-  choices: Array<{
-    id: string;
-    label: string;
-    aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
-  }>;
+  choices: Array<{ id: string; label: string }>;
   label: string;
   timeoutFallback: string;
 };
@@ -26,11 +22,7 @@ export class AskQuestionContext {
 
   private selectedChoice: Nullable<{ id: string; label: string }> = null;
 
-  private choices: Array<{
-    id: string;
-    label: string;
-    aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
-  }> = [];
+  private choices: Array<{ id: string; label: string }> = [];
 
   readonly player: Player;
 
@@ -61,7 +53,7 @@ export class AskQuestionContext {
       questionId: this.questionId,
       player: this.player.id,
       source: this.source.id,
-      choices: this.choices.map(choice => ({ id: choice.id, label: choice.label })),
+      choices: this.choices,
       label: this.label
     };
   }
@@ -77,7 +69,10 @@ export class AskQuestionContext {
     this.game.inputSystem.unpause(this.selectedChoice!.id);
   }
 
-  getChoices() {
-    return [...this.choices];
+  cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION);
+    this.game.interaction.onInteractionEnd();
+    this.game.inputSystem.unpause([]);
   }
 }

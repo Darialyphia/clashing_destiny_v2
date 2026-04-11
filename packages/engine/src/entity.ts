@@ -15,7 +15,7 @@ export abstract class Entity<TI extends Record<string, Interceptable<any, any>>>
   }
 
   equals(e: { id: string }) {
-    return this.id === e.id;
+    return this.id == e.id;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

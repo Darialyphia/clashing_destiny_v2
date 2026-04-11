@@ -7,9 +7,13 @@ import {
   useGameClient,
   useFxEvent
 } from '../composables/useGameClient';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-import { Flip } from 'gsap/Flip';
+import {
+  GAME_PHASES,
+  INTERACTION_STATES
+} from '@game/engine/src/game/game.enums';
+import UiButton from '@/ui/components/UiButton.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 
 const ui = useGameUi();
@@ -32,10 +36,10 @@ useEventListener(
 let prev = { x: x.value, y: y.value };
 let delta = { x: 0, y: 0 };
 const MAX_ANGLE = 45;
-const SCALE_FACTOR = 2;
+const SCALE_FACTOR = 5;
 const LERP_FACTOR = 0.3;
 
-useRafFn(() => {
+const rotationAnimation = useRafFn(() => {
   delta = {
     x: x.value - prev.x,
     y: y.value - prev.y
@@ -79,40 +83,38 @@ const { client } = useGameClient();
 
 const container = useTemplateRef<HTMLDivElement>('container');
 watchEffect(() => {
-  const shouldPin =
-    state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD &&
-    !isDefined(ui.value.draggedCard);
+  const shouldPin = !isDefined(ui.value.selectedCard);
   if (shouldPin === isPinned.value) return;
 
   if (shouldPin) {
     if (!container.value) return;
 
-    const flipState = Flip.getState(container.value);
-    isPinning.value = true;
     isPinned.value = shouldPin;
-    window.requestAnimationFrame(() => {
-      Flip.from(flipState, {
-        targets: container.value,
-        duration: 0.25,
-        absolute: true,
-        ease: Power1.easeOut,
-        onComplete() {
-          isPinning.value = false;
-        }
-      });
-    });
   } else {
     isPinned.value = shouldPin;
   }
 });
 
-// watch(isPinned, pinned => {
-//   if (pinned) {
-//     rotationAnimation.pause();
-//   } else {
-//     rotationAnimation.resume();
-//   }
-// });
+watch(isPinned, pinned => {
+  if (pinned) {
+    rotationAnimation.pause();
+  } else {
+    rotationAnimation.resume();
+  }
+});
+
+const confirmButtonLabel = computed(() => {
+  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return 'Confirm';
+
+  if (
+    state.value.interaction.state !== INTERACTION_STATES.SELECTING_MINION_SLOT
+  ) {
+    return 'Confirm';
+  }
+  return state.value.interaction.ctx.selectedPositions.length
+    ? 'Confirm'
+    : 'Skip';
+});
 
 const isHidden = ref(false);
 useFxEvent(FX_EVENTS.PRE_CARD_BEFORE_PLAY, () => {
@@ -125,8 +127,16 @@ onBeforeUnmount(() => {
   unsub();
 });
 
-const card = computed(() => {
-  return ui.value.draggedCard;
+const draggedCard = computed(() => {
+  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return null;
+
+  const card = state.value.entities[
+    state.value.phase.ctx.card
+  ] as CardViewModel;
+
+  if (!card) return null;
+
+  return card;
 });
 </script>
 
@@ -137,14 +147,47 @@ const card = computed(() => {
       ref="container"
       id="dragged-card"
       data-flip-id="dragged-card"
-      style="--pixel-scale: 1"
+      :class="{
+        'is-pinned': isPinned,
+        'is-pinning': isPinning
+      }"
+      :style="{
+        '--pixel-scale': 1,
+        '--x': `${x}px`,
+        '--y': `${y}px`
+      }"
     >
       <GameCard
-        v-if="card"
-        :card-id="card.id"
+        v-if="draggedCard"
+        :card-id="draggedCard.id"
         :is-interactive="false"
-        :show-action-empty-state="false"
       />
+      <Transition>
+        <div
+          v-if="
+            isPinned &&
+            !isPinning &&
+            state.phase.state === GAME_PHASES.PLAYING_CARD &&
+            state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT
+          "
+          class="flex flex-col gap-3 mt-3"
+          @mouseup.stop
+        >
+          <UiButton
+            class="primary-button w-full pointer-events-auto"
+            @click="client.commitMinionSlotSelection()"
+          >
+            {{ confirmButtonLabel }}
+          </UiButton>
+          <UiButton
+            v-if="state.phase.ctx.canCancel"
+            class="error-button w-full pointer-events-auto"
+            @click="client.cancelPlayCard()"
+          >
+            Cancel
+          </UiButton>
+        </div>
+      </Transition>
     </div>
   </Teleport>
 </template>
@@ -156,17 +199,28 @@ const card = computed(() => {
   z-index: 99;
   transform-style: preserve-3d;
   transform-origin: center center;
-  top: 0;
-  left: 0;
-  transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
-    rotateX(var(--rotation-x)) rotateY(var(--rotation-y));
-  min-width: 10px;
-  min-height: 10px;
-  /* &:not(.is-pinned) {
+
+  &:not(.is-pinned) {
+    top: 0;
+    left: 0;
+    transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
+      rotateX(calc(1deg * v-bind('cardRotation.x')))
+      rotateY(calc(1deg * v-bind('cardRotation.y')));
   }
   &.is-pinned {
-    top: var(--size-13);
-    right: var(--size-8);
-  } */
+    top: var(--size-14);
+    right: var(--size-12);
+  }
+}
+
+.v-enter-active {
+  transition:
+    opacity 0.2s var(--ease-in-2),
+    transform 0.2s var(--ease-in-2);
+}
+
+.v-enter-from {
+  opacity: 0;
+  transform: translateX(2rem);
 }
 </style>

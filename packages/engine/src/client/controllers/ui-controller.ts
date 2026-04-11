@@ -1,19 +1,24 @@
-import { COMBAT_STEPS, GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
-import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
-import { SelectCardAction } from '../actions/select-card';
-import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
+import { GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
-import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
-import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
+import type { UnitViewModel } from '../view-models/unit.model';
+import type { BoardCellViewModel } from '../view-models/board-cell.model';
+import { MoveUnitAction } from '../actions/move-unit';
+import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
+import { SelectUnitAction } from '../actions/select-unit';
+import { UnselectUnitAction } from '../actions/unselect-unit';
+import { AttackAction } from '../actions/attack';
 import { PassGlobalAction } from '../actions/pass';
-import type { AbilityViewModel } from '../view-models/ability.model';
-import { DrawResourceAction } from '../actions/draw-resource-action';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
   handler: (card: CardViewModel) => void;
+};
+
+export type BoardCellClickRule = {
+  predicate: (tile: BoardCellViewModel, state: GameClientState) => boolean;
+  handler: (tile: BoardCellViewModel) => void;
 };
 
 export type GlobalActionRule = {
@@ -32,31 +37,28 @@ export type UiOptimisticState = {
 export class DOMSelector {
   constructor(
     readonly id: string,
-    private readonly selectorPrefix: string = '',
-    private readonly selectorSuffix: string = ''
+    private readonly selectorPrefix: string = ''
   ) {}
 
   get selector() {
-    return `${this.selectorPrefix} #${this.id} ${this.selectorSuffix}`;
+    return `${this.selectorPrefix} #${this.id}`;
   }
 
   get element() {
     return document.querySelector(this.selector) as HTMLElement | null;
   }
-
-  get elements() {
-    return document.querySelectorAll(this.selector) as NodeListOf<HTMLElement>;
-  }
 }
 
 export class UiController {
-  private _hoveredCard: CardViewModel | null = null;
+  private _hoveredCell: BoardCellViewModel | null = null;
 
   private _selectedCard: CardViewModel | null = null;
 
-  private _draggedCard: CardViewModel | null = null;
+  private _selectedUnit: UnitViewModel | null = null;
 
   isHandExpanded = false;
+
+  draggedCard: CardViewModel | null = null;
 
   isPassConfirmationModalOpened = false;
 
@@ -64,9 +66,13 @@ export class UiController {
 
   isOpponentHandExpanded = false;
 
+  isReplacingCard = false;
+
   private cardClickRules: CardClickRule[] = [];
 
   private globalActionRules: GlobalActionRule[] = [];
+
+  private boardCellClickRules: BoardCellClickRule[] = [];
 
   private hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -75,40 +81,29 @@ export class UiController {
   };
 
   DOMSelectors = {
+    cell: (x: number, y: number) => new DOMSelector(`cell-${x}-${y}`),
     board: new DOMSelector('board'),
+    viewport: new DOMSelector('viewport'),
     effectChain: new DOMSelector('effect-chain'),
     playedCardZone: new DOMSelector('played-card'),
+    cardInPlayedCardZone: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.playedCardZone.selector),
     heroHealthIndicator: (playerId: string) =>
       new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
-    destinyZone: (playerId: string) => new DOMSelector(`destiny-zone-${playerId}`),
-    minionPosition: (playerId: string, minionId: string) =>
-      new DOMSelector(`${playerId}-minion-position-${minionId}`),
-    minionOnBoard: (playerId: string, minionId: string) =>
-      new DOMSelector(
-        minionId,
-        this.DOMSelectors.minionPosition(playerId, minionId).selector
-      ),
-    discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
-    banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
-    destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),
+    unit: (unitId: string) =>
+      new DOMSelector(`unit-${unitId}`, this.DOMSelectors.board.selector),
     cardOnBoard: (cardId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.board.selector),
     cardInHand: (cardId: string, playerId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.hand(playerId).selector),
-    cardInEffectChain: (cardId: string) =>
-      new DOMSelector(cardId, this.DOMSelectors.effectChain.selector),
-    cardInDestinyZone: (cardId: string, playerId: string) =>
-      new DOMSelector(cardId, this.DOMSelectors.destinyZone(playerId).selector),
-    cardInPlayedCardZone: (cardId: string) =>
-      new DOMSelector(cardId, this.DOMSelectors.playedCardZone.selector),
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),
-    anyCardOnPlayCardZone: new DOMSelector('played-card', '', '.card'),
-    minionZone: (playerId: string) => new DOMSelector(`${playerId}-minion-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
-    globalActionButtons: new DOMSelector('global-action-buttons')
+    globalActionButtons: new DOMSelector('global-action-buttons'),
+    mana: (playerId: string) => new DOMSelector(`mana-${playerId}`),
+    playerInfos: (playerId: string) => new DOMSelector(`player-infos-${playerId}`)
   };
 
   displayedElements = {
@@ -130,50 +125,45 @@ export class UiController {
 
   constructor(private client: GameClient) {
     this.buildCardClickRules();
+    this.buildBoardCellClickRules();
     this.buildGlobalActionRules();
   }
 
-  get hoveredCard() {
-    return this._hoveredCard;
+  get hoveredCell() {
+    return this._hoveredCell;
   }
 
   get selectedCard() {
     return this._selectedCard;
   }
 
-  get draggedCard() {
-    return this._draggedCard;
-  }
-
-  playDraggedCard() {
-    if (!this._draggedCard) return;
-    this._draggedCard.play();
-    this._draggedCard = null;
+  get selectedUnit() {
+    return this._selectedUnit;
   }
 
   get playedCardId() {
-    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD)
-      return null;
+    if (this.client.state.phase.state !== GAME_PHASES.PLAYING_CARD) return null;
     if (this.client.playerId !== this.client.state.interaction.ctx.player) return null;
 
-    return this.client.state.interaction.ctx.card;
+    return this.client.state.phase.ctx.card;
   }
 
   private buildCardClickRules() {
-    this.cardClickRules = [
-      new SelectCardAction(this.client),
-      new DeclareAttackTargetCardAction(this.client),
-      new SelectCardOnBoardAction(this.client)
+    this.cardClickRules = [];
+  }
+
+  private buildBoardCellClickRules() {
+    this.boardCellClickRules = [
+      new MoveUnitAction(this.client),
+      new AttackAction(this.client),
+      new SelectSpaceOnBoardAction(this.client),
+      new SelectUnitAction(this.client),
+      new UnselectUnitAction(this.client)
     ];
   }
 
   private buildGlobalActionRules() {
-    this.globalActionRules = [
-      new CancelPlayCardGlobalAction(this.client),
-      new CommitCardSelectionGlobalAction(this.client),
-      new PassGlobalAction(this.client),
-      new DrawResourceAction(this.client)
-    ];
+    this.globalActionRules = [new PassGlobalAction(this.client)];
   }
 
   get globalActions() {
@@ -192,14 +182,6 @@ export class UiController {
       });
   }
 
-  startDraggingCard(card: CardViewModel) {
-    this._draggedCard = card;
-  }
-
-  stopDraggingCard() {
-    this._draggedCard = null;
-  }
-
   onCardClick(card: CardViewModel) {
     const state = this.client.state;
     for (const rule of this.cardClickRules) {
@@ -209,7 +191,17 @@ export class UiController {
       }
     }
 
-    this.unselect();
+    this.unselectCard();
+  }
+
+  onBoardCellClick(cell: BoardCellViewModel) {
+    const state = this.client.state;
+    for (const rule of this.boardCellClickRules) {
+      if (rule.predicate(cell, state)) {
+        rule.handler(cell);
+        return;
+      }
+    }
   }
 
   get isInteractivePlayer() {
@@ -221,20 +213,19 @@ export class UiController {
   }
 
   update() {
-    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
-      this.selectedManaCostIndices = [];
-    }
-
     this.clearOptimisticState();
+    if (this.selectedUnit?.isExhausted) {
+      this.unselectUnit();
+    }
   }
 
-  hover(card: CardViewModel) {
+  hover(cell: BoardCellViewModel) {
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout);
     }
     this.hoverTimeout = setTimeout(() => {
-      this._hoveredCard = card;
-    }, 200);
+      this._hoveredCell = cell;
+    }, 0);
   }
 
   unhover() {
@@ -242,35 +233,24 @@ export class UiController {
       clearTimeout(this.hoverTimeout);
       this.hoverTimeout = null;
     }
-    this._hoveredCard = null;
+    this._hoveredCell = null;
   }
 
-  select(card: CardViewModel) {
+  selectCard(card: CardViewModel) {
     this._selectedCard = card;
+    this._selectedUnit = null;
   }
 
-  unselect() {
+  unselectCard() {
     this._selectedCard = null;
   }
 
-  getPlayedCardZoneDOMSelector() {
-    return `#played-card`;
+  selectUnit(unit: UnitViewModel) {
+    this._selectedUnit = unit;
   }
 
-  getDestinyZoneDOMSelector(playerId: string) {
-    return `#destiny-zone-${playerId}`;
-  }
-
-  getCardDOMSelector(cardId: string) {
-    return `#${cardId}`;
-  }
-
-  getCardDOMSelectorInPLayedCardZone(cardId: string) {
-    return `${this.getPlayedCardZoneDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getCardDOMSelectorInDestinyZone(cardId: string, playerId: string) {
-    return `${this.getDestinyZoneDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
+  unselectUnit() {
+    this._selectedUnit = null;
   }
 
   get explainerMessage() {
@@ -281,32 +261,10 @@ export class UiController {
       return 'Waiting for opponent...';
     }
 
-    if (
-      state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
-      state.interaction.ctx.player === this.client.playerId
-    ) {
-      const card = state.entities[state.interaction.ctx.card] as CardViewModel;
-      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${card?.manaCost})`;
-    }
-
-    if (
-      state.interaction.state === INTERACTION_STATES.USING_ABILITY &&
-      state.interaction.ctx.player === this.client.playerId
-    ) {
-      const ability = state.entities[state.interaction.ctx.ability] as AbilityViewModel;
-      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
-    }
-
-    if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {
+    if (state.interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
       return state.interaction.ctx.label;
     }
 
-    if (state.phase.state === GAME_PHASES.COMBAT) {
-      if (state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET) {
-        return 'Declare attack target';
-      }
-    }
-
-    return 'Your turn: play a card, use an ability or declare an attack';
+    return '';
   }
 }

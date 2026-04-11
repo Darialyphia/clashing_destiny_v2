@@ -1,5 +1,5 @@
+import { areArraysIdentical } from '../../utils/helpers';
 import type { PatchOperation } from './patch-types';
-import { areArraysIdentical } from '../../utils/utils';
 
 /**
  * Deep differ that generates patch operations for changes between objects
@@ -16,18 +16,15 @@ export class DeepDiffer {
     previous: T | undefined,
     basePath = ''
   ): PatchOperation[] {
-    // If no previous state, return nothing (new entity handled separately)
     if (!previous) return [];
 
     const patches: PatchOperation[] = [];
 
-    // Check all properties in current
     for (const key in current) {
       const currentValue = current[key];
       const previousValue = previous[key];
       const path = basePath ? `${basePath}.${key}` : key;
 
-      // Property didn't exist before - it's an add
       if (!(key in previous)) {
         patches.push({
           op: 'add',
@@ -37,21 +34,18 @@ export class DeepDiffer {
         continue;
       }
 
-      // Handle arrays specially
       if (Array.isArray(currentValue) && Array.isArray(previousValue)) {
         const arrayPatches = this.diffArrays(currentValue, previousValue, path);
         patches.push(...arrayPatches);
         continue;
       }
 
-      // Handle nested objects recursively
       if (this.isPlainObject(currentValue) && this.isPlainObject(previousValue)) {
         const nestedPatches = this.generatePatches(currentValue, previousValue, path);
         patches.push(...nestedPatches);
         continue;
       }
 
-      // Primitive value - check if changed
       if (currentValue !== previousValue) {
         patches.push({
           op: 'replace',
@@ -61,7 +55,6 @@ export class DeepDiffer {
       }
     }
 
-    // Check for removed properties
     for (const key in previous) {
       if (!(key in current)) {
         const path = basePath ? `${basePath}.${key}` : key;
@@ -75,27 +68,17 @@ export class DeepDiffer {
     return patches;
   }
 
-  /**
-   * Diff two arrays and generate patches
-   * For game entities, arrays are typically:
-   * - IDs (strings): order doesn't matter much, use set operations
-   * - Primitives (numbers, strings): order matters
-   */
   private diffArrays(current: any[], previous: any[], path: string): PatchOperation[] {
-    // Quick check - if identical, no patches
     if (areArraysIdentical(current, previous)) {
       return [];
     }
 
     const patches: PatchOperation[] = [];
 
-    // Strategy 1: If all items are primitives/IDs, do smart diffing
     if (this.isIdArray(current) && this.isIdArray(previous)) {
       return this.diffIdArrays(current, previous, path);
     }
 
-    // Strategy 2: For other cases, replace the whole array
-    // This is simpler and works for small arrays
     patches.push({
       op: 'replace',
       path,
@@ -105,10 +88,6 @@ export class DeepDiffer {
     return patches;
   }
 
-  /**
-   * Diff arrays of IDs/primitives (order-independent for IDs)
-   * Example: modifiers: ['mod1', 'mod2'] vs ['mod1', 'mod2', 'mod3']
-   */
   private diffIdArrays(
     current: string[],
     previous: string[],
@@ -118,13 +97,10 @@ export class DeepDiffer {
     const prevSet = new Set(previous);
     const currSet = new Set(current);
 
-    // Find added items
     const added = current.filter(id => !prevSet.has(id));
 
-    // Find removed items
     const removed = previous.filter(id => !currSet.has(id));
 
-    // Generate patches for removals (do these first, by index from end)
     for (let i = previous.length - 1; i >= 0; i--) {
       if (removed.includes(previous[i])) {
         patches.push({
@@ -134,28 +110,28 @@ export class DeepDiffer {
       }
     }
 
-    // Generate patches for additions (append to end)
-    for (const item of added) {
-      patches.push({
-        op: 'add',
-        path: `${path}[-]`, // Special notation: append to end
-        value: item
-      });
+    // Insert added items at their correct index in the current array.
+    // Processing left-to-right ensures earlier insertions shift indices
+    // correctly for subsequent ones, so the index in `current` is always
+    // the right insertion point at the time the patch is applied.
+    const addedSet = new Set(added);
+    for (let i = 0; i < current.length; i++) {
+      if (addedSet.has(current[i])) {
+        patches.push({
+          op: 'add',
+          path: `${path}[${i}]`,
+          value: current[i]
+        });
+      }
     }
 
     return patches;
   }
 
-  /**
-   * Check if array contains only string IDs
-   */
   private isIdArray(arr: any[]): arr is string[] {
     return arr.every(item => typeof item === 'string');
   }
 
-  /**
-   * Check if value is a plain object (not array, not null, not class instance)
-   */
   private isPlainObject(value: any): value is Record<string, any> {
     return (
       value !== null &&

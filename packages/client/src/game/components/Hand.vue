@@ -170,7 +170,6 @@ watch(width, v => {
         v-for="card in cards"
         :key="card.card.cardId"
         :card-id="card.card.cardId"
-        :is-interactive="isMyHand"
         class="hand-card"
         :style="{
           '--x': `${card.x}px`,

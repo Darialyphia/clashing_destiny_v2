@@ -9,15 +9,22 @@ import type {
 import type {
   MinionCard,
   MinionCardInterceptors
-} from '../../card/entities/minion.entity';
-import type { HeroCard, HeroCardInterceptors } from '../../card/entities/hero.entity';
+} from '../../card/entities/minion-card.entity';
+import type {
+  SpellCard,
+  SpellCardInterceptors
+} from '../../card/entities/spell-card.entity';
 import type {
   ArtifactCard,
   ArtifactCardInterceptors
-} from '../../card/entities/artifact.entity';
-import type { SpellCard, SpellCardInterceptors } from '../../card/entities/spell.entity';
-import type { AnyCard, CardInterceptors } from '../../card/entities/card.entity';
-import type { Player, PlayerInterceptors } from '../../player/player.entity';
+} from '../../card/entities/artifact-card.entity';
+import type { Unit, UnitInterceptors } from '../../unit/unit.entity';
+import type {
+  PlayerArtifact,
+  PlayerArtifactInterceptor
+} from '../../player/player-artifact.entity';
+import type { Player, PlayerInterceptor } from '../../player/player.entity';
+import type { Ability, AbilityInterceptor } from '../../card/entities/ability.entity';
 
 type InterceptorMap = Record<string, Interceptable<any, any>>;
 export class InterceptorModifierMixin<
@@ -61,6 +68,7 @@ export class InterceptorModifierMixin<
   }
 
   onRemoved(target: TTarget): void {
+    if (!target) return;
     //@ts-expect-error
     target.removeInterceptor(
       this.options.key,
@@ -69,27 +77,32 @@ export class InterceptorModifierMixin<
     );
   }
 
-  async onReapplied() {}
+  onReapplied() {}
 }
+
+type CardInterceptors =
+  | MinionCardInterceptors
+  | SpellCardInterceptors
+  | ArtifactCardInterceptors;
 export class CardInterceptorModifierMixin<
   TKey extends keyof CardInterceptors
-> extends InterceptorModifierMixin<CardInterceptors, TKey, AnyCard> {}
+> extends InterceptorModifierMixin<
+  CardInterceptors,
+  TKey,
+  MinionCard | SpellCard | ArtifactCard
+> {}
 
 export class MinionInterceptorModifierMixin<
   TKey extends keyof MinionCardInterceptors
 > extends InterceptorModifierMixin<MinionCardInterceptors, TKey, MinionCard> {}
 
-export class HeroInterceptorModifierMixin<
-  TKey extends keyof HeroCardInterceptors
-> extends InterceptorModifierMixin<HeroCardInterceptors, TKey, HeroCard> {}
-
 export class UnitInterceptorModifierMixin<
-  TKey extends keyof MinionCardInterceptors | keyof HeroCardInterceptors
-> extends InterceptorModifierMixin<
-  MinionCardInterceptors & HeroCardInterceptors,
-  TKey,
-  MinionCard | HeroCard
-> {}
+  TKey extends keyof UnitInterceptors
+> extends InterceptorModifierMixin<UnitInterceptors, TKey, Unit> {}
+
+export class PlayerArtifactInterceptorModifierMixin<
+  TKey extends keyof PlayerArtifactInterceptor
+> extends InterceptorModifierMixin<PlayerArtifactInterceptor, TKey, PlayerArtifact> {}
 
 export class ArtifactInterceptorModifierMixin<
   TKey extends keyof ArtifactCardInterceptors
@@ -100,5 +113,9 @@ export class SpellInterceptorModifierMixin<
 > extends InterceptorModifierMixin<SpellCardInterceptors, TKey, SpellCard> {}
 
 export class PlayerInterceptorModifierMixin<
-  TKey extends keyof PlayerInterceptors
-> extends InterceptorModifierMixin<PlayerInterceptors, TKey, Player> {}
+  TKey extends keyof PlayerInterceptor
+> extends InterceptorModifierMixin<PlayerInterceptor, TKey, Player> {}
+
+export class ArtifactAbilityInterceptorModifierMixin<
+  TKey extends keyof AbilityInterceptor
+> extends InterceptorModifierMixin<AbilityInterceptor, TKey, Ability<ArtifactCard>> {}

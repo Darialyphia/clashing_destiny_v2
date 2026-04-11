@@ -63,12 +63,6 @@ export class ModifierManager<T extends ModifierTarget> {
     }
   }
 
-  async addMany(...modifiers: Modifier<T>[]) {
-    for (const modifier of modifiers) {
-      await this.add(modifier);
-    }
-  }
-
   private onModifierRemoved(event: ModifierLifecycleEvent) {
     this._modifiers = this._modifiers.filter(mod => !mod.equals(event.data));
   }

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import UiSwitch from '@/ui/components/UiSwitch.vue';
-import { useFxEvent, useGameUi } from '../composables/useGameClient';
+import { useFxEvent } from '../composables/useGameClient';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 // import { useMouse, useWindowSize } from '@vueuse/core';
-
-const ui = useGameUi();
 
 const camera = ref({
   origin: { x: 0, y: 0 },
@@ -37,7 +35,7 @@ const isTilted = computed({
     if (value) {
       camera.value.angle.x = 15;
       camera.value.angle.y = 0;
-      camera.value.offset.y = 7;
+      camera.value.offset.y = -5;
     } else {
       camera.value.angle.x = 0;
       camera.value.angle.y = 0;
@@ -69,7 +67,7 @@ const isTilted = computed({
         '--board-angle-Z': `${camera.angle.z}deg`
       }"
     >
-      <div class="camera-viewport" :id="ui.DOMSelectors.board.id">
+      <div class="camera-viewport">
         <slot />
       </div>
     </div>

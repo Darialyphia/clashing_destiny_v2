@@ -1,0 +1,288 @@
+import type { AttackTarget } from '../game/phases/combat.phase';
+import type { CombatDamage, Damage, DamageType } from '../utils/damage';
+import { TypedSerializableEvent } from '../utils/typed-emitter';
+import type { CARD_EVENTS, CardLocation } from './card.enums';
+import type { AnyCard, SerializedCard } from './entities/card.entity';
+import type { HeroCard, SerializedHeroCard } from './entities/hero.entity';
+import type { MinionCard, SerializedMinionCard } from './entities/minion.entity';
+
+export class CardExhaustEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardWakeUpEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardDiscardEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardAddToHandevent extends TypedSerializableEvent<
+  { card: AnyCard; index: number | null },
+  { card: SerializedCard; index: number | null }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      index: this.data.index
+    };
+  }
+}
+
+export class CardBeforePlayEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardAfterPlayEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardBeforeDestroyEvent extends TypedSerializableEvent<
+  { card: AnyCard; source: AnyCard },
+  { card: SerializedCard; source: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      source: this.data.source.serialize()
+    };
+  }
+}
+
+export class CardAfterDestroyEvent extends TypedSerializableEvent<
+  { card: AnyCard; source: AnyCard },
+  { card: SerializedCard; source: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      source: this.data.source.serialize()
+    };
+  }
+}
+
+export class CardLeaveBoardEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardDeclareUseAbilityEvent extends TypedSerializableEvent<
+  { card: AnyCard; abilityId: string },
+  { card: SerializedCard; abilityId: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize() as SerializedCard,
+      abilityId: this.data.abilityId
+    };
+  }
+}
+
+export class CardDisposedEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export class CardEffectTriggeredEvent extends TypedSerializableEvent<
+  { card: AnyCard; message: string },
+  { card: string; message: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      message: this.data.message
+    };
+  }
+}
+
+export class CardBeforeDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard | HeroCard;
+    target: AttackTarget;
+    affectedCards: Array<MinionCard | HeroCard>;
+    damage: CombatDamage;
+  },
+  { card: string; target: string; damage: number; affectedCards: string[] }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id)
+    };
+  }
+}
+
+export class CardAfterDealCombatDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard | HeroCard;
+    target: AttackTarget;
+    damage: CombatDamage;
+    affectedCards: Array<MinionCard | HeroCard>;
+  },
+  {
+    card: string;
+    target: string;
+    damage: number;
+    affectedCards: string[];
+    isFatal: boolean;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      target: this.data.target.id,
+      damage: this.data.damage.getFinalAmount(this.data.target),
+      affectedCards: this.data.affectedCards.map(card => card.id),
+      isFatal: !this.data.target.isAlive
+    };
+  }
+}
+
+export class CardChangeLocationEvent extends TypedSerializableEvent<
+  { card: AnyCard; from: CardLocation | null; to: CardLocation },
+  { card: string; from: CardLocation | null; to: CardLocation }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      from: this.data.from,
+      to: this.data.to
+    };
+  }
+}
+
+export class CardBeforeTakeDamageEvent extends TypedSerializableEvent<
+  { card: MinionCard | HeroCard; source: AnyCard; damage: Damage; amount: number },
+  {
+    card: string;
+    source: string;
+    damage: { type: DamageType; amount: number };
+    amount: number;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      source: this.data.source.id,
+      damage: {
+        type: this.data.damage.type,
+        amount: this.data.damage.getFinalAmount(this.data.card)
+      },
+      amount: this.data.amount
+    };
+  }
+}
+
+export class CardAfterTakeDamageEvent extends TypedSerializableEvent<
+  {
+    card: MinionCard | HeroCard;
+    source: AnyCard;
+    damage: Damage;
+    isFatal: boolean;
+    amount: number;
+  },
+  {
+    card: SerializedMinionCard | SerializedHeroCard;
+    source: string;
+    damage: { type: DamageType; amount: number };
+    isFatal: boolean;
+    amount: number;
+  }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize(),
+      source: this.data.source.id,
+      damage: {
+        type: this.data.damage.type,
+        amount: this.data.damage.getFinalAmount(this.data.card)
+      },
+      isFatal: this.data.isFatal,
+      amount: this.data.amount
+    };
+  }
+}
+
+export class CardRevealEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: SerializedCard }
+> {
+  serialize() {
+    return {
+      card: this.data.card.serialize()
+    };
+  }
+}
+
+export type CardEventMap = {
+  [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
+  [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
+  [CARD_EVENTS.CARD_DISCARD]: CardDiscardEvent;
+  [CARD_EVENTS.CARD_ADD_TO_HAND]: CardAddToHandevent;
+  [CARD_EVENTS.CARD_LEAVE_BOARD]: CardLeaveBoardEvent;
+  [CARD_EVENTS.CARD_BEFORE_PLAY]: CardBeforePlayEvent;
+  [CARD_EVENTS.CARD_AFTER_PLAY]: CardAfterPlayEvent;
+  [CARD_EVENTS.CARD_BEFORE_DESTROY]: CardBeforeDestroyEvent;
+  [CARD_EVENTS.CARD_AFTER_DESTROY]: CardAfterDestroyEvent;
+  [CARD_EVENTS.CARD_DECLARE_USE_ABILITY]: CardDeclareUseAbilityEvent;
+  [CARD_EVENTS.CARD_DISPOSED]: CardDisposedEvent;
+  [CARD_EVENTS.CARD_EFFECT_TRIGGERED]: CardEffectTriggeredEvent;
+  [CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE]: CardBeforeDealCombatDamageEvent;
+  [CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE]: CardAfterDealCombatDamageEvent;
+  [CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION]: CardChangeLocationEvent;
+  [CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION]: CardChangeLocationEvent;
+  [CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE]: CardBeforeTakeDamageEvent;
+  [CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE]: CardAfterTakeDamageEvent;
+  [CARD_EVENTS.CARD_BEFORE_REVEAL]: CardRevealEvent;
+  [CARD_EVENTS.CARD_AFTER_REVEAL]: CardRevealEvent;
+};

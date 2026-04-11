@@ -1,0 +1,565 @@
+import type { Game } from '../../game/game';
+import type { Attacker, AttackTarget } from '../../game/phases/combat.phase';
+import type { Player } from '../../player/player.entity';
+import { CombatDamage, type Damage } from '../../utils/damage';
+import { Interceptable } from '../../utils/interceptable';
+import {
+  type AbilityBlueprint,
+  type MinionBlueprint,
+  type PreResponseTarget
+} from '../card-blueprint';
+import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
+import {
+  CardAfterDealCombatDamageEvent,
+  CardAfterTakeDamageEvent,
+  CardBeforeDealCombatDamageEvent,
+  CardBeforeTakeDamageEvent
+} from '../card.events';
+import {
+  Card,
+  makeCardInterceptors,
+  type AnyCard,
+  type CardInterceptors,
+  type CardOptions,
+  type SerializedCard
+} from './card.entity';
+import { GAME_PHASES } from '../../game/game.enums';
+import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
+import { Ability } from './ability.entity';
+import { HeroCard } from './hero.entity';
+import {
+  MINION_EVENTS,
+  MinionCardHealEvent,
+  MinionSummonedEvent
+} from '../events/minion.events';
+import { DamageTrackerComponent } from '../components/damage-tracker.component';
+import { GAME_EVENTS } from '../../game/game.events';
+import type { BoardPosition } from '../../game/interactions/selecting-minion-slots.interaction';
+import { MeleeAttackRange, type AttackRange } from '../attack-range';
+import { SingleTargetAOE, type AttackAOE } from '../attack-aoe';
+import type { MaybePromise } from '@game/shared';
+
+export type SerializedMinionCard = SerializedCard & {
+  potentialAttackTargets: string[];
+  baseAtk: number;
+  atk: number;
+  baseRetaliation: number;
+  retaliation: number;
+  baseMaxHp: number;
+  maxHp: number;
+  remainingHp: number;
+  manaCost: number;
+  baseManaCost: number;
+  abilities: string[];
+  canMove: boolean;
+  jobs: JobId[];
+  position: Pick<BoardPosition, 'row' | 'slot'> | null;
+};
+
+export type MinionCardInterceptors = CardInterceptors & {
+  hasSummoningSickness: Interceptable<boolean, MinionCard>;
+  canPlay: Interceptable<boolean, MinionCard>;
+  canPlayDuringCombatPhase: Interceptable<boolean, MinionCard>;
+  canAttack: Interceptable<boolean, { target: AttackTarget }>;
+  canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
+  canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
+  canBeRetaliatedAgainst: Interceptable<boolean, { defender: AttackTarget }>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: MinionCard; ability: Ability<MinionCard> }
+  >;
+  canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
+  receivedDamage: Interceptable<number, { damage: Damage }>;
+  maxHp: Interceptable<number, MinionCard>;
+  atk: Interceptable<number, MinionCard>;
+  retaliation: Interceptable<number, MinionCard>;
+  dealsDamageFirst: Interceptable<boolean, MinionCard>;
+  canMove: Interceptable<boolean, MinionCard>;
+  canMoveManually: Interceptable<boolean, MinionCard>;
+
+  shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
+  shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
+
+  attackRanges: Interceptable<AttackRange[], MinionCard>;
+  attackAOEs: Interceptable<AttackAOE[], MinionCard>;
+};
+type MinionCardInterceptorName = keyof MinionCardInterceptors;
+
+export class MinionCard extends Card<
+  SerializedCard,
+  MinionCardInterceptors,
+  MinionBlueprint
+> {
+  private damageTaken = 0;
+
+  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
+
+  readonly abilities: Ability<MinionCard>[] = [];
+
+  readonly damageTracker: DamageTrackerComponent;
+
+  private hasMovedThisTurn = false;
+
+  constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
+    super(
+      game,
+      player,
+      {
+        ...makeCardInterceptors(),
+        canPlay: new Interceptable(),
+        canPlayDuringCombatPhase: new Interceptable(),
+        canAttack: new Interceptable(),
+        canBeAttacked: new Interceptable(),
+        canRetaliate: new Interceptable(),
+        canBeRetaliatedAgainst: new Interceptable(),
+        hasSummoningSickness: new Interceptable(),
+        canUseAbility: new Interceptable(),
+        canBeTargeted: new Interceptable(),
+        receivedDamage: new Interceptable(),
+        maxHp: new Interceptable(),
+        atk: new Interceptable(),
+        retaliation: new Interceptable(),
+        dealsDamageFirst: new Interceptable(),
+        canMove: new Interceptable(),
+        canMoveManually: new Interceptable(),
+        shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
+        shouldSwitchInitiativeAfterattacking: new Interceptable(),
+        attackRanges: new Interceptable(),
+        attackAOEs: new Interceptable()
+      },
+      options
+    );
+
+    this.blueprint.abilities.forEach(ability => {
+      this.abilities.push(new Ability<MinionCard>(this.game, this, ability));
+    });
+
+    this.damageTracker = new DamageTrackerComponent(game, this);
+
+    this.game.on(GAME_EVENTS.TURN_END, async () => {
+      this.hasMovedThisTurn = false;
+    });
+  }
+
+  get hasSummoningSickness(): boolean {
+    return this.interceptors.hasSummoningSickness.getValue(true, this);
+  }
+
+  get isAlive() {
+    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
+  }
+
+  get atk(): number {
+    return this.interceptors.atk.getValue(this.blueprint.atk, this);
+  }
+
+  get retaliation(): number {
+    return this.interceptors.retaliation.getValue(this.blueprint.retaliation, this);
+  }
+
+  get maxHp(): number {
+    return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
+  }
+
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
+  get remainingHp(): number {
+    return Math.max(this.maxHp - this.damageTaken, 0);
+  }
+
+  get attackRanges(): AttackRange[] {
+    return this.interceptors.attackRanges.getValue(
+      [new MeleeAttackRange(this.game, this)],
+      this
+    );
+  }
+
+  get attackAOEs(): AttackAOE[] {
+    return this.interceptors.attackAOEs.getValue([new SingleTargetAOE()], this);
+  }
+
+  get isAttacking() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.attacker?.equals(this);
+  }
+
+  get isAttackTarget() {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    return phaseCtx.state === GAME_PHASES.COMBAT && phaseCtx.ctx.defender?.equals(this);
+  }
+
+  protected async onInterceptorAdded(key: MinionCardInterceptorName) {
+    if (key === 'maxHp') {
+      await this.checkHp(this);
+    }
+  }
+
+  protected async onInterceptorRemoved(key: MinionCardInterceptorName) {
+    if (key === 'maxHp') {
+      await this.checkHp(this);
+    }
+  }
+
+  resetDamageTaken() {
+    this.damageTaken = 0;
+  }
+
+  removeFromCurrentLocation(): void {
+    super.removeFromCurrentLocation();
+    this.damageTaken = 0;
+  }
+
+  canBeTargeted(source: AnyCard) {
+    return this.interceptors.canBeTargeted.getValue(true, {
+      source
+    });
+  }
+
+  canAttack(target: AttackTarget) {
+    const base = !this._isExhausted && this.atk > 0 && target.canBeAttacked(this);
+
+    return this.interceptors.canAttack.getValue(base, {
+      target
+    });
+  }
+
+  canBeAttacked(attacker: AttackTarget) {
+    return this.interceptors.canBeAttacked.getValue(true, {
+      attacker
+    });
+  }
+
+  canBeRetaliatedBy(defender: AttackTarget) {
+    return this.interceptors.canBeRetaliatedAgainst.getValue(true, {
+      defender
+    });
+  }
+
+  canRetaliate(target: AttackTarget) {
+    const phaseCtx = this.game.gamePhaseSystem.getContext();
+    if (phaseCtx.state !== GAME_PHASES.COMBAT) return false;
+    if (!phaseCtx.ctx.defender?.equals(this)) return false;
+
+    return this.interceptors.canRetaliate.getValue(
+      !this.isExhausted &&
+        this.atk > 0 &&
+        !!phaseCtx.ctx.attacker?.canBeRetaliatedBy(this),
+      {
+        attacker: target
+      }
+    );
+  }
+
+  get dealsDamageFirst(): boolean {
+    return this.interceptors.dealsDamageFirst.getValue(false, this);
+  }
+
+  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
+    const targets = this.abilityTargets.get(abilityId);
+    if (!targets) return;
+    if (newTarget instanceof Card) {
+      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
+      if (index === -1) return;
+
+      const oldTarget = targets[index] as AnyCard;
+      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
+
+      targets[index] = newTarget;
+      newTarget.targetBy({ type: 'ability', abilityId, card: this });
+    }
+  }
+
+  canUseAbility(id: string) {
+    const ability = this.abilities.find(ability => ability.abilityId === id);
+    if (!ability) return false;
+
+    return this.interceptors.canUseAbility.getValue(ability.canUse, {
+      card: this,
+      ability
+    });
+  }
+
+  getReceivedDamage(damage: Damage) {
+    return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
+      damage
+    });
+  }
+
+  private async checkHp(source: AnyCard) {
+    if (this.remainingHp <= 0) {
+      await this.destroy(source);
+    }
+  }
+
+  shouldSwitchInitiativeAfterAttacking(attackTarget: AttackTarget): boolean {
+    return this.interceptors.shouldSwitchInitiativeAfterattacking.getValue(true, {
+      target: attackTarget
+    });
+  }
+
+  async dealDamage(target: AttackTarget, damage: CombatDamage) {
+    const affectedCards = this.getAffectedCardsForAttack(target);
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE,
+      new CardBeforeDealCombatDamageEvent({
+        card: this,
+        target,
+        damage,
+        affectedCards
+      })
+    );
+
+    for (const card of affectedCards) {
+      await card.takeDamage(this, damage);
+    }
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
+      new CardAfterDealCombatDamageEvent({
+        card: this,
+        target,
+        damage,
+        affectedCards
+      })
+    );
+  }
+
+  async takeDamage(source: AnyCard, damage: Damage) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
+      new CardBeforeTakeDamageEvent({
+        card: this,
+        source,
+        damage,
+        amount: damage.getFinalAmount(this)
+      })
+    );
+
+    this.damageTaken = Math.min(
+      this.damageTaken + damage.getFinalAmount(this),
+      this.maxHp
+    );
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE,
+      new CardAfterTakeDamageEvent({
+        card: this,
+        source,
+        damage,
+        amount: damage.getFinalAmount(this),
+        isFatal: this.remainingHp <= 0
+      })
+    );
+    await this.checkHp(source);
+  }
+
+  async heal(heal: number) {
+    await this.game.emit(
+      MINION_EVENTS.MINION_BEFORE_HEAL,
+      new MinionCardHealEvent({ card: this, amount: heal })
+    );
+    this.damageTaken = Math.max(this.damageTaken - heal, 0);
+    await this.game.emit(
+      MINION_EVENTS.MINION_AFTER_HEAL,
+      new MinionCardHealEvent({ card: this, amount: heal })
+    );
+  }
+
+  addAbility(ability: AbilityBlueprint<MinionCard, PreResponseTarget>) {
+    const newAbility = new Ability<MinionCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
+
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
+    if (index === -1) return;
+    this.abilities.splice(index, 1);
+  }
+
+  get canMove(): boolean {
+    return this.interceptors.canMove.getValue(
+      this.location === CARD_LOCATIONS.BOARD,
+      this
+    );
+  }
+
+  get canMoveManually(): boolean {
+    return this.interceptors.canMoveManually.getValue(
+      this.canMove && !this.hasMovedThisTurn,
+      this
+    );
+  }
+
+  get shouldSwitchInitiativeAfterMovingManually(): boolean {
+    return this.interceptors.shouldSwitchInitiativeAfterMovingManually.getValue(
+      true,
+      this
+    );
+  }
+
+  get position() {
+    return this.player.boardSide.getPositionFor(this);
+  }
+
+  get slot() {
+    if (!this.position) return null;
+    return this.player.boardSide.getSlot(this.position.row, this.position.slot);
+  }
+
+  async move(position: BoardPosition, allowSwap = false) {
+    if (!this.position) return;
+
+    await this.player.boardSide.moveMinion(this.position, position, { allowSwap });
+  }
+
+  async moveManually(position: BoardPosition) {
+    await this.move(position);
+    this.hasMovedThisTurn = true;
+    if (this.shouldSwitchInitiativeAfterMovingManually) {
+      await this.game.turnSystem.switchInitiative();
+    }
+  }
+
+  private async summon(position: BoardPosition) {
+    this.player.boardSide.summonMinion(this, position.row, position.slot);
+    if (this.hasSummoningSickness && this.game.config.SUMMONING_SICKNESS) {
+      await (this as MinionCard).modifiers.add(
+        new SummoningSicknessModifier(this.game, this)
+      );
+    }
+    await this.blueprint.onPlay(this.game, this);
+
+    await this.game.emit(
+      MINION_EVENTS.MINION_SUMMONED,
+      new MinionSummonedEvent({ card: this })
+    );
+  }
+
+  get canPlayDuringCombatPhase(): boolean {
+    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
+  }
+
+  get isCorrectPhaseToPlay() {
+    const validPhases: string[] = this.canPlayDuringCombatPhase
+      ? [GAME_PHASES.MAIN, GAME_PHASES.COMBAT]
+      : [GAME_PHASES.MAIN];
+    return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
+  }
+
+  canPlay() {
+    return this.interceptors.canPlay.getValue(
+      this.canPlayBase &&
+        this.isCorrectPhaseToPlay &&
+        this.blueprint.canPlay(this.game, this),
+      this
+    );
+  }
+
+  async playAt(position: BoardPosition) {
+    return this.resolve(() => this.summon(position));
+  }
+
+  async selectPosition() {
+    return new Promise<
+      | { position: BoardPosition; cancelled: false }
+      | { cancelled: true; position?: never }
+    >(
+      // eslint-disable-next-line no-async-promise-executor
+      async resolve => {
+        let cancelled = false;
+        this.cancelPlay = async () => {
+          cancelled = true;
+          await this.game.interaction
+            .getContext<'selecting_minion_slot'>()
+            .ctx.cancel(this.player);
+          resolve({ cancelled: true });
+        };
+
+        const [position] = await this.game.interaction.selectMinionSlot({
+          player: this.player,
+          isElligible(position) {
+            return (
+              position.player.equals(this.player) &&
+              !this.player.boardSide.getSlot(position.row, position.slot)?.canSummon
+            );
+          },
+          canCommit(selectedSlots) {
+            return selectedSlots.length === 1;
+          },
+          isDone(selectedSlots) {
+            return selectedSlots.length === 1;
+          },
+          timeoutFallback: [this.player.boardSide.unoccupiedSlots[0]]
+        });
+
+        if (cancelled) return;
+        resolve({ position, cancelled: false });
+      }
+    );
+  }
+
+  async play(onCancel?: () => MaybePromise<void>) {
+    const { position, cancelled } = await this.selectPosition();
+    if (cancelled) return await onCancel?.();
+    this.game.gamePhaseSystem.getContext<'playing_card_phase'>().ctx.closeCancelWindow();
+    await this.playAt(position);
+  }
+
+  get potentialAttackTargets() {
+    if (this.location !== CARD_LOCATIONS.BOARD) return [];
+
+    const result: Array<MinionCard | HeroCard> = this.player.opponent.boardSide
+      .getAllMinions()
+      .filter(minion =>
+        this.attackRanges.some(
+          range => range.canAttack(minion.slot!) && this.canAttack(minion)
+        )
+      );
+
+    if (
+      this.attackRanges.some(range => range.canAttackHero()) &&
+      this.canAttack(this.player.opponent.hero)
+    ) {
+      result.push(this.player.opponent.hero);
+    }
+
+    return result;
+  }
+
+  getAffectedCardsForAttack(target: AttackTarget) {
+    if (target instanceof HeroCard) {
+      return [target];
+    }
+    const affectedCards = new Set<MinionCard | HeroCard>();
+    this.attackAOEs.forEach(aoe => {
+      aoe.getAffectedCards(target.slot!).forEach(card => affectedCards.add(card));
+    });
+
+    return Array.from(affectedCards);
+  }
+
+  serialize(): SerializedMinionCard {
+    return {
+      ...this.serializeBase(),
+      manaCost: this.manaCost,
+      baseManaCost: this.manaCost,
+      potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
+      atk: this.atk,
+      baseAtk: this.blueprint.atk,
+      retaliation: this.retaliation,
+      baseRetaliation: this.blueprint.retaliation,
+      maxHp: this.maxHp,
+      baseMaxHp: this.blueprint.maxHp,
+      remainingHp: this.remainingHp,
+      abilities: this.abilities.map(ability => ability.id),
+      canMove: this.canMoveManually,
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      position: this.position
+        ? { row: this.position.row, slot: this.position.slot }
+        : null
+    };
+  }
+}

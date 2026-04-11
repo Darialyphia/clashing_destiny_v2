@@ -1,32 +1,33 @@
-import { type Override } from '@game/shared';
+import type { Override } from '@game/shared';
 import type {
+  PatchBasedSnapshotDiff,
   SerializedOmniscientState,
-  SerializedPlayerState,
-  SnapshotDiff,
-  PatchBasedSnapshotDiff
+  SerializedPlayerState
 } from '../../game/systems/game-snapshot.system';
-import type {
-  EntityDictionary,
-  SerializedEntity
-} from '../../game/systems/game-serializer';
 import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
 import { match } from 'ts-pattern';
-import type { GameClient } from '../client';
+import type { GameClient, GameStateEntities } from '../client';
+import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
+import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
+import type { SerializedModifier } from '../../modifier/modifier.entity';
+import type { SerializedPlayer } from '../../player/player.entity';
+import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
+import type { SerializedCell } from '../../board/entities/board-cell.entity';
+import { BoardCellViewModel } from '../view-models/board-cell.model';
+import type { SerializedUnit } from '../../unit/unit.entity';
+import { UnitViewModel } from '../view-models/unit.model';
+import type { SerializedTile } from '../../tile/tile.entity';
+import { TileViewModel } from '../view-models/tile.model';
 import {
   GAME_EVENTS,
   type SerializedEvent,
   type SerializedStarEvent
 } from '../../game/game.events';
+import type { EntityDictionary } from '../../game/systems/game-serializer';
+import type { SerializedAbility } from '../../card/entities/ability.entity';
 import { AbilityViewModel } from '../view-models/ability.model';
-import { CARD_LOCATIONS } from '../../card/card.enums';
-import { BOARD_SLOT_ROWS } from '../../board/board.constants';
-
-export type GameStateEntities = Record<
-  string,
-  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
->;
 
 export type GameClientState = Override<
   SerializedOmniscientState | SerializedPlayerState,
@@ -35,6 +36,16 @@ export type GameClientState = Override<
   }
 >;
 
+export type SerializedEntity =
+  | SerializedMinionCard
+  | SerializedSpellCard
+  | SerializedArtifactCard
+  | SerializedPlayer
+  | SerializedModifier
+  | SerializedCell
+  | SerializedUnit
+  | SerializedTile
+  | SerializedAbility;
 export class ClientStateController {
   state!: GameClientState;
 
@@ -65,153 +76,122 @@ export class ClientStateController {
         entity => new ModifierViewModel(entity, dict, this.client)
       )
       .with(
+        { entityType: 'cell' },
+        entity => new BoardCellViewModel(entity, dict, this.client)
+      )
+      .with(
+        { entityType: 'unit' },
+        entity => new UnitViewModel(entity, dict, this.client)
+      )
+      .with(
+        { entityType: 'tile' },
+        entity => new TileViewModel(entity, dict, this.client)
+      )
+      .with(
         { entityType: 'ability' },
         entity => new AbilityViewModel(entity, dict, this.client)
       )
-      .exhaustive();
+      .otherwise(() => {
+        throw new Error(`Unknown entity type: ${(entity as any).entityType}`);
+      });
   }
 
   private buildentities = (entities: EntityDictionary): GameClientState['entities'] => {
     const dict: GameClientState['entities'] = this.state?.entities ?? {};
     for (const [id, entity] of Object.entries(entities)) {
+      if (!entity.entityType) continue; // receivd a partial update, skip it
       dict[id] = this.buildViewModel(entity);
     }
     return dict;
   };
 
   // prepopulate the state with new entities because they could be used by the fx events
-  preupdate(newState: SnapshotDiff) {
+  preupdate(newState: PatchBasedSnapshotDiff) {
     if (!this.state) return;
 
-    for (const id of newState.addedEntities) {
-      const entity = newState.entities[id];
-
-      this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
+    for (const entity of Object.values(newState.addedEntities)) {
+      if (!entity.entityType) continue; // receivd a partial update, skip it
+      this.state.entities[entity.id] = this.buildViewModel(entity as SerializedEntity);
     }
   }
 
-  update(newState: SnapshotDiff): void {
+  update(newState: PatchBasedSnapshotDiff): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { entities, config, addedEntities, removedEntities, ...rest } = newState;
-    for (const [id, entity] of Object.entries(entities)) {
-      if (this.state.entities[id]) {
-        this.state.entities[id] = this.state.entities[id].update(entity as any).clone();
-      } else {
-        this.state.entities[id] = this.buildViewModel(entity as any);
-      }
-    }
+    const { entityPatches, config, board, addedEntities, removedEntities, ...rest } =
+      newState;
 
     removedEntities.forEach(id => {
       delete this.state.entities[id];
     });
 
+    // Apply entity patches to view models
+    for (const [entityId, patches] of Object.entries(entityPatches)) {
+      const viewModel = this.state.entities[entityId];
+      if (!viewModel) continue;
+
+      for (const patch of patches) {
+        viewModel.applyPatch(patch);
+      }
+
+      this.state.entities[entityId] = viewModel.clone();
+    }
+
     this.state = {
       ...this.state,
       ...rest,
+      board: { ...this.state.board, ...board },
       config: { ...this.state.config, ...config }
     };
   }
 
-  /**
-   * Update with patch-based diff for more granular updates
-   */
-  updateWithPatches(newState: PatchBasedSnapshotDiff): void {
-    const { entityPatches, addedEntities, removedEntities, config, ...rest } = newState;
-
-    // Apply patches to existing entities
-    for (const [id, patches] of Object.entries(entityPatches)) {
-      if (this.state.entities[id]) {
-        // Entity exists - apply patches
-        this.state.entities[id] = this.state.entities[id]
-          .updateWithPatches(patches)
-          .clone();
-      } else {
-        console.warn(`Entity ${id} not found for patching`);
-      }
+  private async onBeforePlayCard(
+    event: {
+      event: SerializedEvent<'CARD_BEFORE_PLAY'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    if (!this.state.entities[event.event.card.id]) {
+      return;
     }
+    const card = this.buildViewModel(event.event.card as any) as CardViewModel;
+    this.state.entities[card.id] = card;
+    return await flush();
+  }
 
-    // Add new entities
-    for (const [id, entity] of Object.entries(addedEntities)) {
-      this.state.entities[id] = this.buildViewModel(entity as any);
+  private async onAfterMinionSummoned(
+    event: {
+      event: SerializedEvent<'MINION_AFTER_SUMMON'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    if (!this.state.entities[event.event.unit.id]) {
+      return;
     }
-
-    // Remove deleted entities
-    removedEntities.forEach(id => {
-      delete this.state.entities[id];
-    });
-
-    // Update top-level state
-    this.state = {
-      ...this.state,
-      ...rest,
-      config: { ...this.state.config, ...config }
-    };
+    const unit = this.buildViewModel(event.event.unit as any) as UnitViewModel;
+    this.state.entities[unit.id] = unit;
+    if (!this.state.units.includes(unit.id)) {
+      this.state.units.push(unit.id);
+    }
+    this.state = { ...this.state };
+    return await flush();
   }
 
   async onEvent(
     event: SerializedStarEvent,
     flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
   ) {
-    if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
-      return this.onMinionSummoned(event, flush);
+    if (event.eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
+      return this.onBeforePlayCard(event, flush);
     }
-
-    if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
-      return this.onArtifactEquiped(event, flush);
+    if (event.eventName === GAME_EVENTS.MINION_AFTER_SUMMON) {
+      return this.onAfterMinionSummoned(event, flush);
     }
-  }
-
-  private async onMinionSummoned(
-    event: {
-      event: SerializedEvent<'MINION_SUMMONED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
-    const card = this.buildViewModel(event.event.card) as CardViewModel;
-    this.state.entities[card.id] = card;
-
-    const boardSide = this.state.board.sides.find(
-      side => side.playerId === card.player.id
-    )!;
-    if (card.position?.row === BOARD_SLOT_ROWS.FRONT_ROW) {
-      boardSide.frontRow.slots[card.position.slot] = {
-        ...boardSide.frontRow.slots[card.position.slot],
-        minion: card.id
-      };
-    } else if (card.position?.row === BOARD_SLOT_ROWS.BACK_ROW) {
-      boardSide.backRow.slots[card.position.slot] = {
-        ...boardSide.backRow.slots[card.position.slot],
-        minion: card.id
-      };
-    }
-
-    // @ts-expect-error force reactivity
-    this.state.board.sides = this.state.board.sides.map(side => ({
-      ...side
-    }));
-
     return await flush();
-  }
-
-  private async onArtifactEquiped(
-    event: {
-      event: SerializedEvent<'ARTIFACT_EQUIPED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
-    const card = this.buildViewModel(event.event.card) as CardViewModel;
-    this.state.entities[card.id] = card;
-
-    const boardSide = this.state.board.sides.find(
-      side => side.playerId === card.player.id
-    )!;
-    boardSide.heroZone.artifacts = [...boardSide.heroZone.artifacts, card.id];
-
-    // @ts-expect-error force reactivity
-    this.state.board.sides = this.state.board.sides.map(side => ({
-      ...side
-    }));
-
-    return await flush();
+    // if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
+    //   return this.onArtifactEquiped(event, flush);
+    // }
+    // if (event.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
+    //   return this.onChainEffectAdded(event, flush);
+    // }
   }
 }

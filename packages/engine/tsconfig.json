@@ -4,11 +4,12 @@
     "src/**/*.ts",
     "__test__/**/*.ts",
     "tsup.config.ts",
-    "src/scripts/**/*.ts"
+    "src/player/components/cards-tracker.componentts"
   ],
   "exclude": [".git", "node_modules"],
   "compilerOptions": {
     "types": ["vitest/importMeta"],
+    "rootDir": "./src",
     "lib": ["dom", "dom.iterable", "esnext"]
   }
 }

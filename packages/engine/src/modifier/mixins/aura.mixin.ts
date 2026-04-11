@@ -1,17 +1,23 @@
-import { type Modifier, type ModifierTarget } from '../modifier.entity';
+import type { Modifier, ModifierTarget } from '../modifier.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../../card/entities/card.entity';
+import type { Unit } from '../../unit/unit.entity';
+import type { Player } from '../../player/player.entity';
 
-export type AuraOptions = {
-  isElligible(candidate: AnyCard): boolean;
-  getModifiers: (candidate: AnyCard) => Modifier<AnyCard>[];
+export type AuraOptions<TCandidate extends ModifierTarget> = {
+  isElligible(candidate: TCandidate): boolean;
+  getModifiers: (candidate: TCandidate) => Modifier<TCandidate>[];
+  getCandidates: () => TCandidate[];
 };
 
-export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T> {
+class AuraModifierMixin<
+  T extends ModifierTarget,
+  TCandidate extends ModifierTarget
+> extends ModifierMixin<T> {
   protected modifier!: Modifier<T>;
 
-  private modifierByAffectedCardId = new Map<string, Modifier<AnyCard>[]>();
+  private modifiersPerCandidateId = new Map<string, Modifier<TCandidate>[]>();
   // we need to track this variable because of how the event emitter works
   // basically if we have an event that says "after unit moves, remove this aura modifier"
   // It will not clean up aura's "after unit move" event before all the current listeners have been ran
@@ -21,7 +27,7 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
   constructor(
     game: Game,
     private source: AnyCard,
-    private options: AuraOptions
+    private options: AuraOptions<TCandidate>
   ) {
     super(game);
     this.checkAura = this.checkAura.bind(this);
@@ -31,14 +37,14 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
   private async checkAura() {
     if (!this.isApplied) return;
 
-    for (const card of this.game.cardSystem.cards) {
-      const shouldGetAura = this.options.isElligible(card);
+    for (const candidate of this.options.getCandidates()) {
+      const shouldGetAura = this.options.isElligible(candidate);
 
-      const hasAura = this.modifierByAffectedCardId.has(card.id);
+      const hasAura = this.modifiersPerCandidateId.has(candidate.id);
 
       if (!shouldGetAura && hasAura) {
-        const modifierstoRemove = this.modifierByAffectedCardId.get(card.id) ?? [];
-        this.modifierByAffectedCardId.delete(card.id);
+        const modifierstoRemove = this.modifiersPerCandidateId.get(candidate.id)!;
+        this.modifiersPerCandidateId.delete(candidate.id);
         for (const mod of modifierstoRemove) {
           await mod.removeSource(this.source);
         }
@@ -46,10 +52,10 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
       }
 
       if (shouldGetAura && !hasAura) {
-        const modifiers = this.options.getModifiers(card);
-        this.modifierByAffectedCardId.set(card.id, modifiers);
+        const modifiers = this.options.getModifiers(candidate);
+        this.modifiersPerCandidateId.set(candidate.id, modifiers);
         for (const mod of modifiers) {
-          await card.modifiers.add(mod);
+          await candidate.modifiers.add(mod);
         }
         continue;
       }
@@ -58,13 +64,10 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
 
   private async cleanup() {
     this.game.off('*', this.checkAura);
+    for (const id of this.modifiersPerCandidateId.keys()) {
+      const modifierstoRemove = this.modifiersPerCandidateId.get(id)!;
+      this.modifiersPerCandidateId.delete(id);
 
-    for (const id of this.modifierByAffectedCardId.keys()) {
-      const card = this.game.cardSystem.getCardById(id);
-      if (!card) return;
-
-      const modifierstoRemove = this.modifierByAffectedCardId.get(card.id) ?? [];
-      this.modifierByAffectedCardId.delete(id);
       for (const mod of modifierstoRemove) {
         await mod.removeSource(this.source);
       }
@@ -79,9 +82,51 @@ export class AuraModifierMixin<T extends ModifierTarget> extends ModifierMixin<T
   }
 
   async onRemoved() {
+    console.log('cleanup aura');
     this.isApplied = false;
     await this.cleanup();
   }
 
-  async onReapplied() {}
+  onReapplied() {}
+}
+
+export class CardAuraModifierMixin<T extends AnyCard> extends AuraModifierMixin<
+  ModifierTarget,
+  T
+> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: Omit<AuraOptions<T>, 'getCandidates'>
+  ) {
+    super(game, source, {
+      ...options,
+      getCandidates: () => game.cardSystem.cards as T[]
+    });
+  }
+}
+
+export class UnitAuraModifierMixin extends AuraModifierMixin<ModifierTarget, Unit> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: Omit<AuraOptions<Unit>, 'getCandidates'>
+  ) {
+    super(game, source, {
+      ...options,
+      getCandidates: () => game.unitSystem.units
+    });
+  }
+}
+export class PlayerAuraModifierMixin extends AuraModifierMixin<ModifierTarget, Player> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: Omit<AuraOptions<Player>, 'getCandidates'>
+  ) {
+    super(game, source, {
+      ...options,
+      getCandidates: () => game.playerSystem.players
+    });
+  }
 }

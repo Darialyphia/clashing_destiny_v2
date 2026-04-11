@@ -1,4 +1,4 @@
-import { isFunction, type Serializable, type Values } from '@game/shared';
+import { isFunction, isString, type Serializable, type Values } from '@game/shared';
 import type { ModifierMixin } from './modifier-mixin';
 import { Entity } from '../entity';
 import type { Game } from '../game/game';
@@ -13,7 +13,6 @@ export type ModifierOptions<T extends ModifierTarget> = {
   icon?: string | (() => string);
   isUnique?: boolean;
   mixins: ModifierMixin<T>[];
-  groupKey?: string;
   stacks?: number;
 };
 
@@ -62,7 +61,6 @@ export type SerializedModifier = {
   source: string;
   stacks: number;
   isEnabled: boolean;
-  groupKey: string; // Optional key to group similar modifiers in the UI
 };
 
 export type ModifierInterceptors = {
@@ -91,7 +89,6 @@ export class Modifier<T extends ModifierTarget>
     name?: string | (() => string);
     description?: string | (() => string);
     icon?: string | (() => string);
-    groupKey?: string;
   };
 
   readonly modifierType: string;
@@ -119,8 +116,7 @@ export class Modifier<T extends ModifierTarget>
     this.infos = {
       description: options.description,
       name: options.name,
-      icon: options.icon,
-      groupKey: options.groupKey
+      icon: options.icon
     };
     this._isUnique = options.isUnique ?? false;
     if (options.stacks) {
@@ -247,7 +243,6 @@ export class Modifier<T extends ModifierTarget>
   async removeStacks(count: number) {
     this._stacks = Math.max(0, this._stacks - count);
     if (this._stacks <= 0) {
-      console.log(`Modifier ${this.id} has no stacks left, removing`);
       await this.remove();
     }
   }
@@ -272,8 +267,7 @@ export class Modifier<T extends ModifierTarget>
       target: this._target.id,
       source: this.initialSource.id,
       stacks: this._stacks,
-      isEnabled: this.isEnabled,
-      groupKey: this.infos.groupKey ?? this.modifierType
+      isEnabled: this.isEnabled
     };
   }
 }

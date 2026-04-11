@@ -19,7 +19,6 @@ export class Interceptable<TValue, TContext extends AnyObject = Record<string, n
 
   add(interceptor: Interceptor<TValue, TContext>, priority = 1) {
     this.listeners.push({ interceptor, priority });
-    this.listeners.sort((a, b) => a.priority - b.priority);
   }
 
   remove(interceptor: Interceptor<TValue, TContext>) {
@@ -34,9 +33,8 @@ export class Interceptable<TValue, TContext extends AnyObject = Record<string, n
   }
 
   getValue(initialValue: TValue, ctx: Readonly<TContext>) {
-    return this.listeners.reduce(
-      (value, listener) => listener.interceptor(value, ctx),
-      initialValue
-    );
+    return this.listeners
+      .sort((a, b) => a.priority - b.priority)
+      .reduce((value, listener) => listener.interceptor(value, ctx), initialValue);
   }
 }

@@ -1,31 +1,31 @@
-import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { MinionCard } from '../../card/entities/minion.entity';
+import type { MinionCard } from '../../card/entities/minion-card.entity';
 import type { Game } from '../../game/game';
-import { Modifier } from '../modifier.entity';
+import type { Unit } from '../../unit/unit.entity';
+import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
-import { TogglableModifierMixin } from '../mixins/togglable.mixin';
-import { CARD_LOCATIONS } from '../../card/card.enums';
-import type { HeroCard } from '../../card/entities/hero.entity';
+import { Modifier } from '../modifier.entity';
 
-export class WhileOnBoardModifier<
-  T extends MinionCard | ArtifactCard | HeroCard
-> extends Modifier<T> {
+export class WhileOnBoardModifier<T extends MinionCard> extends Modifier<T> {
   constructor(
-    modifierType: string,
     game: Game,
     source: AnyCard,
-    private options: {
-      mixins: Array<ModifierMixin<T>>;
+    {
+      modifier,
+      mixins = [],
+      modifierType = 'while-on-board'
+    }: {
+      modifier: Modifier<Unit>;
+      mixins?: ModifierMixin<T>[];
+      modifierType?: string;
     }
   ) {
     super(modifierType, game, source, {
       mixins: [
-        new TogglableModifierMixin(
-          game,
-          () => this.target.location === CARD_LOCATIONS.BOARD
-        ),
-        ...options.mixins
+        new UnitEffectModifierMixin(game, {
+          getModifier: () => modifier
+        }),
+        ...mixins
       ]
     });
   }

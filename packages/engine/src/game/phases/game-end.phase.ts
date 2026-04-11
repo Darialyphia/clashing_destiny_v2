@@ -9,10 +9,9 @@ export class GameEndPhase implements GamePhaseController, Serializable<EmptyObje
   async onEnter() {
     await this.game.emit(
       GAME_EVENTS.GAME_OVER,
-      new GameOverEvent({ winners: this.game.gamePhaseSystem.winners })
+      new GameOverEvent({ winners: this.game.gamePhaseSystem.winners! })
     );
   }
-
   async onExit() {}
 
   serialize(): EmptyObject {

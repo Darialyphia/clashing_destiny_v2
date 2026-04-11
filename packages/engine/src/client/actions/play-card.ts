@@ -7,7 +7,7 @@ export class PlayCardAction implements CardActionRule {
   constructor(private client: GameClient) {}
 
   predicate(card: CardViewModel) {
-    return card.canPlay && this.client.isActive();
+    return card.canPlay;
   }
 
   getLabel(card: CardViewModel) {
@@ -18,7 +18,7 @@ export class PlayCardAction implements CardActionRule {
     this.client.ui.optimisticState.playedCardId = card.id;
 
     this.client.dispatch({
-      type: 'declarePlayCard',
+      type: 'playCard',
       payload: {
         id: card.id,
         playerId: this.client.playerId

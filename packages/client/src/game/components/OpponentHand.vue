@@ -177,7 +177,6 @@ const isHoverable = computed(
       <HandCard
         v-for="card in cards"
         :key="card.card.cardId"
-        :is-interactive="isMyHand"
         :card-id="
           teachingMode || card.card.isRevealed ? card.card.cardId : undefined
         "

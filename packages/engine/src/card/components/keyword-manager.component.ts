@@ -24,4 +24,8 @@ export class KeywordManagerComponent {
   get keywords() {
     return [...this.keywordsDict.keys()];
   }
+
+  has(keyword: Keyword) {
+    return this.keywordsDict.has(keyword);
+  }
 }

@@ -60,7 +60,6 @@ export class FxController {
   async emit(eventName: keyof GameEventMap, event: FXEventMap[FXEventName]) {
     this._isPlaying = true;
     await this.emitter.emit(`pre_${eventName}`, event as any);
-    // console.log('[FX] emitting fx event', eventName);
     await this.emitter.emit(eventName, event as any);
     this._isPlaying = false;
   }

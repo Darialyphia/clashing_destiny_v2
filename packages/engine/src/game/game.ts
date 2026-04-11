@@ -7,7 +7,7 @@ import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/sh
 import {
   GameSnapshotSystem,
   type GameStateSnapshot,
-  type SnapshotDiff
+  type PatchBasedSnapshotDiff
 } from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';
 import { GAME_EVENTS, GameReadyEvent, type GameEventMap } from './game.events';
@@ -16,11 +16,15 @@ import { modifierIdFactory } from '../modifier/modifier.entity';
 import { CardSystem } from '../card/card.system';
 import type { CardBlueprint } from '../card/card-blueprint';
 import { GameInteractionSystem } from './systems/game-interaction.system';
+import { UnitSystem } from '../unit/unit-system';
+import { defaultMap, type MapBlueprint } from '../board/map-blueprint';
 import { BoardSystem } from '../board/board.system';
-import { GAME_PHASES } from './game.enums';
+import { VFXSystem } from './systems/vfx.system';
+import type { TileBlueprint } from '../tile/tile-blueprint';
+import { TileSystem } from '../tile/tile.system';
+import { TILES_DICTIONARY } from '../tile/tiles';
 import { TurnSystem } from './systems/turn.system';
 import { CARDS_DICTIONARY } from '../card/sets';
-import { generateRandomString } from '../utils/utils';
 
 export type GameOptions = {
   id: string;
@@ -28,12 +32,14 @@ export type GameOptions = {
   history?: SerializedInput[];
   overrides: Partial<{
     cardPool: IndexedRecord<CardBlueprint, 'id'>;
+    tilesPool: IndexedRecord<TileBlueprint, 'id'>;
+    map: MapBlueprint;
     config: Partial<Config>;
     winCondition: (game: Game, player: Player) => boolean;
   }>;
   isSimulation?: boolean;
   players: [PlayerOptions, PlayerOptions];
-  enableSnapshots?: boolean;
+  enableSnapshots: boolean;
 };
 
 export type SerializedGame = {
@@ -58,15 +64,17 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly gamePhaseSystem = new GamePhaseSystem(this);
 
+  readonly turnSystem = new TurnSystem(this);
+
   readonly cardSystem = new CardSystem(this);
+
+  readonly unitSystem = new UnitSystem(this);
 
   readonly boardSystem = new BoardSystem(this);
 
-  readonly turnSystem = new TurnSystem(this);
+  readonly vfxSystem = new VFXSystem(this);
 
-  // readonly unitSystem = new UnitSystem(this);
-
-  // readonly interactableSystem = new InteractableSystem(this);
+  readonly tileSystem = new TileSystem(this);
 
   readonly interaction = new GameInteractionSystem(this);
 
@@ -75,6 +83,8 @@ export class Game implements Serializable<SerializedGame> {
   readonly modifierIdFactory = modifierIdFactory();
 
   readonly cardPool: IndexedRecord<CardBlueprint, 'id'>;
+
+  readonly tilesPool: IndexedRecord<TileBlueprint, 'id'>;
 
   isInitialized = false;
 
@@ -85,20 +95,10 @@ export class Game implements Serializable<SerializedGame> {
     this.config = Object.assign({}, defaultConfig, options.overrides.config);
     this.isSimulation = options.isSimulation ?? false;
     this.cardPool = options.overrides.cardPool ?? CARDS_DICTIONARY;
-  }
-
-  get winCondition() {
-    return (
-      this.options.overrides.winCondition ??
-      ((game, player) => !player.opponent.hero.isAlive)
-    );
+    this.tilesPool = options.overrides.tilesPool ?? TILES_DICTIONARY;
   }
 
   async initialize() {
-    if (this.isInitialized) return;
-    if (this.isInitializing) return;
-    this.isInitializing = true;
-
     const start = performance.now();
     let now = start;
 
@@ -106,8 +106,18 @@ export class Game implements Serializable<SerializedGame> {
     console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
+    await this.boardSystem.initialize({
+      map: this.options.overrides.map ?? defaultMap
+    });
+    console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
     this.cardSystem.initialize({ cardPool: this.cardPool });
     console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
+    this.unitSystem.initialize();
+    console.log(`Unit system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     await this.playerSystem.initialize({
@@ -116,14 +126,14 @@ export class Game implements Serializable<SerializedGame> {
     console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
-    this.snapshotSystem.initialize({ enabled: this.options.enableSnapshots ?? true });
+    this.tileSystem.initialize();
+    console.log(`Tile system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
+    this.snapshotSystem.initialize({ enabled: this.options.enableSnapshots });
     console.log(
       `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
-    now = performance.now();
-
-    this.boardSystem.initialize();
-    console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     this.interaction.initialize();
@@ -142,8 +152,12 @@ export class Game implements Serializable<SerializedGame> {
     console.log(`Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
-    this.inputSystem.initialize();
+    await this.inputSystem.initialize();
     console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
+    await this.vfxSystem.initialize();
+    console.log(`FX system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));
@@ -181,6 +195,32 @@ export class Game implements Serializable<SerializedGame> {
     return this.emitter.off.bind(this.emitter);
   }
 
+  subscribeOmniscient(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getOmniscientDiffSnapshotAt(e.data.id))
+    );
+  }
+
+  subscribeForPlayer(
+    id: string,
+    cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void
+  ) {
+    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getDiffSnapshotForPlayerAt(e.data.id, id))
+    );
+  }
+
+  async emit<TEventName extends keyof GameEventMap & string>(
+    eventName: TEventName,
+    eventArg: GameEventMap[TEventName]
+  ) {
+    await this.emitter.emit(eventName, eventArg);
+  }
+
+  dispatch(input: SerializedInput) {
+    return this.inputSystem.dispatch(input);
+  }
+
   get activePlayer() {
     return this.interaction.getContext().ctx.player;
   }
@@ -194,57 +234,32 @@ export class Game implements Serializable<SerializedGame> {
     });
   }
 
-  onTurnStart(cb: () => void) {
-    this.on(GAME_EVENTS.TURN_START, cb);
-  }
-
-  subscribeOmniscient(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
-      cb(this.snapshotSystem.getOmniscientDiffSnapshotAt(e.data.id))
-    );
-  }
-
-  subscribeForPlayer(
-    id: string,
-    cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void
-  ) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
-      cb(this.snapshotSystem.getDiffSnapshotForPlayerAt(id, e.data.id))
-    );
-  }
-
-  async emit<TEventName extends keyof GameEventMap & string>(
-    eventName: TEventName,
-    eventArg: GameEventMap[TEventName]
-  ) {
-    await this.emitter.emit(eventName, eventArg);
-  }
-
-  dispatch(input: SerializedInput) {
-    if (this.gamePhaseSystem.getState() === GAME_PHASES.GAME_END) return;
-    return this.inputSystem.dispatch(input);
-  }
-
   shutdown() {
     this.emitter.removeAllListeners();
   }
 
-  async clone(id: string) {
-    const game = new Game({
-      ...this.options,
-      id: `simulation_${id}`,
-      history: this.inputSystem.serialize()
-    });
-    await game.initialize();
-
-    return game;
+  get winCondition() {
+    return (
+      this.options.overrides.winCondition ??
+      ((game, player) => player.opponent.remainingHp === 0)
+    );
   }
+  // clone(id: number) {
+  //   const game = new Game({
+  //     ...this.options,
+  //     id: `simulation_${id}`,
+  //     history: this.inputSystem.serialize()
+  //   });
+  //   game.initialize();
 
-  async simulateDispatch(playerId: string, input: SerializedInput) {
-    const game = await this.clone(generateRandomString(8));
-    await game.dispatch(input);
-    await game.snapshotSystem.takeSnapshot();
+  //   return game;
+  // }
 
-    return game.snapshotSystem.getLatestSnapshotForPlayer(playerId);
-  }
+  // simulateDispatch(playerId: string, input: SerializedInput) {
+  //   const game = this.clone(++this.nextSimulationId);
+  //   game.dispatch(input);
+  //   game.snapshotSystem.takeSnapshot();
+
+  //   return game.snapshotSystem.getLatestSnapshotForPlayer(playerId);
+  // }
 }

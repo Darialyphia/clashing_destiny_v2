@@ -1,11 +1,10 @@
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { CardViewModel } from './card.model';
-import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
+import { applyPatchToData } from '../utils/apply-patch';
+import type { CardViewModel } from './card.model';
 
 export class ModifierViewModel {
-  private static patchApplier = new PatchApplier();
   private getEntities: () => GameStateEntities;
 
   private getClient: () => GameClient;
@@ -24,32 +23,25 @@ export class ModifierViewModel {
   }
 
   update(data: Partial<SerializedModifier>) {
-    this.data = Object.assign({}, this.data, data);
+    Object.assign(this.data, data);
+
     return this;
   }
 
-  /**
-   * Update using patch operations for granular changes
-   */
-  updateWithPatches(patches: PatchOperation[]) {
-    this.data = ModifierViewModel.patchApplier.applyPatches(this.data, patches);
+  applyPatch(patch: PatchOperation) {
+    applyPatchToData(this.data, patch);
     return this;
   }
 
   clone() {
     return new ModifierViewModel(this.data, this.getEntities(), this.getClient());
   }
-
   get id() {
     return this.data.id;
   }
 
   get modifierType() {
     return this.data.modifierType;
-  }
-
-  get groupKey() {
-    return this.data.groupKey ?? this.data.modifierType;
   }
 
   get name() {
@@ -70,8 +62,5 @@ export class ModifierViewModel {
 
   get source() {
     return this.getEntities()[this.data.source] as CardViewModel;
-  }
-  get targetAsCard() {
-    return this.getEntities()[this.data.target] as CardViewModel;
   }
 }

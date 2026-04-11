@@ -18,7 +18,7 @@ export class PassGlobalAction implements GlobalActionRule {
     return (
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      this.client.playerId === state.currentPlayer
+      this.client.playerId === state.turnPlayer
     );
   }
 
@@ -27,11 +27,6 @@ export class PassGlobalAction implements GlobalActionRule {
   }
 
   onClick(): void {
-    const shouldConfirm = false;
-    if (shouldConfirm) {
-      this.client.ui.isPassConfirmationModalOpened = true;
-    } else {
-      this.client.pass();
-    }
+    this.client.pass();
   }
 }

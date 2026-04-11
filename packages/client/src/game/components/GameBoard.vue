@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import {
+  useGameState,
   useGameUi,
+  useMyBoard,
   useMyPlayer,
+  useOpponentBoard,
   useOpponentPlayer
 } from '../composables/useGameClient';
 import CombatArrows from './CombatArrows.vue';
@@ -14,18 +17,18 @@ import AnswerQuestionModal from './AnswerQuestionModal.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import Camera from './Camera.vue';
-import MyBoard from './MyBoard.vue';
-import OpponentBoard from './OpponentBoard.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import OpponentHand from './OpponentHand.vue';
-import BottomBar from './BottomBar.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
-import { useWindowSize } from '@vueuse/core';
+import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
+import BoardMinionRow from './BoardMinionRow.vue';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const { options } = defineProps<{
   clocks?: {
@@ -41,9 +44,11 @@ const { options } = defineProps<{
 }>();
 
 const ui = useGameUi();
+const state = useGameState();
 const myPlayer = useMyPlayer();
+const myBoard = useMyBoard();
 const opponentPlayer = useOpponentPlayer();
-
+const opponentBoard = useOpponentBoard();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
 
@@ -77,21 +82,85 @@ const boardMargin = computed(() => {
     y: (height.value - scaledBoardHeight) / 2
   };
 });
+
+const isOutOfScreen = usePageLeave();
+
+const stopDragging = async (cb?: (playedCard: CardViewModel) => void) => {
+  await nextTick();
+  if (!ui.value.draggedCard) return;
+  const card = ui.value.draggedCard;
+
+  ui.value.stopDraggingCard();
+
+  cb?.(card);
+};
+
+const cancelPlay = (card: CardViewModel) => {
+  const el = document.querySelector(
+    ui.value.DOMSelectors.draggedCard(card.id).selector
+  );
+  if (!el) return;
+  // const flipState = Flip.getState(el);
+  ui.value.unselect();
+  card.cancelPlay();
+  // window.requestAnimationFrame(() => {
+  //   const target = document.querySelector(
+  //     ui.value.DOMSelectors.cardInHand(card.id, card.player.id).selector
+  //   );
+
+  //   Flip.from(flipState, {
+  //     targets: target,
+  //     duration: 0.25,
+  //     absolute: true,
+  //     ease: Power1.easeOut
+  //   });
+  // });
+};
+watch(isOutOfScreen, out => {
+  if (!out) return;
+  stopDragging(card => {
+    if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return;
+    cancelPlay(card);
+  });
+});
+
+useEventListener('mouseup', async () => {
+  stopDragging(card => {
+    if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return;
+    // const isWithinBoard = ui.value.DOMSelectors.board.element?.contains(
+    //   e.target as Node
+    // );
+    // if (isWithinBoard) return;
+    cancelPlay(card);
+  });
+});
 </script>
 
 <template>
-  <SVGFilters />
-  <PlayedCard />
-  <ChooseCardModal />
-  <RearrangeCardsModal />
-  <CombatArrows />
-  <AnswerQuestionModal />
-  <DraggedCard />
-  <TurnIndicator />
-
+  <div class="debug">
+    <div>Game Phase: {{ state.phase.state }}</div>
+    <div>Interaction State: {{ state.interaction.state }}</div>
+    <div>Interaction Context: {{ state.interaction.ctx }}</div>
+  </div>
   <div class="game-board-container">
+    <SVGFilters />
+    <PlayedCard />
+    <ChooseCardModal />
+    <RearrangeCardsModal />
+    <CombatArrows />
+    <AnswerQuestionModal />
+    <DraggedCard />
+    <TurnIndicator />
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
+        <div class="minions-zone">
+          <BoardMinionRow :zone="opponentBoard.backRow" />
+          <BoardMinionRow :zone="opponentBoard.frontRow" />
+          <div class="separator" />
+          <BoardMinionRow :zone="myBoard.frontRow" />
+          <BoardMinionRow :zone="myBoard.backRow" />
+        </div>
+
         <!-- <OpponentBoard />
         <div class="separator" />
         <MyBoard />
@@ -138,6 +207,17 @@ const boardMargin = computed(() => {
 </template>
 
 <style scoped lang="postcss">
+.debug {
+  position: fixed;
+  top: 0;
+  left: var(--size-12);
+  color: white;
+  font-size: var(--font-size-0);
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  padding: var(--size-4);
+}
 .game-board-container {
   width: 100vw;
   height: 100dvh;
@@ -160,6 +240,18 @@ const boardMargin = computed(() => {
   transform: scale(v-bind('boardScale'))
     translateX(calc(v-bind('boardMargin.x') * 1px))
     translateY(calc(v-bind('boardMargin.y') * 1px));
+}
+
+.minions-zone {
+  width: 832px;
+  height: 621px;
+  background: url(@/assets/ui/board.png);
+  margin-top: 196px;
+  margin-inline: auto;
+  padding-block: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .arrows {
@@ -199,8 +291,7 @@ const boardMargin = computed(() => {
 }
 
 .separator {
-  height: 1px;
-  border: solid 1px hsl(from #985e25 h s l / 0.35);
+  height: 24px;
 }
 /* @keyframes warning-pulse {
   0%,

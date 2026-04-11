@@ -3,25 +3,30 @@ import {
   StateMachine,
   stateTransition,
   type BetterExtract,
-  type MaybePromise
+  type Values
 } from '@game/shared';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import {
-  GAME_PHASES,
-  GAME_PHASE_EVENTS,
-  GAME_PHASE_TRANSITIONS,
-  type GamePhase,
-  type GamePhaseTransition
-} from '../game.enums';
-import { CombatPhase } from '../phases/combat.phase';
-import { DrawPhase } from '../phases/draw.phase';
+import { GAME_PHASES, GAME_PHASE_EVENTS, type GamePhase } from '../game.enums';
 import { MainPhase } from '../phases/main.phase';
-import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
+import { MulliganPhase } from '../phases/mulligan.phase';
+import { PlayCardPhase } from '../phases/play-card.phase';
+import { IllegalCardPlayedError } from '../../input/input-errors';
 import { GAME_EVENTS } from '../game.events';
-import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-error';
+
+export const GAME_PHASE_TRANSITIONS = {
+  COMMIT_MULLIGAN: 'commit_mulligan',
+  DRAW_FOR_TURN: 'draw_for_turn',
+  END_TURN: 'end_turn',
+  START_TURN: 'start_turn',
+  PLAYER_WON: 'player_won',
+  START_PLAYING_CARD: 'start_playing_card',
+  COMMIT_PLAYING_CARD: 'commit_playing_card',
+  CANCEL_PLAYING_CARD: 'cancel_playing_card'
+} as const;
+export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
@@ -30,20 +35,16 @@ export type GamePhaseEventMap = {
 
 export type GamePhaseContext =
   | {
-      state: BetterExtract<GamePhase, 'draw_phase'>;
-      ctx: DrawPhase;
+      state: BetterExtract<GamePhase, 'mulligan_phase'>;
+      ctx: MulliganPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: MainPhase;
     }
   | {
-      state: BetterExtract<GamePhase, 'combat_phase'>;
-      ctx: CombatPhase;
-    }
-  | {
-      state: BetterExtract<GamePhase, 'end_phase'>;
-      ctx: EndPhase;
+      state: BetterExtract<GamePhase, 'playing_card_phase'>;
+      ctx: PlayCardPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'game_end'>;
@@ -52,20 +53,16 @@ export type GamePhaseContext =
 
 export type SerializedGamePhaseContext =
   | {
-      state: BetterExtract<GamePhase, 'draw_phase'>;
-      ctx: ReturnType<DrawPhase['serialize']>;
+      state: BetterExtract<GamePhase, 'mulligan_phase'>;
+      ctx: ReturnType<MulliganPhase['serialize']>;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: ReturnType<MainPhase['serialize']>;
     }
   | {
-      state: BetterExtract<GamePhase, 'combat_phase'>;
-      ctx: ReturnType<CombatPhase['serialize']>;
-    }
-  | {
-      state: BetterExtract<GamePhase, 'end_phase'>;
-      ctx: ReturnType<EndPhase['serialize']>;
+      state: Extract<GamePhase, 'playing_card_phase'>;
+      ctx: ReturnType<PlayCardPhase['serialize']>;
     }
   | {
       state: Extract<GamePhase, 'game_end'>;
@@ -73,60 +70,58 @@ export type SerializedGamePhaseContext =
     };
 
 export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition> {
-  private _winners: Player[] = [];
+  private _winners: Player[] | null = null;
 
   readonly ctxDictionary = {
-    [GAME_PHASES.DRAW]: DrawPhase,
+    [GAME_PHASES.MULLIGAN]: MulliganPhase,
     [GAME_PHASES.MAIN]: MainPhase,
-    [GAME_PHASES.COMBAT]: CombatPhase,
-    [GAME_PHASES.END]: EndPhase,
+    [GAME_PHASES.PLAYING_CARD]: PlayCardPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
   };
 
   private _ctx: GamePhaseContext['ctx'];
 
   constructor(private game: Game) {
-    super(GAME_PHASES.DRAW);
-    this._ctx = new DrawPhase(this.game);
+    super(GAME_PHASES.MULLIGAN);
+    this._ctx = new MulliganPhase(this.game);
     this.addTransitions([
       stateTransition(
-        GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
+        GAME_PHASES.MULLIGAN,
+        GAME_PHASE_TRANSITIONS.COMMIT_MULLIGAN,
         GAME_PHASES.MAIN
       ),
       stateTransition(
         GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE,
-        GAME_PHASES.COMBAT
-      ),
-      stateTransition(
-        GAME_PHASES.COMBAT,
-        GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE,
+        GAME_PHASE_TRANSITIONS.END_TURN,
         GAME_PHASES.MAIN
       ),
       stateTransition(
         GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_END_TURN,
-        GAME_PHASES.END
+        GAME_PHASE_TRANSITIONS.END_TURN,
+        GAME_PHASES.MAIN
       ),
-      stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
+      stateTransition(
+        GAME_PHASES.MAIN,
+        GAME_PHASE_TRANSITIONS.START_PLAYING_CARD,
+        GAME_PHASES.PLAYING_CARD
+      ),
+      stateTransition(
+        GAME_PHASES.PLAYING_CARD,
+        GAME_PHASE_TRANSITIONS.COMMIT_PLAYING_CARD,
+        GAME_PHASES.MAIN
+      ),
+      stateTransition(
+        GAME_PHASES.PLAYING_CARD,
+        GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        GAME_PHASES.MAIN
+      ),
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       ),
       stateTransition(
-        GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.PLAYER_WON,
-        GAME_PHASES.GAME_END
-      ),
-      stateTransition(
-        GAME_PHASES.COMBAT,
-        GAME_PHASE_TRANSITIONS.PLAYER_WON,
-        GAME_PHASES.GAME_END
-      ),
-      stateTransition(
-        GAME_PHASES.END,
+        GAME_PHASES.PLAYING_CARD,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       )
@@ -149,7 +144,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   }
 
   async startGame() {
-    await (this._ctx as DrawPhase).onEnter();
+    await (this._ctx as MulliganPhase).onEnter();
   }
 
   shutdown() {}
@@ -172,6 +167,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   async sendTransition(transition: GamePhaseTransition) {
     const previousPhase = this.getState();
     const nextPhase = this.getNextState(transition);
+
     await this.game.emit(
       GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE,
       new GamePhaseBeforeChangeEvent({
@@ -179,8 +175,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         to: nextPhase!
       })
     );
+
     this.dispatch(transition);
+
     await this._ctx.onExit();
+
     this._ctx = new this.ctxDictionary[nextPhase!](this.game);
     await this.game.emit(
       GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE,
@@ -190,16 +189,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       })
     );
     await this._ctx.onEnter();
-  }
-
-  async endCombatPhase() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE), new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE);
-  }
-
-  async declareEndTurn() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN), new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN);
   }
 
   async endTurn() {
@@ -213,13 +202,9 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     });
   }
 
-  async startCombat() {
-    assert(
-      this.can(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE),
-      new WrongGamePhaseError()
-    );
-
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE);
+  async commitMulligan() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.COMMIT_MULLIGAN), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.COMMIT_MULLIGAN);
   }
 
   async declareWinner(players: Player[]) {
@@ -236,16 +221,18 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ctx: context.ctx.serialize()
     } as SerializedGamePhaseContext;
   }
-}
 
-export class GameTurnEvent extends TypedSerializableEvent<
-  { turnCount: number },
-  { turnCount: number }
-> {
-  serialize(): { turnCount: number } {
-    return {
-      turnCount: this.data.turnCount
-    };
+  async playCard(id: string, player: Player) {
+    assert(this.getState() === GAME_PHASES.MAIN, new WrongGamePhaseError());
+
+    const canPlay = this.game.turnSystem.initiativePlayer.equals(player);
+    assert(canPlay, new IllegalCardPlayedError());
+
+    const card = player.cardManager.getCardInHandById(id);
+    assert(card, new IllegalCardPlayedError());
+    assert(card.canPlay(), new IllegalCardPlayedError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_PLAYING_CARD);
+    return (this._ctx as PlayCardPhase).play(card);
   }
 }
 
@@ -273,5 +260,17 @@ export class GamePhaseAfterChangeEvent extends TypedSerializableEvent<
         ctx: this.data.to.ctx.serialize() as any // Type assertion to match SerializedGamePhaseContext
       }
     };
+  }
+}
+
+export class WrongGamePhaseError extends Error {
+  constructor() {
+    super('Wrong game phase');
+  }
+}
+
+export class CorruptedGamephaseContextError extends Error {
+  constructor() {
+    super('Corrupted game phase context');
   }
 }
