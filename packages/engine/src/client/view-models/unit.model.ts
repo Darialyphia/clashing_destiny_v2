@@ -1,6 +1,5 @@
 import type { SerializedUnit } from '../../unit/unit.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { applyPatchToData } from '../utils/apply-patch';
 import type { GameClient, GameStateEntities } from '../client';
 import type { BoardCellViewModel } from './board-cell.model';
 import type { CardViewModel } from './card.model';
@@ -31,8 +30,8 @@ export class UnitViewModel {
     return this;
   }
 
-  applyPatch(patch: PatchOperation) {
-    applyPatchToData(this.data, patch);
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = this.getClient().patchApplier.applyPatches(this.data, patches);
     return this;
   }
 

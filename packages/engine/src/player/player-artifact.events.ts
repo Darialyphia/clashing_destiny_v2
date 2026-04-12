@@ -1,4 +1,3 @@
-import type { EmptyObject } from '@game/shared';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { ARTIFACT_EVENTS } from './player.enums';
 import type { PlayerArtifact } from './player-artifact.entity';

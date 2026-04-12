@@ -1,7 +1,6 @@
 import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { applyPatchToData } from '../utils/apply-patch';
 import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
 import type { GameClient, GameStateEntities } from '../client';
 import type { PlayerViewModel } from './player.model';
@@ -46,8 +45,8 @@ export class CardViewModel {
     return this;
   }
 
-  applyPatch(patch: PatchOperation) {
-    applyPatchToData(this.data, patch);
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = this.getClient().patchApplier.applyPatches(this.data, patches);
     return this;
   }
 
@@ -71,10 +70,6 @@ export class CardViewModel {
     return this.data.description;
   }
 
-  get spriteId() {
-    return this.data.spriteId;
-  }
-
   get kind() {
     return this.data.kind;
   }
@@ -87,12 +82,20 @@ export class CardViewModel {
     return this.data.keywords;
   }
 
-  get sounds() {
-    return this.data.sounds;
-  }
-
   get player() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
+  }
+
+  get art() {
+    return {
+      isFullArt: this.data.art.isFullArt,
+      dimensions: 'dimensions' in this.data.art ? this.data.art.dimensions : undefined,
+      foil: this.data.art.foil,
+      main: `cards/${this.data.art.main}`,
+      bg: `cards/${this.data.art.bg}`,
+      foilBg: this.data.art.foilBg ? `cards/${this.data.art.foilBg}` : undefined,
+      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined
+    };
   }
 
   get manaCost() {

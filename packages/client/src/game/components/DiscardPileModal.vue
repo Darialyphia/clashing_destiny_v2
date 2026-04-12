@@ -1,17 +1,8 @@
 <script setup lang="ts">
-import Pile from './Pile.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import {
-  useBoardSide,
-  useFxEvent,
-  useGameUi,
-  useMyPlayer
-} from '../composables/useGameClient';
+import { useBoardSide, useMyPlayer } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { useSettingsStore } from '@/shared/composables/useSettings';
-import { useKeybordShortcutLabel } from '../composables/useGameKeyboardControls';
 
 const { player } = defineProps<{
   player: string;
@@ -23,39 +14,11 @@ const isOpened = ref(false);
 const close = () => {
   isOpened.value = false;
 };
-useFxEvent(FX_EVENTS.CARD_DECLARE_PLAY, close);
-useFxEvent(FX_EVENTS.CARD_DECLARE_USE_ABILITY, close);
-const ui = useGameUi();
 
 const myPlayer = useMyPlayer();
-const settings = useSettingsStore();
-const getKeyLabel = useKeybordShortcutLabel();
 </script>
 
 <template>
-  <Pile
-    :size="board.discardPile.length"
-    v-slot="{ index }"
-    class="discard-pile"
-    :id="ui.DOMSelectors.discardPile(player).id"
-    :data-keyboard-shortcut="
-      player === myPlayer.id
-        ? getKeyLabel(settings.settings.bindings.toggleDiscardPile.control)
-        : getKeyLabel(
-            settings.settings.bindings.toggleOpponentDiscardPile.control
-          )
-    "
-    data-keyboard-shortcut-centered="true"
-    style="--keyboard-shortcut-top: -8px; --keyboard-shortcut-right: 50%"
-    @click="isOpened = true"
-  >
-    <GameCard
-      :card-id="board.discardPile[index]"
-      :is-interactive="false"
-      variant="small"
-    />
-  </Pile>
-
   <UiModal
     v-model:is-opened="isOpened"
     :title="
@@ -93,15 +56,6 @@ const getKeyLabel = useKeybordShortcutLabel();
 </template>
 
 <style scoped lang="postcss">
-.discard-pile {
-  height: calc(var(--pixel-scale) * var(--card-small-height));
-  width: calc(var(--pixel-scale) * var(--card-small-width));
-  --pixel-scale: 0.75;
-  @screen lt-lg {
-    --pixel-scale: 0.5;
-  }
-}
-
 .content {
   --pixel-scale: 1.5;
   @screen lt-lg {

@@ -61,32 +61,30 @@ const isStarted = ref(false);
       {
         id: 'p1',
         name: 'Player 1',
-        mainDeck: {
-          cards: p1Deck.mainDeck
-            .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
+        deck: {
+          cards: p1Deck.cards
+            .map(c =>
+              Array.from({ length: c.copies }, () => ({
+                blueprintId: c.blueprintId,
+                isFoil: c.isFoil
+              }))
+            )
             .flat()
-        },
-        destinyDeck: {
-          cards: p1Deck.destinyDeck
-            .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
-            .flat()
-        },
-        hero: p1Deck.hero!.blueprintId
+        }
       },
       {
         id: 'p2',
         name: 'Player 2',
-        mainDeck: {
-          cards: p2Deck.mainDeck
-            .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
+        deck: {
+          cards: p2Deck.cards
+            .map(c =>
+              Array.from({ length: c.copies }, () => ({
+                blueprintId: c.blueprintId,
+                isFoil: c.isFoil
+              }))
+            )
             .flat()
-        },
-        destinyDeck: {
-          cards: p2Deck.destinyDeck
-            .map(c => Array.from({ length: c.copies }, () => c.blueprintId))
-            .flat()
-        },
-        hero: p2Deck.hero!.blueprintId
+        }
       }
     ]"
   />

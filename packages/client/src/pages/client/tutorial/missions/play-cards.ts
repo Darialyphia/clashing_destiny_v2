@@ -1,5 +1,5 @@
+import type { HeroCard } from '@game/engine/src/card/entities/hero-card.entity';
 import type { TutorialMission } from '.';
-import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
 
 const meta: {
   allyHero: HeroCard | null;
@@ -17,24 +17,22 @@ export const playCardTutorial: TutorialMission = {
       {
         id: 'p1',
         name: 'You',
-        mainDeck: {
-          cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
-        },
-        destinyDeck: {
-          cards: ['aiden-lv1']
-        },
-        hero: 'todo'
+        deck: {
+          cards: Array.from({ length: 30 }, () => ({
+            blueprintId: 'courageous-footsoldier',
+            isFoil: false
+          }))
+        }
       },
       {
         id: 'p2',
         name: 'Opponent',
-        mainDeck: {
-          cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
-        },
-        destinyDeck: {
-          cards: ['aiden-lv1']
-        },
-        hero: 'todo'
+        deck: {
+          cards: Array.from({ length: 30 }, () => ({
+            blueprintId: 'courageous-footsoldier',
+            isFoil: false
+          }))
+        }
       }
     ],
     rngSeed: 'tutorial-seed',

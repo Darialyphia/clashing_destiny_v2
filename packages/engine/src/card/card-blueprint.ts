@@ -30,33 +30,33 @@ export type CardBlueprintBase = {
   jobs: JobId[];
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-  vfx: {
-    spriteId: string;
-  };
-  sounds: {
-    play?: string;
-    walk?: string;
-    attack?: string;
-    dealDamage?: string;
-    takeDamage?: string;
-    death?: string;
-  };
-  runeCost: Partial<Record<Rune, number>>;
+  art: Record<
+    string,
+    {
+      foil: {
+        sheen?: boolean;
+        oil?: boolean;
+        gradient?: boolean;
+        lightGradient?: boolean;
+        scanlines?: boolean;
+        goldenGlare?: boolean;
+        glitter?: boolean;
+        foilLayer?: boolean;
+        noBackground?: boolean;
+        noFrame?: boolean;
+      };
+      bg: string;
+      main: string;
+      foilBg?: string;
+      foilMain?: string;
+      isFullArt: boolean;
+    }
+  >;
 };
 
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
-  vfx: CardBlueprintBase['vfx'] & {
-    sequences?: {
-      play?: (
-        game: Game,
-        card: MinionCard,
-        position: Point,
-        targets: Point[]
-      ) => VFXSequence;
-    };
-  };
   abilities: AbilityBlueprint<MinionCard>[];
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
@@ -75,18 +75,6 @@ export type MinionBlueprint = CardBlueprintBase & {
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
-  vfx: CardBlueprintBase['vfx'] & {
-    sequences?: {
-      play?: (
-        game: Game,
-        card: SpellCard,
-        ctx: {
-          targets: Point[];
-          aoe: GenericAOEShape;
-        }
-      ) => VFXSequence;
-    };
-  };
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
   onPlay: (
@@ -104,18 +92,6 @@ export type SpellBlueprint = CardBlueprintBase & {
 export type DestinyBlueprint = CardBlueprintBase & {
   expCost: number;
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  vfx: CardBlueprintBase['vfx'] & {
-    sequences?: {
-      play?: (
-        game: Game,
-        card: DestinyCard,
-        ctx: {
-          targets: Point[];
-          aoe: GenericAOEShape;
-        }
-      ) => VFXSequence;
-    };
-  };
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   canPlay: (game: Game, card: DestinyCard) => boolean;
   onPlay: (
@@ -133,6 +109,7 @@ export type DestinyBlueprint = CardBlueprintBase & {
 export type AbilityBlueprint<T extends AnyCard> = {
   id: string;
   description: string;
+  label: string;
   manaCost: number;
   getTargets: (game: Game, card: T) => Promise<BoardCell[]>;
   getAoe: (game: Game, card: T, targets: BoardCell[]) => GenericAOEShape;
@@ -153,19 +130,6 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   durability: number;
   manaCost: number;
   abilities: AbilityBlueprint<ArtifactCard>[];
-  vfx: CardBlueprintBase['vfx'] & {
-    sequences?: {
-      play?: (
-        game: Game,
-        card: ArtifactCard,
-        options: {
-          targets: Point[];
-          aoe: GenericAOEShape;
-          artifact: PlayerArtifact;
-        }
-      ) => VFXSequence;
-    };
-  };
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (

@@ -1,4 +1,4 @@
-import { assert } from '@game/shared';
+import { assert, isDefined } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
 import type { Player } from '../../player/player.entity';
@@ -9,13 +9,14 @@ import {
   TooManyCardsError
 } from '../game-error';
 
-type ChoosingCardsContextOptions = {
+export type ChoosingCardsContextOptions = {
   player: Player;
   choices: AnyCard[];
   minChoiceCount: number;
   maxChoiceCount: number;
   label: string;
   source: AnyCard;
+  timeoutFallback: AnyCard[];
 };
 export class ChoosingCardsContext {
   static async create(game: Game, options: ChoosingCardsContextOptions) {
@@ -38,6 +39,8 @@ export class ChoosingCardsContext {
 
   public source: AnyCard;
 
+  private timeoutFallback: AnyCard[];
+
   private constructor(
     private game: Game,
     options: ChoosingCardsContextOptions
@@ -48,6 +51,7 @@ export class ChoosingCardsContext {
     this.player = options.player;
     this.label = options.label;
     this.source = options.source;
+    this.timeoutFallback = options.timeoutFallback;
   }
 
   async init() {}
@@ -62,26 +66,27 @@ export class ChoosingCardsContext {
     };
   }
 
-  commit(player: Player, indices: number[]) {
+  commit(player: Player, indices: number[] | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
+    if (isDefined(indices)) {
+      assert(
+        indices.length >= this.minChoiceCount,
+        new NotEnoughCardsError(this.minChoiceCount, indices.length)
+      );
+      assert(
+        indices.length <= this.maxChoiceCount,
+        new TooManyCardsError(this.maxChoiceCount, indices.length)
+      );
 
-    assert(
-      indices.length >= this.minChoiceCount,
-      new NotEnoughCardsError(this.minChoiceCount, indices.length)
-    );
-    assert(
-      indices.length <= this.maxChoiceCount,
-      new TooManyCardsError(this.maxChoiceCount, indices.length)
-    );
-
-    const selectedCards = indices.map(index => this.choices[index]);
-    this.selectedCards.push(...selectedCards);
+      this.selectedCards.push(...indices.map(index => this.choices[index]));
+    } else {
+      this.selectedCards.push(...this.timeoutFallback);
+    }
 
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS);
     this.game.interaction.onInteractionEnd();
     this.game.inputSystem.unpause(this.selectedCards);
   }
-
   cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS);

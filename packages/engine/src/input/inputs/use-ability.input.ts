@@ -3,14 +3,11 @@ import { defaultInputSchema, Input } from '../input';
 import { assert, isDefined } from '@game/shared';
 import {
   CardNotOwnedError,
-  IllegalAttackTargetError,
   NotCurrentPlayerError,
-  UnitNotOwnedError,
-  UnknownCardError,
-  UnknownUnitError
+  UnknownCardError
 } from '../input-errors';
 import { GAME_PHASES } from '../../game/game.enums';
-import { isArtifact } from '../../card/card-utils';
+import { isArtifact, isHero, isMinion } from '../../card/card-utils';
 import { IllegalGameStateError } from '../../game/game-error';
 
 const schema = defaultInputSchema.extend({
@@ -37,7 +34,10 @@ export class UseAbilityInput extends Input<typeof schema> {
       new CardNotOwnedError()
     );
     const card = this.card;
-    assert(isArtifact(card), new IllegalGameStateError('Card does not have abilities'));
+    assert(
+      isArtifact(card) || isMinion(card) || isHero(card),
+      new IllegalGameStateError('Card does not have abilities')
+    );
 
     const ability = card.getAbility(this.payload.abilityId);
     assert(
@@ -47,6 +47,10 @@ export class UseAbilityInput extends Input<typeof schema> {
     assert(
       ability.canUse,
       new IllegalGameStateError('Ability cannot be used at this time')
+    );
+    assert(
+      card.canUseAbility(ability.id),
+      new IllegalGameStateError('Card cannot use this ability at this time')
     );
 
     await ability.use();

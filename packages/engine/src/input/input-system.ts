@@ -30,6 +30,7 @@ import { PassInput } from './inputs/pass.input';
 import { AttackInput } from './inputs/attack.input';
 import { SurrenderInput } from './inputs/surrender.input';
 import { UseAbilityInput } from './inputs/use-ability.input';
+import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 
 type GenericInputMap = Record<string, Constructor<Input<ZodType>>>;
 
@@ -54,7 +55,8 @@ const inputMap = validateinputMap({
   pass: PassInput,
   attack: AttackInput,
   surrender: SurrenderInput,
-  useAbility: UseAbilityInput
+  useAbility: UseAbilityInput,
+  interactionTimeout: InteractionTimeoutInput
 });
 
 type InputMap = typeof inputMap;

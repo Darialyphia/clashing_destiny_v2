@@ -20,8 +20,6 @@ import Camera from './Camera.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
 import TurnIndicator from './TurnIndicator.vue';
-import RearrangeCardsModal from './RearrangeCardsModal.vue';
-import OpponentHand from './OpponentHand.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
@@ -90,7 +88,7 @@ const stopDragging = async (cb?: (playedCard: CardViewModel) => void) => {
   if (!ui.value.draggedCard) return;
   const card = ui.value.draggedCard;
 
-  ui.value.stopDraggingCard();
+  ui.value.draggedCard = null;
 
   cb?.(card);
 };
@@ -101,7 +99,7 @@ const cancelPlay = (card: CardViewModel) => {
   );
   if (!el) return;
   // const flipState = Flip.getState(el);
-  ui.value.unselect();
+  ui.value.unselectCard();
   card.cancelPlay();
   // window.requestAnimationFrame(() => {
   //   const target = document.querySelector(
@@ -146,7 +144,6 @@ useEventListener('mouseup', async () => {
     <SVGFilters />
     <PlayedCard />
     <ChooseCardModal />
-    <RearrangeCardsModal />
     <CombatArrows />
     <AnswerQuestionModal />
     <DraggedCard />
@@ -169,14 +166,6 @@ useEventListener('mouseup', async () => {
         <div class="arrows" id="arrows" />
       </div>
     </Camera>
-  </div>
-
-  <div class="opponent-hand">
-    <OpponentHand
-      :player-id="opponentPlayer.id"
-      :key="opponentPlayer.id"
-      :teaching-mode="options.teachingMode"
-    />
   </div>
 
   <div class="my-hand">
@@ -256,13 +245,6 @@ useEventListener('mouseup', async () => {
 
 .arrows {
   transform: translateZ(10px);
-}
-
-.opponent-hand {
-  position: fixed;
-  width: 100%;
-  top: 0%;
-  left: 0;
 }
 
 .my-hand {

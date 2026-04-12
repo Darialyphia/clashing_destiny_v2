@@ -8,7 +8,9 @@ import { PlayerBeforeDrawEvent, PlayerAfterDrawEvent } from '../../player/player
 import { MinionCard } from '../entities/minion-card.entity';
 import { SpellCard } from '../entities/spell-card.entity';
 import { ArtifactCard } from '../entities/artifact-card.entity';
-import { CARD_LOCATIONS, type CardLocation } from '../card.enums';
+import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
+import type { DestinyCard } from '../entities/destiny-card.entity';
+import type { HeroCard } from '../entities/hero-card.entity';
 
 export type CardManagerComponentOptions = {
   deck: { blueprintId: string; isFoil: boolean }[];
@@ -23,6 +25,10 @@ export class CardManagerComponent {
 
   readonly deck: Deck<DeckCard>;
 
+  readonly destinyDeck: Deck<DestinyCard>;
+
+  readonly hero!: HeroCard;
+
   readonly hand: DeckCard[] = [];
 
   readonly discardPile = new Set<DeckCard>();
@@ -36,6 +42,7 @@ export class CardManagerComponent {
   ) {
     this.game = game;
     this.deck = new Deck(this.game, player);
+    this.destinyDeck = new Deck(this.game, player);
 
     if (options.shouldShuffleDeck) {
       this.deck.shuffle();
@@ -55,12 +62,22 @@ export class CardManagerComponent {
   }
 
   async init() {
-    const mainDeckCards = await this.buildCards<DeckCard>(this.options.deck);
+    const cards = await this.buildCards<AnyCard>(this.options.deck);
 
-    this.deck.populate(mainDeckCards);
+    this.deck.populate(
+      cards.filter(
+        c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY
+      ) as DeckCard[]
+    );
+    this.destinyDeck.populate(
+      cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
+    );
+    // @ts-expect-error
+    this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
     if (this.game.config.SHUFFLE_DECK_ON_GAME_START) {
       this.deck.shuffle();
     }
+
     this.hand.push(...this.deck.draw(this.game.config.INITIAL_HAND_SIZE));
   }
 

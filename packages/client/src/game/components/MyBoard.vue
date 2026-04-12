@@ -5,7 +5,7 @@ import {
   useMyBoard,
   useMyPlayer
 } from '../composables/useGameClient';
-import DiscardPile from './DiscardPile.vue';
+import DiscardPile from './DiscardPileModal.vue';
 import BanishPile from './BanishPile.vue';
 import Deck from './Deck.vue';
 import GameCard from './GameCard.vue';

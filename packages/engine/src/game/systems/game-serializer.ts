@@ -1,50 +1,44 @@
 import type { Game } from '../game';
 import type { Config } from '../../config';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
-import type { CardDiscardEvent } from '../../card/card.events';
+import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.events';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { AnyObject } from '@game/shared';
+import type { Ability, SerializedAbility } from '../../card/entities/ability.entity';
+import { INTERACTION_STATES } from '../game.enums';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
-import type { SerializedBoard } from '../../board/board.system';
-import type { SerializedCell } from '../../board/entities/board-cell.entity';
-import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
+import type { SerializedBoard } from '../../board/board.system';
+import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
+import type { SerializedHeroCard } from '../../card/entities/hero-card.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
+import { areArraysIdentical } from '../../utils/helpers';
+import type { SerializedCell } from '../../board/entities/board-cell.entity';
 import type { SerializedTile } from '../../tile/tile.entity';
 import type { SerializedUnit } from '../../unit/unit.entity';
-import { areArraysIdentical } from '../../utils/helpers';
-import { INTERACTION_STATES } from '../game.enums';
-import type { SerializedAbility } from '../../card/entities/ability.entity';
+import type { SerializedDestinyCard } from '../../card/entities/destiny-card.entity';
 
-export type EntityDictionary = Record<
-  string,
+export type SerializedEntity =
   | SerializedMinionCard
   | SerializedSpellCard
   | SerializedArtifactCard
+  | SerializedDestinyCard
+  | SerializedHeroCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedCell
   | SerializedUnit
   | SerializedTile
-  | SerializedAbility
->;
+  | SerializedAbility;
 
-export type EntityDiffDictionary = Record<
-  string,
-  | Partial<SerializedMinionCard>
-  | Partial<SerializedSpellCard>
-  | Partial<SerializedArtifactCard>
-  | Partial<SerializedPlayer>
-  | Partial<SerializedModifier>
-  | Partial<SerializedCell>
-  | Partial<SerializedUnit>
-  | Partial<SerializedTile>
-  | Partial<SerializedAbility>
->;
+export type EntityDictionary = Record<string, SerializedEntity>;
+
+export type EntityDiffDictionary = Record<string, Partial<SerializedEntity>>;
 
 export type SerializedOmniscientState = {
   entities: EntityDictionary;
@@ -112,7 +106,7 @@ export class GameSerializer {
     return result;
   }
 
-  diffSnapshots(
+  diffSnapshotsWithPatches(
     state: SerializedOmniscientState,
     prevState: SerializedOmniscientState
   ): PatchBasedSnapshotDiff {
@@ -160,6 +154,7 @@ export class GameSerializer {
 
   private buildEntityDictionary(): EntityDictionary {
     const entities: EntityDictionary = {};
+
     this.game.cardSystem.cards.forEach(card => {
       entities[card.id] = card.serialize();
       card.modifiers.list.forEach(modifier => {
@@ -261,5 +256,36 @@ export class GameSerializer {
     });
 
     return state;
+  }
+
+  diffSnapshots(
+    state: SerializedOmniscientState,
+    prevState: SerializedOmniscientState
+  ): SnapshotDiff {
+    const entities: EntityDiffDictionary = {};
+    for (const [key, entity] of Object.entries(state.entities)) {
+      const diff = this.getObjectDiff(entity, prevState.entities[key]);
+      if (Object.keys(diff).length > 0) {
+        entities[key] = diff;
+      }
+    }
+    return {
+      config: this.getObjectDiff(state.config, prevState.config),
+      entities,
+      removedEntities: Object.keys(prevState.entities).filter(
+        key => !(key in state.entities)
+      ),
+      addedEntities: Object.keys(state.entities).filter(
+        key => !(key in prevState.entities)
+      ),
+      phase: state.phase,
+      interaction: state.interaction,
+      board: state.board,
+      turnCount: state.turnCount,
+      turnPlayer: state.turnPlayer,
+      players: state.players,
+      tiles: state.tiles,
+      units: state.units
+    };
   }
 }

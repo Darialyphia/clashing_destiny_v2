@@ -31,51 +31,6 @@ export class UnitAfterMoveEvent extends TypedSerializableEvent<
   }
 }
 
-export class UnitAttackEvent extends TypedSerializableEvent<
-  { unit: Unit; targetType: 'unit' | 'player'; target: Unit | Player },
-  { unit: string; targetType: 'unit' | 'player'; target: string }
-> {
-  serialize() {
-    return {
-      unit: this.data.unit.id,
-      targetType: this.data.targetType,
-      target: this.data.target.id
-    };
-  }
-
-  get target() {
-    return this.data.target;
-  }
-}
-
-export class UnitDealDamageEvent extends TypedSerializableEvent<
-  { unit: Unit; targets: Array<Unit | Player>; damage: Damage },
-  { unit: string; targets: Array<{ unit: string; damage: number }> }
-> {
-  serialize() {
-    return {
-      unit: this.data.unit.id,
-      targets: this.data.targets.map(target => ({
-        unit: target.id,
-        damage: this.data.damage.getFinalAmount(target)
-      }))
-    };
-  }
-}
-
-export class UnitReceiveDamageEvent extends TypedSerializableEvent<
-  { unit: Unit; from: AnyCard; damage: Damage },
-  { unit: string; from: string; damage: number }
-> {
-  serialize() {
-    return {
-      unit: this.data.unit.id,
-      from: this.data.from.id,
-      damage: this.data.damage.getFinalAmount(this.data.unit)
-    };
-  }
-}
-
 export class UnitBeforeDestroyEvent extends TypedSerializableEvent<
   { source: AnyCard; unit: Unit },
   { source: string; unit: string }
@@ -149,17 +104,6 @@ export class UnitAfterBounceEvent extends TypedSerializableEvent<
   }
 }
 
-export class UnitAfterCombatEvent extends TypedSerializableEvent<
-  { unit: Unit },
-  { unit: string }
-> {
-  serialize() {
-    return {
-      unit: this.data.unit.id
-    };
-  }
-}
-
 export class UnitEffectTriggeredEvent extends TypedSerializableEvent<
   { unit: Unit },
   { unit: string }
@@ -174,14 +118,6 @@ export class UnitEffectTriggeredEvent extends TypedSerializableEvent<
 export type UnitEventMap = {
   [UNIT_EVENTS.UNIT_BEFORE_MOVE]: UnitBeforeMoveEvent;
   [UNIT_EVENTS.UNIT_AFTER_MOVE]: UnitAfterMoveEvent;
-  [UNIT_EVENTS.UNIT_BEFORE_ATTACK]: UnitAttackEvent;
-  [UNIT_EVENTS.UNIT_AFTER_ATTACK]: UnitAttackEvent;
-  [UNIT_EVENTS.UNIT_BEFORE_COUNTERATTACK]: UnitAttackEvent;
-  [UNIT_EVENTS.UNIT_AFTER_COUNTERATTACK]: UnitAttackEvent;
-  [UNIT_EVENTS.UNIT_BEFORE_DEAL_DAMAGE]: UnitDealDamageEvent;
-  [UNIT_EVENTS.UNIT_AFTER_DEAL_DAMAGE]: UnitDealDamageEvent;
-  [UNIT_EVENTS.UNIT_BEFORE_RECEIVE_DAMAGE]: UnitReceiveDamageEvent;
-  [UNIT_EVENTS.UNIT_AFTER_RECEIVE_DAMAGE]: UnitReceiveDamageEvent;
   [UNIT_EVENTS.UNIT_BEFORE_DESTROY]: UnitBeforeDestroyEvent;
   [UNIT_EVENTS.UNIT_AFTER_DESTROY]: UnitAfterDestroyEvent;
   [UNIT_EVENTS.UNIT_BEFORE_TELEPORT]: UnitBeforeMoveEvent;
@@ -190,6 +126,5 @@ export type UnitEventMap = {
   [UNIT_EVENTS.UNIT_AFTER_HEAL]: UnitAfterHealEvent;
   [UNIT_EVENTS.UNIT_BEFORE_BOUNCE]: UnitBeforeBounceEvent;
   [UNIT_EVENTS.UNIT_AFTER_BOUNCE]: UnitAfterBounceEvent;
-  [UNIT_EVENTS.UNIT_AFTER_COMBAT]: UnitAfterCombatEvent;
   [UNIT_EVENTS.UNIT_EFFECT_TRIGGERED]: UnitEffectTriggeredEvent;
 };

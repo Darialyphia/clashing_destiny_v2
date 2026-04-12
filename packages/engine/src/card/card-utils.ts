@@ -1,3 +1,4 @@
+import { isDefined, type Nullable, type Override } from '@game/shared';
 import type { GenericAOEShape } from '../aoe/aoe-shape';
 import { PointAOEShape } from '../aoe/point.aoe-shape';
 import type { BoardCell } from '../board/entities/board-cell.entity';
@@ -7,8 +8,11 @@ import type { Unit } from '../unit/unit.entity';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact-card.entity';
 import type { AnyCard } from './entities/card.entity';
+import type { DestinyCard } from './entities/destiny-card.entity';
+import type { HeroCard } from './entities/hero-card.entity';
 import type { MinionCard } from './entities/minion-card.entity';
 import type { SpellCard } from './entities/spell-card.entity';
+import type { AbilityBlueprint, CardBlueprint } from './card-blueprint';
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
   return card.kind === CARD_KINDS.MINION;
@@ -20,6 +24,14 @@ export const isSpell = (card: AnyCard): card is SpellCard => {
 
 export const isArtifact = (card: AnyCard): card is ArtifactCard => {
   return card.kind === CARD_KINDS.ARTIFACT;
+};
+
+export const isHero = (card: AnyCard): card is HeroCard => {
+  return card.kind === CARD_KINDS.HERO;
+};
+
+export const isDestiny = (card: AnyCard): card is DestinyCard => {
+  return card.kind === CARD_KINDS.DESTINY;
 };
 
 export const singleEnemyTargetRules = {
@@ -36,12 +48,14 @@ export const singleEnemyTargetRules = {
       predicate = () => true,
       getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
       getLabel = () => `${card.blueprint.name} : Select an enemy unit`,
+      timeoutFallback,
       required = true
     }: {
       predicate?: (unit: Unit) => boolean;
       getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
       getLabel?: () => string;
       required?: boolean;
+      timeoutFallback: BoardCell[];
     }
   ) {
     return await game.interaction.selectSpacesOnBoard({
@@ -49,6 +63,7 @@ export const singleEnemyTargetRules = {
       getLabel: getLabel,
       source: card,
       getAoe,
+      timeoutFallback,
       isElligible(candidate, selectedCards) {
         if (!candidate.unit) return false;
 
@@ -84,19 +99,22 @@ export const singleMinionTargetRules = {
       required = true,
       predicate = () => true,
       getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
-      getLabel = () => `${card.blueprint.name} : Select a minion`
+      getLabel = () => `${card.blueprint.name} : Select a minion`,
+      timeoutFallback
     }: {
       required?: boolean;
       predicate?: (unit: Unit) => boolean;
       getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
       getLabel?: () => string;
-    } = {}
+      timeoutFallback: BoardCell[];
+    }
   ) {
     return await game.interaction.selectSpacesOnBoard({
       player: card.player,
       source: card,
       getLabel: getLabel,
       getAoe,
+      timeoutFallback,
       isElligible(candidate, selectedCells) {
         if (!candidate.unit || !isMinion(candidate.unit.card)) {
           return false;
@@ -137,16 +155,19 @@ export const multipleUnitsTargetRules = {
         predicate = () => true,
         getAoe,
         getLabel = selected =>
-          `${card.blueprint.name} : Select targets (${selected} / ${max})`
+          `${card.blueprint.name} : Select targets (${selected} / ${max})`,
+        timeoutFallback
       }: {
         predicate?: (candidate: Unit, selected: Unit[]) => boolean;
         getAoe: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
         getLabel?: (selectedSpaces: BoardCell[]) => string;
+        timeoutFallback: BoardCell[];
       }
     ) => {
       return await game.interaction.selectSpacesOnBoard({
         player: card.player,
         source: card,
+        timeoutFallback,
         getLabel,
         getAoe,
         isElligible(candidate, selectedCards) {
@@ -191,16 +212,19 @@ export const anywhereTargetRules = {
       {
         predicate = () => true,
         getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
-        getLabel = () => `${card.blueprint.name} : Select a space`
+        getLabel = () => `${card.blueprint.name} : Select a space`,
+        timeoutFallback = []
       }: {
         predicate?: (cell: BoardCell) => boolean;
         getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
         getLabel?: () => string;
+        timeoutFallback?: BoardCell[];
       } = {}
     ) => {
       return await game.interaction.selectSpacesOnBoard({
         player: card.player,
         source: card,
+        timeoutFallback,
         getLabel,
         getAoe,
         isElligible(candidate, selectedCells) {
@@ -237,16 +261,19 @@ export const emptySpacesTargetRules = {
       {
         predicate = () => true,
         getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
-        getLabel = () => `${card.blueprint.name} : Select a space`
+        getLabel = () => `${card.blueprint.name} : Select a space`,
+        timeoutFallback
       }: {
         predicate?: (cell: BoardCell) => boolean;
         getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
         getLabel?: (selectedSpaces: BoardCell[]) => string;
-      } = {}
+        timeoutFallback: BoardCell[];
+      }
     ) => {
       return await game.interaction.selectSpacesOnBoard({
         player: card.player,
         source: card,
+        timeoutFallback,
         getLabel,
         getAoe,
         isElligible(candidate, selectedCells) {
@@ -281,17 +308,20 @@ export const singleUnitTargetRules = {
       required = true,
       predicate = () => true,
       getAoe = () => new PointAOEShape(TARGETING_TYPE.ALLY_UNIT, {}),
-      getLabel = () => `${card.blueprint.name} : Select a unit`
+      getLabel = () => `${card.blueprint.name} : Select a unit`,
+      timeoutFallback
     }: {
       required?: boolean;
       predicate?: (unit: Unit) => boolean;
       getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
       getLabel?: () => string;
-    } = {}
+      timeoutFallback: BoardCell[];
+    }
   ) {
     return await game.interaction.selectSpacesOnBoard({
       player: card.player,
       source: card,
+      timeoutFallback,
       getLabel,
       getAoe,
       isElligible(candidate, selectedCells) {
@@ -314,3 +344,56 @@ export const singleUnitTargetRules = {
     });
   }
 };
+
+export const unitAbility = (
+  ability: Override<
+    AbilityBlueprint<MinionCard>,
+    { canUse?: Nullable<AbilityBlueprint<MinionCard>['canUse']> }
+  >
+): AbilityBlueprint<MinionCard> => ({
+  ...ability,
+  canUse(game, card) {
+    if (!isDefined(card.unit)) return false;
+    if (card.unit.isExhausted) return false;
+    return ability?.canUse?.(game, card) ?? true;
+  }
+});
+
+export const artifactAbility = (
+  ability: Override<
+    AbilityBlueprint<ArtifactCard>,
+    { canUse?: Nullable<AbilityBlueprint<ArtifactCard>['canUse']> }
+  >
+): AbilityBlueprint<ArtifactCard> => ({
+  ...ability,
+  canUse(game, card) {
+    if (!isDefined(card.artifact)) return false;
+    if (card.artifact.isExhausted) return false;
+    return ability?.canUse?.(game, card) ?? true;
+  }
+});
+
+export const heroAbility = (
+  ability: Override<
+    AbilityBlueprint<HeroCard>,
+    { canUse?: Nullable<AbilityBlueprint<HeroCard>['canUse']> }
+  >
+): AbilityBlueprint<HeroCard> => ({
+  ...ability,
+  canUse(game, card) {
+    if (card.isExhausted) return false;
+    return ability?.canUse?.(game, card) ?? true;
+  }
+});
+
+export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
+  default: {
+    foil: {
+      sheen: true,
+      lightGradient: true
+    },
+    isFullArt: false,
+    bg: `${name}-bg`,
+    main: `${name}`
+  }
+});

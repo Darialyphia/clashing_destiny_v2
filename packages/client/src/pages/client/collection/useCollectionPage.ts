@@ -76,32 +76,14 @@ export const provideCollectionPage = () => {
       isEqual(first, second) {
         return first.meta.cardId === second.meta.cardId;
       },
-      mainDeck: newDeck.mainDeck.map(card => ({
+      cards: newDeck.cards.map(card => ({
         blueprintId: card.blueprintId,
         copies: card.copies,
         meta: {
           isFoil: card.isFoil,
           cardId: card.cardId
         }
-      })),
-      destinyDeck: newDeck.destinyDeck.map(card => ({
-        blueprintId: card.blueprintId,
-        copies: card.copies,
-        meta: {
-          isFoil: card.isFoil,
-          cardId: card.cardId
-        }
-      })),
-      hero: newDeck.hero
-        ? {
-            blueprintId: newDeck.hero.blueprintId,
-            copies: 1,
-            meta: {
-              isFoil: newDeck.hero.isFoil,
-              cardId: newDeck.hero.cardId
-            }
-          }
-        : null
+      }))
     });
   });
 
@@ -157,17 +139,10 @@ export const provideCollectionPage = () => {
       saveDeck({
         deckId: selectedDeck.value.id,
         name: deckBuilder.value.deck.name,
-        mainDeck: deckBuilder.value.deck.mainDeck.map(card => ({
+        cards: deckBuilder.value.deck.cards.map(card => ({
           cardId: card.meta.cardId,
           copies: card.copies
-        })),
-        destinyDeck: deckBuilder.value.deck.destinyDeck.map(card => ({
-          cardId: card.meta.cardId,
-          copies: card.copies
-        })),
-        hero: {
-          cardId: deckBuilder.value.deck.hero?.meta.cardId
-        }
+        }))
       });
     },
     deleteDeck: () => {

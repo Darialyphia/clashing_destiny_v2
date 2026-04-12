@@ -10,7 +10,8 @@ import type {
   GameStateSnapshot,
   SerializedOmniscientState,
   SerializedPlayerState,
-  PatchBasedSnapshotDiff
+  PatchBasedSnapshotDiff,
+  SnapshotDiff
 } from '../game/systems/game-snapshot.system';
 import { ModifierViewModel } from './view-models/modifier.model';
 import { CardViewModel } from './view-models/card.model';
@@ -26,6 +27,7 @@ import { GAME_PHASES } from '../game/game.enums';
 import { VFXSequenceController } from './controllers/vfx-sequence.controller';
 import { GAME_EVENTS } from '../game/game.events';
 import type { AbilityViewModel } from './view-models/ability.model';
+import { PatchApplier } from './patch-applier';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -46,15 +48,13 @@ export type GameStateEntities = Record<
 >;
 
 export type OnSnapshotUpdateCallback = (
-  snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>
+  snapshot: GameStateSnapshot<SnapshotDiff>
 ) => MaybePromise<void>;
 
 export type NetworkAdapter = {
   dispatch: InputDispatcher;
   subscribe(cb: OnSnapshotUpdateCallback): void;
-  sync: (
-    lastSnapshotId: number
-  ) => Promise<Array<GameStateSnapshot<PatchBasedSnapshotDiff>>>;
+  sync: (lastSnapshotId: number) => Promise<Array<GameStateSnapshot<SnapshotDiff>>>;
 };
 
 export type FxAdapter = {
@@ -91,7 +91,7 @@ export class GameClient {
 
   private lastSnapshotId = -1;
 
-  private snapshots = new Map<number, GameStateSnapshot<PatchBasedSnapshotDiff>>();
+  private snapshots = new Map<number, GameStateSnapshot<SnapshotDiff>>();
 
   private _isPlayingFx = false;
 
@@ -99,13 +99,15 @@ export class GameClient {
 
   private _processingUpdate = false;
 
-  private queue: Array<GameStateSnapshot<PatchBasedSnapshotDiff>> = [];
+  private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
 
   history: SerializedInput[] = [];
 
+  readonly patchApplier = new PatchApplier();
+
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
-    updateCompleted: GameStateSnapshot<PatchBasedSnapshotDiff>;
+    updateCompleted: GameStateSnapshot<SnapshotDiff>;
   }>('sequential');
 
   readonly isSpectator: boolean = false;
@@ -155,6 +157,10 @@ export class GameClient {
   }
 
   private async processQueue() {
+    if (!this.isReady) {
+      console.warn('Waiting for game client to be ready to process queue...');
+      return;
+    }
     if (this._processingUpdate || this.queue.length === 0) {
       console.warn('Already processing updates or queue is empty, skipping processing.');
       return;
@@ -209,7 +215,7 @@ export class GameClient {
     await this.sync();
   }
 
-  async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
+  async update(snapshot: GameStateSnapshot<SnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
@@ -239,10 +245,6 @@ export class GameClient {
           await postUpdateCallback?.();
         });
 
-        if (event.eventName === GAME_EVENTS.VFX_PLAY_SEQUENCE) {
-          await this.vfx.playSequence(event.event.sequence);
-        }
-
         await this.fx.emit(event.eventName, event.event);
       }
       this._isPlayingFx = false;
@@ -264,7 +266,7 @@ export class GameClient {
     this.emitter.on('update', cb);
   }
 
-  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
+  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
     this.emitter.on('updateCompleted', cb);
     return () => this.emitter.off('updateCompleted', cb);
   }
@@ -301,6 +303,15 @@ export class GameClient {
       payload: {
         playerId: this.playerId,
         indices
+      }
+    });
+  }
+
+  surrender() {
+    this.dispatch({
+      type: 'surrender',
+      payload: {
+        playerId: this.playerId
       }
     });
   }

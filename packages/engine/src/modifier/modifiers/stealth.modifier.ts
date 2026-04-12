@@ -7,12 +7,7 @@ import { KEYWORDS } from '../../card/card-keywords';
 import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import type { Unit } from '../../unit/unit.entity';
 import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
-import { GameEventModifierMixin } from '../mixins/game-event.mixin';
-import { UNIT_EVENTS } from '../../unit/unit.enums';
-import type { UnitAttackEvent } from '../../unit/unit-events';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
-import { TogglableModifierMixin } from '../mixins/togglable.mixin';
-import type { Nullable } from '@game/shared';
 
 export class StealthModifier extends Modifier<MinionCard> {
   constructor(

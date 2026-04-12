@@ -8,7 +8,7 @@ import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
 
-type SelectingSpaceOnBoardContextOptions = {
+export type SelectingSpaceOnBoardContextOptions = {
   player: Player;
   source: AnyCard;
   getLabel: (selectedSpaces: BoardCell[]) => string;
@@ -16,6 +16,7 @@ type SelectingSpaceOnBoardContextOptions = {
   canCommit: (selectedSpaces: BoardCell[]) => boolean;
   getAoe: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
   isDone(selectedSpaces: BoardCell[]): boolean;
+  timeoutFallback: BoardCell[];
 };
 
 export class SelectingSpaceOnBoardContext {
@@ -36,6 +37,8 @@ export class SelectingSpaceOnBoardContext {
 
   readonly player: Player;
 
+  private timeoutFallback: BoardCell[];
+
   private constructor(
     private game: Game,
     private options: SelectingSpaceOnBoardContextOptions
@@ -45,6 +48,7 @@ export class SelectingSpaceOnBoardContext {
     this._canCommit = options.canCommit;
     this.isDone = options.isDone;
     this.getAoe = options.getAoe;
+    this.timeoutFallback = options.timeoutFallback;
   }
 
   serialize() {
@@ -126,8 +130,12 @@ export class SelectingSpaceOnBoardContext {
     await this.autoCommitIfAble();
   }
 
-  commit(player: Player) {
-    assert(this.canCommit, new UnableToCommitError());
+  commit(player: Player, isTimeout = false) {
+    if (isTimeout) {
+      this.selectedSpaces = [...this.timeoutFallback];
+    } else {
+      assert(this.canCommit, new UnableToCommitError());
+    }
     assert(player.equals(this.player), new InvalidPlayerError());
     this.game.interaction.dispatch(
       INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD

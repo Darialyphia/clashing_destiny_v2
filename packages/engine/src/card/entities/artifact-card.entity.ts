@@ -52,9 +52,8 @@ export class ArtifactCard extends Card<
       },
       options
     );
-    // @ts-expect-error pepega typescript moment
     this.abilities = options.blueprint.abilities.map(
-      ability => new Ability(this.game, this, ability)
+      ability => new Ability(this.game, this as ArtifactCard, ability)
     );
   }
 
@@ -125,12 +124,6 @@ export class ArtifactCard extends Card<
     const artifact = await this.player.artifactManager.equip(this)!;
     const aoe = this.blueprint.getAoe(this.game, this, targets);
 
-    this.blueprint.vfx.sequences?.play?.(this.game, this, {
-      targets: targets.map(t => t.position.serialize()),
-      aoe,
-      artifact
-    }) ?? { tracks: [] };
-
     await this.blueprint.onPlay(this.game, this, {
       targets,
       aoe,
@@ -181,5 +174,12 @@ export class ArtifactCard extends Card<
       unplayableReason: this.unplayableReason,
       abilities: this.abilities.map(a => a.id)
     };
+  }
+
+  async useAbility(abilityId: string) {
+    const ability = this.getAbility(abilityId);
+    if (!ability) return;
+    await ability.use();
+    await this.artifact?.exhaust();
   }
 }

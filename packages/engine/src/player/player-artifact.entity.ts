@@ -44,6 +44,8 @@ export class PlayerArtifact
 
   durability: number;
 
+  private _isExhausted = false;
+
   constructor(game: Game, options: PlayerArtifactOptions) {
     super(`${options.playerId}-artifact-${nanoid(6)}`, game, makeInterceptors());
     this.card = options.card;
@@ -60,6 +62,18 @@ export class PlayerArtifact
       maxDurability: this.maxDurability,
       modifiers: this.modifiers.list.map(modifier => modifier.id)
     };
+  }
+
+  get isExhausted() {
+    return this._isExhausted;
+  }
+
+  exhaust() {
+    this._isExhausted = true;
+  }
+
+  wakeUp() {
+    this._isExhausted = false;
   }
 
   get maxDurability() {

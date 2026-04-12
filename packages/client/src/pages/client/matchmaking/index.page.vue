@@ -38,19 +38,10 @@ const canJoin = computed(() => {
 
 const getDisplayedDeck = (deck: UserDeck) => ({
   name: deck.name,
-  mainDeck: deck.mainDeck.map(card => ({
+  cards: deck.cards.map(card => ({
     blueprintId: card.blueprintId,
     copies: card.copies
-  })),
-  destinyDeck: deck.destinyDeck.map(card => ({
-    blueprintId: card.blueprintId,
-    copies: card.copies
-  })),
-  hero: deck.hero
-    ? {
-        blueprintId: deck.hero.blueprintId
-      }
-    : null
+  }))
 });
 </script>
 

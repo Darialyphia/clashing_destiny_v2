@@ -48,7 +48,7 @@ export class ElusiveUnitModifier extends Modifier<Unit> {
       icon: 'icons/keyword-elusive',
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.UNIT_AFTER_ATTACK,
+          eventName: GAME_EVENTS.COMBAT_AFTER_ATTACK,
           filter: event => !!event?.data.target.equals(this.target),
           handler: () => {
             this.wasAttackedThisTurn = true;
@@ -61,7 +61,7 @@ export class ElusiveUnitModifier extends Modifier<Unit> {
           }
         }),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.UNIT_BEFORE_ATTACK,
+          eventName: GAME_EVENTS.COMBAT_BEFORE_ATTACK,
           filter: event => {
             return !!event?.data.target.equals(this.target) && !this.wasAttackedThisTurn;
           },
@@ -106,7 +106,7 @@ class ElusiveDamageCancelModifier extends Modifier<Unit> {
           }
         }),
         new UntilEventModifierMixin(game, {
-          eventName: GAME_EVENTS.UNIT_AFTER_COUNTERATTACK
+          eventName: GAME_EVENTS.COMBAT_AFTER_COUNTERATTACK
         })
       ]
     });

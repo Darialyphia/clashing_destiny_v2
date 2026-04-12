@@ -1,9 +1,8 @@
 import type { Rune } from '../card/card.enums';
 import type { DeckCard } from '../card/components/card-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
-import type { Damage } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
-import type { Player, ResourceAction, SerializedPlayer } from './player.entity';
+import type { Player, SerializedPlayer } from './player.entity';
 import type { PLAYER_EVENTS } from './player.enums';
 
 export class PlayerBeforeDrawEvent extends TypedSerializableEvent<
@@ -78,31 +77,6 @@ export class PlayerLoseRuneEvent extends TypedSerializableEvent<
   }
 }
 
-export class PlayerResourceActionEvent extends TypedSerializableEvent<
-  { player: Player; action: ResourceAction },
-  { player: string; action: ResourceAction }
-> {
-  serialize() {
-    return {
-      player: this.data.player.id,
-      action: this.data.action
-    };
-  }
-}
-
-export class PlayerDamageEvent extends TypedSerializableEvent<
-  { player: Player; from: AnyCard; damage: Damage },
-  { player: string; amount: number; from: string }
-> {
-  serialize() {
-    return {
-      player: this.data.player.id,
-      amount: this.data.damage.getFinalAmount(this.data.player),
-      from: this.data.from.id
-    };
-  }
-}
-
 export class PlayerHealEvent extends TypedSerializableEvent<
   { player: Player; amount: number; source: AnyCard },
   { player: string; amount: number; source: string }
@@ -151,10 +125,6 @@ export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_AFTER_GAIN_RUNE]: PlayerGainRuneEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_LOSE_RUNE]: PlayerLoseRuneEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_LOSE_RUNE]: PlayerLoseRuneEvent;
-  [PLAYER_EVENTS.PLAYER_BEFORE_PERFORM_RESOURCE_ACTION]: PlayerResourceActionEvent;
-  [PLAYER_EVENTS.PLAYER_AFTER_PERFORM_RESOURCE_ACTION]: PlayerResourceActionEvent;
-  [PLAYER_EVENTS.PLAYER_BEFORE_TAKE_DAMAGE]: PlayerDamageEvent;
-  [PLAYER_EVENTS.PLAYER_AFTER_TAKE_DAMAGE]: PlayerDamageEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_HEAL]: PlayerHealEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_HEAL]: PlayerHealEvent;
   [PLAYER_EVENTS.PLAYER_LEVEL_UP]: PlayerLevelUpEvent;

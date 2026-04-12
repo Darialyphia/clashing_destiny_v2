@@ -8,6 +8,7 @@ import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import type { Unit } from '../../unit/unit.entity';
 import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
+import { Player } from '../../player/player.entity';
 
 export class IntimidateCardModifier<T extends MinionCard> extends Modifier<T> {
   constructor(
@@ -51,6 +52,7 @@ export class IntimidateUnitModifier extends Modifier<Unit> {
           key: 'canBeCounterattackTarget',
           interceptor: (value, ctx) => {
             if (!value) return value;
+            if (ctx.attacker instanceof Player) return value;
             return ctx.attacker.card.manaCost > options.threshold;
           }
         }),

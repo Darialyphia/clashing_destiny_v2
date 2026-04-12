@@ -60,16 +60,6 @@ const visibleModifiers = gameStateRef(() => {
       {{ card.atk }}
     </div>
     <div
-      class="spellpower"
-      v-if="isDefined(card.spellpower)"
-      :class="{
-        buffed: card.baseSpellpower! < card.spellpower,
-        debuffed: card.baseSpellpower! > card.spellpower
-      }"
-    >
-      {{ card.spellpower }}
-    </div>
-    <div
       class="hp"
       v-if="isDefined(card.hp)"
       :class="{

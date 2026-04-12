@@ -10,6 +10,7 @@ import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { TARGETING_TYPE } from '../../targeting/targeting-strategy';
 import { RangedTargetingStrategy } from '../../targeting/ranged-targeting-strategy';
+import { Player } from '../../player/player.entity';
 
 export class RangedModifier<T extends MinionCard> extends Modifier<T> {
   constructor(game: Game, source: AnyCard, options: { mixins?: ModifierMixin<T>[] }) {
@@ -51,6 +52,7 @@ export class RangedUnitModifier extends Modifier<Unit> {
           key: 'canBeCounterattackTarget',
           interceptor: (value, ctx) => {
             if (!this.target.player.isTurnPlayer) return value;
+            if (ctx.attacker instanceof Player) return value;
             return ctx.attacker.modifiers.has(RangedUnitModifier);
           }
         }),

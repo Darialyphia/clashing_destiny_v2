@@ -121,7 +121,10 @@ const description = computed(() => {
           <CardText :text="description" />
         </section>
 
-        <section v-if="card.card.abilities?.length" class="abilities">
+        <section
+          v-if="'abilities' in card.card && card.card.abilities?.length"
+          class="abilities"
+        >
           <h3>Abilities</h3>
           <ul>
             <li v-for="(ability, index) in card.card.abilities" :key="index">

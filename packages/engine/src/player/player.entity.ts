@@ -4,18 +4,13 @@ import {
 } from '../card/components/card-manager.component';
 import { Entity } from '../entity';
 import { type Game } from '../game/game';
-import { type Nullable, type Serializable } from '@game/shared';
+import { type Nullable, type Point, type Serializable } from '@game/shared';
 import { ArtifactManagerComponent } from './components/artifact-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
-import {
-  PlayerDamageEvent,
-  PlayerHealEvent,
-  PlayerManaChangeEvent,
-  PlayerPlayCardEvent,
-  PlayerResourceActionEvent
-} from './player.events';
+import { PlayerHealEvent, PlayerPlayCardEvent } from './player.events';
+import { ManaManagerComponent } from './components/mana-manager.component';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import { PLAYER_EVENTS } from './player.enums';
 import { CARD_EVENTS, CARD_KINDS, type Rune } from '../card/card.enums';
@@ -23,6 +18,9 @@ import type { SerializedPlayerArtifact } from './player-artifact.entity';
 import { RuneManagerComponent } from './components/rune-manager.component';
 import type { Damage } from '../utils/damage';
 import { LevelManagerComponent } from './components/level-manager.component';
+import type { Unit } from '../unit/unit.entity';
+import { CombatComponent } from '../combat/combat.component';
+import { COMBAT_EVENTS, CombatDoneEvent } from '../combat/combat.events';
 
 export type PlayerOptions = {
   id: string;
@@ -48,7 +46,6 @@ export type SerializedPlayer = {
   isActive: boolean;
   equipedArtifacts: string[];
   currentlyPlayedCard: string | null;
-  canUseResourceAction: boolean;
   artifacts: SerializedPlayerArtifact[];
   runes: Partial<Record<Rune, number>>;
   manaRegen: number;
@@ -63,29 +60,44 @@ export type PlayerInterceptor = {
   maxManathreshold: Interceptable<number>;
   maxMana: Interceptable<number>;
   manaRegen: Interceptable<number>;
+  canAttack: Interceptable<boolean, { target: Unit | Player }>;
+  canCounterAttack: Interceptable<boolean, { attacker: Player | Unit }>;
+  canBeAttackTarget: Interceptable<boolean, { attacker: Player | Unit }>;
+  canBeCounterattackTarget: Interceptable<boolean, { attacker: Player | Unit }>;
+  maxHp: Interceptable<number>;
+  atk: Interceptable<number>;
+  retaliation: Interceptable<number>;
+  maxAttacksPerTurn: Interceptable<number>;
+  dealsDamageFirstWhenAttacking: Interceptable<boolean>;
+  damageDealt: Interceptable<number, { target: Unit | Player }>;
   damageReceived: Interceptable<
     number,
     { damage: Damage; amount: number; source: AnyCard }
   >;
+  shouldSwitchInitiativeafterAttacking: Interceptable<boolean>;
 };
+
 const makeInterceptors = (): PlayerInterceptor => {
   return {
     cardsDrawnForTurn: new Interceptable(),
     maxMana: new Interceptable(),
     manaRegen: new Interceptable(),
     maxManathreshold: new Interceptable(),
-    damageReceived: new Interceptable()
+    canAttack: new Interceptable(),
+    canCounterAttack: new Interceptable(),
+    canBeAttackTarget: new Interceptable(),
+    canBeCounterattackTarget: new Interceptable(),
+    maxHp: new Interceptable(),
+    atk: new Interceptable(),
+    retaliation: new Interceptable(),
+    dealsDamageFirstWhenAttacking: new Interceptable(),
+    damageDealt: new Interceptable(),
+    damageReceived: new Interceptable(),
+    maxAttacksPerTurn: new Interceptable(),
+    shouldSwitchInitiativeafterAttacking: new Interceptable()
   };
 };
 
-export type ResourceAction =
-  | {
-      type: 'gainRune';
-      rune: Rune;
-    }
-  | {
-      type: 'draw';
-    };
 export class Player
   extends Entity<PlayerInterceptor>
   implements Serializable<SerializedPlayer>
@@ -104,19 +116,17 @@ export class Player
 
   readonly levelManager: LevelManagerComponent;
 
+  readonly manaManager: ManaManagerComponent;
+
+  readonly combat: CombatComponent;
+
+  private _damageTaken = 0;
+
   currentlyPlayedCard: Nullable<DeckCard> = null;
 
   currentlyPlayedCardIndexInHand: Nullable<number> = null;
 
-  private _mana = 0;
-
-  private _baseMaxMana = 0;
-
-  private _resourceActionsDoneThisTurn = 0;
-
   hasPassedThisRound = false;
-
-  damageTaken = 0;
 
   constructor(
     game: Game,
@@ -134,21 +144,29 @@ export class Player
     this.artifactManager = new ArtifactManagerComponent(game, this);
     this.runeManager = new RuneManagerComponent(game, this);
     this.levelManager = new LevelManagerComponent(game, this);
+    this.manaManager = new ManaManagerComponent(game, this, {
+      maxMana: this.interceptors.maxMana,
+      manaRegen: this.interceptors.manaRegen
+    });
+    this.combat = new CombatComponent(game, this);
   }
 
   async init() {
-    this._baseMaxMana = this.game.config.MAX_MANA;
-    this.refillMana();
+    this.manaManager.init();
 
     await this.cardManager.init();
   }
 
   get maxHp() {
-    return this.game.config.PLAYER_MAX_HP;
+    return this.interceptors.maxHp.getValue(this.hero.maxHp, {});
+  }
+
+  get damageTaken() {
+    return this._damageTaken;
   }
 
   get remainingHp() {
-    return this.maxHp - this.damageTaken;
+    return this.maxHp - this._damageTaken;
   }
 
   get frontRowIndex() {
@@ -165,6 +183,10 @@ export class Player
 
   get unitsInBackRow() {
     return this.units.filter(unit => unit.position.x === this.backRowIndex);
+  }
+
+  get hero() {
+    return this.cardManager.hero;
   }
 
   get level() {
@@ -192,14 +214,13 @@ export class Player
       isPlayer1: this.isPlayer1,
       maxHp: this.maxHp,
       currentHp: this.remainingHp,
-      currentMana: this._mana,
+      currentMana: this.mana,
       maxMana: this.maxMana,
       manaRegen: this.manaRegen,
       deckSize: this.cardManager.deck.cards.length,
       isActive: this.isActive,
       equipedArtifacts: this.artifactManager.artifacts.map(artifact => artifact.id),
       currentlyPlayedCard: this.currentlyPlayedCard?.id ?? null,
-      canUseResourceAction: this.canPerformResourceAction,
       artifacts: this.artifactManager.artifacts.map(artifact => artifact.serialize()),
       runes: this.runeManager.runes,
       exp: this.levelManager.exp,
@@ -249,48 +270,10 @@ export class Player
     return this.game.turnSystem.initiativePlayer.equals(this);
   }
 
-  get canPerformResourceAction() {
-    return (
-      this._resourceActionsDoneThisTurn < this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN
-    );
-  }
-
-  async performResourceAction(action: ResourceAction) {
-    if (!this.canPerformResourceAction) {
-      throw new Error('No resource actions remaining for this turn');
-    }
-
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_BEFORE_PERFORM_RESOURCE_ACTION,
-      new PlayerResourceActionEvent({ player: this, action })
-    );
-
-    switch (action.type) {
-      case 'draw':
-        await this.cardManager.drawFromDeck(1);
-        break;
-      case 'gainRune':
-        await this.runeManager.gainRune({ [action.rune]: 1 });
-        break;
-    }
-
-    this._resourceActionsDoneThisTurn++;
-
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_AFTER_PERFORM_RESOURCE_ACTION,
-      new PlayerResourceActionEvent({ player: this, action })
-    );
-  }
-
-  refillMana() {
-    this._mana = Math.min(this._mana + this.manaRegen, this.maxMana);
-  }
-
   async startTurn() {
-    this._resourceActionsDoneThisTurn = 0;
     this.hasPassedThisRound = false;
 
-    this.refillMana();
+    this.manaManager.refillMana();
 
     if (this.game.config.DRAW_STEP === 'turn-start') {
       await this.drawForTurn();
@@ -312,45 +295,27 @@ export class Player
   }
 
   get mana() {
-    return this._mana;
+    return this.manaManager.mana;
   }
 
   get maxMana() {
-    return this.interceptors.maxMana.getValue(this._baseMaxMana, {});
+    return this.manaManager.maxMana;
   }
 
   get manaRegen() {
-    return this.interceptors.manaRegen.getValue(this.game.config.MANA_REGEN_PER_TURN, {});
+    return this.manaManager.manaRegen;
   }
 
-  async spendMana(amount: number) {
-    if (amount === 0) return;
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
-      new PlayerManaChangeEvent({ player: this, amount })
-    );
-    this._mana = Math.max(this._mana - amount, 0);
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE,
-      new PlayerManaChangeEvent({ player: this, amount })
-    );
+  spendMana(amount: number) {
+    return this.manaManager.spendMana(amount);
   }
 
-  async gainMana(amount: number) {
-    if (amount === 0) return;
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
-      new PlayerManaChangeEvent({ player: this, amount })
-    );
-    this._mana = this._mana + amount; // dont clamp to max mana because of effects that go over max mana (ex: mana tile)
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE,
-      new PlayerManaChangeEvent({ player: this, amount })
-    );
+  gainMana(amount: number) {
+    return this.manaManager.gainMana(amount);
   }
 
   canSpendMana(amount: number) {
-    return this.mana >= amount;
+    return this.manaManager.canSpendMana(amount);
   }
 
   generateCard<T extends AnyCard = AnyCard>(
@@ -412,24 +377,7 @@ export class Player
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_BEFORE_TAKE_DAMAGE,
-      new PlayerDamageEvent({
-        player: this,
-        damage,
-        from: source
-      })
-    );
-    const finalDamage = this.getReceivedDamage(damage, source);
-    this.damageTaken += finalDamage;
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_AFTER_TAKE_DAMAGE,
-      new PlayerDamageEvent({
-        player: this,
-        damage,
-        from: source
-      })
-    );
+    return this.combat.takeDamage(source, damage);
   }
 
   async heal(source: AnyCard, amount: number) {
@@ -437,10 +385,96 @@ export class Player
       PLAYER_EVENTS.PLAYER_BEFORE_HEAL,
       new PlayerHealEvent({ player: this, amount, source })
     );
-    this.damageTaken = Math.max(this.damageTaken - amount, 0);
+    this._damageTaken = Math.max(this._damageTaken - amount, 0);
     await this.game.emit(
       PLAYER_EVENTS.PLAYER_AFTER_HEAL,
       new PlayerHealEvent({ player: this, amount, source })
+    );
+  }
+
+  get atk() {
+    return this.interceptors.atk.getValue(this.hero.atk, {});
+  }
+
+  getAttackDamage(target: Unit | Player) {
+    return this.interceptors.damageDealt.getValue(this.atk, { target });
+  }
+
+  get retaliation() {
+    return this.interceptors.retaliation.getValue(this.hero.retaliation, {});
+  }
+
+  getRetaliationDamage(attacker: Unit | Player) {
+    return this.interceptors.damageDealt.getValue(this.retaliation, { target: attacker });
+  }
+
+  get counterattackAOEShape() {
+    return this.hero.counterattackAOEShape;
+  }
+
+  get attackAOEShape() {
+    return this.hero.attackAOEShape;
+  }
+
+  get dealsDamageFirstWhenAttacking() {
+    return this.interceptors.dealsDamageFirstWhenAttacking.getValue(false, {});
+  }
+
+  getCounterattackParticipants(initialTarget: Unit) {
+    return [initialTarget];
+  }
+
+  canBeCounterattackedBy(unit: Unit | Player): boolean {
+    return this.interceptors.canBeCounterattackTarget.getValue(true, {
+      attacker: unit
+    });
+  }
+
+  canCounterAttack(unit: Unit | Player): boolean {
+    return this.interceptors.canCounterAttack.getValue(true, { attacker: unit });
+  }
+
+  async counterAttack(attacker: Unit | Player) {
+    return this.combat.counterAttack(attacker);
+  }
+
+  get shouldSwitchInitiativeafterAttacking() {
+    return this.interceptors.shouldSwitchInitiativeafterAttacking.getValue(true, {});
+  }
+
+  async attack(point: Point) {
+    const target = this.game.unitSystem.getUnitAt(point) ?? this.opponent;
+    await this.combat.attack(target);
+    if (this.combat.attacksCount >= this.maxAttacksPerTurn) {
+      this.hero.exhaust();
+    }
+    await this.game.emit(
+      COMBAT_EVENTS.COMBAT_DONE,
+      new CombatDoneEvent({ attacker: this })
+    );
+
+    if (this.shouldSwitchInitiativeafterAttacking) {
+      await this.game.turnSystem.switchInitiative();
+    }
+  }
+
+  async removeHp(amount: number) {
+    this._damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
+  }
+
+  get maxAttacksPerTurn() {
+    return this.interceptors.maxAttacksPerTurn.getValue(
+      this.game.config.MAX_ATTACKS_PER_TURN,
+      {}
+    );
+  }
+
+  canAttack(target: Unit | Player): boolean {
+    return this.interceptors.canAttack.getValue(
+      this.combat.attacksCount < this.maxAttacksPerTurn &&
+        !this.hero.isExhausted &&
+        this.atk > 0,
+      { target }
     );
   }
 }

@@ -97,6 +97,7 @@ export class UiController {
       new DOMSelector(cardId, this.DOMSelectors.board.selector),
     cardInHand: (cardId: string, playerId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.hand(playerId).selector),
+    draggedCard: (id: string) => new DOMSelector(id, '#dragged-card'),
     hero: (playerId: string) => new DOMSelector(`${playerId}-hero-sprite`),
     cardAction: (cardId: string, actionId: string) =>
       new DOMSelector(`${cardId}-action-${actionId}`),

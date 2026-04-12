@@ -1,7 +1,6 @@
 import type { SerializedCell } from '../../board/entities/board-cell.entity';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { applyPatchToData } from '../utils/apply-patch';
 import type { GameClient, GameStateEntities } from '../client';
 import type { TileViewModel } from './tile.model';
 import type { UnitViewModel } from './unit.model';
@@ -30,8 +29,8 @@ export class BoardCellViewModel {
     return this;
   }
 
-  applyPatch(patch: PatchOperation) {
-    applyPatchToData(this.data, patch);
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = this.getClient().patchApplier.applyPatches(this.data, patches);
     return this;
   }
 

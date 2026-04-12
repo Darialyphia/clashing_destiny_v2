@@ -9,9 +9,7 @@ import type { DeckRepository } from '../repositories/deck.repository';
 export interface UpdateDeckInput {
   deckId: DeckId;
   name: string;
-  mainDeck: Array<{ cardId: CardId; copies: number }>;
-  destinyDeck: Array<{ cardId: CardId; copies: number }>;
-  hero: { cardId?: CardId };
+  cards: Array<{ cardId: CardId; copies: number }>;
 }
 
 export interface UpdateDeckOutput {

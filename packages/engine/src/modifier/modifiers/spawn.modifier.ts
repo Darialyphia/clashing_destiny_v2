@@ -72,6 +72,7 @@ export class SpawnUnitModifier extends Modifier<Unit> {
               isElligible: candidate => {
                 return this.nearbyEmptySpaces.some(space => space.equals(candidate));
               },
+              timeoutFallback: [],
               canCommit(selectedSpaces) {
                 return selectedSpaces.length === 1;
               },
@@ -85,7 +86,7 @@ export class SpawnUnitModifier extends Modifier<Unit> {
                 });
               }
             });
-
+            if (!space) return;
             const cardToSpawn = await this.target.player.generateCard<MinionCard>(
               options.blueprintId,
               this.target.card.isFoil

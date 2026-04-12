@@ -1,5 +1,5 @@
 import type { Values } from '@game/shared';
-import type { Unit } from '../unit/unit.entity';
+import { Unit } from '../unit/unit.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { SpellCard } from '../card/entities/spell-card.entity';
 import { match } from 'ts-pattern';
@@ -42,14 +42,18 @@ export abstract class Damage {
 }
 
 export class CombatDamage extends Damage {
-  private _attacker: Unit;
+  private _attacker: Unit | Player;
   private _checkedTarget: Unit | null = null;
 
   constructor(
-    attacker: Unit,
+    attacker: Unit | Player,
     public kind: 'attack' | 'counterattack'
   ) {
-    super({ baseAmount: attacker.atk, type: DAMAGE_TYPES.COMBAT, source: attacker.card });
+    super({
+      baseAmount: attacker.atk,
+      type: DAMAGE_TYPES.COMBAT,
+      source: attacker instanceof Unit ? attacker.card : attacker.hero
+    });
     this._attacker = attacker;
   }
 

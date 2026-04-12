@@ -27,6 +27,8 @@ export type DeckValidationResult =
 export type DeckValidator<TMeta> = {
   maxCardCopies: number;
   size: number;
+  mainDeckMaxSize: number;
+  destinyDeckMaxSize: number;
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult;
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean;
 };
@@ -36,6 +38,14 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
   get size(): number {
     return defaultConfig.MAX_MAIN_DECK_SIZE + defaultConfig.TALENT_COUNT;
+  }
+
+  get mainDeckMaxSize(): number {
+    return defaultConfig.MAX_MAIN_DECK_SIZE;
+  }
+
+  get destinyDeckMaxSize(): number {
+    return defaultConfig.TALENT_COUNT;
   }
 
   get maxCardCopies(): number {

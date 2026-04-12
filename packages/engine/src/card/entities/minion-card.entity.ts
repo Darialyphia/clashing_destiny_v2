@@ -1,4 +1,4 @@
-import type { MinionBlueprint } from '../card-blueprint';
+import type { AbilityBlueprint, MinionBlueprint } from '../card-blueprint';
 import {
   Card,
   makeCardInterceptors,
@@ -25,6 +25,7 @@ import {
   MinionBeforeSummonedEvent
 } from '../events/minion.events';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness.modifier';
+import { Ability } from './ability.entity';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedMinionCard = SerializedCard & {
@@ -43,6 +44,10 @@ export type MinionCardInterceptors = CardInterceptors & {
   summonTargetingStrategy: Interceptable<TargetingStrategy>;
   canPlay: Interceptable<boolean, MinionCard>;
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: MinionCard; ability: Ability<MinionCard> }
+  >;
 };
 
 export class MinionCard extends Card<
@@ -50,6 +55,8 @@ export class MinionCard extends Card<
   MinionCardInterceptors,
   MinionBlueprint
 > {
+  readonly abilities: Ability<MinionCard>[];
+
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
       game,
@@ -61,9 +68,13 @@ export class MinionCard extends Card<
         retaliation: new Interceptable(),
         summonTargetingStrategy: new Interceptable(),
         canPlay: new Interceptable(),
-        hasSummoningSickness: new Interceptable()
+        hasSummoningSickness: new Interceptable(),
+        canUseAbility: new Interceptable()
       },
       options
+    );
+    this.abilities = options.blueprint.abilities.map(
+      ability => new Ability(this.game, this as MinionCard, ability)
     );
   }
 
@@ -125,6 +136,11 @@ export class MinionCard extends Card<
           isElligible: cell => {
             return !!(cell.player?.equals(this.player) && !cell.isOccupied);
           },
+          timeoutFallback: [
+            this.game.boardSystem
+              .getCellsForPlayer(this.player)
+              .filter(cell => !cell.isOccupied)[0]
+          ],
           canCommit(selectedSlots) {
             return selectedSlots.length === 1;
           },
@@ -181,16 +197,7 @@ export class MinionCard extends Card<
         unit: this.unit
       })
     );
-    await this.game.vfxSystem.playSequence(
-      this.blueprint.vfx.sequences?.play?.(
-        this.game,
-        this,
-        position.position.serialize(),
-        []
-      ) ?? {
-        tracks: []
-      }
-    );
+
     await this.blueprint.onPlay(this.game, this, {
       position
     });
@@ -248,5 +255,38 @@ export class MinionCard extends Card<
 
   get counterattackAOEShape() {
     return new PointAOEShape(TARGETING_TYPE.UNIT, {});
+  }
+
+  getAbility(abilityId: string) {
+    return this.abilities.find(ability => ability.abilityId === abilityId);
+  }
+
+  canUseAbility(id: string) {
+    const ability = this.abilities.find(ability => ability.id === id);
+    if (!ability) return false;
+
+    return this.interceptors.canUseAbility.getValue(ability.canUse, {
+      card: this,
+      ability
+    });
+  }
+
+  addAbility(ability: AbilityBlueprint<MinionCard>) {
+    const newAbility = new Ability<MinionCard>(this.game, this, ability);
+    this.abilities.push(newAbility);
+    return newAbility;
+  }
+
+  removeAbility(abilityId: string) {
+    const index = this.abilities.findIndex(a => a.id === abilityId);
+    if (index === -1) return;
+    this.abilities.splice(index, 1);
+  }
+
+  async useAbility(abilityId: string) {
+    const ability = this.getAbility(abilityId);
+    if (!ability) return;
+    await ability.use();
+    await this.unit?.exhaust();
   }
 }

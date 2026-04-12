@@ -72,30 +72,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
 
   shutdown() {}
 
-  private isErrorSnapshot(snapshot: GameStateSnapshot<any>) {
-    return snapshot.kind === 'error';
-  }
-
-  // Return a clean snapshot state, used for the initial state snapshot or after an error snapshot
-  private getDefaultDiffSnapshotState(
-    state: SerializedOmniscientState | SerializedPlayerState
-  ) {
-    return {
-      entityPatches: {},
-      addedEntities: state.entities,
-      removedEntities: [],
-      phase: state.phase,
-      interaction: state.interaction,
-      board: state.board,
-      turnCount: state.turnCount,
-      players: state.players,
-      config: state.config,
-      tiles: state.tiles,
-      units: state.units,
-      turnPlayer: state.turnPlayer
-    };
-  }
-
   getOmniscientSnapshotAt(index: number): GameStateSnapshot<SerializedOmniscientState> {
     const snapshot = this.omniscientCache[index];
     if (!snapshot) {
@@ -105,7 +81,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     return snapshot;
   }
 
-  getSnapshotForPlayerAt(
+  geSnapshotForPlayerAt(
     playerId: string,
     index: number
   ): GameStateSnapshot<SerializedPlayerState> {
@@ -121,13 +97,143 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     return this.getOmniscientSnapshotAt(this.nextId - 1);
   }
 
-  getLatestSnapshotForPlayer(playerId: string): GameStateSnapshot<SerializedPlayerState> {
-    return this.getSnapshotForPlayerAt(playerId, this.nextId - 1);
+  getLatestOmniscientDiffSnapshot(): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.getLatestOmniscientSnapshot();
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (this.nextId < 2) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(this.nextId - 2);
+
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              ...latestSnapshot.state,
+              removedEntities: [],
+              addedEntities: Object.keys(latestSnapshot.state.entities)
+            }
+          : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
   }
 
-  getLatestOmniscientDiffSnapshot(): GameStateSnapshot<PatchBasedSnapshotDiff> {
+  getOmniscientDiffSnapshotAt(index: number): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.getOmniscientSnapshotAt(index);
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (index < 1) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(index - 1);
+
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              ...latestSnapshot.state,
+              removedEntities: [],
+              addedEntities: Object.keys(latestSnapshot.state.entities)
+            }
+          : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
+  }
+
+  getLatestSnapshotForPlayer(playerId: string): GameStateSnapshot<SerializedPlayerState> {
+    return this.geSnapshotForPlayerAt(playerId, this.nextId - 1);
+  }
+
+  getLatestDiffSnapshotForPlayer(playerId: string): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.getLatestSnapshotForPlayer(playerId);
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (this.nextId < 2) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(this.nextId - 2);
+
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              ...latestSnapshot.state,
+              removedEntities: [],
+              addedEntities: Object.keys(latestSnapshot.state.entities)
+            }
+          : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
+  }
+
+  getDiffSnapshotForPlayerAt(
+    playerId: string,
+    index: number
+  ): GameStateSnapshot<SnapshotDiff> {
+    const latestSnapshot = this.geSnapshotForPlayerAt(playerId, index);
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (index < 1) {
+      return {
+        ...latestSnapshot,
+        state: {
+          removedEntities: [],
+          addedEntities: Object.keys(latestSnapshot.state.entities),
+          ...latestSnapshot.state
+        }
+      };
+    }
+    const previousSnapshot = this.getOmniscientSnapshotAt(index - 1);
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              ...latestSnapshot.state,
+              removedEntities: [],
+              addedEntities: Object.keys(latestSnapshot.state.entities)
+            }
+          : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+    };
+  }
+
+  /**
+   * Get the latest omniscient snapshot as a patch-based diff
+   * This uses deep diffing for more granular updates
+   */
+  getLatestOmniscientPatchDiffSnapshot(): GameStateSnapshot<PatchBasedSnapshotDiff> {
     const latestSnapshot = this.getLatestOmniscientSnapshot();
-    if (this.isErrorSnapshot(latestSnapshot)) {
+    if (latestSnapshot.kind === 'error') {
       return latestSnapshot;
     }
 
@@ -135,7 +241,20 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       // First snapshot - all entities are "added"
       return {
         ...latestSnapshot,
-        state: this.getDefaultDiffSnapshotState(latestSnapshot.state)
+        state: {
+          entityPatches: {},
+          addedEntities: latestSnapshot.state.entities,
+          removedEntities: [],
+          phase: latestSnapshot.state.phase,
+          interaction: latestSnapshot.state.interaction,
+          board: latestSnapshot.state.board,
+          turnCount: latestSnapshot.state.turnCount,
+          turnPlayer: latestSnapshot.state.turnPlayer,
+          players: latestSnapshot.state.players,
+          config: latestSnapshot.state.config,
+          units: latestSnapshot.state.units,
+          tiles: latestSnapshot.state.tiles
+        }
       };
     }
 
@@ -143,20 +262,57 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
 
     return {
       ...latestSnapshot,
-      state: this.isErrorSnapshot(previousSnapshot)
-        ? this.getDefaultDiffSnapshotState(latestSnapshot.state)
-        : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              entityPatches: {},
+              addedEntities: latestSnapshot.state.entities,
+              removedEntities: [],
+              phase: latestSnapshot.state.phase,
+              interaction: latestSnapshot.state.interaction,
+              board: latestSnapshot.state.board,
+              turnCount: latestSnapshot.state.turnCount,
+              turnPlayer: latestSnapshot.state.turnPlayer,
+              players: latestSnapshot.state.players,
+              config: latestSnapshot.state.config,
+              units: latestSnapshot.state.units,
+              tiles: latestSnapshot.state.tiles
+            }
+          : this.serializer.diffSnapshotsWithPatches(
+              latestSnapshot.state,
+              previousSnapshot.state
+            )
     };
   }
 
-  getOmniscientDiffSnapshotAt(index: number): GameStateSnapshot<PatchBasedSnapshotDiff> {
+  /**
+   * Get a specific omniscient snapshot as a patch-based diff
+   */
+  getOmniscientPatchDiffSnapshotAt(
+    index: number
+  ): GameStateSnapshot<PatchBasedSnapshotDiff> {
     const latestSnapshot = this.getOmniscientSnapshotAt(index);
-    if (this.isErrorSnapshot(latestSnapshot)) return latestSnapshot;
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
 
     if (index < 1) {
       return {
         ...latestSnapshot,
-        state: this.getDefaultDiffSnapshotState(latestSnapshot.state)
+        state: {
+          entityPatches: {},
+          addedEntities: latestSnapshot.state.entities,
+          removedEntities: [],
+          phase: latestSnapshot.state.phase,
+          interaction: latestSnapshot.state.interaction,
+          board: latestSnapshot.state.board,
+          turnCount: latestSnapshot.state.turnCount,
+          turnPlayer: latestSnapshot.state.turnPlayer,
+          players: latestSnapshot.state.players,
+          config: latestSnapshot.state.config,
+          units: latestSnapshot.state.units,
+          tiles: latestSnapshot.state.tiles
+        }
       };
     }
 
@@ -164,58 +320,84 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
 
     return {
       ...latestSnapshot,
-      state: this.isErrorSnapshot(previousSnapshot)
-        ? this.getDefaultDiffSnapshotState(latestSnapshot.state)
-        : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              entityPatches: {},
+              addedEntities: latestSnapshot.state.entities,
+              removedEntities: [],
+              phase: latestSnapshot.state.phase,
+              interaction: latestSnapshot.state.interaction,
+              board: latestSnapshot.state.board,
+              turnCount: latestSnapshot.state.turnCount,
+              turnPlayer: latestSnapshot.state.turnPlayer,
+              players: latestSnapshot.state.players,
+              config: latestSnapshot.state.config,
+              units: latestSnapshot.state.units,
+              tiles: latestSnapshot.state.tiles
+            }
+          : this.serializer.diffSnapshotsWithPatches(
+              latestSnapshot.state,
+              previousSnapshot.state
+            )
     };
   }
 
-  getLatestDiffSnapshotForPlayer(
+  /**
+   * Get the latest player snapshot as a patch-based diff
+   */
+  getLatestPatchDiffSnapshotForPlayer(
     playerId: string
   ): GameStateSnapshot<PatchBasedSnapshotDiff> {
     const latestSnapshot = this.getLatestSnapshotForPlayer(playerId);
-    if (this.isErrorSnapshot(latestSnapshot)) return latestSnapshot;
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
 
     if (this.nextId < 2) {
       return {
         ...latestSnapshot,
-        state: this.getDefaultDiffSnapshotState(latestSnapshot.state)
+        state: {
+          entityPatches: {},
+          addedEntities: latestSnapshot.state.entities,
+          removedEntities: [],
+          phase: latestSnapshot.state.phase,
+          interaction: latestSnapshot.state.interaction,
+          board: latestSnapshot.state.board,
+          turnCount: latestSnapshot.state.turnCount,
+          turnPlayer: latestSnapshot.state.turnPlayer,
+          players: latestSnapshot.state.players,
+          config: latestSnapshot.state.config,
+          units: latestSnapshot.state.units,
+          tiles: latestSnapshot.state.tiles
+        }
       };
     }
 
-    const previousSnapshot = this.getSnapshotForPlayerAt(playerId, this.nextId - 2);
+    const previousSnapshot = this.getOmniscientSnapshotAt(this.nextId - 2);
 
     return {
       ...latestSnapshot,
-      state: this.isErrorSnapshot(previousSnapshot)
-        ? this.getDefaultDiffSnapshotState(latestSnapshot.state)
-        : this.serializer.diffSnapshots(latestSnapshot.state, previousSnapshot.state)
-    };
-  }
-
-  getDiffSnapshotForPlayerAt(
-    index: number,
-    playerId: string
-  ): GameStateSnapshot<PatchBasedSnapshotDiff> {
-    const snapshot = this.getSnapshotForPlayerAt(playerId, index);
-    if (this.isErrorSnapshot(snapshot)) {
-      return snapshot;
-    }
-
-    if (index < 1) {
-      return {
-        ...snapshot,
-        state: this.getDefaultDiffSnapshotState(snapshot.state)
-      };
-    }
-
-    const previousSnapshot = this.getSnapshotForPlayerAt(playerId, index - 1);
-
-    return {
-      ...snapshot,
-      state: this.isErrorSnapshot(previousSnapshot)
-        ? this.getDefaultDiffSnapshotState(snapshot.state)
-        : this.serializer.diffSnapshots(snapshot.state, previousSnapshot.state)
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              entityPatches: {},
+              addedEntities: latestSnapshot.state.entities,
+              removedEntities: [],
+              phase: latestSnapshot.state.phase,
+              interaction: latestSnapshot.state.interaction,
+              board: latestSnapshot.state.board,
+              turnCount: latestSnapshot.state.turnCount,
+              turnPlayer: latestSnapshot.state.turnPlayer,
+              players: latestSnapshot.state.players,
+              config: latestSnapshot.state.config,
+              units: latestSnapshot.state.units,
+              tiles: latestSnapshot.state.tiles
+            }
+          : this.serializer.diffSnapshotsWithPatches(
+              latestSnapshot.state,
+              previousSnapshot.state
+            )
     };
   }
 
@@ -226,31 +408,45 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       const events = this.eventsSinceLastSnapshot
         // @ts-expect-error
         .toSorted((a, b) => (a.data.event.__id - b.data.event.__id) as unknown as number)
-        .map((event: GameStarEvent) => event.serialize()) as SerializedStarEvent[];
-
+        .map((event: GameStarEvent) => event.serialize());
+      const previousId = this.nextId - 1;
       const id = this.nextId++;
       const omnisicientState = this.serializer.serializeOmniscientState();
+
+      if (events.length === 0 && previousId > 0) {
+        const previousSnapshot = this.getOmniscientSnapshotAt(previousId);
+        if (previousSnapshot.kind === 'state') {
+          const prevJSON = JSON.stringify(previousSnapshot.state);
+          const currentJSON = JSON.stringify(omnisicientState);
+          if (prevJSON === currentJSON) {
+            this.nextId--;
+            this.eventsSinceLastSnapshot = [];
+
+            return;
+          }
+        }
+      }
 
       this.omniscientCache.push({
         kind: 'state',
         id,
-        events: events,
+        events: events as any,
         state: omnisicientState
       });
-
       this.playerCaches[this.game.playerSystem.player1.id].push({
         kind: 'state',
         id,
-        events: events,
+        events: events as any,
         state: this.serializer.serializePlayerState(
           this.game.playerSystem.player1.id,
           this.eventsSinceLastSnapshot
         )
       });
+
       this.playerCaches[this.game.playerSystem.player2.id].push({
         kind: 'state',
         id,
-        events: events,
+        events: events as any,
         state: this.serializer.serializePlayerState(
           this.game.playerSystem.player2.id,
           this.eventsSinceLastSnapshot

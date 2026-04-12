@@ -1,8 +1,6 @@
 import type { GameClient, GameStateEntities } from '../client';
-
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { applyPatchToData } from '../utils/apply-patch';
 import type { CardViewModel } from './card.model';
 import { isDefined } from '@game/shared';
 
@@ -29,8 +27,8 @@ export class PlayerViewModel {
     return this;
   }
 
-  applyPatch(patch: PatchOperation) {
-    applyPatchToData(this.data, patch);
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = this.getClient().patchApplier.applyPatches(this.data, patches);
     return this;
   }
 
@@ -108,10 +106,6 @@ export class PlayerViewModel {
     return this.data.hand.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
     });
-  }
-
-  get canUseResourceAction() {
-    return this.data.canUseResourceAction;
   }
 
   get level() {

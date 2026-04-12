@@ -85,6 +85,10 @@ export class BoardSystem
     return this.cells.filter(cell => cell.player?.equals(player) && cell.isFrontRow);
   }
 
+  getCellsForPlayer(player: Player) {
+    return [...this.getFrontRowForPlayer(player), ...this.getBackRowForPlayer(player)];
+  }
+
   isInArea(topLeft: Point, size: { width: number; height: number }, point: Point) {
     return (
       point.x >= topLeft.x &&

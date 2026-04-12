@@ -14,31 +14,23 @@ import type { Nullable } from '@game/shared';
 
 export type DisplayedDeck = {
   name: string;
-  hero: Nullable<{ blueprintId: string }>;
-  mainDeck: { blueprintId: string; copies: number }[];
-  destinyDeck: { blueprintId: string; copies: number }[];
+  cards: { blueprintId: string; copies: number }[];
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
 }>();
 
 const mainDeck = computed(() =>
-  deck.mainDeck.map(card => ({
-    ...card,
-    blueprint: CARDS_DICTIONARY[card.blueprintId]
-  }))
-);
-const destinyDeck = computed(() =>
-  deck.destinyDeck.map(card => ({
+  deck.cards.map(card => ({
     ...card,
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
 
 const hero = computed(() => {
-  if (!deck.hero) return null;
-  const blueprint = CARDS_DICTIONARY[deck.hero.blueprintId] as HeroBlueprint;
-  return blueprint;
+  return deck.cards
+    .map(c => CARDS_DICTIONARY[c.blueprintId])
+    .find(c => c.kind === CARD_KINDS.HERO) as Nullable<HeroBlueprint>;
 });
 
 const minions = computed(() =>
@@ -96,15 +88,6 @@ const artifacts = computed(() =>
                 <span :class="item.blueprint.rarity.toLocaleLowerCase()">
                   {{ item.blueprint.name }}
                 </span>
-              </li>
-            </ul>
-            <ul>
-              <li
-                v-for="item in destinyDeck"
-                :key="item.blueprint.id"
-                :class="item.blueprint.rarity.toLocaleLowerCase()"
-              >
-                {{ item.copies }}x {{ item.blueprint.name }}
               </li>
             </ul>
           </div>

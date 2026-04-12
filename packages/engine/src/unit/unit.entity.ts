@@ -22,7 +22,6 @@ import {
 import { UNIT_EVENTS } from './unit.enums';
 import {
   UnitAfterBounceEvent,
-  UnitAfterCombatEvent,
   UnitAfterDestroyEvent,
   UnitAfterHealEvent,
   UnitAfterMoveEvent,
@@ -32,6 +31,7 @@ import {
   UnitBeforeMoveEvent
 } from './unit-events';
 import { CombatComponent } from '../combat/combat.component';
+import { COMBAT_EVENTS, CombatDoneEvent } from '../combat/combat.events';
 
 export type UnitOptions = {
   id: string;
@@ -67,9 +67,9 @@ export type UnitInterceptors = {
   canBeMoved: Interceptable<boolean>;
   canMoveAfterAttacking: Interceptable<boolean>;
   canAttack: Interceptable<boolean, { target: Unit | Player }>;
-  canCounterAttack: Interceptable<boolean, { attacker: Unit }>;
-  canBeAttackTarget: Interceptable<boolean, { attacker: Unit }>;
-  canBeCounterattackTarget: Interceptable<boolean, { attacker: Unit }>;
+  canCounterAttack: Interceptable<boolean, { attacker: Unit | Player }>;
+  canBeAttackTarget: Interceptable<boolean, { attacker: Unit | Player }>;
+  canBeCounterattackTarget: Interceptable<boolean, { attacker: Unit | Player }>;
   canBeCardTarget: Interceptable<boolean, { card: AnyCard }>;
   canBeDestroyed: Interceptable<boolean>;
   canReceiveModifier: Interceptable<boolean, { modifier: Modifier<Unit> }>;
@@ -91,11 +91,10 @@ export type UnitInterceptors = {
 
   maxAttacksPerTurn: Interceptable<number>;
   maxMovementsPerTurn: Interceptable<number>;
-  maxCounterattacksPerTurn: Interceptable<number>;
 
   player: Interceptable<Player>;
 
-  damageDealt: Interceptable<number, { target: Unit }>;
+  damageDealt: Interceptable<number, { target: Unit | Player }>;
   damageReceived: Interceptable<
     number,
     { amount: number; source: AnyCard; damage: Damage }
@@ -111,9 +110,9 @@ export class Unit
   extends EntityWithModifiers<UnitInterceptors>
   implements Serializable<SerializedUnit>
 {
-  movement: MovementComponent;
+  readonly movement: MovementComponent;
 
-  combat: CombatComponent;
+  readonly combat: CombatComponent;
 
   private damageTaken = 0;
 
@@ -153,7 +152,6 @@ export class Unit
 
       maxAttacksPerTurn: new Interceptable(),
       maxMovementsPerTurn: new Interceptable(),
-      maxCounterattacksPerTurn: new Interceptable(),
 
       player: new Interceptable(),
 
@@ -227,13 +225,6 @@ export class Unit
   get maxAttacksPerTurn() {
     return this.interceptors.maxAttacksPerTurn.getValue(
       this.game.config.MAX_ATTACKS_PER_TURN,
-      {}
-    );
-  }
-
-  get maxCounterattacksPerTurn() {
-    return this.interceptors.maxCounterattacksPerTurn.getValue(
-      this.game.config.MAX_COUNTERATTACKS_PER_TURN,
       {}
     );
   }
@@ -396,7 +387,9 @@ export class Unit
 
   canAttack(target: Unit | Player): boolean {
     return this.interceptors.canAttack.getValue(
-      this.attacksPerformedThisTurn < this.maxAttacksPerTurn && !this.isExhausted,
+      this.attacksPerformedThisTurn < this.maxAttacksPerTurn &&
+        !this.isExhausted &&
+        this.atk > 0,
       { target }
     );
   }
@@ -420,13 +413,15 @@ export class Unit
     return this._isExhausted;
   }
 
-  canBeAttackedBy(unit: Unit): boolean {
-    return this.interceptors.canBeAttackTarget.getValue(this.isAlive, { attacker: unit });
+  canBeAttackedBy(attacker: Unit | Player): boolean {
+    return this.interceptors.canBeAttackTarget.getValue(this.isAlive, {
+      attacker: attacker
+    });
   }
 
-  canBeCounterattackedBy(unit: Unit): boolean {
+  canBeCounterattackedBy(attackTarget: Unit | Player): boolean {
     return this.interceptors.canBeCounterattackTarget.getValue(this.isAlive, {
-      attacker: unit
+      attacker: attackTarget
     });
   }
 
@@ -480,11 +475,8 @@ export class Unit
       });
   }
 
-  canCounterAttack(unit: Unit): boolean {
-    return this.interceptors.canCounterAttack.getValue(
-      this.combat.counterAttacksCount < this.maxCounterattacksPerTurn,
-      { attacker: unit }
-    );
+  canCounterAttack(unit: Unit | Player): boolean {
+    return this.interceptors.canCounterAttack.getValue(true, { attacker: unit });
   }
 
   canCounterAttackAt(point: Point) {
@@ -525,11 +517,11 @@ export class Unit
     return this.interceptors.dealsDamageFirstWhenAttacking.getValue(false, {});
   }
 
-  getAttackDamage(target: Unit) {
+  getAttackDamage(target: Unit | Player) {
     return this.interceptors.damageDealt.getValue(this.atk, { target });
   }
 
-  getRetaliationDamage(attacker: Unit) {
+  getRetaliationDamage(attacker: Unit | Player) {
     return this.interceptors.damageDealt.getValue(this.retaliation, { target: attacker });
   }
 
@@ -556,16 +548,16 @@ export class Unit
       this.exhaust();
     }
     await this.game.emit(
-      UNIT_EVENTS.UNIT_AFTER_COMBAT,
-      new UnitAfterCombatEvent({ unit: this })
+      COMBAT_EVENTS.COMBAT_DONE,
+      new CombatDoneEvent({ attacker: this })
     );
     if (this.shouldSwitchInitiativeafterAttacking) {
       await this.game.turnSystem.switchInitiative();
     }
   }
 
-  async counterAttack(unit: Unit) {
-    return this.combat.counterAttack(unit);
+  async counterAttack(attacker: Unit | Player) {
+    return this.combat.counterAttack(attacker);
   }
 
   get dealDamage() {

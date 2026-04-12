@@ -8,8 +8,14 @@ import {
 import type { Game } from '../game';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Player } from '../../player/player.entity';
-import { SelectingSpaceOnBoardContext } from '../interactions/selecting-space-on-board.interaction';
-import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
+import {
+  SelectingSpaceOnBoardContext,
+  type SelectingSpaceOnBoardContextOptions
+} from '../interactions/selecting-space-on-board.interaction';
+import {
+  ChoosingCardsContext,
+  type ChoosingCardsContextOptions
+} from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
 import type { GenericAOEShape } from '../../aoe/aoe-shape';
@@ -153,15 +159,7 @@ export class GameInteractionSystem
     } as InteractionContext & { state: T };
   }
 
-  async selectSpacesOnBoard(options: {
-    isElligible: (candidate: BoardCell, selectedSpaces: BoardCell[]) => boolean;
-    canCommit: (selectedCards: BoardCell[]) => boolean;
-    isDone(selectedCards: BoardCell[]): boolean;
-    getAoe: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
-    player: Player;
-    getLabel: (selectedSpaces: BoardCell[]) => string;
-    source: AnyCard;
-  }) {
+  async selectSpacesOnBoard(options: SelectingSpaceOnBoardContextOptions) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD);
     this._ctx = await this.ctxDictionary[
       INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
@@ -178,14 +176,7 @@ export class GameInteractionSystem
     }
   }
 
-  async chooseCards<T extends AnyCard>(options: {
-    player: Player;
-    minChoiceCount: number;
-    maxChoiceCount: number;
-    choices: AnyCard[];
-    label: string;
-    source: AnyCard;
-  }) {
+  async chooseCards<T extends AnyCard>(options: ChoosingCardsContextOptions) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
       this.game,

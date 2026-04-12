@@ -69,36 +69,10 @@ export class DeckRepository {
       });
     }
 
-    const destinyDeckCards = [];
-    for (const deckCard of premadeDeck.destinyDeck) {
-      const cardId = await this.ctx.cardRepo.create({
-        ownerId: userId,
-        blueprintId: deckCard.blueprintId,
-        isFoil: deckCard.isFoil,
-        copiesOwned: deckCard.copies
-      });
-
-      destinyDeckCards.push({
-        cardId,
-        copies: deckCard.copies
-      });
-    }
-
-    const heroCard = await this.ctx.cardRepo.create({
-      ownerId: userId,
-      blueprintId: premadeDeck.hero.blueprintId,
-      isFoil: premadeDeck.hero.isFoil,
-      copiesOwned: 1
-    });
-
     const deckDocId = await this.ctx.db.insert('decks', {
       name: premadeDeck.name,
       ownerId: userId,
-      mainDeck: mainDeckCards,
-      destinyDeck: destinyDeckCards,
-      hero: {
-        cardId: heroCard
-      }
+      mainDeck: mainDeckCards
     });
 
     const deckDoc = await this.ctx.db.get(deckDocId);
@@ -113,9 +87,7 @@ export class DeckRepository {
     const deckDocId = await this.ctx.db.insert('decks', {
       name: DEFAULT_DECK_NAME,
       ownerId: ownerId,
-      mainDeck: [],
-      destinyDeck: [],
-      hero: {}
+      mainDeck: []
     });
 
     const deckDoc = await this.ctx.db.get(deckDocId);

@@ -2,22 +2,23 @@ import { isDefined } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
 import { Player } from '../player/player.entity';
-import {
-  UnitAttackEvent,
-  UnitDealDamageEvent,
-  UnitReceiveDamageEvent
-} from '../unit/unit-events';
 import { Unit } from '../unit/unit.entity';
 import { UNIT_EVENTS } from '../unit/unit.enums';
 import { type Damage, CombatDamage } from '../utils/damage';
+import {
+  COMBAT_EVENTS,
+  CombatAttackEvent,
+  CombatDealDamageEvent,
+  CombatTakeDamageEvent
+} from './combat.events';
 
 export class CombatComponent {
   private _attacksThisTurn: Array<{ target: Unit | Player; damage: Damage }> = [];
-  private _counterAttacksThisTurn: Array<{ target: Unit; damage: Damage }> = [];
+  private _counterAttacksThisTurn: Array<{ target: Unit | Player; damage: Damage }> = [];
 
   constructor(
     private game: Game,
-    private unit: Unit
+    private combatant: Unit | Player
   ) {}
 
   get attacks() {
@@ -36,36 +37,47 @@ export class CombatComponent {
     return this._counterAttacksThisTurn.length;
   }
 
+  get player() {
+    return this.combatant instanceof Unit ? this.combatant.player : this.combatant;
+  }
+
+  get card() {
+    return this.combatant instanceof Unit ? this.combatant.card : this.combatant.hero;
+  }
+
   reset() {
     this._attacksThisTurn = [];
     this._counterAttacksThisTurn = [];
   }
 
-  async counterAttack(attacker: Unit) {
+  async counterAttack(attacker: Unit | Player) {
     await this.game.emit(
-      UNIT_EVENTS.UNIT_BEFORE_COUNTERATTACK,
-      new UnitAttackEvent({
+      COMBAT_EVENTS.COMBAT_BEFORE_COUNTERATTACK,
+      new CombatAttackEvent({
         targetType: 'unit',
         target: attacker,
-        unit: this.unit
+        attacker: this.combatant
       })
     );
-    const targets = this.unit.counterattackAOEShape
-      .getArea([attacker])
-      .map(point => this.game.unitSystem.getUnitAt(point))
-      .filter(isDefined);
+    const targets =
+      attacker instanceof Player
+        ? [attacker]
+        : this.combatant.counterattackAOEShape
+            .getArea([attacker])
+            .map(point => this.game.unitSystem.getUnitAt(point))
+            .filter(isDefined);
 
-    const damage = new CombatDamage(this.unit, 'counterattack');
+    const damage = new CombatDamage(this.combatant, 'counterattack');
 
     await this.dealDamage(targets, damage);
     this._counterAttacksThisTurn.push({ target: attacker, damage });
 
     await this.game.emit(
-      UNIT_EVENTS.UNIT_AFTER_COUNTERATTACK,
-      new UnitAttackEvent({
+      COMBAT_EVENTS.COMBAT_AFTER_COUNTERATTACK,
+      new CombatAttackEvent({
         targetType: 'unit',
         target: attacker,
-        unit: this.unit
+        attacker: this.combatant
       })
     );
   }
@@ -74,11 +86,11 @@ export class CombatComponent {
     const position = target instanceof Unit ? target.position.clone() : null;
 
     await this.game.emit(
-      UNIT_EVENTS.UNIT_BEFORE_ATTACK,
-      new UnitAttackEvent({
+      COMBAT_EVENTS.COMBAT_BEFORE_ATTACK,
+      new CombatAttackEvent({
         targetType: target instanceof Unit ? 'unit' : 'player',
         target,
-        unit: this.unit
+        attacker: this.combatant
       })
     );
     // if target is unit, we want to get the actual target on the board in case it moved since the attack was declared (ex: provoke)
@@ -89,22 +101,22 @@ export class CombatComponent {
     const targets =
       actualTarget instanceof Unit
         ? this.game.unitSystem.getUnitsInAOE(
-            this.unit.attackAOEShape,
+            this.combatant.attackAOEShape,
             [actualTarget],
-            this.unit.player
+            this.player
           )
         : [actualTarget];
-    const damage = new CombatDamage(this.unit, 'attack');
+    const damage = new CombatDamage(this.combatant, 'attack');
     await this.dealDamage(targets, damage);
     this._attacksThisTurn.push({ target, damage });
 
     if (actualTarget instanceof Player) {
       await this.game.emit(
-        UNIT_EVENTS.UNIT_AFTER_ATTACK,
-        new UnitAttackEvent({
+        COMBAT_EVENTS.COMBAT_AFTER_ATTACK,
+        new CombatAttackEvent({
           targetType: 'player',
           target: actualTarget,
-          unit: this.unit
+          attacker: this.combatant
         })
       );
       return;
@@ -113,66 +125,69 @@ export class CombatComponent {
     const unit = this.game.unitSystem.getUnitAt(actualTarget)!;
     if (!unit) return;
 
-    if (this.unit.dealsDamageFirstWhenAttacking && !unit.isAlive) {
+    if (this.combatant.dealsDamageFirstWhenAttacking && !unit.isAlive) {
       return;
     }
 
     // we check counterattack before emitting AFTER_ATTACK event to enable effects that would prevent counter attack for one attack only
     // ex: Fearsome
-    const counterAttackParticipants = this.unit
+    const counterAttackParticipants = this.combatant
       .getCounterattackParticipants(unit)
       .filter(unit => {
-        return unit.canCounterAttack(this.unit) && this.unit.canBeCounterattackedBy(unit);
+        return (
+          unit.canCounterAttack(this.combatant) &&
+          this.combatant.canBeCounterattackedBy(unit)
+        );
       });
 
     await this.game.emit(
-      UNIT_EVENTS.UNIT_AFTER_ATTACK,
-      new UnitAttackEvent({
+      COMBAT_EVENTS.COMBAT_AFTER_ATTACK,
+      new CombatAttackEvent({
         targetType: 'unit',
         target,
-        unit: this.unit
+        attacker: this.combatant
       })
     );
 
     for (const unit of counterAttackParticipants) {
-      await unit.counterAttack(this.unit);
+      await unit.counterAttack(this.combatant);
     }
   }
 
   async dealDamage(targets: Array<Unit | Player>, damage: Damage) {
     await this.game.emit(
-      UNIT_EVENTS.UNIT_BEFORE_DEAL_DAMAGE,
-      new UnitDealDamageEvent({ targets, damage, unit: this.unit })
+      COMBAT_EVENTS.COMBAT_BEFORE_DEAL_DAMAGE,
+      new CombatDealDamageEvent({ targets, damage, attacker: this.combatant })
     );
     for (const target of targets) {
-      await target.takeDamage(this.unit.card, damage);
+      await target.takeDamage(this.card, damage);
     }
     await this.game.emit(
-      UNIT_EVENTS.UNIT_AFTER_DEAL_DAMAGE,
-      new UnitDealDamageEvent({ targets, damage, unit: this.unit })
+      COMBAT_EVENTS.COMBAT_AFTER_DEAL_DAMAGE,
+      new CombatDealDamageEvent({ targets, damage, attacker: this.combatant })
     );
   }
 
   async takeDamage(from: AnyCard, damage: Damage, silent = false) {
     if (!silent) {
       await this.game.emit(
-        UNIT_EVENTS.UNIT_BEFORE_RECEIVE_DAMAGE,
-        new UnitReceiveDamageEvent({
+        COMBAT_EVENTS.COMBAT_BEFORE_RECEIVE_DAMAGE,
+        new CombatTakeDamageEvent({
           from,
-          unit: this.unit,
+          target: this.combatant,
           damage
         })
       );
     }
 
-    await this.unit.removeHp(damage.getFinalAmount(this.unit), from);
+    await this.combatant.removeHp(damage.getFinalAmount(this.combatant), from);
 
     if (!silent) {
       await this.game.emit(
-        UNIT_EVENTS.UNIT_AFTER_RECEIVE_DAMAGE,
-        new UnitReceiveDamageEvent({
+        COMBAT_EVENTS.COMBAT_AFTER_RECEIVE_DAMAGE,
+        new CombatTakeDamageEvent({
           from,
-          unit: this.unit,
+          target: this.combatant,
           damage
         })
       );

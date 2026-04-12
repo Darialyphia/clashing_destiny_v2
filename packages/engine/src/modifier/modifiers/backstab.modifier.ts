@@ -64,13 +64,13 @@ export class BackstabUnitModifier extends Modifier<Unit> {
       icon: 'icons/keyword-backstab',
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.UNIT_BEFORE_ATTACK,
+          eventName: GAME_EVENTS.COMBAT_BEFORE_ATTACK,
           filter: event => {
             if (!event) return false;
 
             return (
               event.data.target instanceof Unit &&
-              event.data.unit.equals(this.target) &&
+              event.data.attacker.equals(this.target) &&
               event.data.target.remainingHp < event.data.target.maxHp
             );
           },
@@ -84,16 +84,16 @@ export class BackstabUnitModifier extends Modifier<Unit> {
           }
         }),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.UNIT_AFTER_ATTACK,
+          eventName: GAME_EVENTS.COMBAT_AFTER_ATTACK,
           filter: event => {
             if (!event) return false;
-            return event.data.unit.equals(this.target) && this.isBackstabbing;
+            return event.data.attacker.equals(this.target) && this.isBackstabbing;
           },
           handler: async event => {
             await this.game.emit(
               GAME_EVENTS.MODIFIER_BACKSTAB,
               new BackstabEvent({
-                unit: event!.data.unit,
+                attacker: event!.data.attacker as Unit,
                 target: event!.data.target as Unit,
                 amount: this.backstabAmount.getValue(this.options.damageBonus, this)
               })
@@ -101,10 +101,10 @@ export class BackstabUnitModifier extends Modifier<Unit> {
           }
         }),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.UNIT_AFTER_COMBAT,
+          eventName: GAME_EVENTS.COMBAT_DONE,
           filter: event => {
             if (!event) return false;
-            return event.data.unit.equals(this.target);
+            return event.data.attacker.equals(this.target);
           },
           handler: () => {
             this._isBackstabbing = false;

@@ -36,24 +36,22 @@ export const combatTutorial: TutorialMission = {
       {
         id: 'p1',
         name: 'You',
-        mainDeck: {
-          cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
-        },
-        destinyDeck: {
-          cards: ['fire-affinity']
-        },
-        hero: 'todo'
+        deck: {
+          cards: Array.from({ length: 30 }, () => ({
+            blueprintId: 'courageous-footsoldier',
+            isFoil: false
+          }))
+        }
       },
       {
         id: 'p2',
         name: 'Opponent',
-        mainDeck: {
-          cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
-        },
-        destinyDeck: {
-          cards: ['fire-affinity']
-        },
-        hero: 'todo'
+        deck: {
+          cards: Array.from({ length: 30 }, () => ({
+            blueprintId: 'courageous-footsoldier',
+            isFoil: false
+          }))
+        }
       }
     ],
     rngSeed: 'tutorial-seed',
@@ -64,9 +62,7 @@ export const combatTutorial: TutorialMission = {
       // }
     ],
     config: {
-      INITIAL_HAND_SIZE: 4,
-      PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
-      PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0
+      INITIAL_HAND_SIZE: 4
     },
     async setup() {
       // client.ui.displayedElements.hand = false;

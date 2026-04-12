@@ -14,12 +14,22 @@ const getCount = (cards: Array<{ copies: number }>) => {
 
 const getCountForCost = (cost: number) =>
   getCount(
-    deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost === cost)
+    deckBuilder.value.mainDeckCards.filter(c => {
+      if ('manaCost' in c.blueprint) {
+        return c.blueprint.manaCost === cost;
+      }
+      return false;
+    })
   );
 
 const getCountForCostAndUp = (minCost: number) =>
   getCount(
-    deckBuilder.value.mainDeckCards.filter(c => c.blueprint.manaCost >= minCost)
+    deckBuilder.value.mainDeckCards.filter(c => {
+      if ('manaCost' in c.blueprint) {
+        return c.blueprint.manaCost >= minCost;
+      }
+      return false;
+    })
   );
 </script>
 

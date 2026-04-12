@@ -145,29 +145,28 @@ export class GamesManager {
 
     const initialState: GameOptions = {
       id,
+      enableSnapshots: true,
       rngSeed: gameInfos.seed,
       overrides: {},
       players: [
         {
           id: gameInfos.players[0].user.id,
           name: gameInfos.players[0].user.username,
-          hero: gameInfos.players[0].user.deck.hero.blueprintId,
-          mainDeck: {
-            cards: gameInfos.players[0].user.deck.mainDeck.map(c => c.blueprintId)
-          },
-          destinyDeck: {
-            cards: gameInfos.players[0].user.deck.destinyDeck.map(c => c.blueprintId)
+          deck: {
+            cards: gameInfos.players[0].user.deck.cards.map(c => ({
+              blueprintId: c.blueprintId,
+              isFoil: c.isFoil
+            }))
           }
         },
         {
           id: gameInfos.players[1].user.id,
           name: gameInfos.players[1].user.username,
-          hero: gameInfos.players[1].user.deck.hero.blueprintId,
-          mainDeck: {
-            cards: gameInfos.players[1].user.deck.mainDeck.map(c => c.blueprintId)
-          },
-          destinyDeck: {
-            cards: gameInfos.players[1].user.deck.destinyDeck.map(c => c.blueprintId)
+          deck: {
+            cards: gameInfos.players[1].user.deck.cards.map(c => ({
+              blueprintId: c.blueprintId,
+              isFoil: c.isFoil
+            }))
           }
         }
       ]

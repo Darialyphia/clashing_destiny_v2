@@ -6,18 +6,18 @@ import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { Modifier } from '../modifier.entity';
 import type { MinionCard } from '../../card/entities/minion-card.entity';
-import type { UnitAfterDestroyEvent, UnitAttackEvent } from '../../unit/unit-events';
 import type { ModifierMixin } from '../modifier-mixin';
 import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import type { Unit } from '../../unit/unit.entity';
 import { UNIT_EVENTS } from '../../unit/unit.enums';
+import { COMBAT_EVENTS, type CombatAttackEvent } from '../../combat/combat.events';
 
 export class MinionOnAttackModifier extends Modifier<MinionCard> {
   constructor(
     game: Game,
     source: AnyCard,
     private options: {
-      handler: (event: UnitAttackEvent) => MaybePromise<void>;
+      handler: (event: CombatAttackEvent) => MaybePromise<void>;
       mixins?: ModifierMixin<MinionCard>[];
     }
   ) {
@@ -44,7 +44,7 @@ export class MinionOnAttackUnitModifier extends Modifier<Unit> {
     game: Game,
     source: AnyCard,
     options: {
-      handler: (event: UnitAttackEvent) => MaybePromise<void>;
+      handler: (event: CombatAttackEvent) => MaybePromise<void>;
       mixins?: ModifierMixin<Unit>[];
       modifierType?: string;
     }
@@ -55,11 +55,11 @@ export class MinionOnAttackUnitModifier extends Modifier<Unit> {
       icon: 'icons/keyword-on-attack',
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: UNIT_EVENTS.UNIT_BEFORE_ATTACK,
+          eventName: COMBAT_EVENTS.COMBAT_BEFORE_ATTACK,
           filter: event => {
             if (!event) return false;
 
-            return event.data.unit.equals(this.target);
+            return event.data.attacker.equals(this.target);
           },
           handler: event => {
             if (!event) return; // dont trigger when event is triggered manually

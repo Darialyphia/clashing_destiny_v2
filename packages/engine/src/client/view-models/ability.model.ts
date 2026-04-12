@@ -2,7 +2,6 @@ import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
 import type { SerializedAbility } from '../../card/entities/ability.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { applyPatchToData } from '../utils/apply-patch';
 
 export class AbilityViewModel {
   private getEntities: () => GameStateEntities;
@@ -27,8 +26,8 @@ export class AbilityViewModel {
     return this;
   }
 
-  applyPatch(patch: PatchOperation) {
-    applyPatchToData(this.data, patch);
+  updateWithPatches(patches: PatchOperation[]) {
+    this.data = this.getClient().patchApplier.applyPatches(this.data, patches);
     return this;
   }
 

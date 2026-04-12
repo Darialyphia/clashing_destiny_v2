@@ -1,17 +1,8 @@
 import type { Config } from '../../config';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
-
-import type { SerializedPlayer } from '../../player/player.entity';
-import type { SerializedModifier } from '../../modifier/modifier.entity';
+import type { SerializedEntity } from './game-serializer';
 import type { SerializedBoard } from '../../board/board.system';
-import type { SerializedCell } from '../../board/entities/board-cell.entity';
-import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
-import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
-import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
-import type { SerializedTile } from '../../tile/tile.entity';
-import type { SerializedUnit } from '../../unit/unit.entity';
-import type { SerializedAbility } from '../../card/entities/ability.entity';
 
 /**
  * JSON Patch operations (RFC 6902 inspired)
@@ -42,19 +33,8 @@ export interface RemovePatch {
 export type EntityPatchMap = Record<string, PatchOperation[]>;
 
 /**
- * Serialized entity union type
+ * New snapshot diff format using patches
  */
-export type SerializedEntity =
-  | SerializedMinionCard
-  | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedPlayer
-  | SerializedModifier
-  | SerializedCell
-  | SerializedUnit
-  | SerializedTile
-  | SerializedAbility;
-
 export type PatchBasedSnapshotDiff = {
   entityPatches: EntityPatchMap;
 

@@ -11,6 +11,7 @@ import {
   GAME_PHASES,
   INTERACTION_STATES
 } from '@game/engine/src/game/game.enums';
+import { Flip } from 'gsap/Flip';
 import UiButton from '@/ui/components/UiButton.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
@@ -26,17 +27,13 @@ useEventListener(
   (e: MouseEvent) => {
     x.value = e.clientX;
     y.value = e.clientY;
-    // we set the css variables manually for better performance
-    // devtools profiling shows that it triggers style recalculation for way less elements
-    container.value?.style.setProperty('--x', `${e.clientX}px`);
-    container.value?.style.setProperty('--y', `${e.clientY}px`);
   },
   { passive: true, capture: true }
 );
 let prev = { x: x.value, y: y.value };
 let delta = { x: 0, y: 0 };
 const MAX_ANGLE = 45;
-const SCALE_FACTOR = 5;
+const SCALE_FACTOR = 1.4;
 const LERP_FACTOR = 0.3;
 
 const rotationAnimation = useRafFn(() => {
@@ -63,17 +60,6 @@ const rotationAnimation = useRafFn(() => {
       LERP_FACTOR
     )
   };
-
-  // we set the css variables manually for better performance
-  // devtools profiling shows that it triggers style recalculation for way less elements
-  container.value?.style.setProperty(
-    '--rotation-x',
-    cardRotation.value.x + 'deg'
-  );
-  container.value?.style.setProperty(
-    '--rotation-y',
-    cardRotation.value.y + 'deg'
-  );
 });
 
 const state = useGameState();
@@ -89,7 +75,20 @@ watchEffect(() => {
   if (shouldPin) {
     if (!container.value) return;
 
+    const flipState = Flip.getState(container.value);
+    isPinning.value = true;
     isPinned.value = shouldPin;
+    window.requestAnimationFrame(() => {
+      Flip.from(flipState, {
+        targets: container.value,
+        duration: 0.25,
+        absolute: true,
+        ease: Power1.easeOut,
+        onComplete() {
+          isPinning.value = false;
+        }
+      });
+    });
   } else {
     isPinned.value = shouldPin;
   }
@@ -107,13 +106,12 @@ const confirmButtonLabel = computed(() => {
   if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return 'Confirm';
 
   if (
-    state.value.interaction.state !== INTERACTION_STATES.SELECTING_MINION_SLOT
+    state.value.interaction.state !==
+    INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
   ) {
     return 'Confirm';
   }
-  return state.value.interaction.ctx.selectedPositions.length
-    ? 'Confirm'
-    : 'Skip';
+  return state.value.interaction.ctx.selectedSpaces.length ? 'Confirm' : 'Skip';
 });
 
 const isHidden = ref(false);
@@ -168,14 +166,15 @@ const draggedCard = computed(() => {
             isPinned &&
             !isPinning &&
             state.phase.state === GAME_PHASES.PLAYING_CARD &&
-            state.interaction.state === INTERACTION_STATES.SELECTING_MINION_SLOT
+            state.interaction.state ===
+              INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
           "
           class="flex flex-col gap-3 mt-3"
           @mouseup.stop
         >
           <UiButton
             class="primary-button w-full pointer-events-auto"
-            @click="client.commitMinionSlotSelection()"
+            @click="client.commitSpaceSelection()"
           >
             {{ confirmButtonLabel }}
           </UiButton>
@@ -209,7 +208,7 @@ const draggedCard = computed(() => {
   }
   &.is-pinned {
     top: var(--size-14);
-    right: var(--size-12);
+    left: var(--size-12);
   }
 }
 

@@ -23,7 +23,8 @@ export class ArtifactManagerComponent {
         label: 'Choose an artifact to unequip',
         minChoiceCount: 1,
         maxChoiceCount: 1,
-        source: artifact
+        source: artifact,
+        timeoutFallback: [this._artifacts[0].card]
       });
 
       await this.player.artifactManager.unequip(artifactToUnequip);

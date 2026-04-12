@@ -13,11 +13,11 @@ const { deckBuilder } = useCollectionPage();
         <header>
           <TabsTrigger value="main">
             Main ({{ deckBuilder.mainDeckSize }} /
-            {{ deckBuilder.validator.mainDeckSize }})
+            {{ deckBuilder.validator.mainDeckMaxSize }})
           </TabsTrigger>
           <TabsTrigger value="destiny">
             Destiny ({{ deckBuilder.destinyDeckSize }} /
-            {{ deckBuilder.validator.destinyDeckSize }})
+            {{ deckBuilder.validator.destinyDeckMaxSize }})
           </TabsTrigger>
         </header>
       </TabsList>

@@ -24,8 +24,6 @@ export type Config = {
   MAX_EQUIPPED_ARTIFACTS: number;
   DRAW_STEP: 'turn-start' | 'turn-end';
 
-  PLAYER_MAX_HP: number;
-
   PLAYER_MAX_LEVEL: number;
   EXP_PER_LEVEL: number;
   EXP_GAIN_PER_TURN: number;
@@ -54,8 +52,6 @@ export const defaultConfig: Config = {
 
   MAX_EQUIPPED_ARTIFACTS: 5,
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
-
-  PLAYER_MAX_HP: 25,
 
   PLAYER_MAX_LEVEL: 4,
   EXP_PER_LEVEL: 3,

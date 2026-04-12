@@ -1,43 +1,32 @@
 <script setup lang="ts">
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import {
-  useGameClient,
-  useGameState,
-  useGameUi
-} from '../composables/useGameClient';
+import { useGameState, useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-import CardBack from '@/card/components/CardBack.vue';
 
-const { cardId } = defineProps<{
-  cardId?: string;
+const { card, isInteractive } = defineProps<{
+  card: CardViewModel;
+  isInteractive: boolean;
 }>();
 
 const ui = useGameUi();
-const { client } = useGameClient();
 const state = useGameState();
-const card = computed(() => {
-  if (!cardId) return null;
-  return (state.value.entities[cardId] as CardViewModel) ?? null;
-});
+
 const DRAG_THRESHOLD_PX = 60;
 
 const isShaking = ref(false);
 const violationWarning = ref('');
 
 const startDragging = (e: MouseEvent) => {
-  if (!card.value) return;
-  ui.value.select(card.value);
+  ui.value.selectCard(card);
   startY.value = e.clientY;
 
   document.body.addEventListener('mousemove', onMousemove);
 };
 
 const playViolationAnimation = () => {
-  if (!card.value) return;
   isShaking.value = true;
   violationWarning.value =
-    card.value.unplayableReason || 'You cannot play this card.';
+    card.unplayableReason || 'You cannot play this card.';
 
   setTimeout(() => {
     violationWarning.value = '';
@@ -48,63 +37,60 @@ const playViolationAnimation = () => {
 const startY = ref(0);
 
 const onMousemove = (e: MouseEvent) => {
-  if (!card.value) return;
   const deltaY = startY.value - e.clientY;
   if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
-    ui.value.startDraggingCard(card.value);
-    card.value.play();
+    ui.value.draggedCard = card;
+    card.play();
     document.body.removeEventListener('mousemove', onMousemove);
   }
 };
 
 const onMouseDown = (e: MouseEvent) => {
-  if (!card.value) return;
-  if (client.value.getActivePlayerId() !== card.value.player.id) return;
+  if (ui.value.isReplacingCard) return;
+  if (state.value.turnPlayer !== card.player.id) return;
 
-  if (!card.value.canPlay) return playViolationAnimation();
+  if (!card.canPlay) return playViolationAnimation();
 
   startDragging(e);
 };
 
 const isDisabled = computed(() => {
-  return !card.value?.canPlay;
+  if (ui.value.isReplacingCard) {
+    return !card.canReplace;
+  }
+  return !card.canPlay;
 });
 
 const isVisible = computed(() => {
-  const phase = state.value.phase;
-  if (phase.state === GAME_PHASES.PLAYING_CARD) {
-    return phase.ctx.card !== card.value?.id;
-  }
-
-  return true;
+  return state.value.phase.ctx.card !== card.id;
 });
 </script>
 
 <template>
-  <div
-    class="hand-card"
-    :class="{
-      selected: card && ui.selectedCard?.equals(card),
-      disabled: isDisabled,
-      'is-shaking': isShaking
-    }"
-    @mousedown="onMouseDown($event)"
-  >
-    <p class="violation-warning" v-if="violationWarning">
-      {{ violationWarning }}
-    </p>
+  <Sound mouseenter="button-hover" pitch-shift>
+    <div
+      class="hand-card"
+      :class="{
+        selected: ui.selectedCard?.equals(card),
+        disabled: isDisabled,
+        'is-shaking': isShaking
+      }"
+      @mousedown="onMouseDown($event)"
+    >
+      <p class="violation-warning" v-if="violationWarning">
+        {{ violationWarning }}
+      </p>
 
-    <GameCard
-      v-if="card"
-      v-show="isVisible"
-      :card-id="card.id"
-      actions-side="top"
-      :actions-offset="15"
-      :is-interactive="false"
-      show-disabled-message
-    />
-    <CardBack v-else-if="!card" />
-  </div>
+      <GameCard
+        v-if="isVisible"
+        :card-id="card.id"
+        actions-side="top"
+        :actions-offset="15"
+        :is-interactive="isInteractive"
+        show-disabled-message
+      />
+    </div>
+  </Sound>
 </template>
 
 <style scoped lang="postcss">
@@ -126,7 +112,7 @@ const isVisible = computed(() => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &:hover {
-    --hover-offset: -40px;
+    --hover-offset: -120px;
     z-index: var(--hand-size);
   }
 

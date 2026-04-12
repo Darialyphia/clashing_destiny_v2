@@ -101,12 +101,6 @@ export class SpellCard extends Card<
     );
 
     const aoe = this.blueprint.getAoe(this.game, this, targets);
-    await this.game.vfxSystem.playSequence(
-      this.blueprint.vfx.sequences?.play?.(this.game, this, {
-        targets: targets.map(t => t.position.serialize()),
-        aoe
-      }) ?? { tracks: [] }
-    );
 
     await this.blueprint.onPlay(this.game, this, {
       targets,
