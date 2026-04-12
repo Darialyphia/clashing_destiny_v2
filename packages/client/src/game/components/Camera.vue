@@ -11,7 +11,7 @@ const camera = ref({
   offset: { x: 0, y: 0 }
 });
 
-useFxEvent(GAME_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async () => {
+useFxEvent(GAME_EVENTS.COMBAT_AFTER_RECEIVE_DAMAGE, async () => {
   const tl = gsap.timeline();
   tl.to(camera.value.offset, {
     duration: 0.1,

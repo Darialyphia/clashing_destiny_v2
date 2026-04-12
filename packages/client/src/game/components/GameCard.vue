@@ -188,8 +188,7 @@ const classes = computed(() => {
           hp: card.hp,
           baseMaxHp: card.baseMaxHp,
           maxHp: card.maxHp,
-          durability: card.durability,
-          countdown: card.countdown ?? card.maxCountdown
+          durability: card.durability
         }"
         class="game-card small"
         :class="classes"

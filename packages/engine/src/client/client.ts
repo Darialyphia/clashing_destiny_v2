@@ -347,4 +347,14 @@ export class GameClient {
       }
     });
   }
+
+  answerQuestion(id: string) {
+    this.dispatch({
+      type: 'answerQuestion',
+      payload: {
+        playerId: this.playerId,
+        id
+      }
+    });
+  }
 }

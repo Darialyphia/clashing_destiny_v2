@@ -3,13 +3,7 @@ import {
   type Control
 } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
-import {
-  useGameState,
-  useGameUi,
-  useMyBoard,
-  useMyPlayer,
-  useOpponentPlayer
-} from './useGameClient';
+import { useGameState, useGameUi, useMyBoard } from './useGameClient';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { keyToString } from 'key-display-names';
 
@@ -19,8 +13,6 @@ export const useGameKeyboardControls = () => {
   const ui = useGameUi();
   const state = useGameState();
   const myBoard = useMyBoard();
-  const myPlayer = useMyPlayer();
-  const opponentPlayer = useOpponentPlayer();
 
   useKeyboardControl(
     'keyup',
@@ -61,50 +53,6 @@ export const useGameKeyboardControls = () => {
         myBoard.value.heroZone.hero
       ] as CardViewModel;
       ui.value.onCardClick(hero);
-    }
-  );
-
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings.toggleDiscardPile.control,
-    () => {
-      ui.value.DOMSelectors.discardPile(myPlayer.value.id).element?.click();
-    }
-  );
-
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings.toggleBanishPile.control,
-    () => {
-      ui.value.DOMSelectors.banishPile(myPlayer.value.id).element?.click();
-    }
-  );
-
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings.toggleDestinyDeck.control,
-    () => {
-      ui.value.DOMSelectors.destinyDeck(myPlayer.value.id).element?.click();
-    }
-  );
-
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings.toggleOpponentDiscardPile.control,
-    () => {
-      ui.value.DOMSelectors.discardPile(
-        opponentPlayer.value.id
-      ).element?.click();
-    }
-  );
-
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings.toggleOpponentBanishPile.control,
-    () => {
-      ui.value.DOMSelectors.banishPile(
-        opponentPlayer.value.id
-      ).element?.click();
     }
   );
 };

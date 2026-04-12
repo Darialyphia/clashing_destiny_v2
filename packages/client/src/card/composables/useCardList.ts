@@ -4,7 +4,7 @@ import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
   type CardKind,
-  type Job
+  type JobId
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isFunction, isString } from '@game/shared';
@@ -31,8 +31,8 @@ export type CardListContext = {
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
 
-  hasJobFilter(job: Job): boolean;
-  toggleJobFilter(job: Job): void;
+  hasJobFilter(job: JobId): boolean;
+  toggleJobFilter(job: JobId): void;
   clearJobFilter(): void;
 
   manaCostFilter: Ref<{ min: number; max: number } | null>;
@@ -57,7 +57,7 @@ export const provideCardList = () => {
   };
 
   const kindFilter = ref(new Set<CardKind>());
-  const jobFilter = ref(new Set<Job>());
+  const jobFilter = ref(new Set<JobId>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
 
@@ -194,10 +194,10 @@ export const provideCardList = () => {
       kindFilter.value.clear();
     },
 
-    hasJobFilter(job: Job) {
+    hasJobFilter(job: JobId) {
       return jobFilter.value.has(job);
     },
-    toggleJobFilter(job: Job) {
+    toggleJobFilter(job: JobId) {
       if (jobFilter.value.has(job)) {
         jobFilter.value.delete(job);
       } else {
