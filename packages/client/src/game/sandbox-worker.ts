@@ -31,6 +31,7 @@ async function processMessage(options: SandboxWorkerEvent): Promise<void> {
     .with({ type: 'init' }, async ({ payload }) => {
       game = new Game({
         id: 'sandbox',
+        enableSnapshots: true,
         rngSeed: payload.options.rngSeed,
         history: payload.options.history ?? [],
         overrides: {
@@ -99,7 +100,7 @@ async function processMessage(options: SandboxWorkerEvent): Promise<void> {
     })
     .with({ type: 'playCard' }, async ({ payload }) => {
       const player = game.playerSystem.getPlayerById(payload.playerId)!;
-      const card = await player.generateCard(payload.blueprintId);
+      const card = await player.generateCard(payload.blueprintId, false);
       await card.play();
     })
     .exhaustive();

@@ -4,6 +4,11 @@ import type { AbilityBlueprint } from '../card-blueprint';
 import type { AnyCard } from './card.entity';
 import { Interceptable } from '../../utils/interceptable';
 import { EntityWithModifiers } from '../../utils/entity-with-modifiers';
+import {
+  ABILITY_EVENTS,
+  AbilityAfterUseEvent,
+  AbilityBeforeUseEvent
+} from '../events/ability.events';
 
 export type SerializedAbility = {
   entityType: 'ability';
@@ -77,6 +82,10 @@ export class Ability<T extends AnyCard>
   }
 
   async use() {
+    await this.game.emit(
+      ABILITY_EVENTS.ABILITY_BEFORE_USE,
+      new AbilityBeforeUseEvent({ ability: this as any, card: this.card })
+    );
     this.lastUsedAt = this.game.turnSystem.elapsedTurns;
     await this.card.player.spendMana(this.manaCost);
     const targets = await this.blueprint.getTargets(this.game, this.card);
@@ -86,6 +95,11 @@ export class Ability<T extends AnyCard>
       targets,
       aoe
     });
+
+    await this.game.emit(
+      ABILITY_EVENTS.ABILITY_AFTER_USE,
+      new AbilityAfterUseEvent({ ability: this as any, card: this.card })
+    );
   }
 
   serialize(): SerializedAbility {

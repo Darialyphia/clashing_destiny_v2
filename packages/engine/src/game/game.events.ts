@@ -30,6 +30,7 @@ import {
   type ModifierSpecialEventMap
 } from '../modifier/modifier.special-events';
 import { COMBAT_EVENTS, type CombatEventMap } from '../combat/combat.events';
+import { ABILITY_EVENTS, type AbilityEventMap } from '../card/events/ability.events';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -148,6 +149,7 @@ export type GameEventMap = Prettify<
     VFXEventMap &
     TurnEventMap &
     CombatEventMap &
+    AbilityEventMap &
     ModifierSpecialEventMap
 >;
 export type GameEventName = keyof GameEventMap;
@@ -174,6 +176,7 @@ export const GAME_EVENTS = {
   ...TILE_EVENTS,
   ...TURN_EVENTS,
   ...COMBAT_EVENTS,
+  ...ABILITY_EVENTS,
   ...MODIFIER_SPECIAL_EVENTS
 } as const satisfies Record<string, keyof GameEventMap>;
 

@@ -2,7 +2,6 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import type { GamePhase } from '@game/engine/src/game/game.enums';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
-import { DAMAGE_TYPES } from '@game/engine/src/utils/damage';
 import { useGameState, useGameClient } from './useGameClient';
 
 type BattleLogEventToken =
@@ -48,7 +47,7 @@ export const useBattleLog = () => {
         if (eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
           tokens.push({
             kind: 'text',
-            text: `${state.value.entities[event.card.player].name} played`
+            text: `${(state.value.entities[event.card.player] as PlayerViewModel).name} played`
           });
           tokens.push({
             kind: 'card',
@@ -67,59 +66,14 @@ export const useBattleLog = () => {
           });
         }
 
-        if (eventName === GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.attacker] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: 'declared an attack on'
-          });
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.target] as CardViewModel
-          });
-        }
-
-        if (eventName === GAME_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.card] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `dealt ${event.damage} combat damage to`
-          });
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.target] as CardViewModel
-          });
-        }
-
-        if (
-          eventName === GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE &&
-          event.damage.amount &&
-          event.damage.type === DAMAGE_TYPES.COMBAT
-        ) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.card.id] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `took ${event.damage.amount}  damage.`
-          });
-        }
-
         if (eventName === GAME_EVENTS.PLAYER_AFTER_DRAW) {
           tokens.push({
             kind: 'player',
-            player: state.value.entities[event.player] as PlayerViewModel
+            player: state.value.entities[event.player.id] as PlayerViewModel
           });
           tokens.push({
             kind: 'text',
-            text: `draw ${event.amount} card${event.amount > 1 ? 's' : ''}.`
+            text: `draw ${event.cards.length} card${event.cards.length > 1 ? 's' : ''}.`
           });
         }
 
@@ -148,12 +102,12 @@ export const useBattleLog = () => {
           });
         }
 
-        if (eventName === GAME_EVENTS.CARD_EFFECT_TRIGGERED) {
-          tokens.push({
-            kind: 'text',
-            text: event.message
-          });
-        }
+        // if (eventName === GAME_EVENTS.CARD_EFFECT_TRIGGERED) {
+        //   tokens.push({
+        //     kind: 'text',
+        //     text: event.message
+        //   });
+        // }
 
         if (tokens.length > 0) {
           events.value.push(tokens);

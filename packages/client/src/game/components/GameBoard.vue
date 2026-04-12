@@ -4,8 +4,7 @@ import {
   useGameUi,
   useMyBoard,
   useMyPlayer,
-  useOpponentBoard,
-  useOpponentPlayer
+  useOpponentBoard
 } from '../composables/useGameClient';
 import CombatArrows from './CombatArrows.vue';
 import PlayedCard from './PlayedCard.vue';
@@ -24,7 +23,6 @@ import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
 import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
-import BoardMinionRow from './BoardMinionRow.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
@@ -45,7 +43,6 @@ const ui = useGameUi();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const myBoard = useMyBoard();
-const opponentPlayer = useOpponentPlayer();
 const opponentBoard = useOpponentBoard();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
@@ -151,11 +148,7 @@ useEventListener('mouseup', async () => {
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="minions-zone">
-          <BoardMinionRow :zone="opponentBoard.backRow" />
-          <BoardMinionRow :zone="opponentBoard.frontRow" />
           <div class="separator" />
-          <BoardMinionRow :zone="myBoard.frontRow" />
-          <BoardMinionRow :zone="myBoard.backRow" />
         </div>
 
         <!-- <OpponentBoard />
