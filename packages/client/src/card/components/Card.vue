@@ -3,7 +3,7 @@ import {
   RARITIES,
   type CardKind,
   type Rarity,
-  type Job
+  type JobId
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -39,16 +39,14 @@ const {
     destinyCost?: number | null;
     baseDestinyCost?: number | null;
     rarity: Rarity;
-    level?: number | null;
     atk?: number | null;
     hp?: number | null;
     countdown?: number | null;
-    spellpower?: number | null;
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    jobs: Job[];
+    jobs: JobId[];
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -273,7 +271,6 @@ const kindBg = computed(() => {
 
           <div v-if="showText" class="attributes">
             {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
-            <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
             <span v-if="isDefined(card.subKind)">
               - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
             </span>

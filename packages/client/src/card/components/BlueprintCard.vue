@@ -44,8 +44,6 @@ const mergedFoilOptions = computed(() => ({
         (blueprint as any).atkBonus,
       hp: (blueprint as any).maxHp,
       countdown: (blueprint as any).maxCountdown,
-      spellpower: (blueprint as any).spellPower,
-      level: (blueprint as any).level,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,

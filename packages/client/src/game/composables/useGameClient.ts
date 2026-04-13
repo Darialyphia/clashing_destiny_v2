@@ -52,35 +52,6 @@ export const useGameUi = () => {
   return gameStateRef(() => client.value.ui);
 };
 
-export const useBoardSide = (playerId: MaybeRef<string>) => {
-  const { client } = useGameClient();
-  return computed(() => {
-    return client.value.state.board.sides.find(
-      side => side.playerId === unref(playerId)
-    )!;
-  });
-};
-
-export const useMyBoard = () => {
-  const { client, playerId } = useGameClient();
-  return computed(() => {
-    return client.value.state.board.sides.find(
-      side => side.playerId === playerId.value
-    )!;
-  });
-};
-
-export const useOpponentBoard = () => {
-  const { client, playerId } = useGameClient();
-
-  return computed(
-    () =>
-      client.value.state.board.sides.find(
-        side => side.playerId !== playerId.value
-      )!
-  );
-};
-
 export const useEntity = <T>(entityId: MaybeRef<string>) => {
   return gameStateRef(state => {
     return state.entities[unref(entityId)] as T;
@@ -133,16 +104,19 @@ export const useFxEvent = <T extends FXEvent>(
 
 export const useMyPlayer = () => {
   const state = useGameState();
-  const board = useMyBoard();
+  const { playerId } = useGameClient();
   return computed(() => {
-    return state.value.entities[board.value.playerId] as PlayerViewModel;
+    return state.value.entities[playerId.value] as PlayerViewModel;
   });
 };
 
 export const useOpponentPlayer = () => {
   const state = useGameState();
-  const board = useOpponentBoard();
+  const { playerId } = useGameClient();
+  const opponentId = computed(() => {
+    return state.value.players.find(id => id !== playerId.value)!;
+  });
   return computed(() => {
-    return state.value.entities[board.value.playerId] as PlayerViewModel;
+    return state.value.entities[opponentId.value] as PlayerViewModel;
   });
 };

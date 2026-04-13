@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  useCard,
-  useFxEvent,
-  useGameClient,
-  useGameState,
-  useGameUi,
-  useMyPlayer
-} from '../composables/useGameClient';
+import { useCard, useFxEvent, useGameUi } from '../composables/useGameClient';
 import Card from '@/card/components/Card.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -30,7 +23,6 @@ const {
   showModifiers = false,
   showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
-  flipped,
   modifiersPosition = 'top',
   canTilt = false
 } = defineProps<{
@@ -45,7 +37,6 @@ const {
   showStats?: boolean;
   useActionsPortal?: boolean;
   actionsPortalTarget?: string;
-  flipped?: boolean;
   showActionEmptyState?: boolean;
   modifiersPosition?: 'top' | 'bottom';
   canTilt?: boolean;
@@ -58,70 +49,29 @@ const emit = defineEmits<{
 const card = useCard(computed(() => cardId));
 const ui = useGameUi();
 
-const state = useGameState();
-const { playerId } = useGameClient();
-const activePlayerId = computed(() => {
-  return state.value.interaction.ctx.player;
-});
-
-const isTargetable = computed(() => {
-  return (
-    (activePlayerId.value === playerId.value && card.value.canBeTargeted) ||
-    ui.value.selectedManaCostIndices.includes(card.value.indexInHand!)
-  );
-});
-
-const myPlayer = useMyPlayer();
-
 const handleClick = () => {
   if (!isInteractive) return;
   ui.value.onCardClick(card.value);
 };
 
-const isAttacking = refAutoReset(false, 500);
-const isTakingDamage = refAutoReset(false, 500);
-const damageTaken = refAutoReset(0, 1000);
 const isUsingAbility = refAutoReset(false, 1000);
-const onAttack = async (e: { card: string }) => {
-  if (e.card !== cardId) return;
-  isAttacking.value = true;
-};
-
-const onTakeDamage = async (e: { card: string; amount: number }) => {
-  if (e.card !== cardId) return;
-  isTakingDamage.value = true;
-  damageTaken.value = e.amount;
-  await waitFor(500);
-};
-
-const waitForAttackDone = async () => {
-  await waitFor(200);
-};
 
 const onAbilityUse = async (e: { card: string }) => {
   if (e.card !== cardId) return;
   isUsingAbility.value = true;
   await waitFor(1000);
 };
-useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, onAttack);
-useFxEvent(FX_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE, waitForAttackDone);
-useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, onTakeDamage);
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
-useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
+// useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 
 const classes = computed(() => {
   return [
-    card.value.keywords.map(kw => kw.toLowerCase()),
+    card.value.keywords.map(kw => kw.id.toLowerCase()),
     {
-      exhausted: isInteractive && card.value.isExhausted,
       'can-tilt': canTilt,
       disabled:
         !card.value.canPlay && card.value.location === CARD_LOCATIONS.HAND,
       selected: ui.value.selectedCard?.equals(card.value),
-      targetable: isTargetable.value,
-      flipped: flipped && !myPlayer.value.equals(card.value.player),
-      'is-attacking': isAttacking.value,
-      'is-taking-damage': isTakingDamage.value,
       'is-using-ability': isUsingAbility.value
     }
   ];
@@ -155,25 +105,21 @@ const classes = computed(() => {
           name: card.name,
           description: card.description,
           kind: card.kind,
-          level: card.level,
           rarity: card.rarity,
           manaCost: card.manaCost,
           baseManaCost: card.baseManaCost,
           hp: card.hp,
-          countdown: card.countdown ?? card.maxCountdown,
-          spellpower: card.spellpower,
           durability: card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
             .map(
               a =>
-                `${a.shouldExhaust ? '@[exhaust]@ ' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
+                `@[exhaust]@${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
             ),
           jobs: card.jobs
         }"
         class="game-card big"
         :class="classes"
-        :data-damage="damageTaken"
         @click="handleClick"
       />
       <SmallCard
@@ -193,7 +139,6 @@ const classes = computed(() => {
         class="game-card small"
         :class="classes"
         :show-stats="showStats"
-        :data-damage="damageTaken"
         @click="handleClick"
       />
 
@@ -205,9 +150,9 @@ const classes = computed(() => {
         @modifiers-mouse-leave="emit('modifiersMouseLeave')"
       />
 
-      <div class="damage" v-if="damageTaken > 0">
+      <!-- <div class="damage" v-if="damageTaken > 0">
         {{ damageTaken }}
-      </div>
+      </div> -->
       <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
         {{ card.unplayableReason ?? 'You cannot play this card right now.' }}
       </p>
@@ -348,14 +293,6 @@ const classes = computed(() => {
 .is-using-ability {
   filter: brightness(1.5) !important;
   animation: ability-glow 1s ease-in-out;
-}
-
-.flipped:deep(.image) {
-  scale: -1 1;
-}
-
-.big.flipped:deep(.image) {
-  translate: -100% 0;
 }
 
 .disabled-message {

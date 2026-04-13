@@ -1,13 +1,5 @@
 import type { Game } from '../game/game';
-import type {
-  CARD_KINDS,
-  CardKind,
-  CardSetId,
-  Rarity,
-  Tag,
-  JobId,
-  Rune
-} from './card.enums';
+import type { CARD_KINDS, CardKind, CardSetId, Rarity, Tag, JobId } from './card.enums';
 import type { MinionCard } from './entities/minion-card.entity';
 import type { SpellCard } from './entities/spell-card.entity';
 import type { ArtifactCard } from './entities/artifact-card.entity';
@@ -15,10 +7,28 @@ import type { BoardCell } from '../board/entities/board-cell.entity';
 import type { GenericAOEShape } from '../aoe/aoe-shape';
 import type { PlayerArtifact } from '../player/player-artifact.entity';
 import type { AnyCard } from './entities/card.entity';
-import type { VFXSequence } from '../game/systems/vfx.system';
-import type { Point } from '@game/shared';
 import type { DestinyCard } from './entities/destiny-card.entity';
 import type { HeroCard } from './entities/hero-card.entity';
+
+export type CardArt = {
+  foil: {
+    sheen?: boolean;
+    oil?: boolean;
+    gradient?: boolean;
+    lightGradient?: boolean;
+    scanlines?: boolean;
+    goldenGlare?: boolean;
+    glitter?: boolean;
+    foilLayer?: boolean;
+    noBackground?: boolean;
+    noFrame?: boolean;
+  };
+  bg: string;
+  main: string;
+  foilBg?: string;
+  foilMain?: string;
+  isFullArt: boolean;
+};
 
 export type CardBlueprintBase = {
   id: string;
@@ -30,28 +40,7 @@ export type CardBlueprintBase = {
   jobs: JobId[];
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-  art: Record<
-    string,
-    {
-      foil: {
-        sheen?: boolean;
-        oil?: boolean;
-        gradient?: boolean;
-        lightGradient?: boolean;
-        scanlines?: boolean;
-        goldenGlare?: boolean;
-        glitter?: boolean;
-        foilLayer?: boolean;
-        noBackground?: boolean;
-        noFrame?: boolean;
-      };
-      bg: string;
-      main: string;
-      foilBg?: string;
-      foilMain?: string;
-      isFullArt: boolean;
-    }
-  >;
+  art: Record<string, CardArt>;
 };
 
 export type MinionBlueprint = CardBlueprintBase & {
@@ -111,6 +100,7 @@ export type AbilityBlueprint<T extends AnyCard> = {
   description: string;
   label: string;
   manaCost: number;
+  isHiddenOnCard?: boolean;
   getTargets: (game: Game, card: T) => Promise<BoardCell[]>;
   getAoe: (game: Game, card: T, targets: BoardCell[]) => GenericAOEShape;
   getCooldown: (game: Game, card: T) => number;

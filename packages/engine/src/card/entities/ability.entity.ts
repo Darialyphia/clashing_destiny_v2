@@ -18,6 +18,7 @@ export type SerializedAbility = {
   cooldown: number;
   manaCost: number;
   lastUsedAt: number | null;
+  isHiddenOnCard: boolean;
 };
 
 export type AbilityInterceptor = {
@@ -110,7 +111,8 @@ export class Ability<T extends AnyCard>
       description: this.blueprint.description,
       cooldown: this.cooldown,
       manaCost: this.manaCost,
-      lastUsedAt: this.lastUsedAt
+      lastUsedAt: this.lastUsedAt,
+      isHiddenOnCard: this.blueprint.isHiddenOnCard ?? false
     };
   }
 }

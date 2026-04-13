@@ -3,16 +3,14 @@ import {
   type Control
 } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
-import { useGameState, useGameUi, useMyBoard } from './useGameClient';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { useGameUi, useMyPlayer } from './useGameClient';
 import { keyToString } from 'key-display-names';
 
 export const useGameKeyboardControls = () => {
   const settings = useSettingsStore();
 
   const ui = useGameUi();
-  const state = useGameState();
-  const myBoard = useMyBoard();
+  const player = useMyPlayer();
 
   useKeyboardControl(
     'keyup',
@@ -37,24 +35,12 @@ export const useGameKeyboardControls = () => {
       ].control,
       () => {
         if (!ui.value.isHandExpanded) return;
-        const cardId = myBoard.value.hand[i - 1];
-        if (!cardId) return;
-        const card = state.value.entities[cardId] as CardViewModel;
+        const card = player.value.hand[i - 1];
+        if (!card) return;
         ui.value.onCardClick(card);
       }
     );
   }
-
-  useKeyboardControl(
-    'keyup',
-    settings.settings.bindings.interactHero.control,
-    () => {
-      const hero = state.value.entities[
-        myBoard.value.heroZone.hero
-      ] as CardViewModel;
-      ui.value.onCardClick(hero);
-    }
-  );
 };
 
 export const useKeybordShortcutLabel = () => {

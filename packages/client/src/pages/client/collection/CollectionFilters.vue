@@ -3,7 +3,8 @@ import {
   CARD_KINDS,
   JOBS,
   type CardKind,
-  type Job
+  type Job,
+  type JobId
 } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
@@ -182,9 +183,9 @@ const toggleMinManaCostFilter = (cost: number) => {
               >
                 <template #trigger>
                   <button
-                    :class="{ active: hasJobFilter(job.job) }"
+                    :class="{ active: hasJobFilter(job.job.id as JobId) }"
                     :aria-label="job.label"
-                    @click="toggleJobFilter(job.job)"
+                    @click="toggleJobFilter(job.job.id as JobId)"
                   >
                     <img :src="job.img" :alt="job.label" />
                   </button>

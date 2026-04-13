@@ -11,7 +11,6 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import { CARD_SPEED, type CardSpeed } from '@game/engine/src/card/card.enums';
 import { assets } from '@/assets';
 import { useIsKeyboardControlPressed } from '@/shared/composables/useKeyboardControl';
 
@@ -37,8 +36,8 @@ type Token =
   | { type: 'lineage-bonus'; text: string }
   | { type: 'missing-affinity'; text: string }
   | { type: 'durability' }
-  | { type: CardSpeed }
   | { type: 'dynamic'; text: string; tooltipText: string };
+
 const tokens = computed<Token[]>(() => {
   if (!text.includes(KEYWORD_DELIMITER)) return [{ type: 'text', text }];
 
@@ -119,11 +118,7 @@ const tokens = computed<Token[]>(() => {
         tooltipText
       };
     }
-    for (const speed of Object.values(CARD_SPEED)) {
-      if (part.startsWith(`[${speed}]`)) {
-        return { type: speed };
-      }
-    }
+
     return { type: 'text', text: part };
   });
 });
@@ -181,27 +176,6 @@ const showFullText = useIsKeyboardControlPressed({
         </template>
         <b>Durability</b>
         : when it reaches zero, the artifact is destroyed.
-      </UiSimpleTooltip>
-
-      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.SLOW">
-        <template #trigger>
-          <span>SLOW</span>
-        </template>
-        This can only be activated at Slow speed.
-      </UiSimpleTooltip>
-
-      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.FAST">
-        <template #trigger>
-          <span>FAST</span>
-        </template>
-        This can be activated at Fast speed.
-      </UiSimpleTooltip>
-
-      <UiSimpleTooltip v-else-if="token.type === CARD_SPEED.BURST">
-        <template #trigger>
-          <span>BURST</span>
-        </template>
-        This can is activated at Burst speed and resolves instantly.
       </UiSimpleTooltip>
 
       <HoverCardRoot v-else :open-delay="250" :close-delay="0">
@@ -323,35 +297,6 @@ const showFullText = useIsKeyboardControlPressed({
     aspect-ratio: 1;
     transform: translateY(3px);
   }
-}
-.token-SLOW,
-.token-FAST,
-.token-BURST {
-  font-size: 0.8em;
-  color: white;
-  -webkit-text-stroke: calc(var(--pixel-scale) * 1 px) black;
-  paint-order: stroke fill;
-  padding-inline: calc(6px * var(--pixel-scale));
-  clip-path: polygon(
-    calc(3px * var(--pixel-scale)) 0,
-    calc(100% - 3px * var(--pixel-scale)) 0,
-    100% 50%,
-    calc(100% - 3px * var(--pixel-scale)) 100%,
-    calc(3px * var(--pixel-scale)) 100%,
-    0 50%
-  );
-}
-
-.token-SLOW {
-  background: linear-gradient(to bottom, var(--red-8) 50%, var(--red-11) 50%);
-}
-
-.token-FAST {
-  background: linear-gradient(to bottom, var(--cyan-8) 50%, var(--cyan-11) 50%);
-}
-
-.token-BURST {
-  background: linear-gradient(to bottom, var(--gray-8) 50%, var(--gray-11) 50%);
 }
 
 .token-KNOWLEDGE,

@@ -2,9 +2,7 @@
 import {
   useGameState,
   useGameUi,
-  useMyBoard,
-  useMyPlayer,
-  useOpponentBoard
+  useMyPlayer
 } from '../composables/useGameClient';
 import CombatArrows from './CombatArrows.vue';
 import PlayedCard from './PlayedCard.vue';
@@ -42,8 +40,6 @@ const { options } = defineProps<{
 const ui = useGameUi();
 const state = useGameState();
 const myPlayer = useMyPlayer();
-const myBoard = useMyBoard();
-const opponentBoard = useOpponentBoard();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
 

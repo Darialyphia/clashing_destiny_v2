@@ -40,9 +40,9 @@ const isActionsPopoverOpened = computed({
   },
   set(value) {
     if (value) {
-      ui.value.select(card.value);
+      ui.value.selectCard(card.value);
     } else {
-      ui.value.unselect();
+      ui.value.unselectCard();
     }
   }
 });
@@ -59,8 +59,7 @@ const isActionsPopoverOpened = computed({
       :disabled="
         !usePortal ||
         card.location === CARD_LOCATIONS.HAND ||
-        card.location === CARD_LOCATIONS.DISCARD_PILE ||
-        card.location === CARD_LOCATIONS.BANISH_PILE
+        card.location === CARD_LOCATIONS.DISCARD_PILE
       "
     >
       <PopoverContent

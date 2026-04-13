@@ -1,28 +1,27 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useBoardSide, useMyPlayer } from '../composables/useGameClient';
+import { usePlayer } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 
-const { player } = defineProps<{
-  player: string;
+const { playerId } = defineProps<{
+  playerId: string;
 }>();
 
-const board = useBoardSide(computed(() => player));
 const isOpened = ref(false);
 
 const close = () => {
   isOpened.value = false;
 };
 
-const myPlayer = useMyPlayer();
+const player = usePlayer(playerId);
 </script>
 
 <template>
   <UiModal
     v-model:is-opened="isOpened"
     :title="
-      myPlayer.id === player ? 'Your Discard Pile' : 'Opponent Discard Pile'
+      player.id === playerId ? 'Your Discard Pile' : 'Opponent Discard Pile'
     "
     description=""
     :style="{
@@ -33,7 +32,7 @@ const myPlayer = useMyPlayer();
       <header>
         <h2 class="text-center">
           {{
-            myPlayer.id === player
+            player.id === playerId
               ? 'Your Discard Pile'
               : 'Opponent Discard Pile'
           }}
@@ -41,7 +40,7 @@ const myPlayer = useMyPlayer();
       </header>
       <div class="card-list fancy-scrollbar">
         <div
-          v-for="card in board.discardPile.toReversed()"
+          v-for="card in player.discardPile.toReversed()"
           :key="card"
           @click.stop
         >

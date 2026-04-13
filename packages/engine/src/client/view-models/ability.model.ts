@@ -50,4 +50,8 @@ export class AbilityViewModel {
   get manaCost() {
     return this.data.manaCost;
   }
+
+  get isHiddenOnCard() {
+    return this.data.isHiddenOnCard;
+  }
 }
