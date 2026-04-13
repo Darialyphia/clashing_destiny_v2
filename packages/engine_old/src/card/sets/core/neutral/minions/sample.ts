@@ -25,7 +25,9 @@ export const sample: MinionBlueprint = {
   maxHp: 1,
   abilities: [],
   canPlay: () => true,
-  async onInit(game, card) {},
+  async onInit(game, card) {
+    console.log('Sample minion initialized:', card.id);
+  },
   async onPlay(game, card) {},
   aiHints: {
     shouldPlay: () => 0,

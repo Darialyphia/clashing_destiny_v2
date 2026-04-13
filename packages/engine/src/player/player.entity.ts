@@ -53,6 +53,8 @@ export type SerializedPlayer = {
   level: number;
   expToNextLevel: number;
   maxLevel: number;
+  frontRow: string[];
+  backRow: string[];
 };
 
 export type PlayerInterceptor = {
@@ -173,12 +175,20 @@ export class Player
     return this.isPlayer1 ? 1 : 3;
   }
 
+  get frontRow() {
+    return this.game.boardSystem.getRow(this.frontRowIndex);
+  }
+
   get unitsInFrontRow() {
     return this.units.filter(unit => unit.position.x === this.frontRowIndex);
   }
 
   get backRowIndex() {
     return this.isPlayer1 ? 0 : 4;
+  }
+
+  get backRow() {
+    return this.game.boardSystem.getRow(this.backRowIndex);
   }
 
   get unitsInBackRow() {
@@ -229,7 +239,9 @@ export class Player
       expToNextLevel:
         this.levelManager.level < this.game.config.PLAYER_MAX_LEVEL
           ? this.game.config.EXP_PER_LEVEL - this.levelManager.exp
-          : 0
+          : 0,
+      frontRow: this.frontRow.map(cell => cell.id),
+      backRow: this.backRow.map(cell => cell.id)
     };
   }
 

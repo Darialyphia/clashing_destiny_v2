@@ -3,6 +3,7 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
 import type { CardViewModel } from './card.model';
 import { isDefined } from '@game/shared';
+import type { BoardCellViewModel } from './board-cell.model';
 
 export class PlayerViewModel {
   private getEntities: () => GameStateEntities;
@@ -122,6 +123,18 @@ export class PlayerViewModel {
 
   get maxLevel() {
     return this.data.maxLevel;
+  }
+
+  get frontRow() {
+    return this.data.frontRow.map(cardId => {
+      return this.getEntities()[cardId] as BoardCellViewModel;
+    });
+  }
+
+  get backRow() {
+    return this.data.backRow.map(cardId => {
+      return this.getEntities()[cardId] as BoardCellViewModel;
+    });
   }
 
   getDiscardPile() {
