@@ -137,7 +137,7 @@ useEventListener('mouseup', async () => {
     <SVGFilters />
     <PlayedCard />
     <ChooseCardModal />
-    <CombatArrows />
+    <!-- <CombatArrows /> -->
     <AnswerQuestionModal />
     <DraggedCard />
     <TurnIndicator />
@@ -147,11 +147,7 @@ useEventListener('mouseup', async () => {
           <div class="separator" />
         </div>
 
-        <!-- <OpponentBoard />
-        <div class="separator" />
-        <MyBoard />
-        <BottomBar />
-        <div id="card-actions-portal"></div> -->
+        <div id="card-actions-portal"></div>
         <div class="arrows" id="arrows" />
       </div>
     </Camera>

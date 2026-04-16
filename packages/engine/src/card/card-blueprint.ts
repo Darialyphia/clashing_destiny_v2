@@ -144,10 +144,6 @@ export type HeroBlueprint = CardBlueprintBase & {
   retaliation: number;
   maxHp: number;
   abilities: AbilityBlueprint<HeroCard>[];
-  aiHints: {
-    shouldPlay: (game: Game, card: HeroCard) => number;
-    shouldAttack: (game: Game, card: HeroCard) => number;
-  };
 };
 
 export type CardBlueprint =

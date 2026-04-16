@@ -5,11 +5,13 @@
  */
 import type { Rarity } from '../card/card.enums';
 export const cards = {
-  sample: 'sample'
+  sample: 'sample',
+  erina: 'erina'
 } as const;
 
 export const collectableCards = {
-  sample: 'sample'
+  sample: 'sample',
+  erina: 'erina'
 } as const;
 
 type CardSet = Array<{ id: string; collectable: boolean; rarity: Rarity }>;
@@ -19,14 +21,21 @@ export const cardsBySet: Record<string, CardSet> = {
       id: 'sample',
       collectable: true,
       rarity: 'common'
+    },
+    {
+      id: 'erina',
+      collectable: true,
+      rarity: 'common'
     }
   ]
 };
 
 export const cardShortIds: Record<string, number> = {
-  sample: 1
+  sample: 1,
+  erina: 2
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
-  1: 'sample'
+  '1': 'sample',
+  '2': 'erina'
 } as const;

@@ -28,7 +28,7 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
     }
   ) {}
 
-  private async populateDeckList(deckList: DeckDoc['mainDeck']) {
+  private async populateDeckList(deckList: DeckDoc['cards']) {
     return Promise.all(
       deckList.map(async item => {
         const card = await this.ctx.cardReadRepo.getById(item.cardId);
@@ -46,7 +46,7 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
   }
 
   private async populateDeck(deck: DeckDoc) {
-    const cards = await this.populateDeckList(deck.mainDeck);
+    const cards = await this.populateDeckList(deck.cards);
 
     return {
       id: deck._id,

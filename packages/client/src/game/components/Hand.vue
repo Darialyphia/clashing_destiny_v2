@@ -131,7 +131,6 @@ const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
   const offset = (handContainerSize.value.w - usedSpan) / 2;
-
   return player.value.hand.map((card, i) => {
     return {
       card,

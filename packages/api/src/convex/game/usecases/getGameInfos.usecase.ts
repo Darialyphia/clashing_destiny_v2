@@ -88,14 +88,14 @@ export class GetGameInfosUseCase
     const deck = await this.ctx.deckReadRepo.getById(player.deckId);
     if (!deck) throw new AppError('Deck not found');
 
-    const mainDeckCards = await this.buildDeckCards(deck.mainDeck);
+    const cards = await this.buildDeckCards(deck.cards);
     return {
       id: player._id,
       user: {
         id: user._id,
         username: user.username,
         deck: {
-          cards: mainDeckCards
+          cards
         }
       }
     };

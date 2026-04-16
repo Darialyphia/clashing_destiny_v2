@@ -63,7 +63,6 @@ export class CardManagerComponent {
 
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
-
     this.deck.populate(
       cards.filter(
         c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY

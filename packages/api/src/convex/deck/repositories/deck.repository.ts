@@ -54,7 +54,7 @@ export class DeckRepository {
       throw new Error(`Premade deck with ID ${deckId} not found`);
     }
 
-    const mainDeckCards = [];
+    const cards = [];
     for (const deckCard of premadeDeck.mainDeck) {
       const cardId = await this.ctx.cardRepo.create({
         ownerId: userId,
@@ -63,7 +63,7 @@ export class DeckRepository {
         copiesOwned: deckCard.copies
       });
 
-      mainDeckCards.push({
+      cards.push({
         cardId,
         copies: deckCard.copies
       });
@@ -72,7 +72,7 @@ export class DeckRepository {
     const deckDocId = await this.ctx.db.insert('decks', {
       name: premadeDeck.name,
       ownerId: userId,
-      mainDeck: mainDeckCards
+      cards
     });
 
     const deckDoc = await this.ctx.db.get(deckDocId);
@@ -87,7 +87,7 @@ export class DeckRepository {
     const deckDocId = await this.ctx.db.insert('decks', {
       name: DEFAULT_DECK_NAME,
       ownerId: ownerId,
-      mainDeck: []
+      cards: []
     });
 
     const deckDoc = await this.ctx.db.get(deckDocId);

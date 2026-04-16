@@ -160,7 +160,7 @@ export class Player
   }
 
   get maxHp() {
-    return this.interceptors.maxHp.getValue(this.hero.maxHp, {});
+    return this.interceptors.maxHp.getValue(this.hero?.maxHp ?? 0, {});
   }
 
   get damageTaken() {
