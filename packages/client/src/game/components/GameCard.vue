@@ -97,7 +97,7 @@ const classes = computed(() => {
     >
       <Card
         v-if="variant === 'default'"
-        :is-animated="false"
+        :is-animated="true"
         :id="card.id"
         :card="{
           id: card.id,
@@ -108,7 +108,9 @@ const classes = computed(() => {
           rarity: card.rarity,
           manaCost: card.manaCost,
           baseManaCost: card.baseManaCost,
-          hp: card.hp,
+          hp: card.maxHp,
+          atk: card.atk,
+          retaliation: card.retaliation,
           durability: card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
@@ -118,8 +120,10 @@ const classes = computed(() => {
             ),
           jobs: card.jobs
         }"
+        :is-foil="card.isFoil"
         class="game-card big"
         :class="classes"
+        :max-tilt-angle="0"
         @click="handleClick"
       />
       <SmallCard
@@ -134,11 +138,14 @@ const classes = computed(() => {
           hp: card.hp,
           baseMaxHp: card.baseMaxHp,
           maxHp: card.maxHp,
-          durability: card.durability
+          durability: card.durability,
+          retaliation: card.retaliation,
+          baseRetaliation: card.baseRetaliation
         }"
         class="game-card small"
         :class="classes"
         :show-stats="showStats"
+        :is-foil="card.isFoil"
         @click="handleClick"
       />
 
@@ -211,6 +218,9 @@ const classes = computed(() => {
     rotate 0.3s var(--ease-2);
   position: relative;
 
+  &.small {
+    --pixel-scale: 1;
+  }
   &.exhausted {
     filter: grayscale(0.25) brightness(0.8);
     &.can-tilt {

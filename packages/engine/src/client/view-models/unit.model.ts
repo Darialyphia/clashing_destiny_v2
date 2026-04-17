@@ -120,7 +120,7 @@ export class UnitViewModel {
     return this.data.attackableCells.includes(cell.id);
   }
 
-  getCard() {
+  get card() {
     return this.getEntities()[this.data.card] as CardViewModel;
   }
 

@@ -262,7 +262,7 @@ export class CardViewModel {
     if (state.phase.state !== GAME_PHASES.PLAYING_CARD) return;
     if (state.phase.ctx.card !== this.id) return;
     if (!state.phase.ctx.canCancel) return;
-    this.getClient().cancelPlayCard();
+    return this.getClient().cancelPlayCard();
   }
 
   getActions(): CardActionRule[] {

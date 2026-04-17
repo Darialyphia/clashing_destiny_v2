@@ -13,6 +13,7 @@ import { pointToCellId } from '@game/engine/src/board/board-utils';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { Vec2 } from '@game/shared';
 import { useIsInAoe } from '../composables/useIsInAoe';
+import Unit from './Unit.vue';
 
 const { cell } = defineProps<{
   cell: BoardCellViewModel;
@@ -88,10 +89,12 @@ const isInAoe = useIsInAoe();
       'can-move-to': canMoveTo && !client.isPlayingFx,
       'can-attack': canAttack && !client.isPlayingFx
     }"
-    @mouseenter="ui.hover(cell)"
-    @mouseleave="ui.unhover()"
+    @mouseenter="ui.hoverCell(cell)"
+    @mouseleave="ui.unhoverCell()"
     @mouseup="ui.onBoardCellClick(cell)"
-  ></div>
+  >
+    <Unit v-if="cell.unit" :unit="cell.unit" />
+  </div>
 </template>
 
 <style scoped lang="postcss">
@@ -101,6 +104,8 @@ const isInAoe = useIsInAoe();
   background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
     center;
   transition: background-image 0.25s;
+  display: grid;
+  place-content: center;
 
   &.is-in-aoe,
   &.can-attack {

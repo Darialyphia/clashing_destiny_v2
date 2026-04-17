@@ -28,6 +28,8 @@ const {
     countdown?: number | null;
     maxHp?: number | null;
     baseMaxHp?: number | null;
+    retaliation?: number | null;
+    baseRetaliation?: number | null;
     durability?: number | null;
     manaCost?: number | null;
     destinyCost?: number | null;
@@ -78,6 +80,23 @@ const artMainImage = computed(() => {
         >
           <div class="dual-text" :data-text="card.atk">
             {{ card.atk }}
+          </div>
+        </div>
+
+        <div
+          v-if="isDefined(card.retaliation)"
+          class="stat retaliation"
+          :class="{
+            buffed:
+              isDefined(card.baseRetaliation) &&
+              card.retaliation > card.baseRetaliation,
+            debuffed:
+              isDefined(card.baseRetaliation) &&
+              card.retaliation < card.baseRetaliation
+          }"
+        >
+          <div class="dual-text" :data-text="card.retaliation">
+            {{ card.retaliation }}
           </div>
         </div>
 
@@ -133,7 +152,6 @@ const artMainImage = computed(() => {
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   --foil-animated-toggle: ;
-
   width: calc(var(--card-small-width) * var(--pixel-scale));
   height: calc(var(--card-small-height) * var(--pixel-scale));
   display: grid;
@@ -267,57 +285,38 @@ const artMainImage = computed(() => {
 .art-frame {
   position: absolute;
   inset: 0;
-  /* background: v-bind(artFrameImage); */
+  background: url('@/assets/ui/card/frames/default.png');
   background-size: cover;
 }
 .art-main {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artMainImage);
   background-size: cover;
 }
-.art-breakout {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
-  translate: -50% 0;
-  /* background: v-bind(artBreakoutImage); */
-  background-size: cover;
-}
+
 .art-bg {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artBgImage);
   background-size: cover;
 }
 
 .stat {
-  width: calc(39px * var(--pixel-scale));
-  height: calc(39px * var(--pixel-scale));
-  position: absolute;
+  width: calc(27px * var(--pixel-scale));
+  height: calc(25px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
-  bottom: calc(4px * var(--pixel-scale));
+  position: absolute;
+  bottom: calc(0px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 11px);
+  text-align: right;
+  font-weight: var(--font-weight-7);
+  font-family: 'Lato', sans-serif;
   display: grid;
   place-content: center;
-  font-weight: var(--font-weight-7);
-  font-size: calc(22px * var(--pixel-scale));
-  padding-top: calc(7px * var(--pixel-scale));
-  font-family:
-    Cinzel Decorative,
-    serif;
-  --dual-text-offset-y: 1px;
-
+  padding-right: 2px;
+  scale: 1.5;
   &.buffed {
     --top-color: var(--green-2);
     --bottom-color: var(--green-6);
@@ -329,18 +328,28 @@ const artMainImage = computed(() => {
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/attack-large.png');
+  background-image: url('@/assets/ui/card/attack.png');
   left: 0;
 }
 
+.retaliation {
+  background-image: url('@/assets/ui/card/retaliation.png');
+  left: 50%;
+  translate: -25% 0;
+}
+
 .hp {
-  background-image: url('@/assets/ui/card/health-large.png');
+  background-image: url('@/assets/ui/card/health-left.png');
   right: 0;
+  padding-right: 0;
+  padding-left: 2px;
 }
 
 .durability {
   background-image: url('@/assets/ui/card/durability.png');
   right: 0;
+  padding-right: 0px;
+  padding-left: 2px;
 }
 
 .countdown {
@@ -360,25 +369,6 @@ const artMainImage = computed(() => {
   display: grid;
   place-content: center;
   padding-right: calc(0px * var(--pixel-scale));
-  padding-top: calc(0px * var(--pixel-scale));
-  font-weight: var(--font-weight-7);
-  font-size: 10px;
-  --dual-text-offset-y: 1px;
-  scale: 2;
-}
-
-.destiny-cost {
-  background-image: url('@/assets/ui/destiny-cost.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
-  position: absolute;
-  top: calc(2px * var(--pixel-scale));
-  left: calc(12px * var(--pixel-scale));
-  display: grid;
-  place-content: center;
-  padding-left: calc(0px * var(--pixel-scale));
   padding-top: calc(0px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-size: 10px;

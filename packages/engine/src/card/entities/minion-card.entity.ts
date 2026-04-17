@@ -31,6 +31,7 @@ import { Ability } from './ability.entity';
 export type SerializedMinionCard = SerializedCard & {
   atk: number;
   maxHp: number;
+  remainingHp: number;
   retaliation: number;
   manaCost: number;
   unplayableReason: string | null;
@@ -216,6 +217,7 @@ export class MinionCard extends Card<
       atk: this.atk,
       retaliation: this.retaliation,
       maxHp: this.maxHp,
+      remainingHp: this.unit?.remainingHp ?? 0,
       manaCost: this.manaCost,
       unplayableReason: this.unplayableReason
     };

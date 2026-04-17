@@ -130,11 +130,18 @@ const step = computed(() => {
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
+
   const offset = (handContainerSize.value.w - usedSpan) / 2;
+  const hoveredIndexInHand = ui.value.hoveredCardInHand
+    ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
+    : null;
   return player.value.hand.map((card, i) => {
+    const isAfterHoveredCard =
+      hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
     return {
       card,
-      x: i * step.value + offset,
+      x:
+        i * step.value + offset + (isAfterHoveredCard ? cardW.value * 0.25 : 0),
       y: 0,
       z: i
     };
@@ -194,7 +201,7 @@ watch(width, v => {
   height: 50px;
 }
 .hand {
-  --pixel-scale: 1.5;
+  --pixel-scale: 1;
   position: relative;
   z-index: 1;
   width: 100%;

@@ -232,11 +232,11 @@ const jobsBgs = computed(() => {
             style="--parallax-strength: -1"
           />
           <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
+          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <div
             class="art-main parallax"
-            style="--parallax-strength-x: -2; --parallax-strength-y: -1"
+            style="--parallax-strength-x: -1.5; --parallax-strength-y: -1"
           />
-          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
 
           <div
@@ -509,18 +509,31 @@ const jobsBgs = computed(() => {
   initial-value: 0;
 }
 
+@keyframes shine-glow {
+  50% {
+    opacity: 0;
+  }
+}
 .art-frame {
   position: absolute;
   inset: 0;
   background: url('@/assets/ui/card/frames/default.png');
   background-size: cover;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('@/assets/ui/card/frames/default.png');
+    background-size: cover;
+    mix-blend-mode: plus-lighter;
+    filter: blur(15px);
+    animation: shine-glow 10s infinite;
+  }
 }
 
 .art-main {
   position: absolute;
   inset: 0;
-  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-        height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   background: v-bind(artMainImage);
   background-size: cover;
   overflow: hidden;
@@ -687,8 +700,8 @@ const jobsBgs = computed(() => {
   font-family: 'Lato', sans-serif;
   display: grid;
   place-content: center;
-  --dual-text-offset-y: 4px;
-  --dual-text-offset-x: -2px;
+  --dual-text-offset-y: calc(2px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
 
 .atk {

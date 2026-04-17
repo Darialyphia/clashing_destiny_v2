@@ -64,16 +64,18 @@ useKeyboardControl(
 
 const { width, height } = useWindowSize();
 const boardScale = computed(() => {
-  const scaleX = width.value / config.BOARD_SIZE.x;
-  const scaleY = height.value / config.BOARD_SIZE.y;
-  return Math.min(scaleX, scaleY);
+  return 1;
+  // const scaleX = width.value / config.BOARD_SIZE.x;
+  // const scaleY = height.value / config.BOARD_SIZE.y;
+  // return Math.min(scaleX, scaleY);
 });
 
 const boardMargin = computed(() => {
-  const scaledBoardWidth = config.BOARD_SIZE.x * boardScale.value;
+  // const scaledBoardWidth = config.BOARD_SIZE.x * boardScale.value;
   const scaledBoardHeight = config.BOARD_SIZE.y * boardScale.value;
   return {
-    x: (width.value - scaledBoardWidth) / 2,
+    // x: (width.value - scaledBoardWidth) / 2,
+    x: 0,
     y: (height.value - scaledBoardHeight) / 2
   };
 });
@@ -91,10 +93,6 @@ const stopDragging = async (cb?: (playedCard: CardViewModel) => void) => {
 };
 
 const cancelPlay = (card: CardViewModel) => {
-  const el = document.querySelector(
-    ui.value.DOMSelectors.draggedCard(card.id).selector
-  );
-  if (!el) return;
   ui.value.unselectCard();
   card.cancelPlay();
 };
@@ -208,9 +206,12 @@ useEventListener('mouseup', async () => {
   width: var(--board-width);
   height: var(--board-height);
   background: url(@/assets/backgrounds/battle-background.png);
-  transform: scale(v-bind('boardScale'))
+  /* transform: scale(v-bind('boardScale'))
     translateX(calc(v-bind('boardMargin.x') * 1px))
-    translateY(calc(v-bind('boardMargin.y') * 1px));
+    translateY(calc(v-bind('boardMargin.y') * 1px)); */
+  --offset-y: calc(v-bind('boardMargin.y') * 1px);
+  background-position: center calc(var(--offset-y) * -0.5);
+  transform: translateY(var(--offset-y));
 }
 
 .minions-zone {

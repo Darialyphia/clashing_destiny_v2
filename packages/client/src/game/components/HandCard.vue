@@ -87,6 +87,8 @@ const isVisible = computed(() => {
       :actions-offset="15"
       :is-interactive="isInteractive"
       show-disabled-message
+      @mouseenter="ui.hoverCardInHand(card)"
+      @mouseleave="ui.unhoverCardInHand()"
     />
   </div>
 </template>
@@ -97,9 +99,10 @@ const isVisible = computed(() => {
   left: 0;
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
-  --_y: var(--offset-y);
+  --scale: 1;
   transform-origin: 50% 100%;
-  transform: translateX(var(--x)) translateY(var(--_y));
+  transform: translateX(var(--x)) translateY(var(--offset-y))
+    scale(var(--scale));
   z-index: var(--z);
   transition:
     transform 0.2s var(--ease-2),
@@ -110,7 +113,7 @@ const isVisible = computed(() => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &:hover {
-    --hover-offset: -40px;
+    --scale: 1.5;
     z-index: var(--hand-size);
   }
 

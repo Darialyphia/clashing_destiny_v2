@@ -125,8 +125,8 @@
   --card-height: calc(var(--card-height-unitless) * 1px);
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
 
-  --card-small-width-unitless: 180;
-  --card-small-height-unitless: 157;
+  --card-small-width-unitless: 142;
+  --card-small-height-unitless: 129;
   --card-small-width: calc(var(--card-small-width-unitless) * 1px);
   --card-small-height: calc(var(--card-small-height-unitless) * 1px);
   --card-small-ratio: var(--card-small-width-unitless) /
