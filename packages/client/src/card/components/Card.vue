@@ -339,10 +339,10 @@ const jobsBgs = computed(() => {
 
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
-          <!-- <FoilOil v-if="card.art.foil.oil" />
+          <FoilOil v-if="card.art.foil.oil" />
           <FoilGradient v-if="card.art.foil.gradient" />
           <FoilLightGradient v-if="card.art.foil.lightGradient" />
-          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" /> -->
+          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
         </template>
 
         <CardGlare />
@@ -742,11 +742,11 @@ const jobsBgs = computed(() => {
 }
 .description {
   padding: 0 4px;
-  width: calc(144px * var(--pixel-scale));
-  height: calc(46px * var(--pixel-scale));
+  width: calc(132px * var(--pixel-scale));
+  height: calc(58px * var(--pixel-scale));
   position: absolute;
   top: calc(19px * var(--pixel-scale));
-  left: calc(8px * var(--pixel-scale));
+  left: calc(14px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;
