@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
@@ -40,6 +41,7 @@ const { options } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
+const { playerId } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
 // const board = useTemplateRef('board');
@@ -118,6 +120,7 @@ useEventListener('mouseup', async () => {
 
 <template>
   <div class="debug">
+    <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
     <div>Interaction Context: {{ state.interaction.ctx }}</div>
@@ -354,24 +357,24 @@ useEventListener('mouseup', async () => {
 
 .opponent-back-row {
   position: absolute;
-  left: 15px;
+  left: 22px;
 }
 
 .opponent-front-row {
   position: absolute;
-  left: 15px;
+  left: 22px;
   top: 156px;
 }
 
 .my-front-row {
   position: absolute;
-  left: 15px;
+  left: 22px;
   top: 332px;
 }
 
 .my-back-row {
   position: absolute;
-  left: 15px;
+  left: 22px;
   top: 476px;
 }
 </style>

@@ -110,7 +110,7 @@ const isVisible = computed(() => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &:hover {
-    --hover-offset: -120px;
+    --hover-offset: -40px;
     z-index: var(--hand-size);
   }
 

@@ -22,6 +22,7 @@ export type CardArt = {
     foilLayer?: boolean;
     noBackground?: boolean;
     noFrame?: boolean;
+    brightShine?: boolean;
   };
   bg: string;
   main: string;

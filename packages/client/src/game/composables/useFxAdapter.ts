@@ -3,7 +3,7 @@ import { Flip } from 'gsap/Flip';
 
 export const useFxAdapter = (): FxAdapter => {
   return {
-    onDeclarePlayCard(card, client) {
+    onDeclarePlayCard() {
       //   const flipState = Flip.getState(
       //     client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
       //   );
@@ -38,9 +38,9 @@ export const useFxAdapter = (): FxAdapter => {
         observer.disconnect();
         Flip.from(flipState, {
           targets: target,
-          duration: 0.25,
+          duration: 0.2,
           absolute: true,
-          ease: Power1.easeOut,
+          ease: Power1.easeIn,
           onComplete: () => {
             client.ui.optimisticState.isCancellingPlayCard = false;
           }

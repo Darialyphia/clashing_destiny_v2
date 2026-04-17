@@ -16,6 +16,6 @@ const { row } = defineProps<{
 <style scoped lang="postcss">
 .minion-row {
   display: flex;
-  gap: 14px;
+  gap: 12px;
 }
 </style>

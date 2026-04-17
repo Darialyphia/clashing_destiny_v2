@@ -20,6 +20,7 @@ import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import { getJobById } from '@game/engine/src/card/card.enums';
+import FoilBrightShine from './foil/FoilBrightShine.vue';
 
 const {
   card,
@@ -41,6 +42,7 @@ const {
     baseDestinyCost?: number | null;
     rarity: Rarity;
     atk?: number | null;
+    retaliation?: number | null;
     hp?: number | null;
     countdown?: number | null;
     durability?: number | null;
@@ -229,9 +231,13 @@ const jobsBgs = computed(() => {
             class="art-bg parallax"
             style="--parallax-strength: -1"
           />
-          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-          <div class="art-main parallax" style="--parallax-strength: -2" />
+          <div
+            class="art-main parallax"
+            style="--parallax-strength-x: -2; --parallax-strength-y: -1"
+          />
+          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+          <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
 
           <div
             v-if="isFoil && card.art.foil.foilLayer"
@@ -245,7 +251,7 @@ const jobsBgs = computed(() => {
         <div class="top-left">
           <div
             v-if="isDefined(card.manaCost)"
-            class="mana-cost"
+            class="mana-cost parallax"
             :class="costStatus"
             data-label="Mana"
           >
@@ -269,7 +275,7 @@ const jobsBgs = computed(() => {
           <div
             v-for="(jobBg, index) in jobsBgs"
             :key="index"
-            class="job"
+            class="job parallax"
             :data-label="getJobById(card.jobs[index])?.shortName"
             :style="{ '--bg': jobBg }"
           />
@@ -307,33 +313,36 @@ const jobsBgs = computed(() => {
           </div>
         </div>
 
-        <!-- <div v-if="isDefined(card.atk)" class="stat atk parallax">
-          <div v-if="showText">
+        <div v-if="isDefined(card.atk)" class="stat atk parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.atk">
             {{ card.atk }}
           </div>
         </div>
+        <div
+          v-if="isDefined(card.retaliation)"
+          class="stat retaliation parallax"
+        >
+          <div v-if="showText" class="dual-text" :data-text="card.retaliation">
+            {{ card.retaliation }}
+          </div>
+        </div>
         <div v-if="isDefined(card.hp)" class="stat hp parallax">
-          <div v-if="showText">
+          <div v-if="showText" class="dual-text" :data-text="card.hp">
             {{ card.hp }}
           </div>
         </div>
         <div v-if="isDefined(card.durability)" class="stat durability parallax">
-          <div v-if="showText">
+          <div v-if="showText" class="dual-text" :data-text="card.durability">
             {{ card.durability }}
           </div>
         </div>
-        <div v-if="isDefined(card.countdown)" class="stat countdown parallax">
-          <div v-if="showText">
-            {{ card.countdown }}
-          </div>
-        </div> -->
 
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
-          <FoilOil v-if="card.art.foil.oil" />
+          <!-- <FoilOil v-if="card.art.foil.oil" />
           <FoilGradient v-if="card.art.foil.gradient" />
           <FoilLightGradient v-if="card.art.foil.lightGradient" />
-          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
+          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" /> -->
         </template>
 
         <CardGlare />
@@ -425,14 +434,21 @@ const jobsBgs = computed(() => {
   position: relative;
 
   --glare-mask: url('@/assets/ui/card/card_front.png');
-  --foil-mask: url('@/assets/ui/card/card_front.png');
+  --foil-mask: url('@/assets/ui/card/masks/default.png');
 }
 
 .card.animated:has(.foil) .parallax {
-  --parallax-strength: 1;
-  --_parallax-strength: calc(var(--parallax-strength) * var(--pixel-scale) / 2);
-  --parallax-x: calc(v-bind('angle.y') * var(--_parallax-strength) * 1px);
-  --parallax-y: calc(v-bind('angle.x') * var(--_parallax-strength) * -1px);
+  --parallax-strength: 0.7;
+  --_parallax-strength-x: calc(
+    var(--parallax-strength-x, var(--parallax-strength)) * var(--pixel-scale) /
+      2
+  );
+  --_parallax-strength-y: calc(
+    var(--parallax-strength-y, var(--parallax-strength)) * var(--pixel-scale) /
+      2
+  );
+  --parallax-x: calc(v-bind('angle.y') * var(--_parallax-strength-x) * 1px);
+  --parallax-y: calc(v-bind('angle.x') * var(--_parallax-strength-y) * -1px);
   --_parallax-offset-x: var(--parallax-offset-x, 0px);
   --_parallax-offset-y: var(--parallax-offset-y, 0px);
   translate: calc(var(--_parallax-offset-x) + var(--parallax-x))
@@ -493,12 +509,6 @@ const jobsBgs = computed(() => {
   initial-value: 0;
 }
 
-@keyframes foil-art-glow {
-  to {
-    opacity: 0;
-  }
-}
-
 .art-frame {
   position: absolute;
   inset: 0;
@@ -517,19 +527,6 @@ const jobsBgs = computed(() => {
   --parallax-offset-x: -50%;
   .card:has(.foil) & {
     transform: translateX(50%);
-  }
-  .card:has(.foil) &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: v-bind(artMainImage);
-    background-size: cover;
-    filter: blur(calc(12px * var(--pixel-scale))) brightness(1.1);
-    z-index: -1;
-    transform: scale(1.05);
-    mix-blend-mode: plus-lighter;
-    opacity: 0.35;
-    animation: foil-art-glow 5s linear alternate infinite;
   }
 }
 .art-foil {
@@ -564,18 +561,19 @@ const jobsBgs = computed(() => {
   left: 50%;
   translate: -50% 0;
   overflow: hidden;
-
+  mask-image: url(@/assets/ui/card/masks/frame-overflow-mask.png);
+  mask-size: cover;
   .foil {
     --foil-mask: v-bind(artBgImage);
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    inset: 0;
+
     /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
     height: calc(
       1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
     ); */
-    translate: -50% 0;
-    --parallax-offset-x: -50%;
+    /* translate: -50% 0;
+    --parallax-offset-x: -50%; */
   }
 }
 
@@ -677,42 +675,40 @@ const jobsBgs = computed(() => {
 }
 
 .stat {
-  width: calc(31px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
+  width: calc(27px * var(--pixel-scale));
+  height: calc(25px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
-  bottom: calc(3px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 8px);
+  left: calc(2px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 11px);
   text-align: right;
-  padding-top: calc(2.5px * var(--pixel-scale));
-  padding-right: calc(17px * var(--pixel-scale));
   font-weight: var(--font-weight-7);
   font-family: 'Lato', sans-serif;
-  --dual-text-offset-y: 2px;
+  display: grid;
+  place-content: center;
+  --dual-text-offset-y: 4px;
+  --dual-text-offset-x: -2px;
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/attack-small.png');
-  right: calc(36px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/attack.png');
+  top: calc(38px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health-small.png');
-  right: calc(3px * var(--pixel-scale));
-  padding-left: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/health.png');
+  top: calc(90px * var(--pixel-scale));
 }
 
 .durability {
-  background-image: url('@/assets/ui/card/durability-small.png');
-  right: calc(3px * var(--pixel-scale));
-  padding-left: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/durability.png');
+  top: calc(90px * var(--pixel-scale));
 }
 
-.countdown {
-  background-image: url('@/assets/ui/card/countdown-small.png');
-  right: calc(3px * var(--pixel-scale));
-  padding-left: calc(2px * var(--pixel-scale));
+.retaliation {
+  background-image: url('@/assets/ui/card/retaliation.png');
+  top: calc(64px * var(--pixel-scale));
 }
 
 .kind {

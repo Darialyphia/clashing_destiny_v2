@@ -42,6 +42,7 @@ const mergedFoilOptions = computed(() => ({
         (blueprint as any).atk ??
         (blueprint as any).damage ??
         (blueprint as any).atkBonus,
+      retaliation: (blueprint as any).retaliation,
       hp: (blueprint as any).maxHp,
       countdown: (blueprint as any).maxCountdown,
       durability: (blueprint as any).durability,

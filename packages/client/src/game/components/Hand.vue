@@ -204,7 +204,7 @@ watch(width, v => {
     right: 0;
   }
   &.hoverable:hover {
-    transform: translateY(-120px);
+    transform: translateY(-80px);
   }
 }
 </style>

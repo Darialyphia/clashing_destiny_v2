@@ -206,7 +206,7 @@ const draggedCard = computed(() => {
   }
   &.is-pinned {
     top: var(--size-14);
-    left: var(--size-12);
+    right: var(--size-12);
   }
 }
 
