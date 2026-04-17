@@ -19,6 +19,7 @@ import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
+import { getJobById } from '@game/engine/src/card/card.enums';
 
 const {
   card,
@@ -196,6 +197,10 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
 const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
+
+const jobsBgs = computed(() => {
+  return card.jobs.map(jobId => assets[`ui/card/job-${jobId}`].css);
+});
 </script>
 
 <template>
@@ -219,19 +224,25 @@ const kindBg = computed(() => {
         </div>
 
         <div class="image">
-          <div v-if="!isFoil || !card.art.foil.noBackground" class="art-bg" />
+          <div
+            v-if="!isFoil || !card.art.foil.noBackground"
+            class="art-bg parallax"
+            style="--parallax-strength: -1"
+          />
           <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-          <div class="art-main parallax" style="--parallax-strength: 2" />
+          <div class="art-main parallax" style="--parallax-strength: -2" />
 
           <div
             v-if="isFoil && card.art.foil.foilLayer"
             class="art-foil parallax"
             style="--parallax-strength: 2"
           />
+
+          <div class="art-frame" />
         </div>
 
-        <div class="top-left parallax">
+        <div class="top-left">
           <div
             v-if="isDefined(card.manaCost)"
             class="mana-cost"
@@ -254,17 +265,17 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <!--<div
-          class="faction parallax"
-          :style="{
-            '--bg':
-              assets[`ui/card/faction-${card.faction.id.toLocaleLowerCase()}`]
-                .css
-          }"
-          :data-label="card.faction.shortName"
-        />-->
+        <div class="top-right">
+          <div
+            v-for="(jobBg, index) in jobsBgs"
+            :key="index"
+            class="job"
+            :data-label="getJobById(card.jobs[index])?.shortName"
+            :style="{ '--bg': jobBg }"
+          />
+        </div>
 
-        <div class="rarity parallax" style="--parallax-strength: 0.5" />
+        <div class="rarity" />
 
         <div class="description-frame">
           <div class="kind" />
@@ -296,7 +307,7 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <div v-if="isDefined(card.atk)" class="stat atk parallax">
+        <!-- <div v-if="isDefined(card.atk)" class="stat atk parallax">
           <div v-if="showText">
             {{ card.atk }}
           </div>
@@ -315,7 +326,7 @@ const kindBg = computed(() => {
           <div v-if="showText">
             {{ card.countdown }}
           </div>
-        </div>
+        </div> -->
 
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
@@ -412,10 +423,7 @@ const kindBg = computed(() => {
   position: relative;
   transform-style: preserve-3d;
   position: relative;
-  filter: drop-shadow(0 2px 0 hsl(0 0% 100% / 0.2))
-    drop-shadow(0 -2px 0 hsl(0 0% 100% / 0.2))
-    drop-shadow(-2px 0 0 hsl(0 0% 100% / 0.2))
-    drop-shadow(2px 0 0 hsl(0 0% 100% / 0.2));
+
   --glare-mask: url('@/assets/ui/card/card_front.png');
   --foil-mask: url('@/assets/ui/card/card_front.png');
 }
@@ -490,17 +498,26 @@ const kindBg = computed(() => {
     opacity: 0;
   }
 }
+
+.art-frame {
+  position: absolute;
+  inset: 0;
+  background: url('@/assets/ui/card/frames/default.png');
+  background-size: cover;
+}
+
 .art-main {
   position: absolute;
-  bottom: 0;
-  left: 50%;
+  inset: 0;
   /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
         height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
-  translate: -50% 0;
   background: v-bind(artMainImage);
   background-size: cover;
   overflow: hidden;
   --parallax-offset-x: -50%;
+  .card:has(.foil) & {
+    transform: translateX(50%);
+  }
   .card:has(.foil) &::after {
     content: '';
     position: absolute;
@@ -529,14 +546,13 @@ const kindBg = computed(() => {
 
 .art-bg {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artBgImage);
   background-size: cover;
   --parallax-offset-x: -50%;
+  .card:has(.foil) & {
+    transform: translateX(50%);
+  }
 }
 
 .image {
@@ -544,9 +560,10 @@ const kindBg = computed(() => {
   width: calc(var(--card-art-frame-width) * var(--pixel-scale));
   height: calc(var(--card-art-frame-height) * var(--pixel-scale));
   position: absolute;
-  top: calc(27px * var(--pixel-scale));
+  top: calc(23px * var(--pixel-scale));
   left: 50%;
   translate: -50% 0;
+  overflow: hidden;
 
   .foil {
     --foil-mask: v-bind(artBgImage);
@@ -563,16 +580,16 @@ const kindBg = computed(() => {
 }
 
 .name {
-  width: calc(154px * var(--pixel-scale));
+  width: calc(152px * var(--pixel-scale));
   text-align: center;
   text-wrap: pretty;
   position: absolute;
-  top: calc(11px * var(--pixel-scale));
+  top: calc(6px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(nameFontSize));
   line-height: 1.1;
-  height: calc(16px * var(--pixel-scale));
+  height: calc(17px * var(--pixel-scale));
   overflow: hidden;
   color: black;
   background: url('@/assets/ui/card/name-frame.png');
@@ -589,13 +606,14 @@ const kindBg = computed(() => {
   height: calc(18px * var(--pixel-scale));
   position: absolute;
   bottom: calc(87px * var(--pixel-scale));
+  top: calc(132px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
 }
 
 .top-left {
   position: absolute;
-  top: calc(7px * var(--pixel-scale));
+  top: calc(2px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
   > * {
     z-index: 0;
@@ -609,10 +627,13 @@ const kindBg = computed(() => {
   }
 }
 
-.faction {
+.top-right {
   position: absolute;
-  top: calc(7px * var(--pixel-scale));
+  top: calc(2px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
+}
+
+.job {
   width: calc(24px * var(--pixel-scale));
   aspect-ratio: 1;
   background: var(--bg);
@@ -701,7 +722,7 @@ const kindBg = computed(() => {
   background: v-bind(kindBg);
   background-size: cover;
   top: calc(0.5px * var(--pixel-scale));
-  left: calc(3px * var(--pixel-scale));
+  left: calc(1px * var(--pixel-scale));
 }
 
 .attributes {
@@ -714,10 +735,10 @@ const kindBg = computed(() => {
 }
 
 .description-frame {
-  width: calc(160px * var(--pixel-scale));
-  height: calc(72px * var(--pixel-scale));
+  width: calc(158px * var(--pixel-scale));
+  height: calc(88px * var(--pixel-scale));
   position: absolute;
-  bottom: calc(11px * var(--pixel-scale));
+  bottom: calc(6px * var(--pixel-scale));
   left: 50%;
   translate: -50% 0;
   background: url('@/assets/ui/card/description-frame.png');

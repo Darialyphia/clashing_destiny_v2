@@ -389,11 +389,10 @@ export const heroAbility = (
 export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
   default: {
     foil: {
-      sheen: true,
-      lightGradient: true
+      sheen: true
     },
     isFullArt: false,
     bg: `${name}-bg`,
-    main: `${name}`
+    main: `${name}-main`
   }
 });

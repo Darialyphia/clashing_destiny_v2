@@ -55,7 +55,7 @@ export const JOBS = {
   NEUTRAL: {
     id: 'neutral',
     name: 'Neutral',
-    shortName: 'Neu',
+    shortName: 'Neutral',
     isAdvanced: false
   },
   // WARRIOR: {
@@ -67,7 +67,7 @@ export const JOBS = {
   MAGE: {
     id: 'mage',
     name: 'Mage',
-    shortName: 'Mag',
+    shortName: 'Mage',
     isAdvanced: false
   }
   // ROGUE: {
@@ -150,6 +150,9 @@ export const JOBS = {
   // }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
+export const getJobById = (id: JobId): Job | undefined => {
+  return Object.values(JOBS).find(job => job.id === id);
+};
 
 export const RUNES = {
   RED: 'red',

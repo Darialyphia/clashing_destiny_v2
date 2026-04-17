@@ -276,7 +276,7 @@ export class GameClient {
     this.queue.push(...snapshots);
   }
 
-  cancelPlayCard() {
+  async cancelPlayCard() {
     if (this.state.phase.state !== GAME_PHASES.PLAYING_CARD) return;
 
     this.dispatch({

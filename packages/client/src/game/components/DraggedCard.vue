@@ -33,7 +33,7 @@ useEventListener(
 let prev = { x: x.value, y: y.value };
 let delta = { x: 0, y: 0 };
 const MAX_ANGLE = 45;
-const SCALE_FACTOR = 1.4;
+const SCALE_FACTOR = 5;
 const LERP_FACTOR = 0.3;
 
 const rotationAnimation = useRafFn(() => {
@@ -139,56 +139,54 @@ const draggedCard = computed(() => {
 </script>
 
 <template>
-  <Teleport to="#dragged-card-container" defer>
-    <div
-      v-if="!isHidden"
-      ref="container"
-      id="dragged-card"
-      data-flip-id="dragged-card"
-      :class="{
-        'is-pinned': isPinned,
-        'is-pinning': isPinning
-      }"
-      :style="{
-        '--pixel-scale': 1,
-        '--x': `${x}px`,
-        '--y': `${y}px`
-      }"
-    >
-      <GameCard
-        v-if="draggedCard"
-        :card-id="draggedCard.id"
-        :is-interactive="false"
-      />
-      <Transition>
-        <div
-          v-if="
-            isPinned &&
-            !isPinning &&
-            state.phase.state === GAME_PHASES.PLAYING_CARD &&
-            state.interaction.state ===
-              INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
-          "
-          class="flex flex-col gap-3 mt-3"
-          @mouseup.stop
+  <div
+    v-if="!isHidden"
+    ref="container"
+    id="dragged-card"
+    data-flip-id="dragged-card"
+    :class="{
+      'is-pinned': isPinned,
+      'is-pinning': isPinning
+    }"
+    :style="{
+      '--pixel-scale': 1,
+      '--x': `${x}px`,
+      '--y': `${y}px`
+    }"
+  >
+    <GameCard
+      v-if="draggedCard"
+      :card-id="draggedCard.id"
+      :is-interactive="false"
+    />
+    <Transition>
+      <div
+        v-if="
+          isPinned &&
+          !isPinning &&
+          state.phase.state === GAME_PHASES.PLAYING_CARD &&
+          state.interaction.state ===
+            INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
+        "
+        class="flex flex-col gap-3 mt-3"
+        @mouseup.stop
+      >
+        <UiButton
+          class="primary-button w-full pointer-events-auto"
+          @click="client.commitSpaceSelection()"
         >
-          <UiButton
-            class="primary-button w-full pointer-events-auto"
-            @click="client.commitSpaceSelection()"
-          >
-            {{ confirmButtonLabel }}
-          </UiButton>
-          <UiButton
-            v-if="state.phase.ctx.canCancel"
-            class="error-button w-full pointer-events-auto"
-            @click="client.cancelPlayCard()"
-          >
-            Cancel
-          </UiButton>
-        </div>
-      </Transition>
-    </div>
-  </Teleport>
+          {{ confirmButtonLabel }}
+        </UiButton>
+        <UiButton
+          v-if="state.phase.ctx.canCancel"
+          class="error-button w-full pointer-events-auto"
+          @click="client.cancelPlayCard()"
+        >
+          Cancel
+        </UiButton>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <style lang="postcss" scoped>

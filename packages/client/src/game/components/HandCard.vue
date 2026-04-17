@@ -2,6 +2,7 @@
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { useGameState, useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const { card, isInteractive } = defineProps<{
   card: CardViewModel;
@@ -55,42 +56,39 @@ const onMouseDown = (e: MouseEvent) => {
 };
 
 const isDisabled = computed(() => {
-  if (ui.value.isReplacingCard) {
-    return !card.canReplace;
-  }
   return !card.canPlay;
 });
 
 const isVisible = computed(() => {
+  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return true;
+  if (ui.value.optimisticState.isCancellingPlayCard) return true;
   return state.value.phase.ctx.card !== card.id;
 });
 </script>
 
 <template>
-  <Sound mouseenter="button-hover" pitch-shift>
-    <div
-      class="hand-card"
-      :class="{
-        selected: ui.selectedCard?.equals(card),
-        disabled: isDisabled,
-        'is-shaking': isShaking
-      }"
-      @mousedown="onMouseDown($event)"
-    >
-      <p class="violation-warning" v-if="violationWarning">
-        {{ violationWarning }}
-      </p>
+  <div
+    class="hand-card"
+    :class="{
+      selected: ui.selectedCard?.equals(card),
+      disabled: isDisabled,
+      'is-shaking': isShaking
+    }"
+    @mousedown="onMouseDown($event)"
+  >
+    <p class="violation-warning" v-if="violationWarning">
+      {{ violationWarning }}
+    </p>
 
-      <GameCard
-        v-if="isVisible"
-        :card-id="card.id"
-        actions-side="top"
-        :actions-offset="15"
-        :is-interactive="isInteractive"
-        show-disabled-message
-      />
-    </div>
-  </Sound>
+    <GameCard
+      v-if="isVisible"
+      :card-id="card.id"
+      actions-side="top"
+      :actions-offset="15"
+      :is-interactive="isInteractive"
+      show-disabled-message
+    />
+  </div>
 </template>
 
 <style scoped lang="postcss">

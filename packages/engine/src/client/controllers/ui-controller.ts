@@ -32,6 +32,7 @@ export type GlobalActionRule = {
 
 export type UiOptimisticState = {
   playedCardId: string | null;
+  isCancellingPlayCard: boolean;
 };
 
 export class DOMSelector {
@@ -77,7 +78,8 @@ export class UiController {
   private hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
   optimisticState: UiOptimisticState = {
-    playedCardId: null
+    playedCardId: null,
+    isCancellingPlayCard: false
   };
 
   DOMSelectors = {

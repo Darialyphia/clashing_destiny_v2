@@ -2,9 +2,9 @@
 import {
   useGameState,
   useGameUi,
-  useMyPlayer
+  useMyPlayer,
+  useOpponentPlayer
 } from '../composables/useGameClient';
-import CombatArrows from './CombatArrows.vue';
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
@@ -23,6 +23,7 @@ import { config } from '@/utils/config';
 import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import MinionRow from './MinionRow.vue';
 
 const { options } = defineProps<{
   clocks?: {
@@ -40,6 +41,7 @@ const { options } = defineProps<{
 const ui = useGameUi();
 const state = useGameState();
 const myPlayer = useMyPlayer();
+const opponent = useOpponentPlayer();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
 
@@ -91,21 +93,8 @@ const cancelPlay = (card: CardViewModel) => {
     ui.value.DOMSelectors.draggedCard(card.id).selector
   );
   if (!el) return;
-  // const flipState = Flip.getState(el);
   ui.value.unselectCard();
   card.cancelPlay();
-  // window.requestAnimationFrame(() => {
-  //   const target = document.querySelector(
-  //     ui.value.DOMSelectors.cardInHand(card.id, card.player.id).selector
-  //   );
-
-  //   Flip.from(flipState, {
-  //     targets: target,
-  //     duration: 0.25,
-  //     absolute: true,
-  //     ease: Power1.easeOut
-  //   });
-  // });
 };
 watch(isOutOfScreen, out => {
   if (!out) return;
@@ -139,25 +128,27 @@ useEventListener('mouseup', async () => {
     <ChooseCardModal />
     <!-- <CombatArrows /> -->
     <AnswerQuestionModal />
-    <DraggedCard />
     <TurnIndicator />
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="minions-zone">
+          <MinionRow :row="opponent.backRow" class="opponent-back-row" />
+          <MinionRow :row="opponent.frontRow" class="opponent-front-row" />
           <div class="separator" />
+          <MinionRow :row="myPlayer.frontRow" class="my-front-row" />
+          <MinionRow :row="myPlayer.backRow" class="my-back-row" />
         </div>
 
         <div id="card-actions-portal"></div>
         <div class="arrows" id="arrows" />
       </div>
     </Camera>
+    <DraggedCard />
   </div>
 
   <div class="my-hand">
     <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
   </div>
-
-  <div id="dragged-card-container" />
 
   <button
     aria-label="Settings"
@@ -181,6 +172,9 @@ useEventListener('mouseup', async () => {
 </template>
 
 <style scoped lang="postcss">
+:global(body:has(.game-board-container)) {
+  overflow: hidden;
+}
 .debug {
   position: fixed;
   top: 0;
@@ -226,6 +220,7 @@ useEventListener('mouseup', async () => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
 }
 
 .arrows {
@@ -355,5 +350,28 @@ useEventListener('mouseup', async () => {
   > * {
     width: 100%;
   }
+}
+
+.opponent-back-row {
+  position: absolute;
+  left: 15px;
+}
+
+.opponent-front-row {
+  position: absolute;
+  left: 15px;
+  top: 156px;
+}
+
+.my-front-row {
+  position: absolute;
+  left: 15px;
+  top: 332px;
+}
+
+.my-back-row {
+  position: absolute;
+  left: 15px;
+  top: 476px;
 }
 </style>

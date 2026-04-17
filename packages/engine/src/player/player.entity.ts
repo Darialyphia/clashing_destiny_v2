@@ -172,7 +172,7 @@ export class Player
   }
 
   get frontRowIndex() {
-    return this.isPlayer1 ? 1 : 3;
+    return this.isPlayer1 ? 1 : 2;
   }
 
   get frontRow() {
@@ -184,7 +184,7 @@ export class Player
   }
 
   get backRowIndex() {
-    return this.isPlayer1 ? 0 : 4;
+    return this.isPlayer1 ? 0 : 3;
   }
 
   get backRow() {
