@@ -14,6 +14,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import { Vec2 } from '@game/shared';
 import { useIsInAoe } from '../composables/useIsInAoe';
 import Unit from './Unit.vue';
+import Arrow from './Arrow.vue';
 
 const { cell } = defineProps<{
   cell: BoardCellViewModel;
@@ -103,10 +104,56 @@ const onMousemove = (e: MouseEvent) => {
     document.body.removeEventListener('mousemove', onMousemove);
   }
 };
+
+const selectedUnitPath = ref('');
+const cellRef = useTemplateRef<HTMLElement>('cellRef');
+const mousePos = ref({ x: 0, y: 0 });
+
+const updateMousePos = (e: MouseEvent) => {
+  mousePos.value = { x: e.clientX, y: e.clientY };
+};
+
+const computeParabolaPath = () => {
+  if (!ui.value.selectedUnit) return '';
+  if (!cellRef.value) return '';
+  if (cell.unit?.id !== ui.value.selectedUnit.id) return '';
+
+  const rect = cellRef.value.getBoundingClientRect();
+  const startX = rect.left + rect.width / 2;
+  const startY = rect.top + rect.height;
+  const endX = mousePos.value.x;
+  const endY = mousePos.value.y;
+
+  // Control point for quadratic bezier - creates a parabola arc
+  // Place it above the midpoint to create an upward arc
+  const midX = (startX + endX) / 2;
+  const distance = Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
+  const arcHeight = Math.min(distance * 0.4, 150); // Arc height proportional to distance
+  const controlY = Math.min(startY, endY) - arcHeight;
+
+  return `M ${startX} ${startY} Q ${midX} ${controlY} ${endX} ${endY}`;
+};
+
+watch(
+  [() => ui.value.selectedUnit, mousePos],
+  () => {
+    selectedUnitPath.value = computeParabolaPath();
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  document.addEventListener('mousemove', updateMousePos);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('mousemove', updateMousePos);
+});
 </script>
 
 <template>
   <div
+    ref="cellRef"
     class="minion-cell"
     :class="{
       'is-in-aoe':
@@ -123,6 +170,14 @@ const onMousemove = (e: MouseEvent) => {
     @mousedown="onMousedown"
   >
     <Unit v-if="cell.unit" :unit="cell.unit" />
+
+    <Teleport to="#arrows" defer>
+      <Arrow
+        v-if="ui.selectedUnit && selectedUnitPath"
+        :path="selectedUnitPath"
+        color="red"
+      />
+    </Teleport>
   </div>
 </template>
 
