@@ -55,6 +55,8 @@ export class UiController {
 
   private _hoveredCardInHand: CardViewModel | null = null;
 
+  private _hoveredCardOnBoard: CardViewModel | null = null;
+
   private _selectedCard: CardViewModel | null = null;
 
   private _selectedUnit: UnitViewModel | null = null;
@@ -138,6 +140,10 @@ export class UiController {
 
   get hoveredCardInHand() {
     return this._hoveredCardInHand;
+  }
+
+  get hoveredCardOnBoard() {
+    return this._hoveredCardOnBoard;
   }
 
   get selectedCard() {
@@ -240,6 +246,14 @@ export class UiController {
 
   unhoverCardInHand() {
     this._hoveredCardInHand = null;
+  }
+
+  hoverCardOnBoard(card: CardViewModel) {
+    this._hoveredCardOnBoard = card;
+  }
+
+  unhoverCardOnBoard() {
+    this._hoveredCardOnBoard = null;
   }
 
   selectCard(card: CardViewModel) {

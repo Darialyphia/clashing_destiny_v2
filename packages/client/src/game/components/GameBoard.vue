@@ -25,6 +25,13 @@ import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import MinionRow from './MinionRow.vue';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import PassButton from './PassButton.vue';
+import MyPlayerInfos from './MyPlayerInfos.vue';
+import OpponentPlayerInfos from './OpponentPlayerInfos.vue';
+import HoveredCellInfos from './HoveredCellInfos.vue';
+import MyHeroZone from './MyHeroZone.vue';
+import OpponentHeroZone from './OpponentHeroZone.vue';
 
 const { options } = defineProps<{
   clocks?: {
@@ -62,7 +69,7 @@ useKeyboardControl(
   }
 );
 
-const { width, height } = useWindowSize();
+const { height } = useWindowSize();
 const boardScale = computed(() => {
   return 1;
   // const scaleX = width.value / config.BOARD_SIZE.x;
@@ -121,7 +128,10 @@ useEventListener('mouseup', async () => {
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
-    <div>Interaction Context: {{ state.interaction.ctx }}</div>
+    <div>
+      Interaction Context:
+      <pre>{{ state.interaction.ctx }}</pre>
+    </div>
   </div>
   <div class="game-board-container">
     <SVGFilters />
@@ -129,7 +139,6 @@ useEventListener('mouseup', async () => {
     <ChooseCardModal />
     <!-- <CombatArrows /> -->
     <AnswerQuestionModal />
-    <TurnIndicator />
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="minions-zone">
@@ -138,7 +147,10 @@ useEventListener('mouseup', async () => {
           <div class="separator" />
           <MinionRow :row="myPlayer.frontRow" class="my-front-row" />
           <MinionRow :row="myPlayer.backRow" class="my-back-row" />
+          <PassButton />
         </div>
+        <OpponentHeroZone class="opponent-hero-zone" />
+        <MyHeroZone class="my-hero-zone" />
 
         <div id="card-actions-portal"></div>
         <div class="arrows" id="arrows" />
@@ -146,6 +158,17 @@ useEventListener('mouseup', async () => {
     </Camera>
     <DraggedCard />
   </div>
+
+  <HoveredCellInfos class="hovered-cell-infos" />
+  <MyPlayerInfos class="my-player-infos" />
+  <OpponentPlayerInfos class="opponent-player-infos" />
+
+  <Transition>
+    <div
+      class="vignette"
+      v-if="state.interaction.state !== INTERACTION_STATES.IDLE"
+    />
+  </Transition>
 
   <div class="my-hand">
     <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
@@ -156,6 +179,9 @@ useEventListener('mouseup', async () => {
     class="settings-button"
     @click="isGameSettingsOpened = true"
   />
+
+  <TurnIndicator />
+
   <UiModal
     v-model:is-opened="isGameSettingsOpened"
     title="Menu"
@@ -186,6 +212,7 @@ useEventListener('mouseup', async () => {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   padding: var(--size-4);
+  max-width: var(--size-xs);
 }
 .game-board-container {
   width: 100vw;
@@ -210,7 +237,7 @@ useEventListener('mouseup', async () => {
     translateX(calc(v-bind('boardMargin.x') * 1px))
     translateY(calc(v-bind('boardMargin.y') * 1px)); */
   --offset-y: calc(v-bind('boardMargin.y') * 1px);
-  background-position: center calc(var(--offset-y) * -0.5);
+  /* background-position: center calc(var(--offset-y) * -0.5); */
   transform: translateY(var(--offset-y));
 }
 
@@ -234,7 +261,7 @@ useEventListener('mouseup', async () => {
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 15%;
+  bottom: 10%;
   left: 0;
 }
 
@@ -377,5 +404,61 @@ useEventListener('mouseup', async () => {
   position: absolute;
   left: 22px;
   top: 476px;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 20%,
+    rgba(0, 0, 0, 0.5) 90%
+  );
+  z-index: 1;
+
+  &.v-enter-active,
+  &.v-leave-active {
+    transition: opacity 0.6s ease;
+  }
+
+  &.v-enter-from,
+  &.v-leave-to {
+    opacity: 0;
+  }
+}
+
+.my-player-infos {
+  position: absolute;
+  left: var(--size-12);
+  bottom: min(10%, var(--size-11));
+}
+
+.opponent-player-infos {
+  position: absolute;
+  right: var(--size-12);
+  top: 5%;
+}
+
+.hovered-cell-infos {
+  position: absolute;
+  left: var(--size-11);
+  top: 45%;
+  translate: 0 -50%;
+  z-index: 2;
+}
+
+.my-hero-zone {
+  position: absolute;
+  left: 50%;
+  top: 890px;
+  translate: -50% -50%;
+}
+
+.opponent-hero-zone {
+  position: absolute;
+  left: 50%;
+  top: 120px;
+  translate: -50% -50%;
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import UiSwitch from '@/ui/components/UiSwitch.vue';
-import { useFxEvent } from '../composables/useGameClient';
-import { GAME_EVENTS } from '@game/engine/src/game/game.events';
+// import { useFxEvent } from '../composables/useGameClient';
+// import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 // import { useMouse, useWindowSize } from '@vueuse/core';
 
 const camera = ref({
@@ -11,21 +11,21 @@ const camera = ref({
   offset: { x: 0, y: 0 }
 });
 
-useFxEvent(GAME_EVENTS.COMBAT_AFTER_RECEIVE_DAMAGE, async () => {
-  const tl = gsap.timeline();
-  tl.to(camera.value.offset, {
-    duration: 0.1,
-    y: 0,
-    ease: Power1.easeOut
-  });
-  tl.to(camera.value.offset, {
-    duration: 0.25,
-    y: -5,
-    ease: Elastic.easeOut.config(1, 0.5)
-  });
+// useFxEvent(GAME_EVENTS.COMBAT_AFTER_RECEIVE_DAMAGE, async () => {
+//   const tl = gsap.timeline();
+//   tl.to(camera.value.offset, {
+//     duration: 0.1,
+//     y: 0,
+//     ease: Power1.easeOut
+//   });
+//   tl.to(camera.value.offset, {
+//     duration: 0.25,
+//     y: -5,
+//     ease: Elastic.easeOut.config(1, 0.5)
+//   });
 
-  tl.play();
-});
+//   tl.play();
+// });
 
 const isTilted = computed({
   get() {

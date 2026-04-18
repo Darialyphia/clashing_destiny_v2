@@ -22,12 +22,12 @@ export class LevelManagerComponent {
 
   async gainExp(amount: number) {
     const config = this.game.config;
-    this._exp = Math.min(config.EXP_PER_LEVEL, this._exp + amount);
+    this._exp = Math.min(config.MAX_HELD_EXP, this._exp + amount);
     await this.game.emit(
       GAME_EVENTS.PLAYER_GAIN_EXP,
       new PlayerGainExpEvent({ player: this.player, amount })
     );
-    if (this._exp >= config.EXP_PER_LEVEL) {
+    if (this._exp >= config.MAX_HELD_EXP) {
       await this.levelUp();
     }
   }
@@ -37,9 +37,7 @@ export class LevelManagerComponent {
     if (this._level >= config.PLAYER_MAX_LEVEL) {
       return;
     }
-    if (this._exp < config.EXP_PER_LEVEL) {
-      return;
-    }
+
     this._level++;
     this._exp = 0;
 

@@ -54,7 +54,7 @@ export class SelectingSpaceOnBoardContext {
   serialize() {
     return {
       player: this.player.id,
-      source: this.options.source.serialize(),
+      source: this.options.source.id,
       label: this.options.getLabel(this.selectedSpaces),
       selectedSpaces: this.selectedSpaces.map(space => space.position.serialize()),
       elligibleSpaces: this.elligibleSpaces,

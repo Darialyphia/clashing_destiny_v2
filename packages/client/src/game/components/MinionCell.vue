@@ -110,15 +110,18 @@ const isInAoe = useIsInAoe();
   &.is-in-aoe,
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');
+    filter: drop-shadow(0 0 10px red);
   }
 
   &.is-targetable,
   &.can-move-to {
     background-image: url('@/assets/ui/board-small-card-slot-targetable.png');
+    filter: drop-shadow(0 0 10px cyan);
   }
 
   &.is-targeted {
     background-image: url('@/assets/ui/board-small-card-slot-selected.png');
+    filter: drop-shadow(0 0 10px lime);
   }
 }
 </style>

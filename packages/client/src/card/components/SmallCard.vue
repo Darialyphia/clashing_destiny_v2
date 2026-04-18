@@ -9,6 +9,7 @@ import FoilOil from './foil/FoilOil.vue';
 import FoilGradient from './foil/FoilGradient.vue';
 import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
+import FoilBrightShine from './foil/FoilBrightShine.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
@@ -66,6 +67,7 @@ const artMainImage = computed(() => {
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
         <div class="art-main" />
+        <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
         <div class="art-frame" />
       </div>
 
@@ -177,77 +179,8 @@ const artMainImage = computed(() => {
   font-size: 16px;
   position: relative;
   transform-style: preserve-3d;
-  /* --bg-size: calc(
-      1px * v-bind('card.art.dimensions.width') * var(--pixel-scale)
-    )
-    calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  --frame-size: calc(var(--card-art-frame-width) * var(--pixel-scale))
-    calc(var(--card-art-frame-height) * var(--pixel-scale));
-  --stat-size: calc(39px * var(--pixel-scale)) calc(39px * var(--pixel-scale));
-  --stat-left-position: left 0px bottom calc(4px * var(--pixel-scale));
-  --stat-right-position: right 0px bottom calc(4px * var(--pixel-scale));
-
-  --glare-mask: var(--mask);
-  --glare-mask-size: var(--mask-size);
-  --glare-mask-position: var(--mask-position);
-  --foil-mask: var(--mask);
-  --foil-mask-size: var(--mask-size);
-  --foil-mask-position: var(--mask-position); */
-  .small-card:is(.minion, .hero) & {
-    /* --mask:
-      v-bind(artBgImage), v-bind(artFrameImage),
-      url('@/assets/ui/card/attack-large.png'),
-      url('@/assets/ui/card/health-large.png'); */
-    --mask-size:
-      var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
-    --mask-position:
-      center, center, var(--stat-left-position), var(--stat-right-position);
-  }
-
-  .small-card:is(.minion, .hero) & {
-    /* --mask:
-      v-bind(artBgImage), v-bind(artFrameImage),
-      url('@/assets/ui/card/attack-large.png'),
-      url('@/assets/ui/card/durability-large.png');
-    --mask-size:
-      var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
-    --mask-position:
-      center, center, var(--stat-left-position), var(--stat-right-position); */
-    &:has(.foil) {
-      --mask:
-        v-bind(artBgImage), url('@/assets/ui/card/attack-large.png'),
-        url('@/assets/ui/card/durability-large.png');
-      --mask-size:
-        var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size),
-        var(--stat-size);
-      --mask-position:
-        center, center, center, var(--stat-left-position),
-        var(--stat-right-position);
-    }
-  }
-
-  .small-card.spell & {
-    --mask: v-bind(artBgImage);
-    --mask-size: var(--bg-size), var(--frame-size);
-    --mask-position: center, center;
-    &:has(.foil) {
-      --mask: v-bind(artBgImage);
-      --mask-size: var(--bg-size), var(--frame-size), var(--frame-size);
-      --mask-position: center, center, center;
-    }
-  }
-
-  .small-card.sigil & {
-    --mask: v-bind(artBgImage), url('@/assets/ui/card/countdown-large.png');
-    --mask-size: var(--bg-size), var(--frame-size), var(--stat-size);
-    --mask-position: center, center, var(--stat-right-position);
-    &:has(.foil) {
-      --mask: v-bind(artBgImage), url('@/assets/ui/card/countdown-large.png');
-      --mask-size:
-        var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size);
-      --mask-position: center, center, center, var(--stat-right-position);
-    }
-  }
+  --glare-mask: url('@/assets/ui/card/masks/frame-overflow-mask.png');
+  --foil-mask: url('@/assets/ui/card/masks/frame-overflow-mask.png');
 }
 
 .card-back {
@@ -267,19 +200,6 @@ const artMainImage = computed(() => {
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-
-  .foil {
-    --foil-mask: v-bind(artBgImage);
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-    height: calc(
-      1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
-    ); */
-    translate: -50% 0;
-    --parallax-offset-x: -50%;
-  }
 }
 
 .art-frame {

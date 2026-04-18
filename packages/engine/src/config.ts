@@ -17,7 +17,6 @@ export type Config = {
   MANA_REGEN_PER_TURN: number;
 
   MAX_MULLIGANED_CARDS: number;
-  MAX_REPLACES_PER_TURN: number;
   MAX_MOVEMENT_PER_TURN: number;
   MAX_ATTACKS_PER_TURN: number;
   MAX_COUNTERATTACKS_PER_TURN: number;
@@ -25,7 +24,7 @@ export type Config = {
   DRAW_STEP: 'turn-start' | 'turn-end';
 
   PLAYER_MAX_LEVEL: number;
-  EXP_PER_LEVEL: number;
+  MAX_HELD_EXP: number;
   EXP_GAIN_PER_TURN: number;
 };
 
@@ -44,16 +43,15 @@ export const defaultConfig: Config = {
   MANA_REGEN_PER_TURN: 5,
 
   MAX_MULLIGANED_CARDS: 0,
-  MAX_REPLACES_PER_TURN: 1,
   MAX_MOVEMENT_PER_TURN: 1,
 
   MAX_ATTACKS_PER_TURN: 1,
   MAX_COUNTERATTACKS_PER_TURN: Infinity,
 
-  MAX_EQUIPPED_ARTIFACTS: 5,
+  MAX_EQUIPPED_ARTIFACTS: 2,
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 
   PLAYER_MAX_LEVEL: 4,
-  EXP_PER_LEVEL: 3,
+  MAX_HELD_EXP: 5,
   EXP_GAIN_PER_TURN: 1
 };

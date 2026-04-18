@@ -117,10 +117,6 @@ export class PlayerViewModel {
     return this.data.exp;
   }
 
-  get expToNextLevel() {
-    return this.data.expToNextLevel;
-  }
-
   get maxLevel() {
     return this.data.maxLevel;
   }
@@ -135,6 +131,11 @@ export class PlayerViewModel {
     return this.data.backRow.map(cardId => {
       return this.getEntities()[cardId] as BoardCellViewModel;
     });
+  }
+
+  get hero() {
+    if (!this.data.hero) return null;
+    return this.getEntities()[this.data.hero] as CardViewModel;
   }
 
   getDiscardPile() {

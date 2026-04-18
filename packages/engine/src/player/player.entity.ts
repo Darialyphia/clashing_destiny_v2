@@ -13,9 +13,8 @@ import { PlayerHealEvent, PlayerPlayCardEvent } from './player.events';
 import { ManaManagerComponent } from './components/mana-manager.component';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import { PLAYER_EVENTS } from './player.enums';
-import { CARD_EVENTS, CARD_KINDS, type Rune } from '../card/card.enums';
+import { CARD_EVENTS, CARD_KINDS } from '../card/card.enums';
 import type { SerializedPlayerArtifact } from './player-artifact.entity';
-import { RuneManagerComponent } from './components/rune-manager.component';
 import type { Damage } from '../utils/damage';
 import { LevelManagerComponent } from './components/level-manager.component';
 import type { Unit } from '../unit/unit.entity';
@@ -47,14 +46,13 @@ export type SerializedPlayer = {
   equipedArtifacts: string[];
   currentlyPlayedCard: string | null;
   artifacts: SerializedPlayerArtifact[];
-  runes: Partial<Record<Rune, number>>;
   manaRegen: number;
   exp: number;
   level: number;
-  expToNextLevel: number;
   maxLevel: number;
   frontRow: string[];
   backRow: string[];
+  hero: string | null;
 };
 
 export type PlayerInterceptor = {
@@ -66,16 +64,8 @@ export type PlayerInterceptor = {
   canCounterAttack: Interceptable<boolean, { attacker: Player | Unit }>;
   canBeAttackTarget: Interceptable<boolean, { attacker: Player | Unit }>;
   canBeCounterattackTarget: Interceptable<boolean, { attacker: Player | Unit }>;
-  maxHp: Interceptable<number>;
-  atk: Interceptable<number>;
-  retaliation: Interceptable<number>;
   maxAttacksPerTurn: Interceptable<number>;
   dealsDamageFirstWhenAttacking: Interceptable<boolean>;
-  damageDealt: Interceptable<number, { target: Unit | Player }>;
-  damageReceived: Interceptable<
-    number,
-    { damage: Damage; amount: number; source: AnyCard }
-  >;
   shouldSwitchInitiativeafterAttacking: Interceptable<boolean>;
 };
 
@@ -89,12 +79,7 @@ const makeInterceptors = (): PlayerInterceptor => {
     canCounterAttack: new Interceptable(),
     canBeAttackTarget: new Interceptable(),
     canBeCounterattackTarget: new Interceptable(),
-    maxHp: new Interceptable(),
-    atk: new Interceptable(),
-    retaliation: new Interceptable(),
     dealsDamageFirstWhenAttacking: new Interceptable(),
-    damageDealt: new Interceptable(),
-    damageReceived: new Interceptable(),
     maxAttacksPerTurn: new Interceptable(),
     shouldSwitchInitiativeafterAttacking: new Interceptable()
   };
@@ -113,8 +98,6 @@ export class Player
   readonly artifactManager: ArtifactManagerComponent;
 
   readonly cardTracker: CardTrackerComponent;
-
-  readonly runeManager: RuneManagerComponent;
 
   readonly levelManager: LevelManagerComponent;
 
@@ -144,7 +127,6 @@ export class Player
     });
     this.modifiers = new ModifierManager<Player>(game, this);
     this.artifactManager = new ArtifactManagerComponent(game, this);
-    this.runeManager = new RuneManagerComponent(game, this);
     this.levelManager = new LevelManagerComponent(game, this);
     this.manaManager = new ManaManagerComponent(game, this, {
       maxMana: this.interceptors.maxMana,
@@ -160,7 +142,7 @@ export class Player
   }
 
   get maxHp() {
-    return this.interceptors.maxHp.getValue(this.hero?.maxHp ?? 0, {});
+    return this.hero?.maxHp ?? 0;
   }
 
   get damageTaken() {
@@ -232,16 +214,12 @@ export class Player
       equipedArtifacts: this.artifactManager.artifacts.map(artifact => artifact.id),
       currentlyPlayedCard: this.currentlyPlayedCard?.id ?? null,
       artifacts: this.artifactManager.artifacts.map(artifact => artifact.serialize()),
-      runes: this.runeManager.runes,
       exp: this.levelManager.exp,
       level: this.levelManager.level,
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,
-      expToNextLevel:
-        this.levelManager.level < this.game.config.PLAYER_MAX_LEVEL
-          ? this.game.config.EXP_PER_LEVEL - this.levelManager.exp
-          : 0,
       frontRow: this.frontRow.map(cell => cell.id),
-      backRow: this.backRow.map(cell => cell.id)
+      backRow: this.backRow.map(cell => cell.id),
+      hero: this.hero?.id ?? null
     };
   }
 
@@ -381,11 +359,7 @@ export class Player
   }
 
   getReceivedDamage(damage: Damage, source: AnyCard) {
-    return this.interceptors.damageReceived.getValue(damage.baseAmount, {
-      damage,
-      amount: damage.baseAmount,
-      source
-    });
+    return this.hero.getReceivedDamage(damage, source);
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
@@ -405,19 +379,19 @@ export class Player
   }
 
   get atk() {
-    return this.interceptors.atk.getValue(this.hero.atk, {});
+    return this.hero.atk;
   }
 
   getAttackDamage(target: Unit | Player) {
-    return this.interceptors.damageDealt.getValue(this.atk, { target });
+    return this.hero.getAttackDamage(target);
   }
 
   get retaliation() {
-    return this.interceptors.retaliation.getValue(this.hero.retaliation, {});
+    return this.hero.retaliation;
   }
 
   getRetaliationDamage(attacker: Unit | Player) {
-    return this.interceptors.damageDealt.getValue(this.retaliation, { target: attacker });
+    return this.hero.getRetaliationDamage(attacker);
   }
 
   get counterattackAOEShape() {

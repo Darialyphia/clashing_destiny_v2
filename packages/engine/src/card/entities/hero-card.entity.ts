@@ -2,6 +2,7 @@ import type { AbilityBlueprint, HeroBlueprint } from '../card-blueprint';
 import {
   Card,
   makeCardInterceptors,
+  type AnyCard,
   type CardInterceptors,
   type CardOptions,
   type SerializedCard
@@ -13,12 +14,15 @@ import type { Player } from '../../player/player.entity';
 import { TARGETING_TYPE } from '../../targeting/targeting-strategy';
 import { AnywhereTargetingStrategy } from '../../targeting/anywhere-targeting-strategy';
 import { Ability } from './ability.entity';
+import type { Damage } from '../../utils/damage';
+import type { Unit } from '../../unit/unit.entity';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedHeroCard = SerializedCard & {
   atk: number;
   maxHp: number;
   retaliation: number;
+  remainingHp: number;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -27,6 +31,11 @@ export type HeroCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number>;
   retaliation: Interceptable<number>;
   canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
+  damageDealt: Interceptable<number, { target: Unit | Player }>;
+  damageReceived: Interceptable<
+    number,
+    { damage: Damage; amount: number; source: AnyCard }
+  >;
 };
 
 export class HeroCard extends Card<
@@ -47,7 +56,9 @@ export class HeroCard extends Card<
         maxHp: new Interceptable(),
         atk: new Interceptable(),
         retaliation: new Interceptable(),
-        canUseAbility: new Interceptable()
+        canUseAbility: new Interceptable(),
+        damageDealt: new Interceptable(),
+        damageReceived: new Interceptable()
       },
       options
     );
@@ -87,7 +98,8 @@ export class HeroCard extends Card<
       ...this.serializeBase(),
       atk: this.atk,
       retaliation: this.retaliation,
-      maxHp: this.maxHp
+      maxHp: this.maxHp,
+      remainingHp: this.player.remainingHp
     };
   }
 
@@ -158,5 +170,21 @@ export class HeroCard extends Card<
     if (!ability) return;
     await ability.use();
     this.exhaust();
+  }
+
+  getAttackDamage(target: Unit | Player) {
+    return this.interceptors.damageDealt.getValue(this.atk, { target });
+  }
+
+  getRetaliationDamage(attacker: Unit | Player) {
+    return this.interceptors.damageDealt.getValue(this.retaliation, { target: attacker });
+  }
+
+  getReceivedDamage(damage: Damage, source: AnyCard) {
+    return this.interceptors.damageReceived.getValue(damage.baseAmount, {
+      damage,
+      amount: damage.baseAmount,
+      source
+    });
   }
 }

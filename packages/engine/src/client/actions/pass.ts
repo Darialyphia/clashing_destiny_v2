@@ -14,16 +14,16 @@ export class PassGlobalAction implements GlobalActionRule {
     return 'Pass';
   }
 
-  shouldDisplay(state: GameClientState): boolean {
-    return (
-      state.phase.state === GAME_PHASES.MAIN &&
-      state.interaction.state === INTERACTION_STATES.IDLE &&
-      this.client.playerId === state.turnPlayer
-    );
+  shouldDisplay(): boolean {
+    return true;
   }
 
-  shouldBeDisabled(): boolean {
-    return false;
+  shouldBeDisabled(state: GameClientState): boolean {
+    return (
+      state.phase.state !== GAME_PHASES.MAIN ||
+      state.interaction.state !== INTERACTION_STATES.IDLE ||
+      this.client.playerId !== state.turnPlayer
+    );
   }
 
   onClick(): void {
