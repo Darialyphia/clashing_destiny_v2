@@ -24,7 +24,8 @@ const {
   showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
   modifiersPosition = 'top',
-  canTilt = false
+  canTilt = false,
+  overrides = {}
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -40,6 +41,7 @@ const {
   showActionEmptyState?: boolean;
   modifiersPosition?: 'top' | 'bottom';
   canTilt?: boolean;
+  overrides?: Record<string, any>;
 }>();
 
 const emit = defineEmits<{
@@ -101,24 +103,24 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
-          art: card.art,
-          name: card.name,
-          description: card.description,
-          kind: card.kind,
-          rarity: card.rarity,
-          manaCost: card.manaCost,
-          baseManaCost: card.baseManaCost,
-          hp: card.maxHp,
-          atk: card.atk,
-          retaliation: card.retaliation,
-          durability: card.durability,
+          art: card.art ?? overrides.art,
+          name: card.name ?? overrides.name,
+          description: card.description ?? overrides.description,
+          kind: card.kind ?? overrides.kind,
+          rarity: card.rarity ?? overrides.rarity,
+          manaCost: card.manaCost ?? overrides.manaCost,
+          baseManaCost: card.baseManaCost ?? overrides.baseManaCost,
+          hp: card.maxHp ?? overrides.hp,
+          atk: card.atk ?? overrides.atk,
+          retaliation: card.retaliation ?? overrides.retaliation,
+          durability: card.durability ?? overrides.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
             .map(
               a =>
                 `@[exhaust]@${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
             ),
-          jobs: card.jobs
+          jobs: card.jobs ?? overrides.jobs
         }"
         :is-foil="card.isFoil"
         class="game-card big"
@@ -131,16 +133,16 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
-          art: card.art,
-          kind: card.kind,
-          atk: card.atk,
-          baseAtk: card.baseAtk,
-          hp: card.hp,
-          baseMaxHp: card.baseMaxHp,
-          maxHp: card.maxHp,
-          durability: card.durability,
-          retaliation: card.retaliation,
-          baseRetaliation: card.baseRetaliation
+          art: card.art ?? overrides.art,
+          kind: card.kind ?? overrides.kind,
+          atk: card.atk ?? overrides.atk,
+          baseAtk: card.baseAtk ?? overrides.baseAtk,
+          hp: card.hp ?? overrides.hp,
+          baseMaxHp: card.baseMaxHp ?? overrides.baseMaxHp,
+          maxHp: card.maxHp ?? overrides.maxHp,
+          durability: card.durability ?? overrides.durability,
+          retaliation: card.retaliation ?? overrides.retaliation,
+          baseRetaliation: card.baseRetaliation ?? overrides.baseRetaliation
         }"
         class="game-card small"
         :class="classes"

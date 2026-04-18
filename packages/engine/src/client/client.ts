@@ -25,9 +25,9 @@ import type { UnitViewModel } from './view-models/unit.model';
 import type { TileViewModel } from './view-models/tile.model';
 import { GAME_PHASES } from '../game/game.enums';
 import { VFXSequenceController } from './controllers/vfx-sequence.controller';
-import { GAME_EVENTS } from '../game/game.events';
 import type { AbilityViewModel } from './view-models/ability.model';
 import { PatchApplier } from './patch-applier';
+import type { ArtifactViewModel } from './view-models/artifact.model';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -45,6 +45,7 @@ export type GameStateEntities = Record<
   | UnitViewModel
   | TileViewModel
   | AbilityViewModel
+  | ArtifactViewModel
 >;
 
 export type OnSnapshotUpdateCallback = (

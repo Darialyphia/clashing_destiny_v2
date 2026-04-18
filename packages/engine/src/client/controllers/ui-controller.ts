@@ -6,7 +6,7 @@ import type { UnitViewModel } from '../view-models/unit.model';
 import type { BoardCellViewModel } from '../view-models/board-cell.model';
 import { MoveUnitAction } from '../actions/move-unit';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
-import { SelectUnitAction } from '../actions/select-unit';
+// import { SelectUnitAction } from '../actions/select-unit';
 import { UnselectUnitAction } from '../actions/unselect-unit';
 import { AttackAction } from '../actions/attack';
 import { PassGlobalAction } from '../actions/pass';
@@ -170,7 +170,7 @@ export class UiController {
       new MoveUnitAction(this.client),
       new AttackAction(this.client),
       new SelectSpaceOnBoardAction(this.client),
-      new SelectUnitAction(this.client),
+      // new SelectUnitAction(this.client),
       new UnselectUnitAction(this.client)
     ];
   }
@@ -207,7 +207,7 @@ export class UiController {
     this.unselectCard();
   }
 
-  onBoardCellClick(cell: BoardCellViewModel) {
+  async onBoardCellClick(cell: BoardCellViewModel) {
     const state = this.client.state;
     for (const rule of this.boardCellClickRules) {
       if (rule.predicate(cell, state)) {
@@ -215,6 +215,16 @@ export class UiController {
         return;
       }
     }
+    this.unselectUnit();
+    if (!this.draggedCard) return;
+    const card = this.draggedCard;
+
+    this.draggedCard = null;
+
+    if (this.client.state.phase.state !== GAME_PHASES.PLAYING_CARD) return;
+
+    this.unselectCard();
+    await card.cancelPlay();
   }
 
   get isInteractivePlayer() {

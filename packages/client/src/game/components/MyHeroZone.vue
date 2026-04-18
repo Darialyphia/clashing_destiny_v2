@@ -19,8 +19,21 @@ const ui = useGameUi();
       @mouseenter="ui.hoverCardOnBoard(player.hero)"
       @mouseleave="ui.unhoverCardOnBoard()"
     />
-    <div class="zone" />
-    <div class="zone" />
+    <div class="zone">
+      <GameCard
+        v-if="player.artifacts[0]"
+        :card-id="player.artifacts[0].id"
+        variant="small"
+        show-stats
+        show-modifiers
+        :overrides="{
+          durability: player.artifacts[0].durability
+        }"
+        @mouseenter="ui.hoverCardOnBoard(player.artifacts[0].card)"
+        @mouseleave="ui.unhoverCardOnBoard()"
+      />
+    </div>
+    <div class="zone"></div>
   </div>
 </template>
 

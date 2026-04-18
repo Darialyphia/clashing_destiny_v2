@@ -38,7 +38,9 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   bottom: 0;
-
+  transition:
+    rotate 0.3s var(--ease-2),
+    translate 0.3s var(--ease-2);
   &.is-inverted :deep(.sprite-wrapper) {
     scale: -2 2;
   }
@@ -48,9 +50,14 @@ onMounted(() => {
       rotateY(-0deg) rotateX(calc(-1 * var(--board-angle-X) + 270deg))
       scaleX(-1);
   }
-}
 
-.unit.is-exhausted :deep(.sprite) {
-  filter: grayscale(100%) brightness(70%);
+  &.is-selected {
+    translate: 0 -6px;
+    box-shadow: 0 6px 30px 4px black;
+  }
+
+  &.is-exhausted {
+    filter: grayscale(35%) brightness(50%);
+  }
 }
 </style>

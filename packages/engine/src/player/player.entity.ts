@@ -43,9 +43,8 @@ export type SerializedPlayer = {
   maxMana: number;
   deckSize: number;
   isActive: boolean;
-  equipedArtifacts: string[];
   currentlyPlayedCard: string | null;
-  artifacts: SerializedPlayerArtifact[];
+  artifacts: string[];
   manaRegen: number;
   exp: number;
   level: number;
@@ -211,9 +210,8 @@ export class Player
       manaRegen: this.manaRegen,
       deckSize: this.cardManager.deck.cards.length,
       isActive: this.isActive,
-      equipedArtifacts: this.artifactManager.artifacts.map(artifact => artifact.id),
       currentlyPlayedCard: this.currentlyPlayedCard?.id ?? null,
-      artifacts: this.artifactManager.artifacts.map(artifact => artifact.serialize()),
+      artifacts: this.artifactManager.artifacts.map(artifact => artifact.id),
       exp: this.levelManager.exp,
       level: this.levelManager.level,
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,

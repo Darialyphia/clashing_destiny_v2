@@ -21,6 +21,7 @@ import type { PatchBasedSnapshotDiff } from '../../game/systems/patch-types';
 import { BoardCellViewModel } from '../view-models/board-cell.model';
 import { UnitViewModel } from '../view-models/unit.model';
 import { TileViewModel } from '../view-models/tile.model';
+import { ArtifactViewModel } from '../view-models/artifact.model';
 
 export type GameStateEntities = Record<
   string,
@@ -31,6 +32,7 @@ export type GameStateEntities = Record<
   | BoardCellViewModel
   | UnitViewModel
   | TileViewModel
+  | ArtifactViewModel
 >;
 
 export type GameClientState = Override<
@@ -84,6 +86,10 @@ export class ClientStateController {
       .with(
         { entityType: 'ability' },
         entity => new AbilityViewModel(entity, dict, this.client)
+      )
+      .with(
+        { entityType: 'artifact' },
+        entity => new ArtifactViewModel(entity, dict, this.client)
       )
       .otherwise(() => {
         throw new Error(`Unknown entity type: ${(entity as any).entityType}`);

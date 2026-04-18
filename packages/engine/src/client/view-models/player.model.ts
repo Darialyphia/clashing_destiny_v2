@@ -4,6 +4,7 @@ import type { PatchOperation } from '../../game/systems/patch-types';
 import type { CardViewModel } from './card.model';
 import { isDefined } from '@game/shared';
 import type { BoardCellViewModel } from './board-cell.model';
+import type { ArtifactViewModel } from './artifact.model';
 
 export class PlayerViewModel {
   private getEntities: () => GameStateEntities;
@@ -94,7 +95,8 @@ export class PlayerViewModel {
   }
 
   get artifacts() {
-    return this.data.artifacts;
+    const entities = this.getEntities();
+    return this.data.artifacts.map(artifact => entities[artifact] as ArtifactViewModel);
   }
 
   getCurrentlyPlayedCard() {

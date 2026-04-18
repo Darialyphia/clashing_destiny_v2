@@ -8,7 +8,9 @@ const { playerId } = defineProps<{
   playerId: string;
 }>();
 
-const isOpened = ref(false);
+const isOpened = defineModel<boolean>({
+  required: true
+});
 
 const close = () => {
   isOpened.value = false;

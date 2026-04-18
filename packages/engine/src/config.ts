@@ -51,7 +51,7 @@ export const defaultConfig: Config = {
   MAX_EQUIPPED_ARTIFACTS: 2,
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 
-  PLAYER_MAX_LEVEL: 4,
+  PLAYER_MAX_LEVEL: 5,
   MAX_HELD_EXP: 5,
   EXP_GAIN_PER_TURN: 1
 };

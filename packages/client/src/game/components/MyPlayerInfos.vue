@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { useGameState, useMyPlayer } from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import DiscardPileModal from './DiscardPileModal.vue';
 const player = useMyPlayer();
 const state = useGameState();
+
+const isDiscardPileOpened = ref(false);
+
+const openDiscardPileModal = () => {
+  isDiscardPileOpened.value = true;
+};
 
 onMounted(() => {
   preloadAsset('ui/exp-bar-0');
@@ -21,11 +29,18 @@ onMounted(() => {
       <div class="infos-bar">
         <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
         {{ player.remainingCardsInDeck.length }}
-        <div
-          class="info-icon"
-          :style="{ '--bg': assets['ui/discard-pile'].css }"
-        />
-        {{ player.discardPile.length }}
+        <UiSimpleTooltip>
+          <template #trigger>
+            <button class="discard-pile-btn" @click="openDiscardPileModal">
+              <div
+                class="info-icon"
+                :style="{ '--bg': assets['ui/discard-pile'].css }"
+              />
+              {{ player.discardPile.length }}
+            </button>
+          </template>
+          Your discard pile
+        </UiSimpleTooltip>
       </div>
     </section>
 
@@ -71,6 +86,8 @@ onMounted(() => {
         </div>
       </div>
     </section>
+
+    <DiscardPileModal v-model="isDiscardPileOpened" :player-id="player.id" />
   </div>
 </template>
 
@@ -108,9 +125,8 @@ onMounted(() => {
 }
 
 .mana-bar {
-  padding-left: var(--size-4);
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
 
 .mana {
@@ -150,7 +166,7 @@ onMounted(() => {
 .exp {
   display: flex;
   gap: 4px;
-  align-items: start;
+  align-items: center;
   --dual-text-stroke-offset-y: -6px;
   --dual-text-stroke: 1px;
   font-family: 'Lato', sans-serif;
@@ -160,7 +176,7 @@ onMounted(() => {
 
 .exp-bar {
   width: 147px;
-  height: 15px;
+  height: 11px;
   background: var(--bg);
   margin-block-start: 4px;
 }
@@ -168,7 +184,6 @@ onMounted(() => {
 .bottom-grid {
   display: grid;
   grid-template-columns: 1fr auto;
-  translate: -25px 0;
   margin-block-start: 8px;
   row-gap: var(--size-2);
 }
@@ -189,5 +204,17 @@ onMounted(() => {
   width: 16px;
   height: 15px;
   background: var(--bg);
+}
+
+.discard-pile-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: var(--size-1);
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.3);
+  }
 }
 </style>

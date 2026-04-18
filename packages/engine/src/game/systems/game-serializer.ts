@@ -1,15 +1,14 @@
 import type { Game } from '../game';
 import type { Config } from '../../config';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
-import type { CardBeforePlayEvent, CardDiscardEvent } from '../../card/card.events';
+import type { CardDiscardEvent } from '../../card/card.events';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { AnyObject } from '@game/shared';
-import type { Ability, SerializedAbility } from '../../card/entities/ability.entity';
+import type { SerializedAbility } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
-import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
@@ -22,6 +21,7 @@ import type { SerializedCell } from '../../board/entities/board-cell.entity';
 import type { SerializedTile } from '../../tile/tile.entity';
 import type { SerializedUnit } from '../../unit/unit.entity';
 import type { SerializedDestinyCard } from '../../card/entities/destiny-card.entity';
+import type { SerializedPlayerArtifact } from '../../player/player-artifact.entity';
 
 export type SerializedEntity =
   | SerializedMinionCard
@@ -34,7 +34,8 @@ export type SerializedEntity =
   | SerializedCell
   | SerializedUnit
   | SerializedTile
-  | SerializedAbility;
+  | SerializedAbility
+  | SerializedPlayerArtifact;
 
 export type EntityDictionary = Record<string, SerializedEntity>;
 
@@ -165,6 +166,9 @@ export class GameSerializer {
       entities[player.id] = player.serialize();
       player.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
+      });
+      player.artifactManager.artifacts.forEach(artifact => {
+        entities[artifact.id] = artifact.serialize();
       });
     });
     this.game.boardSystem.cells.forEach(cell => {

@@ -22,7 +22,6 @@ import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
 import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import MinionRow from './MinionRow.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
@@ -89,38 +88,31 @@ const boardMargin = computed(() => {
 
 const isOutOfScreen = usePageLeave();
 
-const stopDragging = async (cb?: (playedCard: CardViewModel) => void) => {
+const resetUiState = async () => {
   await nextTick();
+  if (
+    state.value.phase.state === GAME_PHASES.MAIN &&
+    state.value.interaction.state === INTERACTION_STATES.IDLE
+  ) {
+    ui.value.unselectUnit();
+  }
   if (!ui.value.draggedCard) return;
   const card = ui.value.draggedCard;
 
   ui.value.draggedCard = null;
 
-  cb?.(card);
-};
+  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return;
 
-const cancelPlay = (card: CardViewModel) => {
   ui.value.unselectCard();
   card.cancelPlay();
 };
+
 watch(isOutOfScreen, out => {
   if (!out) return;
-  stopDragging(card => {
-    if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return;
-    cancelPlay(card);
-  });
+  resetUiState();
 });
 
-useEventListener('mouseup', async () => {
-  stopDragging(card => {
-    if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return;
-    // const isWithinBoard = ui.value.DOMSelectors.board.element?.contains(
-    //   e.target as Node
-    // );
-    // if (isWithinBoard) return;
-    cancelPlay(card);
-  });
-});
+useEventListener('mouseup', resetUiState);
 </script>
 
 <template>

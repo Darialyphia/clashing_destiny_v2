@@ -295,35 +295,4 @@ const artMainImage = computed(() => {
   --dual-text-offset-y: 1px;
   scale: 2;
 }
-
-.dual-text {
-  color: transparent;
-  position: relative;
-  --_top-color: var(--top-color, #dedede);
-  --_bottom-color: var(--bottom-color, #b8aeab);
-  &::before,
-  &::after {
-    position: absolute;
-    content: attr(data-text);
-    color: transparent;
-    inset: 0;
-  }
-  &:after {
-    background: linear-gradient(
-      var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
-    );
-    line-height: 1.2;
-    background-clip: text;
-    background-size: 100% 1lh;
-    background-repeat: repeat-y;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-  &:before {
-    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
-    z-index: -1;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-}
 </style>

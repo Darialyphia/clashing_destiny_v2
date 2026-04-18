@@ -22,11 +22,12 @@ const cardRotation = ref({ x: 0, y: 0 });
 const x = ref(0);
 const y = ref(0);
 
+const POSITION_OFFSET_Y = -50;
 useEventListener(
   'mousemove',
   (e: MouseEvent) => {
     x.value = e.clientX;
-    y.value = e.clientY;
+    y.value = e.clientY + POSITION_OFFSET_Y;
   },
   { passive: true, capture: true }
 );

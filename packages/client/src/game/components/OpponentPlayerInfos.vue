@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { useGameState, useOpponentPlayer } from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import DiscardPileModal from './DiscardPileModal.vue';
 const player = useOpponentPlayer();
 const state = useGameState();
+
+const isDiscardPileOpened = ref(false);
+
+const openDiscardPileModal = () => {
+  isDiscardPileOpened.value = true;
+};
 
 onMounted(() => {
   preloadAsset('ui/exp-bar-0');
@@ -16,19 +24,6 @@ onMounted(() => {
 
 <template>
   <div class="opponent-player-infos">
-    <section class="left-side">
-      <div class="avatar" />
-      <div class="infos-bar">
-        <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
-        {{ player.remainingCardsInDeck.length }}
-        <div
-          class="info-icon"
-          :style="{ '--bg': assets['ui/discard-pile'].css }"
-        />
-        {{ player.discardPile.length }}
-      </div>
-    </section>
-
     <section>
       <div class="name dual-text" :data-text="player.name">
         {{ player.name }}
@@ -60,17 +55,38 @@ onMounted(() => {
           </div>
         </div>
         <div class="exp">
-          <div class="dual-text" :data-text="`${player.exp}EXP`">
-            {{ player.exp }}EXP
-          </div>
-
           <div
             class="exp-bar"
             :style="{ '--bg': assets[`ui/exp-bar-${player.exp}`].css }"
           />
+          <div class="dual-text" :data-text="`${player.exp}EXP`">
+            {{ player.exp }}EXP
+          </div>
         </div>
       </div>
     </section>
+
+    <section class="right-side">
+      <div class="avatar" />
+      <div class="infos-bar">
+        <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
+        {{ player.remainingCardsInDeck.length }}
+        <UiSimpleTooltip>
+          <template #trigger>
+            <button class="discard-pile-btn" @click="openDiscardPileModal">
+              <div
+                class="info-icon"
+                :style="{ '--bg': assets['ui/discard-pile'].css }"
+              />
+              {{ player.discardPile.length }}
+            </button>
+          </template>
+          Opponent's discard pile
+        </UiSimpleTooltip>
+      </div>
+    </section>
+
+    <DiscardPileModal v-model="isDiscardPileOpened" :player-id="player.id" />
   </div>
 </template>
 
@@ -80,12 +96,12 @@ onMounted(() => {
   --drop-shadow: 0 4px #090d18;
   filter: drop-shadow(var(--drop-shadow));
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr auto;
   column-gap: var(--size-1);
 }
 
-.left-side {
-  grid-column: 1;
+.right-side {
+  grid-column: 2;
   grid-row: 1 / -1;
   align-self: start;
   translate: 0 -6px;
@@ -105,12 +121,14 @@ onMounted(() => {
   font-size: var(--font-size-5);
   font-weight: var(--font-weight-9);
   line-height: 1.1;
+  text-align: right;
 }
 
 .mana-bar {
-  padding-left: var(--size-4);
   display: flex;
-  gap: 2px;
+  gap: 4px;
+  flex-direction: row-reverse;
+  grid-column: 2;
 }
 
 .mana {
@@ -140,8 +158,8 @@ onMounted(() => {
   font-weight: var(--font-weight-9);
   z-index: 0;
   position: relative;
-  grid-column: 2;
-  grid-row: span 2;
+  grid-column: 1;
+  grid-row: 1 / span 2;
   div {
     --dual-text-stroke-offset-y: -5px;
   }
@@ -150,25 +168,26 @@ onMounted(() => {
 .exp {
   display: flex;
   gap: 4px;
-  align-items: start;
+  align-items: center;
   --dual-text-stroke-offset-y: -6px;
   --dual-text-stroke: 1px;
   font-family: 'Lato', sans-serif;
   font-size: var(--font-size-4);
   font-weight: var(--font-weight-9);
+  grid-column: 2;
 }
 
 .exp-bar {
   width: 147px;
-  height: 15px;
+  height: 11px;
   background: var(--bg);
   margin-block-start: 4px;
+  scale: -1 1;
 }
 
 .bottom-grid {
   display: grid;
-  grid-template-columns: 1fr auto;
-  translate: -25px 0;
+  grid-template-columns: auto 1fr;
   margin-block-start: 8px;
   row-gap: var(--size-2);
 }
@@ -189,5 +208,17 @@ onMounted(() => {
   width: 16px;
   height: 15px;
   background: var(--bg);
+}
+
+.discard-pile-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: var(--size-1);
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.3);
+  }
 }
 </style>

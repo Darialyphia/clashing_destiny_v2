@@ -75,6 +75,34 @@ const canAttack = computed(() => {
   return ui.value.selectedUnit.canAttackAt(cell);
 });
 const isInAoe = useIsInAoe();
+
+const canSelectUnit = computed(() => {
+  if (!cell.unit) return false;
+  if (cell.unit.isExhausted) return false;
+  if (!ui.value.isInteractivePlayer) return false;
+  if (state.value.phase.state !== GAME_PHASES.MAIN) return false;
+  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
+  return true;
+});
+
+const DRAG_THRESHOLD_PX = 30;
+
+let startY = 0;
+const onMousedown = (e: MouseEvent) => {
+  if (!canSelectUnit.value) return;
+  startY = e.clientY;
+
+  document.body.addEventListener('mousemove', onMousemove);
+};
+
+const onMousemove = (e: MouseEvent) => {
+  if (!cell.unit) return;
+  const deltaY = startY - e.clientY;
+  if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
+    ui.value.selectUnit(cell.unit);
+    document.body.removeEventListener('mousemove', onMousemove);
+  }
+};
 </script>
 
 <template>
@@ -91,7 +119,8 @@ const isInAoe = useIsInAoe();
     }"
     @mouseenter="ui.hoverCell(cell)"
     @mouseleave="ui.unhoverCell()"
-    @mouseup="ui.onBoardCellClick(cell)"
+    @mouseup.stop="ui.onBoardCellClick(cell)"
+    @mousedown="onMousedown"
   >
     <Unit v-if="cell.unit" :unit="cell.unit" />
   </div>
@@ -116,7 +145,11 @@ const isInAoe = useIsInAoe();
   &.is-targetable,
   &.can-move-to {
     background-image: url('@/assets/ui/board-small-card-slot-targetable.png');
-    filter: drop-shadow(0 0 10px cyan);
+    filter: drop-shadow(0 0 10px var(--blue-9));
+    transition: filter 0.2s var(--ease-2);
+    &:hover {
+      filter: drop-shadow(0 0 10px var(--cyan-1));
+    }
   }
 
   &.is-targeted {
