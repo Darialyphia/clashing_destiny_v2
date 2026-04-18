@@ -17,7 +17,6 @@ import { useIsInAoe } from '../composables/useIsInAoe';
 import Unit from './Unit.vue';
 import Arrow from './Arrow.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { Flip } from 'gsap/Flip';
 
 const { cell } = defineProps<{
   cell: BoardCellViewModel;
@@ -157,26 +156,44 @@ onUnmounted(() => {
 });
 
 useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
+  // Source cell: just remove the unit
   if (event.unit === cell.unit?.id) {
-    const state = Flip.getState(
-      ui.value.DOMSelectors.unit(event.unit).element!
-    );
     cell.update({
       unit: undefined
     });
-    await nextTick();
-    await Flip.from(state, {
-      targets: [ui.value.DOMSelectors.unit(event.unit).element!],
-      duration: 0.5,
-      absolute: true,
-      ease: Power1.easeInOut
-    });
   }
+
+  // Destination cell: add unit and animate from old position
   if (event.position.x === cell.x && event.position.y === cell.y) {
+    // Get the old position before any DOM changes
+    const oldElement = ui.value.DOMSelectors.unit(event.unit).element;
+    const oldRect = oldElement?.getBoundingClientRect();
+
     console.log('adding unit to cell', cell.x, cell.y);
     cell.update({
       unit: event.unit
     });
+
+    await nextTick();
+
+    const newElement = ui.value.DOMSelectors.unit(event.unit).element;
+    if (newElement && oldRect) {
+      const newRect = newElement.getBoundingClientRect();
+      const deltaX = oldRect.left - newRect.left;
+      const deltaY = oldRect.top - newRect.top;
+
+      // Animate from old position to new position
+      gsap.fromTo(
+        newElement,
+        { x: deltaX, y: deltaY },
+        {
+          x: 0,
+          y: 0,
+          duration: 0.3,
+          ease: Power1.easeInOut
+        }
+      );
+    }
   }
 });
 </script>
@@ -199,7 +216,9 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
     @mouseup.stop="ui.onBoardCellClick(cell)"
     @mousedown="onMousedown"
   >
-    <Unit v-if="cell.unit" :unit="cell.unit" />
+    <Transition appear>
+      <Unit v-if="cell.unit" :unit="cell.unit" class="unit" />
+    </Transition>
 
     <Teleport to="#arrows" defer>
       <Arrow
@@ -244,6 +263,19 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
   &.is-targeted {
     background-image: url('@/assets/ui/board-small-card-slot-selected.png');
     filter: drop-shadow(0 0 6px lime);
+  }
+}
+
+.unit {
+  &.v-enter-active,
+  &.v-leave-active {
+    transition: all 0.3s var(--ease-2);
+  }
+  &.v-enter-from,
+  &.v-leave-to {
+    opacity: 0;
+    scale: 3;
+    filter: brightness(150%);
   }
 }
 </style>
