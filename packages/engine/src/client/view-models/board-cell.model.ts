@@ -23,7 +23,7 @@ export class BoardCellViewModel {
     return this.id === unit.id;
   }
 
-  update(data: Partial<SerializedModifier>) {
+  update(data: Partial<SerializedCell>) {
     Object.assign(this.data, data);
 
     return this;

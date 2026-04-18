@@ -3,7 +3,6 @@ import type { GameClientState } from '../controllers/state-controller';
 import type { BoardCellViewModel } from '../view-models/board-cell.model';
 import { GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
 import type { BoardCellClickRule } from '../controllers/ui-controller';
-
 export class MoveUnitAction implements BoardCellClickRule {
   constructor(private client: GameClient) {}
 
@@ -33,5 +32,6 @@ export class MoveUnitAction implements BoardCellClickRule {
         y: cell.y
       }
     });
+    this.client.ui.unselectUnit();
   }
 }

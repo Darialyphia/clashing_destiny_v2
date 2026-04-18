@@ -181,7 +181,6 @@ onMounted(() => {
   width: 147px;
   height: 11px;
   background: var(--bg);
-  margin-block-start: 4px;
   scale: -1 1;
 }
 

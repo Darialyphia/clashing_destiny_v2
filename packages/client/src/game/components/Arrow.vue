@@ -13,6 +13,17 @@ const shadowId = randomString(6);
 const shadowUrl = `url(#${shadowId})`;
 
 const circle = useTemplateRef('circle');
+const pathEl = useTemplateRef<SVGPathElement>('pathEl');
+
+const endPoint = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  props.path; // track path changes
+  if (!pathEl.value) return { x: 0, y: 0 };
+  const length = pathEl.value.getTotalLength();
+  return pathEl.value.getPointAtLength(length);
+});
+
+let motionTween: gsap.core.Tween | null = null;
 
 watch(
   [() => props.path, circle],
@@ -20,12 +31,24 @@ watch(
     if (!path) return;
     if (!circle) return;
 
-    gsap.to(circle, {
+    // Preserve progress when path changes
+    const currentProgress = motionTween?.progress() ?? 0;
+
+    if (motionTween) {
+      motionTween.kill();
+    }
+
+    motionTween = gsap.to(circle, {
       duration: 3,
       motionPath: path,
       ease: Power1.easeInOut,
       repeat: -1
     });
+
+    // Restore progress if we had a previous animation
+    if (currentProgress > 0) {
+      motionTween.progress(currentProgress);
+    }
   },
   {
     immediate: true
@@ -51,9 +74,22 @@ watch(
       </filter>
     </defs>
     <g filter="url(#bloom-filter)">
-      <path :id="pathId" class="path" :d="props.path" :filter="shadowUrl" />
+      <path
+        ref="pathEl"
+        :id="pathId"
+        class="path"
+        :d="props.path"
+        :filter="shadowUrl"
+      />
       <path class="inner-path" :d="props.path" :filter="shadowUrl" />
       <circle cx="0" cy="0" r="5" class="circle" ref="circle" />
+      <g :transform="`translate(${endPoint.x}, ${endPoint.y})`">
+        <circle cx="0" cy="0" r="10" class="end-circle" />
+        <circle cx="0" cy="-18" r="3" class="particle particle-1" />
+        <circle cx="0" cy="-18" r="2.5" class="particle particle-2" />
+        <circle cx="0" cy="-18" r="2" class="particle particle-3" />
+        <circle cx="0" cy="-18" r="2" class="particle particle-4" />
+      </g>
     </g>
   </svg>
 </template>
@@ -89,15 +125,64 @@ watch(
   stroke-width: 3px;
 }
 
-@keyframes arrow-dash {
-  to {
-    stroke-dashoffset: 0;
+.end-circle {
+  fill: white;
+  stroke: v-bind(color);
+  stroke-width: 3px;
+  animation: pulsate 1s ease-in-out infinite;
+  animation-timing-function: linear;
+  transform-origin: center;
+}
+
+.particle {
+  fill: v-bind(color);
+  opacity: 0.8;
+  transform-origin: 0 0;
+}
+
+.particle-1 {
+  animation: spin 1.5s linear infinite;
+}
+
+.particle-2 {
+  animation: spin 1.5s linear infinite;
+  animation-delay: -0.375s;
+}
+
+.particle-3 {
+  animation: spin 1.5s linear infinite;
+  animation-delay: -0.75s;
+}
+
+.particle-4 {
+  animation: spin 1.5s linear infinite;
+  animation-delay: -1.125s;
+}
+
+@keyframes pulsate {
+  0%,
+  100% {
+    r: 10;
+    opacity: 085;
+  }
+  50% {
+    r: 14;
+    opacity: 0.25;
   }
 }
 
-@keyframes arrow-head {
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
   to {
-    opacity: 1;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arrow-dash {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 </style>

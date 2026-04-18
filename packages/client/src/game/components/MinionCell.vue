@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
 import {
+  useFxEvent,
   useGameClient,
   useGameState,
   useGameUi
@@ -11,10 +12,12 @@ import {
 } from '@game/engine/src/game/game.enums';
 import { pointToCellId } from '@game/engine/src/board/board-utils';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { Vec2 } from '@game/shared';
+import { Vec2, waitFor } from '@game/shared';
 import { useIsInAoe } from '../composables/useIsInAoe';
 import Unit from './Unit.vue';
 import Arrow from './Arrow.vue';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { Flip } from 'gsap/Flip';
 
 const { cell } = defineProps<{
   cell: BoardCellViewModel;
@@ -88,9 +91,11 @@ const canSelectUnit = computed(() => {
 
 const DRAG_THRESHOLD_PX = 30;
 
+let startX = 0;
 let startY = 0;
 const onMousedown = (e: MouseEvent) => {
   if (!canSelectUnit.value) return;
+  startX = e.clientX;
   startY = e.clientY;
 
   document.body.addEventListener('mousemove', onMousemove);
@@ -98,8 +103,9 @@ const onMousedown = (e: MouseEvent) => {
 
 const onMousemove = (e: MouseEvent) => {
   if (!cell.unit) return;
-  const deltaY = startY - e.clientY;
-  if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
+  const deltaY = Math.abs(startY - e.clientY);
+  const deltaX = Math.abs(startX - e.clientX);
+  if (deltaY >= DRAG_THRESHOLD_PX || deltaX >= DRAG_THRESHOLD_PX) {
     ui.value.selectUnit(cell.unit);
     document.body.removeEventListener('mousemove', onMousemove);
   }
@@ -149,6 +155,30 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('mousemove', updateMousePos);
 });
+
+useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
+  if (event.unit === cell.unit?.id) {
+    const state = Flip.getState(
+      ui.value.DOMSelectors.unit(event.unit).element!
+    );
+    cell.update({
+      unit: undefined
+    });
+    await nextTick();
+    await Flip.from(state, {
+      targets: [ui.value.DOMSelectors.unit(event.unit).element!],
+      duration: 0.5,
+      absolute: true,
+      ease: Power1.easeInOut
+    });
+  }
+  if (event.position.x === cell.x && event.position.y === cell.y) {
+    console.log('adding unit to cell', cell.x, cell.y);
+    cell.update({
+      unit: event.unit
+    });
+  }
+});
 </script>
 
 <template>
@@ -194,22 +224,26 @@ onUnmounted(() => {
   &.is-in-aoe,
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');
-    filter: drop-shadow(0 0 10px red);
+    filter: drop-shadow(0 0 6px red);
+    transition: filter 0.2s var(--ease-2);
+    &:hover {
+      filter: drop-shadow(0 0 12px var(--red-5)) brightness(120%);
+    }
   }
 
   &.is-targetable,
   &.can-move-to {
     background-image: url('@/assets/ui/board-small-card-slot-targetable.png');
-    filter: drop-shadow(0 0 10px var(--blue-9));
+    filter: drop-shadow(0 0 6px var(--blue-9));
     transition: filter 0.2s var(--ease-2);
     &:hover {
-      filter: drop-shadow(0 0 10px var(--cyan-1));
+      filter: drop-shadow(0 0 12px var(--cyan-1)) brightness(120%);
     }
   }
 
   &.is-targeted {
     background-image: url('@/assets/ui/board-small-card-slot-selected.png');
-    filter: drop-shadow(0 0 10px lime);
+    filter: drop-shadow(0 0 6px lime);
   }
 }
 </style>
