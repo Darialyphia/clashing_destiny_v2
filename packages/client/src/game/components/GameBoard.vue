@@ -116,7 +116,7 @@ useEventListener('mouseup', resetUiState);
 </script>
 
 <template>
-  <div class="debug">
+  <!-- <div class="debug">
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
@@ -124,7 +124,7 @@ useEventListener('mouseup', resetUiState);
       Interaction Context:
       <pre>{{ state.interaction.ctx }}</pre>
     </div>
-  </div>
+  </div> -->
   <div class="game-board-container">
     <SVGFilters />
     <PlayedCard />

@@ -9,6 +9,8 @@ import type { PlayerArtifact } from '../player/player-artifact.entity';
 import type { AnyCard } from './entities/card.entity';
 import type { DestinyCard } from './entities/destiny-card.entity';
 import type { HeroCard } from './entities/hero-card.entity';
+import type { VFXSequence } from '../game/systems/vfx.system';
+import type { Point } from '@game/shared';
 
 export type CardArt = {
   foil: {
@@ -48,6 +50,16 @@ export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
   abilities: AbilityBlueprint<MinionCard>[];
+  vfx: {
+    sequences?: {
+      play?: (
+        game: Game,
+        card: MinionCard,
+        position: Point,
+        targets: Point[]
+      ) => VFXSequence;
+    };
+  };
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onPlay: (

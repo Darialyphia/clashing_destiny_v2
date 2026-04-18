@@ -222,6 +222,12 @@ export class ClientStateController {
     if (!this.state.units.includes(unit.id)) {
       this.state.units.push(unit.id);
     }
+    this.state.board.cells.forEach(cellId => {
+      const cell = this.state.entities[cellId] as BoardCellViewModel;
+      if (cell.x === unit.position.x && cell.y === unit.position.y) {
+        cell.update({ unit: unit.id });
+      }
+    });
     this.state = { ...this.state };
     return await flush();
   }

@@ -1,5 +1,5 @@
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt } from '../../../../card-utils';
+import { defaultCardArt, defaultMinionPlaySequence } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
 
 export const sample: MinionBlueprint = {
@@ -20,5 +20,10 @@ export const sample: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {},
-  async onPlay(game, card) {}
+  async onPlay(game, card) {},
+  vfx: {
+    sequences: {
+      play: defaultMinionPlaySequence
+    }
+  }
 };

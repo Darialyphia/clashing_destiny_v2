@@ -62,7 +62,7 @@ const isActionsPopoverOpened = computed({
         card.location === CARD_LOCATIONS.DISCARD_PILE
       "
     >
-      <PopoverContent
+      <!-- <PopoverContent
         :side-offset="actionsOffset"
         :side="actionsSide"
         :align="actionsAlign"
@@ -72,7 +72,7 @@ const isActionsPopoverOpened = computed({
           v-model:is-opened="isActionsPopoverOpened"
           :show-empty-state="showActionEmptyState"
         />
-      </PopoverContent>
+      </PopoverContent> -->
     </PopoverPortal>
   </PopoverRoot>
 </template>

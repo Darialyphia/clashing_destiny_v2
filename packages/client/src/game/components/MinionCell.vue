@@ -12,7 +12,7 @@ import {
 } from '@game/engine/src/game/game.enums';
 import { pointToCellId } from '@game/engine/src/board/board-utils';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { Vec2, waitFor } from '@game/shared';
+import { Vec2 } from '@game/shared';
 import { useIsInAoe } from '../composables/useIsInAoe';
 import Unit from './Unit.vue';
 import Arrow from './Arrow.vue';
@@ -182,8 +182,8 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
       const deltaX = oldRect.left - newRect.left;
       const deltaY = oldRect.top - newRect.top;
 
-      // Animate from old position to new position
-      gsap.fromTo(
+      newElement.style.transition = 'none';
+      await gsap.fromTo(
         newElement,
         { x: deltaX, y: deltaY },
         {
@@ -193,6 +193,7 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
           ease: Power1.easeInOut
         }
       );
+      newElement.style.transition = '';
     }
   }
 });
@@ -216,9 +217,7 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
     @mouseup.stop="ui.onBoardCellClick(cell)"
     @mousedown="onMousedown"
   >
-    <Transition appear>
-      <Unit v-if="cell.unit" :unit="cell.unit" class="unit" />
-    </Transition>
+    <Unit v-if="cell.unit" :unit="cell.unit" class="unit" />
 
     <Teleport to="#arrows" defer>
       <Arrow
@@ -263,19 +262,6 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
   &.is-targeted {
     background-image: url('@/assets/ui/board-small-card-slot-selected.png');
     filter: drop-shadow(0 0 6px lime);
-  }
-}
-
-.unit {
-  &.v-enter-active,
-  &.v-leave-active {
-    transition: all 0.3s var(--ease-2);
-  }
-  &.v-enter-from,
-  &.v-leave-to {
-    opacity: 0;
-    scale: 3;
-    filter: brightness(150%);
   }
 }
 </style>

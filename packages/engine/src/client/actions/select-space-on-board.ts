@@ -16,6 +16,8 @@ export class SelectSpaceOnBoardAction implements BoardCellClickRule {
   }
 
   handler(cell: BoardCellViewModel) {
+    this.client.ui.draggedCard = null;
+
     this.client.dispatch({
       type: 'selectSpaceOnBoard',
       payload: {

@@ -199,6 +199,17 @@ export class MinionCard extends Card<
       })
     );
 
+    await this.game.vfxSystem.playSequence(
+      this.blueprint.vfx.sequences?.play?.(
+        this.game,
+        this,
+        position.position.serialize(),
+        []
+      ) ?? {
+        tracks: []
+      }
+    );
+
     await this.blueprint.onPlay(this.game, this, {
       position
     });

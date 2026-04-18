@@ -13,6 +13,7 @@ import type { HeroCard } from './entities/hero-card.entity';
 import type { MinionCard } from './entities/minion-card.entity';
 import type { SpellCard } from './entities/spell-card.entity';
 import type { AbilityBlueprint, CardBlueprint } from './card-blueprint';
+import type { VFXSequence } from '../game/systems/vfx.system';
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
   return card.kind === CARD_KINDS.MINION;
@@ -399,3 +400,18 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
     main: `${name}-main`
   }
 });
+
+export const defaultMinionPlaySequence = (game: Game, card: MinionCard): VFXSequence => {
+  return {
+    tracks: [
+      {
+        steps: [
+          {
+            type: 'dropUnit',
+            params: { unitId: card.unit.id, from: { scale: 3 }, duration: 300 }
+          }
+        ]
+      }
+    ]
+  };
+};

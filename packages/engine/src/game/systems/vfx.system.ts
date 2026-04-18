@@ -1,7 +1,6 @@
 import type { EmptyObject, Point, Values } from '@game/shared';
 import { System } from '../../system';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { Unit } from '../../unit/unit.entity';
 
 export const ANIMATIONS_NAMES = {
   IDLE: 'idle',
@@ -70,6 +69,16 @@ export type VFXStep =
         offset: Point;
         scale: number;
         flipX: boolean;
+      };
+    }
+  | {
+      type: 'dropUnit';
+      params: {
+        unitId: string;
+        from: {
+          scale: number;
+        };
+        duration: number;
       };
     }
   | {
