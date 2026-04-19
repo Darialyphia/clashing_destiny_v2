@@ -408,7 +408,7 @@ export const defaultMinionPlaySequence = (game: Game, card: MinionCard): VFXSequ
         steps: [
           {
             type: 'dropUnit',
-            params: { unitId: card.unit.id, from: { scale: 3 }, duration: 300 }
+            params: { unitId: card.unit.id, from: { scale: 3 }, duration: 400 }
           }
         ]
       }

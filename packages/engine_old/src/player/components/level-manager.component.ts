@@ -1,4 +1,3 @@
-import type { AnyCard } from '../../card/entities/card.entity';
 import type { DestinyCard } from '../../card/entities/destiny.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';

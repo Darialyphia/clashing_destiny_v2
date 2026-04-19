@@ -8,9 +8,10 @@ import {
   UnknownUnitError
 } from '../input-errors';
 import { GAME_PHASES } from '../../game/game.enums';
+import { Player } from '../../player/player.entity';
 
 const schema = defaultInputSchema.extend({
-  unitId: z.string(),
+  unitId: z.string().nullable(),
   position: z
     .object({
       x: z.number(),
@@ -26,19 +27,27 @@ export class AttackInput extends Input<typeof schema> {
 
   protected payloadSchema = schema;
 
-  private get unit() {
+  private get attacker() {
+    if (!isDefined(this.payload.unitId)) {
+      return this.game.playerSystem.getPlayerById(this.payload.playerId);
+    }
     return this.game.unitSystem.getUnitById(this.payload.unitId);
   }
 
   async impl() {
     assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
-    assert(isDefined(this.unit), new UnknownUnitError(this.payload.unitId));
+    assert(isDefined(this.attacker), new UnknownUnitError(this.payload.unitId ?? ''));
     assert(
-      this.unit.player.equals(this.game.turnSystem.initiativePlayer),
+      this.attacker instanceof Player
+        ? this.attacker.equals(this.player)
+        : this.attacker.player.equals(this.game.turnSystem.initiativePlayer),
       new UnitNotOwnedError()
     );
-    assert(this.unit.canAttackAt(this.payload.position), new IllegalAttackTargetError());
+    assert(
+      this.attacker.canAttackAt(this.payload.position),
+      new IllegalAttackTargetError()
+    );
 
-    await this.unit.attack(this.payload.position);
+    await this.attacker.attack(this.payload.position);
   }
 }

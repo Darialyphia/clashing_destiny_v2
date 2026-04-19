@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useGameUi, useMyPlayer } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
+import Hero from './Hero.vue';
 
 const player = useMyPlayer();
 const ui = useGameUi();
@@ -10,15 +11,7 @@ const ui = useGameUi();
   <div class="my-hero-zone">
     <div class="zone" />
     <div class="zone" />
-    <GameCard
-      v-if="player?.hero"
-      :card-id="player.hero.id"
-      variant="small"
-      show-stats
-      show-modifiers
-      @mouseenter="ui.hoverCardOnBoard(player.hero)"
-      @mouseleave="ui.unhoverCardOnBoard()"
-    />
+    <Hero :player="player" />
     <div class="zone">
       <GameCard
         v-if="player.artifacts[0]"
@@ -33,7 +26,20 @@ const ui = useGameUi();
         @mouseleave="ui.unhoverCardOnBoard()"
       />
     </div>
-    <div class="zone"></div>
+    <div class="zone">
+      <GameCard
+        v-if="player.artifacts[1]"
+        :card-id="player.artifacts[1].id"
+        variant="small"
+        show-stats
+        show-modifiers
+        :overrides="{
+          durability: player.artifacts[1].durability
+        }"
+        @mouseenter="ui.hoverCardOnBoard(player.artifacts[1].card)"
+        @mouseleave="ui.unhoverCardOnBoard()"
+      />
+    </div>
   </div>
 </template>
 

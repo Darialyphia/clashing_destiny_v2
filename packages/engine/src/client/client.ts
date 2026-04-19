@@ -332,6 +332,7 @@ export class GameClient {
   }
 
   attack(unitId: string, position: Point | null) {
+    this.ui.unselectUnit();
     this.dispatch({
       type: 'attack',
       payload: {

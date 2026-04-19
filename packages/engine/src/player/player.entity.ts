@@ -52,6 +52,8 @@ export type SerializedPlayer = {
   frontRow: string[];
   backRow: string[];
   hero: string | null;
+  canAttackPlayer: boolean;
+  attackableCells: string[];
 };
 
 export type PlayerInterceptor = {
@@ -217,7 +219,11 @@ export class Player
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,
       frontRow: this.frontRow.map(cell => cell.id),
       backRow: this.backRow.map(cell => cell.id),
-      hero: this.hero?.id ?? null
+      hero: this.hero?.id ?? null,
+      canAttackPlayer: this.canAttackPlayer,
+      attackableCells: this.game.boardSystem.cells
+        .filter(cell => this.canAttackAt(cell.position))
+        .map(cell => cell.id)
     };
   }
 
@@ -426,8 +432,10 @@ export class Player
     return this.interceptors.shouldSwitchInitiativeafterAttacking.getValue(true, {});
   }
 
-  async attack(point: Point) {
-    const target = this.game.unitSystem.getUnitAt(point) ?? this.opponent;
+  async attack(point: Point | null) {
+    const target = point ? this.game.unitSystem.getUnitAt(point) : this.opponent;
+    if (!target) return;
+
     await this.combat.attack(target);
     if (this.combat.attacksCount >= this.maxAttacksPerTurn) {
       this.hero.exhaust();
@@ -460,5 +468,26 @@ export class Player
         this.atk > 0,
       { target }
     );
+  }
+
+  get canAttackPlayer() {
+    return this.opponent.canBeAttackedBy(this) && this.canAttack(this.opponent);
+  }
+
+  canBeAttackedBy(attacker: Unit | Player): boolean {
+    return this.interceptors.canBeAttackTarget.getValue(true, {
+      attacker: attacker
+    });
+  }
+
+  canAttackAt(point: Point | null) {
+    if (!point) {
+      return this.canAttackPlayer;
+    }
+
+    const target = this.game.unitSystem.getUnitAt(point);
+    if (!target) return false;
+
+    return this.canAttack(target) && target.canBeAttackedBy(this);
   }
 }

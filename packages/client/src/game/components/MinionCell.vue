@@ -111,7 +111,7 @@ const onMousemove = (e: MouseEvent) => {
 };
 
 const selectedUnitPath = ref('');
-const cellRef = useTemplateRef<HTMLElement>('cellRef');
+const cellEl = useTemplateRef<HTMLElement>('cell');
 const mousePos = ref({ x: 0, y: 0 });
 
 const updateMousePos = (e: MouseEvent) => {
@@ -120,10 +120,10 @@ const updateMousePos = (e: MouseEvent) => {
 
 const computeParabolaPath = () => {
   if (!ui.value.selectedUnit) return '';
-  if (!cellRef.value) return '';
+  if (!cellEl.value) return '';
   if (cell.unit?.id !== ui.value.selectedUnit.id) return '';
 
-  const rect = cellRef.value.getBoundingClientRect();
+  const rect = cellEl.value.getBoundingClientRect();
   const startX = rect.left + rect.width / 2;
   const startY = rect.top + rect.height;
   const endX = mousePos.value.x;
@@ -155,6 +155,7 @@ onUnmounted(() => {
   document.removeEventListener('mousemove', updateMousePos);
 });
 
+const isMovingUnit = ref(false);
 useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
   // Source cell: just remove the unit
   if (event.unit === cell.unit?.id) {
@@ -165,19 +166,19 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
 
   // Destination cell: add unit and animate from old position
   if (event.position.x === cell.x && event.position.y === cell.y) {
+    isMovingUnit.value = true;
     // Get the old position before any DOM changes
     const oldElement = ui.value.DOMSelectors.unit(event.unit).element;
-    const oldRect = oldElement?.getBoundingClientRect();
+    const oldRect = oldElement!.getBoundingClientRect();
 
-    console.log('adding unit to cell', cell.x, cell.y);
     cell.update({
       unit: event.unit
     });
 
     await nextTick();
-
     const newElement = ui.value.DOMSelectors.unit(event.unit).element;
-    if (newElement && oldRect) {
+
+    if (newElement) {
       const newRect = newElement.getBoundingClientRect();
       const deltaX = oldRect.left - newRect.left;
       const deltaY = oldRect.top - newRect.top;
@@ -195,13 +196,15 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
       );
       newElement.style.transition = '';
     }
+
+    isMovingUnit.value = false;
   }
 });
 </script>
 
 <template>
   <div
-    ref="cellRef"
+    ref="cell"
     class="minion-cell"
     :class="{
       'is-in-aoe':
@@ -210,7 +213,8 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
       'is-targetable': isTargetable && !client.isPlayingFx,
       'is-targeted': isTargeted && !client.isPlayingFx,
       'can-move-to': canMoveTo && !client.isPlayingFx,
-      'can-attack': canAttack && !client.isPlayingFx
+      'can-attack': canAttack && !client.isPlayingFx,
+      'is-moving-unit': isMovingUnit
     }"
     @mouseenter="ui.hoverCell(cell)"
     @mouseleave="ui.unhoverCell()"
@@ -238,14 +242,29 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
   transition: background-image 0.25s;
   display: grid;
   place-content: center;
-
+  position: relative;
   &.is-in-aoe,
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');
     filter: drop-shadow(0 0 6px red);
     transition: filter 0.2s var(--ease-2);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: red;
+      opacity: 0.5;
+      mix-blend-mode: multiply;
+      transition: opacirt 0.2s var(--ease-2);
+      z-index: 1;
+      mask-image: url('@/assets/ui/board-small-card-slot.png');
+      mask-size: cover;
+    }
     &:hover {
       filter: drop-shadow(0 0 12px var(--red-5)) brightness(120%);
+      &::after {
+        opacity: 0.35;
+      }
     }
   }
 
@@ -263,5 +282,13 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
     background-image: url('@/assets/ui/board-small-card-slot-selected.png');
     filter: drop-shadow(0 0 6px lime);
   }
+
+  &.is-moving-unit {
+    z-index: 1;
+  }
+}
+
+:global(.minion-cell:has(.unit.is-being-dropped)) {
+  z-index: 1;
 }
 </style>

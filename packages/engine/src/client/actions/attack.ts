@@ -20,6 +20,5 @@ export class AttackAction implements BoardCellClickRule {
 
   handler(cell: BoardCellViewModel) {
     this.client.attack(this.client.ui.selectedUnit!.id, cell.position);
-    this.client.ui.unselectUnit();
   }
 }
