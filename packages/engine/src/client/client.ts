@@ -331,14 +331,13 @@ export class GameClient {
     });
   }
 
-  attack(unitId: string, { x, y }: Point) {
+  attack(unitId: string, position: Point | null) {
     this.dispatch({
       type: 'attack',
       payload: {
         playerId: this.playerId,
         unitId,
-        x,
-        y
+        position
       }
     });
   }

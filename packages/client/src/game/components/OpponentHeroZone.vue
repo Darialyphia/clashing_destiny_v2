@@ -1,9 +1,25 @@
 <script setup lang="ts">
-import { useGameUi, useOpponentPlayer } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameUi,
+  useOpponentPlayer
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 
 const player = useOpponentPlayer();
 const ui = useGameUi();
+const { client } = useGameClient();
+
+const canAttack = computed(() => {
+  return ui.value.selectedUnit?.canAttackPlayer ?? false;
+});
+
+const onMouseup = () => {
+  if (!ui.value.selectedUnit) return;
+  if (!canAttack.value) return;
+
+  client.value.attack(ui.value.selectedUnit.id, null);
+};
 </script>
 
 <template>
@@ -16,6 +32,8 @@ const ui = useGameUi();
       variant="small"
       show-stats
       show-modifiers
+      :class="{ 'can-attack': canAttack }"
+      @mouseup="onMouseup"
       @mouseenter="ui.hoverCardOnBoard(player.hero)"
       @mouseleave="ui.unhoverCardOnBoard()"
     />
@@ -35,5 +53,13 @@ const ui = useGameUi();
   height: 130px;
   background: url('@/assets/ui/board-small-card-slot-empty.png') no-repeat
     center;
+}
+
+.can-attack {
+  filter: drop-shadow(0 0 6px red);
+  transition: filter 0.2s var(--ease-2);
+  &:hover {
+    filter: drop-shadow(0 0 12px var(--red-5)) brightness(120%);
+  }
 }
 </style>

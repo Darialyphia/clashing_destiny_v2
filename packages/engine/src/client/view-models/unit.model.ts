@@ -112,6 +112,10 @@ export class UnitViewModel {
     return this.canMove;
   }
 
+  get canAttackPlayer() {
+    return this.data.canAttackPlayer;
+  }
+
   get attackableCells() {
     return this.data.attackableCells;
   }

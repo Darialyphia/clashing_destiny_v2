@@ -11,8 +11,12 @@ import { GAME_PHASES } from '../../game/game.enums';
 
 const schema = defaultInputSchema.extend({
   unitId: z.string(),
-  x: z.number(),
-  y: z.number()
+  position: z
+    .object({
+      x: z.number(),
+      y: z.number()
+    })
+    .nullable()
 });
 
 export class AttackInput extends Input<typeof schema> {
@@ -33,8 +37,8 @@ export class AttackInput extends Input<typeof schema> {
       this.unit.player.equals(this.game.turnSystem.initiativePlayer),
       new UnitNotOwnedError()
     );
-    assert(this.unit.canAttackAt(this.payload), new IllegalAttackTargetError());
+    assert(this.unit.canAttackAt(this.payload.position), new IllegalAttackTargetError());
 
-    await this.unit.attack(this.payload);
+    await this.unit.attack(this.payload.position);
   }
 }

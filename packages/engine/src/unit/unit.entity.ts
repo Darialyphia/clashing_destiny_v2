@@ -57,6 +57,7 @@ export type SerializedUnit = {
   isDead: boolean;
   modifiers: string[];
   canMove: boolean;
+  canAttackPlayer: boolean;
   attackableCells: string[];
   isBackRow: boolean;
   isFrontRow: boolean;
@@ -394,18 +395,28 @@ export class Unit
     );
   }
 
-  canAttackAt(point: Point) {
+  get canAttackPlayer() {
+    return this.unitsOnSameColumn.filter(unit => unit.isEnemy(this)).length === 0;
+  }
+
+  canAttackAt(point: Point | null) {
+    if (!point) {
+      return this.canAttackPlayer;
+    }
+
     if (this.position.equals(point)) {
       return false;
     }
-    const target = this.game.unitSystem.getUnitAt(point) ?? this.player.opponent;
-    const canBeAttacked =
-      target instanceof Unit ? target.canBeAttackedBy(this) : this.isEnemy(target);
+    const target = this.game.unitSystem.getUnitAt(point);
+    if (!target) return false;
+
+    const canBeAttacked = target.canBeAttackedBy(this);
+
     if (!this.canAttack(target) || !canBeAttacked) {
       return false;
     }
 
-    const result = this.attackTargettingPattern.canTargetAt(point);
+    const result = this.attackTargettingPattern.canTargetAt(target.position);
     return result;
   }
 
@@ -541,8 +552,9 @@ export class Unit
     return this.interceptors.shouldSwitchInitiativeafterAttacking.getValue(true, {});
   }
 
-  async attack(point: Point) {
-    const target = this.game.unitSystem.getUnitAt(point) ?? this.player.opponent;
+  async attack(point: Point | null) {
+    const target = point ? this.game.unitSystem.getUnitAt(point) : this.player.opponent;
+    if (!target) return;
     await this.combat.attack(target);
     if (this.attacksPerformedThisTurn >= this.maxAttacksPerTurn) {
       this.exhaust();
@@ -696,6 +708,7 @@ export class Unit
       isDead: !this.isAlive,
       modifiers: this.modifiers.list.map(modifier => modifier.id),
       canMove: this.canMove,
+      canAttackPlayer: this.canAttackPlayer,
       attackableCells: this.game.boardSystem.cells
         .filter(cell => this.canAttackAt(cell.position))
         .map(cell => cell.id),
