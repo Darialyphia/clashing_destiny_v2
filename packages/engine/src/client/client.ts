@@ -294,6 +294,10 @@ export class GameClient {
     void this.fxAdapter.onCancelPlayCard(playedCard, this);
   }
 
+  isActive() {
+    return this.getActivePlayerId() === this.playerId;
+  }
+
   commitSpaceSelection() {
     this.dispatch({
       type: 'commitSpaceSelection',

@@ -140,12 +140,15 @@ const parseCardsArray = (content: string) => {
   }
 
   const arrayContent = content.slice(openIndex + 1, closeIndex);
-  const existingCards = arrayContent
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith('//'))
-    .map(line => line.replace(/,$/, '').trim())
-    .filter(line => /^[A-Za-z_]\w*$/.test(line));
+  // Extract all valid identifiers from the array content using a regex
+  // This handles both single-line (comma-separated) and multi-line formats
+  const identifierRegex = /\b([A-Za-z_]\w*)\b/g;
+  const existingCards: string[] = [];
+  let match = identifierRegex.exec(arrayContent);
+  while (match) {
+    existingCards.push(match[1]);
+    match = identifierRegex.exec(arrayContent);
+  }
 
   return { arrayContent, openIndex, closeIndex, existingCards };
 };
@@ -298,9 +301,38 @@ const runGenerateCards = async () => {
   });
 };
 
+const runPrettierOnSetFiles = async () => {
+  const setNames = await listSetNames();
+  const setFiles = setNames.map(name => path.join(setsDir, `${name}${setFileSuffix}`));
+  const existingFiles = await Promise.all(
+    setFiles.map(async filePath => ((await fs.pathExists(filePath)) ? filePath : null))
+  );
+  const filesToFormat = existingFiles.filter(Boolean) as string[];
+
+  if (filesToFormat.length === 0) return;
+
+  console.log('[card-sets] Running prettier on set files...');
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn('npx', ['prettier', '--write', ...filesToFormat], {
+      cwd: process.cwd(),
+      stdio: 'inherit',
+      shell: true
+    });
+
+    child.on('close', code => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`[card-sets] prettier exited with code ${code}`));
+      }
+    });
+  });
+};
+
 const runOnce = async () => {
   const changed = await updateAllSets();
   if (changed) {
+    await runPrettierOnSetFiles();
     await runGenerateCards();
   }
 };

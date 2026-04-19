@@ -32,7 +32,7 @@ export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 40,
   MAX_MAIN_DECK_CARD_COPIES: 3,
   TALENT_COUNT: 10,
-  INITIAL_HAND_SIZE: 5,
+  INITIAL_HAND_SIZE: 4,
   MAX_HAND_SIZE: 7,
 
   DRAW_STEP: 'turn-start',

@@ -42,7 +42,7 @@ export const singleEnemyTargetRules = {
         .length > 0
     );
   },
-  async getPreResponseTargets(
+  async getTargets(
     game: Game,
     card: AnyCard,
     {
@@ -82,6 +82,23 @@ export const singleEnemyTargetRules = {
         return selectedCards.length === 1;
       }
     });
+  },
+  defaultTimeoutFallback: (
+    game: Game,
+    card: AnyCard,
+    predicate?: (unit: Unit) => boolean
+  ) => {
+    const elligible = game.boardSystem.cells.filter(cell => {
+      if (!cell.unit) return false;
+
+      return (
+        cell.unit.isEnemy(card.player) &&
+        cell.unit.canBeTargetedBy(card) &&
+        predicate?.(cell.unit)
+      );
+    });
+
+    return [elligible[0]];
   }
 };
 
@@ -93,7 +110,7 @@ export const singleMinionTargetRules = {
       ).length > 0
     );
   },
-  async getPreResponseTargets(
+  async getTargets(
     game: Game,
     card: AnyCard,
     {
@@ -147,7 +164,7 @@ export const multipleUnitsTargetRules = {
         ).length > min
       );
     },
-  getPreResponseTargets:
+  getTargets:
     ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat: boolean }) =>
     async (
       game: Game,
@@ -205,7 +222,7 @@ export const anywhereTargetRules = {
       const elligibleCells = allCells.filter(cell => predicate(cell) && !cell.unit);
       return elligibleCells.length >= min;
     },
-  getPreResponseTargets:
+  getTargets:
     ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat: boolean }) =>
     async (
       game: Game,
@@ -254,7 +271,7 @@ export const emptySpacesTargetRules = {
       const elligibleCells = allCells.filter(cell => predicate(cell) && !cell.unit);
       return elligibleCells.length >= min;
     },
-  getPreResponseTargets:
+  getTargets:
     ({ min, max }: { min: number; max: number }) =>
     async (
       game: Game,
@@ -302,7 +319,7 @@ export const singleUnitTargetRules = {
       ).length > 0
     );
   },
-  async getPreResponseTargets(
+  async getTargets(
     game: Game,
     card: AnyCard,
     {

@@ -39,8 +39,16 @@ export class AbilityViewModel {
     return this.data.id;
   }
 
+  get abilityId() {
+    return this.data.abilityId;
+  }
+
   get description() {
     return this.data.description;
+  }
+
+  get label() {
+    return this.data.label;
   }
 
   get canUse() {

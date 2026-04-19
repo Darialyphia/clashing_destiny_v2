@@ -139,4 +139,8 @@ export class UnitViewModel {
       modId => this.getEntities()[modId] as ModifierViewModel
     );
   }
+
+  get abilities() {
+    return this.card.abilityActions;
+  }
 }

@@ -13,7 +13,9 @@ import {
 export type SerializedAbility = {
   entityType: 'ability';
   id: string;
+  abilityId: string;
   canUse: boolean;
+  label: string;
   description: string;
   cooldown: number;
   manaCost: number;
@@ -107,6 +109,8 @@ export class Ability<T extends AnyCard>
     return {
       entityType: 'ability',
       id: this.id,
+      abilityId: this.abilityId,
+      label: this.blueprint.label,
       canUse: this.canUse,
       description: this.blueprint.description,
       cooldown: this.cooldown,

@@ -14,7 +14,6 @@ import { ManaManagerComponent } from './components/mana-manager.component';
 import { ModifierManager } from '../modifier/modifier-manager.component';
 import { PLAYER_EVENTS } from './player.enums';
 import { CARD_EVENTS, CARD_KINDS } from '../card/card.enums';
-import type { SerializedPlayerArtifact } from './player-artifact.entity';
 import type { Damage } from '../utils/damage';
 import { LevelManagerComponent } from './components/level-manager.component';
 import type { Unit } from '../unit/unit.entity';
@@ -36,6 +35,7 @@ export type SerializedPlayer = {
   discardPile: string[];
   remainingCardsInDeck: string[];
   remainingCountInDeck: number;
+  destinyDeck: string[];
   isPlayer1: boolean;
   maxHp: number;
   currentHp: number;
@@ -54,6 +54,7 @@ export type SerializedPlayer = {
   hero: string | null;
   canAttackPlayer: boolean;
   attackableCells: string[];
+  canLevelup: boolean;
 };
 
 export type PlayerInterceptor = {
@@ -195,6 +196,7 @@ export class Player
       handSize: this.cardManager.hand.length,
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
+      destinyDeck: [...this.cardManager.destinyDeck.cards].map(card => card.id),
       remainingCardsInDeck: [...this.cardManager.deck.cards]
         .sort((a, b) => {
           if (a.manaCost === b.manaCost) {
@@ -223,7 +225,8 @@ export class Player
       canAttackPlayer: this.canAttackPlayer,
       attackableCells: this.game.boardSystem.cells
         .filter(cell => this.canAttackAt(cell.position))
-        .map(cell => cell.id)
+        .map(cell => cell.id),
+      canLevelup: this.levelManager.canLevelup
     };
   }
 

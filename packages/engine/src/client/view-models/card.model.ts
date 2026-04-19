@@ -11,6 +11,7 @@ import type { CardKind } from '../../card/card.enums';
 import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
 import { GAME_PHASES } from '../../game/game.enums';
 import type { AbilityViewModel } from './ability.model';
+import { UseAbilityAction } from '../actions/use-ability';
 
 type CardData = SerializedSpellCard | SerializedArtifactCard | SerializedMinionCard;
 
@@ -181,14 +182,6 @@ export class CardViewModel {
     return null;
   }
 
-  get cmd() {
-    if ('cmd' in this.data) {
-      return this.data.cmd as number;
-    }
-
-    return null;
-  }
-
   get durability() {
     if ('durability' in this.data) {
       return this.data.durability as number;
@@ -265,7 +258,14 @@ export class CardViewModel {
     return this.getClient().cancelPlayCard();
   }
 
+  get abilityActions() {
+    return this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability));
+  }
+
   getActions(): CardActionRule[] {
-    return [new PlayCardAction(this.getClient())].filter(rule => rule.predicate(this));
+    return [
+      // new PlayCardAction(this.getClient()),
+      ...this.abilityActions
+    ].filter(rule => rule.predicate());
   }
 }
