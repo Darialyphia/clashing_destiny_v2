@@ -15,6 +15,8 @@ import gsap from 'gsap';
 import { MotionPathPlugin, Flip } from 'gsap/all';
 import { createConvexVue } from '@convex-vue/core';
 import '@/assets';
+import Trigger from './shared/components/RichText/Trigger.vue';
+
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(Flip);
@@ -35,6 +37,7 @@ app.use(router);
 app.use(convexVue);
 app.use(pinia);
 app.use(autoAnimatePlugin);
+app.component('trigger', Trigger);
 // app.use({
 //   install(app) {
 //     // We are registering global providers here so they can be automatically passed to the vue-pixi renderer which inherits the vue app provides.

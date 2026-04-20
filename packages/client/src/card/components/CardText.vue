@@ -13,6 +13,7 @@ import BlueprintCard from './BlueprintCard.vue';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { assets } from '@/assets';
 import { useIsKeyboardControlPressed } from '@/shared/composables/useKeyboardControl';
+import { RichText } from '@/shared/components/RichText/RichText';
 
 const { text, highlighted = true } = defineProps<{
   text: string;
@@ -127,10 +128,12 @@ const showFullText = useIsKeyboardControlPressed({
   key: 'ShiftLeft',
   modifier: null
 });
+const tmpl = '<div>Hello <Trigger>World</Trigger></div>';
 </script>
 
 <template>
   <div class="card-text" :class="{ 'show-full-text': showFullText }">
+    <RichText :html="tmpl" />
     <span
       v-for="(token, index) in tokens"
       :key="index"
