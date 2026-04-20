@@ -91,15 +91,19 @@ const isOutOfScreen = usePageLeave();
 
 const resetUiState = async () => {
   await nextTick();
+  let actionTaken = false;
+
   if (
     state.value.phase.state === GAME_PHASES.MAIN &&
     state.value.interaction.state === INTERACTION_STATES.IDLE
   ) {
     ui.value.unselectUnit();
+    actionTaken = true;
   }
 
   if (ui.value.draggedCard) {
     ui.value.draggedCard = null;
+    actionTaken = true;
   }
 
   const canCancelSpaceSelection =
@@ -108,7 +112,10 @@ const resetUiState = async () => {
     state.value.interaction.ctx.canCancel;
   if (canCancelSpaceSelection) {
     client.value.cancelSpaceSelection();
+    actionTaken = true;
   }
+
+  return actionTaken;
 };
 
 watch(isOutOfScreen, out => {
@@ -116,7 +123,17 @@ watch(isOutOfScreen, out => {
   resetUiState();
 });
 
-useEventListener('mouseup', resetUiState);
+useEventListener('mouseup', e => {
+  if (e.button !== 0) return; // only triggers on left click
+  resetUiState();
+});
+
+useEventListener('contextmenu', async e => {
+  const actionTaken = await resetUiState();
+  if (actionTaken) {
+    e.preventDefault();
+  }
+});
 </script>
 
 <template>

@@ -28,7 +28,8 @@ const { selectedUnitPath, pathColor } = useUnitArrowPath(cell, cellEl);
 const { isMovingUnit } = useUnitMoveFx(cell);
 
 const isAbilityMenuOpened = ref(false);
-const handleMouseup = () => {
+const handleMouseup = (e: MouseEvent) => {
+  if (e.button !== 0) return;
   onMouseup();
   const shouldHandleAbilities =
     !ui.value.selectedUnit &&

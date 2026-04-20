@@ -19,7 +19,8 @@ const canAttack = computed(() => {
   return ui.value.selectedUnit?.canAttackPlayer ?? false;
 });
 
-const onMouseup = () => {
+const onMouseup = (e: MouseEvent) => {
+  if (e.button !== 0) return;
   if (playerId.value === player.id) return;
   if (!ui.value.selectedUnit) return;
   if (!canAttack.value) return;
