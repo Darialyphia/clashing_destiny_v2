@@ -2,6 +2,7 @@ import type { Values } from '@game/shared';
 
 export const GAME_PHASES = {
   MULLIGAN: 'mulligan_phase',
+  LEVEL_UP: 'level_up_phase',
   MAIN: 'main_phase',
   PLAYING_CARD: 'playing_card_phase',
   GAME_END: 'game_end'

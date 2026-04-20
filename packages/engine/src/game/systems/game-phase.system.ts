@@ -13,6 +13,7 @@ import { MainPhase } from '../phases/main.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
 import { MulliganPhase } from '../phases/mulligan.phase';
 import { PlayCardPhase } from '../phases/play-card.phase';
+import { LevelUpPhase } from '../phases/level-up.phase';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { GAME_EVENTS } from '../game.events';
 
@@ -24,7 +25,8 @@ export const GAME_PHASE_TRANSITIONS = {
   PLAYER_WON: 'player_won',
   START_PLAYING_CARD: 'start_playing_card',
   COMMIT_PLAYING_CARD: 'commit_playing_card',
-  CANCEL_PLAYING_CARD: 'cancel_playing_card'
+  CANCEL_PLAYING_CARD: 'cancel_playing_card',
+  COMMIT_LEVEL_UP: 'commit_level_up'
 } as const;
 export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 
@@ -37,6 +39,10 @@ export type GamePhaseContext =
   | {
       state: BetterExtract<GamePhase, 'mulligan_phase'>;
       ctx: MulliganPhase;
+    }
+  | {
+      state: BetterExtract<GamePhase, 'level_up_phase'>;
+      ctx: LevelUpPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
@@ -57,6 +63,10 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<MulliganPhase['serialize']>;
     }
   | {
+      state: BetterExtract<GamePhase, 'level_up_phase'>;
+      ctx: ReturnType<LevelUpPhase['serialize']>;
+    }
+  | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: ReturnType<MainPhase['serialize']>;
     }
@@ -74,6 +84,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   readonly ctxDictionary = {
     [GAME_PHASES.MULLIGAN]: MulliganPhase,
+    [GAME_PHASES.LEVEL_UP]: LevelUpPhase,
     [GAME_PHASES.MAIN]: MainPhase,
     [GAME_PHASES.PLAYING_CARD]: PlayCardPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
@@ -91,14 +102,14 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.MAIN
       ),
       stateTransition(
-        GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.END_TURN,
+        GAME_PHASES.LEVEL_UP,
+        GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP,
         GAME_PHASES.MAIN
       ),
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.END_TURN,
-        GAME_PHASES.MAIN
+        GAME_PHASES.LEVEL_UP
       ),
       stateTransition(
         GAME_PHASES.MAIN,
@@ -122,6 +133,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(
         GAME_PHASES.PLAYING_CARD,
+        GAME_PHASE_TRANSITIONS.PLAYER_WON,
+        GAME_PHASES.GAME_END
+      ),
+      stateTransition(
+        GAME_PHASES.LEVEL_UP,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       )
@@ -205,6 +221,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   async commitMulligan() {
     assert(this.can(GAME_PHASE_TRANSITIONS.COMMIT_MULLIGAN), new WrongGamePhaseError());
     await this.sendTransition(GAME_PHASE_TRANSITIONS.COMMIT_MULLIGAN);
+  }
+
+  async commitLevelUp() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP);
   }
 
   async declareWinner(players: Player[]) {
