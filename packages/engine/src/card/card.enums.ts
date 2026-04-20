@@ -154,13 +154,6 @@ export const getJobById = (id: JobId): Job | undefined => {
   return Object.values(JOBS).find(job => job.id === id);
 };
 
-export const RUNES = {
-  RED: 'red',
-  BLUE: 'blue',
-  YELLOW: 'yellow'
-} as const;
-export type Rune = Values<typeof RUNES>;
-
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   DECK: 'deck',
@@ -168,3 +161,10 @@ export const CARD_LOCATIONS = {
   BOARD: 'board'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
+
+export const MINION_TYPES = {
+  MELEE: 'MELEE',
+  RANGED: 'RANGED',
+  FLYER: 'FLYER'
+} as const;
+export type MinionType = Values<typeof MINION_TYPES>;

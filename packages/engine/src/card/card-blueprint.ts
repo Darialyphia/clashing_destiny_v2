@@ -1,5 +1,13 @@
 import type { Game } from '../game/game';
-import type { CARD_KINDS, CardKind, CardSetId, Rarity, Tag, JobId } from './card.enums';
+import {
+  type CARD_KINDS,
+  type CardKind,
+  type CardSetId,
+  type Rarity,
+  type Tag,
+  type JobId,
+  type MinionType
+} from './card.enums';
 import type { MinionCard } from './entities/minion-card.entity';
 import type { SpellCard } from './entities/spell-card.entity';
 import type { ArtifactCard } from './entities/artifact-card.entity';
@@ -48,6 +56,7 @@ export type CardBlueprintBase = {
 
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
+  subType: MinionType;
   manaCost: number;
   abilities: AbilityBlueprint<MinionCard>[];
   vfx: {

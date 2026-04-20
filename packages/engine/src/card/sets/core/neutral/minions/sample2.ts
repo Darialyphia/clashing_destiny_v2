@@ -12,6 +12,7 @@ import {
   CARD_LOCATIONS,
   CARD_SETS,
   JOBS,
+  MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
 
@@ -23,6 +24,7 @@ export const sample2: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
+  subType: MINION_TYPES.RANGED,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL.id],
   manaCost: 2,

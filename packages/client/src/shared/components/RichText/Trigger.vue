@@ -1,7 +1,50 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { color = 'red' } = defineProps<{
+  color?: 'red' | 'blue' | 'green' | 'yellow';
+}>();
+</script>
 
 <template>
-  <span class="bg-blue-5"><slot /></span>
+  <span class="trigger" :class="color"><slot /></span>
 </template>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+.trigger {
+  background: linear-gradient(
+    to bottom,
+    var(--top-color) 50%,
+    var(--bottom-color) 50%
+  );
+  color: white;
+  padding-inline: calc(6px * var(--pixel-scale));
+
+  clip-path: polygon(
+    calc(3px * var(--pixel-scale)) 0%,
+    100% 0%,
+    calc(100% - 3px * var(--pixel-scale)) 100%,
+    0% 100%
+  );
+  font-weight: 500;
+}
+
+.red {
+  --top-color: var(--red-7);
+  --bottom-color: var(--red-10);
+}
+
+.blue {
+  --top-color: var(--blue-7);
+  --bottom-color: var(--blue-10);
+}
+
+.green {
+  --top-color: var(--green-7);
+  --bottom-color: var(--green-10);
+}
+
+.yellow {
+  --top-color: var(--yellow-5);
+  --bottom-color: var(--yellow-8);
+  color: black;
+}
+</style>

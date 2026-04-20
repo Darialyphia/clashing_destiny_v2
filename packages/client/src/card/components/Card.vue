@@ -136,7 +136,7 @@ const resizeDescription = () => {
 useResizeObserver(descriptionInner, resizeDescription);
 
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
-const DESCRIPTION_MAX_TEXT_SIZE = 15;
+const DESCRIPTION_MAX_TEXT_SIZE = 14;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()

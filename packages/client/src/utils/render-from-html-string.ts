@@ -37,9 +37,23 @@ function nodeToVNode(node: Node): VNodeChild | null {
     .map(nodeToVNode)
     .filter((x): x is VNodeChild => x !== null);
 
-  const target = isNativeHtmlTag(tag) ? tag : resolveComponent(tag);
+  if (isNativeHtmlTag(tag)) {
+    return h(tag, props, children);
+  }
 
-  return h(target as string | Component, props, children);
+  const target = resolveComponent(tag);
+
+  return h(target as Component, props, makeSlots(children));
+}
+
+function makeSlots(children: VNodeChild[]) {
+  if (children.length === 0) {
+    return undefined;
+  }
+
+  return {
+    default: () => children
+  };
 }
 
 function elementAttributesToProps(el: Element): Record<string, unknown> {
