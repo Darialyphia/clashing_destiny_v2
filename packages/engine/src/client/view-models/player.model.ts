@@ -133,6 +133,10 @@ export class PlayerViewModel {
     return this.data.maxLevel;
   }
 
+  get isExhausted() {
+    return this.data.isExhausted;
+  }
+
   get frontRow() {
     return this.data.frontRow.map(cardId => {
       return this.getEntities()[cardId] as BoardCellViewModel;
@@ -148,6 +152,20 @@ export class PlayerViewModel {
   get hero() {
     if (!this.data.hero) return null;
     return this.getEntities()[this.data.hero] as CardViewModel;
+  }
+
+  get canAttack() {
+    return this.data.canAttackPlayer || this.data.attackableCells.length > 0;
+  }
+
+  get canAttackPlayer() {
+    return this.data.canAttackPlayer;
+  }
+
+  get attackableCells() {
+    return this.data.attackableCells.map(cellId => {
+      return this.getEntities()[cellId] as BoardCellViewModel;
+    });
   }
 
   getDiscardPile() {

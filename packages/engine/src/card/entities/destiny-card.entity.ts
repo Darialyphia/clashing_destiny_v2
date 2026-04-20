@@ -17,6 +17,7 @@ import { Interceptable } from '../../utils/interceptable';
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedDestinyCard = SerializedCard & {
   expCost: number;
+  baseExpCost: number;
   unplayableReason: string | null;
 };
 
@@ -124,7 +125,8 @@ export class DestinyCard extends Card<
     return {
       ...this.serializeBase(),
       unplayableReason: this.unplayableReason,
-      expCost: this.expCost
+      expCost: this.expCost,
+      baseExpCost: this.blueprint.expCost
     };
   }
 }

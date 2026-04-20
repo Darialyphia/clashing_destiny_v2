@@ -5,7 +5,8 @@ import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
 import type { AnyFunction, EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
-import { Clock } from './clock';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import { ClockManager, CLOCK_MANAGER_EVENTS } from './clock-manager';
 
 export type RoomOptions = {
   game: {
@@ -51,7 +52,7 @@ const PLAYER_ACTION_CLOCK_TIME = 60 * 1000;
 export class Room {
   private engine: Game;
 
-  private playerClocks = new Map<string, Clock>();
+  private clockManager: ClockManager;
   private players = new Map<string, RoomPlayer>();
 
   private spectators = new Set<IoSocket>();
@@ -71,6 +72,11 @@ export class Room {
     private options: RoomOptions
   ) {
     this.engine = new Game(this.options.initialState);
+    this.clockManager = new ClockManager({
+      playerIds: this.options.game.players.map(p => p.userId),
+      clockTime: PLAYER_ACTION_CLOCK_TIME,
+      disabled: this.options.game.options.disableTurnTimers
+    });
   }
 
   get disableTurnTimers() {
@@ -91,9 +97,7 @@ export class Room {
 
   async shutdown() {
     await this.engine.shutdown();
-    this.players.forEach(player => {
-      this.playerClocks.get(player.userId)?.shutdown();
-    });
+    this.clockManager.shutdown();
 
     this.callbackSubscriptionsBysocket.forEach((subscriptions, socket) => {
       subscriptions.forEach(({ eventName, callback }) => {
@@ -112,16 +116,14 @@ export class Room {
     return this.engineInitPromise;
   }
 
-  private startActivePlayerclock() {
+  private startActivePlayerClock() {
     const activePlayerId = this.engine.activePlayer.id;
-
-    this.playerClocks.get(activePlayerId)!.start();
+    this.clockManager.startClockForPlayer(activePlayerId);
   }
 
-  private stopActivePlayerclock() {
+  private stopActivePlayerClock() {
     const activePlayerId = this.engine.activePlayer.id;
-
-    this.playerClocks.get(activePlayerId)!.stop();
+    this.clockManager.stopClockForPlayer(activePlayerId);
   }
 
   async start() {
@@ -146,56 +148,55 @@ export class Room {
       this.handleSpectatorSubscription(spectatorSocket);
     });
 
-    if (!this.disableTurnTimers) {
-      this.handleClocks();
-      this.startActivePlayerclock();
-    }
+    this.initializeClocks();
+    this.startActivePlayerClock();
   }
 
-  private handleClocks() {
-    this.options.game.players.forEach(player => {
-      const clock = new Clock(PLAYER_ACTION_CLOCK_TIME);
-      this.playerClocks.set(player.userId, clock);
+  private initializeClocks() {
+    this.clockManager.initialize();
 
-      clock.on('tick', this.emitClocks.bind(this));
+    this.clockManager.on(CLOCK_MANAGER_EVENTS.TICK, async clockState => {
+      await this.emitter.emit(ROOM_EVENTS.CLOCK_TICK, clockState);
+    });
 
-      clock.on('timeout', async () => {
-        await this.engine.inputSystem.dispatch({
-          type: 'interactionTimeout',
-          payload: { playerId: player.userId }
-        });
+    this.clockManager.on(CLOCK_MANAGER_EVENTS.TIMEOUT, async ({ playerId }) => {
+      await this.engine.inputSystem.dispatch({
+        type: 'interactionTimeout',
+        payload: { playerId }
       });
     });
 
     this.engine.onActivePlayerChange(() => {
-      this.options.game.players.forEach(player => {
-        this.playerClocks.get(player.userId)!.reset();
-      });
-      this.stopActivePlayerclock();
-      this.startActivePlayerclock();
+      this.clockManager.resetAllClocks();
+      this.stopActivePlayerClock();
+      this.startActivePlayerClock();
     });
 
     this.engine.on(GAME_EVENTS.TURN_START, () => {
-      this.stopActivePlayerclock();
-      this.startActivePlayerclock();
+      this.stopActivePlayerClock();
+      this.startActivePlayerClock();
     });
-    this.engine.on(GAME_EVENTS.INPUT_START, () => {
-      this.stopActivePlayerclock();
-    });
-  }
 
-  private emitClocks() {
-    void this.emitter.emit(ROOM_EVENTS.CLOCK_TICK, {
-      ...Object.fromEntries(
-        Array.from(this.playerClocks.entries()).map(([userId, clock]) => [
-          userId,
-          {
-            max: PLAYER_ACTION_CLOCK_TIME / 1000,
-            remaining: Math.round(clock.getRemainingTime() / 1000),
-            isActive: clock.isRunning()
-          }
-        ])
-      )
+    this.engine.on(GAME_EVENTS.INPUT_START, () => {
+      this.stopActivePlayerClock();
+    });
+
+    this.engine.on(GAME_EVENTS.AFTER_CHANGE_PHASE, event => {
+      const newPhase = event.data.to.state;
+      const previousPhase = event.data.from;
+
+      // When entering level up phase, start clocks for all players
+      if (newPhase === GAME_PHASES.LEVEL_UP) {
+        this.clockManager.resetAllClocks();
+        this.clockManager.startAllClocks();
+      }
+
+      // When exiting level up phase, stop all clocks and resume normal behavior
+      if (previousPhase === GAME_PHASES.LEVEL_UP) {
+        this.clockManager.stopAllClocks();
+        this.clockManager.resetAllClocks();
+        this.startActivePlayerClock();
+      }
     });
   }
 

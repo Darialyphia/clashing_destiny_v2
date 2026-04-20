@@ -99,6 +99,7 @@ const resetUiState = async () => {
     state.value.interaction.state === INTERACTION_STATES.IDLE
   ) {
     ui.value.unselectUnit();
+    ui.value.unselectHero();
     actionTaken = true;
   }
 

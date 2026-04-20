@@ -335,8 +335,13 @@ export class GameClient {
     });
   }
 
-  attack(unitId: string, position: Point | null) {
-    this.ui.unselectUnit();
+  attack(unitId: string | null, position: Point | null) {
+    if (unitId) {
+      this.ui.unselectUnit();
+    } else {
+      this.ui.unselectHero();
+    }
+
     this.dispatch({
       type: 'attack',
       payload: {

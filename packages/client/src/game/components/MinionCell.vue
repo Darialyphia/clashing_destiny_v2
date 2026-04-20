@@ -19,30 +19,35 @@ const ui = useGameUi();
 const { client, playerId } = useGameClient();
 const isInAoe = useIsInAoe();
 
-const cellEl = useTemplateRef<HTMLElement>('cell');
-
 const { isTargetable, isTargeted } = useCellTargeting(cell);
 const { canMoveTo, canAttack, canSelectUnit } = useUnitActions(cell);
-const { onMousedown, onMouseup } = useUnitDragSelection(cell, canSelectUnit);
-const { selectedUnitPath, pathColor } = useUnitArrowPath(cell, cellEl);
+const dragSelection = useUnitDragSelection(cell, canSelectUnit);
+const { selectedUnitPath, pathColor } = useUnitArrowPath(cell);
 const { isMovingUnit } = useUnitMoveFx(cell);
 
 const isAbilityMenuOpened = ref(false);
+
+const handleAbilities = () => {
+  const availableAbilities = cell.unit!.abilities;
+  if (availableAbilities.length === 1) {
+    return availableAbilities[0].handler(cell.unit!.card);
+  }
+  if (availableAbilities.length > 1) {
+    isAbilityMenuOpened.value = true;
+  }
+};
+
 const handleMouseup = (e: MouseEvent) => {
   if (e.button !== 0) return;
-  onMouseup();
+  dragSelection.onMouseup();
+
   const shouldHandleAbilities =
     !ui.value.selectedUnit &&
     cell.unit &&
     cell.unit.getPlayer()?.id === playerId.value;
+
   if (shouldHandleAbilities) {
-    const availableAbilities = cell.unit.abilities;
-    if (availableAbilities.length === 1) {
-      return availableAbilities[0].handler(cell.unit.card);
-    }
-    if (availableAbilities.length > 1) {
-      return (isAbilityMenuOpened.value = true);
-    }
+    handleAbilities();
   } else {
     ui.value.onBoardCellClick(cell);
   }
@@ -51,7 +56,7 @@ const handleMouseup = (e: MouseEvent) => {
 
 <template>
   <div
-    ref="cell"
+    :id="ui.DOMSelectors.cell(cell.position.x, cell.position.y).id"
     class="minion-cell"
     :class="{
       'is-in-aoe':
@@ -66,7 +71,7 @@ const handleMouseup = (e: MouseEvent) => {
     @mouseenter="ui.hoverCell(cell)"
     @mouseleave="ui.unhoverCell()"
     @mouseup.stop="handleMouseup"
-    @mousedown="onMousedown"
+    @mousedown="dragSelection.onMousedown"
   >
     <AbilityMenu
       v-if="cell.unit"

@@ -56,6 +56,7 @@ export type SerializedPlayer = {
   attackableCells: string[];
   canLevelup: boolean;
   talents: string[];
+  isExhausted: boolean;
 };
 
 export type PlayerInterceptor = {
@@ -228,7 +229,8 @@ export class Player
         .filter(cell => this.canAttackAt(cell.position))
         .map(cell => cell.id),
       canLevelup: this.levelManager.canLevelup,
-      talents: this.levelManager.talents.map(talent => talent.id)
+      talents: this.levelManager.talents.map(talent => talent.id),
+      isExhausted: this.hero.isExhausted
     };
   }
 

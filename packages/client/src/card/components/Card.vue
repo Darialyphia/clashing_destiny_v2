@@ -38,8 +38,8 @@ const {
     kind: CardKind;
     manaCost?: number | null;
     baseManaCost?: number | null;
-    destinyCost?: number | null;
-    baseDestinyCost?: number | null;
+    expCost?: number | null;
+    baseExpCost?: number | null;
     rarity: Rarity;
     atk?: number | null;
     retaliation?: number | null;
@@ -178,14 +178,11 @@ const costStatus = computed(() => {
       return '';
 
     return card.manaCost < card.baseManaCost ? 'buffed' : 'debuffed';
-  } else if (isDefined(card.destinyCost)) {
-    if (
-      !isDefined(card.baseDestinyCost) ||
-      card.baseDestinyCost === card.destinyCost
-    )
+  } else if (isDefined(card.expCost)) {
+    if (!isDefined(card.baseExpCost) || card.baseExpCost === card.expCost)
       return '';
 
-    return card.destinyCost < card.baseDestinyCost ? 'buffed' : 'debuffed';
+    return card.expCost < card.baseExpCost ? 'buffed' : 'debuffed';
   }
 
   return '';
@@ -260,13 +257,13 @@ const jobsBgs = computed(() => {
             </div>
           </div>
           <div
-            v-if="isDefined(card.destinyCost)"
-            class="destiny-cost"
+            v-if="isDefined(card.expCost)"
+            class="exp-cost"
             :class="costStatus"
-            data-label="Dest."
+            data-label="EXP"
           >
-            <div class="dual-text" :data-text="card.destinyCost">
-              {{ card.destinyCost }}
+            <div class="dual-text" :data-text="card.expCost">
+              {{ card.expCost }}
             </div>
           </div>
         </div>
@@ -671,8 +668,8 @@ const jobsBgs = computed(() => {
   }
 }
 
-.destiny-cost {
-  background-image: url('@/assets/ui/card/destiny-cost.png');
+.exp-cost {
+  background-image: url('@/assets/ui/card/exp-cost.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(3px * var(--pixel-scale));
   width: calc(24px * var(--pixel-scale));

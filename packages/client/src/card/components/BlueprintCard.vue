@@ -36,7 +36,8 @@ const mergedFoilOptions = computed(() => ({
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
-      destinyCost: (blueprint as any).destinyCost,
+      expCost: (blueprint as any).expCost,
+      baseExpCost: (blueprint as any).baseExpCost,
       rarity: (blueprint as any).rarity,
       atk:
         (blueprint as any).atk ??

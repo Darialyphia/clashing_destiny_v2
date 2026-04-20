@@ -1,32 +1,14 @@
-import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
 import { useGameClient, useGameState, useGameUi } from './useGameClient';
-import { isDefined, useMouse } from '@vueuse/core';
+import { useMouse } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
-export const useUnitArrowPath = (cell: BoardCellViewModel) => {
+export const useHeroArrowPath = (hero: CardViewModel) => {
   const { client } = useGameClient();
   const ui = useGameUi();
   const state = useGameState();
-  const selectedUnitPath = ref('');
-
+  const heroPath = ref('');
   const { x, y } = useMouse();
-
-  const unit = computed(() => {
-    if (client.value.isPlayingFx) return null;
-
-    const interaction = state.value.interaction;
-    if (interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
-      if (cell.unit?.card.id === interaction.ctx.source) {
-        return cell.unit;
-      }
-    } else if (ui.value.selectedUnit) {
-      if (cell.unit?.id === ui.value.selectedUnit.id) {
-        return ui.value.selectedUnit;
-      }
-    }
-
-    return null;
-  });
 
   const pathColor = computed(() => {
     if (
@@ -38,17 +20,15 @@ export const useUnitArrowPath = (cell: BoardCellViewModel) => {
     return 'red';
   });
 
-  const shouldBeDisplayed = computed(() => isDefined(unit.value));
+  const shouldBeDisplayed = computed(
+    () => !client.value.isPlayingFx && ui.value.selectedHero?.id === hero.id
+  );
 
   const computeParabolaPath = () => {
     if (!shouldBeDisplayed.value) return '';
-    const cellEl = ui.value.DOMSelectors.cell(
-      cell.position.x,
-      cell.position.y
-    ).element;
-    if (!cellEl) return '';
-
-    const rect = cellEl.getBoundingClientRect();
+    const heroEl = ui.value.DOMSelectors.hero(hero.player.id).element;
+    if (!heroEl) return '';
+    const rect = heroEl.getBoundingClientRect();
     const startX = rect.left + rect.width / 2;
     const startY = rect.top + rect.height / 2;
     const endX = x.value;
@@ -67,13 +47,13 @@ export const useUnitArrowPath = (cell: BoardCellViewModel) => {
   watch(
     [() => ui.value.selectedUnit, x, y],
     () => {
-      selectedUnitPath.value = computeParabolaPath();
+      heroPath.value = computeParabolaPath();
     },
     { deep: true }
   );
 
   return {
-    selectedUnitPath,
+    heroPath,
     pathColor
   };
 };

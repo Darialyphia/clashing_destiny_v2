@@ -113,6 +113,20 @@ export class CardViewModel {
     return null;
   }
 
+  get expCost() {
+    if ('expCost' in this.data) {
+      return this.data.expCost as number;
+    }
+    return null;
+  }
+
+  get baseExpCost() {
+    if ('baseExpCost' in this.data) {
+      return this.data.baseExpCost as number;
+    }
+    return null;
+  }
+
   get jobs() {
     return this.data.jobs;
   }
@@ -235,13 +249,6 @@ export class CardViewModel {
       );
     }
     return [];
-  }
-
-  get isUsingAbility() {
-    if ('isUsingAbility' in this.data) {
-      return this.data.isUsingAbility as boolean;
-    }
-    return false;
   }
 
   getPlayer() {

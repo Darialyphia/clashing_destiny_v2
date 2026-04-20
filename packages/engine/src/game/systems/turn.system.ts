@@ -79,7 +79,6 @@ export class TurnSystem extends System<never> {
   }
 
   async switchInitiative() {
-    console.trace('Switching initiative');
     await this.game.inputSystem.schedule(async () => {
       const opponentCanReceiveInitiative =
         !this._initiativePlayer.opponent.hasPassedThisRound;

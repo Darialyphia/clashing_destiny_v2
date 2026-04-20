@@ -1,6 +1,6 @@
 import { GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
 import type { GameClient } from '../client';
-import type { CardViewModel } from '../view-models/card.model';
+import { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
 import type { UnitViewModel } from '../view-models/unit.model';
 import type { BoardCellViewModel } from '../view-models/board-cell.model';
@@ -61,6 +61,8 @@ export class UiController {
 
   private _selectedUnit: UnitViewModel | null = null;
 
+  private _selectedHero: CardViewModel | null = null;
+
   isHandExpanded = false;
 
   draggedCard: CardViewModel | null = null;
@@ -92,8 +94,6 @@ export class UiController {
     playedCardZone: new DOMSelector('played-card'),
     cardInPlayedCardZone: (cardId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.playedCardZone.selector),
-    heroHealthIndicator: (playerId: string) =>
-      new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     unit: (unitId: string) =>
       new DOMSelector(`unit-${unitId}`, this.DOMSelectors.board.selector),
@@ -152,6 +152,10 @@ export class UiController {
 
   get selectedUnit() {
     return this._selectedUnit;
+  }
+
+  get selectedHero() {
+    return this._selectedHero;
   }
 
   get playedCardId() {
@@ -277,10 +281,20 @@ export class UiController {
 
   selectUnit(unit: UnitViewModel) {
     this._selectedUnit = unit;
+    this.unselectHero();
   }
 
   unselectUnit() {
     this._selectedUnit = null;
+  }
+
+  selectHero(hero: CardViewModel) {
+    this._selectedHero = hero;
+    this.unselectUnit();
+  }
+
+  unselectHero() {
+    this._selectedHero = null;
   }
 
   get explainerMessage() {

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useGameState, useMyPlayer } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useMyPlayer
+} from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPileModal from './DiscardPileModal.vue';
@@ -7,6 +11,7 @@ import Talent from './Talent.vue';
 
 const player = useMyPlayer();
 const state = useGameState();
+const { client } = useGameClient();
 
 const isDiscardPileOpened = ref(false);
 
@@ -22,12 +27,16 @@ onMounted(() => {
   preloadAsset('ui/exp-bar-4');
   preloadAsset('ui/exp-bar-5');
 });
+
+const hasInitiative = computed(() => {
+  return player.value.id === client.value.getActivePlayerId();
+});
 </script>
 
 <template>
   <div class="my-player-infos">
     <section class="left-side">
-      <div class="avatar" />
+      <div class="avatar" :class="{ 'has-initiative': hasInitiative }" />
       <div class="infos-bar">
         <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
         {{ player.remainingCardsInDeck.length }}
@@ -209,5 +218,9 @@ onMounted(() => {
   &:hover {
     filter: brightness(1.3);
   }
+}
+
+.has-initiative {
+  filter: drop-shadow(0 0 10px var(--yellow-2)) brightness(125%);
 }
 </style>

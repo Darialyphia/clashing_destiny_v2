@@ -15,24 +15,10 @@ export const erina: HeroBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE.id],
   tags: [],
-  atk: 0,
+  atk: 1,
   retaliation: 0,
   maxHp: 20,
-  abilities: [
-    {
-      id: 'erina-draw',
-      label: 'Draw a card',
-      description: 'Draw a card.',
-      manaCost: 1,
-      getTargets: () => Promise.resolve([]),
-      getAoe: () => new NoAOEShape(TARGETING_TYPE.ANYWHERE, {}),
-      getCooldown: () => 0,
-      canUse: () => true,
-      async onResolve(game, card) {
-        await card.player.cardManager.drawFromDeck(1);
-      }
-    }
-  ],
+  abilities: [],
   async onInit(game, card) {},
   async onPlay(game, card) {}
 };
