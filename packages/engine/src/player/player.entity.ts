@@ -285,6 +285,8 @@ export class Player
         minion.activate();
       }
     }
+    this.hero.wakeUp();
+    this.combat.reset();
 
     await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
   }

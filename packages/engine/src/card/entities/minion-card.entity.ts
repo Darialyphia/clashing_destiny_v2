@@ -36,7 +36,6 @@ export type SerializedMinionCard = SerializedCard & {
   manaCost: number;
   unplayableReason: string | null;
   abilities: string[];
-  isUsingAbility: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -59,7 +58,6 @@ export class MinionCard extends Card<
   MinionBlueprint
 > {
   readonly abilities: Ability<MinionCard>[];
-  private isUsingAbility = false;
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
@@ -237,8 +235,7 @@ export class MinionCard extends Card<
       remainingHp: this.unit?.remainingHp ?? 0,
       manaCost: this.manaCost,
       unplayableReason: this.unplayableReason,
-      abilities: this.abilities.map(ability => ability.id),
-      isUsingAbility: this.isUsingAbility
+      abilities: this.abilities.map(ability => ability.id)
     };
   }
 
@@ -307,9 +304,8 @@ export class MinionCard extends Card<
   async useAbility(abilityId: string) {
     const ability = this.getAbility(abilityId);
     if (!ability) return;
-    this.isUsingAbility = true;
-    await ability.use();
-    await this.unit?.exhaust();
-    this.isUsingAbility = false;
+    await ability.use(async () => {
+      await this.unit?.exhaust();
+    });
   }
 }

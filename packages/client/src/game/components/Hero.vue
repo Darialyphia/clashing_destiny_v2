@@ -65,7 +65,10 @@ const canSelectHero = computed(() => {
   return !player.isExhausted && player.canAttack;
 });
 
-const dragSelection = useHeroDragSelection(player.hero!, canSelectHero);
+const dragSelection = useHeroDragSelection(
+  computed(() => player.hero!),
+  canSelectHero
+);
 
 const isAbilityMenuOpened = ref(false);
 const handleAbilities = () => {

@@ -179,7 +179,8 @@ export class ArtifactCard extends Card<
   async useAbility(abilityId: string) {
     const ability = this.getAbility(abilityId);
     if (!ability) return;
-    await ability.use();
-    await this.artifact?.exhaust();
+    await ability.use(async () => {
+      await this.artifact?.exhaust();
+    });
   }
 }

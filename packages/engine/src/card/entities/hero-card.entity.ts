@@ -170,8 +170,9 @@ export class HeroCard extends Card<
   async useAbility(abilityId: string) {
     const ability = this.getAbility(abilityId);
     if (!ability) return;
-    await ability.use();
-    this.exhaust();
+    await ability.use(async () => {
+      this.exhaust();
+    });
   }
 
   getAttackDamage(target: Unit | Player) {

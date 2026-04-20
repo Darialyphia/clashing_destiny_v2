@@ -1,4 +1,4 @@
-import type { Serializable } from '@game/shared';
+import type { MaybePromise, Serializable } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { AbilityBlueprint } from '../card-blueprint';
 import type { AnyCard } from './card.entity';
@@ -95,7 +95,7 @@ export class Ability<T extends AnyCard>
     });
   }
 
-  async use() {
+  async use(onSuccess?: () => MaybePromise<void>) {
     const { targets, cancelled } = await this.getTargets();
     if (cancelled) return;
 
@@ -118,6 +118,9 @@ export class Ability<T extends AnyCard>
       ABILITY_EVENTS.ABILITY_AFTER_USE,
       new AbilityAfterUseEvent({ ability: this as any, card: this.card })
     );
+
+    await onSuccess?.();
+
     if (this.shouldSwitchInitiativeAfterUse) {
       await this.game.turnSystem.switchInitiative();
     }
