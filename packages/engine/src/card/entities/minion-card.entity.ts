@@ -11,7 +11,7 @@ import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { Interceptable } from '../../utils/interceptable';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, MINION_TYPES, type MinionType } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
 import {
@@ -26,6 +26,8 @@ import {
 } from '../events/minion.events';
 import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness.modifier';
 import { Ability } from './ability.entity';
+import { match } from 'ts-pattern';
+import { RangedTargetingStrategy } from '../../targeting/ranged-targeting-strategy';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedMinionCard = SerializedCard & {
@@ -36,6 +38,7 @@ export type SerializedMinionCard = SerializedCard & {
   manaCost: number;
   unplayableReason: string | null;
   abilities: string[];
+  subKind: MinionType;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -80,9 +83,19 @@ export class MinionCard extends Card<
     );
   }
 
+  isValidCellForsubKind(cell: BoardCell): boolean {
+    if (!cell.player?.equals(this.player)) return false;
+
+    return match(this.blueprint.subKind)
+      .with(MINION_TYPES.MELEE, () => cell.isFrontRow)
+      .with(MINION_TYPES.RANGED, () => cell.isBackRow)
+      .with(MINION_TYPES.FLYER, () => true)
+      .exhaustive();
+  }
+
   get hasAvailablePosition() {
     return this.game.boardSystem.cells.some(
-      cell => cell.player?.equals(this.player) && !cell.isOccupied
+      cell => this.isValidCellForsubKind(cell) && !cell.isOccupied
     );
   }
 
@@ -139,12 +152,12 @@ export class MinionCard extends Card<
           },
           getLabel: () => `Select position to summon ${this.blueprint.name}`,
           isElligible: cell => {
-            return !!(cell.player?.equals(this.player) && !cell.isOccupied);
+            return !!(this.isValidCellForsubKind(cell) && !cell.isOccupied);
           },
           timeoutFallback: [
             this.game.boardSystem
               .getCellsForPlayer(this.player)
-              .filter(cell => !cell.isOccupied)[0]
+              .filter(cell => this.isValidCellForsubKind(cell) && !cell.isOccupied)[0]
           ],
           canCommit(selectedSlots) {
             return selectedSlots.length === 1;
@@ -235,7 +248,8 @@ export class MinionCard extends Card<
       remainingHp: this.unit?.remainingHp ?? 0,
       manaCost: this.manaCost,
       unplayableReason: this.unplayableReason,
-      abilities: this.abilities.map(ability => ability.id)
+      abilities: this.abilities.map(ability => ability.id),
+      subKind: this.blueprint.subKind
     };
   }
 
@@ -256,7 +270,20 @@ export class MinionCard extends Card<
   }
 
   get attackPattern() {
-    return new MeleeTargetingStrategy(this.game, this.unit, this.unit.attackTargetType);
+    return match(this.blueprint.subKind)
+      .with(
+        MINION_TYPES.MELEE,
+        () => new MeleeTargetingStrategy(this.game, this.unit, TARGETING_TYPE.ENEMY_UNIT)
+      )
+      .with(
+        MINION_TYPES.RANGED,
+        () => new RangedTargetingStrategy(this.game, this.unit, TARGETING_TYPE.ENEMY_UNIT)
+      )
+      .with(
+        MINION_TYPES.FLYER,
+        () => new MeleeTargetingStrategy(this.game, this.unit, TARGETING_TYPE.ENEMY_UNIT)
+      )
+      .exhaustive();
   }
 
   get attackAOEShape() {

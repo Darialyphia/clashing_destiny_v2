@@ -134,6 +134,13 @@ export class CardViewModel {
     return this.data.location;
   }
 
+  get subKind() {
+    if ('subKind' in this.data) {
+      return this.data.subKind as string;
+    }
+    return null;
+  }
+
   get atk() {
     if ('atk' in this.data) {
       return this.data.atk as number;

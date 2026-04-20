@@ -3,6 +3,7 @@ import { Unit } from '../unit.entity';
 import { UNIT_EVENTS } from '../unit.enums';
 import { UnitAfterMoveEvent, UnitBeforeMoveEvent } from '../unit-events';
 import type { Game } from '../../game/game';
+import { MINION_TYPES } from '../../card/card.enums';
 
 export type MovementComponentOptions = {
   position: Point;
@@ -48,7 +49,10 @@ export class MovementComponent {
   canMoveTo(point: Point) {
     const cell = this.game.boardSystem.getCellAt(point);
     if (!cell) return false;
-    return !!cell.player?.equals(this.unit.player) && !cell.isOccupied;
+    if (!cell.player?.equals(this.unit.player)) return false;
+    if (cell.isOccupied) return false;
+
+    return this.unit.card.isValidCellForsubKind(cell);
   }
 
   async move(to: Point) {

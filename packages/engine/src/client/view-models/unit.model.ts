@@ -108,8 +108,8 @@ export class UnitViewModel {
       return false;
     }
     if (cell.unit) return false;
-
-    return this.canMove;
+    if (!this.canMove) return false;
+    return this.data.movableCells.includes(cell.id);
   }
 
   get canAttackPlayer() {

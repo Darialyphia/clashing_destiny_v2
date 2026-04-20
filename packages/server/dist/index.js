@@ -750,7 +750,7 @@ var require_mediaType = __commonJS({
         return null;
       var params = /* @__PURE__ */ Object.create(null);
       var q = 1;
-      var subtype = match[2];
+      var subKind = match[2];
       var type = match[1];
       if (match[3]) {
         var kvps = splitParameters(match[3]).map(splitKeyValuePair);
@@ -768,7 +768,7 @@ var require_mediaType = __commonJS({
       }
       return {
         type,
-        subtype,
+        subKind,
         params,
         q,
         i: i2
@@ -795,9 +795,9 @@ var require_mediaType = __commonJS({
       } else if (spec.type != "*") {
         return null;
       }
-      if (spec.subtype.toLowerCase() == p2.subtype.toLowerCase()) {
+      if (spec.subKind.toLowerCase() == p2.subKind.toLowerCase()) {
         s2 |= 2;
-      } else if (spec.subtype != "*") {
+      } else if (spec.subKind != "*") {
         return null;
       }
       var keys2 = Object.keys(spec.params);
@@ -833,7 +833,7 @@ var require_mediaType = __commonJS({
       return b2.q - a2.q || b2.s - a2.s || a2.o - b2.o || a2.i - b2.i || 0;
     }
     function getFullType(spec) {
-      return spec.type + "/" + spec.subtype;
+      return spec.type + "/" + spec.subKind;
     }
     function isQuality(spec) {
       return spec.q > 0;

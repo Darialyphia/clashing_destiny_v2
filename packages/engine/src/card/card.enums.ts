@@ -58,12 +58,12 @@ export const JOBS = {
     shortName: 'Neutral',
     isAdvanced: false
   },
-  // WARRIOR: {
-  //   id: 'warrior',
-  //   name: 'Warrior',
-  //   shortName: 'War',
-  //   isAdvanced: false
-  // },
+  WARRIOR: {
+    id: 'warrior',
+    name: 'Warrior',
+    shortName: 'War',
+    isAdvanced: false
+  },
   MAGE: {
     id: 'mage',
     name: 'Mage',

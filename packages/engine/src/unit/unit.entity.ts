@@ -59,6 +59,7 @@ export type SerializedUnit = {
   canMove: boolean;
   canAttackPlayer: boolean;
   attackableCells: string[];
+  movableCells: string[];
   isBackRow: boolean;
   isFrontRow: boolean;
 };
@@ -710,6 +711,9 @@ export class Unit
       canAttackPlayer: this.canAttackPlayer,
       attackableCells: this.game.boardSystem.cells
         .filter(cell => this.canAttackAt(cell.position))
+        .map(cell => cell.id),
+      movableCells: this.game.boardSystem.cells
+        .filter(cell => this.canMoveTo(cell.position))
         .map(cell => cell.id),
       isBackRow: this.isOnBackRow,
       isFrontRow: this.isOnFrontRow

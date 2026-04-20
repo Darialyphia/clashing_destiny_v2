@@ -26,7 +26,7 @@ export const sample: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
-  subType: MINION_TYPES.MELEE,
+  subKind: MINION_TYPES.MELEE,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL.id],
   manaCost: 1,

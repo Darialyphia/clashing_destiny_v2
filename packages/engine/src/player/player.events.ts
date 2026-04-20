@@ -1,4 +1,3 @@
-import type { Rune } from '../card/card.enums';
 import type { DeckCard } from '../card/components/card-manager.component';
 import type { AnyCard } from '../card/entities/card.entity';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
@@ -53,30 +52,6 @@ export class PlayerManaChangeEvent extends TypedSerializableEvent<
   }
 }
 
-export class PlayerGainRuneEvent extends TypedSerializableEvent<
-  { player: Player; runes: Partial<Record<Rune, number>> },
-  { player: string; runes: Partial<Record<Rune, number>> }
-> {
-  serialize() {
-    return {
-      player: this.data.player.id,
-      runes: this.data.runes
-    };
-  }
-}
-
-export class PlayerLoseRuneEvent extends TypedSerializableEvent<
-  { player: Player; runes: Partial<Record<Rune, number>> },
-  { player: string; runes: Partial<Record<Rune, number>> }
-> {
-  serialize() {
-    return {
-      player: this.data.player.id,
-      runes: this.data.runes
-    };
-  }
-}
-
 export class PlayerHealEvent extends TypedSerializableEvent<
   { player: Player; amount: number; source: AnyCard },
   { player: string; amount: number; source: string }
@@ -121,10 +96,6 @@ export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_AFTER_PLAY_CARD]: PlayerPlayCardEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE]: PlayerManaChangeEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE]: PlayerManaChangeEvent;
-  [PLAYER_EVENTS.PLAYER_BEFORE_GAIN_RUNE]: PlayerGainRuneEvent;
-  [PLAYER_EVENTS.PLAYER_AFTER_GAIN_RUNE]: PlayerGainRuneEvent;
-  [PLAYER_EVENTS.PLAYER_BEFORE_LOSE_RUNE]: PlayerLoseRuneEvent;
-  [PLAYER_EVENTS.PLAYER_AFTER_LOSE_RUNE]: PlayerLoseRuneEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_HEAL]: PlayerHealEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_HEAL]: PlayerHealEvent;
   [PLAYER_EVENTS.PLAYER_LEVEL_UP]: PlayerLevelUpEvent;

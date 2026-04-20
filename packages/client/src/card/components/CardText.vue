@@ -22,7 +22,6 @@ const showFullText = useIsKeyboardControlPressed({
 .card-text {
   white-space: pre-wrap;
   color: var(--card-text-color, var(--card-text-color, black));
-  line-height: 1.2;
-  margin-block: calc(1px * var(--pixel-scale));
+  line-height: 1.4;
 }
 </style>

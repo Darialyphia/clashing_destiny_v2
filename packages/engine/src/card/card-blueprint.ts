@@ -56,7 +56,7 @@ export type CardBlueprintBase = {
 
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
-  subType: MinionType;
+  subKind: MinionType;
   manaCost: number;
   abilities: AbilityBlueprint<MinionCard>[];
   vfx: {

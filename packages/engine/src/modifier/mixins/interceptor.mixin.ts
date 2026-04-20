@@ -25,6 +25,10 @@ import type {
 } from '../../player/player-artifact.entity';
 import type { Player, PlayerInterceptor } from '../../player/player.entity';
 import type { Ability, AbilityInterceptor } from '../../card/entities/ability.entity';
+import type {
+  HeroCard,
+  HeroCardInterceptors
+} from '../../card/entities/hero-card.entity';
 
 type InterceptorMap = Record<string, Interceptable<any, any>>;
 export class InterceptorModifierMixin<
@@ -96,6 +100,9 @@ export class MinionInterceptorModifierMixin<
   TKey extends keyof MinionCardInterceptors
 > extends InterceptorModifierMixin<MinionCardInterceptors, TKey, MinionCard> {}
 
+export class HeroCardInterceptorModifierMixin<
+  TKey extends keyof HeroCardInterceptors
+> extends InterceptorModifierMixin<HeroCardInterceptors, TKey, HeroCard> {}
 export class UnitInterceptorModifierMixin<
   TKey extends keyof UnitInterceptors
 > extends InterceptorModifierMixin<UnitInterceptors, TKey, Unit> {}

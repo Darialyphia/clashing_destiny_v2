@@ -29,6 +29,7 @@ export type SerializedHeroCard = SerializedCard & {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type HeroCardInterceptors = CardInterceptors & {
   atk: Interceptable<number>;
+  spellDamageBonus: Interceptable<number>;
   maxHp: Interceptable<number>;
   retaliation: Interceptable<number>;
   canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
@@ -55,6 +56,7 @@ export class HeroCard extends Card<
       {
         ...makeCardInterceptors(),
         maxHp: new Interceptable(),
+        spellDamageBonus: new Interceptable(),
         atk: new Interceptable(),
         retaliation: new Interceptable(),
         canUseAbility: new Interceptable(),
@@ -111,6 +113,10 @@ export class HeroCard extends Card<
 
   get atk() {
     return this.interceptors.atk.getValue(this.blueprint.atk, {});
+  }
+
+  get spellDamageBonus() {
+    return this.interceptors.spellDamageBonus.getValue(0, {});
   }
 
   get retaliation() {

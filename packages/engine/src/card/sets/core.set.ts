@@ -4,9 +4,10 @@ import { sample } from './core/neutral/minions/sample';
 import { erina } from './core/mage/heroes/erina';
 import { carefulStudy } from './core/neutral/destinies/careful-study';
 import { sample2 } from './core/neutral/minions/sample2';
+import { fireBolt } from './core/mage/spells/fire-bolt';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
-  cards: [erina, sample, carefulStudy, sample2]
+  cards: [erina, sample, carefulStudy, sample2, fireBolt]
 };

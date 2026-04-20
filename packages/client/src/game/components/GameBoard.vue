@@ -23,7 +23,6 @@ import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
 import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import MinionRow from './MinionRow.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import PassButton from './PassButton.vue';
@@ -113,17 +112,13 @@ useEventListener('contextmenu', async e => {
 </script>
 
 <template>
-  <div class="debug">
+  <!-- <div class="debug">
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Selected Unit: {{ ui.selectedUnit?.id }}</div>
     <div>Selected Hero: {{ ui.selectedHero?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
-    <!-- <div>
-      Interaction Context:
-      <pre>{{ state.interaction.ctx }}</pre>
-    </div> -->
-  </div>
+  </div> -->
   <div class="game-board-container">
     <SVGFilters />
     <PlayedCard />

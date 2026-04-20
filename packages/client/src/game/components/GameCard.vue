@@ -9,7 +9,7 @@ import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import CardModifiers from './CardModifiers.vue';
-
+import { formatAbilityText } from '@/utils/formatters';
 const {
   cardId,
   actionsOffset = -50,
@@ -116,11 +116,9 @@ const classes = computed(() => {
           durability: card.durability ?? overrides.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
-            .map(
-              a =>
-                `@[exhaust]@${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.description}`
-            ),
-          jobs: card.jobs ?? overrides.jobs
+            .map(a => formatAbilityText(a)),
+          jobs: card.jobs ?? overrides.jobs,
+          subKind: card.subKind ?? overrides.subKind
         }"
         :is-foil="card.isFoil"
         class="game-card big"

@@ -49,7 +49,7 @@ export class IntimidateUnitModifier extends Modifier<Unit> {
       icon: 'icons/keyword-intimidate',
       mixins: [
         new UnitInterceptorModifierMixin(game, {
-          key: 'canBeCounterattackTarget',
+          key: 'canBeAttackTarget',
           interceptor: (value, ctx) => {
             if (!value) return value;
             if (ctx.attacker instanceof Player) return value;

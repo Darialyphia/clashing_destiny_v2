@@ -8,23 +8,10 @@ export type Keyword = {
 };
 
 export const KEYWORDS = {
-  ABILITY: {
-    id: 'ability',
-    name: 'Ability (X)',
-    description:
-      'This card has an activated ability that costs X and can be used once per turn.',
-    aliases: [/ability \([a-z0-9 -]+\)/]
-  },
   ADAPT: {
     id: 'adapt',
     name: 'Adapt',
     description: 'When you play this card, choose one of multiple possible effects.',
-    aliases: []
-  },
-  AIRDROP: {
-    id: 'airdrop',
-    name: 'Airdrop',
-    description: 'Can be summoned anywhere.',
     aliases: []
   },
   ANCHORED: {
@@ -39,13 +26,6 @@ export const KEYWORDS = {
     description:
       'When this unit attacks a damaged enemy, it deals X additional damage and is immune to retaliation.',
     aliases: [/^backstab$/, /backstab \([0-9]+\)/]
-  },
-  BATTLE_PET: {
-    id: 'battlepet',
-    name: 'Battle Pet',
-    description:
-      'This unit cannot be controlled. It moves and attacks the closest enemy at the start of your turn.',
-    aliases: []
   },
   BURST: {
     id: 'burst',
@@ -68,26 +48,20 @@ export const KEYWORDS = {
   BURN: {
     id: 'burn',
     name: 'Burn (x)',
-    description: 'This unit takes X damage at the beginning of its turn.',
+    description: 'This unit takes X damage at the start of each turn.',
     aliases: [/burn \([0-9]+\)/]
   },
   CELERITY: {
     id: 'celerity',
     name: 'Celerity',
     description:
-      'Can move and attack in the same turn. Does not pass initiative after moving.',
+      'Can move and attack in the same turn, and does not pass initiative after moving.',
     aliases: []
   },
   CLEANSE: {
     id: 'cleanse',
     name: 'Cleanse',
     description: 'Remove enchantments previously added from enemy sources.',
-    aliases: []
-  },
-  CONSUME: {
-    id: 'consume',
-    name: 'Consume',
-    description: 'Destroy the mentioned runes when this card is played.',
     aliases: []
   },
   DEATHWATCH: {
@@ -99,27 +73,20 @@ export const KEYWORDS = {
   DISCOVER: {
     id: 'discover',
     name: 'Discover',
-    description: 'Choose one crd between 3 choices and add it to your hand.',
-    aliases: []
-  },
-  DISPEL: {
-    id: 'dispel',
-    name: 'Dispel',
-    description: 'Nullifies all abilities and enchantments previously added.',
+    description: 'Choose one card between 3 choices and add it to your hand.',
     aliases: []
   },
   ECHO: {
     id: 'echo',
     name: 'Echo',
-    description:
-      'When you play this card, put an Ephemeral copy of it in your hand without echo.',
+    description: 'When you play this card, put an Ephemeral copy of it in your hand.',
     aliases: []
   },
   ELUSIVE: {
     id: 'elusive',
     name: 'Elusive',
     description:
-      'When this unit is attacked  for the first time in a turn, it moves to a adjacent position on the same rowif possible  (favor left). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
+      'When this unit is attacked for the first time in a turn, it moves to a adjacent position on the same rowif possible  (favor left). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
     aliases: []
   },
   EPHEMERAL: {
@@ -137,10 +104,10 @@ export const KEYWORDS = {
   },
   FEARSOME: {
     id: 'fearsome',
-    name: 'Fearsome',
+    name: 'Fearsome (x)',
     description:
-      "When this unit attacks a minion and destroys it, it doesn't counterattack.",
-    aliases: []
+      "When this unit attacks a minino that costs X or less, it doesn't counterattack.",
+    aliases: [/fearsome \([0-9]+\)/]
   },
   FLEETING: {
     id: 'fleeting',
@@ -149,23 +116,17 @@ export const KEYWORDS = {
       "This card is removed from the game at the end of your turn if it's in your hand.",
     aliases: []
   },
-  FLYING: {
-    id: 'flying',
-    name: 'Flying',
-    description: 'can move two more spaces and can move through units and shrines.',
-    aliases: []
-  },
   CLEAVE: {
     id: 'cleave',
     name: 'Cleave',
     description:
-      'When attacking while on the front row, deal its attack damage to adjacent enemies on the same row.',
+      'When attacking, deal its attack damage to adjacent enemies on the same row.',
     aliases: ['frenzy']
   },
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',
-    description: 'This unit skips its next action.',
+    description: 'This unit does not wake up at the start of the next turn.',
     aliases: ['freeze']
   },
   GROW: {
@@ -174,17 +135,11 @@ export const KEYWORDS = {
     description: 'This unit gains attack and hp at the starts of its turn.',
     aliases: []
   },
-  INFILTRATE: {
-    id: 'infiltrate',
-    name: 'Infiltrate',
-    description:
-      "Has an additional effect when on the opponent's side of the battlefield",
-    aliases: []
-  },
+
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate (x)',
-    description: 'Units attacked by this unit that cost X or less cannot counterattack.',
+    description: 'Cannot be attacked by enemies that cost x or less.',
     aliases: [/intimidate \([0-9]+\)/]
   },
   INVULNERABLE: {
@@ -223,12 +178,6 @@ export const KEYWORDS = {
     description: 'Triggers when this unit counterattacks.',
     aliases: []
   },
-  ON_HOLD: {
-    id: 'on_capture',
-    name: 'On Capture',
-    description: 'Triggers when an ally shrine holds while this is nearby.',
-    aliases: []
-  },
   ON_ENTER: {
     id: 'on_enter',
     name: 'On Enter',
@@ -248,18 +197,10 @@ export const KEYWORDS = {
     description: 'Provoked - cannot move and must attack Provoker first.',
     aliases: []
   },
-  RANGED: {
-    id: 'ranged',
-    name: 'Ranged',
-    description:
-      'When this unit is on the back row, it can attack enemies in the back row, and is immune to retaliation from non ranged units.',
-    aliases: []
-  },
-  REBIRTH: {
-    id: 'rebirth',
-    name: 'Rebirth',
-    description:
-      'When destroyed, summon an egg on this space that hatches into a copy of it at the end of the next turn.',
+  SHOOTER: {
+    id: 'shooter',
+    name: 'Shooter',
+    description: 'This unit is immune to retaliation from non shooter units.',
     aliases: []
   },
   RUSH: {
@@ -268,30 +209,11 @@ export const KEYWORDS = {
     description: 'This unit activates the turn it is summoned.',
     aliases: []
   },
-  SLAY: {
-    id: 'on_kill',
-    name: 'On Kill',
-    description: 'Triggers when this unit destroys another one.',
-    aliases: []
-  },
-  SPAWN: {
-    id: 'spawn',
-    name: 'Spawn X',
-    description:
-      'At the start of your turn, summon X on an adjacent space and lose 1 charge.',
-    aliases: [/^spawn/]
-  },
   STRUCTURE: {
     id: 'structure',
     name: 'Structure',
     aliases: [],
     description: 'Cannot move, attack, retaliate or gain attack.'
-  },
-  STUNNED: {
-    id: 'stunned',
-    name: 'Stunned',
-    description: 'This unit cannot move or attack until the end of the turn.',
-    aliases: ['stun']
   },
   SUMMONING_SICKNESS: {
     id: 'summoning_sickness',
@@ -299,22 +221,10 @@ export const KEYWORDS = {
     description: 'This unit was summoned this turn and cannot act.',
     aliases: []
   },
-  TIMELESS: {
-    id: 'timeless',
-    name: 'Timeless',
-    aliases: [],
-    description: 'This cannot lose durability during your turn.'
-  },
-  VEIL: {
-    id: 'veil',
-    name: 'Veil',
+  MAGIC_GUARD: {
+    id: 'magic_guard',
+    name: 'Magic Guard',
     description: 'Cannot be targeted by spells',
-    aliases: []
-  },
-  WALL: {
-    id: 'wall',
-    name: 'Wall',
-    description: 'Cannot move. Disappear when dispelled.',
     aliases: []
   },
   ZEAL: {
@@ -335,6 +245,36 @@ export const KEYWORDS = {
     description:
       'Only one copy of this card can be in play on your side of the board at a time.',
     aliases: []
+  },
+  MELEE_GUARD: {
+    id: 'melee_guard',
+    name: 'Melee Guard (x)',
+    description: 'Adjacent allies take X less damage from melee minions.',
+    aliases: [/melee guard \([0-9]+\)/]
+  },
+  RANGED_GUARD: {
+    id: 'ranged_guard',
+    name: 'Ranged Guard (x)',
+    description: 'Adjacent allies take X less damage from ranged minions.',
+    aliases: [/ranged guard \([0-9]+\)/]
+  },
+  FLYER_GUARD: {
+    id: 'flyer_guard',
+    name: 'Flyer Guard (x)',
+    description: 'Adjacent allies take X less damage from flyer minions.',
+    aliases: [/flyer guard \([0-9]+\)/]
+  },
+  HERO_GUARD: {
+    id: 'hero_guard',
+    name: 'Hero Guard (x)',
+    description: 'Adjacent allies take X less damage from enemy heroes.',
+    aliases: [/hero guard \([0-9]+\)/]
+  },
+  EMPOWER: {
+    id: 'empower',
+    name: 'Empower X',
+    description: 'The next spell you cast this turn deals X more damage.',
+    aliases: [/empower [0-9]+/, 'empower', /empowered/]
   }
 } as const satisfies Record<string, Keyword>;
 

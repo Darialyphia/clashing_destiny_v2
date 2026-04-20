@@ -26,6 +26,8 @@ export abstract class Damage {
 
   readonly source: AnyCard;
 
+  protected _isPrevented = false;
+
   constructor(options: DamageOptions) {
     this._baseAmount = options.baseAmount;
     this.type = options.type;
@@ -37,6 +39,8 @@ export abstract class Damage {
   }
 
   getFinalAmount(target: Unit | Player): number {
+    if (this._isPrevented) return 0;
+
     return target.getReceivedDamage(this, this.source);
   }
 }
@@ -61,6 +65,10 @@ export class CombatDamage extends Damage {
     return this._attacker;
   }
 
+  prevent() {
+    this._isPrevented = true;
+  }
+
   get baseAmount() {
     if (this._checkedTarget === null) {
       return this._baseAmount;
@@ -75,6 +83,8 @@ export class CombatDamage extends Damage {
   }
 
   getFinalAmount(target: Unit): number {
+    if (this._isPrevented) return 0;
+
     this._checkedTarget = target;
     const amount = super.getFinalAmount(target);
     this._checkedTarget = null;
@@ -85,6 +95,12 @@ export class CombatDamage extends Damage {
 export class SpellDamage extends Damage {
   constructor(source: SpellCard, amount: number) {
     super({ baseAmount: amount, type: DAMAGE_TYPES.SPELL, source });
+  }
+
+  getFinalAmount(target: Unit | Player): number {
+    const finalAmount = super.getFinalAmount(target);
+    if (this._isPrevented) return 0;
+    return finalAmount + this.source.player.hero.spellDamageBonus;
   }
 }
 
