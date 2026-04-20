@@ -99,6 +99,11 @@ export class PlayerViewModel {
     return this.data.artifacts.map(artifact => entities[artifact] as ArtifactViewModel);
   }
 
+  get destinyDeck() {
+    const entities = this.getEntities();
+    return this.data.destinyDeck.map(cardId => entities[cardId] as CardViewModel);
+  }
+
   getCurrentlyPlayedCard() {
     if (!this.data.currentlyPlayedCard) return null;
 

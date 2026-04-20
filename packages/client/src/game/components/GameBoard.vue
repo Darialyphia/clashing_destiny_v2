@@ -9,6 +9,7 @@ import {
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
+import LevelUpModal from './LevelUpModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
@@ -150,6 +151,7 @@ useEventListener('contextmenu', async e => {
     <SVGFilters />
     <PlayedCard />
     <ChooseCardModal />
+    <LevelUpModal />
     <!-- <CombatArrows /> -->
     <AnswerQuestionModal />
     <Camera>

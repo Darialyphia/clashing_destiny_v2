@@ -1,8 +1,7 @@
-import type { DestinyCard } from '../../card/entities/destiny-card.entity';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
-import { type Serializable } from '@game/shared';
+import { isDefined, type Serializable } from '@game/shared';
 
 export type LevelUpSelection = {
   cardId: string | null; // null means skip
@@ -56,30 +55,24 @@ export class LevelUpPhase
   }
 
   private async resolveSelections() {
-    // Get players in initiative order
-    const initiativePlayer = this.game.turnSystem.initiativePlayer;
-    const orderedPlayers = [
-      initiativePlayer,
-      ...this.game.playerSystem.players.filter(p => !p.equals(initiativePlayer))
-    ];
+    await this.game.gamePhaseSystem.commitLevelUp();
 
-    // Play destiny cards in initiative order
+    const initiativePlayer = this.game.turnSystem.initiativePlayer;
+    const orderedPlayers = [initiativePlayer, initiativePlayer.opponent];
+
     for (const player of orderedPlayers) {
       const cardId = this.selections.get(player.id);
-      if (cardId !== null && cardId !== undefined) {
-        const card = player.cardManager.destinyDeck.cards.find(c => c.id === cardId) as
-          | DestinyCard
-          | undefined;
-        if (card && card.canPlay()) {
+      if (isDefined(cardId)) {
+        const card = player.cardManager.destinyDeck.cards.find(c => c.id === cardId);
+        if (card?.canPlay()) {
           await player.levelManager.levelUp(card);
         }
       }
     }
-
-    await this.game.gamePhaseSystem.commitLevelUp();
   }
 
   async onEnter() {
+    this.selections.clear();
     for (const player of this.game.playerSystem.players) {
       if (!player.levelManager.canLevelup) {
         await this.skipForPlayer(player);
@@ -87,16 +80,19 @@ export class LevelUpPhase
     }
   }
 
-  async onExit() {
-    // Clear selections for next time
-    this.selections.clear();
-  }
+  async onExit() {}
 
   serialize(): SerializedLevelUpPhase {
     const selections: Record<string, string | null> = {};
     for (const [playerId, cardId] of this.selections.entries()) {
-      selections[playerId] = cardId;
+      selections[playerId] = cardId ?? ('skip' as const);
     }
+    this.game.playerSystem.players.forEach(p => {
+      if (!selections[p.id]) {
+        selections[p.id] = null;
+      }
+    });
+
     return { selections };
   }
 }

@@ -10,7 +10,6 @@ import type {
   GameStateSnapshot,
   SerializedOmniscientState,
   SerializedPlayerState,
-  PatchBasedSnapshotDiff,
   SnapshotDiff
 } from '../game/systems/game-snapshot.system';
 import { ModifierViewModel } from './view-models/modifier.model';
@@ -185,6 +184,19 @@ export class GameClient {
   }
 
   getActivePlayerId() {
+    // auto switch player in sandbox upon choosing level up action
+    if (
+      this.gameType === GAME_TYPES.LOCAL &&
+      this.stateManager.state.phase.state === GAME_PHASES.LEVEL_UP
+    ) {
+      const ctx = this.stateManager.state.phase.ctx;
+      const playerWhoHasToChoose = Object.entries(ctx.selections).find(
+        ([_, cardId]) => cardId === null
+      )?.[0];
+      if (playerWhoHasToChoose) {
+        return playerWhoHasToChoose;
+      }
+    }
     return this.stateManager.state.interaction.ctx.player;
   }
 

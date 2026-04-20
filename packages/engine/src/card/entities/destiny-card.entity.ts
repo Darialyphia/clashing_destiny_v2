@@ -100,7 +100,8 @@ export class DestinyCard extends Card<
       return;
     }
 
-    await this.sendToDiscardPile();
+    this.player.cardManager.destinyDeck.pluck(this);
+
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })

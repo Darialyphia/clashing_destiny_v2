@@ -185,6 +185,9 @@ export class ClientStateController {
     if (event.eventName === GAME_EVENTS.MINION_AFTER_SUMMON) {
       return this.onAfterMinionSummoned(event, flush);
     }
+    if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
+      return this.onAfterChangePhase(event, flush);
+    }
     return await flush();
     // if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
     //   return this.onArtifactEquiped(event, flush);
@@ -228,6 +231,17 @@ export class ClientStateController {
         cell.update({ unit: unit.id });
       }
     });
+    this.state = { ...this.state };
+    return await flush();
+  }
+
+  private async onAfterChangePhase(
+    event: {
+      event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    this.state.phase = event.event.to;
     this.state = { ...this.state };
     return await flush();
   }
