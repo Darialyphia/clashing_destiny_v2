@@ -112,7 +112,8 @@ export class CardManagerComponent {
       this.player.units.find(unit => unit?.card.id === id)?.card ||
       this.player.artifactManager.artifacts.find(artifact => artifact.card.id === id)
         ?.card ||
-      this.player.levelManager.talents.find(talent => talent.id === id);
+      this.player.levelManager.talents.find(talent => talent.id === id) ||
+      this.player.hero.id === id;
     if (onBoardCard) return { card: onBoardCard as T, location: CARD_LOCATIONS.BOARD };
     return null;
   }

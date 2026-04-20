@@ -17,7 +17,7 @@ export class CommitSpaceSelectionInput extends Input<typeof schema> {
 
   protected payloadSchema = schema;
 
-  impl() {
+  async impl() {
     assert(
       this.game.interaction.getState() === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
       new InvalidInteractionStateError()
@@ -27,6 +27,6 @@ export class CommitSpaceSelectionInput extends Input<typeof schema> {
         InteractionStateDict['SELECTING_SPACE_ON_BOARD']
       >();
 
-    interactionContext.ctx.commit(this.player);
+    await interactionContext.ctx.commit(this.player);
   }
 }

@@ -20,9 +20,18 @@ export const useHeroArrowPath = (hero: CardViewModel) => {
     return 'red';
   });
 
-  const shouldBeDisplayed = computed(
-    () => !client.value.isPlayingFx && ui.value.selectedHero?.id === hero.id
-  );
+  const shouldBeDisplayed = computed(() => {
+    if (client.value.isPlayingFx) return false;
+
+    const interaction = state.value.interaction;
+    if (interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
+      return interaction.ctx.source === hero.id;
+    } else if (ui.value.selectedHero) {
+      return ui.value.selectedHero.id === hero.id;
+    }
+
+    return false;
+  });
 
   const computeParabolaPath = () => {
     if (!shouldBeDisplayed.value) return '';

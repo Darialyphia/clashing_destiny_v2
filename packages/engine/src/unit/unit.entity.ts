@@ -564,7 +564,6 @@ export class Unit
       new CombatDoneEvent({ attacker: this })
     );
     if (this.shouldSwitchInitiativeafterAttacking) {
-      console.log('switching initiative after attack');
       await this.game.turnSystem.switchInitiative();
     }
   }

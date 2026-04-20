@@ -13,10 +13,10 @@ export class ChooseCardsInput extends Input<typeof schema> {
 
   protected payloadSchema = schema;
 
-  impl() {
+  async impl() {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['CHOOSING_CARDS']>();
 
-    interactionContext.ctx.commit(this.player, this.payload.indices);
+    await interactionContext.ctx.commit(this.player, this.payload.indices);
   }
 }

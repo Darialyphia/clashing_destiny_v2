@@ -1,7 +1,6 @@
 import type { AnyCard } from '../../card/entities/card.entity';
 import { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import type { TurnEvent } from '../../game/systems/turn.system';
 import type { Unit } from '../../unit/unit.entity';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';

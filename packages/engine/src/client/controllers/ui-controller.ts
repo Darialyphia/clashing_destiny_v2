@@ -10,6 +10,7 @@ import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
 import { UnselectUnitAction } from '../actions/unselect-unit';
 import { AttackAction } from '../actions/attack';
 import { PassGlobalAction } from '../actions/pass';
+import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -62,6 +63,8 @@ export class UiController {
   private _selectedUnit: UnitViewModel | null = null;
 
   private _selectedHero: CardViewModel | null = null;
+
+  private onResetCallbacks: Array<() => void> = [];
 
   isHandExpanded = false;
 
@@ -239,6 +242,21 @@ export class UiController {
     this.optimisticState.playedCardId = null;
   }
 
+  async onEvent(event: SerializedStarEvent) {
+    if (event.eventName === GAME_EVENTS.INTERACTION_AFTER_CHANGE_STATE) {
+      if (event.event.to.state === INTERACTION_STATES.IDLE) {
+        this.reset(false);
+      }
+    }
+
+    // if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
+    //   return this.onArtifactEquiped(event, flush);
+    // }
+    // if (event.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
+    //   return this.onChainEffectAdded(event, flush);
+    // }
+  }
+
   update() {
     this.clearOptimisticState();
     if (this.selectedUnit?.isExhausted) {
@@ -295,6 +313,45 @@ export class UiController {
 
   unselectHero() {
     this._selectedHero = null;
+  }
+
+  reset(cancelPlay = true) {
+    let actionTaken = false;
+
+    if (this.selectedUnit) {
+      this.unselectUnit();
+      actionTaken = true;
+    }
+    if (this.selectedHero) {
+      this.unselectHero();
+      actionTaken = true;
+    }
+
+    if (this.draggedCard) {
+      this.draggedCard = null;
+      actionTaken = true;
+    }
+
+    const canCancelSpaceSelection =
+      this.client.state.interaction.state ===
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD &&
+      this.client.state.interaction.ctx.canCancel;
+    if (cancelPlay && canCancelSpaceSelection) {
+      this.client.cancelSpaceSelection();
+      actionTaken = true;
+    }
+
+    this.onResetCallbacks.forEach(cb => cb());
+
+    return actionTaken;
+  }
+
+  onReset(cb: () => void) {
+    this.onResetCallbacks.push(cb);
+
+    return () => {
+      this.onResetCallbacks = this.onResetCallbacks.filter(c => c !== cb);
+    };
   }
 
   get explainerMessage() {

@@ -9,7 +9,6 @@ import type { MinionCard } from '../../card/entities/minion-card.entity';
 import type { ModifierMixin } from '../modifier-mixin';
 import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import type { Unit } from '../../unit/unit.entity';
-import { UNIT_EVENTS } from '../../unit/unit.enums';
 import { COMBAT_EVENTS, type CombatAttackEvent } from '../../combat/combat.events';
 
 export class MinionOnAttackModifier extends Modifier<MinionCard> {

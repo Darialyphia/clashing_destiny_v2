@@ -1,6 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { MinionCard } from '../../card/entities/minion-card.entity';
 import type { Game } from '../../game/game';
 import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';

@@ -30,9 +30,6 @@ const p2 = (row: BoardRow): CellBlueprint => ({
   player: 'p2',
   row
 });
-const neutral: CellBlueprint = {
-  player: null
-};
 
 export const defaultMap: MapBlueprint = {
   id: 'default-map',

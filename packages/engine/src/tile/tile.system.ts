@@ -1,4 +1,4 @@
-import { assert, indexToPoint, type Point } from '@game/shared';
+import { assert, type Point } from '@game/shared';
 import { System } from '../system';
 import { Tile } from './tile.entity';
 

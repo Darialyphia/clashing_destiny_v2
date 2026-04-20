@@ -1,9 +1,8 @@
-import { isDefined, type Point3D } from '@game/shared';
+import { type Point3D } from '@game/shared';
 import {
   isValidTargetingType,
   TARGETING_TYPE,
-  type TargetingStrategy,
-  type TargetingType
+  type TargetingStrategy
 } from './targeting-strategy';
 import type { Game } from '../game/game';
 import type { Unit } from '../unit/unit.entity';

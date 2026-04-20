@@ -10,7 +10,6 @@ import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { TARGETING_TYPE } from '../../targeting/targeting-strategy';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
-import { CleaveAOEShape } from '../../aoe/cleave.aoe-shape';
 import { ColumnAOEShape } from '../../aoe/column.aoe-shape';
 
 export class BlastCardModifier<T extends MinionCard> extends Modifier<T> {

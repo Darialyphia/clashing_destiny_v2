@@ -38,6 +38,11 @@ export const INTERACTION_STATE_TRANSITIONS = {
 };
 export type InteractionStateTransition = Values<typeof INTERACTION_STATE_TRANSITIONS>;
 
+export const INTERACTION_EVENTS = {
+  INTERACTION_BEFORE_CHANGE_STATE: 'interaction_before_change_state',
+  INTERACTION_AFTER_CHANGE_STATE: 'interaction_after_change_state'
+} as const;
+
 export const TURN_EVENTS = {
   TURN_START: 'turn_start',
   TURN_END: 'turn_end',

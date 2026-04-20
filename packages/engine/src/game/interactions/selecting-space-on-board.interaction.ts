@@ -118,7 +118,7 @@ export class SelectingSpaceOnBoardContext {
     const isDone = this.isDone(this.selectedSpaces);
     const canCommit = this.canCommit(this.selectedSpaces);
     if (isDone && canCommit) {
-      this.commit(this.player);
+      await this.commit(this.player);
     } else {
       await this.game.inputSystem.askForPlayerInput();
     }
@@ -133,27 +133,27 @@ export class SelectingSpaceOnBoardContext {
     await this.autoCommitIfAble();
   }
 
-  commit(player: Player, isTimeout = false) {
+  async commit(player: Player, isTimeout = false) {
     if (isTimeout) {
       this.selectedSpaces = [...this.timeoutFallback];
     } else {
       assert(this.canCommit, new UnableToCommitError());
     }
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.game.interaction.dispatch(
-      INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
+      {}
     );
-    this.game.interaction.onInteractionEnd();
     this.game.inputSystem.unpause(this.selectedSpaces);
   }
 
   async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
     assert(this.options.canCancel, new UnableToCommitError());
-    this.game.interaction.dispatch(
-      INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
+      {}
     );
-    this.game.interaction.onInteractionEnd();
     await this.options.onCancel?.(player);
     this.game.inputSystem.unpause([]);
   }

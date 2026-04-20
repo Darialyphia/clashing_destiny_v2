@@ -35,6 +35,10 @@ export const useUnitDragSelection = (
     document.body.removeEventListener('mousemove', onMousemove);
   };
 
+  ui.value.onReset(() => {
+    document.body.removeEventListener('mousemove', onMousemove);
+  });
+
   return {
     onMousedown,
     onMouseup

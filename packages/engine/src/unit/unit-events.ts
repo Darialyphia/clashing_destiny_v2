@@ -2,9 +2,7 @@ import type { Point, Vec2 } from '@game/shared';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { Unit } from './unit.entity';
 import type { UNIT_EVENTS } from './unit.enums';
-import type { Damage } from '../utils/damage';
 import type { AnyCard } from '../card/entities/card.entity';
-import type { Player } from '../player/player.entity';
 
 export class UnitBeforeMoveEvent extends TypedSerializableEvent<
   { unit: Unit; position: Vec2 },

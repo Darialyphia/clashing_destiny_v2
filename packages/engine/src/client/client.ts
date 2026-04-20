@@ -1,5 +1,4 @@
 import {
-  isDefined,
   type EmptyObject,
   type MaybePromise,
   type Point,
@@ -191,6 +190,7 @@ export class GameClient {
     ) {
       const ctx = this.stateManager.state.phase.ctx;
       const playerWhoHasToChoose = Object.entries(ctx.selections).find(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ([_, cardId]) => cardId === null
       )?.[0];
       if (playerWhoHasToChoose) {
@@ -254,10 +254,9 @@ export class GameClient {
       }
 
       for (const event of snapshot.events) {
-        await this.stateManager.onEvent(event, async postUpdateCallback => {
-          await this.emitter.emit('update', {});
-          await postUpdateCallback?.();
-        });
+        await this.stateManager.onEvent(event);
+        await this.ui.onEvent(event);
+        await this.emitter.emit('update', {});
 
         if (event.eventName === GAME_EVENTS.VFX_PLAY_SEQUENCE) {
           await this.vfx.playSequence(event.event.sequence);

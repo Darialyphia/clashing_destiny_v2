@@ -48,7 +48,6 @@ const { options } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
-const { client } = useGameClient();
 const { playerId } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
@@ -92,32 +91,7 @@ const isOutOfScreen = usePageLeave();
 
 const resetUiState = async () => {
   await nextTick();
-  let actionTaken = false;
-
-  if (
-    state.value.phase.state === GAME_PHASES.MAIN &&
-    state.value.interaction.state === INTERACTION_STATES.IDLE
-  ) {
-    ui.value.unselectUnit();
-    ui.value.unselectHero();
-    actionTaken = true;
-  }
-
-  if (ui.value.draggedCard) {
-    ui.value.draggedCard = null;
-    actionTaken = true;
-  }
-
-  const canCancelSpaceSelection =
-    state.value.interaction.state ===
-      INTERACTION_STATES.SELECTING_SPACE_ON_BOARD &&
-    state.value.interaction.ctx.canCancel;
-  if (canCancelSpaceSelection) {
-    client.value.cancelSpaceSelection();
-    actionTaken = true;
-  }
-
-  return actionTaken;
+  return ui.value.reset();
 };
 
 watch(isOutOfScreen, out => {
@@ -142,11 +116,13 @@ useEventListener('contextmenu', async e => {
   <div class="debug">
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
+    <div>Selected Unit: {{ ui.selectedUnit?.id }}</div>
+    <div>Selected Hero: {{ ui.selectedHero?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
-    <div>
+    <!-- <div>
       Interaction Context:
       <pre>{{ state.interaction.ctx }}</pre>
-    </div>
+    </div> -->
   </div>
   <div class="game-board-container">
     <SVGFilters />
@@ -246,9 +222,11 @@ useEventListener('contextmenu', async e => {
   grid-template-rows: 1fr auto 1fr auto;
   transform-style: preserve-3d;
   transform-origin: top left;
-  width: var(--board-width);
-  height: var(--board-height);
+  width: 100%;
+  /* width: var(--board-width);
+  height: var(--board-height); */
   background: url(@/assets/backgrounds/battle-background.png);
+  background-repeat: no-repeat;
   /* transform: scale(v-bind('boardScale'))
     translateX(calc(v-bind('boardMargin.x') * 1px))
     translateY(calc(v-bind('boardMargin.y') * 1px)); */

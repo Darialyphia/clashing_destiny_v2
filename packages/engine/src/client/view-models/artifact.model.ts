@@ -1,7 +1,5 @@
-import type { SerializedTile } from '../../tile/tile.entity';
 import type { GameClient, GameStateEntities } from '../client';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import type { PlayerViewModel } from './player.model';
 import type { SerializedPlayerArtifact } from '../../player/player-artifact.entity';
 import type { CardViewModel } from './card.model';
 

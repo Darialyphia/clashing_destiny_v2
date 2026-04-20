@@ -1,4 +1,4 @@
-import type { EmptyObject, Point } from '@game/shared';
+import type { Point } from '@game/shared';
 import type { AOEShape } from './aoe-shape';
 import type { TargetingType } from './aoe.enums';
 

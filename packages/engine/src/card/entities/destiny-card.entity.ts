@@ -1,6 +1,6 @@
 import type { MaybePromise } from '@game/shared';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
-import type { DestinyBlueprint, SpellBlueprint } from '../card-blueprint';
+import type { DestinyBlueprint } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {

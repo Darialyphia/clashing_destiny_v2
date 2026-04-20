@@ -3,7 +3,6 @@ import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
 import { Player } from '../player/player.entity';
 import { Unit } from '../unit/unit.entity';
-import { UNIT_EVENTS } from '../unit/unit.enums';
 import { type Damage, CombatDamage } from '../utils/damage';
 import {
   COMBAT_EVENTS,

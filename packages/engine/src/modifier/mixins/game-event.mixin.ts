@@ -1,5 +1,4 @@
 import { isDefined, type Nullable } from '@game/shared';
-import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
 import type { EventMapWithStarEvent } from '../../utils/typed-emitter';

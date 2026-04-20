@@ -13,10 +13,10 @@ export class AnswerQuestionInput extends Input<typeof schema> {
 
   protected payloadSchema = schema;
 
-  impl() {
+  async impl() {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['ASK_QUESTION']>();
 
-    interactionContext.ctx.commit(this.player, this.payload.id);
+    await interactionContext.ctx.commit(this.player, this.payload.id);
   }
 }

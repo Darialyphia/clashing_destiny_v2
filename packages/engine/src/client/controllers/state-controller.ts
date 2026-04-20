@@ -175,20 +175,16 @@ export class ClientStateController {
     };
   }
 
-  async onEvent(
-    event: SerializedStarEvent,
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  async onEvent(event: SerializedStarEvent) {
     if (event.eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
-      return this.onBeforePlayCard(event, flush);
+      return this.onBeforePlayCard(event);
     }
     if (event.eventName === GAME_EVENTS.MINION_AFTER_SUMMON) {
-      return this.onAfterMinionSummoned(event, flush);
+      return this.onAfterMinionSummoned(event);
     }
     if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
-      return this.onAfterChangePhase(event, flush);
+      return this.onAfterChangePhase(event);
     }
-    return await flush();
     // if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
     //   return this.onArtifactEquiped(event, flush);
     // }
@@ -197,26 +193,17 @@ export class ClientStateController {
     // }
   }
 
-  private async onBeforePlayCard(
-    event: {
-      event: SerializedEvent<'CARD_BEFORE_PLAY'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onBeforePlayCard(event: { event: SerializedEvent<'CARD_BEFORE_PLAY'> }) {
     if (!this.state.entities[event.event.card.id]) {
       return;
     }
     const card = this.buildViewModel(event.event.card as any) as CardViewModel;
     this.state.entities[card.id] = card;
-    return await flush();
   }
 
-  private async onAfterMinionSummoned(
-    event: {
-      event: SerializedEvent<'MINION_AFTER_SUMMON'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onAfterMinionSummoned(event: {
+    event: SerializedEvent<'MINION_AFTER_SUMMON'>;
+  }) {
     if (!this.state.entities[event.event.unit.id]) {
       return;
     }
@@ -232,17 +219,12 @@ export class ClientStateController {
       }
     });
     this.state = { ...this.state };
-    return await flush();
   }
 
-  private async onAfterChangePhase(
-    event: {
-      event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onAfterChangePhase(event: {
+    event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
+  }) {
     this.state.phase = event.event.to;
     this.state = { ...this.state };
-    return await flush();
   }
 }

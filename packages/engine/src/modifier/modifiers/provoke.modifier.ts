@@ -10,7 +10,6 @@ import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import type { Unit } from '../../unit/unit.entity';
 import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
-import { isDefined } from '@game/shared';
 import { ProvokedTargetingStrategy } from '../../targeting/provoked-targeting-strategy';
 
 export class ProvokeModifier extends Modifier<MinionCard> {

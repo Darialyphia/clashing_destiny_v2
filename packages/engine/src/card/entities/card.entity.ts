@@ -1,9 +1,4 @@
-import {
-  type Defined,
-  type JSONObject,
-  type MaybePromise,
-  type Point
-} from '@game/shared';
+import { type JSONObject, type MaybePromise, type Point } from '@game/shared';
 import { EntityWithModifiers } from '../../utils/entity-with-modifiers';
 import type { Game } from '../../game/game';
 import { ModifierManager } from '../../modifier/modifier-manager.component';

@@ -58,21 +58,26 @@ export class AskQuestionContext {
     };
   }
 
-  commit(player: Player, id: string | null) {
+  async commit(player: Player, id: string | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
 
     this.selectedChoice = this.choices.find(
       choice => choice.id === (id ?? this.timeoutFallback)
     );
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION);
-    this.game.interaction.onInteractionEnd();
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION,
+      {}
+    );
     this.game.inputSystem.unpause(this.selectedChoice!.id);
   }
 
-  cancel(player: Player) {
+  async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION);
-    this.game.interaction.onInteractionEnd();
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
+      {}
+    );
+
     this.game.inputSystem.unpause([]);
   }
 }

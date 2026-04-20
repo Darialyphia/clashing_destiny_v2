@@ -6,7 +6,6 @@ import type { GameClient, GameStateEntities } from '../client';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
-import { PlayCardAction } from '../actions/play-card';
 import type { CardKind } from '../../card/card.enums';
 import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
 import { GAME_PHASES } from '../../game/game.enums';

@@ -66,7 +66,7 @@ export class ChoosingCardsContext {
     };
   }
 
-  commit(player: Player, indices: number[] | null) {
+  async commit(player: Player, indices: number[] | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
     if (isDefined(indices)) {
       assert(
@@ -83,14 +83,18 @@ export class ChoosingCardsContext {
       this.selectedCards.push(...this.timeoutFallback);
     }
 
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS);
-    this.game.interaction.onInteractionEnd();
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
+      {}
+    );
     this.game.inputSystem.unpause(this.selectedCards);
   }
-  cancel(player: Player) {
+  async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS);
-    this.game.interaction.onInteractionEnd();
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
+      {}
+    );
     this.game.inputSystem.unpause([]);
   }
 }

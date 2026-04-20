@@ -14,7 +14,6 @@ export const useHeroDragSelection = (
   const ui = useGameUi();
 
   const onMousemove = (e: MouseEvent) => {
-    console.log('mouse move');
     const deltaY = Math.abs(startY - e.clientY);
     const deltaX = Math.abs(startX - e.clientX);
     if (deltaY >= DRAG_THRESHOLD_PX || deltaX >= DRAG_THRESHOLD_PX) {
@@ -32,9 +31,12 @@ export const useHeroDragSelection = (
   };
 
   const onMouseup = () => {
-    console.log('mouse up');
     document.body.removeEventListener('mousemove', onMousemove);
   };
+
+  ui.value.onReset(() => {
+    document.body.removeEventListener('mousemove', onMousemove);
+  });
 
   return {
     onMousedown,

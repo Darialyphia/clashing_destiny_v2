@@ -16,6 +16,7 @@ import {
 } from '@game/engine/src/game/game.enums';
 import Arrow from './Arrow.vue';
 import { useHeroArrowPath } from '../composables/useHeroArrowPath';
+import AbilityMenu from './AbilityMenu.vue';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -61,17 +62,31 @@ const canSelectHero = computed(() => {
   if (!ui.value.isInteractivePlayer) return false;
   if (state.value.phase.state !== GAME_PHASES.MAIN) return false;
   if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
-
   return !player.isExhausted && player.canAttack;
 });
 
-const { onMousedown, onMouseup } = useHeroDragSelection(
-  player.hero!,
-  canSelectHero
-);
+const dragSelection = useHeroDragSelection(player.hero!, canSelectHero);
+
+const isAbilityMenuOpened = ref(false);
+const handleAbilities = () => {
+  if (!player.hero) return;
+
+  const availableAbilities = player.hero.abilityActions;
+  if (availableAbilities.length === 1) {
+    return availableAbilities[0].handler(player.hero);
+  }
+  if (availableAbilities.length > 1) {
+    isAbilityMenuOpened.value = true;
+  }
+};
 
 const handleOwnHeroMouseup = () => {
-  onMouseup();
+  const shouldHandleAbilities = !ui.value.selectedHero?.equals(player.hero!);
+  if (shouldHandleAbilities) {
+    handleAbilities();
+  } else {
+    dragSelection.onMouseup();
+  }
 };
 
 const handleOpponentHeroMouseup = () => {
@@ -98,7 +113,7 @@ const handleMouseup = (e: MouseEvent) => {
 const handleMousedown = (e: MouseEvent) => {
   if (e.button !== 0) return;
   if (!isOwnHero.value) return;
-  onMousedown(e);
+  dragSelection.onMousedown(e);
 };
 
 const isSelected = computed(() => {
@@ -115,19 +130,27 @@ const isSelected = computed(() => {
     :class="{
       'can-attack': canBeAttacked,
       'is-taking-damage': isTakingDamage,
-      'is-selected': isSelected
+      'is-selected': isSelected,
+      'is-exhausted': player.isExhausted
     }"
     @mouseup.stop="handleMouseup"
     @mousedown="handleMousedown"
     @mouseenter="ui.hoverCardOnBoard(player.hero)"
     @mouseleave="ui.unhoverCardOnBoard()"
   >
-    <GameCard
-      :card-id="player.hero.id"
-      variant="small"
-      show-stats
-      show-modifiers
-    />
+    <AbilityMenu
+      :card="player.hero"
+      v-model:isOpened="isAbilityMenuOpened"
+      actions-side="top"
+      use-portal
+    >
+      <GameCard
+        :card-id="player.hero.id"
+        variant="small"
+        show-stats
+        show-modifiers
+      />
+    </AbilityMenu>
 
     <Teleport to="#arrows" defer>
       <Arrow v-if="heroPath" :path="heroPath" :color="pathColor" />
@@ -180,6 +203,10 @@ const isSelected = computed(() => {
 .is-selected {
   translate: 0 -6px;
   box-shadow: 0 6px 30px 4px black;
+}
+
+.is-exhausted {
+  filter: grayscale(35%) brightness(50%);
 }
 
 @keyframes hero-take-damage {

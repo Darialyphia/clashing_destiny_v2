@@ -18,15 +18,16 @@ import {
 } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
-import type { GenericAOEShape } from '../../aoe/aoe-shape';
 import {
   INTERACTION_STATE_TRANSITIONS,
   type InteractionState,
   type InteractionStateTransition,
-  INTERACTION_STATES
+  INTERACTION_STATES,
+  INTERACTION_EVENTS
 } from '../game.enums';
 import { CorruptedInteractionContextError } from '../game-error';
 import { AskQuestionContext } from '../interactions/ask-question.interaction';
+import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
 export type InteractionContext =
   | {
@@ -63,6 +64,11 @@ export type SerializedInteractionContext =
       state: Extract<InteractionState, 'ask_question'>;
       ctx: ReturnType<AskQuestionContext['serialize']>;
     };
+
+export type InteractionEventMap = {
+  [INTERACTION_EVENTS.INTERACTION_BEFORE_CHANGE_STATE]: InteractionBeforeChangeEvent;
+  [INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE]: InteractionAfterChangeEvent;
+};
 
 export class GameInteractionSystem
   extends StateMachine<InteractionState, InteractionStateTransition>
@@ -159,17 +165,43 @@ export class GameInteractionSystem
     } as InteractionContext & { state: T };
   }
 
-  async selectSpacesOnBoard(options: SelectingSpaceOnBoardContextOptions) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD);
-    this._ctx = await this.ctxDictionary[
-      INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
-    ].create(this.game, options);
+  async sendTransition(transition: InteractionStateTransition, options: any) {
+    const previousState = this.getState();
+    const nextState = this.getNextState(transition);
 
-    if (this._ctx.elligibleSpaces.length === 0) {
-      this.game.interaction.dispatch(
-        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD
+    await this.game.emit(
+      INTERACTION_EVENTS.INTERACTION_BEFORE_CHANGE_STATE,
+      new InteractionBeforeChangeEvent({
+        from: previousState,
+        to: nextState!
+      })
+    );
+
+    this.dispatch(transition);
+
+    this._ctx = await this.ctxDictionary[nextState!].create(this.game, options);
+
+    await this.game.emit(
+      INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE,
+      new InteractionAfterChangeEvent({
+        from: previousState,
+        to: this.getContext()
+      })
+    );
+  }
+
+  async selectSpacesOnBoard(options: SelectingSpaceOnBoardContextOptions) {
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
+      options
+    );
+
+    const { ctx } = this.getContext<'selecting_space_on_board'>();
+    if (ctx.elligibleSpaces.length === 0) {
+      await this.sendTransition(
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
+        {}
       );
-      this.game.interaction.onInteractionEnd();
       return [];
     } else {
       return this.game.inputSystem.pause<BoardCell[]>();
@@ -177,9 +209,8 @@ export class GameInteractionSystem
   }
 
   async chooseCards<T extends AnyCard>(options: ChoosingCardsContextOptions) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
-      this.game,
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
       options
     );
 
@@ -194,15 +225,41 @@ export class GameInteractionSystem
     questionId: string;
     timeoutFallback: string;
   }) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION,
+      options
+    );
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(
       this.game,
       options
     );
     return this.game.inputSystem.pause<T>();
   }
+}
 
-  onInteractionEnd() {
-    this._ctx = new IdleContext(this.game);
+export class InteractionBeforeChangeEvent extends TypedSerializableEvent<
+  { from: InteractionState; to: InteractionState },
+  { from: InteractionState; to: InteractionState }
+> {
+  serialize() {
+    return {
+      from: this.data.from,
+      to: this.data.to
+    };
+  }
+}
+
+export class InteractionAfterChangeEvent extends TypedSerializableEvent<
+  { from: InteractionState; to: InteractionContext },
+  { from: InteractionState; to: SerializedInteractionContext }
+> {
+  serialize() {
+    return {
+      from: this.data.from,
+      to: {
+        state: this.data.to.state,
+        ctx: this.data.to.ctx.serialize() as any // Type assertion to match SerializedInteractionStateContext
+      }
+    };
   }
 }

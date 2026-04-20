@@ -1,5 +1,4 @@
 import type { SerializedCell } from '../../board/entities/board-cell.entity';
-import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { PatchOperation } from '../../game/systems/patch-types';
 import type { GameClient, GameStateEntities } from '../client';
 import type { TileViewModel } from './tile.model';
