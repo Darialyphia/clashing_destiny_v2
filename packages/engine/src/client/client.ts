@@ -370,4 +370,14 @@ export class GameClient {
       void this.fxAdapter.onCancelPlayCard(playedCard, this);
     }
   }
+
+  selectLevelUpCard(cardId: string | null) {
+    this.dispatch({
+      type: 'levelUpSelection',
+      payload: {
+        playerId: this.playerId,
+        cardId
+      }
+    });
+  }
 }

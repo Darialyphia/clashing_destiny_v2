@@ -32,6 +32,7 @@ import { UseAbilityInput } from './inputs/use-ability.input';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
 import { CancelSpaceSelectionInput } from './inputs/cancel-space-selection';
+import { LevelUpSelectionInput } from './inputs/level-up-selection.input';
 
 type GenericInputMap = Record<string, Constructor<Input<ZodType>>>;
 
@@ -58,7 +59,8 @@ const inputMap = validateinputMap({
   useAbility: UseAbilityInput,
   interactionTimeout: InteractionTimeoutInput,
   answerQuestion: AnswerQuestionInput,
-  cancelSpaceSelection: CancelSpaceSelectionInput
+  cancelSpaceSelection: CancelSpaceSelectionInput,
+  levelUpSelection: LevelUpSelectionInput
 });
 
 type InputMap = typeof inputMap;

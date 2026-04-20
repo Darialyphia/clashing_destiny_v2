@@ -21,7 +21,6 @@ export const GAME_PHASE_TRANSITIONS = {
   COMMIT_MULLIGAN: 'commit_mulligan',
   DRAW_FOR_TURN: 'draw_for_turn',
   END_TURN: 'end_turn',
-  START_TURN: 'start_turn',
   PLAYER_WON: 'player_won',
   START_PLAYING_CARD: 'start_playing_card',
   COMMIT_PLAYING_CARD: 'commit_playing_card',
