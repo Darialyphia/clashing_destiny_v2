@@ -67,6 +67,12 @@ useFxEvent(FX_EVENTS.COMBAT_BEFORE_RECEIVE_DAMAGE, async event => {
   await until(isTakingDamage).toBe(false);
   await waitFor(200);
 });
+
+const hasAvailableAbilities = computed(() => {
+  return unit.abilities.some(ability => {
+    return ability.predicate();
+  });
+});
 </script>
 
 <template>
@@ -80,7 +86,8 @@ useFxEvent(FX_EVENTS.COMBAT_BEFORE_RECEIVE_DAMAGE, async event => {
         'is-selected': ui.selectedUnit?.equals(unit),
         'is-being-dropped': isBeingDropped,
         'is-attacking': isAttacking,
-        'is-taking-damage': isTakingDamage
+        'is-taking-damage': isTakingDamage,
+        'has-ability': hasAvailableAbilities
       }
     ]"
   >
@@ -126,6 +133,10 @@ useFxEvent(FX_EVENTS.COMBAT_BEFORE_RECEIVE_DAMAGE, async event => {
       mix-blend-mode: multiply;
       pointer-events: none;
     }
+  }
+
+  &.has-ability {
+    filter: drop-shadow(0 0 8px var(--yellow-3));
   }
 }
 

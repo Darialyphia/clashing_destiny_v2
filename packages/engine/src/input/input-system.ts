@@ -22,7 +22,6 @@ import { GameNotPausedError, InputError } from './input-errors';
 import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { PlayCardInput } from './inputs/play-card.input';
-import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
 import { MoveInput } from './inputs/move.input';
 import { MulliganInput } from './inputs/mulligan.input';
@@ -32,6 +31,7 @@ import { SurrenderInput } from './inputs/surrender.input';
 import { UseAbilityInput } from './inputs/use-ability.input';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
+import { CancelSpaceSelectionInput } from './inputs/cancel-space-selection';
 
 type GenericInputMap = Record<string, Constructor<Input<ZodType>>>;
 
@@ -47,7 +47,6 @@ const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>)
 
 const inputMap = validateinputMap({
   playCard: PlayCardInput,
-  cancelPlayCard: CancelPlayCardInput,
   selectSpaceOnBoard: SelectSpaceOnBoardInput,
   commitSpaceSelection: CommitSpaceSelectionInput,
   chooseCards: ChooseCardsInput,
@@ -58,7 +57,8 @@ const inputMap = validateinputMap({
   surrender: SurrenderInput,
   useAbility: UseAbilityInput,
   interactionTimeout: InteractionTimeoutInput,
-  answerQuestion: AnswerQuestionInput
+  answerQuestion: AnswerQuestionInput,
+  cancelSpaceSelection: CancelSpaceSelectionInput
 });
 
 type InputMap = typeof inputMap;

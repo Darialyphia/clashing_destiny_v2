@@ -47,6 +47,7 @@ const { options } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
+const { client } = useGameClient();
 const { playerId } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
@@ -96,15 +97,18 @@ const resetUiState = async () => {
   ) {
     ui.value.unselectUnit();
   }
-  if (!ui.value.draggedCard) return;
-  const card = ui.value.draggedCard;
 
-  ui.value.draggedCard = null;
+  if (ui.value.draggedCard) {
+    ui.value.draggedCard = null;
+  }
 
-  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return;
-
-  ui.value.unselectCard();
-  card.cancelPlay();
+  const canCancelSpaceSelection =
+    state.value.interaction.state ===
+      INTERACTION_STATES.SELECTING_SPACE_ON_BOARD &&
+    state.value.interaction.ctx.canCancel;
+  if (canCancelSpaceSelection) {
+    client.value.cancelSpaceSelection();
+  }
 };
 
 watch(isOutOfScreen, out => {
@@ -116,7 +120,7 @@ useEventListener('mouseup', resetUiState);
 </script>
 
 <template>
-  <!-- <div class="debug">
+  <div class="debug">
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
@@ -124,7 +128,7 @@ useEventListener('mouseup', resetUiState);
       Interaction Context:
       <pre>{{ state.interaction.ctx }}</pre>
     </div>
-  </div> -->
+  </div>
   <div class="game-board-container">
     <SVGFilters />
     <PlayedCard />

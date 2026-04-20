@@ -72,6 +72,7 @@ export class SpawnUnitModifier extends Modifier<Unit> {
               isElligible: candidate => {
                 return this.nearbyEmptySpaces.some(space => space.equals(candidate));
               },
+              canCancel: false,
               timeoutFallback: [],
               canCommit(selectedSpaces) {
                 return selectedSpaces.length === 1;

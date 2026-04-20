@@ -35,6 +35,8 @@ export type SerializedMinionCard = SerializedCard & {
   retaliation: number;
   manaCost: number;
   unplayableReason: string | null;
+  abilities: string[];
+  isUsingAbility: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -57,6 +59,7 @@ export class MinionCard extends Card<
   MinionBlueprint
 > {
   readonly abilities: Ability<MinionCard>[];
+  private isUsingAbility = false;
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
@@ -124,15 +127,18 @@ export class MinionCard extends Card<
       // eslint-disable-next-line no-async-promise-executor
       async resolve => {
         let cancelled = false;
-        this.cancelPlay = async () => {
-          cancelled = true;
-          await this.game.interaction.getContext().ctx.cancel(this.player);
-          resolve({ cancelled: true });
-        };
 
         const [position] = await this.game.interaction.selectSpacesOnBoard({
           player: this.player,
           source: this,
+          canCancel: true,
+          onCancel: async () => {
+            cancelled = true;
+            await this.game.gamePhaseSystem
+              .getContext<'playing_card_phase'>()
+              .ctx.cancel(this.player);
+            resolve({ cancelled });
+          },
           getLabel: () => `Select position to summon ${this.blueprint.name}`,
           isElligible: cell => {
             return !!(cell.player?.equals(this.player) && !cell.isOccupied);
@@ -230,7 +236,9 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       remainingHp: this.unit?.remainingHp ?? 0,
       manaCost: this.manaCost,
-      unplayableReason: this.unplayableReason
+      unplayableReason: this.unplayableReason,
+      abilities: this.abilities.map(ability => ability.id),
+      isUsingAbility: this.isUsingAbility
     };
   }
 
@@ -299,7 +307,9 @@ export class MinionCard extends Card<
   async useAbility(abilityId: string) {
     const ability = this.getAbility(abilityId);
     if (!ability) return;
+    this.isUsingAbility = true;
     await ability.use();
     await this.unit?.exhaust();
+    this.isUsingAbility = false;
   }
 }

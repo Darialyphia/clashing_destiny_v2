@@ -39,7 +39,6 @@ export class PlayCardPhase
 
   async cancel(player: Player) {
     assert(player.equals(this.currentPlayer), new InvalidPlayerError());
-    await this.card.cancelPlay?.();
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD
     );

@@ -1,4 +1,4 @@
-import { assert, isDefined, type Point } from '@game/shared';
+import { assert, isDefined, type MaybePromise, type Point } from '@game/shared';
 import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
@@ -17,6 +17,8 @@ export type SelectingSpaceOnBoardContextOptions = {
   getAoe: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
   isDone(selectedSpaces: BoardCell[]): boolean;
   timeoutFallback: BoardCell[];
+  canCancel: boolean;
+  onCancel?: (player: Player) => MaybePromise<void>;
 };
 
 export class SelectingSpaceOnBoardContext {
@@ -59,7 +61,8 @@ export class SelectingSpaceOnBoardContext {
       selectedSpaces: this.selectedSpaces.map(space => space.position.serialize()),
       elligibleSpaces: this.elligibleSpaces,
       canCommit: this.canCommit(this.selectedSpaces),
-      aoe: this.getSerializedAoe()
+      aoe: this.getSerializedAoe(),
+      canCancel: this.options.canCancel
     };
   }
 
@@ -144,12 +147,14 @@ export class SelectingSpaceOnBoardContext {
     this.game.inputSystem.unpause(this.selectedSpaces);
   }
 
-  cancel(player: Player) {
+  async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
+    assert(this.options.canCancel, new UnableToCommitError());
     this.game.interaction.dispatch(
       INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD
     );
     this.game.interaction.onInteractionEnd();
+    await this.options.onCancel?.(player);
     this.game.inputSystem.unpause([]);
   }
 }

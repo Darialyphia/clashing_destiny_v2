@@ -134,7 +134,7 @@ export class GameClient {
       await this.processQueue();
     });
 
-    this.cancelPlayCard = this.cancelPlayCard.bind(this);
+    this.cancelSpaceSelection = this.cancelSpaceSelection.bind(this);
   }
 
   get isPlayingFx() {
@@ -282,18 +282,6 @@ export class GameClient {
     this.queue.push(...snapshots);
   }
 
-  async cancelPlayCard() {
-    if (this.state.phase.state !== GAME_PHASES.PLAYING_CARD) return;
-
-    this.dispatch({
-      type: 'cancelPlayCard',
-      payload: { playerId: this.state.turnPlayer }
-    });
-    const playedCard = this.state.entities[this.state.phase.ctx.card] as CardViewModel;
-
-    void this.fxAdapter.onCancelPlayCard(playedCard, this);
-  }
-
   isActive() {
     return this.getActivePlayerId() === this.playerId;
   }
@@ -366,5 +354,20 @@ export class GameClient {
         id
       }
     });
+  }
+
+  cancelSpaceSelection() {
+    this.dispatch({
+      type: 'cancelSpaceSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+
+    if (this.state.phase.state === GAME_PHASES.PLAYING_CARD) {
+      const playedCard = this.state.entities[this.state.phase.ctx.card] as CardViewModel;
+
+      void this.fxAdapter.onCancelPlayCard(playedCard, this);
+    }
   }
 }

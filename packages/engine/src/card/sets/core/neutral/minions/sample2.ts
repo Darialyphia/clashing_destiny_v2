@@ -18,7 +18,7 @@ import {
 export const sample2: MinionBlueprint = {
   id: 'sample2',
   name: 'Sample2',
-  description: 'This is another sample minion.',
+  description: '',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
@@ -36,14 +36,19 @@ export const sample2: MinionBlueprint = {
       label: 'Deal 1 damage',
       description: 'Deal 1 damage to an enemy minion.',
       manaCost: 1,
-      canUse: (game, card) =>
-        card.location === CARD_LOCATIONS.BOARD &&
-        singleEnemyTargetRules.canPlay(game, card),
+      canUse: (game, card) => {
+        return (
+          card.location === CARD_LOCATIONS.BOARD &&
+          singleEnemyTargetRules.canPlay(game, card)
+        );
+      },
       getAoe: () => new PointAOEShape(TARGETING_TYPES.ENEMY_UNIT, {}),
       getCooldown: () => 0,
-      getTargets: (game, card) =>
+      getTargets: (game, card, onCancel) =>
         singleEnemyTargetRules.getTargets(game, card, {
-          timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card)
+          timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card),
+          canCancel: true,
+          onCancel
         }),
       async onResolve(game, card, options) {
         const units = game.unitSystem.getUnitsInAOE(

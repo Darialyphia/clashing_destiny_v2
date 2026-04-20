@@ -178,13 +178,6 @@ const draggedCard = computed(() => {
         >
           {{ confirmButtonLabel }}
         </UiButton>
-        <UiButton
-          v-if="state.phase.ctx.canCancel"
-          class="error-button w-full pointer-events-auto"
-          @click="client.cancelPlayCard()"
-        >
-          Cancel
-        </UiButton>
       </div>
     </Transition>
   </div>

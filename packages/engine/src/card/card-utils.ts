@@ -1,4 +1,4 @@
-import { isDefined, type Nullable, type Override } from '@game/shared';
+import { isDefined, type MaybePromise, type Nullable, type Override } from '@game/shared';
 import type { GenericAOEShape } from '../aoe/aoe-shape';
 import { PointAOEShape } from '../aoe/point.aoe-shape';
 import type { BoardCell } from '../board/entities/board-cell.entity';
@@ -14,6 +14,7 @@ import type { MinionCard } from './entities/minion-card.entity';
 import type { SpellCard } from './entities/spell-card.entity';
 import type { AbilityBlueprint, CardBlueprint } from './card-blueprint';
 import type { VFXSequence } from '../game/systems/vfx.system';
+import type { Player } from '../player/player.entity';
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
   return card.kind === CARD_KINDS.MINION;
@@ -50,13 +51,17 @@ export const singleEnemyTargetRules = {
       getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
       getLabel = () => `${card.blueprint.name} : Select an enemy unit`,
       timeoutFallback,
-      required = true
+      required = true,
+      canCancel = false,
+      onCancel = () => {}
     }: {
       predicate?: (unit: Unit) => boolean;
       getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
       getLabel?: () => string;
       required?: boolean;
       timeoutFallback: BoardCell[];
+      canCancel?: boolean;
+      onCancel?: (player: Player) => MaybePromise<void>;
     }
   ) {
     return await game.interaction.selectSpacesOnBoard({
@@ -64,6 +69,8 @@ export const singleEnemyTargetRules = {
       getLabel: getLabel,
       source: card,
       getAoe,
+      canCancel,
+      onCancel,
       timeoutFallback,
       isElligible(candidate, selectedCards) {
         if (!candidate.unit) return false;
@@ -118,13 +125,17 @@ export const singleMinionTargetRules = {
       predicate = () => true,
       getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
       getLabel = () => `${card.blueprint.name} : Select a minion`,
-      timeoutFallback
+      timeoutFallback,
+      canCancel = false,
+      onCancel = () => {}
     }: {
       required?: boolean;
       predicate?: (unit: Unit) => boolean;
       getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
       getLabel?: () => string;
       timeoutFallback: BoardCell[];
+      canCancel?: boolean;
+      onCancel?: (player: Player) => MaybePromise<void>;
     }
   ) {
     return await game.interaction.selectSpacesOnBoard({
@@ -133,6 +144,8 @@ export const singleMinionTargetRules = {
       getLabel: getLabel,
       getAoe,
       timeoutFallback,
+      canCancel,
+      onCancel,
       isElligible(candidate, selectedCells) {
         if (!candidate.unit || !isMinion(candidate.unit.card)) {
           return false;
@@ -174,12 +187,16 @@ export const multipleUnitsTargetRules = {
         getAoe,
         getLabel = selected =>
           `${card.blueprint.name} : Select targets (${selected} / ${max})`,
-        timeoutFallback
+        timeoutFallback,
+        canCancel = false,
+        onCancel = () => {}
       }: {
         predicate?: (candidate: Unit, selected: Unit[]) => boolean;
         getAoe: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
         getLabel?: (selectedSpaces: BoardCell[]) => string;
         timeoutFallback: BoardCell[];
+        canCancel?: boolean;
+        onCancel?: (player: Player) => MaybePromise<void>;
       }
     ) => {
       return await game.interaction.selectSpacesOnBoard({
@@ -188,6 +205,8 @@ export const multipleUnitsTargetRules = {
         timeoutFallback,
         getLabel,
         getAoe,
+        canCancel,
+        onCancel,
         isElligible(candidate, selectedCards) {
           if (!candidate.unit) {
             return false;
@@ -223,7 +242,7 @@ export const anywhereTargetRules = {
       return elligibleCells.length >= min;
     },
   getTargets:
-    ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat: boolean }) =>
+    ({ min, max, allowRepeat }: { min: number; max: number; allowRepeat?: boolean }) =>
     async (
       game: Game,
       card: AnyCard,
@@ -231,12 +250,16 @@ export const anywhereTargetRules = {
         predicate = () => true,
         getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
         getLabel = () => `${card.blueprint.name} : Select a space`,
-        timeoutFallback = []
+        timeoutFallback = [],
+        canCancel = false,
+        onCancel = () => {}
       }: {
         predicate?: (cell: BoardCell) => boolean;
         getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
         getLabel?: () => string;
         timeoutFallback?: BoardCell[];
+        canCancel?: boolean;
+        onCancel?: (player: Player) => MaybePromise<void>;
       } = {}
     ) => {
       return await game.interaction.selectSpacesOnBoard({
@@ -245,6 +268,8 @@ export const anywhereTargetRules = {
         timeoutFallback,
         getLabel,
         getAoe,
+        canCancel,
+        onCancel,
         isElligible(candidate, selectedCells) {
           return (
             (allowRepeat
@@ -280,12 +305,16 @@ export const emptySpacesTargetRules = {
         predicate = () => true,
         getAoe = () => new PointAOEShape(TARGETING_TYPE.UNIT, {}),
         getLabel = () => `${card.blueprint.name} : Select a space`,
-        timeoutFallback
+        timeoutFallback,
+        canCancel = false,
+        onCancel = () => {}
       }: {
         predicate?: (cell: BoardCell) => boolean;
         getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
         getLabel?: (selectedSpaces: BoardCell[]) => string;
         timeoutFallback: BoardCell[];
+        canCancel?: boolean;
+        onCancel?: (player: Player) => MaybePromise<void>;
       }
     ) => {
       return await game.interaction.selectSpacesOnBoard({
@@ -294,6 +323,8 @@ export const emptySpacesTargetRules = {
         timeoutFallback,
         getLabel,
         getAoe,
+        canCancel,
+        onCancel,
         isElligible(candidate, selectedCells) {
           return (
             !candidate.unit &&
@@ -327,13 +358,17 @@ export const singleUnitTargetRules = {
       predicate = () => true,
       getAoe = () => new PointAOEShape(TARGETING_TYPE.ALLY_UNIT, {}),
       getLabel = () => `${card.blueprint.name} : Select a unit`,
-      timeoutFallback
+      timeoutFallback,
+      canCancel = false,
+      onCancel = () => {}
     }: {
       required?: boolean;
       predicate?: (unit: Unit) => boolean;
       getAoe?: (selectedSpaces: BoardCell[]) => GenericAOEShape | null;
       getLabel?: () => string;
       timeoutFallback: BoardCell[];
+      canCancel?: boolean;
+      onCancel?: (player: Player) => MaybePromise<void>;
     }
   ) {
     return await game.interaction.selectSpacesOnBoard({
@@ -342,6 +377,8 @@ export const singleUnitTargetRules = {
       timeoutFallback,
       getLabel,
       getAoe,
+      canCancel,
+      onCancel,
       isElligible(candidate, selectedCells) {
         if (!candidate.unit) {
           return false;

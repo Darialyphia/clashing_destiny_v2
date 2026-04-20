@@ -13,7 +13,7 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
 
   card.value = playedCard;
 
-  await waitFor(1000);
+  await waitFor(600);
   card.value = null;
 });
 </script>
@@ -48,8 +48,8 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
 
 :is(.v-enter-active, .v-leave-active) {
   transition:
-    opacity 0.4s var(--ease-2),
-    transform 0.4s var(--ease-2);
+    opacity 0.3s var(--ease-2),
+    transform 0.3s var(--ease-2);
 }
 
 :is(.v-enter-from, .v-leave-to) {

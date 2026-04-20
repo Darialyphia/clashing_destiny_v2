@@ -9,6 +9,7 @@ import {
   AbilityAfterUseEvent,
   AbilityBeforeUseEvent
 } from '../events/ability.events';
+import type { BoardCell } from '../../board/entities/board-cell.entity';
 
 export type SerializedAbility = {
   entityType: 'ability';
@@ -84,14 +85,28 @@ export class Ability<T extends AnyCard>
     return this.interceptors.shouldSwitchInitiativeAfterUse.getValue(true, {});
   }
 
+  private getTargets() {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<{ targets: BoardCell[]; cancelled: boolean }>(async resolve => {
+      const targets = await this.blueprint.getTargets(this.game, this.card, async () => {
+        resolve({ targets: [], cancelled: true });
+      });
+      resolve({ targets, cancelled: false });
+    });
+  }
+
   async use() {
+    const { targets, cancelled } = await this.getTargets();
+    if (cancelled) return;
+
     await this.game.emit(
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ ability: this as any, card: this.card })
     );
+
     this.lastUsedAt = this.game.turnSystem.elapsedTurns;
+
     await this.card.player.spendMana(this.manaCost);
-    const targets = await this.blueprint.getTargets(this.game, this.card);
     const aoe = this.blueprint.getAoe(this.game, this.card, targets);
 
     await this.blueprint.onResolve(this.game, this.card, {
@@ -103,6 +118,9 @@ export class Ability<T extends AnyCard>
       ABILITY_EVENTS.ABILITY_AFTER_USE,
       new AbilityAfterUseEvent({ ability: this as any, card: this.card })
     );
+    if (this.shouldSwitchInitiativeAfterUse) {
+      await this.game.turnSystem.switchInitiative();
+    }
   }
 
   serialize(): SerializedAbility {

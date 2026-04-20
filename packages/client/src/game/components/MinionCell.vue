@@ -1,205 +1,51 @@
 <script setup lang="ts">
 import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
-import {
-  useFxEvent,
-  useGameClient,
-  useGameState,
-  useGameUi
-} from '../composables/useGameClient';
-import {
-  GAME_PHASES,
-  INTERACTION_STATES
-} from '@game/engine/src/game/game.enums';
-import { pointToCellId } from '@game/engine/src/board/board-utils';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { Vec2 } from '@game/shared';
+import { useGameClient, useGameUi } from '../composables/useGameClient';
 import { useIsInAoe } from '../composables/useIsInAoe';
+import { useCellTargeting } from '../composables/useCellTargeting';
+import { useUnitActions } from '../composables/useUnitActions';
+import { useUnitDragSelection } from '../composables/useUnitDragSelection';
+import { useUnitArrowPath } from '../composables/useUnitArrowPath';
+import { useUnitMoveFx } from '../composables/useUnitMoveFx';
 import Unit from './Unit.vue';
 import Arrow from './Arrow.vue';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import AbilityMenu from './AbilityMenu.vue';
 
 const { cell } = defineProps<{
   cell: BoardCellViewModel;
 }>();
 
-const state = useGameState();
 const ui = useGameUi();
-const { client } = useGameClient();
-
-const isTargetable = computed(() => {
-  const interaction = state.value.interaction;
-  if (interaction.state !== INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
-    return false;
-  }
-
-  return (
-    !isTargeted.value &&
-    interaction.ctx.elligibleSpaces.some(
-      spaceId =>
-        spaceId === pointToCellId({ x: cell.position.x, y: cell.position.y })
-    )
-  );
-});
-
-const isTargeted = computed(() => {
-  const { interaction, phase } = state.value;
-  if (interaction.state !== INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
-    return false;
-  }
-
-  if (
-    interaction.ctx.selectedSpaces.some(
-      space =>
-        pointToCellId(space) ===
-        pointToCellId({ x: cell.position.x, y: cell.position.y })
-    )
-  ) {
-    return true;
-  }
-
-  if (phase.state === GAME_PHASES.PLAYING_CARD) {
-    const card = state.value.entities[phase.ctx.card] as CardViewModel;
-    if (!card) return false;
-    return card.spacesToHighlight.some(point =>
-      Vec2.fromPoint(point).equals({ x: cell.position.x, y: cell.position.y })
-    );
-  }
-
-  return false;
-});
-
-const canMoveTo = computed(() => {
-  if (!ui.value.selectedUnit) return false;
-  return ui.value.selectedUnit.canMoveTo(cell);
-});
-
-const canAttack = computed(() => {
-  if (!ui.value.selectedUnit) return false;
-  return ui.value.selectedUnit.canAttackAt(cell);
-});
+const { client, playerId } = useGameClient();
 const isInAoe = useIsInAoe();
 
-const canSelectUnit = computed(() => {
-  if (!cell.unit) return false;
-  if (cell.unit.isExhausted) return false;
-  if (!ui.value.isInteractivePlayer) return false;
-  if (state.value.phase.state !== GAME_PHASES.MAIN) return false;
-  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
-  return true;
-});
-
-const DRAG_THRESHOLD_PX = 30;
-
-let startX = 0;
-let startY = 0;
-const onMousedown = (e: MouseEvent) => {
-  if (!canSelectUnit.value) return;
-  startX = e.clientX;
-  startY = e.clientY;
-
-  document.body.addEventListener('mousemove', onMousemove);
-};
-
-const onMousemove = (e: MouseEvent) => {
-  if (!cell.unit) return;
-  const deltaY = Math.abs(startY - e.clientY);
-  const deltaX = Math.abs(startX - e.clientX);
-  if (deltaY >= DRAG_THRESHOLD_PX || deltaX >= DRAG_THRESHOLD_PX) {
-    ui.value.selectUnit(cell.unit);
-    document.body.removeEventListener('mousemove', onMousemove);
-  }
-};
-
-const selectedUnitPath = ref('');
 const cellEl = useTemplateRef<HTMLElement>('cell');
-const mousePos = ref({ x: 0, y: 0 });
 
-const updateMousePos = (e: MouseEvent) => {
-  mousePos.value = { x: e.clientX, y: e.clientY };
-};
+const { isTargetable, isTargeted } = useCellTargeting(cell);
+const { canMoveTo, canAttack, canSelectUnit } = useUnitActions(cell);
+const { onMousedown, onMouseup } = useUnitDragSelection(cell, canSelectUnit);
+const { selectedUnitPath, pathColor } = useUnitArrowPath(cell, cellEl);
+const { isMovingUnit } = useUnitMoveFx(cell);
 
-const computeParabolaPath = () => {
-  if (!ui.value.selectedUnit) return '';
-  if (!cellEl.value) return '';
-  if (cell.unit?.id !== ui.value.selectedUnit.id) return '';
-
-  const rect = cellEl.value.getBoundingClientRect();
-  const startX = rect.left + rect.width / 2;
-  const startY = rect.top + rect.height;
-  const endX = mousePos.value.x;
-  const endY = mousePos.value.y;
-
-  // Control point for quadratic bezier - creates a parabola arc
-  // Place it above the midpoint to create an upward arc
-  const midX = (startX + endX) / 2;
-  const distance = Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
-  const arcHeight = Math.min(distance * 0.4, 150); // Arc height proportional to distance
-  const controlY = Math.min(startY, endY) - arcHeight;
-
-  return `M ${startX} ${startY} Q ${midX} ${controlY} ${endX} ${endY}`;
-};
-
-watch(
-  [() => ui.value.selectedUnit, mousePos],
-  () => {
-    selectedUnitPath.value = computeParabolaPath();
-  },
-  { deep: true }
-);
-
-onMounted(() => {
-  document.addEventListener('mousemove', updateMousePos);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('mousemove', updateMousePos);
-});
-
-const isMovingUnit = ref(false);
-useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
-  // Source cell: just remove the unit
-  if (event.unit === cell.unit?.id) {
-    cell.update({
-      unit: undefined
-    });
-  }
-
-  // Destination cell: add unit and animate from old position
-  if (event.position.x === cell.x && event.position.y === cell.y) {
-    isMovingUnit.value = true;
-    // Get the old position before any DOM changes
-    const oldElement = ui.value.DOMSelectors.unit(event.unit).element;
-    const oldRect = oldElement!.getBoundingClientRect();
-
-    cell.update({
-      unit: event.unit
-    });
-
-    await nextTick();
-    const newElement = ui.value.DOMSelectors.unit(event.unit).element;
-
-    if (newElement) {
-      const newRect = newElement.getBoundingClientRect();
-      const deltaX = oldRect.left - newRect.left;
-      const deltaY = oldRect.top - newRect.top;
-
-      newElement.style.transition = 'none';
-      await gsap.fromTo(
-        newElement,
-        { x: deltaX, y: deltaY },
-        {
-          x: 0,
-          y: 0,
-          duration: 0.3,
-          ease: Power1.easeInOut
-        }
-      );
-      newElement.style.transition = '';
+const isAbilityMenuOpened = ref(false);
+const handleMouseup = () => {
+  onMouseup();
+  const shouldHandleAbilities =
+    !ui.value.selectedUnit &&
+    cell.unit &&
+    cell.unit.getPlayer()?.id === playerId.value;
+  if (shouldHandleAbilities) {
+    const availableAbilities = cell.unit.abilities;
+    if (availableAbilities.length === 1) {
+      return availableAbilities[0].handler(cell.unit.card);
     }
-
-    isMovingUnit.value = false;
+    if (availableAbilities.length > 1) {
+      return (isAbilityMenuOpened.value = true);
+    }
+  } else {
+    ui.value.onBoardCellClick(cell);
   }
-});
+};
 </script>
 
 <template>
@@ -218,16 +64,24 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
     }"
     @mouseenter="ui.hoverCell(cell)"
     @mouseleave="ui.unhoverCell()"
-    @mouseup.stop="ui.onBoardCellClick(cell)"
+    @mouseup.stop="handleMouseup"
     @mousedown="onMousedown"
   >
-    <Unit v-if="cell.unit" :unit="cell.unit" class="unit" />
+    <AbilityMenu
+      v-if="cell.unit"
+      :card="cell.unit.card"
+      v-model:isOpened="isAbilityMenuOpened"
+      actions-side="top"
+      use-portal
+    >
+      <Unit :unit="cell.unit" class="unit" />
+    </AbilityMenu>
 
     <Teleport to="#arrows" defer>
       <Arrow
-        v-if="ui.selectedUnit && selectedUnitPath"
+        v-if="selectedUnitPath"
         :path="selectedUnitPath"
-        color="red"
+        :color="pathColor"
       />
     </Teleport>
   </div>
@@ -274,7 +128,7 @@ useFxEvent(FX_EVENTS.UNIT_AFTER_MOVE, async event => {
     filter: drop-shadow(0 0 6px var(--blue-9));
     transition: filter 0.2s var(--ease-2);
     &:hover {
-      filter: drop-shadow(0 0 12px var(--cyan-1)) brightness(120%);
+      filter: drop-shadow(0 0 12px var(--cyan-1)) brightness(250%);
     }
   }
 

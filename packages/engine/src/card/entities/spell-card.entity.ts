@@ -70,12 +70,12 @@ export class SpellCard extends Card<
     >(
       // eslint-disable-next-line no-async-promise-executor
       async resolve => {
-        this.cancelPlay = async () => {
+        const targets = await this.blueprint.getTargets(this.game, this, async () => {
+          await this.game.gamePhaseSystem
+            .getContext<'playing_card_phase'>()
+            .ctx.cancel(this.player);
           resolve({ cancelled: true });
-          await this.game.interaction.getContext().ctx.cancel(this.player);
-        };
-
-        const targets = await this.blueprint.getTargets(this.game, this);
+        });
 
         resolve({ targets, cancelled: false });
       }

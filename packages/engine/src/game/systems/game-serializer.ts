@@ -11,10 +11,16 @@ import type { SerializedAbility } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
-import type { SerializedMinionCard } from '../../card/entities/minion-card.entity';
+import {
+  MinionCard,
+  type SerializedMinionCard
+} from '../../card/entities/minion-card.entity';
 import type { SerializedBoard } from '../../board/board.system';
-import type { SerializedArtifactCard } from '../../card/entities/artifact-card.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero-card.entity';
+import {
+  ArtifactCard,
+  type SerializedArtifactCard
+} from '../../card/entities/artifact-card.entity';
+import { HeroCard, type SerializedHeroCard } from '../../card/entities/hero-card.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
 import { areArraysIdentical } from '../../utils/helpers';
 import type { SerializedCell } from '../../board/entities/board-cell.entity';
@@ -161,6 +167,15 @@ export class GameSerializer {
       card.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
+      if (
+        card instanceof MinionCard ||
+        card instanceof HeroCard ||
+        card instanceof ArtifactCard
+      ) {
+        card.abilities.forEach(ability => {
+          entities[ability.id] = ability.serialize();
+        });
+      }
     });
     this.game.playerSystem.players.forEach(player => {
       entities[player.id] = player.serialize();

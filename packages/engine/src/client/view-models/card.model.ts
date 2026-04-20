@@ -237,6 +237,13 @@ export class CardViewModel {
     return [];
   }
 
+  get isUsingAbility() {
+    if ('isUsingAbility' in this.data) {
+      return this.data.isUsingAbility as boolean;
+    }
+    return false;
+  }
+
   getPlayer() {
     return this.getEntities()[this.data.player] as PlayerViewModel;
   }
@@ -255,7 +262,7 @@ export class CardViewModel {
     if (state.phase.state !== GAME_PHASES.PLAYING_CARD) return;
     if (state.phase.ctx.card !== this.id) return;
     if (!state.phase.ctx.canCancel) return;
-    return this.getClient().cancelPlayCard();
+    return this.getClient().cancelSpaceSelection();
   }
 
   get abilityActions() {

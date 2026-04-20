@@ -23,7 +23,7 @@ export class UseAbilityAction implements CardActionRule {
     this.client.dispatch({
       type: 'useAbility',
       payload: {
-        abilityId: this.ability.id,
+        abilityId: this.ability.abilityId,
         cardId: card.id,
         playerId: this.client.playerId
       }

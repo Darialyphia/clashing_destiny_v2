@@ -23,6 +23,7 @@ export type SerializedHeroCard = SerializedCard & {
   maxHp: number;
   retaliation: number;
   remainingHp: number;
+  abilities: string[];
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -99,7 +100,8 @@ export class HeroCard extends Card<
       atk: this.atk,
       retaliation: this.retaliation,
       maxHp: this.maxHp,
-      remainingHp: this.player.remainingHp
+      remainingHp: this.player.remainingHp,
+      abilities: this.abilities.map(ability => ability.id)
     };
   }
 

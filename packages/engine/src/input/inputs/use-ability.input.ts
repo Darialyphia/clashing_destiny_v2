@@ -53,6 +53,12 @@ export class UseAbilityInput extends Input<typeof schema> {
       new IllegalGameStateError('Card cannot use this ability at this time')
     );
 
-    await ability.use();
+    assert(
+      ability.canUse,
+      new IllegalGameStateError('Ability cannot be used at this time')
+    );
+    assert('useAbility' in card, new IllegalGameStateError('Card cannot use abilities'));
+
+    await card.useAbility(this.payload.abilityId);
   }
 }

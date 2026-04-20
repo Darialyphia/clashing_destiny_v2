@@ -88,8 +88,6 @@ export abstract class Card<
 
   protected playedAtTurn: number | null = null;
 
-  cancelPlay?: () => MaybePromise<void>;
-
   protected spacesToHighlight: Point[] = [];
 
   readonly isFoil: boolean;

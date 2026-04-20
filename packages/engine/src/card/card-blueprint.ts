@@ -10,7 +10,7 @@ import type { AnyCard } from './entities/card.entity';
 import type { DestinyCard } from './entities/destiny-card.entity';
 import type { HeroCard } from './entities/hero-card.entity';
 import type { VFXSequence } from '../game/systems/vfx.system';
-import type { Point } from '@game/shared';
+import type { MaybePromise, Point } from '@game/shared';
 
 export type CardArt = {
   foil: {
@@ -87,7 +87,11 @@ export type SpellBlueprint = CardBlueprintBase & {
       aoe: GenericAOEShape;
     }
   ) => Promise<void>;
-  getTargets: (game: Game, card: SpellCard) => Promise<BoardCell[]>;
+  getTargets: (
+    game: Game,
+    card: SpellCard,
+    onCancel: () => MaybePromise<void>
+  ) => Promise<BoardCell[]>;
   getAoe: (game: Game, card: SpellCard, targets: BoardCell[]) => GenericAOEShape;
 };
 
@@ -104,7 +108,11 @@ export type DestinyBlueprint = CardBlueprintBase & {
       aoe: GenericAOEShape;
     }
   ) => Promise<void>;
-  getTargets: (game: Game, card: DestinyCard) => Promise<BoardCell[]>;
+  getTargets: (
+    game: Game,
+    card: DestinyCard,
+    onCancel: () => MaybePromise<void>
+  ) => Promise<BoardCell[]>;
   getAoe: (game: Game, card: DestinyCard, targets: BoardCell[]) => GenericAOEShape;
 };
 
@@ -114,7 +122,11 @@ export type AbilityBlueprint<T extends AnyCard> = {
   label: string;
   manaCost: number;
   isHiddenOnCard?: boolean;
-  getTargets: (game: Game, card: T) => Promise<BoardCell[]>;
+  getTargets: (
+    game: Game,
+    card: T,
+    onCancel: () => MaybePromise<void>
+  ) => Promise<BoardCell[]>;
   getAoe: (game: Game, card: T, targets: BoardCell[]) => GenericAOEShape;
   getCooldown: (game: Game, card: T) => number;
   canUse(game: Game, card: T): boolean;
@@ -144,7 +156,11 @@ export type ArtifactBlueprint = CardBlueprintBase & {
       artifact: PlayerArtifact;
     }
   ) => Promise<void>;
-  getTargets: (game: Game, card: ArtifactCard) => Promise<BoardCell[]>;
+  getTargets: (
+    game: Game,
+    card: ArtifactCard,
+    onCancel: () => MaybePromise<void>
+  ) => Promise<BoardCell[]>;
   getAoe: (game: Game, card: ArtifactCard, targets: BoardCell[]) => GenericAOEShape;
 };
 
