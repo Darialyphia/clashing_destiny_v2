@@ -55,6 +55,7 @@ export type SerializedPlayer = {
   canAttackPlayer: boolean;
   attackableCells: string[];
   canLevelup: boolean;
+  talents: string[];
 };
 
 export type PlayerInterceptor = {
@@ -226,7 +227,8 @@ export class Player
       attackableCells: this.game.boardSystem.cells
         .filter(cell => this.canAttackAt(cell.position))
         .map(cell => cell.id),
-      canLevelup: this.levelManager.canLevelup
+      canLevelup: this.levelManager.canLevelup,
+      talents: this.levelManager.talents.map(talent => talent.id)
     };
   }
 

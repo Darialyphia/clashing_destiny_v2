@@ -3,6 +3,8 @@ import { useGameState, useOpponentPlayer } from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPileModal from './DiscardPileModal.vue';
+import Talent from './Talent.vue';
+
 const player = useOpponentPlayer();
 const state = useGameState();
 
@@ -29,11 +31,11 @@ onMounted(() => {
         {{ player.name }}
       </div>
       <div class="talent-bar">
-        <div
-          v-for="i in state.config.PLAYER_MAX_LEVEL"
-          :key="i"
-          class="talent"
-        />
+        <div class="talent-bar">
+          <div v-for="i in state.config.PLAYER_MAX_LEVEL" :key="i">
+            <Talent :card="player.talents[i - 1] ?? null" />
+          </div>
+        </div>
       </div>
       <div class="bottom-grid">
         <div class="mana-bar">
@@ -140,12 +142,6 @@ onMounted(() => {
 .talent-bar {
   display: flex;
   gap: 2px;
-}
-
-.talent {
-  width: 48px;
-  aspect-ratio: 1;
-  background: url('@/assets/ui/talent-node.png');
 }
 
 .health {

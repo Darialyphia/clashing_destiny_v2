@@ -16,6 +16,7 @@ const isShowingBoard = ref(false);
 
 const isOpened = computed({
   get() {
+    if (isShowingBoard.value) return false;
     if (state.value.phase.state !== GAME_PHASES.LEVEL_UP) return false;
 
     const ctx = state.value.phase.ctx as SerializedLevelUpPhase;
@@ -37,6 +38,13 @@ const hasConfirmed = computed(() => {
   const ctx = state.value.phase.ctx as SerializedLevelUpPhase;
   return ctx.selections[player.value.id] !== null;
 });
+
+const commit = () => {
+  if (hasConfirmed.value) return;
+
+  client.value.selectLevelUpCard(selectedCardId.value);
+  selectedCardId.value = null;
+};
 </script>
 
 <template>
@@ -50,7 +58,7 @@ const hasConfirmed = computed(() => {
     }"
   >
     <div class="content">
-      <p class="text-5 mb-4" v-if="!isShowingBoard">
+      <p class="text-5 mb-4 text-center" v-if="!isShowingBoard">
         Select a destiny card to play or skip
       </p>
       <p v-if="hasConfirmed">Waiting for opponent to choose...</p>
@@ -80,7 +88,7 @@ const hasConfirmed = computed(() => {
           v-if="!isShowingBoard"
           variant="info"
           :text="selectedCardId ? 'Play Card' : 'Skip'"
-          @click="client.selectLevelUpCard(selectedCardId)"
+          @click="commit"
         />
       </footer>
     </div>

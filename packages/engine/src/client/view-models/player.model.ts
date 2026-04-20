@@ -104,6 +104,11 @@ export class PlayerViewModel {
     return this.data.destinyDeck.map(cardId => entities[cardId] as CardViewModel);
   }
 
+  get talents() {
+    const entities = this.getEntities();
+    return this.data.talents.map(talentId => entities[talentId] as CardViewModel);
+  }
+
   getCurrentlyPlayedCard() {
     if (!this.data.currentlyPlayedCard) return null;
 
