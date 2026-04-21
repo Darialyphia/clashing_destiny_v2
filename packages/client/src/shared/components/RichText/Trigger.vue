@@ -17,7 +17,8 @@ const { color = 'red' } = defineProps<{
   );
   color: white;
   padding-inline: calc(6px * var(--pixel-scale));
-  font-size: 0.85em;
+  padding-block: calc(1px * var(--pixel-scale));
+  font-size: 0.8em;
   clip-path: polygon(
     calc(3px * var(--pixel-scale)) 0%,
     100% 0%,
@@ -26,6 +27,8 @@ const { color = 'red' } = defineProps<{
   );
   font-weight: 500;
   font-family: var(--font-system-ui);
+  -webkit-text-stroke: calc(1.5px * var(--pixel-scale)) black;
+  paint-order: stroke fill;
 }
 
 .red {

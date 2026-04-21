@@ -735,7 +735,7 @@ const jobsBgs = computed(() => {
 .attributes {
   width: calc(92px * var(--pixel-scale));
   position: absolute;
-  top: calc(3px * var(--pixel-scale));
+  top: calc(4px * var(--pixel-scale));
   left: calc(22px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 7px);
   color: black;

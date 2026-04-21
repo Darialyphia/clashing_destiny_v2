@@ -1,5 +1,6 @@
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
+import { CARD_KINDS } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -25,7 +26,7 @@ export type DeckValidationResult =
   | { result: 'failure'; violations: Array<DeckViolation> };
 
 export type DeckValidator<TMeta> = {
-  maxCardCopies: number;
+  getMaxCopies: (card: ValidatableCard<TMeta>) => number;
   size: number;
   mainDeckMaxSize: number;
   destinyDeckMaxSize: number;
@@ -48,7 +49,14 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return defaultConfig.TALENT_COUNT;
   }
 
-  get maxCardCopies(): number {
+  getMaxCopies(card: ValidatableCard<TMeta>): number {
+    const blueprint = this.cardPool[card.blueprintId] as CardBlueprint;
+    if (blueprint.kind === CARD_KINDS.HERO) {
+      return 1;
+    }
+    if (blueprint.kind === CARD_KINDS.DESTINY) {
+      return defaultConfig.MAX_TALENT_COPIES;
+    }
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
   }
 
@@ -116,7 +124,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     }
 
     const existing = withBlueprint.find(c => deck.isEqual(c, card));
-    if (existing && existing.copies >= this.maxCardCopies) {
+    if (existing && existing.copies >= this.getMaxCopies(card)) {
       return false;
     }
 

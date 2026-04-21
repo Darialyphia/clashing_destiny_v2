@@ -94,7 +94,7 @@ const isVisible = computed(() => {
   left: 0;
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
-  --scale: 1;
+  --scale: 1.25;
   transform-origin: 50% 100%;
   transform: translateX(var(--x)) translateY(var(--offset-y))
     scale(var(--scale));
@@ -108,7 +108,7 @@ const isVisible = computed(() => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &:hover {
-    --scale: 1.5;
+    --scale: 2;
     z-index: var(--hand-size);
   }
 
@@ -135,9 +135,7 @@ const isVisible = computed(() => {
       animation: booster-border-gradient-rotate 4s linear infinite;
     }
   }
-  &.disabled {
-    filter: brightness(0.8);
-  }
+
   &.is-shaking > :not(.violation-warning) {
     animation: var(--animation-shake-x);
     animation-duration: 0.3s;
@@ -151,11 +149,12 @@ const isVisible = computed(() => {
   transform: translateX(-50%);
   color: white;
   text-align: center;
-  font-size: var(--size-4);
+  font-size: var(--size-3);
   font-weight: var(--font-weight-5);
   width: 100%;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
+  color: var(--red-5);
 }
 
 @property --hand-card-conic-gradient-angle {

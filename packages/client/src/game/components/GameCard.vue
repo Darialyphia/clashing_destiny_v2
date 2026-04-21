@@ -110,6 +110,7 @@ const classes = computed(() => {
           rarity: card.rarity ?? overrides.rarity,
           manaCost: card.manaCost ?? overrides.manaCost,
           baseManaCost: card.baseManaCost ?? overrides.baseManaCost,
+          expCost: card.expCost ?? overrides.expCost,
           hp: card.maxHp ?? overrides.hp,
           atk: card.atk ?? overrides.atk,
           retaliation: card.retaliation ?? overrides.retaliation,
@@ -160,9 +161,9 @@ const classes = computed(() => {
       <!-- <div class="damage" v-if="damageTaken > 0">
         {{ damageTaken }}
       </div> -->
-      <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
+      <!-- <p v-if="!card.canPlay && showDisabledMessage" class="disabled-message">
         {{ card.unplayableReason ?? 'You cannot play this card right now.' }}
-      </p>
+      </p> -->
     </CardActionsPopover>
   </div>
 </template>
@@ -312,7 +313,7 @@ const classes = computed(() => {
   transform: translateX(-50%);
   background: hsl(0 0% 0% / 0.65);
   color: hsl(0 0% 100% / 0.9);
-  font-size: var(--font-size--2);
+  font-size: var(--font-size-12);
   padding: var(--size-1) var(--size-2);
   border-radius: var(--radius-pill);
   width: max-content;

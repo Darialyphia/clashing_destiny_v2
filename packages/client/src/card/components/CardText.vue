@@ -24,4 +24,8 @@ const showFullText = useIsKeyboardControlPressed({
   color: var(--card-text-color, var(--card-text-color, black));
   line-height: 1.4;
 }
+:global(.card-text ul) {
+  list-style: disc !important;
+  padding-left: var(--size-4);
+}
 </style>

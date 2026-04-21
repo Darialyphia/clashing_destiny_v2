@@ -7,12 +7,11 @@ import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils'
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 
-export const fireBolt: SpellBlueprint = {
-  id: 'fire-bolt',
-  name: 'Fire Bolt',
+export const quicksands: SpellBlueprint = {
+  id: 'quicksands',
+  name: 'Quicksands',
   description: dedent`
-  Deal 2 damage to a minion.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> Deal 1 damage to the enemy Hero.
+  Give a board space "Minions on this space have <rt-keyword>Anchored</rt-keyword>."
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,
@@ -20,8 +19,8 @@ export const fireBolt: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   jobs: [JOBS.MAGE.id],
-  tags: [TAGS.FIRE],
-  manaCost: 1,
+  tags: [TAGS.EARTH],
+  manaCost: 2,
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, c => c.isEnemy(card.player)),
   getTargets(game, card, onCancel) {

@@ -16,7 +16,28 @@ export const cards = {
 "apprentice-magician": "apprentice-magician",
 "arcane-master": "arcane-master",
 "orb-ponderer": "orb-ponderer",
-"gargoyle": "gargoyle"
+"gargoyle": "gargoyle",
+"cosmic-avatar": "cosmic-avatar",
+"lightning-strike": "lightning-strike",
+"fire_mastery": "fire_mastery",
+"fire-ball": "fire-ball",
+"shooting_star": "shooting_star",
+"amplify-magic": "amplify-magic",
+"elemental-wisdom": "elemental-wisdom",
+"fire-shard": "fire-shard",
+"water-shard": "water-shard",
+"air-shard": "air-shard",
+"earth-shard": "earth-shard",
+"elementalist_path": "elementalist_path",
+"wheel_of_the_elements": "wheel_of_the_elements",
+"pyromancer": "pyromancer",
+"peer-into-the-essence": "peer-into-the-essence",
+"conflux_chosen": "conflux_chosen",
+"arcane_conduit": "arcane_conduit",
+"rainbow_elemental": "rainbow_elemental",
+"quicksands": "quicksands",
+"wind-shield": "wind-shield",
+"twister": "twister"
 } as const;
 
 export const collectableCards = {
@@ -31,7 +52,21 @@ export const collectableCards = {
 "apprentice-magician": "apprentice-magician",
 "arcane-master": "arcane-master",
 "orb-ponderer": "orb-ponderer",
-"gargoyle": "gargoyle"
+"gargoyle": "gargoyle",
+"cosmic-avatar": "cosmic-avatar",
+"lightning-strike": "lightning-strike",
+"fire_mastery": "fire_mastery",
+"fire-ball": "fire-ball",
+"shooting_star": "shooting_star",
+"amplify-magic": "amplify-magic",
+"elemental-wisdom": "elemental-wisdom",
+"elementalist_path": "elementalist_path",
+"pyromancer": "pyromancer",
+"peer-into-the-essence": "peer-into-the-essence",
+"conflux_chosen": "conflux_chosen",
+"arcane_conduit": "arcane_conduit",
+"rainbow_elemental": "rainbow_elemental",
+"quicksands": "quicksands"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -96,6 +131,111 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "gargoyle",
     "collectable": true,
     "rarity": "common"
+  },
+  {
+    "id": "cosmic-avatar",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "lightning-strike",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "fire_mastery",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "fire-ball",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "shooting_star",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "amplify-magic",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "elemental-wisdom",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "fire-shard",
+    "collectable": false,
+    "rarity": "common"
+  },
+  {
+    "id": "water-shard",
+    "collectable": false,
+    "rarity": "common"
+  },
+  {
+    "id": "air-shard",
+    "collectable": false,
+    "rarity": "common"
+  },
+  {
+    "id": "earth-shard",
+    "collectable": false,
+    "rarity": "common"
+  },
+  {
+    "id": "elementalist_path",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "wheel_of_the_elements",
+    "collectable": false,
+    "rarity": "rare"
+  },
+  {
+    "id": "pyromancer",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "peer-into-the-essence",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "conflux_chosen",
+    "collectable": true,
+    "rarity": "legendary"
+  },
+  {
+    "id": "arcane_conduit",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "rainbow_elemental",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "quicksands",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "wind-shield",
+    "collectable": false,
+    "rarity": "common"
+  },
+  {
+    "id": "twister",
+    "collectable": false,
+    "rarity": "common"
   }
 ]
 };
@@ -112,7 +252,28 @@ export const cardShortIds: Record<string, number> = {
 "apprentice-magician": 9,
 "arcane-master": 10,
 "orb-ponderer": 11,
-"gargoyle": 12
+"gargoyle": 12,
+"cosmic-avatar": 13,
+"lightning-strike": 14,
+"fire_mastery": 15,
+"fire-ball": 16,
+"shooting_star": 17,
+"amplify-magic": 18,
+"elemental-wisdom": 19,
+"fire-shard": 20,
+"water-shard": 21,
+"air-shard": 22,
+"earth-shard": 23,
+"elementalist_path": 24,
+"wheel_of_the_elements": 25,
+"pyromancer": 26,
+"peer-into-the-essence": 27,
+"conflux_chosen": 28,
+"arcane_conduit": 29,
+"rainbow_elemental": 30,
+"quicksands": 31,
+"wind-shield": 32,
+"twister": 33
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -127,5 +288,26 @@ export const cardIdByShortId: Record<number, string> = {
 "9": "apprentice-magician",
 "10": "arcane-master",
 "11": "orb-ponderer",
-"12": "gargoyle"
+"12": "gargoyle",
+"13": "cosmic-avatar",
+"14": "lightning-strike",
+"15": "fire_mastery",
+"16": "fire-ball",
+"17": "shooting_star",
+"18": "amplify-magic",
+"19": "elemental-wisdom",
+"20": "fire-shard",
+"21": "water-shard",
+"22": "air-shard",
+"23": "earth-shard",
+"24": "elementalist_path",
+"25": "wheel_of_the_elements",
+"26": "pyromancer",
+"27": "peer-into-the-essence",
+"28": "conflux_chosen",
+"29": "arcane_conduit",
+"30": "rainbow_elemental",
+"31": "quicksands",
+"32": "wind-shield",
+"33": "twister"
 } as const;

@@ -1,4 +1,5 @@
 import type { Values } from '@game/shared';
+import { JOBS } from './card.enums';
 
 export type Keyword = {
   id: string;
@@ -49,7 +50,7 @@ export const KEYWORDS = {
     id: 'burn',
     name: 'Burn (x)',
     description: 'This unit takes X damage at the start of each turn.',
-    aliases: [/burn \([0-9]+\)/]
+    aliases: [/burn \([0-9]+\)/, /burning/]
   },
   CELERITY: {
     id: 'celerity',
@@ -136,7 +137,6 @@ export const KEYWORDS = {
     description: 'This unit gains attack and hp at the starts of its turn.',
     aliases: []
   },
-
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate (x)',
@@ -296,7 +296,36 @@ export const KEYWORDS = {
     description:
       'This unit deals its combat damage before the attacking unit during combat.',
     aliases: []
-  }
+  },
+  OVERWHELM: {
+    id: 'overwhelm',
+    name: 'Overwhelm',
+    description: 'Excess damage dealt to a unit is dealt to the enemy player.',
+    aliases: []
+  },
+  SPLASH_ATTACK: {
+    id: 'splash_attack',
+    name: 'Splash Attack',
+    description: 'When this unit attacks, it also damages adjacent units.',
+    aliases: []
+  },
+  REGENERATION: {
+    id: 'regeneration',
+    name: 'Regeneration (x)',
+    description: 'At the start of the turn, heal this unit for X.',
+    aliases: [/regeneration \([0-9]+\)/]
+  },
+  ...Object.fromEntries(
+    Object.values(JOBS).map(job => [
+      `${job.id.toUpperCase()}_BONUS`,
+      {
+        id: `${job.id}_mastery`,
+        name: `${job.name} Bonus`,
+        description: `This card has a bonus effect if its owner is playing a ${job.name} hero.`,
+        aliases: []
+      }
+    ]) as [string, Keyword][]
+  )
 } as const satisfies Record<string, Keyword>;
 
 export type KeywordName = Values<typeof KEYWORDS>['name'];

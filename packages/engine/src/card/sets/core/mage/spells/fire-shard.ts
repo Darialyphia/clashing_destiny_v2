@@ -7,15 +7,15 @@ import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils'
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 
-export const fireBolt: SpellBlueprint = {
-  id: 'fire-bolt',
-  name: 'Fire Bolt',
+export const fireShard: SpellBlueprint = {
+  id: 'fire-shard',
+  name: 'Fire Shard',
   description: dedent`
-  Deal 2 damage to a minion.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> Deal 1 damage to the enemy Hero.
+  Deal 1 damage to a minion.
+  Costs <rt-mana>0</rt-mana> if you played a Fire spell this turn.
   `,
   kind: CARD_KINDS.SPELL,
-  collectable: true,
+  collectable: false,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
@@ -42,10 +42,5 @@ export const fireBolt: SpellBlueprint = {
     if (!target) return;
 
     await target.takeDamage(card, new SpellDamage(card, 2));
-
-    const lvlMod = card.modifiers.get(LevelBonusModifier);
-    if (lvlMod?.isActive) {
-      await card.player.opponent.takeDamage(card, new SpellDamage(card, 1));
-    }
   }
 };

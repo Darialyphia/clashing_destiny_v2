@@ -22,5 +22,7 @@ const { lvl } = defineProps<{
   border-radius: var(--radius-pill);
   font-family: var(--font-system-ui);
   font-weight: var(--font-weight-5);
+  -webkit-text-stroke: calc(1px * var(--pixel-scale)) white;
+  paint-order: stroke fill;
 }
 </style>

@@ -12,6 +12,27 @@ import { apprenticeMagician } from './core/mage/minions/apprentice-magician';
 import { arcaneMaster } from './core/mage/minions/arcane-master';
 import { orbPonderer } from './core/mage/minions/orb-ponderer';
 import { gargoyle } from './core/mage/minions/gargoyle';
+import { cosmicAvatar } from './core/mage/minions/cosmic-avatar';
+import { lightningStrike } from './core/mage/spells/lightning-strike';
+import { fireMastery } from './core/mage/destinies/fire-mastery';
+import { fireBall } from './core/mage/spells/fire-ball';
+import { shootingStar } from './core/mage/destinies/shooting-star';
+import { amplifyMagic } from './core/mage/spells/amplify-magic';
+import { elementalWisdom } from './core/elementalist/spells/elemental-wisdom';
+import { fireShard } from './core/mage/spells/fire-shard';
+import { waterShard } from './core/mage/spells/water-shard';
+import { airShard } from './core/mage/spells/air-shard';
+import { earthShard } from './core/mage/spells/earth-shard';
+import { elementalistPath } from './core/mage/destinies/elementalist-path';
+import { wheelOfTheElements } from './core/elementalist/artifacts/wheel-of-the-elements';
+import { pyromancer } from './core/mage/minions/pyromancer';
+import { peerIntoTheEssence } from './core/elementalist/spells/peer-into-the-essence';
+import { confluxChosen } from './core/elementalist/destinies/conflux-chosen';
+import { arcaneConduit } from './core/mage/minions/arcane-conduit';
+import { rainbowElemental } from './core/elementalist/minions/rainbow-elemental';
+import { quicksands } from './core/mage/spells/quicksands';
+import { windShield } from './core/mage/spells/wind-shield';
+import { twister } from './core/mage/spells/twister';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -28,6 +49,27 @@ export const coreSet: CardSet = {
     apprenticeMagician,
     arcaneMaster,
     orbPonderer,
-    gargoyle
+    gargoyle,
+    cosmicAvatar,
+    lightningStrike,
+    fireMastery,
+    fireBall,
+    shootingStar,
+    amplifyMagic,
+    elementalWisdom,
+    fireShard,
+    waterShard,
+    airShard,
+    earthShard,
+    elementalistPath,
+    wheelOfTheElements,
+    pyromancer,
+    peerIntoTheEssence,
+    confluxChosen,
+    arcaneConduit,
+    rainbowElemental,
+    quicksands,
+    windShield,
+    twister
   ]
 };

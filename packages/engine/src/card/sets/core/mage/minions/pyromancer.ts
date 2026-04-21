@@ -12,17 +12,17 @@ import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import { MinionOnDestroyModifier } from '../../../../../modifier/modifiers/on-destroy.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { UnitSimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
-export const apprenticeMagician: MinionBlueprint = {
-  id: 'apprentice-magician',
-  name: 'Apprentice Magician',
+export const pyromancer: MinionBlueprint = {
+  id: 'pyromancer',
+  name: 'Pyromancer',
   description: dedent`
-  <rt-keyword>Shooter</rt-keyword>
-  Whenever you play a spell, gain +1 Attack this turn.
+  <rt-trigger>On Enter</rt-trigger> Add a <rt-card>Fire Bolt</rt-card> to your hand.
+  <rt-job-bonus>Elementalist</rt-job-bonus> Whenever you play a <rt-card>Fire Bolt</rt-card> and your <rt-card>Wheel of the Elements</rt-card> is Fire, add a <rt-card>Fire Shard</rt-card> to your hand.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -31,11 +31,11 @@ export const apprenticeMagician: MinionBlueprint = {
   subKind: MINION_TYPES.RANGED,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE.id],
-  manaCost: 2,
+  manaCost: 3,
   tags: [],
-  atk: 1,
+  atk: 2,
   retaliation: 1,
-  maxHp: 3,
+  maxHp: 4,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
@@ -43,22 +43,13 @@ export const apprenticeMagician: MinionBlueprint = {
       new WhileOnBoardModifier(game, card, {
         modifier: new Modifier('wizard-tutor-empower', game, card, {
           mixins: [
+            new TogglableModifierMixin(game, () => lvlMod.isActive),
             new GameEventModifierMixin(game, {
-              eventName: GAME_EVENTS.CARD_AFTER_PLAY,
-              filter(event) {
-                return (
-                  event?.data.card.kind === CARD_KINDS.SPELL &&
-                  event.data.card.player.equals(card.player)
-                );
-              },
+              eventName: GAME_EVENTS.TURN_START,
+              unitForVisualFX: () => card.unit,
               async handler() {
-                await card.unit.modifiers.add(
-                  new UnitSimpleAttackBuffModifier(
-                    'apprentice-magician-buff',
-                    game,
-                    card,
-                    { amount: 1 }
-                  )
+                await card.player.hero.modifiers.add(
+                  new EmpowerModifier(game, card, { amount: 1 })
                 );
               }
             })
@@ -73,13 +64,8 @@ export const apprenticeMagician: MinionBlueprint = {
     await card.modifiers.add(
       new MinionOnDestroyModifier(game, card, {
         async handler() {
-          const candidates = card.player.cardManager.deck.cards.filter(
-            c => c.hasJob(JOBS.MAGE.id) && c.manaCost === 1 && c.kind === CARD_KINDS.SPELL
-          );
-          if (candidates.length === 0) return;
-          await card.player.cardManager.drawFromPool(candidates, 1);
-        },
-        unitMixins: [new TogglableModifierMixin(game, () => lvlMod.isActive)]
+          await card.player.levelManager.gainExp(1);
+        }
       })
     );
   },

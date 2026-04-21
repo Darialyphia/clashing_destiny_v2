@@ -3,6 +3,7 @@ export type Config = {
   MAX_MAIN_DECK_CARD_COPIES: number;
 
   TALENT_COUNT: number;
+  MAX_TALENT_COPIES: number;
 
   INITIAL_HAND_SIZE: number;
   MAX_HAND_SIZE: number;
@@ -32,6 +33,7 @@ export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 40,
   MAX_MAIN_DECK_CARD_COPIES: 3,
   TALENT_COUNT: 10,
+  MAX_TALENT_COPIES: 1,
   INITIAL_HAND_SIZE: 4,
   MAX_HAND_SIZE: 7,
 

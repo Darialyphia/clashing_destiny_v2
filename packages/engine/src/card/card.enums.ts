@@ -71,7 +71,7 @@ export const JOBS = {
     name: 'Mage',
     shortName: 'Mage',
     isAdvanced: false
-  }
+  },
   // ROGUE: {
   //   id: 'rogue',
   //   name: 'Rogue',
@@ -102,12 +102,12 @@ export const JOBS = {
   //   shortName: 'Alc',
   //   isAdvanced: true
   // },
-  // ELEMENTALIST: {
-  //   id: 'elementalist',
-  //   name: 'Elementalist',
-  //   shortName: 'Ele',
-  //   isAdvanced: true
-  // },
+  ELEMENTALIST: {
+    id: 'elementalist',
+    name: 'Elementalist',
+    shortName: 'Ele',
+    isAdvanced: true
+  }
   // BERZERKER: {
   //   id: 'berzerker',
   //   name: 'Berzerker',

@@ -21,8 +21,8 @@ export const wizardTutor: MinionBlueprint = {
   id: 'wizard-tutor',
   name: 'Wizard Tutor',
   description: dedent`
-    <rt-trigger>Start of Turn</rt-trigger>: <rt-keyword>Empower 1</rt-keyword>.
-    <rt-lvl-bonus lvl="3"></rt-lvl-bonus> <rt-trigger>On Destroyed</rt-trigger> Draw a <rt-mana>1</rt-mana> cost Mage spell.
+  <rt-trigger>On Destroyed</rt-trigger> Gain 1 Experience.
+  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> <rt-trigger>Start of Turn</rt-trigger>: <rt-keyword>Empower 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -43,6 +43,7 @@ export const wizardTutor: MinionBlueprint = {
       new WhileOnBoardModifier(game, card, {
         modifier: new Modifier('wizard-tutor-empower', game, card, {
           mixins: [
+            new TogglableModifierMixin(game, () => lvlMod.isActive),
             new GameEventModifierMixin(game, {
               eventName: GAME_EVENTS.TURN_START,
               unitForVisualFX: () => card.unit,
@@ -63,13 +64,8 @@ export const wizardTutor: MinionBlueprint = {
     await card.modifiers.add(
       new MinionOnDestroyModifier(game, card, {
         async handler() {
-          const candidates = card.player.cardManager.deck.cards.filter(
-            c => c.hasJob(JOBS.MAGE.id) && c.manaCost === 1 && c.kind === CARD_KINDS.SPELL
-          );
-          if (candidates.length === 0) return;
-          await card.player.cardManager.drawFromPool(candidates, 1);
-        },
-        unitMixins: [new TogglableModifierMixin(game, () => lvlMod.isActive)]
+          await card.player.levelManager.gainExp(1);
+        }
       })
     );
   },

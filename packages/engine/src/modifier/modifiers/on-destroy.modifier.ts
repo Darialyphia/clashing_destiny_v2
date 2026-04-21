@@ -23,7 +23,7 @@ export class MinionOnDestroyModifier extends Modifier<MinionCard> {
     private options: {
       handler: (event: UnitAfterDestroyEvent) => MaybePromise<void>;
       mixins?: ModifierMixin<MinionCard>[];
-      unitMixins: ModifierMixin<Unit>[];
+      unitMixins?: ModifierMixin<Unit>[];
     }
   ) {
     super(KEYWORDS.ON_DESTROYED.id, game, source, {

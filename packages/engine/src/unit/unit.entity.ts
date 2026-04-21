@@ -273,6 +273,10 @@ export class Unit
       .filter(isDefined);
   }
 
+  isAdjacentTo(unit: Unit) {
+    return this.adjacentUnits.some(adjacent => adjacent.equals(unit));
+  }
+
   get unitsOnSameColumn() {
     return this.game.unitSystem.units.filter(
       unit => unit.position.x === this.x && !unit.equals(this)

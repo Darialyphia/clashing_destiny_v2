@@ -22,6 +22,7 @@ import Ability from './shared/components/RichText/Ability.vue';
 import JobBonus from './shared/components/RichText/JobBonus.vue';
 import LevelBonus from './shared/components/RichText/LevelBonus.vue';
 import Card from './shared/components/RichText/Card.vue';
+
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(Flip);

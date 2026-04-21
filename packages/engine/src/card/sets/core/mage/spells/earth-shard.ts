@@ -7,20 +7,20 @@ import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils'
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 
-export const fireBolt: SpellBlueprint = {
-  id: 'fire-bolt',
-  name: 'Fire Bolt',
+export const earthShard: SpellBlueprint = {
+  id: 'earth-shard',
+  name: 'Earth Shard',
   description: dedent`
-  Deal 2 damage to a minion.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> Deal 1 damage to the enemy Hero.
+  Give a minion <rt-keyword>Regeneration 2</rt-keyword>.
+  Costs <rt-mana>0</rt-mana> if you played an Earth spell this turn.
   `,
   kind: CARD_KINDS.SPELL,
-  collectable: true,
+  collectable: false,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   jobs: [JOBS.MAGE.id],
-  tags: [TAGS.FIRE],
+  tags: [TAGS.AIR],
   manaCost: 1,
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, c => c.isEnemy(card.player)),
@@ -42,10 +42,5 @@ export const fireBolt: SpellBlueprint = {
     if (!target) return;
 
     await target.takeDamage(card, new SpellDamage(card, 2));
-
-    const lvlMod = card.modifiers.get(LevelBonusModifier);
-    if (lvlMod?.isActive) {
-      await card.player.opponent.takeDamage(card, new SpellDamage(card, 1));
-    }
   }
 };

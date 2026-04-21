@@ -7,21 +7,21 @@ import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils'
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 
-export const fireBolt: SpellBlueprint = {
-  id: 'fire-bolt',
-  name: 'Fire Bolt',
+export const twister: SpellBlueprint = {
+  id: 'twister',
+  name: 'Twister',
   description: dedent`
-  Deal 2 damage to a minion.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> Deal 1 damage to the enemy Hero.
+  Put target minion that costs less than your hero level on top of its owner's deck.
+  <rt-lvl-bonus lvl="4"></rt-lvl-bonus> You can choose to put it on the bottom instead.
   `,
   kind: CARD_KINDS.SPELL,
-  collectable: true,
+  collectable: false,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   jobs: [JOBS.MAGE.id],
-  tags: [TAGS.FIRE],
-  manaCost: 1,
+  tags: [TAGS.AIR],
+  manaCost: 3,
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, c => c.isEnemy(card.player)),
   getTargets(game, card, onCancel) {
@@ -42,10 +42,5 @@ export const fireBolt: SpellBlueprint = {
     if (!target) return;
 
     await target.takeDamage(card, new SpellDamage(card, 2));
-
-    const lvlMod = card.modifiers.get(LevelBonusModifier);
-    if (lvlMod?.isActive) {
-      await card.player.opponent.takeDamage(card, new SpellDamage(card, 1));
-    }
   }
 };

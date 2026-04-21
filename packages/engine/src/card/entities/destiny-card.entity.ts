@@ -45,7 +45,7 @@ export class DestinyCard extends Card<
   }
 
   get canAfford() {
-    return this.player.canSpendMana(this.manaCost);
+    return this.player.levelManager.exp >= this.expCost;
   }
 
   get expCost(): number {

@@ -97,10 +97,8 @@ export class SpellDamage extends Damage {
     super({ baseAmount: amount, type: DAMAGE_TYPES.SPELL, source });
   }
 
-  getFinalAmount(target: Unit | Player): number {
-    const finalAmount = super.getFinalAmount(target);
-    if (this._isPrevented) return 0;
-    return finalAmount + this.source.player.hero.spellDamageBonus;
+  get baseAmount() {
+    return this._baseAmount + this.source.player.hero.spellDamageBonus;
   }
 }
 

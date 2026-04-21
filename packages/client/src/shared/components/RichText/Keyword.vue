@@ -46,6 +46,8 @@ const keyword = computed(() => {
 <style scoped lang="postcss">
 .keyword {
   text-decoration: underline;
+  text-decoration-thickness: calc(1px * var(--pixel-scale));
+  font-style: italic;
 }
 
 .keyword-card {

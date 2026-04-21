@@ -3,6 +3,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
+  JOBS,
   type CardKind,
   type JobId
 } from '@game/engine/src/card/card.enums';
@@ -148,11 +149,27 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        if (!a.card) {
-          console.log(a);
+        const aJobId = a.card.jobs[0];
+        const aJob = Object.values(JOBS).find(j => j.id === aJobId)!;
+        const bJobId = b.card.jobs[0];
+        const bJob = Object.values(JOBS).find(j => j.id === bJobId)!;
+
+        if (aJobId === JOBS.NEUTRAL.id && bJobId !== JOBS.NEUTRAL.id) {
+          return 1;
         }
-        if (!b.card) {
-          console.log(b);
+        if (aJobId !== JOBS.NEUTRAL.id && bJobId === JOBS.NEUTRAL.id) {
+          return -1;
+        }
+
+        if (aJob.isAdvanced && !bJob.isAdvanced) {
+          return 1;
+        }
+        if (!aJob.isAdvanced && bJob.isAdvanced) {
+          return -1;
+        }
+
+        if (aJobId !== bJobId) {
+          return aJobId.localeCompare(bJobId);
         }
 
         if (

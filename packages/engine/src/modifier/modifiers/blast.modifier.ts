@@ -13,13 +13,19 @@ import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { ColumnAOEShape } from '../../aoe/column.aoe-shape';
 
 export class BlastCardModifier<T extends MinionCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard, options?: { mixins: ModifierMixin<T>[] }) {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options?: { mixins?: ModifierMixin<T>[]; unitMixins?: ModifierMixin<Unit>[] }
+  ) {
     super(KEYWORDS.BLAST.id, game, source, {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.BLAST),
         new UnitEffectModifierMixin(game, {
           getModifier: () =>
-            new BlastUnitModifier(game, this.initialSource, { mixins: [] })
+            new BlastUnitModifier(game, this.initialSource, {
+              mixins: options?.unitMixins ?? []
+            })
         }),
         ...(options?.mixins ?? [])
       ]
