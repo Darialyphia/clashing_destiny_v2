@@ -57,6 +57,7 @@ export type SerializedCard = {
   keywords: Array<{ id: string; name: string; description: string }>;
   modifiers: string[];
   jobs: JobId[];
+  tags: string[];
   spacesToHighlight: Point[];
 };
 
@@ -152,6 +153,11 @@ export abstract class Card<
     return 0;
   }
 
+  async copy() {
+    const copy = await this.player.generateCard(this.blueprintId, this.isFoil);
+    return copy;
+  }
+
   abstract removeFromBoard(): Promise<void>;
 
   async removeFromCurrentLocation() {
@@ -237,6 +243,7 @@ export abstract class Card<
         description: keyword.description
       })),
       jobs: this.jobs,
+      tags: this.tags,
       spacesToHighlight: this.spacesToHighlight
     };
   }

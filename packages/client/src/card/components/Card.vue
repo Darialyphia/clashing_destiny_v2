@@ -289,7 +289,8 @@ const jobsBgs = computed(() => {
               - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
             </span>
             <span v-if="isDefined(card.tags)" class="tags">
-              {{ card.tags.join('- ') }}
+              <template v-if="card.tags?.length">|</template>
+              {{ card.tags.join('| ') }}
             </span>
           </div>
           <div

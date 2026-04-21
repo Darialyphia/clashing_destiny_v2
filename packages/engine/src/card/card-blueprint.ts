@@ -19,6 +19,7 @@ import type { DestinyCard } from './entities/destiny-card.entity';
 import type { HeroCard } from './entities/hero-card.entity';
 import type { VFXSequence } from '../game/systems/vfx.system';
 import type { MaybePromise, Point } from '@game/shared';
+import type { Ability } from './entities/ability.entity';
 
 export type CardArt = {
   foil: {
@@ -145,6 +146,7 @@ export type AbilityBlueprint<T extends AnyCard> = {
     options: {
       targets: BoardCell[];
       aoe: GenericAOEShape;
+      ability: Ability<T>;
     }
   ): void;
 };

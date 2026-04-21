@@ -127,14 +127,14 @@ export class CardManagerComponent {
   }
 
   async drawFromDeck(amount: number) {
-    if (this.isHandFull) return;
+    if (this.isHandFull) return [];
 
     const amountToDraw = Math.min(
       amount,
       this.deck.remaining,
       this.options.maxHandSize - this.hand.length
     );
-    if (amountToDraw <= 0) return;
+    if (amountToDraw <= 0) return [];
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_DRAW,
       new PlayerBeforeDrawEvent({
@@ -155,15 +155,19 @@ export class CardManagerComponent {
         cards
       })
     );
+
+    return cards;
   }
 
   async drawFromPool(cards: DeckCard[], amount: number) {
+    if (this.isHandFull) return [];
+
     const amountToDraw = Math.min(
       amount,
       cards.length,
       this.options.maxHandSize - this.hand.length
     );
-    if (amountToDraw <= 0) return;
+    if (amountToDraw <= 0) return [];
 
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_DRAW,
@@ -183,9 +187,10 @@ export class CardManagerComponent {
       GAME_EVENTS.PLAYER_AFTER_DRAW,
       new PlayerAfterDrawEvent({
         player: this.player,
-        cards
+        cards: drawnCards
       })
     );
+    return drawnCards;
   }
 
   removeFromHand(card: AnyCard) {

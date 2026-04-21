@@ -445,9 +445,10 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
   default: {
     foil: {
       sheen: true,
-      brightShine: true,
+      // brightShine: true,
       lightGradient: true,
-      scanlines: true
+      scanlines: true,
+      glitter: true
     },
     isFullArt: false,
     bg: `${name}-bg`,

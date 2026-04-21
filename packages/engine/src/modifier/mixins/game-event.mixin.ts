@@ -4,6 +4,8 @@ import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
 import type { EventMapWithStarEvent } from '../../utils/typed-emitter';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier, ModifierTarget } from '../modifier.entity';
+import type { Unit } from '../../unit/unit.entity';
+import { UnitEffectTriggeredEvent } from '../../unit/unit-events';
 
 export class GameEventModifierMixin<
   TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
@@ -26,6 +28,7 @@ export class GameEventModifierMixin<
       ) => boolean;
       frequencyPerGameTurn?: number;
       persistWhileDisabled?: boolean;
+      unitForVisualFX?: () => Nullable<Unit>;
     }
   ) {
     super(game);
@@ -41,7 +44,7 @@ export class GameEventModifierMixin<
     return this.options.eventName;
   }
 
-  private wrappedHandler(event: EventMapWithStarEvent<GameEventMap>[TEvent]) {
+  private async wrappedHandler(event: EventMapWithStarEvent<GameEventMap>[TEvent]) {
     if (this.options.filter && !this.options.filter(event, this.modifier)) {
       return;
     }
@@ -54,6 +57,16 @@ export class GameEventModifierMixin<
     }
 
     this.occurencesThisGameTurn++;
+
+    const unit = this.options.unitForVisualFX?.();
+    if (unit) {
+      await this.game.emit(
+        GAME_EVENTS.UNIT_EFFECT_TRIGGERED,
+        new UnitEffectTriggeredEvent({
+          unit
+        })
+      );
+    }
 
     return this.options.handler(event, this.modifier);
   }

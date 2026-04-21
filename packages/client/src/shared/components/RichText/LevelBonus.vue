@@ -5,5 +5,22 @@ const { lvl } = defineProps<{
 </script>
 
 <template>
-  <rt-trigger color="blue">Level {{ lvl }} Bonus</rt-trigger>
+  <span class="lvl-bonus">Level {{ lvl }}</span>
 </template>
+
+<style scoped lang="postcss">
+.lvl-bonus {
+  background: linear-gradient(
+    to bottom,
+    var(--yellow-4) 50%,
+    var(--yellow-6) 50%
+  );
+  border: solid calc(0.5px * var(--pixel-scale)) var(--yellow-8);
+  color: black;
+  font-size: 0.85em;
+  padding-inline: calc(4px * var(--pixel-scale));
+  border-radius: var(--radius-pill);
+  font-family: var(--font-system-ui);
+  font-weight: var(--font-weight-5);
+}
+</style>

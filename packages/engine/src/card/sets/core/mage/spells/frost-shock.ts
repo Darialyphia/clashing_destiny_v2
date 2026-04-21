@@ -6,13 +6,15 @@ import type { SpellBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { FreezeModifier } from '../../../../../modifier/modifiers/freeze.modifier';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
-export const fireBolt: SpellBlueprint = {
-  id: 'fire-bolt',
-  name: 'Fire Bolt',
+export const frostShock: SpellBlueprint = {
+  id: 'frost-shock',
+  name: 'Frost Shock',
   description: dedent`
-  Deal 2 damage to a minion.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> Deal 1 damage to the enemy Hero.
+  <rt-keyword>Freeze</rt-keyword> an enemy minion and deal 1 damage to it.
+  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> This costs <rt-mana>1</rt-mana> less.
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,
@@ -20,8 +22,8 @@ export const fireBolt: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   jobs: [JOBS.MAGE.id],
-  tags: [TAGS.FIRE],
-  manaCost: 1,
+  tags: [TAGS.WATER],
+  manaCost: 3,
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, c => c.isEnemy(card.player)),
   getTargets(game, card, onCancel) {
@@ -41,11 +43,16 @@ export const fireBolt: SpellBlueprint = {
     const target = game.unitSystem.getUnitAt(targets[0]);
     if (!target) return;
 
-    await target.takeDamage(card, new SpellDamage(card, 2));
+    await target.takeDamage(card, new SpellDamage(card, 1));
+    await target.modifiers.add(new FreezeModifier(game, card));
 
     const lvlMod = card.modifiers.get(LevelBonusModifier);
     if (lvlMod?.isActive) {
-      await card.player.opponent.takeDamage(card, new SpellDamage(card, 1));
+      await card.modifiers.add(
+        new SimpleManacostModifier('frost-shock-mana-discount', game, card, {
+          amount: -1
+        })
+      );
     }
   }
 };

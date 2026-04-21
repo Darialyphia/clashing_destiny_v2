@@ -25,5 +25,7 @@ const { cost } = defineProps<{
     0 50%
   );
   font-weight: 500;
+  font-family: var(--font-system-ui);
+  font-size: 0.9em;
 }
 </style>

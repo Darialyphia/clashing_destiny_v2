@@ -10,7 +10,7 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 
-export class EphemeralCardModifier<T extends MinionCard> extends Modifier<T> {
+export class EphemeralModifier<T extends MinionCard> extends Modifier<T> {
   constructor(game: Game, source: AnyCard, options?: { mixins: ModifierMixin<T>[] }) {
     super(KEYWORDS.EPHEMERAL.id, game, source, {
       mixins: [
@@ -44,6 +44,33 @@ export class EphemeralUnitModifier extends Modifier<Unit> {
           eventName: GAME_EVENTS.TURN_END,
           handler: async () => {
             await this.target.removeFromBoard();
+          }
+        }),
+        ...(options.mixins ?? [])
+      ]
+    });
+  }
+}
+
+export class EphemeralCardModifier<T extends AnyCard> extends Modifier<T> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: {
+      mixins?: ModifierMixin<T>[];
+      modifierType?: string;
+      isRemovable?: boolean;
+    } = {}
+  ) {
+    super(options.modifierType ?? KEYWORDS.EPHEMERAL.id, game, source, {
+      name: KEYWORDS.EPHEMERAL.name,
+      description: KEYWORDS.EPHEMERAL.description,
+      icon: 'icons/keyword-ephemeral',
+      mixins: [
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.TURN_END,
+          handler: async () => {
+            await this.target.removeFromCurrentLocation();
           }
         }),
         ...(options.mixins ?? [])

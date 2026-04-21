@@ -123,6 +123,6 @@ export class PlayerInterceptorModifierMixin<
   TKey extends keyof PlayerInterceptor
 > extends InterceptorModifierMixin<PlayerInterceptor, TKey, Player> {}
 
-export class ArtifactAbilityInterceptorModifierMixin<
+export class AbilityInterceptorModifierMixin<
   TKey extends keyof AbilityInterceptor
-> extends InterceptorModifierMixin<AbilityInterceptor, TKey, Ability<ArtifactCard>> {}
+> extends InterceptorModifierMixin<AbilityInterceptor, TKey, Ability<any>> {}

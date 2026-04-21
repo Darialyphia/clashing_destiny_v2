@@ -130,6 +130,10 @@ export class CardViewModel {
     return this.data.jobs;
   }
 
+  get tags() {
+    return this.data.tags;
+  }
+
   get location() {
     return this.data.location;
   }

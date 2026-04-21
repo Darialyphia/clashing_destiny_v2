@@ -35,12 +35,14 @@ export const RARITIES = {
 export type Rarity = Values<typeof RARITIES>;
 
 export const TAGS = {
-  GOLEM: 'Golem',
-  ARCANYST: 'Arcanyst',
-  MECH: 'Mech',
-  OBELYSK: 'Obelysk',
-  DERVISH: 'Dervish',
-  GENERAL: 'General'
+  FIRE: 'Fire',
+  WATER: 'Water',
+  EARTH: 'Earth',
+  AIR: 'Air',
+  LIGHT: 'Light',
+  DARK: 'Darkness',
+  ARCANE: 'Arcane',
+  GOLEM: 'Golem'
 } as const;
 export type Tag = Values<typeof TAGS>;
 

@@ -24,6 +24,6 @@
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .glare) {
-  opacity: 1;
+  opacity: 0.75;
 }
 </style>

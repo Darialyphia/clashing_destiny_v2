@@ -111,7 +111,8 @@ export class Ability<T extends AnyCard>
 
     await this.blueprint.onResolve(this.game, this.card, {
       targets,
-      aoe
+      aoe,
+      ability: this
     });
 
     await this.game.emit(

@@ -23,6 +23,7 @@ export class MinionOnDestroyModifier extends Modifier<MinionCard> {
     private options: {
       handler: (event: UnitAfterDestroyEvent) => MaybePromise<void>;
       mixins?: ModifierMixin<MinionCard>[];
+      unitMixins: ModifierMixin<Unit>[];
     }
   ) {
     super(KEYWORDS.ON_DESTROYED.id, game, source, {
@@ -33,7 +34,7 @@ export class MinionOnDestroyModifier extends Modifier<MinionCard> {
         new UnitEffectModifierMixin(game, {
           getModifier: () =>
             new MinionOnDestroyUnitModifier(game, this.initialSource, {
-              mixins: [],
+              mixins: options.unitMixins,
               handler: options.handler
             })
         }),

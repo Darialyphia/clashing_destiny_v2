@@ -92,7 +92,7 @@ export const KEYWORDS = {
   EPHEMERAL: {
     id: 'ephemeral',
     name: 'Ephemeral',
-    description: "This disappears at the end of its owner's turn.",
+    description: 'This disappears at the end of the turn.',
     aliases: []
   },
   ESSENCE: {
@@ -126,7 +126,8 @@ export const KEYWORDS = {
   FROZEN: {
     id: 'frozen',
     name: 'Frozen',
-    description: 'This unit does not wake up at the start of the next turn.',
+    description:
+      'This unit has 0 attack and does not wake up at the start of the next turn.',
     aliases: ['freeze']
   },
   GROW: {
@@ -221,9 +222,9 @@ export const KEYWORDS = {
     description: 'This unit was summoned this turn and cannot act.',
     aliases: []
   },
-  MAGIC_GUARD: {
-    id: 'magic_guard',
-    name: 'Magic Guard',
+  MAGIC_VEIL: {
+    id: 'magic_veil',
+    name: 'Magic Veil',
     description: 'Cannot be targeted by spells',
     aliases: []
   },
@@ -270,11 +271,31 @@ export const KEYWORDS = {
     description: 'Adjacent allies take X less damage from enemy heroes.',
     aliases: [/hero guard \([0-9]+\)/]
   },
+  SPELL_GUARD: {
+    id: 'spell_guard',
+    name: 'Spell Guard (x)',
+    description: 'Adjacent allies take X less damage from enemy spells.',
+    aliases: [/spell guard \([0-9]+\)/]
+  },
   EMPOWER: {
     id: 'empower',
     name: 'Empower X',
     description: 'The next spell you cast this turn deals X more damage.',
     aliases: [/empower [0-9]+/, 'empower', /empowered/]
+  },
+  PREEMPTIVE_STRIKE: {
+    id: 'preemptive-strike',
+    name: 'Preemptive Strike',
+    description:
+      'This unit deals its combat damage before the defending unit during combat.',
+    aliases: []
+  },
+  PREEMPTIVE_RETALIATION: {
+    id: 'preemptive-retaliation',
+    name: 'Preemptive Retaliation',
+    description:
+      'This unit deals its combat damage before the attacking unit during combat.',
+    aliases: []
   }
 } as const satisfies Record<string, Keyword>;
 

@@ -1,6 +1,7 @@
 import type { Game } from '../game/game';
 import type { AnyCard } from './entities/card.entity';
 import { type DeckCard } from './components/card-manager.component';
+import { EmpowerModifier } from '../modifier/modifiers/empower.modifier';
 
 export const discover = async (game: Game, card: AnyCard, choicePool: DeckCard[]) => {
   const choices: DeckCard[] = [];
@@ -22,3 +23,8 @@ export const discover = async (game: Game, card: AnyCard, choicePool: DeckCard[]
 
   return { selectedCard, choices };
 };
+
+export const getEmpowerStacks = (card: AnyCard) =>
+  card.player.hero.modifiers.list
+    .filter(mod => mod instanceof EmpowerModifier)
+    .reduce((acc, mod) => acc + mod.stacks, 0);

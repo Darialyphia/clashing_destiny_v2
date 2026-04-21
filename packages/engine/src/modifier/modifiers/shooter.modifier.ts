@@ -12,14 +12,14 @@ import { TARGETING_TYPE } from '../../targeting/targeting-strategy';
 import { RangedTargetingStrategy } from '../../targeting/ranged-targeting-strategy';
 import { Player } from '../../player/player.entity';
 
-export class RangedModifier<T extends MinionCard> extends Modifier<T> {
+export class ShooterModifier<T extends MinionCard> extends Modifier<T> {
   constructor(game: Game, source: AnyCard, options: { mixins?: ModifierMixin<T>[] }) {
-    super(KEYWORDS.RANGED.id, game, source, {
-      name: KEYWORDS.RANGED.name,
-      description: KEYWORDS.RANGED.description,
+    super(KEYWORDS.SHOOTER.id, game, source, {
+      name: KEYWORDS.SHOOTER.name,
+      description: KEYWORDS.SHOOTER.description,
       icon: 'icons/keyword-ranged',
       mixins: [
-        new KeywordModifierMixin(game, KEYWORDS.RANGED),
+        new KeywordModifierMixin(game, KEYWORDS.SHOOTER),
         new UnitEffectModifierMixin(game, {
           getModifier: () => new RangedUnitModifier(game, source, {})
         }),
@@ -38,16 +38,11 @@ export class RangedUnitModifier extends Modifier<Unit> {
       modifierType?: string;
     }
   ) {
-    super(options.modifierType ?? KEYWORDS.RANGED.id, game, source, {
-      name: KEYWORDS.RANGED.name,
-      description: KEYWORDS.RANGED.description,
+    super(options.modifierType ?? KEYWORDS.SHOOTER.id, game, source, {
+      name: KEYWORDS.SHOOTER.name,
+      description: KEYWORDS.SHOOTER.description,
       icon: 'icons/keyword-ranged',
       mixins: [
-        new UnitInterceptorModifierMixin(game, {
-          key: 'attackTargetingPattern',
-          interceptor: () =>
-            new RangedTargetingStrategy(game, this.target, TARGETING_TYPE.ENEMY_UNIT)
-        }),
         new UnitInterceptorModifierMixin(game, {
           key: 'canBeCounterattackTarget',
           interceptor: (value, ctx) => {
