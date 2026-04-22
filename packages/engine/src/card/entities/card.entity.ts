@@ -32,13 +32,15 @@ export type CardInterceptors = {
   player: Interceptable<Player>;
   canReplace: Interceptable<boolean>;
   shouldPassInitiativeAfterPlay: Interceptable<boolean>;
+  jobs: Interceptable<JobId[]>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
   manaCost: new Interceptable(),
   player: new Interceptable(),
   canReplace: new Interceptable(),
-  shouldPassInitiativeAfterPlay: new Interceptable()
+  shouldPassInitiativeAfterPlay: new Interceptable(),
+  jobs: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -139,7 +141,7 @@ export abstract class Card<
   }
 
   get jobs() {
-    return this.blueprint.jobs;
+    return this.interceptors.jobs.getValue(this.blueprint.jobs, {});
   }
 
   hasJob(jobId: JobId) {

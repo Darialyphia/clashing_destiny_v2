@@ -1,7 +1,7 @@
 import type { MaybePromise } from '@game/shared';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
 import type { SpellBlueprint } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, JOBS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
   Card,
@@ -45,9 +45,15 @@ export class SpellCard extends Card<
     return this.player.canSpendMana(this.manaCost);
   }
 
+  get hasCorrectJob() {
+    return this.jobs.some(
+      job => job === JOBS.NEUTRAL.id || this.player.hero.jobs.includes(job)
+    );
+  }
+
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canAfford && this.blueprint.canPlay(this.game, this),
+      this.hasCorrectJob && this.canAfford && this.blueprint.canPlay(this.game, this),
       this
     );
   }

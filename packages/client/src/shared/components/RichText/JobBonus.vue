@@ -12,13 +12,14 @@
     var(--indigo-6) 50%
   );
   border: solid calc(0.5px * var(--pixel-scale)) var(--indigo-8);
-  color: black;
-  font-size: 0.85em;
+  color: white;
+  font-size: 0.95em;
   padding-inline: calc(4px * var(--pixel-scale));
   border-radius: var(--radius-pill);
   font-family: var(--font-system-ui);
   font-weight: var(--font-weight-5);
-  -webkit-text-stroke: calc(1px * var(--pixel-scale)) white;
+  -webkit-text-stroke: calc(1.5px * var(--pixel-scale)) black;
   paint-order: stroke fill;
+  padding-bottom: calc(1px * var(--pixel-scale));
 }
 </style>

@@ -7,7 +7,8 @@ import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
 import type { ArtifactBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES, TAGS } from '../../../../card.enums';
-import type { HeroCard } from '../../../../entities/hero-card.entity';
+import { WhileEquipedModifier } from '../../../../../modifier/modifiers/while-equiped';
+import { WheelOfElementsModifier } from '../../../../../modifier/modifiers/wheel-of-elements.modifier';
 
 export const wheelOfTheElements: ArtifactBlueprint = {
   id: 'wheel_of_the_elements',
@@ -28,25 +29,12 @@ export const wheelOfTheElements: ArtifactBlueprint = {
   getAoe: () => new NoAOEShape(TARGETING_TYPE.ANYWHERE, {}),
   canPlay: () => true,
   abilities: [],
-  async onInit() {},
-  async onPlay(game, card) {
-    await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('fire-mastery-aura', game, card, {
-        mixins: [
-          new CardAuraModifierMixin(game, card, {
-            isElligible(candidate) {
-              return candidate.kind === CARD_KINDS.SPELL && candidate.hasTag(TAGS.FIRE);
-            },
-            getModifiers() {
-              return [
-                new SimpleManacostModifier('fire-mastery-discount', game, card, {
-                  amount: -1
-                })
-              ];
-            }
-          })
-        ]
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new WhileEquipedModifier(game, card, {
+        modifier: new WheelOfElementsModifier(game, card)
       })
     );
-  }
+  },
+  async onPlay() {}
 };

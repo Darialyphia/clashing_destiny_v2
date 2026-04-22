@@ -29,6 +29,10 @@ import type {
   HeroCard,
   HeroCardInterceptors
 } from '../../card/entities/hero-card.entity';
+import type {
+  DestinyCard,
+  DestinyCardInterceptors
+} from '../../card/entities/destiny-card.entity';
 
 type InterceptorMap = Record<string, Interceptable<any, any>>;
 export class InterceptorModifierMixin<
@@ -87,13 +91,15 @@ export class InterceptorModifierMixin<
 type CardInterceptors =
   | MinionCardInterceptors
   | SpellCardInterceptors
-  | ArtifactCardInterceptors;
+  | ArtifactCardInterceptors
+  | HeroCardInterceptors
+  | DestinyCardInterceptors;
 export class CardInterceptorModifierMixin<
   TKey extends keyof CardInterceptors
 > extends InterceptorModifierMixin<
   CardInterceptors,
   TKey,
-  MinionCard | SpellCard | ArtifactCard
+  MinionCard | SpellCard | ArtifactCard | HeroCard | DestinyCard
 > {}
 
 export class MinionInterceptorModifierMixin<

@@ -10,12 +10,11 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, JOBS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
 import { Ability } from './ability.entity';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedArtifactCard = SerializedCard & {
   durability: number;
   manaCost: number;
@@ -23,7 +22,6 @@ export type SerializedArtifactCard = SerializedCard & {
   abilities: string[];
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type ArtifactCardInterceptors = CardInterceptors & {
   durability: Interceptable<number>;
   canPlay: Interceptable<boolean, ArtifactCard>;
@@ -69,9 +67,15 @@ export class ArtifactCard extends Card<
     return this.blueprint.getAoe(this.game, this, targets);
   }
 
+  get hasCorrectJob() {
+    return this.jobs.some(
+      job => job === JOBS.NEUTRAL.id || this.player.hero.jobs.includes(job)
+    );
+  }
+
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canAfford && this.blueprint.canPlay(this.game, this),
+      this.hasCorrectJob && this.canAfford && this.blueprint.canPlay(this.game, this),
       this
     );
   }

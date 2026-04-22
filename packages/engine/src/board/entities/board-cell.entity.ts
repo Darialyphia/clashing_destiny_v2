@@ -19,14 +19,16 @@ export type SerializedCell = {
   id: string;
   entityType: 'cell';
   position: Point;
-  player: 'p1' | 'p2' | null;
+  player: 'p1' | 'p2';
   unit: string | null;
   tile: string | null;
 };
 
 export type BoardCellOptions = {
   position: Point;
-} & ({ player: 'p1' | 'p2'; row: BoardRow } | { player: null });
+  player: 'p1' | 'p2';
+  row: BoardRow;
+};
 
 export class BoardCell
   extends EntityWithModifiers<BoardCellInterceptors>
@@ -52,13 +54,11 @@ export class BoardCell
     return this.position.y;
   }
 
-  get player(): Player | null {
+  get player(): Player {
     if (this.options.player === 'p1') {
       return this.game.playerSystem.player1;
-    } else if (this.options.player === 'p2') {
-      return this.game.playerSystem.player2;
     } else {
-      return null;
+      return this.game.playerSystem.player2;
     }
   }
 

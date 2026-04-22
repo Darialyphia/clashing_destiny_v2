@@ -15,7 +15,7 @@ export const confluxChosen: DestinyBlueprint = {
   description: dedent`
     Whenever you play a spell of your current <rt-card>Wheel of the Elements</rt-card> element, choose one:
     <ul>
-      <li>Draw a card</li>
+      <li>Draw 1, then discard 1</li>
       <li>Give your hero +1 Attack this turn</li>
       <li><rt-keyword>Empower (1)</rt-keyword></li>
     </ul>

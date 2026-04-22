@@ -1,7 +1,7 @@
 import type { MaybePromise } from '@game/shared';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
 import type { DestinyBlueprint } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, JOBS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
   Card,
@@ -52,9 +52,15 @@ export class DestinyCard extends Card<
     return this.interceptors.expCost.getValue(this.blueprint.expCost, this);
   }
 
+  get hasCorrectJob() {
+    return this.jobs.some(
+      job => job === JOBS.NEUTRAL.id || this.player.hero.jobs.includes(job)
+    );
+  }
+
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canAfford && this.blueprint.canPlay(this.game, this),
+      this.hasCorrectJob && this.canAfford && this.blueprint.canPlay(this.game, this),
       this
     );
   }

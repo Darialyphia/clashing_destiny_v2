@@ -37,7 +37,10 @@ export const cards = {
 "rainbow_elemental": "rainbow_elemental",
 "quicksands": "quicksands",
 "wind-shield": "wind-shield",
-"twister": "twister"
+"twister": "twister",
+"earthquake": "earthquake",
+"seer-of-the-depths": "seer-of-the-depths",
+"elemental_alchemy": "elemental_alchemy"
 } as const;
 
 export const collectableCards = {
@@ -66,7 +69,10 @@ export const collectableCards = {
 "conflux_chosen": "conflux_chosen",
 "arcane_conduit": "arcane_conduit",
 "rainbow_elemental": "rainbow_elemental",
-"quicksands": "quicksands"
+"quicksands": "quicksands",
+"earthquake": "earthquake",
+"seer-of-the-depths": "seer-of-the-depths",
+"elemental_alchemy": "elemental_alchemy"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -236,6 +242,21 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "twister",
     "collectable": false,
     "rarity": "common"
+  },
+  {
+    "id": "earthquake",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "seer-of-the-depths",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "elemental_alchemy",
+    "collectable": true,
+    "rarity": "rare"
   }
 ]
 };
@@ -273,7 +294,10 @@ export const cardShortIds: Record<string, number> = {
 "rainbow_elemental": 30,
 "quicksands": 31,
 "wind-shield": 32,
-"twister": 33
+"twister": 33,
+"earthquake": 34,
+"seer-of-the-depths": 35,
+"elemental_alchemy": 36
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -309,5 +333,8 @@ export const cardIdByShortId: Record<number, string> = {
 "30": "rainbow_elemental",
 "31": "quicksands",
 "32": "wind-shield",
-"33": "twister"
+"33": "twister",
+"34": "earthquake",
+"35": "seer-of-the-depths",
+"36": "elemental_alchemy"
 } as const;

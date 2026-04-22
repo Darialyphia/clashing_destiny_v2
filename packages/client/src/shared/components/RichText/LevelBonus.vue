@@ -17,7 +17,7 @@ const { lvl } = defineProps<{
   );
   border: solid calc(0.5px * var(--pixel-scale)) var(--yellow-8);
   color: black;
-  font-size: 0.85em;
+  font-size: 0.95em;
   padding-inline: calc(4px * var(--pixel-scale));
   border-radius: var(--radius-pill);
   font-family: var(--font-system-ui);

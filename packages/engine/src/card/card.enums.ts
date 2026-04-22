@@ -105,7 +105,7 @@ export const JOBS = {
   ELEMENTALIST: {
     id: 'elementalist',
     name: 'Elementalist',
-    shortName: 'Ele',
+    shortName: 'Element.',
     isAdvanced: true
   }
   // BERZERKER: {

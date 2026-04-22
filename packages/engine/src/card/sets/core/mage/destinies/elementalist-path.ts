@@ -1,12 +1,18 @@
 import { NoAOEShape } from '../../../../../aoe/no-aoe.aoe-shape';
 import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import {
+  CardInterceptorModifierMixin,
+  HeroCardInterceptorModifierMixin
+} from '../../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
 import type { DestinyBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES, TAGS } from '../../../../card.enums';
+import type { ArtifactCard } from '../../../../entities/artifact-card.entity';
 import type { HeroCard } from '../../../../entities/hero-card.entity';
+import { wheelOfTheElements } from '../../elementalist/artifacts/wheel-of-the-elements';
 
 export const elementalistPath: DestinyBlueprint = {
   id: 'elementalist_path',
@@ -27,22 +33,25 @@ export const elementalistPath: DestinyBlueprint = {
   async onInit() {},
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('fire-mastery-aura', game, card, {
+      new Modifier<HeroCard>('elementalist-path', game, card, {
         mixins: [
-          new CardAuraModifierMixin(game, card, {
-            isElligible(candidate) {
-              return candidate.kind === CARD_KINDS.SPELL && candidate.hasTag(TAGS.FIRE);
-            },
-            getModifiers() {
-              return [
-                new SimpleManacostModifier('fire-mastery-discount', game, card, {
-                  amount: -1
-                })
-              ];
+          new CardInterceptorModifierMixin(game, {
+            key: 'jobs',
+            interceptor(value) {
+              if (!value.includes(JOBS.ELEMENTALIST.id)) {
+                return [...value, JOBS.ELEMENTALIST.id];
+              }
+              return value;
             }
           })
         ]
       })
     );
+
+    const wheel = await card.player.generateCard<ArtifactCard>(
+      wheelOfTheElements.id,
+      card.isFoil
+    );
+    await wheel.play(() => {});
   }
 };

@@ -33,6 +33,10 @@ export class CardTrackerComponent {
     return this.cardsPlayedThisTurn.filter(card => card.kind === kind) as TCard[];
   }
 
+  hasPlayedThisTurn(predicate: (card: AnyCard) => boolean): boolean {
+    return this.cardsPlayedThisTurn.some(predicate);
+  }
+
   getCardsPlayedSince(turn: number): AnyCard[] {
     const cards: AnyCard[] = [];
     for (let i = turn; i <= this.game.turnSystem.elapsedTurns; i++) {

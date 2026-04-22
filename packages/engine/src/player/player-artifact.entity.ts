@@ -19,7 +19,9 @@ export type PlayerArtifactOptions = {
 
 const makeInterceptors = () => {
   return {
-    shouldLoseDurabilityOnGeneralDamage: new Interceptable<boolean>()
+    canLoseDurability: new Interceptable<boolean>(),
+    canBeTargeted: new Interceptable<boolean>(),
+    canBeDestroyed: new Interceptable<boolean>()
   };
 };
 
@@ -84,10 +86,6 @@ export class PlayerArtifact
     return this.game.playerSystem.getPlayerById(this.playerId)!;
   }
 
-  get shouldLoseDurabilityOnGeneralDamage(): boolean {
-    return this.interceptors.shouldLoseDurabilityOnGeneralDamage.getValue(true, {});
-  }
-
   async equip() {
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
@@ -97,7 +95,21 @@ export class PlayerArtifact
     );
   }
 
+  get canBeDestroyed() {
+    return this.interceptors.canBeDestroyed.getValue(true, {});
+  }
+
+  get canLoseDurability() {
+    return this.interceptors.canLoseDurability.getValue(true, {});
+  }
+
+  get canBeTargeted() {
+    return this.interceptors.canBeTargeted.getValue(true, {});
+  }
+
   async destroy() {
+    if (!this.canBeDestroyed) return;
+
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_BEFORE_DESTROY,
       new ArtifactDestroyEvent({
@@ -118,6 +130,8 @@ export class PlayerArtifact
   }
 
   async loseDurability(amount = 1) {
+    if (!this.canLoseDurability) return;
+
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_BEFORE_DURABILITY_CHANGE,
       new ArtifactBeforeDurabilityChangeEvent({ artifact: this })

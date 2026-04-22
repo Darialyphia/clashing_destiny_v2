@@ -11,7 +11,7 @@ import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { Interceptable } from '../../utils/interceptable';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { CARD_EVENTS, MINION_TYPES, type MinionType } from '../card.enums';
+import { CARD_EVENTS, JOBS, MINION_TYPES, type MinionType } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import type { BoardCell } from '../../board/entities/board-cell.entity';
 import {
@@ -107,10 +107,17 @@ export class MinionCard extends Card<
     return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
+  get hasCorrectJob() {
+    return this.jobs.some(
+      job => job === JOBS.NEUTRAL.id || this.player.hero.jobs.includes(job)
+    );
+  }
+
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
       this.hasAvailablePosition &&
         this.canAfford &&
+        this.hasCorrectJob &&
         this.blueprint.canPlay(this.game, this),
       this
     );

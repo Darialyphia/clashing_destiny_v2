@@ -8,9 +8,9 @@ import { defaultCardArt } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES, TAGS } from '../../../../card.enums';
 import type { HeroCard } from '../../../../entities/hero-card.entity';
 
-export const fireMastery: DestinyBlueprint = {
-  id: 'fire_mastery',
-  name: 'Fire Mastery',
+export const elementalAlchemy: DestinyBlueprint = {
+  id: 'elemental_alchemy',
+  name: 'Elemental Alchemy',
   description:
     'When your <rt-card>Wheel of the elements</rt-card> cycles, add a <rt-card>Fire Shard</rt-card>, <rt-card>Water Shard</rt-card>, <rt-card>Air Shard</rt-card>, and <rt-card>Earth Shard</rt-card> to your hand, depending on the new element.',
   collectable: true,

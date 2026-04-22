@@ -33,6 +33,9 @@ import { rainbowElemental } from './core/elementalist/minions/rainbow-elemental'
 import { quicksands } from './core/mage/spells/quicksands';
 import { windShield } from './core/mage/spells/wind-shield';
 import { twister } from './core/mage/spells/twister';
+import { earthquake } from './core/mage/spells/earthquake';
+import { seerOfTheDepths } from './core/mage/minions/seer-of-the-depths';
+import { elementalAlchemy } from './core/elementalist/destinies/elemental-alchemy';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -70,6 +73,9 @@ export const coreSet: CardSet = {
     rainbowElemental,
     quicksands,
     windShield,
-    twister
+    twister,
+    earthquake,
+    seerOfTheDepths,
+    elementalAlchemy
   ]
 };

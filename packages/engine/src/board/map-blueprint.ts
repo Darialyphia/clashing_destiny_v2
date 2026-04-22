@@ -12,11 +12,11 @@ export type MapBlueprint = {
   rows: number;
   cols: number;
   cells: Array<
-    Nullable<
-      {
-        tile?: string;
-      } & ({ player: 'p1' | 'p2'; row: BoardRow } | { player: null })
-    >
+    Nullable<{
+      tile?: string;
+      player: 'p1' | 'p2';
+      row: BoardRow;
+    }>
   >;
   onInit(game: Game): Promise<void>;
 };
