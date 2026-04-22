@@ -1,11 +1,20 @@
 import dedent from 'dedent';
-import { PointAOEShape } from '../../../../../aoe/point.aoe-shape';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
 import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils';
-import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
+import { anywhereTargetRules, defaultCardArt } from '../../../../card-utils';
+import {
+  CARD_KINDS,
+  CARD_SETS,
+  RARITIES,
+  JOBS,
+  TAGS,
+  MINION_TYPES
+} from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { EverywhereAOEShape } from '../../../../../aoe/everywhere.aoe-shape';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const earthquake: SpellBlueprint = {
   id: 'earthquake',
@@ -22,25 +31,36 @@ export const earthquake: SpellBlueprint = {
   jobs: [JOBS.MAGE.id],
   tags: [TAGS.EARTH],
   manaCost: 6,
-  canPlay: (game, card) =>
-    singleMinionTargetRules.canPlay(game, card, c => c.isEnemy(card.player)),
+  canPlay: (game, card) => anywhereTargetRules.canPlay({ min: 1, max: 1 })(game, card),
   getTargets(game, card, onCancel) {
-    return singleMinionTargetRules.getTargets(game, card, {
-      predicate: c => c.isEnemy(card.player),
-      getAoe: () => new PointAOEShape(TARGETING_TYPE.ENEMY_UNIT, {}),
-      canCancel: true,
+    return anywhereTargetRules.getTargets({ min: 1, max: 1 })(game, card, {
       onCancel,
-      timeoutFallback: []
+      canCancel: true
     });
   },
-  getAoe: () => new PointAOEShape(TARGETING_TYPE.ENEMY_UNIT, {}),
+  getAoe: game =>
+    new EverywhereAOEShape(TARGETING_TYPE.UNIT, {
+      width: game.boardSystem.width,
+      height: game.boardSystem.height
+    }),
   async onInit(game, card) {
     await card.modifiers.add(new LevelBonusModifier(game, card, 3));
-  },
-  async onPlay(game, card, { targets }) {
-    const target = targets[0].unit;
-    if (!target) return;
+    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
 
-    await target.takeDamage(card, new SpellDamage(card, 2));
+    await card.modifiers.add(
+      new SimpleManacostModifier('earthquake-discount', game, card, {
+        amount: -1,
+        mixins: [new TogglableModifierMixin(game, () => lvlMod.isActive)]
+      })
+    );
+  },
+  async onPlay(game, card, { targets, aoe }) {
+    const units = game.unitSystem
+      .getUnitsInAOE(aoe, targets, card.player)
+      .filter(u => u.card.subKind !== MINION_TYPES.FLYER);
+
+    for (const unit of units) {
+      await unit.takeDamage(card, new SpellDamage(card, 4));
+    }
   }
 };

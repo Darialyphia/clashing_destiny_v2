@@ -113,6 +113,10 @@ export class MinionCard extends Card<
     );
   }
 
+  get subKind() {
+    return this.blueprint.subKind;
+  }
+
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
       this.hasAvailablePosition &&
