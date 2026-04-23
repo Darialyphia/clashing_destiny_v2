@@ -311,6 +311,14 @@ const jobsBgs = computed(() => {
           </div>
         </div>
 
+        <template v-if="isFoil">
+          <FoilSheen v-if="card.art.foil.sheen" />
+          <FoilOil v-if="card.art.foil.oil" />
+          <FoilGradient v-if="card.art.foil.gradient" />
+          <FoilLightGradient v-if="card.art.foil.lightGradient" />
+          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
+        </template>
+
         <div v-if="isDefined(card.atk)" class="stat atk parallax">
           <div v-if="showText" class="dual-text" :data-text="card.atk">
             {{ card.atk }}
@@ -334,14 +342,6 @@ const jobsBgs = computed(() => {
             {{ card.durability }}
           </div>
         </div>
-
-        <template v-if="isFoil">
-          <FoilSheen v-if="card.art.foil.sheen" />
-          <FoilOil v-if="card.art.foil.oil" />
-          <FoilGradient v-if="card.art.foil.gradient" />
-          <FoilLightGradient v-if="card.art.foil.lightGradient" />
-          <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
-        </template>
 
         <CardGlare />
       </div>

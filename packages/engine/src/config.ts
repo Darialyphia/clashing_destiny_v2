@@ -31,11 +31,11 @@ export type Config = {
 
 export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 50,
-  MAX_MAIN_DECK_CARD_COPIES: 3,
+  MAX_MAIN_DECK_CARD_COPIES: 4,
   TALENT_COUNT: 10,
   MAX_TALENT_COPIES: 1,
   INITIAL_HAND_SIZE: 4,
-  MAX_HAND_SIZE: 7,
+  MAX_HAND_SIZE: 8,
 
   DRAW_STEP: 'turn-start',
   SHUFFLE_DECK_ON_GAME_START: true,

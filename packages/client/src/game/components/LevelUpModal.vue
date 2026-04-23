@@ -54,7 +54,7 @@ const commit = () => {
     description="Select a destiny card to play or skip"
     :closable="false"
     :style="{
-      '--ui-modal-size': 'var(--size-lg)'
+      '--ui-modal-size': 'var(--size-xl)'
     }"
   >
     <div class="content">
@@ -120,7 +120,7 @@ const commit = () => {
   );
   justify-items: center;
   row-gap: var(--size-4);
-  max-height: 60dvh;
+  max-height: 80dvh;
   overflow-y: auto;
   > * {
     transition: all 0.2s var(--ease-2);

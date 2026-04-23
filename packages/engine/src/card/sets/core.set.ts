@@ -46,6 +46,10 @@ import { primusFist } from './core/neutral/minions/primus-fist';
 import { cartographer } from './core/neutral/minions/cartographer';
 import { shardCrafter } from './core/elementalist/minions/shard-crafter';
 import { prismInvocation } from './core/elementalist/destinies/prism-invocation';
+import { powerOverwhelming } from './core/mage/destinies/power-overwhelming';
+import { ceasefire } from './core/neutral/destinies/ceasefire';
+import { theDeadStayBuried } from './core/neutral/destinies/the-dead-stay-buried';
+import { battleFervor } from './core/neutral/destinies/battle-fervor';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -96,6 +100,10 @@ export const coreSet: CardSet = {
     primusFist,
     cartographer,
     shardCrafter,
-    prismInvocation
+    prismInvocation,
+    powerOverwhelming,
+    ceasefire,
+    theDeadStayBuried,
+    battleFervor
   ]
 };

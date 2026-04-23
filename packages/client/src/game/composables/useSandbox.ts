@@ -150,6 +150,12 @@ export const useSandbox = (
         type: 'dealDamage',
         payload: { unitId, amount, silent }
       });
+    },
+    grantExp(amount: number) {
+      worker.postMessage({
+        type: 'grantExp',
+        payload: { amount, playerId: client.value.getActivePlayerId() }
+      });
     }
   };
 };

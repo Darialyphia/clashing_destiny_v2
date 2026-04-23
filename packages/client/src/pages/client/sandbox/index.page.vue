@@ -15,6 +15,11 @@ const { data: decks, isLoading } = useDecks();
 const p1Deck = ref<UserDeck | null>(null);
 const p2Deck = ref<UserDeck | null>(null);
 const isStarted = ref(false);
+
+const validDecks = computed(() => {
+  if (!decks.value) return [];
+  return decks.value.filter(deck => deck.isValid.result === 'success');
+});
 </script>
 
 <template>
@@ -24,25 +29,45 @@ const isStarted = ref(false);
       <h1 class="text-3xl font-bold mb-4">Sandbox Mode</h1>
       <p class="mb-4">Choose decks for both players:</p>
       <p v-if="isLoading">Loading decks...</p>
+      <p v-if="!validDecks.length">
+        You don't have any valid decks yet. Create some decks in the Deck
+        Builder to get started!
+      </p>
       <div class="grid grid-cols-2 gap-4" v-if="decks">
         <ul class="flex flex-col gap-3">
           <li
-            v-for="deck in decks"
+            v-for="deck in validDecks"
             :key="deck.name"
             class="w-15"
             :class="{ selected: p1Deck?.id === deck.id }"
           >
-            <PlayerDeck :deck="deck" @click="p1Deck = deck" />
+            <PlayerDeck
+              :deck="deck"
+              @click="
+                () => {
+                  if (deck.isValid.result === 'failure') return;
+                  p1Deck = deck;
+                }
+              "
+            />
           </li>
         </ul>
         <ul class="flex flex-col gap-3">
           <li
-            v-for="deck in decks"
+            v-for="deck in validDecks"
             :key="deck.name"
             class="w-15"
             :class="{ selected: p2Deck?.id === deck.id }"
           >
-            <PlayerDeck :deck="deck" @click="p2Deck = deck" />
+            <PlayerDeck
+              :deck="deck"
+              @click="
+                () => {
+                  if (deck.isValid.result === 'failure') return;
+                  p2Deck = deck;
+                }
+              "
+            />
           </li>
         </ul>
       </div>

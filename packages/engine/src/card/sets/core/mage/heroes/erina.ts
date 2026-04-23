@@ -21,7 +21,7 @@ export const erina: HeroBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE.id],
   tags: [],
-  atk: 1,
+  atk: 0,
   retaliation: 0,
   maxHp: 20,
   abilities: [
@@ -35,11 +35,7 @@ export const erina: HeroBlueprint = {
       },
       getAoe: () => new NoAOEShape(TARGETING_TYPES.ENEMY_UNIT, {}),
       getCooldown: () => 0,
-      getTargets: (game, card, onCancel) =>
-        anywhereTargetRules.getTargets({ min: 1, max: 1 })(game, card, {
-          canCancel: true,
-          onCancel
-        }),
+      getTargets: () => Promise.resolve([]),
       async onResolve(game, card) {
         await card.player.cardManager.drawFromDeck(1);
       }

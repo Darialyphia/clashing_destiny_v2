@@ -11,10 +11,12 @@ import { assets } from '@/assets';
 import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { Nullable } from '@game/shared';
+import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
 
 export type DisplayedDeck = {
   name: string;
   cards: { blueprintId: string; copies: number }[];
+  isValid: DeckValidationResult;
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
@@ -57,6 +59,13 @@ const artifacts = computed(() =>
       >
         <div class="deck-name">
           {{ deck.name }}
+        </div>
+
+        <div
+          v-if="deck.isValid.result === 'failure'"
+          class="text-red-500 font-bold"
+        >
+          Invalid Deck
         </div>
 
         <HoverCardTrigger as-child>

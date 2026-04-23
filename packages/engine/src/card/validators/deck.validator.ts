@@ -89,13 +89,23 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
         reason: `Deck must have exactly ${this.size} cards.`
       });
     }
-
+    let hasHero = false;
     for (const card of deck.cards) {
       const blueprint = this.cardPool[card.blueprintId];
       if (!blueprint) {
         violations.push({
           type: 'unknown_card',
           reason: `Card with Id ${card.blueprintId} not found in card pool.`
+        });
+      }
+      if (blueprint?.kind === CARD_KINDS.HERO) {
+        hasHero = true;
+      }
+
+      if (!hasHero) {
+        violations.push({
+          type: 'missing_hero',
+          reason: 'Deck must include a hero card.'
         });
       }
 
@@ -105,6 +115,9 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
           copies: card.copies
         })
       );
+    }
+    if (violations.length > 0) {
+      return { result: 'failure', violations };
     }
 
     return { result: 'success' };

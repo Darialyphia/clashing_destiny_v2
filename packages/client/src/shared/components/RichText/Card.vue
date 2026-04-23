@@ -7,7 +7,8 @@ import {
   HoverCardPortal
 } from 'reka-ui';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
-const el = useTemplateRef('el');
+import type { ShallowRef } from 'vue';
+const el = useTemplateRef('el') as Readonly<ShallowRef<HTMLSpanElement | null>>;
 
 const card = computed(() => {
   const text = el.value?.textContent || '';

@@ -53,6 +53,7 @@ const sandbox = useSandbox({
     @draw="sandbox.draw"
     @bounce-unit="sandbox.bounceUnit"
     @deal-damage-to-unit="sandbox.dealDamageToUnit"
+    @grant-exp="sandbox.grantExp"
   />
 </template>
 

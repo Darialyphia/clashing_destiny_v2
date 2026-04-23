@@ -26,8 +26,8 @@ export const shardCrafter: MinionBlueprint = {
   id: 'shard_crafter',
   name: 'Shard Crafter',
   description: dedent`
-   <rt-trigger>Start of Turn</rt-trigger>: Add a <rt-card>Fire Shard</rt-card>, <rt-card>Water Shard</rt-card>, <rt-card>Air Shard</rt-card>, or <rt-card>Earth Shard</rt-card> to your hand depending on your <rt-card>Wheel of the Element</rt-card> current element.
-   <rt-lvl-bonus lvl="6">Add all of them instead.</rt-lvl-bonus>
+   <rt-trigger>Start of Turn</rt-trigger>: Add a <rt-card>Fire Shard</rt-card>, <rt-card>Water Shard</rt-card>, <rt-card>Air Shard</rt-card>, or <rt-card>Earth Shard</rt-card> to your hand depending on your <rt-card>Wheel of the Elements</rt-card> current element.
+   <rt-lvl-bonus lvl="5">Add all of them instead.</rt-lvl-bonus>
    `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,14 +37,13 @@ export const shardCrafter: MinionBlueprint = {
   rarity: RARITIES.EPIC,
   jobs: [JOBS.ELEMENTALIST.id],
   manaCost: 2,
-  tags: [TAGS.ELEMENTAL],
+  tags: [],
   atk: 1,
   retaliation: 1,
   maxHp: 5,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const wheel = getWheelOfElementModifier(game, card.player)!;
     await card.modifiers.add(new LevelBonusModifier(game, card, 6));
     const lvlMod = card.modifiers.get(LevelBonusModifier)!;
 
@@ -55,6 +54,8 @@ export const shardCrafter: MinionBlueprint = {
             new GameEventModifierMixin(game, {
               eventName: GAME_EVENTS.TURN_START,
               async handler() {
+                const wheel = getWheelOfElementModifier(game, card.player)!;
+
                 if (lvlMod.isActive) {
                   const fire = await card.player.generateCard(fireShard.id, card.isFoil);
                   const water = await card.player.generateCard(

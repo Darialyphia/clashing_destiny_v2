@@ -30,11 +30,11 @@ export const lightningStrike: SpellBlueprint = {
   canPlay: (game, card) =>
     emptySpacesTargetRules.canPlay({ min: 1 })(
       game,
-      cell => !!cell.player?.equals(card.player)
+      cell => !cell.player?.equals(card.player)
     ),
   getTargets(game, card, onCancel) {
     return emptySpacesTargetRules.getTargets({ min: 1, max: 1 })(game, card, {
-      predicate: cell => !!cell.player?.equals(card.player),
+      predicate: cell => !cell.player?.equals(card.player),
       getAoe: () => new PointAOEShape(TARGETING_TYPE.EMPTY, {}),
       canCancel: true,
       onCancel,

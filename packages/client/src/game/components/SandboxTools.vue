@@ -48,6 +48,7 @@ const emit = defineEmits<{
   bounceUnit: [unitId: string, silent: boolean];
   dealDamageToUnit: [unitId: string, amount: number, silent: boolean];
   draw: [];
+  grantExp: [amount: number];
 }>();
 
 const state = useGameState();
@@ -79,6 +80,8 @@ const units = useUnits();
 const p1 = usePlayer1();
 const triggerEvents = ref(true);
 const damageToDeal = ref(0);
+
+const expToGrant = ref(0);
 </script>
 
 <template>
@@ -88,7 +91,6 @@ const damageToDeal = ref(0);
     <PopoverContent as-child>
       <div class="sandbox-content fancy-scrollbar" @keyup.stop>
         <AccordionRoot class="accordion-root" type="multiple">
-          <!-- Player Controls Section -->
           <AccordionItem class="accordion-item" value="player-controls">
             <AccordionHeader class="accordion-header">
               <AccordionTrigger class="accordion-trigger">
@@ -122,7 +124,6 @@ const damageToDeal = ref(0);
             </AccordionContent>
           </AccordionItem>
 
-          <!-- Game Controls Section -->
           <AccordionItem class="accordion-item" value="game-controls">
             <AccordionHeader class="accordion-header">
               <AccordionTrigger class="accordion-trigger">
@@ -163,11 +164,10 @@ const damageToDeal = ref(0);
             </AccordionContent>
           </AccordionItem>
 
-          <!-- Mana Controls Section -->
           <AccordionItem class="accordion-item" value="mana-controls">
             <AccordionHeader class="accordion-header">
               <AccordionTrigger class="accordion-trigger">
-                <span>Mana Controls</span>
+                <span>Resource Controls</span>
                 <Icon
                   icon="radix-icons:chevron-down"
                   class="accordion-chevron"
@@ -178,10 +178,27 @@ const damageToDeal = ref(0);
               <button @click="emit('refillMana')" class="btn mt-2">
                 Refill Mana
               </button>
+              <div class="input-group mt-2">
+                <input
+                  id="exp"
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="EXP to grant"
+                  class="number-input flex-1"
+                  v-model.number="expToGrant"
+                />
+                <button
+                  :disabled="!isDefined(expToGrant)"
+                  @click="emit('grantExp', expToGrant!)"
+                  class="btn"
+                >
+                  Grant EXP
+                </button>
+              </div>
             </AccordionContent>
           </AccordionItem>
 
-          <!-- Cards Section -->
           <AccordionItem class="accordion-item" value="cards">
             <AccordionHeader class="accordion-header">
               <AccordionTrigger class="accordion-trigger">
@@ -247,7 +264,6 @@ const damageToDeal = ref(0);
             </AccordionContent>
           </AccordionItem>
 
-          <!-- Units Section -->
           <AccordionItem class="accordion-item" value="units">
             <AccordionHeader class="accordion-header">
               <AccordionTrigger class="accordion-trigger">
@@ -290,7 +306,7 @@ const damageToDeal = ref(0);
                           :value="unit.id"
                           class="combobox-item"
                         >
-                          {{ unit.getCard().name }} ({{ unit.x + 1 }},
+                          {{ unit.card.name }} ({{ unit.x + 1 }},
                           {{ unit.y + 1 }})
                         </ComboboxItem>
                       </ComboboxViewport>

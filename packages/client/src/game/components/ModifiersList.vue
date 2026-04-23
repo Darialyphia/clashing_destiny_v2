@@ -15,7 +15,7 @@ const { playerId } = useGameClient();
 const displayedModifiers = computed(() => {
   return uniqBy(
     modifiers.filter(mod => {
-      return isDefined(mod.icon) && mod.stacks > 0;
+      return isDefined(mod.icon) && mod.stacks > 0 && mod.isEnabled;
     }),
     'modifierType'
   );
@@ -71,10 +71,10 @@ const displayedModifiers = computed(() => {
   position: absolute;
   top: calc(3px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
+  right: calc(3px * var(--pixel-scale));
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  direction: rtl;
-  transform: translateZ(0px);
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  transform: translateZ(2px);
 }
 
 .modifier-image {

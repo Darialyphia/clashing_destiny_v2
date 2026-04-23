@@ -21,7 +21,7 @@ export const cosmicAvatar: MinionBlueprint = {
   id: 'cosmic-avatar',
   name: 'Cosmic Avatar',
   description: dedent`
-   <rt-trigger>On Attack</rt-trigger> <rt-keyword>Empower (3)</rt-keyword>
+   <rt-trigger>On Attack</rt-trigger> <rt-keyword>Blast</rt-keyword>
    <br/>
    <rt-lvl-bonus lvl="3"><rt-keyword>Blast</rt-keyword>, <rt-keyword>Overwhelm</rt-keyword></rt-lvl-bonus>
    <br/>
@@ -45,15 +45,7 @@ export const cosmicAvatar: MinionBlueprint = {
     await card.modifiers.add(new LevelBonusModifier(game, card, 3));
     const lvlMod = card.modifiers.get(LevelBonusModifier)!;
 
-    await card.modifiers.add(
-      new MinionOnAttackModifier(game, card, {
-        handler: async () => {
-          await card.player.hero.modifiers.add(
-            new EmpowerModifier(game, card, { amount: 1 })
-          );
-        }
-      })
-    );
+    await card.modifiers.add(new BlastCardModifier(game, card));
 
     await card.modifiers.add(
       new BlastCardModifier(game, card, {

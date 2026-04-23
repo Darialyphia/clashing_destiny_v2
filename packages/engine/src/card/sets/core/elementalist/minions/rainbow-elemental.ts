@@ -43,12 +43,13 @@ export const rainbowElemental: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
-    const wheel = getWheelOfElementModifier(game, card.player);
-
     await card.modifiers.add(
       new CleaveCardModifier(game, card, {
         unitMixins: [
-          new TogglableModifierMixin(game, () => wheel?.currentElement === 'earth')
+          new TogglableModifierMixin(game, () => {
+            const wheel = getWheelOfElementModifier(game, card.player);
+            return wheel?.currentElement === 'earth';
+          })
         ]
       })
     );
@@ -56,22 +57,33 @@ export const rainbowElemental: MinionBlueprint = {
     await card.modifiers.add(
       new BlastCardModifier(game, card, {
         unitMixins: [
-          new TogglableModifierMixin(game, () => wheel?.currentElement === 'fire')
+          new TogglableModifierMixin(game, () => {
+            const wheel = getWheelOfElementModifier(game, card.player);
+            return wheel?.currentElement === 'fire';
+          })
         ]
       })
     );
 
     await card.modifiers.add(
       new ShooterModifier(game, card, {
-        mixins: [
-          new TogglableModifierMixin(game, () => wheel?.currentElement === 'water')
+        unitMixins: [
+          new TogglableModifierMixin(game, () => {
+            const wheel = getWheelOfElementModifier(game, card.player);
+            return wheel?.currentElement === 'water';
+          })
         ]
       })
     );
 
     await card.modifiers.add(
       new CelerityCardModifier(game, card, {
-        mixins: [new TogglableModifierMixin(game, () => wheel?.currentElement === 'air')]
+        unitMixins: [
+          new TogglableModifierMixin(game, () => {
+            const wheel = getWheelOfElementModifier(game, card.player);
+            return wheel?.currentElement === 'air';
+          })
+        ]
       })
     );
   },

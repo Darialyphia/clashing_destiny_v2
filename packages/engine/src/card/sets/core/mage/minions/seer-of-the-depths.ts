@@ -24,7 +24,7 @@ export const seerOfTheDepths: MinionBlueprint = {
   description: dedent`
   <rt-keyword>Shooter</rt-keyword>
   <br />
-  <rt-job-bonus>Elementalist</rt-job-bonus>When your <rt-card>Wheel of the Elements</rt-card> cycles to Water, <rt-keyword>Predict</rt-keyword>. <rt-lvl-bonus lvl="4">Draw a card.</rt-lvl-bonus>  
+  <rt-job-bonus job="Elementalist">When your <rt-card>Wheel of the Elements</rt-card> cycles to Water, <rt-keyword>Predict</rt-keyword></rt-job-bonus><rt-lvl-bonus lvl="4">Draw a card.</rt-lvl-bonus>  
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

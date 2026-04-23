@@ -13,9 +13,9 @@ export const amplifyMagic: SpellBlueprint = {
   id: 'amplify-magic',
   name: 'Amplify Magic',
   description: dedent`
-  <rt-keyword>Empower (1)</rt-keyword> then draw a card.
-  <rt-lvl-bonus lvl="2"><rt-keyword>Burst</rt-keyword>.</rt-lvl-bonus> 
-  <rt-lvl-bonus lvl="3"><rt-keyword>Empower (2)</rt-keyword> instead</rt-lvl-bonus>.
+  <rt-keyword>Empower (2)</rt-keyword>.
+  <rt-lvl-bonus lvl="2"><rt-keyword>Burst</rt-keyword>.</rt-lvl-bonus><br/>
+  <rt-lvl-bonus lvl="3">Draw a card.</rt-lvl-bonus>
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,
@@ -42,7 +42,7 @@ export const amplifyMagic: SpellBlueprint = {
     await card.modifiers.add(new LevelBonusModifier(game, card, 2));
 
     const levelMod = card.modifiers.get(LevelBonusModifier)!;
-    await card.player.hero.modifiers.add(
+    await card.modifiers.add(
       new BurstModifier(game, card, {
         mixins: [new TogglableModifierMixin(game, () => levelMod.isActive)]
       })
@@ -51,10 +51,10 @@ export const amplifyMagic: SpellBlueprint = {
   async onPlay(game, card) {
     const levelMod = card.modifiers.get(LevelBonusModifier)!;
 
-    await card.player.hero.modifiers.add(
-      new EmpowerModifier(game, card, { amount: levelMod.isActiveForLevel(3) ? 2 : 1 })
-    );
+    await card.player.hero.modifiers.add(new EmpowerModifier(game, card, { amount: 2 }));
 
-    await card.player.cardManager.drawFromDeck(1);
+    if (levelMod.isActiveForLevel(3)) {
+      await card.player.cardManager.drawFromDeck(1);
+    }
   }
 };

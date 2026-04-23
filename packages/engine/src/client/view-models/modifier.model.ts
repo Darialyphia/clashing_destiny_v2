@@ -35,6 +35,7 @@ export class ModifierViewModel {
   clone() {
     return new ModifierViewModel(this.data, this.getEntities(), this.getClient());
   }
+
   get id() {
     return this.data.id;
   }
@@ -61,6 +62,10 @@ export class ModifierViewModel {
 
   get stacks() {
     return this.data.stacks;
+  }
+
+  get isEnabled() {
+    return this.data.isEnabled;
   }
 
   get source() {

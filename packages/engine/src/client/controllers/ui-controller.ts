@@ -249,6 +249,10 @@ export class UiController {
       }
     }
 
+    if (event.eventName === GAME_EVENTS.ABILITY_AFTER_USE) {
+      this.reset(false);
+    }
+
     // if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
     //   return this.onArtifactEquiped(event, flush);
     // }

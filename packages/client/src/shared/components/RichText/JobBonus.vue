@@ -1,11 +1,29 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRichTextContext } from '@/game/composables/useRichText';
+import type { JobId } from '@game/engine/src/card/card.enums';
+
+const { job } = defineProps<{
+  job: string;
+}>();
+
+const ctx = useRichTextContext();
+</script>
 
 <template>
-  <span class="job-bonus"><slot /></span>
+  <span
+    class="job-bonus"
+    :class="{
+      disabled:
+        ctx && !ctx.heroJobs.value.includes(job.toLocaleLowerCase() as JobId)
+    }"
+  >
+    <span class="badge">{{ job }}</span>
+    <slot />
+  </span>
 </template>
 
 <style scoped lang="postcss">
-.job-bonus {
+.badge {
   background: linear-gradient(
     to bottom,
     var(--indigo-4) 50%,
@@ -21,5 +39,13 @@
   -webkit-text-stroke: calc(1.5px * var(--pixel-scale)) black;
   paint-order: stroke fill;
   padding-bottom: calc(1px * var(--pixel-scale));
+}
+
+.disabled {
+  opacity: 0.6;
+  .badge {
+    background: var(--gray-4);
+    border-color: var(--gray-6);
+  }
 }
 </style>

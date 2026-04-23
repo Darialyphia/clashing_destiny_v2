@@ -50,7 +50,11 @@ export const cards = {
 "primus_fist": "primus_fist",
 "cartographer": "cartographer",
 "shard_crafter": "shard_crafter",
-"prism_invocation": "prism_invocation"
+"prism_invocation": "prism_invocation",
+"power_overwhelming": "power_overwhelming",
+"ceasefire": "ceasefire",
+"the_dead_stay_buried": "the_dead_stay_buried",
+"battle_fervor": "battle_fervor"
 } as const;
 
 export const collectableCards = {
@@ -92,7 +96,11 @@ export const collectableCards = {
 "primus_fist": "primus_fist",
 "cartographer": "cartographer",
 "shard_crafter": "shard_crafter",
-"prism_invocation": "prism_invocation"
+"prism_invocation": "prism_invocation",
+"power_overwhelming": "power_overwhelming",
+"ceasefire": "ceasefire",
+"the_dead_stay_buried": "the_dead_stay_buried",
+"battle_fervor": "battle_fervor"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -327,6 +335,26 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "prism_invocation",
     "collectable": true,
     "rarity": "rare"
+  },
+  {
+    "id": "power_overwhelming",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "ceasefire",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "the_dead_stay_buried",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "battle_fervor",
+    "collectable": true,
+    "rarity": "epic"
   }
 ]
 };
@@ -377,7 +405,11 @@ export const cardShortIds: Record<string, number> = {
 "primus_fist": 43,
 "cartographer": 44,
 "shard_crafter": 45,
-"prism_invocation": 46
+"prism_invocation": 46,
+"power_overwhelming": 47,
+"ceasefire": 48,
+"the_dead_stay_buried": 49,
+"battle_fervor": 50
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -426,5 +458,9 @@ export const cardIdByShortId: Record<number, string> = {
 "43": "primus_fist",
 "44": "cartographer",
 "45": "shard_crafter",
-"46": "prism_invocation"
+"46": "prism_invocation",
+"47": "power_overwhelming",
+"48": "ceasefire",
+"49": "the_dead_stay_buried",
+"50": "battle_fervor"
 } as const;

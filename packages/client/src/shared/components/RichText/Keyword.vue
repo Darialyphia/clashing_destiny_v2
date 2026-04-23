@@ -7,8 +7,9 @@ import {
   HoverCardTrigger,
   HoverCardPortal
 } from 'reka-ui';
+import type { ShallowRef } from 'vue';
 
-const el = useTemplateRef('el');
+const el = useTemplateRef('el') as Readonly<ShallowRef<HTMLSpanElement | null>>;
 
 const keyword = computed(() => {
   const text = el.value?.textContent?.toLowerCase() || '';

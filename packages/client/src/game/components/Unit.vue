@@ -111,6 +111,7 @@ const modifiers = computed(() => [...unit.modifiers, ...unit.card.modifiers]);
   height: 100%;
   transition: all 0.3s var(--ease-2);
   position: relative;
+  transform-style: preserve-3d;
 
   &.is-selected {
     translate: 0 -6px;

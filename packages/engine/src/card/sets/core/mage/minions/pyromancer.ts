@@ -26,7 +26,7 @@ export const pyromancer: MinionBlueprint = {
   description: dedent`
   <rt-keyword>Shooter</rt-keyword>.
   <rt-trigger>On Enter</rt-trigger> Add a <rt-card>Fire Bolt</rt-card> to your hand.
-  <rt-job-bonus>Elementalist</rt-job-bonus> Whenever you play a <rt-card>Fire Bolt</rt-card> and your <rt-card>Wheel of the Elements</rt-card> is Fire, add a <rt-card>Fire Shard</rt-card> to your hand.
+  <rt-job-bonus job="Elementalist">Whenever you play a <rt-card>Fire Bolt</rt-card> and your <rt-card>Wheel of the Elements</rt-card> is Fire, add a <rt-card>Fire Shard</rt-card> to your hand.</rt-job-bonus>
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

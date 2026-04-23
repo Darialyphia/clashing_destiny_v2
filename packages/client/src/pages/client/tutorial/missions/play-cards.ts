@@ -72,8 +72,8 @@ export const playCardTutorial: TutorialMission = {
             left: '50%',
             centered: { x: true },
             onEnter(game, client) {
-              client.ui.highlightedElement =
-                client.ui.DOMSelectors.heroHealthIndicator('p2').element;
+              // client.ui.highlightedElement =
+              //   client.ui.DOMSelectors.heroHealthIndicator('p2').element;
             }
           }
         ]

@@ -38,7 +38,7 @@ const ctx = useRichTextContext();
   paint-order: stroke fill;
 }
 .disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   .badge {
     background: var(--gray-4);
     border-color: var(--gray-6);

@@ -34,6 +34,7 @@ type SandboxWorkerEvent =
       payload: { playerId: string };
     }
   | { type: 'refillMana'; payload: { playerId: string } }
+  | { type: 'grantExp'; payload: { playerId: string; amount: number } }
   | {
       type: 'moveUnit';
       payload: { unitId: string; position: Point; silent: boolean };
@@ -199,6 +200,11 @@ self.addEventListener('message', ({ data }) => {
         new AbilityDamage(unit.card, payload.amount),
         payload.silent
       );
+      game.snapshotSystem.takeSnapshot();
+    })
+    .with({ type: 'grantExp' }, async ({ payload }) => {
+      const player = game.playerSystem.getPlayerById(payload.playerId)!;
+      await player.levelManager.gainExp(payload.amount);
       game.snapshotSystem.takeSnapshot();
     })
     .exhaustive();

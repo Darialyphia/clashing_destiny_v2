@@ -30,11 +30,11 @@ export const fireBall: SpellBlueprint = {
   canPlay: (game, card) =>
     emptySpacesTargetRules.canPlay({ min: 1 })(
       game,
-      cell => !!cell.player?.equals(card.player)
+      cell => !cell.player?.equals(card.player)
     ),
   getTargets(game, card, onCancel) {
     return emptySpacesTargetRules.getTargets({ min: 1, max: 1 })(game, card, {
-      predicate: cell => !!cell.player?.equals(card.player),
+      predicate: cell => !cell.player?.equals(card.player),
       getAoe: () => new PointAOEShape(TARGETING_TYPE.EMPTY, {}),
       canCancel: true,
       onCancel,
@@ -59,7 +59,7 @@ export const fireBall: SpellBlueprint = {
   },
   async onPlay(game, card, { targets, aoe }) {
     const mainTarget = targets[0];
-    await mainTarget.unit?.takeDamage(card, new SpellDamage(card, 4));
+    await mainTarget?.unit?.takeDamage(card, new SpellDamage(card, 4));
 
     const units = game.unitSystem.getUnitsInAOE(aoe, targets, card.player);
     const lvlMod = card.modifiers.get(LevelBonusModifier)!;

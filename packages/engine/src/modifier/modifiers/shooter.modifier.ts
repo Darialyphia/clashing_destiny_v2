@@ -11,15 +11,19 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { Player } from '../../player/player.entity';
 
 export class ShooterModifier<T extends MinionCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard, options: { mixins?: ModifierMixin<T>[] }) {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options: { mixins?: ModifierMixin<T>[]; unitMixins?: ModifierMixin<Unit>[] } = {}
+  ) {
     super(KEYWORDS.SHOOTER.id, game, source, {
-      name: KEYWORDS.SHOOTER.name,
-      description: KEYWORDS.SHOOTER.description,
-      icon: 'icons/keyword-ranged',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.SHOOTER),
         new UnitEffectModifierMixin(game, {
-          getModifier: () => new RangedUnitModifier(game, source, {})
+          getModifier: () =>
+            new RangedUnitModifier(game, source, {
+              mixins: options.unitMixins
+            })
         }),
         ...(options?.mixins ?? [])
       ]

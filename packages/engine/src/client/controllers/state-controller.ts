@@ -105,25 +105,28 @@ export class ClientStateController {
   };
 
   // prepopulate the state with new entities because they could be used by the fx events
-  preupdate(newState: SnapshotDiff) {
+  preupdate(newState: PatchBasedSnapshotDiff) {
     if (!this.state) return;
 
-    for (const id of newState.addedEntities) {
-      const entity = newState.entities[id];
-
+    Object.entries(newState.addedEntities).forEach(([id, entity]) => {
       this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
-    }
+    });
   }
 
-  update(newState: SnapshotDiff): void {
+  update(newState: PatchBasedSnapshotDiff): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { entities, config, addedEntities, removedEntities, ...rest } = newState;
-    for (const [id, entity] of Object.entries(entities)) {
+    const { entityPatches, config, addedEntities, removedEntities, ...rest } = newState;
+    for (const [id, patches] of Object.entries(entityPatches)) {
       if (this.state.entities[id]) {
-        this.state.entities[id] = this.state.entities[id].update(entity as any).clone();
-      } else {
-        this.state.entities[id] = this.buildViewModel(entity as any);
+        this.state.entities[id].updateWithPatches(patches);
       }
+    }
+
+    // clone all entities to trigger reactivity in case of reference equality
+    // ex: a unit's modifier is updated, but the unit isnt
+    // a computed property depending on the unit wouldnt update
+    for (const [id, entity] of Object.entries(this.state.entities)) {
+      this.state.entities[id] = entity.clone();
     }
 
     removedEntities.forEach(id => {
