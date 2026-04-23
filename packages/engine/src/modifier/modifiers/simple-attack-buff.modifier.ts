@@ -9,6 +9,7 @@ import {
 } from '../mixins/interceptor.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
+import type { HeroCard } from '../../card/entities/hero-card.entity';
 
 export class UnitSimpleAttackBuffModifier<T extends Unit> extends Modifier<T> {
   constructor(
@@ -53,7 +54,9 @@ export class UnitSimpleAttackBuffModifier<T extends Unit> extends Modifier<T> {
   }
 }
 
-export class MinionSimpleAttackBuffModifier<T extends MinionCard> extends Modifier<T> {
+export class CardSimpleAttackBuffModifier<
+  T extends MinionCard | HeroCard
+> extends Modifier<T> {
   constructor(
     modifierType: string,
     game: Game,
@@ -77,6 +80,7 @@ export class MinionSimpleAttackBuffModifier<T extends MinionCard> extends Modifi
         return `${amount > 0 ? '+' : '-'}${amount} Attack`;
       },
       mixins: [
+        // @ts-expect-error hero can receive this interceptor because they also have an atk stat
         new MinionInterceptorModifierMixin(game, {
           key: 'atk',
           interceptor: value => {

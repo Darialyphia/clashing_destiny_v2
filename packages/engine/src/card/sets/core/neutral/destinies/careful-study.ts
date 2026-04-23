@@ -7,7 +7,7 @@ import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
 export const carefulStudy: DestinyBlueprint = {
   id: 'careful_study',
   name: 'Careful Study',
-  description: 'Draw 1 card.',
+  description: 'Draw a card.',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),

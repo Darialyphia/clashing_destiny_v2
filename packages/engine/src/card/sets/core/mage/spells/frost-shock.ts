@@ -14,7 +14,7 @@ export const frostShock: SpellBlueprint = {
   name: 'Frost Shock',
   description: dedent`
   <rt-keyword>Freeze</rt-keyword> an enemy minion and deal 1 damage to it.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> This costs <rt-mana>1</rt-mana> less.
+  <rt-lvl-bonus lvl="3">This costs <rt-mana>1</rt-mana> less.</rt-lvl-bonus> 
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,

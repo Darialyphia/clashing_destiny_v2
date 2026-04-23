@@ -12,7 +12,13 @@ import {
   MODIFIER_SPECIAL_EVENTS,
   WheelOfElementsRotateEvent
 } from '../modifier.special-events';
-import { PlayerArtifactInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import {
+  CardInterceptorModifierMixin,
+  PlayerArtifactInterceptorModifierMixin
+} from '../mixins/interceptor.mixin';
+import { wheelOfTheElements } from '../../card/sets/core/elementalist/artifacts/wheel-of-the-elements';
+import type { Player } from '../../player/player.entity';
+import { CardAuraModifierMixin } from '../mixins/aura.mixin';
 
 export class WheelOfElementsModifier extends Modifier<PlayerArtifact> {
   private _currentElement: 'fire' | 'water' | 'air' | 'earth' = 'fire';
@@ -51,6 +57,13 @@ export class WheelOfElementsModifier extends Modifier<PlayerArtifact> {
         })
       ]
     });
+  }
+
+  activate() {
+    console.log(this.target);
+    return this.target.modifiers.add(
+      new this.elementToModifierMap[this._currentElement](this.game, this.target.card)
+    );
   }
 
   get currentElement() {
@@ -94,23 +107,28 @@ export class WheelOfElementsFireModifier extends Modifier<PlayerArtifact> {
   constructor(game: Game, source: AnyCard) {
     super('wheel-of-elements-fire', game, source, {
       name: 'Wheel of Elements - Fire',
-      description: 'Your hero gains 1 Empower before playing a Fire spell.',
-      icon: 'wheel-of-elements-fire',
+      description: 'Your fire spells are played as if your hero had 1 more level.',
+      icon: 'icons/wheel-of-elements-fire',
       mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-          filter: event => {
-            if (!event) return false;
+        new CardAuraModifierMixin(game, source.player.hero, {
+          isElligible(candidate) {
             return (
-              isSpell(event.data.card) &&
-              event.data.card.isAlly(this.target.card) &&
-              event.data.card.hasTag(TAGS.FIRE)
+              candidate.player.equals(source.player) &&
+              isSpell(candidate) &&
+              candidate.hasTag(TAGS.FIRE)
             );
           },
-          handler: async () => {
-            await this.target.player.hero.modifiers.add(
-              new EmpowerModifier(game, this.target.card, { amount: 1 })
-            );
+          getModifiers: () => {
+            return [
+              new Modifier('empower-level-bonus-aura', game, source, {
+                mixins: [
+                  new CardInterceptorModifierMixin(game, {
+                    key: 'playerLevel',
+                    interceptor: value => value + this.stacks
+                  })
+                ]
+              })
+            ];
           }
         })
       ]
@@ -122,23 +140,28 @@ export class WheelOfElementsWaterModifier extends Modifier<PlayerArtifact> {
   constructor(game: Game, source: AnyCard) {
     super('wheel-of-elements-water', game, source, {
       name: 'Wheel of Elements - Water',
-      description: 'Your hero gains 1 Empower before playing a Water spell.',
-      icon: 'wheel-of-elements-water',
+      description: 'Your water spells are played as if your hero had 1 more level.',
+      icon: 'icons/wheel-of-elements-water',
       mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-          filter: event => {
-            if (!event) return false;
+        new CardAuraModifierMixin(game, source.player.hero, {
+          isElligible(candidate) {
             return (
-              isSpell(event.data.card) &&
-              event.data.card.isAlly(this.target.card) &&
-              event.data.card.hasTag(TAGS.WATER)
+              candidate.player.equals(source.player) &&
+              isSpell(candidate) &&
+              candidate.hasTag(TAGS.WATER)
             );
           },
-          handler: async () => {
-            await this.target.player.hero.modifiers.add(
-              new EmpowerModifier(game, this.target.card, { amount: 1 })
-            );
+          getModifiers: () => {
+            return [
+              new Modifier('empower-level-bonus-aura', game, source, {
+                mixins: [
+                  new CardInterceptorModifierMixin(game, {
+                    key: 'playerLevel',
+                    interceptor: value => value + this.stacks
+                  })
+                ]
+              })
+            ];
           }
         })
       ]
@@ -150,23 +173,28 @@ export class WheelOfElementsAirModifier extends Modifier<PlayerArtifact> {
   constructor(game: Game, source: AnyCard) {
     super('wheel-of-elements-air', game, source, {
       name: 'Wheel of Elements - Air',
-      description: 'Your hero gains 1 Empower before playing an Air spell.',
-      icon: 'wheel-of-elements-air',
+      description: 'Your air spells are played as if your hero had 1 more level.',
+      icon: 'icons/wheel-of-elements-air',
       mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-          filter: event => {
-            if (!event) return false;
+        new CardAuraModifierMixin(game, source.player.hero, {
+          isElligible(candidate) {
             return (
-              isSpell(event.data.card) &&
-              event.data.card.isAlly(this.target.card) &&
-              event.data.card.hasTag(TAGS.AIR)
+              candidate.player.equals(source.player) &&
+              isSpell(candidate) &&
+              candidate.hasTag(TAGS.AIR)
             );
           },
-          handler: async () => {
-            await this.target.player.hero.modifiers.add(
-              new EmpowerModifier(game, this.target.card, { amount: 1 })
-            );
+          getModifiers: () => {
+            return [
+              new Modifier('empower-level-bonus-aura', game, source, {
+                mixins: [
+                  new CardInterceptorModifierMixin(game, {
+                    key: 'playerLevel',
+                    interceptor: value => value + this.stacks
+                  })
+                ]
+              })
+            ];
           }
         })
       ]
@@ -178,26 +206,39 @@ export class WheelOfElementsEarthModifier extends Modifier<PlayerArtifact> {
   constructor(game: Game, source: AnyCard) {
     super('wheel-of-elements-earth', game, source, {
       name: 'Wheel of Elements - Earth',
-      description: 'Your hero gains 1 Empower before playing an Earth spell.',
-      icon: 'wheel-of-elements-earth',
+      description: 'Your earth spells are played as if your hero had 1 more level.',
+      icon: 'icons/wheel-of-elements-earth',
       mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-          filter: event => {
-            if (!event) return false;
+        new CardAuraModifierMixin(game, source.player.hero, {
+          isElligible(candidate) {
             return (
-              isSpell(event.data.card) &&
-              event.data.card.isAlly(this.target.card) &&
-              event.data.card.hasTag(TAGS.EARTH)
+              candidate.player.equals(source.player) &&
+              isSpell(candidate) &&
+              candidate.hasTag(TAGS.EARTH)
             );
           },
-          handler: async () => {
-            await this.target.player.hero.modifiers.add(
-              new EmpowerModifier(game, this.target.card, { amount: 1 })
-            );
+          getModifiers: () => {
+            return [
+              new Modifier('empower-level-bonus-aura', game, source, {
+                mixins: [
+                  new CardInterceptorModifierMixin(game, {
+                    key: 'playerLevel',
+                    interceptor: value => value + this.stacks
+                  })
+                ]
+              })
+            ];
           }
         })
       ]
     });
   }
 }
+
+export const getWheelOfElementModifier = (game: Game, player: Player) => {
+  const artifact = player.artifactManager.artifacts.find(
+    artifact => artifact.card.blueprintId === wheelOfTheElements.id
+  );
+
+  return artifact?.modifiers.get(WheelOfElementsModifier);
+};

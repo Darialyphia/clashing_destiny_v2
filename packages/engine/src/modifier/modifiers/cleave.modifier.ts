@@ -13,13 +13,19 @@ import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { CleaveAOEShape } from '../../aoe/cleave.aoe-shape';
 
 export class CleaveCardModifier<T extends MinionCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard, options?: { mixins: ModifierMixin<T>[] }) {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options?: { mixins?: ModifierMixin<T>[]; unitMixins?: ModifierMixin<Unit>[] }
+  ) {
     super(KEYWORDS.CLEAVE.id, game, source, {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.CLEAVE),
         new UnitEffectModifierMixin(game, {
           getModifier: () =>
-            new CleaveUnitModifier(game, this.initialSource, { mixins: [] })
+            new CleaveUnitModifier(game, this.initialSource, {
+              mixins: options?.unitMixins ?? []
+            })
         }),
         ...(options?.mixins ?? [])
       ]

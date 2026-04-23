@@ -12,10 +12,8 @@ import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { MinionOnDestroyModifier } from '../../../../../modifier/modifiers/on-destroy.modifier';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { UnitSimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { ShooterModifier } from '../../../../../modifier/modifiers/shooter.modifier';
 
 export const apprenticeMagician: MinionBlueprint = {
   id: 'apprentice-magician',
@@ -39,6 +37,7 @@ export const apprenticeMagician: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new ShooterModifier(game, card, {}));
     await card.modifiers.add(
       new WhileOnBoardModifier(game, card, {
         modifier: new Modifier('wizard-tutor-empower', game, card, {
@@ -64,22 +63,6 @@ export const apprenticeMagician: MinionBlueprint = {
             })
           ]
         })
-      })
-    );
-
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
-
-    await card.modifiers.add(
-      new MinionOnDestroyModifier(game, card, {
-        async handler() {
-          const candidates = card.player.cardManager.deck.cards.filter(
-            c => c.hasJob(JOBS.MAGE.id) && c.manaCost === 1 && c.kind === CARD_KINDS.SPELL
-          );
-          if (candidates.length === 0) return;
-          await card.player.cardManager.drawFromPool(candidates, 1);
-        },
-        unitMixins: [new TogglableModifierMixin(game, () => lvlMod.isActive)]
       })
     );
   },

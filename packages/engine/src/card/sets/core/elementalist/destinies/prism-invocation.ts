@@ -14,11 +14,11 @@ import { earthShard } from '../../mage/spells/earth-shard';
 import { fireShard } from '../../mage/spells/fire-shard';
 import { waterShard } from '../../mage/spells/water-shard';
 
-export const elementalAlchemy: DestinyBlueprint = {
-  id: 'elemental_alchemy',
-  name: 'Elemental Alchemy',
+export const prismInvocation: DestinyBlueprint = {
+  id: 'prism_invocation',
+  name: 'Prism Invocation',
   description:
-    'When your <rt-card>Wheel of the elements</rt-card> cycles, add the corresponding Elemental Shard to your hand. Give it <rt-keyword>Ephemeral</rt-keyword>.',
+    '<rt-ability cost="1"></rt-ability> Discard 2 Elemental Shards with the same name to summon an elemental of the corresponding element.',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
@@ -26,7 +26,7 @@ export const elementalAlchemy: DestinyBlueprint = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.ELEMENTALIST.id],
   tags: [],
-  expCost: 2,
+  expCost: 3,
   getTargets: () => Promise.resolve([]),
   getAoe: () => new NoAOEShape(TARGETING_TYPE.ANYWHERE, {}),
   canPlay: () => true,

@@ -49,6 +49,7 @@ const emit = defineEmits<{
   modifiersMouseLeave: [];
 }>();
 const card = useCard(computed(() => cardId));
+
 const ui = useGameUi();
 
 const handleClick = () => {
@@ -85,7 +86,6 @@ const classes = computed(() => {
     class="game-card-container"
     :data-game-card="card.id"
     :data-flip-id="`card_${card.id}`"
-    :id="ui.DOMSelectors.cardInHand(card.id, card.player.id).id"
   >
     <CardActionsPopover
       :card-id="card.id"
@@ -103,23 +103,23 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
-          art: card.art ?? overrides.art,
-          name: card.name ?? overrides.name,
-          description: card.description ?? overrides.description,
-          kind: card.kind ?? overrides.kind,
-          rarity: card.rarity ?? overrides.rarity,
-          manaCost: card.manaCost ?? overrides.manaCost,
-          baseManaCost: card.baseManaCost ?? overrides.baseManaCost,
-          expCost: card.expCost ?? overrides.expCost,
-          hp: card.maxHp ?? overrides.hp,
-          atk: card.atk ?? overrides.atk,
-          retaliation: card.retaliation ?? overrides.retaliation,
-          durability: card.durability ?? overrides.durability,
+          art: overrides.art ?? card.art,
+          name: overrides.name ?? card.name,
+          description: overrides.description ?? card.description,
+          kind: overrides.kind ?? card.kind,
+          rarity: overrides.rarity ?? card.rarity,
+          manaCost: overrides.manaCost ?? card.manaCost,
+          baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
+          expCost: overrides.expCost ?? card.expCost,
+          hp: overrides.hp ?? card.maxHp,
+          atk: overrides.atk ?? card.atk,
+          retaliation: overrides.retaliation ?? card.retaliation,
+          durability: overrides.durability ?? card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
             .map(a => formatAbilityText(a)),
-          jobs: card.jobs ?? overrides.jobs,
-          subKind: card.subKind ?? overrides.subKind
+          jobs: overrides.jobs ?? card.jobs,
+          subKind: overrides.subKind ?? card.subKind
         }"
         :is-foil="card.isFoil"
         class="game-card big"
@@ -132,16 +132,16 @@ const classes = computed(() => {
         :id="card.id"
         :card="{
           id: card.id,
-          art: card.art ?? overrides.art,
-          kind: card.kind ?? overrides.kind,
-          atk: card.atk ?? overrides.atk,
-          baseAtk: card.baseAtk ?? overrides.baseAtk,
-          hp: card.hp ?? overrides.hp,
-          baseMaxHp: card.baseMaxHp ?? overrides.baseMaxHp,
-          maxHp: card.maxHp ?? overrides.maxHp,
-          durability: card.durability ?? overrides.durability,
-          retaliation: card.retaliation ?? overrides.retaliation,
-          baseRetaliation: card.baseRetaliation ?? overrides.baseRetaliation
+          art: overrides.art ?? card.art,
+          kind: overrides.kind ?? card.kind,
+          atk: overrides.atk ?? card.atk,
+          baseAtk: overrides.baseAtk ?? card.baseAtk,
+          hp: overrides.hp ?? card.hp,
+          baseMaxHp: overrides.baseMaxHp ?? card.baseMaxHp,
+          maxHp: overrides.maxHp ?? card.maxHp,
+          durability: overrides.durability ?? card.durability,
+          retaliation: overrides.retaliation ?? card.retaliation,
+          baseRetaliation: overrides.baseRetaliation ?? card.baseRetaliation
         }"
         class="game-card small"
         :class="classes"
@@ -313,7 +313,7 @@ const classes = computed(() => {
   transform: translateX(-50%);
   background: hsl(0 0% 0% / 0.65);
   color: hsl(0 0% 100% / 0.9);
-  font-size: var(--font-size-12);
+  font-size: var(--font-size-0);
   padding: var(--size-1) var(--size-2);
   border-radius: var(--radius-pill);
   width: max-content;

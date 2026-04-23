@@ -1,5 +1,5 @@
 import type { Values } from '@game/shared';
-import { JOBS } from './card.enums';
+import { JOBS, type JobId } from './card.enums';
 
 export type Keyword = {
   id: string;
@@ -171,7 +171,7 @@ export const KEYWORDS = {
     id: 'on_attack',
     name: 'On Attack',
     description: 'Triggers when this unit attacks.',
-    aliases: ['on minion attack', 'on player attack']
+    aliases: ['on minion attack', 'on hero attack']
   },
   ON_COUNTERATTACK: {
     id: 'on_counterattack',
@@ -280,7 +280,8 @@ export const KEYWORDS = {
   EMPOWER: {
     id: 'empower',
     name: 'Empower X',
-    description: 'The next spell you cast this turn deals X more damage.',
+    description:
+      'The next spell you cast this turn resolves as if your Hero had +X level.',
     aliases: [/empower [0-9]+/, 'empower', /empowered/]
   },
   PREEMPTIVE_STRIKE: {
@@ -315,16 +316,23 @@ export const KEYWORDS = {
     description: 'At the start of the turn, heal this unit for X.',
     aliases: [/regeneration \([0-9]+\)/]
   },
+  PREDICT: {
+    id: 'predict',
+    name: 'Predict',
+    description:
+      'Look at 3 cards from your deck at random, choose one and put it on top of your deck.',
+    aliases: []
+  },
   ...Object.fromEntries(
     Object.values(JOBS).map(job => [
-      `${job.id.toUpperCase()}_BONUS`,
+      `${job.id.toUpperCase()}_BONUS` as `${Uppercase<JobId>}_BONUS`,
       {
         id: `${job.id}_mastery`,
         name: `${job.name} Bonus`,
         description: `This card has a bonus effect if its owner is playing a ${job.name} hero.`,
         aliases: []
       }
-    ]) as [string, Keyword][]
+    ]) as [`${Uppercase<JobId>}_BONUS`, Keyword][]
   )
 } as const satisfies Record<string, Keyword>;
 

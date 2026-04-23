@@ -13,16 +13,14 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { MinionOnDestroyModifier } from '../../../../../modifier/modifiers/on-destroy.modifier';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { ShooterModifier } from '../../../../../modifier/modifiers/shooter.modifier';
 
 export const wizardTutor: MinionBlueprint = {
   id: 'wizard-tutor',
   name: 'Wizard Tutor',
   description: dedent`
-  <rt-trigger>On Destroyed</rt-trigger> Gain 1 Experience.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> <rt-trigger>Start of Turn</rt-trigger>: <rt-keyword>Empower 1</rt-keyword>.
+  <rt-keyword>Shooter</rt-keyword><br/>
+  <rt-trigger>Start of Turn</rt-trigger>: <rt-keyword>Empower 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -39,11 +37,11 @@ export const wizardTutor: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new ShooterModifier(game, card, {}));
     await card.modifiers.add(
       new WhileOnBoardModifier(game, card, {
         modifier: new Modifier('wizard-tutor-empower', game, card, {
           mixins: [
-            new TogglableModifierMixin(game, () => lvlMod.isActive),
             new GameEventModifierMixin(game, {
               eventName: GAME_EVENTS.TURN_START,
               unitForVisualFX: () => card.unit,
@@ -55,17 +53,6 @@ export const wizardTutor: MinionBlueprint = {
             })
           ]
         })
-      })
-    );
-
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
-
-    await card.modifiers.add(
-      new MinionOnDestroyModifier(game, card, {
-        async handler() {
-          await card.player.levelManager.gainExp(1);
-        }
       })
     );
   },

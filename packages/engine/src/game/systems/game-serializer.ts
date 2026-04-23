@@ -184,6 +184,9 @@ export class GameSerializer {
       });
       player.artifactManager.artifacts.forEach(artifact => {
         entities[artifact.id] = artifact.serialize();
+        artifact.modifiers.list.forEach(modifier => {
+          entities[modifier.id] = modifier.serialize();
+        });
       });
     });
     this.game.boardSystem.cells.forEach(cell => {

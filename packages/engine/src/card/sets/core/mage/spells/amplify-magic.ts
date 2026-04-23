@@ -14,8 +14,8 @@ export const amplifyMagic: SpellBlueprint = {
   name: 'Amplify Magic',
   description: dedent`
   <rt-keyword>Empower (1)</rt-keyword> then draw a card.
-  <rt-lvl-bonus lvl="2"></rt-lvl-bonus> <rt-keyword>Burst</rt-keyword>.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> <rt-keyword>Empower (2)</rt-keyword> instead.
+  <rt-lvl-bonus lvl="2"><rt-keyword>Burst</rt-keyword>.</rt-lvl-bonus> 
+  <rt-lvl-bonus lvl="3"><rt-keyword>Empower (2)</rt-keyword> instead</rt-lvl-bonus>.
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,

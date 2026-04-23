@@ -25,7 +25,7 @@ const { cards, deckBuilder } = defineProps<{
       v-for="(card, index) in cards"
       :key="index"
     >
-      <HoverCardTrigger class="inspectable-card" v-bind="$attrs" as-child>
+      <HoverCardTrigger v-bind="$attrs" as-child>
         <li
           :style="{
             '--bg': assets[`cards/${card.blueprint.art.default.main}`].css
@@ -34,6 +34,14 @@ const { cards, deckBuilder } = defineProps<{
           class="deck-item"
           @click="deckBuilder.removeCard(card.meta!.cardId)"
         >
+          <div class="flex gap-1 items-center">
+            <div
+              v-for="job in card.blueprint.jobs"
+              :key="job"
+              class="job"
+              :style="{ '--bg': assets[`ui/card/job-${job}`].css }"
+            />
+          </div>
           <div class="mana-cost" v-if="'manaCost' in card.blueprint">
             {{ card.blueprint.manaCost }}
           </div>
@@ -112,5 +120,12 @@ const { cards, deckBuilder } = defineProps<{
   white-space: nowrap;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
+}
+
+.job {
+  width: 36px;
+  aspect-ratio: 1;
+  background: var(--bg);
+  background-size: cover;
 }
 </style>

@@ -33,6 +33,7 @@ export type CardInterceptors = {
   canReplace: Interceptable<boolean>;
   shouldPassInitiativeAfterPlay: Interceptable<boolean>;
   jobs: Interceptable<JobId[]>;
+  playerLevel: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -40,7 +41,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   player: new Interceptable(),
   canReplace: new Interceptable(),
   shouldPassInitiativeAfterPlay: new Interceptable(),
-  jobs: new Interceptable()
+  jobs: new Interceptable(),
+  playerLevel: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -148,6 +150,10 @@ export abstract class Card<
     return this.jobs.includes(jobId);
   }
 
+  get playerLevel() {
+    return this.interceptors.playerLevel.getValue(this.player.level, {});
+  }
+
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {}) ?? 0;
@@ -202,14 +208,34 @@ export abstract class Card<
     this.player.cardManager.sendToDiscardPile(this);
   }
 
-  async sendToBanishPile() {
+  async sendToTopOfDeck() {
     if (!isDeckCard(this)) {
       throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to banish pile when it is not a main deck card.`
+        `Cannot send card ${this.id} to top of deck when it is not a main deck card.`
       );
     }
     await this.removeFromCurrentLocation();
-    this.player.cardManager.sendToBanishPile(this);
+    this.player.cardManager.deck.addToTop(this);
+  }
+
+  async sendToBottomOfDeck() {
+    if (!isDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot send card ${this.id} to bottom of deck when it is not a main deck card.`
+      );
+    }
+    await this.removeFromCurrentLocation();
+    this.player.cardManager.deck.addToBottom(this);
+  }
+
+  async shuffleIntoDeck() {
+    if (!isDeckCard(this)) {
+      throw new IllegalGameStateError(
+        `Cannot shuffle card ${this.id} into deck when it is not a main deck card.`
+      );
+    }
+    await this.removeFromCurrentLocation();
+    this.player.cardManager.deck.addAtRandomPosition(this);
   }
 
   protected updatePlayedAt() {

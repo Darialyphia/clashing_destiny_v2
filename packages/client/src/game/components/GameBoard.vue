@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
@@ -31,6 +30,7 @@ import OpponentPlayerInfos from './OpponentPlayerInfos.vue';
 import HoveredCellInfos from './HoveredCellInfos.vue';
 import MyHeroZone from './MyHeroZone.vue';
 import OpponentHeroZone from './OpponentHeroZone.vue';
+import { provideRichTextContext } from '../composables/useRichText';
 
 const { options } = defineProps<{
   clocks?: {
@@ -47,12 +47,15 @@ const { options } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
-const { playerId } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
 
+provideRichTextContext({
+  heroLevel: computed(() => myPlayer.value.level),
+  heroJobs: computed(() => myPlayer.value.hero?.jobs ?? [])
+});
 useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);
 // const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
@@ -250,7 +253,7 @@ useEventListener('contextmenu', async e => {
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 10%;
+  bottom: 5%;
   left: 0;
 }
 

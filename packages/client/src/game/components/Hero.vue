@@ -17,6 +17,7 @@ import {
 import Arrow from './Arrow.vue';
 import { useHeroArrowPath } from '../composables/useHeroArrowPath';
 import AbilityMenu from './AbilityMenu.vue';
+import ModifiersList from './ModifiersList.vue';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -123,6 +124,11 @@ const isSelected = computed(() => {
   if (!ui.value.selectedHero) return false;
   return ui.value.selectedHero.id === player.hero?.id;
 });
+
+const modifiers = computed(() => [
+  ...player.modifiers,
+  ...(player.hero?.modifiers || [])
+]);
 </script>
 
 <template>
@@ -154,6 +160,7 @@ const isSelected = computed(() => {
         show-modifiers
       />
     </AbilityMenu>
+    <ModifiersList :modifiers="modifiers" />
 
     <Teleport to="#arrows" defer>
       <Arrow v-if="heroPath" :path="heroPath" :color="pathColor" />

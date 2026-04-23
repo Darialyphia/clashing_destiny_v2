@@ -5,6 +5,7 @@ import type { CardViewModel } from './card.model';
 import { isDefined } from '@game/shared';
 import type { BoardCellViewModel } from './board-cell.model';
 import type { ArtifactViewModel } from './artifact.model';
+import type { ModifierViewModel } from './modifier.model';
 
 export class PlayerViewModel {
   private getEntities: () => GameStateEntities;
@@ -36,6 +37,12 @@ export class PlayerViewModel {
 
   clone() {
     return new PlayerViewModel(this.data, this.getEntities(), this.getClient());
+  }
+
+  get modifiers() {
+    return this.data.modifiers.map(
+      modId => this.getEntities()[modId] as ModifierViewModel
+    );
   }
 
   get id() {

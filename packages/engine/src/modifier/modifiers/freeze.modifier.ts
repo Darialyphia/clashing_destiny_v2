@@ -12,7 +12,7 @@ export class FreezeModifier<T extends Unit> extends Modifier<T> {
     super(KEYWORDS.FROZEN.id, game, source, {
       name: KEYWORDS.FROZEN.name,
       description: KEYWORDS.FROZEN.description,
-      icon: 'keyword-frozen',
+      icon: 'icons/keyword-frozen',
       isUnique: true,
       mixins: [
         new DurationModifierMixin(game, 2),

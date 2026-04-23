@@ -8,19 +8,23 @@ import {
   MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
-import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
-import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { MinionOnDestroyModifier } from '../../../../../modifier/modifiers/on-destroy.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { MinionOnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
+import { fireBolt } from '../spells/fire-bolt';
+import { JobBonusModifier } from '../../../../../modifier/modifiers/job-bonus.modifier';
+import type { MinionCard } from '../../../../entities/minion-card.entity';
+import { fireShard } from '../spells/fire-shard';
+import { getWheelOfElementModifier } from '../../../../../modifier/modifiers/wheel-of-elements.modifier';
+import { ShooterModifier } from '../../../../../modifier/modifiers/shooter.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent`
+  <rt-keyword>Shooter</rt-keyword>.
   <rt-trigger>On Enter</rt-trigger> Add a <rt-card>Fire Bolt</rt-card> to your hand.
   <rt-job-bonus>Elementalist</rt-job-bonus> Whenever you play a <rt-card>Fire Bolt</rt-card> and your <rt-card>Wheel of the Elements</rt-card> is Fire, add a <rt-card>Fire Shard</rt-card> to your hand.
   `,
@@ -39,33 +43,45 @@ export const pyromancer: MinionBlueprint = {
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
+    await card.modifiers.add(new ShooterModifier(game, card, {}));
     await card.modifiers.add(
-      new WhileOnBoardModifier(game, card, {
-        modifier: new Modifier('wizard-tutor-empower', game, card, {
-          mixins: [
-            new TogglableModifierMixin(game, () => lvlMod.isActive),
-            new GameEventModifierMixin(game, {
-              eventName: GAME_EVENTS.TURN_START,
-              unitForVisualFX: () => card.unit,
-              async handler() {
-                await card.player.hero.modifiers.add(
-                  new EmpowerModifier(game, card, { amount: 1 })
-                );
-              }
-            })
-          ]
-        })
+      new MinionOnEnterModifier(game, card, {
+        async handler() {
+          const bolt = await card.player.generateCard(fireBolt.id, card.isFoil);
+          await bolt.addToHand();
+        }
       })
     );
 
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
+    const elementalistMod = (await card.modifiers.add(
+      new JobBonusModifier(game, card, JOBS.ELEMENTALIST.id)
+    )) as JobBonusModifier<MinionCard>;
 
     await card.modifiers.add(
-      new MinionOnDestroyModifier(game, card, {
-        async handler() {
-          await card.player.levelManager.gainExp(1);
-        }
+      new Modifier('pyromancer-elementalist-bonus', game, card, {
+        mixins: [
+          new TogglableModifierMixin(game, () => {
+            const wheelMod = getWheelOfElementModifier(game, card.player);
+            return elementalistMod?.isActive && wheelMod?.currentElement === 'fire';
+          }),
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
+            filter(event) {
+              if (!event) return false;
+              return (
+                event.data.card.isAlly(card) &&
+                event.data.card.blueprintId === fireBolt.id
+              );
+            },
+            unitForVisualFX() {
+              return card.unit;
+            },
+            async handler() {
+              const shard = await card.player.generateCard(fireShard.id, card.isFoil);
+              await shard.addToHand();
+            }
+          })
+        ]
       })
     );
   },

@@ -6,6 +6,7 @@ import { useVFXStep } from '../composables/useVFXStep';
 import { waitFor } from '@game/shared';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
+import ModifiersList from './ModifiersList.vue';
 
 const { unit } = defineProps<{ unit: UnitViewModel }>();
 
@@ -73,6 +74,8 @@ const hasAvailableAbilities = computed(() => {
     return ability.predicate();
   });
 });
+
+const modifiers = computed(() => [...unit.modifiers, ...unit.card.modifiers]);
 </script>
 
 <template>
@@ -91,7 +94,13 @@ const hasAvailableAbilities = computed(() => {
       }
     ]"
   >
-    <GameCard variant="small" :card-id="unit.cardId" show-stats />
+    <GameCard
+      variant="small"
+      :card-id="unit.cardId"
+      show-stats
+      :overrides="{ atk: unit.atk, hp: unit.hp, retaliation: unit.retaliation }"
+    />
+    <ModifiersList :modifiers="modifiers" />
   </div>
 </template>
 

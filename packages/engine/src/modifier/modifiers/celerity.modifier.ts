@@ -10,13 +10,19 @@ import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 
 export class CelerityCardModifier<T extends MinionCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard, options?: { mixins: ModifierMixin<T>[] }) {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options?: { mixins?: ModifierMixin<T>[]; unitMixins?: ModifierMixin<Unit>[] }
+  ) {
     super(KEYWORDS.CELERITY.id, game, source, {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.CELERITY),
         new UnitEffectModifierMixin(game, {
           getModifier: () =>
-            new CelerityUnitModifier(game, this.initialSource, { mixins: [] })
+            new CelerityUnitModifier(game, this.initialSource, {
+              mixins: options?.unitMixins ?? []
+            })
         }),
         ...(options?.mixins ?? [])
       ]

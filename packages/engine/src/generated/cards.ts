@@ -40,7 +40,17 @@ export const cards = {
 "twister": "twister",
 "earthquake": "earthquake",
 "seer-of-the-depths": "seer-of-the-depths",
-"elemental_alchemy": "elemental_alchemy"
+"elemental_alchemy": "elemental_alchemy",
+"healing_mystic": "healing_mystic",
+"saberspine-tiger": "saberspine-tiger",
+"fire-elemental": "fire-elemental",
+"water-elemental": "water-elemental",
+"air-elemental": "air-elemental",
+"earth-elemental": "earth-elemental",
+"primus_fist": "primus_fist",
+"cartographer": "cartographer",
+"shard_crafter": "shard_crafter",
+"prism_invocation": "prism_invocation"
 } as const;
 
 export const collectableCards = {
@@ -72,7 +82,17 @@ export const collectableCards = {
 "quicksands": "quicksands",
 "earthquake": "earthquake",
 "seer-of-the-depths": "seer-of-the-depths",
-"elemental_alchemy": "elemental_alchemy"
+"elemental_alchemy": "elemental_alchemy",
+"healing_mystic": "healing_mystic",
+"saberspine-tiger": "saberspine-tiger",
+"fire-elemental": "fire-elemental",
+"water-elemental": "water-elemental",
+"air-elemental": "air-elemental",
+"earth-elemental": "earth-elemental",
+"primus_fist": "primus_fist",
+"cartographer": "cartographer",
+"shard_crafter": "shard_crafter",
+"prism_invocation": "prism_invocation"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -241,7 +261,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "twister",
     "collectable": false,
-    "rarity": "common"
+    "rarity": "rare"
   },
   {
     "id": "earthquake",
@@ -255,6 +275,56 @@ export const cardsBySet: Record<string, CardSet> = {
   },
   {
     "id": "elemental_alchemy",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "healing_mystic",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "saberspine-tiger",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "fire-elemental",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "water-elemental",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "air-elemental",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "earth-elemental",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "primus_fist",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "cartographer",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "shard_crafter",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "prism_invocation",
     "collectable": true,
     "rarity": "rare"
   }
@@ -297,7 +367,17 @@ export const cardShortIds: Record<string, number> = {
 "twister": 33,
 "earthquake": 34,
 "seer-of-the-depths": 35,
-"elemental_alchemy": 36
+"elemental_alchemy": 36,
+"healing_mystic": 37,
+"saberspine-tiger": 38,
+"fire-elemental": 39,
+"water-elemental": 40,
+"air-elemental": 41,
+"earth-elemental": 42,
+"primus_fist": 43,
+"cartographer": 44,
+"shard_crafter": 45,
+"prism_invocation": 46
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -336,5 +416,15 @@ export const cardIdByShortId: Record<number, string> = {
 "33": "twister",
 "34": "earthquake",
 "35": "seer-of-the-depths",
-"36": "elemental_alchemy"
+"36": "elemental_alchemy",
+"37": "healing_mystic",
+"38": "saberspine-tiger",
+"39": "fire-elemental",
+"40": "water-elemental",
+"41": "air-elemental",
+"42": "earth-elemental",
+"43": "primus_fist",
+"44": "cartographer",
+"45": "shard_crafter",
+"46": "prism_invocation"
 } as const;

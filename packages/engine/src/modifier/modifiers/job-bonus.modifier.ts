@@ -1,29 +1,27 @@
 import { KEYWORDS } from '../../card/card-keywords';
+import type { JobId } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { Modifier } from '../modifier.entity';
 
-export class LevelBonusModifier<T extends AnyCard = AnyCard> extends Modifier<T> {
+export class JobBonusModifier<T extends AnyCard = AnyCard> extends Modifier<T> {
   constructor(
     game: Game,
     source: AnyCard,
-    private level: number
+    private jobId: JobId
   ) {
-    super(`${KEYWORDS.LEVEL_BONUS.id}_${level}`, game, source, {
+    const keyword = KEYWORDS[`${jobId.toUpperCase()}_BONUS` as keyof typeof KEYWORDS];
+    super(keyword.id, game, source, {
       mixins: [
-        new KeywordModifierMixin(game, KEYWORDS.LEVEL_BONUS),
+        new KeywordModifierMixin(game, keyword),
         new TogglableModifierMixin(game, () => this.isActive)
       ]
     });
   }
 
   get isActive() {
-    return this.target.playerLevel >= this.level;
-  }
-
-  isActiveForLevel(level: number) {
-    return this.target.playerLevel >= level;
+    return this.target.player.hero?.hasJob(this.jobId);
   }
 }

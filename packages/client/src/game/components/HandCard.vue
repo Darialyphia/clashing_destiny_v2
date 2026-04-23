@@ -77,6 +77,7 @@ const isVisible = computed(() => {
 
     <GameCard
       v-if="isVisible"
+      :id="ui.DOMSelectors.cardInHand(card.id, card.player.id).id"
       :card-id="card.id"
       actions-side="top"
       :actions-offset="15"
@@ -109,6 +110,7 @@ const isVisible = computed(() => {
   }
   &:hover {
     --scale: 2;
+    --hover-offset: -50px;
     z-index: var(--hand-size);
   }
 

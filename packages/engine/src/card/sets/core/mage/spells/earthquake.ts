@@ -21,7 +21,7 @@ export const earthquake: SpellBlueprint = {
   name: 'Earthquake',
   description: dedent`
   Deal 4 damage to every non Flyer minion.
-  <rt-level-bonus lvl="3"></rt-level-bonus> This costs 1 less.
+  <rt-lvl-bonus lvl="3">This costs 2 less.</rt-lvl-bonus> 
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,
@@ -60,7 +60,7 @@ export const earthquake: SpellBlueprint = {
       .filter(u => u.card.subKind !== MINION_TYPES.FLYER);
 
     for (const unit of units) {
-      await unit.takeDamage(card, new SpellDamage(card, 4));
+      await unit.takeDamage(card, new SpellDamage(card, 2));
     }
   }
 };

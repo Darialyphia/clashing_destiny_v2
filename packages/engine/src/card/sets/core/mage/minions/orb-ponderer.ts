@@ -44,9 +44,9 @@ export const orbPonderer: MinionBlueprint = {
       label: 'Give a spell in your hand Echo',
       description: dedent`
       Give a spell in your hand <rt-keyword>Echo</rt-keyword> this turn. 
-      <rt-lvl-bonus lvl="4"></rt-lvl-bonus> This ability costs <rt-mana>1</rt-mana> less.
+      <rt-lvl-bonus lvl="4">This ability costs <rt-mana>1</rt-mana> less.</rt-lvl-bonus> 
       `,
-      manaCost: 1,
+      manaCost: 2,
       canUse: (game, card) => {
         return (
           card.location === CARD_LOCATIONS.BOARD &&

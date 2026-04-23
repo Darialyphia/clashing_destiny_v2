@@ -23,7 +23,7 @@ export const gargoyle: MinionBlueprint = {
   name: 'Gargoyle',
   description: dedent`
    <rt-keyword>Magic Veil</rt-keyword>.
-   <rt-lvl-bonus lvl="3"></rt-lvl-bonus>This unit and adjacent allies have <rt-keyword>Spell Guard (1)</rt-keyword>.
+   <rt-lvl-bonus lvl="3">This unit and adjacent allies have <rt-keyword>Spell Guard (1)</rt-keyword>.</rt-lvl-bonus>
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -35,7 +35,7 @@ export const gargoyle: MinionBlueprint = {
   manaCost: 2,
   tags: [TAGS.GOLEM],
   atk: 0,
-  retaliation: 2,
+  retaliation: 1,
   maxHp: 5,
   abilities: [],
   canPlay: () => true,

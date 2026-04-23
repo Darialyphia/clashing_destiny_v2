@@ -1,10 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  defaultCardArt,
-  defaultMinionPlaySequence,
-  isSpell
-} from '../../../../card-utils';
+import { defaultCardArt, defaultMinionPlaySequence } from '../../../../card-utils';
 import {
   CARD_KINDS,
   CARD_SETS,
@@ -13,11 +9,12 @@ import {
   RARITIES,
   TAGS
 } from '../../../../card.enums';
-import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { Unit } from '../../../../../unit/unit.entity';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { GAME_EVENTS } from '../../../../../game/game.events';
+import { getWheelOfElementModifier } from '../../../../../modifier/modifiers/wheel-of-elements.modifier';
+import { CleaveCardModifier } from '../../../../../modifier/modifiers/cleave.modifier';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { BlastCardModifier } from '../../../../../modifier/modifiers/blast.modifier';
+import { ShooterModifier } from '../../../../../modifier/modifiers/shooter.modifier';
+import { CelerityCardModifier } from '../../../../../modifier/modifiers/celerity.modifier';
 
 export const rainbowElemental: MinionBlueprint = {
   id: 'rainbow_elemental',
@@ -26,7 +23,7 @@ export const rainbowElemental: MinionBlueprint = {
    Depending on your current <rt-card>Wheel of the Elements</rt-card> element, this unit has:
 <ul>
     <li>Fire: <rt-keyword><rt-keyword>Blast</rt-keyword></li>
-    <li>Water: <rt-keyword>Elusive</rt-keyword></li>
+    <li>Water: <rt-keyword>Shooter</rt-keyword></li>
     <li>Air: <rt-keyword>Celerity</rt-keyword></li>
     <li>Earth: <rt-keyword>Cleave</rt-keyword></li>
 </ul>
@@ -39,29 +36,42 @@ export const rainbowElemental: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.ELEMENTALIST.id],
   manaCost: 5,
-  tags: [TAGS.GOLEM],
-  atk: 2,
+  tags: [TAGS.ELEMENTAL],
+  atk: 3,
   retaliation: 2,
   maxHp: 7,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
+    const wheel = getWheelOfElementModifier(game, card.player);
+
     await card.modifiers.add(
-      new WhileOnBoardModifier(game, card, {
-        modifier: new Modifier<Unit>('arcane-conduit-on-spell', game, card, {
-          mixins: [
-            new GameEventModifierMixin(game, {
-              eventName: GAME_EVENTS.CARD_AFTER_PLAY,
-              filter(event) {
-                if (!event) return false;
-                return event.data.card.isAlly(card) && isSpell(event.data.card);
-              },
-              async handler() {
-                await card.unit.wakeUp();
-              }
-            })
-          ]
-        })
+      new CleaveCardModifier(game, card, {
+        unitMixins: [
+          new TogglableModifierMixin(game, () => wheel?.currentElement === 'earth')
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new BlastCardModifier(game, card, {
+        unitMixins: [
+          new TogglableModifierMixin(game, () => wheel?.currentElement === 'fire')
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new ShooterModifier(game, card, {
+        mixins: [
+          new TogglableModifierMixin(game, () => wheel?.currentElement === 'water')
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new CelerityCardModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, () => wheel?.currentElement === 'air')]
       })
     );
   },

@@ -1,12 +1,9 @@
 import dedent from 'dedent';
 import { NoAOEShape } from '../../../../../aoe/no-aoe.aoe-shape';
-import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
 import type { ArtifactBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import { CARD_KINDS, CARD_SETS, JOBS, RARITIES, TAGS } from '../../../../card.enums';
+import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
 import { WhileEquipedModifier } from '../../../../../modifier/modifiers/while-equiped';
 import { WheelOfElementsModifier } from '../../../../../modifier/modifiers/wheel-of-elements.modifier';
 
@@ -15,7 +12,7 @@ export const wheelOfTheElements: ArtifactBlueprint = {
   name: 'Wheel of the Elements',
   description: dedent`Indestructible, Untargetable.
   Cycle through Fire, Earth, Water and Air (starts at Fire). Whenever you play a spell, cycle to the next element. 
-  Before playing a spell of the current element, <rt-keyword>Empower (1)</rt-keyword>`,
+  Spells of the current element are played as if your hero had 1 more level.`,
   collectable: false,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
@@ -36,5 +33,10 @@ export const wheelOfTheElements: ArtifactBlueprint = {
       })
     );
   },
-  async onPlay() {}
+  async onPlay(game, card) {
+    const wheel = card.artifact?.modifiers.get(WheelOfElementsModifier);
+    if (wheel) {
+      await wheel.activate();
+    }
+  }
 };

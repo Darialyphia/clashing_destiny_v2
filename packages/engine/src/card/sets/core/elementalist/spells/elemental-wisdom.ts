@@ -1,15 +1,15 @@
 import dedent from 'dedent';
 import { PointAOEShape } from '../../../../../aoe/point.aoe-shape';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
-import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import { anywhereTargetRules, defaultCardArt } from '../../../../card-utils';
-import { CARD_KINDS, CARD_SETS, RARITIES, JOBS } from '../../../../card.enums';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
+import { anywhereTargetRules, defaultCardArt, isSpell } from '../../../../card-utils';
+import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { RingAOEShape } from '../../../../../aoe/ring.aoe-shape';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
-import { BurnModifier } from '../../../../../modifier/modifiers/burn.modifier';
+import { discardFromHand } from '../../../../card-actions-utils';
+import { fireShard } from '../../mage/spells/fire-shard';
+import { waterShard } from '../../mage/spells/water-shard';
+import { airShard } from '../../mage/spells/air-shard';
+import { earthShard } from '../../mage/spells/earth-shard';
 
 export const elementalWisdom: SpellBlueprint = {
   id: 'elemental-wisdom',
@@ -35,34 +35,25 @@ export const elementalWisdom: SpellBlueprint = {
       timeoutFallback: []
     });
   },
-  getAoe: () =>
-    new RingAOEShape(TARGETING_TYPE.ENEMY_UNIT, {
-      includeDiagonals: false,
-      includeCenter: false
-    }),
-  async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
+  getAoe: () => new PointAOEShape(TARGETING_TYPE.EMPTY, {}),
+  async onInit() {},
+  async onPlay(game, card) {
+    await card.player.cardManager.drawFromDeck(2);
+    const [discardedCard] = await discardFromHand(game, card, { min: 1, max: 1 });
+    if (!isSpell(discardedCard)) return;
 
-    await card.modifiers.add(
-      new SimpleManacostModifier('lightning-strike-discount', game, card, {
-        amount: -1,
-        mixins: [new TogglableModifierMixin(game, () => lvlMod.isActive)]
-      })
-    );
-  },
-  async onPlay(game, card, { targets, aoe }) {
-    const mainTarget = targets[0];
-    await mainTarget.unit?.takeDamage(card, new SpellDamage(card, 4));
-
-    const units = game.unitSystem.getUnitsInAOE(aoe, targets, card.player);
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
-
-    for (const unit of units) {
-      await unit.modifiers.add(new BurnModifier(game, card, { stacks: 2 }));
-      if (lvlMod.isActiveForLevel(4)) {
-        await unit.takeDamage(card, new SpellDamage(card, 2));
-      }
+    if (discardedCard.hasTag(TAGS.FIRE)) {
+      const shard = await card.player.generateCard(fireShard.id, card.isFoil);
+      await shard.addToHand();
+    } else if (discardedCard.hasTag(TAGS.WATER)) {
+      const shard = await card.player.generateCard(waterShard.id, card.isFoil);
+      await shard.addToHand();
+    } else if (discardedCard.hasTag(TAGS.AIR)) {
+      const shard = await card.player.generateCard(airShard.id, card.isFoil);
+      await shard.addToHand();
+    } else if (discardedCard.hasTag(TAGS.EARTH)) {
+      const shard = await card.player.generateCard(earthShard.id, card.isFoil);
+      await shard.addToHand();
     }
   }
 };

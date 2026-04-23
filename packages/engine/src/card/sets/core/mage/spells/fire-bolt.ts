@@ -12,7 +12,7 @@ export const fireBolt: SpellBlueprint = {
   name: 'Fire Bolt',
   description: dedent`
   Deal 2 damage to a minion.
-  <rt-lvl-bonus lvl="3"></rt-lvl-bonus> Deal 1 damage to the enemy Hero.
+  <rt-lvl-bonus lvl="3">Deal 1 damage to the enemy Hero.</rt-lvl-bonus> 
   `,
   kind: CARD_KINDS.SPELL,
   collectable: true,

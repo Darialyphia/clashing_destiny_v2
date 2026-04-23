@@ -128,6 +128,10 @@ export const provideCardList = () => {
             card.tags.some(tag =>
               tag.toLocaleLowerCase().includes(searchText)
             ) ||
+            (card as any).subKind?.toLocaleLowerCase().includes(searchText) ||
+            card.tags.some(tag =>
+              tag.toLocaleLowerCase().includes(searchText)
+            ) ||
             Object.values(KEYWORDS).some(k => {
               return (
                 (k.name.toLocaleLowerCase().includes(searchText) &&

@@ -23,9 +23,9 @@ export const cosmicAvatar: MinionBlueprint = {
   description: dedent`
    <rt-trigger>On Attack</rt-trigger> <rt-keyword>Empower (3)</rt-keyword>
    <br/>
-   <rt-lvl-bonus lvl="3"></rt-lvl-bonus> <rt-keyword>Blast</rt-keyword>, <rt-keyword>Overwhelm</rt-keyword>
+   <rt-lvl-bonus lvl="3"><rt-keyword>Blast</rt-keyword>, <rt-keyword>Overwhelm</rt-keyword></rt-lvl-bonus>
    <br/>
-   <rt-lvl-bonus lvl="5"></rt-lvl-bonus> This costs <rt-mana>2</rt-mana> less.
+   <rt-lvl-bonus lvl="5">This costs <rt-mana>2</rt-mana> less.</rt-lvl-bonus>
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

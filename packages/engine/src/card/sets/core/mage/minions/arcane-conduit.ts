@@ -10,20 +10,20 @@ import {
   CARD_SETS,
   JOBS,
   MINION_TYPES,
-  RARITIES,
-  TAGS
+  RARITIES
 } from '../../../../card.enums';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { Unit } from '../../../../../unit/unit.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
+import { EmpowerModifier } from '../../../../../modifier/modifiers/empower.modifier';
 
 export const arcaneConduit: MinionBlueprint = {
   id: 'arcane_conduit',
   name: 'Arcane Conduit',
   description: dedent`
-   When you play a spell, wake up this unit.
+   <rt-trigger>On Attack</rt-trigger> <rt-keyword>Empower (1)</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -33,10 +33,10 @@ export const arcaneConduit: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE.id],
   manaCost: 2,
-  tags: [TAGS.GOLEM],
+  tags: [],
   atk: 2,
-  retaliation: 0,
-  maxHp: 3,
+  retaliation: 1,
+  maxHp: 4,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
@@ -51,7 +51,9 @@ export const arcaneConduit: MinionBlueprint = {
                 return event.data.card.isAlly(card) && isSpell(event.data.card);
               },
               async handler() {
-                await card.unit.wakeUp();
+                await card.player.hero.modifiers.add(
+                  new EmpowerModifier(game, card, { amount: 1 })
+                );
               }
             })
           ]

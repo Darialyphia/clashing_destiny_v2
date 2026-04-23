@@ -86,6 +86,21 @@ export const usePlayer = (playerId: MaybeRef<string>) => {
   return useEntity<PlayerViewModel>(playerId);
 };
 
+export const usePlayers = () => {
+  const state = useGameState();
+  return computed(() => {
+    return state.value.players.map(
+      id => state.value.entities[id] as PlayerViewModel
+    );
+  });
+};
+
+export const usePlayer1 = () => {
+  const players = usePlayers();
+
+  return computed(() => players.value.find(p => p.isPlayer1)!);
+};
+
 export const useCard = (cardId: MaybeRef<string>) => {
   return useEntity<CardViewModel>(cardId);
 };

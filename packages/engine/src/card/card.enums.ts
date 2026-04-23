@@ -42,7 +42,8 @@ export const TAGS = {
   LIGHT: 'Light',
   DARK: 'Darkness',
   ARCANE: 'Arcane',
-  GOLEM: 'Golem'
+  GOLEM: 'Golem',
+  ELEMENTAL: 'Elemental'
 } as const;
 export type Tag = Values<typeof TAGS>;
 

@@ -36,6 +36,16 @@ import { twister } from './core/mage/spells/twister';
 import { earthquake } from './core/mage/spells/earthquake';
 import { seerOfTheDepths } from './core/mage/minions/seer-of-the-depths';
 import { elementalAlchemy } from './core/elementalist/destinies/elemental-alchemy';
+import { healingMystic } from './core/neutral/minions/healing-mystic';
+import { saberspineTiger } from './core/neutral/minions/saberspine-tiger';
+import { fireElemental } from './core/neutral/minions/fire-elemental';
+import { waterElemental } from './core/neutral/minions/water-elemental';
+import { airElemental } from './core/neutral/minions/air-elemental';
+import { earthElemental } from './core/neutral/minions/earth-elemental';
+import { primusFist } from './core/neutral/minions/primus-fist';
+import { cartographer } from './core/neutral/minions/cartographer';
+import { shardCrafter } from './core/elementalist/minions/shard-crafter';
+import { prismInvocation } from './core/elementalist/destinies/prism-invocation';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -76,6 +86,16 @@ export const coreSet: CardSet = {
     twister,
     earthquake,
     seerOfTheDepths,
-    elementalAlchemy
+    elementalAlchemy,
+    healingMystic,
+    saberspineTiger,
+    fireElemental,
+    waterElemental,
+    airElemental,
+    earthElemental,
+    primusFist,
+    cartographer,
+    shardCrafter,
+    prismInvocation
   ]
 };

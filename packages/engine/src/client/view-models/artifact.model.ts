@@ -2,6 +2,7 @@ import type { GameClient, GameStateEntities } from '../client';
 import type { PatchOperation } from '../../game/systems/patch-types';
 import type { SerializedPlayerArtifact } from '../../player/player-artifact.entity';
 import type { CardViewModel } from './card.model';
+import type { ModifierViewModel } from './modifier.model';
 
 export class ArtifactViewModel {
   private getEntities: () => GameStateEntities;
@@ -50,5 +51,11 @@ export class ArtifactViewModel {
 
   get card() {
     return this.getEntities()[this.data.card] as CardViewModel;
+  }
+
+  get modifiers() {
+    return this.data.modifiers.map(
+      modId => this.getEntities()[modId] as ModifierViewModel
+    );
   }
 }

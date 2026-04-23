@@ -8,8 +8,6 @@ import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
 import { Unit } from '../../unit/unit.entity';
 import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
-import { TARGETING_TYPE } from '../../targeting/targeting-strategy';
-import { RangedTargetingStrategy } from '../../targeting/ranged-targeting-strategy';
 import { Player } from '../../player/player.entity';
 
 export class ShooterModifier<T extends MinionCard> extends Modifier<T> {

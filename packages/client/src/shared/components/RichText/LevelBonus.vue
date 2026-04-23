@@ -1,15 +1,27 @@
 <script setup lang="ts">
+import { useRichTextContext } from '@/game/composables/useRichText';
+
 const { lvl } = defineProps<{
-  lvl: number;
+  lvl: number | string;
 }>();
+
+const ctx = useRichTextContext();
 </script>
 
 <template>
-  <span class="lvl-bonus">Level {{ lvl }}</span>
+  <span
+    class="lvl-bonus"
+    :class="{
+      disabled: ctx && ctx.heroLevel.value < Number(lvl)
+    }"
+  >
+    <span class="badge">Level {{ lvl }}</span>
+    <slot />
+  </span>
 </template>
 
 <style scoped lang="postcss">
-.lvl-bonus {
+.badge {
   background: linear-gradient(
     to bottom,
     var(--yellow-4) 50%,
@@ -24,5 +36,12 @@ const { lvl } = defineProps<{
   font-weight: var(--font-weight-5);
   -webkit-text-stroke: calc(1px * var(--pixel-scale)) white;
   paint-order: stroke fill;
+}
+.disabled {
+  opacity: 0.5;
+  .badge {
+    background: var(--gray-4);
+    border-color: var(--gray-6);
+  }
 }
 </style>

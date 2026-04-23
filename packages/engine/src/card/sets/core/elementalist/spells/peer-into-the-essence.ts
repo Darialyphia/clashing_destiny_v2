@@ -1,21 +1,17 @@
 import dedent from 'dedent';
 import { PointAOEShape } from '../../../../../aoe/point.aoe-shape';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
-import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS } from '../../../../card.enums';
-import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { RingAOEShape } from '../../../../../aoe/ring.aoe-shape';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
-import { BurnModifier } from '../../../../../modifier/modifiers/burn.modifier';
+import { predict } from '../../../../card-actions-utils';
+import { getWheelOfElementModifier } from '../../../../../modifier/modifiers/wheel-of-elements.modifier';
 
 export const peerIntoTheEssence: SpellBlueprint = {
   id: 'peer-into-the-essence',
   name: 'Peer into the Essence',
   description: dedent`
-  <rt-keyword>Discover</rt-keyword> a spell from your deck. Cycle your <rt-card>Wheel of the Elements</rt-card> to the element of your choice.
+  <rt-keyword>Predict</rt-keyword>, then draw a card. Cycle your <rt-card>Wheel of the Elements</rt-card> to the element of your choice.
    `,
   kind: CARD_KINDS.SPELL,
   collectable: true,
@@ -35,34 +31,27 @@ export const peerIntoTheEssence: SpellBlueprint = {
       timeoutFallback: []
     });
   },
-  getAoe: () =>
-    new RingAOEShape(TARGETING_TYPE.ENEMY_UNIT, {
-      includeDiagonals: false,
-      includeCenter: false
-    }),
-  async onInit(game, card) {
-    await card.modifiers.add(new LevelBonusModifier(game, card, 3));
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
+  getAoe: () => new PointAOEShape(TARGETING_TYPE.EMPTY, {}),
+  async onInit() {},
+  async onPlay(game, card) {
+    await predict(game, card);
+    await card.player.cardManager.drawFromDeck(1);
+    const wheelMod = getWheelOfElementModifier(game, card.player);
 
-    await card.modifiers.add(
-      new SimpleManacostModifier('lightning-strike-discount', game, card, {
-        amount: -1,
-        mixins: [new TogglableModifierMixin(game, () => lvlMod.isActive)]
-      })
-    );
-  },
-  async onPlay(game, card, { targets, aoe }) {
-    const mainTarget = targets[0];
-    await mainTarget.unit?.takeDamage(card, new SpellDamage(card, 4));
+    const newElement = await game.interaction.askQuestion({
+      player: card.player,
+      questionId: 'peer-into-the-essence-element-choice',
+      label: 'Choose an element to cycle your Wheel of the Elements to',
+      source: card,
+      choices: [
+        { id: 'fire', label: 'Fire' },
+        { id: 'water', label: 'Water' },
+        { id: 'air', label: 'Air' },
+        { id: 'earth', label: 'Earth' }
+      ],
+      timeoutFallback: 'fire'
+    });
 
-    const units = game.unitSystem.getUnitsInAOE(aoe, targets, card.player);
-    const lvlMod = card.modifiers.get(LevelBonusModifier)!;
-
-    for (const unit of units) {
-      await unit.modifiers.add(new BurnModifier(game, card, { stacks: 2 }));
-      if (lvlMod.isActiveForLevel(4)) {
-        await unit.takeDamage(card, new SpellDamage(card, 2));
-      }
-    }
+    await wheelMod?.rotateTo(newElement as any);
   }
 };

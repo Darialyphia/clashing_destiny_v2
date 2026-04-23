@@ -16,7 +16,7 @@ export const shootingStar: DestinyBlueprint = {
   name: 'Shooting Star',
   description: dedent`
     <rt-trigger>End of turn</rt-trigger>: Deal damage split among enemy minions equal to half your unspent mana rounded down.
-    <rt-lvl-bonus lvl="4"></rt-lvl-bonus> deal damage equal to your unspent mana instead.
+    <rt-lvl-bonus lvl="4">Deal damage equal to your unspent mana instead</rt-lvl-bonus> .
     `,
   collectable: true,
   setId: CARD_SETS.CORE,

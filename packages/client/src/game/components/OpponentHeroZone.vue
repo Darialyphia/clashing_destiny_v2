@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useGameUi, useOpponentPlayer } from '../composables/useGameClient';
+import { useOpponentPlayer } from '../composables/useGameClient';
 import Hero from './Hero.vue';
-import GameCard from './GameCard.vue';
+import EquippedArtifact from './EquippedArtifact.vue';
 
 const player = useOpponentPlayer();
-const ui = useGameUi();
 </script>
 
 <template>
@@ -13,31 +12,15 @@ const ui = useGameUi();
     <div class="zone" />
     <Hero :player="player" />
     <div class="zone">
-      <GameCard
+      <EquippedArtifact
         v-if="player.artifacts[0]"
-        :card-id="player.artifacts[0].id"
-        variant="small"
-        show-stats
-        show-modifiers
-        :overrides="{
-          durability: player.artifacts[0].durability
-        }"
-        @mouseenter="ui.hoverCardOnBoard(player.artifacts[0].card)"
-        @mouseleave="ui.unhoverCardOnBoard()"
+        :artifact="player.artifacts[0]"
       />
     </div>
     <div class="zone">
-      <GameCard
+      <EquippedArtifact
         v-if="player.artifacts[1]"
-        :card-id="player.artifacts[1].id"
-        variant="small"
-        show-stats
-        show-modifiers
-        :overrides="{
-          durability: player.artifacts[1].durability
-        }"
-        @mouseenter="ui.hoverCardOnBoard(player.artifacts[1].card)"
-        @mouseleave="ui.unhoverCardOnBoard()"
+        :artifact="player.artifacts[1]"
       />
     </div>
   </div>

@@ -5,11 +5,10 @@ import {
   HeroCardInterceptorModifierMixin
 } from '../../../../../modifier/mixins/interceptor.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
 import type { DestinyBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import { CARD_KINDS, CARD_SETS, JOBS, RARITIES, TAGS } from '../../../../card.enums';
+import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
 import type { ArtifactCard } from '../../../../entities/artifact-card.entity';
 import type { HeroCard } from '../../../../entities/hero-card.entity';
 import { wheelOfTheElements } from '../../elementalist/artifacts/wheel-of-the-elements';
@@ -18,7 +17,7 @@ export const elementalistPath: DestinyBlueprint = {
   id: 'elementalist_path',
   name: "Elementalist's Path",
   description:
-    'Your hero gaiins the Elementalist Job. Equip the <rt-card>Wheel of the Elements</rt-card>.',
+    'Your hero gains the Elementalist Job. Equip the <rt-card>Wheel of the Elements</rt-card>.',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),

@@ -1,17 +1,18 @@
 import { NoAOEShape } from '../../../../../aoe/no-aoe.aoe-shape';
-import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
+import { AbilityDamage } from '../../../../../utils/damage';
 import type { DestinyBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt } from '../../../../card-utils';
+import { defaultCardArt, isSpell } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES, TAGS } from '../../../../card.enums';
 import type { HeroCard } from '../../../../entities/hero-card.entity';
 
 export const fireMastery: DestinyBlueprint = {
   id: 'fire_mastery',
   name: 'Fire Mastery',
-  description: 'Your Fire Spells costs <rt-mana>1</rt-mana> less.',
+  description: 'When you play a fire spell, deal 1 damage to the enemy hero.',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
@@ -28,16 +29,19 @@ export const fireMastery: DestinyBlueprint = {
     await card.player.hero.modifiers.add(
       new Modifier<HeroCard>('fire-mastery-aura', game, card, {
         mixins: [
-          new CardAuraModifierMixin(game, card, {
-            isElligible(candidate) {
-              return candidate.kind === CARD_KINDS.SPELL && candidate.hasTag(TAGS.FIRE);
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            filter: event => {
+              if (!event) return false;
+              const candidate = event.data.card;
+              return (
+                candidate.player.equals(card.player) &&
+                candidate.hasTag(TAGS.FIRE) &&
+                isSpell(candidate)
+              );
             },
-            getModifiers() {
-              return [
-                new SimpleManacostModifier('fire-mastery-discount', game, card, {
-                  amount: -1
-                })
-              ];
+            handler: async () => {
+              await card.player.opponent.takeDamage(card, new AbilityDamage(card, 1));
             }
           })
         ]
