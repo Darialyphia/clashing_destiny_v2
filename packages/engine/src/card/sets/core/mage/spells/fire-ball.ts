@@ -3,7 +3,11 @@ import { PointAOEShape } from '../../../../../aoe/point.aoe-shape';
 import { TARGETING_TYPE } from '../../../../../targeting/targeting-strategy';
 import { SpellDamage } from '../../../../../utils/damage';
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, emptySpacesTargetRules } from '../../../../card-utils';
+import {
+  defaultCardArt,
+  emptySpacesTargetRules,
+  singleMinionTargetRules
+} from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, RARITIES, JOBS, TAGS } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import { RingAOEShape } from '../../../../../aoe/ring.aoe-shape';
@@ -16,7 +20,7 @@ export const fireBall: SpellBlueprint = {
   name: 'Fire Ball',
   description: dedent`
   Deal 4 damage to a minion. Give <rt-keyword>Burn (2)</rt-keyword> to adjacent enemies.
-  <rt-lvl-bonus lvl="3">This deals 2 damage to adjacent minions.</rt-lvl-bonus> 
+  <rt-lvl-bonus lvl="3">This deals 2 damage to adjacent minions.</rt-lvl-bonus> <br/>
   <rt-lvl-bonus lvl="5"> This costs <rt-mana>2</rt-mana> less.</rt-lvl-bonus>
   `,
   kind: CARD_KINDS.SPELL,
@@ -28,17 +32,16 @@ export const fireBall: SpellBlueprint = {
   tags: [TAGS.FIRE],
   manaCost: 4,
   canPlay: (game, card) =>
-    emptySpacesTargetRules.canPlay({ min: 1 })(
-      game,
-      cell => !cell.player?.equals(card.player)
-    ),
+    singleMinionTargetRules.canPlay(game, card, c => c.isEnemy(card.player)),
   getTargets(game, card, onCancel) {
-    return emptySpacesTargetRules.getTargets({ min: 1, max: 1 })(game, card, {
-      predicate: cell => !cell.player?.equals(card.player),
-      getAoe: () => new PointAOEShape(TARGETING_TYPE.EMPTY, {}),
+    return singleMinionTargetRules.getTargets(game, card, {
+      predicate: c => c.isEnemy(card.player),
+      getAoe: () => new PointAOEShape(TARGETING_TYPE.ENEMY_UNIT, {}),
       canCancel: true,
       onCancel,
-      timeoutFallback: []
+      timeoutFallback: singleMinionTargetRules.timeoutFallback(game, card, c =>
+        c.isEnemy(card.player)
+      )
     });
   },
   getAoe: () =>

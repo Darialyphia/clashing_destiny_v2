@@ -84,6 +84,9 @@ export class ArtifactCard extends Card<
     if (!this.canAfford) {
       return "You don't have enough mana.";
     }
+    if (!this.hasCorrectJob) {
+      return "Your hero doesn't have the required class.";
+    }
     return this.canPlay() ? null : 'You cannot play this card.';
   }
 

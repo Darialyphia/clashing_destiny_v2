@@ -20,7 +20,7 @@ export const arcaneMaster: MinionBlueprint = {
   id: 'arcane-master',
   name: 'Arcane Master',
   description: dedent`
-  <rt-trigger>End of turn</rt-trigger>: If this did not attack this turn, draw a card. <rt-lvl-bonus lvl="4">If the card is a spell, it costs <rt-mana>2</rt-mana> less.</rt-lvl-bonus>
+  <rt-trigger>End of turn</rt-trigger>: If this is not exhausted, draw a card. <rt-lvl-bonus lvl="4">If the card is a spell, it costs <rt-mana>2</rt-mana> less.</rt-lvl-bonus>
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

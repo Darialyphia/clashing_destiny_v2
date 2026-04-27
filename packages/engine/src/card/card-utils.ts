@@ -7,7 +7,7 @@ import { TARGETING_TYPE } from '../targeting/targeting-strategy';
 import type { Unit } from '../unit/unit.entity';
 import { CARD_KINDS } from './card.enums';
 import type { ArtifactCard } from './entities/artifact-card.entity';
-import type { AnyCard } from './entities/card.entity';
+import type { AnyCard, Card } from './entities/card.entity';
 import type { DestinyCard } from './entities/destiny-card.entity';
 import type { HeroCard } from './entities/hero-card.entity';
 import type { MinionCard } from './entities/minion-card.entity';
@@ -164,9 +164,19 @@ export const singleMinionTargetRules = {
         return selectedCards.length === 1;
       }
     });
+  },
+  timeoutFallback: (game: Game, card: AnyCard, predicate?: (unit: Unit) => boolean) => {
+    const elligible = game.boardSystem.cells.filter(cell => {
+      if (!cell.unit || !isMinion(cell.unit.card)) {
+        return false;
+      }
+
+      return predicate?.(cell.unit);
+    });
+
+    return [elligible[0]];
   }
 };
-
 export const multipleUnitsTargetRules = {
   canPlay:
     (min: number) =>

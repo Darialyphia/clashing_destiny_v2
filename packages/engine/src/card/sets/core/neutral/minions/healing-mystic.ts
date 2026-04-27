@@ -1,14 +1,8 @@
-import { TARGETING_TYPES } from '../../../../../aoe/aoe.enums';
-import { NoAOEShape } from '../../../../../aoe/no-aoe.aoe-shape';
-import { PointAOEShape } from '../../../../../aoe/point.aoe-shape';
 import { MinionOnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { AbilityDamage } from '../../../../../utils/damage';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
-  anywhereTargetRules,
   defaultCardArt,
   defaultMinionPlaySequence,
-  singleEnemyTargetRules,
   singleUnitTargetRules
 } from '../../../../card-utils';
 import {
@@ -30,7 +24,7 @@ export const healingMystic: MinionBlueprint = {
   subKind: MINION_TYPES.MELEE,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL.id],
-  manaCost: 1,
+  manaCost: 2,
   tags: [],
   atk: 2,
   retaliation: 1,
