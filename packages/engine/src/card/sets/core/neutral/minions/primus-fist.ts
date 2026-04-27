@@ -1,16 +1,7 @@
-import { TARGETING_TYPES } from '../../../../../aoe/aoe.enums';
-import { NoAOEShape } from '../../../../../aoe/no-aoe.aoe-shape';
-import { PointAOEShape } from '../../../../../aoe/point.aoe-shape';
 import { MinionOnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { UnitSimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { AbilityDamage } from '../../../../../utils/damage';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  anywhereTargetRules,
-  defaultCardArt,
-  defaultMinionPlaySequence,
-  singleUnitTargetRules
-} from '../../../../card-utils';
+import { defaultCardArt, defaultMinionPlaySequence } from '../../../../card-utils';
 import {
   CARD_KINDS,
   CARD_SETS,

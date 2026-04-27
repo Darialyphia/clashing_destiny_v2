@@ -16,7 +16,7 @@ export const waterShard: SpellBlueprint = {
   id: 'water-shard',
   name: 'Water Shard',
   description: dedent`
-  Exhaust an minion that costs 3 or less. If it is already exhausted, <rt-keyword>Freeze</rt-keyword> it instead.
+  Exhaust an minion that costs 2 or less. If it is already exhausted, <rt-keyword>Freeze</rt-keyword> it instead.
   Costs <rt-mana>0</rt-mana> if you played a Water spell this turn.
   `,
   kind: CARD_KINDS.SPELL,
@@ -31,11 +31,11 @@ export const waterShard: SpellBlueprint = {
     singleMinionTargetRules.canPlay(
       game,
       card,
-      c => c.isEnemy(card.player) && c.card.manaCost <= 3
+      c => c.isEnemy(card.player) && c.card.manaCost <= 2
     ),
   getTargets(game, card, onCancel) {
     return singleMinionTargetRules.getTargets(game, card, {
-      predicate: c => c.isEnemy(card.player) && c.card.manaCost <= 3,
+      predicate: c => c.isEnemy(card.player) && c.card.manaCost <= 2,
       getAoe: () => new PointAOEShape(TARGETING_TYPE.ENEMY_UNIT, {}),
       canCancel: true,
       onCancel,
