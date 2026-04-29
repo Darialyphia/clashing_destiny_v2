@@ -16,7 +16,7 @@ This guide explains how targeting works in the game engine and how to implement 
 Targeting is how players select which cards or entities a card will affect. The system has two main phases:
 
 1. **Validation** (`canPlay`) - Check if valid targets exist
-2. **Selection** (`getPreResponseTargets`) - Let player choose targets
+2. **Selection** (`getTargets`) - Let player choose targets
 
 This two-phase approach ensures the UI only prompts for targets when the card can actually be played.
 
@@ -27,7 +27,7 @@ When a player tries to play a card:
 1. **Check `canPlay(game, card)`** - Are there any valid targets?
    - Returns `true` if card can be played
    - Returns `false` if no valid targets exist
-2. **Call `getPreResponseTargets(game, card)`** - Let player select targets
+2. **Call `getTargets(game, card)`** - Let player select targets
    - Returns an array of selected targets
    - Uses the interaction system to prompt the player
 3. **Execute `onPlay(game, card, targets)`** - Apply effects to targets
@@ -61,8 +61,8 @@ import { singleEnemyTargetRules } from '../../../../card-utils';
 canPlay(game, card) {
   return singleEnemyTargetRules.canPlay(game, card);
 },
-getPreResponseTargets(game, card) {
-  return singleEnemyTargetRules.getPreResponseTargets(game, card, {
+getTargets(game, card) {
+  return singleEnemyTargetRules.getTargets(game, card, {
     type: 'card',
     card
   });
@@ -76,8 +76,8 @@ With a predicate to filter targets:
 canPlay(game, card) {
   return singleEnemyTargetRules.canPlay(game, card, (c) => c.damage > 0);
 },
-getPreResponseTargets(game, card) {
-  return singleEnemyTargetRules.getPreResponseTargets(
+getTargets(game, card) {
+  return singleEnemyTargetRules.getTargets(
     game,
     card,
     { type: 'card', card },
@@ -96,8 +96,8 @@ import { singleAllyTargetRules } from '../../../../card-utils';
 canPlay(game, card) {
   return singleAllyTargetRules.canPlay(game, card);
 },
-getPreResponseTargets(game, card) {
-  return singleAllyTargetRules.getPreResponseTargets(game, card, {
+getTargets(game, card) {
+  return singleAllyTargetRules.getTargets(game, card, {
     type: 'card',
     card
   });
@@ -114,8 +114,8 @@ import { singleEnemyMinionTargetRules } from '../../../../card-utils';
 canPlay(game, card) {
   return singleEnemyMinionTargetRules.canPlay(game, card);
 },
-getPreResponseTargets(game, card) {
-  return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+getTargets(game, card) {
+  return singleEnemyMinionTargetRules.getTargets(game, card, {
     type: 'card',
     card
   });
@@ -132,8 +132,8 @@ import { singleAllyMinionTargetRules } from '../../../../card-utils';
 canPlay(game, card) {
   return singleAllyMinionTargetRules.canPlay(game, card);
 },
-getPreResponseTargets(game, card) {
-  return singleAllyMinionTargetRules.getPreResponseTargets(game, card, {
+getTargets(game, card) {
+  return singleAllyMinionTargetRules.getTargets(game, card, {
     type: 'card',
     card
   });
@@ -150,8 +150,8 @@ import { singleMinionTargetRules } from '../../../../card-utils';
 canPlay(game, card) {
   return singleMinionTargetRules.canPlay(game, card);
 },
-getPreResponseTargets(game, card) {
-  return singleMinionTargetRules.getPreResponseTargets(game, card, {
+getTargets(game, card) {
+  return singleMinionTargetRules.getTargets(game, card, {
     type: 'card',
     card
   });
@@ -168,8 +168,8 @@ import { singleArtifactTargetRules } from '../../../../card-utils';
 canPlay(game, card) {
   return singleArtifactTargetRules.canPlay(game, card);
 },
-getPreResponseTargets(game, card) {
-  return singleArtifactTargetRules.getPreResponseTargets(game, card, {
+getTargets(game, card) {
+  return singleArtifactTargetRules.getTargets(game, card, {
     type: 'card',
     card
   });
@@ -189,9 +189,9 @@ canPlay(game, card) {
   // Requires at least 2 valid targets
   return multipleEnemyTargetRules.canPlay(2)(game, card);
 },
-getPreResponseTargets(game, card) {
+getTargets(game, card) {
   // Select 1-3 targets, no repeats
-  return multipleEnemyTargetRules.getPreResponseTargets({
+  return multipleEnemyTargetRules.getTargets({
     min: 1,
     max: 3,
     allowRepeat: false
@@ -202,8 +202,8 @@ getPreResponseTargets(game, card) {
 With repeats allowed (e.g., Magic Missile hitting same target 3 times):
 
 ```typescript
-getPreResponseTargets(game, card) {
-  return multipleEnemyTargetRules.getPreResponseTargets({
+getTargets(game, card) {
+  return multipleEnemyTargetRules.getTargets({
     min: 3,
     max: 3,
     allowRepeat: true  // Can select same target multiple times
@@ -226,8 +226,8 @@ canPlay(game, card) {
     predicate: (c) => isMinion(c)
   });
 },
-async getPreResponseTargets(game, card) {
-  return await cardsInAllyDiscardPile.getPreResponseTargets(game, card, {
+async getTargets(game, card) {
+  return await cardsInAllyDiscardPile.getTargets(game, card, {
     player: card.player,
     label: 'Choose a minion from your discard pile',
     minChoiceCount: 1,
@@ -250,8 +250,8 @@ canPlay(game, card) {
     predicate: (c) => isSpell(c)
   });
 },
-async getPreResponseTargets(game, card) {
-  return await cardsInEnemyDiscardPile.getPreResponseTargets(game, card, {
+async getTargets(game, card) {
+  return await cardsInEnemyDiscardPile.getTargets(game, card, {
     player: card.player,
     label: 'Choose a spell from enemy discard pile',
     minChoiceCount: 1,
@@ -273,7 +273,7 @@ canPlay(game, card) {
   return card.player.minions.length > 0 && card.player.mana >= 5;
 },
 
-async getPreResponseTargets(game, card) {
+async getTargets(game, card) {
   return await game.interaction.selectCardsOnBoard<MinionCard>({
     player: card.player,
     origin: { type: 'card', card },
@@ -306,7 +306,7 @@ async getPreResponseTargets(game, card) {
 For choosing cards from hand, deck, or other zones:
 
 ```typescript
-async getPreResponseTargets(game, card) {
+async getTargets(game, card) {
   return await game.interaction.chooseCards<MinionCard>({
     player: card.player,
     label: 'Choose 2 minions from your hand',
@@ -385,8 +385,8 @@ export const damageSpell: SpellBlueprint = {
   canPlay(game, card) {
     return singleEnemyTargetRules.canPlay(game, card);
   },
-  getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyTargetRules.getTargets(game, card, {
       type: 'card',
       card
     });
@@ -410,8 +410,8 @@ export const buffSpell: SpellBlueprint = {
   canPlay(game, card) {
     return singleAllyMinionTargetRules.canPlay(game, card);
   },
-  getPreResponseTargets(game, card) {
-    return singleAllyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleAllyMinionTargetRules.getTargets(game, card, {
       type: 'card',
       card
     });
@@ -436,8 +436,8 @@ export const conditionalSpell: SpellBlueprint = {
     // Only target damaged enemies
     return singleEnemyTargetRules.canPlay(game, card, target => target.damage > 0);
   },
-  getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(
+  getTargets(game, card) {
+    return singleEnemyTargetRules.getTargets(
       game,
       card,
       { type: 'card', card },
@@ -464,9 +464,9 @@ export const magicMissile: SpellBlueprint = {
   canPlay(game, card) {
     return multipleEnemyTargetRules.canPlay(1)(game, card);
   },
-  getPreResponseTargets(game, card) {
+  getTargets(game, card) {
     // Select 3 times, can repeat same target
-    return multipleEnemyTargetRules.getPreResponseTargets({
+    return multipleEnemyTargetRules.getTargets({
       min: 3,
       max: 3,
       allowRepeat: true
@@ -494,8 +494,8 @@ export const resurrect: SpellBlueprint = {
       predicate: c => isMinion(c) && c.manaCost <= 3
     });
   },
-  async getPreResponseTargets(game, card) {
-    return await cardsInAllyDiscardPile.getPreResponseTargets<MinionCard>(game, card, {
+  async getTargets(game, card) {
+    return await cardsInAllyDiscardPile.getTargets<MinionCard>(game, card, {
       player: card.player,
       label: 'Choose a minion (3 cost or less) to resurrect',
       minChoiceCount: 1,
@@ -538,7 +538,7 @@ if (isMinionOrHero(card)) {
 ## Tips and Best Practices
 
 1. **Always validate in `canPlay`** - Don't let players try to play unplayable cards
-2. **Use the same predicate** in both `canPlay` and `getPreResponseTargets`
+2. **Use the same predicate** in both `canPlay` and `getTargets`
 3. **Prefer pre-built rules** - They handle edge cases correctly
 4. **Check locations** - Targets might be removed before effects resolve
 5. **Use type guards** - Safely narrow card types before accessing properties

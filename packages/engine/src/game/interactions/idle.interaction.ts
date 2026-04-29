@@ -8,7 +8,7 @@ export class IdleContext {
   constructor(private game: Game) {}
 
   get player() {
-    return this.game.turnSystem.initiativePlayer;
+    return this.game.interaction.interactivePlayer;
   }
 
   serialize() {
@@ -16,6 +16,4 @@ export class IdleContext {
       player: this.player.id
     };
   }
-
-  cancel() {} //noop
 }

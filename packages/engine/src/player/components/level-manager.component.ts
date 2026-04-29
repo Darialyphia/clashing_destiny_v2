@@ -1,4 +1,6 @@
-import type { DestinyCard } from '../../card/entities/destiny-card.entity';
+// import type { DestinyCard } from '../../card/entities/destiny-card.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
+import type { DestinyCard } from '../../card/entities/destiny.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import type { Player } from '../player.entity';
@@ -7,7 +9,7 @@ import { PlayerGainExpEvent, PlayerLevelUpEvent } from '../player.events';
 export class LevelManagerComponent {
   private _exp = 0;
 
-  private _destinies: DestinyCard[] = [];
+  private _destinies: AnyCard[] = [];
 
   private _hasLeveledUpThisTurn = false;
 
@@ -52,7 +54,7 @@ export class LevelManagerComponent {
   }
 
   async levelUp(destiny: DestinyCard) {
-    await destiny.play(() => {});
+    await destiny.play();
     this._exp -= destiny.expCost;
     this._destinies.push(destiny);
 

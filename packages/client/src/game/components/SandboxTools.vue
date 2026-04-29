@@ -22,12 +22,7 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
-import {
-  useGameState,
-  useGameUi,
-  usePlayer1,
-  useUnits
-} from '../composables/useGameClient';
+import { usePlayer1, useUnits } from '../composables/useGameClient';
 import { isDefined, type Point } from '@game/shared';
 import UiSwitch from '@/ui/components/UiSwitch.vue';
 
@@ -51,22 +46,10 @@ const emit = defineEmits<{
   grantExp: [amount: number];
 }>();
 
-const state = useGameState();
-const ui = useGameUi();
-
 const isSandboxPopoverOpened = ref(false);
 const card = ref<string | null>(null);
 const unit = ref<string | null>(null);
-const position = ref({ x: 0, y: 0 });
-watch(
-  () => ui.value.selectedUnit,
-  selected => {
-    if (selected) {
-      unit.value = selected.id;
-      position.value = { x: selected.x, y: selected.y };
-    }
-  }
-);
+
 const playerId = defineModel<string>('playerId', { required: true });
 const autoSwitchPlayer = defineModel<boolean>('autoSwitch', {
   required: true
@@ -353,43 +336,6 @@ const expToGrant = ref(0);
                   class="btn"
                 >
                   Return to hand
-                </button>
-              </div>
-
-              <div class="position-controls">
-                <label>X</label>
-                <select v-model="position.x" class="position-select">
-                  <option
-                    v-for="i in state.board.columns"
-                    :key="i"
-                    :value="i - 1"
-                  >
-                    {{ i }}
-                  </option>
-                </select>
-                <label>Y</label>
-                <select v-model="position.y" class="position-select">
-                  <option v-for="i in state.board.rows" :key="i" :value="i - 1">
-                    {{ i }}
-                  </option>
-                </select>
-
-                <button
-                  :disabled="!unit"
-                  @click="
-                    () => {
-                      emit(
-                        'move',
-                        unit!,
-                        { x: position.x, y: position.y },
-                        !triggerEvents
-                      );
-                      unit = null;
-                    }
-                  "
-                  class="btn flex-1 text-center"
-                >
-                  Move
                 </button>
               </div>
 

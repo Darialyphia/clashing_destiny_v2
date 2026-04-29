@@ -13,15 +13,19 @@ export type TurnEventMap = {
 export class TurnSystem extends System<never> {
   private _elapsedTurns = 0;
 
-  // the initiative player is the one that can start an action
+  // the initiative player is the one that can takestart an action
   private _initiativePlayer!: Player;
 
-  // the player that will start with initiative in the next game turn
-  private nextInitiativePlayer!: Player;
+  // the player that started the current turn with the initiative
+  private _turnInitiativePlayer!: Player;
+  // the player who will start next turn with initiative
+  private _nextTurnInitiativePlayer!: Player;
 
   async initialize() {
+    // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._initiativePlayer = this.game.playerSystem.player1;
-    this.nextInitiativePlayer = this.game.playerSystem.player2;
+    this._turnInitiativePlayer = this._initiativePlayer;
+    this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
   }
 
   shutdown() {}
@@ -34,38 +38,17 @@ export class TurnSystem extends System<never> {
     return this._elapsedTurns;
   }
 
-  async pass(player: Player) {
-    if (!player.equals(this._initiativePlayer)) return;
-    await this.game.emit(
-      TURN_EVENTS.TURN_PASS,
-      new TurnPassEvent({ player: this._initiativePlayer })
-    );
-    player.passTurn();
-
-    const allPlayersPassed = this.game.playerSystem.players.every(
-      p => p.hasPassedThisRound
-    );
-    if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.endTurn();
-    } else {
-      this._initiativePlayer = this._initiativePlayer.opponent;
-      await this.game.emit(
-        TURN_EVENTS.TURN_INITATIVE_CHANGE,
-        new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
-      );
-    }
-  }
-
   async startTurn() {
-    this._initiativePlayer = this.nextInitiativePlayer;
-    this.nextInitiativePlayer = this._initiativePlayer.opponent;
-    for (const player of this.game.playerSystem.players) {
-      await player.startTurn();
-    }
-
-    return this.game.emit(
+    await this.game.emit(
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })
+    );
+    this._initiativePlayer = this._nextTurnInitiativePlayer;
+    this._turnInitiativePlayer = this._initiativePlayer;
+    this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
+    await this.game.emit(
+      TURN_EVENTS.TURN_INITATIVE_CHANGE,
+      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
     );
   }
 
@@ -79,18 +62,12 @@ export class TurnSystem extends System<never> {
   }
 
   async switchInitiative() {
-    await this.game.inputSystem.schedule(async () => {
-      const opponentCanReceiveInitiative =
-        !this._initiativePlayer.opponent.hasPassedThisRound;
+    this._initiativePlayer = this._initiativePlayer.opponent;
 
-      if (!opponentCanReceiveInitiative) return;
-
-      this._initiativePlayer = this._initiativePlayer.opponent;
-      await this.game.emit(
-        TURN_EVENTS.TURN_INITATIVE_CHANGE,
-        new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
-      );
-    });
+    await this.game.emit(
+      TURN_EVENTS.TURN_INITATIVE_CHANGE,
+      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+    );
   }
 }
 

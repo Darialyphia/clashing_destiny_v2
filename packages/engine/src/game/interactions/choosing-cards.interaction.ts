@@ -1,21 +1,25 @@
 import { assert, isDefined } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
+import {
+  NotEnoughCardsError,
+  TooManyCardsError,
+  InvalidPlayerError
+} from '../game-error';
 import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
-import {
-  InvalidPlayerError,
-  NotEnoughCardsError,
-  TooManyCardsError
-} from '../game-error';
 
 export type ChoosingCardsContextOptions = {
   player: Player;
-  choices: AnyCard[];
+  choices: Array<{
+    card: AnyCard;
+    aiHints: {
+      shouldPick: (game: Game, player: Player) => number;
+    };
+  }>;
   minChoiceCount: number;
   maxChoiceCount: number;
   label: string;
-  source: AnyCard;
   timeoutFallback: AnyCard[];
 };
 export class ChoosingCardsContext {
@@ -27,17 +31,20 @@ export class ChoosingCardsContext {
 
   private selectedCards: AnyCard[] = [];
 
-  private choices: AnyCard[] = [];
+  private choices: Array<{
+    card: AnyCard;
+    aiHints: {
+      shouldPick: (game: Game, player: Player) => number;
+    };
+  }> = [];
 
-  private minChoiceCount: number;
+  readonly minChoiceCount: number;
 
-  private maxChoiceCount: number;
+  readonly maxChoiceCount: number;
 
   readonly player: Player;
 
   private label: string;
-
-  public source: AnyCard;
 
   private timeoutFallback: AnyCard[];
 
@@ -50,7 +57,6 @@ export class ChoosingCardsContext {
     this.maxChoiceCount = options.maxChoiceCount;
     this.player = options.player;
     this.label = options.label;
-    this.source = options.source;
     this.timeoutFallback = options.timeoutFallback;
   }
 
@@ -59,7 +65,7 @@ export class ChoosingCardsContext {
   serialize() {
     return {
       player: this.player.id,
-      choices: this.choices.map(card => card.id),
+      choices: this.choices.map(choice => choice.card.id),
       minChoiceCount: this.minChoiceCount,
       maxChoiceCount: this.maxChoiceCount,
       label: this.label
@@ -78,7 +84,7 @@ export class ChoosingCardsContext {
         new TooManyCardsError(this.maxChoiceCount, indices.length)
       );
 
-      this.selectedCards.push(...indices.map(index => this.choices[index]));
+      this.selectedCards.push(...indices.map(index => this.choices[index].card));
     } else {
       this.selectedCards.push(...this.timeoutFallback);
     }
@@ -89,12 +95,8 @@ export class ChoosingCardsContext {
     );
     this.game.inputSystem.unpause(this.selectedCards);
   }
-  async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
-    await this.game.interaction.sendTransition(
-      INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
-      {}
-    );
-    this.game.inputSystem.unpause([]);
+
+  getChoices() {
+    return [...this.choices];
   }
 }

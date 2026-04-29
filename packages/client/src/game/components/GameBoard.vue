@@ -132,11 +132,17 @@ useEventListener('contextmenu', async e => {
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="minions-zone">
-          <MinionRow :row="opponent.backRow" class="opponent-back-row" />
-          <MinionRow :row="opponent.frontRow" class="opponent-front-row" />
+          <!-- <MinionRow :row="opponent.boardSide.base" class="opponent-back-row" />
+          <MinionRow
+            :row="opponent.boardSide.battlefield"
+            class="opponent-front-row"
+          />
           <div class="separator" />
-          <MinionRow :row="myPlayer.frontRow" class="my-front-row" />
-          <MinionRow :row="myPlayer.backRow" class="my-back-row" />
+          <MinionRow
+            :row="myPlayer.boardSide.battlefield"
+            class="my-front-row"
+          />
+          <MinionRow :row="myPlayer.boardSide.base" class="my-back-row" /> -->
           <PassButton />
         </div>
         <OpponentHeroZone class="opponent-hero-zone" />

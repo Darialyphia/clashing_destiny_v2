@@ -1,4 +1,14 @@
 import { type Override } from '@game/shared';
+import type {
+  SerializedOmniscientState,
+  SerializedPlayerState,
+  SnapshotDiff,
+  PatchBasedSnapshotDiff
+} from '../../game/systems/game-snapshot.system';
+import type {
+  EntityDictionary,
+  SerializedEntity
+} from '../../game/systems/game-serializer';
 import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
@@ -10,29 +20,11 @@ import {
   type SerializedStarEvent
 } from '../../game/game.events';
 import { AbilityViewModel } from '../view-models/ability.model';
-import type {
-  SerializedOmniscientState,
-  SerializedPlayerState,
-  SerializedEntity,
-  EntityDictionary,
-  SnapshotDiff
-} from '../../game/systems/game-serializer';
-import type { PatchBasedSnapshotDiff } from '../../game/systems/patch-types';
-import { BoardCellViewModel } from '../view-models/board-cell.model';
-import { UnitViewModel } from '../view-models/unit.model';
-import { TileViewModel } from '../view-models/tile.model';
-import { ArtifactViewModel } from '../view-models/artifact.model';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 
 export type GameStateEntities = Record<
   string,
-  | PlayerViewModel
-  | CardViewModel
-  | ModifierViewModel
-  | AbilityViewModel
-  | BoardCellViewModel
-  | UnitViewModel
-  | TileViewModel
-  | ArtifactViewModel
+  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
 >;
 
 export type GameClientState = Override<
@@ -72,28 +64,10 @@ export class ClientStateController {
         entity => new ModifierViewModel(entity, dict, this.client)
       )
       .with(
-        { entityType: 'cell' },
-        entity => new BoardCellViewModel(entity, dict, this.client)
-      )
-      .with(
-        { entityType: 'unit' },
-        entity => new UnitViewModel(entity, dict, this.client)
-      )
-      .with(
-        { entityType: 'tile' },
-        entity => new TileViewModel(entity, dict, this.client)
-      )
-      .with(
         { entityType: 'ability' },
         entity => new AbilityViewModel(entity, dict, this.client)
       )
-      .with(
-        { entityType: 'artifact' },
-        entity => new ArtifactViewModel(entity, dict, this.client)
-      )
-      .otherwise(() => {
-        throw new Error(`Unknown entity type: ${(entity as any).entityType}`);
-      });
+      .exhaustive();
   }
 
   private buildentities = (entities: EntityDictionary): GameClientState['entities'] => {
@@ -105,28 +79,25 @@ export class ClientStateController {
   };
 
   // prepopulate the state with new entities because they could be used by the fx events
-  preupdate(newState: PatchBasedSnapshotDiff) {
+  preupdate(newState: SnapshotDiff) {
     if (!this.state) return;
 
-    Object.entries(newState.addedEntities).forEach(([id, entity]) => {
+    for (const id of newState.addedEntities) {
+      const entity = newState.entities[id];
+
       this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
-    });
+    }
   }
 
-  update(newState: PatchBasedSnapshotDiff): void {
+  update(newState: SnapshotDiff): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { entityPatches, config, addedEntities, removedEntities, ...rest } = newState;
-    for (const [id, patches] of Object.entries(entityPatches)) {
+    const { entities, config, addedEntities, removedEntities, ...rest } = newState;
+    for (const [id, entity] of Object.entries(entities)) {
       if (this.state.entities[id]) {
-        this.state.entities[id].updateWithPatches(patches);
+        this.state.entities[id] = this.state.entities[id].update(entity as any).clone();
+      } else {
+        this.state.entities[id] = this.buildViewModel(entity as any);
       }
-    }
-
-    // clone all entities to trigger reactivity in case of reference equality
-    // ex: a unit's modifier is updated, but the unit isnt
-    // a computed property depending on the unit wouldnt update
-    for (const [id, entity] of Object.entries(this.state.entities)) {
-      this.state.entities[id] = entity.clone();
     }
 
     removedEntities.forEach(id => {
@@ -136,8 +107,7 @@ export class ClientStateController {
     this.state = {
       ...this.state,
       ...rest,
-      config: { ...this.state.config, ...config },
-      board: { ...this.state.board, ...rest.board }
+      config: { ...this.state.config, ...config }
     };
   }
 
@@ -173,61 +143,72 @@ export class ClientStateController {
     this.state = {
       ...this.state,
       ...rest,
-      config: { ...this.state.config, ...config },
-      board: { ...this.state.board, ...rest.board }
+      config: { ...this.state.config, ...config }
     };
   }
 
-  async onEvent(event: SerializedStarEvent) {
-    if (event.eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
-      return this.onBeforePlayCard(event);
+  async onEvent(
+    event: SerializedStarEvent,
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
+      return this.onMinionSummoned(event, flush);
     }
-    if (event.eventName === GAME_EVENTS.MINION_AFTER_SUMMON) {
-      return this.onAfterMinionSummoned(event);
+
+    if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
+      return this.onArtifactEquiped(event, flush);
     }
-    if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
-      return this.onAfterChangePhase(event);
-    }
-    // if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
-    //   return this.onArtifactEquiped(event, flush);
-    // }
-    // if (event.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
-    //   return this.onChainEffectAdded(event, flush);
-    // }
   }
 
-  private async onBeforePlayCard(event: { event: SerializedEvent<'CARD_BEFORE_PLAY'> }) {
-    if (!this.state.entities[event.event.card.id]) {
-      return;
-    }
-    const card = this.buildViewModel(event.event.card as any) as CardViewModel;
+  private async onMinionSummoned(
+    event: {
+      event: SerializedEvent<'MINION_SUMMONED'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
+
+    const boardSide = this.state.board.sides.find(
+      side => side.playerId === card.player.id
+    )!;
+    if (event.event.card.location === CARD_LOCATIONS.BASE) {
+      boardSide.base = {
+        cards: [...boardSide.base.cards, card.id]
+      };
+    } else if (event.event.card.location === CARD_LOCATIONS.BATTLEFIELD) {
+      boardSide.battlefield = {
+        cards: [...boardSide.battlefield.cards, card.id]
+      };
+    }
+
+    // @ts-expect-error force reactivity
+    this.state.board.sides = this.state.board.sides.map(side => ({
+      ...side
+    }));
+
+    return await flush();
   }
 
-  private async onAfterMinionSummoned(event: {
-    event: SerializedEvent<'MINION_AFTER_SUMMON'>;
-  }) {
-    if (!this.state.entities[event.event.unit.id]) {
-      return;
-    }
-    const unit = this.buildViewModel(event.event.unit as any) as UnitViewModel;
-    this.state.entities[unit.id] = unit;
-    if (!this.state.units.includes(unit.id)) {
-      this.state.units.push(unit.id);
-    }
-    this.state.board.cells.forEach(cellId => {
-      const cell = this.state.entities[cellId] as BoardCellViewModel;
-      if (cell.x === unit.position.x && cell.y === unit.position.y) {
-        cell.update({ unit: unit.id });
-      }
-    });
-    this.state = { ...this.state };
-  }
+  private async onArtifactEquiped(
+    event: {
+      event: SerializedEvent<'ARTIFACT_EQUIPED'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    const card = this.buildViewModel(event.event.card) as CardViewModel;
+    this.state.entities[card.id] = card;
 
-  private async onAfterChangePhase(event: {
-    event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
-  }) {
-    this.state.phase = event.event.to;
-    this.state = { ...this.state };
+    const boardSide = this.state.board.sides.find(
+      side => side.playerId === card.player.id
+    )!;
+    boardSide.base.cards = [...boardSide.base.cards, card.id];
+
+    // @ts-expect-error force reactivity
+    this.state.board.sides = this.state.board.sides.map(side => ({
+      ...side
+    }));
+
+    return await flush();
   }
 }

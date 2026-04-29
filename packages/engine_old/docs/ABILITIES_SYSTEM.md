@@ -68,7 +68,7 @@ abilities: [
     isHiddenOnCard?: boolean,      // Hide from card display (for keywords)
 
     canUse(game, card): boolean,
-    getPreResponseTargets(game, card): Promise<PreResponseTarget[]>,
+    getTargets(game, card): Promise<PreResponseTarget[]>,
     onResolve(game, card, targets, ability): Promise<void>
   }
 ]
@@ -111,7 +111,7 @@ abilities: [
 - Check card location, valid targets, game state
 - Return `true` if usable, `false` otherwise
 
-**getPreResponseTargets**: Function that prompts for targets
+**getTargets**: Function that prompts for targets
 
 - Uses interaction system to select targets
 - Returns array of selected targets
@@ -142,7 +142,7 @@ export const myCard: MinionBlueprint = {
         return card.location === CARD_LOCATIONS.BOARD;
       },
 
-      async getPreResponseTargets(game, card) {
+      async getTargets(game, card) {
         // Return empty array if no targets
         return [];
       },
@@ -170,8 +170,8 @@ import { singleEnemyMinionTargetRules } from '../../../../card-utils';
     );
   },
 
-  getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyMinionTargetRules.getTargets(game, card, {
       type: 'ability',
       card,
       abilityId: 'my-card-ability'
@@ -213,7 +213,7 @@ No targeting, just an effect:
     return card.location === CARD_LOCATIONS.BOARD;
   },
 
-  async getPreResponseTargets(game, card) {
+  async getTargets(game, card) {
     return [];  // No targets needed
   },
 
@@ -246,8 +246,8 @@ import { AbilityDamage } from '../../../../../utils/damage';
     );
   },
 
-  getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyMinionTargetRules.getTargets(game, card, {
       type: 'ability',
       card,
       abilityId: 'damage-ability'
@@ -283,8 +283,8 @@ Ability can only be used once:
     );
   },
 
-  getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyMinionTargetRules.getTargets(game, card, {
       type: 'ability',
       card,
       abilityId: 'one-time-ability'
@@ -327,8 +327,8 @@ import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/unti
     );
   },
 
-  getPreResponseTargets(game, card) {
-    return singleAllyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleAllyMinionTargetRules.getTargets(game, card, {
       type: 'ability',
       card,
       abilityId: 'buff-ability'
@@ -370,8 +370,8 @@ Only usable under certain conditions:
     );
   },
 
-  getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyMinionTargetRules.getTargets(game, card, {
       type: 'ability',
       card,
       abilityId: 'conditional-ability'
@@ -406,7 +406,7 @@ Ability that affects the card itself:
     return card.location === CARD_LOCATIONS.BOARD;
   },
 
-  async getPreResponseTargets(game, card) {
+  async getTargets(game, card) {
     return [];
   },
 
@@ -542,8 +542,8 @@ export const littleWitch: MinionBlueprint = {
         card.location === CARD_LOCATIONS.BOARD &&
         singleEnemyMinionTargetRules.canPlay(game, card),
 
-      getPreResponseTargets(game, card) {
-        return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+      getTargets(game, card) {
+        return singleEnemyMinionTargetRules.getTargets(game, card, {
           type: 'ability',
           card,
           abilityId: 'little-witch-ability-1'
@@ -577,7 +577,7 @@ export const littleWitch: MinionBlueprint = {
 7. **Keep labels short** - they appear on UI buttons
 8. **Use the correct origin** - `{ type: 'ability', card, abilityId }`
 9. **Test edge cases** - What if player can't pay cost? Target is gone?
-10. **Match predicates** - Same logic in `canUse` and `getPreResponseTargets`
+10. **Match predicates** - Same logic in `canUse` and `getTargets`
 
 ## See Also
 

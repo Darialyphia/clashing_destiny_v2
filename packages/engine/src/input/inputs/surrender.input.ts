@@ -7,9 +7,10 @@ export class SurrenderInput extends Input<typeof schema> {
   readonly name = 'surrender';
 
   readonly allowedPhases = [
-    GAME_PHASES.MULLIGAN,
+    GAME_PHASES.DRAW,
     GAME_PHASES.MAIN,
-    GAME_PHASES.PLAYING_CARD
+    GAME_PHASES.COMBAT,
+    GAME_PHASES.END
   ];
 
   protected payloadSchema = schema;

@@ -1,63 +1,51 @@
 import type { Game } from '../game';
 import type { Config } from '../../config';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
-import type { CardDiscardEvent } from '../../card/card.events';
+import type {
+  CardDeclarePlayEvent,
+  CardDiscardEvent,
+  CardRevealEvent
+} from '../../card/card.events';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
+import type { SerializedMinionCard } from '../../card/entities/minion.entity';
+import type { SerializedHeroCard } from '../../card/entities/hero.entity';
+import type { SerializedSpellCard } from '../../card/entities/spell.entity';
+import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
+import type { SerializedBoard } from '../../board/board-side.entity';
 import type { AnyObject } from '@game/shared';
-import type { SerializedAbility } from '../../card/entities/ability.entity';
+import { areArraysIdentical } from '../../utils/utils';
+import type { SerializedAbility } from '../../card/card-blueprint';
+import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
-import {
-  MinionCard,
-  type SerializedMinionCard
-} from '../../card/entities/minion-card.entity';
-import type { SerializedBoard } from '../../board/board.system';
-import {
-  ArtifactCard,
-  type SerializedArtifactCard
-} from '../../card/entities/artifact-card.entity';
-import { HeroCard, type SerializedHeroCard } from '../../card/entities/hero-card.entity';
-import type { SerializedSpellCard } from '../../card/entities/spell-card.entity';
-import { areArraysIdentical } from '../../utils/helpers';
-import type { SerializedCell } from '../../board/entities/board-cell.entity';
-import type { SerializedTile } from '../../tile/tile.entity';
-import type { SerializedUnit } from '../../unit/unit.entity';
-import type { SerializedDestinyCard } from '../../card/entities/destiny-card.entity';
-import type { SerializedPlayerArtifact } from '../../player/player-artifact.entity';
 
 export type SerializedEntity =
   | SerializedMinionCard
+  | SerializedHeroCard
   | SerializedSpellCard
   | SerializedArtifactCard
-  | SerializedDestinyCard
-  | SerializedHeroCard
   | SerializedPlayer
   | SerializedModifier
-  | SerializedCell
-  | SerializedUnit
-  | SerializedTile
-  | SerializedAbility
-  | SerializedPlayerArtifact;
+  | SerializedAbility;
 
 export type EntityDictionary = Record<string, SerializedEntity>;
 
 export type EntityDiffDictionary = Record<string, Partial<SerializedEntity>>;
 
 export type SerializedOmniscientState = {
-  entities: EntityDictionary;
   config: Config;
+  entities: EntityDictionary;
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  board: SerializedBoard;
-  turnCount: number;
-  turnPlayer: string;
   players: string[];
-  tiles: string[];
-  units: string[];
+  board: SerializedBoard;
+  currentPlayer: string;
+  turnCount: number;
 };
 
 export type SnapshotDiff = {
@@ -67,12 +55,10 @@ export type SnapshotDiff = {
   removedEntities: string[];
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  board: Partial<SerializedBoard>;
+  board: SerializedBoard;
   turnCount: number;
-  turnPlayer: string;
+  currentPlayer: string;
   players: string[];
-  tiles: string[];
-  units: string[];
 };
 
 export type SerializedPlayerState = SerializedOmniscientState;
@@ -147,32 +133,25 @@ export class GameSerializer {
       entityPatches,
       addedEntities,
       removedEntities: removedEntityIds,
-      config: this.getObjectDiff(state.config, prevState.config),
       phase: state.phase,
       interaction: state.interaction,
-      board: this.getObjectDiff(state.board, prevState.board),
-      turnCount: state.turnCount - prevState.turnCount,
-      turnPlayer: state.turnPlayer,
+      board: state.board,
+      turnCount: state.turnCount,
+      currentPlayer: state.currentPlayer,
       players: state.players,
-      tiles: state.tiles,
-      units: state.units
+      config: this.getObjectDiff(state.config, prevState.config)
     };
   }
 
   private buildEntityDictionary(): EntityDictionary {
     const entities: EntityDictionary = {};
-
     this.game.cardSystem.cards.forEach(card => {
       entities[card.id] = card.serialize();
       card.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
-      if (
-        card instanceof MinionCard ||
-        card instanceof HeroCard ||
-        card instanceof ArtifactCard
-      ) {
-        card.abilities.forEach(ability => {
+      if ('abilities' in card) {
+        (card.abilities as Ability<AbilityOwner>[]).forEach(ability => {
           entities[ability.id] = ability.serialize();
         });
       }
@@ -182,24 +161,6 @@ export class GameSerializer {
       player.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
-      player.artifactManager.artifacts.forEach(artifact => {
-        entities[artifact.id] = artifact.serialize();
-        artifact.modifiers.list.forEach(modifier => {
-          entities[modifier.id] = modifier.serialize();
-        });
-      });
-    });
-    this.game.boardSystem.cells.forEach(cell => {
-      entities[cell.id] = cell.serialize();
-    });
-    this.game.unitSystem.units.forEach(unit => {
-      entities[unit.id] = unit.serialize();
-      unit.modifiers.list.forEach(modifier => {
-        entities[modifier.id] = modifier.serialize();
-      });
-    });
-    this.game.tileSystem.tiles.forEach(tile => {
-      entities[tile.id] = tile.serialize();
     });
     return entities;
   }
@@ -211,10 +172,8 @@ export class GameSerializer {
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
       board: this.game.boardSystem.serialize(),
-      units: this.game.unitSystem.units.map(unit => unit.id),
       players: this.game.playerSystem.players.map(player => player.id),
-      tiles: this.game.tileSystem.tiles.map(tile => tile.id),
-      turnPlayer: this.game.turnSystem.initiativePlayer.id,
+      currentPlayer: this.game.interaction.interactivePlayer.id,
       turnCount: this.game.turnSystem.elapsedTurns
     };
   }
@@ -225,9 +184,19 @@ export class GameSerializer {
   ): SerializedPlayerState {
     const state = this.serializeOmniscientState();
 
-    const hasBeenPlayed = (cardId: string) => {
+    // Remove entities that the player shouldn't have access to in order to prevent cheating
+    const shouldBeSeen = (cardId: string) => {
       if (state.interaction.ctx.player === playerId) {
-        // add card from choices since they could come from a hidden source (like deck or opponent's hand)
+        // add card from buckets when rearrangign cards since they could come from a hidden source (like deck or opponent's hand)
+        if (state.interaction.state === INTERACTION_STATES.REARRANGING_CARDS) {
+          const buckets = state.interaction.ctx.buckets;
+          for (const bucket of buckets) {
+            if (bucket.cards.includes(cardId)) {
+              return true;
+            }
+          }
+        }
+        // same thing
         if (state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS) {
           const choices = state.interaction.ctx.choices;
           if (choices.includes(cardId)) {
@@ -239,8 +208,20 @@ export class GameSerializer {
       return eventsSinceLastSnapshot.some(e => {
         const event = e.data.event;
         if (
+          e.data.eventName === GAME_EVENTS.CARD_DECLARE_PLAY &&
+          (event as CardDeclarePlayEvent).data.card.id === cardId
+        ) {
+          return true;
+        }
+        if (
           e.data.eventName === GAME_EVENTS.CARD_DISCARD &&
           (event as CardDiscardEvent).data.card.id === cardId
+        ) {
+          return true;
+        }
+        if (
+          e.data.eventName === GAME_EVENTS.CARD_AFTER_REVEAL &&
+          (event as CardRevealEvent).data.card.id === cardId
         ) {
           return true;
         }
@@ -251,13 +232,18 @@ export class GameSerializer {
     const cardsToRemove: string[] = [];
     this.game.cardSystem.cards.forEach(card => {
       if (card.player.id === playerId) return;
-      if (card.location === 'board' || card.location === 'discardPile') {
+      if (
+        card.location === CARD_LOCATIONS.BANISH_PILE ||
+        card.location === CARD_LOCATIONS.BASE ||
+        card.location === CARD_LOCATIONS.BATTLEFIELD ||
+        card.location === CARD_LOCATIONS.DISCARD_PILE
+      ) {
         return;
       }
       if (this.seenCardsByPlayer[playerId].has(card.id)) {
         return;
       }
-      const seen = hasBeenPlayed(card.id);
+      const seen = shouldBeSeen(card.id);
 
       if (seen) {
         this.seenCardsByPlayer[playerId].add(card.id);
@@ -267,13 +253,18 @@ export class GameSerializer {
       cardsToRemove.push(card.id);
     });
 
+    // prune unseen cards and their related entities
     cardsToRemove.forEach(cardId => {
       const card = this.game.cardSystem.getCardById(cardId)!;
 
       card.modifiers.list.forEach(modifier => {
         delete state.entities[modifier.id];
       });
-
+      if ('abilities' in card) {
+        (card.abilities as Ability<AbilityOwner>[]).forEach(ability => {
+          delete state.entities[ability.id];
+        });
+      }
       delete state.entities[cardId];
     });
 
@@ -304,10 +295,8 @@ export class GameSerializer {
       interaction: state.interaction,
       board: state.board,
       turnCount: state.turnCount,
-      turnPlayer: state.turnPlayer,
-      players: state.players,
-      tiles: state.tiles,
-      units: state.units
+      currentPlayer: state.currentPlayer,
+      players: state.players
     };
   }
 }

@@ -26,7 +26,7 @@ const getCountForCostAndUp = (minCost: number) =>
   getCount(
     deckBuilder.value.mainDeckCards.filter(c => {
       if ('manaCost' in c.blueprint) {
-        return c.blueprint.manaCost >= minCost;
+        return (c.blueprint.manaCost ?? 0) >= minCost;
       }
       return false;
     })

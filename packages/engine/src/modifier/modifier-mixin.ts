@@ -15,5 +15,5 @@ export abstract class ModifierMixin<T extends ModifierTarget> {
     modifier: Modifier<T>,
     stacks?: number,
     oldStacks?: number
-  ): void;
+  ): Promise<void>;
 }

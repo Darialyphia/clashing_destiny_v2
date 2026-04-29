@@ -1,9 +1,11 @@
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { PatchOperation } from '../../game/systems/patch-types';
 import type { CardViewModel } from './card.model';
+import { PatchApplier } from '../patch-applier';
+import type { PatchOperation } from '../../game/systems/patch-types';
 
 export class ModifierViewModel {
+  private static patchApplier = new PatchApplier();
   private getEntities: () => GameStateEntities;
 
   private getClient: () => GameClient;
@@ -22,13 +24,15 @@ export class ModifierViewModel {
   }
 
   update(data: Partial<SerializedModifier>) {
-    Object.assign(this.data, data);
-
+    this.data = Object.assign({}, this.data, data);
     return this;
   }
 
+  /**
+   * Update using patch operations for granular changes
+   */
   updateWithPatches(patches: PatchOperation[]) {
-    this.data = this.getClient().patchApplier.applyPatches(this.data, patches);
+    this.data = ModifierViewModel.patchApplier.applyPatches(this.data, patches);
     return this;
   }
 
@@ -64,11 +68,10 @@ export class ModifierViewModel {
     return this.data.stacks;
   }
 
-  get isEnabled() {
-    return this.data.isEnabled;
-  }
-
   get source() {
     return this.getEntities()[this.data.source] as CardViewModel;
+  }
+  get targetAsCard() {
+    return this.getEntities()[this.data.target] as CardViewModel;
   }
 }

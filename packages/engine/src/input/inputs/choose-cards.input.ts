@@ -9,14 +9,14 @@ const schema = defaultInputSchema.extend({
 export class ChooseCardsInput extends Input<typeof schema> {
   readonly name = 'chooseCards';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.PLAYING_CARD];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.COMBAT, GAME_PHASES.END];
 
   protected payloadSchema = schema;
 
-  async impl() {
+  impl() {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['CHOOSING_CARDS']>();
 
-    await interactionContext.ctx.commit(this.player, this.payload.indices);
+    interactionContext.ctx.commit(this.player, this.payload.indices);
   }
 }

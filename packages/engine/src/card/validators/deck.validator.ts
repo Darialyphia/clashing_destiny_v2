@@ -38,7 +38,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   constructor(private cardPool: Record<string, CardBlueprint>) {}
 
   get size(): number {
-    return defaultConfig.MAX_MAIN_DECK_SIZE + defaultConfig.TALENT_COUNT;
+    return defaultConfig.MAX_MAIN_DECK_SIZE + defaultConfig.MAX_DESTINY_DECK_SIZE;
   }
 
   get mainDeckMaxSize(): number {
@@ -46,7 +46,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   }
 
   get destinyDeckMaxSize(): number {
-    return defaultConfig.TALENT_COUNT;
+    return defaultConfig.MAX_DESTINY_DECK_SIZE;
   }
 
   getMaxCopies(card: ValidatableCard<TMeta>): number {
@@ -55,7 +55,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       return 1;
     }
     if (blueprint.kind === CARD_KINDS.DESTINY) {
-      return defaultConfig.MAX_TALENT_COPIES;
+      return defaultConfig.MAX_DESTINY_DECK_CARD_COPIES;
     }
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
   }

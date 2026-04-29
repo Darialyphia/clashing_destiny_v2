@@ -321,7 +321,7 @@ export const myCard: MinionBlueprint = {
 ```typescript
 {
   kind: CARD_KINDS.SPELL,
-  getPreResponseTargets: (game, card) => Promise<PreResponseTarget[]>,
+  getTargets: (game, card) => Promise<PreResponseTarget[]>,
   // ... rest of blueprint
 }
 ```
@@ -383,8 +383,8 @@ export const damageSpell: SpellBlueprint = {
   canPlay(game, card) {
     return singleEnemyMinionTargetRules.canPlay(game, card);
   },
-  getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyMinionTargetRules.getTargets(game, card, {
       type: 'card',
       card
     });
@@ -457,8 +457,8 @@ export const minionWithAbility: MinionBlueprint = {
       canUse: (game, card) =>
         card.location === CARD_LOCATIONS.BOARD &&
         singleEnemyMinionTargetRules.canPlay(game, card),
-      getPreResponseTargets(game, card) {
-        return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+      getTargets(game, card) {
+        return singleEnemyMinionTargetRules.getTargets(game, card, {
           type: 'ability',
           card,
           abilityId: 'unique-ability-id'
@@ -495,8 +495,8 @@ export const lightningBolt: SpellBlueprint = {
   canPlay(game, card) {
     return singleEnemyMinionTargetRules.canPlay(game, card);
   },
-  getPreResponseTargets(game, card) {
-    return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyMinionTargetRules.getTargets(game, card, {
       type: 'card',
       card
     });
@@ -536,8 +536,8 @@ export const littleWitch: MinionBlueprint = {
       canUse: (game, card) =>
         card.location === CARD_LOCATIONS.BOARD &&
         singleEnemyMinionTargetRules.canPlay(game, card),
-      getPreResponseTargets(game, card) {
-        return singleEnemyMinionTargetRules.getPreResponseTargets(game, card, {
+      getTargets(game, card) {
+        return singleEnemyMinionTargetRules.getTargets(game, card, {
           type: 'ability',
           card,
           abilityId: 'little-witch-ability-1'

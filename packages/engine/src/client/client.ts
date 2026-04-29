@@ -1,33 +1,25 @@
-import {
-  type EmptyObject,
-  type MaybePromise,
-  type Point,
-  type Values
-} from '@game/shared';
+import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
 import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
-  PatchBasedSnapshotDiff,
-  SerializedOmniscientState,
-  SerializedPlayerState,
   SnapshotDiff
 } from '../game/systems/game-snapshot.system';
+import type {
+  SerializedOmniscientState,
+  SerializedPlayerState
+} from '../game/systems/game-serializer';
 import { ModifierViewModel } from './view-models/modifier.model';
 import { CardViewModel } from './view-models/card.model';
 import { PlayerViewModel } from './view-models/player.model';
 import { FxController } from './controllers/fx-controller';
-import { ClientStateController } from './controllers/state-controller';
+import {
+  ClientStateController,
+  type GameClientState
+} from './controllers/state-controller';
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
-import type { BoardCellViewModel } from './view-models/board-cell.model';
-import type { UnitViewModel } from './view-models/unit.model';
-import type { TileViewModel } from './view-models/tile.model';
-import { GAME_PHASES } from '../game/game.enums';
-import { VFXSequenceController } from './controllers/vfx-sequence.controller';
 import type { AbilityViewModel } from './view-models/ability.model';
-import { PatchApplier } from './patch-applier';
-import type { ArtifactViewModel } from './view-models/artifact.model';
-import { GAME_EVENTS } from '../game/game.events';
+import { INTERACTION_STATES } from '../game/game.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -38,26 +30,17 @@ export type GameType = Values<typeof GAME_TYPES>;
 
 export type GameStateEntities = Record<
   string,
-  | PlayerViewModel
-  | CardViewModel
-  | ModifierViewModel
-  | BoardCellViewModel
-  | UnitViewModel
-  | TileViewModel
-  | AbilityViewModel
-  | ArtifactViewModel
+  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
 >;
 
 export type OnSnapshotUpdateCallback = (
-  snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>
+  snapshot: GameStateSnapshot<SnapshotDiff>
 ) => MaybePromise<void>;
 
 export type NetworkAdapter = {
   dispatch: InputDispatcher;
   subscribe(cb: OnSnapshotUpdateCallback): void;
-  sync: (
-    lastSnapshotId: number
-  ) => Promise<Array<GameStateSnapshot<PatchBasedSnapshotDiff>>>;
+  sync: (lastSnapshotId: number) => Promise<Array<GameStateSnapshot<SnapshotDiff>>>;
 };
 
 export type FxAdapter = {
@@ -76,8 +59,6 @@ export type GameClientOptions = {
 export class GameClient {
   readonly fx = new FxController();
 
-  readonly vfx = new VFXSequenceController();
-
   readonly stateManager: ClientStateController;
 
   readonly ui: UiController;
@@ -94,7 +75,7 @@ export class GameClient {
 
   private lastSnapshotId = -1;
 
-  private snapshots = new Map<number, GameStateSnapshot<PatchBasedSnapshotDiff>>();
+  private snapshots = new Map<number, GameStateSnapshot<SnapshotDiff>>();
 
   private _isPlayingFx = false;
 
@@ -102,18 +83,17 @@ export class GameClient {
 
   private _processingUpdate = false;
 
-  private queue: Array<GameStateSnapshot<PatchBasedSnapshotDiff>> = [];
+  private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
 
   history: SerializedInput[] = [];
 
-  readonly patchApplier = new PatchApplier();
-
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
-    updateCompleted: GameStateSnapshot<PatchBasedSnapshotDiff>;
+    updateCompleted: GameStateSnapshot<SnapshotDiff>;
   }>('sequential');
 
   readonly isSpectator: boolean = false;
+
   constructor(options: GameClientOptions) {
     this.networkAdapter = options.networkAdapter;
     this.fxAdapter = options.fxAdapter;
@@ -131,11 +111,15 @@ export class GameClient {
       console.log('events', snapshot.events);
       console.groupEnd();
       this.queue.push(snapshot);
-      if (this._processingUpdate || !this.isReady) return;
+      if (this._processingUpdate) return;
       await this.processQueue();
     });
 
-    this.cancelSpaceSelection = this.cancelSpaceSelection.bind(this);
+    this.cancelPlayCard = this.cancelPlayCard.bind(this);
+  }
+
+  get nextSnapshotId() {
+    return this.lastSnapshotId + 1;
   }
 
   get isPlayingFx() {
@@ -144,19 +128,6 @@ export class GameClient {
 
   get state() {
     return this.stateManager.state;
-  }
-
-  get player() {
-    return this.stateManager.state.entities[this.playerId] as PlayerViewModel;
-  }
-
-  get nextSnapshotId() {
-    return this.lastSnapshotId + 1;
-  }
-
-  dispatch(input: SerializedInput) {
-    this.history.push(input);
-    this.networkAdapter.dispatch(input);
   }
 
   private async processQueue() {
@@ -179,28 +150,12 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerIdFromSnapshotState(
-    snapshot: SerializedOmniscientState | SerializedPlayerState
-  ) {
-    return snapshot.interaction.ctx.player;
+  getActivePlayerId() {
+    return this.stateManager.state.interaction.ctx.player;
   }
 
-  getActivePlayerId() {
-    // auto switch player in sandbox upon choosing level up action
-    if (
-      this.gameType === GAME_TYPES.LOCAL &&
-      this.stateManager.state.phase.state === GAME_PHASES.LEVEL_UP
-    ) {
-      const ctx = this.stateManager.state.phase.ctx;
-      const playerWhoHasToChoose = Object.entries(ctx.selections).find(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([_, cardId]) => cardId === null
-      )?.[0];
-      if (playerWhoHasToChoose) {
-        return playerWhoHasToChoose;
-      }
-    }
-    return this.stateManager.state.interaction.ctx.player;
+  isActive() {
+    return this.getActivePlayerId() === this.playerId;
   }
 
   async initialize(
@@ -232,7 +187,7 @@ export class GameClient {
     await this.sync();
   }
 
-  async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
+  async update(snapshot: GameStateSnapshot<SnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
@@ -257,13 +212,10 @@ export class GameClient {
       }
 
       for (const event of snapshot.events) {
-        await this.stateManager.onEvent(event);
-        await this.ui.onEvent(event);
-        await this.emitter.emit('update', {});
-
-        if (event.eventName === GAME_EVENTS.VFX_PLAY_SEQUENCE) {
-          await this.vfx.playSequence(event.event.sequence);
-        }
+        await this.stateManager.onEvent(event, async postUpdateCallback => {
+          await this.emitter.emit('update', {});
+          await postUpdateCallback?.();
+        });
 
         await this.fx.emit(event.eventName, event.event);
       }
@@ -284,11 +236,25 @@ export class GameClient {
 
   onUpdate(cb: () => void) {
     this.emitter.on('update', cb);
+    return () => this.emitter.off('update', cb);
   }
 
-  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
+  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
     this.emitter.on('updateCompleted', cb);
     return () => this.emitter.off('updateCompleted', cb);
+  }
+
+  waitUntil(predicate: (state: GameClientState) => boolean) {
+    return new Promise<void>(resolve => {
+      const check = () => {
+        if (predicate(this.state)) {
+          resolve();
+          this.emitter.off('updateCompleted', check);
+        }
+      };
+      check();
+      this.emitter.on('updateCompleted', check);
+    });
   }
 
   private async sync() {
@@ -296,13 +262,70 @@ export class GameClient {
     this.queue.push(...snapshots);
   }
 
-  isActive() {
-    return this.getActivePlayerId() === this.playerId;
+  dispatch(input: SerializedInput) {
+    if (this.isSpectator) return;
+
+    this.history.push(input);
+    return this.networkAdapter.dispatch(input);
   }
 
-  commitSpaceSelection() {
+  declarePlayCard(card: CardViewModel) {
+    this.ui.optimisticState.playedCardId = card.id;
+
     this.dispatch({
-      type: 'commitSpaceSelection',
+      type: 'declarePlayCard',
+      payload: {
+        id: card.id,
+        playerId: this.playerId
+      }
+    });
+  }
+
+  cancelPlayCard() {
+    if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
+
+    this.dispatch({
+      type: 'cancelPlayCard',
+      payload: { playerId: this.state.currentPlayer }
+    });
+    const playedCard = this.state.entities[
+      this.state.interaction.ctx.card
+    ] as CardViewModel;
+
+    void this.fxAdapter.onCancelPlayCard(playedCard, this);
+  }
+
+  cancelUseAbility() {
+    if (this.state.interaction.state !== INTERACTION_STATES.USING_ABILITY) return;
+
+    this.dispatch({
+      type: 'cancelUseAbility',
+      payload: { playerId: this.state.currentPlayer }
+    });
+  }
+
+  commitCardSelection() {
+    this.dispatch({
+      type: 'commitCardSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  commitRearrangeCards(buckets: Array<{ id: string; cards: string[] }>) {
+    this.dispatch({
+      type: 'commitRearrangeCards',
+      payload: {
+        playerId: this.playerId,
+        buckets
+      }
+    });
+  }
+
+  pass() {
+    this.dispatch({
+      type: 'pass',
       payload: {
         playerId: this.playerId
       }
@@ -319,52 +342,6 @@ export class GameClient {
     });
   }
 
-  surrender() {
-    this.dispatch({
-      type: 'surrender',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
-  pass() {
-    this.dispatch({
-      type: 'pass',
-      payload: {
-        playerId: this.playerId
-      }
-    });
-  }
-
-  attack(unitId: string | null, position: Point | null) {
-    if (unitId) {
-      this.ui.unselectUnit();
-    } else {
-      this.ui.unselectHero();
-    }
-
-    this.dispatch({
-      type: 'attack',
-      payload: {
-        playerId: this.playerId,
-        unitId,
-        position
-      }
-    });
-  }
-
-  useAbility(cardId: string, abilityId: string) {
-    this.dispatch({
-      type: 'useAbility',
-      payload: {
-        playerId: this.playerId,
-        cardId,
-        abilityId
-      }
-    });
-  }
-
   answerQuestion(id: string) {
     this.dispatch({
       type: 'answerQuestion',
@@ -375,27 +352,11 @@ export class GameClient {
     });
   }
 
-  cancelSpaceSelection() {
+  surrender() {
     this.dispatch({
-      type: 'cancelSpaceSelection',
+      type: 'surrender',
       payload: {
         playerId: this.playerId
-      }
-    });
-
-    if (this.state.phase.state === GAME_PHASES.PLAYING_CARD) {
-      const playedCard = this.state.entities[this.state.phase.ctx.card] as CardViewModel;
-
-      void this.fxAdapter.onCancelPlayCard(playedCard, this);
-    }
-  }
-
-  selectLevelUpCard(cardId: string | null) {
-    this.dispatch({
-      type: 'levelUpSelection',
-      payload: {
-        playerId: this.playerId,
-        cardId
       }
     });
   }

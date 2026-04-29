@@ -1,25 +1,33 @@
+import type { BetterExtract, EmptyObject } from '@game/shared';
 import type { Game } from '../game/game';
-import {
-  type CARD_KINDS,
-  type CardKind,
-  type CardSetId,
-  type Rarity,
-  type Tag,
-  type JobId,
-  type MinionType
+import type {
+  CARD_KINDS,
+  CardKind,
+  CardSetId,
+  Rarity,
+  ArtifactKind,
+  Tag,
+  CARD_DECK_SOURCES,
+  Job,
+  RuneId
 } from './card.enums';
-import type { MinionCard } from './entities/minion-card.entity';
-import type { SpellCard } from './entities/spell-card.entity';
-import type { ArtifactCard } from './entities/artifact-card.entity';
-import type { BoardCell } from '../board/entities/board-cell.entity';
-import type { GenericAOEShape } from '../aoe/aoe-shape';
-import type { PlayerArtifact } from '../player/player-artifact.entity';
-import type { AnyCard } from './entities/card.entity';
-import type { DestinyCard } from './entities/destiny-card.entity';
-import type { HeroCard } from './entities/hero-card.entity';
-import type { VFXSequence } from '../game/systems/vfx.system';
-import type { MaybePromise, Point } from '@game/shared';
-import type { Ability } from './entities/ability.entity';
+import type { ArtifactCard } from './entities/artifact.entity';
+import { type AnyCard } from './entities/card.entity';
+import type { HeroCard } from './entities/hero.entity';
+import type { MinionCard } from './entities/minion.entity';
+import type { SpellCard } from './entities/spell.entity';
+import type { Ability, AbilityOwner } from './entities/ability.entity';
+import type { DestinyCard } from './entities/destiny.entity';
+
+export type CardSourceBlueprint =
+  | {
+      deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
+      manaCost: number;
+    }
+  | {
+      deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
+      manaCost?: never;
+    };
 
 export type CardArt = {
   foil: {
@@ -45,150 +53,143 @@ export type CardArt = {
 export type CardBlueprintBase = {
   id: string;
   name: string;
-  description: string;
+  description: string | (() => string);
+  dynamicDescription?: (game: Game, card: AnyCard) => string;
   setId: CardSetId;
   rarity: Rarity;
+  art: Record<string, CardArt>;
   collectable: boolean;
-  jobs: JobId[];
+  unique?: boolean;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-  art: Record<string, CardArt>;
+} & CardSourceBlueprint;
+
+export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target> = {
+  id: string;
+  manaCost: number;
+  shouldExhaust: boolean;
+  description: string;
+  dynamicDescription?: (game: Game, card: TCard) => string;
+  label: string;
+  isHiddenOnCard?: boolean;
+  getTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
+  canUse(game: Game, card: TCard): boolean;
+  onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
+  aiHints: {
+    shouldUse: (game: Game, card: TCard) => number;
+  };
+};
+
+export type AnyAbility = AbilityBlueprint<AbilityOwner, Target>;
+
+export type SerializedAbility = {
+  id: string;
+  entityType: 'ability';
+  abilityId: string;
+  canUse: boolean;
+  name: string;
+  manaCost: number;
+  description: string;
+  targets: SerializedPreResponseTarget[] | null;
+  isHiddenOnCard: boolean;
+  shouldExhaust: boolean;
+};
+
+export type Target = AnyCard;
+export type SerializedPreResponseTarget = string;
+
+export const serializePreResponseTarget = (
+  target: Target
+): SerializedPreResponseTarget => {
+  return target.id;
 };
 
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
-  subKind: MinionType;
-  manaCost: number;
-  abilities: AbilityBlueprint<MinionCard>[];
-  vfx: {
-    sequences?: {
-      play?: (
-        game: Game,
-        card: MinionCard,
-        position: Point,
-        targets: Point[]
-      ) => VFXSequence;
-    };
-  };
-  onInit: (game: Game, card: MinionCard) => Promise<void>;
-  canPlay: (game: Game, card: MinionCard) => boolean;
-  onPlay: (
-    game: Game,
-    card: MinionCard,
-    options: {
-      position: BoardCell;
-    }
-  ) => Promise<void>;
   atk: number;
-  retaliation: number;
   maxHp: number;
+  abilities: AbilityBlueprint<MinionCard, Target>[];
+  jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
+  canPlay: (game: Game, card: MinionCard) => boolean;
+  onInit: (game: Game, card: MinionCard) => Promise<void>;
+  onPlay: (game: Game, card: MinionCard) => Promise<void>;
+  aiHints: {
+    shouldPlay: (game: Game, card: MinionCard) => number;
+    shouldMove: (game: Game, card: MinionCard) => number;
+    shouldAttack: (game: Game, card: MinionCard) => number;
+    getThreatScore: (game: Game, card: MinionCard) => number;
+  };
 };
 
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
-  manaCost: number;
+  jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
+  abilities: AbilityBlueprint<SpellCard, Target>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
+  onPlay: (game: Game, card: SpellCard, targets: Target[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
-  onPlay: (
-    game: Game,
-    card: SpellCard,
-    options: {
-      targets: BoardCell[];
-      aoe: GenericAOEShape;
-    }
-  ) => Promise<void>;
-  getTargets: (
-    game: Game,
-    card: SpellCard,
-    onCancel: () => MaybePromise<void>
-  ) => Promise<BoardCell[]>;
-  getAoe: (game: Game, card: SpellCard, targets: BoardCell[]) => GenericAOEShape;
-};
-
-export type DestinyBlueprint = CardBlueprintBase & {
-  expCost: number;
-  kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  onInit: (game: Game, card: DestinyCard) => Promise<void>;
-  canPlay: (game: Game, card: DestinyCard) => boolean;
-  onPlay: (
-    game: Game,
-    card: DestinyCard,
-    options: {
-      targets: BoardCell[];
-      aoe: GenericAOEShape;
-    }
-  ) => Promise<void>;
-  getTargets: (
-    game: Game,
-    card: DestinyCard,
-    onCancel: () => MaybePromise<void>
-  ) => Promise<BoardCell[]>;
-  getAoe: (game: Game, card: DestinyCard, targets: BoardCell[]) => GenericAOEShape;
-};
-
-export type AbilityBlueprint<T extends AnyCard> = {
-  id: string;
-  description: string;
-  label: string;
-  manaCost: number;
-  isHiddenOnCard?: boolean;
-  getTargets: (
-    game: Game,
-    card: T,
-    onCancel: () => MaybePromise<void>
-  ) => Promise<BoardCell[]>;
-  getAoe: (game: Game, card: T, targets: BoardCell[]) => GenericAOEShape;
-  getCooldown: (game: Game, card: T) => number;
-  canUse(game: Game, card: T): boolean;
-  onResolve(
-    game: Game,
-    card: T,
-    options: {
-      targets: BoardCell[];
-      aoe: GenericAOEShape;
-      ability: Ability<T>;
-    }
-  ): void;
-};
-
-export type ArtifactBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
-  durability: number;
-  manaCost: number;
-  abilities: AbilityBlueprint<ArtifactCard>[];
-  onInit: (game: Game, card: ArtifactCard) => Promise<void>;
-  canPlay: (game: Game, card: ArtifactCard) => boolean;
-  onPlay: (
-    game: Game,
-    card: ArtifactCard,
-    options: {
-      targets: BoardCell[];
-      aoe: GenericAOEShape;
-      artifact: PlayerArtifact;
-    }
-  ) => Promise<void>;
-  getTargets: (
-    game: Game,
-    card: ArtifactCard,
-    onCancel: () => MaybePromise<void>
-  ) => Promise<BoardCell[]>;
-  getAoe: (game: Game, card: ArtifactCard, targets: BoardCell[]) => GenericAOEShape;
+  getTargets: (game: Game, card: SpellCard) => Promise<Target[]>;
+  aiHints: {
+    shouldPlay: (game: Game, card: SpellCard) => number;
+  };
 };
 
 export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
-  jobs: JobId[];
+  jobs: Job[];
   onInit: (game: Game, card: HeroCard) => Promise<void>;
-  onPlay: (game: Game, card: HeroCard) => Promise<void>;
+  onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
+  canPlay: (game: Game, card: HeroCard) => boolean;
   atk: number;
-  retaliation: number;
   maxHp: number;
-  abilities: AbilityBlueprint<HeroCard>[];
+  abilities: AbilityBlueprint<HeroCard, Target>[];
+  aiHints: {
+    shouldPlay: (game: Game, card: HeroCard) => number;
+    shouldAttack: (game: Game, card: HeroCard) => number;
+  };
+};
+
+export type ArtifactBlueprint = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
+  jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
+  onInit: (game: Game, card: ArtifactCard) => Promise<void>;
+  canPlay: (game: Game, card: ArtifactCard) => boolean;
+  onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
+  abilities: Array<AbilityBlueprint<ArtifactCard, Target> & { durabilityCost: number }>;
+  durability: number;
+  aiHints: {
+    shouldPlay: (game: Game, card: ArtifactCard) => number;
+  };
+} & (
+    | {
+        subKind: BetterExtract<ArtifactKind, 'ARMOR' | 'RELIC'>;
+      }
+    | {
+        subKind: BetterExtract<ArtifactKind, 'WEAPON'>;
+        atkBonus: number;
+      }
+  );
+
+export type DestinyBlueprint = CardBlueprintBase & {
+  expCost: number;
+  kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
+  jobs: Job[];
+  runeCost: Partial<Record<RuneId, number>>;
+  onInit: (game: Game, card: DestinyCard) => Promise<void>;
+  onPlay: (game: Game, card: DestinyCard, targets: Target[]) => Promise<void>;
+  canPlay: (game: Game, card: DestinyCard) => boolean;
+  getTargets: (game: Game, card: DestinyCard) => Promise<Target[]>;
+  aiHints: {
+    shouldPlay: (game: Game, card: DestinyCard) => number;
+  };
 };
 
 export type CardBlueprint =
   | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
-  | DestinyBlueprint
-  | HeroBlueprint;
+  | HeroBlueprint
+  | DestinyBlueprint;

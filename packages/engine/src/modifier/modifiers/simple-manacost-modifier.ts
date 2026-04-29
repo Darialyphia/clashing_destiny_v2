@@ -1,7 +1,8 @@
-import type { Ability } from '../../card/entities/ability.entity';
+import { isFunction } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -11,50 +12,22 @@ export class SimpleManacostModifier<T extends AnyCard> extends Modifier<T> {
     game: Game,
     card: AnyCard,
     options: {
-      amount: number;
+      amount: number | (() => number);
       mixins?: ModifierMixin<T>[];
-      isRemovable?: boolean;
     }
   ) {
     super(modifierType, game, card, {
-      isRemovable: options.isRemovable,
       mixins: [
-        // @ts-expect-error
+        new RemoveOnDestroyedMixin(game),
         new CardInterceptorModifierMixin(game, {
           key: 'manaCost',
           interceptor: value => {
             if (value === null) return value;
 
-            return Math.max(0, value + options.amount);
-          }
-        }),
-        ...(options.mixins ?? [])
-      ]
-    });
-  }
-}
-
-export class AbilitySimpleManacostModifier<T extends Ability<any>> extends Modifier<T> {
-  constructor(
-    modifierType: string,
-    game: Game,
-    card: AnyCard,
-    options: {
-      amount: number;
-      mixins?: ModifierMixin<T>[];
-      isRemovable?: boolean;
-    }
-  ) {
-    super(modifierType, game, card, {
-      isRemovable: options.isRemovable,
-      mixins: [
-        // @ts-expect-error
-        new CardInterceptorModifierMixin(game, {
-          key: 'manaCost',
-          interceptor: value => {
-            if (value === null) return value;
-
-            return Math.max(0, value + options.amount);
+            return Math.max(
+              0,
+              value + (isFunction(options.amount) ? options.amount() : options.amount)
+            );
           }
         }),
         ...(options.mixins ?? [])

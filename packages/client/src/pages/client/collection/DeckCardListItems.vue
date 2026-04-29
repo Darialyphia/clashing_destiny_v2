@@ -37,9 +37,9 @@ const { cards, deckBuilder } = defineProps<{
           <div class="flex gap-1 items-center">
             <div
               v-for="job in card.blueprint.jobs"
-              :key="job"
+              :key="job.id"
               class="job"
-              :style="{ '--bg': assets[`ui/card/job-${job}`].css }"
+              :style="{ '--bg': assets[`ui/card/job-${job.id}`].css }"
             />
           </div>
           <div class="mana-cost" v-if="'manaCost' in card.blueprint">

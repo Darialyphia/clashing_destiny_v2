@@ -1,18 +1,14 @@
-import { z } from 'zod';
-import { defaultInputSchema, Input } from '../input';
-import { assert, isDefined } from '@game/shared';
-import {
-  UnknownUnitError,
-  UnitNotOwnedError,
-  IllegalMovementError,
-  NotCurrentPlayerError
-} from '../input-errors';
+import { assert } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
+import { defaultInputSchema, Input } from '../input';
+import { NotCurrentPlayerError } from '../input-errors';
+import { z } from 'zod';
+import { CardNotFoundError } from '../../card/card-errors';
+import { isMinion } from '../../card/card-utils';
 
 const schema = defaultInputSchema.extend({
-  unitId: z.string(),
-  x: z.number(),
-  y: z.number()
+  cardId: z.string(),
+  index: z.number()
 });
 
 export class MoveInput extends Input<typeof schema> {
@@ -22,19 +18,16 @@ export class MoveInput extends Input<typeof schema> {
 
   protected payloadSchema = schema;
 
-  private get unit() {
-    return this.game.unitSystem.getUnitById(this.payload.unitId);
+  get minion() {
+    const card = this.game.cardSystem.getCardById(this.payload.cardId);
+    assert(card, new CardNotFoundError());
+    assert(isMinion(card), new CardNotFoundError());
+    return card;
   }
 
   async impl() {
-    assert(this.player.isCurrentPlayer, new NotCurrentPlayerError());
-    assert(isDefined(this.unit), new UnknownUnitError(this.payload.unitId));
-    assert(
-      this.unit.player.equals(this.game.turnSystem.initiativePlayer),
-      new UnitNotOwnedError()
-    );
-    assert(this.unit.canMoveTo(this.payload), new IllegalMovementError(this.payload));
-
-    await this.unit.move(this.payload);
+    assert(this.player.isInteractive, new NotCurrentPlayerError());
+    assert(this.minion.canMoveManually, new Error('Minion cannot be moved manually'));
+    await this.minion.moveManually(this.payload.index);
   }
 }

@@ -16,12 +16,12 @@ export class UseAbilityAction implements CardActionRule {
 
   getLabel() {
     const a = this.ability;
-    return `${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}  ${a.label}`;
+    return `${a.shouldExhaust ? '@[exhaust]@ ' : ''}${a.manaCost ? ` @[mana] ${a.manaCost}@` : ''}:  ${a.name}`;
   }
 
   handler(card: CardViewModel) {
     this.client.dispatch({
-      type: 'useAbility',
+      type: 'declareUseCardAbility',
       payload: {
         abilityId: this.ability.abilityId,
         cardId: card.id,

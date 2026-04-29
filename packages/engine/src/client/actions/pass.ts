@@ -14,19 +14,24 @@ export class PassGlobalAction implements GlobalActionRule {
     return 'Pass';
   }
 
-  shouldDisplay(): boolean {
-    return true;
-  }
-
-  shouldBeDisabled(state: GameClientState): boolean {
+  shouldDisplay(state: GameClientState): boolean {
     return (
-      state.phase.state !== GAME_PHASES.MAIN ||
-      state.interaction.state !== INTERACTION_STATES.IDLE ||
-      this.client.playerId !== state.turnPlayer
+      state.phase.state === GAME_PHASES.MAIN &&
+      state.interaction.state === INTERACTION_STATES.IDLE &&
+      this.client.playerId === state.currentPlayer
     );
   }
 
+  shouldBeDisabled(): boolean {
+    return false;
+  }
+
   onClick(): void {
-    this.client.pass();
+    const shouldConfirm = false;
+    if (shouldConfirm) {
+      this.client.ui.isPassConfirmationModalOpened = true;
+    } else {
+      this.client.pass();
+    }
   }
 }

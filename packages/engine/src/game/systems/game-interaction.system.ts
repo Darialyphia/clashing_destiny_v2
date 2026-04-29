@@ -5,29 +5,48 @@ import {
   StateMachine,
   stateTransition
 } from '@game/shared';
+
 import type { Game } from '../game';
 import type { AnyCard } from '../../card/entities/card.entity';
+import { CorruptedInteractionContextError } from '../game-error';
 import type { Player } from '../../player/player.entity';
 import {
-  SelectingSpaceOnBoardContext,
-  type SelectingSpaceOnBoardContextOptions
-} from '../interactions/selecting-space-on-board.interaction';
+  SelectingCardOnBoardContext,
+  type SelectingCardOnBoardContextOptions
+} from '../interactions/selecting-cards-on-board.interaction';
 import {
   ChoosingCardsContext,
   type ChoosingCardsContextOptions
 } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
-import type { BoardCell } from '../../board/entities/board-cell.entity';
+import { CARD_DECK_SOURCES } from '../../card/card.enums';
+import { PlayCardContext } from '../interactions/play-card.interaction';
+import { IllegalCardPlayedError } from '../../input/input-errors';
+import { UseAbilityContext } from '../interactions/use-ability.interaction';
+import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import { GAME_EVENTS } from '../game.events';
+import { CardDeclareUseAbilityEvent } from '../../card/card.events';
 import {
+  AskQuestionContext,
+  type AskQuestionContextOptions
+} from '../interactions/ask-question.interaction';
+import {
+  INTERACTION_EVENTS,
   INTERACTION_STATE_TRANSITIONS,
-  type InteractionState,
-  type InteractionStateTransition,
   INTERACTION_STATES,
-  INTERACTION_EVENTS
+  type InteractionState,
+  type InteractionStateTransition
 } from '../game.enums';
-import { CorruptedInteractionContextError } from '../game-error';
-import { AskQuestionContext } from '../interactions/ask-question.interaction';
+import {
+  RearrangeCardsContext,
+  type RearrangeCardBucket
+} from '../interactions/rearrange-cards.interaction';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import {
+  SelectingSpaceOnBoardContext,
+  type SelectingSpaceOnBoardContextOptions
+} from '../interactions/selecting-space-on-board';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type InteractionContext =
   | {
@@ -35,7 +54,11 @@ export type InteractionContext =
       ctx: IdleContext;
     }
   | {
-      state: BetterExtract<InteractionState, 'selecting_space_on_board'>;
+      state: BetterExtract<InteractionState, 'selecting_cards_on_board'>;
+      ctx: SelectingCardOnBoardContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'select_space_on_board'>;
       ctx: SelectingSpaceOnBoardContext;
     }
   | {
@@ -43,8 +66,20 @@ export type InteractionContext =
       ctx: ChoosingCardsContext;
     }
   | {
+      state: BetterExtract<InteractionState, 'playing_card'>;
+      ctx: PlayCardContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'using_ability'>;
+      ctx: UseAbilityContext;
+    }
+  | {
       state: BetterExtract<InteractionState, 'ask_question'>;
       ctx: AskQuestionContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'rearranging_cards'>;
+      ctx: RearrangeCardsContext;
     };
 
 export type SerializedInteractionContext =
@@ -53,7 +88,11 @@ export type SerializedInteractionContext =
       ctx: ReturnType<IdleContext['serialize']>;
     }
   | {
-      state: Extract<InteractionState, 'selecting_space_on_board'>;
+      state: Extract<InteractionState, 'selecting_cards_on_board'>;
+      ctx: ReturnType<SelectingCardOnBoardContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'select_space_on_board'>;
       ctx: ReturnType<SelectingSpaceOnBoardContext['serialize']>;
     }
   | {
@@ -61,8 +100,20 @@ export type SerializedInteractionContext =
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
     }
   | {
+      state: Extract<InteractionState, 'playing_card'>;
+      ctx: ReturnType<PlayCardContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'using_ability'>;
+      ctx: ReturnType<UseAbilityContext['serialize']>;
+    }
+  | {
       state: Extract<InteractionState, 'ask_question'>;
       ctx: ReturnType<AskQuestionContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'rearranging_cards'>;
+      ctx: ReturnType<RearrangeCardsContext['serialize']>;
     };
 
 export type InteractionEventMap = {
@@ -76,34 +127,32 @@ export class GameInteractionSystem
 {
   private ctxDictionary = {
     [INTERACTION_STATES.IDLE]: IdleContext,
-    [INTERACTION_STATES.SELECTING_SPACE_ON_BOARD]: SelectingSpaceOnBoardContext,
+    [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
+    [INTERACTION_STATES.SELECT_SPACE_ON_BOARD]: SelectingSpaceOnBoardContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
-    [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext
+    [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
+    [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
+    [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
+    [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext
   } as const;
 
   private _ctx:
     | IdleContext
+    | SelectingCardOnBoardContext
     | SelectingSpaceOnBoardContext
     | ChoosingCardsContext
-    | AskQuestionContext;
+    | PlayCardContext
+    | UseAbilityContext
+    | AskQuestionContext
+    | RearrangeCardsContext;
 
   constructor(private game: Game) {
     super(INTERACTION_STATES.IDLE);
     this.addTransitions([
       stateTransition(
         INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
-      ),
-      stateTransition(
-        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATES.IDLE
-      ),
-      stateTransition(
-        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATES.IDLE
+        INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
       ),
       stateTransition(
         INTERACTION_STATES.IDLE,
@@ -111,13 +160,58 @@ export class GameInteractionSystem
         INTERACTION_STATES.CHOOSING_CARDS
       ),
       stateTransition(
+        INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATES.SELECT_SPACE_ON_BOARD
+      ),
+      stateTransition(
+        INTERACTION_STATES.SELECT_SPACE_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.SELECT_SPACE_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
         INTERACTION_STATES.CHOOSING_CARDS,
         INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
-        INTERACTION_STATES.CHOOSING_CARDS,
-        INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD,
+        INTERACTION_STATES.PLAYING_CARD
+      ),
+      stateTransition(
+        INTERACTION_STATES.PLAYING_CARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.PLAYING_CARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY,
+        INTERACTION_STATES.USING_ABILITY
+      ),
+      stateTransition(
+        INTERACTION_STATES.USING_ABILITY,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.USING_ABILITY,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
@@ -134,6 +228,21 @@ export class GameInteractionSystem
         INTERACTION_STATES.ASK_QUESTION,
         INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
         INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS,
+        INTERACTION_STATES.REARRANGING_CARDS
+      ),
+      stateTransition(
+        INTERACTION_STATES.REARRANGING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_REARRANGING_CARDS,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.REARRANGING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_REARRANGING_CARDS,
+        INTERACTION_STATES.IDLE
       )
     ]);
     this._ctx = new IdleContext(this.game);
@@ -142,6 +251,14 @@ export class GameInteractionSystem
   initialize() {}
 
   shutdown() {}
+
+  get interactivePlayer() {
+    return this.game.turnSystem.initiativePlayer;
+  }
+
+  isInteractive(player: Player) {
+    return player.equals(this.interactivePlayer);
+  }
 
   serialize() {
     const context = this.getContext();
@@ -154,10 +271,7 @@ export class GameInteractionSystem
   getContext<T extends InteractionState>() {
     assert(
       this._ctx instanceof this.ctxDictionary[this.getState()],
-      new CorruptedInteractionContextError(
-        this.ctxDictionary[this.getState()].name,
-        this._ctx.constructor.name
-      )
+      new CorruptedInteractionContextError()
     );
     return {
       state: this.getState() as T,
@@ -190,13 +304,26 @@ export class GameInteractionSystem
     );
   }
 
-  async selectSpacesOnBoard(options: SelectingSpaceOnBoardContextOptions) {
+  async selectCardsOnBoard<T extends AnyCard>(
+    options: SelectingCardOnBoardContextOptions
+  ) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD);
+    this._ctx = await this.ctxDictionary[
+      INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
+    ].create(this.game, options);
+
+    return this.game.inputSystem.pause<T[]>();
+  }
+
+  async selectSpacesOnBoard<T extends AnyCard>(
+    options: SelectingSpaceOnBoardContextOptions
+  ) {
     await this.sendTransition(
       INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
       options
     );
 
-    const { ctx } = this.getContext<'selecting_space_on_board'>();
+    const { ctx } = this.getContext<'select_space_on_board'>();
     if (ctx.elligibleSpaces.length === 0) {
       await this.sendTransition(
         INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
@@ -204,36 +331,96 @@ export class GameInteractionSystem
       );
       return [];
     } else {
-      return this.game.inputSystem.pause<BoardCell[]>();
+      return this.game.inputSystem.pause<BoardSpace<T>[]>();
     }
   }
 
   async chooseCards<T extends AnyCard>(options: ChoosingCardsContextOptions) {
-    await this.sendTransition(
-      INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
+      this.game,
       options
     );
-
     return this.game.inputSystem.pause<T[]>();
   }
 
-  async askQuestion<T extends string = string>(options: {
+  async rearrangeCards<
+    T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>
+  >(options: {
     player: Player;
-    choices: Array<{ id: string; label: string }>;
-    source: AnyCard;
+    buckets: RearrangeCardBucket[];
     label: string;
-    questionId: string;
-    timeoutFallback: string;
+    source: AnyCard;
   }) {
-    await this.sendTransition(
-      INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION,
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.REARRANGING_CARDS].create(
+      this.game,
       options
     );
+    return this.game.inputSystem.pause<T>();
+  }
+
+  async askQuestion<T extends string = string>(options: AskQuestionContextOptions) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(
       this.game,
       options
     );
     return this.game.inputSystem.pause<T>();
+  }
+
+  async declarePlayCardIntent(card: AnyCard, player: Player) {
+    assert(
+      this.getState() === INTERACTION_STATES.IDLE,
+      new CorruptedInteractionContextError()
+    );
+
+    assert(this.isInteractive(player), new IllegalCardPlayedError());
+
+    assert(card, new IllegalCardPlayedError());
+    assert(card.canPlay(), new IllegalCardPlayedError());
+
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD);
+
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.PLAYING_CARD].create(
+      this.game,
+      {
+        card,
+        player
+      }
+    );
+    await this._ctx.commit(this._ctx.player);
+  }
+
+  async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
+    assert(
+      this.getState() === INTERACTION_STATES.IDLE,
+      new CorruptedInteractionContextError()
+    );
+
+    assert(this.isInteractive(player), new IllegalCardPlayedError());
+
+    assert(ability.canUse, new IllegalCardPlayedError());
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.USING_ABILITY].create(
+      this.game,
+      {
+        ability,
+        player
+      }
+    );
+    await this.game.emit(
+      GAME_EVENTS.CARD_DECLARE_USE_ABILITY,
+      new CardDeclareUseAbilityEvent({
+        card: ability.card,
+        abilityId: ability.abilityId
+      })
+    );
+    await this._ctx.commit(this._ctx.player);
+  }
+
+  onInteractionEnd() {
+    this._ctx = new IdleContext(this.game);
   }
 }
 

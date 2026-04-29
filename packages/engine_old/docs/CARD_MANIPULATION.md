@@ -398,7 +398,7 @@ import { isMinion } from '../../../../card/card-utils';
 export const drawSpell: SpellBlueprint = {
   // ...
   canPlay: () => true,
-  async getPreResponseTargets() {
+  async getTargets() {
     return [];
   },
   async onPlay(game, card) {
@@ -451,8 +451,8 @@ export const resurrect: SpellBlueprint = {
       predicate: isMinion
     });
   },
-  async getPreResponseTargets(game, card) {
-    return await cardsInAllyDiscardPile.getPreResponseTargets<MinionCard>(game, card, {
+  async getTargets(game, card) {
+    return await cardsInAllyDiscardPile.getTargets<MinionCard>(game, card, {
       player: card.player,
       label: 'Choose a minion to resurrect',
       minChoiceCount: 1,
@@ -544,8 +544,8 @@ async onPlay(game, card, targets) {
 ```typescript
 import { cardsInEnemyDiscardPile } from '../../../../card-utils';
 
-async getPreResponseTargets(game, card) {
-  return await cardsInEnemyDiscardPile.getPreResponseTargets(
+async getTargets(game, card) {
+  return await cardsInEnemyDiscardPile.getTargets(
     game,
     card,
     {

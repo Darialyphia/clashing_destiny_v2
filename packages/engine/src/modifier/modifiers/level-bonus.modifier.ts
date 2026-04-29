@@ -5,7 +5,7 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { Modifier } from '../modifier.entity';
 
-export class LevelBonusModifier<T extends AnyCard = AnyCard> extends Modifier<T> {
+export class LevelBonusModifier<T extends AnyCard> extends Modifier<T> {
   constructor(
     game: Game,
     source: AnyCard,
@@ -20,10 +20,7 @@ export class LevelBonusModifier<T extends AnyCard = AnyCard> extends Modifier<T>
   }
 
   get isActive() {
-    return this.target.playerLevel >= this.level;
-  }
-
-  isActiveForLevel(level: number) {
-    return this.target.playerLevel >= level;
+    if (!this.target.player.hero) return false;
+    return this.target.player.levelManager.level >= this.level;
   }
 }

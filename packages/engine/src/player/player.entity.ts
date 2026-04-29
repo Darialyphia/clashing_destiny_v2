@@ -1,24 +1,20 @@
-import {
-  CardManagerComponent,
-  type DeckCard
-} from '../card/components/card-manager.component';
-import { Entity } from '../entity';
+import { BoardSide } from '../board/board-side.entity';
+import { CardManagerComponent } from '../card/components/card-manager.component';
 import { type Game } from '../game/game';
-import { type Nullable, type Point, type Serializable } from '@game/shared';
-import { ArtifactManagerComponent } from './components/artifact-manager.component';
+import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
+import { NotEnoughManaError } from '../card/card-errors';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
-import { PlayerHealEvent, PlayerPlayCardEvent } from './player.events';
-import { ManaManagerComponent } from './components/mana-manager.component';
-import { ModifierManager } from '../modifier/modifier-manager.component';
-import { PLAYER_EVENTS } from './player.enums';
-import { CARD_EVENTS, CARD_KINDS } from '../card/card.enums';
-import type { Damage } from '../utils/damage';
+import { GAME_EVENTS } from '../game/game.events';
+import { PlayerTurnEvent } from './player.events';
+import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
+import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
+import { LockedModifier } from '../modifier/modifiers/locked.modifier';
+import { cloneDeep } from 'lodash-es';
 import { LevelManagerComponent } from './components/level-manager.component';
-import type { Unit } from '../unit/unit.entity';
-import { CombatComponent } from '../combat/combat.component';
-import { COMBAT_EVENTS, CombatDoneEvent } from '../combat/combat.events';
+import { ManaManagerComponent } from './components/mana-manager.component';
+import { isArtifact, isMinion } from '../card/card-utils';
 
 export type PlayerOptions = {
   id: string;
@@ -30,217 +26,88 @@ export type SerializedPlayer = {
   id: string;
   entityType: 'player';
   name: string;
-  hand: string[];
+  hand: Array<{ cardId: string; isLocked: boolean; isRevealed: boolean }>;
   handSize: number;
   discardPile: string[];
-  remainingCardsInDeck: string[];
-  remainingCountInDeck: number;
-  destinyDeck: string[];
-  isPlayer1: boolean;
+  banishPile: string[];
+  remainingCardsInMainDeck: number;
+  remainingCardsInRuneDeck: number;
   maxHp: number;
   currentHp: number;
-  currentMana: number;
+  isPlayer1: boolean;
   maxMana: number;
-  deckSize: number;
-  isActive: boolean;
-  currentlyPlayedCard: string | null;
-  artifacts: string[];
+  currentMana: number;
   manaRegen: number;
   exp: number;
   level: number;
   maxLevel: number;
-  frontRow: string[];
-  backRow: string[];
-  hero: string | null;
-  canAttackPlayer: boolean;
-  attackableCells: string[];
-  canLevelup: boolean;
-  talents: string[];
-  isExhausted: boolean;
-  modifiers: string[];
 };
 
-export type PlayerInterceptor = {
+export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
-  maxManathreshold: Interceptable<number>;
-  maxMana: Interceptable<number>;
   manaRegen: Interceptable<number>;
-  canAttack: Interceptable<boolean, { target: Unit | Player }>;
-  canCounterAttack: Interceptable<boolean, { attacker: Player | Unit }>;
-  canBeAttackTarget: Interceptable<boolean, { attacker: Player | Unit }>;
-  canBeCounterattackTarget: Interceptable<boolean, { attacker: Player | Unit }>;
-  maxAttacksPerTurn: Interceptable<number>;
-  dealsDamageFirstWhenAttacking: Interceptable<boolean>;
-  shouldSwitchInitiativeafterAttacking: Interceptable<boolean>;
+  maxMana: Interceptable<number>;
 };
 
-const makeInterceptors = (): PlayerInterceptor => {
+const makeInterceptors = (): PlayerInterceptors => {
   return {
     cardsDrawnForTurn: new Interceptable(),
-    maxMana: new Interceptable(),
     manaRegen: new Interceptable(),
-    maxManathreshold: new Interceptable(),
-    canAttack: new Interceptable(),
-    canCounterAttack: new Interceptable(),
-    canBeAttackTarget: new Interceptable(),
-    canBeCounterattackTarget: new Interceptable(),
-    dealsDamageFirstWhenAttacking: new Interceptable(),
-    maxAttacksPerTurn: new Interceptable(),
-    shouldSwitchInitiativeafterAttacking: new Interceptable()
+    maxMana: new Interceptable()
   };
 };
 
+export type PlayerResourceAction = { type: 'rune' } | { type: 'draw' };
+
 export class Player
-  extends Entity<PlayerInterceptor>
+  extends EntityWithModifiers<PlayerInterceptors>
   implements Serializable<SerializedPlayer>
 {
-  private game: Game;
+  readonly boardSide: BoardSide;
 
   readonly cardManager: CardManagerComponent;
-
-  readonly modifiers: ModifierManager<Player>;
-
-  readonly artifactManager: ArtifactManagerComponent;
 
   readonly cardTracker: CardTrackerComponent;
 
   readonly levelManager: LevelManagerComponent;
 
-  readonly manaManager: ManaManagerComponent;
+  readonly manaManager = new ManaManagerComponent(this.game, this, {
+    manaRegen: this.interceptors.manaRegen,
+    maxMana: this.interceptors.maxMana
+  });
 
-  readonly combat: CombatComponent;
+  private options: PlayerOptions;
 
-  private _damageTaken = 0;
-
-  currentlyPlayedCard: Nullable<DeckCard> = null;
-
-  currentlyPlayedCardIndexInHand: Nullable<number> = null;
-
-  hasPassedThisRound = false;
-
-  constructor(
-    game: Game,
-    private options: PlayerOptions
-  ) {
-    super(options.id, makeInterceptors());
+  constructor(game: Game, options: PlayerOptions) {
+    super(options.id, game, makeInterceptors());
+    this.options = cloneDeep(options);
     this.game = game;
     this.cardTracker = new CardTrackerComponent(game, this);
+    this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
-      deck: this.options.deck.cards,
       maxHandSize: this.game.config.MAX_HAND_SIZE,
-      shouldShuffleDeck: true
+      shouldShuffleDeck: true,
+      deck: options.deck.cards
     });
-    this.modifiers = new ModifierManager<Player>(game, this);
-    this.artifactManager = new ArtifactManagerComponent(game, this);
     this.levelManager = new LevelManagerComponent(game, this);
-    this.manaManager = new ManaManagerComponent(game, this, {
-      maxMana: this.interceptors.maxMana,
-      manaRegen: this.interceptors.manaRegen
-    });
-    this.combat = new CombatComponent(game, this);
   }
 
   async init() {
-    this.manaManager.init();
-
     await this.cardManager.init();
   }
 
-  get maxHp() {
-    return this.hero?.maxHp ?? 0;
-  }
-
-  get damageTaken() {
-    return this._damageTaken;
-  }
-
-  get remainingHp() {
-    return this.maxHp - this._damageTaken;
-  }
-
-  get frontRowIndex() {
-    return this.isPlayer1 ? 2 : 1;
-  }
-
-  get frontRow() {
-    return this.game.boardSystem.getRow(this.frontRowIndex);
-  }
-
-  get unitsInFrontRow() {
-    return this.units.filter(unit => unit.position.x === this.frontRowIndex);
-  }
-
-  get backRowIndex() {
-    return this.isPlayer1 ? 3 : 0;
-  }
-
-  get backRow() {
-    return this.game.boardSystem.getRow(this.backRowIndex);
-  }
-
-  get unitsInBackRow() {
-    return this.units.filter(unit => unit.position.x === this.backRowIndex);
-  }
-
-  get hero() {
-    return this.cardManager.hero;
-  }
-
-  get level() {
-    return this.levelManager.level;
-  }
-
-  serialize() {
-    return {
-      id: this.id,
-      entityType: 'player' as const,
-      name: this.options.name,
-      hand: this.cardManager.hand.map(card => card.id),
-      handSize: this.cardManager.hand.length,
-      discardPile: [...this.cardManager.discardPile].map(card => card.id),
-      banishPile: [...this.cardManager.banishPile].map(card => card.id),
-      destinyDeck: [...this.cardManager.destinyDeck.cards].map(card => card.id),
-      remainingCardsInDeck: [...this.cardManager.deck.cards]
-        .sort((a, b) => {
-          if (a.manaCost === b.manaCost) {
-            return a.blueprint.name.localeCompare(b.blueprint.name);
-          }
-          return a.manaCost - b.manaCost;
-        })
-        .map(card => card.id),
-      remainingCountInDeck: this.cardManager.deck.cards.length,
-      isPlayer1: this.isPlayer1,
-      maxHp: this.maxHp,
-      currentHp: this.remainingHp,
-      currentMana: this.mana,
-      maxMana: this.maxMana,
-      manaRegen: this.manaRegen,
-      deckSize: this.cardManager.deck.cards.length,
-      isActive: this.isActive,
-      currentlyPlayedCard: this.currentlyPlayedCard?.id ?? null,
-      artifacts: this.artifactManager.artifacts.map(artifact => artifact.id),
-      exp: this.levelManager.exp,
-      level: this.levelManager.level,
-      maxLevel: this.game.config.PLAYER_MAX_LEVEL,
-      frontRow: this.frontRow.map(cell => cell.id),
-      backRow: this.backRow.map(cell => cell.id),
-      hero: this.hero?.id ?? null,
-      canAttackPlayer: this.canAttackPlayer,
-      attackableCells: this.game.boardSystem.cells
-        .filter(cell => this.canAttackAt(cell.position))
-        .map(cell => cell.id),
-      canLevelup: this.levelManager.canLevelup,
-      talents: this.levelManager.talents.map(talent => talent.id),
-      isExhausted: this.hero.isExhausted,
-      modifiers: this.modifiers.list.map(modifier => modifier.id)
-    };
-  }
-
-  get isCurrentPlayer() {
-    return this.game.turnSystem.initiativePlayer.equals(this);
-  }
-
   get cardsDrawnForTurn() {
+    const isFirstTurn = this.game.turnSystem.elapsedTurns === 0;
+
+    if (isFirstTurn) {
+      return this.interceptors.cardsDrawnForTurn.getValue(
+        this.game.interaction.isInteractive(this)
+          ? this.game.config.PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN
+          : this.game.config.PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN,
+        {}
+      );
+    }
+
     return this.interceptors.cardsDrawnForTurn.getValue(
       this.game.config.CARDS_DRAWN_PER_TURN,
       {}
@@ -251,52 +118,114 @@ export class Player
     return this.game.playerSystem.player1.equals(this);
   }
 
-  get isActive() {
-    return this.game.turnSystem.initiativePlayer.equals(this);
-  }
-
   get opponent() {
     return this.game.playerSystem.players.find(p => !p.equals(this))!;
   }
 
-  get units() {
-    return this.game.unitSystem
-      .getUnitsByPlayer(this)
-      .filter(unit => unit.card.kind === CARD_KINDS.MINION);
+  get hero() {
+    return this.cardManager.hero;
   }
 
-  get enemyUnits() {
-    return this.opponent.units;
+  get enemyHero() {
+    return this.opponent.hero;
   }
 
-  get isTurnPlayer() {
-    return this.game.turnSystem.initiativePlayer.equals(this);
+  get minionsInBase() {
+    return this.boardSide.base
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isMinion);
+  }
+
+  get minionsInBattlefield() {
+    return this.boardSide.battlefield
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isMinion);
+  }
+
+  get artifactsInBase() {
+    return this.boardSide.base
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isArtifact);
+  }
+
+  get artifactsInBattlefield() {
+    return this.boardSide.battlefield
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isArtifact);
+  }
+
+  get minions() {
+    return [...this.minionsInBase];
+  }
+
+  get artifacts() {
+    return [...this.artifactsInBase, ...this.artifactsInBattlefield];
+  }
+
+  get allAllies() {
+    return [this.hero, ...this.minions];
+  }
+
+  get allEnemies() {
+    return [this.enemyHero, ...this.enemyMinions];
+  }
+
+  get enemyMinions() {
+    return this.opponent.minions;
+  }
+
+  get enemyArtifacts() {
+    return this.opponent.artifacts;
+  }
+
+  get isInteractive() {
+    return this.game.interaction.isInteractive(this);
+  }
+
+  private async playCard(card: AnyCard) {
+    await card.play();
+    if (card.shouldSwitchInitiativeAfterPlay) {
+      await this.game.turnSystem.switchInitiative();
+    }
+  }
+
+  private async payForManaCost(manaCost: number) {
+    assert(this.canSpendMana(manaCost), new NotEnoughManaError());
+    await this.spendMana(manaCost);
+  }
+
+  async playMainDeckCard(card: AnyCard) {
+    await this.payForManaCost(card.manaCost);
+    card.isPlayedFromHand = true;
+    await this.playCard(card);
+  }
+
+  async useAbility(ability: Ability<AbilityOwner>, onResolved: () => MaybePromise<void>) {
+    await this.payForManaCost(ability.manaCost);
+    await ability.use(onResolved);
   }
 
   async startTurn() {
-    this.hasPassedThisRound = false;
-
-    this.manaManager.refillMana();
-
-    if (this.game.config.DRAW_STEP === 'turn-start') {
-      await this.drawForTurn();
-    }
-
-    for (const minion of this.units) {
-      if (minion.shouldActivateOnTurnStart) {
-        minion.activate();
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_START_TURN,
+      new PlayerTurnEvent({ player: this })
+    );
+    for (const card of this.boardSide.getAllCardsInPlay()) {
+      if (card.shouldWakeUpAtTurnStart) {
+        await card.wakeUp();
       }
     }
-    this.hero.wakeUp();
-    this.combat.reset();
-
     await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
   }
 
-  async endTurn() {
-    if (this.game.config.DRAW_STEP === 'turn-end') {
-      await this.drawForTurn();
-    }
+  generateCard<T extends AnyCard>(blueprintId: string, isFoil: boolean) {
+    const card = this.game.cardSystem.addCard<T>(this, blueprintId, isFoil);
+
+    return card;
   }
 
   get mana() {
@@ -311,194 +240,42 @@ export class Player
     return this.manaManager.manaRegen;
   }
 
-  spendMana(amount: number) {
-    return this.manaManager.spendMana(amount);
+  async spendMana(amount: number) {
+    await this.manaManager.spend(amount);
   }
 
-  gainMana(amount: number) {
-    return this.manaManager.gainMana(amount);
+  async gainMana(amount: number) {
+    await this.manaManager.gain(amount);
   }
 
   canSpendMana(amount: number) {
-    return this.manaManager.canSpendMana(amount);
+    return this.mana >= amount;
   }
 
-  generateCard<T extends AnyCard = AnyCard>(
-    blueprintId: string,
-    isFoil: boolean
-  ): Promise<T> {
-    const card = this.game.cardSystem.addCard<T>(this, blueprintId, isFoil);
-
-    return card;
-  }
-
-  private async onBeforePlayFromHand(card: DeckCard) {
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_BEFORE_PLAY_CARD,
-      new PlayerPlayCardEvent({ player: this, card })
-    );
-    await this.spendMana(card.manaCost);
-  }
-
-  playCardFromHand(card: DeckCard) {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise<{ cancelled: boolean }>(async resolve => {
-      this.currentlyPlayedCard = card;
-      this.currentlyPlayedCardIndexInHand = this.cardManager.hand.indexOf(card);
-      const stop = card.once(
-        CARD_EVENTS.CARD_BEFORE_PLAY,
-        this.onBeforePlayFromHand.bind(this, card)
-      );
-      await card.play(async () => {
-        this.currentlyPlayedCard = null;
-        this.currentlyPlayedCardIndexInHand = null;
-        resolve({ cancelled: true });
-      });
-      await this.game.emit(
-        PLAYER_EVENTS.PLAYER_AFTER_PLAY_CARD,
-        new PlayerPlayCardEvent({ player: this, card })
-      );
-      stop();
-      this.currentlyPlayedCard = null;
-      this.currentlyPlayedCardIndexInHand = null;
-      resolve({ cancelled: false });
-    });
-  }
-
-  async drawForTurn() {
-    await this.cardManager.drawFromDeck(this.cardsDrawnForTurn);
-  }
-
-  passTurn() {
-    this.hasPassedThisRound = true;
-  }
-
-  getReceivedDamage(damage: Damage, source: AnyCard) {
-    return this.hero.getReceivedDamage(damage, source);
-  }
-
-  async takeDamage(source: AnyCard, damage: Damage) {
-    return this.combat.takeDamage(source, damage);
-  }
-
-  async heal(source: AnyCard, amount: number) {
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_BEFORE_HEAL,
-      new PlayerHealEvent({ player: this, amount, source })
-    );
-    this._damageTaken = Math.max(this._damageTaken - amount, 0);
-    await this.game.emit(
-      PLAYER_EVENTS.PLAYER_AFTER_HEAL,
-      new PlayerHealEvent({ player: this, amount, source })
-    );
-  }
-
-  get atk() {
-    return this.hero.atk;
-  }
-
-  getAttackDamage(target: Unit | Player) {
-    return this.hero.getAttackDamage(target);
-  }
-
-  get retaliation() {
-    return this.hero.retaliation;
-  }
-
-  getRetaliationDamage(attacker: Unit | Player) {
-    return this.hero.getRetaliationDamage(attacker);
-  }
-
-  get counterattackAOEShape() {
-    return this.hero.counterattackAOEShape;
-  }
-
-  get attackAOEShape() {
-    return this.hero.attackAOEShape;
-  }
-
-  get dealsDamageFirstWhenAttacking() {
-    return this.interceptors.dealsDamageFirstWhenAttacking.getValue(false, {});
-  }
-
-  getCounterattackParticipants(initialTarget: Unit) {
-    return [initialTarget];
-  }
-
-  canBeCounterattackedBy(unit: Unit | Player): boolean {
-    return this.interceptors.canBeCounterattackTarget.getValue(true, {
-      attacker: unit
-    });
-  }
-
-  canCounterAttack(unit: Unit | Player): boolean {
-    return this.interceptors.canCounterAttack.getValue(true, { attacker: unit });
-  }
-
-  async counterAttack(attacker: Unit | Player) {
-    return this.combat.counterAttack(attacker);
-  }
-
-  get shouldSwitchInitiativeafterAttacking() {
-    return this.interceptors.shouldSwitchInitiativeafterAttacking.getValue(true, {});
-  }
-
-  async attack(point: Point | null) {
-    const target = point ? this.game.unitSystem.getUnitAt(point) : this.opponent;
-    if (!target) return;
-
-    await this.combat.attack(target);
-    if (this.combat.attacksCount >= this.maxAttacksPerTurn) {
-      this.hero.exhaust();
-    }
-    await this.game.emit(
-      COMBAT_EVENTS.COMBAT_DONE,
-      new CombatDoneEvent({ attacker: this })
-    );
-
-    if (this.shouldSwitchInitiativeafterAttacking) {
-      await this.game.turnSystem.switchInitiative();
-    }
-  }
-
-  async removeHp(amount: number) {
-    this._damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
-  }
-
-  get maxAttacksPerTurn() {
-    return this.interceptors.maxAttacksPerTurn.getValue(
-      this.game.config.MAX_ATTACKS_PER_TURN,
-      {}
-    );
-  }
-
-  canAttack(target: Unit | Player): boolean {
-    return this.interceptors.canAttack.getValue(
-      this.combat.attacksCount < this.maxAttacksPerTurn &&
-        !this.hero.isExhausted &&
-        this.atk > 0,
-      { target }
-    );
-  }
-
-  get canAttackPlayer() {
-    return this.opponent.canBeAttackedBy(this) && this.canAttack(this.opponent);
-  }
-
-  canBeAttackedBy(attacker: Unit | Player): boolean {
-    return this.interceptors.canBeAttackTarget.getValue(true, {
-      attacker: attacker
-    });
-  }
-
-  canAttackAt(point: Point | null) {
-    if (!point) {
-      return this.canAttackPlayer;
-    }
-
-    const target = this.game.unitSystem.getUnitAt(point);
-    if (!target) return false;
-
-    return this.canAttack(target) && target.canBeAttackedBy(this);
+  serialize() {
+    return {
+      id: this.id,
+      entityType: 'player' as const,
+      name: this.options.name,
+      hand: this.cardManager.hand.map(card => ({
+        cardId: card.id,
+        isLocked: card.modifiers.has(LockedModifier),
+        isRevealed: card.isRevealed
+      })),
+      handSize: this.cardManager.hand.length,
+      discardPile: [...this.cardManager.discardPile].map(card => card.id),
+      banishPile: [...this.cardManager.banishPile].map(card => card.id),
+      remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
+      remainingCardsInRuneDeck: this.cardManager.destinyDeck.cards.length,
+      maxHp: this.hero.maxHp,
+      currentHp: this.hero.remainingHp,
+      isPlayer1: this.isPlayer1,
+      currentMana: this.mana,
+      maxMana: this.maxMana,
+      manaRegen: this.manaRegen,
+      exp: this.levelManager.exp,
+      level: this.levelManager.level,
+      maxLevel: this.game.config.PLAYER_MAX_LEVEL
+    };
   }
 }

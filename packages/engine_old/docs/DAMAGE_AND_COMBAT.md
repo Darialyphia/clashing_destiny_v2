@@ -263,8 +263,8 @@ export const directDamage: SpellBlueprint = {
   canPlay(game, card) {
     return singleEnemyTargetRules.canPlay(game, card);
   },
-  getPreResponseTargets(game, card) {
-    return singleEnemyTargetRules.getPreResponseTargets(game, card, {
+  getTargets(game, card) {
+    return singleEnemyTargetRules.getTargets(game, card, {
       type: 'card',
       card
     });
@@ -286,7 +286,7 @@ import { SpellDamage } from '../../../../../utils/damage';
 export const aoeSpell: SpellBlueprint = {
   // ...
   canPlay: () => true, // No targeting needed
-  async getPreResponseTargets() {
+  async getTargets() {
     return [];
   },
   async onPlay(game, card) {

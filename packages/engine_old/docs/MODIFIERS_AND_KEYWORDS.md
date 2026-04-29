@@ -35,7 +35,7 @@ Modifiers are reusable effects that can be attached to cards. They handle keywor
 ### DON'T Use Modifiers For:
 
 - One-time spell effects (use `onPlay` instead)
-- Card targeting logic (use `canPlay` and `getPreResponseTargets`)
+- Card targeting logic (use `canPlay` and `getTargets`)
 
 ## Available Modifiers
 

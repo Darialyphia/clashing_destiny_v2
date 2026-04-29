@@ -7,7 +7,7 @@ export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMi
 
   constructor(
     game: Game,
-    private predicate: (modifier: Modifier<T>) => boolean
+    private predicate: () => boolean
   ) {
     super(game);
     this.check = this.check.bind(this);
@@ -16,7 +16,7 @@ export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMi
   check(val: boolean) {
     if (!val) return val;
 
-    return this.predicate(this.modifier);
+    return this.predicate();
   }
 
   async onApplied(target: T, modifier: Modifier<T>) {
@@ -32,5 +32,5 @@ export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMi
     }
   }
 
-  onReapplied() {}
+  async onReapplied() {}
 }

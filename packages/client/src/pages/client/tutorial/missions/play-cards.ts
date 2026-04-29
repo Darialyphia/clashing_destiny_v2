@@ -1,4 +1,4 @@
-import type { HeroCard } from '@game/engine/src/card/entities/hero-card.entity';
+import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
 import type { TutorialMission } from '.';
 
 const meta: {

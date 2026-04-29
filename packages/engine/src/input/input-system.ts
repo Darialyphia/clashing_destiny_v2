@@ -9,35 +9,36 @@ import {
   type Values
 } from '@game/shared';
 import { type Game } from '../game/game';
-import type { Input } from './input';
+import type { DefaultSchema, Input } from './input';
 import { System } from '../system';
-import { z, ZodType } from 'zod';
+import { z } from 'zod';
 import {
   GAME_EVENTS,
   GameErrorEvent,
   GameInputQueueFlushedEvent,
   GameInputEvent
 } from '../game/game.events';
-import { GameNotPausedError, InputError } from './input-errors';
-import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
-import { ChooseCardsInput } from './inputs/choose-cards.input';
-import { PlayCardInput } from './inputs/play-card.input';
-import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
-import { MoveInput } from './inputs/move.input';
-import { MulliganInput } from './inputs/mulligan.input';
+import { GameAlreadyPausedError, GameNotPausedError, InputError } from './input-errors';
+import { DeclareAttackInput } from './inputs/declare-attack.input';
 import { PassInput } from './inputs/pass.input';
-import { AttackInput } from './inputs/attack.input';
+import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
+import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
+import { ChooseCardsInput } from './inputs/choose-cards.input';
+import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
+import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
+import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
+import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
+import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { SurrenderInput } from './inputs/surrender.input';
-import { UseAbilityInput } from './inputs/use-ability.input';
+import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
-import { CancelSpaceSelectionInput } from './inputs/cancel-space-selection';
-import { LevelUpSelectionInput } from './inputs/level-up-selection.input';
+import { MoveInput } from './inputs/move.input';
 
-type GenericInputMap = Record<string, Constructor<Input<ZodType>>>;
+type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
 type ValidatedInputMap<T extends GenericInputMap> = {
-  [Name in keyof T & string]: T[Name] extends Constructor<Input<ZodType>>
+  [Name in keyof T & string]: T[Name] extends Constructor<Input<DefaultSchema>>
     ? Name extends InstanceType<T[Name]>['name']
       ? T[Name]
       : `input map mismatch: expected ${Name}, but Input name is ${InstanceType<T[Name]>['name']}`
@@ -47,20 +48,21 @@ type ValidatedInputMap<T extends GenericInputMap> = {
 const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>) => data;
 
 const inputMap = validateinputMap({
-  playCard: PlayCardInput,
-  selectSpaceOnBoard: SelectSpaceOnBoardInput,
-  commitSpaceSelection: CommitSpaceSelectionInput,
-  chooseCards: ChooseCardsInput,
-  move: MoveInput,
-  mulligan: MulliganInput,
+  declarePlayCard: DeclarePlayCardInput,
+  cancelPlayCard: CancelPlayCardInput,
+  declareAttack: DeclareAttackInput,
+  declareAttackTarget: DeclareAttackTargetInput,
   pass: PassInput,
-  attack: AttackInput,
+  selectCardOnBoard: SelectCardOnBoardInput,
+  commitCardSelection: CommitCardSelectionInput,
+  chooseCards: ChooseCardsInput,
+  declareUseCardAbility: DeclareUseCardAbilityInput,
+  cancelUseAbility: CancelUseAbilityInput,
   surrender: SurrenderInput,
-  useAbility: UseAbilityInput,
-  interactionTimeout: InteractionTimeoutInput,
   answerQuestion: AnswerQuestionInput,
-  cancelSpaceSelection: CancelSpaceSelectionInput,
-  levelUpSelection: LevelUpSelectionInput
+  commitRearrangeCards: CommitRearrangeCardsInput,
+  interactionTimeout: InteractionTimeoutInput,
+  move: MoveInput
 });
 
 type InputMap = typeof inputMap;
@@ -109,8 +111,6 @@ export class InputSystem extends System<never> {
     this._currentAction = null;
     for (const rawInput of rawHistory) {
       void this.dispatch(rawInput);
-      // dispatch is async but it doesnt actually return when the input is fully processed
-      // so we need to wait a bit before dispatching the next input
       await waitFor(20);
     }
   }
@@ -137,6 +137,7 @@ export class InputSystem extends System<never> {
   }
 
   pause<T>() {
+    assert(!this.isPaused, new GameAlreadyPausedError());
     return new Promise<T>(resolve => {
       this.onUnpause = data => {
         this.onUnpause = null;
@@ -149,6 +150,7 @@ export class InputSystem extends System<never> {
 
   unpause<T>(data: T) {
     assert(this.isPaused, new GameNotPausedError());
+
     this.onUnpause?.(data);
   }
 
@@ -202,9 +204,6 @@ export class InputSystem extends System<never> {
   }
 
   async dispatch(input: SerializedInput) {
-    console.groupCollapsed(`[InputSystem]: ${input.type}`);
-    console.log(input);
-    console.groupEnd();
     if (!this.isActionType(input.type)) return;
     if (this.isPaused) {
       // if the game is paused, run the input immediately
@@ -216,6 +215,7 @@ export class InputSystem extends System<never> {
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
       // the current input could schedule new actions, so we need to wait for the flush to preserve the correct action order
+      console.log('scheduling input after current run');
       this.game.once(GAME_EVENTS.FLUSHED, () => {
         return this.schedule(() => this.handleInput(input));
       });
@@ -248,7 +248,6 @@ export class InputSystem extends System<never> {
 
   async askForPlayerInput() {
     await this.game.snapshotSystem.takeSnapshot();
-    // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 
   serialize() {

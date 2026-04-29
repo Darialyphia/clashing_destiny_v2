@@ -1,5 +1,4 @@
-import type { Values } from '@game/shared';
-import { JOBS, type JobId } from './card.enums';
+import { type Values } from '@game/shared';
 
 export type Keyword = {
   id: string;
@@ -9,145 +8,112 @@ export type Keyword = {
 };
 
 export const KEYWORDS = {
-  ADAPT: {
-    id: 'adapt',
-    name: 'Adapt',
-    description: 'When you play this card, choose one of multiple possible effects.',
-    aliases: []
-  },
-  ANCHORED: {
-    id: 'anchored',
-    name: 'Anchored',
-    description: 'This unit cannot move or be moved by any effect.',
-    aliases: []
-  },
-  BACKSTAB: {
-    id: 'backstab',
-    name: 'Backstab (x)',
+  LINEAGE: {
+    id: 'lineage',
+    name: 'Lineage',
     description:
-      'When this unit attacks a damaged enemy, it deals X additional damage and is immune to retaliation.',
-    aliases: [/^backstab$/, /backstab \([0-9]+\)/]
+      'This Hero must be leveled up from a previous hero with the same lineage.',
+    aliases: [/^[a-z\s]+\slineage+/]
   },
-  BURST: {
-    id: 'burst',
-    name: 'Burst',
-    description: 'You do not lose initiative after playing this card.',
-    aliases: []
-  },
-  SHIELD: {
-    id: 'barrier',
-    name: 'Barrier',
-    description: 'Prevents the next time this would be damaged.',
-    aliases: []
-  },
-  BLAST: {
-    id: 'blast',
-    name: 'Blast',
-    description: 'When this attacks, this damages all enemies on the same column.',
-    aliases: []
-  },
-  BURN: {
-    id: 'burn',
-    name: 'Burn (x)',
-    description: 'This unit takes X damage at the start of each turn.',
-    aliases: [/burn \([0-9]+\)/, /burning/]
-  },
-  CELERITY: {
-    id: 'celerity',
-    name: 'Celerity',
+  LOYALTY: {
+    id: 'loyalty',
+    name: 'Loyalty X',
     description:
-      'Can move and attack in the same turn, and does not pass initiative after moving.',
-    aliases: []
+      'If this card is from a different faction than your hero, Deal X additional unpreventable damage to your hero when you play it.',
+    aliases: [/^loyalty [0-9]+/, 'loyalty']
   },
-  CLEANSE: {
-    id: 'cleanse',
-    name: 'Cleanse',
-    description: 'Remove enchantments previously added from enemy sources.',
-    aliases: []
-  },
-  DEATHWATCH: {
-    id: 'deathwatch',
-    name: 'Deathwatch',
-    description: 'Triggers effect whenever a unit is destroyed.',
-    aliases: []
-  },
-  DISCOVER: {
-    id: 'discover',
-    name: 'Discover',
-    description: 'Choose one card between 3 choices and add it to your hand.',
-    aliases: []
-  },
-  ECHO: {
-    id: 'echo',
-    name: 'Echo',
-    description: 'When you play this card, put an Ephemeral copy of it in your hand.',
-    aliases: []
-  },
-  ELUSIVE: {
-    id: 'elusive',
-    name: 'Elusive',
+  LINGERING_DESTINY: {
+    id: 'lingering-destiny',
+    name: 'Lingering Destiny',
     description:
-      'When this unit is attacked for the first time in a turn, it moves to a adjacent position on the same rowif possible  (favor left). When it does, prevent all combat damage that would be dealt to and dealt by this creature.',
+      'You can banish this card from your discard pile to add a Mana Spark to your hand.',
     aliases: []
   },
-  EPHEMERAL: {
-    id: 'ephemeral',
-    name: 'Ephemeral',
-    description: 'This disappears at the end of the turn.',
+  SUMMONING_SICKNESS: {
+    id: 'summoning-sickness',
+    name: 'Summoning Sickness',
+    description: 'This unit cannot move the turn it is played.',
     aliases: []
   },
-  ESSENCE: {
-    id: 'essence',
-    name: 'Essence',
-    description:
-      "If you don't have enough mana, you can play this minion as a spell by paying its essence cost instead.",
-    aliases: [/essence\([0-9]+\)/]
-  },
-  FEARSOME: {
-    id: 'fearsome',
-    name: 'Fearsome (x)',
-    description:
-      "When this unit attacks a minino that costs X or less, it doesn't counterattack.",
-    aliases: [/fearsome \([0-9]+\)/]
-  },
-  FLEETING: {
-    id: 'fleeting',
-    name: 'Fleeting',
-    description:
-      "This card is removed from the game at the end of your turn if it's in your hand.",
+  ON_ENTER: {
+    id: 'on-enter',
+    name: 'On Enter',
+    description: 'Does something when this card enters the board when played from hand.',
     aliases: []
   },
-  CLEAVE: {
-    id: 'cleave',
-    name: 'Cleave',
-    description:
-      'When attacking, deal its attack damage to adjacent enemies on the same row.',
-    aliases: ['frenzy']
+  ON_DESTROYED: {
+    id: 'on-destroyed',
+    name: 'On Destroyed',
+    description: 'Does something when this card is destroyed.',
+    aliases: ['on death']
   },
-  FROZEN: {
-    id: 'frozen',
-    name: 'Frozen',
-    description:
-      'This unit has 0 attack and does not wake up at the start of the next turn.',
-    aliases: ['freeze']
+  ON_ATTACK: {
+    id: 'on-attack',
+    name: 'On Attack',
+    description: 'Does something when this card declares an attack.',
+    aliases: ['on minion attack', 'on hero attack']
   },
-  GROW: {
-    id: 'grow',
-    name: 'Grow',
-    description: 'This unit gains attack and hp at the starts of its turn.',
+  ON_RETALIATE: {
+    id: 'on-retaliate',
+    name: 'On Retaliate',
+    description: 'Does something when this card retaliates.',
     aliases: []
   },
-  INTIMIDATE: {
-    id: 'intimidate',
-    name: 'Intimidate (x)',
-    description: 'Cannot be attacked by enemies that cost x or less.',
-    aliases: [/intimidate \([0-9]+\)/]
-  },
-  INVULNERABLE: {
-    id: 'invulnerable',
-    name: 'Invulnerable',
-    description: 'This unit cannot be damaged.',
+  ON_KILL: {
+    id: 'on-kill',
+    name: 'On Kill',
+    description:
+      'Does something when this card kills another unit by combat while being the attacker.',
     aliases: []
+  },
+  ON_LEVEL_UP: {
+    id: 'on-level-up',
+    name: 'On Level Up',
+    description: 'Does something when your hero levels up.',
+    aliases: []
+  },
+  ON_RETREAT: {
+    id: 'on-retreat',
+    name: 'On Retreat',
+    description: 'Does something when this card moves from the battlefield to the base.',
+    aliases: []
+  },
+  ON_ENGAGE: {
+    id: 'on-engage',
+    name: 'On Engage',
+    description: 'Does something when this card moves from the base to the battlefield.',
+    aliases: []
+  },
+  IN_BASE: {
+    id: 'in-base',
+    name: 'In Base',
+    description: 'Does something while this card is in base.',
+    aliases: []
+  },
+  IN_BATTLEFIELD: {
+    id: 'in-battlefield',
+    name: 'In Battlefield',
+    description: 'Does something while this card is in the battlefield.',
+    aliases: []
+  },
+  UNIQUE: {
+    id: 'unique',
+    name: 'Unique',
+    description: 'You can only have one copy of this card on the board at the same time.',
+    aliases: []
+  },
+  HEXED: {
+    id: 'hexed',
+    name: 'Hexed',
+    description:
+      'Other card effects benefit from units being Hexed. The opponent can pay 2 mana to remove the hex.',
+    aliases: ['hex']
+  },
+  LINEAGE_BONUS: {
+    id: 'lineage-bonus',
+    name: 'Lineage Bonus',
+    description: 'This card has a bonus effect if this is your hero.',
+    aliases: [/lineage bonus [0-9]+/]
   },
   LEVEL_BONUS: {
     id: 'level-bonus',
@@ -155,134 +121,158 @@ export const KEYWORDS = {
     description: "This card has a bonus effect if its owner's Hero is at least level X.",
     aliases: [/level [0-9] bonus/]
   },
-  LONE_WOLF: {
-    id: 'lone_wolf',
-    name: 'Lone wolf',
-    description: 'Triggers when this unit has no nearby allies.',
-    aliases: []
-  },
-  ON_DESTROYED: {
-    id: 'on_destroyed',
-    name: 'On Destroyed',
-    description: 'Triggers when the unit is destroyed.',
-    aliases: ['dying wish']
-  },
-  ON_ATTACK: {
-    id: 'on_attack',
-    name: 'On Attack',
-    description: 'Triggers when this unit attacks.',
-    aliases: ['on minion attack', 'on hero attack']
-  },
-  ON_COUNTERATTACK: {
-    id: 'on_counterattack',
-    name: 'On Counterattack',
-    description: 'Triggers when this unit counterattacks.',
-    aliases: []
-  },
-  ON_ENTER: {
-    id: 'on_enter',
-    name: 'On Enter',
-    description: 'Triggers when the unit enters the battlefield.',
-    aliases: []
-  },
-  PROVOKE: {
-    id: 'provoke',
-    name: 'Provoke',
+  PRIDE: {
+    id: 'pride',
+    name: 'Pride X',
     description:
-      'Enemies in the same column as this cannot move and can only attack this unit.',
-    aliases: ['provoke']
+      "This minion cannot attack, move, or use abilities unless its owner's hero is at least level X.",
+    aliases: [/pride [0-9]+/]
   },
-  PROVOKED: {
-    id: 'provoked',
-    name: 'Provoked',
-    description: 'Provoked - cannot move and must attack Provoker first.',
+  PROTECTOR: {
+    id: 'protector',
+    name: 'Protector',
+    description: 'Enemy units cannot attack other minions without Protector',
     aliases: []
   },
-  SHOOTER: {
-    id: 'shooter',
-    name: 'Shooter',
-    description: 'This unit is immune to retaliation from non shooter units.',
+  FLEETING: {
+    id: 'fleeting',
+    name: 'Fleeting',
+    description:
+      'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
     aliases: []
   },
-  RUSH: {
-    id: 'rush',
-    name: 'Rush',
-    description: 'This unit activates the turn it is summoned.',
+  ECHO: {
+    id: 'echo',
+    name: 'Echo',
+    description:
+      'When you play this card, add it to your hand as a Fleeting copy of it without Echo.',
     aliases: []
   },
-  STRUCTURE: {
-    id: 'structure',
-    name: 'Structure',
-    aliases: [],
-    description: 'Cannot move, attack, retaliate or gain attack.'
+  FROZEN: {
+    id: 'frozen',
+    name: 'Frozen',
+    description:
+      "This unit has 0 attack and doesn't wake up at the start of the next turn.",
+    aliases: ['Freeze']
   },
-  SUMMONING_SICKNESS: {
-    id: 'summoning_sickness',
-    name: 'Summoning Sickness',
-    description: 'This unit was summoned this turn and cannot act.',
+  INHERITED_EFFECT: {
+    id: 'inherited-effect',
+    name: 'Inherited Effect',
+    description: 'This effect is preserved when your hero levels up.',
     aliases: []
   },
-  MAGIC_VEIL: {
-    id: 'magic_veil',
-    name: 'Magic Veil',
-    description: 'Cannot be targeted by spells',
+  DISCOVER: {
+    id: 'discover',
+    name: 'Discover',
+    description: 'pick one card among three choices to add to your hand.',
     aliases: []
   },
-  ZEAL: {
-    id: 'zeal',
-    name: 'Zeal',
-    description: 'Triggers an effect when an adjacent ally has attacked this turn.',
+  BURN: {
+    id: 'burn',
+    name: 'Burn X',
+    description: 'This takes X damage at the start of every turn.',
+    aliases: [/burn [0-9]+/]
+  },
+  INFLUENCE: {
+    id: 'influence',
+    name: 'Influence',
+    description: 'The sum of the cards in your hand and Destiny zone.',
     aliases: []
+  },
+  SCRY: {
+    id: 'scry',
+    name: 'Scry X',
+    description:
+      'Look at the top X cards of your deck, then put any number of them at the bottom of your deck.',
+    aliases: [/scry [0-9]+/]
+  },
+  SILENCED: {
+    id: 'silenced',
+    name: 'Silenced',
+    description: "All of this card's activated abilities are Sealed.",
+    aliases: ['silence']
+  },
+  SEAL: {
+    id: 'seal',
+    name: 'Seal',
+    description: 'Once sealed, this ability can no longer be used.',
+    aliases: []
+  },
+  DOUBLE_ATTACK: {
+    id: 'double-attack',
+    name: 'Double Attack',
+    description:
+      'The first time this attacks each turn, wake up this minion after combat.',
+    aliases: []
+  },
+  BALANCE: {
+    id: 'balance',
+    name: 'Balance',
+    description: 'You have the same amount of cards in your hand and your Destiny zone.',
+    aliases: []
+  },
+  TOUGH: {
+    id: 'tough',
+    name: 'Tough X',
+    description: 'This minion takes X less damage from all sources.',
+    aliases: [/tough [0-9]+/]
+  },
+  MILL: {
+    id: 'mill',
+    name: 'Mill (X)',
+    description: 'Send the top X cards of your deck to the discard pile.',
+    aliases: [/mill [0-9]+/]
+  },
+  INTIMIDATE: {
+    id: 'intimidate',
+    name: 'Intimidate X',
+    description: 'This unit cannot be attacked by minions that cost X or less.',
+    aliases: [/intimidate [0-9]+/]
   },
   STEALTH: {
     id: 'stealth',
     name: 'Stealth',
-    description: 'Cannot be targeted or attacked unless exhausted.',
-    aliases: []
-  },
-  UNIQUE: {
-    id: 'unique',
-    name: 'Unique',
     description:
-      'Only one copy of this card can be in play on your side of the board at a time.',
+      'This unit cannot be targeted by attacks as long as it is not exhausted.',
     aliases: []
   },
-  MELEE_GUARD: {
-    id: 'melee_guard',
-    name: 'Melee Guard (x)',
-    description: 'Adjacent allies take X less damage from melee minions.',
-    aliases: [/melee guard \([0-9]+\)/]
+  EQUIP_WEAPON: {
+    id: 'equip-weapon',
+    name: 'Equip Weapon',
+    description: "This turn, your hero gains attack equal to this card's Attack bonus",
+    aliases: []
   },
-  RANGED_GUARD: {
-    id: 'ranged_guard',
-    name: 'Ranged Guard (x)',
-    description: 'Adjacent allies take X less damage from ranged minions.',
-    aliases: [/ranged guard \([0-9]+\)/]
+  OVERWHELM: {
+    id: 'overwhelm',
+    name: 'Overwhelm',
+    description:
+      'When this attacks and destroy a minion, deal excess damage to the enemy Hero.',
+    aliases: []
   },
-  FLYER_GUARD: {
-    id: 'flyer_guard',
-    name: 'Flyer Guard (x)',
-    description: 'Adjacent allies take X less damage from flyer minions.',
-    aliases: [/flyer guard \([0-9]+\)/]
-  },
-  HERO_GUARD: {
-    id: 'hero_guard',
-    name: 'Hero Guard (x)',
-    description: 'Adjacent allies take X less damage from enemy heroes.',
-    aliases: [/hero guard \([0-9]+\)/]
-  },
-  SPELL_GUARD: {
-    id: 'spell_guard',
-    name: 'Spell Guard (x)',
-    description: 'Adjacent allies take X less damage from enemy spells.',
-    aliases: [/spell guard \([0-9]+\)/]
+  SPELLPOWER: {
+    id: 'spellpower',
+    name: 'Spellpower X',
+    description: 'Increase the damage of your spells by X.',
+    aliases: [/spellpower [0-9]+/, 'spellpower']
   },
   EMPOWER: {
     id: 'empower',
     name: 'Empower X',
-    description:
-      'The next spell you cast this turn resolves as if your Hero had +X level.',
+    description: 'The next spell you cast this turn deals X more damage.',
     aliases: [/empower [0-9]+/, 'empower', /empowered/]
+  },
+  LOCKED: {
+    id: 'locked',
+    name: 'Locked',
+    description:
+      'This card cannot be played. If it is in the Destiny Zone, it is not recollected at the start of the turn.',
+    aliases: [/^lock$/]
+  },
+  BLAST: {
+    id: 'blast',
+    name: 'Blast X',
+    description: 'When this card is destroyed in combat, deal X damage to an enemy.',
+    aliases: [/blast [0-9]+/]
   },
   PREEMPTIVE_STRIKE: {
     id: 'preemptive-strike',
@@ -298,43 +288,45 @@ export const KEYWORDS = {
       'This unit deals its combat damage before the attacking unit during combat.',
     aliases: []
   },
-  OVERWHELM: {
-    id: 'overwhelm',
-    name: 'Overwhelm',
-    description: 'Excess damage dealt to a unit is dealt to the enemy player.',
-    aliases: []
-  },
-  SPLASH_ATTACK: {
-    id: 'splash_attack',
-    name: 'Splash Attack',
-    description: 'When this unit attacks, it also damages adjacent units.',
-    aliases: []
-  },
-  REGENERATION: {
-    id: 'regeneration',
-    name: 'Regeneration (x)',
-    description: 'At the start of the turn, heal this unit for X.',
-    aliases: [/regeneration \([0-9]+\)/]
-  },
-  PREDICT: {
-    id: 'predict',
-    name: 'Predict',
+  TRUE_DAMAGE: {
+    id: 'true-damage',
+    name: 'True Damage',
     description:
-      'Look at 3 cards from your deck at random, choose one and put it on top of your deck.',
+      'This damage cannot be prevented or reduced, and is not affected by Spellpower.',
     aliases: []
   },
-  ...Object.fromEntries(
-    Object.values(JOBS).map(job => [
-      `${job.id.toUpperCase()}_BONUS` as `${Uppercase<JobId>}_BONUS`,
-      {
-        id: `${job.id}_mastery`,
-        name: `${job.name} Bonus`,
-        description: `This card has a bonus effect if its owner is playing a ${job.name} hero.`,
-        aliases: []
-      }
-    ]) as [`${Uppercase<JobId>}_BONUS`, Keyword][]
-  )
-} as const satisfies Record<string, Keyword>;
+  SPELLBOOST: {
+    id: 'spellboost',
+    name: 'Spellboost',
+    description:
+      'When you play a spell, the Spellboost effects of cards in your hand activate. Effects vary by card',
+    aliases: []
+  },
+  BURST_ATTACK: {
+    id: 'burst-attack',
+    name: 'Burst Attack',
+    description: "This unit's owner keeps initiativer after this unit attacks.",
+    aliases: []
+  },
+  COURAGE: {
+    id: 'courage',
+    name: 'Courage X',
+    description: 'This unit has +X attack when attacking.',
+    aliases: [/courage [0-9]+/]
+  },
+  STEADFAST: {
+    id: 'steadfast',
+    name: 'Steadfast X',
+    description: 'This unit has +X attack when getting attacked.',
+    aliases: [/steadfast [0-9]+/]
+  },
+  CHALLENGE: {
+    id: 'challenge',
+    name: 'Challenge',
+    description: 'Move a minino from the base to the battlefield',
+    aliases: []
+  }
+};
 
 export type KeywordName = Values<typeof KEYWORDS>['name'];
 export type KeywordId = Values<typeof KEYWORDS>['id'];

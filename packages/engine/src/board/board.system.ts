@@ -1,166 +1,69 @@
-import {
-  indexToPoint,
-  isDefined,
-  isString,
-  type Point,
-  type Serializable
-} from '@game/shared';
-import { BoardCell } from './entities/board-cell.entity';
-import { pointToCellId } from './board-utils';
+import { type BetterExtract, type Serializable } from '@game/shared';
+import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
-import type { MapBlueprint } from './map-blueprint';
-import type { Player } from '../player/player.entity';
+import type { BoardSide, SerializedBoardSide } from './board-side.entity';
+import { CARD_DECK_SOURCES, type CardLocation } from '../card/card.enums';
 
-export type BoardSystemOptions = {
-  map: MapBlueprint;
+export type MinionSlot = number;
+
+export const isMainDeckCard = (card: AnyCard) => {
+  return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
+};
+
+export const isDestinyDeckCard = (card: AnyCard) => {
+  return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
 };
 
 export type SerializedBoard = {
-  rows: number;
-  columns: number;
-  cells: string[];
-  shrines: string[];
-  teleporters: string[];
+  sides: [SerializedBoardSide, SerializedBoardSide];
 };
 
-export class BoardSystem
-  extends System<BoardSystemOptions>
-  implements Serializable<SerializedBoard>
-{
-  map!: MapBlueprint;
-
-  cellsMap = new Map<string, BoardCell>();
-
-  dimensions!: { width: number; height: number };
-
-  async initialize(options: BoardSystemOptions) {
-    this.map = options.map;
-
-    this.map.cells.forEach((cellBlueprint, index) => {
-      if (!cellBlueprint) return;
-      const position = indexToPoint(this.map.cols, index);
-      const cell = new BoardCell(this.game, {
-        position,
-        ...cellBlueprint
-      });
-      this.cellsMap.set(cell.id, cell);
-    });
-
-    this.dimensions = {
-      width: options.map.cols,
-      height: options.map.rows
-    };
-
-    await this.map.onInit(this.game);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+export class BoardSystem extends System<never> implements Serializable<SerializedBoard> {
+  initialize() {}
   shutdown() {}
 
-  get width() {
-    return this.map.cols;
-  }
-
-  get height() {
-    return this.map.rows;
-  }
-
-  get cells() {
-    return [...this.cellsMap.values()];
-  }
-
-  getRow(rowIndex: number) {
-    return this.cells.filter(cell => cell.y === rowIndex);
-  }
-
-  getColumn(colIndex: number) {
-    return this.cells.filter(cell => cell.x === colIndex);
-  }
-
-  getBackRowForPlayer(player: Player) {
-    return this.cells.filter(cell => cell.player?.equals(player) && cell.isBackRow);
-  }
-
-  getFrontRowForPlayer(player: Player) {
-    return this.cells.filter(cell => cell.player?.equals(player) && cell.isFrontRow);
-  }
-
-  getCellsForPlayer(player: Player) {
-    return [...this.getFrontRowForPlayer(player), ...this.getBackRowForPlayer(player)];
-  }
-
-  isInArea(topLeft: Point, size: { width: number; height: number }, point: Point) {
-    return (
-      point.x >= topLeft.x &&
-      point.x < topLeft.x + size.width &&
-      point.y >= topLeft.y &&
-      point.y < topLeft.y + size.height
-    );
-  }
-
-  getCellAt(posOrKey: string | Point): BoardCell | null {
-    if (isString(posOrKey)) {
-      return this.cellsMap.get(posOrKey) ?? null;
-    }
-    return this.cellsMap.get(pointToCellId(posOrKey)) ?? null;
-  }
-
-  getDistance(origin: Point, point: Point): number {
-    return Math.max(Math.abs(point.x - origin.x), Math.abs(point.y - origin.y));
-  }
-
-  getNeighbors(point: Point) {
-    // get neighboring positions in a clockwise order
+  get sides(): [BoardSide, BoardSide] {
     return [
-      this.getCellAt({ x: point.x - 1, y: point.y - 1 }), // top left
-      this.getCellAt({ x: point.x, y: point.y - 1 }), // top
-      this.getCellAt({ x: point.x + 1, y: point.y - 1 }), // top right
-      this.getCellAt({ x: point.x + 1, y: point.y }), // right
-      this.getCellAt({ x: point.x + 1, y: point.y + 1 }), // bottom right
-      this.getCellAt({ x: point.x, y: point.y + 1 }), // bottom
-      this.getCellAt({ x: point.x - 1, y: point.y + 1 }), // bottom left,
-      this.getCellAt({ x: point.x - 1, y: point.y }) // left
-    ].filter(isDefined);
+      this.game.playerSystem.player1.boardSide,
+      this.game.playerSystem.player2.boardSide
+    ];
   }
 
-  getAdjacent(point: Point) {
-    // get adjacent positions (non-diagonal)
-    return [
-      this.getCellAt({ x: point.x, y: point.y - 1 }), // top
-      this.getCellAt({ x: point.x + 1, y: point.y }), // right
-      this.getCellAt({ x: point.x, y: point.y + 1 }), // bottom
-      this.getCellAt({ x: point.x - 1, y: point.y }) // left
-    ].filter(isDefined);
-  }
-
-  getNearbyShrines({ x, y }: Point) {
-    return this.game.boardSystem
-      .getNeighbors({ x, y })
-      .map(cell => cell.shrine)
-      .filter(isDefined);
-  }
-
-  getCellsWithin(topLeft: Point, bottomRight: Point) {
-    return [...this.cellsMap.values()].filter(
-      cell =>
-        cell.x >= topLeft.x &&
-        cell.x <= bottomRight.x &&
-        cell.y >= topLeft.y &&
-        cell.y <= bottomRight.y
-    );
-  }
-
-  isNearby(from: Point, to: Point) {
-    return this.getDistance(from, to) == 1;
+  getAllCardsInPlay(): AnyCard[] {
+    return this.sides.flatMap(side => side.getAllCardsInPlay());
   }
 
   serialize(): SerializedBoard {
     return {
-      rows: this.height,
-      columns: this.width,
-      cells: this.cells.map(cell => cell.id),
-      shrines: [],
-      teleporters: []
+      sides: this.sides.map(side => side.serialize()) as unknown as [
+        SerializedBoardSide,
+        SerializedBoardSide
+      ]
     };
+  }
+
+  getBoardSpace({
+    playerId,
+    zone,
+    index
+  }: {
+    playerId: string;
+    zone: BetterExtract<CardLocation, 'base' | 'battlefield'>;
+    index: number;
+  }) {
+    const side = this.sides.find(side => side.player.id === playerId);
+    return side?.getSpace(zone, index) ?? null;
+  }
+}
+
+export class CreatureSlotAlreadyOccupiedError extends Error {
+  constructor() {
+    super('Creature slot is already occupied');
+  }
+}
+
+export class ShardZoneAlreadyOccupiedError extends Error {
+  constructor() {
+    super('Shard zone is already occupied');
   }
 }

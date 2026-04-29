@@ -1,39 +1,39 @@
-import { isDefined, shuffleArray } from '@game/shared';
+import { isDefined } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
+import {
+  CARD_DECK_SOURCES,
+  CARD_KINDS,
+  CARD_LOCATIONS,
+  type CardLocation
+} from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
-import { PlayerBeforeDrawEvent, PlayerAfterDrawEvent } from '../../player/player.events';
-import { MinionCard } from '../entities/minion-card.entity';
-import { SpellCard } from '../entities/spell-card.entity';
-import { ArtifactCard } from '../entities/artifact-card.entity';
-import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
-import type { DestinyCard } from '../entities/destiny-card.entity';
-import type { HeroCard } from '../entities/hero-card.entity';
+import { PlayerDrawEvent } from '../../player/player.events';
+import type { DestinyCard } from '../entities/destiny.entity';
+import type { HeroCard } from '../entities/hero.entity';
 
 export type CardManagerComponentOptions = {
-  deck: { blueprintId: string; isFoil: boolean }[];
   maxHandSize: number;
   shouldShuffleDeck: boolean;
+  deck: { blueprintId: string; isFoil: boolean }[];
 };
-
-export type DeckCard = MinionCard | SpellCard | ArtifactCard;
 
 export class CardManagerComponent {
   private game: Game;
 
-  readonly deck: Deck<DeckCard>;
+  readonly mainDeck: Deck<AnyCard>;
 
   readonly destinyDeck: Deck<DestinyCard>;
 
   readonly hero!: HeroCard;
 
-  readonly hand: DeckCard[] = [];
+  readonly hand: AnyCard[] = [];
 
-  readonly discardPile = new Set<DeckCard>();
+  readonly discardPile = new Set<AnyCard>();
 
-  readonly banishPile = new Set<DeckCard>();
+  readonly banishPile = new Set<AnyCard>();
 
   constructor(
     game: Game,
@@ -41,12 +41,8 @@ export class CardManagerComponent {
     private options: CardManagerComponentOptions
   ) {
     this.game = game;
-    this.deck = new Deck(this.game, player);
+    this.mainDeck = new Deck(this.game, player);
     this.destinyDeck = new Deck(this.game, player);
-
-    if (options.shouldShuffleDeck) {
-      this.deck.shuffle();
-    }
   }
 
   private async buildCards<T extends AnyCard>(
@@ -63,21 +59,21 @@ export class CardManagerComponent {
 
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
-    this.deck.populate(
-      cards.filter(
-        c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY
-      ) as DeckCard[]
+    this.mainDeck.populate(
+      cards.filter(c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY)
     );
     this.destinyDeck.populate(
       cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
     );
-    // @ts-expect-error
+
+    // @ts-expect-error ts complaining about readonly
     this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
-    if (this.game.config.SHUFFLE_DECK_ON_GAME_START) {
-      this.deck.shuffle();
+
+    if (this.options.shouldShuffleDeck) {
+      this.mainDeck.shuffle();
     }
 
-    this.hand.push(...this.deck.draw(this.game.config.INITIAL_HAND_SIZE));
+    this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
   }
 
   get isHandFull() {
@@ -85,36 +81,49 @@ export class CardManagerComponent {
   }
 
   get remainingCardsInMainDeck() {
-    return this.deck.remaining;
+    return this.mainDeck.remaining;
+  }
+
+  get remainingCardsInRuneDeck() {
+    return this.destinyDeck.remaining;
   }
 
   get mainDeckSize() {
-    return this.deck.size;
+    return this.mainDeck.size;
   }
 
-  findCard<T extends DeckCard>(
-    id: string
-  ): {
-    card: T;
+  get runeDeckSize() {
+    return this.destinyDeck.size;
+  }
+
+  findCard(id: string): {
+    card: AnyCard;
     location: CardLocation;
   } | null {
     const card = this.hand.find(card => card.id === id);
-    if (card) return { card: card as T, location: CARD_LOCATIONS.HAND };
+    if (card) return { card, location: CARD_LOCATIONS.HAND };
 
-    const deckCard = this.deck.cards.find(card => card.id === id);
-    if (deckCard) return { card: deckCard as T, location: CARD_LOCATIONS.DECK };
+    const mainDeckCard = this.mainDeck.cards.find(card => card.id === id);
+    if (mainDeckCard) return { card: mainDeckCard, location: CARD_LOCATIONS.MAIN_DECK };
+
+    const runeDeckCard = this.destinyDeck.cards.find(card => card.id === id);
+    if (runeDeckCard) return { card: runeDeckCard, location: CARD_LOCATIONS.RUNE_DECK };
 
     const discardPileCard = [...this.discardPile].find(card => card.id === id);
     if (discardPileCard)
-      return { card: discardPileCard as T, location: CARD_LOCATIONS.DISCARD_PILE };
+      return { card: discardPileCard, location: CARD_LOCATIONS.DISCARD_PILE };
 
-    const onBoardCard =
-      this.player.units.find(unit => unit?.card.id === id)?.card ||
-      this.player.artifactManager.artifacts.find(artifact => artifact.card.id === id)
-        ?.card ||
-      this.player.levelManager.talents.find(talent => talent.id === id) ||
-      this.player.hero.id === id;
-    if (onBoardCard) return { card: onBoardCard as T, location: CARD_LOCATIONS.BOARD };
+    const banishPileCard = [...this.banishPile].find(card => card.id === id);
+    if (banishPileCard)
+      return { card: banishPileCard, location: CARD_LOCATIONS.BANISH_PILE };
+
+    const baseCard = this.player.boardSide.getCardInBase(id);
+    if (baseCard) return { card: baseCard, location: CARD_LOCATIONS.BASE };
+
+    const battlefieldCard = this.player.boardSide.getCardInBattlefield(id);
+    if (battlefieldCard)
+      return { card: battlefieldCard, location: CARD_LOCATIONS.BATTLEFIELD };
+
     return null;
   }
 
@@ -126,23 +135,68 @@ export class CardManagerComponent {
     return this.hand.find(card => card.id === id);
   }
 
-  async drawFromDeck(amount: number) {
+  getRuneCardById(id: string) {
+    return this.destinyDeck.cards.find(card => card.id === id);
+  }
+
+  getRuneCardAt(index: number) {
+    return this.destinyDeck.cards[index];
+  }
+
+  async drawWithFilter(amount: number, filter: (card: AnyCard) => boolean) {
     if (this.isHandFull) return [];
 
     const amountToDraw = Math.min(
       amount,
-      this.deck.remaining,
+      this.mainDeck.remaining,
       this.options.maxHandSize - this.hand.length
     );
+
     if (amountToDraw <= 0) return [];
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_DRAW,
-      new PlayerBeforeDrawEvent({
+      new PlayerDrawEvent({
         player: this.player,
         amount: amountToDraw
       })
     );
-    const cards = this.deck.draw(amountToDraw);
+    const candidates = this.mainDeck.cards.filter(filter);
+    const cards = candidates.slice(0, amountToDraw);
+
+    for (const card of cards) {
+      this.mainDeck.pluck(card);
+      await card.addToHand();
+    }
+
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_AFTER_DRAW,
+      new PlayerDrawEvent({
+        player: this.player,
+        amount: amountToDraw
+      })
+    );
+
+    return cards;
+  }
+
+  async draw(amount: number) {
+    if (this.isHandFull) return [];
+
+    const amountToDraw = Math.min(
+      amount,
+      this.mainDeck.remaining,
+      this.options.maxHandSize - this.hand.length
+    );
+
+    if (amountToDraw <= 0) return [];
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_BEFORE_DRAW,
+      new PlayerDrawEvent({
+        player: this.player,
+        amount: amountToDraw
+      })
+    );
+    const cards = this.mainDeck.draw(amountToDraw);
 
     for (const card of cards) {
       await card.addToHand();
@@ -150,47 +204,19 @@ export class CardManagerComponent {
 
     await this.game.emit(
       GAME_EVENTS.PLAYER_AFTER_DRAW,
-      new PlayerAfterDrawEvent({
+      new PlayerDrawEvent({
         player: this.player,
-        cards
+        amount: amountToDraw
       })
     );
 
     return cards;
   }
 
-  async drawFromPool(cards: DeckCard[], amount: number) {
-    if (this.isHandFull) return [];
-
-    const amountToDraw = Math.min(
-      amount,
-      cards.length,
-      this.options.maxHandSize - this.hand.length
-    );
-    if (amountToDraw <= 0) return [];
-
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_BEFORE_DRAW,
-      new PlayerBeforeDrawEvent({
-        player: this.player,
-        amount: amountToDraw
-      })
-    );
-    const shuffledPool = shuffleArray(cards, () => this.game.rngSystem.next());
-    const drawnCards = shuffledPool.splice(0, amountToDraw);
-
-    for (const card of drawnCards) {
-      await card.addToHand();
-    }
-
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_AFTER_DRAW,
-      new PlayerAfterDrawEvent({
-        player: this.player,
-        cards: drawnCards
-      })
-    );
-    return drawnCards;
+  removeFromRuneDeck(card: AnyCard) {
+    const index = this.destinyDeck.cards.findIndex(runeCard => runeCard.equals(card));
+    if (index === -1) return;
+    this.destinyDeck.cards.splice(index, 1);
   }
 
   removeFromHand(card: AnyCard) {
@@ -199,38 +225,50 @@ export class CardManagerComponent {
     this.hand.splice(index, 1);
   }
 
-  discard(card: DeckCard) {
+  discard(card: AnyCard) {
     this.removeFromHand(card);
     this.sendToDiscardPile(card);
   }
 
-  sendToDiscardPile(card: DeckCard) {
-    this.discardPile.add(card as DeckCard);
+  mill(amount: number) {
+    const cards = this.mainDeck.draw(amount);
+    for (const card of cards) {
+      this.sendToDiscardPile(card);
+    }
+    return cards;
   }
 
-  removeFromDiscardPile(card: DeckCard) {
+  sendToDiscardPile(card: AnyCard) {
+    if (card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
+      this.sendToBanishPile(card);
+    } else {
+      this.discardPile.add(card);
+    }
+  }
+
+  removeFromDiscardPile(card: AnyCard) {
     this.discardPile.delete(card);
   }
 
-  sendToBanishPile(card: DeckCard) {
+  sendToBanishPile(card: AnyCard) {
     this.banishPile.add(card);
   }
 
-  removeFromBanishPile(card: DeckCard) {
+  removeFromBanishPile(card: AnyCard) {
     this.banishPile.delete(card);
   }
 
-  replaceCardAt(index: number, random = true) {
+  replaceCardAt(index: number) {
     const card = this.getCardInHandAt(index);
     if (!card) return card;
 
-    const replacement = random ? this.deck.randomReplace(card) : this.deck.replace(card);
+    const replacement = this.mainDeck.replace(card);
     this.hand[index] = replacement;
 
     return replacement;
   }
 
-  async addToHand(card: DeckCard, index?: number) {
+  addToHand(card: AnyCard, index?: number) {
     if (this.isHandFull) return;
     if (isDefined(index)) {
       this.hand.splice(index, 0, card);

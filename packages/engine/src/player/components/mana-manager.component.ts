@@ -21,7 +21,7 @@ export class ManaManagerComponent {
 
   init() {
     this._baseMaxMana = this.game.config.MAX_MANA;
-    this.refillMana();
+    this.refill();
   }
 
   get mana() {
@@ -36,11 +36,11 @@ export class ManaManagerComponent {
     return this.interceptors.manaRegen.getValue(this.game.config.MANA_REGEN_PER_TURN, {});
   }
 
-  refillMana() {
+  refill() {
     this._mana = Math.min(this._mana + this.manaRegen, this.maxMana);
   }
 
-  async spendMana(amount: number) {
+  async spend(amount: number) {
     if (amount === 0) return;
     await this.game.emit(
       PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
@@ -53,7 +53,7 @@ export class ManaManagerComponent {
     );
   }
 
-  async gainMana(amount: number) {
+  async gain(amount: number) {
     if (amount === 0) return;
     await this.game.emit(
       PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,

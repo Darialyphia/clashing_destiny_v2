@@ -1,0 +1,144 @@
+import type { MaybePromise, Serializable } from '@game/shared';
+import type { Game } from '../../game/game';
+import type { AbilityBlueprint } from '../card-blueprint';
+import type { AnyCard } from './card.entity';
+import { Interceptable } from '../../utils/interceptable';
+import { EntityWithModifiers } from '../../utils/entity-with-modifiers';
+import {
+  ABILITY_EVENTS,
+  AbilityAfterUseEvent,
+  AbilityBeforeUseEvent
+} from '../events/ability.events';
+import type { BoardCell } from '../../board/entities/board-cell.entity';
+
+export type SerializedAbility = {
+  entityType: 'ability';
+  id: string;
+  abilityId: string;
+  canUse: boolean;
+  label: string;
+  description: string;
+  cooldown: number;
+  manaCost: number;
+  lastUsedAt: number | null;
+  isHiddenOnCard: boolean;
+};
+
+export type AbilityInterceptor = {
+  manaCost: Interceptable<number>;
+  canUse: Interceptable<boolean>;
+  cooldown: Interceptable<number>;
+  shouldSwitchInitiativeAfterUse: Interceptable<boolean>;
+};
+
+export class Ability<T extends AnyCard>
+  extends EntityWithModifiers<AbilityInterceptor>
+  implements Serializable<SerializedAbility>
+{
+  private lastUsedAt: number | null = null;
+
+  constructor(
+    game: Game,
+    private card: T,
+    public blueprint: AbilityBlueprint<T>
+  ) {
+    super(`${card.id}-ability-${blueprint.id}`, game, {
+      manaCost: new Interceptable(),
+      canUse: new Interceptable(),
+      cooldown: new Interceptable(),
+      shouldSwitchInitiativeAfterUse: new Interceptable()
+    });
+  }
+
+  get abilityId() {
+    return this.blueprint.id;
+  }
+
+  get manaCost() {
+    return this.interceptors.manaCost.getValue(this.blueprint.manaCost, {});
+  }
+
+  get cooldown() {
+    return this.interceptors.cooldown.getValue(
+      this.blueprint.getCooldown(this.game, this.card),
+      {}
+    );
+  }
+
+  get isOnCooldown() {
+    if (this.lastUsedAt === null) {
+      return false;
+    }
+    return this.lastUsedAt + this.cooldown > this.game.turnSystem.elapsedTurns;
+  }
+
+  get canUse() {
+    return this.interceptors.canUse.getValue(
+      this.blueprint.canUse(this.game, this.card) &&
+        this.card.player.canSpendMana(this.blueprint.manaCost) &&
+        !this.isOnCooldown,
+      {}
+    );
+  }
+
+  get shouldSwitchInitiativeAfterUse() {
+    return this.interceptors.shouldSwitchInitiativeAfterUse.getValue(true, {});
+  }
+
+  private getTargets() {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<{ targets: BoardCell[]; cancelled: boolean }>(async resolve => {
+      const targets = await this.blueprint.getTargets(this.game, this.card, async () => {
+        resolve({ targets: [], cancelled: true });
+      });
+      resolve({ targets, cancelled: false });
+    });
+  }
+
+  async use(onSuccess?: () => MaybePromise<void>) {
+    const { targets, cancelled } = await this.getTargets();
+    if (cancelled) return;
+
+    await this.game.emit(
+      ABILITY_EVENTS.ABILITY_BEFORE_USE,
+      new AbilityBeforeUseEvent({ ability: this as any, card: this.card })
+    );
+
+    this.lastUsedAt = this.game.turnSystem.elapsedTurns;
+
+    await this.card.player.spendMana(this.manaCost);
+    const aoe = this.blueprint.getAoe(this.game, this.card, targets);
+
+    await this.blueprint.onResolve(this.game, this.card, {
+      targets,
+      aoe,
+      ability: this
+    });
+
+    await this.game.emit(
+      ABILITY_EVENTS.ABILITY_AFTER_USE,
+      new AbilityAfterUseEvent({ ability: this as any, card: this.card })
+    );
+
+    await onSuccess?.();
+
+    if (this.shouldSwitchInitiativeAfterUse) {
+      await this.game.turnSystem.switchInitiative();
+    }
+  }
+
+  serialize(): SerializedAbility {
+    return {
+      entityType: 'ability',
+      id: this.id,
+      abilityId: this.abilityId,
+      label: this.blueprint.label,
+      canUse: this.canUse,
+      description: this.blueprint.description,
+      cooldown: this.cooldown,
+      manaCost: this.manaCost,
+      lastUsedAt: this.lastUsedAt,
+      isHiddenOnCard: this.blueprint.isHiddenOnCard ?? false
+    };
+  }
+}

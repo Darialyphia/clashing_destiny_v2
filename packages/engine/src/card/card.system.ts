@@ -10,14 +10,14 @@ import type {
   MinionBlueprint,
   SpellBlueprint
 } from './card-blueprint';
-import { SpellCard } from './entities/spell-card.entity';
-import { ArtifactCard } from './entities/artifact-card.entity';
+import { SpellCard } from './entities/spell.entity';
+import { ArtifactCard } from './entities/artifact.entity';
+import { MinionCard } from './entities/minion.entity';
+import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { MinionCard } from './entities/minion-card.entity';
-import { DestinyCard } from './entities/destiny-card.entity';
-import { HeroCard } from './entities/hero-card.entity';
+import { DestinyCard } from './entities/destiny.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -55,7 +55,7 @@ export class CardSystem extends System<CardSystemOptions> {
     return [...this.cardMap.values()];
   }
 
-  async addCard<T extends AnyCard = AnyCard>(
+  async addCard<T extends AnyCard>(
     player: Player,
     blueprintId: string,
     isFoil: boolean
@@ -69,8 +69,7 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new SpellCard(this.game, player, {
             id,
-            blueprint,
-            isFoil
+            blueprint
           } as CardOptions<SpellBlueprint>)
       )
       .with(
@@ -78,8 +77,7 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new ArtifactCard(this.game, player, {
             id,
-            blueprint,
-            isFoil
+            blueprint
           } as CardOptions<ArtifactBlueprint>)
       )
       .with(
@@ -87,32 +85,29 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new MinionCard(this.game, player, {
             id,
-            blueprint,
-            isFoil
+            blueprint
           } as CardOptions<MinionBlueprint>)
-      )
-      .with(
-        CARD_KINDS.DESTINY,
-        () =>
-          new DestinyCard(this.game, player, {
-            id,
-            blueprint,
-            isFoil
-          } as CardOptions<DestinyBlueprint>)
       )
       .with(
         CARD_KINDS.HERO,
         () =>
           new HeroCard(this.game, player, {
             id,
-            blueprint,
-            isFoil
+            blueprint
           } as CardOptions<HeroBlueprint>)
       )
+      .with(
+        CARD_KINDS.DESTINY,
+        () =>
+          new DestinyCard(this.game, player, {
+            id,
+            blueprint
+          } as CardOptions<DestinyBlueprint>)
+      )
       .exhaustive();
-    this.cardMap.set(card.id, card);
     await card.init();
 
+    this.cardMap.set(card.id, card);
     return card as any;
   }
 

@@ -1,72 +1,52 @@
-import type { MaybePromise } from '@game/shared';
 import { KEYWORDS } from '../../card/card-keywords';
+import { CardEffectTriggeredEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
+import type { HeroCard } from '../../card/entities/hero.entity';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
+import { GAME_EVENTS } from '../../game/game.events';
+import type {
+  AfterDeclareAttackEvent,
+  AfterDeclareAttackTargetEvent
+} from '../../game/phases/combat.phase';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
-import { Modifier } from '../modifier.entity';
-import type { MinionCard } from '../../card/entities/minion-card.entity';
 import type { ModifierMixin } from '../modifier-mixin';
-import { UnitEffectModifierMixin } from '../mixins/unit-effect.mixin';
-import type { Unit } from '../../unit/unit.entity';
-import { COMBAT_EVENTS, type CombatAttackEvent } from '../../combat/combat.events';
+import { Modifier } from '../modifier.entity';
 
-export class MinionOnAttackModifier extends Modifier<MinionCard> {
+export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
   constructor(
     game: Game,
     source: AnyCard,
     private options: {
-      handler: (event: CombatAttackEvent) => MaybePromise<void>;
-      mixins?: ModifierMixin<MinionCard>[];
+      mixins?: ModifierMixin<T>[];
+      handler: (event: AfterDeclareAttackTargetEvent, modifier: Modifier<T>) => void;
     }
   ) {
     super(KEYWORDS.ON_ATTACK.id, game, source, {
       name: KEYWORDS.ON_ATTACK.name,
       description: KEYWORDS.ON_ATTACK.description,
+      icon: 'keyword-on-attack',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_ATTACK),
-        new UnitEffectModifierMixin(game, {
-          getModifier: () =>
-            new MinionOnAttackUnitModifier(game, this.initialSource, {
-              mixins: [],
-              handler: options.handler
-            })
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
+          handler: event => this.onDamage(event)
         }),
-        ...(options?.mixins ?? [])
+        ...(options.mixins || [])
       ]
     });
   }
-}
 
-export class MinionOnAttackUnitModifier extends Modifier<Unit> {
-  constructor(
-    game: Game,
-    source: AnyCard,
-    options: {
-      handler: (event: CombatAttackEvent) => MaybePromise<void>;
-      mixins?: ModifierMixin<Unit>[];
-      modifierType?: string;
-    }
-  ) {
-    super(options.modifierType ?? KEYWORDS.ON_ATTACK.id, game, source, {
-      name: KEYWORDS.ON_ATTACK.name,
-      description: KEYWORDS.ON_ATTACK.description,
-      icon: 'icons/keyword-on-attack',
-      mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: COMBAT_EVENTS.COMBAT_BEFORE_ATTACK,
-          filter: event => {
-            if (!event) return false;
-
-            return event.data.attacker.equals(this.target);
-          },
-          handler: event => {
-            if (!event) return; // dont trigger when event is triggered manually
-            return options.handler(event);
-          }
-        }),
-        ...(options.mixins ?? [])
-      ]
-    });
+  private async onDamage(event: AfterDeclareAttackTargetEvent) {
+    if (!event.data.attacker.equals(this.target)) return;
+    await this.game.emit(
+      GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+      new CardEffectTriggeredEvent({
+        card: this.target,
+        message: `${this.target.blueprint.name} triggers its On Attack effect.`
+      })
+    );
+    await this.options.handler(event, this);
   }
 }

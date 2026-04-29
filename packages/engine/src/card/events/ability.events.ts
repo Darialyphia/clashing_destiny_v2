@@ -1,32 +1,37 @@
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { Ability } from '../entities/ability.entity';
-import type { AnyCard } from '../entities/card.entity';
+import type { AbilityOwner } from '../entities/ability.entity';
 
 export const ABILITY_EVENTS = {
-  ABILITY_BEFORE_USE: 'ability:before-use',
-  ABILITY_AFTER_USE: 'ability:after-use'
+  ABILITY_BEFORE_USE: 'ability.before-use',
+  ABILITY_AFTER_USE: 'ability.after-use'
 } as const;
 
 export class AbilityBeforeUseEvent extends TypedSerializableEvent<
-  { ability: Ability<AnyCard>; card: AnyCard },
-  { card: string; ability: string }
+  { card: AbilityOwner; abilityId: string },
+  {
+    card: string;
+    abilityId: string;
+  }
 > {
   serialize() {
     return {
       card: this.data.card.id,
-      ability: this.data.ability.abilityId
+      abilityId: this.data.abilityId
     };
   }
 }
 
 export class AbilityAfterUseEvent extends TypedSerializableEvent<
-  { ability: Ability<AnyCard>; card: AnyCard },
-  { card: string; ability: string }
+  { card: AbilityOwner; abilityId: string },
+  {
+    card: string;
+    abilityId: string;
+  }
 > {
   serialize() {
     return {
       card: this.data.card.id,
-      ability: this.data.ability.abilityId
+      abilityId: this.data.abilityId
     };
   }
 }

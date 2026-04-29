@@ -5,7 +5,6 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
-import { EphemeralCardModifier } from './ephemeral.modifier';
 
 export class EchoModifier<T extends AnyCard> extends Modifier<T> {
   constructor(game: Game, source: AnyCard, options?: { mixins: ModifierMixin<T>[] }) {
@@ -15,10 +14,9 @@ export class EchoModifier<T extends AnyCard> extends Modifier<T> {
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_PLAY,
           handler: async event => {
-            if (!event?.data.card.equals(this.target)) return;
-            const copy = await this.target.copy();
-            await copy.addToHand();
-            await copy.modifiers.add(new EphemeralCardModifier(game, this.target, {}));
+            if (!event.data.card.equals(this.target)) return;
+            await this.target.modifiers.remove(KEYWORDS.ECHO.id);
+            await this.target.addToHand();
           }
         }),
         ...(options?.mixins ?? [])

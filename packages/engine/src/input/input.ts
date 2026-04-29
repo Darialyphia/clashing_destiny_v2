@@ -1,4 +1,4 @@
-import { z, ZodType } from 'zod';
+import { z } from 'zod';
 import {
   assert,
   type JSONValue,
@@ -16,7 +16,7 @@ export type DefaultSchema = typeof defaultInputSchema;
 
 export type AnyGameAction = Input<any>;
 
-export abstract class Input<TSchema extends ZodType>
+export abstract class Input<TSchema extends DefaultSchema>
   implements Serializable<{ type: string; payload: z.infer<TSchema> }>
 {
   abstract readonly allowedPhases: GamePhase[];
@@ -52,10 +52,8 @@ export abstract class Input<TSchema extends ZodType>
 
   async execute() {
     this.parsePayload();
-
     assert(this.payload, new MissingPayloadError());
     assert(this.isValidPhase, new WrongGamePhaseError());
-
     await this.impl();
   }
 
