@@ -19,7 +19,6 @@ export type SelectingSpaceOnBoardContextOptions = {
   isDone(selectedSpaces: BoardSpace<AnyCard>[]): boolean;
   timeoutFallback: BoardSpace<AnyCard>[];
   canCancel: boolean;
-  onCancel?: (player: Player) => MaybePromise<void>;
 };
 
 export class SelectingSpaceOnBoardContext {
@@ -117,7 +116,7 @@ export class SelectingSpaceOnBoardContext {
       INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
       {}
     );
-    this.game.inputSystem.unpause(this.selectedSpaces);
+    this.game.inputSystem.unpause({ cancelled: false, result: this.selectedSpaces });
   }
 
   async cancel(player: Player) {
@@ -127,7 +126,6 @@ export class SelectingSpaceOnBoardContext {
       INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
       {}
     );
-    await this.options.onCancel?.(player);
-    this.game.inputSystem.unpause([]);
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 }

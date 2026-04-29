@@ -186,22 +186,9 @@ export class Player
     return this.game.interaction.isInteractive(this);
   }
 
-  private async playCard(card: AnyCard) {
-    await card.play();
-    if (card.shouldSwitchInitiativeAfterPlay) {
-      await this.game.turnSystem.switchInitiative();
-    }
-  }
-
   private async payForManaCost(manaCost: number) {
     assert(this.canSpendMana(manaCost), new NotEnoughManaError());
     await this.spendMana(manaCost);
-  }
-
-  async playMainDeckCard(card: AnyCard) {
-    await this.payForManaCost(card.manaCost);
-    card.isPlayedFromHand = true;
-    await this.playCard(card);
   }
 
   async useAbility(ability: Ability<AbilityOwner>, onResolved: () => MaybePromise<void>) {

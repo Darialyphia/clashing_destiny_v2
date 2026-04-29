@@ -213,7 +213,7 @@ export const singleEnemyMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    return (await singleEnemyTargetRules.getTargets({
+    const result = await singleEnemyTargetRules.getTargets({
       game,
       card,
       origin,
@@ -221,7 +221,11 @@ export const singleEnemyMinionTargetRules = {
       timeoutFallback,
       predicate: c => isMinion(c) && predicate(c),
       aiHints
-    })) as MinionCard[];
+    });
+    if (result.cancelled) {
+      return { cancelled: true };
+    }
+    return { cancelled: false, result: result.result as MinionCard[] };
   }
 };
 
@@ -248,7 +252,7 @@ export const singleAllyMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    return (await singleAllyTargetRules.getTargets({
+    const result = await singleAllyTargetRules.getTargets({
       game,
       card,
       origin,
@@ -256,7 +260,12 @@ export const singleAllyMinionTargetRules = {
       timeoutFallback,
       predicate: c => isMinion(c) && predicate(c),
       aiHints
-    })) as MinionCard[];
+    });
+
+    if (result.cancelled) {
+      return { cancelled: true };
+    }
+    return { cancelled: false, result: result.result as MinionCard[] };
   }
 };
 
@@ -287,7 +296,7 @@ export const singleMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    return (await minionOrHeroTargetRules.getTargets({
+    const result = await minionOrHeroTargetRules.getTargets({
       min: 1,
       max: 1,
       label,
@@ -299,7 +308,12 @@ export const singleMinionTargetRules = {
       predicate: c => isMinion(c) && predicate(c),
       timeoutFallback,
       aiHints
-    })) as MinionCard[];
+    });
+
+    if (result.cancelled) {
+      return { cancelled: true };
+    }
+    return { cancelled: false, result: result.result as MinionCard[] };
   }
 };
 

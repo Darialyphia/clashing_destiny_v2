@@ -29,13 +29,13 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
       .with({ state: INTERACTION_STATES.CHOOSING_CARDS }, async ctx => {
         await ctx.ctx.commit(this.player, null);
       })
-      .with({ state: INTERACTION_STATES.PLAYING_CARD }, async ctx => {
-        await ctx.ctx.commit(this.player);
-      })
       .with({ state: INTERACTION_STATES.REARRANGING_CARDS }, async ctx => {
         await ctx.ctx.commit(this.player, null);
       })
       .with({ state: INTERACTION_STATES.SELECTING_CARDS_ON_BOARD }, async ctx => {
+        await ctx.ctx.commit(this.player, true);
+      })
+      .with({ state: INTERACTION_STATES.SELECTING_SPACE_ON_BOARD }, async ctx => {
         await ctx.ctx.commit(this.player, true);
       })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, async ctx => {

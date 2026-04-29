@@ -93,7 +93,17 @@ export class ChoosingCardsContext {
       INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
       {}
     );
-    this.game.inputSystem.unpause(this.selectedCards);
+    this.game.inputSystem.unpause({ cancelled: false, result: this.selectedCards });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
+      {}
+    );
+
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 
   getChoices() {

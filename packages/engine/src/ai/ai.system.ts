@@ -85,17 +85,6 @@ export class AISystem {
           score: 100
         });
       })
-      .with({ state: INTERACTION_STATES.PLAYING_CARD }, ctx => {
-        // moves.push({
-        //   input: {
-        //     type: 'commitPlayCard',
-        //     payload: {
-        //       playerId: this.playerId
-        //     }
-        //   },
-        //   score: 100
-        // });
-      })
       .with({ state: INTERACTION_STATES.REARRANGING_CARDS }, ctx => {
         moves.push({
           input: {
@@ -112,6 +101,9 @@ export class AISystem {
         });
       })
       .with({ state: INTERACTION_STATES.SELECTING_CARDS_ON_BOARD }, ctx => {
+        // TODO
+      })
+      .with({ state: INTERACTION_STATES.SELECTING_SPACE_ON_BOARD }, ctx => {
         // TODO
       })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, ctx => {

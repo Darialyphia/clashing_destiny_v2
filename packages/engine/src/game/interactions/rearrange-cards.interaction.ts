@@ -84,6 +84,16 @@ export class RearrangeCardsContext {
       {}
     );
 
-    this.game.inputSystem.unpause(result);
+    this.game.inputSystem.unpause({ cancelled: false, result: result });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_REARRANGING_CARDS,
+      {}
+    );
+
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 }

@@ -14,8 +14,13 @@ import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { MinionMoveEvent } from '../card/events/minion.events';
-import { isMinion } from '../card/card-utils';
-import type { BoardRow, BoardSpace, SerializedBoardSpace } from './board-space.entity';
+import { isArtifact, isHero, isMinion } from '../card/card-utils';
+import {
+  BoardSpace,
+  type BoardRow,
+  type SerializedBoardSpace
+} from './board-space.entity';
+import { IllegalTargetError } from '../input/input-errors';
 
 export type MinionSlot = number;
 
@@ -51,9 +56,9 @@ export class BoardSide
 {
   readonly player: Player;
 
-  private readonly _base: BoardBase = [];
+  private readonly _base: BoardBase;
 
-  readonly _battlefield: BoardBattlefield = [];
+  readonly _battlefield: BoardBattlefield;
 
   constructor(
     private game: Game,
@@ -61,6 +66,24 @@ export class BoardSide
   ) {
     super(`board-side-${player.id}`, {});
     this.player = player;
+    this._base = Array.from(
+      { length: game.config.BASE_SLOTS },
+      (_, i) =>
+        new BoardSpace(game, {
+          index: i,
+          zone: CARD_LOCATIONS.BASE,
+          playerId: player.id
+        })
+    );
+    this._battlefield = Array.from(
+      { length: game.config.BATTLEFIELD_SLOTS },
+      (_, i) =>
+        new BoardSpace(game, {
+          index: i,
+          zone: CARD_LOCATIONS.BATTLEFIELD,
+          playerId: player.id
+        })
+    );
   }
 
   get base() {
@@ -101,6 +124,20 @@ export class BoardSide
         ].filter(isDefined);
       })
     ].filter(isDefined);
+  }
+
+  placeCard(card: AnyCard, zone: BoardRow, index: number) {
+    if (zone === CARD_LOCATIONS.BASE) {
+      if (!isMinion(card) && !isArtifact(card)) {
+        throw new IllegalTargetError();
+      }
+      return this.placeCardInBase(card, index);
+    } else if (zone === CARD_LOCATIONS.BATTLEFIELD) {
+      if (!isMinion(card) && !isHero(card)) {
+        throw new IllegalTargetError();
+      }
+      return this.placeCardInBattlefield(card, index);
+    }
   }
 
   placeCardInBase(card: MinionCard | ArtifactCard, index: number) {

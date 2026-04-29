@@ -25,7 +25,6 @@ import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
-import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
 import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
@@ -34,6 +33,8 @@ import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
 import { MoveInput } from './inputs/move.input';
+import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
+import { CancelSpaceSelectionInput } from './inputs/cancel-space-selection';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -49,7 +50,6 @@ const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>)
 
 const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
-  cancelPlayCard: CancelPlayCardInput,
   declareAttack: DeclareAttackInput,
   declareAttackTarget: DeclareAttackTargetInput,
   pass: PassInput,
@@ -62,7 +62,9 @@ const inputMap = validateinputMap({
   answerQuestion: AnswerQuestionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
   interactionTimeout: InteractionTimeoutInput,
-  move: MoveInput
+  move: MoveInput,
+  commitSpaceSelection: CommitSpaceSelectionInput,
+  cancelSpaceSelection: CancelSpaceSelectionInput
 });
 
 type InputMap = typeof inputMap;

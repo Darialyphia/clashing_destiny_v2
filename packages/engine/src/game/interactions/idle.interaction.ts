@@ -11,6 +11,9 @@ export class IdleContext {
     return this.game.interaction.interactivePlayer;
   }
 
+  cancel() {
+    return; //noop
+  }
   serialize() {
     return {
       player: this.player.id

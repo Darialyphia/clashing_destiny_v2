@@ -1,4 +1,4 @@
-import { assert, type Nullable } from '@game/shared';
+import { assert, type MaybePromise, type Nullable } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
 import type { Player } from '../../player/player.entity';
@@ -16,6 +16,8 @@ export type AskQuestionContextOptions = {
   }>;
   label: string;
   timeoutFallback: string;
+  canCancel: boolean;
+  onCancel?: (player: Player) => MaybePromise<void>;
 };
 export class AskQuestionContext {
   static async create(game: Game, options: AskQuestionContextOptions) {
@@ -76,7 +78,19 @@ export class AskQuestionContext {
       INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION,
       {}
     );
-    this.game.inputSystem.unpause(this.selectedChoice!.id);
+    this.game.inputSystem.unpause({
+      cancelled: false,
+      result: this.selectedChoice!.id
+    });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
+      {}
+    );
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 
   getChoices() {

@@ -4,6 +4,7 @@ export const GAME_PHASES = {
   DRAW: 'draw_phase',
   LEVEL_UP: 'level_up_phase',
   MAIN: 'main_phase',
+  PLAY_CARD: 'play_card_phase',
   COMBAT: 'combat_phase',
   END: 'end_phase',
   GAME_END: 'game_end'
@@ -31,7 +32,10 @@ export const GAME_PHASE_TRANSITIONS = {
   END_COMBAT_PHASE: 'end_combat_phase',
   END_TURN: 'end_turn',
   PLAYER_WON: 'player_won',
-  COMMIT_LEVEL_UP: 'commit_level_up'
+  COMMIT_LEVEL_UP: 'commit_level_up',
+  START_PLAYING_CARD: 'start_playing_card',
+  COMMIT_PLAYING_CARD: 'commit_playing_card',
+  CANCEL_PLAYING_CARD: 'cancel_playing_card'
 } as const;
 export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 
@@ -68,10 +72,9 @@ export const GAME_QUESTIONS = {
 export const INTERACTION_STATES = {
   IDLE: 'idle',
   SELECTING_CARDS_ON_BOARD: 'selecting_cards_on_board',
-  SELECT_SPACE_ON_BOARD: 'select_space_on_board',
+  SELECTING_SPACE_ON_BOARD: 'select_space_on_board',
   CHOOSING_CARDS: 'choosing_cards',
   REARRANGING_CARDS: 'rearranging_cards',
-  PLAYING_CARD: 'playing_card',
   USING_ABILITY: 'using_ability',
   ASK_QUESTION: 'ask_question'
 } as const;
@@ -81,20 +84,24 @@ export type InteractionState = Values<typeof INTERACTION_STATES>;
 export const INTERACTION_STATE_TRANSITIONS = {
   START_SELECTING_CARDS_ON_BOARD: 'start_selecting_cards_on_board',
   COMMIT_SELECTING_CARDS_ON_BOARD: 'commit_selecting_cards_on_board',
+  CANCEL_SELECTING_CARDS_ON_BOARD: 'cancel_selecting_cards_on_board',
+
   START_CHOOSING_CARDS: 'start_choosing_cards',
   COMMIT_CHOOSING_CARDS: 'commit_choosing_cards',
-  START_PLAYING_CARD: 'start_playing_card',
-  COMMIT_PLAYING_CARD: 'commit_playing_card',
-  CANCEL_PLAYING_CARD: 'cancel_playing_card',
+  CANCEL_CHOOSING_CARDS: 'cancel_choosing_cards',
+
   START_USING_ABILITY: 'start_using_ability',
   COMMIT_USING_ABILITY: 'commit_using_ability',
   CANCEL_USING_ABILITY: 'cancel_using_ability',
+
   START_ASKING_QUESTION: 'start_asking_question',
   COMMIT_ASKING_QUESTION: 'commit_asking_question',
   CANCEL_ASKING_QUESTION: 'cancel_asking_question',
+
   START_REARRANGING_CARDS: 'start_rearranging_cards',
   COMMIT_REARRANGING_CARDS: 'commit_rearranging_cards',
   CANCEL_REARRANGING_CARDS: 'cancel_rearranging_cards',
+
   START_SELECTING_SPACE_ON_BOARD: 'start_selecting_space_on_board',
   COMMIT_SELECTING_SPACE_ON_BOARD: 'commit_selecting_space_on_board',
   CANCEL_SELECTING_SPACE_ON_BOARD: 'cancel_selecting_space_on_board'

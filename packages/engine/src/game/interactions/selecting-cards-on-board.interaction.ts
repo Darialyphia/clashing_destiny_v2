@@ -92,7 +92,7 @@ export class SelectingCardOnBoardContext {
     if (isTimeout) {
       this.selectedCards = [...this.timeoutFallback];
     }
-    assert(this.canCommit, new UnableToCommitError());
+    assert(this.canCommit(this.selectedCards), new UnableToCommitError());
     assert(player.equals(this.player), new InvalidPlayerError());
 
     await this.game.interaction.sendTransition(
@@ -100,6 +100,16 @@ export class SelectingCardOnBoardContext {
       {}
     );
 
-    this.game.inputSystem.unpause(this.selectedCards);
+    this.game.inputSystem.unpause({ cancelled: false, result: this.selectedCards });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
+      {}
+    );
+
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 }

@@ -23,6 +23,8 @@ import { GameEndPhase } from '../phases/game-end.phase';
 import { GAME_EVENTS } from '../game.events';
 import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-error';
 import { LevelUpPhase } from '../phases/level-up.phase';
+import { PlayCardPhase } from '../phases/play-card.phase';
+import { IllegalCardPlayedError } from '../../input/input-errors';
 
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
@@ -38,6 +40,10 @@ export type GamePhaseContext =
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: MainPhase;
+    }
+  | {
+      state: BetterExtract<GamePhase, 'play_card_phase'>;
+      ctx: PlayCardPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'combat_phase'>;
@@ -66,6 +72,10 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<MainPhase['serialize']>;
     }
   | {
+      state: BetterExtract<GamePhase, 'play_card_phase'>;
+      ctx: ReturnType<PlayCardPhase['serialize']>;
+    }
+  | {
       state: BetterExtract<GamePhase, 'combat_phase'>;
       ctx: ReturnType<CombatPhase['serialize']>;
     }
@@ -85,6 +95,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     [GAME_PHASES.DRAW]: DrawPhase,
     [GAME_PHASES.LEVEL_UP]: LevelUpPhase,
     [GAME_PHASES.MAIN]: MainPhase,
+    [GAME_PHASES.PLAY_CARD]: PlayCardPhase,
     [GAME_PHASES.COMBAT]: CombatPhase,
     [GAME_PHASES.END]: EndPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
@@ -112,6 +123,22 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.END
       ),
       stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
+
+      stateTransition(
+        GAME_PHASES.MAIN,
+        GAME_PHASE_TRANSITIONS.START_PLAYING_CARD,
+        GAME_PHASES.PLAY_CARD
+      ),
+      stateTransition(
+        GAME_PHASES.PLAY_CARD,
+        GAME_PHASE_TRANSITIONS.COMMIT_PLAYING_CARD,
+        GAME_PHASES.MAIN
+      ),
+      stateTransition(
+        GAME_PHASES.PLAY_CARD,
+        GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        GAME_PHASES.MAIN
+      ),
 
       stateTransition(
         GAME_PHASES.MAIN,
@@ -232,6 +259,19 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   async commitLevelUp() {
     assert(this.can(GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP), new WrongGamePhaseError());
     await this.sendTransition(GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP);
+  }
+
+  async playCard(id: string, player: Player) {
+    assert(this.getState() === GAME_PHASES.MAIN, new WrongGamePhaseError());
+
+    const canPlay = this.game.turnSystem.initiativePlayer.equals(player);
+    assert(canPlay, new IllegalCardPlayedError());
+
+    const card = player.cardManager.getCardInHandById(id);
+    assert(card, new IllegalCardPlayedError());
+    assert(card.canPlay(), new IllegalCardPlayedError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_PLAYING_CARD);
+    return (this._ctx as PlayCardPhase).play(player, card);
   }
 
   serialize() {

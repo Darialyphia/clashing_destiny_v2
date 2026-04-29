@@ -114,8 +114,6 @@ export class GameClient {
       if (this._processingUpdate) return;
       await this.processQueue();
     });
-
-    this.cancelPlayCard = this.cancelPlayCard.bind(this);
   }
 
   get nextSnapshotId() {
@@ -279,20 +277,6 @@ export class GameClient {
         playerId: this.playerId
       }
     });
-  }
-
-  cancelPlayCard() {
-    if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
-
-    this.dispatch({
-      type: 'cancelPlayCard',
-      payload: { playerId: this.state.currentPlayer }
-    });
-    const playedCard = this.state.entities[
-      this.state.interaction.ctx.card
-    ] as CardViewModel;
-
-    void this.fxAdapter.onCancelPlayCard(playedCard, this);
   }
 
   cancelUseAbility() {

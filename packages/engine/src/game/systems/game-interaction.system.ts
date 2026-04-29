@@ -19,8 +19,6 @@ import {
   type ChoosingCardsContextOptions
 } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
-import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { UseAbilityContext } from '../interactions/use-ability.interaction';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
@@ -66,10 +64,6 @@ export type InteractionContext =
       ctx: ChoosingCardsContext;
     }
   | {
-      state: BetterExtract<InteractionState, 'playing_card'>;
-      ctx: PlayCardContext;
-    }
-  | {
       state: BetterExtract<InteractionState, 'using_ability'>;
       ctx: UseAbilityContext;
     }
@@ -100,10 +94,6 @@ export type SerializedInteractionContext =
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
     }
   | {
-      state: Extract<InteractionState, 'playing_card'>;
-      ctx: ReturnType<PlayCardContext['serialize']>;
-    }
-  | {
       state: Extract<InteractionState, 'using_ability'>;
       ctx: ReturnType<UseAbilityContext['serialize']>;
     }
@@ -121,6 +111,16 @@ export type InteractionEventMap = {
   [INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE]: InteractionAfterChangeEvent;
 };
 
+export type InteractionResult<T> =
+  | {
+      cancelled: false;
+      result: T;
+    }
+  | {
+      cancelled: true;
+      result: null;
+    };
+
 export class GameInteractionSystem
   extends StateMachine<InteractionState, InteractionStateTransition>
   implements Serializable<SerializedInteractionContext>
@@ -128,9 +128,8 @@ export class GameInteractionSystem
   private ctxDictionary = {
     [INTERACTION_STATES.IDLE]: IdleContext,
     [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
-    [INTERACTION_STATES.SELECT_SPACE_ON_BOARD]: SelectingSpaceOnBoardContext,
+    [INTERACTION_STATES.SELECTING_SPACE_ON_BOARD]: SelectingSpaceOnBoardContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
-    [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
     [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
     [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext
@@ -141,7 +140,6 @@ export class GameInteractionSystem
     | SelectingCardOnBoardContext
     | SelectingSpaceOnBoardContext
     | ChoosingCardsContext
-    | PlayCardContext
     | UseAbilityContext
     | AskQuestionContext
     | RearrangeCardsContext;
@@ -155,29 +153,20 @@ export class GameInteractionSystem
         INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
       ),
       stateTransition(
-        INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
-        INTERACTION_STATES.CHOOSING_CARDS
-      ),
-      stateTransition(
         INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
         INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD,
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
+        INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATES.IDLE
+      ),
+
+      stateTransition(
         INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATES.SELECT_SPACE_ON_BOARD
-      ),
-      stateTransition(
-        INTERACTION_STATES.SELECT_SPACE_ON_BOARD,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATES.IDLE
-      ),
-      stateTransition(
-        INTERACTION_STATES.SELECT_SPACE_ON_BOARD,
-        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
-        INTERACTION_STATES.IDLE
+        INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
+        INTERACTION_STATES.CHOOSING_CARDS
       ),
       stateTransition(
         INTERACTION_STATES.CHOOSING_CARDS,
@@ -185,20 +174,27 @@ export class GameInteractionSystem
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
+        INTERACTION_STATES.CHOOSING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
+        INTERACTION_STATES.IDLE
+      ),
+
+      stateTransition(
         INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD,
-        INTERACTION_STATES.PLAYING_CARD
+        INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
       ),
       stateTransition(
-        INTERACTION_STATES.PLAYING_CARD,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD,
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
-        INTERACTION_STATES.PLAYING_CARD,
-        INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
         INTERACTION_STATES.IDLE
       ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY,
@@ -214,6 +210,7 @@ export class GameInteractionSystem
         INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
         INTERACTION_STATES.IDLE
       ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION,
@@ -229,6 +226,7 @@ export class GameInteractionSystem
         INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
         INTERACTION_STATES.IDLE
       ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS,
@@ -312,7 +310,7 @@ export class GameInteractionSystem
       INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
     ].create(this.game, options);
 
-    return this.game.inputSystem.pause<T[]>();
+    return this.game.inputSystem.pause<InteractionResult<T[]>>();
   }
 
   async selectSpacesOnBoard<T extends AnyCard>(
@@ -331,7 +329,7 @@ export class GameInteractionSystem
       );
       return [];
     } else {
-      return this.game.inputSystem.pause<BoardSpace<T>[]>();
+      return this.game.inputSystem.pause<InteractionResult<BoardSpace<T>[]>>();
     }
   }
 
@@ -341,7 +339,7 @@ export class GameInteractionSystem
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T[]>();
+    return this.game.inputSystem.pause<InteractionResult<T[]>>();
   }
 
   async rearrangeCards<
@@ -357,7 +355,7 @@ export class GameInteractionSystem
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T>();
+    return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
   async askQuestion<T extends string = string>(options: AskQuestionContextOptions) {
@@ -366,30 +364,7 @@ export class GameInteractionSystem
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T>();
-  }
-
-  async declarePlayCardIntent(card: AnyCard, player: Player) {
-    assert(
-      this.getState() === INTERACTION_STATES.IDLE,
-      new CorruptedInteractionContextError()
-    );
-
-    assert(this.isInteractive(player), new IllegalCardPlayedError());
-
-    assert(card, new IllegalCardPlayedError());
-    assert(card.canPlay(), new IllegalCardPlayedError());
-
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD);
-
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.PLAYING_CARD].create(
-      this.game,
-      {
-        card,
-        player
-      }
-    );
-    await this._ctx.commit(this._ctx.player);
+    return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
   async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
