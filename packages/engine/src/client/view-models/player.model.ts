@@ -96,7 +96,7 @@ export class PlayerViewModel {
   }
 
   get boardSide() {
-    return this.getClient().state.board.sides.find(side => side.playerId === this.id)!;
+    return this.data.boardSide;
   }
 
   get hero() {

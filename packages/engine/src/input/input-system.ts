@@ -25,7 +25,6 @@ import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
-import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
 import { SurrenderInput } from './inputs/surrender.input';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
@@ -52,7 +51,6 @@ const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>)
 const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
   declareAttack: DeclareAttackInput,
-  declareAttackTarget: DeclareAttackTargetInput,
   pass: PassInput,
   selectCardOnBoard: SelectCardOnBoardInput,
   commitCardSelection: CommitCardSelectionInput,

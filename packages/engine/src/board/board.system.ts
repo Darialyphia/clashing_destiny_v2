@@ -1,7 +1,7 @@
-import { type BetterExtract, type Serializable } from '@game/shared';
+import { type BetterExtract } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
-import type { BoardSide, SerializedBoardSide } from './board-side.entity';
+import type { BoardSide } from './board-side.entity';
 import { CARD_DECK_SOURCES, type CardLocation } from '../card/card.enums';
 
 export type MinionSlot = number;
@@ -14,11 +14,7 @@ export const isDestinyDeckCard = (card: AnyCard) => {
   return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
 };
 
-export type SerializedBoard = {
-  sides: [SerializedBoardSide, SerializedBoardSide];
-};
-
-export class BoardSystem extends System<never> implements Serializable<SerializedBoard> {
+export class BoardSystem extends System<never> {
   initialize() {}
   shutdown() {}
 
@@ -39,15 +35,6 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
 
   getBoardSpaceById(id: string) {
     return this.boardSpaces.find(space => space.id === id) ?? null;
-  }
-
-  serialize(): SerializedBoard {
-    return {
-      sides: this.sides.map(side => side.serialize()) as unknown as [
-        SerializedBoardSide,
-        SerializedBoardSide
-      ]
-    };
   }
 
   getBoardSpace({

@@ -4,12 +4,14 @@ import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
   IllegalAttackerError,
+  IllegalAttackTargetError,
   NotCurrentPlayerError,
   UnknownUnitError
 } from '../input-errors';
 
 const schema = defaultInputSchema.extend({
-  attackerId: z.string()
+  attackerId: z.string(),
+  targetId: z.string()
 });
 
 export class DeclareAttackInput extends Input<typeof schema> {
@@ -26,16 +28,29 @@ export class DeclareAttackInput extends Input<typeof schema> {
     return this.player.minions.find(creature => creature.id === this.payload.attackerId);
   }
 
+  get target() {
+    return [this.player.opponent.hero, ...this.player.enemyMinions].find(
+      creature => creature.id === this.payload.targetId
+    );
+  }
+
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.attacker, new UnknownUnitError(this.payload.attackerId));
     assert(this.attacker.canAttack, new IllegalAttackerError());
+    assert(this.target, new UnknownUnitError(this.payload.targetId));
+    assert(this.target.canBeAttacked, new IllegalAttackTargetError());
 
     await this.game.gamePhaseSystem.startCombat(async () => {
       await this.game.turnSystem.switchInitiative();
     });
+
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['COMBAT']>()
       .ctx.declareAttacker(this.attacker);
+
+    await this.game.gamePhaseSystem
+      .getContext<GamePhasesDict['COMBAT']>()
+      .ctx.declareAttackTarget(this.target);
   }
 }

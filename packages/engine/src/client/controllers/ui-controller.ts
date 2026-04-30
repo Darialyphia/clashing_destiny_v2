@@ -1,5 +1,4 @@
 import { COMBAT_STEPS, GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
-import { DeclareAttackTargetCardAction } from '../actions/declare-attack-target';
 import { SelectCardAction } from '../actions/select-card';
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
@@ -137,7 +136,6 @@ export class UiController {
   private buildCardClickRules() {
     this.cardClickRules = [
       new SelectCardAction(this.client),
-      new DeclareAttackTargetCardAction(this.client),
       new SelectCardOnBoardAction(this.client)
     ];
   }

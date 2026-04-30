@@ -1,4 +1,4 @@
-import { BoardSide } from '../board/board-side.entity';
+import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { type Game } from '../game/game';
 import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
@@ -44,6 +44,7 @@ export type SerializedPlayer = {
   maxLevel: number;
   hero: string;
   destinies: string[];
+  boardSide: SerializedBoardSide;
 };
 
 export type PlayerInterceptors = {
@@ -268,7 +269,8 @@ export class Player
       level: this.levelManager.level,
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,
       hero: this.hero.id,
-      destinies: this.levelManager.destinies.map(destiny => destiny.id)
+      destinies: this.levelManager.destinies.map(destiny => destiny.id),
+      boardSide: this.boardSide.serialize()
     };
   }
 }

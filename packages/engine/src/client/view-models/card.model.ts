@@ -4,15 +4,11 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type {
-  CardBlueprint,
-  SerializedPreResponseTarget
-} from '../../card/card-blueprint';
+import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
 import { PlayCardAction } from '../actions/play-card';
-import { DeclareAttackAction } from '../actions/declare-attack';
 import {
   CARD_KINDS,
   type CardKind,
@@ -381,13 +377,16 @@ export class CardViewModel {
   }
 
   get actions(): CardActionRule[] {
-    const actions = [
-      new PlayCardAction(this.getClient()),
-      new DeclareAttackAction(this.getClient()),
-      ...this.abilityActions
-    ].filter(rule => rule.predicate(this));
+    const actions = [new PlayCardAction(this.getClient()), ...this.abilityActions].filter(
+      rule => rule.predicate(this)
+    );
 
     return actions;
+  }
+
+  getCurrentAction() {
+    const state = this.getClient().state;
+    return this.actions.find(action => action.predicate(this, state)) ?? null;
   }
 
   get abilities() {

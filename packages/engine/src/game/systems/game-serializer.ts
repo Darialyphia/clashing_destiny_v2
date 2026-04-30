@@ -45,7 +45,6 @@ export type SerializedOmniscientState = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   players: string[];
-  board: SerializedBoard;
   currentPlayer: string;
   turnCount: number;
 };
@@ -57,7 +56,6 @@ export type SnapshotDiff = {
   removedEntities: string[];
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  board: SerializedBoard;
   turnCount: number;
   currentPlayer: string;
   players: string[];
@@ -137,7 +135,6 @@ export class GameSerializer {
       removedEntities: removedEntityIds,
       phase: state.phase,
       interaction: state.interaction,
-      board: state.board,
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
@@ -179,7 +176,6 @@ export class GameSerializer {
       entities: this.buildEntityDictionary(),
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
-      board: this.game.boardSystem.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
       currentPlayer: this.game.interaction.interactivePlayer.id,
       turnCount: this.game.turnSystem.elapsedTurns
@@ -301,7 +297,6 @@ export class GameSerializer {
       ),
       phase: state.phase,
       interaction: state.interaction,
-      board: state.board,
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players

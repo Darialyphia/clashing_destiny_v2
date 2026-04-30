@@ -86,7 +86,7 @@ export class BoardSpace<T extends AnyCard>
   serialize(): SerializedBoardSpace {
     return {
       id: this.id,
-      entityType: 'board--space',
+      entityType: 'board-space',
       position: this.position,
       player: this.player.id,
       card: this.card?.id ?? null
