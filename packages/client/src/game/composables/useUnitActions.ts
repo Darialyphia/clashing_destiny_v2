@@ -10,8 +10,8 @@ export const useUnitActions = (cell: BoardCellViewModel) => {
   const ui = useGameUi();
 
   const canMoveTo = computed(() => {
-    if (!ui.value.selectedUnit) return false;
-    return ui.value.selectedUnit.canMoveTo(cell);
+    if (!ui.value.selectedCard) return false;
+    return ui.value.selectedCard.canMoveTo(cell);
   });
 
   const canAttack = computed(() => {

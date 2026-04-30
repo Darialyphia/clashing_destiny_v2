@@ -31,7 +31,8 @@ export type SerializedPlayer = {
   discardPile: string[];
   banishPile: string[];
   remainingCardsInMainDeck: number;
-  remainingCardsInRuneDeck: number;
+  remainingCardsInDestinyDeck: number;
+  destinyDeck: string[];
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
@@ -41,6 +42,8 @@ export type SerializedPlayer = {
   exp: number;
   level: number;
   maxLevel: number;
+  hero: string;
+  destinies: string[];
 };
 
 export type PlayerInterceptors = {
@@ -253,7 +256,8 @@ export class Player
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
-      remainingCardsInRuneDeck: this.cardManager.destinyDeck.cards.length,
+      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
+      destinyDeck: [...this.cardManager.destinyDeck.cards].map(card => card.id),
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
@@ -262,7 +266,9 @@ export class Player
       manaRegen: this.manaRegen,
       exp: this.levelManager.exp,
       level: this.levelManager.level,
-      maxLevel: this.game.config.PLAYER_MAX_LEVEL
+      maxLevel: this.game.config.PLAYER_MAX_LEVEL,
+      hero: this.hero.id,
+      destinies: this.levelManager.destinies.map(destiny => destiny.id)
     };
   }
 }

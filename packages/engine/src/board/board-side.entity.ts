@@ -11,9 +11,8 @@ import type { AnyCard } from '../card/entities/card.entity';
 import type { Game } from '../game/game';
 import { Entity } from '../entity';
 import { match } from 'ts-pattern';
-import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
+import { CARD_KINDS, CARD_LOCATIONS } from '../card/card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { MinionMoveEvent } from '../card/events/minion.events';
 import { isArtifact, isHero, isMinion } from '../card/card-utils';
 import {
   BoardSpace,
@@ -21,6 +20,7 @@ import {
   type SerializedBoardSpace
 } from './board-space.entity';
 import { IllegalTargetError } from '../input/input-errors';
+import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card/card.events';
 
 export type MinionSlot = number;
 
@@ -38,8 +38,8 @@ export type SerializedBoardSide = {
   mainDeck: { total: number; remaining: number };
   discardPile: string[];
   banishPile: string[];
-  base: SerializedBoardSpace[];
-  battlefield: SerializedBoardSpace[];
+  base: string[];
+  battlefield: string[];
 };
 
 export type SerializedBoard = {
@@ -193,19 +193,19 @@ export class BoardSide
     return this.battlefield.some(space => space.card?.id === cardId);
   }
 
-  private async moveMinionToBattlefield(minion: MinionCard, index: number) {
+  private async moveToBattlefield(card: MinionCard, index: number) {
     await this.game.emit(
-      GAME_EVENTS.MINION_BEFORE_MOVE,
-      new MinionMoveEvent({
-        card: minion,
-        from: CARD_LOCATIONS.BASE,
-        to: CARD_LOCATIONS.BATTLEFIELD
+      GAME_EVENTS.CARD_BEFORE_MOVE,
+      new CardBeforeMoveEvent({
+        card: card,
+        to: this.battlefield[index]
       })
     );
-    this.removeFromBase(minion);
+    const oldPos = card.position;
+    this.removeFromBase(card);
 
     // place minion at the right index on the battlefield. If the space is already occupied, shift the other minions to the right until the end or until we hit an unoccupied board space
-    let _minion = minion;
+    let _minion = card;
     for (let i = index; i < this.battlefield.length; i++) {
       const space = this.battlefield[i];
       if (space.isEmpty) {
@@ -219,28 +219,28 @@ export class BoardSide
     }
 
     await this.game.emit(
-      GAME_EVENTS.MINION_AFTER_MOVE,
-      new MinionMoveEvent({
-        card: minion,
-        from: CARD_LOCATIONS.BASE,
-        to: CARD_LOCATIONS.BATTLEFIELD
+      GAME_EVENTS.CARD_AFTER_MOVE,
+      new CardAfterMoveEvent({
+        card: card,
+        from: oldPos!,
+        to: this.battlefield[index]
       })
     );
   }
 
-  private async moveMinionToBase(minion: MinionCard, index: number) {
+  private async moveToBase(card: MinionCard, index: number) {
     await this.game.emit(
-      GAME_EVENTS.MINION_BEFORE_MOVE,
-      new MinionMoveEvent({
-        card: minion,
-        from: CARD_LOCATIONS.BATTLEFIELD,
-        to: CARD_LOCATIONS.BASE
+      GAME_EVENTS.CARD_BEFORE_MOVE,
+      new CardBeforeMoveEvent({
+        card: card,
+        to: this.base[index]
       })
     );
-    this.removeFromBattlefield(minion);
+    const oldPos = card.position;
+    this.removeFromBattlefield(card);
 
     // place minion at the right index on the baase. If the space is already occupied, shift the other minions to the right until the end or until we hit an unoccupied board space
-    let _minion = minion;
+    let _minion = card;
     for (let i = index; i < this.base.length; i++) {
       const space = this.base[i];
       if (space.isEmpty) {
@@ -254,26 +254,26 @@ export class BoardSide
     }
 
     await this.game.emit(
-      GAME_EVENTS.MINION_AFTER_MOVE,
-      new MinionMoveEvent({
-        card: minion,
-        from: CARD_LOCATIONS.BATTLEFIELD,
-        to: CARD_LOCATIONS.BASE
+      GAME_EVENTS.CARD_AFTER_MOVE,
+      new CardAfterMoveEvent({
+        card: card,
+        from: oldPos!,
+        to: this.base[index]
       })
     );
   }
 
-  async moveMinion(id: string, index: number) {
+  async moveCard(id: string, index: number) {
     const cardInBase = this.getCardInBase(id);
     if (cardInBase && isMinion(cardInBase)) {
       if (isMinion(cardInBase)) return;
-      await this.moveMinionToBattlefield(cardInBase, index);
+      await this.moveToBattlefield(cardInBase, index);
       return;
     }
 
     const cardInBattlefield = this.getCardInBattlefield(id);
     if (cardInBattlefield && isMinion(cardInBattlefield)) {
-      await this.moveMinionToBase(cardInBattlefield, index);
+      await this.moveToBase(cardInBattlefield, index);
     }
   }
 
@@ -287,8 +287,8 @@ export class BoardSide
         total: this.player.cardManager.mainDeckSize,
         remaining: this.player.cardManager.remainingCardsInMainDeck
       },
-      base: this.base.map(space => space.serialize()),
-      battlefield: this.battlefield.map(space => space.serialize())
+      base: this.base.map(space => space.id),
+      battlefield: this.battlefield.map(space => space.id)
     };
   }
 }

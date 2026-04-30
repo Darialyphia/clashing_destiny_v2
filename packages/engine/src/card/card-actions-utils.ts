@@ -11,6 +11,7 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
   }>({
     player: card.player,
     source: card,
+    canCancel: false,
     label: `Drag cards to put them at the top or bottom of your deck`,
     buckets: [
       { id: 'top', label: 'Top', cards: cards.slice() },
@@ -46,6 +47,7 @@ export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[])
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
+    canCancel: false,
     choices: choices.map(c => ({
       card: c,
       aiHints: {
@@ -78,6 +80,7 @@ export const discardFromHand = async (
     player: card.player,
     minChoiceCount: options.min,
     maxChoiceCount: options.max,
+    canCancel: false,
     choices: cards.map(c => ({
       card: c,
       aiHints: {

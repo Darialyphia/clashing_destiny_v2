@@ -2,7 +2,6 @@
 import type { UnitViewModel } from '@game/engine/src/client/view-models/unit.model';
 import { useFxEvent, useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { useVFXStep } from '../composables/useVFXStep';
 import { waitFor } from '@game/shared';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
@@ -20,15 +19,6 @@ onMounted(() => {
 const isBeingDropped = ref(false);
 const dropScale = ref(1);
 const dropDuration = ref('');
-useVFXStep('dropUnit', async step => {
-  if (step.params.unitId !== unit.id) return;
-  dropScale.value = step.params.from.scale;
-  dropDuration.value = `${step.params.duration * 0.8}ms`;
-  isBeingDropped.value = true;
-
-  await waitFor(step.params.duration);
-  isBeingDropped.value = false;
-});
 
 const unitEl = useTemplateRef('unit');
 

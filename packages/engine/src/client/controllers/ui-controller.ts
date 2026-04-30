@@ -5,10 +5,10 @@ import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
-import { CancelPlayCardGlobalAction } from '../actions/cancel-play-card';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
+import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 
 export type CardClickRule = {
   predicate: (card: CardViewModel, state: GameClientState) => boolean;
@@ -144,7 +144,6 @@ export class UiController {
 
   private buildGlobalActionRules() {
     this.globalActionRules = [
-      new CancelPlayCardGlobalAction(this.client),
       new CommitCardSelectionGlobalAction(this.client),
       new PassGlobalAction(this.client)
     ];
@@ -158,12 +157,9 @@ export class UiController {
       actionTaken = true;
     }
 
-    const canCancelSpaceSelection =
-      this.client.state.interaction.state ===
-        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD &&
-      this.client.state.interaction.ctx.canCancel;
-    if (cancelPlay && canCancelSpaceSelection) {
-      this.client.cancelSpaceSelection();
+    const canCancelInteraction = this.client.state.interaction.ctx.canCancel;
+    if (cancelPlay && canCancelInteraction) {
+      this.client.cancelInteraction();
       actionTaken = true;
     }
 
@@ -199,11 +195,10 @@ export class UiController {
   }
 
   get playedCardId() {
-    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD)
-      return null;
-    if (this.client.playerId !== this.client.state.interaction.ctx.player) return null;
+    if (this.client.state.phase.state !== GAME_PHASES.PLAY_CARD) return null;
+    if (this.client.playerId !== this.client.state.phase.ctx.player) return null;
 
-    return this.client.state.interaction.ctx.card;
+    return this.client.state.phase.ctx.card;
   }
 
   get globalActions() {
@@ -251,11 +246,23 @@ export class UiController {
   }
 
   update() {
-    if (this.client.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) {
-      this.selectedManaCostIndices = [];
+    this.clearOptimisticState();
+
+    if (this.selectedCard?.isExhausted) {
+      this.unselect();
+    }
+  }
+
+  async onEvent(event: SerializedStarEvent) {
+    if (event.eventName === GAME_EVENTS.INTERACTION_AFTER_CHANGE_STATE) {
+      if (event.event.to.state === INTERACTION_STATES.IDLE) {
+        this.reset(false);
+      }
     }
 
-    this.clearOptimisticState();
+    if (event.eventName === GAME_EVENTS.ABILITY_AFTER_USE) {
+      this.reset(false);
+    }
   }
 
   hover(card: CardViewModel) {
@@ -312,10 +319,10 @@ export class UiController {
     }
 
     if (
-      state.interaction.state === INTERACTION_STATES.PLAYING_CARD &&
-      state.interaction.ctx.player === this.client.playerId
+      state.phase.state === GAME_PHASES.PLAY_CARD &&
+      state.phase.ctx.player === this.client.playerId
     ) {
-      const card = state.entities[state.interaction.ctx.card] as CardViewModel;
+      const card = state.entities[state.phase.ctx.card] as CardViewModel;
       return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${card?.manaCost})`;
     }
 

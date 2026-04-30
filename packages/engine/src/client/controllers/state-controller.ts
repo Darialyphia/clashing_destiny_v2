@@ -13,7 +13,7 @@ import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
 import { match } from 'ts-pattern';
-import type { GameClient } from '../client';
+import type { GameClient, GameStateEntities } from '../client';
 import {
   GAME_EVENTS,
   type SerializedEvent,
@@ -21,11 +21,7 @@ import {
 } from '../../game/game.events';
 import { AbilityViewModel } from '../view-models/ability.model';
 import { CARD_LOCATIONS } from '../../card/card.enums';
-
-export type GameStateEntities = Record<
-  string,
-  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
->;
+import { BoardSpaceViewModel } from '../view-models/board-space.model';
 
 export type GameClientState = Override<
   SerializedOmniscientState | SerializedPlayerState,
@@ -66,6 +62,10 @@ export class ClientStateController {
       .with(
         { entityType: 'ability' },
         entity => new AbilityViewModel(entity, dict, this.client)
+      )
+      .with(
+        { entityType: 'board-space' },
+        entity => new BoardSpaceViewModel(entity, dict, this.client)
       )
       .exhaustive();
   }
@@ -169,19 +169,13 @@ export class ClientStateController {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
 
-    const boardSide = this.state.board.sides.find(
-      side => side.playerId === card.player.id
-    )!;
-    if (event.event.card.location === CARD_LOCATIONS.BASE) {
-      boardSide.base = {
-        cards: [...boardSide.base.cards, card.id]
-      };
-    } else if (event.event.card.location === CARD_LOCATIONS.BATTLEFIELD) {
-      boardSide.battlefield = {
-        cards: [...boardSide.battlefield.cards, card.id]
-      };
-    }
+    const boardSpace = Object.values(this.state.entities).find(
+      e => e.id === event.event.position.id
+    )! as BoardSpaceViewModel;
 
+    boardSpace.update({
+      card: card.id
+    });
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({
       ...side
@@ -199,10 +193,13 @@ export class ClientStateController {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
 
-    const boardSide = this.state.board.sides.find(
-      side => side.playerId === card.player.id
-    )!;
-    boardSide.base.cards = [...boardSide.base.cards, card.id];
+    const boardSpace = Object.values(this.state.entities).find(
+      e => e.id === event.event.position.id
+    )! as BoardSpaceViewModel;
+
+    boardSpace.update({
+      card: card.id
+    });
 
     // @ts-expect-error force reactivity
     this.state.board.sides = this.state.board.sides.map(side => ({

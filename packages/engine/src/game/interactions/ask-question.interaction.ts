@@ -17,7 +17,6 @@ export type AskQuestionContextOptions = {
   label: string;
   timeoutFallback: string;
   canCancel: boolean;
-  onCancel?: (player: Player) => MaybePromise<void>;
 };
 export class AskQuestionContext {
   static async create(game: Game, options: AskQuestionContextOptions) {
@@ -46,7 +45,7 @@ export class AskQuestionContext {
 
   private constructor(
     private game: Game,
-    options: AskQuestionContextOptions
+    private options: AskQuestionContextOptions
   ) {
     this.choices = options.choices;
     this.player = options.player;
@@ -64,7 +63,8 @@ export class AskQuestionContext {
       player: this.player.id,
       source: this.source.id,
       choices: this.choices.map(choice => ({ id: choice.id, label: choice.label })),
-      label: this.label
+      label: this.label,
+      canCancel: this.options.canCancel
     };
   }
 

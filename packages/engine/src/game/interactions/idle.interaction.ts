@@ -16,7 +16,8 @@ export class IdleContext {
   }
   serialize() {
     return {
-      player: this.player.id
+      player: this.player.id,
+      canCancel: false
     };
   }
 }

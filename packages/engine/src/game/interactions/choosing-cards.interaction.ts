@@ -21,6 +21,7 @@ export type ChoosingCardsContextOptions = {
   maxChoiceCount: number;
   label: string;
   timeoutFallback: AnyCard[];
+  canCancel: boolean;
 };
 export class ChoosingCardsContext {
   static async create(game: Game, options: ChoosingCardsContextOptions) {
@@ -50,7 +51,7 @@ export class ChoosingCardsContext {
 
   private constructor(
     private game: Game,
-    options: ChoosingCardsContextOptions
+    private options: ChoosingCardsContextOptions
   ) {
     this.choices = options.choices;
     this.minChoiceCount = options.minChoiceCount;
@@ -68,7 +69,8 @@ export class ChoosingCardsContext {
       choices: this.choices.map(choice => choice.card.id),
       minChoiceCount: this.minChoiceCount,
       maxChoiceCount: this.maxChoiceCount,
-      label: this.label
+      label: this.label,
+      canCancel: this.options.canCancel
     };
   }
 

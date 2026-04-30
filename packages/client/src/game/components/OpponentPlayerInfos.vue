@@ -42,7 +42,7 @@ const hasInitiative = computed(() => {
       <div class="talent-bar">
         <div class="talent-bar">
           <div v-for="i in state.config.PLAYER_MAX_LEVEL" :key="i">
-            <Talent :card="player.talents[i - 1] ?? null" />
+            <Talent :card="player.destinies[i - 1] ?? null" />
           </div>
         </div>
       </div>
@@ -81,7 +81,7 @@ const hasInitiative = computed(() => {
       <div class="avatar" :class="{ 'has-initiative': hasInitiative }" />
       <div class="infos-bar">
         <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
-        {{ player.remainingCardsInDeck.length }}
+        {{ player.remainingCardsInMainDeck }}
         <UiSimpleTooltip>
           <template #trigger>
             <button class="discard-pile-btn" @click="openDiscardPileModal">

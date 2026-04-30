@@ -22,15 +22,13 @@ import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
 import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
-import MinionRow from './MinionRow.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import PassButton from './PassButton.vue';
 import MyPlayerInfos from './MyPlayerInfos.vue';
 import OpponentPlayerInfos from './OpponentPlayerInfos.vue';
-import HoveredCellInfos from './HoveredCellInfos.vue';
-import MyHeroZone from './MyHeroZone.vue';
-import OpponentHeroZone from './OpponentHeroZone.vue';
+import HoveredCardInfos from './HoveredCardnfos.vue';
 import { provideRichTextContext } from '../composables/useRichText';
+import type { JobId } from '@game/engine/src/card/card.enums';
 
 const { options } = defineProps<{
   clocks?: {
@@ -54,7 +52,9 @@ const opponent = useOpponentPlayer();
 
 provideRichTextContext({
   heroLevel: computed(() => myPlayer.value.level),
-  heroJobs: computed(() => myPlayer.value.hero?.jobs ?? [])
+  heroJobs: computed(
+    () => myPlayer.value.hero?.jobs.map(j => j.id as JobId) ?? []
+  )
 });
 useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);
@@ -145,8 +145,6 @@ useEventListener('contextmenu', async e => {
           <MinionRow :row="myPlayer.boardSide.base" class="my-back-row" /> -->
           <PassButton />
         </div>
-        <OpponentHeroZone class="opponent-hero-zone" />
-        <MyHeroZone class="my-hero-zone" />
 
         <div id="card-actions-portal"></div>
         <div class="arrows" id="arrows" />
@@ -155,7 +153,7 @@ useEventListener('contextmenu', async e => {
     <DraggedCard />
   </div>
 
-  <HoveredCellInfos class="hovered-cell-infos" />
+  <HoveredCardInfos class="hovered-cell-infos" />
   <MyPlayerInfos class="my-player-infos" />
   <OpponentPlayerInfos class="opponent-player-infos" />
 
@@ -444,19 +442,5 @@ useEventListener('contextmenu', async e => {
   top: 45%;
   translate: 0 -50%;
   z-index: 2;
-}
-
-.my-hero-zone {
-  position: absolute;
-  left: 50%;
-  top: 890px;
-  translate: -50% -50%;
-}
-
-.opponent-hero-zone {
-  position: absolute;
-  left: 50%;
-  top: 120px;
-  translate: -50% -50%;
 }
 </style>

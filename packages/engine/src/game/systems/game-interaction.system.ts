@@ -20,7 +20,10 @@ import {
 } from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
-import { UseAbilityContext } from '../interactions/use-ability.interaction';
+import {
+  UseAbilityContext,
+  type UseAbilityContextOptions
+} from '../interactions/use-ability.interaction';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_EVENTS } from '../game.events';
 import { CardDeclareUseAbilityEvent } from '../../card/card.events';
@@ -37,7 +40,8 @@ import {
 } from '../game.enums';
 import {
   RearrangeCardsContext,
-  type RearrangeCardBucket
+  type RearrangeCardBucket,
+  type RearrangeCardsContextOptions
 } from '../interactions/rearrange-cards.interaction';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import {
@@ -327,7 +331,10 @@ export class GameInteractionSystem
         INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
         {}
       );
-      return [];
+      return {
+        cancelled: false,
+        result: []
+      } as InteractionResult<BoardSpace<T>[]>;
     } else {
       return this.game.inputSystem.pause<InteractionResult<BoardSpace<T>[]>>();
     }
@@ -342,14 +349,9 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<InteractionResult<T[]>>();
   }
 
-  async rearrangeCards<
-    T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>
-  >(options: {
-    player: Player;
-    buckets: RearrangeCardBucket[];
-    label: string;
-    source: AnyCard;
-  }) {
+  async rearrangeCards<T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>>(
+    options: RearrangeCardsContextOptions
+  ) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.REARRANGING_CARDS].create(
       this.game,
@@ -367,28 +369,25 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
-  async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
+  async declareUseAbilityIntent(options: UseAbilityContextOptions) {
     assert(
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
     );
 
-    assert(this.isInteractive(player), new IllegalCardPlayedError());
+    assert(this.isInteractive(options.player), new IllegalCardPlayedError());
 
-    assert(ability.canUse, new IllegalCardPlayedError());
+    assert(options.ability.canUse, new IllegalCardPlayedError());
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.USING_ABILITY].create(
       this.game,
-      {
-        ability,
-        player
-      }
+      options
     );
     await this.game.emit(
       GAME_EVENTS.CARD_DECLARE_USE_ABILITY,
       new CardDeclareUseAbilityEvent({
-        card: ability.card,
-        abilityId: ability.abilityId
+        card: options.ability.card,
+        abilityId: options.ability.abilityId
       })
     );
     await this._ctx.commit(this._ctx.player);

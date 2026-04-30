@@ -27,14 +27,15 @@ import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
 import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
-import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
 import { SurrenderInput } from './inputs/surrender.input';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
 import { AnswerQuestionInput } from './inputs/answer-question.input';
 import { MoveInput } from './inputs/move.input';
 import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
-import { CancelSpaceSelectionInput } from './inputs/cancel-space-selection';
+import { CancelInteractionInput } from './inputs/cancel-interaction';
+import { LevelUpSelectionInput } from './inputs/level-up-selection.input';
+import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -57,14 +58,15 @@ const inputMap = validateinputMap({
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   declareUseCardAbility: DeclareUseCardAbilityInput,
-  cancelUseAbility: CancelUseAbilityInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
   interactionTimeout: InteractionTimeoutInput,
   move: MoveInput,
   commitSpaceSelection: CommitSpaceSelectionInput,
-  cancelSpaceSelection: CancelSpaceSelectionInput
+  levelUpSelection: LevelUpSelectionInput,
+  cancelInteraction: CancelInteractionInput,
+  selectSpaceOnBoard: SelectSpaceOnBoardInput
 });
 
 type InputMap = typeof inputMap;

@@ -5,7 +5,7 @@ import type { Game } from '../game';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { BoardRow, BoardSpace } from '../../board/board-space.entity';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type SelectingSpaceOnBoardContextOptions = {
   player: Player;
@@ -89,16 +89,9 @@ export class SelectingSpaceOnBoardContext {
     }
   }
 
-  async selectSpace(
-    player: Player,
-    space: {
-      playerId: string;
-      zone: BoardRow;
-      index: number;
-    }
-  ) {
+  async selectSpace(player: Player, spaceId: string) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    const cell = this.game.boardSystem.getBoardSpace(space);
+    const cell = this.game.boardSystem.getBoardSpaceById(spaceId);
     assert(isDefined(cell), new IllegalTargetError());
     assert(this.isElligible(cell, this.selectedSpaces), new IllegalTargetError());
     this.selectedSpaces.push(cell);

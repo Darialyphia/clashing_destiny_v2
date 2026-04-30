@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
-import { useGameClient, useGameUi } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameUi,
+  useMaybeEntity
+} from '../composables/useGameClient';
 import { useIsInAoe } from '../composables/useIsInAoe';
 import { useCellTargeting } from '../composables/useCellTargeting';
 import { useUnitActions } from '../composables/useUnitActions';
@@ -10,9 +13,12 @@ import { useUnitMoveFx } from '../composables/useUnitMoveFx';
 import Unit from './Unit.vue';
 import Arrow from './Arrow.vue';
 import AbilityMenu from './AbilityMenu.vue';
+import type { SerializedBoardSpace } from '@game/engine/src/board/board-space.entity';
+import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import { isDefined } from '@game/shared';
 
 const { cell } = defineProps<{
-  cell: BoardCellViewModel;
+  cell: SerializedBoardSpace;
 }>();
 
 const ui = useGameUi();
@@ -27,10 +33,14 @@ const { isMovingUnit } = useUnitMoveFx(cell);
 
 const isAbilityMenuOpened = ref(false);
 
+const card = useMaybeEntity<CardViewModel>(computed(() => cell.card));
+
 const handleAbilities = () => {
-  const availableAbilities = cell.unit!.abilities;
+  const _card = card.value;
+  if (!_card) return;
+  const availableAbilities = _card.abilityActions ?? [];
   if (availableAbilities.length === 1) {
-    return availableAbilities[0].handler(cell.unit!.card);
+    return availableAbilities[0].handler(_card);
   }
   if (availableAbilities.length > 1) {
     isAbilityMenuOpened.value = true;
@@ -42,9 +52,9 @@ const handleMouseup = (e: MouseEvent) => {
   dragSelection.onMouseup();
 
   const shouldHandleAbilities =
-    !ui.value.selectedUnit &&
-    cell.unit &&
-    cell.unit.getPlayer()?.id === playerId.value;
+    !ui.value.selectedCard &&
+    isDefined(card.value) &&
+    card.value.player.id === playerId.value;
 
   if (shouldHandleAbilities) {
     handleAbilities();

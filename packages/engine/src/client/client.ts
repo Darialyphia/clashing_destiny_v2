@@ -19,7 +19,8 @@ import {
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
-import { INTERACTION_STATES } from '../game/game.enums';
+import { GAME_PHASES, INTERACTION_STATES } from '../game/game.enums';
+import type { BoardSpaceViewModel } from './view-models/board-space.model';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -30,7 +31,11 @@ export type GameType = Values<typeof GAME_TYPES>;
 
 export type GameStateEntities = Record<
   string,
-  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
+  | PlayerViewModel
+  | CardViewModel
+  | ModifierViewModel
+  | AbilityViewModel
+  | BoardSpaceViewModel
 >;
 
 export type OnSnapshotUpdateCallback = (
@@ -114,6 +119,8 @@ export class GameClient {
       if (this._processingUpdate) return;
       await this.processQueue();
     });
+
+    this.cancelInteraction = this.cancelInteraction.bind(this);
   }
 
   get nextSnapshotId() {
@@ -279,11 +286,9 @@ export class GameClient {
     });
   }
 
-  cancelUseAbility() {
-    if (this.state.interaction.state !== INTERACTION_STATES.USING_ABILITY) return;
-
+  cancelInteraction() {
     this.dispatch({
-      type: 'cancelUseAbility',
+      type: 'cancelInteraction',
       payload: { playerId: this.state.currentPlayer }
     });
   }
@@ -341,6 +346,16 @@ export class GameClient {
       type: 'surrender',
       payload: {
         playerId: this.playerId
+      }
+    });
+  }
+
+  selectLevelUpCard(cardId: string | null) {
+    this.dispatch({
+      type: 'levelUpSelection',
+      payload: {
+        playerId: this.playerId,
+        cardId
       }
     });
   }

@@ -5,9 +5,10 @@ import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError } from '../game-error';
 
-type UseAbilityContextOptions = {
+export type UseAbilityContextOptions = {
   ability: Ability<AbilityOwner>;
   player: Player;
+  canCancel: boolean;
 };
 
 export class UseAbilityContext {
@@ -26,7 +27,7 @@ export class UseAbilityContext {
 
   private constructor(
     private game: Game,
-    options: UseAbilityContextOptions
+    private options: UseAbilityContextOptions
   ) {
     this.player = options.player;
     this._ability = options.ability;
@@ -38,7 +39,8 @@ export class UseAbilityContext {
     return {
       ability: this._ability.id,
       card: this._ability.card.id,
-      player: this.player.id
+      player: this.player.id,
+      canCancel: this.options.canCancel
     };
   }
 

@@ -1,16 +1,14 @@
-import type { BetterExtract, Values } from '@game/shared';
+import type { Values } from '@game/shared';
 import type { MinionCard, SerializedMinionCard } from '../entities/minion.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { CardLocation } from '../card.enums';
+import type { BoardSpace, SerializedBoardSpace } from '../../board/board-space.entity';
 
 export const MINION_EVENTS = {
   MINION_SUMMONED: 'minion.summoned',
   MINION_BEFORE_HEAL: 'minion.before-heal',
   MINION_AFTER_HEAL: 'minion.after-heal',
   MINION_BEFORE_USE_ABILITY: 'minion.before-use-ability',
-  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability',
-  MINION_BEFORE_MOVE: 'minion.before-move',
-  MINION_AFTER_MOVE: 'minion.after-move'
+  MINION_AFTER_USE_ABILITY: 'minion.after-use-ability'
 } as const;
 export type MinionEvents = Values<typeof MINION_EVENTS>;
 
@@ -39,33 +37,13 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard },
-  { card: SerializedMinionCard }
+  { card: MinionCard; position: BoardSpace<MinionCard> },
+  { card: SerializedMinionCard; position: SerializedBoardSpace }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
-    };
-  }
-}
-
-export class MinionMoveEvent extends TypedSerializableEvent<
-  {
-    card: MinionCard;
-    from: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-    to: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-  },
-  {
-    card: string;
-    from: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-    to: BetterExtract<CardLocation, 'base' | 'battlefield'>;
-  }
-> {
-  serialize() {
-    return {
-      card: this.data.card.id,
-      from: this.data.from,
-      to: this.data.to
+      card: this.data.card.serialize(),
+      position: this.data.position.serialize()
     };
   }
 }
@@ -76,6 +54,4 @@ export type MinionCardEventMap = {
   [MINION_EVENTS.MINION_SUMMONED]: MinionSummonedEvent;
   [MINION_EVENTS.MINION_BEFORE_HEAL]: MinionCardHealEvent;
   [MINION_EVENTS.MINION_AFTER_HEAL]: MinionCardHealEvent;
-  [MINION_EVENTS.MINION_BEFORE_MOVE]: MinionMoveEvent;
-  [MINION_EVENTS.MINION_AFTER_MOVE]: MinionMoveEvent;
 };

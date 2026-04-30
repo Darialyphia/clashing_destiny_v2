@@ -6,26 +6,17 @@ const ui = useGameUi();
 </script>
 
 <template>
-  <div class="hovered-cell-infos">
+  <div class="hovered-card-infos">
     <Transition appear>
-      <div v-if="ui.hoveredCell?.unit?.card" class="hovered-card">
-        <GameCard
-          :card-id="ui.hoveredCell.unit.card.id"
-          :is-interactive="false"
-        />
-      </div>
-    </Transition>
-
-    <Transition appear>
-      <div v-if="ui.hoveredCardOnBoard" class="hovered-card">
-        <GameCard :card-id="ui.hoveredCardOnBoard.id" :is-interactive="false" />
+      <div v-if="ui.hoveredCard" class="hovered-card">
+        <GameCard :card-id="ui.hoveredCard.id" :is-interactive="false" />
       </div>
     </Transition>
   </div>
 </template>
 
 <style scoped lang="postcss">
-.hovered-cell-infos {
+.hovered-card-infos {
   color: white;
   font-size: 12px;
   border-radius: 4px;

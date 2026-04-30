@@ -29,6 +29,7 @@ import {
   ArtifactEquipedEvent
 } from '../events/artifact.events';
 import { GAME_PHASES } from '../../game/game.enums';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type SerializedArtifactCard = SerializedCard & {
   maxDurability: number;
@@ -213,18 +214,49 @@ export class ArtifactCard extends Card<
     );
   }
 
+  get potentialSummonPositions() {
+    return this.player.boardSide.base.filter(space => space.isEmpty);
+  }
+
+  private async selectPosition() {
+    const result = await this.game.interaction.selectSpacesOnBoard({
+      source: this,
+      player: this.player,
+      canCancel: true,
+      getLabel: () => 'Select position to summon',
+      isElligible: space => {
+        return this.potentialSummonPositions.includes(space as any);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: [this.potentialSummonPositions[0]]
+    });
+
+    return result;
+  }
+
   async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.player.boardSide.placeCardInBase(this, 0);
+    const positionResult = await this.selectPosition();
+    if (positionResult.cancelled) return;
+
+    await this.player.boardSide.placeCardInBase(this, positionResult.result[0].index);
     this.lostDurability = 0;
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-      new ArtifactEquipedEvent({ card: this })
+      new ArtifactEquipedEvent({
+        card: this,
+        position: positionResult.result[0] as BoardSpace<ArtifactCard>
+      })
     );
   }
 

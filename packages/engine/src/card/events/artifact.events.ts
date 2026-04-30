@@ -1,6 +1,7 @@
 import type { Values } from '@game/shared';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { ArtifactCard, SerializedArtifactCard } from '../entities/artifact.entity';
+import type { BoardSpace, SerializedBoardSpace } from '../../board/board-space.entity';
 
 export const ARTIFACT_EVENTS = {
   ARTIFACT_BEFORE_LOSE_DURABILITY: 'artifact.lose-durability',
@@ -25,12 +26,13 @@ export class ArtifactDurabilityEvent extends TypedSerializableEvent<
 }
 
 export class ArtifactEquipedEvent extends TypedSerializableEvent<
-  { card: ArtifactCard },
-  { card: SerializedArtifactCard }
+  { card: ArtifactCard; position: BoardSpace<ArtifactCard> },
+  { card: SerializedArtifactCard; position: SerializedBoardSpace }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.serialize(),
+      position: this.data.position.serialize()
     };
   }
 }

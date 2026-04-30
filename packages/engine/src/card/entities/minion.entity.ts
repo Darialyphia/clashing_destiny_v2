@@ -35,6 +35,7 @@ import {
 } from '../events/minion.events';
 import { DamageTrackerComponent } from '../components/damage-tracker.component';
 import { GAME_EVENTS } from '../../game/game.events';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -357,7 +358,8 @@ export class MinionCard extends Card<
 
   get canMove(): boolean {
     return this.interceptors.canMove.getValue(
-      !this.hasMovedThisTurn &&
+      this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
+        !this.hasMovedThisTurn &&
         (this.location === CARD_LOCATIONS.BATTLEFIELD ||
           this.location === CARD_LOCATIONS.BASE),
       this
@@ -396,12 +398,12 @@ export class MinionCard extends Card<
       return;
     }
 
-    await this.player.boardSide.moveMinion(this.id, index);
+    await this.player.boardSide.moveCard(this.id, index);
     this.hasMovedThisTurn = true;
   }
 
-  private async summon() {
-    this.player.boardSide.placeCardInBase(this, 0);
+  private async summon(position: BoardSpace<MinionCard>) {
+    this.player.boardSide.placeCardInBase(this, position.index);
     if (this.hasSummoningSickness) {
       await (this as MinionCard).modifiers.add(
         new SummoningSicknessModifier(this.game, this)
@@ -411,7 +413,7 @@ export class MinionCard extends Card<
 
     await this.game.emit(
       MINION_EVENTS.MINION_SUMMONED,
-      new MinionSummonedEvent({ card: this })
+      new MinionSummonedEvent({ card: this, position })
     );
   }
 
@@ -435,14 +437,39 @@ export class MinionCard extends Card<
     );
   }
 
-  async playAt() {
-    await this.summon();
+  async playAt(position: BoardSpace<MinionCard>) {
+    await this.summon(position);
   }
 
   // immediately plays the minion regardless of current chain or interaction state
   // this is useful when summoning minions as part of another card effect
-  playImmediately() {
-    return this.resolve(() => this.summon());
+  playImmediatelyAt(position: BoardSpace<MinionCard>) {
+    return this.resolve(() => this.summon(position));
+  }
+
+  get potentialSummonPositions() {
+    return this.player.boardSide.base.filter(space => space.isEmpty);
+  }
+
+  private async selectPosition() {
+    const result = await this.game.interaction.selectSpacesOnBoard({
+      source: this,
+      player: this.player,
+      canCancel: true,
+      getLabel: () => 'Select position to summon',
+      isElligible: space => {
+        return this.potentialSummonPositions.includes(space as any);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: [this.potentialSummonPositions[0]]
+    });
+
+    return result;
   }
 
   async play() {
@@ -451,7 +478,10 @@ export class MinionCard extends Card<
       new CardDeclarePlayEvent({ card: this })
     );
 
-    await this.playAt();
+    const positionResult = await this.selectPosition();
+    if (positionResult.cancelled) return;
+
+    await this.playAt(positionResult.result[0] as BoardSpace<MinionCard>);
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {

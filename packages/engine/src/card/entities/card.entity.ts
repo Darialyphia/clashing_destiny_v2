@@ -31,6 +31,7 @@ import { IllegalGameStateError } from '../../game/game-error';
 import { isMainDeckCard } from '../../board/board.system';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -75,6 +76,7 @@ export type SerializedCard = {
   keywords: string[];
   unplayableReason: string | null;
   isRevealed: boolean;
+  position: string | null;
 };
 
 export type CardTargetOrigin =
@@ -190,6 +192,14 @@ export abstract class Card<
 
   get location() {
     return this.player.cardManager.findCard(this.id)?.location;
+  }
+
+  get position(): BoardSpace<AnyCard> | null {
+    return (
+      [...this.player.boardSide.base, ...this.player.boardSide.battlefield].find(space =>
+        space.card?.equals(this)
+      ) ?? null
+    );
   }
 
   get tags() {
@@ -423,7 +433,8 @@ export abstract class Card<
       manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
-      isRevealed: this.isRevealed
+      isRevealed: this.isRevealed,
+      position: this.position?.id ?? null
     };
   }
 

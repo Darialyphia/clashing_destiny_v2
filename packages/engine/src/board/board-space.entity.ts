@@ -20,7 +20,7 @@ export type BoardPosition = {
 
 export type SerializedBoardSpace = {
   id: string;
-  entityType: 'board--space';
+  entityType: 'board-space';
   position: BoardPosition;
   card: string | null;
   player: string;
@@ -53,6 +53,10 @@ export class BoardSpace<T extends AnyCard>
       return this.player.boardSide.base;
     }
     return this.player.boardSide.battlefield;
+  }
+
+  get index() {
+    return this.position.index;
   }
 
   get player(): Player {

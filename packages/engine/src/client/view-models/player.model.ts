@@ -64,8 +64,8 @@ export class PlayerViewModel {
     return this.data.remainingCardsInMainDeck;
   }
 
-  get remainingCardsInRuneDeck() {
-    return this.data.remainingCardsInRuneDeck;
+  get remainingCardsInDestinyDeck() {
+    return this.data.remainingCardsInDestinyDeck;
   }
 
   get isPlayer1() {
@@ -97,5 +97,36 @@ export class PlayerViewModel {
 
   get boardSide() {
     return this.getClient().state.board.sides.find(side => side.playerId === this.id)!;
+  }
+
+  get hero() {
+    if (!this.data.hero) return null;
+    return this.getEntities()[this.data.hero] as CardViewModel;
+  }
+
+  get level() {
+    return this.data.level;
+  }
+
+  get exp() {
+    return this.data.exp;
+  }
+
+  get destinyDeck() {
+    const entities = this.getEntities();
+    return this.data.destinyDeck.map(cardId => entities[cardId] as CardViewModel);
+  }
+
+  get destinies() {
+    const entities = this.getEntities();
+    return this.data.destinies.map(destinyId => entities[destinyId] as CardViewModel);
+  }
+
+  get mana() {
+    return this.data.currentMana;
+  }
+
+  get maxMana() {
+    return this.data.maxMana;
   }
 }

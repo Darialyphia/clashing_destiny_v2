@@ -18,7 +18,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
   deckSource: CARD_DECK_SOURCES.MAIN_DECK,
-  jobs: [JOBS.MAGE, JOBS.WITCH],
+  jobs: [JOBS.MAGE],
   tags: [],
   manaCost: 0,
   atk: 2,

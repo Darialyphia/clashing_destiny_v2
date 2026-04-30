@@ -11,11 +11,12 @@ export type RearrangeCardBucket = {
   label: string;
   cards: AnyCard[];
 };
-type RearrangeCardsContextOptions = {
+export type RearrangeCardsContextOptions = {
   source: AnyCard;
   player: Player;
   buckets: Array<RearrangeCardBucket>;
   label: string;
+  canCancel: boolean;
 };
 export class RearrangeCardsContext {
   static async create(game: Game, options: RearrangeCardsContextOptions) {
@@ -34,7 +35,7 @@ export class RearrangeCardsContext {
 
   private constructor(
     private game: Game,
-    options: RearrangeCardsContextOptions
+    private options: RearrangeCardsContextOptions
   ) {
     this.buckets = options.buckets;
     this.source = options.source;
@@ -53,7 +54,8 @@ export class RearrangeCardsContext {
         id: bucket.id,
         label: bucket.label,
         cards: bucket.cards.map(card => card.id)
-      }))
+      })),
+      canCancel: this.options.canCancel
     };
   }
 

@@ -127,7 +127,7 @@ export class Ability<T extends AbilityOwner>
       abilityId: this.abilityId,
       canUse: this.canUse,
       description: this.blueprint.description,
-      name: this.blueprint.label,
+      label: this.blueprint.label,
       manaCost: this.manaCost,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       shouldExhaust: this.shouldExhaust,

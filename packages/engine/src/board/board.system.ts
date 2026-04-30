@@ -33,6 +33,14 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
     return this.sides.flatMap(side => side.getAllCardsInPlay());
   }
 
+  get boardSpaces() {
+    return this.sides.flatMap(side => side.allSpaces);
+  }
+
+  getBoardSpaceById(id: string) {
+    return this.boardSpaces.find(space => space.id === id) ?? null;
+  }
+
   serialize(): SerializedBoard {
     return {
       sides: this.sides.map(side => side.serialize()) as unknown as [

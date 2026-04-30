@@ -1,3 +1,4 @@
+import type { BoardSpace, SerializedBoardSpace } from '../board/board-space.entity';
 import type { AttackTarget } from '../game/phases/combat.phase';
 import type { CombatDamage, Damage, DamageType } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
@@ -275,6 +276,31 @@ export class CardRevealEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardBeforeMoveEvent extends TypedSerializableEvent<
+  { card: AnyCard; to: BoardSpace<AnyCard> },
+  { card: string; to: SerializedBoardSpace }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      to: this.data.to.serialize()
+    };
+  }
+}
+
+export class CardAfterMoveEvent extends TypedSerializableEvent<
+  { card: AnyCard; to: BoardSpace<AnyCard>; from: BoardSpace<AnyCard> },
+  { card: string; to: SerializedBoardSpace; from: SerializedBoardSpace }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      to: this.data.to.serialize(),
+      from: this.data.from.serialize()
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -297,4 +323,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE]: CardAfterTakeDamageEvent;
   [CARD_EVENTS.CARD_BEFORE_REVEAL]: CardRevealEvent;
   [CARD_EVENTS.CARD_AFTER_REVEAL]: CardRevealEvent;
+  [CARD_EVENTS.CARD_BEFORE_MOVE]: CardBeforeMoveEvent;
+  [CARD_EVENTS.CARD_AFTER_MOVE]: CardAfterMoveEvent;
 };

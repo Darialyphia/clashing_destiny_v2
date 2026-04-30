@@ -384,7 +384,7 @@ export class CardViewModel {
     const actions = [
       new PlayCardAction(this.getClient()),
       new DeclareAttackAction(this.getClient()),
-      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
+      ...this.abilityActions
     ].filter(rule => rule.predicate(this));
 
     return actions;
@@ -398,5 +398,9 @@ export class CardViewModel {
     }
 
     return [];
+  }
+
+  get abilityActions() {
+    return this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability));
   }
 }

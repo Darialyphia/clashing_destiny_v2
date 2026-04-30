@@ -1,17 +1,19 @@
-import type { SerializedAbility } from '../../card/card-blueprint';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
+import type { SerializedBoardSpace } from '../../board/board-space.entity';
+import type { PlayerViewModel } from './player.model';
+import type { CardViewModel } from './card.model';
 
-export class AbilityViewModel {
+export class BoardSpaceViewModel {
   private static patchApplier = new PatchApplier();
   private getEntities: () => GameStateEntities;
 
   private getClient: () => GameClient;
 
   constructor(
-    private data: SerializedAbility,
+    private data: SerializedBoardSpace,
     entityDictionary: GameStateEntities,
     client: GameClient
   ) {
@@ -19,11 +21,11 @@ export class AbilityViewModel {
     this.getClient = () => client;
   }
 
-  equals(unit: AbilityViewModel | SerializedAbility) {
+  equals(unit: BoardSpaceViewModel | SerializedBoardSpace) {
     return this.id === unit.id;
   }
 
-  update(data: Partial<SerializedAbility>) {
+  update(data: Partial<SerializedBoardSpace>) {
     this.data = Object.assign({}, this.data, data);
     return this;
   }
@@ -32,47 +34,31 @@ export class AbilityViewModel {
    * Update using patch operations for granular changes
    */
   updateWithPatches(patches: PatchOperation[]) {
-    this.data = AbilityViewModel.patchApplier.applyPatches(this.data, patches);
+    this.data = BoardSpaceViewModel.patchApplier.applyPatches(this.data, patches);
     return this;
   }
 
   clone() {
-    return new AbilityViewModel(this.data, this.getEntities(), this.getClient());
+    return new BoardSpaceViewModel(this.data, this.getEntities(), this.getClient());
   }
 
   get id() {
     return this.data.id;
   }
 
-  get abilityId() {
-    return this.data.abilityId;
+  get position() {
+    return this.data.position;
   }
 
-  get label() {
-    return this.data.label;
+  get player() {
+    const entities = this.getEntities();
+
+    return entities[this.data.player] as PlayerViewModel;
   }
 
-  get description() {
-    return this.data.description;
-  }
-
-  get isHiddenOnCard() {
-    return this.data.isHiddenOnCard;
-  }
-
-  get shouldExhaust() {
-    return this.data.shouldExhaust;
-  }
-
-  get canUse() {
-    return this.data.canUse;
-  }
-
-  get manaCost() {
-    return this.data.manaCost;
-  }
-
-  get targets() {
-    return this.data.targets;
+  get card() {
+    if (!this.data.card) return null;
+    const entities = this.getEntities();
+    return entities[this.data.card] as unknown as CardViewModel;
   }
 }

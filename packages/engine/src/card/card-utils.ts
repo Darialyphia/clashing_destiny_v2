@@ -49,12 +49,14 @@ export const minionOrHeroTargetRules = {
       min,
       max,
       allowRepeat,
-      label
+      label,
+      canCancel = false
     }: {
       min: number;
       max: number;
       allowRepeat: boolean;
       label: string;
+      canCancel?: boolean;
     }) =>
     async ({
       game,
@@ -78,6 +80,7 @@ export const minionOrHeroTargetRules = {
         origin,
         label,
         timeoutFallback,
+        canCancel,
         aiHints,
         isElligible(candidate, selectedCards) {
           if (!isMinionOrHero(candidate)) {
@@ -122,13 +125,15 @@ export const singleEnemyTargetRules = {
     label,
     timeoutFallback,
     predicate = () => true,
-    aiHints
+    aiHints,
+    canCancel = false
   }: {
     game: Game;
     card: AnyCard;
     origin: CardTargetOrigin;
     label: string;
     timeoutFallback: AnyCard[];
+    canCancel?: boolean;
     predicate?: (c: MinionCard | HeroCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -138,7 +143,8 @@ export const singleEnemyTargetRules = {
       min: 1,
       max: 1,
       allowRepeat: false,
-      label
+      label,
+      canCancel
     })({
       game,
       card,
@@ -378,6 +384,7 @@ export const singleArtifactTargetRules = {
     origin,
     label,
     timeoutFallback,
+    canCancel = false,
     predicate = () => true,
     aiHints
   }: {
@@ -386,6 +393,7 @@ export const singleArtifactTargetRules = {
     origin: CardTargetOrigin;
     label: string;
     timeoutFallback: AnyCard[];
+    canCancel?: boolean;
     predicate: (c: ArtifactCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -396,6 +404,7 @@ export const singleArtifactTargetRules = {
       label,
       player: card.player,
       timeoutFallback,
+      canCancel,
       aiHints,
       isElligible(candidate, selectedCards) {
         if (!isArtifact(candidate)) {
@@ -442,6 +451,7 @@ export const cardsInAllyDiscardPile = {
       maxChoiceCount?: number;
       label: string;
       timeoutFallback: T[];
+      canCancel?: boolean;
       aiHints: {
         shouldPick: (game: Game, player: Player, card: AnyCard) => number;
       };
@@ -450,6 +460,7 @@ export const cardsInAllyDiscardPile = {
     return await game.interaction.chooseCards<T>({
       player: options.player,
       label: options.label,
+      canCancel: options.canCancel ?? false,
       choices: Array.from(card.player.cardManager.discardPile)
         .filter(c => {
           return options.predicate ? options.predicate(c) : true;
@@ -490,6 +501,7 @@ export const cardsInEnemyDiscardPile = {
       maxChoiceCount?: number;
       label: string;
       timeoutFallback: T[];
+      canCancel?: boolean;
       aiHints: {
         shouldPick: (game: Game, player: Player, card: AnyCard) => number;
       };
@@ -498,6 +510,7 @@ export const cardsInEnemyDiscardPile = {
     return await game.interaction.chooseCards<T>({
       player: options.player,
       label: options.label,
+      canCancel: options.canCancel ?? false,
       choices: Array.from(card.player.cardManager.discardPile)
         .filter(c => {
           return options.predicate ? options.predicate(c) : true;

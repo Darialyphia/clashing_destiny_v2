@@ -52,9 +52,10 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
       new IllegalAbilityError()
     );
 
-    await this.game.interaction.declareUseAbilityIntent(
-      this.ability as Ability<AbilityOwner>,
-      this.player
-    );
+    await this.game.interaction.declareUseAbilityIntent({
+      ability: this.ability as Ability<AbilityOwner>,
+      player: this.player,
+      canCancel: true
+    });
   }
 }

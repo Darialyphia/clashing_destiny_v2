@@ -23,6 +23,7 @@ import { INTERACTION_STATES } from '../game.enums';
 import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
+import type { SerializedBoardSpace } from '../../board/board-space.entity';
 
 export type SerializedEntity =
   | SerializedMinionCard
@@ -31,7 +32,8 @@ export type SerializedEntity =
   | SerializedArtifactCard
   | SerializedPlayer
   | SerializedModifier
-  | SerializedAbility;
+  | SerializedAbility
+  | SerializedBoardSpace;
 
 export type EntityDictionary = Record<string, SerializedEntity>;
 
@@ -159,6 +161,12 @@ export class GameSerializer {
     this.game.playerSystem.players.forEach(player => {
       entities[player.id] = player.serialize();
       player.modifiers.list.forEach(modifier => {
+        entities[modifier.id] = modifier.serialize();
+      });
+    });
+    this.game.boardSystem.boardSpaces.forEach(space => {
+      entities[space.id] = space.serialize();
+      space.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
     });

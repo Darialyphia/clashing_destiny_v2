@@ -15,6 +15,7 @@ export type SelectingCardOnBoardContextOptions = {
   isDone(selectedCards: AnyCard[]): boolean;
   origin: CardTargetOrigin;
   timeoutFallback: AnyCard[];
+  canCancel: boolean;
   aiHints: {
     shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
   };
@@ -44,7 +45,7 @@ export class SelectingCardOnBoardContext {
 
   private constructor(
     private game: Game,
-    options: SelectingCardOnBoardContextOptions
+    private options: SelectingCardOnBoardContextOptions
   ) {
     this.player = options.player;
     this.isElligible = options.isElligible;
@@ -64,7 +65,8 @@ export class SelectingCardOnBoardContext {
         .filter(card => this.isElligible(card, this.selectedCards))
         .map(card => card.id),
       canCommit: this.canCommit(this.selectedCards),
-      label: this.label
+      label: this.label,
+      canCancel: this.options.canCancel
     };
   }
 
