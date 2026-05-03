@@ -15,6 +15,7 @@ import { cloneDeep } from 'lodash-es';
 import { LevelManagerComponent } from './components/level-manager.component';
 import { ManaManagerComponent } from './components/mana-manager.component';
 import { isArtifact, isMinion } from '../card/card-utils';
+import type { Affinity } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -45,19 +46,22 @@ export type SerializedPlayer = {
   hero: string;
   destinies: string[];
   boardSide: SerializedBoardSide;
+  unlockedAffinities: Affinity[];
 };
 
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
   manaRegen: Interceptable<number>;
   maxMana: Interceptable<number>;
+  unlockedAffinities: Interceptable<Affinity[]>;
 };
 
 const makeInterceptors = (): PlayerInterceptors => {
   return {
     cardsDrawnForTurn: new Interceptable(),
     manaRegen: new Interceptable(),
-    maxMana: new Interceptable()
+    maxMana: new Interceptable(),
+    unlockedAffinities: new Interceptable()
   };
 };
 
@@ -187,6 +191,14 @@ export class Player
     return this.opponent.artifacts;
   }
 
+  get unlockedAffinities() {
+    return this.interceptors.unlockedAffinities.getValue(
+      this.levelManager.level > this.game.config.ADVANCED_AFFINITY_UNLOCK_LEVEL
+        ? [this.hero.affinity, this.hero.advancedAffinity]
+        : [this.hero.affinity],
+      {}
+    );
+  }
   get isInteractive() {
     return this.game.interaction.isInteractive(this);
   }
@@ -211,7 +223,9 @@ export class Player
         await card.wakeUp();
       }
     }
-    await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
+    if (this.game.turnSystem.elapsedTurns > 0) {
+      await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
+    }
   }
 
   generateCard<T extends AnyCard>(blueprintId: string, isFoil: boolean) {
@@ -271,7 +285,8 @@ export class Player
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,
       hero: this.hero.id,
       destinies: this.levelManager.destinies.map(destiny => destiny.id),
-      boardSide: this.boardSide.serialize()
+      boardSide: this.boardSide.serialize(),
+      unlockedAffinities: this.unlockedAffinities
     };
   }
 }

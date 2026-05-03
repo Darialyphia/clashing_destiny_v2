@@ -5,7 +5,8 @@ import {
   CARD_KINDS,
   RARITIES,
   JOBS,
-  CARD_LOCATIONS
+  CARD_LOCATIONS,
+  AFFINITIES
 } from '../../../../card.enums';
 
 export const erinaVioletWitch: HeroBlueprint = {
@@ -18,6 +19,8 @@ export const erinaVioletWitch: HeroBlueprint = {
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
   jobs: [JOBS.MAGE],
+  affinity: AFFINITIES.FIRE,
+  advancedAffinity: AFFINITIES.WATER,
   tags: [],
   atk: 2,
   maxHp: 25,

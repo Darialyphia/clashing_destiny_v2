@@ -9,7 +9,8 @@ import {
   type Rarity,
   CARD_LOCATIONS,
   type CardLocation,
-  CARD_KINDS
+  CARD_KINDS,
+  type Affinity
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -71,6 +72,7 @@ export type SerializedCard = {
   unplayableReason: string | null;
   isRevealed: boolean;
   position: string | null;
+  affinity: Affinity;
 };
 
 export type CardTargetOrigin =
@@ -140,6 +142,10 @@ export abstract class Card<
 
   get isRevealed() {
     return this._isRevealed;
+  }
+
+  get affinity() {
+    return this.blueprint.affinity;
   }
 
   async reveal() {
@@ -390,7 +396,8 @@ export abstract class Card<
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
-      position: this.position?.id ?? null
+      position: this.position?.id ?? null,
+      affinity: this.affinity
     };
   }
 

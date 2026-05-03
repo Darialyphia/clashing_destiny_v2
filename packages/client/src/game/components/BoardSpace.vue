@@ -22,12 +22,11 @@ const { client } = useGameClient();
 
 const cell = useEntity<BoardSpaceViewModel>(cellId);
 const { isTargetable, isTargeted } = useCellTargeting(cell);
-const { canMoveTo, canAttack, canSelectUnit } = useCellHighlights(cell);
+const { canMoveTo, canAttack, canSelectUnit, cannotSelectReason } =
+  useCellHighlights(cell);
 const dragSelection = useBoardCardDragSelection(cell, canSelectUnit);
 const { path, pathColor } = useBoardSpaceArrowPath(cell);
 const { isMovingUnit } = useCardMoveFx(cell);
-
-const isAbilityMenuOpened = ref(false);
 
 const handleMouseup = (e: MouseEvent) => {
   if (e.button !== 0) return;
@@ -59,7 +58,19 @@ const handleMouseup = (e: MouseEvent) => {
     @mouseup.stop="handleMouseup"
     @mousedown="dragSelection.onMousedown"
   >
-    <BoardCard v-if="cell.card" :card="cell.card" />
+    <BoardCard
+      v-if="cell.card"
+      :card="cell.card"
+      :is-shaking="dragSelection.isShaking.value"
+    />
+    <Transition name="cannot-select-msg">
+      <div
+        v-if="dragSelection.isShowingMessage.value && cannotSelectReason"
+        class="cannot-select-msg"
+      >
+        {{ cannotSelectReason }}
+      </div>
+    </Transition>
 
     <Teleport to="#arrows" defer>
       <Arrow v-if="path" :path="path" :color="pathColor" />
@@ -124,5 +135,37 @@ const handleMouseup = (e: MouseEvent) => {
 
 :global(.minion-cell:has(.unit.is-being-dropped)) {
   z-index: 1;
+}
+
+.cannot-select-msg {
+  position: absolute;
+  bottom: calc(100% + var(--size-3));
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  text-align: center;
+  font-size: var(--size-3);
+  font-weight: var(--font-weight-5);
+  width: 100%;
+  -webkit-text-stroke: 4px black;
+  paint-order: stroke fill;
+  color: var(--red-5);
+}
+
+.cannot-select-msg-enter-active,
+.cannot-select-msg-leave-active {
+  transition:
+    opacity 0.15s ease,
+    translate 0.15s ease;
+}
+
+.cannot-select-msg-enter-from {
+  opacity: 0;
+  translate: 0 -6px;
+}
+
+.cannot-select-msg-leave-to {
+  opacity: 0;
+  translate: 0 -4px;
 }
 </style>

@@ -8,7 +8,10 @@ import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import AbilityMenu from './AbilityMenu.vue';
 
-const { card } = defineProps<{ card: CardViewModel }>();
+const { card, isShaking = false } = defineProps<{
+  card: CardViewModel;
+  isShaking?: boolean;
+}>();
 
 const ui = useGameUi();
 
@@ -79,7 +82,8 @@ const modifiers = computed(() => card.modifiers);
         'is-being-dropped': isBeingDropped,
         'is-attacking': isAttacking,
         'is-taking-damage': isTakingDamage,
-        'has-ability': hasAvailableAbilities
+        'has-ability': hasAvailableAbilities,
+        'is-shaking': isShaking
       }
     ]"
   >
@@ -133,6 +137,11 @@ const modifiers = computed(() => card.modifiers);
       mix-blend-mode: multiply;
       pointer-events: none;
     }
+  }
+
+  &.is-shaking {
+    animation: var(--animation-shake-x);
+    animation-duration: 0.3s;
   }
 
   &.has-ability {

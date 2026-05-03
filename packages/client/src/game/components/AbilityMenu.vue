@@ -37,11 +37,8 @@ const ui = useGameUi();
         <button
           class="ability"
           :disabled="!ability.predicate()"
-          @click="
-            () => {
-              ability.handler(card);
-            }
-          "
+          @mousedown.stop
+          @click="ability.handler(card)"
         />
       </template>
       <div class="ability-tooltip">

@@ -9,7 +9,7 @@ import {
   type HeroBlueprint,
   type Target
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type Affinity, type JobId } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -42,6 +42,7 @@ export type SerializedHeroCard = SerializedCard & {
   remainingHp: number;
   abilities: string[];
   jobs: JobId[];
+  advancedAffinity: Affinity;
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -331,6 +332,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.blueprint.jobs;
   }
 
+  get advancedAffinity() {
+    return this.blueprint.advancedAffinity;
+  }
+
   get isCorrectPhaseToPlay() {
     return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
@@ -381,7 +386,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilities.map(ability => ability.id),
-      jobs: this.jobs.map(job => job.id) as JobId[]
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      advancedAffinity: this.advancedAffinity
     };
   }
 }

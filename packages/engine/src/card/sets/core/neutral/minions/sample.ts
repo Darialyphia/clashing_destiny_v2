@@ -1,6 +1,12 @@
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
+import {
+  AFFINITIES,
+  CARD_KINDS,
+  CARD_SETS,
+  JOBS,
+  RARITIES
+} from '../../../../card.enums';
 
 export const sample: MinionBlueprint = {
   id: 'sample',
@@ -12,7 +18,8 @@ export const sample: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL],
-  manaCost: 1,
+  affinity: AFFINITIES.NEUTRAL,
+  manaCost: 6,
   tags: [],
   atk: 1,
   maxHp: 2,

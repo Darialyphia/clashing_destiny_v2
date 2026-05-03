@@ -31,5 +31,6 @@ const passAction = computed(() => {
   &:disabled {
     filter: grayscale(100%) brightness(0.8);
   }
+  margin-left: 35px;
 }
 </style>

@@ -1,6 +1,12 @@
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
+import {
+  AFFINITIES,
+  CARD_KINDS,
+  CARD_SETS,
+  JOBS,
+  RARITIES
+} from '../../../../card.enums';
 
 export const sampleSpell: SpellBlueprint = {
   id: 'sampleSpell',
@@ -12,6 +18,7 @@ export const sampleSpell: SpellBlueprint = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL],
+  affinity: AFFINITIES.NEUTRAL,
   manaCost: 1,
   tags: [],
   abilities: [],

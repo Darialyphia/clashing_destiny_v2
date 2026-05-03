@@ -140,42 +140,11 @@ export const CARD_LOCATIONS = {
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 
-export type Rune = {
-  id: string;
-  name: string;
-  tint: CardTint;
-};
-export const defaultCardTint: CardTint = {
-  colors: ['#FFFFFF', '#FFFFFF'],
-  mode: { type: 'radial' },
-  blendMode: 'overlay',
-  opacity: 0
-};
-export const RUNES = {
-  MIGHT: {
-    id: 'MIGHT',
-    name: 'Might',
-    tint: defaultCardTint
-  },
-  WISDOM: {
-    id: 'WISDOM',
-    name: 'Wisdom',
-    tint: defaultCardTint
-  },
-  FOCUS: {
-    id: 'FOCUS',
-    name: 'Focus',
-    tint: defaultCardTint
-  },
-  RESONANCE: {
-    id: 'RESONANCE',
-    name: 'Resonance',
-    tint: defaultCardTint
-  },
-  COLORLESS: {
-    id: 'COLORLESS',
-    name: 'Neutral',
-    tint: defaultCardTint
-  }
-} as const satisfies Record<string, Rune>;
-export type RuneId = Values<typeof RUNES>['id'];
+export const AFFINITIES = {
+  NEUTRAL: 'Neutral',
+  FIRE: 'Fire',
+  WATER: 'Water',
+  EARTH: 'Earth',
+  AIR: 'Air'
+} as const;
+export type Affinity = Values<typeof AFFINITIES>;

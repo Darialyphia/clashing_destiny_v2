@@ -1,4 +1,4 @@
-import type { BetterExtract, EmptyObject } from '@game/shared';
+import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
 import type {
   CARD_KINDS,
@@ -8,7 +8,7 @@ import type {
   ArtifactKind,
   Tag,
   Job,
-  RuneId
+  Affinity
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -51,6 +51,7 @@ export type CardBlueprintBase = {
   unique?: boolean;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
+  affinity: Affinity;
 };
 
 export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target> = {
@@ -126,6 +127,7 @@ export type SpellBlueprint = CardBlueprintBase & {
 export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
   jobs: Job[];
+  advancedAffinity: Affinity;
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;

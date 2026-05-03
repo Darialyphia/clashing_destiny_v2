@@ -30,6 +30,7 @@ import HoveredCardInfos from './HoveredCardnfos.vue';
 import { provideRichTextContext } from '../composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
 import BoardSpace from './BoardSpace.vue';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -187,6 +188,19 @@ useEventListener('contextmenu', async e => {
                 :data-count="clock.remaining"
               ></div>
             </div>
+
+            <div
+              class="phase level-up"
+              :class="state.phase.state === GAME_PHASES.LEVEL_UP && 'active'"
+            />
+            <div
+              class="phase main"
+              :class="state.phase.state === GAME_PHASES.MAIN && 'active'"
+            />
+            <div
+              class="phase combat"
+              :class="state.phase.state === GAME_PHASES.COMBAT && 'active'"
+            />
           </div>
         </div>
 
@@ -481,7 +495,7 @@ useEventListener('contextmenu', async e => {
 
 .hovered-cell-infos {
   position: absolute;
-  left: var(--size-11);
+  right: var(--size-11);
   top: 45%;
   translate: 0 -50%;
   z-index: 2;
@@ -491,5 +505,34 @@ useEventListener('contextmenu', async e => {
   position: absolute;
   left: 960px;
   top: 282px;
+
+  .phase {
+    width: 220px;
+    height: 55px;
+
+    &:not(.active) {
+      filter: grayscale(100%) brightness(50%);
+    }
+
+    &.draw {
+      background: url('@/assets/ui/phase-indicator-draw.png');
+    }
+
+    &.level-up {
+      background: url('@/assets/ui/phase-indicator-level-up.png');
+    }
+
+    &.main {
+      background: url('@/assets/ui/phase-indicator-main.png');
+    }
+
+    &.combat {
+      background: url('@/assets/ui/phase-indicator-combat.png');
+    }
+
+    &.end {
+      background: url('@/assets/ui/phase-indicator-end.png');
+    }
+  }
 }
 </style>

@@ -30,7 +30,7 @@ const ui = useGameUi();
 
   &.v-enter-from,
   &.v-leave-to {
-    translate: calc(-1 * var(--size-8)) 0;
+    translate: var(--size-8) 0;
     opacity: 0;
   }
 }

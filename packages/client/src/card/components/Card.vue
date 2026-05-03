@@ -3,7 +3,8 @@ import {
   RARITIES,
   type CardKind,
   type Rarity,
-  type JobId
+  type JobId,
+  type Affinity
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -50,6 +51,8 @@ const {
     subKind?: string | null;
     tags?: string[];
     jobs: JobId[];
+    affinity: Affinity;
+    advancedAffinity?: Affinity;
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -197,8 +200,16 @@ const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
 
-const jobsBgs = computed(() => {
-  return card.jobs.map(jobId => assets[`ui/card/job-${jobId}`].css);
+const affinities = computed(() => {
+  const affinities = [card.affinity, card.advancedAffinity].filter(isDefined);
+
+  return affinities.map(affinity => {
+    console.log(`ui/card/affinity-${affinity.toLocaleLowerCase()}`, assets);
+    return {
+      affinity,
+      bg: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css
+    };
+  });
 });
 </script>
 
@@ -270,11 +281,11 @@ const jobsBgs = computed(() => {
 
         <div class="top-right">
           <div
-            v-for="(jobBg, index) in jobsBgs"
+            v-for="(affinity, index) in affinities"
             :key="index"
-            class="job parallax"
-            :data-label="getJobById(card.jobs[index])?.shortName"
-            :style="{ '--bg': jobBg }"
+            class="affinity parallax"
+            :data-label="affinity.affinity"
+            :style="{ '--bg': affinity.bg }"
           />
         </div>
 
@@ -287,6 +298,10 @@ const jobsBgs = computed(() => {
             {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
             <span v-if="isDefined(card.subKind)">
               - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
+            </span>
+            <span v-if="card.jobs.length" class="jobs">
+              |
+              {{ card.jobs.map(jobId => getJobById(jobId)?.name).join(' | ') }}
             </span>
             <span v-if="isDefined(card.tags)" class="tags">
               <template v-if="card.tags?.length">|</template>
@@ -517,7 +532,7 @@ const jobsBgs = computed(() => {
   inset: 0;
   background: url('@/assets/ui/card/frames/default.png');
   background-size: cover;
-  &::after {
+  .card.animated:has(.foil) & ::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -640,13 +655,16 @@ const jobsBgs = computed(() => {
   position: absolute;
   top: calc(2px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
+  display: grid;
+  gap: calc(4px * var(--pixel-scale));
 }
 
-.job {
-  width: calc(24px * var(--pixel-scale));
+.affinity {
+  width: calc(30px * var(--pixel-scale));
   aspect-ratio: 1;
   background: var(--bg);
   background-size: cover;
+  position: relative;
 }
 
 .buffed {
@@ -691,7 +709,7 @@ const jobsBgs = computed(() => {
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
-  left: calc(2px * var(--pixel-scale));
+  top: calc(125px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 11px);
   text-align: right;
   font-weight: var(--font-weight-7);
@@ -704,22 +722,19 @@ const jobsBgs = computed(() => {
 
 .atk {
   background-image: url('@/assets/ui/card/attack.png');
-  top: calc(38px * var(--pixel-scale));
+  left: calc(12px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health.png');
-  top: calc(90px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/health-left.png');
+  right: calc(12px * var(--pixel-scale));
+  --dual-text-offset-x: calc(2px * var(--pixel-scale));
 }
 
 .durability {
   background-image: url('@/assets/ui/card/durability.png');
-  top: calc(90px * var(--pixel-scale));
-}
-
-.retaliation {
-  background-image: url('@/assets/ui/card/retaliation.png');
-  top: calc(64px * var(--pixel-scale));
+  right: calc(12px * var(--pixel-scale));
+  --dual-text-offset-x: calc(2px * var(--pixel-scale));
 }
 
 .kind {

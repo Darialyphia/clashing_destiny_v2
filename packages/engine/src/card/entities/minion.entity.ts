@@ -8,7 +8,7 @@ import {
   type MinionBlueprint,
   type Target
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type JobId, type RuneId } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -50,6 +50,7 @@ export type SerializedMinionCard = SerializedCard & {
   abilities: string[];
   canMove: boolean;
   jobs: JobId[];
+  hasSummoningSickness: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -520,7 +521,8 @@ export class MinionCard extends Card<
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
       canMove: this.canMoveManually,
-      jobs: this.jobs.map(job => job.id) as JobId[]
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      hasSummoningSickness: this.hasSummoningSickness
     };
   }
 }

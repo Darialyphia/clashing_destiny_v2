@@ -8,7 +8,12 @@ import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
-import { CARD_KINDS, type CardKind, type Job } from '../../card/card.enums';
+import {
+  CARD_KINDS,
+  type Affinity,
+  type CardKind,
+  type Job
+} from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
@@ -129,6 +134,14 @@ export class CardViewModel {
     return null;
   }
 
+  get hasSummoningSickness() {
+    if ('hasSummoningSickness' in this.data) {
+      return this.data.hasSummoningSickness as boolean;
+    }
+
+    return false;
+  }
+
   get manaCost() {
     if ('manaCost' in this.data) {
       return this.data.manaCost as number;
@@ -155,6 +168,17 @@ export class CardViewModel {
       return this.data.jobs as Job[];
     }
     return [];
+  }
+
+  get affinity() {
+    return this.data.affinity;
+  }
+
+  get advancedAffinity() {
+    if ('advancedAffinity' in this.data) {
+      return this.data.advancedAffinity as Affinity | null;
+    }
+    return null;
   }
 
   get subKind() {

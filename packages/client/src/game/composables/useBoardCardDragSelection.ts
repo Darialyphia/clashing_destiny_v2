@@ -3,6 +3,8 @@ import { useGameUi } from './useGameClient';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 
 const DRAG_THRESHOLD_PX = 30;
+const SHAKE_DURATION_MS = 600;
+const MESSAGE_DURATION_MS = 2000;
 
 export const useBoardCardDragSelection = (
   cell: Ref<BoardSpaceViewModel>,
@@ -12,6 +14,29 @@ export const useBoardCardDragSelection = (
 
   let startX = 0;
   let startY = 0;
+
+  const isShaking = ref(false);
+  const isShowingMessage = ref(false);
+  let shakeTimeout: ReturnType<typeof setTimeout> | null = null;
+  let messageTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  const triggerShake = () => {
+    if (shakeTimeout) clearTimeout(shakeTimeout);
+    if (messageTimeout) clearTimeout(messageTimeout);
+
+    isShaking.value = true;
+    isShowingMessage.value = true;
+
+    shakeTimeout = setTimeout(() => {
+      isShaking.value = false;
+      shakeTimeout = null;
+    }, SHAKE_DURATION_MS);
+
+    messageTimeout = setTimeout(() => {
+      isShowingMessage.value = false;
+      messageTimeout = null;
+    }, MESSAGE_DURATION_MS);
+  };
 
   const onMousemove = (e: MouseEvent) => {
     if (!cell.value.card) return;
@@ -24,6 +49,10 @@ export const useBoardCardDragSelection = (
   };
 
   const onMousedown = (e: MouseEvent) => {
+    if (cell.value.card && !canSelectUnit.value) {
+      triggerShake();
+      return;
+    }
     if (!canSelectUnit.value) return;
     startX = e.clientX;
     startY = e.clientY;
@@ -41,6 +70,8 @@ export const useBoardCardDragSelection = (
 
   return {
     onMousedown,
-    onMouseup
+    onMouseup,
+    isShaking,
+    isShowingMessage
   };
 };

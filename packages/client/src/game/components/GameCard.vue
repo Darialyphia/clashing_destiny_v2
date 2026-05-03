@@ -112,7 +112,9 @@ const classes = computed(() => {
             .filter(ability => !ability.isHiddenOnCard)
             .map(a => formatAbilityText(a)),
           jobs: overrides.jobs ?? card.jobs,
-          subKind: overrides.subKind ?? card.subKind
+          subKind: overrides.subKind ?? card.subKind,
+          affinity: overrides.affinity ?? card.affinity,
+          advancedAffinity: overrides.advancedAffinity ?? card.advancedAffinity
         }"
         :is-foil="card.isFoil"
         class="game-card big"

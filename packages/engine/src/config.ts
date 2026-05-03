@@ -26,6 +26,8 @@ export type Config = {
   EXP_GAIN_PER_TURN: number;
 
   HERO_POSITION: number;
+
+  ADVANCED_AFFINITY_UNLOCK_LEVEL: number;
 };
 
 export const defaultConfig: Config = {
@@ -53,5 +55,6 @@ export const defaultConfig: Config = {
   MAX_HELD_EXP: 5,
   EXP_GAIN_PER_TURN: 1,
 
-  HERO_POSITION: 2
+  HERO_POSITION: 2,
+  ADVANCED_AFFINITY_UNLOCK_LEVEL: 3
 };

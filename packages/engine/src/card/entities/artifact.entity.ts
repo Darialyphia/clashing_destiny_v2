@@ -10,8 +10,7 @@ import {
   ARTIFACT_KINDS,
   CARD_EVENTS,
   type ArtifactKind,
-  type JobId,
-  type RuneId
+  type JobId
 } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import {
@@ -40,7 +39,6 @@ export type SerializedArtifactCard = SerializedCard & {
   abilities: string[];
   atkBonus: number | null;
   jobs: JobId[];
-  runeCost: Partial<Record<RuneId, number>>;
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
@@ -270,8 +268,7 @@ export class ArtifactCard extends Card<
       baseManaCost: this.manaCost,
       abilities: this.abilities.map(a => a.id),
       atkBonus: this.atkBonus,
-      jobs: this.jobs.map(job => job.id) as JobId[],
-      runeCost: this.blueprint.runeCost
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }
