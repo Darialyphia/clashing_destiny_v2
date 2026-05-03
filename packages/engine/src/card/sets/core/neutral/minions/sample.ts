@@ -19,7 +19,7 @@ export const sample: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [],
   affinity: AFFINITIES.NEUTRAL,
-  manaCost: 6,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
