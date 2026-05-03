@@ -9,6 +9,8 @@ import type { AbilityViewModel } from '../view-models/ability.model';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { BoardSpaceViewModel } from '../view-models/board-space.model';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
+import { MoveAction } from '../actions/move';
+import { AttackAction } from '../actions/attack';
 
 export type BoardCellClickRule = {
   predicate: (tile: BoardSpaceViewModel, state: GameClientState) => boolean;
@@ -141,7 +143,9 @@ export class UiController {
   private buildCardClickRules() {
     this.boardSpaceClickRules = [
       new SelectCardOnBoardAction(this.client),
-      new SelectSpaceOnBoardAction(this.client)
+      new SelectSpaceOnBoardAction(this.client),
+      new MoveAction(this.client),
+      new AttackAction(this.client)
     ];
   }
 

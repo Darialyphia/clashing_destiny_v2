@@ -206,6 +206,9 @@ export class InputSystem extends System<never> {
   }
 
   async dispatch(input: SerializedInput) {
+    console.groupCollapsed(`[InputSystem]: ${input.type}`);
+    console.log(input);
+    console.groupEnd();
     if (!this.isActionType(input.type)) return;
     if (this.isPaused) {
       // if the game is paused, run the input immediately
@@ -217,7 +220,6 @@ export class InputSystem extends System<never> {
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
       // the current input could schedule new actions, so we need to wait for the flush to preserve the correct action order
-      console.log('scheduling input after current run');
       this.game.once(GAME_EVENTS.FLUSHED, () => {
         return this.schedule(() => this.handleInput(input));
       });

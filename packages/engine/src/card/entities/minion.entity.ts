@@ -50,7 +50,6 @@ export type SerializedMinionCard = SerializedCard & {
   abilities: string[];
   canMove: boolean;
   jobs: JobId[];
-  runeCost: Partial<Record<RuneId, number>>;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -367,6 +366,13 @@ export class MinionCard extends Card<
     );
   }
 
+  get isOnBoard() {
+    return (
+      this.location === CARD_LOCATIONS.BATTLEFIELD ||
+      this.location === CARD_LOCATIONS.BASE
+    );
+  }
+
   get canMoveManually(): boolean {
     return this.interceptors.canMoveManually.getValue(
       (this.canMove && this.location === CARD_LOCATIONS.BATTLEFIELD) ||
@@ -392,12 +398,7 @@ export class MinionCard extends Card<
 
   async move(index: number) {
     if (!this.canMove) return;
-    if (
-      this.location !== CARD_LOCATIONS.BATTLEFIELD &&
-      this.location !== CARD_LOCATIONS.BASE
-    ) {
-      return;
-    }
+    if (!this.isOnBoard) return;
 
     await this.player.boardSide.moveCard(this.id, index);
     this.hasMovedThisTurn = true;
@@ -498,8 +499,8 @@ export class MinionCard extends Card<
     return this.canMove
       ? [
           ...(this.location === CARD_LOCATIONS.BATTLEFIELD
-            ? this.player.boardSide.battlefield
-            : this.player.boardSide.base
+            ? this.player.boardSide.base
+            : this.player.boardSide.battlefield
           ).filter(space => space.isEmpty)
         ]
       : [];
@@ -519,8 +520,7 @@ export class MinionCard extends Card<
       remainingHp: this.remainingHp,
       abilities: this.abilities.map(ability => ability.id),
       canMove: this.canMoveManually,
-      jobs: this.jobs.map(job => job.id) as JobId[],
-      runeCost: this.blueprint.runeCost
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }

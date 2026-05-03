@@ -287,7 +287,7 @@ export class CardViewModel {
   canAttackAt(space: BoardSpaceViewModel) {
     if (!this.canAttack) return false;
 
-    return this.potentialAttackTargets.some(target => target.id === space.id);
+    return this.potentialAttackTargets.some(target => target.id === space.card?.id);
   }
 
   canMoveTo(space: BoardSpaceViewModel) {

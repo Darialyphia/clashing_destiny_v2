@@ -242,14 +242,12 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     });
   }
 
-  async startCombat(onResolved?: () => MaybePromise<void>) {
+  async startCombat() {
     assert(
       this.can(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE),
       new WrongGamePhaseError()
     );
-    if (onResolved) {
-      this.game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, onResolved);
-    }
+
     await this.sendTransition(GAME_PHASE_TRANSITIONS.START_COMBAT_PHASE);
   }
 

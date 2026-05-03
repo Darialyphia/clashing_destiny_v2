@@ -24,9 +24,6 @@ const passAction = computed(() => {
   height: 55px;
   background: url(@/assets/ui/pass-button.png);
   color: transparent;
-  position: absolute;
-  left: 900px;
-  top: 282px;
   transition: filter 0.3s ease;
   &:hover {
     filter: brightness(1.2) drop-shadow(0 0 12px lime);

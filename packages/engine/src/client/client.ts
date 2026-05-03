@@ -19,8 +19,8 @@ import {
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
-import { GAME_PHASES, INTERACTION_STATES } from '../game/game.enums';
 import type { BoardSpaceViewModel } from './view-models/board-space.model';
+import { GAME_PHASES } from '../game/game.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -156,6 +156,20 @@ export class GameClient {
   }
 
   getActivePlayerId() {
+    // auto switch player in sandbox upon choosing level up action
+    if (
+      this.gameType === GAME_TYPES.LOCAL &&
+      this.stateManager.state.phase.state === GAME_PHASES.LEVEL_UP
+    ) {
+      const ctx = this.stateManager.state.phase.ctx;
+      const playerWhoHasToChoose = Object.entries(ctx.selections).find(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ([_, cardId]) => cardId === null
+      )?.[0];
+      if (playerWhoHasToChoose) {
+        return playerWhoHasToChoose;
+      }
+    }
     return this.stateManager.state.interaction.ctx.player;
   }
 

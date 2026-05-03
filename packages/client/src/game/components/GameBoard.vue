@@ -25,14 +25,13 @@ import { config } from '@/utils/config';
 import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import PassButton from './PassButton.vue';
-import MyPlayerInfos from './MyPlayerInfos.vue';
-import OpponentPlayerInfos from './OpponentPlayerInfos.vue';
+import PlayerInfos from './PlayerInfos.vue';
 import HoveredCardInfos from './HoveredCardnfos.vue';
 import { provideRichTextContext } from '../composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
 import BoardSpace from './BoardSpace.vue';
 
-const { options } = defineProps<{
+const { clocks } = defineProps<{
   clocks?: {
     [playerId: string]: {
       max: number;
@@ -136,14 +135,14 @@ useEventListener('contextmenu', async e => {
         <div class="minions-zone">
           <div class="opponent-base">
             <BoardSpace
-              v-for="space in opponent.boardSide.base"
+              v-for="space in opponent.boardSide.base.toReversed()"
               :key="space"
               :cell-id="space"
             />
           </div>
           <div class="opponent-battlefield">
             <BoardSpace
-              v-for="space in opponent.boardSide.battlefield"
+              v-for="space in opponent.boardSide.battlefield.toReversed()"
               :key="space"
               :cell-id="space"
             />
@@ -173,7 +172,22 @@ useEventListener('contextmenu', async e => {
             class="my-front-row"
           />
           <MinionRow :row="myPlayer.boardSide.base" class="my-back-row" /> -->
-          <PassButton />
+          <div class="right-side">
+            <PassButton />
+            <div class="flex gap-2">
+              <div
+                v-for="(clock, userId) of clocks"
+                :key="userId"
+                class="action-clock"
+                :class="{
+                  active: clock.isActive,
+                  warning: clock.remaining < 15
+                }"
+                :style="{ '--max': clock.max, '--remaining': clock.remaining }"
+                :data-count="clock.remaining"
+              ></div>
+            </div>
+          </div>
         </div>
 
         <div id="card-actions-portal"></div>
@@ -184,8 +198,8 @@ useEventListener('contextmenu', async e => {
   </div>
 
   <HoveredCardInfos class="hovered-cell-infos" />
-  <MyPlayerInfos class="my-player-infos" />
-  <OpponentPlayerInfos class="opponent-player-infos" />
+  <PlayerInfos class="my-player-infos" :player="myPlayer" />
+  <PlayerInfos class="opponent-player-infos" :player="opponent" />
 
   <Transition>
     <div
@@ -229,7 +243,7 @@ useEventListener('contextmenu', async e => {
 .debug {
   position: fixed;
   top: 0;
-  left: var(--size-12);
+  right: var(--size-12);
   color: white;
   font-size: var(--font-size-0);
   z-index: 10;
@@ -279,7 +293,7 @@ useEventListener('contextmenu', async e => {
   gap: 12px;
   position: relative;
 
-  > div {
+  > div:not(.right-side) {
     height: 130px;
     margin-inline: 22px;
     width: calc(100% - 44px);
@@ -295,7 +309,7 @@ useEventListener('contextmenu', async e => {
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 5%;
+  bottom: 10%;
   left: 0;
 }
 
@@ -326,28 +340,22 @@ useEventListener('contextmenu', async e => {
     color: red;
   }
 } */
-/*
+
 .action-clock {
   --color: #ffb270;
-}
-
-.turn-clock {
-  --color: #79d2c0;
-}
-
-.action-clock,
-.turn-clock {
   aspect-ratio: 1;
   border: 2px solid #985e25;
   border-radius: 50%;
   position: relative;
-  height: 100%;
+  height: 80px;
   aspect-ratio: 1;
+  --colored-angle: calc(360deg * (var(--remaining) / var(--max)));
+  --transparent-angle: calc(360deg - var(--colored-angle));
   background: conic-gradient(
-    var(--color) 0deg,
+    transparent 0deg,
+    transparent var(--transparent-angle),
     var(--color) calc(360deg * (var(--remaining) / var(--max))),
-    transparent calc(360deg * (var(--remaining) / var(--max))),
-    transparent 360deg
+    var(--color) 360deg
   );
 
   &:not(.active) {
@@ -364,9 +372,9 @@ useEventListener('contextmenu', async e => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-4);
-    color: #985e25;
-    font-weight: var(--font-weight-9);
+    font-size: var(--font-size-5);
+    color: var(--color);
+    font-weight: var(--font-weight-5);
     background-color: black;
     border-radius: var(--radius-round);
   }
@@ -389,7 +397,7 @@ useEventListener('contextmenu', async e => {
   &.active.warning::after {
     animation: warning-pulse 1s infinite;
   }
-} */
+}
 
 .settings-button {
   --pixel-scale: 2;
@@ -458,13 +466,15 @@ useEventListener('contextmenu', async e => {
 .my-player-infos {
   position: absolute;
   left: var(--size-12);
-  bottom: min(10%, var(--size-11));
+  top: 45%;
+  translate: 0 50%;
 }
 
 .opponent-player-infos {
   position: absolute;
-  right: var(--size-12);
-  top: 5%;
+  left: var(--size-12);
+  top: 40%;
+  translate: 0 -100%;
 }
 
 .hovered-cell-infos {
@@ -473,5 +483,11 @@ useEventListener('contextmenu', async e => {
   top: 45%;
   translate: 0 -50%;
   z-index: 2;
+}
+
+.right-side {
+  position: absolute;
+  left: 860px;
+  top: 282px;
 }
 </style>

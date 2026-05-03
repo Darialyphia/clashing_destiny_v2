@@ -41,10 +41,6 @@ export class DeclareAttackInput extends Input<typeof schema> {
     assert(this.target, new UnknownUnitError(this.payload.targetId));
     assert(this.target.canBeAttacked, new IllegalAttackTargetError());
 
-    await this.game.gamePhaseSystem.startCombat(async () => {
-      await this.game.turnSystem.switchInitiative();
-    });
-
     await this.game.gamePhaseSystem
       .getContext<GamePhasesDict['COMBAT']>()
       .ctx.declareAttacker(this.attacker);

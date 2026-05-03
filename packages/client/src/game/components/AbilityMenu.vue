@@ -2,8 +2,9 @@
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import CardText from '@/card/components/CardText.vue';
-
+import { isDefined } from '@game/shared';
 import { type PopoverContentProps } from 'reka-ui';
+import { useGameUi } from '../composables/useGameClient';
 
 const { card } = defineProps<{
   card: CardViewModel;
@@ -18,6 +19,8 @@ const abilities = computed(() => {
   if (!card) return [];
   return card.abilityActions;
 });
+
+const ui = useGameUi();
 </script>
 
 <template>
@@ -28,6 +31,7 @@ const abilities = computed(() => {
       side="bottom"
       :side-offset="15"
       :delay="0"
+      :disabled="isDefined(ui.selectedCard)"
     >
       <template #trigger>
         <button

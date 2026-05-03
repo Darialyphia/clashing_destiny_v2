@@ -14,11 +14,7 @@ import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS } from '../card/card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { isArtifact, isHero, isMinion } from '../card/card-utils';
-import {
-  BoardSpace,
-  type BoardRow,
-  type SerializedBoardSpace
-} from './board-space.entity';
+import { BoardSpace, type BoardRow } from './board-space.entity';
 import { IllegalTargetError } from '../input/input-errors';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card/card.events';
 
@@ -203,7 +199,6 @@ export class BoardSide
     );
     const oldPos = card.position;
     this.removeFromBase(card);
-
     // place minion at the right index on the battlefield. If the space is already occupied, shift the other minions to the right until the end or until we hit an unoccupied board space
     let _minion = card;
     for (let i = index; i < this.battlefield.length; i++) {
@@ -266,7 +261,6 @@ export class BoardSide
   async moveCard(id: string, index: number) {
     const cardInBase = this.getCardInBase(id);
     if (cardInBase && isMinion(cardInBase)) {
-      if (isMinion(cardInBase)) return;
       await this.moveToBattlefield(cardInBase, index);
       return;
     }

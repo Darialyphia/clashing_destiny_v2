@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import {
-  useGameClient,
-  useGameState,
-  useOpponentPlayer
-} from '../composables/useGameClient';
+import { useGameClient, useGameState } from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPileModal from './DiscardPileModal.vue';
 import Talent from './Talent.vue';
+import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 
-const player = useOpponentPlayer();
+const { player } = defineProps<{
+  player: PlayerViewModel;
+}>();
+
 const state = useGameState();
 const { client } = useGameClient();
 
@@ -29,21 +29,39 @@ onMounted(() => {
 });
 
 const hasInitiative = computed(() => {
-  return player.value.id === client.value.getActivePlayerId();
+  return player.id === client.value.getActivePlayerId();
 });
 </script>
 
 <template>
-  <div class="opponent-player-infos">
+  <div class="my-player-infos">
+    <section class="left-side">
+      <div class="avatar" :class="{ 'has-initiative': hasInitiative }" />
+      <div class="infos-bar">
+        <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
+        {{ player.remainingCardsInMainDeck }}
+        <UiSimpleTooltip>
+          <template #trigger>
+            <button class="discard-pile-btn" @click="openDiscardPileModal">
+              <div
+                class="info-icon"
+                :style="{ '--bg': assets['ui/discard-pile'].css }"
+              />
+              {{ player.discardPile.length }}
+            </button>
+          </template>
+          Your discard pile
+        </UiSimpleTooltip>
+      </div>
+    </section>
+
     <section>
       <div class="name dual-text" :data-text="player.name">
         {{ player.name }}
       </div>
       <div class="talent-bar">
-        <div class="talent-bar">
-          <div v-for="i in state.config.PLAYER_MAX_LEVEL" :key="i">
-            <Talent :card="player.destinies[i - 1] ?? null" />
-          </div>
+        <div v-for="i in state.config.PLAYER_MAX_LEVEL" :key="i">
+          <Talent :card="player.destinies[i - 1] ?? null" />
         </div>
       </div>
       <div class="bottom-grid">
@@ -66,34 +84,15 @@ const hasInitiative = computed(() => {
           </div>
         </div>
         <div class="exp">
+          <div class="dual-text" :data-text="`${player.exp}EXP`">
+            {{ player.exp }}EXP
+          </div>
+
           <div
             class="exp-bar"
             :style="{ '--bg': assets[`ui/exp-bar-${player.exp}`].css }"
           />
-          <div class="dual-text" :data-text="`${player.exp}EXP`">
-            {{ player.exp }}EXP
-          </div>
         </div>
-      </div>
-    </section>
-
-    <section class="right-side">
-      <div class="avatar" :class="{ 'has-initiative': hasInitiative }" />
-      <div class="infos-bar">
-        <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
-        {{ player.remainingCardsInMainDeck }}
-        <UiSimpleTooltip>
-          <template #trigger>
-            <button class="discard-pile-btn" @click="openDiscardPileModal">
-              <div
-                class="info-icon"
-                :style="{ '--bg': assets['ui/discard-pile'].css }"
-              />
-              {{ player.discardPile.length }}
-            </button>
-          </template>
-          Opponent's discard pile
-        </UiSimpleTooltip>
       </div>
     </section>
 
@@ -102,17 +101,17 @@ const hasInitiative = computed(() => {
 </template>
 
 <style scoped lang="postcss">
-.opponent-player-infos {
+.my-player-infos {
   z-index: 0;
   --drop-shadow: 0 4px #090d18;
   filter: drop-shadow(var(--drop-shadow));
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr;
   column-gap: var(--size-1);
 }
 
-.right-side {
-  grid-column: 2;
+.left-side {
+  grid-column: 1;
   grid-row: 1 / -1;
   align-self: start;
   translate: 0 -6px;
@@ -132,14 +131,11 @@ const hasInitiative = computed(() => {
   font-size: var(--font-size-5);
   font-weight: var(--font-weight-9);
   line-height: 1.1;
-  text-align: right;
 }
 
 .mana-bar {
   display: flex;
   gap: 4px;
-  flex-direction: row-reverse;
-  grid-column: 2;
 }
 
 .mana {
@@ -163,8 +159,8 @@ const hasInitiative = computed(() => {
   font-weight: var(--font-weight-9);
   z-index: 0;
   position: relative;
-  grid-column: 1;
-  grid-row: 1 / span 2;
+  grid-column: 2;
+  grid-row: span 2;
   div {
     --dual-text-stroke-offset-y: -5px;
   }
@@ -179,19 +175,17 @@ const hasInitiative = computed(() => {
   font-family: 'Lato', sans-serif;
   font-size: var(--font-size-4);
   font-weight: var(--font-weight-9);
-  grid-column: 2;
 }
 
 .exp-bar {
   width: 147px;
   height: 11px;
   background: var(--bg);
-  scale: -1 1;
 }
 
 .bottom-grid {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr auto;
   margin-block-start: 8px;
   row-gap: var(--size-2);
 }
