@@ -282,7 +282,7 @@ useEventListener('contextmenu', async e => {
 }
 
 .minions-zone {
-  width: 832px;
+  width: 912px;
   height: 621px;
   background: url(@/assets/ui/board.png);
   margin-top: 196px;
@@ -424,21 +424,23 @@ useEventListener('contextmenu', async e => {
 
 .opponent-base {
   position: absolute;
+  padding-inline: 40px;
 }
 
 .opponent-battlefield {
   position: absolute;
-  top: 172px;
+  top: 165px;
 }
 
 .my-battlefield {
   position: absolute;
-  top: 314px;
+  top: 318px;
 }
 
 .my-base {
   position: absolute;
   top: 476px;
+  padding-inline: 40px;
 }
 
 .vignette {
@@ -465,14 +467,14 @@ useEventListener('contextmenu', async e => {
 
 .my-player-infos {
   position: absolute;
-  left: var(--size-12);
+  left: var(--size-11);
   top: 45%;
   translate: 0 50%;
 }
 
 .opponent-player-infos {
   position: absolute;
-  left: var(--size-12);
+  left: var(--size-11);
   top: 40%;
   translate: 0 -100%;
 }
@@ -487,7 +489,7 @@ useEventListener('contextmenu', async e => {
 
 .right-side {
   position: absolute;
-  left: 860px;
+  left: 960px;
   top: 282px;
 }
 </style>

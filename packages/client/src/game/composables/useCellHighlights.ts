@@ -23,10 +23,15 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
     if (!cell.value.card) return false;
     if (cell.value.card.isExhausted) return false;
     if (!ui.value.isInteractivePlayer) return false;
-    const allowedPhases: string[] = [GAME_PHASES.MAIN, GAME_PHASES.COMBAT];
-    if (!allowedPhases.includes(state.value.phase.state)) return false;
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
-    return true;
+    if (state.value.phase.state === GAME_PHASES.MAIN) {
+      return cell.value.card.canMove;
+    }
+    if (state.value.phase.state === GAME_PHASES.COMBAT) {
+      return cell.value.card.canAttack;
+    }
+
+    return false;
   });
 
   return {
