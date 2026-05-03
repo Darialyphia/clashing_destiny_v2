@@ -31,6 +31,7 @@ import { provideRichTextContext } from '../composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
 import BoardSpace from './BoardSpace.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import GamePhaseIndicator from './GamePhaseIndicator.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -233,6 +234,7 @@ useEventListener('contextmenu', async e => {
   />
 
   <TurnIndicator />
+  <GamePhaseIndicator />
 
   <UiModal
     v-model:is-opened="isGameSettingsOpened"

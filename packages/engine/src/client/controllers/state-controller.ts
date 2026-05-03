@@ -157,6 +157,10 @@ export class ClientStateController {
     if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
       return this.onArtifactEquiped(event, flush);
     }
+
+    if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
+      return this.onAfterChangePhase(event, flush);
+    }
   }
 
   private async onMinionSummoned(
@@ -196,6 +200,17 @@ export class ClientStateController {
       card: card.id
     });
 
+    return await flush();
+  }
+
+  private async onAfterChangePhase(
+    event: {
+      event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
+    },
+    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
+  ) {
+    this.state.phase = event.event.to;
+    this.state = { ...this.state };
     return await flush();
   }
 }
