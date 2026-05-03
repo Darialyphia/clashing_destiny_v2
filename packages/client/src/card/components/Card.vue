@@ -4,7 +4,8 @@ import {
   type CardKind,
   type Rarity,
   type JobId,
-  type Affinity
+  type Affinity,
+  type CardSpeed
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
@@ -53,6 +54,7 @@ const {
     jobs: JobId[];
     affinity: Affinity;
     advancedAffinity?: Affinity;
+    speed?: CardSpeed;
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -162,18 +164,6 @@ until(nameBox)
       NAME_MAX_TEXT_SIZE
     );
   });
-
-// const multiLineChecker = useTemplateRef('multi-line-checker');
-const isMultiLine = computed(() => {
-  // if (!multiLineChecker.value) return;
-  // if (!descriptionBox.value) return;
-  // if (card.description.includes('\n')) return true;
-  // if (card.abilities?.length) return true;
-  // const boxRect = descriptionBox.value.getBoundingClientRect();
-  // const checkerRect = multiLineChecker.value.getBoundingClientRect();
-  // return checkerRect.top > boxRect.top;
-  return true;
-});
 
 const costStatus = computed(() => {
   if (isDefined(card.manaCost)) {
@@ -308,12 +298,23 @@ const affinities = computed(() => {
               {{ card.tags.join('| ') }}
             </span>
           </div>
+
           <div
-            v-if="showText"
-            class="description"
-            ref="description-box"
-            :class="{ 'is-multi-line': isMultiLine }"
+            v-if="card.speed"
+            class="speed"
+            :style="{
+              '--bg':
+                assets[`ui/card/speed-${card.speed.toLocaleLowerCase()}`].css
+            }"
           >
+            <div
+              class="dual-text"
+              :data-text="uppercaseFirstLetter(card.speed.toLocaleLowerCase())"
+            >
+              {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
+            </div>
+          </div>
+          <div v-if="showText" class="description" ref="description-box">
             <div ref="description-inner">
               <CardText :text="card.description" />
               <CardText
@@ -777,9 +778,7 @@ const affinities = computed(() => {
   overflow: hidden;
   text-align: center;
   line-height: 1.2;
-  &.is-multi-line {
-    text-align: left;
-  }
+  text-align: left;
   > * {
     display: inline-block;
   }
@@ -789,5 +788,19 @@ const affinities = computed(() => {
     align-self: start;
     vertical-align: top;
   }
+}
+
+.speed {
+  position: absolute;
+  width: calc(40px * var(--pixel-scale));
+  height: calc(16px * var(--pixel-scale));
+  background: var(--bg);
+  background-size: cover;
+  right: calc(-2px * var(--pixel-scale));
+  top: calc(72px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-family: 'Lato', sans-serif;
+  --dual-text-offset-y: calc(2px * var(--pixel-scale));
+  --dual-text-offset-x: calc(6px * var(--pixel-scale));
 }
 </style>

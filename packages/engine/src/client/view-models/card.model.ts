@@ -12,6 +12,7 @@ import {
   CARD_KINDS,
   type Affinity,
   type CardKind,
+  type CardSpeed,
   type Job
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
@@ -174,6 +175,12 @@ export class CardViewModel {
     return this.data.affinity;
   }
 
+  get speed() {
+    if ('speed' in this.data) {
+      return this.data.speed as CardSpeed;
+    }
+    return null;
+  }
   get advancedAffinity() {
     if ('advancedAffinity' in this.data) {
       return this.data.advancedAffinity as Affinity | null;

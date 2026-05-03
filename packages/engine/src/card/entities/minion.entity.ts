@@ -8,7 +8,7 @@ import {
   type MinionBlueprint,
   type Target
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type JobId } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type CardSpeed, type JobId } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -51,6 +51,7 @@ export type SerializedMinionCard = SerializedCard & {
   canMove: boolean;
   jobs: JobId[];
   hasSummoningSickness: boolean;
+  speed: CardSpeed;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -75,6 +76,7 @@ export type MinionCardInterceptors = CardInterceptors & {
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
+  speed: Interceptable<CardSpeed, MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -115,7 +117,8 @@ export class MinionCard extends Card<
         canMove: new Interceptable(),
         canMoveManually: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
-        shouldSwitchInitiativeAfterattacking: new Interceptable()
+        shouldSwitchInitiativeAfterattacking: new Interceptable(),
+        speed: new Interceptable()
       },
       options
     );
@@ -153,6 +156,10 @@ export class MinionCard extends Card<
 
   get jobs() {
     return this.blueprint.jobs;
+  }
+
+  get speed(): CardSpeed {
+    return this.interceptors.speed.getValue(this.blueprint.speed, this);
   }
 
   get remainingHp(): number {
@@ -434,6 +441,7 @@ export class MinionCard extends Card<
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
+        this.hasUnlockedAffinity &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
@@ -522,7 +530,8 @@ export class MinionCard extends Card<
       abilities: this.abilities.map(ability => ability.id),
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],
-      hasSummoningSickness: this.hasSummoningSickness
+      hasSummoningSickness: this.hasSummoningSickness,
+      speed: this.speed
     };
   }
 }

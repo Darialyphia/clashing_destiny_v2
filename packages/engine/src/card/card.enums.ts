@@ -94,11 +94,6 @@ export type Job = {
 };
 
 export const JOBS = {
-  NEUTRAL: {
-    id: 'neutral',
-    name: 'Neutral',
-    shortName: 'Neutral'
-  },
   WARRIOR: {
     id: 'warrior',
     name: 'Warrior',

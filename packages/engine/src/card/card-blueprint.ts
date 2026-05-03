@@ -8,7 +8,8 @@ import type {
   ArtifactKind,
   Tag,
   Job,
-  Affinity
+  Affinity,
+  CardSpeed
 } from './card.enums';
 import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
@@ -95,6 +96,7 @@ export const serializePreResponseTarget = (
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
+  speed: CardSpeed;
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, Target>[];
@@ -113,6 +115,7 @@ export type MinionBlueprint = CardBlueprintBase & {
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
+  speed: CardSpeed;
   jobs: Job[];
   abilities: AbilityBlueprint<SpellCard, Target>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
@@ -144,6 +147,7 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   manaCost: number;
   jobs: Job[];
+  speed: CardSpeed;
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;

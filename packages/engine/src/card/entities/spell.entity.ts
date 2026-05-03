@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS, type JobId } from '../card.enums';
+import { CARD_EVENTS, type CardSpeed, type JobId } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { GAME_PHASES } from '../../game/game.enums';
@@ -28,12 +28,14 @@ export type SerializedSpellCard = SerializedCard & {
   preResponseTargets: SerializedPreResponseTarget[] | null;
   abilities: string[];
   jobs: JobId[];
+  speed: CardSpeed;
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
   canPlayDuringCombatPhase: Interceptable<boolean, SpellCard>;
   canUseAbility: Interceptable<boolean, { card: SpellCard; ability: Ability<SpellCard> }>;
   canBeTargeted: Interceptable<boolean, SpellCard>;
+  speed: Interceptable<CardSpeed, SpellCard>;
 };
 
 export class SpellCard extends Card<
@@ -56,7 +58,8 @@ export class SpellCard extends Card<
         canPlay: new Interceptable(),
         canPlayDuringCombatPhase: new Interceptable(),
         canBeTargeted: new Interceptable(),
-        canUseAbility: new Interceptable()
+        canUseAbility: new Interceptable(),
+        speed: new Interceptable()
       },
       options
     );
@@ -68,6 +71,10 @@ export class SpellCard extends Card<
 
   get jobs() {
     return this.blueprint.jobs;
+  }
+
+  get speed(): CardSpeed {
+    return this.interceptors.speed.getValue(this.blueprint.speed, this);
   }
 
   get canBeTargeted(): boolean {
@@ -140,6 +147,7 @@ export class SpellCard extends Card<
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
+        this.hasUnlockedAffinity &&
         this.blueprint.canPlay(this.game, this) &&
         this.isCorrectPhaseToPlay,
       this
@@ -179,7 +187,8 @@ export class SpellCard extends Card<
       preResponseTargets: this.preResponseTargets
         ? this.preResponseTargets.map(serializePreResponseTarget)
         : null,
-      jobs: this.jobs.map(job => job.id) as JobId[]
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      speed: this.speed
     };
   }
 }

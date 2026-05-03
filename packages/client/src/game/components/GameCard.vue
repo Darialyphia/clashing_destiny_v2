@@ -114,7 +114,8 @@ const classes = computed(() => {
           jobs: overrides.jobs ?? card.jobs,
           subKind: overrides.subKind ?? card.subKind,
           affinity: overrides.affinity ?? card.affinity,
-          advancedAffinity: overrides.advancedAffinity ?? card.advancedAffinity
+          advancedAffinity: overrides.advancedAffinity ?? card.advancedAffinity,
+          speed: overrides.speed ?? card.speed
         }"
         :is-foil="card.isFoil"
         class="game-card big"

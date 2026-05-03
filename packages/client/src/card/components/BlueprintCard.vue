@@ -53,7 +53,8 @@ const mergedFoilOptions = computed(() => ({
       jobs: blueprint.jobs.map(job => job.id as JobId),
       tags: blueprint.tags,
       affinity: blueprint.affinity,
-      advancedAffinity: (blueprint as any).advancedAffinity
+      advancedAffinity: (blueprint as any).advancedAffinity,
+      speed: (blueprint as any).speed
     }"
     :is-tilt-enabled="isTiltEnabled"
   />

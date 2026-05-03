@@ -10,6 +10,7 @@ import {
   ARTIFACT_KINDS,
   CARD_EVENTS,
   type ArtifactKind,
+  type CardSpeed,
   type JobId
 } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
@@ -39,6 +40,7 @@ export type SerializedArtifactCard = SerializedCard & {
   abilities: string[];
   atkBonus: number | null;
   jobs: JobId[];
+  speed: CardSpeed;
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
@@ -50,6 +52,7 @@ export type ArtifactCardInterceptors = CardInterceptors & {
   >;
   durability: Interceptable<number, ArtifactCard>;
   attackBonus: Interceptable<number | null, ArtifactCard>;
+  speed: Interceptable<CardSpeed, ArtifactCard>;
 };
 
 export class ArtifactCard extends Card<
@@ -73,7 +76,8 @@ export class ArtifactCard extends Card<
         canPlayDuringCombatPhase: new Interceptable(),
         canUseAbility: new Interceptable(),
         durability: new Interceptable(),
-        attackBonus: new Interceptable()
+        attackBonus: new Interceptable(),
+        speed: new Interceptable()
       },
       options
     );
@@ -93,6 +97,10 @@ export class ArtifactCard extends Card<
 
   get subkind() {
     return this.blueprint.subKind;
+  }
+
+  get speed(): CardSpeed {
+    return this.interceptors.speed.getValue(this.blueprint.speed, this);
   }
 
   get maxDurability(): number {
@@ -206,6 +214,7 @@ export class ArtifactCard extends Card<
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
+        this.hasUnlockedAffinity &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
@@ -268,7 +277,8 @@ export class ArtifactCard extends Card<
       baseManaCost: this.manaCost,
       abilities: this.abilities.map(a => a.id),
       atkBonus: this.atkBonus,
-      jobs: this.jobs.map(job => job.id) as JobId[]
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      speed: this.speed
     };
   }
 }

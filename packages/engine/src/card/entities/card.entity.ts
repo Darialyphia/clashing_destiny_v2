@@ -10,7 +10,8 @@ import {
   CARD_LOCATIONS,
   type CardLocation,
   CARD_KINDS,
-  type Affinity
+  type Affinity,
+  AFFINITIES
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -213,6 +214,13 @@ export abstract class Card<
       this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
       this.manaCost
     );
+  }
+
+  get hasUnlockedAffinity() {
+    if (this.affinity === AFFINITIES.NEUTRAL) {
+      return true;
+    }
+    return this.player.unlockedAffinities.includes(this.blueprint.affinity);
   }
 
   get targetedBy() {

@@ -1,6 +1,5 @@
-import type { MaybePromise } from '@game/shared';
 import type { DestinyBlueprint, Target } from '../card-blueprint';
-import { CARD_EVENTS, JOBS } from '../card.enums';
+import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
   Card,
@@ -53,7 +52,9 @@ export class DestinyCard extends Card<
 
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canAfford && this.blueprint.canPlay(this.game, this),
+      this.canAfford &&
+        this.hasUnlockedAffinity &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }
