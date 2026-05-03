@@ -46,10 +46,6 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.id;
   }
 
-  get shouldExhaust() {
-    return this.blueprint.shouldExhaust;
-  }
-
   get manaCost(): number {
     return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
   }
@@ -68,7 +64,7 @@ export class Ability<T extends AbilityOwner>
       GAME_PHASES.END
     ];
 
-    const exhaustCondition = this.shouldExhaust ? !this.card.isExhausted : true;
+    const exhaustCondition = !this.card.isExhausted;
     const timingCondition = this.game.interaction.isInteractive(this.card.player);
 
     return (
@@ -104,9 +100,7 @@ export class Ability<T extends AbilityOwner>
     const targets = await this.blueprint.getTargets(this.game, this.card);
     this.card.abilityTargets.set(this.blueprint.id, targets);
 
-    if (this.shouldExhaust) {
-      await this.card.exhaust();
-    }
+    await this.card.exhaust();
 
     await this.resolveEffect();
     await onResolved?.();
@@ -130,7 +124,6 @@ export class Ability<T extends AbilityOwner>
       label: this.blueprint.label,
       manaCost: this.manaCost,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
-      shouldExhaust: this.shouldExhaust,
       targets:
         this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
     };

@@ -411,4 +411,8 @@ export class CardViewModel {
   get abilityActions() {
     return this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability));
   }
+
+  get hasAction() {
+    return this.canMove || this.canAttack || this.actions.length > 0;
+  }
 }

@@ -39,7 +39,7 @@ const onMousemove = (e: MouseEvent) => {
 };
 
 const onMouseDown = (e: MouseEvent) => {
-  if (ui.value.isInteractivePlayer) return;
+  if (!ui.value.isInteractivePlayer) return;
 
   if (!card.canPlay) return playViolationAnimation();
 
@@ -66,7 +66,8 @@ const isVisible = computed(() => {
     :class="{
       selected: ui.selectedCard?.equals(card),
       disabled: isDisabled,
-      'is-shaking': isShaking
+      'is-shaking': isShaking,
+      hoverable: ui.draggedCard === null
     }"
     @mousedown="onMouseDown($event)"
   >
@@ -107,7 +108,7 @@ const isVisible = computed(() => {
   @starting-style {
     filter: brightness(3.5) saturate(2) !important;
   }
-  &:hover {
+  &.hoverable:hover {
     --scale: 2;
     --hover-offset: -50px;
     z-index: var(--hand-size);

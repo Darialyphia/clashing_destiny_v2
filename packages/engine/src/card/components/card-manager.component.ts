@@ -63,6 +63,7 @@ export class CardManagerComponent {
 
     // @ts-expect-error ts complaining about readonly
     this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
+    await this.hero.play();
 
     if (this.options.shouldShuffleDeck) {
       this.mainDeck.shuffle();

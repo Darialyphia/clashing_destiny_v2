@@ -542,7 +542,6 @@ export const equipWeapon = (options: {
     canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BASE,
     getTargets: () => Promise.resolve([]),
     manaCost: options.manaCost,
-    shouldExhaust: true,
     durabilityCost: options.durabilityCost,
     onResolve: async (game: Game, card: ArtifactCard) => {
       await card.player.hero.modifiers.add(

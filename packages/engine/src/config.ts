@@ -24,6 +24,8 @@ export type Config = {
   PLAYER_MAX_LEVEL: number;
   MAX_HELD_EXP: number;
   EXP_GAIN_PER_TURN: number;
+
+  HERO_POSITION: number;
 };
 
 export const defaultConfig: Config = {
@@ -49,5 +51,7 @@ export const defaultConfig: Config = {
 
   PLAYER_MAX_LEVEL: 5,
   MAX_HELD_EXP: 5,
-  EXP_GAIN_PER_TURN: 1
+  EXP_GAIN_PER_TURN: 1,
+
+  HERO_POSITION: 2
 };

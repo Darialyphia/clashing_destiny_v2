@@ -281,7 +281,6 @@ useEventListener('contextmenu', async e => {
 
   > div {
     height: 130px;
-    background-color: #666;
     margin-inline: 22px;
     width: calc(100% - 44px);
     display: flex;

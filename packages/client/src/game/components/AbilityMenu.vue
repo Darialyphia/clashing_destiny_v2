@@ -1,18 +1,11 @@
 <script setup lang="ts">
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import CardText from '@/card/components/CardText.vue';
 
-const isOpened = defineModel<boolean>('isOpened', { required: true });
-import {
-  PopoverRoot,
-  PopoverAnchor,
-  PopoverPortal,
-  PopoverContent,
-  type PopoverContentProps
-} from 'reka-ui';
+import { type PopoverContentProps } from 'reka-ui';
 
-const { card, usePortal, portalTarget } = defineProps<{
+const { card } = defineProps<{
   card: CardViewModel;
   usePortal?: boolean;
   actionsOffset?: number;
@@ -28,73 +21,53 @@ const abilities = computed(() => {
 </script>
 
 <template>
-  <PopoverRoot v-model:open="isOpened">
-    <PopoverAnchor>
-      <slot />
-    </PopoverAnchor>
-
-    <PopoverPortal
-      :to="portalTarget"
-      :disabled="
-        !usePortal ||
-        card.location === CARD_LOCATIONS.HAND ||
-        card.location === CARD_LOCATIONS.DISCARD_PILE
-      "
+  <div class="abilities-list">
+    <UiSimpleTooltip
+      v-for="ability in abilities"
+      :key="ability.id"
+      side="bottom"
+      :side-offset="15"
+      :delay="0"
     >
-      <PopoverContent
-        :side-offset="actionsOffset"
-        :side="actionsSide"
-        :align="actionsAlign"
-      >
-        <div class="abilities-list">
-          <button
-            v-for="(ability, index) in abilities"
-            :key="`${ability.id}-${index}`"
-            class="ability"
-            :disabled="!ability.predicate()"
-            @click="
-              () => {
-                ability.handler(card);
-                isOpened = false;
-              }
-            "
-          >
-            <CardText :text="ability.getLabel()" />
-          </button>
-        </div>
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+      <template #trigger>
+        <button
+          class="ability"
+          :disabled="!ability.predicate()"
+          @click="
+            () => {
+              ability.handler(card);
+            }
+          "
+        />
+      </template>
+      <div class="ability-tooltip">
+        <CardText :text="ability.getLabel()" />
+      </div>
+    </UiSimpleTooltip>
+  </div>
 </template>
 
 <style scoped lang="postcss">
 .abilities-list {
   display: flex;
   flex-direction: column;
-  &:not(:has(> p)) {
-    border: solid 2px var(--primary);
-  }
 }
 .ability {
-  --card-text-color: #d1c6c2;
-  background: var(--gray-9);
-  padding: 0.5rem;
-  min-width: 10rem;
-  text-align: left;
-  &:hover:not(:disabled) {
-    background: var(--gray-10);
-  }
-  &:focus {
-    outline: none;
-  }
-  &:focus-visible {
-    outline: solid 2px hsl(var(--cyan-4-hsl));
+  width: 16px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/card/ability.png') no-repeat center/contain;
+  transition: filter 0.2s;
+  &:hover {
+    filter: drop-shadow(0 0 2px white) brightness(150%);
   }
   &:disabled {
-    filter: brightness(50%);
+    background: url('@/assets/ui/card/ability-disabled.png');
   }
 }
 
+.ability-tooltip {
+  --card-text-color: #d1c6c2;
+}
 p {
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;

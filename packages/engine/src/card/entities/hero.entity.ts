@@ -351,7 +351,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    this.player.boardSide.placeCardInBattlefield(this, 0);
+    this.player.boardSide.placeCardInBattlefield(this, this.game.config.HERO_POSITION);
     await this.blueprint.onPlay(this.game, this, this);
     await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
     await this.game.emit(

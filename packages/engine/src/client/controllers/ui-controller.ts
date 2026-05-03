@@ -168,6 +168,11 @@ export class UiController {
 
     this.onResetCallbacks.forEach(cb => cb());
 
+    if (this.selectedCard) {
+      this.unselect();
+      actionTaken = true;
+    }
+
     return actionTaken;
   }
 

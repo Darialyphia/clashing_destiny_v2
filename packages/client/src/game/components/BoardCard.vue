@@ -6,6 +6,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
 import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import AbilityMenu from './AbilityMenu.vue';
 
 const { card } = defineProps<{ card: CardViewModel }>();
 
@@ -89,6 +90,7 @@ const modifiers = computed(() => card.modifiers);
       :overrides="{ atk: card.atk, hp: card.hp }"
     />
     <ModifiersList :modifiers="modifiers" />
+    <AbilityMenu :card="card" actions-side="top" use-portal class="abilities" />
   </div>
 </template>
 
@@ -138,6 +140,12 @@ const modifiers = computed(() => card.modifiers);
   }
 }
 
+.abilities {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  bottom: 7px;
+}
 @keyframes drop {
   0% {
     scale: v-bind(dropScale);

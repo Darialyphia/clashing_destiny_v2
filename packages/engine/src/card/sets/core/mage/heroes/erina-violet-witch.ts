@@ -1,6 +1,12 @@
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import { CARD_SETS, CARD_KINDS, RARITIES, JOBS } from '../../../../card.enums';
+import {
+  CARD_SETS,
+  CARD_KINDS,
+  RARITIES,
+  JOBS,
+  CARD_LOCATIONS
+} from '../../../../card.enums';
 
 export const erinaVioletWitch: HeroBlueprint = {
   id: 'erina-violet-witch',
@@ -16,7 +22,24 @@ export const erinaVioletWitch: HeroBlueprint = {
   atk: 2,
   maxHp: 25,
   canPlay: () => true,
-  abilities: [],
+  abilities: [
+    {
+      id: 'erina-ability1',
+      label: 'Draw a card',
+      description: 'Draw a card.',
+      manaCost: 1,
+      canUse: (game, card) => {
+        return card.location === CARD_LOCATIONS.BATTLEFIELD;
+      },
+      getTargets: () => Promise.resolve([]),
+      async onResolve(game, card) {
+        await card.player.cardManager.draw(1);
+      },
+      aiHints: {
+        shouldUse: () => 1
+      }
+    }
+  ],
   async onInit(game, card) {},
   async onPlay() {},
   aiHints: {

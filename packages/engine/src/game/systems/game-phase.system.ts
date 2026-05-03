@@ -108,9 +108,14 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     this._ctx = new DrawPhase(this.game);
     this.addTransitions([
       stateTransition(
+        GAME_PHASES.LEVEL_UP,
+        GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP,
+        GAME_PHASES.MAIN
+      ),
+      stateTransition(
         GAME_PHASES.DRAW,
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
-        GAME_PHASES.MAIN
+        GAME_PHASES.LEVEL_UP
       ),
       stateTransition(
         GAME_PHASES.MAIN,
@@ -118,7 +123,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.COMBAT
       ),
       stateTransition(
-        GAME_PHASES.MAIN,
+        GAME_PHASES.COMBAT,
         GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE,
         GAME_PHASES.END
       ),
@@ -171,7 +176,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
           winners.push(player);
         }
       }
-
       if (!winners.length) return;
       stop();
       await this.declareWinner(winners);

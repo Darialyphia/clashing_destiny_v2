@@ -1,13 +1,16 @@
 import { useGameClient, useGameState, useGameUi } from './useGameClient';
 import { isDefined, useMouse } from '@vueuse/core';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import {
+  GAME_PHASES,
+  INTERACTION_STATES
+} from '@game/engine/src/game/game.enums';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 
 export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
   const { client } = useGameClient();
   const ui = useGameUi();
   const state = useGameState();
-  const selectedUnitPath = ref('');
+  const path = ref('');
 
   const { x, y } = useMouse();
 
@@ -35,6 +38,10 @@ export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
     ) {
       return 'lime';
     }
+    if (state.value.phase.state === GAME_PHASES.MAIN) {
+      return 'cyan';
+    }
+
     return 'red';
   });
 
@@ -64,13 +71,13 @@ export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
   watch(
     [() => ui.value.selectedCard, x, y],
     () => {
-      selectedUnitPath.value = computeParabolaPath();
+      path.value = computeParabolaPath();
     },
     { deep: true }
   );
 
   return {
-    selectedUnitPath,
+    path,
     pathColor
   };
 };

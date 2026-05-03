@@ -9,8 +9,6 @@ import { useBoardCardDragSelection } from '../composables/useBoardCardDragSelect
 import { useBoardSpaceArrowPath } from '../composables/useBoardSpaceArrowPath';
 import { useCardMoveFx } from '../composables/useCardMoveFx';
 import Arrow from './Arrow.vue';
-import AbilityMenu from './AbilityMenu.vue';
-import { isDefined } from '@game/shared';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 import { useCellHighlights } from '../composables/useCellHighlights';
 import BoardCard from './BoardCard.vue';
@@ -20,42 +18,22 @@ const { cellId } = defineProps<{
 }>();
 
 const ui = useGameUi();
-const { client, playerId } = useGameClient();
+const { client } = useGameClient();
 
 const cell = useEntity<BoardSpaceViewModel>(cellId);
 const { isTargetable, isTargeted } = useCellTargeting(cell);
 const { canMoveTo, canAttack, canSelectUnit } = useCellHighlights(cell);
 const dragSelection = useBoardCardDragSelection(cell, canSelectUnit);
-const { selectedUnitPath, pathColor } = useBoardSpaceArrowPath(cell);
+const { path, pathColor } = useBoardSpaceArrowPath(cell);
 const { isMovingUnit } = useCardMoveFx(cell);
 
 const isAbilityMenuOpened = ref(false);
-
-const handleAbilities = () => {
-  if (!cell.value.card) return;
-  const availableAbilities = cell.value.card.abilityActions ?? [];
-  if (availableAbilities.length === 1) {
-    return availableAbilities[0].handler(cell.value.card);
-  }
-  if (availableAbilities.length > 1) {
-    isAbilityMenuOpened.value = true;
-  }
-};
 
 const handleMouseup = (e: MouseEvent) => {
   if (e.button !== 0) return;
   dragSelection.onMouseup();
 
-  const shouldHandleAbilities =
-    !ui.value.selectedCard &&
-    isDefined(cell.value.card) &&
-    cell.value.card.player.id === playerId.value;
-
-  if (shouldHandleAbilities) {
-    handleAbilities();
-  } else {
-    ui.value.onBoardSpaceClick(cell.value);
-  }
+  ui.value.onBoardSpaceClick(cell.value);
 };
 </script>
 
@@ -81,22 +59,10 @@ const handleMouseup = (e: MouseEvent) => {
     @mouseup.stop="handleMouseup"
     @mousedown="dragSelection.onMousedown"
   >
-    <AbilityMenu
-      v-if="cell.card"
-      :card="cell.card"
-      v-model:isOpened="isAbilityMenuOpened"
-      actions-side="top"
-      use-portal
-    >
-      <BoardCard v-if="cell.card" :card="cell.card" />
-    </AbilityMenu>
+    <BoardCard v-if="cell.card" :card="cell.card" />
 
     <Teleport to="#arrows" defer>
-      <Arrow
-        v-if="selectedUnitPath"
-        :path="selectedUnitPath"
-        :color="pathColor"
-      />
+      <Arrow v-if="path" :path="path" :color="pathColor" />
     </Teleport>
   </div>
 </template>

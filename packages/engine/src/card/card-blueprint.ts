@@ -56,7 +56,6 @@ export type CardBlueprintBase = {
 export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target> = {
   id: string;
   manaCost: number;
-  shouldExhaust: boolean;
   description: string;
   dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
@@ -81,7 +80,6 @@ export type SerializedAbility = {
   description: string;
   targets: SerializedPreResponseTarget[] | null;
   isHiddenOnCard: boolean;
-  shouldExhaust: boolean;
 };
 
 export type Target = AnyCard;

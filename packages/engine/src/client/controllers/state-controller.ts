@@ -20,7 +20,6 @@ import {
   type SerializedStarEvent
 } from '../../game/game.events';
 import { AbilityViewModel } from '../view-models/ability.model';
-import { CARD_LOCATIONS } from '../../card/card.enums';
 import { BoardSpaceViewModel } from '../view-models/board-space.model';
 
 export type GameClientState = Override<
@@ -176,10 +175,6 @@ export class ClientStateController {
     boardSpace.update({
       card: card.id
     });
-    // @ts-expect-error force reactivity
-    this.state.board.sides = this.state.board.sides.map(side => ({
-      ...side
-    }));
 
     return await flush();
   }
@@ -200,11 +195,6 @@ export class ClientStateController {
     boardSpace.update({
       card: card.id
     });
-
-    // @ts-expect-error force reactivity
-    this.state.board.sides = this.state.board.sides.map(side => ({
-      ...side
-    }));
 
     return await flush();
   }

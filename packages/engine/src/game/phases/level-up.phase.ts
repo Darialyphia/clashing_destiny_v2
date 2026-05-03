@@ -72,6 +72,9 @@ export class LevelUpPhase
   }
 
   async onEnter() {
+    if (this.game.turnSystem.elapsedTurns === 0) {
+      await this.game.gamePhaseSystem.commitLevelUp();
+    }
     this.selections.clear();
     for (const player of this.game.playerSystem.players) {
       if (!player.levelManager.canLevelup) {

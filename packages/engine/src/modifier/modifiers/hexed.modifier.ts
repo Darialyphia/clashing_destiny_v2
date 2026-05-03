@@ -27,7 +27,6 @@ export class HexedModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
           label: 'Remove Hexed',
           description: 'Remove Hexed from this card.',
           manaCost: 2,
-          shouldExhaust: false,
           canUse: () => true,
           getTargets: () => Promise.resolve([]),
           isHiddenOnCard: true,
