@@ -152,6 +152,11 @@
   --rarity-rare: var(--blue-4);
   --rarity-epic: #bb00e0;
   --rarity-legendary: var(--orange-4);
+  --tint-neutral: transparent;
+  --tint-fire: #d3572d;
+  --tint-water: #467af4;
+  --tint-earth: #7ab800;
+  --tint-air: #00cbb3;
 }
 
 html.dark {

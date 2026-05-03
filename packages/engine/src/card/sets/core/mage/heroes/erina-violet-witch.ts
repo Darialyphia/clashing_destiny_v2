@@ -19,7 +19,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
   jobs: [JOBS.MAGE],
-  affinity: AFFINITIES.FIRE,
+  affinity: AFFINITIES.EARTH,
   advancedAffinity: AFFINITIES.WATER,
   tags: [],
   atk: 2,

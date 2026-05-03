@@ -201,6 +201,10 @@ const affinities = computed(() => {
     };
   });
 });
+
+const tint = computed(() => {
+  return `var(--tint-${card.affinity.toLocaleLowerCase()})`;
+});
 </script>
 
 <template>
@@ -216,7 +220,7 @@ const affinities = computed(() => {
       :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
       :data-flip-id="`card_${card.id}`"
     >
-      <div class="card-front">
+      <div class="card-front" :style="{ '--tint': tint }">
         <div ref="name-box" v-if="showText" class="name">
           <div>
             {{ card.name }}
@@ -449,6 +453,19 @@ const affinities = computed(() => {
 
   --glare-mask: url('@/assets/ui/card/card_front.png');
   --foil-mask: url('@/assets/ui/card/masks/default.png');
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--tint);
+    mix-blend-mode: overlay;
+    opacity: 0.75;
+    mask-size: cover;
+    z-index: -1;
+    pointer-events: none;
+    mask-image: url('@/assets/ui/card/card_front.png');
+  }
 }
 
 .card.animated:has(.foil) .parallax {
