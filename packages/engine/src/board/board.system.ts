@@ -2,17 +2,9 @@ import { type BetterExtract } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide } from './board-side.entity';
-import { CARD_DECK_SOURCES, type CardLocation } from '../card/card.enums';
+import { type CardLocation } from '../card/card.enums';
 
 export type MinionSlot = number;
-
-export const isMainDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
-};
-
-export const isDestinyDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
-};
 
 export class BoardSystem extends System<never> {
   initialize() {}

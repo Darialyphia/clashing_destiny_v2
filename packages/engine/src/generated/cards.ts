@@ -1,108 +1,74 @@
 /** This file is auto-generated. Do not edit manually.
- * This files export the list of all card ids
- * This file should be used in the api package  to reference card ids
- *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
- */
-import type { Rarity, CardDeckSource } from '../card/card.enums';
+   * This files export the list of all card ids
+   * This file should be used in the api package  to reference card ids
+   *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
+   */
+import type { Rarity } from '../card/card.enums';
 export const cards = {
-  sample: 'sample',
-  rune_of_focus: 'rune_of_focus',
-  rune_of_might: 'rune_of_might',
-  rune_of_resonance: 'rune_of_resonance',
-  rune_of_wisdom: 'rune_of_wisdom'
+"sample": "sample",
+"erina-violet-witch": "erina-violet-witch",
+"sample2": "sample2",
+"sampleSpell": "sampleSpell"
 } as const;
 
 export const collectableCards = {
-  sample: 'sample',
-  rune_of_focus: 'rune_of_focus',
-  rune_of_might: 'rune_of_might',
-  rune_of_resonance: 'rune_of_resonance',
-  rune_of_wisdom: 'rune_of_wisdom'
+"sample": "sample",
+"erina-violet-witch": "erina-violet-witch",
+"sample2": "sample2",
+"sampleSpell": "sampleSpell"
 } as const;
 
-type CardSet = Array<{
-  id: string;
-  collectable: boolean;
-  rarity: Rarity;
-  deckSource: CardDeckSource;
-}>;
+type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
 export const cardsBySet: Record<string, CardSet> = {
-  CORE: [
-    {
-      id: 'sample',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'mainDeck'
-    },
-    {
-      id: 'rune_of_focus',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'rune_of_might',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'rune_of_resonance',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'rune_of_wisdom',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'sample',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'mainDeck'
-    },
-    {
-      id: 'rune_of_focus',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'rune_of_might',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'rune_of_resonance',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    },
-    {
-      id: 'rune_of_wisdom',
-      collectable: true,
-      rarity: 'common',
-      deckSource: 'runeDeck'
-    }
-  ]
+"CORE": [
+  {
+    "id": "sample",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "sample",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "erina-violet-witch",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "erina-violet-witch",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "sample",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "sample2",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "sampleSpell",
+    "collectable": true,
+    "rarity": "common"
+  }
+]
 };
 
 export const cardShortIds: Record<string, number> = {
-  sample: 1,
-  rune_of_focus: 5,
-  rune_of_might: 2,
-  rune_of_resonance: 6,
-  rune_of_wisdom: 3
+"sample": 1,
+"erina-violet-witch": 7,
+"sample2": 8,
+"sampleSpell": 9
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
-  '1': 'sample',
-  '2': 'rune_of_might',
-  '3': 'rune_of_wisdom',
-  '5': 'rune_of_focus',
-  '6': 'rune_of_resonance'
+"1": "sample",
+"7": "erina-violet-witch",
+"8": "sample2",
+"9": "sampleSpell"
 } as const;

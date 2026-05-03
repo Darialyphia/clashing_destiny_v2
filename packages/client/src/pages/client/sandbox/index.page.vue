@@ -18,7 +18,8 @@ const isStarted = ref(false);
 
 const validDecks = computed(() => {
   if (!decks.value) return [];
-  return decks.value.filter(deck => deck.isValid.result === 'success');
+  // return decks.value.filter(deck => deck.isValid.result === 'success');
+  return decks.value;
 });
 </script>
 
@@ -41,15 +42,7 @@ const validDecks = computed(() => {
             class="w-15"
             :class="{ selected: p1Deck?.id === deck.id }"
           >
-            <PlayerDeck
-              :deck="deck"
-              @click="
-                () => {
-                  if (deck.isValid.result === 'failure') return;
-                  p1Deck = deck;
-                }
-              "
-            />
+            <PlayerDeck :deck="deck" @click="p1Deck = deck" />
           </li>
         </ul>
         <ul class="flex flex-col gap-3">
@@ -59,15 +52,7 @@ const validDecks = computed(() => {
             class="w-15"
             :class="{ selected: p2Deck?.id === deck.id }"
           >
-            <PlayerDeck
-              :deck="deck"
-              @click="
-                () => {
-                  if (deck.isValid.result === 'failure') return;
-                  p2Deck = deck;
-                }
-              "
-            />
+            <PlayerDeck :deck="deck" @click="p2Deck = deck" />
           </li>
         </ul>
       </div>

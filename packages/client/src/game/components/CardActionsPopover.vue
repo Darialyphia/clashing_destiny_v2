@@ -4,17 +4,11 @@ import {
   PopoverRoot,
   PopoverAnchor,
   PopoverPortal,
-  PopoverContent,
   type PopoverContentProps
 } from 'reka-ui';
-import CardActions from './CardActions.vue';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 const {
   cardId,
-  actionsOffset = -50,
-  actionsSide,
-  actionsAlign,
-  showActionEmptyState = true,
   isInteractive = true,
   usePortal = true,
   portalTarget = '#card-actions-portal'
@@ -40,9 +34,9 @@ const isActionsPopoverOpened = computed({
   },
   set(value) {
     if (value) {
-      ui.value.selectCard(card.value);
+      ui.value.select(card.value);
     } else {
-      ui.value.unselectCard();
+      ui.value.unselect();
     }
   }
 });

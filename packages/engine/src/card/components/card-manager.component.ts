@@ -3,12 +3,7 @@ import type { Game } from '../../game/game';
 import type { AnyCard } from '../entities/card.entity';
 import { Deck } from '../entities/deck.entity';
 import { Player } from '../../player/player.entity';
-import {
-  CARD_DECK_SOURCES,
-  CARD_KINDS,
-  CARD_LOCATIONS,
-  type CardLocation
-} from '../card.enums';
+import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 import type { DestinyCard } from '../entities/destiny.entity';
@@ -239,11 +234,7 @@ export class CardManagerComponent {
   }
 
   sendToDiscardPile(card: AnyCard) {
-    if (card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
-      this.sendToBanishPile(card);
-    } else {
-      this.discardPile.add(card);
-    }
+    this.discardPile.add(card);
   }
 
   removeFromDiscardPile(card: AnyCard) {

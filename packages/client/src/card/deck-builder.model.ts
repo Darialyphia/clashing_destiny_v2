@@ -177,8 +177,11 @@ export class DeckBuilderViewModel {
           return a.blueprint.name.localeCompare(b.blueprint.name);
         }
 
-        // @ts-expect-error - We know these are the only possible types at this point
-        if (a.blueprint.manaCost === b.blueprint.manaCost) {
+        if (
+          'manaCost' in a.blueprint &&
+          'manaCost' in b.blueprint &&
+          a.blueprint.manaCost === b.blueprint.manaCost
+        ) {
           return a.blueprint.name.localeCompare(b.blueprint.name);
         }
         // @ts-expect-error - We know these are the only possible types at this point
@@ -283,7 +286,7 @@ export class DeckBuilderViewModel {
         if (aBp.manaCost === bBp.manaCost) {
           return aBp.name.localeCompare(bBp.name);
         }
-        return aBp.manaCost - bBp.manaCost;
+        return (aBp.manaCost ?? 0) - (bBp.manaCost ?? 0);
       });
   }
 

@@ -98,6 +98,7 @@ export class Player
 
   async init() {
     await this.cardManager.init();
+    this.manaManager.init();
   }
 
   get cardsDrawnForTurn() {

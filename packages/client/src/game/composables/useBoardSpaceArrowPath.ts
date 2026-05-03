@@ -1,9 +1,9 @@
-import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
 import { useGameClient, useGameState, useGameUi } from './useGameClient';
 import { isDefined, useMouse } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 
-export const useUnitArrowPath = (cell: BoardCellViewModel) => {
+export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
   const { client } = useGameClient();
   const ui = useGameUi();
   const state = useGameState();
@@ -11,17 +11,17 @@ export const useUnitArrowPath = (cell: BoardCellViewModel) => {
 
   const { x, y } = useMouse();
 
-  const unit = computed(() => {
+  const card = computed(() => {
     if (client.value.isPlayingFx) return null;
 
     const interaction = state.value.interaction;
     if (interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
-      if (cell.unit?.card.id === interaction.ctx.source) {
-        return cell.unit;
+      if (cell.value.card?.id === interaction.ctx.source) {
+        return cell.value.card;
       }
-    } else if (ui.value.selectedUnit) {
-      if (cell.unit?.id === ui.value.selectedUnit.id) {
-        return ui.value.selectedUnit;
+    } else if (ui.value.selectedCard) {
+      if (cell.value.card?.id === ui.value.selectedCard.id) {
+        return ui.value.selectedCard;
       }
     }
 
@@ -38,14 +38,11 @@ export const useUnitArrowPath = (cell: BoardCellViewModel) => {
     return 'red';
   });
 
-  const shouldBeDisplayed = computed(() => isDefined(unit.value));
+  const shouldBeDisplayed = computed(() => isDefined(card.value));
 
   const computeParabolaPath = () => {
     if (!shouldBeDisplayed.value) return '';
-    const cellEl = ui.value.DOMSelectors.cell(
-      cell.position.x,
-      cell.position.y
-    ).element;
+    const cellEl = ui.value.DOMSelectors.boardSpace(cell.value).element;
     if (!cellEl) return '';
 
     const rect = cellEl.getBoundingClientRect();
@@ -65,7 +62,7 @@ export const useUnitArrowPath = (cell: BoardCellViewModel) => {
   };
 
   watch(
-    [() => ui.value.selectedUnit, x, y],
+    [() => ui.value.selectedCard, x, y],
     () => {
       selectedUnitPath.value = computeParabolaPath();
     },

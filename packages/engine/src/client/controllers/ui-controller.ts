@@ -1,5 +1,4 @@
 import { COMBAT_STEPS, GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
-import { SelectCardAction } from '../actions/select-card';
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
@@ -8,10 +7,12 @@ import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selectio
 import { PassGlobalAction } from '../actions/pass';
 import type { AbilityViewModel } from '../view-models/ability.model';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
+import type { BoardSpaceViewModel } from '../view-models/board-space.model';
+import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
 
-export type CardClickRule = {
-  predicate: (card: CardViewModel, state: GameClientState) => boolean;
-  handler: (card: CardViewModel) => void;
+export type BoardCellClickRule = {
+  predicate: (tile: BoardSpaceViewModel, state: GameClientState) => boolean;
+  handler: (tile: BoardSpaceViewModel) => void;
 };
 
 export type GlobalActionRule = {
@@ -51,6 +52,8 @@ export class DOMSelector {
 export class UiController {
   private _hoveredCard: CardViewModel | null = null;
 
+  private _hoveredCardInHand: CardViewModel | null = null;
+
   private _selectedCard: CardViewModel | null = null;
 
   private _draggedCard: CardViewModel | null = null;
@@ -63,7 +66,7 @@ export class UiController {
 
   isOpponentHandExpanded = false;
 
-  private cardClickRules: CardClickRule[] = [];
+  private boardSpaceClickRules: BoardCellClickRule[] = [];
 
   private globalActionRules: GlobalActionRule[] = [];
 
@@ -94,6 +97,8 @@ export class UiController {
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
     destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),
+    boardSpace: (space: BoardSpaceViewModel) =>
+      new DOMSelector(`board-space-${space.id}`),
     cardOnBoard: (cardId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.board.selector),
     cardInHand: (cardId: string, playerId: string) =>
@@ -134,9 +139,9 @@ export class UiController {
   }
 
   private buildCardClickRules() {
-    this.cardClickRules = [
-      new SelectCardAction(this.client),
-      new SelectCardOnBoardAction(this.client)
+    this.boardSpaceClickRules = [
+      new SelectCardOnBoardAction(this.client),
+      new SelectSpaceOnBoardAction(this.client)
     ];
   }
 
@@ -182,6 +187,10 @@ export class UiController {
     return this._selectedCard;
   }
 
+  get hoveredCardInHand() {
+    return this._hoveredCardInHand;
+  }
+
   get draggedCard() {
     return this._draggedCard;
   }
@@ -215,6 +224,14 @@ export class UiController {
       });
   }
 
+  hoverCardInHand(card: CardViewModel) {
+    this._hoveredCardInHand = card;
+  }
+
+  unhoverCardInHand() {
+    this._hoveredCardInHand = null;
+  }
+
   startDraggingCard(card: CardViewModel) {
     this._draggedCard = card;
   }
@@ -223,16 +240,17 @@ export class UiController {
     this._draggedCard = null;
   }
 
-  onCardClick(card: CardViewModel) {
+  async onBoardSpaceClick(cell: BoardSpaceViewModel) {
     const state = this.client.state;
-    for (const rule of this.cardClickRules) {
-      if (rule.predicate(card, state)) {
-        rule.handler(card);
+    for (const rule of this.boardSpaceClickRules) {
+      if (rule.predicate(cell, state)) {
+        rule.handler(cell);
         return;
       }
     }
-
     this.unselect();
+    if (!this._draggedCard) return;
+    this._draggedCard = null;
   }
 
   get isInteractivePlayer() {

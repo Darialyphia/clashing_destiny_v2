@@ -19,8 +19,8 @@ import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
-import { getJobById } from '@game/engine/src/card/card.enums';
 import FoilBrightShine from './foil/FoilBrightShine.vue';
+import { getJobById } from '@game/engine/src/card/card.enums';
 
 const {
   card,

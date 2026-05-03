@@ -140,7 +140,7 @@ export class SpellCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
+      this.canPayManaCost &&
         this.blueprint.canPlay(this.game, this) &&
         this.isCorrectPhaseToPlay,
       this

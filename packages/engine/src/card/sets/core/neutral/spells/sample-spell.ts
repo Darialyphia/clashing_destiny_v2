@@ -1,29 +1,27 @@
-import type { MinionBlueprint } from '../../../../card-blueprint';
+import type { SpellBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
 
-export const sample: MinionBlueprint = {
-  id: 'sample',
-  name: 'Sample',
-  description: 'This is a sample minion.',
+export const sampleSpell: SpellBlueprint = {
+  id: 'sampleSpell',
+  name: 'Sample Spell',
+  description: 'This is a sample spell.',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
-  kind: CARD_KINDS.MINION,
+  kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.NEUTRAL],
   manaCost: 1,
   tags: [],
-  atk: 1,
-  maxHp: 2,
   abilities: [],
   canPlay: () => true,
+  getTargets(game, card) {
+    return Promise.resolve([]);
+  },
   async onInit(game, card) {},
   async onPlay(game, card) {},
   aiHints: {
-    shouldPlay: () => 0,
-    shouldMove: () => 0,
-    shouldAttack: () => 0,
-    getThreatScore: () => 0
+    shouldPlay: () => 0
   }
 };

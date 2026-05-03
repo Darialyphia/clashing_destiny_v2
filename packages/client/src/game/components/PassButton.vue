@@ -4,6 +4,7 @@ import { useGameUi } from '../composables/useGameClient';
 const ui = useGameUi();
 
 const passAction = computed(() => {
+  console.log(ui.value.globalActions);
   return ui.value.globalActions.find(action => action.id === 'pass');
 });
 </script>

@@ -1,12 +1,6 @@
 import type { HeroBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_DECK_SOURCES,
-  JOBS
-} from '../../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, JOBS } from '../../../../card.enums';
 
 export const erinaVioletWitch: HeroBlueprint = {
   id: 'erina-violet-witch',
@@ -17,10 +11,8 @@ export const erinaVioletWitch: HeroBlueprint = {
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
-  deckSource: CARD_DECK_SOURCES.MAIN_DECK,
   jobs: [JOBS.MAGE],
   tags: [],
-  manaCost: 0,
   atk: 2,
   maxHp: 25,
   canPlay: () => true,

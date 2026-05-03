@@ -104,7 +104,7 @@ watch(isPinned, pinned => {
 });
 
 const confirmButtonLabel = computed(() => {
-  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return 'Confirm';
+  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return 'Confirm';
 
   if (
     state.value.interaction.state !==
@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
 });
 
 const draggedCard = computed(() => {
-  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return null;
+  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return null;
 
   const card = state.value.entities[
     state.value.phase.ctx.card
@@ -165,7 +165,7 @@ const draggedCard = computed(() => {
         v-if="
           isPinned &&
           !isPinning &&
-          state.phase.state === GAME_PHASES.PLAYING_CARD &&
+          state.phase.state === GAME_PHASES.PLAY_CARD &&
           state.interaction.state ===
             INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
         "

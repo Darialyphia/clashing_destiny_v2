@@ -207,7 +207,7 @@ export class ArtifactCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
+      this.canPayManaCost &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this

@@ -27,12 +27,6 @@ export const CARD_EVENTS = {
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
 
-export const CARD_DECK_SOURCES = {
-  MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck'
-} as const;
-export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
-
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
@@ -114,19 +108,26 @@ export const JOBS = {
     id: 'mage',
     name: 'Mage',
     shortName: 'Mage'
-  },
-  ROGUE: {
-    id: 'rogue',
-    name: 'Rogue',
-    shortName: 'Rogue'
-  },
-  ACOLYTE: {
-    id: 'acolyte',
-    name: 'Acolyte',
-    shortName: 'Acolyte'
   }
+  // ROGUE: {
+  //   id: 'rogue',
+  //   name: 'Rogue',
+  //   shortName: 'Rogue'
+  // },
+  // ACOLYTE: {
+  //   id: 'acolyte',
+  //   name: 'Acolyte',
+  //   shortName: 'Acolyte'
+  // }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
+export const getJobById = (id: JobId): Job => {
+  const job = Object.values(JOBS).find(job => job.id === id);
+  if (!job) {
+    throw new Error(`Invalid job id: ${id}`);
+  }
+  return job;
+};
 
 export const CARD_LOCATIONS = {
   HAND: 'hand',

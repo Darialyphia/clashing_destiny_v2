@@ -1,11 +1,9 @@
 /// <reference lib="webworker" />
-import type { Point } from '@game/shared';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { match } from 'ts-pattern';
-import type { DeckCard } from '@game/engine/src/card/components/card-manager.component';
-import { AbilityDamage } from '@game/engine/src/utils/damage';
+import type { AnyCard } from '@game/engine/src/card/entities/card.entity';
 
 type SandboxWorkerEvent =
   | {
@@ -34,18 +32,7 @@ type SandboxWorkerEvent =
       payload: { playerId: string };
     }
   | { type: 'refillMana'; payload: { playerId: string } }
-  | { type: 'grantExp'; payload: { playerId: string; amount: number } }
-  | {
-      type: 'moveUnit';
-      payload: { unitId: string; position: Point; silent: boolean };
-    }
-  | { type: 'activateUnit'; payload: { unitId: string } }
-  | { type: 'destroyUnit'; payload: { unitId: string; silent: boolean } }
-  | { type: 'bounceUnit'; payload: { unitId: string; silent: boolean } }
-  | {
-      type: 'dealDamage';
-      payload: { unitId: string; amount: number; silent: boolean };
-    };
+  | { type: 'grantExp'; payload: { playerId: string; amount: number } };
 
 let game: Game;
 self.addEventListener('message', ({ data }) => {
@@ -133,11 +120,11 @@ self.addEventListener('message', ({ data }) => {
     })
     .with({ type: 'addCardToTopOfDeck' }, async ({ payload }) => {
       const player = game.playerSystem.getPlayerById(payload.playerId)!;
-      const card = await player.generateCard<DeckCard>(
+      const card = await player.generateCard<AnyCard>(
         payload.blueprintId,
         false
       );
-      player.cardManager.deck.addToTop(card);
+      player.cardManager.mainDeck.addToTop(card);
       game.snapshotSystem.takeSnapshot();
     })
     .with({ type: 'addCardToDiscardPile' }, async ({ payload }) => {
@@ -148,58 +135,12 @@ self.addEventListener('message', ({ data }) => {
     })
     .with({ type: 'refillMana' }, async ({ payload }) => {
       const player = game.playerSystem.getPlayerById(payload.playerId)!;
-      player.manaManager.refillMana();
-      game.snapshotSystem.takeSnapshot();
-    })
-    .with({ type: 'moveUnit' }, async ({ payload }) => {
-      const unit = game.unitSystem.getUnitById(payload.unitId);
-      if (!unit) {
-        return;
-      }
-      await unit.teleport(payload.position, payload.silent);
-      game.snapshotSystem.takeSnapshot();
-    })
-    .with({ type: 'activateUnit' }, async ({ payload }) => {
-      const unit = game.unitSystem.getUnitById(payload.unitId);
-      if (!unit) {
-        return;
-      }
-      await unit.activate();
-      game.snapshotSystem.takeSnapshot();
-    })
-    .with({ type: 'destroyUnit' }, async ({ payload }) => {
-      const unit = game.unitSystem.getUnitById(payload.unitId);
-      if (!unit) {
-        return;
-      }
-
-      await unit.destroy(unit.card, payload.silent);
-      game.snapshotSystem.takeSnapshot();
-    })
-    .with({ type: 'bounceUnit' }, async ({ payload }) => {
-      const unit = game.unitSystem.getUnitById(payload.unitId);
-      if (!unit) {
-        return;
-      }
-
-      await unit.bounce(payload.silent);
+      player.manaManager.refill();
       game.snapshotSystem.takeSnapshot();
     })
     .with({ type: 'draw' }, async ({ payload }) => {
       const player = game.playerSystem.getPlayerById(payload.playerId)!;
-      await player.cardManager.drawFromDeck(1);
-      game.snapshotSystem.takeSnapshot();
-    })
-    .with({ type: 'dealDamage' }, async ({ payload }) => {
-      const unit = game.unitSystem.getUnitById(payload.unitId);
-      if (!unit) {
-        return;
-      }
-      await unit.takeDamage(
-        unit.card,
-        new AbilityDamage(unit.card, payload.amount),
-        payload.silent
-      );
+      await player.cardManager.draw(1);
       game.snapshotSystem.takeSnapshot();
     })
     .with({ type: 'grantExp' }, async ({ payload }) => {

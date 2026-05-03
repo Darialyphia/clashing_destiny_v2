@@ -39,6 +39,7 @@ import type { BoardSpace } from '../../board/board-space.entity';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
+  potentialMoveTargets: string[];
   baseAtk: number;
   atk: number;
   baseMaxHp: number;
@@ -430,7 +431,7 @@ export class MinionCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
+      this.canPayManaCost &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
@@ -493,12 +494,24 @@ export class MinionCard extends Card<
     ].filter(minion => this.canAttack(minion));
   }
 
+  get potentialMoveTargets(): BoardSpace<AnyCard>[] {
+    return this.canMove
+      ? [
+          ...(this.location === CARD_LOCATIONS.BATTLEFIELD
+            ? this.player.boardSide.battlefield
+            : this.player.boardSide.base
+          ).filter(space => space.isEmpty)
+        ]
+      : [];
+  }
+
   serialize(): SerializedMinionCard {
     return {
       ...this.serializeBase(),
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
+      potentialMoveTargets: this.potentialMoveTargets.map(space => space.id),
       atk: this.atk,
       baseAtk: this.blueprint.atk,
       maxHp: this.maxHp,

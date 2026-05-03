@@ -3,7 +3,6 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   CARD_KINDS,
-  JOBS,
   type CardKind,
   type JobId
 } from '@game/engine/src/card/card.enums';
@@ -100,7 +99,9 @@ export const provideCardList = () => {
         }
 
         if (jobFilter.value.size > 0) {
-          const isMatch = card.jobs.some(job => jobFilter.value.has(job));
+          const isMatch = card.jobs.some(job =>
+            jobFilter.value.has(job.id as JobId)
+          );
           return isMatch;
         }
 
@@ -153,35 +154,12 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        const aJobId = a.card.jobs[0];
-        const aJob = Object.values(JOBS).find(j => j.id === aJobId)!;
-        const bJobId = b.card.jobs[0];
-        const bJob = Object.values(JOBS).find(j => j.id === bJobId)!;
-
-        if (aJobId === JOBS.NEUTRAL.id && bJobId !== JOBS.NEUTRAL.id) {
-          return 1;
-        }
-        if (aJobId !== JOBS.NEUTRAL.id && bJobId === JOBS.NEUTRAL.id) {
-          return -1;
-        }
-
-        if (aJob.isAdvanced && !bJob.isAdvanced) {
-          return 1;
-        }
-        if (!aJob.isAdvanced && bJob.isAdvanced) {
-          return -1;
-        }
-
-        if (aJobId !== bJobId) {
-          return aJobId.localeCompare(bJobId);
-        }
-
         if (
           'manaCost' in a.card &&
           'manaCost' in b.card &&
           a.card.manaCost !== b.card.manaCost
         ) {
-          return a.card.manaCost - b.card.manaCost;
+          return (a.card.manaCost ?? 0) - (b.card.manaCost ?? 0);
         }
 
         if (a.card.kind !== b.card.kind) {

@@ -359,4 +359,13 @@ export class GameClient {
       }
     });
   }
+
+  commitSpaceSelection() {
+    this.dispatch({
+      type: 'commitSpaceSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
 }

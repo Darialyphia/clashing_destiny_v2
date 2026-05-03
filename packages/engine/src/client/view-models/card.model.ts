@@ -8,18 +8,13 @@ import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
-import { PlayCardAction } from '../actions/play-card';
-import {
-  CARD_KINDS,
-  type CardKind,
-  CARD_DECK_SOURCES,
-  type Job
-} from '../../card/card.enums';
+import { CARD_KINDS, type CardKind, type Job } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
+import type { BoardSpaceViewModel } from './board-space.model';
 
 type CardData =
   | SerializedSpellCard
@@ -102,6 +97,10 @@ export class CardViewModel {
     return this.data.isRevealed;
   }
 
+  get isFoil() {
+    return false;
+  }
+
   get kind() {
     return this.data.kind;
   }
@@ -131,11 +130,15 @@ export class CardViewModel {
   }
 
   get manaCost() {
-    if (this.source === CARD_DECK_SOURCES.DESTINY_DECK) {
-      return null;
-    }
     if ('manaCost' in this.data) {
       return this.data.manaCost as number;
+    }
+    return null;
+  }
+
+  get expCost() {
+    if ('expCost' in this.data) {
+      return this.data.expCost as number;
     }
     return null;
   }
@@ -147,25 +150,6 @@ export class CardViewModel {
     return null;
   }
 
-  get destinyCost() {
-    if (this.source === CARD_DECK_SOURCES.MAIN_DECK) {
-      return null;
-    }
-    if ('destinyCost' in this.data) {
-      return this.data.destinyCost as number;
-    }
-
-    return null;
-  }
-
-  get baseDestinyCost() {
-    if ('baseDestinyCost' in this.data) {
-      return this.data.baseDestinyCost as number;
-    }
-
-    return null;
-  }
-
   get jobs() {
     if ('jobs' in this.data) {
       return this.data.jobs as Job[];
@@ -173,12 +157,15 @@ export class CardViewModel {
     return [];
   }
 
-  get unplayableReason() {
-    return this.data.unplayableReason;
+  get subKind() {
+    if ('subKind' in this.data) {
+      return this.data.subKind as string;
+    }
+    return null;
   }
 
-  get source() {
-    return this.data.source;
+  get unplayableReason() {
+    return this.data.unplayableReason;
   }
 
   get location() {
@@ -278,11 +265,35 @@ export class CardViewModel {
     return [];
   }
 
+  get potentialMoveTargets() {
+    if ('potentialMoveTargets' in this.data) {
+      return (
+        this.data.potentialMoveTargets as SerializedMinionCard['potentialMoveTargets']
+      ).map(spaceId => {
+        return this.getEntities()[spaceId] as BoardSpaceViewModel;
+      });
+    }
+
+    return [];
+  }
+
   get canAttack() {
     return (
       this.player.id === this.getClient().state.currentPlayer &&
       this.potentialAttackTargets.length > 0
     );
+  }
+
+  canAttackAt(space: BoardSpaceViewModel) {
+    if (!this.canAttack) return false;
+
+    return this.potentialAttackTargets.some(target => target.id === space.id);
+  }
+
+  canMoveTo(space: BoardSpaceViewModel) {
+    if (!this.canMove) return false;
+
+    return this.potentialMoveTargets.some(target => target.id === space.id);
   }
 
   get canBlock() {
@@ -326,7 +337,7 @@ export class CardViewModel {
       return null;
     }
 
-    return this.player.hand.findIndex(card => card.cardId === this.id);
+    return this.player.hand.findIndex(card => card.id === this.id);
   }
 
   get preResponseTargets() {
@@ -370,16 +381,14 @@ export class CardViewModel {
   play() {
     const hand = this.player.hand;
 
-    const index = hand.findIndex(card => card.cardId === this.id);
+    const index = hand.findIndex(card => card.id === this.id);
     if (index === -1) return;
 
     this.getClient().declarePlayCard(this);
   }
 
   get actions(): CardActionRule[] {
-    const actions = [new PlayCardAction(this.getClient()), ...this.abilityActions].filter(
-      rule => rule.predicate(this)
-    );
+    const actions = this.abilityActions.filter(rule => rule.predicate());
 
     return actions;
   }

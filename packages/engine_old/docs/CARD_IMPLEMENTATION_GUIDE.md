@@ -72,11 +72,9 @@ All cards share common properties defined in `CardBlueprintBase`:
   tags: Tag[];                   // Searchable tags (usually empty [])
 
   // Cost
-  deckSource: CARD_DECK_SOURCES.MAIN_DECK;
   manaCost: number;              // Mana cost to play
   // OR
-  deckSource: CARD_DECK_SOURCES.DESTINY_DECK;
-  destinyCost: number;           // Destiny cost to play
+  expCost: number;           // Destiny cost to play
 
   // Art (can use placeholders)
   art: {

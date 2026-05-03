@@ -1,11 +1,11 @@
-import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
 import type { ComputedRef } from 'vue';
 import { useGameUi } from './useGameClient';
+import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 
 const DRAG_THRESHOLD_PX = 30;
 
-export const useUnitDragSelection = (
-  cell: BoardCellViewModel,
+export const useBoardCardDragSelection = (
+  cell: Ref<BoardSpaceViewModel>,
   canSelectUnit: ComputedRef<boolean>
 ) => {
   const ui = useGameUi();
@@ -14,11 +14,11 @@ export const useUnitDragSelection = (
   let startY = 0;
 
   const onMousemove = (e: MouseEvent) => {
-    if (!cell.unit) return;
+    if (!cell.value.card) return;
     const deltaY = Math.abs(startY - e.clientY);
     const deltaX = Math.abs(startX - e.clientX);
     if (deltaY >= DRAG_THRESHOLD_PX || deltaX >= DRAG_THRESHOLD_PX) {
-      ui.value.selectUnit(cell.unit);
+      ui.value.select(cell.value.card);
       document.body.removeEventListener('mousemove', onMousemove);
     }
   };

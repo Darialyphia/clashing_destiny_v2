@@ -17,7 +17,6 @@ const {
   actionsAlign = 'center',
   variant = 'default',
   isInteractive = true,
-  showDisabledMessage = false,
   showStats = false,
   useActionsPortal = true,
   showModifiers = false,
@@ -52,11 +51,6 @@ const card = useCard(computed(() => cardId));
 
 const ui = useGameUi();
 
-const handleClick = () => {
-  if (!isInteractive) return;
-  ui.value.onCardClick(card.value);
-};
-
 const isUsingAbility = refAutoReset(false, 1000);
 
 const onAbilityUse = async (e: { card: string }) => {
@@ -69,7 +63,7 @@ useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
 
 const classes = computed(() => {
   return [
-    card.value.keywords.map(kw => kw.id.toLowerCase()),
+    card.value.keywords.map(kw => kw.toLowerCase()),
     {
       'can-tilt': canTilt,
       disabled:
@@ -113,7 +107,6 @@ const classes = computed(() => {
           expCost: overrides.expCost ?? card.expCost,
           hp: overrides.hp ?? card.maxHp,
           atk: overrides.atk ?? card.atk,
-          retaliation: overrides.retaliation ?? card.retaliation,
           durability: overrides.durability ?? card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
@@ -125,7 +118,6 @@ const classes = computed(() => {
         class="game-card big"
         :class="classes"
         :max-tilt-angle="0"
-        @click="handleClick"
       />
       <SmallCard
         v-else-if="variant === 'small'"
@@ -139,15 +131,12 @@ const classes = computed(() => {
           hp: overrides.hp ?? card.hp,
           baseMaxHp: overrides.baseMaxHp ?? card.baseMaxHp,
           maxHp: overrides.maxHp ?? card.maxHp,
-          durability: overrides.durability ?? card.durability,
-          retaliation: overrides.retaliation ?? card.retaliation,
-          baseRetaliation: overrides.baseRetaliation ?? card.baseRetaliation
+          durability: overrides.durability ?? card.durability
         }"
         class="game-card small"
         :class="classes"
         :show-stats="showStats"
         :is-foil="card.isFoil"
-        @click="handleClick"
       />
 
       <CardModifiers

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
@@ -29,6 +30,7 @@ import OpponentPlayerInfos from './OpponentPlayerInfos.vue';
 import HoveredCardInfos from './HoveredCardnfos.vue';
 import { provideRichTextContext } from '../composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
+import BoardSpace from './BoardSpace.vue';
 
 const { options } = defineProps<{
   clocks?: {
@@ -44,6 +46,7 @@ const { options } = defineProps<{
 }>();
 
 const ui = useGameUi();
+const { playerId } = useGameClient();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
@@ -115,13 +118,12 @@ useEventListener('contextmenu', async e => {
 </script>
 
 <template>
-  <!-- <div class="debug">
+  <div class="debug">
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
-    <div>Selected Unit: {{ ui.selectedUnit?.id }}</div>
-    <div>Selected Hero: {{ ui.selectedHero?.id }}</div>
+    <div>Selected Card: {{ ui.selectedCard?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
-  </div> -->
+  </div>
   <div class="game-board-container">
     <SVGFilters />
     <PlayedCard />
@@ -132,6 +134,34 @@ useEventListener('contextmenu', async e => {
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="minions-zone">
+          <div class="opponent-base">
+            <BoardSpace
+              v-for="space in opponent.boardSide.base"
+              :key="space"
+              :cell-id="space"
+            />
+          </div>
+          <div class="opponent-battlefield">
+            <BoardSpace
+              v-for="space in opponent.boardSide.battlefield"
+              :key="space"
+              :cell-id="space"
+            />
+          </div>
+          <div class="my-battlefield">
+            <BoardSpace
+              v-for="space in myPlayer.boardSide.battlefield"
+              :key="space"
+              :cell-id="space"
+            />
+          </div>
+          <div class="my-base">
+            <BoardSpace
+              v-for="space in myPlayer.boardSide.base"
+              :key="space"
+              :cell-id="space"
+            />
+          </div>
           <!-- <MinionRow :row="opponent.boardSide.base" class="opponent-back-row" />
           <MinionRow
             :row="opponent.boardSide.battlefield"
@@ -248,6 +278,15 @@ useEventListener('contextmenu', async e => {
   flex-direction: column;
   gap: 12px;
   position: relative;
+
+  > div {
+    height: 130px;
+    background-color: #666;
+    margin-inline: 22px;
+    width: calc(100% - 44px);
+    display: flex;
+    justify-content: space-between;
+  }
 }
 
 .arrows {
@@ -279,9 +318,6 @@ useEventListener('contextmenu', async e => {
   transform: translateZ(10px);
 }
 
-.separator {
-  height: 24px;
-}
 /* @keyframes warning-pulse {
   0%,
   100% {
@@ -379,26 +415,22 @@ useEventListener('contextmenu', async e => {
   }
 }
 
-.opponent-back-row {
+.opponent-base {
   position: absolute;
-  left: 22px;
 }
 
-.opponent-front-row {
+.opponent-battlefield {
   position: absolute;
-  left: 22px;
-  top: 156px;
+  top: 172px;
 }
 
-.my-front-row {
+.my-battlefield {
   position: absolute;
-  left: 22px;
-  top: 332px;
+  top: 314px;
 }
 
-.my-back-row {
+.my-base {
   position: absolute;
-  left: 22px;
   top: 476px;
 }
 

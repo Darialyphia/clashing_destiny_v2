@@ -1,55 +1,30 @@
-import type { BoardCellViewModel } from '@game/engine/src/client/view-models/board-cell.model';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import {
-  GAME_PHASES,
-  INTERACTION_STATES
-} from '@game/engine/src/game/game.enums';
-import { pointToCellId } from '@game/engine/src/board/board-utils';
-import { Vec2 } from '@game/shared';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { useGameState } from './useGameClient';
+import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 
-export const useCellTargeting = (cell: BoardCellViewModel) => {
+export const useCellTargeting = (cell: Ref<BoardSpaceViewModel>) => {
   const state = useGameState();
 
   const isTargeted = computed(() => {
-    const { interaction, phase } = state.value;
+    const { interaction } = state.value;
     if (interaction.state !== INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
       return false;
     }
 
-    if (
-      interaction.ctx.selectedSpaces.some(
-        space =>
-          pointToCellId(space) ===
-          pointToCellId({ x: cell.position.x, y: cell.position.y })
-      )
-    ) {
-      return true;
-    }
-
-    if (phase.state === GAME_PHASES.PLAYING_CARD) {
-      const card = state.value.entities[phase.ctx.card] as CardViewModel;
-      if (!card) return false;
-      return card.spacesToHighlight.some(point =>
-        Vec2.fromPoint(point).equals({ x: cell.position.x, y: cell.position.y })
-      );
-    }
-
-    return false;
+    return interaction.ctx.selectedSpaces.some(
+      space => space.id === cell.value.id
+    );
   });
 
   const isTargetable = computed(() => {
-    const interaction = state.value.interaction;
+    const { interaction } = state.value;
     if (interaction.state !== INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
       return false;
     }
 
     return (
       !isTargeted.value &&
-      interaction.ctx.elligibleSpaces.some(
-        spaceId =>
-          spaceId === pointToCellId({ x: cell.position.x, y: cell.position.y })
-      )
+      interaction.ctx.elligibleSpaces.some(space => space.id === cell.value.id)
     );
   });
 

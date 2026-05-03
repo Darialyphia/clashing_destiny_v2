@@ -18,8 +18,8 @@ const ui = useGameUi();
         :card-id="card.id"
         :is-interactive="false"
         class="card"
-        @mouseenter="ui.hoverCardOnBoard(card)"
-        @mouseleave="ui.unhoverCardOnBoard()"
+        @mouseenter="ui.hover(card)"
+        @mouseleave="ui.unhover()"
       />
     </div>
   </div>

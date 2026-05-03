@@ -32,19 +32,18 @@ let startY = 0;
 const onMousemove = (e: MouseEvent) => {
   const deltaY = startY - e.clientY;
   if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
-    ui.value.draggedCard = card;
+    ui.value.startDraggingCard(card);
     card.play();
     document.body.removeEventListener('mousemove', onMousemove);
   }
 };
 
 const onMouseDown = (e: MouseEvent) => {
-  if (ui.value.isReplacingCard) return;
-  if (state.value.turnPlayer !== card.player.id) return;
+  if (ui.value.isInteractivePlayer) return;
 
   if (!card.canPlay) return playViolationAnimation();
 
-  ui.value.selectCard(card);
+  ui.value.select(card);
   startY = e.clientY;
 
   document.body.addEventListener('mousemove', onMousemove);
@@ -55,7 +54,7 @@ const isDisabled = computed(() => {
 });
 
 const isVisible = computed(() => {
-  if (state.value.phase.state !== GAME_PHASES.PLAYING_CARD) return true;
+  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return true;
   if (ui.value.optimisticState.isCancellingPlayCard) return true;
   return state.value.phase.ctx.card !== card.id;
 });

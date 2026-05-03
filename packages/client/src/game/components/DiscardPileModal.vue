@@ -43,10 +43,10 @@ const player = usePlayer(playerId);
       <div class="card-list fancy-scrollbar">
         <div
           v-for="card in player.discardPile.toReversed()"
-          :key="card"
+          :key="card.id"
           @click.stop
         >
-          <GameCard :card-id="card" :actions-offset="10" />
+          <GameCard :card-id="card.id" :actions-offset="10" />
         </div>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">

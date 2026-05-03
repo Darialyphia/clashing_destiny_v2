@@ -12,7 +12,6 @@ import type { PlayerViewModel } from '@game/engine/src/client/view-models/player
 import { isDefined, type MaybePromise, type Nullable } from '@game/shared';
 import type { InjectionKey, Ref } from 'vue';
 import { gameStateRef } from './gameStateRef';
-import type { UnitViewModel } from '@game/engine/src/client/view-models/unit.model';
 
 type GameClientContext = { client: Ref<GameClient>; playerId: Ref<string> };
 
@@ -135,10 +134,4 @@ export const useOpponentPlayer = () => {
   return computed(() => {
     return state.value.entities[opponentId.value] as PlayerViewModel;
   });
-};
-
-export const useUnits = () => {
-  const state = useGameState();
-
-  return useEntities<UnitViewModel>(computed(() => state.value.units));
 };

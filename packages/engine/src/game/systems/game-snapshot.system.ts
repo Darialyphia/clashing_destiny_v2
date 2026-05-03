@@ -81,7 +81,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     return snapshot;
   }
 
-  geSnapshotForPlayerAt(
+  getSnapshotForPlayerAt(
     playerId: string,
     index: number
   ): GameStateSnapshot<SerializedPlayerState> {
@@ -160,7 +160,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
   }
 
   getLatestSnapshotForPlayer(playerId: string): GameStateSnapshot<SerializedPlayerState> {
-    return this.geSnapshotForPlayerAt(playerId, this.nextId - 1);
+    return this.getSnapshotForPlayerAt(playerId, this.nextId - 1);
   }
 
   getLatestDiffSnapshotForPlayer(playerId: string): GameStateSnapshot<SnapshotDiff> {
@@ -198,7 +198,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     playerId: string,
     index: number
   ): GameStateSnapshot<SnapshotDiff> {
-    const latestSnapshot = this.geSnapshotForPlayerAt(playerId, index);
+    const latestSnapshot = this.getSnapshotForPlayerAt(playerId, index);
     if (latestSnapshot.kind === 'error') {
       return latestSnapshot;
     }

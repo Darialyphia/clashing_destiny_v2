@@ -73,7 +73,10 @@ export class PlayerViewModel {
   }
 
   get hand() {
-    return this.data.hand;
+    const entities = this.getEntities();
+    return this.data.hand.map(card => {
+      return entities[card.cardId] as CardViewModel;
+    });
   }
 
   get discardPile() {

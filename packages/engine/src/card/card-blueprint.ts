@@ -7,7 +7,6 @@ import type {
   Rarity,
   ArtifactKind,
   Tag,
-  CARD_DECK_SOURCES,
   Job,
   RuneId
 } from './card.enums';
@@ -18,16 +17,6 @@ import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { DestinyCard } from './entities/destiny.entity';
-
-export type CardSourceBlueprint =
-  | {
-      deckSource: typeof CARD_DECK_SOURCES.MAIN_DECK;
-      manaCost: number;
-    }
-  | {
-      deckSource: typeof CARD_DECK_SOURCES.DESTINY_DECK;
-      manaCost?: never;
-    };
 
 export type CardArt = {
   foil: {
@@ -62,7 +51,7 @@ export type CardBlueprintBase = {
   unique?: boolean;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-} & CardSourceBlueprint;
+};
 
 export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target> = {
   id: string;
@@ -106,11 +95,11 @@ export const serializePreResponseTarget = (
 
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
+  manaCost: number;
   atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, Target>[];
   jobs: Job[];
-  runeCost: Partial<Record<RuneId, number>>;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
@@ -124,8 +113,8 @@ export type MinionBlueprint = CardBlueprintBase & {
 
 export type SpellBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
+  manaCost: number;
   jobs: Job[];
-  runeCost: Partial<Record<RuneId, number>>;
   abilities: AbilityBlueprint<SpellCard, Target>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: Target[]) => Promise<void>;
@@ -153,8 +142,8 @@ export type HeroBlueprint = CardBlueprintBase & {
 
 export type ArtifactBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
+  manaCost: number;
   jobs: Job[];
-  runeCost: Partial<Record<RuneId, number>>;
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
@@ -177,7 +166,6 @@ export type DestinyBlueprint = CardBlueprintBase & {
   expCost: number;
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
   jobs: Job[];
-  runeCost: Partial<Record<RuneId, number>>;
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard, targets: Target[]) => Promise<void>;
   canPlay: (game: Game, card: DestinyCard) => boolean;

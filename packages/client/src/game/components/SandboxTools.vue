@@ -22,9 +22,8 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
-import { usePlayer1, useUnits } from '../composables/useGameClient';
-import { isDefined, type Point } from '@game/shared';
-import UiSwitch from '@/ui/components/UiSwitch.vue';
+import { usePlayer1 } from '../composables/useGameClient';
+import { isDefined } from '@game/shared';
 
 const { players } = defineProps<{
   players: Array<{ id: string }>;
@@ -37,18 +36,12 @@ const emit = defineEmits<{
   restart: [];
   refillMana: [];
   addToHand: [cardId: string];
-  move: [unitId: string, pos: Point, silent: boolean];
-  activateUnit: [unitId: string];
-  destroyUnit: [unitId: string, silent: boolean];
-  bounceUnit: [unitId: string, silent: boolean];
-  dealDamageToUnit: [unitId: string, amount: number, silent: boolean];
   draw: [];
   grantExp: [amount: number];
 }>();
 
 const isSandboxPopoverOpened = ref(false);
 const card = ref<string | null>(null);
-const unit = ref<string | null>(null);
 
 const playerId = defineModel<string>('playerId', { required: true });
 const autoSwitchPlayer = defineModel<boolean>('autoSwitch', {
@@ -58,11 +51,8 @@ const autoSwitchPlayer = defineModel<boolean>('autoSwitch', {
 const allCards = Object.values(CARDS_DICTIONARY).sort((a, b) =>
   a.name.localeCompare(b.name)
 );
-const units = useUnits();
 
 const p1 = usePlayer1();
-const triggerEvents = ref(true);
-const damageToDeal = ref(0);
 
 const expToGrant = ref(0);
 </script>
@@ -244,126 +234,6 @@ const expToGrant = ref(0);
               >
                 Add to Hand
               </button>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem class="accordion-item" value="units">
-            <AccordionHeader class="accordion-header">
-              <AccordionTrigger class="accordion-trigger">
-                <span>Units</span>
-                <Icon
-                  icon="radix-icons:chevron-down"
-                  class="accordion-chevron"
-                />
-              </AccordionTrigger>
-            </AccordionHeader>
-            <AccordionContent class="accordion-content">
-              <ComboboxRoot class="relative" v-model="unit">
-                <ComboboxAnchor class="combobox-anchor">
-                  <ComboboxInput
-                    class="combobox-input"
-                    placeholder="Search units..."
-                  />
-                  <ComboboxTrigger>
-                    <Icon
-                      icon="radix-icons:chevron-down"
-                      class="chevron-icon"
-                    />
-                  </ComboboxTrigger>
-                </ComboboxAnchor>
-
-                <ComboboxPortal to="#sandbox-tools-combobox-portal">
-                  <ComboboxContent
-                    align="start"
-                    position="popper"
-                    position-strategy="fixed"
-                    as-child
-                  >
-                    <div class="combobox-content">
-                      <ComboboxViewport class="combobox-viewport">
-                        <ComboboxEmpty class="combobox-empty" />
-
-                        <ComboboxItem
-                          v-for="unit in units"
-                          :key="unit.id"
-                          :value="unit.id"
-                          class="combobox-item"
-                        >
-                          {{ unit.card.name }} ({{ unit.x + 1 }},
-                          {{ unit.y + 1 }})
-                        </ComboboxItem>
-                      </ComboboxViewport>
-                    </div>
-                  </ComboboxContent>
-                </ComboboxPortal>
-              </ComboboxRoot>
-
-              <div class="flex gap-2 items-center mt-3">
-                <UiSwitch v-model="triggerEvents" />
-                <span class="option-title">
-                  Trigger Events (can cause issues if disabled)
-                </span>
-              </div>
-
-              <div class="flex gap-2 items-center mt-2">
-                <button
-                  :disabled="!unit"
-                  @click="emit('activateUnit', unit!)"
-                  class="btn"
-                >
-                  Activate
-                </button>
-                <button
-                  :disabled="!unit"
-                  @click="
-                    () => {
-                      emit('destroyUnit', unit!, !triggerEvents);
-                      unit = null;
-                    }
-                  "
-                  class="btn"
-                >
-                  Destroy
-                </button>
-                <button
-                  :disabled="!unit"
-                  @click="
-                    () => {
-                      emit('bounceUnit', unit!, !triggerEvents);
-                      unit = null;
-                    }
-                  "
-                  class="btn"
-                >
-                  Return to hand
-                </button>
-              </div>
-
-              <div class="input-group mt-2">
-                <input
-                  id="damage-input"
-                  type="number"
-                  min="0"
-                  step="1"
-                  placeholder="Damage to deal"
-                  class="number-input flex-1"
-                  v-model.number="damageToDeal"
-                />
-                <button
-                  :disabled="!isDefined(damageToDeal) || !unit"
-                  @click="
-                    emit(
-                      'dealDamageToUnit',
-                      unit!,
-                      damageToDeal!,
-                      !triggerEvents
-                    )
-                  "
-                  class="btn"
-                >
-                  Deal damage
-                </button>
-              </div>
             </AccordionContent>
           </AccordionItem>
         </AccordionRoot>

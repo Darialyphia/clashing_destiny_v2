@@ -50,12 +50,14 @@ const jobs: Array<{
   img: string;
   label: string;
   job: Job;
-}> = Object.values(JOBS).map(job => ({
-  id: job.id,
-  img: assets[`ui/card/job-${job.id.toLocaleLowerCase()}`].path,
-  label: job.name,
-  job
-}));
+}> = Object.values(JOBS).map(job => {
+  return {
+    id: job.id,
+    img: assets[`ui/card/job-${job.id.toLocaleLowerCase()}`].path,
+    label: job.name,
+    job
+  };
+});
 
 const router = useRouter();
 

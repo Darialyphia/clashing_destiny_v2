@@ -168,7 +168,7 @@ watch(width, v => {
       :class="{
         'ui-hidden': !ui.displayedElements.hand,
         'opponent-hand': !isMyHand,
-        hoverable: state.phase.state !== GAME_PHASES.PLAYING_CARD
+        hoverable: state.phase.state !== GAME_PHASES.PLAY_CARD
       }"
       :style="{
         '--hand-size': player.hand.length,

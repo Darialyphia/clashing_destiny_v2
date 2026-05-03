@@ -3,6 +3,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
 import Card from './Card.vue';
 import { isFunction } from '@game/shared';
+import type { JobId } from '@game/engine/src/card/card.enums';
 
 const {
   blueprint,
@@ -49,7 +50,7 @@ const mergedFoilOptions = computed(() => ({
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
-      jobs: blueprint.jobs,
+      jobs: blueprint.jobs.map(job => job.id as JobId),
       tags: blueprint.tags
     }"
     :is-tilt-enabled="isTiltEnabled"

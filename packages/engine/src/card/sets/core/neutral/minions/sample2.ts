@@ -2,10 +2,10 @@ import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import { CARD_KINDS, CARD_SETS, JOBS, RARITIES } from '../../../../card.enums';
 
-export const sample: MinionBlueprint = {
-  id: 'sample',
-  name: 'Sample',
-  description: 'This is a sample minion.',
+export const sampl2: MinionBlueprint = {
+  id: 'sample2',
+  name: 'Sample2',
+  description: 'This is another sample minion.',
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
@@ -14,8 +14,8 @@ export const sample: MinionBlueprint = {
   jobs: [JOBS.NEUTRAL],
   manaCost: 1,
   tags: [],
-  atk: 1,
-  maxHp: 2,
+  atk: 2,
+  maxHp: 3,
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {},

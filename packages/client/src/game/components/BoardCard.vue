@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { UnitViewModel } from '@game/engine/src/client/view-models/unit.model';
 import { useFxEvent, useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { waitFor } from '@game/shared';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
 import ModifiersList from './ModifiersList.vue';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
-const { unit } = defineProps<{ unit: UnitViewModel }>();
+const { card } = defineProps<{ card: CardViewModel }>();
 
 const ui = useGameUi();
 
 const element = ref<HTMLElement>();
 onMounted(() => {
-  element.value = ui.value.DOMSelectors.unit(unit.id).element!;
+  element.value = ui.value.DOMSelectors.cardOnBoard(card.id).element!;
 });
 
 const isBeingDropped = ref(false);
@@ -23,8 +23,9 @@ const dropDuration = ref('');
 const unitEl = useTemplateRef('unit');
 
 const isAttacking = ref(false);
-const onAttack = async (event: { attacker: string }) => {
-  if (event.attacker !== unit.id) return;
+
+useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, async event => {
+  if (event.card !== card.id) return;
 
   if (!unitEl.value) return;
   isAttacking.value = true;
@@ -36,14 +37,11 @@ const onAttack = async (event: { attacker: string }) => {
     { once: true }
   );
   await until(isAttacking).toBe(false);
-};
-
-useFxEvent(FX_EVENTS.COMBAT_BEFORE_ATTACK, onAttack);
-useFxEvent(FX_EVENTS.COMBAT_BEFORE_COUNTERATTACK, onAttack);
+});
 
 const isTakingDamage = ref(false);
-useFxEvent(FX_EVENTS.COMBAT_BEFORE_RECEIVE_DAMAGE, async event => {
-  if (event.target !== unit.id) return;
+useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async event => {
+  if (event.card !== card.id) return;
 
   if (!unitEl.value) return;
   isTakingDamage.value = true;
@@ -60,23 +58,23 @@ useFxEvent(FX_EVENTS.COMBAT_BEFORE_RECEIVE_DAMAGE, async event => {
 });
 
 const hasAvailableAbilities = computed(() => {
-  return unit.abilities.some(ability => {
+  return card.abilityActions.some(ability => {
     return ability.predicate();
   });
 });
 
-const modifiers = computed(() => [...unit.modifiers, ...unit.card.modifiers]);
+const modifiers = computed(() => card.modifiers);
 </script>
 
 <template>
   <div
     ref="unit"
-    :id="ui.DOMSelectors.unit(unit.id).id"
+    :id="ui.DOMSelectors.cardOnBoard(card.id).id"
     class="unit"
     :class="[
       {
-        'is-exhausted': unit.isExhausted,
-        'is-selected': ui.selectedUnit?.equals(unit),
+        'is-exhausted': card.isExhausted,
+        'is-selected': ui.selectedCard?.equals(card),
         'is-being-dropped': isBeingDropped,
         'is-attacking': isAttacking,
         'is-taking-damage': isTakingDamage,
@@ -86,9 +84,9 @@ const modifiers = computed(() => [...unit.modifiers, ...unit.card.modifiers]);
   >
     <GameCard
       variant="small"
-      :card-id="unit.cardId"
+      :card-id="card.id"
       show-stats
-      :overrides="{ atk: unit.atk, hp: unit.hp, retaliation: unit.retaliation }"
+      :overrides="{ atk: card.atk, hp: card.hp }"
     />
     <ModifiersList :modifiers="modifiers" />
   </div>

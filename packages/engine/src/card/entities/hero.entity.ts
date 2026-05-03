@@ -336,12 +336,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canPlay() {
-    return this.interceptors.canPlay.getValue(
-      this.canPlayBase &&
-        this.isCorrectPhaseToPlay &&
-        this.blueprint.canPlay(this.game, this),
-      this
-    );
+    return true;
   }
 
   get unplayableReason() {

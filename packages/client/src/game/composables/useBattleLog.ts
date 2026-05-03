@@ -69,11 +69,11 @@ export const useBattleLog = () => {
         if (eventName === GAME_EVENTS.PLAYER_AFTER_DRAW) {
           tokens.push({
             kind: 'player',
-            player: state.value.entities[event.player.id] as PlayerViewModel
+            player: state.value.entities[event.player] as PlayerViewModel
           });
           tokens.push({
             kind: 'text',
-            text: `draw ${event.cards.length} card${event.cards.length > 1 ? 's' : ''}.`
+            text: `draw ${event.amount} card${event.amount > 1 ? 's' : ''}.`
           });
         }
 
