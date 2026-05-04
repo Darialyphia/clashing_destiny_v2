@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRichTextContext } from '@/game/composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
+import { uppercaseFirstLetter } from '@game/shared';
 
 const { job } = defineProps<{
   job: string;
@@ -14,15 +15,19 @@ const ctx = useRichTextContext();
     class="job-bonus"
     :class="{
       disabled:
-        ctx && !ctx.heroJobs.value.includes(job.toLocaleLowerCase() as JobId)
+        ctx && !ctx.heroJobs.value.includes(job.toLocaleUpperCase() as JobId)
     }"
   >
-    <span class="badge">{{ job }}</span>
+    <span class="badge">{{ uppercaseFirstLetter(job) }}</span>
     <slot />
   </span>
 </template>
 
 <style scoped lang="postcss">
+.job-bonus {
+  line-height: 2;
+}
+
 .badge {
   background: linear-gradient(
     to bottom,

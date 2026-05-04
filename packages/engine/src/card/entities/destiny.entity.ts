@@ -72,16 +72,12 @@ export class DestinyCard extends Card<
   }
 
   private async selectTargets() {
-    return new Promise<
-      { targets: Target[]; cancelled: false } | { cancelled: true; targets?: never }
-    >(
-      // eslint-disable-next-line no-async-promise-executor
-      async resolve => {
-        const targets = await this.blueprint.getTargets(this.game, this);
+    const targetsResult = await this.blueprint.getTargets(this.game, this);
+    if (targetsResult.cancelled) {
+      return { cancelled: true as const };
+    }
 
-        resolve({ targets, cancelled: false });
-      }
-    );
+    return { cancelled: false as const, targets: targetsResult.result };
   }
 
   async play() {

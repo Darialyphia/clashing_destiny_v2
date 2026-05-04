@@ -49,6 +49,7 @@ const keyword = computed(() => {
   text-decoration: underline;
   text-decoration-thickness: calc(1px * var(--pixel-scale));
   font-style: italic;
+  line-height: 2;
 }
 
 .keyword-card {

@@ -1,5 +1,5 @@
 import type { SpellBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt } from '../../../../card-utils';
+import { defaultCardArt, noTargets } from '../../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
@@ -24,9 +24,7 @@ export const sampleSpell: SpellBlueprint = {
   tags: [],
   abilities: [],
   canPlay: () => true,
-  getTargets(game, card) {
-    return Promise.resolve([]);
-  },
+  getTargets: noTargets,
   async onInit(game, card) {},
   async onPlay(game, card) {},
   aiHints: {

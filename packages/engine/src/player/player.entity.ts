@@ -172,7 +172,7 @@ export class Player
   }
 
   get minions() {
-    return [...this.minionsInBase];
+    return [...this.minionsInBase, ...this.minionsInBattlefield];
   }
 
   get artifacts() {

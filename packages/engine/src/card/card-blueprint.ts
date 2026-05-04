@@ -18,6 +18,7 @@ import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { DestinyCard } from './entities/destiny.entity';
+import type { InteractionResult } from '../game/systems/game-interaction.system';
 
 export type CardArt = {
   foil: {
@@ -62,7 +63,7 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target>
   dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
   isHiddenOnCard?: boolean;
-  getTargets: (game: Game, card: TCard) => Promise<TTarget[]>;
+  getTargets: (game: Game, card: TCard) => Promise<InteractionResult<Target[]>>;
   canUse(game: Game, card: TCard): boolean;
   onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
   aiHints: {
@@ -121,7 +122,7 @@ export type SpellBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: Target[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
-  getTargets: (game: Game, card: SpellCard) => Promise<Target[]>;
+  getTargets: (game: Game, card: SpellCard) => Promise<InteractionResult<Target[]>>;
   aiHints: {
     shouldPlay: (game: Game, card: SpellCard) => number;
   };
@@ -173,7 +174,7 @@ export type DestinyBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard, targets: Target[]) => Promise<void>;
   canPlay: (game: Game, card: DestinyCard) => boolean;
-  getTargets: (game: Game, card: DestinyCard) => Promise<Target[]>;
+  getTargets: (game: Game, card: DestinyCard) => Promise<InteractionResult<Target[]>>;
   aiHints: {
     shouldPlay: (game: Game, card: DestinyCard) => number;
   };

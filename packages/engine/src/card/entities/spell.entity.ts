@@ -174,8 +174,11 @@ export class SpellCard extends Card<
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardDeclarePlayEvent({ card: this })
     );
-    const targets = await this.blueprint.getTargets(this.game, this);
-    await this.playWithTargets(targets);
+    const targetsResult = await this.blueprint.getTargets(this.game, this);
+    if (targetsResult.cancelled) {
+      return;
+    }
+    await this.playWithTargets(targetsResult.result);
   }
 
   serialize(): SerializedSpellCard {

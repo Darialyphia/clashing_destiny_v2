@@ -18,7 +18,6 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import Camera from './Camera.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
-import TurnIndicator from './TurnIndicator.vue';
 import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { config } from '@/utils/config';
@@ -233,7 +232,6 @@ useEventListener('contextmenu', async e => {
     @click="isGameSettingsOpened = true"
   />
 
-  <TurnIndicator />
   <GamePhaseIndicator />
 
   <UiModal

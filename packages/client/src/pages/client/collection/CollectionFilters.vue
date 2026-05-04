@@ -45,20 +45,6 @@ const cardKinds: Array<{
   color: 'white'
 }));
 
-const jobs: Array<{
-  id: string;
-  img: string;
-  label: string;
-  job: Job;
-}> = Object.values(JOBS).map(job => {
-  return {
-    id: job.id,
-    img: assets[`ui/card/job-${job.id.toLocaleLowerCase()}`].path,
-    label: job.name,
-    job
-  };
-});
-
 const router = useRouter();
 
 const toggleManaFilter = (cost: number) => {
@@ -175,7 +161,7 @@ const toggleMinManaCostFilter = (cost: number) => {
               Include Unowned
               <UiSwitch v-model="includeUnowned" />
             </h4>
-            <h4 class="filter-title">Faction</h4>
+            <!-- <h4 class="filter-title">Faction</h4>
             <div class="faction-filter">
               <UiSimpleTooltip
                 v-for="job in jobs"
@@ -194,7 +180,7 @@ const toggleMinManaCostFilter = (cost: number) => {
                 </template>
                 {{ job.label }}
               </UiSimpleTooltip>
-            </div>
+            </div> -->
           </section>
 
           <section class="filter-section">

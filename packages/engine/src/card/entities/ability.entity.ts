@@ -97,8 +97,13 @@ export class Ability<T extends AbilityOwner>
   }
 
   async use(onResolved?: () => MaybePromise<void>) {
-    const targets = await this.blueprint.getTargets(this.game, this.card);
-    this.card.abilityTargets.set(this.blueprint.id, targets);
+    const targetsResult = await this.blueprint.getTargets(this.game, this.card);
+    if (targetsResult.cancelled) {
+      this.card.abilityTargets.delete(this.blueprint.id);
+      return;
+    }
+
+    this.card.abilityTargets.set(this.blueprint.id, targetsResult.result);
 
     await this.card.exhaust();
 

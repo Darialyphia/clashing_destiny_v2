@@ -3,7 +3,9 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
 import Card from './Card.vue';
 import { isFunction } from '@game/shared';
-import type { JobId } from '@game/engine/src/card/card.enums';
+import { JOBS, type JobId } from '@game/engine/src/card/card.enums';
+import { provideRichTextContext } from '@/game/composables/useRichText';
+import { defaultConfig } from '@game/engine/src/config';
 
 const {
   blueprint,
@@ -19,6 +21,11 @@ const mergedFoilOptions = computed(() => ({
   ...blueprint.art.default.foil,
   ...foilOverrides
 }));
+
+provideRichTextContext({
+  heroLevel: computed(() => defaultConfig.PLAYER_MAX_LEVEL),
+  heroJobs: computed(() => Object.keys(JOBS) as JobId[])
+});
 </script>
 
 <template>

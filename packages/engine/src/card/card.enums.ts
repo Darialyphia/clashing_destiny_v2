@@ -103,17 +103,17 @@ export const JOBS = {
     id: 'mage',
     name: 'Mage',
     shortName: 'Mage'
+  },
+  ROGUE: {
+    id: 'rogue',
+    name: 'Rogue',
+    shortName: 'Rogue'
+  },
+  ACOLYTE: {
+    id: 'acolyte',
+    name: 'Acolyte',
+    shortName: 'Acolyte'
   }
-  // ROGUE: {
-  //   id: 'rogue',
-  //   name: 'Rogue',
-  //   shortName: 'Rogue'
-  // },
-  // ACOLYTE: {
-  //   id: 'acolyte',
-  //   name: 'Acolyte',
-  //   shortName: 'Acolyte'
-  // }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
 export const getJobById = (id: JobId): Job => {

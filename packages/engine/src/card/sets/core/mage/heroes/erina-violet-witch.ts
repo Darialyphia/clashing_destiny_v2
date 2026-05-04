@@ -1,5 +1,5 @@
 import type { HeroBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt } from '../../../../card-utils';
+import { defaultCardArt, noTargets } from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -34,7 +34,7 @@ export const erinaVioletWitch: HeroBlueprint = {
       canUse: (game, card) => {
         return card.location === CARD_LOCATIONS.BATTLEFIELD;
       },
-      getTargets: () => Promise.resolve([]),
+      getTargets: noTargets,
       async onResolve(game, card) {
         await card.player.cardManager.draw(1);
       },

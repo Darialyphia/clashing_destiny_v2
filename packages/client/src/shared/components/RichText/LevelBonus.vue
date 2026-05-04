@@ -15,12 +15,15 @@ const ctx = useRichTextContext();
       disabled: ctx && ctx.heroLevel.value < Number(lvl)
     }"
   >
-    <span class="badge">Level {{ lvl }}</span>
+    <span class="badge">Lvl {{ lvl }}</span>
     <slot />
   </span>
 </template>
 
 <style scoped lang="postcss">
+.lvl-bonus {
+  line-height: 2;
+}
 .badge {
   background: linear-gradient(
     to bottom,

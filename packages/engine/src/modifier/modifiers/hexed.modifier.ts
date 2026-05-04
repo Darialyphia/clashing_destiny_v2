@@ -1,4 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
+import { noTargets } from '../../card/card-utils';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -28,7 +29,7 @@ export class HexedModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
           description: 'Remove Hexed from this card.',
           manaCost: 2,
           canUse: () => true,
-          getTargets: () => Promise.resolve([]),
+          getTargets: noTargets,
           isHiddenOnCard: true,
           onResolve: () => {
             return this.target.modifiers.remove(KEYWORDS.HEXED.id);

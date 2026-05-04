@@ -194,7 +194,6 @@ const affinities = computed(() => {
   const affinities = [card.affinity, card.advancedAffinity].filter(isDefined);
 
   return affinities.map(affinity => {
-    console.log(`ui/card/affinity-${affinity.toLocaleLowerCase()}`, assets);
     return {
       affinity,
       bg: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css

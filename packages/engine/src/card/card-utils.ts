@@ -122,7 +122,7 @@ export const singleEnemyTargetRules = {
     game,
     card,
     origin,
-    label,
+    label = 'Select an enemy',
     timeoutFallback,
     predicate = () => true,
     aiHints,
@@ -131,7 +131,7 @@ export const singleEnemyTargetRules = {
     game: Game;
     card: AnyCard;
     origin: CardTargetOrigin;
-    label: string;
+    label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
     predicate?: (c: MinionCard | HeroCard) => boolean;
@@ -155,7 +155,24 @@ export const singleEnemyTargetRules = {
       },
       aiHints,
       timeoutFallback
-    })
+    }),
+  defaultTimeoutFallback: (
+    game: Game,
+    card: AnyCard,
+    predicate?: (c: MinionCard | HeroCard) => boolean
+  ) => {
+    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+      if (!isMinion(candidate) && !isHero(candidate)) return false;
+
+      return (
+        candidate.isEnemy(card.player) &&
+        candidate.canBeTargeted(card) &&
+        predicate?.(candidate)
+      );
+    });
+
+    return [elligible[0]];
+  }
 };
 
 export const singleAllyTargetRules = {
@@ -173,16 +190,18 @@ export const singleAllyTargetRules = {
     game,
     card,
     origin,
-    label,
+    label = 'Select an ally',
     timeoutFallback,
     predicate = () => true,
-    aiHints
+    aiHints,
+    canCancel = false
   }: {
     game: Game;
     card: AnyCard;
     origin: CardTargetOrigin;
-    label: string;
+    label?: string;
     timeoutFallback: AnyCard[];
+    canCancel?: boolean;
     predicate?: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -192,8 +211,26 @@ export const singleAllyTargetRules = {
       min: 1,
       max: 1,
       label,
-      allowRepeat: false
-    })({ game, card, origin, predicate, aiHints, timeoutFallback })
+      allowRepeat: false,
+      canCancel
+    })({ game, card, origin, predicate, aiHints, timeoutFallback }),
+  defaultTimeoutFallback: (
+    game: Game,
+    card: AnyCard,
+    predicate?: (c: MinionCard | HeroCard) => boolean
+  ) => {
+    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+      if (!isMinion(candidate) && !isHero(candidate)) return false;
+
+      return (
+        candidate.isAlly(card.player) &&
+        candidate.canBeTargeted(card) &&
+        predicate?.(candidate)
+      );
+    });
+
+    return [elligible[0]];
+  }
 };
 
 export const singleEnemyMinionTargetRules = {
@@ -204,14 +241,14 @@ export const singleEnemyMinionTargetRules = {
     game,
     card,
     origin,
-    label,
+    label = 'Select an enemy minion',
     timeoutFallback,
     predicate = () => true,
     aiHints
   }: {
     game: Game;
     card: AnyCard;
-    label: string;
+    label?: string;
     origin: CardTargetOrigin;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
@@ -232,6 +269,23 @@ export const singleEnemyMinionTargetRules = {
       return { cancelled: true };
     }
     return { cancelled: false, result: result.result as MinionCard[] };
+  },
+  defaultTimeoutFallback: (
+    game: Game,
+    card: AnyCard,
+    predicate?: (c: MinionCard) => boolean
+  ) => {
+    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+      if (!isMinion(candidate)) return false;
+
+      return (
+        candidate.isEnemy(card.player) &&
+        candidate.canBeTargeted(card) &&
+        predicate?.(candidate)
+      );
+    });
+
+    return [elligible[0]];
   }
 };
 
@@ -243,7 +297,7 @@ export const singleAllyMinionTargetRules = {
     game,
     card,
     origin,
-    label,
+    label = 'Select an ally minion',
     timeoutFallback,
     predicate = () => true,
     aiHints
@@ -251,7 +305,7 @@ export const singleAllyMinionTargetRules = {
     game: Game;
     card: AnyCard;
     origin: CardTargetOrigin;
-    label: string;
+    label?: string;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
     aiHints: {
@@ -269,9 +323,26 @@ export const singleAllyMinionTargetRules = {
     });
 
     if (result.cancelled) {
-      return { cancelled: true };
+      return result;
     }
-    return { cancelled: false, result: result.result as MinionCard[] };
+    return { cancelled: false as const, result: result.result as MinionCard[] };
+  },
+  defaultTimeoutFallback: (
+    game: Game,
+    card: AnyCard,
+    predicate?: (c: MinionCard) => boolean
+  ) => {
+    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+      if (!isMinion(candidate)) return false;
+
+      return (
+        candidate.isAlly(card.player) &&
+        candidate.canBeTargeted(card) &&
+        predicate?.(candidate)
+      );
+    });
+
+    return [elligible[0]];
   }
 };
 
@@ -287,16 +358,18 @@ export const singleMinionTargetRules = {
     game,
     card,
     origin,
-    label,
+    label = 'Select a minion',
     timeoutFallback,
     predicate = () => true,
-    aiHints
+    aiHints,
+    canCancel = false
   }: {
     game: Game;
     card: AnyCard;
     origin: CardTargetOrigin;
-    label: string;
+    label?: string;
     timeoutFallback: AnyCard[];
+    canCancel?: boolean;
     predicate?: (c: MinionCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -306,7 +379,8 @@ export const singleMinionTargetRules = {
       min: 1,
       max: 1,
       label,
-      allowRepeat: false
+      allowRepeat: false,
+      canCancel
     })({
       game,
       card,
@@ -317,9 +391,22 @@ export const singleMinionTargetRules = {
     });
 
     if (result.cancelled) {
-      return { cancelled: true };
+      return result;
     }
-    return { cancelled: false, result: result.result as MinionCard[] };
+    return { cancelled: false as const, result: result.result as MinionCard[] };
+  },
+  defaultTimeoutFallback: (
+    game: Game,
+    card: AnyCard,
+    predicate?: (c: MinionCard) => boolean
+  ) => {
+    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+      if (!isMinion(candidate)) return false;
+
+      return candidate.canBeTargeted(card) && predicate?.(candidate);
+    });
+
+    return [elligible[0]];
   }
 };
 
@@ -568,3 +655,11 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
     main: `${name}-main`
   }
 });
+
+export const noTargets = () => Promise.resolve({ cancelled: false as const, result: [] });
+
+export const isOnBoard = (card: AnyCard) => {
+  return (
+    card.location === CARD_LOCATIONS.BASE || card.location === CARD_LOCATIONS.BATTLEFIELD
+  );
+};
