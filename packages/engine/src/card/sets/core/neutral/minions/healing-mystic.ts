@@ -31,7 +31,7 @@ export const healingMystic: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [],
+  jobs: [JOBS.ACOLYTE],
   affinity: AFFINITIES.NEUTRAL,
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
