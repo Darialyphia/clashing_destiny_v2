@@ -6,15 +6,18 @@ import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const phase = ref<string | null>(null);
 
-useFxEvent(FX_EVENTS.BEFORE_CHANGE_PHASE, async event => {
+useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   if (
     event.from === GAME_PHASES.PLAY_CARD ||
-    event.to === GAME_PHASES.PLAY_CARD
+    event.to.state === GAME_PHASES.PLAY_CARD
   ) {
     return;
   }
+  if (event.to.state === GAME_PHASES.DRAW) {
+    return;
+  }
 
-  phase.value = event.to.replace('_', ' ');
+  phase.value = event.to.state.replace('_', ' ');
   await waitFor(1250);
   phase.value = null;
   await waitFor(400);

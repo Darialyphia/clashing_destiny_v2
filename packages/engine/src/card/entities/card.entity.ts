@@ -11,7 +11,8 @@ import {
   type CardLocation,
   CARD_KINDS,
   type Affinity,
-  AFFINITIES
+  AFFINITIES,
+  type JobId
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -45,6 +46,7 @@ export type CardInterceptors = {
   loyalty: Interceptable<number>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
   shouldSwitchInitiativeAfterPlay: Interceptable<boolean>;
+  playerLevel: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -52,7 +54,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   player: new Interceptable(),
   loyalty: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
-  shouldSwitchInitiativeAfterPlay: new Interceptable()
+  shouldSwitchInitiativeAfterPlay: new Interceptable(),
+  playerLevel: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -133,6 +136,14 @@ export abstract class Card<
     return this.blueprint.kind;
   }
 
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
+  hasJob(jobId: JobId) {
+    return this.jobs.map(j => j.id).includes(jobId);
+  }
+
   get keywords() {
     return this.keywordManager.keywords;
   }
@@ -169,6 +180,10 @@ export abstract class Card<
 
   get blueprintId() {
     return this.blueprint.id;
+  }
+
+  get playerLevel() {
+    return this.interceptors.playerLevel.getValue(this.player.level, {});
   }
 
   get isExhausted() {

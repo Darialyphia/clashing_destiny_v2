@@ -135,6 +135,10 @@ export class Player
     return this.cardManager.hero;
   }
 
+  get level() {
+    return this.levelManager.level;
+  }
+
   get enemyHero() {
     return this.opponent.hero;
   }

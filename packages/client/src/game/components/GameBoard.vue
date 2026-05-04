@@ -483,14 +483,14 @@ useEventListener('contextmenu', async e => {
 
 .my-player-infos {
   position: absolute;
-  left: var(--size-11);
+  left: var(--size-10);
   top: 45%;
   translate: 0 50%;
 }
 
 .opponent-player-infos {
   position: absolute;
-  left: var(--size-11);
+  left: var(--size-10);
   top: 40%;
   translate: 0 -100%;
 }

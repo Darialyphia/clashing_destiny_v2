@@ -460,7 +460,7 @@ const tint = computed(() => {
     inset: 0;
     background: var(--tint);
     mix-blend-mode: overlay;
-    opacity: 0.75;
+    opacity: 1;
     mask-size: cover;
     z-index: -1;
     pointer-events: none;
