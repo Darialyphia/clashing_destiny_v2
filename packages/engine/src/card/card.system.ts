@@ -8,7 +8,8 @@ import type {
   DestinyBlueprint,
   HeroBlueprint,
   MinionBlueprint,
-  SpellBlueprint
+  SpellBlueprint,
+  TrapBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
 import { ArtifactCard } from './entities/artifact.entity';
@@ -18,6 +19,7 @@ import { match } from 'ts-pattern';
 import { CARD_KINDS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { DestinyCard } from './entities/destiny.entity';
+import { TrapCard } from './entities/trap.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -103,6 +105,14 @@ export class CardSystem extends System<CardSystemOptions> {
             id,
             blueprint
           } as CardOptions<DestinyBlueprint>)
+      )
+      .with(
+        CARD_KINDS.TRAP,
+        () =>
+          new TrapCard(this.game, player, {
+            id,
+            blueprint
+          } as CardOptions<TrapBlueprint>)
       )
       .exhaustive();
     await card.init();

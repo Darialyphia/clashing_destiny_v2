@@ -61,7 +61,7 @@ export class DestinyCard extends Card<
 
   get unplayableReason() {
     if (!this.canAfford) {
-      return "You don't have enough mana.";
+      return "You don't have enough Experience.";
     }
 
     return this.canPlay() ? null : 'You cannot play this card.';

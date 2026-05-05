@@ -19,6 +19,8 @@ import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
+import type { GameEvent, GameEventMap } from '../game/game.events';
+import type { TrapCard } from './entities/trap.entity';
 
 export type CardArt = {
   foil: {
@@ -180,9 +182,24 @@ export type DestinyBlueprint = CardBlueprintBase & {
   };
 };
 
+export type TrapBlueprint = CardBlueprintBase & {
+  manaCost: number;
+  triggerCost: number;
+  kind: Extract<CardKind, typeof CARD_KINDS.TRAP>;
+  jobs: Job[];
+  onInit: (game: Game, card: AnyCard) => Promise<void>;
+  canPlay: (game: Game, card: TrapCard) => boolean;
+  onTrigger: (game: Game, card: TrapCard, event: GameEvent) => Promise<void>;
+  shouldTrigger: (game: Game, card: TrapCard, event: GameEvent) => boolean;
+  aiHints: {
+    shouldPlay: (game: Game, card: DestinyCard) => number;
+  };
+};
+
 export type CardBlueprint =
   | SpellBlueprint
   | ArtifactBlueprint
   | MinionBlueprint
   | HeroBlueprint
-  | DestinyBlueprint;
+  | DestinyBlueprint
+  | TrapBlueprint;

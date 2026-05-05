@@ -28,6 +28,7 @@ import {
   type ArtifactCardEventMap
 } from '../card/events/artifact.events';
 import type { InteractionEventMap } from './systems/game-interaction.system';
+import { TRAP_EVENTS, type TrapCardEventMap } from '../card/events/trap.events';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -145,8 +146,13 @@ export type GameEventMap = Prettify<
     PlayerEventMap &
     AbilityEventMap &
     TurnEventMap &
-    InteractionEventMap
+    InteractionEventMap &
+    TrapCardEventMap
 >;
+
+export type GameEvent = Values<{
+  [Name in GameEventName]: GameEventMap[Name];
+}>;
 
 export type GameEventName = keyof GameEventMap;
 
@@ -170,7 +176,8 @@ export const GAME_EVENTS = {
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
   ...TURN_EVENTS,
-  ...INTERACTION_EVENTS
+  ...INTERACTION_EVENTS,
+  ...TRAP_EVENTS
 } as const satisfies Record<string, GameEventName>;
 
 export type SerializedEvent<T extends keyof typeof GAME_EVENTS> = ReturnType<

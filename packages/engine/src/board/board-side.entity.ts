@@ -13,10 +13,11 @@ import { Entity } from '../entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS } from '../card/card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { isArtifact, isHero, isMinion } from '../card/card-utils';
+import { isArtifact, isHero, isMinion, isTrap } from '../card/card-utils';
 import { BoardSpace, type BoardRow } from './board-space.entity';
 import { IllegalTargetError } from '../input/input-errors';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card/card.events';
+import type { TrapCard } from '../card/entities/trap.entity';
 
 export type MinionSlot = number;
 
@@ -42,7 +43,7 @@ export type SerializedBoard = {
   sides: [SerializedBoardSide, SerializedBoardSide];
 };
 
-export type BoardBase = Array<BoardSpace<MinionCard | ArtifactCard>>;
+export type BoardBase = Array<BoardSpace<MinionCard | ArtifactCard | TrapCard>>;
 
 export type BoardBattlefield = Array<BoardSpace<MinionCard | HeroCard>>;
 
@@ -54,7 +55,7 @@ export class BoardSide
 
   private readonly _base: BoardBase;
 
-  readonly _battlefield: BoardBattlefield;
+  private readonly _battlefield: BoardBattlefield;
 
   constructor(
     private game: Game,
@@ -124,7 +125,7 @@ export class BoardSide
 
   placeCard(card: AnyCard, zone: BoardRow, index: number) {
     if (zone === CARD_LOCATIONS.BASE) {
-      if (!isMinion(card) && !isArtifact(card)) {
+      if (!isMinion(card) && !isArtifact(card) && !isTrap(card)) {
         throw new IllegalTargetError();
       }
       return this.placeCardInBase(card, index);
@@ -136,7 +137,7 @@ export class BoardSide
     }
   }
 
-  placeCardInBase(card: MinionCard | ArtifactCard, index: number) {
+  placeCardInBase(card: MinionCard | ArtifactCard | TrapCard, index: number) {
     this._base[index].placeCard(card);
   }
 
@@ -161,7 +162,7 @@ export class BoardSide
   remove(card: AnyCard) {
     match(card.kind)
       .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.DESTINY, () => {})
-      .with(CARD_KINDS.ARTIFACT, () => {
+      .with(CARD_KINDS.ARTIFACT, CARD_KINDS.TRAP, () => {
         this.removeFromBase(card);
       })
       .with(CARD_KINDS.MINION, () => {

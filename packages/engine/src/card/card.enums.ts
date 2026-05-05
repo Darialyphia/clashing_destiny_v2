@@ -32,7 +32,8 @@ export const CARD_KINDS = {
   HERO: 'HERO',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  DESTINY: 'DESTINY'
+  DESTINY: 'DESTINY',
+  TRAP: 'TRAP'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 

@@ -244,9 +244,15 @@ export abstract class Card<
 
   protected async dispose() {
     await match(this.kind)
-      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, async () => {
-        await this.sendToDiscardPile();
-      })
+      .with(
+        CARD_KINDS.MINION,
+        CARD_KINDS.SPELL,
+        CARD_KINDS.ARTIFACT,
+        CARD_KINDS.TRAP,
+        async () => {
+          await this.sendToDiscardPile();
+        }
+      )
       .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, async () => {
         await this.sendToBanishPile();
       })
@@ -375,15 +381,21 @@ export abstract class Card<
     }
 
     return match(this.kind)
-      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () => {
-        if (this.location !== CARD_LOCATIONS.HAND) {
-          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
+      .with(
+        CARD_KINDS.MINION,
+        CARD_KINDS.SPELL,
+        CARD_KINDS.ARTIFACT,
+        CARD_KINDS.TRAP,
+        () => {
+          if (this.location !== CARD_LOCATIONS.HAND) {
+            return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
+          }
+          if (!this.canPayManaCost) {
+            return 'Cannot pay mana cost.';
+          }
+          return 'You cannot play this card';
         }
-        if (!this.canPayManaCost) {
-          return 'Cannot pay mana cost.';
-        }
-        return 'You cannot play this card';
-      })
+      )
       .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, () => {
         return 'You cannot play this card.';
       })
