@@ -21,7 +21,7 @@ onMounted(() => {
 });
 
 const isBeingPlayed = ref(false);
-const DROP_DURATION = 800;
+const DROP_DURATION = 300;
 useFxEvent(FX_EVENTS.CARD_AFTER_PLAY, async event => {
   if (event.card.id !== card.id) return;
   isBeingPlayed.value = true;
@@ -125,8 +125,9 @@ const modifiers = computed(() => card.modifiers);
   }
 
   &.is-being-played {
-    filter: brightness(500%);
-    animation: drop var(--drop-duration) ease-in forwards;
+    filter: brightness(140%);
+    animation: drop var(--drop-duration) cubic-bezier(0.18, 0.88, 0.32, 1.08)
+      forwards;
   }
 
   &.is-attacking {
@@ -166,24 +167,9 @@ const modifiers = computed(() => card.modifiers);
 }
 @keyframes drop {
   0% {
-    scale: 3;
-    translate: 0 -200px;
+    scale: 2;
+    translate: 0 -180px;
     opacity: 0;
-  }
-  50% {
-    scale: 1;
-    translate: 0 0;
-    opacity: 1;
-  }
-  75% {
-    scale: 1.15;
-    translate: 0 -30px;
-    opacity: 1;
-  }
-  100% {
-    scale: 1;
-    translate: 0 0;
-    opacity: 1;
   }
 }
 
