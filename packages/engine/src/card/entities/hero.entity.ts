@@ -23,10 +23,12 @@ import { Ability } from './ability.entity';
 import type { MinionCard } from './minion.entity';
 import {
   CardAfterDealCombatDamageEvent,
+  CardAfterPlayEvent,
   CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
+  CardBeforePlayEvent,
   CardBeforeTakeDamageEvent,
-  CardDeclarePlayEvent
+  CardPlayEvent
 } from '../card.events';
 import { HERO_EVENTS, HeroCardHealEvent, HeroPlayedEvent } from '../events/hero.events';
 import { DamageTrackerComponent } from '../components/damage-tracker.component';
@@ -352,15 +354,17 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardBeforePlayEvent({ card: this })
     );
     this.player.boardSide.placeCardInBattlefield(this, this.game.config.HERO_POSITION);
     await this.blueprint.onPlay(this.game, this, this);
     await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardAfterPlayEvent({ card: this })
     );
+
+    return { cancelled: false };
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {

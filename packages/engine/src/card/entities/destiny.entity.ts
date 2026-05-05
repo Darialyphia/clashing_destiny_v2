@@ -1,4 +1,4 @@
-import type { DestinyBlueprint, Target } from '../card-blueprint';
+import type { DestinyBlueprint } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent } from '../card.events';
 import {
@@ -83,7 +83,7 @@ export class DestinyCard extends Card<
   async play() {
     const { targets, cancelled } = await this.selectTargets();
 
-    if (cancelled) return;
+    if (cancelled) return { cancelled: true };
 
     this.player.cardManager.destinyDeck.pluck(this);
 
@@ -98,6 +98,8 @@ export class DestinyCard extends Card<
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })
     );
+
+    return { cancelled: false };
   }
 
   serialize() {

@@ -231,12 +231,10 @@ export class GameClient {
       }
 
       for (const event of snapshot.events) {
-        await this.stateManager.onEvent(event, async postUpdateCallback => {
-          await this.emitter.emit('update', {});
-          await postUpdateCallback?.();
-        });
-
+        await this.stateManager.onEvent(event);
+        await this.ui.onEvent(event);
         await this.fx.emit(event.eventName, event.event);
+        await this.emitter.emit('update', {});
       }
       this._isPlayingFx = false;
 

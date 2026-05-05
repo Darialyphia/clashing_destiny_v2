@@ -1,4 +1,4 @@
-import { type Override } from '@game/shared';
+import { waitFor, type Override } from '@game/shared';
 import type {
   SerializedOmniscientState,
   SerializedPlayerState,
@@ -146,29 +146,21 @@ export class ClientStateController {
     };
   }
 
-  async onEvent(
-    event: SerializedStarEvent,
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  async onEvent(event: SerializedStarEvent) {
     if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
-      return this.onMinionSummoned(event, flush);
+      return this.onMinionSummoned(event);
     }
 
     if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
-      return this.onArtifactEquiped(event, flush);
+      return this.onArtifactEquiped(event);
     }
 
     if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
-      return this.onAfterChangePhase(event, flush);
+      return this.onAfterChangePhase(event);
     }
   }
 
-  private async onMinionSummoned(
-    event: {
-      event: SerializedEvent<'MINION_SUMMONED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onMinionSummoned(event: { event: SerializedEvent<'MINION_SUMMONED'> }) {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
 
@@ -176,19 +168,14 @@ export class ClientStateController {
       e => e.id === event.event.position.id
     )! as BoardSpaceViewModel;
 
-    boardSpace.update({
-      card: card.id
-    });
-
-    return await flush();
+    this.state.entities[boardSpace.id] = boardSpace
+      .update({
+        card: card.id
+      })
+      .clone();
   }
 
-  private async onArtifactEquiped(
-    event: {
-      event: SerializedEvent<'ARTIFACT_EQUIPED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onArtifactEquiped(event: { event: SerializedEvent<'ARTIFACT_EQUIPED'> }) {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
 
@@ -196,21 +183,17 @@ export class ClientStateController {
       e => e.id === event.event.position.id
     )! as BoardSpaceViewModel;
 
-    boardSpace.update({
-      card: card.id
-    });
-
-    return await flush();
+    this.state.entities[boardSpace.id] = boardSpace
+      .update({
+        card: card.id
+      })
+      .clone();
   }
 
-  private async onAfterChangePhase(
-    event: {
-      event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onAfterChangePhase(event: {
+    event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
+  }) {
     this.state.phase = event.event.to;
     this.state = { ...this.state };
-    return await flush();
   }
 }

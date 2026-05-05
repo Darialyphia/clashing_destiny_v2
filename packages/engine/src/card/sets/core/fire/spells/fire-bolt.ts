@@ -29,7 +29,7 @@ export const fireBolt: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinity: AFFINITIES.FIRE,
   manaCost: 1,
-  speed: CARD_SPEED.SLOW,
+  speed: CARD_SPEED.FAST,
   tags: [],
   abilities: [],
   canPlay: () => true,

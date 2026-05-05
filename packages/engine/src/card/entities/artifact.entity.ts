@@ -14,7 +14,7 @@ import {
   type CardSpeed,
   type JobId
 } from '../card.enums';
-import { CardDeclarePlayEvent } from '../card.events';
+import { CardAfterPlayEvent, CardBeforePlayEvent, CardPlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -248,11 +248,13 @@ export class ArtifactCard extends Card<
   async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardBeforePlayEvent({ card: this })
     );
 
     const positionResult = await this.selectPosition();
-    if (positionResult.cancelled) return;
+    if (positionResult.cancelled) return { cancelled: true };
+
+    await this.game.emit(CARD_EVENTS.CARD_BEFORE_PLAY, new CardPlayEvent({ card: this }));
 
     await this.player.boardSide.placeCardInBase(this, positionResult.result[0].index);
     this.lostDurability = 0;
@@ -264,6 +266,12 @@ export class ArtifactCard extends Card<
         position: positionResult.result[0] as BoardSpace<ArtifactCard>
       })
     );
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardAfterPlayEvent({ card: this })
+    );
+
+    return { cancelled: false };
   }
 
   serialize(): SerializedArtifactCard {

@@ -18,7 +18,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { CARD_EVENTS, CARD_SPEED, type CardSpeed, type JobId } from '../card.enums';
-import { CardDeclarePlayEvent } from '../card.events';
+import { CardBeforePlayEvent, CardPlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { GAME_PHASES } from '../../game/game.enums';
 
@@ -153,6 +153,10 @@ export class SpellCard extends Card<
   }
 
   async playWithTargets(targets: Target[]) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
     this.preResponseTargets = targets;
 
     await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
@@ -165,18 +169,24 @@ export class SpellCard extends Card<
       }
     });
     this.preResponseTargets = null;
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
   }
 
   async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardPlayEvent({ card: this })
     );
     const targetsResult = await this.blueprint.getTargets(this.game, this);
     if (targetsResult.cancelled) {
-      return;
+      return { cancelled: true };
     }
     await this.playWithTargets(targetsResult.result);
+    return { cancelled: false };
   }
 
   serialize(): SerializedSpellCard {

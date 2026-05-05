@@ -109,7 +109,7 @@ export class CardLeaveBoardEvent extends TypedSerializableEvent<
   }
 }
 
-export class CardDeclarePlayEvent extends TypedSerializableEvent<
+export class CardPlayEvent extends TypedSerializableEvent<
   { card: AnyCard },
   { card: SerializedCard }
 > {
@@ -311,7 +311,7 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_PLAY]: CardAfterPlayEvent;
   [CARD_EVENTS.CARD_BEFORE_DESTROY]: CardBeforeDestroyEvent;
   [CARD_EVENTS.CARD_AFTER_DESTROY]: CardAfterDestroyEvent;
-  [CARD_EVENTS.CARD_DECLARE_PLAY]: CardDeclarePlayEvent;
+  [CARD_EVENTS.CARD_DECLARE_PLAY]: CardPlayEvent;
   [CARD_EVENTS.CARD_DECLARE_USE_ABILITY]: CardDeclareUseAbilityEvent;
   [CARD_EVENTS.CARD_DISPOSED]: CardDisposedEvent;
   [CARD_EVENTS.CARD_EFFECT_TRIGGERED]: CardEffectTriggeredEvent;

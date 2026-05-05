@@ -2,7 +2,7 @@ import type { Game } from '../game';
 import type { Config } from '../../config';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
 import type {
-  CardDeclarePlayEvent,
+  CardPlayEvent,
   CardDiscardEvent,
   CardRevealEvent
 } from '../../card/card.events';
@@ -213,7 +213,7 @@ export class GameSerializer {
         const event = e.data.event;
         if (
           e.data.eventName === GAME_EVENTS.CARD_DECLARE_PLAY &&
-          (event as CardDeclarePlayEvent).data.card.id === cardId
+          (event as CardPlayEvent).data.card.id === cardId
         ) {
           return true;
         }

@@ -20,9 +20,14 @@ onMounted(() => {
   element.value = ui.value.DOMSelectors.cardOnBoard(card.id).element!;
 });
 
-const isBeingDropped = ref(false);
-const dropScale = ref(1);
-const dropDuration = ref('');
+const isBeingPlayed = ref(false);
+const DROP_DURATION = 800;
+useFxEvent(FX_EVENTS.CARD_AFTER_PLAY, async event => {
+  if (event.card.id !== card.id) return;
+  isBeingPlayed.value = true;
+  await waitFor(DROP_DURATION);
+  isBeingPlayed.value = false;
+});
 
 const unitEl = useTemplateRef('unit');
 
@@ -79,13 +84,16 @@ const modifiers = computed(() => card.modifiers);
       {
         'is-exhausted': card.isExhausted,
         'is-selected': ui.selectedCard?.equals(card),
-        'is-being-dropped': isBeingDropped,
+        'is-being-played': isBeingPlayed,
         'is-attacking': isAttacking,
         'is-taking-damage': isTakingDamage,
         'has-ability': hasAvailableAbilities,
         'is-shaking': isShaking
       }
     ]"
+    :style="{
+      '--drop-duration': `${DROP_DURATION}ms`
+    }"
   >
     <GameCard
       variant="small"
@@ -112,12 +120,13 @@ const modifiers = computed(() => card.modifiers);
     box-shadow: 0 6px 30px 4px black;
   }
 
-  &.is-exhausted:not(.is-being-dropped) {
+  &.is-exhausted:not(.is-being-played) {
     filter: grayscale(35%) brightness(50%);
   }
 
-  &.is-being-dropped {
-    animation: drop v-bind(dropDuration) ease-in forwards;
+  &.is-being-played {
+    filter: brightness(500%);
+    animation: drop var(--drop-duration) ease-in forwards;
   }
 
   &.is-attacking {
@@ -157,10 +166,24 @@ const modifiers = computed(() => card.modifiers);
 }
 @keyframes drop {
   0% {
-    scale: v-bind(dropScale);
+    scale: 3;
     translate: 0 -200px;
     opacity: 0;
-    filter: brightness(700%);
+  }
+  50% {
+    scale: 1;
+    translate: 0 0;
+    opacity: 1;
+  }
+  75% {
+    scale: 1.15;
+    translate: 0 -30px;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    translate: 0 0;
+    opacity: 1;
   }
 }
 

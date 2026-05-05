@@ -5,6 +5,7 @@ import { InvalidPlayerError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { GamePhaseController } from './game-phase';
 import { GAME_PHASE_TRANSITIONS } from '../game.enums';
+import { GAME_EVENTS } from '../game.events';
 
 export class PlayCardPhase
   implements GamePhaseController, Serializable<{ card: string; player: string }>
@@ -38,13 +39,29 @@ export class PlayCardPhase
     this._card = card;
     this._player = player;
 
+    const indexInHand = player.cardManager.hand.findIndex(c => c.equals(card));
+    const manaCost = card.manaCost;
+
+    const stop = await this.game.on(GAME_EVENTS.CARD_BEFORE_PLAY, async event => {
+      if (event.data.card.equals(card)) {
+        await player.manaManager.spend(manaCost);
+        stop;
+      }
+    });
+
     await card.removeFromCurrentLocation();
     card.isPlayedFromHand = true;
-    await card.play();
 
-    if (card.shouldSwitchInitiativeAfterPlay) {
+    const result = await card.play();
+
+    if (result.cancelled) {
+      await card.addToHand(indexInHand);
+      await player.manaManager.gain(manaCost);
+      stop();
+    } else if (card.shouldSwitchInitiativeAfterPlay) {
       await this.game.turnSystem.switchInitiative();
     }
+    card.isPlayedFromHand = false;
 
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.COMMIT_PLAYING_CARD

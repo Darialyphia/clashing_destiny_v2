@@ -103,21 +103,14 @@ watch(isPinned, pinned => {
   }
 });
 
-const confirmButtonLabel = computed(() => {
-  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return 'Confirm';
-
-  if (
-    state.value.interaction.state !==
-    INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
-  ) {
-    return 'Confirm';
-  }
-  return state.value.interaction.ctx.selectedSpaces.length ? 'Confirm' : 'Skip';
-});
-
 const isHidden = ref(false);
 useFxEvent(FX_EVENTS.PRE_CARD_BEFORE_PLAY, () => {
   isHidden.value = true;
+});
+useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
+  if (event.to.state === INTERACTION_STATES.IDLE) {
+    isHidden.value = true;
+  }
 });
 const unsub = client.value.onUpdateCompleted(() => {
   isHidden.value = false;
@@ -165,18 +158,20 @@ const draggedCard = computed(() => {
         v-if="
           isPinned &&
           !isPinning &&
-          state.phase.state === GAME_PHASES.PLAY_CARD &&
-          state.interaction.state ===
-            INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
+          (state.interaction.state ===
+            INTERACTION_STATES.SELECTING_SPACE_ON_BOARD ||
+            state.interaction.state ===
+              INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) &&
+          state.interaction.ctx.canCancel
         "
         class="flex flex-col gap-3 mt-3"
         @mouseup.stop
       >
         <UiButton
           class="primary-button w-full pointer-events-auto"
-          @click="client.commitSpaceSelection()"
+          @click="client.cancelInteraction()"
         >
-          {{ confirmButtonLabel }}
+          Cancel
         </UiButton>
       </div>
     </Transition>
@@ -199,8 +194,8 @@ const draggedCard = computed(() => {
       rotateY(calc(1deg * v-bind('cardRotation.y')));
   }
   &.is-pinned {
-    top: var(--size-14);
-    right: var(--size-12);
+    top: var(--size-11);
+    right: var(--size-13);
   }
 }
 

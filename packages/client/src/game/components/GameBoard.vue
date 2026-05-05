@@ -55,9 +55,11 @@ const opponent = useOpponentPlayer();
 
 provideRichTextContext({
   heroLevel: computed(() => myPlayer.value.level),
-  heroJobs: computed(
-    () => myPlayer.value.hero?.jobs.map(j => j.id as JobId) ?? []
-  )
+  heroJobs: computed(() => {
+    return (
+      myPlayer.value.hero?.jobs.map(j => j.toLocaleUpperCase() as JobId) ?? []
+    );
+  })
 });
 useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);

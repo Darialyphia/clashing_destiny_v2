@@ -19,8 +19,9 @@ import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
+  CardBeforePlayEvent,
   CardBeforeTakeDamageEvent,
-  CardDeclarePlayEvent
+  CardPlayEvent
 } from '../card.events';
 import {
   Card,
@@ -451,7 +452,15 @@ export class MinionCard extends Card<
   }
 
   async playAt(position: BoardSpace<MinionCard>) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
     await this.summon(position);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
   }
 
   // immediately plays the minion regardless of current chain or interaction state
@@ -488,13 +497,18 @@ export class MinionCard extends Card<
   async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardPlayEvent({ card: this })
     );
 
     const positionResult = await this.selectPosition();
-    if (positionResult.cancelled) return;
+    if (positionResult.cancelled)
+      return {
+        cancelled: true
+      };
 
     await this.playAt(positionResult.result[0] as BoardSpace<MinionCard>);
+
+    return { cancelled: false };
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {

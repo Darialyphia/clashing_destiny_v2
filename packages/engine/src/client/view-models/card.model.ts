@@ -13,7 +13,8 @@ import {
   type Affinity,
   type CardKind,
   type CardSpeed,
-  type Job
+  type Job,
+  type JobId
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
@@ -166,7 +167,7 @@ export class CardViewModel {
 
   get jobs() {
     if ('jobs' in this.data) {
-      return this.data.jobs as Job[];
+      return this.data.jobs as JobId[];
     }
     return [];
   }

@@ -390,7 +390,7 @@ export abstract class Card<
       .exhaustive();
   }
 
-  abstract play(): Promise<void>;
+  abstract play(): Promise<{ cancelled: boolean }>;
 
   get description() {
     return isFunction(this.blueprint.description)
