@@ -207,7 +207,7 @@ const description = computed(() => {
 }
 
 .card-preview {
-  --pixel-scale: 2;
+  --pixel-scale: 3;
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;

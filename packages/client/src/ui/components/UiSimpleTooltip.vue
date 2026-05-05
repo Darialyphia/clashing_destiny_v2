@@ -57,6 +57,7 @@ const {
   font-size: 14px;
   border: solid 1px #bb8225;
   max-width: 40ch;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 :is(.v-enter-active, .v-leave-active) {

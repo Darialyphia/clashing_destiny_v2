@@ -172,7 +172,7 @@ export const KEYWORDS = {
     id: 'burn',
     name: 'Burn X',
     description: 'This takes X damage at the start of every turn.',
-    aliases: [/burn [0-9]+/]
+    aliases: [/burn [0-9]+/, /burn/]
   },
   INFLUENCE: {
     id: 'influence',

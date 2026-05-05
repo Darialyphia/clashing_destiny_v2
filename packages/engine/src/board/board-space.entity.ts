@@ -59,6 +59,18 @@ export class BoardSpace<T extends AnyCard>
     return this.position.index;
   }
 
+  get adjacentSpaces() {
+    return [this.zone[this.index - 1], this.zone[this.index + 1]].filter(isDefined);
+  }
+
+  get adjacentCards() {
+    return this.adjacentSpaces.map(space => space.card).filter(isDefined);
+  }
+
+  getAdjacentCardsOfKind<CardType extends AnyCard>(type: CardType['kind']) {
+    return this.adjacentCards.filter(card => card.kind === type) as unknown as CardType[];
+  }
+
   get player(): Player {
     return this.game.playerSystem.getPlayerById(this.position.playerId)!;
   }

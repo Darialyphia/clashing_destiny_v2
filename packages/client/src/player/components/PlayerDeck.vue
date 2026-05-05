@@ -35,6 +35,14 @@ const hero = computed(() => {
     .find(c => c.kind === CARD_KINDS.HERO) as Nullable<HeroBlueprint>;
 });
 
+const affinities = computed(() => {
+  const affs = new Set<string>();
+  mainDeck.value.forEach(card => {
+    affs.add(card.blueprint.affinity);
+  });
+  return Array.from(affs);
+});
+
 const minions = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
 );
@@ -59,6 +67,14 @@ const artifacts = computed(() =>
       >
         <div class="deck-name">
           {{ deck.name }}
+          <div class="flex gap-2">
+            <img
+              v-for="aff in affinities"
+              :key="aff"
+              :src="assets[`ui/card/affinity-${aff.toLocaleLowerCase()}`].path"
+              :alt="aff"
+            />
+          </div>
         </div>
 
         <div

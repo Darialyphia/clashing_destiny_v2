@@ -36,17 +36,20 @@ const { cards, deckBuilder } = defineProps<{
         >
           <div class="flex gap-1 items-center">
             <div
-              v-for="job in card.blueprint.jobs"
-              :key="job.id"
-              class="job"
-              :style="{ '--bg': assets[`ui/card/job-${job.id}`].css }"
+              class="affinity"
+              :style="{
+                '--bg':
+                  assets[
+                    `ui/card/affinity-${card.blueprint.affinity.toLocaleLowerCase()}`
+                  ].css
+              }"
             />
           </div>
           <div class="mana-cost" v-if="'manaCost' in card.blueprint">
             {{ card.blueprint.manaCost }}
           </div>
-          <div class="destiny-cost" v-if="'destinyCost' in card.blueprint">
-            {{ card.blueprint.destinyCost }}
+          <div class="exp-cost" v-if="'expCost' in card.blueprint">
+            {{ card.blueprint.expCost }}
           </div>
           <span class="card-name">
             <template v-if="'copies' in card">X {{ card.copies }}</template>
@@ -87,12 +90,12 @@ const { cards, deckBuilder } = defineProps<{
 }
 
 .mana-cost {
-  background: url(@/assets/ui/mana-cost.png) no-repeat center center;
+  background: url(@/assets/ui/card/mana-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
+  width: 24px;
+  aspect-ratio: 1;
   display: grid;
   place-content: center;
   -webkit-text-stroke: 4px black;
@@ -100,13 +103,13 @@ const { cards, deckBuilder } = defineProps<{
   padding-right: 1px;
 }
 
-.destiny-cost {
-  background: url(@/assets/ui/destiny-cost.png) no-repeat center center;
+.exp-cost {
+  background: url(@/assets/ui/card/exp-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
+  width: 24px;
+  aspect-ratio: 1;
   display: grid;
   place-content: center;
   -webkit-text-stroke: 4px black;
@@ -122,8 +125,8 @@ const { cards, deckBuilder } = defineProps<{
   paint-order: stroke fill;
 }
 
-.job {
-  width: 36px;
+.affinity {
+  width: 30px;
   aspect-ratio: 1;
   background: var(--bg);
   background-size: cover;

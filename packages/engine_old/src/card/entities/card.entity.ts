@@ -25,7 +25,6 @@ import {
 } from '../card.events';
 import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
-import { IllegalGameStateError } from '../../game/game-error';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
 import type { DestinyCard } from './destiny.entity';

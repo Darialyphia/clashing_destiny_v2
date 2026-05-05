@@ -320,6 +320,8 @@ const tint = computed(() => {
           <div v-if="showText" class="description" ref="description-box">
             <div ref="description-inner">
               <CardText :text="card.description" />
+
+              <div v-if="card.abilities?.length" class="text-separator" />
               <CardText
                 v-for="ability in card.abilities"
                 :key="ability"
@@ -785,7 +787,7 @@ const tint = computed(() => {
 }
 .description {
   padding: 0 4px;
-  width: calc(132px * var(--pixel-scale));
+  width: calc(130px * var(--pixel-scale));
   height: calc(58px * var(--pixel-scale));
   position: absolute;
   top: calc(19px * var(--pixel-scale));
@@ -818,5 +820,12 @@ const tint = computed(() => {
   font-family: 'Lato', sans-serif;
   --dual-text-offset-y: calc(2px * var(--pixel-scale));
   --dual-text-offset-x: calc(6px * var(--pixel-scale));
+}
+
+.text-separator {
+  width: 75%;
+  height: calc(1px * var(--pixel-scale));
+  background: #00000030;
+  margin: calc(3px * var(--pixel-scale)) auto;
 }
 </style>

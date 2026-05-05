@@ -24,7 +24,7 @@ export const healingMystic: MinionBlueprint = {
   id: 'healing_mystic',
   name: 'Healing Mystic',
   description: dedent`
-    <rt-lvl-bonus lvl="2"><rt-job-bonus job="acolyte"> This costs 1 less.</rt-job-bonus></rt-lvl-bonus> 
+    <rt-lvl-bonus lvl="2"><rt-job-bonus job="acolyte">This costs 1 less.</rt-job-bonus></rt-lvl-bonus> 
     `,
   collectable: true,
   setId: CARD_SETS.CORE,

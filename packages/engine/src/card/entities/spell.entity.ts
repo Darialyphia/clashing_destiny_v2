@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS, type CardSpeed, type JobId } from '../card.enums';
+import { CARD_EVENTS, CARD_SPEED, type CardSpeed, type JobId } from '../card.enums';
 import { CardDeclarePlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { GAME_PHASES } from '../../game/game.enums';
@@ -32,7 +32,6 @@ export type SerializedSpellCard = SerializedCard & {
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
-  canPlayDuringCombatPhase: Interceptable<boolean, SpellCard>;
   canUseAbility: Interceptable<boolean, { card: SpellCard; ability: Ability<SpellCard> }>;
   canBeTargeted: Interceptable<boolean, SpellCard>;
   speed: Interceptable<CardSpeed, SpellCard>;
@@ -56,7 +55,6 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canPlayDuringCombatPhase: new Interceptable(),
         canBeTargeted: new Interceptable(),
         canUseAbility: new Interceptable(),
         speed: new Interceptable()
@@ -134,7 +132,7 @@ export class SpellCard extends Card<
   }
 
   get canPlayDuringCombatPhase(): boolean {
-    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
+    return this.speed === CARD_SPEED.FAST;
   }
 
   get isCorrectPhaseToPlay() {

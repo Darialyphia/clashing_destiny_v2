@@ -9,6 +9,7 @@ import {
 import {
   ARTIFACT_KINDS,
   CARD_EVENTS,
+  CARD_SPEED,
   type ArtifactKind,
   type CardSpeed,
   type JobId
@@ -45,7 +46,6 @@ export type SerializedArtifactCard = SerializedCard & {
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
-  canPlayDuringCombatPhase: Interceptable<boolean, ArtifactCard>;
   canUseAbility: Interceptable<
     boolean,
     { card: ArtifactCard; ability: Ability<ArtifactCard> }
@@ -73,7 +73,6 @@ export class ArtifactCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canPlayDuringCombatPhase: new Interceptable(),
         canUseAbility: new Interceptable(),
         durability: new Interceptable(),
         attackBonus: new Interceptable(),
@@ -197,7 +196,7 @@ export class ArtifactCard extends Card<
   }
 
   get canPlayDuringCombatPhase(): boolean {
-    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
+    return this.speed === CARD_SPEED.FAST;
   }
 
   get isCorrectPhaseToPlay() {

@@ -4,7 +4,8 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import { HeroInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import { CardAuraModifierMixin } from '../mixins/aura.mixin';
+import { CardInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import { UntilEventModifierMixin } from '../mixins/until-event';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -24,9 +25,22 @@ export class EmpowerModifier extends Modifier<HeroCard> {
       icon: 'keyword-empower-buff',
       groupKey: 'empower',
       mixins: [
-        new HeroInterceptorModifierMixin(game, {
-          key: 'spellPower',
-          interceptor: value => value + this.stacks
+        new CardAuraModifierMixin(game, source.player.hero, {
+          isElligible(candidate) {
+            return candidate.player.equals(source.player) && isSpell(candidate);
+          },
+          getModifiers: () => {
+            return [
+              new Modifier('empower-level-bonus-aura', game, source, {
+                mixins: [
+                  new CardInterceptorModifierMixin(game, {
+                    key: 'playerLevel',
+                    interceptor: value => value + this.stacks
+                  })
+                ]
+              })
+            ];
+          }
         }),
         new UntilEndOfTurnModifierMixin(game),
         new UntilEventModifierMixin(game, {

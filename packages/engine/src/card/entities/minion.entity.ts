@@ -8,7 +8,13 @@ import {
   type MinionBlueprint,
   type Target
 } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type CardSpeed, type JobId } from '../card.enums';
+import {
+  CARD_EVENTS,
+  CARD_LOCATIONS,
+  CARD_SPEED,
+  type CardSpeed,
+  type JobId
+} from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -57,7 +63,6 @@ export type SerializedMinionCard = SerializedCard & {
 export type MinionCardInterceptors = CardInterceptors & {
   hasSummoningSickness: Interceptable<boolean, MinionCard>;
   canPlay: Interceptable<boolean, MinionCard>;
-  canPlayDuringCombatPhase: Interceptable<boolean, MinionCard>;
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
@@ -102,7 +107,6 @@ export class MinionCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canPlayDuringCombatPhase: new Interceptable(),
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canRetaliate: new Interceptable(),
@@ -426,7 +430,7 @@ export class MinionCard extends Card<
   }
 
   get canPlayDuringCombatPhase(): boolean {
-    return this.interceptors.canPlayDuringCombatPhase.getValue(false, this);
+    return this.speed === CARD_SPEED.FAST;
   }
 
   get isCorrectPhaseToPlay() {
