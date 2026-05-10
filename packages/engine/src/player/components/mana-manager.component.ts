@@ -21,7 +21,7 @@ export class ManaManagerComponent {
 
   init() {
     this._baseMaxMana = this.game.config.MAX_MANA;
-    this.refill();
+    this._mana = this.manaRegen;
   }
 
   get mana() {
@@ -37,19 +37,19 @@ export class ManaManagerComponent {
   }
 
   refill() {
-    this._mana = Math.min(this._mana + this.manaRegen, this.maxMana);
+    this._mana = this.maxMana;
   }
 
   async spend(amount: number) {
     if (amount === 0) return;
     await this.game.emit(
       PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
-      new PlayerManaChangeEvent({ player: this.player, amount })
+      new PlayerManaChangeEvent({ player: this.player, amount: -amount })
     );
     this._mana = Math.max(this._mana - amount, 0);
     await this.game.emit(
       PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE,
-      new PlayerManaChangeEvent({ player: this.player, amount })
+      new PlayerManaChangeEvent({ player: this.player, amount: -amount })
     );
   }
 
@@ -59,7 +59,7 @@ export class ManaManagerComponent {
       PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
       new PlayerManaChangeEvent({ player: this.player, amount })
     );
-    this._mana = this._mana + amount; // dont clamp to max mana because of effects that go over max mana (ex: mana tile)
+    this._mana = Math.min(this._mana + amount, this.maxMana);
     await this.game.emit(
       PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE,
       new PlayerManaChangeEvent({ player: this.player, amount })

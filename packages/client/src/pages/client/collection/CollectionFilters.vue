@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  CARD_KINDS,
-  JOBS,
-  type CardKind,
-  type Job,
-  type JobId
-} from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useCollectionPage } from './useCollectionPage';
@@ -25,8 +19,6 @@ const {
   textFilter,
   hasKindFilter,
   toggleKindFilter,
-  hasJobFilter,
-  toggleJobFilter,
   manaCostFilter,
   includeUnowned,
   cardScale
@@ -40,7 +32,7 @@ const cardKinds: Array<{
   color: string;
 }> = Object.values(CARD_KINDS).map(kind => ({
   id: kind,
-  img: assets[`ui/card-kind-${kind.toLocaleLowerCase()}`].path,
+  img: assets[`ui/card/kind-${kind.toLocaleLowerCase()}`].path,
   label: uppercaseFirstLetter(kind),
   color: 'white'
 }));

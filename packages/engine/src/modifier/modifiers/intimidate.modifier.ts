@@ -17,8 +17,9 @@ export class IntimidateModifier<T extends MinionCard | HeroCard> extends Modifie
     options: { level: number; mixins?: ModifierMixin<T>[] }
   ) {
     super(KEYWORDS.INTIMIDATE.id, game, source, {
-      name: 'Intimidate',
-      description: `This card has Intimidate ${options.level}.`,
+      name: KEYWORDS.INTIMIDATE.name,
+      description: () =>
+        KEYWORDS.INTIMIDATE.description.replace('X', options.level.toString()),
       icon: 'keyword-intimidate',
       isUnique: false,
       mixins: [

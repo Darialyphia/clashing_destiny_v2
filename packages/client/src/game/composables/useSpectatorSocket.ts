@@ -4,7 +4,7 @@ import type {
   GameStateSnapshot,
   SerializedPlayerState,
   SerializedOmniscientState,
-  SnapshotDiff
+  PatchBasedSnapshotDiff
 } from '@game/engine/src/game/systems/game-snapshot.system';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { until } from '@vueuse/core';
@@ -17,7 +17,7 @@ export type ServerToClientEvents = {
     >;
     history: SerializedInput[];
   }) => void;
-  gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
+  gameSnapshot: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void;
   error: (message: string) => void;
   clockUpdate: (
     clocks: Record<

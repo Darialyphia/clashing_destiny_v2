@@ -29,7 +29,6 @@ const { color = 'red' } = defineProps<{
   font-family: var(--font-system-ui);
   -webkit-text-stroke: calc(1.5px * var(--pixel-scale)) black;
   paint-order: stroke fill;
-  line-height: 1.8;
 }
 
 .red {

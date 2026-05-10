@@ -10,7 +10,9 @@ export const cards = {
 "sample2": "sample2",
 "sampleSpell": "sampleSpell",
 "healing_mystic": "healing_mystic",
-"fireBolt": "fireBolt"
+"fireBolt": "fireBolt",
+"little_witch": "little_witch",
+"pyromancer": "pyromancer"
 } as const;
 
 export const collectableCards = {
@@ -19,7 +21,9 @@ export const collectableCards = {
 "sample2": "sample2",
 "sampleSpell": "sampleSpell",
 "healing_mystic": "healing_mystic",
-"fireBolt": "fireBolt"
+"fireBolt": "fireBolt",
+"little_witch": "little_witch",
+"pyromancer": "pyromancer"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -69,6 +73,16 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "fireBolt",
     "collectable": true,
     "rarity": "common"
+  },
+  {
+    "id": "little_witch",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "pyromancer",
+    "collectable": true,
+    "rarity": "common"
   }
 ]
 };
@@ -79,7 +93,9 @@ export const cardShortIds: Record<string, number> = {
 "sample2": 8,
 "sampleSpell": 9,
 "healing_mystic": 10,
-"fireBolt": 11
+"fireBolt": 11,
+"little_witch": 12,
+"pyromancer": 13
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -88,5 +104,7 @@ export const cardIdByShortId: Record<number, string> = {
 "8": "sample2",
 "9": "sampleSpell",
 "10": "healing_mystic",
-"11": "fireBolt"
+"11": "fireBolt",
+"12": "little_witch",
+"13": "pyromancer"
 } as const;

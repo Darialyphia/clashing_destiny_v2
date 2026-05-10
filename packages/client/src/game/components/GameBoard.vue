@@ -308,7 +308,7 @@ useEventListener('contextmenu', async e => {
   flex-direction: column;
   gap: 12px;
   position: relative;
-
+  translate: 0 -8px;
   > div:not(.right-side) {
     height: 130px;
     margin-inline: 22px;

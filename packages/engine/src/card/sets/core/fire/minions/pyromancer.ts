@@ -8,41 +8,43 @@ import {
 import {
   AFFINITIES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   JOBS,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
-import { JobBonusModifier } from '../../../../../modifier/modifiers/job-bonus.modifier';
+import { BurnModifier } from '../../../../../modifier/modifiers/burn.modifier';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import { fireBolt } from '../spells/fire-bolt';
 
-export const healingMystic: MinionBlueprint = {
-  id: 'healing_mystic',
-  name: 'Healing Mystic',
+export const pyromancer: MinionBlueprint = {
+  id: 'pyromancer',
+  name: 'Pyromancer',
   description: dedent /*html*/ `
-    <rt-lvl-bonus lvl="2"><rt-job-bonus job="acolyte">This costs 1 less.</rt-job-bonus></rt-lvl-bonus> 
-    `,
+  <rt-lvl-bonus lvl="2"><rt-trigger>On Turn Start</rt-trigger> Add a <rt-card>Fire Bolt</rt-card> to your hand.</rt-lvl-bonus>
+  `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.COMMON,
-  jobs: [JOBS.ACOLYTE],
-  affinity: AFFINITIES.NEUTRAL,
-  manaCost: 2,
+  rarity: RARITIES.RARE,
+  jobs: [JOBS.MAGE],
+  affinity: AFFINITIES.FIRE,
+  manaCost: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 3,
+  maxHp: 5,
   abilities: [
     {
-      id: 'healing-mystic-ability',
-      label: 'Heal 2 damage',
-      description: 'Heal a minion for 2.',
+      id: 'pyromancer-ability',
+      label: 'Burn a minion',
+      description: 'Inflict <rt-keyword>Burn 2</rt-keyword> to a minion.',
       manaCost: 1,
       canUse: (game, card) => {
         return isOnBoard(card) && singleMinionTargetRules.canPlay(game, card);
@@ -60,7 +62,9 @@ export const healingMystic: MinionBlueprint = {
         }),
       async onResolve(game, card, targets) {
         for (const target of targets) {
-          await (target as MinionCard).heal(2);
+          await (target as MinionCard).modifiers.add(
+            new BurnModifier(game, card, { stacks: 2 })
+          );
         }
       },
       aiHints: {
@@ -72,19 +76,26 @@ export const healingMystic: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new LevelBonusModifier(game, card, 2));
     const lvlMod = card.modifiers.get(LevelBonusModifier)!;
-    await card.modifiers.add(new JobBonusModifier(game, card, JOBS.ACOLYTE.id));
-    const jobMod = card.modifiers.get(JobBonusModifier)!;
 
     await card.modifiers.add(
-      new SimpleManacostModifier('healing-mystic-discount', game, card, {
-        amount: -2,
+      new WhileOnBoardModifier<MinionCard>('pyromancer-on-turn-start', game, card, {
         mixins: [
-          new TogglableModifierMixin(game, () => lvlMod.isActive && jobMod.isActive)
+          new TogglableModifierMixin(game, () => lvlMod.isActive),
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.TURN_START,
+            async handler() {
+              const fireBoltCard = await card.player.generateCard(
+                fireBolt.id,
+                card.isFoil
+              );
+              await fireBoltCard.addToHand();
+            }
+          })
         ]
       })
     );
   },
-  async onPlay(game, card) {},
+  async onPlay() {},
   aiHints: {
     shouldPlay: () => 0,
     shouldMove: () => 0,

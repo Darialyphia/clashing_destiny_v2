@@ -370,6 +370,21 @@ export abstract class Card<
     );
   }
 
+  async sendToTopOfDeck() {
+    await this.removeFromCurrentLocation();
+    this.player.cardManager.mainDeck.addToTop(this);
+  }
+
+  async sendToBottomOfDeck() {
+    await this.removeFromCurrentLocation();
+    this.player.cardManager.mainDeck.addToBottom(this);
+  }
+
+  async shuffleIntoDeck() {
+    await this.removeFromCurrentLocation();
+    this.player.cardManager.mainDeck.addAtRandomPosition(this);
+  }
+
   protected updatePlayedAt() {
     this.playedAtTurn = this.game.turnSystem.elapsedTurns;
   }

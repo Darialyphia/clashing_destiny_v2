@@ -1,6 +1,7 @@
 import type { ComputedRef } from 'vue';
-import { useGameUi } from './useGameClient';
+import { useGameState, useGameUi } from './useGameClient';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 
 const DRAG_THRESHOLD_PX = 30;
 const SHAKE_DURATION_MS = 600;
@@ -11,6 +12,7 @@ export const useBoardCardDragSelection = (
   canSelectUnit: ComputedRef<boolean>
 ) => {
   const ui = useGameUi();
+  const state = useGameState();
 
   let startX = 0;
   let startY = 0;
@@ -71,7 +73,11 @@ export const useBoardCardDragSelection = (
   return {
     onMousedown,
     onMouseup,
-    isShaking,
+    isShaking: computed(
+      () =>
+        isShaking.value &&
+        state.value.interaction.state === INTERACTION_STATES.IDLE
+    ),
     isShowingMessage
   };
 };

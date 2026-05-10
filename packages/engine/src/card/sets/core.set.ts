@@ -6,6 +6,8 @@ import { sampl2 } from './core/neutral/minions/sample2';
 import { sampleSpell } from './core/neutral/spells/sample-spell';
 import { healingMystic } from './core/neutral/minions/healing-mystic';
 import { fireBolt } from './core/fire/spells/fire-bolt';
+import { littleWitch } from './core/neutral/minions/little-witch';
+import { pyromancer } from './core/fire/minions/pyromancer';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -19,6 +21,8 @@ export const coreSet: CardSet = {
     sampl2,
     sampleSpell,
     healingMystic,
-    fireBolt
+    fireBolt,
+    littleWitch,
+    pyromancer
   ]
 };

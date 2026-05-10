@@ -1,4 +1,3 @@
-import type { MaybePromise } from '@game/shared';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -65,10 +64,16 @@ export class WhileOnBattlefieldModifier<
     game: Game,
     source: AnyCard,
     private options: {
+      name?: string | (() => string);
+      description?: string | (() => string);
+      icon?: string | (() => string);
       mixins: Array<ModifierMixin<T>>;
     }
   ) {
     super(modifierType, game, source, {
+      name: options.name,
+      description: options.description,
+      icon: options.icon,
       mixins: [
         new TogglableModifierMixin(
           game,

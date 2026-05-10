@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPileModal from './DiscardPileModal.vue';
 import Talent from './Talent.vue';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
+import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
@@ -30,6 +35,12 @@ onMounted(() => {
 
 const hasInitiative = computed(() => {
   return player.id === client.value.getActivePlayerId();
+});
+
+useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
+  if (event.player === player.id) {
+    player.update({ currentMana: player.mana + event.amount });
+  }
 });
 </script>
 

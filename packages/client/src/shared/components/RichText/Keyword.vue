@@ -48,7 +48,6 @@ const keyword = computed(() => {
 .keyword {
   font-weight: 700;
   font-style: italic;
-  line-height: 1.8;
 }
 
 .keyword-card {

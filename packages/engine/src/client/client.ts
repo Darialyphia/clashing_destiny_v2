@@ -2,6 +2,7 @@ import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
 import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
+  PatchBasedSnapshotDiff,
   SnapshotDiff
 } from '../game/systems/game-snapshot.system';
 import type {
@@ -39,13 +40,15 @@ export type GameStateEntities = Record<
 >;
 
 export type OnSnapshotUpdateCallback = (
-  snapshot: GameStateSnapshot<SnapshotDiff>
+  snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>
 ) => MaybePromise<void>;
 
 export type NetworkAdapter = {
   dispatch: InputDispatcher;
   subscribe(cb: OnSnapshotUpdateCallback): void;
-  sync: (lastSnapshotId: number) => Promise<Array<GameStateSnapshot<SnapshotDiff>>>;
+  sync: (
+    lastSnapshotId: number
+  ) => Promise<Array<GameStateSnapshot<PatchBasedSnapshotDiff>>>;
 };
 
 export type FxAdapter = {
@@ -80,7 +83,7 @@ export class GameClient {
 
   private lastSnapshotId = -1;
 
-  private snapshots = new Map<number, GameStateSnapshot<SnapshotDiff>>();
+  private snapshots = new Map<number, GameStateSnapshot<PatchBasedSnapshotDiff>>();
 
   private _isPlayingFx = false;
 
@@ -88,13 +91,13 @@ export class GameClient {
 
   private _processingUpdate = false;
 
-  private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
+  private queue: Array<GameStateSnapshot<PatchBasedSnapshotDiff>> = [];
 
   history: SerializedInput[] = [];
 
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
-    updateCompleted: GameStateSnapshot<SnapshotDiff>;
+    updateCompleted: GameStateSnapshot<PatchBasedSnapshotDiff>;
   }>('sequential');
 
   readonly isSpectator: boolean = false;
@@ -116,7 +119,7 @@ export class GameClient {
       console.log('events', snapshot.events);
       console.groupEnd();
       this.queue.push(snapshot);
-      if (this._processingUpdate) return;
+      if (this._processingUpdate || !this.isReady) return;
       await this.processQueue();
     });
 
@@ -206,7 +209,7 @@ export class GameClient {
     await this.sync();
   }
 
-  async update(snapshot: GameStateSnapshot<SnapshotDiff>) {
+  async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
@@ -256,7 +259,7 @@ export class GameClient {
     return () => this.emitter.off('update', cb);
   }
 
-  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
+  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
     this.emitter.on('updateCompleted', cb);
     return () => this.emitter.off('updateCompleted', cb);
   }

@@ -321,7 +321,9 @@ const tint = computed(() => {
             <div ref="description-inner">
               <CardText :text="card.description" />
 
-              <div v-if="card.abilities?.length" class="text-separator" />
+              <div v-if="card.abilities?.length" class="text-separator">
+                Abilities
+              </div>
               <CardText
                 v-for="ability in card.abilities"
                 :key="ability"
@@ -823,9 +825,25 @@ const tint = computed(() => {
 }
 
 .text-separator {
-  width: 75%;
-  height: calc(1px * var(--pixel-scale));
-  background: #00000030;
-  margin: calc(3px * var(--pixel-scale)) auto;
+  margin-top: calc(3px * var(--pixel-scale));
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+  color: black;
+  font-size: calc(var(--pixel-scale) * 4.5px);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-7);
+  font-family: 'Lato', sans-serif;
+  opacity: 0.5;
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: calc(0.5px * var(--pixel-scale));
+    background: black;
+    flex: 1;
+    opacity: 0.5;
+  }
 }
 </style>

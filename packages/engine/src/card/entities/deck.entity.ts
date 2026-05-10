@@ -84,6 +84,11 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
     this.cards.push(card);
   }
 
+  addAtRandomPosition(card: TCard) {
+    const index = this.game.rngSystem.nextInt(this.cards.length);
+    this.cards.splice(index, 0, card);
+  }
+
   peek(amount: number) {
     return this.cards.slice(0, amount);
   }

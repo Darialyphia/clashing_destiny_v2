@@ -229,6 +229,7 @@ export class Player
     }
     if (this.game.turnSystem.elapsedTurns > 0) {
       await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
+      await this.manaManager.gain(this.manaManager.manaRegen);
     }
   }
 

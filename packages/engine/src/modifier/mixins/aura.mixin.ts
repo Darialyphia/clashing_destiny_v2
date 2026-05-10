@@ -81,7 +81,6 @@ class AuraModifierMixin<
   }
 
   async onRemoved() {
-    console.log('cleanup aura');
     this.isApplied = false;
     await this.cleanup();
   }

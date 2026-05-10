@@ -68,13 +68,8 @@ const displayedModifiers = computed(() => {
 
 <style scoped lang="postcss">
 .modifiers {
-  position: absolute;
-  top: calc(3px * var(--pixel-scale));
-  left: calc(3px * var(--pixel-scale));
-  right: calc(3px * var(--pixel-scale));
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  transform: translateZ(2px);
 }
 
 .modifier-image {

@@ -70,6 +70,42 @@ export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[])
   return { cancelled: false, selectedCard, choices };
 };
 
+export const predict = async (game: Game, card: AnyCard) => {
+  const choices: AnyCard[] = [];
+  const choicePool = Array.from(card.player.cardManager.mainDeck.cards);
+  const maxChoices = Math.min(3, choicePool.length);
+
+  for (let i = 0; i < maxChoices; i++) {
+    const index = game.rngSystem.nextInt(choicePool.length - 1);
+    choices.push(...choicePool.splice(index, 1));
+  }
+  const result = await game.interaction.chooseCards<AnyCard>({
+    player: card.player,
+    minChoiceCount: 1,
+    maxChoiceCount: 1,
+    canCancel: false,
+    choices: choices.map(c => ({
+      card: c,
+      aiHints: {
+        shouldPick() {
+          return 1;
+        }
+      }
+    })),
+    timeoutFallback: [choicePool[0]],
+    label: 'Choose a card to put on top of your deck'
+  });
+
+  if (result.cancelled) {
+    return { cancelled: true };
+  }
+
+  const [selectedCard] = result.result;
+  await selectedCard.sendToTopOfDeck();
+
+  return { cancelled: false, selectedCard };
+};
+
 export const discardFromHand = async (
   game: Game,
   card: AnyCard,

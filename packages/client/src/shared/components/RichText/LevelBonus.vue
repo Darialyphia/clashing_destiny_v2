@@ -18,7 +18,7 @@ const ctx = useRichTextContext();
   >
     <UiSimpleTooltip>
       <template #trigger>
-        <span class="badge">Lvl {{ lvl }}</span>
+        <span class="badge">Lvl&nbsp;{{ lvl }}</span>
       </template>
       Activates if your hero's level is {{ lvl }} or higher.
     </UiSimpleTooltip>
@@ -28,7 +28,6 @@ const ctx = useRichTextContext();
 
 <style scoped lang="postcss">
 .badge {
-  line-height: 1.8;
   background: linear-gradient(
     to bottom,
     var(--yellow-4) 50%,

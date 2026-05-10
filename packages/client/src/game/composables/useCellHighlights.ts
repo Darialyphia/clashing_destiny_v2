@@ -39,8 +39,7 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
     if (!cell.value.card) return null;
     if (!ui.value.isInteractivePlayer) return null;
     if (cell.value.card.isExhausted) return 'Exhausted';
-    if (state.value.interaction.state !== INTERACTION_STATES.IDLE)
-      return 'An ability is being resolved';
+    if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return ''; // no need to show reason when in the middle of an interaction
     if (state.value.phase.state === GAME_PHASES.MAIN) {
       if (cell.value.card.kind === CARD_KINDS.HERO) {
         return 'Heroes cannot move !';

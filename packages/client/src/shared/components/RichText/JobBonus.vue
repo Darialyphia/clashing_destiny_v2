@@ -37,7 +37,6 @@ const ctx = useRichTextContext();
     var(--indigo-4) 50%,
     var(--indigo-6) 50%
   );
-  line-height: 1.8;
   border: solid calc(0.5px * var(--pixel-scale)) var(--indigo-8);
   color: white;
   font-size: 0.95em;

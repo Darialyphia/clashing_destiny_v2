@@ -11,12 +11,13 @@ import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import { Modifier } from '../modifier.entity';
 
 export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
-  constructor(game: Game, source: AnyCard) {
+  constructor(game: Game, source: AnyCard, { stacks = 1 }: { stacks?: number } = {}) {
     super(KEYWORDS.BURN.id, game, source, {
       name: KEYWORDS.BURN.name,
       description: KEYWORDS.BURN.description,
       icon: 'keyword-burn',
       isUnique: true,
+      stacks,
       mixins: [
         new RemoveOnDestroyedMixin(game),
         new GameEventModifierMixin(game, {
@@ -24,7 +25,9 @@ export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
           handler: async () => {
             await this.target.takeDamage(
               source,
-              isSpell(source) ? new SpellDamage(1, this.target) : new AbilityDamage(1)
+              isSpell(source)
+                ? new SpellDamage(1, this.target)
+                : new AbilityDamage(this.stacks)
             );
           }
         })

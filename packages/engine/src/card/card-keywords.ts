@@ -132,7 +132,7 @@ export const KEYWORDS = {
   PROTECTOR: {
     id: 'protector',
     name: 'Protector',
-    description: 'Enemy units cannot attack other minions without Protector',
+    description: 'Other allies cannot be attacked  unless they have Protector.',
     aliases: []
   },
   FLEETING: {
@@ -206,12 +206,6 @@ export const KEYWORDS = {
       'The first time this attacks each turn, wake up this minion after combat.',
     aliases: []
   },
-  BALANCE: {
-    id: 'balance',
-    name: 'Balance',
-    description: 'You have the same amount of cards in your hand and your Destiny zone.',
-    aliases: []
-  },
   TOUGH: {
     id: 'tough',
     name: 'Tough X',
@@ -229,6 +223,13 @@ export const KEYWORDS = {
     name: 'Intimidate X',
     description: 'This unit cannot be attacked by minions that cost X or less.',
     aliases: [/intimidate [0-9]+/]
+  },
+  FEARSOME: {
+    id: 'fearsome',
+    name: 'Fearsome X',
+    description:
+      "When this unit attacks a minion that costs X or less, it doesn't counterattack.",
+    aliases: [/fearsome [0-9]+/]
   },
   STEALTH: {
     id: 'stealth',
@@ -259,7 +260,8 @@ export const KEYWORDS = {
   EMPOWER: {
     id: 'empower',
     name: 'Empower X',
-    description: 'The next spell you cast this turn deals X more damage.',
+    description:
+      'The next spell you cast this turn resolves as if your Hero had +X level.',
     aliases: [/empower [0-9]+/, 'empower', /empowered/]
   },
   LOCKED: {
@@ -331,6 +333,25 @@ export const KEYWORDS = {
     id: 'push',
     name: 'Push',
     description: 'Move a minion from the battlefield to the base',
+    aliases: []
+  },
+  REGENERATION: {
+    id: 'regeneration',
+    name: 'Regeneration X',
+    description: 'At the start of the turn, heal this unit for X.',
+    aliases: [/regeneration [0-9]+/]
+  },
+  SPLASH_ATTACK: {
+    id: 'splash_attack',
+    name: 'Splash Attack',
+    description: 'When this unit attacks, it also damages adjacent units.',
+    aliases: []
+  },
+  PREDICT: {
+    id: 'predict',
+    name: 'Predict',
+    description:
+      'Look at 3 cards from your deck at random, choose one and put it on top of your deck.',
     aliases: []
   },
   ...Object.fromEntries(

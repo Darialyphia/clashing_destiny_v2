@@ -235,7 +235,6 @@ const artMainImage = computed(() => {
   font-family: 'Lato', sans-serif;
   display: grid;
   place-content: center;
-  padding-right: 2px;
   scale: 1.5;
   &.buffed {
     --top-color: var(--green-2);
@@ -250,19 +249,16 @@ const artMainImage = computed(() => {
 .atk {
   background-image: url('@/assets/ui/card/attack.png');
   left: 0;
-}
-
-.retaliation {
-  background-image: url('@/assets/ui/card/retaliation.png');
-  left: 50%;
-  translate: -25% 0;
+  --dual-text-offset-y: 1px;
+  --dual-text-offset-x: -2px;
 }
 
 .hp {
   background-image: url('@/assets/ui/card/health-left.png');
   right: 0;
   padding-right: 0;
-  padding-left: 2px;
+  --dual-text-offset-x: 2px;
+  --dual-text-offset-y: 1px;
 }
 
 .durability {

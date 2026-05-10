@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { useFxEvent, useGameUi } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameState,
+  useGameUi
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { waitFor } from '@game/shared';
+import { isDefined, waitFor } from '@game/shared';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
 import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import AbilityMenu from './AbilityMenu.vue';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 
 const { card, isShaking = false } = defineProps<{
   card: CardViewModel;
@@ -72,7 +77,19 @@ const hasAvailableAbilities = computed(() => {
   });
 });
 
-const modifiers = computed(() => card.modifiers);
+const modifiers = computed(() => card.modifiers.filter(isDefined));
+
+const state = useGameState();
+const isTargetable = computed(() => {
+  if (
+    state.value.interaction.state !==
+    INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
+  )
+    return false;
+  return state.value.interaction.ctx.elligibleCards.some(
+    cardId => cardId === card.id
+  );
+});
 </script>
 
 <template>
@@ -88,7 +105,8 @@ const modifiers = computed(() => card.modifiers);
         'is-attacking': isAttacking,
         'is-taking-damage': isTakingDamage,
         'has-ability': hasAvailableAbilities,
-        'is-shaking': isShaking
+        'is-shaking': isShaking,
+        'is-targetable': isTargetable
       }
     ]"
     :style="{
@@ -101,7 +119,7 @@ const modifiers = computed(() => card.modifiers);
       show-stats
       :overrides="{ atk: card.atk, hp: card.hp }"
     />
-    <ModifiersList :modifiers="modifiers" />
+    <ModifiersList :modifiers="modifiers" class="modifiers" />
     <AbilityMenu :card="card" actions-side="top" use-portal class="abilities" />
   </div>
 </template>
@@ -128,6 +146,16 @@ const modifiers = computed(() => card.modifiers);
     filter: brightness(140%);
     animation: drop var(--drop-duration) cubic-bezier(0.18, 0.88, 0.32, 1.08)
       forwards;
+  }
+
+  &.is-targetable {
+    --shadow-color: var(--orange-4);
+    filter: drop-shadow(0 0 6px var(--shadow-color));
+    translate: 0 -8px;
+
+    &:hover {
+      --shadow-color: var(--yellow-2);
+    }
   }
 
   &.is-attacking {
@@ -164,6 +192,15 @@ const modifiers = computed(() => card.modifiers);
   left: 50%;
   translate: -50% 0;
   bottom: 7px;
+  transform: translateZ(2px);
+}
+
+.modifiers {
+  position: absolute;
+  top: calc(3px * var(--pixel-scale));
+  left: calc(3px * var(--pixel-scale));
+  right: calc(3px * var(--pixel-scale));
+  transform: translateZ(2px);
 }
 @keyframes drop {
   0% {
