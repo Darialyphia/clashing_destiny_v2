@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { MinionBlueprint } from '../../../../card-blueprint';
+import { defineAbility, type MinionBlueprint } from '../../../../card-blueprint';
 import {
   defaultCardArt,
   isOnBoard,
@@ -39,7 +39,7 @@ export const healingMystic: MinionBlueprint = {
   atk: 2,
   maxHp: 3,
   abilities: [
-    {
+    defineAbility<MinionCard, MinionCard>({
       id: 'healing-mystic-ability',
       label: 'Heal 2 damage',
       description: 'Heal a minion for 2.',
@@ -60,13 +60,13 @@ export const healingMystic: MinionBlueprint = {
         }),
       async onResolve(game, card, targets) {
         for (const target of targets) {
-          await (target as MinionCard).heal(2);
+          await target.heal(2);
         }
       },
       aiHints: {
         shouldUse: () => 1
       }
-    }
+    })
   ],
   canPlay: () => true,
   async onInit(game, card) {

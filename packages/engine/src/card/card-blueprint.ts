@@ -72,6 +72,9 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target>
     shouldUse: (game: Game, card: TCard) => number;
   };
 };
+export const defineAbility = <TCard extends AbilityOwner, TTarget extends Target>(
+  bp: AbilityBlueprint<TCard, TTarget>
+): AbilityBlueprint<TCard, TTarget> => bp;
 
 export type AnyAbility = AbilityBlueprint<AbilityOwner, Target>;
 
@@ -115,16 +118,16 @@ export type MinionBlueprint = CardBlueprintBase & {
   };
 };
 
-export type SpellBlueprint = CardBlueprintBase & {
+export type SpellBlueprint<T extends Target = Target> = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
   speed: CardSpeed;
   jobs: Job[];
-  abilities: AbilityBlueprint<SpellCard, Target>[];
+  abilities: AbilityBlueprint<SpellCard, any>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
-  onPlay: (game: Game, card: SpellCard, targets: Target[]) => Promise<void>;
+  onPlay: (game: Game, card: SpellCard, targets: T[]) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
-  getTargets: (game: Game, card: SpellCard) => Promise<InteractionResult<Target[]>>;
+  getTargets: (game: Game, card: SpellCard) => Promise<InteractionResult<T[]>>;
   aiHints: {
     shouldPlay: (game: Game, card: SpellCard) => number;
   };
@@ -169,12 +172,12 @@ export type ArtifactBlueprint = CardBlueprintBase & {
       }
   );
 
-export type DestinyBlueprint = CardBlueprintBase & {
+export type DestinyBlueprint<T extends Target = Target> = CardBlueprintBase & {
   expCost: number;
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
   jobs: Job[];
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
-  onPlay: (game: Game, card: DestinyCard, targets: Target[]) => Promise<void>;
+  onPlay: (game: Game, card: DestinyCard, targets: T[]) => Promise<void>;
   canPlay: (game: Game, card: DestinyCard) => boolean;
   getTargets: (game: Game, card: DestinyCard) => Promise<InteractionResult<Target[]>>;
   aiHints: {
@@ -197,7 +200,7 @@ export type TrapBlueprint = CardBlueprintBase & {
 };
 
 export type CardBlueprint =
-  | SpellBlueprint
+  | SpellBlueprint<any>
   | ArtifactBlueprint
   | MinionBlueprint
   | HeroBlueprint

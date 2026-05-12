@@ -13,8 +13,9 @@ import { JobBonusModifier } from '../../../../../modifier/modifiers/job-bonus.mo
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SpellDamage } from '../../../../../utils/damage';
 import { BurnModifier } from '../../../../../modifier/modifiers/burn.modifier';
+import type { HeroCard } from '../../../../entities/hero.entity';
 
-export const fireBolt: SpellBlueprint = {
+export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   id: 'fireBolt',
   name: 'Fire Bolt',
   description: dedent /*html*/ `
@@ -48,7 +49,7 @@ export const fireBolt: SpellBlueprint = {
     await card.modifiers.add(new JobBonusModifier(game, card, JOBS.MAGE.id));
   },
   async onPlay(game, card, targets) {
-    const [target] = targets as MinionCard[];
+    const [target] = targets;
     if (!target) return;
 
     await target.takeDamage(card, new SpellDamage(1, card));
