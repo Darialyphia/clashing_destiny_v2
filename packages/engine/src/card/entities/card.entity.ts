@@ -32,6 +32,7 @@ import { KeywordManagerComponent } from '../components/keyword-manager.component
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
 import type { BoardSpace } from '../../board/board-space.entity';
+import { MovementComponent } from '../components/movement.component';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -110,6 +111,8 @@ export abstract class Card<
 
   readonly isFoil: boolean;
 
+  readonly movement: MovementComponent;
+
   constructor(
     game: Game,
     player: Player,
@@ -121,6 +124,9 @@ export abstract class Card<
     this.originalPlayer = player;
     this.blueprint = options.blueprint as any;
     this.isFoil = options.isFoil;
+    this.movement = new MovementComponent(game, this, {
+      position: null
+    });
   }
 
   async init() {
@@ -202,14 +208,6 @@ export abstract class Card<
     return this.player.cardManager.findCard(this.id)?.location;
   }
 
-  get position(): BoardSpace<AnyCard> | null {
-    return (
-      [...this.player.boardSide.base, ...this.player.boardSide.battlefield].find(space =>
-        space.card?.equals(this)
-      ) ?? null
-    );
-  }
-
   get tags() {
     return this.blueprint.tags ?? [];
   }
@@ -241,6 +239,8 @@ export abstract class Card<
   get targetedBy() {
     return this._targetedBy;
   }
+
+  abstract isValidPosition(space: BoardSpace): boolean;
 
   protected async dispose() {
     await match(this.kind)
@@ -446,7 +446,7 @@ export abstract class Card<
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
-      position: this.position?.id ?? null,
+      position: this.movement.space?.id ?? null,
       affinity: this.affinity
     };
   }

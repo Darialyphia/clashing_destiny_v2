@@ -1,7 +1,6 @@
-import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { type Game } from '../game/game';
-import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
+import { assert, type MaybePromise, type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { NotEnoughManaError } from '../card/card-errors';
 import { CardTrackerComponent } from './components/cards-tracker.component';
@@ -14,7 +13,6 @@ import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 import { cloneDeep } from 'lodash-es';
 import { LevelManagerComponent } from './components/level-manager.component';
 import { ManaManagerComponent } from './components/mana-manager.component';
-import { isArtifact, isMinion } from '../card/card-utils';
 import type { Affinity } from '../card/card.enums';
 
 export type PlayerOptions = {
@@ -143,56 +141,20 @@ export class Player
     return this.opponent.hero;
   }
 
-  get minionsInBase() {
-    return this.boardSide.base
-      .map(space => space.card)
-      .filter(isDefined)
-      .filter(isMinion);
+  get frontRowIndex() {
+    return this.isPlayer1 ? 2 : 1;
   }
 
-  get minionsInBattlefield() {
-    return this.boardSide.battlefield
-      .map(space => space.card)
-      .filter(isDefined)
-      .filter(isMinion);
+  get frontRow() {
+    return this.game.boardSystem.getRow(this.frontRowIndex);
   }
 
-  get artifactsInBase() {
-    return this.boardSide.base
-      .map(space => space.card)
-      .filter(isDefined)
-      .filter(isArtifact);
+  get backRowIndex() {
+    return this.isPlayer1 ? 3 : 0;
   }
 
-  get artifactsInBattlefield() {
-    return this.boardSide.battlefield
-      .map(space => space.card)
-      .filter(isDefined)
-      .filter(isArtifact);
-  }
-
-  get minions() {
-    return [...this.minionsInBase, ...this.minionsInBattlefield];
-  }
-
-  get artifacts() {
-    return [...this.artifactsInBase, ...this.artifactsInBattlefield];
-  }
-
-  get allAllies() {
-    return [this.hero, ...this.minions];
-  }
-
-  get allEnemies() {
-    return [this.enemyHero, ...this.enemyMinions];
-  }
-
-  get enemyMinions() {
-    return this.opponent.minions;
-  }
-
-  get enemyArtifacts() {
-    return this.opponent.artifacts;
+  get backRow() {
+    return this.game.boardSystem.getRow(this.backRowIndex);
   }
 
   get unlockedAffinities() {
