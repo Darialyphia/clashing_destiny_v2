@@ -16,7 +16,11 @@ const schema = defaultInputSchema.extend({
 export class SelectSpaceOnBoardInput extends Input<typeof schema> {
   readonly name = 'selectSpaceOnBoard';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.PLAY_CARD, GAME_PHASES.COMBAT];
+  readonly allowedPhases = [
+    GAME_PHASES.MAIN,
+    GAME_PHASES.PLAY_CARD,
+    GAME_PHASES.LEVEL_UP
+  ];
 
   protected payloadSchema = schema;
 

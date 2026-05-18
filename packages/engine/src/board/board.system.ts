@@ -8,8 +8,8 @@ import {
 import { BoardSpace } from './board-space.entity';
 import { System } from '../system';
 import type { Player } from '../player/player.entity';
-import type { MapBlueprint } from './map-blueprint';
-import { pointToCellId } from './board-utils';
+import { defaultMap, type MapBlueprint } from './map-blueprint';
+import { pointToSpaceId } from './board-utils';
 
 export type BoardSystemOptions = {
   map: MapBlueprint;
@@ -27,21 +27,21 @@ export class BoardSystem
 {
   map!: MapBlueprint;
 
-  cellsMap = new Map<string, BoardSpace>();
+  spacesMap = new Map<string, BoardSpace>();
 
   dimensions!: { width: number; height: number };
 
-  async initialize(options: BoardSystemOptions) {
+  async initialize(options: BoardSystemOptions = { map: defaultMap }) {
     this.map = options.map;
 
-    this.map.cells.forEach((cellBlueprint, index) => {
-      if (!cellBlueprint) return;
+    this.map.cells.forEach((blueprint, index) => {
+      if (!blueprint) return;
       const position = indexToPoint(this.map.cols, index);
-      const cell = new BoardSpace(this.game, {
+      const space = new BoardSpace(this.game, {
         position,
-        ...cellBlueprint
+        ...blueprint
       });
-      this.cellsMap.set(cell.id, cell);
+      this.spacesMap.set(space.id, space);
     });
 
     this.dimensions = {
@@ -63,27 +63,31 @@ export class BoardSystem
     return this.map.rows;
   }
 
-  get cells() {
-    return [...this.cellsMap.values()];
+  get spaces() {
+    return [...this.spacesMap.values()];
+  }
+
+  getSpaceById(id: string) {
+    return this.spacesMap.get(id) ?? null;
   }
 
   getRow(rowIndex: number) {
-    return this.cells.filter(cell => cell.y === rowIndex);
+    return this.spaces.filter(space => space.y === rowIndex);
   }
 
   getColumn(colIndex: number) {
-    return this.cells.filter(cell => cell.x === colIndex);
+    return this.spaces.filter(space => space.x === colIndex);
   }
 
   getBackRowForPlayer(player: Player) {
-    return this.cells.filter(cell => cell.player?.equals(player) && cell.isBackRow);
+    return this.spaces.filter(space => space.player?.equals(player) && space.isBackRow);
   }
 
   getFrontRowForPlayer(player: Player) {
-    return this.cells.filter(cell => cell.player?.equals(player) && cell.isFrontRow);
+    return this.spaces.filter(space => space.player?.equals(player) && space.isFrontRow);
   }
 
-  getCellsForPlayer(player: Player) {
+  getSpacesForPlayer(player: Player) {
     return [...this.getFrontRowForPlayer(player), ...this.getBackRowForPlayer(player)];
   }
 
@@ -96,11 +100,11 @@ export class BoardSystem
     );
   }
 
-  getCellAt(posOrKey: string | Point): BoardSpace | null {
+  getSpaceAt(posOrKey: string | Point): BoardSpace | null {
     if (isString(posOrKey)) {
-      return this.cellsMap.get(posOrKey) ?? null;
+      return this.spacesMap.get(posOrKey) ?? null;
     }
-    return this.cellsMap.get(pointToCellId(posOrKey)) ?? null;
+    return this.spacesMap.get(pointToSpaceId(posOrKey)) ?? null;
   }
 
   getDistance(origin: Point, point: Point): number {
@@ -110,20 +114,20 @@ export class BoardSystem
   getAdjacent(point: Point) {
     // get adjacent positions (non-diagonal)
     return [
-      this.getCellAt({ x: point.x, y: point.y - 1 }), // top
-      this.getCellAt({ x: point.x + 1, y: point.y }), // right
-      this.getCellAt({ x: point.x, y: point.y + 1 }), // bottom
-      this.getCellAt({ x: point.x - 1, y: point.y }) // left
+      this.getSpaceAt({ x: point.x, y: point.y - 1 }), // top
+      this.getSpaceAt({ x: point.x + 1, y: point.y }), // right
+      this.getSpaceAt({ x: point.x, y: point.y + 1 }), // bottom
+      this.getSpaceAt({ x: point.x - 1, y: point.y }) // left
     ].filter(isDefined);
   }
 
-  getCellsWithin(topLeft: Point, bottomRight: Point) {
-    return [...this.cellsMap.values()].filter(
-      cell =>
-        cell.x >= topLeft.x &&
-        cell.x <= bottomRight.x &&
-        cell.y >= topLeft.y &&
-        cell.y <= bottomRight.y
+  getSpacesWithin(topLeft: Point, bottomRight: Point) {
+    return [...this.spacesMap.values()].filter(
+      space =>
+        space.x >= topLeft.x &&
+        space.x <= bottomRight.x &&
+        space.y >= topLeft.y &&
+        space.y <= bottomRight.y
     );
   }
 
@@ -135,7 +139,7 @@ export class BoardSystem
     return {
       rows: this.height,
       columns: this.width,
-      spaces: this.cells.map(cell => cell.id)
+      spaces: this.spaces.map(space => space.id)
     };
   }
 }

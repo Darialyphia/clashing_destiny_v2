@@ -1,13 +1,10 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  defaultCardArt,
-  isOnBoard,
-  singleMinionTargetRules
-} from '../../../../card-utils';
+import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
+  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   JOBS,
@@ -47,7 +44,10 @@ export const pyromancer: MinionBlueprint = {
       description: 'Inflict <rt-keyword>Burn 2</rt-keyword> to a minion.',
       manaCost: 1,
       canUse: (game, card) => {
-        return isOnBoard(card) && singleMinionTargetRules.canPlay(game, card);
+        return (
+          card.location === CARD_LOCATIONS.BOARD &&
+          singleMinionTargetRules.canPlay(game, card)
+        );
       },
       getTargets: (game, card) =>
         singleMinionTargetRules.getTargets({

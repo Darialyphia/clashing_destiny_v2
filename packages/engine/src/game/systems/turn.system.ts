@@ -61,6 +61,28 @@ export class TurnSystem extends System<never> {
     );
   }
 
+  async pass(player: Player) {
+    if (!player.equals(this._initiativePlayer)) return;
+    await this.game.emit(
+      TURN_EVENTS.TURN_PASS,
+      new TurnPassEvent({ player: this._initiativePlayer })
+    );
+    player.passTurn();
+
+    const allPlayersPassed = this.game.playerSystem.players.every(
+      p => p.hasPassedThisRound
+    );
+    if (allPlayersPassed) {
+      await this.game.gamePhaseSystem.endTurn();
+    } else {
+      this._initiativePlayer = this._initiativePlayer.opponent;
+      await this.game.emit(
+        TURN_EVENTS.TURN_INITATIVE_CHANGE,
+        new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+      );
+    }
+  }
+
   async switchInitiative() {
     this._initiativePlayer = this._initiativePlayer.opponent;
 

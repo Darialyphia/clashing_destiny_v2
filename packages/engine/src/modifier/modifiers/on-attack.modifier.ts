@@ -5,10 +5,7 @@ import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import type {
-  AfterDeclareAttackEvent,
-  AfterDeclareAttackTargetEvent
-} from '../../game/phases/combat.phase';
+import type { AfterDeclareAttackTargetEvent } from '../../game/systems/combat.system';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';

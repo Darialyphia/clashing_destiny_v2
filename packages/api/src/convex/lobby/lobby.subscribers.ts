@@ -36,13 +36,13 @@ export class LobbySubscribers {
   }
 
   private async onPlayersPaired(event: PlayersPairedEvent) {
+    const participants = event.pairs.flatMap(pair => pair);
+
     await Promise.all(
-      event.pairs.flatMap(pair =>
-        pair.map(async participant =>
-          this.ctx.scheduler.runAfter(0, internal.lobbies.kick, {
-            userId: participant.meta.userId
-          })
-        )
+      participants.map(async participant =>
+        this.ctx.scheduler.runAfter(0, internal.lobbies.kick, {
+          userId: participant.meta.userId
+        })
       )
     );
   }

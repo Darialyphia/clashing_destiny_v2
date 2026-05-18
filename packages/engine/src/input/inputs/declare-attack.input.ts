@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { defaultInputSchema, Input } from '../input';
-import { GAME_PHASES, type GamePhasesDict } from '../../game/game.enums';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
   IllegalAttackerError,
@@ -8,6 +8,7 @@ import {
   NotCurrentPlayerError,
   UnknownUnitError
 } from '../input-errors';
+import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 const schema = defaultInputSchema.extend({
   attackerId: z.string(),
@@ -17,15 +18,11 @@ const schema = defaultInputSchema.extend({
 export class DeclareAttackInput extends Input<typeof schema> {
   readonly name = 'declareAttack';
 
-  readonly allowedPhases = [GAME_PHASES.COMBAT];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 
   get attacker() {
-    if (this.player.hero.id === this.payload.attackerId) {
-      return this.player.hero;
-    }
-    console.log(this.player.minions);
     return this.player.minions.find(creature => creature.id === this.payload.attackerId);
   }
 
@@ -38,16 +35,15 @@ export class DeclareAttackInput extends Input<typeof schema> {
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.attacker, new UnknownUnitError(this.payload.attackerId));
-    assert(this.attacker.canAttack, new IllegalAttackerError());
     assert(this.target, new UnknownUnitError(this.payload.targetId));
+    assert(this.attacker.canAttack(this.target), new IllegalAttackerError());
     assert(this.target.canBeAttacked, new IllegalAttackTargetError());
+    assert(
+      this.game.combatSystem.state === COMBAT_STEPS.DECLARE_ATTACKER,
+      new CorruptedGamephaseContextError()
+    );
 
-    await this.game.gamePhaseSystem
-      .getContext<GamePhasesDict['COMBAT']>()
-      .ctx.declareAttacker(this.attacker);
-
-    await this.game.gamePhaseSystem
-      .getContext<GamePhasesDict['COMBAT']>()
-      .ctx.declareAttackTarget(this.target);
+    await this.game.combatSystem.declareAttacker(this.attacker);
+    await this.game.combatSystem.declareAttackTarget(this.target);
   }
 }

@@ -115,9 +115,13 @@ export class ArtifactCard extends Card<
     this.lostDurability = 0;
   }
 
+  isValidMovementPosition(): boolean {
+    return false;
+  }
+
   async checkDurability() {
     if (this.remainingDurability <= 0) {
-      await this.player.boardSide.remove(this);
+      await this.destroy(this);
     }
   }
 
@@ -195,15 +199,8 @@ export class ArtifactCard extends Card<
     this.abilityTargets.delete(abilityId);
   }
 
-  get canPlayDuringCombatPhase(): boolean {
-    return this.speed === CARD_SPEED.FAST;
-  }
-
   get isCorrectPhaseToPlay() {
-    const validPhases: string[] = this.canPlayDuringCombatPhase
-      ? [GAME_PHASES.MAIN, GAME_PHASES.COMBAT]
-      : [GAME_PHASES.MAIN];
-    return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
+    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
 
   get jobs() {
@@ -221,7 +218,7 @@ export class ArtifactCard extends Card<
   }
 
   get potentialSummonPositions() {
-    return this.player.boardSide.base.filter(space => space.isEmpty);
+    return []; // pending artifact rework
   }
 
   private async selectPosition() {
@@ -231,7 +228,7 @@ export class ArtifactCard extends Card<
       canCancel: true,
       getLabel: () => 'Select position to summon',
       isElligible: space => {
-        return this.potentialSummonPositions.includes(space as any);
+        return false; // pending artifact rework
       },
       canCommit(selectedSpaces) {
         return selectedSpaces.length === 1;
@@ -256,14 +253,13 @@ export class ArtifactCard extends Card<
 
     await this.game.emit(CARD_EVENTS.CARD_BEFORE_PLAY, new CardPlayEvent({ card: this }));
 
-    await this.player.boardSide.placeCardInBase(this, positionResult.result[0].index);
     this.lostDurability = 0;
     await this.blueprint.onPlay(this.game, this);
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
       new ArtifactEquipedEvent({
         card: this,
-        position: positionResult.result[0] as BoardSpace<ArtifactCard>
+        position: positionResult.result[0] as BoardSpace
       })
     );
     await this.game.emit(

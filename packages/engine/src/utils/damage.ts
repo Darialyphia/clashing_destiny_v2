@@ -1,6 +1,6 @@
 import type { Values } from '@game/shared';
-import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
 import type { AnyCard } from '../card/entities/card.entity';
+import type { Attacker, AttackTarget } from '../game/systems/combat.system';
 
 export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',

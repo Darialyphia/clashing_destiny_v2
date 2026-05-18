@@ -1,4 +1,4 @@
-import { assert, isDefined, type MaybePromise } from '@game/shared';
+import { assert, isDefined } from '@game/shared';
 import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
@@ -10,14 +10,11 @@ import type { BoardSpace } from '../../board/board-space.entity';
 export type SelectingSpaceOnBoardContextOptions = {
   player: Player;
   source: AnyCard;
-  getLabel: (selectedSpaces: BoardSpace<AnyCard>[]) => string;
-  isElligible: (
-    space: BoardSpace<AnyCard>,
-    selectedSpaces: BoardSpace<AnyCard>[]
-  ) => boolean;
-  canCommit: (selectedSpaces: BoardSpace<AnyCard>[]) => boolean;
-  isDone(selectedSpaces: BoardSpace<AnyCard>[]): boolean;
-  timeoutFallback: BoardSpace<AnyCard>[];
+  getLabel: (selectedSpaces: BoardSpace[]) => string;
+  isElligible: (space: BoardSpace, selectedSpaces: BoardSpace[]) => boolean;
+  canCommit: (selectedSpaces: BoardSpace[]) => boolean;
+  isDone(selectedSpaces: BoardSpace[]): boolean;
+  timeoutFallback: BoardSpace[];
   canCancel: boolean;
 };
 
@@ -27,20 +24,17 @@ export class SelectingSpaceOnBoardContext {
     await instance.init();
     return instance;
   }
-  private selectedSpaces: BoardSpace<AnyCard>[] = [];
+  private selectedSpaces: BoardSpace[] = [];
 
-  private isElligible: (
-    space: BoardSpace<AnyCard>,
-    selectedSpaces: BoardSpace<AnyCard>[]
-  ) => boolean;
+  private isElligible: (space: BoardSpace, selectedSpaces: BoardSpace[]) => boolean;
 
-  private _canCommit: (selectedSpaces: BoardSpace<AnyCard>[]) => boolean;
+  private _canCommit: (selectedSpaces: BoardSpace[]) => boolean;
 
-  private isDone: (selectedSpaces: BoardSpace<AnyCard>[]) => boolean;
+  private isDone: (selectedSpaces: BoardSpace[]) => boolean;
 
   readonly player: Player;
 
-  private timeoutFallback: BoardSpace<AnyCard>[];
+  private timeoutFallback: BoardSpace[];
 
   private constructor(
     private game: Game,
@@ -65,7 +59,7 @@ export class SelectingSpaceOnBoardContext {
     };
   }
 
-  private canCommit(selectedSpaces: BoardSpace<AnyCard>[]) {
+  private canCommit(selectedSpaces: BoardSpace[]) {
     if (this.elligibleSpaces.length === 0) return true;
 
     return this._canCommit(selectedSpaces);
@@ -74,9 +68,9 @@ export class SelectingSpaceOnBoardContext {
   async init() {}
 
   get elligibleSpaces() {
-    return this.game.boardSystem.sides
-      .flatMap(side => side.allSpaces)
-      .filter(space => this.isElligible(space, this.selectedSpaces));
+    return this.game.boardSystem.spaces.filter(space =>
+      this.isElligible(space, this.selectedSpaces)
+    );
   }
 
   private async autoCommitIfAble() {
@@ -91,10 +85,10 @@ export class SelectingSpaceOnBoardContext {
 
   async selectSpace(player: Player, spaceId: string) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    const cell = this.game.boardSystem.getBoardSpaceById(spaceId);
-    assert(isDefined(cell), new IllegalTargetError());
-    assert(this.isElligible(cell, this.selectedSpaces), new IllegalTargetError());
-    this.selectedSpaces.push(cell);
+    const space = this.game.boardSystem.getSpaceById(spaceId);
+    assert(isDefined(space), new IllegalTargetError());
+    assert(this.isElligible(space, this.selectedSpaces), new IllegalTargetError());
+    this.selectedSpaces.push(space);
     await this.autoCommitIfAble();
   }
 

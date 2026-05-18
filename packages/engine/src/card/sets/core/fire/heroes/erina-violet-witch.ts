@@ -22,7 +22,6 @@ export const erinaVioletWitch: HeroBlueprint = {
   affinity: AFFINITIES.FIRE,
   advancedAffinity: AFFINITIES.ASTRAL,
   tags: [],
-  atk: 2,
   maxHp: 25,
   canPlay: () => true,
   abilities: [
@@ -32,7 +31,7 @@ export const erinaVioletWitch: HeroBlueprint = {
       description: 'Draw a card.',
       manaCost: 1,
       canUse: (game, card) => {
-        return card.location === CARD_LOCATIONS.BATTLEFIELD;
+        return card.location === CARD_LOCATIONS.BOARD;
       },
       getTargets: noTargets,
       async onResolve(game, card) {
@@ -46,7 +45,6 @@ export const erinaVioletWitch: HeroBlueprint = {
   async onInit(game, card) {},
   async onPlay() {},
   aiHints: {
-    shouldAttack: () => 1,
     shouldPlay: () => 1
   }
 };

@@ -8,9 +8,9 @@ export class SurrenderInput extends Input<typeof schema> {
 
   readonly allowedPhases = [
     GAME_PHASES.DRAW,
-    GAME_PHASES.MAIN,
-    GAME_PHASES.COMBAT,
-    GAME_PHASES.END
+    GAME_PHASES.LEVEL_UP,
+    GAME_PHASES.PLAY_CARD,
+    GAME_PHASES.MAIN
   ];
 
   protected payloadSchema = schema;

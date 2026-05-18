@@ -58,11 +58,7 @@ export class Ability<T extends AbilityOwner>
   get canUse() {
     if (this._isSealed) return false;
 
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.COMBAT,
-      GAME_PHASES.END
-    ];
+    const authorizedPhases: GamePhase[] = [GAME_PHASES.MAIN];
 
     const exhaustCondition = !this.card.isExhausted;
     const timingCondition = this.game.interaction.isInteractive(this.card.player);

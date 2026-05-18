@@ -5,11 +5,11 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card.events';
 import type { BoardSpace } from '../../board/board-space.entity';
 
-export type MovementComponentOptions = {
+export type PositionComponentOptions = {
   position: Point | null;
 };
 
-export class MovementComponent {
+export class PositionComponent {
   coordinates: Vec2 | null;
 
   private _movementsCount = 0;
@@ -17,7 +17,7 @@ export class MovementComponent {
   constructor(
     private game: Game,
     private card: AnyCard,
-    options: MovementComponentOptions
+    options: PositionComponentOptions
   ) {
     this.coordinates = options.position ? Vec2.fromPoint(options.position) : null;
   }
@@ -25,7 +25,7 @@ export class MovementComponent {
   get space() {
     if (!this.coordinates) return null;
 
-    return this.game.boardSystem.getCellAt(this.coordinates);
+    return this.game.boardSystem.getSpaceAt(this.coordinates);
   }
 
   get x() {
@@ -53,12 +53,12 @@ export class MovementComponent {
   }
 
   canMoveTo(point: Point) {
-    const cell = this.game.boardSystem.getCellAt(point);
+    const cell = this.game.boardSystem.getSpaceAt(point);
     if (!cell) return false;
     if (!cell.player?.equals(this.card.player)) return false;
     if (cell.isOccupied) return false;
 
-    return this.card.isValidPosition(cell);
+    return this.card.isValidMovementPosition(cell);
   }
 
   async move(to: BoardSpace) {
@@ -83,5 +83,13 @@ export class MovementComponent {
         to
       })
     );
+  }
+
+  placeOnBoard(space: BoardSpace) {
+    this.coordinates = Vec2.fromPoint(space);
+  }
+
+  removeFromBoard() {
+    this.coordinates = null;
   }
 }

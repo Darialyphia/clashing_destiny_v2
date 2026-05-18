@@ -26,7 +26,7 @@ export class MainPhase implements GamePhaseController, Serializable<EmptyObject>
       this.playersWhoHavePassedThisRound.size === this.game.playerSystem.players.length;
 
     if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.startCombat();
+      await this.game.gamePhaseSystem.endTurn();
     } else {
       await this.game.turnSystem.switchInitiative();
     }

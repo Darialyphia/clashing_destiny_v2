@@ -7,11 +7,11 @@ import type { Game } from '../../game/game';
 import { CardAuraModifierMixin } from '../mixins/aura.mixin';
 import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { Modifier } from '../modifier.entity';
-import { WhileOnBattlefieldModifier } from './while-on-board.modifier';
+import { WhileOnBoardModifier } from './while-on-board.modifier';
 
 export class ProtectorModifier<
   T extends MinionCard | HeroCard
-> extends WhileOnBattlefieldModifier<T> {
+> extends WhileOnBoardModifier<T> {
   constructor(game: Game, source: AnyCard) {
     super(KEYWORDS.PROTECTOR.id, game, source, {
       name: KEYWORDS.PROTECTOR.name,
@@ -23,7 +23,7 @@ export class ProtectorModifier<
             return (
               candidate.isAlly(this.target) &&
               !candidate.equals(this.target) &&
-              candidate.location === CARD_LOCATIONS.BATTLEFIELD
+              candidate.location === CARD_LOCATIONS.BOARD
             );
           },
           getModifiers(candidate) {

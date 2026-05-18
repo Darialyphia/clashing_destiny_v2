@@ -5,8 +5,6 @@ export const GAME_PHASES = {
   LEVEL_UP: 'level_up_phase',
   MAIN: 'main_phase',
   PLAY_CARD: 'play_card_phase',
-  COMBAT: 'combat_phase',
-  END: 'end_phase',
   GAME_END: 'game_end'
 } as const;
 export type GamePhasesDict = typeof GAME_PHASES;
@@ -28,8 +26,6 @@ export type TurnEventName = Values<typeof TURN_EVENTS>;
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
-  START_COMBAT_PHASE: 'start_combat_phase',
-  END_COMBAT_PHASE: 'end_combat_phase',
   END_TURN: 'end_turn',
   PLAYER_WON: 'player_won',
   COMMIT_LEVEL_UP: 'commit_level_up',

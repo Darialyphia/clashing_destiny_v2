@@ -24,9 +24,9 @@ export class PreemptiveRetaliationModifier<
           key: 'dealsDamageFirst',
           interceptor: value => {
             const gamePhaseCtx = game.gamePhaseSystem.getContext();
-            if (gamePhaseCtx.state !== GAME_PHASES.COMBAT) return value;
+            if (gamePhaseCtx.state !== GAME_PHASES.MAIN) return value;
 
-            return !!gamePhaseCtx.ctx.defender?.equals(this.target);
+            return !!this.game.combatSystem.defender?.equals(this.target);
           }
         }),
         ...(options.mixins || [])

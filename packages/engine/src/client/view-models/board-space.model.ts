@@ -57,8 +57,8 @@ export class BoardSpaceViewModel {
   }
 
   get card() {
-    if (!this.data.card) return null;
+    if (!this.data.occupant) return null;
     const entities = this.getEntities();
-    return entities[this.data.card] as unknown as CardViewModel;
+    return entities[this.data.occupant] as unknown as CardViewModel;
   }
 }

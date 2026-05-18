@@ -13,7 +13,7 @@ export class AttackAction implements BoardCellClickRule {
       isDefined(this.client.ui.selectedCard) &&
       this.client.ui.selectedCard.canAttackAt(cell) &&
       this.client.ui.isInteractivePlayer &&
-      state.phase.state === GAME_PHASES.COMBAT &&
+      state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE
     );
   }

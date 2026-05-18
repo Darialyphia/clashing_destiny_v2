@@ -1,8 +1,7 @@
-import { waitFor, type Override } from '@game/shared';
+import { type Override } from '@game/shared';
 import type {
   SerializedOmniscientState,
   SerializedPlayerState,
-  SnapshotDiff,
   PatchBasedSnapshotDiff
 } from '../../game/systems/game-snapshot.system';
 import type {
@@ -173,7 +172,7 @@ export class ClientStateController {
 
     this.state.entities[boardSpace.id] = boardSpace
       .update({
-        card: card.id
+        occupant: card.id
       })
       .clone();
   }
@@ -188,7 +187,7 @@ export class ClientStateController {
 
     this.state.entities[boardSpace.id] = boardSpace
       .update({
-        card: card.id
+        occupant: card.id
       })
       .clone();
   }

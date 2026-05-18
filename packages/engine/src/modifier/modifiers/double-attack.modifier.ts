@@ -36,7 +36,7 @@ export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modif
           }
         }),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.PLAYER_END_TURN,
+          eventName: GAME_EVENTS.TURN_END,
           handler: async () => {
             this.hasAttackedThisturn = false;
           }

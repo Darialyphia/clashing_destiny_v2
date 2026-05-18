@@ -60,7 +60,7 @@ export class SelectingCardOnBoardContext {
     return {
       player: this.player.id,
       selectedCards: this.selectedCards.map(card => card.id),
-      elligibleCards: this.game.boardSystem
+      elligibleCards: this.game.cardSystem
         .getAllCardsInPlay()
         .filter(card => this.isElligible(card, this.selectedCards))
         .map(card => card.id),

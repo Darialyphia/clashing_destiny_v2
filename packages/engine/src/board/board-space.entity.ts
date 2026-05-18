@@ -5,7 +5,7 @@ import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { Interceptable } from '../utils/interceptable';
 import { BOARD_ROWS, type BoardRow } from './map-blueprint';
-import { pointToCellId } from './board-utils';
+import { pointToSpaceId } from './board-utils';
 import { match } from 'ts-pattern';
 
 export type BoardCellInterceptors = {
@@ -16,7 +16,7 @@ export type SerializedCoords = `${string}:${string}`;
 
 export type SerializedBoardSpace = {
   id: string;
-  entityType: 'cell';
+  entityType: 'board-space';
   position: Point;
   player: 'p1' | 'p2';
   occupant: string | null;
@@ -38,7 +38,7 @@ export class BoardSpace
     protected game: Game,
     private options: BoardSpaceOptions
   ) {
-    super(pointToCellId(options.position), game, {
+    super(pointToSpaceId(options.position), game, {
       isWalkable: new Interceptable()
     });
     this.position = Vec2.fromPoint(options.position);
@@ -73,7 +73,7 @@ export class BoardSpace
   }
 
   get occupant(): AnyCard | null {
-    return this.game.cardSystem.getUnitAt(this);
+    return this.game.cardSystem.getCardAt(this);
   }
 
   get row() {
@@ -90,7 +90,7 @@ export class BoardSpace
     return match(row)
       .with(BOARD_ROWS.FRONT, () => {
         return (
-          this.game.boardSystem.cells.find(
+          this.game.boardSystem.spaces.find(
             c =>
               c.player?.equals(player.opponent) &&
               c.row === BOARD_ROWS.FRONT &&
@@ -100,7 +100,7 @@ export class BoardSpace
       })
       .with(BOARD_ROWS.BACK, () => {
         return (
-          this.game.boardSystem.cells.find(
+          this.game.boardSystem.spaces.find(
             c => c.player?.equals(player) && c.row === BOARD_ROWS.FRONT && c.x === this.x
           ) ?? null
         );
@@ -117,7 +117,7 @@ export class BoardSpace
     return match(row)
       .with(BOARD_ROWS.FRONT, () => {
         return (
-          this.game.boardSystem.cells.find(
+          this.game.boardSystem.spaces.find(
             c => c.player?.equals(player) && c.row === BOARD_ROWS.BACK && c.x === this.x
           ) ?? null
         );
@@ -129,11 +129,11 @@ export class BoardSpace
   }
 
   get left() {
-    return this.game.boardSystem.cells.find(c => c.y === this.y && c.x === this.x - 1);
+    return this.game.boardSystem.spaces.find(c => c.y === this.y && c.x === this.x - 1);
   }
 
   get right() {
-    return this.game.boardSystem.cells.find(c => c.y === this.y && c.x === this.x + 1);
+    return this.game.boardSystem.spaces.find(c => c.y === this.y && c.x === this.x + 1);
   }
 
   get adjacent() {
@@ -157,7 +157,7 @@ export class BoardSpace
   serialize(): SerializedBoardSpace {
     return {
       id: this.id,
-      entityType: 'cell',
+      entityType: 'board-space',
       position: this.position,
       player: this.options.player,
       occupant: this.occupant ? this.occupant.id : null

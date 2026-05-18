@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS, CARD_SPEED, type CardSpeed, type JobId } from '../card.enums';
+import { CARD_EVENTS, type CardSpeed, type JobId } from '../card.enums';
 import { CardBeforePlayEvent, CardPlayEvent } from '../card.events';
 import { Ability } from './ability.entity';
 import { GAME_PHASES } from '../../game/game.enums';
@@ -73,6 +73,10 @@ export class SpellCard extends Card<
 
   get speed(): CardSpeed {
     return this.interceptors.speed.getValue(this.blueprint.speed, this);
+  }
+
+  isValidMovementPosition() {
+    return false;
   }
 
   get canBeTargeted(): boolean {
@@ -131,15 +135,8 @@ export class SpellCard extends Card<
     this.abilities.splice(index, 1);
   }
 
-  get canPlayDuringCombatPhase(): boolean {
-    return this.speed === CARD_SPEED.FAST;
-  }
-
   get isCorrectPhaseToPlay() {
-    const validPhases: string[] = this.canPlayDuringCombatPhase
-      ? [GAME_PHASES.MAIN, GAME_PHASES.COMBAT]
-      : [GAME_PHASES.MAIN];
-    return validPhases.includes(this.game.gamePhaseSystem.getContext().state);
+    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
 
   canPlay() {

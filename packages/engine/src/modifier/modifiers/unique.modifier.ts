@@ -18,9 +18,9 @@ export class UniqueModifier<T extends MinionCard | ArtifactCard> extends Modifie
           key: 'canPlay',
           interceptor(value, ctx) {
             if (!value) return value;
-            const cards = ctx.player.boardSide
-              .getAllCardsInPlay()
-              .filter(c => c.blueprintId === ctx.blueprintId);
+            const cards = ctx.player.allCardsInPlay.filter(
+              c => c.blueprintId === ctx.blueprintId
+            );
 
             return cards.length === 0;
           }

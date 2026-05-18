@@ -11,6 +11,7 @@ import {
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedDestinyCard = SerializedCard & {
@@ -48,6 +49,10 @@ export class DestinyCard extends Card<
 
   get expCost(): number {
     return this.interceptors.expCost.getValue(this.blueprint.expCost, this);
+  }
+
+  isValidMovementPosition() {
+    return false;
   }
 
   canPlay(): boolean {

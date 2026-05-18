@@ -334,9 +334,9 @@ export class GameInteractionSystem
       return {
         cancelled: false,
         result: []
-      } as InteractionResult<BoardSpace<T>[]>;
+      } as InteractionResult<BoardSpace[]>;
     } else {
-      return this.game.inputSystem.pause<InteractionResult<BoardSpace<T>[]>>();
+      return this.game.inputSystem.pause<InteractionResult<BoardSpace[]>>();
     }
   }
 

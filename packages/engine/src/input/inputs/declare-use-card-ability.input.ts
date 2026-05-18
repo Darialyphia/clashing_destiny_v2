@@ -18,7 +18,7 @@ const schema = defaultInputSchema.extend({
 export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   readonly name = 'declareUseCardAbility';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.COMBAT, GAME_PHASES.END];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 

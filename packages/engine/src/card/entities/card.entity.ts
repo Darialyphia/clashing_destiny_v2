@@ -32,7 +32,7 @@ import { KeywordManagerComponent } from '../components/keyword-manager.component
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
 import type { BoardSpace } from '../../board/board-space.entity';
-import { MovementComponent } from '../components/movement.component';
+import { PositionComponent } from '../components/position.component';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -111,7 +111,7 @@ export abstract class Card<
 
   readonly isFoil: boolean;
 
-  readonly movement: MovementComponent;
+  readonly position: PositionComponent;
 
   constructor(
     game: Game,
@@ -124,7 +124,7 @@ export abstract class Card<
     this.originalPlayer = player;
     this.blueprint = options.blueprint as any;
     this.isFoil = options.isFoil;
-    this.movement = new MovementComponent(game, this, {
+    this.position = new PositionComponent(game, this, {
       position: null
     });
   }
@@ -240,7 +240,7 @@ export abstract class Card<
     return this._targetedBy;
   }
 
-  abstract isValidPosition(space: BoardSpace): boolean;
+  abstract isValidMovementPosition(space: BoardSpace): boolean;
 
   protected async dispose() {
     await match(this.kind)
@@ -257,6 +257,7 @@ export abstract class Card<
         await this.sendToBanishPile();
       })
       .exhaustive();
+
     await this.game.emit(
       CARD_EVENTS.CARD_DISPOSED,
       new CardDisposedEvent({ card: this })
@@ -317,11 +318,11 @@ export abstract class Card<
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with(CARD_LOCATIONS.RUNE_DECK, () => {
+      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
         this.player.cardManager.removeFromRuneDeck(this);
       })
-      .with(CARD_LOCATIONS.BASE, CARD_LOCATIONS.BATTLEFIELD, () => {
-        this.player.boardSide.remove(this);
+      .with(CARD_LOCATIONS.BOARD, CARD_LOCATIONS.BOARD, () => {
+        this.position.removeFromBoard();
       })
       .exhaustive();
   }
@@ -425,6 +426,10 @@ export abstract class Card<
       : this.blueprint.description;
   }
 
+  get space() {
+    return this.position.space;
+  }
+
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
@@ -446,7 +451,7 @@ export abstract class Card<
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
-      position: this.movement.space?.id ?? null,
+      position: this.space?.id ?? null,
       affinity: this.affinity
     };
   }

@@ -1,4 +1,5 @@
-import type { MatchmakingStrategy, MatchmakingParticipant } from '../matchmaking';
+import { clamp } from '@game/shared';
+import { type MatchmakingStrategy, type MatchmakingParticipant } from '../matchmaking';
 
 export type MMRMatchmakingParticipant<TMeta> = {
   id: string;
@@ -7,8 +8,8 @@ export type MMRMatchmakingParticipant<TMeta> = {
   recentWinrate: number;
   winStreak: number;
   lossStreak: number;
-  isPromotionGame: boolean; // will they go up a ranking division if they win
-  isDemotionGame: boolean; // will they go down a ranking division if they lose
+  isPromotionGame: boolean;
+  isDemotionGame: boolean;
 };
 
 export type MMRMatchmakingOptions = {
@@ -63,7 +64,7 @@ export function createMMRMatchmakingOptions(
     },
     tolerance: {
       mmrToleranceIncreasePerSecond: 0.5,
-      timeBeforeToleranceExpansionInSeconds: 30,
+      timeBeforeToleranceExpansionInSeconds: 15,
       minTolerance: 50,
       maxTolerance: 500,
       ...overrides.tolerance
@@ -103,112 +104,104 @@ export class MMRMatchmakingStrategy<TMeta>
     );
   }
 
-  private calculateWeightedMatchScore(
+  private getMMrDifference(
     a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
     b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
   ): number {
-    const weights = this.options.matching.weights;
-    let totalScore = 0;
+    return Math.abs(a.data.mmr - b.data.mmr);
+  }
 
-    // MMR Similarity Score (0-100)
-    const mmrDifference = Math.abs(a.data.mmr - b.data.mmr);
+  private isMMRMatch(
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ) {
+    const mmrDifference = this.getMMrDifference(a, b);
     const maxAllowedMmrDifference = this.getTolerance(a) + this.getTolerance(b);
 
-    // If MMR difference exceeds tolerance, this is a hard fail
-    if (mmrDifference > maxAllowedMmrDifference) return 0;
+    return mmrDifference <= maxAllowedMmrDifference;
+  }
 
-    const mmrScore = Math.max(0, 100 - (mmrDifference / maxAllowedMmrDifference) * 100);
-    totalScore += (mmrScore * weights.mmrSimilarity) / 100;
+  private getMMRScore(
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ): number {
+    const diff = this.getMMrDifference(a, b);
 
-    // Winrate Similarity Score (0-100)
+    return (
+      Math.max(0, 100 - (diff / (this.getTolerance(a) + this.getTolerance(b))) * 100) *
+      this.options.matching.weights.mmrSimilarity
+    );
+  }
+
+  private getWinrateScore(
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ): number {
     const winrateDifference = Math.abs(a.data.recentWinrate - b.data.recentWinrate);
     const winrateScore = Math.max(0, 100 - (winrateDifference / 0.5) * 100); // 0.5 = 50% max difference
-    totalScore += (winrateScore * weights.winrateSimilarity) / 100;
 
-    // Streak Similarity Score (0-100)
+    return winrateScore * this.options.matching.weights.winrateSimilarity;
+  }
+
+  private getStreakScore(
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ): number {
     const aStreak = a.data.winStreak > 0 ? a.data.winStreak : -a.data.lossStreak;
     const bStreak = b.data.winStreak > 0 ? b.data.winStreak : -b.data.lossStreak;
     const streakDifference = Math.abs(aStreak - bStreak);
     const streakScore = Math.max(0, 100 - (streakDifference / 10) * 100); // 10 = max meaningful streak difference
-    totalScore += (streakScore * weights.streakSimilarity) / 100;
 
-    // Stakes Alignment Score (0-100)
-    const aHighStakes = a.data.isPromotionGame || a.data.isDemotionGame;
-    const bHighStakes = b.data.isPromotionGame || b.data.isDemotionGame;
-
-    let stakesScore = 100; // Default: both normal games
-    if (aHighStakes && bHighStakes) {
-      stakesScore = 100; // Perfect: both high stakes
-    } else if (aHighStakes || bHighStakes) {
-      stakesScore = 50; // Suboptimal: mixed stakes
-    }
-    totalScore += (stakesScore * weights.stakesAlignment) / 100;
-
-    return totalScore;
+    return streakScore * this.options.matching.weights.streakSimilarity;
   }
 
-  getMatchQuality(
+  private getStakesAlignmentScore(
     a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
     b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
-  ): {
-    totalScore: number;
-    breakdown: {
-      mmrScore: number;
-      winrateScore: number;
-      streakScore: number;
-      stakesScore: number;
-    };
-    wouldMatch: boolean;
-  } {
-    const weights = this.options.matching.weights;
-
-    // Calculate individual scores
-    const mmrDifference = Math.abs(a.data.mmr - b.data.mmr);
-    const maxAllowedMmrDifference = this.getTolerance(a) + this.getTolerance(b);
-
-    const mmrScore =
-      mmrDifference > maxAllowedMmrDifference
-        ? 0
-        : Math.max(0, 100 - (mmrDifference / maxAllowedMmrDifference) * 100);
-
-    const winrateDifference = Math.abs(a.data.recentWinrate - b.data.recentWinrate);
-    const winrateScore = Math.max(0, 100 - (winrateDifference / 0.5) * 100);
-
-    const aStreak = a.data.winStreak > 0 ? a.data.winStreak : -a.data.lossStreak;
-    const bStreak = b.data.winStreak > 0 ? b.data.winStreak : -b.data.lossStreak;
-    const streakDifference = Math.abs(aStreak - bStreak);
-    const streakScore = Math.max(0, 100 - (streakDifference / 10) * 100);
-
+  ): number {
     const aHighStakes = a.data.isPromotionGame || a.data.isDemotionGame;
     const bHighStakes = b.data.isPromotionGame || b.data.isDemotionGame;
-    let stakesScore = 100;
-    if (aHighStakes && bHighStakes) stakesScore = 100;
-    else if (aHighStakes || bHighStakes) stakesScore = 50;
 
-    const totalScore =
-      (mmrScore * weights.mmrSimilarity) / 100 +
-      (winrateScore * weights.winrateSimilarity) / 100 +
-      (streakScore * weights.streakSimilarity) / 100 +
-      (stakesScore * weights.stakesAlignment) / 100;
-
-    return {
-      totalScore,
-      breakdown: { mmrScore, winrateScore, streakScore, stakesScore },
-      wouldMatch: totalScore >= this.options.matching.minimumMatchScore
-    };
+    if (aHighStakes && bHighStakes) {
+      return 100 * this.options.matching.weights.stakesAlignment; // Perfect: both high stakes
+    } else if (aHighStakes || bHighStakes) {
+      return 50 * this.options.matching.weights.stakesAlignment; // Suboptimal: mixed stakes
+    }
+    return 100 * this.options.matching.weights.stakesAlignment; // Both normal games
   }
 
-  getTolerance(participant: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>) {
-    const timeSpentInSeconds = (Date.now() - participant.joinedAt) / 1000;
+  private calculateWeightedMatchScore(
+    a: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>,
+    b: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ): number {
+    const isMMRMatch = this.isMMRMatch(a, b);
 
-    return timeSpentInSeconds >
-      this.options.tolerance.timeBeforeToleranceExpansionInSeconds
-      ? Math.min(
-          this.options.tolerance.minTolerance +
-            this.options.tolerance.mmrToleranceIncreasePerSecond * timeSpentInSeconds,
-          this.options.tolerance.maxTolerance
-        )
-      : this.options.tolerance.minTolerance;
+    // If MMR difference exceeds tolerance, this is a hard fail
+    if (!isMMRMatch) return 0;
+
+    const mmrScore = this.getMMRScore(a, b);
+    const winrateScore = this.getWinrateScore(a, b);
+    const streakScore = this.getStreakScore(a, b);
+    const stakesScore = this.getStakesAlignmentScore(a, b);
+
+    return (mmrScore + winrateScore + streakScore + stakesScore) / 100;
+  }
+
+  private getTolerance(
+    participant: MatchmakingParticipant<MMRMatchmakingParticipant<TMeta>>
+  ) {
+    const timeSpentInSeconds = (Date.now() - participant.joinedAt) / 1000;
+    const timeToExpandTolerance =
+      timeSpentInSeconds - this.options.tolerance.timeBeforeToleranceExpansionInSeconds;
+
+    const toleranceIncrease =
+      this.options.tolerance.mmrToleranceIncreasePerSecond * timeToExpandTolerance;
+
+    return clamp(
+      this.options.tolerance.minTolerance + toleranceIncrease,
+      this.options.tolerance.minTolerance,
+      this.options.tolerance.maxTolerance
+    );
   }
 
   processUnmatched(

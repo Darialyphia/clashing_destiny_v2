@@ -22,6 +22,7 @@ import { GAME_PHASES } from './game.enums';
 import { TurnSystem } from './systems/turn.system';
 import { CARDS_DICTIONARY } from '../card/sets';
 import { generateRandomString } from '../utils/utils';
+import { CombatSystem } from './systems/combat.system';
 
 export type GameOptions = {
   id: string;
@@ -64,6 +65,8 @@ export class Game implements Serializable<SerializedGame> {
   readonly boardSystem = new BoardSystem(this);
 
   readonly turnSystem = new TurnSystem(this);
+
+  readonly combatSystem = new CombatSystem(this);
 
   // readonly unitSystem = new UnitSystem(this);
 
@@ -123,7 +126,7 @@ export class Game implements Serializable<SerializedGame> {
     );
     now = performance.now();
 
-    this.boardSystem.initialize();
+    await this.boardSystem.initialize();
     console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
@@ -145,6 +148,10 @@ export class Game implements Serializable<SerializedGame> {
 
     this.inputSystem.initialize();
     console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
+    await this.combatSystem.initialize();
+    console.log(`Combat system initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));

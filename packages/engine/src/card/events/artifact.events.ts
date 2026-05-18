@@ -26,7 +26,7 @@ export class ArtifactDurabilityEvent extends TypedSerializableEvent<
 }
 
 export class ArtifactEquipedEvent extends TypedSerializableEvent<
-  { card: ArtifactCard; position: BoardSpace<ArtifactCard> },
+  { card: ArtifactCard; position: BoardSpace },
   { card: SerializedArtifactCard; position: SerializedBoardSpace }
 > {
   serialize() {

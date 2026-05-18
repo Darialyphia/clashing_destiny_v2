@@ -128,11 +128,10 @@ export const getJobById = (id: JobId): Job => {
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
-  RUNE_DECK: 'runeDeck',
+  DESTINY_DECK: 'destinyDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
-  BASE: 'base',
-  BATTLEFIELD: 'battlefield'
+  BOARD: 'board'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 

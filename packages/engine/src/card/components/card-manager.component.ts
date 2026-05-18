@@ -103,7 +103,8 @@ export class CardManagerComponent {
     if (mainDeckCard) return { card: mainDeckCard, location: CARD_LOCATIONS.MAIN_DECK };
 
     const runeDeckCard = this.destinyDeck.cards.find(card => card.id === id);
-    if (runeDeckCard) return { card: runeDeckCard, location: CARD_LOCATIONS.RUNE_DECK };
+    if (runeDeckCard)
+      return { card: runeDeckCard, location: CARD_LOCATIONS.DESTINY_DECK };
 
     const discardPileCard = [...this.discardPile].find(card => card.id === id);
     if (discardPileCard)
@@ -113,12 +114,8 @@ export class CardManagerComponent {
     if (banishPileCard)
       return { card: banishPileCard, location: CARD_LOCATIONS.BANISH_PILE };
 
-    const baseCard = this.player.boardSide.getCardInBase(id);
-    if (baseCard) return { card: baseCard, location: CARD_LOCATIONS.BASE };
-
-    const battlefieldCard = this.player.boardSide.getCardInBattlefield(id);
-    if (battlefieldCard)
-      return { card: battlefieldCard, location: CARD_LOCATIONS.BATTLEFIELD };
+    const baseCard = this.player.allCardsInPlay.find(card => card.id === id);
+    if (baseCard) return { card: baseCard, location: CARD_LOCATIONS.BOARD };
 
     return null;
   }

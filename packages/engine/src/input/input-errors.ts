@@ -43,6 +43,12 @@ export class NotCurrentPlayerError extends InputError {
   }
 }
 
+export class CannotMoveManuallyError extends InputError {
+  constructor() {
+    super('This minion cannot be moved manually.');
+  }
+}
+
 export class TooManyReplacesError extends InputError {
   constructor() {
     super('You cannot replace any more cards this turn.');

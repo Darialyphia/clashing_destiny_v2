@@ -37,7 +37,7 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard; position: BoardSpace<MinionCard> },
+  { card: MinionCard; position: BoardSpace },
   { card: SerializedMinionCard; position: SerializedBoardSpace }
 > {
   serialize() {

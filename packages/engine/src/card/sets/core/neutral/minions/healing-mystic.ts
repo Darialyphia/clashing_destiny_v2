@@ -1,10 +1,6 @@
 import dedent from 'dedent';
 import { defineAbility, type MinionBlueprint } from '../../../../card-blueprint';
-import {
-  defaultCardArt,
-  isOnBoard,
-  singleMinionTargetRules
-} from '../../../../card-utils';
+import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
@@ -45,7 +41,10 @@ export const healingMystic: MinionBlueprint = {
       description: 'Heal a minion for 2.',
       manaCost: 1,
       canUse: (game, card) => {
-        return isOnBoard(card) && singleMinionTargetRules.canPlay(game, card);
+        return (
+          card.location === CARD_LOCATIONS.BOARD &&
+          singleMinionTargetRules.canPlay(game, card)
+        );
       },
       getTargets: (game, card) =>
         singleMinionTargetRules.getTargets({

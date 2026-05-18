@@ -44,7 +44,7 @@ export const minionOrHeroTargetRules = {
       predicate: (c: MinionCard | HeroCard) => boolean = () => true
     ) => {
       return (
-        [...card.player.allAllies, ...card.player.allEnemies].filter(
+        [...card.player.minions, card.player.hero].filter(
           c => c.canBeTargeted(card) && predicate(c)
         ).length >= min
       );
@@ -93,7 +93,7 @@ export const minionOrHeroTargetRules = {
           }
 
           return (
-            [...card.player.allAllies, ...card.player.allEnemies].some(enemy =>
+            [...card.player.minions, card.player.hero].some(enemy =>
               enemy.equals(candidate)
             ) &&
             candidate.canBeTargeted(card) &&
@@ -166,7 +166,7 @@ export const singleEnemyTargetRules = {
     card: AnyCard,
     predicate?: (c: MinionCard | HeroCard) => boolean
   ) => {
-    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+    const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
       if (!isMinion(candidate) && !isHero(candidate)) return false;
 
       return (
@@ -224,7 +224,7 @@ export const singleAllyTargetRules = {
     card: AnyCard,
     predicate?: (c: MinionCard | HeroCard) => boolean
   ) => {
-    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+    const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
       if (!isMinion(candidate) && !isHero(candidate)) return false;
 
       return (
@@ -280,7 +280,7 @@ export const singleEnemyMinionTargetRules = {
     card: AnyCard,
     predicate?: (c: MinionCard) => boolean
   ) => {
-    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+    const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
       if (!isMinion(candidate)) return false;
 
       return (
@@ -337,7 +337,7 @@ export const singleAllyMinionTargetRules = {
     card: AnyCard,
     predicate?: (c: MinionCard) => boolean
   ) => {
-    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+    const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
       if (!isMinion(candidate)) return false;
 
       return (
@@ -405,7 +405,7 @@ export const singleMinionTargetRules = {
     card: AnyCard,
     predicate?: (c: MinionCard) => boolean
   ) => {
-    const elligible = game.boardSystem.getAllCardsInPlay().filter(candidate => {
+    const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
       if (!isMinion(candidate)) return false;
 
       return candidate.canBeTargeted(card) && predicate?.(candidate);
@@ -466,7 +466,7 @@ export const singleArtifactTargetRules = {
     predicate: (c: ArtifactCard) => boolean = () => true
   ) {
     return (
-      game.boardSystem.getAllCardsInPlay().filter(c => isArtifact(c) && predicate(c))
+      game.cardSystem.getAllCardsInPlay().filter(c => isArtifact(c) && predicate(c))
         .length > 0
     );
   },
@@ -504,7 +504,7 @@ export const singleArtifactTargetRules = {
         }
 
         return (
-          game.boardSystem
+          game.cardSystem
             .getAllCardsInPlay()
             .some(artifact => artifact.equals(candidate)) &&
           !selectedCards.some(selected => selected.equals(candidate)) &&
@@ -631,7 +631,7 @@ export const equipWeapon = (options: {
     id: 'equip-weapon-ability',
     description: '@Equip Weapon@',
     label: 'Equip Weapon',
-    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BASE,
+    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BOARD,
     getTargets: () => Promise.resolve([]),
     manaCost: options.manaCost,
     durabilityCost: options.durabilityCost,
@@ -662,9 +662,3 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
 });
 
 export const noTargets = () => Promise.resolve({ cancelled: false as const, result: [] });
-
-export const isOnBoard = (card: AnyCard) => {
-  return (
-    card.location === CARD_LOCATIONS.BASE || card.location === CARD_LOCATIONS.BATTLEFIELD
-  );
-};

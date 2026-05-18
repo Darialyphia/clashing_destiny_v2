@@ -16,8 +16,7 @@ export class PassGlobalAction implements GlobalActionRule {
 
   shouldDisplay(state: GameClientState): boolean {
     return (
-      (state.phase.state === GAME_PHASES.MAIN ||
-        state.phase.state === GAME_PHASES.COMBAT) &&
+      state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
       this.client.playerId === state.currentPlayer
     );

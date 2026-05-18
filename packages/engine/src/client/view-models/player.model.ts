@@ -98,10 +98,6 @@ export class PlayerViewModel {
     return entity as PlayerViewModel;
   }
 
-  get boardSide() {
-    return this.data.boardSide;
-  }
-
   get hero() {
     if (!this.data.hero) return null;
     return this.getEntities()[this.data.hero] as CardViewModel;

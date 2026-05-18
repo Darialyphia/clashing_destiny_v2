@@ -21,7 +21,7 @@ export class SetupRankedGameUsecase
       disableTurnTimers: false,
       teachingMode: false
     });
-    // await this.ctx.gameRepo.scheduleCancellation(game);
+    await this.ctx.gameRepo.scheduleCancellation(game);
     await this.ctx.gameRepo.save(game);
 
     return { success: true };

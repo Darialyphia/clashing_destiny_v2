@@ -14,7 +14,7 @@ import {
 } from '../modifier/modifier.entity';
 import { CARD_EVENTS } from '../card/card.enums';
 import type { CardEventMap } from '../card/card.events';
-import { COMBAT_EVENTS, type CombatEventMap } from './phases/combat.phase';
+import { COMBAT_EVENTS, type CombatEventMap } from './systems/combat.system';
 import { PLAYER_EVENTS } from '../player/player.enums';
 import type { PlayerEventMap } from '../player/player.events';
 import { ABILITY_EVENTS, type AbilityEventMap } from '../card/events/ability.events';

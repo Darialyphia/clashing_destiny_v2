@@ -28,7 +28,6 @@ export class KickFromLobbyUseCase {
     const isOwner = lobby.isOwner(input.userId);
 
     if (isOwner) {
-      await this.ctx.lobbyUserRepo.deleteByLobbyId(lobby.id);
       await this.ctx.lobbyRepo.delete(lobby.id);
     } else {
       await this.ctx.lobbyUserRepo.delete(lobbyUser[0].id);

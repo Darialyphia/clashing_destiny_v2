@@ -1,5 +1,5 @@
 import type { BoardSpace, SerializedBoardSpace } from '../board/board-space.entity';
-import type { AttackTarget } from '../game/phases/combat.phase';
+import type { AttackTarget } from '../game/systems/combat.system';
 import type { CombatDamage, Damage, DamageType } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS, CardLocation } from './card.enums';

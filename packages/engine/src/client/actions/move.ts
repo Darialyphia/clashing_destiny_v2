@@ -29,7 +29,7 @@ export class MoveAction implements BoardCellClickRule {
       payload: {
         playerId: this.client.playerId,
         cardId: this.client.ui.selectedCard!.id,
-        index: cell.position.index
+        spaceId: cell.id
       }
     });
     this.client.ui.unselect();

@@ -3,48 +3,37 @@ import {
   isDefined,
   StateMachine,
   stateTransition,
+  type MaybePromise,
   type Nullable,
   type Serializable,
   type Values
 } from '@game/shared';
-import type { Game } from '../game';
-import type { GamePhaseController } from './game-phase';
-import type { HeroCard } from '../../card/entities/hero.entity';
+import { System } from '../../system';
 import type { MinionCard } from '../../card/entities/minion.entity';
-import { CorruptedGamephaseContextError, GameError } from '../game-error';
-import { CombatDamage } from '../../utils/damage';
-import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import type { HeroCard } from '../../card/entities/hero.entity';
 import {
   COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
-  GAME_PHASE_TRANSITIONS,
-  TURN_EVENTS,
   type CombatStep,
   type CombatStepTransition
 } from '../game.enums';
-import type { Player } from '../../player/player.entity';
-import { TurnPassEvent } from '../systems/turn.system';
+import { CorruptedGamephaseContextError, GameError } from '../game-error';
+import { CombatDamage } from '../../utils/damage';
+import { isMinion } from '../../card/card-utils';
+import { TypedSerializableEvent } from '../../utils/typed-emitter';
 
-export type Attacker = MinionCard | HeroCard;
+export type Attacker = MinionCard;
 export type AttackTarget = MinionCard | HeroCard;
 
-export type SerializedCombatPhase = {
+export type SerializedCombatState = {
   attacker: string | null;
-  target: string | null;
+  defender: string | null;
   step: CombatStep;
   potentialTargets: string[];
 };
 
-export class CombatPhase
-  extends StateMachine<CombatStep, CombatStepTransition>
-  implements GamePhaseController, Serializable<SerializedCombatPhase>
-{
-  attacker: Attacker | null = null;
-  defender: AttackTarget | null = null;
-
-  private playersWhoHavePassedThisRound: Set<Player> = new Set();
-
-  constructor(private game: Game) {
+export class CombatStateMachine extends StateMachine<CombatStep, CombatStepTransition> {
+  constructor() {
     super(COMBAT_STEPS.DECLARE_ATTACKER);
 
     this.addTransitions([
@@ -70,14 +59,43 @@ export class CombatPhase
       )
     ]);
   }
+}
+
+export class CombatSystem
+  extends System<never>
+  implements Serializable<SerializedCombatState>
+{
+  private _attacker: Attacker | null = null;
+  private _defender: AttackTarget | null = null;
+
+  private stateMachine = new CombatStateMachine();
+
+  initialize(): MaybePromise<void> {}
+  shutdown() {}
+
+  get attacker() {
+    return this._attacker;
+  }
+
+  get defender() {
+    return this._defender;
+  }
+
+  get state() {
+    return this.stateMachine.getState();
+  }
 
   get potentialTargets(): Nullable<AttackTarget[]> {
     return this.attacker?.potentialAttackTargets;
   }
 
+  get isCombatOngoing() {
+    return this.stateMachine.getState() !== COMBAT_STEPS.DECLARE_ATTACKER;
+  }
+
   async declareAttacker(attacker: Attacker) {
     assert(
-      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED),
+      this.stateMachine.can(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED),
       new WrongCombatStepError()
     );
     await this.game.emit(
@@ -85,9 +103,10 @@ export class CombatPhase
       new BeforeDeclareAttackEvent({ attacker })
     );
 
-    this.attacker = attacker;
+    this._attacker = attacker;
 
-    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_DECLARED);
+
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK,
       new AfterDeclareAttackEvent({ attacker })
@@ -96,7 +115,7 @@ export class CombatPhase
 
   async declareAttackTarget(target: AttackTarget) {
     assert(
-      this.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
+      this.stateMachine.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
       new WrongCombatStepError()
     );
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
@@ -106,10 +125,10 @@ export class CombatPhase
       new BeforeDeclareAttackTargetEvent({ target, attacker: this.attacker })
     );
 
-    this.defender = target;
+    this._defender = target;
     await this.attacker.exhaust();
 
-    this.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
       new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
@@ -120,30 +139,12 @@ export class CombatPhase
 
   changeTarget(newTarget: AttackTarget) {
     if (!this.defender) return;
-    this.defender = newTarget;
+    this._defender = newTarget;
   }
 
   changeAttacker(newAttacker: Attacker) {
     if (!this.attacker) return;
-    this.attacker = newAttacker;
-  }
-
-  async pass(player: Player) {
-    if (!player.equals(this.game.turnSystem.initiativePlayer)) return;
-    await this.game.emit(
-      TURN_EVENTS.TURN_PASS,
-      new TurnPassEvent({ player: this.game.turnSystem.initiativePlayer })
-    );
-
-    this.playersWhoHavePassedThisRound.add(player);
-    const allPlayersPassed =
-      this.playersWhoHavePassedThisRound.size === this.game.playerSystem.players.length;
-
-    if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.endCombatPhase();
-    } else {
-      await this.game.turnSystem.switchInitiative();
-    }
+    this._attacker = newAttacker;
   }
 
   private async resolveCombat() {
@@ -153,8 +154,8 @@ export class CombatPhase
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
       new BeforeResolveCombatEvent({
-        attacker: this.attacker,
-        target: this.defender
+        attacker: this.attacker!,
+        target: this.defender!
       })
     );
 
@@ -168,11 +169,13 @@ export class CombatPhase
       })
     );
 
-    if (this.attacker.shouldSwitchInitiativeAfterAttacking(this.defender)) {
+    if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
       await this.game.turnSystem.switchInitiative();
     }
 
-    this.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
+    this._attacker = null;
+    this._defender = null;
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
   }
 
   private async performAttacks() {
@@ -183,7 +186,7 @@ export class CombatPhase
     const canResolve = defender.isAlive && attacker.isAlive;
     if (canResolve) {
       const attackerFirst = attacker.dealsDamageFirst;
-      const defenderFirst = defender.dealsDamageFirst;
+      const defenderFirst = isMinion(defender) && defender.dealsDamageFirst;
 
       const performAtttackerStrike = async () => {
         if (defender.isAlive) {
@@ -195,7 +198,10 @@ export class CombatPhase
         if (!attacker.isAlive) return;
 
         const shouldStrikeBack =
-          defender.canRetaliate(attacker) && attacker.canBeRetaliatedBy(defender);
+          isMinion(defender) &&
+          defender.canRetaliate(attacker) &&
+          attacker.canBeRetaliatedBy(defender);
+
         if (!shouldStrikeBack) return;
 
         await defender.dealDamage(attacker, new CombatDamage(defender));
@@ -218,35 +224,12 @@ export class CombatPhase
     }
   }
 
-  private async end() {
-    this.game.interaction.onInteractionEnd();
-    await this.game.gamePhaseSystem.sendTransition(
-      GAME_PHASE_TRANSITIONS.END_COMBAT_PHASE
-    );
-    await this.game.inputSystem.askForPlayerInput();
-  }
-
-  async cancelAttack() {
-    assert(this.can(COMBAT_STEP_TRANSITIONS.CANCEL), new WrongCombatStepError());
-    this.attacker = null;
-    this.defender = null;
-    this.dispatch(COMBAT_STEP_TRANSITIONS.CANCEL);
-  }
-
-  get step() {
-    return this.getState();
-  }
-
-  async onEnter() {}
-
-  async onExit() {}
-
-  serialize(): SerializedCombatPhase {
+  serialize() {
     return {
       attacker: this.attacker?.id ?? null,
-      target: this.defender?.id ?? null,
-      step: this.getState(),
-      potentialTargets: this.potentialTargets?.map(t => t.id) ?? []
+      defender: this.defender?.id ?? null,
+      step: this.stateMachine.getState(),
+      potentialTargets: this.potentialTargets?.map(target => target.id) ?? []
     };
   }
 }

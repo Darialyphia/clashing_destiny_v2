@@ -16,10 +16,11 @@ import { ArtifactCard } from './entities/artifact.entity';
 import { MinionCard } from './entities/minion.entity';
 import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
-import { CARD_KINDS, type CardKind } from './card.enums';
+import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { DestinyCard } from './entities/destiny.entity';
 import { TrapCard } from './entities/trap.entity';
+import type { BoardSpace } from '../board/board-space.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -53,6 +54,10 @@ export class CardSystem extends System<CardSystemOptions> {
     return this.cardMap.get(id) as T | undefined;
   }
 
+  getAllCardsInPlay() {
+    return this.cards.filter(card => card.location === CARD_LOCATIONS.BOARD);
+  }
+
   get cards() {
     return [...this.cardMap.values()];
   }
@@ -71,7 +76,8 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new SpellCard(this.game, player, {
             id,
-            blueprint
+            blueprint,
+            isFoil
           } as CardOptions<SpellBlueprint>)
       )
       .with(
@@ -79,7 +85,8 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new ArtifactCard(this.game, player, {
             id,
-            blueprint
+            blueprint,
+            isFoil
           } as CardOptions<ArtifactBlueprint>)
       )
       .with(
@@ -87,7 +94,8 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new MinionCard(this.game, player, {
             id,
-            blueprint
+            blueprint,
+            isFoil
           } as CardOptions<MinionBlueprint>)
       )
       .with(
@@ -95,7 +103,8 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new HeroCard(this.game, player, {
             id,
-            blueprint
+            blueprint,
+            isFoil
           } as CardOptions<HeroBlueprint>)
       )
       .with(
@@ -103,7 +112,8 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new DestinyCard(this.game, player, {
             id,
-            blueprint
+            blueprint,
+            isFoil
           } as CardOptions<DestinyBlueprint>)
       )
       .with(
@@ -119,6 +129,14 @@ export class CardSystem extends System<CardSystemOptions> {
 
     this.cardMap.set(card.id, card);
     return card as any;
+  }
+
+  getCardAt(space: BoardSpace) {
+    return (
+      this.cards.find(card => {
+        return card.space?.equals(space);
+      }) ?? null
+    );
   }
 
   getLastPlayedCard<T extends AnyCard = AnyCard>(

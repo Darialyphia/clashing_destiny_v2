@@ -1,12 +1,10 @@
 import { CardManagerComponent } from '../card/components/card-manager.component';
 import { type Game } from '../game/game';
-import { assert, type MaybePromise, type Serializable } from '@game/shared';
+import { assert, isDefined, type MaybePromise, type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { NotEnoughManaError } from '../card/card-errors';
 import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
-import { GAME_EVENTS } from '../game/game.events';
-import { PlayerTurnEvent } from './player.events';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { LockedModifier } from '../modifier/modifiers/locked.modifier';
@@ -14,6 +12,7 @@ import { cloneDeep } from 'lodash-es';
 import { LevelManagerComponent } from './components/level-manager.component';
 import { ManaManagerComponent } from './components/mana-manager.component';
 import type { Affinity } from '../card/card.enums';
+import { isMinion } from '../card/card-utils';
 
 export type PlayerOptions = {
   id: string;
@@ -43,7 +42,6 @@ export type SerializedPlayer = {
   maxLevel: number;
   hero: string;
   destinies: string[];
-  boardSide: SerializedBoardSide;
   unlockedAffinities: Affinity[];
 };
 
@@ -69,8 +67,6 @@ export class Player
   extends EntityWithModifiers<PlayerInterceptors>
   implements Serializable<SerializedPlayer>
 {
-  readonly boardSide: BoardSide;
-
   readonly cardManager: CardManagerComponent;
 
   readonly cardTracker: CardTrackerComponent;
@@ -84,12 +80,13 @@ export class Player
 
   private options: PlayerOptions;
 
+  hasPassedThisRound = false;
+
   constructor(game: Game, options: PlayerOptions) {
     super(options.id, game, makeInterceptors());
     this.options = cloneDeep(options);
     this.game = game;
     this.cardTracker = new CardTrackerComponent(game, this);
-    this.boardSide = new BoardSide(this.game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true,
@@ -149,12 +146,40 @@ export class Player
     return this.game.boardSystem.getRow(this.frontRowIndex);
   }
 
+  get cardsInFrontRow() {
+    return this.frontRow.map(space => space.occupant).filter(isDefined);
+  }
+
+  get minionsInFrontRow() {
+    return this.cardsInFrontRow.filter(isMinion);
+  }
+
   get backRowIndex() {
     return this.isPlayer1 ? 3 : 0;
   }
 
   get backRow() {
     return this.game.boardSystem.getRow(this.backRowIndex);
+  }
+
+  get cardsInBackRow() {
+    return this.backRow.map(space => space.occupant).filter(isDefined);
+  }
+
+  get minionsInBackRow() {
+    return this.cardsInBackRow.filter(isMinion);
+  }
+
+  get allCardsInPlay() {
+    return [...this.cardsInFrontRow, ...this.cardsInBackRow];
+  }
+
+  get minions() {
+    return [...this.minionsInFrontRow, ...this.minionsInBackRow];
+  }
+
+  get enemyMinions() {
+    return this.opponent.minions;
   }
 
   get unlockedAffinities() {
@@ -179,12 +204,18 @@ export class Player
     await ability.use(onResolved);
   }
 
+  get hasInitiative() {
+    return this.game.turnSystem.initiativePlayer.equals(this);
+  }
+
+  passTurn() {
+    this.hasPassedThisRound = true;
+  }
+
   async startTurn() {
-    await this.game.emit(
-      GAME_EVENTS.PLAYER_START_TURN,
-      new PlayerTurnEvent({ player: this })
-    );
-    for (const card of this.boardSide.getAllCardsInPlay()) {
+    this.hasPassedThisRound = false;
+
+    for (const card of this.allCardsInPlay) {
       if (card.shouldWakeUpAtTurnStart) {
         await card.wakeUp();
       }
@@ -252,7 +283,6 @@ export class Player
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,
       hero: this.hero.id,
       destinies: this.levelManager.destinies.map(destiny => destiny.id),
-      boardSide: this.boardSide.serialize(),
       unlockedAffinities: this.unlockedAffinities
     };
   }

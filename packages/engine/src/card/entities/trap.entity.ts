@@ -11,6 +11,7 @@ import {
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedTrapCard = SerializedCard & {
@@ -50,6 +51,10 @@ export class TrapCard extends Card<
 
   get canAffordTriggerCost(): boolean {
     return this.player.mana >= this.triggerCost;
+  }
+
+  isValidMovementPosition(space: BoardSpace): boolean {
+    return space.occupant === null && space.player?.equals(this.player);
   }
 
   canPlay(): boolean {
@@ -94,7 +99,7 @@ export class TrapCard extends Card<
       CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
       async event => {
         if (!event.data.card.equals(this)) return;
-        if (event.data.from === CARD_LOCATIONS.BASE) {
+        if (event.data.from === CARD_LOCATIONS.BOARD) {
           stopTrigger();
           stopLocationWatch();
         }

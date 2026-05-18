@@ -352,9 +352,8 @@ export class CardViewModel {
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      state.phase.state === GAME_PHASES.COMBAT &&
-      state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
-      state.phase.ctx.potentialTargets.some(id => id === this.id) &&
+      state.combat.step === COMBAT_STEPS.DECLARE_TARGET &&
+      state.combat.potentialTargets.some(id => id === this.id) &&
       client.getActivePlayerId() === client.playerId;
 
     return canSelect || canAttack;
@@ -381,15 +380,13 @@ export class CardViewModel {
   }
 
   get isAttacking() {
-    const relevantKinds: CardKind[] = [CARD_KINDS.MINION, CARD_KINDS.HERO];
+    const relevantKinds: CardKind[] = [CARD_KINDS.MINION];
     if (!relevantKinds.includes(this.kind)) {
       return false;
     }
     const state = this.getClient().state;
 
-    return (
-      state.phase.state === GAME_PHASES.COMBAT && state.phase.ctx.attacker === this.id
-    );
+    return state.combat.attacker === this.id;
   }
 
   get canMove() {

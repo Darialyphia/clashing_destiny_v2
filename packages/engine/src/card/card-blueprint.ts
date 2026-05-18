@@ -140,12 +140,10 @@ export type HeroBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;
-  atk: number;
   maxHp: number;
   abilities: AbilityBlueprint<HeroCard, Target>[];
   aiHints: {
     shouldPlay: (game: Game, card: HeroCard) => number;
-    shouldAttack: (game: Game, card: HeroCard) => number;
   };
 };
 

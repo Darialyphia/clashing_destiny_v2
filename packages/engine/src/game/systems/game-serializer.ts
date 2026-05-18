@@ -14,7 +14,6 @@ import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
-import type { SerializedBoard } from '../../board/board-side.entity';
 import type { AnyObject } from '@game/shared';
 import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
@@ -24,6 +23,7 @@ import { CARD_LOCATIONS } from '../../card/card.enums';
 import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 import type { SerializedBoardSpace } from '../../board/board-space.entity';
+import type { SerializedCombatState } from './combat.system';
 
 export type SerializedEntity =
   | SerializedMinionCard
@@ -47,6 +47,7 @@ export type SerializedOmniscientState = {
   players: string[];
   currentPlayer: string;
   turnCount: number;
+  combat: SerializedCombatState;
 };
 
 export type SnapshotDiff = {
@@ -59,6 +60,7 @@ export type SnapshotDiff = {
   turnCount: number;
   currentPlayer: string;
   players: string[];
+  combat: SerializedCombatState;
 };
 
 export type SerializedPlayerState = SerializedOmniscientState;
@@ -161,7 +163,7 @@ export class GameSerializer {
         entities[modifier.id] = modifier.serialize();
       });
     });
-    this.game.boardSystem.boardSpaces.forEach(space => {
+    this.game.boardSystem.spaces.forEach(space => {
       entities[space.id] = space.serialize();
       space.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
@@ -178,7 +180,8 @@ export class GameSerializer {
       interaction: this.game.interaction.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
       currentPlayer: this.game.interaction.interactivePlayer.id,
-      turnCount: this.game.turnSystem.elapsedTurns
+      turnCount: this.game.turnSystem.elapsedTurns,
+      combat: this.game.combatSystem.serialize()
     };
   }
 
@@ -238,8 +241,7 @@ export class GameSerializer {
       if (card.player.id === playerId) return;
       if (
         card.location === CARD_LOCATIONS.BANISH_PILE ||
-        card.location === CARD_LOCATIONS.BASE ||
-        card.location === CARD_LOCATIONS.BATTLEFIELD ||
+        card.location === CARD_LOCATIONS.BOARD ||
         card.location === CARD_LOCATIONS.DISCARD_PILE
       ) {
         return;
@@ -299,7 +301,8 @@ export class GameSerializer {
       interaction: state.interaction,
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
-      players: state.players
+      players: state.players,
+      combat: state.combat
     };
   }
 }

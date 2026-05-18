@@ -34,7 +34,7 @@ export class SpellboostModifier<T extends AnyCard> extends Modifier<T> {
             return (
               isSpell(event.data.card) &&
               (this.target.location === CARD_LOCATIONS.HAND ||
-                this.target.location === CARD_LOCATIONS.RUNE_DECK)
+                this.target.location === CARD_LOCATIONS.DESTINY_DECK)
             );
           },
           handler: async () => {

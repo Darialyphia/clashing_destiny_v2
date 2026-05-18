@@ -23,10 +23,10 @@ export function assertSerializedCoords(str: string): asserts str is SerializedCo
   return assert(isDefined(x) && isDefined(y), 'Invalid serialized coordinates');
 }
 
-export const pointToCellId = (point: Point): SerializedCoords => `${point.x}:${point.y}`;
+export const pointToSpaceId = (point: Point): SerializedCoords => `${point.x}:${point.y}`;
 
-export const cellIdToPoint = (cellId: SerializedCoords): Point => {
-  const [x, y] = cellId.split(':').map(Number);
+export const spaceIdToPoint = (spaceId: SerializedCoords): Point => {
+  const [x, y] = spaceId.split(':').map(Number);
 
   return { x, y };
 };
