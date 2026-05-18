@@ -153,31 +153,12 @@ export class ClientStateController {
       return this.onMinionSummoned(event);
     }
 
-    if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
-      return this.onArtifactEquiped(event);
-    }
-
     if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
       return this.onAfterChangePhase(event);
     }
   }
 
   private async onMinionSummoned(event: { event: SerializedEvent<'MINION_SUMMONED'> }) {
-    const card = this.buildViewModel(event.event.card) as CardViewModel;
-    this.state.entities[card.id] = card;
-
-    const boardSpace = Object.values(this.state.entities).find(
-      e => e.id === event.event.position.id
-    )! as BoardSpaceViewModel;
-
-    this.state.entities[boardSpace.id] = boardSpace
-      .update({
-        occupant: card.id
-      })
-      .clone();
-  }
-
-  private async onArtifactEquiped(event: { event: SerializedEvent<'ARTIFACT_EQUIPED'> }) {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
 

@@ -3,7 +3,6 @@ import { defaultInputSchema, Input } from '../input';
 import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import { IllegalAbilityError, UnknownAbilityError } from '../input-errors';
-import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
@@ -32,7 +31,6 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
       .with(
         P.instanceOf(MinionCard),
         P.instanceOf(HeroCard),
-        P.instanceOf(ArtifactCard),
         P.instanceOf(SpellCard),
         card =>
           card.abilities.find(ability => ability.abilityId === this.payload.abilityId) ||

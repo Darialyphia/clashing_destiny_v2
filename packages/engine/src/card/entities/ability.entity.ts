@@ -7,7 +7,6 @@ import {
   type SerializedAbility
 } from '../card-blueprint';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Card } from './card.entity';
@@ -20,7 +19,7 @@ import {
   AbilityBeforeUseEvent
 } from '../events/ability.events';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SpellCard;
+export type AbilityOwner = MinionCard | HeroCard | SpellCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;

@@ -11,7 +11,6 @@ import type {
   Affinity,
   CardSpeed
 } from './card.enums';
-import type { ArtifactCard } from './entities/artifact.entity';
 import { type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
@@ -19,7 +18,7 @@ import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
-import type { GameEvent, GameEventMap } from '../game/game.events';
+import type { GameEvent } from '../game/game.events';
 import type { TrapCard } from './entities/trap.entity';
 
 export type CardArt = {
@@ -147,29 +146,6 @@ export type HeroBlueprint = CardBlueprintBase & {
   };
 };
 
-export type ArtifactBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
-  manaCost: number;
-  jobs: Job[];
-  speed: CardSpeed;
-  onInit: (game: Game, card: ArtifactCard) => Promise<void>;
-  canPlay: (game: Game, card: ArtifactCard) => boolean;
-  onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
-  abilities: Array<AbilityBlueprint<ArtifactCard, Target> & { durabilityCost: number }>;
-  durability: number;
-  aiHints: {
-    shouldPlay: (game: Game, card: ArtifactCard) => number;
-  };
-} & (
-    | {
-        subKind: BetterExtract<ArtifactKind, 'ARMOR' | 'RELIC'>;
-      }
-    | {
-        subKind: BetterExtract<ArtifactKind, 'WEAPON'>;
-        atkBonus: number;
-      }
-  );
-
 export type DestinyBlueprint<T extends Target = Target> = CardBlueprintBase & {
   expCost: number;
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
@@ -199,7 +175,6 @@ export type TrapBlueprint = CardBlueprintBase & {
 
 export type CardBlueprint =
   | SpellBlueprint<any>
-  | ArtifactBlueprint
   | MinionBlueprint
   | HeroBlueprint
   | DestinyBlueprint

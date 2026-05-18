@@ -1,4 +1,3 @@
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
@@ -13,21 +12,21 @@ import {
   type Affinity,
   type CardKind,
   type CardSpeed,
-  type Job,
   type JobId
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
-import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
+import { INTERACTION_STATES, COMBAT_STEPS } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
 import type { BoardSpaceViewModel } from './board-space.model';
+import type { SerializedTrapCard } from '../../card/entities/trap.entity';
 
 type CardData =
   | SerializedSpellCard
-  | SerializedArtifactCard
   | SerializedHeroCard
-  | SerializedMinionCard;
+  | SerializedMinionCard
+  | SerializedTrapCard;
 
 export type CardActionRule = {
   id: string;

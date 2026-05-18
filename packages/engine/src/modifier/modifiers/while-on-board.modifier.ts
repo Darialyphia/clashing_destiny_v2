@@ -1,4 +1,3 @@
-import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
@@ -8,9 +7,7 @@ import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { CARD_LOCATIONS } from '../../card/card.enums';
 import type { HeroCard } from '../../card/entities/hero.entity';
 
-export class WhileOnBoardModifier<
-  T extends MinionCard | ArtifactCard | HeroCard
-> extends Modifier<T> {
+export class WhileOnBoardModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
   constructor(
     modifierType: string,
     game: Game,

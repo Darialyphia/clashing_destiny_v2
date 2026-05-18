@@ -3,7 +3,6 @@ import type { Player } from '../player/player.entity';
 import { System } from '../system';
 import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
-  ArtifactBlueprint,
   CardBlueprint,
   DestinyBlueprint,
   HeroBlueprint,
@@ -12,7 +11,6 @@ import type {
   TrapBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
-import { ArtifactCard } from './entities/artifact.entity';
 import { MinionCard } from './entities/minion.entity';
 import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
@@ -79,15 +77,6 @@ export class CardSystem extends System<CardSystemOptions> {
             blueprint,
             isFoil
           } as CardOptions<SpellBlueprint>)
-      )
-      .with(
-        CARD_KINDS.ARTIFACT,
-        () =>
-          new ArtifactCard(this.game, player, {
-            id,
-            blueprint,
-            isFoil
-          } as CardOptions<ArtifactBlueprint>)
       )
       .with(
         CARD_KINDS.MINION,

@@ -3,9 +3,6 @@ import type { Game } from '../game/game';
 import { GAME_EVENTS } from '../game/game.events';
 import type { SerializedInput } from '../input/input-system';
 import { INTERACTION_STATES } from '../game/game.enums';
-import { SpellCard } from '../card/entities/spell.entity';
-import { ArtifactCard } from '../card/entities/artifact.entity';
-import type { MinionCard } from '../card/entities/minion.entity';
 
 export type AIMove = {
   input: SerializedInput;

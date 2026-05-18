@@ -4,7 +4,6 @@ import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-bu
 import type { Player } from '../player/player.entity';
 import type { CardBlueprint } from './card-blueprint';
 import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
-import type { ArtifactCard } from './entities/artifact.entity';
 import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
@@ -21,10 +20,6 @@ export const isMinion = (card: AnyCard): card is MinionCard => {
 
 export const isSpell = (card: AnyCard): card is SpellCard => {
   return card.kind === CARD_KINDS.SPELL;
-};
-
-export const isArtifact = (card: AnyCard): card is ArtifactCard => {
-  return card.kind === CARD_KINDS.ARTIFACT;
 };
 
 export const isTrap = (card: AnyCard): card is TrapCard => {
@@ -75,7 +70,7 @@ export const minionOrHeroTargetRules = {
       card: AnyCard;
       origin: CardTargetOrigin;
       timeoutFallback: AnyCard[];
-      predicate: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
+      predicate: (c: MinionCard | HeroCard) => boolean;
       aiHints: {
         shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
       };
@@ -116,7 +111,7 @@ export const singleEnemyTargetRules = {
   canPlay: (
     game: Game,
     card: AnyCard,
-    predicate: (c: MinionCard | HeroCard | ArtifactCard) => boolean = () => true
+    predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) =>
     minionOrHeroTargetRules.canPlay(1)(
       game,
@@ -207,7 +202,7 @@ export const singleAllyTargetRules = {
     label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
-    predicate?: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
+    predicate?: (c: MinionCard | HeroCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
@@ -437,7 +432,7 @@ export const multipleEnemyTargetRules = {
       max: number;
       allowRepeat?: boolean;
       label: string;
-      predicate?: (c: MinionCard | HeroCard | ArtifactCard) => boolean;
+      predicate?: (c: MinionCard | HeroCard) => boolean;
       timeoutFallback: AnyCard[];
       aiHints: {
         shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -456,67 +451,6 @@ export const multipleEnemyTargetRules = {
       predicate: c => !c.player.equals(card.player) && (options.predicate?.(c) ?? true),
       timeoutFallback: options.timeoutFallback,
       aiHints: options.aiHints
-    });
-  }
-};
-export const singleArtifactTargetRules = {
-  canPlay(
-    game: Game,
-    card: AnyCard,
-    predicate: (c: ArtifactCard) => boolean = () => true
-  ) {
-    return (
-      game.cardSystem.getAllCardsInPlay().filter(c => isArtifact(c) && predicate(c))
-        .length > 0
-    );
-  },
-  async getTargets({
-    game,
-    card,
-    origin,
-    label,
-    timeoutFallback,
-    canCancel = false,
-    predicate = () => true,
-    aiHints
-  }: {
-    game: Game;
-    card: AnyCard;
-    origin: CardTargetOrigin;
-    label: string;
-    timeoutFallback: AnyCard[];
-    canCancel?: boolean;
-    predicate: (c: ArtifactCard) => boolean;
-    aiHints: {
-      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
-    };
-  }) {
-    return await game.interaction.selectCardsOnBoard<ArtifactCard>({
-      origin,
-      label,
-      player: card.player,
-      timeoutFallback,
-      canCancel,
-      aiHints,
-      isElligible(candidate, selectedCards) {
-        if (!isArtifact(candidate)) {
-          return false;
-        }
-
-        return (
-          game.cardSystem
-            .getAllCardsInPlay()
-            .some(artifact => artifact.equals(candidate)) &&
-          !selectedCards.some(selected => selected.equals(candidate)) &&
-          predicate(candidate)
-        );
-      },
-      canCommit(selectedCards) {
-        return selectedCards.length === 1;
-      },
-      isDone(selectedCards) {
-        return selectedCards.length === 1;
-      }
     });
   }
 };
@@ -619,32 +553,6 @@ export const cardsInEnemyDiscardPile = {
       maxChoiceCount: options.maxChoiceCount ?? 1
     });
   }
-};
-
-export const equipWeapon = (options: {
-  durabilityCost: number;
-  manaCost: number;
-  modifierType: string;
-  onResolve?: (game: Game, card: ArtifactCard) => Promise<void>;
-}) => {
-  return {
-    id: 'equip-weapon-ability',
-    description: '@Equip Weapon@',
-    label: 'Equip Weapon',
-    canUse: (game: Game, card: ArtifactCard) => card.location === CARD_LOCATIONS.BOARD,
-    getTargets: () => Promise.resolve([]),
-    manaCost: options.manaCost,
-    durabilityCost: options.durabilityCost,
-    onResolve: async (game: Game, card: ArtifactCard) => {
-      await card.player.hero.modifiers.add(
-        new SimpleAttackBuffModifier(options.modifierType, game, card, {
-          amount: card.atkBonus ?? 0,
-          mixins: [new UntilEndOfTurnModifierMixin(game)]
-        })
-      );
-      await options.onResolve?.(game, card);
-    }
-  };
 };
 
 export const defaultCardArt = (name: string): CardBlueprint['art'] => ({

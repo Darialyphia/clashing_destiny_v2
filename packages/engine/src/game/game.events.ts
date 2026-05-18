@@ -23,10 +23,6 @@ import type { Player } from '../player/player.entity';
 
 import { MINION_EVENTS, type MinionCardEventMap } from '../card/events/minion.events';
 import { HERO_EVENTS, type HeroCardEventMap } from '../card/events/hero.events';
-import {
-  ARTIFACT_EVENTS,
-  type ArtifactCardEventMap
-} from '../card/events/artifact.events';
 import type { InteractionEventMap } from './systems/game-interaction.system';
 import { TRAP_EVENTS, type TrapCardEventMap } from '../card/events/trap.events';
 
@@ -142,7 +138,6 @@ export type GameEventMap = Prettify<
     CombatEventMap &
     MinionCardEventMap &
     HeroCardEventMap &
-    ArtifactCardEventMap &
     PlayerEventMap &
     AbilityEventMap &
     TurnEventMap &
@@ -172,7 +167,6 @@ export const GAME_EVENTS = {
   ...COMBAT_EVENTS,
   ...MINION_EVENTS,
   ...HERO_EVENTS,
-  ...ARTIFACT_EVENTS,
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
   ...TURN_EVENTS,

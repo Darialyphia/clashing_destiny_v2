@@ -31,7 +31,6 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
-  ARTIFACT: 'ARTIFACT',
   DESTINY: 'DESTINY',
   TRAP: 'TRAP'
 } as const;

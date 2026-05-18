@@ -11,7 +11,6 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { AnyObject } from '@game/shared';
@@ -29,7 +28,6 @@ export type SerializedEntity =
   | SerializedMinionCard
   | SerializedHeroCard
   | SerializedSpellCard
-  | SerializedArtifactCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility
