@@ -43,6 +43,8 @@ export type SerializedPlayer = {
   hero: string;
   destinies: string[];
   unlockedAffinities: Affinity[];
+  frontRow: Array<string>;
+  backRow: Array<string>;
 };
 
 export type PlayerInterceptors = {
@@ -283,7 +285,9 @@ export class Player
       maxLevel: this.game.config.PLAYER_MAX_LEVEL,
       hero: this.hero.id,
       destinies: this.levelManager.destinies.map(destiny => destiny.id),
-      unlockedAffinities: this.unlockedAffinities
+      unlockedAffinities: this.unlockedAffinities,
+      frontRow: this.frontRow.map(card => card.id),
+      backRow: this.backRow.map(card => card.id)
     };
   }
 }

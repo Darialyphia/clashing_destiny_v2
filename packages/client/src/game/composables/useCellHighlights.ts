@@ -21,36 +21,31 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
   });
 
   const canSelectUnit = computed(() => {
-    if (!cell.value.card) return false;
-    if (cell.value.card.isExhausted) return false;
+    if (!cell.value.occupant) return false;
+    if (cell.value.occupant.isExhausted) return false;
     if (!ui.value.isInteractivePlayer) return false;
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
     if (state.value.phase.state === GAME_PHASES.MAIN) {
-      return cell.value.card.canMove;
-    }
-    if (state.value.phase.state === GAME_PHASES.COMBAT) {
-      return cell.value.card.canAttack;
+      return cell.value.occupant.canMove || cell.value.occupant.canAttack;
     }
 
     return false;
   });
 
   const cannotSelectReason = computed((): string | null => {
-    if (!cell.value.card) return null;
+    if (!cell.value.occupant) return null;
     if (!ui.value.isInteractivePlayer) return null;
-    if (cell.value.card.isExhausted) return 'Exhausted';
+    if (cell.value.occupant.isExhausted) return 'Exhausted';
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return ''; // no need to show reason when in the middle of an interaction
     if (state.value.phase.state === GAME_PHASES.MAIN) {
-      if (cell.value.card.kind === CARD_KINDS.HERO) {
+      if (cell.value.occupant.kind === CARD_KINDS.HERO) {
         return 'Heroes cannot move !';
       }
-      if (cell.value.card.hasSummoningSickness) {
+      if (cell.value.occupant.hasSummoningSickness) {
         return 'Minions cannot move the turn they are summoned !';
       }
-      if (!cell.value.card.canMove) return 'This card cannot move !';
-    }
-    if (state.value.phase.state === GAME_PHASES.COMBAT) {
-      if (!cell.value.card.canAttack) return 'This card cannot attack !';
+      if (!cell.value.occupant.canMove) return 'This card cannot move !';
+      if (!cell.value.occupant.canAttack) return 'This card cannot attack !';
     }
     return null;
   });

@@ -27,8 +27,8 @@ const getCountByKind = (kind: CardKind) => {
         Spells
       </div>
       <div>
-        <span>{{ getCountByKind(CARD_KINDS.ARTIFACT) }}</span>
-        Artifacts
+        <span>{{ getCountByKind(CARD_KINDS.TRAP) }}</span>
+        Traps
       </div>
     </div>
   </div>

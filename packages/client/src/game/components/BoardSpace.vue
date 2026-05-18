@@ -49,8 +49,8 @@ const handleMouseup = (e: MouseEvent) => {
     }"
     @mouseenter="
       () => {
-        if (cell.card) {
-          ui.hover(cell.card);
+        if (cell.occupant) {
+          ui.hover(cell.occupant);
         }
       }
     "
@@ -59,8 +59,8 @@ const handleMouseup = (e: MouseEvent) => {
     @mousedown="dragSelection.onMousedown"
   >
     <BoardCard
-      v-if="cell.card"
-      :card="cell.card"
+      v-if="cell.occupant"
+      :card="cell.occupant"
       :is-shaking="dragSelection.isShaking.value"
     />
     <Transition name="cannot-select-msg">

@@ -29,7 +29,6 @@ import HoveredCardInfos from './HoveredCardnfos.vue';
 import { provideRichTextContext } from '../composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
 import BoardSpace from './BoardSpace.vue';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
 
 const { clocks } = defineProps<{
@@ -138,30 +137,30 @@ useEventListener('contextmenu', async e => {
         <div class="minions-zone">
           <div class="opponent-base">
             <BoardSpace
-              v-for="space in opponent.boardSide.base.toReversed()"
-              :key="space"
-              :cell-id="space"
+              v-for="space in opponent.backRow"
+              :key="space.id"
+              :cell-id="space.id"
             />
           </div>
           <div class="opponent-battlefield">
             <BoardSpace
-              v-for="space in opponent.boardSide.battlefield.toReversed()"
-              :key="space"
-              :cell-id="space"
+              v-for="space in opponent.frontRow"
+              :key="space.id"
+              :cell-id="space.id"
             />
           </div>
           <div class="my-battlefield">
             <BoardSpace
-              v-for="space in myPlayer.boardSide.battlefield"
-              :key="space"
-              :cell-id="space"
+              v-for="space in myPlayer.frontRow"
+              :key="space.id"
+              :cell-id="space.id"
             />
           </div>
           <div class="my-base">
             <BoardSpace
-              v-for="space in myPlayer.boardSide.base"
-              :key="space"
-              :cell-id="space"
+              v-for="space in myPlayer.backRow"
+              :key="space.id"
+              :cell-id="space.id"
             />
           </div>
           <!-- <MinionRow :row="opponent.boardSide.base" class="opponent-back-row" />
@@ -190,19 +189,7 @@ useEventListener('contextmenu', async e => {
                 :data-count="clock.remaining"
               ></div>
             </div>
-
-            <div
-              class="phase level-up"
-              :class="state.phase.state === GAME_PHASES.LEVEL_UP && 'active'"
-            />
-            <div
-              class="phase main"
-              :class="state.phase.state === GAME_PHASES.MAIN && 'active'"
-            />
-            <div
-              class="phase combat"
-              :class="state.phase.state === GAME_PHASES.COMBAT && 'active'"
-            />
+            .
           </div>
         </div>
 
@@ -507,34 +494,5 @@ useEventListener('contextmenu', async e => {
   position: absolute;
   left: 960px;
   top: 282px;
-
-  .phase {
-    width: 220px;
-    height: 55px;
-
-    &:not(.active) {
-      filter: grayscale(100%) brightness(50%);
-    }
-
-    &.draw {
-      background: url('@/assets/ui/phase-indicator-draw.png');
-    }
-
-    &.level-up {
-      background: url('@/assets/ui/phase-indicator-level-up.png');
-    }
-
-    &.main {
-      background: url('@/assets/ui/phase-indicator-main.png');
-    }
-
-    &.combat {
-      background: url('@/assets/ui/phase-indicator-combat.png');
-    }
-
-    &.end {
-      background: url('@/assets/ui/phase-indicator-end.png');
-    }
-  }
 }
 </style>

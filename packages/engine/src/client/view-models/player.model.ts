@@ -4,6 +4,7 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import type { CardViewModel } from './card.model';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
+import type { BoardSpaceViewModel } from './board-space.model';
 
 export class PlayerViewModel {
   private static patchApplier = new PatchApplier();
@@ -96,6 +97,18 @@ export class PlayerViewModel {
       entity => entity instanceof PlayerViewModel && entity.id !== this.id
     );
     return entity as PlayerViewModel;
+  }
+
+  get frontRow() {
+    return this.data.frontRow.map(spaceId => {
+      return this.getEntities()[spaceId] as BoardSpaceViewModel;
+    });
+  }
+
+  get backRow() {
+    return this.data.backRow.map(spaceId => {
+      return this.getEntities()[spaceId] as BoardSpaceViewModel;
+    });
   }
 
   get hero() {

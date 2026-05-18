@@ -44,12 +44,6 @@ const spells = computed(() =>
 const spellsCount = computed(() =>
   spells.value.reduce((sum, item) => sum + item.copies, 0)
 );
-const artifacts = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
-);
-const artifactsCount = computed(() =>
-  artifacts.value.reduce((sum, item) => sum + item.copies, 0)
-);
 
 const root = useTemplateRef('root');
 const optionsBar = useTemplateRef('optionsBar');
@@ -117,12 +111,6 @@ const craftingCost = computed(() => {
           </span>
           {{ spellsCount <= 1 ? 'Spell' : 'Spells' }}
         </div>
-        <div>
-          <span class="font-bold text-3">
-            {{ artifactsCount }}
-          </span>
-          {{ artifactsCount <= 1 ? 'Artifact' : 'Artifacts' }}
-        </div>
         <div class="flex items-center">
           <CraftignShardIcon />
           {{ craftingCost }}
@@ -150,7 +138,7 @@ const craftingCost = computed(() => {
         <div class="divider" />
         <section>
           <div
-            v-for="item in [...minions, ...spells, ...artifacts]"
+            v-for="item in [...minions, ...spells]"
             :key="item.blueprint.id"
             class="card-wrapper"
           >
@@ -192,12 +180,6 @@ const craftingCost = computed(() => {
             </span>
           </li>
           <li v-for="item in spells" :key="item.blueprint.id">
-            {{ item.copies }}x
-            <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-              {{ item.blueprint.name }}
-            </span>
-          </li>
-          <li v-for="item in artifacts" :key="item.blueprint.id">
             {{ item.copies }}x
             <span :class="item.blueprint.rarity.toLocaleLowerCase()">
               {{ item.blueprint.name }}

@@ -1,10 +1,5 @@
 import type { CardId } from '@game/api';
-import type {
-  ArtifactBlueprint,
-  CardBlueprint,
-  MinionBlueprint,
-  SpellBlueprint
-} from '@game/engine/src/card/card-blueprint';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type {
@@ -251,43 +246,14 @@ export class DeckBuilderViewModel {
   }
 
   get cards() {
-    return [...this._deck.cards]
-      .map(card => {
-        const blueprint = this.cardPool.find(c => c.id === card.blueprintId)!;
+    return [...this._deck.cards].map(card => {
+      const blueprint = this.cardPool.find(c => c.id === card.blueprintId)!;
 
-        return {
-          ...card,
-          blueprint
-        };
-      })
-      .toSorted((a, b) => {
-        if (
-          a.blueprint.kind === CARD_KINDS.DESTINY &&
-          b.blueprint.kind !== CARD_KINDS.DESTINY
-        ) {
-          return -1;
-        }
-
-        if (
-          a.blueprint.kind === CARD_KINDS.DESTINY &&
-          b.blueprint.kind !== CARD_KINDS.DESTINY
-        ) {
-          return 1;
-        }
-
-        const aBp = a.blueprint as
-          | ArtifactBlueprint
-          | SpellBlueprint
-          | MinionBlueprint;
-        const bBp = b.blueprint as
-          | ArtifactBlueprint
-          | SpellBlueprint
-          | MinionBlueprint;
-        if (aBp.manaCost === bBp.manaCost) {
-          return aBp.name.localeCompare(bBp.name);
-        }
-        return (aBp.manaCost ?? 0) - (bBp.manaCost ?? 0);
-      });
+      return {
+        ...card,
+        blueprint
+      };
+    });
   }
 
   getErrors() {

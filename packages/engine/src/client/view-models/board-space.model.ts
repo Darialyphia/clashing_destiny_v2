@@ -56,7 +56,7 @@ export class BoardSpaceViewModel {
     return entities[this.data.player] as PlayerViewModel;
   }
 
-  get card() {
+  get occupant() {
     if (!this.data.occupant) return null;
     const entities = this.getEntities();
     return entities[this.data.occupant] as unknown as CardViewModel;

@@ -41,17 +41,17 @@ export const useBoardCardDragSelection = (
   };
 
   const onMousemove = (e: MouseEvent) => {
-    if (!cell.value.card) return;
+    if (!cell.value.occupant) return;
     const deltaY = Math.abs(startY - e.clientY);
     const deltaX = Math.abs(startX - e.clientX);
     if (deltaY >= DRAG_THRESHOLD_PX || deltaX >= DRAG_THRESHOLD_PX) {
-      ui.value.select(cell.value.card);
+      ui.value.select(cell.value.occupant);
       document.body.removeEventListener('mousemove', onMousemove);
     }
   };
 
   const onMousedown = (e: MouseEvent) => {
-    if (cell.value.card && !canSelectUnit.value) {
+    if (cell.value.occupant && !canSelectUnit.value) {
       triggerShake();
       return;
     }
