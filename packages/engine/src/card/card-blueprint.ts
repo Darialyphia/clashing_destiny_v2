@@ -9,7 +9,8 @@ import type {
   Tag,
   Job,
   Affinity,
-  CardSpeed
+  CardSpeed,
+  MinionType
 } from './card.enums';
 import { type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
@@ -106,6 +107,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   maxHp: number;
   abilities: AbilityBlueprint<MinionCard, Target>[];
   jobs: Job[];
+  subKind: MinionType;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;

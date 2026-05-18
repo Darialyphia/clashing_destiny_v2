@@ -7,6 +7,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   JOBS,
+  MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
@@ -31,6 +32,7 @@ export const littleWitch: MinionBlueprint = {
   affinity: AFFINITIES.NEUTRAL,
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
+  subKind: MINION_TYPES.MELEE,
   tags: [],
   atk: 1,
   maxHp: 2,

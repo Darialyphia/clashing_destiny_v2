@@ -5,6 +5,7 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
+  MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
 
@@ -21,6 +22,7 @@ export const sampl2: MinionBlueprint = {
   affinity: AFFINITIES.NEUTRAL,
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
+  subKind: MINION_TYPES.MELEE,
   tags: [],
   atk: 2,
   maxHp: 3,

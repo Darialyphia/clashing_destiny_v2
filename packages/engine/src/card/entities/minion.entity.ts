@@ -11,8 +11,10 @@ import {
   CARD_EVENTS,
   CARD_LOCATIONS,
   CARD_SPEED,
+  MINION_TYPES,
   type CardSpeed,
-  type JobId
+  type JobId,
+  type MinionType
 } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
@@ -45,6 +47,9 @@ import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
 import { isMinion } from '../card-utils';
 import type { SpaceTargetingStrategy } from '../../targeting/targeting-strategy';
 import { MeleeTargetingStrategy } from '../../targeting/ranged-targeting.strategy';
+import { PointAOEShape } from '../../aoe/point.aoe-shape';
+import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
+import { match } from 'ts-pattern';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -61,6 +66,7 @@ export type SerializedMinionCard = SerializedCard & {
   jobs: JobId[];
   hasSummoningSickness: boolean;
   speed: CardSpeed;
+  subKind: MinionType;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -141,11 +147,15 @@ export class MinionCard extends Card<
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
-    return space.occupant === null && space.player?.equals(this.player);
+    return space.isEmpty && this.isValidSpaceForsubKind(space);
   }
 
   get hasSummoningSickness(): boolean {
     return this.interceptors.hasSummoningSickness.getValue(true, this);
+  }
+
+  get subKind() {
+    return this.blueprint.subKind;
   }
 
   get isAlive() {
@@ -449,6 +459,22 @@ export class MinionCard extends Card<
     return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
 
+  isValidSpaceForsubKind(cell: BoardSpace): boolean {
+    if (!cell.player?.equals(this.player)) return false;
+
+    return match(this.blueprint.subKind)
+      .with(MINION_TYPES.MELEE, () => cell.isFrontRow)
+      .with(MINION_TYPES.RANGED, () => cell.isBackRow)
+      .with(MINION_TYPES.FLYER, () => true)
+      .exhaustive();
+  }
+
+  get hasAvailablePosition() {
+    return this.game.boardSystem
+      .getSpacesForPlayer(this.player)
+      .some(cell => this.isValidSpaceForsubKind(cell) && !cell.isOccupied);
+  }
+
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
@@ -480,7 +506,7 @@ export class MinionCard extends Card<
   get potentialSummonPositions() {
     return this.game.boardSystem
       .getSpacesForPlayer(this.player)
-      .filter(space => space.isEmpty);
+      .filter(space => this.isValidSpaceForsubKind(space) && !space.isOccupied);
   }
 
   private async selectPosition() {
@@ -498,7 +524,12 @@ export class MinionCard extends Card<
       isDone(selectedSpaces) {
         return selectedSpaces.length === 1;
       },
-      timeoutFallback: [this.potentialSummonPositions[0]]
+      timeoutFallback: [this.potentialSummonPositions[0]],
+      getAOE: () =>
+        new PointAOEShape(this.game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: this.player
+        })
     });
 
     return result;
@@ -553,7 +584,8 @@ export class MinionCard extends Card<
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],
       hasSummoningSickness: this.hasSummoningSickness,
-      speed: this.speed
+      speed: this.speed,
+      subKind: this.subKind
     };
   }
 }

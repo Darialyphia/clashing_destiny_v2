@@ -8,6 +8,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   JOBS,
+  MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -31,6 +32,7 @@ export const healingMystic: MinionBlueprint = {
   affinity: AFFINITIES.NEUTRAL,
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
+  subKind: MINION_TYPES.MELEE,
   tags: [],
   atk: 2,
   maxHp: 3,

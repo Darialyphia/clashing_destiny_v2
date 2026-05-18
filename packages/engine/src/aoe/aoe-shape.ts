@@ -9,7 +9,7 @@ export type AOEShape = {
   getArea(points: Point[]): BoardSpace[];
 };
 
-export const SPACE_TARGETING_TYPE = {
+export const AOE_TARGETING_TYPE = {
   ANYWHERE: 'anywhere',
   EMPTY: 'empty',
 
@@ -26,7 +26,7 @@ export const SPACE_TARGETING_TYPE = {
   ENEMY_TRAP: 'enemy_trap'
 } as const;
 
-export type AOETargetingType = Values<typeof SPACE_TARGETING_TYPE>;
+export type AOETargetingType = Values<typeof AOE_TARGETING_TYPE>;
 
 export const isValidAOETargetingType = (
   game: Game,
@@ -37,42 +37,42 @@ export const isValidAOETargetingType = (
   const space = game.boardSystem.getSpaceAt(point);
 
   return !!match(type)
-    .with(SPACE_TARGETING_TYPE.ANYWHERE, () => true)
-    .with(SPACE_TARGETING_TYPE.EMPTY, () => !space)
-    .with(SPACE_TARGETING_TYPE.CARD, () => isDefined(space?.occupant))
-    .with(SPACE_TARGETING_TYPE.ENEMY_CARD, () => !space?.occupant?.player.equals(player))
-    .with(SPACE_TARGETING_TYPE.ALLY_CARD, () => space?.occupant?.player.equals(player))
+    .with(AOE_TARGETING_TYPE.ANYWHERE, () => true)
+    .with(AOE_TARGETING_TYPE.EMPTY, () => !space)
+    .with(AOE_TARGETING_TYPE.CARD, () => isDefined(space?.occupant))
+    .with(AOE_TARGETING_TYPE.ENEMY_CARD, () => !space?.occupant?.player.equals(player))
+    .with(AOE_TARGETING_TYPE.ALLY_CARD, () => space?.occupant?.player.equals(player))
     .with(
-      SPACE_TARGETING_TYPE.MINION,
+      AOE_TARGETING_TYPE.MINION,
       () => isDefined(space?.occupant) && isMinion(space.occupant)
     )
     .with(
-      SPACE_TARGETING_TYPE.ENEMY_MINION,
+      AOE_TARGETING_TYPE.ENEMY_MINION,
       () =>
         isDefined(space?.occupant) &&
         isMinion(space.occupant) &&
         !space.occupant.player.equals(player)
     )
     .with(
-      SPACE_TARGETING_TYPE.ALLY_MINION,
+      AOE_TARGETING_TYPE.ALLY_MINION,
       () =>
         isDefined(space?.occupant) &&
         isMinion(space.occupant) &&
         space.occupant.player.equals(player)
     )
     .with(
-      SPACE_TARGETING_TYPE.TRAP,
+      AOE_TARGETING_TYPE.TRAP,
       () => isDefined(space?.occupant) && isTrap(space.occupant)
     )
     .with(
-      SPACE_TARGETING_TYPE.ENEMY_TRAP,
+      AOE_TARGETING_TYPE.ENEMY_TRAP,
       () =>
         isDefined(space?.occupant) &&
         isTrap(space.occupant) &&
         !space.occupant.player.equals(player)
     )
     .with(
-      SPACE_TARGETING_TYPE.ALLY_TRAP,
+      AOE_TARGETING_TYPE.ALLY_TRAP,
       () =>
         isDefined(space?.occupant) &&
         isTrap(space.occupant) &&

@@ -143,3 +143,10 @@ export const AFFINITIES = {
   ASTRAL: 'Astral'
 } as const;
 export type Affinity = Values<typeof AFFINITIES>;
+
+export const MINION_TYPES = {
+  MELEE: 'MELEE',
+  RANGED: 'RANGED',
+  FLYER: 'FLYER'
+} as const;
+export type MinionType = Values<typeof MINION_TYPES>;

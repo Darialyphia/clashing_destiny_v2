@@ -8,6 +8,7 @@ import {
   CARD_SETS,
   CARD_SPEED,
   JOBS,
+  MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -34,6 +35,7 @@ export const pyromancer: MinionBlueprint = {
   affinity: AFFINITIES.FIRE,
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
+  subKind: MINION_TYPES.RANGED,
   tags: [],
   atk: 2,
   maxHp: 5,

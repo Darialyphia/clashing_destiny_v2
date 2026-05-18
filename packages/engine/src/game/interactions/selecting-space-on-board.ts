@@ -6,6 +6,7 @@ import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { BoardSpace } from '../../board/board-space.entity';
+import type { AOEShape } from '../../aoe/aoe-shape';
 
 export type SelectingSpaceOnBoardContextOptions = {
   player: Player;
@@ -16,6 +17,7 @@ export type SelectingSpaceOnBoardContextOptions = {
   isDone(selectedSpaces: BoardSpace[]): boolean;
   timeoutFallback: BoardSpace[];
   canCancel: boolean;
+  getAOE: (ctx: SelectingSpaceOnBoardContext) => AOEShape | null;
 };
 
 export class SelectingSpaceOnBoardContext {
@@ -47,6 +49,18 @@ export class SelectingSpaceOnBoardContext {
     this.timeoutFallback = options.timeoutFallback;
   }
 
+  get AOEForNextSpace() {
+    return Object.fromEntries(
+      this.elligibleSpaces.map(space => {
+        const spaces = [...this.selectedSpaces, space];
+        const aoe = this.options.getAOE(this);
+        if (!aoe) return [space.id, []];
+        const area = aoe?.getArea(spaces);
+        return [space.id, area.map(space => space.id)];
+      })
+    );
+  }
+
   serialize() {
     return {
       player: this.player.id,
@@ -55,7 +69,8 @@ export class SelectingSpaceOnBoardContext {
       selectedSpaces: this.selectedSpaces.map(space => space.serialize()),
       elligibleSpaces: this.elligibleSpaces.map(space => space.serialize()),
       canCommit: this.canCommit(this.selectedSpaces),
-      canCancel: this.options.canCancel
+      canCancel: this.options.canCancel,
+      AOEForNextSpace: this.AOEForNextSpace
     };
   }
 
