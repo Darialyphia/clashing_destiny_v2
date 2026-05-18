@@ -42,6 +42,9 @@ import {
 import { DamageTrackerComponent } from '../components/damage-tracker.component';
 import type { BoardSpace } from '../../board/board-space.entity';
 import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
+import { isMinion } from '../card-utils';
+import type { SpaceTargetingStrategy } from '../../targeting/targeting-strategy';
+import { MeleeTargetingStrategy } from '../../targeting/ranged-targeting.strategy';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -78,6 +81,9 @@ export type MinionCardInterceptors = CardInterceptors & {
   dealsDamageFirst: Interceptable<boolean, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
   canMoveManually: Interceptable<boolean, MinionCard>;
+
+  attackTargetingPattern: Interceptable<SpaceTargetingStrategy>;
+  retaliationTargetingPattern: Interceptable<SpaceTargetingStrategy>;
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
@@ -120,7 +126,9 @@ export class MinionCard extends Card<
         canMoveManually: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
         shouldSwitchInitiativeAfterattacking: new Interceptable(),
-        speed: new Interceptable()
+        speed: new Interceptable(),
+        attackTargetingPattern: new Interceptable(),
+        retaliationTargetingPattern: new Interceptable()
       },
       options
     );
@@ -199,12 +207,42 @@ export class MinionCard extends Card<
     });
   }
 
-  canAttack(target: AttackTarget) {
-    const base = !this._isExhausted && this.atk > 0 && target.canBeAttacked(this);
+  canAttack(target: MinionCard | HeroCard): boolean {
+    const base = !this._isExhausted && this.atk > 0;
 
-    return this.interceptors.canAttack.getValue(base, {
-      target
-    });
+    return this.interceptors.canAttack.getValue(base, { target });
+  }
+
+  get attackTargettingPattern(): SpaceTargetingStrategy {
+    return this.interceptors.attackTargetingPattern.getValue(
+      new MeleeTargetingStrategy(this.game, this),
+      {}
+    );
+  }
+
+  get retaliationTargettingPattern(): SpaceTargetingStrategy {
+    return this.interceptors.retaliationTargetingPattern.getValue(
+      new MeleeTargetingStrategy(this.game, this),
+      {}
+    );
+  }
+
+  canAttackAt(space: BoardSpace) {
+    if (this.space?.equals(space)) {
+      return false;
+    }
+    const target =
+      space.occupant && isMinion(space.occupant)
+        ? space.occupant
+        : this.player.opponent.hero;
+    const canBeAttacked =
+      target instanceof MinionCard ? target.canBeAttacked(this) : this.isEnemy(target);
+
+    if (!this.canAttack(target) || !canBeAttacked) {
+      return false;
+    }
+
+    return this.attackTargettingPattern.canTargetAt(space);
   }
 
   canBeAttacked(attacker: Attacker) {
@@ -223,7 +261,8 @@ export class MinionCard extends Card<
     if (!this.game.combatSystem.defender?.equals(this)) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      this.atk > 0 && !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this),
+      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) &&
+        this.retaliationTargettingPattern.canTargetAt(target.position.coordinates!),
       {
         attacker: target
       }

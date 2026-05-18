@@ -1,9 +1,10 @@
-import { Vec2, type Point } from '@game/shared';
+import { isDefined, Vec2, type Point } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { AnyCard } from '../entities/card.entity';
 import { GAME_EVENTS } from '../../game/game.events';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card.events';
 import type { BoardSpace } from '../../board/board-space.entity';
+import type { CardKind } from '../card.enums';
 
 export type PositionComponentOptions = {
   position: Point | null;
@@ -91,5 +92,46 @@ export class PositionComponent {
 
   removeFromBoard() {
     this.coordinates = null;
+  }
+
+  get isAloneOnColumn() {
+    return (
+      this.game.boardSystem
+        .getColumn(this.x!)
+        .map(cell => cell.occupant)
+        .filter(card => isDefined(card) && !card.equals(this.card)).length === 0
+    );
+  }
+
+  get isOnBackRow() {
+    return this.space?.isBackRow ?? false;
+  }
+
+  get isOnFrontRow() {
+    return this.space?.isFrontRow ?? false;
+  }
+
+  get adjacentUnits() {
+    return this.space?.adjacent.map(cell => cell.occupant).filter(isDefined) ?? [];
+  }
+
+  get cardsOnSameColumn() {
+    return this.game.boardSystem
+      .getColumn(this.x!)
+      .map(cell => cell.occupant)
+      .filter(isDefined)
+      .filter(card => !card.equals(this.card)) as AnyCard[];
+  }
+
+  getCardsOnSamecolumnOfKind(kind: CardKind) {
+    return this.cardsOnSameColumn.filter(card => card.blueprint.kind === kind);
+  }
+
+  get enemyCardsOnSameColumn(): AnyCard[] {
+    return this.cardsOnSameColumn.filter(card => card.isEnemy(this.card));
+  }
+
+  get alliesOnSameColumn() {
+    return this.cardsOnSameColumn.filter(card => card.isAlly(this.card));
   }
 }

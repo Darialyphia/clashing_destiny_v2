@@ -7,6 +7,8 @@ import { Interceptable } from '../utils/interceptable';
 import { BOARD_ROWS, type BoardRow } from './map-blueprint';
 import { pointToSpaceId } from './board-utils';
 import { match } from 'ts-pattern';
+import { isMinion } from '../card/card-utils';
+import type { MinionCard } from '../card/entities/minion.entity';
 
 export type BoardCellInterceptors = {
   isWalkable: Interceptable<boolean>;
@@ -60,10 +62,6 @@ export class BoardSpace
     }
   }
 
-  get shrine() {
-    return null;
-  }
-
   get isOccupied() {
     return isDefined(this.occupant);
   }
@@ -74,6 +72,13 @@ export class BoardSpace
 
   get occupant(): AnyCard | null {
     return this.game.cardSystem.getCardAt(this);
+  }
+
+  get minion(): MinionCard | null {
+    if (!this.occupant) return null;
+    if (!isMinion(this.occupant)) return null;
+
+    return this.occupant;
   }
 
   get row() {
@@ -136,7 +141,7 @@ export class BoardSpace
     return this.game.boardSystem.spaces.find(c => c.y === this.y && c.x === this.x + 1);
   }
 
-  get adjacent() {
+  get adjacent(): BoardSpace[] {
     return [this.left, this.right, this.inFront, this.behind].filter(isDefined);
   }
 

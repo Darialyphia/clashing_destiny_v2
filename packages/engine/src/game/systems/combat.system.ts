@@ -21,6 +21,7 @@ import { CorruptedGamephaseContextError, GameError } from '../game-error';
 import { CombatDamage } from '../../utils/damage';
 import { isMinion } from '../../card/card-utils';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type Attacker = MinionCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -113,12 +114,17 @@ export class CombatSystem
     );
   }
 
-  async declareAttackTarget(target: AttackTarget) {
+  async declareAttackTarget(space: BoardSpace) {
     assert(
       this.stateMachine.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
       new WrongCombatStepError()
     );
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
+
+    const target =
+      space.occupant && isMinion(space.occupant)
+        ? space.occupant
+        : this.attacker!.player.opponent.hero;
 
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET,

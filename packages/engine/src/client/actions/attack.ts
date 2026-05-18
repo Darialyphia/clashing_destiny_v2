@@ -18,13 +18,13 @@ export class AttackAction implements BoardCellClickRule {
     );
   }
 
-  handler(cell: BoardSpaceViewModel) {
+  handler(space: BoardSpaceViewModel) {
     this.client.dispatch({
       type: 'declareAttack',
       payload: {
         playerId: this.client.playerId,
         attackerId: this.client.ui.selectedCard!.id,
-        targetId: cell.card!.id
+        spaceId: space.id
       }
     });
   }

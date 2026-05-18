@@ -91,6 +91,12 @@ export class UnknownCardError extends Error {
   }
 }
 
+export class UnknownSpaceError extends InputError {
+  constructor(spaceId: string) {
+    super(`Unknown space id: ${spaceId}`);
+  }
+}
+
 export class UnknownAbilityError extends Error {
   constructor(cardId: string, abilityId: string) {
     super(`Unknown ability id: ${abilityId} on card id: ${cardId}`);
