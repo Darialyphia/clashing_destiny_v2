@@ -5,7 +5,7 @@ import { type SpaceTargetingStrategy } from './targeting-strategy';
 import type { MinionCard } from '../card/entities/minion.entity';
 import { CARD_KINDS } from '../card/card.enums';
 
-export class MeleeTargetingStrategy implements SpaceTargetingStrategy {
+export class RangedTargetingStrategy implements SpaceTargetingStrategy {
   constructor(
     private game: Game,
     private card: MinionCard

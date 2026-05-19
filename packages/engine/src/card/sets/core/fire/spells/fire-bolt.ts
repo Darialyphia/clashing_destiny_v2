@@ -32,13 +32,11 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   manaCost: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
-  abilities: [],
   canPlay: () => true,
   getTargets: (game, card) =>
     singleEnemyTargetRules.getTargets({
       game,
       card,
-      origin: { type: 'card', card },
       timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
       aiHints: {
@@ -49,7 +47,7 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
     await card.modifiers.add(new JobBonusModifier(game, card, JOBS.MAGE.id));
   },
   async onPlay(game, card, targets) {
-    const [target] = targets;
+    const [target] = targets.cards;
     if (!target) return;
 
     await target.takeDamage(card, new SpellDamage(1, card));

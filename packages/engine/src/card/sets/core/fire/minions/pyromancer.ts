@@ -51,11 +51,10 @@ export const pyromancer: MinionBlueprint = {
           singleMinionTargetRules.canPlay(game, card)
         );
       },
-      getTargets: (game, card) =>
-        singleMinionTargetRules.getTargets({
+      getTargets: async (game, card) =>
+        await singleMinionTargetRules.getTargets({
           game,
           card,
-          origin: { type: 'ability', abilityId: 'healing-mystic-ability', card },
           timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card),
           canCancel: true,
           aiHints: {
@@ -63,7 +62,7 @@ export const pyromancer: MinionBlueprint = {
           }
         }),
       async onResolve(game, card, targets) {
-        for (const target of targets) {
+        for (const target of targets.cards) {
           await (target as MinionCard).modifiers.add(
             new BurnModifier(game, card, { stacks: 2 })
           );

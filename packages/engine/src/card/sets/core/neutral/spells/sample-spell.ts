@@ -22,7 +22,6 @@ export const sampleSpell: SpellBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  abilities: [],
   canPlay: () => true,
   getTargets: noTargets,
   async onInit(game, card) {},

@@ -1,10 +1,11 @@
 import type { Game } from '../game/game';
+import type { InteractionResult } from '../game/systems/game-interaction.system';
 import { UntilEndOfTurnModifierMixin } from '../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import type { Player } from '../player/player.entity';
-import type { CardBlueprint } from './card-blueprint';
+import type { CardBlueprint, Targets } from './card-blueprint';
 import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
-import type { AnyCard, CardTargetOrigin } from './entities/card.entity';
+import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
@@ -31,80 +32,77 @@ export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => 
 };
 
 export const minionOrHeroTargetRules = {
-  canPlay:
-    (min: number) =>
-    (
-      game: Game,
-      card: AnyCard,
-      predicate: (c: MinionCard | HeroCard) => boolean = () => true
-    ) => {
-      return (
-        [...card.player.minions, card.player.hero].filter(
-          c => c.canBeTargeted(card) && predicate(c)
-        ).length >= min
-      );
-    },
-  getTargets:
-    ({
-      min,
-      max,
-      allowRepeat,
+  canPlay: (
+    game: Game,
+    card: AnyCard,
+    { predicate, min }: { predicate: (c: MinionCard | HeroCard) => boolean; min: number }
+  ) => {
+    return (
+      [...card.player.minions, card.player.hero].filter(
+        c => c.canBeTargeted(card) && predicate(c)
+      ).length >= min
+    );
+  },
+  getTargets: async ({
+    game,
+    card,
+    timeoutFallback,
+    predicate = () => true,
+    min,
+    max,
+    allowRepeat,
+    label,
+    canCancel = false,
+    aiHints
+  }: {
+    game: Game;
+    card: AnyCard;
+    timeoutFallback: AnyCard[];
+    predicate: (c: MinionCard | HeroCard) => boolean;
+    min: number;
+    max: number;
+    allowRepeat: boolean;
+    label: string;
+    canCancel?: boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
+  }): Promise<InteractionResult<Targets<MinionCard | HeroCard>>> => {
+    const result = await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+      player: card.player,
       label,
-      canCancel = false
-    }: {
-      min: number;
-      max: number;
-      allowRepeat: boolean;
-      label: string;
-      canCancel?: boolean;
-    }) =>
-    async ({
-      game,
-      card,
-      origin,
       timeoutFallback,
-      predicate = () => true,
-      aiHints
-    }: {
-      game: Game;
-      card: AnyCard;
-      origin: CardTargetOrigin;
-      timeoutFallback: AnyCard[];
-      predicate: (c: MinionCard | HeroCard) => boolean;
-      aiHints: {
-        shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
-      };
-    }) => {
-      return await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
-        player: card.player,
-        origin,
-        label,
-        timeoutFallback,
-        canCancel,
-        aiHints,
-        isElligible(candidate, selectedCards) {
-          if (!isMinionOrHero(candidate)) {
-            return false;
-          }
-
-          return (
-            [...card.player.minions, card.player.hero].some(enemy =>
-              enemy.equals(candidate)
-            ) &&
-            candidate.canBeTargeted(card) &&
-            (allowRepeat ||
-              !selectedCards.some(selected => selected.equals(candidate))) &&
-            predicate(candidate)
-          );
-        },
-        canCommit(selectedCards) {
-          return selectedCards.length >= min;
-        },
-        isDone(selectedCards) {
-          return selectedCards.length === max;
+      canCancel,
+      aiHints,
+      isElligible(candidate, selectedCards) {
+        if (!isMinionOrHero(candidate)) {
+          return false;
         }
-      });
+
+        return (
+          [...card.player.minions, card.player.hero].some(enemy =>
+            enemy.equals(candidate)
+          ) &&
+          candidate.canBeTargeted(card) &&
+          (allowRepeat || !selectedCards.some(selected => selected.equals(candidate))) &&
+          predicate(candidate)
+        );
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length >= min;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === max;
+      }
+    });
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
     }
+    return {
+      cancelled: false as const,
+      result: { cards: result.result as (MinionCard | HeroCard)[], spaces: [] }
+    };
+  }
 };
 
 export const singleEnemyTargetRules = {
@@ -113,15 +111,13 @@ export const singleEnemyTargetRules = {
     card: AnyCard,
     predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) =>
-    minionOrHeroTargetRules.canPlay(1)(
-      game,
-      card,
-      c => !c.player.equals(card.player) && predicate(c)
-    ),
+    minionOrHeroTargetRules.canPlay(game, card, {
+      predicate: c => !c.player.equals(card.player) && predicate(c),
+      min: 1
+    }),
   getTargets: async ({
     game,
     card,
-    origin,
     label = 'Select an enemy',
     timeoutFallback,
     predicate = () => true,
@@ -130,7 +126,6 @@ export const singleEnemyTargetRules = {
   }: {
     game: Game;
     card: AnyCard;
-    origin: CardTargetOrigin;
     label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
@@ -140,19 +135,17 @@ export const singleEnemyTargetRules = {
     };
   }) =>
     await minionOrHeroTargetRules.getTargets({
-      min: 1,
-      max: 1,
-      allowRepeat: false,
-      label,
-      canCancel
-    })({
       game,
       card,
-      origin,
       predicate: card => {
         if (!isMinion(card) && !isHero(card)) return false;
         return predicate(card);
       },
+      min: 1,
+      max: 1,
+      allowRepeat: false,
+      label,
+      canCancel,
       aiHints,
       timeoutFallback
     }),
@@ -181,15 +174,13 @@ export const singleAllyTargetRules = {
     card: AnyCard,
     predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) =>
-    minionOrHeroTargetRules.canPlay(1)(
-      game,
-      card,
-      c => c.player.equals(card.player) && predicate(c)
-    ),
+    minionOrHeroTargetRules.canPlay(game, card, {
+      predicate: c => c.player.equals(card.player) && predicate(c),
+      min: 1
+    }),
   getTargets: async ({
     game,
     card,
-    origin,
     label = 'Select an ally',
     timeoutFallback,
     predicate = () => true,
@@ -198,7 +189,6 @@ export const singleAllyTargetRules = {
   }: {
     game: Game;
     card: AnyCard;
-    origin: CardTargetOrigin;
     label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
@@ -208,12 +198,17 @@ export const singleAllyTargetRules = {
     };
   }) =>
     await minionOrHeroTargetRules.getTargets({
+      game,
+      card,
       min: 1,
       max: 1,
       label,
       allowRepeat: false,
-      canCancel
-    })({ game, card, origin, predicate, aiHints, timeoutFallback }),
+      canCancel,
+      predicate,
+      aiHints,
+      timeoutFallback
+    }),
   defaultTimeoutFallback: (
     game: Game,
     card: AnyCard,
@@ -240,7 +235,6 @@ export const singleEnemyMinionTargetRules = {
   async getTargets({
     game,
     card,
-    origin,
     label = 'Select an enemy minion',
     timeoutFallback,
     predicate = () => true,
@@ -249,7 +243,6 @@ export const singleEnemyMinionTargetRules = {
     game: Game;
     card: AnyCard;
     label?: string;
-    origin: CardTargetOrigin;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
     aiHints: {
@@ -259,16 +252,15 @@ export const singleEnemyMinionTargetRules = {
     const result = await singleEnemyTargetRules.getTargets({
       game,
       card,
-      origin,
       label,
       timeoutFallback,
       predicate: c => isMinion(c) && predicate(c),
       aiHints
     });
     if (result.cancelled) {
-      return { cancelled: true };
+      return { cancelled: true as const, result: null };
     }
-    return { cancelled: false, result: result.result as MinionCard[] };
+    return { cancelled: false as const, result: result.result as Targets<MinionCard> };
   },
   defaultTimeoutFallback: (
     game: Game,
@@ -296,7 +288,6 @@ export const singleAllyMinionTargetRules = {
   async getTargets({
     game,
     card,
-    origin,
     label = 'Select an ally minion',
     timeoutFallback,
     predicate = () => true,
@@ -304,7 +295,6 @@ export const singleAllyMinionTargetRules = {
   }: {
     game: Game;
     card: AnyCard;
-    origin: CardTargetOrigin;
     label?: string;
     timeoutFallback: AnyCard[];
     predicate?: (c: MinionCard) => boolean;
@@ -315,7 +305,6 @@ export const singleAllyMinionTargetRules = {
     const result = await singleAllyTargetRules.getTargets({
       game,
       card,
-      origin,
       label,
       timeoutFallback,
       predicate: c => isMinion(c) && predicate(c),
@@ -323,9 +312,9 @@ export const singleAllyMinionTargetRules = {
     });
 
     if (result.cancelled) {
-      return result;
+      return { cancelled: true as const, result: null };
     }
-    return { cancelled: false as const, result: result.result as MinionCard[] };
+    return { cancelled: false as const, result: result.result as Targets<MinionCard> };
   },
   defaultTimeoutFallback: (
     game: Game,
@@ -348,16 +337,14 @@ export const singleAllyMinionTargetRules = {
 
 export const singleMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
-    return minionOrHeroTargetRules.canPlay(1)(
-      game,
-      card,
-      c => isMinion(c) && predicate(c)
-    );
+    return minionOrHeroTargetRules.canPlay(game, card, {
+      predicate: c => isMinion(c) && predicate(c),
+      min: 1
+    });
   },
   async getTargets({
     game,
     card,
-    origin,
     label = 'Select a minion',
     timeoutFallback,
     predicate = () => true,
@@ -366,7 +353,6 @@ export const singleMinionTargetRules = {
   }: {
     game: Game;
     card: AnyCard;
-    origin: CardTargetOrigin;
     label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
@@ -380,20 +366,18 @@ export const singleMinionTargetRules = {
       max: 1,
       label,
       allowRepeat: false,
-      canCancel
-    })({
+      canCancel,
       game,
       card,
-      origin,
       predicate: c => isMinion(c) && predicate(c),
       timeoutFallback,
       aiHints
     });
 
     if (result.cancelled) {
-      return result;
+      return { cancelled: true as const, result: null };
     }
-    return { cancelled: false as const, result: result.result as MinionCard[] };
+    return { cancelled: false as const, result: result.result as Targets<MinionCard> };
   },
   defaultTimeoutFallback: (
     game: Game,
@@ -417,16 +401,14 @@ export const multipleEnemyTargetRules = {
     min: number,
     predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) {
-    return minionOrHeroTargetRules.canPlay(min)(
-      game,
-      card,
-      c => !c.player.equals(card.player) && predicate(c)
-    );
+    return minionOrHeroTargetRules.canPlay(game, card, {
+      predicate: c => !c.player.equals(card.player) && predicate(c),
+      min
+    });
   },
   async getTargets(
     game: Game,
     card: AnyCard,
-    origin: CardTargetOrigin,
     options: {
       min: number;
       max: number;
@@ -443,11 +425,9 @@ export const multipleEnemyTargetRules = {
       min: options.min,
       max: options.max,
       label: options.label,
-      allowRepeat: options.allowRepeat ?? false
-    })({
+      allowRepeat: options.allowRepeat ?? false,
       game,
       card,
-      origin,
       predicate: c => !c.player.equals(card.player) && (options.predicate?.(c) ?? true),
       timeoutFallback: options.timeoutFallback,
       aiHints: options.aiHints
@@ -569,4 +549,5 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
   }
 });
 
-export const noTargets = () => Promise.resolve({ cancelled: false as const, result: [] });
+export const noTargets = () =>
+  Promise.resolve({ cancelled: false as const, result: { cards: [], spaces: [] } });

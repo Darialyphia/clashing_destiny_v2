@@ -80,14 +80,6 @@ export type SerializedCard = {
   affinity: Affinity;
 };
 
-export type CardTargetOrigin =
-  | { type: 'card'; card: AnyCard }
-  | {
-      type: 'ability';
-      abilityId: string;
-      card: AbilityOwner;
-    };
-
 export abstract class Card<
   TSerialized extends JSONObject,
   TInterceptors extends CardInterceptors = CardInterceptors,
@@ -102,8 +94,6 @@ export abstract class Card<
   readonly keywordManager = new KeywordManagerComponent();
 
   protected playedAtTurn: number | null = null;
-
-  protected _targetedBy: CardTargetOrigin[] = [];
 
   protected _isRevealed = false;
 
@@ -236,10 +226,6 @@ export abstract class Card<
     return this.player.unlockedAffinities.includes(this.blueprint.affinity);
   }
 
-  get targetedBy() {
-    return this._targetedBy;
-  }
-
   abstract isValidMovementPosition(space: BoardSpace): boolean;
 
   protected async dispose() {
@@ -270,27 +256,6 @@ export abstract class Card<
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_PLAY,
       new CardAfterPlayEvent({ card: this })
-    );
-  }
-
-  targetBy(origin: CardTargetOrigin) {
-    this._targetedBy.push(origin);
-  }
-
-  clearTargetedBy(origin: CardTargetOrigin) {
-    this._targetedBy = this._targetedBy.filter(t =>
-      match(t)
-        .with(
-          { type: 'ability' },
-          t =>
-            (origin.type === 'ability' && t.abilityId !== origin.abilityId) ||
-            !t.card.equals(origin.card)
-        )
-        .with(
-          { type: 'card' },
-          t => origin.type === 'card' && !t.card.equals(origin.card)
-        )
-        .exhaustive()
     );
   }
 
