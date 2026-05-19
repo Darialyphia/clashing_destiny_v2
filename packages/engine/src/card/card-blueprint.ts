@@ -1,11 +1,9 @@
-import type { BetterExtract } from '@game/shared';
 import type { Game } from '../game/game';
 import type {
   CARD_KINDS,
   CardKind,
   CardSetId,
   Rarity,
-  ArtifactKind,
   Tag,
   Job,
   Affinity,
@@ -21,6 +19,7 @@ import type { DestinyCard } from './entities/destiny.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
 import type { GameEvent } from '../game/game.events';
 import type { TrapCard } from './entities/trap.entity';
+import type { BoardSpace } from '../board/board-space.entity';
 
 export type CardArt = {
   foil: {
@@ -58,25 +57,33 @@ export type CardBlueprintBase = {
   affinity: Affinity;
 };
 
-export type AbilityBlueprint<TCard extends AbilityOwner, TTarget extends Target> = {
+export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends AnyCard> = {
   id: string;
   manaCost: number;
   description: string;
   dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
   isHiddenOnCard?: boolean;
-  getTargets: (game: Game, card: TCard) => Promise<InteractionResult<Target[]>>;
+  getTargets: (
+    game: Game,
+    card: TCard
+  ) => Promise<InteractionResult<Targets<TCardTarget>>>;
   canUse(game: Game, card: TCard): boolean;
-  onResolve(game: Game, card: TCard, targets: TTarget[], ability: Ability<TCard>): void;
+  onResolve(
+    game: Game,
+    card: TCard,
+    targets: Targets<TCardTarget>,
+    ability: Ability<TCard>
+  ): Promise<void>;
   aiHints: {
     shouldUse: (game: Game, card: TCard) => number;
   };
 };
-export const defineAbility = <TCard extends AbilityOwner, TTarget extends Target>(
-  bp: AbilityBlueprint<TCard, TTarget>
-): AbilityBlueprint<TCard, TTarget> => bp;
+export const defineAbility = <TCard extends AbilityOwner, TCardTarget extends AnyCard>(
+  bp: AbilityBlueprint<TCard, TCardTarget>
+): AbilityBlueprint<TCard, TCardTarget> => bp;
 
-export type AnyAbility = AbilityBlueprint<AbilityOwner, Target>;
+export type AnyAbility = AbilityBlueprint<AbilityOwner, AnyCard>;
 
 export type SerializedAbility = {
   id: string;
@@ -86,17 +93,26 @@ export type SerializedAbility = {
   label: string;
   manaCost: number;
   description: string;
-  targets: SerializedPreResponseTarget[] | null;
+  targets: SerializedPreResponseTarget | null;
   isHiddenOnCard: boolean;
 };
 
-export type Target = AnyCard;
-export type SerializedPreResponseTarget = string;
+export type Targets<TCard extends AnyCard = AnyCard> = {
+  cards: TCard[];
+  spaces: BoardSpace[];
+};
+export type SerializedPreResponseTarget = {
+  cards: string[];
+  spaces: string[];
+};
 
 export const serializePreResponseTarget = (
-  target: Target
+  targets: Targets
 ): SerializedPreResponseTarget => {
-  return target.id;
+  return {
+    cards: targets.cards.map(card => card.id),
+    spaces: targets.spaces.map(space => space.id)
+  };
 };
 
 export type MinionBlueprint = CardBlueprintBase & {
@@ -105,7 +121,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   speed: CardSpeed;
   atk: number;
   maxHp: number;
-  abilities: AbilityBlueprint<MinionCard, Target>[];
+  abilities: AbilityBlueprint<MinionCard, any>[];
   jobs: Job[];
   subKind: MinionType;
   canPlay: (game: Game, card: MinionCard) => boolean;
@@ -119,16 +135,15 @@ export type MinionBlueprint = CardBlueprintBase & {
   };
 };
 
-export type SpellBlueprint<T extends Target = Target> = CardBlueprintBase & {
+export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
   speed: CardSpeed;
   jobs: Job[];
-  abilities: AbilityBlueprint<SpellCard, any>[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
-  onPlay: (game: Game, card: SpellCard, targets: T[]) => Promise<void>;
+  onPlay: (game: Game, card: SpellCard, targets: Targets<T>) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
-  getTargets: (game: Game, card: SpellCard) => Promise<InteractionResult<T[]>>;
+  getTargets: (game: Game, card: SpellCard) => Promise<InteractionResult<Targets<T>>>;
   aiHints: {
     shouldPlay: (game: Game, card: SpellCard) => number;
   };
@@ -142,20 +157,20 @@ export type HeroBlueprint = CardBlueprintBase & {
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;
   maxHp: number;
-  abilities: AbilityBlueprint<HeroCard, Target>[];
+  abilities: AbilityBlueprint<HeroCard, any>[];
   aiHints: {
     shouldPlay: (game: Game, card: HeroCard) => number;
   };
 };
 
-export type DestinyBlueprint<T extends Target = Target> = CardBlueprintBase & {
+export type DestinyBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   expCost: number;
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
   jobs: Job[];
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
-  onPlay: (game: Game, card: DestinyCard, targets: T[]) => Promise<void>;
+  onPlay: (game: Game, card: DestinyCard, targets: Targets<T>) => Promise<void>;
   canPlay: (game: Game, card: DestinyCard) => boolean;
-  getTargets: (game: Game, card: DestinyCard) => Promise<InteractionResult<Target[]>>;
+  getTargets: (game: Game, card: DestinyCard) => Promise<InteractionResult<Targets<T>>>;
   aiHints: {
     shouldPlay: (game: Game, card: DestinyCard) => number;
   };

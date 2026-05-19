@@ -5,7 +5,7 @@ import { Interceptable } from '../../utils/interceptable';
 import {
   type AbilityBlueprint,
   type HeroBlueprint,
-  type Target
+  type Targets
 } from '../card-blueprint';
 import { CARD_EVENTS, CARD_LOCATIONS, type Affinity, type JobId } from '../card.enums';
 import {
@@ -30,6 +30,7 @@ import {
 import { HERO_EVENTS, HeroCardHealEvent, HeroPlayedEvent } from '../events/hero.events';
 import { DamageTrackerComponent } from '../components/damage-tracker.component';
 import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
+import { AbilityManagerComponent } from '../components/abilities-manager.component';
 
 export type SerializedHeroCard = SerializedCard & {
   spellPower: number;
@@ -57,9 +58,7 @@ export type HeroCardInterceptorName = keyof HeroCardInterceptors;
 export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlueprint> {
   private damageTaken = 0;
 
-  readonly abilityTargets = new Map<string, Target[]>();
-
-  readonly abilities: Ability<HeroCard>[] = [];
+  readonly abilityManager: AbilityManagerComponent<HeroCard>;
 
   readonly damageTracker: DamageTrackerComponent;
 
@@ -81,9 +80,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
 
     this.damageTracker = new DamageTrackerComponent(game, this);
-    this.blueprint.abilities.forEach(ability => {
-      this.abilities.push(new Ability<HeroCard>(this.game, this, ability));
-    });
+    this.abilityManager = new AbilityManagerComponent<HeroCard>(game, this);
   }
 
   protected async onInterceptorAdded(key: HeroCardInterceptorName) {
@@ -213,40 +210,24 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
+    const ability = this.abilityManager.getAbility(id);
     if (!ability) return false;
 
-    return this.interceptors.canUseAbility.getValue(ability.canUse, {
-      card: this,
-      ability
-    });
+    return this.interceptors.canUseAbility.getValue(
+      this.abilityManager.canUseAbility(id),
+      {
+        card: this,
+        ability
+      }
+    );
   }
 
-  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
-    const targets = this.abilityTargets.get(abilityId);
-    if (!targets) return;
-    if (newTarget instanceof Card) {
-      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
-      if (index === -1) return;
-
-      const oldTarget = targets[index] as AnyCard;
-      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
-
-      targets[index] = newTarget;
-      newTarget.targetBy({ type: 'ability', abilityId, card: this });
-    }
-  }
-
-  addAbility(ability: AbilityBlueprint<HeroCard, Target>) {
-    const newAbility = new Ability<HeroCard>(this.game, this, ability);
-    this.abilities.push(newAbility);
-    return newAbility;
+  addAbility(ability: AbilityBlueprint<HeroCard, any>) {
+    return this.abilityManager.addAbility(ability);
   }
 
   removeAbility(abilityId: string) {
-    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
-    if (index === -1) return;
-    this.abilities.splice(index, 1);
+    this.abilityManager.removeAbility(abilityId);
   }
 
   get jobs() {
@@ -299,7 +280,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
-      abilities: this.abilities.map(ability => ability.id),
+      abilities: this.abilityManager.serialize(),
       jobs: this.jobs.map(job => job.id) as JobId[],
       advancedAffinity: this.advancedAffinity
     };

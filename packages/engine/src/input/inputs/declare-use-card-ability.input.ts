@@ -28,13 +28,8 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   private get ability() {
     if (!this.card) return null;
     return match(this.card)
-      .with(
-        P.instanceOf(MinionCard),
-        P.instanceOf(HeroCard),
-        P.instanceOf(SpellCard),
-        card =>
-          card.abilities.find(ability => ability.abilityId === this.payload.abilityId) ||
-          null
+      .with(P.instanceOf(MinionCard), P.instanceOf(HeroCard), card =>
+        card.abilityManager.getAbility(this.payload.abilityId)
       )
       .otherwise(() => null);
   }

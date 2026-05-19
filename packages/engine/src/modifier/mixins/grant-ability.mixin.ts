@@ -1,5 +1,6 @@
-import type { AbilityBlueprint, Target } from '../../card/card-blueprint';
+import type { AbilityBlueprint, Targets } from '../../card/card-blueprint';
 import type { AbilityOwner } from '../../card/entities/ability.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';
@@ -11,14 +12,14 @@ export class GrantAbilityModifierMixin<T extends AbilityOwner> extends ModifierM
 
   constructor(
     game: Game,
-    private blueprint: AbilityBlueprint<T, Target>
+    private blueprint: AbilityBlueprint<T, AnyCard>
   ) {
     super(game);
   }
 
   async onApplied(target: T, modifier: Modifier<T>) {
     this.modifier = modifier;
-    if (target.abilities.some(a => a.blueprint.id === this.blueprint.id)) return;
+    if (target.abilityManager.hasAbility(this.blueprint.id)) return;
 
     const ability = target.addAbility(this.blueprint as any);
     this.abilityId = ability.abilityId;

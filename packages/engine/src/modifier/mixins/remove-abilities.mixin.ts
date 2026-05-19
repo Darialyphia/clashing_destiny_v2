@@ -10,19 +10,19 @@ export class RemoveAbilitiesModifierMixin<
   }
 
   onApplied(target: T): void {
-    for (const ability of target.abilities) {
+    for (const ability of target.abilityManager.abilities) {
       ability.seal();
     }
   }
 
   onRemoved(target: T): void {
-    for (const ability of target.abilities) {
+    for (const ability of target.abilityManager.abilities) {
       ability.unseal();
     }
   }
 
   async onReapplied(target: T) {
-    for (const ability of target.abilities) {
+    for (const ability of target.abilityManager.abilities) {
       ability.seal();
     }
   }

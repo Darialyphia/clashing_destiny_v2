@@ -52,7 +52,6 @@ export const healingMystic: MinionBlueprint = {
         singleMinionTargetRules.getTargets({
           game,
           card,
-          origin: { type: 'ability', abilityId: 'healing-mystic-ability', card },
           timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card),
           canCancel: true,
           aiHints: {
@@ -60,7 +59,7 @@ export const healingMystic: MinionBlueprint = {
           }
         }),
       async onResolve(game, card, targets) {
-        for (const target of targets) {
+        for (const target of targets.cards) {
           await target.heal(2);
         }
       },
@@ -85,7 +84,7 @@ export const healingMystic: MinionBlueprint = {
       })
     );
   },
-  async onPlay(game, card) {},
+  async onPlay() {},
   aiHints: {
     shouldPlay: () => 0,
     shouldMove: () => 0,

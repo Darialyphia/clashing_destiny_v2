@@ -46,7 +46,9 @@ export const destinyCardsTutorial: TutorialMission = {
       // client.ui.displayedElements.phaseTracker = false;
 
       meta.allyHero = game.playerSystem.player1.hero;
-      meta.allyHero.abilities.splice(0, -1);
+      meta.allyHero.abilityManager.abilities.forEach(ability =>
+        meta.allyHero?.abilityManager.removeAbility(ability.id)
+      );
       meta.enemyHero = game.playerSystem.player2.hero;
     },
     steps: {

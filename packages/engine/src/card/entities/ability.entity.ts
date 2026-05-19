@@ -3,15 +3,13 @@ import type { Game } from '../../game/game';
 import {
   serializePreResponseTarget,
   type AbilityBlueprint,
-  type Target,
-  type SerializedAbility
+  type SerializedAbility,
+  type Targets
 } from '../card-blueprint';
 import { GAME_PHASES, type GamePhase } from '../../game/game.enums';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
-import { Card } from './card.entity';
 import { Entity } from '../../entity';
-import type { SpellCard } from './spell.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
   ABILITY_EVENTS,
@@ -19,7 +17,7 @@ import {
   AbilityBeforeUseEvent
 } from '../events/ability.events';
 
-export type AbilityOwner = MinionCard | HeroCard | SpellCard;
+export type AbilityOwner = MinionCard | HeroCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;
@@ -31,10 +29,12 @@ export class Ability<T extends AbilityOwner>
 {
   _isSealed = false;
 
+  private targets: Targets | null = null;
+
   constructor(
     private game: Game,
     readonly card: T,
-    public blueprint: AbilityBlueprint<T, Target>
+    public blueprint: AbilityBlueprint<T, any>
   ) {
     super(`${card.id}-${blueprint.id}`, {
       manaCost: new Interceptable()
@@ -76,14 +76,8 @@ export class Ability<T extends AbilityOwner>
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
     );
-    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id) ?? [];
-    await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
-    abilityTargets.forEach(target => {
-      if (target instanceof Card) {
-        target.clearTargetedBy({ type: 'card', card: this.card });
-      }
-    });
-    this.card.abilityTargets.delete(this.blueprint.id);
+
+    await this.blueprint.onResolve(this.game, this.card, this.targets!, this);
 
     await this.game.emit(
       ABILITY_EVENTS.ABILITY_AFTER_USE,
@@ -93,16 +87,13 @@ export class Ability<T extends AbilityOwner>
 
   async use(onResolved?: () => MaybePromise<void>) {
     const targetsResult = await this.blueprint.getTargets(this.game, this.card);
-    if (targetsResult.cancelled) {
-      this.card.abilityTargets.delete(this.blueprint.id);
-      return;
-    }
-
-    this.card.abilityTargets.set(this.blueprint.id, targetsResult.result);
-
-    await this.card.exhaust();
+    if (targetsResult.cancelled) return;
+    this.targets = targetsResult.result;
 
     await this.resolveEffect();
+    await this.card.exhaust();
+    this.targets = null;
+
     await onResolved?.();
   }
 
@@ -124,8 +115,7 @@ export class Ability<T extends AbilityOwner>
       label: this.blueprint.label,
       manaCost: this.manaCost,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
-      targets:
-        this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
+      targets: this.targets ? serializePreResponseTarget(this.targets) : null
     };
   }
 }

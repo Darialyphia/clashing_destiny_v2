@@ -5,7 +5,7 @@ import { Interceptable } from '../../utils/interceptable';
 import {
   type AbilityBlueprint,
   type MinionBlueprint,
-  type Target
+  type Targets
 } from '../card-blueprint';
 import {
   CARD_EVENTS,
@@ -45,10 +45,12 @@ import type { BoardSpace } from '../../board/board-space.entity';
 import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
 import { isMinion } from '../card-utils';
 import type { SpaceTargetingStrategy } from '../../targeting/targeting-strategy';
-import { MeleeTargetingStrategy } from '../../targeting/ranged-targeting.strategy';
+import { RangedTargetingStrategy } from '../../targeting/ranged-targeting.strategy';
 import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE, type AOEShape } from '../../aoe/aoe-shape';
 import { match } from 'ts-pattern';
+import { MeleeTargetingStrategy } from '../../targeting/melee-targeting.strategy';
+import { AbilityManagerComponent } from '../components/abilities-manager.component';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -103,11 +105,11 @@ export class MinionCard extends Card<
   MinionCardInterceptors,
   MinionBlueprint
 > {
-  readonly abilityTargets = new Map<string, Target[]>();
-
-  readonly abilities: Ability<MinionCard>[] = [];
+  private damageTaken = 0;
 
   readonly damageTracker: DamageTrackerComponent;
+
+  readonly abilityManager: AbilityManagerComponent<MinionCard>;
 
   constructor(game: Game, player: Player, options: CardOptions<MinionBlueprint>) {
     super(
@@ -140,17 +142,8 @@ export class MinionCard extends Card<
       options
     );
 
-    this.blueprint.abilities.forEach(ability => {
-      this.abilities.push(new Ability<MinionCard>(this.game, this, ability));
-    });
-
     this.damageTracker = new DamageTrackerComponent(game, this);
-
-    this.game.on(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, event => {
-      if (event.data.card.equals(this)) {
-        this.damageTracker.resetDamageTaken();
-      }
-    });
+    this.abilityManager = new AbilityManagerComponent<MinionCard>(game, this);
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
@@ -221,6 +214,13 @@ export class MinionCard extends Card<
     return this.interceptors.canAttack.getValue(base, { target });
   }
 
+  get defaultAttackTargettingPattern(): SpaceTargetingStrategy {
+    return match(this.blueprint.subKind)
+      .with(MINION_TYPES.MELEE, () => new MeleeTargetingStrategy(this.game, this))
+      .with(MINION_TYPES.RANGED, () => new RangedTargetingStrategy(this.game, this))
+      .with(MINION_TYPES.FLYER, () => new MeleeTargetingStrategy(this.game, this))
+      .exhaustive();
+  }
   get attackTargettingPattern(): SpaceTargetingStrategy {
     return this.interceptors.attackTargetingPattern.getValue(
       new MeleeTargetingStrategy(this.game, this),
@@ -301,31 +301,26 @@ export class MinionCard extends Card<
     return this.interceptors.dealsDamageFirst.getValue(false, this);
   }
 
-  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
-    const targets = this.abilityTargets.get(abilityId);
-    if (!targets) return;
-    if (newTarget instanceof Card) {
-      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
-      if (index === -1) return;
-
-      const oldTarget = targets[index] as AnyCard;
-      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
-
-      targets[index] = newTarget;
-      newTarget.targetBy({ type: 'ability', abilityId, card: this });
-    }
-  }
-
   canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
+    const ability = this.abilityManager.getAbility(id);
     if (!ability) return false;
 
-    return this.interceptors.canUseAbility.getValue(ability.canUse, {
-      card: this,
-      ability
-    });
+    return this.interceptors.canUseAbility.getValue(
+      this.abilityManager.canUseAbility(id),
+      {
+        card: this,
+        ability
+      }
+    );
   }
 
+  addAbility(ability: AbilityBlueprint<MinionCard, any>) {
+    return this.abilityManager.addAbility(ability);
+  }
+
+  removeAbility(abilityId: string) {
+    this.abilityManager.removeAbility(abilityId);
+  }
   getReceivedDamage(damage: Damage) {
     return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
       damage
@@ -407,18 +402,6 @@ export class MinionCard extends Card<
       MINION_EVENTS.MINION_AFTER_HEAL,
       new MinionCardHealEvent({ card: this, amount: heal })
     );
-  }
-
-  addAbility(ability: AbilityBlueprint<MinionCard, Target>) {
-    const newAbility = new Ability<MinionCard>(this.game, this, ability);
-    this.abilities.push(newAbility);
-    return newAbility;
-  }
-
-  removeAbility(abilityId: string) {
-    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
-    if (index === -1) return;
-    this.abilities.splice(index, 1);
   }
 
   get canMove(): boolean {
@@ -596,7 +579,7 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
-      abilities: this.abilities.map(ability => ability.id),
+      abilities: this.abilityManager.serialize(),
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],
       hasSummoningSickness: this.hasSummoningSickness,
