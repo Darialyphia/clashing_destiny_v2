@@ -10,7 +10,6 @@ import {
 import {
   CARD_EVENTS,
   CARD_LOCATIONS,
-  CARD_SPEED,
   MINION_TYPES,
   type CardSpeed,
   type JobId,
@@ -48,7 +47,7 @@ import { isMinion } from '../card-utils';
 import type { SpaceTargetingStrategy } from '../../targeting/targeting-strategy';
 import { MeleeTargetingStrategy } from '../../targeting/ranged-targeting.strategy';
 import { PointAOEShape } from '../../aoe/point.aoe-shape';
-import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
+import { AOE_TARGETING_TYPE, type AOEShape } from '../../aoe/aoe-shape';
 import { match } from 'ts-pattern';
 
 export type SerializedMinionCard = SerializedCard & {
@@ -89,7 +88,9 @@ export type MinionCardInterceptors = CardInterceptors & {
   canMoveManually: Interceptable<boolean, MinionCard>;
 
   attackTargetingPattern: Interceptable<SpaceTargetingStrategy>;
+  attackAOE: Interceptable<AOEShape>;
   retaliationTargetingPattern: Interceptable<SpaceTargetingStrategy>;
+  retaliationAOE: Interceptable<AOEShape>;
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
@@ -102,8 +103,6 @@ export class MinionCard extends Card<
   MinionCardInterceptors,
   MinionBlueprint
 > {
-  private damageTaken = 0;
-
   readonly abilityTargets = new Map<string, Target[]>();
 
   readonly abilities: Ability<MinionCard>[] = [];
@@ -134,7 +133,9 @@ export class MinionCard extends Card<
         shouldSwitchInitiativeAfterattacking: new Interceptable(),
         speed: new Interceptable(),
         attackTargetingPattern: new Interceptable(),
-        retaliationTargetingPattern: new Interceptable()
+        attackAOE: new Interceptable(),
+        retaliationTargetingPattern: new Interceptable(),
+        retaliationAOE: new Interceptable()
       },
       options
     );
@@ -144,6 +145,12 @@ export class MinionCard extends Card<
     });
 
     this.damageTracker = new DamageTrackerComponent(game, this);
+
+    this.game.on(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, event => {
+      if (event.data.card.equals(this)) {
+        this.damageTracker.resetDamageTaken();
+      }
+    });
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
@@ -179,7 +186,7 @@ export class MinionCard extends Card<
   }
 
   get remainingHp(): number {
-    return Math.max(this.maxHp - this.damageTaken, 0);
+    return Math.max(this.maxHp - this.damageTracker.damageTaken, 0);
   }
 
   get isAttacking() {
@@ -200,15 +207,6 @@ export class MinionCard extends Card<
     if (key === 'maxHp') {
       await this.checkHp(this);
     }
-  }
-
-  resetDamageTaken() {
-    this.damageTaken = 0;
-  }
-
-  removeFromCurrentLocation(): void {
-    super.removeFromCurrentLocation();
-    this.damageTaken = 0;
   }
 
   canBeTargeted(source: AnyCard) {
@@ -233,6 +231,26 @@ export class MinionCard extends Card<
   get retaliationTargettingPattern(): SpaceTargetingStrategy {
     return this.interceptors.retaliationTargetingPattern.getValue(
       new MeleeTargetingStrategy(this.game, this),
+      {}
+    );
+  }
+
+  get attackAOE(): AOEShape {
+    return this.interceptors.attackAOE.getValue(
+      new PointAOEShape(this.game, {
+        player: this.player.opponent,
+        targetingType: AOE_TARGETING_TYPE.ENEMY_MINION
+      }),
+      {}
+    );
+  }
+
+  get retaliationAOE(): AOEShape {
+    return this.interceptors.retaliationAOE.getValue(
+      new PointAOEShape(this.game, {
+        player: this.player.opponent,
+        targetingType: AOE_TARGETING_TYPE.ENEMY_MINION
+      }),
       {}
     );
   }
@@ -364,10 +382,8 @@ export class MinionCard extends Card<
       })
     );
 
-    this.damageTaken = Math.min(
-      this.damageTaken + damage.getFinalAmount(this),
-      this.maxHp
-    );
+    this.damageTracker.takeDamage(damage.getFinalAmount(this));
+
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE,
       new CardAfterTakeDamageEvent({
@@ -386,7 +402,7 @@ export class MinionCard extends Card<
       MINION_EVENTS.MINION_BEFORE_HEAL,
       new MinionCardHealEvent({ card: this, amount: heal })
     );
-    this.damageTaken = Math.max(this.damageTaken - heal, 0);
+    this.damageTracker.heal(heal);
     await this.game.emit(
       MINION_EVENTS.MINION_AFTER_HEAL,
       new MinionCardHealEvent({ card: this, amount: heal })

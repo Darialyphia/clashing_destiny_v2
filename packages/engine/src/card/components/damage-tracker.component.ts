@@ -6,8 +6,10 @@ import type { HeroCard } from '../entities/hero.entity';
 import type { MinionCard } from '../entities/minion.entity';
 
 export class DamageTrackerComponent {
-  private damageTakenThisTurnPerTurn: number[] = [];
+  private damageTakenPerTurn: number[] = [];
   private damageInstancesPerTurn: Damage[][] = [];
+
+  private _damageTaken = 0;
 
   constructor(
     private game: Game,
@@ -17,11 +19,27 @@ export class DamageTrackerComponent {
     this.game.on(GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE, this.onDamageTaken);
   }
 
+  get damageTaken(): number {
+    return this._damageTaken;
+  }
+
+  takeDamage(amount: number) {
+    this._damageTaken += amount;
+  }
+
+  heal(amount: number) {
+    this._damageTaken = Math.max(this._damageTaken - amount, 0);
+  }
+
+  resetDamageTaken() {
+    this._damageTaken = 0;
+  }
+
   private onDamageTaken(event: CardAfterTakeDamageEvent) {
     if (!event.data.card.equals(this.owner)) return;
     const currentTurn = this.game.turnSystem.elapsedTurns;
-    const damage = this.damageTakenThisTurnPerTurn[currentTurn] || 0;
-    this.damageTakenThisTurnPerTurn[currentTurn] =
+    const damage = this.damageTakenPerTurn[currentTurn] || 0;
+    this.damageTakenPerTurn[currentTurn] =
       damage + event.data.damage.getFinalAmount(this.owner);
     const damageInstances = this.damageInstancesPerTurn[currentTurn] || [];
     damageInstances.push(event.data.damage);
@@ -30,7 +48,7 @@ export class DamageTrackerComponent {
 
   get damageTakenThisTurn(): number {
     const currentTurn = this.game.turnSystem.elapsedTurns;
-    return this.damageTakenThisTurnPerTurn[currentTurn] || 0;
+    return this.damageTakenPerTurn[currentTurn] || 0;
   }
 
   get damageInstancesThisTurn(): Damage[] {
@@ -39,7 +57,7 @@ export class DamageTrackerComponent {
   }
 
   getDamageTakenForTurn(turn: number): number {
-    return this.damageTakenThisTurnPerTurn[turn] || 0;
+    return this.damageTakenPerTurn[turn] || 0;
   }
 
   getDamageInstancesForTurn(turn: number): Damage[] {

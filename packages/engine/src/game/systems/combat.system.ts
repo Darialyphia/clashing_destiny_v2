@@ -10,7 +10,7 @@ import {
 } from '@game/shared';
 import { System } from '../../system';
 import type { MinionCard } from '../../card/entities/minion.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
+import { HeroCard } from '../../card/entities/hero.entity';
 import {
   COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
@@ -165,7 +165,7 @@ export class CombatSystem
       })
     );
 
-    await this.performAttacks();
+    await this.dealDamage();
 
     await this.game.emit(
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
@@ -184,49 +184,62 @@ export class CombatSystem
     this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
   }
 
-  private async performAttacks() {
+  private async performAttackerStrike(attacker: Attacker, defender: AttackTarget) {
+    if (defender.isAlive) {
+      const area = attacker.attackAOE.getArea([defender.position.coordinates!]);
+      const targetsToDamage =
+        defender instanceof HeroCard
+          ? [defender]
+          : area.map(space => space.minion!).filter(isDefined);
+
+      for (const target of targetsToDamage) {
+        await attacker.dealDamage(target, new CombatDamage(attacker));
+      }
+    }
+  }
+
+  private async performDefenderStrike(attacker: Attacker, defender: AttackTarget) {
+    if (!attacker.isAlive) return;
+
+    const shouldStrikeBack =
+      isMinion(defender) &&
+      defender.canRetaliate(attacker) &&
+      attacker.canBeRetaliatedBy(defender);
+
+    if (!shouldStrikeBack) return;
+
+    const area = defender.retaliationAOE.getArea([attacker.position.coordinates!]);
+    const targetsToDamage = area.map(space => space.minion!).filter(isDefined);
+
+    for (const target of targetsToDamage) {
+      await defender.dealDamage(target, new CombatDamage(defender));
+    }
+  }
+
+  private async dealDamage() {
     const defender = this.defender;
     const attacker = this.attacker;
     if (!defender || !attacker) return;
 
     const canResolve = defender.isAlive && attacker.isAlive;
-    if (canResolve) {
-      const attackerFirst = attacker.dealsDamageFirst;
-      const defenderFirst = isMinion(defender) && defender.dealsDamageFirst;
 
-      const performAtttackerStrike = async () => {
-        if (defender.isAlive) {
-          await attacker.dealDamage(defender, new CombatDamage(attacker));
-        }
-      };
+    if (!canResolve) return;
+    const attackerFirst = attacker.dealsDamageFirst;
+    const defenderFirst = isMinion(defender) && defender.dealsDamageFirst;
 
-      const performDefenderStrike = async () => {
-        if (!attacker.isAlive) return;
-
-        const shouldStrikeBack =
-          isMinion(defender) &&
-          defender.canRetaliate(attacker) &&
-          attacker.canBeRetaliatedBy(defender);
-
-        if (!shouldStrikeBack) return;
-
-        await defender.dealDamage(attacker, new CombatDamage(defender));
-      };
-
-      if (attackerFirst && !defenderFirst) {
-        await performAtttackerStrike();
-        if (defender.isAlive) {
-          await performDefenderStrike();
-        }
-      } else if (!attackerFirst && defenderFirst) {
-        await performDefenderStrike();
-        if (attacker.isAlive) {
-          await performAtttackerStrike();
-        }
-      } else {
-        await performAtttackerStrike();
-        await performDefenderStrike();
+    if (attackerFirst && !defenderFirst) {
+      await this.performAttackerStrike(attacker, defender);
+      if (defender.isAlive) {
+        await this.performDefenderStrike(attacker, defender);
       }
+    } else if (!attackerFirst && defenderFirst) {
+      await this.performDefenderStrike(attacker, defender);
+      if (attacker.isAlive) {
+        await this.performAttackerStrike(attacker, defender);
+      }
+    } else {
+      await this.performAttackerStrike(attacker, defender);
+      await this.performDefenderStrike(attacker, defender);
     }
   }
 
