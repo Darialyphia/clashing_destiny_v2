@@ -1,26 +1,27 @@
 import dedent from 'dedent';
-import { defineAbility, type MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, singleMinionTargetRules } from '../../../../card-utils';
+import { type MinionBlueprint } from '../../../../card-blueprint';
+import { defaultCardArt } from '../../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   JOBS,
   MINION_TYPES,
   RARITIES
 } from '../../../../card.enums';
-import type { MinionCard } from '../../../../entities/minion.entity';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { LevelBonusModifier } from '../../../../../modifier/modifiers/level-bonus.modifier';
 import { JobBonusModifier } from '../../../../../modifier/modifiers/job-bonus.modifier';
+import { ChannelModifier } from '../../../../../modifier/modifiers/channel.modifier';
+import { MinionCard } from '../../../../entities/minion.entity';
 
 export const healingMystic: MinionBlueprint = {
   id: 'healing_mystic',
   name: 'Healing Mystic',
   description: dedent /*html*/ `
+    <rt-trigger>Channel</rt-trigger> Heal nearby ally minions for 2.
     <rt-lvl-bonus lvl="2"><rt-job-bonus job="acolyte">This costs 1 less.</rt-job-bonus></rt-lvl-bonus> 
     `,
   collectable: true,
@@ -34,40 +35,9 @@ export const healingMystic: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   subKind: MINION_TYPES.MELEE,
   tags: [],
-  atk: 2,
+  atk: 1,
   maxHp: 3,
-  abilities: [
-    defineAbility<MinionCard, MinionCard>({
-      id: 'healing-mystic-ability',
-      label: 'Heal 2 damage',
-      description: 'Heal a minion for 2.',
-      manaCost: 1,
-      canUse: (game, card) => {
-        return (
-          card.location === CARD_LOCATIONS.BOARD &&
-          singleMinionTargetRules.canPlay(game, card)
-        );
-      },
-      getTargets: (game, card) =>
-        singleMinionTargetRules.getTargets({
-          game,
-          card,
-          timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card),
-          canCancel: true,
-          aiHints: {
-            shouldPick: () => 1
-          }
-        }),
-      async onResolve(game, card, targets) {
-        for (const target of targets.cards) {
-          await target.heal(2);
-        }
-      },
-      aiHints: {
-        shouldUse: () => 1
-      }
-    })
-  ],
+  abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(new LevelBonusModifier(game, card, 2));
@@ -81,6 +51,19 @@ export const healingMystic: MinionBlueprint = {
         mixins: [
           new TogglableModifierMixin(game, () => lvlMod.isActive && jobMod.isActive)
         ]
+      })
+    );
+
+    await card.modifiers.add(
+      new ChannelModifier(game, card, {
+        handler: async () => {
+          const adjacentAllies = card.position
+            .getAdjacentCardsOfKind<MinionCard>(CARD_KINDS.MINION)
+            .filter(minion => minion.isAlly(card));
+          for (const ally of adjacentAllies) {
+            await ally.heal(2);
+          }
+        }
       })
     );
   },

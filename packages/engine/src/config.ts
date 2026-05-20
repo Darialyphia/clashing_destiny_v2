@@ -27,7 +27,7 @@ export type Config = {
 
   HERO_POSITION: number;
 
-  ADVANCED_AFFINITY_UNLOCK_LEVEL: number;
+  OFF_FACTION_MANA_COST_INCREASE: number;
 };
 
 export const defaultConfig: Config = {
@@ -56,5 +56,5 @@ export const defaultConfig: Config = {
   EXP_GAIN_PER_TURN: 1,
 
   HERO_POSITION: 2,
-  ADVANCED_AFFINITY_UNLOCK_LEVEL: 3
+  OFF_FACTION_MANA_COST_INCREASE: 1
 };

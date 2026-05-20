@@ -2,11 +2,7 @@ import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  type AbilityBlueprint,
-  type MinionBlueprint,
-  type Targets
-} from '../card-blueprint';
+import { type AbilityBlueprint, type MinionBlueprint } from '../card-blueprint';
 import {
   CARD_EVENTS,
   CARD_LOCATIONS,
@@ -97,7 +93,6 @@ export type MinionCardInterceptors = CardInterceptors & {
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
-  shouldExhaustWhenSummoned: Interceptable<boolean, MinionCard>;
   shouldExhaustAfterMoving: Interceptable<boolean, MinionCard>;
   speed: Interceptable<CardSpeed, MinionCard>;
 };
@@ -136,7 +131,6 @@ export class MinionCard extends Card<
         canMoveManually: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
         shouldSwitchInitiativeAfterattacking: new Interceptable(),
-        shouldExhaustWhenSummoned: new Interceptable(),
         shouldExhaustAfterMoving: new Interceptable(),
         speed: new Interceptable(),
         attackTargetingPattern: new Interceptable(),
@@ -442,10 +436,6 @@ export class MinionCard extends Card<
     return this.interceptors.shouldExhaustAfterMoving.getValue(true, this);
   }
 
-  get shouldExhaustWhenSummoned(): boolean {
-    return this.interceptors.shouldExhaustWhenSummoned.getValue(true, this);
-  }
-
   async moveManually(space: BoardSpace) {
     await this.move(space);
     if (this.shouldExhaustAfterMoving) {
@@ -471,10 +461,6 @@ export class MinionCard extends Card<
       );
     }
     await this.blueprint.onPlay(this.game, this);
-
-    if (this.shouldExhaustWhenSummoned) {
-      await this.exhaust();
-    }
 
     await this.game.emit(
       MINION_EVENTS.MINION_SUMMONED,

@@ -1,19 +1,21 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import { CARD_KINDS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
-import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { CombatDamage, DAMAGE_TYPES } from '../../utils/damage';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
+import type { ModifierMixin } from '../modifier-mixin';
 import { WhileOnBoardModifier } from './while-on-board.modifier';
 
-export class ProtectorModifier<
-  T extends MinionCard | HeroCard
-> extends WhileOnBoardModifier<T> {
-  constructor(game: Game, source: AnyCard) {
+export class ProtectorModifier<T extends MinionCard> extends WhileOnBoardModifier<T> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    options?: { mixins?: Array<ModifierMixin<T>> }
+  ) {
     super(KEYWORDS.PROTECTOR.id, game, source, {
       name: KEYWORDS.PROTECTOR.name,
       description: KEYWORDS.PROTECTOR.description,
@@ -39,7 +41,8 @@ export class ProtectorModifier<
               new CombatDamage((event.data.damage as CombatDamage).attacker)
             );
           }
-        })
+        }),
+        ...(options?.mixins ?? [])
       ]
     });
   }

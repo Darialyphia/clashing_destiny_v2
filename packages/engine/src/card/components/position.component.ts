@@ -116,8 +116,8 @@ export class PositionComponent {
     return this.space?.adjacent.map(cell => cell.occupant).filter(isDefined) ?? [];
   }
 
-  getAdjacentCardsOfKind(kind: CardKind) {
-    return this.adjacentCards.filter(card => card.blueprint.kind === kind) ?? [];
+  getAdjacentCardsOfKind<T extends AnyCard = AnyCard>(kind: CardKind): Array<T> {
+    return this.adjacentCards.filter(card => card.blueprint.kind === kind) as Array<T>;
   }
 
   get cardsOnSameColumn() {
@@ -128,8 +128,10 @@ export class PositionComponent {
       .filter(card => !card.equals(this.card)) as AnyCard[];
   }
 
-  getCardsOnSameColumnOfKind(kind: CardKind) {
-    return this.cardsOnSameColumn.filter(card => card.blueprint.kind === kind);
+  getCardsOnSameColumnOfKind<T extends AnyCard = AnyCard>(kind: CardKind): Array<T> {
+    return this.cardsOnSameColumn.filter(
+      card => card.blueprint.kind === kind
+    ) as Array<T>;
   }
 
   get enemyCardsOnSameColumn(): AnyCard[] {

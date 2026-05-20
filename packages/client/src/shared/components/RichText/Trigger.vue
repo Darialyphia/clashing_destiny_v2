@@ -1,11 +1,55 @@
 <script setup lang="ts">
+import { KEYWORDS } from '@game/engine/src/card/card-keywords';
+import { isString } from '@game/shared';
+import type { ShallowRef } from 'vue';
+import {
+  HoverCardRoot,
+  HoverCardContent,
+  HoverCardTrigger,
+  HoverCardPortal
+} from 'reka-ui';
+
 const { color = 'red' } = defineProps<{
   color?: 'red' | 'blue' | 'green' | 'yellow';
 }>();
+
+const el = useTemplateRef('el') as Readonly<ShallowRef<HTMLSpanElement | null>>;
+
+const keyword = computed(() => {
+  const text = el.value?.textContent?.toLowerCase() || '';
+  const k = Object.values(KEYWORDS).find(keyword => {
+    return (
+      text.match(new RegExp(`^${keyword.name.toLowerCase()}$`)) ||
+      keyword.aliases.some(alias => {
+        return isString(alias)
+          ? text.match(alias.toLowerCase())
+          : text.match(alias);
+      })
+    );
+  });
+  console.log(text, k);
+  return k;
+});
 </script>
 
 <template>
-  <span class="trigger" :class="color"><slot /></span>
+  <HoverCardRoot :open-delay="250" :close-delay="0">
+    <HoverCardTrigger>
+      <span ref="el" class="trigger" :class="color">
+        <slot />
+      </span>
+    </HoverCardTrigger>
+    <HoverCardPortal>
+      <HoverCardContent v-if="keyword" class="z-10" side="top">
+        <article>
+          <div class="keyword-card">
+            <div class="font-600">{{ keyword.name }}</div>
+            <p class="text-0">{{ keyword.description }}</p>
+          </div>
+        </article>
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
 </template>
 
 <style scoped lang="postcss">
@@ -50,5 +94,18 @@ const { color = 'red' } = defineProps<{
   --top-color: var(--yellow-5);
   --bottom-color: var(--yellow-8);
   color: black;
+}
+
+.keyword-card {
+  max-width: 30ch;
+  padding: var(--size-3);
+  color: var(--text-1);
+  background-color: black;
+  color: #efef9f;
+  padding: var(--size-2) var(--size-3);
+  font-family: var(--font-system-ui);
+  font-size: 14px;
+  border: solid 1px #bb8225;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 </style>

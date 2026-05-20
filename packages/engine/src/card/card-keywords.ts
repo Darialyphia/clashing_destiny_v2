@@ -52,6 +52,13 @@ export const KEYWORDS = {
       'Can move and attack in the same turn, and does not pass initiative after moving.',
     aliases: []
   },
+  CHANNEL: {
+    id: 'channel',
+    name: 'Channel X',
+    description:
+      'At the end of the turn, if this card is not exhausted, this card does something.',
+    aliases: [/channel/, /channel [0-9]+/]
+  },
   DEFENDER: {
     id: 'defender',
     name: 'Defender X',
@@ -236,7 +243,7 @@ export const KEYWORDS = {
   SUMMONING_SICKNESS: {
     id: 'summoning-sickness',
     name: 'Summoning Sickness',
-    description: 'This unit cannot move the turn it is played.',
+    description: 'This unit cannot move or attack the turn it is played.',
     aliases: []
   },
   SCRY: {

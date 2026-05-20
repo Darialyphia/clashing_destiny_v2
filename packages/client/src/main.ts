@@ -23,6 +23,7 @@ import JobBonus from './shared/components/RichText/JobBonus.vue';
 import LevelBonus from './shared/components/RichText/LevelBonus.vue';
 import Card from './shared/components/RichText/Card.vue';
 import Location from './shared/components/RichText/Location.vue';
+import Dynamic from './shared/components/RichText/Dynamic.vue';
 
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
@@ -52,6 +53,7 @@ app.component('rt-job-bonus', JobBonus);
 app.component('rt-lvl-bonus', LevelBonus);
 app.component('rt-card', Card);
 app.component('rt-location', Location);
+app.component('rt-dynamic', Dynamic);
 // app.component('HoverCard', HoverCardRoot);
 // app.use({
 //   install(app) {
