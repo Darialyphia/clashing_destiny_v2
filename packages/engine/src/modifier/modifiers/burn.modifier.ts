@@ -7,6 +7,7 @@ import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { AbilityDamage, SpellDamage } from '../../utils/damage';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import { Modifier } from '../modifier.entity';
 
@@ -15,10 +16,11 @@ export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
     super(KEYWORDS.BURN.id, game, source, {
       name: KEYWORDS.BURN.name,
       description: KEYWORDS.BURN.description,
-      icon: 'keyword-burn',
+      icon: 'icons/keyword-burn',
       isUnique: true,
       stacks,
       mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.BURN),
         new RemoveOnDestroyedMixin(game),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.TURN_START,

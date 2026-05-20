@@ -36,12 +36,12 @@ const { cards, deckBuilder } = defineProps<{
         >
           <div class="flex gap-1 items-center">
             <div
+              v-for="affinity in card.blueprint.affinities"
+              :key="affinity"
               class="affinity"
               :style="{
                 '--bg':
-                  assets[
-                    `ui/card/affinity-${card.blueprint.affinity.toLocaleLowerCase()}`
-                  ].css
+                  assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css
               }"
             />
           </div>

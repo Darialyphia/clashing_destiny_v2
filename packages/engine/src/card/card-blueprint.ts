@@ -54,7 +54,7 @@ export type CardBlueprintBase = {
   unique?: boolean;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-  affinity: Affinity;
+  affinities: Affinity[];
 };
 
 export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends AnyCard> = {
@@ -152,7 +152,6 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
 export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
   jobs: Job[];
-  advancedAffinity: Affinity;
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   canPlay: (game: Game, card: HeroCard) => boolean;

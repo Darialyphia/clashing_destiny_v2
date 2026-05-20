@@ -28,7 +28,7 @@ export const fireBolt: SpellBlueprint<MinionCard | HeroCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
-  affinity: AFFINITIES.FIRE,
+  affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   speed: CARD_SPEED.FAST,
   tags: [],

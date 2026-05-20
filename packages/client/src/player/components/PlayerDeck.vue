@@ -38,7 +38,9 @@ const hero = computed(() => {
 const affinities = computed(() => {
   const affs = new Set<string>();
   mainDeck.value.forEach(card => {
-    affs.add(card.blueprint.affinity);
+    card.blueprint.affinities.forEach(aff => {
+      affs.add(aff);
+    });
   });
   return Array.from(affs);
 });

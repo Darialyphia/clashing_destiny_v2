@@ -32,7 +32,7 @@ export const pyromancer: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],
-  affinity: AFFINITIES.FIRE,
+  affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
   subKind: MINION_TYPES.RANGED,

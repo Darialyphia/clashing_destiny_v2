@@ -114,8 +114,8 @@ export class CardManagerComponent {
     if (banishPileCard)
       return { card: banishPileCard, location: CARD_LOCATIONS.BANISH_PILE };
 
-    const baseCard = this.player.allCardsInPlay.find(card => card.id === id);
-    if (baseCard) return { card: baseCard, location: CARD_LOCATIONS.BOARD };
+    const boardCard = this.player.allCardsInPlay.find(card => card.id === id);
+    if (boardCard) return { card: boardCard, location: CARD_LOCATIONS.BOARD };
 
     return null;
   }

@@ -50,7 +50,7 @@ const {
 
 <style lang="postcss" scoped>
 .tooltip-content {
-  background-color: black;
+  background-color: hsla(0, 0%, 0%, 0.8);
   color: #efef9f;
   padding: var(--size-1) var(--size-3);
   font-family: var(--font-system-ui);

@@ -30,6 +30,7 @@ import { provideRichTextContext } from '../composables/useRichText';
 import type { JobId } from '@game/engine/src/card/card.enums';
 import BoardSpace from './BoardSpace.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
+import BoardCard from './BoardCard.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -163,17 +164,6 @@ useEventListener('contextmenu', async e => {
               :cell-id="space.id"
             />
           </div>
-          <!-- <MinionRow :row="opponent.boardSide.base" class="opponent-back-row" />
-          <MinionRow
-            :row="opponent.boardSide.battlefield"
-            class="opponent-front-row"
-          />
-          <div class="separator" />
-          <MinionRow
-            :row="myPlayer.boardSide.battlefield"
-            class="my-front-row"
-          />
-          <MinionRow :row="myPlayer.boardSide.base" class="my-back-row" /> -->
           <div class="right-side">
             <PassButton />
             <div class="flex gap-2">
@@ -201,8 +191,29 @@ useEventListener('contextmenu', async e => {
   </div>
 
   <HoveredCardInfos class="hovered-cell-infos" />
-  <PlayerInfos class="my-player-infos" :player="myPlayer" />
-  <PlayerInfos class="opponent-player-infos" :player="opponent" />
+
+  <div class="my-player">
+    <div class="mb-3">
+      <BoardCard
+        v-if="myPlayer.hero"
+        :card="myPlayer.hero"
+        @mouseenter="ui.hover(myPlayer.hero)"
+        @mouseleave="ui.unhover()"
+      />
+    </div>
+    <PlayerInfos :player="myPlayer" />
+  </div>
+  <div class="opponent-player">
+    <PlayerInfos :player="opponent" />
+    <div class="mt-3">
+      <BoardCard
+        v-if="opponent.hero"
+        :card="opponent.hero"
+        @mouseenter="ui.hover(opponent.hero)"
+        @mouseleave="ui.unhover()"
+      />
+    </div>
+  </div>
 
   <Transition>
     <div
@@ -471,18 +482,24 @@ useEventListener('contextmenu', async e => {
   }
 }
 
-.my-player-infos {
+.my-player {
   position: absolute;
   left: var(--size-10);
   top: 45%;
-  translate: 0 50%;
+  translate: 0 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.opponent-player-infos {
+.opponent-player {
   position: absolute;
   left: var(--size-10);
   top: 40%;
-  translate: 0 -100%;
+  translate: 0 -90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hovered-cell-infos {

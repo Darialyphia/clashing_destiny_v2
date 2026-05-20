@@ -59,8 +59,7 @@ provideRichTextContext({
       subKind: (blueprint as any).subKind,
       jobs: blueprint.jobs.map(job => job.id as JobId),
       tags: blueprint.tags,
-      affinity: blueprint.affinity,
-      advancedAffinity: (blueprint as any).advancedAffinity,
+      affinities: blueprint.affinities,
       speed: (blueprint as any).speed
     }"
     :is-tilt-enabled="isTiltEnabled"

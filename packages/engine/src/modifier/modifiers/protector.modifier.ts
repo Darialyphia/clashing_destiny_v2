@@ -1,12 +1,13 @@
 import { KEYWORDS } from '../../card/card-keywords';
-import { CARD_LOCATIONS } from '../../card/card.enums';
+import { CARD_KINDS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
-import { CardAuraModifierMixin } from '../mixins/aura.mixin';
-import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
-import { Modifier } from '../modifier.entity';
+import { GAME_EVENTS } from '../../game/game.events';
+import { CombatDamage, DAMAGE_TYPES } from '../../utils/damage';
+import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { WhileOnBoardModifier } from './while-on-board.modifier';
 
 export class ProtectorModifier<
@@ -18,28 +19,25 @@ export class ProtectorModifier<
       description: KEYWORDS.PROTECTOR.description,
       icon: 'icons/keyword-provoke',
       mixins: [
-        new CardAuraModifierMixin(game, source, {
-          isElligible: candidate => {
-            return (
-              candidate.isAlly(this.target) &&
-              !candidate.equals(this.target) &&
-              candidate.location === CARD_LOCATIONS.BOARD
+        new KeywordModifierMixin(game, KEYWORDS.PROTECTOR),
+        new GameEventModifierMixin(game, {
+          eventName: GAME_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
+          filter: event => {
+            return !!(
+              event.data.damage.type === DAMAGE_TYPES.COMBAT &&
+              this.game.combatSystem.defender?.equals(event.data.card) &&
+              this.target.position
+                .getAdjacentCardsOfKind(CARD_KINDS.MINION)
+                .filter(minion => minion.isAlly(this.target))
+                .some(minion => minion.equals(event.data.card))
             );
           },
-          getModifiers(candidate) {
-            return [
-              new Modifier('protector-aura', game, source, {
-                mixins: [
-                  new MinionInterceptorModifierMixin(game, {
-                    key: 'canBeAttacked',
-                    interceptor: value => {
-                      if (!value) return value;
-                      return candidate.modifiers.has(ProtectorModifier);
-                    }
-                  })
-                ]
-              })
-            ];
+          handler: async event => {
+            event.data.damage.prevent();
+            await this.target.takeDamage(
+              event.data.card,
+              new CombatDamage((event.data.damage as CombatDamage).attacker)
+            );
           }
         })
       ]

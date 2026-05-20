@@ -20,6 +20,9 @@ export class WhileOnBoardModifier<T extends MinionCard | HeroCard> extends Modif
     }
   ) {
     super(modifierType, game, source, {
+      name: options.name,
+      description: options.description,
+      icon: options.icon,
       mixins: [
         new TogglableModifierMixin(
           game,

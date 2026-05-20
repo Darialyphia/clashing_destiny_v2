@@ -29,7 +29,7 @@ export const littleWitch: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.ACOLYTE],
-  affinity: AFFINITIES.NEUTRAL,
+  affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   subKind: MINION_TYPES.MELEE,

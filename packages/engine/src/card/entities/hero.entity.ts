@@ -40,7 +40,6 @@ export type SerializedHeroCard = SerializedCard & {
   remainingHp: number;
   abilities: string[];
   jobs: JobId[];
-  advancedAffinity: Affinity;
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -234,10 +233,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.blueprint.jobs;
   }
 
-  get advancedAffinity() {
-    return this.blueprint.advancedAffinity;
-  }
-
   get isCorrectPhaseToPlay() {
     return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
@@ -281,8 +276,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilityManager.serialize(),
-      jobs: this.jobs.map(job => job.id) as JobId[],
-      advancedAffinity: this.advancedAffinity
+      jobs: this.jobs.map(job => job.id) as JobId[]
     };
   }
 }

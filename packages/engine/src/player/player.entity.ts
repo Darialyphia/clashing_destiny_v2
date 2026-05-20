@@ -173,7 +173,7 @@ export class Player
   }
 
   get allCardsInPlay() {
-    return [...this.cardsInFrontRow, ...this.cardsInBackRow];
+    return [this.hero, ...this.cardsInFrontRow, ...this.cardsInBackRow].filter(isDefined);
   }
 
   get minions() {
@@ -185,12 +185,7 @@ export class Player
   }
 
   get unlockedAffinities() {
-    return this.interceptors.unlockedAffinities.getValue(
-      this.levelManager.level > this.game.config.ADVANCED_AFFINITY_UNLOCK_LEVEL
-        ? [this.hero.affinity, this.hero.advancedAffinity]
-        : [this.hero.affinity],
-      {}
-    );
+    return this.interceptors.unlockedAffinities.getValue(this.hero.affinities, {});
   }
   get isInteractive() {
     return this.game.interaction.isInteractive(this);

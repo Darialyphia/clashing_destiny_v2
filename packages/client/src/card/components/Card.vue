@@ -52,8 +52,7 @@ const {
     subKind?: string | null;
     tags?: string[];
     jobs: JobId[];
-    affinity: Affinity;
-    advancedAffinity?: Affinity;
+    affinities: Affinity[];
     speed?: CardSpeed;
   };
   isFoil?: boolean;
@@ -191,7 +190,7 @@ const kindBg = computed(() => {
 });
 
 const affinities = computed(() => {
-  const affinities = [card.affinity, card.advancedAffinity].filter(isDefined);
+  const affinities = card.affinities.filter(isDefined);
 
   return affinities.map(affinity => {
     return {
@@ -202,7 +201,7 @@ const affinities = computed(() => {
 });
 
 const tint = computed(() => {
-  return `var(--tint-${card.affinity.toLocaleLowerCase()})`;
+  return `var(--tint-${card.affinities[0].toLocaleLowerCase()})`;
 });
 </script>
 
@@ -318,7 +317,7 @@ const tint = computed(() => {
             </div>
           </div>
           <div v-if="showText" class="description" ref="description-box">
-            <div ref="description-inner">
+            <div ref="description-inner" class="w-full">
               <CardText :text="card.description" />
 
               <div v-if="card.abilities?.length" class="text-separator">

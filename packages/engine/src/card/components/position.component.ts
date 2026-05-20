@@ -5,6 +5,7 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card.events';
 import type { BoardSpace } from '../../board/board-space.entity';
 import type { CardKind } from '../card.enums';
+import { isMinion } from '../card-utils';
 
 export type PositionComponentOptions = {
   position: Point | null;
@@ -111,8 +112,12 @@ export class PositionComponent {
     return this.space?.isFrontRow ?? false;
   }
 
-  get adjacentUnits() {
+  get adjacentCards() {
     return this.space?.adjacent.map(cell => cell.occupant).filter(isDefined) ?? [];
+  }
+
+  getAdjacentCardsOfKind(kind: CardKind) {
+    return this.adjacentCards.filter(card => card.blueprint.kind === kind) ?? [];
   }
 
   get cardsOnSameColumn() {

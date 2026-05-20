@@ -8,6 +8,7 @@ import {
   CardInterceptorModifierMixin,
   MinionInterceptorModifierMixin
 } from '../mixins/interceptor.mixin';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
@@ -17,9 +18,10 @@ export class FreezeModifier<T extends MinionCard | HeroCard> extends Modifier<T>
     super(KEYWORDS.FROZEN.id, game, source, {
       name: KEYWORDS.FROZEN.name,
       description: KEYWORDS.FROZEN.description,
-      icon: 'keyword-frozen',
+      icon: 'icons/keyword-frozen',
       isUnique: true,
       mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.FROZEN),
         new RemoveOnDestroyedMixin(game),
         new DurationModifierMixin(game, 2),
         new CardInterceptorModifierMixin(game, {

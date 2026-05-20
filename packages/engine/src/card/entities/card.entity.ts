@@ -77,7 +77,7 @@ export type SerializedCard = {
   unplayableReason: string | null;
   isRevealed: boolean;
   position: string | null;
-  affinity: Affinity;
+  affinities: Affinity[];
 };
 
 export abstract class Card<
@@ -152,8 +152,8 @@ export abstract class Card<
     return this._isRevealed;
   }
 
-  get affinity() {
-    return this.blueprint.affinity;
+  get affinities() {
+    return this.blueprint.affinities;
   }
 
   async reveal() {
@@ -220,10 +220,12 @@ export abstract class Card<
   }
 
   get hasUnlockedAffinity() {
-    if (this.affinity === AFFINITIES.NEUTRAL) {
+    if (this.affinities[0] === AFFINITIES.NEUTRAL) {
       return true;
     }
-    return this.player.unlockedAffinities.includes(this.blueprint.affinity);
+    return this.affinities.some(affinity =>
+      this.player.unlockedAffinities.includes(affinity)
+    );
   }
 
   abstract isValidMovementPosition(space: BoardSpace): boolean;
@@ -405,7 +407,7 @@ export abstract class Card<
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
       position: this.space?.id ?? null,
-      affinity: this.affinity
+      affinities: this.affinities
     };
   }
 

@@ -113,8 +113,7 @@ const classes = computed(() => {
             .map(a => formatAbilityText(a)),
           jobs: overrides.jobs ?? card.jobs,
           subKind: overrides.subKind ?? card.subKind,
-          affinity: overrides.affinity ?? card.affinity,
-          advancedAffinity: overrides.advancedAffinity ?? card.advancedAffinity,
+          affinities: overrides.affinities ?? card.affinities,
           speed: overrides.speed ?? card.speed
         }"
         :is-foil="card.isFoil"

@@ -171,8 +171,8 @@ export class CardViewModel {
     return [];
   }
 
-  get affinity() {
-    return this.data.affinity;
+  get affinities() {
+    return this.data.affinities as Affinity[];
   }
 
   get speed() {
