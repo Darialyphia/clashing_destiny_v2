@@ -13,7 +13,8 @@ export const cards = {
 "fireBall": "fireBall",
 "first-aid": "first-aid",
 "path-to-discovery": "path-to-discovery",
-"cull-the-weak": "cull-the-weak"
+"cull-the-weak": "cull-the-weak",
+"burning-hands": "burning-hands"
 } as const;
 
 export const collectableCards = {
@@ -25,7 +26,8 @@ export const collectableCards = {
 "fireBall": "fireBall",
 "first-aid": "first-aid",
 "path-to-discovery": "path-to-discovery",
-"cull-the-weak": "cull-the-weak"
+"cull-the-weak": "cull-the-weak",
+"burning-hands": "burning-hands"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -75,6 +77,11 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "cull-the-weak",
     "collectable": true,
     "rarity": "rare"
+  },
+  {
+    "id": "burning-hands",
+    "collectable": true,
+    "rarity": "common"
   }
 ]
 };
@@ -88,7 +95,8 @@ export const cardShortIds: Record<string, number> = {
 "fireBall": 14,
 "first-aid": 15,
 "path-to-discovery": 16,
-"cull-the-weak": 17
+"cull-the-weak": 17,
+"burning-hands": 18
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -100,5 +108,6 @@ export const cardIdByShortId: Record<number, string> = {
 "14": "fireBall",
 "15": "first-aid",
 "16": "path-to-discovery",
-"17": "cull-the-weak"
+"17": "cull-the-weak",
+"18": "burning-hands"
 } as const;

@@ -186,6 +186,12 @@ export const KEYWORDS = {
     description: 'Does something when this card retaliates.',
     aliases: []
   },
+  ON_STRIKE: {
+    id: 'on-strike',
+    name: 'On Strike',
+    description: 'Does something when this card deals combat damage to a unit.',
+    aliases: ['on minion strike', 'on hero strike']
+  },
   OVERWHELM: {
     id: 'overwhelm',
     name: 'Overwhelm',

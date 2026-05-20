@@ -27,7 +27,6 @@ const keyword = computed(() => {
       })
     );
   });
-  console.log(text, k);
   return k;
 });
 </script>

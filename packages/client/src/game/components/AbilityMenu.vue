@@ -55,7 +55,7 @@ const ui = useGameUi();
 <style scoped lang="postcss">
 .abilities-list {
   display: flex;
-  flex-direction: column;
+  gap: var(--size-2);
 }
 .ability {
   width: 16px;

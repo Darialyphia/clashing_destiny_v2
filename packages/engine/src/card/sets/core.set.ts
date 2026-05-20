@@ -9,6 +9,7 @@ import { fireBall } from './core/fire/spells/fire-ball';
 import { firstAid } from './core/neutral/destinies/first-aid';
 import { pathToDiscovery } from './core/neutral/destinies/path-to-discovery';
 import { cullTheWeak } from './core/neutral/destinies/cull-the-weak';
+import { burningHands } from './core/fire/destinies/burning-hands';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -22,6 +23,7 @@ export const coreSet: CardSet = {
     fireBall,
     firstAid,
     pathToDiscovery,
-    cullTheWeak
+    cullTheWeak,
+    burningHands
   ]
 };
