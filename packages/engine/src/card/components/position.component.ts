@@ -123,7 +123,7 @@ export class PositionComponent {
       .filter(card => !card.equals(this.card)) as AnyCard[];
   }
 
-  getCardsOnSamecolumnOfKind(kind: CardKind) {
+  getCardsOnSameColumnOfKind(kind: CardKind) {
     return this.cardsOnSameColumn.filter(card => card.blueprint.kind === kind);
   }
 

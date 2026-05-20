@@ -4,7 +4,6 @@ import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
   IllegalAttackerError,
-  IllegalAttackTargetError,
   NotCurrentPlayerError,
   UnknownSpaceError,
   UnknownUnitError

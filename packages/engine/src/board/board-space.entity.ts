@@ -14,7 +14,7 @@ export type BoardCellInterceptors = {
   isWalkable: Interceptable<boolean>;
 };
 
-export type SerializedCoords = `${string}:${string}`;
+export type SerializedCoords = `${string}-${string}`;
 
 export type SerializedBoardSpace = {
   id: string;

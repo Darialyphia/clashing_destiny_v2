@@ -135,28 +135,28 @@ useEventListener('contextmenu', async e => {
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="minions-zone">
-          <div class="opponent-base">
+          <div class="opponent-back-row">
             <BoardSpace
               v-for="space in opponent.backRow"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
-          <div class="opponent-battlefield">
+          <div class="opponent-front-row">
             <BoardSpace
               v-for="space in opponent.frontRow"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
-          <div class="my-battlefield">
+          <div class="my-front-row">
             <BoardSpace
               v-for="space in myPlayer.frontRow"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
-          <div class="my-base">
+          <div class="my-back-row">
             <BoardSpace
               v-for="space in myPlayer.backRow"
               :key="space.id"
@@ -425,22 +425,25 @@ useEventListener('contextmenu', async e => {
   }
 }
 
-.opponent-base {
+.opponent-back-row {
   position: absolute;
   padding-inline: 40px;
 }
 
-.opponent-battlefield {
+.opponent-front-row {
   position: absolute;
+  padding-inline: 40px;
   top: 165px;
 }
 
-.my-battlefield {
+.my-front-row {
   position: absolute;
+  padding-inline: 40px;
   top: 318px;
 }
 
-.my-base {
+.my-back-row {
+  padding-inline: 40px;
   position: absolute;
   top: 476px;
   padding-inline: 40px;

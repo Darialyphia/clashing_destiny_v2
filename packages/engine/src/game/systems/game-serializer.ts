@@ -23,6 +23,7 @@ import { DeepDiffer } from './deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 import type { SerializedBoardSpace } from '../../board/board-space.entity';
 import type { SerializedCombatState } from './combat.system';
+import type { AbilityManagerComponent } from '../../card/components/abilities-manager.component';
 
 export type SerializedEntity =
   | SerializedMinionCard
@@ -149,8 +150,9 @@ export class GameSerializer {
       card.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
-      if ('abilities' in card) {
-        (card.abilities as Ability<AbilityOwner>[]).forEach(ability => {
+      if ('abilityManager' in card) {
+        const manager = card.abilityManager as AbilityManagerComponent<AbilityOwner>;
+        manager.abilities.forEach(ability => {
           entities[ability.id] = ability.serialize();
         });
       }

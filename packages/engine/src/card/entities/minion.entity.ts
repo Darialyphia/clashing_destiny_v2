@@ -51,6 +51,7 @@ import { AOE_TARGETING_TYPE, type AOEShape } from '../../aoe/aoe-shape';
 import { match } from 'ts-pattern';
 import { MeleeTargetingStrategy } from '../../targeting/melee-targeting.strategy';
 import { AbilityManagerComponent } from '../components/abilities-manager.component';
+import { GAME_EVENTS } from '../../game/game.events';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -96,6 +97,7 @@ export type MinionCardInterceptors = CardInterceptors & {
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
+  shouldExhaustAfterMoving: Interceptable<boolean, MinionCard>;
   speed: Interceptable<CardSpeed, MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
@@ -105,7 +107,7 @@ export class MinionCard extends Card<
   MinionCardInterceptors,
   MinionBlueprint
 > {
-  private damageTaken = 0;
+  private hasMovedManuallyThisTurn = false;
 
   readonly damageTracker: DamageTrackerComponent;
 
@@ -133,6 +135,7 @@ export class MinionCard extends Card<
         canMoveManually: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
         shouldSwitchInitiativeAfterattacking: new Interceptable(),
+        shouldExhaustAfterMoving: new Interceptable(),
         speed: new Interceptable(),
         attackTargetingPattern: new Interceptable(),
         attackAOE: new Interceptable(),
@@ -144,6 +147,9 @@ export class MinionCard extends Card<
 
     this.damageTracker = new DamageTrackerComponent(game, this);
     this.abilityManager = new AbilityManagerComponent<MinionCard>(game, this);
+    this.game.on(GAME_EVENTS.TURN_START, () => {
+      this.hasMovedManuallyThisTurn = false;
+    });
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
@@ -221,16 +227,17 @@ export class MinionCard extends Card<
       .with(MINION_TYPES.FLYER, () => new MeleeTargetingStrategy(this.game, this))
       .exhaustive();
   }
+
   get attackTargettingPattern(): SpaceTargetingStrategy {
     return this.interceptors.attackTargetingPattern.getValue(
-      new MeleeTargetingStrategy(this.game, this),
+      this.defaultAttackTargettingPattern,
       {}
     );
   }
 
   get retaliationTargettingPattern(): SpaceTargetingStrategy {
     return this.interceptors.retaliationTargetingPattern.getValue(
-      new MeleeTargetingStrategy(this.game, this),
+      this.defaultAttackTargettingPattern,
       {}
     );
   }
@@ -263,6 +270,7 @@ export class MinionCard extends Card<
       space.occupant && isMinion(space.occupant)
         ? space.occupant
         : this.player.opponent.hero;
+
     const canBeAttacked =
       target instanceof MinionCard ? target.canBeAttacked(this) : this.isEnemy(target);
 
@@ -414,7 +422,9 @@ export class MinionCard extends Card<
 
   get canMoveManually(): boolean {
     return this.interceptors.canMoveManually.getValue(
-      this.canMove && this.location === CARD_LOCATIONS.BOARD,
+      this.canMove &&
+        this.location === CARD_LOCATIONS.BOARD &&
+        !this.hasMovedManuallyThisTurn,
       this
     );
   }
@@ -426,11 +436,19 @@ export class MinionCard extends Card<
     );
   }
 
+  get shouldExhaustAfterMoving(): boolean {
+    return this.interceptors.shouldExhaustAfterMoving.getValue(true, this);
+  }
+
   async moveManually(space: BoardSpace) {
     await this.move(space);
+    if (this.shouldExhaustAfterMoving) {
+      await this.exhaust();
+    }
     if (this.shouldSwitchInitiativeAfterMovingManually) {
       await this.game.turnSystem.switchInitiative();
     }
+    this.hasMovedManuallyThisTurn = true;
   }
 
   async move(space: BoardSpace) {
@@ -551,12 +569,12 @@ export class MinionCard extends Card<
     return { cancelled: false };
   }
 
-  get potentialAttackTargets(): Array<MinionCard | HeroCard> {
+  get potentialAttackTargets(): Array<BoardSpace> {
     if (this.location !== CARD_LOCATIONS.BOARD) return [];
 
-    return [this.player.opponent.hero, ...this.player.enemyMinions].filter(minion =>
-      this.canAttack(minion)
-    );
+    return this.game.boardSystem
+      .getSpacesForPlayer(this.player.opponent)
+      .filter(space => this.canAttackAt(space));
   }
 
   get potentialMoveTargets(): BoardSpace[] {

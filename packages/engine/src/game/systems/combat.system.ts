@@ -86,7 +86,7 @@ export class CombatSystem
     return this.stateMachine.getState();
   }
 
-  get potentialTargets(): Nullable<AttackTarget[]> {
+  get potentialTargets(): Nullable<BoardSpace[]> {
     return this.attacker?.potentialAttackTargets;
   }
 
@@ -191,7 +191,7 @@ export class CombatSystem
         defender instanceof HeroCard
           ? [defender]
           : area.map(space => space.minion!).filter(isDefined);
-
+      console.log(area, targetsToDamage);
       for (const target of targetsToDamage) {
         await attacker.dealDamage(target, new CombatDamage(attacker));
       }
@@ -210,6 +210,7 @@ export class CombatSystem
 
     const area = defender.retaliationAOE.getArea([attacker.position.coordinates!]);
     const targetsToDamage = area.map(space => space.minion!).filter(isDefined);
+    console.log(area, targetsToDamage);
 
     for (const target of targetsToDamage) {
       await defender.dealDamage(target, new CombatDamage(defender));

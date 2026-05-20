@@ -17,6 +17,7 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
 
   const canAttack = computed(() => {
     if (!ui.value.selectedCard) return false;
+
     return ui.value.selectedCard.canAttackAt(cell.value);
   });
 

@@ -20,11 +20,12 @@ export class MeleeTargetingStrategy implements SpaceTargetingStrategy {
 
     if (!space.occupant) {
       return (
-        this.card.position.getCardsOnSamecolumnOfKind(CARD_KINDS.MINION).length === 0
+        this.card.position.getCardsOnSameColumnOfKind(CARD_KINDS.MINION).length === 0
       );
     }
+
     if (space.isBackRow) {
-      return isDefined(space.inFront?.minion);
+      return !isDefined(space.inFront?.minion);
     }
 
     return true;

@@ -20,7 +20,7 @@ export class RangedTargetingStrategy implements SpaceTargetingStrategy {
 
     if (!space.occupant) {
       return (
-        this.card.position.getCardsOnSamecolumnOfKind(CARD_KINDS.MINION).length === 0
+        this.card.position.getCardsOnSameColumnOfKind(CARD_KINDS.MINION).length === 0
       );
     }
 

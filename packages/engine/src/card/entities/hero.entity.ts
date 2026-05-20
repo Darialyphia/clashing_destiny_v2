@@ -106,7 +106,7 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   get isAlive() {
-    return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
+    return this.remainingHp > 0;
   }
 
   isValidMovementPosition() {

@@ -84,7 +84,10 @@ const handleMouseup = (e: MouseEvent) => {
   height: 130px;
   background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
     center;
-  transition: background-image 0.25s;
+  transition:
+    background-image 0.25s,
+    filter 0.2s var(--ease-2),
+    translate 0.2s var(--ease-2);
   display: grid;
   place-content: center;
   position: relative;
@@ -92,19 +95,8 @@ const handleMouseup = (e: MouseEvent) => {
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');
     filter: drop-shadow(0 0 6px red);
-    transition: filter 0.2s var(--ease-2);
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-color: red;
-      opacity: 0.5;
-      mix-blend-mode: multiply;
-      transition: opacirt 0.2s var(--ease-2);
-      z-index: 1;
-      mask-image: url('@/assets/ui/board-small-card-slot.png');
-      mask-size: cover;
-    }
+    translate: 0 -8px;
+
     &:hover {
       filter: drop-shadow(0 0 12px var(--red-5)) brightness(120%);
       &::after {
@@ -117,7 +109,8 @@ const handleMouseup = (e: MouseEvent) => {
   &.can-move-to {
     background-image: url('@/assets/ui/board-small-card-slot-targetable.png');
     filter: drop-shadow(0 0 6px var(--blue-9));
-    transition: filter 0.2s var(--ease-2);
+    translate: 0 -8px;
+
     &:hover {
       filter: drop-shadow(0 0 12px var(--cyan-1)) brightness(250%);
     }

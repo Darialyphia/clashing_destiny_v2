@@ -18,15 +18,15 @@ export const DIRECTIONS_TO_DIFF = {
 export type Direction = Values<typeof DIRECTION>;
 
 export function assertSerializedCoords(str: string): asserts str is SerializedCoords {
-  const [x, y] = str.split(':').map(Number);
+  const [x, y] = str.split('-').map(Number);
 
   return assert(isDefined(x) && isDefined(y), 'Invalid serialized coordinates');
 }
 
-export const pointToSpaceId = (point: Point): SerializedCoords => `${point.x}:${point.y}`;
+export const pointToSpaceId = (point: Point): SerializedCoords => `${point.x}-${point.y}`;
 
 export const spaceIdToPoint = (spaceId: SerializedCoords): Point => {
-  const [x, y] = spaceId.split(':').map(Number);
+  const [x, y] = spaceId.split('-').map(Number);
 
   return { x, y };
 };

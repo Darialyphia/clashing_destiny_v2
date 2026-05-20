@@ -50,6 +50,14 @@ export class BoardSpaceViewModel {
     return this.data.position;
   }
 
+  get x() {
+    return this.data.position.x;
+  }
+
+  get y() {
+    return this.data.position.y;
+  }
+
   get player() {
     const entities = this.getEntities();
 

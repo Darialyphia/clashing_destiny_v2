@@ -317,8 +317,7 @@ export class CardViewModel {
 
   canAttackAt(space: BoardSpaceViewModel) {
     if (!this.canAttack) return false;
-
-    return this.potentialAttackTargets.some(target => target.id === space.occupant?.id);
+    return this.potentialAttackTargets.some(target => target.id === space.id);
   }
 
   canMoveTo(space: BoardSpaceViewModel) {
@@ -428,9 +427,9 @@ export class CardViewModel {
 
   get abilities() {
     if ('abilities' in this.data) {
-      return (this.data.abilities as string[]).map(
-        ability => this.getEntities()[ability] as AbilityViewModel
-      );
+      return (this.data.abilities as string[]).map(ability => {
+        return this.getEntities()[ability] as AbilityViewModel;
+      });
     }
 
     return [];
