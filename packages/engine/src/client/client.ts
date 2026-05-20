@@ -184,6 +184,9 @@ export class GameClient {
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
     history: SerializedInput[] = []
   ) {
+    console.groupCollapsed('Initializing Game Client');
+    console.log('Initial Snapshot:', snapshot);
+    console.groupEnd();
     this.isReady = false;
     this.history = history;
     this.lastSnapshotId = -1;

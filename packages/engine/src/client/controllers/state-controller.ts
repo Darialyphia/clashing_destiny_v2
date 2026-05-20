@@ -30,6 +30,7 @@ export type GameClientState = Override<
 
 export class ClientStateController {
   state!: GameClientState;
+  private previousEntities?: GameClientState['entities'];
 
   constructor(private client: GameClient) {}
 
@@ -80,23 +81,40 @@ export class ClientStateController {
   preupdate(newState: PatchBasedSnapshotDiff) {
     if (!this.state) return;
 
+    // Snapshot the current entities before any event-driven mutations so that
+    // update() can apply entityPatches against this clean baseline instead of
+    // the potentially-mutated state produced by event handlers.
+    this.previousEntities = Object.fromEntries(
+      Object.entries(this.state.entities).map(([id, vm]) => [id, vm.clone()])
+    );
+
     Object.entries(newState.addedEntities).forEach(([id, entity]) => {
       this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
     });
   }
 
   update(newState: PatchBasedSnapshotDiff): void {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { entityPatches, config, addedEntities, removedEntities, ...rest } = newState;
+
+    // Apply patches against the pre-event snapshot so that event-handler
+    // mutations (e.g. onMinionSummoned) don't corrupt the patch baseline.
+    // Entities that are new (not in previousEntities) are skipped here because
+    // they already carry the final state from addedEntities.
     for (const [id, patches] of Object.entries(entityPatches)) {
-      if (this.state.entities[id]) {
-        this.state.entities[id].updateWithPatches(patches);
+      const base = this.previousEntities?.[id];
+      if (base) {
+        this.state.entities[id] = base.updateWithPatches(patches);
       }
     }
 
-    // clone all entities to trigger reactivity in case of reference equality
-    // ex: a unit's modifier is updated, but the unit isnt
-    // a computed property depending on the unit wouldnt update
+    // Ensure newly added entities are at their definitive final state.
+    for (const [id, entity] of Object.entries(addedEntities)) {
+      this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
+    }
+
+    // Clone all entities to trigger reactivity in case of reference equality.
+    // e.g. a unit's modifier is updated, but the unit isn't —
+    // a computed property depending on the unit wouldn't update.
     for (const [id, entity] of Object.entries(this.state.entities)) {
       this.state.entities[id] = entity.clone();
     }
@@ -110,6 +128,8 @@ export class ClientStateController {
       ...rest,
       config: { ...this.state.config, ...config }
     };
+
+    this.previousEntities = undefined;
   }
 
   /**

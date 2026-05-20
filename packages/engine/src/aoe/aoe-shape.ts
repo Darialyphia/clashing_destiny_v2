@@ -34,7 +34,7 @@ export const isValidAOETargetingType = (
   player: Player,
   type: AOETargetingType
 ) => {
-  const space = game.boardSystem.getSpaceAt(point);
+  const space = game.boardSystem.getSpaceAt(point)!;
 
   return !!match(type)
     .with(AOE_TARGETING_TYPE.ANYWHERE, () => true)
@@ -46,13 +46,13 @@ export const isValidAOETargetingType = (
       AOE_TARGETING_TYPE.MINION,
       () => isDefined(space?.occupant) && isMinion(space.occupant)
     )
-    .with(
-      AOE_TARGETING_TYPE.ENEMY_MINION,
-      () =>
+    .with(AOE_TARGETING_TYPE.ENEMY_MINION, () => {
+      return (
         isDefined(space?.occupant) &&
         isMinion(space.occupant) &&
         !space.occupant.player.equals(player)
-    )
+      );
+    })
     .with(
       AOE_TARGETING_TYPE.ALLY_MINION,
       () =>

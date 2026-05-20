@@ -38,7 +38,7 @@ export const pyromancer: MinionBlueprint = {
   subKind: MINION_TYPES.RANGED,
   tags: [],
   atk: 2,
-  maxHp: 5,
+  maxHp: 3,
   abilities: [
     {
       id: 'pyromancer-ability',

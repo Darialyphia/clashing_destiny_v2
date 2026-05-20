@@ -186,12 +186,16 @@ export class CombatSystem
 
   private async performAttackerStrike(attacker: Attacker, defender: AttackTarget) {
     if (defender.isAlive) {
+      console.log({
+        attacker: attacker.position.coordinates,
+        defender: defender.position.coordinates
+      });
       const area = attacker.attackAOE.getArea([defender.position.coordinates!]);
       const targetsToDamage =
         defender instanceof HeroCard
           ? [defender]
           : area.map(space => space.minion!).filter(isDefined);
-      console.log(area, targetsToDamage);
+
       for (const target of targetsToDamage) {
         await attacker.dealDamage(target, new CombatDamage(attacker));
       }

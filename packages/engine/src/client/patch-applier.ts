@@ -83,7 +83,6 @@ export class PatchApplier {
     }
 
     const current = (obj as any)[first];
-
     if (Array.isArray(current)) {
       const indexStr = rest[0];
       const newArray = [...current];

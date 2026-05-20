@@ -21,18 +21,19 @@ export class PointAOEShape implements AOEShape {
 
   getArea([point]: [Point]) {
     const area = this.options.override ?? point;
+
     if (!area) return [];
 
     return [area]
       .map(point => this.game.boardSystem.getSpaceAt(point))
       .filter(isDefined)
-      .filter(space =>
-        isValidAOETargetingType(
+      .filter(space => {
+        return isValidAOETargetingType(
           this.game,
           space,
           this.options.player,
           this.options.targetingType
-        )
-      );
+        );
+      });
   }
 }
