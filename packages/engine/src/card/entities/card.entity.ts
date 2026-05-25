@@ -222,10 +222,7 @@ export abstract class Card<
   }
 
   get canPayManaCost() {
-    return (
-      this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
-      this.manaCost
-    );
+    return this.player.mana >= this.manaCost;
   }
 
   get hasUnlockedAffinity() {

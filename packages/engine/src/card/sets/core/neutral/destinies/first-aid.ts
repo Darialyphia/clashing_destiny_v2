@@ -5,7 +5,7 @@ import { AFFINITIES, CARD_KINDS, RARITIES } from '../../../../card.enums';
 export const firstAid: DestinyBlueprint = {
   id: 'first-aid',
   name: 'First Aid',
-  description: 'Heal your hero for 4.',
+  description: '<rt-trigger>On Enter</rt-trigger>Heal your hero for 4.',
   collectable: true,
   setId: 'CORE',
   art: defaultCardArt('placeholder'),

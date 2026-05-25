@@ -6,7 +6,8 @@ import { AFFINITIES, CARD_KINDS, RARITIES } from '../../../../card.enums';
 export const pathToDiscovery: DestinyBlueprint = {
   id: 'path-to-discovery',
   name: 'Path to Discovery',
-  description: '<rt-keyword>Predict</rt-keyword>, then draw a card.',
+  description:
+    '<rt-trigger>On Enter</rt-trigger><rt-keyword>Predict</rt-keyword>, then draw a card.',
   collectable: true,
   setId: 'CORE',
   art: defaultCardArt('placeholder'),

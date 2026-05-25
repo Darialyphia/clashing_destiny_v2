@@ -54,10 +54,10 @@ export const KEYWORDS = {
   },
   CHANNEL: {
     id: 'channel',
-    name: 'Channel X',
+    name: 'Channel',
     description:
       'At the end of the turn, if this card is not exhausted, this card does something.',
-    aliases: [/channel/, /channel [0-9]+/]
+    aliases: [/channel/]
   },
   DEFENDER: {
     id: 'defender',

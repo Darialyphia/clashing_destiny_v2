@@ -5,7 +5,8 @@ import { AFFINITIES, CARD_KINDS, RARITIES } from '../../../../card.enums';
 export const cullTheWeak: DestinyBlueprint = {
   id: 'cull-the-weak',
   name: 'Cull the Weak',
-  description: 'Destroy all minions with a cost of <rt-mana>2</rt-mana> or less.',
+  description:
+    '<rt-trigger>On Enter</rt-trigger>Destroy all minions with a cost of <rt-mana>2</rt-mana> or less.',
   collectable: true,
   setId: 'CORE',
   art: defaultCardArt('placeholder'),
