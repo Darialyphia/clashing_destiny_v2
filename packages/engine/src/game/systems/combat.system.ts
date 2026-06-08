@@ -18,9 +18,10 @@ import {
   type CombatStepTransition
 } from '../game.enums';
 import { CorruptedGamephaseContextError, GameError } from '../game-error';
-import { isMinion } from '../../card/card-utils';
+import { isHero, isMinion } from '../../card/card-utils';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { BoardSpace } from '../../board/board-space.entity';
+import { CombatDamage } from '../../utils/damage';
 
 export type Attacker = MinionCard;
 export type AttackTarget = MinionCard | HeroCard;
@@ -192,29 +193,29 @@ export class CombatSystem
     this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
   }
 
-  private async performAttackerStrike(attacker: Attacker, defender: AttackTarget) {
-    // const area = attacker.attackAOE.getArea([defender.position.coordinates!]);
-    // const targetsToDamage =
-    //   defender instanceof HeroCard
-    //     ? [defender]
-    //     : area.map(space => space.minion!).filter(isDefined);
-    // for (const target of targetsToDamage) {
-    //   await attacker.dealDamage(target, new CombatDamage(attacker));
-    // }
+  private getDamagingParticipants(
+    attacker: Attacker,
+    defender: AttackTarget
+  ): Array<{ attacker: Attacker; defender: AttackTarget }> {
+    if (isHero(defender)) return [{ attacker, defender }];
+
+    if (attacker.power === defender.power)
+      return [
+        { attacker, defender },
+        { attacker: defender as Attacker, defender: attacker as AttackTarget }
+      ];
+
+    return attacker.power > defender.power
+      ? [{ attacker, defender }]
+      : [{ attacker: defender as Attacker, defender: attacker as AttackTarget }];
   }
 
-  private async performDefenderStrike(attacker: Attacker, defender: AttackTarget) {
-    // const shouldStrikeBack =
-    //   isMinion(defender) &&
-    //   defender.canRetaliate(attacker) &&
-    //   attacker.canBeRetaliatedBy(defender);
-    // if (!shouldStrikeBack) return;
-    // const area = defender.retaliationAOE.getArea([attacker.position.coordinates!]);
-    // const targetsToDamage = area.map(space => space.minion!).filter(isDefined);
-    // console.log(area, targetsToDamage);
-    // for (const target of targetsToDamage) {
-    //   await defender.dealDamage(target, new CombatDamage(defender));
-    // }
+  private getWinner(attacker: Attacker, defender: AttackTarget): AttackTarget | null {
+    if (isHero(defender)) return attacker;
+
+    if (attacker.power === defender.power) return null;
+
+    return attacker.power > defender.power ? attacker : defender;
   }
 
   private async dealDamage() {
@@ -225,9 +226,13 @@ export class CombatSystem
     const canResolve = defender.isAlive && attacker.isAlive;
 
     if (!canResolve) return;
-
-    await this.performAttackerStrike(attacker, defender);
-    await this.performDefenderStrike(attacker, defender);
+    const damagingParticipants = this.getDamagingParticipants(attacker, defender);
+    for (const participant of damagingParticipants) {
+      await participant.attacker.dealDamage(
+        participant.defender,
+        new CombatDamage(participant.attacker)
+      );
+    }
   }
 
   serialize() {
