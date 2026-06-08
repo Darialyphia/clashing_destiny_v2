@@ -2,7 +2,6 @@ import type { Values } from '@game/shared';
 
 export const GAME_PHASES = {
   DRAW: 'draw_phase',
-  LEVEL_UP: 'level_up_phase',
   MAIN: 'main_phase',
   PLAY_CARD: 'play_card_phase',
   GAME_END: 'game_end'
@@ -28,7 +27,6 @@ export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
   END_TURN: 'end_turn',
   PLAYER_WON: 'player_won',
-  COMMIT_LEVEL_UP: 'commit_level_up',
   START_PLAYING_CARD: 'start_playing_card',
   COMMIT_PLAYING_CARD: 'commit_playing_card',
   CANCEL_PLAYING_CARD: 'cancel_playing_card'
@@ -55,8 +53,6 @@ export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 export const EFFECT_TYPE = {
   CARD: 'CARD',
   ABILITY: 'ABILITY',
-  DECLARE_BLOCKER: 'DECLARE_BLOCKER',
-  RETALIATION: 'RETALIATION',
   NEGATE: 'NEGATE'
 } as const;
 export type EffectType = Values<typeof EFFECT_TYPE>;

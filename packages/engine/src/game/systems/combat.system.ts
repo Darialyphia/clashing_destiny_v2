@@ -18,7 +18,6 @@ import {
   type CombatStepTransition
 } from '../game.enums';
 import { CorruptedGamephaseContextError, GameError } from '../game-error';
-import { CombatDamage } from '../../utils/damage';
 import { isMinion } from '../../card/card-utils';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { BoardSpace } from '../../board/board-space.entity';
@@ -140,7 +139,21 @@ export class CombatSystem
       new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
     );
 
-    await this.resolveCombat();
+    if (!this.attacker.getShouldCreateChainOnAttack(this.defender!)) {
+      await this.resolveCombat();
+      return;
+    }
+
+    if (!this.game.effectChainSystem.currentChain) {
+      await this.game.effectChainSystem.createChain({
+        initialPlayer: this.attacker.player.opponent,
+        onResolved: async () => this.resolveCombat()
+      });
+
+      await this.game.inputSystem.askForPlayerInput();
+    } else {
+      await this.resolveCombat();
+    }
   }
 
   changeTarget(newTarget: AttackTarget) {
@@ -185,36 +198,28 @@ export class CombatSystem
   }
 
   private async performAttackerStrike(attacker: Attacker, defender: AttackTarget) {
-    console.log({
-      attacker: attacker.position.coordinates,
-      defender: defender.position.coordinates
-    });
-    const area = attacker.attackAOE.getArea([defender.position.coordinates!]);
-    const targetsToDamage =
-      defender instanceof HeroCard
-        ? [defender]
-        : area.map(space => space.minion!).filter(isDefined);
-
-    for (const target of targetsToDamage) {
-      await attacker.dealDamage(target, new CombatDamage(attacker));
-    }
+    // const area = attacker.attackAOE.getArea([defender.position.coordinates!]);
+    // const targetsToDamage =
+    //   defender instanceof HeroCard
+    //     ? [defender]
+    //     : area.map(space => space.minion!).filter(isDefined);
+    // for (const target of targetsToDamage) {
+    //   await attacker.dealDamage(target, new CombatDamage(attacker));
+    // }
   }
 
   private async performDefenderStrike(attacker: Attacker, defender: AttackTarget) {
-    const shouldStrikeBack =
-      isMinion(defender) &&
-      defender.canRetaliate(attacker) &&
-      attacker.canBeRetaliatedBy(defender);
-
-    if (!shouldStrikeBack) return;
-
-    const area = defender.retaliationAOE.getArea([attacker.position.coordinates!]);
-    const targetsToDamage = area.map(space => space.minion!).filter(isDefined);
-    console.log(area, targetsToDamage);
-
-    for (const target of targetsToDamage) {
-      await defender.dealDamage(target, new CombatDamage(defender));
-    }
+    // const shouldStrikeBack =
+    //   isMinion(defender) &&
+    //   defender.canRetaliate(attacker) &&
+    //   attacker.canBeRetaliatedBy(defender);
+    // if (!shouldStrikeBack) return;
+    // const area = defender.retaliationAOE.getArea([attacker.position.coordinates!]);
+    // const targetsToDamage = area.map(space => space.minion!).filter(isDefined);
+    // console.log(area, targetsToDamage);
+    // for (const target of targetsToDamage) {
+    //   await defender.dealDamage(target, new CombatDamage(defender));
+    // }
   }
 
   private async dealDamage() {

@@ -29,7 +29,6 @@ export type DeckValidator<TMeta> = {
   getMaxCopies: (card: ValidatableCard<TMeta>) => number;
   size: number;
   mainDeckMaxSize: number;
-  destinyDeckMaxSize: number;
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult;
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean;
 };
@@ -38,24 +37,17 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   constructor(private cardPool: Record<string, CardBlueprint>) {}
 
   get size(): number {
-    return defaultConfig.MAX_MAIN_DECK_SIZE + defaultConfig.MAX_DESTINY_DECK_SIZE;
+    return defaultConfig.MAX_MAIN_DECK_SIZE;
   }
 
   get mainDeckMaxSize(): number {
     return defaultConfig.MAX_MAIN_DECK_SIZE;
   }
 
-  get destinyDeckMaxSize(): number {
-    return defaultConfig.MAX_DESTINY_DECK_SIZE;
-  }
-
   getMaxCopies(card: ValidatableCard<TMeta>): number {
     const blueprint = this.cardPool[card.blueprintId] as CardBlueprint;
     if (blueprint.kind === CARD_KINDS.HERO) {
       return 1;
-    }
-    if (blueprint.kind === CARD_KINDS.DESTINY) {
-      return defaultConfig.MAX_DESTINY_DECK_CARD_COPIES;
     }
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
   }

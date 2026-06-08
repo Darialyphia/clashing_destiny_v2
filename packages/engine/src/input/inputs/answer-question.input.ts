@@ -9,7 +9,7 @@ const schema = defaultInputSchema.extend({
 export class AnswerQuestionInput extends Input<typeof schema> {
   readonly name = 'answerQuestion';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.LEVEL_UP];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 

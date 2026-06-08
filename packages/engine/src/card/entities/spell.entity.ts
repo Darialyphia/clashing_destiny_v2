@@ -3,10 +3,10 @@ import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
-  serializePreResponseTarget,
+  serializeTargets,
   type AbilityBlueprint,
   type Targets,
-  type SerializedPreResponseTarget,
+  type SerializedTargets,
   type SpellBlueprint
 } from '../card-blueprint';
 import {
@@ -23,7 +23,7 @@ import { GAME_PHASES } from '../../game/game.enums';
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
-  targets: SerializedPreResponseTarget | null;
+  targets: SerializedTargets | null;
   jobs: JobId[];
   speed: CardSpeed;
 };
@@ -91,15 +91,20 @@ export class SpellCard extends Card<
     );
     this.targets = targets;
 
-    await this.blueprint.onPlay(this.game, this, this.targets!);
+    await this.insertInChainOrExecute(
+      async () => {
+        await this.blueprint.onPlay(this.game, this, this.targets!);
 
-    await this.dispose();
+        await this.dispose();
 
-    this.targets = null;
+        this.targets = null;
 
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardBeforePlayEvent({ card: this })
+        await this.game.emit(
+          CARD_EVENTS.CARD_AFTER_PLAY,
+          new CardBeforePlayEvent({ card: this })
+        );
+      },
+      { targets: this.targets }
     );
   }
 
@@ -121,7 +126,7 @@ export class SpellCard extends Card<
       ...this.serializeBase(),
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
-      targets: this.targets ? serializePreResponseTarget(this.targets) : null,
+      targets: this.targets ? serializeTargets(this.targets) : null,
       jobs: this.jobs.map(job => job.id) as JobId[],
       speed: this.speed
     };

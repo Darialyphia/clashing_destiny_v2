@@ -25,6 +25,7 @@ import { MINION_EVENTS, type MinionCardEventMap } from '../card/events/minion.ev
 import { HERO_EVENTS, type HeroCardEventMap } from '../card/events/hero.events';
 import type { InteractionEventMap } from './systems/game-interaction.system';
 import { TRAP_EVENTS, type TrapCardEventMap } from '../card/events/trap.events';
+import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -134,6 +135,7 @@ export type GameEventMap = Prettify<
   GameEventsBase &
     GamePhaseEventMap &
     ModifierEventMap &
+    EffectChainEventMap &
     CardEventMap &
     CombatEventMap &
     MinionCardEventMap &
@@ -162,6 +164,7 @@ export const GAME_EVENTS = {
   GAME_OVER: 'game.over',
   MODIFIER_EVENT: 'game.modifier-event',
   ...GAME_PHASE_EVENTS,
+  ...EFFECT_CHAIN_EVENTS,
   ...MODIFIER_EVENTS,
   ...CARD_EVENTS,
   ...COMBAT_EVENTS,

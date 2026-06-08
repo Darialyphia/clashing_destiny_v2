@@ -24,6 +24,7 @@ import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 import type { SerializedBoardSpace } from '../../board/board-space.entity';
 import type { SerializedCombatState } from './combat.system';
 import type { AbilityManagerComponent } from '../../card/components/abilities-manager.component';
+import type { SerializedEffectChain } from '../effect-chain';
 
 export type SerializedEntity =
   | SerializedMinionCard
@@ -47,6 +48,7 @@ export type SerializedOmniscientState = {
   currentPlayer: string;
   turnCount: number;
   combat: SerializedCombatState;
+  effectChain: SerializedEffectChain | null;
 };
 
 export type SnapshotDiff = {
@@ -181,7 +183,8 @@ export class GameSerializer {
       players: this.game.playerSystem.players.map(player => player.id),
       currentPlayer: this.game.interaction.interactivePlayer.id,
       turnCount: this.game.turnSystem.elapsedTurns,
-      combat: this.game.combatSystem.serialize()
+      combat: this.game.combatSystem.serialize(),
+      effectChain: this.game.effectChainSystem.serialize()
     };
   }
 

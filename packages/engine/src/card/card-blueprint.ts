@@ -7,19 +7,16 @@ import type {
   Tag,
   Job,
   Affinity,
-  CardSpeed,
-  MinionType
+  CardSpeed
 } from './card.enums';
 import { type AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
-import type { DestinyCard } from './entities/destiny.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
 import type { GameEvent } from '../game/game.events';
 import type { TrapCard } from './entities/trap.entity';
-import type { BoardSpace } from '../board/board-space.entity';
 
 export type CardArt = {
   foil: {
@@ -64,6 +61,7 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends Any
   dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
   isHiddenOnCard?: boolean;
+  shoouldExhaust?: boolean;
   getTargets: (
     game: Game,
     card: TCard
@@ -93,25 +91,20 @@ export type SerializedAbility = {
   label: string;
   manaCost: number;
   description: string;
-  targets: SerializedPreResponseTarget | null;
+  targets: SerializedTargets | null;
   isHiddenOnCard: boolean;
 };
 
 export type Targets<TCard extends AnyCard = AnyCard> = {
   cards: TCard[];
-  spaces: BoardSpace[];
 };
-export type SerializedPreResponseTarget = {
+export type SerializedTargets = {
   cards: string[];
-  spaces: string[];
 };
 
-export const serializePreResponseTarget = (
-  targets: Targets
-): SerializedPreResponseTarget => {
+export const serializeTargets = (targets: Targets): SerializedTargets => {
   return {
-    cards: targets.cards.map(card => card.id),
-    spaces: targets.spaces.map(space => space.id)
+    cards: targets.cards.map(card => card.id)
   };
 };
 
@@ -119,11 +112,10 @@ export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
   speed: CardSpeed;
-  atk: number;
-  maxHp: number;
+  power: number;
+  damage: number;
   abilities: AbilityBlueprint<MinionCard, any>[];
   jobs: Job[];
-  subKind: MinionType;
   canPlay: (game: Game, card: MinionCard) => boolean;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
@@ -154,24 +146,10 @@ export type HeroBlueprint = CardBlueprintBase & {
   jobs: Job[];
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
-  canPlay: (game: Game, card: HeroCard) => boolean;
   maxHp: number;
   abilities: AbilityBlueprint<HeroCard, any>[];
   aiHints: {
     shouldPlay: (game: Game, card: HeroCard) => number;
-  };
-};
-
-export type DestinyBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
-  expCost: number;
-  kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  jobs: Job[];
-  onInit: (game: Game, card: DestinyCard) => Promise<void>;
-  onPlay: (game: Game, card: DestinyCard, targets: Targets<T>) => Promise<void>;
-  canPlay: (game: Game, card: DestinyCard) => boolean;
-  getTargets: (game: Game, card: DestinyCard) => Promise<InteractionResult<Targets<T>>>;
-  aiHints: {
-    shouldPlay: (game: Game, card: DestinyCard) => number;
   };
 };
 
@@ -185,7 +163,7 @@ export type TrapBlueprint = CardBlueprintBase & {
   onTrigger: (game: Game, card: TrapCard, event: GameEvent) => Promise<void>;
   shouldTrigger: (game: Game, card: TrapCard, event: GameEvent) => boolean;
   aiHints: {
-    shouldPlay: (game: Game, card: DestinyCard) => number;
+    shouldPlay: (game: Game, card: TrapCard) => number;
   };
 };
 
@@ -193,5 +171,4 @@ export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
   | HeroBlueprint
-  | DestinyBlueprint
   | TrapBlueprint;

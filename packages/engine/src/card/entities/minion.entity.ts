@@ -3,14 +3,7 @@ import type { Player } from '../../player/player.entity';
 import { CombatDamage, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type AbilityBlueprint, type MinionBlueprint } from '../card-blueprint';
-import {
-  CARD_EVENTS,
-  CARD_LOCATIONS,
-  MINION_TYPES,
-  type CardSpeed,
-  type JobId,
-  type MinionType
-} from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS, type CardSpeed, type JobId } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -40,20 +33,18 @@ import { DamageTrackerComponent } from '../components/damage-tracker.component';
 import type { BoardSpace } from '../../board/board-space.entity';
 import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
 import { isMinion } from '../card-utils';
-import type { SpaceTargetingStrategy } from '../../targeting/targeting-strategy';
-import { RangedTargetingStrategy } from '../../targeting/ranged-targeting.strategy';
 import { PointAOEShape } from '../../aoe/point.aoe-shape';
-import { AOE_TARGETING_TYPE, type AOEShape } from '../../aoe/aoe-shape';
-import { match } from 'ts-pattern';
-import { MeleeTargetingStrategy } from '../../targeting/melee-targeting.strategy';
+import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
 import { AbilityManagerComponent } from '../components/abilities-manager.component';
 import { GAME_EVENTS } from '../../game/game.events';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
   potentialMoveTargets: string[];
-  baseAtk: number;
-  atk: number;
+  basePower: number;
+  power: number;
+  baseDamage: number;
+  damage: number;
   baseMaxHp: number;
   maxHp: number;
   remainingHp: number;
@@ -64,7 +55,6 @@ export type SerializedMinionCard = SerializedCard & {
   jobs: JobId[];
   hasSummoningSickness: boolean;
   speed: CardSpeed;
-  subKind: MinionType;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -81,19 +71,15 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
-  atk: Interceptable<number, MinionCard>;
+  power: Interceptable<number, MinionCard>;
+  damage: Interceptable<number, MinionCard>;
   dealsDamageFirst: Interceptable<boolean, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
   canMoveManually: Interceptable<boolean, MinionCard>;
 
-  attackTargetingPattern: Interceptable<SpaceTargetingStrategy>;
-  attackAOE: Interceptable<AOEShape>;
-  retaliationTargetingPattern: Interceptable<SpaceTargetingStrategy>;
-  retaliationAOE: Interceptable<AOEShape>;
-
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
-  shouldSwitchInitiativeAfterattacking: Interceptable<boolean, { target: AttackTarget }>;
-  shouldExhaustAfterMoving: Interceptable<boolean, MinionCard>;
+  shouldSwitchInitiativeAfterAttacking: Interceptable<boolean, { target: AttackTarget }>;
+  shouldCreateChainOnAttack: Interceptable<boolean, { target: AttackTarget }>;
   speed: Interceptable<CardSpeed, MinionCard>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
@@ -125,18 +111,15 @@ export class MinionCard extends Card<
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        atk: new Interceptable(),
+        power: new Interceptable(),
+        damage: new Interceptable(),
         dealsDamageFirst: new Interceptable(),
         canMove: new Interceptable(),
         canMoveManually: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
-        shouldSwitchInitiativeAfterattacking: new Interceptable(),
-        shouldExhaustAfterMoving: new Interceptable(),
-        speed: new Interceptable(),
-        attackTargetingPattern: new Interceptable(),
-        attackAOE: new Interceptable(),
-        retaliationTargetingPattern: new Interceptable(),
-        retaliationAOE: new Interceptable()
+        shouldSwitchInitiativeAfterAttacking: new Interceptable(),
+        shouldCreateChainOnAttack: new Interceptable(),
+        speed: new Interceptable()
       },
       options
     );
@@ -149,27 +132,27 @@ export class MinionCard extends Card<
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
-    return space.isEmpty && this.isValidSpaceForsubKind(space);
+    return space.isEmpty;
   }
 
   get hasSummoningSickness(): boolean {
     return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
-  get subKind() {
-    return this.blueprint.subKind;
-  }
-
   get isAlive() {
     return this.remainingHp > 0 && this.location === CARD_LOCATIONS.BOARD;
   }
 
-  get atk(): number {
-    return this.interceptors.atk.getValue(this.blueprint.atk, this);
+  get power(): number {
+    return this.interceptors.power.getValue(this.blueprint.power, this);
+  }
+
+  get damage(): number {
+    return this.interceptors.damage.getValue(this.blueprint.damage, this);
   }
 
   get maxHp(): number {
-    return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
+    return this.interceptors.maxHp.getValue(this.game.config.MINION_HP, this);
   }
 
   get jobs() {
@@ -211,51 +194,9 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: MinionCard | HeroCard): boolean {
-    const base = !this._isExhausted && this.atk > 0;
+    const base = !this._isExhausted;
 
     return this.interceptors.canAttack.getValue(base, { target });
-  }
-
-  get defaultAttackTargettingPattern(): SpaceTargetingStrategy {
-    return match(this.blueprint.subKind)
-      .with(MINION_TYPES.MELEE, () => new MeleeTargetingStrategy(this.game, this))
-      .with(MINION_TYPES.RANGED, () => new RangedTargetingStrategy(this.game, this))
-      .with(MINION_TYPES.FLYER, () => new MeleeTargetingStrategy(this.game, this))
-      .exhaustive();
-  }
-
-  get attackTargettingPattern(): SpaceTargetingStrategy {
-    return this.interceptors.attackTargetingPattern.getValue(
-      this.defaultAttackTargettingPattern,
-      {}
-    );
-  }
-
-  get retaliationTargettingPattern(): SpaceTargetingStrategy {
-    return this.interceptors.retaliationTargetingPattern.getValue(
-      this.defaultAttackTargettingPattern,
-      {}
-    );
-  }
-
-  get attackAOE(): AOEShape {
-    return this.interceptors.attackAOE.getValue(
-      new PointAOEShape(this.game, {
-        player: this.player,
-        targetingType: AOE_TARGETING_TYPE.ENEMY_MINION
-      }),
-      {}
-    );
-  }
-
-  get retaliationAOE(): AOEShape {
-    return this.interceptors.retaliationAOE.getValue(
-      new PointAOEShape(this.game, {
-        player: this.player,
-        targetingType: AOE_TARGETING_TYPE.ENEMY_MINION
-      }),
-      {}
-    );
   }
 
   canAttackAt(space: BoardSpace) {
@@ -274,7 +215,7 @@ export class MinionCard extends Card<
       return false;
     }
 
-    return this.attackTargettingPattern.canTargetAt(space);
+    return true;
   }
 
   canBeAttacked(attacker: Attacker) {
@@ -293,8 +234,7 @@ export class MinionCard extends Card<
     if (!this.game.combatSystem.defender?.equals(this)) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) &&
-        this.retaliationTargettingPattern.canTargetAt(target.position.coordinates!),
+      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) && true,
       {
         attacker: target
       }
@@ -338,7 +278,7 @@ export class MinionCard extends Card<
   }
 
   shouldSwitchInitiativeAfterAttacking(attackTarget: AttackTarget): boolean {
-    return this.interceptors.shouldSwitchInitiativeAfterattacking.getValue(true, {
+    return this.interceptors.shouldSwitchInitiativeAfterAttacking.getValue(true, {
       target: attackTarget
     });
   }
@@ -432,15 +372,15 @@ export class MinionCard extends Card<
     );
   }
 
-  get shouldExhaustAfterMoving(): boolean {
-    return this.interceptors.shouldExhaustAfterMoving.getValue(true, this);
+  getShouldCreateChainOnAttack(attackTarget: AttackTarget): boolean {
+    return this.interceptors.shouldCreateChainOnAttack.getValue(true, {
+      target: attackTarget
+    });
   }
 
   async moveManually(space: BoardSpace) {
     await this.move(space);
-    if (this.shouldExhaustAfterMoving) {
-      await this.exhaust();
-    }
+
     if (this.shouldSwitchInitiativeAfterMovingManually) {
       await this.game.turnSystem.switchInitiative();
     }
@@ -472,20 +412,8 @@ export class MinionCard extends Card<
     return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
 
-  isValidSpaceForsubKind(cell: BoardSpace): boolean {
-    if (!cell.player?.equals(this.player)) return false;
-
-    return match(this.blueprint.subKind)
-      .with(MINION_TYPES.MELEE, () => cell.isFrontRow)
-      .with(MINION_TYPES.RANGED, () => cell.isBackRow)
-      .with(MINION_TYPES.FLYER, () => true)
-      .exhaustive();
-  }
-
   get hasAvailablePosition() {
-    return this.game.boardSystem
-      .getSpacesForPlayer(this.player)
-      .some(cell => this.isValidSpaceForsubKind(cell) && !cell.isOccupied);
+    return true;
   }
 
   canPlay() {
@@ -517,9 +445,7 @@ export class MinionCard extends Card<
   }
 
   get potentialSummonPositions() {
-    return this.game.boardSystem
-      .getSpacesForPlayer(this.player)
-      .filter(space => this.isValidSpaceForsubKind(space) && !space.isOccupied);
+    return this.game.boardSystem.getSpacesForPlayer(this.player).filter(space => true);
   }
 
   private async selectPosition() {
@@ -588,17 +514,18 @@ export class MinionCard extends Card<
       baseManaCost: this.manaCost,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       potentialMoveTargets: this.potentialMoveTargets.map(space => space.id),
-      atk: this.atk,
-      baseAtk: this.blueprint.atk,
+      power: this.power,
+      basePower: this.blueprint.power,
+      damage: this.damage,
+      baseDamage: this.blueprint.damage,
       maxHp: this.maxHp,
-      baseMaxHp: this.blueprint.maxHp,
+      baseMaxHp: this.game.config.MINION_HP,
       remainingHp: this.remainingHp,
       abilities: this.abilityManager.serialize(),
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],
       hasSummoningSickness: this.hasSummoningSickness,
-      speed: this.speed,
-      subKind: this.subKind
+      speed: this.speed
     };
   }
 }

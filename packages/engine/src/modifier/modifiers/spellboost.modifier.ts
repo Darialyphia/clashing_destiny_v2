@@ -32,9 +32,7 @@ export class SpellboostModifier<T extends AnyCard> extends Modifier<T> {
           filter: event => {
             if (!event.data.card.isAlly(this.target)) return false;
             return (
-              isSpell(event.data.card) &&
-              (this.target.location === CARD_LOCATIONS.HAND ||
-                this.target.location === CARD_LOCATIONS.DESTINY_DECK)
+              isSpell(event.data.card) && this.target.location === CARD_LOCATIONS.HAND
             );
           },
           handler: async () => {

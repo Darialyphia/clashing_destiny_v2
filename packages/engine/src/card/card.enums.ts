@@ -31,7 +31,6 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
-  DESTINY: 'DESTINY',
   TRAP: 'TRAP'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
@@ -127,7 +126,6 @@ export const getJobById = (id: JobId): Job => {
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   BOARD: 'board'
@@ -143,10 +141,3 @@ export const AFFINITIES = {
   ASTRAL: 'Astral'
 } as const;
 export type Affinity = Values<typeof AFFINITIES>;
-
-export const MINION_TYPES = {
-  MELEE: 'MELEE',
-  RANGED: 'RANGED',
-  FLYER: 'FLYER'
-} as const;
-export type MinionType = Values<typeof MINION_TYPES>;

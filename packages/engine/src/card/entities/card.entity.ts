@@ -1,8 +1,8 @@
-import { isFunction, type JSONObject } from '@game/shared';
+import { isFunction, type JSONObject, type MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint } from '../card-blueprint';
+import type { CardBlueprint, Targets } from '../card-blueprint';
 import {
   CARD_EVENTS,
   type CardKind,
@@ -33,6 +33,8 @@ import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import type { AbilityOwner } from './ability.entity';
 import type { BoardSpace } from '../../board/board-space.entity';
 import { PositionComponent } from '../components/position.component';
+import { EFFECT_TYPE } from '../../game/game.enums';
+import { nanoid } from 'nanoid';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -180,10 +182,6 @@ export abstract class Card<
     return this.blueprint.id;
   }
 
-  get playerLevel() {
-    return this.interceptors.playerLevel.getValue(this.player.level, {});
-  }
-
   get isExhausted() {
     return this._isExhausted;
   }
@@ -241,7 +239,7 @@ export abstract class Card<
       .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.TRAP, async () => {
         await this.sendToDiscardPile();
       })
-      .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, async () => {
+      .with(CARD_KINDS.HERO, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
@@ -250,6 +248,42 @@ export abstract class Card<
       CARD_EVENTS.CARD_DISPOSED,
       new CardDisposedEvent({ card: this })
     );
+  }
+
+  protected async insertInChainOrExecute(
+    handler: () => Promise<void>,
+    options: {
+      targets: Targets<AnyCard>;
+      onResolved?: () => MaybePromise<void>;
+    }
+  ) {
+    const effect = {
+      id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
+      type: EFFECT_TYPE.CARD,
+      source: this,
+      targets: options.targets,
+      handler: async () => {
+        await this.resolve(handler);
+        this.isPlayedFromHand = false;
+      }
+    };
+
+    if (this.game.effectChainSystem.currentChain) {
+      if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
+        await this.game.effectChainSystem.addEffect(effect, this.player);
+      } else {
+        // this can happen if a card is played as part of an other card effect
+        // the card wiill be played while the current chain is resolving, so let's just execute it immediately
+        await effect.handler();
+        return this.game.inputSystem.askForPlayerInput();
+      }
+    } else {
+      await this.game.effectChainSystem.createChain({
+        initialPlayer: this.player,
+        initialEffect: effect,
+        onResolved: options.onResolved
+      });
+    }
   }
 
   async resolve(handler: () => Promise<void>) {
@@ -284,9 +318,6 @@ export abstract class Card<
       })
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
-      })
-      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
-        this.player.cardManager.removeFromRuneDeck(this);
       })
       .with(CARD_LOCATIONS.BOARD, CARD_LOCATIONS.BOARD, () => {
         this.position.removeFromBoard();
@@ -364,7 +395,7 @@ export abstract class Card<
     }
 
     return match(this.kind)
-      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.TRAP, () => {
+      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.TRAP, CARD_KINDS.HERO, () => {
         if (this.location !== CARD_LOCATIONS.HAND) {
           return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
         }
@@ -372,9 +403,6 @@ export abstract class Card<
           return 'Cannot pay mana cost.';
         }
         return 'You cannot play this card';
-      })
-      .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, () => {
-        return 'You cannot play this card.';
       })
       .exhaustive();
   }

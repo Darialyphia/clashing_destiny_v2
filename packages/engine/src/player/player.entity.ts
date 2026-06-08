@@ -7,12 +7,13 @@ import { CardTrackerComponent } from './components/cards-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
-import { LockedModifier } from '../modifier/modifiers/locked.modifier';
 import { cloneDeep } from 'lodash-es';
-import { LevelManagerComponent } from './components/level-manager.component';
 import { ManaManagerComponent } from './components/mana-manager.component';
 import type { Affinity } from '../card/card.enums';
 import { isMinion } from '../card/card-utils';
+import { RuneManagerComponent } from './components/rune-manager.component';
+import type { Rune } from './player.enums';
+import { match } from 'ts-pattern';
 
 export type PlayerOptions = {
   id: string;
@@ -29,19 +30,13 @@ export type SerializedPlayer = {
   discardPile: string[];
   banishPile: string[];
   remainingCardsInMainDeck: number;
-  remainingCardsInDestinyDeck: number;
-  destinyDeck: string[];
   maxHp: number;
   currentHp: number;
   isPlayer1: boolean;
   maxMana: number;
   currentMana: number;
   manaRegen: number;
-  exp: number;
-  level: number;
-  maxLevel: number;
   hero: string;
-  destinies: string[];
   unlockedAffinities: Affinity[];
   frontRow: Array<string>;
   backRow: Array<string>;
@@ -52,6 +47,7 @@ export type PlayerInterceptors = {
   manaRegen: Interceptable<number>;
   maxMana: Interceptable<number>;
   unlockedAffinities: Interceptable<Affinity[]>;
+  maxResourceActionsPerTurn: Interceptable<number>;
 };
 
 const makeInterceptors = (): PlayerInterceptors => {
@@ -59,11 +55,12 @@ const makeInterceptors = (): PlayerInterceptors => {
     cardsDrawnForTurn: new Interceptable(),
     manaRegen: new Interceptable(),
     maxMana: new Interceptable(),
-    unlockedAffinities: new Interceptable()
+    unlockedAffinities: new Interceptable<Affinity[]>(),
+    maxResourceActionsPerTurn: new Interceptable<number>()
   };
 };
 
-export type PlayerResourceAction = { type: 'rune' } | { type: 'draw' };
+export type PlayerResourceAction = { type: 'rune'; rune: Rune } | { type: 'draw' };
 
 export class Player
   extends EntityWithModifiers<PlayerInterceptors>
@@ -73,7 +70,7 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly levelManager: LevelManagerComponent;
+  readonly runeManager: RuneManagerComponent;
 
   readonly manaManager = new ManaManagerComponent(this.game, this, {
     manaRegen: this.interceptors.manaRegen,
@@ -83,6 +80,8 @@ export class Player
   private options: PlayerOptions;
 
   hasPassedThisRound = false;
+
+  resourceActionsTakenThisTurn: PlayerResourceAction[] = [];
 
   constructor(game: Game, options: PlayerOptions) {
     super(options.id, game, makeInterceptors());
@@ -94,7 +93,7 @@ export class Player
       shouldShuffleDeck: true,
       deck: options.deck.cards
     });
-    this.levelManager = new LevelManagerComponent(game, this);
+    this.runeManager = new RuneManagerComponent(game, this);
   }
 
   async init() {
@@ -130,10 +129,6 @@ export class Player
 
   get hero() {
     return this.cardManager.hero;
-  }
-
-  get level() {
-    return this.levelManager.level;
   }
 
   get enemyHero() {
@@ -187,6 +182,30 @@ export class Player
   get unlockedAffinities() {
     return this.interceptors.unlockedAffinities.getValue(this.hero.affinities, {});
   }
+
+  get maxResourceActionsPerTurn() {
+    return this.interceptors.maxResourceActionsPerTurn.getValue(
+      this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
+      {}
+    );
+  }
+
+  canTakeResourceAction() {
+    return this.resourceActionsTakenThisTurn.length < this.maxResourceActionsPerTurn;
+  }
+
+  async takeResourceAction(action: PlayerResourceAction) {
+    this.resourceActionsTakenThisTurn.push(action);
+    await match(action)
+      .with({ type: 'rune' }, async ({ rune }) => {
+        await this.runeManager.addRunes([rune]);
+      })
+      .with({ type: 'draw' }, async () => {
+        await this.cardManager.draw(1);
+      })
+      .exhaustive();
+  }
+
   get isInteractive() {
     return this.game.interaction.isInteractive(this);
   }
@@ -218,8 +237,8 @@ export class Player
       }
     }
     if (this.game.turnSystem.elapsedTurns > 0) {
-      await this.levelManager.gainExp(this.game.config.EXP_GAIN_PER_TURN);
       await this.manaManager.gain(this.manaManager.manaRegen);
+      this.resourceActionsTakenThisTurn = [];
     }
   }
 
@@ -260,26 +279,20 @@ export class Player
       name: this.options.name,
       hand: this.cardManager.hand.map(card => ({
         cardId: card.id,
-        isLocked: card.modifiers.has(LockedModifier),
+        isLocked: false,
         isRevealed: card.isRevealed
       })),
       handSize: this.cardManager.hand.length,
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
-      remainingCardsInDestinyDeck: this.cardManager.destinyDeck.cards.length,
-      destinyDeck: [...this.cardManager.destinyDeck.cards].map(card => card.id),
       maxHp: this.hero.maxHp,
       currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       currentMana: this.mana,
       maxMana: this.maxMana,
       manaRegen: this.manaRegen,
-      exp: this.levelManager.exp,
-      level: this.levelManager.level,
-      maxLevel: this.game.config.PLAYER_MAX_LEVEL,
       hero: this.hero.id,
-      destinies: this.levelManager.destinies.map(destiny => destiny.id),
       unlockedAffinities: this.unlockedAffinities,
       frontRow: this.frontRow.map(card => card.id),
       backRow: this.backRow.map(card => card.id)
