@@ -53,10 +53,6 @@ export class TrapCard extends Card<
     return this.player.mana >= this.triggerCost;
   }
 
-  isValidMovementPosition(space: BoardSpace): boolean {
-    return space.occupant === null && space.player?.equals(this.player);
-  }
-
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
       this.canPayManaCost &&
@@ -99,7 +95,7 @@ export class TrapCard extends Card<
       CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
       async event => {
         if (!event.data.card.equals(this)) return;
-        if (event.data.from === CARD_LOCATIONS.BOARD) {
+        if (event.data.from === CARD_LOCATIONS.BASE) {
           stopTrigger();
           stopLocationWatch();
         }

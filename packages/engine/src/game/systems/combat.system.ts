@@ -85,7 +85,7 @@ export class CombatSystem
     return this.stateMachine.getState();
   }
 
-  get potentialTargets(): Nullable<BoardSpace[]> {
+  get potentialTargets(): Nullable<AttackTarget[]> {
     return this.attacker?.potentialAttackTargets;
   }
 
@@ -113,17 +113,12 @@ export class CombatSystem
     );
   }
 
-  async declareAttackTarget(space: BoardSpace) {
+  async declareAttackTarget(target: AttackTarget) {
     assert(
       this.stateMachine.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
       new WrongCombatStepError()
     );
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
-
-    const target =
-      space.occupant && isMinion(space.occupant)
-        ? space.occupant
-        : this.attacker!.player.opponent.hero;
 
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_DECLARE_ATTACK_TARGET,
@@ -230,23 +225,9 @@ export class CombatSystem
     const canResolve = defender.isAlive && attacker.isAlive;
 
     if (!canResolve) return;
-    const attackerFirst = attacker.dealsDamageFirst;
-    const defenderFirst = isMinion(defender) && defender.dealsDamageFirst;
 
-    if (attackerFirst && !defenderFirst) {
-      await this.performAttackerStrike(attacker, defender);
-      if (defender.isAlive) {
-        await this.performDefenderStrike(attacker, defender);
-      }
-    } else if (!attackerFirst && defenderFirst) {
-      await this.performDefenderStrike(attacker, defender);
-      if (attacker.isAlive) {
-        await this.performAttackerStrike(attacker, defender);
-      }
-    } else {
-      await this.performAttackerStrike(attacker, defender);
-      await this.performDefenderStrike(attacker, defender);
-    }
+    await this.performAttackerStrike(attacker, defender);
+    await this.performDefenderStrike(attacker, defender);
   }
 
   serialize() {

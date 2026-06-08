@@ -1,6 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
@@ -10,16 +9,15 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { isHero } from '../../card/card-utils';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { AbilityDamage } from '../../utils/damage';
-import { CARD_LOCATIONS } from '../../card/card.enums';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 
-export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+export class OverwhelmModifier extends Modifier<MinionCard> {
   private excessDamageByTarget: Record<string, number> = {};
 
   constructor(
     game: Game,
     source: AnyCard,
-    { mixins }: { mixins?: ModifierMixin<T>[] } = {}
+    { mixins }: { mixins?: ModifierMixin<MinionCard>[] } = {}
   ) {
     super(KEYWORDS.OVERWHELM.id, game, source, {
       name: KEYWORDS.OVERWHELM.name,
@@ -28,16 +26,13 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.OVERWHELM),
-        new TogglableModifierMixin(
-          game,
-          () => this.target.location === CARD_LOCATIONS.BOARD
-        ),
+        new TogglableModifierMixin(game, () => this.target.isOnBoard),
         ...(mixins ?? [])
       ]
     });
   }
 
-  async applyTo(target: T): Promise<void> {
+  async applyTo(target: MinionCard): Promise<void> {
     await super.applyTo(target);
 
     this.addMixin(
@@ -60,7 +55,7 @@ export class OverwhelmModifier<T extends MinionCard | HeroCard> extends Modifier
       new GameEventModifierMixin(this.game, {
         eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
         handler: async event => {
-          if (this.target.location !== CARD_LOCATIONS.BOARD) return;
+          if (!this.target.isOnBoard) return;
           if (!event.data.card.equals(this.target)) return;
 
           const totalAmount = Object.values(this.excessDamageByTarget).reduce(

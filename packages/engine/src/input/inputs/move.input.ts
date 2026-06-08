@@ -1,18 +1,14 @@
 import { assert } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import { defaultInputSchema, Input } from '../input';
-import {
-  CannotMoveManuallyError,
-  IllegalMovementError,
-  NotCurrentPlayerError
-} from '../input-errors';
+import { NotCurrentPlayerError } from '../input-errors';
 import { z } from 'zod';
-import { CardNotFoundError, SpaceNotFoundError } from '../../card/card-errors';
+import { CardNotFoundError } from '../../card/card-errors';
 import { isMinion } from '../../card/card-utils';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
-  spaceId: z.string()
+  index: z.number()
 });
 
 export class MoveInput extends Input<typeof schema> {
@@ -29,19 +25,9 @@ export class MoveInput extends Input<typeof schema> {
     return card;
   }
 
-  get space() {
-    const space = this.game.boardSystem.getSpaceById(this.payload.spaceId);
-    assert(space, new SpaceNotFoundError());
-    return space;
-  }
-
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
-    assert(this.minion.canMoveManually, new CannotMoveManuallyError());
-    assert(
-      this.minion.position.canMoveTo(this.space),
-      new IllegalMovementError(this.space)
-    );
-    await this.minion.moveManually(this.space);
+    assert(this.minion.canMoveManually, new Error('Minion cannot be moved manually'));
+    await this.minion.moveManually(this.payload.index);
   }
 }

@@ -128,7 +128,8 @@ export const CARD_LOCATIONS = {
   MAIN_DECK: 'mainDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
-  BOARD: 'board'
+  BASE: 'base',
+  BATTLEFIELD: 'battlefield'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 

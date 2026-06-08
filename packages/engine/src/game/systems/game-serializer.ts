@@ -19,7 +19,7 @@ import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
 import { CARD_LOCATIONS } from '../../card/card.enums';
-import { DeepDiffer } from './deep-differ';
+import { DeepDiffer } from '../../utils/deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
 import type { SerializedBoardSpace } from '../../board/board-space.entity';
 import type { SerializedCombatState } from './combat.system';
@@ -165,7 +165,7 @@ export class GameSerializer {
         entities[modifier.id] = modifier.serialize();
       });
     });
-    this.game.boardSystem.spaces.forEach(space => {
+    this.game.boardSystem.boardSpaces.forEach(space => {
       entities[space.id] = space.serialize();
       space.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
@@ -244,7 +244,8 @@ export class GameSerializer {
       if (card.player.id === playerId) return;
       if (
         card.location === CARD_LOCATIONS.BANISH_PILE ||
-        card.location === CARD_LOCATIONS.BOARD ||
+        card.location === CARD_LOCATIONS.BASE ||
+        card.location === CARD_LOCATIONS.BATTLEFIELD ||
         card.location === CARD_LOCATIONS.DISCARD_PILE
       ) {
         return;

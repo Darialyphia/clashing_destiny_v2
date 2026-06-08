@@ -2,7 +2,6 @@ import { KEYWORDS } from '../../card/card-keywords';
 import { CARD_EVENTS } from '../../card/card.enums';
 import { CardEffectTriggeredEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
@@ -10,19 +9,19 @@ import { OnEnterModifierMixin, type OnEnterHandler } from '../mixins/on-enter.mi
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class OnEnterModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+export class OnEnterModifier extends Modifier<MinionCard> {
   constructor(
     game: Game,
     source: AnyCard,
     options: {
-      handler: OnEnterHandler<T>;
-      mixins?: ModifierMixin<T>[];
+      handler: OnEnterHandler;
+      mixins?: ModifierMixin<MinionCard>[];
       onlyWhenPlayedFromHand?: boolean;
     }
   ) {
     super(KEYWORDS.ON_ENTER.id, game, source, {
       mixins: [
-        new OnEnterModifierMixin<T>(game, {
+        new OnEnterModifierMixin(game, {
           onlyWhenPlayedFromHand: options.onlyWhenPlayedFromHand,
           handler: async event => {
             await game.emit(

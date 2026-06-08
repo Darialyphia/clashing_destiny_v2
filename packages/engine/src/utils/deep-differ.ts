@@ -1,5 +1,5 @@
-import type { PatchOperation } from './patch-types';
-import { areArraysIdentical } from '../../utils/utils';
+import type { PatchOperation } from '../game/systems/patch-types';
+import { areArraysIdentical } from './utils';
 
 /**
  * Deep differ that generates patch operations for changes between objects

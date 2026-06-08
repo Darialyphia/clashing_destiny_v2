@@ -19,12 +19,14 @@ export class AttackAction implements BoardCellClickRule {
   }
 
   handler(space: BoardSpaceViewModel) {
+    if (!space.card) return;
+
     this.client.dispatch({
       type: 'declareAttack',
       payload: {
         playerId: this.client.playerId,
         attackerId: this.client.ui.selectedCard!.id,
-        spaceId: space.id
+        targetId: space.card.id
       }
     });
   }

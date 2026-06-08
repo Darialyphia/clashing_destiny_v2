@@ -50,23 +50,15 @@ export class BoardSpaceViewModel {
     return this.data.position;
   }
 
-  get x() {
-    return this.data.position.x;
-  }
-
-  get y() {
-    return this.data.position.y;
-  }
-
   get player() {
     const entities = this.getEntities();
 
     return entities[this.data.player] as PlayerViewModel;
   }
 
-  get occupant() {
-    if (!this.data.occupant) return null;
+  get card() {
+    if (!this.data.card) return null;
     const entities = this.getEntities();
-    return entities[this.data.occupant] as unknown as CardViewModel;
+    return entities[this.data.card] as unknown as CardViewModel;
   }
 }

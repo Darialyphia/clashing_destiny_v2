@@ -1,11 +1,7 @@
-import { isDefined, type Point } from '@game/shared';
-import {
-  isValidAOETargetingType,
-  type AOEShape,
-  type AOETargetingType
-} from './aoe-shape';
+import { type AOEShape } from './aoe-shape';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
+import type { BoardCoordinates } from '../board/board.system';
 
 export class CompositeAOEShape implements AOEShape {
   readonly type = 'point' as const;
@@ -18,7 +14,7 @@ export class CompositeAOEShape implements AOEShape {
     }
   ) {}
 
-  getArea([point]: [Point]) {
+  getArea([point]: [BoardCoordinates]) {
     const area = this.options.shapes.flatMap(shape => shape.getArea([point]));
     return [...new Set(area)];
   }

@@ -6,6 +6,7 @@ import {
 } from './aoe-shape';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
+import type { BoardCoordinates } from '../board/board.system';
 
 export class PointAOEShape implements AOEShape {
   readonly type = 'point' as const;
@@ -14,19 +15,17 @@ export class PointAOEShape implements AOEShape {
     private game: Game,
     private options: {
       targetingType: AOETargetingType;
-      readonly override?: Point;
+      readonly override?: BoardCoordinates;
       player: Player;
     }
   ) {}
 
-  getArea([point]: [Point]) {
+  getArea([point]: [BoardCoordinates]) {
     const area = this.options.override ?? point;
 
     if (!area) return [];
 
     return [area]
-      .map(point => this.game.boardSystem.getSpaceAt(point))
-      .filter(isDefined)
       .filter(space => {
         return isValidAOETargetingType(
           this.game,
@@ -34,6 +33,8 @@ export class PointAOEShape implements AOEShape {
           this.options.player,
           this.options.targetingType
         );
-      });
+      })
+      .map(space => this.game.boardSystem.getBoardSpaceAt(space))
+      .filter(isDefined);
   }
 }

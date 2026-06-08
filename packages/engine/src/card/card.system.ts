@@ -16,7 +16,6 @@ import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { TrapCard } from './entities/trap.entity';
-import type { BoardSpace } from '../board/board-space.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -51,7 +50,11 @@ export class CardSystem extends System<CardSystemOptions> {
   }
 
   getAllCardsInPlay() {
-    return this.cards.filter(card => card.location === CARD_LOCATIONS.BOARD);
+    return this.cards.filter(
+      card =>
+        card.location === CARD_LOCATIONS.BASE ||
+        card.location === CARD_LOCATIONS.BATTLEFIELD
+    );
   }
 
   get cards() {
@@ -107,14 +110,6 @@ export class CardSystem extends System<CardSystemOptions> {
 
     this.cardMap.set(card.id, card);
     return card as any;
-  }
-
-  getCardAt(space: BoardSpace) {
-    return (
-      this.cards.find(card => {
-        return card.space?.equals(space);
-      }) ?? null
-    );
   }
 
   getLastPlayedCard<T extends AnyCard = AnyCard>(

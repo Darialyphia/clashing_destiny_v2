@@ -55,7 +55,7 @@ export class SelectingSpaceOnBoardContext {
         const spaces = [...this.selectedSpaces, space];
         const aoe = this.options.getAOE(this);
         if (!aoe) return [space.id, []];
-        const area = aoe?.getArea(spaces);
+        const area = aoe?.getArea(spaces.map(space => space.position));
         return [space.id, area.map(space => space.id)];
       })
     );
@@ -83,7 +83,7 @@ export class SelectingSpaceOnBoardContext {
   async init() {}
 
   get elligibleSpaces() {
-    return this.game.boardSystem.spaces.filter(space =>
+    return this.game.boardSystem.boardSpaces.filter(space =>
       this.isElligible(space, this.selectedSpaces)
     );
   }
@@ -98,9 +98,9 @@ export class SelectingSpaceOnBoardContext {
     }
   }
 
-  async selectSpace(player: Player, spaceId: string) {
+  async selectSpace(player: Player, id: string) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    const space = this.game.boardSystem.getSpaceById(spaceId);
+    const space = this.game.boardSystem.getBoardSpaceById(id);
     assert(isDefined(space), new IllegalTargetError());
     assert(this.isElligible(space, this.selectedSpaces), new IllegalTargetError());
     this.selectedSpaces.push(space);

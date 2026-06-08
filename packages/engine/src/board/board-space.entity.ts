@@ -1,162 +1,98 @@
-import { isDefined, Vec2, type Point, type Serializable } from '@game/shared';
+import {
+  isDefined,
+  type BetterExtract,
+  type EmptyObject,
+  type Serializable
+} from '@game/shared';
+import type { CardLocation } from '../card/card.enums';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
-import { Interceptable } from '../utils/interceptable';
-import { BOARD_ROWS, type BoardRow } from './map-blueprint';
-import { pointToSpaceId } from './board-utils';
-import { match } from 'ts-pattern';
-import { isMinion } from '../card/card-utils';
-import type { MinionCard } from '../card/entities/minion.entity';
 
-export type BoardCellInterceptors = {
-  isWalkable: Interceptable<boolean>;
+export type BoardRow = BetterExtract<CardLocation, 'base' | 'battlefield'>;
+
+export type BoardPosition = {
+  playerId: string;
+  zone: BoardRow;
+  index: number;
 };
-
-export type SerializedCoords = `${string}-${string}`;
 
 export type SerializedBoardSpace = {
   id: string;
   entityType: 'board-space';
-  position: Point;
-  player: 'p1' | 'p2';
-  occupant: string | null;
+  position: BoardPosition;
+  card: string | null;
+  player: string;
 };
 
 export type BoardSpaceOptions = {
-  position: Point;
-  player: 'p1' | 'p2';
-  row: BoardRow;
+  playerId: string;
+  zone: BoardRow;
+  index: number;
 };
 
 export class BoardSpace
-  extends EntityWithModifiers<BoardCellInterceptors>
+  extends EntityWithModifiers<EmptyObject>
   implements Serializable<SerializedBoardSpace>
 {
-  readonly position: Vec2;
+  readonly position: BoardPosition;
+
+  _card: AnyCard | null = null;
 
   constructor(
     protected game: Game,
-    private options: BoardSpaceOptions
+    private options: BoardPosition
   ) {
-    super(pointToSpaceId(options.position), game, {
-      isWalkable: new Interceptable()
-    });
-    this.position = Vec2.fromPoint(options.position);
+    super(`${options.playerId}-${options.zone}-${options.index}`, game, {});
+    this.position = options;
   }
 
-  get x() {
-    return this.position.x;
+  get zone() {
+    if (this.position.zone === 'base') {
+      return this.player.boardSide.base;
+    }
+    return this.player.boardSide.battlefield;
   }
 
-  get y() {
-    return this.position.y;
+  get index() {
+    return this.position.index;
+  }
+
+  get adjacentSpaces() {
+    return [this.zone[this.index - 1], this.zone[this.index + 1]].filter(isDefined);
+  }
+
+  get adjacentCards() {
+    return this.adjacentSpaces.map(space => space.card).filter(isDefined);
+  }
+
+  getAdjacentCardsOfKind<CardType extends AnyCard>(type: CardType['kind']) {
+    return this.adjacentCards.filter(card => card.kind === type) as unknown as CardType[];
   }
 
   get player(): Player {
-    if (this.options.player === 'p1') {
-      return this.game.playerSystem.player1;
-    } else {
-      return this.game.playerSystem.player2;
-    }
+    return this.game.playerSystem.getPlayerById(this.position.playerId)!;
+  }
+
+  get card() {
+    return this._card;
   }
 
   get isOccupied() {
-    return isDefined(this.occupant);
+    return isDefined(this.card);
   }
 
   get isEmpty() {
     return !this.isOccupied;
   }
 
-  get occupant(): AnyCard | null {
-    return this.game.cardSystem.getCardAt(this);
+  placeCard(card: AnyCard) {
+    this._card = card;
   }
 
-  get minion(): MinionCard | null {
-    if (!this.occupant) return null;
-    if (!isMinion(this.occupant)) return null;
-
-    return this.occupant;
-  }
-
-  get row() {
-    if (!this.options.player) return null;
-    return this.options.row;
-  }
-
-  get inFront(): BoardSpace | null {
-    if (!this.player) return null;
-    if (!this.row) return null;
-    const player = this.player;
-    const row = this.row;
-
-    return match(row)
-      .with(BOARD_ROWS.FRONT, () => {
-        return (
-          this.game.boardSystem.spaces.find(
-            c =>
-              c.player?.equals(player.opponent) &&
-              c.row === BOARD_ROWS.FRONT &&
-              c.x == this.x
-          ) ?? null
-        );
-      })
-      .with(BOARD_ROWS.BACK, () => {
-        return (
-          this.game.boardSystem.spaces.find(
-            c => c.player?.equals(player) && c.row === BOARD_ROWS.FRONT && c.x === this.x
-          ) ?? null
-        );
-      })
-      .exhaustive();
-  }
-
-  get behind(): BoardSpace | null {
-    if (!this.player) return null;
-    if (!this.row) return null;
-    const player = this.player;
-    const row = this.row;
-
-    return match(row)
-      .with(BOARD_ROWS.FRONT, () => {
-        return (
-          this.game.boardSystem.spaces.find(
-            c => c.player?.equals(player) && c.row === BOARD_ROWS.BACK && c.x === this.x
-          ) ?? null
-        );
-      })
-      .with(BOARD_ROWS.BACK, () => {
-        return null;
-      })
-      .exhaustive();
-  }
-
-  get left() {
-    return this.game.boardSystem.spaces.find(c => c.y === this.y && c.x === this.x - 1);
-  }
-
-  get right() {
-    return this.game.boardSystem.spaces.find(c => c.y === this.y && c.x === this.x + 1);
-  }
-
-  get adjacent(): BoardSpace[] {
-    return [this.left, this.right, this.inFront, this.behind].filter(isDefined);
-  }
-
-  isNearby(point: Point) {
-    return this.game.boardSystem.getDistance(this.position, point) === 1;
-  }
-
-  get isFrontRow() {
-    if (!this.options.player) return false;
-    return this.options.row === BOARD_ROWS.FRONT;
-  }
-
-  get isBackRow() {
-    if (!this.options.player) return false;
-    return this.options.row === BOARD_ROWS.BACK;
+  removeCard() {
+    this._card = null;
   }
 
   serialize(): SerializedBoardSpace {
@@ -164,8 +100,8 @@ export class BoardSpace
       id: this.id,
       entityType: 'board-space',
       position: this.position,
-      player: this.options.player,
-      occupant: this.occupant ? this.occupant.id : null
+      player: this.player.id,
+      card: this.card?.id ?? null
     };
   }
 }

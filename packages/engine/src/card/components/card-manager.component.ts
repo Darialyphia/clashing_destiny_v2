@@ -93,12 +93,15 @@ export class CardManagerComponent {
     if (banishPileCard)
       return { card: banishPileCard, location: CARD_LOCATIONS.BANISH_PILE };
 
-    const boardCard = this.player.allCardsInPlay.find(card => card.id === id);
-    if (boardCard) return { card: boardCard, location: CARD_LOCATIONS.BOARD };
+    const baseCard = this.player.boardSide.getCardInBase(id);
+    if (baseCard) return { card: baseCard, location: CARD_LOCATIONS.BASE };
+
+    const battlefieldCard = this.player.boardSide.getCardInBattlefield(id);
+    if (battlefieldCard)
+      return { card: battlefieldCard, location: CARD_LOCATIONS.BATTLEFIELD };
 
     return null;
   }
-
   getCardInHandAt(index: number) {
     return [...this.hand][index];
   }

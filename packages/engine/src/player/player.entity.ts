@@ -14,6 +14,7 @@ import { isMinion } from '../card/card-utils';
 import { RuneManagerComponent } from './components/rune-manager.component';
 import type { Rune } from './player.enums';
 import { match } from 'ts-pattern';
+import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 
 export type PlayerOptions = {
   id: string;
@@ -38,8 +39,7 @@ export type SerializedPlayer = {
   manaRegen: number;
   hero: string;
   unlockedAffinities: Affinity[];
-  frontRow: Array<string>;
-  backRow: Array<string>;
+  boardSide: SerializedBoardSide;
 };
 
 export type PlayerInterceptors = {
@@ -77,6 +77,8 @@ export class Player
     maxMana: this.interceptors.maxMana
   });
 
+  readonly boardSide: BoardSide;
+
   private options: PlayerOptions;
 
   hasPassedThisRound = false;
@@ -87,6 +89,8 @@ export class Player
     super(options.id, game, makeInterceptors());
     this.options = cloneDeep(options);
     this.game = game;
+    this.boardSide = new BoardSide(this.game, this);
+
     this.cardTracker = new CardTrackerComponent(game, this);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
@@ -135,44 +139,28 @@ export class Player
     return this.opponent.hero;
   }
 
-  get frontRowIndex() {
-    return this.isPlayer1 ? 2 : 1;
+  get minionsInBase() {
+    return this.boardSide.base
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isMinion);
   }
 
-  get frontRow() {
-    return this.game.boardSystem.getRow(this.frontRowIndex);
-  }
-
-  get cardsInFrontRow() {
-    return this.frontRow.map(space => space.occupant).filter(isDefined);
-  }
-
-  get minionsInFrontRow() {
-    return this.cardsInFrontRow.filter(isMinion);
-  }
-
-  get backRowIndex() {
-    return this.isPlayer1 ? 3 : 0;
-  }
-
-  get backRow() {
-    return this.game.boardSystem.getRow(this.backRowIndex);
-  }
-
-  get cardsInBackRow() {
-    return this.backRow.map(space => space.occupant).filter(isDefined);
-  }
-
-  get minionsInBackRow() {
-    return this.cardsInBackRow.filter(isMinion);
-  }
-
-  get allCardsInPlay() {
-    return [this.hero, ...this.cardsInFrontRow, ...this.cardsInBackRow].filter(isDefined);
+  get minionsInBattlefield() {
+    return this.boardSide.battlefield
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isMinion);
   }
 
   get minions() {
-    return [...this.minionsInFrontRow, ...this.minionsInBackRow];
+    return [...this.minionsInBase, ...this.minionsInBattlefield];
+  }
+
+  get allCardsInPlay() {
+    return [this.hero, ...this.minionsInBase, ...this.minionsInBattlefield].filter(
+      isDefined
+    );
   }
 
   get enemyMinions() {
@@ -294,8 +282,7 @@ export class Player
       manaRegen: this.manaRegen,
       hero: this.hero.id,
       unlockedAffinities: this.unlockedAffinities,
-      frontRow: this.frontRow.map(card => card.id),
-      backRow: this.backRow.map(card => card.id)
+      boardSide: this.boardSide.serialize()
     };
   }
 }

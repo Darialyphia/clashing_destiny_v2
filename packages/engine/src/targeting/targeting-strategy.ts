@@ -3,6 +3,7 @@ import { match } from 'ts-pattern';
 import type { Player } from '../player/player.entity';
 import type { Game } from '../game/game';
 import { isMinion, isTrap } from '../card/card-utils';
+import type { BoardCoordinates } from '../board/board.system';
 
 export type SpaceTargetingStrategy = {
   canTargetAt(point: Point): boolean;
@@ -33,53 +34,44 @@ export type NonEmptySpaceTargetingType = Exclude<
 
 export const isValidSpaceTargetingType = (
   game: Game,
-  point: Point,
+  point: BoardCoordinates,
   player: Player,
   type: SpaceTargetingType
 ) => {
-  const space = game.boardSystem.getSpaceAt(point);
+  const space = game.boardSystem.getBoardSpaceAt(point);
 
   return !!match(type)
     .with(SPACE_TARGETING_TYPE.ANYWHERE, () => true)
     .with(SPACE_TARGETING_TYPE.EMPTY, () => !space)
-    .with(SPACE_TARGETING_TYPE.CARD, () => isDefined(space?.occupant))
-    .with(SPACE_TARGETING_TYPE.ENEMY_CARD, () => !space?.occupant?.player.equals(player))
-    .with(SPACE_TARGETING_TYPE.ALLY_CARD, () => space?.occupant?.player.equals(player))
+    .with(SPACE_TARGETING_TYPE.CARD, () => isDefined(space?.card))
+    .with(SPACE_TARGETING_TYPE.ENEMY_CARD, () => !space?.card?.player.equals(player))
+    .with(SPACE_TARGETING_TYPE.ALLY_CARD, () => space?.card?.player.equals(player))
     .with(
       SPACE_TARGETING_TYPE.MINION,
-      () => isDefined(space?.occupant) && isMinion(space.occupant)
+      () => isDefined(space?.card) && isMinion(space.card)
     )
     .with(
       SPACE_TARGETING_TYPE.ENEMY_MINION,
       () =>
-        isDefined(space?.occupant) &&
-        isMinion(space.occupant) &&
-        !space.occupant.player.equals(player)
+        isDefined(space?.card) &&
+        isMinion(space.card) &&
+        !space.card.player.equals(player)
     )
     .with(
       SPACE_TARGETING_TYPE.ALLY_MINION,
       () =>
-        isDefined(space?.occupant) &&
-        isMinion(space.occupant) &&
-        space.occupant.player.equals(player)
+        isDefined(space?.card) && isMinion(space.card) && space.card.player.equals(player)
     )
-    .with(
-      SPACE_TARGETING_TYPE.TRAP,
-      () => isDefined(space?.occupant) && isTrap(space.occupant)
-    )
+    .with(SPACE_TARGETING_TYPE.TRAP, () => isDefined(space?.card) && isTrap(space.card))
     .with(
       SPACE_TARGETING_TYPE.ENEMY_TRAP,
       () =>
-        isDefined(space?.occupant) &&
-        isTrap(space.occupant) &&
-        !space.occupant.player.equals(player)
+        isDefined(space?.card) && isTrap(space.card) && !space.card.player.equals(player)
     )
     .with(
       SPACE_TARGETING_TYPE.ALLY_TRAP,
       () =>
-        isDefined(space?.occupant) &&
-        isTrap(space.occupant) &&
-        space.occupant.player.equals(player)
+        isDefined(space?.card) && isTrap(space.card) && space.card.player.equals(player)
     )
     .exhaustive();
 };

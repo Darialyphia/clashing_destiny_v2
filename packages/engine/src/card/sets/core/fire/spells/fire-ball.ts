@@ -56,13 +56,6 @@ export const fireBall: SpellBlueprint<MinionCard | HeroCard> = {
     if (!target) return;
 
     await target.takeDamage(card, new SpellDamage(4, card));
-
-    const adjacentMinions = target.position.getAdjacentCardsOfKind<MinionCard>(
-      CARD_KINDS.MINION
-    );
-    for (const adjacent of adjacentMinions) {
-      await adjacent.takeDamage(card, new SpellDamage(4, card));
-    }
   },
   aiHints: {
     shouldPlay: () => 1

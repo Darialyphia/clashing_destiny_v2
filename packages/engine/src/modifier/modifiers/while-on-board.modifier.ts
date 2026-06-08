@@ -26,7 +26,59 @@ export class WhileOnBoardModifier<T extends MinionCard | HeroCard> extends Modif
       mixins: [
         new TogglableModifierMixin(
           game,
-          () => this.target.location === CARD_LOCATIONS.BOARD
+          () =>
+            this.target.location === CARD_LOCATIONS.BASE ||
+            this.target.location === CARD_LOCATIONS.BATTLEFIELD
+        ),
+        ...options.mixins
+      ]
+    });
+  }
+}
+
+export class WhileOnBaseModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+  constructor(
+    modifierType: string,
+    game: Game,
+    source: AnyCard,
+    private options: {
+      mixins: Array<ModifierMixin<T>>;
+    }
+  ) {
+    super(modifierType, game, source, {
+      mixins: [
+        new TogglableModifierMixin(
+          game,
+          () => this.target.location === CARD_LOCATIONS.BASE
+        ),
+        ...options.mixins
+      ]
+    });
+  }
+}
+
+export class WhileOnBattlefieldModifier<
+  T extends MinionCard | HeroCard
+> extends Modifier<T> {
+  constructor(
+    modifierType: string,
+    game: Game,
+    source: AnyCard,
+    private options: {
+      name?: string | (() => string);
+      description?: string | (() => string);
+      icon?: string | (() => string);
+      mixins: Array<ModifierMixin<T>>;
+    }
+  ) {
+    super(modifierType, game, source, {
+      name: options.name,
+      description: options.description,
+      icon: options.icon,
+      mixins: [
+        new TogglableModifierMixin(
+          game,
+          () => this.target.location === CARD_LOCATIONS.BATTLEFIELD
         ),
         ...options.mixins
       ]

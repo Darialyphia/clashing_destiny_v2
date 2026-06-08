@@ -278,25 +278,25 @@ export class CardRevealEvent extends TypedSerializableEvent<
 
 export class CardBeforeMoveEvent extends TypedSerializableEvent<
   { card: AnyCard; to: BoardSpace },
-  { card: string; to: string }
+  { card: string; to: SerializedBoardSpace }
 > {
   serialize() {
     return {
       card: this.data.card.id,
-      to: this.data.to.id
+      to: this.data.to.serialize()
     };
   }
 }
 
 export class CardAfterMoveEvent extends TypedSerializableEvent<
   { card: AnyCard; to: BoardSpace; from: BoardSpace },
-  { card: string; to: string; from: string }
+  { card: string; to: SerializedBoardSpace; from: SerializedBoardSpace }
 > {
   serialize() {
     return {
       card: this.data.card.id,
-      to: this.data.to.id,
-      from: this.data.from.id
+      to: this.data.to.serialize(),
+      from: this.data.from.serialize()
     };
   }
 }

@@ -1,11 +1,9 @@
 import type { MaybePromise } from '@game/shared';
 import { KEYWORDS } from '../../card/card-keywords';
-import { CARD_KINDS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import { CombatDamage, DAMAGE_TYPES } from '../../utils/damage';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { WhileOnBoardModifier } from './while-on-board.modifier';

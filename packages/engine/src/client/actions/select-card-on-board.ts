@@ -11,19 +11,19 @@ export class SelectCardOnBoardAction implements BoardCellClickRule {
   predicate(cell: BoardSpaceViewModel, state: GameClientState) {
     return (
       this.client.isActive() &&
-      isDefined(cell.occupant) &&
+      isDefined(cell.card) &&
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-      state.interaction.ctx.elligibleCards.includes(cell.occupant.id) &&
+      state.interaction.ctx.elligibleCards.includes(cell.card.id) &&
       this.client.playerId === this.client.getActivePlayerId()
     );
   }
 
   handler(cell: BoardSpaceViewModel) {
-    if (!isDefined(cell.occupant)) return;
+    if (!isDefined(cell.card)) return;
     this.client.dispatch({
       type: 'selectCardOnBoard',
       payload: {
-        cardId: cell.occupant.id,
+        cardId: cell.card.id,
         playerId: this.client.playerId
       }
     });

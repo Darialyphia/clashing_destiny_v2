@@ -29,7 +29,7 @@ export const erinaVioletWitch: HeroBlueprint = {
       description: 'Draw a card.',
       manaCost: 1,
       canUse: (game, card) => {
-        return card.location === CARD_LOCATIONS.BOARD;
+        return true;
       },
       getTargets: noTargets,
       async onResolve(game, card) {

@@ -30,11 +30,9 @@ import {
 import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
-import type { AbilityOwner } from './ability.entity';
-import type { BoardSpace } from '../../board/board-space.entity';
-import { PositionComponent } from '../components/position.component';
 import { EFFECT_TYPE } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -80,8 +78,8 @@ export type SerializedCard = {
   keywords: string[];
   unplayableReason: string | null;
   isRevealed: boolean;
-  position: string | null;
   affinities: Affinity[];
+  position: string | null;
 };
 
 export abstract class Card<
@@ -105,8 +103,6 @@ export abstract class Card<
 
   readonly isFoil: boolean;
 
-  readonly position: PositionComponent;
-
   constructor(
     game: Game,
     player: Player,
@@ -118,9 +114,6 @@ export abstract class Card<
     this.originalPlayer = player;
     this.blueprint = options.blueprint as any;
     this.isFoil = options.isFoil;
-    this.position = new PositionComponent(game, this, {
-      position: null
-    });
   }
 
   async init() {
@@ -223,6 +216,14 @@ export abstract class Card<
     return this.player.mana >= this.manaCost;
   }
 
+  get position(): BoardSpace | null {
+    return (
+      [...this.player.boardSide.base, ...this.player.boardSide.battlefield].find(space =>
+        space.card?.equals(this)
+      ) ?? null
+    );
+  }
+
   get hasUnlockedAffinity() {
     if (this.affinities[0] === AFFINITIES.NEUTRAL) {
       return true;
@@ -231,8 +232,6 @@ export abstract class Card<
       this.player.unlockedAffinities.includes(affinity)
     );
   }
-
-  abstract isValidMovementPosition(space: BoardSpace): boolean;
 
   protected async dispose() {
     await match(this.kind)
@@ -319,8 +318,8 @@ export abstract class Card<
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with(CARD_LOCATIONS.BOARD, CARD_LOCATIONS.BOARD, () => {
-        this.position.removeFromBoard();
+      .with(CARD_LOCATIONS.BASE, CARD_LOCATIONS.BATTLEFIELD, () => {
+        this.player.boardSide.remove(this);
       })
       .exhaustive();
   }
@@ -415,10 +414,6 @@ export abstract class Card<
       : this.blueprint.description;
   }
 
-  get space() {
-    return this.position.space;
-  }
-
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
@@ -440,8 +435,8 @@ export abstract class Card<
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
-      position: this.space?.id ?? null,
-      affinities: this.affinities
+      affinities: this.affinities,
+      position: this.position?.id ?? null
     };
   }
 

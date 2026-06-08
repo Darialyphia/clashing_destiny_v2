@@ -188,7 +188,7 @@ export class ClientStateController {
 
     this.state.entities[boardSpace.id] = boardSpace
       .update({
-        occupant: card.id
+        card: card.id
       })
       .clone();
   }

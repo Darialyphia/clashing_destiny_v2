@@ -95,14 +95,14 @@ export class PlayerViewModel {
     return entity as PlayerViewModel;
   }
 
-  get frontRow() {
-    return this.data.frontRow.map(spaceId => {
+  get base() {
+    return this.data.boardSide.base.map(spaceId => {
       return this.getEntities()[spaceId] as BoardSpaceViewModel;
     });
   }
 
-  get backRow() {
-    return this.data.backRow.map(spaceId => {
+  get battlefield() {
+    return this.data.boardSide.battlefield.map(spaceId => {
       return this.getEntities()[spaceId] as BoardSpaceViewModel;
     });
   }
