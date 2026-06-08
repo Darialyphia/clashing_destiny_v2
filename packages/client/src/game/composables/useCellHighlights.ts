@@ -36,14 +36,11 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
   const cannotSelectReason = computed((): string | null => {
     if (!cell.value.occupant) return null;
     if (!ui.value.isInteractivePlayer) return null;
-    if (cell.value.occupant.isExhausted) return 'Exhausted';
+    if (cell.value.occupant.isExhausted) return 'Card is exhausted';
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return ''; // no need to show reason when in the middle of an interaction
     if (state.value.phase.state === GAME_PHASES.MAIN) {
-      if (cell.value.occupant.kind === CARD_KINDS.HERO) {
-        return 'Heroes cannot move !';
-      }
       if (cell.value.occupant.hasSummoningSickness) {
-        return 'Minions cannot move the turn they are summoned !';
+        return 'This card cannot act the turn it is summoned !';
       }
       if (!cell.value.occupant.canMove) return 'This card cannot move !';
       if (!cell.value.occupant.canAttack) return 'This card cannot attack !';

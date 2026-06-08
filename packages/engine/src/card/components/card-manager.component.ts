@@ -6,7 +6,6 @@ import { Player } from '../../player/player.entity';
 import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
-import type { DestinyCard } from '../entities/destiny.entity';
 import type { HeroCard } from '../entities/hero.entity';
 
 export type CardManagerComponentOptions = {
@@ -19,8 +18,6 @@ export class CardManagerComponent {
   private game: Game;
 
   readonly mainDeck: Deck<AnyCard>;
-
-  readonly destinyDeck: Deck<DestinyCard>;
 
   readonly hero!: HeroCard;
 
@@ -37,7 +34,6 @@ export class CardManagerComponent {
   ) {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
-    this.destinyDeck = new Deck(this.game, player);
   }
 
   private async buildCards<T extends AnyCard>(
@@ -54,12 +50,7 @@ export class CardManagerComponent {
 
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
-    this.mainDeck.populate(
-      cards.filter(c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY)
-    );
-    this.destinyDeck.populate(
-      cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
-    );
+    this.mainDeck.populate(cards.filter(c => c.kind !== CARD_KINDS.HERO));
 
     // @ts-expect-error ts complaining about readonly
     this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
@@ -80,16 +71,8 @@ export class CardManagerComponent {
     return this.mainDeck.remaining;
   }
 
-  get remainingCardsInRuneDeck() {
-    return this.destinyDeck.remaining;
-  }
-
   get mainDeckSize() {
     return this.mainDeck.size;
-  }
-
-  get runeDeckSize() {
-    return this.destinyDeck.size;
   }
 
   findCard(id: string): {
@@ -101,10 +84,6 @@ export class CardManagerComponent {
 
     const mainDeckCard = this.mainDeck.cards.find(card => card.id === id);
     if (mainDeckCard) return { card: mainDeckCard, location: CARD_LOCATIONS.MAIN_DECK };
-
-    const runeDeckCard = this.destinyDeck.cards.find(card => card.id === id);
-    if (runeDeckCard)
-      return { card: runeDeckCard, location: CARD_LOCATIONS.DESTINY_DECK };
 
     const discardPileCard = [...this.discardPile].find(card => card.id === id);
     if (discardPileCard)
@@ -126,14 +105,6 @@ export class CardManagerComponent {
 
   getCardInHandById(id: string) {
     return this.hand.find(card => card.id === id);
-  }
-
-  getRuneCardById(id: string) {
-    return this.destinyDeck.cards.find(card => card.id === id);
-  }
-
-  getRuneCardAt(index: number) {
-    return this.destinyDeck.cards[index];
   }
 
   async drawWithFilter(amount: number, filter: (card: AnyCard) => boolean) {
@@ -204,12 +175,6 @@ export class CardManagerComponent {
     );
 
     return cards;
-  }
-
-  removeFromRuneDeck(card: AnyCard) {
-    const index = this.destinyDeck.cards.findIndex(runeCard => runeCard.equals(card));
-    if (index === -1) return;
-    this.destinyDeck.cards.splice(index, 1);
   }
 
   removeFromHand(card: AnyCard) {

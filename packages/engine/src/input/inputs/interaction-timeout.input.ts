@@ -7,11 +7,7 @@ const schema = defaultInputSchema;
 export class InteractionTimeoutInput extends Input<typeof schema> {
   readonly name = 'interactionTimeout';
 
-  readonly allowedPhases = [
-    GAME_PHASES.MAIN,
-    GAME_PHASES.LEVEL_UP,
-    GAME_PHASES.PLAY_CARD
-  ];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.PLAY_CARD];
 
   protected payloadSchema = schema;
 

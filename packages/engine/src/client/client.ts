@@ -159,20 +159,6 @@ export class GameClient {
   }
 
   getActivePlayerId() {
-    // auto switch player in sandbox upon choosing level up action
-    if (
-      this.gameType === GAME_TYPES.LOCAL &&
-      this.stateManager.state.phase.state === GAME_PHASES.LEVEL_UP
-    ) {
-      const ctx = this.stateManager.state.phase.ctx;
-      const playerWhoHasToChoose = Object.entries(ctx.selections).find(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([_, cardId]) => cardId === null
-      )?.[0];
-      if (playerWhoHasToChoose) {
-        return playerWhoHasToChoose;
-      }
-    }
     return this.stateManager.state.interaction.ctx.player;
   }
 
@@ -364,16 +350,6 @@ export class GameClient {
       type: 'surrender',
       payload: {
         playerId: this.playerId
-      }
-    });
-  }
-
-  selectLevelUpCard(cardId: string | null) {
-    this.dispatch({
-      type: 'levelUpSelection',
-      payload: {
-        playerId: this.playerId,
-        cardId
       }
     });
   }

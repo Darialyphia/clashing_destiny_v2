@@ -29,7 +29,7 @@ export class FreezeModifier<T extends MinionCard | HeroCard> extends Modifier<T>
           interceptor: () => false
         }),
         new MinionInterceptorModifierMixin(game, {
-          key: 'atk',
+          key: 'power',
           interceptor: () => 0
         }) as ModifierMixin<T>
       ]

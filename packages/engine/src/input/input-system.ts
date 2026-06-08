@@ -33,7 +33,6 @@ import { AnswerQuestionInput } from './inputs/answer-question.input';
 import { MoveInput } from './inputs/move.input';
 import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
 import { CancelInteractionInput } from './inputs/cancel-interaction';
-import { LevelUpSelectionInput } from './inputs/level-up-selection.input';
 import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
@@ -62,7 +61,6 @@ const inputMap = validateinputMap({
   interactionTimeout: InteractionTimeoutInput,
   move: MoveInput,
   commitSpaceSelection: CommitSpaceSelectionInput,
-  levelUpSelection: LevelUpSelectionInput,
   cancelInteraction: CancelInteractionInput,
   selectSpaceOnBoard: SelectSpaceOnBoardInput
 });

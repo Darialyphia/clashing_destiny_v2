@@ -23,6 +23,7 @@ import { TurnSystem } from './systems/turn.system';
 import { CARDS_DICTIONARY } from '../card/sets';
 import { generateRandomString } from '../utils/utils';
 import { CombatSystem } from './systems/combat.system';
+import { EffectChainSystem } from './systems/effect-chain.system';
 
 export type GameOptions = {
   id: string;
@@ -67,6 +68,8 @@ export class Game implements Serializable<SerializedGame> {
   readonly turnSystem = new TurnSystem(this);
 
   readonly combatSystem = new CombatSystem(this);
+
+  readonly effectChainSystem = new EffectChainSystem(this);
 
   // readonly unitSystem = new UnitSystem(this);
 
@@ -135,6 +138,12 @@ export class Game implements Serializable<SerializedGame> {
     this.interaction.initialize();
     console.log(
       `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
+
+    this.effectChainSystem.initialize();
+    console.log(
+      `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
     now = performance.now();
 

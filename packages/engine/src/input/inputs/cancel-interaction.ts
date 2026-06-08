@@ -6,11 +6,7 @@ const schema = defaultInputSchema;
 export class CancelInteractionInput extends Input<typeof schema> {
   readonly name = 'cancelInteraction';
 
-  readonly allowedPhases = [
-    GAME_PHASES.PLAY_CARD,
-    GAME_PHASES.MAIN,
-    GAME_PHASES.LEVEL_UP
-  ];
+  readonly allowedPhases = [GAME_PHASES.PLAY_CARD, GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 

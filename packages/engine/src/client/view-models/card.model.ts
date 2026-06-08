@@ -3,7 +3,7 @@ import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type { SerializedPreResponseTarget } from '../../card/card-blueprint';
+import type { SerializedTargets } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
@@ -371,7 +371,7 @@ export class CardViewModel {
 
   get preResponseTargets() {
     if ('preResponseTargets' in this.data) {
-      return this.data.preResponseTargets as SerializedPreResponseTarget[];
+      return this.data.preResponseTargets as SerializedTargets[];
     }
 
     return null;

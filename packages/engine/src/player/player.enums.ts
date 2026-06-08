@@ -5,7 +5,15 @@ export const PLAYER_EVENTS = {
   PLAYER_AFTER_DRAW: 'player_after_draw',
   PLAYER_BEFORE_MANA_CHANGE: 'player_before_mana_change',
   PLAYER_AFTER_MANA_CHANGE: 'player_after_mana_change',
-  PLAYER_LEVEL_UP: 'player:level_up',
-  PLAYER_GAIN_EXP: 'player:gain_exp'
+  PLAYER_BEFORE_RUNE_CHANGE: 'player_before_rune_change',
+  PLAYER_AFTER_RUNE_CHANGE: 'player_after_rune_change'
 } as const;
 export type PlayerEvent = Values<typeof PLAYER_EVENTS>;
+
+export const RUNES = {
+  MIGHT: 'might',
+  WISDOM: 'wisdom',
+  FOCUS: 'focus',
+  CHAOS: 'chaos'
+} as const;
+export type Rune = Values<typeof RUNES>;

@@ -8,7 +8,7 @@ import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class SimpleAttackBuffModifier<
+export class SimplePowerBuffModifier<
   T extends MinionCard | HeroCard
 > extends Modifier<T> {
   constructor(
@@ -41,7 +41,7 @@ export class SimpleAttackBuffModifier<
       mixins: [
         new RemoveOnDestroyedMixin(game),
         new UnitInterceptorModifierMixin(game, {
-          key: 'atk',
+          key: 'power',
           interceptor: value => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             return Math.max(0, value + amount * this._stacks);

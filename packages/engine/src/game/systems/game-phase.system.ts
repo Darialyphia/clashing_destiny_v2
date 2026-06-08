@@ -14,7 +14,6 @@ import { MainPhase } from '../phases/main.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
 import { GAME_EVENTS } from '../game.events';
 import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-error';
-import { LevelUpPhase } from '../phases/level-up.phase';
 import { PlayCardPhase } from '../phases/play-card.phase';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 
@@ -28,7 +27,6 @@ export type GamePhaseContext =
       state: BetterExtract<GamePhase, 'draw_phase'>;
       ctx: DrawPhase;
     }
-  | { state: BetterExtract<GamePhase, 'level_up_phase'>; ctx: LevelUpPhase }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: MainPhase;
@@ -48,10 +46,6 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<DrawPhase['serialize']>;
     }
   | {
-      state: BetterExtract<GamePhase, 'level_up_phase'>;
-      ctx: ReturnType<LevelUpPhase['serialize']>;
-    }
-  | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: ReturnType<MainPhase['serialize']>;
     }
@@ -69,7 +63,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
-    [GAME_PHASES.LEVEL_UP]: LevelUpPhase,
     [GAME_PHASES.MAIN]: MainPhase,
     [GAME_PHASES.PLAY_CARD]: PlayCardPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
@@ -84,11 +77,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       stateTransition(
         GAME_PHASES.DRAW,
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
-        GAME_PHASES.LEVEL_UP
-      ),
-      stateTransition(
-        GAME_PHASES.LEVEL_UP,
-        GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP,
         GAME_PHASES.MAIN
       ),
       stateTransition(
@@ -199,11 +187,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     this._winners = players;
     await this.sendTransition(GAME_PHASE_TRANSITIONS.PLAYER_WON);
     await this.game.inputSystem.askForPlayerInput();
-  }
-
-  async commitLevelUp() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP), new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.COMMIT_LEVEL_UP);
   }
 
   async playCard(id: string, player: Player) {

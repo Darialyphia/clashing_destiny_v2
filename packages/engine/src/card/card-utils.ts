@@ -1,10 +1,8 @@
 import type { Game } from '../game/game';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
-import { UntilEndOfTurnModifierMixin } from '../modifier/mixins/until-end-of-turn.mixin';
-import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import type { Player } from '../player/player.entity';
 import type { CardBlueprint, Targets } from './card-blueprint';
-import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
+import { CARD_KINDS } from './card.enums';
 import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
@@ -100,7 +98,7 @@ export const minionOrHeroTargetRules = {
     }
     return {
       cancelled: false as const,
-      result: { cards: result.result as (MinionCard | HeroCard)[], spaces: [] }
+      result: { cards: result.result as (MinionCard | HeroCard)[] }
     };
   }
 };

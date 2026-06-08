@@ -4,7 +4,6 @@ import { System } from '../system';
 import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
   CardBlueprint,
-  DestinyBlueprint,
   HeroBlueprint,
   MinionBlueprint,
   SpellBlueprint,
@@ -16,7 +15,6 @@ import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { DestinyCard } from './entities/destiny.entity';
 import { TrapCard } from './entities/trap.entity';
 import type { BoardSpace } from '../board/board-space.entity';
 
@@ -95,15 +93,6 @@ export class CardSystem extends System<CardSystemOptions> {
             blueprint,
             isFoil
           } as CardOptions<HeroBlueprint>)
-      )
-      .with(
-        CARD_KINDS.DESTINY,
-        () =>
-          new DestinyCard(this.game, player, {
-            id,
-            blueprint,
-            isFoil
-          } as CardOptions<DestinyBlueprint>)
       )
       .with(
         CARD_KINDS.TRAP,

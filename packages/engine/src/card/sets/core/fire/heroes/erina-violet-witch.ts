@@ -22,7 +22,6 @@ export const erinaVioletWitch: HeroBlueprint = {
   affinities: [AFFINITIES.FIRE, AFFINITIES.ASTRAL],
   tags: [],
   maxHp: 25,
-  canPlay: () => true,
   abilities: [
     {
       id: 'erina-ability1',

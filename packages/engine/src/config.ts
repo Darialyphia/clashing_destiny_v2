@@ -2,9 +2,6 @@ export type Config = {
   MAX_MAIN_DECK_SIZE: number;
   MAX_MAIN_DECK_CARD_COPIES: number;
 
-  MAX_DESTINY_DECK_SIZE: number;
-  MAX_DESTINY_DECK_CARD_COPIES: number;
-
   INITIAL_HAND_SIZE: number;
 
   MAX_HAND_SIZE: number;
@@ -23,19 +20,17 @@ export type Config = {
 
   PLAYER_MAX_LEVEL: number;
   MAX_HELD_EXP: number;
-  EXP_GAIN_PER_TURN: number;
-
-  HERO_POSITION: number;
 
   OFF_FACTION_MANA_COST_INCREASE: number;
+
+  MAX_RESOURCE_ACTIONS_PER_TURN: number;
+
+  MINION_HP: number;
 };
 
 export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 40,
   MAX_MAIN_DECK_CARD_COPIES: 3,
-
-  MAX_DESTINY_DECK_SIZE: 10,
-  MAX_DESTINY_DECK_CARD_COPIES: 1,
 
   INITIAL_HAND_SIZE: 4,
   MAX_HAND_SIZE: 8,
@@ -53,8 +48,10 @@ export const defaultConfig: Config = {
 
   PLAYER_MAX_LEVEL: 5,
   MAX_HELD_EXP: 5,
-  EXP_GAIN_PER_TURN: 1,
 
-  HERO_POSITION: 2,
-  OFF_FACTION_MANA_COST_INCREASE: 1
+  OFF_FACTION_MANA_COST_INCREASE: 1,
+
+  MAX_RESOURCE_ACTIONS_PER_TURN: 1,
+
+  MINION_HP: 3
 };
