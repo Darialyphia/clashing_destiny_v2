@@ -18,9 +18,8 @@ import {
   type CombatStepTransition
 } from '../game.enums';
 import { CorruptedGamephaseContextError, GameError } from '../game-error';
-import { isHero, isMinion } from '../../card/card-utils';
+import { isHero } from '../../card/card-utils';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { BoardSpace } from '../../board/board-space.entity';
 import { CombatDamage } from '../../utils/damage';
 
 export type Attacker = MinionCard;
@@ -174,13 +173,15 @@ export class CombatSystem
       })
     );
 
+    const winner = this.getWinner(this.attacker, this.defender);
     await this.dealDamage();
 
     await this.game.emit(
       COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
       new AfterResolveCombatEvent({
         attacker: this.attacker!,
-        target: this.defender!
+        target: this.defender!,
+        winner
       })
     );
 
@@ -210,8 +211,8 @@ export class CombatSystem
       : [{ attacker: defender as Attacker, defender: attacker as AttackTarget }];
   }
 
-  private getWinner(attacker: Attacker, defender: AttackTarget): AttackTarget | null {
-    if (isHero(defender)) return attacker;
+  private getWinner(attacker: Attacker, defender: AttackTarget): Attacker | null {
+    if (isHero(defender)) return null;
 
     if (attacker.power === defender.power) return null;
 
@@ -316,13 +317,14 @@ export class BeforeResolveCombatEvent extends TypedSerializableEvent<
 }
 
 export class AfterResolveCombatEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget },
-  { attacker: string; target: string }
+  { attacker: Attacker; target: AttackTarget; winner: Attacker | null },
+  { attacker: string; target: string; winner: string | null }
 > {
   serialize() {
     return {
       attacker: this.data.attacker.id,
-      target: this.data.target.id
+      target: this.data.target.id,
+      winner: this.data.winner?.id ?? null
     };
   }
 }

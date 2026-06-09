@@ -31,8 +31,7 @@ type SandboxWorkerEvent =
       type: 'draw';
       payload: { playerId: string };
     }
-  | { type: 'refillMana'; payload: { playerId: string } }
-  | { type: 'grantExp'; payload: { playerId: string; amount: number } };
+  | { type: 'refillMana'; payload: { playerId: string } };
 
 let game: Game;
 self.addEventListener('message', ({ data }) => {
@@ -141,11 +140,6 @@ self.addEventListener('message', ({ data }) => {
     .with({ type: 'draw' }, async ({ payload }) => {
       const player = game.playerSystem.getPlayerById(payload.playerId)!;
       await player.cardManager.draw(1);
-      game.snapshotSystem.takeSnapshot();
-    })
-    .with({ type: 'grantExp' }, async ({ payload }) => {
-      const player = game.playerSystem.getPlayerById(payload.playerId)!;
-      await player.levelManager.gainExp(payload.amount);
       game.snapshotSystem.takeSnapshot();
     })
     .exhaustive();

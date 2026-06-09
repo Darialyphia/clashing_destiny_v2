@@ -49,6 +49,7 @@ export type CardBlueprintBase = {
   art: Record<string, CardArt>;
   collectable: boolean;
   unique?: boolean;
+  speed: CardSpeed;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
   affinities: Affinity[];
@@ -111,9 +112,9 @@ export const serializeTargets = (targets: Targets): SerializedTargets => {
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
-  speed: CardSpeed;
   power: number;
   damage: number;
+  bounty: number;
   abilities: AbilityBlueprint<MinionCard, any>[];
   jobs: Job[];
   canPlay: (game: Game, card: MinionCard) => boolean;
@@ -160,8 +161,7 @@ export type TrapBlueprint = CardBlueprintBase & {
   jobs: Job[];
   onInit: (game: Game, card: AnyCard) => Promise<void>;
   canPlay: (game: Game, card: TrapCard) => boolean;
-  onTrigger: (game: Game, card: TrapCard, event: GameEvent) => Promise<void>;
-  shouldTrigger: (game: Game, card: TrapCard, event: GameEvent) => boolean;
+  onPlay: (game: Game, card: TrapCard) => Promise<void>;
   aiHints: {
     shouldPlay: (game: Game, card: TrapCard) => number;
   };

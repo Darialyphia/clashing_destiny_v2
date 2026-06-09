@@ -1,7 +1,6 @@
 import type { CardId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type {
   DeckValidator,
   ValidatableCard,
@@ -149,7 +148,6 @@ export class DeckBuilderViewModel {
           copies: card.copies
         };
       })
-      .filter(card => card.blueprint.kind !== CARD_KINDS.DESTINY)
       .sort((a, b) => {
         if (
           a.blueprint.kind === CARD_KINDS.HERO &&
@@ -184,23 +182,6 @@ export class DeckBuilderViewModel {
       });
   }
 
-  get destinyDeckCards() {
-    return this._deck.cards
-      .map(card => {
-        const blueprint = this.cardPool.find(c => c.id === card.blueprintId)!;
-
-        return {
-          ...card,
-          blueprint,
-          copies: card.copies
-        };
-      })
-      .filter(card => card.blueprint.kind === CARD_KINDS.DESTINY)
-      .sort((a, b) => {
-        return a.blueprint.name.localeCompare(b.blueprint.name);
-      });
-  }
-
   get deckCode() {
     // Optimized deck code format:
     // Group cards by copy count for better compression
@@ -230,19 +211,7 @@ export class DeckBuilderViewModel {
   }
 
   get mainDeckSize() {
-    return this._deck.cards
-      .filter(
-        card => CARDS_DICTIONARY[card.blueprintId].kind !== CARD_KINDS.DESTINY
-      )
-      .reduce((acc, card) => acc + card.copies, 0);
-  }
-
-  get destinyDeckSize() {
-    return this._deck.cards
-      .filter(
-        card => CARDS_DICTIONARY[card.blueprintId].kind === CARD_KINDS.DESTINY
-      )
-      .reduce((acc, card) => acc + card.copies, 0);
+    return this._deck.cards.reduce((acc, card) => acc + card.copies, 0);
   }
 
   get cards() {

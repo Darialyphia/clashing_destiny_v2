@@ -10,9 +10,7 @@ import { assets } from '@/assets';
 import type { DeckBuilderViewModel } from '@/card/deck-builder.model';
 
 const { cards, deckBuilder } = defineProps<{
-  cards:
-    | DeckBuilderViewModel['mainDeckCards']
-    | DeckBuilderViewModel['destinyDeckCards'];
+  cards: DeckBuilderViewModel['mainDeckCards'];
   deckBuilder: DeckBuilderViewModel;
 }>();
 </script>

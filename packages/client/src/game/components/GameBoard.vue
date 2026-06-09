@@ -9,7 +9,6 @@ import {
 import PlayedCard from './PlayedCard.vue';
 import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
-import LevelUpModal from './LevelUpModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
@@ -54,7 +53,7 @@ const opponent = useOpponentPlayer();
 // useBoardResize(board);
 
 provideRichTextContext({
-  heroLevel: computed(() => myPlayer.value.level),
+  heroLevel: computed(() => 1),
   heroJobs: computed(() => {
     return (
       myPlayer.value.hero?.jobs.map(j => j.toLocaleUpperCase() as JobId) ?? []
@@ -138,28 +137,28 @@ useEventListener('contextmenu', async e => {
         <div class="minions-zone">
           <div class="opponent-back-row">
             <BoardSpace
-              v-for="space in opponent.backRow"
+              v-for="space in opponent.base"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
           <div class="opponent-front-row">
             <BoardSpace
-              v-for="space in opponent.frontRow"
+              v-for="space in opponent.battlefield"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
           <div class="my-front-row">
             <BoardSpace
-              v-for="space in myPlayer.frontRow"
+              v-for="space in myPlayer.battlefield"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
           <div class="my-back-row">
             <BoardSpace
-              v-for="space in myPlayer.backRow"
+              v-for="space in myPlayer.base"
               :key="space.id"
               :cell-id="space.id"
             />

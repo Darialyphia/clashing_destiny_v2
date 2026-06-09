@@ -11,26 +11,14 @@ import {
   FOIL_CRAFTING_COST_MULTIPLIER
 } from '@game/api';
 
-const { mainDeck, destinyDeck, name } = defineProps<{
+const { mainDeck, name } = defineProps<{
   mainDeck: Array<{
-    blueprint: CardBlueprint;
-    copies: number;
-    meta: { isFoil: boolean };
-  }>;
-  destinyDeck: Array<{
     blueprint: CardBlueprint;
     copies: number;
     meta: { isFoil: boolean };
   }>;
   name: string;
 }>();
-
-const heroes = computed(() =>
-  destinyDeck.filter(item => item.blueprint.kind === CARD_KINDS.HERO)
-);
-const otherDestinyCards = computed(() =>
-  destinyDeck.filter(item => item.blueprint.kind !== CARD_KINDS.HERO)
-);
 
 const minions = computed(() =>
   mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
@@ -70,8 +58,7 @@ const cardComponent = computed(() =>
 );
 
 const craftingCost = computed(() => {
-  const allCards = [...mainDeck, ...destinyDeck];
-  return allCards.reduce((sum, item) => {
+  return mainDeck.reduce((sum, item) => {
     const cost =
       CRAFTING_COST_PER_RARITY[item.blueprint.rarity] *
       (item.meta.isFoil ? FOIL_CRAFTING_COST_MULTIPLIER : 1);
@@ -121,22 +108,6 @@ const craftingCost = computed(() => {
     <div class="content">
       <div>
         <section>
-          <component
-            v-for="item in heroes"
-            :key="item.blueprint.id"
-            :is="cardComponent"
-            :blueprint="item.blueprint"
-          />
-          <component
-            v-for="item in otherDestinyCards"
-            :key="item.blueprint.id"
-            :is="cardComponent"
-            :blueprint="item.blueprint"
-          />
-        </section>
-
-        <div class="divider" />
-        <section>
           <div
             v-for="item in [...minions, ...spells]"
             :key="item.blueprint.id"
@@ -153,25 +124,6 @@ const craftingCost = computed(() => {
       </div>
 
       <div class="listing">
-        <h3 data-text="Destiny Deck">Destiny Deck</h3>
-        <ul>
-          <li
-            v-for="item in heroes"
-            :key="item.blueprint.id"
-            :class="item.blueprint.rarity.toLocaleLowerCase()"
-          >
-            {{ item.copies }}x {{ item.blueprint.name }}
-          </li>
-
-          <li
-            v-for="item in otherDestinyCards"
-            :key="item.blueprint.id"
-            :class="item.blueprint.rarity.toLocaleLowerCase()"
-          >
-            {{ item.copies }}x {{ item.blueprint.name }}
-          </li>
-        </ul>
-        <h3 data-text="Main Deck">Main Deck</h3>
         <ul>
           <li v-for="item in minions" :key="item.blueprint.id">
             {{ item.copies }}x

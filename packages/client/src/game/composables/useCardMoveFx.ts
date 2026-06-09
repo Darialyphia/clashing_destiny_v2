@@ -8,21 +8,21 @@ export const useCardMoveFx = (cell: Ref<BoardSpaceViewModel>) => {
 
   useFxEvent(FX_EVENTS.CARD_AFTER_MOVE, async event => {
     // Source cell: just remove the unit
-    if (event.card === cell.value.occupant?.id) {
+    if (event.card === cell.value.card?.id) {
       cell.value.update({
-        occupant: undefined
+        card: undefined
       });
     }
 
     // Destination cell: add unit and animate from old position
-    if (event.to === cell.value.id) {
+    if (event.to.id === cell.value.id) {
       isMovingUnit.value = true;
       // Get the old position before any DOM changes
       const oldElement = ui.value.DOMSelectors.cardOnBoard(event.card).element;
       const oldRect = oldElement!.getBoundingClientRect();
 
       cell.value.update({
-        occupant: event.card
+        card: event.card
       });
 
       await nextTick();

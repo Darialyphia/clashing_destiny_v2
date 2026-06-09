@@ -34,6 +34,7 @@ import { MoveInput } from './inputs/move.input';
 import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
 import { CancelInteractionInput } from './inputs/cancel-interaction';
 import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
+import { TakeResourceActionInput } from './inputs/take-resource-action.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -62,7 +63,8 @@ const inputMap = validateinputMap({
   move: MoveInput,
   commitSpaceSelection: CommitSpaceSelectionInput,
   cancelInteraction: CancelInteractionInput,
-  selectSpaceOnBoard: SelectSpaceOnBoardInput
+  selectSpaceOnBoard: SelectSpaceOnBoardInput,
+  takeResourceAction: TakeResourceActionInput
 });
 
 type InputMap = typeof inputMap;

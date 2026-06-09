@@ -19,11 +19,11 @@ export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
 
     const interaction = state.value.interaction;
     if (interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
-      if (cell.value.occupant?.id === interaction.ctx.source) {
-        return cell.value.occupant;
+      if (cell.value.card?.id === interaction.ctx.source) {
+        return cell.value.card;
       }
     } else if (ui.value.selectedCard) {
-      if (cell.value.occupant?.id === ui.value.selectedCard.id) {
+      if (cell.value.card?.id === ui.value.selectedCard.id) {
         return ui.value.selectedCard;
       }
     }

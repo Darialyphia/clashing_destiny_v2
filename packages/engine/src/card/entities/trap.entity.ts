@@ -12,6 +12,8 @@ import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import type { BoardSpace } from '../../board/board-space.entity';
+import { PointAOEShape } from '../../aoe/point.aoe-shape';
+import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedTrapCard = SerializedCard & {
@@ -74,32 +76,57 @@ export class TrapCard extends Card<
     return Promise.resolve();
   }
 
-  async play() {
+  get potentialPlayPositions() {
+    return this.player.boardSide.base.filter(space => space.isEmpty);
+  }
+
+  private async selectPosition() {
+    const result = await this.game.interaction.selectSpacesOnBoard({
+      source: this,
+      player: this.player,
+      canCancel: true,
+      getLabel: () => 'Select position to summon',
+      isElligible: space => {
+        return this.potentialPlayPositions.includes(space as any);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: [this.potentialPlayPositions[0]],
+      getAOE: () =>
+        new PointAOEShape(this.game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: this.player
+        })
+    });
+
+    return result;
+  }
+
+  async playFaceDown() {
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_PLAY,
       new CardBeforePlayEvent({ card: this })
     );
 
-    const stopTrigger = this.game.on('*', async event => {
-      if (!this.canAffordTriggerCost) return;
-      if (this.blueprint.shouldTrigger(this.game, this, event.data.event)) {
-        await this.player.manaManager.spend(this.triggerCost);
-        await this.blueprint.onTrigger(this.game, this, event.data.event);
-        await this.dispose();
-        stopTrigger();
-        stopLocationWatch();
-      }
-    });
+    const positionResult = await this.selectPosition();
+    if (positionResult.cancelled) {
+      return { cancelled: true };
+    }
 
-    const stopLocationWatch = this.game.on(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      async event => {
-        if (!event.data.card.equals(this)) return;
-        if (event.data.from === CARD_LOCATIONS.BASE) {
-          stopTrigger();
-          stopLocationWatch();
-        }
-      }
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardAfterPlayEvent({ card: this })
+    );
+  }
+
+  async play() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
     );
 
     await this.game.emit(

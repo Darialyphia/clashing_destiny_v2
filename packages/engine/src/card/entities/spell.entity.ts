@@ -30,7 +30,6 @@ export type SerializedSpellCard = SerializedCard & {
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
   canBeTargeted: Interceptable<boolean, SpellCard>;
-  speed: Interceptable<CardSpeed, SpellCard>;
 };
 
 export class SpellCard extends Card<
@@ -47,8 +46,7 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBeTargeted: new Interceptable(),
-        speed: new Interceptable()
+        canBeTargeted: new Interceptable()
       },
       options
     );
@@ -56,10 +54,6 @@ export class SpellCard extends Card<
 
   get jobs() {
     return this.blueprint.jobs;
-  }
-
-  get speed(): CardSpeed {
-    return this.interceptors.speed.getValue(this.blueprint.speed, this);
   }
 
   isValidMovementPosition() {
@@ -76,7 +70,7 @@ export class SpellCard extends Card<
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost &&
+      this.canPlayBase &&
         this.hasUnlockedAffinity &&
         this.blueprint.canPlay(this.game, this) &&
         this.isCorrectPhaseToPlay,

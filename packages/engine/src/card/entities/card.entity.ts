@@ -12,7 +12,8 @@ import {
   CARD_KINDS,
   type Affinity,
   AFFINITIES,
-  type JobId
+  type JobId,
+  type CardSpeed
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -30,7 +31,7 @@ import {
 import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
-import { EFFECT_TYPE } from '../../game/game.enums';
+import { COMBAT_STEPS, EFFECT_TYPE } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
 
@@ -49,6 +50,7 @@ export type CardInterceptors = {
   shouldSwitchInitiativeAfterPlay: Interceptable<boolean>;
   playerLevel: Interceptable<number>;
   offFactionManaCostIncrease: Interceptable<number>;
+  speed: Interceptable<CardSpeed>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -58,7 +60,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   shouldWakeUpAtTurnStart: new Interceptable(),
   shouldSwitchInitiativeAfterPlay: new Interceptable(),
   playerLevel: new Interceptable(),
-  offFactionManaCostIncrease: new Interceptable()
+  offFactionManaCostIncrease: new Interceptable(),
+  speed: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -80,6 +83,7 @@ export type SerializedCard = {
   isRevealed: boolean;
   affinities: Affinity[];
   position: string | null;
+  speed: CardSpeed;
 };
 
 export abstract class Card<
@@ -386,6 +390,31 @@ export abstract class Card<
   protected updatePlayedAt() {
     this.playedAtTurn = this.game.turnSystem.elapsedTurns;
   }
+
+  get isIncombatPhaseBeforeChain() {
+    return this.game.combatSystem.state === COMBAT_STEPS.DECLARE_TARGET;
+  }
+
+  get speed() {
+    return this.interceptors.speed.getValue(this.blueprint.speed, {});
+  }
+
+  get canPlayDuringChain() {
+    return this.speed;
+  }
+
+  protected get canPlayBase() {
+    if (this.isIncombatPhaseBeforeChain) {
+      return false;
+    }
+
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+      return false;
+    }
+
+    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
+  }
+
   abstract canPlay(): boolean;
 
   get unplayableReason(): string | null {
@@ -398,6 +427,15 @@ export abstract class Card<
         if (this.location !== CARD_LOCATIONS.HAND) {
           return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
         }
+
+        if (this.isIncombatPhaseBeforeChain) {
+          return 'You need to declare the attack target before playing cards.';
+        }
+
+        if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+          return "Can't play during an effect chain.";
+        }
+
         if (!this.canPayManaCost) {
           return 'Cannot pay mana cost.';
         }
@@ -436,7 +474,8 @@ export abstract class Card<
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
       affinities: this.affinities,
-      position: this.position?.id ?? null
+      position: this.position?.id ?? null,
+      speed: this.speed
     };
   }
 

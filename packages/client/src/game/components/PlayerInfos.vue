@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import {
-  useFxEvent,
-  useGameClient,
-  useGameState
-} from '../composables/useGameClient';
+import { useFxEvent, useGameClient } from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPileModal from './DiscardPileModal.vue';
-import Talent from './Talent.vue';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 
@@ -15,7 +10,6 @@ const { player } = defineProps<{
   player: PlayerViewModel;
 }>();
 
-const state = useGameState();
 const { client } = useGameClient();
 
 const isDiscardPileOpened = ref(false);
@@ -70,11 +64,6 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
       <div class="name dual-text" :data-text="player.name">
         {{ player.name }}
       </div>
-      <div class="talent-bar">
-        <div v-for="i in state.config.PLAYER_MAX_LEVEL" :key="i">
-          <Talent :card="player.destinies[i - 1] ?? null" />
-        </div>
-      </div>
       <div class="bottom-grid">
         <div class="mana-bar">
           <div
@@ -93,16 +82,6 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
           <div class="dual-text" :data-text="player.currentHp">
             {{ player.currentHp }}
           </div>
-        </div>
-        <div class="exp">
-          <div class="dual-text" :data-text="`${player.exp}EXP`">
-            {{ player.exp }}EXP
-          </div>
-
-          <div
-            class="exp-bar"
-            :style="{ '--bg': assets[`ui/exp-bar-${player.exp}`].css }"
-          />
         </div>
       </div>
     </section>
