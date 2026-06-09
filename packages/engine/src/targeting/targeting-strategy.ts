@@ -2,7 +2,7 @@ import { isDefined, type Point, type Values } from '@game/shared';
 import { match } from 'ts-pattern';
 import type { Player } from '../player/player.entity';
 import type { Game } from '../game/game';
-import { isMinion, isTrap } from '../card/card-utils';
+import { isMinion, isArtifact } from '../card/card-utils';
 import type { BoardCoordinates } from '../board/board.system';
 
 export type SpaceTargetingStrategy = {
@@ -21,9 +21,9 @@ export const SPACE_TARGETING_TYPE = {
   ALLY_MINION: 'ally_minion',
   ENEMY_MINION: 'enemy_minion',
 
-  TRAP: 'trap',
-  ALLY_TRAP: 'ally_trap',
-  ENEMY_TRAP: 'enemy_trap'
+  ARTIFACT: 'artifact',
+  ALLY_ARTIFACT: 'ally_artifact',
+  ENEMY_ARTIFACT: 'enemy_artifact'
 } as const;
 
 export type SpaceTargetingType = Values<typeof SPACE_TARGETING_TYPE>;
@@ -62,16 +62,23 @@ export const isValidSpaceTargetingType = (
       () =>
         isDefined(space?.card) && isMinion(space.card) && space.card.player.equals(player)
     )
-    .with(SPACE_TARGETING_TYPE.TRAP, () => isDefined(space?.card) && isTrap(space.card))
     .with(
-      SPACE_TARGETING_TYPE.ENEMY_TRAP,
-      () =>
-        isDefined(space?.card) && isTrap(space.card) && !space.card.player.equals(player)
+      SPACE_TARGETING_TYPE.ARTIFACT,
+      () => isDefined(space?.card) && isArtifact(space.card)
     )
     .with(
-      SPACE_TARGETING_TYPE.ALLY_TRAP,
+      SPACE_TARGETING_TYPE.ENEMY_ARTIFACT,
       () =>
-        isDefined(space?.card) && isTrap(space.card) && space.card.player.equals(player)
+        isDefined(space?.card) &&
+        isArtifact(space.card) &&
+        !space.card.player.equals(player)
+    )
+    .with(
+      SPACE_TARGETING_TYPE.ALLY_ARTIFACT,
+      () =>
+        isDefined(space?.card) &&
+        isArtifact(space.card) &&
+        space.card.player.equals(player)
     )
     .exhaustive();
 };

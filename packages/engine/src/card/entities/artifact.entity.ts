@@ -1,0 +1,206 @@
+import type { ArtifactBlueprint } from '../card-blueprint';
+import { CARD_EVENTS } from '../card.enums';
+import { CardAfterPlayEvent, CardBeforePlayEvent, CardPlayEvent } from '../card.events';
+import {
+  Card,
+  makeCardInterceptors,
+  type CardInterceptors,
+  type CardOptions,
+  type SerializedCard
+} from './card.entity';
+import type { Game } from '../../game/game';
+import type { Player } from '../../player/player.entity';
+import { Interceptable } from '../../utils/interceptable';
+import { PointAOEShape } from '../../aoe/point.aoe-shape';
+import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
+import {
+  ARTIFACT_EVENTS,
+  ArtifactDurabilityChangeEvent,
+  ArtifactEquippedEvent
+} from '../events/artifact.events';
+import type { BoardSpace } from '../../board/board-space.entity';
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type SerializedArtifactCard = SerializedCard & {
+  unplayableReason: string | null;
+  manaCost: number;
+  baseManaCost: number;
+  maxDurability: number;
+  remainingDurability: number;
+};
+
+export type ArtifactCardInterceptors = CardInterceptors & {
+  canPlay: Interceptable<boolean, Artifact>;
+  maxDurability: Interceptable<number, Artifact>;
+};
+
+export class Artifact extends Card<
+  SerializedArtifactCard,
+  ArtifactCardInterceptors,
+  ArtifactBlueprint
+> {
+  private lostDurability = 0;
+
+  constructor(game: Game, player: Player, options: CardOptions<ArtifactBlueprint>) {
+    super(
+      game,
+      player,
+      {
+        ...makeCardInterceptors(),
+        canPlay: new Interceptable(),
+        maxDurability: new Interceptable()
+      },
+      options
+    );
+  }
+
+  canPlay(): boolean {
+    return this.interceptors.canPlay.getValue(
+      this.canPayManaCost &&
+        this.hasUnlockedAffinity &&
+        this.blueprint.canPlay(this.game, this),
+      this
+    );
+  }
+
+  get maxDurability(): number {
+    return this.interceptors.maxDurability.getValue(this.blueprint.durability, this);
+  }
+
+  get remainingDurability(): number {
+    return this.maxDurability - this.lostDurability;
+  }
+
+  get unplayableReason() {
+    if (!this.canPayManaCost) {
+      return "You don't have enough mana.";
+    }
+
+    return this.canPlay() ? null : 'You cannot play this card.';
+  }
+
+  async checkDurability() {
+    if (this.remainingDurability <= 0) {
+      await this.destroy(this);
+    }
+  }
+
+  removeFromCurrentLocation(): void {
+    super.removeFromCurrentLocation();
+    this.lostDurability = 0;
+  }
+
+  get potentialPlayPositions() {
+    return this.player.boardSide.base.filter(space => space.isEmpty);
+  }
+
+  private async selectPosition() {
+    const result = await this.game.interaction.selectSpacesOnBoard({
+      source: this,
+      player: this.player,
+      canCancel: true,
+      getLabel: () => 'Select position to summon',
+      isElligible: space => {
+        return this.potentialPlayPositions.includes(space as any);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: [this.potentialPlayPositions[0]],
+      getAOE: () =>
+        new PointAOEShape(this.game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: this.player
+        })
+    });
+
+    return result;
+  }
+
+  async loseDurability(amount: number) {
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_BEFORE_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount })
+    );
+
+    this.lostDurability += Math.min(this.maxDurability, this.lostDurability + amount);
+    await this.checkDurability();
+
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_AFTER_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount })
+    );
+  }
+
+  async gainDurability(amount: number) {
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_BEFORE_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount: -amount })
+    );
+
+    this.lostDurability = Math.max(0, this.lostDurability - amount);
+    await this.checkDurability();
+
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_AFTER_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount: -amount })
+    );
+  }
+
+  async playAt(position: BoardSpace) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
+    await this.equip(position);
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardAfterPlayEvent({ card: this })
+    );
+  }
+
+  private async equip(position: BoardSpace) {
+    this.player.boardSide.placeCardInBase(this, position.index);
+
+    await this.blueprint.onPlay(this.game, this);
+
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+      new ArtifactEquippedEvent({ card: this })
+    );
+  }
+
+  // immediately plays the minion regardless of current chain or interaction state
+  // this is useful when summoning minions as part of another card effect
+  playImmediatelyAt(position: BoardSpace) {
+    return this.resolve(() => this.equip(position));
+  }
+
+  async play() {
+    await this.game.emit(
+      CARD_EVENTS.CARD_DECLARE_PLAY,
+      new CardPlayEvent({ card: this })
+    );
+    const positionResult = await this.selectPosition();
+    if (positionResult.cancelled) {
+      return { cancelled: true };
+    }
+    await this.playAt(positionResult.result[0] as BoardSpace);
+
+    return { cancelled: false };
+  }
+
+  serialize() {
+    return {
+      ...this.serializeBase(),
+      manaCost: this.manaCost,
+      baseManaCost: this.manaCost,
+      maxDurability: this.maxDurability,
+      remainingDurability: this.remainingDurability,
+      unplayableReason: this.unplayableReason
+    };
+  }
+}

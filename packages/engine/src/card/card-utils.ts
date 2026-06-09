@@ -7,7 +7,7 @@ import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
-import type { TrapCard } from './entities/trap.entity';
+import type { Artifact } from './entities/artifact.entity';
 
 export const isHero = (card: AnyCard): card is HeroCard => {
   return card.kind === CARD_KINDS.HERO;
@@ -21,8 +21,8 @@ export const isSpell = (card: AnyCard): card is SpellCard => {
   return card.kind === CARD_KINDS.SPELL;
 };
 
-export const isTrap = (card: AnyCard): card is TrapCard => {
-  return card.kind === CARD_KINDS.TRAP;
+export const isArtifact = (card: AnyCard): card is Artifact => {
+  return card.kind === CARD_KINDS.ARTIFACT;
 };
 
 export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => {

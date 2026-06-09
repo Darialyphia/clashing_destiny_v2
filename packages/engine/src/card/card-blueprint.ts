@@ -15,8 +15,7 @@ import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
-import type { GameEvent } from '../game/game.events';
-import type { TrapCard } from './entities/trap.entity';
+import type { Artifact } from './entities/artifact.entity';
 
 export type CardArt = {
   foil: {
@@ -154,16 +153,16 @@ export type HeroBlueprint = CardBlueprintBase & {
   };
 };
 
-export type TrapBlueprint = CardBlueprintBase & {
+export type ArtifactBlueprint = CardBlueprintBase & {
   manaCost: number;
-  triggerCost: number;
-  kind: Extract<CardKind, typeof CARD_KINDS.TRAP>;
+  kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   jobs: Job[];
+  durability: number;
   onInit: (game: Game, card: AnyCard) => Promise<void>;
-  canPlay: (game: Game, card: TrapCard) => boolean;
-  onPlay: (game: Game, card: TrapCard) => Promise<void>;
+  canPlay: (game: Game, card: Artifact) => boolean;
+  onPlay: (game: Game, card: Artifact) => Promise<void>;
   aiHints: {
-    shouldPlay: (game: Game, card: TrapCard) => number;
+    shouldPlay: (game: Game, card: Artifact) => number;
   };
 };
 
@@ -171,4 +170,4 @@ export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
   | HeroBlueprint
-  | TrapBlueprint;
+  | ArtifactBlueprint;

@@ -53,8 +53,8 @@ const spells = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
 );
 
-const traps = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.TRAP)
+const artifacts = computed(() =>
+  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
 </script>
 
@@ -110,7 +110,7 @@ const traps = computed(() =>
                   {{ item.blueprint.name }}
                 </span>
               </li>
-              <li v-for="item in traps" :key="item.blueprint.id">
+              <li v-for="item in artifacts" :key="item.blueprint.id">
                 {{ item.copies }}x
                 <span :class="item.blueprint.rarity.toLocaleLowerCase()">
                   {{ item.blueprint.name }}

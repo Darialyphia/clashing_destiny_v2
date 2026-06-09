@@ -20,13 +20,13 @@ import { AbilityViewModel } from './ability.model';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
 import type { BoardSpaceViewModel } from './board-space.model';
-import type { SerializedTrapCard } from '../../card/entities/trap.entity';
+import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 
 type CardData =
   | SerializedSpellCard
   | SerializedHeroCard
   | SerializedMinionCard
-  | SerializedTrapCard;
+  | SerializedArtifactCard;
 
 export type CardActionRule = {
   id: string;

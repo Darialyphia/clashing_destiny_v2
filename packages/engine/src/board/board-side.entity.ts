@@ -7,11 +7,11 @@ import { Entity } from '../entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS } from '../card/card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { isMinion, isTrap } from '../card/card-utils';
+import { isMinion, isArtifact } from '../card/card-utils';
 import { BoardSpace, type BoardRow } from './board-space.entity';
 import { IllegalTargetError } from '../input/input-errors';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card/card.events';
-import type { TrapCard } from '../card/entities/trap.entity';
+import type { Artifact } from '../card/entities/artifact.entity';
 
 export type MinionSlot = number;
 
@@ -107,7 +107,7 @@ export class BoardSide
 
   placeCard(card: AnyCard, zone: BoardRow, index: number) {
     if (zone === CARD_LOCATIONS.BASE) {
-      if (!isMinion(card) && !isTrap(card)) {
+      if (!isMinion(card) && !isArtifact(card)) {
         throw new IllegalTargetError();
       }
       return this.placeCardInBase(card, index);
@@ -119,7 +119,7 @@ export class BoardSide
     }
   }
 
-  placeCardInBase(card: MinionCard | TrapCard, index: number) {
+  placeCardInBase(card: MinionCard | Artifact, index: number) {
     this._base[index].placeCard(card);
   }
 
@@ -144,7 +144,7 @@ export class BoardSide
   remove(card: AnyCard) {
     match(card.kind)
       .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, () => {})
-      .with(CARD_KINDS.TRAP, () => {
+      .with(CARD_KINDS.ARTIFACT, () => {
         this.removeFromBase(card);
       })
       .with(CARD_KINDS.MINION, () => {

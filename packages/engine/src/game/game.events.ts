@@ -24,7 +24,10 @@ import type { Player } from '../player/player.entity';
 import { MINION_EVENTS, type MinionCardEventMap } from '../card/events/minion.events';
 import { HERO_EVENTS, type HeroCardEventMap } from '../card/events/hero.events';
 import type { InteractionEventMap } from './systems/game-interaction.system';
-import { TRAP_EVENTS, type TrapCardEventMap } from '../card/events/trap.events';
+import {
+  ARTIFACT_EVENTS,
+  type ArtifactCardEventMap
+} from '../card/events/artifact.events';
 import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
 
 export class GameInputEvent extends TypedSerializableEvent<
@@ -144,7 +147,7 @@ export type GameEventMap = Prettify<
     AbilityEventMap &
     TurnEventMap &
     InteractionEventMap &
-    TrapCardEventMap
+    ArtifactCardEventMap
 >;
 
 export type GameEvent = Values<{
@@ -174,7 +177,7 @@ export const GAME_EVENTS = {
   ...ABILITY_EVENTS,
   ...TURN_EVENTS,
   ...INTERACTION_EVENTS,
-  ...TRAP_EVENTS
+  ...ARTIFACT_EVENTS
 } as const satisfies Record<string, GameEventName>;
 
 export type SerializedEvent<T extends keyof typeof GAME_EVENTS> = ReturnType<
