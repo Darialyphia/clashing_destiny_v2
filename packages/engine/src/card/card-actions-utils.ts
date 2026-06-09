@@ -143,7 +143,46 @@ export const discardFromHand = async (
   return { cancelled: false, cardsToDiscard: result.result };
 };
 
-export const getEmpowerStacks = (card: AnyCard) =>
-  card.player.hero.modifiers.list
-    .filter(mod => mod instanceof EmpowerModifier)
-    .reduce((acc, mod) => acc + mod.stacks, 0);
+export const askMandatoryYesNoQuestion = async ({
+  game,
+  card,
+  questionId,
+  label,
+  timeoutFallback = 'no',
+  aiChoice
+}: {
+  game: Game;
+  card: AnyCard;
+  questionId: string;
+  label: string;
+  timeoutFallback?: 'yes' | 'no';
+  aiChoice: 'yes' | 'no';
+}) => {
+  const answer = await game.interaction.askQuestion({
+    player: card.player,
+    canCancel: false,
+    label,
+    questionId,
+    source: card,
+    timeoutFallback,
+    choices: [
+      {
+        id: 'yes',
+        label: 'Yes',
+        aiHints: {
+          shouldPick: () => (aiChoice === 'yes' ? 1 : 0)
+        }
+      },
+      {
+        id: 'no',
+        label: 'No',
+        aiHints: {
+          shouldPick: () => (aiChoice === 'no' ? 1 : 0)
+        }
+      }
+    ]
+  });
+  if (answer.cancelled) return true;
+
+  return answer.result === 'yes';
+};

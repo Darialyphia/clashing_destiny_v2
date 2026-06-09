@@ -1,4 +1,4 @@
-import { assert, type MaybePromise, type Nullable } from '@game/shared';
+import { assert, type Nullable } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../game';
 import type { Player } from '../../player/player.entity';

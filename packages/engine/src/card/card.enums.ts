@@ -139,6 +139,8 @@ export const AFFINITIES = {
   WATER: 'Water',
   EARTH: 'Earth',
   AIR: 'Air',
-  ASTRAL: 'Astral'
+  LIGHT: 'Light',
+  DARK: 'Dark',
+  ARCANE: 'Arcane'
 } as const;
 export type Affinity = Values<typeof AFFINITIES>;

@@ -9,22 +9,16 @@ export type Keyword = {
 };
 
 export const KEYWORDS = {
-  ANCHORED: {
-    id: 'anchored',
-    name: 'Anchored',
-    description: 'This unit cannot move or be moved by any effect.',
-    aliases: []
-  },
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
-    description: 'This unit has +X attack when attacking.',
+    description: 'This unit has +X power when attacking.',
     aliases: [/attacker [0-9]+/]
   },
   BLAST: {
     id: 'blast',
-    name: 'Blast',
-    description: 'When this attacks, this damages all enemies on the same column.',
+    name: 'Blast X',
+    description: 'When this dies, deal X damage to a minion.',
     aliases: []
   },
   BURN: {
@@ -42,14 +36,13 @@ export const KEYWORDS = {
   BURST_ATTACK: {
     id: 'burst-attack',
     name: 'Burst Attack',
-    description: "This unit's owner keeps initiative after this unit attacks.",
+    description: 'You do not lose initiative after this minion attacks.',
     aliases: []
   },
   CELERITY: {
     id: 'celerity',
     name: 'Celerity',
-    description:
-      'Can move and attack in the same turn, and does not pass initiative after moving.',
+    description: 'You do not lose initiative after this minion moves.',
     aliases: []
   },
   CHANNEL: {
@@ -84,20 +77,6 @@ export const KEYWORDS = {
     description: 'When you play this card, add a Fleeting copy of it to your hand.',
     aliases: []
   },
-  EMPOWER: {
-    id: 'empower',
-    name: 'Empower X',
-    description:
-      'The next spell you cast this turn resolves as if your Hero had +X level.',
-    aliases: [/empower [0-9]+/, 'empower', /empowered/]
-  },
-  FEARSOME: {
-    id: 'fearsome',
-    name: 'Fearsome X',
-    description:
-      "When this unit attacks a minion that costs X or less, it doesn't counterattack.",
-    aliases: [/fearsome [0-9]+/]
-  },
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',
@@ -105,43 +84,17 @@ export const KEYWORDS = {
       'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
     aliases: []
   },
-  FLYER_GUARD: {
-    id: 'flyer_guard',
-    name: 'Flyer Guard (x)',
-    description: 'Adjacent allies take X less damage from flyer minions.',
-    aliases: [/flyer guard \([0-9]+\)/]
-  },
-  FROZEN: {
-    id: 'frozen',
-    name: 'Frozen',
-    description:
-      "This unit has 0 attack and doesn't wake up at the start of the next turn.",
-    aliases: ['Freeze']
+  STUNNED: {
+    id: 'stunned',
+    name: 'Stunned',
+    description: 'This unit is exhausted and has 0 damage until the end of the turn.',
+    aliases: ['Stun']
   },
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
     description: 'This unit cannot be attacked by minions that cost X or less.',
     aliases: [/intimidate [0-9]+/]
-  },
-  LEVEL_BONUS: {
-    id: 'level-bonus',
-    name: 'Level X Bonus',
-    description: "This card has a bonus effect if its owner's Hero is at least level X.",
-    aliases: [/level [0-9] bonus/]
-  },
-  LOYALTY: {
-    id: 'loyalty',
-    name: 'Loyalty X',
-    description:
-      "This cards costs X more to play if it doesn't share an affinity with your Hero.",
-    aliases: [/^loyalty [0-9]+/, 'loyalty']
-  },
-  MELEE_GUARD: {
-    id: 'melee_guard',
-    name: 'Melee Guard (x)',
-    description: 'Adjacent allies take X less damage from melee minions.',
-    aliases: [/melee guard \([0-9]+\)/]
   },
   MILL: {
     id: 'mill',
@@ -174,23 +127,11 @@ export const KEYWORDS = {
       'Does something when this card kills another unit by combat while being the attacker.',
     aliases: []
   },
-  ON_LEVEL_UP: {
-    id: 'on-level-up',
-    name: 'On Level Up',
-    description: 'Does something when your hero levels up.',
-    aliases: []
-  },
-  ON_RETALIATE: {
-    id: 'on-retaliate',
-    name: 'On Retaliate',
-    description: 'Does something when this card retaliates.',
-    aliases: []
-  },
   ON_STRIKE: {
     id: 'on-strike',
     name: 'On Strike',
-    description: 'Does something when this card deals combat damage to a unit.',
-    aliases: ['on minion strike', 'on hero strike']
+    description: 'Does something when this card wins a combat.',
+    aliases: []
   },
   OVERWHELM: {
     id: 'overwhelm',
@@ -206,27 +147,6 @@ export const KEYWORDS = {
       'Look at 3 cards from your deck at random, choose one and put it on top of your deck.',
     aliases: []
   },
-  PREEMPTIVE_RETALIATION: {
-    id: 'preemptive-retaliation',
-    name: 'Preemptive Retaliation',
-    description:
-      'This unit deals its combat damage before the attacking unit during combat.',
-    aliases: []
-  },
-  PREEMPTIVE_STRIKE: {
-    id: 'preemptive-strike',
-    name: 'Preemptive Strike',
-    description:
-      'This unit deals its combat damage before the defending unit during combat.',
-    aliases: []
-  },
-  PRIDE: {
-    id: 'pride',
-    name: 'Pride X',
-    description:
-      "This minion cannot attack, move, or use abilities unless its owner's hero is at least level X.",
-    aliases: [/pride [0-9]+/]
-  },
   PROTECTOR: {
     id: 'protector',
     name: 'Protector',
@@ -234,11 +154,11 @@ export const KEYWORDS = {
       'When an adjacent ally takes combat damage, this unit takes that damage instead.',
     aliases: []
   },
-  RANGED_GUARD: {
-    id: 'ranged_guard',
-    name: 'Ranged Guard (x)',
-    description: 'Adjacent allies take X less damage from ranged minions.',
-    aliases: [/ranged guard \([0-9]+\)/]
+  TAUNT: {
+    id: 'taunt',
+    name: 'Taunt',
+    description: 'Enemy units must attack this unit if able.',
+    aliases: []
   },
   REGENERATION: {
     id: 'regeneration',
@@ -246,10 +166,16 @@ export const KEYWORDS = {
     description: 'At the start of the turn, heal this unit for X.',
     aliases: [/regeneration [0-9]+/]
   },
-  SUMMONING_SICKNESS: {
-    id: 'summoning-sickness',
-    name: 'Summoning Sickness',
-    description: 'This unit cannot move or attack the turn it is played.',
+  ROOTED: {
+    id: 'rooted',
+    name: 'Rooted',
+    description: 'This unit cannot move or be moved by any effect.',
+    aliases: []
+  },
+  RUSH: {
+    id: 'rush',
+    name: 'Rush X',
+    description: 'You may pay X to wake up this minion when it is summoned.',
     aliases: []
   },
   SCRY: {

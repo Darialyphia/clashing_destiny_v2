@@ -22,7 +22,6 @@ import {
   type SerializedCard
 } from './card.entity';
 import { GAME_PHASES } from '../../game/game.enums';
-import { SummoningSicknessModifier } from '../../modifier/modifiers/summoning-sickness';
 import { Ability } from './ability.entity';
 import { HeroCard } from './hero.entity';
 import {
@@ -396,9 +395,7 @@ export class MinionCard extends Card<
   private async summon(position: BoardSpace) {
     this.player.boardSide.placeCardInBase(this, position.index);
     if (this.hasSummoningSickness) {
-      await (this as MinionCard).modifiers.add(
-        new SummoningSicknessModifier(this.game, this)
-      );
+      await this.exhaust();
     }
     await this.blueprint.onPlay(this.game, this);
 

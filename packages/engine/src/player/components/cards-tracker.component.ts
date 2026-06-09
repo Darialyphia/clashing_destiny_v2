@@ -52,7 +52,7 @@ export class CardTrackerComponent {
     return this.cardsDestroyedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
   }
 
-  getCardsPlayedThisGameTurnOfKind<
+  getCardsPlayedThisTurnOfKind<
     TKind extends CardKind,
     TCard extends AnyCard & { kind: TKind } = AnyCard & { kind: TKind }
   >(kind: TKind): Array<PlayedCard<TCard>> {
@@ -61,7 +61,7 @@ export class CardTrackerComponent {
     >;
   }
 
-  getCardsPlayedOnGameTurn(turn: number) {
+  getCardsPlayedOnTurn(turn: number) {
     return this.cardsPlayedByGameTurn.get(turn) ?? [];
   }
 
