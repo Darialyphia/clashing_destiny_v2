@@ -157,6 +157,9 @@
   --tint-water: #467af4;
   --tint-earth: #7ab800;
   --tint-air: #00cbb3;
+  --tint-light: #ffe761;
+  --tint-dark: #8f00ff;
+  --tint-arcane: #6d1394;
 }
 
 html.dark {

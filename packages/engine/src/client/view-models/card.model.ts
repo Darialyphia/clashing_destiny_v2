@@ -203,21 +203,32 @@ export class CardViewModel {
     return this.data.location;
   }
 
-  get atk() {
-    if ('atk' in this.data) {
-      return this.data.atk as number;
-    }
-
-    if ('atkBonus' in this.data) {
-      return this.data.atkBonus as number | null;
+  get power() {
+    if ('power' in this.data) {
+      return this.data.power as number;
     }
 
     return null;
   }
 
-  get baseAtk() {
-    if ('baseAtk' in this.data) {
-      return this.data.baseAtk as number;
+  get basePower() {
+    if ('basePower' in this.data) {
+      return this.data.basePower as number;
+    }
+    return null;
+  }
+
+  get damage() {
+    if ('damage' in this.data) {
+      return this.data.damage as number;
+    }
+
+    return null;
+  }
+
+  get baseDamage() {
+    if ('baseDamage' in this.data) {
+      return this.data.baseDamage as number;
     }
     return null;
   }

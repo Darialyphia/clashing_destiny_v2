@@ -2,9 +2,9 @@ import { isDefined, type Values } from '@game/shared';
 import { match } from 'ts-pattern';
 import type { Player } from '../player/player.entity';
 import type { Game } from '../game/game';
-import { isMinion, isArtifact } from '../card/card-utils';
 import type { BoardSpace } from '../board/board-space.entity';
 import type { BoardCoordinates } from '../board/board.system';
+import { CARD_KINDS } from '../card/card.enums';
 
 export type AOEShape = {
   getArea(points: BoardCoordinates[]): BoardSpace[];
@@ -45,12 +45,12 @@ export const isValidAOETargetingType = (
     .with(AOE_TARGETING_TYPE.ALLY_CARD, () => space?._card?.player.equals(player))
     .with(
       AOE_TARGETING_TYPE.MINION,
-      () => isDefined(space?._card) && isMinion(space._card)
+      () => isDefined(space?._card) && space._card.kind === CARD_KINDS.MINION
     )
     .with(AOE_TARGETING_TYPE.ENEMY_MINION, () => {
       return (
         isDefined(space?._card) &&
-        isMinion(space._card) &&
+        space._card.kind === CARD_KINDS.MINION &&
         !space._card.player.equals(player)
       );
     })
@@ -58,25 +58,25 @@ export const isValidAOETargetingType = (
       AOE_TARGETING_TYPE.ALLY_MINION,
       () =>
         isDefined(space?._card) &&
-        isMinion(space._card) &&
+        space._card.kind === CARD_KINDS.MINION &&
         space._card.player.equals(player)
     )
     .with(
       AOE_TARGETING_TYPE.ARTIFACT,
-      () => isDefined(space?._card) && isArtifact(space._card)
+      () => isDefined(space?._card) && space._card.kind === CARD_KINDS.ARTIFACT
     )
     .with(
       AOE_TARGETING_TYPE.ENEMY_ARTIFACT,
       () =>
         isDefined(space?._card) &&
-        isArtifact(space._card) &&
+        space._card.kind === CARD_KINDS.ARTIFACT &&
         !space._card.player.equals(player)
     )
     .with(
       AOE_TARGETING_TYPE.ALLY_ARTIFACT,
       () =>
         isDefined(space?._card) &&
-        isArtifact(space._card) &&
+        space._card.kind === CARD_KINDS.ARTIFACT &&
         space._card.player.equals(player)
     )
     .exhaustive();

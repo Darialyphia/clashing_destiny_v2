@@ -25,18 +25,18 @@ export class SimplePowerBuffModifier<
       isUnique: true,
       icon: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-attack-buff' : 'keyword-attack-debuff';
+        return amount > 0 ? 'keyword-power-buff' : 'keyword-power-debuff';
       },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'Attack Buff' : 'Attack Debuff';
+        return amount > 0 ? 'Power Buff' : 'Power Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${options.amount} Attack`;
+        return `${amount > 0 ? '+' : '-'}${options.amount} Power`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),

@@ -20,10 +20,10 @@ import Keyword from './shared/components/RichText/Keyword.vue';
 import Mana from './shared/components/RichText/Mana.vue';
 import Ability from './shared/components/RichText/Ability.vue';
 import JobBonus from './shared/components/RichText/JobBonus.vue';
-import LevelBonus from './shared/components/RichText/LevelBonus.vue';
 import Card from './shared/components/RichText/Card.vue';
 import Location from './shared/components/RichText/Location.vue';
 import Dynamic from './shared/components/RichText/Dynamic.vue';
+import Runes from './shared/components/RichText/Runes.vue';
 
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
@@ -50,10 +50,10 @@ app.component('rt-keyword', Keyword);
 app.component('rt-mana', Mana);
 app.component('rt-ability', Ability);
 app.component('rt-job-bonus', JobBonus);
-app.component('rt-lvl-bonus', LevelBonus);
 app.component('rt-card', Card);
 app.component('rt-location', Location);
 app.component('rt-dynamic', Dynamic);
+app.component('rt-runes', Runes);
 // app.component('HoverCard', HoverCardRoot);
 // app.use({
 //   install(app) {

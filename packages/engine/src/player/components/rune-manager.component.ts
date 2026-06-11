@@ -10,7 +10,7 @@ export class RuneManagerComponent {
     [RUNES.MIGHT]: 0,
     [RUNES.WISDOM]: 0,
     [RUNES.FOCUS]: 0,
-    [RUNES.CHAOS]: 0
+    [RUNES.RESONANCE]: 0
   };
 
   constructor(

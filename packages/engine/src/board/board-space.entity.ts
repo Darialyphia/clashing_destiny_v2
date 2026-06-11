@@ -4,13 +4,17 @@ import {
   type EmptyObject,
   type Serializable
 } from '@game/shared';
-import type { CardLocation } from '../card/card.enums';
+import { CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
+import { match } from 'ts-pattern';
 
-export type BoardRow = BetterExtract<CardLocation, 'base' | 'battlefield'>;
+export type BoardRow = BetterExtract<
+  CardLocation,
+  'base' | 'left_battlefield' | 'right_battlefield'
+>;
 
 export type BoardPosition = {
   playerId: string;
@@ -49,10 +53,14 @@ export class BoardSpace
   }
 
   get zone() {
-    if (this.position.zone === 'base') {
-      return this.player.boardSide.base;
-    }
-    return this.player.boardSide.battlefield;
+    return match(this.position.zone)
+      .with(CARD_LOCATIONS.BASE, () => this.player.boardSide.base)
+      .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () => this.player.boardSide.leftBattlefield)
+      .with(
+        CARD_LOCATIONS.RIGHT_BATTLEFIELD,
+        () => this.player.boardSide.rightBattlefield
+      )
+      .exhaustive();
   }
 
   get index() {

@@ -5,9 +5,15 @@ import { NotCurrentPlayerError } from '../input-errors';
 import { z } from 'zod';
 import { CardNotFoundError } from '../../card/card-errors';
 import { isMinion } from '../../card/card-utils';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
+  zone: z.enum([
+    CARD_LOCATIONS.BASE,
+    CARD_LOCATIONS.LEFT_BATTLEFIELD,
+    CARD_LOCATIONS.RIGHT_BATTLEFIELD
+  ]),
   index: z.number()
 });
 
@@ -28,6 +34,6 @@ export class MoveInput extends Input<typeof schema> {
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.minion.canMoveManually, new Error('Minion cannot be moved manually'));
-    await this.minion.moveManually(this.payload.index);
+    await this.minion.moveManually(this.payload.zone, this.payload.index);
   }
 }

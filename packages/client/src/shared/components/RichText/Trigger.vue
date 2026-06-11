@@ -61,7 +61,7 @@ const keyword = computed(() => {
   color: white;
   padding-inline: calc(6px * var(--pixel-scale));
   padding-block: calc(1px * var(--pixel-scale));
-  font-size: 0.8em;
+  font-size: 0.9em;
   clip-path: polygon(
     calc(3px * var(--pixel-scale)) 0%,
     100% 0%,

@@ -1,9 +1,9 @@
-import type { JobId } from '@game/engine/src/card/card.enums';
-import type { InjectionKey, Ref } from 'vue';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
+import type { Nullable } from '@game/shared';
+import type { Ref, InjectionKey } from 'vue';
 
 export type RichTextContext = {
-  heroLevel: Ref<number>;
-  heroJobs: Ref<JobId[]>;
+  card: Ref<Nullable<CardViewModel>>;
 };
 
 export const RICH_TEXT_CONTEXT_KEY = Symbol(

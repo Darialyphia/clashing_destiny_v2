@@ -15,7 +15,7 @@ import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { Artifact } from './entities/artifact.entity';
+import { ArtifactCard } from './entities/artifact.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -53,7 +53,8 @@ export class CardSystem extends System<CardSystemOptions> {
     return this.cards.filter(
       card =>
         card.location === CARD_LOCATIONS.BASE ||
-        card.location === CARD_LOCATIONS.BATTLEFIELD
+        card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
     );
   }
 
@@ -100,7 +101,7 @@ export class CardSystem extends System<CardSystemOptions> {
       .with(
         CARD_KINDS.ARTIFACT,
         () =>
-          new Artifact(this.game, player, {
+          new ArtifactCard(this.game, player, {
             id,
             blueprint
           } as CardOptions<ArtifactBlueprint>)

@@ -7,7 +7,11 @@ import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
-import type { Artifact } from './entities/artifact.entity';
+import type { ArtifactCard } from './entities/artifact.entity';
+import type { BoardSpace } from '../board/board-space.entity';
+import { PointAOEShape } from '../aoe/point.aoe-shape';
+import { AOE_TARGETING_TYPE } from '../aoe/aoe-shape';
+import { isFunction } from '@game/shared';
 
 export const isHero = (card: AnyCard): card is HeroCard => {
   return card.kind === CARD_KINDS.HERO;
@@ -21,7 +25,7 @@ export const isSpell = (card: AnyCard): card is SpellCard => {
   return card.kind === CARD_KINDS.SPELL;
 };
 
-export const isArtifact = (card: AnyCard): card is Artifact => {
+export const isArtifact = (card: AnyCard): card is ArtifactCard => {
   return card.kind === CARD_KINDS.ARTIFACT;
 };
 
@@ -98,7 +102,7 @@ export const minionOrHeroTargetRules = {
     }
     return {
       cancelled: false as const,
-      result: { cards: result.result as (MinionCard | HeroCard)[] }
+      result: { cards: result.result as (MinionCard | HeroCard)[], spaces: [] }
     };
   }
 };
@@ -236,7 +240,8 @@ export const singleEnemyMinionTargetRules = {
     label = 'Select an enemy minion',
     timeoutFallback,
     predicate = () => true,
-    aiHints
+    aiHints,
+    canCancel = false
   }: {
     game: Game;
     card: AnyCard;
@@ -246,6 +251,7 @@ export const singleEnemyMinionTargetRules = {
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
+    canCancel?: boolean;
   }) {
     const result = await singleEnemyTargetRules.getTargets({
       game,
@@ -253,7 +259,8 @@ export const singleEnemyMinionTargetRules = {
       label,
       timeoutFallback,
       predicate: c => isMinion(c) && predicate(c),
-      aiHints
+      aiHints,
+      canCancel
     });
     if (result.cancelled) {
       return { cancelled: true as const, result: null };
@@ -445,7 +452,7 @@ export const cardsInAllyDiscardPile = {
       }).length >= (options.min ?? 1)
     );
   },
-  async getTargets<T extends AnyCard = AnyCard>(
+  async getTargets<T extends AnyCard = AnyCard, TCancellable extends boolean = true>(
     game: Game,
     card: AnyCard,
     options: {
@@ -455,16 +462,16 @@ export const cardsInAllyDiscardPile = {
       maxChoiceCount?: number;
       label: string;
       timeoutFallback: T[];
-      canCancel?: boolean;
+      canCancel?: TCancellable;
       aiHints: {
         shouldPick: (game: Game, player: Player, card: AnyCard) => number;
       };
     }
   ) {
-    return await game.interaction.chooseCards<T>({
+    return await game.interaction.chooseCards<T, TCancellable>({
       player: options.player,
       label: options.label,
-      canCancel: options.canCancel ?? false,
+      canCancel: options.canCancel ?? (true as TCancellable),
       choices: Array.from(card.player.cardManager.discardPile)
         .filter(c => {
           return options.predicate ? options.predicate(c) : true;
@@ -495,7 +502,7 @@ export const cardsInEnemyDiscardPile = {
       }).length >= (options.min ?? 1)
     );
   },
-  async getTargets<T extends AnyCard = AnyCard>(
+  async getTargets<T extends AnyCard = AnyCard, TCancellable extends boolean = true>(
     game: Game,
     card: AnyCard,
     options: {
@@ -505,16 +512,16 @@ export const cardsInEnemyDiscardPile = {
       maxChoiceCount?: number;
       label: string;
       timeoutFallback: T[];
-      canCancel?: boolean;
+      canCancel?: TCancellable;
       aiHints: {
         shouldPick: (game: Game, player: Player, card: AnyCard) => number;
       };
     }
   ) {
-    return await game.interaction.chooseCards<T>({
+    return await game.interaction.chooseCards<T, TCancellable>({
       player: options.player,
       label: options.label,
-      canCancel: options.canCancel ?? false,
+      canCancel: (options.canCancel ?? true) as TCancellable,
       choices: Array.from(card.player.cardManager.discardPile)
         .filter(c => {
           return options.predicate ? options.predicate(c) : true;
@@ -549,3 +556,63 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
 
 export const noTargets = () =>
   Promise.resolve({ cancelled: false as const, result: { cards: [], spaces: [] } });
+
+export const emptyBoardSpaceTatgetRules = {
+  canPlay: (game: Game, predicate?: (space: BoardSpace) => boolean) =>
+    game.boardSystem.boardSpaces.some(
+      space => space.isEmpty && (predicate ? predicate(space) : true)
+    ),
+
+  getTargets: async ({
+    game,
+    card,
+    label = 'Select a space',
+    timeoutFallback,
+    predicate = () => true,
+    canCancel = false
+  }: {
+    game: Game;
+    card: AnyCard;
+    label?: string | ((selectedSpaces: BoardSpace[]) => string);
+    timeoutFallback?: BoardSpace[];
+    predicate?: (space: BoardSpace) => boolean;
+    canCancel?: boolean;
+  }): Promise<InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }>> => {
+    const result = await game.interaction.selectSpacesOnBoard({
+      source: card,
+      player: card.player,
+      canCancel,
+      getLabel: selectedSpaces =>
+        isFunction(label)
+          ? label(selectedSpaces)
+          : (label ?? 'Select position to summon'),
+      isElligible: space => {
+        return space.isEmpty && predicate(space);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: timeoutFallback ?? [
+        game.boardSystem.boardSpaces.find(
+          space => space.isEmpty && (predicate ? predicate(space) : true)
+        )!
+      ],
+      getAOE: () =>
+        new PointAOEShape(game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: card.player
+        })
+    });
+
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
+    }
+    return {
+      cancelled: false as const,
+      result: { spaces: result.result, cards: [] }
+    };
+  }
+};

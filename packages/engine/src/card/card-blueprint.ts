@@ -15,7 +15,8 @@ import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
-import type { Artifact } from './entities/artifact.entity';
+import type { ArtifactCard } from './entities/artifact.entity';
+import type { BoardSpace } from '../board/board-space.entity';
 
 export type CardArt = {
   foil: {
@@ -97,14 +98,17 @@ export type SerializedAbility = {
 
 export type Targets<TCard extends AnyCard = AnyCard> = {
   cards: TCard[];
+  spaces: BoardSpace[];
 };
 export type SerializedTargets = {
   cards: string[];
+  spaces: string[];
 };
 
 export const serializeTargets = (targets: Targets): SerializedTargets => {
   return {
-    cards: targets.cards.map(card => card.id)
+    cards: targets.cards.map(card => card.id),
+    spaces: targets.spaces.map(space => space.id)
   };
 };
 
@@ -159,10 +163,10 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   jobs: Job[];
   durability: number;
   onInit: (game: Game, card: AnyCard) => Promise<void>;
-  canPlay: (game: Game, card: Artifact) => boolean;
-  onPlay: (game: Game, card: Artifact) => Promise<void>;
+  canPlay: (game: Game, card: ArtifactCard) => boolean;
+  onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
   aiHints: {
-    shouldPlay: (game: Game, card: Artifact) => number;
+    shouldPlay: (game: Game, card: ArtifactCard) => number;
   };
 };
 

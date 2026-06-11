@@ -117,7 +117,7 @@ const isTargetable = computed(() => {
       variant="small"
       :card-id="card.id"
       show-stats
-      :overrides="{ atk: card.atk, hp: card.hp }"
+      :overrides="{ power: card.power, damage: card.damage, hp: card.hp }"
     />
     <ModifiersList :modifiers="modifiers" class="modifiers" />
     <AbilityMenu :card="card" actions-side="top" use-portal class="abilities" />

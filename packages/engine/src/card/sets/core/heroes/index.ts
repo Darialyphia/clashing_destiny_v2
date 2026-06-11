@@ -1,10 +1,11 @@
-import { GAME_EVENTS } from '../../../../../game/game.events';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { RUNES, type Rune } from '../../../../../player/player.enums';
-import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
-import type { HeroBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, isSpell } from '../../../../card-utils';
+import dedent from 'dedent';
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { RUNES, type Rune } from '../../../../player/player.enums';
+import { askMandatoryYesNoQuestion } from '../../../card-actions-utils';
+import type { HeroBlueprint } from '../../../card-blueprint';
+import { defaultCardArt, isSpell } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -12,16 +13,17 @@ import {
   JOBS,
   AFFINITIES,
   CARD_SPEED
-} from '../../../../card.enums';
-import type { HeroCard } from '../../../../entities/hero.entity';
+} from '../../../card.enums';
+import type { HeroCard } from '../../../entities/hero.entity';
 
 export const erinaVioletWitch: HeroBlueprint = {
   id: 'erina-violet-witch',
   kind: CARD_KINDS.HERO,
   collectable: true,
   name: 'Erina, Violet Witch',
-  description:
-    'When you play 3 spells in a turn, you may consume <rt-rune-colorless></rt-rune-colorless> to gain 2 mana and draw a card.',
+  description: dedent /*html*/ `
+    When you play 3 spells in a turn, you may consume <rt-runes runes="colorless"></rt-runes>to gain 2 mana and draw a card.
+  `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
@@ -29,7 +31,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE, AFFINITIES.ARCANE],
   tags: [],
-  maxHp: 25,
+  maxHp: 20,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(

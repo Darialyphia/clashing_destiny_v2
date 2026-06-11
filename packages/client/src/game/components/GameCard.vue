@@ -10,6 +10,7 @@ import type { PopoverContentProps } from 'reka-ui';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import CardModifiers from './CardModifiers.vue';
 import { formatAbilityText } from '@/utils/formatters';
+import { provideRichTextContext } from '../composables/useRichText';
 const {
   cardId,
   actionsOffset = -50,
@@ -73,6 +74,10 @@ const classes = computed(() => {
     }
   ];
 });
+
+provideRichTextContext({
+  card
+});
 </script>
 
 <template>
@@ -106,7 +111,8 @@ const classes = computed(() => {
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
           expCost: overrides.expCost ?? card.expCost,
           hp: overrides.hp ?? card.maxHp,
-          atk: overrides.atk ?? card.atk,
+          power: overrides.power ?? card.power,
+          damage: overrides.damage ?? card.damage,
           durability: overrides.durability ?? card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
@@ -128,8 +134,10 @@ const classes = computed(() => {
           id: card.id,
           art: overrides.art ?? card.art,
           kind: overrides.kind ?? card.kind,
-          atk: overrides.atk ?? card.atk,
-          baseAtk: overrides.baseAtk ?? card.baseAtk,
+          power: overrides.atk ?? card.power,
+          basePower: overrides.baseAtk ?? card.basePower,
+          damage: overrides.damage ?? card.damage,
+          baseDamage: overrides.baseDamage ?? card.baseDamage,
           hp: overrides.hp ?? card.hp,
           baseMaxHp: overrides.baseMaxHp ?? card.baseMaxHp,
           maxHp: overrides.maxHp ?? card.maxHp,

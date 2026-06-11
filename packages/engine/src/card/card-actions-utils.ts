@@ -1,5 +1,4 @@
 import type { Game } from '../game/game';
-import { EmpowerModifier } from '../modifier/modifiers/empower.modifier';
 import type { AnyCard } from './entities/card.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
@@ -35,7 +34,11 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
   return { cancelled: false, cards, result: result.result };
 };
 
-export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[]) => {
+export const discover = async <T extends AnyCard>(
+  game: Game,
+  card: AnyCard,
+  choicePool: T[]
+) => {
   const choices: AnyCard[] = [];
   const maxChoices = Math.min(3, choicePool.length);
 
@@ -43,7 +46,7 @@ export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[])
     const index = game.rngSystem.nextInt(choicePool.length - 1);
     choices.push(...choicePool.splice(index, 1));
   }
-  const result = await game.interaction.chooseCards<AnyCard>({
+  const result = await game.interaction.chooseCards<T, false>({
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
@@ -79,7 +82,7 @@ export const predict = async (game: Game, card: AnyCard) => {
     const index = game.rngSystem.nextInt(choicePool.length - 1);
     choices.push(...choicePool.splice(index, 1));
   }
-  const result = await game.interaction.chooseCards<AnyCard>({
+  const result = await game.interaction.chooseCards<AnyCard, false>({
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
@@ -112,7 +115,7 @@ export const discardFromHand = async (
   options: { min: number; max: number }
 ) => {
   const cards = card.player.cardManager.hand;
-  const result = await game.interaction.chooseCards<AnyCard>({
+  const result = await game.interaction.chooseCards<AnyCard, false>({
     player: card.player,
     minChoiceCount: options.min,
     maxChoiceCount: options.max,

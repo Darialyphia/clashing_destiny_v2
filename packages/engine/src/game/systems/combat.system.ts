@@ -45,12 +45,17 @@ export class CombatStateMachine extends StateMachine<CombatStep, CombatStepTrans
       stateTransition(
         COMBAT_STEPS.DECLARE_TARGET,
         COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED,
-        COMBAT_STEPS.RESOLVING_COMBAT
+        COMBAT_STEPS.REACTION
       ),
       stateTransition(
         COMBAT_STEPS.DECLARE_TARGET,
         COMBAT_STEP_TRANSITIONS.CANCEL,
         COMBAT_STEPS.DECLARE_ATTACKER
+      ),
+      stateTransition(
+        COMBAT_STEPS.REACTION,
+        COMBAT_STEP_TRANSITIONS.RESOLVE_COMBAT,
+        COMBAT_STEPS.RESOLVING_COMBAT
       ),
       stateTransition(
         COMBAT_STEPS.RESOLVING_COMBAT,
@@ -164,6 +169,8 @@ export class CombatSystem
   private async resolveCombat() {
     assert(isDefined(this.defender), new CorruptedGamephaseContextError());
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
+
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.RESOLVE_COMBAT);
 
     await this.game.emit(
       COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,

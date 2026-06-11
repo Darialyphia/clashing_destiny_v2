@@ -1,14 +1,13 @@
-import { type BetterExtract } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
 import type { BoardSide } from './board-side.entity';
-import { type CardLocation } from '../card/card.enums';
+import type { BoardRow } from './board-space.entity';
 
 export type MinionSlot = number;
 
 export type BoardCoordinates = {
   playerId: string;
-  zone: BetterExtract<CardLocation, 'base' | 'battlefield'>;
+  zone: BoardRow;
   index: number;
 };
 

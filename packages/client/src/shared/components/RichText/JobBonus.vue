@@ -16,7 +16,10 @@ const ctx = useRichTextContext();
     class="job-bonus"
     :class="{
       disabled:
-        ctx && !ctx.heroJobs.value.includes(job.toLocaleUpperCase() as JobId)
+        ctx?.card?.value &&
+        !ctx.card?.value?.player.hero?.jobs.includes(
+          job.toLocaleUpperCase() as JobId
+        )
     }"
   >
     <UiSimpleTooltip>
@@ -34,10 +37,10 @@ const ctx = useRichTextContext();
 .badge {
   background: linear-gradient(
     to bottom,
-    var(--indigo-4) 50%,
-    var(--indigo-6) 50%
+    var(--yellow-5) 50%,
+    var(--yellow-7) 50%
   );
-  border: solid calc(0.5px * var(--pixel-scale)) var(--indigo-8);
+  border: solid calc(0.5px * var(--pixel-scale)) var(--yellow-9);
   color: white;
   font-size: 0.95em;
   padding-inline: calc(4px * var(--pixel-scale));

@@ -30,12 +30,13 @@ import {
   MinionSummonedEvent
 } from '../events/minion.events';
 import { DamageTrackerComponent } from '../components/damage-tracker.component';
-import type { BoardSpace } from '../../board/board-space.entity';
+import type { BoardRow, BoardSpace } from '../../board/board-space.entity';
 import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
 import { AbilityManagerComponent } from '../components/abilities-manager.component';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
+import { match } from 'ts-pattern';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -143,11 +144,15 @@ export class MinionCard extends Card<
     return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
-  get isOnBoard() {
+  get isOnBattleField() {
     return (
-      this.location === CARD_LOCATIONS.BASE ||
-      this.location === CARD_LOCATIONS.BATTLEFIELD
+      this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+      this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
     );
+  }
+
+  get isOnBoard() {
+    return this.location === CARD_LOCATIONS.BASE || this.isOnBattleField;
   }
 
   get isAlive() {
@@ -377,19 +382,19 @@ export class MinionCard extends Card<
     });
   }
 
-  async moveManually(index: number) {
-    await this.move(index);
+  async moveManually(zone: BoardRow, index: number) {
+    await this.move(zone, index);
     this.hasMovedManuallyThisTurn = true;
     if (this.shouldSwitchInitiativeAfterMovingManually) {
       await this.game.turnSystem.switchInitiative();
     }
   }
 
-  async move(index: number) {
+  async move(zone: BoardRow, index: number) {
     if (!this.canMove) return;
     if (!this.isOnBoard) return;
 
-    await this.player.boardSide.moveCard(this.id, index);
+    await this.player.boardSide.moveCard(this.id, zone, index);
   }
 
   private async summon(position: BoardSpace) {
@@ -486,23 +491,32 @@ export class MinionCard extends Card<
   }
 
   get potentialAttackTargets(): Array<MinionCard | HeroCard> {
-    if (this.location !== CARD_LOCATIONS.BATTLEFIELD) return [];
+    if (!this.isOnBattleField) return [];
 
-    return [
-      this.player.opponent.hero,
-      ...this.player.opponent.minionsInBattlefield
-    ].filter(minion => this.canAttack(minion));
+    const result: AttackTarget[] = [this.player.opponent.hero];
+    if (this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      result.push(...this.player.opponent.minionsInLeftBattlefield);
+    }
+    if (this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD) {
+      result.push(...this.player.opponent.minionsInRightBattlefield);
+    }
+    return result.filter(minion => this.canAttack(minion));
   }
 
   get potentialMoveTargets(): BoardSpace[] {
-    return this.canMove
-      ? [
-          ...(this.location === CARD_LOCATIONS.BATTLEFIELD
-            ? this.player.boardSide.base
-            : this.player.boardSide.battlefield
-          ).filter(space => space.isEmpty)
-        ]
-      : [];
+    if (!this.canMove) return [];
+    if (!this.isOnBoard) return [];
+    return match(this.position!.position.zone)
+      .with(CARD_LOCATIONS.BASE, () =>
+        this.player.boardSide.base.filter(space => space.isEmpty)
+      )
+      .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () =>
+        this.player.boardSide.leftBattlefield.filter(space => space.isEmpty)
+      )
+      .with(CARD_LOCATIONS.RIGHT_BATTLEFIELD, () =>
+        this.player.boardSide.rightBattlefield.filter(space => space.isEmpty)
+      )
+      .exhaustive();
   }
 
   serialize(): SerializedMinionCard {

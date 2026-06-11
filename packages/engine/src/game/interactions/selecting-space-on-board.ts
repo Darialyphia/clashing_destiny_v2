@@ -8,7 +8,7 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { BoardSpace } from '../../board/board-space.entity';
 import type { AOEShape } from '../../aoe/aoe-shape';
 
-export type SelectingSpaceOnBoardContextOptions = {
+export type SelectingSpaceOnBoardContextOptions<T extends boolean = boolean> = {
   player: Player;
   source: AnyCard;
   getLabel: (selectedSpaces: BoardSpace[]) => string;
@@ -16,12 +16,15 @@ export type SelectingSpaceOnBoardContextOptions = {
   canCommit: (selectedSpaces: BoardSpace[]) => boolean;
   isDone(selectedSpaces: BoardSpace[]): boolean;
   timeoutFallback: BoardSpace[];
-  canCancel: boolean;
+  canCancel: T;
   getAOE: (ctx: SelectingSpaceOnBoardContext) => AOEShape | null;
 };
 
 export class SelectingSpaceOnBoardContext {
-  static async create(game: Game, options: SelectingSpaceOnBoardContextOptions) {
+  static async create<T extends boolean = boolean>(
+    game: Game,
+    options: SelectingSpaceOnBoardContextOptions<T>
+  ) {
     const instance = new SelectingSpaceOnBoardContext(game, options);
     await instance.init();
     return instance;

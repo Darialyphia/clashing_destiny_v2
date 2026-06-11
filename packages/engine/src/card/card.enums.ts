@@ -112,6 +112,11 @@ export const JOBS = {
     id: 'acolyte',
     name: 'Acolyte',
     shortName: 'Acolyte'
+  },
+  RANGER: {
+    id: 'ranger',
+    name: 'Ranger',
+    shortName: 'Ranger'
   }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];
@@ -129,7 +134,8 @@ export const CARD_LOCATIONS = {
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   BASE: 'base',
-  BATTLEFIELD: 'battlefield'
+  LEFT_BATTLEFIELD: 'left_battlefield',
+  RIGHT_BATTLEFIELD: 'right_battlefield'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 

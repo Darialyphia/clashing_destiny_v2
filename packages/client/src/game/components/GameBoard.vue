@@ -25,8 +25,6 @@ import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import PassButton from './PassButton.vue';
 import PlayerInfos from './PlayerInfos.vue';
 import HoveredCardInfos from './HoveredCardnfos.vue';
-import { provideRichTextContext } from '../composables/useRichText';
-import type { JobId } from '@game/engine/src/card/card.enums';
 import BoardSpace from './BoardSpace.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import BoardCard from './BoardCard.vue';
@@ -52,14 +50,6 @@ const opponent = useOpponentPlayer();
 // const board = useTemplateRef('board');
 // useBoardResize(board);
 
-provideRichTextContext({
-  heroLevel: computed(() => 1),
-  heroJobs: computed(() => {
-    return (
-      myPlayer.value.hero?.jobs.map(j => j.toLocaleUpperCase() as JobId) ?? []
-    );
-  })
-});
 useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);
 // const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
@@ -144,14 +134,24 @@ useEventListener('contextmenu', async e => {
           </div>
           <div class="opponent-front-row">
             <BoardSpace
-              v-for="space in opponent.battlefield"
+              v-for="space in opponent.leftBattlefield"
+              :key="space.id"
+              :cell-id="space.id"
+            />
+            <BoardSpace
+              v-for="space in opponent.rightBattlefield"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
           <div class="my-front-row">
             <BoardSpace
-              v-for="space in myPlayer.battlefield"
+              v-for="space in myPlayer.leftBattlefield"
+              :key="space.id"
+              :cell-id="space.id"
+            />
+            <BoardSpace
+              v-for="space in myPlayer.rightBattlefield"
               :key="space.id"
               :cell-id="space.id"
             />

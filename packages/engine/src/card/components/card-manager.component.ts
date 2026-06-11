@@ -96,9 +96,13 @@ export class CardManagerComponent {
     const baseCard = this.player.boardSide.getCardInBase(id);
     if (baseCard) return { card: baseCard, location: CARD_LOCATIONS.BASE };
 
-    const battlefieldCard = this.player.boardSide.getCardInBattlefield(id);
-    if (battlefieldCard)
-      return { card: battlefieldCard, location: CARD_LOCATIONS.BATTLEFIELD };
+    const leftBattlefieldCard = this.player.boardSide.getCardInLeftBattlefield(id);
+    if (leftBattlefieldCard)
+      return { card: leftBattlefieldCard, location: CARD_LOCATIONS.LEFT_BATTLEFIELD };
+
+    const rightBattlefieldCard = this.player.boardSide.getCardInRightBattlefield(id);
+    if (rightBattlefieldCard)
+      return { card: rightBattlefieldCard, location: CARD_LOCATIONS.RIGHT_BATTLEFIELD };
 
     return null;
   }

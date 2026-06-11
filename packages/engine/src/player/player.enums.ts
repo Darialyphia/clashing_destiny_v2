@@ -14,6 +14,6 @@ export const RUNES = {
   MIGHT: 'might',
   WISDOM: 'wisdom',
   FOCUS: 'focus',
-  CHAOS: 'chaos'
+  RESONANCE: 'resonance'
 } as const;
 export type Rune = Values<typeof RUNES>;

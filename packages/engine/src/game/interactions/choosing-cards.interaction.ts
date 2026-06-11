@@ -9,7 +9,7 @@ import {
 import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 
-export type ChoosingCardsContextOptions = {
+export type ChoosingCardsContextOptions<T extends boolean = boolean> = {
   player: Player;
   choices: Array<{
     card: AnyCard;
@@ -21,10 +21,13 @@ export type ChoosingCardsContextOptions = {
   maxChoiceCount: number;
   label: string;
   timeoutFallback: AnyCard[];
-  canCancel: boolean;
+  canCancel: T;
 };
 export class ChoosingCardsContext {
-  static async create(game: Game, options: ChoosingCardsContextOptions) {
+  static async create<T extends boolean = boolean>(
+    game: Game,
+    options: ChoosingCardsContextOptions<T>
+  ) {
     const instance = new ChoosingCardsContext(game, options);
     await instance.init();
     return instance;

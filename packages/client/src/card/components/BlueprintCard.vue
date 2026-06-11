@@ -3,9 +3,8 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
 import Card from './Card.vue';
 import { isFunction } from '@game/shared';
-import { JOBS, type JobId } from '@game/engine/src/card/card.enums';
+import { type JobId } from '@game/engine/src/card/card.enums';
 import { provideRichTextContext } from '@/game/composables/useRichText';
-import { defaultConfig } from '@game/engine/src/config';
 
 const {
   blueprint,
@@ -23,8 +22,7 @@ const mergedFoilOptions = computed(() => ({
 }));
 
 provideRichTextContext({
-  heroLevel: computed(() => defaultConfig.PLAYER_MAX_LEVEL),
-  heroJobs: computed(() => Object.keys(JOBS) as JobId[])
+  card: ref(null)
 });
 </script>
 
@@ -47,13 +45,9 @@ provideRichTextContext({
       expCost: (blueprint as any).expCost,
       baseExpCost: (blueprint as any).baseExpCost,
       rarity: (blueprint as any).rarity,
-      atk:
-        (blueprint as any).atk ??
-        (blueprint as any).damage ??
-        (blueprint as any).atkBonus,
-      retaliation: (blueprint as any).retaliation,
+      power: (blueprint as any).power,
+      damage: (blueprint as any).damage,
       hp: (blueprint as any).maxHp,
-      countdown: (blueprint as any).maxCountdown,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,

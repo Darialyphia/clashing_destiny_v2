@@ -9,6 +9,13 @@ export type Keyword = {
 };
 
 export const KEYWORDS = {
+  ASSIST: {
+    id: 'assist',
+    name: 'Assist X',
+    description:
+      'When an ally attacks, you can exhaust this to give the attacking minion +X Power until the end of combat.',
+    aliases: [/assist [0-9]+/]
+  },
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
@@ -19,7 +26,7 @@ export const KEYWORDS = {
     id: 'blast',
     name: 'Blast X',
     description: 'When this dies, deal X damage to a minion.',
-    aliases: []
+    aliases: [/blast [0-9]+/]
   },
   BURN: {
     id: 'burn',
@@ -176,6 +183,13 @@ export const KEYWORDS = {
     id: 'rush',
     name: 'Rush X',
     description: 'You may pay X to wake up this minion when it is summoned.',
+    aliases: [/rush [0-9]+/]
+  },
+  SACRIFICE: {
+    id: 'sacrifice',
+    name: 'Sacrifice',
+    description:
+      "When a minion is sacrificed, its owner doesn't lose HP equal to its Bounty.",
     aliases: []
   },
   SCRY: {
@@ -252,6 +266,18 @@ export const KEYWORDS = {
     name: 'Unique',
     description: 'You can only have one copy of this card on the board at the same time.',
     aliases: []
+  },
+  VULNERABLE: {
+    id: 'vulnerable',
+    name: 'Vulnerable X',
+    description: 'This unit takes X more damage from all sources.',
+    aliases: [/vulnerable [0-9]+/]
+  },
+  WITHER: {
+    id: 'wither',
+    name: 'Wither X',
+    description: 'At the start of the turn, this unit loses X Power.',
+    aliases: [/wither [0-9]+/]
   },
   ...Object.fromEntries(
     Object.values(JOBS).map(job => [

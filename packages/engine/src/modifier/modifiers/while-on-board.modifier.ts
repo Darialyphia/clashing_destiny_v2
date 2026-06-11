@@ -1,5 +1,6 @@
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
+import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { Game } from '../../game/game';
 import { Modifier } from '../modifier.entity';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -7,19 +8,24 @@ import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { CARD_LOCATIONS } from '../../card/card.enums';
 import type { HeroCard } from '../../card/entities/hero.entity';
 
-export class WhileOnBoardModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+type WhileOnBoardOptions<T extends MinionCard | ArtifactCard> = {
+  isUnique?: boolean;
+  mixins: Array<ModifierMixin<T>>;
+  name?: string | (() => string);
+  description?: string | (() => string);
+  icon?: string | (() => string);
+};
+export class WhileOnBoardModifier<
+  T extends MinionCard | ArtifactCard
+> extends Modifier<T> {
   constructor(
     modifierType: string,
     game: Game,
     source: AnyCard,
-    private options: {
-      mixins: Array<ModifierMixin<T>>;
-      name?: string | (() => string);
-      description?: string | (() => string);
-      icon?: string | (() => string);
-    }
+    private options: WhileOnBoardOptions<T>
   ) {
     super(modifierType, game, source, {
+      isUnique: options.isUnique,
       name: options.name,
       description: options.description,
       icon: options.icon,
@@ -28,7 +34,8 @@ export class WhileOnBoardModifier<T extends MinionCard | HeroCard> extends Modif
           game,
           () =>
             this.target.location === CARD_LOCATIONS.BASE ||
-            this.target.location === CARD_LOCATIONS.BATTLEFIELD
+            this.target.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+            this.target.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
         ),
         ...options.mixins
       ]
@@ -36,14 +43,14 @@ export class WhileOnBoardModifier<T extends MinionCard | HeroCard> extends Modif
   }
 }
 
-export class WhileOnBaseModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+export class WhileOnBaseModifier<
+  T extends MinionCard | ArtifactCard
+> extends Modifier<T> {
   constructor(
     modifierType: string,
     game: Game,
     source: AnyCard,
-    private options: {
-      mixins: Array<ModifierMixin<T>>;
-    }
+    options: WhileOnBoardOptions<T>
   ) {
     super(modifierType, game, source, {
       mixins: [
@@ -57,19 +64,12 @@ export class WhileOnBaseModifier<T extends MinionCard | HeroCard> extends Modifi
   }
 }
 
-export class WhileOnBattlefieldModifier<
-  T extends MinionCard | HeroCard
-> extends Modifier<T> {
+export class WhileOnBattlefieldModifier<T extends MinionCard> extends Modifier<T> {
   constructor(
     modifierType: string,
     game: Game,
     source: AnyCard,
-    private options: {
-      name?: string | (() => string);
-      description?: string | (() => string);
-      icon?: string | (() => string);
-      mixins: Array<ModifierMixin<T>>;
-    }
+    options: WhileOnBoardOptions<T>
   ) {
     super(modifierType, game, source, {
       name: options.name,
@@ -78,7 +78,9 @@ export class WhileOnBattlefieldModifier<
       mixins: [
         new TogglableModifierMixin(
           game,
-          () => this.target.location === CARD_LOCATIONS.BATTLEFIELD
+          () =>
+            this.target.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+            this.target.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
         ),
         ...options.mixins
       ]

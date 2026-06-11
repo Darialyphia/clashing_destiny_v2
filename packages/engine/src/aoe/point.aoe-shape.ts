@@ -1,4 +1,4 @@
-import { isDefined, type Point } from '@game/shared';
+import { isDefined } from '@game/shared';
 import {
   isValidAOETargetingType,
   type AOEShape,

@@ -1,6 +1,6 @@
 import type { Values } from '@game/shared';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { SerializedArtifactCard, Artifact } from '../entities/artifact.entity';
+import type { SerializedArtifactCard, ArtifactCard } from '../entities/artifact.entity';
 
 export const ARTIFACT_EVENTS = {
   ARTIFACT_EQUIPED: 'artifact.equipped',
@@ -10,7 +10,7 @@ export const ARTIFACT_EVENTS = {
 export type ArtifactEvents = Values<typeof ARTIFACT_EVENTS>;
 
 export class ArtifactDurabilityChangeEvent extends TypedSerializableEvent<
-  { card: Artifact; amount: number },
+  { card: ArtifactCard; amount: number },
   { card: string; amount: number }
 > {
   serialize() {
@@ -22,7 +22,7 @@ export class ArtifactDurabilityChangeEvent extends TypedSerializableEvent<
 }
 
 export class ArtifactEquippedEvent extends TypedSerializableEvent<
-  { card: Artifact },
+  { card: ArtifactCard },
   { card: string }
 > {
   serialize() {

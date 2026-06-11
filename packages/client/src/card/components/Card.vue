@@ -43,10 +43,9 @@ const {
     expCost?: number | null;
     baseExpCost?: number | null;
     rarity: Rarity;
-    atk?: number | null;
-    retaliation?: number | null;
+    power?: number | null;
+    damage?: number | null;
     hp?: number | null;
-    countdown?: number | null;
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
@@ -201,7 +200,11 @@ const affinities = computed(() => {
 });
 
 const tint = computed(() => {
-  return `var(--tint-${card.affinities[0].toLocaleLowerCase()})`;
+  return `linear-gradient(135deg, ${card.affinities
+    .map(affinity => {
+      return `var(--tint-${affinity.toLocaleLowerCase()})`;
+    })
+    .join(', ')})`;
 });
 </script>
 
@@ -344,17 +347,14 @@ const tint = computed(() => {
           <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
         </template>
 
-        <div v-if="isDefined(card.atk)" class="stat atk parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.atk">
-            {{ card.atk }}
+        <div v-if="isDefined(card.power)" class="stat power parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.power">
+            {{ card.power }}
           </div>
         </div>
-        <div
-          v-if="isDefined(card.retaliation)"
-          class="stat retaliation parallax"
-        >
-          <div v-if="showText" class="dual-text" :data-text="card.retaliation">
-            {{ card.retaliation }}
+        <div v-if="isDefined(card.damage)" class="stat damage parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.damage">
+            {{ card.damage }}
           </div>
         </div>
         <div v-if="isDefined(card.hp)" class="stat hp parallax">
@@ -727,37 +727,41 @@ const tint = computed(() => {
 }
 
 .stat {
-  width: calc(27px * var(--pixel-scale));
-  height: calc(25px * var(--pixel-scale));
+  width: calc(40px * var(--pixel-scale));
+  height: calc(26px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
-  position: absolute;
-  top: calc(125px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 11px);
-  text-align: right;
-  font-weight: var(--font-weight-7);
+  font-weight: var(--font-weight-9);
   font-family: 'Lato', sans-serif;
-  display: grid;
-  place-content: center;
-  --dual-text-offset-y: calc(2px * var(--pixel-scale));
-  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
+  position: absolute;
+  z-index: 0;
+  bottom: calc(96px * var(--pixel-scale));
+  --dual-text-offset-y: calc(7px * var(--pixel-scale));
+  --dual-text-offset-x: calc(8px * var(--pixel-scale));
 }
 
-.atk {
-  background-image: url('@/assets/ui/card/attack.png');
-  left: calc(12px * var(--pixel-scale));
+.power {
+  background-image: url('@/assets/ui/card/power.png');
+  left: calc(2px * var(--pixel-scale));
+}
+
+.damage {
+  background-image: url('@/assets/ui/card/damage.png');
+  right: calc(2px * var(--pixel-scale));
+  text-align: right;
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health-left.png');
-  right: calc(12px * var(--pixel-scale));
-  --dual-text-offset-x: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/health.png');
+  right: calc(2px * var(--pixel-scale));
+  text-align: right;
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .durability {
-  background-image: url('@/assets/ui/card/durability.png');
-  right: calc(12px * var(--pixel-scale));
-  --dual-text-offset-x: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/health.png');
 }
 
 .kind {

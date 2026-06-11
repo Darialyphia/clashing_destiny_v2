@@ -101,8 +101,14 @@ export class PlayerViewModel {
     });
   }
 
-  get battlefield() {
-    return this.data.boardSide.battlefield.map(spaceId => {
+  get leftBattlefield() {
+    return this.data.boardSide.leftBattlefield.map(spaceId => {
+      return this.getEntities()[spaceId] as BoardSpaceViewModel;
+    });
+  }
+
+  get rightBattlefield() {
+    return this.data.boardSide.rightBattlefield.map(spaceId => {
       return this.getEntities()[spaceId] as BoardSpaceViewModel;
     });
   }

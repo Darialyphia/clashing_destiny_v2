@@ -222,9 +222,11 @@ export abstract class Card<
 
   get position(): BoardSpace | null {
     return (
-      [...this.player.boardSide.base, ...this.player.boardSide.battlefield].find(space =>
-        space.card?.equals(this)
-      ) ?? null
+      [
+        ...this.player.boardSide.base,
+        ...this.player.boardSide.leftBattlefield,
+        ...this.player.boardSide.rightBattlefield
+      ].find(space => space.card?.equals(this)) ?? null
     );
   }
 
@@ -322,9 +324,14 @@ export abstract class Card<
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with(CARD_LOCATIONS.BASE, CARD_LOCATIONS.BATTLEFIELD, () => {
-        this.player.boardSide.remove(this);
-      })
+      .with(
+        CARD_LOCATIONS.BASE,
+        CARD_LOCATIONS.LEFT_BATTLEFIELD,
+        CARD_LOCATIONS.RIGHT_BATTLEFIELD,
+        () => {
+          this.player.boardSide.remove(this);
+        }
+      )
       .exhaustive();
   }
 

@@ -317,9 +317,13 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<InteractionResult<T[]>>();
   }
 
-  async selectSpacesOnBoard<T extends AnyCard>(
-    options: SelectingSpaceOnBoardContextOptions
+  async selectSpacesOnBoard<TCancellable extends boolean>(
+    options: SelectingSpaceOnBoardContextOptions<TCancellable>
   ) {
+    type ReturnValue = TCancellable extends true
+      ? InteractionResult<BoardSpace[]>
+      : InteractionResult<BoardSpace[]> & { cancelled: false };
+
     await this.sendTransition(
       INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
       options
@@ -334,19 +338,25 @@ export class GameInteractionSystem
       return {
         cancelled: false,
         result: []
-      } as InteractionResult<BoardSpace[]>;
+      } as unknown as ReturnValue;
     } else {
-      return this.game.inputSystem.pause<InteractionResult<BoardSpace[]>>();
+      return this.game.inputSystem.pause<ReturnValue>();
     }
   }
 
-  async chooseCards<T extends AnyCard>(options: ChoosingCardsContextOptions) {
+  async chooseCards<T extends AnyCard, TCancellable extends boolean>(
+    options: ChoosingCardsContextOptions<TCancellable>
+  ) {
+    type ReturnValue = TCancellable extends true
+      ? InteractionResult<T[]>
+      : InteractionResult<T[]> & { cancelled: false };
+
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
       this.game,
       options
     );
-    return this.game.inputSystem.pause<InteractionResult<T[]>>();
+    return this.game.inputSystem.pause<ReturnValue>();
   }
 
   async rearrangeCards<T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>>(

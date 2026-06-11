@@ -6,28 +6,30 @@
 import type { Rarity } from '../card/card.enums';
 export const cards = {
 "erina-violet-witch": "erina-violet-witch",
-"healing_mystic": "healing_mystic",
 "fireBolt": "fireBolt",
-"little_witch": "little_witch",
 "pyromancer": "pyromancer",
+"braveCitizen": "braveCitizen",
+"recklessRecruit": "recklessRecruit",
+"willowisp": "willowisp",
+"cremation": "cremation",
+"innerFire": "innerFire",
 "fireBall": "fireBall",
-"first-aid": "first-aid",
-"path-to-discovery": "path-to-discovery",
-"cull-the-weak": "cull-the-weak",
-"burning-hands": "burning-hands"
+"engulfInFlames": "engulfInFlames",
+"lesserFireSummoning": "lesserFireSummoning"
 } as const;
 
 export const collectableCards = {
 "erina-violet-witch": "erina-violet-witch",
-"healing_mystic": "healing_mystic",
 "fireBolt": "fireBolt",
-"little_witch": "little_witch",
 "pyromancer": "pyromancer",
+"braveCitizen": "braveCitizen",
+"recklessRecruit": "recklessRecruit",
+"willowisp": "willowisp",
+"cremation": "cremation",
+"innerFire": "innerFire",
 "fireBall": "fireBall",
-"first-aid": "first-aid",
-"path-to-discovery": "path-to-discovery",
-"cull-the-weak": "cull-the-weak",
-"burning-hands": "burning-hands"
+"engulfInFlames": "engulfInFlames",
+"lesserFireSummoning": "lesserFireSummoning"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -39,47 +41,52 @@ export const cardsBySet: Record<string, CardSet> = {
     "rarity": "epic"
   },
   {
-    "id": "healing_mystic",
-    "collectable": true,
-    "rarity": "common"
-  },
-  {
     "id": "fireBolt",
-    "collectable": true,
-    "rarity": "common"
-  },
-  {
-    "id": "little_witch",
     "collectable": true,
     "rarity": "common"
   },
   {
     "id": "pyromancer",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "common"
+  },
+  {
+    "id": "braveCitizen",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "recklessRecruit",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "willowisp",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "cremation",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "innerFire",
+    "collectable": true,
+    "rarity": "common"
   },
   {
     "id": "fireBall",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "rare"
   },
   {
-    "id": "first-aid",
-    "collectable": true,
-    "rarity": "common"
-  },
-  {
-    "id": "path-to-discovery",
-    "collectable": true,
-    "rarity": "common"
-  },
-  {
-    "id": "cull-the-weak",
+    "id": "engulfInFlames",
     "collectable": true,
     "rarity": "rare"
   },
   {
-    "id": "burning-hands",
+    "id": "lesserFireSummoning",
     "collectable": true,
     "rarity": "common"
   }
@@ -87,27 +94,29 @@ export const cardsBySet: Record<string, CardSet> = {
 };
 
 export const cardShortIds: Record<string, number> = {
-"erina-violet-witch": 7,
-"healing_mystic": 10,
-"fireBolt": 11,
-"little_witch": 12,
-"pyromancer": 13,
-"fireBall": 14,
-"first-aid": 15,
-"path-to-discovery": 16,
-"cull-the-weak": 17,
-"burning-hands": 18
+"erina-violet-witch": 1,
+"fireBolt": 2,
+"pyromancer": 3,
+"braveCitizen": 4,
+"recklessRecruit": 5,
+"willowisp": 6,
+"cremation": 7,
+"innerFire": 8,
+"fireBall": 9,
+"engulfInFlames": 10,
+"lesserFireSummoning": 11
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
-"7": "erina-violet-witch",
-"10": "healing_mystic",
-"11": "fireBolt",
-"12": "little_witch",
-"13": "pyromancer",
-"14": "fireBall",
-"15": "first-aid",
-"16": "path-to-discovery",
-"17": "cull-the-weak",
-"18": "burning-hands"
+"1": "erina-violet-witch",
+"2": "fireBolt",
+"3": "pyromancer",
+"4": "braveCitizen",
+"5": "recklessRecruit",
+"6": "willowisp",
+"7": "cremation",
+"8": "innerFire",
+"9": "fireBall",
+"10": "engulfInFlames",
+"11": "lesserFireSummoning"
 } as const;

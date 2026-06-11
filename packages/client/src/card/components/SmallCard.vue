@@ -23,13 +23,14 @@ const {
     id: string;
     art: CardArt;
     kind: CardKind;
-    atk?: number | null;
-    baseAtk?: number | null;
+    power?: number | null;
+    basePower?: number | null;
+    damage?: number | null;
+    baseDamage?: number | null;
     hp?: number | null;
     countdown?: number | null;
     maxHp?: number | null;
     baseMaxHp?: number | null;
-    retaliation?: number | null;
     baseRetaliation?: number | null;
     durability?: number | null;
     manaCost?: number | null;
@@ -73,32 +74,29 @@ const artMainImage = computed(() => {
 
       <template v-if="showStats">
         <div
-          v-if="isDefined(card.atk)"
+          v-if="isDefined(card.power)"
           class="stat atk"
           :class="{
-            buffed: isDefined(card.baseAtk) && card.atk > card.baseAtk,
-            debuffed: isDefined(card.baseAtk) && card.atk < card.baseAtk
+            buffed: isDefined(card.basePower) && card.power > card.basePower,
+            debuffed: isDefined(card.basePower) && card.power < card.basePower
           }"
         >
-          <div class="dual-text" :data-text="card.atk">
-            {{ card.atk }}
+          <div class="dual-text" :data-text="card.power">
+            {{ card.power }}
           </div>
         </div>
 
         <div
-          v-if="isDefined(card.retaliation)"
-          class="stat retaliation"
+          v-if="isDefined(card.damage)"
+          class="stat damage"
           :class="{
-            buffed:
-              isDefined(card.baseRetaliation) &&
-              card.retaliation > card.baseRetaliation,
+            buffed: isDefined(card.baseDamage) && card.damage > card.baseDamage,
             debuffed:
-              isDefined(card.baseRetaliation) &&
-              card.retaliation < card.baseRetaliation
+              isDefined(card.baseDamage) && card.damage < card.baseDamage
           }"
         >
-          <div class="dual-text" :data-text="card.retaliation">
-            {{ card.retaliation }}
+          <div class="dual-text" :data-text="card.damage">
+            {{ card.damage }}
           </div>
         </div>
 

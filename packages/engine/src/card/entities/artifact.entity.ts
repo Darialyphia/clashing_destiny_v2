@@ -30,11 +30,11 @@ export type SerializedArtifactCard = SerializedCard & {
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
-  canPlay: Interceptable<boolean, Artifact>;
-  maxDurability: Interceptable<number, Artifact>;
+  canPlay: Interceptable<boolean, ArtifactCard>;
+  maxDurability: Interceptable<number, ArtifactCard>;
 };
 
-export class Artifact extends Card<
+export class ArtifactCard extends Card<
   SerializedArtifactCard,
   ArtifactCardInterceptors,
   ArtifactBlueprint

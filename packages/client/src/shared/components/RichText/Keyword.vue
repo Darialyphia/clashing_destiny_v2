@@ -29,7 +29,7 @@ const keyword = computed(() => {
 <template>
   <HoverCardRoot :open-delay="250" :close-delay="0">
     <HoverCardTrigger>
-      <span class="keyword" ref="el"><slot /></span>
+      <rt-trigger color="blue" ref="el"><slot /></rt-trigger>
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent class="z-10" side="top">
@@ -47,7 +47,7 @@ const keyword = computed(() => {
 <style scoped lang="postcss">
 .keyword {
   font-weight: 700;
-  font-style: italic;
+  /* font-style: italic; */
 }
 
 .keyword-card {

@@ -36,6 +36,7 @@ export type GamePhaseTransition = Values<typeof GAME_PHASE_TRANSITIONS>;
 export const COMBAT_STEPS = {
   DECLARE_ATTACKER: 'declare-attacker',
   DECLARE_TARGET: 'declare-target',
+  REACTION: 'reaction',
   RESOLVING_COMBAT: 'resolving'
 } as const;
 
@@ -44,6 +45,7 @@ export type CombatStep = Values<typeof COMBAT_STEPS>;
 export const COMBAT_STEP_TRANSITIONS = {
   ATTACKER_DECLARED: 'attacker-declared',
   ATTACKER_TARGET_DECLARED: 'attacker-target-declared',
+  RESOLVE_COMBAT: 'resolve-combat',
   FINISHED: 'finished',
   CANCEL: 'cancel'
 } as const;
