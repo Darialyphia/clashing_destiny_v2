@@ -25,7 +25,8 @@ export const KEYWORDS = {
   BLAST: {
     id: 'blast',
     name: 'Blast X',
-    description: 'When this dies, deal X damage to a minion.',
+    description:
+      'When this dies in a battlefield, deal X damage to a minion in the same battlefield.',
     aliases: [/blast [0-9]+/]
   },
   BURN: {

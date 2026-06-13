@@ -13,7 +13,15 @@ export class PassInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    assert(this.player.hasInitiative, new NotCurrentPlayerError());
-    await this.game.turnSystem.pass(this.player);
+    if (this.game.effectChainSystem.currentChain) {
+      assert(
+        this.game.effectChainSystem.currentChain.currentPlayer.equals(this.player),
+        new NotCurrentPlayerError()
+      );
+      await this.game.effectChainSystem.pass(this.player);
+    } else {
+      assert(this.player.hasInitiative, new NotCurrentPlayerError());
+      await this.game.turnSystem.pass(this.player);
+    }
   }
 }

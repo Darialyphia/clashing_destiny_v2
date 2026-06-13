@@ -35,6 +35,7 @@ import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input
 import { CancelInteractionInput } from './inputs/cancel-interaction';
 import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
 import { TakeResourceActionInput } from './inputs/take-resource-action.input';
+import { ChooseChainEffectsInput } from './inputs/choose-chain-effect';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -64,7 +65,8 @@ const inputMap = validateinputMap({
   commitSpaceSelection: CommitSpaceSelectionInput,
   cancelInteraction: CancelInteractionInput,
   selectSpaceOnBoard: SelectSpaceOnBoardInput,
-  takeResourceAction: TakeResourceActionInput
+  takeResourceAction: TakeResourceActionInput,
+  chooseChainEffects: ChooseChainEffectsInput
 });
 
 type InputMap = typeof inputMap;

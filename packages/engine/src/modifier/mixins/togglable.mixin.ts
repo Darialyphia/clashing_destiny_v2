@@ -46,7 +46,7 @@ export class JobBonusToggleModifierMixin<
     source: AnyCard,
     private jobId: JobId
   ) {
-    super(game, () => source.player.hero.hasJob(this.jobId));
+    super(game, () => source.player.hero?.hasJob(this.jobId));
   }
 }
 

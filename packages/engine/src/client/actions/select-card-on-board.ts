@@ -2,28 +2,32 @@ import { isDefined } from '@game/shared';
 import { INTERACTION_STATES } from '../../game/game.enums';
 import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
-import type { BoardCellClickRule } from '../controllers/ui-controller';
-import type { BoardSpaceViewModel } from '../view-models/board-space.model';
+import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
-export class SelectCardOnBoardAction implements BoardCellClickRule {
+export class SelectCardOnBoardAction implements CardActionRule {
+  id = 'selectCardOnBoard';
+
   constructor(private client: GameClient) {}
 
-  predicate(cell: BoardSpaceViewModel, state: GameClientState) {
+  getLabel() {
+    return 'Select Card';
+  }
+
+  predicate(card: CardViewModel, state: GameClientState) {
     return (
       this.client.isActive() &&
-      isDefined(cell.card) &&
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-      state.interaction.ctx.elligibleCards.includes(cell.card.id) &&
+      state.interaction.ctx.elligibleCards.includes(card.id) &&
       this.client.playerId === this.client.getActivePlayerId()
     );
   }
 
-  handler(cell: BoardSpaceViewModel) {
-    if (!isDefined(cell.card)) return;
+  handler(card: CardViewModel) {
+    if (!isDefined(card)) return;
     this.client.dispatch({
       type: 'selectCardOnBoard',
       payload: {
-        cardId: cell.card.id,
+        cardId: card.id,
         playerId: this.client.playerId
       }
     });

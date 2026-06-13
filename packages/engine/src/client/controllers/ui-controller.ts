@@ -142,10 +142,8 @@ export class UiController {
 
   private buildCardClickRules() {
     this.boardSpaceClickRules = [
-      new SelectCardOnBoardAction(this.client),
       new SelectSpaceOnBoardAction(this.client),
-      new MoveAction(this.client),
-      new AttackAction(this.client)
+      new MoveAction(this.client)
     ];
   }
 
@@ -290,6 +288,10 @@ export class UiController {
     }
 
     if (event.eventName === GAME_EVENTS.ABILITY_AFTER_USE) {
+      this.reset(false);
+    }
+
+    if (event.eventName === GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET) {
       this.reset(false);
     }
   }

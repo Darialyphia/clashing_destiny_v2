@@ -1,10 +1,8 @@
 import type { Game } from '../../game/game';
-
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
   serializeTargets,
-  type AbilityBlueprint,
   type Targets,
   type SerializedTargets,
   type SpellBlueprint
@@ -79,10 +77,6 @@ export class SpellCard extends Card<
   }
 
   async playWithTargets(targets: Targets) {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
     this.targets = targets;
 
     await this.insertInChainOrExecute(
@@ -92,11 +86,6 @@ export class SpellCard extends Card<
         await this.dispose();
 
         this.targets = null;
-
-        await this.game.emit(
-          CARD_EVENTS.CARD_AFTER_PLAY,
-          new CardBeforePlayEvent({ card: this })
-        );
       },
       { targets: this.targets }
     );

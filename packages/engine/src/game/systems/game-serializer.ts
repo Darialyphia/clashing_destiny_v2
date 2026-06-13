@@ -62,6 +62,7 @@ export type SnapshotDiff = {
   currentPlayer: string;
   players: string[];
   combat: SerializedCombatState;
+  effectChain: SerializedEffectChain | null;
 };
 
 export type SerializedPlayerState = SerializedOmniscientState;
@@ -141,7 +142,9 @@ export class GameSerializer {
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
-      config: this.getObjectDiff(state.config, prevState.config)
+      config: this.getObjectDiff(state.config, prevState.config),
+      combat: state.combat,
+      effectChain: state.effectChain
     };
   }
 
@@ -307,7 +310,8 @@ export class GameSerializer {
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
-      combat: state.combat
+      combat: state.combat,
+      effectChain: state.effectChain
     };
   }
 }

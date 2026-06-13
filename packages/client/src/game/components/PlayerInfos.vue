@@ -83,6 +83,28 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
             {{ player.currentHp }}
           </div>
         </div>
+        <div class="flex gap-2">
+          <div class="rune might">
+            <span class="dual-text" :data-text="player.runes.might">
+              {{ player.runes.might }}
+            </span>
+          </div>
+          <div class="rune wisdom">
+            <span class="dual-text" :data-text="player.runes.wisdom">
+              {{ player.runes.wisdom }}
+            </span>
+          </div>
+          <div class="rune focus">
+            <span class="dual-text" :data-text="player.runes.focus">
+              {{ player.runes.focus }}
+            </span>
+          </div>
+          <div class="rune resonance">
+            <span class="dual-text" :data-text="player.runes.resonance">
+              {{ player.runes.resonance }}
+            </span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -134,11 +156,6 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   background: var(--bg);
 }
 
-.talent-bar {
-  display: flex;
-  gap: 2px;
-}
-
 .health {
   width: 47px;
   height: 43px;
@@ -154,23 +171,6 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   div {
     --dual-text-stroke-offset-y: -5px;
   }
-}
-
-.exp {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  --dual-text-stroke-offset-y: -6px;
-  --dual-text-stroke: 1px;
-  font-family: 'Lato', sans-serif;
-  font-size: var(--font-size-4);
-  font-weight: var(--font-weight-9);
-}
-
-.exp-bar {
-  width: 147px;
-  height: 11px;
-  background: var(--bg);
 }
 
 .bottom-grid {
@@ -212,5 +212,31 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
 
 .has-initiative {
   filter: drop-shadow(0 0 10px var(--yellow-2)) brightness(125%);
+}
+
+.rune {
+  background-position: top center;
+  background-size: 29px 30px;
+  background-repeat: no-repeat;
+  padding-top: 32px;
+  min-width: 29px;
+  text-align: center;
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-7);
+  position: relative;
+  z-index: 0;
+  --dual-text-stroke-offset-y: -3px;
+  &.might {
+    background-image: url('@/assets/ui/card/rune-might-large.png');
+  }
+  &.wisdom {
+    background-image: url('@/assets/ui/card/rune-wisdom-large.png');
+  }
+  &.focus {
+    background-image: url('@/assets/ui/card/rune-focus-large.png');
+  }
+  &.resonance {
+    background-image: url('@/assets/ui/card/rune-resonance-large.png');
+  }
 }
 </style>

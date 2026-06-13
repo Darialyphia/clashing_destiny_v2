@@ -2,6 +2,8 @@ import type { Config } from '../../config';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
 import type { SerializedEntity } from './game-serializer';
+import type { SerializedEffectChain } from '../effect-chain';
+import type { SerializedCombatState } from './combat.system';
 
 /**
  * JSON Patch operations (RFC 6902 inspired)
@@ -51,6 +53,8 @@ export type PatchBasedSnapshotDiff = {
   currentPlayer: string;
   players: string[];
   config: Partial<Config>;
+  combat: SerializedCombatState;
+  effectChain: SerializedEffectChain | null;
 };
 
 /**

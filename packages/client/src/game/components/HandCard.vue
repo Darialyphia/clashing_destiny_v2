@@ -95,7 +95,7 @@ const isVisible = computed(() => {
   left: 0;
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
-  --scale: 1.25;
+  --scale: 1;
   transform-origin: 50% 100%;
   transform: translateX(var(--x)) translateY(var(--offset-y))
     scale(var(--scale));
@@ -109,7 +109,7 @@ const isVisible = computed(() => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &.hoverable:hover {
-    --scale: 2;
+    --scale: 1.5;
     --hover-offset: -10px;
     z-index: var(--hand-size);
   }

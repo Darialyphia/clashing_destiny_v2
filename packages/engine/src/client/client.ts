@@ -22,6 +22,8 @@ import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
 import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { GAME_PHASES } from '../game/game.enums';
+import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
+import type { Rune } from '../player/player.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -159,6 +161,12 @@ export class GameClient {
   }
 
   getActivePlayerId() {
+    if (
+      this.stateManager.state.effectChain &&
+      this.stateManager.state.effectChain.state === EFFECT_CHAIN_STATES.BUILDING
+    ) {
+      return this.stateManager.state.effectChain.player;
+    }
     return this.stateManager.state.interaction.ctx.player;
   }
 
@@ -335,6 +343,16 @@ export class GameClient {
     });
   }
 
+  chooseChainEffect(effectId: string) {
+    this.dispatch({
+      type: 'chooseChainEffects',
+      payload: {
+        playerId: this.playerId,
+        id: effectId
+      }
+    });
+  }
+
   answerQuestion(id: string) {
     this.dispatch({
       type: 'answerQuestion',
@@ -359,6 +377,16 @@ export class GameClient {
       type: 'commitSpaceSelection',
       payload: {
         playerId: this.playerId
+      }
+    });
+  }
+
+  takeResourceAction(action: { type: 'rune'; rune: Rune } | { type: 'draw' }) {
+    this.dispatch({
+      type: 'takeResourceAction',
+      payload: {
+        playerId: this.playerId,
+        action
       }
     });
   }

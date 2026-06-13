@@ -9,7 +9,7 @@ const schema = defaultInputSchema.extend({
 export class ChooseCardsInput extends Input<typeof schema> {
   readonly name = 'chooseCards';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.PLAY_CARD];
 
   protected payloadSchema = schema;
 

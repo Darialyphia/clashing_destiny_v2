@@ -75,7 +75,7 @@ const artMainImage = computed(() => {
       <template v-if="showStats">
         <div
           v-if="isDefined(card.power)"
-          class="stat atk"
+          class="stat power"
           :class="{
             buffed: isDefined(card.basePower) && card.power > card.basePower,
             debuffed: isDefined(card.basePower) && card.power < card.basePower
@@ -221,19 +221,20 @@ const artMainImage = computed(() => {
 }
 
 .stat {
-  width: calc(27px * var(--pixel-scale));
-  height: calc(25px * var(--pixel-scale));
+  width: calc(40px * var(--pixel-scale));
+  height: calc(26px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
   bottom: calc(0px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 11px);
+  font-size: calc(var(--pixel-scale) * 14px);
   text-align: right;
-  font-weight: var(--font-weight-7);
+  font-weight: var(--font-weight-9);
   font-family: 'Lato', sans-serif;
   display: grid;
   place-content: center;
-  scale: 1.5;
+  paint-order: stroke fill;
+  z-index: 0;
   &.buffed {
     --top-color: var(--green-2);
     --bottom-color: var(--green-6);
@@ -244,21 +245,31 @@ const artMainImage = computed(() => {
   }
 }
 
-.atk {
-  background-image: url('@/assets/ui/card/attack.png');
+.power {
+  background-image: url('@/assets/ui/card/power-flipped.png');
   left: 0;
-  --dual-text-offset-y: 1px;
-  --dual-text-offset-x: -2px;
+  padding-left: calc(16px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
+}
+
+.damage {
+  background-image: url('@/assets/ui/card/damage-flipped.png');
+  left: calc(39px * var(--pixel-scale));
+  text-align: right;
+  padding-right: calc(10px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health-left.png');
+  background-image: url('@/assets/ui/card/health.png');
   right: 0;
-  padding-right: 0;
-  --dual-text-offset-x: 2px;
-  --dual-text-offset-y: 1px;
+  text-align: right;
+  padding-left: calc(18px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
-
 .durability {
   background-image: url('@/assets/ui/card/durability.png');
   right: 0;

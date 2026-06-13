@@ -21,6 +21,8 @@ import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
 import type { BoardSpaceViewModel } from './board-space.model';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
+import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
+import { AttackAction } from '../actions/attack';
 
 type CardData =
   | SerializedSpellCard
@@ -326,9 +328,9 @@ export class CardViewModel {
     );
   }
 
-  canAttackAt(space: BoardSpaceViewModel) {
+  canAttackAt(card: CardViewModel) {
     if (!this.canAttack) return false;
-    return this.potentialAttackTargets.some(target => target.id === space.id);
+    return this.potentialAttackTargets.some(target => target.id === card.id);
   }
 
   canMoveTo(space: BoardSpaceViewModel) {
@@ -425,17 +427,6 @@ export class CardViewModel {
     this.getClient().declarePlayCard(this);
   }
 
-  get actions(): CardActionRule[] {
-    const actions = this.abilityActions.filter(rule => rule.predicate());
-
-    return actions;
-  }
-
-  getCurrentAction() {
-    const state = this.getClient().state;
-    return this.actions.find(action => action.predicate(this, state)) ?? null;
-  }
-
   get abilities() {
     if ('abilities' in this.data) {
       return (this.data.abilities as string[]).map(ability => {
@@ -451,6 +442,18 @@ export class CardViewModel {
   }
 
   get hasAction() {
-    return this.canMove || this.canAttack || this.actions.length > 0;
+    return this.canMove || this.canAttack || this.abilityActions.length > 0;
+  }
+
+  get clickActions() {
+    return [
+      new AttackAction(this.getClient()),
+      new SelectCardOnBoardAction(this.getClient())
+    ];
+  }
+
+  get currentClickAction() {
+    const state = this.getClient().stateManager.state;
+    return this.clickActions.find(action => action.predicate(this, state));
   }
 }

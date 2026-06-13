@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { randomString } from '@game/shared';
+import { useMutationObserver } from '@vueuse/core';
 
 const props = defineProps<{
   path: string;
@@ -15,13 +16,18 @@ const shadowUrl = `url(#${shadowId})`;
 const circle = useTemplateRef('circle');
 const pathEl = useTemplateRef<SVGPathElement>('pathEl');
 
-const endPoint = computed(() => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  props.path; // track path changes
-  if (!pathEl.value) return { x: 0, y: 0 };
-  const length = pathEl.value.getTotalLength();
-  return pathEl.value.getPointAtLength(length);
-});
+const endPoint = ref({ x: 0, y: 0 });
+useMutationObserver(
+  pathEl,
+  () => {
+    if (!pathEl.value) return;
+    const length = pathEl.value.getTotalLength();
+    endPoint.value = pathEl.value.getPointAtLength(length);
+  },
+  {
+    attributes: true
+  }
+);
 
 let motionTween: gsap.core.Tween | null = null;
 

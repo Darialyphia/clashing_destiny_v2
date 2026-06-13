@@ -90,6 +90,22 @@ const isTargetable = computed(() => {
     cardId => cardId === card.id
   );
 });
+
+const canAttack = computed(() => {
+  if (!ui.value.selectedCard) return false;
+
+  return ui.value.selectedCard.canAttackAt(card);
+});
+
+const onMouseup = (e: MouseEvent) => {
+  if (e.button !== 0) return;
+
+  const action = card.currentClickAction;
+  if (!action) return;
+  e.stopPropagation();
+
+  action.handler(card);
+};
 </script>
 
 <template>
@@ -106,12 +122,14 @@ const isTargetable = computed(() => {
         'is-taking-damage': isTakingDamage,
         'has-ability': hasAvailableAbilities,
         'is-shaking': isShaking,
-        'is-targetable': isTargetable
+        'is-targetable': isTargetable,
+        'is-attackable': canAttack
       }
     ]"
     :style="{
       '--drop-duration': `${DROP_DURATION}ms`
     }"
+    @mouseup="onMouseup"
   >
     <GameCard
       variant="small"
@@ -138,8 +156,8 @@ const isTargetable = computed(() => {
     box-shadow: 0 6px 30px 4px black;
   }
 
-  &.is-exhausted:not(.is-being-played) {
-    filter: grayscale(35%) brightness(50%);
+  &.is-exhausted:not(.is-being-played):deep(:is(.art-main, .art-bg)) {
+    filter: grayscale(35%) brightness(65%);
   }
 
   &.is-being-played {
@@ -152,9 +170,21 @@ const isTargetable = computed(() => {
     --shadow-color: var(--orange-4);
     filter: drop-shadow(0 0 6px var(--shadow-color));
     translate: 0 -8px;
+    box-shadow: 0 0px 20px 0 var(--shadow-color);
 
     &:hover {
       --shadow-color: var(--yellow-2);
+    }
+  }
+
+  &.is-attackable {
+    --shadow-color: var(--red-5);
+    filter: drop-shadow(0 0 6px var(--shadow-color));
+    translate: 0 -8px;
+    box-shadow: 0 0px 20px 0 var(--shadow-color);
+
+    &:hover {
+      --shadow-color: var(--red-4);
     }
   }
 
@@ -191,7 +221,7 @@ const isTargetable = computed(() => {
   position: absolute;
   left: 50%;
   translate: -50% 0;
-  bottom: 7px;
+  top: 7px;
   transform: translateZ(2px);
 }
 

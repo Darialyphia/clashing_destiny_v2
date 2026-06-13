@@ -28,6 +28,9 @@ import HoveredCardInfos from './HoveredCardnfos.vue';
 import BoardSpace from './BoardSpace.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import BoardCard from './BoardCard.vue';
+import EffectChain from './EffectChain.vue';
+import CombatArrows from './CombatArrows.vue';
+import MyHero from './MyHero.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -106,6 +109,12 @@ useEventListener('contextmenu', async e => {
     e.preventDefault();
   }
 });
+
+const isScreenDimmed = computed(() => {
+  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return true;
+  if (state.value.effectChain?.state === 'BUILDING') return true;
+  return false;
+});
 </script>
 
 <template>
@@ -114,49 +123,66 @@ useEventListener('contextmenu', async e => {
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Selected Card: {{ ui.selectedCard?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
+    <div>Chain: {{ state.effectChain?.state }}</div>
   </div>
   <div class="game-board-container">
     <SVGFilters />
     <PlayedCard />
     <ChooseCardModal />
-    <LevelUpModal />
-    <!-- <CombatArrows /> -->
+    <CombatArrows />
     <AnswerQuestionModal />
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
+        <div class="opponent-hero">
+          <BoardCard
+            v-if="opponent.hero"
+            :card="opponent.hero"
+            @mouseenter="ui.hover(opponent.hero)"
+            @mouseleave="ui.unhover()"
+          />
+        </div>
+
         <div class="minions-zone">
-          <div class="opponent-back-row">
+          <div class="opponent-base zone">
             <BoardSpace
               v-for="space in opponent.base"
               :key="space.id"
               :cell-id="space.id"
             />
           </div>
-          <div class="opponent-front-row">
-            <BoardSpace
-              v-for="space in opponent.leftBattlefield"
-              :key="space.id"
-              :cell-id="space.id"
-            />
-            <BoardSpace
-              v-for="space in opponent.rightBattlefield"
-              :key="space.id"
-              :cell-id="space.id"
-            />
+          <div class="opponent-battlefields">
+            <div class="zone">
+              <BoardSpace
+                v-for="space in opponent.leftBattlefield"
+                :key="space.id"
+                :cell-id="space.id"
+              />
+            </div>
+            <div class="zone">
+              <BoardSpace
+                v-for="space in opponent.rightBattlefield"
+                :key="space.id"
+                :cell-id="space.id"
+              />
+            </div>
           </div>
-          <div class="my-front-row">
-            <BoardSpace
-              v-for="space in myPlayer.leftBattlefield"
-              :key="space.id"
-              :cell-id="space.id"
-            />
-            <BoardSpace
-              v-for="space in myPlayer.rightBattlefield"
-              :key="space.id"
-              :cell-id="space.id"
-            />
+          <div class="my-battlefields">
+            <div class="zone">
+              <BoardSpace
+                v-for="space in myPlayer.leftBattlefield"
+                :key="space.id"
+                :cell-id="space.id"
+              />
+            </div>
+            <div class="zone">
+              <BoardSpace
+                v-for="space in myPlayer.rightBattlefield"
+                :key="space.id"
+                :cell-id="space.id"
+              />
+            </div>
           </div>
-          <div class="my-back-row">
+          <div class="my-base zone">
             <BoardSpace
               v-for="space in myPlayer.base"
               :key="space.id"
@@ -182,7 +208,12 @@ useEventListener('contextmenu', async e => {
           </div>
         </div>
 
-        <div id="card-actions-portal"></div>
+        <div class="my-hero">
+          <MyHero />
+          <EffectChain class="effect-chain" />
+        </div>
+
+        <div id="card-actions-portal" class="absolute"></div>
         <div class="arrows" id="arrows" />
       </div>
     </Camera>
@@ -192,33 +223,14 @@ useEventListener('contextmenu', async e => {
   <HoveredCardInfos class="hovered-cell-infos" />
 
   <div class="my-player">
-    <div class="mb-3">
-      <BoardCard
-        v-if="myPlayer.hero"
-        :card="myPlayer.hero"
-        @mouseenter="ui.hover(myPlayer.hero)"
-        @mouseleave="ui.unhover()"
-      />
-    </div>
     <PlayerInfos :player="myPlayer" />
   </div>
   <div class="opponent-player">
     <PlayerInfos :player="opponent" />
-    <div class="mt-3">
-      <BoardCard
-        v-if="opponent.hero"
-        :card="opponent.hero"
-        @mouseenter="ui.hover(opponent.hero)"
-        @mouseleave="ui.unhover()"
-      />
-    </div>
   </div>
 
   <Transition>
-    <div
-      class="vignette"
-      v-if="state.interaction.state !== INTERACTION_STATES.IDLE"
-    />
+    <div class="vignette" v-if="isScreenDimmed" />
   </Transition>
 
   <div class="my-hand">
@@ -276,40 +288,43 @@ useEventListener('contextmenu', async e => {
 }
 
 .board {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin-inline: auto;
-  grid-template-rows: 1fr auto 1fr auto;
   transform-style: preserve-3d;
   transform-origin: top left;
   width: 100%;
+  height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
   background: url(@/assets/backgrounds/battle-background.png);
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
+  padding-bottom: 5dvh;
   /* transform: scale(v-bind('boardScale'))
     translateX(calc(v-bind('boardMargin.x') * 1px))
     translateY(calc(v-bind('boardMargin.y') * 1px)); */
   --offset-y: calc(v-bind('boardMargin.y') * 1px);
   /* background-position: center calc(var(--offset-y) * -0.5); */
-  transform: translateY(var(--offset-y));
+  /* transform: translateY(var(--offset-y)); */
 }
 
 .minions-zone {
-  width: 912px;
+  width: 1200px;
   height: 621px;
   background: url(@/assets/ui/board.png);
-  margin-top: 196px;
   margin-inline: auto;
+  margin-block-start: -10px;
   padding-block: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
   translate: 0 -8px;
-  > div:not(.right-side) {
+  .zone {
     height: 130px;
-    margin-inline: 22px;
-    width: calc(100% - 44px);
     display: flex;
     justify-content: space-between;
   }
@@ -435,28 +450,47 @@ useEventListener('contextmenu', async e => {
   }
 }
 
-.opponent-back-row {
+.opponent-base {
   position: absolute;
-  padding-inline: 40px;
+  width: 930px;
+  left: 50%;
+  translate: -50% 0;
 }
 
-.opponent-front-row {
+.opponent-battlefields {
   position: absolute;
-  padding-inline: 40px;
   top: 165px;
+  display: flex;
+  padding-inline: 22px;
+  justify-content: space-between;
+  width: 100%;
+
+  .zone {
+    width: 502px;
+    padding-inline: 10px;
+  }
 }
 
-.my-front-row {
+.my-battlefields {
   position: absolute;
-  padding-inline: 40px;
   top: 318px;
+  display: flex;
+  padding-inline: 22px;
+  justify-content: space-between;
+  width: 100%;
+
+  .zone {
+    width: 502px;
+    padding-inline: 10px;
+  }
 }
 
-.my-back-row {
-  padding-inline: 40px;
+.my-base {
   position: absolute;
+  width: 930px;
+  left: 50%;
+  translate: -50% 0;
   top: 476px;
-  padding-inline: 40px;
 }
 
 .vignette {
@@ -484,7 +518,7 @@ useEventListener('contextmenu', async e => {
 .my-player {
   position: absolute;
   left: var(--size-10);
-  top: 45%;
+  bottom: 28%;
   translate: 0 20%;
   display: flex;
   flex-direction: column;
@@ -494,7 +528,7 @@ useEventListener('contextmenu', async e => {
 .opponent-player {
   position: absolute;
   left: var(--size-10);
-  top: 40%;
+  top: 28%;
   translate: 0 -90%;
   display: flex;
   flex-direction: column;
@@ -511,7 +545,24 @@ useEventListener('contextmenu', async e => {
 
 .right-side {
   position: absolute;
-  left: 960px;
-  top: 282px;
+  left: 1180px;
+  top: 288px;
+}
+
+.my-hero {
+  align-self: start;
+  display: flex;
+  gap: var(--size-4);
+  width: 50%;
+  translate: calc(50vw - (var(--card-small-width) / 2)) 0;
+}
+
+.opponent-hero {
+  align-self: center;
+  translate: 0 -20px;
+}
+
+.effect-chain {
+  flex-grow: 1;
 }
 </style>

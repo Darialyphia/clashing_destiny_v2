@@ -60,7 +60,7 @@ const onAbilityUse = async (e: { card: string }) => {
   await waitFor(1000);
 };
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
-// useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
+useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 
 const classes = computed(() => {
   return [

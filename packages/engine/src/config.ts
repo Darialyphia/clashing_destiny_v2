@@ -40,7 +40,7 @@ export const defaultConfig: Config = {
   PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
 
   BATTLEFIELD_SLOTS: 3,
-  BASE_SLOTS: 5,
+  BASE_SLOTS: 6,
 
   MAX_MANA: 8,
 

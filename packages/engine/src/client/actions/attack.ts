@@ -1,32 +1,36 @@
 import type { GameClient } from '../client';
 import type { GameClientState } from '../controllers/state-controller';
 import { GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
-import type { BoardCellClickRule } from '../controllers/ui-controller';
 import { isDefined } from '@game/shared';
-import type { BoardSpaceViewModel } from '../view-models/board-space.model';
+import type { CardActionRule, CardViewModel } from '../view-models/card.model';
 
-export class AttackAction implements BoardCellClickRule {
+export class AttackAction implements CardActionRule {
+  id = 'attack';
   constructor(private client: GameClient) {}
 
-  predicate(cell: BoardSpaceViewModel, state: GameClientState) {
+  getLabel() {
+    return 'Attack';
+  }
+
+  predicate(card: CardViewModel, state: GameClientState) {
     return (
       isDefined(this.client.ui.selectedCard) &&
-      this.client.ui.selectedCard.canAttackAt(cell) &&
+      this.client.ui.selectedCard.canAttackAt(card) &&
       this.client.ui.isInteractivePlayer &&
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE
     );
   }
 
-  handler(space: BoardSpaceViewModel) {
-    if (!space.card) return;
+  handler(card: CardViewModel) {
+    if (!card) return;
 
     this.client.dispatch({
       type: 'declareAttack',
       payload: {
         playerId: this.client.playerId,
         attackerId: this.client.ui.selectedCard!.id,
-        targetId: space.card.id
+        targetId: card.id
       }
     });
   }

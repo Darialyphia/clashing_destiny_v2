@@ -35,7 +35,9 @@ const keyword = computed(() => {
   <HoverCardRoot :open-delay="250" :close-delay="0">
     <HoverCardTrigger>
       <span ref="el" class="trigger" :class="color">
-        <slot />
+        <span>
+          <slot />
+        </span>
       </span>
     </HoverCardTrigger>
     <HoverCardPortal>
@@ -60,18 +62,22 @@ const keyword = computed(() => {
   );
   color: white;
   padding-inline: calc(6px * var(--pixel-scale));
-  padding-block: calc(1px * var(--pixel-scale));
+  padding-block: calc(1px * var(--pixel-scale)) calc(1.5px * var(--pixel-scale));
   font-size: 0.9em;
   clip-path: polygon(
-    calc(3px * var(--pixel-scale)) 0%,
+    calc(1px * var(--pixel-scale)) 0%,
     100% 0%,
-    calc(100% - 3px * var(--pixel-scale)) 100%,
+    calc(100% - 1px * var(--pixel-scale)) 100%,
     0% 100%
   );
   font-weight: 500;
   font-family: var(--font-system-ui);
   -webkit-text-stroke: calc(1.5px * var(--pixel-scale)) black;
   paint-order: stroke fill;
+  span {
+    display: inline-block;
+    transform: skewX(-5deg);
+  }
 }
 
 .red {

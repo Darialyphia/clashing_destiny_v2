@@ -3,7 +3,13 @@ import type { Player } from '../../player/player.entity';
 import { CombatDamage, UnpreventableDamage, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type AbilityBlueprint, type MinionBlueprint } from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type CardSpeed, type JobId } from '../card.enums';
+import {
+  CARD_EVENTS,
+  CARD_LOCATIONS,
+  type CardLocation,
+  type CardSpeed,
+  type JobId
+} from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterPlayEvent,
@@ -37,6 +43,8 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
 import { match } from 'ts-pattern';
+import { isHero } from '../card-utils';
+import type { BetterExtract } from '@game/shared';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -221,8 +229,27 @@ export class MinionCard extends Card<
     });
   }
 
+  get canAttackEnemyHero(): boolean {
+    if (!this.isOnBattleField) return false;
+    const location = this.location as BetterExtract<
+      CardLocation,
+      'left_battlefield' | 'right_battlefield'
+    >;
+    const blockers = (
+      location === CARD_LOCATIONS.LEFT_BATTLEFIELD
+        ? this.player.opponent.minionsInLeftBattlefield
+        : this.player.opponent.minionsInRightBattlefield
+    ).filter(minion => !minion.isExhausted);
+
+    return blockers.length === 0;
+  }
+
   canAttack(target: AttackTarget) {
-    const base = !this._isExhausted && target.canBeAttacked(this);
+    let base = this.isOnBattleField && !this._isExhausted && target.canBeAttacked(this);
+
+    if (isHero(target) && !this.canAttackEnemyHero) {
+      base = false;
+    }
 
     return this.interceptors.canAttack.getValue(base, {
       target
@@ -398,7 +425,7 @@ export class MinionCard extends Card<
   }
 
   private async summon(position: BoardSpace) {
-    this.player.boardSide.placeCardInBase(this, position.index);
+    position.placeCard(this);
     if (this.hasSummoningSickness) {
       await this.exhaust();
     }
@@ -429,21 +456,17 @@ export class MinionCard extends Card<
   }
 
   async playAt(position: BoardSpace) {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    await this.summon(position);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
-    );
+    await this.resolve(async () => {
+      await this.summon(position);
+    });
   }
 
   // immediately plays the minion regardless of current chain or interaction state
+  // doesnt trigger BEFORE_PLAY or AFTER_PLAY events
   // this is useful when summoning minions as part of another card effect
-  playImmediatelyAt(position: BoardSpace) {
-    return this.resolve(() => this.summon(position));
+  async playImmediatelyAt(position: BoardSpace) {
+    await this.summon(position);
+    this.updatePlayedAt();
   }
 
   get potentialSummonPositions() {
@@ -508,13 +531,16 @@ export class MinionCard extends Card<
     if (!this.isOnBoard) return [];
     return match(this.position!.position.zone)
       .with(CARD_LOCATIONS.BASE, () =>
-        this.player.boardSide.base.filter(space => space.isEmpty)
+        [
+          ...this.player.boardSide.leftBattlefield,
+          ...this.player.boardSide.rightBattlefield
+        ].filter(space => space.isEmpty)
       )
       .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () =>
-        this.player.boardSide.leftBattlefield.filter(space => space.isEmpty)
+        this.player.boardSide.base.filter(space => space.isEmpty)
       )
       .with(CARD_LOCATIONS.RIGHT_BATTLEFIELD, () =>
-        this.player.boardSide.rightBattlefield.filter(space => space.isEmpty)
+        this.player.boardSide.base.filter(space => space.isEmpty)
       )
       .exhaustive();
   }

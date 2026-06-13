@@ -25,13 +25,16 @@ export class BlastModifier extends Modifier<MinionCard> {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.BLAST),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
+          eventName: GAME_EVENTS.CARD_BEFORE_DESTROY,
           filter: event => event.data.card.equals(this.target),
           handler: async () => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             if (amount === 0) return;
 
-            const elligibleTargets = game.cardSystem.getAllCardsInPlay().filter(isMinion);
+            const elligibleTargets = (this.target.position?.zone ?? [])
+              .filter(space => space.isEmpty)
+              .map(space => space.card)
+              .filter(c => isMinion(c!));
             if (elligibleTargets.length === 0) return;
 
             await game.emit(

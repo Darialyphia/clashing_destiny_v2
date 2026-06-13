@@ -92,7 +92,7 @@ export const recklessRecruit: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  power: 3,
+  power: 1,
   damage: 1,
   bounty: 1,
   canPlay: () => true,

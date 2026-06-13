@@ -15,6 +15,8 @@ import { RuneManagerComponent } from './components/rune-manager.component';
 import type { Rune } from './player.enums';
 import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
+import { GAME_EVENTS } from '../game/game.events';
+import { CardEffectTriggeredEvent } from '../card/card.events';
 
 export type PlayerOptions = {
   id: string;
@@ -40,6 +42,8 @@ export type SerializedPlayer = {
   hero: string;
   unlockedAffinities: Affinity[];
   boardSide: SerializedBoardSide;
+  runes: Record<Rune, number>;
+  canTakeResourceAction: boolean;
 };
 
 export type PlayerInterceptors = {
@@ -194,6 +198,13 @@ export class Player
   }
 
   async takeResourceAction(action: PlayerResourceAction) {
+    await this.game.emit(
+      GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+      new CardEffectTriggeredEvent({
+        card: this.hero,
+        message: `Player ${this.options.name} took a resource action: ${action.type}`
+      })
+    );
     this.resourceActionsTakenThisTurn.push(action);
     await match(action)
       .with({ type: 'rune' }, async ({ rune }) => {
@@ -293,7 +304,9 @@ export class Player
       manaRegen: this.manaRegen,
       hero: this.hero.id,
       unlockedAffinities: this.unlockedAffinities,
-      boardSide: this.boardSide.serialize()
+      boardSide: this.boardSide.serialize(),
+      runes: this.runeManager.runes,
+      canTakeResourceAction: this.canTakeResourceAction()
     };
   }
 }

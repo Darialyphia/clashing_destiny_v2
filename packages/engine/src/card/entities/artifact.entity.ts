@@ -151,15 +151,9 @@ export class ArtifactCard extends Card<
   }
 
   async playAt(position: BoardSpace) {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    await this.equip(position);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
-    );
+    await this.resolve(async () => {
+      await this.equip(position);
+    });
   }
 
   private async equip(position: BoardSpace) {
@@ -174,6 +168,7 @@ export class ArtifactCard extends Card<
   }
 
   // immediately plays the minion regardless of current chain or interaction state
+  // doesnt trigger BEFORE_PLAY or AFTER_PLAY events
   // this is useful when summoning minions as part of another card effect
   playImmediatelyAt(position: BoardSpace) {
     return this.resolve(() => this.equip(position));

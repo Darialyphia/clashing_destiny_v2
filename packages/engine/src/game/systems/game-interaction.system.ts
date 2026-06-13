@@ -24,7 +24,6 @@ import {
   UseAbilityContext,
   type UseAbilityContextOptions
 } from '../interactions/use-ability.interaction';
-import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { GAME_EVENTS } from '../game.events';
 import { CardDeclareUseAbilityEvent } from '../../card/card.events';
 import {
@@ -40,7 +39,6 @@ import {
 } from '../game.enums';
 import {
   RearrangeCardsContext,
-  type RearrangeCardBucket,
   type RearrangeCardsContextOptions
 } from '../interactions/rearrange-cards.interaction';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
@@ -49,6 +47,11 @@ import {
   type SelectingSpaceOnBoardContextOptions
 } from '../interactions/selecting-space-on-board';
 import type { BoardSpace } from '../../board/board-space.entity';
+import {
+  ChooseChainEffectContext,
+  type ChoosingChainEffectContextOptions
+} from '../interactions/choosing-chain-effect';
+import type { Effect } from '../effect-chain';
 
 export type InteractionContext =
   | {
@@ -66,6 +69,10 @@ export type InteractionContext =
   | {
       state: BetterExtract<InteractionState, 'choosing_cards'>;
       ctx: ChoosingCardsContext;
+    }
+  | {
+      state: BetterExtract<InteractionState, 'choosing_chain_effect'>;
+      ctx: ChooseChainEffectContext;
     }
   | {
       state: BetterExtract<InteractionState, 'using_ability'>;
@@ -96,6 +103,10 @@ export type SerializedInteractionContext =
   | {
       state: Extract<InteractionState, 'choosing_cards'>;
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
+    }
+  | {
+      state: Extract<InteractionState, 'choosing_chain_effect'>;
+      ctx: ReturnType<ChooseChainEffectContext['serialize']>;
     }
   | {
       state: Extract<InteractionState, 'using_ability'>;
@@ -136,6 +147,7 @@ export class GameInteractionSystem
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
     [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
+    [INTERACTION_STATES.CHOOSING_CHAIN_EFFECT]: ChooseChainEffectContext,
     [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext
   } as const;
 
@@ -146,6 +158,7 @@ export class GameInteractionSystem
     | ChoosingCardsContext
     | UseAbilityContext
     | AskQuestionContext
+    | ChooseChainEffectContext
     | RearrangeCardsContext;
 
   constructor(private game: Game) {
@@ -180,6 +193,22 @@ export class GameInteractionSystem
       stateTransition(
         INTERACTION_STATES.CHOOSING_CARDS,
         INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
+        INTERACTION_STATES.IDLE
+      ),
+
+      stateTransition(
+        INTERACTION_STATES.IDLE,
+        INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT
+      ),
+      stateTransition(
+        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CHAIN_EFFECT,
         INTERACTION_STATES.IDLE
       ),
 
@@ -357,6 +386,15 @@ export class GameInteractionSystem
       options
     );
     return this.game.inputSystem.pause<ReturnValue>();
+  }
+
+  async chooseChainEffect(options: ChoosingChainEffectContextOptions) {
+    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT);
+    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CHAIN_EFFECT].create(
+      this.game,
+      options
+    );
+    return this.game.inputSystem.pause<Effect>();
   }
 
   async rearrangeCards<T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>>(

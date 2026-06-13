@@ -82,9 +82,6 @@ export const minionOrHeroTargetRules = {
         }
 
         return (
-          [...card.player.minions, card.player.hero].some(enemy =>
-            enemy.equals(candidate)
-          ) &&
           candidate.canBeTargeted(card) &&
           (allowRepeat || !selectedCards.some(selected => selected.equals(candidate))) &&
           predicate(candidate)
@@ -258,7 +255,9 @@ export const singleEnemyMinionTargetRules = {
       card,
       label,
       timeoutFallback,
-      predicate: c => isMinion(c) && predicate(c),
+      predicate: c => {
+        return isMinion(c) && predicate(c);
+      },
       aiHints,
       canCancel
     });

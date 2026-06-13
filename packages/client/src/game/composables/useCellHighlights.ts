@@ -2,13 +2,13 @@ import {
   GAME_PHASES,
   INTERACTION_STATES
 } from '@game/engine/src/game/game.enums';
-import { useGameState, useGameUi } from './useGameClient';
+import { useGameClient, useGameState, useGameUi } from './useGameClient';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 
 export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
   const state = useGameState();
   const ui = useGameUi();
-
+  const { playerId } = useGameClient();
   const canMoveTo = computed(() => {
     if (!ui.value.selectedCard) return false;
     return ui.value.selectedCard.canMoveTo(cell.value);
@@ -16,8 +16,9 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
 
   const canAttack = computed(() => {
     if (!ui.value.selectedCard) return false;
+    if (!cell.value.card) return false;
 
-    return ui.value.selectedCard.canAttackAt(cell.value);
+    return ui.value.selectedCard.canAttackAt(cell.value.card);
   });
 
   const canSelectUnit = computed(() => {
@@ -28,6 +29,7 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
     if (state.value.phase.state === GAME_PHASES.MAIN) {
       return cell.value.card.canMove || cell.value.card.canAttack;
     }
+    if (cell.value.card.player.id !== playerId.value) return false;
 
     return false;
   });

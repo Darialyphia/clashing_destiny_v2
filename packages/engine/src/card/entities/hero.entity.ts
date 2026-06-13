@@ -249,16 +249,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
   }
 
   async play() {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
     await this.blueprint.onPlay(this.game, this, this);
     await this.game.emit(HERO_EVENTS.HERO_PLAYED, new HeroPlayedEvent({ card: this }));
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
-    );
 
     return { cancelled: false };
   }

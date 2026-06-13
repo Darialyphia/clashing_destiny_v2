@@ -67,6 +67,7 @@ export const INTERACTION_STATES = {
   IDLE: 'idle',
   SELECTING_CARDS_ON_BOARD: 'selecting_cards_on_board',
   SELECTING_SPACE_ON_BOARD: 'select_space_on_board',
+  CHOOSING_CHAIN_EFFECT: 'choosing_chain_effect',
   CHOOSING_CARDS: 'choosing_cards',
   REARRANGING_CARDS: 'rearranging_cards',
   USING_ABILITY: 'using_ability',
@@ -83,6 +84,10 @@ export const INTERACTION_STATE_TRANSITIONS = {
   START_CHOOSING_CARDS: 'start_choosing_cards',
   COMMIT_CHOOSING_CARDS: 'commit_choosing_cards',
   CANCEL_CHOOSING_CARDS: 'cancel_choosing_cards',
+
+  START_CHOOSING_CHAIN_EFFECT: 'start_choosing_chain_effect',
+  COMMIT_CHOOSING_CHAIN_EFFECT: 'commit_choosing_chain_effect',
+  CANCEL_CHOOSING_CHAIN_EFFECT: 'cancel_choosing_chain_effect',
 
   START_USING_ABILITY: 'start_using_ability',
   COMMIT_USING_ABILITY: 'commit_using_ability',
