@@ -42,7 +42,10 @@ const onMousedown = (e: MouseEvent) => {
   startY = e.clientY;
 
   document.body.addEventListener('mousemove', onMousemove);
-  document.body.addEventListener('mouseup', onMouseup, { once: true });
+  document.body.addEventListener('mouseup', onMouseup, {
+    once: true,
+    capture: true
+  });
 };
 
 const onMouseup = () => {
@@ -54,7 +57,17 @@ const onMouseup = () => {
 </script>
 
 <template>
-  <div class="wrapper" @mousedown="onMousedown">
+  <div
+    class="wrapper"
+    :class="{ 'can-act': canSelectHero }"
+    @mousedown="onMousedown"
+  >
+    <Transition>
+      <div
+        class="resource-action-indicator"
+        v-if="canSelectHero && !isResourceActionMenuOpened"
+      />
+    </Transition>
     <Transition>
       <div class="resource-actions-menu" v-if="isResourceActionMenuOpened">
         <button
@@ -115,6 +128,65 @@ const onMouseup = () => {
 <style scoped lang="postcss">
 .wrapper {
   position: relative;
+  &.can-act {
+    cursor: pointer;
+
+    & :deep(.unit) {
+      --shadow-color: var(--yellow-5);
+      filter: drop-shadow(0 0 10px var(--shadow-color));
+      box-shadow: 0 0px 25px 0 var(--shadow-color);
+      animation: pulse-hero 2s infinite ease-in-out;
+    }
+  }
+}
+
+@keyframes pulse-hero {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 5px var(--yellow-5));
+    box-shadow: 0 0px 15px 0 var(--yellow-5);
+  }
+  50% {
+    filter: drop-shadow(0 0 15px var(--yellow-3));
+    box-shadow: 0 0px 35px 2px var(--yellow-3);
+  }
+}
+
+.resource-action-indicator {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  translate: -50% 0;
+  width: 40px;
+  height: 40px;
+  background: url('@/assets/ui/action-rune-colorless.png') no-repeat center
+    center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 1;
+  animation: bounce 2s infinite ease-in-out;
+  filter: drop-shadow(0 0 10px var(--yellow-4));
+
+  &.v-enter-active,
+  &.v-leave-active {
+    transition: all 0.2s var(--ease-2);
+  }
+
+  &.v-enter-from,
+  &.v-leave-to {
+    opacity: 0;
+    translate: -50% 1rem;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    translate: -50% 0;
+  }
+  50% {
+    translate: -50% -10px;
+  }
 }
 
 .resource-actions-menu {
