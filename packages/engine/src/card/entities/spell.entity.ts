@@ -31,7 +31,7 @@ export type SpellCardInterceptors = CardInterceptors & {
 };
 
 export class SpellCard extends Card<
-  SerializedCard,
+  SerializedSpellCard,
   SpellCardInterceptors,
   SpellBlueprint
 > {

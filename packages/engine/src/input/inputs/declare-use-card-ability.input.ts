@@ -7,7 +7,6 @@ import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
-import { SpellCard } from '../../card/entities/spell.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),

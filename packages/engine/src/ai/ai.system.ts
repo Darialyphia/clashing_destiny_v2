@@ -103,6 +103,9 @@ export class AISystem {
       .with({ state: INTERACTION_STATES.SELECTING_SPACE_ON_BOARD }, ctx => {
         // TODO
       })
+      .with({ state: INTERACTION_STATES.CHOOSING_CHAIN_EFFECT }, ctx => {
+        // TODO
+      })
       .with({ state: INTERACTION_STATES.USING_ABILITY }, ctx => {
         // moves.push({
         //   input: {

@@ -38,6 +38,9 @@ export class InteractionTimeoutInput extends Input<typeof schema> {
       .with({ state: INTERACTION_STATES.USING_ABILITY }, async ctx => {
         await ctx.ctx.commit(this.player);
       })
+      .with({ state: INTERACTION_STATES.CHOOSING_CHAIN_EFFECT }, async ctx => {
+        await ctx.ctx.commit(this.player, null);
+      })
       .exhaustive();
   }
 }

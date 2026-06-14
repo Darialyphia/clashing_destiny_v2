@@ -244,7 +244,7 @@ export abstract class Card<
       .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, async () => {
         await this.sendToDiscardPile();
       })
-      .with(CARD_KINDS.HERO, async () => {
+      .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
@@ -429,32 +429,22 @@ export abstract class Card<
       return null;
     }
 
-    return match(this.kind)
-      .with(
-        CARD_KINDS.MINION,
-        CARD_KINDS.SPELL,
-        CARD_KINDS.ARTIFACT,
-        CARD_KINDS.HERO,
-        () => {
-          if (this.location !== CARD_LOCATIONS.HAND) {
-            return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
-          }
+    if (this.location !== CARD_LOCATIONS.HAND) {
+      return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
+    }
 
-          if (this.isIncombatPhaseBeforeChain) {
-            return 'You need to declare the attack target before playing cards.';
-          }
+    if (this.isIncombatPhaseBeforeChain) {
+      return 'You need to declare the attack target before playing cards.';
+    }
 
-          if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
-            return "Can't play during an effect chain.";
-          }
+    if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
+      return "Can't play during an effect chain.";
+    }
 
-          if (!this.canPayManaCost) {
-            return 'Cannot pay mana cost.';
-          }
-          return 'You cannot play this card';
-        }
-      )
-      .exhaustive();
+    if (!this.canPayManaCost) {
+      return 'Cannot pay mana cost.';
+    }
+    return 'You cannot play this card';
   }
 
   abstract play(): Promise<{ cancelled: boolean }>;

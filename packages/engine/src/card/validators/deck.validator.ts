@@ -46,7 +46,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
 
   getMaxCopies(card: ValidatableCard<TMeta>): number {
     const blueprint = this.cardPool[card.blueprintId] as CardBlueprint;
-    if (blueprint.kind === CARD_KINDS.HERO) {
+    if (blueprint.kind === CARD_KINDS.HERO || blueprint.kind === CARD_KINDS.DESTINY) {
       return 1;
     }
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;

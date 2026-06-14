@@ -17,6 +17,7 @@ import { BoardSpace, type BoardRow } from './board-space.entity';
 import { IllegalTargetError } from '../input/input-errors';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card/card.events';
 import type { ArtifactCard } from '../card/entities/artifact.entity';
+import { Battlefield } from './battlefield';
 
 export type MinionSlot = number;
 
@@ -27,8 +28,14 @@ export type SerializedBoardSide = {
   discardPile: string[];
   banishPile: string[];
   base: string[];
-  leftBattlefield: string[];
-  rightBattlefield: string[];
+  leftBattlefield: {
+    spaces: string[];
+    destinyCard: string | null;
+  };
+  rightBattlefield: {
+    spaces: string[];
+    destinyCard: string | null;
+  };
 };
 
 export type SerializedBoard = {
@@ -43,9 +50,9 @@ export class BoardSide
 
   private readonly _base: BoardSpace[];
 
-  private readonly _leftBattlefield: BoardSpace[];
+  private readonly _leftBattlefield: Battlefield;
 
-  private readonly _rightBattlefield: BoardSpace[];
+  private readonly _rightBattlefield: Battlefield;
 
   constructor(
     private game: Game,
@@ -62,23 +69,15 @@ export class BoardSide
           playerId: player.id
         })
     );
-    this._leftBattlefield = Array.from(
-      { length: game.config.BATTLEFIELD_SLOTS },
-      (_, i) =>
-        new BoardSpace(game, {
-          index: i,
-          zone: CARD_LOCATIONS.LEFT_BATTLEFIELD,
-          playerId: player.id
-        })
+    this._leftBattlefield = new Battlefield(
+      game,
+      player,
+      CARD_LOCATIONS.LEFT_BATTLEFIELD
     );
-    this._rightBattlefield = Array.from(
-      { length: game.config.BATTLEFIELD_SLOTS },
-      (_, i) =>
-        new BoardSpace(game, {
-          index: i,
-          zone: CARD_LOCATIONS.RIGHT_BATTLEFIELD,
-          playerId: player.id
-        })
+    this._rightBattlefield = new Battlefield(
+      game,
+      player,
+      CARD_LOCATIONS.RIGHT_BATTLEFIELD
     );
   }
 
@@ -189,7 +188,7 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, () => {})
+      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.DESTINY, () => {})
       .with(CARD_KINDS.ARTIFACT, () => {
         this.removeFromBase(card);
       })
