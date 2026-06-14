@@ -63,6 +63,15 @@ export class BoardSpace
       .exhaustive();
   }
 
+  get opponentZone() {
+    const opponent = this.player.opponent;
+    return match(this.position.zone)
+      .with(CARD_LOCATIONS.BASE, () => opponent.boardSide.base)
+      .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () => opponent.boardSide.leftBattlefield)
+      .with(CARD_LOCATIONS.RIGHT_BATTLEFIELD, () => opponent.boardSide.rightBattlefield)
+      .exhaustive();
+  }
+
   get index() {
     return this.position.index;
   }

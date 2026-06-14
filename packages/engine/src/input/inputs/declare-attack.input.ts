@@ -3,6 +3,7 @@ import { defaultInputSchema, Input } from '../input';
 import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import {
+  AlreadyInCombatError,
   IllegalAttackerError,
   IllegalAttackTargetError,
   NotCurrentPlayerError,
@@ -40,7 +41,7 @@ export class DeclareAttackInput extends Input<typeof schema> {
     assert(this.target.canBeAttacked, new IllegalAttackTargetError());
     assert(
       this.game.combatSystem.state === COMBAT_STEPS.DECLARE_ATTACKER,
-      new CorruptedGamephaseContextError()
+      new AlreadyInCombatError()
     );
 
     await this.game.combatSystem.declareAttacker(this.attacker);

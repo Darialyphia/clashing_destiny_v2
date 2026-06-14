@@ -16,6 +16,7 @@ import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { ArtifactCard } from './entities/artifact.entity';
+import { isHero } from './card-utils';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -54,7 +55,8 @@ export class CardSystem extends System<CardSystemOptions> {
       card =>
         card.location === CARD_LOCATIONS.BASE ||
         card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
+        isHero(card)
     );
   }
 

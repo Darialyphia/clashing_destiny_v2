@@ -31,8 +31,8 @@ export class BlastModifier extends Modifier<MinionCard> {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             if (amount === 0) return;
 
-            const elligibleTargets = (this.target.position?.zone ?? [])
-              .filter(space => space.isEmpty)
+            const elligibleTargets = (this.target.position?.opponentZone ?? [])
+              .filter(space => !space.isEmpty)
               .map(space => space.card)
               .filter(c => isMinion(c!));
             if (elligibleTargets.length === 0) return;

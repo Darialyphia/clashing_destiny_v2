@@ -127,6 +127,12 @@ export class IllegalAttackTargetError extends InputError {
   }
 }
 
+export class AlreadyInCombatError extends InputError {
+  constructor() {
+    super('You are already in combat');
+  }
+}
+
 export class IllegalMovementError extends InputError {
   constructor(point: Point) {
     super(`Cannot move at position ${point.x}:${point.y}`);

@@ -9,17 +9,17 @@ const { job } = defineProps<{
 }>();
 
 const ctx = useRichTextContext();
+
+const isDisabled = computed(() => {
+  return !ctx.card.value?.player.hero?.jobs.includes(job as JobId);
+});
 </script>
 
 <template>
   <span
     class="job-bonus"
     :class="{
-      disabled:
-        ctx?.card?.value &&
-        !ctx.card?.value?.player.hero?.jobs.includes(
-          job.toLocaleUpperCase() as JobId
-        )
+      disabled: isDisabled
     }"
   >
     <UiSimpleTooltip>

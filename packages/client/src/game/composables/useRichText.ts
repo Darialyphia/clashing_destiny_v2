@@ -1,3 +1,4 @@
+import { useSafeInject } from '@/shared/composables/useSafeInject';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import type { Nullable } from '@game/shared';
 import type { Ref, InjectionKey } from 'vue';
@@ -14,8 +15,4 @@ export const provideRichTextContext = (context: RichTextContext) => {
   return context;
 };
 
-export const useRichTextContext = () => {
-  const context = inject(RICH_TEXT_CONTEXT_KEY);
-
-  return context;
-};
+export const useRichTextContext = () => useSafeInject(RICH_TEXT_CONTEXT_KEY);

@@ -1,9 +1,11 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import {
+  battlefieldTargetRules,
   defaultCardArt,
-  emptyBoardSpaceTatgetRules,
+  emptyBoardSpaceTargetRules,
   isHero,
+  isMinion,
   noTargets,
   singleAllyMinionTargetRules,
   singleEnemyMinionTargetRules,
@@ -29,6 +31,7 @@ import {
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { RUNES } from '../../../../../player/player.enums';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
+import { isDefined } from '@game/shared';
 
 export const fireBolt: SpellBlueprint<MinionCard> = {
   id: 'fireBolt',
@@ -39,7 +42,7 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('spells/fire-bolt'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
@@ -197,7 +200,7 @@ export const fireBall: SpellBlueprint<MinionCard | HeroCard> = {
   manaCost: 4,
   speed: CARD_SPEED.FAST,
   tags: [],
-  canPlay: () => true,
+  canPlay: (game, card) => card.player.runeManager.has({ wisdom: 1 }),
   getTargets: (game, card) =>
     singleEnemyTargetRules.getTargets({
       game,
@@ -221,12 +224,12 @@ export const fireBall: SpellBlueprint<MinionCard | HeroCard> = {
   }
 };
 
-export const engulfInFlames: SpellBlueprint<MinionCard> = {
+export const engulfInFlames: SpellBlueprint = {
   id: 'engulfInFlames',
   name: 'Engulf in Flames',
   description: dedent /*html*/ `
-  Deal 1 damage to all enemy minions. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
   <rt-job-bonus job="${JOBS.MAGE.id}">This costs 1 less</rt-job-bonus>
+  Deal 1 damage to all enemy minions on target battlefield. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -239,7 +242,12 @@ export const engulfInFlames: SpellBlueprint<MinionCard> = {
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,
-  getTargets: noTargets,
+  getTargets: (game, card) =>
+    battlefieldTargetRules.getTargets({
+      game,
+      card,
+      predicate: ({ space }) => space.player.equals(card.player.opponent)
+    }),
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('engulf-in-flames-discount', game, card, {
@@ -248,7 +256,7 @@ export const engulfInFlames: SpellBlueprint<MinionCard> = {
       })
     );
   },
-  async onPlay(game, card) {
+  async onPlay(game, card, targets) {
     let damageAmount = 1;
 
     const canConsume = card.player.runeManager.has({ wisdom: 1, resonance: 1 });
@@ -268,7 +276,12 @@ export const engulfInFlames: SpellBlueprint<MinionCard> = {
       }
     }
 
-    for (const minion of card.player.enemyMinions) {
+    const minionsToDamage = targets.spaces[0].zone
+      .map(space => space.card)
+      .filter(isDefined)
+      .filter(isMinion);
+
+    for (const minion of minionsToDamage) {
       await minion.takeDamage(card, new SpellDamage(damageAmount, card));
     }
   },
@@ -295,7 +308,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
-    emptyBoardSpaceTatgetRules.canPlay(
+    emptyBoardSpaceTargetRules.canPlay(
       game,
       space =>
         space.player.equals(card.player) &&
@@ -303,7 +316,7 @@ export const lesserFireSummoning: SpellBlueprint = {
           space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD)
     ),
   getTargets: (game, card) =>
-    emptyBoardSpaceTatgetRules.getTargets({
+    emptyBoardSpaceTargetRules.getTargets({
       game,
       card,
       predicate: space =>

@@ -104,6 +104,7 @@ const onEffectClick = (effectId: string) => {
   >
     <!-- <ExplainerMessage /> -->
 
+    <p class="title dual-text" data-text="Effect Chain">Effect chain</p>
     <div class="flex items-center gap-4">
       <div class="effect-wrapper" v-for="(effect, index) in stack" :key="index">
         <InspectableCard :card-id="effect.source.id">
@@ -174,6 +175,10 @@ const onEffectClick = (effectId: string) => {
   backdrop-filter: blur(4px);
   border-radius: var(--radius-2);
   border: solid 3px transparent;
+  transition: opacity 0.5s var(--ease-3);
+  position: relative;
+  z-index: 0;
+  opacity: 0;
   --effect-chain-glow-angle: 0deg;
   &.is-active {
     border-image: conic-gradient(
@@ -184,7 +189,16 @@ const onEffectClick = (effectId: string) => {
     );
     border-image-slice: 1;
     animation: effect-chain-glow 5s linear infinite;
+    opacity: 1;
   }
+}
+
+.title {
+  position: absolute;
+  top: var(--size-2);
+  right: var(--size-2);
+  width: 20ch;
+  text-align: right;
 }
 
 .ally {

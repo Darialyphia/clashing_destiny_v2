@@ -31,7 +31,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE, AFFINITIES.ARCANE],
   tags: [],
-  maxHp: 20,
+  maxHp: 15,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(

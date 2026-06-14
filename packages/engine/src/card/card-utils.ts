@@ -2,7 +2,7 @@ import type { Game } from '../game/game';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
 import type { Player } from '../player/player.entity';
 import type { CardBlueprint, Targets } from './card-blueprint';
-import { CARD_KINDS } from './card.enums';
+import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
 import type { AnyCard } from './entities/card.entity';
 import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
@@ -136,9 +136,9 @@ export const singleEnemyTargetRules = {
     await minionOrHeroTargetRules.getTargets({
       game,
       card,
-      predicate: card => {
-        if (!isMinion(card) && !isHero(card)) return false;
-        return predicate(card);
+      predicate: c => {
+        if (c.player.equals(card.player)) return false;
+        return predicate(c);
       },
       min: 1,
       max: 1,
@@ -556,7 +556,7 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
 export const noTargets = () =>
   Promise.resolve({ cancelled: false as const, result: { cards: [], spaces: [] } });
 
-export const emptyBoardSpaceTatgetRules = {
+export const emptyBoardSpaceTargetRules = {
   canPlay: (game: Game, predicate?: (space: BoardSpace) => boolean) =>
     game.boardSystem.boardSpaces.some(
       space => space.isEmpty && (predicate ? predicate(space) : true)
@@ -597,6 +597,105 @@ export const emptyBoardSpaceTatgetRules = {
       timeoutFallback: timeoutFallback ?? [
         game.boardSystem.boardSpaces.find(
           space => space.isEmpty && (predicate ? predicate(space) : true)
+        )!
+      ],
+      getAOE: () =>
+        new PointAOEShape(game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: card.player
+        })
+    });
+
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
+    }
+    return {
+      cancelled: false as const,
+      result: { spaces: result.result, cards: [] }
+    };
+  }
+};
+
+export const battlefieldTargetRules = {
+  canPlay: (
+    game: Game,
+    predicate?: (battlefield: {
+      space: BoardSpace;
+      allySpaces: BoardSpace[];
+      enemySpaces: BoardSpace[];
+    }) => boolean
+  ) =>
+    game.boardSystem.boardSpaces.some(
+      space =>
+        (space.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+          space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD) &&
+        (predicate
+          ? predicate({
+              space,
+              allySpaces: space.zone,
+              enemySpaces: space.opponentZone
+            })
+          : true)
+    ),
+
+  getTargets: async ({
+    game,
+    card,
+    label = 'Select a battlefi',
+    timeoutFallback,
+    predicate = () => true,
+    canCancel = false
+  }: {
+    game: Game;
+    card: AnyCard;
+    label?: string | ((selectedSpaces: BoardSpace[]) => string);
+    timeoutFallback?: BoardSpace[];
+    predicate?: (battlefield: {
+      space: BoardSpace;
+      allySpaces: BoardSpace[];
+      enemySpaces: BoardSpace[];
+    }) => boolean;
+    canCancel?: boolean;
+  }): Promise<InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }>> => {
+    const result = await game.interaction.selectSpacesOnBoard({
+      source: card,
+      player: card.player,
+      canCancel,
+      getLabel: selectedSpaces =>
+        isFunction(label)
+          ? label(selectedSpaces)
+          : (label ?? 'Select position to summon'),
+      isElligible: space => {
+        return (
+          (space.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+            space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD) &&
+          (predicate
+            ? predicate({
+                space,
+                allySpaces: space.zone,
+                enemySpaces: space.opponentZone
+              })
+            : true)
+        );
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: timeoutFallback ?? [
+        game.boardSystem.boardSpaces.find(
+          space =>
+            (space.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+              space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD) &&
+            (predicate
+              ? predicate({
+                  space,
+                  allySpaces: space.zone,
+                  enemySpaces: space.opponentZone
+                })
+              : true)
         )!
       ],
       getAOE: () =>
