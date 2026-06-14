@@ -11,6 +11,7 @@ const { job } = defineProps<{
 const ctx = useRichTextContext();
 
 const isDisabled = computed(() => {
+  if (!ctx.card.value) return false;
   return !ctx.card.value?.player.hero?.jobs.includes(job as JobId);
 });
 </script>

@@ -151,14 +151,14 @@ export class Player
   }
 
   get minionsInLeftBattlefield() {
-    return this.boardSide.leftBattlefield
+    return this.boardSide.leftBattlefield.spaces
       .map(space => space.card)
       .filter(isDefined)
       .filter(isMinion);
   }
 
   get minionsInRightBattlefield() {
-    return this.boardSide.rightBattlefield
+    return this.boardSide.rightBattlefield.spaces
       .map(space => space.card)
       .filter(isDefined)
       .filter(isMinion);

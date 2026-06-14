@@ -102,15 +102,29 @@ export class PlayerViewModel {
   }
 
   get leftBattlefield() {
-    return this.data.boardSide.leftBattlefield.map(spaceId => {
-      return this.getEntities()[spaceId] as BoardSpaceViewModel;
-    });
+    return {
+      spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
+        return this.getEntities()[spaceId] as BoardSpaceViewModel;
+      }),
+      destinyCard: this.data.boardSide.leftBattlefield.destinyCard
+        ? (this.getEntities()[
+            this.data.boardSide.leftBattlefield.destinyCard
+          ] as CardViewModel)
+        : null
+    };
   }
 
   get rightBattlefield() {
-    return this.data.boardSide.rightBattlefield.map(spaceId => {
-      return this.getEntities()[spaceId] as BoardSpaceViewModel;
-    });
+    return {
+      spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
+        return this.getEntities()[spaceId] as BoardSpaceViewModel;
+      }),
+      destinyCard: this.data.boardSide.rightBattlefield.destinyCard
+        ? (this.getEntities()[
+            this.data.boardSide.rightBattlefield.destinyCard
+          ] as CardViewModel)
+        : null
+    };
   }
 
   get hero() {

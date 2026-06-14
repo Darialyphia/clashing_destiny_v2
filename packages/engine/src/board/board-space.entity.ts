@@ -52,23 +52,32 @@ export class BoardSpace
     this.position = options;
   }
 
-  get zone() {
+  get zone(): BoardSpace[] {
     return match(this.position.zone)
       .with(CARD_LOCATIONS.BASE, () => this.player.boardSide.base)
-      .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () => this.player.boardSide.leftBattlefield)
+      .with(
+        CARD_LOCATIONS.LEFT_BATTLEFIELD,
+        () => this.player.boardSide.leftBattlefield.spaces
+      )
       .with(
         CARD_LOCATIONS.RIGHT_BATTLEFIELD,
-        () => this.player.boardSide.rightBattlefield
+        () => this.player.boardSide.rightBattlefield.spaces
       )
       .exhaustive();
   }
 
-  get opponentZone() {
+  get opponentZone(): BoardSpace[] {
     const opponent = this.player.opponent;
     return match(this.position.zone)
       .with(CARD_LOCATIONS.BASE, () => opponent.boardSide.base)
-      .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () => opponent.boardSide.leftBattlefield)
-      .with(CARD_LOCATIONS.RIGHT_BATTLEFIELD, () => opponent.boardSide.rightBattlefield)
+      .with(
+        CARD_LOCATIONS.LEFT_BATTLEFIELD,
+        () => opponent.boardSide.leftBattlefield.spaces
+      )
+      .with(
+        CARD_LOCATIONS.RIGHT_BATTLEFIELD,
+        () => opponent.boardSide.rightBattlefield.spaces
+      )
       .exhaustive();
   }
 

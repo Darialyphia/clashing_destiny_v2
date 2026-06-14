@@ -12,6 +12,7 @@ import type { BoardSpace } from '../board/board-space.entity';
 import { PointAOEShape } from '../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../aoe/aoe-shape';
 import { isFunction } from '@game/shared';
+import type { DestinyCard } from './entities/destiny.entity';
 
 export const isHero = (card: AnyCard): card is HeroCard => {
   return card.kind === CARD_KINDS.HERO;
@@ -31,6 +32,10 @@ export const isArtifact = (card: AnyCard): card is ArtifactCard => {
 
 export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => {
   return isMinion(card) || isHero(card);
+};
+
+export const isDestiny = (card: AnyCard): card is DestinyCard => {
+  return card.kind === CARD_KINDS.DESTINY;
 };
 
 export const minionOrHeroTargetRules = {

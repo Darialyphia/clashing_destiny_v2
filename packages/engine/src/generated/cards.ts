@@ -15,7 +15,9 @@ export const cards = {
 "innerFire": "innerFire",
 "fireBall": "fireBall",
 "engulfInFlames": "engulfInFlames",
-"lesserFireSummoning": "lesserFireSummoning"
+"lesserFireSummoning": "lesserFireSummoning",
+"day-of-fortitude": "day-of-fortitude",
+"day-of-conquest": "day-of-conquest"
 } as const;
 
 export const collectableCards = {
@@ -29,7 +31,9 @@ export const collectableCards = {
 "innerFire": "innerFire",
 "fireBall": "fireBall",
 "engulfInFlames": "engulfInFlames",
-"lesserFireSummoning": "lesserFireSummoning"
+"lesserFireSummoning": "lesserFireSummoning",
+"day-of-fortitude": "day-of-fortitude",
+"day-of-conquest": "day-of-conquest"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -89,6 +93,16 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "lesserFireSummoning",
     "collectable": true,
     "rarity": "common"
+  },
+  {
+    "id": "day-of-fortitude",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "day-of-conquest",
+    "collectable": true,
+    "rarity": "common"
   }
 ]
 };
@@ -104,7 +118,9 @@ export const cardShortIds: Record<string, number> = {
 "innerFire": 8,
 "fireBall": 9,
 "engulfInFlames": 10,
-"lesserFireSummoning": 11
+"lesserFireSummoning": 11,
+"day-of-fortitude": 12,
+"day-of-conquest": 13
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -118,5 +134,7 @@ export const cardIdByShortId: Record<number, string> = {
 "8": "innerFire",
 "9": "fireBall",
 "10": "engulfInFlames",
-"11": "lesserFireSummoning"
+"11": "lesserFireSummoning",
+"12": "day-of-fortitude",
+"13": "day-of-conquest"
 } as const;

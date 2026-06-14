@@ -92,6 +92,12 @@ export const KEYWORDS = {
       'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
     aliases: []
   },
+  FLANKING: {
+    id: 'flanking',
+    name: 'Flanking',
+    description: 'This minion can move between battlefields.',
+    aliases: []
+  },
   STUNNED: {
     id: 'stunned',
     name: 'Stunned',

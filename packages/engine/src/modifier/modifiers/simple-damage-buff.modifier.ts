@@ -19,10 +19,11 @@ export class SimpleDamageBuffModifier<
       amount: number | (() => number);
       name?: string | (() => string);
       mixins?: ModifierMixin<T>[];
+      isUnique?: boolean;
     }
   ) {
     super(modifierType, game, card, {
-      isUnique: true,
+      isUnique: options.isUnique ?? true,
       icon: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
         return amount > 0 ? 'keyword-damage-buff' : 'keyword-damage-debuff';

@@ -85,7 +85,7 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
 
 export const cremation: SpellBlueprint = {
   id: 'cremation',
-  name: 'Cremation',
+  name: 'Ritual of Cremation',
   description: dedent /*html*/ `
   Banish 3 Fire cards from your discard pile. Draw 2 cards.
   `,

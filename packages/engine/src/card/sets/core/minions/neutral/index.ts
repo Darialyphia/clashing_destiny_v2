@@ -15,7 +15,7 @@ export const braveCitizen: MinionBlueprint = {
   id: 'braveCitizen',
   name: 'Brave Citizen',
   description: dedent /*html*/ `
-  <rt-keyword><rt-runes runes="might"></rt-runes>Assist 2</rt-keyword>.
+  <rt-keyword><rt-runes runes="might"></rt-runes>Assist 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -35,7 +35,7 @@ export const braveCitizen: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new AssistModifier(game, card, {
-        amount: 2,
+        amount: 1,
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {
             might: 1

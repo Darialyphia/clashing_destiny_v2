@@ -1,6 +1,7 @@
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { type DestinyBlueprint } from '../card-blueprint';
+import { CARD_LOCATIONS } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -29,6 +30,21 @@ export class DestinyCard extends Card<
     await this.blueprint.onPlay(this.game, this);
 
     return { cancelled: false };
+  }
+
+  get battlefield() {
+    if (
+      this.location !== CARD_LOCATIONS.LEFT_BATTLEFIELD &&
+      this.location !== CARD_LOCATIONS.RIGHT_BATTLEFIELD
+    ) {
+      return null;
+    }
+
+    if (this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.boardSide.leftBattlefield;
+    } else {
+      return this.player.boardSide.rightBattlefield;
+    }
   }
 
   serialize(): SerializedDestinyCard {

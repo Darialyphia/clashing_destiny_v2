@@ -94,14 +94,18 @@ export class BoardSide
   }
 
   get allSpaces() {
-    return [...this.base, ...this.leftBattlefield, ...this.rightBattlefield];
+    return [
+      ...this.base,
+      ...this.leftBattlefield.spaces,
+      ...this.rightBattlefield.spaces
+    ];
   }
 
   getSpace(zone: BoardRow, index: number) {
     return match(zone)
       .with('base', () => this.base[index])
-      .with('left_battlefield', () => this.leftBattlefield[index])
-      .with('right_battlefield', () => this.rightBattlefield[index])
+      .with('left_battlefield', () => this.leftBattlefield.spaces[index])
+      .with('right_battlefield', () => this.rightBattlefield.spaces[index])
       .exhaustive();
   }
 
@@ -115,7 +119,7 @@ export class BoardSide
           ) ?? [])
         ].filter(isDefined);
       }),
-      ...this.leftBattlefield.flatMap(space => {
+      ...this.leftBattlefield.spaces.flatMap(space => {
         return [
           space.card,
           ...(space.card?.modifiers.list.flatMap(modifier =>
@@ -123,7 +127,7 @@ export class BoardSide
           ) ?? [])
         ].filter(isDefined);
       }),
-      ...this.rightBattlefield.flatMap(space => {
+      ...this.rightBattlefield.spaces.flatMap(space => {
         return [
           space.card,
           ...(space.card?.modifiers.list.flatMap(modifier =>
@@ -158,11 +162,11 @@ export class BoardSide
   }
 
   placeCardInLeftBattlefield(card: MinionCard, index: number) {
-    this._leftBattlefield[index].placeCard(card);
+    this._leftBattlefield.spaces[index].placeCard(card);
   }
 
   placeCardInRightBattlefield(card: MinionCard, index: number) {
-    this._rightBattlefield[index].placeCard(card);
+    this._rightBattlefield.spaces[index].placeCard(card);
   }
 
   removeFromBase(card: AnyCard) {
@@ -173,14 +177,14 @@ export class BoardSide
   }
 
   removeFromLeftBattlefield(card: AnyCard) {
-    const space = this._leftBattlefield.find(space => space.card?.equals(card));
+    const space = this._leftBattlefield.spaces.find(space => space.card?.equals(card));
     if (space) {
       space.removeCard();
     }
   }
 
   removeFromRightBattlefield(card: AnyCard) {
-    const space = this._rightBattlefield.find(space => space.card?.equals(card));
+    const space = this._rightBattlefield.spaces.find(space => space.card?.equals(card));
     if (space) {
       space.removeCard();
     }
@@ -188,7 +192,7 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, CARD_KINDS.DESTINY, () => {})
+      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, () => {})
       .with(CARD_KINDS.ARTIFACT, () => {
         this.removeFromBase(card);
       })
@@ -196,6 +200,14 @@ export class BoardSide
         this.removeFromBase(card);
         this.removeFromLeftBattlefield(card);
         this.removeFromRightBattlefield(card);
+      })
+      .with(CARD_KINDS.DESTINY, () => {
+        if (this.leftBattlefield.destinyCard?.equals(card)) {
+          this.leftBattlefield.destinyCard = null;
+        }
+        if (this.rightBattlefield.destinyCard?.equals(card)) {
+          this.rightBattlefield.destinyCard = null;
+        }
       })
       .exhaustive();
   }
@@ -205,16 +217,26 @@ export class BoardSide
   }
 
   getCardInLeftBattlefield(cardId: string) {
+    if (this.leftBattlefield.destinyCard?.id === cardId) {
+      return this.leftBattlefield.destinyCard;
+    }
+
     return (
-      this.leftBattlefield.map(space => space.card).find(card => card?.id === cardId) ??
-      null
+      this.leftBattlefield.spaces
+        .map(space => space.card)
+        .find(card => card?.id === cardId) ?? null
     );
   }
 
   getCardInRightBattlefield(cardId: string) {
+    if (this.rightBattlefield.destinyCard?.id === cardId) {
+      return this.rightBattlefield.destinyCard;
+    }
+
     return (
-      this.rightBattlefield.map(space => space.card).find(card => card?.id === cardId) ??
-      null
+      this.rightBattlefield.spaces
+        .map(space => space.card)
+        .find(card => card?.id === cardId) ?? null
     );
   }
 
@@ -223,11 +245,11 @@ export class BoardSide
   }
 
   isInLeftBattlefield(cardId: string) {
-    return this.leftBattlefield.some(space => space.card?.id === cardId);
+    return this.leftBattlefield.spaces.some(space => space.card?.id === cardId);
   }
 
   isInRightBattlefield(cardId: string) {
-    return this.rightBattlefield.some(space => space.card?.id === cardId);
+    return this.rightBattlefield.spaces.some(space => space.card?.id === cardId);
   }
 
   isInBattlefield(cardId: string) {
@@ -242,8 +264,8 @@ export class BoardSide
     const oldPos = card.position;
     const newPos =
       battleField === 'left_battlefield'
-        ? this.leftBattlefield[index]
-        : this.rightBattlefield[index];
+        ? this.leftBattlefield.spaces[index]
+        : this.rightBattlefield.spaces[index];
 
     await this.game.emit(
       GAME_EVENTS.CARD_BEFORE_MOVE,
@@ -318,8 +340,14 @@ export class BoardSide
         remaining: this.player.cardManager.remainingCardsInMainDeck
       },
       base: this.base.map(space => space.id),
-      leftBattlefield: this.leftBattlefield.map(space => space.id),
-      rightBattlefield: this.rightBattlefield.map(space => space.id)
+      leftBattlefield: {
+        spaces: this.leftBattlefield.spaces.map(space => space.id),
+        destinyCard: this.leftBattlefield.destinyCard?.id ?? null
+      },
+      rightBattlefield: {
+        spaces: this.rightBattlefield.spaces.map(space => space.id),
+        destinyCard: this.rightBattlefield.destinyCard?.id ?? null
+      }
     };
   }
 }

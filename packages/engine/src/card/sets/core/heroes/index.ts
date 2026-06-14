@@ -29,7 +29,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   art: defaultCardArt('heroes/erina-violet-witch'),
   speed: CARD_SPEED.SLOW,
   jobs: [JOBS.MAGE],
-  affinities: [AFFINITIES.FIRE, AFFINITIES.ARCANE],
+  affinities: [AFFINITIES.ARCANE, AFFINITIES.FIRE],
   tags: [],
   maxHp: 15,
   abilities: [],

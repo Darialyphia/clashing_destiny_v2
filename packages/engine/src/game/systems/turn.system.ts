@@ -16,16 +16,15 @@ export class TurnSystem extends System<never> {
   // the initiative player is the one that can takestart an action
   private _initiativePlayer!: Player;
 
-  // the player that started the current turn with the initiative
-  private _turnInitiativePlayer!: Player;
-  // the player who will start next turn with initiative
-  private _nextTurnInitiativePlayer!: Player;
+  private firstPlayerToPassThisRound: Player | null = null;
 
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._initiativePlayer = this.game.playerSystem.player1;
-    this._turnInitiativePlayer = this._initiativePlayer;
-    this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
+    this.initiativePlayer.boardSide.leftBattlefield.destinyCard =
+      this.initiativePlayer.cardManager.destinyDeck.draw(1)[0] ?? null;
+    this.initiativePlayer.opponent.boardSide.rightBattlefield.destinyCard =
+      this.initiativePlayer.opponent.cardManager.destinyDeck.draw(1)[0] ?? null;
   }
 
   shutdown() {}
@@ -38,18 +37,43 @@ export class TurnSystem extends System<never> {
     return this._elapsedTurns;
   }
 
+  private async rotateDestinyCards() {
+    for (const player of this.game.playerSystem.players) {
+      const left = player.boardSide.leftBattlefield;
+      const right = player.boardSide.rightBattlefield;
+
+      const hasRight = !!right.destinyCard;
+      const hasLeft = !!left.destinyCard;
+      if (hasRight) {
+        const card = right.destinyCard!;
+        await right.destinyCard!.removeFromCurrentLocation();
+        player.cardManager.destinyDeck.addToBottom(card);
+        left.destinyCard = player.cardManager.destinyDeck.draw(1)[0] ?? null;
+      }
+
+      if (hasLeft) {
+        const card = left.destinyCard!;
+        await card!.removeFromCurrentLocation();
+        right.destinyCard = card;
+        console.log(player.id, player.cardManager.destinyDeck.cards.length);
+      }
+    }
+  }
+
   async startTurn() {
     await this.game.emit(
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })
     );
-    this._initiativePlayer = this._nextTurnInitiativePlayer;
-    this._turnInitiativePlayer = this._initiativePlayer;
-    this._nextTurnInitiativePlayer = this._initiativePlayer.opponent;
+    this._initiativePlayer = this.firstPlayerToPassThisRound ?? this.initiativePlayer;
+    this.firstPlayerToPassThisRound = null;
+
     await this.game.emit(
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
       new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
     );
+
+    await this.rotateDestinyCards();
   }
 
   endTurn() {
@@ -68,7 +92,9 @@ export class TurnSystem extends System<never> {
       new TurnPassEvent({ player: this._initiativePlayer })
     );
     player.passTurn();
-
+    if (!this.firstPlayerToPassThisRound) {
+      this.firstPlayerToPassThisRound = player;
+    }
     const allPlayersPassed = this.game.playerSystem.players.every(
       p => p.hasPassedThisRound
     );

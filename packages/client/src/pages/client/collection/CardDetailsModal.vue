@@ -17,6 +17,7 @@ import { useAuthedMutation } from '@/auth/composables/useAuth';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import { useMe } from '@/auth/composables/useMe';
 import { isFunction } from '@game/shared';
+import { provideRichTextContext } from '@/game/composables/useRichText';
 
 const { card } = defineProps<{
   card: {
@@ -74,6 +75,10 @@ const description = computed(() => {
   return isFunction(card.card.description)
     ? card.card.description()
     : card.card.description;
+});
+
+provideRichTextContext({
+  card: ref(null)
 });
 </script>
 

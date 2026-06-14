@@ -21,6 +21,7 @@ import type { MinionCard } from '../../../../entities/minion.entity';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import { BlastModifier } from '../../../../../modifier/modifiers/blast.modifier';
+import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
@@ -141,6 +142,82 @@ export const willowisp: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new BlastModifier(game, card, { amount: 1 }));
   },
+  async onPlay() {},
+  aiHints: {
+    shouldPlay: () => 1,
+    shouldAttack: () => 1,
+    shouldMove: () => 1,
+    getThreatScore: () => 1
+  }
+};
+
+export const fireImp: MinionBlueprint = {
+  id: 'fireImp',
+  name: 'Fire Imp',
+  description: dedent /*html*/ `
+  <rt-keyword><rt-runes runes="wisdom,might"></rt-runes> Flanking</rt-keyword>
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.MINION,
+  rarity: RARITIES.COMMON,
+  jobs: [],
+  affinities: [AFFINITIES.FIRE],
+  manaCost: 1,
+  speed: CARD_SPEED.SLOW,
+  tags: [],
+  power: 1,
+  damage: 1,
+  bounty: 1,
+  canPlay: () => true,
+  abilities: [],
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new FlankingModifier(game, card, {
+        amount: 1,
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, {
+            wisdom: 1,
+            might: 1
+          })
+        ]
+      })
+    );
+  },
+  async onPlay() {},
+  aiHints: {
+    shouldPlay: () => 1,
+    shouldAttack: () => 1,
+    shouldMove: () => 1,
+    getThreatScore: () => 1
+  }
+};
+
+export const flameArchmage: MinionBlueprint = {
+  id: 'flameArchmage',
+  name: 'Flame Archmage',
+  description: dedent /*html*/ `
+  <rt-location locations="battlefield">
+    After you play a Fire spell, you may consume <rt-runes runes="wisdom">to deal 2 damage to a minion</rt-runes>.
+  </rt-location>
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.MINION,
+  rarity: RARITIES.RARE,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.FIRE],
+  manaCost: 5,
+  speed: CARD_SPEED.SLOW,
+  tags: [],
+  power: 4,
+  damage: 2,
+  bounty: 2,
+  canPlay: () => true,
+  abilities: [],
+  async onInit(game, card) {},
   async onPlay() {},
   aiHints: {
     shouldPlay: () => 1,

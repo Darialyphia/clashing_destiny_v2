@@ -26,11 +26,13 @@ import PassButton from './PassButton.vue';
 import PlayerInfos from './PlayerInfos.vue';
 import HoveredCardInfos from './HoveredCardnfos.vue';
 import BoardSpace from './BoardSpace.vue';
-import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import BoardCard from './BoardCard.vue';
 import EffectChain from './EffectChain.vue';
 import CombatArrows from './CombatArrows.vue';
 import MyHero from './MyHero.vue';
+import GameCard from './GameCard.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import TurnIndicator from './TurnIndicator.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -152,34 +154,78 @@ const isScreenDimmed = computed(() => {
           </div>
           <div class="opponent-battlefields">
             <div class="zone">
+              <InspectableCard
+                v-if="opponent.leftBattlefield.destinyCard"
+                :card-id="opponent.leftBattlefield.destinyCard.id"
+              >
+                <GameCard
+                  class="opponent-left-destiny"
+                  :card-id="opponent.leftBattlefield.destinyCard.id"
+                  variant="small"
+                  :is-interactive="false"
+                />
+              </InspectableCard>
               <BoardSpace
-                v-for="space in opponent.leftBattlefield"
+                v-for="space in opponent.leftBattlefield.spaces"
                 :key="space.id"
                 :cell-id="space.id"
               />
             </div>
             <div class="zone">
               <BoardSpace
-                v-for="space in opponent.rightBattlefield"
+                v-for="space in opponent.rightBattlefield.spaces"
                 :key="space.id"
                 :cell-id="space.id"
               />
+              <InspectableCard
+                v-if="opponent.rightBattlefield.destinyCard"
+                :card-id="opponent.rightBattlefield.destinyCard.id"
+              >
+                <GameCard
+                  class="opponent-right-destiny"
+                  :card-id="opponent.rightBattlefield.destinyCard.id"
+                  variant="small"
+                  :is-interactive="false"
+                />
+              </InspectableCard>
             </div>
           </div>
           <div class="my-battlefields">
             <div class="zone">
+              <InspectableCard
+                v-if="myPlayer.leftBattlefield.destinyCard"
+                :card-id="myPlayer.leftBattlefield.destinyCard.id"
+              >
+                <GameCard
+                  class="my-left-destiny"
+                  :card-id="myPlayer.leftBattlefield.destinyCard.id"
+                  variant="small"
+                  :is-interactive="false"
+                />
+              </InspectableCard>
               <BoardSpace
-                v-for="space in myPlayer.leftBattlefield"
+                v-for="space in myPlayer.leftBattlefield.spaces"
                 :key="space.id"
                 :cell-id="space.id"
               />
             </div>
             <div class="zone">
               <BoardSpace
-                v-for="space in myPlayer.rightBattlefield"
+                v-for="space in myPlayer.rightBattlefield.spaces"
                 :key="space.id"
                 :cell-id="space.id"
               />
+              <InspectableCard
+                v-if="myPlayer.rightBattlefield.destinyCard"
+                :card-id="myPlayer.rightBattlefield.destinyCard.id"
+              >
+                <GameCard
+                  class="my-right-destiny"
+                  :card-id="myPlayer.rightBattlefield.destinyCard.id"
+                  variant="small"
+                  :is-interactive="false"
+                />
+              </InspectableCard>
             </div>
           </div>
           <div class="my-base zone">
@@ -243,7 +289,8 @@ const isScreenDimmed = computed(() => {
     @click="isGameSettingsOpened = true"
   />
 
-  <GamePhaseIndicator />
+  <!-- <GamePhaseIndicator /> -->
+  <TurnIndicator />
 
   <UiModal
     v-model:is-opened="isGameSettingsOpened"
@@ -298,7 +345,7 @@ const isScreenDimmed = computed(() => {
   height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
-  background: url(@/assets/backgrounds/battle-background.png);
+  background: url(@/assets/backgrounds/battle-background-hirez.png);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -328,6 +375,36 @@ const isScreenDimmed = computed(() => {
     display: flex;
     justify-content: space-between;
   }
+}
+
+.opponent-left-destiny,
+.my-left-destiny {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.opponent-left-destiny {
+  translate: -125% -10%;
+}
+
+.my-left-destiny {
+  translate: -125% 10%;
+}
+
+.opponent-right-destiny,
+.my-right-destiny {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.opponent-right-destiny {
+  translate: 125% -10%;
+}
+
+.my-right-destiny {
+  translate: 125% 25%;
 }
 
 .arrows {
@@ -468,6 +545,7 @@ const isScreenDimmed = computed(() => {
   .zone {
     width: 502px;
     padding-inline: 10px;
+    position: relative;
   }
 }
 
@@ -482,6 +560,7 @@ const isScreenDimmed = computed(() => {
   .zone {
     width: 502px;
     padding-inline: 10px;
+    position: relative;
   }
 }
 
@@ -518,7 +597,7 @@ const isScreenDimmed = computed(() => {
 .my-player {
   position: absolute;
   left: var(--size-10);
-  bottom: 28%;
+  bottom: 20%;
   translate: 0 20%;
   display: flex;
   flex-direction: column;
@@ -528,7 +607,7 @@ const isScreenDimmed = computed(() => {
 .opponent-player {
   position: absolute;
   left: var(--size-10);
-  top: 28%;
+  top: 20%;
   translate: 0 -90%;
   display: flex;
   flex-direction: column;

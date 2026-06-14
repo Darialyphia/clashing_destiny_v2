@@ -132,6 +132,7 @@ export const getJobById = (id: JobId): Job => {
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
+  DESTINY_DECK: 'destinyDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   BASE: 'base',

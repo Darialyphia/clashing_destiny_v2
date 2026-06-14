@@ -7,6 +7,7 @@ import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 import type { HeroCard } from '../entities/hero.entity';
+import type { DestinyCard } from '../entities/destiny.entity';
 
 export type CardManagerComponentOptions = {
   maxHandSize: number;
@@ -18,6 +19,8 @@ export class CardManagerComponent {
   private game: Game;
 
   readonly mainDeck: Deck<AnyCard>;
+
+  readonly destinyDeck: Deck<DestinyCard>;
 
   readonly hero!: HeroCard;
 
@@ -34,6 +37,7 @@ export class CardManagerComponent {
   ) {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
+    this.destinyDeck = new Deck(this.game, player);
   }
 
   private async buildCards<T extends AnyCard>(
@@ -50,7 +54,10 @@ export class CardManagerComponent {
 
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
-    this.mainDeck.populate(cards.filter(c => c.kind !== CARD_KINDS.HERO));
+    this.mainDeck.populate(
+      cards.filter(c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY)
+    );
+    this.destinyDeck.populate(cards.filter(c => c.kind === CARD_KINDS.DESTINY));
 
     // @ts-expect-error ts complaining about readonly
     this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
@@ -58,6 +65,7 @@ export class CardManagerComponent {
 
     if (this.options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
+      this.destinyDeck.shuffle();
     }
 
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));

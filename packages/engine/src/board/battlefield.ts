@@ -1,5 +1,5 @@
 import type { BetterExtract } from '@game/shared';
-import { type CardLocation } from '../card/card.enums';
+import { CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import { BoardSpace } from './board-space.entity';
@@ -13,7 +13,7 @@ export class Battlefield {
   constructor(
     private game: Game,
     private player: Player,
-    zone: BetterExtract<CardLocation, 'left_battlefield' | 'right_battlefield'>
+    readonly zone: BetterExtract<CardLocation, 'left_battlefield' | 'right_battlefield'>
   ) {
     this.spaces = Array.from(
       { length: game.config.BATTLEFIELD_SLOTS },
@@ -24,5 +24,17 @@ export class Battlefield {
           playerId: player.id
         })
     );
+  }
+
+  get opponentSpaces() {
+    if (this.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.opponent.boardSide.leftBattlefield.spaces;
+    } else {
+      return this.player.opponent.boardSide.rightBattlefield.spaces;
+    }
+  }
+
+  get allSpaces() {
+    return [...this.spaces, ...this.opponentSpaces];
   }
 }

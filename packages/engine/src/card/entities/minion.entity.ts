@@ -83,6 +83,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   bounty: Interceptable<number, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
   canMoveManually: Interceptable<boolean, MinionCard>;
+  canMoveBetweenBattlefields: Interceptable<boolean, MinionCard>;
 
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterAttacking: Interceptable<boolean, { target: AttackTarget }>;
@@ -123,6 +124,7 @@ export class MinionCard extends Card<
         bounty: new Interceptable(),
         canMove: new Interceptable(),
         canMoveManually: new Interceptable(),
+        canMoveBetweenBattlefields: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
         shouldSwitchInitiativeAfterAttacking: new Interceptable(),
         shouldCreateChainOnAttack: new Interceptable(),
@@ -526,21 +528,39 @@ export class MinionCard extends Card<
     return result.filter(minion => this.canAttack(minion));
   }
 
+  get canMoveBetweenBattlefields(): boolean {
+    return this.interceptors.canMoveBetweenBattlefields.getValue(false, this);
+  }
+
   get potentialMoveTargets(): BoardSpace[] {
     if (!this.canMove) return [];
     if (!this.isOnBoard) return [];
     return match(this.position!.position.zone)
       .with(CARD_LOCATIONS.BASE, () =>
         [
-          ...this.player.boardSide.leftBattlefield,
-          ...this.player.boardSide.rightBattlefield
+          ...this.player.boardSide.leftBattlefield.spaces,
+          ...this.player.boardSide.rightBattlefield.spaces
         ].filter(space => space.isEmpty)
       )
       .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () =>
-        this.player.boardSide.base.filter(space => space.isEmpty)
+        this.canMoveBetweenBattlefields
+          ? [
+              ...this.player.boardSide.base.filter(space => space.isEmpty),
+              ...this.player.boardSide.rightBattlefield.spaces.filter(
+                space => space.isEmpty
+              )
+            ]
+          : this.player.boardSide.base.filter(space => space.isEmpty)
       )
       .with(CARD_LOCATIONS.RIGHT_BATTLEFIELD, () =>
-        this.player.boardSide.base.filter(space => space.isEmpty)
+        this.canMoveBetweenBattlefields
+          ? [
+              ...this.player.boardSide.base.filter(space => space.isEmpty),
+              ...this.player.boardSide.leftBattlefield.spaces.filter(
+                space => space.isEmpty
+              )
+            ]
+          : this.player.boardSide.base.filter(space => space.isEmpty)
       )
       .exhaustive();
   }

@@ -192,9 +192,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   async playCard(id: string, player: Player) {
     assert(this.getState() === GAME_PHASES.MAIN, new WrongGamePhaseError());
 
-    const canPlay = this.game.turnSystem.initiativePlayer.equals(player);
-    assert(canPlay, new IllegalCardPlayedError());
-
     const card = player.cardManager.getCardInHandById(id);
     assert(card, new IllegalCardPlayedError());
     assert(card.canPlay(), new IllegalCardPlayedError());

@@ -11,6 +11,8 @@ import {
   lesserFireSummoning
 } from './core/spells/fire/index';
 import { braveCitizen } from './core/minions/neutral/index';
+import { dayOfFortitude } from './core/destinies/index';
+import { dayOfConquest } from './core/destinies/index';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -26,6 +28,8 @@ export const coreSet: CardSet = {
     innerFire,
     fireBall,
     engulfInFlames,
-    lesserFireSummoning
+    lesserFireSummoning,
+    dayOfFortitude,
+    dayOfConquest
   ]
 };

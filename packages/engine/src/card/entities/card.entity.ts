@@ -224,8 +224,8 @@ export abstract class Card<
     return (
       [
         ...this.player.boardSide.base,
-        ...this.player.boardSide.leftBattlefield,
-        ...this.player.boardSide.rightBattlefield
+        ...this.player.boardSide.leftBattlefield.spaces,
+        ...this.player.boardSide.rightBattlefield.spaces
       ].find(space => space.card?.equals(this)) ?? null
     );
   }
@@ -323,6 +323,9 @@ export abstract class Card<
       })
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
+      })
+      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
+        this.player.cardManager.destinyDeck.pluck(this as any);
       })
       .with(
         CARD_LOCATIONS.BASE,

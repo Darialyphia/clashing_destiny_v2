@@ -37,11 +37,19 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
   constructor(private cardPool: Record<string, CardBlueprint>) {}
 
   get size(): number {
-    return defaultConfig.MAX_MAIN_DECK_SIZE;
+    return (
+      defaultConfig.MAX_MAIN_DECK_SIZE +
+      defaultConfig.MAX_HERO_CARDS +
+      defaultConfig.MAX_DESTINY_CARDS
+    );
   }
 
   get mainDeckMaxSize(): number {
     return defaultConfig.MAX_MAIN_DECK_SIZE;
+  }
+
+  get destinyDeckSize(): number {
+    return defaultConfig.MAX_DESTINY_CARDS;
   }
 
   getMaxCopies(card: ValidatableCard<TMeta>): number {
@@ -82,6 +90,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       });
     }
     let hasHero = false;
+    let destinyCount = 0;
     for (const card of deck.cards) {
       const blueprint = this.cardPool[card.blueprintId];
       if (!blueprint) {
@@ -93,11 +102,28 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       if (blueprint?.kind === CARD_KINDS.HERO) {
         hasHero = true;
       }
+      if (blueprint?.kind === CARD_KINDS.DESTINY) {
+        destinyCount++;
+      }
 
       if (!hasHero) {
         violations.push({
           type: 'missing_hero',
           reason: 'Deck must include a hero card.'
+        });
+      }
+
+      if (destinyCount > this.destinyDeckSize) {
+        violations.push({
+          type: 'too_many_destiny_cards',
+          reason: `Deck can only include ${this.destinyDeckSize} destiny cards.`
+        });
+      }
+
+      if (hasHero && destinyCount < this.destinyDeckSize) {
+        violations.push({
+          type: 'too_few_destiny_cards',
+          reason: `Deck must include ${this.destinyDeckSize} destiny cards.`
         });
       }
 
