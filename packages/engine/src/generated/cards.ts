@@ -17,7 +17,14 @@ export const cards = {
 "engulfInFlames": "engulfInFlames",
 "lesserFireSummoning": "lesserFireSummoning",
 "day-of-fortitude": "day-of-fortitude",
-"day-of-conquest": "day-of-conquest"
+"day-of-conquest": "day-of-conquest",
+"fireImp": "fireImp",
+"flameArchmage": "flameArchmage",
+"arcaneSight": "arcaneSight",
+"conjureMight": "conjureMight",
+"conjureWisdom": "conjureWisdom",
+"conjureFocus": "conjureFocus",
+"conjureResonance": "conjureResonance"
 } as const;
 
 export const collectableCards = {
@@ -33,7 +40,14 @@ export const collectableCards = {
 "engulfInFlames": "engulfInFlames",
 "lesserFireSummoning": "lesserFireSummoning",
 "day-of-fortitude": "day-of-fortitude",
-"day-of-conquest": "day-of-conquest"
+"day-of-conquest": "day-of-conquest",
+"fireImp": "fireImp",
+"flameArchmage": "flameArchmage",
+"arcaneSight": "arcaneSight",
+"conjureMight": "conjureMight",
+"conjureWisdom": "conjureWisdom",
+"conjureFocus": "conjureFocus",
+"conjureResonance": "conjureResonance"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
@@ -103,6 +117,41 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "day-of-conquest",
     "collectable": true,
     "rarity": "common"
+  },
+  {
+    "id": "fireImp",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "flameArchmage",
+    "collectable": true,
+    "rarity": "epic"
+  },
+  {
+    "id": "arcaneSight",
+    "collectable": true,
+    "rarity": "common"
+  },
+  {
+    "id": "conjureMight",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "conjureWisdom",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "conjureFocus",
+    "collectable": true,
+    "rarity": "rare"
+  },
+  {
+    "id": "conjureResonance",
+    "collectable": true,
+    "rarity": "rare"
   }
 ]
 };
@@ -120,7 +169,14 @@ export const cardShortIds: Record<string, number> = {
 "engulfInFlames": 10,
 "lesserFireSummoning": 11,
 "day-of-fortitude": 12,
-"day-of-conquest": 13
+"day-of-conquest": 13,
+"fireImp": 14,
+"flameArchmage": 15,
+"arcaneSight": 16,
+"conjureMight": 17,
+"conjureWisdom": 18,
+"conjureFocus": 19,
+"conjureResonance": 20
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -136,5 +192,12 @@ export const cardIdByShortId: Record<number, string> = {
 "10": "engulfInFlames",
 "11": "lesserFireSummoning",
 "12": "day-of-fortitude",
-"13": "day-of-conquest"
+"13": "day-of-conquest",
+"14": "fireImp",
+"15": "flameArchmage",
+"16": "arcaneSight",
+"17": "conjureMight",
+"18": "conjureWisdom",
+"19": "conjureFocus",
+"20": "conjureResonance"
 } as const;

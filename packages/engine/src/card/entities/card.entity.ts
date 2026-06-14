@@ -51,6 +51,7 @@ export type CardInterceptors = {
   playerLevel: Interceptable<number>;
   offFactionManaCostIncrease: Interceptable<number>;
   speed: Interceptable<CardSpeed>;
+  shouldCreateChainWhenPlayed: Interceptable<boolean, AnyCard>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -61,7 +62,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   shouldSwitchInitiativeAfterPlay: new Interceptable(),
   playerLevel: new Interceptable(),
   offFactionManaCostIncrease: new Interceptable(),
-  speed: new Interceptable()
+  speed: new Interceptable(),
+  shouldCreateChainWhenPlayed: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -255,6 +257,10 @@ export abstract class Card<
     );
   }
 
+  get shouldCreateChainWhenPlayed(): boolean {
+    return this.interceptors.shouldCreateChainWhenPlayed.getValue(true, this);
+  }
+
   protected async insertInChainOrExecute(
     handler: () => Promise<void>,
     options: {
@@ -273,6 +279,10 @@ export abstract class Card<
       }
     };
 
+    if (!this.shouldCreateChainWhenPlayed) {
+      await effect.handler();
+      return this.game.inputSystem.askForPlayerInput();
+    }
     if (this.game.effectChainSystem.currentChain) {
       if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
         await this.game.effectChainSystem.addEffect(effect, this.player);

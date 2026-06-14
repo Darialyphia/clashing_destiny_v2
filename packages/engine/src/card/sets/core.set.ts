@@ -1,7 +1,13 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
 import { erinaVioletWitch } from './core/heroes/index';
-import { pyromancer, recklessRecruit, willowisp } from './core/minions/fire/index';
+import {
+  pyromancer,
+  recklessRecruit,
+  willowisp,
+  fireImp,
+  flameArchmage
+} from './core/minions/fire/index';
 import {
   fireBolt,
   cremation,
@@ -11,8 +17,14 @@ import {
   lesserFireSummoning
 } from './core/spells/fire/index';
 import { braveCitizen } from './core/minions/neutral/index';
-import { dayOfFortitude } from './core/destinies/index';
-import { dayOfConquest } from './core/destinies/index';
+import { dayOfFortitude, dayOfConquest } from './core/destinies/index';
+import { arcaneSight } from './core/spells/arcane/index';
+import {
+  conjureMight,
+  conjureWisdom,
+  conjureFocus,
+  conjureResonance
+} from './core/spells/neutral/index';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -30,6 +42,13 @@ export const coreSet: CardSet = {
     engulfInFlames,
     lesserFireSummoning,
     dayOfFortitude,
-    dayOfConquest
+    dayOfConquest,
+    fireImp,
+    flameArchmage,
+    arcaneSight,
+    conjureMight,
+    conjureWisdom,
+    conjureFocus,
+    conjureResonance
   ]
 };

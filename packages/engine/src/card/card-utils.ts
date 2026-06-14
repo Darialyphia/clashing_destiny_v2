@@ -45,9 +45,12 @@ export const minionOrHeroTargetRules = {
     { predicate, min }: { predicate: (c: MinionCard | HeroCard) => boolean; min: number }
   ) => {
     return (
-      [...card.player.minions, card.player.hero].filter(
-        c => c.canBeTargeted(card) && predicate(c)
-      ).length >= min
+      [
+        ...card.player.minions,
+        card.player.hero,
+        ...card.player.enemyMinions,
+        card.player.enemyHero
+      ].filter(c => c.canBeTargeted(card) && predicate(c)).length >= min
     );
   },
   getTargets: async ({
@@ -116,7 +119,9 @@ export const singleEnemyTargetRules = {
     predicate: (c: MinionCard | HeroCard) => boolean = () => true
   ) =>
     minionOrHeroTargetRules.canPlay(game, card, {
-      predicate: c => !c.player.equals(card.player) && predicate(c),
+      predicate: c => {
+        return !c.player.equals(card.player) && predicate(c);
+      },
       min: 1
     }),
   getTargets: async ({
@@ -234,7 +239,9 @@ export const singleAllyTargetRules = {
 
 export const singleEnemyMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
-    return singleEnemyTargetRules.canPlay(game, card, c => isMinion(c) && predicate(c));
+    return singleEnemyTargetRules.canPlay(game, card, c => {
+      return isMinion(c) && predicate(c);
+    });
   },
   async getTargets({
     game,
@@ -702,6 +709,60 @@ export const battlefieldTargetRules = {
                 })
               : true)
         )!
+      ],
+      getAOE: () =>
+        new PointAOEShape(game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: card.player
+        })
+    });
+
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
+    }
+    return {
+      cancelled: false as const,
+      result: { spaces: result.result, cards: [] }
+    };
+  }
+};
+
+export const anywhereTargetRules = {
+  canPlay: (game: Game, predicate?: (space: BoardSpace) => boolean) =>
+    game.boardSystem.boardSpaces.some(space => (predicate ? predicate(space) : true)),
+
+  getTargets: async ({
+    game,
+    card,
+    label = 'Select a space',
+    timeoutFallback,
+    predicate = () => true,
+    canCancel = false
+  }: {
+    game: Game;
+    card: AnyCard;
+    label?: string | ((selectedSpaces: BoardSpace[]) => string);
+    timeoutFallback?: BoardSpace[];
+    predicate?: (space: BoardSpace) => boolean;
+    canCancel?: boolean;
+  }): Promise<InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }>> => {
+    const result = await game.interaction.selectSpacesOnBoard({
+      source: card,
+      player: card.player,
+      canCancel,
+      getLabel: selectedSpaces =>
+        isFunction(label) ? label(selectedSpaces) : (label ?? 'Select a space'),
+      isElligible: space => {
+        return predicate(space);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: timeoutFallback ?? [
+        game.boardSystem.boardSpaces.find(space => (predicate ? predicate(space) : true))!
       ],
       getAOE: () =>
         new PointAOEShape(game, {

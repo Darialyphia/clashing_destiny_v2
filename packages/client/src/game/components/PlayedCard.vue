@@ -10,7 +10,6 @@ const state = useGameState();
 
 useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   const playedCard = state.value.entities[event.card.id] as CardViewModel;
-  console.log('CARD_BEFORE_PLAY', playedCard.name);
 
   card.value = playedCard;
 

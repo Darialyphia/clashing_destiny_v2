@@ -15,7 +15,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import { CARD_EVENTS, type CardSpeed, type JobId } from '../card.enums';
-import { CardBeforePlayEvent, CardPlayEvent } from '../card.events';
+import { CardPlayEvent } from '../card.events';
 import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedSpellCard = SerializedCard & {
@@ -44,7 +44,8 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBeTargeted: new Interceptable()
+        canBeTargeted: new Interceptable(),
+        shouldCreateChain: new Interceptable()
       },
       options
     );

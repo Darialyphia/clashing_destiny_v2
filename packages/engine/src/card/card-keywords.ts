@@ -171,7 +171,8 @@ export const KEYWORDS = {
   TAUNT: {
     id: 'taunt',
     name: 'Taunt',
-    description: 'Enemy units must attack this unit if able.',
+    description:
+      'Enemy units on the same battlefield as this must attack this unit if able.',
     aliases: []
   },
   REGENERATION: {
