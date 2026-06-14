@@ -134,7 +134,6 @@ const onMouseup = () => {
     & :deep(.unit) {
       --shadow-color: var(--yellow-5);
       filter: drop-shadow(0 0 10px var(--shadow-color));
-      box-shadow: 0 0px 25px 0 var(--shadow-color);
       animation: pulse-hero 2s infinite ease-in-out;
     }
   }
@@ -143,12 +142,10 @@ const onMouseup = () => {
 @keyframes pulse-hero {
   0%,
   100% {
-    filter: drop-shadow(0 0 5px var(--yellow-5));
-    box-shadow: 0 0px 15px 0 var(--yellow-5);
+    filter: drop-shadow(0 0 5px var(--lime-5));
   }
   50% {
-    filter: drop-shadow(0 0 15px var(--yellow-3));
-    box-shadow: 0 0px 35px 2px var(--yellow-3);
+    filter: drop-shadow(0 0 15px var(--lime-3));
   }
 }
 
@@ -164,7 +161,7 @@ const onMouseup = () => {
   background-size: contain;
   pointer-events: none;
   z-index: 1;
-  animation: bounce 2s infinite ease-in-out;
+  animation: resource-action-indicator-float 2s infinite ease-in-out;
   filter: drop-shadow(0 0 10px var(--yellow-4));
 
   &.v-enter-active,
@@ -179,7 +176,7 @@ const onMouseup = () => {
   }
 }
 
-@keyframes bounce {
+@keyframes resource-action-indicator-float {
   0%,
   100% {
     translate: -50% 0;
