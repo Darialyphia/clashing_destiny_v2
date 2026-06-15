@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { SpellBlueprint } from '../../../../card-blueprint';
+import type { MinionBlueprint, SpellBlueprint } from '../../../../card-blueprint';
 import {
   anywhereTargetRules,
   defaultCardArt,
@@ -20,6 +20,8 @@ import { predict } from '../../../../card-actions-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SimplePowerBuffModifier } from '../../../../../modifier/modifiers/simple-power-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { SpellDamage } from '../../../../../utils/damage';
+import { RUNES } from '../../../../../player/player.enums';
 
 export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
@@ -55,7 +57,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   name: 'Arcane Spark',
   description: dedent /*html*/ `
     Give a minion -1 Power this turn. 
-    <rt-runes runes="focus,wisdom">Draw a card.</rt-runes>
+    <rt-runes runes="focus,wisdom"></rt-runes>Draw a card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -86,7 +88,9 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
       })
     );
 
-    await card.player.cardManager.draw(1);
+    if (card.player.runeManager.has({ focus: 1, wisdom: 1 })) {
+      await card.player.cardManager.draw(1);
+    }
   },
   aiHints: {
     shouldPlay: () => 1
@@ -153,6 +157,50 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
     } else {
       await minion.addToHand();
     }
+  },
+  aiHints: {
+    shouldPlay: () => 1
+  }
+};
+
+export const fallingStar: SpellBlueprint<MinionCard> = {
+  id: 'fallingStar',
+  name: 'Falling Star',
+  description: dedent /*html*/ `
+    Consume <rt-runes runes="resonance"></rt-runes>. Deal 1 damage to a minion at a battlefield and give it -2 Power.
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.SPELL,
+  rarity: RARITIES.RARE,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.ARCANE],
+  manaCost: 2,
+  speed: CARD_SPEED.FAST,
+  tags: [],
+  canPlay: (game, card) =>
+    singleMinionTargetRules.canPlay(game, card) &&
+    card.player.runeManager.has({ resonance: 1 }),
+  getTargets: (game, card) =>
+    singleMinionTargetRules.getTargets({
+      game,
+      card,
+      aiHints: {
+        shouldPick: () => 1
+      },
+      timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card)
+    }),
+  async onInit() {},
+  async onPlay(game, card, targets) {
+    const minion = targets.cards[0];
+    await card.player.runeManager.remove([RUNES.RESONANCE]);
+    await minion.takeDamage(card, new SpellDamage(1, card));
+    await minion.modifiers.add(
+      new SimplePowerBuffModifier('fallingStar', game, card, {
+        amount: -2
+      })
+    );
   },
   aiHints: {
     shouldPlay: () => 1

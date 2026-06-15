@@ -277,7 +277,7 @@ export const flameArchmage: MinionBlueprint = {
 
               if (!minionTarget) return;
 
-              await card.player.runeManager.removeRunes([RUNES.WISDOM]);
+              await card.player.runeManager.remove([RUNES.WISDOM]);
               await minionTarget.takeDamage(card, new AbilityDamage(2));
             }
           })

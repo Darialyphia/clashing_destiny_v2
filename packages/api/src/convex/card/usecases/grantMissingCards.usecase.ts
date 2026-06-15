@@ -1,9 +1,10 @@
+import type { CardKind } from '@game/engine/src/card/card.enums';
 import { GIFT_KINDS, GIFT_SOURCES } from '../../gift/gift.constants';
 import type { GiftRepository } from '../../gift/repositories/gift.repository';
 import type { UseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
 import type { CardRepository } from '../repositories/card.repository';
-import { collectableCards } from '@game/engine/src/generated/cards';
+import { collectableCards, cardsBySet } from '@game/engine/src/generated/cards';
 
 export type GrantMissingCardsUseCaseInput = {
   userId: UserId;
@@ -24,13 +25,23 @@ export class GrantMissingCardsUseCase
   async execute(
     input: GrantMissingCardsUseCaseInput
   ): Promise<GrantMissingCardsUseCaseOutput> {
-    const MAX_COPIES = 4;
-
+    const MAX_COPIES_PER_KIND: Record<CardKind, number> = {
+      MINION: 3,
+      SPELL: 3,
+      ARTIFACT: 3,
+      HERO: 1,
+      DESTINY: 1
+    };
     const cardsToGift: Array<{ blueprintId: string; copies: number }> = [];
+
+    const allCardsDef = Object.values(cardsBySet).flat();
 
     for (const cardName of Object.values(collectableCards)) {
       const card = await this.ctx.cardRepo.findIdentical(input.userId, cardName, false);
       const copiesOwned = card?.copiesOwned.value ?? 0;
+      const cardDef = allCardsDef.find(c => c.id === cardName);
+      const MAX_COPIES = cardDef ? MAX_COPIES_PER_KIND[cardDef.kind] : 0;
+
       if (copiesOwned < MAX_COPIES) {
         const copiesNeeded = MAX_COPIES - copiesOwned;
         cardsToGift.push({ blueprintId: cardName, copies: copiesNeeded });

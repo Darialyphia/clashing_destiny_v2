@@ -85,7 +85,7 @@ export class Player
 
   private options: PlayerOptions;
 
-  hasPassedThisRound = false;
+  hasPassedThisTurn = false;
 
   resourceActionsTakenThisTurn: PlayerResourceAction[] = [];
 
@@ -208,7 +208,7 @@ export class Player
     this.resourceActionsTakenThisTurn.push(action);
     await match(action)
       .with({ type: 'rune' }, async ({ rune }) => {
-        await this.runeManager.addRunes([rune]);
+        await this.runeManager.add([rune]);
       })
       .with({ type: 'draw' }, async () => {
         await this.cardManager.draw(1);
@@ -235,11 +235,11 @@ export class Player
   }
 
   passTurn() {
-    this.hasPassedThisRound = true;
+    this.hasPassedThisTurn = true;
   }
 
   async startTurn() {
-    this.hasPassedThisRound = false;
+    this.hasPassedThisTurn = false;
 
     for (const card of this.allCardsInPlay) {
       if (card.shouldWakeUpAtTurnStart) {

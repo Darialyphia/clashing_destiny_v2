@@ -96,7 +96,7 @@ export class TurnSystem extends System<never> {
       this.firstPlayerToPassThisRound = player;
     }
     const allPlayersPassed = this.game.playerSystem.players.every(
-      p => p.hasPassedThisRound
+      p => p.hasPassedThisTurn
     );
     if (allPlayersPassed) {
       await this.game.gamePhaseSystem.endTurn();
@@ -110,6 +110,10 @@ export class TurnSystem extends System<never> {
   }
 
   async switchInitiative() {
+    const opponentCanReceiveInitiative =
+      !this._initiativePlayer.opponent.hasPassedThisTurn;
+    if (!opponentCanReceiveInitiative) return;
+
     this._initiativePlayer = this._initiativePlayer.opponent;
 
     await this.game.emit(

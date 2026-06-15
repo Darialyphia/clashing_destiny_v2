@@ -3,7 +3,8 @@
    * This file should be used in the api package  to reference card ids
    *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
    */
-import type { Rarity } from '../card/card.enums';
+import type { Rarity, CardKind } from '../card/card.enums';
+
 export const cards = {
 "erina-violet-witch": "erina-violet-witch",
 "fireBolt": "fireBolt",
@@ -24,7 +25,10 @@ export const cards = {
 "conjureMight": "conjureMight",
 "conjureWisdom": "conjureWisdom",
 "conjureFocus": "conjureFocus",
-"conjureResonance": "conjureResonance"
+"conjureResonance": "conjureResonance",
+"arcaneSpark": "arcaneSpark",
+"repulsorShield": "repulsorShield",
+"fallingStar": "fallingStar"
 } as const;
 
 export const collectableCards = {
@@ -47,111 +51,152 @@ export const collectableCards = {
 "conjureMight": "conjureMight",
 "conjureWisdom": "conjureWisdom",
 "conjureFocus": "conjureFocus",
-"conjureResonance": "conjureResonance"
+"conjureResonance": "conjureResonance",
+"arcaneSpark": "arcaneSpark",
+"repulsorShield": "repulsorShield",
+"fallingStar": "fallingStar"
 } as const;
 
-type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity }>;
+type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
 export const cardsBySet: Record<string, CardSet> = {
 "CORE": [
   {
     "id": "erina-violet-witch",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "kind": "HERO"
   },
   {
     "id": "fireBolt",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "SPELL"
   },
   {
     "id": "pyromancer",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "MINION"
   },
   {
     "id": "braveCitizen",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "MINION"
   },
   {
     "id": "recklessRecruit",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "MINION"
   },
   {
     "id": "willowisp",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "MINION"
   },
   {
     "id": "cremation",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "SPELL"
   },
   {
     "id": "innerFire",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "SPELL"
   },
   {
     "id": "fireBall",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "kind": "SPELL"
   },
   {
     "id": "engulfInFlames",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "kind": "SPELL"
   },
   {
     "id": "lesserFireSummoning",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "SPELL"
   },
   {
     "id": "day-of-fortitude",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "DESTINY"
   },
   {
     "id": "day-of-conquest",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "DESTINY"
   },
   {
     "id": "fireImp",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "MINION"
   },
   {
     "id": "flameArchmage",
     "collectable": true,
-    "rarity": "epic"
+    "rarity": "epic",
+    "kind": "MINION"
   },
   {
     "id": "arcaneSight",
     "collectable": true,
-    "rarity": "common"
+    "rarity": "common",
+    "kind": "SPELL"
   },
   {
     "id": "conjureMight",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "kind": "SPELL"
   },
   {
     "id": "conjureWisdom",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "kind": "SPELL"
   },
   {
     "id": "conjureFocus",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "kind": "SPELL"
   },
   {
     "id": "conjureResonance",
     "collectable": true,
-    "rarity": "rare"
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "arcaneSpark",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "repulsorShield",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "fallingStar",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
   }
 ]
 };
@@ -176,7 +221,10 @@ export const cardShortIds: Record<string, number> = {
 "conjureMight": 17,
 "conjureWisdom": 18,
 "conjureFocus": 19,
-"conjureResonance": 20
+"conjureResonance": 20,
+"arcaneSpark": 21,
+"repulsorShield": 22,
+"fallingStar": 23
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -199,5 +247,8 @@ export const cardIdByShortId: Record<number, string> = {
 "17": "conjureMight",
 "18": "conjureWisdom",
 "19": "conjureFocus",
-"20": "conjureResonance"
+"20": "conjureResonance",
+"21": "arcaneSpark",
+"22": "repulsorShield",
+"23": "fallingStar"
 } as const;

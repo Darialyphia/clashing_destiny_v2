@@ -24,7 +24,7 @@ export class RuneManagerComponent {
     });
   }
 
-  async addRunes(runes: Rune[]) {
+  async add(runes: Rune[]) {
     const gainedRunes: Rune[] = [];
     runes.forEach(rune => {
       this._runes[rune]++;
@@ -40,7 +40,7 @@ export class RuneManagerComponent {
     );
   }
 
-  async removeRunes(runes: Rune[]) {
+  async remove(runes: Rune[]) {
     const lostRunes: Rune[] = [];
     runes.forEach(rune => {
       if (this._runes[rune] > 0) {

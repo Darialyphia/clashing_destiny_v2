@@ -31,10 +31,10 @@ export const conjureMight: SpellBlueprint = {
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.runeManager.addRunes([RUNES.MIGHT]);
+    await card.player.runeManager.add([RUNES.MIGHT]);
     game.once(GAME_EVENTS.TURN_END, async () => {
       if (card.player.runeManager.has({ might: 1 })) {
-        await card.player.runeManager.removeRunes([RUNES.MIGHT]);
+        await card.player.runeManager.remove([RUNES.MIGHT]);
       }
     });
   },
@@ -63,10 +63,10 @@ export const conjureWisdom: SpellBlueprint = {
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.runeManager.addRunes([RUNES.WISDOM]);
+    await card.player.runeManager.add([RUNES.WISDOM]);
     game.once(GAME_EVENTS.TURN_END, async () => {
       if (card.player.runeManager.has({ wisdom: 1 })) {
-        await card.player.runeManager.removeRunes([RUNES.WISDOM]);
+        await card.player.runeManager.remove([RUNES.WISDOM]);
       }
     });
   },
@@ -95,10 +95,10 @@ export const conjureFocus: SpellBlueprint = {
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.runeManager.addRunes([RUNES.FOCUS]);
+    await card.player.runeManager.add([RUNES.FOCUS]);
     game.once(GAME_EVENTS.TURN_END, async () => {
       if (card.player.runeManager.has({ focus: 1 })) {
-        await card.player.runeManager.removeRunes([RUNES.FOCUS]);
+        await card.player.runeManager.remove([RUNES.FOCUS]);
       }
     });
   },
@@ -127,10 +127,10 @@ export const conjureResonance: SpellBlueprint = {
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.runeManager.addRunes([RUNES.RESONANCE]);
+    await card.player.runeManager.add([RUNES.RESONANCE]);
     game.once(GAME_EVENTS.TURN_END, async () => {
       if (card.player.runeManager.has({ resonance: 1 })) {
-        await card.player.runeManager.removeRunes([RUNES.RESONANCE]);
+        await card.player.runeManager.remove([RUNES.RESONANCE]);
       }
     });
   },

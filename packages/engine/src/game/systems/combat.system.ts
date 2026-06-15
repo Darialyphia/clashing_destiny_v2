@@ -170,6 +170,8 @@ export class CombatSystem
     assert(isDefined(this.defender), new CorruptedGamephaseContextError());
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
 
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.RESOLVE_COMBAT);
+
     if (!this.attacker.canResolveCombat || !this.defender.canResolveCombat) {
       await this.game.emit(
         COMBAT_EVENTS.ATTACK_FIZZLED,
@@ -178,37 +180,35 @@ export class CombatSystem
           target: this.defender
         })
       );
-    }
+    } else {
+      await this.game.emit(
+        COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
+        new BeforeResolveCombatEvent({
+          attacker: this.attacker!,
+          target: this.defender!
+        })
+      );
 
-    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.RESOLVE_COMBAT);
+      const winner = this.getWinner(this.attacker, this.defender);
+      await this.dealDamage();
 
-    await this.game.emit(
-      COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT,
-      new BeforeResolveCombatEvent({
-        attacker: this.attacker!,
-        target: this.defender!
-      })
-    );
+      await this.game.emit(
+        COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
+        new AfterResolveCombatEvent({
+          attacker: this.attacker!,
+          target: this.defender!,
+          winner
+        })
+      );
 
-    const winner = this.getWinner(this.attacker, this.defender);
-    await this.dealDamage();
-
-    await this.game.emit(
-      COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
-      new AfterResolveCombatEvent({
-        attacker: this.attacker!,
-        target: this.defender!,
-        winner
-      })
-    );
-
-    if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
-      await this.game.turnSystem.switchInitiative();
+      this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
     }
 
     this._attacker = null;
     this._defender = null;
-    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
+    if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
+      await this.game.turnSystem.switchInitiative();
+    }
   }
 
   private getDamagingParticipants(

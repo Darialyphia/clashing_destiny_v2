@@ -272,7 +272,7 @@ export const engulfInFlames: SpellBlueprint = {
       });
       if (shouldConsume) {
         damageAmount = 2;
-        await card.player.runeManager.removeRunes([RUNES.WISDOM, RUNES.RESONANCE]);
+        await card.player.runeManager.remove([RUNES.WISDOM, RUNES.RESONANCE]);
       }
     }
 

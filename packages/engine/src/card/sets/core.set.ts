@@ -18,7 +18,12 @@ import {
 } from './core/spells/fire/index';
 import { braveCitizen } from './core/minions/neutral/index';
 import { dayOfFortitude, dayOfConquest } from './core/destinies/index';
-import { arcaneSight } from './core/spells/arcane/index';
+import {
+  arcaneSight,
+  repulsorShield,
+  fallingStar,
+  arcaneSpark
+} from './core/spells/arcane/index';
 import {
   conjureMight,
   conjureWisdom,
@@ -49,6 +54,9 @@ export const coreSet: CardSet = {
     conjureMight,
     conjureWisdom,
     conjureFocus,
-    conjureResonance
+    conjureResonance,
+    arcaneSpark,
+    repulsorShield,
+    fallingStar
   ]
 };
