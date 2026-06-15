@@ -89,6 +89,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
         reason: `Deck must have exactly ${this.size} cards.`
       });
     }
+
     let hasHero = false;
     let destinyCount = 0;
     for (const card of deck.cards) {
@@ -106,24 +107,10 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
         destinyCount++;
       }
 
-      if (!hasHero) {
-        violations.push({
-          type: 'missing_hero',
-          reason: 'Deck must include a hero card.'
-        });
-      }
-
       if (destinyCount > this.destinyDeckSize) {
         violations.push({
           type: 'too_many_destiny_cards',
           reason: `Deck can only include ${this.destinyDeckSize} destiny cards.`
-        });
-      }
-
-      if (hasHero && destinyCount < this.destinyDeckSize) {
-        violations.push({
-          type: 'too_few_destiny_cards',
-          reason: `Deck must include ${this.destinyDeckSize} destiny cards.`
         });
       }
 
@@ -134,6 +121,21 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
         })
       );
     }
+
+    if (destinyCount < this.destinyDeckSize) {
+      violations.push({
+        type: 'too_few_destiny_cards',
+        reason: `Deck must include ${this.destinyDeckSize} destiny cards.`
+      });
+    }
+
+    if (!hasHero) {
+      violations.push({
+        type: 'missing_hero',
+        reason: 'Deck must include a hero card.'
+      });
+    }
+
     if (violations.length > 0) {
       return { result: 'failure', violations };
     }

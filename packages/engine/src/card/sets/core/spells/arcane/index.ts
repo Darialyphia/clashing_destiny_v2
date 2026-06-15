@@ -264,7 +264,6 @@ export const starConvergence: SpellBlueprint = {
   id: 'starconvergence',
   name: 'Star Convergence',
   description: dedent /*html*/ `
-  Consume <rt-runes runes="resonance"></rt-runes>
   Until the end of turn, whenever you would draw a card, put a random Arcane spell from your deck on top of your deck.
   <rt-runes runes="wisdom,resonance"></rt-runes>Draw a card.
   `,
@@ -278,11 +277,10 @@ export const starConvergence: SpellBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  canPlay: (game, card) => card.player.runeManager.has({ resonance: 1 }),
+  canPlay: () => true,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.runeManager.remove([RUNES.RESONANCE]);
     await card.player.hero.modifiers.add(
       new Modifier<HeroCard>('starConvergence', game, card, {
         mixins: [

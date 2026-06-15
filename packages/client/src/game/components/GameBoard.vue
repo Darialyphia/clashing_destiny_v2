@@ -33,6 +33,7 @@ import MyHero from './MyHero.vue';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import TurnIndicator from './TurnIndicator.vue';
+import RearrangeCardsModal from './RearrangeCardsModal.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -133,6 +134,7 @@ const isScreenDimmed = computed(() => {
     <ChooseCardModal />
     <CombatArrows />
     <AnswerQuestionModal />
+    <RearrangeCardsModal />
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="opponent-hero">

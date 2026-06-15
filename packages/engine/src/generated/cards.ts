@@ -34,7 +34,8 @@ export const cards = {
 "manaWeaverApprentice": "manaWeaverApprentice",
 "mysticRecall": "mysticRecall",
 "starconvergence": "starconvergence",
-"restrain-the-beast": "restrain-the-beast"
+"restrain-the-beast": "restrain-the-beast",
+"crowds-favor": "crowds-favor"
 } as const;
 
 export const collectableCards = {
@@ -66,7 +67,8 @@ export const collectableCards = {
 "manaWeaverApprentice": "manaWeaverApprentice",
 "mysticRecall": "mysticRecall",
 "starconvergence": "starconvergence",
-"restrain-the-beast": "restrain-the-beast"
+"restrain-the-beast": "restrain-the-beast",
+"crowds-favor": "crowds-favor"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -245,6 +247,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "DESTINY"
+  },
+  {
+    "id": "crowds-favor",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "DESTINY"
   }
 ]
 };
@@ -278,7 +286,8 @@ export const cardShortIds: Record<string, number> = {
 "manaWeaverApprentice": 25,
 "mysticRecall": 26,
 "starconvergence": 27,
-"restrain-the-beast": 29
+"restrain-the-beast": 29,
+"crowds-favor": 30
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -310,5 +319,6 @@ export const cardIdByShortId: Record<number, string> = {
 "26": "mysticRecall",
 "27": "starconvergence",
 "28": "birdOfGoodLuck",
-"29": "restrain-the-beast"
+"29": "restrain-the-beast",
+"30": "crowds-favor"
 } as const;

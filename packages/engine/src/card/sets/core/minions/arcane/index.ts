@@ -1,10 +1,6 @@
 import dedent from 'dedent';
-import {
-  RuneCostToggleModifierMixin,
-  TogglableModifierMixin
-} from '../../../../../modifier/mixins/togglable.mixin';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import {
@@ -61,7 +57,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   id: 'manaWeaverApprentice',
   name: 'Mana Weaver Apprentice',
   description: dedent /*html*/ `
-    I have <rt-keyword>Attacker 2</rt-keyword> if you have played 2 or more spells this turn.
+    I have <rt-keyword>Attacker 3</rt-keyword> if you have played 2 or more spells this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -81,7 +77,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new AttackerModifier(game, card, {
-        amount: 2,
+        amount: 3,
         mixins: [
           new TogglableModifierMixin(
             game,

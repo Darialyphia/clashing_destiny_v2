@@ -16,6 +16,7 @@ import { SimplePowerBuffModifier } from '../../../../modifier/modifiers/simple-p
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { SimpleBountyBuffModifier } from '../../../../modifier/modifiers/simple-bounty-modifier';
 
 export const dayOfFortitude: DestinyBlueprint = {
   id: 'day-of-fortitude',
@@ -123,7 +124,7 @@ At the start of the turn, exhaust the minion with the highest Power at this batt
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/placeholder'),
+  art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
@@ -135,7 +136,9 @@ At the start of the turn, exhaust the minion with the highest Power at this batt
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.TURN_START,
             async handler() {
-              const battlefield = card.battlefield!;
+              const battlefield = card.battlefield;
+              if (!battlefield) return;
+
               const minions = battlefield.allSpaces
                 .map(space => space.card)
                 .filter(isDefined)
@@ -171,7 +174,7 @@ export const crowdsFavor: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('clash-of-titans', game, card, {
+      new WhileOnBattlefieldModifier<DestinyCard>('crowds-favor', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {
@@ -182,7 +185,7 @@ export const crowdsFavor: DestinyBlueprint = {
             },
             getModifiers(candidate) {
               return [
-                new SimplePowerBuffModifier('clash-of-titans-bounty-buff', game, card, {
+                new SimpleBountyBuffModifier('clash-of-titans-bounty-buff', game, card, {
                   isUnique: false,
                   amount: 1,
                   mixins: [new TogglableModifierMixin(game, () => isMinion(candidate))]

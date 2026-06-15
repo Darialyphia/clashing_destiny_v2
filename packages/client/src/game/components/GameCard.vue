@@ -7,7 +7,7 @@ import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
-import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import CardModifiers from './CardModifiers.vue';
 import { formatAbilityText } from '@/utils/formatters';
 import { provideRichTextContext } from '../composables/useRichText';
@@ -110,7 +110,10 @@ provideRichTextContext({
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
           expCost: overrides.expCost ?? card.expCost,
-          hp: overrides.hp ?? card.maxHp,
+          hp:
+            card.kind === CARD_KINDS.MINION
+              ? null
+              : (overrides.hp ?? card.maxHp),
           power: overrides.power ?? card.power,
           damage: overrides.damage ?? card.damage,
           durability: overrides.durability ?? card.durability,

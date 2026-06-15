@@ -17,7 +17,12 @@ import {
   lesserFireSummoning
 } from './core/spells/fire/index';
 import { braveCitizen, birdOfGoodLuck } from './core/minions/neutral/index';
-import { dayOfFortitude, dayOfConquest, restrainTheBeast } from './core/destinies/index';
+import {
+  dayOfFortitude,
+  dayOfConquest,
+  restrainTheBeast,
+  crowdsFavor
+} from './core/destinies/index';
 import {
   arcaneSight,
   repulsorShield,
@@ -66,6 +71,7 @@ export const coreSet: CardSet = {
     manaWeaverApprentice,
     mysticRecall,
     starConvergence,
-    restrainTheBeast
+    restrainTheBeast,
+    crowdsFavor
   ]
 };

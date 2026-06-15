@@ -204,11 +204,11 @@ export class CombatSystem
       this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
     }
 
-    this._attacker = null;
-    this._defender = null;
     if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
       await this.game.turnSystem.switchInitiative();
     }
+    this._attacker = null;
+    this._defender = null;
   }
 
   private getDamagingParticipants(
