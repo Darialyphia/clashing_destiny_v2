@@ -57,7 +57,9 @@ export class CardManagerComponent {
     this.mainDeck.populate(
       cards.filter(c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY)
     );
-    this.destinyDeck.populate(cards.filter(c => c.kind === CARD_KINDS.DESTINY));
+    this.destinyDeck.populate(
+      cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
+    );
 
     // @ts-expect-error ts complaining about readonly
     this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
