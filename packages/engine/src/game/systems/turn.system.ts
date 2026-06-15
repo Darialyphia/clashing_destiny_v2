@@ -55,12 +55,12 @@ export class TurnSystem extends System<never> {
         const card = left.destinyCard!;
         await card!.removeFromCurrentLocation();
         right.destinyCard = card;
-        console.log(player.id, player.cardManager.destinyDeck.cards.length);
       }
     }
   }
 
   async startTurn() {
+    await this.rotateDestinyCards();
     await this.game.emit(
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })
@@ -72,8 +72,6 @@ export class TurnSystem extends System<never> {
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
       new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
     );
-
-    await this.rotateDestinyCards();
   }
 
   endTurn() {

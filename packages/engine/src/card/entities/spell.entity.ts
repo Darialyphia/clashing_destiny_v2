@@ -44,8 +44,7 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBeTargeted: new Interceptable(),
-        shouldCreateChain: new Interceptable()
+        canBeTargeted: new Interceptable()
       },
       options
     );

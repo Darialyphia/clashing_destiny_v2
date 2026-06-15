@@ -16,14 +16,17 @@ import {
   engulfInFlames,
   lesserFireSummoning
 } from './core/spells/fire/index';
-import { braveCitizen } from './core/minions/neutral/index';
-import { dayOfFortitude, dayOfConquest } from './core/destinies/index';
+import { braveCitizen, birdOfGoodLuck } from './core/minions/neutral/index';
+import { dayOfFortitude, dayOfConquest, restrainTheBeast } from './core/destinies/index';
 import {
   arcaneSight,
   repulsorShield,
   fallingStar,
-  arcaneSpark
+  arcaneSpark,
+  mysticRecall,
+  starConvergence
 } from './core/spells/arcane/index';
+import { starSeer, manaWeaverApprentice } from './core/minions/arcane/index';
 import {
   conjureMight,
   conjureWisdom,
@@ -39,6 +42,7 @@ export const coreSet: CardSet = {
     fireBolt,
     pyromancer,
     braveCitizen,
+    birdOfGoodLuck,
     recklessRecruit,
     willowisp,
     cremation,
@@ -57,6 +61,11 @@ export const coreSet: CardSet = {
     conjureResonance,
     arcaneSpark,
     repulsorShield,
-    fallingStar
+    fallingStar,
+    starSeer,
+    manaWeaverApprentice,
+    mysticRecall,
+    starConvergence,
+    restrainTheBeast
   ]
 };

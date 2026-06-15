@@ -55,6 +55,8 @@ export type SerializedMinionCard = SerializedCard & {
   remainingHp: number;
   manaCost: number;
   baseManaCost: number;
+  bounty: number;
+  baseBounty: number;
   abilities: string[];
   canMove: boolean;
   jobs: JobId[];
@@ -580,6 +582,8 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       baseMaxHp: this.game.config.MINION_HP,
       remainingHp: this.remainingHp,
+      bounty: this.bounty,
+      baseBounty: this.blueprint.bounty,
       abilities: this.abilityManager.serialize(),
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],

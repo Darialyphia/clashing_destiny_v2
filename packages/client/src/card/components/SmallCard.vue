@@ -31,7 +31,8 @@ const {
     countdown?: number | null;
     maxHp?: number | null;
     baseMaxHp?: number | null;
-    baseRetaliation?: number | null;
+    bounty?: number | null;
+    baseBounty?: number | null;
     durability?: number | null;
     manaCost?: number | null;
     destinyCost?: number | null;
@@ -73,6 +74,21 @@ const artMainImage = computed(() => {
       </div>
 
       <template v-if="showStats">
+        <div
+          v-if="isDefined(card.bounty)"
+          class="bounty"
+          :class="{
+            buffed: isDefined(card.baseBounty) && card.bounty > card.baseBounty,
+            debuffed:
+              isDefined(card.baseBounty) && card.bounty < card.baseBounty
+          }"
+          data-label="Bounty"
+        >
+          <div class="dual-text" :data-text="card.bounty">
+            {{ card.bounty }}
+          </div>
+        </div>
+
         <div
           v-if="isDefined(card.power)"
           class="stat power"
@@ -299,5 +315,21 @@ const artMainImage = computed(() => {
   font-size: 10px;
   --dual-text-offset-y: 1px;
   scale: 2;
+}
+
+.bounty {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url('@/assets/ui/card/bounty.png');
+  font-weight: var(--font-weight-7);
+  padding-top: calc(3px * var(--pixel-scale));
+  width: calc(30px * var(--pixel-scale));
+  height: calc(28px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 14px);
+  .dual-text::before {
+    transform: translateY(-3px);
+  }
+  padding-left: calc(8px * var(--pixel-scale));
 }
 </style>

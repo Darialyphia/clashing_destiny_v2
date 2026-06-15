@@ -120,7 +120,8 @@ provideRichTextContext({
           jobs: overrides.jobs ?? card.jobs,
           subKind: overrides.subKind ?? card.subKind,
           affinities: overrides.affinities ?? card.affinities,
-          speed: overrides.speed ?? card.speed
+          speed: overrides.speed ?? card.speed,
+          bounty: overrides.bounty ?? card.bounty
         }"
         :is-foil="card.isFoil"
         class="game-card big"
@@ -141,7 +142,9 @@ provideRichTextContext({
           hp: overrides.hp ?? card.hp,
           baseMaxHp: overrides.baseMaxHp ?? card.baseMaxHp,
           maxHp: overrides.maxHp ?? card.maxHp,
-          durability: overrides.durability ?? card.durability
+          durability: overrides.durability ?? card.durability,
+          bounty: overrides.bounty ?? card.bounty,
+          baseBounty: overrides.baseBounty ?? card.baseBounty
         }"
         class="game-card small"
         :class="classes"

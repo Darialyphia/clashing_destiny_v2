@@ -54,7 +54,8 @@ provideRichTextContext({
       jobs: blueprint.jobs.map(job => job.id as JobId),
       tags: blueprint.tags,
       affinities: blueprint.affinities,
-      speed: (blueprint as any).speed
+      speed: (blueprint as any).speed,
+      bounty: (blueprint as any).bounty
     }"
     :is-tilt-enabled="isTiltEnabled"
   />

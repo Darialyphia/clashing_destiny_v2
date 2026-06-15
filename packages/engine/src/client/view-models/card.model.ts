@@ -285,6 +285,21 @@ export class CardViewModel {
     return null;
   }
 
+  get bounty() {
+    if ('bounty' in this.data) {
+      return this.data.bounty as number;
+    }
+
+    return null;
+  }
+
+  get baseBounty() {
+    if ('baseBounty' in this.data) {
+      return this.data.baseBounty as number;
+    }
+    return null;
+  }
+
   get durability() {
     if ('durability' in this.data) {
       return this.data.durability as number;

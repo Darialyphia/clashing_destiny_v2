@@ -10,6 +10,7 @@ export const cards = {
 "fireBolt": "fireBolt",
 "pyromancer": "pyromancer",
 "braveCitizen": "braveCitizen",
+"birdOfGoodLuck": "birdOfGoodLuck",
 "recklessRecruit": "recklessRecruit",
 "willowisp": "willowisp",
 "cremation": "cremation",
@@ -28,7 +29,12 @@ export const cards = {
 "conjureResonance": "conjureResonance",
 "arcaneSpark": "arcaneSpark",
 "repulsorShield": "repulsorShield",
-"fallingStar": "fallingStar"
+"fallingStar": "fallingStar",
+"starSeer": "starSeer",
+"manaWeaverApprentice": "manaWeaverApprentice",
+"mysticRecall": "mysticRecall",
+"starconvergence": "starconvergence",
+"restrain-the-beast": "restrain-the-beast"
 } as const;
 
 export const collectableCards = {
@@ -36,6 +42,7 @@ export const collectableCards = {
 "fireBolt": "fireBolt",
 "pyromancer": "pyromancer",
 "braveCitizen": "braveCitizen",
+"birdOfGoodLuck": "birdOfGoodLuck",
 "recklessRecruit": "recklessRecruit",
 "willowisp": "willowisp",
 "cremation": "cremation",
@@ -54,7 +61,12 @@ export const collectableCards = {
 "conjureResonance": "conjureResonance",
 "arcaneSpark": "arcaneSpark",
 "repulsorShield": "repulsorShield",
-"fallingStar": "fallingStar"
+"fallingStar": "fallingStar",
+"starSeer": "starSeer",
+"manaWeaverApprentice": "manaWeaverApprentice",
+"mysticRecall": "mysticRecall",
+"starconvergence": "starconvergence",
+"restrain-the-beast": "restrain-the-beast"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -82,6 +94,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "braveCitizen",
     "collectable": true,
     "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "birdOfGoodLuck",
+    "collectable": true,
+    "rarity": "epic",
     "kind": "MINION"
   },
   {
@@ -197,6 +215,36 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "SPELL"
+  },
+  {
+    "id": "starSeer",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "manaWeaverApprentice",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "mysticRecall",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "starconvergence",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "restrain-the-beast",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "DESTINY"
   }
 ]
 };
@@ -206,6 +254,7 @@ export const cardShortIds: Record<string, number> = {
 "fireBolt": 2,
 "pyromancer": 3,
 "braveCitizen": 4,
+"birdOfGoodLuck": 28,
 "recklessRecruit": 5,
 "willowisp": 6,
 "cremation": 7,
@@ -224,7 +273,12 @@ export const cardShortIds: Record<string, number> = {
 "conjureResonance": 20,
 "arcaneSpark": 21,
 "repulsorShield": 22,
-"fallingStar": 23
+"fallingStar": 23,
+"starSeer": 24,
+"manaWeaverApprentice": 25,
+"mysticRecall": 26,
+"starconvergence": 27,
+"restrain-the-beast": 29
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -250,5 +304,11 @@ export const cardIdByShortId: Record<number, string> = {
 "20": "conjureResonance",
 "21": "arcaneSpark",
 "22": "repulsorShield",
-"23": "fallingStar"
+"23": "fallingStar",
+"24": "starSeer",
+"25": "manaWeaverApprentice",
+"26": "mysticRecall",
+"27": "starconvergence",
+"28": "birdOfGoodLuck",
+"29": "restrain-the-beast"
 } as const;

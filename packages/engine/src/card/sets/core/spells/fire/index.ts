@@ -85,16 +85,16 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
 
 export const cremation: SpellBlueprint = {
   id: 'cremation',
-  name: 'Ritual of Cremation',
+  name: 'Ceremonial Cremation',
   description: dedent /*html*/ `
   Banish 3 Fire cards from your discard pile. Draw 2 cards.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('spells/ceremonial-cremation'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
+  jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   speed: CARD_SPEED.FAST,

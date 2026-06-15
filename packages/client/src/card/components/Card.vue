@@ -53,6 +53,7 @@ const {
     jobs: JobId[];
     affinities: Affinity[];
     speed?: CardSpeed;
+    bounty?: number | null;
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -263,13 +264,13 @@ const tint = computed(() => {
             </div>
           </div>
           <div
-            v-if="isDefined(card.expCost)"
-            class="exp-cost"
+            v-if="isDefined(card.bounty)"
+            class="bounty-cost"
             :class="costStatus"
-            data-label="EXP"
+            data-label="Bounty"
           >
-            <div class="dual-text" :data-text="card.expCost">
-              {{ card.expCost }}
+            <div class="dual-text" :data-text="card.bounty">
+              {{ card.bounty }}
             </div>
           </div>
         </div>
@@ -662,6 +663,9 @@ const tint = computed(() => {
   position: absolute;
   top: calc(2px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--pixel-scale));
   > * {
     z-index: 0;
     background-size: cover;
@@ -709,17 +713,17 @@ const tint = computed(() => {
     transform: translateY(-3px);
   }
 }
-
-.exp-cost {
-  background-image: url('@/assets/ui/card/exp-cost.png');
+.bounty-cost {
+  background-image: url('@/assets/ui/card/bounty.png');
   font-weight: var(--font-weight-7);
-  padding-top: calc(3px * var(--pixel-scale));
-  width: calc(24px * var(--pixel-scale));
-  aspect-ratio: 1;
+  padding-top: calc(1px * var(--pixel-scale));
+  width: calc(30px * var(--pixel-scale));
+  height: calc(28px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 14px);
   .dual-text::before {
     transform: translateY(-3px);
   }
+  padding-right: calc(6px * var(--pixel-scale));
 }
 
 .job {
