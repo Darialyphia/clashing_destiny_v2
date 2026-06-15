@@ -574,25 +574,28 @@ export const emptyBoardSpaceTargetRules = {
       space => space.isEmpty && (predicate ? predicate(space) : true)
     ),
 
-  getTargets: async ({
+  getTargets: async <TCancellable extends boolean = true>({
     game,
     card,
     label = 'Select a space',
     timeoutFallback,
     predicate = () => true,
-    canCancel = false
+    canCancel
   }: {
     game: Game;
     card: AnyCard;
     label?: string | ((selectedSpaces: BoardSpace[]) => string);
     timeoutFallback?: BoardSpace[];
     predicate?: (space: BoardSpace) => boolean;
-    canCancel?: boolean;
-  }): Promise<InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }>> => {
-    const result = await game.interaction.selectSpacesOnBoard({
+    canCancel?: TCancellable;
+  }): Promise<
+    InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }> &
+      (TCancellable extends true ? { cancelled: boolean } : { cancelled: false })
+  > => {
+    const result = await game.interaction.selectSpacesOnBoard<TCancellable>({
       source: card,
       player: card.player,
-      canCancel,
+      canCancel: (canCancel ?? true) as TCancellable,
       getLabel: selectedSpaces =>
         isFunction(label)
           ? label(selectedSpaces)

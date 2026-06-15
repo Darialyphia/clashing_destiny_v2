@@ -15,6 +15,12 @@ export class BurstModifier<T extends AnyCard> extends Modifier<T> {
             return false;
           }
         }),
+        new CardInterceptorModifierMixin(game, {
+          key: 'shouldCreateChainWhenPlayed',
+          interceptor: () => {
+            return false;
+          }
+        }),
         ...(options?.mixins || [])
       ]
     });

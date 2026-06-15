@@ -170,6 +170,16 @@ export class CombatSystem
     assert(isDefined(this.defender), new CorruptedGamephaseContextError());
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
 
+    if (!this.attacker.canResolveCombat || !this.defender.canResolveCombat) {
+      await this.game.emit(
+        COMBAT_EVENTS.ATTACK_FIZZLED,
+        new AttackFizzledResolveCombatEvent({
+          attacker: this.attacker,
+          target: this.defender
+        })
+      );
+    }
+
     this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.RESOLVE_COMBAT);
 
     await this.game.emit(

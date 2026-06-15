@@ -98,12 +98,6 @@ export const KEYWORDS = {
     description: 'This minion can move between battlefields.',
     aliases: []
   },
-  STUNNED: {
-    id: 'stunned',
-    name: 'Stunned',
-    description: 'This unit is exhausted and has 0 damage until the end of the turn.',
-    aliases: ['Stun']
-  },
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
@@ -166,13 +160,6 @@ export const KEYWORDS = {
     name: 'Protector',
     description:
       'When an adjacent ally takes combat damage, this unit takes that damage instead.',
-    aliases: []
-  },
-  TAUNT: {
-    id: 'taunt',
-    name: 'Taunt',
-    description:
-      'Enemy units on the same battlefield as this must attack this unit if able.',
     aliases: []
   },
   REGENERATION: {
@@ -255,6 +242,19 @@ export const KEYWORDS = {
     name: 'Stealth',
     description:
       'This unit cannot be targeted by attacks as long as it is not exhausted.',
+    aliases: []
+  },
+  STUNNED: {
+    id: 'stunned',
+    name: 'Stunned',
+    description: 'This unit is exhausted and has 0 damage until the end of the turn.',
+    aliases: ['Stun']
+  },
+  TAUNT: {
+    id: 'taunt',
+    name: 'Taunt',
+    description:
+      'Enemy units on the same battlefield as this must attack this unit if able.',
     aliases: []
   },
   TOUGH: {

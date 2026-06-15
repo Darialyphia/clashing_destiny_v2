@@ -7,15 +7,12 @@ import {
   CARD_EVENTS,
   CARD_LOCATIONS,
   type CardLocation,
-  type CardSpeed,
   type JobId
 } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
-  CardAfterPlayEvent,
   CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
-  CardBeforePlayEvent,
   CardBeforeTakeDamageEvent,
   CardPlayEvent
 } from '../card.events';
@@ -190,11 +187,15 @@ export class MinionCard extends Card<
   }
 
   get isAttacking() {
-    return this.game.combatSystem.attacker?.equals(this);
+    return !!this.game.combatSystem.attacker?.equals(this);
   }
 
   get isAttackTarget() {
-    return this.game.combatSystem.defender?.equals(this);
+    return !!this.game.combatSystem.defender?.equals(this);
+  }
+
+  get canResolveCombat() {
+    return this.isOnBattleField && (this.isAttacking || this.isAttackTarget);
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {

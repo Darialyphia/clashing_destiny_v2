@@ -229,6 +229,14 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     this.abilityManager.removeAbility(abilityId);
   }
 
+  get isAttackTarget() {
+    return this.game.combatSystem.defender?.equals(this);
+  }
+
+  get canResolveCombat() {
+    return this.isAttackTarget;
+  }
+
   get jobs() {
     return this.blueprint.jobs;
   }
