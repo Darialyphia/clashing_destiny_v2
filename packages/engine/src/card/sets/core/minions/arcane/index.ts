@@ -1,5 +1,8 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import {
+  RuneCostToggleModifierMixin,
+  TogglableModifierMixin
+} from '../../../../../modifier/mixins/togglable.mixin';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
@@ -42,6 +45,51 @@ export const starSeer: MinionBlueprint = {
         async handler() {
           await scry(game, card, 2);
         }
+      })
+    );
+  },
+  async onPlay() {},
+  aiHints: {
+    shouldPlay: () => 1,
+    shouldAttack: () => 1,
+    shouldMove: () => 1,
+    getThreatScore: () => 1
+  }
+};
+
+export const manaWeaverApprentice: MinionBlueprint = {
+  id: 'manaWeaverApprentice',
+  name: 'Mana Weaver Apprentice',
+  description: dedent /*html*/ `
+    I have <rt-keyword>Attacker 2</rt-keyword> if you have played 2 or more spells this turn.
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.MINION,
+  rarity: RARITIES.COMMON,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.ARCANE],
+  manaCost: 2,
+  speed: CARD_SPEED.SLOW,
+  tags: [],
+  power: 2,
+  damage: 1,
+  bounty: 2,
+  canPlay: () => true,
+  abilities: [],
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new AttackerModifier(game, card, {
+        amount: 2,
+        mixins: [
+          new TogglableModifierMixin(
+            game,
+            () =>
+              card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL)
+                .length >= 2
+          )
+        ]
       })
     );
   },

@@ -301,7 +301,6 @@ export const starConvergence: SpellBlueprint = {
               const index = game.rngSystem.nextInt(arcaneSpellsInDeck.length - 1);
               const cardToPut = arcaneSpellsInDeck[index];
               if (cardToPut) {
-                cardToPut.removeFromCurrentLocation();
                 await cardToPut.sendToTopOfDeck();
               }
             }
