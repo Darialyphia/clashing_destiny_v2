@@ -55,8 +55,8 @@ export type SerializedMinionCard = SerializedCard & {
   remainingHp: number;
   manaCost: number;
   baseManaCost: number;
-  bounty: number;
-  baseBounty: number;
+  commandment: number;
+  baseCommandment: number;
   abilities: string[];
   canMove: boolean;
   jobs: JobId[];
@@ -79,7 +79,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   maxHp: Interceptable<number, MinionCard>;
   power: Interceptable<number, MinionCard>;
   damage: Interceptable<number, MinionCard>;
-  bounty: Interceptable<number, MinionCard>;
+  commandment: Interceptable<number, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
   canMoveManually: Interceptable<boolean, MinionCard>;
   canMoveBetweenBattlefields: Interceptable<boolean, MinionCard>;
@@ -120,7 +120,7 @@ export class MinionCard extends Card<
         maxHp: new Interceptable(),
         power: new Interceptable(),
         damage: new Interceptable(),
-        bounty: new Interceptable(),
+        commandment: new Interceptable(),
         canMove: new Interceptable(),
         canMoveManually: new Interceptable(),
         canMoveBetweenBattlefields: new Interceptable(),
@@ -137,11 +137,6 @@ export class MinionCard extends Card<
     this.abilityManager = new AbilityManagerComponent<MinionCard>(game, this);
     this.game.on(GAME_EVENTS.TURN_START, () => {
       this.hasMovedManuallyThisTurn = false;
-    });
-    this.game.on(GAME_EVENTS.CARD_AFTER_DESTROY, async event => {
-      if (event.data.card.equals(this)) {
-        await this.onDestroyed(event.data.source);
-      }
     });
   }
 
@@ -212,20 +207,8 @@ export class MinionCard extends Card<
     }
   }
 
-  get bounty(): number {
-    return this.interceptors.bounty.getValue(this.blueprint.bounty, this);
-  }
-
-  protected async onDestroyed(source: AnyCard) {
-    const shouldGiveBounty = this.interceptors.shouldGiveBountyWhenDestroyed.getValue(
-      true,
-      {
-        source
-      }
-    );
-    if (!shouldGiveBounty) return;
-
-    await this.player.hero.takeDamage(this, new UnpreventableDamage(this.bounty));
+  get commandment(): number {
+    return this.interceptors.commandment.getValue(this.blueprint.commandment, this);
   }
 
   canBeTargeted(source: AnyCard) {
@@ -518,10 +501,10 @@ export class MinionCard extends Card<
     return { cancelled: false };
   }
 
-  get potentialAttackTargets(): Array<MinionCard | HeroCard> {
+  get potentialAttackTargets(): Array<AttackTarget> {
     if (!this.isOnBattleField) return [];
 
-    const result: AttackTarget[] = [this.player.opponent.hero];
+    const result: AttackTarget[] = [];
     if (this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
       result.push(...this.player.opponent.minionsInLeftBattlefield);
     }
@@ -582,8 +565,8 @@ export class MinionCard extends Card<
       maxHp: this.maxHp,
       baseMaxHp: this.game.config.MINION_HP,
       remainingHp: this.remainingHp,
-      bounty: this.bounty,
-      baseBounty: this.blueprint.bounty,
+      commandment: this.commandment,
+      baseCommandment: this.blueprint.commandment,
       abilities: this.abilityManager.serialize(),
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],

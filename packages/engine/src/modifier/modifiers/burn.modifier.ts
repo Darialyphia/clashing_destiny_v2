@@ -11,7 +11,7 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import { Modifier } from '../modifier.entity';
 
-export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+export class BurnModifier<T extends MinionCard> extends Modifier<T> {
   constructor(game: Game, source: AnyCard, { stacks = 1 }: { stacks?: number } = {}) {
     super(KEYWORDS.BURN.id, game, source, {
       name: KEYWORDS.BURN.name,

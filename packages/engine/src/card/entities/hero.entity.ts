@@ -1,13 +1,8 @@
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import type { CombatDamage, Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
-import {
-  type AbilityBlueprint,
-  type HeroBlueprint,
-  type Targets
-} from '../card-blueprint';
-import { CARD_EVENTS, CARD_LOCATIONS, type Affinity, type JobId } from '../card.enums';
+import { type AbilityBlueprint, type HeroBlueprint } from '../card-blueprint';
+import { type JobId } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -19,36 +14,20 @@ import {
 import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 import type { MinionCard } from './minion.entity';
-import {
-  CardAfterDealCombatDamageEvent,
-  CardAfterPlayEvent,
-  CardAfterTakeDamageEvent,
-  CardBeforeDealCombatDamageEvent,
-  CardBeforePlayEvent,
-  CardBeforeTakeDamageEvent
-} from '../card.events';
-import { HERO_EVENTS, HeroCardHealEvent, HeroPlayedEvent } from '../events/hero.events';
-import { DamageTrackerComponent } from '../components/damage-tracker.component';
-import type { Attacker, AttackTarget } from '../../game/systems/combat.system';
+import { HERO_EVENTS, HeroPlayedEvent } from '../events/hero.events';
 import { AbilityManagerComponent } from '../components/abilities-manager.component';
 
 export type SerializedHeroCard = SerializedCard & {
   spellPower: number;
   baseSpellPower: number;
-  maxHp: number;
-  baseMaxHp: number;
-  remainingHp: number;
   abilities: string[];
   jobs: JobId[];
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, HeroCard>;
-  canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canUseAbility: Interceptable<boolean, { card: HeroCard; ability: Ability<HeroCard> }>;
-  receivedDamage: Interceptable<number, { damage: Damage }>;
-  maxHp: Interceptable<number, HeroCard>;
   spellPower: Interceptable<number, HeroCard>;
 };
 
@@ -59,8 +38,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   readonly abilityManager: AbilityManagerComponent<HeroCard>;
 
-  readonly damageTracker: DamageTrackerComponent;
-
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
     super(
       game,
@@ -68,44 +45,14 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBeAttacked: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
-        receivedDamage: new Interceptable(),
-        maxHp: new Interceptable(),
         spellPower: new Interceptable()
       },
       options
     );
 
-    this.damageTracker = new DamageTrackerComponent(game, this);
     this.abilityManager = new AbilityManagerComponent<HeroCard>(game, this);
-  }
-
-  protected async onInterceptorAdded(key: HeroCardInterceptorName) {
-    if (key === 'maxHp') {
-      await this.checkHp(this);
-    }
-  }
-
-  protected async onInterceptorRemoved(key: HeroCardInterceptorName) {
-    if (key === 'maxHp') {
-      await this.checkHp(this);
-    }
-  }
-
-  private async checkHp(source: AnyCard) {
-    if (this.remainingHp <= 0) {
-      await this.destroy(source);
-    }
-  }
-
-  cloneDamageTaken(previousHero: HeroCard) {
-    this.damageTaken = previousHero.damageTaken;
-  }
-
-  get isAlive() {
-    return this.remainingHp > 0;
   }
 
   isValidMovementPosition() {
@@ -116,96 +63,10 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     return this.interceptors.spellPower.getValue(0, this);
   }
 
-  get maxHp(): number {
-    return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
-  }
-
-  get remainingHp(): number {
-    return Math.max(this.maxHp - this.damageTaken, 0);
-  }
-
   canBeTargeted(source: AnyCard) {
     return this.interceptors.canBeTargeted.getValue(true, {
       source
     });
-  }
-
-  canBeAttacked(attacker: Attacker) {
-    return this.interceptors.canBeAttacked.getValue(true, {
-      attacker
-    });
-  }
-
-  getReceivedDamage(damage: Damage) {
-    return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
-      damage
-    });
-  }
-
-  async dealDamage(target: AttackTarget, damage: CombatDamage) {
-    const affectedCards = [target];
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE,
-      new CardBeforeDealCombatDamageEvent({
-        card: this,
-        target,
-        damage,
-        affectedCards
-      })
-    );
-
-    for (const card of affectedCards) {
-      await card.takeDamage(this, damage);
-    }
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
-      new CardAfterDealCombatDamageEvent({
-        card: this,
-        target,
-        damage,
-        affectedCards
-      })
-    );
-  }
-
-  async takeDamage(source: AnyCard, damage: Damage) {
-    const amount = damage.getFinalAmount(this);
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
-      new CardBeforeTakeDamageEvent({
-        card: this,
-        damage,
-        source,
-        amount: amount
-      })
-    );
-
-    this.damageTaken = Math.min(this.damageTaken + amount, this.maxHp);
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE,
-      new CardAfterTakeDamageEvent({
-        card: this,
-        damage,
-        source,
-        amount: amount,
-        isFatal: this.remainingHp <= 0
-      })
-    );
-  }
-
-  async heal(heal: number) {
-    await this.game.emit(
-      HERO_EVENTS.HERO_BEFORE_HEAL,
-      new HeroCardHealEvent({ card: this, amount: heal })
-    );
-    this.damageTaken = Math.max(this.damageTaken - heal, 0);
-    await this.game.emit(
-      HERO_EVENTS.HERO_AFTER_HEAL,
-      new HeroCardHealEvent({ card: this, amount: heal })
-    );
   }
 
   canUseAbility(id: string) {
@@ -272,9 +133,6 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       ...this.serializeBase(),
       spellPower: this.spellPower,
       baseSpellPower: this.spellPower,
-      maxHp: this.maxHp,
-      baseMaxHp: this.blueprint.maxHp,
-      remainingHp: this.maxHp - this.damageTaken,
       abilities: this.abilityManager.serialize(),
       jobs: this.jobs.map(job => job.id) as JobId[]
     };

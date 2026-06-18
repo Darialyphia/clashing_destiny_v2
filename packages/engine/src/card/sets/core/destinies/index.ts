@@ -16,7 +16,7 @@ import { SimplePowerBuffModifier } from '../../../../modifier/modifiers/simple-p
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { SimpleBountyBuffModifier } from '../../../../modifier/modifiers/simple-bounty-modifier';
+import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const dayOfFortitude: DestinyBlueprint = {
   id: 'day-of-fortitude',
@@ -185,11 +185,16 @@ export const crowdsFavor: DestinyBlueprint = {
             },
             getModifiers(candidate) {
               return [
-                new SimpleBountyBuffModifier('clash-of-titans-bounty-buff', game, card, {
-                  isUnique: false,
-                  amount: 1,
-                  mixins: [new TogglableModifierMixin(game, () => isMinion(candidate))]
-                })
+                new SimpleCommandmentBuffModifier(
+                  'clash-of-titans-commandment-buff',
+                  game,
+                  card,
+                  {
+                    isUnique: false,
+                    amount: 1,
+                    mixins: [new TogglableModifierMixin(game, () => isMinion(candidate))]
+                  }
+                )
               ];
             }
           })

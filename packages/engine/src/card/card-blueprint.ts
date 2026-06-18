@@ -118,7 +118,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   manaCost: number;
   power: number;
   damage: number;
-  bounty: number;
+  commandment: number;
   abilities: AbilityBlueprint<MinionCard, any>[];
   jobs: Job[];
   canPlay: (game: Game, card: MinionCard) => boolean;
@@ -151,7 +151,6 @@ export type HeroBlueprint = CardBlueprintBase & {
   jobs: Job[];
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
-  maxHp: number;
   abilities: AbilityBlueprint<HeroCard, any>[];
   aiHints: {
     shouldPlay: (game: Game, card: HeroCard) => number;

@@ -53,7 +53,7 @@ const {
     jobs: JobId[];
     affinities: Affinity[];
     speed?: CardSpeed;
-    bounty?: number | null;
+    commandment?: number | null;
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -264,13 +264,13 @@ const tint = computed(() => {
             </div>
           </div>
           <div
-            v-if="isDefined(card.bounty)"
-            class="bounty-cost"
+            v-if="isDefined(card.commandment)"
+            class="commandment-cost"
             :class="costStatus"
             data-label="Bounty"
           >
-            <div class="dual-text" :data-text="card.bounty">
-              {{ card.bounty }}
+            <div class="dual-text" :data-text="card.commandment">
+              {{ card.commandment }}
             </div>
           </div>
         </div>
@@ -713,8 +713,8 @@ const tint = computed(() => {
     transform: translateY(-3px);
   }
 }
-.bounty-cost {
-  background-image: url('@/assets/ui/card/bounty.png');
+.commandment-cost {
+  background-image: url('@/assets/ui/card/commandment.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(1px * var(--pixel-scale));
   width: calc(30px * var(--pixel-scale));

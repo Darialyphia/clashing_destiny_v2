@@ -31,7 +31,6 @@ export const erinaVioletWitch: HeroBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE, AFFINITIES.FIRE],
   tags: [],
-  maxHp: 15,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
@@ -68,7 +67,7 @@ export const erinaVioletWitch: HeroBlueprint = {
                     label: rune,
                     aiHints: { shouldPick: () => 0.5 }
                   }))
-                ],
+                ].filter(choice => card.player.runeManager.has({ [choice.id]: 1 })),
                 timeoutFallback: RUNES.FOCUS
               });
 

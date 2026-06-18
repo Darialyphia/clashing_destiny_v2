@@ -17,7 +17,7 @@ import { BoardSpace, type BoardRow } from './board-space.entity';
 import { IllegalTargetError } from '../input/input-errors';
 import { CardAfterMoveEvent, CardBeforeMoveEvent } from '../card/card.events';
 import type { ArtifactCard } from '../card/entities/artifact.entity';
-import { Battlefield } from './battlefield';
+import { Battlefield, type SerializedBattlefield } from './battlefield';
 
 export type MinionSlot = number;
 
@@ -28,14 +28,8 @@ export type SerializedBoardSide = {
   discardPile: string[];
   banishPile: string[];
   base: string[];
-  leftBattlefield: {
-    spaces: string[];
-    destinyCard: string | null;
-  };
-  rightBattlefield: {
-    spaces: string[];
-    destinyCard: string | null;
-  };
+  leftBattlefield: SerializedBattlefield;
+  rightBattlefield: SerializedBattlefield;
 };
 
 export type SerializedBoard = {
@@ -340,14 +334,8 @@ export class BoardSide
         remaining: this.player.cardManager.remainingCardsInMainDeck
       },
       base: this.base.map(space => space.id),
-      leftBattlefield: {
-        spaces: this.leftBattlefield.spaces.map(space => space.id),
-        destinyCard: this.leftBattlefield.destinyCard?.id ?? null
-      },
-      rightBattlefield: {
-        spaces: this.rightBattlefield.spaces.map(space => space.id),
-        destinyCard: this.rightBattlefield.destinyCard?.id ?? null
-      }
+      leftBattlefield: this.leftBattlefield.serialize(),
+      rightBattlefield: this.rightBattlefield.serialize()
     };
   }
 }

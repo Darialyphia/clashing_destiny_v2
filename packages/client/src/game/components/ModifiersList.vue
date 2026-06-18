@@ -70,6 +70,7 @@ const displayedModifiers = computed(() => {
 .modifiers {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+  direction: rtl;
 }
 
 .modifier-image {

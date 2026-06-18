@@ -1,11 +1,17 @@
-import type { BetterExtract } from '@game/shared';
+import type { BetterExtract, Serializable } from '@game/shared';
 import { CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import { BoardSpace } from './board-space.entity';
 import type { DestinyCard } from '../card/entities/destiny.entity';
+import { isMinion } from '../card/card-utils';
 
-export class Battlefield {
+export type SerializedBattlefield = {
+  spaces: string[];
+  destinyCard: string | null;
+  commandmentScore: number;
+};
+export class Battlefield implements Serializable<SerializedBattlefield> {
   readonly spaces: BoardSpace[];
 
   destinyCard: DestinyCard | null = null;
@@ -36,5 +42,21 @@ export class Battlefield {
 
   get allSpaces() {
     return [...this.spaces, ...this.opponentSpaces];
+  }
+
+  get commandmentScore() {
+    return this.spaces.reduce((score, space) => {
+      if (!space.card) return score;
+      if (!isMinion(space.card)) return score;
+      return score + space.card.commandment;
+    }, 0);
+  }
+
+  serialize() {
+    return {
+      spaces: this.spaces.map(space => space.id),
+      destinyCard: this.destinyCard?.id ?? null,
+      commandmentScore: this.commandmentScore
+    };
   }
 }

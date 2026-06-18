@@ -16,6 +16,7 @@ import { GAME_EVENTS } from '../game.events';
 import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-error';
 import { PlayCardPhase } from '../phases/play-card.phase';
 import { IllegalCardPlayedError } from '../../input/input-errors';
+import { EndPhase } from '../phases/end.phase';
 
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
@@ -36,6 +37,10 @@ export type GamePhaseContext =
       ctx: PlayCardPhase;
     }
   | {
+      state: BetterExtract<GamePhase, 'end_phase'>;
+      ctx: EndPhase;
+    }
+  | {
       state: BetterExtract<GamePhase, 'game_end'>;
       ctx: GameEndPhase;
     };
@@ -54,6 +59,10 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<PlayCardPhase['serialize']>;
     }
   | {
+      state: BetterExtract<GamePhase, 'end_phase'>;
+      ctx: ReturnType<EndPhase['serialize']>;
+    }
+  | {
       state: Extract<GamePhase, 'game_end'>;
       ctx: ReturnType<GameEndPhase['serialize']>;
     };
@@ -65,6 +74,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     [GAME_PHASES.DRAW]: DrawPhase,
     [GAME_PHASES.MAIN]: MainPhase,
     [GAME_PHASES.PLAY_CARD]: PlayCardPhase,
+    [GAME_PHASES.END]: EndPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
   };
 
@@ -79,11 +89,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
         GAME_PHASES.MAIN
       ),
-      stateTransition(
-        GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.END_TURN,
-        GAME_PHASES.DRAW
-      ),
+      stateTransition(GAME_PHASES.MAIN, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.END),
       stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.START_PLAYING_CARD,
@@ -98,6 +104,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.PLAY_CARD,
         GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD,
         GAME_PHASES.MAIN
+      ),
+      stateTransition(
+        GAME_PHASES.END,
+        GAME_PHASE_TRANSITIONS.START_TURN,
+        GAME_PHASES.DRAW
       ),
 
       stateTransition(
@@ -174,12 +185,10 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.END_TURN), new WrongGamePhaseError());
 
-    await this.game.turnSystem.endTurn();
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
 
-    await this.game.inputSystem.schedule(async () => {
-      await this.game.turnSystem.startTurn();
-      await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
-    });
+    await (this._ctx as EndPhase).scoreBattlefields();
+    await (this._ctx as EndPhase).terminateTurn();
   }
 
   async declareWinner(players: Player[]) {

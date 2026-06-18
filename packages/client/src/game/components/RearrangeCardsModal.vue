@@ -119,7 +119,7 @@ const label = computed(() => {
         <div
           v-for="(bucket, bucketIndex) in result"
           :key="bucket.id"
-          class="bucket"
+          class="bucket surface"
         >
           <div>{{ bucket.label }}</div>
           <ul>
@@ -208,6 +208,7 @@ const label = computed(() => {
   --pixel-scale: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: var(--size-3);
 }
 
 .bucket {

@@ -28,7 +28,7 @@ export class DeclareAttackInput extends Input<typeof schema> {
   }
 
   get target() {
-    return [this.player.opponent.hero, ...this.player.enemyMinions].find(
+    return [...this.player.enemyMinions].find(
       creature => creature.id === this.payload.targetId
     );
   }

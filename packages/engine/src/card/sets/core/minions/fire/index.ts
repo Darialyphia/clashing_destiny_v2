@@ -52,7 +52,7 @@ export const pyromancer: MinionBlueprint = {
   tags: [],
   power: 3,
   damage: 1,
-  bounty: 1,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -104,7 +104,7 @@ export const recklessRecruit: MinionBlueprint = {
   tags: [],
   power: 1,
   damage: 1,
-  bounty: 1,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -145,7 +145,7 @@ export const willowisp: MinionBlueprint = {
   tags: [],
   power: 1,
   damage: 1,
-  bounty: 1,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -178,7 +178,7 @@ export const fireImp: MinionBlueprint = {
   tags: [],
   power: 1,
   damage: 1,
-  bounty: 1,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -222,7 +222,7 @@ export const flameArchmage: MinionBlueprint = {
   tags: [],
   power: 4,
   damage: 2,
-  bounty: 2,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

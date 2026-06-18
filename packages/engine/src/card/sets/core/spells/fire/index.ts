@@ -183,12 +183,12 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   }
 };
 
-export const fireBall: SpellBlueprint<MinionCard | HeroCard> = {
+export const fireBall: SpellBlueprint<MinionCard> = {
   id: 'fireBall',
   name: 'Fire Ball',
   description: dedent /*html*/ `
   Consume <rt-runes runes="wisdom"></rt-runes>
-  Deal 2 damage to an enemy minion, or 3 damage to the enemy Hero.
+  Deal 2 damage to an enemy minion.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -202,7 +202,7 @@ export const fireBall: SpellBlueprint<MinionCard | HeroCard> = {
   tags: [],
   canPlay: (game, card) => card.player.runeManager.has({ wisdom: 1 }),
   getTargets: (game, card) =>
-    singleEnemyTargetRules.getTargets({
+    singleEnemyMinionTargetRules.getTargets({
       game,
       card,
       timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card),
@@ -216,8 +216,7 @@ export const fireBall: SpellBlueprint<MinionCard | HeroCard> = {
     const [target] = targets.cards;
     if (!target) return;
 
-    const damageAmount = isHero(target) ? 3 : 2;
-    await target.takeDamage(card, new SpellDamage(damageAmount, card));
+    await target.takeDamage(card, new SpellDamage(2, card));
   },
   aiHints: {
     shouldPlay: () => 1

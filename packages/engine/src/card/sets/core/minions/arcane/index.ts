@@ -32,7 +32,7 @@ export const starSeer: MinionBlueprint = {
   tags: [],
   power: 3,
   damage: 1,
-  bounty: 1,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -71,7 +71,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   tags: [],
   power: 2,
   damage: 1,
-  bounty: 2,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

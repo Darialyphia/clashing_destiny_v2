@@ -228,7 +228,6 @@ const onMouseup = (e: MouseEvent) => {
 .modifiers {
   position: absolute;
   top: calc(3px * var(--pixel-scale));
-  left: calc(3px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
   transform: translateZ(2px);
 }

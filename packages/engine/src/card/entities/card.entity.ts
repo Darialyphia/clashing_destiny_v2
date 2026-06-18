@@ -13,7 +13,8 @@ import {
   type Affinity,
   AFFINITIES,
   type JobId,
-  type CardSpeed
+  type CardSpeed,
+  CARD_SPEED
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -86,6 +87,7 @@ export type SerializedCard = {
   affinities: Affinity[];
   position: string | null;
   speed: CardSpeed;
+  isFoil: boolean;
 };
 
 export abstract class Card<
@@ -420,7 +422,7 @@ export abstract class Card<
   }
 
   get canPlayDuringChain() {
-    return this.speed;
+    return this.speed === CARD_SPEED.FAST;
   }
 
   protected get canPlayBase() {
@@ -471,6 +473,7 @@ export abstract class Card<
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
+      isFoil: this.isFoil,
       art: this.blueprint.art.default,
       entityType: 'card',
       rarity: this.blueprint.rarity,

@@ -49,14 +49,6 @@ export class PlayerViewModel {
     return this.data.name;
   }
 
-  get currentHp() {
-    return this.data.currentHp;
-  }
-
-  get maxHp() {
-    return this.data.maxHp;
-  }
-
   get handSize() {
     return this.data.handSize;
   }

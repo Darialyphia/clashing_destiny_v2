@@ -214,7 +214,7 @@ export class CardChangeLocationEvent extends TypedSerializableEvent<
 }
 
 export class CardBeforeTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard; source: AnyCard; damage: Damage; amount: number },
+  { card: MinionCard; source: AnyCard; damage: Damage; amount: number },
   {
     card: string;
     source: string;
@@ -237,7 +237,7 @@ export class CardBeforeTakeDamageEvent extends TypedSerializableEvent<
 
 export class CardAfterTakeDamageEvent extends TypedSerializableEvent<
   {
-    card: MinionCard | HeroCard;
+    card: MinionCard;
     source: AnyCard;
     damage: Damage;
     isFatal: boolean;

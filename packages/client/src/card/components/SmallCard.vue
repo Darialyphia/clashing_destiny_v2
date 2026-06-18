@@ -31,7 +31,7 @@ const {
     countdown?: number | null;
     maxHp?: number | null;
     baseMaxHp?: number | null;
-    bounty?: number | null;
+    commandment?: number | null;
     baseBounty?: number | null;
     durability?: number | null;
     manaCost?: number | null;
@@ -75,17 +75,18 @@ const artMainImage = computed(() => {
 
       <template v-if="showStats">
         <div
-          v-if="isDefined(card.bounty)"
-          class="bounty"
+          v-if="isDefined(card.commandment)"
+          class="commandment"
           :class="{
-            buffed: isDefined(card.baseBounty) && card.bounty > card.baseBounty,
+            buffed:
+              isDefined(card.baseBounty) && card.commandment > card.baseBounty,
             debuffed:
-              isDefined(card.baseBounty) && card.bounty < card.baseBounty
+              isDefined(card.baseBounty) && card.commandment < card.baseBounty
           }"
           data-label="Bounty"
         >
-          <div class="dual-text" :data-text="card.bounty">
-            {{ card.bounty }}
+          <div class="dual-text" :data-text="card.commandment">
+            {{ card.commandment }}
           </div>
         </div>
 
@@ -317,11 +318,11 @@ const artMainImage = computed(() => {
   scale: 2;
 }
 
-.bounty {
+.commandment {
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url('@/assets/ui/card/bounty.png');
+  background-image: url('@/assets/ui/card/commandment.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(3px * var(--pixel-scale));
   width: calc(30px * var(--pixel-scale));

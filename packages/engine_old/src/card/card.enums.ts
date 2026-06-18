@@ -189,7 +189,7 @@ export const JOBS = {
   //   isAdvanced: true
   // },
   // BOUNTY_HUNTER: {
-  //   id: 'bounty_hunter',
+  //   id: 'commandment_hunter',
   //   name: 'Bounty Hunter',
   //   shortName: 'Bou',
   //   isAdvanced: true

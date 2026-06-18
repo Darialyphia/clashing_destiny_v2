@@ -17,6 +17,7 @@ import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
 import { CardEffectTriggeredEvent } from '../card/card.events';
+import { PlayerGainVictoryPointEvent } from './player.events';
 
 export type PlayerOptions = {
   id: string;
@@ -33,8 +34,6 @@ export type SerializedPlayer = {
   discardPile: string[];
   banishPile: string[];
   remainingCardsInMainDeck: number;
-  maxHp: number;
-  currentHp: number;
   isPlayer1: boolean;
   maxMana: number;
   currentMana: number;
@@ -44,6 +43,7 @@ export type SerializedPlayer = {
   boardSide: SerializedBoardSide;
   runes: Record<Rune, number>;
   canTakeResourceAction: boolean;
+  victoryPoints: number;
 };
 
 export type PlayerInterceptors = {
@@ -85,6 +85,8 @@ export class Player
 
   private options: PlayerOptions;
 
+  private _victoryPoints = 0;
+
   hasPassedThisTurn = false;
 
   resourceActionsTakenThisTurn: PlayerResourceAction[] = [];
@@ -107,6 +109,22 @@ export class Player
   async init() {
     await this.cardManager.init();
     this.manaManager.init();
+  }
+
+  get victoryPoints() {
+    return this._victoryPoints;
+  }
+
+  async gainVictoryPoints(amount: number) {
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_BEFORE_GAIN_VICTORY_POINT,
+      new PlayerGainVictoryPointEvent({ player: this, amount })
+    );
+    this._victoryPoints += amount;
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT,
+      new PlayerGainVictoryPointEvent({ player: this, amount })
+    );
   }
 
   get cardsDrawnForTurn() {
@@ -296,8 +314,6 @@ export class Player
       discardPile: [...this.cardManager.discardPile].map(card => card.id),
       banishPile: [...this.cardManager.banishPile].map(card => card.id),
       remainingCardsInMainDeck: this.cardManager.mainDeck.cards.length,
-      maxHp: this.hero.maxHp,
-      currentHp: this.hero.remainingHp,
       isPlayer1: this.isPlayer1,
       currentMana: this.mana,
       maxMana: this.maxMana,
@@ -306,7 +322,8 @@ export class Player
       unlockedAffinities: this.unlockedAffinities,
       boardSide: this.boardSide.serialize(),
       runes: this.runeManager.runes,
-      canTakeResourceAction: this.canTakeResourceAction()
+      canTakeResourceAction: this.canTakeResourceAction(),
+      victoryPoints: this.victoryPoints
     };
   }
 }

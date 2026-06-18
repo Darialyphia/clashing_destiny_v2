@@ -124,7 +124,7 @@ provideRichTextContext({
           subKind: overrides.subKind ?? card.subKind,
           affinities: overrides.affinities ?? card.affinities,
           speed: overrides.speed ?? card.speed,
-          bounty: overrides.bounty ?? card.bounty
+          commandment: overrides.commandment ?? card.commandment
         }"
         :is-foil="card.isFoil"
         class="game-card big"
@@ -146,7 +146,7 @@ provideRichTextContext({
           baseMaxHp: overrides.baseMaxHp ?? card.baseMaxHp,
           maxHp: overrides.maxHp ?? card.maxHp,
           durability: overrides.durability ?? card.durability,
-          bounty: overrides.bounty ?? card.bounty,
+          commandment: overrides.commandment ?? card.commandment,
           baseBounty: overrides.baseBounty ?? card.baseBounty
         }"
         class="game-card small"

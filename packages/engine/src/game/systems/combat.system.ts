@@ -23,7 +23,7 @@ import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CombatDamage } from '../../utils/damage';
 
 export type Attacker = MinionCard;
-export type AttackTarget = MinionCard | HeroCard;
+export type AttackTarget = MinionCard;
 
 export type SerializedCombatState = {
   attacker: string | null;

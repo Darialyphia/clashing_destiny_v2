@@ -7,7 +7,7 @@ import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class SimpleBountyBuffModifier extends Modifier<MinionCard> {
+export class SimpleCommandmentBuffModifier extends Modifier<MinionCard> {
   constructor(
     modifierType: string,
     game: Game,
@@ -23,7 +23,7 @@ export class SimpleBountyBuffModifier extends Modifier<MinionCard> {
       isUnique: options.isUnique ?? true,
       icon: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-bounty-buff' : 'keyword-bounty-debuff';
+        return amount > 0 ? 'keyword-commandment-buff' : 'keyword-commandment-debuff';
       },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
@@ -39,7 +39,7 @@ export class SimpleBountyBuffModifier extends Modifier<MinionCard> {
       mixins: [
         new RemoveOnDestroyedMixin(game),
         new UnitInterceptorModifierMixin(game, {
-          key: 'bounty',
+          key: 'commandment',
           interceptor: value => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             return Math.max(0, value + amount * this._stacks);

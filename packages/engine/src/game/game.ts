@@ -98,7 +98,7 @@ export class Game implements Serializable<SerializedGame> {
     return (
       this.options.overrides.winCondition ??
       ((game, player) => {
-        return !player.opponent.hero.isAlive;
+        return false;
       })
     );
   }

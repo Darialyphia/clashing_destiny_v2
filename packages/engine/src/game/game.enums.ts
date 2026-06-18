@@ -4,6 +4,7 @@ export const GAME_PHASES = {
   DRAW: 'draw_phase',
   MAIN: 'main_phase',
   PLAY_CARD: 'play_card_phase',
+  END: 'end_phase',
   GAME_END: 'game_end'
 } as const;
 export type GamePhasesDict = typeof GAME_PHASES;
@@ -26,6 +27,7 @@ export type TurnEventName = Values<typeof TURN_EVENTS>;
 export const GAME_PHASE_TRANSITIONS = {
   DRAW_FOR_TURN: 'draw_for_turn',
   END_TURN: 'end_turn',
+  START_TURN: 'start_turn',
   PLAYER_WON: 'player_won',
   START_PLAYING_CARD: 'start_playing_card',
   COMMIT_PLAYING_CARD: 'commit_playing_card',

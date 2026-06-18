@@ -106,7 +106,7 @@ export class CardViewModel {
   }
 
   get isFoil() {
-    return false;
+    return this.data.isFoil;
   }
 
   get kind() {
@@ -285,9 +285,9 @@ export class CardViewModel {
     return null;
   }
 
-  get bounty() {
-    if ('bounty' in this.data) {
-      return this.data.bounty as number;
+  get commandment() {
+    if ('commandment' in this.data) {
+      return this.data.commandment as number;
     }
 
     return null;

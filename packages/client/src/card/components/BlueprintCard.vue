@@ -55,7 +55,7 @@ provideRichTextContext({
       tags: blueprint.tags,
       affinities: blueprint.affinities,
       speed: (blueprint as any).speed,
-      bounty: (blueprint as any).bounty
+      commandment: (blueprint as any).commandment
     }"
     :is-tilt-enabled="isTiltEnabled"
   />
