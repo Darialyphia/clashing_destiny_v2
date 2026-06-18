@@ -56,10 +56,6 @@ const spells = computed(() =>
 const artifacts = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
-
-watchEffect(() => {
-  console.log(deck.isValid);
-});
 </script>
 
 <template>

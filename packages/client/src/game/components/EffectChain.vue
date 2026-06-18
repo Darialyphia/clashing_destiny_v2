@@ -28,8 +28,12 @@ const buildPaths = async () => {
     paths.value = [];
     return;
   }
+
   await nextTick();
   paths.value = state.value.effectChain?.stack.map(effect => {
+    if (effect.type === EFFECT_TYPE.RETALIATION) {
+      return [];
+    }
     return effect.targets.cards.map(target => {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();

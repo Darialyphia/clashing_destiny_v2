@@ -135,10 +135,15 @@ const onMouseup = (e: MouseEvent) => {
       variant="small"
       :card-id="card.id"
       show-stats
-      :overrides="{ power: card.power, damage: card.damage, hp: card.hp }"
+      :overrides="{ atk: card.atk, hp: card.hp, commandment: card.commandment }"
     />
     <ModifiersList :modifiers="modifiers" class="modifiers" />
     <AbilityMenu :card="card" actions-side="top" use-portal class="abilities" />
+    <button
+      v-if="card.retaliateAction.predicate(card)"
+      class="retaliate-button"
+      @click="card.retaliateAction.handler()"
+    />
   </div>
 </template>
 
@@ -230,6 +235,24 @@ const onMouseup = (e: MouseEvent) => {
   top: calc(3px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
   transform: translateZ(2px);
+}
+
+.retaliate-button {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  translate: -50% -50%;
+  width: calc(24px * var(--pixel-scale));
+  height: calc(19px * var(--pixel-scale));
+  border: none;
+  cursor: pointer;
+  background: url('@/assets/ui/retaliate.png') no-repeat center center;
+  background-size: cover;
+  transform: translateZ(2px);
+  transition: filter 0.3s var(--ease-2);
+  &:hover {
+    filter: brightness(1.2) drop-shadow(0 0 6px var(--yellow-3));
+  }
 }
 @keyframes drop {
   0% {

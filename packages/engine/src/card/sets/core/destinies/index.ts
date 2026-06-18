@@ -12,11 +12,11 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
-import { SimplePowerBuffModifier } from '../../../../modifier/modifiers/simple-power-buff.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
+import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const dayOfFortitude: DestinyBlueprint = {
   id: 'day-of-fortitude',
@@ -24,7 +24,7 @@ export const dayOfFortitude: DestinyBlueprint = {
   collectable: true,
   name: 'Day of Fortitude',
   description: dedent /*html*/ `
-    Minions at this battlefield have +1 Power while defending.
+    Minions at this battlefield have +1 Attack while defending.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
@@ -46,7 +46,7 @@ export const dayOfFortitude: DestinyBlueprint = {
             },
             getModifiers(candidate) {
               return [
-                new SimplePowerBuffModifier('day-of-fortitude-power-buff', game, card, {
+                new SimpleAttackBuffModifier('day-of-fortitude-attack-buff', game, card, {
                   isUnique: false,
                   amount: 1,
                   mixins: [
@@ -94,7 +94,7 @@ export const dayOfConquest: DestinyBlueprint = {
             },
             getModifiers(candidate) {
               return [
-                new SimplePowerBuffModifier('day-of-conquest-power-buff', game, card, {
+                new SimpleAttackBuffModifier('day-of-conquest-power-buff', game, card, {
                   isUnique: false,
                   amount: 1,
                   mixins: [
@@ -144,10 +144,10 @@ At the start of the turn, exhaust the minion with the highest Power at this batt
                 .filter(isDefined)
                 .filter(isMinion);
               if (minions.length === 0) return;
-              const highestPowerMinion = minions.reduce((prev, curr) =>
-                prev.power > curr.power ? prev : curr
+              const highestAttackMinion = minions.reduce((prev, curr) =>
+                prev.atk > curr.atk ? prev : curr
               );
-              await highestPowerMinion.exhaust();
+              await highestAttackMinion.exhaust();
             }
           })
         ]

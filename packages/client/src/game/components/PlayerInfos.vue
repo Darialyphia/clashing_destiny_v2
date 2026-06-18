@@ -64,7 +64,7 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
       <div class="name dual-text" :data-text="player.name">
         {{ player.name }}
       </div>
-      <div class="bottom-grid">
+      <div class="bottom">
         <div class="mana-bar">
           <div
             v-for="i in player.maxMana"
@@ -78,11 +78,7 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
             }"
           />
         </div>
-        <div class="health">
-          <div class="dual-text" :data-text="player.currentHp">
-            {{ player.currentHp }}
-          </div>
-        </div>
+
         <div class="flex gap-2">
           <div class="rune might">
             <span class="dual-text" :data-text="player.runes.might">
@@ -120,6 +116,9 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: var(--size-1);
+  background-color: hsl(0 0% 0% / 0.35);
+  padding: var(--size-2) var(--size-4) 0;
+  border-radius: var(--radius-3);
 }
 
 .left-side {
@@ -156,28 +155,11 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   background: var(--bg);
 }
 
-.health {
-  width: 47px;
-  height: 43px;
-  background: url('@/assets/ui/health.png');
-  display: grid;
-  place-content: center;
-  font-size: var(--font-size-5);
-  font-weight: var(--font-weight-9);
-  z-index: 0;
-  position: relative;
-  grid-column: 2;
-  grid-row: span 2;
-  div {
-    --dual-text-stroke-offset-y: -5px;
-  }
-}
-
-.bottom-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
+.bottom {
   margin-block-start: 8px;
-  row-gap: var(--size-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
 }
 
 .infos-bar {

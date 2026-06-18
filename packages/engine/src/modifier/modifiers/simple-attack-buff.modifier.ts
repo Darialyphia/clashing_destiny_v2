@@ -8,7 +8,7 @@ import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class SimpleDamageBuffModifier<
+export class SimpleAttackBuffModifier<
   T extends MinionCard | HeroCard
 > extends Modifier<T> {
   constructor(
@@ -26,23 +26,23 @@ export class SimpleDamageBuffModifier<
       isUnique: options.isUnique ?? true,
       icon: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-damage-buff' : 'keyword-damage-debuff';
+        return amount > 0 ? 'keyword-attack-buff' : 'keyword-attack-debuff';
       },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'Damage Buff' : 'Damage Debuff';
+        return amount > 0 ? 'attack Buff' : 'attack Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${options.amount} Damage`;
+        return `${amount > 0 ? '+' : '-'}${options.amount} attack`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),
         new UnitInterceptorModifierMixin(game, {
-          key: 'damage',
+          key: 'atk',
           interceptor: value => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             return Math.max(0, value + amount * this._stacks);

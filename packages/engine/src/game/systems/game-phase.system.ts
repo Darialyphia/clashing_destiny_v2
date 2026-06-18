@@ -191,6 +191,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await (this._ctx as EndPhase).terminateTurn();
   }
 
+  async startTurn() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.START_TURN), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_TURN);
+  }
+
   async declareWinner(players: Player[]) {
     assert(this.can(GAME_PHASE_TRANSITIONS.PLAYER_WON), new WrongGamePhaseError());
     this._winners = players;

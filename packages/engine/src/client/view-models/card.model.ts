@@ -23,6 +23,7 @@ import type { BoardSpaceViewModel } from './board-space.model';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import { AttackAction } from '../actions/attack';
+import { DeclareRetaliationAction } from '../actions/retaliate';
 
 type CardData =
   | SerializedSpellCard
@@ -205,32 +206,17 @@ export class CardViewModel {
     return this.data.location;
   }
 
-  get power() {
-    if ('power' in this.data) {
-      return this.data.power as number;
+  get atk() {
+    if ('atk' in this.data) {
+      return this.data.atk as number;
     }
 
     return null;
   }
 
-  get basePower() {
-    if ('basePower' in this.data) {
-      return this.data.basePower as number;
-    }
-    return null;
-  }
-
-  get damage() {
-    if ('damage' in this.data) {
-      return this.data.damage as number;
-    }
-
-    return null;
-  }
-
-  get baseDamage() {
-    if ('baseDamage' in this.data) {
-      return this.data.baseDamage as number;
+  get baseAtk() {
+    if ('baseAtk' in this.data) {
+      return this.data.baseAtk as number;
     }
     return null;
   }
@@ -465,6 +451,10 @@ export class CardViewModel {
       new AttackAction(this.getClient()),
       new SelectCardOnBoardAction(this.getClient())
     ];
+  }
+
+  get retaliateAction() {
+    return new DeclareRetaliationAction(this.getClient());
   }
 
   get currentClickAction() {

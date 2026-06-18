@@ -19,7 +19,6 @@ import {
 import { BurstModifier } from '../../../../../modifier/modifiers/burst.modifier';
 import { predict, scry } from '../../../../card-actions-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { SimplePowerBuffModifier } from '../../../../../modifier/modifiers/simple-power-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SpellDamage } from '../../../../../utils/damage';
 import { RUNES } from '../../../../../player/player.enums';
@@ -27,6 +26,7 @@ import { GAME_EVENTS } from '../../../../../game/game.events';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { HeroCard } from '../../../../entities/hero.entity';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
@@ -62,7 +62,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   id: 'arcaneSpark',
   name: 'Arcane Spark',
   description: dedent /*html*/ `
-    Give a minion -1 Power this turn. 
+    Give a minion -1 Attack this turn. 
     <rt-runes runes="focus,wisdom"></rt-runes>Draw a card.
   `,
   collectable: true,
@@ -88,7 +88,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   async onInit() {},
   async onPlay(game, card, targets) {
     await targets.cards[0].modifiers.add(
-      new SimplePowerBuffModifier('arcaneSpark', game, card, {
+      new SimpleAttackBuffModifier('arcaneSpark', game, card, {
         amount: -1,
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
@@ -173,7 +173,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   id: 'fallingStar',
   name: 'Falling Star',
   description: dedent /*html*/ `
-    Consume <rt-runes runes="resonance"></rt-runes>. Deal 1 damage to a minion at a battlefield and give it -2 Power.
+    Consume <rt-runes runes="resonance"></rt-runes>. Deal 1 damage to a minion at a battlefield and give it -3 Attack.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -203,8 +203,8 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
     await card.player.runeManager.remove([RUNES.RESONANCE]);
     await minion.takeDamage(card, new SpellDamage(1, card));
     await minion.modifiers.add(
-      new SimplePowerBuffModifier('fallingStar', game, card, {
-        amount: -2
+      new SimpleAttackBuffModifier('fallingStar', game, card, {
+        amount: -3
       })
     );
   },

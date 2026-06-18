@@ -156,17 +156,18 @@ const isScreenDimmed = computed(() => {
           </div>
           <div class="opponent-battlefields">
             <div class="zone">
-              <InspectableCard
-                v-if="opponent.leftBattlefield.destinyCard"
-                :card-id="opponent.leftBattlefield.destinyCard.id"
-              >
-                <GameCard
-                  class="opponent-left-destiny"
+              <div class="opponent-left-destiny">
+                <InspectableCard
+                  v-if="opponent.leftBattlefield.destinyCard"
                   :card-id="opponent.leftBattlefield.destinyCard.id"
-                  variant="small"
-                  :is-interactive="false"
-                />
-              </InspectableCard>
+                >
+                  <GameCard
+                    :card-id="opponent.leftBattlefield.destinyCard.id"
+                    variant="small"
+                    :is-interactive="false"
+                  />
+                </InspectableCard>
+              </div>
               <BoardSpace
                 v-for="space in opponent.leftBattlefield.spaces"
                 :key="space.id"
@@ -179,32 +180,35 @@ const isScreenDimmed = computed(() => {
                 :key="space.id"
                 :cell-id="space.id"
               />
-              <InspectableCard
-                v-if="opponent.rightBattlefield.destinyCard"
-                :card-id="opponent.rightBattlefield.destinyCard.id"
-              >
-                <GameCard
-                  class="opponent-right-destiny"
+
+              <div class="opponent-right-destiny">
+                <InspectableCard
+                  v-if="opponent.rightBattlefield.destinyCard"
                   :card-id="opponent.rightBattlefield.destinyCard.id"
-                  variant="small"
-                  :is-interactive="false"
-                />
-              </InspectableCard>
+                >
+                  <GameCard
+                    :card-id="opponent.rightBattlefield.destinyCard.id"
+                    variant="small"
+                    :is-interactive="false"
+                  />
+                </InspectableCard>
+              </div>
             </div>
           </div>
           <div class="my-battlefields">
             <div class="zone">
-              <InspectableCard
-                v-if="myPlayer.leftBattlefield.destinyCard"
-                :card-id="myPlayer.leftBattlefield.destinyCard.id"
-              >
-                <GameCard
-                  class="my-left-destiny"
+              <div class="my-left-destiny">
+                <InspectableCard
+                  v-if="myPlayer.leftBattlefield.destinyCard"
                   :card-id="myPlayer.leftBattlefield.destinyCard.id"
-                  variant="small"
-                  :is-interactive="false"
-                />
-              </InspectableCard>
+                >
+                  <GameCard
+                    :card-id="myPlayer.leftBattlefield.destinyCard.id"
+                    variant="small"
+                    :is-interactive="false"
+                  />
+                </InspectableCard>
+              </div>
               <BoardSpace
                 v-for="space in myPlayer.leftBattlefield.spaces"
                 :key="space.id"
@@ -217,17 +221,18 @@ const isScreenDimmed = computed(() => {
                 :key="space.id"
                 :cell-id="space.id"
               />
-              <InspectableCard
-                v-if="myPlayer.rightBattlefield.destinyCard"
-                :card-id="myPlayer.rightBattlefield.destinyCard.id"
-              >
-                <GameCard
-                  class="my-right-destiny"
+              <div class="my-right-destiny">
+                <InspectableCard
+                  v-if="myPlayer.rightBattlefield.destinyCard"
                   :card-id="myPlayer.rightBattlefield.destinyCard.id"
-                  variant="small"
-                  :is-interactive="false"
-                />
-              </InspectableCard>
+                >
+                  <GameCard
+                    :card-id="myPlayer.rightBattlefield.destinyCard.id"
+                    variant="small"
+                    :is-interactive="false"
+                  />
+                </InspectableCard>
+              </div>
             </div>
           </div>
           <div class="my-base zone">

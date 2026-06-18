@@ -1,6 +1,6 @@
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { CombatDamage, UnpreventableDamage, type Damage } from '../../utils/damage';
+import { CombatDamage, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type AbilityBlueprint, type MinionBlueprint } from '../card-blueprint';
 import {
@@ -26,7 +26,6 @@ import {
 } from './card.entity';
 import { GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
-import { HeroCard } from './hero.entity';
 import {
   MINION_EVENTS,
   MinionCardHealEvent,
@@ -46,10 +45,8 @@ import type { BetterExtract } from '@game/shared';
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
   potentialMoveTargets: string[];
-  basePower: number;
-  power: number;
-  baseDamage: number;
-  damage: number;
+  baseAtk: number;
+  atk: number;
   baseMaxHp: number;
   maxHp: number;
   remainingHp: number;
@@ -61,6 +58,7 @@ export type SerializedMinionCard = SerializedCard & {
   canMove: boolean;
   jobs: JobId[];
   hasSummoningSickness: boolean;
+  canRetaliate: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -77,13 +75,13 @@ export type MinionCardInterceptors = CardInterceptors & {
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
-  power: Interceptable<number, MinionCard>;
-  damage: Interceptable<number, MinionCard>;
+  atk: Interceptable<number, MinionCard>;
   commandment: Interceptable<number, MinionCard>;
   canMove: Interceptable<boolean, MinionCard>;
   canMoveManually: Interceptable<boolean, MinionCard>;
   canMoveBetweenBattlefields: Interceptable<boolean, MinionCard>;
 
+  shouldDealDamageFirst: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterAttacking: Interceptable<boolean, { target: AttackTarget }>;
   shouldCreateChainOnAttack: Interceptable<boolean, { target: AttackTarget }>;
@@ -118,8 +116,7 @@ export class MinionCard extends Card<
         canBeTargeted: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
-        power: new Interceptable(),
-        damage: new Interceptable(),
+        atk: new Interceptable(),
         commandment: new Interceptable(),
         canMove: new Interceptable(),
         canMoveManually: new Interceptable(),
@@ -128,6 +125,7 @@ export class MinionCard extends Card<
         shouldSwitchInitiativeAfterAttacking: new Interceptable(),
         shouldCreateChainOnAttack: new Interceptable(),
         shouldGiveBountyWhenDestroyed: new Interceptable(),
+        shouldDealDamageFirst: new Interceptable(),
         speed: new Interceptable()
       },
       options
@@ -163,12 +161,8 @@ export class MinionCard extends Card<
     return this.remainingHp > 0 && this.isOnBoard;
   }
 
-  get power(): number {
-    return this.interceptors.power.getValue(this.blueprint.power, this);
-  }
-
-  get damage(): number {
-    return this.interceptors.damage.getValue(this.blueprint.damage, this);
+  get atk(): number {
+    return this.interceptors.atk.getValue(this.blueprint.atk, this);
   }
 
   get maxHp(): number {
@@ -193,6 +187,10 @@ export class MinionCard extends Card<
 
   get canResolveCombat() {
     return this.isOnBattleField && (this.isAttacking || this.isAttackTarget);
+  }
+
+  get shouldDealDamageFirst(): boolean {
+    return this.interceptors.shouldDealDamageFirst.getValue(false, this);
   }
 
   protected async onInterceptorAdded(key: MinionCardInterceptorName) {
@@ -258,9 +256,10 @@ export class MinionCard extends Card<
 
   canRetaliate(target: AttackTarget) {
     if (!this.game.combatSystem.defender?.equals(this)) return false;
+    if (this.game.combatSystem.isDefenderRetaliating) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) && true,
+      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) && !this.isExhausted,
       {
         attacker: target
       }
@@ -558,10 +557,8 @@ export class MinionCard extends Card<
       baseManaCost: this.manaCost,
       potentialAttackTargets: this.potentialAttackTargets.map(target => target.id),
       potentialMoveTargets: this.potentialMoveTargets.map(space => space.id),
-      power: this.power,
-      basePower: this.blueprint.power,
-      damage: this.damage,
-      baseDamage: this.blueprint.damage,
+      atk: this.atk,
+      baseAtk: this.blueprint.atk,
       maxHp: this.maxHp,
       baseMaxHp: this.game.config.MINION_HP,
       remainingHp: this.remainingHp,
@@ -570,7 +567,8 @@ export class MinionCard extends Card<
       abilities: this.abilityManager.serialize(),
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],
-      hasSummoningSickness: this.hasSummoningSickness
+      hasSummoningSickness: this.hasSummoningSickness,
+      canRetaliate: this.canRetaliate(this.game.combatSystem.attacker!)
     };
   }
 }

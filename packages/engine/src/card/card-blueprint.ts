@@ -116,8 +116,8 @@ export const serializeTargets = (targets: Targets): SerializedTargets => {
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
-  power: number;
-  damage: number;
+  maxHp: number;
+  atk: number;
   commandment: number;
   abilities: AbilityBlueprint<MinionCard, any>[];
   jobs: Job[];

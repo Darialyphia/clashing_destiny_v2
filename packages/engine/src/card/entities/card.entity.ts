@@ -203,18 +203,10 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
-  get offFactionManaCostIncrease() {
-    return this.interceptors.offFactionManaCostIncrease.getValue(
-      this.game.config.OFF_FACTION_MANA_COST_INCREASE,
-      {}
-    );
-  }
-
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
-      const base = this.hasUnlockedAffinity
-        ? this.blueprint.manaCost
-        : this.blueprint.manaCost + this.offFactionManaCostIncrease;
+      const base = this.blueprint.manaCost;
+
       return Math.max(0, this.interceptors.manaCost.getValue(base ?? null, {}) ?? 0);
     }
     return 0;

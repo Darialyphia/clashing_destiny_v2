@@ -284,7 +284,9 @@ export class GameInteractionSystem
   shutdown() {}
 
   get interactivePlayer() {
-    return this.game.turnSystem.initiativePlayer;
+    return this.game.effectChainSystem.currentChain
+      ? this.game.effectChainSystem.currentChain.currentPlayer
+      : this.game.turnSystem.initiativePlayer;
   }
 
   isInteractive(player: Player) {

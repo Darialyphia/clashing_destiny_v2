@@ -7,6 +7,7 @@ import {
 import Arrow from './Arrow.vue';
 import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
+import { COMBAT_STEPS } from '@game/engine/src/game/game.enums';
 
 const { playerId } = useGameClient();
 const ui = useGameUi();
@@ -73,12 +74,38 @@ const buildAttackArrowPath = async () => {
 
 watchEffect(buildAttackArrowPath);
 watch(() => playerId.value, buildAttackArrowPath);
-watch(() => state.value.phase.ctx, buildAttackArrowPath);
+watch(() => state.value.combat, buildAttackArrowPath);
 useEventListener(window, 'resize', throttle(buildAttackArrowPath, 100));
+
+const counterAttackPath = ref('');
+
+const buildBlockerArrowPath = async () => {
+  await nextTick();
+  if (state.value.combat.step !== COMBAT_STEPS.REACTION) {
+    counterAttackPath.value = '';
+    return;
+  }
+  if (!state.value.combat.attacker || !state.value.combat.defender) {
+    counterAttackPath.value = '';
+    return;
+  }
+
+  counterAttackPath.value = buildArrowBetweenTwoCards(
+    state.value.combat.defender,
+    state.value.combat.attacker,
+    -40
+  );
+};
+
+watchEffect(buildBlockerArrowPath);
+watch(() => playerId.value, buildBlockerArrowPath);
+watch(() => state.value.combat, buildBlockerArrowPath);
+useEventListener(window, 'resize', throttle(buildBlockerArrowPath, 100));
 </script>
 
 <template>
   <Teleport to="#arrows" defer>
     <Arrow :path="attackPath" color="red" v-if="attackPath" />
+    <Arrow :path="counterAttackPath" color="lime" v-if="counterAttackPath" />
   </Teleport>
 </template>

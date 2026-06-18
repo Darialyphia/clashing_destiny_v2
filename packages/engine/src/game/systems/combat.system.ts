@@ -14,6 +14,7 @@ import { HeroCard } from '../../card/entities/hero.entity';
 import {
   COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
+  EFFECT_TYPE,
   type CombatStep,
   type CombatStepTransition
 } from '../game.enums';
@@ -21,6 +22,7 @@ import { CorruptedGamephaseContextError, GameError } from '../game-error';
 import { isHero } from '../../card/card-utils';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CombatDamage } from '../../utils/damage';
+import { nanoid } from 'nanoid';
 
 export type Attacker = MinionCard;
 export type AttackTarget = MinionCard;
@@ -72,6 +74,7 @@ export class CombatSystem
 {
   private _attacker: Attacker | null = null;
   private _defender: AttackTarget | null = null;
+  isDefenderRetaliating = false;
 
   private stateMachine = new CombatStateMachine();
 
@@ -156,6 +159,30 @@ export class CombatSystem
     }
   }
 
+  async declareRetaliation() {
+    if (!this.defender) {
+      throw new WrongCombatStepError();
+    }
+    if (
+      !this.attacker!.canBeRetaliatedBy(this.defender) ||
+      !this.defender.canRetaliate(this.attacker!)
+    ) {
+      throw new InvalidCounterattackError();
+    }
+    await this.defender.exhaust();
+    this.isDefenderRetaliating = true;
+    await this.game.effectChainSystem.currentChain?.addEffect(
+      {
+        id: nanoid(),
+        source: this.defender,
+        type: EFFECT_TYPE.RETALIATION,
+        targets: { cards: [this.attacker!], spaces: [] },
+        handler: async () => {}
+      },
+      this.defender.player
+    );
+  }
+
   changeTarget(newTarget: AttackTarget) {
     if (!this.defender) return;
     this._defender = newTarget;
@@ -189,15 +216,13 @@ export class CombatSystem
         })
       );
 
-      const winner = this.getWinner(this.attacker, this.defender);
-      await this.dealDamage();
+      await this.performAttacks();
 
       await this.game.emit(
         COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
         new AfterResolveCombatEvent({
           attacker: this.attacker!,
-          target: this.defender!,
-          winner
+          target: this.defender!
         })
       );
 
@@ -211,46 +236,52 @@ export class CombatSystem
     this._defender = null;
   }
 
-  private getDamagingParticipants(
-    attacker: Attacker,
-    defender: AttackTarget
-  ): Array<{ attacker: Attacker; defender: AttackTarget }> {
-    if (isHero(defender)) return [{ attacker, defender }];
-
-    if (attacker.power === defender.power)
-      return [
-        { attacker, defender },
-        { attacker: defender as Attacker, defender: attacker as AttackTarget }
-      ];
-
-    return attacker.power > defender.power
-      ? [{ attacker, defender }]
-      : [{ attacker: defender as Attacker, defender: attacker as AttackTarget }];
-  }
-
-  private getWinner(attacker: Attacker, defender: AttackTarget): Attacker | null {
-    if (isHero(defender)) return null;
-
-    if (attacker.power === defender.power) return null;
-
-    return attacker.power > defender.power ? attacker : defender;
-  }
-
-  private async dealDamage() {
+  private async performAttacks() {
     const defender = this.defender;
     const attacker = this.attacker;
-    if (!defender || !attacker) return;
+    if (!attacker || !defender) return;
 
     const canResolve = defender.isAlive && attacker.isAlive;
+    if (canResolve) {
+      const attackerDealsFirst = attacker.shouldDealDamageFirst;
+      const defenderDealsFirst = defender.shouldDealDamageFirst;
 
-    if (!canResolve) return;
-    const damagingParticipants = this.getDamagingParticipants(attacker, defender);
-    for (const participant of damagingParticipants) {
-      await participant.attacker.dealDamage(
-        participant.defender,
-        new CombatDamage(participant.attacker)
-      );
+      const performAtttackerStrike = async () => {
+        if (defender.isAlive) {
+          await attacker.dealDamage(defender, new CombatDamage(attacker));
+        }
+      };
+
+      const performDefenderStrike = async () => {
+        if (!this.isDefenderRetaliating) return;
+        if (attacker.isAlive) {
+          await defender.dealDamage(attacker, new CombatDamage(defender));
+        }
+      };
+
+      if (attackerDealsFirst && !defenderDealsFirst) {
+        await performAtttackerStrike();
+        if (defender.isAlive) {
+          await performDefenderStrike();
+        }
+      } else if (!attackerDealsFirst && defenderDealsFirst) {
+        await performDefenderStrike();
+        if (defender.isAlive) {
+          await performAtttackerStrike();
+        }
+      } else {
+        await performAtttackerStrike();
+        await performDefenderStrike();
+      }
     }
+
+    await this.game.emit(
+      COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
+      new AfterResolveCombatEvent({
+        attacker: attacker,
+        target: defender
+      })
+    );
   }
 
   serialize() {
@@ -334,14 +365,13 @@ export class BeforeResolveCombatEvent extends TypedSerializableEvent<
 }
 
 export class AfterResolveCombatEvent extends TypedSerializableEvent<
-  { attacker: Attacker; target: AttackTarget; winner: Attacker | null },
-  { attacker: string; target: string; winner: string | null }
+  { attacker: Attacker; target: AttackTarget },
+  { attacker: string; target: string }
 > {
   serialize() {
     return {
       attacker: this.data.attacker.id,
-      target: this.data.target.id,
-      winner: this.data.winner?.id ?? null
+      target: this.data.target.id
     };
   }
 }

@@ -7,7 +7,7 @@ import { waitFor } from '@game/shared';
 import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
-import { CARD_KINDS, CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
+import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import CardModifiers from './CardModifiers.vue';
 import { formatAbilityText } from '@/utils/formatters';
 import { provideRichTextContext } from '../composables/useRichText';
@@ -110,12 +110,8 @@ provideRichTextContext({
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
           expCost: overrides.expCost ?? card.expCost,
-          hp:
-            card.kind === CARD_KINDS.MINION
-              ? null
-              : (overrides.hp ?? card.maxHp),
-          power: overrides.power ?? card.power,
-          damage: overrides.damage ?? card.damage,
+          hp: overrides.hp ?? card.maxHp,
+          atk: overrides.atk ?? card.atk,
           durability: overrides.durability ?? card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
@@ -138,10 +134,8 @@ provideRichTextContext({
           id: card.id,
           art: overrides.art ?? card.art,
           kind: overrides.kind ?? card.kind,
-          power: overrides.atk ?? card.power,
-          basePower: overrides.baseAtk ?? card.basePower,
-          damage: overrides.damage ?? card.damage,
-          baseDamage: overrides.baseDamage ?? card.baseDamage,
+          atk: overrides.atk ?? card.atk,
+          baseAtk: overrides.baseAtk ?? card.baseAtk,
           hp: overrides.hp ?? card.hp,
           baseMaxHp: overrides.baseMaxHp ?? card.baseMaxHp,
           maxHp: overrides.maxHp ?? card.maxHp,

@@ -43,8 +43,7 @@ const {
     expCost?: number | null;
     baseExpCost?: number | null;
     rarity: Rarity;
-    power?: number | null;
-    damage?: number | null;
+    atk?: number | null;
     hp?: number | null;
     durability?: number | null;
     abilities?: string[];
@@ -267,7 +266,6 @@ const tint = computed(() => {
             v-if="isDefined(card.commandment)"
             class="commandment-cost"
             :class="costStatus"
-            data-label="Bounty"
           >
             <div class="dual-text" :data-text="card.commandment">
               {{ card.commandment }}
@@ -348,14 +346,9 @@ const tint = computed(() => {
           <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
         </template>
 
-        <div v-if="isDefined(card.power)" class="stat power parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.power">
-            {{ card.power }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.damage)" class="stat damage parallax">
-          <div v-if="showText" class="dual-text" :data-text="card.damage">
-            {{ card.damage }}
+        <div v-if="isDefined(card.atk)" class="stat atk parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.atk">
+            {{ card.atk }}
           </div>
         </div>
         <div v-if="isDefined(card.hp)" class="stat hp parallax">
@@ -745,7 +738,7 @@ const tint = computed(() => {
   --dual-text-offset-x: calc(8px * var(--pixel-scale));
 }
 
-.power {
+.atk {
   background-image: url('@/assets/ui/card/power.png');
   left: calc(2px * var(--pixel-scale));
 }

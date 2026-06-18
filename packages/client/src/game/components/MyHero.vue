@@ -8,15 +8,17 @@ import {
 } from '../composables/useGameClient';
 import BoardCard from './BoardCard.vue';
 import { RUNES } from '@game/engine/src/player/player.enums';
+import {
+  DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuRoot,
+  DropdownMenuTrigger
+} from 'reka-ui';
 
 const ui = useGameUi();
 const myPlayer = useMyPlayer();
 const state = useGameState();
 const { client } = useGameClient();
-
-let startX = 0;
-let startY = 0;
-const DRAG_THRESHOLD_PX = 30;
 
 const isResourceActionMenuOpened = ref(false);
 
@@ -26,96 +28,70 @@ const canSelectHero = computed(() => {
   if (!myPlayer.value.canTakeResourceAction) return false;
   return true;
 });
-
-const onMousemove = (e: MouseEvent) => {
-  const deltaY = Math.abs(startY - e.clientY);
-  const deltaX = Math.abs(startX - e.clientX);
-  if (deltaY >= DRAG_THRESHOLD_PX || deltaX >= DRAG_THRESHOLD_PX) {
-    isResourceActionMenuOpened.value = true;
-    document.body.removeEventListener('mousemove', onMousemove);
-  }
-};
-
-const onMousedown = (e: MouseEvent) => {
-  if (!canSelectHero.value) return;
-  startX = e.clientX;
-  startY = e.clientY;
-
-  document.body.addEventListener('mousemove', onMousemove);
-  document.body.addEventListener('mouseup', onMouseup, {
-    once: true,
-    capture: true
-  });
-};
-
-const onMouseup = () => {
-  document.body.removeEventListener('mousemove', onMousemove);
-  nextTick(() => {
-    isResourceActionMenuOpened.value = false;
-  });
-};
 </script>
 
 <template>
-  <div
-    class="wrapper"
-    :class="{ 'can-act': canSelectHero }"
-    @mousedown="onMousedown"
-  >
-    <Transition>
-      <div
+  <div class="wrapper" :class="{ 'can-act': canSelectHero }">
+    <DropdownMenuRoot
+      v-model:open="isResourceActionMenuOpened"
+      :side="'top'"
+      :align="'center'"
+    >
+      <DropdownMenuTrigger
+        v-if="canSelectHero"
         class="resource-action-indicator"
-        v-if="canSelectHero && !isResourceActionMenuOpened"
       />
-    </Transition>
-    <Transition>
-      <div class="resource-actions-menu" v-if="isResourceActionMenuOpened">
-        <button
-          class="resource-action might"
-          @mouseup="
-            client.takeResourceAction({
-              type: 'rune',
-              rune: RUNES.MIGHT
-            })
-          "
-        />
-        <button
-          class="resource-action wisdom"
-          @mouseup="
-            client.takeResourceAction({
-              type: 'rune',
-              rune: RUNES.WISDOM
-            })
-          "
-        />
-        <button
-          class="resource-action focus"
-          @mouseup="
-            client.takeResourceAction({
-              type: 'rune',
-              rune: RUNES.FOCUS
-            })
-          "
-        />
-        <button
-          class="resource-action resonance"
-          @mouseup="
-            client.takeResourceAction({
-              type: 'rune',
-              rune: RUNES.RESONANCE
-            })
-          "
-        />
-        <button
-          class="resource-action draw"
-          @mouseup="
-            client.takeResourceAction({
-              type: 'draw'
-            })
-          "
-        />
-      </div>
-    </Transition>
+      <DropdownMenuPortal>
+        <DropdownMenuContent>
+          <div class="resource-actions-menu" v-if="isResourceActionMenuOpened">
+            <button
+              class="resource-action might"
+              @mouseup="
+                client.takeResourceAction({
+                  type: 'rune',
+                  rune: RUNES.MIGHT
+                })
+              "
+            />
+            <button
+              class="resource-action wisdom"
+              @mouseup="
+                client.takeResourceAction({
+                  type: 'rune',
+                  rune: RUNES.WISDOM
+                })
+              "
+            />
+            <button
+              class="resource-action focus"
+              @mouseup="
+                client.takeResourceAction({
+                  type: 'rune',
+                  rune: RUNES.FOCUS
+                })
+              "
+            />
+            <button
+              class="resource-action resonance"
+              @mouseup="
+                client.takeResourceAction({
+                  type: 'rune',
+                  rune: RUNES.RESONANCE
+                })
+              "
+            />
+            <button
+              class="resource-action draw"
+              @mouseup="
+                client.takeResourceAction({
+                  type: 'draw'
+                })
+              "
+            />
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
+    </DropdownMenuRoot>
     <BoardCard
       v-if="myPlayer.hero"
       :card="myPlayer.hero"
@@ -159,20 +135,13 @@ const onMouseup = () => {
   background: url('@/assets/ui/action-rune-colorless.png') no-repeat center
     center;
   background-size: contain;
-  pointer-events: none;
   z-index: 1;
   animation: resource-action-indicator-float 2s infinite ease-in-out;
   filter: drop-shadow(0 0 10px var(--yellow-4));
-
-  &.v-enter-active,
-  &.v-leave-active {
-    transition: all 0.2s var(--ease-2);
-  }
-
-  &.v-enter-from,
-  &.v-leave-to {
-    opacity: 0;
-    translate: -50% 1rem;
+  cursor: pointer;
+  transition: filter 0.2s ease-in-out;
+  &:hover {
+    filter: drop-shadow(0 0 15px var(--yellow-3)) brightness(1.2);
   }
 }
 
@@ -199,17 +168,6 @@ const onMouseup = () => {
   box-shadow: var(--shadow-2);
   background-color: hsl(0 0% 0% / 0.5);
   backdrop-filter: blur(4px);
-
-  &.v-enter-active,
-  &.v-leave-active {
-    transition: all 0.2s var(--ease-2);
-  }
-
-  &.v-enter-from,
-  &.v-leave-to {
-    opacity: 0;
-    translate: -50% 1rem;
-  }
 }
 .resource-action {
   width: 38px;

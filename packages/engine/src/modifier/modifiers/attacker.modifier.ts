@@ -22,7 +22,7 @@ export class AttackerModifier extends Modifier<MinionCard> {
       icon: 'icons/keyword-attacker',
       mixins: [
         new MinionInterceptorModifierMixin(game, {
-          key: 'power',
+          key: 'atk',
           interceptor: (value, ctx) => {
             if (!game.combatSystem.attacker?.equals(ctx)) return value;
 

@@ -23,10 +23,8 @@ const {
     id: string;
     art: CardArt;
     kind: CardKind;
-    power?: number | null;
-    basePower?: number | null;
-    damage?: number | null;
-    baseDamage?: number | null;
+    atk?: number | null;
+    baseAtk?: number | null;
     hp?: number | null;
     countdown?: number | null;
     maxHp?: number | null;
@@ -91,29 +89,15 @@ const artMainImage = computed(() => {
         </div>
 
         <div
-          v-if="isDefined(card.power)"
-          class="stat power"
+          v-if="isDefined(card.atk)"
+          class="stat atk"
           :class="{
-            buffed: isDefined(card.basePower) && card.power > card.basePower,
-            debuffed: isDefined(card.basePower) && card.power < card.basePower
+            buffed: isDefined(card.baseAtk) && card.atk > card.baseAtk,
+            debuffed: isDefined(card.baseAtk) && card.atk < card.baseAtk
           }"
         >
-          <div class="dual-text" :data-text="card.power">
-            {{ card.power }}
-          </div>
-        </div>
-
-        <div
-          v-if="isDefined(card.damage)"
-          class="stat damage"
-          :class="{
-            buffed: isDefined(card.baseDamage) && card.damage > card.baseDamage,
-            debuffed:
-              isDefined(card.baseDamage) && card.damage < card.baseDamage
-          }"
-        >
-          <div class="dual-text" :data-text="card.damage">
-            {{ card.damage }}
+          <div class="dual-text" :data-text="card.atk">
+            {{ card.atk }}
           </div>
         </div>
 
@@ -262,21 +246,11 @@ const artMainImage = computed(() => {
   }
 }
 
-.power {
-  background-image: url('@/assets/ui/card/power-flipped.png');
+.atk {
+  background-image: url('@/assets/ui/card/power.png');
   left: 0;
-  padding-left: calc(16px * var(--pixel-scale));
   --dual-text-offset-y: calc(4px * var(--pixel-scale));
-  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
-}
-
-.damage {
-  background-image: url('@/assets/ui/card/damage-flipped.png');
-  left: calc(39px * var(--pixel-scale));
-  text-align: right;
-  padding-right: calc(10px * var(--pixel-scale));
-  --dual-text-offset-y: calc(4px * var(--pixel-scale));
-  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .hp {

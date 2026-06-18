@@ -2,8 +2,7 @@ import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
 import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
-  PatchBasedSnapshotDiff,
-  SnapshotDiff
+  PatchBasedSnapshotDiff
 } from '../game/systems/game-snapshot.system';
 import type {
   SerializedOmniscientState,
@@ -21,7 +20,6 @@ import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
 import type { BoardSpaceViewModel } from './view-models/board-space.model';
-import { GAME_PHASES } from '../game/game.enums';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import type { Rune } from '../player/player.enums';
 
@@ -387,6 +385,15 @@ export class GameClient {
       payload: {
         playerId: this.playerId,
         action
+      }
+    });
+  }
+
+  declareRetaliation() {
+    this.dispatch({
+      type: 'declareRetaliation',
+      payload: {
+        playerId: this.playerId
       }
     });
   }
