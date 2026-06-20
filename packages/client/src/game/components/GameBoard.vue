@@ -138,6 +138,14 @@ const isScreenDimmed = computed(() => {
     <Camera>
       <div class="board" :id="ui.DOMSelectors.board.id">
         <div class="opponent-hero">
+          <div class="victory-points">
+            <div
+              v-for="point in state.config.VICTORY_POINTS_TO_WIN"
+              :key="point"
+              class="victory-point"
+              :class="{ empty: opponent.victoryPoints < point }"
+            />
+          </div>
           <BoardCard
             v-if="opponent.hero"
             :card="opponent.hero"
@@ -156,6 +164,19 @@ const isScreenDimmed = computed(() => {
           </div>
           <div class="opponent-battlefields">
             <div class="zone">
+              <div
+                class="opponent-left-score"
+                :class="{
+                  win:
+                    opponent.leftBattlefield.commandmentScore >
+                    myPlayer.leftBattlefield.commandmentScore,
+                  lose:
+                    opponent.leftBattlefield.commandmentScore <
+                    myPlayer.leftBattlefield.commandmentScore
+                }"
+              >
+                {{ opponent.leftBattlefield.commandmentScore }}
+              </div>
               <div class="opponent-left-destiny">
                 <InspectableCard
                   v-if="opponent.leftBattlefield.destinyCard"
@@ -193,6 +214,19 @@ const isScreenDimmed = computed(() => {
                   />
                 </InspectableCard>
               </div>
+              <div
+                class="opponent-right-score"
+                :class="{
+                  win:
+                    opponent.rightBattlefield.commandmentScore >
+                    myPlayer.rightBattlefield.commandmentScore,
+                  lose:
+                    opponent.rightBattlefield.commandmentScore <
+                    myPlayer.rightBattlefield.commandmentScore
+                }"
+              >
+                {{ opponent.rightBattlefield.commandmentScore }}
+              </div>
             </div>
           </div>
           <div class="my-battlefields">
@@ -214,6 +248,19 @@ const isScreenDimmed = computed(() => {
                 :key="space.id"
                 :cell-id="space.id"
               />
+              <div
+                class="my-left-score"
+                :class="{
+                  win:
+                    myPlayer.leftBattlefield.commandmentScore >
+                    opponent.leftBattlefield.commandmentScore,
+                  lose:
+                    myPlayer.leftBattlefield.commandmentScore <
+                    opponent.leftBattlefield.commandmentScore
+                }"
+              >
+                {{ myPlayer.leftBattlefield.commandmentScore }}
+              </div>
             </div>
             <div class="zone">
               <BoardSpace
@@ -232,6 +279,19 @@ const isScreenDimmed = computed(() => {
                     :is-interactive="false"
                   />
                 </InspectableCard>
+              </div>
+              <div
+                class="my-right-score"
+                :class="{
+                  win:
+                    myPlayer.rightBattlefield.commandmentScore >
+                    opponent.rightBattlefield.commandmentScore,
+                  lose:
+                    myPlayer.rightBattlefield.commandmentScore <
+                    opponent.rightBattlefield.commandmentScore
+                }"
+              >
+                {{ myPlayer.rightBattlefield.commandmentScore }}
               </div>
             </div>
           </div>
@@ -262,6 +322,14 @@ const isScreenDimmed = computed(() => {
         </div>
 
         <div class="my-hero">
+          <div class="victory-points">
+            <div
+              v-for="point in state.config.VICTORY_POINTS_TO_WIN"
+              :key="point"
+              class="victory-point"
+              :class="{ empty: myPlayer.victoryPoints < point }"
+            />
+          </div>
           <MyHero />
           <EffectChain class="effect-chain" />
         </div>
@@ -650,5 +718,62 @@ const isScreenDimmed = computed(() => {
 
 .effect-chain {
   flex-grow: 1;
+}
+
+.opponent-left-score,
+.opponent-right-score,
+.my-left-score,
+.my-right-score {
+  position: absolute;
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-7);
+  color: white;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
+  &.win {
+    color: var(--green-6);
+  }
+  &.lose {
+    color: var(--red-6);
+  }
+}
+
+.opponent-left-score {
+  top: 80%;
+  right: -35px;
+}
+
+.my-left-score {
+  top: -7px;
+  right: -35px;
+}
+
+.opponent-right-score {
+  top: 80%;
+  left: -50px;
+}
+
+.my-right-score {
+  top: -7px;
+  left: -50px;
+}
+
+.victory-points {
+  display: grid;
+  grid-template-columns: repeat(5, 47px);
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: calc(100% + var(--size-3));
+  top: 0px;
+}
+.victory-point {
+  width: 47px;
+  height: 48px;
+  background: url('@/assets/ui/score.png');
+  &.empty {
+    background: url('@/assets/ui/score-empty.png');
+  }
 }
 </style>

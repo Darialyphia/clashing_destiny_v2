@@ -146,7 +146,7 @@ export class MinionCard extends Card<
     return this.interceptors.hasSummoningSickness.getValue(true, this);
   }
 
-  get isOnBattleField() {
+  get isOnBattlefield() {
     return (
       this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
       this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
@@ -154,7 +154,7 @@ export class MinionCard extends Card<
   }
 
   get isOnBoard() {
-    return this.location === CARD_LOCATIONS.BASE || this.isOnBattleField;
+    return this.location === CARD_LOCATIONS.BASE || this.isOnBattlefield;
   }
 
   get isAlive() {
@@ -166,7 +166,7 @@ export class MinionCard extends Card<
   }
 
   get maxHp(): number {
-    return this.interceptors.maxHp.getValue(this.game.config.MINION_HP, this);
+    return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
   }
 
   get jobs() {
@@ -186,7 +186,7 @@ export class MinionCard extends Card<
   }
 
   get canResolveCombat() {
-    return this.isOnBattleField && (this.isAttacking || this.isAttackTarget);
+    return this.isOnBattlefield && (this.isAttacking || this.isAttackTarget);
   }
 
   get shouldDealDamageFirst(): boolean {
@@ -216,7 +216,7 @@ export class MinionCard extends Card<
   }
 
   get canAttackEnemyHero(): boolean {
-    if (!this.isOnBattleField) return false;
+    if (!this.isOnBattlefield) return false;
     const location = this.location as BetterExtract<
       CardLocation,
       'left_battlefield' | 'right_battlefield'
@@ -231,7 +231,7 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    let base = this.isOnBattleField && !this._isExhausted && target.canBeAttacked(this);
+    let base = this.isOnBattlefield && !this._isExhausted && target.canBeAttacked(this);
 
     if (isHero(target) && !this.canAttackEnemyHero) {
       base = false;
@@ -501,7 +501,7 @@ export class MinionCard extends Card<
   }
 
   get potentialAttackTargets(): Array<AttackTarget> {
-    if (!this.isOnBattleField) return [];
+    if (!this.isOnBattlefield) return [];
 
     const result: AttackTarget[] = [];
     if (this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
@@ -560,7 +560,7 @@ export class MinionCard extends Card<
       atk: this.atk,
       baseAtk: this.blueprint.atk,
       maxHp: this.maxHp,
-      baseMaxHp: this.game.config.MINION_HP,
+      baseMaxHp: this.blueprint.maxHp,
       remainingHp: this.remainingHp,
       commandment: this.commandment,
       baseCommandment: this.blueprint.commandment,

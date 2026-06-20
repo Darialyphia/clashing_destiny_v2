@@ -1,11 +1,11 @@
 import dedent from 'dedent';
-import type { SpellBlueprint } from '../../../../card-blueprint';
+import type { SpellBlueprint, Targets } from '../../../../card-blueprint';
 import {
   battlefieldTargetRules,
   defaultCardArt,
   emptyBoardSpaceTargetRules,
-  isHero,
   isMinion,
+  multipleEnemyTargetRules,
   noTargets,
   singleAllyMinionTargetRules,
   singleEnemyMinionTargetRules,
@@ -22,23 +22,21 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SpellDamage } from '../../../../../utils/damage';
-import type { HeroCard } from '../../../../entities/hero.entity';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
-import {
-  RuneCostToggleModifierMixin,
-  JobBonusToggleModifierMixin
-} from '../../../../../modifier/mixins/togglable.mixin';
+import { JobBonusToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { RUNES } from '../../../../../player/player.enums';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { isDefined } from '@game/shared';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import type { InteractionResult } from '../../../../../game/systems/game-interaction.system';
 
 export const fireBolt: SpellBlueprint<MinionCard> = {
   id: 'fireBolt',
   name: 'Fire Bolt',
   description: dedent /*html*/ `
-  <rt-job-bonus job="${JOBS.MAGE.id}"><rt-runes runes="wisdom,wisdom"></rt-runes>This costs 1 less.</rt-job-bonus>
-  Deal 1 damage to an enemy minion.
+  Deal 1 damage to an enemy minion at a battlefield.
+  <rt-job-bonus job="${JOBS.MAGE.id}"><rt-runes runes="wisdom,wisdom"></rt-runes> This can also target enemy minions in base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -47,31 +45,26 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
-  canPlay: () => true,
+  canPlay: (game, card) =>
+    singleEnemyMinionTargetRules.canPlay(game, card, minion =>
+      card.player.runeManager.has({ wisdom: 2 }) ? true : minion.isOnBattlefield
+    ),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({
       game,
       card,
       timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
+      predicate: minion =>
+        card.player.runeManager.has({ wisdom: 2 }) ? true : minion.isOnBattlefield,
       aiHints: {
         shouldPick: () => 1
       }
     }),
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new SimpleManacostModifier('firebolt-discount', game, card, {
-        amount: -1,
-        mixins: [
-          new JobBonusToggleModifierMixin(game, card, JOBS.MAGE.id),
-          new RuneCostToggleModifierMixin(game, card, { wisdom: 2 })
-        ]
-      })
-    );
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
     const [target] = targets.cards;
     if (!target) return;
@@ -139,7 +132,7 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   id: 'innerFire',
   name: 'Inner Fire',
   description: dedent /*html*/ `
-  Give a minion +2 Power and +1 Damage this turn.
+  Give a minion +2 Attack this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -148,7 +141,7 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,
@@ -161,22 +154,14 @@ export const innerFire: SpellBlueprint<MinionCard> = {
         shouldPick: () => 1
       }
     }),
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new SimpleManacostModifier('firebolt-discount', game, card, {
-        amount: -1,
-        mixins: [
-          new JobBonusToggleModifierMixin(game, card, JOBS.MAGE.id),
-          new RuneCostToggleModifierMixin(game, card, { wisdom: 2 })
-        ]
-      })
-    );
-  },
+  async onInit() {},
   async onPlay(game, card, targets) {
     const [target] = targets.cards;
     if (!target) return;
 
-    await target.takeDamage(card, new SpellDamage(1, card));
+    await target.modifiers.add(
+      new SimpleAttackBuffModifier('inner-fire', game, target, { amount: 2 })
+    );
   },
   aiHints: {
     shouldPlay: () => 1
@@ -188,7 +173,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   name: 'Fire Ball',
   description: dedent /*html*/ `
   Consume <rt-runes runes="wisdom"></rt-runes>
-  Deal 2 damage to an enemy minion.
+  Deal 4 damage to an enemy minion.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -197,10 +182,12 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
-  manaCost: 4,
+  manaCost: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
-  canPlay: (game, card) => card.player.runeManager.has({ wisdom: 1 }),
+  canPlay: (game, card) =>
+    card.player.runeManager.has({ wisdom: 1 }) &&
+    singleEnemyMinionTargetRules.canPlay(game, card),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({
       game,
@@ -216,7 +203,13 @@ export const fireBall: SpellBlueprint<MinionCard> = {
     const [target] = targets.cards;
     if (!target) return;
 
-    await target.takeDamage(card, new SpellDamage(2, card));
+    if (!card.player.runeManager.has({ wisdom: 1 })) {
+      return;
+    }
+
+    await card.player.runeManager.remove([RUNES.WISDOM]);
+
+    await target.takeDamage(card, new SpellDamage(4, card));
   },
   aiHints: {
     shouldPlay: () => 1
@@ -293,7 +286,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   id: 'lesserFireSummoning',
   name: 'Lesser Fire Summoning',
   description: dedent /*html*/ `
-  Summon a <rt-card>Will-o-Wisp</rt-card> in your battlefield.
+  Summon a <rt-card>Will-o-Wisp</rt-card> on a battlefield.
   <rt-runes runes="wisdom,wisdom,wisdom"></rt-runes> Give it <rt-keyword>Rush 0</rt-keyword>.
   `,
   collectable: true,
@@ -331,6 +324,59 @@ export const lesserFireSummoning: SpellBlueprint = {
       await minion.modifiers.add(new RushModifier(game, minion, { cost: 0 }));
     }
     await minion.playImmediatelyAt(targets.spaces[0]);
+  },
+  aiHints: {
+    shouldPlay: () => 1
+  }
+};
+
+export const twinFlame: SpellBlueprint<MinionCard> = {
+  id: 'twinFlame',
+  name: 'Twin Flame',
+  description: dedent /*html*/ `
+  <rt-runes runes="wisdom,resonance"></rt-runes>
+  Deal 2 damage to 2 enemy minions.
+  <rt-runes runes="wisdom,wisdom,resonance"></rt-runes> Deal 3 damage instead.
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.SPELL,
+  rarity: RARITIES.RARE,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.FIRE],
+  manaCost: 5,
+  speed: CARD_SPEED.FAST,
+  tags: [],
+  canPlay: (game, card) =>
+    multipleEnemyTargetRules.canPlay(
+      game,
+      card,
+      2,
+      card => isMinion(card) && card.isOnBattlefield
+    ),
+  getTargets: (game, card) =>
+    multipleEnemyTargetRules.getTargets(game, card, {
+      min: 2,
+      max: 2,
+      predicate: card => isMinion(card) && card.isOnBattlefield,
+      timeoutFallback: [],
+      aiHints: {
+        shouldPick: () => 1
+      },
+      label: 'Select 2 enemy minions to deal damage to',
+      allowRepeat: false
+    }) as Promise<InteractionResult<Targets<MinionCard>>>,
+  async onInit() {},
+  async onPlay(game, card, targets) {
+    const [target] = targets.cards;
+    if (!target) return;
+
+    const damageAmount = card.player.runeManager.has({ wisdom: 2, resonance: 1 }) ? 3 : 2;
+
+    for (const target of targets.cards) {
+      await target.takeDamage(card, new SpellDamage(damageAmount, card));
+    }
   },
   aiHints: {
     shouldPlay: () => 1

@@ -161,8 +161,13 @@ const onMouseup = (e: MouseEvent) => {
     box-shadow: 0 6px 30px 4px black;
   }
 
-  &.is-exhausted:not(.is-being-played):deep(:is(.art-main, .art-bg)) {
-    filter: grayscale(35%) brightness(65%);
+  &.is-exhausted:not(.is-being-played)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: #00000070;
+    pointer-events: none;
+    transform: translateZ(2px);
   }
 
   &.is-being-played {

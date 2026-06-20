@@ -264,8 +264,10 @@ const tint = computed(() => {
           </div>
           <div
             v-if="isDefined(card.commandment)"
-            class="commandment-cost"
+            class="commandment-cost parallax"
             :class="costStatus"
+            :style="{ '--label-offset-x': '-3' }"
+            data-label="Cmd"
           >
             <div class="dual-text" :data-text="card.commandment">
               {{ card.commandment }}
@@ -437,6 +439,8 @@ const tint = computed(() => {
     font-weight: var(--font-weight-5);
     -webkit-text-stroke: 4px black;
     font-family: 'Lato', sans-serif;
+    translate: calc(1px * var(--pixel-scale) * var(--label-offset-x, 0))
+      calc(1px * var(--pixel-scale) * var(--label-offset-y, 0));
   }
 }
 .card-front {

@@ -135,6 +135,18 @@ export const KEYWORDS = {
       'Does something when this card kills another unit by combat while being the attacker.',
     aliases: []
   },
+  ON_MOVE: {
+    id: 'on-move',
+    name: 'On Move',
+    description: 'Does something when this card moves.',
+    aliases: ['on move to base', 'on move to battlefield']
+  },
+  ON_SCORE: {
+    id: 'on-score',
+    name: 'On Score',
+    description: 'Does something when you win a round on a battlefield this is on.',
+    aliases: []
+  },
   ON_STRIKE: {
     id: 'on-strike',
     name: 'On Strike',

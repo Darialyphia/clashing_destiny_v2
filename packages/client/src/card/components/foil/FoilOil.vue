@@ -56,7 +56,7 @@
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-oil) {
-  opacity: 0.15;
+  opacity: 0.25;
   transition-delay: 0.3s;
 }
 </style>

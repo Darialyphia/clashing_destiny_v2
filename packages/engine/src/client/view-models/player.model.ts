@@ -87,6 +87,10 @@ export class PlayerViewModel {
     return entity as PlayerViewModel;
   }
 
+  get victoryPoints() {
+    return this.data.victoryPoints;
+  }
+
   get base() {
     return this.data.boardSide.base.map(spaceId => {
       return this.getEntities()[spaceId] as BoardSpaceViewModel;
@@ -95,6 +99,7 @@ export class PlayerViewModel {
 
   get leftBattlefield() {
     return {
+      commandmentScore: this.data.boardSide.leftBattlefield.commandmentScore,
       spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
@@ -108,6 +113,7 @@ export class PlayerViewModel {
 
   get rightBattlefield() {
     return {
+      commandmentScore: this.data.boardSide.rightBattlefield.commandmentScore,
       spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),

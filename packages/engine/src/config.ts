@@ -23,8 +23,6 @@ export type Config = {
   VICTORY_POINTS_TO_WIN: number;
 
   MAX_RESOURCE_ACTIONS_PER_TURN: number;
-
-  MINION_HP: number;
 };
 
 export const defaultConfig: Config = {
@@ -48,7 +46,5 @@ export const defaultConfig: Config = {
   MANA_REGEN_PER_TURN: 5,
   VICTORY_POINTS_TO_WIN: 10,
 
-  MAX_RESOURCE_ACTIONS_PER_TURN: 1,
-
-  MINION_HP: 3
+  MAX_RESOURCE_ACTIONS_PER_TURN: 1
 };

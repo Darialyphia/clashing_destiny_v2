@@ -131,13 +131,16 @@ const onEffectClick = (effectId: string) => {
                 <div class="effect-type" :class="effect.type.toLowerCase()" />
               </template>
               <p v-if="effect.type === EFFECT_TYPE.ABILITY">
-                This effect with execute an ability
+                This effect will execute an ability.
               </p>
               <p v-if="effect.type === EFFECT_TYPE.CARD">
                 This effect will play a card.
               </p>
               <p v-if="effect.type === EFFECT_TYPE.NEGATE">
                 This effect will negate a previous effect on the chain.
+              </p>
+              <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
+                This effect declaresa retaliation.
               </p>
             </UiSimpleTooltip>
           </div>

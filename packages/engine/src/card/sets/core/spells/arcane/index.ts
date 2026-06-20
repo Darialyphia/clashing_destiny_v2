@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { MinionBlueprint, SpellBlueprint } from '../../../../card-blueprint';
+import type { SpellBlueprint } from '../../../../card-blueprint';
 import {
   anywhereTargetRules,
   defaultCardArt,
@@ -17,22 +17,23 @@ import {
   CARD_LOCATIONS
 } from '../../../../card.enums';
 import { BurstModifier } from '../../../../../modifier/modifiers/burst.modifier';
-import { predict, scry } from '../../../../card-actions-utils';
+import { scry } from '../../../../card-actions-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SpellDamage } from '../../../../../utils/damage';
-import { RUNES } from '../../../../../player/player.enums';
+import { RUNES, type Rune } from '../../../../../player/player.enums';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { HeroCard } from '../../../../entities/hero.entity';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
   name: 'Arcane Sight',
   description: dedent /*html*/ `
-    <rt-keyword>Burst</rt-keyword> <rt-keyword>Screy 1</rt-keyword>, then draw a card.
+    <rt-keyword>Burst</rt-keyword> <rt-keyword>Scry 1</rt-keyword>, then draw a card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -62,8 +63,8 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   id: 'arcaneSpark',
   name: 'Arcane Spark',
   description: dedent /*html*/ `
-    Give a minion -1 Attack this turn. 
-    <rt-runes runes="focus,wisdom"></rt-runes>Draw a card.
+    Deal 1 damage to a minion then draw a card. 
+    <rt-runes runes="focus,wisdom"></rt-runes>Burst.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -72,7 +73,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => singleMinionTargetRules.canPlay(game, card),
@@ -85,18 +86,21 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
       },
       timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card)
     }),
-  async onInit() {},
-  async onPlay(game, card, targets) {
-    await targets.cards[0].modifiers.add(
-      new SimpleAttackBuffModifier('arcaneSpark', game, card, {
-        amount: -1,
-        mixins: [new UntilEndOfTurnModifierMixin(game)]
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new BurstModifier(game, card, {
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, {
+            focus: 1,
+            wisdom: 1
+          })
+        ]
       })
     );
-
-    if (card.player.runeManager.has({ focus: 1, wisdom: 1 })) {
-      await card.player.cardManager.draw(1);
-    }
+  },
+  async onPlay(game, card, targets) {
+    await targets.cards[0].takeDamage(card, new SpellDamage(1, card));
+    await card.player.cardManager.draw(1);
   },
   aiHints: {
     shouldPlay: () => 1
@@ -173,7 +177,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   id: 'fallingStar',
   name: 'Falling Star',
   description: dedent /*html*/ `
-    Consume <rt-runes runes="resonance"></rt-runes>. Deal 1 damage to a minion at a battlefield and give it -3 Attack.
+    Give a minion -2 Commandment this turn. Gain a rune of your choice.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -182,7 +186,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 2,
+  manaCost: 5,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -200,13 +204,30 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   async onInit() {},
   async onPlay(game, card, targets) {
     const minion = targets.cards[0];
-    await card.player.runeManager.remove([RUNES.RESONANCE]);
-    await minion.takeDamage(card, new SpellDamage(1, card));
     await minion.modifiers.add(
-      new SimpleAttackBuffModifier('fallingStar', game, card, {
-        amount: -3
+      new SimpleCommandmentBuffModifier('fallingStar', game, card, {
+        amount: -2
       })
     );
+
+    const runeResult = await game.interaction.askQuestion({
+      player: card.player,
+      canCancel: false,
+      label: 'Choose a rune to gain',
+      questionId: 'falling-star-rune-selection',
+      source: card,
+      choices: [
+        ...Object.values(RUNES).map(rune => ({
+          id: rune,
+          label: rune,
+          aiHints: { shouldPick: () => 0.5 }
+        }))
+      ].filter(choice => card.player.runeManager.has({ [choice.id]: 1 })),
+      timeoutFallback: RUNES.FOCUS
+    });
+
+    if (runeResult.cancelled) return;
+    await card.player.runeManager.add([runeResult.result[0] as Rune]);
   },
   aiHints: {
     shouldPlay: () => 1
@@ -264,7 +285,8 @@ export const starConvergence: SpellBlueprint = {
   id: 'starconvergence',
   name: 'Star Convergence',
   description: dedent /*html*/ `
-  Until the end of turn, whenever you would draw a card, put a random Arcane spell from your deck on top of your deck.
+  Until the end of turn, whenever you would play a spell, you may play an <rt-card>Astral Ball</rt-card> in your base exhausted.
+  <br/>
   <rt-runes runes="wisdom,resonance"></rt-runes>Draw a card.
   `,
   collectable: true,
@@ -274,7 +296,7 @@ export const starConvergence: SpellBlueprint = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 2,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: () => true,
@@ -291,21 +313,32 @@ export const starConvergence: SpellBlueprint = {
               return event.data.player.equals(card.player);
             },
             async handler() {
-              const arcaneSpellsInDeck = card.player.cardManager.mainDeck.cards.filter(
-                c => isSpell(c) && c.blueprint.affinities.includes(AFFINITIES.ARCANE)
+              const generatedCard = await card.player.generateCard<MinionCard>(
+                'astralBall',
+                card.isFoil
               );
-              if (arcaneSpellsInDeck.length === 0) return;
 
-              const index = game.rngSystem.nextInt(arcaneSpellsInDeck.length - 1);
-              const cardToPut = arcaneSpellsInDeck[index];
-              if (cardToPut) {
-                await cardToPut.sendToTopOfDeck();
-              }
+              const hasRoomInBase = card.player.boardSide.base.some(
+                space => space.isEmpty
+              );
+              if (!hasRoomInBase) return;
+
+              const position = await emptyBoardSpaceTargetRules.getTargets({
+                game,
+                card,
+                predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
+                canCancel: false
+              });
+              await generatedCard.playImmediatelyAt(position.result.spaces[0]);
             }
           })
         ]
       })
     );
+
+    if (card.player.runeManager.has({ wisdom: 1, resonance: 1 })) {
+      await card.player.cardManager.draw(1);
+    }
   },
   aiHints: {
     shouldPlay: () => 1

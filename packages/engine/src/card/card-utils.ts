@@ -554,10 +554,11 @@ export const cardsInEnemyDiscardPile = {
 export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
   default: {
     foil: {
-      sheen: true,
+      oil: true,
       lightGradient: true,
       scanlines: true,
-      glitter: true
+      brightShine: true,
+      gradient: true
     },
     isFullArt: false,
     bg: `${name}-bg`,
