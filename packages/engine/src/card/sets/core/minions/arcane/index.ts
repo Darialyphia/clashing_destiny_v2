@@ -18,6 +18,7 @@ import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/wh
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { MinionCard } from '../../../../entities/minion.entity';
+import { RUNES } from '../../../../../player/player.enums';
 
 export const starSeer: MinionBlueprint = {
   id: 'starSeer',
@@ -178,14 +179,15 @@ export const erinasApprentice: MinionBlueprint = {
 
           const answer = await askMandatoryYesNoQuestion({
             game,
-            card,
+            card: drawnCard,
             questionId: 'manaReduction',
-            label: 'Consume 1 Wisdom Rune to reduce the cost of the drawn spell by 1?',
+            label: 'Consume 1 Wisdom Rune to reduce the cost of this card by 1?',
             timeoutFallback: 'no',
             aiChoice: 'yes'
           });
 
           if (answer) {
+            await card.player.runeManager.remove([RUNES.WISDOM]);
             await drawnCard.modifiers.add(
               new SimpleManacostModifier('erinasApprentice', game, card, { amount: -1 })
             );
@@ -206,7 +208,7 @@ export const erinasApprentice: MinionBlueprint = {
 export const enigmaticWizard: MinionBlueprint = {
   id: 'enigmaticWizard',
   name: 'Enigmatic Wizard',
-  description: dedent /*html*/ `,
+  description: dedent /*html*/ `
     <rt-location locations="battlefield"><rt-trigger>Start of Turn</rt-trigger> Put an Arcane Spark in your hand.
     </rt-location>
   `,

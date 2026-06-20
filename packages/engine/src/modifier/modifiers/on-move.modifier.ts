@@ -27,6 +27,7 @@ export class OnMoveModifier extends Modifier<MinionCard> {
         new KeywordModifierMixin(game, KEYWORDS.ON_MOVE),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_MOVE,
+          filter: event => event.data.card.equals(this.target),
           handler: event => this.onMove(event)
         }),
         ...(options.mixins || [])

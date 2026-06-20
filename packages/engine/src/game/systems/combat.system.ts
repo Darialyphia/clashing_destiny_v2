@@ -19,7 +19,6 @@ import {
   type CombatStepTransition
 } from '../game.enums';
 import { CorruptedGamephaseContextError, GameError } from '../game-error';
-import { isHero } from '../../card/card-utils';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { CombatDamage } from '../../utils/damage';
 import { nanoid } from 'nanoid';
@@ -32,6 +31,7 @@ export type SerializedCombatState = {
   defender: string | null;
   step: CombatStep;
   potentialTargets: string[];
+  isDefenderRetaliating: boolean;
 };
 
 export class CombatStateMachine extends StateMachine<CombatStep, CombatStepTransition> {
@@ -289,7 +289,8 @@ export class CombatSystem
       attacker: this.attacker?.id ?? null,
       defender: this.defender?.id ?? null,
       step: this.stateMachine.getState(),
-      potentialTargets: this.potentialTargets?.map(target => target.id) ?? []
+      potentialTargets: this.potentialTargets?.map(target => target.id) ?? [],
+      isDefenderRetaliating: this.isDefenderRetaliating
     };
   }
 }

@@ -6,7 +6,8 @@ import {
   recklessRecruit,
   willowisp,
   fireImp,
-  flameArchmage
+  flameArchmage,
+  indomitableVindicator
 } from './core/minions/fire/index';
 import {
   fireBolt,
@@ -14,7 +15,8 @@ import {
   innerFire,
   fireBall,
   engulfInFlames,
-  lesserFireSummoning
+  lesserFireSummoning,
+  twinFlame
 } from './core/spells/fire/index';
 import { braveCitizen, birdOfGoodLuck } from './core/minions/neutral/index';
 import {
@@ -31,7 +33,14 @@ import {
   mysticRecall,
   starConvergence
 } from './core/spells/arcane/index';
-import { starSeer, manaWeaverApprentice } from './core/minions/arcane/index';
+import {
+  starSeer,
+  manaWeaverApprentice,
+  manaFueledGolem,
+  erinasApprentice,
+  enigmaticWizard,
+  astralBall
+} from './core/minions/arcane/index';
 import {
   conjureMight,
   conjureWisdom,
@@ -72,6 +81,12 @@ export const coreSet: CardSet = {
     mysticRecall,
     starConvergence,
     restrainTheBeast,
-    crowdsFavor
+    crowdsFavor,
+    manaFueledGolem,
+    erinasApprentice,
+    enigmaticWizard,
+    astralBall,
+    indomitableVindicator,
+    twinFlame
   ]
 };

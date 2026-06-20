@@ -97,6 +97,10 @@ const buildBlockerArrowPath = async () => {
     counterAttackPath.value = '';
     return;
   }
+  if (!state.value.combat.isDefenderRetaliating) {
+    counterAttackPath.value = '';
+    return;
+  }
 
   counterAttackPath.value = buildArrowBetweenTwoCards(
     state.value.combat.defender,

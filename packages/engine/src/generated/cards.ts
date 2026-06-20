@@ -35,7 +35,13 @@ export const cards = {
 "mysticRecall": "mysticRecall",
 "starconvergence": "starconvergence",
 "restrain-the-beast": "restrain-the-beast",
-"crowds-favor": "crowds-favor"
+"crowds-favor": "crowds-favor",
+"manaFueledGolem": "manaFueledGolem",
+"erinasApprentice": "erinasApprentice",
+"enigmaticWizard": "enigmaticWizard",
+"astralBall": "astralBall",
+"indomitableVindicator": "indomitableVindicator",
+"twinFlame": "twinFlame"
 } as const;
 
 export const collectableCards = {
@@ -68,7 +74,12 @@ export const collectableCards = {
 "mysticRecall": "mysticRecall",
 "starconvergence": "starconvergence",
 "restrain-the-beast": "restrain-the-beast",
-"crowds-favor": "crowds-favor"
+"crowds-favor": "crowds-favor",
+"manaFueledGolem": "manaFueledGolem",
+"erinasApprentice": "erinasApprentice",
+"enigmaticWizard": "enigmaticWizard",
+"indomitableVindicator": "indomitableVindicator",
+"twinFlame": "twinFlame"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -253,6 +264,42 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "DESTINY"
+  },
+  {
+    "id": "manaFueledGolem",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "erinasApprentice",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "enigmaticWizard",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "astralBall",
+    "collectable": false,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "indomitableVindicator",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "twinFlame",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
   }
 ]
 };
@@ -287,7 +334,13 @@ export const cardShortIds: Record<string, number> = {
 "mysticRecall": 26,
 "starconvergence": 27,
 "restrain-the-beast": 29,
-"crowds-favor": 30
+"crowds-favor": 30,
+"manaFueledGolem": 31,
+"erinasApprentice": 32,
+"enigmaticWizard": 33,
+"astralBall": 34,
+"indomitableVindicator": 35,
+"twinFlame": 36
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -320,5 +373,11 @@ export const cardIdByShortId: Record<number, string> = {
 "27": "starconvergence",
 "28": "birdOfGoodLuck",
 "29": "restrain-the-beast",
-"30": "crowds-favor"
+"30": "crowds-favor",
+"31": "manaFueledGolem",
+"32": "erinasApprentice",
+"33": "enigmaticWizard",
+"34": "astralBall",
+"35": "indomitableVindicator",
+"36": "twinFlame"
 } as const;

@@ -57,7 +57,7 @@
   mask-repeat: no-repeat;
   opacity: 1;
   --opacity-from: 0.25;
-  --opacity-to: 1;
+  --opacity-to: 0.75;
   animation:
     foil-gradient 3s linear infinite,
     foil-gradient-shift 5s ease-in-out infinite,

@@ -34,6 +34,7 @@ import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
+import InteractionCard from './InteractionCard.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -342,6 +343,7 @@ const isScreenDimmed = computed(() => {
   </div>
 
   <HoveredCardInfos class="hovered-cell-infos" />
+  <InteractionCard />
 
   <div class="my-player">
     <PlayerInfos :player="myPlayer" />
@@ -436,7 +438,8 @@ const isScreenDimmed = computed(() => {
 .minions-zone {
   width: 1200px;
   height: 621px;
-  background: url(@/assets/ui/board.png);
+  background: url(@/assets/ui/board-hirez.png);
+  background-size: cover;
   margin-inline: auto;
   margin-block-start: -10px;
   padding-block: 12px;
@@ -653,7 +656,7 @@ const isScreenDimmed = computed(() => {
   pointer-events: none;
   background: radial-gradient(
     ellipse at center,
-    rgba(0, 0, 0, 0) 20%,
+    rgba(0, 0, 0, 0) 45%,
     rgba(0, 0, 0, 0.5) 90%
   );
   z-index: 1;
@@ -760,13 +763,14 @@ const isScreenDimmed = computed(() => {
 
 .victory-points {
   display: grid;
-  grid-template-columns: repeat(5, 47px);
+  grid-template-columns: repeat(6, 47px);
   gap: 4px;
   align-items: center;
   justify-content: center;
   position: absolute;
   right: calc(100% + var(--size-3));
-  top: 0px;
+  top: 50%;
+  translate: 0 -50%;
 }
 .victory-point {
   width: 47px;

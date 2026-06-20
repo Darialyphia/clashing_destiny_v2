@@ -40,7 +40,7 @@ export const arcaneSight: SpellBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
+  jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 0,
   speed: CARD_SPEED.FAST,
@@ -119,7 +119,7 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
+  jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
   speed: CARD_SPEED.FAST,
@@ -137,7 +137,9 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
       minionCondition &&
       emptyBoardSpaceTargetRules.canPlay(
         game,
-        space => space.position.zone === CARD_LOCATIONS.BASE
+        space =>
+          space.position.zone === CARD_LOCATIONS.BASE &&
+          space.player.equals(card.player.opponent)
       )
     );
   },
@@ -160,7 +162,9 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
         game,
         card,
         canCancel: false,
-        predicate: space => space.position.zone === CARD_LOCATIONS.BASE
+        predicate: space =>
+          space.position.zone === CARD_LOCATIONS.BASE &&
+          space.player.equals(card.player.opponent)
       });
       const space = destination.result.spaces[0];
       await minion.move(space.position.zone, space.position.index);

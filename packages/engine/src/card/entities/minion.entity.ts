@@ -24,7 +24,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { Ability } from './ability.entity';
 import {
   MINION_EVENTS,
@@ -257,6 +257,7 @@ export class MinionCard extends Card<
   canRetaliate(target: AttackTarget) {
     if (!this.game.combatSystem.defender?.equals(this)) return false;
     if (this.game.combatSystem.isDefenderRetaliating) return false;
+    if (this.game.combatSystem.state !== COMBAT_STEPS.REACTION) return false;
 
     return this.interceptors.canRetaliate.getValue(
       !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) && !this.isExhausted,

@@ -291,12 +291,12 @@ export const lesserFireSummoning: SpellBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('spells/lesser-fire-summoning'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
-  manaCost: 1,
+  manaCost: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -334,7 +334,6 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
   id: 'twinFlame',
   name: 'Twin Flame',
   description: dedent /*html*/ `
-  <rt-runes runes="wisdom,resonance"></rt-runes>
   Deal 2 damage to 2 enemy minions.
   <rt-runes runes="wisdom,wisdom,resonance"></rt-runes> Deal 3 damage instead.
   `,

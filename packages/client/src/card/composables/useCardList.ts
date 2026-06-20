@@ -2,6 +2,7 @@ import { useSafeInject } from '@/shared/composables/useSafeInject';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
+  AFFINITIES,
   CARD_KINDS,
   type CardKind,
   type JobId
@@ -54,6 +55,17 @@ export const provideCardList = () => {
     [CARD_KINDS.SPELL]: 3,
     [CARD_KINDS.ARTIFACT]: 4,
     [CARD_KINDS.DESTINY]: 5
+  };
+
+  const AFFINITY_ORDER = {
+    [AFFINITIES.FIRE]: 1,
+    [AFFINITIES.WATER]: 2,
+    [AFFINITIES.AIR]: 3,
+    [AFFINITIES.EARTH]: 4,
+    [AFFINITIES.LIGHT]: 5,
+    [AFFINITIES.DARK]: 6,
+    [AFFINITIES.ARCANE]: 7,
+    [AFFINITIES.NEUTRAL]: 8
   };
 
   const kindFilter = ref(new Set<CardKind>());
@@ -154,6 +166,29 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
+        if (
+          a.card.kind === CARD_KINDS.HERO &&
+          b.card.kind !== CARD_KINDS.HERO
+        ) {
+          return -1;
+        }
+        if (
+          a.card.kind !== CARD_KINDS.HERO &&
+          b.card.kind === CARD_KINDS.HERO
+        ) {
+          return 1;
+        }
+
+        if (a.card.affinities.length !== b.card.affinities.length) {
+          return a.card.affinities.length - b.card.affinities.length;
+        }
+
+        if (a.card.affinities[0] !== b.card.affinities[0]) {
+          return (
+            (AFFINITY_ORDER[a.card.affinities[0]] ?? 999) -
+            (AFFINITY_ORDER[b.card.affinities[0]] ?? 999)
+          );
+        }
         if (
           'manaCost' in a.card &&
           'manaCost' in b.card &&

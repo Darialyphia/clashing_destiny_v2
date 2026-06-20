@@ -30,6 +30,7 @@ export class OnAttackModifier extends Modifier<MinionCard> {
         new KeywordModifierMixin(game, KEYWORDS.ON_ATTACK),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
+          filter: event => event.data.attacker.equals(this.target),
           handler: event => this.onDamage(event)
         }),
         ...(options.mixins || [])
@@ -38,7 +39,6 @@ export class OnAttackModifier extends Modifier<MinionCard> {
   }
 
   private async onDamage(event: AfterDeclareAttackTargetEvent) {
-    if (!event.data.attacker.equals(this.target)) return;
     await this.game.emit(
       GAME_EVENTS.CARD_EFFECT_TRIGGERED,
       new CardEffectTriggeredEvent({
