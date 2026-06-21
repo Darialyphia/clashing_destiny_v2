@@ -120,7 +120,7 @@ export const restrainTheBeast: DestinyBlueprint = {
   collectable: true,
   name: 'Restrain the Beast',
   description: dedent /*html*/ `
-At the start of the turn, exhaust the minion with the highest Power at this battlefield.
+    When a creature with 5 Attack or more moves to this battlefield, exhaust it.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
@@ -134,20 +134,16 @@ At the start of the turn, exhaust the minion with the highest Power at this batt
       new WhileOnBattlefieldModifier<DestinyCard>('restrain-the-beast', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.TURN_START,
-            async handler() {
-              const battlefield = card.battlefield;
-              if (!battlefield) return;
-
-              const minions = battlefield.allSpaces
-                .map(space => space.card)
-                .filter(isDefined)
-                .filter(isMinion);
-              if (minions.length === 0) return;
-              const highestAttackMinion = minions.reduce((prev, curr) =>
-                prev.atk > curr.atk ? prev : curr
+            eventName: GAME_EVENTS.CARD_AFTER_MOVE,
+            filter(event) {
+              return !!(
+                isMinion(event.data.card) &&
+                event.data.card.atk >= 5 &&
+                event.data.to.position.zone === card.battlefield?.zone
               );
-              await highestAttackMinion.exhaust();
+            },
+            async handler(event) {
+              await event.data.card.exhaust();
             }
           })
         ]
@@ -163,7 +159,7 @@ export const crowdsFavor: DestinyBlueprint = {
   collectable: true,
   name: "Crowd's Favor",
   description: dedent /*html*/ `
-    Minions at this battlefield have +1 Bounty.
+    Minion(s) at this battlefield with the highest Attack have +1 Commandment.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
@@ -178,21 +174,28 @@ export const crowdsFavor: DestinyBlueprint = {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {
-              return card
-                .battlefield!.allSpaces.map(space => space.card)
-                .filter(isDefined)
-                .some(c => c.equals(candidate));
+              if (!isMinion(candidate)) return false;
+
+              const highestAttackOnBattlefield = Math.max(
+                ...card
+                  .battlefield!.allSpaces.map(space => space.card)
+                  .filter(isDefined)
+                  .filter(isMinion)
+                  .map(minion => minion.atk)
+              );
+              if (candidate.atk !== highestAttackOnBattlefield) return false;
+
+              return card.battlefield!.has(candidate);
             },
-            getModifiers(candidate) {
+            getModifiers() {
               return [
                 new SimpleCommandmentBuffModifier(
-                  'clash-of-titans-commandment-buff',
+                  'crowds-favor-commandment-buff',
                   game,
                   card,
                   {
                     isUnique: false,
-                    amount: 1,
-                    mixins: [new TogglableModifierMixin(game, () => isMinion(candidate))]
+                    amount: 1
                   }
                 )
               ];

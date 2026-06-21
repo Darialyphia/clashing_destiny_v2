@@ -14,7 +14,7 @@ export class ToughModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
     options: { amount: number; mixins?: ModifierMixin<T>[] } = { mixins: [], amount: 1 }
   ) {
     super(KEYWORDS.TOUGH.id, game, source, {
-      icon: 'keyword-tough',
+      icon: 'icons/keyword-tough',
       name: KEYWORDS.TOUGH.name,
       description: KEYWORDS.TOUGH.description,
       isUnique: true,

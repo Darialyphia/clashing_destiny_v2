@@ -41,7 +41,8 @@ export const cards = {
 "enigmaticWizard": "enigmaticWizard",
 "astralBall": "astralBall",
 "indomitableVindicator": "indomitableVindicator",
-"twinFlame": "twinFlame"
+"twinFlame": "twinFlame",
+"astralSage": "astralSage"
 } as const;
 
 export const collectableCards = {
@@ -79,7 +80,8 @@ export const collectableCards = {
 "erinasApprentice": "erinasApprentice",
 "enigmaticWizard": "enigmaticWizard",
 "indomitableVindicator": "indomitableVindicator",
-"twinFlame": "twinFlame"
+"twinFlame": "twinFlame",
+"astralSage": "astralSage"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -286,7 +288,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "astralBall",
     "collectable": false,
-    "rarity": "epic",
+    "rarity": "token",
     "kind": "MINION"
   },
   {
@@ -300,6 +302,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "SPELL"
+  },
+  {
+    "id": "astralSage",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
   }
 ]
 };
@@ -340,7 +348,8 @@ export const cardShortIds: Record<string, number> = {
 "enigmaticWizard": 33,
 "astralBall": 34,
 "indomitableVindicator": 35,
-"twinFlame": 36
+"twinFlame": 36,
+"astralSage": 37
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -379,5 +388,6 @@ export const cardIdByShortId: Record<number, string> = {
 "33": "enigmaticWizard",
 "34": "astralBall",
 "35": "indomitableVindicator",
-"36": "twinFlame"
+"36": "twinFlame",
+"37": "astralSage"
 } as const;

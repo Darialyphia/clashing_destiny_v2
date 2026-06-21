@@ -37,6 +37,9 @@ import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifi
 import { RemoveOnDestroyedMixin } from '../../../../../modifier/mixins/remove-on-destroyed';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { SimpleHealthBuffModifier } from '../../../../../modifier/modifiers/simple-health-buff.modifier';
+import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
@@ -236,7 +239,7 @@ export const flameArchmage: MinionBlueprint = {
   id: 'flameArchmage',
   name: 'Flame Archmage',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield">After you play a Fire spell, you may consume <rt-runes runes="wisdom"></rt-runes> to deal 2 damage to a minion.
+  <rt-location locations="battlefield">After you play a Fire spell, you may consume <rt-runes runes="wisdom"></rt-runes> to put a <rt-card>Firebolt</rt-card> in your hand. It costs 0 this turn.
   </rt-location>
   `,
   collectable: true,
@@ -249,7 +252,7 @@ export const flameArchmage: MinionBlueprint = {
   manaCost: 5,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 3,
+  atk: 2,
   maxHp: 5,
   commandment: 2,
   canPlay: () => true,
@@ -267,9 +270,6 @@ export const flameArchmage: MinionBlueprint = {
             async handler() {
               if (!card.player.runeManager.has({ wisdom: 1 })) return;
 
-              const hasTarget = singleEnemyMinionTargetRules.canPlay(game, card);
-              if (!hasTarget) return;
-
               await game.emit(
                 GAME_EVENTS.CARD_EFFECT_TRIGGERED,
                 new CardEffectTriggeredEvent({
@@ -281,33 +281,30 @@ export const flameArchmage: MinionBlueprint = {
                 game,
                 card,
                 questionId: 'flameArchmage-activation',
-                label: 'Consume 1 Wisdom rune to deal 2 damage to a minion?',
+                label: 'Consume 1 Wisdom rune to put a Firebolt in your hand ?',
                 aiChoice: 'yes',
                 timeoutFallback: 'no'
               });
 
               if (!shouldActivate) return;
 
-              const { result: target } = await singleEnemyMinionTargetRules.getTargets({
-                game,
-                card,
-                label: 'Select an enemy minion to deal 2 damage to',
-                timeoutFallback: singleEnemyMinionTargetRules.defaultTimeoutFallback(
-                  game,
-                  card
-                ),
-                aiHints: {
-                  shouldPick: () => 1
-                }
-              });
-
-              if (!target) return;
-              const [minionTarget] = target.cards;
-
-              if (!minionTarget) return;
-
               await card.player.runeManager.remove([RUNES.WISDOM]);
-              await minionTarget.takeDamage(card, new AbilityDamage(2));
+              const generatedCard = await card.player.generateCard(
+                'fireBolt',
+                card.isFoil
+              );
+              await generatedCard.modifiers.add(
+                new Modifier('flameArchmage-firebolt-cost-modifier', game, card, {
+                  mixins: [
+                    new CardInterceptorModifierMixin(game, {
+                      key: 'manaCost',
+                      interceptor: () => 0
+                    }),
+                    new UntilEndOfTurnModifierMixin(game)
+                  ]
+                })
+              );
+              await generatedCard.addToHand();
             }
           })
         ]
@@ -342,7 +339,7 @@ export const indomitableVindicator: MinionBlueprint = {
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 1,
   maxHp: 3,
   commandment: 1,
   canPlay: () => true,

@@ -21,7 +21,7 @@ export class LockedModifier<T extends AnyCard> extends Modifier<T> {
     super(KEYWORDS.LOCKED.id, game, source, {
       name: KEYWORDS.LOCKED.name,
       description: KEYWORDS.LOCKED.description,
-      icon: 'keyword-locked',
+      icon: 'icons/keyword-locked',
       isUnique: true,
       stacks: options.stacks,
       mixins: [

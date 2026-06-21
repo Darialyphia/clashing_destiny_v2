@@ -103,7 +103,7 @@ watch(
 <style scoped lang="postcss">
 .path {
   stroke: v-bind(color);
-  stroke-width: 5px;
+  stroke-width: 3px;
   fill: none;
   /* marker-end: v-bind(markerUrl); */
   animation: arrow-dash 0.3s var(--ease-in-2) forwards;

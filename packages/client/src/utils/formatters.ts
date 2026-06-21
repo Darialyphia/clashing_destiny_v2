@@ -1,4 +1,7 @@
 export const formatAbilityText = (a: {
   manaCost: number;
   description: string;
-}) => `<rt-ability cost="${a.manaCost}"></rt-ability> ${a.description}`;
+  shouldExhaust: boolean;
+}) => {
+  return `<rt-ability cost="${a.manaCost}" exhaust="${a.shouldExhaust}"></rt-ability> ${a.description}`;
+};

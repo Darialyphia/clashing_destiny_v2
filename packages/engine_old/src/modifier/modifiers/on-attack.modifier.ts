@@ -26,7 +26,7 @@ export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<
     super(KEYWORDS.ON_ATTACK.id, game, source, {
       name: KEYWORDS.ON_ATTACK.name,
       description: KEYWORDS.ON_ATTACK.description,
-      icon: 'keyword-on-attack',
+      icon: 'icons/keyword-on-attack',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_ATTACK),
         new GameEventModifierMixin(game, {

@@ -61,4 +61,8 @@ export class RuneManagerComponent {
   get runes() {
     return { ...this._runes };
   }
+
+  get runeCount() {
+    return Object.values(this._runes).reduce((sum, count) => sum + count, 0);
+  }
 }

@@ -17,7 +17,7 @@ export class HexedModifier<T extends MinionCard | HeroCard> extends Modifier<T> 
     super(KEYWORDS.HEXED.id, game, source, {
       name: KEYWORDS.HEXED.name,
       description: KEYWORDS.HEXED.description,
-      icon: 'keyword-hexed',
+      icon: 'icons/keyword-hexed',
       isUnique: true,
       stacks: options.stacks,
       mixins: [

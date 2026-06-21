@@ -177,7 +177,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('spells/fireball'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],
@@ -334,7 +334,7 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
   id: 'twinFlame',
   name: 'Twin Flame',
   description: dedent /*html*/ `
-  Deal 2 damage to 2 enemy minions.
+  Deal 2 damage to 2 enemy minions on a battlefield.
   <rt-runes runes="wisdom,wisdom,resonance"></rt-runes> Deal 3 damage instead.
   `,
   collectable: true,

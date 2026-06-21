@@ -39,7 +39,8 @@ import {
   manaFueledGolem,
   erinasApprentice,
   enigmaticWizard,
-  astralBall
+  astralBall,
+  astralSage
 } from './core/minions/arcane/index';
 import {
   conjureMight,
@@ -87,6 +88,7 @@ export const coreSet: CardSet = {
     enigmaticWizard,
     astralBall,
     indomitableVindicator,
-    twinFlame
+    twinFlame,
+    astralSage
   ]
 };

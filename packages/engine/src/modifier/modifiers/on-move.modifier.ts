@@ -22,7 +22,7 @@ export class OnMoveModifier extends Modifier<MinionCard> {
     super(KEYWORDS.ON_MOVE.id, game, source, {
       name: KEYWORDS.ON_MOVE.name,
       description: KEYWORDS.ON_MOVE.description,
-      icon: 'keyword-on-move',
+      icon: 'icons/keyword-on-move',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_MOVE),
         new GameEventModifierMixin(game, {

@@ -18,7 +18,7 @@ export class IntimidateModifier<T extends MinionCard | HeroCard> extends Modifie
     super(KEYWORDS.INTIMIDATE.id, game, source, {
       name: 'Intimidate',
       description: `This card has Intimidate ${options.level}.`,
-      icon: 'keyword-intimidate',
+      icon: 'icons/keyword-intimidate',
       isUnique: false,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.INTIMIDATE),

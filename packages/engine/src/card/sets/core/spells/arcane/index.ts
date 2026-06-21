@@ -28,6 +28,9 @@ import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-even
 import type { HeroCard } from '../../../../entities/hero.entity';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
+import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
+import type { SpellCard } from '../../../../entities/spell.entity';
+import { SpellInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 
 export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
@@ -64,7 +67,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   name: 'Arcane Spark',
   description: dedent /*html*/ `
     Deal 1 damage to a minion then draw a card. 
-    <rt-runes runes="focus,wisdom"></rt-runes>Burst.
+    <rt-runes runes="focus,wisdom"></rt-runes> This costs 1 less.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -88,7 +91,8 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
     }),
   async onInit(game, card) {
     await card.modifiers.add(
-      new BurstModifier(game, card, {
+      new SimpleManacostModifier('arcane-spark-discount', game, card, {
+        amount: -1,
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {
             focus: 1,
@@ -181,7 +185,9 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   id: 'fallingStar',
   name: 'Falling Star',
   description: dedent /*html*/ `
-    Give a minion -2 Commandment this turn. Gain a rune of your choice.
+    Give a minion -2 Commandment this turn and exhaust it.
+
+    <rt-runes runes="resonance,resonance,resonance"></rt-runes>This costs 2 less.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -190,8 +196,8 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 5,
-  speed: CARD_SPEED.FAST,
+  manaCost: 4,
+  speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card) &&
@@ -205,7 +211,14 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
       },
       timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card)
     }),
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new SimpleManacostModifier('fallingStar', game, card, {
+        amount: -2,
+        mixins: [new RuneCostToggleModifierMixin(game, card, { resonance: 3 })]
+      })
+    );
+  },
   async onPlay(game, card, targets) {
     const minion = targets.cards[0];
     await minion.modifiers.add(
@@ -214,24 +227,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
       })
     );
 
-    const runeResult = await game.interaction.askQuestion({
-      player: card.player,
-      canCancel: false,
-      label: 'Choose a rune to gain',
-      questionId: 'falling-star-rune-selection',
-      source: card,
-      choices: [
-        ...Object.values(RUNES).map(rune => ({
-          id: rune,
-          label: rune,
-          aiHints: { shouldPick: () => 0.5 }
-        }))
-      ].filter(choice => card.player.runeManager.has({ [choice.id]: 1 })),
-      timeoutFallback: RUNES.FOCUS
-    });
-
-    if (runeResult.cancelled) return;
-    await card.player.runeManager.add([runeResult.result[0] as Rune]);
+    await minion.exhaust();
   },
   aiHints: {
     shouldPlay: () => 1
@@ -243,7 +239,7 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
   name: 'Mystic Recall',
   description: dedent /*html*/ `
     Return an ally minion to its owner's hand. Draw a card.
-    <rt-runes runes="wisdom,wisdom"></rt-runes> Gain 1 mana at the end of the turn.
+    <rt-runes runes="wisdom,wisdom,focus"></rt-runes> This is fast speed.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -252,8 +248,8 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 2,
-  speed: CARD_SPEED.FAST,
+  manaCost: 1,
+  speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, minion => minion.isAlly(card)),
@@ -267,18 +263,26 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
       },
       timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card)
     }),
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new Modifier<SpellCard>('mysticRecall', game, card, {
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, { wisdom: 2, focus: 1 }),
+          new SpellInterceptorModifierMixin(game, {
+            key: 'speed',
+            interceptor() {
+              return CARD_SPEED.FAST;
+            }
+          })
+        ]
+      })
+    );
+  },
   async onPlay(game, card, targets) {
     const minion = targets.cards[0];
     await minion.addToHand();
 
     await card.player.cardManager.draw(1);
-
-    if (card.player.runeManager.has({ wisdom: 2 })) {
-      game.once(GAME_EVENTS.TURN_END, async () => {
-        await card.player.gainMana(1);
-      });
-    }
   },
   aiHints: {
     shouldPlay: () => 1
@@ -290,7 +294,6 @@ export const starConvergence: SpellBlueprint = {
   name: 'Star Convergence',
   description: dedent /*html*/ `
   Until the end of turn, whenever you would play a spell, you may play an <rt-card>Astral Ball</rt-card> in your base exhausted.
-  <br/>
   <rt-runes runes="wisdom,resonance"></rt-runes>Draw a card.
   `,
   collectable: true,
@@ -309,12 +312,18 @@ export const starConvergence: SpellBlueprint = {
   async onPlay(game, card) {
     await card.player.hero.modifiers.add(
       new Modifier<HeroCard>('starConvergence', game, card, {
+        name: 'Star Convergence',
+        description:
+          'Until the end of turn, whenever you would play a spell, you may play an Astral Ball in your base exhausted.',
+        icon: 'icons/keyword-double-cast',
         mixins: [
           new UntilEndOfTurnModifierMixin(game),
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.PLAYER_BEFORE_DRAW,
+            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
             filter(event) {
-              return event.data.player.equals(card.player);
+              return (
+                event.data.card.player.equals(card.player) && isSpell(event.data.card)
+              );
             },
             async handler() {
               const generatedCard = await card.player.generateCard<MinionCard>(
@@ -334,6 +343,7 @@ export const starConvergence: SpellBlueprint = {
                 canCancel: false
               });
               await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+              await generatedCard.exhaust();
             }
           })
         ]

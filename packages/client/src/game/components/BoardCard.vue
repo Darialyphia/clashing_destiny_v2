@@ -231,7 +231,7 @@ const onMouseup = (e: MouseEvent) => {
   position: absolute;
   left: 50%;
   translate: -50% 0;
-  top: 7px;
+  bottom: 7px;
   transform: translateZ(2px);
 }
 

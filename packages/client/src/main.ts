@@ -24,6 +24,7 @@ import Card from './shared/components/RichText/Card.vue';
 import Location from './shared/components/RichText/Location.vue';
 import Dynamic from './shared/components/RichText/Dynamic.vue';
 import Runes from './shared/components/RichText/Runes.vue';
+import Exhaust from './shared/components/RichText/Exhaust.vue';
 
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
@@ -54,6 +55,7 @@ app.component('rt-card', Card);
 app.component('rt-location', Location);
 app.component('rt-dynamic', Dynamic);
 app.component('rt-runes', Runes);
+app.component('rt-exhaust', Exhaust);
 // app.component('HoverCard', HoverCardRoot);
 // app.use({
 //   install(app) {

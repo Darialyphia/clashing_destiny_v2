@@ -15,7 +15,7 @@ export class BurnModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
     super(KEYWORDS.BURN.id, game, source, {
       name: KEYWORDS.BURN.name,
       description: KEYWORDS.BURN.description,
-      icon: 'keyword-burn',
+      icon: 'icons/keyword-burn',
       isUnique: true,
       mixins: [
         new RemoveOnDestroyedMixin(game),

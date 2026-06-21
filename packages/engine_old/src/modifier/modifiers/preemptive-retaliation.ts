@@ -16,7 +16,7 @@ export class PreemptiveRetaliationModifier<
     super(KEYWORDS.PREEMPTIVE_RETALIATION.id, game, source, {
       name: KEYWORDS.PREEMPTIVE_RETALIATION.name,
       description: KEYWORDS.PREEMPTIVE_RETALIATION.description,
-      icon: 'keyword-preemptive-strike',
+      icon: 'icons/keyword-preemptive-strike',
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.PREEMPTIVE_STRIKE),

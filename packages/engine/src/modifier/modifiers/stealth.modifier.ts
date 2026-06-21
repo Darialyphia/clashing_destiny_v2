@@ -16,7 +16,7 @@ export class StealthModifier extends Modifier<MinionCard> {
     super(KEYWORDS.STEALTH.id, game, source, {
       name: KEYWORDS.STEALTH.name,
       description: KEYWORDS.STEALTH.description,
-      icon: 'keyword-stealth',
+      icon: 'icons/keyword-stealth',
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.STEALTH),

@@ -20,27 +20,24 @@ const isOpened = computed({
 
 const currentQuestion = ref<string | null>(null);
 
-watch(
-  () => state.value.interaction,
-  () => {
-    const interactionState = state.value.interaction.state;
-    if (interactionState !== INTERACTION_STATES.ASK_QUESTION) {
-      _isOpened.value = false;
-      currentQuestion.value = null;
-      return;
-    }
-
-    if (currentQuestion.value === state.value.interaction.ctx.questionId) {
-      return;
-    }
-
-    currentQuestion.value = state.value.interaction.ctx.questionId;
-
-    _isOpened.value =
-      state.value.interaction.ctx.player === playerId.value &&
-      playerId.value === client.value.getActivePlayerId();
+watch([() => state.value.interaction, playerId], () => {
+  const interactionState = state.value.interaction.state;
+  if (interactionState !== INTERACTION_STATES.ASK_QUESTION) {
+    _isOpened.value = false;
+    currentQuestion.value = null;
+    return;
   }
-);
+
+  if (currentQuestion.value === state.value.interaction.ctx.questionId) {
+    return;
+  }
+
+  currentQuestion.value = state.value.interaction.ctx.questionId;
+
+  _isOpened.value =
+    state.value.interaction.ctx.player === playerId.value &&
+    playerId.value === client.value.getActivePlayerId();
+});
 const isShowingBoard = ref(false);
 
 const label = computed(() => {

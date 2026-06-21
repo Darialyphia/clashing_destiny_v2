@@ -24,7 +24,7 @@ export class OnStrikeModifier<T extends MinionCard> extends Modifier<T> {
     super(KEYWORDS.ON_STRIKE.id, game, source, {
       name: KEYWORDS.ON_STRIKE.name,
       description: KEYWORDS.ON_STRIKE.description,
-      icon: 'keyword-on-attack',
+      icon: 'icons/keyword-on-attack',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_STRIKE),
         new GameEventModifierMixin(game, {

@@ -17,7 +17,7 @@ export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modif
     options: { mixins?: ModifierMixin<T>[] } = { mixins: [] }
   ) {
     super(KEYWORDS.DOUBLE_ATTACK.id, game, source, {
-      icon: 'keyword-double-attack',
+      icon: 'icons/keyword-double-attack',
       name: KEYWORDS.DOUBLE_ATTACK.name,
       description: KEYWORDS.DOUBLE_ATTACK.description,
       isUnique: true,

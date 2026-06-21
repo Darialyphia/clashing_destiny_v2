@@ -20,7 +20,7 @@ export class IntimidateModifier<T extends MinionCard | HeroCard> extends Modifie
       name: KEYWORDS.INTIMIDATE.name,
       description: () =>
         KEYWORDS.INTIMIDATE.description.replace('X', options.level.toString()),
-      icon: 'keyword-intimidate',
+      icon: 'icons/keyword-intimidate',
       isUnique: false,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.INTIMIDATE),

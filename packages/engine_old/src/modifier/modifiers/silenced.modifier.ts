@@ -17,7 +17,7 @@ export class SilencedModifier<T extends AbilityOwner> extends Modifier<T> {
     super(KEYWORDS.SILENCED.id, game, source, {
       name: 'Silenced',
       description: 'This card is Silenced.',
-      icon: 'keyword-silenced',
+      icon: 'icons/keyword-silenced',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.SILENCED),
         new RemoveAbilitiesModifierMixin(game),

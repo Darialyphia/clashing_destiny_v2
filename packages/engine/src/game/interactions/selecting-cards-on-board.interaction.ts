@@ -10,6 +10,7 @@ import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 export type SelectingCardOnBoardContextOptions = {
   player: Player;
   label: string;
+  source: AnyCard;
   isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
   canCommit: (selectedCards: AnyCard[]) => boolean;
   isDone(selectedCards: AnyCard[]): boolean;
@@ -62,7 +63,8 @@ export class SelectingCardOnBoardContext {
         .map(card => card.id),
       canCommit: this.canCommit(this.selectedCards),
       label: this.label,
-      canCancel: this.options.canCancel
+      canCancel: this.options.canCancel,
+      source: this.options.source.id
     };
   }
 

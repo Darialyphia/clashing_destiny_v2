@@ -225,15 +225,16 @@ export class CombatSystem
           target: this.defender!
         })
       );
-
-      this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
     }
+
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
 
     if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
       await this.game.turnSystem.switchInitiative();
     }
     this._attacker = null;
     this._defender = null;
+    this.isDefenderRetaliating = false;
   }
 
   private async performAttacks() {

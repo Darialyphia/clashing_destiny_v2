@@ -63,7 +63,7 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends Any
   dynamicDescription?: (game: Game, card: TCard) => string;
   label: string;
   isHiddenOnCard?: boolean;
-  shoouldExhaust?: boolean;
+  shouldExhaust?: boolean;
   getTargets: (
     game: Game,
     card: TCard

@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import GameCard from './GameCard.vue';
-import { useGameState } from '../composables/useGameClient';
+import { useGameState, useGameUi } from '../composables/useGameClient';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const state = useGameState();
+const ui = useGameUi();
 </script>
 
 <template>
   <Transition appear>
-    <div v-if="'card' in state.interaction.ctx" class="interaction-card">
-      <GameCard :card-id="state.interaction.ctx.card" :is-interactive="false" />
+    <div
+      v-if="'source' in state.interaction.ctx && !ui.selectedCard"
+      class="interaction-card"
+    >
+      <InspectableCard
+        :card-id="state.interaction.ctx.source"
+        :is-interactive="false"
+      >
+        <GameCard
+          :card-id="state.interaction.ctx.source"
+          :is-interactive="false"
+          style="--pixel-scale: 1"
+        />
+      </InspectableCard>
     </div>
   </Transition>
 </template>

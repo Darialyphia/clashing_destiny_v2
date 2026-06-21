@@ -2,14 +2,21 @@ import dedent from 'dedent';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, isSpell, noTargets } from '../../../../card-utils';
+import {
+  defaultCardArt,
+  emptyBoardSpaceTargetRules,
+  isSpell,
+  noTargets,
+  singleAllyMinionTargetRules
+} from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
   JOBS,
   AFFINITIES,
-  CARD_SPEED
+  CARD_SPEED,
+  CARD_LOCATIONS
 } from '../../../../card.enums';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { askMandatoryYesNoQuestion, scry } from '../../../../card-actions-utils';
@@ -19,6 +26,11 @@ import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { RUNES } from '../../../../../player/player.enums';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import type { Player } from '../../../../../player/player.entity';
+import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
+import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 
 export const starSeer: MinionBlueprint = {
   id: 'starSeer',
@@ -153,7 +165,7 @@ export const erinasApprentice: MinionBlueprint = {
   id: 'erinasApprentice',
   name: "Erina's Apprentice",
   description: dedent /*html*/ `
-    <rt-trigger>On Enter</rt-trigger> <rt-keyword>Draw a spell</rt-keyword>. You may consume <rt-runes runes="wisdom"></rt-runes> to reduce its cost by 1.
+    <rt-trigger>On Enter</rt-trigger> Draw a spell. You may consume <rt-runes runes="wisdom"></rt-runes> to reduce its cost by 1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -166,7 +178,7 @@ export const erinasApprentice: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
-  maxHp: 3,
+  maxHp: 2,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -222,7 +234,7 @@ export const enigmaticWizard: MinionBlueprint = {
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 4,
+  atk: 3,
   maxHp: 4,
   commandment: 2,
   canPlay: () => true,
@@ -262,10 +274,10 @@ export const astralBall: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.EPIC,
-  jobs: [JOBS.MAGE],
+  rarity: RARITIES.TOKEN,
+  jobs: [],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 4,
+  manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -276,13 +288,14 @@ export const astralBall: MinionBlueprint = {
     {
       id: 'astralBallAbility',
       label: 'Scry 2',
-      description: 'Sacrifice this unit: <rt-keyword>Scry 2</rt-keyword>',
+      description: 'Sacrifice this unit to gain 1 mana',
       canUse: () => true,
       getTargets: noTargets,
       manaCost: 0,
-      shoouldExhaust: true,
+      shouldExhaust: true,
       onResolve: async (game, card) => {
-        await scry(game, card, 2);
+        await card.destroy(card);
+        await card.player.manaManager.gain(1);
       },
       aiHints: {
         shouldUse: () => 0
@@ -290,6 +303,132 @@ export const astralBall: MinionBlueprint = {
     }
   ],
   async onInit() {},
+  async onPlay() {},
+  aiHints: {
+    shouldPlay: () => 1,
+    shouldAttack: () => 1,
+    shouldMove: () => 1,
+    getThreatScore: () => 1
+  }
+};
+
+export const astralSage: MinionBlueprint = {
+  id: 'astralSage',
+  name: 'Astral Sage',
+  description: dedent /*html*/ `
+    <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.MINION,
+  rarity: RARITIES.EPIC,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.ARCANE],
+  manaCost: 6,
+  speed: CARD_SPEED.SLOW,
+  tags: [],
+  atk: 3,
+  maxHp: 6,
+  commandment: 2,
+  canPlay: () => true,
+  abilities: [
+    {
+      id: 'astralSageAbility',
+      label: 'Give next spell Echo',
+      /*html*/
+      description: `Sacrifice an <rt-card>Astral Ball</rt-card>: give the next spell you play this turn has <rt-keyword>Echo</rt-keyword>`,
+      canUse: (game, card) =>
+        singleAllyMinionTargetRules.canPlay(
+          game,
+          card,
+          minion => minion.blueprintId === 'astralBall'
+        ),
+      getTargets(game, card) {
+        return singleAllyMinionTargetRules.getTargets({
+          game,
+          card,
+          timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(
+            game,
+            card,
+            minion => minion.blueprintId === 'astralBall'
+          ),
+          predicate: minion => {
+            return minion.blueprintId === 'astralBall';
+          },
+          aiHints: {
+            shouldPick: () => 1
+          }
+        });
+      },
+      manaCost: 0,
+      shouldExhaust: true,
+      async onResolve(game, card, targets) {
+        const target = targets.cards[0] as MinionCard;
+        await target.destroy(card);
+        await card.player.modifiers.add(
+          new Modifier<Player>('astralSageEcho', game, card, {
+            mixins: [
+              new CardAuraModifierMixin(game, card, {
+                isElligible(candidate) {
+                  return isSpell(candidate) && candidate.player.equals(card.player);
+                },
+                getModifiers(candidate) {
+                  return [
+                    new EchoModifier(game, card, {
+                      mixins: [
+                        new UntilEventModifierMixin(game, {
+                          eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+                          filter(event) {
+                            return event.data.card.equals(candidate);
+                          }
+                        })
+                      ]
+                    })
+                  ];
+                }
+              }),
+              new UntilEventModifierMixin(game, {
+                eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+                filter(event) {
+                  return (
+                    isSpell(event.data.card) && event.data.card.player.equals(card.player)
+                  );
+                }
+              })
+            ]
+          })
+        );
+      },
+      aiHints: {
+        shouldUse: () => 0
+      }
+    }
+  ],
+
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        async handler() {
+          const generatedCard = await card.player.generateCard<MinionCard>(
+            'astralBall',
+            card.isFoil
+          );
+          const hasRoomInBase = card.player.boardSide.base.some(space => space.isEmpty);
+          if (!hasRoomInBase) return;
+
+          const position = await emptyBoardSpaceTargetRules.getTargets({
+            game,
+            card,
+            predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
+            canCancel: false
+          });
+          await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+          await generatedCard.exhaust();
+        }
+      })
+    );
+  },
   async onPlay() {},
   aiHints: {
     shouldPlay: () => 1,

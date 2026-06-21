@@ -35,6 +35,10 @@ export const erinaVioletWitch: HeroBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new Modifier<HeroCard>('erina-violet-witch', game, card, {
+        name: 'Spellslinger',
+        description:
+          'When you play 3 spells in a turn, you may consume a rune to gain 2 mana and draw a card.',
+        icon: 'icons/erina-passive',
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
@@ -48,7 +52,7 @@ export const erinaVioletWitch: HeroBlueprint = {
                 game,
                 card,
                 aiChoice: 'no',
-                label: `Consume a rune to gain 1 mana and draw a card?`,
+                label: `Consume a rune to gain 2 mana and draw a card?`,
                 questionId: 'erina-violet-witch-activation',
                 timeoutFallback: 'no'
               });

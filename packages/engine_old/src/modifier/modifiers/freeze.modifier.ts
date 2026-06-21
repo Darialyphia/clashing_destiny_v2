@@ -17,7 +17,7 @@ export class FreezeModifier<T extends MinionCard | HeroCard> extends Modifier<T>
     super(KEYWORDS.FROZEN.id, game, source, {
       name: KEYWORDS.FROZEN.name,
       description: KEYWORDS.FROZEN.description,
-      icon: 'keyword-frozen',
+      icon: 'icons/keyword-frozen',
       isUnique: true,
       mixins: [
         new RemoveOnDestroyedMixin(game),

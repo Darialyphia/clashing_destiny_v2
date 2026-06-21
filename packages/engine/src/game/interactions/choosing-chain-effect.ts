@@ -4,9 +4,11 @@ import type { Effect } from '../effect-chain';
 import type { Game } from '../game';
 import { InvalidPlayerError } from '../game-error';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
+import type { AnyCard } from '../../card/entities/card.entity';
 
 export type ChoosingChainEffectContextOptions = {
   player: Player;
+  source: AnyCard;
   isElligible(effect: Effect): boolean;
   label: string;
   timeoutFallback: Effect;
@@ -34,7 +36,7 @@ export class ChooseChainEffectContext {
 
   private constructor(
     private game: Game,
-    options: ChoosingChainEffectContextOptions
+    private options: ChoosingChainEffectContextOptions
   ) {
     this.isElligible = options.isElligible;
     this.player = options.player;
@@ -50,7 +52,8 @@ export class ChooseChainEffectContext {
       elligibleEffectsIds:
         this.game.effectChainSystem.currentChain?.stack.map(effect => effect.id) ?? [],
       label: this.label,
-      canCancel: false
+      canCancel: false,
+      source: this.options.source.id
     };
   }
 

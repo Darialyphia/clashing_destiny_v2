@@ -1,11 +1,13 @@
 <script setup lang="ts">
-const { cost } = defineProps<{
+const { cost, exhaust } = defineProps<{
   cost: number;
+  exhaust: boolean;
 }>();
 </script>
 
 <template>
   <span class="ability">
+    <rt-exhaust v-if="exhaust" class="exhaust" />
     <rt-mana v-if="cost > 0" class="mana">{{ cost }}</rt-mana>
     :
   </span>

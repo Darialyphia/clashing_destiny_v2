@@ -5,6 +5,7 @@ import type { Player } from '../player/player.entity';
 import { BoardSpace } from './board-space.entity';
 import type { DestinyCard } from '../card/entities/destiny.entity';
 import { isMinion } from '../card/card-utils';
+import type { MinionCard } from '../card/entities/minion.entity';
 
 export type SerializedBattlefield = {
   spaces: string[];
@@ -50,6 +51,10 @@ export class Battlefield implements Serializable<SerializedBattlefield> {
       if (!isMinion(space.card)) return score;
       return score + space.card.commandment;
     }, 0);
+  }
+
+  has(card: MinionCard) {
+    return this.allSpaces.some(space => space.card?.equals(card));
   }
 
   serialize() {

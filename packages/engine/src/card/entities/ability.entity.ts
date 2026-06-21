@@ -129,7 +129,7 @@ export class Ability<T extends AbilityOwner>
     if (targetsResult.cancelled) return;
     this.targets = targetsResult.result;
 
-    if (this.blueprint.shoouldExhaust) {
+    if (this.blueprint.shouldExhaust) {
       await this.card.exhaust();
     }
 

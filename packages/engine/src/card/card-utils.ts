@@ -81,6 +81,7 @@ export const minionOrHeroTargetRules = {
     const result = await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
       player: card.player,
       label,
+      source: card,
       timeoutFallback,
       canCancel,
       aiHints,
