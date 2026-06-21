@@ -221,7 +221,7 @@ export const engulfInFlames: SpellBlueprint = {
   name: 'Engulf in Flames',
   description: dedent /*html*/ `
   <rt-job-bonus job="${JOBS.MAGE.id}">This costs 1 less</rt-job-bonus>
-  Deal 1 damage to all enemy minions on target battlefield. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
+  Deal 1 damage to all enemy minions at a battlefield. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -248,7 +248,7 @@ export const engulfInFlames: SpellBlueprint = {
       })
     );
   },
-  async onPlay(game, card, targets) {
+  async onPlay(game, card) {
     let damageAmount = 1;
 
     const canConsume = card.player.runeManager.has({ wisdom: 1, resonance: 1 });
@@ -268,10 +268,9 @@ export const engulfInFlames: SpellBlueprint = {
       }
     }
 
-    const minionsToDamage = targets.spaces[0].zone
-      .map(space => space.card)
-      .filter(isDefined)
-      .filter(isMinion);
+    const minionsToDamage = card.player.opponent.minions.filter(
+      minion => minion.isOnBattlefield
+    );
 
     for (const minion of minionsToDamage) {
       await minion.takeDamage(card, new SpellDamage(damageAmount, card));

@@ -21,7 +21,6 @@ import { scry } from '../../../../card-actions-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SpellDamage } from '../../../../../utils/damage';
-import { RUNES, type Rune } from '../../../../../player/player.enums';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
@@ -31,6 +30,7 @@ import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import type { SpellCard } from '../../../../entities/spell.entity';
 import { SpellInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
+import { CardEffectTriggeredEvent } from '../../../../card.events';
 
 export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
@@ -310,45 +310,55 @@ export const starConvergence: SpellBlueprint = {
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.hero.modifiers.add(
-      new Modifier<HeroCard>('starConvergence', game, card, {
-        name: 'Star Convergence',
-        description:
-          'Until the end of turn, whenever you would play a spell, you may play an Astral Ball in your base exhausted.',
-        icon: 'icons/keyword-double-cast',
-        mixins: [
-          new UntilEndOfTurnModifierMixin(game),
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_AFTER_PLAY,
-            filter(event) {
-              return (
-                event.data.card.player.equals(card.player) && isSpell(event.data.card)
-              );
-            },
-            async handler() {
-              const generatedCard = await card.player.generateCard<MinionCard>(
-                'astralBall',
-                card.isFoil
-              );
+    // Avoid the modifier to proc on the card itself
+    await game.inputSystem.schedule(async () => {
+      await card.player.hero.modifiers.add(
+        new Modifier<HeroCard>('starConvergence', game, card, {
+          name: 'Star Convergence',
+          description:
+            'Until the end of turn, whenever you would play a spell, you may play an Astral Ball in your base exhausted.',
+          icon: 'icons/keyword-double-cast',
+          mixins: [
+            new UntilEndOfTurnModifierMixin(game),
+            new GameEventModifierMixin(game, {
+              eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+              filter(event) {
+                return (
+                  event.data.card.player.equals(card.player) && isSpell(event.data.card)
+                );
+              },
+              async handler() {
+                await game.emit(
+                  GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                  new CardEffectTriggeredEvent({
+                    card: card.player.hero,
+                    message: `Star Convergence effect triggered.`
+                  })
+                );
+                const generatedCard = await card.player.generateCard<MinionCard>(
+                  'astralBall',
+                  card.isFoil
+                );
 
-              const hasRoomInBase = card.player.boardSide.base.some(
-                space => space.isEmpty
-              );
-              if (!hasRoomInBase) return;
+                const hasRoomInBase = card.player.boardSide.base.some(
+                  space => space.isEmpty
+                );
+                if (!hasRoomInBase) return;
 
-              const position = await emptyBoardSpaceTargetRules.getTargets({
-                game,
-                card,
-                predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
-                canCancel: false
-              });
-              await generatedCard.playImmediatelyAt(position.result.spaces[0]);
-              await generatedCard.exhaust();
-            }
-          })
-        ]
-      })
-    );
+                const position = await emptyBoardSpaceTargetRules.getTargets({
+                  game,
+                  card,
+                  predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
+                  canCancel: false
+                });
+                await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+                await generatedCard.exhaust();
+              }
+            })
+          ]
+        })
+      );
+    });
 
     if (card.player.runeManager.has({ wisdom: 1, resonance: 1 })) {
       await card.player.cardManager.draw(1);

@@ -34,7 +34,8 @@ export class BlastModifier extends Modifier<MinionCard> {
             const elligibleTargets = (this.target.position?.opponentZone ?? [])
               .filter(space => !space.isEmpty)
               .map(space => space.card)
-              .filter(c => isMinion(c!));
+              .filter(c => isMinion(c!))
+              .filter(c => c.isAlive);
             if (elligibleTargets.length === 0) return;
 
             await game.emit(

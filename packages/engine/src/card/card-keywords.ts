@@ -171,7 +171,7 @@ export const KEYWORDS = {
     id: 'protector',
     name: 'Protector',
     description:
-      'When an adjacent ally takes combat damage, this unit takes that damage instead.',
+      'Enemies on the same battlefield as this can only attack this unit if able.',
     aliases: []
   },
   REGENERATION: {

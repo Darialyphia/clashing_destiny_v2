@@ -333,6 +333,9 @@ export class MinionCard extends Card<
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
+    // prevents the minion from taking damage and trigger events if it alreadydied during chain resolution
+    if (!this.isAlive) return;
+
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
       new CardBeforeTakeDamageEvent({

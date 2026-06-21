@@ -1,5 +1,8 @@
 import dedent from 'dedent';
-import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import {
+  RuneCostToggleModifierMixin,
+  TogglableModifierMixin
+} from '../../../../../modifier/mixins/togglable.mixin';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
@@ -31,6 +34,8 @@ import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin
 import type { Player } from '../../../../../player/player.entity';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
+import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
+import { StealthModifier } from '../../../../../modifier/modifiers/stealth.modifier';
 
 export const starSeer: MinionBlueprint = {
   id: 'starSeer',
@@ -76,6 +81,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   name: 'Mana Weaver Apprentice',
   description: dedent /*html*/ `
     I have +1 Commandment if you have played 2 or more spells this turn.
+    <rt-runes runes="wisdom,focus,focus"></rt-runes> <rt-keyword>Stealth</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -104,6 +110,12 @@ export const manaWeaverApprentice: MinionBlueprint = {
                 .length >= 2
           )
         ]
+      })
+    );
+
+    await card.modifiers.add(
+      new StealthModifier(game, card, {
+        mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 })]
       })
     );
   },
@@ -407,26 +419,31 @@ export const astralSage: MinionBlueprint = {
   ],
 
   async onInit(game, card) {
+    const summonAstralBall = async () => {
+      const generatedCard = await card.player.generateCard<MinionCard>(
+        'astralBall',
+        card.isFoil
+      );
+      const hasRoomInBase = card.player.boardSide.base.some(space => space.isEmpty);
+      if (!hasRoomInBase) return;
+
+      const position = await emptyBoardSpaceTargetRules.getTargets({
+        game,
+        card,
+        predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
+        canCancel: false
+      });
+      await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+      await generatedCard.exhaust();
+    };
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
-        async handler() {
-          const generatedCard = await card.player.generateCard<MinionCard>(
-            'astralBall',
-            card.isFoil
-          );
-          const hasRoomInBase = card.player.boardSide.base.some(space => space.isEmpty);
-          if (!hasRoomInBase) return;
-
-          const position = await emptyBoardSpaceTargetRules.getTargets({
-            game,
-            card,
-            predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
-            canCancel: false
-          });
-          await generatedCard.playImmediatelyAt(position.result.spaces[0]);
-          await generatedCard.exhaust();
-        }
+        handler: summonAstralBall
       })
+    );
+
+    await card.modifiers.add(
+      new OnMoveModifier(game, card, { handler: summonAstralBall })
     );
   },
   async onPlay() {},
