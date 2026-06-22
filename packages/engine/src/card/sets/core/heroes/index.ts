@@ -112,7 +112,7 @@ export const haroldVowedCrusader: HeroBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('heroes/harold-vowed-crusader'),
   speed: CARD_SPEED.SLOW,
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.LIGHT, AFFINITIES.EARTH],
