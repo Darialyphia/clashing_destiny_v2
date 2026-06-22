@@ -46,7 +46,7 @@ export const erinaVioletWitch: HeroBlueprint = {
       new Modifier<HeroCard>('erina-violet-witch', game, card, {
         name: 'Spellslinger',
         description:
-          'When you play 3 spells in a turn, you may consume a rune to gain 2 mana and draw a card.',
+          'When you play 3 spells in a turn, you may consume a rune to gain 1 mana and draw a card.',
         icon: 'icons/erina-passive',
         mixins: [
           new GameEventModifierMixin(game, {
@@ -88,7 +88,7 @@ export const erinaVioletWitch: HeroBlueprint = {
 
               if (runeResult.cancelled) return;
               await card.player.runeManager.remove([runeResult.result[0] as Rune]);
-              await card.player.manaManager.gain(2);
+              await card.player.manaManager.gain(1);
               await card.player.cardManager.draw(1);
             }
           })
