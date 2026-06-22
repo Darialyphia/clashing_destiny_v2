@@ -30,6 +30,7 @@ import { RUNES } from '../../../../../player/player.enums';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { InteractionResult } from '../../../../../game/systems/game-interaction.system';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const fireBolt: SpellBlueprint<MinionCard> = {
   id: 'fireBolt',
@@ -160,7 +161,10 @@ export const innerFire: SpellBlueprint<MinionCard> = {
     if (!target) return;
 
     await target.modifiers.add(
-      new SimpleAttackBuffModifier('inner-fire', game, target, { amount: 2 })
+      new SimpleAttackBuffModifier('inner-fire', game, target, {
+        amount: 2,
+        mixins: [new UntilEndOfTurnModifierMixin(game)]
+      })
     );
   },
   aiHints: {

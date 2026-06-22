@@ -108,7 +108,7 @@ export const haroldVowedCrusader: HeroBlueprint = {
   collectable: true,
   name: 'Harold Vowed Crusader',
   description: dedent /*html*/ `
-    Your minions have "<rt-location locations="battlefield"></rt-location> <rt-keyword>Channel</rt-keyword> : Gain +1 Health."
+    Your minions have <br/>"<rt-location locations="battlefield" always-active="true"></rt-location> <rt-keyword>Channel</rt-keyword> : Gain +1 Health."
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,

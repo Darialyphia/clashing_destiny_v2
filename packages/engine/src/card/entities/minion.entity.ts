@@ -389,7 +389,7 @@ export class MinionCard extends Card<
 
   get shouldSwitchInitiativeAfterMovingManually(): boolean {
     return this.interceptors.shouldSwitchInitiativeAfterMovingManually.getValue(
-      true,
+      false,
       this
     );
   }

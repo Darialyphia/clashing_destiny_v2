@@ -7,8 +7,9 @@ import {
 } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 
-const { locations } = defineProps<{
+const { locations, alwaysActive } = defineProps<{
   locations: string;
+  alwaysActive?: boolean;
 }>();
 
 const ctx = useRichTextContext();
@@ -20,6 +21,7 @@ const locationsArray = computed(() => {
 });
 const isDisabled = computed(() => {
   if (!ctx?.card?.value) return false;
+  if (alwaysActive) return false;
   return !locationsArray.value.some(loc => {
     if (loc === 'battlefield') {
       return (

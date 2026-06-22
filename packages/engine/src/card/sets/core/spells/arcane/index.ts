@@ -270,7 +270,7 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
     await card.modifiers.add(
       new Modifier<SpellCard>('mysticRecall', game, card, {
         mixins: [
-          new RuneCostToggleModifierMixin(game, card, { wisdom: 2, focus: 1 }),
+          new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 1 }),
           new SpellInterceptorModifierMixin(game, {
             key: 'speed',
             interceptor() {
