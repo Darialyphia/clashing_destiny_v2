@@ -308,10 +308,12 @@ export const starConvergence: SpellBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  canPlay: () => true,
+  canPlay: (game, card) => card.player.runeManager.has({ resonance: 1 }),
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
+    await card.player.runeManager.remove([RUNES.RESONANCE]);
+
     // Avoid the modifier to proc on the card itself
     await game.inputSystem.schedule(async () => {
       await card.player.hero.modifiers.add(
@@ -350,7 +352,9 @@ export const starConvergence: SpellBlueprint = {
                 const position = await emptyBoardSpaceTargetRules.getTargets({
                   game,
                   card,
-                  predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
+                  predicate: space =>
+                    space.position.zone === CARD_LOCATIONS.BASE &&
+                    space.player.equals(card.player),
                   canCancel: false
                 });
                 await generatedCard.playImmediatelyAt(position.result.spaces[0]);
@@ -362,9 +366,7 @@ export const starConvergence: SpellBlueprint = {
       );
     });
 
-    if (card.player.runeManager.has({ wisdom: 1, resonance: 1 })) {
-      await card.player.cardManager.draw(1);
-    }
+    await card.player.cardManager.draw(1);
   },
   aiHints: {
     shouldPlay: () => 1
