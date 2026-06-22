@@ -47,6 +47,7 @@ export type CombatStep = Values<typeof COMBAT_STEPS>;
 export const COMBAT_STEP_TRANSITIONS = {
   ATTACKER_DECLARED: 'attacker-declared',
   ATTACKER_TARGET_DECLARED: 'attacker-target-declared',
+  ABORT_COMBAT: 'abort-combat',
   RESOLVE_COMBAT: 'resolve-combat',
   FINISHED: 'finished',
   CANCEL: 'cancel'

@@ -10,7 +10,6 @@ import {
 } from '@game/shared';
 import { System } from '../../system';
 import type { MinionCard } from '../../card/entities/minion.entity';
-import { HeroCard } from '../../card/entities/hero.entity';
 import {
   COMBAT_STEP_TRANSITIONS,
   COMBAT_STEPS,
@@ -58,6 +57,11 @@ export class CombatStateMachine extends StateMachine<CombatStep, CombatStepTrans
         COMBAT_STEPS.REACTION,
         COMBAT_STEP_TRANSITIONS.RESOLVE_COMBAT,
         COMBAT_STEPS.RESOLVING_COMBAT
+      ),
+      stateTransition(
+        COMBAT_STEPS.REACTION,
+        COMBAT_STEP_TRANSITIONS.ABORT_COMBAT,
+        COMBAT_STEPS.DECLARE_ATTACKER
       ),
       stateTransition(
         COMBAT_STEPS.RESOLVING_COMBAT,
@@ -136,14 +140,20 @@ export class CombatSystem
     this._defender = target;
     await this.attacker.exhaust();
 
-    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
       new AfterDeclareAttackTargetEvent({ target, attacker: this.attacker })
     );
 
-    if (!this.attacker.getShouldCreateChainOnAttack(this.defender!)) {
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
+
+    if (!this.attacker.isAlive || !this.defender!.isAlive) {
       await this.resolveCombat();
+      return;
+    }
+
+    if (!this.attacker.getShouldCreateChainOnAttack(this.defender!)) {
+      await this.abortCombat();
       return;
     }
 
@@ -193,6 +203,17 @@ export class CombatSystem
     this._attacker = newAttacker;
   }
 
+  private reset() {
+    this._attacker = null;
+    this._defender = null;
+    this.isDefenderRetaliating = false;
+  }
+
+  private abortCombat() {
+    this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ABORT_COMBAT);
+    this.reset();
+  }
+
   private async resolveCombat() {
     assert(isDefined(this.defender), new CorruptedGamephaseContextError());
     assert(isDefined(this.attacker), new CorruptedGamephaseContextError());
@@ -232,9 +253,7 @@ export class CombatSystem
     if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
       await this.game.turnSystem.switchInitiative();
     }
-    this._attacker = null;
-    this._defender = null;
-    this.isDefenderRetaliating = false;
+    this.reset();
   }
 
   private async performAttacks() {
