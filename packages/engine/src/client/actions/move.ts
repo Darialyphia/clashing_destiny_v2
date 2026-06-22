@@ -19,6 +19,7 @@ export class MoveAction implements BoardCellClickRule {
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
       !!this.client.ui.selectedCard &&
+      this.client.ui.selectedCard.player.id === this.client.playerId &&
       this.canMove(cell)
     );
   }

@@ -13,6 +13,7 @@ import { PointAOEShape } from '../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../aoe/aoe-shape';
 import { isFunction } from '@game/shared';
 import type { DestinyCard } from './entities/destiny.entity';
+import type { Effect } from '../game/effect-chain';
 
 export const isHero = (card: AnyCard): card is HeroCard => {
   return card.kind === CARD_KINDS.HERO;
@@ -108,7 +109,11 @@ export const minionOrHeroTargetRules = {
     }
     return {
       cancelled: false as const,
-      result: { cards: result.result as (MinionCard | HeroCard)[], spaces: [] }
+      result: {
+        cards: result.result as (MinionCard | HeroCard)[],
+        spaces: [],
+        effect: null
+      }
     };
   }
 };
@@ -567,7 +572,10 @@ export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
 });
 
 export const noTargets = () =>
-  Promise.resolve({ cancelled: false as const, result: { cards: [], spaces: [] } });
+  Promise.resolve({
+    cancelled: false as const,
+    result: { cards: [], spaces: [], effect: null }
+  });
 
 export const emptyBoardSpaceTargetRules = {
   canPlay: (game: Game, predicate?: (space: BoardSpace) => boolean) =>
@@ -590,7 +598,7 @@ export const emptyBoardSpaceTargetRules = {
     predicate?: (space: BoardSpace) => boolean;
     canCancel?: TCancellable;
   }): Promise<
-    InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }> &
+    InteractionResult<Targets> &
       (TCancellable extends true ? { cancelled: boolean } : { cancelled: false })
   > => {
     const result = await game.interaction.selectSpacesOnBoard<TCancellable>({
@@ -627,7 +635,7 @@ export const emptyBoardSpaceTargetRules = {
     }
     return {
       cancelled: false as const,
-      result: { spaces: result.result, cards: [] }
+      result: { spaces: result.result, cards: [], effect: null }
     };
   }
 };
@@ -672,7 +680,7 @@ export const battlefieldTargetRules = {
       enemySpaces: BoardSpace[];
     }) => boolean;
     canCancel?: boolean;
-  }): Promise<InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }>> => {
+  }): Promise<InteractionResult<Targets>> => {
     const result = await game.interaction.selectSpacesOnBoard({
       source: card,
       player: card.player,
@@ -726,7 +734,7 @@ export const battlefieldTargetRules = {
     }
     return {
       cancelled: false as const,
-      result: { spaces: result.result, cards: [] }
+      result: { spaces: result.result, cards: [], effect: null }
     };
   }
 };
@@ -749,7 +757,7 @@ export const anywhereTargetRules = {
     timeoutFallback?: BoardSpace[];
     predicate?: (space: BoardSpace) => boolean;
     canCancel?: boolean;
-  }): Promise<InteractionResult<{ spaces: BoardSpace[]; cards: AnyCard[] }>> => {
+  }): Promise<InteractionResult<Targets>> => {
     const result = await game.interaction.selectSpacesOnBoard({
       source: card,
       player: card.player,
@@ -780,7 +788,58 @@ export const anywhereTargetRules = {
     }
     return {
       cancelled: false as const,
-      result: { spaces: result.result, cards: [] }
+      result: { spaces: result.result, cards: [], effect: null }
+    };
+  }
+};
+
+export const effectTargetRules = {
+  canPlay: (game: Game, card: AnyCard, predicate?: (effect: Effect) => boolean) =>
+    !!game.effectChainSystem.currentChain?.stack.some(effect =>
+      predicate ? predicate(effect) : true
+    ),
+
+  getTargets: async ({
+    game,
+    card,
+    label = 'Select an effect',
+    timeoutFallback,
+    predicate = () => true,
+    canCancel = false
+  }: {
+    game: Game;
+    card: AnyCard;
+    label?: string;
+    timeoutFallback?: Effect;
+    predicate?: (effect: Effect) => boolean;
+    canCancel?: boolean;
+  }): Promise<InteractionResult<Targets>> => {
+    const result = await game.interaction.chooseChainEffect({
+      source: card,
+      player: card.player,
+      canCancel,
+      label,
+      isElligible: effect => {
+        return predicate(effect);
+      },
+      timeoutFallback:
+        timeoutFallback ??
+        game.effectChainSystem.currentChain!.stack.find(effect =>
+          predicate ? predicate(effect) : true
+        )!,
+      aiHints: {
+        shouldPick: () => {
+          return 0;
+        }
+      }
+    });
+
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
+    }
+    return {
+      cancelled: false as const,
+      result: { spaces: [], cards: [], effect: result.result }
     };
   }
 };

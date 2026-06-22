@@ -42,7 +42,9 @@ export const cards = {
 "astralBall": "astralBall",
 "indomitableVindicator": "indomitableVindicator",
 "twinFlame": "twinFlame",
-"astralSage": "astralSage"
+"astralSage": "astralSage",
+"harold-vowed-crusader": "harold-vowed-crusader",
+"spellSiphon": "spellSiphon"
 } as const;
 
 export const collectableCards = {
@@ -52,7 +54,6 @@ export const collectableCards = {
 "braveCitizen": "braveCitizen",
 "birdOfGoodLuck": "birdOfGoodLuck",
 "recklessRecruit": "recklessRecruit",
-"willowisp": "willowisp",
 "cremation": "cremation",
 "innerFire": "innerFire",
 "fireBall": "fireBall",
@@ -81,7 +82,9 @@ export const collectableCards = {
 "enigmaticWizard": "enigmaticWizard",
 "indomitableVindicator": "indomitableVindicator",
 "twinFlame": "twinFlame",
-"astralSage": "astralSage"
+"astralSage": "astralSage",
+"harold-vowed-crusader": "harold-vowed-crusader",
+"spellSiphon": "spellSiphon"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -125,7 +128,7 @@ export const cardsBySet: Record<string, CardSet> = {
   },
   {
     "id": "willowisp",
-    "collectable": true,
+    "collectable": false,
     "rarity": "common",
     "kind": "MINION"
   },
@@ -308,6 +311,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "epic",
     "kind": "MINION"
+  },
+  {
+    "id": "harold-vowed-crusader",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "HERO"
+  },
+  {
+    "id": "spellSiphon",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
   }
 ]
 };
@@ -349,7 +364,9 @@ export const cardShortIds: Record<string, number> = {
 "astralBall": 34,
 "indomitableVindicator": 35,
 "twinFlame": 36,
-"astralSage": 37
+"astralSage": 37,
+"harold-vowed-crusader": 38,
+"spellSiphon": 39
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -389,5 +406,7 @@ export const cardIdByShortId: Record<number, string> = {
 "34": "astralBall",
 "35": "indomitableVindicator",
 "36": "twinFlame",
-"37": "astralSage"
+"37": "astralSage",
+"38": "harold-vowed-crusader",
+"39": "spellSiphon"
 } as const;

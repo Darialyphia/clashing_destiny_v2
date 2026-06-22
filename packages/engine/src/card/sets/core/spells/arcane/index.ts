@@ -3,6 +3,7 @@ import type { SpellBlueprint } from '../../../../card-blueprint';
 import {
   anywhereTargetRules,
   defaultCardArt,
+  effectTargetRules,
   emptyBoardSpaceTargetRules,
   isSpell,
   singleMinionTargetRules
@@ -31,6 +32,8 @@ import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple
 import type { SpellCard } from '../../../../entities/spell.entity';
 import { SpellInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 import { CardEffectTriggeredEvent } from '../../../../card.events';
+import { EFFECT_TYPE } from '../../../../../game/game.enums';
+import { RUNES } from '../../../../../player/player.enums';
 
 export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
@@ -45,7 +48,7 @@ export const arcaneSight: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 0,
+  manaCost: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,
@@ -239,7 +242,7 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
   name: 'Mystic Recall',
   description: dedent /*html*/ `
     Return an ally minion to its owner's hand. Draw a card.
-    <rt-runes runes="wisdom,wisdom,focus"></rt-runes> This is fast speed.
+    <rt-runes runes="wisdom,focus"></rt-runes> This is fast speed.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -293,8 +296,7 @@ export const starConvergence: SpellBlueprint = {
   id: 'starconvergence',
   name: 'Star Convergence',
   description: dedent /*html*/ `
-  Until the end of turn, whenever you would play a spell, you may play an <rt-card>Astral Ball</rt-card> in your base exhausted.
-  <rt-runes runes="wisdom,resonance"></rt-runes>Draw a card.
+  Consume <rt-runes runes="resonance"></rt-runes>. Until the end of turn, whenever you would play a spell, you may play an <rt-card>Astral Ball</rt-card> in your base exhausted.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -363,6 +365,53 @@ export const starConvergence: SpellBlueprint = {
     if (card.player.runeManager.has({ wisdom: 1, resonance: 1 })) {
       await card.player.cardManager.draw(1);
     }
+  },
+  aiHints: {
+    shouldPlay: () => 1
+  }
+};
+
+export const spellSiphon: SpellBlueprint = {
+  id: 'spellSiphon',
+  name: 'Spell Siphon',
+  description: dedent /*html*/ `
+    Consume <rt-runes runes="resonance"></rt-runes>. Negate the activation of a spell that costs 3 or less.
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.SPELL,
+  rarity: RARITIES.RARE,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.ARCANE],
+  manaCost: 1,
+  speed: CARD_SPEED.FAST,
+  tags: [],
+  canPlay: (game, card) =>
+    effectTargetRules.canPlay(
+      game,
+      card,
+      effect =>
+        effect.type === EFFECT_TYPE.CARD &&
+        isSpell(effect.source) &&
+        effect.source.manaCost <= 3
+    ) && card.player.runeManager.has({ resonance: 1 }),
+  getTargets: (game, card) =>
+    effectTargetRules.getTargets({
+      game,
+      card,
+      predicate: effect =>
+        effect.type === EFFECT_TYPE.CARD &&
+        isSpell(effect.source) &&
+        effect.source.manaCost <= 3
+    }),
+  async onInit() {},
+  async onPlay(game, card, targets) {
+    const effect = targets.effect;
+    if (!effect) return;
+    if (!card.player.runeManager.has({ resonance: 1 })) return;
+    await card.player.runeManager.remove([RUNES.RESONANCE]);
+    game.effectChainSystem.currentChain?.negateEffect(effect.id);
   },
   aiHints: {
     shouldPlay: () => 1

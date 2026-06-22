@@ -13,9 +13,11 @@ export class AttackAction implements CardActionRule {
   }
 
   predicate(card: CardViewModel, state: GameClientState) {
+    console.log();
     return (
       isDefined(this.client.ui.selectedCard) &&
       this.client.ui.selectedCard.canAttackAt(card) &&
+      this.client.ui.selectedCard.player.id === this.client.playerId &&
       this.client.ui.isInteractivePlayer &&
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&

@@ -200,7 +200,7 @@ const affinities = computed(() => {
 });
 
 const tint = computed(() => {
-  return `linear-gradient(135deg, ${card.affinities
+  return `linear-gradient(135deg in oklch, ${card.affinities
     .map(affinity => {
       return `var(--tint-${affinity.toLocaleLowerCase()})`;
     })

@@ -7,7 +7,11 @@ export class DeclareRetaliationAction implements CardActionRule {
   constructor(private client: GameClient) {}
 
   predicate(card: CardViewModel) {
-    return card.canRetaliate && this.client.isActive();
+    return (
+      card.player.id === this.client.playerId &&
+      card.canRetaliate &&
+      this.client.isActive()
+    );
   }
 
   getLabel() {

@@ -20,7 +20,7 @@ export class TakeResourceActionInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
-    assert(this.player.hasInitiative, new NotCurrentPlayerError());
+    assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(
       this.player.canTakeResourceAction(),
       new InputError('Player cannot take any more resource actions this turn.')

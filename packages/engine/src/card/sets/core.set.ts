@@ -1,6 +1,6 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
-import { erinaVioletWitch } from './core/heroes/index';
+import { erinaVioletWitch, haroldVowedCrusader } from './core/heroes/index';
 import {
   pyromancer,
   recklessRecruit,
@@ -31,7 +31,8 @@ import {
   fallingStar,
   arcaneSpark,
   mysticRecall,
-  starConvergence
+  starConvergence,
+  spellSiphon
 } from './core/spells/arcane/index';
 import {
   starSeer,
@@ -89,6 +90,8 @@ export const coreSet: CardSet = {
     astralBall,
     indomitableVindicator,
     twinFlame,
-    astralSage
+    astralSage,
+    haroldVowedCrusader,
+    spellSiphon
   ]
 };

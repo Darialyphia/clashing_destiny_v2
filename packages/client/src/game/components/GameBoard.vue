@@ -763,7 +763,7 @@ const isScreenDimmed = computed(() => {
 
 .victory-points {
   display: grid;
-  grid-template-columns: repeat(6, 47px);
+  grid-template-columns: repeat(8, 47px);
   gap: 4px;
   align-items: center;
   justify-content: center;

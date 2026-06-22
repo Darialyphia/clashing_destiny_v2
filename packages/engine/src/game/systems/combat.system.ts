@@ -176,7 +176,7 @@ export class CombatSystem
         id: nanoid(),
         source: this.defender,
         type: EFFECT_TYPE.RETALIATION,
-        targets: { cards: [this.attacker!], spaces: [] },
+        targets: { cards: [this.attacker!], spaces: [], effect: null },
         handler: async () => {}
       },
       this.defender.player

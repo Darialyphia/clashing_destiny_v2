@@ -1,6 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint, Targets } from '../../../../card-blueprint';
 import {
+  anywhereTargetRules,
   battlefieldTargetRules,
   defaultCardArt,
   emptyBoardSpaceTargetRules,
@@ -27,7 +28,6 @@ import { JobBonusToggleModifierMixin } from '../../../../../modifier/mixins/togg
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { RUNES } from '../../../../../player/player.enums';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
-import { isDefined } from '@game/shared';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import type { InteractionResult } from '../../../../../game/systems/game-interaction.system';
 
@@ -96,7 +96,7 @@ export const cremation: SpellBlueprint = {
     [...card.player.cardManager.discardPile].filter(c =>
       c.affinities.includes(AFFINITIES.FIRE)
     ).length >= 3,
-  getTargets: noTargets,
+  getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
     const choices = [...card.player.cardManager.discardPile].filter(c =>

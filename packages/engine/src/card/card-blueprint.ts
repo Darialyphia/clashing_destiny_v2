@@ -18,6 +18,8 @@ import type { InteractionResult } from '../game/systems/game-interaction.system'
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { BoardSpace } from '../board/board-space.entity';
 import type { DestinyCard } from './entities/destiny.entity';
+import type { Effect } from '../game/effect-chain';
+import type { Nullable } from '@game/shared';
 
 export type CardArt = {
   foil: {
@@ -100,16 +102,19 @@ export type SerializedAbility = {
 export type Targets<TCard extends AnyCard = AnyCard> = {
   cards: TCard[];
   spaces: BoardSpace[];
+  effect: Nullable<Effect>;
 };
 export type SerializedTargets = {
   cards: string[];
   spaces: string[];
+  effect: string | null;
 };
 
 export const serializeTargets = (targets: Targets): SerializedTargets => {
   return {
     cards: targets.cards.map(card => card.id),
-    spaces: targets.spaces.map(space => space.id)
+    spaces: targets.spaces.map(space => space.id),
+    effect: targets.effect ? targets.effect.id : null
   };
 };
 

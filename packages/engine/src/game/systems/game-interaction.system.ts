@@ -390,13 +390,19 @@ export class GameInteractionSystem
     return this.game.inputSystem.pause<ReturnValue>();
   }
 
-  async chooseChainEffect(options: ChoosingChainEffectContextOptions) {
+  async chooseChainEffect<TCancellable extends boolean>(
+    options: ChoosingChainEffectContextOptions<TCancellable>
+  ) {
+    type ReturnValue = TCancellable extends true
+      ? InteractionResult<Effect>
+      : InteractionResult<Effect> & { cancelled: false };
+
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CHAIN_EFFECT].create(
       this.game,
       options
     );
-    return this.game.inputSystem.pause<Effect>();
+    return this.game.inputSystem.pause<ReturnValue>();
   }
 
   async rearrangeCards<T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>>(
