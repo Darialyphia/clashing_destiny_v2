@@ -24,6 +24,7 @@ import {
   LocationToggleModifierMixin,
   TogglableModifierMixin
 } from '../../../../modifier/mixins/togglable.mixin';
+import { CardEffectTriggeredEvent } from '../../../card.events';
 
 export const erinaVioletWitch: HeroBlueprint = {
   id: 'erina-violet-witch',
@@ -59,6 +60,13 @@ export const erinaVioletWitch: HeroBlueprint = {
             async handler() {
               if (card.player.runeManager.runeCount === 0) return;
 
+              await game.emit(
+                GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                new CardEffectTriggeredEvent({
+                  card,
+                  message: 'Erina, Violet Witch passive triggered.'
+                })
+              );
               const answer = await askMandatoryYesNoQuestion({
                 game,
                 card,
@@ -87,8 +95,7 @@ export const erinaVioletWitch: HeroBlueprint = {
               });
 
               if (runeResult.cancelled) return;
-              console.log(runeResult.result);
-              await card.player.runeManager.remove([runeResult.result[0] as Rune]);
+              await card.player.runeManager.remove([runeResult.result as Rune]);
               await card.player.manaManager.gain(1);
               await card.player.cardManager.draw(1);
             }
