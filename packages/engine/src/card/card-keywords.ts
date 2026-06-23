@@ -224,6 +224,12 @@ export const KEYWORDS = {
     description: 'This cards loses all abilities.',
     aliases: ['silence']
   },
+  SLOW: {
+    id: 'slow',
+    name: 'Slow',
+    description: 'This unit gives initiative to the opponent after moving',
+    aliases: []
+  },
   SPELL_GUARD: {
     id: 'spell_guard',
     name: 'Spell Guard (x)',
@@ -296,7 +302,7 @@ export const KEYWORDS = {
   WITHER: {
     id: 'wither',
     name: 'Wither X',
-    description: 'At the start of the turn, this unit loses X Power.',
+    description: 'At the start of the turn, this unit loses X Attack and X Health.',
     aliases: [/wither [0-9]+/]
   },
   ...Object.fromEntries(

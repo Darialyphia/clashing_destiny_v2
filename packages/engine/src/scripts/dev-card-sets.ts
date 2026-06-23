@@ -212,7 +212,7 @@ const insertMissingImports = (content: string, missingImports: CardEntry[]) => {
   let lastImportIndex = -1;
 
   lines.forEach((line, index) => {
-    if (line.startsWith('import ')) {
+    if (/from\s+['"][^'"]+['"]\s*;?\s*$/.test(line.trim())) {
       lastImportIndex = index;
     }
   });
@@ -339,7 +339,7 @@ const startWatcher = async () => {
 
   const watcher = chokidar.watch(path.join(setsDir, '**/*.ts'), {
     ignoreInitial: true,
-    ignored: [new RegExp(`${setFileSuffix.replace('.', '\\.')}$`), /\/index\.ts$/]
+    ignored: [new RegExp(`${setFileSuffix.replace('.', '\\.')}$`)]
   });
 
   let scheduled: NodeJS.Timeout | undefined;

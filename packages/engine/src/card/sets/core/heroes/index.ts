@@ -87,6 +87,7 @@ export const erinaVioletWitch: HeroBlueprint = {
               });
 
               if (runeResult.cancelled) return;
+              console.log(runeResult.result);
               await card.player.runeManager.remove([runeResult.result[0] as Rune]);
               await card.player.manaManager.gain(1);
               await card.player.cardManager.draw(1);

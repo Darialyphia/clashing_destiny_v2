@@ -63,13 +63,19 @@ const artifacts = computed(() =>
     <HoverCardRoot :open-delay="200">
       <button
         class="player-deck"
+        :class="{
+          invalid: deck.isValid.result === 'failure'
+        }"
         :style="{
           '--bg': assets[`cards/${hero?.art.default.main}`]?.css
         }"
       >
         <div class="deck-name">
           {{ deck.name }}
-          <div class="flex gap-2">
+          <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
+            Invalid Deck
+          </div>
+          <div v-else class="flex gap-2">
             <img
               v-for="aff in affinities"
               :key="aff"
@@ -77,13 +83,6 @@ const artifacts = computed(() =>
               :alt="aff"
             />
           </div>
-        </div>
-
-        <div
-          v-if="deck.isValid.result === 'failure'"
-          class="text-red-500 font-bold"
-        >
-          Invalid Deck
         </div>
 
         <HoverCardTrigger as-child>
@@ -126,6 +125,7 @@ const artifacts = computed(() =>
 
 <style scoped lang="postcss">
 .player-deck {
+  position: relative;
   display: flex;
   width: 100%;
   gap: var(--size-2);
@@ -140,6 +140,19 @@ const artifacts = computed(() =>
   background-size: 200%, calc(2px * 96);
   padding: var(--size-2) var(--size-4);
   border: solid 1px hsl(var(--color-primary-hsl) / 0.5);
+  &.invalid {
+    border-color: var(--red-8);
+    background-image:
+      linear-gradient(to right, hsl(0deg 0% 20% / 0.5), hsl(0deg 0% 0% / 0.5)),
+      var(--bg),
+      repeating-linear-gradient(
+        45deg,
+        hsl(var(--red-8-hsl) / 0.35) 0px,
+        hsl(var(--red-8-hsl) / 0.35) 10px,
+        hsl(var(--red-9-hsl) / 0.35) 10px,
+        hsl(var(--red-9-hsl) / 0.35) 20px
+      );
+  }
 }
 
 .deck-name {
@@ -180,5 +193,9 @@ const artifacts = computed(() =>
 
 .legendary {
   color: var(--orange-4);
+}
+
+.invalid-label {
+  color: var(--red-8);
 }
 </style>

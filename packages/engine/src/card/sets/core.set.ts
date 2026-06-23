@@ -49,6 +49,8 @@ import {
   conjureFocus,
   conjureResonance
 } from './core/spells/neutral/index';
+import { mountainProtector } from './core/minions/earth/index';
+import { vineTrapper } from './core/minions/earth/index';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -92,6 +94,8 @@ export const coreSet: CardSet = {
     twinFlame,
     astralSage,
     haroldVowedCrusader,
-    spellSiphon
+    spellSiphon,
+    mountainProtector,
+    vineTrapper
   ]
 };

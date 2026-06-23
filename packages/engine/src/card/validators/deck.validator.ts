@@ -1,6 +1,6 @@
 import { defaultConfig } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_KINDS } from '../card.enums';
+import { AFFINITIES, CARD_KINDS } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -60,10 +60,13 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
     return defaultConfig.MAX_MAIN_DECK_CARD_COPIES;
   }
 
-  private validateCard(card: {
-    blueprint: CardBlueprint;
-    copies: number;
-  }): DeckViolation[] {
+  private validateCard(
+    card: {
+      blueprint: CardBlueprint;
+      copies: number;
+    },
+    hero?: ValidatableCard<TMeta>
+  ): DeckViolation[] {
     const violations: DeckViolation[] = [];
 
     if (card.copies > defaultConfig.MAX_MAIN_DECK_CARD_COPIES) {
@@ -72,7 +75,24 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
         reason: `Card ${card.blueprint.name} has too many copies.`
       });
     }
+    if (card.blueprint.kind !== CARD_KINDS.HERO) {
+      const heroBlueprint = hero
+        ? (this.cardPool[hero.blueprintId] as CardBlueprint)
+        : undefined;
+      const affinities = heroBlueprint?.affinities.concat(AFFINITIES.NEUTRAL) || [
+        AFFINITIES.NEUTRAL
+      ];
 
+      const matchesAffinities = card.blueprint.affinities.some(affinity =>
+        affinities.includes(affinity)
+      );
+      if (!matchesAffinities) {
+        violations.push({
+          type: 'affinity_mismatch',
+          reason: `Card ${card.blueprint.name} does not match hero affinities.`
+        });
+      }
+    }
     return violations;
   }
 
@@ -90,7 +110,18 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       });
     }
 
-    let hasHero = false;
+    const hero = deck.cards.find(card => {
+      const blueprint = this.cardPool[card.blueprintId];
+      return blueprint?.kind === CARD_KINDS.HERO;
+    });
+
+    if (!hero) {
+      violations.push({
+        type: 'missing_hero',
+        reason: 'Deck must include a hero card.'
+      });
+    }
+
     let destinyCount = 0;
     for (const card of deck.cards) {
       const blueprint = this.cardPool[card.blueprintId];
@@ -100,9 +131,7 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
           reason: `Card with Id ${card.blueprintId} not found in card pool.`
         });
       }
-      if (blueprint?.kind === CARD_KINDS.HERO) {
-        hasHero = true;
-      }
+
       if (blueprint?.kind === CARD_KINDS.DESTINY) {
         destinyCount++;
       }
@@ -115,10 +144,13 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       }
 
       violations.push(
-        ...this.validateCard({
-          blueprint,
-          copies: card.copies
-        })
+        ...this.validateCard(
+          {
+            blueprint,
+            copies: card.copies
+          },
+          hero
+        )
       );
     }
 
@@ -126,13 +158,6 @@ export class StandardDeckValidator<TMeta> implements DeckValidator<TMeta> {
       violations.push({
         type: 'too_few_destiny_cards',
         reason: `Deck must include ${this.destinyDeckSize} destiny cards.`
-      });
-    }
-
-    if (!hasHero) {
-      violations.push({
-        type: 'missing_hero',
-        reason: 'Deck must include a hero card.'
       });
     }
 

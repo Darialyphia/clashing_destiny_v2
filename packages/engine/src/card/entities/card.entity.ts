@@ -343,62 +343,52 @@ export abstract class Card<
   }
 
   async sendToDiscardPile() {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DISCARD_PILE,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToDiscardPile(this);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DISCARD_PILE,
-        from: currentLocation
-      })
+    await this.changeLocation(CARD_LOCATIONS.DISCARD_PILE, () =>
+      this.originalPlayer.cardManager.sendToDiscardPile(this)
     );
   }
 
   async sendToBanishPile() {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.BANISH_PILE,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToBanishPile(this);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.BANISH_PILE,
-        from: currentLocation
-      })
+    await this.changeLocation(CARD_LOCATIONS.BANISH_PILE, () =>
+      this.originalPlayer.cardManager.sendToBanishPile(this)
     );
   }
 
   async sendToTopOfDeck() {
-    await this.removeFromCurrentLocation();
-    this.player.cardManager.mainDeck.addToTop(this);
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addToTop(this)
+    );
   }
 
   async sendToBottomOfDeck() {
-    await this.removeFromCurrentLocation();
-    this.player.cardManager.mainDeck.addToBottom(this);
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addToBottom(this)
+    );
   }
 
   async shuffleIntoDeck() {
-    await this.removeFromCurrentLocation();
-    this.player.cardManager.mainDeck.addAtRandomPosition(this);
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addAtRandomPosition(this)
+    );
+  }
+
+  protected async changeLocation(
+    to: CardLocation,
+    move: () => MaybePromise<void>,
+    options: { removeBeforeMove?: boolean } = {}
+  ) {
+    const { removeBeforeMove = true } = options;
+    const from = this.location ?? null;
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
+      new CardChangeLocationEvent({ card: this, to, from })
+    );
+    if (removeBeforeMove) this.removeFromCurrentLocation();
+    await move();
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      new CardChangeLocationEvent({ card: this, to, from })
+    );
   }
 
   protected updatePlayedAt() {
@@ -501,29 +491,13 @@ export abstract class Card<
   }
 
   async addToHand(index?: number) {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.HAND,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    await this.player.cardManager.addToHand(this, index);
-    await (this as this).game.emit(
-      CARD_EVENTS.CARD_ADD_TO_HAND,
-      new CardAddToHandevent({ card: this, index: index ?? null })
-    );
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.HAND,
-        from: currentLocation
-      })
-    );
+    await this.changeLocation(CARD_LOCATIONS.HAND, async () => {
+      await this.player.cardManager.addToHand(this, index);
+      await this.game.emit(
+        CARD_EVENTS.CARD_ADD_TO_HAND,
+        new CardAddToHandevent({ card: this, index: index ?? null })
+      );
+    });
   }
 
   async exhaust() {

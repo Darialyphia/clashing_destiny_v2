@@ -1,4 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 import { CardAfterMoveEvent, CardEffectTriggeredEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -17,6 +18,7 @@ export class OnMoveModifier extends Modifier<MinionCard> {
     private options: {
       mixins?: ModifierMixin<MinionCard>[];
       handler: (event: CardAfterMoveEvent, modifier: Modifier<MinionCard>) => void;
+      location?: 'base' | 'battlefield' | 'both';
     }
   ) {
     super(KEYWORDS.ON_MOVE.id, game, source, {
@@ -27,7 +29,19 @@ export class OnMoveModifier extends Modifier<MinionCard> {
         new KeywordModifierMixin(game, KEYWORDS.ON_MOVE),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_MOVE,
-          filter: event => event.data.card.equals(this.target),
+          filter: event => {
+            if (!event.data.card.equals(this.target)) return false;
+            if (this.options.location === 'base') {
+              return event.data.to.position.zone === CARD_LOCATIONS.BASE;
+            }
+            if (this.options.location === 'battlefield') {
+              return (
+                event.data.to.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+                event.data.to.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+              );
+            }
+            return true;
+          },
           handler: event => this.onMove(event)
         }),
         ...(options.mixins || [])

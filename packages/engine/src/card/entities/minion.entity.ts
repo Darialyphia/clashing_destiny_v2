@@ -136,6 +136,19 @@ export class MinionCard extends Card<
     this.game.on(GAME_EVENTS.TURN_START, () => {
       this.hasMovedManuallyThisTurn = false;
     });
+    this.game.on(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, async ({ data }) => {
+      if (!data.card.equals(this)) return;
+      if (
+        data.to === CARD_LOCATIONS.BASE ||
+        data.to === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+        data.to === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+      ) {
+        return;
+      }
+
+      this.hasMovedManuallyThisTurn = false;
+      this.damageTracker.resetDamageTaken();
+    });
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
@@ -412,7 +425,13 @@ export class MinionCard extends Card<
     if (!this.canMove) return;
     if (!this.isOnBoard) return;
 
-    await this.player.boardSide.moveCard(this.id, zone, index);
+    await this.changeLocation(
+      zone,
+      async () => {
+        await this.player.boardSide.moveCard(this.id, zone, index);
+      },
+      { removeBeforeMove: false }
+    );
   }
 
   private async summon(position: BoardSpace) {

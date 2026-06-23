@@ -269,46 +269,28 @@ export abstract class Card<
   }
 
   async sendToDiscardPile() {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DISCARD_PILE,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToDiscardPile(this);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DISCARD_PILE,
-        from: currentLocation
-      })
+    await this.changeLocation(CARD_LOCATIONS.DISCARD_PILE, () =>
+      this.originalPlayer.cardManager.sendToDiscardPile(this)
     );
   }
 
   async sendToBanishPile() {
-    const currentLocation = this.location ?? null;
+    await this.changeLocation(CARD_LOCATIONS.BANISH_PILE, () =>
+      this.originalPlayer.cardManager.sendToBanishPile(this)
+    );
+  }
+
+  protected async changeLocation(to: CardLocation, move: () => MaybePromise<void>) {
+    const from = this.location ?? null;
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.BANISH_PILE,
-        from: currentLocation
-      })
+      new CardChangeLocationEvent({ card: this, to, from })
     );
     this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToBanishPile(this);
+    await move();
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.BANISH_PILE,
-        from: currentLocation
-      })
+      new CardChangeLocationEvent({ card: this, to, from })
     );
   }
 
@@ -378,29 +360,13 @@ export abstract class Card<
   }
 
   async addToHand(index?: number) {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.HAND,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    await this.player.cardManager.addToHand(this, index);
-    await (this as this).game.emit(
-      CARD_EVENTS.CARD_ADD_TO_HAND,
-      new CardAddToHandevent({ card: this, index: index ?? null })
-    );
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.HAND,
-        from: currentLocation
-      })
-    );
+    await this.changeLocation(CARD_LOCATIONS.HAND, async () => {
+      await this.player.cardManager.addToHand(this, index);
+      await this.game.emit(
+        CARD_EVENTS.CARD_ADD_TO_HAND,
+        new CardAddToHandevent({ card: this, index: index ?? null })
+      );
+    });
   }
 
   async exhaust() {

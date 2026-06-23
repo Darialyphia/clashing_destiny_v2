@@ -422,7 +422,7 @@ const isScreenDimmed = computed(() => {
   height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
-  background: url(@/assets/backgrounds/battle-background-hirez.png);
+  background: url(@/assets/backgrounds/battle-background.png);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -438,7 +438,7 @@ const isScreenDimmed = computed(() => {
 .minions-zone {
   width: 1200px;
   height: 621px;
-  background: url(@/assets/ui/board-hirez.png);
+  background: url(@/assets/ui/board.png);
   background-size: cover;
   margin-inline: auto;
   margin-block-start: -10px;

@@ -203,15 +203,18 @@ export class CombatSystem
     this._attacker = newAttacker;
   }
 
-  private reset() {
+  private async reset() {
+    if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
+      await this.game.turnSystem.switchInitiative();
+    }
     this._attacker = null;
     this._defender = null;
     this.isDefenderRetaliating = false;
   }
 
-  private abortCombat() {
+  private async abortCombat() {
     this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ABORT_COMBAT);
-    this.reset();
+    await this.reset();
   }
 
   private async resolveCombat() {
@@ -249,11 +252,7 @@ export class CombatSystem
     }
 
     this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.FINISHED);
-
-    if (this.attacker!.shouldSwitchInitiativeAfterAttacking(this.defender!)) {
-      await this.game.turnSystem.switchInitiative();
-    }
-    this.reset();
+    await this.reset();
   }
 
   private async performAttacks() {

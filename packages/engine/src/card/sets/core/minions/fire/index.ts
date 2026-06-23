@@ -77,7 +77,7 @@ export const pyromancer: MinionBlueprint = {
           const target = await singleEnemyMinionTargetRules.getTargets({
             game,
             card,
-            canCancel: true,
+            canCancel: false,
             label: 'Select an enemy minion to deal 1 damage to',
             timeoutFallback: [],
             aiHints: {

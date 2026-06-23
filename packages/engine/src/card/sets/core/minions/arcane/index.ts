@@ -300,14 +300,14 @@ export const astralBall: MinionBlueprint = {
     {
       id: 'astralBallAbility',
       label: 'Scry 2',
-      description: 'Sacrifice this unit to gain 1 mana',
+      description: 'Sacrifice this unit to <rt-keyword>Scry 1</rt-keyword>.',
       canUse: () => true,
       getTargets: noTargets,
       manaCost: 0,
       shouldExhaust: true,
       onResolve: async (game, card) => {
         await card.destroy(card);
-        await card.player.manaManager.gain(1);
+        await scry(game, card, 1);
       },
       aiHints: {
         shouldUse: () => 0
