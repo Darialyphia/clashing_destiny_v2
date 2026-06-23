@@ -12,6 +12,7 @@ import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import AbilityMenu from './AbilityMenu.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const { card, isShaking = false } = defineProps<{
   card: CardViewModel;
@@ -139,11 +140,16 @@ const onMouseup = (e: MouseEvent) => {
     />
     <ModifiersList :modifiers="modifiers" class="modifiers" />
     <AbilityMenu :card="card" actions-side="top" use-portal class="abilities" />
-    <button
-      v-if="card.retaliateAction.predicate(card)"
-      class="retaliate-button"
-      @click="card.retaliateAction.handler()"
-    />
+    <UiSimpleTooltip>
+      <template #trigger>
+        <button
+          v-if="card.retaliateAction.predicate(card)"
+          class="retaliate-button"
+          @click="card.retaliateAction.handler()"
+        />
+      </template>
+      Retaliate
+    </UiSimpleTooltip>
   </div>
 </template>
 
@@ -244,7 +250,7 @@ const onMouseup = (e: MouseEvent) => {
 
 .retaliate-button {
   position: absolute;
-  top: 25%;
+  top: -25%;
   left: 50%;
   translate: -50% -50%;
   width: calc(24px * var(--pixel-scale));
