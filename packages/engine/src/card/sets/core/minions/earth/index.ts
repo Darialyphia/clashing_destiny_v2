@@ -67,7 +67,7 @@ export const vineTrapper: MinionBlueprint = {
   id: 'vineTrapper',
   name: 'Vine Trapper',
   description: dedent /*html*/ `
-  <rt-trigger>On Move to Battlefield</rt-trigger>: Inflict <rt-keyword>Rooted</rt-keyword> to an enemy on the same battlefield until the end of the turn.
+  <rt-trigger>On Engage</rt-trigger>: Inflict <rt-keyword>Rooted</rt-keyword> to an enemy on the same battlefield until the end of the turn.
   <rt-runes runes="might,focus,resonance"></rt-runes> give it <rt-keyword>Vulnerable 1</rt-keyword> as well.
   `,
   collectable: true,

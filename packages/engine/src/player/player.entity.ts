@@ -211,7 +211,7 @@ export class Player
     );
   }
 
-  canTakeResourceAction() {
+  get canTakeResourceAction() {
     return this.resourceActionsTakenThisTurn.length < this.maxResourceActionsPerTurn;
   }
 
@@ -322,7 +322,7 @@ export class Player
       unlockedAffinities: this.unlockedAffinities,
       boardSide: this.boardSide.serialize(),
       runes: this.runeManager.runes,
-      canTakeResourceAction: this.canTakeResourceAction(),
+      canTakeResourceAction: this.canTakeResourceAction,
       victoryPoints: this.victoryPoints
     };
   }

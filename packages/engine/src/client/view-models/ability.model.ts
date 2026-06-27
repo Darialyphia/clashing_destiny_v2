@@ -71,4 +71,8 @@ export class AbilityViewModel {
   get targets() {
     return this.data.targets;
   }
+
+  get shouldExhaust() {
+    return this.data.shouldExhaust;
+  }
 }

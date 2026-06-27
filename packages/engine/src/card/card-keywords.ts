@@ -122,6 +122,12 @@ export const KEYWORDS = {
     description: 'Does something when this card is destroyed.',
     aliases: ['on death']
   },
+  ON_ENGAGE: {
+    id: 'on-engage',
+    name: 'On Engage',
+    description: 'Does something when this moves from the base to the battlefield.',
+    aliases: []
+  },
   ON_ENTER: {
     id: 'on-enter',
     name: 'On Enter',
@@ -140,6 +146,12 @@ export const KEYWORDS = {
     name: 'On Move',
     description: 'Does something when this card moves.',
     aliases: ['on move to base', 'on move to battlefield']
+  },
+  ON_RETREAT: {
+    id: 'on-retreat',
+    name: 'On Retreat',
+    description: 'Does something when this moves from the battlefield to the base.',
+    aliases: []
   },
   ON_SCORE: {
     id: 'on-score',

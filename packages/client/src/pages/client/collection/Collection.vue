@@ -83,7 +83,7 @@ useIntersectionObserver(
 
 <style scoped lang="postcss">
 .cards {
-  column-gap: var(--size-4);
+  column-gap: var(--size-0);
   display: grid;
   grid-template-columns: repeat(
     auto-fill,

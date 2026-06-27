@@ -97,6 +97,7 @@ export type SerializedAbility = {
   description: string;
   targets: SerializedTargets | null;
   isHiddenOnCard: boolean;
+  shouldExhaust: boolean;
 };
 
 export type Targets<TCard extends AnyCard = AnyCard> = {

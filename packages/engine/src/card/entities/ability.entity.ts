@@ -156,7 +156,8 @@ export class Ability<T extends AbilityOwner>
       label: this.blueprint.label,
       manaCost: this.manaCost,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
-      targets: this.targets ? serializeTargets(this.targets) : null
+      targets: this.targets ? serializeTargets(this.targets) : null,
+      shouldExhaust: !!this.blueprint.shouldExhaust
     };
   }
 }

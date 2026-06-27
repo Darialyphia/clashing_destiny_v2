@@ -22,7 +22,7 @@ export class TakeResourceActionInput extends Input<typeof schema> {
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(
-      this.player.canTakeResourceAction(),
+      this.player.canTakeResourceAction,
       new InputError('Player cannot take any more resource actions this turn.')
     );
     await this.player.takeResourceAction(this.payload.action);
