@@ -292,6 +292,8 @@ export class CombatSystem
         await performAtttackerStrike();
         await performDefenderStrike();
       }
+      await attacker.checkHp(defender);
+      await defender.checkHp(attacker);
     }
 
     await this.game.emit(

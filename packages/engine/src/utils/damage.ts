@@ -46,6 +46,7 @@ export class CombatDamage extends Damage {
   private _attacker: Attacker;
 
   constructor(attacker: Attacker) {
+    console.log(attacker.blueprint.name, attacker.atk);
     super({ baseAmount: attacker.atk, type: DAMAGE_TYPES.COMBAT });
     this._attacker = attacker;
   }

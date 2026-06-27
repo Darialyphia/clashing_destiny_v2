@@ -306,7 +306,7 @@ export class MinionCard extends Card<
     });
   }
 
-  private async checkHp(source: AnyCard) {
+  async checkHp(source: AnyCard) {
     if (this.remainingHp <= 0) {
       await this.destroy(source);
     }
@@ -371,7 +371,10 @@ export class MinionCard extends Card<
         isFatal: this.remainingHp <= 0
       })
     );
-    await this.checkHp(source);
+    const shouldCheckHp = this.game.combatSystem.state !== COMBAT_STEPS.RESOLVING_COMBAT;
+    if (shouldCheckHp) {
+      await this.checkHp(source);
+    }
   }
 
   async heal(heal: number) {
