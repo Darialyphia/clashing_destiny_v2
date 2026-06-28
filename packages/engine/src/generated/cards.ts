@@ -46,7 +46,8 @@ export const cards = {
 "harold-vowed-crusader": "harold-vowed-crusader",
 "spellSiphon": "spellSiphon",
 "mountainProtector": "mountainProtector",
-"vineTrapper": "vineTrapper"
+"vineTrapper": "vineTrapper",
+"impassibleMonk": "impassibleMonk"
 } as const;
 
 export const collectableCards = {
@@ -88,7 +89,8 @@ export const collectableCards = {
 "harold-vowed-crusader": "harold-vowed-crusader",
 "spellSiphon": "spellSiphon",
 "mountainProtector": "mountainProtector",
-"vineTrapper": "vineTrapper"
+"vineTrapper": "vineTrapper",
+"impassibleMonk": "impassibleMonk"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -339,6 +341,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "MINION"
+  },
+  {
+    "id": "impassibleMonk",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
   }
 ]
 };
@@ -384,7 +392,8 @@ export const cardShortIds: Record<string, number> = {
 "harold-vowed-crusader": 38,
 "spellSiphon": 39,
 "mountainProtector": 40,
-"vineTrapper": 41
+"vineTrapper": 41,
+"impassibleMonk": 42
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -428,5 +437,6 @@ export const cardIdByShortId: Record<number, string> = {
 "38": "harold-vowed-crusader",
 "39": "spellSiphon",
 "40": "mountainProtector",
-"41": "vineTrapper"
+"41": "vineTrapper",
+"42": "impassibleMonk"
 } as const;

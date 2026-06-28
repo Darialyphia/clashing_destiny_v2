@@ -1,6 +1,6 @@
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { CombatDamage, type Damage } from '../../utils/damage';
+import { CombatDamage, DAMAGE_TYPES, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type AbilityBlueprint, type MinionBlueprint } from '../card-blueprint';
 import {
@@ -371,7 +371,7 @@ export class MinionCard extends Card<
         isFatal: this.remainingHp <= 0
       })
     );
-    const shouldCheckHp = this.game.combatSystem.state !== COMBAT_STEPS.RESOLVING_COMBAT;
+    const shouldCheckHp = damage.type !== DAMAGE_TYPES.COMBAT;
     if (shouldCheckHp) {
       await this.checkHp(source);
     }
