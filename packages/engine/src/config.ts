@@ -25,6 +25,8 @@ export type Config = {
   MAX_RESOURCE_ACTIONS_PER_TURN: number;
 
   DEFINITIVE_PASSES: boolean;
+
+  SHOULD_SWITCH_INITIATIVE_AFTER_MANUAL_MOVE: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -50,5 +52,7 @@ export const defaultConfig: Config = {
 
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 
-  DEFINITIVE_PASSES: false
+  DEFINITIVE_PASSES: false,
+
+  SHOULD_SWITCH_INITIATIVE_AFTER_MANUAL_MOVE: true
 };

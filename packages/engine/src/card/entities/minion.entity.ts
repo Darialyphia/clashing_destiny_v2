@@ -405,7 +405,7 @@ export class MinionCard extends Card<
 
   get shouldSwitchInitiativeAfterMovingManually(): boolean {
     return this.interceptors.shouldSwitchInitiativeAfterMovingManually.getValue(
-      false,
+      this.game.config.SHOULD_SWITCH_INITIATIVE_AFTER_MANUAL_MOVE,
       this
     );
   }
