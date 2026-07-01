@@ -23,6 +23,8 @@ export type Config = {
   VICTORY_POINTS_TO_WIN: number;
 
   MAX_RESOURCE_ACTIONS_PER_TURN: number;
+
+  DEFINITIVE_PASSES: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -46,5 +48,7 @@ export const defaultConfig: Config = {
   MANA_REGEN_PER_TURN: 5,
   VICTORY_POINTS_TO_WIN: 8,
 
-  MAX_RESOURCE_ACTIONS_PER_TURN: 1
+  MAX_RESOURCE_ACTIONS_PER_TURN: 1,
+
+  DEFINITIVE_PASSES: false
 };

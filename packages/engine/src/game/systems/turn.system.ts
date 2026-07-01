@@ -2,6 +2,7 @@ import type { Player } from '../../player/player.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { TURN_EVENTS } from '../game.enums';
 import { System } from '../../system';
+import { GAME_EVENTS } from '../game.events';
 
 export type TurnEventMap = {
   [TURN_EVENTS.TURN_START]: TurnEvent;
@@ -10,13 +11,20 @@ export type TurnEventMap = {
   [TURN_EVENTS.TURN_PASS]: TurnPassEvent;
 };
 
+// Input types that do NOT reset consecutive pass count in non-definitive pass mode
+const PASS_RESET_EXEMPT_INPUTS = new Set(['pass', 'declarePlayCard', 'surrender']);
+
 export class TurnSystem extends System<never> {
   private _elapsedTurns = 0;
 
-  // the initiative player is the one that can takestart an action
+  // the initiative player is the one that can take an action
   private _initiativePlayer!: Player;
 
+  // DEFINITIVE_PASSES = true: tracks first player to pass, to determine next turn's initiative
   private firstPlayerToPassThisRound: Player | null = null;
+
+  // DEFINITIVE_PASSES = false: counts consecutive passes; turn ends when both players pass back-to-back
+  private consecutivePassCount = 0;
 
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
@@ -25,6 +33,15 @@ export class TurnSystem extends System<never> {
       this.initiativePlayer.cardManager.destinyDeck.draw(1)[0] ?? null;
     this.initiativePlayer.opponent.boardSide.rightBattlefield.destinyCard =
       this.initiativePlayer.opponent.cardManager.destinyDeck.draw(1)[0] ?? null;
+
+    if (!this.game.config.DEFINITIVE_PASSES) {
+      // Any input that is not exempt resets the consecutive pass counter
+      this.game.on(GAME_EVENTS.INPUT_START, event => {
+        if (!PASS_RESET_EXEMPT_INPUTS.has(event.data.input.name)) {
+          this.consecutivePassCount = 0;
+        }
+      });
+    }
   }
 
   shutdown() {}
@@ -65,8 +82,16 @@ export class TurnSystem extends System<never> {
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })
     );
-    this._initiativePlayer = this.firstPlayerToPassThisRound ?? this.initiativePlayer;
-    this.firstPlayerToPassThisRound = null;
+
+    if (this.game.config.DEFINITIVE_PASSES) {
+      // The first player to pass last turn gets initiative this turn
+      this._initiativePlayer = this.firstPlayerToPassThisRound ?? this._initiativePlayer;
+      this.firstPlayerToPassThisRound = null;
+    } else {
+      // Initiative alternates each turn: player1 on even turns, player2 on odd turns
+      this._initiativePlayer = this._initiativePlayer.opponent;
+      this.consecutivePassCount = 0;
+    }
 
     await this.game.emit(
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
@@ -89,28 +114,46 @@ export class TurnSystem extends System<never> {
       TURN_EVENTS.TURN_PASS,
       new TurnPassEvent({ player: this._initiativePlayer })
     );
-    player.passTurn();
-    if (!this.firstPlayerToPassThisRound) {
-      this.firstPlayerToPassThisRound = player;
-    }
-    const allPlayersPassed = this.game.playerSystem.players.every(
-      p => p.hasPassedThisTurn
-    );
-    if (allPlayersPassed) {
-      await this.game.gamePhaseSystem.endTurn();
-    } else {
-      this._initiativePlayer = this._initiativePlayer.opponent;
-      await this.game.emit(
-        TURN_EVENTS.TURN_INITATIVE_CHANGE,
-        new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+
+    if (this.game.config.DEFINITIVE_PASSES) {
+      // A player can only pass once; the first to pass determines next turn's initiative
+      player.passTurn();
+      if (!this.firstPlayerToPassThisRound) {
+        this.firstPlayerToPassThisRound = player;
+      }
+      const allPlayersPassed = this.game.playerSystem.players.every(
+        p => p.hasPassedThisTurn
       );
+      if (allPlayersPassed) {
+        await this.game.gamePhaseSystem.endTurn();
+      } else {
+        this._initiativePlayer = this._initiativePlayer.opponent;
+        await this.game.emit(
+          TURN_EVENTS.TURN_INITATIVE_CHANGE,
+          new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+        );
+      }
+    } else {
+      // Turn ends only when both players pass consecutively; any other input resets the count
+      this.consecutivePassCount++;
+      if (this.consecutivePassCount >= 2) {
+        this.consecutivePassCount = 0;
+        await this.game.gamePhaseSystem.endTurn();
+      } else {
+        this._initiativePlayer = this._initiativePlayer.opponent;
+        await this.game.emit(
+          TURN_EVENTS.TURN_INITATIVE_CHANGE,
+          new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+        );
+      }
     }
   }
 
   async switchInitiative() {
-    const opponentCanReceiveInitiative =
-      !this._initiativePlayer.opponent.hasPassedThisTurn;
-    if (!opponentCanReceiveInitiative) return;
+    if (this.game.config.DEFINITIVE_PASSES) {
+      // In definitive pass mode, a player who has already passed cannot receive initiative
+      if (this._initiativePlayer.opponent.hasPassedThisTurn) return;
+    }
 
     this._initiativePlayer = this._initiativePlayer.opponent;
 
