@@ -20,6 +20,8 @@ export class TurnSystem extends System<never> {
   // the initiative player is the one that can take an action
   private _initiativePlayer!: Player;
 
+  private _nextInitiativePlayer!: Player;
+
   // DEFINITIVE_PASSES = true: tracks first player to pass, to determine next turn's initiative
   private firstPlayerToPassThisRound: Player | null = null;
 
@@ -29,6 +31,8 @@ export class TurnSystem extends System<never> {
   async initialize() {
     // const idx = this.game.rngSystem.nextInt(this.game.playerSystem.players.length);
     this._initiativePlayer = this.game.playerSystem.player1;
+    this._nextInitiativePlayer = this.game.playerSystem.player2;
+
     this.initiativePlayer.boardSide.leftBattlefield.destinyCard =
       this.initiativePlayer.cardManager.destinyDeck.draw(1)[0] ?? null;
     this.initiativePlayer.opponent.boardSide.rightBattlefield.destinyCard =
@@ -89,7 +93,8 @@ export class TurnSystem extends System<never> {
       this.firstPlayerToPassThisRound = null;
     } else {
       // Initiative alternates each turn: player1 on even turns, player2 on odd turns
-      this._initiativePlayer = this._initiativePlayer.opponent;
+      this._initiativePlayer = this._nextInitiativePlayer;
+      this._nextInitiativePlayer = this._initiativePlayer.opponent;
       this.consecutivePassCount = 0;
     }
 

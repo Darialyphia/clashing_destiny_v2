@@ -19,6 +19,9 @@ import { VulnerableModifier } from '../../../../../modifier/modifiers/vulnerable
 import { ChannelModifier } from '../../../../../modifier/modifiers/channel.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 import { SimpleHealthBuffModifier } from '../../../../../modifier/modifiers/simple-health-buff.modifier';
+import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
+import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
+import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 
 export const mountainProtector: MinionBlueprint = {
   id: 'mountainProtector',
@@ -182,6 +185,143 @@ export const impassibleMonk: MinionBlueprint = {
             might: 1,
             focus: 1,
             wisdom: 1
+          })
+        ]
+      })
+    );
+  },
+  async onPlay() {},
+  aiHints: {
+    shouldPlay: () => 1,
+    shouldAttack: () => 1,
+    shouldMove: () => 1,
+    getThreatScore: () => 1
+  }
+};
+
+export const rockSlideGolem: MinionBlueprint = {
+  id: 'rockslideGolem',
+  name: 'Rockslide Golem',
+  description: dedent /*html*/ `
+  <rt-keyword>Taunt</rt-keyword>
+  <br/>
+  <rt-runes runes="might,might,focus"></rt-runes> <rt-keyword>Flanking</rt-keyword>
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.MINION,
+  rarity: RARITIES.COMMON,
+  jobs: [],
+  affinities: [AFFINITIES.EARTH],
+  manaCost: 3,
+  speed: CARD_SPEED.SLOW,
+  tags: [],
+  atk: 1,
+  maxHp: 4,
+  commandment: 1,
+  canPlay: () => true,
+  abilities: [],
+  async onInit(game, card) {
+    await card.modifiers.add(new TauntModifier(game, card));
+    await card.modifiers.add(
+      new FlankingModifier(game, card, {
+        amount: 1,
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, {
+            might: 1,
+            focus: 1,
+            resonance: 1
+          })
+        ]
+      })
+    );
+  },
+  async onPlay() {},
+  aiHints: {
+    shouldPlay: () => 1,
+    shouldAttack: () => 1,
+    shouldMove: () => 1,
+    getThreatScore: () => 1
+  }
+};
+
+export const terramancer: MinionBlueprint = {
+  id: 'terramancer',
+  name: 'Terramancer',
+  description: dedent /*html*/ `
+  <rt-keyword>On Engage</rt-keyword> you may pay <rt-mana>1</rt-mana> to exhaust an enemy minion on the same battlefield.
+  <br/>
+  <rt-runes runes="might,focus,resonance"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
+  `,
+  collectable: true,
+  setId: CARD_SETS.CORE,
+  art: defaultCardArt('placeholder'),
+  kind: CARD_KINDS.MINION,
+  rarity: RARITIES.RARE,
+  jobs: [JOBS.MAGE],
+  affinities: [AFFINITIES.EARTH],
+  manaCost: 3,
+  speed: CARD_SPEED.SLOW,
+  tags: [],
+  atk: 2,
+  maxHp: 4,
+  commandment: 1,
+  canPlay: () => true,
+  abilities: [],
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new OnMoveModifier(game, card, {
+        location: 'battlefield',
+        async handler() {
+          if (card.player.manaManager.mana < 1) return;
+          const hasTarget = singleEnemyMinionTargetRules.canPlay(
+            game,
+            card,
+            minion => minion.location === card.location
+          );
+
+          if (!hasTarget) return;
+
+          const shouldPay = await askMandatoryYesNoQuestion({
+            game,
+            card,
+            questionId: 'terramancer',
+            label: 'Pay 1 mana to exhaust an enemy minion on the same battlefield?',
+            aiChoice: 'yes',
+            timeoutFallback: 'no'
+          });
+
+          if (!shouldPay) return;
+
+          const target = await singleEnemyMinionTargetRules.getTargets({
+            game,
+            card,
+            canCancel: false,
+            label: 'Select an enemy minion to root',
+            timeoutFallback: [],
+            aiHints: {
+              shouldPick: () => 1
+            },
+            predicate: minion => minion.location === card.location
+          });
+
+          if (!target) return;
+          if (target.cancelled) return;
+
+          await target.result.cards[0]?.exhaust();
+        }
+      })
+    );
+
+    await card.modifiers.add(
+      new RushModifier(game, card, {
+        cost: 1,
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, {
+            might: 1,
+            focus: 1,
+            resonance: 1
           })
         ]
       })

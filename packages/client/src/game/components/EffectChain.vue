@@ -16,6 +16,7 @@ import {
 } from '@game/engine/src/game/game.enums';
 import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
+import { isDefined } from '@game/shared';
 
 const { playerId, client } = useGameClient();
 const ui = useGameUi();
@@ -23,6 +24,32 @@ const state = useGameState();
 
 const paths = ref<string[][]>([]);
 
+const getPath = (
+  startRect: DOMRect,
+  endRect: DOMRect,
+  boardRect: DOMRect,
+  offset: { x: number; y: number } = { x: 0, y: 0 }
+) => {
+  const start = {
+    x: startRect.left - boardRect.left + startRect.width / 2,
+    y: startRect.top + startRect.height / 2 - boardRect.top
+  };
+  const end = {
+    x: endRect.left + endRect.width / 2 - boardRect.left,
+    y: endRect.top + endRect.height / 2 - boardRect.top
+  };
+
+  const highest = Math.min(start.y, end.y);
+  const halfX = (start.x + end.x) / 2;
+  const yDiff = Math.abs(start.y - end.y);
+  const controlX = halfX + offset.x;
+  const controlY = highest - yDiff / 2 + offset.y;
+  return `
+        M${start.x},${start.y}
+        Q${controlX},${controlY}
+         ${end.x},${end.y}
+      `;
+};
 const buildPaths = async () => {
   if (!state.value.effectChain?.stack) {
     paths.value = [];
@@ -34,7 +61,7 @@ const buildPaths = async () => {
     if (effect.type === EFFECT_TYPE.RETALIATION) {
       return [];
     }
-    return effect.targets.cards.map(target => {
+    const cardArrows = effect.targets.cards.map(target => {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();
 
@@ -48,23 +75,50 @@ const buildPaths = async () => {
         ).element?.getBoundingClientRect();
       if (!startRect || !endRect) return '';
 
-      const start = {
-        x: startRect.left - boardRect.left + startRect.width / 2,
-        y: startRect.top + startRect.height / 2 - boardRect.top
-      };
-      const end = {
-        x: endRect.left + endRect.width / 2 - boardRect.left,
-        y: endRect.top + endRect.height / 2 - boardRect.top
-      };
-      const highest = Math.min(start.y, end.y);
-      const halfX = (start.x + end.x) / 2;
-      const yDiff = Math.abs(start.y - end.y);
-      return `
-        M${start.x},${start.y}
-        Q${halfX},${highest - yDiff / 2}
-         ${end.x},${end.y}
-      `;
+      return getPath(startRect, endRect, boardRect);
     });
+
+    const spaceArrows = effect.targets.spaces.map(target => {
+      const boardRect =
+        ui.value.DOMSelectors.board.element!.getBoundingClientRect();
+
+      const startRect = ui.value.DOMSelectors.cardInEffectChain(
+        effect.source.id
+      ).element!.getBoundingClientRect();
+
+      const endRect =
+        ui.value.DOMSelectors.boardSpace(
+          target
+        ).element?.getBoundingClientRect();
+
+      if (!startRect || !endRect) return '';
+      return getPath(startRect, endRect, boardRect);
+    });
+
+    const effectArrow = effect.targets.effect
+      ? (() => {
+          const boardRect =
+            ui.value.DOMSelectors.board.element!.getBoundingClientRect();
+
+          const startRect = ui.value.DOMSelectors.cardInEffectChain(
+            effect.source.id
+          ).element!.getBoundingClientRect();
+
+          const cardOnEffect = state.value.effectChain?.stack.find(
+            e => e.id === effect.targets.effect
+          )?.source;
+
+          if (!cardOnEffect) return null;
+          const endRect = ui.value.DOMSelectors.cardInEffectChain(
+            cardOnEffect.id
+          ).element?.getBoundingClientRect();
+
+          if (!startRect || !endRect) return '';
+          return getPath(startRect, endRect, boardRect, { x: 0, y: -40 });
+        })()
+      : null;
+
+    return [...cardArrows, ...spaceArrows, effectArrow].filter(isDefined);
   });
 };
 watch(() => state.value.effectChain?.stack, buildPaths, { immediate: true });
@@ -135,9 +189,6 @@ const onEffectClick = (effectId: string) => {
               </p>
               <p v-if="effect.type === EFFECT_TYPE.CARD">
                 This effect will play a card.
-              </p>
-              <p v-if="effect.type === EFFECT_TYPE.NEGATE">
-                This effect will negate a previous effect on the chain.
               </p>
               <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
                 This effect declaresa retaliation.

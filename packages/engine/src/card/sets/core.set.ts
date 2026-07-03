@@ -49,9 +49,13 @@ import {
   conjureFocus,
   conjureResonance
 } from './core/spells/neutral/index';
-import { mountainProtector } from './core/minions/earth/index';
-import { vineTrapper } from './core/minions/earth/index';
-import { impassibleMonk } from './core/minions/earth/index';
+import {
+  mountainProtector,
+  vineTrapper,
+  impassibleMonk,
+  rockSlideGolem,
+  terramancer
+} from './core/minions/earth/index';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -98,6 +102,8 @@ export const coreSet: CardSet = {
     spellSiphon,
     mountainProtector,
     vineTrapper,
-    impassibleMonk
+    impassibleMonk,
+    rockSlideGolem,
+    terramancer
   ]
 };

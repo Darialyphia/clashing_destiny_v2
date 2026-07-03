@@ -155,7 +155,7 @@
   --tint-neutral: transparent;
   --tint-fire: #d3572d;
   --tint-water: #467af4;
-  --tint-earth: hsl(from #7ab800 calc(h + 70) s calc(l - 20));
+  --tint-earth: hsl(from #7ab800 calc(h + 10) calc(s - 40) l);
   --tint-air: #00cbb3;
   --tint-light: hsl(from #ffe761 h s calc(l + 20));
   --tint-dark: #8f00ff;

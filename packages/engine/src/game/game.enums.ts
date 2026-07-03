@@ -58,7 +58,6 @@ export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 export const EFFECT_TYPE = {
   CARD: 'CARD',
   ABILITY: 'ABILITY',
-  NEGATE: 'NEGATE',
   RETALIATION: 'RETALIATION'
 } as const;
 export type EffectType = Values<typeof EFFECT_TYPE>;

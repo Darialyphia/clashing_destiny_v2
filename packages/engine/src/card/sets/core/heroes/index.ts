@@ -71,7 +71,7 @@ export const erinaVioletWitch: HeroBlueprint = {
                 game,
                 card,
                 aiChoice: 'no',
-                label: `Consume a rune to gain 2 mana and draw a card?`,
+                label: `Consume a rune to gain 1 mana and draw a card?`,
                 questionId: 'erina-violet-witch-activation',
                 timeoutFallback: 'no'
               });

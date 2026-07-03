@@ -207,6 +207,7 @@ const isScreenDimmed = computed(() => {
                 <InspectableCard
                   v-if="opponent.rightBattlefield.destinyCard"
                   :card-id="opponent.rightBattlefield.destinyCard.id"
+                  :open-delay="300"
                 >
                   <GameCard
                     :card-id="opponent.rightBattlefield.destinyCard.id"
@@ -236,6 +237,7 @@ const isScreenDimmed = computed(() => {
                 <InspectableCard
                   v-if="myPlayer.leftBattlefield.destinyCard"
                   :card-id="myPlayer.leftBattlefield.destinyCard.id"
+                  :open-delay="300"
                 >
                   <GameCard
                     :card-id="myPlayer.leftBattlefield.destinyCard.id"
@@ -273,6 +275,7 @@ const isScreenDimmed = computed(() => {
                 <InspectableCard
                   v-if="myPlayer.rightBattlefield.destinyCard"
                   :card-id="myPlayer.rightBattlefield.destinyCard.id"
+                  :open-delay="300"
                 >
                   <GameCard
                     :card-id="myPlayer.rightBattlefield.destinyCard.id"
@@ -422,7 +425,7 @@ const isScreenDimmed = computed(() => {
   height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
-  background: url(@/assets/backgrounds/battle-background.png);
+  background: url(@/assets/backgrounds/battle-background-hirez.png);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -438,7 +441,7 @@ const isScreenDimmed = computed(() => {
 .minions-zone {
   width: 1200px;
   height: 621px;
-  background: url(@/assets/ui/board.png);
+  background: url(@/assets/ui/board-hirez.png);
   background-size: cover;
   margin-inline: auto;
   margin-block-start: -10px;

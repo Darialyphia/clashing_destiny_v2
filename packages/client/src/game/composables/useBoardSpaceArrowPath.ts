@@ -49,7 +49,7 @@ export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
 
   const computeParabolaPath = () => {
     if (!shouldBeDisplayed.value) return '';
-    const cellEl = ui.value.DOMSelectors.boardSpace(cell.value).element;
+    const cellEl = ui.value.DOMSelectors.boardSpace(cell.value.id).element;
     if (!cellEl) return '';
 
     const rect = cellEl.getBoundingClientRect();

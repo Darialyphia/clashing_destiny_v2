@@ -6,7 +6,15 @@ export const useCellTargeting = (cell: Ref<BoardSpaceViewModel>) => {
   const state = useGameState();
 
   const isTargeted = computed(() => {
-    const { interaction } = state.value;
+    const { interaction, effectChain } = state.value;
+
+    if (
+      effectChain?.stack.some(effect =>
+        effect.targets.spaces.some(spaceId => spaceId === cell.value.id)
+      )
+    ) {
+      return true;
+    }
     if (interaction.state !== INTERACTION_STATES.SELECTING_SPACE_ON_BOARD) {
       return false;
     }

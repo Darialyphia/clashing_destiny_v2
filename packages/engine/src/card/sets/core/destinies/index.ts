@@ -120,7 +120,7 @@ export const restrainTheBeast: DestinyBlueprint = {
   collectable: true,
   name: 'Restrain the Beast',
   description: dedent /*html*/ `
-    When a creature with 5 Attack or more moves to this battlefield, exhaust it.
+    When a creature with 4 Attack or more moves to this battlefield, exhaust it.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
@@ -138,7 +138,7 @@ export const restrainTheBeast: DestinyBlueprint = {
             filter(event) {
               return !!(
                 isMinion(event.data.card) &&
-                event.data.card.atk >= 5 &&
+                event.data.card.atk >= 4 &&
                 event.data.to.position.zone === card.battlefield?.zone
               );
             },

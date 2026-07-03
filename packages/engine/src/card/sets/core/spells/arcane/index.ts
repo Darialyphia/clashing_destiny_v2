@@ -17,7 +17,7 @@ import {
   CARD_SPEED,
   CARD_LOCATIONS
 } from '../../../../card.enums';
-import { BurstModifier } from '../../../../../modifier/modifiers/burst.modifier';
+import { InstantModifier } from '../../../../../modifier/modifiers/instant.modifier';
 import { scry } from '../../../../card-actions-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
@@ -54,7 +54,7 @@ export const arcaneSight: SpellBlueprint = {
   canPlay: () => true,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit(game, card) {
-    await card.modifiers.add(new BurstModifier(game, card));
+    await card.modifiers.add(new InstantModifier(game, card));
   },
   async onPlay(game, card) {
     await scry(game, card, 1);
@@ -202,9 +202,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  canPlay: (game, card) =>
-    singleMinionTargetRules.canPlay(game, card) &&
-    card.player.runeManager.has({ resonance: 1 }),
+  canPlay: (game, card) => singleMinionTargetRules.canPlay(game, card),
   getTargets: (game, card) =>
     singleMinionTargetRules.getTargets({
       game,

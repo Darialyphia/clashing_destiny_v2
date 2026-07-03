@@ -38,7 +38,7 @@ const handleMouseup = (e: MouseEvent) => {
 
 <template>
   <div
-    :id="ui.DOMSelectors.boardSpace(cell).id"
+    :id="ui.DOMSelectors.boardSpace(cell.id).id"
     class="minion-cell"
     :class="{
       'is-targetable': isTargetable && !client.isPlayingFx,

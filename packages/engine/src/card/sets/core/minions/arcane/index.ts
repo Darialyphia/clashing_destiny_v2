@@ -36,6 +36,10 @@ import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { StealthModifier } from '../../../../../modifier/modifiers/stealth.modifier';
+import { InstantMoveModifier } from '../../../../../modifier/modifiers/instant-move.modifier';
+import { InstantAttackModifier } from '../../../../../modifier/modifiers/instant-attack.modifier';
+import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const starSeer: MinionBlueprint = {
   id: 'starSeer',
@@ -132,7 +136,7 @@ export const manaFueledGolem: MinionBlueprint = {
   id: 'manaFueledGolem',
   name: 'Mana-fueled Golem',
   description: dedent /*html*/ `
-    At the start of your turn, you may pay 1 mana. If you don't, exhaust this minion.
+    At the start of your turn, you may pay 1 mana. If you don't, exhaust this minion and give it -2 Commandment this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -151,15 +155,35 @@ export const manaFueledGolem: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new AttackerModifier(game, card, {
-        amount: 3,
+      new Modifier<MinionCard>('mana-fueled-golem', game, card, {
         mixins: [
-          new TogglableModifierMixin(
-            game,
-            () =>
-              card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL)
-                .length >= 3
-          )
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.TURN_START,
+            handler: async () => {
+              const answer = await askMandatoryYesNoQuestion({
+                game,
+                card,
+                questionId: 'manaPayment',
+                label:
+                  'Pay 1 mana to avoid exhausting this minion and giving it -2 Commandment this turn?',
+                timeoutFallback: 'yes',
+                aiChoice: 'yes'
+              });
+              if (answer) return;
+              await card.exhaust();
+              await card.modifiers.add(
+                new SimpleCommandmentBuffModifier(
+                  'mana-fueled-golem-debuff',
+                  game,
+                  card,
+                  {
+                    amount: -2,
+                    mixins: [new UntilEndOfTurnModifierMixin(game)]
+                  }
+                )
+              );
+            }
+          })
         ]
       })
     );
@@ -200,6 +224,9 @@ export const erinasApprentice: MinionBlueprint = {
         async handler() {
           const [drawnCard] = await card.player.cardManager.drawWithFilter(1, isSpell);
           if (!drawnCard) return;
+
+          const canPay = card.player.runeManager.has({ wisdom: 1 });
+          if (!canPay) return;
 
           const answer = await askMandatoryYesNoQuestion({
             game,
@@ -284,7 +311,7 @@ export const astralBall: MinionBlueprint = {
   description: dedent /*html*/ ``,
   collectable: false,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/astral-ball'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.TOKEN,
   jobs: [],
@@ -292,14 +319,14 @@ export const astralBall: MinionBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 1,
+  atk: 0,
   maxHp: 1,
   commandment: 1,
   canPlay: () => true,
   abilities: [
     {
       id: 'astralBallAbility',
-      label: 'Scry 2',
+      label: 'Scry 1',
       description: 'Sacrifice this unit to <rt-keyword>Scry 1</rt-keyword>.',
       canUse: () => true,
       getTargets: noTargets,
@@ -329,10 +356,11 @@ export const astralSage: MinionBlueprint = {
   name: 'Astral Sage',
   description: dedent /*html*/ `
     <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-  `,
+    <rt-runes runes="wisdom,focus,focus"></rt-runes> <rt-keyword>Instant Move</rt-keyword>. If you control at least 3 <rt-card>Astral Ball</rt-card>, <rt-keyword>Instant Attack</rt-keyword>.
+    `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/astral-sage'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],
@@ -340,84 +368,11 @@ export const astralSage: MinionBlueprint = {
   manaCost: 6,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 3,
+  atk: 2,
   maxHp: 6,
   commandment: 2,
   canPlay: () => true,
-  abilities: [
-    {
-      id: 'astralSageAbility',
-      label: 'Give next spell Echo',
-      /*html*/
-      description: `Sacrifice an <rt-card>Astral Ball</rt-card>: give the next spell you play this turn has <rt-keyword>Echo</rt-keyword>`,
-      canUse: (game, card) =>
-        singleAllyMinionTargetRules.canPlay(
-          game,
-          card,
-          minion => minion.blueprintId === 'astralBall'
-        ),
-      getTargets(game, card) {
-        return singleAllyMinionTargetRules.getTargets({
-          game,
-          card,
-          timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(
-            game,
-            card,
-            minion => minion.blueprintId === 'astralBall'
-          ),
-          predicate: minion => {
-            return minion.blueprintId === 'astralBall';
-          },
-          aiHints: {
-            shouldPick: () => 1
-          }
-        });
-      },
-      manaCost: 0,
-      shouldExhaust: true,
-      async onResolve(game, card, targets) {
-        const target = targets.cards[0] as MinionCard;
-        await target.destroy(card);
-        await card.player.modifiers.add(
-          new Modifier<Player>('astralSageEcho', game, card, {
-            mixins: [
-              new CardAuraModifierMixin(game, card, {
-                isElligible(candidate) {
-                  return isSpell(candidate) && candidate.player.equals(card.player);
-                },
-                getModifiers(candidate) {
-                  return [
-                    new EchoModifier(game, card, {
-                      mixins: [
-                        new UntilEventModifierMixin(game, {
-                          eventName: GAME_EVENTS.CARD_AFTER_PLAY,
-                          filter(event) {
-                            return event.data.card.equals(candidate);
-                          }
-                        })
-                      ]
-                    })
-                  ];
-                }
-              }),
-              new UntilEventModifierMixin(game, {
-                eventName: GAME_EVENTS.CARD_AFTER_PLAY,
-                filter(event) {
-                  return (
-                    isSpell(event.data.card) && event.data.card.player.equals(card.player)
-                  );
-                }
-              })
-            ]
-          })
-        );
-      },
-      aiHints: {
-        shouldUse: () => 0
-      }
-    }
-  ],
-
+  abilities: [],
   async onInit(game, card) {
     const summonAstralBall = async () => {
       const generatedCard = await card.player.generateCard<MinionCard>(
@@ -436,6 +391,7 @@ export const astralSage: MinionBlueprint = {
       await generatedCard.playImmediatelyAt(position.result.spaces[0]);
       await generatedCard.exhaust();
     };
+
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         handler: summonAstralBall
@@ -444,6 +400,26 @@ export const astralSage: MinionBlueprint = {
 
     await card.modifiers.add(
       new OnMoveModifier(game, card, { handler: summonAstralBall })
+    );
+
+    await card.modifiers.add(
+      new InstantMoveModifier(game, card, {
+        mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 })]
+      })
+    );
+
+    await card.modifiers.add(
+      new InstantAttackModifier(game, card, {
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 }),
+          new TogglableModifierMixin(
+            game,
+            () =>
+              card.player.minions.filter(minion => minion.blueprint.id === 'astralBall')
+                .length >= 2
+          )
+        ]
+      })
     );
   },
   async onPlay() {},

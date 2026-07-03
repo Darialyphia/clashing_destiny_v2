@@ -7,7 +7,8 @@ import {
   defaultCardArt,
   isMinion,
   isSpell,
-  singleEnemyMinionTargetRules
+  singleEnemyMinionTargetRules,
+  singleMinionTargetRules
 } from '../../../../card-utils';
 import {
   CARD_SETS,
@@ -32,7 +33,6 @@ import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/wh
 import { CardEffectTriggeredEvent } from '../../../../card.events';
 import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 import { OnKillModifier } from '../../../../../modifier/modifiers/on-kill.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { RemoveOnDestroyedMixin } from '../../../../../modifier/mixins/remove-on-destroyed';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
@@ -45,8 +45,8 @@ export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Attack</rt-trigger> You may deal 1 damage to an enemy on the same battlefield as this.
-  <rt-runes runes="wisdom,might"></rt-runes> <rt-trigger>On Kill</rt-trigger> this gains +1 Commandment.
+  <rt-trigger>On Attack</rt-trigger> You may deal 1 damage to an enemy on the same battlefield.
+  <rt-runes runes="wisdom,might"></rt-runes> <rt-trigger>On Kill</rt-trigger> add a <rt-card>Fire Bolt</rt-card> to your hand.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -96,11 +96,8 @@ export const pyromancer: MinionBlueprint = {
     await card.modifiers.add(
       new OnKillModifier(game, card, {
         async handler() {
-          await card.modifiers.add(
-            new SimpleCommandmentBuffModifier('pyromancer-commandment-buff', game, card, {
-              amount: 1
-            })
-          );
+          const generatedCard = await card.player.generateCard('fireBolt', card.isFoil);
+          await generatedCard.addToHand();
         },
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {
@@ -239,7 +236,7 @@ export const flameArchmage: MinionBlueprint = {
   id: 'flameArchmage',
   name: 'Flame Archmage',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield">After you play a Fire spell, you may consume <rt-runes runes="wisdom"></rt-runes> to put a <rt-card>Firebolt</rt-card> in your hand. It costs 0 this turn.
+  <rt-location locations="battlefield">After you play a Fire spell, you may consume <rt-runes runes="wisdom"></rt-runes> to deal 2 damage to a minion on a battlefield.
   </rt-location>
   `,
   collectable: true,
@@ -253,7 +250,7 @@ export const flameArchmage: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
-  maxHp: 5,
+  maxHp: 4,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -270,6 +267,13 @@ export const flameArchmage: MinionBlueprint = {
             async handler() {
               if (!card.player.runeManager.has({ wisdom: 1 })) return;
 
+              const hasTarget = singleMinionTargetRules.canPlay(
+                game,
+                card,
+                minion => minion.isOnBattlefield
+              );
+              if (!hasTarget) return;
+
               await game.emit(
                 GAME_EVENTS.CARD_EFFECT_TRIGGERED,
                 new CardEffectTriggeredEvent({
@@ -277,11 +281,13 @@ export const flameArchmage: MinionBlueprint = {
                   message: `Flame Archmage effect triggered.`
                 })
               );
+
               const shouldActivate = await askMandatoryYesNoQuestion({
                 game,
                 card,
                 questionId: 'flameArchmage-activation',
-                label: 'Consume 1 Wisdom rune to put a Firebolt in your hand ?',
+                label:
+                  'Consume 1 Wisdom rune to deal 2 damage to a minion on the battlefield?',
                 aiChoice: 'yes',
                 timeoutFallback: 'no'
               });
@@ -289,22 +295,24 @@ export const flameArchmage: MinionBlueprint = {
               if (!shouldActivate) return;
 
               await card.player.runeManager.remove([RUNES.WISDOM]);
-              const generatedCard = await card.player.generateCard(
-                'fireBolt',
-                card.isFoil
-              );
-              await generatedCard.modifiers.add(
-                new Modifier('flameArchmage-firebolt-cost-modifier', game, card, {
-                  mixins: [
-                    new CardInterceptorModifierMixin(game, {
-                      key: 'manaCost',
-                      interceptor: () => 0
-                    }),
-                    new UntilEndOfTurnModifierMixin(game)
-                  ]
-                })
-              );
-              await generatedCard.addToHand();
+
+              const result = await singleMinionTargetRules.getTargets({
+                game,
+                card,
+                predicate: minion => minion.isOnBattlefield,
+                canCancel: false,
+                label: 'Select a minion to deal 2 damage to',
+                timeoutFallback: [],
+                aiHints: {
+                  shouldPick: () => 1
+                }
+              });
+              if (result.cancelled) return;
+
+              const target = result.result.cards[0];
+              if (!target) return;
+
+              await target.takeDamage(card, new AbilityDamage(2));
             }
           })
         ]

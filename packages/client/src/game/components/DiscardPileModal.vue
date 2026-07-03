@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { usePlayer } from '../composables/useGameClient';
+import { useGameClient, usePlayer } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 
 const { playerId } = defineProps<{
@@ -16,14 +16,15 @@ const close = () => {
   isOpened.value = false;
 };
 
-const player = usePlayer(playerId);
+const { playerId: myPlayerId } = useGameClient();
+const player = usePlayer(computed(() => playerId));
 </script>
 
 <template>
   <UiModal
     v-model:is-opened="isOpened"
     :title="
-      player.id === playerId ? 'Your Discard Pile' : 'Opponent Discard Pile'
+      player.id === myPlayerId ? 'Your Discard Pile' : 'Opponent Discard Pile'
     "
     description=""
     :style="{
@@ -34,7 +35,7 @@ const player = usePlayer(playerId);
       <header>
         <h2 class="text-center">
           {{
-            player.id === playerId
+            player.id === myPlayerId
               ? 'Your Discard Pile'
               : 'Opponent Discard Pile'
           }}

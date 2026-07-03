@@ -35,21 +35,21 @@ export const KEYWORDS = {
     description: 'This takes X damage at the start of every turn.',
     aliases: [/burn [0-9]+/, /burn/]
   },
-  BURST: {
-    id: 'burst',
-    name: 'Burst',
+  INSTANT: {
+    id: 'instant',
+    name: 'Instant',
     description: 'You do not lose initiative after playing this card.',
     aliases: []
   },
-  BURST_ATTACK: {
-    id: 'burst-attack',
-    name: 'Burst Attack',
+  INSTANT_ATTACK: {
+    id: 'instant-attack',
+    name: 'Instant Attack',
     description: 'You do not lose initiative after this minion attacks.',
     aliases: []
   },
-  CELERITY: {
-    id: 'celerity',
-    name: 'Celerity',
+  INSTANT_MOVE: {
+    id: 'instant-move',
+    name: 'Instant Move',
     description: 'You do not lose initiative after this minion moves.',
     aliases: []
   },
@@ -82,7 +82,7 @@ export const KEYWORDS = {
   ECHO: {
     id: 'echo',
     name: 'Echo',
-    description: 'When you play this card, add a Fleeting copy of it to your hand.',
+    description: 'When you play this card, add a copy of it to your hand without Echo.',
     aliases: []
   },
   FLEETING: {

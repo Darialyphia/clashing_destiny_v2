@@ -32,7 +32,7 @@ import {
 import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
-import { COMBAT_STEPS, EFFECT_TYPE } from '../../game/game.enums';
+import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
 
@@ -416,6 +416,10 @@ export abstract class Card<
       return false;
     }
 
+    if (this.game.interaction.getState() !== INTERACTION_STATES.IDLE) {
+      return false;
+    }
+
     return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
@@ -436,6 +440,10 @@ export abstract class Card<
 
     if (this.game.effectChainSystem.currentChain && !this.canPlayDuringChain) {
       return "Can't play during an effect chain.";
+    }
+
+    if (this.game.interaction.getState() !== INTERACTION_STATES.IDLE) {
+      return 'You cannot play cards from hand right now.';
     }
 
     if (!this.canPayManaCost) {

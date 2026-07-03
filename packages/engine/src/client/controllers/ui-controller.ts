@@ -99,8 +99,7 @@ export class UiController {
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
     destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),
-    boardSpace: (space: BoardSpaceViewModel) =>
-      new DOMSelector(`board-space-${space.id}`),
+    boardSpace: (spaceId: string) => new DOMSelector(`board-space-${spaceId}`),
     cardOnBoard: (cardId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.board.selector),
     cardInHand: (cardId: string, playerId: string) =>
