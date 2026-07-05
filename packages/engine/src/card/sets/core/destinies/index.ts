@@ -163,7 +163,7 @@ export const crowdsFavor: DestinyBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('destinies/crowds-favor'),
   speed: CARD_SPEED.SLOW,
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],

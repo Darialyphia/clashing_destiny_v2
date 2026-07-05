@@ -27,6 +27,7 @@ export type Config = {
   DEFINITIVE_PASSES: boolean;
 
   SHOULD_SWITCH_INITIATIVE_AFTER_MANUAL_MOVE: boolean;
+  SHOULD_EXHAUST_MINIONS_ON_SUMMON: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -54,5 +55,6 @@ export const defaultConfig: Config = {
 
   DEFINITIVE_PASSES: false,
 
-  SHOULD_SWITCH_INITIATIVE_AFTER_MANUAL_MOVE: true
+  SHOULD_SWITCH_INITIATIVE_AFTER_MANUAL_MOVE: true,
+  SHOULD_EXHAUST_MINIONS_ON_SUMMON: true
 };

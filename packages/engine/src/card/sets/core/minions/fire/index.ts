@@ -35,11 +35,6 @@ import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.mo
 import { OnKillModifier } from '../../../../../modifier/modifiers/on-kill.modifier';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { RemoveOnDestroyedMixin } from '../../../../../modifier/mixins/remove-on-destroyed';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleHealthBuffModifier } from '../../../../../modifier/modifiers/simple-health-buff.modifier';
-import { CardInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
-import { Modifier } from '../../../../../modifier/modifier.entity';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
@@ -59,7 +54,7 @@ export const pyromancer: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 4,
+  maxHp: 3,
   commandment: 1,
   canPlay: () => true,
   abilities: [],
@@ -332,10 +327,8 @@ export const indomitableVindicator: MinionBlueprint = {
   id: 'indomitableVindicator',
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield">The first minion you play each turn has <rt-keyword>Rush 1</rt-keyword>.
+  <rt-runes runes="might,might"></rt-runes><rt-location locations="battlefield">The first minion you play each turn has <rt-keyword>Rush 1</rt-keyword>.
   </rt-location>
-
-  <rt-runes runes="might,might,focus"></rt-runes> This gains +1 Attack and +1 Health.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -347,8 +340,8 @@ export const indomitableVindicator: MinionBlueprint = {
   manaCost: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 1,
-  maxHp: 3,
+  atk: 2,
+  maxHp: 4,
   commandment: 1,
   canPlay: () => true,
   abilities: [],
@@ -356,6 +349,9 @@ export const indomitableVindicator: MinionBlueprint = {
     await card.modifiers.add(
       new WhileOnBattlefieldModifier<MinionCard>('indomitableVindicator', game, card, {
         mixins: [
+          new RuneCostToggleModifierMixin(game, card, {
+            might: 2
+          }),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
             frequencyPerGameTurn: 1,
@@ -369,30 +365,6 @@ export const indomitableVindicator: MinionBlueprint = {
                 })
               );
             }
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new SimpleAttackBuffModifier('indomitableVindicator-attack-buff', game, card, {
-        amount: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 2,
-            focus: 1
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new SimpleHealthBuffModifier('indomitableVindicator-health-buff', game, card, {
-        amount: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 2,
-            focus: 1
           })
         ]
       })

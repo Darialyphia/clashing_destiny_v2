@@ -829,6 +829,11 @@ const tint = computed(() => {
   font-family: 'Lato', sans-serif;
   --dual-text-offset-y: calc(2px * var(--pixel-scale));
   --dual-text-offset-x: calc(6px * var(--pixel-scale));
+
+  .hero &,
+  .destiny & {
+    display: none;
+  }
 }
 
 .text-separator {

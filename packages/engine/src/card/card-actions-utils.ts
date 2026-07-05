@@ -112,9 +112,15 @@ export const predict = async (game: Game, card: AnyCard) => {
 export const discardFromHand = async (
   game: Game,
   card: AnyCard,
-  options: { min: number; max: number }
+  options: { min: number; max: number; predicate?: (card: AnyCard) => boolean }
 ) => {
-  const cards = card.player.cardManager.hand;
+  const cards = card.player.cardManager.hand.filter(
+    c => !options.predicate || options.predicate(c)
+  );
+  if (cards.length === 0 || cards.length < options.min) {
+    return { cancelled: false, discardedCards: [] };
+  }
+
   const result = await game.interaction.chooseCards<AnyCard, false>({
     player: card.player,
     minChoiceCount: options.min,
@@ -143,7 +149,7 @@ export const discardFromHand = async (
     await card.discard();
   }
 
-  return { cancelled: false, cardsToDiscard: result.result };
+  return { cancelled: false, discardedCards: result.result };
 };
 
 export const askMandatoryYesNoQuestion = async ({

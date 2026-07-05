@@ -289,8 +289,8 @@ export const lesserFireSummoning: SpellBlueprint = {
   id: 'lesserFireSummoning',
   name: 'Lesser Fire Summoning',
   description: dedent /*html*/ `
-  Summon a <rt-card>Will-o-Wisp</rt-card> on a battlefield.
-  <rt-runes runes="wisdom,wisdom,wisdom"></rt-runes> Give it <rt-keyword>Rush 0</rt-keyword>.
+  Summon a <rt-card>Will-o-Wisp</rt-card> on a battlefield exhausted. 
+  <rt-runes runes="wisdom,wisdom,wisdom"></rt-runes> Don't exhaust it.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -323,8 +323,8 @@ export const lesserFireSummoning: SpellBlueprint = {
   async onInit() {},
   async onPlay(game, card, targets) {
     const minion = await card.player.generateCard<MinionCard>('willowisp', card.isFoil);
-    if (card.player.runeManager.has({ wisdom: 3 })) {
-      await minion.modifiers.add(new RushModifier(game, minion, { cost: 0 }));
+    if (!card.player.runeManager.has({ wisdom: 3 })) {
+      await minion.exhaust();
     }
     await minion.playImmediatelyAt(targets.spaces[0]);
   },

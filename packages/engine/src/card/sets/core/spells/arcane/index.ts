@@ -20,18 +20,13 @@ import {
 import { InstantModifier } from '../../../../../modifier/modifiers/instant.modifier';
 import { scry } from '../../../../card-actions-utils';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SpellDamage } from '../../../../../utils/damage';
-import { GAME_EVENTS } from '../../../../../game/game.events';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import type { HeroCard } from '../../../../entities/hero.entity';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import type { SpellCard } from '../../../../entities/spell.entity';
 import { SpellInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
-import { CardEffectTriggeredEvent } from '../../../../card.events';
 import { EFFECT_TYPE } from '../../../../../game/game.enums';
 import { RUNES } from '../../../../../player/player.enums';
 
@@ -294,7 +289,7 @@ export const starConvergence: SpellBlueprint = {
   id: 'starconvergence',
   name: 'Star Convergence',
   description: dedent /*html*/ `
-  Consume <rt-runes runes="resonance"></rt-runes>. Until the end of turn, whenever you would play a spell, you may play an <rt-card>Astral Ball</rt-card> in your base exhausted.
+  Consume <rt-runes runes="resonance"></rt-runes>. Summon 2 <rt-card>Astral Ball</rt-card> exhausted.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -312,59 +307,29 @@ export const starConvergence: SpellBlueprint = {
   async onPlay(game, card) {
     await card.player.runeManager.remove([RUNES.RESONANCE]);
 
-    // Avoid the modifier to proc on the card itself
-    await game.inputSystem.schedule(async () => {
-      await card.player.hero.modifiers.add(
-        new Modifier<HeroCard>('starConvergence', game, card, {
-          name: 'Star Convergence',
-          description:
-            'Until the end of turn, whenever you would play a spell, you may play an Astral Ball in your base exhausted.',
-          icon: 'icons/keyword-double-cast',
-          mixins: [
-            new UntilEndOfTurnModifierMixin(game),
-            new GameEventModifierMixin(game, {
-              eventName: GAME_EVENTS.CARD_AFTER_PLAY,
-              filter(event) {
-                return (
-                  event.data.card.player.equals(card.player) && isSpell(event.data.card)
-                );
-              },
-              async handler() {
-                await game.emit(
-                  GAME_EVENTS.CARD_EFFECT_TRIGGERED,
-                  new CardEffectTriggeredEvent({
-                    card: card.player.hero,
-                    message: `Star Convergence effect triggered.`
-                  })
-                );
-                const generatedCard = await card.player.generateCard<MinionCard>(
-                  'astralBall',
-                  card.isFoil
-                );
-
-                const hasRoomInBase = card.player.boardSide.base.some(
-                  space => space.isEmpty
-                );
-                if (!hasRoomInBase) return;
-
-                const position = await emptyBoardSpaceTargetRules.getTargets({
-                  game,
-                  card,
-                  predicate: space =>
-                    space.position.zone === CARD_LOCATIONS.BASE &&
-                    space.player.equals(card.player),
-                  canCancel: false
-                });
-                await generatedCard.playImmediatelyAt(position.result.spaces[0]);
-                await generatedCard.exhaust();
-              }
-            })
-          ]
-        })
+    const summonBall = async () => {
+      const generatedCard = await card.player.generateCard<MinionCard>(
+        'astralBall',
+        card.isFoil
       );
-    });
 
-    await card.player.cardManager.draw(1);
+      const hasRoom = game.boardSystem.boardSpaces.some(
+        space => space.player.equals(card.player) && space.isEmpty
+      );
+      if (!hasRoom) return;
+
+      const position = await emptyBoardSpaceTargetRules.getTargets({
+        game,
+        card,
+        predicate: space => space.player.equals(card.player),
+        canCancel: false
+      });
+      await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+      await generatedCard.exhaust();
+    };
+
+    await summonBall();
+    await summonBall();
   },
   aiHints: {
     shouldPlay: () => 1

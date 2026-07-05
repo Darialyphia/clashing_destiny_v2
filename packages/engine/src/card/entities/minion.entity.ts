@@ -156,7 +156,10 @@ export class MinionCard extends Card<
   }
 
   get hasSummoningSickness(): boolean {
-    return this.interceptors.hasSummoningSickness.getValue(true, this);
+    return this.interceptors.hasSummoningSickness.getValue(
+      this.game.config.SHOULD_EXHAUST_MINIONS_ON_SUMMON,
+      this
+    );
   }
 
   get isOnBattlefield() {
@@ -440,6 +443,7 @@ export class MinionCard extends Card<
   private async summon(position: BoardSpace) {
     position.placeCard(this);
     if (this.hasSummoningSickness) {
+      console.log('exhausting minion', this.id, this.blueprintId);
       await this.exhaust();
     }
     await this.blueprint.onPlay(this.game, this);

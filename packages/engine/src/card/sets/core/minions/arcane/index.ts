@@ -9,8 +9,7 @@ import {
   defaultCardArt,
   emptyBoardSpaceTargetRules,
   isSpell,
-  noTargets,
-  singleAllyMinionTargetRules
+  noTargets
 } from '../../../../card-utils';
 import {
   CARD_SETS,
@@ -30,16 +29,12 @@ import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-even
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { RUNES } from '../../../../../player/player.enums';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
-import type { Player } from '../../../../../player/player.entity';
-import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
-import { UntilEventModifierMixin } from '../../../../../modifier/mixins/until-event';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { StealthModifier } from '../../../../../modifier/modifiers/stealth.modifier';
-import { InstantMoveModifier } from '../../../../../modifier/modifiers/instant-move.modifier';
 import { InstantAttackModifier } from '../../../../../modifier/modifiers/instant-attack.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const starSeer: MinionBlueprint = {
   id: 'starSeer',
@@ -97,8 +92,8 @@ export const manaWeaverApprentice: MinionBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
-  maxHp: 3,
+  atk: 1,
+  maxHp: 4,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -356,7 +351,8 @@ export const astralSage: MinionBlueprint = {
   name: 'Astral Sage',
   description: dedent /*html*/ `
     <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    <rt-runes runes="wisdom,focus,focus"></rt-runes> <rt-keyword>Instant Move</rt-keyword>. If you control at least 3 <rt-card>Astral Ball</rt-card>, <rt-keyword>Instant Attack</rt-keyword>.
+    if you control at least 3 <rt-card>Astral Ball</rt-card>, this has <rt-keyword>Instant Attack</rt-keyword> ans +1 Attack.
+    <rt-runes runes="wisdom,focus,focus"></rt-runes> This costs 1 less.
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -403,22 +399,29 @@ export const astralSage: MinionBlueprint = {
     );
 
     await card.modifiers.add(
-      new InstantMoveModifier(game, card, {
+      new SimpleManacostModifier('astralSage', game, card, {
+        amount: -1,
         mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 })]
       })
     );
 
+    const astralBallThresholdMixin = () =>
+      new TogglableModifierMixin(
+        game,
+        () =>
+          card.player.minions.filter(minion => minion.blueprint.id === 'astralBall')
+            .length >= 3
+      );
     await card.modifiers.add(
       new InstantAttackModifier(game, card, {
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 }),
-          new TogglableModifierMixin(
-            game,
-            () =>
-              card.player.minions.filter(minion => minion.blueprint.id === 'astralBall')
-                .length >= 2
-          )
-        ]
+        mixins: [astralBallThresholdMixin()]
+      })
+    );
+
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier<MinionCard>('astralSage-atk-buff', game, card, {
+        amount: 1,
+        mixins: [astralBallThresholdMixin()]
       })
     );
   },

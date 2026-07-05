@@ -22,6 +22,7 @@ import { SimpleHealthBuffModifier } from '../../../../../modifier/modifiers/simp
 import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
+import { InstantMoveModifier } from '../../../../../modifier/modifiers/instant-move.modifier';
 
 export const mountainProtector: MinionBlueprint = {
   id: 'mountainProtector',
@@ -83,11 +84,11 @@ export const vineTrapper: MinionBlueprint = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.RANGER],
   affinities: [AFFINITIES.EARTH],
-  manaCost: 3,
+  manaCost: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 4,
+  maxHp: 3,
   commandment: 1,
   canPlay: () => true,
   abilities: [],
@@ -252,7 +253,7 @@ export const terramancer: MinionBlueprint = {
   description: dedent /*html*/ `
   <rt-keyword>On Engage</rt-keyword> you may pay <rt-mana>1</rt-mana> to exhaust an enemy minion on the same battlefield.
   <br/>
-  <rt-runes runes="might,focus,resonance"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
+  <rt-runes runes="might,focus"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -320,8 +321,7 @@ export const terramancer: MinionBlueprint = {
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {
             might: 1,
-            focus: 1,
-            resonance: 1
+            focus: 1
           })
         ]
       })

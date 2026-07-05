@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import GameCard from './GameCard.vue';
-import { useGameState, useGameUi } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
+const { client } = useGameClient();
 const state = useGameState();
 const ui = useGameUi();
 </script>
@@ -23,6 +29,12 @@ const ui = useGameUi();
           style="--pixel-scale: 1"
         />
       </InspectableCard>
+      <FancyButton
+        v-if="state.interaction.ctx.canCancel"
+        class="mt-4"
+        text="Cancel"
+        @click="client.cancelInteraction()"
+      />
     </div>
   </Transition>
 </template>
