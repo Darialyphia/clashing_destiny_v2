@@ -9,12 +9,24 @@ const { battlefield } = defineProps<{
 const { playerId } = useGameClient();
 
 const ui = useGameUi();
+const { client } = useGameClient();
 
 const canInteract = computed(() => {
   if (playerId.value !== battlefield.player.id) return false;
   if (!ui.value.selectedCard) return false;
-  return ui.value.selectedCard.canScore;
+  if (!ui.value.selectedCard.canScore) return false;
+
+  const card = ui.value.selectedCard;
+  return battlefield.spaces.some(space => space.card?.equals(card));
 });
+
+const onMousedown = (e: MouseEvent) => {
+  console.log(e.button, canInteract.value);
+  if (e.button !== 0) return;
+  if (!canInteract.value) return;
+
+  client.value.score(ui.value.selectedCard!.id);
+};
 </script>
 
 <template>
@@ -25,6 +37,7 @@ const canInteract = computed(() => {
       win: battlefield.commandmentScore > battlefield.opponentCommandmentScore,
       lose: battlefield.commandmentScore < battlefield.opponentCommandmentScore
     }"
+    @mouseup="onMousedown"
   >
     {{ battlefield.commandmentScore }}
   </button>
