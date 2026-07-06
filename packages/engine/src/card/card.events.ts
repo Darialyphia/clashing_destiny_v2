@@ -1,3 +1,4 @@
+import type { Battlefield } from '../board/battlefield';
 import type { BoardSpace, SerializedBoardSpace } from '../board/board-space.entity';
 import type { AttackTarget } from '../game/systems/combat.system';
 import type { CombatDamage, Damage, DamageType } from '../utils/damage';
@@ -301,6 +302,18 @@ export class CardAfterMoveEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardScoreEvent extends TypedSerializableEvent<
+  { card: AnyCard; battlefield: Battlefield },
+  { card: string; battlefield: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      battlefield: this.data.battlefield.id
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -325,4 +338,6 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_REVEAL]: CardRevealEvent;
   [CARD_EVENTS.CARD_BEFORE_MOVE]: CardBeforeMoveEvent;
   [CARD_EVENTS.CARD_AFTER_MOVE]: CardAfterMoveEvent;
+  [CARD_EVENTS.BEFORE_SCORE]: CardScoreEvent;
+  [CARD_EVENTS.AFTER_SCORE]: CardScoreEvent;
 };

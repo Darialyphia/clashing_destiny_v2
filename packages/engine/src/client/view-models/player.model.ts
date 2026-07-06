@@ -100,6 +100,9 @@ export class PlayerViewModel {
   get leftBattlefield() {
     return {
       commandmentScore: this.data.boardSide.leftBattlefield.commandmentScore,
+      opponentCommandmentScore:
+        this.data.boardSide.leftBattlefield.opponentCommandmentScore,
+      player: this.getEntities()[this.data.id] as PlayerViewModel,
       spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
@@ -114,6 +117,9 @@ export class PlayerViewModel {
   get rightBattlefield() {
     return {
       commandmentScore: this.data.boardSide.rightBattlefield.commandmentScore,
+      opponentCommandmentScore:
+        this.data.boardSide.rightBattlefield.opponentCommandmentScore,
+      player: this.getEntities()[this.data.id] as PlayerViewModel,
       spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),

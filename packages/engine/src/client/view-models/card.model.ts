@@ -322,6 +322,14 @@ export class CardViewModel {
     return [];
   }
 
+  get canScore() {
+    if ('canScore' in this.data) {
+      return this.data.canScore as boolean;
+    }
+
+    return false;
+  }
+
   get canAttack() {
     return (
       this.player.id === this.getClient().state.currentPlayer &&

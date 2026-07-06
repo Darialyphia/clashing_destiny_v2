@@ -53,21 +53,6 @@ export class PlayerGainVictoryPointEvent extends TypedSerializableEvent<
   }
 }
 
-export class PlayerWinBattlefieldRoundEvent extends TypedSerializableEvent<
-  {
-    player: Player;
-    battlefield: BetterExtract<CardLocation, 'left_battlefield' | 'right_battlefield'>;
-  },
-  { player: string; battlefield: string }
-> {
-  serialize() {
-    return {
-      player: this.data.player.id,
-      battlefield: this.data.battlefield
-    };
-  }
-}
-
 export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_BEFORE_DRAW]: PlayerDrawEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_DRAW]: PlayerDrawEvent;
@@ -77,5 +62,4 @@ export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_AFTER_RUNE_CHANGE]: PlayerRuneChangeEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_GAIN_VICTORY_POINT]: PlayerGainVictoryPointEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT]: PlayerGainVictoryPointEvent;
-  [PLAYER_EVENTS.PLAYER_WIN_BATTLEFIELD_ROUND]: PlayerWinBattlefieldRoundEvent;
 };

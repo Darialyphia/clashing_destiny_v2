@@ -28,7 +28,11 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
     if (!ui.value.isInteractivePlayer) return false;
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
     if (state.value.phase.state === GAME_PHASES.MAIN) {
-      return cell.value.card.canMove || cell.value.card.canAttack;
+      return (
+        cell.value.card.canMove ||
+        cell.value.card.canAttack ||
+        cell.value.card.canScore
+      );
     }
     if (state.value.effectChain) return false;
     if (state.value.combat.step !== COMBAT_STEPS.DECLARE_ATTACKER) return false;

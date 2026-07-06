@@ -49,7 +49,7 @@ export const defaultConfig: Config = {
   MAX_MANA: 8,
 
   MANA_REGEN_PER_TURN: 5,
-  VICTORY_POINTS_TO_WIN: 8,
+  VICTORY_POINTS_TO_WIN: 6,
 
   MAX_RESOURCE_ACTIONS_PER_TURN: 1,
 

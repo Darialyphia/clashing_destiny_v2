@@ -14,7 +14,8 @@ import {
   CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
   CardBeforeTakeDamageEvent,
-  CardPlayEvent
+  CardPlayEvent,
+  CardScoreEvent
 } from '../card.events';
 import {
   Card,
@@ -59,6 +60,7 @@ export type SerializedMinionCard = SerializedCard & {
   jobs: JobId[];
   hasSummoningSickness: boolean;
   canRetaliate: boolean;
+  canScore: boolean;
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -73,6 +75,7 @@ export type MinionCardInterceptors = CardInterceptors & {
     { card: MinionCard; ability: Ability<MinionCard> }
   >;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
+  canScore: Interceptable<boolean, MinionCard>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
@@ -126,6 +129,7 @@ export class MinionCard extends Card<
         shouldCreateChainOnAttack: new Interceptable(),
         shouldGiveBountyWhenDestroyed: new Interceptable(),
         shouldDealDamageFirst: new Interceptable(),
+        canScore: new Interceptable(),
         speed: new Interceptable()
       },
       options
@@ -530,6 +534,43 @@ export class MinionCard extends Card<
     return { cancelled: false };
   }
 
+  get battlefield() {
+    if (this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.boardSide.leftBattlefield;
+    }
+    if (this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD) {
+      return this.player.boardSide.rightBattlefield;
+    }
+    return null;
+  }
+
+  get canScore(): boolean {
+    return this.interceptors.canScore.getValue(
+      this.isOnBattlefield && !this.isExhausted,
+      this
+    );
+  }
+
+  async score() {
+    if (!this.battlefield) return;
+    await this.game.emit(
+      CARD_EVENTS.BEFORE_SCORE,
+      new CardScoreEvent({
+        card: this,
+        battlefield: this.battlefield
+      })
+    );
+    await this.battlefield?.gainScore(this.commandment);
+    await this.exhaust();
+    await this.game.emit(
+      CARD_EVENTS.AFTER_SCORE,
+      new CardScoreEvent({
+        card: this,
+        battlefield: this.battlefield
+      })
+    );
+  }
+
   get potentialAttackTargets(): Array<AttackTarget> {
     if (!this.isOnBattlefield) return [];
 
@@ -598,7 +639,8 @@ export class MinionCard extends Card<
       canMove: this.canMoveManually,
       jobs: this.jobs.map(job => job.id) as JobId[],
       hasSummoningSickness: this.hasSummoningSickness,
-      canRetaliate: this.canRetaliate(this.game.combatSystem.attacker!)
+      canRetaliate: this.canRetaliate(this.game.combatSystem.attacker!),
+      canScore: this.canScore
     };
   }
 }

@@ -397,4 +397,14 @@ export class GameClient {
       }
     });
   }
+
+  score(minionId: string) {
+    this.dispatch({
+      type: 'score',
+      payload: {
+        playerId: this.playerId,
+        minionId
+      }
+    });
+  }
 }

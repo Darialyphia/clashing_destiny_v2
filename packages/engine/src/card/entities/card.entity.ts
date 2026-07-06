@@ -27,6 +27,7 @@ import {
   CardDisposedEvent,
   CardExhaustEvent,
   CardRevealEvent,
+  CardScoreEvent,
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';

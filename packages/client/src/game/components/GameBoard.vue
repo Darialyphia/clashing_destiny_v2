@@ -1,40 +1,20 @@
 <script setup lang="ts">
 import {
-  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
   useOpponentPlayer
 } from '../composables/useGameClient';
-import PlayedCard from './PlayedCard.vue';
-import SVGFilters from './SVGFilters.vue';
-import ChooseCardModal from './ChooseCardModal.vue';
-import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
-import GameErrorModal from './GameErrorModal.vue';
-import AnswerQuestionModal from './AnswerQuestionModal.vue';
-import UiModal from '@/ui/components/UiModal.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
-import Camera from './Camera.vue';
-import Hand from './Hand.vue';
-import DraggedCard from './DraggedCard.vue';
-import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
-import { useSettingsStore } from '@/shared/composables/useSettings';
-import { config } from '@/utils/config';
-import { useEventListener, usePageLeave, useWindowSize } from '@vueuse/core';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-import PassButton from './PassButton.vue';
-import PlayerInfos from './PlayerInfos.vue';
-import HoveredCardInfos from './HoveredCardnfos.vue';
 import BoardSpace from './BoardSpace.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import GameCard from './GameCard.vue';
+import { useWindowSize } from '@vueuse/core';
+import { config } from '@/utils/config';
+import PassButton from './PassButton.vue';
 import BoardCard from './BoardCard.vue';
 import EffectChain from './EffectChain.vue';
-import CombatArrows from './CombatArrows.vue';
 import MyHero from './MyHero.vue';
-import GameCard from './GameCard.vue';
-import InspectableCard from '@/card/components/InspectableCard.vue';
-import TurnIndicator from './TurnIndicator.vue';
-import RearrangeCardsModal from './RearrangeCardsModal.vue';
-import InteractionCard from './InteractionCard.vue';
+import ScoreButton from './ScoreButton.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -44,33 +24,12 @@ const { clocks } = defineProps<{
       isActive: boolean;
     };
   };
-  options: {
-    teachingMode: boolean;
-  };
 }>();
 
 const ui = useGameUi();
-const { playerId } = useGameClient();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
-// const board = useTemplateRef('board');
-// useBoardResize(board);
-
-useGameKeyboardControls();
-// const myClock = computed(() => clocks?.[myPlayer.value.id]);
-// const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
-
-const isGameSettingsOpened = ref(false);
-const settings = useSettingsStore();
-
-useKeyboardControl(
-  'keydown',
-  settings.settings.bindings.openSettings.control,
-  () => {
-    isGameSettingsOpened.value = !isGameSettingsOpened.value;
-  }
-);
 
 const { height } = useWindowSize();
 const boardScale = computed(() => {
@@ -89,331 +48,181 @@ const boardMargin = computed(() => {
     y: (height.value - scaledBoardHeight) / 2
   };
 });
-
-const isOutOfScreen = usePageLeave();
-
-const resetUiState = async () => {
-  await nextTick();
-  return ui.value.reset();
-};
-
-watch(isOutOfScreen, out => {
-  if (!out) return;
-  resetUiState();
-});
-
-useEventListener('mouseup', e => {
-  if (e.button !== 0) return; // only triggers on left click
-  resetUiState();
-});
-
-useEventListener('contextmenu', async e => {
-  const actionTaken = await resetUiState();
-  if (actionTaken) {
-    e.preventDefault();
-  }
-});
-
-const isScreenDimmed = computed(() => {
-  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return true;
-  if (state.value.effectChain?.state === 'BUILDING') return true;
-  return false;
-});
 </script>
 
 <template>
-  <div class="debug">
-    <div>You are: {{ playerId }}</div>
-    <div>Game Phase: {{ state.phase.state }}</div>
-    <div>Selected Card: {{ ui.selectedCard?.id }}</div>
-    <div>Interaction State: {{ state.interaction.state }}</div>
-    <div>Chain: {{ state.effectChain?.state }}</div>
-  </div>
-  <div class="game-board-container">
-    <SVGFilters />
-    <PlayedCard />
-    <ChooseCardModal />
-    <CombatArrows />
-    <AnswerQuestionModal />
-    <RearrangeCardsModal />
-    <Camera>
-      <div class="board" :id="ui.DOMSelectors.board.id">
-        <div class="opponent-hero">
-          <div class="victory-points">
-            <div
-              v-for="point in state.config.VICTORY_POINTS_TO_WIN"
-              :key="point"
-              class="victory-point"
-              :class="{ empty: opponent.victoryPoints < point }"
-            />
+  <div class="board" :id="ui.DOMSelectors.board.id">
+    <div class="opponent-hero">
+      <div class="victory-points">
+        <div
+          v-for="point in state.config.VICTORY_POINTS_TO_WIN"
+          :key="point"
+          class="victory-point"
+          :class="{ empty: opponent.victoryPoints < point }"
+        />
+      </div>
+      <BoardCard
+        v-if="opponent.hero"
+        :card="opponent.hero"
+        @mouseenter="ui.hover(opponent.hero)"
+        @mouseleave="ui.unhover()"
+      />
+    </div>
+
+    <div class="minions-zone">
+      <div class="opponent-base zone">
+        <BoardSpace
+          v-for="space in opponent.base"
+          :key="space.id"
+          :cell-id="space.id"
+        />
+      </div>
+      <div class="opponent-battlefields">
+        <div class="zone">
+          <ScoreButton
+            class="opponent-left-score"
+            :battlefield="opponent.leftBattlefield"
+          />
+
+          <div class="opponent-left-destiny">
+            <InspectableCard
+              v-if="opponent.leftBattlefield.destinyCard"
+              :card-id="opponent.leftBattlefield.destinyCard.id"
+            >
+              <GameCard
+                :card-id="opponent.leftBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
           </div>
-          <BoardCard
-            v-if="opponent.hero"
-            :card="opponent.hero"
-            @mouseenter="ui.hover(opponent.hero)"
-            @mouseleave="ui.unhover()"
+          <BoardSpace
+            v-for="space in opponent.leftBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
           />
         </div>
+        <div class="zone">
+          <BoardSpace
+            v-for="space in opponent.rightBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
 
-        <div class="minions-zone">
-          <div class="opponent-base zone">
-            <BoardSpace
-              v-for="space in opponent.base"
-              :key="space.id"
-              :cell-id="space.id"
-            />
-          </div>
-          <div class="opponent-battlefields">
-            <div class="zone">
-              <div
-                class="opponent-left-score"
-                :class="{
-                  win:
-                    opponent.leftBattlefield.commandmentScore >
-                    myPlayer.leftBattlefield.commandmentScore,
-                  lose:
-                    opponent.leftBattlefield.commandmentScore <
-                    myPlayer.leftBattlefield.commandmentScore
-                }"
-              >
-                {{ opponent.leftBattlefield.commandmentScore }}
-              </div>
-              <div class="opponent-left-destiny">
-                <InspectableCard
-                  v-if="opponent.leftBattlefield.destinyCard"
-                  :card-id="opponent.leftBattlefield.destinyCard.id"
-                >
-                  <GameCard
-                    :card-id="opponent.leftBattlefield.destinyCard.id"
-                    variant="small"
-                    :is-interactive="false"
-                  />
-                </InspectableCard>
-              </div>
-              <BoardSpace
-                v-for="space in opponent.leftBattlefield.spaces"
-                :key="space.id"
-                :cell-id="space.id"
+          <div class="opponent-right-destiny">
+            <InspectableCard
+              v-if="opponent.rightBattlefield.destinyCard"
+              :card-id="opponent.rightBattlefield.destinyCard.id"
+              :open-delay="300"
+            >
+              <GameCard
+                :card-id="opponent.rightBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
               />
-            </div>
-            <div class="zone">
-              <BoardSpace
-                v-for="space in opponent.rightBattlefield.spaces"
-                :key="space.id"
-                :cell-id="space.id"
-              />
-
-              <div class="opponent-right-destiny">
-                <InspectableCard
-                  v-if="opponent.rightBattlefield.destinyCard"
-                  :card-id="opponent.rightBattlefield.destinyCard.id"
-                  :open-delay="300"
-                >
-                  <GameCard
-                    :card-id="opponent.rightBattlefield.destinyCard.id"
-                    variant="small"
-                    :is-interactive="false"
-                  />
-                </InspectableCard>
-              </div>
-              <div
-                class="opponent-right-score"
-                :class="{
-                  win:
-                    opponent.rightBattlefield.commandmentScore >
-                    myPlayer.rightBattlefield.commandmentScore,
-                  lose:
-                    opponent.rightBattlefield.commandmentScore <
-                    myPlayer.rightBattlefield.commandmentScore
-                }"
-              >
-                {{ opponent.rightBattlefield.commandmentScore }}
-              </div>
-            </div>
+            </InspectableCard>
           </div>
-          <div class="my-battlefields">
-            <div class="zone">
-              <div class="my-left-destiny">
-                <InspectableCard
-                  v-if="myPlayer.leftBattlefield.destinyCard"
-                  :card-id="myPlayer.leftBattlefield.destinyCard.id"
-                  :open-delay="300"
-                >
-                  <GameCard
-                    :card-id="myPlayer.leftBattlefield.destinyCard.id"
-                    variant="small"
-                    :is-interactive="false"
-                  />
-                </InspectableCard>
-              </div>
-              <BoardSpace
-                v-for="space in myPlayer.leftBattlefield.spaces"
-                :key="space.id"
-                :cell-id="space.id"
-              />
-              <div
-                class="my-left-score"
-                :class="{
-                  win:
-                    myPlayer.leftBattlefield.commandmentScore >
-                    opponent.leftBattlefield.commandmentScore,
-                  lose:
-                    myPlayer.leftBattlefield.commandmentScore <
-                    opponent.leftBattlefield.commandmentScore
-                }"
-              >
-                {{ myPlayer.leftBattlefield.commandmentScore }}
-              </div>
-            </div>
-            <div class="zone">
-              <BoardSpace
-                v-for="space in myPlayer.rightBattlefield.spaces"
-                :key="space.id"
-                :cell-id="space.id"
-              />
-              <div class="my-right-destiny">
-                <InspectableCard
-                  v-if="myPlayer.rightBattlefield.destinyCard"
-                  :card-id="myPlayer.rightBattlefield.destinyCard.id"
-                  :open-delay="300"
-                >
-                  <GameCard
-                    :card-id="myPlayer.rightBattlefield.destinyCard.id"
-                    variant="small"
-                    :is-interactive="false"
-                  />
-                </InspectableCard>
-              </div>
-              <div
-                class="my-right-score"
-                :class="{
-                  win:
-                    myPlayer.rightBattlefield.commandmentScore >
-                    opponent.rightBattlefield.commandmentScore,
-                  lose:
-                    myPlayer.rightBattlefield.commandmentScore <
-                    opponent.rightBattlefield.commandmentScore
-                }"
-              >
-                {{ myPlayer.rightBattlefield.commandmentScore }}
-              </div>
-            </div>
-          </div>
-          <div class="my-base zone">
-            <BoardSpace
-              v-for="space in myPlayer.base"
-              :key="space.id"
-              :cell-id="space.id"
-            />
-          </div>
-          <div class="right-side">
-            <PassButton />
-            <div class="flex gap-2">
-              <div
-                v-for="(clock, userId) of clocks"
-                :key="userId"
-                class="action-clock"
-                :class="{
-                  active: clock.isActive,
-                  warning: clock.remaining < 15
-                }"
-                :style="{ '--max': clock.max, '--remaining': clock.remaining }"
-                :data-count="clock.remaining"
-              ></div>
-            </div>
-            .
-          </div>
+          <ScoreButton
+            class="opponent-right-score"
+            :battlefield="opponent.rightBattlefield"
+          />
         </div>
-
-        <div class="my-hero">
-          <div class="victory-points">
-            <div
-              v-for="point in state.config.VICTORY_POINTS_TO_WIN"
-              :key="point"
-              class="victory-point"
-              :class="{ empty: myPlayer.victoryPoints < point }"
-            />
-          </div>
-          <MyHero />
-          <EffectChain class="effect-chain" />
-        </div>
-
-        <div id="card-actions-portal" class="absolute"></div>
-        <div class="arrows" id="arrows" />
       </div>
-    </Camera>
-    <DraggedCard />
-  </div>
-
-  <HoveredCardInfos class="hovered-cell-infos" />
-  <InteractionCard />
-
-  <div class="my-player">
-    <PlayerInfos :player="myPlayer" />
-  </div>
-  <div class="opponent-player">
-    <PlayerInfos :player="opponent" />
-  </div>
-
-  <Transition>
-    <div class="vignette" v-if="isScreenDimmed" />
-  </Transition>
-
-  <div class="my-hand">
-    <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
-  </div>
-
-  <button
-    aria-label="Settings"
-    class="settings-button"
-    @click="isGameSettingsOpened = true"
-  />
-
-  <!-- <GamePhaseIndicator /> -->
-  <TurnIndicator />
-
-  <UiModal
-    v-model:is-opened="isGameSettingsOpened"
-    title="Menu"
-    description="Game settings"
-    :style="{ '--ui-modal-size': 'var(--size-xs)' }"
-  >
-    <div class="game-board-menu">
-      <FancyButton text="Close" @click="isGameSettingsOpened = false" />
-      <slot name="menu" />
+      <div class="my-battlefields">
+        <div class="zone">
+          <div class="my-left-destiny">
+            <InspectableCard
+              v-if="myPlayer.leftBattlefield.destinyCard"
+              :card-id="myPlayer.leftBattlefield.destinyCard.id"
+              :open-delay="300"
+            >
+              <GameCard
+                :card-id="myPlayer.leftBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
+          </div>
+          <BoardSpace
+            v-for="space in myPlayer.leftBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
+          <ScoreButton
+            class="my-left-score"
+            :battlefield="myPlayer.leftBattlefield"
+          />
+        </div>
+        <div class="zone">
+          <BoardSpace
+            v-for="space in myPlayer.rightBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
+          <div class="my-right-destiny">
+            <InspectableCard
+              v-if="myPlayer.rightBattlefield.destinyCard"
+              :card-id="myPlayer.rightBattlefield.destinyCard.id"
+              :open-delay="300"
+            >
+              <GameCard
+                :card-id="myPlayer.rightBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
+          </div>
+          <ScoreButton
+            class="my-right-score"
+            :battlefield="myPlayer.rightBattlefield"
+          />
+        </div>
+      </div>
+      <div class="my-base zone">
+        <BoardSpace
+          v-for="space in myPlayer.base"
+          :key="space.id"
+          :cell-id="space.id"
+        />
+      </div>
+      <div class="right-side">
+        <PassButton />
+        <div class="flex gap-2">
+          <div
+            v-for="(clock, userId) of clocks"
+            :key="userId"
+            class="action-clock"
+            :class="{
+              active: clock.isActive,
+              warning: clock.remaining < 15
+            }"
+            :style="{ '--max': clock.max, '--remaining': clock.remaining }"
+            :data-count="clock.remaining"
+          ></div>
+        </div>
+        .
+      </div>
     </div>
-  </UiModal>
-  <slot name="board-additional" />
 
-  <GameErrorModal />
+    <div class="my-hero">
+      <div class="victory-points">
+        <div
+          v-for="point in state.config.VICTORY_POINTS_TO_WIN"
+          :key="point"
+          class="victory-point"
+          :class="{ empty: myPlayer.victoryPoints < point }"
+        />
+      </div>
+      <MyHero />
+      <EffectChain class="effect-chain" />
+    </div>
+
+    <div id="card-actions-portal" class="absolute"></div>
+    <div class="arrows" id="arrows" />
+  </div>
 </template>
 
 <style scoped lang="postcss">
-:global(body:has(.game-board-container)) {
-  overflow: hidden;
-}
-.debug {
-  position: fixed;
-  top: 0;
-  right: var(--size-12);
-  color: white;
-  font-size: var(--font-size-0);
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  padding: var(--size-4);
-  max-width: var(--size-xs);
-}
-.game-board-container {
-  width: 100vw;
-  height: 100dvh;
-  background-size: cover;
-  overflow: hidden;
-  position: relative;
-  transform-style: preserve-3d;
-  perspective: 1500px;
-}
-
 .board {
   display: flex;
   flex-direction: column;
@@ -490,13 +299,6 @@ const isScreenDimmed = computed(() => {
 
 .arrows {
   transform: translateZ(10px);
-}
-
-.my-hand {
-  position: fixed;
-  width: 100%;
-  bottom: 10%;
-  left: 0;
 }
 
 #arrows {
@@ -585,29 +387,6 @@ const isScreenDimmed = computed(() => {
   }
 }
 
-.settings-button {
-  --pixel-scale: 2;
-  position: fixed;
-  right: var(--size-8);
-  bottom: var(--size-6);
-  width: calc(32px * var(--pixel-scale));
-  aspect-ratio: 1;
-  background: url('@/assets/ui/settings-icon.png');
-  background-size: cover;
-  z-index: 2;
-  &:hover {
-    filter: brightness(1.2);
-  }
-}
-
-.game-board-menu {
-  display: grid;
-  gap: var(--size-2);
-  > * {
-    width: 100%;
-  }
-}
-
 .opponent-base {
   position: absolute;
   width: 930px;
@@ -653,56 +432,6 @@ const isScreenDimmed = computed(() => {
   top: 476px;
 }
 
-.vignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 0) 45%,
-    rgba(0, 0, 0, 0.5) 90%
-  );
-  z-index: 1;
-
-  &.v-enter-active,
-  &.v-leave-active {
-    transition: opacity 0.6s ease;
-  }
-
-  &.v-enter-from,
-  &.v-leave-to {
-    opacity: 0;
-  }
-}
-
-.my-player {
-  position: absolute;
-  left: var(--size-10);
-  bottom: 20%;
-  translate: 0 20%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.opponent-player {
-  position: absolute;
-  left: var(--size-10);
-  top: 20%;
-  translate: 0 -90%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.hovered-cell-infos {
-  position: absolute;
-  right: var(--size-11);
-  top: 45%;
-  translate: 0 -50%;
-  z-index: 2;
-}
-
 .right-side {
   position: absolute;
   left: 1180px;
@@ -726,42 +455,24 @@ const isScreenDimmed = computed(() => {
   flex-grow: 1;
 }
 
-.opponent-left-score,
-.opponent-right-score,
-.my-left-score,
-.my-right-score {
-  position: absolute;
-  font-size: var(--font-size-4);
-  font-weight: var(--font-weight-7);
-  color: white;
-  -webkit-text-stroke: 2px black;
-  paint-order: stroke fill;
-  &.win {
-    color: var(--green-6);
-  }
-  &.lose {
-    color: var(--red-6);
-  }
-}
-
 .opponent-left-score {
   top: 80%;
-  right: -35px;
+  right: -65px;
 }
 
 .my-left-score {
   top: -7px;
-  right: -35px;
+  right: -65px;
 }
 
 .opponent-right-score {
   top: 80%;
-  left: -50px;
+  left: -60px;
 }
 
 .my-right-score {
   top: -7px;
-  left: -50px;
+  left: -60px;
 }
 
 .victory-points {

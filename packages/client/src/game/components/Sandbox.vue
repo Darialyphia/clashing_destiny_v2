@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SandboxTools from './SandboxTools.vue';
 import { useSandbox } from '../composables/useSandbox';
-import GameBoard from './GameBoard.vue';
+import GameScene from './GameScene.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 
 const { players } = defineProps<{
@@ -15,7 +15,7 @@ const sandbox = useSandbox({
 </script>
 
 <template>
-  <GameBoard
+  <GameScene
     v-if="sandbox.client.value.isReady"
     :options="{
       teachingMode: true
@@ -36,7 +36,7 @@ const sandbox = useSandbox({
         />
       </RouterLink>
     </template>
-  </GameBoard>
+  </GameScene>
   <SandboxTools
     v-model:auto-switch="sandbox.autoSwitchPlayer.value"
     v-model:player-id="sandbox.playerId.value"

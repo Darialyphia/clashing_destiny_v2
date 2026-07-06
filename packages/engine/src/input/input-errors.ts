@@ -228,3 +228,9 @@ export class IllegalResourceActionError extends InputError {
     super('Cannot perform this resource action');
   }
 }
+
+export class CannotScoreError extends InputError {
+  constructor() {
+    super('This minion cannot score');
+  }
+}

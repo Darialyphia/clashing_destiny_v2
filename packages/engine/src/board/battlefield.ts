@@ -1,27 +1,37 @@
-import type { BetterExtract, Serializable } from '@game/shared';
+import type { BetterExtract, EmptyObject, Serializable } from '@game/shared';
 import { CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import { BoardSpace } from './board-space.entity';
 import type { DestinyCard } from '../card/entities/destiny.entity';
-import { isMinion } from '../card/card-utils';
 import type { MinionCard } from '../card/entities/minion.entity';
+import { Entity } from '../entity';
+import { GAME_EVENTS } from '../game/game.events';
 
 export type SerializedBattlefield = {
+  id: string;
   spaces: string[];
   destinyCard: string | null;
   commandmentScore: number;
+  opponentCommandmentScore: number;
+  player: string;
 };
-export class Battlefield implements Serializable<SerializedBattlefield> {
+export class Battlefield
+  extends Entity<EmptyObject>
+  implements Serializable<SerializedBattlefield>
+{
   readonly spaces: BoardSpace[];
 
   destinyCard: DestinyCard | null = null;
+
+  _commandmentScore = 0;
 
   constructor(
     private game: Game,
     private player: Player,
     readonly zone: BetterExtract<CardLocation, 'left_battlefield' | 'right_battlefield'>
   ) {
+    super(zone, {});
     this.spaces = Array.from(
       { length: game.config.BATTLEFIELD_SLOTS },
       (_, i) =>
@@ -31,6 +41,10 @@ export class Battlefield implements Serializable<SerializedBattlefield> {
           playerId: player.id
         })
     );
+
+    this.game.on(GAME_EVENTS.TURN_START, async () => {
+      this._commandmentScore = 0;
+    });
   }
 
   get opponentSpaces() {
@@ -46,11 +60,23 @@ export class Battlefield implements Serializable<SerializedBattlefield> {
   }
 
   get commandmentScore() {
-    return this.spaces.reduce((score, space) => {
-      if (!space.card) return score;
-      if (!isMinion(space.card)) return score;
-      return score + space.card.commandment;
-    }, 0);
+    return this._commandmentScore;
+  }
+
+  get opponentCommandmentScore() {
+    if (this.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.opponent.boardSide.leftBattlefield.commandmentScore;
+    } else {
+      return this.player.opponent.boardSide.rightBattlefield.commandmentScore;
+    }
+  }
+
+  async gainScore(amount: number) {
+    this._commandmentScore += amount;
+  }
+
+  async loseScore(amount: number) {
+    this._commandmentScore -= Math.max(0, amount);
   }
 
   has(card: MinionCard) {
@@ -59,9 +85,12 @@ export class Battlefield implements Serializable<SerializedBattlefield> {
 
   serialize() {
     return {
+      id: this.id,
       spaces: this.spaces.map(space => space.id),
       destinyCard: this.destinyCard?.id ?? null,
-      commandmentScore: this.commandmentScore
+      commandmentScore: this.commandmentScore,
+      opponentCommandmentScore: this.opponentCommandmentScore,
+      player: this.player.id
     };
   }
 }

@@ -37,6 +37,7 @@ import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
 import { TakeResourceActionInput } from './inputs/take-resource-action.input';
 import { ChooseChainEffectsInput } from './inputs/choose-chain-effect';
 import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
+import { ScoreInput } from './inputs/score.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -68,7 +69,8 @@ const inputMap = validateinputMap({
   selectSpaceOnBoard: SelectSpaceOnBoardInput,
   takeResourceAction: TakeResourceActionInput,
   chooseChainEffects: ChooseChainEffectsInput,
-  declareRetaliation: DeclareRetaliationInput
+  declareRetaliation: DeclareRetaliationInput,
+  score: ScoreInput
 });
 
 type InputMap = typeof inputMap;

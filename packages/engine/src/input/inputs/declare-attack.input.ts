@@ -9,7 +9,6 @@ import {
   NotCurrentPlayerError,
   UnknownUnitError
 } from '../input-errors';
-import { CorruptedGamephaseContextError } from '../../game/game-error';
 
 const schema = defaultInputSchema.extend({
   attackerId: z.string(),
