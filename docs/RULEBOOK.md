@@ -20,7 +20,7 @@
 
 ## 1. Introduction
 
-**Clashing Destiny** is a strategic digital card game where two players command powerful Heroes, summon Minions, cast Spells, and equip Artifacts on a tactical battlefield. Victory is achieved by reducing your opponent's Hero to 0 HP through strategic positioning and combat.
+**Clashing Destiny** is a strategic digital card game where two players fight over the controls of battlefields. They alternate actions, using powerful minions and spells, to seize influence on the battlefields and earn Victory Points (VP). When a player reaches 6 VP, they win the game.
 
 ---
 
@@ -30,73 +30,38 @@
 
 Each player builds a deck before the game begins with the following constraints:
 
-| Rule                    | Value                                 |
-| ----------------------- | ------------------------------------- |
-| Deck Size               | Exactly **40 cards**                  |
-| Maximum Copies per Card | **3 copies** of any single card       |
-| Required                | **1 Hero card** (not counted in deck) |
+| Rule                    | Value                                          |
+| ----------------------- | ---------------------------------------------- |
+| Deck Size               | Exactly **44 cards**                           |
+| Maximum Copies per Card | **3 copies** of any single card                |
+| Required                | **1 Hero card** and **4 Unique Destiny Cards** |
 
 ## 3. Game Setup
 
 ### 3.1 Starting the Game
 
-1. Both players' decks are shuffled
+1. Both player's Hero and Destiny Cards are set aside, they both decks are shuffled. Destiny Cards are set aside face down and shuffled.
 2. Each player draws **5 cards** to form their starting hand
-3. Players may mulligan cards (replace cards in hand with new ones from deck) if the game format allows
-4. **Player 1** is determined randomly and takes the first turn
-5. Each player's Hero begins on the battlefield
-6. Both players start with **0 mana** (mana regenerates at the start of each turn)
+3. Players may replace any amount of cards they want (shuffle them back into the deck and draw another card)
+4. **Player 1** is determined randomly and takes the first action of the first turn
+5. Both players start with **0 mana** (mana regenerates at the start of each turn)
 
 ### 3.2 Hand Limits
 
-| Parameter            | Value   |
-| -------------------- | ------- |
-| Starting Hand        | 5 cards |
-| Maximum Hand Size    | 7 cards |
-| Cards Drawn per Turn | 1 card  |
+| Parameter            | Value    |
+| -------------------- | -------- |
+| Starting Hand        | 5 cards  |
+| Maximum Hand Size    | 10 cards |
+| Cards Drawn per Turn | 1 card   |
 
 ---
 
 ## 4. The Battlefield
 
-### 4.1 Board Layout
+The battlefield contains:
 
-The battlefield is a grid of **5 columns × 4 rows**, divided between two players:
-
-```
-         Column 1    Column 2    Column 3    Column 4    Column 5
-       ┌───────────┬───────────┬───────────┬───────────┬───────────┐
-Row 1  │  P2 Back  │  P2 Back  │  P2 Back  │  P2 Back  │  P2 Back  │  ← Player 2's Back Row
-       ├───────────┼───────────┼───────────┼───────────┼───────────┤
-Row 2  │ P2 Front  │ P2 Front  │ P2 Front  │ P2 Front  │ P2 Front  │  ← Player 2's Front Row
-       ├───────────┼───────────┼───────────┼───────────┼───────────┤
-Row 3  │ P1 Front  │ P1 Front  │ P1 Front  │ P1 Front  │ P1 Front  │  ← Player 1's Front Row
-       ├───────────┼───────────┼───────────┼───────────┼───────────┤
-Row 4  │  P1 Back  │  P1 Back  │  P1 Back  │  P1 Back  │  P1 Back  │  ← Player 1's Back Row
-       └───────────┴───────────┴───────────┴───────────┴───────────┘
-```
-
-### 4.2 Row Types
-
-**Front Row**
-
-- Units here are in direct combat range
-- Melee units can attack enemies in the opposing front row
-- Units with **Cleave** deal damage to adjacent enemies when attacking from here
-
-**Back Row**
-
-- Safer positioning for ranged units
-- **Ranged** units can attack enemies in the back row from here
-- **Ranged** units are immune to retaliation from non-ranged units when attacking from the back row
-
-### 4.3 Cell Rules
-
-- Each cell can hold **at most 1 unit** at any time
-- Units can only be summoned on cells in their owner's territory (front or back row)
-- Some cards with **Airdrop** can be summoned anywhere on the board
-
----
+- One Base for each player, with 6 slots each
+- Two battlefields. Each player has their own 3 slots zone on each battlefield.
 
 ## 5. Card Types
 

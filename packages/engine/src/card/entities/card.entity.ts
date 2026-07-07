@@ -45,6 +45,7 @@ export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
 
 export type AnyCard = Card<any, any, any>;
 export type CardInterceptors = {
+  blueprintId: Interceptable<string>;
   manaCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
@@ -57,6 +58,7 @@ export type CardInterceptors = {
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
+  blueprintId: new Interceptable(),
   manaCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
@@ -96,8 +98,7 @@ export abstract class Card<
   TInterceptors extends CardInterceptors = CardInterceptors,
   TBlueprint extends CardBlueprint = CardBlueprint
 > extends EntityWithModifiers<TInterceptors> {
-  blueprint: TBlueprint;
-
+  protected _baseblueprintId: string;
   protected originalPlayer: Player;
 
   protected _isExhausted = false;
@@ -121,8 +122,16 @@ export abstract class Card<
     super(options.id, game, interceptors);
     this.game = game;
     this.originalPlayer = player;
-    this.blueprint = options.blueprint as any;
+    this._baseblueprintId = options.blueprint.id;
     this.isFoil = options.isFoil;
+  }
+
+  get blueprintId() {
+    return this.interceptors.blueprintId.getValue(this._baseblueprintId, {});
+  }
+
+  get blueprint() {
+    return this.game.cardPool[this.blueprintId] as TBlueprint;
   }
 
   async init() {
@@ -178,10 +187,6 @@ export abstract class Card<
   async hide() {
     if (!this.isRevealed) return;
     this._isRevealed = false;
-  }
-
-  get blueprintId() {
-    return this.blueprint.id;
   }
 
   get isExhausted() {

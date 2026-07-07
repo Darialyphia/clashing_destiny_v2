@@ -167,13 +167,16 @@ const onMouseup = (e: MouseEvent) => {
     box-shadow: 0 6px 30px 4px black;
   }
 
-  &.is-exhausted:not(.is-being-played)::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: #00000070;
-    pointer-events: none;
-    transform: translateZ(2px);
+  &.is-exhausted:not(.is-being-played) {
+    rotate: 5deg;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: #00000070;
+      pointer-events: none;
+      transform: translateZ(2px);
+    }
   }
 
   &.is-being-played {

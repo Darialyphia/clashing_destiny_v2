@@ -1,8 +1,6 @@
 <script setup lang="ts">
-// @ts-expect-error
-import { VueComponent as HowToPlay } from './rules.md';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
-
+import Rules from './rules.vue';
 definePage({
   name: 'HowToPlay'
 });
@@ -14,7 +12,7 @@ definePage({
     <div class="how-to-play-container fancy-scrollbar">
       <h1 class="dual-text" data-text="How To Play">How To Play</h1>
       <div class="divider" />
-      <HowToPlay />
+      <Rules />
     </div>
   </div>
 </template>
@@ -65,33 +63,9 @@ h1 {
   font-weight: 800;
   margin: 1rem;
 }
-</style>
 
-<style lang="postcss">
 .how-to-play-container {
-  max-width: var(--size-lg);
   margin-inline: auto;
   overflow-y: auto;
-
-  h1:not(:first-of-type) {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-block: 1rem;
-  }
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-block: 1rem;
-  }
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-block: 1rem;
-  }
-  h4 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin-block: 1rem;
-  }
 }
 </style>

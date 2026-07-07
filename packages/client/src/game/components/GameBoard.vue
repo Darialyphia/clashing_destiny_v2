@@ -456,22 +456,22 @@ const boardMargin = computed(() => {
 }
 
 .opponent-left-score {
-  top: 80%;
+  top: calc(80% + 3px);
   right: -65px;
 }
 
 .my-left-score {
-  top: -7px;
+  top: -4px;
   right: -65px;
 }
 
 .opponent-right-score {
-  top: 80%;
+  top: calc(80% + 3px);
   left: -60px;
 }
 
 .my-right-score {
-  top: -7px;
+  top: -4px;
   left: -60px;
 }
 

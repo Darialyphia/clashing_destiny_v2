@@ -86,9 +86,9 @@ export type MinionCardInterceptors = CardInterceptors & {
 
   shouldDealDamageFirst: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterMovingManually: Interceptable<boolean, MinionCard>;
+  shouldSwitchInitiativeAfterScoring: Interceptable<boolean, MinionCard>;
   shouldSwitchInitiativeAfterAttacking: Interceptable<boolean, { target: AttackTarget }>;
   shouldCreateChainOnAttack: Interceptable<boolean, { target: AttackTarget }>;
-  shouldGiveBountyWhenDestroyed: Interceptable<boolean, { source: AnyCard }>;
 };
 type MinionCardInterceptorName = keyof MinionCardInterceptors;
 
@@ -126,8 +126,8 @@ export class MinionCard extends Card<
         canMoveBetweenBattlefields: new Interceptable(),
         shouldSwitchInitiativeAfterMovingManually: new Interceptable(),
         shouldSwitchInitiativeAfterAttacking: new Interceptable(),
+        shouldSwitchInitiativeAfterScoring: new Interceptable(),
         shouldCreateChainOnAttack: new Interceptable(),
-        shouldGiveBountyWhenDestroyed: new Interceptable(),
         shouldDealDamageFirst: new Interceptable(),
         canScore: new Interceptable(),
         speed: new Interceptable()
@@ -551,6 +551,13 @@ export class MinionCard extends Card<
     );
   }
 
+  get shouldSwitchInitiativeAfterScoring(): boolean {
+    return this.interceptors.shouldSwitchInitiativeAfterScoring.getValue(
+      this.game.config.SHOULD_SWITCH_INITIATIVE_AFTER_SCORING,
+      this
+    );
+  }
+
   async score() {
     if (!this.battlefield) return;
     await this.game.emit(
@@ -569,6 +576,9 @@ export class MinionCard extends Card<
         battlefield: this.battlefield
       })
     );
+    if (this.shouldSwitchInitiativeAfterScoring) {
+      await this.game.turnSystem.switchInitiative();
+    }
   }
 
   get potentialAttackTargets(): Array<AttackTarget> {

@@ -1,163 +1,308 @@
-# Clashing Destinies
+# Clash of Destinies - Rules Guide
 
-## Overview
+Current player-facing rules draft.
 
-2 players PVP card game
+## 1. Game Overview
 
-The goal of the game is to reduce the enemy Health Points (HP) to 0. To do so they will attack with their own hero or minions, cast spells and equip artifacts.
+Clash of Destinies is an alternating action two-player digital card game about fighting over battlefields to earn Victory Points. The first player to reach 6 victory Points wins the game !
 
-## Turn structure
+You win by committing units to the battlefield, choosing when they fight, when they move, and when they score.
 
-At the start of a turn, both players draw 2 cards, then recollect all cards in their Destiny zone (see below) to their hand.
+## 2. How To Win
 
-During a turn, players alternate taking action. On the first turn, Player 1 starts with the initiative and is able to play the first card. On the following turns, the first player who passed on the previous starts the turn with initiative.
+The first player to reach 6 Victory Points wins the game.
 
-The actions available are:
+Victory Points are mainly earned by having more **Influence** on a battlefield at the end of a turn. The player wit hthe highest Influence gains 1 Victory Point. If both players are tied, no Victory Point is awarded.
 
-- Play a card from their hand
-- Play a card from their Destiny Deck (see below)
-- Declare an attack
-- Use a card ability
-- Pass
+Influence on each battlefield is reset at the start of each turn.
 
-The player who can performe an action is called the **initiative player**. On the first turn, player 1 gets the initiative first. After that it goes back and forth between the two players.
+## 3. Decks
 
-## Actions
+Each player uses a Main Deck and a Destiny deck.
 
-### Play a Card from hand
+### Main Deck
 
-In order to play a card, players must put card from their hand face down into their Destiny Zone equal to the card's cost.
-Playing any card starts an Card Chain (see below).
+- 40 cards.
+- Up to 3 copies of a card.
+- Must contain one, and only one Hero card.
+- Contains units, spells, and artifact cards.
 
-### Play a Card from Destiny deck
+### Destiny Deck
 
-Each player has a Destiny Deck with 12 unique cards (the content of which is unknown to the opponent). Once per turn, A player may pay a card from their Destiny deck by banishing cards at random from their Destiny Zone equal to its cost.
-As with playing cards from hand, playing a card from the Destiny Deck starts a Card Chain
+- 4 different Destiny cards
 
-### Declare an attack
+For both decks, cards must share an **Affinity** with your hero, or have the Neutral affinity.
 
-A player may declare an attack with one of their minions of their hero. To do so, they declare its target (more info in the combat sectiob below).
-Declaring an attack starts a Card Chain with the opponent having priority.
+## 4. Card Types
 
-### Use a card ability
+### Heroes
 
-A player may use one of their card's ability. Abilities may be activated from different locations depending on the card (from hand, from the board, from the graveyard, etc).
-Using a ability starts a Card Chain with the opponent having priority.
+Each deck has one Hero Card. It defines which affinities you are able to use in your deck. There are 7 affinities: fire, water, air, earth, light, dark and Arcane. A card can have Neutral Afifnity and can be used in any deck.
 
-### Pass
+Heroes also have an ability, wether it's a passive trigger or activated ability. they are revealed at the start of the game and placed on the side.
 
-Passing makes the opponent the initiative player. If both players pass in a row. The turn ends.
-Once a player have passed, they will no longer get initiative this turn. They can, however, still react to their opponent's plays (by add cards to card chains, declaring a retaliation, etc...)
+### Units
 
-## Cards
+Units enter the board exhausted and can move, attack, use abilities, and score.
 
-### Playing restriction
+Units have three main stats:
 
-In order to be played, a card needs to match the class ans spell shcools of your Hero (see below).
-The also need to match your deck's chosen **spell School**.
-
-### Spell Schools
-
-There are 7 spell schools in the game: Fire, Water, Earth, Air, Light, Dark and Arcane. When building a deck, you choose up to 2 spell schools, and can only play cards that match one of these spell schools (or that don't have any spell school requirements).
-
-### Card Source
-
-There are 2 kinds of cards: Main deck cards, and Destiny Deck Cards. This defines which deck they go to, and thus how they are played.
-
-### Card Speed
-
-Every card has a _Speed_ stat:
-
-- Slow: this card cannot be played during an ongoing Card chain and can only be played when its owner is the initiative player.
-- Fast: this card can be played during a Card Chain, or to start one. It can be played even if its owner is not the initiative player.
-- Flash: this card can be played at the same time a Fast card can be played. However, it will not go into the Card Chain and will resolve instantly. Furthermore, playing an Instant speed card does not pass card chain priority, nor switch the initiative player.
-
-### Card Chain
-
-Card Chains are the mechanism used to resolve multiple card that happen at the same time. Priority alternates between players during a card chain. When they have priority, a player can
-
-- pass
-- add another effect to the chain. This can done by :
-  - playing a card from their hand
-  - playing a card from their Destiny Deck
-  - using a card ability
-  - choosing to retaliate. This can only happen when one of your unit is getting attacked.
-
-Once both players have successively passed, the chains resolves in a FILO (First In, Last Out) manner, until the chain is empty.
-
-Note that the priority is independant from the initiative player : if player 1 is the initiative player, but player 2 is the last player to add a card to the chain, once the chain resolves, player 2 still becomes the initiative player.
-
-Example:
-
-- player 1 plays **Fireball**, targeting the opponent's hero, trying to deal damage
-- player 2 adds **Holy Barrier** to the chain, trying to mitigate all damage their heero takes this turn
-- player 1 adds **Unrelenting Destruction**, which negates all effects that prevent damage this turn
-- player 2 passes
-- player 1 passes
-  The chain now resolves backwards
-- **Unrelenting Destruction** resolves, preventing damage negation
-- **Holy Barrier** resolves, however, because of **Unrelenting Destruction**, its effect is negated and does nothing
-- **Fireball** resolves, dealing damage to the opponent's hero
-
-#### Exhaustion
-
-An exhausted card cannot attack, retaliate, or use an ability. A card becomes exhausted when it declares an attacks, retaliates, or uses an ability (note: not all abilities exhaust the card).
-A card loses its exhausted status at the start of the turn. Taking damage from an attack does not exhaust if you choose not to retaliate.
-
-Losing the exhausted status is referred as waking up the card.
-
-### Hero
-
-The hero card is the most important card in a deck. If its HP are reduced to 0, its owner loses the game.
-Heroes have the following stats:
-
-- HP
-- Attack
-- Level
-- Class
-
-Player start the game with a fixed lvl 0 hero on the board.
-
-Heroes are always Destiny Deck cards. To play a hero of level greater than 1, a player's current hero must meet the following requirements:
-
-- have exactly one level less than the hero (a lvl 2 hero can only be played over a lvl 1 hero)
-- share the same **lineage**. For example, "Erina, Aether Scholar", can only be lpayed over a level 1 "Erina" hero.
-
-When a hero levels up, it keeps the ongoing effects
-
-### Minions
-
-Each player has 2 columns of 4 slots each: the front line and the back line. A minion can usually be player on any slot of any column, even though specific restrictions may apply.
-Minions remain on the board until their HP is reduced to 0.
+| Stat        | Meaning                                                   |
+| ----------- | --------------------------------------------------------- |
+| Attack      | How much combat damage the unit deals.                    |
+| Health      | How much damage the unit can take before being destroyed. |
+| Commandment | How much Score the unit adds when it scores.              |
 
 ### Spells
 
-Spells are one time effects. Once resolved, they go directly to the discard pile.
+Spells create one-time effects, such as dealing damage, drawing cards, moving units, exhausting units, or changing Commandment.
+
+After a spell resolves, it goes to the discard pile unless the card says otherwise.
 
 ### Artifacts
 
-Artifacts are attached to your Hero and enhance their performance in battle or give them new abilities. Every Artifact has a durability stat; when it reaches 0, the artifact is removed and sent to the discard pile. In most cases, using an artifact's ability will consume one or more durability.
+Artifacts stay in play and provide ongoing effects or activated abilities. They have a Durability stat: when it reached zero, the artifact is sent to the discard pile.
 
-A hero can only have 3 artifacts equiped at the same time. If they try to play a fourth one, they must choose one of their already equiped artifacts to destroy.
+### Destinies
 
-### Sigils
+Destiny Card posess symmetrical effects that modify the rules and behavior of a battlefield.Destiny cards cycle on the board each turn so that there's always one Destiny card from each player in play.
 
-Sigils are played on your front row or back row, like minions. However, they cannot attack or retaliate. They just take space on the board.Sigils have a Countsown start. At the start of each turn, this countdown decreases by 1. When it raches zero, the Sigil is destroyed and sent to the Discard pile.
+## 5. Resource System
 
-## Combat
+The game uses 2 resources: Mana and Runes
 
-A combat occurs between 2 participants which can be a hero or a minion. A unit with 0 attack cannot declare an attack.
+### Mana
 
-During combat:
+Each player gains 5 mana at the start of each turn. They use this mana to play cards according to a card's Mana cost.
+Unspent mana carries over between turn. However, a player can never have more than 8 mana at any given time.
 
-- A Card chain is created, with the defending player having priority
-- The defender may choose to retaliate or not. If it does, exhaust the card.
-- Once the chain is resolved, combat occurs
-- The attacker and defender (if they chose to retaliate) deal damage to each other at the same time, reducing each other's HP by their Attack value.
-- once resolved, the game goes back to the Main Phase and the iniative player is switched.
+### Runes
 
-### Targeting restriction
+There are 4 kinds of runes: Might (red), Wisdom (blue), Focus (green) and Resonance (yellow).
+Some cards may require to consume some runes: if you don't have the necessary runes, you cannot play the card.
+In addition, most cards will bonuses if you possess certain runes, such as mana cost reduction, better stats, additional effects, etc.
 
-Under normal circumstances, a minion may only attack a minion in the same column as them. In addition, if the enemy column has a minion in both the front row and back row, they may only attack the one in the front row.
-If there no enemy minion in a row,a minion may attack the enemy hero directly.
-A hero can attack anywhere (any other enemy minion or hero)
+### Resource Action
+
+Once per turn, you can perform a Resource action: you will either gain one rune of your choice, or draw an additional card.
+
+You can perform your resource action whenever you have the initiative and the game is in a neutral state (no ongoing actions or effect chain).
+
+## 6. Board structure
+
+### Deck
+
+Your face-down Main Deck.
+
+### Hand
+
+Cards available for you to play.
+
+### Destiny Pile
+
+your face-down Destiny Cards.
+
+### Base
+
+This is where Unit and Artifact cards are played.
+A base has 6 slots where a card can be played.
+Your Base is considered a "safe" area. Cards in your Base are usually harder to interact with for your opponent.
+
+Units in the Base usually do not score battlefield points unless a card says otherwise.
+
+### Battlefields
+
+Battlefields are the contested areas of the board.
+
+Units on battlefields can:
+
+- Attack enemy units.
+- Be attacked by enemy units.
+- Score influence on that battlefield.
+
+There are 2 battle fields on the board, that score separately at the end of the turn. Players has 3 slots on each battlefield.
+
+### Discard Pile
+
+Destroyed units and resolved spells usually go to the discard pile.
+
+### Banishment
+
+Banished cards are removed from the normal game flow. Some effects may still reference or use banished cards.
+
+## 7. Setup
+
+At the start of the game:
+
+1. Each player prepares their Main Deck, Hero, and Destiny pile.
+2. Each player draws their starting hand of 5 cards.
+3. Each player performs the current mulligan procedure.
+4. The first turn begins.
+
+The exact starting hand size and mulligan numbers are tuning values. The current rules assume a standard digital mulligan where players can replace any amount of cards from their starting hand.
+
+## 8. Turn Structure
+
+Each turn follows this structure:
+
+1. Start of Turn
+2. Action Phase
+3. End of Turn Scoring
+4. Cleanup
+
+### Start of Turn
+
+At the start of the turn:
+
+- Ready your exhausted cards.
+- Each player gains 5 mana.
+- Each player draw a card.
+- Resolve start-of-turn effects.
+
+### Action Phase
+
+During the action phase, players alternate taking actions.
+
+When you have initiative, you may take one action. Then initiative passes to the opponent.
+
+The available actions are :
+
+- Playing a card.
+- Moving a unit from the base to a battlefield, or from a battlefield to a base.
+- Attacking with a unit.
+- Scoring with a unit.
+- Using a card's activated ability.
+- Passing.
+
+When both players pass one after the other, the action phase ends and the turn moves to End of Turn.
+
+### End of Turn
+
+At the end of the turn:
+
+- For each battlefield, award 1 Victory Point to the player who has the highest influence here
+- Resolve end-of-turn effects.
+- Reset the influence on each battlefield to 0
+- Rotate the Destiny Cards in play in the following fashion:
+  - Put the card on the battlefield on player 2's left on bottom of its owner's destiny pile
+  - Shift the card on the battlefield on player 1's left to the other battlefield
+  - The player without a Destiny card in play puts the card on top of their destiny pile on the battlefield on player 1's left
+
+## 9. Readying and Exhausting
+
+A ready unit can act.
+
+A unit becomes exhausted when it:
+
+- Attacks.
+- Scores.
+- Uses an ability.
+- Is exhausted by a card effect.
+
+An exhausted unit cannot attack, score, move, or use abilities until it becomes ready again.
+
+## 10. Scoring With Units
+
+Scoring is a normal action.
+
+To score with a unit:
+
+1. Choose a ready unit you control on a battlefield.
+2. Exhaust that unit.
+3. Add Influence to that battlefield equal to the unit's Commandment.
+
+## 11. Movement
+
+Units can move between your Base and battlefields, or between legal battlefield positions, according to their movement rules.
+
+Units cannot move between battlefields.
+
+A unit must be ready to move.
+
+## 12. Combat
+
+Combat is used to damage and destroy enemy units.
+
+To attack:
+
+1. Choose a ready unit you control on a battlefield.
+2. Choose a legal enemy target on the same battlefield.
+3. Exhaust the attacking unit.
+4. The defender may choose to retaliate: if they do, exhaust the defender.
+5. Units deal damage to each other at the same time.
+
+Damage on units is persistent and carries over between turns.
+
+## 13. Effect chains
+
+Some actions may start an effect chains, which allows players to play other cards or abilities before they resolve.
+
+An Effect chain is created when :
+
+- An attack is declared
+- A Spell card is played
+- An activated ability is used
+
+during an effect chain, players have the ability to add effects to the chain (playing other cardsor activating an ability), starting wit hthe opponent of the player who started the chain. They may also choose to pass the opportunity. Once both player passed in a row, the chain resolves, starting fro mthe last effect that was added t othe chain.
+
+While a chain is resolving, players cannot take additional actions until the chain is fully resolved
+
+### Triggers timing
+
+If an card trigger is activated while a chain is resolving, the chain pauses and the trigger resolves immediately without the possibility for players to react to it. If this trigger would activate another trigger, it keeps resolving until the game reaches a "stable" state.
+
+Example:
+There is a card on the board with the following trigger "On Destroyed: draw a card", and another with "On Draw: gain 1 influence on a battlefield".
+
+If an effect chain would cause the first unit to be destroyed, it would trigger its OnDestroyed effect, immediately drawing a card, which would trigger the OnDraw trigger of the other card, gaining influence on a battlefield. Once completed, the effect cain resumes and resolves normally.
+
+## 14. Card Speeds
+
+Cards can have different speeds.
+
+| Speed | Meaning                                                                              |
+| ----- | ------------------------------------------------------------------------------------ |
+| Slow  | Can only be played when you have initiative. Cannot be played during an effect chain |
+| Fast  | Can be played during an effect chain, even if yo udo not have the initiative         |
+
+## 15. Passing
+
+Passing means you choose not to take a normal action.
+
+When both players pass, the action phase ends.
+
+Passing is not definitive for the turn (soft passes) : they will get initiative back if they pass and their opponent performs an action.
+
+## 16. Common Keywords
+
+| Keyword        | Meaning                                                                      |
+| -------------- | ---------------------------------------------------------------------------- |
+| On Enter       | Triggers when the card enters play.                                          |
+| On Destroyed   | Triggers when the unit is destroyed.                                         |
+| On Move        | Triggers when the unit moves, either manually or from a card effect.         |
+| On Attack      | Triggers when the unit attacks.                                              |
+| On Retaliate   | Triggers when the unit retaliates                                            |
+| On Score       | Triggers when the unit scores.                                               |
+| Instant        | Playing this card does not create a chain and doesnt pass initiative.        |
+| Instant Move   | Moving this unit does not create a chain and doesnt pass initiative.         |
+| Instant Attack | Attacking with this unit does not create a chain and doesnt pass initiative. |
+| Instant Score  | Scoring with this card does not create a chain and doesnt pass initiative.   |
+| Taunt          | Enemy units on the smae battle field can only attack this unit.              |
+| Channel        | Does something if a unie is not exhausted at the end of the turn             |
+| Burn X         | Deals X damage at the end of the turn                                        |
+| Rush X         | A player can pay X to ready this unit when it's played                       |
+| Stealth        | This card cannot be attacked as long as its not exhausted.                   |
+| Attacker X     | This unit has +X attack when attackint                                       |
+| Defender X     | This unit has +X attack when retaliating                                     |
+
+## 17. Alternative Scoring Effects
+
+Some cards can add Influence without using the normal Score action.
+
+Examples:
+
+> On Attack: Add 1 Influence to this battlefield.
+
+> When you play your second spell this turn, add 1 Influence to a battlefield.
+
+Unless a card says otherwise, adding Influence through an effect does not make a unit score and does not trigger On Score.

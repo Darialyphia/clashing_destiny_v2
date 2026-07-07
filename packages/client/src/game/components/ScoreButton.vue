@@ -21,7 +21,6 @@ const canInteract = computed(() => {
 });
 
 const onMousedown = (e: MouseEvent) => {
-  console.log(e.button, canInteract.value);
   if (e.button !== 0) return;
   if (!canInteract.value) return;
 
@@ -52,10 +51,17 @@ const onMousedown = (e: MouseEvent) => {
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;
   width: 55px;
-  text-align: center;
+  height: 37px;
+  display: grid;
+  place-content: center;
+  transition: font-size 0.2s var(--ease-3);
 
-  &:not(:disabled):hover {
-    background-color: var(--yellow-2);
+  &:not(:disabled) {
+    animation: score-golden-glow 2s infinite ease-in-out;
+    font-size: var(--font-size-5);
+    &:hover {
+      background-color: var(--yellow-2);
+    }
   }
 }
 
@@ -64,5 +70,17 @@ const onMousedown = (e: MouseEvent) => {
 }
 .lose {
   color: var(--red-6);
+}
+
+@keyframes score-golden-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 3px var(--yellow-4))
+      drop-shadow(0 0 6px var(--yellow-6));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px var(--yellow-3))
+      drop-shadow(0 0 30px var(--yellow-3));
+  }
 }
 </style>
