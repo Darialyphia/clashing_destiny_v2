@@ -56,6 +56,7 @@ import {
   rockSlideGolem,
   terramancer
 } from './core/minions/earth/index';
+import { runicCatalyst } from './core/artifacts/arcane/index';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -104,6 +105,7 @@ export const coreSet: CardSet = {
     vineTrapper,
     impassibleMonk,
     rockSlideGolem,
-    terramancer
+    terramancer,
+    runicCatalyst
   ]
 };

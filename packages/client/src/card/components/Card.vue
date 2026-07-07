@@ -762,7 +762,10 @@ const tint = computed(() => {
 }
 
 .durability {
-  background-image: url('@/assets/ui/card/health.png');
+  background-image: url('@/assets/ui/card/durability.png');
+  right: calc(2px * var(--pixel-scale));
+  text-align: right;
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .kind {

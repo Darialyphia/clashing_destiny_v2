@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { assets } from '@/assets';
+import BlueprintCard from '@/card/components/BlueprintCard.vue';
+import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 const searchQuery = ref('');
 const isMobileMenuActive = ref(false);
 const activeSectionId = ref('overview');
@@ -509,6 +511,11 @@ onUnmounted(() => {
               <span class="i-mdi-crown-outline text-amber-400" />
               Heroes
             </h3>
+
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['erina-violet-witch']"
+              class="mb-4"
+            />
             <p class="mb-3">
               Each deck has one Hero Card. It defines which affinities you are
               able to use in your deck. There are 7 affinities:
@@ -563,11 +570,11 @@ onUnmounted(() => {
                 Neutral
               </span>
             </div>
-            <p class="text-sm text-slate-400">
+            <blockquote style="--color: #d7ad42">
               Heroes also have an ability, whether it's a passive trigger or an
               activated ability. They are revealed at the start of the game and
-              placed on the side.
-            </p>
+              always present on the board, but cannot be interacted with.
+            </blockquote>
           </div>
 
           <!-- Units -->
@@ -578,6 +585,10 @@ onUnmounted(() => {
               <span class="i-mdi-shield-account text-indigo-400" />
               Units
             </h3>
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['pyromancer']"
+              class="mb-4"
+            />
             <p class="mb-3">
               Units enter the board exhausted and can move, attack, use
               abilities, and score. They have three main stats:
@@ -636,6 +647,10 @@ onUnmounted(() => {
             Spells
           </h3>
 
+          <BlueprintCard
+            :blueprint="CARDS_DICTIONARY['fireBall']"
+            class="mb-4"
+          />
           <p class="text-slate-300 leading-relaxed">
             Spells create one-time effects, such as dealing damage, drawing
             cards, moving units, exhausting units, or altering
@@ -650,6 +665,10 @@ onUnmounted(() => {
             Artifacts
           </h3>
 
+          <BlueprintCard
+            :blueprint="CARDS_DICTIONARY['runicCatalyst']"
+            class="mb-4"
+          />
           <p class="text-slate-300 leading-relaxed">
             Artifacts stay in play and provide ongoing effects or activated
             abilities. They have a
@@ -664,6 +683,11 @@ onUnmounted(() => {
             <span class="i-mdi-fountain-pen-tip text-indigo-400" />
             Destinies
           </h3>
+
+          <BlueprintCard
+            :blueprint="CARDS_DICTIONARY['crowds-favor']"
+            class="mb-4"
+          />
 
           <p class="text-sm text-slate-300 leading-relaxed">
             Destiny cards possess symmetrical effects that modify the rules and
@@ -1173,11 +1197,16 @@ onUnmounted(() => {
               class="border border-emerald-500/20 bg-emerald-950/10 p-4 rounded-lg"
             >
               <h3
-                class="font-bold text-emerald-400 flex items-center gap-1.5 text-sm font-serif"
+                class="flex justify-center font-bold text-emerald-400 flex items-center gap-1.5 text-sm font-serif"
               >
                 <span class="i-mdi-check-circle" />
                 Ready State
               </h3>
+
+              <img
+                :src="assets['screenshots/card-awaken'].path"
+                class="mx-auto my-2"
+              />
               <p class="text-sm text-slate-300 mt-2">
                 A ready unit has full energy. It is ready to move, declare
                 attacks, trigger abilities, or score.
@@ -1187,11 +1216,15 @@ onUnmounted(() => {
             <!-- Exhausted Card -->
             <div class="border border-red-500/20 bg-red-950/10 p-4 rounded-lg">
               <h3
-                class="font-bold text-red-400 flex items-center gap-1.5 text-sm font-serif"
+                class="flex justify-center font-bold text-red-400 flex items-center gap-1.5 text-sm font-serif"
               >
                 <span class="i-mdi-power-off" />
                 Exhausted State
               </h3>
+              <img
+                :src="assets['screenshots/card-exhausted'].path"
+                class="mx-auto my-2"
+              />
               <p class="text-sm text-slate-300 mt-2">
                 A unit becomes exhausted immediately when it:
                 <strong class="text-red-300">
