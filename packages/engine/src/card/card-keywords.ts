@@ -156,13 +156,7 @@ export const KEYWORDS = {
   ON_SCORE: {
     id: 'on-score',
     name: 'On Score',
-    description: 'Does something when you win a round on a battlefield this is on.',
-    aliases: []
-  },
-  ON_STRIKE: {
-    id: 'on-strike',
-    name: 'On Strike',
-    description: 'Does something when this card wins a combat.',
+    description: 'Does something when this minion scores.',
     aliases: []
   },
   OVERWHELM: {

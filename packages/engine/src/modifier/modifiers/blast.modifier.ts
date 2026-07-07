@@ -51,6 +51,7 @@ export class BlastModifier extends Modifier<MinionCard> {
               card: this.target,
               timeoutFallback: [elligibleTargets[0]],
               canCancel: false,
+              predicate: card => elligibleTargets.some(target => target.equals(card)),
               aiHints: {
                 shouldPick: () => 1
               }

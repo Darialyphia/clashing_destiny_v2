@@ -6,6 +6,7 @@ import {
   effectTargetRules,
   emptyBoardSpaceTargetRules,
   isSpell,
+  singleEnemyMinionTargetRules,
   singleMinionTargetRules
 } from '../../../../card-utils';
 import {
@@ -183,7 +184,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   id: 'fallingStar',
   name: 'Falling Star',
   description: dedent /*html*/ `
-    Give a minion -2 Commandment this turn and exhaust it.
+    Exhaust a minion at a battlefield. Gain 2 influence on this battlefield.
 
     <rt-runes runes="resonance,resonance,resonance"></rt-runes>This costs 2 less.
   `,
@@ -197,15 +198,17 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   manaCost: 4,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  canPlay: (game, card) => singleMinionTargetRules.canPlay(game, card),
+  canPlay: (game, card) =>
+    singleEnemyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield),
   getTargets: (game, card) =>
-    singleMinionTargetRules.getTargets({
+    singleEnemyMinionTargetRules.getTargets({
       game,
       card,
+      predicate: minion => minion.isOnBattlefield,
       aiHints: {
         shouldPick: () => 1
       },
-      timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card)
+      timeoutFallback: singleEnemyMinionTargetRules.defaultTimeoutFallback(game, card)
     }),
   async onInit(game, card) {
     await card.modifiers.add(
@@ -217,13 +220,8 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   },
   async onPlay(game, card, targets) {
     const minion = targets.cards[0];
-    await minion.modifiers.add(
-      new SimpleCommandmentBuffModifier('fallingStar', game, card, {
-        amount: -2
-      })
-    );
-
     await minion.exhaust();
+    await minion.battlefield?.opponentBattlefield.gainScore(2);
   },
   aiHints: {
     shouldPlay: () => 1

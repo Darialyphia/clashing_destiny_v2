@@ -35,6 +35,8 @@ import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.mo
 import { OnKillModifier } from '../../../../../modifier/modifiers/on-kill.modifier';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { RemoveOnDestroyedMixin } from '../../../../../modifier/mixins/remove-on-destroyed';
+import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
+import { isDefined } from '@game/shared';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
@@ -169,7 +171,7 @@ export const willowisp: MinionBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 1,
   maxHp: 1,
   commandment: 1,
   canPlay: () => true,
@@ -327,8 +329,8 @@ export const indomitableVindicator: MinionBlueprint = {
   id: 'indomitableVindicator',
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
-  <rt-runes runes="might,might"></rt-runes><rt-location locations="battlefield">The first minion you play each turn has <rt-keyword>Rush 1</rt-keyword>.
-  </rt-location>
+  <rt-keyword>On Score</rt-keyword> Deal 1 damage to all minions on this battlefield.
+  <rt-runes runes="might,might,resonance"></rt-runes> When another minion Scores on the same battlefield as this unit, wake up this unit.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -347,23 +349,33 @@ export const indomitableVindicator: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
+      new OnScoreModifier(game, card, {
+        async handler(event) {
+          const battlefield = event.data.battlefield;
+          const targets = [...battlefield.spaces, ...battlefield.opponentSpaces]
+            .map(space => space.card)
+            .filter(isDefined)
+            .filter(isMinion);
+
+          for (const target of targets) {
+            await target.takeDamage(card, new AbilityDamage(1));
+          }
+        }
+      })
+    );
+    await card.modifiers.add(
       new WhileOnBattlefieldModifier<MinionCard>('indomitableVindicator', game, card, {
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {
             might: 2
           }),
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_BEFORE_PLAY,
-            frequencyPerGameTurn: 1,
+            eventName: GAME_EVENTS.AFTER_SCORE,
             filter: event =>
-              event.data.card.player.equals(card.player) && isMinion(event.data.card),
-            async handler(event) {
-              await event.data.card.modifiers.add(
-                new RushModifier(game, card, {
-                  cost: 1,
-                  mixins: [new RemoveOnDestroyedMixin(game)]
-                })
-              );
+              event.data.battlefield.id === card.battlefield?.id &&
+              !event.data.card.equals(card),
+            async handler() {
+              await card.wakeUp();
             }
           })
         ]

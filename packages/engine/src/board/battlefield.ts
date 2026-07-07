@@ -71,6 +71,14 @@ export class Battlefield
     }
   }
 
+  get opponentBattlefield() {
+    if (this.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.opponent.boardSide.leftBattlefield;
+    } else {
+      return this.player.opponent.boardSide.rightBattlefield;
+    }
+  }
+
   async gainScore(amount: number) {
     this._commandmentScore += amount;
   }
