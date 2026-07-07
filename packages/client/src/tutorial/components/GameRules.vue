@@ -1814,6 +1814,39 @@ onUnmounted(() => {
                 remains in a Ready state.
               </p>
             </div>
+            <div class="keyword-block">
+              <div class="keyword-badge text-indigo-400 border-indigo-500/20">
+                Flanking
+              </div>
+              <p class="text-sm text-slate-400 mt-1.5">
+                This unit can move between battlefields.
+              </p>
+            </div>
+            <div class="keyword-block">
+              <div class="keyword-badge text-indigo-400 border-indigo-500/20">
+                Intimidate X
+              </div>
+              <p class="text-sm text-slate-400 mt-1.5">
+                This unit cannot be attacked by minions that cost X or less.
+              </p>
+            </div>
+            <div class="keyword-block">
+              <div class="keyword-badge text-indigo-400 border-indigo-500/20">
+                Protector
+              </div>
+              <p class="text-sm text-slate-400 mt-1.5">
+                Enemies on the same battlefield as this can only attack this
+                unit if able.
+              </p>
+            </div>
+            <div class="keyword-block">
+              <div class="keyword-badge text-indigo-400 border-indigo-500/20">
+                Vulnerable
+              </div>
+              <p class="text-sm text-slate-400 mt-1.5">
+                This unit takes X more damage from all sources.
+              </p>
+            </div>
             <div class="keyword-block flex flex-col justify-between">
               <div>
                 <span class="keyword-badge text-red-400 border-red-500/20">

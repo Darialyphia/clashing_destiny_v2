@@ -9,13 +9,6 @@ export type Keyword = {
 };
 
 export const KEYWORDS = {
-  ASSIST: {
-    id: 'assist',
-    name: 'Assist X',
-    description:
-      'When an ally attacks, you can exhaust this to give the attacking minion +X Power until the end of combat.',
-    aliases: [/assist [0-9]+/]
-  },
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
@@ -198,13 +191,6 @@ export const KEYWORDS = {
     description: 'You may pay X to wake up this minion when it is summoned.',
     aliases: [/rush [0-9]+/]
   },
-  SACRIFICE: {
-    id: 'sacrifice',
-    name: 'Sacrifice',
-    description:
-      "When a minion is sacrificed, its owner doesn't lose HP equal to its Bounty.",
-    aliases: []
-  },
   SCRY: {
     id: 'scry',
     name: 'Scry X',
@@ -271,7 +257,7 @@ export const KEYWORDS = {
   STUNNED: {
     id: 'stunned',
     name: 'Stunned',
-    description: 'This unit is exhausted and has 0 damage until the end of the turn.',
+    description: 'This unit is exhausted and has 0 attack until the end of the turn.',
     aliases: ['Stun']
   },
   TAUNT: {
