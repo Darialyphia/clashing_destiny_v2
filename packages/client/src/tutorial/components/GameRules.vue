@@ -527,13 +527,13 @@ onUnmounted(() => {
                 Water
               </span>
               <span
-                class="affinity bg-emerald-950/40 border border-emerald-500/30 text-emerald-400"
+                class="affinity bg-teal-950/40 border border-teal-500/30 text-teal-400"
               >
                 <img :src="assets[`ui/card/affinity-air`].path" />
                 Air
               </span>
               <span
-                class="affinity bg-amber-950/40 border border-amber-500/30 text-amber-500"
+                class="affinity bg-lime-950/40 border border-lime-500/30 text-lime-500"
               >
                 <img :src="assets[`ui/card/affinity-earth`].path" />
                 Earth
@@ -545,19 +545,19 @@ onUnmounted(() => {
                 Light
               </span>
               <span
-                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
+                class="affinity bg-fuchsia-950/40 border border-fuchsia-500/30 text-fuchsia-400"
               >
-                <img :src="assets[`ui/card/affinity-neutral`].path" />
+                <img :src="assets[`ui/card/affinity-dark`].path" />
                 Dark
               </span>
               <span
-                class="affinity bg-pink-950/40 border border-pink-500/30 text-pink-400"
+                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
               >
                 <img :src="assets[`ui/card/affinity-arcane`].path" />
                 Arcane
               </span>
               <span
-                class="affinity bg-slate-900/40 border border-slate-700/30 text-slate-400"
+                class="affinity bg-slate-900/40 border border-slate-400/30 text-slate-300"
               >
                 <img :src="assets[`ui/card/affinity-neutral`].path" />
                 Neutral
