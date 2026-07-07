@@ -6,12 +6,7 @@ const schema = defaultInputSchema;
 export class SurrenderInput extends Input<typeof schema> {
   readonly name = 'surrender';
 
-  readonly allowedPhases = [
-    GAME_PHASES.DRAW,
-    GAME_PHASES.MAIN,
-    GAME_PHASES.ATTACK,
-    GAME_PHASES.END
-  ];
+  readonly allowedPhases = [GAME_PHASES.DRAW, GAME_PHASES.PLAY_CARD, GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 

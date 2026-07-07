@@ -1,60 +1,45 @@
-import type { MaybePromise } from '@game/shared';
-import type { Game } from '../../game/game';
-
-import type { Player } from '../../player/player.entity';
-import { Interceptable } from '../../utils/interceptable';
-import {
-  type AbilityBlueprint,
-  type ArtifactBlueprint,
-  type PreResponseTarget
-} from '../card-blueprint';
-import { ARTIFACT_KINDS, CARD_EVENTS, type ArtifactKind } from '../card.enums';
-import { CardDeclarePlayEvent } from '../card.events';
+import type { ArtifactBlueprint } from '../card-blueprint';
+import { CARD_EVENTS } from '../card.enums';
+import { CardAfterPlayEvent, CardBeforePlayEvent, CardPlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
-  type AnyCard,
   type CardInterceptors,
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { Ability } from './ability.entity';
+import type { Game } from '../../game/game';
+import type { Player } from '../../player/player.entity';
+import { Interceptable } from '../../utils/interceptable';
+import { PointAOEShape } from '../../aoe/point.aoe-shape';
+import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
 import {
   ARTIFACT_EVENTS,
-  ArtifactDurabilityEvent,
-  ArtifactEquipedEvent
+  ArtifactDurabilityChangeEvent,
+  ArtifactEquippedEvent
 } from '../events/artifact.events';
+import type { BoardSpace } from '../../board/board-space.entity';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedArtifactCard = SerializedCard & {
-  maxDurability: number;
-  durability: number;
-  subKind: ArtifactKind;
+  unplayableReason: string | null;
   manaCost: number;
   baseManaCost: number;
-  abilities: string[];
-  atkBonus: number | null;
+  maxDurability: number;
+  remainingDurability: number;
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
-  canUseAbility: Interceptable<
-    boolean,
-    { card: ArtifactCard; ability: Ability<ArtifactCard> }
-  >;
-  durability: Interceptable<number, ArtifactCard>;
-  attackBonus: Interceptable<number | null, ArtifactCard>;
+  maxDurability: Interceptable<number, ArtifactCard>;
 };
 
 export class ArtifactCard extends Card<
-  SerializedCard,
+  SerializedArtifactCard,
   ArtifactCardInterceptors,
   ArtifactBlueprint
 > {
   private lostDurability = 0;
-
-  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
-
-  readonly abilities: Ability<ArtifactCard>[] = [];
 
   constructor(game: Game, player: Player, options: CardOptions<ArtifactBlueprint>) {
     super(
@@ -63,36 +48,41 @@ export class ArtifactCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canUseAbility: new Interceptable(),
-        durability: new Interceptable(),
-        attackBonus: new Interceptable()
+        maxDurability: new Interceptable()
       },
       options
     );
-
-    this.blueprint.abilities.forEach(ability => {
-      this.abilities.push(
-        new Ability<ArtifactCard>(this.game, this, {
-          ...ability,
-          onResolve: async (...args) => {
-            await ability.onResolve(...args);
-            await this.loseDurability(ability.durabilityCost);
-          }
-        })
-      );
-    });
   }
 
-  get subkind() {
-    return this.blueprint.subKind;
+  canPlay(): boolean {
+    return this.interceptors.canPlay.getValue(
+      this.canPayManaCost &&
+        this.hasUnlockedAffinity &&
+        this.blueprint.canPlay(this.game, this),
+      this
+    );
   }
 
   get maxDurability(): number {
-    return this.interceptors.durability.getValue(this.blueprint.durability, this);
+    return this.interceptors.maxDurability.getValue(this.blueprint.durability, this);
   }
 
   get remainingDurability(): number {
     return this.maxDurability - this.lostDurability;
+  }
+
+  get unplayableReason() {
+    if (!this.canPayManaCost) {
+      return "You don't have enough mana.";
+    }
+
+    return this.canPlay() ? null : 'You cannot play this card.';
+  }
+
+  async checkDurability() {
+    if (this.remainingDurability <= 0) {
+      await this.destroy(this);
+    }
   }
 
   removeFromCurrentLocation(): void {
@@ -100,126 +90,112 @@ export class ArtifactCard extends Card<
     this.lostDurability = 0;
   }
 
-  async checkDurability() {
-    if (this.remainingDurability <= 0) {
-      await this.player.artifactManager.unequip(this);
-    }
+  get potentialPlayPositions() {
+    return this.player.boardSide.base.filter(space => space.isEmpty);
+  }
+
+  private async selectPosition() {
+    const result = await this.game.interaction.selectSpacesOnBoard({
+      source: this,
+      player: this.player,
+      canCancel: true,
+      getLabel: () => 'Select position to summon',
+      isElligible: space => {
+        return this.potentialPlayPositions.includes(space as any);
+      },
+      canCommit(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      isDone(selectedSpaces) {
+        return selectedSpaces.length === 1;
+      },
+      timeoutFallback: [this.potentialPlayPositions[0]],
+      getAOE: () =>
+        new PointAOEShape(this.game, {
+          targetingType: AOE_TARGETING_TYPE.EMPTY,
+          player: this.player
+        })
+    });
+
+    return result;
   }
 
   async loseDurability(amount: number) {
     await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_BEFORE_LOSE_DURABILITY,
-      new ArtifactDurabilityEvent({ card: this, amount })
+      ARTIFACT_EVENTS.ARTIFACT_BEFORE_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount })
     );
 
     this.lostDurability += Math.min(this.maxDurability, this.lostDurability + amount);
     await this.checkDurability();
 
     await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_AFTER_LOSE_DURABILITY,
-      new ArtifactDurabilityEvent({ card: this, amount })
+      ARTIFACT_EVENTS.ARTIFACT_AFTER_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount })
     );
   }
 
   async gainDurability(amount: number) {
     await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_BEFORE_GAIN_DURABILITY,
-      new ArtifactDurabilityEvent({ card: this, amount })
+      ARTIFACT_EVENTS.ARTIFACT_BEFORE_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount: -amount })
     );
 
     this.lostDurability = Math.max(0, this.lostDurability - amount);
     await this.checkDurability();
 
     await this.game.emit(
-      ARTIFACT_EVENTS.ARTIFACT_AFTER_GAIN_DURABILITY,
-      new ArtifactDurabilityEvent({ card: this, amount })
+      ARTIFACT_EVENTS.ARTIFACT_AFTER_DURABILITY_CHANGE,
+      new ArtifactDurabilityChangeEvent({ card: this, amount: -amount })
     );
   }
 
-  get atkBonus(): number | null {
-    return this.interceptors.attackBonus.getValue(
-      this.blueprint.subKind === ARTIFACT_KINDS.WEAPON ? this.blueprint.atkBonus : null,
-      this
-    );
-  }
-
-  canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
-    if (!ability) return false;
-
-    return this.interceptors.canUseAbility.getValue(ability.canUse, {
-      card: this,
-      ability
+  async playAt(position: BoardSpace) {
+    await this.resolve(async () => {
+      await this.equip(position);
     });
   }
 
-  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
-    const targets = this.abilityTargets.get(abilityId);
-    if (!targets) return;
-    if (newTarget instanceof Card) {
-      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
-      if (index === -1) return;
+  private async equip(position: BoardSpace) {
+    this.player.boardSide.placeCardInBase(this, position.index);
 
-      const oldTarget = targets[index] as AnyCard;
-      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
+    await this.blueprint.onPlay(this.game, this);
 
-      targets[index] = newTarget;
-      newTarget.targetBy({ type: 'ability', abilityId, card: this });
-    }
-  }
-
-  addAbility(ability: AbilityBlueprint<ArtifactCard, PreResponseTarget>) {
-    const newAbility = new Ability<ArtifactCard>(this.game, this, ability);
-    this.abilities.push(newAbility);
-    return newAbility;
-  }
-
-  removeAbility(abilityId: string) {
-    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
-    if (index === -1) return;
-    this.abilityTargets.delete(abilityId);
-  }
-
-  canPlay() {
-    return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
-      this
+    await this.game.emit(
+      ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
+      new ArtifactEquippedEvent({ card: this })
     );
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  // immediately plays the minion regardless of current chain or interaction state
+  // doesnt trigger BEFORE_PLAY or AFTER_PLAY events
+  // this is useful when summoning minions as part of another card effect
+  playImmediatelyAt(position: BoardSpace) {
+    return this.resolve(() => this.equip(position));
+  }
+
+  async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardPlayEvent({ card: this })
     );
+    const positionResult = await this.selectPosition();
+    if (positionResult.cancelled) {
+      return { cancelled: true };
+    }
+    await this.playAt(positionResult.result[0] as BoardSpace);
 
-    await this.insertInChainOrExecute(
-      async () => {
-        await this.player.artifactManager.equip(this);
-        this.lostDurability = 0;
-        await this.blueprint.onPlay(this.game, this);
-        await this.game.emit(
-          ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-          new ArtifactEquipedEvent({ card: this })
-        );
-      },
-      {
-        targets: [],
-        onResolved
-      }
-    );
+    return { cancelled: false };
   }
 
-  serialize(): SerializedArtifactCard {
+  serialize() {
     return {
       ...this.serializeBase(),
-      maxDurability: this.maxDurability,
-      durability: this.remainingDurability,
-      subKind: this.subkind,
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
-      abilities: this.abilities.map(a => a.id),
-      atkBonus: this.atkBonus
+      maxDurability: this.maxDurability,
+      remainingDurability: this.remainingDurability,
+      unplayableReason: this.unplayableReason
     };
   }
 }

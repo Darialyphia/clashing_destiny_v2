@@ -1,36 +1,36 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import { CardEffectTriggeredEvent } from '../../card/card.events';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import type {
-  AfterDeclareAttackEvent,
-  AfterDeclareAttackTargetEvent
-} from '../../game/phases/combat.phase';
+import type { AfterDeclareAttackTargetEvent } from '../../game/systems/combat.system';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
+export class OnAttackModifier extends Modifier<MinionCard> {
   constructor(
     game: Game,
     source: AnyCard,
     private options: {
-      mixins?: ModifierMixin<T>[];
-      handler: (event: AfterDeclareAttackTargetEvent, modifier: Modifier<T>) => void;
+      mixins?: ModifierMixin<MinionCard>[];
+      handler: (
+        event: AfterDeclareAttackTargetEvent,
+        modifier: Modifier<MinionCard>
+      ) => void;
     }
   ) {
     super(KEYWORDS.ON_ATTACK.id, game, source, {
       name: KEYWORDS.ON_ATTACK.name,
       description: KEYWORDS.ON_ATTACK.description,
-      icon: 'keyword-on-attack',
+      icon: 'icons/keyword-on-attack',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_ATTACK),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
+          filter: event => event.data.attacker.equals(this.target),
           handler: event => this.onDamage(event)
         }),
         ...(options.mixins || [])
@@ -39,7 +39,6 @@ export class OnAttackModifier<T extends MinionCard | HeroCard> extends Modifier<
   }
 
   private async onDamage(event: AfterDeclareAttackTargetEvent) {
-    if (!event.data.attacker.equals(this.target)) return;
     await this.game.emit(
       GAME_EVENTS.CARD_EFFECT_TRIGGERED,
       new CardEffectTriggeredEvent({

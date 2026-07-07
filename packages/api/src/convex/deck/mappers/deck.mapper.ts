@@ -9,8 +9,7 @@ export class DeckMapper {
       _id: deck.id,
       name: deck.name,
       ownerId: deck.ownerId,
-      mainDeck: deck.mainDeck,
-      destinyDeck: deck.destinyDeck
+      cards: deck.cards
     };
   }
 }

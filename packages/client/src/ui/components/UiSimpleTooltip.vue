@@ -50,13 +50,14 @@ const {
 
 <style lang="postcss" scoped>
 .tooltip-content {
-  background-color: black;
+  background-color: hsla(0, 0%, 0%, 0.8);
   color: #efef9f;
   padding: var(--size-1) var(--size-3);
   font-family: var(--font-system-ui);
   font-size: 14px;
   border: solid 1px #bb8225;
   max-width: 40ch;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 :is(.v-enter-active, .v-leave-active) {

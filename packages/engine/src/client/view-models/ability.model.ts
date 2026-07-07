@@ -23,7 +23,7 @@ export class AbilityViewModel {
     return this.id === unit.id;
   }
 
-  update(data: Partial<SerializedModifier>) {
+  update(data: Partial<SerializedAbility>) {
     this.data = Object.assign({}, this.data, data);
     return this;
   }
@@ -48,8 +48,8 @@ export class AbilityViewModel {
     return this.data.abilityId;
   }
 
-  get name() {
-    return this.data.name;
+  get label() {
+    return this.data.label;
   }
 
   get description() {
@@ -58,14 +58,6 @@ export class AbilityViewModel {
 
   get isHiddenOnCard() {
     return this.data.isHiddenOnCard;
-  }
-
-  get shouldExhaust() {
-    return this.data.shouldExhaust;
-  }
-
-  get speed() {
-    return this.data.speed;
   }
 
   get canUse() {
@@ -78,5 +70,9 @@ export class AbilityViewModel {
 
   get targets() {
     return this.data.targets;
+  }
+
+  get shouldExhaust() {
+    return this.data.shouldExhaust;
   }
 }

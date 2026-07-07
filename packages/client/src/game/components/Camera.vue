@@ -1,33 +1,31 @@
 <script setup lang="ts">
 import UiSwitch from '@/ui/components/UiSwitch.vue';
-import { useFxEvent, useGameUi } from '../composables/useGameClient';
-import { GAME_EVENTS } from '@game/engine/src/game/game.events';
+// import { useFxEvent } from '../composables/useGameClient';
+// import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 // import { useMouse, useWindowSize } from '@vueuse/core';
-
-const ui = useGameUi();
 
 const camera = ref({
   origin: { x: 0, y: 0 },
   scale: 1,
-  angle: { x: 15, y: 0, z: 0 },
-  offset: { x: 0, y: -5 }
+  angle: { x: 0, y: 0, z: 0 },
+  offset: { x: 0, y: 0 }
 });
 
-useFxEvent(GAME_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async () => {
-  const tl = gsap.timeline();
-  tl.to(camera.value.offset, {
-    duration: 0.1,
-    y: 0,
-    ease: Power1.easeOut
-  });
-  tl.to(camera.value.offset, {
-    duration: 0.25,
-    y: -5,
-    ease: Elastic.easeOut.config(1, 0.5)
-  });
+// useFxEvent(GAME_EVENTS.COMBAT_AFTER_RECEIVE_DAMAGE, async () => {
+//   const tl = gsap.timeline();
+//   tl.to(camera.value.offset, {
+//     duration: 0.1,
+//     y: 0,
+//     ease: Power1.easeOut
+//   });
+//   tl.to(camera.value.offset, {
+//     duration: 0.25,
+//     y: -5,
+//     ease: Elastic.easeOut.config(1, 0.5)
+//   });
 
-  tl.play();
-});
+//   tl.play();
+// });
 
 const isTilted = computed({
   get() {
@@ -37,11 +35,11 @@ const isTilted = computed({
     if (value) {
       camera.value.angle.x = 15;
       camera.value.angle.y = 0;
-      camera.value.offset.y = -7;
+      camera.value.offset.y = -5;
     } else {
       camera.value.angle.x = 0;
       camera.value.angle.y = 0;
-      camera.value.offset.y = -2;
+      camera.value.offset.y = 0;
     }
   }
 });
@@ -69,7 +67,7 @@ const isTilted = computed({
         '--board-angle-Z': `${camera.angle.z}deg`
       }"
     >
-      <div class="camera-viewport" :id="ui.DOMSelectors.board.id">
+      <div class="camera-viewport">
         <slot />
       </div>
     </div>
@@ -116,11 +114,11 @@ const isTilted = computed({
   position: absolute;
   pointer-events: auto;
   top: 0;
-  left: 5%;
+  left: 0;
   translate: calc(v-bind('camera.offset.x') * 1%)
     calc(v-bind('camera.offset.y') * 1%);
   transform-style: preserve-3d;
-  width: 90vw;
+  width: 100vw;
   height: 100dvh;
   transition: translate 1s var(--ease-4);
   /* solves some hover detection issues because of 3D transforms */

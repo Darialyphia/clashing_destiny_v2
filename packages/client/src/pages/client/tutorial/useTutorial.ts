@@ -52,6 +52,7 @@ export type UseTutorialOptions = Pick<
 export const useTutorial = (options: UseTutorialOptions) => {
   const game = new Game({
     id: 'sandbox',
+    enableSnapshots: true,
     rngSeed: options.rngSeed,
     history: options.history,
     overrides: {

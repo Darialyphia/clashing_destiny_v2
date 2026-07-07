@@ -84,6 +84,11 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
     this.cards.push(card);
   }
 
+  addAtRandomPosition(card: TCard) {
+    const index = this.game.rngSystem.nextInt(this.cards.length);
+    this.cards.splice(index, 0, card);
+  }
+
   peek(amount: number) {
     return this.cards.slice(0, amount);
   }
@@ -100,5 +105,10 @@ export class Deck<TCard extends AnyCard> extends EntityWithModifiers<EmptyObject
   pluck(card: TCard) {
     this.cards = this.cards.filter(c => !c.equals(card));
     return card;
+  }
+
+  addCardAtRandomPosition(card: TCard) {
+    const index = Math.floor(this.game.rngSystem.next() * (this.cards.length + 1));
+    this.cards.splice(index, 0, card);
   }
 }

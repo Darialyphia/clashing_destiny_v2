@@ -2,7 +2,7 @@
 import type { NetworkAdapter } from '@game/engine/src/client/client';
 import { provideGameClient } from '../composables/useGameClient';
 import { useFxAdapter } from '../composables/useFxAdapter';
-import GameBoard from './GameBoard.vue';
+import GameScene from './GameScene.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { GameInfos } from '@game/api';
 import { useSpectatorSocket } from '../composables/useSpectatorSocket';
@@ -49,7 +49,7 @@ socket.value.on('clockUpdate', updatedClocks => {
 </script>
 
 <template>
-  <GameBoard
+  <GameScene
     v-if="client.isReady"
     :clocks="clocks"
     :options="{
@@ -64,5 +64,5 @@ socket.value.on('clockUpdate', updatedClocks => {
         @click="client.surrender()"
       />
     </template>
-  </GameBoard>
+  </GameScene>
 </template>

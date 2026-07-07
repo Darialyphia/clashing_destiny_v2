@@ -1,37 +1,35 @@
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedCard } from '../../card/entities/card.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
-import type {
-  CardBlueprint,
-  SerializedPreResponseTarget
-} from '../../card/card-blueprint';
+import type { SerializedTargets } from '../../card/card-blueprint';
 import type { PlayerViewModel } from './player.model';
 import type { ModifierViewModel } from './modifier.model';
 import type { GameClientState } from '../controllers/state-controller';
-import { PlayCardAction } from '../actions/play-card';
-import { DeclareAttackAction } from '../actions/declare-attack';
 import {
   CARD_KINDS,
+  type Affinity,
   type CardKind,
-  CARD_DECK_SOURCES,
-  FACTIONS
+  type CardSpeed,
+  type JobId
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
-import { INTERACTION_STATES, COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
+import { INTERACTION_STATES, COMBAT_STEPS } from '../../game/game.enums';
 import { AbilityViewModel } from './ability.model';
-import { DeclareBlockerAction } from '../actions/declare-blocker';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
-import { DeclareRetaliationAction } from '../actions/declare-retaliation';
+import type { BoardSpaceViewModel } from './board-space.model';
+import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
+import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
+import { AttackAction } from '../actions/attack';
+import { DeclareRetaliationAction } from '../actions/retaliate';
 
 type CardData =
   | SerializedSpellCard
-  | SerializedArtifactCard
   | SerializedHeroCard
-  | SerializedMinionCard;
+  | SerializedMinionCard
+  | SerializedArtifactCard;
 
 export type CardActionRule = {
   id: string;
@@ -88,16 +86,15 @@ export class CardViewModel {
     return this.data.description;
   }
 
-  get art(): CardBlueprint['art'][string] {
+  get art() {
     return {
-      dimensions: this.data.art.dimensions,
+      isFullArt: this.data.art.isFullArt,
+      dimensions: 'dimensions' in this.data.art ? this.data.art.dimensions : undefined,
       foil: this.data.art.foil,
       main: `cards/${this.data.art.main}`,
-      frame: `ui/card/frames/${this.data.art.frame}`,
       bg: `cards/${this.data.art.bg}`,
-      breakout: this.data.art.breakout ? `cards/${this.data.art.breakout}` : undefined,
-      foilArt: this.data.art.foilArt ? `cards/${this.data.art.foilArt}` : undefined,
-      tint: this.data.art.tint
+      foilBg: this.data.art.foilBg ? `cards/${this.data.art.foilBg}` : undefined,
+      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined
     };
   }
 
@@ -107,6 +104,10 @@ export class CardViewModel {
 
   get isRevealed() {
     return this.data.isRevealed;
+  }
+
+  get isFoil() {
+    return this.data.isFoil;
   }
 
   get kind() {
@@ -137,12 +138,24 @@ export class CardViewModel {
     return null;
   }
 
-  get manaCost() {
-    if (this.source === CARD_DECK_SOURCES.DESTINY_DECK) {
-      return null;
+  get hasSummoningSickness() {
+    if ('hasSummoningSickness' in this.data) {
+      return this.data.hasSummoningSickness as boolean;
     }
+
+    return false;
+  }
+
+  get manaCost() {
     if ('manaCost' in this.data) {
       return this.data.manaCost as number;
+    }
+    return null;
+  }
+
+  get expCost() {
+    if ('expCost' in this.data) {
+      return this.data.expCost as number;
     }
     return null;
   }
@@ -154,39 +167,39 @@ export class CardViewModel {
     return null;
   }
 
-  get destinyCost() {
-    if (this.source === CARD_DECK_SOURCES.MAIN_DECK) {
-      return null;
+  get jobs() {
+    if ('jobs' in this.data) {
+      return this.data.jobs as JobId[];
     }
-    if ('destinyCost' in this.data) {
-      return this.data.destinyCost as number;
-    }
+    return [];
+  }
 
+  get affinities() {
+    return this.data.affinities as Affinity[];
+  }
+
+  get speed() {
+    if ('speed' in this.data) {
+      return this.data.speed as CardSpeed;
+    }
+    return null;
+  }
+  get advancedAffinity() {
+    if ('advancedAffinity' in this.data) {
+      return this.data.advancedAffinity as Affinity | null;
+    }
     return null;
   }
 
-  get baseDestinyCost() {
-    if ('baseDestinyCost' in this.data) {
-      return this.data.baseDestinyCost as number;
+  get subKind() {
+    if ('subKind' in this.data) {
+      return this.data.subKind as string;
     }
-
     return null;
-  }
-
-  get faction() {
-    return this.data.faction as keyof typeof FACTIONS;
   }
 
   get unplayableReason() {
     return this.data.unplayableReason;
-  }
-
-  get canBeUsedAsManaCost() {
-    return this.data.canBeUsedAsManaCost;
-  }
-
-  get source() {
-    return this.data.source;
   }
 
   get location() {
@@ -196,10 +209,6 @@ export class CardViewModel {
   get atk() {
     if ('atk' in this.data) {
       return this.data.atk as number;
-    }
-
-    if ('atkBonus' in this.data) {
-      return this.data.atkBonus as number | null;
     }
 
     return null;
@@ -236,10 +245,6 @@ export class CardViewModel {
     return null;
   }
 
-  get speed() {
-    return this.data.speed;
-  }
-
   get level() {
     if ('level' in this.data) {
       return this.data.level as number;
@@ -262,6 +267,21 @@ export class CardViewModel {
   get baseSpellpower() {
     if ('baseSpellPower' in this.data) {
       return this.data.baseSpellPower as number;
+    }
+    return null;
+  }
+
+  get commandment() {
+    if ('commandment' in this.data) {
+      return this.data.commandment as number;
+    }
+
+    return null;
+  }
+
+  get baseBounty() {
+    if ('baseBounty' in this.data) {
+      return this.data.baseBounty as number;
     }
     return null;
   }
@@ -290,11 +310,42 @@ export class CardViewModel {
     return [];
   }
 
+  get potentialMoveTargets() {
+    if ('potentialMoveTargets' in this.data) {
+      return (
+        this.data.potentialMoveTargets as SerializedMinionCard['potentialMoveTargets']
+      ).map(spaceId => {
+        return this.getEntities()[spaceId] as BoardSpaceViewModel;
+      });
+    }
+
+    return [];
+  }
+
+  get canScore() {
+    if ('canScore' in this.data) {
+      return this.data.canScore as boolean;
+    }
+
+    return false;
+  }
+
   get canAttack() {
     return (
       this.player.id === this.getClient().state.currentPlayer &&
       this.potentialAttackTargets.length > 0
     );
+  }
+
+  canAttackAt(card: CardViewModel) {
+    if (!this.canAttack) return false;
+    return this.potentialAttackTargets.some(target => target.id === card.id);
+  }
+
+  canMoveTo(space: BoardSpaceViewModel) {
+    if (!this.canMove) return false;
+
+    return this.potentialMoveTargets.some(target => target.id === space.id);
   }
 
   get canBlock() {
@@ -321,9 +372,8 @@ export class CardViewModel {
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      state.phase.state === GAME_PHASES.ATTACK &&
-      state.phase.ctx.step === COMBAT_STEPS.DECLARE_TARGET &&
-      state.phase.ctx.potentialTargets.some(id => id === this.id) &&
+      state.combat.step === COMBAT_STEPS.DECLARE_TARGET &&
+      state.combat.potentialTargets.some(id => id === this.id) &&
       client.getActivePlayerId() === client.playerId;
 
     return canSelect || canAttack;
@@ -338,27 +388,33 @@ export class CardViewModel {
       return null;
     }
 
-    return this.player.hand.findIndex(card => card.cardId === this.id);
+    return this.player.hand.findIndex(card => card.id === this.id);
   }
 
   get preResponseTargets() {
     if ('preResponseTargets' in this.data) {
-      return this.data.preResponseTargets as SerializedPreResponseTarget[];
+      return this.data.preResponseTargets as SerializedTargets[];
     }
 
     return null;
   }
 
   get isAttacking() {
-    const relevantKinds: CardKind[] = [CARD_KINDS.MINION, CARD_KINDS.HERO];
+    const relevantKinds: CardKind[] = [CARD_KINDS.MINION];
     if (!relevantKinds.includes(this.kind)) {
       return false;
     }
     const state = this.getClient().state;
 
-    return (
-      state.phase.state === GAME_PHASES.ATTACK && state.phase.ctx.attacker === this.id
-    );
+    return state.combat.attacker === this.id;
+  }
+
+  get canMove() {
+    if ('canMove' in this.data) {
+      return this.data.canMove as boolean;
+    }
+
+    return false;
   }
 
   get player() {
@@ -374,31 +430,43 @@ export class CardViewModel {
   play() {
     const hand = this.player.hand;
 
-    const index = hand.findIndex(card => card.cardId === this.id);
+    const index = hand.findIndex(card => card.id === this.id);
     if (index === -1) return;
 
     this.getClient().declarePlayCard(this);
   }
 
-  get actions(): CardActionRule[] {
-    const actions = [
-      new PlayCardAction(this.getClient()),
-      new DeclareAttackAction(this.getClient()),
-      new DeclareBlockerAction(this.getClient()),
-      new DeclareRetaliationAction(this.getClient()),
-      ...this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability))
-    ].filter(rule => rule.predicate(this));
-
-    return actions;
-  }
-
   get abilities() {
     if ('abilities' in this.data) {
-      return (this.data.abilities as string[]).map(
-        ability => this.getEntities()[ability] as AbilityViewModel
-      );
+      return (this.data.abilities as string[]).map(ability => {
+        return this.getEntities()[ability] as AbilityViewModel;
+      });
     }
 
     return [];
+  }
+
+  get abilityActions() {
+    return this.abilities.map(ability => new UseAbilityAction(this.getClient(), ability));
+  }
+
+  get hasAction() {
+    return this.canMove || this.canAttack || this.abilityActions.length > 0;
+  }
+
+  get clickActions() {
+    return [
+      new AttackAction(this.getClient()),
+      new SelectCardOnBoardAction(this.getClient())
+    ];
+  }
+
+  get retaliateAction() {
+    return new DeclareRetaliationAction(this.getClient());
+  }
+
+  get currentClickAction() {
+    const state = this.getClient().stateManager.state;
+    return this.clickActions.find(action => action.predicate(this, state));
   }
 }

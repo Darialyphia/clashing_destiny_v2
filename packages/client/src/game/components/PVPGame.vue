@@ -5,7 +5,7 @@ import { useGameSocket } from '../composables/useGameSocket';
 import { provideGameClient } from '../composables/useGameClient';
 import { useFxAdapter } from '../composables/useFxAdapter';
 import { useMe } from '@/auth/composables/useMe';
-import GameBoard from './GameBoard.vue';
+import GameScene from './GameScene.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 
@@ -53,7 +53,7 @@ socket.value.on('clockUpdate', updatedClocks => {
 </script>
 
 <template>
-  <GameBoard
+  <GameScene
     v-if="client.isReady"
     :clocks="clocks"
     :options="{
@@ -68,7 +68,7 @@ socket.value.on('clockUpdate', updatedClocks => {
         @click="client.surrender()"
       />
     </template>
-  </GameBoard>
+  </GameScene>
   <p v-else>Waiting for initial state...</p>
   <UiModal
     :is-opened="isDefined(socketError)"

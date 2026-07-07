@@ -5,13 +5,18 @@ import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError } from '../game-error';
 
-type AskQuestionContextOptions = {
+export type AskQuestionContextOptions = {
   questionId: string;
   player: Player;
   source: AnyCard;
-  choices: Array<{ id: string; label: string }>;
+  choices: Array<{
+    id: string;
+    label: string;
+    aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
+  }>;
   label: string;
   timeoutFallback: string;
+  canCancel: boolean;
 };
 export class AskQuestionContext {
   static async create(game: Game, options: AskQuestionContextOptions) {
@@ -22,7 +27,11 @@ export class AskQuestionContext {
 
   private selectedChoice: Nullable<{ id: string; label: string }> = null;
 
-  private choices: Array<{ id: string; label: string }> = [];
+  private choices: Array<{
+    id: string;
+    label: string;
+    aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
+  }> = [];
 
   readonly player: Player;
 
@@ -36,7 +45,7 @@ export class AskQuestionContext {
 
   private constructor(
     private game: Game,
-    options: AskQuestionContextOptions
+    private options: AskQuestionContextOptions
   ) {
     this.choices = options.choices;
     this.player = options.player;
@@ -53,19 +62,38 @@ export class AskQuestionContext {
       questionId: this.questionId,
       player: this.player.id,
       source: this.source.id,
-      choices: this.choices,
-      label: this.label
+      choices: this.choices.map(choice => ({ id: choice.id, label: choice.label })),
+      label: this.label,
+      canCancel: this.options.canCancel
     };
   }
 
-  commit(player: Player, id: string | null) {
+  async commit(player: Player, id: string | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
 
     this.selectedChoice = this.choices.find(
       choice => choice.id === (id ?? this.timeoutFallback)
     );
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION);
-    this.game.interaction.onInteractionEnd();
-    this.game.inputSystem.unpause(this.selectedChoice!.id);
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_ASKING_QUESTION,
+      {}
+    );
+    this.game.inputSystem.unpause({
+      cancelled: false,
+      result: this.selectedChoice!.id
+    });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
+      {}
+    );
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
+  }
+
+  getChoices() {
+    return [...this.choices];
   }
 }

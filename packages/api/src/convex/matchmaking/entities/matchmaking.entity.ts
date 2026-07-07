@@ -77,7 +77,7 @@ export class Matchmaking extends Entity<MatchmakingId, MatchmakingData> {
     this.participants.forEach(user => {
       matchmaking.join(
         {
-          id: user.userId as string,
+          id: user.userId,
           isDemotionGame: false,
           isPromotionGame: false,
           lossStreak: 0,

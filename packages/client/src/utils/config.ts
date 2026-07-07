@@ -34,6 +34,11 @@ export const config = {
     height: 80
   },
 
+  BOARD_SIZE: {
+    x: 1920,
+    y: 1080
+  },
+
   MOVEMENT_BOUNCE_HEIGHT: 0.5,
   MOVEMENT_SPEED_PER_TILE: 0.3,
 

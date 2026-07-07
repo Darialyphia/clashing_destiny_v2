@@ -1,32 +1,29 @@
 import type { MaybePromise, Serializable } from '@game/shared';
-import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
 import {
-  serializePreResponseTarget,
+  serializeTargets,
   type AbilityBlueprint,
-  type PreResponseTarget,
-  type SerializedAbility
+  type SerializedAbility,
+  type Targets
 } from '../card-blueprint';
 import { EFFECT_TYPE, GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { ArtifactCard } from './artifact.entity';
 import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
-import { Card } from './card.entity';
 import { Entity } from '../../entity';
-import { CARD_SPEED } from '../card.enums';
-import type { SigilCard } from './sigil.entity';
-import type { SpellCard } from './spell.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
   ABILITY_EVENTS,
   AbilityAfterUseEvent,
   AbilityBeforeUseEvent
 } from '../events/ability.events';
+import { nanoid } from 'nanoid';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard | SigilCard | SpellCard;
+export type AbilityOwner = MinionCard | HeroCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;
+  shouldCreateChain: Interceptable<boolean, Ability<T>>;
+  canUseDuringChain: Interceptable<boolean, Ability<T>>;
 };
 
 export class Ability<T extends AbilityOwner>
@@ -35,13 +32,17 @@ export class Ability<T extends AbilityOwner>
 {
   _isSealed = false;
 
+  private targets: Targets | null = null;
+
   constructor(
     private game: Game,
     readonly card: T,
-    public blueprint: AbilityBlueprint<T, PreResponseTarget>
+    public blueprint: AbilityBlueprint<T, any>
   ) {
     super(`${card.id}-${blueprint.id}`, {
-      manaCost: new Interceptable()
+      manaCost: new Interceptable(),
+      shouldCreateChain: new Interceptable(),
+      canUseDuringChain: new Interceptable()
     });
   }
 
@@ -49,36 +50,24 @@ export class Ability<T extends AbilityOwner>
     return this.blueprint.id;
   }
 
-  get speed() {
-    return this.blueprint.speed;
-  }
-
-  get shouldExhaust() {
-    return this.blueprint.shouldExhaust;
-  }
-
   get manaCost(): number {
     return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
   }
 
-  get canUseDuringChain() {
-    return this.speed !== CARD_SPEED.SLOW;
+  get shouldCreateChain(): boolean {
+    return this.interceptors.shouldCreateChain.getValue(true, this);
+  }
+
+  get canUseDuringChain(): boolean {
+    return this.interceptors.canUseDuringChain.getValue(true, this);
   }
 
   get canUse() {
     if (this._isSealed) return false;
 
-    if (this.game.effectChainSystem.currentChain && !this.canUseDuringChain) {
-      return false;
-    }
+    const authorizedPhases: GamePhase[] = [GAME_PHASES.MAIN];
 
-    const authorizedPhases: GamePhase[] = [
-      GAME_PHASES.MAIN,
-      GAME_PHASES.ATTACK,
-      GAME_PHASES.END
-    ];
-
-    const exhaustCondition = this.shouldExhaust ? !this.card.isExhausted : true;
+    const exhaustCondition = !this.card.isExhausted;
     const timingCondition = this.game.interaction.isInteractive(this.card.player);
 
     return (
@@ -95,60 +84,58 @@ export class Ability<T extends AbilityOwner>
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
     );
-    const abilityTargets = this.card.abilityTargets.get(this.blueprint.id) ?? [];
-    await this.blueprint.onResolve(this.game, this.card, abilityTargets, this);
-    abilityTargets.forEach(target => {
-      if (target instanceof Card) {
-        target.clearTargetedBy({ type: 'card', card: this.card });
-      }
-    });
-    this.card.abilityTargets.delete(this.blueprint.id);
+
+    await this.blueprint.onResolve(this.game, this.card, this.targets!, this);
 
     await this.game.emit(
       ABILITY_EVENTS.ABILITY_AFTER_USE,
       new AbilityAfterUseEvent({ card: this.card, abilityId: this.abilityId })
     );
+
+    this.targets = null;
   }
 
   protected async insertInChainOrExecute(
-    targets: PreResponseTarget[],
+    targets: Targets,
     onResolved?: () => MaybePromise<void>
   ) {
-    const effect = {
-      id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
-      type: EFFECT_TYPE.ABILITY,
-      source: this.card,
-      targets,
-      handler: async () => {
-        await this.resolveEffect();
+    if (this.shouldCreateChain) {
+      const effect = {
+        id: `effect-${this.game.effectChainSystem.currentChain?.stack.length ?? 0}-${nanoid(4)}`,
+        type: EFFECT_TYPE.ABILITY,
+        source: this.card,
+        targets,
+        handler: async () => {
+          await this.resolveEffect();
+        }
+      };
+
+      if (this.game.effectChainSystem.currentChain) {
+        await this.game.effectChainSystem.addEffect(effect, this.card.player);
+      } else {
+        await this.game.effectChainSystem.createChain({
+          initialPlayer: this.card.player,
+          initialEffect: effect,
+          onResolved
+        });
       }
-    };
-
-    if (this.speed === CARD_SPEED.BURST) {
-      await effect.handler();
-      return this.game.inputSystem.askForPlayerInput();
-    }
-
-    if (this.game.effectChainSystem.currentChain) {
-      await this.game.effectChainSystem.addEffect(effect, this.card.player);
     } else {
-      await this.game.effectChainSystem.createChain({
-        initialPlayer: this.card.player,
-        initialEffect: effect,
-        onResolved
-      });
+      await this.resolveEffect();
     }
   }
 
   async use(onResolved?: () => MaybePromise<void>) {
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this.card);
-    this.card.abilityTargets.set(this.blueprint.id, targets);
+    const targetsResult = await this.blueprint.getTargets(this.game, this.card);
+    if (targetsResult.cancelled) return;
+    this.targets = targetsResult.result;
 
-    if (this.shouldExhaust) {
+    if (this.blueprint.shouldExhaust) {
       await this.card.exhaust();
     }
 
-    await this.insertInChainOrExecute(targets, onResolved);
+    await this.insertInChainOrExecute(this.targets, onResolved);
+
+    await onResolved?.();
   }
 
   seal() {
@@ -166,13 +153,11 @@ export class Ability<T extends AbilityOwner>
       abilityId: this.abilityId,
       canUse: this.canUse,
       description: this.blueprint.description,
-      name: this.blueprint.label,
+      label: this.blueprint.label,
       manaCost: this.manaCost,
-      speed: this.speed,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
-      shouldExhaust: this.shouldExhaust,
-      targets:
-        this.card.abilityTargets.get(this.id)?.map(serializePreResponseTarget) ?? []
+      targets: this.targets ? serializeTargets(this.targets) : null,
+      shouldExhaust: !!this.blueprint.shouldExhaust
     };
   }
 }

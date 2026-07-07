@@ -19,3 +19,13 @@ for (const [path, url] of Object.entries(rawAssets)) {
 
   assets[cleanedPath] = new Asset(url.default);
 }
+
+export const preloadAsset = (path: string) => {
+  const img = new Image();
+  img.src = assets[path].path;
+
+  return new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = err => reject(err);
+  });
+};

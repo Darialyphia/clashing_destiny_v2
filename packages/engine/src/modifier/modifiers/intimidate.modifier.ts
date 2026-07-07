@@ -1,5 +1,5 @@
 import { KEYWORDS } from '../../card/card-keywords';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
+import { CARD_KINDS } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
@@ -17,9 +17,10 @@ export class IntimidateModifier<T extends MinionCard | HeroCard> extends Modifie
     options: { level: number; mixins?: ModifierMixin<T>[] }
   ) {
     super(KEYWORDS.INTIMIDATE.id, game, source, {
-      name: 'Intimidate',
-      description: `This card has Intimidate ${options.level}.`,
-      icon: 'keyword-intimidate',
+      name: KEYWORDS.INTIMIDATE.name,
+      description: () =>
+        KEYWORDS.INTIMIDATE.description.replace('X', options.level.toString()),
+      icon: 'icons/keyword-intimidate',
       isUnique: false,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.INTIMIDATE),
@@ -29,7 +30,7 @@ export class IntimidateModifier<T extends MinionCard | HeroCard> extends Modifie
           key: 'canBeAttacked',
           interceptor: (value, { attacker }) => {
             if (!value) return value;
-            if (attacker.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) return value;
+            if (attacker.kind === CARD_KINDS.HERO) return value;
 
             return attacker.manaCost > options.level;
           }

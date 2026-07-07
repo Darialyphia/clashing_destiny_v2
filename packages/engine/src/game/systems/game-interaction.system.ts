@@ -7,21 +7,31 @@ import {
 } from '@game/shared';
 
 import type { Game } from '../game';
-import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
 import { CorruptedInteractionContextError } from '../game-error';
 import type { Player } from '../../player/player.entity';
-import { SelectingCardOnBoardContext } from '../interactions/selecting-cards-on-board.interaction';
-import { ChoosingCardsContext } from '../interactions/choosing-cards.interaction';
+import {
+  SelectingCardOnBoardContext,
+  type SelectingCardOnBoardContextOptions
+} from '../interactions/selecting-cards-on-board.interaction';
+import {
+  ChoosingCardsContext,
+  type ChoosingCardsContextOptions
+} from '../interactions/choosing-cards.interaction';
 import { IdleContext } from '../interactions/idle.interaction';
-import { CARD_DECK_SOURCES } from '../../card/card.enums';
-import { PlayCardContext } from '../interactions/play-card.interaction';
 import { IllegalCardPlayedError } from '../../input/input-errors';
-import { UseAbilityContext } from '../interactions/use-ability.interaction';
-import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import {
+  UseAbilityContext,
+  type UseAbilityContextOptions
+} from '../interactions/use-ability.interaction';
 import { GAME_EVENTS } from '../game.events';
 import { CardDeclareUseAbilityEvent } from '../../card/card.events';
-import { AskQuestionContext } from '../interactions/ask-question.interaction';
 import {
+  AskQuestionContext,
+  type AskQuestionContextOptions
+} from '../interactions/ask-question.interaction';
+import {
+  INTERACTION_EVENTS,
   INTERACTION_STATE_TRANSITIONS,
   INTERACTION_STATES,
   type InteractionState,
@@ -29,9 +39,18 @@ import {
 } from '../game.enums';
 import {
   RearrangeCardsContext,
-  type RearrangeCardBucket
+  type RearrangeCardsContextOptions
 } from '../interactions/rearrange-cards.interaction';
-import { ChooseChainEffectContext } from '../interactions/choose-chain-effect';
+import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import {
+  SelectingSpaceOnBoardContext,
+  type SelectingSpaceOnBoardContextOptions
+} from '../interactions/selecting-space-on-board';
+import type { BoardSpace } from '../../board/board-space.entity';
+import {
+  ChooseChainEffectContext,
+  type ChoosingChainEffectContextOptions
+} from '../interactions/choosing-chain-effect';
 import type { Effect } from '../effect-chain';
 
 export type InteractionContext =
@@ -44,16 +63,16 @@ export type InteractionContext =
       ctx: SelectingCardOnBoardContext;
     }
   | {
+      state: BetterExtract<InteractionState, 'select_space_on_board'>;
+      ctx: SelectingSpaceOnBoardContext;
+    }
+  | {
       state: BetterExtract<InteractionState, 'choosing_cards'>;
       ctx: ChoosingCardsContext;
     }
   | {
       state: BetterExtract<InteractionState, 'choosing_chain_effect'>;
       ctx: ChooseChainEffectContext;
-    }
-  | {
-      state: BetterExtract<InteractionState, 'playing_card'>;
-      ctx: PlayCardContext;
     }
   | {
       state: BetterExtract<InteractionState, 'using_ability'>;
@@ -78,16 +97,16 @@ export type SerializedInteractionContext =
       ctx: ReturnType<SelectingCardOnBoardContext['serialize']>;
     }
   | {
+      state: Extract<InteractionState, 'select_space_on_board'>;
+      ctx: ReturnType<SelectingSpaceOnBoardContext['serialize']>;
+    }
+  | {
       state: Extract<InteractionState, 'choosing_cards'>;
       ctx: ReturnType<ChoosingCardsContext['serialize']>;
     }
   | {
       state: Extract<InteractionState, 'choosing_chain_effect'>;
       ctx: ReturnType<ChooseChainEffectContext['serialize']>;
-    }
-  | {
-      state: Extract<InteractionState, 'playing_card'>;
-      ctx: ReturnType<PlayCardContext['serialize']>;
     }
   | {
       state: Extract<InteractionState, 'using_ability'>;
@@ -101,6 +120,22 @@ export type SerializedInteractionContext =
       state: Extract<InteractionState, 'rearranging_cards'>;
       ctx: ReturnType<RearrangeCardsContext['serialize']>;
     };
+
+export type InteractionEventMap = {
+  [INTERACTION_EVENTS.INTERACTION_BEFORE_CHANGE_STATE]: InteractionBeforeChangeEvent;
+  [INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE]: InteractionAfterChangeEvent;
+};
+
+export type InteractionResult<T> =
+  | {
+      cancelled: false;
+      result: T;
+    }
+  | {
+      cancelled: true;
+      result: null;
+    };
+
 export class GameInteractionSystem
   extends StateMachine<InteractionState, InteractionStateTransition>
   implements Serializable<SerializedInteractionContext>
@@ -108,22 +143,22 @@ export class GameInteractionSystem
   private ctxDictionary = {
     [INTERACTION_STATES.IDLE]: IdleContext,
     [INTERACTION_STATES.SELECTING_CARDS_ON_BOARD]: SelectingCardOnBoardContext,
+    [INTERACTION_STATES.SELECTING_SPACE_ON_BOARD]: SelectingSpaceOnBoardContext,
     [INTERACTION_STATES.CHOOSING_CARDS]: ChoosingCardsContext,
-    [INTERACTION_STATES.CHOOSING_CHAIN_EFFECT]: ChooseChainEffectContext,
-    [INTERACTION_STATES.PLAYING_CARD]: PlayCardContext,
     [INTERACTION_STATES.USING_ABILITY]: UseAbilityContext,
     [INTERACTION_STATES.ASK_QUESTION]: AskQuestionContext,
+    [INTERACTION_STATES.CHOOSING_CHAIN_EFFECT]: ChooseChainEffectContext,
     [INTERACTION_STATES.REARRANGING_CARDS]: RearrangeCardsContext
   } as const;
 
   private _ctx:
     | IdleContext
     | SelectingCardOnBoardContext
+    | SelectingSpaceOnBoardContext
     | ChoosingCardsContext
-    | ChooseChainEffectContext
-    | PlayCardContext
     | UseAbilityContext
     | AskQuestionContext
+    | ChooseChainEffectContext
     | RearrangeCardsContext;
 
   constructor(private game: Game) {
@@ -135,10 +170,32 @@ export class GameInteractionSystem
         INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
       ),
       stateTransition(
+        INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATES.IDLE
+      ),
+
+      stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
         INTERACTION_STATES.CHOOSING_CARDS
       ),
+      stateTransition(
+        INTERACTION_STATES.CHOOSING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
+        INTERACTION_STATES.IDLE
+      ),
+      stateTransition(
+        INTERACTION_STATES.CHOOSING_CARDS,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
+        INTERACTION_STATES.IDLE
+      ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT,
@@ -150,30 +207,27 @@ export class GameInteractionSystem
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
-        INTERACTION_STATES.SELECTING_CARDS_ON_BOARD,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD,
+        INTERACTION_STATES.CHOOSING_CHAIN_EFFECT,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CHAIN_EFFECT,
         INTERACTION_STATES.IDLE
       ),
-      stateTransition(
-        INTERACTION_STATES.CHOOSING_CARDS,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
-        INTERACTION_STATES.IDLE
-      ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
-        INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD,
-        INTERACTION_STATES.PLAYING_CARD
+        INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
       ),
       stateTransition(
-        INTERACTION_STATES.PLAYING_CARD,
-        INTERACTION_STATE_TRANSITIONS.COMMIT_PLAYING_CARD,
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
         INTERACTION_STATES.IDLE
       ),
       stateTransition(
-        INTERACTION_STATES.PLAYING_CARD,
-        INTERACTION_STATE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
+        INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,
         INTERACTION_STATES.IDLE
       ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY,
@@ -189,6 +243,7 @@ export class GameInteractionSystem
         INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
         INTERACTION_STATES.IDLE
       ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION,
@@ -204,6 +259,7 @@ export class GameInteractionSystem
         INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
         INTERACTION_STATES.IDLE
       ),
+
       stateTransition(
         INTERACTION_STATES.IDLE,
         INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS,
@@ -256,142 +312,171 @@ export class GameInteractionSystem
     } as InteractionContext & { state: T };
   }
 
-  async selectCardsOnBoard<T extends AnyCard>(options: {
-    isElligible: (candidate: AnyCard, selectedCards: AnyCard[]) => boolean;
-    label: string;
-    canCommit: (selectedCards: AnyCard[]) => boolean;
-    isDone(selectedCards: AnyCard[]): boolean;
-    player: Player;
-    origin: CardTargetOrigin;
-    timeoutFallback: AnyCard[];
-  }) {
+  async sendTransition(transition: InteractionStateTransition, options: any) {
+    const previousState = this.getState();
+    const nextState = this.getNextState(transition);
+
+    await this.game.emit(
+      INTERACTION_EVENTS.INTERACTION_BEFORE_CHANGE_STATE,
+      new InteractionBeforeChangeEvent({
+        from: previousState,
+        to: nextState!
+      })
+    );
+
+    this.dispatch(transition);
+
+    this._ctx = await this.ctxDictionary[nextState!].create(this.game, options);
+
+    await this.game.emit(
+      INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE,
+      new InteractionAfterChangeEvent({
+        from: previousState,
+        to: this.getContext()
+      })
+    );
+  }
+
+  async selectCardsOnBoard<T extends AnyCard>(
+    options: SelectingCardOnBoardContextOptions
+  ) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD);
     this._ctx = await this.ctxDictionary[
       INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
     ].create(this.game, options);
 
-    return this.game.inputSystem.pause<T[]>();
+    return this.game.inputSystem.pause<InteractionResult<T[]>>();
   }
 
-  async chooseCards<T extends AnyCard>(options: {
-    player: Player;
-    minChoiceCount: number;
-    maxChoiceCount: number;
-    choices: AnyCard[];
-    label: string;
-    timeoutFallback: AnyCard[];
-  }) {
+  async selectSpacesOnBoard<TCancellable extends boolean>(
+    options: SelectingSpaceOnBoardContextOptions<TCancellable>
+  ) {
+    type ReturnValue = TCancellable extends true
+      ? InteractionResult<BoardSpace[]>
+      : InteractionResult<BoardSpace[]> & { cancelled: false };
+
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_SELECTING_SPACE_ON_BOARD,
+      options
+    );
+
+    const { ctx } = this.getContext<'select_space_on_board'>();
+    if (ctx.elligibleSpaces.length === 0) {
+      await this.sendTransition(
+        INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
+        {}
+      );
+      return {
+        cancelled: false,
+        result: []
+      } as unknown as ReturnValue;
+    } else {
+      return this.game.inputSystem.pause<ReturnValue>();
+    }
+  }
+
+  async chooseCards<T extends AnyCard, TCancellable extends boolean>(
+    options: ChoosingCardsContextOptions<TCancellable>
+  ) {
+    type ReturnValue = TCancellable extends true
+      ? InteractionResult<T[]>
+      : InteractionResult<T[]> & { cancelled: false };
+
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T[]>();
+    return this.game.inputSystem.pause<ReturnValue>();
   }
 
-  async chooseChainEffect(options: {
-    player: Player;
-    isElligible: (effect: Effect) => boolean;
-    label: string;
-  }) {
+  async chooseChainEffect<TCancellable extends boolean>(
+    options: ChoosingChainEffectContextOptions<TCancellable>
+  ) {
+    type ReturnValue = TCancellable extends true
+      ? InteractionResult<Effect>
+      : InteractionResult<Effect> & { cancelled: false };
+
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CHAIN_EFFECT].create(
       this.game,
       options
     );
-    return this.game.inputSystem.pause<Effect>();
+    return this.game.inputSystem.pause<ReturnValue>();
   }
 
-  async rearrangeCards<
-    T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>
-  >(options: {
-    player: Player;
-    buckets: RearrangeCardBucket[];
-    label: string;
-    source: AnyCard;
-  }) {
+  async rearrangeCards<T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>>(
+    options: RearrangeCardsContextOptions
+  ) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.REARRANGING_CARDS].create(
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T>();
+    return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
-  async askQuestion<T extends string = string>(options: {
-    player: Player;
-    choices: Array<{ id: string; label: string }>;
-    source: AnyCard;
-    label: string;
-    questionId: string;
-    timeoutFallback: string;
-  }) {
+  async askQuestion<T extends string = string>(options: AskQuestionContextOptions) {
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(
       this.game,
       options
     );
-    return this.game.inputSystem.pause<T>();
+    return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
-  async declarePlayCardIntent(card: AnyCard, player: Player) {
+  async declareUseAbilityIntent(options: UseAbilityContextOptions) {
     assert(
       this.getState() === INTERACTION_STATES.IDLE,
       new CorruptedInteractionContextError()
     );
 
-    assert(this.isInteractive(player), new IllegalCardPlayedError());
+    assert(this.isInteractive(options.player), new IllegalCardPlayedError());
 
-    assert(card, new IllegalCardPlayedError());
-    assert(card.canPlay(), new IllegalCardPlayedError());
-
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_PLAYING_CARD);
-
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.PLAYING_CARD].create(
-      this.game,
-      {
-        card,
-        player
-      }
-    );
-    if (card.manaCost === 0 || card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK) {
-      await this._ctx.commit(this._ctx.player, []);
-    }
-
-    await this.game.inputSystem.askForPlayerInput();
-  }
-
-  async declareUseAbilityIntent(ability: Ability<AbilityOwner>, player: Player) {
-    assert(
-      this.getState() === INTERACTION_STATES.IDLE,
-      new CorruptedInteractionContextError()
-    );
-
-    assert(this.isInteractive(player), new IllegalCardPlayedError());
-
-    assert(ability.canUse, new IllegalCardPlayedError());
+    assert(options.ability.canUse, new IllegalCardPlayedError());
     this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
     this._ctx = await this.ctxDictionary[INTERACTION_STATES.USING_ABILITY].create(
       this.game,
-      {
-        ability,
-        player
-      }
+      options
     );
     await this.game.emit(
       GAME_EVENTS.CARD_DECLARE_USE_ABILITY,
       new CardDeclareUseAbilityEvent({
-        card: ability.card,
-        abilityId: ability.abilityId
+        card: options.ability.card,
+        abilityId: options.ability.abilityId
       })
     );
-    if (ability.manaCost === 0) {
-      await this._ctx.commit(this._ctx.player, []);
-    }
-    await this.game.inputSystem.askForPlayerInput();
+    await this._ctx.commit(this._ctx.player);
   }
 
   onInteractionEnd() {
     this._ctx = new IdleContext(this.game);
+  }
+}
+
+export class InteractionBeforeChangeEvent extends TypedSerializableEvent<
+  { from: InteractionState; to: InteractionState },
+  { from: InteractionState; to: InteractionState }
+> {
+  serialize() {
+    return {
+      from: this.data.from,
+      to: this.data.to
+    };
+  }
+}
+
+export class InteractionAfterChangeEvent extends TypedSerializableEvent<
+  { from: InteractionState; to: InteractionContext },
+  { from: InteractionState; to: SerializedInteractionContext }
+> {
+  serialize() {
+    return {
+      from: this.data.from,
+      to: {
+        state: this.data.to.state,
+        ctx: this.data.to.ctx.serialize() as any // Type assertion to match SerializedInteractionStateContext
+      }
+    };
   }
 }

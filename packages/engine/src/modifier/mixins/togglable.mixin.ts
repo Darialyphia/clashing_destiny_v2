@@ -1,4 +1,7 @@
+import type { CardLocation, JobId } from '../../card/card.enums';
+import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
+import type { RuneCost } from '../../player/components/rune-manager.component';
 import { ModifierMixin } from '../modifier-mixin';
 import type { Modifier, ModifierTarget } from '../modifier.entity';
 
@@ -32,5 +35,42 @@ export class TogglableModifierMixin<T extends ModifierTarget> extends ModifierMi
     }
   }
 
-  onReapplied() {}
+  async onReapplied() {}
+}
+
+export class JobBonusToggleModifierMixin<
+  T extends AnyCard
+> extends TogglableModifierMixin<T> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    private jobId: JobId
+  ) {
+    super(game, () => source.player.hero?.hasJob(this.jobId));
+  }
+}
+
+export class RuneCostToggleModifierMixin<
+  T extends AnyCard
+> extends TogglableModifierMixin<T> {
+  constructor(
+    game: Game,
+    source: AnyCard,
+    private cost: RuneCost
+  ) {
+    super(game, () => source.player.runeManager.has(this.cost));
+  }
+}
+
+export class LocationToggleModifierMixin<
+  T extends AnyCard
+> extends TogglableModifierMixin<T> {
+  constructor(
+    game: Game,
+    private location: CardLocation[]
+  ) {
+    super(game, () =>
+      this.location.some(location => this.modifier.target.location === location)
+    );
+  }
 }

@@ -1,24 +1,17 @@
-import { type Serializable } from '@game/shared';
 import type { AnyCard } from '../card/entities/card.entity';
 import { System } from '../system';
-import type { BoardSide, SerializedBoardSide } from './board-side.entity';
-import { CARD_DECK_SOURCES } from '../card/card.enums';
+import type { BoardSide } from './board-side.entity';
+import type { BoardRow } from './board-space.entity';
 
 export type MinionSlot = number;
 
-export const isMainDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
+export type BoardCoordinates = {
+  playerId: string;
+  zone: BoardRow;
+  index: number;
 };
 
-export const isDestinyDeckCard = (card: AnyCard) => {
-  return card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
-};
-
-export type SerializedBoard = {
-  sides: [SerializedBoardSide, SerializedBoardSide];
-};
-
-export class BoardSystem extends System<never> implements Serializable<SerializedBoard> {
+export class BoardSystem extends System<never> {
   initialize() {}
   shutdown() {}
 
@@ -28,17 +21,22 @@ export class BoardSystem extends System<never> implements Serializable<Serialize
       this.game.playerSystem.player2.boardSide
     ];
   }
+
   getAllCardsInPlay(): AnyCard[] {
     return this.sides.flatMap(side => side.getAllCardsInPlay());
   }
 
-  serialize(): SerializedBoard {
-    return {
-      sides: this.sides.map(side => side.serialize()) as unknown as [
-        SerializedBoardSide,
-        SerializedBoardSide
-      ]
-    };
+  get boardSpaces() {
+    return this.sides.flatMap(side => side.allSpaces);
+  }
+
+  getBoardSpaceById(id: string) {
+    return this.boardSpaces.find(space => space.id === id) ?? null;
+  }
+
+  getBoardSpaceAt({ playerId, zone, index }: BoardCoordinates) {
+    const side = this.sides.find(side => side.player.id === playerId);
+    return side?.getSpace(zone, index) ?? null;
   }
 }
 

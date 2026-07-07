@@ -22,7 +22,6 @@ const listSetNames = async () => {
 const listCardFiles = async (dirPath: string): Promise<string[]> => {
   const dirents = await fs.readdir(dirPath, { withFileTypes: true });
   const files: string[] = [];
-
   await Promise.all(
     dirents.map(async dirent => {
       const resolvedPath = path.join(dirPath, dirent.name);
@@ -34,7 +33,7 @@ const listCardFiles = async (dirPath: string): Promise<string[]> => {
       if (!dirent.isFile()) return;
       if (!resolvedPath.endsWith('.ts')) return;
       if (resolvedPath.endsWith(setFileSuffix)) return;
-      if (dirent.name === 'index.ts') return;
+      // if (dirent.name === 'index.ts') return;
 
       files.push(resolvedPath);
     })
@@ -43,33 +42,34 @@ const listCardFiles = async (dirPath: string): Promise<string[]> => {
   return files.sort();
 };
 
-const extractIdentifier = (fileContent: string, filePath: string): string | null => {
-  const match = fileContent.match(/export const (\w+)/);
-  if (!match) {
+const extractIdentifiers = (fileContent: string, filePath: string): string[] => {
+  const matches = [...fileContent.matchAll(/export const (\w+)/g)];
+  if (matches.length === 0) {
     console.warn(`[card-sets] No export const found in ${filePath}`);
-    return null;
+    return [];
   }
 
-  return match[1];
+  return matches.map(match => match[1]);
 };
 
 const buildCardEntries = async (setName: string, setFilePath: string) => {
   const setFolder = path.join(setsDir, setName);
   const cardFiles = await listCardFiles(setFolder);
-
   const entries: CardEntry[] = [];
 
   for (const filePath of cardFiles) {
     const fileContent = await fs.readFile(filePath, 'utf8');
-    const identifier = extractIdentifier(fileContent, filePath);
-    if (!identifier) continue;
+    const identifiers = extractIdentifiers(fileContent, filePath);
+    if (identifiers.length === 0) continue;
 
     const relativePath = path
       .relative(path.dirname(setFilePath), filePath)
       .replace(/\.ts$/, '');
     const importPath = `./${toPosixPath(relativePath)}`;
 
-    entries.push({ identifier, importPath, filePath });
+    for (const identifier of identifiers) {
+      entries.push({ identifier, importPath, filePath });
+    }
   }
 
   const uniqueEntries = new Map<string, CardEntry>();
@@ -140,12 +140,15 @@ const parseCardsArray = (content: string) => {
   }
 
   const arrayContent = content.slice(openIndex + 1, closeIndex);
-  const existingCards = arrayContent
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith('//'))
-    .map(line => line.replace(/,$/, '').trim())
-    .filter(line => /^[A-Za-z_]\w*$/.test(line));
+  // Extract all valid identifiers from the array content using a regex
+  // This handles both single-line (comma-separated) and multi-line formats
+  const identifierRegex = /\b([A-Za-z_]\w*)\b/g;
+  const existingCards: string[] = [];
+  let match = identifierRegex.exec(arrayContent);
+  while (match) {
+    existingCards.push(match[1]);
+    match = identifierRegex.exec(arrayContent);
+  }
 
   return { arrayContent, openIndex, closeIndex, existingCards };
 };
@@ -209,7 +212,7 @@ const insertMissingImports = (content: string, missingImports: CardEntry[]) => {
   let lastImportIndex = -1;
 
   lines.forEach((line, index) => {
-    if (line.startsWith('import ')) {
+    if (/from\s+['"][^'"]+['"]\s*;?\s*$/.test(line.trim())) {
       lastImportIndex = index;
     }
   });
@@ -231,7 +234,6 @@ const insertMissingImports = (content: string, missingImports: CardEntry[]) => {
 
 const updateSetFile = async (setName: string) => {
   const setFilePath = path.join(setsDir, `${setName}${setFileSuffix}`);
-
   if (!(await fs.pathExists(setFilePath))) {
     console.warn(`[card-sets] Set file missing: ${setFilePath}`);
     return false;
@@ -298,11 +300,38 @@ const runGenerateCards = async () => {
   });
 };
 
+const runPrettierOnSetFiles = async () => {
+  const setNames = await listSetNames();
+  const setFiles = setNames.map(name => path.join(setsDir, `${name}${setFileSuffix}`));
+  const existingFiles = await Promise.all(
+    setFiles.map(async filePath => ((await fs.pathExists(filePath)) ? filePath : null))
+  );
+  const filesToFormat = existingFiles.filter(Boolean) as string[];
+
+  if (filesToFormat.length === 0) return;
+
+  console.log('[card-sets] Running prettier on set files...');
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn('npx', ['prettier', '--write', ...filesToFormat], {
+      cwd: process.cwd(),
+      stdio: 'inherit',
+      shell: true
+    });
+
+    child.on('close', code => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`[card-sets] prettier exited with code ${code}`));
+      }
+    });
+  });
+};
+
 const runOnce = async () => {
-  const changed = await updateAllSets();
-  if (changed) {
-    await runGenerateCards();
-  }
+  await updateAllSets();
+  await runGenerateCards();
+  await runPrettierOnSetFiles();
 };
 
 const startWatcher = async () => {
@@ -310,7 +339,7 @@ const startWatcher = async () => {
 
   const watcher = chokidar.watch(path.join(setsDir, '**/*.ts'), {
     ignoreInitial: true,
-    ignored: [new RegExp(`${setFileSuffix.replace('.', '\\.')}$`), /\/index\.ts$/]
+    ignored: [new RegExp(`${setFileSuffix.replace('.', '\\.')}$`)]
   });
 
   let scheduled: NodeJS.Timeout | undefined;

@@ -1,4 +1,6 @@
-import type { AttackTarget } from '../game/phases/combat.phase';
+import type { Battlefield } from '../board/battlefield';
+import type { BoardSpace, SerializedBoardSpace } from '../board/board-space.entity';
+import type { AttackTarget } from '../game/systems/combat.system';
 import type { CombatDamage, Damage, DamageType } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS, CardLocation } from './card.enums';
@@ -108,7 +110,7 @@ export class CardLeaveBoardEvent extends TypedSerializableEvent<
   }
 }
 
-export class CardDeclarePlayEvent extends TypedSerializableEvent<
+export class CardPlayEvent extends TypedSerializableEvent<
   { card: AnyCard },
   { card: SerializedCard }
 > {
@@ -213,7 +215,7 @@ export class CardChangeLocationEvent extends TypedSerializableEvent<
 }
 
 export class CardBeforeTakeDamageEvent extends TypedSerializableEvent<
-  { card: MinionCard | HeroCard; source: AnyCard; damage: Damage; amount: number },
+  { card: MinionCard; source: AnyCard; damage: Damage; amount: number },
   {
     card: string;
     source: string;
@@ -236,7 +238,7 @@ export class CardBeforeTakeDamageEvent extends TypedSerializableEvent<
 
 export class CardAfterTakeDamageEvent extends TypedSerializableEvent<
   {
-    card: MinionCard | HeroCard;
+    card: MinionCard;
     source: AnyCard;
     damage: Damage;
     isFatal: boolean;
@@ -275,6 +277,43 @@ export class CardRevealEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardBeforeMoveEvent extends TypedSerializableEvent<
+  { card: AnyCard; to: BoardSpace },
+  { card: string; to: SerializedBoardSpace }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      to: this.data.to.serialize()
+    };
+  }
+}
+
+export class CardAfterMoveEvent extends TypedSerializableEvent<
+  { card: AnyCard; to: BoardSpace; from: BoardSpace },
+  { card: string; to: SerializedBoardSpace; from: SerializedBoardSpace }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      to: this.data.to.serialize(),
+      from: this.data.from.serialize()
+    };
+  }
+}
+
+export class CardScoreEvent extends TypedSerializableEvent<
+  { card: AnyCard; battlefield: Battlefield },
+  { card: string; battlefield: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      battlefield: this.data.battlefield.id
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -285,7 +324,7 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_PLAY]: CardAfterPlayEvent;
   [CARD_EVENTS.CARD_BEFORE_DESTROY]: CardBeforeDestroyEvent;
   [CARD_EVENTS.CARD_AFTER_DESTROY]: CardAfterDestroyEvent;
-  [CARD_EVENTS.CARD_DECLARE_PLAY]: CardDeclarePlayEvent;
+  [CARD_EVENTS.CARD_DECLARE_PLAY]: CardPlayEvent;
   [CARD_EVENTS.CARD_DECLARE_USE_ABILITY]: CardDeclareUseAbilityEvent;
   [CARD_EVENTS.CARD_DISPOSED]: CardDisposedEvent;
   [CARD_EVENTS.CARD_EFFECT_TRIGGERED]: CardEffectTriggeredEvent;
@@ -297,4 +336,8 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE]: CardAfterTakeDamageEvent;
   [CARD_EVENTS.CARD_BEFORE_REVEAL]: CardRevealEvent;
   [CARD_EVENTS.CARD_AFTER_REVEAL]: CardRevealEvent;
+  [CARD_EVENTS.CARD_BEFORE_MOVE]: CardBeforeMoveEvent;
+  [CARD_EVENTS.CARD_AFTER_MOVE]: CardAfterMoveEvent;
+  [CARD_EVENTS.BEFORE_SCORE]: CardScoreEvent;
+  [CARD_EVENTS.AFTER_SCORE]: CardScoreEvent;
 };

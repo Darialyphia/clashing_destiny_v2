@@ -1,5 +1,5 @@
-import type { TutorialMission } from '.';
 import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
+import type { TutorialMission } from '.';
 
 const meta: {
   allyHero: HeroCard | null;
@@ -17,21 +17,21 @@ export const destinyCardsTutorial: TutorialMission = {
       {
         id: 'p1',
         name: 'You',
-        mainDeck: {
-          cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
-        },
-        destinyDeck: {
-          cards: ['aiden-lv1']
+        deck: {
+          cards: Array.from({ length: 30 }, () => ({
+            blueprintId: 'courageous-footsoldier',
+            isFoil: false
+          }))
         }
       },
       {
         id: 'p2',
         name: 'Opponent',
-        mainDeck: {
-          cards: Array.from({ length: 30 }, () => 'courageous-footsoldier')
-        },
-        destinyDeck: {
-          cards: ['aiden-lv1']
+        deck: {
+          cards: Array.from({ length: 30 }, () => ({
+            blueprintId: 'courageous-footsoldier',
+            isFoil: false
+          }))
         }
       }
     ],
@@ -46,7 +46,9 @@ export const destinyCardsTutorial: TutorialMission = {
       // client.ui.displayedElements.phaseTracker = false;
 
       meta.allyHero = game.playerSystem.player1.hero;
-      meta.allyHero.abilities.splice(0, -1);
+      meta.allyHero.abilityManager.abilities.forEach(ability =>
+        meta.allyHero?.abilityManager.removeAbility(ability.id)
+      );
       meta.enemyHero = game.playerSystem.player2.hero;
     },
     steps: {

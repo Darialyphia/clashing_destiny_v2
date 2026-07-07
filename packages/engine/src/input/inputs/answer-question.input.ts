@@ -9,14 +9,14 @@ const schema = defaultInputSchema.extend({
 export class AnswerQuestionInput extends Input<typeof schema> {
   readonly name = 'answerQuestion';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.PLAY_CARD];
 
   protected payloadSchema = schema;
 
-  impl() {
+  async impl() {
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['ASK_QUESTION']>();
 
-    interactionContext.ctx.commit(this.player, this.payload.id);
+    await interactionContext.ctx.commit(this.player, this.payload.id);
   }
 }

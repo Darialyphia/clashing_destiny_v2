@@ -22,7 +22,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  mix-blend-mode: plus-lighter;
+  mix-blend-mode: screen;
   background: linear-gradient(
     45deg,
     rgb(255, 119, 115),

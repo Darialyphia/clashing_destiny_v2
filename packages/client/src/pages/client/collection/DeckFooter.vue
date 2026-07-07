@@ -63,7 +63,7 @@ const { copy, copied } = useClipboard({
         <div class="surface">
           <p class="text-center my-4 text-4">Deck Code</p>
           <pre
-            class="bg-black/20 p-4 rounded text-center break-all select-all"
+            class="bg-black/20 p-4 rounded text-center break-all select-all mx-auto"
             >{{ deckBuilder.deckCode }}</pre
           >
           <footer class="flex justify-center mt-6 gap-6">

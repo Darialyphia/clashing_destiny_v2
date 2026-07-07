@@ -10,11 +10,11 @@ const { card, showEmptyState = true } = defineProps<{
 const isOpened = defineModel<boolean>('isOpened', { required: true });
 watchEffect(() => {
   if (!isOpened.value) return;
-  if (card.actions.length === 0) {
-    setTimeout(() => {
-      isOpened.value = false;
-    }, 2000);
-  }
+  // if (card.actions.length === 0) {
+  //   setTimeout(() => {
+  //     isOpened.value = false;
+  //   }, 2000);
+  // }
 });
 
 const ui = useGameUi();
@@ -22,8 +22,8 @@ const ui = useGameUi();
 
 <template>
   <div class="actions-list">
-    <p v-if="!card.actions.length && showEmptyState">No actions available</p>
-    <button
+    <!-- <p v-if="!card.actions.length && showEmptyState">No actions available</p> -->
+    <!-- <button
       v-for="action in card.actions"
       :key="action.id"
       class="action"
@@ -36,7 +36,7 @@ const ui = useGameUi();
       "
     >
       <CardText :text="action.getLabel(card)" />
-    </button>
+    </button> -->
   </div>
 </template>
 

@@ -3,6 +3,8 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
 import Card from './Card.vue';
 import { isFunction } from '@game/shared';
+import { type JobId } from '@game/engine/src/card/card.enums';
+import { provideRichTextContext } from '@/game/composables/useRichText';
 
 const {
   blueprint,
@@ -18,6 +20,10 @@ const mergedFoilOptions = computed(() => ({
   ...blueprint.art.default.foil,
   ...foilOverrides
 }));
+
+provideRichTextContext({
+  card: ref(null)
+});
 </script>
 
 <template>
@@ -30,35 +36,25 @@ const mergedFoilOptions = computed(() => ({
         : blueprint.description,
       art: {
         foil: mergedFoilOptions,
-        dimensions: blueprint.art.default.dimensions,
         bg: `cards/${blueprint.art.default.bg}`,
         main: `cards/${blueprint.art.default.main}`,
-        breakout: blueprint.art.default.breakout
-          ? `cards/${blueprint.art.default.breakout}`
-          : undefined,
-        foilArt: blueprint.art.default.foilArt
-          ? `cards/${blueprint.art.default.foilArt}`
-          : undefined,
-        frame: `ui/card/frames/${blueprint.art.default.frame}`,
-        tint: blueprint.art.default.tint
+        isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
-      destinyCost: (blueprint as any).destinyCost,
+      expCost: (blueprint as any).expCost,
+      baseExpCost: (blueprint as any).baseExpCost,
       rarity: (blueprint as any).rarity,
-      atk:
-        (blueprint as any).atk ??
-        (blueprint as any).damage ??
-        (blueprint as any).atkBonus,
+      atk: (blueprint as any).atk,
       hp: (blueprint as any).maxHp,
-      countdown: (blueprint as any).maxCountdown,
-      spellpower: (blueprint as any).spellPower,
-      level: (blueprint as any).level,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
-      speed: blueprint.speed,
-      faction: blueprint.faction
+      jobs: blueprint.jobs.map(job => job.id as JobId),
+      tags: blueprint.tags,
+      affinities: blueprint.affinities,
+      speed: (blueprint as any).speed,
+      commandment: (blueprint as any).commandment
     }"
     :is-tilt-enabled="isTiltEnabled"
   />

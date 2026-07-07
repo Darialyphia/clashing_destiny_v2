@@ -13,6 +13,12 @@ export class CardNotFoundError extends GameError {
   }
 }
 
+export class SpaceNotFoundError extends GameError {
+  constructor() {
+    super('Space not found.');
+  }
+}
+
 export class NotEnoughCardsInDestinyZoneError extends InputError {
   constructor() {
     super('Not enough cards in destiny zone.');
@@ -25,6 +31,11 @@ export class NotEnoughCardsInHandError extends InputError {
   }
 }
 
+export class NotEnoughManaError extends InputError {
+  constructor() {
+    super('Not enough mana.');
+  }
+}
 export class NoTalentSlotAvailableError extends InputError {
   constructor() {
     super('No talent slot available.');

@@ -2,7 +2,7 @@ import { type EmptyObject, type MaybePromise, type Values } from '@game/shared';
 import type { InputDispatcher, SerializedInput } from '../input/input-system';
 import type {
   GameStateSnapshot,
-  SnapshotDiff
+  PatchBasedSnapshotDiff
 } from '../game/systems/game-snapshot.system';
 import type {
   SerializedOmniscientState,
@@ -19,8 +19,9 @@ import {
 import { UiController } from './controllers/ui-controller';
 import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
+import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
-import { INTERACTION_STATES } from '../game/game.enums';
+import type { Rune } from '../player/player.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -31,30 +32,28 @@ export type GameType = Values<typeof GAME_TYPES>;
 
 export type GameStateEntities = Record<
   string,
-  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
+  | PlayerViewModel
+  | CardViewModel
+  | ModifierViewModel
+  | AbilityViewModel
+  | BoardSpaceViewModel
 >;
 
 export type OnSnapshotUpdateCallback = (
-  snapshot: GameStateSnapshot<SnapshotDiff>
+  snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>
 ) => MaybePromise<void>;
 
 export type NetworkAdapter = {
   dispatch: InputDispatcher;
   subscribe(cb: OnSnapshotUpdateCallback): void;
-  sync: (lastSnapshotId: number) => Promise<Array<GameStateSnapshot<SnapshotDiff>>>;
+  sync: (
+    lastSnapshotId: number
+  ) => Promise<Array<GameStateSnapshot<PatchBasedSnapshotDiff>>>;
 };
 
 export type FxAdapter = {
   onDeclarePlayCard: (card: CardViewModel, client: GameClient) => MaybePromise<void>;
   onCancelPlayCard: (card: CardViewModel, client: GameClient) => MaybePromise<void>;
-  onSelectCardForManaCost: (
-    card: CardViewModel,
-    client: GameClient
-  ) => MaybePromise<void>;
-  onUnselectCardForManaCost: (
-    card: CardViewModel,
-    client: GameClient
-  ) => MaybePromise<void>;
 };
 
 export type GameClientOptions = {
@@ -84,7 +83,7 @@ export class GameClient {
 
   private lastSnapshotId = -1;
 
-  private snapshots = new Map<number, GameStateSnapshot<SnapshotDiff>>();
+  private snapshots = new Map<number, GameStateSnapshot<PatchBasedSnapshotDiff>>();
 
   private _isPlayingFx = false;
 
@@ -92,13 +91,13 @@ export class GameClient {
 
   private _processingUpdate = false;
 
-  private queue: Array<GameStateSnapshot<SnapshotDiff>> = [];
+  private queue: Array<GameStateSnapshot<PatchBasedSnapshotDiff>> = [];
 
   history: SerializedInput[] = [];
 
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
-    updateCompleted: GameStateSnapshot<SnapshotDiff>;
+    updateCompleted: GameStateSnapshot<PatchBasedSnapshotDiff>;
   }>('sequential');
 
   readonly isSpectator: boolean = false;
@@ -120,12 +119,11 @@ export class GameClient {
       console.log('events', snapshot.events);
       console.groupEnd();
       this.queue.push(snapshot);
-      if (this._processingUpdate) return;
+      if (this._processingUpdate || !this.isReady) return;
       await this.processQueue();
     });
 
-    this.cancelPlayCard = this.cancelPlayCard.bind(this);
-    this.commitPlayCard = this.commitPlayCard.bind(this);
+    this.cancelInteraction = this.cancelInteraction.bind(this);
   }
 
   get nextSnapshotId() {
@@ -167,7 +165,6 @@ export class GameClient {
     ) {
       return this.stateManager.state.effectChain.player;
     }
-
     return this.stateManager.state.interaction.ctx.player;
   }
 
@@ -179,6 +176,9 @@ export class GameClient {
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
     history: SerializedInput[] = []
   ) {
+    console.groupCollapsed('Initializing Game Client');
+    console.log('Initial Snapshot:', snapshot);
+    console.groupEnd();
     this.isReady = false;
     this.history = history;
     this.lastSnapshotId = -1;
@@ -204,7 +204,7 @@ export class GameClient {
     await this.sync();
   }
 
-  async update(snapshot: GameStateSnapshot<SnapshotDiff>) {
+  async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
@@ -229,12 +229,10 @@ export class GameClient {
       }
 
       for (const event of snapshot.events) {
-        await this.stateManager.onEvent(event, async postUpdateCallback => {
-          await this.emitter.emit('update', {});
-          await postUpdateCallback?.();
-        });
-
+        await this.stateManager.onEvent(event);
+        await this.ui.onEvent(event);
         await this.fx.emit(event.eventName, event.event);
+        await this.emitter.emit('update', {});
       }
       this._isPlayingFx = false;
 
@@ -256,7 +254,7 @@ export class GameClient {
     return () => this.emitter.off('update', cb);
   }
 
-  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
+  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
     this.emitter.on('updateCompleted', cb);
     return () => this.emitter.off('updateCompleted', cb);
   }
@@ -298,45 +296,9 @@ export class GameClient {
     });
   }
 
-  cancelPlayCard() {
-    if (this.state.interaction.state !== INTERACTION_STATES.PLAYING_CARD) return;
-
+  cancelInteraction() {
     this.dispatch({
-      type: 'cancelPlayCard',
-      payload: { playerId: this.state.currentPlayer }
-    });
-    const playedCard = this.state.entities[
-      this.state.interaction.ctx.card
-    ] as CardViewModel;
-
-    void this.fxAdapter.onCancelPlayCard(playedCard, this);
-  }
-
-  commitPlayCard() {
-    this.dispatch({
-      type: 'commitPlayCard',
-      payload: {
-        playerId: this.playerId,
-        manaCostIndices: this.ui.selectedManaCostIndices
-      }
-    });
-  }
-
-  commitUseAbility() {
-    this.dispatch({
-      type: 'commitUseAbility',
-      payload: {
-        playerId: this.playerId,
-        manaCostIndices: this.ui.selectedManaCostIndices
-      }
-    });
-  }
-
-  cancelUseAbility() {
-    if (this.state.interaction.state !== INTERACTION_STATES.USING_ABILITY) return;
-
-    this.dispatch({
-      type: 'cancelUseAbility',
+      type: 'cancelInteraction',
       payload: { playerId: this.state.currentPlayer }
     });
   }
@@ -399,16 +361,6 @@ export class GameClient {
     });
   }
 
-  declareBlocker(blockerId: string) {
-    this.dispatch({
-      type: 'declareBlocker',
-      payload: {
-        blockerId,
-        playerId: this.playerId
-      }
-    });
-  }
-
   surrender() {
     this.dispatch({
       type: 'surrender',
@@ -418,11 +370,40 @@ export class GameClient {
     });
   }
 
+  commitSpaceSelection() {
+    this.dispatch({
+      type: 'commitSpaceSelection',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
+  takeResourceAction(action: { type: 'rune'; rune: Rune } | { type: 'draw' }) {
+    this.dispatch({
+      type: 'takeResourceAction',
+      payload: {
+        playerId: this.playerId,
+        action
+      }
+    });
+  }
+
   declareRetaliation() {
     this.dispatch({
       type: 'declareRetaliation',
       payload: {
         playerId: this.playerId
+      }
+    });
+  }
+
+  score(minionId: string) {
+    this.dispatch({
+      type: 'score',
+      payload: {
+        playerId: this.playerId,
+        minionId
       }
     });
   }

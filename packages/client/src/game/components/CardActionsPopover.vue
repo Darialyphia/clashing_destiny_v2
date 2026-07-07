@@ -4,17 +4,11 @@ import {
   PopoverRoot,
   PopoverAnchor,
   PopoverPortal,
-  PopoverContent,
   type PopoverContentProps
 } from 'reka-ui';
-import CardActions from './CardActions.vue';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 const {
   cardId,
-  actionsOffset = -50,
-  actionsSide,
-  actionsAlign,
-  showActionEmptyState = true,
   isInteractive = true,
   usePortal = true,
   portalTarget = '#card-actions-portal'
@@ -59,11 +53,10 @@ const isActionsPopoverOpened = computed({
       :disabled="
         !usePortal ||
         card.location === CARD_LOCATIONS.HAND ||
-        card.location === CARD_LOCATIONS.DISCARD_PILE ||
-        card.location === CARD_LOCATIONS.BANISH_PILE
+        card.location === CARD_LOCATIONS.DISCARD_PILE
       "
     >
-      <PopoverContent
+      <!-- <PopoverContent
         :side-offset="actionsOffset"
         :side="actionsSide"
         :align="actionsAlign"
@@ -73,7 +66,7 @@ const isActionsPopoverOpened = computed({
           v-model:is-opened="isActionsPopoverOpened"
           :show-empty-state="showActionEmptyState"
         />
-      </PopoverContent>
+      </PopoverContent> -->
     </PopoverPortal>
   </PopoverRoot>
 </template>

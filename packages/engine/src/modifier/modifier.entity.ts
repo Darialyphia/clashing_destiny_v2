@@ -207,9 +207,9 @@ export class Modifier<T extends ModifierTarget>
     );
     this._stacks += stacks;
     if (this.isEnabled) {
-      this.mixins.forEach(mixin => {
-        mixin.onReapplied(target, this);
-      });
+      for (const mixin of this.mixins) {
+        await mixin.onReapplied(target, this, stacks, this._stacks - stacks);
+      }
     }
 
     await this.game.emit(

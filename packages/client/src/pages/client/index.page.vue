@@ -47,6 +47,8 @@ const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
           :to="{ name: 'Boosters' }"
         />
       </template>
+
+      <FancyButton text="Learn how to Play" :to="{ name: 'TutorialHome' }" />
     </div>
   </div>
 </template>

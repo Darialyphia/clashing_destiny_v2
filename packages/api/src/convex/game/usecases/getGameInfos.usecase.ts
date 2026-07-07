@@ -26,8 +26,7 @@ export type GetGameInfosOutput = {
       id: UserId;
       username: string;
       deck: {
-        mainDeck: Array<{ blueprintId: string }>;
-        destinyDeck: Array<{ blueprintId: string }>;
+        cards: Array<{ blueprintId: string; isFoil: boolean }>;
       };
     };
   }>;
@@ -89,17 +88,14 @@ export class GetGameInfosUseCase
     const deck = await this.ctx.deckReadRepo.getById(player.deckId);
     if (!deck) throw new AppError('Deck not found');
 
-    const mainDeckCards = await this.buildDeckCards(deck.mainDeck);
-    const destinyDeckCards = await this.buildDeckCards(deck.destinyDeck);
-
+    const cards = await this.buildDeckCards(deck.cards);
     return {
       id: player._id,
       user: {
         id: user._id,
         username: user.username,
         deck: {
-          mainDeck: mainDeckCards,
-          destinyDeck: destinyDeckCards
+          cards
         }
       }
     };
@@ -109,7 +105,8 @@ export class GetGameInfosUseCase
     const cardPromises = deckCards.map(async ({ cardId, copies }) => {
       const card = await this.ctx.cardReadRepo.getById(cardId);
       return Array.from({ length: copies }).map(() => ({
-        blueprintId: card!.blueprintId
+        blueprintId: card!.blueprintId,
+        isFoil: card!.isFoil
       }));
     });
 

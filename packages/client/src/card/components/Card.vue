@@ -2,16 +2,15 @@
 import {
   RARITIES,
   type CardKind,
-  type CardSpeed,
-  type CardTint,
-  type Faction,
-  type Rarity
+  type Rarity,
+  type JobId,
+  type Affinity,
+  type CardSpeed
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardText from '@/card/components/CardText.vue';
 import { until, useResizeObserver } from '@vueuse/core';
 import CardGlare from './CardGlare.vue';
-import { match } from 'ts-pattern';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilSheen from './foil/FoilSheen.vue';
 import FoilOil from './foil/FoilOil.vue';
@@ -21,6 +20,9 @@ import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
+import type { CardArt } from '@game/engine/src/card/card-blueprint';
+import FoilBrightShine from './foil/FoilBrightShine.vue';
+import { getJobById } from '@game/engine/src/card/card.enums';
 
 const {
   card,
@@ -34,47 +36,23 @@ const {
     id: string;
     name: string;
     description: string;
-    art: {
-      foil: {
-        sheen?: boolean;
-        oil?: boolean;
-        gradient?: boolean;
-        lightGradient?: boolean;
-        scanlines?: boolean;
-        goldenGlare?: boolean;
-        glitter?: boolean;
-        foilLayer?: boolean;
-        noBackground?: boolean;
-        noFrame?: boolean;
-      };
-      dimensions: {
-        width: number;
-        height: number;
-      };
-      bg: string;
-      main: string;
-      breakout?: string;
-      foilArt?: string;
-      frame: string;
-      tint: CardTint;
-    };
+    art: CardArt;
     kind: CardKind;
     manaCost?: number | null;
     baseManaCost?: number | null;
-    destinyCost?: number | null;
-    baseDestinyCost?: number | null;
+    expCost?: number | null;
+    baseExpCost?: number | null;
     rarity: Rarity;
-    level?: number | null;
     atk?: number | null;
     hp?: number | null;
-    countdown?: number | null;
-    spellpower?: number | null;
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
-    speed: CardSpeed;
     tags?: string[];
-    faction: Faction;
+    jobs: JobId[];
+    affinities: Affinity[];
+    speed?: CardSpeed;
+    commandment?: number | null;
   };
   isFoil?: boolean;
   isAnimated?: boolean;
@@ -95,14 +73,6 @@ const rarityBg = computed(() => {
   return assets[`ui/card/rarity-${card.rarity}`].css;
 });
 
-const speedBg = computed(() => {
-  return assets[`ui/card/speed-${card.speed.toLowerCase()}`].css;
-});
-
-const artFrameImage = computed(() => {
-  return assets[card.art.frame].css;
-});
-
 const artBgImage = computed(() => {
   return assets[card.art.bg].css;
 });
@@ -112,12 +82,8 @@ const artMainImage = computed(() => {
 });
 
 const artFoilImage = computed(() => {
-  if (!card.art.foilArt) return 'transparent';
-  return assets[card.art.foilArt].css;
-});
-
-const artBreakoutImage = computed(() => {
-  return card.art.breakout ? assets[card.art.breakout].css : 'none';
+  if (!card.art.foilMain) return 'transparent';
+  return assets[card.art.foilMain].css;
 });
 
 const root = useTemplateRef('card');
@@ -173,7 +139,7 @@ const resizeDescription = () => {
 useResizeObserver(descriptionInner, resizeDescription);
 
 const DESCRIPTION_MIN_TEXT_SIZE = 9;
-const DESCRIPTION_MAX_TEXT_SIZE = 15;
+const DESCRIPTION_MAX_TEXT_SIZE = 14;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 until(descriptionBox)
   .toBeTruthy()
@@ -197,32 +163,17 @@ until(nameBox)
     );
   });
 
-// const multiLineChecker = useTemplateRef('multi-line-checker');
-const isMultiLine = computed(() => {
-  // if (!multiLineChecker.value) return;
-  // if (!descriptionBox.value) return;
-  // if (card.description.includes('\n')) return true;
-  // if (card.abilities?.length) return true;
-  // const boxRect = descriptionBox.value.getBoundingClientRect();
-  // const checkerRect = multiLineChecker.value.getBoundingClientRect();
-  // return checkerRect.top > boxRect.top;
-  return true;
-});
-
 const costStatus = computed(() => {
   if (isDefined(card.manaCost)) {
     if (!isDefined(card.baseManaCost) || card.baseManaCost === card.manaCost)
       return '';
 
     return card.manaCost < card.baseManaCost ? 'buffed' : 'debuffed';
-  } else if (isDefined(card.destinyCost)) {
-    if (
-      !isDefined(card.baseDestinyCost) ||
-      card.baseDestinyCost === card.destinyCost
-    )
+  } else if (isDefined(card.expCost)) {
+    if (!isDefined(card.baseExpCost) || card.baseExpCost === card.expCost)
       return '';
 
-    return card.destinyCost < card.baseDestinyCost ? 'buffed' : 'debuffed';
+    return card.expCost < card.baseExpCost ? 'buffed' : 'debuffed';
   }
 
   return '';
@@ -233,21 +184,27 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
     isEnabled: computed(() => isTiltEnabled && isFoil)
   });
 
-const tintGradient = computed(() => {
-  return match(card.art.tint)
-    .with({ mode: { type: 'linear' } }, tint => {
-      return `linear-gradient(${tint.mode.angle}deg, ${tint.colors.join(
-        ', '
-      )})`;
-    })
-    .with({ mode: { type: 'radial' } }, tint => {
-      return `radial-gradient(circle at center, ${tint.colors.join(', ')})`;
-    })
-    .exhaustive();
-});
-
 const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
+});
+
+const affinities = computed(() => {
+  const affinities = card.affinities.filter(isDefined);
+
+  return affinities.map(affinity => {
+    return {
+      affinity,
+      bg: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css
+    };
+  });
+});
+
+const tint = computed(() => {
+  return `linear-gradient(135deg in oklch, ${card.affinities
+    .map(affinity => {
+      return `var(--tint-${affinity.toLocaleLowerCase()})`;
+    })
+    .join(', ')})`;
 });
 </script>
 
@@ -264,7 +221,7 @@ const kindBg = computed(() => {
       :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
       :data-flip-id="`card_${card.id}`"
     >
-      <div class="card-front">
+      <div class="card-front" :style="{ '--tint': tint }">
         <div ref="name-box" v-if="showText" class="name">
           <div>
             {{ card.name }}
@@ -272,31 +229,32 @@ const kindBg = computed(() => {
         </div>
 
         <div class="image">
-          <div v-if="!isFoil || !card.art.foil.noBackground" class="art-bg" />
-          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+          <div
+            v-if="!isFoil || !card.art.foil.noBackground"
+            class="art-bg parallax"
+            style="--parallax-strength: -1"
+          />
           <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-          <div class="art-main parallax" style="--parallax-strength: 2" />
+          <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
           <div
-            v-if="!isFoil || !card.art.foil.noFrame"
-            class="art-frame parallax"
-            style="--parallax-strength: 0.5"
+            class="art-main parallax"
+            style="--parallax-strength-x: -1.5; --parallax-strength-y: -1"
           />
-          <div
-            v-if="isFoil && card.art.breakout"
-            class="art-breakout parallax"
-            style="--parallax-strength: 2"
-          />
+          <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
+
           <div
             v-if="isFoil && card.art.foil.foilLayer"
             class="art-foil parallax"
             style="--parallax-strength: 2"
           />
+
+          <div class="art-frame" />
         </div>
 
-        <div class="top-left parallax">
+        <div class="top-left">
           <div
             v-if="isDefined(card.manaCost)"
-            class="mana-cost"
+            class="mana-cost parallax"
             :class="costStatus"
             data-label="Mana"
           >
@@ -305,52 +263,73 @@ const kindBg = computed(() => {
             </div>
           </div>
           <div
-            v-if="isDefined(card.destinyCost)"
-            class="destiny-cost"
+            v-if="isDefined(card.commandment)"
+            class="commandment-cost parallax"
             :class="costStatus"
-            data-label="Dest."
+            :style="{ '--label-offset-x': '-3' }"
+            data-label="Cmd"
           >
-            <div class="dual-text" :data-text="card.destinyCost">
-              {{ card.destinyCost }}
+            <div class="dual-text" :data-text="card.commandment">
+              {{ card.commandment }}
             </div>
           </div>
         </div>
 
-        <div
-          class="faction parallax"
-          :style="{
-            '--bg':
-              assets[`ui/card/faction-${card.faction.id.toLocaleLowerCase()}`]
-                .css
-          }"
-          :data-label="card.faction.shortName"
-        />
+        <div class="top-right">
+          <div
+            v-for="(affinity, index) in affinities"
+            :key="index"
+            class="affinity parallax"
+            :data-label="affinity.affinity"
+            :style="{ '--bg': affinity.bg }"
+          />
+        </div>
 
-        <div class="rarity parallax" style="--parallax-strength: 0.5" />
+        <div class="rarity" />
 
         <div class="description-frame">
           <div class="kind" />
-          <div class="speed">
-            {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
-          </div>
+
           <div v-if="showText" class="attributes">
             {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
-            <span v-if="isDefined(card.level)">- Lvl{{ card.level }}</span>
             <span v-if="isDefined(card.subKind)">
               - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
             </span>
+            <span v-if="card.jobs.length" class="jobs">
+              |
+              {{ card.jobs.map(jobId => getJobById(jobId)?.name).join(' | ') }}
+            </span>
             <span v-if="isDefined(card.tags)" class="tags">
-              {{ card.tags.join('- ') }}
+              <template v-if="card.tags?.length">|</template>
+              {{ card.tags.join('| ') }}
             </span>
           </div>
+
           <div
-            v-if="showText"
-            class="description"
-            ref="description-box"
-            :class="{ 'is-multi-line': isMultiLine }"
+            v-if="card.speed"
+            class="speed"
+            :style="{
+              '--bg':
+                assets[`ui/card/speed-${card.speed.toLocaleLowerCase()}`].css
+            }"
           >
-            <div ref="description-inner">
+            <div
+              class="dual-text"
+              :data-text="uppercaseFirstLetter(card.speed.toLocaleLowerCase())"
+            >
+              {{ uppercaseFirstLetter(card.speed.toLocaleLowerCase()) }}
+            </div>
+          </div>
+          <div v-if="showText" class="description" ref="description-box">
+            <div ref="description-inner" class="w-full">
               <CardText :text="card.description" />
+
+              <div
+                v-if="card.abilities?.length && card.description"
+                class="text-separator"
+              >
+                Abilities
+              </div>
               <CardText
                 v-for="ability in card.abilities"
                 :key="ability"
@@ -361,27 +340,6 @@ const kindBg = computed(() => {
           </div>
         </div>
 
-        <div v-if="isDefined(card.atk)" class="stat atk parallax">
-          <div v-if="showText">
-            {{ card.atk }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.hp)" class="stat hp parallax">
-          <div v-if="showText">
-            {{ card.hp }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.durability)" class="stat durability parallax">
-          <div v-if="showText">
-            {{ card.durability }}
-          </div>
-        </div>
-        <div v-if="isDefined(card.countdown)" class="stat countdown parallax">
-          <div v-if="showText">
-            {{ card.countdown }}
-          </div>
-        </div>
-
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
           <FoilOil v-if="card.art.foil.oil" />
@@ -389,6 +347,22 @@ const kindBg = computed(() => {
           <FoilLightGradient v-if="card.art.foil.lightGradient" />
           <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
         </template>
+
+        <div v-if="isDefined(card.atk)" class="stat atk parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.atk">
+            {{ card.atk }}
+          </div>
+        </div>
+        <div v-if="isDefined(card.hp)" class="stat hp parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.hp">
+            {{ card.hp }}
+          </div>
+        </div>
+        <div v-if="isDefined(card.durability)" class="stat durability parallax">
+          <div v-if="showText" class="dual-text" :data-text="card.durability">
+            {{ card.durability }}
+          </div>
+        </div>
 
         <CardGlare />
       </div>
@@ -465,6 +439,8 @@ const kindBg = computed(() => {
     font-weight: var(--font-weight-5);
     -webkit-text-stroke: 4px black;
     font-family: 'Lato', sans-serif;
+    translate: calc(1px * var(--pixel-scale) * var(--label-offset-x, 0))
+      calc(1px * var(--pixel-scale) * var(--label-offset-y, 0));
   }
 }
 .card-front {
@@ -477,31 +453,36 @@ const kindBg = computed(() => {
   position: relative;
   transform-style: preserve-3d;
   position: relative;
-  filter: drop-shadow(0 2px 0 hsl(0 0% 100% / 0.2))
-    drop-shadow(0 -2px 0 hsl(0 0% 100% / 0.2))
-    drop-shadow(-2px 0 0 hsl(0 0% 100% / 0.2))
-    drop-shadow(2px 0 0 hsl(0 0% 100% / 0.2));
+
   --glare-mask: url('@/assets/ui/card/card_front.png');
-  --foil-mask: url('@/assets/ui/card/card_front.png');
+  --foil-mask: url('@/assets/ui/card/masks/default.png');
+
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: v-bind(tintGradient);
-    mix-blend-mode: v-bind('card.art.tint.blendMode');
-    opacity: v-bind('card.art.tint.opacity');
-    mask-image: url('@/assets/ui/card/tint-mask.png');
+    background: var(--tint);
+    mix-blend-mode: overlay;
+    opacity: 1;
     mask-size: cover;
     z-index: -1;
     pointer-events: none;
+    mask-image: url('@/assets/ui/card/card_front.png');
   }
 }
 
 .card.animated:has(.foil) .parallax {
-  --parallax-strength: 1;
-  --_parallax-strength: calc(var(--parallax-strength) * var(--pixel-scale) / 2);
-  --parallax-x: calc(v-bind('angle.y') * var(--_parallax-strength) * 1px);
-  --parallax-y: calc(v-bind('angle.x') * var(--_parallax-strength) * -1px);
+  --parallax-strength: 0.7;
+  --_parallax-strength-x: calc(
+    var(--parallax-strength-x, var(--parallax-strength)) * var(--pixel-scale) /
+      2
+  );
+  --_parallax-strength-y: calc(
+    var(--parallax-strength-y, var(--parallax-strength)) * var(--pixel-scale) /
+      2
+  );
+  --parallax-x: calc(v-bind('angle.y') * var(--_parallax-strength-x) * 1px);
+  --parallax-y: calc(v-bind('angle.x') * var(--_parallax-strength-y) * -1px);
   --_parallax-offset-x: var(--parallax-offset-x, 0px);
   --_parallax-offset-y: var(--parallax-offset-y, 0px);
   translate: calc(var(--_parallax-offset-x) + var(--parallax-x))
@@ -562,75 +543,60 @@ const kindBg = computed(() => {
   initial-value: 0;
 }
 
-.art-frame {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artFrameImage);
-  background-size: cover;
-}
-
-@keyframes foil-art-glow {
-  to {
+@keyframes shine-glow {
+  50% {
     opacity: 0;
   }
 }
+.art-frame {
+  position: absolute;
+  inset: 0;
+  background: url('@/assets/ui/card/frames/default.png');
+  background-size: cover;
+  .card.animated:has(.foil) & ::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('@/assets/ui/card/frames/default.png');
+    background-size: cover;
+    mix-blend-mode: plus-lighter;
+    filter: blur(15px);
+    animation: shine-glow 10s infinite;
+  }
+}
+
 .art-main {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artMainImage);
   background-size: cover;
   overflow: hidden;
   --parallax-offset-x: -50%;
-  .card:has(.foil) &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: v-bind(artMainImage);
-    background-size: cover;
-    filter: blur(calc(12px * var(--pixel-scale))) brightness(1.1);
-    z-index: -1;
-    transform: scale(1.05);
-    mix-blend-mode: plus-lighter;
-    opacity: 0.35;
-    animation: foil-art-glow 5s linear alternate infinite;
+  .card:has(.foil) & {
+    transform: translateX(50%);
   }
 }
 .art-foil {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
+  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
   translate: -50% 0;
   background: v-bind(artFoilImage);
   background-size: cover;
   --parallax-offset-x: -50%;
 }
-.art-breakout {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
-  background: v-bind(artBreakoutImage);
-  background-size: cover;
-  --parallax-offset-x: -50%;
-}
+
 .art-bg {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artBgImage);
   background-size: cover;
   --parallax-offset-x: -50%;
+  .card:has(.foil) & {
+    transform: translateX(50%);
+  }
 }
 
 .image {
@@ -638,35 +604,37 @@ const kindBg = computed(() => {
   width: calc(var(--card-art-frame-width) * var(--pixel-scale));
   height: calc(var(--card-art-frame-height) * var(--pixel-scale));
   position: absolute;
-  top: calc(27px * var(--pixel-scale));
+  top: calc(23px * var(--pixel-scale));
   left: 50%;
   translate: -50% 0;
-
+  overflow: hidden;
+  mask-image: url(@/assets/ui/card/masks/frame-overflow-mask.png);
+  mask-size: cover;
   .foil {
     --foil-mask: v-bind(artBgImage);
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
+    inset: 0;
+
+    /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
     height: calc(
       1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
-    );
-    translate: -50% 0;
-    --parallax-offset-x: -50%;
+    ); */
+    /* translate: -50% 0;
+    --parallax-offset-x: -50%; */
   }
 }
 
 .name {
-  width: calc(154px * var(--pixel-scale));
+  width: calc(152px * var(--pixel-scale));
   text-align: center;
   text-wrap: pretty;
   position: absolute;
-  top: calc(11px * var(--pixel-scale));
+  top: calc(6px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(nameFontSize));
   line-height: 1.1;
-  height: calc(16px * var(--pixel-scale));
+  height: calc(17px * var(--pixel-scale));
   overflow: hidden;
   color: black;
   background: url('@/assets/ui/card/name-frame.png');
@@ -683,14 +651,18 @@ const kindBg = computed(() => {
   height: calc(18px * var(--pixel-scale));
   position: absolute;
   bottom: calc(87px * var(--pixel-scale));
+  top: calc(132px * var(--pixel-scale));
   left: 50%;
   transform: translateX(-50%);
 }
 
 .top-left {
   position: absolute;
-  top: calc(7px * var(--pixel-scale));
+  top: calc(2px * var(--pixel-scale));
   left: calc(3px * var(--pixel-scale));
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--pixel-scale));
   > * {
     z-index: 0;
     background-size: cover;
@@ -703,14 +675,20 @@ const kindBg = computed(() => {
   }
 }
 
-.faction {
+.top-right {
   position: absolute;
-  top: calc(7px * var(--pixel-scale));
+  top: calc(2px * var(--pixel-scale));
   right: calc(3px * var(--pixel-scale));
-  width: calc(24px * var(--pixel-scale));
+  display: grid;
+  gap: calc(4px * var(--pixel-scale));
+}
+
+.affinity {
+  width: calc(30px * var(--pixel-scale));
   aspect-ratio: 1;
   background: var(--bg);
   background-size: cover;
+  position: relative;
 }
 
 .buffed {
@@ -732,17 +710,17 @@ const kindBg = computed(() => {
     transform: translateY(-3px);
   }
 }
-
-.destiny-cost {
-  background-image: url('@/assets/ui/card/destiny-cost.png');
+.commandment-cost {
+  background-image: url('@/assets/ui/card/commandment.png');
   font-weight: var(--font-weight-7);
-  padding-top: calc(3px * var(--pixel-scale));
-  width: calc(24px * var(--pixel-scale));
-  aspect-ratio: 1;
+  padding-top: calc(1px * var(--pixel-scale));
+  width: calc(30px * var(--pixel-scale));
+  height: calc(28px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 14px);
   .dual-text::before {
     transform: translateY(-3px);
   }
+  padding-right: calc(6px * var(--pixel-scale));
 }
 
 .job {
@@ -750,42 +728,41 @@ const kindBg = computed(() => {
 }
 
 .stat {
-  width: calc(31px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
+  width: calc(40px * var(--pixel-scale));
+  height: calc(26px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
-  position: absolute;
-  bottom: calc(3px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 8px);
-  text-align: right;
-  padding-top: calc(2.5px * var(--pixel-scale));
-  padding-right: calc(17px * var(--pixel-scale));
-  font-weight: var(--font-weight-7);
+  font-size: calc(var(--pixel-scale) * 11px);
+  font-weight: var(--font-weight-9);
   font-family: 'Lato', sans-serif;
-  --dual-text-offset-y: 2px;
+  position: absolute;
+  z-index: 0;
+  bottom: calc(96px * var(--pixel-scale));
+  --dual-text-offset-y: calc(7px * var(--pixel-scale));
+  --dual-text-offset-x: calc(8px * var(--pixel-scale));
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/attack-small.png');
-  right: calc(36px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/power.png');
+  left: calc(2px * var(--pixel-scale));
+}
+
+.damage {
+  background-image: url('@/assets/ui/card/damage.png');
+  right: calc(2px * var(--pixel-scale));
+  text-align: right;
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health-small.png');
-  right: calc(3px * var(--pixel-scale));
-  padding-left: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/health.png');
+  right: calc(2px * var(--pixel-scale));
+  text-align: right;
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .durability {
-  background-image: url('@/assets/ui/card/durability-small.png');
-  right: calc(3px * var(--pixel-scale));
-  padding-left: calc(2px * var(--pixel-scale));
-}
-
-.countdown {
-  background-image: url('@/assets/ui/card/countdown-small.png');
-  right: calc(3px * var(--pixel-scale));
-  padding-left: calc(2px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/health.png');
 }
 
 .kind {
@@ -795,41 +772,23 @@ const kindBg = computed(() => {
   background: v-bind(kindBg);
   background-size: cover;
   top: calc(0.5px * var(--pixel-scale));
-  left: calc(3px * var(--pixel-scale));
-}
-
-.speed {
-  background: v-bind(speedBg);
-  background-size: cover;
-  position: absolute;
-  top: calc(0.5px * var(--pixel-scale));
-  right: calc(3px * var(--pixel-scale));
-  width: calc(40px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 7px);
-  text-align: right;
-  padding-top: calc(2.5px * var(--pixel-scale));
-  padding-right: calc(17px * var(--pixel-scale));
-  font-family: 'Lato', sans-serif;
-  + * {
-    margin-top: calc(2px * var(--pixel-scale));
-  }
+  left: calc(1px * var(--pixel-scale));
 }
 
 .attributes {
   width: calc(92px * var(--pixel-scale));
   position: absolute;
-  top: calc(3px * var(--pixel-scale));
+  top: calc(4px * var(--pixel-scale));
   left: calc(22px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 7px);
   color: black;
 }
 
 .description-frame {
-  width: calc(160px * var(--pixel-scale));
-  height: calc(72px * var(--pixel-scale));
+  width: calc(158px * var(--pixel-scale));
+  height: calc(88px * var(--pixel-scale));
   position: absolute;
-  bottom: calc(11px * var(--pixel-scale));
+  bottom: calc(6px * var(--pixel-scale));
   left: 50%;
   translate: -50% 0;
   background: url('@/assets/ui/card/description-frame.png');
@@ -837,18 +796,16 @@ const kindBg = computed(() => {
 }
 .description {
   padding: 0 4px;
-  width: calc(144px * var(--pixel-scale));
-  height: calc(46px * var(--pixel-scale));
+  width: calc(130px * var(--pixel-scale));
+  height: calc(58px * var(--pixel-scale));
   position: absolute;
   top: calc(19px * var(--pixel-scale));
-  left: calc(8px * var(--pixel-scale));
+  left: calc(14px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 0.5px * v-bind(descriptionFontSize));
   overflow: hidden;
   text-align: center;
   line-height: 1.2;
-  &.is-multi-line {
-    text-align: left;
-  }
+  text-align: left;
   > * {
     display: inline-block;
   }
@@ -857,6 +814,48 @@ const kindBg = computed(() => {
     height: 1px;
     align-self: start;
     vertical-align: top;
+  }
+}
+
+.speed {
+  position: absolute;
+  width: calc(40px * var(--pixel-scale));
+  height: calc(16px * var(--pixel-scale));
+  background: var(--bg);
+  background-size: cover;
+  right: calc(-2px * var(--pixel-scale));
+  top: calc(72px * var(--pixel-scale));
+  font-weight: var(--font-weight-7);
+  font-family: 'Lato', sans-serif;
+  --dual-text-offset-y: calc(2px * var(--pixel-scale));
+  --dual-text-offset-x: calc(6px * var(--pixel-scale));
+
+  .hero &,
+  .destiny & {
+    display: none;
+  }
+}
+
+.text-separator {
+  margin-top: calc(3px * var(--pixel-scale));
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+  color: black;
+  font-size: calc(var(--pixel-scale) * 4.5px);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-7);
+  font-family: 'Lato', sans-serif;
+  opacity: 0.5;
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: calc(0.5px * var(--pixel-scale));
+    background: black;
+    flex: 1;
+    opacity: 0.5;
   }
 }
 </style>

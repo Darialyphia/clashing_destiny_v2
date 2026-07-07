@@ -4,6 +4,7 @@ import path from 'path';
 import dedent from 'dedent';
 import { cardIdByShortId, cardShortIds } from '../generated/cards';
 import { isDefined } from '@game/shared';
+import type { CardKind } from '../card/card.enums';
 
 const generateCardsFile = () => {
   const cards = Object.fromEntries(
@@ -18,7 +19,7 @@ const generateCardsFile = () => {
   //generate a dictionary of cards by set id, with only id / collectable / rarity fields
   const cardsBySet: Record<
     string,
-    { id: string; collectable: boolean; rarity: string; deckSource: string }[]
+    { id: string; collectable: boolean; rarity: string; kind: CardKind }[]
   > = {};
 
   for (const [setId, set] of Object.entries(CARD_SET_DICTIONARY)) {
@@ -26,7 +27,7 @@ const generateCardsFile = () => {
       id: card.id,
       collectable: card.collectable,
       rarity: card.rarity,
-      deckSource: card.deckSource
+      kind: card.kind
     }));
   }
   let maxShortId = Math.max(...Object.values(cardShortIds)) ?? 1;
@@ -54,12 +55,13 @@ const generateCardsFile = () => {
      * This file should be used in the api package  to reference card ids
      *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
      */
-  import type { Rarity, CardDeckSource } from '../card/card.enums';
+  import type { Rarity, CardKind } from '../card/card.enums';
+
   export const cards = ${JSON.stringify(cards, null, 2)} as const;
 
   export const collectableCards = ${JSON.stringify(collectableCards, null, 2)} as const;
 
-  type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity; deckSource: CardDeckSource }>;
+  type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
   export const cardsBySet: Record<string, CardSet> = ${JSON.stringify(cardsBySet, null, 2)};
 
   export const cardShortIds: Record<string, number> = ${JSON.stringify(updatedCardShortIds, null, 2)} as const;

@@ -10,48 +10,34 @@ import {
 import { assets } from '@/assets';
 import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import type { Nullable } from '@game/shared';
+import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
 
 export type DisplayedDeck = {
   name: string;
-  mainDeck: { blueprintId: string; copies: number }[];
-  destinyDeck: { blueprintId: string; copies: number }[];
+  cards: { blueprintId: string; copies: number }[];
+  isValid: DeckValidationResult;
 };
 const { deck } = defineProps<{
   deck: DisplayedDeck;
 }>();
 
+const mainDeck = computed(() =>
+  deck.cards.map(card => ({
+    ...card,
+    blueprint: CARDS_DICTIONARY[card.blueprintId]
+  }))
+);
+
 const hero = computed(() => {
-  const heroes = deck.destinyDeck
-    .map(card => CARDS_DICTIONARY[card.blueprintId])
-    .filter(c => c.kind === CARD_KINDS.HERO);
-  return heroes.sort((a, b) => b.level - a.level)[0];
+  return deck.cards
+    .map(c => CARDS_DICTIONARY[c.blueprintId])
+    .find(c => c.kind === CARD_KINDS.HERO) as Nullable<HeroBlueprint>;
 });
 
-const mainDeck = computed(() =>
-  deck.mainDeck.map(card => ({
-    ...card,
-    blueprint: CARDS_DICTIONARY[card.blueprintId]
-  }))
-);
-const destinyDeck = computed(() =>
-  deck.destinyDeck.map(card => ({
-    ...card,
-    blueprint: CARDS_DICTIONARY[card.blueprintId]
-  }))
-);
-
-const heroes = computed(() =>
-  destinyDeck.value
-    .filter(item => item.blueprint.kind === CARD_KINDS.HERO)
-    .sort(
-      (a, b) =>
-        (a.blueprint as HeroBlueprint).level -
-        (b.blueprint as HeroBlueprint).level
-    )
-);
-const otherDestinyCards = computed(() =>
-  destinyDeck.value.filter(item => item.blueprint.kind !== CARD_KINDS.HERO)
-);
+const affinities = computed(() => {
+  return hero.value?.affinities ?? [];
+});
 
 const minions = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
@@ -64,10 +50,6 @@ const spells = computed(() =>
 const artifacts = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
-
-const sigils = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SIGIL)
-);
 </script>
 
 <template>
@@ -75,12 +57,26 @@ const sigils = computed(() =>
     <HoverCardRoot :open-delay="200">
       <button
         class="player-deck"
+        :class="{
+          invalid: deck.isValid.result === 'failure'
+        }"
         :style="{
           '--bg': assets[`cards/${hero?.art.default.main}`]?.css
         }"
       >
         <div class="deck-name">
           {{ deck.name }}
+          <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
+            Invalid Deck
+          </div>
+          <div v-else class="flex gap-2">
+            <img
+              v-for="aff in affinities"
+              :key="aff"
+              :src="assets[`ui/card/affinity-${aff.toLocaleLowerCase()}`].path"
+              :alt="aff"
+            />
+          </div>
         </div>
 
         <HoverCardTrigger as-child>
@@ -92,6 +88,9 @@ const sigils = computed(() =>
         <HoverCardContent side="right" align="center" :side-offset="8">
           <div class="deck-details">
             <ul>
+              <li v-if="hero" :class="hero.rarity.toLocaleLowerCase()">
+                1 x {{ hero.name }}
+              </li>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
                 <span :class="item.blueprint.rarity.toLocaleLowerCase()">
@@ -110,29 +109,6 @@ const sigils = computed(() =>
                   {{ item.blueprint.name }}
                 </span>
               </li>
-              <li v-for="item in sigils" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-            </ul>
-            <ul>
-              <li
-                v-for="item in heroes"
-                :key="item.blueprint.id"
-                :class="item.blueprint.rarity.toLocaleLowerCase()"
-              >
-                {{ item.copies }}x {{ item.blueprint.name }}
-              </li>
-
-              <li
-                v-for="item in otherDestinyCards"
-                :key="item.blueprint.id"
-                :class="item.blueprint.rarity.toLocaleLowerCase()"
-              >
-                {{ item.copies }}x {{ item.blueprint.name }}
-              </li>
             </ul>
           </div>
         </HoverCardContent>
@@ -143,6 +119,7 @@ const sigils = computed(() =>
 
 <style scoped lang="postcss">
 .player-deck {
+  position: relative;
   display: flex;
   width: 100%;
   gap: var(--size-2);
@@ -157,6 +134,19 @@ const sigils = computed(() =>
   background-size: 200%, calc(2px * 96);
   padding: var(--size-2) var(--size-4);
   border: solid 1px hsl(var(--color-primary-hsl) / 0.5);
+  &.invalid {
+    border-color: var(--red-8);
+    background-image:
+      linear-gradient(to right, hsl(0deg 0% 20% / 0.5), hsl(0deg 0% 0% / 0.5)),
+      var(--bg),
+      repeating-linear-gradient(
+        45deg,
+        hsl(var(--red-8-hsl) / 0.35) 0px,
+        hsl(var(--red-8-hsl) / 0.35) 10px,
+        hsl(var(--red-9-hsl) / 0.35) 10px,
+        hsl(var(--red-9-hsl) / 0.35) 20px
+      );
+  }
 }
 
 .deck-name {
@@ -197,5 +187,9 @@ const sigils = computed(() =>
 
 .legendary {
   color: var(--orange-4);
+}
+
+.invalid-label {
+  color: var(--red-8);
 }
 </style>

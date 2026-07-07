@@ -130,6 +130,14 @@ export class GameRepository {
     await this.ctx.db.patch(game.id, this.ctx.gameMapper.toPersistence(game));
   }
 
+  async abortCancellation(game: Game) {
+    if (!game.cancellationId) {
+      throw new Error('No cancellation scheduled for this game');
+    }
+    await this.ctx.scheduler.cancel(game.cancellationId);
+    game.abortCancellation();
+  }
+
   async scheduleCancellation(game: Game) {
     const cancellationId = await this.ctx.scheduler.runAfter(
       GAME_TIMEOUT_MS,

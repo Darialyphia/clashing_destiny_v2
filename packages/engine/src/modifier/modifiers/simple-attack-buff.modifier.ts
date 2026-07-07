@@ -19,10 +19,11 @@ export class SimpleAttackBuffModifier<
       amount: number | (() => number);
       name?: string | (() => string);
       mixins?: ModifierMixin<T>[];
+      isUnique?: boolean;
     }
   ) {
     super(modifierType, game, card, {
-      isUnique: true,
+      isUnique: options.isUnique ?? true,
       icon: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
         return amount > 0 ? 'keyword-attack-buff' : 'keyword-attack-debuff';
@@ -32,11 +33,11 @@ export class SimpleAttackBuffModifier<
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'Attack Buff' : 'Attack Debuff';
+        return amount > 0 ? 'attack Buff' : 'attack Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${options.amount} Attack`;
+        return `${amount > 0 ? '+' : '-'}${options.amount} attack`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),

@@ -82,6 +82,7 @@ export type BetterOmit<T, K extends keyof T> = {
 };
 
 export type BetterExtract<T, U extends T> = T extends U ? T : never;
+export type BetterExclude<T, U extends T> = T extends U ? never : T;
 
 export type JSONValue =
   | string

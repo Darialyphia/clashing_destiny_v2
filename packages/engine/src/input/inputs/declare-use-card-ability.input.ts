@@ -3,13 +3,10 @@ import { defaultInputSchema, Input } from '../input';
 import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import { IllegalAbilityError, UnknownAbilityError } from '../input-errors';
-import { ArtifactCard } from '../../card/entities/artifact.entity';
 import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
-import { SpellCard } from '../../card/entities/spell.entity';
-import { SigilCard } from '../../card/entities/sigil.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -19,7 +16,7 @@ const schema = defaultInputSchema.extend({
 export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   readonly name = 'declareUseCardAbility';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 
@@ -30,15 +27,8 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   private get ability() {
     if (!this.card) return null;
     return match(this.card)
-      .with(
-        P.instanceOf(MinionCard),
-        P.instanceOf(HeroCard),
-        P.instanceOf(ArtifactCard),
-        P.instanceOf(SpellCard),
-        P.instanceOf(SigilCard),
-        card =>
-          card.abilities.find(ability => ability.abilityId === this.payload.abilityId) ||
-          null
+      .with(P.instanceOf(MinionCard), P.instanceOf(HeroCard), card =>
+        card.abilityManager.getAbility(this.payload.abilityId)
       )
       .otherwise(() => null);
   }
@@ -54,9 +44,10 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
       new IllegalAbilityError()
     );
 
-    await this.game.interaction.declareUseAbilityIntent(
-      this.ability as Ability<AbilityOwner>,
-      this.player
-    );
+    await this.game.interaction.declareUseAbilityIntent({
+      ability: this.ability as Ability<AbilityOwner>,
+      player: this.player,
+      canCancel: true
+    });
   }
 }

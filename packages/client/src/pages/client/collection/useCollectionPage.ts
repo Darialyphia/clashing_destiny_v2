@@ -45,14 +45,10 @@ export const provideCollectionPage = () => {
     toggleKindFilter,
     clearKindFilter,
     textFilter,
-    hasSpeedFilter,
-    toggleSpeedFilter,
-    clearSpeedFilter,
-    hasFactionFilter,
-    toggleFactionFilter,
-    clearFactionFilter,
+    hasJobFilter,
+    toggleJobFilter,
+    clearJobFilter,
     manaCostFilter,
-    destinyCostFilter,
     includeUnowned
   } = provideCardList();
 
@@ -80,15 +76,7 @@ export const provideCollectionPage = () => {
       isEqual(first, second) {
         return first.meta.cardId === second.meta.cardId;
       },
-      mainDeck: newDeck.mainDeck.map(card => ({
-        blueprintId: card.blueprintId,
-        copies: card.copies,
-        meta: {
-          isFoil: card.isFoil,
-          cardId: card.cardId
-        }
-      })),
-      destinyDeck: newDeck.destinyDeck.map(card => ({
+      cards: newDeck.cards.map(card => ({
         blueprintId: card.blueprintId,
         copies: card.copies,
         meta: {
@@ -126,14 +114,10 @@ export const provideCollectionPage = () => {
     hasKindFilter,
     toggleKindFilter,
     clearKindFilter,
-    hasSpeedFilter,
-    toggleSpeedFilter,
-    clearSpeedFilter,
-    hasFactionFilter,
-    toggleFactionFilter,
-    clearFactionFilter,
+    hasJobFilter,
+    toggleJobFilter,
+    clearJobFilter,
     manaCostFilter,
-    destinyCostFilter,
     textFilter,
     viewMode,
     isEditingDeck,
@@ -141,7 +125,7 @@ export const provideCollectionPage = () => {
     isDeleting: isDeletingDeck,
     deckBuilder,
     decks,
-    cardScale: ref([1]),
+    cardScale: ref([2]),
     createDeck: () => createDeck({}),
     editDeck: id => {
       selectedDeckId.value = id;
@@ -155,11 +139,7 @@ export const provideCollectionPage = () => {
       saveDeck({
         deckId: selectedDeck.value.id,
         name: deckBuilder.value.deck.name,
-        mainDeck: deckBuilder.value.deck.mainDeck.map(card => ({
-          cardId: card.meta.cardId,
-          copies: card.copies
-        })),
-        destinyDeck: deckBuilder.value.deck.destinyDeck.map(card => ({
+        cards: deckBuilder.value.deck.cards.map(card => ({
           cardId: card.meta.cardId,
           copies: card.copies
         }))

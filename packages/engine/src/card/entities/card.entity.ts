@@ -1,20 +1,20 @@
 import { isFunction, type JSONObject, type MaybePromise } from '@game/shared';
-import { nanoid } from 'nanoid';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
-import type { CardBlueprint, PreResponseTarget } from '../card-blueprint';
+import type { CardBlueprint, Targets } from '../card-blueprint';
 import {
-  CARD_DECK_SOURCES,
   CARD_EVENTS,
-  CARD_SPEED,
-  type CardDeckSource,
   type CardKind,
-  type CardSpeed,
   type Rarity,
   CARD_LOCATIONS,
   type CardLocation,
-  FACTIONS
+  CARD_KINDS,
+  type Affinity,
+  AFFINITIES,
+  type JobId,
+  type CardSpeed,
+  CARD_SPEED
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -27,53 +27,47 @@ import {
   CardDisposedEvent,
   CardExhaustEvent,
   CardRevealEvent,
+  CardScoreEvent,
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';
 import { KeywordManagerComponent } from '../components/keyword-manager.component';
-import { IllegalGameStateError } from '../../game/game-error';
-import { isMainDeckCard } from '../../board/board.system';
-import { COMBAT_STEPS, EFFECT_TYPE, GAME_PHASES } from '../../game/game.enums';
 import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
-import type { AbilityOwner } from './ability.entity';
-import { LockedModifier } from '../../modifier/modifiers/locked.modifier';
+import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.enums';
+import { nanoid } from 'nanoid';
+import type { BoardSpace } from '../../board/board-space.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
   blueprint: T;
+  isFoil: boolean;
 };
 
 export type AnyCard = Card<any, any, any>;
 export type CardInterceptors = {
+  blueprintId: Interceptable<string>;
   manaCost: Interceptable<number | null>;
-  destinyCost: Interceptable<number | null>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
-  canBeUsedAsDestinyCost: Interceptable<boolean>;
-  canBeUsedAsManaCost: Interceptable<boolean>;
-  canBeRecollected: Interceptable<boolean>;
-  speed: Interceptable<CardSpeed>;
-  deckSource: Interceptable<CardDeckSource>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
-  loyaltyManaCostIncrease: Interceptable<number>;
-  loyaltyDestinyCostIncrease: Interceptable<number>;
-  loyaltyHpCost: Interceptable<number>;
+  shouldSwitchInitiativeAfterPlay: Interceptable<boolean>;
+  playerLevel: Interceptable<number>;
+  offFactionManaCostIncrease: Interceptable<number>;
+  speed: Interceptable<CardSpeed>;
+  shouldCreateChainWhenPlayed: Interceptable<boolean, AnyCard>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
+  blueprintId: new Interceptable(),
   manaCost: new Interceptable(),
-  destinyCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
-  canBeUsedAsDestinyCost: new Interceptable(),
-  canBeUsedAsManaCost: new Interceptable(),
-  canBeRecollected: new Interceptable(),
-  speed: new Interceptable(),
-  deckSource: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
-  loyaltyManaCostIncrease: new Interceptable(),
-  loyaltyDestinyCostIncrease: new Interceptable(),
-  loyaltyHpCost: new Interceptable()
+  shouldSwitchInitiativeAfterPlay: new Interceptable(),
+  playerLevel: new Interceptable(),
+  offFactionManaCostIncrease: new Interceptable(),
+  speed: new Interceptable(),
+  shouldCreateChainWhenPlayed: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -87,34 +81,24 @@ export type SerializedCard = {
   name: string;
   description: string;
   canPlay: boolean;
-  source: CardDeckSource;
   location: CardLocation | null;
-  speed: CardSpeed;
   modifiers: string[];
-  canBeUsedAsManaCost: boolean;
   manaCost: number | null;
-  destinyCost: number | null;
   keywords: string[];
-  faction: string;
   unplayableReason: string | null;
   isRevealed: boolean;
+  affinities: Affinity[];
+  position: string | null;
+  speed: CardSpeed;
+  isFoil: boolean;
 };
-
-export type CardTargetOrigin =
-  | { type: 'card'; card: AnyCard }
-  | {
-      type: 'ability';
-      abilityId: string;
-      card: AbilityOwner;
-    };
 
 export abstract class Card<
   TSerialized extends JSONObject,
   TInterceptors extends CardInterceptors = CardInterceptors,
   TBlueprint extends CardBlueprint = CardBlueprint
 > extends EntityWithModifiers<TInterceptors> {
-  blueprint: TBlueprint;
-
+  protected _baseblueprintId: string;
   protected originalPlayer: Player;
 
   protected _isExhausted = false;
@@ -123,11 +107,11 @@ export abstract class Card<
 
   protected playedAtTurn: number | null = null;
 
-  protected _targetedBy: CardTargetOrigin[] = [];
-
   protected _isRevealed = false;
 
   isPlayedFromHand = false;
+
+  readonly isFoil: boolean;
 
   constructor(
     game: Game,
@@ -138,19 +122,37 @@ export abstract class Card<
     super(options.id, game, interceptors);
     this.game = game;
     this.originalPlayer = player;
-    this.blueprint = options.blueprint as any;
+    this._baseblueprintId = options.blueprint.id;
+    this.isFoil = options.isFoil;
+  }
+
+  get blueprintId() {
+    return this.interceptors.blueprintId.getValue(this._baseblueprintId, {});
+  }
+
+  get blueprint() {
+    return this.game.cardPool[this.blueprintId] as TBlueprint;
   }
 
   async init() {
     await this.blueprint.onInit(this.game, this as any);
   }
 
+  async copy() {
+    const copy = await this.player.generateCard(this.blueprintId, this.isFoil);
+    return copy;
+  }
+
   get kind() {
     return this.blueprint.kind;
   }
 
-  get faction() {
-    return this.blueprint.faction;
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
+  hasJob(jobId: JobId) {
+    return this.jobs.map(j => j.id).includes(jobId);
   }
 
   get keywords() {
@@ -161,20 +163,12 @@ export abstract class Card<
     return this.interceptors.player.getValue(this.originalPlayer, {});
   }
 
-  get deckSource() {
-    return this.interceptors.deckSource.getValue(this.blueprint.deckSource, {});
-  }
-
-  get isMainDeckCard() {
-    return this.deckSource === CARD_DECK_SOURCES.MAIN_DECK;
-  }
-
-  get isDestinyDeckCard() {
-    return this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK;
-  }
-
   get isRevealed() {
     return this._isRevealed;
+  }
+
+  get affinities() {
+    return this.blueprint.affinities;
   }
 
   async reveal() {
@@ -195,16 +189,16 @@ export abstract class Card<
     this._isRevealed = false;
   }
 
-  get blueprintId() {
-    return this.blueprint.id;
-  }
-
   get isExhausted() {
     return this._isExhausted;
   }
 
   get shouldWakeUpAtTurnStart() {
     return this.interceptors.shouldWakeUpAtTurnStart.getValue(true, {});
+  }
+
+  get shouldSwitchInitiativeAfterPlay() {
+    return this.interceptors.shouldSwitchInitiativeAfterPlay.getValue(true, {});
   }
 
   get location() {
@@ -215,138 +209,62 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
-  get loyaltyManaCostIncrease() {
-    return this.interceptors.loyaltyManaCostIncrease.getValue(
-      this.game.config.BASE_LOYALTY_COST_INCREASE,
-      {}
-    );
-  }
-
-  get loyaltyDestinyCostIncrease() {
-    return this.interceptors.loyaltyDestinyCostIncrease.getValue(
-      this.game.config.BASE_LOYALTY_COST_INCREASE,
-      {}
-    );
-  }
-
-  get loyaltyHpCost() {
-    return this.interceptors.loyaltyHpCost.getValue(
-      this.game.config.BASE_LOYALTY_HP_COST,
-      {}
-    );
-  }
-
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
-      const loyaltyCost =
-        this.faction.id === this.player.hero.faction.id ||
-        this.faction.id === FACTIONS.NEUTRAL.id
-          ? 0
-          : this.loyaltyManaCostIncrease;
+      const base = this.blueprint.manaCost;
 
-      return Math.max(
-        0,
-        this.interceptors.manaCost.getValue(this.blueprint.manaCost + loyaltyCost, {}) ??
-          0
-      );
+      return Math.max(0, this.interceptors.manaCost.getValue(base ?? null, {}) ?? 0);
     }
     return 0;
   }
 
   get canPayManaCost() {
+    return this.player.mana >= this.manaCost;
+  }
+
+  get position(): BoardSpace | null {
     return (
-      this.player.cardManager.hand.filter(card => !card.equals(this)).length >=
-      this.manaCost
+      [
+        ...this.player.boardSide.base,
+        ...this.player.boardSide.leftBattlefield.spaces,
+        ...this.player.boardSide.rightBattlefield.spaces
+      ].find(space => space.card?.equals(this)) ?? null
     );
   }
 
-  get destinyCost(): number {
-    if ('destinyCost' in this.blueprint) {
-      const loyaltyCost =
-        this.faction.id === this.player.hero.faction.id ||
-        this.faction.id === FACTIONS.NEUTRAL.id
-          ? 0
-          : this.loyaltyManaCostIncrease;
-
-      return (
-        this.interceptors.destinyCost.getValue(
-          this.blueprint.destinyCost + loyaltyCost,
-          {}
-        ) ?? 0
-      );
+  get hasUnlockedAffinity() {
+    if (this.affinities[0] === AFFINITIES.NEUTRAL) {
+      return true;
     }
-    return 0;
-  }
-
-  get canPayDestinyCost() {
-    const pool = Array.from(this.player.cardManager.destinyZone).filter(
-      card => card.canBeUsedAsDestinyCost
+    return this.affinities.some(affinity =>
+      this.player.unlockedAffinities.includes(affinity)
     );
-
-    return pool.length >= this.destinyCost;
-  }
-
-  get canBeUsedAsDestinyCost() {
-    return this.interceptors.canBeUsedAsDestinyCost.getValue(
-      this.location === CARD_LOCATIONS.DESTINY_ZONE,
-      {}
-    );
-  }
-
-  get canBeUsedAsManaCost() {
-    return this.interceptors.canBeUsedAsManaCost.getValue(true, {});
-  }
-
-  get canBeRecollected() {
-    return this.interceptors.canBeRecollected.getValue(true, {});
-  }
-
-  get targetedBy() {
-    return this._targetedBy;
-  }
-
-  get speed() {
-    return this.interceptors.speed.getValue(this.blueprint.speed, {});
-  }
-
-  get canPlayDuringChain() {
-    return this.speed !== CARD_SPEED.SLOW;
   }
 
   protected async dispose() {
-    await match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, async () => {
+    await match(this.kind)
+      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, async () => {
         await this.sendToDiscardPile();
       })
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, async () => {
+      .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
+
     await this.game.emit(
       CARD_EVENTS.CARD_DISPOSED,
       new CardDisposedEvent({ card: this })
     );
   }
 
-  async resolve(handler: () => Promise<void>) {
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_PLAY,
-      new CardBeforePlayEvent({ card: this })
-    );
-    this.updatePlayedAt();
-
-    await handler();
-
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_PLAY,
-      new CardAfterPlayEvent({ card: this })
-    );
+  get shouldCreateChainWhenPlayed(): boolean {
+    return this.interceptors.shouldCreateChainWhenPlayed.getValue(true, this);
   }
 
   protected async insertInChainOrExecute(
     handler: () => Promise<void>,
     options: {
-      targets: PreResponseTarget[];
+      targets: Targets<AnyCard>;
       onResolved?: () => MaybePromise<void>;
     }
   ) {
@@ -361,7 +279,7 @@ export abstract class Card<
       }
     };
 
-    if (this.speed === CARD_SPEED.BURST) {
+    if (!this.shouldCreateChainWhenPlayed) {
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
@@ -383,24 +301,18 @@ export abstract class Card<
     }
   }
 
-  targetBy(origin: CardTargetOrigin) {
-    this._targetedBy.push(origin);
-  }
+  async resolve(handler: () => Promise<void>) {
+    await this.game.emit(
+      CARD_EVENTS.CARD_BEFORE_PLAY,
+      new CardBeforePlayEvent({ card: this })
+    );
+    this.updatePlayedAt();
 
-  clearTargetedBy(origin: CardTargetOrigin) {
-    this._targetedBy = this._targetedBy.filter(t =>
-      match(t)
-        .with(
-          { type: 'ability' },
-          t =>
-            (origin.type === 'ability' && t.abilityId !== origin.abilityId) ||
-            !t.card.equals(origin.card)
-        )
-        .with(
-          { type: 'card' },
-          t => origin.type === 'card' && !t.card.equals(origin.card)
-        )
-        .exhaustive()
+    await handler();
+
+    await this.game.emit(
+      CARD_EVENTS.CARD_AFTER_PLAY,
+      new CardAfterPlayEvent({ card: this })
     );
   }
 
@@ -410,165 +322,95 @@ export abstract class Card<
     }
     this.interceptors.player.clear();
     match(this.location)
-      .with('hand', () => {
+      .with(CARD_LOCATIONS.HAND, () => {
         this.player.cardManager.removeFromHand(this);
       })
-      .with('discardPile', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from discard pile when it is not a main deck card.`
-          );
-        }
+      .with(CARD_LOCATIONS.DISCARD_PILE, () => {
         this.player.cardManager.removeFromDiscardPile(this);
       })
-      .with('banishPile', () => {
+      .with(CARD_LOCATIONS.BANISH_PILE, () => {
         this.player.cardManager.removeFromBanishPile(this);
       })
-      .with('mainDeck', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from main deck when it is not a main deck card.`
-          );
-        }
+      .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with('destinyDeck', () => {
-        this.player.cardManager.removeFromDestinyDeck(this);
+      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
+        this.player.cardManager.destinyDeck.pluck(this as any);
       })
-      .with('destinyZone', () => {
-        if (!isMainDeckCard(this)) {
-          throw new IllegalGameStateError(
-            `Cannot remove card ${this.id} from destiny zone pile when it is not a main deck card.`
-          );
+      .with(
+        CARD_LOCATIONS.BASE,
+        CARD_LOCATIONS.LEFT_BATTLEFIELD,
+        CARD_LOCATIONS.RIGHT_BATTLEFIELD,
+        () => {
+          this.player.boardSide.remove(this);
         }
-        this.player.cardManager.removeFromDestinyZone(this);
-      })
-      .with('board', () => {
-        this.player.boardSide.remove(this);
-      })
+      )
       .exhaustive();
   }
 
   async sendToDiscardPile() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to discard pile when it is not a main deck card.`
-      );
-    }
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DISCARD_PILE,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToDiscardPile(this);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DISCARD_PILE,
-        from: currentLocation
-      })
+    await this.changeLocation(CARD_LOCATIONS.DISCARD_PILE, () =>
+      this.originalPlayer.cardManager.sendToDiscardPile(this)
     );
   }
 
   async sendToBanishPile() {
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.BANISH_PILE,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToBanishPile(this);
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.BANISH_PILE,
-        from: currentLocation
-      })
+    await this.changeLocation(CARD_LOCATIONS.BANISH_PILE, () =>
+      this.originalPlayer.cardManager.sendToBanishPile(this)
     );
   }
 
-  async sendToDestinyZone() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot send card ${this.id} to destiny zone when it is not a main deck card.`
-      );
-    }
-    const currentLocation = this.location ?? null;
+  async sendToTopOfDeck() {
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addToTop(this)
+    );
+  }
+
+  async sendToBottomOfDeck() {
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addToBottom(this)
+    );
+  }
+
+  async shuffleIntoDeck() {
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addAtRandomPosition(this)
+    );
+  }
+
+  protected async changeLocation(
+    to: CardLocation,
+    move: () => MaybePromise<void>,
+    options: { removeBeforeMove?: boolean } = {}
+  ) {
+    const { removeBeforeMove = true } = options;
+    const from = this.location ?? null;
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DESTINY_ZONE,
-        from: currentLocation
-      })
+      new CardChangeLocationEvent({ card: this, to, from })
     );
-    this.removeFromCurrentLocation();
-    this.originalPlayer.cardManager.sendToDestinyZone(this);
+    if (removeBeforeMove) this.removeFromCurrentLocation();
+    await move();
     await this.game.emit(
       CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.DESTINY_ZONE,
-        from: currentLocation
-      })
+      new CardChangeLocationEvent({ card: this, to, from })
     );
   }
 
   protected updatePlayedAt() {
     this.playedAtTurn = this.game.turnSystem.elapsedTurns;
   }
-  abstract canPlay(): boolean;
-
-  protected get canPlayAsMaindeckCard() {
-    if (this.deckSource !== CARD_DECK_SOURCES.MAIN_DECK) {
-      return false;
-    }
-    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
-  }
-
-  protected get canPlayAsDestinyDeckCard() {
-    if (this.deckSource !== CARD_DECK_SOURCES.DESTINY_DECK) {
-      return false;
-    }
-    if (this.player.hasPlayedDestinyCardThisTurn) {
-      return false;
-    }
-    if (
-      !this.game.config.ALLOW_DESTINY_CARDS_ON_TURN_1 &&
-      this.game.turnSystem.elapsedTurns === 0
-    ) {
-      return false;
-    }
-
-    return (
-      this.location === CARD_LOCATIONS.DESTINY_DECK &&
-      this.canPayDestinyCost &&
-      this.game.turnSystem.elapsedTurns >=
-        this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
-    );
-  }
 
   get isIncombatPhaseBeforeChain() {
-    const gameStateCtx = this.game.gamePhaseSystem.getContext();
-    if (
-      gameStateCtx.state === GAME_PHASES.ATTACK &&
-      gameStateCtx.ctx.step !== COMBAT_STEPS.BUILDING_CHAIN
-    ) {
-      return true;
-    }
+    return this.game.combatSystem.state === COMBAT_STEPS.DECLARE_TARGET;
+  }
 
-    return false;
+  get speed() {
+    return this.interceptors.speed.getValue(this.blueprint.speed, {});
+  }
+
+  get canPlayDuringChain() {
+    return this.speed === CARD_SPEED.FAST;
   }
 
   protected get canPlayBase() {
@@ -580,15 +422,22 @@ export abstract class Card<
       return false;
     }
 
-    return match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => this.canPlayAsMaindeckCard)
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => this.canPlayAsDestinyDeckCard)
-      .exhaustive();
+    if (this.game.interaction.getState() !== INTERACTION_STATES.IDLE) {
+      return false;
+    }
+
+    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
+
+  abstract canPlay(): boolean;
 
   get unplayableReason(): string | null {
     if (this.canPlay()) {
       return null;
+    }
+
+    if (this.location !== CARD_LOCATIONS.HAND) {
+      return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
     }
 
     if (this.isIncombatPhaseBeforeChain) {
@@ -599,44 +448,17 @@ export abstract class Card<
       return "Can't play during an effect chain.";
     }
 
-    return match(this.deckSource)
-      .with(CARD_DECK_SOURCES.MAIN_DECK, () => {
-        if (this.location !== CARD_LOCATIONS.HAND) {
-          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
-        }
-        if (!this.canPayManaCost) {
-          return 'Cannot pay mana cost.';
-        }
-        return 'You cannot play this card';
-      })
-      .with(CARD_DECK_SOURCES.DESTINY_DECK, () => {
-        if (this.player.hasPlayedDestinyCardThisTurn) {
-          return 'You have already played a Destiny card this turn.';
-        }
-        if (this.location !== CARD_LOCATIONS.DESTINY_DECK) {
-          return null; // we avoid sending a message as it wont be used client side and this allows us to drastically reduce game snapshot size
-        }
-        if (
-          !this.game.config.ALLOW_DESTINY_CARDS_ON_TURN_1 &&
-          this.game.turnSystem.elapsedTurns === 0
-        ) {
-          return 'Cannot play on the first turn.';
-        }
-        if (!this.canPayDestinyCost) {
-          return 'Cannot pay destiny cost.';
-        }
-        if (
-          this.game.turnSystem.elapsedTurns <
-          this.game.config.MINIMUM_TURN_COUNT_TO_PLAY_DESTINY_CARD
-        ) {
-          return `Cannot play destiny cards yet.`;
-        }
-        return 'You cannot play this card.';
-      })
-      .exhaustive();
+    if (this.game.interaction.getState() !== INTERACTION_STATES.IDLE) {
+      return 'You cannot play cards from hand right now.';
+    }
+
+    if (!this.canPayManaCost) {
+      return 'Cannot pay mana cost.';
+    }
+    return 'You cannot play this card';
   }
 
-  abstract play(onResolved: () => MaybePromise<void>): Promise<void>;
+  abstract play(): Promise<{ cancelled: boolean }>;
 
   get description() {
     return isFunction(this.blueprint.description)
@@ -647,41 +469,34 @@ export abstract class Card<
   protected serializeBase(): SerializedCard {
     return {
       id: this.id,
+      isFoil: this.isFoil,
       art: this.blueprint.art.default,
-      source: this.deckSource,
       entityType: 'card',
       rarity: this.blueprint.rarity,
       player: this.player.id,
       kind: this.kind,
       isExhausted: this.isExhausted,
-      faction: this.faction.id,
       name: this.blueprint.name,
       description:
         this.blueprint?.dynamicDescription?.(this.game, this) ?? this.description,
       canPlay: this.canPlay(),
       location: this.location ?? null,
-      canBeUsedAsManaCost: this.canBeUsedAsManaCost,
       modifiers: this.modifiers.list
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
-      manaCost: this.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? this.manaCost : null,
-      destinyCost:
-        this.deckSource === CARD_DECK_SOURCES.DESTINY_DECK ? this.destinyCost : null,
-      speed: this.blueprint.speed,
+      manaCost: 'manaCost' in this.blueprint ? this.manaCost : null,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
-      isRevealed: this.isRevealed
+      isRevealed: this.isRevealed,
+      affinities: this.affinities,
+      position: this.position?.id ?? null,
+      speed: this.speed
     };
   }
 
   abstract serialize(): TSerialized;
 
   async discard() {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot discard card ${this.id} when it is not a main deck card.`
-      );
-    }
     await (this as this).game.emit(
       CARD_EVENTS.CARD_DISCARD,
       new CardDiscardEvent({ card: this })
@@ -690,34 +505,13 @@ export abstract class Card<
   }
 
   async addToHand(index?: number) {
-    if (!isMainDeckCard(this)) {
-      throw new IllegalGameStateError(
-        `Cannot add card ${this.id} to hand because it is not a main deck card.`
+    await this.changeLocation(CARD_LOCATIONS.HAND, async () => {
+      await this.player.cardManager.addToHand(this, index);
+      await this.game.emit(
+        CARD_EVENTS.CARD_ADD_TO_HAND,
+        new CardAddToHandevent({ card: this, index: index ?? null })
       );
-    }
-    const currentLocation = this.location ?? null;
-    await this.game.emit(
-      CARD_EVENTS.CARD_BEFORE_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.HAND,
-        from: currentLocation
-      })
-    );
-    this.removeFromCurrentLocation();
-    await this.player.cardManager.addToHand(this, index);
-    await (this as this).game.emit(
-      CARD_EVENTS.CARD_ADD_TO_HAND,
-      new CardAddToHandevent({ card: this, index: index ?? null })
-    );
-    await this.game.emit(
-      CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION,
-      new CardChangeLocationEvent({
-        card: this,
-        to: CARD_LOCATIONS.HAND,
-        from: currentLocation
-      })
-    );
+    });
   }
 
   async exhaust() {

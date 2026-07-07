@@ -2,11 +2,10 @@ import { useSafeInject } from '@/shared/composables/useSafeInject';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
+  AFFINITIES,
   CARD_KINDS,
-  CARD_DECK_SOURCES,
   type CardKind,
-  type CardSpeed,
-  type Faction
+  type JobId
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isFunction, isString } from '@game/shared';
@@ -33,16 +32,11 @@ export type CardListContext = {
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
 
-  hasSpeedFilter(speed: CardSpeed): boolean;
-  toggleSpeedFilter(speed: CardSpeed): void;
-  clearSpeedFilter(): void;
-
-  hasFactionFilter(faction: Faction): boolean;
-  toggleFactionFilter(faction: Faction): void;
-  clearFactionFilter(): void;
+  hasJobFilter(job: JobId): boolean;
+  toggleJobFilter(job: JobId): void;
+  clearJobFilter(): void;
 
   manaCostFilter: Ref<{ min: number; max: number } | null>;
-  destinyCostFilter: Ref<{ min: number; max: number } | null>;
 };
 
 const CardListInjectionKey = Symbol(
@@ -60,14 +54,23 @@ export const provideCardList = () => {
     [CARD_KINDS.MINION]: 2,
     [CARD_KINDS.SPELL]: 3,
     [CARD_KINDS.ARTIFACT]: 4,
-    [CARD_KINDS.SIGIL]: 5
+    [CARD_KINDS.DESTINY]: 5
+  };
+
+  const AFFINITY_ORDER = {
+    [AFFINITIES.FIRE]: 1,
+    [AFFINITIES.WATER]: 2,
+    [AFFINITIES.AIR]: 3,
+    [AFFINITIES.EARTH]: 4,
+    [AFFINITIES.LIGHT]: 5,
+    [AFFINITIES.DARK]: 6,
+    [AFFINITIES.ARCANE]: 7,
+    [AFFINITIES.NEUTRAL]: 8
   };
 
   const kindFilter = ref(new Set<CardKind>());
-  const speedFilter = ref(new Set<CardSpeed>());
-  const factionFilter = ref(new Set<Faction>());
+  const jobFilter = ref(new Set<JobId>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
-  const destinyCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
 
   const textFilter = ref('');
@@ -103,19 +106,15 @@ export const provideCardList = () => {
         };
       })
       .filter(({ card }) => {
-        if (speedFilter.value.size > 0 && !speedFilter.value.has(card.speed)) {
-          return false;
-        }
-
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
           return false;
         }
 
-        if (
-          factionFilter.value.size > 0 &&
-          !factionFilter.value.has(card.faction)
-        ) {
-          return false;
+        if (jobFilter.value.size > 0) {
+          const isMatch = card.jobs.some(job =>
+            jobFilter.value.has(job.id as JobId)
+          );
+          return isMatch;
         }
 
         if (manaCostFilter.value !== null) {
@@ -124,21 +123,8 @@ export const provideCardList = () => {
           }
           if (
             'manaCost' in card &&
-            (card.manaCost < manaCostFilter.value.min ||
-              card.manaCost > manaCostFilter.value.max)
-          ) {
-            return false;
-          }
-        }
-
-        if (destinyCostFilter.value !== null) {
-          if (!('destinyCost' in card)) {
-            return false;
-          }
-          if (
-            'destinyCost' in card &&
-            (card.destinyCost < destinyCostFilter.value.min ||
-              card.destinyCost > destinyCostFilter.value.max)
+            ((card.manaCost ?? 0) < manaCostFilter.value.min ||
+              (card.manaCost ?? 0) > manaCostFilter.value.max)
           ) {
             return false;
           }
@@ -152,6 +138,10 @@ export const provideCardList = () => {
           return (
             card.name.toLocaleLowerCase().includes(searchText) ||
             description.toLocaleLowerCase().includes(searchText) ||
+            card.tags.some(tag =>
+              tag.toLocaleLowerCase().includes(searchText)
+            ) ||
+            (card as any).subKind?.toLocaleLowerCase().includes(searchText) ||
             card.tags.some(tag =>
               tag.toLocaleLowerCase().includes(searchText)
             ) ||
@@ -176,30 +166,35 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        if (!a.card) {
-          console.log(a);
+        if (
+          a.card.kind === CARD_KINDS.HERO &&
+          b.card.kind !== CARD_KINDS.HERO
+        ) {
+          return -1;
         }
-        if (!b.card) {
-          console.log(b);
-        }
-        if (a.card.deckSource !== b.card.deckSource) {
-          return a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK ? 1 : -1;
+        if (
+          a.card.kind !== CARD_KINDS.HERO &&
+          b.card.kind === CARD_KINDS.HERO
+        ) {
+          return 1;
         }
 
+        if (a.card.affinities.length !== b.card.affinities.length) {
+          return a.card.affinities.length - b.card.affinities.length;
+        }
+
+        if (a.card.affinities[0] !== b.card.affinities[0]) {
+          return (
+            (AFFINITY_ORDER[a.card.affinities[0]] ?? 999) -
+            (AFFINITY_ORDER[b.card.affinities[0]] ?? 999)
+          );
+        }
         if (
-          a.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
-          b.card.deckSource === CARD_DECK_SOURCES.MAIN_DECK &&
+          'manaCost' in a.card &&
+          'manaCost' in b.card &&
           a.card.manaCost !== b.card.manaCost
         ) {
-          return a.card.manaCost - b.card.manaCost;
-        }
-
-        if (
-          a.card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          b.card.deckSource === CARD_DECK_SOURCES.DESTINY_DECK &&
-          a.card.destinyCost !== b.card.destinyCost
-        ) {
-          return a.card.destinyCost - b.card.destinyCost;
+          return (a.card.manaCost ?? 0) - (b.card.manaCost ?? 0);
         }
 
         if (a.card.kind !== b.card.kind) {
@@ -233,35 +228,20 @@ export const provideCardList = () => {
       kindFilter.value.clear();
     },
 
-    hasSpeedFilter(speed: CardSpeed) {
-      return speedFilter.value.has(speed);
+    hasJobFilter(job: JobId) {
+      return jobFilter.value.has(job);
     },
-    toggleSpeedFilter(speed: CardSpeed) {
-      if (speedFilter.value.has(speed)) {
-        speedFilter.value.delete(speed);
+    toggleJobFilter(job: JobId) {
+      if (jobFilter.value.has(job)) {
+        jobFilter.value.delete(job);
       } else {
-        speedFilter.value.add(speed);
+        jobFilter.value.add(job);
       }
     },
-    clearSpeedFilter: () => {
-      speedFilter.value.clear();
+    clearJobFilter: () => {
+      jobFilter.value.clear();
     },
-
-    hasFactionFilter(faction: Faction) {
-      return factionFilter.value.has(faction);
-    },
-    toggleFactionFilter(faction: Faction) {
-      if (factionFilter.value.has(faction)) {
-        factionFilter.value.delete(faction);
-      } else {
-        factionFilter.value.add(faction);
-      }
-    },
-    clearFactionFilter: () => {
-      factionFilter.value.clear();
-    },
-    manaCostFilter,
-    destinyCostFilter
+    manaCostFilter
   };
 
   provide(CardListInjectionKey, ctx);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
-import { type CardKind, type CardTint } from '@game/engine/src/card/card.enums';
+import { type CardKind } from '@game/engine/src/card/card.enums';
 import CardGlare from './CardGlare.vue';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilScanlines from './foil/FoilScanlines.vue';
@@ -9,8 +9,10 @@ import FoilOil from './foil/FoilOil.vue';
 import FoilGradient from './foil/FoilGradient.vue';
 import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
+import FoilBrightShine from './foil/FoilBrightShine.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
+import type { CardArt } from '@game/engine/src/card/card-blueprint';
 
 const {
   card,
@@ -19,26 +21,7 @@ const {
 } = defineProps<{
   card: {
     id: string;
-    art: {
-      foil: {
-        sheen?: boolean;
-        oil?: boolean;
-        gradient?: boolean;
-        lightGradient?: boolean;
-        scanlines?: boolean;
-        goldenGlare?: boolean;
-        glitter?: boolean;
-      };
-      dimensions: {
-        width: number;
-        height: number;
-      };
-      bg: string;
-      main: string;
-      breakout?: string;
-      frame: string;
-      tint: CardTint;
-    };
+    art: CardArt;
     kind: CardKind;
     atk?: number | null;
     baseAtk?: number | null;
@@ -46,6 +29,8 @@ const {
     countdown?: number | null;
     maxHp?: number | null;
     baseMaxHp?: number | null;
+    commandment?: number | null;
+    baseBounty?: number | null;
     durability?: number | null;
     manaCost?: number | null;
     destinyCost?: number | null;
@@ -60,20 +45,12 @@ const { pointerStyle } = useCardTilt(root, {
   isEnabled: ref(true)
 });
 
-const artFrameImage = computed(() => {
-  return assets[card.art.frame].css;
-});
-
 const artBgImage = computed(() => {
   return assets[card.art.bg].css;
 });
 
 const artMainImage = computed(() => {
   return assets[card.art.main].css;
-});
-
-const artBreakoutImage = computed(() => {
-  return card.art.breakout ? assets[card.art.breakout].css : 'none';
 });
 </script>
 
@@ -90,11 +67,27 @@ const artBreakoutImage = computed(() => {
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
         <div class="art-main" />
+        <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
         <div class="art-frame" />
-        <div v-if="isFoil && card.art.breakout" class="art-breakout" />
       </div>
 
       <template v-if="showStats">
+        <div
+          v-if="isDefined(card.commandment)"
+          class="commandment"
+          :class="{
+            buffed:
+              isDefined(card.baseBounty) && card.commandment > card.baseBounty,
+            debuffed:
+              isDefined(card.baseBounty) && card.commandment < card.baseBounty
+          }"
+          data-label="Bounty"
+        >
+          <div class="dual-text" :data-text="card.commandment">
+            {{ card.commandment }}
+          </div>
+        </div>
+
         <div
           v-if="isDefined(card.atk)"
           class="stat atk"
@@ -160,7 +153,6 @@ const artBreakoutImage = computed(() => {
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   --foil-animated-toggle: ;
-
   width: calc(var(--card-small-width) * var(--pixel-scale));
   height: calc(var(--card-small-height) * var(--pixel-scale));
   display: grid;
@@ -186,83 +178,8 @@ const artBreakoutImage = computed(() => {
   font-size: 16px;
   position: relative;
   transform-style: preserve-3d;
-  --bg-size: calc(
-      1px * v-bind('card.art.dimensions.width') * var(--pixel-scale)
-    )
-    calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  --frame-size: calc(var(--card-art-frame-width) * var(--pixel-scale))
-    calc(var(--card-art-frame-height) * var(--pixel-scale));
-  --stat-size: calc(39px * var(--pixel-scale)) calc(39px * var(--pixel-scale));
-  --stat-left-position: left 0px bottom calc(4px * var(--pixel-scale));
-  --stat-right-position: right 0px bottom calc(4px * var(--pixel-scale));
-
-  --glare-mask: var(--mask);
-  --glare-mask-size: var(--mask-size);
-  --glare-mask-position: var(--mask-position);
-  --foil-mask: var(--mask);
-  --foil-mask-size: var(--mask-size);
-  --foil-mask-position: var(--mask-position);
-  .small-card:is(.minion, .hero) & {
-    --mask:
-      v-bind(artBgImage), v-bind(artFrameImage),
-      url('@/assets/ui/card/attack-large.png'),
-      url('@/assets/ui/card/health-large.png');
-    --mask-size:
-      var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
-    --mask-position:
-      center, center, var(--stat-left-position), var(--stat-right-position);
-  }
-
-  .small-card:is(.minion, .hero) & {
-    --mask:
-      v-bind(artBgImage), v-bind(artFrameImage),
-      url('@/assets/ui/card/attack-large.png'),
-      url('@/assets/ui/card/durability-large.png');
-    --mask-size:
-      var(--bg-size), var(--frame-size), var(--stat-size), var(--stat-size);
-    --mask-position:
-      center, center, var(--stat-left-position), var(--stat-right-position);
-    &:has(.foil) {
-      --mask:
-        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
-        url('@/assets/ui/card/attack-large.png'),
-        url('@/assets/ui/card/durability-large.png');
-      --mask-size:
-        var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size),
-        var(--stat-size);
-      --mask-position:
-        center, center, center, var(--stat-left-position),
-        var(--stat-right-position);
-    }
-  }
-
-  .small-card.spell & {
-    --mask: v-bind(artBgImage), v-bind(artFrameImage);
-    --mask-size: var(--bg-size), var(--frame-size);
-    --mask-position: center, center;
-    &:has(.foil) {
-      --mask:
-        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage);
-      --mask-size: var(--bg-size), var(--frame-size), var(--frame-size);
-      --mask-position: center, center, center;
-    }
-  }
-
-  .small-card.sigil & {
-    --mask:
-      v-bind(artBgImage), v-bind(artFrameImage),
-      url('@/assets/ui/card/countdown-large.png');
-    --mask-size: var(--bg-size), var(--frame-size), var(--stat-size);
-    --mask-position: center, center, var(--stat-right-position);
-    &:has(.foil) {
-      --mask:
-        v-bind(artBgImage), v-bind(artFrameImage), v-bind(artBreakoutImage),
-        url('@/assets/ui/card/countdown-large.png');
-      --mask-size:
-        var(--bg-size), var(--frame-size), var(--frame-size), var(--stat-size);
-      --mask-position: center, center, center, var(--stat-right-position);
-    }
-  }
+  --glare-mask: url('@/assets/ui/card/masks/frame-overflow-mask.png');
+  --foil-mask: url('@/assets/ui/card/masks/frame-overflow-mask.png');
 }
 
 .card-back {
@@ -282,75 +199,43 @@ const artBreakoutImage = computed(() => {
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-
-  .foil {
-    --foil-mask: v-bind(artBgImage);
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-    height: calc(
-      1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
-    );
-    translate: -50% 0;
-    --parallax-offset-x: -50%;
-  }
 }
 
 .art-frame {
   position: absolute;
   inset: 0;
-  background: v-bind(artFrameImage);
+  background: url('@/assets/ui/card/frames/default.png');
   background-size: cover;
 }
 .art-main {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artMainImage);
   background-size: cover;
 }
-.art-breakout {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
-  background: v-bind(artBreakoutImage);
-  background-size: cover;
-}
+
 .art-bg {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale));
-  translate: -50% 0;
+  inset: 0;
   background: v-bind(artBgImage);
   background-size: cover;
 }
 
 .stat {
-  width: calc(39px * var(--pixel-scale));
-  height: calc(39px * var(--pixel-scale));
-  position: absolute;
+  width: calc(40px * var(--pixel-scale));
+  height: calc(26px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
-  bottom: calc(4px * var(--pixel-scale));
+  position: absolute;
+  bottom: calc(0px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 14px);
+  text-align: right;
+  font-weight: var(--font-weight-9);
+  font-family: 'Lato', sans-serif;
   display: grid;
   place-content: center;
-  font-weight: var(--font-weight-7);
-  font-size: calc(22px * var(--pixel-scale));
-  padding-top: calc(7px * var(--pixel-scale));
-  font-family:
-    Cinzel Decorative,
-    serif;
-  --dual-text-offset-y: 1px;
-
+  paint-order: stroke fill;
+  z-index: 0;
   &.buffed {
     --top-color: var(--green-2);
     --bottom-color: var(--green-6);
@@ -362,18 +247,25 @@ const artBreakoutImage = computed(() => {
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/attack-large.png');
+  background-image: url('@/assets/ui/card/power.png');
   left: 0;
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health-large.png');
+  background-image: url('@/assets/ui/card/health.png');
   right: 0;
+  text-align: right;
+  padding-left: calc(18px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
-
 .durability {
   background-image: url('@/assets/ui/card/durability.png');
   right: 0;
+  padding-right: 0px;
+  padding-left: 2px;
 }
 
 .countdown {
@@ -400,53 +292,19 @@ const artBreakoutImage = computed(() => {
   scale: 2;
 }
 
-.destiny-cost {
-  background-image: url('@/assets/ui/destiny-cost.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
+.commandment {
   position: absolute;
-  top: calc(2px * var(--pixel-scale));
-  left: calc(12px * var(--pixel-scale));
-  display: grid;
-  place-content: center;
-  padding-left: calc(0px * var(--pixel-scale));
-  padding-top: calc(0px * var(--pixel-scale));
+  top: 0;
+  left: 0;
+  background-image: url('@/assets/ui/card/commandment.png');
   font-weight: var(--font-weight-7);
-  font-size: 10px;
-  --dual-text-offset-y: 1px;
-  scale: 2;
-}
-
-.dual-text {
-  color: transparent;
-  position: relative;
-  --_top-color: var(--top-color, #dedede);
-  --_bottom-color: var(--bottom-color, #b8aeab);
-  &::before,
-  &::after {
-    position: absolute;
-    content: attr(data-text);
-    color: transparent;
-    inset: 0;
+  padding-top: calc(3px * var(--pixel-scale));
+  width: calc(30px * var(--pixel-scale));
+  height: calc(28px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 14px);
+  .dual-text::before {
+    transform: translateY(-3px);
   }
-  &:after {
-    background: linear-gradient(
-      var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
-    );
-    line-height: 1.2;
-    background-clip: text;
-    background-size: 100% 1lh;
-    background-repeat: repeat-y;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-  &:before {
-    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
-    z-index: -1;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
+  padding-left: calc(8px * var(--pixel-scale));
 }
 </style>

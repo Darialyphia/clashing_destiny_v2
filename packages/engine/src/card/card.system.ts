@@ -3,21 +3,22 @@ import type { Player } from '../player/player.entity';
 import { System } from '../system';
 import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
-  ArtifactBlueprint,
   CardBlueprint,
   HeroBlueprint,
   MinionBlueprint,
-  SigilBlueprint,
-  SpellBlueprint
+  SpellBlueprint,
+  ArtifactBlueprint,
+  DestinyBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
-import { ArtifactCard } from './entities/artifact.entity';
 import { MinionCard } from './entities/minion.entity';
 import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
-import { CARD_KINDS, type CardKind } from './card.enums';
+import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
-import { SigilCard } from './entities/sigil.entity';
+import { ArtifactCard } from './entities/artifact.entity';
+import { isHero } from './card-utils';
+import { DestinyCard } from './entities/destiny.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -51,11 +52,25 @@ export class CardSystem extends System<CardSystemOptions> {
     return this.cardMap.get(id) as T | undefined;
   }
 
+  getAllCardsInPlay() {
+    return this.cards.filter(
+      card =>
+        card.location === CARD_LOCATIONS.BASE ||
+        card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
+        isHero(card)
+    );
+  }
+
   get cards() {
     return [...this.cardMap.values()];
   }
 
-  async addCard<T extends AnyCard>(player: Player, blueprintId: string): Promise<T> {
+  async addCard<T extends AnyCard>(
+    player: Player,
+    blueprintId: string,
+    isFoil: boolean
+  ): Promise<T> {
     const blueprint = this.getBlueprint(blueprintId);
     const id = `${blueprintId}-${this.nextId++}`;
 
@@ -65,8 +80,27 @@ export class CardSystem extends System<CardSystemOptions> {
         () =>
           new SpellCard(this.game, player, {
             id,
-            blueprint
+            blueprint,
+            isFoil
           } as CardOptions<SpellBlueprint>)
+      )
+      .with(
+        CARD_KINDS.MINION,
+        () =>
+          new MinionCard(this.game, player, {
+            id,
+            blueprint,
+            isFoil
+          } as CardOptions<MinionBlueprint>)
+      )
+      .with(
+        CARD_KINDS.HERO,
+        () =>
+          new HeroCard(this.game, player, {
+            id,
+            blueprint,
+            isFoil
+          } as CardOptions<HeroBlueprint>)
       )
       .with(
         CARD_KINDS.ARTIFACT,
@@ -77,28 +111,12 @@ export class CardSystem extends System<CardSystemOptions> {
           } as CardOptions<ArtifactBlueprint>)
       )
       .with(
-        CARD_KINDS.MINION,
+        CARD_KINDS.DESTINY,
         () =>
-          new MinionCard(this.game, player, {
+          new DestinyCard(this.game, player, {
             id,
             blueprint
-          } as CardOptions<MinionBlueprint>)
-      )
-      .with(
-        CARD_KINDS.HERO,
-        () =>
-          new HeroCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<HeroBlueprint>)
-      )
-      .with(
-        CARD_KINDS.SIGIL,
-        () =>
-          new SigilCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<SigilBlueprint>)
+          } as CardOptions<DestinyBlueprint>)
       )
       .exhaustive();
     await card.init();

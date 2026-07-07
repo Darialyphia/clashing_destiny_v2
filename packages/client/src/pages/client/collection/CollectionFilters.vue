@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import {
-  CARD_KINDS,
-  FACTIONS,
-  type CardKind,
-  type Faction
-} from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useCollectionPage } from './useCollectionPage';
@@ -24,10 +19,7 @@ const {
   textFilter,
   hasKindFilter,
   toggleKindFilter,
-  hasFactionFilter,
-  toggleFactionFilter,
   manaCostFilter,
-  destinyCostFilter,
   includeUnowned,
   cardScale
 } = useCollectionPage();
@@ -40,21 +32,9 @@ const cardKinds: Array<{
   color: string;
 }> = Object.values(CARD_KINDS).map(kind => ({
   id: kind,
-  img: assets[`ui/card-kind-${kind.toLocaleLowerCase()}`].path,
+  img: assets[`ui/card/kind-${kind.toLocaleLowerCase()}`].path,
   label: uppercaseFirstLetter(kind),
   color: 'white'
-}));
-
-const factions: Array<{
-  id: string;
-  img: string;
-  label: string;
-  faction: Faction;
-}> = Object.values(FACTIONS).map(faction => ({
-  id: faction.id,
-  img: assets[`ui/card/faction-${faction.id.toLocaleLowerCase()}`].path,
-  label: faction.name,
-  faction
 }));
 
 const router = useRouter();
@@ -64,7 +44,6 @@ const toggleManaFilter = (cost: number) => {
     manaCostFilter.value = null;
   } else {
     manaCostFilter.value = { min: cost, max: cost };
-    destinyCostFilter.value = null;
   }
 };
 
@@ -73,25 +52,6 @@ const toggleMinManaCostFilter = (cost: number) => {
     manaCostFilter.value = null;
   } else {
     manaCostFilter.value = { min: cost, max: Infinity };
-    destinyCostFilter.value = null;
-  }
-};
-
-const toggleDestinyFilter = (cost: number) => {
-  if (destinyCostFilter.value?.min === cost) {
-    destinyCostFilter.value = null;
-  } else {
-    destinyCostFilter.value = { min: cost, max: cost };
-    manaCostFilter.value = null;
-  }
-};
-
-const toggleMinDestinyCostFilter = (cost: number) => {
-  if (destinyCostFilter.value?.min === cost) {
-    destinyCostFilter.value = null;
-  } else {
-    destinyCostFilter.value = { min: cost, max: Infinity };
-    manaCostFilter.value = null;
   }
 };
 </script>
@@ -143,38 +103,16 @@ const toggleMinDestinyCostFilter = (cost: number) => {
     <button
       class="mana-cost"
       :class="{ active: manaCostFilter?.min === 5 }"
-      @click="toggleMinManaCostFilter(5)"
+      @click="toggleManaFilter(5)"
     >
-      5+
-    </button>
-
-    <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 0 }"
-      @click="toggleDestinyFilter(0)"
-    >
-      0
+      5
     </button>
     <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 1 }"
-      @click="toggleDestinyFilter(1)"
+      class="mana-cost"
+      :class="{ active: manaCostFilter?.min === 6 }"
+      @click="toggleMinManaCostFilter(6)"
     >
-      1
-    </button>
-    <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 2 }"
-      @click="toggleDestinyFilter(2)"
-    >
-      2
-    </button>
-    <button
-      class="destiny-cost"
-      :class="{ active: destinyCostFilter?.min === 3 }"
-      @click="toggleMinDestinyCostFilter(3)"
-    >
-      3+
+      6+
     </button>
 
     <Icon icon="material-symbols:zoom-in" width="2rem" />
@@ -215,41 +153,49 @@ const toggleMinDestinyCostFilter = (cost: number) => {
               Include Unowned
               <UiSwitch v-model="includeUnowned" />
             </h4>
-            <h4 class="filter-title">Faction</h4>
+            <!-- <h4 class="filter-title">Faction</h4>
             <div class="faction-filter">
               <UiSimpleTooltip
-                v-for="faction in factions"
-                :key="faction.id"
-                :content="faction.label"
+                v-for="job in jobs"
+                :key="job.id"
                 side="bottom"
+                use-portal
               >
                 <template #trigger>
                   <button
-                    :class="{ active: hasFactionFilter(faction.faction) }"
-                    :aria-label="faction.label"
-                    @click="toggleFactionFilter(faction.faction)"
+                    :class="{ active: hasJobFilter(job.job.id as JobId) }"
+                    :aria-label="job.label"
+                    @click="toggleJobFilter(job.job.id as JobId)"
                   >
-                    <img :src="faction.img" :alt="faction.label" />
+                    <img :src="job.img" :alt="job.label" />
                   </button>
                 </template>
-                {{ faction.label }}
+                {{ job.label }}
               </UiSimpleTooltip>
-            </div>
+            </div> -->
           </section>
 
           <section class="filter-section">
             <h4 class="filter-title">Card Type</h4>
             <div class="kind-filter">
-              <button
+              <UiSimpleTooltip
                 v-for="kind in cardKinds"
-                :key="kind.label"
-                :class="{ active: hasKindFilter(kind.id) }"
-                :style="{ '--color': kind.color }"
-                :aria-label="kind.label"
-                @click="toggleKindFilter(kind.id)"
+                :key="kind.id"
+                side="top"
+                use-portal
               >
-                <img :src="kind.img" :alt="kind.label" />
-              </button>
+                <template #trigger>
+                  <button
+                    :class="{ active: hasKindFilter(kind.id) }"
+                    :style="{ '--color': kind.color }"
+                    :aria-label="kind.label"
+                    @click="toggleKindFilter(kind.id)"
+                  >
+                    <img :src="kind.img" :alt="kind.label" />
+                  </button>
+                </template>
+                {{ uppercaseFirstLetter(kind.label.toLocaleLowerCase()) }}
+              </UiSimpleTooltip>
             </div>
           </section>
         </PopoverContent>
@@ -340,8 +286,8 @@ const toggleMinDestinyCostFilter = (cost: number) => {
     }
 
     & > img {
-      width: 32px;
-      height: 32px;
+      width: calc(24px * var(--pixel-scale));
+      aspect-ratio: 1;
       object-fit: contain;
     }
   }

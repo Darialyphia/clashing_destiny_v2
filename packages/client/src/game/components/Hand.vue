@@ -2,6 +2,7 @@
 import {
   useFxEvent,
   useGameClient,
+  useGameState,
   useGameUi,
   useMyPlayer,
   usePlayer
@@ -12,11 +13,13 @@ import { OnClickOutside } from '@vueuse/components';
 import { useElementBounding, useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
 const player = usePlayer(playerId);
 const ui = useGameUi();
+const state = useGameState();
 const { client } = useGameClient();
 
 const myPlayer = useMyPlayer();
@@ -127,12 +130,18 @@ const step = computed(() => {
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
-  const offset = (handContainerSize.value.w - usedSpan) / 2;
 
+  const offset = (handContainerSize.value.w - usedSpan) / 2;
+  const hoveredIndexInHand = ui.value.hoveredCardInHand
+    ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
+    : null;
   return player.value.hand.map((card, i) => {
+    const isAfterHoveredCard =
+      hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
     return {
       card,
-      x: i * step.value + offset,
+      x:
+        i * step.value + offset + (isAfterHoveredCard ? cardW.value * 0.25 : 0),
       y: 0,
       z: i
     };
@@ -140,10 +149,10 @@ const cards = computed(() => {
 });
 
 const { width } = useElementBounding(() => ui.value.DOMSelectors.board.element);
-const handWidth = ref(width.value * 0.75);
+const handWidth = ref(width.value);
 watch(width, v => {
   if (client.value.isPlayingFx) return;
-  handWidth.value = v * 0.75;
+  handWidth.value = Math.max(v + 200, window.innerWidth * 0.75);
 });
 </script>
 
@@ -158,7 +167,8 @@ watch(width, v => {
       class="hand"
       :class="{
         'ui-hidden': !ui.displayedElements.hand,
-        'opponent-hand': !isMyHand
+        'opponent-hand': !isMyHand,
+        hoverable: state.phase.state !== GAME_PHASES.PLAY_CARD
       }"
       :style="{
         '--hand-size': player.hand.length,
@@ -168,10 +178,9 @@ watch(width, v => {
     >
       <HandCard
         v-for="card in cards"
-        :key="card.card.cardId"
-        :card-id="card.card.cardId"
+        :key="card.card.id"
+        :card="card.card"
         :is-interactive="isMyHand"
-        class="hand-card"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
@@ -192,23 +201,17 @@ watch(width, v => {
   height: 50px;
 }
 .hand {
-  --pixel-scale: 1.5;
-  --hover-offset: -20px; /* used in HandCard.vue */
+  --pixel-scale: 1;
   position: relative;
   z-index: 1;
   width: 100%;
-  transition: transform 0.15s var(--ease-elastic-2);
+  transition: transform 0.15s var(--ease-in-3);
   &.opponent-hand:not(.expanded) {
     position: absolute;
     right: 0;
   }
-  &:hover {
-    --pixel-scale: 1.5;
-    transform: translateY(-240px);
+  &.hoverable:hover {
+    transform: translateY(-135px);
   }
-}
-
-.hand-card {
-  padding-block: var(--size-3) var(--size-6);
 }
 </style>

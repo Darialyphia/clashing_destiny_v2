@@ -6,12 +6,8 @@ import type { WalletRepository } from '../../currency/repositories/wallet.reposi
 import type { EventEmitter } from '../../shared/eventEmitter';
 import { isDefined } from '@game/shared';
 import { cardsBySet } from '@game/engine/src/generated/cards';
-import {
-  DECRAFTING_REWARD_PER_RARITY,
-  MAX_COPIES_PER_CARD_DECK_SOURCE
-} from '../card.constants';
+import { DECRAFTING_REWARD_PER_RARITY, MAX_COPIES_PER_CARD } from '../card.constants';
 import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
-import { CARD_DECK_SOURCES } from '@game/engine/src/card/card.enums';
 import type { AwardCurrencyUseCase } from '../../currency/usecases/awardCurrency.usecase';
 
 export interface DecraftExtraCardsOutput {
@@ -54,7 +50,7 @@ export class DecraftExtraCardsUseCase implements UseCase<never, DecraftExtraCard
         continue;
       }
 
-      const maxCopiesAllowed = MAX_COPIES_PER_CARD_DECK_SOURCE[blueprint.deckSource];
+      const maxCopiesAllowed = MAX_COPIES_PER_CARD;
       const extraCopies = card.copiesOwned.value - maxCopiesAllowed;
 
       if (extraCopies > 0) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
-import GameBoard from '@/game/components/GameBoard.vue';
+import GameScene from '@/game/components/GameScene.vue';
 import { useElementBounding } from '@vueuse/core';
 import { useTutorial } from './useTutorial';
 
@@ -24,7 +24,7 @@ const RECT_PADDING = 15;
 </script>
 
 <template>
-  <GameBoard v-if="client.isReady" :options="{ teachingMode: false }">
+  <GameScene v-if="client.isReady" :options="{ teachingMode: false }">
     <template #menu>
       <RouterLink
         custom
@@ -40,7 +40,7 @@ const RECT_PADDING = 15;
         />
       </RouterLink>
     </template>
-  </GameBoard>
+  </GameScene>
   <div
     class="highlight"
     v-if="client.ui.highlightedElement"

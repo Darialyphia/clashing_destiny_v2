@@ -2,34 +2,24 @@ import { type Override } from '@game/shared';
 import type {
   SerializedOmniscientState,
   SerializedPlayerState,
-  SnapshotDiff,
   PatchBasedSnapshotDiff
 } from '../../game/systems/game-snapshot.system';
-import type { EntityDictionary } from '../../game/systems/game-serializer';
+import type {
+  EntityDictionary,
+  SerializedEntity
+} from '../../game/systems/game-serializer';
 import { CardViewModel } from '../view-models/card.model';
 import { ModifierViewModel } from '../view-models/modifier.model';
 import { PlayerViewModel } from '../view-models/player.model';
 import { match } from 'ts-pattern';
-import type { GameClient } from '../client';
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
-import type { SerializedMinionCard } from '../../card/entities/minion.entity';
-import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedModifier } from '../../modifier/modifier.entity';
-import type { SerializedPlayer } from '../../player/player.entity';
+import type { GameClient, GameStateEntities } from '../client';
 import {
   GAME_EVENTS,
   type SerializedEvent,
   type SerializedStarEvent
 } from '../../game/game.events';
-import type { SerializedAbility } from '../../card/card-blueprint';
 import { AbilityViewModel } from '../view-models/ability.model';
-import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
-
-export type GameStateEntities = Record<
-  string,
-  PlayerViewModel | CardViewModel | ModifierViewModel | AbilityViewModel
->;
+import { BoardSpaceViewModel } from '../view-models/board-space.model';
 
 export type GameClientState = Override<
   SerializedOmniscientState | SerializedPlayerState,
@@ -38,18 +28,9 @@ export type GameClientState = Override<
   }
 >;
 
-export type SerializedEntity =
-  | SerializedMinionCard
-  | SerializedHeroCard
-  | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedSigilCard
-  | SerializedPlayer
-  | SerializedModifier
-  | SerializedAbility;
-
 export class ClientStateController {
   state!: GameClientState;
+  private previousEntities?: GameClientState['entities'];
 
   constructor(private client: GameClient) {}
 
@@ -81,6 +62,10 @@ export class ClientStateController {
         { entityType: 'ability' },
         entity => new AbilityViewModel(entity, dict, this.client)
       )
+      .with(
+        { entityType: 'board-space' },
+        entity => new BoardSpaceViewModel(entity, dict, this.client)
+      )
       .exhaustive();
   }
 
@@ -93,25 +78,45 @@ export class ClientStateController {
   };
 
   // prepopulate the state with new entities because they could be used by the fx events
-  preupdate(newState: SnapshotDiff) {
+  preupdate(newState: PatchBasedSnapshotDiff) {
     if (!this.state) return;
 
-    for (const id of newState.addedEntities) {
-      const entity = newState.entities[id];
+    // Snapshot the current entities before any event-driven mutations so that
+    // update() can apply entityPatches against this clean baseline instead of
+    // the potentially-mutated state produced by event handlers.
+    this.previousEntities = Object.fromEntries(
+      Object.entries(this.state.entities).map(([id, vm]) => [id, vm.clone()])
+    );
 
+    Object.entries(newState.addedEntities).forEach(([id, entity]) => {
       this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
-    }
+    });
   }
 
-  update(newState: SnapshotDiff): void {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { entities, config, addedEntities, removedEntities, ...rest } = newState;
-    for (const [id, entity] of Object.entries(entities)) {
-      if (this.state.entities[id]) {
-        this.state.entities[id] = this.state.entities[id].update(entity as any).clone();
-      } else {
-        this.state.entities[id] = this.buildViewModel(entity as any);
+  update(newState: PatchBasedSnapshotDiff): void {
+    const { entityPatches, config, addedEntities, removedEntities, ...rest } = newState;
+
+    // Apply patches against the pre-event snapshot so that event-handler
+    // mutations (e.g. onMinionSummoned) don't corrupt the patch baseline.
+    // Entities that are new (not in previousEntities) are skipped here because
+    // they already carry the final state from addedEntities.
+    for (const [id, patches] of Object.entries(entityPatches)) {
+      const base = this.previousEntities?.[id];
+      if (base) {
+        this.state.entities[id] = base.updateWithPatches(patches);
       }
+    }
+
+    // Ensure newly added entities are at their definitive final state.
+    for (const [id, entity] of Object.entries(addedEntities)) {
+      this.state.entities[id] = this.buildViewModel(entity as SerializedEntity);
+    }
+
+    // Clone all entities to trigger reactivity in case of reference equality.
+    // e.g. a unit's modifier is updated, but the unit isn't —
+    // a computed property depending on the unit wouldn't update.
+    for (const [id, entity] of Object.entries(this.state.entities)) {
+      this.state.entities[id] = entity.clone();
     }
 
     removedEntities.forEach(id => {
@@ -123,6 +128,8 @@ export class ClientStateController {
       ...rest,
       config: { ...this.state.config, ...config }
     };
+
+    this.previousEntities = undefined;
   }
 
   /**
@@ -161,78 +168,35 @@ export class ClientStateController {
     };
   }
 
-  async onEvent(
-    event: SerializedStarEvent,
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  async onEvent(event: SerializedStarEvent) {
     if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
-      return this.onMinionSummoned(event, flush);
+      return this.onMinionSummoned(event);
     }
 
-    if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
-      return this.onArtifactEquiped(event, flush);
-    }
-
-    if (event.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
-      return this.onChainEffectAdded(event, flush);
+    if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
+      return this.onAfterChangePhase(event);
     }
   }
 
-  private async onMinionSummoned(
-    event: {
-      event: SerializedEvent<'MINION_SUMMONED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
+  private async onMinionSummoned(event: { event: SerializedEvent<'MINION_SUMMONED'> }) {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
 
-    const boardSide = this.state.board.sides.find(
-      side => side.playerId === card.player.id
-    )!;
-    boardSide.minions = [...boardSide.minions, card.id];
+    const boardSpace = Object.values(this.state.entities).find(
+      e => e.id === event.event.position.id
+    )! as BoardSpaceViewModel;
 
-    // @ts-expect-error force reactivity
-    this.state.board.sides = this.state.board.sides.map(side => ({
-      ...side
-    }));
-
-    return await flush();
+    this.state.entities[boardSpace.id] = boardSpace
+      .update({
+        card: card.id
+      })
+      .clone();
   }
 
-  private async onChainEffectAdded(
-    event: {
-      event: SerializedEvent<'EFFECT_CHAIN_EFFECT_ADDED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
-    if (!this.state.entities[event.event.effect.source.id]) {
-      return;
-    }
-    const card = this.buildViewModel(event.event.effect.source as any) as CardViewModel;
-    this.state.entities[card.id] = card;
-    return await flush();
-  }
-
-  private async onArtifactEquiped(
-    event: {
-      event: SerializedEvent<'ARTIFACT_EQUIPED'>;
-    },
-    flush: (postUpdateCallback?: () => Promise<void>) => Promise<void>
-  ) {
-    const card = this.buildViewModel(event.event.card) as CardViewModel;
-    this.state.entities[card.id] = card;
-
-    const boardSide = this.state.board.sides.find(
-      side => side.playerId === card.player.id
-    )!;
-    boardSide.heroZone.artifacts = [...boardSide.heroZone.artifacts, card.id];
-
-    // @ts-expect-error force reactivity
-    this.state.board.sides = this.state.board.sides.map(side => ({
-      ...side
-    }));
-
-    return await flush();
+  private async onAfterChangePhase(event: {
+    event: SerializedEvent<'AFTER_CHANGE_PHASE'>;
+  }) {
+    this.state.phase = event.event.to;
+    this.state = { ...this.state };
   }
 }

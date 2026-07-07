@@ -127,7 +127,7 @@ const emit = defineEmits<{
 }
 
 .modifier {
-  width: calc(var(--pixel-scale) * 2 * 12px);
+  width: 24px;
   aspect-ratio: 1;
   background: var(--bg) no-repeat center center;
   background-size: cover;

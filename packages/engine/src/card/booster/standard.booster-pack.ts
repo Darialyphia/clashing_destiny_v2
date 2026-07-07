@@ -49,8 +49,8 @@ export class StandardBoosterPack implements BoosterPack {
     const pickedIds = new Set<string>();
 
     for (let i = 0; i < options.packSize; i++) {
-      const isHeroSlot = i === 0;
-      const rates = isHeroSlot
+      const isRareSlot = i === 0;
+      const rates = isRareSlot
         ? StandardBoosterPack.dropRates.guaranteedRare
         : StandardBoosterPack.dropRates.standard;
       const rarity = this.rollRarity(rates, options.rarityWeightModifier);

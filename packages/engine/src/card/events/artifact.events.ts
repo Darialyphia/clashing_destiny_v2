@@ -1,44 +1,39 @@
 import type { Values } from '@game/shared';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
-import type { ArtifactCard, SerializedArtifactCard } from '../entities/artifact.entity';
+import type { SerializedArtifactCard, ArtifactCard } from '../entities/artifact.entity';
 
 export const ARTIFACT_EVENTS = {
-  ARTIFACT_BEFORE_LOSE_DURABILITY: 'artifact.lose-durability',
-  ARTIFACT_AFTER_LOSE_DURABILITY: 'artifact.after-lose-durability',
-  ARTIFACT_BEFORE_GAIN_DURABILITY: 'artifact.gain-durability',
-  ARTIFACT_AFTER_GAIN_DURABILITY: 'artifact.after-gain-durability',
-  ARTIFACT_EQUIPED: 'artifact.equiped'
+  ARTIFACT_EQUIPED: 'artifact.equipped',
+  ARTIFACT_BEFORE_DURABILITY_CHANGE: 'artifact.before-durability-change',
+  ARTIFACT_AFTER_DURABILITY_CHANGE: 'artifact.after-durability-change'
 } as const;
-
 export type ArtifactEvents = Values<typeof ARTIFACT_EVENTS>;
 
-export class ArtifactDurabilityEvent extends TypedSerializableEvent<
+export class ArtifactDurabilityChangeEvent extends TypedSerializableEvent<
   { card: ArtifactCard; amount: number },
-  { card: SerializedArtifactCard; amount: number }
+  { card: string; amount: number }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize(),
+      card: this.data.card.id,
       amount: this.data.amount
     };
   }
 }
 
-export class ArtifactEquipedEvent extends TypedSerializableEvent<
+export class ArtifactEquippedEvent extends TypedSerializableEvent<
   { card: ArtifactCard },
-  { card: SerializedArtifactCard }
+  { card: string }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.id
     };
   }
 }
 
 export type ArtifactCardEventMap = {
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_LOSE_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_LOSE_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_GAIN_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_AFTER_GAIN_DURABILITY]: ArtifactDurabilityEvent;
-  [ARTIFACT_EVENTS.ARTIFACT_EQUIPED]: ArtifactEquipedEvent;
+  [ARTIFACT_EVENTS.ARTIFACT_BEFORE_DURABILITY_CHANGE]: ArtifactDurabilityChangeEvent;
+  [ARTIFACT_EVENTS.ARTIFACT_AFTER_DURABILITY_CHANGE]: ArtifactDurabilityChangeEvent;
+  [ARTIFACT_EVENTS.ARTIFACT_EQUIPED]: ArtifactEquippedEvent;
 };

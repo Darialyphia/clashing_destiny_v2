@@ -38,14 +38,11 @@ const canJoin = computed(() => {
 
 const getDisplayedDeck = (deck: UserDeck) => ({
   name: deck.name,
-  mainDeck: deck.mainDeck.map(card => ({
+  cards: deck.cards.map(card => ({
     blueprintId: card.blueprintId,
     copies: card.copies
   })),
-  destinyDeck: deck.destinyDeck.map(card => ({
-    blueprintId: card.blueprintId,
-    copies: card.copies
-  }))
+  isValid: deck.isValid
 });
 </script>
 
@@ -73,7 +70,12 @@ const getDisplayedDeck = (deck: UserDeck) => ({
               :key="deck.id"
               class="deck-option"
               :class="{ selected: selectedDeckId === deck.id }"
-              @click="selectedDeckId = deck.id"
+              @click="
+                () => {
+                  if (deck.isValid.result === 'failure') return;
+                  selectedDeckId = deck.id;
+                }
+              "
             >
               <PlayerDeck :deck="getDisplayedDeck(deck)" />
               <div v-if="selectedDeckId === deck.id" class="selected-indicator">

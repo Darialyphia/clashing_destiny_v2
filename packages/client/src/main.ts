@@ -15,6 +15,17 @@ import gsap from 'gsap';
 import { MotionPathPlugin, Flip } from 'gsap/all';
 import { createConvexVue } from '@convex-vue/core';
 import '@/assets';
+import Trigger from './shared/components/RichText/Trigger.vue';
+import Keyword from './shared/components/RichText/Keyword.vue';
+import Mana from './shared/components/RichText/Mana.vue';
+import Ability from './shared/components/RichText/Ability.vue';
+import JobBonus from './shared/components/RichText/JobBonus.vue';
+import Card from './shared/components/RichText/Card.vue';
+import Location from './shared/components/RichText/Location.vue';
+import Dynamic from './shared/components/RichText/Dynamic.vue';
+import Runes from './shared/components/RichText/Runes.vue';
+import Exhaust from './shared/components/RichText/Exhaust.vue';
+
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(Flip);
@@ -35,6 +46,17 @@ app.use(router);
 app.use(convexVue);
 app.use(pinia);
 app.use(autoAnimatePlugin);
+app.component('rt-trigger', Trigger);
+app.component('rt-keyword', Keyword);
+app.component('rt-mana', Mana);
+app.component('rt-ability', Ability);
+app.component('rt-job-bonus', JobBonus);
+app.component('rt-card', Card);
+app.component('rt-location', Location);
+app.component('rt-dynamic', Dynamic);
+app.component('rt-runes', Runes);
+app.component('rt-exhaust', Exhaust);
+// app.component('HoverCard', HoverCardRoot);
 // app.use({
 //   install(app) {
 //     // We are registering global providers here so they can be automatically passed to the vue-pixi renderer which inherits the vue app provides.

@@ -13,11 +13,27 @@ const getCountByKind = (kind: CardKind) => {
       return acc + 1;
     }, 0);
 };
+
+const mainDeckCount = computed(() => {
+  return deckBuilder.value.cards.reduce((acc, card) => {
+    if (card.blueprint.kind === CARD_KINDS.DESTINY) {
+      return acc;
+    }
+    if ('copies' in card) {
+      return acc + ((card.copies as number) ?? 1);
+    }
+    return acc + 1;
+  }, 0);
+});
 </script>
 
 <template>
   <div class="flex lt-lg:hidden">
     <div class="kind-counts">
+      <div>
+        <span>{{ mainDeckCount }}</span>
+        Deck
+      </div>
       <div>
         <span>{{ getCountByKind(CARD_KINDS.MINION) }}</span>
         Minions
@@ -31,8 +47,8 @@ const getCountByKind = (kind: CardKind) => {
         Artifacts
       </div>
       <div>
-        <span>{{ getCountByKind(CARD_KINDS.SIGIL) }}</span>
-        Sigils
+        <span>{{ getCountByKind(CARD_KINDS.DESTINY) }}</span>
+        Destinies
       </div>
     </div>
   </div>
@@ -41,7 +57,7 @@ const getCountByKind = (kind: CardKind) => {
 <style scoped lang="postcss">
 .kind-counts {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--size-2);
   justify-items: center;
   font-size: var(--font-size-00);

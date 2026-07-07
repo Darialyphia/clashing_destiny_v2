@@ -17,6 +17,7 @@ import { useAuthedMutation } from '@/auth/composables/useAuth';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import { useMe } from '@/auth/composables/useMe';
 import { isFunction } from '@game/shared';
+import { provideRichTextContext } from '@/game/composables/useRichText';
 
 const { card } = defineProps<{
   card: {
@@ -75,6 +76,10 @@ const description = computed(() => {
     ? card.card.description()
     : card.card.description;
 });
+
+provideRichTextContext({
+  card: ref(null)
+});
 </script>
 
 <template>
@@ -121,7 +126,10 @@ const description = computed(() => {
           <CardText :text="description" />
         </section>
 
-        <section v-if="card.card.abilities.length" class="abilities">
+        <section
+          v-if="'abilities' in card.card && card.card.abilities?.length"
+          class="abilities"
+        >
           <h3>Abilities</h3>
           <ul>
             <li v-for="(ability, index) in card.card.abilities" :key="index">
@@ -204,7 +212,7 @@ const description = computed(() => {
 }
 
 .card-preview {
-  --pixel-scale: 2;
+  --pixel-scale: 3;
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;

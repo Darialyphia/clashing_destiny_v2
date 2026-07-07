@@ -25,20 +25,19 @@ import { SelectCardOnBoardInput } from './inputs/select-card-on-board.input';
 import { CommitCardSelectionInput } from './inputs/commit-card-selection.input';
 import { ChooseCardsInput } from './inputs/choose-cards.input';
 import { DeclarePlayCardInput } from './inputs/declare-play-card.input';
-import { CancelPlayCardInput } from './inputs/cancel-play-card.input';
-import { CommitPlayCardInput } from './inputs/commit-play-card';
-import { DeclareAttackTargetInput } from './inputs/declare-attack-target.input';
 import { DeclareUseCardAbilityInput } from './inputs/declare-use-card-ability.input';
-import { CancelUseAbilityInput } from './inputs/cancel-use-ability.input';
-import { CommitUseAbilityInput } from './inputs/commit-use-ability.input';
 import { SurrenderInput } from './inputs/surrender.input';
-import { AnswerQuestionInput } from './inputs/answer-question.input';
-import { DeclareBlockerInput } from './inputs/declare-blocker.input';
-import { CommitResourceActionInput } from './inputs/commit-resource-action';
 import { CommitRearrangeCardsInput } from './inputs/commit-rearrange-cards';
-import { ChooseChainEffectsInput } from './inputs/choose-chain-effects.input';
 import { InteractionTimeoutInput } from './inputs/interaction-timeout.input';
+import { AnswerQuestionInput } from './inputs/answer-question.input';
+import { MoveInput } from './inputs/move.input';
+import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
+import { CancelInteractionInput } from './inputs/cancel-interaction';
+import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
+import { TakeResourceActionInput } from './inputs/take-resource-action.input';
+import { ChooseChainEffectsInput } from './inputs/choose-chain-effect';
 import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
+import { ScoreInput } from './inputs/score.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -54,25 +53,24 @@ const validateinputMap = <T extends GenericInputMap>(data: ValidatedInputMap<T>)
 
 const inputMap = validateinputMap({
   declarePlayCard: DeclarePlayCardInput,
-  cancelPlayCard: CancelPlayCardInput,
-  commitPlayCard: CommitPlayCardInput,
   declareAttack: DeclareAttackInput,
-  declareAttackTarget: DeclareAttackTargetInput,
   pass: PassInput,
   selectCardOnBoard: SelectCardOnBoardInput,
   commitCardSelection: CommitCardSelectionInput,
   chooseCards: ChooseCardsInput,
   declareUseCardAbility: DeclareUseCardAbilityInput,
-  commitUseAbility: CommitUseAbilityInput,
-  cancelUseAbility: CancelUseAbilityInput,
-  declareBlocker: DeclareBlockerInput,
-  declareRetaliation: DeclareRetaliationInput,
   surrender: SurrenderInput,
   answerQuestion: AnswerQuestionInput,
-  commitResourceAction: CommitResourceActionInput,
   commitRearrangeCards: CommitRearrangeCardsInput,
+  interactionTimeout: InteractionTimeoutInput,
+  move: MoveInput,
+  commitSpaceSelection: CommitSpaceSelectionInput,
+  cancelInteraction: CancelInteractionInput,
+  selectSpaceOnBoard: SelectSpaceOnBoardInput,
+  takeResourceAction: TakeResourceActionInput,
   chooseChainEffects: ChooseChainEffectsInput,
-  interactionTimeout: InteractionTimeoutInput
+  declareRetaliation: DeclareRetaliationInput,
+  score: ScoreInput
 });
 
 type InputMap = typeof inputMap;
@@ -214,6 +212,9 @@ export class InputSystem extends System<never> {
   }
 
   async dispatch(input: SerializedInput) {
+    console.groupCollapsed(`[InputSystem]: ${input.type}`);
+    console.log(input);
+    console.groupEnd();
     if (!this.isActionType(input.type)) return;
     if (this.isPaused) {
       // if the game is paused, run the input immediately
@@ -225,7 +226,6 @@ export class InputSystem extends System<never> {
     } else if (this.isRunning) {
       // let the current input fully resolve, then schedule
       // the current input could schedule new actions, so we need to wait for the flush to preserve the correct action order
-      console.log('scheduling input after current run');
       this.game.once(GAME_EVENTS.FLUSHED, () => {
         return this.schedule(() => this.handleInput(input));
       });
@@ -258,7 +258,6 @@ export class InputSystem extends System<never> {
 
   async askForPlayerInput() {
     await this.game.snapshotSystem.takeSnapshot();
-    // await this.game.emit(GAME_EVENTS.INPUT_REQUIRED, new GameInputRequiredEvent({}));
   }
 
   serialize() {

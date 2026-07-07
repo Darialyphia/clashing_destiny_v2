@@ -5,9 +5,10 @@ import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError } from '../game-error';
 
-type UseAbilityContextOptions = {
+export type UseAbilityContextOptions = {
   ability: Ability<AbilityOwner>;
   player: Player;
+  canCancel: boolean;
 };
 
 export class UseAbilityContext {
@@ -20,45 +21,50 @@ export class UseAbilityContext {
     return instance;
   }
 
-  private ability: Ability<AbilityOwner>;
+  private _ability: Ability<AbilityOwner>;
 
   readonly player: Player;
 
   private constructor(
     private game: Game,
-    options: UseAbilityContextOptions
+    private options: UseAbilityContextOptions
   ) {
     this.player = options.player;
-    this.ability = options.ability;
+    this._ability = options.ability;
   }
 
   async init() {}
 
   serialize() {
     return {
-      ability: this.ability.id,
-      card: this.ability.card.id,
-      player: this.player.id
+      ability: this._ability.id,
+      card: this._ability.card.id,
+      player: this.player.id,
+      canCancel: this.options.canCancel
     };
   }
 
-  async commit(player: Player, manaCostIndices: number[] | null) {
+  get ability() {
+    return this._ability;
+  }
+
+  async commit(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY);
-    this.game.interaction.onInteractionEnd();
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY,
+      {}
+    );
 
-    const indicesToUse =
-      manaCostIndices ??
-      Array.from({ length: this.ability.card.manaCost }, (_, index) => index);
-
-    await this.player.useAbility(this.ability, indicesToUse, async () => {
+    await this.player.useAbility(this._ability, async () => {
       await this.game.turnSystem.switchInitiative();
     });
   }
 
   async cancel(player: Player) {
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.game.interaction.dispatch(INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY);
-    this.game.interaction.onInteractionEnd();
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
+      {}
+    );
   }
 }

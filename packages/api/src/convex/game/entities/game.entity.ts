@@ -53,6 +53,13 @@ export class Game extends Entity<GameId, GameData> {
     this.data.game.cancellationId = scheduledFunctionId;
   }
 
+  abortCancellation() {
+    if (!this.data.game.cancellationId) {
+      throw new DomainError('No cancellation scheduled for this game');
+    }
+    this.data.game.cancellationId = undefined;
+  }
+
   cancel() {
     if (!this.canCancel) {
       throw new DomainError('Game cannot be cancelled');

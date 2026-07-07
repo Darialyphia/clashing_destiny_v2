@@ -81,7 +81,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     return snapshot;
   }
 
-  geSnapshotForPlayerAt(
+  getSnapshotForPlayerAt(
     playerId: string,
     index: number
   ): GameStateSnapshot<SerializedPlayerState> {
@@ -160,7 +160,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
   }
 
   getLatestSnapshotForPlayer(playerId: string): GameStateSnapshot<SerializedPlayerState> {
-    return this.geSnapshotForPlayerAt(playerId, this.nextId - 1);
+    return this.getSnapshotForPlayerAt(playerId, this.nextId - 1);
   }
 
   getLatestDiffSnapshotForPlayer(playerId: string): GameStateSnapshot<SnapshotDiff> {
@@ -198,7 +198,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
     playerId: string,
     index: number
   ): GameStateSnapshot<SnapshotDiff> {
-    const latestSnapshot = this.geSnapshotForPlayerAt(playerId, index);
+    const latestSnapshot = this.getSnapshotForPlayerAt(playerId, index);
     if (latestSnapshot.kind === 'error') {
       return latestSnapshot;
     }
@@ -247,12 +247,12 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          board: latestSnapshot.state.board,
           turnCount: latestSnapshot.state.turnCount,
           currentPlayer: latestSnapshot.state.currentPlayer,
           players: latestSnapshot.state.players,
-          effectChain: latestSnapshot.state.effectChain,
-          config: latestSnapshot.state.config
+          config: latestSnapshot.state.config,
+          combat: latestSnapshot.state.combat,
+          effectChain: latestSnapshot.state.effectChain
         }
       };
     }
@@ -269,12 +269,12 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              board: latestSnapshot.state.board,
               turnCount: latestSnapshot.state.turnCount,
               currentPlayer: latestSnapshot.state.currentPlayer,
               players: latestSnapshot.state.players,
-              effectChain: latestSnapshot.state.effectChain,
-              config: latestSnapshot.state.config
+              config: latestSnapshot.state.config,
+              combat: latestSnapshot.state.combat,
+              effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(
               latestSnapshot.state,
@@ -303,12 +303,12 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          board: latestSnapshot.state.board,
           turnCount: latestSnapshot.state.turnCount,
           currentPlayer: latestSnapshot.state.currentPlayer,
           players: latestSnapshot.state.players,
-          effectChain: latestSnapshot.state.effectChain,
-          config: latestSnapshot.state.config
+          config: latestSnapshot.state.config,
+          combat: latestSnapshot.state.combat,
+          effectChain: latestSnapshot.state.effectChain
         }
       };
     }
@@ -325,12 +325,12 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              board: latestSnapshot.state.board,
               turnCount: latestSnapshot.state.turnCount,
               currentPlayer: latestSnapshot.state.currentPlayer,
               players: latestSnapshot.state.players,
-              effectChain: latestSnapshot.state.effectChain,
-              config: latestSnapshot.state.config
+              config: latestSnapshot.state.config,
+              combat: latestSnapshot.state.combat,
+              effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(
               latestSnapshot.state,
@@ -359,12 +359,12 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          board: latestSnapshot.state.board,
           turnCount: latestSnapshot.state.turnCount,
           currentPlayer: latestSnapshot.state.currentPlayer,
           players: latestSnapshot.state.players,
-          effectChain: latestSnapshot.state.effectChain,
-          config: latestSnapshot.state.config
+          config: latestSnapshot.state.config,
+          combat: latestSnapshot.state.combat,
+          effectChain: latestSnapshot.state.effectChain
         }
       };
     }
@@ -381,12 +381,69 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              board: latestSnapshot.state.board,
               turnCount: latestSnapshot.state.turnCount,
               currentPlayer: latestSnapshot.state.currentPlayer,
               players: latestSnapshot.state.players,
-              effectChain: latestSnapshot.state.effectChain,
-              config: latestSnapshot.state.config
+              config: latestSnapshot.state.config,
+              combat: latestSnapshot.state.combat,
+              effectChain: latestSnapshot.state.effectChain
+            }
+          : this.serializer.diffSnapshotsWithPatches(
+              latestSnapshot.state,
+              previousSnapshot.state
+            )
+    };
+  }
+
+  /**
+   * Get a specific omniscient snapshot as a patch-based diff
+   */
+  getPlayerPatchDiffSnapshotAt(
+    playerId: string,
+    index: number
+  ): GameStateSnapshot<PatchBasedSnapshotDiff> {
+    const latestSnapshot = this.getSnapshotForPlayerAt(playerId, index);
+    if (latestSnapshot.kind === 'error') {
+      return latestSnapshot;
+    }
+
+    if (index < 1) {
+      return {
+        ...latestSnapshot,
+        state: {
+          entityPatches: {},
+          addedEntities: latestSnapshot.state.entities,
+          removedEntities: [],
+          phase: latestSnapshot.state.phase,
+          interaction: latestSnapshot.state.interaction,
+          turnCount: latestSnapshot.state.turnCount,
+          currentPlayer: latestSnapshot.state.currentPlayer,
+          players: latestSnapshot.state.players,
+          config: latestSnapshot.state.config,
+          combat: latestSnapshot.state.combat,
+          effectChain: latestSnapshot.state.effectChain
+        }
+      };
+    }
+
+    const previousSnapshot = this.getSnapshotForPlayerAt(playerId, index - 1);
+
+    return {
+      ...latestSnapshot,
+      state:
+        previousSnapshot.kind === 'error'
+          ? {
+              entityPatches: {},
+              addedEntities: latestSnapshot.state.entities,
+              removedEntities: [],
+              phase: latestSnapshot.state.phase,
+              interaction: latestSnapshot.state.interaction,
+              turnCount: latestSnapshot.state.turnCount,
+              currentPlayer: latestSnapshot.state.currentPlayer,
+              players: latestSnapshot.state.players,
+              config: latestSnapshot.state.config,
+              combat: latestSnapshot.state.combat,
+              effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(
               latestSnapshot.state,

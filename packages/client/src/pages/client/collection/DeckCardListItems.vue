@@ -10,9 +10,7 @@ import { assets } from '@/assets';
 import type { DeckBuilderViewModel } from '@/card/deck-builder.model';
 
 const { cards, deckBuilder } = defineProps<{
-  cards:
-    | DeckBuilderViewModel['mainDeckCards']
-    | DeckBuilderViewModel['destinyDeckCards'];
+  cards: DeckBuilderViewModel['mainDeckCards'];
   deckBuilder: DeckBuilderViewModel;
 }>();
 </script>
@@ -25,7 +23,7 @@ const { cards, deckBuilder } = defineProps<{
       v-for="(card, index) in cards"
       :key="index"
     >
-      <HoverCardTrigger class="inspectable-card" v-bind="$attrs" as-child>
+      <HoverCardTrigger v-bind="$attrs" as-child>
         <li
           :style="{
             '--bg': assets[`cards/${card.blueprint.art.default.main}`].css
@@ -34,11 +32,22 @@ const { cards, deckBuilder } = defineProps<{
           class="deck-item"
           @click="deckBuilder.removeCard(card.meta!.cardId)"
         >
+          <div class="flex gap-1 items-center">
+            <div
+              v-for="affinity in card.blueprint.affinities"
+              :key="affinity"
+              class="affinity"
+              :style="{
+                '--bg':
+                  assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css
+              }"
+            />
+          </div>
           <div class="mana-cost" v-if="'manaCost' in card.blueprint">
             {{ card.blueprint.manaCost }}
           </div>
-          <div class="destiny-cost" v-if="'destinyCost' in card.blueprint">
-            {{ card.blueprint.destinyCost }}
+          <div class="exp-cost" v-if="'expCost' in card.blueprint">
+            {{ card.blueprint.expCost }}
           </div>
           <span class="card-name">
             <template v-if="'copies' in card">X {{ card.copies }}</template>
@@ -79,12 +88,12 @@ const { cards, deckBuilder } = defineProps<{
 }
 
 .mana-cost {
-  background: url(@/assets/ui/mana-cost.png) no-repeat center center;
+  background: url(@/assets/ui/card/mana-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
+  width: 24px;
+  aspect-ratio: 1;
   display: grid;
   place-content: center;
   -webkit-text-stroke: 4px black;
@@ -92,13 +101,13 @@ const { cards, deckBuilder } = defineProps<{
   padding-right: 1px;
 }
 
-.destiny-cost {
-  background: url(@/assets/ui/destiny-cost.png) no-repeat center center;
+.exp-cost {
+  background: url(@/assets/ui/card/exp-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);
-  width: calc(22px * var(--pixel-scale));
-  height: calc(20px * var(--pixel-scale));
+  width: 24px;
+  aspect-ratio: 1;
   display: grid;
   place-content: center;
   -webkit-text-stroke: 4px black;
@@ -112,5 +121,12 @@ const { cards, deckBuilder } = defineProps<{
   white-space: nowrap;
   -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
+}
+
+.affinity {
+  width: 30px;
+  aspect-ratio: 1;
+  background: var(--bg);
+  background-size: cover;
 }
 </style>

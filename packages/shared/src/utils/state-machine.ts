@@ -18,8 +18,6 @@ export function stateTransition<STATE, EVENT, CALLBACK>(
   return { fromState, event, toState, cb };
 }
 
-type ILogger = Partial<typeof console> & { error(...data: unknown[]): void };
-
 export class StateMachine<
   TState extends string | number | symbol,
   TEvent extends string | number | symbol,
@@ -30,12 +28,7 @@ export class StateMachine<
   // initialize the state-machine
   constructor(
     _init: TState,
-    protected transitions: ITransition<
-      TState,
-      TEvent,
-      TCallback[TEvent]
-    >[] = [],
-    protected readonly logger: ILogger = console
+    protected transitions: ITransition<TState, TEvent, TCallback[TEvent]>[] = []
   ) {
     this._current = _init;
   }
@@ -93,7 +86,6 @@ export class StateMachine<
 
     if (!transition) {
       const errorMessage = this.#formatNoTransitionError(this._current, event);
-      this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
 
@@ -102,7 +94,8 @@ export class StateMachine<
       try {
         transition.cb(...args);
       } catch (e) {
-        this.logger.error('Exception caught in callback', e);
+        // @ts-ignore
+        console.error('Exception caught in callback', e);
       }
     }
   }

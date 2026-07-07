@@ -1,5 +1,5 @@
 import { defaultInputSchema, Input } from '../input';
-import { GAME_PHASES } from '../../game/game.enums';
+import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
 import { assert } from '@game/shared';
 import { NotCurrentPlayerError, WrongGamePhaseError } from '../input-errors';
 
@@ -8,17 +8,16 @@ const schema = defaultInputSchema;
 export class DeclareRetaliationInput extends Input<typeof schema> {
   readonly name = 'declareRetaliation';
 
-  readonly allowedPhases = [GAME_PHASES.ATTACK];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(
-      this.game.gamePhaseSystem.getState() === GAME_PHASES.ATTACK,
+      this.game.combatSystem.state === COMBAT_STEPS.REACTION,
       new WrongGamePhaseError()
     );
-    const phaseCtx = this.game.gamePhaseSystem.getContext<'attack_phase'>();
-    await phaseCtx.ctx.declareRetaliation();
+    await this.game.combatSystem.declareRetaliation();
   }
 }

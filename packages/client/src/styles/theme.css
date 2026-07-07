@@ -115,21 +115,25 @@
     hsl(250 30% 0% / 0.6);
   --fancy-border: solid var(--border-size-2) hsl(var(--color-primary-hsl) / 0.5);
 
+  --board-width: 1920px;
+  --board-height: 1080px;
+  --board-ratio: calc(var(--board-width) / var(--board-height));
+
   --card-width-unitless: 174;
   --card-height-unitless: 245;
   --card-width: calc(var(--card-width-unitless) * 1px);
   --card-height: calc(var(--card-height-unitless) * 1px);
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
 
-  --card-small-width-unitless: 180;
-  --card-small-height-unitless: 157;
+  --card-small-width-unitless: 142;
+  --card-small-height-unitless: 129;
   --card-small-width: calc(var(--card-small-width-unitless) * 1px);
   --card-small-height: calc(var(--card-small-height-unitless) * 1px);
   --card-small-ratio: var(--card-small-width-unitless) /
     var(--card-small-height-unitless);
 
-  --card-art-frame-width-unitless: 162;
-  --card-art-frame-height-unitless: 136;
+  --card-art-frame-width-unitless: 142;
+  --card-art-frame-height-unitless: 129;
   --card-art-frame-width: calc(var(--card-art-frame-width-unitless) * 1px);
   --card-art-frame-height: calc(var(--card-art-frame-height-unitless) * 1px);
   --card-art-frame-ratio: var(--card-art-frame-width-unitless) /
@@ -148,6 +152,14 @@
   --rarity-rare: var(--blue-4);
   --rarity-epic: #bb00e0;
   --rarity-legendary: var(--orange-4);
+  --tint-neutral: transparent;
+  --tint-fire: #d3572d;
+  --tint-water: #467af4;
+  --tint-earth: hsl(from #7ab800 calc(h + 10) calc(s - 40) l);
+  --tint-air: #00cbb3;
+  --tint-light: hsl(from #ffe761 h s calc(l + 20));
+  --tint-dark: #8f00ff;
+  --tint-arcane: #6d1394;
 }
 
 html.dark {

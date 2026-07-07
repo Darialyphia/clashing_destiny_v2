@@ -7,6 +7,7 @@ import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/sh
 import {
   GameSnapshotSystem,
   type GameStateSnapshot,
+  type PatchBasedSnapshotDiff,
   type SnapshotDiff
 } from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';
@@ -17,10 +18,12 @@ import { CardSystem } from '../card/card.system';
 import type { CardBlueprint } from '../card/card-blueprint';
 import { GameInteractionSystem } from './systems/game-interaction.system';
 import { BoardSystem } from '../board/board.system';
-import { EffectChainSystem } from './systems/effect-chain.system';
 import { GAME_PHASES } from './game.enums';
 import { TurnSystem } from './systems/turn.system';
 import { CARDS_DICTIONARY } from '../card/sets';
+import { generateRandomString } from '../utils/utils';
+import { CombatSystem } from './systems/combat.system';
+import { EffectChainSystem } from './systems/effect-chain.system';
 
 export type GameOptions = {
   id: string;
@@ -62,9 +65,11 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly boardSystem = new BoardSystem(this);
 
-  readonly effectChainSystem = new EffectChainSystem(this);
-
   readonly turnSystem = new TurnSystem(this);
+
+  readonly combatSystem = new CombatSystem(this);
+
+  readonly effectChainSystem = new EffectChainSystem(this);
 
   // readonly unitSystem = new UnitSystem(this);
 
@@ -92,7 +97,9 @@ export class Game implements Serializable<SerializedGame> {
   get winCondition() {
     return (
       this.options.overrides.winCondition ??
-      ((game, player) => !player.opponent.hero.isAlive)
+      ((game, player) => {
+        return false;
+      })
     );
   }
 
@@ -102,59 +109,61 @@ export class Game implements Serializable<SerializedGame> {
     this.isInitializing = true;
 
     const start = performance.now();
-    // const now = start;
+    let now = start;
 
     this.rngSystem.initialize({ seed: this.options.rngSeed });
-    // console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
-    // now = performance.now();
+    console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
 
     this.cardSystem.initialize({ cardPool: this.cardPool });
-    // console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
-    // now = performance.now();
+    console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
 
     await this.playerSystem.initialize({
       players: this.options.players
     });
-    // console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
-    // now = performance.now();
+    console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
 
     this.snapshotSystem.initialize({ enabled: this.options.enableSnapshots ?? true });
-    // console.log(
-    //   `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    // );
-    // now = performance.now();
+    console.log(
+      `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
 
-    this.boardSystem.initialize();
-    // console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
-    // now = performance.now();
+    await this.boardSystem.initialize();
+    console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
 
     this.interaction.initialize();
-    // console.log(
-    //   `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    // );
-    // now = performance.now();
+    console.log(
+      `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
 
     this.effectChainSystem.initialize();
-    // console.log(
-    //   `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    // );
-    // now = performance.now();
+    console.log(
+      `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
 
     await this.gamePhaseSystem.initialize();
-    // console.log(
-    //   `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    // );
-    // now = performance.now();
+    console.log(
+      `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
+    now = performance.now();
 
     await this.turnSystem.initialize();
-    // console.log(
-    //   `Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`
-    // );
-    // now = performance.now();
+    console.log(`Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
 
     this.inputSystem.initialize();
-    // console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
-    // now = performance.now();
+    console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
+
+    await this.combatSystem.initialize();
+    console.log(`Combat system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    now = performance.now();
 
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));
     await this.gamePhaseSystem.startGame();
@@ -192,10 +201,6 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   get activePlayer() {
-    if (this.effectChainSystem.currentChain) {
-      return this.effectChainSystem.currentChain.currentPlayer;
-    }
-
     return this.interaction.getContext().ctx.player;
   }
 
@@ -212,18 +217,18 @@ export class Game implements Serializable<SerializedGame> {
     this.on(GAME_EVENTS.TURN_START, cb);
   }
 
-  subscribeOmniscient(cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void) {
+  subscribeOmniscient(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
     this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
-      cb(this.snapshotSystem.getOmniscientDiffSnapshotAt(e.data.id))
+      cb(this.snapshotSystem.getOmniscientPatchDiffSnapshotAt(e.data.id))
     );
   }
 
   subscribeForPlayer(
     id: string,
-    cb: (snapshot: GameStateSnapshot<SnapshotDiff>) => void
+    cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void
   ) {
     this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
-      cb(this.snapshotSystem.getDiffSnapshotForPlayerAt(id, e.data.id))
+      cb(this.snapshotSystem.getPlayerPatchDiffSnapshotAt(id, e.data.id))
     );
   }
 
@@ -243,22 +248,22 @@ export class Game implements Serializable<SerializedGame> {
     this.emitter.removeAllListeners();
   }
 
-  // clone(id: number) {
-  //   const game = new Game({
-  //     ...this.options,
-  //     id: `simulation_${id}`,
-  //     history: this.inputSystem.serialize()
-  //   });
-  //   game.initialize();
+  async clone(id: string) {
+    const game = new Game({
+      ...this.options,
+      id: `simulation_${id}`,
+      history: this.inputSystem.serialize()
+    });
+    await game.initialize();
 
-  //   return game;
-  // }
+    return game;
+  }
 
-  // simulateDispatch(playerId: string, input: SerializedInput) {
-  //   const game = this.clone(++this.nextSimulationId);
-  //   game.dispatch(input);
-  //   game.snapshotSystem.takeSnapshot();
+  async simulateDispatch(playerId: string, input: SerializedInput) {
+    const game = await this.clone(generateRandomString(8));
+    await game.dispatch(input);
+    await game.snapshotSystem.takeSnapshot();
 
-  //   return game.snapshotSystem.getLatestSnapshotForPlayer(playerId);
-  // }
+    return game.snapshotSystem.getLatestSnapshotForPlayer(playerId);
+  }
 }

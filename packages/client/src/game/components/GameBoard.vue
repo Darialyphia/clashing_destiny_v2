@@ -1,32 +1,22 @@
 <script setup lang="ts">
 import {
+  useGameState,
   useGameUi,
   useMyPlayer,
   useOpponentPlayer
 } from '../composables/useGameClient';
-import CombatArrows from './CombatArrows.vue';
-import PlayedCard from './PlayedCard.vue';
-import SVGFilters from './SVGFilters.vue';
-import ChooseCardModal from './ChooseCardModal.vue';
-import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
-import GameErrorModal from './GameErrorModal.vue';
-import DestinyCostVFX from './DestinyCostVFX.vue';
-import AnswerQuestionModal from './AnswerQuestionModal.vue';
-import UiModal from '@/ui/components/UiModal.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
-import Camera from './Camera.vue';
-import MyBoard from './MyBoard.vue';
-import OpponentBoard from './OpponentBoard.vue';
-import Hand from './Hand.vue';
-import DraggedCard from './DraggedCard.vue';
-import TurnIndicator from './TurnIndicator.vue';
-import RearrangeCardsModal from './RearrangeCardsModal.vue';
-import OpponentHand from './OpponentHand.vue';
-import BottomBar from './BottomBar.vue';
-import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
-import { useSettingsStore } from '@/shared/composables/useSettings';
+import BoardSpace from './BoardSpace.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import GameCard from './GameCard.vue';
+import { useWindowSize } from '@vueuse/core';
+import { config } from '@/utils/config';
+import PassButton from './PassButton.vue';
+import BoardCard from './BoardCard.vue';
+import EffectChain from './EffectChain.vue';
+import MyHero from './MyHero.vue';
+import ScoreButton from './ScoreButton.vue';
 
-const { options } = defineProps<{
+const { clocks } = defineProps<{
   clocks?: {
     [playerId: string]: {
       max: number;
@@ -34,131 +24,281 @@ const { options } = defineProps<{
       isActive: boolean;
     };
   };
-  options: {
-    teachingMode: boolean;
-  };
 }>();
 
 const ui = useGameUi();
+const state = useGameState();
 const myPlayer = useMyPlayer();
-const opponentPlayer = useOpponentPlayer();
+const opponent = useOpponentPlayer();
 
-// const board = useTemplateRef('board');
-// useBoardResize(board);
+const { height } = useWindowSize();
+const boardScale = computed(() => {
+  return 1;
+  // const scaleX = width.value / config.BOARD_SIZE.x;
+  // const scaleY = height.value / config.BOARD_SIZE.y;
+  // return Math.min(scaleX, scaleY);
+});
 
-useGameKeyboardControls();
-// const myClock = computed(() => clocks?.[myPlayer.value.id]);
-// const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
-
-const isGameSettingsOpened = ref(false);
-const settings = useSettingsStore();
-
-useKeyboardControl(
-  'keyup',
-  settings.settings.bindings.openSettings.control,
-  () => {
-    isGameSettingsOpened.value = !isGameSettingsOpened.value;
-  }
-);
+const boardMargin = computed(() => {
+  // const scaledBoardWidth = config.BOARD_SIZE.x * boardScale.value;
+  const scaledBoardHeight = config.BOARD_SIZE.y * boardScale.value;
+  return {
+    // x: (width.value - scaledBoardWidth) / 2,
+    x: 0,
+    y: (height.value - scaledBoardHeight) / 2
+  };
+});
 </script>
 
 <template>
-  <SVGFilters />
-  <DestinyCostVFX />
-  <PlayedCard />
-  <ChooseCardModal />
-  <RearrangeCardsModal />
-  <CombatArrows />
-  <AnswerQuestionModal />
-  <DraggedCard />
-  <TurnIndicator />
-
-  <div class="game-board-container">
-    <Camera>
-      <div class="board" :id="ui.DOMSelectors.board.id">
-        <OpponentBoard />
-        <div class="separator" />
-        <MyBoard />
-        <BottomBar />
-        <div id="card-actions-portal"></div>
-        <div class="arrows" id="arrows" />
+  <div class="board" :id="ui.DOMSelectors.board.id">
+    <div class="opponent-hero">
+      <div class="victory-points">
+        <div
+          v-for="point in state.config.VICTORY_POINTS_TO_WIN"
+          :key="point"
+          class="victory-point"
+          :class="{ empty: opponent.victoryPoints < point }"
+        />
       </div>
-    </Camera>
-  </div>
-
-  <div class="opponent-hand">
-    <OpponentHand
-      :player-id="opponentPlayer.id"
-      :key="opponentPlayer.id"
-      :teaching-mode="options.teachingMode"
-    />
-  </div>
-
-  <div class="my-hand">
-    <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
-  </div>
-
-  <div id="dragged-card-container" />
-
-  <button
-    aria-label="Settings"
-    class="settings-button"
-    @click="isGameSettingsOpened = true"
-  />
-  <UiModal
-    v-model:is-opened="isGameSettingsOpened"
-    title="Menu"
-    description="Game settings"
-    :style="{ '--ui-modal-size': 'var(--size-xs)' }"
-  >
-    <div class="game-board-menu">
-      <FancyButton text="Close" @click="isGameSettingsOpened = false" />
-      <slot name="menu" />
+      <BoardCard
+        v-if="opponent.hero"
+        :card="opponent.hero"
+        @mouseenter="ui.hover(opponent.hero)"
+        @mouseleave="ui.unhover()"
+      />
     </div>
-  </UiModal>
-  <slot name="board-additional" />
 
-  <GameErrorModal />
+    <div class="minions-zone">
+      <div class="opponent-base zone">
+        <BoardSpace
+          v-for="space in opponent.base"
+          :key="space.id"
+          :cell-id="space.id"
+        />
+      </div>
+      <div class="opponent-battlefields">
+        <div class="zone">
+          <ScoreButton
+            class="opponent-left-score"
+            :battlefield="opponent.leftBattlefield"
+          />
+
+          <div class="opponent-left-destiny">
+            <InspectableCard
+              v-if="opponent.leftBattlefield.destinyCard"
+              :card-id="opponent.leftBattlefield.destinyCard.id"
+            >
+              <GameCard
+                :card-id="opponent.leftBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
+          </div>
+          <BoardSpace
+            v-for="space in opponent.leftBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
+        </div>
+        <div class="zone">
+          <BoardSpace
+            v-for="space in opponent.rightBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
+
+          <div class="opponent-right-destiny">
+            <InspectableCard
+              v-if="opponent.rightBattlefield.destinyCard"
+              :card-id="opponent.rightBattlefield.destinyCard.id"
+              :open-delay="300"
+            >
+              <GameCard
+                :card-id="opponent.rightBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
+          </div>
+          <ScoreButton
+            class="opponent-right-score"
+            :battlefield="opponent.rightBattlefield"
+          />
+        </div>
+      </div>
+      <div class="my-battlefields">
+        <div class="zone">
+          <div class="my-left-destiny">
+            <InspectableCard
+              v-if="myPlayer.leftBattlefield.destinyCard"
+              :card-id="myPlayer.leftBattlefield.destinyCard.id"
+              :open-delay="300"
+            >
+              <GameCard
+                :card-id="myPlayer.leftBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
+          </div>
+          <BoardSpace
+            v-for="space in myPlayer.leftBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
+          <ScoreButton
+            class="my-left-score"
+            :battlefield="myPlayer.leftBattlefield"
+          />
+        </div>
+        <div class="zone">
+          <BoardSpace
+            v-for="space in myPlayer.rightBattlefield.spaces"
+            :key="space.id"
+            :cell-id="space.id"
+          />
+          <div class="my-right-destiny">
+            <InspectableCard
+              v-if="myPlayer.rightBattlefield.destinyCard"
+              :card-id="myPlayer.rightBattlefield.destinyCard.id"
+              :open-delay="300"
+            >
+              <GameCard
+                :card-id="myPlayer.rightBattlefield.destinyCard.id"
+                variant="small"
+                :is-interactive="false"
+              />
+            </InspectableCard>
+          </div>
+          <ScoreButton
+            class="my-right-score"
+            :battlefield="myPlayer.rightBattlefield"
+          />
+        </div>
+      </div>
+      <div class="my-base zone">
+        <BoardSpace
+          v-for="space in myPlayer.base"
+          :key="space.id"
+          :cell-id="space.id"
+        />
+      </div>
+      <div class="right-side">
+        <PassButton />
+        <div class="flex gap-2">
+          <div
+            v-for="(clock, userId) of clocks"
+            :key="userId"
+            class="action-clock"
+            :class="{
+              active: clock.isActive,
+              warning: clock.remaining < 15
+            }"
+            :style="{ '--max': clock.max, '--remaining': clock.remaining }"
+            :data-count="clock.remaining"
+          ></div>
+        </div>
+        .
+      </div>
+    </div>
+
+    <div class="my-hero">
+      <div class="victory-points">
+        <div
+          v-for="point in state.config.VICTORY_POINTS_TO_WIN"
+          :key="point"
+          class="victory-point"
+          :class="{ empty: myPlayer.victoryPoints < point }"
+        />
+      </div>
+      <MyHero />
+      <EffectChain class="effect-chain" />
+    </div>
+
+    <div id="card-actions-portal" class="absolute"></div>
+    <div class="arrows" id="arrows" />
+  </div>
 </template>
 
 <style scoped lang="postcss">
-.game-board-container {
-  width: 100vw;
-  height: 100dvh;
-  background-size: cover;
-  overflow: hidden;
-  position: relative;
+.board {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-inline: auto;
   transform-style: preserve-3d;
-  perspective: 1500px;
+  transform-origin: top left;
+  width: 100%;
+  height: 100%;
+  /* width: var(--board-width);
+  height: var(--board-height); */
+  background: url(@/assets/backgrounds/battle-background-hirez.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-bottom: 5dvh;
+  /* transform: scale(v-bind('boardScale'))
+    translateX(calc(v-bind('boardMargin.x') * 1px))
+    translateY(calc(v-bind('boardMargin.y') * 1px)); */
+  --offset-y: calc(v-bind('boardMargin.y') * 1px);
+  /* background-position: center calc(var(--offset-y) * -0.5); */
+  /* transform: translateY(var(--offset-y)); */
 }
 
-.board {
-  display: grid;
-  width: 100%;
-  max-width: 80vw;
+.minions-zone {
+  width: 1200px;
+  height: 621px;
+  background: url(@/assets/ui/board-hirez.png);
+  background-size: cover;
   margin-inline: auto;
-  grid-template-rows: 1fr auto 1fr auto;
-  transform-style: preserve-3d;
-  /* background: radial-gradient(circle at center, #0e151b, transparent 75%); */
-  transform-origin: center center;
+  margin-block-start: -10px;
+  padding-block: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  translate: 0 -8px;
+  .zone {
+    height: 130px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.opponent-left-destiny,
+.my-left-destiny {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.opponent-left-destiny {
+  translate: -125% -10%;
+}
+
+.my-left-destiny {
+  translate: -125% 10%;
+}
+
+.opponent-right-destiny,
+.my-right-destiny {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.opponent-right-destiny {
+  translate: 125% -10%;
+}
+
+.my-right-destiny {
+  translate: 125% 25%;
 }
 
 .arrows {
   transform: translateZ(10px);
-}
-
-.opponent-hand {
-  position: fixed;
-  width: 100%;
-  top: 0%;
-  left: 0;
-}
-
-.my-hand {
-  position: fixed;
-  width: 100%;
-  bottom: 15%;
-  left: 0;
 }
 
 #arrows {
@@ -179,10 +319,6 @@ useKeyboardControl(
   transform: translateZ(10px);
 }
 
-.separator {
-  height: 1px;
-  border: solid 1px hsl(from #985e25 h s l / 0.35);
-}
 /* @keyframes warning-pulse {
   0%,
   100% {
@@ -192,28 +328,22 @@ useKeyboardControl(
     color: red;
   }
 } */
-/*
+
 .action-clock {
   --color: #ffb270;
-}
-
-.turn-clock {
-  --color: #79d2c0;
-}
-
-.action-clock,
-.turn-clock {
   aspect-ratio: 1;
   border: 2px solid #985e25;
   border-radius: 50%;
   position: relative;
-  height: 100%;
+  height: 80px;
   aspect-ratio: 1;
+  --colored-angle: calc(360deg * (var(--remaining) / var(--max)));
+  --transparent-angle: calc(360deg - var(--colored-angle));
   background: conic-gradient(
-    var(--color) 0deg,
+    transparent 0deg,
+    transparent var(--transparent-angle),
     var(--color) calc(360deg * (var(--remaining) / var(--max))),
-    transparent calc(360deg * (var(--remaining) / var(--max))),
-    transparent 360deg
+    var(--color) 360deg
   );
 
   &:not(.active) {
@@ -230,9 +360,9 @@ useKeyboardControl(
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-4);
-    color: #985e25;
-    font-weight: var(--font-weight-9);
+    font-size: var(--font-size-5);
+    color: var(--color);
+    font-weight: var(--font-weight-5);
     background-color: black;
     border-radius: var(--radius-round);
   }
@@ -255,28 +385,113 @@ useKeyboardControl(
   &.active.warning::after {
     animation: warning-pulse 1s infinite;
   }
-} */
+}
 
-.settings-button {
-  --pixel-scale: 2;
-  position: fixed;
-  right: var(--size-8);
-  bottom: var(--size-6);
-  width: calc(32px * var(--pixel-scale));
-  aspect-ratio: 1;
-  background: url('@/assets/ui/settings-icon.png');
-  background-size: cover;
-  z-index: 2;
-  &:hover {
-    filter: brightness(1.2);
+.opponent-base {
+  position: absolute;
+  width: 930px;
+  left: 50%;
+  translate: -50% 0;
+}
+
+.opponent-battlefields {
+  position: absolute;
+  top: 165px;
+  display: flex;
+  padding-inline: 22px;
+  justify-content: space-between;
+  width: 100%;
+
+  .zone {
+    width: 502px;
+    padding-inline: 10px;
+    position: relative;
   }
 }
 
-.game-board-menu {
+.my-battlefields {
+  position: absolute;
+  top: 318px;
+  display: flex;
+  padding-inline: 22px;
+  justify-content: space-between;
+  width: 100%;
+
+  .zone {
+    width: 502px;
+    padding-inline: 10px;
+    position: relative;
+  }
+}
+
+.my-base {
+  position: absolute;
+  width: 930px;
+  left: 50%;
+  translate: -50% 0;
+  top: 476px;
+}
+
+.right-side {
+  position: absolute;
+  left: 1180px;
+  top: 288px;
+}
+
+.my-hero {
+  align-self: start;
+  display: flex;
+  gap: var(--size-4);
+  width: 50%;
+  translate: calc(50vw - (var(--card-small-width) / 2)) 0;
+}
+
+.opponent-hero {
+  align-self: center;
+  translate: 0 -20px;
+}
+
+.effect-chain {
+  flex-grow: 1;
+}
+
+.opponent-left-score {
+  top: calc(80% + 3px);
+  right: -65px;
+}
+
+.my-left-score {
+  top: -4px;
+  right: -65px;
+}
+
+.opponent-right-score {
+  top: calc(80% + 3px);
+  left: -60px;
+}
+
+.my-right-score {
+  top: -4px;
+  left: -60px;
+}
+
+.victory-points {
   display: grid;
-  gap: var(--size-2);
-  > * {
-    width: 100%;
+  grid-template-columns: repeat(8, 47px);
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: calc(100% + var(--size-3));
+  top: 50%;
+  translate: 0 -50%;
+}
+.victory-point {
+  width: 47px;
+  height: 48px;
+  background: url('@/assets/ui/score.png');
+  &.empty {
+    background: url('@/assets/ui/score-empty.png');
   }
 }
 </style>

@@ -12,9 +12,9 @@ import type { Player } from '../player/player.entity';
 import type { AnyCard, SerializedCard } from '../card/entities/card.entity';
 import { GameError } from './game-error';
 import {
-  serializePreResponseTarget,
-  type PreResponseTarget,
-  type SerializedPreResponseTarget
+  serializeTargets,
+  type SerializedTargets,
+  type Targets
 } from '../card/card-blueprint';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import { EFFECT_TYPE, type EffectType } from './game.enums';
@@ -39,7 +39,7 @@ export type Effect = {
   type: EffectType;
   source: AnyCard;
   handler: (game: Game) => Promise<void>;
-  targets: PreResponseTarget[];
+  targets: Targets;
   isNegated?: boolean;
 };
 
@@ -48,7 +48,7 @@ export type SerializedEffectChain = {
     id: string;
     type: EffectType;
     source: SerializedCard;
-    targets: SerializedPreResponseTarget[];
+    targets: SerializedTargets;
     isNegated: boolean | null;
   }>;
   state: EffectChainState;
@@ -61,7 +61,7 @@ export const EFFECT_CHAIN_EVENTS = {
   EFFECT_CHAIN_PLAYER_PASSED: 'player-passed',
   EFFECT_CHAIN_BEFORE_EFFECT_RESOLVED: 'effect-before-resolved',
   EFFECT_CHAIN_AFTER_EFFECT_RESOLVED: 'effect-after-resolved',
-  EFFECT_CHAIN_AFTER_RESOLVED: 'chain-rafter-esolved',
+  EFFECT_CHAIN_AFTER_RESOLVED: 'chain-after-resolved',
   EFFECT_CHAIN_BEFORE_RESOLVED: 'chain-before-resolved',
   EFFECT_CHAIN_EFFECT_NEGATED: 'effect-negated'
 } as const;
@@ -283,7 +283,7 @@ export class EffectChain
           id: effect.id,
           type: effect.type,
           source: effect.source.serialize(),
-          targets: effect.targets.map(serializePreResponseTarget),
+          targets: serializeTargets(effect.targets),
           isNegated: effect.isNegated ?? null
         };
       }),
@@ -339,7 +339,7 @@ export class ChainEffectAddedEvent extends TypedSerializableEvent<
         id: this.data.effect.id,
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
-        targets: this.data.effect.targets.map(serializePreResponseTarget),
+        targets: serializeTargets(this.data.effect.targets),
         isNegated: this.data.effect.isNegated ?? null
       }
     };
@@ -371,7 +371,7 @@ export class ChainEffectResolvedEvent extends TypedSerializableEvent<
         id: this.data.effect.id,
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
-        targets: this.data.effect.targets.map(serializePreResponseTarget),
+        targets: serializeTargets(this.data.effect.targets),
         isNegated: this.data.effect.isNegated ?? null
       }
     };
@@ -390,7 +390,7 @@ export class ChainEffectNegatedEvent extends TypedSerializableEvent<
         id: this.data.effect.id,
         type: this.data.effect.type,
         source: this.data.effect.source.serialize(),
-        targets: this.data.effect.targets.map(serializePreResponseTarget),
+        targets: serializeTargets(this.data.effect.targets),
         isNegated: this.data.effect.isNegated ?? null
       }
     };

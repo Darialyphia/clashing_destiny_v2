@@ -1,10 +1,4 @@
-import {
-  assert,
-  StateMachine,
-  stateTransition,
-  type BetterExtract,
-  type MaybePromise
-} from '@game/shared';
+import { assert, StateMachine, stateTransition, type BetterExtract } from '@game/shared';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
@@ -15,13 +9,14 @@ import {
   type GamePhase,
   type GamePhaseTransition
 } from '../game.enums';
-import { CombatPhase } from '../phases/combat.phase';
 import { DrawPhase } from '../phases/draw.phase';
 import { MainPhase } from '../phases/main.phase';
-import { EndPhase } from '../phases/end.phase';
 import { GameEndPhase } from '../phases/game-end.phase';
 import { GAME_EVENTS } from '../game.events';
 import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-error';
+import { PlayCardPhase } from '../phases/play-card.phase';
+import { IllegalCardPlayedError } from '../../input/input-errors';
+import { EndPhase } from '../phases/end.phase';
 
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
@@ -38,8 +33,8 @@ export type GamePhaseContext =
       ctx: MainPhase;
     }
   | {
-      state: BetterExtract<GamePhase, 'attack_phase'>;
-      ctx: CombatPhase;
+      state: BetterExtract<GamePhase, 'play_card_phase'>;
+      ctx: PlayCardPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'end_phase'>;
@@ -60,8 +55,8 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<MainPhase['serialize']>;
     }
   | {
-      state: BetterExtract<GamePhase, 'attack_phase'>;
-      ctx: ReturnType<CombatPhase['serialize']>;
+      state: BetterExtract<GamePhase, 'play_card_phase'>;
+      ctx: ReturnType<PlayCardPhase['serialize']>;
     }
   | {
       state: BetterExtract<GamePhase, 'end_phase'>;
@@ -78,7 +73,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
     [GAME_PHASES.MAIN]: MainPhase,
-    [GAME_PHASES.ATTACK]: CombatPhase,
+    [GAME_PHASES.PLAY_CARD]: PlayCardPhase,
     [GAME_PHASES.END]: EndPhase,
     [GAME_PHASES.GAME_END]: GameEndPhase
   };
@@ -94,22 +89,27 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
         GAME_PHASES.MAIN
       ),
+      stateTransition(GAME_PHASES.MAIN, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.END),
       stateTransition(
         GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_ATTACK,
-        GAME_PHASES.ATTACK
+        GAME_PHASE_TRANSITIONS.START_PLAYING_CARD,
+        GAME_PHASES.PLAY_CARD
       ),
       stateTransition(
-        GAME_PHASES.ATTACK,
-        GAME_PHASE_TRANSITIONS.FINISH_ATTACK,
+        GAME_PHASES.PLAY_CARD,
+        GAME_PHASE_TRANSITIONS.COMMIT_PLAYING_CARD,
         GAME_PHASES.MAIN
       ),
       stateTransition(
-        GAME_PHASES.MAIN,
-        GAME_PHASE_TRANSITIONS.DECLARE_END_TURN,
-        GAME_PHASES.END
+        GAME_PHASES.PLAY_CARD,
+        GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD,
+        GAME_PHASES.MAIN
       ),
-      stateTransition(GAME_PHASES.END, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.DRAW),
+      stateTransition(
+        GAME_PHASES.END,
+        GAME_PHASE_TRANSITIONS.START_TURN,
+        GAME_PHASES.DRAW
+      ),
 
       stateTransition(
         GAME_PHASES.MAIN,
@@ -118,16 +118,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(
         GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.PLAYER_WON,
-        GAME_PHASES.GAME_END
-      ),
-      stateTransition(
-        GAME_PHASES.ATTACK,
-        GAME_PHASE_TRANSITIONS.PLAYER_WON,
-        GAME_PHASES.GAME_END
-      ),
-      stateTransition(
-        GAME_PHASES.END,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
       )
@@ -142,7 +132,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
           winners.push(player);
         }
       }
-
       if (!winners.length) return;
       stop();
       await this.declareWinner(winners);
@@ -193,28 +182,18 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await this._ctx.onEnter();
   }
 
-  async declareEndTurn() {
-    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN), new WrongGamePhaseError());
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_END_TURN);
-  }
-
   async endTurn() {
     assert(this.can(GAME_PHASE_TRANSITIONS.END_TURN), new WrongGamePhaseError());
 
-    await this.game.turnSystem.endTurn();
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
 
-    await this.game.inputSystem.schedule(async () => {
-      await this.game.turnSystem.startTurn();
-      await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
-    });
+    await (this._ctx as EndPhase).scoreBattlefields();
+    await (this._ctx as EndPhase).terminateTurn();
   }
 
-  async startCombat(onResolved?: () => MaybePromise<void>) {
-    assert(this.can(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK), new WrongGamePhaseError());
-    if (onResolved) {
-      this.game.once(GAME_EVENTS.AFTER_RESOLVE_COMBAT, onResolved);
-    }
-    await this.sendTransition(GAME_PHASE_TRANSITIONS.DECLARE_ATTACK);
+  async startTurn() {
+    assert(this.can(GAME_PHASE_TRANSITIONS.START_TURN), new WrongGamePhaseError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_TURN);
   }
 
   async declareWinner(players: Player[]) {
@@ -222,6 +201,16 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     this._winners = players;
     await this.sendTransition(GAME_PHASE_TRANSITIONS.PLAYER_WON);
     await this.game.inputSystem.askForPlayerInput();
+  }
+
+  async playCard(id: string, player: Player) {
+    assert(this.getState() === GAME_PHASES.MAIN, new WrongGamePhaseError());
+
+    const card = player.cardManager.getCardInHandById(id);
+    assert(card, new IllegalCardPlayedError());
+    assert(card.canPlay(), new IllegalCardPlayedError());
+    await this.sendTransition(GAME_PHASE_TRANSITIONS.START_PLAYING_CARD);
+    return (this._ctx as PlayCardPhase).play(player, card);
   }
 
   serialize() {

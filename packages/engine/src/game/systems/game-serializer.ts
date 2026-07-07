@@ -2,53 +2,42 @@ import type { Game } from '../game';
 import type { Config } from '../../config';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
 import type {
-  CardDeclarePlayEvent,
+  CardPlayEvent,
   CardDiscardEvent,
   CardRevealEvent
 } from '../../card/card.events';
-import type { ChainEffectAddedEvent, SerializedEffectChain } from '../effect-chain';
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
-import type { SerializedBoard } from '../../board/board-side.entity';
 import type { AnyObject } from '@game/shared';
 import { areArraysIdentical } from '../../utils/utils';
 import type { SerializedAbility } from '../../card/card-blueprint';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
 import { INTERACTION_STATES } from '../game.enums';
-import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
 import { CARD_LOCATIONS } from '../../card/card.enums';
-import { DeepDiffer } from './deep-differ';
+import { DeepDiffer } from '../../utils/deep-differ';
 import type { PatchBasedSnapshotDiff, EntityPatchMap } from './patch-types';
+import type { SerializedBoardSpace } from '../../board/board-space.entity';
+import type { SerializedCombatState } from './combat.system';
+import type { AbilityManagerComponent } from '../../card/components/abilities-manager.component';
+import type { SerializedEffectChain } from '../effect-chain';
 
-export type EntityDictionary = Record<
-  string,
+export type SerializedEntity =
   | SerializedMinionCard
   | SerializedHeroCard
   | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedSigilCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility
->;
+  | SerializedBoardSpace;
 
-export type EntityDiffDictionary = Record<
-  string,
-  | Partial<SerializedMinionCard>
-  | Partial<SerializedSpellCard>
-  | Partial<SerializedArtifactCard>
-  | Partial<SerializedHeroCard>
-  | Partial<SerializedSigilCard>
-  | Partial<SerializedPlayer>
-  | Partial<SerializedModifier>
-  | Partial<SerializedAbility>
->;
+export type EntityDictionary = Record<string, SerializedEntity>;
+
+export type EntityDiffDictionary = Record<string, Partial<SerializedEntity>>;
 
 export type SerializedOmniscientState = {
   config: Config;
@@ -56,9 +45,9 @@ export type SerializedOmniscientState = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   players: string[];
-  board: SerializedBoard;
   currentPlayer: string;
   turnCount: number;
+  combat: SerializedCombatState;
   effectChain: SerializedEffectChain | null;
 };
 
@@ -69,10 +58,10 @@ export type SnapshotDiff = {
   removedEntities: string[];
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  board: SerializedBoard;
   turnCount: number;
   currentPlayer: string;
   players: string[];
+  combat: SerializedCombatState;
   effectChain: SerializedEffectChain | null;
 };
 
@@ -150,12 +139,12 @@ export class GameSerializer {
       removedEntities: removedEntityIds,
       phase: state.phase,
       interaction: state.interaction,
-      board: state.board,
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
-      effectChain: state.effectChain,
-      config: this.getObjectDiff(state.config, prevState.config)
+      config: this.getObjectDiff(state.config, prevState.config),
+      combat: state.combat,
+      effectChain: state.effectChain
     };
   }
 
@@ -166,8 +155,9 @@ export class GameSerializer {
       card.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
-      if ('abilities' in card) {
-        (card.abilities as Ability<AbilityOwner>[]).forEach(ability => {
+      if ('abilityManager' in card) {
+        const manager = card.abilityManager as AbilityManagerComponent<AbilityOwner>;
+        manager.abilities.forEach(ability => {
           entities[ability.id] = ability.serialize();
         });
       }
@@ -175,6 +165,12 @@ export class GameSerializer {
     this.game.playerSystem.players.forEach(player => {
       entities[player.id] = player.serialize();
       player.modifiers.list.forEach(modifier => {
+        entities[modifier.id] = modifier.serialize();
+      });
+    });
+    this.game.boardSystem.boardSpaces.forEach(space => {
+      entities[space.id] = space.serialize();
+      space.modifiers.list.forEach(modifier => {
         entities[modifier.id] = modifier.serialize();
       });
     });
@@ -187,10 +183,10 @@ export class GameSerializer {
       entities: this.buildEntityDictionary(),
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
-      board: this.game.boardSystem.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
       currentPlayer: this.game.interaction.interactivePlayer.id,
       turnCount: this.game.turnSystem.elapsedTurns,
+      combat: this.game.combatSystem.serialize(),
       effectChain: this.game.effectChainSystem.serialize()
     };
   }
@@ -226,15 +222,9 @@ export class GameSerializer {
         const event = e.data.event;
         if (
           e.data.eventName === GAME_EVENTS.CARD_DECLARE_PLAY &&
-          (event as CardDeclarePlayEvent).data.card.id === cardId
+          (event as CardPlayEvent).data.card.id === cardId
         ) {
           return true;
-        }
-        if (e.data.eventName === GAME_EVENTS.EFFECT_CHAIN_EFFECT_ADDED) {
-          const effect = (event as ChainEffectAddedEvent).data.effect;
-          if (effect.source.id === cardId) {
-            return true;
-          }
         }
         if (
           e.data.eventName === GAME_EVENTS.CARD_DISCARD &&
@@ -257,7 +247,9 @@ export class GameSerializer {
       if (card.player.id === playerId) return;
       if (
         card.location === CARD_LOCATIONS.BANISH_PILE ||
-        card.location === CARD_LOCATIONS.BOARD ||
+        card.location === CARD_LOCATIONS.BASE ||
+        card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
         card.location === CARD_LOCATIONS.DISCARD_PILE
       ) {
         return;
@@ -315,10 +307,10 @@ export class GameSerializer {
       ),
       phase: state.phase,
       interaction: state.interaction,
-      board: state.board,
       turnCount: state.turnCount,
       currentPlayer: state.currentPlayer,
       players: state.players,
+      combat: state.combat,
       effectChain: state.effectChain
     };
   }

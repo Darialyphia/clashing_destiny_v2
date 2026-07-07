@@ -11,11 +11,12 @@ export type RearrangeCardBucket = {
   label: string;
   cards: AnyCard[];
 };
-type RearrangeCardsContextOptions = {
+export type RearrangeCardsContextOptions = {
   source: AnyCard;
   player: Player;
   buckets: Array<RearrangeCardBucket>;
   label: string;
+  canCancel: boolean;
 };
 export class RearrangeCardsContext {
   static async create(game: Game, options: RearrangeCardsContextOptions) {
@@ -34,7 +35,7 @@ export class RearrangeCardsContext {
 
   private constructor(
     private game: Game,
-    options: RearrangeCardsContextOptions
+    private options: RearrangeCardsContextOptions
   ) {
     this.buckets = options.buckets;
     this.source = options.source;
@@ -53,11 +54,12 @@ export class RearrangeCardsContext {
         id: bucket.id,
         label: bucket.label,
         cards: bucket.cards.map(card => card.id)
-      }))
+      })),
+      canCancel: this.options.canCancel
     };
   }
 
-  commit(player: Player, buckets: Array<{ id: string; cards: string[] }> | null) {
+  async commit(player: Player, buckets: Array<{ id: string; cards: string[] }> | null) {
     assert(player.equals(this.player), new InvalidPlayerError());
     const bucketsToUse =
       buckets ??
@@ -79,11 +81,21 @@ export class RearrangeCardsContext {
       })
     );
 
-    this.game.interaction.dispatch(
-      INTERACTION_STATE_TRANSITIONS.COMMIT_REARRANGING_CARDS
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_REARRANGING_CARDS,
+      {}
     );
-    this.game.interaction.onInteractionEnd();
 
-    this.game.inputSystem.unpause(result);
+    this.game.inputSystem.unpause({ cancelled: false, result: result });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_REARRANGING_CARDS,
+      {}
+    );
+
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 }

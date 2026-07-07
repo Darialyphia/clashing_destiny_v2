@@ -43,6 +43,12 @@ export class NotCurrentPlayerError extends InputError {
   }
 }
 
+export class CannotMoveManuallyError extends InputError {
+  constructor() {
+    super('This minion cannot be moved manually.');
+  }
+}
+
 export class TooManyReplacesError extends InputError {
   constructor() {
     super('You cannot replace any more cards this turn.');
@@ -85,6 +91,12 @@ export class UnknownCardError extends Error {
   }
 }
 
+export class UnknownSpaceError extends InputError {
+  constructor(spaceId: string) {
+    super(`Unknown space id: ${spaceId}`);
+  }
+}
+
 export class UnknownAbilityError extends Error {
   constructor(cardId: string, abilityId: string) {
     super(`Unknown ability id: ${abilityId} on card id: ${cardId}`);
@@ -112,6 +124,12 @@ export class IllegalTalentUnlockError extends InputError {
 export class IllegalAttackTargetError extends InputError {
   constructor() {
     super(`Cannot attack at position this target`);
+  }
+}
+
+export class AlreadyInCombatError extends InputError {
+  constructor() {
+    super('You are already in combat');
   }
 }
 
@@ -208,5 +226,11 @@ export class NoOngoingEffectChainsError extends InputError {
 export class IllegalResourceActionError extends InputError {
   constructor() {
     super('Cannot perform this resource action');
+  }
+}
+
+export class CannotScoreError extends InputError {
+  constructor() {
+    super('This minion cannot score');
   }
 }

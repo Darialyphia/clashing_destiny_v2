@@ -5,13 +5,7 @@ export const deckSchemas = {
   decks: defineTable({
     name: v.string(),
     ownerId: v.id('users'),
-    mainDeck: v.array(
-      v.object({
-        cardId: v.id('cards'),
-        copies: v.number()
-      })
-    ),
-    destinyDeck: v.array(
+    cards: v.array(
       v.object({
         cardId: v.id('cards'),
         copies: v.number()

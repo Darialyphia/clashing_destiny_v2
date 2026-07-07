@@ -4,6 +4,7 @@ import type { SerializedPlayer } from '../../player/player.entity';
 import type { CardViewModel } from './card.model';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
+import type { BoardSpaceViewModel } from './board-space.model';
 
 export class PlayerViewModel {
   private static patchApplier = new PatchApplier();
@@ -48,52 +49,23 @@ export class PlayerViewModel {
     return this.data.name;
   }
 
-  get currentHp() {
-    return this.data.currentHp;
-  }
-
-  get maxHp() {
-    return this.data.maxHp;
-  }
-
   get handSize() {
     return this.data.handSize;
-  }
-
-  get influence() {
-    return this.data.influence;
   }
 
   get remainingCardsInMainDeck() {
     return this.data.remainingCardsInMainDeck;
   }
 
-  get remainingCardsInDestinyDeck() {
-    return this.data.remainingCardsInDestinyDeck;
-  }
-
-  // get canPerformResourceAction() {
-  //   return this.data.canPerformResourceAction;
-  // }
-
-  // get remainingResourceActions() {
-  //   return this.data.remainingResourceActions;
-  // }
-
-  // get maxResourceActionPerTurn() {
-  //   return this.data.maxResourceActionPerTurn;
-  // }
-
-  // get remainingTotalResourceActions() {
-  //   return this.data.remainingTotalResourceActions;
-  // }
-
   get isPlayer1() {
     return this.data.isPlayer1;
   }
 
   get hand() {
-    return this.data.hand;
+    const entities = this.getEntities();
+    return this.data.hand.map(card => {
+      return entities[card.cardId] as CardViewModel;
+    });
   }
 
   get discardPile() {
@@ -113,5 +85,70 @@ export class PlayerViewModel {
       entity => entity instanceof PlayerViewModel && entity.id !== this.id
     );
     return entity as PlayerViewModel;
+  }
+
+  get victoryPoints() {
+    return this.data.victoryPoints;
+  }
+
+  get base() {
+    return this.data.boardSide.base.map(spaceId => {
+      return this.getEntities()[spaceId] as BoardSpaceViewModel;
+    });
+  }
+
+  get leftBattlefield() {
+    return {
+      commandmentScore: this.data.boardSide.leftBattlefield.commandmentScore,
+      opponentCommandmentScore:
+        this.data.boardSide.leftBattlefield.opponentCommandmentScore,
+      player: this.getEntities()[this.data.id] as PlayerViewModel,
+      spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
+        return this.getEntities()[spaceId] as BoardSpaceViewModel;
+      }),
+      destinyCard: this.data.boardSide.leftBattlefield.destinyCard
+        ? (this.getEntities()[
+            this.data.boardSide.leftBattlefield.destinyCard
+          ] as CardViewModel)
+        : null
+    };
+  }
+
+  get rightBattlefield() {
+    return {
+      commandmentScore: this.data.boardSide.rightBattlefield.commandmentScore,
+      opponentCommandmentScore:
+        this.data.boardSide.rightBattlefield.opponentCommandmentScore,
+      player: this.getEntities()[this.data.id] as PlayerViewModel,
+      spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
+        return this.getEntities()[spaceId] as BoardSpaceViewModel;
+      }),
+      destinyCard: this.data.boardSide.rightBattlefield.destinyCard
+        ? (this.getEntities()[
+            this.data.boardSide.rightBattlefield.destinyCard
+          ] as CardViewModel)
+        : null
+    };
+  }
+
+  get hero() {
+    if (!this.data.hero) return null;
+    return this.getEntities()[this.data.hero] as CardViewModel;
+  }
+
+  get mana() {
+    return this.data.currentMana;
+  }
+
+  get maxMana() {
+    return this.data.maxMana;
+  }
+
+  get runes() {
+    return this.data.runes;
+  }
+
+  get canTakeResourceAction() {
+    return this.data.canTakeResourceAction;
   }
 }

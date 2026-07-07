@@ -4,7 +4,6 @@ import { useCollectionPage } from './useCollectionPage';
 import { Icon } from '@iconify/vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import DeckPoster from '@/card/components/DeckPoster.vue';
-import { assets } from '@/assets';
 
 const { deckBuilder } = useCollectionPage();
 const isPosterOpened = ref(false);
@@ -25,11 +24,9 @@ const isPosterOpened = ref(false);
     >
       <DeckPoster
         :main-deck="deckBuilder.mainDeckCards"
-        :destiny-deck="deckBuilder.destinyDeckCards"
         :name="deckBuilder.deck.name"
       />
     </UiModal>
-    <img class="edit-icon" :src="assets['ui/pen'].path" />
     <UiTextInput
       v-model="deckBuilder.deck.name"
       class="flex-1"
@@ -37,10 +34,3 @@ const isPosterOpened = ref(false);
     />
   </div>
 </template>
-
-<style scoped lang="postcss">
-.edit-icon {
-  width: 24px;
-  height: 24px;
-}
-</style>

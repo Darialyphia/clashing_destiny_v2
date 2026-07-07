@@ -13,10 +13,17 @@ export class EchoModifier<T extends AnyCard> extends Modifier<T> {
       mixins: [
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+          filter: event => {
+            return !!event?.data?.card.equals(this.target);
+          },
           handler: async event => {
-            if (!event.data.card.equals(this.target)) return;
-            await this.target.modifiers.remove(KEYWORDS.ECHO.id);
-            await this.target.addToHand();
+            const clone = await this.target.player.generateCard(
+              this.target.blueprintId,
+              this.target.isFoil
+            );
+
+            await clone.modifiers.remove(EchoModifier);
+            await clone.addToHand();
           }
         }),
         ...(options?.mixins ?? [])

@@ -49,13 +49,7 @@ export const update = mutationWithContainer({
   args: {
     deckId: v.id('decks'),
     name: v.string(),
-    mainDeck: v.array(
-      v.object({
-        cardId: v.id('cards'),
-        copies: v.number()
-      })
-    ),
-    destinyDeck: v.array(
+    cards: v.array(
       v.object({
         cardId: v.id('cards'),
         copies: v.number()
@@ -68,8 +62,7 @@ export const update = mutationWithContainer({
     return usecase.execute({
       deckId: arg.deckId,
       name: arg.name,
-      mainDeck: arg.mainDeck,
-      destinyDeck: arg.destinyDeck
+      cards: arg.cards
     });
   }
 });

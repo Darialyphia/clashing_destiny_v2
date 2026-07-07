@@ -1,6 +1,7 @@
 import type { Values } from '@game/shared';
 import type { MinionCard, SerializedMinionCard } from '../entities/minion.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import type { BoardSpace, SerializedBoardSpace } from '../../board/board-space.entity';
 
 export const MINION_EVENTS = {
   MINION_SUMMONED: 'minion.summoned',
@@ -36,12 +37,13 @@ export class MinionUsedAbilityEvent extends TypedSerializableEvent<
 }
 
 export class MinionSummonedEvent extends TypedSerializableEvent<
-  { card: MinionCard },
-  { card: SerializedMinionCard }
+  { card: MinionCard; position: BoardSpace },
+  { card: SerializedMinionCard; position: SerializedBoardSpace }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.serialize(),
+      position: this.data.position.serialize()
     };
   }
 }

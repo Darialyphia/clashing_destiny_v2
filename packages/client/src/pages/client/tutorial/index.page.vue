@@ -42,7 +42,6 @@ definePage({
 <style scoped lang="postcss">
 .page {
   min-height: 100dvh;
-  background: linear-gradient(to bottom, var(--surface-1), var(--surface-2));
 }
 
 section {

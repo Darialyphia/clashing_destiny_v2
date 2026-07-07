@@ -1,16 +1,16 @@
 import type { Game } from '../game/game';
-import { EmpowerModifier } from '../modifier/modifiers/empower.modifier';
 import type { AnyCard } from './entities/card.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
 
-  const buckets = await game.interaction.rearrangeCards<{
+  const result = await game.interaction.rearrangeCards<{
     top: AnyCard[];
     bottom: AnyCard[];
   }>({
     player: card.player,
     source: card,
+    canCancel: false,
     label: `Drag cards to put them at the top or bottom of your deck`,
     buckets: [
       { id: 'top', label: 'Top', cards: cards.slice() },
@@ -18,19 +18,27 @@ export const scry = async (game: Game, card: AnyCard, amount: number) => {
     ]
   });
 
-  buckets.top.reverse().forEach(card => {
+  if (result.cancelled) {
+    return { cancelled: true };
+  }
+
+  result.result.top.reverse().forEach(card => {
     card.player.cardManager.mainDeck.pluck(card);
     card.player.cardManager.mainDeck.addToTop(card);
   });
-  buckets.bottom.reverse().forEach(card => {
+  result.result.bottom.reverse().forEach(card => {
     card.player.cardManager.mainDeck.pluck(card);
     card.player.cardManager.mainDeck.addToBottom(card);
   });
 
-  return { cards, result: buckets };
+  return { cancelled: false, cards, result: result.result };
 };
 
-export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[]) => {
+export const discover = async <T extends AnyCard>(
+  game: Game,
+  card: AnyCard,
+  choicePool: T[]
+) => {
   const choices: AnyCard[] = [];
   const maxChoices = Math.min(3, choicePool.length);
 
@@ -38,31 +46,94 @@ export const discover = async (game: Game, card: AnyCard, choicePool: AnyCard[])
     const index = game.rngSystem.nextInt(choicePool.length - 1);
     choices.push(...choicePool.splice(index, 1));
   }
-  const [selectedCard] = await game.interaction.chooseCards<AnyCard>({
+  const result = await game.interaction.chooseCards<T, false>({
     player: card.player,
     minChoiceCount: 1,
     maxChoiceCount: 1,
-    choices,
+    canCancel: false,
+    choices: choices.map(c => ({
+      card: c,
+      aiHints: {
+        shouldPick() {
+          return 1;
+        }
+      }
+    })),
     timeoutFallback: [choicePool[0]],
     label: 'Choose a card to add to your hand'
   });
 
+  if (result.cancelled) {
+    return { cancelled: true };
+  }
+
+  const [selectedCard] = result.result;
   await selectedCard.addToHand();
 
-  return { selectedCard, choices };
+  return { cancelled: false, selectedCard, choices };
+};
+
+export const predict = async (game: Game, card: AnyCard) => {
+  const choices: AnyCard[] = [];
+  const choicePool = Array.from(card.player.cardManager.mainDeck.cards);
+  const maxChoices = Math.min(3, choicePool.length);
+
+  for (let i = 0; i < maxChoices; i++) {
+    const index = game.rngSystem.nextInt(choicePool.length - 1);
+    choices.push(...choicePool.splice(index, 1));
+  }
+  const result = await game.interaction.chooseCards<AnyCard, false>({
+    player: card.player,
+    minChoiceCount: 1,
+    maxChoiceCount: 1,
+    canCancel: false,
+    choices: choices.map(c => ({
+      card: c,
+      aiHints: {
+        shouldPick() {
+          return 1;
+        }
+      }
+    })),
+    timeoutFallback: [choicePool[0]],
+    label: 'Choose a card to put on top of your deck'
+  });
+
+  if (result.cancelled) {
+    return { cancelled: true };
+  }
+
+  const [selectedCard] = result.result;
+  await selectedCard.sendToTopOfDeck();
+
+  return { cancelled: false, selectedCard };
 };
 
 export const discardFromHand = async (
   game: Game,
   card: AnyCard,
-  options: { min: number; max: number }
+  options: { min: number; max: number; predicate?: (card: AnyCard) => boolean }
 ) => {
-  const cards = card.player.cardManager.hand;
-  const cardsToDiscard = await game.interaction.chooseCards<AnyCard>({
+  const cards = card.player.cardManager.hand.filter(
+    c => !options.predicate || options.predicate(c)
+  );
+  if (cards.length === 0 || cards.length < options.min) {
+    return { cancelled: false, discardedCards: [] };
+  }
+
+  const result = await game.interaction.chooseCards<AnyCard, false>({
     player: card.player,
     minChoiceCount: options.min,
     maxChoiceCount: options.max,
-    choices: cards,
+    canCancel: false,
+    choices: cards.map(c => ({
+      card: c,
+      aiHints: {
+        shouldPick() {
+          return 1;
+        }
+      }
+    })),
     timeoutFallback: cards.slice(0, options.min),
     label:
       options.min === options.max
@@ -70,18 +141,57 @@ export const discardFromHand = async (
         : `Choose up to ${options.max} cards to discard`
   });
 
-  for (const card of cardsToDiscard) {
+  if (result.cancelled) {
+    return { cancelled: true };
+  }
+
+  for (const card of result.result) {
     await card.discard();
   }
 
-  return cardsToDiscard;
+  return { cancelled: false, discardedCards: result.result };
 };
 
-export const getEmpowerStacks = (card: AnyCard) =>
-  card.player.hero.modifiers.list
-    .filter(mod => mod instanceof EmpowerModifier)
-    .reduce((acc, mod) => acc + mod.stacks, 0);
+export const askMandatoryYesNoQuestion = async ({
+  game,
+  card,
+  questionId,
+  label,
+  timeoutFallback = 'no',
+  aiChoice
+}: {
+  game: Game;
+  card: AnyCard;
+  questionId: string;
+  label: string;
+  timeoutFallback?: 'yes' | 'no';
+  aiChoice: 'yes' | 'no';
+}) => {
+  const answer = await game.interaction.askQuestion({
+    player: card.player,
+    canCancel: false,
+    label,
+    questionId,
+    source: card,
+    timeoutFallback,
+    choices: [
+      {
+        id: 'yes',
+        label: 'Yes',
+        aiHints: {
+          shouldPick: () => (aiChoice === 'yes' ? 1 : 0)
+        }
+      },
+      {
+        id: 'no',
+        label: 'No',
+        aiHints: {
+          shouldPick: () => (aiChoice === 'no' ? 1 : 0)
+        }
+      }
+    ]
+  });
+  if (answer.cancelled) return true;
 
-export const hasBalance = (card: AnyCard) => {
-  return card.player.cardManager.hand.length !== card.player.cardManager.destinyZone.size;
+  return answer.result === 'yes';
 };

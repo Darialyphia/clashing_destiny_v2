@@ -7,9 +7,14 @@ import {
   useGameClient,
   useFxEvent
 } from '../composables/useGameClient';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import {
+  GAME_PHASES,
+  INTERACTION_STATES
+} from '@game/engine/src/game/game.enums';
 import { Flip } from 'gsap/Flip';
+import UiButton from '@/ui/components/UiButton.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 
 const ui = useGameUi();
@@ -17,25 +22,22 @@ const cardRotation = ref({ x: 0, y: 0 });
 const x = ref(0);
 const y = ref(0);
 
+const POSITION_OFFSET_Y = -0;
 useEventListener(
   'mousemove',
   (e: MouseEvent) => {
     x.value = e.clientX;
-    y.value = e.clientY;
-    // we set the css variables manually for better performance
-    // devtools profiling shows that it triggers style recalculation for way less elements
-    container.value?.style.setProperty('--x', `${e.clientX}px`);
-    container.value?.style.setProperty('--y', `${e.clientY}px`);
+    y.value = e.clientY + POSITION_OFFSET_Y;
   },
   { passive: true, capture: true }
 );
 let prev = { x: x.value, y: y.value };
 let delta = { x: 0, y: 0 };
 const MAX_ANGLE = 45;
-const SCALE_FACTOR = 2;
+const SCALE_FACTOR = 5;
 const LERP_FACTOR = 0.3;
 
-useRafFn(() => {
+const rotationAnimation = useRafFn(() => {
   delta = {
     x: x.value - prev.x,
     y: y.value - prev.y
@@ -59,17 +61,6 @@ useRafFn(() => {
       LERP_FACTOR
     )
   };
-
-  // we set the css variables manually for better performance
-  // devtools profiling shows that it triggers style recalculation for way less elements
-  container.value?.style.setProperty(
-    '--rotation-x',
-    cardRotation.value.x + 'deg'
-  );
-  container.value?.style.setProperty(
-    '--rotation-y',
-    cardRotation.value.y + 'deg'
-  );
 });
 
 const state = useGameState();
@@ -79,9 +70,7 @@ const { client } = useGameClient();
 
 const container = useTemplateRef<HTMLDivElement>('container');
 watchEffect(() => {
-  const shouldPin =
-    state.value.interaction.state !== INTERACTION_STATES.PLAYING_CARD &&
-    !isDefined(ui.value.draggedCard);
+  const shouldPin = !isDefined(ui.value.selectedCard);
   if (shouldPin === isPinned.value) return;
 
   if (shouldPin) {
@@ -106,17 +95,22 @@ watchEffect(() => {
   }
 });
 
-// watch(isPinned, pinned => {
-//   if (pinned) {
-//     rotationAnimation.pause();
-//   } else {
-//     rotationAnimation.resume();
-//   }
-// });
+watch(isPinned, pinned => {
+  if (pinned) {
+    rotationAnimation.pause();
+  } else {
+    rotationAnimation.resume();
+  }
+});
 
 const isHidden = ref(false);
 useFxEvent(FX_EVENTS.PRE_CARD_BEFORE_PLAY, () => {
   isHidden.value = true;
+});
+useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
+  if (event.to.state === INTERACTION_STATES.IDLE) {
+    isHidden.value = true;
+  }
 });
 const unsub = client.value.onUpdateCompleted(() => {
   isHidden.value = false;
@@ -125,28 +119,63 @@ onBeforeUnmount(() => {
   unsub();
 });
 
-const card = computed(() => {
-  return ui.value.draggedCard;
+const draggedCard = computed(() => {
+  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return null;
+
+  const card = state.value.entities[
+    state.value.phase.ctx.card
+  ] as CardViewModel;
+
+  if (!card) return null;
+
+  return card;
 });
 </script>
 
 <template>
-  <Teleport to="#dragged-card-container" defer>
-    <div
-      v-if="!isHidden"
-      ref="container"
-      id="dragged-card"
-      data-flip-id="dragged-card"
-      style="--pixel-scale: 1"
-    >
-      <GameCard
-        v-if="card"
-        :card-id="card.id"
-        :is-interactive="false"
-        :show-action-empty-state="false"
-      />
-    </div>
-  </Teleport>
+  <div
+    v-if="!isHidden"
+    ref="container"
+    id="dragged-card"
+    data-flip-id="dragged-card"
+    :class="{
+      'is-pinned': isPinned,
+      'is-pinning': isPinning
+    }"
+    :style="{
+      '--pixel-scale': 1,
+      '--x': `${x}px`,
+      '--y': `${y}px`
+    }"
+  >
+    <GameCard
+      v-if="draggedCard"
+      :card-id="draggedCard.id"
+      :is-interactive="false"
+    />
+    <Transition>
+      <div
+        v-if="
+          isPinned &&
+          !isPinning &&
+          (state.interaction.state ===
+            INTERACTION_STATES.SELECTING_SPACE_ON_BOARD ||
+            state.interaction.state ===
+              INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) &&
+          state.interaction.ctx.canCancel
+        "
+        class="flex flex-col gap-3 mt-3"
+        @mouseup.stop
+      >
+        <UiButton
+          class="primary-button w-full pointer-events-auto"
+          @click="client.cancelInteraction()"
+        >
+          Cancel
+        </UiButton>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <style lang="postcss" scoped>
@@ -156,17 +185,28 @@ const card = computed(() => {
   z-index: 99;
   transform-style: preserve-3d;
   transform-origin: center center;
-  top: 0;
-  left: 0;
-  transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
-    rotateX(var(--rotation-x)) rotateY(var(--rotation-y));
-  min-width: 10px;
-  min-height: 10px;
-  /* &:not(.is-pinned) {
+
+  &:not(.is-pinned) {
+    top: 0;
+    left: 0;
+    transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
+      rotateX(calc(1deg * v-bind('cardRotation.x')))
+      rotateY(calc(1deg * v-bind('cardRotation.y')));
   }
   &.is-pinned {
-    top: var(--size-13);
-    right: var(--size-8);
-  } */
+    top: var(--size-11);
+    right: var(--size-13);
+  }
+}
+
+.v-enter-active {
+  transition:
+    opacity 0.2s var(--ease-in-2),
+    transform 0.2s var(--ease-in-2);
+}
+
+.v-enter-from {
+  opacity: 0;
+  transform: translateX(2rem);
 }
 </style>

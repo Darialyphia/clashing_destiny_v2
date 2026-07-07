@@ -1,16 +1,9 @@
 import type { Config } from '../../config';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
-import type { SerializedBoard } from '../../board/board-side.entity';
+import type { SerializedEntity } from './game-serializer';
 import type { SerializedEffectChain } from '../effect-chain';
-import type { SerializedMinionCard } from '../../card/entities/minion.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
-import type { SerializedSpellCard } from '../../card/entities/spell.entity';
-import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
-import type { SerializedSigilCard } from '../../card/entities/sigil.entity';
-import type { SerializedPlayer } from '../../player/player.entity';
-import type { SerializedModifier } from '../../modifier/modifier.entity';
-import type { SerializedAbility } from '../../card/card-blueprint';
+import type { SerializedCombatState } from './combat.system';
 
 /**
  * JSON Patch operations (RFC 6902 inspired)
@@ -41,19 +34,6 @@ export interface RemovePatch {
 export type EntityPatchMap = Record<string, PatchOperation[]>;
 
 /**
- * Serialized entity union type
- */
-export type SerializedEntity =
-  | SerializedMinionCard
-  | SerializedHeroCard
-  | SerializedSpellCard
-  | SerializedArtifactCard
-  | SerializedSigilCard
-  | SerializedPlayer
-  | SerializedModifier
-  | SerializedAbility;
-
-/**
  * New snapshot diff format using patches
  */
 export type PatchBasedSnapshotDiff = {
@@ -69,12 +49,12 @@ export type PatchBasedSnapshotDiff = {
   // Top-level state changes (these are infrequent, so keep as partial)
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  board: SerializedBoard;
   turnCount: number;
   currentPlayer: string;
   players: string[];
-  effectChain: SerializedEffectChain | null;
   config: Partial<Config>;
+  combat: SerializedCombatState;
+  effectChain: SerializedEffectChain | null;
 };
 
 /**

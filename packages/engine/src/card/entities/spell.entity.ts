@@ -1,49 +1,41 @@
-import type { MaybePromise } from '@game/shared';
 import type { Game } from '../../game/game';
-
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import {
-  serializePreResponseTarget,
-  type AbilityBlueprint,
-  type PreResponseTarget,
-  type SerializedPreResponseTarget,
+  serializeTargets,
+  type Targets,
+  type SerializedTargets,
   type SpellBlueprint
 } from '../card-blueprint';
 import {
   Card,
   makeCardInterceptors,
-  type AnyCard,
   type CardInterceptors,
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS } from '../card.enums';
-import { CardDeclarePlayEvent } from '../card.events';
-import { Ability } from './ability.entity';
+import { CARD_EVENTS, type CardSpeed, type JobId } from '../card.enums';
+import { CardPlayEvent } from '../card.events';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
-  preResponseTargets: SerializedPreResponseTarget[] | null;
-  abilities: string[];
+  targets: SerializedTargets | null;
+  jobs: JobId[];
+  speed: CardSpeed;
 };
 export type SpellCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, SpellCard>;
-  canUseAbility: Interceptable<boolean, { card: SpellCard; ability: Ability<SpellCard> }>;
   canBeTargeted: Interceptable<boolean, SpellCard>;
 };
 
 export class SpellCard extends Card<
-  SerializedCard,
+  SerializedSpellCard,
   SpellCardInterceptors,
   SpellBlueprint
 > {
-  private preResponseTargets: PreResponseTarget[] | null = null;
-
-  readonly abilityTargets = new Map<string, PreResponseTarget[]>();
-
-  readonly abilities: Ability<SpellCard>[] = [];
+  private targets: Targets | null = null;
 
   constructor(game: Game, player: Player, options: CardOptions<SpellBlueprint>) {
     super(
@@ -52,110 +44,64 @@ export class SpellCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        canBeTargeted: new Interceptable(),
-        canUseAbility: new Interceptable()
+        canBeTargeted: new Interceptable()
       },
       options
     );
+  }
 
-    this.blueprint.abilities.forEach(ability => {
-      this.abilities.push(new Ability<SpellCard>(this.game, this, ability));
-    });
+  get jobs() {
+    return this.blueprint.jobs;
+  }
+
+  isValidMovementPosition() {
+    return false;
   }
 
   get canBeTargeted(): boolean {
     return this.interceptors.canBeTargeted.getValue(true, this);
   }
 
-  replaceAbilityTarget(abilityId: string, oldTarget: AnyCard, newTarget: AnyCard) {
-    const targets = this.abilityTargets.get(abilityId);
-    if (!targets) return;
-    if (newTarget instanceof Card) {
-      const index = targets.findIndex(t => t instanceof Card && t.equals(oldTarget));
-      if (index === -1) return;
-
-      const oldTarget = targets[index] as AnyCard;
-      oldTarget.clearTargetedBy({ type: 'ability', abilityId, card: this });
-
-      targets[index] = newTarget;
-      newTarget.targetBy({ type: 'ability', abilityId, card: this });
-    }
-  }
-
-  replacePreResponseTarget(oldTarget: AnyCard, newTarget: AnyCard) {
-    if (!this.preResponseTargets) return;
-    if (newTarget instanceof Card) {
-      const index = this.preResponseTargets.findIndex(
-        t => t instanceof Card && t.equals(oldTarget)
-      );
-      if (index === -1) return;
-
-      oldTarget.clearTargetedBy({ type: 'card', card: this });
-
-      this.preResponseTargets[index] = newTarget;
-      newTarget.targetBy({ type: 'card', card: this });
-    }
-  }
-
-  canUseAbility(id: string) {
-    const ability = this.abilities.find(ability => ability.abilityId === id);
-    if (!ability) return false;
-
-    return this.interceptors.canUseAbility.getValue(ability.canUse, {
-      card: this,
-      ability
-    });
-  }
-
-  addAbility(ability: AbilityBlueprint<SpellCard, PreResponseTarget>) {
-    const newAbility = new Ability<SpellCard>(this.game, this, ability);
-    this.abilities.push(newAbility);
-    return newAbility;
-  }
-
-  removeAbility(abilityId: string) {
-    const index = this.abilities.findIndex(a => a.abilityId === abilityId);
-    if (index === -1) return;
-    this.abilityTargets.delete(abilityId);
+  get isCorrectPhaseToPlay() {
+    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
   }
 
   canPlay() {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase &&
+        this.hasUnlockedAffinity &&
+        this.blueprint.canPlay(this.game, this) &&
+        this.isCorrectPhaseToPlay,
       this
     );
   }
 
-  async playWithTargets(
-    targets: PreResponseTarget[],
-    onResolved?: () => MaybePromise<void>
-  ) {
-    this.preResponseTargets = targets;
+  async playWithTargets(targets: Targets) {
+    this.targets = targets;
 
     await this.insertInChainOrExecute(
       async () => {
-        await this.blueprint.onPlay(this.game, this, this.preResponseTargets!);
+        await this.blueprint.onPlay(this.game, this, this.targets!);
 
         await this.dispose();
 
-        this.preResponseTargets?.forEach(target => {
-          if (target instanceof Card) {
-            target.clearTargetedBy({ type: 'card', card: this });
-          }
-        });
-        this.preResponseTargets = null;
+        this.targets = null;
       },
-      { targets, onResolved }
+      { targets: this.targets }
     );
   }
 
-  async play(onResolved: () => MaybePromise<void>) {
+  async play() {
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
-      new CardDeclarePlayEvent({ card: this })
+      new CardPlayEvent({ card: this })
     );
-    const targets = await this.blueprint.getPreResponseTargets(this.game, this);
-    await this.playWithTargets(targets, onResolved);
+    const targetsResult = await this.blueprint.getTargets(this.game, this);
+    if (targetsResult.cancelled) {
+      return { cancelled: true };
+    }
+    await this.playWithTargets(targetsResult.result);
+    return { cancelled: false };
   }
 
   serialize(): SerializedSpellCard {
@@ -163,10 +109,9 @@ export class SpellCard extends Card<
       ...this.serializeBase(),
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
-      abilities: this.abilities.map(ability => ability.id),
-      preResponseTargets: this.preResponseTargets
-        ? this.preResponseTargets.map(serializePreResponseTarget)
-        : null
+      targets: this.targets ? serializeTargets(this.targets) : null,
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      speed: this.speed
     };
   }
 }

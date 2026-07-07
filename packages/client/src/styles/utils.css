@@ -193,3 +193,37 @@ button:is(.primary-button, .error-button) {
     box-shadow: 0 0 0 4px var(--surface-1);
   }
 }
+
+.dual-text {
+  color: transparent;
+  position: relative;
+  --_top-color: var(--top-color, #f8eabb);
+  --_bottom-color: var(--bottom-color, #d1b07d);
+  &::before,
+  &::after {
+    position: absolute;
+    content: attr(data-text);
+    color: transparent;
+    inset: 0;
+  }
+  &:after {
+    background: linear-gradient(
+      var(--_top-color),
+      var(--_top-color) 50%,
+      var(--_bottom-color) 50%
+    );
+    line-height: 1.2;
+    background-clip: text;
+    background-size: 100% 1lh;
+    background-repeat: repeat-y;
+    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
+  }
+  &:before {
+    -webkit-text-stroke: calc(var(--dual-text-stroke, 2px) * var(--pixel-scale))
+      black;
+    z-index: -1;
+    translate: var(--dual-text-offset-x, 0)
+      var(--dual-text-stroke-offset-y, var(--dual-text-offset-y, 0));
+    height: 100%;
+  }
+}

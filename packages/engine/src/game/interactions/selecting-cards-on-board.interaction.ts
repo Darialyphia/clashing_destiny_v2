@@ -1,5 +1,5 @@
 import { assert } from '@game/shared';
-import type { AnyCard, CardTargetOrigin } from '../../card/entities/card.entity';
+import type { AnyCard } from '../../card/entities/card.entity';
 import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
@@ -7,14 +7,18 @@ import type { Game } from '../game';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 import { InvalidPlayerError, UnableToCommitError } from '../game-error';
 
-type SelectingCardOnBoardContextOptions = {
+export type SelectingCardOnBoardContextOptions = {
   player: Player;
   label: string;
+  source: AnyCard;
   isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
   canCommit: (selectedCards: AnyCard[]) => boolean;
   isDone(selectedCards: AnyCard[]): boolean;
-  origin: CardTargetOrigin;
   timeoutFallback: AnyCard[];
+  canCancel: boolean;
+  aiHints: {
+    shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+  };
 };
 
 export class SelectingCardOnBoardContext {
@@ -26,8 +30,6 @@ export class SelectingCardOnBoardContext {
   private selectedCards: AnyCard[] = [];
 
   private timeoutFallback: AnyCard[];
-
-  private origin: CardTargetOrigin;
 
   private isElligible: (card: AnyCard, selectedCards: AnyCard[]) => boolean;
 
@@ -41,13 +43,12 @@ export class SelectingCardOnBoardContext {
 
   private constructor(
     private game: Game,
-    options: SelectingCardOnBoardContextOptions
+    private options: SelectingCardOnBoardContextOptions
   ) {
     this.player = options.player;
     this.isElligible = options.isElligible;
     this.canCommit = options.canCommit;
     this.isDone = options.isDone;
-    this.origin = options.origin;
     this.label = options.label;
     this.timeoutFallback = options.timeoutFallback;
   }
@@ -56,12 +57,14 @@ export class SelectingCardOnBoardContext {
     return {
       player: this.player.id,
       selectedCards: this.selectedCards.map(card => card.id),
-      elligibleCards: this.game.boardSystem
+      elligibleCards: this.game.cardSystem
         .getAllCardsInPlay()
         .filter(card => this.isElligible(card, this.selectedCards))
         .map(card => card.id),
       canCommit: this.canCommit(this.selectedCards),
-      label: this.label
+      label: this.label,
+      canCancel: this.options.canCancel,
+      source: this.options.source.id
     };
   }
 
@@ -71,7 +74,7 @@ export class SelectingCardOnBoardContext {
     const isDone = this.isDone(this.selectedCards);
     const canCommit = this.canCommit(this.selectedCards);
     if (isDone && canCommit) {
-      this.commit(this.player);
+      await this.commit(this.player);
     } else {
       await this.game.inputSystem.askForPlayerInput();
     }
@@ -81,20 +84,31 @@ export class SelectingCardOnBoardContext {
     assert(player.equals(this.player), new InvalidPlayerError());
     assert(this.isElligible(card, this.selectedCards), new IllegalTargetError());
     this.selectedCards.push(card);
-    card.targetBy(this.origin);
     await this.autoCommitIfAble();
   }
 
-  commit(player: Player, isTimeout = false) {
+  async commit(player: Player, isTimeout = false) {
     if (isTimeout) {
       this.selectedCards = [...this.timeoutFallback];
     }
-    assert(this.canCommit, new UnableToCommitError());
+    assert(this.canCommit(this.selectedCards), new UnableToCommitError());
     assert(player.equals(this.player), new InvalidPlayerError());
-    this.game.interaction.dispatch(
-      INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD
+
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD,
+      {}
     );
-    this.game.interaction.onInteractionEnd();
-    this.game.inputSystem.unpause(this.selectedCards);
+
+    this.game.inputSystem.unpause({ cancelled: false, result: this.selectedCards });
+  }
+
+  async cancel(player: Player) {
+    assert(player.equals(this.player), new InvalidPlayerError());
+    await this.game.interaction.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
+      {}
+    );
+
+    this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 }

@@ -11,12 +11,8 @@ export class Deck extends Entity<DeckId, DeckDoc> {
     return this.data.name;
   }
 
-  get mainDeck() {
-    return this.data.mainDeck;
-  }
-
-  get destinyDeck() {
-    return this.data.destinyDeck;
+  get cards() {
+    return this.data.cards;
   }
 
   get ownerId() {
@@ -29,7 +25,7 @@ export class Deck extends Entity<DeckId, DeckDoc> {
     return this.data.ownerId === userId;
   }
 
-  update(updates: Partial<Pick<DeckDoc, 'name' | 'mainDeck' | 'destinyDeck'>>) {
+  update(updates: Partial<Pick<DeckDoc, 'name' | 'cards'>>) {
     this.data = {
       ...this.data,
       ...updates

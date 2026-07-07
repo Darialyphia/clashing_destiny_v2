@@ -31,6 +31,10 @@ export class StartGameUseCase implements UseCase<StartGameInput, StartGameOutput
     }
 
     game.start();
+    if (game.cancellationId) {
+      await this.ctx.gameRepo.abortCancellation(game);
+    }
+
     await this.ctx.gameRepo.save(game);
 
     return { success: true };

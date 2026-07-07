@@ -21,22 +21,20 @@ export const CARD_EVENTS = {
   CARD_BEFORE_TAKE_DAMAGE: 'card.before_take_damage',
   CARD_AFTER_TAKE_DAMAGE: 'card.after_take_damage',
   CARD_BEFORE_REVEAL: 'card.before_reveal',
-  CARD_AFTER_REVEAL: 'card.after_reveal'
+  CARD_AFTER_REVEAL: 'card.after_reveal',
+  CARD_BEFORE_MOVE: 'card.before_move',
+  CARD_AFTER_MOVE: 'card.after_move',
+  BEFORE_SCORE: 'card.before_score',
+  AFTER_SCORE: 'card.after_score'
 } as const;
 export type CardEvent = Values<typeof CARD_EVENTS>;
-
-export const CARD_DECK_SOURCES = {
-  MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck'
-} as const;
-export type CardDeckSource = Values<typeof CARD_DECK_SOURCES>;
 
 export const CARD_KINDS = {
   MINION: 'MINION',
   HERO: 'HERO',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  SIGIL: 'SIGIL'
+  DESTINY: 'DESTINY'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -49,8 +47,8 @@ export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
 
 export const CARD_SPEED = {
   SLOW: 'SLOW',
-  FAST: 'FAST',
-  BURST: 'BURST'
+  FAST: 'FAST'
+  // BURST: 'BURST'
   // WARP: 'WARP'
 } as const;
 export type CardSpeed = Values<typeof CARD_SPEED>;
@@ -91,92 +89,47 @@ export type CardTint = {
   opacity: number;
 };
 
-export type Faction = {
+export type Job = {
   id: string;
   name: string;
   shortName: string;
-  defaultCardTint: CardTint;
 };
-export const FACTIONS = {
-  NEUTRAL: {
-    id: 'NEUTRAL' as const,
-    name: 'Neutral' as const,
-    shortName: 'Neutr',
-    defaultCardTint: {
-      colors: ['#FFFFFF', '#FFFFFF'],
-      mode: { type: 'radial' },
-      blendMode: 'overlay',
-      opacity: 0
-    }
+
+export const JOBS = {
+  WARRIOR: {
+    id: 'warrior',
+    name: 'Warrior',
+    shortName: 'Warrior'
   },
-  ORDER: {
-    id: 'ORDER',
-    name: 'Order',
-    shortName: 'Order',
-    defaultCardTint: {
-      colors: ['#be9019', '#bc8720', '#156ba8'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  MAGE: {
+    id: 'mage',
+    name: 'Mage',
+    shortName: 'Mage'
   },
-  CHAOS: {
-    id: 'CHAOS',
-    name: 'Chaos',
-    shortName: 'Chaos',
-    defaultCardTint: {
-      mode: { type: 'linear', angle: 135 },
-      colors: ['#483D8B', '#7E2042'],
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  ROGUE: {
+    id: 'rogue',
+    name: 'Rogue',
+    shortName: 'Rogue'
   },
-  GENESIS: {
-    id: 'GENESIS',
-    name: 'Genesis',
-    shortName: 'Genesis',
-    defaultCardTint: {
-      colors: ['#0064a9', '#a2dd92'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  ACOLYTE: {
+    id: 'acolyte',
+    name: 'Acolyte',
+    shortName: 'Acolyte'
   },
-  OBLIVION: {
-    id: 'OBLIVION',
-    name: 'Oblivion',
-    shortName: 'Obliv',
-    defaultCardTint: {
-      colors: ['#8B0064', '#aa2442'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
-  },
-  ARCANE: {
-    id: 'ARCANE',
-    name: 'Arcane',
-    shortName: 'Arcane',
-    defaultCardTint: {
-      colors: ['#cc0081', '#006ab6'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
-  },
-  PRIMAL: {
-    id: 'PRIMAL',
-    name: 'Primal',
-    shortName: 'Primal',
-    defaultCardTint: {
-      colors: ['#8B4513', '#DEB887'],
-      mode: { type: 'linear', angle: 135 },
-      blendMode: 'overlay',
-      opacity: 1
-    }
+  RANGER: {
+    id: 'ranger',
+    name: 'Ranger',
+    shortName: 'Ranger'
   }
-} as const satisfies Record<string, Faction>;
-export type FactionId = Values<typeof FACTIONS>['id'];
+} as const satisfies Record<string, Job>;
+export type JobId = Values<typeof JOBS>['id'];
+export const getJobById = (id: JobId): Job => {
+  const job = Object.values(JOBS).find(job => job.id === id);
+  if (!job) {
+    throw new Error(`Invalid job id: ${id}`);
+  }
+  return job;
+};
 
 export const CARD_LOCATIONS = {
   HAND: 'hand',
@@ -184,7 +137,20 @@ export const CARD_LOCATIONS = {
   DESTINY_DECK: 'destinyDeck',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
-  DESTINY_ZONE: 'destinyZone',
-  BOARD: 'board'
+  BASE: 'base',
+  LEFT_BATTLEFIELD: 'left_battlefield',
+  RIGHT_BATTLEFIELD: 'right_battlefield'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
+
+export const AFFINITIES = {
+  NEUTRAL: 'Neutral',
+  FIRE: 'Fire',
+  WATER: 'Water',
+  EARTH: 'Earth',
+  AIR: 'Air',
+  LIGHT: 'Light',
+  DARK: 'Dark',
+  ARCANE: 'Arcane'
+} as const;
+export type Affinity = Values<typeof AFFINITIES>;

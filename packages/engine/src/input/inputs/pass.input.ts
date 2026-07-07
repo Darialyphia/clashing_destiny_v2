@@ -8,7 +8,7 @@ const schema = defaultInputSchema;
 export class PassInput extends Input<typeof schema> {
   readonly name = 'pass';
 
-  readonly allowedPhases = [GAME_PHASES.MAIN, GAME_PHASES.ATTACK, GAME_PHASES.END];
+  readonly allowedPhases = [GAME_PHASES.MAIN];
 
   protected payloadSchema = schema;
 
@@ -20,7 +20,7 @@ export class PassInput extends Input<typeof schema> {
       );
       await this.game.effectChainSystem.pass(this.player);
     } else {
-      assert(this.player.isInteractive, new NotCurrentPlayerError());
+      assert(this.player.hasInitiative, new NotCurrentPlayerError());
       await this.game.turnSystem.pass(this.player);
     }
   }

@@ -1,6 +1,6 @@
 import type { Values } from '@game/shared';
-import type { Attacker, AttackTarget } from '../game/phases/combat.phase';
 import type { AnyCard } from '../card/entities/card.entity';
+import type { Attacker, AttackTarget } from '../game/systems/combat.system';
 
 export const DAMAGE_TYPES = {
   COMBAT: 'COMBAT',
@@ -46,6 +46,7 @@ export class CombatDamage extends Damage {
   private _attacker: Attacker;
 
   constructor(attacker: Attacker) {
+    console.log(attacker.blueprint.name, attacker.atk);
     super({ baseAmount: attacker.atk, type: DAMAGE_TYPES.COMBAT });
     this._attacker = attacker;
   }

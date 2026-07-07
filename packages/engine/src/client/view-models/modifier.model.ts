@@ -71,7 +71,12 @@ export class ModifierViewModel {
   get source() {
     return this.getEntities()[this.data.source] as CardViewModel;
   }
+
   get targetAsCard() {
     return this.getEntities()[this.data.target] as CardViewModel;
+  }
+
+  get isEnabled() {
+    return this.data.isEnabled;
   }
 }

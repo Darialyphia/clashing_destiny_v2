@@ -17,7 +17,7 @@ const ui = useGameUi();
 
 <style scoped lang="postcss">
 .explainer-message {
-  font-size: var(--font-size-2);
+  font-size: var(--font-size-1);
   color: #ffb270;
   letter-spacing: 0.25ch;
   opacity: 0;
