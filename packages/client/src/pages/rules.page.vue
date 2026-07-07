@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
+import UnauthenticatedHeader from '@/UnauthenticatedHeader.vue';
 import GameRules from '@/tutorial/components/GameRules.vue';
 
 definePage({
-  name: 'HowToPlay'
+  name: 'HowToPlayPublic'
 });
 </script>
 
 <template>
   <div class="how-to-play-page">
-    <AuthenticatedHeader />
+    <UnauthenticatedHeader />
     <div class="how-to-play-container fancy-scrollbar">
       <h1 class="dual-text" data-text="How To Play">How To Play</h1>
       <div class="divider" />

@@ -264,7 +264,7 @@ onUnmounted(() => {
           class="space-y-2"
         >
           <div
-            class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 font-serif px-1"
+            class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-400 px-1"
           >
             <span :class="cat.icon" class="text-[#d7ad42] text-sm" />
             <span>{{ cat.name }}</span>
@@ -333,9 +333,7 @@ onUnmounted(() => {
         >
           Chapter 1
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-book-open-outline text-[#d7ad42]" />
           Game Overview
         </h2>
@@ -373,9 +371,7 @@ onUnmounted(() => {
         >
           Chapter 2
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-trophy-outline text-[#d7ad42]" />
           How To Win
         </h2>
@@ -425,9 +421,7 @@ onUnmounted(() => {
         >
           Chapter 3
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-cards-outline text-[#d7ad42]" />
           Decks
         </h2>
@@ -438,12 +432,12 @@ onUnmounted(() => {
             <!-- Main Deck Box -->
             <div class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg">
               <h3
-                class="text-sm font-bold font-serif text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
+                class="text-2 font-bold text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
               >
                 <span class="i-mdi-cards text-[#d7ad42]" />
                 Main Deck
               </h3>
-              <ul class="space-y-2 text-sm text-slate-300">
+              <ul class="space-y-2 text-1 text-slate-300">
                 <li class="flex items-start gap-2">
                   <span
                     class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
@@ -460,9 +454,7 @@ onUnmounted(() => {
                   <span
                     class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
                   />
-                  Must contain one, and only one
-                  <span class="game-term hero">Hero</span>
-                  card.
+                  Must contain one, and only one Hero card.
                 </li>
                 <li class="flex items-start gap-2">
                   <span
@@ -476,12 +468,12 @@ onUnmounted(() => {
             <!-- Destiny Deck Box -->
             <div class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg">
               <h3
-                class="text-sm font-bold font-serif text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
+                class="text-2 font-bold text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
               >
                 <span class="i-mdi-star-four-points text-[#d7ad42]" />
                 Destiny Deck
               </h3>
-              <ul class="space-y-2 text-sm text-slate-300">
+              <ul class="space-y-2 text-1 text-slate-300">
                 <li class="flex items-start gap-2">
                   <span
                     class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
@@ -492,15 +484,11 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <p
-            class="text-sm text-slate-400 mt-2 bg-slate-950/40 p-3 border border-slate-800 rounded"
-          >
+          <blockquote style="--color: #d7ad42">
             For both decks, cards must share an
             <strong class="text-slate-200">Affinity</strong>
-            with your
-            <span class="game-term hero">Hero</span>
-            , or have the Neutral affinity.
-          </p>
+            with your Hero , or have the Neutral affinity.
+          </blockquote>
         </div>
       </section>
 
@@ -520,9 +508,7 @@ onUnmounted(() => {
         >
           Chapter 4
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-badge-account-horizontal-outline text-[#d7ad42]" />
           Card Types
         </h2>
@@ -541,52 +527,52 @@ onUnmounted(() => {
             </p>
             <div class="flex justify-around flex-wrap gap-2 mb-3">
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-red-950/40 border border-red-500/30 text-red-400"
+                class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
               >
                 <img :src="assets[`ui/card/affinity-fire`].path" />
                 Fire
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-blue-950/40 border border-blue-500/30 text-blue-400"
+                class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
               >
                 <img :src="assets[`ui/card/affinity-water`].path" />
                 Water
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-emerald-950/40 border border-emerald-500/30 text-emerald-400"
+                class="affinity bg-emerald-950/40 border border-emerald-500/30 text-emerald-400"
               >
                 <img :src="assets[`ui/card/affinity-air`].path" />
                 Air
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-amber-950/40 border border-amber-500/30 text-amber-500"
+                class="affinity bg-amber-950/40 border border-amber-500/30 text-amber-500"
               >
                 <img :src="assets[`ui/card/affinity-earth`].path" />
                 Earth
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-yellow-950/40 border border-yellow-200/30 text-yellow-200"
+                class="affinity bg-yellow-950/40 border border-yellow-200/30 text-yellow-200"
               >
                 <img :src="assets[`ui/card/affinity-light`].path" />
                 Light
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-purple-950/40 border border-purple-500/30 text-purple-400"
+                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
               >
                 <img :src="assets[`ui/card/affinity-neutral`].path" />
                 Dark
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-pink-950/40 border border-pink-500/30 text-pink-400"
+                class="affinity bg-pink-950/40 border border-pink-500/30 text-pink-400"
               >
                 <img :src="assets[`ui/card/affinity-arcane`].path" />
                 Arcane
               </span>
               <span
-                class="flex flex-col items-center gap-1 px-2 py-1 rounded text-sm font-semibold bg-slate-900 border border-slate-700 text-slate-400"
+                class="affinity bg-slate-900/40 border border-slate-700/30 text-slate-400"
               >
                 <img :src="assets[`ui/card/affinity-neutral`].path" />
-                Neutral (Universal)
+                Neutral
               </span>
             </div>
             <p class="text-sm text-slate-400">
@@ -662,16 +648,12 @@ onUnmounted(() => {
             Spells
           </h3>
 
-          <div
-            class="border border-slate-800/60 bg-[#090f1d]/50 p-4 rounded-lg"
-          >
-            <p class="text-sm text-slate-300 leading-relaxed">
-              Spells create one-time effects, such as dealing damage, drawing
-              cards, moving units, exhausting units, or altering
-              <span class="stat-term commandment">Commandment</span>
-              . Spells are sent to the discard pile after resolving.
-            </p>
-          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Spells create one-time effects, such as dealing damage, drawing
+            cards, moving units, exhausting units, or altering
+            <span class="stat-term commandment">Commandment</span>
+            . Spells are sent to the discard pile after resolving.
+          </p>
 
           <h3
             class="text-md font-bold font-serif text-[#efef9f] mb-2 flex items-center gap-2"
@@ -680,17 +662,13 @@ onUnmounted(() => {
             Artifacts
           </h3>
 
-          <div
-            class="border border-slate-800/60 bg-[#090f1d]/50 p-4 rounded-lg"
-          >
-            <p class="text-sm text-slate-300 leading-relaxed">
-              Artifacts stay in play and provide ongoing effects or activated
-              abilities. They have a
-              <strong class="text-amber-500">Durability</strong>
-              stat; when durability reaches zero, the artifact is sent to the
-              discard pile.
-            </p>
-          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Artifacts stay in play and provide ongoing effects or activated
+            abilities. They have a
+            <strong class="text-amber-500">Durability</strong>
+            stat; when durability reaches zero, the artifact is sent to the
+            discard pile.
+          </p>
 
           <h3
             class="text-md font-bold font-serif text-[#efef9f] mb-2 flex items-center gap-2"
@@ -699,16 +677,16 @@ onUnmounted(() => {
             Destinies
           </h3>
 
-          <div
-            class="border border-indigo-950/40 bg-[#0c122c]/40 p-4 rounded-lg"
-          >
-            <p class="text-sm text-slate-300 leading-relaxed">
-              Destiny cards possess symmetrical effects that modify the rules
-              and behavior of battlefields. They cycle across the board each
-              turn, ensuring that there's always one Destiny card from each
-              player in play.
-            </p>
-          </div>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Destiny cards possess symmetrical effects that modify the rules and
+            behavior of battlefields. They cycle across the board each turn,
+            ensuring that there's always one Destiny card from each player in
+            play.
+          </p>
+
+          <blockquote style="--color: #d7ad42">
+            There is always one Destiny card from each player in play.
+          </blockquote>
         </div>
       </section>
 
@@ -728,9 +706,7 @@ onUnmounted(() => {
         >
           Chapter 5
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-diamond-stone text-[#d7ad42]" />
           Resource System
         </h2>
@@ -770,8 +746,7 @@ onUnmounted(() => {
                 Runes
               </h4>
               <p class="text-sm mb-2">
-                There are 4 kinds of runes required as prerequisites or
-                modifiers for playing cards:
+                There are 4 kinds of runes in the game:
               </p>
               <div class="grid grid-cols-4 gap-2">
                 <div class="rune-term might">
@@ -796,6 +771,11 @@ onUnmounted(() => {
                 runes, such as cost reduction, improved stats, or supplementary
                 effects.
               </p>
+
+              <p class="text-sm text-slate-400 mt-2">
+                In addition, some cards or effects may require you to spend a
+                specific type of rune to activate their abilities.
+              </p>
             </div>
           </div>
 
@@ -803,7 +783,7 @@ onUnmounted(() => {
             class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg space-y-1.5 mt-2"
           >
             <h4
-              class="font-serif text-[#efef9f] text-sm font-bold flex items-center gap-1.5"
+              class="font-serif text-[#efef9f] font-bold flex items-center gap-1.5"
             >
               <span class="i-mdi-plus-box text-[#d7ad42]" />
               Resource Action
@@ -840,9 +820,7 @@ onUnmounted(() => {
         >
           Chapter 6
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-map-marker-outline text-[#d7ad42]" />
           Board Structure
         </h2>
@@ -974,9 +952,7 @@ onUnmounted(() => {
         >
           Chapter 7
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-gamepad-circle text-[#d7ad42]" />
           Setup
         </h2>
@@ -1026,7 +1002,7 @@ onUnmounted(() => {
                 Mulligan
               </h4>
               <p class="text-sm text-slate-400 leading-normal">
-                Standard digital mulligan to replace unneeded cards.
+                Play may replace one or more cards from their hand.
               </p>
             </div>
 
@@ -1042,7 +1018,7 @@ onUnmounted(() => {
                 Duel Starts
               </h4>
               <p class="text-sm text-slate-400 leading-normal">
-                First turn begins and players begin casting.
+                First turn begins and players begin taking actions.
               </p>
             </div>
           </div>
@@ -1065,14 +1041,12 @@ onUnmounted(() => {
         >
           Chapter 8
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-cached text-[#d7ad42]" />
           Turn Structure
         </h2>
         <div
-          class="text-slate-300 text-sm leading-relaxed relative pl-4 border-l border-dashed border-[#d7ad42]/30 space-y-6 ml-2"
+          class="text-slate-300 leading-relaxed relative pl-4 border-l border-dashed border-[#d7ad42]/30 space-y-6 ml-2"
         >
           <!-- Step 1 -->
           <div class="relative">
@@ -1136,10 +1110,11 @@ onUnmounted(() => {
               <li>
                 Compare
                 <span class="game-term influence">Influence</span>
-                at each battlefield. Award
+                at each battlefield. Grant
                 <span class="game-term vp">1 Victory Point</span>
                 to the player with highest influence.
               </li>
+              <li>In case of a tie, no player gains Victory Points.</li>
               <li>Resolve end-of-turn triggered effects.</li>
               <li>Reset battlefield influence back to 0.</li>
             </ul>
@@ -1172,6 +1147,10 @@ onUnmounted(() => {
             </ol>
           </div>
         </div>
+        <blockquote style="--color: #d7ad42" class="mt-4">
+          This means that, sice both players have 4 Destiny Cards, it will take
+          8 turns for a Destiny card to cycle back to its original position.
+        </blockquote>
       </section>
 
       <!-- 9. Readying and Exhausting -->
@@ -1190,9 +1169,7 @@ onUnmounted(() => {
         >
           Chapter 9
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-flash text-[#d7ad42]" />
           Readying and Exhausting
         </h2>
@@ -1230,13 +1207,15 @@ onUnmounted(() => {
               <p class="text-sm text-slate-300 mt-2">
                 A unit becomes exhausted immediately when it:
                 <strong class="text-red-300">
-                  Attacks, Scores, Uses an active ability, or is target of an
-                  exhaust card effect
+                  attacks, scores, or uses an active ability
                 </strong>
                 . It cannot act again until readied.
               </p>
             </div>
           </div>
+          <blockquote style="--color: #d7ad42">
+            Note that moving a unit does not exhaust it.
+          </blockquote>
         </div>
       </section>
 
@@ -1256,9 +1235,7 @@ onUnmounted(() => {
         >
           Chapter 10
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-crown text-[#d7ad42]" />
           Scoring
         </h2>
@@ -1288,9 +1265,7 @@ onUnmounted(() => {
                 >
                   2
                 </span>
-                <span>
-                  Exhaust that unit (turning it sideways, locking its actions).
-                </span>
+                <span>Exhaust that unit.</span>
               </li>
               <li class="flex items-center gap-3">
                 <span
@@ -1327,35 +1302,31 @@ onUnmounted(() => {
         >
           Chapter 11
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-compass-outline text-[#d7ad42]" />
-          Movement Heuristic
+          Movement
         </h2>
         <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
-          <p>
-            Units traverse the board boundaries following these clear-cut
-            directives:
-          </p>
+          <p>Units can move across the board following these rules:</p>
           <ul class="space-y-3.5 pl-2">
             <li class="flex items-start gap-2.5">
               <span
                 class="i-mdi-checkbox-marked-circle text-emerald-400 mt-1 shrink-0"
               />
               <span>
-                Units can move freely between your private
+                Units can move freely between your e
                 <strong class="text-[#efef9f]">Base</strong>
-                slots and the contesting battlefields.
+                and the
+                <strong class="text-[#efef9f]">Battlefields</strong>
               </span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="i-mdi-close-circle text-red-400 mt-0.5 shrink-0" />
               <span class="text-slate-400">
                 Units
-                <strong class="text-red-300">cannot auto-move</strong>
-                directly between different battlefields (e.g. battlefield 1 ⇄
-                battlefield 2). They must route through base first.
+                <strong class="text-red-300">cannot amove</strong>
+                from battlefield to battlefield They must route through base
+                first.
               </span>
             </li>
             <li class="flex items-start gap-2.5">
@@ -1364,10 +1335,15 @@ onUnmounted(() => {
               />
               <span>
                 A unit must be in a
-                <strong class="text-emerald-400">Ready state</strong>
-                to utilize its movement action. Moving does not exhaust it
-                unless specified otherwise by a card effect.
+                <strong class="text-emerald-400">Awaken</strong>
+                to move, but moving does not exhaust it.
               </span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span
+                class="i-mdi-alert-circle-outline text-[#d7ad42] mt-1 shrink-0"
+              />
+              A Unit can only move once per turn.
             </li>
           </ul>
         </div>
@@ -1389,9 +1365,7 @@ onUnmounted(() => {
         >
           Chapter 12
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-sword-cross text-[#d7ad42]" />
           Combat Resolution
         </h2>
@@ -1453,16 +1427,20 @@ onUnmounted(() => {
               </li>
             </ol>
           </div>
-          <div
-            class="p-3 bg-red-950/20 border border-red-500/10 rounded text-red-200/90 text-sm mt-3 flex items-center gap-2"
-          >
+
+          <blockquote style="--color: #d7ad42">
+            If the attack target chose to not retaliate, it will not deal damage
+            to the attacker.
+          </blockquote>
+
+          <blockquote style="--color: #d7ad42">
             <span class="i-mdi-shield-alert text-red-400 shrink-0" />
             <span>
               Combat damage is
               <strong class="text-white">persistent</strong>
               and carries over across turns! It is not healed at turn cleanup.
             </span>
-          </div>
+          </blockquote>
         </div>
       </section>
 
@@ -1482,9 +1460,7 @@ onUnmounted(() => {
         >
           Chapter 13
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-layers-triple-outline text-[#d7ad42]" />
           Effect Chains
         </h2>
@@ -1495,21 +1471,29 @@ onUnmounted(() => {
             , allowing players to respond before effects resolve:
           </p>
 
-          <div class="border-l-2 border-slate-700 pl-3 space-y-1 my-3 text-sm">
+          <div class="border-l-2 border-slate-700 pl-3 space-y-1 my-3">
             <span class="text-[#efef9f] font-serif font-bold">
               Chains are created by:
             </span>
-            <div>• Declarations of Attacks</div>
-            <div>• Casting Spell Cards</div>
+            <div>• Declaring an attack</div>
+            <div>• Playing a Spell Card</div>
             <div>• Triggering Activated Card abilities</div>
           </div>
+
+          <p>
+            During an effect chain, players alternate adding actions to the
+            chain starting with the initiator's opponent. Once both players pass
+            in succession, the chain resolves backwards (from the last card
+            added to the first). Players cannot make normal plays while a chain
+            is mid-resolution.
+          </p>
 
           <!-- Stack Visualization -->
           <div
             class="bg-[#040813] border border-[#d7ad42]/10 rounded p-4 text-center my-4 max-w-sm mx-auto shadow-inner"
           >
             <span
-              class="text-[10px] text-slate-500 uppercase font-bold block mb-2"
+              class="text-[10px] text-slate-500 uppercase font-bo99ld block mb-2"
             >
               Stack Resolution Logic (LIFO)
             </span>
@@ -1530,22 +1514,16 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <p>
-            During an effect chain, players alternate adding actions to the
-            chain starting with the initiator's opponent. Once both players pass
-            in succession, the chain resolves backwards (from the last card
-            added to the first). Players cannot make normal plays while a chain
-            is mid-resolution.
-          </p>
-
           <h3
-            class="text-sm font-bold font-serif text-[#efef9f] border-t border-slate-900 pt-3"
+            class="text-2 font-bold text-[#efef9f] border-t border-slate-900 pt-3"
           >
             Trigger Timings
           </h3>
-          <p class="text-sm text-slate-400">
-            If a trigger activates mid-resolution, the chain pauses, and the
-            trigger resolves immediately.
+          <p class="text-slate-400">
+            If a trigger, such as
+            <strong class="text-slate-200">On Destroyed</strong>
+            activates mid-resolution, the chain pauses, and the trigger resolves
+            immediately.
           </p>
           <div
             class="p-3.5 bg-slate-950/60 border border-slate-800/80 rounded text-sm text-slate-400"
@@ -1580,9 +1558,7 @@ onUnmounted(() => {
         >
           Chapter 14
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-flash text-[#d7ad42]" />
           Card Speeds
         </h2>
@@ -1655,9 +1631,7 @@ onUnmounted(() => {
         >
           Chapter 15
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-hand-wave-outline text-[#d7ad42]" />
           Passing
         </h2>
@@ -1667,10 +1641,10 @@ onUnmounted(() => {
             concrete action:
           </p>
           <p class="text-md text-slate-200">
-            Passing is
-            <strong class="text-[#d7ad42]">soft</strong>
-            (non-definitive): you regain initiative if you pass but your
-            opponent chooses to act rather than passing as well.
+            The game uses
+            <strong class="text-[#d7ad42]">Soft Passes</strong>
+            : you regain initiative if you pass but your opponent chooses to act
+            rather than passing as well.
           </p>
           <div
             class="p-3 bg-indigo-950/20 border border-indigo-500/15 rounded flex items-center gap-2.5 text-sm text-indigo-300"
@@ -1679,7 +1653,8 @@ onUnmounted(() => {
             <span>
               When
               <strong class="text-white">both players</strong>
-              pass in succession, action ends and turn scoring commences.
+              pass in succession, the Action phase ends and turn scoring
+              commences.
             </span>
           </div>
         </div>
@@ -1701,9 +1676,7 @@ onUnmounted(() => {
         >
           Chapter 16
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-tag-text-outline text-[#d7ad42]" />
           Common Keywords
         </h2>
@@ -1856,9 +1829,7 @@ onUnmounted(() => {
         >
           Chapter 17
         </div>
-        <h2
-          class="flex items-center gap-3 text-xl md:text-2xl font-bold font-serif mb-4 text-[#efef9f] mt-1"
-        >
+        <h2>
           <span class="i-mdi-plus-one text-[#d7ad42]" />
           Alternative Scoring
         </h2>
@@ -1914,8 +1885,30 @@ onUnmounted(() => {
 </template>
 
 <style scoped lang="postcss">
+section {
+  padding: var(--size-7);
+}
 h2 {
   margin-top: var(--size-6);
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+  font-size: var(--font-size-3);
+  font-weight: 700;
+  margin-block: var(--size-7) var(--size-4);
+  font-family: var(--font-slab-serif);
+  color: #efef9f;
+}
+
+blockquote {
+  border: solid var(--border-size-1) hsl(from var(--color) h s l / 0.15);
+  border-left: solid var(--border-size-3) var(--color);
+  background: hsl(from var(--color) h s l / 0.05);
+  padding: var(--size-4);
+  border-top-right-radius: var(--radius-2);
+  border-bottom-right-radius: var(--radius-2);
+  font-style: italic;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
 }
 /* Custom CSS Variables & Game Term Highlights */
 .game-term {
@@ -1955,7 +1948,7 @@ h2 {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 2px 6px;
+  padding: var(--size-2) var(--size-3);
   border-radius: 4px;
   font-size: var(--font-size-1);
   background: rgba(0, 0, 0, 0.3);
@@ -2046,5 +2039,17 @@ h2 {
   &::-webkit-scrollbar-track {
     background: var(--scrollbar-background);
   }
+}
+
+.affinity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-1);
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-1);
+  font-weight: 500;
+  width: var(--size-9);
 }
 </style>
