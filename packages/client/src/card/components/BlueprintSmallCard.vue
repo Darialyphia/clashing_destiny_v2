@@ -16,8 +16,8 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
         isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
-      power: (blueprint as any).power,
-      damage: (blueprint as any).damage,
+      atk: (blueprint as any).atk,
+      commandment: (blueprint as any).commandment,
       hp: (blueprint as any).maxHp,
       durability: (blueprint as any).durability,
       manaCost: (blueprint as any).manaCost,
