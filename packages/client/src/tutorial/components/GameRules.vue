@@ -390,18 +390,6 @@ onUnmounted(() => {
             <span class="game-term vp">1 Victory Point</span>
             . If both players are tied, no Victory Point is awarded.
           </p>
-          <div
-            class="mt-4 p-3 bg-amber-500/5 border border-[#d7ad42]/20 rounded-md flex items-start gap-2.5 text-amber-200/90 text-sm"
-          >
-            <span
-              class="i-mdi-information-outline shrink-0 mt-0.5 text-[#d7ad42]"
-            />
-            <span>
-              <strong class="text-white">Rule Tip:</strong>
-              Influence on each battlefield is reset to 0 at the start of each
-              turn.
-            </span>
-          </div>
         </div>
       </section>
 
