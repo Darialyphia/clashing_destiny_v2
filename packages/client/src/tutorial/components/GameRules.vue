@@ -758,8 +758,12 @@ onUnmounted(() => {
                 Runes
               </h4>
               <p class="text-sm mb-2">
-                There are 4 kinds of runes in the game:
+                Runes are a special resource that is not automatically gained.
+                Instead you need to gain them via your
+                <strong>Resource Action</strong>
               </p>
+              <p class="text-sm mb-2">There are 4 kinds of runes:</p>
+
               <div class="grid grid-cols-4 gap-2">
                 <div class="rune-term might">
                   <img :src="assets['ui/card/rune-might'].path" />
@@ -778,15 +782,15 @@ onUnmounted(() => {
                   Resonance
                 </div>
               </div>
-              <p class="text-sm text-slate-400 mt-2">
+              <p class="text-sm mt-2">
                 Most cards provide special bonuses if you possess specific
                 runes, such as cost reduction, improved stats, or supplementary
                 effects.
               </p>
 
-              <p class="text-sm text-slate-400 mt-2">
-                In addition, some cards or effects may require you to spend a
-                specific type of rune to activate their abilities.
+              <p class="text-sm mt-2">
+                In addition, some cards or effects may require you to spend one
+                or multiple runes.
               </p>
             </div>
           </div>
@@ -1102,6 +1106,10 @@ onUnmounted(() => {
                 <li>Attack with a unit</li>
                 <li>Score with a unit</li>
                 <li>Activate a card ability</li>
+                <li>
+                  Perform a resource action (Note: this does not pass initiative
+                  to your opponent)
+                </li>
                 <li>Pass initiative</li>
               </ul>
             </div>
