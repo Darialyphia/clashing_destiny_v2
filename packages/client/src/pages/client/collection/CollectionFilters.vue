@@ -351,10 +351,18 @@ const toggleMinManaCostFilter = (cost: number) => {
 }
 
 .filters-popover {
-  min-width: 300px;
+  min-width: 320px;
+  max-width: 400px;
+  padding: var(--size-4);
+  background-color: var(--surface-2);
+  border: solid var(--border-size-1) var(--border-subtle);
+  border-radius: var(--radius-3);
   box-shadow: var(--shadow-4);
   z-index: 50;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
 
   &[data-state='open'] {
     animation: slideDown 0.2s var(--ease-out-3);
@@ -366,84 +374,25 @@ const toggleMinManaCostFilter = (cost: number) => {
 }
 
 .filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+
   & + & {
-    margin-top: var(--size-2);
-    border-top: solid var(--border-size-1) var(--color-gray-4);
+    border-top: solid var(--border-size-1) hsl(var(--color-primary-hsl) / 0.15);
+    padding-top: var(--size-4);
   }
 }
 
 .filter-title {
-  font-size: var(--font-size-0);
-  font-weight: 300;
-  text-transform: capitalize;
-  letter-spacing: 0.05em;
+  font-size: var(--font-size-00);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
 }
 
-.faction-filter {
-  display: flex;
-  flex-wrap: wrap;
-
-  button {
-    cursor: url('@/assets/ui/cursor-hover.png'), auto;
-    border: solid var(--border-size-2) transparent;
-    border-radius: var(--radius-pill);
-    padding: var(--size-1);
-    display: flex;
-    align-items: center;
-    background-color: var(--color-gray-2);
-
-    &:hover {
-      filter: brightness(1.2);
-    }
-
-    &.active {
-      background-color: hsl(from var(--color) h s l / 0.25);
-      border-color: var(--color);
-      box-shadow: 0 0 10px hsl(from var(--color) h s l / 0.3);
-    }
-
-    & > img {
-      width: calc(24px * var(--pixel-scale));
-      aspect-ratio: 1;
-      object-fit: contain;
-    }
-  }
-}
-
-.kind-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-2);
-
-  button {
-    cursor: url('@/assets/ui/cursor-hover.png'), auto;
-    border: solid var(--border-size-2) transparent;
-    border-radius: var(--radius-pill);
-    padding: var(--size-1);
-    display: flex;
-    align-items: center;
-    background-color: var(--color-gray-2);
-    transition: all 0.2s var(--ease-1);
-
-    &:hover {
-      background-color: var(--color-gray-3);
-      transform: scale(1.05);
-    }
-
-    &.active {
-      background-color: hsl(from var(--color) h s l / 0.25);
-      border-color: var(--color);
-      box-shadow: 0 0 10px hsl(from var(--color) h s l / 0.3);
-    }
-
-    & > img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-    }
-  }
-}
-
+.kind-filter,
 .affinity-filter,
 .rarity-filter {
   display: flex;
@@ -453,39 +402,53 @@ const toggleMinManaCostFilter = (cost: number) => {
   button {
     cursor: url('@/assets/ui/cursor-hover.png'), auto;
     border: solid var(--border-size-2) transparent;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-2);
     padding: var(--size-1);
     display: flex;
     align-items: center;
-    background-color: var(--color-gray-2);
-    transition: all 0.2s var(--ease-1);
+    justify-content: center;
+    background-color: hsl(var(--color-surface-4-hsl) / 0.4);
+    transition: all 0.15s var(--ease-1);
 
     &:hover {
-      background-color: var(--color-gray-3);
-      transform: scale(1.05);
+      background-color: hsl(var(--color-surface-4-hsl) / 0.8);
+      transform: translateY(-1px);
     }
 
     &.active {
-      background-color: hsl(from var(--color-accent) h s l / 0.25);
-      border-color: var(--color-accent);
-      box-shadow: 0 0 10px hsl(from var(--color-accent) h s l / 0.3);
+      background-color: hsl(var(--color-primary-hsl) / 0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 12px hsl(var(--color-primary-hsl) / 0.35);
+    }
+
+    & > img {
+      aspect-ratio: 1;
+      object-fit: contain;
     }
   }
 }
 
-.rarity-filter button {
+.kind-filter button {
   & > img {
-    width: 28px;
-    height: 36px;
-    object-fit: contain;
+    width: 32px;
+    height: 32px;
   }
 }
 
 .affinity-filter button {
+  padding: 0;
+  border-radius: var(--radius-pill);
   & > img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.rarity-filter button {
+  padding: var(--size-1) var(--size-2);
+  & > img {
+    width: 24px;
+    height: 30px;
   }
 }
 
@@ -499,21 +462,6 @@ const toggleMinManaCostFilter = (cost: number) => {
 
   &.active {
     filter: drop-shadow(0 0 5px hsl(from #4a90e2 h s l / 0.8)) brightness(1.25);
-  }
-
-  @screen lt-lg {
-    display: none;
-  }
-}
-.destiny-cost {
-  background-image: url('@/assets/ui/card/destiny-cost.png');
-  background-size: cover;
-  font-weight: 700;
-  font-size: var(--font-size-2);
-  width: 48px;
-  aspect-ratio: 1;
-  &.active {
-    filter: drop-shadow(0 0 5px hsl(from #b945a3 h s l / 0.8)) brightness(1.25);
   }
 
   @screen lt-lg {
