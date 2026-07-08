@@ -66,6 +66,16 @@ export class BoardSpace
       .exhaustive();
   }
 
+  get battlefield() {
+    if (this.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.boardSide.leftBattlefield;
+    } else if (this.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD) {
+      return this.player.boardSide.rightBattlefield;
+    } else {
+      return null;
+    }
+  }
+
   get opponentZone(): BoardSpace[] {
     const opponent = this.player.opponent;
     return match(this.position.zone)

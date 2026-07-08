@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
+import {
+  CARD_KINDS,
+  AFFINITIES,
+  RARITIES,
+  type CardKind,
+  type Affinity,
+  type Rarity
+} from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { useCollectionPage } from './useCollectionPage';
@@ -19,10 +26,48 @@ const {
   textFilter,
   hasKindFilter,
   toggleKindFilter,
+  clearKindFilter,
   manaCostFilter,
   includeUnowned,
-  cardScale
+  cardScale,
+  hasRarityFilter,
+  toggleRarityFilter,
+  clearRarityFilter,
+  hasAffinityFilter,
+  toggleAffinityFilter,
+  clearAffinityFilter
 } = useCollectionPage();
+
+const activeFilterCount = computed(() => {
+  let count = 0;
+  if (manaCostFilter.value !== null) count++;
+  for (const kind of Object.values(CARD_KINDS)) {
+    if (hasKindFilter(kind)) {
+      count++;
+      break;
+    }
+  }
+  for (const affinity of Object.values(AFFINITIES)) {
+    if (hasAffinityFilter(affinity)) {
+      count++;
+      break;
+    }
+  }
+  for (const rarity of rarities) {
+    if (hasRarityFilter(rarity.id)) {
+      count++;
+      break;
+    }
+  }
+  return count;
+});
+
+const clearAllFilters = () => {
+  clearKindFilter();
+  clearRarityFilter();
+  clearAffinityFilter();
+  manaCostFilter.value = null;
+};
 const isFiltersOpen = ref(false);
 
 const cardKinds: Array<{
@@ -36,6 +81,24 @@ const cardKinds: Array<{
   label: uppercaseFirstLetter(kind),
   color: 'white'
 }));
+
+const affinities: Array<{ id: Affinity; img: string; label: string }> =
+  Object.values(AFFINITIES).map(affinity => ({
+    id: affinity,
+    img: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].path,
+    label: uppercaseFirstLetter(affinity.toLocaleLowerCase())
+  }));
+
+const rarities: Array<{ id: Rarity; img: string; label: string }> =
+  Object.values(RARITIES)
+    .filter(r => r !== RARITIES.TOKEN && r !== RARITIES.BASIC)
+    .map(rarity => {
+      return {
+        id: rarity,
+        img: assets[`ui/card/rarity-${rarity.toLocaleLowerCase()}`].path,
+        label: uppercaseFirstLetter(rarity.toLocaleLowerCase())
+      };
+    });
 
 const router = useRouter();
 
@@ -65,56 +128,6 @@ const toggleMinManaCostFilter = (cost: number) => {
       @click="router.push({ name: 'ClientHome' })"
     />
 
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 0 }"
-      @click="toggleManaFilter(0)"
-    >
-      0
-    </button>
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 1 }"
-      @click="toggleManaFilter(1)"
-    >
-      1
-    </button>
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 2 }"
-      @click="toggleManaFilter(2)"
-    >
-      2
-    </button>
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 3 }"
-      @click="toggleManaFilter(3)"
-    >
-      3
-    </button>
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 4 }"
-      @click="toggleManaFilter(4)"
-    >
-      4
-    </button>
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 5 }"
-      @click="toggleManaFilter(5)"
-    >
-      5
-    </button>
-    <button
-      class="mana-cost"
-      :class="{ active: manaCostFilter?.min === 6 }"
-      @click="toggleMinManaCostFilter(6)"
-    >
-      6+
-    </button>
-
     <Icon icon="material-symbols:zoom-in" width="2rem" />
     <SliderRoot
       v-model="cardScale"
@@ -138,7 +151,12 @@ const toggleMinManaCostFilter = (cost: number) => {
 
     <PopoverRoot v-model:open="isFiltersOpen">
       <PopoverTrigger as-child>
-        <FancyButton text="Filters" />
+        <div class="filter-btn-wrapper">
+          <FancyButton text="Filters" />
+          <span v-if="activeFilterCount > 0" class="filter-badge">
+            {{ activeFilterCount }}
+          </span>
+        </div>
       </PopoverTrigger>
 
       <PopoverPortal>
@@ -152,27 +170,16 @@ const toggleMinManaCostFilter = (cost: number) => {
             <h4 class="filter-title flex gap-3 items-center">
               Include Unowned
               <UiSwitch v-model="includeUnowned" />
-            </h4>
-            <!-- <h4 class="filter-title">Faction</h4>
-            <div class="faction-filter">
-              <UiSimpleTooltip
-                v-for="job in jobs"
-                :key="job.id"
-                side="bottom"
-                use-portal
+
+              <button
+                v-if="activeFilterCount > 0"
+                class="clear-all-btn"
+                @click="clearAllFilters"
               >
-                <template #trigger>
-                  <button
-                    :class="{ active: hasJobFilter(job.job.id as JobId) }"
-                    :aria-label="job.label"
-                    @click="toggleJobFilter(job.job.id as JobId)"
-                  >
-                    <img :src="job.img" :alt="job.label" />
-                  </button>
-                </template>
-                {{ job.label }}
-              </UiSimpleTooltip>
-            </div> -->
+                <Icon icon="material-symbols:close" width="0.85rem" />
+                Clear all filters
+              </button>
+            </h4>
           </section>
 
           <section class="filter-section">
@@ -198,6 +205,74 @@ const toggleMinManaCostFilter = (cost: number) => {
               </UiSimpleTooltip>
             </div>
           </section>
+
+          <section class="filter-section">
+            <h4 class="filter-title">Mana Cost</h4>
+            <div class="flex gap-2">
+              <button
+                v-for="cost in [0, 1, 2, 3, 4, 5]"
+                :key="cost"
+                :class="{ active: manaCostFilter?.min === cost }"
+                class="mana-cost"
+                @click="toggleManaFilter(cost)"
+              >
+                {{ cost }}
+              </button>
+              <button
+                :class="{ active: manaCostFilter?.min === 6 }"
+                class="mana-cost"
+                @click="toggleMinManaCostFilter(6)"
+              >
+                6+
+              </button>
+            </div>
+          </section>
+
+          <section class="filter-section">
+            <h4 class="filter-title">Affinity</h4>
+            <div class="affinity-filter">
+              <UiSimpleTooltip
+                v-for="affinity in affinities"
+                :key="affinity.id"
+                side="top"
+                use-portal
+              >
+                <template #trigger>
+                  <button
+                    :class="{ active: hasAffinityFilter(affinity.id) }"
+                    :aria-label="affinity.label"
+                    @click="toggleAffinityFilter(affinity.id)"
+                  >
+                    <img :src="affinity.img" :alt="affinity.label" />
+                  </button>
+                </template>
+                {{ affinity.label }}
+              </UiSimpleTooltip>
+            </div>
+          </section>
+
+          <section class="filter-section">
+            <h4 class="filter-title">Rarity</h4>
+            <div class="rarity-filter">
+              <UiSimpleTooltip
+                v-for="rarity in rarities"
+                :key="rarity.id"
+                side="top"
+                use-portal
+              >
+                <template #trigger>
+                  <button
+                    :class="{ active: hasRarityFilter(rarity.id) }"
+                    :aria-label="rarity.label"
+                    @click="toggleRarityFilter(rarity.id)"
+                  >
+                    <img :src="rarity.img" :alt="rarity.label" />
+                  </button>
+                </template>
+                {{ rarity.label }}
+              </UiSimpleTooltip>
+            </div>
+          </section>
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
@@ -210,6 +285,47 @@ const toggleMinManaCostFilter = (cost: number) => {
   gap: var(--size-3);
   align-items: center;
   border-radius: var(--radius-2);
+}
+
+.filter-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.filter-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background-color: var(--red-6);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.clear-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-1);
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius-pill);
+  border: solid var(--border-size-1) var(--color-red-6);
+  background: transparent;
+  color: var(--color-red-6);
+  font-size: var(--font-size-0);
+  cursor: url('@/assets/ui/cursor-hover.png'), auto;
+  transition: all 0.15s var(--ease-1);
+
+  &:hover {
+    background-color: hsl(from var(--color-red-6) h s l / 0.1);
+  }
 }
 
 .search-input {
@@ -238,6 +354,7 @@ const toggleMinManaCostFilter = (cost: number) => {
   min-width: 300px;
   box-shadow: var(--shadow-4);
   z-index: 50;
+  position: relative;
 
   &[data-state='open'] {
     animation: slideDown 0.2s var(--ease-out-3);
@@ -324,6 +441,51 @@ const toggleMinManaCostFilter = (cost: number) => {
       height: 32px;
       object-fit: contain;
     }
+  }
+}
+
+.affinity-filter,
+.rarity-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2);
+
+  button {
+    cursor: url('@/assets/ui/cursor-hover.png'), auto;
+    border: solid var(--border-size-2) transparent;
+    border-radius: var(--radius-pill);
+    padding: var(--size-1);
+    display: flex;
+    align-items: center;
+    background-color: var(--color-gray-2);
+    transition: all 0.2s var(--ease-1);
+
+    &:hover {
+      background-color: var(--color-gray-3);
+      transform: scale(1.05);
+    }
+
+    &.active {
+      background-color: hsl(from var(--color-accent) h s l / 0.25);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 10px hsl(from var(--color-accent) h s l / 0.3);
+    }
+  }
+}
+
+.rarity-filter button {
+  & > img {
+    width: 28px;
+    height: 36px;
+    object-fit: contain;
+  }
+}
+
+.affinity-filter button {
+  & > img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
   }
 }
 

@@ -199,12 +199,16 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) =>
-    singleEnemyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield),
+    singleEnemyMinionTargetRules.canPlay(
+      game,
+      card,
+      minion => minion.isOnBattlefield && !minion.isExhausted
+    ),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({
       game,
       card,
-      predicate: minion => minion.isOnBattlefield,
+      predicate: minion => minion.isOnBattlefield && !minion.isExhausted,
       aiHints: {
         shouldPick: () => 1
       },

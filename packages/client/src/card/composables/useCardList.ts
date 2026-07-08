@@ -4,8 +4,10 @@ import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   AFFINITIES,
   CARD_KINDS,
+  type Affinity,
   type CardKind,
-  type JobId
+  type JobId,
+  type Rarity
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
 import { isFunction, isString } from '@game/shared';
@@ -35,6 +37,14 @@ export type CardListContext = {
   hasJobFilter(job: JobId): boolean;
   toggleJobFilter(job: JobId): void;
   clearJobFilter(): void;
+
+  hasRarityFilter(rarity: Rarity): boolean;
+  toggleRarityFilter(rarity: Rarity): void;
+  clearRarityFilter(): void;
+
+  hasAffinityFilter(affinity: Affinity): boolean;
+  toggleAffinityFilter(affinity: Affinity): void;
+  clearAffinityFilter(): void;
 
   manaCostFilter: Ref<{ min: number; max: number } | null>;
 };
@@ -70,6 +80,8 @@ export const provideCardList = () => {
 
   const kindFilter = ref(new Set<CardKind>());
   const jobFilter = ref(new Set<JobId>());
+  const rarityFilter = ref(new Set<Rarity>());
+  const affinityFilter = ref(new Set<Affinity>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
 
@@ -115,6 +127,20 @@ export const provideCardList = () => {
             jobFilter.value.has(job.id as JobId)
           );
           return isMatch;
+        }
+
+        if (
+          rarityFilter.value.size > 0 &&
+          !rarityFilter.value.has(card.rarity)
+        ) {
+          return false;
+        }
+
+        if (affinityFilter.value.size > 0) {
+          const isMatch = card.affinities.some(affinity =>
+            affinityFilter.value.has(affinity)
+          );
+          if (!isMatch) return false;
         }
 
         if (manaCostFilter.value !== null) {
@@ -241,6 +267,35 @@ export const provideCardList = () => {
     clearJobFilter: () => {
       jobFilter.value.clear();
     },
+
+    hasRarityFilter(rarity: Rarity) {
+      return rarityFilter.value.has(rarity);
+    },
+    toggleRarityFilter(rarity: Rarity) {
+      if (rarityFilter.value.has(rarity)) {
+        rarityFilter.value.delete(rarity);
+      } else {
+        rarityFilter.value.add(rarity);
+      }
+    },
+    clearRarityFilter: () => {
+      rarityFilter.value.clear();
+    },
+
+    hasAffinityFilter(affinity: Affinity) {
+      return affinityFilter.value.has(affinity);
+    },
+    toggleAffinityFilter(affinity: Affinity) {
+      if (affinityFilter.value.has(affinity)) {
+        affinityFilter.value.delete(affinity);
+      } else {
+        affinityFilter.value.add(affinity);
+      }
+    },
+    clearAffinityFilter: () => {
+      affinityFilter.value.clear();
+    },
+
     manaCostFilter
   };
 
