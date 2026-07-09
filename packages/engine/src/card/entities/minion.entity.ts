@@ -307,6 +307,7 @@ export class MinionCard extends Card<
   removeAbility(abilityId: string) {
     this.abilityManager.removeAbility(abilityId);
   }
+
   getReceivedDamage(damage: Damage) {
     return this.interceptors.receivedDamage.getValue(damage.baseAmount, {
       damage

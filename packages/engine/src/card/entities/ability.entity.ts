@@ -17,8 +17,9 @@ import {
   AbilityBeforeUseEvent
 } from '../events/ability.events';
 import { nanoid } from 'nanoid';
+import type { ArtifactCard } from './artifact.entity';
 
-export type AbilityOwner = MinionCard | HeroCard;
+export type AbilityOwner = MinionCard | HeroCard | ArtifactCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;

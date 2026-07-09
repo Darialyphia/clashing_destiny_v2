@@ -324,12 +324,12 @@ const tint = computed(() => {
             <div ref="description-inner" class="w-full">
               <CardText :text="card.description" />
 
-              <div
+              <!-- <div
                 v-if="card.abilities?.length && card.description"
                 class="text-separator"
               >
                 Abilities
-              </div>
+              </div> -->
               <CardText
                 v-for="ability in card.abilities"
                 :key="ability"

@@ -13,43 +13,13 @@ import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.mod
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
-
-export const braveCitizen: MinionBlueprint = {
-  id: 'braveCitizen',
-  name: 'Brave Citizen',
-  description: dedent /*html*/ `
-  <rt-keyword><rt-runes runes="might">.
-  `,
-  collectable: true,
-  setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
-  kind: CARD_KINDS.MINION,
-  rarity: RARITIES.COMMON,
-  jobs: [],
-  affinities: [AFFINITIES.NEUTRAL],
-  manaCost: 2,
-  speed: CARD_SPEED.SLOW,
-  tags: [],
-  atk: 2,
-  maxHp: 2,
-  commandment: 2,
-  canPlay: () => true,
-  abilities: [],
-  async onInit(game, card) {},
-  async onPlay() {},
-  aiHints: {
-    shouldPlay: () => 1,
-    shouldAttack: () => 1,
-    shouldMove: () => 1,
-    getThreatScore: () => 1
-  }
-};
+import { predict } from '../../../../card-actions-utils';
 
 export const birdOfGoodLuck: MinionBlueprint = {
   id: 'birdOfGoodLuck',
   name: 'Bird of Good Luck',
   description: dedent /*html*/ `
-  <rt-runes runes="wisdom"></rt-runes><rt-trigger>On Enter</rt-trigger> Draw a card.
+  <rt-runes runes="wisdom"></rt-runes><rt-trigger>On Enter</rt-trigger> <rt-keyword>Predict</rt-keyword>.
   <rt-runes runes="focus"></rt-runes> <rt-keyword>Flanking</rt-keyword>
   <br/>
   <rt-runes runes="resonance"></rt-runes> <rt-keyword>Echo</rt-keyword>
@@ -86,7 +56,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await card.player.cardManager.draw(1);
+          await predict(game, card);
         },
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {

@@ -7,6 +7,7 @@ import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
+import { ArtifactCard } from '../../card/entities/artifact.entity';
 
 const schema = defaultInputSchema.extend({
   cardId: z.string(),
@@ -21,14 +22,22 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   private get card() {
-    return this.player.cardManager.findCard(this.payload.cardId)?.card;
+    const card = this.game.cardSystem.getCardById(this.payload.cardId);
+    if (!card?.isAlly(this.player)) return null;
+    return card;
   }
 
   private get ability() {
     if (!this.card) return null;
     return match(this.card)
-      .with(P.instanceOf(MinionCard), P.instanceOf(HeroCard), card =>
-        card.abilityManager.getAbility(this.payload.abilityId)
+      .with(
+        P.instanceOf(MinionCard),
+        P.instanceOf(HeroCard),
+        P.instanceOf(ArtifactCard),
+        card => {
+          console.log(this.payload, card.abilityManager);
+          return card.abilityManager.getAbility(this.payload.abilityId);
+        }
       )
       .otherwise(() => null);
   }

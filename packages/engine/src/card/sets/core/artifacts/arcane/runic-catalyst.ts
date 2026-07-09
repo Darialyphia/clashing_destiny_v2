@@ -16,6 +16,7 @@ import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-even
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import type { ArtifactCard } from '../../../../entities/artifact.entity';
 
+
 export const runicCatalyst: ArtifactBlueprint = {
   id: 'runicCatalyst',
   name: 'Runic Catalyst',

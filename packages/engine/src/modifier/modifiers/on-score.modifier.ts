@@ -4,7 +4,6 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
-import type { AfterDeclareAttackTargetEvent } from '../../game/systems/combat.system';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
@@ -36,6 +35,7 @@ export class OnScoreModifier extends Modifier<MinionCard> {
   }
 
   private async onScore(event: CardScoreEvent) {
+    console.log('on score');
     await this.game.emit(
       GAME_EVENTS.CARD_EFFECT_TRIGGERED,
       new CardEffectTriggeredEvent({

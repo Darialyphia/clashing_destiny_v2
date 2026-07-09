@@ -6,124 +6,124 @@
 import type { Rarity, CardKind } from '../card/card.enums';
 
 export const cards = {
-"erina-violet-witch": "erina-violet-witch",
-"fireBolt": "fireBolt",
-"pyromancer": "pyromancer",
-"braveCitizen": "braveCitizen",
+"arcaneSight": "arcaneSight",
+"arcaneSpark": "arcaneSpark",
+"astralBall": "astralBall",
+"astralSage": "astralSage",
 "birdOfGoodLuck": "birdOfGoodLuck",
-"recklessRecruit": "recklessRecruit",
-"willowisp": "willowisp",
+"braveCitizen": "braveCitizen",
+"conjureFocus": "conjureFocus",
+"conjureMight": "conjureMight",
+"conjureResonance": "conjureResonance",
+"conjureWisdom": "conjureWisdom",
 "cremation": "cremation",
-"innerFire": "innerFire",
-"fireBall": "fireBall",
-"engulfInFlames": "engulfInFlames",
-"lesserFireSummoning": "lesserFireSummoning",
-"day-of-fortitude": "day-of-fortitude",
+"crowds-favor": "crowds-favor",
 "day-of-conquest": "day-of-conquest",
+"day-of-fortitude": "day-of-fortitude",
+"engulfInFlames": "engulfInFlames",
+"enigmaticWizard": "enigmaticWizard",
+"erinasApprentice": "erinasApprentice",
+"erina-violet-witch": "erina-violet-witch",
+"fallingStar": "fallingStar",
+"fireBall": "fireBall",
+"fireBolt": "fireBolt",
 "fireImp": "fireImp",
 "flameArchmage": "flameArchmage",
-"arcaneSight": "arcaneSight",
-"conjureMight": "conjureMight",
-"conjureWisdom": "conjureWisdom",
-"conjureFocus": "conjureFocus",
-"conjureResonance": "conjureResonance",
-"arcaneSpark": "arcaneSpark",
-"repulsorShield": "repulsorShield",
-"fallingStar": "fallingStar",
-"starSeer": "starSeer",
-"manaWeaverApprentice": "manaWeaverApprentice",
-"mysticRecall": "mysticRecall",
-"starconvergence": "starconvergence",
-"restrain-the-beast": "restrain-the-beast",
-"crowds-favor": "crowds-favor",
-"manaFueledGolem": "manaFueledGolem",
-"erinasApprentice": "erinasApprentice",
-"enigmaticWizard": "enigmaticWizard",
-"astralBall": "astralBall",
-"indomitableVindicator": "indomitableVindicator",
-"twinFlame": "twinFlame",
-"astralSage": "astralSage",
 "harold-vowed-crusader": "harold-vowed-crusader",
-"spellSiphon": "spellSiphon",
-"mountainProtector": "mountainProtector",
-"vineTrapper": "vineTrapper",
 "impassibleMonk": "impassibleMonk",
+"indomitableVindicator": "indomitableVindicator",
+"innerFire": "innerFire",
+"lesserFireSummoning": "lesserFireSummoning",
+"manaFueledGolem": "manaFueledGolem",
+"manaWeaverApprentice": "manaWeaverApprentice",
+"mountainProtector": "mountainProtector",
+"mysticRecall": "mysticRecall",
+"pyromancer": "pyromancer",
+"recklessRecruit": "recklessRecruit",
+"repulsorShield": "repulsorShield",
+"restrain-the-beast": "restrain-the-beast",
 "rockslideGolem": "rockslideGolem",
+"runicCatalyst": "runicCatalyst",
+"spellSiphon": "spellSiphon",
+"starconvergence": "starconvergence",
+"starSeer": "starSeer",
 "terramancer": "terramancer",
-"runicCatalyst": "runicCatalyst"
+"twinFlame": "twinFlame",
+"vineTrapper": "vineTrapper",
+"willowisp": "willowisp"
 } as const;
 
 export const collectableCards = {
-"erina-violet-witch": "erina-violet-witch",
-"fireBolt": "fireBolt",
-"pyromancer": "pyromancer",
-"braveCitizen": "braveCitizen",
+"arcaneSight": "arcaneSight",
+"arcaneSpark": "arcaneSpark",
+"astralSage": "astralSage",
 "birdOfGoodLuck": "birdOfGoodLuck",
-"recklessRecruit": "recklessRecruit",
+"braveCitizen": "braveCitizen",
+"conjureFocus": "conjureFocus",
+"conjureMight": "conjureMight",
+"conjureResonance": "conjureResonance",
+"conjureWisdom": "conjureWisdom",
 "cremation": "cremation",
-"innerFire": "innerFire",
-"fireBall": "fireBall",
-"engulfInFlames": "engulfInFlames",
-"lesserFireSummoning": "lesserFireSummoning",
-"day-of-fortitude": "day-of-fortitude",
+"crowds-favor": "crowds-favor",
 "day-of-conquest": "day-of-conquest",
+"day-of-fortitude": "day-of-fortitude",
+"engulfInFlames": "engulfInFlames",
+"enigmaticWizard": "enigmaticWizard",
+"erinasApprentice": "erinasApprentice",
+"erina-violet-witch": "erina-violet-witch",
+"fallingStar": "fallingStar",
+"fireBall": "fireBall",
+"fireBolt": "fireBolt",
 "fireImp": "fireImp",
 "flameArchmage": "flameArchmage",
-"arcaneSight": "arcaneSight",
-"conjureMight": "conjureMight",
-"conjureWisdom": "conjureWisdom",
-"conjureFocus": "conjureFocus",
-"conjureResonance": "conjureResonance",
-"arcaneSpark": "arcaneSpark",
-"repulsorShield": "repulsorShield",
-"fallingStar": "fallingStar",
-"starSeer": "starSeer",
-"manaWeaverApprentice": "manaWeaverApprentice",
-"mysticRecall": "mysticRecall",
-"starconvergence": "starconvergence",
-"restrain-the-beast": "restrain-the-beast",
-"crowds-favor": "crowds-favor",
-"manaFueledGolem": "manaFueledGolem",
-"erinasApprentice": "erinasApprentice",
-"enigmaticWizard": "enigmaticWizard",
-"indomitableVindicator": "indomitableVindicator",
-"twinFlame": "twinFlame",
-"astralSage": "astralSage",
 "harold-vowed-crusader": "harold-vowed-crusader",
-"spellSiphon": "spellSiphon",
-"mountainProtector": "mountainProtector",
-"vineTrapper": "vineTrapper",
 "impassibleMonk": "impassibleMonk",
+"indomitableVindicator": "indomitableVindicator",
+"innerFire": "innerFire",
+"lesserFireSummoning": "lesserFireSummoning",
+"manaFueledGolem": "manaFueledGolem",
+"manaWeaverApprentice": "manaWeaverApprentice",
+"mountainProtector": "mountainProtector",
+"mysticRecall": "mysticRecall",
+"pyromancer": "pyromancer",
+"recklessRecruit": "recklessRecruit",
+"repulsorShield": "repulsorShield",
+"restrain-the-beast": "restrain-the-beast",
 "rockslideGolem": "rockslideGolem",
+"runicCatalyst": "runicCatalyst",
+"spellSiphon": "spellSiphon",
+"starconvergence": "starconvergence",
+"starSeer": "starSeer",
 "terramancer": "terramancer",
-"runicCatalyst": "runicCatalyst"
+"twinFlame": "twinFlame",
+"vineTrapper": "vineTrapper"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
 export const cardsBySet: Record<string, CardSet> = {
 "CORE": [
   {
-    "id": "erina-violet-witch",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "HERO"
-  },
-  {
-    "id": "fireBolt",
+    "id": "arcaneSight",
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
   },
   {
-    "id": "pyromancer",
+    "id": "arcaneSpark",
     "collectable": true,
     "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "astralBall",
+    "collectable": false,
+    "rarity": "token",
     "kind": "MINION"
   },
   {
-    "id": "braveCitizen",
+    "id": "astralSage",
     "collectable": true,
-    "rarity": "common",
+    "rarity": "epic",
     "kind": "MINION"
   },
   {
@@ -133,16 +133,34 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "MINION"
   },
   {
-    "id": "recklessRecruit",
+    "id": "braveCitizen",
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
   },
   {
-    "id": "willowisp",
-    "collectable": false,
-    "rarity": "common",
-    "kind": "MINION"
+    "id": "conjureFocus",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "conjureMight",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "conjureResonance",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "conjureWisdom",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
   },
   {
     "id": "cremation",
@@ -151,31 +169,7 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "SPELL"
   },
   {
-    "id": "innerFire",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "fireBall",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "engulfInFlames",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "lesserFireSummoning",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "day-of-fortitude",
+    "id": "crowds-favor",
     "collectable": true,
     "rarity": "common",
     "kind": "DESTINY"
@@ -185,6 +179,54 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "DESTINY"
+  },
+  {
+    "id": "day-of-fortitude",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "engulfInFlames",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "enigmaticWizard",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "erinasApprentice",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "erina-violet-witch",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "HERO"
+  },
+  {
+    "id": "fallingStar",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "fireBall",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "fireBolt",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
   },
   {
     "id": "fireImp",
@@ -199,61 +241,49 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "MINION"
   },
   {
-    "id": "arcaneSight",
+    "id": "harold-vowed-crusader",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "HERO"
+  },
+  {
+    "id": "impassibleMonk",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "indomitableVindicator",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "innerFire",
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
   },
   {
-    "id": "conjureMight",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "conjureWisdom",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "conjureFocus",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "conjureResonance",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "arcaneSpark",
+    "id": "lesserFireSummoning",
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
   },
   {
-    "id": "repulsorShield",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "fallingStar",
+    "id": "manaFueledGolem",
     "collectable": true,
     "rarity": "rare",
-    "kind": "SPELL"
+    "kind": "MINION"
   },
   {
-    "id": "starSeer",
+    "id": "manaWeaverApprentice",
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
   },
   {
-    "id": "manaWeaverApprentice",
+    "id": "mountainProtector",
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
@@ -265,9 +295,21 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "SPELL"
   },
   {
-    "id": "starconvergence",
+    "id": "pyromancer",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "recklessRecruit",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "repulsorShield",
+    "collectable": true,
+    "rarity": "common",
     "kind": "SPELL"
   },
   {
@@ -277,58 +319,16 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "DESTINY"
   },
   {
-    "id": "crowds-favor",
+    "id": "rockslideGolem",
     "collectable": true,
     "rarity": "common",
-    "kind": "DESTINY"
-  },
-  {
-    "id": "manaFueledGolem",
-    "collectable": true,
-    "rarity": "rare",
     "kind": "MINION"
   },
   {
-    "id": "erinasApprentice",
+    "id": "runicCatalyst",
     "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "enigmaticWizard",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "MINION"
-  },
-  {
-    "id": "astralBall",
-    "collectable": false,
-    "rarity": "token",
-    "kind": "MINION"
-  },
-  {
-    "id": "indomitableVindicator",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "twinFlame",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "astralSage",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "MINION"
-  },
-  {
-    "id": "harold-vowed-crusader",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "HERO"
+    "rarity": "common",
+    "kind": "ARTIFACT"
   },
   {
     "id": "spellSiphon",
@@ -337,25 +337,13 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "SPELL"
   },
   {
-    "id": "mountainProtector",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "vineTrapper",
+    "id": "starconvergence",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "SPELL"
   },
   {
-    "id": "impassibleMonk",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "rockslideGolem",
+    "id": "starSeer",
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
@@ -367,60 +355,72 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "MINION"
   },
   {
-    "id": "runicCatalyst",
+    "id": "twinFlame",
     "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "vineTrapper",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "willowisp",
+    "collectable": false,
     "rarity": "common",
-    "kind": "ARTIFACT"
+    "kind": "MINION"
   }
 ]
 };
 
 export const cardShortIds: Record<string, number> = {
-"erina-violet-witch": 1,
-"fireBolt": 2,
-"pyromancer": 3,
-"braveCitizen": 4,
+"arcaneSight": 16,
+"arcaneSpark": 21,
+"astralBall": 34,
+"astralSage": 37,
 "birdOfGoodLuck": 28,
-"recklessRecruit": 5,
-"willowisp": 6,
+"braveCitizen": 4,
+"conjureFocus": 19,
+"conjureMight": 17,
+"conjureResonance": 20,
+"conjureWisdom": 18,
 "cremation": 7,
-"innerFire": 8,
-"fireBall": 9,
-"engulfInFlames": 10,
-"lesserFireSummoning": 11,
-"day-of-fortitude": 12,
+"crowds-favor": 30,
 "day-of-conquest": 13,
+"day-of-fortitude": 12,
+"engulfInFlames": 10,
+"enigmaticWizard": 33,
+"erinasApprentice": 32,
+"erina-violet-witch": 1,
+"fallingStar": 23,
+"fireBall": 9,
+"fireBolt": 2,
 "fireImp": 14,
 "flameArchmage": 15,
-"arcaneSight": 16,
-"conjureMight": 17,
-"conjureWisdom": 18,
-"conjureFocus": 19,
-"conjureResonance": 20,
-"arcaneSpark": 21,
-"repulsorShield": 22,
-"fallingStar": 23,
-"starSeer": 24,
-"manaWeaverApprentice": 25,
-"mysticRecall": 26,
-"starconvergence": 27,
-"restrain-the-beast": 29,
-"crowds-favor": 30,
-"manaFueledGolem": 31,
-"erinasApprentice": 32,
-"enigmaticWizard": 33,
-"astralBall": 34,
-"indomitableVindicator": 35,
-"twinFlame": 36,
-"astralSage": 37,
 "harold-vowed-crusader": 38,
-"spellSiphon": 39,
-"mountainProtector": 40,
-"vineTrapper": 41,
 "impassibleMonk": 42,
+"indomitableVindicator": 35,
+"innerFire": 8,
+"lesserFireSummoning": 11,
+"manaFueledGolem": 31,
+"manaWeaverApprentice": 25,
+"mountainProtector": 40,
+"mysticRecall": 26,
+"pyromancer": 3,
+"recklessRecruit": 5,
+"repulsorShield": 22,
+"restrain-the-beast": 29,
 "rockslideGolem": 43,
+"runicCatalyst": 45,
+"spellSiphon": 39,
+"starconvergence": 27,
+"starSeer": 24,
 "terramancer": 44,
-"runicCatalyst": 45
+"twinFlame": 36,
+"vineTrapper": 41,
+"willowisp": 6
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {

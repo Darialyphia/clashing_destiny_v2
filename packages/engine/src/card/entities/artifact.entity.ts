@@ -1,4 +1,4 @@
-import type { ArtifactBlueprint } from '../card-blueprint';
+import type { AbilityBlueprint, ArtifactBlueprint } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
 import { CardAfterPlayEvent, CardBeforePlayEvent, CardPlayEvent } from '../card.events';
 import {
@@ -19,6 +19,8 @@ import {
   ArtifactEquippedEvent
 } from '../events/artifact.events';
 import type { BoardSpace } from '../../board/board-space.entity';
+import { AbilityManagerComponent } from '../components/abilities-manager.component';
+import type { Ability } from './ability.entity';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedArtifactCard = SerializedCard & {
@@ -27,11 +29,16 @@ export type SerializedArtifactCard = SerializedCard & {
   baseManaCost: number;
   maxDurability: number;
   remainingDurability: number;
+  abilities: string[];
 };
 
 export type ArtifactCardInterceptors = CardInterceptors & {
   canPlay: Interceptable<boolean, ArtifactCard>;
   maxDurability: Interceptable<number, ArtifactCard>;
+  canUseAbility: Interceptable<
+    boolean,
+    { card: ArtifactCard; ability: Ability<ArtifactCard> }
+  >;
 };
 
 export class ArtifactCard extends Card<
@@ -41,6 +48,8 @@ export class ArtifactCard extends Card<
 > {
   private lostDurability = 0;
 
+  readonly abilityManager: AbilityManagerComponent<ArtifactCard>;
+
   constructor(game: Game, player: Player, options: CardOptions<ArtifactBlueprint>) {
     super(
       game,
@@ -48,10 +57,13 @@ export class ArtifactCard extends Card<
       {
         ...makeCardInterceptors(),
         canPlay: new Interceptable(),
-        maxDurability: new Interceptable()
+        maxDurability: new Interceptable(),
+        canUseAbility: new Interceptable()
       },
       options
     );
+
+    this.abilityManager = new AbilityManagerComponent<ArtifactCard>(game, this);
   }
 
   canPlay(): boolean {
@@ -61,6 +73,27 @@ export class ArtifactCard extends Card<
         this.blueprint.canPlay(this.game, this),
       this
     );
+  }
+
+  canUseAbility(id: string) {
+    const ability = this.abilityManager.getAbility(id);
+    if (!ability) return false;
+
+    return this.interceptors.canUseAbility.getValue(
+      this.abilityManager.canUseAbility(id),
+      {
+        card: this,
+        ability
+      }
+    );
+  }
+
+  addAbility(ability: AbilityBlueprint<ArtifactCard, any>) {
+    return this.abilityManager.addAbility(ability);
+  }
+
+  removeAbility(abilityId: string) {
+    this.abilityManager.removeAbility(abilityId);
   }
 
   get maxDurability(): number {
@@ -195,7 +228,8 @@ export class ArtifactCard extends Card<
       baseManaCost: this.manaCost,
       maxDurability: this.maxDurability,
       remainingDurability: this.remainingDurability,
-      unplayableReason: this.unplayableReason
+      unplayableReason: this.unplayableReason,
+      abilities: this.abilityManager.serialize()
     };
   }
 }
