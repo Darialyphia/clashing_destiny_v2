@@ -7,9 +7,7 @@ import {
   type Affinity,
   type CardSpeed
 } from '@game/engine/src/card/card.enums';
-import { isDefined, uppercaseFirstLetter } from '@game/shared';
-import CardText from '@/card/components/CardText.vue';
-import { until, useResizeObserver } from '@vueuse/core';
+import { isDefined } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
 import { useCardTilt } from '../../composables/useCardtilt';
 import FoilSheen from '../foil/FoilSheen.vue';
@@ -22,7 +20,6 @@ import FoilGlitter from '../foil/FoilGlitter.vue';
 import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
-import { getJobById } from '@game/engine/src/card/card.enums';
 import ManaCost from './ManaCost.vue';
 import Stats from './Stats.vue';
 import AffinityFlags from './AffinityFlags.vue';

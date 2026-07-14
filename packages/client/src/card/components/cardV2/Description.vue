@@ -47,7 +47,7 @@ const setVariableFontSize = (
 const descriptionBox = useTemplateRef('description-box');
 
 const DESCRIPTION_MIN_TEXT_SIZE = 8;
-const DESCRIPTION_MAX_TEXT_SIZE = 14;
+const DESCRIPTION_MAX_TEXT_SIZE = 12;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 
 const resizeDescription = () => {
@@ -75,7 +75,7 @@ useResizeObserver(descriptionBox, resizeDescription);
 <style scoped lang="postcss">
 .description {
   --card-text-color: #e9d8c0;
-  height: calc(80px * var(--pixel-scale));
+  height: calc(85px * var(--pixel-scale));
   position: absolute;
   top: calc(215px * var(--pixel-scale));
   left: calc(20px * var(--pixel-scale));
