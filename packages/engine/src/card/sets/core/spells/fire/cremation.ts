@@ -18,7 +18,7 @@ export const cremation: SpellBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('spells/ceremonial-cremation'),
+  art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.ACOLYTE],

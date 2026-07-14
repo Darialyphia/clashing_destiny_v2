@@ -18,7 +18,6 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
-
 export const dayOfFortitude: DestinyBlueprint = {
   id: 'day-of-fortitude',
   kind: CARD_KINDS.DESTINY,
@@ -29,7 +28,7 @@ export const dayOfFortitude: DestinyBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/day-of-fortitude'),
+  art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],

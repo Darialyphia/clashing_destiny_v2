@@ -18,7 +18,6 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
-
 export const crowdsFavor: DestinyBlueprint = {
   id: 'crowds-favor',
   kind: CARD_KINDS.DESTINY,
@@ -29,7 +28,7 @@ export const crowdsFavor: DestinyBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/crowds-favor'),
+  art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],

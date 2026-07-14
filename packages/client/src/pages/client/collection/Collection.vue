@@ -87,7 +87,7 @@ useIntersectionObserver(
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(calc(var(--card-width) * var(--card-scale)), 1fr)
+    minmax(calc(var(--card-v2-width) * var(--card-scale)), 1fr)
   );
   justify-items: center;
   overflow-x: hidden;
@@ -103,7 +103,7 @@ useIntersectionObserver(
     perspective: 700px;
     perspective-origin: center;
     isolation: isolate;
-    width: calc(var(--card-width) * var(--pixel-scale));
+    width: calc(var(--card-v2-width) * var(--pixel-scale));
     aspect-ratio: var(--card-ratio);
   }
 

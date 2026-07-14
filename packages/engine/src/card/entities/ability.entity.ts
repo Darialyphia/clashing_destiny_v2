@@ -135,8 +135,6 @@ export class Ability<T extends AbilityOwner>
     }
 
     await this.insertInChainOrExecute(this.targets, onResolved);
-
-    await onResolved?.();
   }
 
   seal() {

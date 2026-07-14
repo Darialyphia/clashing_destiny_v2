@@ -40,7 +40,7 @@ export class OnScoreModifier extends Modifier<MinionCard> {
       GAME_EVENTS.CARD_EFFECT_TRIGGERED,
       new CardEffectTriggeredEvent({
         card: this.target,
-        message: `${this.target.blueprint.name} triggers its On Score effect.`
+        message: `${this.target.blueprint.name} triggered its On Score effect.`
       })
     );
     await this.options.handler(event, this);

@@ -1,18 +1,18 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="foil foil-scanlines"></div>
+  <div class="foil foil-bright-shine"></div>
 </template>
 
 <style scoped lang="postcss">
 .foil {
 }
 
-.foil-scanlines {
+.foil-bright-shine {
   position: absolute;
   mix-blend-mode: color-dodge;
-  opacity: 0;
   transition: opacity 0.3s ease-in-out;
+  inset: 0;
   &::before {
     content: '';
     position: absolute;

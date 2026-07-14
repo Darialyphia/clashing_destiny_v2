@@ -272,7 +272,7 @@ const cardsWithParticles = computed(() => {
 
 .card-wrapper {
   --pixel-scale: 1.5;
-  width: calc(var(--card-width) * var(--pixel-scale));
+  width: calc(var(--card-v2-width) * var(--pixel-scale));
   aspect-ratio: var(--card-ratio);
   transform-origin: center center;
   transform-style: preserve-3d;
@@ -411,8 +411,8 @@ const cardsWithParticles = computed(() => {
 
 .stack-glow {
   position: absolute;
-  width: calc(var(--pixel-scale) * var(--card-width));
-  height: calc(var(--pixel-scale) * var(--card-height));
+  width: calc(var(--pixel-scale) * var(--card-v2-width));
+  height: calc(var(--pixel-scale) * var(--card-v2-height));
   background: radial-gradient(circle at center, red, transparent 40%);
   z-index: 6;
   filter: blur(30px);

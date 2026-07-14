@@ -125,6 +125,24 @@
   --card-height: calc(var(--card-height-unitless) * 1px);
   --card-ratio: var(--card-width-unitless) / var(--card-height-unitless);
 
+  --card-v2-width-unitless: 231;
+  --card-v2-height-unitless: 320;
+  --card-v2-width: calc(var(--card-v2-width-unitless) * 1px);
+  --card-v2-height: calc(var(--card-v2-height-unitless) * 1px);
+  --card-v2-ratio: var(--card-v2-width-unitless) /
+    var(--card-v2-height-unitless);
+
+  --card-v2-art-frame-width-unitless: 113;
+  --card-v2-art-frame-height-unitless: 90;
+  --card-v2-art-frame-width: calc(
+    var(--card-v2-art-frame-width-unitless) * 1px
+  );
+  --card-v2-art-frame-height: calc(
+    var(--card-v2-art-frame-height-unitless) * 1px
+  );
+  --card-v2-art-frame-ratio: var(--card-v2-art-frame-width-unitless) /
+    var(--card-v2-art-frame-height-unitless);
+
   --card-small-width-unitless: 142;
   --card-small-height-unitless: 129;
   --card-small-width: calc(var(--card-small-width-unitless) * 1px);

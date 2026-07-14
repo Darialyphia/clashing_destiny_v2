@@ -28,7 +28,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  art: defaultCardArt('heroes/erina-violet-witch'),
+  art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE, AFFINITIES.FIRE],
@@ -37,7 +37,7 @@ export const erinaVioletWitch: HeroBlueprint = {
     {
       id: 'erina-violet-witch-ability',
       description: dedent /*html*/ `
-    Remove 4 stacks of <rt-trigger color="green">SpellSlinger</rt-trigger> from this card to draw a card. <rt-runes runes="wisdom,wisdom"></rt-runes> gain 1 mana as well.`,
+    Remove 4 stacks of <rt-trigger color="green">SpellSlinger</rt-trigger> from this card to gain 2 mana.`,
       label: 'Draw a card',
       canUse: (game, card) => {
         const modifier = card.modifiers.get(SpellSlingerCounterModifier);
@@ -48,13 +48,10 @@ export const erinaVioletWitch: HeroBlueprint = {
       manaCost: 0,
       shouldExhaust: true,
       async onResolve(game, card) {
-        const modifier = card.modifiers.get(SpellSlingerCounterModifier);
-        if (!modifier) return;
-        await modifier.removeStacks(4);
-        await card.player.cardManager.draw(1);
-        if (card.player.runeManager.has({ wisdom: 2 })) {
-          await card.player.manaManager.gain(1);
-        }
+        // const modifier = card.modifiers.get(SpellSlingerCounterModifier);
+        // if (!modifier) return;
+        // await modifier.removeStacks(4);
+        await card.player.manaManager.gain(2);
       },
       aiHints: {
         shouldUse: () => 1

@@ -25,7 +25,7 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('spells/fire-bolt'),
+  art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],

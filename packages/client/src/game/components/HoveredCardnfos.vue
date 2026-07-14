@@ -58,7 +58,7 @@ ul {
   gap: var(--size-1);
 }
 li {
-  max-inline-size: calc(var(--card-width) * var(--pixel-scale));
+  max-inline-size: calc(var(--card-v2-width) * var(--pixel-scale));
   background-color: hsla(0, 0%, 0%, 0.8);
   color: #efef9f;
   padding: var(--size-1) var(--size-3);

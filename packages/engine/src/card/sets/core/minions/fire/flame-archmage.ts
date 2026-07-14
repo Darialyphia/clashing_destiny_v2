@@ -27,7 +27,7 @@ export const flameArchmage: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/flame-archmage'),
+  art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],

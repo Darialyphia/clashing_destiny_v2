@@ -9,8 +9,8 @@
   display: inline-block;
   background: url(@/assets/ui/ability-exhaust.png) no-repeat center center;
   background-size: cover;
-  width: calc(20px * var(--pixel-scale) / 2);
-  height: calc(20px * var(--pixel-scale) / 2);
+  width: calc(20px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
 
   translate: 0 calc(1px * var(--pixel-scale));
 }

@@ -56,6 +56,7 @@ export class UseAbilityContext {
     );
 
     await this.player.useAbility(this._ability, async () => {
+      console.log('Ability resolved');
       await this.game.turnSystem.switchInitiative();
     });
   }

@@ -45,6 +45,7 @@ const {
     rarity: Rarity;
     atk?: number | null;
     hp?: number | null;
+    commandment?: number | null;
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
@@ -52,7 +53,6 @@ const {
     jobs: JobId[];
     affinities: Affinity[];
     speed?: CardSpeed;
-    commandment?: number | null;
   };
   isFoil?: boolean;
   isAnimated?: boolean;

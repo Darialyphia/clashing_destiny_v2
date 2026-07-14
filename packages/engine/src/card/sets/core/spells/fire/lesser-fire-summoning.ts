@@ -23,7 +23,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('spells/lesser-fire-summoning'),
+  art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],

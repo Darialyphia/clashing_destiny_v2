@@ -32,7 +32,7 @@ export const impassibleMonk: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
-  maxHp: 5,
+  maxHp: 4,
   commandment: 1,
   canPlay: () => true,
   abilities: [],

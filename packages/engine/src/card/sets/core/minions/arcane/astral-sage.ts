@@ -27,11 +27,11 @@ export const astralSage: MinionBlueprint = {
   description: dedent /*html*/ `
     <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
     <br />
-    <rt-location locations="battlefield">This gains Commandment equal to amount of <rt-card>Astral Ball</rt-card> you control on the same battlefield.</rt-location>
+    <rt-location locations="battlefield">This gains CMD equal to amount of <rt-card>Astral Ball</rt-card> you control on the same battlefield.</rt-location>
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/astral-sage'),
+  art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],

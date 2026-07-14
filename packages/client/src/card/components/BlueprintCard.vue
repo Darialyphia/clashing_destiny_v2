@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
-import Card from './Card.vue';
+import Card from './cardV2/index.vue';
 import { isFunction } from '@game/shared';
 import { type JobId } from '@game/engine/src/card/card.enums';
 import { provideRichTextContext } from '@/game/composables/useRichText';
@@ -42,8 +42,6 @@ provideRichTextContext({
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
-      expCost: (blueprint as any).expCost,
-      baseExpCost: (blueprint as any).baseExpCost,
       rarity: (blueprint as any).rarity,
       atk: (blueprint as any).atk,
       hp: (blueprint as any).maxHp,

@@ -35,7 +35,6 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
         P.instanceOf(HeroCard),
         P.instanceOf(ArtifactCard),
         card => {
-          console.log(this.payload, card.abilityManager);
           return card.abilityManager.getAbility(this.payload.abilityId);
         }
       )

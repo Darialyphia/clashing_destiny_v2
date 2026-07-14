@@ -19,7 +19,7 @@ export const astralBall: MinionBlueprint = {
   `,
   collectable: false,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/astral-ball'),
+  art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.TOKEN,
   jobs: [],

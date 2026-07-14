@@ -41,8 +41,8 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   top: var(--size-10);
   left: 50%;
   transform: translateX(-50%);
-  width: calc(var(--pixel-scale) * var(--card-width));
-  height: calc(var(--pixel-scale) * var(--card-height));
+  width: calc(var(--pixel-scale) * var(--card-v2-width));
+  height: calc(var(--pixel-scale) * var(--card-v2-height));
   pointer-events: none;
 }
 

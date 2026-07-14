@@ -16,6 +16,7 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import { LocationToggleModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const haroldVowedCrusader: HeroBlueprint = {
   id: 'harold-vowed-crusader',
@@ -23,11 +24,11 @@ export const haroldVowedCrusader: HeroBlueprint = {
   collectable: true,
   name: 'Harold Vowed Crusader',
   description: dedent /*html*/ `
-    Your minions have <br/>"<rt-location locations="battlefield" always-active="true"></rt-location> <rt-keyword>Channel</rt-keyword> : Gain +1 Health."
+    Your minions have <br/>"<rt-location locations="battlefield" always-active="true"></rt-location> <rt-keyword>Channel</rt-keyword> : Gain +1 Commandment."
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  art: defaultCardArt('heroes/harold-vowed-crusader'),
+  art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.LIGHT, AFFINITIES.EARTH],
@@ -46,7 +47,7 @@ export const haroldVowedCrusader: HeroBlueprint = {
                 new ChannelModifier(game, card, {
                   handler: async () => {
                     await candidate.modifiers.add(
-                      new SimpleHealthBuffModifier(
+                      new SimpleCommandmentBuffModifier(
                         'harold-vowed-crusader-aura',
                         game,
                         card,

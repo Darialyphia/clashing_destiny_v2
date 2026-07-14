@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCard, useFxEvent, useGameUi } from '../composables/useGameClient';
-import Card from '@/card/components/Card.vue';
+import Card from '@/card/components/cardV2/index.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { waitFor } from '@game/shared';
@@ -109,7 +109,6 @@ provideRichTextContext({
           rarity: overrides.rarity ?? card.rarity,
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
-          expCost: overrides.expCost ?? card.expCost,
           hp: overrides.hp ?? card.maxHp,
           atk: overrides.atk ?? card.atk,
           durability: overrides.durability ?? card.durability,

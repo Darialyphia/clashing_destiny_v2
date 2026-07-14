@@ -112,7 +112,7 @@ const cardW = computed(() => {
   return (
     parseInt(
       getComputedStyle(document.documentElement).getPropertyValue(
-        '--card-width-unitless'
+        '--card-v2-width-unitless'
       )
     ) * pixelScale.value
   );

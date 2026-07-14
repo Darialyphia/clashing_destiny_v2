@@ -121,7 +121,7 @@ const maxChoices = computed(() => {
   display: grid;
   grid-template-columns: repeat(
     auto-fit,
-    minmax(calc(var(--pixel-scale) * var(--card-width)), 1fr)
+    minmax(calc(var(--pixel-scale) * var(--card-v2-width)), 1fr)
   );
   justify-items: center;
   row-gap: var(--size-4);

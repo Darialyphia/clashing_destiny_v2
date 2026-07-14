@@ -14,7 +14,6 @@
 }
 
 .foil-scanlines {
-  position: absolute;
   --scanlines-space: 1px;
   --scanlines-light: #666;
   --scanlines-dark: black;
@@ -57,12 +56,13 @@
   background-blend-mode: overlay;
   filter: brightness(1.1) contrast(1.1) saturate(1.2);
   mix-blend-mode: color-dodge;
-  opacity: 0;
   transition: opacity 1s var(--ease-3);
   mask-image: var(--foil-mask);
   mask-size: var(--foil-mask-size, cover);
   mask-position: var(--foil-mask-position, center);
   mask-repeat: no-repeat;
+  position: absolute;
+  inset: 0;
   &::before {
     content: '';
     position: absolute;
