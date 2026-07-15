@@ -14,6 +14,7 @@ import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modi
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import { predict } from '../../../../card-actions-utils';
+import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const birdOfGoodLuck: MinionBlueprint = {
   id: 'birdOfGoodLuck',
@@ -22,7 +23,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
   <rt-runes runes="wisdom"></rt-runes><rt-trigger>On Enter</rt-trigger> <rt-keyword>Predict</rt-keyword>.
   <rt-runes runes="focus"></rt-runes> <rt-keyword>Flanking</rt-keyword>
   <br/>
-  <rt-runes runes="resonance"></rt-runes> <rt-keyword>Echo</rt-keyword>
+  <rt-runes runes="resonance"></rt-runes> +1/+0/+0
   <br/>
   <rt-runes runes="might"></rt-runes> <rt-keyword>Attacker 1</rt-keyword>
   `,
@@ -38,7 +39,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 3,
-  commandment: 2,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -67,7 +68,8 @@ export const birdOfGoodLuck: MinionBlueprint = {
     );
 
     await card.modifiers.add(
-      new EchoModifier(game, card, {
+      new SimpleCommandmentBuffModifier('bird-of-good-luck-cmd-buff', game, card, {
+        amount: 1,
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {
             resonance: 1

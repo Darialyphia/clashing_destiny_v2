@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {
-  RARITIES,
   type CardKind,
   type Rarity,
   type JobId,
   type Affinity,
-  type CardSpeed
+  type CardSpeed,
+  CARD_KINDS
 } from '@game/engine/src/card/card.enums';
 import { isDefined } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
@@ -17,7 +17,6 @@ import FoilScanlines from '../foil/FoilScanlines.vue';
 import FoilLightGradient from '../foil/FoilLightGradient.vue';
 import FoilGoldenGlare from '../foil/FoilGoldenGlare.vue';
 import FoilGlitter from '../foil/FoilGlitter.vue';
-import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
 import ManaCost from './ManaCost.vue';
@@ -26,12 +25,13 @@ import AffinityFlags from './AffinityFlags.vue';
 import CardName from './CardName.vue';
 import Description from './Description.vue';
 import CardArtComponent from './CardArt.vue';
+import CardRarity from './Rarity.vue';
+import Speed from './Speed.vue';
 
 const {
   card,
   isFoil,
   isAnimated = true,
-  showText = true,
   maxTiltAngle = 30,
   isTiltEnabled = true
 } = defineProps<{
@@ -57,35 +57,9 @@ const {
   };
   isFoil?: boolean;
   isAnimated?: boolean;
-  showText?: boolean;
   maxTiltAngle?: number;
   isTiltEnabled?: boolean;
 }>();
-
-const rarityBg = computed(() => {
-  if (
-    [RARITIES.BASIC, RARITIES.COMMON, RARITIES.TOKEN].includes(
-      card.rarity as any
-    )
-  ) {
-    return assets[`ui/card/rarity-common`].css;
-  }
-
-  return assets[`ui/card/rarity-${card.rarity}`].css;
-});
-
-const artBgImage = computed(() => {
-  return assets[card.art.bg].css;
-});
-
-const artMainImage = computed(() => {
-  return assets[card.art.main].css;
-});
-
-const artFoilImage = computed(() => {
-  if (!card.art.foilMain) return 'transparent';
-  return assets[card.art.foilMain].css;
-});
 
 const root = useTemplateRef('card');
 
@@ -94,6 +68,14 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
     maxAngle: maxTiltAngle,
     isEnabled: computed(() => isTiltEnabled && isFoil)
   });
+
+const tint = computed(() => {
+  return `linear-gradient(to right in oklch, ${card.affinities
+    .map(affinity => {
+      return `var(--tint-${affinity.toLocaleLowerCase()})`;
+    })
+    .join(', ')})`;
+});
 </script>
 
 <template>
@@ -109,7 +91,7 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
       :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
       :data-flip-id="`card_${card.id}`"
     >
-      <div class="card-front">
+      <div class="card-front" :style="{ '--tint': tint }">
         <CardArtComponent :art="card.art" />
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
@@ -122,12 +104,13 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
           <FoilScanlines v-if="card.art.foil.scanlines" />
         </template>
 
+        <div class="card-border" />
         <ManaCost
           v-if="isDefined(card.manaCost)"
           :cost="card.manaCost"
           :baseCost="card.baseManaCost ?? card.manaCost"
         />
-
+        <CardRarity :rarity="card.rarity" />
         <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />
         <Description
@@ -139,6 +122,14 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
           :hp="card.hp ?? null"
           :durability="card.durability ?? null"
           :commandment="card.commandment ?? null"
+        />
+        <Speed
+          v-if="
+            isDefined(card.speed) &&
+            card.kind !== CARD_KINDS.HERO &&
+            card.kind !== CARD_KINDS.DESTINY
+          "
+          :speed="card.speed"
         />
         <CardGlare />
       </div>
@@ -215,6 +206,18 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
 
   --glare-mask: url('@/assets/ui/card/v2/card-front.png');
   --foil-mask: url('@/assets/ui/card/v2/card-front.png');
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--tint);
+    mix-blend-mode: color-dodge;
+    opacity: 0.3;
+    mask-size: cover;
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 .card.animated:has(.foil):deep(.parallax) {
@@ -250,106 +253,12 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
   initial-value: 0;
 }
 
-.art-main {
+.card-border {
   position: absolute;
   inset: 0;
-  background: v-bind(artMainImage);
+  background: url('@/assets/ui/card/v2/card-front-border.png');
   background-size: cover;
-  overflow: hidden;
-  --parallax-offset-x: -50%;
-  .card:has(.foil) & {
-    transform: translateX(50%);
-  }
-}
-.art-foil {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-  height: calc(1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)); */
-  translate: -50% 0;
-  background: v-bind(artFoilImage);
-  background-size: cover;
-  --parallax-offset-x: -50%;
-}
-
-.art-bg {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artBgImage);
-  background-size: cover;
-  --parallax-offset-x: -50%;
-  .card:has(.foil) & {
-    transform: translateX(50%);
-  }
-}
-
-.image {
   pointer-events: none;
-  width: calc(var(--card-art-frame-width) * var(--pixel-scale));
-  height: calc(var(--card-art-frame-height) * var(--pixel-scale));
-  position: absolute;
-  top: calc(23px * var(--pixel-scale));
-  left: 50%;
-  translate: -50% 0;
-  overflow: hidden;
-  mask-image: url(@/assets/ui/card/masks/frame-overflow-mask.png);
-  mask-size: cover;
-  .foil {
-    --foil-mask: v-bind(artBgImage);
-    position: absolute;
-    inset: 0;
-
-    /* width: calc(1px * v-bind('card.art.dimensions.width') * var(--pixel-scale));
-    height: calc(
-      1px * v-bind('card.art.dimensions.height') * var(--pixel-scale)
-    ); */
-    /* translate: -50% 0;
-    --parallax-offset-x: -50%; */
-  }
-}
-
-.rarity {
-  background: v-bind(rarityBg);
-  background-size: cover;
-  background-position: center;
-  width: calc(14px * var(--pixel-scale));
-  height: calc(18px * var(--pixel-scale));
-  position: absolute;
-  bottom: calc(87px * var(--pixel-scale));
-  top: calc(132px * var(--pixel-scale));
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.description-frame {
-  width: calc(158px * var(--pixel-scale));
-  height: calc(88px * var(--pixel-scale));
-  position: absolute;
-  bottom: calc(6px * var(--pixel-scale));
-  left: 50%;
-  translate: -50% 0;
-  background: url('@/assets/ui/card/description-frame.png');
-  background-size: cover;
-}
-
-.speed {
-  position: absolute;
-  width: calc(40px * var(--pixel-scale));
-  height: calc(16px * var(--pixel-scale));
-  background: var(--bg);
-  background-size: cover;
-  right: calc(-2px * var(--pixel-scale));
-  top: calc(72px * var(--pixel-scale));
-  font-weight: var(--font-weight-7);
-  font-family: 'Lato', sans-serif;
-  --dual-text-offset-y: calc(2px * var(--pixel-scale));
-  --dual-text-offset-x: calc(6px * var(--pixel-scale));
-
-  .hero &,
-  .destiny & {
-    display: none;
-  }
 }
 
 .text-separator {

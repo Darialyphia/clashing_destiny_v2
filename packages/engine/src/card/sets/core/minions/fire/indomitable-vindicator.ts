@@ -23,11 +23,11 @@ export const indomitableVindicator: MinionBlueprint = {
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
   <rt-keyword>On Score</rt-keyword> Deal 1 damage to all other minions on this battlefield.
-  <rt-runes runes="might,might,resonance"></rt-runes> When another minion Scores on the same battlefield, wake up this unit.
+  <rt-runes runes="might,might,resonance"></rt-runes> Once per turn, when another minion Scores on the same battlefield, wake up this unit.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/indomitable-vindicator'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   jobs: [JOBS.WARRIOR],
@@ -66,8 +66,10 @@ export const indomitableVindicator: MinionBlueprint = {
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.AFTER_SCORE,
             filter: event =>
+              card.isExhausted &&
               event.data.battlefield.id === card.battlefield?.id &&
               !event.data.card.equals(card),
+            frequencyPerGameTurn: 1,
             async handler() {
               await card.wakeUp();
             }

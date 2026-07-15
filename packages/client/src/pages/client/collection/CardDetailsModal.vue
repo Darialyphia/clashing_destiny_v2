@@ -212,7 +212,7 @@ provideRichTextContext({
 }
 
 .card-preview {
-  --pixel-scale: 3;
+  --pixel-scale: 2;
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;

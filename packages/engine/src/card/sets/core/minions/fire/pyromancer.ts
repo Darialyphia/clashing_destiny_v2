@@ -28,7 +28,7 @@ export const pyromancer: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/pyromancer'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
@@ -38,7 +38,7 @@ export const pyromancer: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 3,
-  commandment: 1,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

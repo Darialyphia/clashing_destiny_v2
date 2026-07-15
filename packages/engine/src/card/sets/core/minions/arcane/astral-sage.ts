@@ -1,8 +1,4 @@
 import dedent from 'dedent';
-import {
-  RuneCostToggleModifierMixin,
-  TogglableModifierMixin
-} from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, emptyBoardSpaceTargetRules } from '../../../../card-utils';
 import {
@@ -15,19 +11,16 @@ import {
   CARD_LOCATIONS
 } from '../../../../card.enums';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { InstantAttackModifier } from '../../../../../modifier/modifiers/instant-attack.modifier';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const astralSage: MinionBlueprint = {
   id: 'astralSage',
   name: 'Astral Sage',
   description: dedent /*html*/ `
     <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    <br />
-    <rt-location locations="battlefield">This gains CMD equal to amount of <rt-card>Astral Ball</rt-card> you control on the same battlefield.</rt-location>
+    This gains CMD equal to amount of <rt-card>Astral Ball</rt-card> you control.</rt-location>
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -74,29 +67,10 @@ export const astralSage: MinionBlueprint = {
     );
 
     await card.modifiers.add(
-      new SimpleManacostModifier('astralSage', game, card, {
-        amount: -1,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 })]
-      })
-    );
-
-    const astralBallThresholdMixin = () =>
-      new TogglableModifierMixin(
-        game,
-        () =>
+      new SimpleCommandmentBuffModifier('astralSage-cmd-buff', game, card, {
+        amount: () =>
           card.player.minions.filter(minion => minion.blueprint.id === 'astralBall')
-            .length >= 3
-      );
-    await card.modifiers.add(
-      new InstantAttackModifier(game, card, {
-        mixins: [astralBallThresholdMixin()]
-      })
-    );
-
-    await card.modifiers.add(
-      new SimpleAttackBuffModifier<MinionCard>('astralSage-atk-buff', game, card, {
-        amount: 1,
-        mixins: [astralBallThresholdMixin()]
+            .length
       })
     );
   },

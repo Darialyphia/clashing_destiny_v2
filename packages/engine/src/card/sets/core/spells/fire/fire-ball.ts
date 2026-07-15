@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { SpellBlueprint, Targets } from '../../../../card-blueprint';
+import type { SpellBlueprint } from '../../../../card-blueprint';
 import {
   defaultCardArt,
   singleEnemyMinionTargetRules,
@@ -26,7 +26,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('spells/fireball'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],

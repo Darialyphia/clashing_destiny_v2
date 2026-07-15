@@ -74,6 +74,6 @@ const artMainImage = computed(() => {
 }
 
 :global(.card-v2:has(.foil):hover .art-main-shadow) {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 </style>

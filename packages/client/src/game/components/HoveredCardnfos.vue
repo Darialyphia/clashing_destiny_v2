@@ -39,6 +39,7 @@ const keywords = computed(() => {
 }
 
 .hovered-card {
+  --pixel-scale: 1.5;
   &.v-enter-active,
   &.v-leave-active {
     transition: all 0.3s var(--ease-3);

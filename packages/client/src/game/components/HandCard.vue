@@ -110,7 +110,7 @@ const isVisible = computed(() => {
   }
   &.hoverable:hover {
     --scale: 1.5;
-    --hover-offset: -10px;
+    --hover-offset: -80px;
     z-index: var(--hand-size);
   }
 

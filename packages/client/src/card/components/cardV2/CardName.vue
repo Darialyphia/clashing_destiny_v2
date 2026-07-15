@@ -10,8 +10,8 @@ defineProps<{
 const nameBox = useTemplateRef('name-box');
 const { fontSize: nameFontSize } = useAutoResizeText(nameBox, {
   min: 14,
-  max: 18,
-  ideal: 18
+  max: 24,
+  ideal: 24
 });
 
 const curveId = `card-name-curve-${nanoid(4)}`;
@@ -62,7 +62,7 @@ const curveId = `card-name-curve-${nanoid(4)}`;
 
   svg text {
     font-family: 'Lato';
-    font-size: calc(1px * v-bind(nameFontSize) * var(--pixel-scale));
+    font-size: calc(1px * v-bind(nameFontSize));
     fill: #dbc4a4;
     filter: drop-shadow(0 calc(2.5px * var(--pixel-scale)) 0 black);
   }

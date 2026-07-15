@@ -28,7 +28,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('heroes/erina-violet-witch'),
   speed: CARD_SPEED.SLOW,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE, AFFINITIES.FIRE],

@@ -171,11 +171,11 @@
   --rarity-epic: #bb00e0;
   --rarity-legendary: var(--orange-4);
   --tint-neutral: transparent;
-  --tint-fire: #d3572d;
+  --tint-fire: #cc582e;
   --tint-water: #467af4;
-  --tint-earth: hsl(from #7ab800 calc(h + 10) calc(s - 40) l);
+  --tint-earth: #5ed100;
   --tint-air: #00cbb3;
-  --tint-light: hsl(from #ffe761 h s calc(l + 20));
+  --tint-light: #f1e07e;
   --tint-dark: #8f00ff;
   --tint-arcane: #6d1394;
 }

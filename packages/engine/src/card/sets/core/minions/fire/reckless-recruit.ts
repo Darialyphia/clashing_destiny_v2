@@ -21,7 +21,7 @@ export const recklessRecruit: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/reckless-recruit'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.WARRIOR],
