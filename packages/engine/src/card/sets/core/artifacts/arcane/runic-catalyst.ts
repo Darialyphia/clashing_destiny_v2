@@ -1,6 +1,5 @@
 import dedent from 'dedent';
-import { InstantModifier } from '../../../../../modifier/modifiers/instant.modifier';
-import { askMandatoryYesNoQuestion, scry } from '../../../../card-actions-utils';
+import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import type { ArtifactBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, anywhereTargetRules } from '../../../../card-utils';
 import {
@@ -15,7 +14,6 @@ import { Modifier } from '../../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import type { ArtifactCard } from '../../../../entities/artifact.entity';
-
 
 export const runicCatalyst: ArtifactBlueprint = {
   id: 'runicCatalyst',
@@ -34,6 +32,7 @@ export const runicCatalyst: ArtifactBlueprint = {
   durability: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  abilities: [],
   canPlay: () => true,
   async onInit(game, card) {
     await card.modifiers.add(
