@@ -156,56 +156,54 @@ const onEffectClick = (effectId: string) => {
 
 <template>
   <div
-    class="effect-chain"
+    class="effect-chain surface"
     id="effect-chain"
     :class="{ 'is-active': state.effectChain }"
   >
     <!-- <ExplainerMessage /> -->
 
-    <p class="title dual-text" data-text="Effect Chain">Effect chain</p>
-    <div class="flex items-center gap-4">
-      <div class="effect-wrapper" v-for="(effect, index) in stack" :key="index">
-        <InspectableCard :card-id="effect.source.id">
-          <div
-            class="effect"
-            :class="[
-              effect.playerType,
-              { 'is-selectable': isSelectable(effect.id) }
-            ]"
-            @click="onEffectClick(effect.id)"
-          >
-            <GameCard
-              :card-id="effect.source.id"
-              :is-interactive="false"
-              variant="small"
-            />
+    <div class="effect-wrapper" v-for="(effect, index) in stack" :key="index">
+      <InspectableCard :card-id="effect.source.id">
+        <div
+          class="effect"
+          :class="[
+            effect.playerType,
+            { 'is-selectable': isSelectable(effect.id) }
+          ]"
+          @click="onEffectClick(effect.id)"
+        >
+          <GameCard
+            :card-id="effect.source.id"
+            :is-interactive="false"
+            variant="small"
+            :pixel-scale="0.5"
+          />
 
-            <UiSimpleTooltip>
-              <template #trigger>
-                <div class="effect-type" :class="effect.type.toLowerCase()" />
-              </template>
-              <p v-if="effect.type === EFFECT_TYPE.ABILITY">
-                This effect will execute an ability.
-              </p>
-              <p v-if="effect.type === EFFECT_TYPE.CARD">
-                This effect will play a card.
-              </p>
-              <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
-                This effect declaresa retaliation.
-              </p>
-            </UiSimpleTooltip>
-          </div>
+          <UiSimpleTooltip>
+            <template #trigger>
+              <div class="effect-type" :class="effect.type.toLowerCase()" />
+            </template>
+            <p v-if="effect.type === EFFECT_TYPE.ABILITY">
+              This effect will execute an ability.
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.CARD">
+              This effect will play a card.
+            </p>
+            <p v-if="effect.type === EFFECT_TYPE.RETALIATION">
+              This effect declaresa retaliation.
+            </p>
+          </UiSimpleTooltip>
+        </div>
 
-          <Teleport to="#arrows" defer>
-            <Arrow
-              v-for="(path, targetIndex) in paths[index]"
-              :key="targetIndex"
-              :path="path"
-              :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
-            />
-          </Teleport>
-        </InspectableCard>
-      </div>
+        <Teleport to="#arrows" defer>
+          <Arrow
+            v-for="(path, targetIndex) in paths[index]"
+            :key="targetIndex"
+            :path="path"
+            :color="effect.playerType === 'ally' ? 'cyan' : 'red'"
+          />
+        </Teleport>
+      </InspectableCard>
     </div>
   </div>
 </template>
@@ -225,38 +223,29 @@ const onEffectClick = (effectId: string) => {
   }
 }
 .effect-chain {
-  --pixel-scale: 0.75;
+  --pixel-scale: 0.5;
 
   /* height: calc(var(--card-small-height)); */
-  padding: var(--size-2) var(--size-4);
-  background-color: hsl(0 0% 0% / 0.5);
-  backdrop-filter: blur(4px);
   border-radius: var(--radius-2);
-  border: solid 3px transparent;
+  /* border: solid 3px transparent; */
   transition: opacity 0.5s var(--ease-3);
   position: relative;
   z-index: 0;
-  opacity: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4);
   --effect-chain-glow-angle: 0deg;
   &.is-active {
-    border-image: conic-gradient(
+    /* border-image: conic-gradient(
       from var(--effect-chain-glow-angle) at center,
       cyan 0deg,
       orange 20deg,
       transparent 20deg
-    );
-    border-image-slice: 1;
+    ); */
+    /* border-image-slice: 1; */
     animation: effect-chain-glow 5s linear infinite;
     opacity: 1;
   }
-}
-
-.title {
-  position: absolute;
-  top: var(--size-2);
-  right: var(--size-2);
-  width: 20ch;
-  text-align: right;
 }
 
 .ally {

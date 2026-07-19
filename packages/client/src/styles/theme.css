@@ -143,12 +143,26 @@
   --card-v2-art-frame-ratio: var(--card-v2-art-frame-width-unitless) /
     var(--card-v2-art-frame-height-unitless);
 
+  --card-small-v2-width-unitless: 129;
+  --card-small-v2-height-unitless: 106;
+  --card-small-v2-width: calc(var(--card-small-v2-width-unitless) * 1px);
+  --card-small-v2-height: calc(var(--card-small-v2-height-unitless) * 1px);
+  --card-small-v2-ratio: var(--card-small-v2-width-unitless) /
+    var(--card-small-v2-height-unitless);
+
   --card-small-width-unitless: 142;
   --card-small-height-unitless: 129;
   --card-small-width: calc(var(--card-small-width-unitless) * 1px);
   --card-small-height: calc(var(--card-small-height-unitless) * 1px);
   --card-small-ratio: var(--card-small-width-unitless) /
     var(--card-small-height-unitless);
+
+  --card-small-v2-art-width-unitless: 113;
+  --card-small-v2-art-height-unitless: 90;
+  --card-small-v2-art-width: calc(var(--card-small-art-width-unitless) * 1px);
+  --card-small-v2-art-height: calc(var(--card-small-art-height-unitless) * 1px);
+  --card-small-v2-art-ratio: var(--card-small-art-width-unitless) /
+    var(--card-small-art-height-unitless);
 
   --card-art-frame-width-unitless: 142;
   --card-art-frame-height-unitless: 129;

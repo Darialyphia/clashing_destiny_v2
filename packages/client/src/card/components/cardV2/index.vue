@@ -5,9 +5,10 @@ import {
   type JobId,
   type Affinity,
   type CardSpeed,
-  CARD_KINDS
+  CARD_KINDS,
+  getJobById
 } from '@game/engine/src/card/card.enums';
-import { isDefined } from '@game/shared';
+import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
 import { useCardTilt } from '../../composables/useCardtilt';
 import FoilSheen from '../foil/FoilSheen.vue';
@@ -27,6 +28,8 @@ import Description from './Description.vue';
 import CardArtComponent from './CardArt.vue';
 import CardRarity from './Rarity.vue';
 import Speed from './Speed.vue';
+import { assets } from '@/assets';
+import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
 const {
   card,
@@ -76,6 +79,10 @@ const tint = computed(() => {
     })
     .join(', ')})`;
 });
+
+const kindBg = computed(() => {
+  return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
+});
 </script>
 
 <template>
@@ -113,6 +120,29 @@ const tint = computed(() => {
         <CardRarity :rarity="card.rarity" />
         <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />
+
+        <div class="tags">
+          <UiSimpleTooltip>
+            <template #trigger>
+              <div class="kind" />
+            </template>
+            {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
+          </UiSimpleTooltip>
+
+          <div>
+            <span v-if="isDefined(card.subKind)">
+              - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
+            </span>
+            <span v-if="card.jobs.length" class="jobs">
+              |
+              {{ card.jobs.map(jobId => getJobById(jobId)?.name).join(' | ') }}
+            </span>
+            <span v-if="isDefined(card.tags)" class="tags">
+              <template v-if="card.tags?.length">|</template>
+              {{ card.tags.join('| ') }}
+            </span>
+          </div>
+        </div>
         <Description
           :description="card.description"
           :abilities="card.abilities ?? []"
@@ -282,5 +312,27 @@ const tint = computed(() => {
     flex: 1;
     opacity: 0.5;
   }
+}
+
+.kind {
+  width: calc(16px * var(--pixel-scale));
+  aspect-ratio: 1;
+  background: v-bind(kindBg);
+  background-size: cover;
+}
+
+.tags {
+  position: absolute;
+  width: fit-content;
+  display: flex;
+  gap: calc(2px * var(--pixel-scale));
+  font-size: calc(var(--pixel-scale) * 11px);
+  top: calc(194px * var(--pixel-scale));
+  left: 50%;
+  translate: -50% 0;
+  color: #e9d8c0;
+  text-shadow: 0 0 0.75rem black;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke fill;
 }
 </style>

@@ -153,11 +153,12 @@ const artMainImage = computed(() => {
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   --foil-animated-toggle: ;
-  width: calc(var(--card-small-width) * var(--pixel-scale));
-  height: calc(var(--card-small-height) * var(--pixel-scale));
+  width: calc(var(--card-small-v2-width) * var(--pixel-scale));
+  height: calc(var(--card-small-v2-height) * var(--pixel-scale));
   display: grid;
   font-family: 'Lato', sans-serif;
   transform-style: preserve-3d;
+  position: relative;
   --art-pixel-scale: calc(2 * var(--pixel-scale));
   --root-pixel-scale: var(--pixel-scale);
   &:hover {
@@ -194,8 +195,8 @@ const artMainImage = computed(() => {
   position: absolute;
   display: grid;
   transform-origin: center center;
-  width: calc(var(--card-art-frame-width) * var(--pixel-scale));
-  height: calc(var(--card-art-frame-height) * var(--pixel-scale));
+  width: calc(var(--card-small-v2-width) * var(--pixel-scale));
+  height: calc(var(--card-small-v2-height) * var(--pixel-scale));
   left: 50%;
   top: 50%;
   translate: -50% -50%;
@@ -204,21 +205,23 @@ const artMainImage = computed(() => {
 .art-frame {
   position: absolute;
   inset: 0;
-  background: url('@/assets/ui/card/frames/default.png');
+  background: url('@/assets/ui/card/v2/art-frame.png');
   background-size: cover;
 }
 .art-main {
   position: absolute;
   inset: 0;
   background: v-bind(artMainImage);
-  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .art-bg {
   position: absolute;
   inset: 0;
   background: v-bind(artBgImage);
-  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .stat {
@@ -294,8 +297,8 @@ const artMainImage = computed(() => {
 
 .commandment {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: calc(-1px * var(--pixel-scale));
+  left: calc(-1px * var(--pixel-scale));
   background-image: url('@/assets/ui/card/commandment.png');
   font-weight: var(--font-weight-7);
   padding-top: calc(3px * var(--pixel-scale));

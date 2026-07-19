@@ -499,10 +499,10 @@ const tint = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('@/assets/ui/card/card_backs/default.png');
+  background: url('@/assets/ui/card/v2/card-back.png');
   background-size: cover;
-  --glare-mask: url('@/assets/ui/card-back.png');
-  --foil-mask: url('@/assets/ui/card-back.png');
+  --glare-mask: url('@/assets/ui/card/v2/card-back.png');
+  --foil-mask: url('@/assets/ui/card/v2/card-back.png');
 }
 
 .dual-text {

@@ -113,7 +113,7 @@ const onMouseup = (e: MouseEvent) => {
   <div
     ref="unit"
     :id="ui.DOMSelectors.cardOnBoard(card.id).id"
-    class="unit"
+    class="board-card"
     :class="[
       {
         'is-exhausted': card.isExhausted,
@@ -154,10 +154,10 @@ const onMouseup = (e: MouseEvent) => {
 </template>
 
 <style scoped lang="postcss">
-.unit {
+.board-card {
   --pixel-scale: 2;
-  width: 100%;
-  height: 100%;
+  width: var(--card-small-v2-width);
+  height: var(--card-small-v2-height);
   transition: all 0.3s var(--ease-2);
   position: relative;
   transform-style: preserve-3d;
@@ -246,8 +246,8 @@ const onMouseup = (e: MouseEvent) => {
 
 .modifiers {
   position: absolute;
-  top: calc(3px * var(--pixel-scale));
-  right: calc(3px * var(--pixel-scale));
+  top: calc(-3px * var(--pixel-scale));
+  right: calc(-3px * var(--pixel-scale));
   transform: translateZ(2px);
 }
 

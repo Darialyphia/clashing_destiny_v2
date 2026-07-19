@@ -19,7 +19,11 @@ const keywords = computed(() => {
   <div class="hovered-card-infos">
     <Transition appear>
       <div v-if="ui.hoveredCard" class="hovered-card">
-        <GameCard :card-id="ui.hoveredCard.id" :is-interactive="false" />
+        <GameCard
+          :card-id="ui.hoveredCard.id"
+          :is-interactive="false"
+          :pixel-scale="1.5"
+        />
         <ul>
           <li v-for="keyword in keywords" :key="keyword.id">
             <div class="keyword-name">{{ keyword.name }}</div>

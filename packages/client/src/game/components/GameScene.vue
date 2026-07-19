@@ -31,6 +31,7 @@ import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import InteractionCard from './InteractionCard.vue';
 import GameBoard from './GameBoard.vue';
+import OpponentHand from './OpponentHand.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -138,6 +139,10 @@ const isScreenDimmed = computed(() => {
     <Hand :player-id="myPlayer.id" :key="myPlayer.id" />
   </div>
 
+  <div class="opponent-hand">
+    <OpponentHand :player-id="opponent.id" :teaching-mode="false" />
+  </div>
+
   <button
     aria-label="Settings"
     class="settings-button"
@@ -196,6 +201,13 @@ const isScreenDimmed = computed(() => {
   left: 0;
 }
 
+.opponent-hand {
+  position: fixed;
+  width: 100%;
+  top: 6%;
+  left: 0;
+}
+
 .settings-button {
   --pixel-scale: 2;
   position: fixed;
@@ -243,7 +255,7 @@ const isScreenDimmed = computed(() => {
 
 .my-player {
   position: absolute;
-  left: var(--size-10);
+  left: var(--size-6);
   bottom: 20%;
   translate: 0 20%;
   display: flex;
@@ -253,7 +265,7 @@ const isScreenDimmed = computed(() => {
 
 .opponent-player {
   position: absolute;
-  left: var(--size-10);
+  left: var(--size-6);
   top: 20%;
   translate: 0 -90%;
   display: flex;
@@ -263,7 +275,7 @@ const isScreenDimmed = computed(() => {
 
 .hovered-cell-infos {
   position: absolute;
-  right: var(--size-11);
+  right: var(--size-1);
   top: 45%;
   translate: 0 -50%;
   z-index: 2;

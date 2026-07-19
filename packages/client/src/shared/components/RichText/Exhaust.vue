@@ -12,6 +12,6 @@
   width: calc(20px * var(--pixel-scale));
   height: calc(20px * var(--pixel-scale));
 
-  translate: 0 calc(1px * var(--pixel-scale));
+  translate: 0 calc(3px * var(--pixel-scale));
 }
 </style>

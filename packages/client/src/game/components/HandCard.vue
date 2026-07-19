@@ -3,10 +3,17 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import { useGameState, useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-
-const { card, isInteractive } = defineProps<{
-  card: CardViewModel;
+import CardBack from '@/card/components/CardBack.vue';
+const {
+  card,
+  isInteractive,
+  hoverYOffset = 80,
+  hoverScale = 1.5
+} = defineProps<{
+  card?: CardViewModel;
   isInteractive: boolean;
+  hoverYOffset?: number;
+  hoverScale?: number;
 }>();
 
 const ui = useGameUi();
@@ -20,7 +27,7 @@ const violationWarning = ref('');
 const playViolationAnimation = () => {
   isShaking.value = true;
   violationWarning.value =
-    card.unplayableReason || 'You cannot play this card.';
+    card?.unplayableReason || 'You cannot play this card.';
 
   setTimeout(() => {
     violationWarning.value = '';
@@ -30,6 +37,7 @@ const playViolationAnimation = () => {
 
 let startY = 0;
 const onMousemove = (e: MouseEvent) => {
+  if (!card) return;
   const deltaY = startY - e.clientY;
   if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
     ui.value.startDraggingCard(card);
@@ -39,6 +47,7 @@ const onMousemove = (e: MouseEvent) => {
 };
 
 const onMouseDown = (e: MouseEvent) => {
+  if (!card) return;
   if (!ui.value.isInteractivePlayer) return;
 
   if (!card.canPlay) return playViolationAnimation();
@@ -50,13 +59,13 @@ const onMouseDown = (e: MouseEvent) => {
 };
 
 const isDisabled = computed(() => {
-  return !card.canPlay;
+  return !card?.canPlay;
 });
 
 const isVisible = computed(() => {
   if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return true;
   if (ui.value.optimisticState.isCancellingPlayCard) return true;
-  return state.value.phase.ctx.card !== card.id;
+  return state.value.phase.ctx.card !== card?.id;
 });
 </script>
 
@@ -64,11 +73,12 @@ const isVisible = computed(() => {
   <div
     class="hand-card"
     :class="{
-      selected: ui.selectedCard?.equals(card),
+      selected: card ? ui.selectedCard?.equals(card) : false,
       disabled: isDisabled,
       'is-shaking': isShaking,
       hoverable: ui.draggedCard === null
     }"
+    :style="{ '--hover-y-offset': hoverYOffset, '--hover-scale': hoverScale }"
     @mousedown="onMouseDown($event)"
   >
     <p class="violation-warning" v-if="violationWarning">
@@ -76,7 +86,7 @@ const isVisible = computed(() => {
     </p>
 
     <GameCard
-      v-if="isVisible"
+      v-if="card && isVisible"
       :id="ui.DOMSelectors.cardInHand(card.id, card.player.id).id"
       :card-id="card.id"
       actions-side="top"
@@ -86,6 +96,7 @@ const isVisible = computed(() => {
       @mouseenter="ui.hoverCardInHand(card)"
       @mouseleave="ui.unhoverCardInHand()"
     />
+    <CardBack v-else-if="!card" class="hand-card-flipped" />
   </div>
 </template>
 
@@ -109,8 +120,8 @@ const isVisible = computed(() => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &.hoverable:hover {
-    --scale: 1.5;
-    --hover-offset: -80px;
+    --scale: var(--hover-scale);
+    --hover-offset: calc(var(--hover-y-offset) * 1px);
     z-index: var(--hand-size);
   }
 

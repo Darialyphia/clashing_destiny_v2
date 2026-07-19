@@ -39,7 +39,7 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
 </script>
 
 <template>
-  <div class="my-player-infos">
+  <div class="player-infos surface">
     <section class="left-side">
       <div class="avatar" :class="{ 'has-initiative': hasInitiative }" />
       <div class="infos-bar">
@@ -109,15 +109,13 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
 </template>
 
 <style scoped lang="postcss">
-.my-player-infos {
+.player-infos {
   z-index: 0;
   --drop-shadow: 0 4px #090d18;
   filter: drop-shadow(var(--drop-shadow));
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: var(--size-1);
-  background-color: hsl(0 0% 0% / 0.35);
-  padding: var(--size-2) var(--size-4) 0;
   border-radius: var(--radius-3);
 }
 

@@ -25,7 +25,8 @@ const {
   actionsPortalTarget = '#card-actions-portal',
   modifiersPosition = 'top',
   canTilt = false,
-  overrides = {}
+  overrides = {},
+  pixelScale = 1
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -42,6 +43,7 @@ const {
   modifiersPosition?: 'top' | 'bottom';
   canTilt?: boolean;
   overrides?: Record<string, any>;
+  pixelScale?: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -98,6 +100,7 @@ provideRichTextContext({
     >
       <Card
         v-if="variant === 'default'"
+        :style="{ '--pixel-scale': pixelScale }"
         :is-animated="true"
         :id="card.id"
         :card="{
@@ -128,6 +131,7 @@ provideRichTextContext({
       />
       <SmallCard
         v-else-if="variant === 'small'"
+        :style="{ '--pixel-scale': pixelScale }"
         :id="card.id"
         :card="{
           id: card.id,
@@ -217,9 +221,6 @@ provideRichTextContext({
     rotate 0.3s var(--ease-2);
   position: relative;
 
-  &.small {
-    --pixel-scale: 1;
-  }
   &.exhausted {
     filter: grayscale(0.25) brightness(0.8);
     &.can-tilt {

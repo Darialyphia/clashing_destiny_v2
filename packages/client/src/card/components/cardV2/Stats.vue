@@ -48,6 +48,7 @@ const {} = defineProps<{
   position: relative;
   display: grid;
   place-items: center;
+  padding-bottom: calc(2px * var(--pixel-scale));
 
   .stat-value {
     font-weight: var(--font-weight-7);
@@ -63,6 +64,7 @@ const {} = defineProps<{
   height: calc(30px * var(--pixel-scale));
   background-image: url('@/assets/ui/card/v2/commandment.png');
   background-size: cover;
+  padding-right: calc(4px * var(--pixel-scale));
 }
 
 .atk {
