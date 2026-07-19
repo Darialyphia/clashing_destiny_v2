@@ -8,8 +8,8 @@ export function useBoosterCardLayout(
 ) {
   const cardStyles = computed(() => {
     const count = cards.value.length;
-    const radius = 1000;
-    const angleStep = 18;
+    const radius = 800;
+    const angleStep = 12;
     const totalArc = (count - 1) * angleStep;
     const startAngle = -90 - totalArc / 2;
 
@@ -17,7 +17,7 @@ export function useBoosterCardLayout(
       const angle = startAngle + index * angleStep;
       const radian = (angle * Math.PI) / 180;
       const x = Math.cos(radian) * radius;
-      const y = Math.sin(radian) * radius + 800;
+      const y = Math.sin(radian) * radius + 500;
       const rotation = angle + 90;
 
       return {

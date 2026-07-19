@@ -117,7 +117,7 @@ const maxChoices = computed(() => {
   pointer-events: auto;
 }
 .card-list {
-  --pixel-scale: 1.5;
+  --pixel-scale: 1;
   display: grid;
   grid-template-columns: repeat(
     auto-fit,

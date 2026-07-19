@@ -220,7 +220,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
           :align="'center'"
         >
           <DropdownMenuTrigger
-            v-if="canSelectHero"
+            :disabled="!canSelectHero"
             class="resource-action-indicator"
           />
           <DropdownMenuPortal>
@@ -232,45 +232,59 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
                 <button
                   class="resource-action might"
                   @mouseup="
-                    client.takeResourceAction({
-                      type: 'rune',
-                      rune: RUNES.MIGHT
-                    })
+                    () => {
+                      isResourceActionMenuOpened = false;
+                      client.takeResourceAction({
+                        type: 'rune',
+                        rune: RUNES.MIGHT
+                      });
+                    }
                   "
                 />
                 <button
                   class="resource-action wisdom"
                   @mouseup="
-                    client.takeResourceAction({
-                      type: 'rune',
-                      rune: RUNES.WISDOM
-                    })
+                    () => {
+                      isResourceActionMenuOpened = false;
+                      client.takeResourceAction({
+                        type: 'rune',
+                        rune: RUNES.WISDOM
+                      });
+                    }
                   "
                 />
                 <button
                   class="resource-action focus"
                   @mouseup="
-                    client.takeResourceAction({
-                      type: 'rune',
-                      rune: RUNES.FOCUS
-                    })
+                    () => {
+                      isResourceActionMenuOpened = false;
+                      client.takeResourceAction({
+                        type: 'rune',
+                        rune: RUNES.FOCUS
+                      });
+                    }
                   "
                 />
                 <button
                   class="resource-action resonance"
                   @mouseup="
-                    client.takeResourceAction({
-                      type: 'rune',
-                      rune: RUNES.RESONANCE
-                    })
+                    () => {
+                      isResourceActionMenuOpened = false;
+                      client.takeResourceAction({
+                        type: 'rune',
+                        rune: RUNES.RESONANCE
+                      });
+                    }
                   "
                 />
                 <button
                   class="resource-action draw"
                   @mouseup="
-                    client.takeResourceAction({
-                      type: 'draw'
-                    })
+                    () => {
+                      client.takeResourceAction({
+                        type: 'draw'
+                      });
+                    }
                   "
                 />
               </div>
@@ -297,7 +311,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
-  /* background: url(@/assets/backgrounds/battle-background-hirez.png); */
+  background: url(@/assets/backgrounds/battle-background-hirez.png);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -531,7 +545,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 
 .middle-side {
   position: absolute;
-  top: 415px;
+  top: 390px;
   left: 50%;
   translate: -50% -50%;
   display: flex;
@@ -548,12 +562,18 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
     center;
   background-size: contain;
   z-index: 1;
-  animation: resource-action-indicator-float 2s infinite ease-in-out;
   filter: drop-shadow(0 0 10px var(--yellow-4));
   cursor: pointer;
   transition: filter 0.2s ease-in-out;
-  &:hover {
-    filter: drop-shadow(0 0 15px var(--yellow-3)) brightness(1.2);
+  &:disabled {
+    filter: drop-shadow(0 0 10px var(--yellow-4)) brightness(0.5);
+    cursor: not-allowed;
+  }
+  &:not(:disabled) {
+    animation: resource-action-indicator-float 2s infinite ease-in-out;
+    &:hover {
+      filter: drop-shadow(0 0 15px var(--yellow-3)) brightness(1.2);
+    }
   }
 }
 

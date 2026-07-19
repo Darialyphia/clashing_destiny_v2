@@ -24,7 +24,6 @@ export const birdOfGoodLuck: MinionBlueprint = {
   <rt-runes runes="focus"></rt-runes> <rt-keyword>Flanking</rt-keyword>
   <br/>
   <rt-runes runes="resonance"></rt-runes> +1/+0/+0
-  <br/>
   <rt-runes runes="might"></rt-runes> <rt-keyword>Attacker 1</rt-keyword>
   `,
   collectable: true,

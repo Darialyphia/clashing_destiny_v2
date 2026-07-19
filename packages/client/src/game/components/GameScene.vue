@@ -140,7 +140,10 @@ const isScreenDimmed = computed(() => {
   </div>
 
   <div class="opponent-hand">
-    <OpponentHand :player-id="opponent.id" :teaching-mode="false" />
+    <OpponentHand
+      :player-id="opponent.id"
+      :teaching-mode="options.teachingMode"
+    />
   </div>
 
   <button
@@ -197,7 +200,7 @@ const isScreenDimmed = computed(() => {
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 11.5%;
+  bottom: 18%;
   left: 0;
 }
 

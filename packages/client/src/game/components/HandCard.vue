@@ -7,7 +7,7 @@ import CardBack from '@/card/components/CardBack.vue';
 const {
   card,
   isInteractive,
-  hoverYOffset = 80,
+  hoverYOffset = 0,
   hoverScale = 1.5
 } = defineProps<{
   card?: CardViewModel;
@@ -107,7 +107,7 @@ const isVisible = computed(() => {
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
   --scale: 1;
-  transform-origin: 50% 100%;
+  transform-origin: 0% 100%;
   transform: translateX(var(--x)) translateY(var(--offset-y))
     scale(var(--scale));
   z-index: var(--z);
@@ -115,7 +115,6 @@ const isVisible = computed(() => {
     transform 0.2s var(--ease-2),
     filter 1s var(--ease-2);
   pointer-events: auto;
-
   @starting-style {
     filter: brightness(3.5) saturate(2) !important;
   }

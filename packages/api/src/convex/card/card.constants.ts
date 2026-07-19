@@ -30,7 +30,7 @@ export const BOOSTER_PACKS_CATALOG = {
     id: 'CORE_STANDARD',
     set: CARD_SETS.CORE,
     name: 'Core Set Standard Booster',
-    packSize: 5,
+    packSize: 8,
     packGoldCost: 100,
     foilChance: 0.05,
     enabled: true,

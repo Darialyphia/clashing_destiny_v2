@@ -271,7 +271,7 @@ const cardsWithParticles = computed(() => {
 }
 
 .card-wrapper {
-  --pixel-scale: 1.5;
+  --pixel-scale: 1;
   width: calc(var(--card-v2-width) * var(--pixel-scale));
   aspect-ratio: var(--card-ratio);
   transform-origin: center center;
