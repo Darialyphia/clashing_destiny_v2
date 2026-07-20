@@ -12,10 +12,11 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
-import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../utils/damage';
+import { CardEffectTriggeredEvent } from '../../../card.events';
+import { GAME_EVENTS } from '../../../../game/game.events';
 
 export const ashesOfPain: DestinyBlueprint = {
   id: 'ashes-of-pain',
@@ -46,7 +47,14 @@ export const ashesOfPain: DestinyBlueprint = {
             getModifiers(candidate) {
               return [
                 new OnScoreModifier(game, card, {
-                  async handler(event) {
+                  async handler() {
+                    await game.emit(
+                      GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                      new CardEffectTriggeredEvent({
+                        card,
+                        message: 'Ashes of Pain effect triggered'
+                      })
+                    );
                     await (candidate as MinionCard).takeDamage(
                       card,
                       new AbilityDamage(1)

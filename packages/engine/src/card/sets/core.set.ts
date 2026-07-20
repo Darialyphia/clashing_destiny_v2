@@ -49,6 +49,7 @@ import { ashesOfPain } from './core/destinies/ashes-of-pain';
 import { blastSorcerer } from './core/minions/fire/blast-sorcerer';
 import { moltenSalamander } from './core/minions/fire/molten-salamander';
 import { austerity } from './core/destinies/austerity';
+import { cosmic } from './core/spells/arcane/cosmic-flurry';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -102,6 +103,7 @@ export const coreSet: CardSet = {
     ashesOfPain,
     blastSorcerer,
     moltenSalamander,
-    austerity
+    austerity,
+    cosmic
   ]
 };

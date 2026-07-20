@@ -54,7 +54,8 @@ export const cards = {
 "ashes-of-pain": "ashes-of-pain",
 "blast-sorcerer": "blast-sorcerer",
 "moltenSalamander": "moltenSalamander",
-"austerity": "austerity"
+"austerity": "austerity",
+"cosmicFlurry": "cosmicFlurry"
 } as const;
 
 export const collectableCards = {
@@ -104,7 +105,8 @@ export const collectableCards = {
 "ashes-of-pain": "ashes-of-pain",
 "blast-sorcerer": "blast-sorcerer",
 "moltenSalamander": "moltenSalamander",
-"austerity": "austerity"
+"austerity": "austerity",
+"cosmicFlurry": "cosmicFlurry"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -403,6 +405,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "epic",
     "kind": "DESTINY"
+  },
+  {
+    "id": "cosmicFlurry",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
   }
 ]
 };
@@ -456,7 +464,8 @@ export const cardShortIds: Record<string, number> = {
 "ashes-of-pain": 46,
 "blast-sorcerer": 47,
 "moltenSalamander": 48,
-"austerity": 49
+"austerity": 49,
+"cosmicFlurry": 50
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -508,5 +517,6 @@ export const cardIdByShortId: Record<number, string> = {
 "46": "ashes-of-pain",
 "47": "blast-sorcerer",
 "48": "moltenSalamander",
-"49": "austerity"
+"49": "austerity",
+"50": "cosmicFlurry"
 } as const;

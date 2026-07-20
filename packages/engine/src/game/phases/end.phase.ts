@@ -38,7 +38,6 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
 
   async terminateTurn() {
     await this.game.turnSystem.endTurn();
-    await this.game.turnSystem.startTurn();
     await this.game.gamePhaseSystem.startTurn();
   }
 

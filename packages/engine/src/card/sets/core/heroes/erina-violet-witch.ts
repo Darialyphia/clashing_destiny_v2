@@ -48,9 +48,9 @@ export const erinaVioletWitch: HeroBlueprint = {
       manaCost: 0,
       shouldExhaust: true,
       async onResolve(game, card) {
-        // const modifier = card.modifiers.get(SpellSlingerCounterModifier);
-        // if (!modifier) return;
-        // await modifier.removeStacks(4);
+        const modifier = card.modifiers.get(SpellSlingerCounterModifier);
+        if (!modifier) return;
+        await modifier.removeStacks(4);
         await card.player.manaManager.gain(2);
       },
       aiHints: {

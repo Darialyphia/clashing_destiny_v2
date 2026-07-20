@@ -47,6 +47,7 @@ export abstract class Input<TSchema extends DefaultSchema>
   }
 
   get isValidPhase() {
+    console.log(this.allowedPhases, this.game.gamePhaseSystem.getContext().state);
     return this.allowedPhases.includes(this.game.gamePhaseSystem.getContext().state);
   }
 

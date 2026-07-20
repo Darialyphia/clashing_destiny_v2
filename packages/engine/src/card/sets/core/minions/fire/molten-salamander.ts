@@ -27,7 +27,7 @@ export const moltenSalamander: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/reckless-recruit'),
+  art: defaultCardArt('minions/molten-salamander'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.TAMER],

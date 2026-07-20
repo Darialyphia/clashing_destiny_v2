@@ -61,7 +61,9 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
   },
   async onPlay(game, card, targets) {
     const minion = targets.cards[0];
-    await minion.addToHand();
+    if (minion.isOnBoard) {
+      await minion.addToHand();
+    }
 
     await card.player.cardManager.draw(1);
   },

@@ -13,6 +13,8 @@ import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { Modifier } from '../../../../../modifier/modifier.entity';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
+import { CardEffectTriggeredEvent } from '../../../../card.events';
 
 export const manaFueledGolem: MinionBlueprint = {
   id: 'manaFueledGolem',
@@ -37,11 +39,18 @@ export const manaFueledGolem: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new Modifier<MinionCard>('mana-fueled-golem', game, card, {
+      new WhileOnBoardModifier<MinionCard>('mana-fueled-golem', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.TURN_START,
             handler: async () => {
+              await game.emit(
+                GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                new CardEffectTriggeredEvent({
+                  card,
+                  message: 'Mana-fueled Golem effect triggered'
+                })
+              );
               const answer = await askMandatoryYesNoQuestion({
                 game,
                 card,
