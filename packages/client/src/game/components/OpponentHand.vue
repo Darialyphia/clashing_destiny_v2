@@ -18,7 +18,7 @@ const { playerId, teachingMode } = defineProps<{
   teachingMode: boolean;
 }>();
 
-const player = usePlayer(playerId);
+const player = usePlayer(computed(() => playerId));
 const ui = useGameUi();
 const { client } = useGameClient();
 
