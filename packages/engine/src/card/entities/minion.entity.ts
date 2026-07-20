@@ -41,7 +41,7 @@ import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
 import { match } from 'ts-pattern';
 import { isHero } from '../card-utils';
-import type { BetterExtract } from '@game/shared';
+import { isDefined, type BetterExtract } from '@game/shared';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -171,6 +171,13 @@ export class MinionCard extends Card<
       this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
       this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
     );
+  }
+
+  isOnSameBattlefieldAs(card: MinionCard) {
+    if (!this.isOnBattlefield || !card.isOnBattlefield) return false;
+    return this.battlefield!.allSpaces.map(space => space.card)
+      .filter(isDefined)
+      .some(c => c.equals(card));
   }
 
   get isOnBoard() {

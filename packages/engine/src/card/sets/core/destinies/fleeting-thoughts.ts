@@ -17,6 +17,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../utils/damage';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 import { GAME_EVENTS } from '../../../../game/game.events';
+import { discardFromHand } from '../../../card-actions-utils';
 
 export const ashesOfPain: DestinyBlueprint = {
   id: 'ashes-of-pain',
@@ -24,7 +25,7 @@ export const ashesOfPain: DestinyBlueprint = {
   collectable: true,
   name: 'Ashes of Pain',
   description: dedent /*html*/ `
-    Minions at this battlefield have <rt-trigger>On Score</rt-trigger> this takes 1 damage.
+    Minions at this battlefield have <rt-trigger>On Score</rt-trigger>  Discard a card, then draw a card.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
@@ -52,10 +53,9 @@ export const ashesOfPain: DestinyBlueprint = {
                         message: 'Ashes of Pain effect triggered'
                       })
                     );
-                    await (candidate as MinionCard).takeDamage(
-                      card,
-                      new AbilityDamage(1)
-                    );
+                    if (card.player.cardManager.hand.length === 0) return;
+                    await discardFromHand(game, card, { min: 1, max: 1 });
+                    await card.player.cardManager.draw(1);
                   }
                 })
               ];

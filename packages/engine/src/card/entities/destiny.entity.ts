@@ -1,3 +1,4 @@
+import { isDefined } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { type DestinyBlueprint } from '../card-blueprint';
@@ -9,6 +10,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
+import type { MinionCard } from './minion.entity';
 
 export type SerializedDestinyCard = SerializedCard;
 export type DestinyCardInterceptors = CardInterceptors;
@@ -45,6 +47,13 @@ export class DestinyCard extends Card<
     } else {
       return this.player.boardSide.rightBattlefield;
     }
+  }
+
+  isOnSameBattlefieldAs(card: MinionCard) {
+    if (!this.battlefield || !card.isOnBattlefield) return false;
+    return this.battlefield!.allSpaces.map(space => space.card)
+      .filter(isDefined)
+      .some(c => c.equals(card));
   }
 
   serialize(): SerializedDestinyCard {

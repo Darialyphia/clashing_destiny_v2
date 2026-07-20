@@ -41,6 +41,7 @@ export type Effect = {
   handler: (game: Game) => Promise<void>;
   targets: Targets;
   isNegated?: boolean;
+  shouldHideTargetArrows?: boolean;
 };
 
 export type SerializedEffectChain = {
@@ -53,6 +54,7 @@ export type SerializedEffectChain = {
   }>;
   state: EffectChainState;
   player: string;
+  shouldHideTargetArrows?: boolean;
 };
 
 export const EFFECT_CHAIN_EVENTS = {
@@ -284,7 +286,8 @@ export class EffectChain
           type: effect.type,
           source: effect.source.serialize(),
           targets: serializeTargets(effect.targets),
-          isNegated: effect.isNegated ?? null
+          isNegated: effect.isNegated ?? null,
+          shouldHideTargetArrows: effect.shouldHideTargetArrows ?? false
         };
       }),
       state: this.getState(),
