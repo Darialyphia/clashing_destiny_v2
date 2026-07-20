@@ -71,6 +71,18 @@ export class Battlefield
     }
   }
 
+  get isWinning() {
+    return this.commandmentScore > this.opponentCommandmentScore;
+  }
+
+  get isLosing() {
+    return this.commandmentScore < this.opponentCommandmentScore;
+  }
+
+  get isDraw() {
+    return this.commandmentScore === this.opponentCommandmentScore;
+  }
+
   get opponentBattlefield() {
     if (this.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
       return this.player.opponent.boardSide.leftBattlefield;

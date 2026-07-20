@@ -6,32 +6,24 @@ import {
   CARD_KINDS,
   RARITIES,
   AFFINITIES,
-  CARD_SPEED
+  CARD_SPEED,
+  JOBS
 } from '../../../../card.enums';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
-import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
-import { predict } from '../../../../card-actions-utils';
-import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const birdOfGoodLuck: MinionBlueprint = {
   id: 'birdOfGoodLuck',
   name: 'Bird of Good Luck',
   description: dedent /*html*/ `
-  <rt-runes runes="wisdom"></rt-runes><rt-trigger>On Enter</rt-trigger> <rt-keyword>Predict</rt-keyword>.
-  <rt-runes runes="focus"></rt-runes> <rt-keyword>Flanking</rt-keyword>
-  <br/>
-  <rt-runes runes="resonance"></rt-runes> +1/+0/+0
-  <rt-runes runes="might"></rt-runes> <rt-keyword>Attacker 1</rt-keyword>
+  <rt-trigger>On Enter</rt-trigger> Gain 1 influence on battlefields where you have less influence than your opponent.
+  <rt-runes runes="might,resonance,focus,wisdom"></rt-runes> Gain 2 influence instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  jobs: [],
+  jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
   speed: CARD_SPEED.SLOW,
@@ -43,48 +35,23 @@ export const birdOfGoodLuck: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new FlankingModifier(game, card, {
-        amount: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            focus: 1
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          await predict(game, card);
-        },
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
+          const amountToGain = card.player.runeManager.has({
+            might: 1,
+            resonance: 1,
+            focus: 1,
             wisdom: 1
           })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new SimpleCommandmentBuffModifier('bird-of-good-luck-cmd-buff', game, card, {
-        amount: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            resonance: 1
-          })
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new AttackerModifier(game, card, {
-        amount: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 1
-          })
-        ]
+            ? 2
+            : 1;
+          if (card.player.boardSide.leftBattlefield.isLosing) {
+            await card.player.boardSide.leftBattlefield.gainScore(amountToGain);
+          }
+          if (card.player.boardSide.rightBattlefield.isLosing) {
+            await card.player.boardSide.rightBattlefield.gainScore(amountToGain);
+          }
+        }
       })
     );
   },

@@ -50,7 +50,11 @@ export const cards = {
 "terramancer": "terramancer",
 "twinFlame": "twinFlame",
 "vineTrapper": "vineTrapper",
-"willowisp": "willowisp"
+"willowisp": "willowisp",
+"ashes-of-pain": "ashes-of-pain",
+"blast-sorcerer": "blast-sorcerer",
+"moltenSalamander": "moltenSalamander",
+"austerity": "austerity"
 } as const;
 
 export const collectableCards = {
@@ -96,7 +100,11 @@ export const collectableCards = {
 "starSeer": "starSeer",
 "terramancer": "terramancer",
 "twinFlame": "twinFlame",
-"vineTrapper": "vineTrapper"
+"vineTrapper": "vineTrapper",
+"ashes-of-pain": "ashes-of-pain",
+"blast-sorcerer": "blast-sorcerer",
+"moltenSalamander": "moltenSalamander",
+"austerity": "austerity"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -371,6 +379,30 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": false,
     "rarity": "common",
     "kind": "MINION"
+  },
+  {
+    "id": "ashes-of-pain",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "blast-sorcerer",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "moltenSalamander",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "austerity",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "DESTINY"
   }
 ]
 };
@@ -420,7 +452,11 @@ export const cardShortIds: Record<string, number> = {
 "terramancer": 44,
 "twinFlame": 36,
 "vineTrapper": 41,
-"willowisp": 6
+"willowisp": 6,
+"ashes-of-pain": 46,
+"blast-sorcerer": 47,
+"moltenSalamander": 48,
+"austerity": 49
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -468,5 +504,9 @@ export const cardIdByShortId: Record<number, string> = {
 "42": "impassibleMonk",
 "43": "rockslideGolem",
 "44": "terramancer",
-"45": "runicCatalyst"
+"45": "runicCatalyst",
+"46": "ashes-of-pain",
+"47": "blast-sorcerer",
+"48": "moltenSalamander",
+"49": "austerity"
 } as const;

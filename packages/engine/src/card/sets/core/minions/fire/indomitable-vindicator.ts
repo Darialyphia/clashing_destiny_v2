@@ -17,13 +17,14 @@ import { AbilityDamage } from '../../../../../utils/damage';
 import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 import { isDefined } from '@game/shared';
+import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 
 export const indomitableVindicator: MinionBlueprint = {
   id: 'indomitableVindicator',
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
   <rt-keyword>On Score</rt-keyword> Deal 1 damage to all other minions on this battlefield.
-  <rt-runes runes="might,might,resonance"></rt-runes> Once per turn, when another minion Scores on the same battlefield, wake up this unit.
+  <rt-runes runes="might,might,resonance"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,7 +38,7 @@ export const indomitableVindicator: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 4,
-  commandment: 1,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -58,23 +59,9 @@ export const indomitableVindicator: MinionBlueprint = {
       })
     );
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<MinionCard>('indomitableVindicator', game, card, {
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 2
-          }),
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.AFTER_SCORE,
-            filter: event =>
-              card.isExhausted &&
-              event.data.battlefield.id === card.battlefield?.id &&
-              !event.data.card.equals(card),
-            frequencyPerGameTurn: 1,
-            async handler() {
-              await card.wakeUp();
-            }
-          })
-        ]
+      new RushModifier(game, card, {
+        cost: 1,
+        mixins: [new RuneCostToggleModifierMixin(game, card, { might: 2, resonance: 1 })]
       })
     );
   },

@@ -12,20 +12,19 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 
-export const dayOfConquest: DestinyBlueprint = {
-  id: 'day-of-conquest',
+export const austerity: DestinyBlueprint = {
+  id: 'austerity',
   kind: CARD_KINDS.DESTINY,
   collectable: true,
-  name: 'Day of Conquest',
+  name: 'Austerity',
   description: dedent /*html*/ `
-    Minions at this battlefield have <rt-keyword>Attacker 1</rt-keyword>.
+    Minions at this battlefield have 0 CMD.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [],
@@ -33,7 +32,7 @@ export const dayOfConquest: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('day-of-conquest', game, card, {
+      new WhileOnBattlefieldModifier<DestinyCard>('ashes-of-pain', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {
@@ -43,7 +42,17 @@ export const dayOfConquest: DestinyBlueprint = {
                 .some(c => c.equals(candidate));
             },
             getModifiers() {
-              return [new AttackerModifier(game, card, { amount: 1 })];
+              return [
+                new Modifier('austerity-aura', game, card, {
+                  mixins: [
+                    new MinionInterceptorModifierMixin(game, {
+                      key: 'commandment',
+                      interceptor: () => 0,
+                      priority: 100
+                    })
+                  ]
+                })
+              ];
             }
           })
         ]

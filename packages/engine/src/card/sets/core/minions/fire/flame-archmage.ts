@@ -37,7 +37,7 @@ export const flameArchmage: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 4,
-  commandment: 2,
+  commandment: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

@@ -78,6 +78,12 @@ export const KEYWORDS = {
     description: 'When you play this card, add a copy of it to your hand without Echo.',
     aliases: []
   },
+  EPHEMERAL: {
+    id: 'ephemeral',
+    name: 'Ephemeral',
+    description: 'This card is banished at the end of the turn if it is on the board.',
+    aliases: []
+  },
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',

@@ -47,7 +47,7 @@ const setVariableFontSize = (
 const descriptionBox = useTemplateRef('description-box');
 
 const DESCRIPTION_MIN_TEXT_SIZE = 8;
-const DESCRIPTION_MAX_TEXT_SIZE = 12;
+const DESCRIPTION_MAX_TEXT_SIZE = 13;
 const descriptionFontSize = ref(DESCRIPTION_MAX_TEXT_SIZE);
 
 const resizeDescription = () => {

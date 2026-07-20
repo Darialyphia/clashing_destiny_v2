@@ -120,6 +120,11 @@ export const JOBS = {
     id: 'ranger',
     name: 'Ranger',
     shortName: 'Ranger'
+  },
+  TAMER: {
+    id: 'tamer',
+    name: 'Tamer',
+    shortName: 'Tamer'
   }
 } as const satisfies Record<string, Job>;
 export type JobId = Values<typeof JOBS>['id'];

@@ -45,6 +45,10 @@ import { terramancer } from './core/minions/earth/terramancer';
 import { twinFlame } from './core/spells/fire/twin-flame';
 import { vineTrapper } from './core/minions/earth/vine-trapper';
 import { willowisp } from './core/minions/fire/willowisp';
+import { ashesOfPain } from './core/destinies/ashes-of-pain';
+import { blastSorcerer } from './core/minions/fire/blast-sorcerer';
+import { moltenSalamander } from './core/minions/fire/molten-salamander';
+import { austerity } from './core/destinies/austerity';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -94,6 +98,10 @@ export const coreSet: CardSet = {
     terramancer,
     twinFlame,
     vineTrapper,
-    willowisp
+    willowisp,
+    ashesOfPain,
+    blastSorcerer,
+    moltenSalamander,
+    austerity
   ]
 };

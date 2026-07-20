@@ -1,11 +1,7 @@
 import dedent from 'dedent';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  defaultCardArt,
-  emptyBoardSpaceTargetRules,
-  singleEnemyMinionTargetRules
-} from '../../../../card-utils';
+import { defaultCardArt, emptyBoardSpaceTargetRules } from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -14,17 +10,20 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import { AbilityDamage } from '../../../../../utils/damage';
 import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
-import { OnKillModifier } from '../../../../../modifier/modifiers/on-kill.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
+import {
+  askMandatoryYesNoQuestion,
+  chooseColorlessRune
+} from '../../../../card-actions-utils';
+import { type Rune } from '../../../../../player/player.enums';
+import { EphemeralModifier } from '../../../../../modifier/modifiers/ephemeral.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Attack</rt-trigger> You may deal 1 damage to an enemy on the same battlefield.
-  <rt-runes runes="wisdom,might"></rt-runes> <rt-trigger>On Kill</rt-trigger> summon a <rt-card>Will-o-Wisp</rt-card> exhausted on the same location as this minion.
+  <rt-trigger>On Attack</rt-trigger> You may consume <rt-runes runes="colorless"></rt-runes> to summon an <rt-keyword>Ephemeral</rt-keyword> <rt-card>Will-o-Wisp</rt-card> on the same location as this minion
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -45,46 +44,36 @@ export const pyromancer: MinionBlueprint = {
     await card.modifiers.add(
       new OnAttackModifier(game, card, {
         async handler() {
-          const hasTarget = singleEnemyMinionTargetRules.canPlay(
-            game,
-            card,
-            minion => minion.location === card.location
-          );
-
-          if (!hasTarget) return;
-          const target = await singleEnemyMinionTargetRules.getTargets({
-            game,
-            card,
-            canCancel: false,
-            label: 'Select an enemy minion to deal 1 damage to',
-            timeoutFallback: [],
-            aiHints: {
-              shouldPick: () => 1
-            },
-            predicate: minion => minion.location === card.location
-          });
-          if (!target) return;
-          if (target.cancelled) return;
-
-          await target.result.cards[0]?.takeDamage(card, new AbilityDamage(1));
-        }
-      })
-    );
-
-    await card.modifiers.add(
-      new OnKillModifier(game, card, {
-        async handler() {
           if (card.isOnBattlefield) return;
-          const generatedCard = await card.player.generateCard<MinionCard>(
-            'willowisp',
-            card.isFoil
-          );
-          const hasRoom = emptyBoardSpaceTargetRules.canPlay(
+
+          const canSummonWisp =
+            card.player.runeManager.runeCount > 0 &&
+            emptyBoardSpaceTargetRules.canPlay(
+              game,
+              space =>
+                space.player.equals(card.player) && space.position.zone === card.location
+            );
+          if (!canSummonWisp) return;
+
+          const shouldGenerateWisp = await askMandatoryYesNoQuestion({
             game,
-            space =>
-              space.player.equals(card.player) && space.position.zone === card.location
-          );
-          if (!hasRoom) return;
+            card,
+            questionId: 'pyromancer-summon-wisp',
+            label: 'Consume a rune to summon a Will-o-wisp?',
+            timeoutFallback: 'no',
+            aiChoice: 'yes'
+          });
+
+          if (!shouldGenerateWisp) return;
+
+          const runeResult = await chooseColorlessRune({
+            game,
+            card,
+            questionId: 'pyromancer-rune-choice'
+          });
+
+          if (runeResult.cancelled) return;
+          await card.player.runeManager.remove([runeResult.result as Rune]);
 
           const result = await emptyBoardSpaceTargetRules.getTargets({
             game,
@@ -93,9 +82,16 @@ export const pyromancer: MinionBlueprint = {
               space.player.equals(card.player) && space.position.zone === card.location,
             label: 'Select a space to summon the Willowisp'
           });
-          if (!result) return;
+
           if (result.cancelled) return;
+
+          const generatedCard = await card.player.generateCard<MinionCard>(
+            'willowisp',
+            card.isFoil
+          );
           await generatedCard.playImmediatelyAt(result.result.spaces[0]);
+          await generatedCard.wakeUp();
+          await generatedCard.modifiers.add(new EphemeralModifier(game, card));
         },
         mixins: [
           new RuneCostToggleModifierMixin(game, card, {

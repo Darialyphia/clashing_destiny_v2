@@ -13,8 +13,6 @@ import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
 export const manaFueledGolem: MinionBlueprint = {
   id: 'manaFueledGolem',

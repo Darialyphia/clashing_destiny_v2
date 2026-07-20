@@ -11,7 +11,6 @@ import {
 } from '../../../../card.enums';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
-import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 import { SpellSlingerCounterModifier } from '../../../../../modifier/modifiers/counters.modifier';
 
 export const erinasApprentice: MinionBlueprint = {

@@ -12,20 +12,21 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
+import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
+import type { MinionCard } from '../../../entities/minion.entity';
+import { AbilityDamage } from '../../../../utils/damage';
 
-export const dayOfConquest: DestinyBlueprint = {
-  id: 'day-of-conquest',
+export const ashesOfPain: DestinyBlueprint = {
+  id: 'ashes-of-pain',
   kind: CARD_KINDS.DESTINY,
   collectable: true,
-  name: 'Day of Conquest',
+  name: 'Ashes of Pain',
   description: dedent /*html*/ `
-    Minions at this battlefield have <rt-keyword>Attacker 1</rt-keyword>.
+    Minions at this battlefield have <rt-trigger>On Score</rt-trigger> this takes 1 damage.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.RARE,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   jobs: [],
@@ -33,7 +34,7 @@ export const dayOfConquest: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('day-of-conquest', game, card, {
+      new WhileOnBattlefieldModifier<DestinyCard>('ashes-of-pain', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {
@@ -42,8 +43,17 @@ export const dayOfConquest: DestinyBlueprint = {
                 .filter(isDefined)
                 .some(c => c.equals(candidate));
             },
-            getModifiers() {
-              return [new AttackerModifier(game, card, { amount: 1 })];
+            getModifiers(candidate) {
+              return [
+                new OnScoreModifier(game, card, {
+                  async handler(event) {
+                    await (candidate as MinionCard).takeDamage(
+                      card,
+                      new AbilityDamage(1)
+                    );
+                  }
+                })
+              ];
             }
           })
         ]

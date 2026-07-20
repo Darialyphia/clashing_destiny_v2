@@ -14,13 +14,15 @@ import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modi
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
+import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
+import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const astralSage: MinionBlueprint = {
   id: 'astralSage',
   name: 'Astral Sage',
   description: dedent /*html*/ `
     <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    This gains CMD equal to amount of <rt-card>Astral Ball</rt-card> you control.</rt-location>
+    <rt-runes runes="focus,wisdom"></rt-runes> <rt-keyword>Rush 1</rt-keyword>
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -29,12 +31,12 @@ export const astralSage: MinionBlueprint = {
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 6,
+  manaCost: 5,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 6,
-  commandment: 1,
+  maxHp: 5,
+  commandment: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -67,10 +69,9 @@ export const astralSage: MinionBlueprint = {
     );
 
     await card.modifiers.add(
-      new SimpleCommandmentBuffModifier('astralSage-cmd-buff', game, card, {
-        amount: () =>
-          card.player.minions.filter(minion => minion.blueprint.id === 'astralBall')
-            .length
+      new RushModifier(game, card, {
+        cost: 1,
+        mixins: [new RuneCostToggleModifierMixin(game, card, { focus: 1, wisdom: 1 })]
       })
     );
   },
