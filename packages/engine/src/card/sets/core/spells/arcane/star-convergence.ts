@@ -32,6 +32,7 @@ export const starConvergence: SpellBlueprint = {
   manaCost: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  shouldHideTargetarrows: true,
   canPlay: (game, card) => card.player.runeManager.has({ resonance: 1 }),
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},

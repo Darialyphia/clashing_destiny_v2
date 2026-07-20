@@ -27,9 +27,10 @@ export const cosmic: SpellBlueprint = {
   rarity: RARITIES.RARE,
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 3,
+  manaCost: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  shouldHideTargetarrows: true,
   canPlay: () => true,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit(game, card) {

@@ -61,6 +61,9 @@ const buildPaths = async () => {
     if (effect.type === EFFECT_TYPE.RETALIATION) {
       return [];
     }
+    if (effect.shouldHideTargetArrows) {
+      return [];
+    }
     const cardArrows = effect.targets.cards.map(target => {
       const boardRect =
         ui.value.DOMSelectors.board.element!.getBoundingClientRect();

@@ -56,6 +56,7 @@ export type CardBlueprintBase = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
   affinities: Affinity[];
+  shouldHideTargetarrows?: boolean;
 };
 
 export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends AnyCard> = {
@@ -66,6 +67,7 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends Any
   label: string;
   isHiddenOnCard?: boolean;
   shouldExhaust?: boolean;
+  shouldHideTargetarrows?: boolean;
   getTargets: (
     game: Game,
     card: TCard

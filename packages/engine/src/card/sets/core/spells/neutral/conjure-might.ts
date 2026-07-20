@@ -29,6 +29,7 @@ export const conjureMight: SpellBlueprint = {
   manaCost: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
+  shouldHideTargetarrows: true,
   canPlay: (game, card) => card.player.cardManager.hand.length > 0,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit(game, card) {

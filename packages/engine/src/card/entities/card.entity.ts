@@ -276,7 +276,8 @@ export abstract class Card<
       handler: async () => {
         await this.resolve(handler);
         this.isPlayedFromHand = false;
-      }
+      },
+      shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
     };
 
     if (!this.shouldCreateChainWhenPlayed) {

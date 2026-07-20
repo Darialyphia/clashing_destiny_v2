@@ -51,10 +51,10 @@ export type SerializedEffectChain = {
     source: SerializedCard;
     targets: SerializedTargets;
     isNegated: boolean | null;
+    shouldHideTargetArrows?: boolean;
   }>;
   state: EffectChainState;
   player: string;
-  shouldHideTargetArrows?: boolean;
 };
 
 export const EFFECT_CHAIN_EVENTS = {

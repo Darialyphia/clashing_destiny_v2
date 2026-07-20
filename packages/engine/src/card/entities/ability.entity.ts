@@ -108,7 +108,8 @@ export class Ability<T extends AbilityOwner>
         targets,
         handler: async () => {
           await this.resolveEffect();
-        }
+        },
+        shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
       };
 
       if (this.game.effectChainSystem.currentChain) {
