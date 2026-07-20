@@ -17,7 +17,8 @@ const {
   style = {},
   closable = true,
   usePortal = true,
-  modal = true
+  modal = true,
+  animated = true
 } = defineProps<{
   title: string;
   description: string;
@@ -25,6 +26,11 @@ const {
   style?: StyleProp<ModalStyleVariables>;
   usePortal?: boolean;
   modal?: boolean;
+  animated?: boolean;
+}>();
+
+const emit = defineEmits<{
+  openAnimationEnd: [];
 }>();
 </script>
 
@@ -35,9 +41,17 @@ const {
         <DialogOverlay class="modal-overlay" />
       </Transition>
 
-      <Transition appear>
+      <Transition
+        appear
+        @after-enter="
+          () => {
+            emit('openAnimationEnd');
+          }
+        "
+      >
         <DialogContent
           class="modal-content"
+          :class="{ animated }"
           :style="style"
           @escape-key-down="
             e => {
@@ -113,30 +127,22 @@ const {
     pointer-events: all;
   } */
 
-  &:is(.v-enter-active, .v-leave-active) {
-    transition:
-      transform 0.3s,
-      opacity 0.2s 0.1s;
-  }
+  &.animated {
+    &:is(.v-enter-active, .v-leave-active) {
+      transition:
+        transform 0.3s,
+        opacity 0.2s 0.1s;
+    }
 
-  &.v-enter-from {
-    transform: translate(-50%, -50%) scale(2);
-    opacity: 0;
-  }
+    &.v-enter-from {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
 
-  &.v-leave-to {
-    transform: translate(-50%, calc(-50% - 3rem));
-    opacity: 0;
+    &.v-leave-to {
+      transform: translate(-50%, calc(-50% - 3rem));
+      opacity: 0;
+    }
   }
-}
-
-.end-game-ui {
-  background-color: #32021b;
-  padding: var(--size-5);
-  border: solid 6px #efef9f;
-  border-right-color: #d7ad42;
-  border-bottom-color: #d7ad42;
-  text-shadow: 0 4px 0px #4e3327;
-  box-shadow: 3px 3px 0 black;
 }
 </style>

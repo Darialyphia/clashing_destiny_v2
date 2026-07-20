@@ -16,8 +16,9 @@ import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import { useAuthedMutation } from '@/auth/composables/useAuth';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import { useMe } from '@/auth/composables/useMe';
-import { isFunction } from '@game/shared';
+import { isFunction, waitFor } from '@game/shared';
 import { provideRichTextContext } from '@/game/composables/useRichText';
+import { unrefElement } from '@vueuse/core';
 
 const { card } = defineProps<{
   card: {
@@ -80,6 +81,88 @@ const description = computed(() => {
 provideRichTextContext({
   card: ref(null)
 });
+
+const cardRoot = useTemplateRef('root');
+
+watch(isOpened, async opened => {
+  if (!opened) {
+    animateCardOut();
+  }
+});
+
+const shouldDisplayCard = ref(false);
+const animateCardIn = async () => {
+  shouldDisplayCard.value = true;
+  const collectionCard = document.querySelector(
+    `[data-flip-id="collection-card-${card.id}"]`
+  );
+  if (!collectionCard) return;
+  await nextTick();
+  const modalCard = unrefElement(cardRoot)!;
+  const collectionCardRect = collectionCard.getBoundingClientRect();
+  const modalCardRect = modalCard.getBoundingClientRect();
+  const transforms = {
+    x: collectionCardRect.left - modalCardRect.left,
+    y: collectionCardRect.top - modalCardRect.top,
+    scaleX: collectionCardRect.width / modalCardRect.width,
+    scaleY: collectionCardRect.height / modalCardRect.height
+  };
+  modalCard.style.transformOrigin = 'top left';
+  modalCard.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+  await nextTick();
+  modalCard.style.transform = '';
+  modalCard.style.transition = 'transform 0.3s ease-in-out';
+  modalCard.addEventListener(
+    'transitionend',
+    () => {
+      modalCard.style.transition = '';
+      modalCard.style.transformOrigin = '';
+    },
+    { once: true }
+  );
+};
+
+const animateCardOut = async () => {
+  shouldDisplayCard.value = false;
+  const collectionCard = document.querySelector(
+    `[data-flip-id="collection-card-${card.id}"]`
+  ) as HTMLElement | null;
+  if (!collectionCard) return;
+
+  const modalCard = unrefElement(cardRoot)!;
+  const collectionCardRect = collectionCard.getBoundingClientRect();
+  const modalCardRect = modalCard.getBoundingClientRect();
+  const transforms = {
+    x: modalCardRect.left - collectionCardRect.left,
+    y: modalCardRect.top - collectionCardRect.top,
+    scaleX: modalCardRect.width / collectionCardRect.width,
+    scaleY: modalCardRect.height / collectionCardRect.height
+  };
+  collectionCard.style.transformOrigin = 'top left';
+  collectionCard.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+
+  const zIndexAncestor = collectionCard.closest<HTMLElement>(
+    'li[data-collection-card-id]'
+  );
+  if (zIndexAncestor) {
+    zIndexAncestor.style.zIndex = '1000';
+  }
+
+  await waitFor(50);
+  collectionCard.style.transition = 'transform 0.3s ease-in-out';
+  collectionCard.style.transform = '';
+  collectionCard.addEventListener(
+    'transitionend',
+    () => {
+      collectionCard.style.transition = '';
+      collectionCard.style.transformOrigin = '';
+      if (zIndexAncestor) {
+        zIndexAncestor.style.zIndex = '';
+      }
+    },
+    { once: true }
+  );
+};
 </script>
 
 <template>
@@ -88,122 +171,127 @@ provideRichTextContext({
     :title="card.card.name"
     :description="description"
     :style="{ '--ui-modal-size': 'var(--size-lg)' }"
+    :animated="false"
+    @open-animation-end="animateCardIn"
   >
     <article class="card-details">
       <aside class="card-preview">
-        <Transition name="card" appear>
-          <BlueprintCard
-            :blueprint="card.card"
-            show-stats
-            :is-foil="card.isFoil"
-          />
-        </Transition>
+        <BlueprintCard
+          v-if="shouldDisplayCard"
+          ref="root"
+          :data-flip-id="`collection-card-modal-${card.id}`"
+          :blueprint="card.card"
+          show-stats
+          :is-foil="card.isFoil"
+        />
       </aside>
 
-      <section class="card-info surface">
-        <header>
-          <h2>{{ card.card.name }}</h2>
-          <span
-            class="rarity-badge"
-            :style="{
-              '--rarity-color': `var(--rarity-${card.card.rarity.toLowerCase()})`
-            }"
-          >
-            {{ card.card.rarity }}
-          </span>
-          <p class="metadata">
-            <span class="set-id">{{ card.card.setId }}</span>
-            <span class="separator">•</span>
-            <span class="copies-count">
-              {{ card.copiesOwned }}
-              {{ card.copiesOwned === 1 ? 'copy' : 'copies' }} owned
+      <Transition appear>
+        <section class="card-info surface">
+          <header>
+            <h2>{{ card.card.name }}</h2>
+            <span
+              class="rarity-badge"
+              :style="{
+                '--rarity-color': `var(--rarity-${card.card.rarity.toLowerCase()})`
+              }"
+            >
+              {{ card.card.rarity }}
             </span>
-          </p>
-        </header>
+            <p class="metadata">
+              <span class="set-id">{{ card.card.setId }}</span>
+              <span class="separator">•</span>
+              <span class="copies-count">
+                {{ card.copiesOwned }}
+                {{ card.copiesOwned === 1 ? 'copy' : 'copies' }} owned
+              </span>
+            </p>
+          </header>
 
-        <section class="description">
-          <h3>Description</h3>
-          <CardText :text="description" />
+          <section class="description">
+            <h3>Description</h3>
+            <CardText :text="description" />
+          </section>
+
+          <section
+            v-if="'abilities' in card.card && card.card.abilities?.length"
+            class="abilities"
+          >
+            <h3>Abilities</h3>
+            <ul>
+              <li v-for="(ability, index) in card.card.abilities" :key="index">
+                <CardText :text="ability.description" />
+              </li>
+            </ul>
+          </section>
+
+          <Transition name="success-message">
+            <aside v-if="successMessage" class="success-notification">
+              {{ successMessage }}
+            </aside>
+          </Transition>
+
+          <footer>
+            <FancyButton
+              :text="`Craft (${craftingCost})`"
+              :disabled="isCrafting || isDecrafting"
+              size="sm"
+              @click="craft({ blueprintId: card.card.id, isFoil: false })"
+            >
+              <template #left>
+                <CraftignShardIcon />
+              </template>
+
+              <template v-if="isCrafting" #right>
+                <UiSpinner size="5" />
+              </template>
+            </FancyButton>
+
+            <FancyButton
+              :text="`Craft Foil (${craftingCost * FOIL_CRAFTING_COST_MULTIPLIER})`"
+              :disabled="isCrafting || isDecrafting"
+              size="sm"
+              @click="craft({ blueprintId: card.card.id, isFoil: true })"
+            >
+              <template #left>
+                <CraftignShardIcon />
+              </template>
+
+              <template v-if="isCrafting" #right>
+                <UiSpinner size="5" />
+              </template>
+            </FancyButton>
+            <FancyButton
+              :text="`Disenchant (${decraftingReward})`"
+              :disabled="card.copiesOwned === 0 || isCrafting || isDecrafting"
+              size="sm"
+              variant="error"
+              @click="decraft({ cardId: card.id as CardId, amount: 1 })"
+            >
+              <template #left>
+                <CraftignShardIcon />
+              </template>
+
+              <template v-if="isDecrafting" #right>
+                <UiSpinner size="5" />
+              </template>
+            </FancyButton>
+          </footer>
+          <p>Your Shards: {{ me?.wallet.craftingShards ?? 0 }}</p>
         </section>
-
-        <section
-          v-if="'abilities' in card.card && card.card.abilities?.length"
-          class="abilities"
-        >
-          <h3>Abilities</h3>
-          <ul>
-            <li v-for="(ability, index) in card.card.abilities" :key="index">
-              <CardText :text="ability.description" />
-            </li>
-          </ul>
-        </section>
-
-        <Transition name="success-message">
-          <aside v-if="successMessage" class="success-notification">
-            {{ successMessage }}
-          </aside>
-        </Transition>
-
-        <footer>
-          <FancyButton
-            :text="`Craft (${craftingCost})`"
-            :disabled="isCrafting || isDecrafting"
-            size="sm"
-            @click="craft({ blueprintId: card.card.id, isFoil: false })"
-          >
-            <template #left>
-              <CraftignShardIcon />
-            </template>
-
-            <template v-if="isCrafting" #right>
-              <UiSpinner size="5" />
-            </template>
-          </FancyButton>
-
-          <FancyButton
-            :text="`Craft Foil (${craftingCost * FOIL_CRAFTING_COST_MULTIPLIER})`"
-            :disabled="isCrafting || isDecrafting"
-            size="sm"
-            @click="craft({ blueprintId: card.card.id, isFoil: true })"
-          >
-            <template #left>
-              <CraftignShardIcon />
-            </template>
-
-            <template v-if="isCrafting" #right>
-              <UiSpinner size="5" />
-            </template>
-          </FancyButton>
-          <FancyButton
-            :text="`Disenchant (${decraftingReward})`"
-            :disabled="card.copiesOwned === 0 || isCrafting || isDecrafting"
-            size="sm"
-            variant="error"
-            @click="decraft({ cardId: card.id as CardId, amount: 1 })"
-          >
-            <template #left>
-              <CraftignShardIcon />
-            </template>
-
-            <template v-if="isDecrafting" #right>
-              <UiSpinner size="5" />
-            </template>
-          </FancyButton>
-        </footer>
-        <p>Your Shards: {{ me?.wallet.craftingShards ?? 0 }}</p>
-      </section>
+      </Transition>
     </article>
   </UiModal>
 </template>
 
 <style scoped lang="postcss">
-.card-enter-active,
+/* .card-enter-active,
 .card-leave-active {
   transition: rotate 1s var(--ease-spring-3);
 }
 .card-enter-from {
   rotate: 45deg;
-}
+} */
 
 .card-details {
   display: flex;
@@ -216,6 +304,8 @@ provideRichTextContext({
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;
+  min-height: calc(var(--card-v2-height) * var(--pixel-scale));
+  aspect-ratio: var(--card-v2-ratio);
 }
 
 .card-info {
@@ -225,6 +315,16 @@ provideRichTextContext({
   flex-direction: column;
   gap: var(--size-4);
   min-width: 0;
+
+  &.v-enter-active,
+  &.v-leave-active {
+    transition: opacity 0.3s var(--ease-3);
+  }
+
+  &.v-enter-from,
+  &.v-leave-to {
+    opacity: 0;
+  }
 }
 
 .card-info > header {

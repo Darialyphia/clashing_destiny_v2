@@ -34,7 +34,18 @@ const canAddCard = computed(() => {
 });
 
 const isModalOpened = ref(false);
-const root = useTemplateRef('root');
+const isInvisible = ref(false);
+watch(isModalOpened, opened => {
+  // we had a delay to avoid flickering when right clicking a card to see the modal
+  // because the modal has some Flip shenanigans going on
+  if (opened) {
+    setTimeout(() => {
+      isInvisible.value = true;
+    }, 0);
+  } else {
+    isInvisible.value = false;
+  }
+});
 </script>
 
 <template>
@@ -45,8 +56,10 @@ const root = useTemplateRef('root');
       :is-foil="card.isFoil"
       class="collection-card"
       :class="{
-        disabled: card.copiesOwned === 0 || (isEditingDeck && !canAddCard)
+        disabled: card.copiesOwned === 0 || (isEditingDeck && !canAddCard),
+        invisible: isInvisible
       }"
+      :data-flip-id="`collection-card-${card.id}`"
       @click="
         () => {
           if (!isEditingDeck) return;
@@ -86,6 +99,11 @@ const root = useTemplateRef('root');
     transform: translateY(15px);
     opacity: 0.5;
   } */
+
+  &.invisible {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 .collection-card.disabled {
