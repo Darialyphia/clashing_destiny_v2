@@ -11,6 +11,7 @@ import { cardsBySet } from '@game/engine/src/generated/cards';
 import { DECRAFTING_REWARD_PER_RARITY } from '../card.constants';
 import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
 import type { AwardCurrencyUseCase } from '../../currency/usecases/awardCurrency.usecase';
+import { CardDecraftedEvent } from '../events/cardDecrafted.event';
 
 export interface DecraftCardInput {
   cardId: CardId;
@@ -73,6 +74,14 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
         source: CURRENCY_SOURCES.DECRAFTING
       });
     }
+
+    this.ctx.eventEmitter.emit(
+      CardDecraftedEvent.EVENT_NAME,
+      new CardDecraftedEvent({
+        userId: session.userId,
+        cardId: card.id
+      })
+    );
 
     return {
       cardId: input.cardId,

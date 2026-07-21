@@ -124,13 +124,6 @@ const isScreenDimmed = computed(() => {
   <HoveredCardInfos class="hovered-cell-infos" />
   <InteractionCard />
 
-  <div class="my-player">
-    <PlayerInfos :player="myPlayer" />
-  </div>
-  <div class="opponent-player">
-    <PlayerInfos :player="opponent" />
-  </div>
-
   <Transition>
     <div class="vignette" v-if="isScreenDimmed" />
   </Transition>
@@ -144,6 +137,13 @@ const isScreenDimmed = computed(() => {
       :player-id="opponent.id"
       :teaching-mode="options.teachingMode"
     />
+  </div>
+
+  <div class="my-player">
+    <PlayerInfos :player="myPlayer" />
+  </div>
+  <div class="opponent-player">
+    <PlayerInfos :player="opponent" />
   </div>
 
   <button
@@ -259,7 +259,7 @@ const isScreenDimmed = computed(() => {
 .my-player {
   position: absolute;
   left: var(--size-6);
-  bottom: 20%;
+  bottom: 140px;
   translate: 0 20%;
   display: flex;
   flex-direction: column;
@@ -269,7 +269,7 @@ const isScreenDimmed = computed(() => {
 .opponent-player {
   position: absolute;
   left: var(--size-6);
-  top: 20%;
+  top: 200px;
   translate: 0 -90%;
   display: flex;
   flex-direction: column;

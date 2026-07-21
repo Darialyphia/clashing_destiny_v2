@@ -82,6 +82,11 @@ export class TurnSystem extends System<never> {
 
   async startTurn() {
     await this.rotateDestinyCards();
+
+    for (const player of this.game.playerSystem.players) {
+      await player.startTurn();
+    }
+
     await this.game.emit(
       TURN_EVENTS.TURN_START,
       new TurnEvent({ turnCount: this.elapsedTurns })
