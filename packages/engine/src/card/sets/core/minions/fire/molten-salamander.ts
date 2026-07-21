@@ -17,13 +17,16 @@ import { isDefined } from '@game/shared';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { BurnModifier } from '../../../../../modifier/modifiers/burn.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
+import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
+import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
 
 export const moltenSalamander: MinionBlueprint = {
   id: 'moltenSalamander',
   name: 'Molten Salamander',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield"></rt-location> At the start of the turn, inflict <rt-keyword>Burn 1</rt-keyword> to all enemies at this battlefield.
-  <rt-runes runes="might,resonance,wisdom"></rt-runes>This has +1 CMD for each enemy with <rt-keyword>Burn</rt-keyword> at this battlefield.
+  <rt-keyword>Flanking</rt-keyword><br/>
+  <rt-trigger>On Move</rt-trigger> Inflict <rt-keyword>Burn 1</rt-keyword> to all enemies at this battlefield.
+  <rt-runes runes="might,resonance,wisdom"></rt-runes>This has +0/+0/+1 for each enemy with <rt-keyword>Burn</rt-keyword> at this battlefield.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -32,30 +35,26 @@ export const moltenSalamander: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.FIRE],
-  manaCost: 6,
+  manaCost: 4,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
-  maxHp: 5,
-  commandment: 2,
+  maxHp: 4,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new FlankingModifier(game, card));
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<MinionCard>('molten-salamander', game, card, {
-        mixins: [
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.TURN_START,
-            async handler() {
-              const enemies = card
-                .battlefield!.opponentSpaces.map(space => space.card)
-                .filter(isDefined);
-              for (const enemy of enemies) {
-                await enemy?.modifiers.add(new BurnModifier(game, card, { stacks: 1 }));
-              }
-            }
-          })
-        ]
+      new OnMoveModifier(game, card, {
+        async handler() {
+          const enemies = card
+            .battlefield!.opponentSpaces.map(space => space.card)
+            .filter(isDefined);
+          for (const enemy of enemies) {
+            await enemy?.modifiers.add(new BurnModifier(game, card, { stacks: 1 }));
+          }
+        }
       })
     );
     await card.modifiers.add(

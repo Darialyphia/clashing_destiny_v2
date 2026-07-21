@@ -76,11 +76,16 @@ const choices = computed(() => {
     }"
   >
     <div class="content">
-      <p class="text-5 mb-4" v-if="!isShowingBoard">
+      <p class="text-5 mb-4 text-center" v-if="!isShowingBoard">
         {{ label }}
       </p>
       <div class="question-source">
-        <GameCard v-if="source" :card-id="source" :is-interactive="false" />
+        <GameCard
+          v-if="source"
+          :card-id="source"
+          :is-interactive="false"
+          :pixel-scale="1.5"
+        />
       </div>
       <ul class="flex gap-4 justify-center">
         <li v-for="choice in choices" :key="choice.id">

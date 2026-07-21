@@ -162,7 +162,7 @@ export const KEYWORDS = {
     id: 'overwhelm',
     name: 'Overwhelm',
     description:
-      'When this attacks and destroy a minion, deal excess damage to the enemy Hero.',
+      "When this attacks and destroy a minion at a battlefield, you gain influence on this minion's battlefield equal to the excess damage.",
     aliases: []
   },
   PREDICT: {
@@ -289,6 +289,12 @@ export const KEYWORDS = {
     id: 'unique',
     name: 'Unique',
     description: 'You can only have one copy of this card on the board at the same time.',
+    aliases: []
+  },
+  VIGILANT: {
+    id: 'vigilant',
+    name: 'Vigilant',
+    description: 'This unit does not exhaust when it retaliates.',
     aliases: []
   },
   VULNERABLE: {

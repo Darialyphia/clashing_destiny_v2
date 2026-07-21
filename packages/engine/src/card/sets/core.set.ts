@@ -50,6 +50,7 @@ import { blastSorcerer } from './core/minions/fire/blast-sorcerer';
 import { moltenSalamander } from './core/minions/fire/molten-salamander';
 import { austerity } from './core/destinies/austerity';
 import { cosmic } from './core/spells/arcane/cosmic-flurry';
+import { enjiOneManArmy } from './core/minions/fire/enji-one-man-army';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -104,6 +105,7 @@ export const coreSet: CardSet = {
     blastSorcerer,
     moltenSalamander,
     austerity,
-    cosmic
+    cosmic,
+    enjiOneManArmy
   ]
 };

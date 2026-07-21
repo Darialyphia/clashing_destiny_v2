@@ -92,13 +92,7 @@ export const pyromancer: MinionBlueprint = {
           await generatedCard.playImmediatelyAt(result.result.spaces[0]);
           await generatedCard.wakeUp();
           await generatedCard.modifiers.add(new EphemeralModifier(game, card));
-        },
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            wisdom: 1,
-            might: 1
-          })
-        ]
+        }
       })
     );
   },

@@ -24,6 +24,7 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
 
   const canSelectUnit = computed(() => {
     if (!cell.value.card) return false;
+    if (cell.value.card.player.id !== playerId.value) return false;
     if (cell.value.card.isExhausted) return false;
     if (!ui.value.isInteractivePlayer) return false;
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
@@ -44,7 +45,7 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
   const cannotSelectReason = computed((): string | null => {
     if (!cell.value.card) return null;
     if (!ui.value.isInteractivePlayer) return null;
-    if (cell.value.card.isExhausted) return 'Card is exhausted';
+    if (cell.value.card.isExhausted) return 'This card is exhausted !';
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return ''; // no need to show reason when in the middle of an interaction
     if (state.value.phase.state === GAME_PHASES.MAIN) {
       if (state.value.effectChain) return 'Cannot act during effect chain';

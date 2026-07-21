@@ -37,7 +37,7 @@ export const erinaVioletWitch: HeroBlueprint = {
     {
       id: 'erina-violet-witch-ability',
       description: dedent /*html*/ `
-    Remove 4 stacks of <rt-trigger color="green">SpellSlinger</rt-trigger> from this card to gain 2 mana.`,
+    Remove 4 stacks of <rt-trigger color="green">SpellSlinger</rt-trigger> from this card to draw a card.`,
       label: 'Draw a card',
       canUse: (game, card) => {
         const modifier = card.modifiers.get(SpellSlingerCounterModifier);
@@ -51,7 +51,7 @@ export const erinaVioletWitch: HeroBlueprint = {
         const modifier = card.modifiers.get(SpellSlingerCounterModifier);
         if (!modifier) return;
         await modifier.removeStacks(4);
-        await card.player.manaManager.gain(2);
+        await card.player.cardManager.draw(1);
       },
       aiHints: {
         shouldUse: () => 1

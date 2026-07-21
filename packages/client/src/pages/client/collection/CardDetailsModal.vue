@@ -111,7 +111,7 @@ const animateCardIn = async () => {
   modalCard.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
   await nextTick();
   modalCard.style.transform = '';
-  modalCard.style.transition = 'transform 0.3s ease-in-out';
+  modalCard.style.transition = 'transform 0.3s var(--ease-in-out-4)';
   modalCard.addEventListener(
     'transitionend',
     () => {
@@ -149,7 +149,7 @@ const animateCardOut = async () => {
   }
 
   await waitFor(50);
-  collectionCard.style.transition = 'transform 0.3s ease-in-out';
+  collectionCard.style.transition = 'transform 0.3s var(--ease-in-out-4)';
   collectionCard.style.transform = '';
   collectionCard.addEventListener(
     'transitionend',

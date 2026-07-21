@@ -12,12 +12,13 @@ import {
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { SpellSlingerCounterModifier } from '../../../../../modifier/modifiers/counters.modifier';
+import { RUNES } from '../../../../../player/player.enums';
 
 export const erinasApprentice: MinionBlueprint = {
   id: 'erinasApprentice',
   name: "Erina's Apprentice",
   description: dedent /*html*/ `
-    <rt-trigger>On Enter</rt-trigger> you may remove 2 stacks of <rt-trigger color="green">SpellSlinger</rt-trigger> from your Hero to draw a spell.
+    <rt-trigger>On Enter</rt-trigger> you may consume <rt-runes runes="wisdom"></rt-runes> to draw a spell.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -38,21 +39,18 @@ export const erinasApprentice: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          const spellslingerMod = card.player.hero.modifiers.get(
-            SpellSlingerCounterModifier
-          );
-          if (!spellslingerMod || spellslingerMod.stacks < 2) return;
+          if (!card.player.runeManager.has({ wisdom: 1 })) return;
           const answer = await askMandatoryYesNoQuestion({
             game,
             card,
             questionId: 'erina-apprentice',
-            label: 'Remove 2 stacks of SpellSlinger to draw a spell?',
+            label: 'Consume 1 Wisdom rune to draw a spell?',
             timeoutFallback: 'no',
             aiChoice: 'yes'
           });
 
           if (!answer) return;
-          await spellslingerMod.removeStacks(2);
+          await card.player.runeManager.remove([RUNES.WISDOM]);
           await card.player.cardManager.drawWithFilter(1, isSpell);
         }
       })

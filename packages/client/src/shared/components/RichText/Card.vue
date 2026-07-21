@@ -25,7 +25,9 @@ const card = computed(() => {
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent class="z-10" side="top">
-        <BlueprintCard v-if="card" :blueprint="card" />
+        <div style="--pixel-scale: 1">
+          <BlueprintCard v-if="card" :blueprint="card" />
+        </div>
       </HoverCardContent>
     </HoverCardPortal>
   </HoverCardRoot>
