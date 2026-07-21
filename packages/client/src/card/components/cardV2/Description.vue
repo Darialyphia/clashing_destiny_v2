@@ -84,7 +84,7 @@ useResizeObserver(descriptionBox, resizeDescription);
   overflow: hidden;
   line-height: 1.2;
   text-shadow: 0 0 0.75rem black;
-  -webkit-text-stroke: 2px black;
+  -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
   paint-order: stroke fill;
 
   &.is-multi-line {

@@ -35,7 +35,7 @@ const isTilted = computed({
     if (value) {
       camera.value.angle.x = 15;
       camera.value.angle.y = 0;
-      camera.value.offset.y = 0;
+      camera.value.offset.y = -5;
     } else {
       camera.value.angle.x = 0;
       camera.value.angle.y = 0;

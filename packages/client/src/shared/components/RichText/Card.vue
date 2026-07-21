@@ -36,5 +36,6 @@ const card = computed(() => {
 <style scoped lang="postcss">
 .card {
   text-decoration: underline;
+  text-decoration-color: var(--card-text-color);
 }
 </style>

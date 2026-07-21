@@ -25,7 +25,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   description: dedent /*html*/ `
   <rt-keyword>Unique</rt-keyword> <rt-keyword>Rush 1</rt-keyword><br/>
   <rt-trigger>On Enter</rt-trigger> Consume <rt-runes runes="might,focus"></rt-runes> or destroy this minion.
-  If This is the only minion you control on a battlefield, this has +2/+0/+0, and <rt-keyword>Overwhelm</rt-keyword>.
+  If This is the only minion you control on a battlefield, this has +2/+0/+0 and <rt-keyword>Overwhelm</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
