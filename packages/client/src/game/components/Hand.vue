@@ -149,10 +149,12 @@ const cards = computed(() => {
 });
 
 const { width } = useElementBounding(() => ui.value.DOMSelectors.board.element);
-const handWidth = ref(width.value);
+const WIDTH_RATIO = 0.75;
+const handWidth = ref(width.value * WIDTH_RATIO);
+
 watch(width, v => {
   if (client.value.isPlayingFx) return;
-  handWidth.value = Math.max(v + 200, window.innerWidth * 0.75);
+  handWidth.value = Math.max(v * WIDTH_RATIO, window.innerWidth);
 });
 </script>
 

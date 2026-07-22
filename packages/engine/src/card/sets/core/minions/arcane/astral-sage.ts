@@ -13,7 +13,6 @@ import {
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
@@ -51,7 +50,8 @@ export const astralSage: MinionBlueprint = {
       const position = await emptyBoardSpaceTargetRules.getTargets({
         game,
         card,
-        predicate: space => space.position.zone === CARD_LOCATIONS.BASE,
+        predicate: space =>
+          space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player),
         canCancel: false
       });
       await generatedCard.playImmediatelyAt(position.result.spaces[0]);

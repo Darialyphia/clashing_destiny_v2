@@ -22,7 +22,7 @@ export const arcaneSight: SpellBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('placeholder-spell'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.ACOLYTE],

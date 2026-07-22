@@ -568,37 +568,7 @@ export class MinionCard extends Card<
   }
 
   async score() {
-    if (!this.battlefield) return;
-    await this.game.emit(
-      CARD_EVENTS.BEFORE_SCORE,
-      new CardScoreEvent({
-        card: this,
-        battlefield: this.battlefield
-      })
-    );
-
-    await this.exhaust();
-
-    await this.game.effectChainSystem.createChain({
-      initialPlayer: this.player.opponent,
-      onResolved: async () => {
-        if (!this.battlefield) return;
-
-        await this.battlefield?.gainScore(this.commandment);
-        await this.game.emit(
-          CARD_EVENTS.AFTER_SCORE,
-          new CardScoreEvent({
-            card: this,
-            battlefield: this.battlefield
-          })
-        );
-        if (this.shouldSwitchInitiativeAfterScoring) {
-          await this.game.turnSystem.switchInitiative();
-        }
-      }
-    });
-
-    await this.game.inputSystem.askForPlayerInput();
+    await this.game.scoringSystem.declareScoring(this);
   }
 
   get potentialAttackTargets(): Array<AttackTarget> {

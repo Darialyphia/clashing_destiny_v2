@@ -25,6 +25,7 @@ import type { SerializedBoardSpace } from '../../board/board-space.entity';
 import type { SerializedCombatState } from './combat.system';
 import type { AbilityManagerComponent } from '../../card/components/abilities-manager.component';
 import type { SerializedEffectChain } from '../effect-chain';
+import type { SerializedScoringState } from './scoring.system';
 
 export type SerializedEntity =
   | SerializedMinionCard
@@ -48,6 +49,7 @@ export type SerializedOmniscientState = {
   currentPlayer: string;
   turnCount: number;
   combat: SerializedCombatState;
+  scoring: SerializedScoringState;
   effectChain: SerializedEffectChain | null;
 };
 
@@ -62,6 +64,7 @@ export type SnapshotDiff = {
   currentPlayer: string;
   players: string[];
   combat: SerializedCombatState;
+  scoring: SerializedScoringState;
   effectChain: SerializedEffectChain | null;
 };
 
@@ -144,6 +147,7 @@ export class GameSerializer {
       players: state.players,
       config: this.getObjectDiff(state.config, prevState.config),
       combat: state.combat,
+      scoring: state.scoring,
       effectChain: state.effectChain
     };
   }
@@ -187,6 +191,7 @@ export class GameSerializer {
       currentPlayer: this.game.interaction.interactivePlayer.id,
       turnCount: this.game.turnSystem.elapsedTurns,
       combat: this.game.combatSystem.serialize(),
+      scoring: this.game.scoringSystem.serialize(),
       effectChain: this.game.effectChainSystem.serialize()
     };
   }
@@ -311,6 +316,7 @@ export class GameSerializer {
       currentPlayer: state.currentPlayer,
       players: state.players,
       combat: state.combat,
+      scoring: state.scoring,
       effectChain: state.effectChain
     };
   }

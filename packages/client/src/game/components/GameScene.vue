@@ -31,6 +31,7 @@ import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import InteractionCard from './InteractionCard.vue';
 import GameBoard from './GameBoard.vue';
 import OpponentHand from './OpponentHand.vue';
+import ScoringArrow from './ScoringArrow.vue';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -112,6 +113,7 @@ const isScreenDimmed = computed(() => {
     <PlayedCard />
     <ChooseCardModal />
     <CombatArrows />
+    <ScoringArrow />
     <AnswerQuestionModal />
     <RearrangeCardsModal />
     <Camera>

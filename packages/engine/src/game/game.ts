@@ -7,8 +7,7 @@ import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/sh
 import {
   GameSnapshotSystem,
   type GameStateSnapshot,
-  type PatchBasedSnapshotDiff,
-  type SnapshotDiff
+  type PatchBasedSnapshotDiff
 } from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';
 import { GAME_EVENTS, GameReadyEvent, type GameEventMap } from './game.events';
@@ -24,6 +23,7 @@ import { CARDS_DICTIONARY } from '../card/sets';
 import { generateRandomString } from '../utils/utils';
 import { CombatSystem } from './systems/combat.system';
 import { EffectChainSystem } from './systems/effect-chain.system';
+import { ScoringSystem } from './systems/scoring.system';
 
 export type GameOptions = {
   id: string;
@@ -68,6 +68,8 @@ export class Game implements Serializable<SerializedGame> {
   readonly turnSystem = new TurnSystem(this);
 
   readonly combatSystem = new CombatSystem(this);
+
+  readonly scoringSystem = new ScoringSystem(this);
 
   readonly effectChainSystem = new EffectChainSystem(this);
 
