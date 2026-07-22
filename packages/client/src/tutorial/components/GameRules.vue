@@ -515,6 +515,7 @@ onUnmounted(() => {
             <BlueprintCard
               :blueprint="CARDS_DICTIONARY['erina-violet-witch']"
               class="mb-4"
+              style="--pixel-scale: 1.5"
             />
             <p class="mb-3">
               Each deck has one Hero Card. It defines which affinities you are
@@ -588,6 +589,7 @@ onUnmounted(() => {
             <BlueprintCard
               :blueprint="CARDS_DICTIONARY['pyromancer']"
               class="mb-4"
+              style="--pixel-scale: 1.5"
             />
             <p class="mb-3">
               Units enter the board exhausted and can move, attack, use
@@ -650,6 +652,7 @@ onUnmounted(() => {
           <BlueprintCard
             :blueprint="CARDS_DICTIONARY['fireBall']"
             class="mb-4"
+            style="--pixel-scale: 1.5"
           />
           <p class="text-slate-300 leading-relaxed">
             Spells create one-time effects, such as dealing damage, drawing
@@ -668,6 +671,7 @@ onUnmounted(() => {
           <BlueprintCard
             :blueprint="CARDS_DICTIONARY['runicCatalyst']"
             class="mb-4"
+            style="--pixel-scale: 1.5"
           />
           <p class="text-slate-300 leading-relaxed">
             Artifacts stay in play and provide ongoing effects or activated
@@ -687,6 +691,7 @@ onUnmounted(() => {
           <BlueprintCard
             :blueprint="CARDS_DICTIONARY['crowds-favor']"
             class="mb-4"
+            style="--pixel-scale: 1.5"
           />
 
           <p class="text-sm text-slate-300 leading-relaxed">

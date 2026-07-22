@@ -200,7 +200,7 @@ const isScreenDimmed = computed(() => {
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 190px;
+  bottom: 195px;
   left: 0;
 }
 

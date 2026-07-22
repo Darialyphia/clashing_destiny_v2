@@ -12,12 +12,14 @@ import {
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
+import { OverwhelmModifier } from '../../../../../modifier/modifiers/overwhelm.modifier';
 
 export const innerFire: SpellBlueprint<MinionCard> = {
   id: 'innerFire',
   name: 'Inner Fire',
   description: dedent /*html*/ `
   Give a minion +2 Attack this turn.
+  <rt-runes runes="might,might,focus"></rt-runes> Give it <rt-keyword>Overwhelm</rt-keyword> this turn as well.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -50,6 +52,14 @@ export const innerFire: SpellBlueprint<MinionCard> = {
         mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );
+
+    if (card.player.runeManager.has({ might: 2, focus: 1 })) {
+      await target.modifiers.add(
+        new OverwhelmModifier(game, card, {
+          mixins: [new UntilEndOfTurnModifierMixin(game)]
+        })
+      );
+    }
   },
   aiHints: {
     shouldPlay: () => 1

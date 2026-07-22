@@ -492,7 +492,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 .my-hero {
   position: absolute;
   left: -150px;
-  bottom: 250px;
+  bottom: 200px;
 }
 
 .opponent-hero {

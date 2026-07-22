@@ -21,11 +21,11 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   name: 'Fire Bolt',
   description: dedent /*html*/ `
   Deal 1 damage to an enemy minion at a battlefield.
-  <rt-job-bonus job="${JOBS.MAGE.id}"><rt-runes runes="wisdom,wisdom"></rt-runes> This can also target enemy minions in base.
+  <rt-runes runes="wisdom,wisdom"></rt-runes> This can also target enemy minions in base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('spells/fire-bolt'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],

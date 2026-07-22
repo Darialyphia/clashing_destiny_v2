@@ -20,7 +20,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   name: 'Arcane Spark',
   description: dedent /*html*/ `
   <rt-keyword>Echo</rt-keyword>.
-  Deal 1 damage to a minion. 
+  Deal 1 damage to a minion at a battlefield. 
   <rt-runes runes="focus,wisdom"></rt-runes> This costs 1 less.
   `,
   collectable: true,
@@ -33,7 +33,8 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   manaCost: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  canPlay: (game, card) => singleMinionTargetRules.canPlay(game, card),
+  canPlay: (game, card) =>
+    singleMinionTargetRules.canPlay(game, card, c => c.isOnBattlefield),
   getTargets: (game, card) =>
     singleMinionTargetRules.getTargets({
       game,
@@ -41,7 +42,11 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
       aiHints: {
         shouldPick: () => 1
       },
-      timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(game, card)
+      timeoutFallback: singleMinionTargetRules.defaultTimeoutFallback(
+        game,
+        card,
+        c => c.isOnBattlefield
+      )
     }),
   async onInit(game, card) {
     await card.modifiers.add(
@@ -58,7 +63,10 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
     await card.modifiers.add(new EchoModifier(game, card, { mixins: [] }));
   },
   async onPlay(game, card, targets) {
-    await targets.cards[0].takeDamage(card, new SpellDamage(1, card));
+    const target = targets.cards[0];
+    if (target.isOnBattlefield) {
+      await targets.cards[0].takeDamage(card, new SpellDamage(1, card));
+    }
   },
   aiHints: {
     shouldPlay: () => 1

@@ -75,7 +75,8 @@ export const KEYWORDS = {
   ECHO: {
     id: 'echo',
     name: 'Echo',
-    description: 'When you play this card, add a copy of it to your hand without Echo.',
+    description:
+      'When you play this card, add a Fleeting copy of it to your hand without Echo.',
     aliases: []
   },
   EPHEMERAL: {

@@ -72,12 +72,15 @@ const isVisible = computed(() => {
 <template>
   <div
     class="hand-card"
-    :class="{
-      selected: card ? ui.selectedCard?.equals(card) : false,
-      disabled: isDisabled,
-      'is-shaking': isShaking,
-      hoverable: ui.draggedCard === null
-    }"
+    :class="[
+      {
+        selected: card ? ui.selectedCard?.equals(card) : false,
+        disabled: isDisabled,
+        'is-shaking': isShaking,
+        hoverable: ui.draggedCard === null
+      },
+      card?.keywords.map(k => `keyword-${k.toLocaleLowerCase()}`)
+    ]"
     :style="{ '--hover-y-offset': hoverYOffset, '--hover-scale': hoverScale }"
     @mousedown="onMouseDown($event)"
   >
@@ -101,6 +104,17 @@ const isVisible = computed(() => {
 </template>
 
 <style scoped lang="postcss">
+@keyframes keyword-fleeting {
+  0%,
+  20%,
+  80%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
 .hand-card {
   position: absolute;
   left: 0;
@@ -151,6 +165,35 @@ const isVisible = computed(() => {
   &.is-shaking > :not(.violation-warning) {
     animation: var(--animation-shake-x);
     animation-duration: 0.3s;
+  }
+  &.keyword-fleeting {
+    animation: keyword-fleeting 3s infinite;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 20px 5px var(--cyan-4);
+      z-index: 1;
+    }
+    &:before {
+      content: 'Fleeting';
+      position: absolute;
+      top: 0;
+      inset: initial;
+      left: 50%;
+      translate: -50% 0;
+      padding: var(--size-1) var(--size-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-0);
+      color: var(--cyan-4);
+      z-index: 2;
+      background: hsla(0 0% 0% / 0.45);
+      filter: none;
+      border: solid 1px var(--cyan-4);
+      font-style: italic;
+    }
   }
 }
 

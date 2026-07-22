@@ -17,7 +17,7 @@ export function useBoosterCardLayout(
       const angle = startAngle + index * angleStep;
       const radian = (angle * Math.PI) / 180;
       const x = Math.cos(radian) * radius;
-      const y = Math.sin(radian) * radius + 500;
+      const y = Math.sin(radian) * radius + 650;
       const rotation = angle + 90;
 
       return {

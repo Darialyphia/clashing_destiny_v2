@@ -321,19 +321,4 @@ provideRichTextContext({
   pointer-events: none;
   font-style: italic;
 }
-
-@keyframes fleeting {
-  0%,
-  20%,
-  80%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.65;
-  }
-}
-.fleeting {
-  animation: fleeting 5s var(--ease-3) infinite;
-}
 </style>
