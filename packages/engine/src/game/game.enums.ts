@@ -55,6 +55,21 @@ export const COMBAT_STEP_TRANSITIONS = {
 
 export type CombatStepTransition = Values<typeof COMBAT_STEP_TRANSITIONS>;
 
+export const SCORING_STEPS = {
+  DECLARE_SCORING: 'declare-scoring',
+  REACTION: 'reaction',
+  RESOLVING_SCORING: 'resolving-scoring'
+} as const;
+export type ScoringStep = Values<typeof SCORING_STEPS>;
+
+export const SCORING_STEP_TRANSITIONS = {
+  SCORING_DECLARED: 'scoring-declared',
+  ABORT_SCORING: 'abort-scoring',
+  RESOLVE_SCORING: 'resolve-scoring',
+  FINISHED: 'finished'
+} as const;
+export type ScoringStepTransition = Values<typeof SCORING_STEP_TRANSITIONS>;
+
 export const EFFECT_TYPE = {
   CARD: 'CARD',
   ABILITY: 'ABILITY',

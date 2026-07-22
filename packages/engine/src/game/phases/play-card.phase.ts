@@ -42,13 +42,6 @@ export class PlayCardPhase
     const indexInHand = player.cardManager.hand.findIndex(c => c.equals(card));
     const manaCost = card.manaCost;
 
-    const stop = await this.game.on(GAME_EVENTS.CARD_BEFORE_PLAY, async event => {
-      if (event.data.card.equals(card)) {
-        await player.manaManager.spend(manaCost);
-        stop;
-      }
-    });
-
     await card.removeFromCurrentLocation();
     card.isPlayedFromHand = true;
 
@@ -57,7 +50,6 @@ export class PlayCardPhase
     if (result.cancelled) {
       await card.addToHand(indexInHand);
       await player.manaManager.gain(manaCost);
-      stop();
     } else if (card.shouldSwitchInitiativeAfterPlay) {
       await this.game.turnSystem.switchInitiative();
     }

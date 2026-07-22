@@ -24,9 +24,8 @@ import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 
 import PlayerInfos from './PlayerInfos.vue';
 import HoveredCardInfos from './HoveredCardnfos.vue';
-
+import BoardCard from './BoardCard.vue';
 import CombatArrows from './CombatArrows.vue';
-
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
 import InteractionCard from './InteractionCard.vue';
@@ -139,11 +138,32 @@ const isScreenDimmed = computed(() => {
     />
   </div>
 
-  <div class="my-player">
-    <PlayerInfos :player="myPlayer" />
-  </div>
   <div class="opponent-player">
     <PlayerInfos :player="opponent" />
+    <div class="surface mr-8">
+      <BoardCard
+        v-if="opponent.hero"
+        :card="opponent.hero"
+        variant="default"
+        :pixel-scale="0.5"
+        @mouseenter="ui.hover(opponent.hero)"
+        @mouseleave="ui.unhover()"
+      />
+    </div>
+  </div>
+
+  <div class="my-player">
+    <div class="surface mr-8">
+      <BoardCard
+        v-if="myPlayer.hero"
+        :card="myPlayer.hero"
+        variant="default"
+        :pixel-scale="0.5"
+        @mouseenter="ui.hover(myPlayer.hero)"
+        @mouseleave="ui.unhover()"
+      />
+    </div>
+    <PlayerInfos :player="myPlayer" />
   </div>
 
   <button
@@ -258,21 +278,21 @@ const isScreenDimmed = computed(() => {
 
 .my-player {
   position: absolute;
-  left: var(--size-6);
-  bottom: 140px;
-  translate: 0 20%;
+  left: 0;
+  bottom: 55px;
   display: flex;
+  gap: var(--size-2);
   flex-direction: column;
   align-items: center;
 }
 
 .opponent-player {
   position: absolute;
-  left: var(--size-6);
-  top: 200px;
-  translate: 0 -90%;
+  left: 0;
+  top: 55px;
   display: flex;
   flex-direction: column;
+  gap: var(--size-2);
   align-items: center;
 }
 

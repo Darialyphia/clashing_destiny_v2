@@ -10,11 +10,7 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { GAME_EVENTS } from '../../../../../game/game.events';
 import { isDefined } from '@game/shared';
-import type { MinionCard } from '../../../../entities/minion.entity';
 import { BurnModifier } from '../../../../../modifier/modifiers/burn.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
@@ -39,7 +35,7 @@ export const moltenSalamander: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
-  maxHp: 4,
+  maxHp: 3,
   commandment: 1,
   canPlay: () => true,
   abilities: [],
@@ -48,6 +44,8 @@ export const moltenSalamander: MinionBlueprint = {
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
         async handler() {
+          if (!card.isOnBattlefield) return;
+
           const enemies = card
             .battlefield!.opponentSpaces.map(space => space.card)
             .filter(isDefined);

@@ -1,5 +1,4 @@
 import { GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
-import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import type { GameClient } from '../client';
 import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
@@ -10,7 +9,6 @@ import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { BoardSpaceViewModel } from '../view-models/board-space.model';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
 import { MoveAction } from '../actions/move';
-import { AttackAction } from '../actions/attack';
 
 export type BoardCellClickRule = {
   predicate: (tile: BoardSpaceViewModel, state: GameClientState) => boolean;

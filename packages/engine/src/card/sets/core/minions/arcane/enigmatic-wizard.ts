@@ -11,7 +11,8 @@ import {
 } from '../../../../card.enums';
 import {
   WhileOnBaseModifier,
-  WhileOnBattlefieldModifier
+  WhileOnBattlefieldModifier,
+  WhileOnBoardModifier
 } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
@@ -22,7 +23,7 @@ export const enigmaticWizard: MinionBlueprint = {
   id: 'enigmaticWizard',
   name: 'Enigmatic Wizard',
   description: dedent /*html*/ `
-    <rt-location locations="battlefield"><rt-trigger>Start of Turn</rt-trigger> Put an Arcane Spark in your hand. <br /><rt-runes runes="focus"></rt-runes>This can also happen in base.
+    <rt-location locations="battlefield"><rt-trigger>Start of Turn</rt-trigger> Put an Arcane Spark in your hand. <br /><rt-runes runes="focus,resonance"></rt-runes>This can also happen in base.
     </rt-location>
   `,
   collectable: true,
@@ -41,26 +42,29 @@ export const enigmaticWizard: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    const mixins = () => [
-      new GameEventModifierMixin(game, {
-        eventName: GAME_EVENTS.TURN_START,
-        handler: async () => {
-          const generatedCard = await card.player.generateCard(
-            'arcaneSpark',
-            card.isFoil
-          );
-          await generatedCard.addToHand();
-        }
-      })
-    ];
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<MinionCard>('enigmaticWizard', game, card, {
-        mixins: mixins()
-      })
-    );
-    await card.modifiers.add(
-      new WhileOnBaseModifier<MinionCard>('enigmaticWizard', game, card, {
-        mixins: [...mixins(), new RuneCostToggleModifierMixin(game, card, { focus: 1 })]
+      new WhileOnBoardModifier<MinionCard>('enigmaticWizard', game, card, {
+        mixins: [
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.TURN_START,
+            handler: async () => {
+              const shouldTrigger = card.player.runeManager.has({
+                focus: 1,
+                resonance: 1
+              })
+                ? true
+                : card.isOnBattlefield;
+
+              if (!shouldTrigger) return;
+
+              const generatedCard = await card.player.generateCard(
+                'arcaneSpark',
+                card.isFoil
+              );
+              await generatedCard.addToHand();
+            }
+          })
+        ]
       })
     );
   },

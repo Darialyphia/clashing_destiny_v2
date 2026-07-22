@@ -72,7 +72,7 @@ export class CombatStateMachine extends StateMachine<CombatStep, CombatStepTrans
   }
 }
 
-export class CombatSystem
+export class ScoringSystem
   extends System<never>
   implements Serializable<SerializedCombatState>
 {

@@ -1,6 +1,6 @@
 import type { AbilityBlueprint, ArtifactBlueprint } from '../card-blueprint';
 import { CARD_EVENTS } from '../card.enums';
-import { CardAfterPlayEvent, CardBeforePlayEvent, CardPlayEvent } from '../card.events';
+import { CardPlayEvent } from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -216,6 +216,7 @@ export class ArtifactCard extends Card<
     if (positionResult.cancelled) {
       return { cancelled: true };
     }
+    await this.player.manaManager.spend(this.manaCost);
     await this.playAt(positionResult.result[0] as BoardSpace);
 
     return { cancelled: false };

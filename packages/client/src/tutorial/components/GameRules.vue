@@ -512,11 +512,13 @@ onUnmounted(() => {
               Heroes
             </h3>
 
-            <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['erina-violet-witch']"
-              class="mb-4"
-              style="--pixel-scale: 1.5"
-            />
+            <div class="mb-4 flex justify-center">
+              <BlueprintCard
+                :blueprint="CARDS_DICTIONARY['erina-violet-witch']"
+                class="mb-4"
+                style="--pixel-scale: 1.5"
+              />
+            </div>
             <p class="mb-3">
               Each deck has one Hero Card. It defines which affinities you are
               able to use in your deck. There are 7 affinities:
@@ -525,49 +527,49 @@ onUnmounted(() => {
               <span
                 class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
               >
-                <img :src="assets[`ui/card/affinity-fire`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-fire`].path" />
                 Fire
               </span>
               <span
                 class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
               >
-                <img :src="assets[`ui/card/affinity-water`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-water`].path" />
                 Water
               </span>
               <span
                 class="affinity bg-teal-950/40 border border-teal-500/30 text-teal-400"
               >
-                <img :src="assets[`ui/card/affinity-air`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-air`].path" />
                 Air
               </span>
               <span
                 class="affinity bg-lime-950/40 border border-lime-500/30 text-lime-500"
               >
-                <img :src="assets[`ui/card/affinity-earth`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-earth`].path" />
                 Earth
               </span>
               <span
                 class="affinity bg-yellow-950/40 border border-yellow-200/30 text-yellow-200"
               >
-                <img :src="assets[`ui/card/affinity-light`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-light`].path" />
                 Light
               </span>
               <span
                 class="affinity bg-fuchsia-950/40 border border-fuchsia-500/30 text-fuchsia-400"
               >
-                <img :src="assets[`ui/card/affinity-dark`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-dark`].path" />
                 Dark
               </span>
               <span
                 class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
               >
-                <img :src="assets[`ui/card/affinity-arcane`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-arcane`].path" />
                 Arcane
               </span>
               <span
                 class="affinity bg-slate-900/40 border border-slate-400/30 text-slate-300"
               >
-                <img :src="assets[`ui/card/affinity-neutral`].path" />
+                <img :src="assets[`ui/card/v2/affinity-flag-neutral`].path" />
                 Neutral
               </span>
             </div>
@@ -586,11 +588,13 @@ onUnmounted(() => {
               <span class="i-mdi-shield-account text-indigo-400" />
               Units
             </h3>
-            <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['pyromancer']"
-              class="mb-4"
-              style="--pixel-scale: 1.5"
-            />
+            <div class="mb-4 flex justify-center">
+              <BlueprintCard
+                :blueprint="CARDS_DICTIONARY['pyromancer']"
+                class="mb-4"
+                style="--pixel-scale: 1.5"
+              />
+            </div>
             <p class="mb-3">
               Units enter the board exhausted and can move, attack, use
               abilities, and score. They have three main stats:
@@ -604,12 +608,8 @@ onUnmounted(() => {
                   <tr
                     class="bg-slate-900/80 border-b border-slate-800 text-left"
                   >
-                    <th class="px-4 py-2 font-serif text-[#efef9f] font-bold">
-                      Stat
-                    </th>
-                    <th class="px-4 py-2 font-serif text-[#efef9f] font-bold">
-                      Meaning
-                    </th>
+                    <th class="px-4 py-2 text-[#efef9f] font-bold">Stat</th>
+                    <th class="px-4 py-2 text-[#efef9f] font-bold">Meaning</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-900/60">
@@ -649,11 +649,13 @@ onUnmounted(() => {
             Spells
           </h3>
 
-          <BlueprintCard
-            :blueprint="CARDS_DICTIONARY['fireBall']"
-            class="mb-4"
-            style="--pixel-scale: 1.5"
-          />
+          <div class="mb-4 flex justify-center">
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['fireBall']"
+              class="mb-4"
+              style="--pixel-scale: 1.5"
+            />
+          </div>
           <p class="text-slate-300 leading-relaxed">
             Spells create one-time effects, such as dealing damage, drawing
             cards, moving units, exhausting units, or altering
@@ -668,11 +670,13 @@ onUnmounted(() => {
             Artifacts
           </h3>
 
-          <BlueprintCard
-            :blueprint="CARDS_DICTIONARY['runicCatalyst']"
-            class="mb-4"
-            style="--pixel-scale: 1.5"
-          />
+          <div class="mb-4 flex justify-center">
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['runicCatalyst']"
+              class="mb-4"
+              style="--pixel-scale: 1.5"
+            />
+          </div>
           <p class="text-slate-300 leading-relaxed">
             Artifacts stay in play and provide ongoing effects or activated
             abilities. They have a
@@ -688,11 +692,13 @@ onUnmounted(() => {
             Destinies
           </h3>
 
-          <BlueprintCard
-            :blueprint="CARDS_DICTIONARY['crowds-favor']"
-            class="mb-4"
-            style="--pixel-scale: 1.5"
-          />
+          <div class="mb-4 flex justify-center">
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['crowds-favor']"
+              class="mb-4"
+              style="--pixel-scale: 1.5"
+            />
+          </div>
 
           <p class="text-sm text-slate-300 leading-relaxed">
             Destiny cards possess symmetrical effects that modify the rules and
@@ -2048,19 +2054,19 @@ blockquote {
   font-size: 0.9em;
 }
 .stat-term.attack {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--red-5);
+  background: hsl(var(--red-5-hsl) / 0.12);
+  border: 1px solid hsl(var(--red-5-hsl) / 0.25);
 }
 .stat-term.health {
-  color: #f43f5e;
-  background: rgba(244, 63, 94, 0.12);
-  border: 1px solid rgba(244, 63, 94, 0.25);
+  color: var(--green-5);
+  background: hsl(var(--green-5-hsl) / 0.12);
+  border: 1px solid hsl(var(--green-5-hsl) / 0.5);
 }
 .stat-term.commandment {
-  color: #818cf8;
-  background: rgba(129, 140, 248, 0.12);
-  border: 1px solid rgba(129, 140, 248, 0.25);
+  color: var(--indigo-4);
+  background: hsl(var(--indigo-4-hsl) / 0.12);
+  border: 1px solid hsl(var(--indigo-4-hsl) / 0.25);
 }
 
 .keyword-badge {

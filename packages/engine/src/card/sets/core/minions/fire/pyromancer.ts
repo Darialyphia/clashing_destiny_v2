@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, emptyBoardSpaceTargetRules } from '../../../../card-utils';
 import {
@@ -10,7 +9,6 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import { OnAttackModifier } from '../../../../../modifier/modifiers/on-attack.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import {
   askMandatoryYesNoQuestion,
@@ -18,12 +16,13 @@ import {
 } from '../../../../card-actions-utils';
 import { type Rune } from '../../../../../player/player.enums';
 import { EphemeralModifier } from '../../../../../modifier/modifiers/ephemeral.modifier';
+import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Attack</rt-trigger> You may consume <rt-runes runes="colorless"></rt-runes> to summon an <rt-keyword>Ephemeral</rt-keyword> <rt-card>Will-o-Wisp</rt-card> on the same location as this minion
+  <rt-trigger>On Score</rt-trigger> You may consume <rt-runes runes="colorless"></rt-runes> to summon an <rt-keyword>Ephemeral</rt-keyword> <rt-card>Will-o-Wisp</rt-card> on the same location as this minion
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -36,13 +35,13 @@ export const pyromancer: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 3,
+  maxHp: 4,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnAttackModifier(game, card, {
+      new OnScoreModifier(game, card, {
         async handler() {
           if (card.isOnBattlefield) return;
 

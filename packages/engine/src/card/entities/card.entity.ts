@@ -280,10 +280,13 @@ export abstract class Card<
       shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
     };
 
+    await this.player.manaManager.spend(this.manaCost);
+
     if (!this.shouldCreateChainWhenPlayed) {
       await effect.handler();
       return this.game.inputSystem.askForPlayerInput();
     }
+
     if (this.game.effectChainSystem.currentChain) {
       if (this.game.effectChainSystem.currentChain.canAddEffect(this.player)) {
         await this.game.effectChainSystem.addEffect(effect, this.player);

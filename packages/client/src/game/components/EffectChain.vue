@@ -238,7 +238,9 @@ const onEffectClick = (effectId: string) => {
   align-items: center;
   gap: var(--size-4);
   --effect-chain-glow-angle: 0deg;
+  visibility: hidden;
   &.is-active {
+    visibility: visible;
     /* border-image: conic-gradient(
       from var(--effect-chain-glow-angle) at center,
       cyan 0deg,

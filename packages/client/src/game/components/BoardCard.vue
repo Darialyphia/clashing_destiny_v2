@@ -14,9 +14,16 @@ import AbilityMenu from './AbilityMenu.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
-const { card, isShaking = false } = defineProps<{
+const {
+  card,
+  isShaking = false,
+  variant = 'small',
+  pixelScale
+} = defineProps<{
   card: CardViewModel;
   isShaking?: boolean;
+  variant?: 'default' | 'small';
+  pixelScale?: number;
 }>();
 
 const ui = useGameUi();
@@ -107,6 +114,11 @@ const onMouseup = (e: MouseEvent) => {
 
   action.handler(card);
 };
+
+useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
+  if (event.card !== card.id) return;
+  card.update({ isExhausted: true });
+});
 </script>
 
 <template>
@@ -133,9 +145,10 @@ const onMouseup = (e: MouseEvent) => {
     @mouseup="onMouseup"
   >
     <GameCard
-      variant="small"
+      :variant
       :card-id="card.id"
       show-stats
+      :pixel-scale="pixelScale"
       :overrides="{ atk: card.atk, hp: card.hp, commandment: card.commandment }"
     />
     <ModifiersList :modifiers="modifiers" class="modifiers" />
@@ -156,8 +169,8 @@ const onMouseup = (e: MouseEvent) => {
 <style scoped lang="postcss">
 .board-card {
   --pixel-scale: 2;
-  width: var(--card-small-v2-width);
-  height: var(--card-small-v2-height);
+  /* width: var(--card-small-v2-width);
+  height: var(--card-small-v2-height); */
   transition: all 0.3s var(--ease-2);
   position: relative;
   transform-style: preserve-3d;

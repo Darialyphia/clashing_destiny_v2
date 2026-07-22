@@ -425,7 +425,7 @@ export class MinionCard extends Card<
     );
   }
 
-  getShouldCreateChainOnAttack(attackTarget: AttackTarget): boolean {
+  shouldCreateChainOnAttack(attackTarget: AttackTarget): boolean {
     return this.interceptors.shouldCreateChainOnAttack.getValue(true, {
       target: attackTarget
     });
@@ -537,6 +537,7 @@ export class MinionCard extends Card<
     if (positionResult.cancelled) {
       return { cancelled: true };
     }
+    await this.player.manaManager.spend(this.manaCost);
     await this.playAt(positionResult.result[0] as BoardSpace);
 
     return { cancelled: false };
@@ -575,18 +576,29 @@ export class MinionCard extends Card<
         battlefield: this.battlefield
       })
     );
-    await this.battlefield?.gainScore(this.commandment);
+
     await this.exhaust();
-    await this.game.emit(
-      CARD_EVENTS.AFTER_SCORE,
-      new CardScoreEvent({
-        card: this,
-        battlefield: this.battlefield
-      })
-    );
-    if (this.shouldSwitchInitiativeAfterScoring) {
-      await this.game.turnSystem.switchInitiative();
-    }
+
+    await this.game.effectChainSystem.createChain({
+      initialPlayer: this.player.opponent,
+      onResolved: async () => {
+        if (!this.battlefield) return;
+
+        await this.battlefield?.gainScore(this.commandment);
+        await this.game.emit(
+          CARD_EVENTS.AFTER_SCORE,
+          new CardScoreEvent({
+            card: this,
+            battlefield: this.battlefield
+          })
+        );
+        if (this.shouldSwitchInitiativeAfterScoring) {
+          await this.game.turnSystem.switchInitiative();
+        }
+      }
+    });
+
+    await this.game.inputSystem.askForPlayerInput();
   }
 
   get potentialAttackTargets(): Array<AttackTarget> {

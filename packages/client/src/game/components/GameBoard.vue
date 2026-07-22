@@ -10,9 +10,8 @@ import BoardSpace from './BoardSpace.vue';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
 import PassButton from './PassButton.vue';
-import BoardCard from './BoardCard.vue';
 import EffectChain from './EffectChain.vue';
-import MyHero from './MyHero.vue';
+import BoardCard from './BoardCard.vue';
 import ScoreButton from './ScoreButton.vue';
 import { RUNES } from '@game/engine/src/player/player.enums';
 import {
@@ -180,17 +179,6 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
           ></div>
         </div>
         .
-      </div>
-      <div class="opponent-hero">
-        <BoardCard
-          v-if="opponent.hero"
-          :card="opponent.hero"
-          @mouseenter="ui.hover(opponent.hero)"
-          @mouseleave="ui.unhover()"
-        />
-      </div>
-      <div class="my-hero">
-        <MyHero />
       </div>
 
       <div class="middle-side">
@@ -487,18 +475,6 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   position: absolute;
   left: 1180px;
   top: 288px;
-}
-
-.my-hero {
-  position: absolute;
-  left: -150px;
-  bottom: 200px;
-}
-
-.opponent-hero {
-  position: absolute;
-  left: -150px;
-  top: 200px;
 }
 
 .effect-chain {

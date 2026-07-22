@@ -10,22 +10,22 @@ import type { MinionCard, SerializedMinionCard } from './entities/minion.entity'
 
 export class CardExhaustEvent extends TypedSerializableEvent<
   { card: AnyCard },
-  { card: SerializedCard }
+  { card: string }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.id
     };
   }
 }
 
 export class CardWakeUpEvent extends TypedSerializableEvent<
   { card: AnyCard },
-  { card: SerializedCard }
+  { card: string }
 > {
   serialize() {
     return {
-      card: this.data.card.serialize()
+      card: this.data.card.id
     };
   }
 }
