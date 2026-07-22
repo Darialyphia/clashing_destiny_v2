@@ -38,7 +38,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   atk: 3,
   maxHp: 5,
   commandment: 3,
-  canPlay: (game, card) => card.player.runeManager.has({ might: 1, focus: 1 }),
+  canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new UniqueModifier(game, card));

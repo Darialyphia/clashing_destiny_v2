@@ -42,6 +42,7 @@ provideRichTextContext({
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
+      runeCost: (blueprint as any).runeCost,
       rarity: (blueprint as any).rarity,
       atk: (blueprint as any).atk,
       hp: (blueprint as any).maxHp,

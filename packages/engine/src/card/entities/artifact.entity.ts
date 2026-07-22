@@ -216,7 +216,9 @@ export class ArtifactCard extends Card<
     if (positionResult.cancelled) {
       return { cancelled: true };
     }
-    await this.player.manaManager.spend(this.manaCost);
+
+    await this.payManaCost();
+    await this.payRuneCost();
     await this.playAt(positionResult.result[0] as BoardSpace);
 
     return { cancelled: false };

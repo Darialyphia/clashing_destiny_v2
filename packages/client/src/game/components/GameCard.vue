@@ -112,6 +112,7 @@ provideRichTextContext({
           rarity: overrides.rarity ?? card.rarity,
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
+          runeCost: overrides.runeCost ?? card.runeCost,
           hp: overrides.hp ?? card.maxHp,
           atk: overrides.atk ?? card.atk,
           durability: overrides.durability ?? card.durability,

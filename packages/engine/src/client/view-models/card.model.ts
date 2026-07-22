@@ -24,6 +24,7 @@ import type { SerializedArtifactCard } from '../../card/entities/artifact.entity
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import { AttackAction } from '../actions/attack';
 import { DeclareRetaliationAction } from '../actions/retaliate';
+import type { Rune } from '../../player/player.enums';
 
 type CardData =
   | SerializedSpellCard
@@ -153,9 +154,9 @@ export class CardViewModel {
     return null;
   }
 
-  get expCost() {
-    if ('expCost' in this.data) {
-      return this.data.expCost as number;
+  get runeCost() {
+    if ('runeCost' in this.data) {
+      return this.data.runeCost as Rune[];
     }
     return null;
   }

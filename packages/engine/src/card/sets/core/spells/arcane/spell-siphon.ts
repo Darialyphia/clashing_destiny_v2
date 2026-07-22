@@ -37,7 +37,7 @@ export const spellSiphon: SpellBlueprint = {
         effect.type === EFFECT_TYPE.CARD &&
         isSpell(effect.source) &&
         effect.source.manaCost <= 3
-    ) && card.player.runeManager.has({ resonance: 1 }),
+    ),
   getTargets: (game, card) =>
     effectTargetRules.getTargets({
       game,

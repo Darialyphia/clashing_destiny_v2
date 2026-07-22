@@ -27,7 +27,6 @@ import {
   CardDisposedEvent,
   CardExhaustEvent,
   CardRevealEvent,
-  CardScoreEvent,
   CardWakeUpEvent
 } from '../card.events';
 import { match } from 'ts-pattern';
@@ -36,6 +35,8 @@ import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
+import type { Rune } from '../../player/player.enums';
+import type { RuneCost } from '../../player/components/rune-manager.component';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -47,6 +48,7 @@ export type AnyCard = Card<any, any, any>;
 export type CardInterceptors = {
   blueprintId: Interceptable<string>;
   manaCost: Interceptable<number | null>;
+  runeCost: Interceptable<Rune[]>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
@@ -60,6 +62,7 @@ export type CardInterceptors = {
 export const makeCardInterceptors = (): CardInterceptors => ({
   blueprintId: new Interceptable(),
   manaCost: new Interceptable(),
+  runeCost: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
@@ -84,6 +87,7 @@ export type SerializedCard = {
   location: CardLocation | null;
   modifiers: string[];
   manaCost: number | null;
+  runeCost: Rune[] | null;
   keywords: string[];
   unplayableReason: string | null;
   isRevealed: boolean;
@@ -222,6 +226,35 @@ export abstract class Card<
     return this.player.mana >= this.manaCost;
   }
 
+  async payManaCost() {
+    if (!this.canPayManaCost) return;
+    await this.player.manaManager.spend(this.manaCost);
+  }
+
+  get runeCost(): Rune[] {
+    if ('runeCost' in this.blueprint) {
+      const base = this.blueprint.runeCost;
+
+      return this.interceptors.runeCost.getValue(base ?? [], {}) ?? [];
+    }
+    return [];
+  }
+
+  get canPayRuneCost() {
+    const cost: RuneCost = {};
+    this.runeCost.forEach(rune => {
+      cost[rune] = (cost[rune] ?? 0) + 1;
+    });
+
+    return this.player.runeManager.has(cost);
+  }
+
+  async payRuneCost() {
+    if (!this.canPayRuneCost) return;
+
+    await this.player.runeManager.remove(this.runeCost);
+  }
+
   get position(): BoardSpace | null {
     return (
       [
@@ -280,7 +313,8 @@ export abstract class Card<
       shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
     };
 
-    await this.player.manaManager.spend(this.manaCost);
+    await this.payManaCost();
+    await this.payRuneCost();
 
     if (!this.shouldCreateChainWhenPlayed) {
       await effect.handler();
@@ -430,7 +464,9 @@ export abstract class Card<
       return false;
     }
 
-    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
+    return (
+      this.location === CARD_LOCATIONS.HAND && this.canPayManaCost && this.canPayRuneCost
+    );
   }
 
   abstract canPlay(): boolean;
@@ -459,6 +495,11 @@ export abstract class Card<
     if (!this.canPayManaCost) {
       return 'Cannot pay mana cost.';
     }
+
+    if (!this.canPayRuneCost) {
+      return 'Cannot pay rune cost.';
+    }
+
     return 'You cannot play this card';
   }
 
@@ -489,6 +530,7 @@ export abstract class Card<
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
       manaCost: 'manaCost' in this.blueprint ? this.manaCost : null,
+      runeCost: 'runeCost' in this.blueprint ? this.runeCost : null,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,

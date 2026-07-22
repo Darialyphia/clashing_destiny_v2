@@ -34,9 +34,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   runeCost: [RUNES.WISDOM],
   speed: CARD_SPEED.FAST,
   tags: [],
-  canPlay: (game, card) =>
-    card.player.runeManager.has({ wisdom: 1 }) &&
-    singleEnemyMinionTargetRules.canPlay(game, card),
+  canPlay: (game, card) => singleEnemyMinionTargetRules.canPlay(game, card),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({
       game,
