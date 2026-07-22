@@ -20,7 +20,7 @@ export const starConvergence: SpellBlueprint = {
   id: 'starconvergence',
   name: 'Star Convergence',
   description: dedent /*html*/ `
-  Consume <rt-runes runes="resonance"></rt-runes>. Summon 2 <rt-card>Astral Ball</rt-card> exhausted.
+  Summon 2 <rt-card>Astral Ball</rt-card> exhausted.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -30,6 +30,7 @@ export const starConvergence: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
+  runeCost: [RUNES.RESONANCE],
   speed: CARD_SPEED.SLOW,
   tags: [],
   shouldHideTargetarrows: true,
@@ -37,8 +38,6 @@ export const starConvergence: SpellBlueprint = {
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},
   async onPlay(game, card) {
-    await card.player.runeManager.remove([RUNES.RESONANCE]);
-
     const summonBall = async () => {
       const generatedCard = await card.player.generateCard<MinionCard>(
         'astralBall',

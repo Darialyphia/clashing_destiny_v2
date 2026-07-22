@@ -20,7 +20,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   id: 'manaWeaverApprentice',
   name: 'Mana Weaver Apprentice',
   description: dedent /*html*/ `
-    I have +1 CMD if you have played 2 or more spells this turn.
+    I have +0/+0/+1 if you have played 2 or more spells this turn.
     <rt-runes runes="wisdom,focus,focus"></rt-runes> <rt-keyword>Stealth</rt-keyword>.
   `,
   collectable: true,
@@ -31,6 +31,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

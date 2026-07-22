@@ -9,8 +9,6 @@ import {
   CARD_SPEED,
   JOBS
 } from '../../../../card.enums';
-import { discardFromHand } from '../../../../card-actions-utils';
-import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { UniqueModifier } from '../../../../../modifier/modifiers/unique.modifier';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
@@ -24,7 +22,6 @@ export const enjiOneManArmy: MinionBlueprint = {
   name: 'Enji, One-Man Army',
   description: dedent /*html*/ `
   <rt-keyword>Unique</rt-keyword> <rt-keyword>Rush 1</rt-keyword><br/>
-  <rt-trigger>On Enter</rt-trigger> Consume <rt-runes runes="might,focus"></rt-runes> or destroy this minion.
   If This is the only minion you control on a battlefield, this has +2/+0/+0 and <rt-keyword>Overwhelm</rt-keyword>.
   `,
   collectable: true,
@@ -35,6 +32,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 6,
+  runeCost: [RUNES.MIGHT, RUNES.FOCUS],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
@@ -43,17 +41,6 @@ export const enjiOneManArmy: MinionBlueprint = {
   canPlay: (game, card) => card.player.runeManager.has({ might: 1, focus: 1 }),
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        async handler() {
-          if (!card.player.runeManager.has({ might: 1, focus: 1 })) {
-            await card.destroy(card);
-            return;
-          }
-          await card.player.runeManager.remove([RUNES.MIGHT, RUNES.FOCUS]);
-        }
-      })
-    );
     await card.modifiers.add(new UniqueModifier(game, card));
     await card.modifiers.add(new RushModifier(game, card, { cost: 1 }));
     const isAlone = () => {

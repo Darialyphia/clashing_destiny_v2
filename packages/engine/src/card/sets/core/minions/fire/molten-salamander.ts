@@ -32,6 +32,7 @@ export const moltenSalamander: MinionBlueprint = {
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.FIRE],
   manaCost: 4,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

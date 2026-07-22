@@ -12,7 +12,6 @@ import {
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import { RootedModifier } from '../../../../../modifier/modifiers/rooted.modifier';
-import { VulnerableModifier } from '../../../../../modifier/modifiers/vulnerable.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const vineTrapper: MinionBlueprint = {
@@ -30,6 +29,7 @@ export const vineTrapper: MinionBlueprint = {
   jobs: [JOBS.RANGER],
   affinities: [AFFINITIES.EARTH],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

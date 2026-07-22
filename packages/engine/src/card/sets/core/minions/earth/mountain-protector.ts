@@ -29,6 +29,7 @@ export const mountainProtector: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.EARTH],
   manaCost: 4,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

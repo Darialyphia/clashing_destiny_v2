@@ -25,6 +25,7 @@ export const astralBall: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 0,

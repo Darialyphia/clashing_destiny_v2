@@ -27,6 +27,7 @@ export const recklessRecruit: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

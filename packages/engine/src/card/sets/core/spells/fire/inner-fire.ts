@@ -29,6 +29,7 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
+  runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,

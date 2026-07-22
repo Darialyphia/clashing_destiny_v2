@@ -26,6 +26,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

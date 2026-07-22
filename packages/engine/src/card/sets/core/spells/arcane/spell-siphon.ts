@@ -16,7 +16,7 @@ export const spellSiphon: SpellBlueprint = {
   id: 'spellSiphon',
   name: 'Spell Siphon',
   description: dedent /*html*/ `
-    Consume <rt-runes runes="resonance"></rt-runes>. Negate the activation of a spell that costs 3 or less.
+    Negate the activation of a spell that costs 3 or less.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -26,6 +26,7 @@ export const spellSiphon: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
+  runeCost: [RUNES.RESONANCE],
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -50,8 +51,6 @@ export const spellSiphon: SpellBlueprint = {
   async onPlay(game, card, targets) {
     const effect = targets.effect;
     if (!effect) return;
-    if (!card.player.runeManager.has({ resonance: 1 })) return;
-    await card.player.runeManager.remove([RUNES.RESONANCE]);
     game.effectChainSystem.currentChain?.negateEffect(effect.id);
   },
   aiHints: {

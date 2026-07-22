@@ -11,7 +11,6 @@ import {
 } from '../../../../card.enums';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
-import { SpellSlingerCounterModifier } from '../../../../../modifier/modifiers/counters.modifier';
 import { RUNES } from '../../../../../player/player.enums';
 
 export const erinasApprentice: MinionBlueprint = {
@@ -28,10 +27,11 @@ export const erinasApprentice: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 3,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 2,
+  maxHp: 3,
   commandment: 2,
   canPlay: () => true,
   abilities: [],

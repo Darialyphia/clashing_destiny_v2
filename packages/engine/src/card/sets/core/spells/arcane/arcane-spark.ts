@@ -31,6 +31,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

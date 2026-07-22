@@ -32,6 +32,7 @@ export const pyromancer: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

@@ -252,6 +252,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
+          scoring: latestSnapshot.state.scoring,
           effectChain: latestSnapshot.state.effectChain
         }
       };
@@ -274,6 +275,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
+              scoring: latestSnapshot.state.scoring,
               effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(
@@ -308,6 +310,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
+          scoring: latestSnapshot.state.scoring,
           effectChain: latestSnapshot.state.effectChain
         }
       };
@@ -330,6 +333,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
+              scoring: latestSnapshot.state.scoring,
               effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(
@@ -364,6 +368,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
+          scoring: latestSnapshot.state.scoring,
           effectChain: latestSnapshot.state.effectChain
         }
       };
@@ -386,6 +391,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
+              scoring: latestSnapshot.state.scoring,
               effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(
@@ -421,6 +427,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
+          scoring: latestSnapshot.state.scoring,
           effectChain: latestSnapshot.state.effectChain
         }
       };
@@ -443,6 +450,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
+              scoring: latestSnapshot.state.scoring,
               effectChain: latestSnapshot.state.effectChain
             }
           : this.serializer.diffSnapshotsWithPatches(

@@ -27,6 +27,7 @@ export const conjureWisdom: SpellBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetarrows: true,

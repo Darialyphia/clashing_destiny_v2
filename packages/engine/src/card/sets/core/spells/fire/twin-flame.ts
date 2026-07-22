@@ -32,6 +32,7 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
+  runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

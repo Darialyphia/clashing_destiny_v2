@@ -21,7 +21,6 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   id: 'fireBall',
   name: 'Fire Ball',
   description: dedent /*html*/ `
-  Consume <rt-runes runes="wisdom"></rt-runes>
   Deal 4 damage to an enemy minion.
   `,
   collectable: true,
@@ -32,6 +31,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
+  runeCost: [RUNES.WISDOM],
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -51,12 +51,6 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   async onPlay(game, card, targets) {
     const [target] = targets.cards;
     if (!target) return;
-
-    if (!card.player.runeManager.has({ wisdom: 1 })) {
-      return;
-    }
-
-    await card.player.runeManager.remove([RUNES.WISDOM]);
 
     await target.takeDamage(card, new SpellDamage(4, card));
   },

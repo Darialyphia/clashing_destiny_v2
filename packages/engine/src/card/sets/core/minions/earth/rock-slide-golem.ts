@@ -29,6 +29,7 @@ export const rockSlideGolem: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.EARTH],
   manaCost: 3,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

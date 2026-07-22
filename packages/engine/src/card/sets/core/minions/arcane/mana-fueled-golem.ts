@@ -30,6 +30,7 @@ export const manaFueledGolem: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 3,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

@@ -19,7 +19,6 @@ export const engulfInFlames: SpellBlueprint = {
   id: 'engulfInFlames',
   name: 'Engulf in Flames',
   description: dedent /*html*/ `
-  <rt-job-bonus job="${JOBS.MAGE.id}">This costs 1 less</rt-job-bonus>
   Deal 1 damage to all enemy minions at a battlefield. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
   `,
   collectable: true,
@@ -30,6 +29,7 @@ export const engulfInFlames: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
+  runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,
@@ -39,14 +39,7 @@ export const engulfInFlames: SpellBlueprint = {
       card,
       predicate: ({ space }) => space.player.equals(card.player.opponent)
     }),
-  async onInit(game, card) {
-    await card.modifiers.add(
-      new SimpleManacostModifier('engulf-in-flames-discount', game, card, {
-        amount: -1,
-        mixins: [new JobBonusToggleModifierMixin(game, card, JOBS.MAGE.id)]
-      })
-    );
-  },
+  async onInit() {},
   async onPlay(game, card) {
     let damageAmount = 1;
 

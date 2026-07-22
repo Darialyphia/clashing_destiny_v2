@@ -51,6 +51,7 @@ import { moltenSalamander } from './core/minions/fire/molten-salamander';
 import { austerity } from './core/destinies/austerity';
 import { cosmic } from './core/spells/arcane/cosmic-flurry';
 import { enjiOneManArmy } from './core/minions/fire/enji-one-man-army';
+import { cosmicAvatar } from './core/minions/arcane/cosmic-avatar';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -106,6 +107,7 @@ export const coreSet: CardSet = {
     moltenSalamander,
     austerity,
     cosmic,
-    enjiOneManArmy
+    enjiOneManArmy,
+    cosmicAvatar
   ]
 };

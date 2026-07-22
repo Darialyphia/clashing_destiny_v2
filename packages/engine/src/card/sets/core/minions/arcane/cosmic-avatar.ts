@@ -16,13 +16,12 @@ import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifi
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
-export const astralSage: MinionBlueprint = {
-  id: 'astralSage',
-  name: 'Astral Sage',
+export const cosmicAvatar: MinionBlueprint = {
+  id: 'cosmicAvatar',
+  name: 'Cosmic Avatar',
   description: dedent /*html*/ `
-    <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    <rt-runes runes="focus,wisdom"></rt-runes> <rt-keyword>Rush 1</rt-keyword>
-    `,
+  Your <rt-card>Astral Ball</rt-card> have +1/+1/+1.
+  `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('placeholder'),
@@ -30,12 +29,12 @@ export const astralSage: MinionBlueprint = {
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 5,
+  manaCost: 6,
   runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
-  maxHp: 5,
+  atk: 3,
+  maxHp: 6,
   commandment: 3,
   canPlay: () => true,
   abilities: [],

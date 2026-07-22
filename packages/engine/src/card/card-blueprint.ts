@@ -20,6 +20,7 @@ import type { BoardSpace } from '../board/board-space.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
+import type { Rune } from '../player/player.enums';
 
 export type CardArt = {
   foil: {
@@ -124,6 +125,7 @@ export const serializeTargets = (targets: Targets): SerializedTargets => {
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
+  runeCost: Rune[];
   maxHp: number;
   atk: number;
   commandment: number;
@@ -143,6 +145,7 @@ export type MinionBlueprint = CardBlueprintBase & {
 export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
+  runeCost: Rune[];
   speed: CardSpeed;
   jobs: Job[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
@@ -167,6 +170,7 @@ export type HeroBlueprint = CardBlueprintBase & {
 
 export type ArtifactBlueprint = CardBlueprintBase & {
   manaCost: number;
+  runeCost: Rune[];
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   jobs: Job[];
   durability: number;

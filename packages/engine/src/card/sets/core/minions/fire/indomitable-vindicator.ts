@@ -14,7 +14,6 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../../utils/damage';
-import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 import { isDefined } from '@game/shared';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
@@ -24,7 +23,7 @@ export const indomitableVindicator: MinionBlueprint = {
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
   <rt-keyword>On Score</rt-keyword> Deal 1 damage to all other minions on this battlefield.
-  <rt-runes runes="might,might,resonance"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
+  <rt-runes runes="might,resonance"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -34,6 +33,7 @@ export const indomitableVindicator: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -61,7 +61,7 @@ export const indomitableVindicator: MinionBlueprint = {
     await card.modifiers.add(
       new RushModifier(game, card, {
         cost: 1,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { might: 2, resonance: 1 })]
+        mixins: [new RuneCostToggleModifierMixin(game, card, { might: 1, resonance: 1 })]
       })
     );
   },

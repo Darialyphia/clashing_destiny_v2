@@ -29,6 +29,7 @@ export const runicCatalyst: ArtifactBlueprint = {
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
+  runeCost: [],
   durability: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

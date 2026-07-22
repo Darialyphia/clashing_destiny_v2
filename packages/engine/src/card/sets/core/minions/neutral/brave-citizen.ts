@@ -8,18 +8,12 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
-import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
-import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
-
 
 export const braveCitizen: MinionBlueprint = {
   id: 'braveCitizen',
   name: 'Brave Citizen',
   description: dedent /*html*/ `
-  <rt-keyword><rt-runes runes="might">.
+
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -29,10 +23,11 @@ export const braveCitizen: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
+  runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 2,
+  maxHp: 3,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
