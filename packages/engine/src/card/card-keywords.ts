@@ -251,7 +251,7 @@ export const KEYWORDS = {
   SPLASH_ATTACK: {
     id: 'splash_attack',
     name: 'Splash Attack',
-    description: 'When this unit attacks, it also damages adjacent units.',
+    description: 'When this unit attacks, it damages all enemies on that battlefield.',
     aliases: []
   },
   STEALTH: {

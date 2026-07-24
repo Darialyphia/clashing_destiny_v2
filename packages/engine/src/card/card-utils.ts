@@ -557,13 +557,16 @@ export const cardsInEnemyDiscardPile = {
   }
 };
 
-export const defaultCardArt = (name: string): CardBlueprint['art'] => ({
+export const defaultCardArt = (
+  name: string,
+  isFullArt = false
+): CardBlueprint['art'] => ({
   default: {
     foil: {
       oil: true,
       sheen: true
     },
-    isFullArt: false,
+    isFullArt,
     bg: `${name}-bg`,
     main: `${name}-main`
   }

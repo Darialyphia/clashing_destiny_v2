@@ -52,6 +52,9 @@ import { austerity } from './core/destinies/austerity';
 import { cosmic } from './core/spells/arcane/cosmic-flurry';
 import { enjiOneManArmy } from './core/minions/fire/enji-one-man-army';
 import { cosmicAvatar } from './core/minions/arcane/cosmic-avatar';
+import { cosmicAvatarAlt } from './core/minions/arcane/cosmic-avatar';
+import { enjiOneManArmyFullArt } from './core/minions/fire/enji-one-man-army';
+import { enjiOneManArmyAlt } from './core/minions/fire/enji-one-man-army';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -108,6 +111,9 @@ export const coreSet: CardSet = {
     austerity,
     cosmic,
     enjiOneManArmy,
-    cosmicAvatar
+    cosmicAvatar,
+    cosmicAvatarAlt,
+    enjiOneManArmyFullArt,
+    enjiOneManArmyAlt
   ]
 };

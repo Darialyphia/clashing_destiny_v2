@@ -98,7 +98,11 @@ const kindBg = computed(() => {
     <div
       ref="card"
       class="card"
-      :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
+      :class="[
+        card.kind.toLocaleLowerCase(),
+        isAnimated && 'animated',
+        card.art.isFullArt && 'full-art'
+      ]"
       :data-flip-id="`card_${card.id}`"
     >
       <div class="card-front" :style="{ '--tint': tint }">
@@ -237,6 +241,10 @@ const kindBg = computed(() => {
   position: relative;
   transform-style: preserve-3d;
   position: relative;
+  &.full-art {
+    text-shadow: 0 0 10px black;
+    background: none;
+  }
 
   --glare-mask: url('@/assets/ui/card/v2/card-front.png');
   --foil-mask: url('@/assets/ui/card/v2/card-front.png');

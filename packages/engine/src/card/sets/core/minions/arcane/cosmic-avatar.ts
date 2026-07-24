@@ -7,30 +7,39 @@ import {
   RARITIES,
   JOBS,
   AFFINITIES,
-  CARD_SPEED,
-  CARD_LOCATIONS
+  CARD_SPEED
 } from '../../../../card.enums';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { RUNES } from '../../../../../player/player.enums';
+import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
+import { Modifier } from '../../../../../modifier/modifier.entity';
+import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
+import { astralBall } from './astral-ball';
+import { SimpleCommandmentBuffModifier } from '../../../../../modifier/modifiers/simple-commandment-modifier';
+import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../../game/game.events';
+import type { AnyCard } from '../../../../entities/card.entity';
+import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
+import { UniqueModifier } from '../../../../../modifier/modifiers/unique.modifier';
 
 export const cosmicAvatar: MinionBlueprint = {
   id: 'cosmicAvatar',
   name: 'Cosmic Avatar',
   description: dedent /*html*/ `
-  Your <rt-card>Astral Ball</rt-card> have +1/+1/+1.
+  <rt-keyword>Flanking</rt-keyword> <rt-keyword>Unique</rt-keyword>
+  Your <rt-card>Astral Ball</rt-card> have +1/+1/+0.
+  Once per turn, when an <rt-card>Astral Ball</rt-card> you control deals combat damage, wake up this card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/cosmic-avatar'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.EPIC,
+  rarity: RARITIES.LEGENDARY,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 6,
-  runeCost: [],
+  runeCost: [RUNES.WISDOM, RUNES.RESONANCE],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
@@ -39,39 +48,44 @@ export const cosmicAvatar: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    const summonAstralBall = async () => {
-      const generatedCard = await card.player.generateCard<MinionCard>(
-        'astralBall',
-        card.isFoil
-      );
-      const hasRoomInBase = card.player.boardSide.base.some(space => space.isEmpty);
-      if (!hasRoomInBase) return;
+    await card.modifiers.add(new UniqueModifier(game, card));
+    await card.modifiers.add(new FlankingModifier(game, card));
 
-      const position = await emptyBoardSpaceTargetRules.getTargets({
-        game,
-        card,
-        predicate: space =>
-          space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player),
-        canCancel: false
-      });
-      await generatedCard.playImmediatelyAt(position.result.spaces[0]);
-      await generatedCard.exhaust();
-    };
+    const isAlliedAstralBall = (candidate: AnyCard) =>
+      candidate.blueprintId === astralBall.id && candidate.isAlly(card);
 
     await card.modifiers.add(
-      new OnEnterModifier(game, card, {
-        handler: summonAstralBall
-      })
-    );
-
-    await card.modifiers.add(
-      new OnMoveModifier(game, card, { handler: summonAstralBall })
-    );
-
-    await card.modifiers.add(
-      new RushModifier(game, card, {
-        cost: 1,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { focus: 1, wisdom: 1 })]
+      new WhileOnBoardModifier<MinionCard>('cosmic-avatar-aura', game, card, {
+        mixins: [
+          new CardAuraModifierMixin(game, card, {
+            isElligible(candidate) {
+              return isAlliedAstralBall(candidate);
+            },
+            getModifiers() {
+              return [
+                new SimpleAttackBuffModifier('cosmic-avatar-aura-atk-buff', game, card, {
+                  amount: 1
+                }),
+                new SimpleCommandmentBuffModifier(
+                  'cosmic-avatar-aura-cmd-buff',
+                  game,
+                  card,
+                  { amount: 1 }
+                )
+              ];
+            }
+          }),
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
+            frequencyPerGameTurn: 1,
+            filter(event) {
+              return card.isExhausted && isAlliedAstralBall(event.data.card);
+            },
+            async handler() {
+              await card.wakeUp();
+            }
+          })
+        ]
       })
     );
   },
@@ -82,4 +96,11 @@ export const cosmicAvatar: MinionBlueprint = {
     shouldMove: () => 1,
     getThreatScore: () => 1
   }
+};
+
+export const cosmicAvatarAlt: MinionBlueprint = {
+  ...cosmicAvatar,
+  id: 'cosmicAvatarAlt',
+  collectable: false,
+  art: defaultCardArt('minions/cosmic-avatar-alt')
 };

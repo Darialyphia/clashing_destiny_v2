@@ -129,7 +129,10 @@ export class ScoringSystem
     return {
       step: this.stateMachine.getState(),
       scoringCard: this._scoringCard?.id ?? null,
-      scoredDestiny: this._scoringCard?.battlefield?.destinyCard?.id ?? null
+      scoredDestiny:
+        this._scoringCard?.battlefield?.destinyCard?.id ??
+        this._scoringCard?.battlefield?.opponentBattlefield.destinyCard?.id ??
+        null
     };
   }
 }

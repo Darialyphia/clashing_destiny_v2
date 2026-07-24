@@ -40,6 +40,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
     singleMinionTargetRules.getTargets({
       game,
       card,
+      predicate: c => c.isOnBattlefield,
       aiHints: {
         shouldPick: () => 1
       },

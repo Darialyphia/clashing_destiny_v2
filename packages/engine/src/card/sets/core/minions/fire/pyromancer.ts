@@ -44,7 +44,7 @@ export const pyromancer: MinionBlueprint = {
     await card.modifiers.add(
       new OnScoreModifier(game, card, {
         async handler() {
-          if (card.isOnBattlefield) return;
+          if (!card.isOnBattlefield) return;
 
           const canSummonWisp =
             card.player.runeManager.runeCount > 0 &&

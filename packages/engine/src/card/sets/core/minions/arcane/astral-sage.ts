@@ -15,6 +15,7 @@ import type { MinionCard } from '../../../../entities/minion.entity';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { RUNES } from '../../../../../player/player.enums';
 
 export const astralSage: MinionBlueprint = {
   id: 'astralSage',
@@ -31,7 +32,7 @@ export const astralSage: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 5,
-  runeCost: [],
+  runeCost: [RUNES.WISDOM],
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

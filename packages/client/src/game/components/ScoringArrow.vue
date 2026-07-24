@@ -30,7 +30,6 @@ const buildArrowBetweenTwoCards = (
   const endRect = document
     .querySelector(ui.value.DOMSelectors.cardOnBoard(card2).selector)
     ?.getBoundingClientRect();
-  console.log(startRect, endRect);
   if (!startRect || !endRect) return '';
 
   const start = {
@@ -61,6 +60,7 @@ const buildArrowBetweenTwoCards = (
 
 const buildScoringArrowPath = async () => {
   await nextTick();
+  console.log(state.value.scoring);
   if (!state.value.scoring.scoringCard || !state.value.scoring.scoredDestiny) {
     scoringPath.value = '';
     return;

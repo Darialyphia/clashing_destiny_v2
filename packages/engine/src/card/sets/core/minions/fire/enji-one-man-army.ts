@@ -11,18 +11,18 @@ import {
 } from '../../../../card.enums';
 import { UniqueModifier } from '../../../../../modifier/modifiers/unique.modifier';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
-import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import { RUNES } from '../../../../../player/player.enums';
-import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { OverwhelmModifier } from '../../../../../modifier/modifiers/overwhelm.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
+import { ToughModifier } from '../../../../../modifier/modifiers/tough.modifier';
 
 export const enjiOneManArmy: MinionBlueprint = {
   id: 'enjiOneManArmy',
   name: 'Enji, One-Man Army',
   description: dedent /*html*/ `
-  <rt-keyword>Unique</rt-keyword> <rt-keyword>Rush 1</rt-keyword><br/>
-  If This is the only minion you control on a battlefield, this has +2/+0/+0 and <rt-keyword>Overwhelm</rt-keyword>.
+  <rt-keyword>Unique</rt-keyword> <rt-keyword>Rush 1</rt-keyword>
+  If This is the only minion you control on a battlefield, this has <rt-keyword>Attacker 3</rt-keyword>, <rt-keyword>Tough 1</rt-keyword> and <rt-keyword>Overwhelm</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -52,13 +52,19 @@ export const enjiOneManArmy: MinionBlueprint = {
       return friendlyMinions.length === 0;
     };
     await card.modifiers.add(
-      new SimpleAttackBuffModifier('enji-one-man-army-atk-buff', game, card, {
-        amount: 2,
+      new AttackerModifier(game, card, {
+        amount: 3,
         mixins: [new TogglableModifierMixin(game, isAlone)]
       })
     );
     await card.modifiers.add(
       new OverwhelmModifier(game, card, {
+        mixins: [new TogglableModifierMixin(game, isAlone)]
+      })
+    );
+    await card.modifiers.add(
+      new ToughModifier(game, card, {
+        amount: 1,
         mixins: [new TogglableModifierMixin(game, isAlone)]
       })
     );
@@ -70,4 +76,17 @@ export const enjiOneManArmy: MinionBlueprint = {
     shouldMove: () => 1,
     getThreatScore: () => 1
   }
+};
+
+export const enjiOneManArmyAlt: MinionBlueprint = {
+  ...enjiOneManArmy,
+  id: 'enjiOneManArmyAlt',
+  collectable: false,
+  art: defaultCardArt('minions/enji-one-man-alt')
+};
+export const enjiOneManArmyFullArt: MinionBlueprint = {
+  ...enjiOneManArmy,
+  id: 'enjiOneManArmyFullArt',
+  collectable: false,
+  art: defaultCardArt('minions/enji-one-man-army-fullart', true)
 };

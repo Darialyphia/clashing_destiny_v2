@@ -16,7 +16,7 @@ const artMainImage = computed(() => {
 </script>
 
 <template>
-  <div class="card-art">
+  <div class="card-art" :class="{ 'full-art': art.isFullArt }">
     <div class="art-bg parallax" style="--parallax-strength: -1" />
     <div
       class="art-main-shadow parallax"
@@ -36,8 +36,35 @@ const artMainImage = computed(() => {
   height: calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
   left: calc(2px * var(--pixel-scale));
   top: calc(2px * var(--pixel-scale));
-  mask-image: url('@/assets/ui/card/masks/card-art-v2.png');
-  mask-size: cover;
+
+  &:not(.full-art) {
+    mask-image: url('@/assets/ui/card/masks/card-art-v2.png');
+    mask-size: cover;
+  }
+  &.full-art {
+    width: calc(var(--card-v2-width) * var(--pixel-scale));
+    height: calc(var(--card-v2-height) * var(--pixel-scale));
+    left: 0;
+    top: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('@/assets/ui/card/v2/full-art-overlay.png');
+      background-size: cover;
+      pointer-events: none;
+    }
+  }
+}
+
+@keyframes full-art-glow {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .art-main {
@@ -46,6 +73,19 @@ const artMainImage = computed(() => {
   background-position: center;
   position: absolute;
   inset: 0;
+  .full-art & {
+    &::after {
+      content: '';
+      background-image: v-bind(artMainImage);
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      inset: 0;
+      mix-blend-mode: plus-lighter;
+      filter: blur(calc(var(--pixel-scale) * 7px));
+      animation: full-art-glow 2s var(--ease-3) infinite alternate;
+    }
+  }
 }
 
 .art-bg {

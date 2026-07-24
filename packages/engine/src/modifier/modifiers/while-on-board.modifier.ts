@@ -22,7 +22,7 @@ export class WhileOnBoardModifier<
     modifierType: string,
     game: Game,
     source: AnyCard,
-    private options: WhileOnBoardOptions<T>
+    options: WhileOnBoardOptions<T>
   ) {
     super(modifierType, game, source, {
       isUnique: options.isUnique,

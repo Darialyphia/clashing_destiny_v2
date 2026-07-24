@@ -57,7 +57,10 @@ export const cards = {
 "austerity": "austerity",
 "cosmicFlurry": "cosmicFlurry",
 "enjiOneManArmy": "enjiOneManArmy",
-"cosmicAvatar": "cosmicAvatar"
+"cosmicAvatar": "cosmicAvatar",
+"cosmicAvatarAlt": "cosmicAvatarAlt",
+"enjiOneManArmyFullArt": "enjiOneManArmyFullArt",
+"enjiOneManArmyAlt": "enjiOneManArmyAlt"
 } as const;
 
 export const collectableCards = {
@@ -425,7 +428,25 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "cosmicAvatar",
     "collectable": true,
-    "rarity": "epic",
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "cosmicAvatarAlt",
+    "collectable": false,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "enjiOneManArmyFullArt",
+    "collectable": false,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "enjiOneManArmyAlt",
+    "collectable": false,
+    "rarity": "legendary",
     "kind": "MINION"
   }
 ]
@@ -483,7 +504,10 @@ export const cardShortIds: Record<string, number> = {
 "austerity": 49,
 "cosmicFlurry": 50,
 "enjiOneManArmy": 51,
-"cosmicAvatar": 52
+"cosmicAvatar": 52,
+"cosmicAvatarAlt": 53,
+"enjiOneManArmyFullArt": 54,
+"enjiOneManArmyAlt": 55
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -538,5 +562,8 @@ export const cardIdByShortId: Record<number, string> = {
 "49": "austerity",
 "50": "cosmicFlurry",
 "51": "enjiOneManArmy",
-"52": "cosmicAvatar"
+"52": "cosmicAvatar",
+"53": "cosmicAvatarAlt",
+"54": "enjiOneManArmyFullArt",
+"55": "enjiOneManArmyAlt"
 } as const;

@@ -14,8 +14,7 @@ import {
   CardAfterTakeDamageEvent,
   CardBeforeDealCombatDamageEvent,
   CardBeforeTakeDamageEvent,
-  CardPlayEvent,
-  CardScoreEvent
+  CardPlayEvent
 } from '../card.events';
 import {
   Card,
@@ -25,7 +24,12 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { COMBAT_STEPS, GAME_PHASES } from '../../game/game.enums';
+import {
+  COMBAT_STEPS,
+  GAME_PHASES,
+  INTERACTION_STATES,
+  SCORING_STEPS
+} from '../../game/game.enums';
 import { Ability } from './ability.entity';
 import {
   MINION_EVENTS,
@@ -258,7 +262,13 @@ export class MinionCard extends Card<
   }
 
   canAttack(target: AttackTarget) {
-    let base = this.isOnBattlefield && !this._isExhausted && target.canBeAttacked(this);
+    let base =
+      this.isOnBattlefield &&
+      !this._isExhausted &&
+      target.canBeAttacked(this) &&
+      this.game.combatSystem.state === COMBAT_STEPS.DECLARE_ATTACKER &&
+      this.game.scoringSystem.state === SCORING_STEPS.DECLARE_SCORING &&
+      !this.game.effectChainSystem.currentChain;
 
     if (isHero(target) && !this.canAttackEnemyHero) {
       base = false;
@@ -557,7 +567,13 @@ export class MinionCard extends Card<
 
   get canScore(): boolean {
     return this.interceptors.canScore.getValue(
-      this.isOnBattlefield && !this.isExhausted,
+      this.isOnBattlefield &&
+        !this.isExhausted &&
+        this.game.interaction.getState() === INTERACTION_STATES.IDLE &&
+        this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN &&
+        !this.game.effectChainSystem.currentChain &&
+        this.game.combatSystem.state === COMBAT_STEPS.DECLARE_ATTACKER &&
+        this.game.scoringSystem.state === SCORING_STEPS.DECLARE_SCORING,
       this
     );
   }
