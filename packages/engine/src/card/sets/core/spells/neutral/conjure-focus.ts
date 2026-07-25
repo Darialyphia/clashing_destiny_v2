@@ -26,7 +26,7 @@ export const conjureFocus: SpellBlueprint = {
   rarity: RARITIES.RARE,
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
-  manaCost: 2,
+  manaCost: 1,
   runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],

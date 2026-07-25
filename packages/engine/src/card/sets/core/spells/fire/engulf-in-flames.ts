@@ -19,11 +19,11 @@ export const engulfInFlames: SpellBlueprint = {
   id: 'engulfInFlames',
   name: 'Engulf in Flames',
   description: dedent /*html*/ `
-  Deal 1 damage to all enemy minions at a battlefield. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
+  Deal 1 damage to all enemy minions on any battlefield. You may consume <rt-runes runes="wisdom,resonance"></rt-runes> to deal 2 instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder-spell'),
+  art: defaultCardArt('spells/engulf-in-flames'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],

@@ -19,7 +19,7 @@ export const fireImp: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/fire-imp'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [],

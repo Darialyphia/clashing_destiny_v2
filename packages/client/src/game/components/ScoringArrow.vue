@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import {
+  useFxEvent,
   useGameClient,
   useGameState,
   useGameUi
 } from '../composables/useGameClient';
+import { waitFor } from '@game/shared';
 import Arrow from './Arrow.vue';
 import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
 const { playerId } = useGameClient();
 const ui = useGameUi();
@@ -16,6 +19,14 @@ const scoringPath = ref('');
 
 const VERTICAL_ALIGN_THRESHOLD = 50;
 
+useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
+  if (!state.value.config.SHOULD_CREATE_CHAIN_ON_SCORE) {
+    state.value.scoring.scoringCard = event.card;
+    state.value.scoring.scoredDestiny = event.destinyCard;
+    buildScoringArrowPath();
+    await waitFor(1000);
+  }
+});
 const buildArrowBetweenTwoCards = (
   card1: string,
   card2: string,
@@ -60,23 +71,25 @@ const buildArrowBetweenTwoCards = (
 
 const buildScoringArrowPath = async () => {
   await nextTick();
-  console.log(state.value.scoring);
+
   if (!state.value.scoring.scoringCard || !state.value.scoring.scoredDestiny) {
     scoringPath.value = '';
     return;
   }
 
-  scoringPath.value = buildArrowBetweenTwoCards(
+  const path = buildArrowBetweenTwoCards(
     state.value.scoring.scoringCard,
     state.value.scoring.scoredDestiny,
     40,
     -80
   );
+  console.log(path);
+  scoringPath.value = path;
 };
 
 watchEffect(buildScoringArrowPath);
 watch(() => playerId.value, buildScoringArrowPath);
-watch(() => state.value.scoring, buildScoringArrowPath);
+watch(() => state.value.scoring, buildScoringArrowPath, { deep: true });
 useEventListener(window, 'resize', throttle(buildScoringArrowPath, 100));
 </script>
 

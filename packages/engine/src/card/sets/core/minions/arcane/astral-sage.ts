@@ -26,7 +26,7 @@ export const astralSage: MinionBlueprint = {
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/astral-sage'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],
@@ -56,7 +56,9 @@ export const astralSage: MinionBlueprint = {
           space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player),
         canCancel: false
       });
-      await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+      await generatedCard.playImmediatelyAt(position.result.spaces[0], {
+        shouldExhaust: true
+      });
       await generatedCard.exhaust();
     };
 

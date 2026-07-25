@@ -107,7 +107,9 @@ export const cosmic: SpellBlueprint = {
         astralBall.id,
         card.isFoil
       );
-      await generatedCard.playImmediatelyAt(position.result.spaces[0]);
+      await generatedCard.playImmediatelyAt(position.result.spaces[0], {
+        shouldExhaust: false
+      });
     }
   },
   aiHints: {

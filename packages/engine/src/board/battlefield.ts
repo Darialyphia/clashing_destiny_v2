@@ -31,7 +31,7 @@ export class Battlefield
     private player: Player,
     readonly zone: BetterExtract<CardLocation, 'left_battlefield' | 'right_battlefield'>
   ) {
-    super(zone, {});
+    super(`${player.id}_${zone}`, {});
     this.spaces = Array.from(
       { length: game.config.BATTLEFIELD_SLOTS },
       (_, i) =>

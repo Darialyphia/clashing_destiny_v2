@@ -55,8 +55,9 @@ export const starConvergence: SpellBlueprint = {
         predicate: space => space.player.equals(card.player),
         canCancel: false
       });
-      await generatedCard.playImmediatelyAt(position.result.spaces[0]);
-      await generatedCard.exhaust();
+      await generatedCard.playImmediatelyAt(position.result.spaces[0], {
+        shouldExhaust: true
+      });
     };
 
     await summonBall();

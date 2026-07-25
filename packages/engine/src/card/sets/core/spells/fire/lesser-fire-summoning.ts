@@ -60,7 +60,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   async onPlay(game, card, targets) {
     const minion = await card.player.generateCard<MinionCard>('willowisp', card.isFoil);
     await minion.exhaust();
-    await minion.playImmediatelyAt(targets.spaces[0]);
+    await minion.playImmediatelyAt(targets.spaces[0], { shouldExhaust: true });
   },
   aiHints: {
     shouldPlay: () => 1

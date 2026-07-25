@@ -19,14 +19,14 @@ import type { InteractionResult } from '../../../../../game/systems/game-interac
 
 export const twinFlame: SpellBlueprint<MinionCard> = {
   id: 'twinFlame',
-  name: 'Twin Flame',
+  name: 'Twin Flames',
   description: dedent /*html*/ `
   Deal 2 damage to 2 enemy minions on a battlefield.
   <rt-runes runes="wisdom,wisdom,resonance"></rt-runes> Deal 3 damage instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder-spell'),
+  art: defaultCardArt('spells/twin-flames'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],

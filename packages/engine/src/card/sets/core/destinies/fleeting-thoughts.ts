@@ -11,19 +11,17 @@ import {
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
-import { isDefined } from '@game/shared';
 import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { AbilityDamage } from '../../../../utils/damage';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { discardFromHand } from '../../../card-actions-utils';
 
-export const ashesOfPain: DestinyBlueprint = {
-  id: 'ashes-of-pain',
+export const fleetingThought: DestinyBlueprint = {
+  id: 'fleeting-thought',
   kind: CARD_KINDS.DESTINY,
   collectable: true,
-  name: 'Ashes of Pain',
+  name: 'Fleeting Thoughts',
   description: dedent /*html*/ `
     Minions at this battlefield have <rt-trigger>On Score</rt-trigger>  Discard a card, then draw a card.
   `,
@@ -42,7 +40,7 @@ export const ashesOfPain: DestinyBlueprint = {
             isElligible(candidate) {
               return card.isOnSameBattlefieldAs(candidate);
             },
-            getModifiers(candidate) {
+            getModifiers() {
               return [
                 new OnScoreModifier(game, card, {
                   async handler() {

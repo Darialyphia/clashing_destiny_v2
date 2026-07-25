@@ -31,8 +31,8 @@ export const blastSorcerer: MinionBlueprint = {
   runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 4,
-  maxHp: 2,
+  atk: 1,
+  maxHp: 5,
   commandment: 2,
   canPlay: () => true,
   abilities: [
@@ -40,7 +40,7 @@ export const blastSorcerer: MinionBlueprint = {
       id: 'blast-sorcerer',
       label: 'Give a minion blast 2',
       description: 'Give a minion <rt-keyword>Blast 2</rt-keyword> this turn',
-      manaCost: 2,
+      manaCost: 1,
       shouldExhaust: true,
       canUse(game, card) {
         return singleMinionTargetRules.canPlay(game, card);

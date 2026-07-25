@@ -14,6 +14,7 @@ import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while
 import { isDefined } from '@game/shared';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const austerity: DestinyBlueprint = {
   id: 'austerity',
@@ -21,7 +22,7 @@ export const austerity: DestinyBlueprint = {
   collectable: true,
   name: 'Austerity',
   description: dedent /*html*/ `
-    Minions at this battlefield have 0 CMD.
+    Minions at this battlefield have -1/+0/+0.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
@@ -43,14 +44,8 @@ export const austerity: DestinyBlueprint = {
             },
             getModifiers() {
               return [
-                new Modifier('austerity-aura', game, card, {
-                  mixins: [
-                    new MinionInterceptorModifierMixin(game, {
-                      key: 'commandment',
-                      interceptor: () => 0,
-                      priority: 100
-                    })
-                  ]
+                new SimpleCommandmentBuffModifier('austerity-aura', game, card, {
+                  amount: -1
                 })
               ];
             }

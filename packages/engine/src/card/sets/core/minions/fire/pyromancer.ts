@@ -89,7 +89,9 @@ export const pyromancer: MinionBlueprint = {
             'willowisp',
             card.isFoil
           );
-          await generatedCard.playImmediatelyAt(result.result.spaces[0]);
+          await generatedCard.playImmediatelyAt(result.result.spaces[0], {
+            shouldExhaust: false
+          });
           await generatedCard.wakeUp();
           await generatedCard.modifiers.add(new EphemeralModifier(game, card));
         }

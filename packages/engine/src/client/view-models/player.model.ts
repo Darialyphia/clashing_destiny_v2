@@ -99,6 +99,7 @@ export class PlayerViewModel {
 
   get leftBattlefield() {
     return {
+      id: this.data.boardSide.leftBattlefield.id,
       commandmentScore: this.data.boardSide.leftBattlefield.commandmentScore,
       opponentCommandmentScore:
         this.data.boardSide.leftBattlefield.opponentCommandmentScore,
@@ -116,6 +117,7 @@ export class PlayerViewModel {
 
   get rightBattlefield() {
     return {
+      id: this.data.boardSide.rightBattlefield.id,
       commandmentScore: this.data.boardSide.rightBattlefield.commandmentScore,
       opponentCommandmentScore:
         this.data.boardSide.rightBattlefield.opponentCommandmentScore,

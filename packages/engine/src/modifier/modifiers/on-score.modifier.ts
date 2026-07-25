@@ -25,7 +25,7 @@ export class OnScoreModifier extends Modifier<MinionCard> {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_SCORE),
         new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.BEFORE_SCORE,
+          eventName: GAME_EVENTS.AFTER_SCORE,
           filter: event => event.data.card.equals(this.target),
           handler: event => this.onScore(event)
         }),
@@ -35,7 +35,6 @@ export class OnScoreModifier extends Modifier<MinionCard> {
   }
 
   private async onScore(event: CardScoreEvent) {
-    console.log('on score');
     await this.game.emit(
       GAME_EVENTS.CARD_EFFECT_TRIGGERED,
       new CardEffectTriggeredEvent({

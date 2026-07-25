@@ -55,6 +55,8 @@ import { cosmicAvatar } from './core/minions/arcane/cosmic-avatar';
 import { cosmicAvatarAlt } from './core/minions/arcane/cosmic-avatar';
 import { enjiOneManArmyFullArt } from './core/minions/fire/enji-one-man-army';
 import { enjiOneManArmyAlt } from './core/minions/fire/enji-one-man-army';
+import { fleetingThought } from './core/destinies/fleeting-thoughts';
+import { igniteTheSky } from './core/destinies/ignite-the-sky';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -114,6 +116,8 @@ export const coreSet: CardSet = {
     cosmicAvatar,
     cosmicAvatarAlt,
     enjiOneManArmyFullArt,
-    enjiOneManArmyAlt
+    enjiOneManArmyAlt,
+    fleetingThought,
+    igniteTheSky
   ]
 };

@@ -29,7 +29,7 @@ export const cosmicAvatar: MinionBlueprint = {
   description: dedent /*html*/ `
   <rt-keyword>Flanking</rt-keyword> <rt-keyword>Unique</rt-keyword>
   Your <rt-card>Astral Ball</rt-card> have +1/+1/+0.
-  Once per turn, when an <rt-card>Astral Ball</rt-card> you control deals combat damage, wake up this card.
+  When an <rt-card>Astral Ball</rt-card> you control deals combat damage, wake up this card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -77,7 +77,6 @@ export const cosmicAvatar: MinionBlueprint = {
           }),
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
-            frequencyPerGameTurn: 1,
             filter(event) {
               return card.isExhausted && isAlliedAstralBall(event.data.card);
             },

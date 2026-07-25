@@ -462,10 +462,9 @@ export class MinionCard extends Card<
     );
   }
 
-  private async summon(position: BoardSpace) {
+  private async summon(position: BoardSpace, shouldExhaust = true) {
     position.placeCard(this);
-    if (this.hasSummoningSickness) {
-      console.log('exhausting minion', this.id, this.blueprintId);
+    if (this.hasSummoningSickness && shouldExhaust) {
       await this.exhaust();
     }
     await this.blueprint.onPlay(this.game, this);
@@ -503,8 +502,8 @@ export class MinionCard extends Card<
   // immediately plays the minion regardless of current chain or interaction state
   // doesnt trigger BEFORE_PLAY or AFTER_PLAY events
   // this is useful when summoning minions as part of another card effect
-  async playImmediatelyAt(position: BoardSpace) {
-    await this.summon(position);
+  async playImmediatelyAt(position: BoardSpace, { shouldExhaust = true }) {
+    await this.summon(position, shouldExhaust);
     this.updatePlayedAt();
   }
 

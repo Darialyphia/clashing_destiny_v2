@@ -90,16 +90,23 @@ export class ScoringSystem
       CARD_EVENTS.BEFORE_SCORE,
       new CardScoreEvent({
         card: this._scoringCard,
-        battlefield: this._scoringCard!.battlefield!
+        battlefield: this._scoringCard!.battlefield!,
+        destinyCard:
+          this._scoringCard!.battlefield!.destinyCard ??
+          this._scoringCard!.battlefield!.opponentBattlefield.destinyCard!
       })
     );
 
     this.stateMachine.dispatch(SCORING_STEP_TRANSITIONS.SCORING_DECLARED);
 
-    await this.game.effectChainSystem.createChain({
-      initialPlayer: this.scoringCard!.player.opponent,
-      onResolved: async () => this.resolveScoring()
-    });
+    if (this.game.config.SHOULD_CREATE_CHAIN_ON_SCORE) {
+      await this.game.effectChainSystem.createChain({
+        initialPlayer: this.scoringCard!.player.opponent,
+        onResolved: async () => this.resolveScoring()
+      });
+    } else {
+      await this.resolveScoring();
+    }
   }
 
   private async resolveScoring() {
@@ -112,7 +119,10 @@ export class ScoringSystem
         CARD_EVENTS.AFTER_SCORE,
         new CardScoreEvent({
           card: this._scoringCard!,
-          battlefield: this._scoringCard!.battlefield!
+          battlefield: this._scoringCard!.battlefield!,
+          destinyCard:
+            this._scoringCard!.battlefield!.destinyCard ??
+            this._scoringCard!.battlefield!.opponentBattlefield.destinyCard!
         })
       );
     }

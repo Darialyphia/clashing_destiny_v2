@@ -60,7 +60,9 @@ export const cards = {
 "cosmicAvatar": "cosmicAvatar",
 "cosmicAvatarAlt": "cosmicAvatarAlt",
 "enjiOneManArmyFullArt": "enjiOneManArmyFullArt",
-"enjiOneManArmyAlt": "enjiOneManArmyAlt"
+"enjiOneManArmyAlt": "enjiOneManArmyAlt",
+"fleeting-thought": "fleeting-thought",
+"ignite-the-sky": "ignite-the-sky"
 } as const;
 
 export const collectableCards = {
@@ -113,7 +115,9 @@ export const collectableCards = {
 "austerity": "austerity",
 "cosmicFlurry": "cosmicFlurry",
 "enjiOneManArmy": "enjiOneManArmy",
-"cosmicAvatar": "cosmicAvatar"
+"cosmicAvatar": "cosmicAvatar",
+"fleeting-thought": "fleeting-thought",
+"ignite-the-sky": "ignite-the-sky"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -448,6 +452,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": false,
     "rarity": "legendary",
     "kind": "MINION"
+  },
+  {
+    "id": "fleeting-thought",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "ignite-the-sky",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "DESTINY"
   }
 ]
 };
@@ -507,7 +523,9 @@ export const cardShortIds: Record<string, number> = {
 "cosmicAvatar": 52,
 "cosmicAvatarAlt": 53,
 "enjiOneManArmyFullArt": 54,
-"enjiOneManArmyAlt": 55
+"enjiOneManArmyAlt": 55,
+"fleeting-thought": 56,
+"ignite-the-sky": 57
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -565,5 +583,7 @@ export const cardIdByShortId: Record<number, string> = {
 "52": "cosmicAvatar",
 "53": "cosmicAvatarAlt",
 "54": "enjiOneManArmyFullArt",
-"55": "enjiOneManArmyAlt"
+"55": "enjiOneManArmyAlt",
+"56": "fleeting-thought",
+"57": "ignite-the-sky"
 } as const;
