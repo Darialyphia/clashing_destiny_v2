@@ -11,7 +11,7 @@ import {
   CARD_SPEED
 } from '../../../../card.enums';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
+import { askMandatoryYesNoQuestion, statBuff } from '../../../../card-actions-utils';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 
 export const terramancer: MinionBlueprint = {
@@ -20,7 +20,7 @@ export const terramancer: MinionBlueprint = {
   description: dedent /*html*/ `
   <rt-keyword>On Engage</rt-keyword> you may exhaust this card to exhaust an enemy minion on the same battlefield.
   <br/>
-  <rt-runes runes="might,focus"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
+  <rt-runes runes="might,focus"></rt-runes> +1/+1/+1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -84,17 +84,18 @@ export const terramancer: MinionBlueprint = {
       })
     );
 
-    await card.modifiers.add(
-      new RushModifier(game, card, {
-        cost: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 1,
-            focus: 1
-          })
-        ]
-      })
-    );
+    await statBuff(game, card, card, {
+      modifierType: 'astral-sage-stat-buff',
+      atk: 1,
+      maxHp: 1,
+      cmd: 1,
+      mixins: () => [
+        new RuneCostToggleModifierMixin(game, card, {
+          focus: 1,
+          might: 1
+        })
+      ]
+    });
   },
   async onPlay() {},
   aiHints: {

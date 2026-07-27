@@ -43,17 +43,17 @@ export const fleetingThought: DestinyBlueprint = {
             getModifiers() {
               return [
                 new OnScoreModifier(game, card, {
-                  async handler() {
+                  async handler(event) {
                     await game.emit(
                       GAME_EVENTS.CARD_EFFECT_TRIGGERED,
                       new CardEffectTriggeredEvent({
                         card,
-                        message: 'Ashes of Pain effect triggered'
+                        message: 'Fleeting Thoughts effect triggered'
                       })
                     );
-                    if (card.player.cardManager.hand.length === 0) return;
-                    await discardFromHand(game, card, { min: 1, max: 1 });
-                    await card.player.cardManager.draw(1);
+                    if (event.data.card.player.cardManager.hand.length === 0) return;
+                    await discardFromHand(game, event.data.card, { min: 1, max: 1 });
+                    await event.data.card.player.cardManager.draw(1);
                   }
                 })
               ];

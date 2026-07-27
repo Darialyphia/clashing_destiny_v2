@@ -46,6 +46,13 @@ export const KEYWORDS = {
     description: 'You do not lose initiative after this minion moves.',
     aliases: []
   },
+  CLEAVE: {
+    id: 'cleave',
+    name: 'Cleave X',
+    description:
+      'When this attacks, it also deals X damage to all other minions on the same battlefield.',
+    aliases: [/cleave [0-9]+/]
+  },
   CHANNEL: {
     id: 'channel',
     name: 'Channel',
@@ -69,7 +76,7 @@ export const KEYWORDS = {
     id: 'double-attack',
     name: 'Double Attack',
     description:
-      'The first time this attacks each turn, wake up this minion after combat.',
+      'After combat resolution, if this minion is still alive it attacks again.',
     aliases: []
   },
   ECHO: {

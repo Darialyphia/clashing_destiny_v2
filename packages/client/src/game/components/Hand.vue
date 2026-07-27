@@ -202,6 +202,7 @@ watch(width, v => {
   left: 50%;
   transform: translateX(-50%);
   height: 50px;
+  z-index: 10;
 }
 .hand {
   --pixel-scale: 1;

@@ -1,6 +1,11 @@
 import type { Game } from '../game/game';
+import type { ModifierMixin } from '../modifier/modifier-mixin';
+import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
+import { SimpleCommandmentBuffModifier } from '../modifier/modifiers/simple-commandment-modifier';
+import { SimpleHealthBuffModifier } from '../modifier/modifiers/simple-health-buff.modifier';
 import { RUNES } from '../player/player.enums';
-import type { AnyCard } from './entities/card.entity';
+import type { AnyCard, Card } from './entities/card.entity';
+import type { MinionCard } from './entities/minion.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
@@ -223,4 +228,38 @@ export const chooseColorlessRune = async ({
   });
 
   return runeResult;
+};
+
+export const statBuff = async (
+  game: Game,
+  source: AnyCard,
+  card: MinionCard,
+  options: {
+    modifierType: string;
+    atk: number | (() => number);
+    maxHp: number | (() => number);
+    cmd: number | (() => number);
+    mixins?: () => ModifierMixin<MinionCard>[];
+  }
+) => {
+  await card.modifiers.add(
+    new SimpleAttackBuffModifier(`${options.modifierType}-atk`, game, source, {
+      amount: options.atk,
+      mixins: options.mixins?.() ?? []
+    })
+  );
+
+  await card.modifiers.add(
+    new SimpleHealthBuffModifier(`${options.modifierType}-hp`, game, source, {
+      amount: options.maxHp,
+      mixins: options.mixins?.() ?? []
+    })
+  );
+
+  await card.modifiers.add(
+    new SimpleCommandmentBuffModifier(`${options.modifierType}-cmd`, game, source, {
+      amount: options.cmd,
+      mixins: options.mixins?.() ?? []
+    })
+  );
 };

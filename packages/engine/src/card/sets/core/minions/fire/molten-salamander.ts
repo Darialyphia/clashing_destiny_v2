@@ -37,7 +37,7 @@ export const moltenSalamander: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 3,
-  commandment: 1,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

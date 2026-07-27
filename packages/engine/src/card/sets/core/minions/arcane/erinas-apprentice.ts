@@ -21,7 +21,7 @@ export const erinasApprentice: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('minions/erinas-apprentice'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   jobs: [JOBS.MAGE],

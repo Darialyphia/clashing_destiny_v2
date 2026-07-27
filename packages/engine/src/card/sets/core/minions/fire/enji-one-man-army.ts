@@ -21,7 +21,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   id: 'enjiOneManArmy',
   name: 'Enji, One-Man Army',
   description: dedent /*html*/ `
-  <rt-keyword>Unique</rt-keyword> <rt-keyword>Rush 1</rt-keyword>
+  <rt-keyword>Unique</rt-keyword>
   If This is the only minion you control on a battlefield, this has <rt-keyword>Attacker 3</rt-keyword>, <rt-keyword>Tough 1</rt-keyword> and <rt-keyword>Overwhelm</rt-keyword>.
   `,
   collectable: true,

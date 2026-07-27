@@ -249,7 +249,7 @@ const kindBg = computed(() => {
   --glare-mask: url('@/assets/ui/card/v2/card-front.png');
   --foil-mask: url('@/assets/ui/card/v2/card-front.png');
 
-  &::after {
+  .hero &::after {
     content: '';
     position: absolute;
     inset: 0;

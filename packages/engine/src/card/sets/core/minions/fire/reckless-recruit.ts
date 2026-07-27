@@ -12,12 +12,13 @@ import {
 } from '../../../../card.enums';
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
+import { DoubleAttackModifier } from '../../../../../modifier/modifiers/double-attack.modifier';
 
 export const recklessRecruit: MinionBlueprint = {
   id: 'recklessRecruit',
   name: 'Reckless Recruit',
   description: dedent /*html*/ `
-  <rt-keyword>Rush 1</rt-keyword> <rt-keyword><rt-runes runes="might,might,might"></rt-runes> Attacker 2</rt-keyword>
+  <rt-keyword>Double Attack</rt-keyword> <rt-keyword><rt-runes runes="might,might,might"></rt-runes> Attacker 2</rt-keyword>
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -32,11 +33,11 @@ export const recklessRecruit: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 3,
-  commandment: 2,
+  commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new RushModifier(game, card, { cost: 1 }));
+    await card.modifiers.add(new DoubleAttackModifier(game, card));
     await card.modifiers.add(
       new AttackerModifier(game, card, {
         amount: 2,

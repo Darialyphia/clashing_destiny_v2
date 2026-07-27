@@ -1,9 +1,12 @@
 import dedent from 'dedent';
-import { GAME_EVENTS } from '../../../../../game/game.events';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
+import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, isMinion } from '../../../../card-utils';
+import {
+  defaultCardArt,
+  isMinion,
+  singleEnemyMinionTargetRules
+} from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -12,18 +15,18 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import type { MinionCard } from '../../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../../utils/damage';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
+import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
+import { VulnerableModifier } from '../../../../../modifier/modifiers/vulnerable.modifier';
 import { isDefined } from '@game/shared';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 
 export const indomitableVindicator: MinionBlueprint = {
   id: 'indomitableVindicator',
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
   <rt-keyword>On Score</rt-keyword> Deal 1 damage to all other minions on this battlefield.
-  <rt-runes runes="might,resonance"></rt-runes> <rt-keyword>Rush 1</rt-keyword>.
+  <rt-runes runes="might,resonance"></rt-runes> <rt-trigger>On Engage</rt-trigger> Give an enemy minion on the same battlefield <rt-keyword>Vulnerable</rt-keyword> this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,7 +40,7 @@ export const indomitableVindicator: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 4,
+  maxHp: 3,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -58,10 +61,44 @@ export const indomitableVindicator: MinionBlueprint = {
         }
       })
     );
+
     await card.modifiers.add(
-      new RushModifier(game, card, {
-        cost: 1,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { might: 1, resonance: 1 })]
+      new OnMoveModifier(game, card, {
+        location: 'battlefield',
+        mixins: [new RuneCostToggleModifierMixin(game, card, { might: 1, resonance: 1 })],
+        async handler() {
+          const hasTarget = singleEnemyMinionTargetRules.canPlay(
+            game,
+            card,
+            minion => minion.location === card.location
+          );
+          if (!hasTarget) return;
+
+          const result = await singleEnemyMinionTargetRules.getTargets({
+            game,
+            card,
+            label: 'Select an enemy minion to give Vulnerable',
+            canCancel: false,
+            timeoutFallback: singleEnemyMinionTargetRules.defaultTimeoutFallback(
+              game,
+              card,
+              minion => minion.location === card.location
+            ),
+            predicate: minion => minion.location === card.location,
+            aiHints: { shouldPick: () => 1 }
+          });
+
+          if (result.cancelled) return;
+
+          for (const target of result.result.cards) {
+            await target.modifiers.add(
+              new VulnerableModifier(game, card, {
+                amount: 1,
+                mixins: [new UntilEndOfTurnModifierMixin(game)]
+              })
+            );
+          }
+        }
       })
     );
   },

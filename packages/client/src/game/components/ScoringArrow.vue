@@ -83,7 +83,6 @@ const buildScoringArrowPath = async () => {
     40,
     -80
   );
-  console.log(path);
   scoringPath.value = path;
 };
 

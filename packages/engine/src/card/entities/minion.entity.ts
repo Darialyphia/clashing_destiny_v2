@@ -343,7 +343,7 @@ export class MinionCard extends Card<
     });
   }
 
-  async dealDamage(target: AttackTarget, damage: CombatDamage) {
+  async dealDamage(target: AttackTarget, damage: CombatDamage, forceCheckHp = false) {
     const affectedCards = [target];
     await this.game.emit(
       CARD_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE,
@@ -368,10 +368,13 @@ export class MinionCard extends Card<
         affectedCards
       })
     );
+    if (forceCheckHp) {
+      await target.checkHp(this);
+    }
   }
 
   async takeDamage(source: AnyCard, damage: Damage) {
-    // prevents the minion from taking damage and trigger events if it alreadydied during chain resolution
+    // prevents the minion from taking damage and trigger events if it already died during chain resolution
     if (!this.isAlive) return;
 
     await this.game.emit(

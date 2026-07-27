@@ -16,13 +16,14 @@ import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifi
 import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { RUNES } from '../../../../../player/player.enums';
+import { statBuff } from '../../../../card-actions-utils';
 
 export const astralSage: MinionBlueprint = {
   id: 'astralSage',
   name: 'Astral Sage',
   description: dedent /*html*/ `
     <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    <rt-runes runes="focus,wisdom"></rt-runes> <rt-keyword>Rush 1</rt-keyword>
+    <rt-runes runes="focus,wisdom"></rt-runes> +1/+1/+1
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,7 +38,7 @@ export const astralSage: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 5,
-  commandment: 3,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
@@ -78,6 +79,19 @@ export const astralSage: MinionBlueprint = {
         mixins: [new RuneCostToggleModifierMixin(game, card, { focus: 1, wisdom: 1 })]
       })
     );
+
+    await statBuff(game, card, card, {
+      modifierType: 'astral-sage-stat-buff',
+      atk: 1,
+      maxHp: 1,
+      cmd: 1,
+      mixins: () => [
+        new RuneCostToggleModifierMixin(game, card, {
+          focus: 1,
+          wisdom: 1
+        })
+      ]
+    });
   },
   async onPlay() {},
   aiHints: {

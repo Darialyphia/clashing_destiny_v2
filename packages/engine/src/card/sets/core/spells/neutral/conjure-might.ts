@@ -21,7 +21,7 @@ export const conjureMight: SpellBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('placeholder-spell'),
+  art: defaultCardArt('spells/conjure-might'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   jobs: [],

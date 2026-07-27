@@ -1,20 +1,18 @@
 import { KEYWORDS } from '../../card/card-keywords';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
+import { CombatDamage } from '../../utils/damage';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
-import { Modifier } from '../modifier.entity';
+import { WhileOnBoardModifier } from './while-on-board.modifier';
 
-export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modifier<T> {
-  private hasAttackedThisturn = false;
-
+export class DoubleAttackModifier extends WhileOnBoardModifier<MinionCard> {
   constructor(
     game: Game,
     source: AnyCard,
-    options: { mixins?: ModifierMixin<T>[] } = { mixins: [] }
+    options: { mixins?: ModifierMixin<MinionCard>[] } = { mixins: [] }
   ) {
     super(KEYWORDS.DOUBLE_ATTACK.id, game, source, {
       icon: 'icons/keyword-double-attack',
@@ -23,22 +21,17 @@ export class DoubleAttackModifier<T extends MinionCard | HeroCard> extends Modif
       isUnique: true,
       mixins: [
         new GameEventModifierMixin(game, {
-          eventName: 'combat.after-resolve-combat',
+          eventName: GAME_EVENTS.AFTER_RESOLVE_COMBAT,
           handler: async event => {
             if (!event.data.attacker.equals(this.target)) return;
 
-            if (this.hasAttackedThisturn) return;
-
-            if (event.data.attacker.isAlive) {
-              await event.data.attacker.wakeUp();
-              this.hasAttackedThisturn = true;
+            if (event.data.attacker.isAlive && event.data.target.isAlive) {
+              await event.data.attacker.dealDamage(
+                event.data.target,
+                new CombatDamage(event.data.attacker),
+                true
+              );
             }
-          }
-        }),
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.TURN_END,
-          handler: async () => {
-            this.hasAttackedThisturn = false;
           }
         }),
         ...(options.mixins || [])
