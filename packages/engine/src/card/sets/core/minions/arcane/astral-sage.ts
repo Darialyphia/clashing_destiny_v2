@@ -36,7 +36,7 @@ export const astralSage: MinionBlueprint = {
   runeCost: [RUNES.WISDOM],
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 1,
   maxHp: 5,
   commandment: 2,
   canPlay: () => true,

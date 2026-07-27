@@ -31,7 +31,7 @@ export const blastSorcerer: MinionBlueprint = {
   runeCost: [],
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 1,
+  atk: 2,
   maxHp: 5,
   commandment: 2,
   canPlay: () => true,
