@@ -22,7 +22,7 @@ export const moltenSalamander: MinionBlueprint = {
   description: dedent /*html*/ `
   <rt-keyword>Flanking</rt-keyword><br/>
   <rt-trigger>On Move</rt-trigger> Inflict <rt-keyword>Burn 1</rt-keyword> to all enemies at this battlefield.
-  <rt-runes runes="might,resonance,wisdom"></rt-runes>This has +0/+0/+1 for each enemy with <rt-keyword>Burn</rt-keyword> at this battlefield.
+  <rt-runes runes="might,resonance,wisdom"></rt-runes>This has +1/+0/+0 for each enemy with <rt-keyword>Burn</rt-keyword> at this battlefield.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
