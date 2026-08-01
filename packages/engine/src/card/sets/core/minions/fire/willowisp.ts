@@ -23,6 +23,7 @@ export const willowisp: MinionBlueprint = {
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

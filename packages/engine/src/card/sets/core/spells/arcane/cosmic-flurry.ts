@@ -41,6 +41,7 @@ export const cosmic: SpellBlueprint = {
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   shouldHideTargetarrows: true,

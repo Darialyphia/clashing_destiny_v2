@@ -30,6 +30,7 @@ export const conjureFocus: SpellBlueprint = {
   runeCost: [],
   speed: CARD_SPEED.FAST,
   tags: [],
+  statRequirements: {},
   shouldHideTargetarrows: true,
   canPlay: (game, card) => card.player.cardManager.hand.length > 0,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),

@@ -29,6 +29,7 @@ export const arcaneSight: SpellBlueprint = {
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: () => true,

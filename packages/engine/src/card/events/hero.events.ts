@@ -7,7 +7,9 @@ export const HERO_EVENTS = {
   HERO_AFTER_HEAL: 'hero.after-heal',
   HERO_BEFORE_LEVEL_UP: 'hero.before-level-up',
   HERO_AFTER_LEVEL_UP: 'hero.after-level-up',
-  HERO_PLAYED: 'hero.played'
+  HERO_PLAYED: 'hero.played',
+  HERO_BEFORE_STAT_CHANGE: 'hero.before-stat-change',
+  HERO_AFTER_STAT_CHANGE: 'hero.after-stat-change'
 } as const;
 export type HeroEvents = Values<typeof HERO_EVENTS>;
 
@@ -46,10 +48,24 @@ export class HeroLevelUpEvent extends TypedSerializableEvent<
   }
 }
 
+export class HeroStatChangeEvent extends TypedSerializableEvent<
+  { card: HeroCard; diff: Partial<{ strength: number; focus: number; wisdom: number }> },
+  { card: string; diff: Partial<{ strength: number; focus: number; wisdom: number }> }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      diff: this.data.diff
+    };
+  }
+}
+
 export type HeroCardEventMap = {
   [HERO_EVENTS.HERO_BEFORE_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_AFTER_HEAL]: HeroCardHealEvent;
   [HERO_EVENTS.HERO_BEFORE_LEVEL_UP]: HeroLevelUpEvent;
   [HERO_EVENTS.HERO_AFTER_LEVEL_UP]: HeroLevelUpEvent;
   [HERO_EVENTS.HERO_PLAYED]: HeroPlayedEvent;
+  [HERO_EVENTS.HERO_BEFORE_STAT_CHANGE]: HeroStatChangeEvent;
+  [HERO_EVENTS.HERO_AFTER_STAT_CHANGE]: HeroStatChangeEvent;
 };

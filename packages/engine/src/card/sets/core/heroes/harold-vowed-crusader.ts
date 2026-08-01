@@ -14,7 +14,6 @@ import {
 import type { HeroCard } from '../../../entities/hero.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import { LocationToggleModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
@@ -33,6 +32,9 @@ export const haroldVowedCrusader: HeroBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.LIGHT, AFFINITIES.EARTH],
   tags: [],
+  strength: 1,
+  focus: 1,
+  wisdom: 1,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(

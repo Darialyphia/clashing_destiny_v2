@@ -32,6 +32,7 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => {

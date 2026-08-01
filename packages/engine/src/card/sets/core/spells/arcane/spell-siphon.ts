@@ -26,7 +26,8 @@ export const spellSiphon: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
-  runeCost: [RUNES.RESONANCE],
+  runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

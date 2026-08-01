@@ -30,6 +30,7 @@ export const vineTrapper: MinionBlueprint = {
   affinities: [AFFINITIES.EARTH],
   manaCost: 2,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

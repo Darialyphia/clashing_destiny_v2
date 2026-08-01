@@ -30,6 +30,7 @@ export const mountainProtector: MinionBlueprint = {
   affinities: [AFFINITIES.EARTH],
   manaCost: 4,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

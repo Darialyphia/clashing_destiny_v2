@@ -52,6 +52,14 @@ const {
     rarity: Rarity;
     atk?: number | null;
     hp?: number | null;
+    strength?: number | null;
+    focus?: number | null;
+    wisdom?: number | null;
+    statRequirements?: {
+      strength?: number | null;
+      focus?: number | null;
+      wisdom?: number | null;
+    };
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;

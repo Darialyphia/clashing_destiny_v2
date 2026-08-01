@@ -30,6 +30,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   affinities: [AFFINITIES.ARCANE],
   manaCost: 4,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) =>

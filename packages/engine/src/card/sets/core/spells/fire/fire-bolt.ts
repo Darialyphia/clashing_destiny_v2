@@ -32,6 +32,7 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

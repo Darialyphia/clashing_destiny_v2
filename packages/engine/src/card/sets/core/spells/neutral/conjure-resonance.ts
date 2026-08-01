@@ -29,6 +29,7 @@ export const conjureResonance: SpellBlueprint = {
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 1,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetarrows: true,

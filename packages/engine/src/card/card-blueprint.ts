@@ -22,6 +22,12 @@ import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
 import type { Rune } from '../player/player.enums';
 
+export type StatRequirements = {
+  strength?: number;
+  focus?: number;
+  wisdom?: number;
+};
+
 export type CardArt = {
   foil: {
     sheen?: boolean;
@@ -126,6 +132,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
   runeCost: Rune[];
+  statRequirements: StatRequirements;
   maxHp: number;
   atk: number;
   commandment: number;
@@ -146,6 +153,7 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
   runeCost: Rune[];
+  statRequirements: StatRequirements;
   speed: CardSpeed;
   jobs: Job[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
@@ -163,6 +171,9 @@ export type HeroBlueprint = CardBlueprintBase & {
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   abilities: AbilityBlueprint<HeroCard, any>[];
+  strength: number;
+  focus: number;
+  wisdom: number;
   aiHints: {
     shouldPlay: (game: Game, card: HeroCard) => number;
   };
@@ -171,6 +182,7 @@ export type HeroBlueprint = CardBlueprintBase & {
 export type ArtifactBlueprint = CardBlueprintBase & {
   manaCost: number;
   runeCost: Rune[];
+  statRequirements: StatRequirements;
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   jobs: Job[];
   durability: number;

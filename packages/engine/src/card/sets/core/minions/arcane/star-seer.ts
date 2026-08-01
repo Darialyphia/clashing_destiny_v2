@@ -27,6 +27,7 @@ export const starSeer: MinionBlueprint = {
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

@@ -30,6 +30,7 @@ export const engulfInFlames: SpellBlueprint = {
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,

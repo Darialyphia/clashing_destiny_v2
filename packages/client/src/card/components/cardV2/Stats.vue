@@ -38,9 +38,8 @@ const {} = defineProps<{
 .stats {
   display: flex;
   flex-direction: column;
-  gap: calc(2px * var(--pixel-scale));
   position: absolute;
-  top: calc(75px * var(--pixel-scale));
+  top: calc(80px * var(--pixel-scale));
   left: calc(5px * var(--pixel-scale));
 }
 

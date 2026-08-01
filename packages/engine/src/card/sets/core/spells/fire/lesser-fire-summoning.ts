@@ -30,6 +30,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

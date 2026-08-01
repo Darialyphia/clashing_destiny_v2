@@ -30,6 +30,7 @@ export const enigmaticWizard: MinionBlueprint = {
   affinities: [AFFINITIES.ARCANE],
   manaCost: 4,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

@@ -15,7 +15,6 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SpellDamage } from '../../../../../utils/damage';
-import { RUNES } from '../../../../../player/player.enums';
 
 export const fireBall: SpellBlueprint<MinionCard> = {
   id: 'fireBall',
@@ -31,7 +30,8 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
-  runeCost: [RUNES.WISDOM],
+  runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => singleEnemyMinionTargetRules.canPlay(game, card),

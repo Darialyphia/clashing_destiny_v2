@@ -33,6 +33,9 @@ export const erinaVioletWitch: HeroBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE, AFFINITIES.FIRE],
   tags: [],
+  strength: 1,
+  focus: 1,
+  wisdom: 1,
   abilities: [
     {
       id: 'erina-violet-witch-ability',

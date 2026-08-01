@@ -34,6 +34,7 @@ export const flameArchmage: MinionBlueprint = {
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
   runeCost: [],
+  statRequirements: {},
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
