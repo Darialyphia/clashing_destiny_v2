@@ -15,7 +15,7 @@ export const astralBall: MinionBlueprint = {
   id: 'astralBall',
   name: 'Astral Ball',
   description: dedent /*html*/ `
-  <rt-trigger>On Score</rt-trigger> <rt-keyword>Predict, then destroy this minion.
+  <rt-trigger>On Score</rt-trigger> <rt-keyword>Predict</rt-keyword>, then destroy this minion.
   `,
   collectable: false,
   setId: CARD_SETS.CORE,
