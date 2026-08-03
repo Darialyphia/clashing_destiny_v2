@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, noTargets } from '../../../../card-utils';
+import { defaultCardArt } from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -8,14 +8,14 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
+import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 import { predict } from '../../../../card-actions-utils';
-import { OnDeathModifier } from '../../../../../modifier/modifiers/on-death.modifier';
 
 export const astralBall: MinionBlueprint = {
   id: 'astralBall',
   name: 'Astral Ball',
   description: dedent /*html*/ `
-  <rt-trigger>On Destroyed</rt-trigger>: <rt-keyword>Predict</rt-keyword>.
+  <rt-trigger>On Score</rt-trigger> <rt-keyword>Predict, then destroy this minion.
   `,
   collectable: false,
   setId: CARD_SETS.CORE,
@@ -35,9 +35,10 @@ export const astralBall: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new OnDeathModifier(game, card, {
+      new OnScoreModifier(game, card, {
         handler: async () => {
           await predict(game, card);
+          await card.destroy(card);
         }
       })
     );

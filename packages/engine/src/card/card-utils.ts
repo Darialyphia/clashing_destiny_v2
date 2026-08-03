@@ -313,12 +313,14 @@ export const singleAllyMinionTargetRules = {
     label = 'Select an ally minion',
     timeoutFallback,
     predicate = () => true,
+    canCancel = false,
     aiHints
   }: {
     game: Game;
     card: AnyCard;
     label?: string;
     timeoutFallback: AnyCard[];
+    canCancel?: boolean;
     predicate?: (c: MinionCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -329,6 +331,7 @@ export const singleAllyMinionTargetRules = {
       card,
       label,
       timeoutFallback,
+      canCancel,
       predicate: c => isMinion(c) && predicate(c),
       aiHints
     });

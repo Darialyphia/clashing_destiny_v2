@@ -13,17 +13,15 @@ import {
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { RUNES } from '../../../../../player/player.enums';
-import { statBuff } from '../../../../card-actions-utils';
 
 export const astralSage: MinionBlueprint = {
   id: 'astralSage',
   name: 'Astral Sage',
   description: dedent /*html*/ `
-    <rt-trigger>On Enter</rt-trigger> and <rt-trigger>On Move</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    <rt-runes runes="focus,wisdom"></rt-runes> +1/+1/+1
+    <rt-trigger>On Enter</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
+    <rt-runes runes="focus,wisdom"></rt-runes> <rt-trigger>On Move</rt-trigger> Repeat this minions's On Enter effect.
     `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -36,7 +34,7 @@ export const astralSage: MinionBlueprint = {
   runeCost: [RUNES.WISDOM],
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 1,
+  atk: 2,
   maxHp: 5,
   commandment: 2,
   canPlay: () => true,
@@ -70,28 +68,16 @@ export const astralSage: MinionBlueprint = {
     );
 
     await card.modifiers.add(
-      new OnMoveModifier(game, card, { handler: summonAstralBall })
-    );
-
-    await card.modifiers.add(
-      new RushModifier(game, card, {
-        cost: 1,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { focus: 1, wisdom: 1 })]
+      new OnMoveModifier(game, card, {
+        handler: summonAstralBall,
+        mixins: [
+          new RuneCostToggleModifierMixin(game, card, {
+            focus: 1,
+            wisdom: 1
+          })
+        ]
       })
     );
-
-    await statBuff(game, card, card, {
-      modifierType: 'astral-sage-stat-buff',
-      atk: 1,
-      maxHp: 1,
-      cmd: 1,
-      mixins: () => [
-        new RuneCostToggleModifierMixin(game, card, {
-          focus: 1,
-          wisdom: 1
-        })
-      ]
-    });
   },
   async onPlay() {},
   aiHints: {

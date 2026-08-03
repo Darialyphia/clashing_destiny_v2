@@ -12,14 +12,12 @@ import {
 } from '../../../../card.enums';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { askMandatoryYesNoQuestion, statBuff } from '../../../../card-actions-utils';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 
 export const terramancer: MinionBlueprint = {
   id: 'terramancer',
   name: 'Terramancer',
   description: dedent /*html*/ `
   <rt-keyword>On Engage</rt-keyword> you may exhaust this card to exhaust an enemy minion on the same battlefield.
-  <br/>
   <rt-runes runes="might,focus"></rt-runes> +1/+1/+1.
   `,
   collectable: true,

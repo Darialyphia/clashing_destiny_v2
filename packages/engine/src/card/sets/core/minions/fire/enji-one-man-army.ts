@@ -10,7 +10,6 @@ import {
   JOBS
 } from '../../../../card.enums';
 import { UniqueModifier } from '../../../../../modifier/modifiers/unique.modifier';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { RUNES } from '../../../../../player/player.enums';
 import { OverwhelmModifier } from '../../../../../modifier/modifiers/overwhelm.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
@@ -42,7 +41,6 @@ export const enjiOneManArmy: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new UniqueModifier(game, card));
-    await card.modifiers.add(new RushModifier(game, card, { cost: 1 }));
     const isAlone = () => {
       const battlefield = card.battlefield;
       if (!battlefield) return false;

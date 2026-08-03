@@ -19,7 +19,7 @@ export const vineTrapper: MinionBlueprint = {
   name: 'Vine Trapper',
   description: dedent /*html*/ `
   <rt-trigger>On Engage</rt-trigger>: Inflict <rt-keyword>Rooted</rt-keyword> to an enemy on the same battlefield until the end of the turn.
-  <rt-runes runes="might,focus,resonance"></rt-runes> give it -1 CMD as well.
+  <rt-runes runes="might,focus,resonance"></rt-runes> give it -1/+0/+0 as well.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

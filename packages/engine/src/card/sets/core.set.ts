@@ -50,13 +50,19 @@ import { blastSorcerer } from './core/minions/fire/blast-sorcerer';
 import { moltenSalamander } from './core/minions/fire/molten-salamander';
 import { austerity } from './core/destinies/austerity';
 import { cosmic } from './core/spells/arcane/cosmic-flurry';
-import { enjiOneManArmy } from './core/minions/fire/enji-one-man-army';
-import { cosmicAvatar } from './core/minions/arcane/cosmic-avatar';
-import { cosmicAvatarAlt } from './core/minions/arcane/cosmic-avatar';
-import { enjiOneManArmyFullArt } from './core/minions/fire/enji-one-man-army';
-import { enjiOneManArmyAlt } from './core/minions/fire/enji-one-man-army';
+import {
+  enjiOneManArmy,
+  enjiOneManArmyFullArt,
+  enjiOneManArmyAlt
+} from './core/minions/fire/enji-one-man-army';
+import { cosmicAvatar, cosmicAvatarAlt } from './core/minions/arcane/cosmic-avatar';
 import { fleetingThought } from './core/destinies/fleeting-thoughts';
 import { igniteTheSky } from './core/destinies/ignite-the-sky';
+import { ancientTreant } from './core/minions/earth/ancient-treant';
+import { loamkinTender } from './core/minions/earth/loamkin-tender';
+import { mosscloakQuartermaster } from './core/minions/earth/mosscloak-quartermaster';
+import { invigorate } from './core/spells/earth/invigorate';
+import { landSlide } from './core/spells/earth/land-slide';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -118,6 +124,11 @@ export const coreSet: CardSet = {
     enjiOneManArmyFullArt,
     enjiOneManArmyAlt,
     fleetingThought,
-    igniteTheSky
+    igniteTheSky,
+    ancientTreant,
+    loamkinTender,
+    mosscloakQuartermaster,
+    invigorate,
+    landSlide
   ]
 };

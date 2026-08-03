@@ -62,7 +62,12 @@ export const cards = {
 "enjiOneManArmyFullArt": "enjiOneManArmyFullArt",
 "enjiOneManArmyAlt": "enjiOneManArmyAlt",
 "fleeting-thought": "fleeting-thought",
-"ignite-the-sky": "ignite-the-sky"
+"ignite-the-sky": "ignite-the-sky",
+"ancientTreant": "ancientTreant",
+"loamkinTender": "loamkinTender",
+"mosscloakQuartermaster": "mosscloakQuartermaster",
+"invigorate": "invigorate",
+"landSlide": "landSlide"
 } as const;
 
 export const collectableCards = {
@@ -117,7 +122,12 @@ export const collectableCards = {
 "enjiOneManArmy": "enjiOneManArmy",
 "cosmicAvatar": "cosmicAvatar",
 "fleeting-thought": "fleeting-thought",
-"ignite-the-sky": "ignite-the-sky"
+"ignite-the-sky": "ignite-the-sky",
+"ancientTreant": "ancientTreant",
+"loamkinTender": "loamkinTender",
+"mosscloakQuartermaster": "mosscloakQuartermaster",
+"invigorate": "invigorate",
+"landSlide": "landSlide"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -464,6 +474,36 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "DESTINY"
+  },
+  {
+    "id": "ancientTreant",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "loamkinTender",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "mosscloakQuartermaster",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "invigorate",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "landSlide",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
   }
 ]
 };
@@ -525,7 +565,12 @@ export const cardShortIds: Record<string, number> = {
 "enjiOneManArmyFullArt": 54,
 "enjiOneManArmyAlt": 55,
 "fleeting-thought": 56,
-"ignite-the-sky": 57
+"ignite-the-sky": 57,
+"ancientTreant": 58,
+"loamkinTender": 59,
+"mosscloakQuartermaster": 60,
+"invigorate": 62,
+"landSlide": 61
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -585,5 +630,10 @@ export const cardIdByShortId: Record<number, string> = {
 "54": "enjiOneManArmyFullArt",
 "55": "enjiOneManArmyAlt",
 "56": "fleeting-thought",
-"57": "ignite-the-sky"
+"57": "ignite-the-sky",
+"58": "ancientTreant",
+"59": "loamkinTender",
+"60": "mosscloakQuartermaster",
+"61": "landSlide",
+"62": "invigorate"
 } as const;

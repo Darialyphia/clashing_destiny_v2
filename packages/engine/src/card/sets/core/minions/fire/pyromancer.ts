@@ -22,7 +22,7 @@ export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Score</rt-trigger> You may consume <rt-runes runes="colorless"></rt-runes> to summon an <rt-keyword>Ephemeral</rt-keyword> <rt-card>Will-o-Wisp</rt-card> on the same location as this minion
+  <rt-trigger>On Score</rt-trigger> Summon a <rt-card>Will-o-Wisp</rt-card> exhausted on the same location as this minion. You may consume <rt-runes runes="colorless">to Ready it</rt-runes>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -55,26 +55,6 @@ export const pyromancer: MinionBlueprint = {
             );
           if (!canSummonWisp) return;
 
-          const shouldGenerateWisp = await askMandatoryYesNoQuestion({
-            game,
-            card,
-            questionId: 'pyromancer-summon-wisp',
-            label: 'Consume a rune to summon a Will-o-wisp?',
-            timeoutFallback: 'no',
-            aiChoice: 'yes'
-          });
-
-          if (!shouldGenerateWisp) return;
-
-          const runeResult = await chooseColorlessRune({
-            game,
-            card,
-            questionId: 'pyromancer-rune-choice'
-          });
-
-          if (runeResult.cancelled) return;
-          await card.player.runeManager.remove([runeResult.result as Rune]);
-
           const result = await emptyBoardSpaceTargetRules.getTargets({
             game,
             card,
@@ -93,7 +73,27 @@ export const pyromancer: MinionBlueprint = {
             shouldExhaust: false
           });
           await generatedCard.wakeUp();
-          await generatedCard.modifiers.add(new EphemeralModifier(game, card));
+
+          const shouldWakeup = await askMandatoryYesNoQuestion({
+            game,
+            card,
+            questionId: 'pyromancer-summon-wisp',
+            label: 'Consume a rune to ready the Will-o-wisp ?',
+            timeoutFallback: 'no',
+            aiChoice: 'yes'
+          });
+
+          if (!shouldWakeup) return;
+
+          const runeResult = await chooseColorlessRune({
+            game,
+            card,
+            questionId: 'pyromancer-rune-choice'
+          });
+
+          if (runeResult.cancelled) return;
+          await card.player.runeManager.remove([runeResult.result as Rune]);
+          await generatedCard.wakeUp();
         }
       })
     );

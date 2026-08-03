@@ -19,7 +19,7 @@ export const rockSlideGolem: MinionBlueprint = {
   description: dedent /*html*/ `
   <rt-keyword>Taunt</rt-keyword> <rt-keyword>Flanking</rt-keyword>
   <br/>
-  <rt-runes runes="might,might,focus"></rt-runes> +1 Commandment
+  <rt-runes runes="might,might,focus"></rt-runes> +1/+0/+0
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -34,7 +34,7 @@ export const rockSlideGolem: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 4,
-  commandment: 1,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

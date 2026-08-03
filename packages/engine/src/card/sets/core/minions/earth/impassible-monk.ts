@@ -18,8 +18,8 @@ export const impassibleMonk: MinionBlueprint = {
   id: 'impassibleMonk',
   name: 'Impassible Monk',
   description: dedent /*html*/ `
-  <rt-keyword>Channel</rt-keyword>: gain +1 Commandment.
-  <rt-runes runes="might,focus"></rt-runes> +2 Health .  
+  <rt-keyword>Channel</rt-keyword>: gain +1/+0/+0..
+  <rt-runes runes="might,focus"></rt-runes> +0/+0/+2 .  
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
