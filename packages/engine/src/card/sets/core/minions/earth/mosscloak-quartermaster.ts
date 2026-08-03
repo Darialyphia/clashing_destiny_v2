@@ -25,7 +25,7 @@ export const mosscloakQuartermaster: MinionBlueprint = {
   id: 'mosscloakQuartermaster',
   name: 'Mosscloak Quartermaster',
   description: dedent /*html*/ `
-  <rt-location locations="base">In Base</rt-location> Your other minions have <rt-keyword>Defender 1</rt-keyword>.
+  <rt-location locations="base"></rt-location> Your other minions have <rt-keyword>Defender 1</rt-keyword>.
   <rt-runes runes="focus,resonance"></rt-runes> <rt-trigger>On Score</rt-trigger> Move this minion to your base.
   `,
   collectable: true,

@@ -28,7 +28,7 @@ export const ancientTreant: MinionBlueprint = {
   name: 'Ancient Treant',
   description: dedent /*html*/ `
   <rt-trigger>On Move</rt-trigger> This units gains <rt-keyword>Rooted</rt-keyword> until the end of the next turn.
-  Enemy minions on the same battlefield as this units cannot score.
+  Enemy minions on the same battlefield as this unit cannot score.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

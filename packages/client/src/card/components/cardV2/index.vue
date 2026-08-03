@@ -249,13 +249,13 @@ const kindBg = computed(() => {
   --glare-mask: url('@/assets/ui/card/v2/card-front.png');
   --foil-mask: url('@/assets/ui/card/v2/card-front.png');
 
-  .hero &::after {
+  &::after {
     content: '';
     position: absolute;
     inset: 0;
     background: var(--tint);
     mix-blend-mode: color-dodge;
-    opacity: 0.3;
+    opacity: 0.2;
     mask-size: cover;
     z-index: -1;
     pointer-events: none;
