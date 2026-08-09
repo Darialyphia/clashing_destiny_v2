@@ -68,9 +68,7 @@ export class ArtifactCard extends Card<
 
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost &&
-        this.hasUnlockedAffinity &&
-        this.blueprint.canPlay(this.game, this),
+      this.canPayManaCost && this.blueprint.canPlay(this.game, this),
       this
     );
   }

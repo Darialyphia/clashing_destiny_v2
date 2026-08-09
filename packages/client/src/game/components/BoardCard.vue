@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   useFxEvent,
+  useGameClient,
   useGameState,
   useGameUi
 } from '../composables/useGameClient';
@@ -27,7 +28,7 @@ const {
 }>();
 
 const ui = useGameUi();
-
+const { playerId } = useGameClient();
 const element = ref<HTMLElement>();
 onMounted(() => {
   element.value = ui.value.DOMSelectors.cardOnBoard(card.id).element!;
@@ -92,8 +93,13 @@ const isTargetable = computed(() => {
   if (
     state.value.interaction.state !==
     INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
-  )
+  ) {
     return false;
+  }
+  if (state.value.interaction.ctx.player !== playerId.value) {
+    return false;
+  }
+
   return state.value.interaction.ctx.elligibleCards.some(
     cardId => cardId === card.id
   );

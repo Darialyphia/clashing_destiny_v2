@@ -98,25 +98,39 @@ const animateCardIn = async () => {
   );
   if (!collectionCard) return;
   await nextTick();
-  const modalCard = unrefElement(cardRoot)!;
+  const modalCardWrapperEl = unrefElement(cardRoot)!;
+  const modalCardEl = modalCardWrapperEl.querySelector('.card') as HTMLElement;
+
   const collectionCardRect = collectionCard.getBoundingClientRect();
-  const modalCardRect = modalCard.getBoundingClientRect();
+  const modalCardRect = modalCardWrapperEl.getBoundingClientRect();
   const transforms = {
     x: collectionCardRect.left - modalCardRect.left,
     y: collectionCardRect.top - modalCardRect.top,
     scaleX: collectionCardRect.width / modalCardRect.width,
     scaleY: collectionCardRect.height / modalCardRect.height
   };
-  modalCard.style.transformOrigin = 'top left';
-  modalCard.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+  modalCardWrapperEl.style.transformOrigin = 'top left';
+  modalCardWrapperEl.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+  modalCardEl.style.transformOrigin = 'center';
+  modalCardEl.style.transform = `rotateY(360deg)`;
+
   await nextTick();
-  modalCard.style.transform = '';
-  modalCard.style.transition = 'transform 0.3s var(--ease-in-out-4)';
-  modalCard.addEventListener(
+  modalCardWrapperEl.style.transform = '';
+  modalCardWrapperEl.style.transition = 'transform 0.3s var(--ease-in-out-4)';
+  modalCardEl.style.transition = 'transform 1s var(--ease-in-out-4)';
+  modalCardWrapperEl.addEventListener(
     'transitionend',
     () => {
-      modalCard.style.transition = '';
-      modalCard.style.transformOrigin = '';
+      modalCardWrapperEl.style.transition = '';
+      modalCardWrapperEl.style.transformOrigin = '';
+    },
+    { once: true }
+  );
+  modalCardEl.addEventListener(
+    'transitionend',
+    () => {
+      modalCardEl.style.transition = '';
+      modalCardEl.style.transformOrigin = '';
     },
     { once: true }
   );
@@ -124,24 +138,30 @@ const animateCardIn = async () => {
 
 const animateCardOut = async () => {
   shouldDisplayCard.value = false;
-  const collectionCard = document.querySelector(
+  const collectionCardEl = document.querySelector(
     `[data-flip-id="collection-card-${card.id}"]`
   ) as HTMLElement | null;
-  if (!collectionCard) return;
+  if (!collectionCardEl) return;
 
-  const modalCard = unrefElement(cardRoot)!;
-  const collectionCardRect = collectionCard.getBoundingClientRect();
-  const modalCardRect = modalCard.getBoundingClientRect();
+  const modalCardWrapperEl = unrefElement(cardRoot)!;
+  const modalCardEl = modalCardWrapperEl.querySelector('.card') as HTMLElement;
+
+  const collectionCardRect = collectionCardEl.getBoundingClientRect();
+  const modalCardRect = modalCardWrapperEl.getBoundingClientRect();
+
   const transforms = {
     x: modalCardRect.left - collectionCardRect.left,
     y: modalCardRect.top - collectionCardRect.top,
     scaleX: modalCardRect.width / collectionCardRect.width,
     scaleY: modalCardRect.height / collectionCardRect.height
   };
-  collectionCard.style.transformOrigin = 'top left';
-  collectionCard.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+  collectionCardEl.style.transformOrigin = 'top left';
+  collectionCardEl.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
 
-  const zIndexAncestor = collectionCard.closest<HTMLElement>(
+  modalCardEl.style.transformOrigin = 'center';
+  modalCardEl.style.transform = `rotate`;
+
+  const zIndexAncestor = collectionCardEl.closest<HTMLElement>(
     'li[data-collection-card-id]'
   );
   if (zIndexAncestor) {
@@ -149,13 +169,13 @@ const animateCardOut = async () => {
   }
 
   await waitFor(50);
-  collectionCard.style.transition = 'transform 0.3s var(--ease-in-out-4)';
-  collectionCard.style.transform = '';
-  collectionCard.addEventListener(
+  collectionCardEl.style.transition = 'transform 0.3s var(--ease-in-out-4)';
+  collectionCardEl.style.transform = '';
+  collectionCardEl.addEventListener(
     'transitionend',
     () => {
-      collectionCard.style.transition = '';
-      collectionCard.style.transformOrigin = '';
+      collectionCardEl.style.transition = '';
+      collectionCardEl.style.transformOrigin = '';
       if (zIndexAncestor) {
         zIndexAncestor.style.zIndex = '';
       }
@@ -176,14 +196,15 @@ const animateCardOut = async () => {
   >
     <article class="card-details">
       <aside class="card-preview">
-        <BlueprintCard
-          v-if="shouldDisplayCard"
-          ref="root"
-          :data-flip-id="`collection-card-modal-${card.id}`"
-          :blueprint="card.card"
-          show-stats
-          :is-foil="card.isFoil"
-        />
+        <div ref="root">
+          <BlueprintCard
+            v-if="shouldDisplayCard"
+            :data-flip-id="`collection-card-modal-${card.id}`"
+            :blueprint="card.card"
+            show-stats
+            :is-foil="card.isFoil"
+          />
+        </div>
       </aside>
 
       <Transition appear>

@@ -489,7 +489,6 @@ export class MinionCard extends Card<
   canPlay() {
     return this.interceptors.canPlay.getValue(
       this.canPlayBase &&
-        this.hasUnlockedAffinity &&
         this.isCorrectPhaseToPlay &&
         this.blueprint.canPlay(this.game, this),
       this
