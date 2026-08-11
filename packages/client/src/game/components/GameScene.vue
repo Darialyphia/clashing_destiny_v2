@@ -230,7 +230,6 @@ const isScreenDimmed = computed(() => {
 
 :global(.my-hand:has(.hand-card:hover)) {
   z-index: 10;
-  background: red;
 }
 
 .opponent-hand {

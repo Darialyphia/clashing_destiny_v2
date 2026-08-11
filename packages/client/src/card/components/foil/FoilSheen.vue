@@ -48,7 +48,7 @@
   --foil-brightness: 0.6;
   position: absolute;
   inset: 0;
-  opacity: 0.35;
+  opacity: 0.2;
   pointer-events: none;
   mask-image: var(--foil-mask);
   mask-size: var(--foil-mask-size, cover);

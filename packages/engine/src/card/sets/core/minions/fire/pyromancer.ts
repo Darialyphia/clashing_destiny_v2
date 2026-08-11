@@ -22,7 +22,7 @@ export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Score</rt-trigger> Summon a <rt-card>Will-o-Wisp</rt-card> exhausted on the same location as this minion. You may consume <rt-runes runes="colorless">to Ready it</rt-runes>.
+  <rt-trigger>On Score</rt-trigger> Summon a <rt-card>Will-o-Wisp</rt-card> exhausted on the same location as this minion. You may consume <rt-runes runes="colorless"></rt-runes> to Ready it.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

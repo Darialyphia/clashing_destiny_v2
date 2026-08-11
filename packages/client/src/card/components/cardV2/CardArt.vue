@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import { assets } from '@/assets';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 
-const { art } = defineProps<{
+const { kind, art } = defineProps<{
+  kind: CardKind;
   art: CardArt;
 }>();
 
 const artBgImage = computed(() => {
-  return assets[art.bg].css;
+  if (kind === CARD_KINDS.HERO || art.isFullArt || art.bg.includes('-alt')) {
+    return assets[art.bg].css;
+  }
+
+  return assets['cards/placeholder-spell-bg'].css;
 });
 
 const artMainImage = computed(() => {

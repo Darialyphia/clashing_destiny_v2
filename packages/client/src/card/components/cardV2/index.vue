@@ -106,7 +106,7 @@ const kindBg = computed(() => {
       :data-flip-id="`card_${card.id}`"
     >
       <div class="card-front" :style="{ '--tint': tint }">
-        <CardArtComponent :art="card.art" />
+        <CardArtComponent :art="card.art" :kind="card.kind" />
         <template v-if="isFoil">
           <FoilSheen v-if="card.art.foil.sheen" />
           <FoilOil v-if="card.art.foil.oil" />
@@ -129,7 +129,7 @@ const kindBg = computed(() => {
         <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />
 
-        <div class="tags">
+        <div class="tags parallax">
           <UiSimpleTooltip>
             <template #trigger>
               <div class="kind" />
@@ -341,7 +341,7 @@ const kindBg = computed(() => {
   font-size: calc(var(--pixel-scale) * 11px);
   top: calc(194px * var(--pixel-scale));
   left: 50%;
-  translate: -50% 0;
+  transform: translateX(-50%);
   color: #e9d8c0;
   text-shadow: 0 0 0.75rem black;
   -webkit-text-stroke: 2px black;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isDefined } from '@game/shared';
-import { type CardKind } from '@game/engine/src/card/card.enums';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import CardGlare from './CardGlare.vue';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilScanlines from './foil/FoilScanlines.vue';
@@ -46,7 +46,15 @@ const { pointerStyle } = useCardTilt(root, {
 });
 
 const artBgImage = computed(() => {
-  return assets[card.art.bg].css;
+  if (
+    card.kind === CARD_KINDS.HERO ||
+    card.art.isFullArt ||
+    card.art.bg.includes('-alt')
+  ) {
+    return assets[card.art.bg].css;
+  }
+
+  return assets['cards/placeholder-spell-bg'].css;
 });
 
 const artMainImage = computed(() => {
