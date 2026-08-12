@@ -50,18 +50,6 @@ export class JobBonusToggleModifierMixin<
   }
 }
 
-export class RuneCostToggleModifierMixin<
-  T extends AnyCard
-> extends TogglableModifierMixin<T> {
-  constructor(
-    game: Game,
-    source: AnyCard,
-    private cost: RuneCost
-  ) {
-    super(game, () => source.player.runeManager.has(this.cost));
-  }
-}
-
 export class LocationToggleModifierMixin<
   T extends AnyCard
 > extends TogglableModifierMixin<T> {

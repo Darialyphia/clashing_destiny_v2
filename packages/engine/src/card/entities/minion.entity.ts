@@ -549,7 +549,6 @@ export class MinionCard extends Card<
       return { cancelled: true };
     }
     await this.payManaCost();
-    await this.payRuneCost();
 
     await this.playAt(positionResult.result[0] as BoardSpace);
 

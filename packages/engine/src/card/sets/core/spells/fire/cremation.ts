@@ -24,7 +24,7 @@ export const cremation: SpellBlueprint = {
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetarrows: true,

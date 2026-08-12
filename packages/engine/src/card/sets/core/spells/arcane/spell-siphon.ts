@@ -10,7 +10,6 @@ import {
   CARD_SPEED
 } from '../../../../card.enums';
 import { EFFECT_TYPE } from '../../../../../game/game.enums';
-import { RUNES } from '../../../../../player/player.enums';
 
 export const spellSiphon: SpellBlueprint = {
   id: 'spellSiphon',
@@ -26,7 +25,7 @@ export const spellSiphon: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
-  runeCost: [RUNES.RESONANCE],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

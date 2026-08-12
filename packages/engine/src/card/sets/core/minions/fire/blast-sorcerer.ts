@@ -10,7 +10,6 @@ import {
   JOBS
 } from '../../../../card.enums';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { BlastModifier } from '../../../../../modifier/modifiers/blast.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 
@@ -28,7 +27,7 @@ export const blastSorcerer: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -71,8 +70,7 @@ export const blastSorcerer: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('blast-sorcerer-cost-reduction', game, card, {
-        amount: -2,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 2, focus: 1 })]
+        amount: -2
       })
     );
   },

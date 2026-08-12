@@ -1,10 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  defaultCardArt,
-  isMinion,
-  singleAllyMinionTargetRules
-} from '../../../../card-utils';
+import { defaultCardArt, isMinion } from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -16,7 +12,6 @@ import {
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 import { RootedModifier } from '../../../../../modifier/modifiers/rooted.modifier';
 import { DurationModifierMixin } from '../../../../../modifier/mixins/duration.mixin';
-import { RUNES } from '../../../../../player/player.enums';
 import { Modifier } from '../../../../../modifier/modifier.entity';
 import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
@@ -38,7 +33,7 @@ export const ancientTreant: MinionBlueprint = {
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.EARTH],
   manaCost: 7,
-  runeCost: [RUNES.FOCUS, RUNES.WISDOM],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

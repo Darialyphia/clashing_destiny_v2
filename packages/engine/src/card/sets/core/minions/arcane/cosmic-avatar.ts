@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, emptyBoardSpaceTargetRules } from '../../../../card-utils';
+import { defaultCardArt } from '../../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -10,9 +10,7 @@ import {
   CARD_SPEED
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { RUNES } from '../../../../../player/player.enums';
 import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { SimpleAttackBuffModifier } from '../../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin';
 import { astralBall } from './astral-ball';
@@ -39,7 +37,7 @@ export const cosmicAvatar: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 6,
-  runeCost: [RUNES.WISDOM, RUNES.RESONANCE],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

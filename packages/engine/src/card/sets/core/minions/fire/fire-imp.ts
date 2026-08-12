@@ -25,7 +25,7 @@ export const fireImp: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

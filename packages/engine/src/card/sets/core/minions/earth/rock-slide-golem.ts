@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import {
@@ -29,7 +28,7 @@ export const rockSlideGolem: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.EARTH],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -47,13 +46,7 @@ export const rockSlideGolem: MinionBlueprint = {
 
     await card.modifiers.add(
       new SimpleCommandmentBuffModifier('rockslide-golem-cmd-buff', game, card, {
-        amount: 1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 2,
-            focus: 1
-          })
-        ]
+        amount: 1
       })
     );
   },

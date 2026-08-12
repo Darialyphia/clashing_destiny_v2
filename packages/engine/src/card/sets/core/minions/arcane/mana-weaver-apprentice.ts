@@ -1,8 +1,5 @@
 import dedent from 'dedent';
-import {
-  RuneCostToggleModifierMixin,
-  TogglableModifierMixin
-} from '../../../../../modifier/mixins/togglable.mixin';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
@@ -31,7 +28,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -54,11 +51,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
       })
     );
 
-    await card.modifiers.add(
-      new StealthModifier(game, card, {
-        mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 2 })]
-      })
-    );
+    await card.modifiers.add(new StealthModifier(game, card, {}));
   },
   async onPlay() {},
   aiHints: {

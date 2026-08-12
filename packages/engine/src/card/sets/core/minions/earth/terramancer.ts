@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, singleEnemyMinionTargetRules } from '../../../../card-utils';
 import {
@@ -28,7 +27,7 @@ export const terramancer: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.EARTH],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -86,13 +85,7 @@ export const terramancer: MinionBlueprint = {
       modifierType: 'astral-sage-stat-buff',
       atk: 1,
       maxHp: 1,
-      cmd: 1,
-      mixins: () => [
-        new RuneCostToggleModifierMixin(game, card, {
-          focus: 1,
-          might: 1
-        })
-      ]
+      cmd: 1
     });
   },
   async onPlay() {},

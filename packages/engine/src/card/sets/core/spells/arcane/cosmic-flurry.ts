@@ -40,7 +40,7 @@ export const cosmic: SpellBlueprint = {
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   shouldHideTargetarrows: true,
@@ -88,29 +88,27 @@ export const cosmic: SpellBlueprint = {
       })
     );
 
-    if (card.player.runeManager.has({ resonance: 1, focus: 1 })) {
-      const hasRoom = emptyBoardSpaceTargetRules.canPlay(
-        game,
-        space =>
-          space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player)
-      );
-      if (!hasRoom) return;
+    const hasRoom = emptyBoardSpaceTargetRules.canPlay(
+      game,
+      space =>
+        space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player)
+    );
+    if (!hasRoom) return;
 
-      const position = await emptyBoardSpaceTargetRules.getTargets({
-        game,
-        card,
-        predicate: space =>
-          space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player),
-        canCancel: false
-      });
-      const generatedCard = await card.player.generateCard<MinionCard>(
-        astralBall.id,
-        card.isFoil
-      );
-      await generatedCard.playImmediatelyAt(position.result.spaces[0], {
-        shouldExhaust: false
-      });
-    }
+    const position = await emptyBoardSpaceTargetRules.getTargets({
+      game,
+      card,
+      predicate: space =>
+        space.position.zone === CARD_LOCATIONS.BASE && space.player.equals(card.player),
+      canCancel: false
+    });
+    const generatedCard = await card.player.generateCard<MinionCard>(
+      astralBall.id,
+      card.isFoil
+    );
+    await generatedCard.playImmediatelyAt(position.result.spaces[0], {
+      shouldExhaust: false
+    });
   },
   aiHints: {
     shouldPlay: () => 1

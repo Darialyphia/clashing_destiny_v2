@@ -27,7 +27,7 @@ export const conjureWisdom: SpellBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetarrows: true,
@@ -36,14 +36,7 @@ export const conjureWisdom: SpellBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new InstantModifier(game, card));
   },
-  async onPlay(game, card) {
-    if (card.player.cardManager.hand.length === 0) return;
-    await discardFromHand(game, card, {
-      min: 1,
-      max: 1
-    });
-    await card.player.runeManager.add([RUNES.WISDOM]);
-  },
+  async onPlay(game, card) {},
   aiHints: {
     shouldPlay: () => 1
   }

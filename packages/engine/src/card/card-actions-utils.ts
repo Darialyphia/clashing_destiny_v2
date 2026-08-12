@@ -202,34 +202,6 @@ export const askMandatoryYesNoQuestion = async ({
   return answer.result === 'yes';
 };
 
-export const chooseColorlessRune = async ({
-  game,
-  card,
-  questionId
-}: {
-  game: Game;
-  card: AnyCard;
-  questionId: string;
-}) => {
-  const runeResult = await game.interaction.askQuestion({
-    player: card.player,
-    canCancel: false,
-    label: 'Choose a rune to consume',
-    questionId,
-    source: card,
-    choices: [
-      ...Object.values(RUNES).map(rune => ({
-        id: rune,
-        label: rune,
-        aiHints: { shouldPick: () => 0.5 }
-      }))
-    ].filter(choice => card.player.runeManager.has({ [choice.id]: 1 })),
-    timeoutFallback: RUNES.FOCUS
-  });
-
-  return runeResult;
-};
-
 export const statBuff = async (
   game: Game,
   source: AnyCard,

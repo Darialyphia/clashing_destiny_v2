@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import {
@@ -10,7 +9,6 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import { RushModifier } from '../../../../../modifier/modifiers/rush.modifier';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
 import { DoubleAttackModifier } from '../../../../../modifier/modifiers/double-attack.modifier';
 
@@ -28,7 +26,7 @@ export const recklessRecruit: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -40,12 +38,7 @@ export const recklessRecruit: MinionBlueprint = {
     await card.modifiers.add(new DoubleAttackModifier(game, card));
     await card.modifiers.add(
       new AttackerModifier(game, card, {
-        amount: 2,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 3
-          })
-        ]
+        amount: 2
       })
     );
   },

@@ -12,7 +12,6 @@ import {
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { defaultCardArt, emptyBoardSpaceTargetRules } from '../../../../card-utils';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const lesserFireSummoning: SpellBlueprint = {
   id: 'lesserFireSummoning',
@@ -29,7 +28,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -51,11 +50,7 @@ export const lesserFireSummoning: SpellBlueprint = {
       label: 'Select a space to summon the Willowisp'
     }),
   async onInit(game, card) {
-    await card.modifiers.add(
-      new EchoModifier(game, card, {
-        mixins: [new RuneCostToggleModifierMixin(game, card, { wisdom: 3 })]
-      })
-    );
+    await card.modifiers.add(new EchoModifier(game, card));
   },
   async onPlay(game, card, targets) {
     const minion = await card.player.generateCard<MinionCard>('willowisp', card.isFoil);

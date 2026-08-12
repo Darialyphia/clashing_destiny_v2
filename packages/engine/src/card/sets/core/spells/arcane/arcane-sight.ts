@@ -28,7 +28,7 @@ export const arcaneSight: SpellBlueprint = {
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: () => true,
@@ -38,9 +38,7 @@ export const arcaneSight: SpellBlueprint = {
   },
   async onPlay(game, card) {
     await predict(game, card);
-    if (card.player.runeManager.has({ wisdom: 1, resonance: 1 })) {
-      await card.player.cardManager.draw(1);
-    }
+    await card.player.cardManager.draw(1);
   },
   aiHints: {
     shouldPlay: () => 1

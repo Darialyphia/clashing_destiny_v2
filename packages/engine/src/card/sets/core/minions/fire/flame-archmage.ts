@@ -33,7 +33,7 @@ export const flameArchmage: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
@@ -52,8 +52,6 @@ export const flameArchmage: MinionBlueprint = {
               isSpell(event.data.card) &&
               event.data.card.affinities.includes(AFFINITIES.FIRE),
             async handler() {
-              if (!card.player.runeManager.has({ wisdom: 1 })) return;
-
               const hasTarget = singleMinionTargetRules.canPlay(
                 game,
                 card,
@@ -80,8 +78,6 @@ export const flameArchmage: MinionBlueprint = {
               });
 
               if (!shouldActivate) return;
-
-              await card.player.runeManager.remove([RUNES.WISDOM]);
 
               const result = await singleMinionTargetRules.getTargets({
                 game,

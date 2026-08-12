@@ -86,7 +86,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     this.addTransitions([
       stateTransition(
         GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
+        GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN,
         GAME_PHASES.MAIN
       ),
       stateTransition(GAME_PHASES.MAIN, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.END),

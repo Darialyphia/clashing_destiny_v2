@@ -41,7 +41,6 @@ export type SerializedPlayer = {
   hero: string;
   unlockedAffinities: Affinity[];
   boardSide: SerializedBoardSide;
-  runes: Record<Rune, number>;
   canTakeResourceAction: boolean;
   victoryPoints: number;
 };
@@ -64,7 +63,7 @@ const makeInterceptors = (): PlayerInterceptors => {
   };
 };
 
-export type PlayerResourceAction = { type: 'rune'; rune: Rune } | { type: 'draw' };
+export type PlayerResourceAction = { type: 'draw' };
 
 export class Player
   extends EntityWithModifiers<PlayerInterceptors>
@@ -74,10 +73,7 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly runeManager: RuneManagerComponent;
-
   readonly manaManager = new ManaManagerComponent(this.game, this, {
-    manaRegen: this.interceptors.manaRegen,
     maxMana: this.interceptors.maxMana
   });
 
@@ -103,7 +99,6 @@ export class Player
       shouldShuffleDeck: true,
       deck: options.deck.cards
     });
-    this.runeManager = new RuneManagerComponent(game, this);
   }
 
   async init() {
@@ -139,10 +134,14 @@ export class Player
       );
     }
 
-    return this.interceptors.cardsDrawnForTurn.getValue(
-      this.game.config.CARDS_DRAWN_PER_TURN,
-      {}
-    );
+    const base = match(this.game.config.CARD_DRAW_MODE)
+      .with('fixed', () => this.game.config.CARDS_DRAWN_PER_TURN)
+      .with('threshold', () =>
+        Math.max(0, this.game.config.CARDS_DRAWN_PER_TURN - this.cardManager.hand.length)
+      )
+      .exhaustive();
+
+    return this.interceptors.cardsDrawnForTurn.getValue(base, {});
   }
 
   get isPlayer1() {
@@ -225,9 +224,6 @@ export class Player
     );
     this.resourceActionsTakenThisTurn.push(action);
     await match(action)
-      .with({ type: 'rune' }, async ({ rune }) => {
-        await this.runeManager.add([rune]);
-      })
       .with({ type: 'draw' }, async () => {
         await this.cardManager.draw(1);
       })
@@ -264,10 +260,8 @@ export class Player
         await card.wakeUp();
       }
     }
-    if (this.game.turnSystem.elapsedTurns > 0) {
-      await this.manaManager.gain(this.manaManager.manaRegen);
-      this.resourceActionsTakenThisTurn = [];
-    }
+
+    this.resourceActionsTakenThisTurn = [];
   }
 
   generateCard<T extends AnyCard>(blueprintId: string, isFoil: boolean) {
@@ -321,7 +315,6 @@ export class Player
       hero: this.hero.id,
       unlockedAffinities: this.unlockedAffinities,
       boardSide: this.boardSide.serialize(),
-      runes: this.runeManager.runes,
       canTakeResourceAction: this.canTakeResourceAction,
       victoryPoints: this.victoryPoints
     };

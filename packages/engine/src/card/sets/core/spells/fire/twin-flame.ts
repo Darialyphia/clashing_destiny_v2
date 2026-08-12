@@ -32,7 +32,7 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -59,10 +59,8 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
     const [target] = targets.cards;
     if (!target) return;
 
-    const damageAmount = card.player.runeManager.has({ wisdom: 2, resonance: 1 }) ? 3 : 2;
-
     for (const target of targets.cards) {
-      await target.takeDamage(card, new SpellDamage(damageAmount, card));
+      await target.takeDamage(card, new SpellDamage(2, card));
     }
   },
   aiHints: {

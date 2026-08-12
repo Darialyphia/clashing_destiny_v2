@@ -216,7 +216,6 @@ export class ArtifactCard extends Card<
     }
 
     await this.payManaCost();
-    await this.payRuneCost();
     await this.playAt(positionResult.result[0] as BoardSpace);
 
     return { cancelled: false };

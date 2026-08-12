@@ -14,7 +14,6 @@ import {
   CARD_SPEED
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { RUNES } from '../../../../../player/player.enums';
 
 export const starConvergence: SpellBlueprint = {
   id: 'starconvergence',
@@ -30,7 +29,7 @@ export const starConvergence: SpellBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
-  runeCost: [RUNES.RESONANCE],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   shouldHideTargetarrows: true,

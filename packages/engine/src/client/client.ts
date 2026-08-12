@@ -379,7 +379,7 @@ export class GameClient {
     });
   }
 
-  takeResourceAction(action: { type: 'rune'; rune: Rune } | { type: 'draw' }) {
+  takeResourceAction(action: { type: 'draw' }) {
     this.dispatch({
       type: 'takeResourceAction',
       payload: {

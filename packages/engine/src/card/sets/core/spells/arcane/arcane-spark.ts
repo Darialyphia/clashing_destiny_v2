@@ -11,7 +11,6 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { SpellDamage } from '../../../../../utils/damage';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
 
@@ -31,7 +30,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
@@ -53,13 +52,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('arcane-spark-discount', game, card, {
-        amount: -1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            focus: 1,
-            wisdom: 1
-          })
-        ]
+        amount: -1
       })
     );
     await card.modifiers.add(new EchoModifier(game, card, { mixins: [] }));

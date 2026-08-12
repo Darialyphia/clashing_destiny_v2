@@ -10,7 +10,6 @@ import {
   CARD_SPEED
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const fallingStar: SpellBlueprint<MinionCard> = {
@@ -29,7 +28,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 4,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) =>
@@ -51,8 +50,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('fallingStar', game, card, {
-        amount: -2,
-        mixins: [new RuneCostToggleModifierMixin(game, card, { resonance: 3 })]
+        amount: -2
       })
     );
   },

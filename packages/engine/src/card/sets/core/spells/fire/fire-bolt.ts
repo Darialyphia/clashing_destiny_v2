@@ -31,21 +31,18 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
-    singleEnemyMinionTargetRules.canPlay(game, card, minion =>
-      card.player.runeManager.has({ wisdom: 2 }) ? true : minion.isOnBattlefield
-    ),
+    singleEnemyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({
       game,
       card,
       timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
-      predicate: minion =>
-        card.player.runeManager.has({ wisdom: 2 }) ? true : minion.isOnBattlefield,
+      predicate: minion => minion.isOnBattlefield,
       aiHints: {
         shouldPick: () => 1
       }

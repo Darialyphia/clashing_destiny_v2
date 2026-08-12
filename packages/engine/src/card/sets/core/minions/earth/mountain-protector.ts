@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import {
@@ -29,7 +28,7 @@ export const mountainProtector: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.EARTH],
   manaCost: 4,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -41,13 +40,7 @@ export const mountainProtector: MinionBlueprint = {
     await card.modifiers.add(new TauntModifier(game, card));
     await card.modifiers.add(
       new SimpleManacostModifier('mountain-protector', game, card, {
-        amount: -1,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 2,
-            focus: 1
-          })
-        ]
+        amount: -1
       })
     );
   },

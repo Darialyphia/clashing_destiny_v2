@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import {
@@ -36,7 +35,7 @@ export const indomitableVindicator: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -65,7 +64,6 @@ export const indomitableVindicator: MinionBlueprint = {
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
         location: 'battlefield',
-        mixins: [new RuneCostToggleModifierMixin(game, card, { might: 1, resonance: 1 })],
         async handler() {
           const hasTarget = singleEnemyMinionTargetRules.canPlay(
             game,

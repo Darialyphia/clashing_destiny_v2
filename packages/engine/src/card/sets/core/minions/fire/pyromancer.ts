@@ -10,12 +10,7 @@ import {
   CARD_SPEED
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import {
-  askMandatoryYesNoQuestion,
-  chooseColorlessRune
-} from '../../../../card-actions-utils';
-import { type Rune } from '../../../../../player/player.enums';
-import { EphemeralModifier } from '../../../../../modifier/modifiers/ephemeral.modifier';
+import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 
 export const pyromancer: MinionBlueprint = {
@@ -32,7 +27,7 @@ export const pyromancer: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -46,13 +41,11 @@ export const pyromancer: MinionBlueprint = {
         async handler() {
           if (!card.isOnBattlefield) return;
 
-          const canSummonWisp =
-            card.player.runeManager.runeCount > 0 &&
-            emptyBoardSpaceTargetRules.canPlay(
-              game,
-              space =>
-                space.player.equals(card.player) && space.position.zone === card.location
-            );
+          const canSummonWisp = emptyBoardSpaceTargetRules.canPlay(
+            game,
+            space =>
+              space.player.equals(card.player) && space.position.zone === card.location
+          );
           if (!canSummonWisp) return;
 
           const result = await emptyBoardSpaceTargetRules.getTargets({
@@ -85,14 +78,6 @@ export const pyromancer: MinionBlueprint = {
 
           if (!shouldWakeup) return;
 
-          const runeResult = await chooseColorlessRune({
-            game,
-            card,
-            questionId: 'pyromancer-rune-choice'
-          });
-
-          if (runeResult.cancelled) return;
-          await card.player.runeManager.remove([runeResult.result as Rune]);
           await generatedCard.wakeUp();
         }
       })

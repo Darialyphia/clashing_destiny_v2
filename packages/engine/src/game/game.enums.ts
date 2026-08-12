@@ -25,7 +25,7 @@ export const TURN_EVENTS = {
 export type TurnEventName = Values<typeof TURN_EVENTS>;
 
 export const GAME_PHASE_TRANSITIONS = {
-  DRAW_FOR_TURN: 'draw_for_turn',
+  DRAWN_FOR_TURN: 'drawn_for_turn',
   END_TURN: 'end_turn',
   START_TURN: 'start_turn',
   PLAYER_WON: 'player_won',

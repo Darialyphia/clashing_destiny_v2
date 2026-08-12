@@ -31,7 +31,7 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => {
@@ -40,9 +40,7 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
       card,
       minion => minion.isAttacking
     );
-    if (card.player.runeManager.has({ focus: 1, wisdom: 1, resonance: 1 })) {
-      return minionCondition;
-    }
+
     return (
       minionCondition &&
       emptyBoardSpaceTargetRules.canPlay(
@@ -67,20 +65,16 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
   async onInit() {},
   async onPlay(game, card, target) {
     const minion = target.cards[0];
-    if (!card.player.runeManager.has({ focus: 1, wisdom: 1, resonance: 1 })) {
-      const destination = await emptyBoardSpaceTargetRules.getTargets({
-        game,
-        card,
-        canCancel: false,
-        predicate: space =>
-          space.position.zone === CARD_LOCATIONS.BASE &&
-          space.player.equals(card.player.opponent)
-      });
-      const space = destination.result.spaces[0];
-      await minion.move(space.position.zone, space.position.index);
-    } else {
-      await minion.addToHand();
-    }
+    const destination = await emptyBoardSpaceTargetRules.getTargets({
+      game,
+      card,
+      canCancel: false,
+      predicate: space =>
+        space.position.zone === CARD_LOCATIONS.BASE &&
+        space.player.equals(card.player.opponent)
+    });
+    const space = destination.result.spaces[0];
+    await minion.move(space.position.zone, space.position.index);
   },
   aiHints: {
     shouldPlay: () => 1

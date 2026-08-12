@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import {
@@ -29,7 +28,7 @@ export const impassibleMonk: MinionBlueprint = {
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.EARTH],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -52,13 +51,7 @@ export const impassibleMonk: MinionBlueprint = {
 
     await card.modifiers.add(
       new SimpleHealthBuffModifier('impassible-monk-hp-buff', game, card, {
-        amount: 2,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 1,
-            focus: 1
-          })
-        ]
+        amount: 2
       })
     );
   },

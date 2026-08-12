@@ -13,8 +13,6 @@ import {
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
-import { RUNES } from '../../../../../player/player.enums';
 
 export const astralSage: MinionBlueprint = {
   id: 'astralSage',
@@ -31,7 +29,7 @@ export const astralSage: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 5,
-  runeCost: [RUNES.WISDOM],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -69,13 +67,7 @@ export const astralSage: MinionBlueprint = {
 
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
-        handler: summonAstralBall,
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            focus: 1,
-            wisdom: 1
-          })
-        ]
+        handler: summonAstralBall
       })
     );
   },

@@ -146,10 +146,6 @@ export class PlayerViewModel {
     return this.data.maxMana;
   }
 
-  get runes() {
-    return this.data.runes;
-  }
-
   get canTakeResourceAction() {
     return this.data.canTakeResourceAction;
   }

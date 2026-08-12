@@ -27,7 +27,7 @@ export const erinasApprentice: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 3,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -39,7 +39,6 @@ export const erinasApprentice: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          if (!card.player.runeManager.has({ wisdom: 1 })) return;
           const answer = await askMandatoryYesNoQuestion({
             game,
             card,
@@ -50,7 +49,6 @@ export const erinasApprentice: MinionBlueprint = {
           });
 
           if (!answer) return;
-          await card.player.runeManager.remove([RUNES.WISDOM]);
           await card.player.cardManager.drawWithFilter(1, isSpell);
         }
       })

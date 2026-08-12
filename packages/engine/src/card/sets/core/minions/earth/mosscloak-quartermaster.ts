@@ -19,7 +19,6 @@ import { CardAuraModifierMixin } from '../../../../../modifier/mixins/aura.mixin
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { DefenderModifier } from '../../../../../modifier/modifiers/defender.modifier';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const mosscloakQuartermaster: MinionBlueprint = {
   id: 'mosscloakQuartermaster',
@@ -36,7 +35,7 @@ export const mosscloakQuartermaster: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.EARTH],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -69,7 +68,6 @@ export const mosscloakQuartermaster: MinionBlueprint = {
 
     await card.modifiers.add(
       new OnScoreModifier(game, card, {
-        mixins: [new RuneCostToggleModifierMixin(game, card, { focus: 1, resonance: 1 })],
         async handler() {
           const hasRoom = emptyBoardSpaceTargetRules.canPlay(
             game,

@@ -28,7 +28,7 @@ export const loamkinTender: MinionBlueprint = {
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.EARTH],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -65,7 +65,7 @@ export const loamkinTender: MinionBlueprint = {
 
           await target.modifiers.add(
             new SimpleHealthBuffModifier('loamkin-tender-hp-buff', game, target, {
-              amount: card.player.runeManager.has({ focus: 2 }) ? 2 : 1
+              amount: 1
             })
           );
         }

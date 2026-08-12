@@ -23,7 +23,7 @@ export const braveCitizen: MinionBlueprint = {
   jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

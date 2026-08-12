@@ -26,7 +26,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -38,14 +38,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          const amountToGain = card.player.runeManager.has({
-            might: 1,
-            resonance: 1,
-            focus: 1,
-            wisdom: 1
-          })
-            ? 2
-            : 1;
+          const amountToGain = 1;
           if (card.player.boardSide.leftBattlefield.isLosing) {
             await card.player.boardSide.leftBattlefield.gainScore(amountToGain);
           }

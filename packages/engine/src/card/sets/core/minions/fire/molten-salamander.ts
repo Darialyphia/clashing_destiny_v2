@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
 import {
@@ -32,7 +31,7 @@ export const moltenSalamander: MinionBlueprint = {
   jobs: [JOBS.TAMER],
   affinities: [AFFINITIES.FIRE],
   manaCost: 4,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
@@ -64,14 +63,7 @@ export const moltenSalamander: MinionBlueprint = {
             .battlefield!.opponentSpaces.map(space => space.card)
             .filter(isDefined)
             .filter(enemy => enemy.modifiers.has(BurnModifier)).length;
-        },
-        mixins: [
-          new RuneCostToggleModifierMixin(game, card, {
-            might: 1,
-            resonance: 1,
-            wisdom: 1
-          })
-        ]
+        }
       })
     );
   },

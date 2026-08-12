@@ -11,7 +11,6 @@ import {
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { Modifier } from '../../../../../modifier/modifier.entity';
-import { RuneCostToggleModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import type { SpellCard } from '../../../../entities/spell.entity';
 import { SpellInterceptorModifierMixin } from '../../../../../modifier/mixins/interceptor.mixin';
 
@@ -30,7 +29,7 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) =>
@@ -49,7 +48,6 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
     await card.modifiers.add(
       new Modifier<SpellCard>('mysticRecall', game, card, {
         mixins: [
-          new RuneCostToggleModifierMixin(game, card, { wisdom: 1, focus: 1 }),
           new SpellInterceptorModifierMixin(game, {
             key: 'speed',
             interceptor() {

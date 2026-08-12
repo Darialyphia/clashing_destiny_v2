@@ -29,7 +29,7 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,
@@ -54,13 +54,11 @@ export const innerFire: SpellBlueprint<MinionCard> = {
       })
     );
 
-    if (card.player.runeManager.has({ might: 2, focus: 1 })) {
-      await target.modifiers.add(
-        new OverwhelmModifier(game, card, {
-          mixins: [new UntilEndOfTurnModifierMixin(game)]
-        })
-      );
-    }
+    await target.modifiers.add(
+      new OverwhelmModifier(game, card, {
+        mixins: [new UntilEndOfTurnModifierMixin(game)]
+      })
+    );
   },
   aiHints: {
     shouldPlay: () => 1

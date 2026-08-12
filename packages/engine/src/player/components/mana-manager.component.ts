@@ -6,7 +6,6 @@ import type { Interceptable } from '../../utils/interceptable';
 
 export type ManaInterceptors = {
   maxMana: Interceptable<number>;
-  manaRegen: Interceptable<number>;
 };
 
 export class ManaManagerComponent {
@@ -21,7 +20,6 @@ export class ManaManagerComponent {
 
   init() {
     this._baseMaxMana = this.game.config.MAX_MANA;
-    this._mana = this.manaRegen;
   }
 
   get mana() {
@@ -33,11 +31,21 @@ export class ManaManagerComponent {
   }
 
   get manaRegen() {
-    return this.interceptors.manaRegen.getValue(this.game.config.MANA_REGEN_PER_TURN, {});
+    return this.player.cardManager.hand
+      .map(card => card.manaSupply)
+      .reduce((a, b) => a + b, 0);
   }
 
-  refill() {
-    this._mana = this.maxMana;
+  async refill() {
+    await this.game.emit(
+      PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this.player, amount: this.manaRegen })
+    );
+    this._mana = this.manaRegen;
+    await this.game.emit(
+      PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this.player, amount: this.manaRegen })
+    );
   }
 
   async spend(amount: number) {

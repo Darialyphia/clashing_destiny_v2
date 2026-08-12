@@ -29,7 +29,7 @@ export const enigmaticWizard: MinionBlueprint = {
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 4,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -44,15 +44,6 @@ export const enigmaticWizard: MinionBlueprint = {
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.TURN_START,
             handler: async () => {
-              const shouldTrigger = card.player.runeManager.has({
-                focus: 1,
-                resonance: 1
-              })
-                ? true
-                : card.isOnBattlefield;
-
-              if (!shouldTrigger) return;
-
               const generatedCard = await card.player.generateCard(
                 'arcaneSpark',
                 card.isFoil

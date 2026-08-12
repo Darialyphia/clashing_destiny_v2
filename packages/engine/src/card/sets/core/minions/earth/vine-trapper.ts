@@ -29,7 +29,7 @@ export const vineTrapper: MinionBlueprint = {
   jobs: [JOBS.RANGER],
   affinities: [AFFINITIES.EARTH],
   manaCost: 2,
-  runeCost: [],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -67,15 +67,6 @@ export const vineTrapper: MinionBlueprint = {
               mixins: [new UntilEndOfTurnModifierMixin(game)]
             })
           );
-
-          if (card.player.runeManager.has({ might: 2, focus: 1, resonance: 1 })) {
-            await target.result.cards[0]?.modifiers.add(
-              new SimpleCommandmentBuffModifier('vine-trapper-cmd-buff', game, card, {
-                amount: -1,
-                mixins: [new UntilEndOfTurnModifierMixin(game)]
-              })
-            );
-          }
         }
       })
     );

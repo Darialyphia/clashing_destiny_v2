@@ -31,7 +31,7 @@ export const enjiOneManArmy: MinionBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 6,
-  runeCost: [RUNES.MIGHT, RUNES.FOCUS],
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
