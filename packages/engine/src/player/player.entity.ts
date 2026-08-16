@@ -11,8 +11,6 @@ import { cloneDeep } from 'lodash-es';
 import { ManaManagerComponent } from './components/mana-manager.component';
 import type { Affinity } from '../card/card.enums';
 import { isMinion } from '../card/card-utils';
-import { RuneManagerComponent } from './components/rune-manager.component';
-import type { Rune } from './player.enums';
 import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
@@ -63,7 +61,11 @@ const makeInterceptors = (): PlayerInterceptors => {
   };
 };
 
-export type PlayerResourceAction = { type: 'draw' };
+export type PlayerResourceAction =
+  | { type: 'draw' }
+  | { type: 'gain_might' }
+  | { type: 'gain_focus' }
+  | { type: 'gain_wisdom' };
 
 export class Player
   extends EntityWithModifiers<PlayerInterceptors>
@@ -226,6 +228,15 @@ export class Player
     await match(action)
       .with({ type: 'draw' }, async () => {
         await this.cardManager.draw(1);
+      })
+      .with({ type: 'gain_might' }, async () => {
+        await this.hero.statsManager.changeMight(1);
+      })
+      .with({ type: 'gain_focus' }, async () => {
+        await this.hero.statsManager.changeFocus(1);
+      })
+      .with({ type: 'gain_wisdom' }, async () => {
+        await this.hero.statsManager.changeWisdom(1);
       })
       .exhaustive();
   }

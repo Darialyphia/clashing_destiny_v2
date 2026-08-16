@@ -7,7 +7,10 @@ import { NotCurrentPlayerError, InputError } from '../input-errors';
 const schema = defaultInputSchema.extend({
   action: z.discriminatedUnion('type', [
     // z.object({ type: z.literal('rune'), rune: z.nativeEnum(RUNES) }),
-    z.object({ type: z.literal('draw') })
+    z.object({ type: z.literal('draw') }),
+    z.object({ type: z.literal('gain_might') }),
+    z.object({ type: z.literal('gain_focus') }),
+    z.object({ type: z.literal('gain_wisdom') })
   ])
 });
 

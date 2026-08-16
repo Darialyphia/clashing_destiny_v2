@@ -16,12 +16,18 @@ import { Ability } from './ability.entity';
 import type { MinionCard } from './minion.entity';
 import { HERO_EVENTS, HeroPlayedEvent } from '../events/hero.events';
 import { AbilityManagerComponent } from '../components/abilities-manager.component';
+import { StatsManagerComponent } from '../components/stats-manager.component';
 
 export type SerializedHeroCard = SerializedCard & {
   spellPower: number;
   baseSpellPower: number;
   abilities: string[];
   jobs: JobId[];
+  stats: {
+    might: number;
+    focus: number;
+    wisdom: number;
+  };
 };
 
 export type HeroCardInterceptors = CardInterceptors & {
@@ -38,6 +44,8 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
 
   readonly abilityManager: AbilityManagerComponent<HeroCard>;
 
+  readonly statsManager: StatsManagerComponent;
+
   constructor(game: Game, player: Player, options: CardOptions<HeroBlueprint>) {
     super(
       game,
@@ -53,10 +61,27 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
     );
 
     this.abilityManager = new AbilityManagerComponent<HeroCard>(game, this);
+    this.statsManager = new StatsManagerComponent(game, this, {
+      might: this.blueprint.stats.might,
+      focus: this.blueprint.stats.focus,
+      wisdom: this.blueprint.stats.wisdom
+    });
   }
 
   isValidMovementPosition() {
     return false;
+  }
+
+  get might() {
+    return this.statsManager.might;
+  }
+
+  get focus() {
+    return this.statsManager.focus;
+  }
+
+  get wisdom() {
+    return this.statsManager.wisdom;
   }
 
   get spellPower(): number {
@@ -134,7 +159,12 @@ export class HeroCard extends Card<SerializedCard, HeroCardInterceptors, HeroBlu
       spellPower: this.spellPower,
       baseSpellPower: this.spellPower,
       abilities: this.abilityManager.serialize(),
-      jobs: this.jobs.map(job => job.id) as JobId[]
+      jobs: this.jobs.map(job => job.id) as JobId[],
+      stats: {
+        might: this.statsManager.might,
+        focus: this.statsManager.focus,
+        wisdom: this.statsManager.wisdom
+      }
     };
   }
 }

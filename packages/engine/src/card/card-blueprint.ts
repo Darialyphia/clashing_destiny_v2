@@ -126,6 +126,11 @@ export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
   manaSupply: number;
+  statRequirements: {
+    might?: number;
+    focus?: number;
+    wisdom?: number;
+  };
   maxHp: number;
   atk: number;
   commandment: number;
@@ -148,6 +153,11 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   manaSupply: number;
   speed: CardSpeed;
   jobs: Job[];
+  statRequirements: {
+    might?: number;
+    focus?: number;
+    wisdom?: number;
+  };
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: Targets<T>) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
@@ -160,6 +170,11 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
 export type HeroBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
   jobs: Job[];
+  stats: {
+    might: number;
+    focus: number;
+    wisdom: number;
+  };
   onInit: (game: Game, card: HeroCard) => Promise<void>;
   onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
   abilities: AbilityBlueprint<HeroCard, any>[];
@@ -175,6 +190,11 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   jobs: Job[];
   durability: number;
   abilities: AbilityBlueprint<ArtifactCard, any>[];
+  statRequirements: {
+    might?: number;
+    focus?: number;
+    wisdom?: number;
+  };
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;

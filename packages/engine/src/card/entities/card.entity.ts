@@ -211,6 +211,30 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
+  get statRequirements() {
+    if ('statRequirements' in this.blueprint) {
+      return {
+        might: this.blueprint.statRequirements.might ?? 0,
+        focus: this.blueprint.statRequirements.focus ?? 0,
+        wisdom: this.blueprint.statRequirements.wisdom ?? 0
+      };
+    }
+    return {
+      might: 0,
+      focus: 0,
+      wisdom: 0
+    };
+  }
+
+  get fullfillsStatRequirements() {
+    const { might, focus, wisdom } = this.statRequirements;
+    return (
+      this.player.hero.might >= might &&
+      this.player.hero.focus >= focus &&
+      this.player.hero.wisdom >= wisdom
+    );
+  }
+
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       const base = this.blueprint.manaCost;
@@ -446,6 +470,10 @@ export abstract class Card<
       return false;
     }
 
+    if (!this.fullfillsStatRequirements) {
+      return false;
+    }
+
     return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
@@ -474,6 +502,10 @@ export abstract class Card<
 
     if (!this.canPayManaCost) {
       return 'Cannot pay mana cost.';
+    }
+
+    if (!this.fullfillsStatRequirements) {
+      return 'Your hero does not meet the stat requirements to play this card.';
     }
 
     return 'You cannot play this card';
