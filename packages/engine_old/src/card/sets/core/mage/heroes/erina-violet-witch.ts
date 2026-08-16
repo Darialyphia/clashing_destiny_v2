@@ -24,6 +24,7 @@ export const erinaVioletWitch: HeroBlueprint = {
   art: defaultCardArt('placeholder', defaultCardTint),
   jobs: [JOBS.MAGE],
   tags: [],
+  statRequirements: {},
 
   atk: 2,
   retaliation: 0,

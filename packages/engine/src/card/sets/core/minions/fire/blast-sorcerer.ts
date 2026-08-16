@@ -30,6 +30,7 @@ export const blastSorcerer: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   atk: 2,
   maxHp: 5,
   commandment: 2,

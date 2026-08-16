@@ -354,6 +354,7 @@ export const simpleMinion: MinionBlueprint = {
   faction: FACTIONS.ARCANE,
   rarity: RARITIES.COMMON,
   tags: [],
+  statRequirements: {},
   art: {
     /* ... */
   },

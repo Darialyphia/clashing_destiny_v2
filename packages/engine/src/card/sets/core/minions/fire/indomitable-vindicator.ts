@@ -38,6 +38,7 @@ export const indomitableVindicator: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   atk: 2,
   maxHp: 3,
   commandment: 2,

@@ -27,6 +27,7 @@ export const cremation: SpellBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
+  statRequirements: {},
   shouldHideTargetarrows: true,
   canPlay: (game, card) =>
     [...card.player.cardManager.discardPile].filter(c =>

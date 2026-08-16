@@ -28,6 +28,7 @@ export const engulfInFlames: SpellBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
+  statRequirements: {},
   canPlay: () => true,
   getTargets: (game, card) =>
     battlefieldTargetRules.getTargets({

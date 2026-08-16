@@ -20,6 +20,7 @@ export const sample: MinionBlueprint = {
   jobs: [JOBS.NEUTRAL],
   manaCost: 1,
   tags: [],
+  statRequirements: {},
   atk: 1,
   retaliation: 1,
   maxHp: 1,

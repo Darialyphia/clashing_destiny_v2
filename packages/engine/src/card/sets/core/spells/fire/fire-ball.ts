@@ -33,6 +33,7 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
+  statRequirements: {},
   canPlay: (game, card) => singleEnemyMinionTargetRules.canPlay(game, card),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({

@@ -32,6 +32,7 @@ export const starConvergence: SpellBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   shouldHideTargetarrows: true,
   canPlay: () => true,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),

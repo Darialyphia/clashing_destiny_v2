@@ -33,6 +33,11 @@ export const haroldVowedCrusader: HeroBlueprint = {
   jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.LIGHT, AFFINITIES.EARTH],
   tags: [],
+  stats: {
+    might: 1,
+    focus: 0,
+    wisdom: 0
+  },
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(

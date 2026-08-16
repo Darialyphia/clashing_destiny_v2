@@ -36,6 +36,7 @@ export const ancientTreant: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   atk: 2,
   maxHp: 7,
   commandment: 2,

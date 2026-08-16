@@ -24,7 +24,6 @@ import type { SerializedArtifactCard } from '../../card/entities/artifact.entity
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import { AttackAction } from '../actions/attack';
 import { DeclareRetaliationAction } from '../actions/retaliate';
-import type { Rune } from '../../player/player.enums';
 
 type CardData =
   | SerializedSpellCard
@@ -154,16 +153,16 @@ export class CardViewModel {
     return null;
   }
 
-  get runeCost() {
-    if ('runeCost' in this.data) {
-      return this.data.runeCost as Rune[];
+  get baseManaCost() {
+    if ('baseManaCost' in this.data) {
+      return this.data.baseManaCost as number;
     }
     return null;
   }
 
-  get baseManaCost() {
-    if ('baseManaCost' in this.data) {
-      return this.data.baseManaCost as number;
+  get stats() {
+    if ('stats' in this.data) {
+      return this.data.stats as { might: number; focus: number; wisdom: number };
     }
     return null;
   }
@@ -185,6 +184,7 @@ export class CardViewModel {
     }
     return null;
   }
+
   get advancedAffinity() {
     if ('advancedAffinity' in this.data) {
       return this.data.advancedAffinity as Affinity | null;

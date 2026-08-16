@@ -40,6 +40,7 @@ export const cosmicAvatar: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   atk: 3,
   maxHp: 6,
   commandment: 3,

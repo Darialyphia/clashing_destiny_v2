@@ -31,6 +31,7 @@ export const loamkinTender: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   atk: 1,
   maxHp: 1,
   commandment: 1,

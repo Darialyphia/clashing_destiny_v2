@@ -18,7 +18,6 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
-
 export const restrainTheBeast: DestinyBlueprint = {
   id: 'restrain-the-beast',
   kind: CARD_KINDS.DESTINY,

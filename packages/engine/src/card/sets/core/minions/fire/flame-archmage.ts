@@ -36,6 +36,7 @@ export const flameArchmage: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   atk: 3,
   maxHp: 5,
   commandment: 2,

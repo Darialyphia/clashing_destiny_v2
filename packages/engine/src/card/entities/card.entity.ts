@@ -92,6 +92,11 @@ export type SerializedCard = {
   affinities: Affinity[];
   position: string | null;
   speed: CardSpeed;
+  stats: {
+    might: number;
+    focus: number;
+    wisdom: number;
+  };
   isFoil: boolean;
 };
 
@@ -544,7 +549,12 @@ export abstract class Card<
       isRevealed: this.isRevealed,
       affinities: this.affinities,
       position: this.position?.id ?? null,
-      speed: this.speed
+      speed: this.speed,
+      stats: {
+        might: this.statRequirements.might,
+        focus: this.statRequirements.focus,
+        wisdom: this.statRequirements.wisdom
+      }
     };
   }
 

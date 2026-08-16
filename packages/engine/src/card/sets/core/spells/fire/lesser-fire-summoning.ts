@@ -31,6 +31,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
+  statRequirements: {},
   canPlay: (game, card) =>
     emptyBoardSpaceTargetRules.canPlay(
       game,

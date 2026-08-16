@@ -32,6 +32,7 @@ export const mysticRecall: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, minion => minion.isAlly(card)),
   getTargets: (game, card) =>

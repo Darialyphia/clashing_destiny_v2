@@ -379,7 +379,9 @@ export class GameClient {
     });
   }
 
-  takeResourceAction(action: { type: 'draw' }) {
+  takeResourceAction(action: {
+    type: 'draw' | 'gain_might' | 'gain_focus' | 'gain_wisdom';
+  }) {
     this.dispatch({
       type: 'takeResourceAction',
       payload: {

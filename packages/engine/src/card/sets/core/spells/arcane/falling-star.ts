@@ -31,6 +31,7 @@ export const fallingStar: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
+  statRequirements: {},
   canPlay: (game, card) =>
     singleEnemyMinionTargetRules.canPlay(
       game,
